@@ -480,6 +480,8 @@ public class PGraphics3D extends PGraphics {
   public void hint(int which) {
     if (which == DISABLE_DEPTH_SORT) {
       flush();
+    } else if (which == DISABLE_DEPTH_TEST) {
+      Arrays.fill(zbuffer, Float.MAX_VALUE);
     }
     super.hint(which);
   }
@@ -2291,11 +2293,6 @@ public class PGraphics3D extends PGraphics {
   }
   
   
-
-  /////////////////////////////////////////////////////////////////////////////
-
-  // DEPTH SORTING
-  
   /**
    * Handle depth sorting of geometry. Currently this only handles triangles, 
    * however in the future it will be expanded for points and lines, which 
@@ -2590,9 +2587,23 @@ public class PGraphics3D extends PGraphics {
 
   //////////////////////////////////////////////////////////////
 
+  // TEXT SETTINGS
+  
+  // Only textModeCheck overridden from PGraphics, no textAlign, textAscent, 
+  // textDescent, textFont, textLeading, textMode, textSize, textWidth 
+
+  
+  protected boolean textModeCheck(int mode) {
+    return (textMode == MODEL) || (textMode == SCREEN);
+  }
+
+  
+  
+  //////////////////////////////////////////////////////////////
+
   // TEXT
   
-  // None of the text functions are overridden from PGraphics.
+  // None of the variations of text() are overridden from PGraphics.
   
   
   

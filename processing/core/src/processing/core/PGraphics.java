@@ -264,9 +264,9 @@ public class PGraphics extends PImage implements PConstants {
 
   // Additional stroke properties 
   
-  static final float DEFAULT_STROKE_WEIGHT = 1;
-  static final int DEFAULT_STROKE_JOIN = MITER;
-  static final int DEFAULT_STROKE_CAP = ROUND;
+  static protected final float DEFAULT_STROKE_WEIGHT = 1;
+  static protected final int DEFAULT_STROKE_JOIN = MITER;
+  static protected final int DEFAULT_STROKE_CAP = ROUND;
 
   /**
    * Last value set by strokeWeight() (read-only). This has a default
@@ -827,7 +827,7 @@ public class PGraphics extends PImage implements PConstants {
 
   //////////////////////////////////////////////////////////////
 
-  // SHAPES
+  // VERTEX SHAPES
 
   /**
    * Start a new shape of type POLYGON

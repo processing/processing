@@ -84,8 +84,14 @@ public class PGraphicsOpenGL extends PGraphics3D {
   //protected FloatBuffer lightBuffer;
   protected float[] lightArray = new float[] { 1, 1, 1 };
 
+  static int maxTextureSize;
+
+  int[] textureDeleteQueue = new int[10];
+  int textureDeleteQueueCount = 0;
+
   /// Used to hold color values to be sent to OpenGL
-  protected FloatBuffer colorBuffer;
+  //protected FloatBuffer colorBuffer;
+  protected float[] colorBuffer;
 
   /// Used to store empty values to be passed when a light has no ambient value
   protected FloatBuffer zeroBuffer;
@@ -128,6 +134,18 @@ public class PGraphicsOpenGL extends PGraphics3D {
   }
 
 
+  //public void setParent(PApplet parent)  // PGraphics
+  
+  
+  //public void setPrimary(boolean primary)  // PGraphics
+  
+  
+  //public void setPath(String path)  // PGraphics
+  
+  
+  //public void setSize(int iwidth, int iheight)  // PGraphics3D
+
+  
   /**
    * Called by resize(), this handles creating the actual GLCanvas the
    * first time around, or simply resizing it on subsequent calls.
@@ -183,39 +201,13 @@ public class PGraphicsOpenGL extends PGraphics3D {
   }
 
 
-  public void hint(int which) {
-    // make note of whether these are set, if they are,
-    // then will prevent the new renderer exception from being thrown.
-    boolean opengl2X = hints[ENABLE_OPENGL_2X_SMOOTH];
-    boolean opengl4X = hints[ENABLE_OPENGL_4X_SMOOTH];
-    super.hint(which);
+  //public void dispose()  // PGraphics
 
-    if (which == DISABLE_DEPTH_TEST) {
-      gl.glDisable(GL.GL_DEPTH_TEST);
-
-    } else if (which == ENABLE_DEPTH_TEST) {
-      gl.glEnable(GL.GL_DEPTH_TEST);
-
-    } else if (which == ENABLE_OPENGL_2X_SMOOTH) {
-      if (!opengl2X) {
-        releaseContext();
-        context.destroy();
-        context = null;
-        allocate();
-        throw new PApplet.RendererChangeException();
-      }
-    } else if (which == ENABLE_OPENGL_4X_SMOOTH) {
-      if (!opengl4X) {
-        releaseContext();
-        context.destroy();
-        context = null;
-        allocate();
-        throw new PApplet.RendererChangeException();
-      }
-    }
-  }
-
-
+  
+  
+  ////////////////////////////////////////////////////////////  
+  
+  
   /**
    * Get the current context, for use by libraries that need to talk to it.
    */
@@ -429,6 +421,78 @@ public class PGraphicsOpenGL extends PGraphics3D {
   }
 
 
+  
+  ////////////////////////////////////////////////////////////
+
+  // SETTINGS
+  
+  // checkSettings, defaultSettings, reapplySettings in PGraphics
+  
+  
+  
+  ////////////////////////////////////////////////////////////
+
+  // HINTS
+  
+  
+  public void hint(int which) {
+    // make note of whether these are set, if they are,
+    // then will prevent the new renderer exception from being thrown.
+    boolean opengl2X = hints[ENABLE_OPENGL_2X_SMOOTH];
+    boolean opengl4X = hints[ENABLE_OPENGL_4X_SMOOTH];
+    super.hint(which);
+
+    if (which == DISABLE_DEPTH_TEST) {
+      gl.glDisable(GL.GL_DEPTH_TEST);
+      gl.glClear(GL.GL_DEPTH_BUFFER_BIT);
+
+    } else if (which == ENABLE_DEPTH_TEST) {
+      gl.glEnable(GL.GL_DEPTH_TEST);
+
+    } else if (which == ENABLE_OPENGL_2X_SMOOTH) {
+      if (!opengl2X) {
+        releaseContext();
+        context.destroy();
+        context = null;
+        allocate();
+        throw new PApplet.RendererChangeException();
+      }
+    } else if (which == ENABLE_OPENGL_4X_SMOOTH) {
+      if (!opengl4X) {
+        releaseContext();
+        context.destroy();
+        context = null;
+        allocate();
+        throw new PApplet.RendererChangeException();
+      }
+    }
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // VERTEX SHAPES
+  
+  // All picked up from either PGraphics or PGraphics3D
+  
+  
+  //public void beginShape()
+  //public void beginShape(int kind)
+  //public void edge(boolean e)
+  //public void normal(float nx, float ny, float nz)
+  //public void textureMode(int mode)
+  //public void texture(PImage image)
+  //public void vertex(float x, float y)
+  //public void vertex(float x, float y, float z)
+  //public void vertex(float x, float y, float u, float v)
+  //public void vertex(float x, float y, float z, float u, float v)
+  //protected void vertexTexture(float u, float v);
+  //public void breakShape()
+  //public void endShape()
+  //public void endShape(int mode)
+
+  
   protected void endShapeLighting(boolean lights) {
     super.endShapeLighting(lights);
     
@@ -443,20 +507,158 @@ public class PGraphicsOpenGL extends PGraphics3D {
     }
   }
 
+  
+  
+  //////////////////////////////////////////////////////////////
 
-  protected void renderTriangles() {
+  // BEZIER CURVE VERTICES
+  
+  // All picked up from either PGraphics or PGraphics3D, however
+  // a faster version that made use of OpenGL's evaluator methods
+  // would be a nice improvement.
+
+  
+  //protected void bezierVertexCheck();
+  //public void bezierVertex(float x2, float y2,
+  //                         float x3, float y3,
+  //                         float x4, float y4)
+  //public void bezierVertex(float x2, float y2, float z2,
+  //                         float x3, float y3, float z3,
+  //                         float x4, float y4, float z4)
+
+  
+  
+  //////////////////////////////////////////////////////////////
+
+  // CATMULL-ROM CURVE VERTICES
+  
+  // Like bezier, these could be implemented using an OpenGL evaluator.
+
+  
+  //protected void curveVertexCheck();
+  //public void curveVertex(float x, float y)
+  //public void curveVertex(float x, float y, float z)
+  //protected void curveVertexSegment(float x1, float y1,  
+  //                                  float x2, float y2, 
+  //                                  float x3, float y3, 
+  //                                  float x4, float y4)
+  //protected void curveVertexSegment(float x1, float y1, float z1, 
+  //                                  float x2, float y2, float z2,
+  //                                  float x3, float y3, float z3,
+  //                                  float x4, float y4, float z4)
+
+
+  
+  //////////////////////////////////////////////////////////////
+  
+  // POINTS (override from P3D)
+
+  
+  protected void renderPoints(int start, int stop) {
+    gl.glBegin(GL.GL_POINTS);
+    float sw = vertices[lines[start][VERTEX1]][SW];
+    if (sw > 0) {
+      gl.glPointSize(sw);  // can only be set outside glBegin/glEnd
+      for (int i = start; i < stop; i++) {
+        float[] a = vertices[points[i][VERTEX1]];
+      
+        gl.glColor4f(a[SR], a[SG], a[SB], a[SA]);
+        gl.glVertex3f(a[VX], a[VY], a[VZ]);
+      }
+    }
+    gl.glEnd();
+  }
+  
+  
+  //protected void rawPoints(int start, int stop)  // PGraphics3D
+  
+
+  
+  //////////////////////////////////////////////////////////////
+  
+  // LINES (override from P3D)
+
+
+  //protected final void addLineBreak()  // PGraphics3D
+  
+  
+  /**
+   * Add this line, but disable clipping because GL will handle it.  
+   */
+  protected void addLine(int a, int b) {
+    addLineWithoutClip(a, b);
+  }
+
+
+  //protected final void addLineWithClip(int a, int b)
+  
+
+  //protected final void addLineWithoutClip(int a, int b)
+  
+  
+  /**
+   * In the current implementation, start and stop are ignored (in OpenGL). 
+   * This will obviously have to be revisited if/when proper depth sorting 
+   * is implemented.  
+   */
+  protected void renderLines(int start, int stop) {
+    report("render_lines in");
+
+    int i = 0;
+    for (int j = 0; j < pathCount; j++) {
+      float sw = vertices[lines[i][VERTEX1]][SW];
+      //report("render_lines 1");
+      // stroke weight zero will cause a gl error
+      if (sw > 0) {
+        // glLineWidth has to occur outside glBegin/glEnd
+        gl.glLineWidth(sw);
+        gl.glBegin(GL.GL_LINE_STRIP);
+
+        // always draw a first point
+        float a[] = vertices[lines[i][VERTEX1]];
+        gl.glColor4f(a[SR], a[SG], a[SB], a[SA]);
+        gl.glVertex3f(a[VX], a[VY], a[VZ]);
+
+        // on this and subsequent lines, only draw the second point
+        //System.out.println(pathLength[j]);
+        for (int k = 0; k < pathLength[j]; k++) {
+          float b[] = vertices[lines[i][VERTEX2]];
+          gl.glColor4f(b[SR], b[SG], b[SB], b[SA]);
+          //gl.glEdgeFlag(a[EDGE] == 1);
+          gl.glVertex3f(b[VX], b[VY], b[VZ]);
+          i++;
+        }
+        gl.glEnd();
+      }
+    }
+    report("render_lines out");
+  }
+
+
+  //protected void rawLines(int start, int stop)
+  
+  
+  
+  //////////////////////////////////////////////////////////////
+  
+  // TRIANGLES
+  
+
+  /**
+   * Add the triangle, but disable clipping because GL will handle it.  
+   */
+  protected void addTriangle(int a, int b, int c) {
+    addTriangleWithoutClip(a, b, c);
+  }
+
+
+  protected void renderTriangles(int start, int stop) {
     report("render_triangles in");
-    //System.out.println("rendering " + triangleCount + " triangles");
 
-    for (int i = 0; i < triangleCount; i ++) {
-      //System.out.println("rendering triangle " + i);
-
+    for (int i = start; i < stop; i++) {
       float a[] = vertices[triangles[i][VERTEX1]];
       float b[] = vertices[triangles[i][VERTEX2]];
       float c[] = vertices[triangles[i][VERTEX3]];
-      //System.out.println(triangles[i][VERTEX1] + " " +
-      //                 triangles[i][VERTEX2] + " " +
-      //                 triangles[i][VERTEX3] + " " + vertexCount);
 
       // This is only true when not textured.
       // We really should pass specular straight through to triangle rendering.
@@ -470,207 +672,77 @@ public class PGraphicsOpenGL extends PGraphics3D {
       float cg = clamp(triangleColors[i][2][TRI_DIFFUSE_G] + triangleColors[i][2][TRI_SPECULAR_G]);
       float cb = clamp(triangleColors[i][2][TRI_DIFFUSE_B] + triangleColors[i][2][TRI_SPECULAR_B]);
 
-      if (raw != null) {
-        raw.colorMode(RGB, 1);
-        raw.noStroke();
-        raw.beginShape(TRIANGLES);
-      }
-
       int textureIndex = triangles[i][TEXTURE_INDEX];
       if (textureIndex != -1) {
         report("before enable");
         gl.glEnable(GL.GL_TEXTURE_2D);
         report("after enable");
 
+        report("before bind");
         PImage texture = textures[textureIndex];
         bindTexture(texture);
-
-        report("before bind");
-        //System.out.println(gl.glIsTexture(image.tindex));
-
-        //GL_PERSPECTIVE_CORRECTION_HINT to GL_NICEST
-        // and running the example again. To do this, use glHint().
-
-        // these don't seem to do much
-        //gl.glPixelStorei(GL.GL_UNPACK_ALIGNMENT, 1);
-        //gl.glPixelStorei(GL.GL_UNPACK_SWAP_BYTES, 1);
-
-        //if (image.format == ALPHA) {
-        //System.out.println("binding with replace");
-        //  gl.glTexEnvf(GL.GL_TEXTURE_ENV,
-        //             GL.GL_TEXTURE_ENV_MODE, GL.GL_REPLACE);
-        //} else {
-        //gl.glTexEnvf(GL.GL_TEXTURE_ENV,
-        //             GL.GL_TEXTURE_ENV_MODE, GL.GL_MODULATE);
-        //}
-
         report("after bind");
-
-        /*
-        } else {
-          cache(texture);
-          cash = (ImageCache) texture.cache;
-
-          report("non-binding 0");
-          // may be needed for windows
-          report("non-binding 1");
-
-          gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, 4,
-                          cash.twidth, cash.theight,
-                          0, GL.GL_BGRA_EXT, GL.GL_UNSIGNED_BYTE,
-                          cash.tpixels);
-
-          report("non-binding 2 " + cash.twidth + " " +
-                 cash.theight + " " + cash.tpixels);
-          gl.glTexParameterf(GL.GL_TEXTURE_2D,
-                             GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP);
-          gl.glTexParameterf(GL.GL_TEXTURE_2D,
-                             GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP);
-          gl.glTexParameterf(GL.GL_TEXTURE_2D,
-                             GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
-          gl.glTexParameterf(GL.GL_TEXTURE_2D,
-                             GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
-
-          report("non-binding 3");
-          gl.glTexEnvf(GL.GL_TEXTURE_ENV,
-                       GL.GL_TEXTURE_ENV_MODE, GL.GL_MODULATE);
-        }
-        */
 
         ImageCache cash = (ImageCache) texture.getCache(this);
         float uscale = (float) texture.width / (float) cash.twidth;
         float vscale = (float) texture.height / (float) cash.theight;
-
-        //int tindex = ((ImageCache) texture.cache).tindex;
 
         gl.glBegin(GL.GL_TRIANGLES);
 
         gl.glColor4f(ar, ag, ab, a[A]);
         gl.glTexCoord2f(a[U] * uscale, a[V] * vscale);
         gl.glNormal3f(a[NX], a[NY], a[NZ]);
-        //gl.glEdgeFlag(a[EDGE] == 1);
+        gl.glEdgeFlag(a[EDGE] == 1);
         gl.glVertex3f(a[VX], a[VY], a[VZ]);
 
         gl.glColor4f(br, bg, bb, b[A]);
         gl.glTexCoord2f(b[U] * uscale, b[V] * vscale);
         gl.glNormal3f(b[NX], b[NY], b[NZ]);
-        //gl.glEdgeFlag(a[EDGE] == 1);
+        gl.glEdgeFlag(a[EDGE] == 1);
         gl.glVertex3f(b[VX], b[VY], b[VZ]);
 
         gl.glColor4f(cr, cg, cb, c[A]);
         gl.glTexCoord2f(c[U] * uscale, c[V] * vscale);
         gl.glNormal3f(c[NX], c[NY], c[NZ]);
-        //gl.glEdgeFlag(a[EDGE] == 1);
+        gl.glEdgeFlag(a[EDGE] == 1);
         gl.glVertex3f(c[VX], c[VY], c[VZ]);
 
         gl.glEnd();
+
         report("non-binding 6");
 
         gl.glDisable(GL.GL_TEXTURE_2D);
 
-        if (raw != null) {
-          if (raw instanceof PGraphics3D) {
-            if ((a[VW] != 0) && (b[VW] != 0) && (c[VW] != 0)) {
-              raw.texture(texture);
-              raw.fill(ar, ag, ab, a[A]);
-              raw.vertex(a[VX] / a[VW], a[VY] / a[VW], a[VZ] / a[VW],
-                         a[U] * uscale, a[V] * vscale);
-              raw.fill(br, bg, bb, b[A]);
-              raw.vertex(b[VX] / b[VW], b[VY] / b[VW], b[VZ] / b[VW],
-                         b[U] * uscale, b[V] * vscale);
-              raw.fill(cr, cg, cb, c[A]);
-              raw.vertex(c[VX] / c[VW], c[VY] / c[VW], c[VZ] / c[VW],
-                         c[U] * uscale, c[V] * vscale);
-            } else {
-              if (reasonablePoint(a[TX], a[TY], a[TZ]) &&
-                  reasonablePoint(b[TX], b[TY], b[TZ]) &&
-                  reasonablePoint(c[TX], c[TY], c[TZ])) {
-                raw.fill(ar, ag, ab, a[A]);
-                raw.vertex(a[TX], a[TY], a[U] * uscale, a[V] * vscale);
-                raw.fill(br, bg, bb, b[A]);
-                raw.vertex(b[TX], b[TY], b[U] * uscale, b[V] * vscale);
-                raw.fill(cr, cg, cb, c[A]);
-                raw.vertex(c[TX], c[TY], c[U] * uscale, c[V] * vscale);
-              }
-            }
-          }
-        }
-
-      } else {  // image has no texture
+      } else {  // no texture
         gl.glBegin(GL.GL_TRIANGLES);
-
-        //System.out.println("tri " + a[VX] + " " + a[VY] + " " + a[VZ]);
-        //System.out.println("    " + b[VX] + " " + b[VY] + " " + b[VZ]);
-        //System.out.println("    " + c[VX] + " " + c[VY] + " " + c[VZ]);
 
         gl.glColor4f(ar, ag, ab, a[A]);
         gl.glNormal3f(a[NX], a[NY], a[NZ]);
-        //gl.glEdgeFlag(a[EDGE] == 1);
+        gl.glEdgeFlag(a[EDGE] == 1);
         gl.glVertex3f(a[VX], a[VY], a[VZ]);
 
         gl.glColor4f(br, bg, bb, b[A]);
         gl.glNormal3f(b[NX], b[NY], b[NZ]);
-        //gl.glEdgeFlag(a[EDGE] == 1);
+        gl.glEdgeFlag(a[EDGE] == 1);
         gl.glVertex3f(b[VX], b[VY], b[VZ]);
 
         gl.glColor4f(cr, cg, cb, c[A]);
         gl.glNormal3f(c[NX], c[NY], c[NZ]);
-        //gl.glEdgeFlag(a[EDGE] == 1);
+        gl.glEdgeFlag(a[EDGE] == 1);
         gl.glVertex3f(c[VX], c[VY], c[VZ]);
 
-        if (raw != null) {
-          if (raw instanceof PGraphics3D) {
-            if ((a[VW] != 0) && (b[VW] != 0) && (c[VW] != 0)) {
-              raw.fill(ar, ag, ab, a[A]);
-              raw.vertex(a[VX] / a[VW], a[VY] / a[VW], a[VZ] / a[VW]);
-              raw.fill(br, bg, bb, b[A]);
-              raw.vertex(b[VX] / b[VW], b[VY] / b[VW], b[VZ] / b[VW]);
-              raw.fill(cr, cg, cb, c[A]);
-              raw.vertex(c[VX] / c[VW], c[VY] / c[VW], c[VZ] / c[VW]);
-            }
-          } else {
-            if (reasonablePoint(a[TX], a[TY], a[TZ]) &&
-                reasonablePoint(b[TX], b[TY], b[TZ]) &&
-                reasonablePoint(c[TX], c[TY], c[TZ])) {
-              raw.fill(ar, ag, ab, a[A]);
-              raw.vertex(a[TX], a[TY]);
-              raw.fill(br, bg, bb, b[A]);
-              raw.vertex(b[TX], b[TY]);
-              raw.fill(cr, cg, cb, c[A]);
-              raw.vertex(c[TX], c[TY]);
-            }
-          }
-        }
         gl.glEnd();
       }
-    }
-    if (raw != null) {
-      raw.endShape();
     }
     triangleCount = 0;
     report("render_triangles out");
   }
 
+  
+  //protected void rawTriangles(int start, int stop)  // PGraphics3D
 
-  // TODO bad clipping, replace me
-  protected boolean reasonablePoint(float x, float y, float z) {
-    return ((z < 1) && (x > -width) && (x < width*2) && (y > -height) && (y < height*2));
-  }
 
-  // TODO need to remove this
-  public float uscale(PImage texture) {
-    ImageCache cash = (ImageCache) texture.getCache(this);
-    return (float) texture.width / (float) cash.twidth;
-  }
-
-  // TODO need to remove this
-  public float vscale(PImage texture) {
-    ImageCache cash = (ImageCache) texture.getCache(this);
-    return (float) texture.height / (float) cash.theight;
-  }
-
-  // TODO need to remove this
-  public void bindTexture(PImage texture) {
+  protected void bindTexture(PImage texture) {
     ImageCache cash = (ImageCache) texture.getCache(this);  // as in johnny
     if (cash == null) {
       cash = new ImageCache();
@@ -692,108 +764,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
     }
   }
 
-
-  public void renderLines() {
-    report("render_lines in");
-
-    int i = 0;
-    for (int j = 0; j < pathCount; j++) {
-      float sw = vertices[lines[i][VERTEX1]][SW];
-      //report("render_lines 1");
-      // stroke weight zero will cause a gl error
-      //if (lines[i][STROKE_WEIGHT] == 0) continue;
-      if (sw == 0) continue;
-      // glLineWidth has to occur outside glBegin/glEnd
-      //gl.glLineWidth(lines[i][STROKE_WEIGHT]);
-      gl.glLineWidth(sw);
-      //report("render_lines 2 " + lines[i][STROKE_WEIGHT]);
-      gl.glBegin(GL.GL_LINE_STRIP);
-
-      if (raw != null) {
-        raw.strokeWeight(sw);
-      }
-
-      // always draw a first point
-      float a[] = vertices[lines[i][VERTEX1]];
-      gl.glColor4f(a[SR], a[SG], a[SB], a[SA]);
-      //gl.glEdgeFlag(a[EDGE] == 1);
-      gl.glVertex3f(a[VX], a[VY], a[VZ]);
-      //System.out.println("First point: " + a[VX] +", "+ a[VY] +", "+ a[VZ]);
-
-      if (raw != null) {
-        if (a[SA] > EPSILON) {  // don't draw if transparent
-          raw.colorMode(RGB, 1);
-          raw.noFill();  // 0116
-          raw.beginShape(); // 0116  LINE_STRIP);
-          if (raw instanceof PGraphics3D) {
-            if (a[VW] != 0) {
-              raw.stroke(a[SR], a[SG], a[SB], a[SA]);
-              raw.vertex(a[VX] / a[VW], a[VY] / a[VW], a[VZ] / a[VW]);
-            }
-          } else {
-            raw.stroke(a[SR], a[SG], a[SB], a[SA]);
-            raw.vertex(a[TX], a[TY]);
-          }
-        }
-      }
-
-      // on this and subsequent lines, only draw the second point
-      //System.out.println(pathLength[j]);
-      for (int k = 0; k < pathLength[j]; k++) {
-        float b[] = vertices[lines[i][VERTEX2]];
-        gl.glColor4f(b[SR], b[SG], b[SB], b[SA]);
-        //gl.glEdgeFlag(a[EDGE] == 1);
-        gl.glVertex3f(b[VX], b[VY], b[VZ]);
-        if (raw != null) {
-          if (raw instanceof PGraphics3D) {
-            if ((a[VW] != 0) && (b[VW] != 0)) {
-              raw.stroke(b[SR], b[SG], b[SB], b[SA]);
-              raw.vertex(b[VX] / b[VW], b[VY] / b[VW], b[VZ] / b[VW]);
-            }
-          } else {
-            //System.out.println("writing 2d vertex");
-            raw.stroke(b[SR], b[SG], b[SB], b[SA]);
-            raw.vertex(b[TX], b[TY]);
-          }
-        }
-        i++;
-      }
-      if (raw != null) {
-        raw.endShape();
-      }
-      gl.glEnd();
-    }
-    report("render_lines out");
-  }
-
-
-  /**
-   * Handled entirely by OpenGL, so use this to override the superclass.
-   */
-  //protected void light_and_transform() {
-  //}
-
-
-  //GL will do the clipping for us
-  protected void addLine(int a, int b) {
-    addLineWithoutClip(a, b);
-  }
-
-
-  // GL will do the clipping for us
-  protected void addTriangle(int a, int b, int c) {
-    addTriangleWithoutClip(a, b, c);
-  }
-
-
-  //////////////////////////////////////////////////////////////
-
-
-  static int maxTextureSize;
-
-  int[] deleteQueue = new int[10];
-  int deleteQueueCount = 0;
-
+  
   protected class ImageCache {
     int tindex = -1;  // not yet ready
     int tpixels[];
@@ -808,11 +779,11 @@ public class PGraphicsOpenGL extends PGraphics3D {
      * Added for 0125 to deal with memory problems reported in Bug #150.
      */
     protected void finalize() {
-      if (deleteQueue.length == deleteQueueCount) {
-        deleteQueue = (int[]) PApplet.expand(deleteQueue);
+      if (textureDeleteQueue.length == textureDeleteQueueCount) {
+        textureDeleteQueue = (int[]) PApplet.expand(textureDeleteQueue);
       }
       if (tindex != -1) {
-        deleteQueue[deleteQueueCount++] = tindex;
+        textureDeleteQueue[textureDeleteQueueCount++] = tindex;
       }
     }
 
@@ -821,10 +792,10 @@ public class PGraphicsOpenGL extends PGraphics3D {
      * Generate a texture ID and do the necessary bitshifting for the image.
      */
     public void rebind(PImage source) {
-      if (deleteQueueCount != 0) {
+      if (textureDeleteQueueCount != 0) {
         //gl.glDeleteTextures(1, new int[] { tindex }, 0);
-        gl.glDeleteTextures(deleteQueueCount, deleteQueue, 0);
-        deleteQueueCount = 0;
+        gl.glDeleteTextures(textureDeleteQueueCount, textureDeleteQueue, 0);
+        textureDeleteQueueCount = 0;
       }
 
       //System.out.println("rebinding texture for " + source);
@@ -1013,7 +984,357 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
   //////////////////////////////////////////////////////////////
 
+  // RENDERING
+  
+  
+  //public void flush()
+  
+  
+  //protected void render()
+  
+  
+  //protected void sort()
 
+  
+  
+  //////////////////////////////////////////////////////////////
+
+  // POINT, LINE, TRIANGLE, QUAD
+
+  // Because vertex(x, y) is mapped to vertex(x, y, 0), none of these commands
+  // need to be overridden from their default implementation in PGraphics.
+  
+  
+  //public void point(float x, float y)
+
+
+  //public void point(float x, float y, float z)
+
+  
+  //public void line(float x1, float y1, float x2, float y2)
+  
+  
+  //public void line(float x1, float y1, float z1,
+  //                 float x2, float y2, float z2)
+
+
+  //public void triangle(float x1, float y1, float x2, float y2,
+  //                     float x3, float y3)
+
+
+  //public void quad(float x1, float y1, float x2, float y2,
+  //                 float x3, float y3, float x4, float y4)
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // RECT
+  
+  
+  //public void rectMode(int mode)
+  
+  
+  //public void rect(float a, float b, float c, float d)
+  
+  
+  //protected void rectImpl(float x1, float y1, float x2, float y2)
+
+  
+  
+  //////////////////////////////////////////////////////////////
+  
+  // ELLIPSE
+  
+  
+  //public void ellipseMode(int mode)
+  
+  
+  //public void ellipse(float a, float b, float c, float d)
+  
+  /*
+  boolean ellipseInited;
+  int ellipseFillList;
+  int ellipseStrokeList;
+
+  protected void ellipseImpl(float x1, float y1, float w, float h) {
+    float hradius = w / 2f;
+    float vradius = h / 2f;
+
+    float centerX = x1 + hradius;
+    float centerY = y1 + vradius;
+
+    // adapt accuracy to radii used w/ a minimum of 4 segments [toxi]
+    // now uses current scale factors to determine "real" transformed radius
+
+    //int cAccuracy = (int)(4+Math.sqrt(hradius*abs(m00)+vradius*abs(m11))*2);
+    //int cAccuracy = (int)(4+Math.sqrt(hradius+vradius)*2);
+
+    // notched this up to *3 instead of *2 because things were
+    // looking a little rough, i.e. the calculate->arctangent example [fry]
+
+    // also removed the m00 and m11 because those were causing weirdness
+    // need an actual measure of magnitude in there [fry]
+
+    int accuracy = (int)(4+Math.sqrt(hradius+vradius)*3);
+    //System.out.println("accuracy is " + accuracy);
+    //accuracy = 5;
+
+    // [toxi031031] adapted to use new lookup tables
+    float inc = (float)SINCOS_LENGTH / accuracy;
+
+    float val = 0;
+
+    if (fill) {
+      boolean savedStroke = stroke;
+      stroke = false;
+
+      beginShape(TRIANGLE_FAN);
+      normal(0, 0, 1);
+      vertex(centerX, centerY);
+      for (int i = 0; i < accuracy; i++) {
+        vertex(centerX + cosLUT[(int) val] * hradius,
+               centerY + sinLUT[(int) val] * vradius);
+        val += inc;
+      }
+      // back to the beginning
+      vertex(centerX + cosLUT[0] * hradius,
+             centerY + sinLUT[0] * vradius);
+      endShape();
+
+      stroke = savedStroke;
+    }
+
+    if (stroke) {
+      boolean savedFill = fill;
+      fill = false;
+
+      val = 0;
+      beginShape(); //LINE_LOOP);
+      for (int i = 0; i < accuracy; i++) {
+        vertex(centerX + cosLUT[(int) val] * hradius,
+               centerY + sinLUT[(int) val] * vradius);
+        val += inc;
+      }
+      endShape(CLOSE);
+
+      fill = savedFill;
+    }
+  }
+  */
+
+  /*
+    pgl.beginGL();
+    //PGraphics gr = PApplet.this.g;
+    //GL gl = ((PGraphicsOpenGL).gr).beginGL();
+    if (!ellipseInited) {
+      ellipseList = gl.glGenLists(1);
+      gl.glNewList(ellipseList, GL.GL_COMPILE);
+      gl.glBegin(GL.GL_LINE_LOOP);
+      int seg = 15;
+      float segf = 15;
+      for (int i = 0; i < seg; i++) {
+        float theta = TWO_PI * (float)i / segf;
+        gl.glVertex2f(cos(theta), sin(theta));
+      }
+      gl.glEnd();
+      gl.glEndList();
+      ellipseInited = true;
+    }
+
+    for (int i=1; i<numSegments-1; i++) {
+    gl.glPushMatrix();
+    gl.glTranslatef(x[i], y[i], z);
+    float r = w[i]/2f;
+    gl.glScalef(r, r, r);
+    gl.glColor4f(1, 1, 1, 150.0/255.0);
+    gl.glCallList(ellipseList);
+    gl.glScalef(0.5, 0.5, 0.5);
+    gl.glColor4f(1, 1, 1, 50.0/255.0);
+    gl.glCallList(ellipseList);
+    gl.glPopMatrix();
+    }
+    pgl.endGL();
+  */
+  
+  
+  //public void arc(float a, float b, float c, float d,
+  //                float start, float stop)
+  
+  
+  //protected void arcImpl(float x, float y, float w, float h,
+  //                       float start, float stop)
+
+  
+  
+  //////////////////////////////////////////////////////////////
+
+  // BOX
+  
+  // TODO P3D overrides box to turn on triangle culling, but that's a waste 
+  // for OpenGL. Also could just use the cube method from GL or GLUT.
+
+
+  //public void box(float size)
+
+
+  //public void box(float w, float h, float d)  // P3D
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // SPHERE
+
+  // TODO P3D overrides sphere to turn on triangle culling, but that's a waste 
+  // for OpenGL. Also could just use the cube method from GL or GLUT.
+  
+  
+  //public void sphereDetail(int res)
+
+
+  //public void sphereDetail(int ures, int vres)
+
+
+  //public void sphere(float r)
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // BEZIER
+
+  
+  //public float bezierPoint(float a, float b, float c, float d, float t)
+  
+  
+  //public float bezierTangent(float a, float b, float c, float d, float t)
+  
+  
+  //public void bezierDetail(int detail)
+  
+  
+  //public void bezier(float x1, float y1,
+  //                   float x2, float y2,
+  //                   float x3, float y3,
+  //                   float x4, float y4)
+  
+  
+  //public void bezier(float x1, float y1, float z1,
+  //                   float x2, float y2, float z2,
+  //                   float x3, float y3, float z3,
+  //                   float x4, float y4, float z4)
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // CATMULL-ROM CURVES
+
+  
+  //public float curvePoint(float a, float b, float c, float d, float t)
+  
+  
+  //public float curveTangent(float a, float b, float c, float d, float t)
+  
+  
+  //public void curveDetail(int detail)
+  
+  
+  //public void curveTightness(float tightness)
+
+
+  //public void curve(float x1, float y1,
+  //                  float x2, float y2,
+  //                  float x3, float y3,
+  //                  float x4, float y4)
+  
+  
+  //public void curve(float x1, float y1, float z1,
+  //                  float x2, float y2, float z2,
+  //                  float x3, float y3, float z3,
+  //                  float x4, float y4, float z4)
+
+  
+  
+  //////////////////////////////////////////////////////////////
+
+  // SMOOTH
+  
+  
+  public void smooth() {
+    smooth = true;
+    gl.glEnable(GL.GL_MULTISAMPLE);
+    gl.glEnable(GL.GL_POINT_SMOOTH);
+    gl.glEnable(GL.GL_LINE_SMOOTH);
+    gl.glEnable(GL.GL_POLYGON_SMOOTH);
+  }
+
+
+  public void noSmooth() {
+    smooth = false;
+    gl.glDisable(GL.GL_MULTISAMPLE);
+    gl.glDisable(GL.GL_POINT_SMOOTH);
+    gl.glDisable(GL.GL_LINE_SMOOTH);
+    gl.glDisable(GL.GL_POLYGON_SMOOTH);
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // IMAGES
+  
+  
+  //public void imageMode(int mode)
+  
+  
+  //public void image(PImage image, float x, float y)
+  
+  
+  //public void image(PImage image, float x, float y, float c, float d)
+  
+  
+  //public void image(PImage image,
+  //                  float a, float b, float c, float d,
+  //                  int u1, int v1, int u2, int v2)
+
+
+  //protected void imageImpl(PImage image,
+  //                         float x1, float y1, float x2, float y2,
+  //                         int u1, int v1, int u2, int v2)
+
+  
+
+  //////////////////////////////////////////////////////////////
+
+  // SHAPE
+  
+  
+  //public void shapeMode(int mode)
+  
+  
+  //public void shape(PShape shape)
+
+  
+  //public void shape(PShape shape, float x, float y)
+  
+  
+  //public void shape(PShape shape, float x, float y, float c, float d)
+  
+  
+
+  //////////////////////////////////////////////////////////////
+
+  // TEXT SETTINGS
+  
+  
+  //public void textAlign(int align)
+  
+  
+  //public void textAlign(int alignX, int alignY)
+  
+  
   public float textAscent() {
     Font font = textFont.getFont();    
     if ((textMode != SHAPE) || (font == null)) {
@@ -1022,8 +1343,8 @@ public class PGraphicsOpenGL extends PGraphics3D {
     FontMetrics metrics = parent.getFontMetrics(font);
     return metrics.getAscent();
   }
-
-
+  
+  
   public float textDescent() {
     Font font = textFont.getFont();    
     if ((textMode != SHAPE) || (font == null)) {
@@ -1032,8 +1353,8 @@ public class PGraphicsOpenGL extends PGraphics3D {
     FontMetrics metrics = parent.getFontMetrics(font);
     return metrics.getDescent();
   }
-
-
+  
+  
   public void textFont(PFont which) {
     super.textFont(which);
 
@@ -1044,22 +1365,45 @@ public class PGraphicsOpenGL extends PGraphics3D {
       }
     }
   }
-
-
+  
+  
+  //public void textFont(PFont which, float size)
+  
+  
+  //public void textLeading(float leading)
+  
+  
+//  public void textMode(int mode) {
+//    if (mode == SHAPE) {
+//      textMode = SHAPE;
+//
+//    } else {
+//      // if not SHAPE mode, then pass off to the PGraphics.textMode()
+//      // which is built for error handling (but objects to SHAPE).
+//      super.textMode(mode);
+//    }
+//  }
+  
+  
+  protected boolean textModeCheck(int mode) {
+    return (textMode == MODEL) || (textMode == SCREEN) || (textMode == SHAPE);
+  }
+  
+  
   /**
    * Same as parent, but override for native version of the font.
    * <p/>
    * Also gets called by textFont, so the metrics
    * will get recorded properly.
    */
-  public void textSize(float size) {
+//  public void textSize(float size) {
     // can't cancel on textMode(SHAPE) because textMode() must happen
     // after textFont() and textFont() calls textSize()
     //if ((textMode != SHAPE) || (textFontNative == null)) {
 
     // call this anyway to set the base variables for cases
     // where textMode(SHAPE) will not be used
-    super.textSize(size);
+//    super.textSize(size);
 
     /*
     // derive the font just in case the user is gonna call
@@ -1073,9 +1417,15 @@ public class PGraphicsOpenGL extends PGraphics3D {
       textFontNativeMetrics = graphics.getFontMetrics(textFontNative);
     }
     */
-  }
-
-
+//  }
+  
+  
+  //public float textWidth(char c)
+  
+  
+  //public float textWidth(String str)
+  
+  
   protected float textWidthImpl(char buffer[], int start, int stop) {
     Font font = textFont.getFont();
     if ((textMode != SHAPE) || (font == null)) {
@@ -1114,7 +1464,29 @@ public class PGraphicsOpenGL extends PGraphics3D {
     return sum;
   }
 
+  
 
+  //////////////////////////////////////////////////////////////
+
+  // TEXT
+  
+  // None of the variations of text() are overridden from PGraphics.
+  
+  
+  
+  //////////////////////////////////////////////////////////////
+
+  // TEXT IMPL
+   
+
+  //protected void textLineAlignImpl(char buffer[], int start, int stop,
+  //                                 float x, float y)
+  
+  
+  //protected void textLineImpl(char buffer[], int start, int stop,
+  //                            float x, float y)
+
+  
   /**
    * Override to handle rendering characters with textMode(SHAPE).
    */
@@ -1124,7 +1496,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
         PGraphics.showWarning("textMode(SHAPE) is disabled because the font " +
                             "\"" + textFont.name + "\" is not available.");
       } else {
-        textCharImplShape(ch, x, y);
+        textCharShapeImpl(ch, x, y);
       }
     } else {
       super.textCharImpl(ch, x, y);
@@ -1155,7 +1527,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
    * tested with Akzidenz Grotesk Light). But this won't be visible
    * with the stroke shut off, so tabling that bug for now.
    */
-  protected void textCharImplShape(char ch, float x, float y) {
+  protected void textCharShapeImpl(char ch, float x, float y) {
     // save the current stroke because it needs to be disabled
     // while the text is being drawn
     boolean strokeSaved = stroke;
@@ -1277,18 +1649,6 @@ public class PGraphicsOpenGL extends PGraphics3D {
   }
 
 
-  public void textMode(int mode) {
-    if (mode == SHAPE) {
-      textMode = SHAPE;
-
-    } else {
-      // if not SHAPE mode, then pass off to the PGraphics.textMode()
-      // which is built for error handling (but objects to SHAPE).
-      super.textMode(mode);
-    }
-  }
-
-
   /**
    * There must be a better way to do this, but I'm having a brain fart
    * with all the inner class crap. Fix it later once this stuff is debugged.
@@ -1305,30 +1665,13 @@ public class PGraphicsOpenGL extends PGraphics3D {
   */
 
 
-  //public static class TessCallback extends GLUtesselatorCallbackAdapter {
   public class TessCallback extends GLUtessellatorCallbackAdapter {
-    //GL gl;
-    //GLU glu;
-
-    // grabs the gl and glu variables because it's a static class
-    //public TessCallback(GL gl, GLU glu) {
-    //this.gl = gl;
-    //this.glu = glu;
-    //}
-
-    // *** need to shut off the stroke here
-
     public void begin(int type) {
-      // one of GL_TRIANGLE_FAN, GL_TRIANGLE_STRIP,
-      // GL_TRIANGLES, or GL_LINE_LOOP
-      //gl.glBegin(type);
       switch (type) {
       case GL.GL_TRIANGLE_FAN: beginShape(TRIANGLE_FAN); break;
       case GL.GL_TRIANGLE_STRIP: beginShape(TRIANGLE_STRIP); break;
       case GL.GL_TRIANGLES: beginShape(TRIANGLES); break;
-      //case GL.GL_LINE_LOOP: beginShape(LINE_LOOP); break;
       }
-      //System.out.println("shape type is " + shape);
     }
 
     public void end() {
@@ -1336,9 +1679,9 @@ public class PGraphicsOpenGL extends PGraphics3D {
       endShape();
     }
 
-//    public void edge(boolean e) {
-//      PGraphicsOpenGL.this.edge(e);
-//    }
+    public void edge(boolean e) {
+      PGraphicsOpenGL.this.edge(e);
+    }
 
     public void vertex(Object data) {
       if (data instanceof double[]) {
@@ -1368,9 +1711,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
     public void error(int errnum) {
       String estring = glu.gluErrorString(errnum);
-      //System.out.println("Tessellation Error: " + estring);
-      //throw new RuntimeException();
-      throw new RuntimeException("Tessellation Error: " + estring);
+      PGraphics.showWarning("Tessellation Error: " + estring);
     }
 
     /**
@@ -1421,129 +1762,288 @@ public class PGraphicsOpenGL extends PGraphics3D {
   }
 
 
+  
   //////////////////////////////////////////////////////////////
 
+  // MATRIX MATH
+  
+  //public void pushMatrix()
+  //public void popMatrix()
 
-  /*
-  boolean ellipseInited;
-  int ellipseFillList;
-  int ellipseStrokeList;
+  //public void translate(float tx, float ty)
+  //public void translate(float tx, float ty, float tz)
+  //public void rotate(float angle)
+  //public void rotateX(float angle)
+  //public void rotateY(float angle)
+  //public void rotateZ(float angle)
+  //public void rotate(float angle, float vx, float vy, float vz)
+  //public void scale(float s)
+  //public void scale(float sx, float sy)
+  //public void scale(float x, float y, float z)
 
-  protected void ellipseImpl(float x1, float y1, float w, float h) {
-    float hradius = w / 2f;
-    float vradius = h / 2f;
+  //public void resetMatrix()
+  //public void applyMatrix(PMatrix2D source)
+  //public void applyMatrix(float n00, float n01, float n02,
+  //                        float n10, float n11, float n12)
+  //public void applyMatrix(PMatrix3D source)
+  //public void applyMatrix(float n00, float n01, float n02, float n03,
+  //                        float n10, float n11, float n12, float n13,
+  //                        float n20, float n21, float n22, float n23,
+  //                        float n30, float n31, float n32, float n33)
 
-    float centerX = x1 + hradius;
-    float centerY = y1 + vradius;
+  //public getMatrix(PMatrix2D target)
+  //public getMatrix(PMatrix3D target)
+  //public void setMatrix(PMatrix2D source)
+  //public void setMatrix(PMatrix3D source)
+  //public void printMatrix()
 
-    // adapt accuracy to radii used w/ a minimum of 4 segments [toxi]
-    // now uses current scale factors to determine "real" transformed radius
+  //public void beginCamera()
+  //public void endCamera()
+  //public void camera()
+  //public void camera(float eyeX, float eyeY, float eyeZ,
+  //                   float centerX, float centerY, float centerZ,
+  //                   float upX, float upY, float upZ)
+  //public void printCamera()
 
-    //int cAccuracy = (int)(4+Math.sqrt(hradius*abs(m00)+vradius*abs(m11))*2);
-    //int cAccuracy = (int)(4+Math.sqrt(hradius+vradius)*2);
+  //public void ortho()
+  //public void ortho(float left, float right,
+  //                  float bottom, float top,
+  //                  float near, float far)
+  //public void perspective()
+  //public void perspective(float fov, float aspect, float near, float far)
+  //public void frustum(float left, float right, 
+  //                    float bottom, float top, 
+  //                    float near, float far)
+  //public void printProjection()
 
-    // notched this up to *3 instead of *2 because things were
-    // looking a little rough, i.e. the calculate->arctangent example [fry]
+  //public float screenX(float x, float y)
+  //public float screenY(float x, float y)
+  //public float screenX(float x, float y, float z)
+  //public float screenY(float x, float y, float z)
+  //public float screenZ(float x, float y, float z)
+  //public float modelX(float x, float y, float z)
+  //public float modelY(float x, float y, float z)
+  //public float modelZ(float x, float y, float z)
 
-    // also removed the m00 and m11 because those were causing weirdness
-    // need an actual measure of magnitude in there [fry]
+  
 
-    int accuracy = (int)(4+Math.sqrt(hradius+vradius)*3);
-    //System.out.println("accuracy is " + accuracy);
-    //accuracy = 5;
+  //////////////////////////////////////////////////////////////
 
-    // [toxi031031] adapted to use new lookup tables
-    float inc = (float)SINCOS_LENGTH / accuracy;
+  // STYLES
+  
+  
+  //public void pushStyle()
+  //public void popStyle()
+  //public void style(PStyle) 
+  //public PStyle getStyle()
+  //public void getStyle(PStyle)
 
-    float val = 0;
 
-    if (fill) {
-      boolean savedStroke = stroke;
-      stroke = false;
+  
+  //////////////////////////////////////////////////////////////
 
-      beginShape(TRIANGLE_FAN);
-      normal(0, 0, 1);
-      vertex(centerX, centerY);
-      for (int i = 0; i < accuracy; i++) {
-        vertex(centerX + cosLUT[(int) val] * hradius,
-               centerY + sinLUT[(int) val] * vradius);
-        val += inc;
-      }
-      // back to the beginning
-      vertex(centerX + cosLUT[0] * hradius,
-             centerY + sinLUT[0] * vradius);
-      endShape();
+  // COLOR MODE
+  
+  
+  //public void colorMode(int mode)
+  //public void colorMode(int mode, float max)
+  //public void colorMode(int mode, float mx, float my, float mz);
+  //public void colorMode(int mode, float mx, float my, float mz, float ma);
 
-      stroke = savedStroke;
-    }
+  
+  
+  //////////////////////////////////////////////////////////////
 
-    if (stroke) {
-      boolean savedFill = fill;
-      fill = false;
+  // COLOR CALC
+  
+  
+  //protected void colorCalc(int rgb)
+  //protected void colorCalc(int rgb, float alpha)
+  //protected void colorCalc(float gray)
+  //protected void colorCalc(float gray, float alpha)
+  //protected void colorCalc(float x, float y, float z)
+  //protected void colorCalc(float x, float y, float z, float a)
+  //protected void colorCalcARGB(int argb, float alpha)
 
-      val = 0;
-      beginShape(); //LINE_LOOP);
-      for (int i = 0; i < accuracy; i++) {
-        vertex(centerX + cosLUT[(int) val] * hradius,
-               centerY + sinLUT[(int) val] * vradius);
-        val += inc;
-      }
-      endShape(CLOSE);
+  
+  
+  //////////////////////////////////////////////////////////////
+  
+  // STROKE CAP/JOIN/WEIGHT
+  
+  
+  public void strokeWeight(float weight) {
+    this.strokeWeight = weight;
+  }
 
-      fill = savedFill;
+
+  public void strokeJoin(int join) {
+    if (join != DEFAULT_STROKE_JOIN) {
+      showMethodWarning("strokeJoin");
     }
   }
-  */
 
-  /*
-    pgl.beginGL();
-    //PGraphics gr = PApplet.this.g;
-    //GL gl = ((PGraphicsOpenGL).gr).beginGL();
-    if (!ellipseInited) {
-      ellipseList = gl.glGenLists(1);
-      gl.glNewList(ellipseList, GL.GL_COMPILE);
-      gl.glBegin(GL.GL_LINE_LOOP);
-      int seg = 15;
-      float segf = 15;
-      for (int i = 0; i < seg; i++) {
-        float theta = TWO_PI * (float)i / segf;
-        gl.glVertex2f(cos(theta), sin(theta));
-      }
-      gl.glEnd();
-      gl.glEndList();
-      ellipseInited = true;
+
+  public void strokeCap(int cap) {
+    if (cap != DEFAULT_STROKE_CAP) {
+      showMethodWarning("strokeCap");
     }
+  }
+  
+  
+  
+  //////////////////////////////////////////////////////////////
+  
+  // STROKE, TINT, FILL
+  
+  
+  //public void noStroke()
+  //public void stroke(int rgb)
+  //public void stroke(int rgb, float alpha)
+  //public void stroke(float gray)
+  //public void stroke(float gray, float alpha)
+  //public void stroke(float x, float y, float z)
+  //public void stroke(float x, float y, float z, float a)
+  //protected void strokeFromCalc()
 
-    for (int i=1; i<numSegments-1; i++) {
-    gl.glPushMatrix();
-    gl.glTranslatef(x[i], y[i], z);
-    float r = w[i]/2f;
-    gl.glScalef(r, r, r);
-    gl.glColor4f(1, 1, 1, 150.0/255.0);
-    gl.glCallList(ellipseList);
-    gl.glScalef(0.5, 0.5, 0.5);
-    gl.glColor4f(1, 1, 1, 50.0/255.0);
-    gl.glCallList(ellipseList);
-    gl.glPopMatrix();
-    }
-    pgl.endGL();
-  */
+  //public void noTint()
+  //public void tint(int rgb)
+  //public void tint(int rgb, float alpha)
+  //public void tint(float gray)
+  //public void tint(float gray, float alpha)
+  //public void tint(float x, float y, float z)
+  //public void tint(float x, float y, float z, float a)
+  //protected void tintFromCalc()
 
+  //public void noFill()
+  //public void fill(int rgb)
+  //public void fill(int rgb, float alpha)
+  //public void fill(float gray)
+  //public void fill(float gray, float alpha)
+  //public void fill(float x, float y, float z)
+  //public void fill(float x, float y, float z, float a)
+  
+  
+  protected void fillFromCalc() {
+    super.fillFromCalc();
+    calcColorBuffer();
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT_AND_DIFFUSE,
+                    colorBuffer, 0);
+  }
+
+  
 
   //////////////////////////////////////////////////////////////
 
+  // MATERIAL PROPERTIES
+  
 
+//  public void ambient(int rgb) {
+//    super.ambient(rgb);
+//    calcColorBuffer();
+//    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT, colorBuffer, 0);
+//  }
+
+
+//  public void ambient(float gray) {
+//    super.ambient(gray);
+//    calcColorBuffer();
+//    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT, colorBuffer, 0);
+//  }
+
+
+//  public void ambient(float x, float y, float z) {
+//    super.ambient(x, y, z);
+//    calcColorBuffer();
+//    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT, colorBuffer, 0);
+//  }
+
+
+  protected void ambientFromCalc() {
+    calcColorBuffer();
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT, colorBuffer, 0);
+  }
+  
+  
+//  public void specular(int rgb) {
+//    super.specular(rgb);
+//    calcColorBuffer();
+//    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, colorBuffer, 0);
+//  }
+
+  
+//  public void specular(float gray) {
+//    super.specular(gray);
+//    calcColorBuffer();
+//    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, colorBuffer, 0);
+//  }
+
+
+//  public void specular(float x, float y, float z) {
+//    super.specular(x, y, z);
+//    calcColorBuffer();
+//    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, colorBuffer, 0);
+//  }
+
+  
+  protected void specularFromCalc() {
+    calcColorBuffer();
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, colorBuffer, 0);
+  }
+
+  
+  public void shininess(float shine) {
+    super.shininess(shine);
+    gl.glMaterialf(GL.GL_FRONT_AND_BACK, GL.GL_SHININESS, shine);
+  }
+
+  
+//  public void emissive(int rgb) {
+//    super.emissive(rgb);
+//    calcColorBuffer();
+//    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_EMISSION, colorBuffer, 0);
+//  }
+
+
+//  public void emissive(float gray) {
+//    super.emissive(gray);
+//    calcColorBuffer();
+//    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_EMISSION, colorBuffer, 0);
+//  }
+
+
+//  public void emissive(float x, float y, float z) {
+//    super.emissive(x, y, z);
+//    calcColorBuffer();
+//    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_EMISSION, colorBuffer, 0);
+//  }
+
+  
+  protected void emissiveFromCalc() {
+    calcColorBuffer();
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_EMISSION, colorBuffer, 0);
+  }
+
+  
+  
+  //////////////////////////////////////////////////////////////
+  
+  // LIGHTING
+    
   // We're not actually turning on GL lights right now
   // because our home-grown ones work better for now.
-  public void lights() {
-    super.lights();
-    //gl.glEnable(GL.GL_LIGHTING);
-  }
+  
+  
+//  public void lights() {
+//    super.lights();
+//    gl.glEnable(GL.GL_LIGHTING);
+//  }
 
-  //public void noLights() {
-  //super.noLights();
-  //gl.glDisable(GL.GL_LIGHTING);
-  //}
+  
+//  public void noLights() {
+//    super.noLights();
+//    gl.glDisable(GL.GL_LIGHTING);
+//  }
 
 
   public void ambientLight(float r, float g, float b) {
@@ -1552,7 +2052,6 @@ public class PGraphicsOpenGL extends PGraphics3D {
     glLightAmbient(lightCount - 1);
     glLightPosition(lightCount - 1);
     glLightFalloff(lightCount - 1);
-    //return num;
   }
 
   public void ambientLight(float r, float g, float b,
@@ -1562,35 +2061,30 @@ public class PGraphicsOpenGL extends PGraphics3D {
     glLightAmbient(lightCount - 1);
     glLightPosition(lightCount - 1);
     glLightFalloff(lightCount - 1);
-    //return num;
   }
 
 
   public void directionalLight(float r, float g, float b,
                                float nx, float ny, float nz) {
     super.directionalLight(r, g, b, nx, ny, nz);
-    //int num = super.internalCreateDirectionalLight(lr, lg, lb, nx, ny, nz);
     glLightEnable(lightCount - 1);
     glLightNoAmbient(lightCount - 1);
     glLightDirection(lightCount - 1);
     glLightDiffuse(lightCount - 1);
     glLightSpecular(lightCount - 1);
     glLightFalloff(lightCount - 1);
-    //return num;
   }
 
 
   public void pointLight(float r, float g, float b,
                          float x, float y, float z) {
     super.pointLight(r, g, b, x, y, z);
-    //int num = super.internalCreatePointLight(lr, lg, lb, x, y, z);
     glLightEnable(lightCount - 1);
     glLightNoAmbient(lightCount - 1);
     glLightPosition(lightCount - 1);
     glLightDiffuse(lightCount - 1);
     glLightSpecular(lightCount - 1);
     glLightFalloff(lightCount - 1);
-    //return num;
   }
 
 
@@ -1599,7 +2093,6 @@ public class PGraphicsOpenGL extends PGraphics3D {
                         float nx, float ny, float nz,
                         float angle, float concentration) {
     super.spotLight(r, g, b, x, y, z, nx, ny, nz, angle, concentration);
-    //int num = super.internalCreateSpotLight(lr, lg, lb, x, y, z, nx, ny, nz, angle);
     glLightNoAmbient(lightCount - 1);
     glLightPosition(lightCount - 1);
     glLightDirection(lightCount - 1);
@@ -1608,14 +2101,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
     glLightFalloff(lightCount - 1);
     glLightSpotAngle(lightCount - 1);
     glLightSpotConcentration(lightCount - 1);
-    //return num;
   }
-
-
-  //public void lightDisable(int num) {
-  //super.lightDisable(num);
-  //gl.glDisable(GL.GL_LIGHT0 + num);
-  //}
 
 
   public void lightFalloff(float constant, float linear, float quadratic) {
@@ -1630,12 +2116,6 @@ public class PGraphicsOpenGL extends PGraphics3D {
   }
 
 
-  //////////////////////////////////////////////////////////////
-
-  // internal helper functions to update position and direction
-  // (eventually remove the 'num' param here)
-
-
   protected void lightPosition(int num, float x, float y, float z) {
     super.lightPosition(num, x, y, z);
     glLightPosition(num);
@@ -1648,13 +2128,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
   }
 
 
-  //////////////////////////////////////////////////////////////
-
-  // internal functions to update gl state for lighting variables
-  // (eventually remove the 'num' param here)
-
-
-  protected void glLightAmbient(int num) {
+  private void glLightAmbient(int num) {
 //    lightBuffer.put(lightDiffuse[num]);
 //    lightBuffer.rewind();
 //    gl.glLightfv(GL.GL_LIGHT0 + num,
@@ -1664,7 +2138,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
   }
 
 
-  protected void glLightNoAmbient(int num) {
+  private void glLightNoAmbient(int num) {
     if (zeroBuffer == null) {
       // hopefully buffers are filled with zeroes..
       zeroBuffer = BufferUtil.newFloatBuffer(3);
@@ -1674,7 +2148,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
   }
 
 
-  protected void glLightDiffuse(int num) {
+  private void glLightDiffuse(int num) {
 //    lightBuffer.put(lightDiffuse[num]);
 //    lightBuffer.rewind();
 //    gl.glLightfv(GL.GL_LIGHT0 + num,
@@ -1684,7 +2158,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
   }
 
 
-  protected void glLightDirection(int num) {
+  private void glLightDirection(int num) {
 //    lightBuffer.put(lightNormal[num]);
 //    lightBuffer.rewind();
 
@@ -1704,12 +2178,12 @@ public class PGraphicsOpenGL extends PGraphics3D {
   }
 
 
-  protected void glLightEnable(int num) {
+  private void glLightEnable(int num) {
     gl.glEnable(GL.GL_LIGHT0 + num);
   }
 
 
-  protected void glLightFalloff(int num) {
+  private void glLightFalloff(int num) {
     gl.glLightf(GL.GL_LIGHT0 + num,
                 GL.GL_CONSTANT_ATTENUATION, lightFalloffConstant[num]);
     gl.glLightf(GL.GL_LIGHT0 + num,
@@ -1719,211 +2193,110 @@ public class PGraphicsOpenGL extends PGraphics3D {
   }
 
 
-  protected void glLightPosition(int num) {
-//    lightBuffer.put(lightPosition[num]);
-//    lightBuffer.rewind();
-//    gl.glLightfv(GL.GL_LIGHT0 + num, GL.GL_POSITION, lightBuffer);
+  private void glLightPosition(int num) {
     gl.glLightfv(GL.GL_LIGHT0 + num, GL.GL_POSITION, lightPosition[num].array(), 0);
   }
 
 
-  protected void glLightSpecular(int num) {
-//    lightBuffer.put(lightSpecular[num]);
-//    lightBuffer.rewind();
-//    gl.glLightfv(GL.GL_LIGHT0 + num, GL.GL_SPECULAR, lightBuffer);
+  private void glLightSpecular(int num) {
     gl.glLightfv(GL.GL_LIGHT0 + num, GL.GL_SPECULAR, lightSpecular[num], 0);
   }
 
 
-  public void glLightSpotAngle(int num) {
+  private void glLightSpotAngle(int num) {
     gl.glLightf(GL.GL_LIGHT0 + num,
                 GL.GL_SPOT_CUTOFF, lightSpotAngle[num]);
   }
 
 
-  public void glLightSpotConcentration(int num) {
+  private void glLightSpotConcentration(int num) {
     gl.glLightf(GL.GL_LIGHT0 + num,
                 GL.GL_SPOT_EXPONENT, lightSpotConcentration[num]);
   }
 
 
-  //////////////////////////////////////////////////////////////
-
-
-  public void strokeJoin(int join) {
-    String msg = "strokeJoin() not available with OPENGL";
-    throw new RuntimeException(msg);
-  }
-
-
-  public void strokeCap(int cap) {
-    String msg = "strokeCap() not available with OPENGL";
-    throw new RuntimeException(msg);
-  }
-
 
   //////////////////////////////////////////////////////////////
 
+  // BACKGROUND
 
-  /**
-   * Load the calculated color into a pre-allocated array so that
-   * it can be quickly passed over to OpenGL. (fix from Willis Morse)
-   */
-  private final void calcColorBuffer() {
-    if (colorBuffer == null) {
-      colorBuffer = BufferUtil.newFloatBuffer(4);
-    }
-    colorBuffer.put(0, calcR);
-    colorBuffer.put(1, calcG);
-    colorBuffer.put(2, calcB);
-    colorBuffer.put(3, calcA);
-    colorBuffer.rewind();
-  }
-
-
-  //////////////////////////////////////////////////////////////
-
-
-  protected void fillFromCalc() {
-    super.fillFromCalc();
-    calcColorBuffer();
-//    String nom = Thread.currentThread().getName();
-//    System.out.println("fill in " + nom);
-//    if (!nom.equals("Animation Thread")) {
-//      new Exception().printStackTrace();
-//    }
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT_AND_DIFFUSE,
-                    colorBuffer);
-//    System.out.println("fill out");
-  }
-
-
-  //////////////////////////////////////////////////////////////
-
-
-  public void ambient(int rgb) {
-    super.ambient(rgb);
-    calcColorBuffer();
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT, colorBuffer);
-  }
-
-
-  public void ambient(float gray) {
-    super.ambient(gray);
-    calcColorBuffer();
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT, colorBuffer);
-  }
-
-
-  public void ambient(float x, float y, float z) {
-    super.ambient(x, y, z);
-    calcColorBuffer();
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT, colorBuffer);
-  }
-
-
-  //////////////////////////////////////////////////////////////
-
-
-  public void specular(int rgb) {
-    super.specular(rgb);
-    calcColorBuffer();
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, colorBuffer);
-  }
-
-  public void specular(float gray) {
-    super.specular(gray);
-    calcColorBuffer();
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, colorBuffer);
-  }
-
-
-//  public void specular(float gray, float alpha) {
-//    super.specular(gray, alpha);
-//    calcColorBuffer();
-//    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, colorBuffer);
-//  }
-
-
-  public void specular(float x, float y, float z) {
-    super.specular(x, y, z);
-    calcColorBuffer();
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, colorBuffer);
-  }
-
-
-  //////////////////////////////////////////////////////////////
-
-
-  public void emissive(int rgb) {
-    super.emissive(rgb);
-    calcColorBuffer();
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_EMISSION, colorBuffer);
-  }
-
-
-  public void emissive(float gray) {
-    super.emissive(gray);
-    calcColorBuffer();
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_EMISSION, colorBuffer);
-  }
-
-
-  public void emissive(float x, float y, float z) {
-    super.emissive(x, y, z);
-    calcColorBuffer();
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_EMISSION, colorBuffer);
-  }
-
-
-  //////////////////////////////////////////////////////////////
-
-
-  public void shininess(float shine) {
-    super.shininess(shine);
-    gl.glMaterialf(GL.GL_FRONT_AND_BACK, GL.GL_SHININESS, shine);
-  }
-
-
-  //////////////////////////////////////////////////////////////
-
-
-  public void backgroundImpl(PImage image) {
+  
+  protected void backgroundImpl(PImage image) {
     gl.glClearColor(backgroundR, backgroundG, backgroundB, 1);
     gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
     set(0, 0, image);
   }
 
 
-  public void backgroundImpl() {
+  protected void backgroundImpl() {
     gl.glClearColor(backgroundR, backgroundG, backgroundB, 1);
     gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
   }
 
 
-  //////////////////////////////////////////////////////////////
-
-
-  public void smooth() {
-    gl.glEnable(GL.GL_MULTISAMPLE);
-    gl.glEnable(GL.GL_POINT_SMOOTH);
-    gl.glEnable(GL.GL_LINE_SMOOTH);
-    gl.glEnable(GL.GL_POLYGON_SMOOTH);
-    smooth = true;
-  }
-
-
-  public void noSmooth() {
-    gl.glDisable(GL.GL_MULTISAMPLE);
-    gl.glDisable(GL.GL_POINT_SMOOTH);
-    gl.glDisable(GL.GL_LINE_SMOOTH);
-    gl.glDisable(GL.GL_POLYGON_SMOOTH);
-    smooth = false;
-  }
-
 
   //////////////////////////////////////////////////////////////
 
+  // COLOR MODE
+  
+  // colorMode() is inherited from PGraphics.
+  
+  
+  
+  //////////////////////////////////////////////////////////////
+
+  // COLOR CALC
+  
+  // This is the OpenGL complement to the colorCalc() methods.
+
+  
+  /**
+   * Load the calculated color into a pre-allocated array so that
+   * it can be quickly passed over to OpenGL. 
+   */
+  private final void calcColorBuffer() {
+    if (colorBuffer == null) {
+//      colorBuffer = BufferUtil.newFloatBuffer(4);
+      colorBuffer = new float[4];
+    }
+    colorBuffer[0] = calcR;
+    colorBuffer[1] = calcG;
+    colorBuffer[2] = calcB;
+    colorBuffer[3] = calcA;
+//    colorBuffer.put(0, calcR);
+//    colorBuffer.put(1, calcG);
+//    colorBuffer.put(2, calcB);
+//    colorBuffer.put(3, calcA);
+//    colorBuffer.rewind();
+  }
+  
+  
+
+  //////////////////////////////////////////////////////////////
+
+  // COLOR METHODS
+  
+  //public final int color(int gray)
+  //public final int color(int gray, int alpha)
+  //public final int color(int rgb, float alpha)
+  //public final int color(int x, int y, int z)
+
+  //public final float alpha(int what)
+  //public final float red(int what)
+  //public final float green(int what)
+  //public final float blue(int what)
+  //public final float hue(int what)
+  //public final float saturation(int what)
+  //public final float brightness(int what)
+
+  //public int lerpColor(int c1, int c2, float amt)
+  //static public int lerpColor(int c1, int c2, float amt, int mode)
+
+  
+
+  //////////////////////////////////////////////////////////////
+
+  
 
   public void loadPixels() {
     if ((pixels == null) || (pixels.length != width*height)) {
