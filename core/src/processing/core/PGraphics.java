@@ -5060,10 +5060,11 @@ public class PGraphics extends PImage implements PConstants {
   
 
   /**
-   * Return true if this renderer should be drawn to the screen.
-   * Overridden for subclasses like PDF so that an enormous window
-   * doesn't open up.
-   * showFrame, displayable, isVisible, visible, shouldDisplay,
+   * Return true if this renderer should be drawn to the screen. Defaults to 
+   * returning true, since nearly all renderers are on-screen beasts. But can 
+   * be overridden for subclasses like PDF so that a window doesn't open up.
+   * <br/> <br/>
+   * A better name? showFrame, displayable, isVisible, visible, shouldDisplay, 
    * what to call this?
    */
   public boolean displayable() {  // ignore
@@ -5072,7 +5073,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Return true if this renderer supports 3D drawing.
+   * Return true if this renderer supports 3D drawing. Defaults to false.
    */
   public boolean dimensional() {  // ignore
     return false;
