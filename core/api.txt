@@ -50,13 +50,15 @@
                                     float x3, float y3, float z3,
                                     float x4, float y4, float z4)
 
-  // P3D adds the protected methods that can be overridden 
-  protected void renderPoints(int start, int stop)
-  protected void rawPoints(int start, int stop)
-  protected void renderLines(int start, int stop)
-  protected void rawLines(int start, int stop)
-  protected void renderTriangles(int start, int stop)
-  protected void rawTriangles(int start, int stop)
+  protected void renderPoints(int start, int stop)  // P3D
+  protected void rawPoints(int start, int stop)  // P3D
+  
+  protected void renderLines(int start, int stop)  // P3D
+  protected void rawLines(int start, int stop)  // P3D
+  
+  protected void renderTriangles(int start, int stop)  // P3D
+  protected void rawTriangles(int start, int stop)  // P3D
+  
   public void flush()
   protected void render()
   proected void sort()
@@ -78,6 +80,8 @@
 
   public void ellipseMode(int mode)
   public void ellipse(float a, float b, float c, float d)
+  protected void ellipseImpl(float x, float y, float w, float h)
+    
   public void arc(float a, float b, float c, float d,
                   float start, float stop)
   protected void arcImpl(float x, float y, float w, float h,
@@ -316,6 +320,8 @@
                         float angle, float concentration)
   public void lightFalloff(float constant, float linear, float quadratic)
   public void lightSpecular(float x, float y, float z)
+  protected void lightPosition(int num, float x, float y, float z)
+  protected void lightDirection(int num, float x, float y, float z)
 
   public void background(int rgb)
   public void background(int rgb, float alpha)
