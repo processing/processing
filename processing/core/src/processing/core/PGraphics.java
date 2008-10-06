@@ -5053,7 +5053,7 @@ public class PGraphics extends PImage implements PConstants {
    * A better name? showFrame, displayable, isVisible, visible, shouldDisplay, 
    * what to call this?
    */
-  public boolean displayable() {  // ignore
+  public boolean displayable() {
     return true;
   }
 
@@ -5061,7 +5061,7 @@ public class PGraphics extends PImage implements PConstants {
   /**
    * Return true if this renderer supports 3D drawing. Defaults to false.
    */
-  public boolean dimensional() {  // ignore
+  public boolean dimensional() {
     return false;
   }
 }
