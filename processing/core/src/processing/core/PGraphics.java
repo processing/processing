@@ -3898,6 +3898,7 @@ public class PGraphics extends PImage implements PConstants {
     strokeAlpha = calcAlpha;
   }
 
+  
 
   //////////////////////////////////////////////////////////////
 
