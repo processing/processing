@@ -59,6 +59,21 @@ o   although set() with alpha is a little different..
 o resizing opengl applet likely to cause big trouble
 o   componentlistener should prolly only do size() command outside of draw
 
+point()
+X java2d - if strokeWeight is 1, do screenX/Y and set()
+X   if strokeWeight larger, should work ok with line()
+X   no, use an ellipse if strokeWeight is larger
+X gl points not working again
+X   need to implement point() as actual gl points
+X   this means adding points to the pipeline
+X point() doesn't work with some graphics card setups
+X   particularly with opengl and java2d
+X   http://dev.processing.org/bugs/show_bug.cgi?id=121
+X point() issues
+o   point() being funneled through beginShape is terribly slow
+X     go the other way 'round
+X   sometimes broken, could be a problem with java 1.5? (was using win2k)
+
 api changes
 setMainDrawingSurface() -> setPrimarySurface()
 mainDrawingSurface = primarySurface;
@@ -88,6 +103,8 @@ imageMode ignored for get(), set(), blend() and copy()
 smooth is now part of PGraphics, moved out of PImage
 imageMode has been removed from PImage, too awkward
 raw must handle points, lines, triangles, and textures
+
+um, this is gross: getMatrix((PMatrix2D) null)
 
 _ no changing point sizes when using beginShape(POINTS)
 _   this is an opengl restriction, should we stick with it elsewhere?
@@ -258,30 +275,6 @@ _   leave smooth off, get the gl object, then enable line smooth
 _ repeating texture support
 _ PPolygon no longer in use and PLine is a mess
 _   make a version of PGraphics3 that uses it for more accurate rendering?
-
-
-point() [1.0]
-_ java2d - if strokeWeight is 1, do screenX/Y and set()
-_   if strokeWeight larger, should work ok with line()
-_   no, use an ellipse if strokeWeight is larger
-_ gl points not working again
-_   need to implement point() as actual gl points
-_   this means adding points to the pipeline
-_ point() doesn't work with some graphics card setups
-_   particularly with opengl and java2d
-_   http://dev.processing.org/bugs/show_bug.cgi?id=121
-_ point() issues
-_   point() being funneled through beginShape is terribly slow
-_     go the other way 'round
-_   sometimes broken, could be a problem with java 1.5? (was using win2k)
-noStroke();
-colorMode(RGB, 100);  
-for(int i=0; i<100; i++) {  
-  for(int j=0; j<100; j++) {  
-    stroke(i, j, 0);  
-    point(i, j);  
-  }  
-}  
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
