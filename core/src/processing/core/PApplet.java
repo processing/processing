@@ -6685,9 +6685,9 @@ public class PApplet extends Applet
   }
 
 
-  public void edge(boolean e) {
-    if (recorder != null) recorder.edge(e);
-    g.edge(e);
+  public void edge(boolean edge) {
+    if (recorder != null) recorder.edge(edge);
+    g.edge(edge);
   }
 
 
@@ -6779,12 +6779,6 @@ public class PApplet extends Applet
   }
 
 
-  public void style(PStyle s) {
-    if (recorder != null) recorder.style(s);
-    g.style(s);
-  }
-
-
   public void point(float x, float y) {
     if (recorder != null) recorder.point(x, y);
     g.point(x, y);
@@ -6830,9 +6824,9 @@ public class PApplet extends Applet
   }
 
 
-  public void rect(float x1, float y1, float x2, float y2) {
-    if (recorder != null) recorder.rect(x1, y1, x2, y2);
-    g.rect(x1, y1, x2, y2);
+  public void rect(float a, float b, float c, float d) {
+    if (recorder != null) recorder.rect(a, b, c, d);
+    g.rect(a, b, c, d);
   }
 
 
@@ -6959,14 +6953,31 @@ public class PApplet extends Applet
   }
 
 
+  public void smooth() {
+    if (recorder != null) recorder.smooth();
+    g.smooth();
+  }
+
+
+  public void noSmooth() {
+    if (recorder != null) recorder.noSmooth();
+    g.noSmooth();
+  }
+
+
+  public void imageMode(int mode) {
+    if (recorder != null) recorder.imageMode(mode);
+    g.imageMode(mode);
+  }
+
+
   public void image(PImage image, float x, float y) {
     if (recorder != null) recorder.image(image, x, y);
     g.image(image, x, y);
   }
 
 
-  public void image(PImage image,
-                    float x, float y, float c, float d) {
+  public void image(PImage image, float x, float y, float c, float d) {
     if (recorder != null) recorder.image(image, x, y, c, d);
     g.image(image, x, y, c, d);
   }
@@ -7138,6 +7149,18 @@ public class PApplet extends Applet
   }
 
 
+  public void pushMatrix() {
+    if (recorder != null) recorder.pushMatrix();
+    g.pushMatrix();
+  }
+
+
+  public void popMatrix() {
+    if (recorder != null) recorder.popMatrix();
+    g.popMatrix();
+  }
+
+
   public void translate(float tx, float ty) {
     if (recorder != null) recorder.translate(tx, ty);
     g.translate(tx, ty);
@@ -7198,21 +7221,15 @@ public class PApplet extends Applet
   }
 
 
-  public void pushMatrix() {
-    if (recorder != null) recorder.pushMatrix();
-    g.pushMatrix();
-  }
-
-
-  public void popMatrix() {
-    if (recorder != null) recorder.popMatrix();
-    g.popMatrix();
-  }
-
-
   public void resetMatrix() {
     if (recorder != null) recorder.resetMatrix();
     g.resetMatrix();
+  }
+
+
+  public void applyMatrix(PMatrix2D source) {
+    if (recorder != null) recorder.applyMatrix(source);
+    g.applyMatrix(source);
   }
 
 
@@ -7223,12 +7240,40 @@ public class PApplet extends Applet
   }
 
 
+  public void applyMatrix(PMatrix3D source) {
+    if (recorder != null) recorder.applyMatrix(source);
+    g.applyMatrix(source);
+  }
+
+
   public void applyMatrix(float n00, float n01, float n02, float n03,
                           float n10, float n11, float n12, float n13,
                           float n20, float n21, float n22, float n23,
                           float n30, float n31, float n32, float n33) {
     if (recorder != null) recorder.applyMatrix(n00, n01, n02, n03, n10, n11, n12, n13, n20, n21, n22, n23, n30, n31, n32, n33);
     g.applyMatrix(n00, n01, n02, n03, n10, n11, n12, n13, n20, n21, n22, n23, n30, n31, n32, n33);
+  }
+
+
+  public PMatrix2D getMatrix(PMatrix2D target) {
+    return g.getMatrix(target);
+  }
+
+
+  public PMatrix3D getMatrix(PMatrix3D target) {
+    return g.getMatrix(target);
+  }
+
+
+  public void setMatrix(PMatrix2D source) {  
+    if (recorder != null) recorder.setMatrix(source);
+    g.setMatrix(source);
+  }
+
+
+  public void setMatrix(PMatrix3D source) {
+    if (recorder != null) recorder.setMatrix(source);
+    g.setMatrix(source);
   }
 
 
@@ -7362,29 +7407,9 @@ public class PApplet extends Applet
   }
 
 
-  public void colorMode(int mode) {
-    if (recorder != null) recorder.colorMode(mode);
-    g.colorMode(mode);
-  }
-
-
-  public void colorMode(int mode, float max) {
-    if (recorder != null) recorder.colorMode(mode, max);
-    g.colorMode(mode, max);
-  }
-
-
-  public void colorMode(int mode,
-                        float maxX, float maxY, float maxZ) {
-    if (recorder != null) recorder.colorMode(mode, maxX, maxY, maxZ);
-    g.colorMode(mode, maxX, maxY, maxZ);
-  }
-
-
-  public void colorMode(int mode,
-                        float maxX, float maxY, float maxZ, float maxA) {
-    if (recorder != null) recorder.colorMode(mode, maxX, maxY, maxZ, maxA);
-    g.colorMode(mode, maxX, maxY, maxZ, maxA);
+  public void style(PStyle s) {
+    if (recorder != null) recorder.style(s);
+    g.style(s);
   }
 
 
@@ -7586,7 +7611,7 @@ public class PApplet extends Applet
   }
 
 
-  public void emissive(float x, float y, float z ) {
+  public void emissive(float x, float y, float z) {
     if (recorder != null) recorder.emissive(x, y, z);
     g.emissive(x, y, z);
   }
@@ -7694,6 +7719,31 @@ public class PApplet extends Applet
   }
 
 
+  public void colorMode(int mode) {
+    if (recorder != null) recorder.colorMode(mode);
+    g.colorMode(mode);
+  }
+
+
+  public void colorMode(int mode, float max) {
+    if (recorder != null) recorder.colorMode(mode, max);
+    g.colorMode(mode, max);
+  }
+
+
+  public void colorMode(int mode, float maxX, float maxY, float maxZ) {
+    if (recorder != null) recorder.colorMode(mode, maxX, maxY, maxZ);
+    g.colorMode(mode, maxX, maxY, maxZ);
+  }
+
+
+  public void colorMode(int mode,
+                        float maxX, float maxY, float maxZ, float maxA) {
+    if (recorder != null) recorder.colorMode(mode, maxX, maxY, maxZ, maxA);
+    g.colorMode(mode, maxX, maxY, maxZ, maxA);
+  }
+
+
   public final float alpha(int what) {
     return g.alpha(what);
   }
@@ -7744,21 +7794,25 @@ public class PApplet extends Applet
   }
 
 
-  public void smooth() {
-    if (recorder != null) recorder.smooth();
-    g.smooth();
+  public boolean dimensional() {
+    return g.dimensional();
   }
 
 
-  public void noSmooth() {
-    if (recorder != null) recorder.noSmooth();
-    g.noSmooth();
+  public void setCache(Object parent, Object storage) {
+    if (recorder != null) recorder.setCache(parent, storage);
+    g.setCache(parent, storage);
   }
 
 
-  public void imageMode(int mode) {
-    if (recorder != null) recorder.imageMode(mode);
-    g.imageMode(mode);
+  public Object getCache(Object parent) {
+    return g.getCache(parent);
+  }
+
+
+  public void removeCache(Object parent) {
+    if (recorder != null) recorder.removeCache(parent);
+    g.removeCache(parent);
   }
 
 
@@ -7813,18 +7867,18 @@ public class PApplet extends Applet
   }
 
 
-  public void copy(int sx1, int sy1, int sx2, int sy2,
-                   int dx1, int dy1, int dx2, int dy2) {
-    if (recorder != null) recorder.copy(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2);
-    g.copy(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2);
+  public void copy(int sx, int sy, int sw, int sh,
+                   int dx, int dy, int dw, int dh) {
+    if (recorder != null) recorder.copy(sx, sy, sw, sh, dx, dy, dw, dh);
+    g.copy(sx, sy, sw, sh, dx, dy, dw, dh);
   }
 
 
   public void copy(PImage src,
-                   int sx1, int sy1, int sx2, int sy2,
-                   int dx1, int dy1, int dx2, int dy2) {
-    if (recorder != null) recorder.copy(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2);
-    g.copy(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2);
+                   int sx, int sy, int sw, int sh,
+                   int dx, int dy, int dw, int dh) {
+    if (recorder != null) recorder.copy(src, sx, sy, sw, sh, dx, dy, dw, dh);
+    g.copy(src, sx, sy, sw, sh, dx, dy, dw, dh);
   }
 
 
@@ -7833,17 +7887,17 @@ public class PApplet extends Applet
   }
 
 
-  public void blend(int sx1, int sy1, int sx2, int sy2,
-                    int dx1, int dy1, int dx2, int dy2, int mode) {
-    if (recorder != null) recorder.blend(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
-    g.blend(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
+  public void blend(int sx, int sy, int sw, int sh,
+                    int dx, int dy, int dw, int dh, int mode) {
+    if (recorder != null) recorder.blend(sx, sy, sw, sh, dx, dy, dw, dh, mode);
+    g.blend(sx, sy, sw, sh, dx, dy, dw, dh, mode);
   }
 
 
   public void blend(PImage src,
-                    int sx1, int sy1, int sx2, int sy2,
-                    int dx1, int dy1, int dx2, int dy2, int mode) {
-    if (recorder != null) recorder.blend(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
-    g.blend(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
+                    int sx, int sy, int sw, int sh,
+                    int dx, int dy, int dw, int dh, int mode) {
+    if (recorder != null) recorder.blend(src, sx, sy, sw, sh, dx, dy, dw, dh, mode);
+    g.blend(src, sx, sy, sw, sh, dx, dy, dw, dh, mode);
   }
 }
