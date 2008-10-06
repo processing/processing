@@ -247,19 +247,6 @@
   public PStyle getStyle()
   public void getStyle(PStyle)
 
-  public void colorMode(int mode)
-  public void colorMode(int mode, float max)
-  public void colorMode(int mode, float mx, float my, float mz);
-  public void colorMode(int mode, float mx, float my, float mz, float ma);
-
-  protected void colorCalc(int rgb)
-  protected void colorCalc(int rgb, float alpha)
-  protected void colorCalc(float gray)
-  protected void colorCalc(float gray, float alpha)
-  protected void colorCalc(float x, float y, float z)
-  protected void colorCalc(float x, float y, float z, float a)
-  protected void colorCalcARGB(int argb, float alpha)
-
   public void strokeCap(int cap)
   public void strokeJoin(int join)
   public void strokeWeight(float weight)

@@ -3387,23 +3387,7 @@ public class PGraphics3D extends PGraphics {
   
   // STYLE
   
-  // All methods are inherited from PGraphics.
-
-
-  
-  //////////////////////////////////////////////////////////////
-  
-  // COLOR MODE
-  
-  // All methods are inherited from PGraphics.
-
-  
-
-  //////////////////////////////////////////////////////////////
-  
-  // COLOR CALC
-  
-  // All methods are inherited from PGraphics.
+  // pushStyle(), popStyle(), style() and getStyle() inherited. 
 
 
   
@@ -3825,6 +3809,8 @@ public class PGraphics3D extends PGraphics {
 
   // BACKGROUND
 
+  // Base background() variations inherited from PGraphics.
+  
 
   protected void backgroundImpl(PImage image) {
     System.arraycopy(image.pixels, 0, pixels, 0, pixels.length);
@@ -3885,7 +3871,7 @@ public class PGraphics3D extends PGraphics {
   
   //////////////////////////////////////////////////////////////
 
-  // BEGINRAW/ENDRAW
+  // BEGIN/END RAW
 
   // beginRaw, endRaw() both inherited.
 
