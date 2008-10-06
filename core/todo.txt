@@ -50,6 +50,14 @@ o cameraXYZ doesn't seem to actually be used for anything
 o   since camera functions don't even look at it or set it
 o registerSize() in arcball is causing trouble
 o   some sort of infinite loop issue
+o textMode(SCREEN) is broken for opengl
+o   http://dev.processing.org/bugs/show_bug.cgi?id=426
+o textSpace(SCREEN) for opengl and java2d
+o   don't use loadPixels for either
+o   use font code to set the cached color of the font, then call set()
+o   although set() with alpha is a little different..
+o resizing opengl applet likely to cause big trouble
+o   componentlistener should prolly only do size() command outside of draw
 
 api changes
 setMainDrawingSurface() -> setPrimarySurface()
@@ -85,7 +93,6 @@ _ no changing point sizes when using beginShape(POINTS)
 _   this is an opengl restriction, should we stick with it elsewhere?
 _   and changing stroke weight in general (with lines/shapes)
 _   no renderer does this, we should probably disable it
-
 
 _ accessors inside PFont need a lot of work
 
@@ -608,11 +615,20 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 
 LIBRARIES / PGraphicsOpenGL
 
+
+
+_ implement setImpl() instead of set() inside PGraphicsOpenGL
+_   http://dev.processing.org/bugs/show_bug.cgi?id=943
+_ use glCopyPixels() or glReadPixels() instead of copy() method
+_   http://dev.processing.org/bugs/show_bug.cgi?id=941
+_ implement a more efficient version of blend()
+_   http://dev.processing.org/bugs/show_bug.cgi?id=942
 _ copy() does not update the screen with OpenGL
 _   http://dev.processing.org/bugs/show_bug.cgi?id=933
 _ set() requires updatePixels() with OpenGL
 _   http://dev.processing.org/bugs/show_bug.cgi?id=705
 _ odd-size height will make blue line across image in saveFrame()
+_   http://dev.processing.org/bugs/show_bug.cgi?id=944
 _   probably the pixel flipping code (and endian sorting) not happening
 _   because the blue comes from the byte order flip
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=post;num=1219196429
@@ -644,14 +660,6 @@ _   or maybe call the object "texture"?
 _   in opengl lib, need beginTexture(PImage) and endTexture()
 _   this will be helpful to have access to the raw texture data
 _   that way it can be re-bound by itself, and ppl can write directly to it
-_ textMode(SCREEN) is broken for opengl
-_   http://dev.processing.org/bugs/show_bug.cgi?id=426
-_ textSpace(SCREEN) for opengl and java2d
-_   don't use loadPixels for either
-_   use font code to set the cached color of the font, then call set()
-_   although set() with alpha is a little different..
-_ resizing opengl applet likely to cause big trouble
-_   componentlistener should prolly only do size() command outside of draw
 _ make textMode(SHAPE) faster in opengl
 _   cache for type should be per-renderer
 _   make the opengl textmode shape stuff get better and use PShape
