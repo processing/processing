@@ -3746,14 +3746,14 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public PStyle getStyle() {  // ignore
-    PStyle s = new PStyle();
-    getStyle(s);
-    return s;
+    return getStyle(null);
   }
   
   
-  public void getStyle(PStyle s) {  // ignore
-//    s.smooth = smooth;
+  public PStyle getStyle(PStyle s) {  // ignore
+    if (s == null) {
+      s = new PStyle();
+    }
     
     s.imageMode = imageMode;
     s.rectMode = rectMode;
@@ -3793,6 +3793,8 @@ public class PGraphics extends PImage implements PConstants {
     s.textMode = textMode;
     s.textSize = textSize;
     s.textLeading = textLeading;
+    
+    return s;
   }
 
 
@@ -3804,36 +3806,19 @@ public class PGraphics extends PImage implements PConstants {
   
   public void strokeWeight(float weight) {
     strokeWeight = weight;
-//    strokeWeightImpl();
   }
   
   
-  /** Renderer-specific handling after the strokeJoin has been set. */
-//  protected void strokeWeightImpl() {
-//  }
-
-
   public void strokeJoin(int join) {
     strokeJoin = join;
-//    strokeJoinImpl();
   }
   
-  
-  /** Renderer-specific handling after the strokeJoin has been set. */
-//  protected void strokeJoinImpl() {
-//  }
-
 
   public void strokeCap(int cap) {
     strokeCap = cap;
   }
   
   
-  /** Renderer-specific handling after the strokeCap has been set. */
-//  protected void strokeCapImpl() {
-//  }
-
-
   
   //////////////////////////////////////////////////////////////
 
