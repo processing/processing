@@ -179,8 +179,8 @@ public class SVG extends BaseObject {
         } else {
             if ((width == 0) || (height == 0)) {
                 //throw new RuntimeException("width/height not specified");
-            	System.err.println("The width and/or height is not " +
-            			           "readable in the <svg> tag of this file.");
+            	PGraphics.showWarning("The width and/or height is not " +
+            			              "readable in the <svg> tag of this file.");
             	// For the spec, the default is 100% and 100%. For purposes 
             	// here, insert a dummy value because this is prolly just a 
             	// font or something for which the w/h doesn't matter.
