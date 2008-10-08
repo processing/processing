@@ -30,11 +30,11 @@ import java.util.HashMap;
 
 /**
  * Main graphics and rendering context, as well as the base API implementation.
- * <p>
+ * 
+ * <h2>Subclassing and initializing PGraphics objects</h2>
  * Starting in release 0149, subclasses of PGraphics are handled differently.
  * The constructor for subclasses takes no parameters, instead a series of 
  * functions are called by the hosting PApplet to specify its attributes. 
- * 
  * <ul>
  * <li>setParent(PApplet) - is called to specify the parent PApplet. 
  * <li>setPrimary(boolean) - called with true if this PGraphics will be the 
@@ -44,13 +44,65 @@ import java.util.HashMap;
  * <li>setSize(int, int) - this is called last, at which point it's safe for
  * the renderer to complete its initialization routine.
  * </ul>
- * 
  * The functions were broken out because of the growing number of parameters
  * such as these that might be used by a renderer, yet with the exception of 
  * setSize(), it's not clear which will be necessary. So while the size could
  * be passed in to the constructor instead of a setSize() function, a function
  * would still be needed that would notify the renderer that it was time to 
  * finish its initialization. Thus, setSize() simply does both.
+ * 
+ * <h2>Know your rights: public vs. private methods</h2>
+ * Methods that are protected are often subclassed by other renderers, however
+ * they are not set 'public' because they shouldn't be part of the user-facing 
+ * public API accessible from PApplet. That is, we don't want sketches calling 
+ * textModeCheck() or vertexTexture() directly.
+ *
+ * <h2>Handling warnings and exceptions</h2> 
+ * Methods that are unavailable generally show a warning, unless their lack of 
+ * availability will soon cause another exception. For instance, if a method 
+ * like getMatrix() returns null because it is unavailable, an exception will 
+ * be thrown stating that the method is unavailable, rather than waiting for 
+ * the NullPointerException that will occur when the sketch tries to use that 
+ * method. As of release 0149, warnings will only be shown once, and exceptions
+ * have been changed to warnings where possible. 
+ * 
+ * <h2>Using xxxxImpl() for subclassing smoothness</h2>
+ * The xxxImpl() methods are generally renderer-specific handling for some 
+ * subset if tasks for a particular function (vague enough for you?) For 
+ * instance, imageImpl() handles drawing an image whose x/y/w/h and u/v coords 
+ * have been specified, and screen placement (independent of imageMode) has 
+ * been determined. There's no point in all renderers implementing the 
+ * <tt>if (imageMode == BLAH)</tt> placement/sizing logic, so that's handled 
+ * by PGraphics, which then calls imageImpl() once all that is figured out.
+ * 
+ * <h2>His brother PImage</h2>
+ * PGraphics subclasses PImage so that it can be drawn and manipulated in a 
+ * similar fashion. As such, many methods are inherited from PGraphics, 
+ * though many are unavailable: for instance, resize() is not likely to be 
+ * implemented; the same goes for mask(), depending on the situation.
+ * 
+ * <h2>What's in PGraphics, what ain't</h2>
+ * For the benefit of subclasses, as much as possible has been placed inside
+ * PGraphics. For instance, bezier interpolation code and implementations of
+ * the strokeCap() method (that simply sets the strokeCap variable) are 
+ * handled here. Features that will vary widely between renderers are located
+ * inside the subclasses themselves. For instance, all matrix handling code
+ * is per-renderer: Java 2D uses its own AffineTransform, P2D uses a PMatrix2D,
+ * and PGraphics3D needs to keep continually update forward and reverse 
+ * transformations. A proper (future) OpenGL implementation will have all its 
+ * matrix madness handled by the card. Lighting also falls under this 
+ * category, however the base material property settings (emissive, specular, 
+ * et al.) are handled in PGraphics because they use the standard colorMode() 
+ * logic. Subclasses should override methods like emissiveFromCalc(), which 
+ * is a point where a valid color has been defined internally, and can be
+ * applied in some manner based on the calcXxxx values.
+ * 
+ * <h2>What's in the PGraphics documentation, what ain't</h2>
+ * Some things are noted here, some things are not. For public API, always
+ * refer to the <a href="http://processing.org/reference">reference</A>
+ * on Processing.org for proper explanations. <b>No attempt has been made to 
+ * keep the javadoc up to date or complete.</b> It's an enormous task for 
+ * which we simply do not have the time.
  */
 public class PGraphics extends PImage implements PConstants {
 

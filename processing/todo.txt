@@ -44,6 +44,8 @@ X fix other instances of match() using the wrong array indices
 X add additional newline hack so that autoformat complains less
 X video capture problems with opengl (on mac os x)
 X   http://dev.processing.org/bugs/show_bug.cgi?id=882
+X sketch export results in 100x100 default size, regardless of size() setting
+X   http://dev.processing.org/bugs/show_bug.cgi?id=945
 
 reference
 X do some edits on the "getting started" text
@@ -91,12 +93,17 @@ X update match(), write new reference for matchAll()
 this release: start specifically supporting libraries in the sketchbook folder via a 'libraries' subfolder
 next release: osx inside .app, sketchbook/libraries and sketchbook/tools folders, improved native support for libraries with better export.txt
 
-
+_ third tab throws NullPointerException
+_   http://dev.processing.org/bugs/show_bug.cgi?id=940
 _ sketch must be saved to use a constructor
 _   http://dev.processing.org/bugs/show_bug.cgi?id=929
-
 _ get new version of examples and reference
 
+
+. . . . 
+
+
+after 0149
 
 major windows launcher problem
 _ windows jdk sometimes not getting picked up, even if it's there
