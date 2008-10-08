@@ -81,12 +81,7 @@ public class BaseObject extends PShape {
 
 		String transformStr = properties.getStringAttribute("transform");
 		if (transformStr != null) {
-			float[] t = parseMatrix(transformStr);
-			//matrix = new PMatrix2D(t[0], t[2], t[4], t[1], t[3], t[5]);
-			matrix = new PMatrix3D(t[0], t[2], 0, t[4], 
-					               t[1], t[3], 0, t[5],
-					               0, 0, 1, 0,
-					               0, 0, 0, 1);
+			matrix = parseMatrix(transformStr);
 		}
 		
 		parseColors(properties);
@@ -95,17 +90,16 @@ public class BaseObject extends PShape {
 	}
 
 
-
-    // http://www.w3.org/TR/SVG/coords.html#TransformAttribute
-	static protected float[] parseMatrix(String matrixStr) {
-		/*
-		String prefix = "matrix(";
-		int start = matrixStr.indexOf(prefix);
-		if (start == -1) return null;
-		int stop = matrixStr.indexOf(')');
-		String content = matrixStr.substring(start + matrixStr.length(), stop);
-		return PApplet.parseFloat(PApplet.splitTokens(content.trim()));
-		*/
+	/** 
+	 * Parse the specified SVG matrix into a PMatrix2D. Note that PMatrix2D 
+	 * is rotated relative to the SVG definition, so parameters are rearranged 
+	 * here. More about the transformation matrices in
+	 * <a href="http://www.w3.org/TR/SVG/coords.html#TransformAttribute">this section</a>
+	 * of the SVG documentation.
+     * @param matrixStr text of the matrix param. 
+	 * @return a good old-fashioned PMatrix2D
+	 */
+	static protected PMatrix2D parseMatrix(String matrixStr) {
 		String[] pieces = PApplet.match(matrixStr, "\\s*(\\w+)\\((.*)\\)");
 		if (pieces == null) {
 			System.err.println("Could not parse transform " + matrixStr);
@@ -114,17 +108,19 @@ public class BaseObject extends PShape {
 		float[] m = PApplet.parseFloat(PApplet.splitTokens(pieces[2]));
 		
 		if (pieces[1].equals("matrix")) {
-			return m;
+			return new PMatrix2D(m[0], m[2], m[4], m[1], m[3], m[5]);
 			
 		} else if (pieces[1].equals("translate")) {
 			float tx = m[0];
 			float ty = (m.length == 2) ? m[1] : m[0];
-			return new float[] { 1, 0, tx,  0, 1, ty };
+			//return new float[] { 1, 0, tx,  0, 1, ty };
+			return new PMatrix2D(1, 0, tx, 0, 1, ty);
 			
 		} else if (pieces[1].equals("scale")) {
 			float sx = m[0];
 			float sy = (m.length == 2) ? m[1] : m[0];
-			return new float[] { sx, 0, 0, 0, sy, 0 };
+			//return new float[] { sx, 0, 0, 0, sy, 0 };
+			return new PMatrix2D(sx, 0, 0,  0, sy, 0);
 
 		} else if (pieces[1].equals("rotate")) {
 			float angle = m[0];
@@ -132,53 +128,27 @@ public class BaseObject extends PShape {
 			if (m.length == 1) {
 				float c = PApplet.cos(angle);
 				float s = PApplet.sin(angle);
-				return new float[] { c, -s, 0,  s, c, 0 };
+				// SVG version is cos(a) sin(a) -sin(a) cos(a) 0 0
+				return new PMatrix2D(c, -s, 0, s, c, 0);
 
 			} else if (m.length == 3) {
 				PMatrix2D mat = new PMatrix2D(0, 1, m[1],  1, 0, m[2]);
 				mat.rotate(m[0]);
 				mat.translate(-m[1], -m[2]);
-				return mat.get(null);
+				return mat; //.get(null);
 			}
 			
 		} else if (pieces[1].equals("skewX")) {
-			return new float[] { 1, PApplet.tan(m[0]), 0,  0, 1, 0 };
+			//return new float[] { 1, PApplet.tan(m[0]), 0,  0, 1, 0 };
+		    return new PMatrix2D(1, 0, 1,  PApplet.tan(m[0]), 0, 0);
 			
 		} else if (pieces[1].equals("skewY")) {
-			return new float[] { 1, 0, 0,  PApplet.tan(m[0]), 1, 0 };
+			//return new float[] { 1, 0, 0,  PApplet.tan(m[0]), 1, 0 };
+		    return new PMatrix2D(1, 0, 1,  0, PApplet.tan(m[0]), 0);
 		}
 		return null;
 	}
 	
-	
-	/*
-	protected void parseTransformation2(XMLElement properties) {
-		String transform = 
-		if (transform != null) {
-			//this.hasTransform = true;
-			transform = transform.substring(7, transform.length() - 2);
-			String tf[] = PApplet.splitTokens(transform);
-			float[] transformation = PApplet.parseFloat(tf);
-			matrix = new PMatrix3D(transformation[0], transformation[1], transformation[2],
-					transformation[3], transformation[4], transformation[5]);
-		}
-	}
-	*/
-
-
-	/*
-    static protected AffineTransform parseTransform(String what) {
-        if (what != null) {
-            if (what.startsWith("matrix(") && what.endsWith(")")) {
-                // columns go first with AT constructor
-                what = what.substring(7, what.length() - 1);
-                return new AffineTransform(PApplet.parseFloat(PApplet.split(what, ' ')));
-            }
-        }
-        return null;
-    }
-    */
-
 	
 	protected void parseColors(XMLElement properties) {
 		if (properties.hasAttribute("opacity")) {
@@ -536,6 +506,10 @@ public class BaseObject extends PShape {
 	}
 
 
+	/**
+	 * Parse a child XML element. 
+	 * Override this method to add parsing for more SVG elements. 
+	 */
 	protected PShape parseChild(XMLElement elem) {
 		String name = elem.getName();
 
@@ -575,7 +549,7 @@ public class BaseObject extends PShape {
 			return new LinearGradient(this, elem);
 
 		} else if (name.equals("text")) {
-			PApplet.println("Text is not currently handled, " +
+			PGraphics.showWarning("Text is not currently handled, " +
 			"convert text to outlines instead.");
 
 		} else if (name.equals("filter")) {
@@ -592,7 +566,7 @@ public class BaseObject extends PShape {
 
 
     /**
-     * Prints out the SVG document useful for parsing
+     * Prints out the SVG document. Useful for parsing.
      */
     public void print() {
         PApplet.println(element.toString());
