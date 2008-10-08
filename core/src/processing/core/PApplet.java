@@ -7227,6 +7227,12 @@ public class PApplet extends Applet
   }
 
 
+  public void applyMatrix(PMatrix source) {
+    if (recorder != null) recorder.applyMatrix(source);
+    g.applyMatrix(source);
+  }
+
+
   public void applyMatrix(PMatrix2D source) {
     if (recorder != null) recorder.applyMatrix(source);
     g.applyMatrix(source);

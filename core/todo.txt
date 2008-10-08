@@ -40,6 +40,14 @@ X   this may be specific to lines
 X   http://dev.processing.org/bugs/show_bug.cgi?id=827
 X   though it also seems to be a problem with opengl
 X   also make a note of disabling as a way to help font appearance
+o Font width calculation fails when using vectorfonts and PDF
+o   http://dev.processing.org/bugs/show_bug.cgi?id=920
+X um, this is gross: getMatrix((PMatrix2D) null)
+X no changing point sizes when using beginShape(POINTS)
+X   this is an opengl restriction, should we stick with it elsewhere?
+X   and changing stroke weight in general (with lines/shapes)
+o   no renderer does this, we should probably disable it
+X   added a note to the reference about it
 
 cleaning
 o chooseFile() and chooseFolder() with named fxn callbacks
@@ -58,6 +66,9 @@ o   use font code to set the cached color of the font, then call set()
 o   although set() with alpha is a little different..
 o resizing opengl applet likely to cause big trouble
 o   componentlistener should prolly only do size() command outside of draw
+o fjen says blend() doens't work in JAVA2D
+o   the functions are fairly well separated now in PMethods
+o   just go through all the stuff to make sure it's setting properly
 
 point()
 X java2d - if strokeWeight is 1, do screenX/Y and set()
@@ -88,7 +99,7 @@ depth_sort_lines -> sortLines()
 no longer any abstract methods in PGraphics itself
 removed support for specular alpha (and its 'SPA' constant)
 clear() -> backgroundImpl()
-CENTER -> DIAMETER for ellipseMode and friends
+add DIAMETER as synonym for CENTER for ellipseMode and friends
 textFontNative and textFontNativeMetrics have been removed
   they require a font rendering context on which to draw
   and were a weird sort of hack
@@ -103,15 +114,8 @@ imageMode ignored for get(), set(), blend() and copy()
 smooth is now part of PGraphics, moved out of PImage
 imageMode has been removed from PImage, too awkward
 raw must handle points, lines, triangles, and textures
+light position and normal are now PVector object
 
-um, this is gross: getMatrix((PMatrix2D) null)
-
-_ no changing point sizes when using beginShape(POINTS)
-_   this is an opengl restriction, should we stick with it elsewhere?
-_   and changing stroke weight in general (with lines/shapes)
-_   no renderer does this, we should probably disable it
-
-_ accessors inside PFont need a lot of work
 
 _ may need to add to PApplet.main() for OS X 10.5
 _   System.setProperty("apple.awt.graphics.UseQuartz","true");
@@ -215,9 +219,6 @@ _   touching pixels[]. All other functions including get(), set(),
 _   filter(), etc shouldn't need them. 
 _ image memory use.. how to handle lots of images
 _   need to figure out exactly how they should/can unload
-_ fjen says blend() doens't work in JAVA2D
-_   the functions are fairly well separated now in PMethods
-_   just go through all the stuff to make sure it's setting properly
 _ don't do a loadPixels unless an updatePixels has completed
 _   tho this won't affect anything, since either it's an image buffer
 _   or it's the PGraphics object, which does an updatePixels() immediately
@@ -231,12 +232,10 @@ _   same will go for blend()
 
 
 rework some text/font code [1.0]
-_ Font width calculation fails when using vectorfonts and PDF
-_   http://dev.processing.org/bugs/show_bug.cgi?id=920
+_ PFont not working well with all characters
+_   only create bitmap chars on the fly when needed (in createFont)
 _ text placement is ugly, seems like fractional metrics problem
 _   http://dev.processing.org/bugs/show_bug.cgi?id=866
-_ textMode(SHAPE) and textMode(IMAGE)?
-_   textMode(SCREEN) is out of its league?
 _ fix getFontMetrics() warning
 _   need to have a getGraphics() to get the actual Graphics object
 _   where drawing is happening. parent.getGraphics() works except for OpenGL
@@ -252,6 +251,7 @@ _ when using createFont("xxxx.ttf"), should use textMode(SHAPE) with PDF
 _   because ttf files will not be installed on the system when opening pdf
 _ text position is quantized in JAVA2D
 _   http://dev.processing.org/bugs/show_bug.cgi?id=806
+_ accessors inside PFont need a lot of work
 
 
 P2D, P3D, PPolygon [1.0]
@@ -609,7 +609,7 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 LIBRARIES / PGraphicsOpenGL
 
 
-
+_ switch to glWindowPos() instead of glRasterPos() silliness
 _ implement setImpl() instead of set() inside PGraphicsOpenGL
 _   http://dev.processing.org/bugs/show_bug.cgi?id=943
 _ use glCopyPixels() or glReadPixels() instead of copy() method
@@ -799,3 +799,5 @@ _   colorMode(RGB, 1.0); colorMode(255); println(red(color(0.5,1,1)));
 _   will return 127, instead of 128.
 _ curves
 _   non-homogenous coloring for curve vertices
+_ textMode(SHAPE) and textMode(IMAGE)?
+_   textMode(SCREEN) is out of its league?

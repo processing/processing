@@ -50,7 +50,7 @@ public class PGraphics3D extends PGraphics {
   public PMatrix3D modelview;
 
   /** Inverse modelview matrix, used for lighting. */
-  protected PMatrix3D modelviewInv;
+  public PMatrix3D modelviewInv;
 
   /**
    * The camera matrix, the modelview will be set to this on beginDraw.
@@ -209,7 +209,7 @@ public class PGraphics3D extends PGraphics {
 
   // used for sorting points when triangulating a polygon
   // warning - maximum number of vertices for a polygon is DEFAULT_VERTICES
-  protected int vertex_order[] = new int[DEFAULT_VERTICES];
+  protected int vertexOrder[] = new int[DEFAULT_VERTICES];
 
   // ........................................................
 
@@ -227,17 +227,19 @@ public class PGraphics3D extends PGraphics {
   static protected final int VERTEX1 = 0;
   static protected final int VERTEX2 = 1;
   static protected final int VERTEX3 = 2;        // (triangles only)
-  static protected final int STROKE_COLOR = 2;   // (points only)
+  /** used to store the strokeColor int for efficient drawing. */ 
+  static protected final int STROKE_COLOR = 1;   // (points only)
   static protected final int TEXTURE_INDEX = 3;  // (triangles only)
-  static protected final int STROKE_MODE = 2;    // (lines only)
-  static protected final int STROKE_WEIGHT = 3;  // (lines only)
+  //static protected final int STROKE_MODE = 2;    // (lines only)
+  //static protected final int STROKE_WEIGHT = 3;  // (lines only)
 
-  static protected final int LINE_FIELD_COUNT = 4;
+  static protected final int POINT_FIELD_COUNT = 2;  //4
+  static protected final int LINE_FIELD_COUNT = 2;  //4
   static protected final int TRIANGLE_FIELD_COUNT = 4;
 
   // points
   static final int DEFAULT_POINTS = 512;
-  protected int[][] points = new int[DEFAULT_POINTS][LINE_FIELD_COUNT];
+  protected int[][] points = new int[DEFAULT_POINTS][POINT_FIELD_COUNT];
   protected int pointCount;
   
   // lines
@@ -303,11 +305,13 @@ public class PGraphics3D extends PGraphics {
 
     // init lights (in resize() instead of allocate() b/c needed by opengl)
     lightType = new int[MAX_LIGHTS];
-    //lightPosition = new float[MAX_LIGHTS][3];
     lightPosition = new PVector[MAX_LIGHTS];
-    lightDiffuse = new float[MAX_LIGHTS][3];
-    //lightNormal = new float[MAX_LIGHTS][3];
     lightNormal = new PVector[MAX_LIGHTS];
+    for (int i = 0; i < MAX_LIGHTS; i++) {
+      lightPosition[i] = new PVector();
+      lightNormal[i] = new PVector();
+    }
+    lightDiffuse = new float[MAX_LIGHTS][3];
     lightSpecular = new float[MAX_LIGHTS][3];
     lightFalloffConstant = new float[MAX_LIGHTS];
     lightFalloffLinear = new float[MAX_LIGHTS];
@@ -517,11 +521,11 @@ public class PGraphics3D extends PGraphics {
       if (triangle != null) triangle.reset();  // necessary?
       triangleCount = 0;
     }
+    
     textureImage = null;
-
     curveVertexCount = 0;
     normalMode = NORMAL_MODE_AUTO;
-    normalCount = 0;
+//    normalCount = 0;
   }
 
 
@@ -602,8 +606,21 @@ public class PGraphics3D extends PGraphics {
     // render shape and fill here if not saving the shapes for later 
     // if true, the shapes will be rendered on endDraw
     if (!hints[ENABLE_DEPTH_SORT]) {
-      if (fill) renderTriangles(0, triangleCount);
-      if (stroke) renderLines(0, lineCount);
+      if (fill) {
+        renderTriangles(0, triangleCount);
+        if (raw != null) {
+          rawTriangles(0, triangleCount);
+        }
+        triangleCount = 0;
+      }
+      if (stroke) {
+        renderLines(0, lineCount);
+        if (raw != null) {
+          rawLines(0, lineCount);
+        }
+        lineCount = 0;
+      }
+      pathCount = 0;
     }
 
     shape = 0;
@@ -912,9 +929,9 @@ public class PGraphics3D extends PGraphics {
       lines = temp;
     }
     points[pointCount][VERTEX1] = a;
-    points[pointCount][STROKE_MODE] = strokeCap | strokeJoin;
+    //points[pointCount][STROKE_MODE] = strokeCap | strokeJoin;
     points[pointCount][STROKE_COLOR] = strokeColor;
-    points[pointCount][STROKE_WEIGHT] = (int) (strokeWeight + 0.5f); // hmm
+    //points[pointCount][STROKE_WEIGHT] = (int) (strokeWeight + 0.5f); // hmm
     pointCount++;
   }  
 
@@ -1065,8 +1082,8 @@ public class PGraphics3D extends PGraphics {
     lines[lineCount][VERTEX1] = a;
     lines[lineCount][VERTEX2] = b;
 
-    lines[lineCount][STROKE_MODE] = strokeCap | strokeJoin;
-    lines[lineCount][STROKE_WEIGHT] = (int) (strokeWeight + 0.5f); // hmm
+    //lines[lineCount][STROKE_MODE] = strokeCap | strokeJoin;
+    //lines[lineCount][STROKE_WEIGHT] = (int) (strokeWeight + 0.5f); // hmm
     lineCount++;
 
     // mark this piece as being part of the current path
@@ -1213,17 +1230,13 @@ public class PGraphics3D extends PGraphics {
     }
     if (clippedCount == 0) {
       addTriangleWithoutClip(a, b, c);
-      return;
-    }
-    else if (clippedCount == 3) {
-      return;
-    }
-    //                                                          | .
-    // In this case there is only one visible point.            |/|
-    // So we'll have to make two new points on the clip line   <| |
-    // and add that triangle instead.                           |\|
-    //                                                          | .
-    else if (clippedCount == 2) {
+      
+    } else if (clippedCount == 3) {
+      // In this case there is only one visible point.            |/|
+      // So we'll have to make two new points on the clip line   <| |
+      // and add that triangle instead.                           |\|
+
+    } else if (clippedCount == 2) {
       //System.out.println("Clipped two");
 
       int ca, cb, cc, cd, ce;
@@ -1246,15 +1259,13 @@ public class PGraphics3D extends PGraphics {
       cd = interpolateClipVertex(ca, cb);
       ce = interpolateClipVertex(ca, cc);
       addTriangleWithoutClip(ca, cd, ce);
-      return;
-    }
 
-    //                                                          . |
-    // In this case there are two visible points.               |\|
-    // So we'll have to make two new points on the clip line    | |>
-    // and then add two new triangles.                          |/|
-    //                                                          . |
-    else { // (clippedCount == 1) {
+    } else { // (clippedCount == 1) {
+      //                                                          . |
+      // In this case there are two visible points.               |\|
+      // So we'll have to make two new points on the clip line    | |>
+      // and then add two new triangles.                          |/|
+      //                                                          . |
       //System.out.println("Clipped one");
       int ca, cb, cc, cd, ce;
       if (aClipped) {
@@ -1283,7 +1294,6 @@ public class PGraphics3D extends PGraphics {
       //System.out.println("cd: " + cd + ", " + vertices[cd][VX] + ", " + vertices[cd][VY] + ", " + vertices[cd][VZ]);
       //System.out.println("cb: " + cb + ", " + vertices[cb][VX] + ", " + vertices[cb][VY] + ", " + vertices[cb][VZ]);
       addTriangleWithoutClip(cb, cd, ce);
-      return;
     }
   }
 
@@ -1347,7 +1357,7 @@ public class PGraphics3D extends PGraphics {
     rv[NY] = pa * va[NY] + pb * vb[NY];
     rv[NZ] = pa * va[NZ] + pb * vb[NZ];
 
-    rv[SW] = pa * va[SW] + pb * vb[SW];
+//    rv[SW] = pa * va[SW] + pb * vb[SW];
 
     rv[AR] = pa * va[AR] + pb * vb[AR];
     rv[AG] = pa * va[AG] + pb * vb[AG];
@@ -1404,11 +1414,11 @@ public class PGraphics3D extends PGraphics {
    * bit of code from the web.
    */
   protected void addPolygonTriangles() {
-    if (vertex_order.length != vertices.length) {
+    if (vertexOrder.length != vertices.length) {
       int[] temp = new int[vertices.length];
       // since vertex_start may not be zero, might need to keep old stuff around
-      PApplet.arraycopy(vertex_order, temp, vertexCount);
-      vertex_order = temp;
+      PApplet.arraycopy(vertexOrder, temp, vertexCount);
+      vertexOrder = temp;
     }
 
     // this clipping algorithm only works in 2D, so in cases where a
@@ -1496,12 +1506,12 @@ public class PGraphics3D extends PGraphics {
     if (area > 0) {
       for (int i = shapeFirst; i < shapeLast; i++) {
         j = i - shapeFirst;
-        vertex_order[j] = i;
+        vertexOrder[j] = i;
       }
     } else {
       for (int i = shapeFirst; i < shapeLast; i++) {
         j = i - shapeFirst;
-        vertex_order[j] = (shapeLast - 1) - j;
+        vertexOrder[j] = (shapeLast - 1) - j;
       }
     }
 
@@ -1530,12 +1540,12 @@ public class PGraphics3D extends PGraphics {
       // http://dev.processing.org/bugs/show_bug.cgi?id=774
 
       // triangle A B C
-      double Ax = -10 * vertices[vertex_order[u]][d1];
-      double Ay =  10 * vertices[vertex_order[u]][d2];
-      double Bx = -10 * vertices[vertex_order[v]][d1];
-      double By =  10 * vertices[vertex_order[v]][d2];
-      double Cx = -10 * vertices[vertex_order[w]][d1];
-      double Cy =  10 * vertices[vertex_order[w]][d2];
+      double Ax = -10 * vertices[vertexOrder[u]][d1];
+      double Ay =  10 * vertices[vertexOrder[u]][d2];
+      double Bx = -10 * vertices[vertexOrder[v]][d1];
+      double By =  10 * vertices[vertexOrder[v]][d2];
+      double Cx = -10 * vertices[vertexOrder[w]][d1];
+      double Cy =  10 * vertices[vertexOrder[w]][d2];
 
       // first we check if <u,v,w> continues going ccw
       if (EPSILON > (((Bx-Ax) * (Cy-Ay)) - ((By-Ay) * (Cx-Ax)))) {
@@ -1547,8 +1557,8 @@ public class PGraphics3D extends PGraphics {
           continue;
         }
 
-        double Px = -10 * vertices[vertex_order[p]][d1];
-        double Py =  10 * vertices[vertex_order[p]][d2];
+        double Px = -10 * vertices[vertexOrder[p]][d1];
+        double Py =  10 * vertices[vertexOrder[p]][d2];
 
         double ax  = Cx - Bx;  double ay  = Cy - By;
         double bx  = Ax - Cx;  double by  = Ay - Cy;
@@ -1567,13 +1577,13 @@ public class PGraphics3D extends PGraphics {
       }
 
       if (snip) {
-        addTriangle(vertex_order[u], vertex_order[v], vertex_order[w]);
+        addTriangle(vertexOrder[u], vertexOrder[v], vertexOrder[w]);
 
         m++;
 
         // remove v from remaining polygon
         for (int s = v, t = v + 1; t < vc; s++, t++) {
-          vertex_order[s] = vertex_order[t];
+          vertexOrder[s] = vertexOrder[t];
         }
         vc--;
 
@@ -1584,7 +1594,6 @@ public class PGraphics3D extends PGraphics {
   }
 
   
-  /*
   private void toWorldNormal(float nx, float ny, float nz, float[] out) {
     out[0] =
       modelviewInv.m00*nx + modelviewInv.m10*ny +
@@ -1610,10 +1619,11 @@ public class PGraphics3D extends PGraphics {
       out[0] /= nlen; out[1] /= nlen; out[2] /= nlen;
     }
   }
-  */
 
-  PVector calcLightingNorm = new PVector();
-  PVector calcLightingWorldNorm = new PVector();
+  private PVector calcLightingNorm = new PVector();
+  private PVector calcLightingWorldNorm = new PVector();
+  
+  float[] worldNormal = new float[4];
   
   
   private void calcLightingContribution(int vIndex,
@@ -1640,33 +1650,45 @@ public class PGraphics3D extends PGraphics {
     float nz = v[NZ];
 
     if (!normalIsWorld) {
-      calcLightingNorm.set(nx, ny, nz);
-      modelviewInv.mult(calcLightingNorm, calcLightingWorldNorm);
-      calcLightingWorldNorm.normalize();
+//      System.out.println("um, hello?");
+//      calcLightingNorm.set(nx, ny, nz);
+//      //modelviewInv.mult(calcLightingNorm, calcLightingWorldNorm);
+//      
+////      PMatrix3D mvi = modelViewInv;
+////      float ox = mvi.m00*nx + mvi.m10*ny + mvi*m20+nz +
+//      modelviewInv.cmult(calcLightingNorm, calcLightingWorldNorm);
+//      
+//      calcLightingWorldNorm.normalize();
+//      nx = calcLightingWorldNorm.x;
+//      ny = calcLightingWorldNorm.y;
+//      nz = calcLightingWorldNorm.z;
       
-      /*
-      //toWorldNormal(v[NX], v[NY], v[NZ], worldNormal);
-      float wnx = modelviewInv.multX(nx, ny, nz);
-      float wny = modelviewInv.multY(nx, ny, nz);
-      float wnz = modelviewInv.multZ(nx, ny, nz);
-      float wnw = modelviewInv.multW(nx, ny, nz);
+      toWorldNormal(v[NX], v[NY], v[NZ], worldNormal);
+      nx = worldNormal[X];
+      ny = worldNormal[Y];
+      nz = worldNormal[Z];
+
+//      float wnx = modelviewInv.multX(nx, ny, nz);
+//      float wny = modelviewInv.multY(nx, ny, nz);
+//      float wnz = modelviewInv.multZ(nx, ny, nz);
+//      float wnw = modelviewInv.multW(nx, ny, nz);
       
-      if (wnw != 0 && wnw != 1) {
-        wnx /= wnw;
-        wny /= wnw;
-        wnz /= wnw;
-      } 
-      float nlen = mag(wnx, wny, wnw);
-      if (nlen != 0 && nlen != 1) {
-        nx = wnx / nlen;
-        ny = wny / nlen;
-        nz = wnz / nlen;
-      } else {
-        nx = wnx;
-        ny = wny;
-        nz = wnz;
-      }
-      */
+//      if (wnw != 0 && wnw != 1) {
+//        wnx /= wnw;
+//        wny /= wnw;
+//        wnz /= wnw;
+//      } 
+//      float nlen = mag(wnx, wny, wnw);
+//      if (nlen != 0 && nlen != 1) {
+//        nx = wnx / nlen;
+//        ny = wny / nlen;
+//        nz = wnz / nlen;
+//      } else {
+//        nx = wnx;
+//        ny = wny;
+//        nz = wnz;
+//      }
+//      */
     } else {
       nx = v[NX];
       ny = v[NY];
@@ -1714,7 +1736,7 @@ public class PGraphics3D extends PGraphics {
                              lightPosition[i].z - wz);
           denom +=
             lightFalloffQuadratic[i] * distSq +
-            lightFalloffLinear[i] * (float) sqrt(distSq);
+            lightFalloffLinear[i] * sqrt(distSq);
         }
         if (denom == 0) denom = 1;
 
@@ -2276,18 +2298,24 @@ public class PGraphics3D extends PGraphics {
   protected void render() {
     if (pointCount > 0) {
       renderPoints(0, pointCount);
-      rawPoints(0, pointCount);
+      if (raw != null) {
+        rawPoints(0, pointCount);
+      }
       pointCount = 0;
     }
     if (lineCount > 0) {
       renderLines(0, lineCount);
-      rawLines(0, lineCount);
+      if (raw != null) {
+        rawLines(0, lineCount);
+      }
       lineCount = 0;
       pathCount = 0;
     }
     if (triangleCount > 0) {
       renderTriangles(0, triangleCount);
-      rawTriangles(0, triangleCount);
+      if (raw != null) {
+        rawTriangles(0, triangleCount);
+      }
       triangleCount = 0;
     }
   }
@@ -2299,7 +2327,9 @@ public class PGraphics3D extends PGraphics {
    * will also need to be interspersed with one another while rendering.
    */
   protected void sort() {
-    sortTrianglesInternal(0, triangleCount-1);
+    if (triangleCount > 0) {
+      sortTrianglesInternal(0, triangleCount-1);
+    }
   }
 
 
@@ -3778,9 +3808,20 @@ public class PGraphics3D extends PGraphics {
    * based on the current modelview matrix.
    */
   protected void lightDirection(int num, float x, float y, float z) {
-    lightDirectionVec.set(x, y, z);
-    modelviewInv.mult(lightDirectionVec, lightNormal[num]);
+    lightNormal[num].set(modelviewInv.m00*x + modelviewInv.m10*y + modelviewInv.m20*z + modelviewInv.m30, 
+                         modelviewInv.m01*x + modelviewInv.m11*y + modelviewInv.m21*z + modelviewInv.m31,
+                         modelviewInv.m02*x + modelviewInv.m12*y + modelviewInv.m22*z + modelviewInv.m32);
     lightNormal[num].normalize();
+
+    /*
+    lightDirectionVec.set(x, y, z);
+    System.out.println("dir vec " + lightDirectionVec);
+    //modelviewInv.mult(lightDirectionVec, lightNormal[num]);
+    modelviewInv.cmult(lightDirectionVec, lightNormal[num]);
+    System.out.println("cmult vec " + lightNormal[num]);
+    lightNormal[num].normalize();
+    System.out.println("setting light direction " + lightNormal[num]);
+    */
     
     /*
     // Multiply by inverse transpose.

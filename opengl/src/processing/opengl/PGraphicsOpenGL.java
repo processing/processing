@@ -604,8 +604,9 @@ public class PGraphicsOpenGL extends PGraphics3D {
   protected void renderLines(int start, int stop) {
     report("render_lines in");
 
-    int i = 0;
+    //int i = 0;
     for (int j = 0; j < pathCount; j++) {
+      int i = pathOffset[j];
       float sw = vertices[lines[i][VERTEX1]][SW];
       //report("render_lines 1");
       // stroke weight zero will cause a gl error
@@ -689,6 +690,9 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
         gl.glBegin(GL.GL_TRIANGLES);
 
+        //System.out.println(a[U] + " " + a[V] + " " + uscale + " " + vscale);
+        //System.out.println(ar + " " + ag + " " + ab + " " + a[A]);
+        //ar = ag = ab = 1;
         gl.glColor4f(ar, ag, ab, a[A]);
         gl.glTexCoord2f(a[U] * uscale, a[V] * vscale);
         gl.glNormal3f(a[NX], a[NY], a[NZ]);
