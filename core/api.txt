@@ -1,3 +1,4 @@
+  
   public void setParent(PApplet parent)
   public void setPrimary(boolean primary)
   public void setPath(String path)
@@ -360,6 +361,8 @@
   public boolean dimensional()  // better name for this?
 
 //
+
+These are the methods found in PImage, which are inherited by PGraphics.
 
   public PImage(Image)
   public Image getImage()

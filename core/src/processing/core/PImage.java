@@ -220,6 +220,7 @@ public class PImage implements PConstants, Cloneable {
    * PGraphicsOpenGL. 
    */
   public void setCache(Object parent, Object storage) {
+    if (cacheMap == null) cacheMap = new HashMap<Object, Object>();
     cacheMap.put(parent, storage);
   }
   
@@ -233,6 +234,7 @@ public class PImage implements PConstants, Cloneable {
    * @return data stored for the specified parent
    */
   public Object getCache(Object parent) {
+    if (cacheMap == null) return null;
     return cacheMap.get(parent);
   }
   
@@ -242,7 +244,9 @@ public class PImage implements PConstants, Cloneable {
    * @param parent The PGraphics object whose cache data should be removed
    */
   public void removeCache(Object parent) {
-    cacheMap.remove(parent);
+    if (cacheMap != null) {
+      cacheMap.remove(parent);
+    }
   }
   
   
