@@ -21,7 +21,8 @@ public class RadialGradient extends Gradient {
 			properties.getStringAttribute("gradientTransform");
 		
 		if (transformStr != null) {
-			this.transform = new AffineTransform(parseMatrix(transformStr));
+		    float t[] = parseMatrix(transformStr).get(null);
+			this.transform = new AffineTransform(t[0], t[3], t[1], t[4], t[2], t[5]);
 
 			Point2D t1 = transform.transform(new Point2D.Float(cx, cy), null);
 			Point2D t2 = transform.transform(new Point2D.Float(cx + r, cy), null);
