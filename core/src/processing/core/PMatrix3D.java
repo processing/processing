@@ -399,12 +399,29 @@ public final class PMatrix3D implements PMatrix /*, PConstants*/ {
     target.x = m00*source.x + m01*source.y + m02*source.z + m03;
     target.y = m10*source.x + m11*source.y + m12*source.z + m13;
     target.z = m20*source.x + m21*source.y + m22*source.z + m23;
-    float tw = m30*source.x + m31*source.y + m32*source.z + m33;
+//    float tw = m30*source.x + m31*source.y + m32*source.z + m33;
+//    if (tw != 0 && tw != 1) {
+//      target.div(tw);
+//    }
+    return target;
+  }
+
+
+  /*
+  public PVector cmult(PVector source, PVector target) {
+    if (target == null) {
+      target = new PVector();
+    }
+    target.x = m00*source.x + m10*source.y + m20*source.z + m30;
+    target.y = m01*source.x + m11*source.y + m21*source.z + m31;
+    target.z = m02*source.x + m12*source.y + m22*source.z + m32;
+    float tw = m03*source.x + m13*source.y + m23*source.z + m33;
     if (tw != 0 && tw != 1) {
       target.div(tw);
     }
     return target;
   }
+  */
 
 
   /** 
@@ -423,10 +440,10 @@ public final class PMatrix3D implements PMatrix /*, PConstants*/ {
       target[0] = m00*source[0] + m01*source[1] + m02*source[2] + m03;
       target[1] = m10*source[0] + m11*source[1] + m12*source[2] + m13;
       target[2] = m20*source[0] + m21*source[1] + m22*source[2] + m23;
-      float w = m30*source[0] + m31*source[1] + m32*source[2] + m33;
-      if (w != 0 && w != 1) {
-        target[0] /= w; target[1] /= w; target[2] /= w;
-      }
+      //float w = m30*source[0] + m31*source[1] + m32*source[2] + m33;
+      //if (w != 0 && w != 1) {
+      //  target[0] /= w; target[1] /= w; target[2] /= w;
+      //}
     } else if (target.length > 3) {
       target[0] = m00*source[0] + m01*source[1] + m02*source[2] + m03*source[3];
       target[1] = m10*source[0] + m11*source[1] + m12*source[2] + m13*source[3];
@@ -680,6 +697,12 @@ public final class PMatrix3D implements PMatrix /*, PConstants*/ {
 
 
   public void print() {
+    /*
+    System.out.println(m00 + " " + m01 + " " + m02 + " " + m03 + "\n" +
+                       m10 + " " + m11 + " " + m12 + " " + m13 + "\n" +
+                       m20 + " " + m21 + " " + m22 + " " + m23 + "\n" +
+                       m30 + " " + m31 + " " + m32 + " " + m33 + "\n");
+    */
     int big = (int) Math.abs(max(max(max(max(abs(m00), abs(m01)),
                                          max(abs(m02), abs(m03))),
                                      max(max(abs(m10), abs(m11)),

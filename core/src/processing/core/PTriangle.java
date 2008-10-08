@@ -39,7 +39,7 @@ public class PTriangle implements PConstants
 
   private int[] m_pixels;
   private int[] m_texture;
-  private int[] m_stencil;
+  //private int[] m_stencil;
   private float[] m_zbuffer;
 
   private int SCREEN_WIDTH;
@@ -186,7 +186,7 @@ public class PTriangle implements PConstants
   public int  m_drawFlags;
 
   /* current poly number */
-  private int m_index;
+//  private int m_index;
 
   /** */
   private PGraphics3D parent;
@@ -441,9 +441,9 @@ public class PTriangle implements PConstants
   }
 
 
-  public void setIndex(int index) {
-    m_index = index;
-  }
+//  public void setIndex(int index) {
+//    m_index = index;
+//  }
 
 
   /**
@@ -1082,8 +1082,8 @@ public class PTriangle implements PConstants
                                  int ybottom) {
     ytop *= SCREEN_WIDTH;
     ybottom *= SCREEN_WIDTH;
-    int f = m_fill;
-    int p = m_index;
+//    int f = m_fill;
+//    int p = m_index;
 
     while (ytop < ybottom) {
       int xstart = (int) (xleft + PIXEL_CENTER);
@@ -1102,8 +1102,8 @@ public class PTriangle implements PConstants
       for ( ; xstart < xend; xstart++ ) {
         if (noDepthTest || (iz <= m_zbuffer[xstart])) {
           m_zbuffer[xstart] = iz;
-          m_pixels[xstart] = f;
-          m_stencil[xstart] = p;
+          m_pixels[xstart] = m_fill;
+//          m_stencil[xstart] = p;
         }
         iz+=izadd;
       }
@@ -1130,7 +1130,7 @@ public class PTriangle implements PConstants
     int pg = m_fill & 0xFF00;
     int pb = m_fill & 0xFF;
 
-    int p = m_index;
+//    int p = m_index;
     float iaf = iaadd;
 
     while (ytop < ybottom) {
@@ -1174,7 +1174,7 @@ public class PTriangle implements PConstants
           m_pixels[xstart] = 0xFF000000 | 
             (mr0 & 0xFF0000) | (mg0 & 0xFF00) | (mb0 & 0xFF);
 
-          m_stencil[xstart] = p;
+//          m_stencil[xstart] = p;
         }
         iz += izadd;
         ia += iaadd;
@@ -1200,7 +1200,7 @@ public class PTriangle implements PConstants
 
     ytop *= SCREEN_WIDTH;
     ybottom *= SCREEN_WIDTH;
-    int p = m_index;
+//    int p = m_index;
 
     while (ytop < ybottom) {
       int xstart = (int) (xleft + PIXEL_CENTER);
@@ -1225,7 +1225,7 @@ public class PTriangle implements PConstants
           m_zbuffer[xstart] = iz;
           m_pixels[xstart] = 0xFF000000 | 
             ((ir & 0xFF0000) | ((ig >> 8) & 0xFF00) | (ib >> 16));
-          m_stencil[xstart] = p;
+//          m_stencil[xstart] = p;
         }
 
         ir+=iradd;
@@ -1254,7 +1254,7 @@ public class PTriangle implements PConstants
                                          int ybottom) {
     ytop *= SCREEN_WIDTH;
     ybottom *= SCREEN_WIDTH;
-    int p = m_index;
+//    int p = m_index;
 
     float irf = iradd;
     float igf = igadd;
@@ -1302,7 +1302,7 @@ public class PTriangle implements PConstants
             ((br + (((red - br) * al) >> 8)) & 0xFF0000) | 
             ((bg + (((grn - bg) * al) >> 8)) & 0xFF00) | 
             ((bb + (((blu - bb) * al) >> 8)) & 0xFF);
-          m_stencil[xstart] = p;
+//          m_stencil[xstart] = p;
         }
 
         //
@@ -1359,7 +1359,7 @@ public class PTriangle implements PConstants
     }
     ytop *= SCREEN_WIDTH;
     ybottom *= SCREEN_WIDTH;
-    int p = m_index;
+//    int p = m_index;
 
     float iuf = iuadd;
     float ivf = ivadd;
@@ -1474,7 +1474,7 @@ public class PTriangle implements PConstants
               ((br + (((red - br) * al0) >> 8)) & 0xFF0000) | 
               ((bg + (((grn - bg) * al0) >> 8)) & 0xFF00) | 
               ((bb + (((blu - bb) * al0) >> 8)) & 0xFF);
-            m_stencil[xstart] = p;
+//            m_stencil[xstart] = p;
           }
         }
         catch (Exception e) {
@@ -1531,7 +1531,7 @@ public class PTriangle implements PConstants
     }
     ytop*=SCREEN_WIDTH;
     ybottom*=SCREEN_WIDTH;
-    int p = m_index;
+//    int p = m_index;
 
     float iuf = iuadd;
     float ivf = ivadd;
@@ -1650,7 +1650,7 @@ public class PTriangle implements PConstants
                 ((br + (((red - br) * al0) >> 8)) & 0xFF0000) | 
                 ((bg + (((grn - bg) * al0) >> 8)) & 0xFF00) | 
                 ((bb + (((blu - bb) * al0) >> 8)) & 0xFF);
-              m_stencil[xstart] = p;
+//              m_stencil[xstart] = p;
             }
           }
         catch (Exception e) {
@@ -1683,7 +1683,7 @@ public class PTriangle implements PConstants
                                      int ybottom) {
     ytop *= SCREEN_WIDTH;
     ybottom *= SCREEN_WIDTH;
-    int p = m_index;
+//    int p = m_index;
     float iuf = iuadd;
     float ivf = ivadd;
     
@@ -1911,7 +1911,7 @@ public class PTriangle implements PConstants
             } else {
               m_pixels[xstart] = m_texture[(iv >> 16) * TEX_WIDTH + (iu >> 16)];
             }
-            m_stencil[xstart] = p;
+//            m_stencil[xstart] = p;
           }
         } catch (Exception e) {/*exCount++;*/}
         iz+=izadd;
@@ -1967,7 +1967,7 @@ public class PTriangle implements PConstants
     
     ytop *= SCREEN_WIDTH;
     ybottom *= SCREEN_WIDTH;
-    int p = m_index;
+//    int p = m_index;
 
     float iuf = iuadd;
     float ivf = ivadd;
@@ -2121,7 +2121,7 @@ public class PTriangle implements PConstants
                 ((bg + (((grn - bg) * al) >> 8)) & 0xFF00) |
                 ((bb + (((blu - bb) * al) >> 8)) & 0xFF);
             }
-            m_stencil[xstart] = p;
+//            m_stencil[xstart] = p;
           }
         } catch (Exception e) { }
         
@@ -2175,7 +2175,7 @@ public class PTriangle implements PConstants
 
     ytop*=SCREEN_WIDTH;
     ybottom*=SCREEN_WIDTH;
-    int p = m_index;
+//    int p = m_index;
 
     boolean tint = m_fill != 0xFFFFFFFF;
     int rtint = (m_fill >> 16) & 0xff;
@@ -2337,7 +2337,7 @@ public class PTriangle implements PConstants
               ((bg + (((grn - bg) * al) >> 8)) & 0xFF00) | 
               ((bb + (((blu - bb) * al) >> 8)) & 0xFF);
             }
-            m_stencil[xstart] = p;
+//            m_stencil[xstart] = p;
           }
         } catch (Exception e) { }
         xpixel++;//accurate mode
@@ -2391,7 +2391,7 @@ public class PTriangle implements PConstants
 
     ytop *= SCREEN_WIDTH;
     ybottom *= SCREEN_WIDTH;
-    int p = m_index;
+//    int p = m_index;
 
     boolean tint = (m_fill & 0xFFFFFF) != 0xFFFFFF;
     int rtint = (m_fill >> 16) & 0xff;
@@ -2557,7 +2557,7 @@ public class PTriangle implements PConstants
               ((bg + (((grn - bg) * al) >> 8)) & 0xFF00) | 
               ((bb + (((blu - bb) * al) >> 8)) & 0xFF);
             }
-            m_stencil[xstart] = p;
+//            m_stencil[xstart] = p;
           }
         } catch (Exception e) { }
         
@@ -2612,9 +2612,9 @@ public class PTriangle implements PConstants
       }
     }
 
-    ytop*=SCREEN_WIDTH;
-    ybottom*=SCREEN_WIDTH;
-    int p = m_index;
+    ytop *= SCREEN_WIDTH;
+    ybottom *= SCREEN_WIDTH;
+//    int p = m_index;
 
     float iuf = iuadd;
     float ivf = ivadd;
@@ -2740,7 +2740,7 @@ public class PTriangle implements PConstants
                 ((bb + (((blu - bb) * al0) >> 8)) & 0xFF);
 
               // write stencil
-              m_stencil[xstart] = p;
+//              m_stencil[xstart] = p;
             }
           }
         catch (Exception e) {
@@ -2804,9 +2804,9 @@ public class PTriangle implements PConstants
       }
     }
 
-    ytop*=SCREEN_WIDTH;
-    ybottom*=SCREEN_WIDTH;
-    int p = m_index;
+    ytop *= SCREEN_WIDTH;
+    ybottom *= SCREEN_WIDTH;
+//    int p = m_index;
 
     float iuf = iuadd;
     float ivf = ivadd;
@@ -2935,7 +2935,7 @@ public class PTriangle implements PConstants
               ((bb + (((blu - bb) * al0) >> 8)) & 0xFF);
 
             // write stencil
-            m_stencil[xstart] = p;
+//            m_stencil[xstart] = p;
           }
         } catch (Exception e) { }
 
@@ -2993,9 +2993,9 @@ public class PTriangle implements PConstants
       }
     }
 
-    ytop*=SCREEN_WIDTH;
-    ybottom*=SCREEN_WIDTH;
-    int p = m_index;
+    ytop *= SCREEN_WIDTH;
+    ybottom *= SCREEN_WIDTH;
+//    int p = m_index;
 
     float iuf = iuadd;
     float ivf = ivadd;
@@ -3140,7 +3140,7 @@ public class PTriangle implements PConstants
 
             m_pixels[xstart] = 0xFF000000 | 
             ((((red * r) & 0xFF000000) | ((grn * g) & 0xFF0000) | (blu * bb2)) >> 8);
-            m_stencil[xstart] = p;
+//            m_stencil[xstart] = p;
           }
         } catch (Exception e) { }
 
@@ -3201,9 +3201,9 @@ public class PTriangle implements PConstants
       }
     }
 
-    ytop*=SCREEN_WIDTH;
-    ybottom*=SCREEN_WIDTH;
-    int p = m_index;
+    ytop *= SCREEN_WIDTH;
+    ybottom *= SCREEN_WIDTH;
+//    int p = m_index;
 
     float iuf = iuadd;
     float ivf = ivadd;
@@ -3362,7 +3362,7 @@ public class PTriangle implements PConstants
                 ((br + (((red - br) * al) >> 8)) & 0xFF0000) |
                 ((bg + (((grn - bg) * al) >> 8)) & 0xFF00) | 
                 ((bb + (((blu - bb) * al) >> 8)) & 0xFF);
-              m_stencil[xstart] = p;
+//              m_stencil[xstart] = p;
             }
           }
         catch (Exception e) {
@@ -3649,9 +3649,9 @@ public class PTriangle implements PConstants
       }
     }
 
-    ytop*=SCREEN_WIDTH;
-    ybottom*=SCREEN_WIDTH;
-    int p = m_index;
+    ytop *= SCREEN_WIDTH;
+    ybottom *= SCREEN_WIDTH;
+//    int p = m_index;
 
     float iuf = iuadd;
     float ivf = ivadd;
@@ -3816,7 +3816,7 @@ public class PTriangle implements PConstants
               ((br + (((red - br) * al) >> 8)) & 0xFF0000) |
               ((bg + (((grn - bg) * al) >> 8)) & 0xFF00) | 
               ((bb + (((blu - bb) * al) >> 8)) & 0xFF);
-            m_stencil[xstart] = p;
+//            m_stencil[xstart] = p;
           }
         } catch (Exception e) { }
 
