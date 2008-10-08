@@ -76,6 +76,8 @@ public interface PMatrix {
   /** 
    * Multiply this matrix by another.
    */
+  public void apply(PMatrix source);
+
   public void apply(PMatrix2D source);
 
   public void apply(PMatrix3D source);

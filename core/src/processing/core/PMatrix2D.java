@@ -44,6 +44,11 @@ public class PMatrix2D implements PMatrix {
         m10, m11, m12);
   }
   
+  
+  public PMatrix2D(PMatrix matrix) {
+    set(matrix);
+  }
+  
 
   public void reset() {
     set(1, 0, 0, 
@@ -185,9 +190,15 @@ public class PMatrix2D implements PMatrix {
   }
 
 
-  /** 
-   * Multiply this matrix by another.
-   */
+  public void apply(PMatrix source) {
+    if (source instanceof PMatrix2D) {
+      apply((PMatrix2D) source);
+    } else if (source instanceof PMatrix3D) {
+      apply((PMatrix3D) source);
+    }
+  }
+  
+
   public void apply(PMatrix2D source) {
     apply(source.m00, source.m01, source.m02, 
           source.m10, source.m11, source.m12);
