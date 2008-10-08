@@ -52,6 +52,12 @@ writeFile('learning/tutorials/regular_polygon/index.html', $page->out());
 if (!is_dir($path.'learning/tutorials/regular_polygon/imgs')) { mkdir($path.'learning/tutorials/regular_polygon/imgs', '0757'); }
 copydirr($source.'regular_polygon/imgs', $path.'learning/tutorials/regular_polygon/imgs', null, 0757, true);
 
+$page = new Page("Trig", "Tutorials");
+$page->content(file_get_contents($source."trig/index.html"));
+writeFile('learning/tutorials/trig/index.html', $page->out());
+if (!is_dir($path.'learning/tutorials/trig/imgs')) { mkdir($path.'learning/tutorials/trig/imgs', '0757'); }
+copydirr($source.'trig/imgs', $path.'learning/tutorials/trig/imgs', null, 0757, true);
+
 $benchmark_end = microtime_float();
 $execution_time = round($benchmark_end - $benchmark_start, 4);
 
