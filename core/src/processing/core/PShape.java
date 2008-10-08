@@ -38,7 +38,7 @@ abstract public class PShape implements PConstants {
 
   protected int kind;
   //protected int drawMode;
-  protected PMatrix3D matrix;
+  protected PMatrix matrix;
 
   // setAxis -> .x and .y to move x and y coords of origin
   protected float x;
@@ -199,6 +199,7 @@ abstract public class PShape implements PConstants {
 
   protected void pre(PGraphics g) {
     if (matrix != null) {
+      /*
       boolean flat = g instanceof PGraphics2D;
 
       g.pushMatrix();
@@ -211,6 +212,8 @@ abstract public class PShape implements PConstants {
                       matrix.m20, matrix.m21, matrix.m22, matrix.m23,
                       matrix.m30, matrix.m31, matrix.m32, matrix.m33);
       }
+      */
+      g.applyMatrix(matrix);
     }
 
     strokeSaved = g.stroke;
@@ -394,11 +397,13 @@ abstract public class PShape implements PConstants {
 
 
   public void translate(float tx, float ty) {
-    translate(tx, ty, 0);
+    checkMatrix(2);
+    matrix.translate(tx, ty);
   }
 
+  
   public void translate(float tx, float ty, float tz) {
-    checkMatrix();
+    checkMatrix(3);
     matrix.translate(tx, ty, 0);
   }
 
@@ -407,20 +412,25 @@ abstract public class PShape implements PConstants {
     rotate(angle, 1, 0, 0);
   }
 
+  
   public void rotateY(float angle) {
     rotate(angle, 0, 1, 0);
   }
 
+  
   public void rotateZ(float angle) {
     rotate(angle, 0, 0, 1);
   }
 
+
   public void rotate(float angle) {
-    rotateZ(angle);
+    checkMatrix(2);  // at least 2...
+    matrix.rotate(angle);
   }
 
+  
   public void rotate(float angle, float v0, float v1, float v2) {
-    checkMatrix();
+    checkMatrix(3);
     matrix.rotate(angle, v0, v1, v2);
   }
 
@@ -429,17 +439,19 @@ abstract public class PShape implements PConstants {
 
 
   public void scale(float s) {
-    scale(s, s, s);
+    checkMatrix(2);  // at least 2...
+    matrix.scale(s);
   }
 
   
   public void scale(float sx, float sy) {
-    scale(sx, sy, 1);
+    checkMatrix(2);
+    matrix.scale(sx, sy);
   }
 
   
   public void scale(float x, float y, float z) {
-    checkMatrix();
+    checkMatrix(3);
     matrix.scale(x, y, z);
   }
 
@@ -448,12 +460,31 @@ abstract public class PShape implements PConstants {
 
 
   public void resetMatrix() {
+    checkMatrix(2);
+    matrix.reset();
   }
   
   
+  public void applyMatrix(PMatrix source) {
+    if (source instanceof PMatrix2D) {
+      applyMatrix((PMatrix2D) source);
+    } else if (source instanceof PMatrix3D) {
+      applyMatrix((PMatrix3D) source);
+    }
+  }
+  
+  
+  public void applyMatrix(PMatrix2D source) {
+    applyMatrix(source.m00, source.m01, 0, source.m02, 
+                source.m10, source.m11, 0, source.m12,
+                0, 0, 1, 0,
+                0, 0, 0, 1);
+  }
+
+  
   public void applyMatrix(float n00, float n01, float n02,
                           float n10, float n11, float n12) {
-    checkMatrix();
+    checkMatrix(2);
     matrix.apply(n00, n01, n02, 0,
                  n10, n11, n12, 0,
                  0,   0,   1,   0,
@@ -461,11 +492,19 @@ abstract public class PShape implements PConstants {
   }
 
   
+  public void apply(PMatrix3D source) {
+    applyMatrix(source.m00, source.m01, source.m02, source.m03,
+                source.m10, source.m11, source.m12, source.m13,
+                source.m20, source.m21, source.m22, source.m23,
+                source.m30, source.m31, source.m32, source.m33);
+  }
+
+
   public void applyMatrix(float n00, float n01, float n02, float n03,
                           float n10, float n11, float n12, float n13,
                           float n20, float n21, float n22, float n23,
                           float n30, float n31, float n32, float n33) {
-    checkMatrix();
+    checkMatrix(3);
     matrix.apply(n00, n01, n02, n03,
                  n10, n11, n12, n13,
                  n20, n21, n22, n23,
@@ -476,9 +515,20 @@ abstract public class PShape implements PConstants {
   //
 
 
-  protected void checkMatrix() {
+  /**
+   * Make sure that the shape's matrix is 1) not null, and 2) has a matrix 
+   * that can handle <em>at least</em> the specified number of dimensions.
+   */
+  protected void checkMatrix(int dimensions) {
     if (matrix == null) {
-      matrix = new PMatrix3D();
+      if (dimensions == 2) {
+        matrix = new PMatrix2D();
+      } else {
+        matrix = new PMatrix3D();
+      }
+    } else if (dimensions == 3 && (matrix instanceof PMatrix2D)) {
+      // time for an upgrayedd for a double dose of my pimpin' 
+      matrix = new PMatrix3D(matrix);
     }
   }
 

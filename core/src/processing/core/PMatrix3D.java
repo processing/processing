@@ -64,6 +64,11 @@ public final class PMatrix3D implements PMatrix /*, PConstants*/ {
   }
 
 
+  public PMatrix3D(PMatrix matrix) {
+    set(matrix);
+  }
+  
+
   public void reset() {
     set(1, 0, 0, 0,
         0, 1, 0, 0,
@@ -257,6 +262,15 @@ public final class PMatrix3D implements PMatrix /*, PConstants*/ {
     m30 *= x;  m31 *= y;  m32 *= z;
   }
 
+
+  public void apply(PMatrix source) {
+    if (source instanceof PMatrix2D) {
+      apply((PMatrix2D) source);
+    } else if (source instanceof PMatrix3D) {
+      apply((PMatrix3D) source);
+    }
+  }
+  
 
   public void apply(PMatrix2D source) {
     apply(source.m00, source.m01, 0, source.m02, 

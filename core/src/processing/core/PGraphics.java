@@ -102,7 +102,10 @@ import java.util.HashMap;
  * refer to the <a href="http://processing.org/reference">reference</A>
  * on Processing.org for proper explanations. <b>No attempt has been made to 
  * keep the javadoc up to date or complete.</b> It's an enormous task for 
- * which we simply do not have the time.
+ * which we simply do not have the time. That is, it's not something that
+ * to be done once&mdash;it's a matter of keeping the multiple references
+ * synchronized (to say nothing of the translation issues), while targeting 
+ * them for their separate audiences. Ouch.
  */
 public class PGraphics extends PImage implements PConstants {
 
@@ -3434,6 +3437,15 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  public void applyMatrix(PMatrix source) {
+    if (source instanceof PMatrix2D) {
+      applyMatrix((PMatrix2D) source);
+    } else if (source instanceof PMatrix3D) {
+      applyMatrix((PMatrix3D) source);
+    }
+  }
+
+  
   public void applyMatrix(PMatrix2D source) {
     applyMatrix(source.m00, source.m01, source.m02, 
                 source.m10, source.m11, source.m12);
