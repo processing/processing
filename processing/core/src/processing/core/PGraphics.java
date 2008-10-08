@@ -566,7 +566,7 @@ public class PGraphics extends PImage implements PConstants {
   protected int normalMode;
 
   /// Keep track of how many calls to normal, to determine the mode. 
-  protected int normalCount;
+  //protected int normalCount;
 
   /** Current normal vector. */
   public float normalX, normalY, normalZ;
@@ -999,6 +999,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public void vertex(float x, float y) {
+    vertexCheck();
     float[] vertex = vertices[vertexCount];
 
     curveVertexCount = 0;
@@ -1033,6 +1034,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public void vertex(float x, float y, float z) {
+    vertexCheck();
     float[] vertex = vertices[vertexCount];
 
     // only do this if we're using an irregular (POLYGON) shape that
@@ -1063,8 +1065,13 @@ public class PGraphics extends PImage implements PConstants {
 
     vertex[EDGE] = edge ? 1 : 0;
 
-    if (fill) {
-      if (textureImage != null) {
+    if (fill || textureImage != null) {
+      if (textureImage == null) {
+        vertex[R] = fillR;
+        vertex[G] = fillG;
+        vertex[B] = fillB;
+        vertex[A] = fillA;
+      } else {
         if (tint) {
           vertex[R] = tintR;
           vertex[G] = tintG;
@@ -1076,11 +1083,6 @@ public class PGraphics extends PImage implements PConstants {
           vertex[B] = 1;
           vertex[A] = 1;
         }
-      } else {
-        vertex[R] = fillR;
-        vertex[G] = fillG;
-        vertex[B] = fillB;
-        vertex[A] = fillA;
       }
 
       vertex[AR] = ambientR;
@@ -1903,7 +1905,8 @@ public class PGraphics extends PImage implements PConstants {
 
     pushMatrix();
     scale(r);
-
+    edge(false);
+    
     // 1st ring from south pole
     beginShape(TRIANGLE_STRIP);
     for (int i = 0; i < sphereDetailU; i++) {
@@ -1957,7 +1960,8 @@ public class PGraphics extends PImage implements PConstants {
     normal(0, 1, 0);
     vertex(0, 1, 0);
     endShape();
-    
+
+    edge(true);
     popMatrix();
   }
 

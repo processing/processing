@@ -35,12 +35,22 @@ import java.util.HashMap;
 abstract public class PShape implements PConstants {
 
   protected String name;
+  protected HashMap<String,PShape> nameTable;
 
+  /** Generic, only draws its child objects. */
+  static public final int GROUP = 0;
+  /** A line, ellipse, arc, image, etc. */
+  static public final int PRIMITIVE = 1;
+  /** A series of vertex, curveVertex, and bezierVertex calls. */
+  static public final int PATH = 2;
+  /** Collections of vertices created with beginShape(). */
+  static public final int GEOMETRY = 3;
+  /** The shape type, one of GROUP, PRIMITIVE, PATH, or GEOMETRY. */
   protected int kind;
-  //protected int drawMode;
+  
   protected PMatrix matrix;
 
-  // setAxis -> .x and .y to move x and y coords of origin
+  // used for ELLIPSE, RECT, TRIANGLE
   protected float x;
   protected float y;
   protected float width;
@@ -63,8 +73,12 @@ abstract public class PShape implements PConstants {
   //public boolean hasTransform;
   //protected float[] transformation;
 
+  static final int VERTEX = 0;
+  static final int BEZIER_VERTEX = 1;
+  static final int CURVE_VERTEX = 2;
   int[] opcode;
   int opcodeCount;
+  
   // need to reorder vertex fields to make a VERTEX_SHORT_COUNT
   // that puts all the non-rendering fields into later indices
   int dataCount;
@@ -75,7 +89,6 @@ abstract public class PShape implements PConstants {
   protected PShape parent;
   protected int childCount;
   protected PShape[] children;
-  protected HashMap<String,PShape> table;
 
   // POINTS, LINES, xLINE_STRIP, xLINE_LOOP
   // TRIANGLES, TRIANGLE_STRIP, TRIANGLE_FAN
@@ -258,9 +271,9 @@ abstract public class PShape implements PConstants {
 
 
   public void post(PGraphics g) {
-    for (int i = 0; i < childCount; i++) {
-      children[i].draw(g);
-    }
+//    for (int i = 0; i < childCount; i++) {
+//      children[i].draw(g);
+//    }
     
     // TODO this is not sufficient, since not saving fillR et al.
     g.stroke = strokeSaved;
@@ -298,7 +311,13 @@ abstract public class PShape implements PConstants {
   /**
    * Draws the SVG document.
    */
-  abstract public void drawImpl(PGraphics g);
+  public void drawImpl(PGraphics g) {
+    if (kind == GROUP) {
+      for (int i = 0; i < childCount; i++) {
+        children[i].draw(g);
+      }
+    }
+  }
   
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -318,10 +337,10 @@ abstract public class PShape implements PConstants {
     if (name != null && name.equals(who)) {
       return this;
     }
-    if (table != null) {
-      for (String n : table.keySet()) {
+    if (nameTable != null) {
+      for (String n : nameTable.keySet()) {
         if (n.equals(name)) {
-          return table.get(name);
+          return nameTable.get(name);
         }
       }
     }
@@ -371,10 +390,10 @@ abstract public class PShape implements PConstants {
     if (parent != null) {
       parent.addName(nom, shape);
     } else {
-      if (table == null) {
-        table = new HashMap<String,PShape>();
+      if (nameTable == null) {
+        nameTable = new HashMap<String,PShape>();
       }
-      table.put(nom, shape);
+      nameTable.put(nom, shape);
     }
   }
 
