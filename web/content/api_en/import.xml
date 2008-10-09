@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>import</name>
+
+<category>Structure</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+...
+</code>
+</example>
+
+<description>
+The keyword <b>import</b> is used to load a library into a Processing sketch. 
+A library is one or more classes that are grouped together to extend the capabilities of Processing. 
+The <b>*</b> character is often used at the end of the import line (see the code example above)
+to load all of the classes at once, without having to reference them all individually.<br />
+<br />
+The import statement will be created for you by selecting a library from 
+the "Import Library..." item in the Sketch menu.
+</description>
+
+<syntax>
+import <c>libraryName</c>
+</syntax>
+
+<parameter>
+<label>libraryName</label>
+<description>the name of the library to load (e.g. "processing.pdf.*")</description>
+</parameter>
+
+<returns></returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Keyword</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>
