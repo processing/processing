@@ -77,22 +77,27 @@ abstract public class PShape implements PConstants {
   /** Temporary toggle for whether styles should be honored. */
   protected boolean style = true;
 
-  //public boolean hasTransform;
-  //protected float[] transformation;
+  /** For primitive shapes in particular, parms like x/y/w/h or x1/y1/x2/y2. */
+  protected float[] params;
 
-  static final int VERTEX = 0;
-  static final int BEZIER_VERTEX = 1;
-  static final int CURVE_VERTEX = 2;
-  int[] opcodes;
-  int opcodeCount;
-  
   protected int vertexCount;
-  protected float[][] vertices;
+  /**
+   * When drawing POLYGON shapes, the second param is an array of length 
+   * VERTEX_FIELD_COUNT. When drawing PATH shapes, the second param has only
+   * two variables.
+   */
+  protected float[][] vertices;  
+
+  static public final int VERTEX = 0;
+  static public final int BEZIER_VERTEX = 1;
+  static public final int CURVE_VERTEX = 2;
+  static public final int BREAK = 3;
+  /** Array of VERTEX, BEZIER_VERTEX, and CURVE_VERTEXT calls. */
+  protected int vertexCodeCount;
+  protected int[] vertexCodes;
+  /** True if this is a closed path. */
+  protected boolean close;
   
-  // need to reorder vertex fields to make a VERTEX_SHORT_COUNT
-  // that puts all the non-rendering fields into later indices
-  //int dataCount;
-  float[] params;  // second param is the VERTEX_FIELD_COUNT
   // should this be called vertices (consistent with PGraphics internals)
   // or does that hurt flexibility?
 
@@ -431,13 +436,14 @@ abstract public class PShape implements PConstants {
   }
 
 
+  /*
   protected void drawPath(PGraphics g) {
     g.beginShape();
     for (int j = 0; j < childCount; j++) {
       if (j > 0) g.breakShape();
       int count = children[j].vertexCount;
       float[][] vert = children[j].vertices;
-      int[] code = children[j].opcodes;
+      int[] code = children[j].vertexCodes;
 
       for (int i = 0; i < count; i++) {
         if (style) {
@@ -481,6 +487,64 @@ abstract public class PShape implements PConstants {
       }
     }
     g.endShape();
+  }
+  */
+
+
+  protected void drawPath(PGraphics g) {
+    g.beginShape();
+    int index = 0;
+    
+    if (vertices[0].length == 2) {
+      for (int j = 0; j < vertexCodeCount; j++) {
+        switch (vertexCodes[j]) {
+
+        case VERTEX:
+          g.vertex(vertices[index][X], vertices[index][Y]);
+          index++;
+          break;
+
+        case BEZIER_VERTEX:
+          g.bezierVertex(vertices[index+0][X], vertices[index+0][Y],
+                         vertices[index+1][X], vertices[index+1][Y],
+                         vertices[index+2][X], vertices[index+2][Y]);
+          index += 3;
+          break;
+
+        case CURVE_VERTEX:
+          g.curveVertex(vertices[index][X], vertices[index][Y]);
+          index++;
+
+        case BREAK:
+          g.breakShape();
+        }
+      }
+    } else {
+      for (int j = 0; j < vertexCodeCount; j++) {
+        switch (vertexCodes[j]) {
+
+        case VERTEX:
+          g.vertex(vertices[index][X], vertices[index][Y], vertices[index][Z]);
+          index++;
+          break;
+
+        case BEZIER_VERTEX:
+          g.bezierVertex(vertices[index+0][X], vertices[index+0][Y], vertices[index+0][Z],
+                         vertices[index+1][X], vertices[index+1][Y], vertices[index+1][Z],
+                         vertices[index+2][X], vertices[index+2][Y], vertices[index+2][Z]);
+          index += 3;
+          break;
+
+        case CURVE_VERTEX:
+          g.curveVertex(vertices[index][X], vertices[index][Y], vertices[index][Z]);
+          index++;
+
+        case BREAK:
+          g.breakShape();
+        }
+      }
+    }
+    g.endShape(close ? CLOSE : OPEN);
   }
 
 
