@@ -12,8 +12,6 @@ import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 import java.util.HashMap;
 
-import processing.candy.LinearGradientPaint.LinearGradientContext;
-import processing.candy.RadialGradientPaint.RadialGradientContext;
 import processing.core.*;
 import processing.xml.XMLElement;
 
@@ -132,7 +130,7 @@ import processing.xml.XMLElement;
  * For those interested, the SVG specification can be found
  * <A HREF="http://www.w3.org/TR/SVG">here</A>.
  */
-public class BaseObject extends PShape {
+public class SVG extends PShape {
 	XMLElement element;
 
 	float opacity;
@@ -149,7 +147,7 @@ public class BaseObject extends PShape {
   /**
    * Initializes a new SVG Object with the given filename.
    */
-	public BaseObject(PApplet parent, String filename) {
+	public SVG(PApplet parent, String filename) {
 	  // this will grab the root document, starting <svg ...>
 	  // the xml version and initial comments are ignored
 	  this(new XMLElement(parent, filename));
@@ -159,7 +157,7 @@ public class BaseObject extends PShape {
   /**
    * Initializes a new SVG Object from the given XMLElement.
    */
-  public BaseObject(XMLElement svg) {
+  public SVG(XMLElement svg) {
     this(null, svg);
 
     if (!svg.getName().equals("svg")) {
@@ -201,7 +199,7 @@ public class BaseObject extends PShape {
   }
   
   
-	public BaseObject(BaseObject parent, XMLElement properties) {
+	public SVG(SVG parent, XMLElement properties) {
 		//super(GROUP);
 		
 		if (parent == null) {
@@ -290,7 +288,7 @@ public class BaseObject extends PShape {
    */
   protected PShape parseChild(XMLElement elem) {
     String name = elem.getName();
-    BaseObject shape = new BaseObject(this, elem);
+    SVG shape = new SVG(this, elem);
     
     if (name.equals("g")) {
       //return new BaseObject(this, elem);
@@ -1040,14 +1038,14 @@ public class BaseObject extends PShape {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-	abstract class Gradient extends BaseObject {
+	class Gradient extends SVG {
 	  AffineTransform transform;
 
 	  float[] offset;
 	  int[] color;
 	  int count;
 
-	  public Gradient(BaseObject parent, XMLElement properties) {
+	  public Gradient(SVG parent, XMLElement properties) {
 	    super(parent, properties);
 
 	    XMLElement elements[] = properties.getChildren();
@@ -1080,7 +1078,7 @@ public class BaseObject extends PShape {
 	class LinearGradient extends Gradient {
 	  float x1, y1, x2, y2;
 
-	  public LinearGradient(BaseObject parent, XMLElement properties) {
+	  public LinearGradient(SVG parent, XMLElement properties) {
 	    super(parent, properties);
 
 	    this.x1 = properties.getFloatAttribute("x1");
@@ -1111,7 +1109,7 @@ public class BaseObject extends PShape {
 	class RadialGradient extends Gradient {
 	  float cx, cy, r;
 
-	  public RadialGradient(BaseObject parent, XMLElement properties) {
+	  public RadialGradient(SVG parent, XMLElement properties) {
 	    super(parent, properties);
 
 	    this.cx = properties.getFloatAttribute("cx");
@@ -1134,6 +1132,7 @@ public class BaseObject extends PShape {
 	    }
 	  }
 	}
+	
 	
 	
 	class LinearGradientPaint implements Paint {
