@@ -38,15 +38,15 @@ public class Path extends BaseObject {
 			boolean separate = false;
 
 			if (c == 'M' || c == 'm' ||
-				c == 'L' || c == 'l' ||
-				c == 'H' || c == 'h' ||
-				c == 'V' || c == 'v' ||
-				c == 'C' || c == 'c' ||  // beziers
-				c == 'S' || c == 's' ||
-				c == 'Q' || c == 'q' ||  // quadratic beziers
-				c == 'T' || c == 't' ||
-				c == 'Z' || c == 'z' ||  // closepath 
-				c == ',') {
+			    c == 'L' || c == 'l' ||
+			    c == 'H' || c == 'h' ||
+			    c == 'V' || c == 'v' ||
+			    c == 'C' || c == 'c' ||  // beziers
+			    c == 'S' || c == 's' ||
+			    c == 'Q' || c == 'q' ||  // quadratic beziers
+			    c == 'T' || c == 't' ||
+			    c == 'Z' || c == 'z' ||  // closepath 
+			    c == ',') {
 				separate = true;
 				if (i != 0) {
 					pathChars.append("|");
