@@ -72,10 +72,15 @@ To create a new image, use the <b>createImage()</b> function (do not use <tt>new
 <mname>save()</mname>
 <mdescription>Saves the image to a TIFF, TARGA, PNG, or JPEG file</mdescription>
 </method>
+<method>
+<mname>resize()</mname>
+<mdescription>Changes the size of an image to a new width and height</mdescription>
+</method>
 
 <constructor>
 PImage()
 PImage(<c>width</c>, <c>height</c>)
+PImage(<c>width</c>, <c>height</c>, <c>format</c>)
 PImage(<c>img</c>)
 </constructor>
 
