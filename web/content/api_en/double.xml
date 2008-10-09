@@ -19,7 +19,7 @@ Example to come...
 Datatype for floating-point numbers larger than those that can be stored in a <b>float</b>. A <b>float</b> is a 32-bit values that can be as large as 3.40282347E+38 and as low as -3.40282347E+38. A <b>double</b> can have a greater magnitude because it is a 64-bit number.</description>
 
 <syntax>
-double<c>var</c>
+double <c>var</c>
 double <c>var</c> = <c>value</c>
 </syntax>
 
