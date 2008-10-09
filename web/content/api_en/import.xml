@@ -11,7 +11,16 @@
 <example>
 <image></image>
 <code>
-...
+import processing.opengl.*;
+
+void setup() {
+  size(screen.width, screen.height, OPENGL);
+}
+
+void draw() {
+  line(0, 0, width, height);
+  line(0, height, width, 0);
+}
 </code>
 </example>
 
@@ -19,7 +28,7 @@
 The keyword <b>import</b> is used to load a library into a Processing sketch. 
 A library is one or more classes that are grouped together to extend the capabilities of Processing. 
 The <b>*</b> character is often used at the end of the import line (see the code example above)
-to load all of the classes at once, without having to reference them all individually.<br />
+to load all of the related classes at once, without having to reference them individually.<br />
 <br />
 The import statement will be created for you by selecting a library from 
 the "Import Library..." item in the Sketch menu.
