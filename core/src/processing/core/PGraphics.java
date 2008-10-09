@@ -109,80 +109,6 @@ import java.util.HashMap;
  */
 public class PGraphics extends PImage implements PConstants {
 
-  static public final int X = 0;  // model coords xyz (formerly MX/MY/MZ)
-  static public final int Y = 1;
-  static public final int Z = 2;
-
-  static public final int R = 3;  // actual rgb, after lighting
-  static public final int G = 4;  // fill stored here, transform in place
-  static public final int B = 5;  // TODO don't do that anymore (?)
-  static public final int A = 6;
-
-  static public final int U = 7; // texture
-  static public final int V = 8;
-
-  static public final int NX = 9; // normal
-  static public final int NY = 10;
-  static public final int NZ = 11;
-
-  static public final int EDGE = 12;
-
-
-  // stroke
-
-  /** stroke argb values */
-  static public final int SR = 13;
-  static public final int SG = 14;
-  static public final int SB = 15;
-  static public final int SA = 16;
-
-  /** stroke weight */
-  static public final int SW = 17;
-
-  
-  // transformations (2D and 3D) 
-  
-  static public final int TX = 18; // transformed xyzw
-  static public final int TY = 19;
-  static public final int TZ = 20;
-
-  static public final int VX = 21; // view space coords
-  static public final int VY = 22;
-  static public final int VZ = 23;
-  static public final int VW = 24;
-
-  
-  // material properties 
-  
-  // Ambient color (usually to be kept the same as diffuse)
-  // fill(_) sets both ambient and diffuse.
-  static public final int AR = 25;
-  static public final int AG = 26;
-  static public final int AB = 27;
-
-  // Diffuse is shared with fill.
-  static public final int DR = 3;  // TODO needs to not be shared, this is a material property
-  static public final int DG = 4;
-  static public final int DB = 5;
-  static public final int DA = 6;
-
-  // specular (by default kept white)
-  static public final int SPR = 28;
-  static public final int SPG = 29;
-  static public final int SPB = 30;
-
-  static public final int SHINE = 31;
-
-  // emissive (by default kept black)
-  static public final int ER = 32;
-  static public final int EG = 33;
-  static public final int EB = 34;
-
-  // has this vertex been lit yet
-  static public final int BEEN_LIT = 35;
-
-  static final int VERTEX_FIELD_COUNT = 36;
-
   // ........................................................
   
   // width and height are already inherited from PImage
@@ -1124,6 +1050,20 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  /** 
+   * Used by renderer subclasses or PShape to efficiently pass in already 
+   * formatted vertex information. 
+   * @param v vertex parameters, as a float array of length VERTEX_FIELD_COUNT
+   */
+  public void vertex(float[] v) {
+    vertexCheck();
+    curveVertexCount = 0;
+    float[] vertex = vertices[vertexCount];
+    System.arraycopy(v, 0, vertex, 0, VERTEX_FIELD_COUNT);
+    vertexCount++;
+  }
+  
+  
   public void vertex(float x, float y, float u, float v) {
     vertexTexture(u, v);
     vertex(x, y);

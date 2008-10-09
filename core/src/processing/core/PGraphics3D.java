@@ -1620,20 +1620,21 @@ public class PGraphics3D extends PGraphics {
     }
   }
 
-  private PVector calcLightingNorm = new PVector();
-  private PVector calcLightingWorldNorm = new PVector();
   
+  //private PVector calcLightingNorm = new PVector();
+  //private PVector calcLightingWorldNorm = new PVector();
   float[] worldNormal = new float[4];
   
   
   private void calcLightingContribution(int vIndex,
-                                          float[] contribution) {
+                                        float[] contribution) {
     calcLightingContribution(vIndex, contribution, false);
   }
 
+  
   private void calcLightingContribution(int vIndex,
-                                          float[] contribution,
-                                          boolean normalIsWorld) {
+                                        float[] contribution,
+                                        boolean normalIsWorld) {
     float[] v = vertices[vIndex];
 
     float sr = v[SPR];
