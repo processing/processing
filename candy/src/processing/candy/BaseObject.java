@@ -1,8 +1,19 @@
 package processing.candy;
 
 import java.awt.Paint;
+import java.awt.PaintContext;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.ColorModel;
+import java.awt.image.Raster;
+import java.awt.image.WritableRaster;
 import java.util.HashMap;
 
+import processing.candy.LinearGradientPaint.LinearGradientContext;
+import processing.candy.RadialGradientPaint.RadialGradientContext;
 import processing.core.*;
 import processing.xml.XMLElement;
 
@@ -1029,6 +1040,305 @@ public class BaseObject extends PShape {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+	abstract class Gradient extends BaseObject {
+	  AffineTransform transform;
+
+	  float[] offset;
+	  int[] color;
+	  int count;
+
+	  public Gradient(BaseObject parent, XMLElement properties) {
+	    super(parent, properties);
+
+	    XMLElement elements[] = properties.getChildren();
+	    offset = new float[elements.length];
+	    color = new int[elements.length];
+
+	    // <stop  offset="0" style="stop-color:#967348"/>
+	    for (int i = 0; i < elements.length; i++) {
+	      XMLElement elem = elements[i];
+	      String name = elem.getName();
+	      if (name.equals("stop")) {
+	        offset[count] = elem.getFloatAttribute("offset");
+	        String style = elem.getStringAttribute("style");
+	        HashMap<String, String> styles = parseStyleAttributes(style);
+
+	        String colorStr = styles.get("stop-color");
+	        if (colorStr == null) colorStr = "#000000";
+	        String opacityStr = styles.get("stop-opacity");
+	        if (opacityStr == null) opacityStr = "1";
+	        int tupacity = (int) (PApplet.parseFloat(opacityStr) * 255);
+	        color[count] = (tupacity << 24) |
+	        Integer.parseInt(colorStr.substring(1), 16);
+	        count++;
+	      }
+	    }
+	  }
+	}
+	
+	
+	class LinearGradient extends Gradient {
+	  float x1, y1, x2, y2;
+
+	  public LinearGradient(BaseObject parent, XMLElement properties) {
+	    super(parent, properties);
+
+	    this.x1 = properties.getFloatAttribute("x1");
+	    this.y1 = properties.getFloatAttribute("y1");
+	    this.x2 = properties.getFloatAttribute("x2");
+	    this.y2 = properties.getFloatAttribute("y2");
+
+	    String transformStr =
+	      properties.getStringAttribute("gradientTransform");
+	    
+	    if (transformStr != null) {
+	            float t[] = parseMatrix(transformStr).get(null);
+	            this.transform = new AffineTransform(t[0], t[3], t[1], t[4], t[2], t[5]);
+
+	      Point2D t1 = transform.transform(new Point2D.Float(x1, y1), null);
+	      Point2D t2 = transform.transform(new Point2D.Float(x2, y2), null);
+	      
+	      this.x1 = (float) t1.getX();
+	      this.y1 = (float) t1.getY();
+	      this.x2 = (float) t2.getX();
+	      this.y2 = (float) t2.getY();
+
+	    }
+	  }
+	}
+	
+	
+	class RadialGradient extends Gradient {
+	  float cx, cy, r;
+
+	  public RadialGradient(BaseObject parent, XMLElement properties) {
+	    super(parent, properties);
+
+	    this.cx = properties.getFloatAttribute("cx");
+	    this.cy = properties.getFloatAttribute("cy");
+	    this.r = properties.getFloatAttribute("r");
+
+	    String transformStr =
+	      properties.getStringAttribute("gradientTransform");
+	    
+	    if (transformStr != null) {
+	        float t[] = parseMatrix(transformStr).get(null);
+	      this.transform = new AffineTransform(t[0], t[3], t[1], t[4], t[2], t[5]);
+
+	      Point2D t1 = transform.transform(new Point2D.Float(cx, cy), null);
+	      Point2D t2 = transform.transform(new Point2D.Float(cx + r, cy), null);
+	      
+	      this.cx = (float) t1.getX();
+	      this.cy = (float) t1.getY();
+	      this.r = (float) (t2.getX() - t1.getX());
+	    }
+	  }
+	}
+	
+	
+	class LinearGradientPaint implements Paint {
+    float x1, y1, x2, y2;
+    float[] offset;
+    int[] color;
+    int count;
+    float opacity;
+
+    public LinearGradientPaint(float x1, float y1, float x2, float y2,
+                               float[] offset, int[] color, int count,
+                               float opacity) {
+      this.x1 = x1;
+      this.y1 = y1;
+      this.x2 = x2;
+      this.y2 = y2;
+      this.offset = offset;
+      this.color = color;
+      this.count = count;
+      this.opacity = opacity;
+    }
+
+    public PaintContext createContext(ColorModel cm,
+                                      Rectangle deviceBounds, Rectangle2D userBounds,
+                                      AffineTransform xform, RenderingHints hints) {
+      Point2D t1 = xform.transform(new Point2D.Float(x1, y1), null);
+      Point2D t2 = xform.transform(new Point2D.Float(x2, y2), null);
+      return new LinearGradientContext((float) t1.getX(), (float) t1.getY(),
+                                       (float) t2.getX(), (float) t2.getY());
+    }
+
+    public int getTransparency() {
+      return TRANSLUCENT;  // why not.. rather than checking each color
+    }
+
+    public class LinearGradientContext implements PaintContext {
+      int ACCURACY = 2;
+      float tx1, ty1, tx2, ty2;
+
+      public LinearGradientContext(float tx1, float ty1, float tx2, float ty2) {
+        this.tx1 = tx1;
+        this.ty1 = ty1;
+        this.tx2 = tx2;
+        this.ty2 = ty2;
+      }
+
+      public void dispose() { }
+
+      public ColorModel getColorModel() { return ColorModel.getRGBdefault(); }
+
+      public Raster getRaster(int x, int y, int w, int h) {
+        WritableRaster raster =
+          getColorModel().createCompatibleWritableRaster(w, h);
+
+        int[] data = new int[w * h * 4];
+
+        // make normalized version of base vector
+        float nx = tx2 - tx1;
+        float ny = ty2 - ty1;
+        float len = (float) Math.sqrt(nx*nx + ny*ny);
+        if (len != 0) {
+          nx /= len;
+          ny /= len;
+        }
+
+        int span = (int) PApplet.dist(tx1, ty1, tx2, ty2) * ACCURACY;
+        if (span <= 0) {
+          //System.err.println("span is too small");
+          // annoying edge case where the gradient isn't legit
+          int index = 0;
+          for (int j = 0; j < h; j++) {
+            for (int i = 0; i < w; i++) {
+              data[index++] = 0;
+              data[index++] = 0;
+              data[index++] = 0;
+              data[index++] = 255;
+            }
+          }
+
+        } else {
+          int[][] interp = new int[span][4];
+          int prev = 0;
+          for (int i = 1; i < count; i++) {
+            int c0 = color[i-1];
+            int c1 = color[i];
+            int last = (int) (offset[i] * (span-1));
+            //System.out.println("last is " + last);
+            for (int j = prev; j <= last; j++) {
+              float btwn = PApplet.norm(j, prev, last);
+              interp[j][0] = (int) PApplet.lerp((c0 >> 16) & 0xff, (c1 >> 16) & 0xff, btwn);
+              interp[j][1] = (int) PApplet.lerp((c0 >> 8) & 0xff, (c1 >> 8) & 0xff, btwn);
+              interp[j][2] = (int) PApplet.lerp(c0 & 0xff, c1 & 0xff, btwn);
+              interp[j][3] = (int) (PApplet.lerp((c0 >> 24) & 0xff, (c1 >> 24) & 0xff, btwn) * opacity);
+              //System.out.println(j + " " + interp[j][0] + " " + interp[j][1] + " " + interp[j][2]);
+            }
+            prev = last;
+          }
+
+          int index = 0;
+          for (int j = 0; j < h; j++) {
+            for (int i = 0; i < w; i++) {
+              //float distance = 0; //PApplet.dist(cx, cy, x + i, y + j);
+              //int which = PApplet.min((int) (distance * ACCURACY), interp.length-1);
+              float px = (x + i) - tx1;
+              float py = (y + j) - ty1;
+              // distance up the line is the dot product of the normalized
+              // vector of the gradient start/stop by the point being tested
+              int which = (int) ((px*nx + py*ny) * ACCURACY);
+              if (which < 0) which = 0;
+              if (which > interp.length-1) which = interp.length-1;
+              //if (which > 138) System.out.println("grabbing " + which);
+
+              data[index++] = interp[which][0];
+              data[index++] = interp[which][1];
+              data[index++] = interp[which][2];
+              data[index++] = interp[which][3];
+            }
+          }
+        }
+        raster.setPixels(0, 0, w, h, data);
+
+        return raster;
+      }
+    }
+	}
+	
+	
+	class RadialGradientPaint implements Paint {
+	  float cx, cy, radius;
+	  float[] offset;
+	  int[] color;
+	  int count;
+	  float opacity;
+
+	  public RadialGradientPaint(float cx, float cy, float radius,
+	                             float[] offset, int[] color, int count,
+	                             float opacity) {
+	    this.cx = cx;
+	    this.cy = cy;
+	    this.radius = radius;
+	    this.offset = offset;
+	    this.color = color;
+	    this.count = count;
+	    this.opacity = opacity;
+	  }
+
+	  public PaintContext createContext(ColorModel cm,
+	                                    Rectangle deviceBounds, Rectangle2D userBounds,
+	                                    AffineTransform xform, RenderingHints hints) {
+	    return new RadialGradientContext();
+	  }
+
+	  public int getTransparency() {
+	    return TRANSLUCENT;
+	  }
+
+	  public class RadialGradientContext implements PaintContext {
+	    int ACCURACY = 5;
+
+	    public void dispose() {}
+
+	    public ColorModel getColorModel() { return ColorModel.getRGBdefault(); }
+
+	    public Raster getRaster(int x, int y, int w, int h) {
+	      WritableRaster raster =
+	        getColorModel().createCompatibleWritableRaster(w, h);
+
+	      int span = (int) radius * ACCURACY;
+	      int[][] interp = new int[span][4];
+	      int prev = 0;
+	      for (int i = 1; i < count; i++) {
+	        int c0 = color[i-1];
+	        int c1 = color[i];
+	        int last = (int) (offset[i] * (span - 1));
+	        for (int j = prev; j <= last; j++) {
+	          float btwn = PApplet.norm(j, prev, last);
+	          interp[j][0] = (int) PApplet.lerp((c0 >> 16) & 0xff, (c1 >> 16) & 0xff, btwn);
+	          interp[j][1] = (int) PApplet.lerp((c0 >> 8) & 0xff, (c1 >> 8) & 0xff, btwn);
+	          interp[j][2] = (int) PApplet.lerp(c0 & 0xff, c1 & 0xff, btwn);
+	          interp[j][3] = (int) (PApplet.lerp((c0 >> 24) & 0xff, (c1 >> 24) & 0xff, btwn) * opacity);
+	        }
+	        prev = last;
+	      }
+
+	      int[] data = new int[w * h * 4];
+	      int index = 0;
+	      for (int j = 0; j < h; j++) {
+	        for (int i = 0; i < w; i++) {
+	          float distance = PApplet.dist(cx, cy, x + i, y + j);
+	          int which = PApplet.min((int) (distance * ACCURACY), interp.length-1);
+
+	          data[index++] = interp[which][0];
+	          data[index++] = interp[which][1];
+	          data[index++] = interp[which][2];
+	          data[index++] = interp[which][3];
+	        }
+	      }
+	      raster.setPixels(0, 0, w, h, data);
+
+	      return raster;
+	    }
+	  }
+	}
+
+	
 	protected Paint calcGradientPaint(Gradient gradient) {
 	  if (gradient instanceof LinearGradient) {
 	    LinearGradient grad = (LinearGradient) gradient;
