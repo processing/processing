@@ -29,7 +29,7 @@ void draw() {
 </example>
 
 <description>
-Controls the detail used to render a sphere by adjusting the number of vertices of the sphere mesh. The default resolution is 30, which creates a fairly detailed sphere definition with vertices every 360/30 = 12 degrees. If you're going to render a great number of spheres per frame, it is advised to reduce the level of detail using this function. The setting stays active until <b>sphereDetail()</b> is called again with a new parameter and so should <i>not</i> be called prior to every <b>sphere()</b> statement, unless you wish to render spheres with different settings, e.g. using less detail for smaller spheres or ones further away from the camera. To control the detail on the horizontal and vertical resolution independently, use the version of the functions with two paramters.
+Controls the detail used to render a sphere by adjusting the number of vertices of the sphere mesh. The default resolution is 30, which creates a fairly detailed sphere definition with vertices every 360/30 = 12 degrees. If you're going to render a great number of spheres per frame, it is advised to reduce the level of detail using this function. The setting stays active until <b>sphereDetail()</b> is called again with a new parameter and so should <i>not</i> be called prior to every <b>sphere()</b> statement, unless you wish to render spheres with different settings, e.g. using less detail for smaller spheres or ones further away from the camera. To control the detail of the horizontal and vertical resolution independently, use the version of the functions with two parameters.
 </description>
 
 <syntax>
@@ -49,7 +49,7 @@ sphereDetail(<c>ures</c>, <c>vres</c>);
 
 <parameter>
 <label>vres</label>
-<description>int: number of segments used longitudinally from top to bottom</description>
+<description>int: number of segments used latitudinally from top to bottom</description>
 </parameter>
 
 <returns>None</returns>
