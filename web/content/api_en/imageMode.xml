@@ -21,7 +21,7 @@ image(b, 35, 35, 50, 50);
 </example>
 
 <description>
-Modifies the location from which images draw. The default mode is <b>imageMode(CORNER)</b>, which specifies the location to be the upper left corner and uses the fourth and fifth parameters of <b>image()</b> to set the image's width and height. The syntax <b>imageMode(CORNERS)</b> uses the second and third parameters of <b>image()</b> to set the location of one corner of the image and uses the fourth and fifth parameters to set the opposite corner. Using <b>imageMode(CENTER)</b> will draw images centered at the given x and y position.
+Modifies the location from which images draw. The default mode is <b>imageMode(CORNER)</b>, which specifies the location to be the upper left corner and uses the fourth and fifth parameters of <b>image()</b> to set the image's width and height. The syntax <b>imageMode(CORNERS)</b> uses the second and third parameters of <b>image()</b> to set the location of one corner of the image and uses the fourth and fifth parameters to set the opposite corner. Use <b>imageMode(CENTER)</b> to draw images centered at the given x and y position.
 <br/> <br/>
 The parameter to <b>imageMode()</b> must be written in ALL CAPS because Processing is a case sensitive language.
 </description>
@@ -32,7 +32,7 @@ imageMode(MODE)
 
 <parameter>
 <label>MODE</label>
-<description>Either CORNER or CORNERS</description>
+<description>Either CORNER, CORNERS, or CENTER</description>
 </parameter>
 
 <returns>None</returns>
