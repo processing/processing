@@ -37,6 +37,81 @@ import java.awt.event.KeyEvent;
  */
 public interface PConstants {
 
+  static public final int X = 0;  // model coords xyz (formerly MX/MY/MZ)
+  static public final int Y = 1;
+  static public final int Z = 2;
+
+  static public final int R = 3;  // actual rgb, after lighting
+  static public final int G = 4;  // fill stored here, transform in place
+  static public final int B = 5;  // TODO don't do that anymore (?)
+  static public final int A = 6;
+
+  static public final int U = 7; // texture
+  static public final int V = 8;
+
+  static public final int NX = 9; // normal
+  static public final int NY = 10;
+  static public final int NZ = 11;
+
+  static public final int EDGE = 12;
+
+
+  // stroke
+
+  /** stroke argb values */
+  static public final int SR = 13;
+  static public final int SG = 14;
+  static public final int SB = 15;
+  static public final int SA = 16;
+
+  /** stroke weight */
+  static public final int SW = 17;
+
+  
+  // transformations (2D and 3D) 
+  
+  static public final int TX = 18; // transformed xyzw
+  static public final int TY = 19;
+  static public final int TZ = 20;
+
+  static public final int VX = 21; // view space coords
+  static public final int VY = 22;
+  static public final int VZ = 23;
+  static public final int VW = 24;
+
+  
+  // material properties 
+  
+  // Ambient color (usually to be kept the same as diffuse)
+  // fill(_) sets both ambient and diffuse.
+  static public final int AR = 25;
+  static public final int AG = 26;
+  static public final int AB = 27;
+
+  // Diffuse is shared with fill.
+  static public final int DR = 3;  // TODO needs to not be shared, this is a material property
+  static public final int DG = 4;
+  static public final int DB = 5;
+  static public final int DA = 6;
+
+  // specular (by default kept white)
+  static public final int SPR = 28;
+  static public final int SPG = 29;
+  static public final int SPB = 30;
+
+  static public final int SHINE = 31;
+
+  // emissive (by default kept black)
+  static public final int ER = 32;
+  static public final int EG = 33;
+  static public final int EB = 34;
+
+  // has this vertex been lit yet
+  static public final int BEEN_LIT = 35;
+
+  static public final int VERTEX_FIELD_COUNT = 36;
+
+  
   // renderers known to processing.core
 
   static final String P2D    = "processing.core.PGraphics2D";
@@ -177,35 +252,41 @@ public interface PConstants {
   static final int PERSPECTIVE  = 3; // perspective matrix
 
 
-  // rendering settings
-
-  static final float PIXEL_CENTER = 0.5f;  // for polygon aa
-
-
   // shapes
 
   // the low four bits set the variety,
   // higher bits set the specific shape type
 
-  static final int GROUP           = (1 << 2);
+  //static final int GROUP           = (1 << 2);
+
+  static final int POINT           = 2;  // shared with light (!)
+  static final int POINTS          = 2;
+
+  static final int LINE            = 4;
+  static final int LINES           = 4;
+
+  static final int TRIANGLE        = 8;
+  static final int TRIANGLES       = 9;
+  static final int TRIANGLE_STRIP  = 10;
+  static final int TRIANGLE_FAN    = 11;
+
+  static final int QUAD            = 16;
+  static final int QUADS           = 16;
+  static final int QUAD_STRIP      = 17;
+
+  static final int POLYGON         = 20;
+  static final int PATH            = 21;
   
-  static final int POINTS          = (1 << 4);
-
-  static final int LINES           = (1 << 5);
-  //static final int LINE_STRIP      = (1 << 5) | 1;
-  //static final int LINE_LOOP       = (1 << 5) | 2;
-
-  static final int TRIANGLES       = (1 << 6) | 0;
-  static final int TRIANGLE_STRIP  = (1 << 6) | 1;
-  static final int TRIANGLE_FAN    = (1 << 6) | 2;
-
-  static final int QUADS           = (1 << 7) | 0;
-  static final int QUAD_STRIP      = (1 << 7) | 1;
-
-  static final int POLYGON         = (1 << 8) | 0;
-  //static final int CONCAVE_POLYGON = (1 << 8) | 1;
-  //static final int CONVEX_POLYGON  = (1 << 8) | 2;
-
+  static final int RECT            = 30;
+  static final int ELLIPSE         = 31;
+  static final int ARC             = 32;
+  
+  static final int SPHERE          = 40;
+  static final int BOX             = 41;
+  
+  
+  // shape closing modes 
+  
   static final int OPEN = 1;
   static final int CLOSE = 2;
 
@@ -242,7 +323,11 @@ public interface PConstants {
 
   // uv texture orientation modes
 
-  static final int NORMALIZED = 1; //_SPACE  = 0;  // 0..1
+  /** texture coordinates in 0..1 range */
+  static final int NORMAL     = 1;
+  /** @deprecated, use NORMAL instead */
+  static final int NORMALIZED = 1;
+  /** texture coordinates based on image width/height */
   static final int IMAGE      = 2;
 
 
@@ -286,7 +371,7 @@ public interface PConstants {
 
   static final int AMBIENT = 0;
   static final int DIRECTIONAL  = 1;
-  static final int POINT  = 2;
+  //static final int POINT  = 2;  // shared with shape feature
   static final int SPOT = 3;
 
 

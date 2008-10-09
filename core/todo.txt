@@ -115,6 +115,7 @@ smooth is now part of PGraphics, moved out of PImage
 imageMode has been removed from PImage, too awkward
 raw must handle points, lines, triangles, and textures
 light position and normal are now PVector object
+change NORMALIZED to NORMAL for textureMode()
 
 
 _ may need to add to PApplet.main() for OS X 10.5
