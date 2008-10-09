@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <root>
-<name>*= (divide assign)</name>
+<name>/= (divide assign)</name>
 
 <category>Math</category>
 
