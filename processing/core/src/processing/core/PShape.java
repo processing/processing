@@ -46,11 +46,17 @@ abstract public class PShape implements PConstants {
   /** Collections of vertices created with beginShape(). */
   static public final int GEOMETRY = 3;
   /** The shape type, one of GROUP, PRIMITIVE, PATH, or GEOMETRY. */
+  protected int family;
+  
+  /** ELLIPSE, LINE, QUAD; TRIANGLE_FAN, QUAD_STRIP; etc. */
   protected int kind;
   
   protected PMatrix matrix;
+  
+  /** Texture or image data associated with this shape. */
+  protected PImage image;
 
-  // used for ELLIPSE, RECT, TRIANGLE
+  // boundary box of this shape
   protected float x;
   protected float y;
   protected float width;
@@ -68,6 +74,7 @@ abstract public class PShape implements PConstants {
   protected boolean fill;
   protected int fillColor;
   
+  /** Temporary toggle for whether styles should be honored. */
   protected boolean style = true;
 
   //public boolean hasTransform;
@@ -76,13 +83,16 @@ abstract public class PShape implements PConstants {
   static final int VERTEX = 0;
   static final int BEZIER_VERTEX = 1;
   static final int CURVE_VERTEX = 2;
-  int[] opcode;
+  int[] opcodes;
   int opcodeCount;
+  
+  protected int vertexCount;
+  protected float[][] vertices;
   
   // need to reorder vertex fields to make a VERTEX_SHORT_COUNT
   // that puts all the non-rendering fields into later indices
-  int dataCount;
-  float[][] data;  // second param is the VERTEX_FIELD_COUNT
+  //int dataCount;
+  float[] params;  // second param is the VERTEX_FIELD_COUNT
   // should this be called vertices (consistent with PGraphics internals)
   // or does that hurt flexibility?
 
@@ -123,12 +133,12 @@ abstract public class PShape implements PConstants {
 
 
   public PShape() {
-    this.kind = GROUP;
+    this.family = GROUP;
   }
   
   
-  public PShape(int kind) {
-    this.kind = kind;
+  public PShape(int family) {
+    this.family = family;
   }
 
 
@@ -151,21 +161,30 @@ abstract public class PShape implements PConstants {
     this.visible = visible;
   }
 
-  
+
   /**
-   * Overrides SVG-set styles and uses PGraphics styles and colors.
-   * Identical to ignoreStyles(true).
+   * Overrides this shape's style information and uses PGraphics styles and 
+   * colors. Identical to ignoreStyles(true). Also disables styles for all 
+   * child shapes.
    */
   public void disableStyle() {
     style = false;
+
+    for (int i = 0; i < childCount; i++) {
+      children[i].disableStyle();
+    }
   }
 
 
   /**
-   * Enabless style information (fill and stroke) set in the shape.
+   * Re-enables style information (fill and stroke) set in the shape.
    */
   public void enableStyle() {
     style = true;
+    
+    for (int i = 0; i < childCount; i++) {
+      children[i].enableStyle();
+    }
   }
 
   
@@ -196,6 +215,7 @@ abstract public class PShape implements PConstants {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
   
+  /*
   boolean strokeSaved;
   int strokeColorSaved;
   float strokeWeightSaved;
@@ -208,6 +228,7 @@ abstract public class PShape implements PConstants {
   int rectModeSaved;
   int ellipseModeSaved;
   int shapeModeSaved;
+  */
   
 
   protected void pre(PGraphics g) {
@@ -229,6 +250,7 @@ abstract public class PShape implements PConstants {
       g.applyMatrix(matrix);
     }
 
+    /*
     strokeSaved = g.stroke;
     strokeColorSaved = g.strokeColor;
     strokeWeightSaved = g.strokeWeight;
@@ -241,7 +263,8 @@ abstract public class PShape implements PConstants {
     rectModeSaved = g.rectMode;
     ellipseModeSaved = g.ellipseMode;
     shapeModeSaved = g.shapeMode;
-
+    */
+    g.pushStyle();
     if (style) {
       styles(g);
     }
@@ -274,7 +297,8 @@ abstract public class PShape implements PConstants {
 //    for (int i = 0; i < childCount; i++) {
 //      children[i].draw(g);
 //    }
-    
+
+    /*
     // TODO this is not sufficient, since not saving fillR et al.
     g.stroke = strokeSaved;
     g.strokeColor = strokeColorSaved;
@@ -286,6 +310,8 @@ abstract public class PShape implements PConstants {
     g.fillColor = fillColorSaved;
 
     g.ellipseMode = ellipseModeSaved;
+    */
+    g.popStyle();
 
     if (matrix != null) {
       g.popMatrix();
@@ -312,13 +338,151 @@ abstract public class PShape implements PConstants {
    * Draws the SVG document.
    */
   public void drawImpl(PGraphics g) {
-    if (kind == GROUP) {
-      for (int i = 0; i < childCount; i++) {
-        children[i].draw(g);
-      }
+    if (family == GROUP) {
+      drawGroup(g);
+    } else if (family == PRIMITIVE) {
+      drawPrimitive(g);
+    } else if (family == GEOMETRY) {
+      drawGeometry(g);
+    } else if (family == PATH) {
+      drawPath(g);
     }
   }
   
+  
+  protected void drawGroup(PGraphics g) {
+    for (int i = 0; i < childCount; i++) {
+      children[i].draw(g);
+    }
+  }
+  
+
+  protected void drawPrimitive(PGraphics g) {
+    if (kind == POINT) {
+      g.point(params[0], params[1]);
+      
+    } else if (kind == LINE) {
+      if (params.length == 4) {  // 2D
+        g.line(params[0], params[1], 
+               params[2], params[3]);
+      } else {  // 3D
+        g.line(params[0], params[1], params[2], 
+               params[3], params[4], params[5]);
+      }
+
+    } else if (kind == TRIANGLE) {
+      g.triangle(params[0], params[1], 
+                 params[2], params[3],
+                 params[4], params[5]);
+      
+    } else if (kind == QUAD) {
+      g.quad(params[0], params[1], 
+             params[2], params[3], 
+             params[4], params[5],
+             params[6], params[7]);
+
+    } else if (kind == RECT) {
+      if (image != null) {
+        g.imageMode(CORNER);
+        g.image(image, params[0], params[1], params[2], params[3]);
+      } else {
+        g.rectMode(CORNER);
+        g.rect(params[0], params[1], params[2], params[3]);
+      }
+
+    } else if (kind == ELLIPSE) {
+      g.ellipseMode(CORNER);
+      g.ellipse(params[0], params[1], params[2], params[3]);
+    
+    } else if (kind == ARC) {
+      g.ellipseMode(CORNER);
+      g.arc(params[0], params[1], params[2], params[3], params[4], params[5]);
+    
+    } else if (kind == BOX) {
+      if (params.length == 1) {
+        g.box(params[0]);
+      } else {
+        g.box(params[0], params[1], params[2]);
+      }
+      
+    } else if (kind == SPHERE) {
+      g.sphere(params[0]);
+    }
+  }
+
+
+  protected void drawGeometry(PGraphics g) {
+    g.beginShape(kind);
+    if (style) {
+      for (int i = 0; i < vertexCount; i++) {
+        g.vertex(vertices[i]);
+      }
+    } else {
+      for (int i = 0; i < vertexCount; i++) {
+        float[] vert = vertices[i];
+        if (vert[PGraphics.Z] == 0) {
+          g.vertex(vert[X], vert[Y]);
+        } else {
+          g.vertex(vert[X], vert[Y], vert[Z]);
+        }
+      }
+    }
+    g.endShape();
+  }
+
+
+  protected void drawPath(PGraphics g) {
+    g.beginShape();
+    for (int j = 0; j < childCount; j++) {
+      if (j > 0) g.breakShape();
+      int count = children[j].vertexCount;
+      float[][] vert = children[j].vertices;
+      int[] code = children[j].opcodes;
+
+      for (int i = 0; i < count; i++) {
+        if (style) {
+          if (children[j].fill) {
+            g.fill(vert[i][R], vert[i][G], vert[i][B]);
+          } else {
+            g.noFill();
+          }
+          if (children[j].stroke) {
+            g.stroke(vert[i][R], vert[i][G], vert[i][B]);
+          } else {
+            g.noStroke();
+          }
+        }
+        g.edge(vert[i][EDGE] == 1);
+        
+        if (code[i] == VERTEX) {
+          g.vertex(vert[i]);
+          
+        } else if (code[i] == BEZIER_VERTEX) {
+          float z0 = vert[i+0][Z];
+          float z1 = vert[i+1][Z];
+          float z2 = vert[i+2][Z];
+          if (z0 == 0 && z1 == 0 && z2 == 0) {
+            g.bezierVertex(vert[i+0][X], vert[i+0][Y], z0,
+                           vert[i+1][X], vert[i+1][Y], z1,
+                           vert[i+2][X], vert[i+2][Y], z2);
+          } else {
+            g.bezierVertex(vert[i+0][X], vert[i+0][Y],
+                           vert[i+1][X], vert[i+1][Y],
+                           vert[i+2][X], vert[i+2][Y]);
+          }
+        } else if (code[i] == CURVE_VERTEX) {
+          float z = vert[i][Z];
+          if (z == 0) {
+            g.curveVertex(vert[i][X], vert[i][Y]);
+          } else {
+            g.curveVertex(vert[i][X], vert[i][Y], z);
+          }
+        }
+      }
+    }
+    g.endShape();
+  }
+
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 

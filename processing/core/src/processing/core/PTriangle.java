@@ -31,6 +31,8 @@ package processing.core;
  */
 public class PTriangle implements PConstants
 {
+  static final float PIXEL_CENTER = 0.5f;  // for polygon aa
+
   static final int R_GOURAUD = 0x1;
   static final int R_TEXTURE8 = 0x2;
   static final int R_TEXTURE24 = 0x4;
