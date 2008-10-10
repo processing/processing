@@ -20,6 +20,8 @@ image(b, 0, 0);
 <example>
 <image>loadImage_.jpg</image>
 <code>
+// Loading an image when using setup() and draw()
+
 PImage b;
 
 void setup() {
@@ -54,11 +56,11 @@ void draw() {
 <description>
 Loads an image into a variable of type <b>PImage</b>. Four types of images ( <b>.gif</b>, <b>.jpg</b>, <b>.tga</b>, <b>.png</b>) images may be loaded. To load correctly, images must be located in the data directory of the current sketch. In most cases, load all images in <b>setup()</b> to preload them at the start of the program. Loading images inside <b>draw()</b> will reduce the speed of a program. 
 <br/> <br/>
-The filename parameter can also be a URL to a file found online. For security reasons, a Processing sketch found online can only download files from the same server from which it came. Getting around this restriction requires a <A HREF="http://processing.org/hacks/doku.php?id=hacks:signapplet">signed applet</A>.
+The <b>filename</b> parameter can also be a URL to a file found online. For security reasons, a Processing sketch found online can only download files from the same server from which it came. Getting around this restriction requires a <A HREF="http://processing.org/hacks/doku.php?id=hacks:signapplet">signed applet</A>.
 <br/> <br/>
-The extension of the filename parameter is used to determine the image type. In cases where the image filename does not end with a proper extension, specify the extension as the second parameter to loadImage(), as shown in the third example on this page.
+The <b>extension</b> parameter is used to determine the image type in cases where the image filename does not end with a proper extension. Specify the extension as the second parameter to <b>loadImage()</b>, as shown in the third example on this page.
 <br/> <br/>
-If an image is not loaded successfully, the <b>null</b> value is returned and an error message will be printed to the console. The error message does not halt the program, however the null value may cause a NullPointerException if your code does not check whether the value returned from loadImage() is null.
+If an image is not loaded successfully, the <b>null</b> value is returned and an error message will be printed to the console. The error message does not halt the program, however the null value may cause a NullPointerException if your code does not check whether the value returned from <b>loadImage()</b> is null.
 <br/> <br/>
 Depending on the type of error, a <b>PImage</b> object may still be returned, but the width and height of the image will be set to -1. This happens if bad image data is returned or cannot be decoded properly. Sometimes this happens with image URLs that produce a 403 error or that redirect to a password prompt, because <b>loadImage()</b> will attempt to interpret the HTML as image data.
 </description>
@@ -70,7 +72,12 @@ loadImage(<c>filename</c>, <c>extension</c>)
 
 <parameter>
 <label>filename</label>
-<description>string: name of file to load, can be .gif, .jpg, .tga, or a handful of other image types depending on your platform.</description>
+<description>String: name of file to load, can be .gif, .jpg, .tga, or a handful of other image types depending on your platform.</description>
+</parameter>
+
+<parameter>
+<label>extension</label>
+<description>String: the type of image to load, for example "png", "gif", "jpg"</description>
 </parameter>
 
 <returns>PImage or null</returns>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>requestImage()</name>
+
+<category>Image</category>
+
+<subcategory>Loading &amp; Displaying</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>image_.jpg</image>
+<code>
+PImage bigImage;
+ 
+void setup() {
+  bigImage = requestImage("something.jpg");
+}
+ 
+void draw() {
+  if (bigImage.width == 0) {
+    // Image is not yet loaded
+  } else if (bigImage.width == -1) {
+    // This means an error occurred during image loading
+  } else {
+    // Image is ready to go, draw it
+    image(bigImage, 0, 0);
+  }
+}
+</code>
+</example>
+
+
+<description>
+This function load images on a separate thread so that your sketch does not freeze while images load during <b>setup()</b>. While the image is loading, its width and height will be 0. If an error occurs while loading the image, its width and height will be set to -1. You'll know when the image has loaded properly because its width and height will be greater than 0. Asynchronous image loading (particularly when downloading from a server) can drastically improve performance.<br />
+<br/>
+The <b>extension</b> parameter is used to determine the image type in cases where the image filename does not end with a proper extension. Specify the extension as the second parameter to <b>requestImage()</b>.
+</description>
+
+<syntax>
+requestImage(<c>filename</c>)
+requestImage(<c>filename</c>, <c>extension</c>)
+</syntax>
+
+<parameter>
+<label>filename</label>
+<description>String: name of file to load, can be .gif, .jpg, .tga, or a handful of other image types depending on your platform</description>
+</parameter>
+
+<parameter>
+<label>extension</label>
+<description>String: the type of image to load, for example "png", "gif", "jpg"</description>
+</parameter>
+
+<returns>PImage or null</returns>
+
+<related>
+loadImage() 
+PImage  
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+<level>Extended</level>
+
+
+</root>
