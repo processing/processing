@@ -24,7 +24,7 @@ if (loadPath == null) {
 
 
 <description>
-Opens a platform-specific file chooser dialog to select a file for input. This function returns full path to the selected file as a <b>String</b>, or <b>null</b> if no selection.
+Opens a platform-specific file chooser dialog to select a file for input. This function returns the full path to the selected file as a <b>String</b>, or <b>null</b> if no selection.
 </description>
 
 <syntax>
