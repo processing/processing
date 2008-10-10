@@ -20,9 +20,9 @@ image(b, 0, 0);
 <description>
 Datatype for storing images. Processing can display <b>.gif</b>, <b>.jpg</b>, <b>.tga</b>, and <b>.png</b> images. Images may be displayed in 2D and 3D space. Before an image is used, it must be loaded with the <b>loadImage()</b> function. The <b>PImage</b> object contains fields for the <b>width</b> and <b>height</b> of the image, as well as an array called <b>pixels[]</b> which contains the values for every pixel in the image. A group of methods, described below, allow easy access to the image's pixels and alpha channel and simplify the process of compositing. 
 <br/> <br/>
-Before usign the <b>pixels[]</b> array, be sure to use the <b>loadPixels()</b> method on the image to make sure that the pixel data is properly loaded.
+Before using the <b>pixels[]</b> array, be sure to use the <b>loadPixels()</b> method on the image to make sure that the pixel data is properly loaded.
 <br/> <br/>
-To create a new image, use the <b>createImage()</b> function (do not use <tt>new PImage()</tt>). 
+To create a new image, use the <b>createImage()</b> function (do not use <b>new PImage()</b>). 
 </description>
 
 <syntax>
