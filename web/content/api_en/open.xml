@@ -67,7 +67,7 @@ open(<c>args</c>)
 </syntax>
 
 <parameter>
-<label>filename</label>
+<label>file</label>
 <description>String: name of the file</description>
 </parameter>
 

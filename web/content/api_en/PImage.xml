@@ -95,11 +95,6 @@ PImage(<c>img</c>)
 </cparameter>
 
 <cparameter>
-<clabel>pixels[]</clabel>
-<cdescription>int[] or color[]: array of integers or colors, must be the same dimension as width*height</cdescription>
-</cparameter>
-
-<cparameter>
 <clabel>format</clabel>
 <cdescription>Either RGB, ARGB, ALPHA (grayscale alpha channel)</cdescription>
 </cparameter>

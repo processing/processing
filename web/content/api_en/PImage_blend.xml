@@ -54,7 +54,43 @@ image(img2, 0, 0);
 </example>
 
 <description>
-Blends a region of pixels into the image specified by the <b>img</b> parameter. These copies utilize full alpha channel support and a choice of the following modes to blend the colors of source pixels (A) with the ones of pixels in the destination image (B):<br /><br />BLEND - linear interpolation of colors: C = A*factor + B<br /><br />ADD - additive blending with white clip: C = min(A*factor + B, 255)<br /><br />SUBTRACT - subtractive blending with black clip: C = max(B - A*factor, 0)<br /><br />DARKEST - only the darkest color succeeds: C = min(A*factor, B)<br /><br />LIGHTEST - only the lightest color succeeds: C = max(A*factor, B)<br /><br />All modes use the alpha information (highest byte) of source image pixels as the blending factor. If the source and destination regions are different sizes, the image will be automatically resized to match the destination size. If the <b>srcImg</b> parameter is not used, the display window is used as the source image.<br /><br />The <b>imageMode()</b> function changes the way the parameters work. For example, a call to <b>imageMode(CORNERS)</b> will change the width and height related parameters to define the x and y values of the opposite corner of the image.
+Blends a region of pixels into the image specified by the <b>img</b> parameter. These copies utilize full alpha channel support and a choice of the following modes to blend the colors of source pixels (A) with the ones of pixels in the destination image (B):<br />
+<br />
+BLEND - linear interpolation of colours: C = A*factor + B<br />
+<br />
+ADD - additive blending with white clip: C = min(A*factor + B, 255)<br />
+<br />
+SUBTRACT - subtractive blending with black clip: C = max(B - A*factor, 0)<br />
+<br />
+DARKEST - only the darkest colour succeeds: C = min(A*factor, B)<br />
+<br />
+LIGHTEST - only the lightest colour succeeds: C = max(A*factor, B)<br />
+<br />
+DIFFERENCE - subtract colors from underlying image.<br />
+<br />
+EXCLUSION - similar to DIFFERENCE, but less extreme.<br />
+<br />
+MULTIPLY - Multiply the colors, result will always be darker.<br />
+<br />
+SCREEN - Opposite multiply, uses inverse values of the colors.<br />
+<br />
+OVERLAY - A mix of MULTIPLY and SCREEN. Multiplies dark values,
+and screens light values.<br />
+<br />
+HARD_LIGHT - SCREEN when greater than 50% gray, MULTIPLY when lower.<br />
+<br />
+SOFT_LIGHT - Mix of DARKEST and LIGHTEST. 
+Works like OVERLAY, but not as harsh.<br />
+<br />
+DODGE - Lightens light tones and increases contrast, ignores darks.
+Called "Color Dodge" in Illustrator and Photoshop.<br />
+<br />
+BURN - Darker areas are applied, increasing contrast, ignores lights.
+Called "Color Burn" in Illustrator and Photoshop.<br />
+<br />
+All modes use the alpha information (highest byte) of source image pixels as the blending factor. If the source and destination regions are different sizes, the image will be automatically resized to match the destination size. If the <b>srcImg</b> parameter is not used, the display window is used as the source image.<br />
+<br />
+As of release 0149, this function ignores <b>imageMode()</b>.
 </description>
 
 <syntax>
@@ -114,7 +150,7 @@ Blends a region of pixels into the image specified by the <b>img</b> parameter. 
 
 <parameter>
 <label>MODE</label>
-<description>Either BLEND, ADD, SUBTRACT, LIGHTEST, DARKEST</description>
+<description>Either BLEND, ADD, SUBTRACT, LIGHTEST, DARKEST, DIFFERENCE, EXCLUSION, MULTIPLY, SCREEN, OVERLAY, OVERLAY, SOFT_LIGHT, DODGE, BURN</description>
 </parameter>
 
 

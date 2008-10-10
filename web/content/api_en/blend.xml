@@ -82,7 +82,7 @@ Called "Color Burn" in Illustrator and Photoshop.<br />
 <br />
 All modes use the alpha information (highest byte) of source image pixels as the blending factor. If the source and destination regions are different sizes, the image will be automatically resized to match the destination size. If the <b>srcImg</b> parameter is not used, the display window is used as the source image.<br />
 <br />
-As of release 0149, this function ignores imageMode(), only x/y/width/height are recognized as parameters.
+As of release 0149, this function ignores <b>imageMode()</b>.
 </description>
 
 <syntax>
@@ -137,7 +137,7 @@ blend(<c>srcImg</c>, <c>x</c>, <c>y</c>, <c>width</c>, <c>height</c>, <c>dx</c>,
 
 <parameter>
 <label>MODE</label>
-<description>Either BLEND, ADD, SUBTRACT, LIGHTEST, DARKEST</description>
+<description>Either BLEND, ADD, SUBTRACT, LIGHTEST, DARKEST, DIFFERENCE, EXCLUSION, MULTIPLY, SCREEN, OVERLAY, OVERLAY, SOFT_LIGHT, DODGE, BURN</description>
 </parameter>
 
 
