@@ -16,7 +16,7 @@ if (folderPath == null) {
   // If a folder was not selected
   println("No folder was selected...");
 } else {
-  // If a folder was selected, print path to file
+  // If a folder was selected, print path to folder
   println(folderPath);
 }
 </code>
