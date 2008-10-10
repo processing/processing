@@ -42,9 +42,9 @@ static class MiniClass {
 </example>
 
 <description>
-Keyword used to define a variable as a "class variable" and a method as a "class method." When a variable is declared with the <b>static</b> keyword, all instances of that class contain the variable. When a class is defined with the <b>static</b> keyword, it's methods can be used without making an instance of the class. The above examples demonstrate each of these uses.<br />
+Keyword used to define a variable as a "class variable" and a method as a "class method." When a variable is declared with the <b>static</b> keyword, all instances of that class share the same variable. When a class is defined with the <b>static</b> keyword, it's methods can be used without making an instance of the class. The above examples demonstrate each of these uses.<br />
 <br />
-This keyword is an essential part of Java programming and is not usually used with Processing. Consult a Java language reference for more information, such as <a href="http://java.sun.com/docs/books/tutorial/java/javaOO/classvars.html">this tutorial</a>. 
+This keyword is an essential part of Java programming and is not usually used with Processing. Consult a Java language reference or tutorial for more information, such as <a href="http://java.sun.com/docs/books/tutorial/java/javaOO/classvars.html">this one</a>. 
 </description>
 
 <syntax>
