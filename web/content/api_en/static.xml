@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>static</name>
+
+<category>Structure</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+void setup() {
+  MiniClass mc1 = new MiniClass();
+  MiniClass mc2 = new MiniClass();
+  println( mc1.y );   // Prints "10"
+  MiniClass.y += 10;  // The "y" variable is shared by mc1 and mc2
+  println( mc1.y );   // Prints "20"
+  println( mc2.y );   // Prints "20"
+}
+
+static class MiniClass {
+  static int y = 10; // Class variable
+}
+</code>
+</example>
+
+<example>
+<image></image>
+<code>
+void setup() {
+  println(MiniClass.add(3, 4));
+}
+
+static class MiniClass {
+  static int add(int x, int y) {
+    return(x + y);
+  } 
+}
+</code>
+</example>
+
+<description>
+Keyword used to define a variable as a "class variable" and a method as a "class method." When a variable is declared with the <b>static</b> keyword, all instances of that class contain the variable. When a class is defined with the <b>static</b> keyword, it's methods can be used without making an instance of the class. The above examples demonstrate each of these uses.<br />
+<br />
+This keyword is an essential part of Java programming and is not usually used with Processing. Consult a Java language reference for more information, such as <a href="http://java.sun.com/docs/books/tutorial/java/javaOO/classvars.html">this tutorial</a>. 
+</description>
+
+<syntax>
+static
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns></returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Keyword</type>
+
+<level>Extended</level>
+
+<partof>PDE</partof>
+
+
+</root>
