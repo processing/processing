@@ -34,9 +34,9 @@ rect(30, 20, 55, 55);
 <description>
 Reads the color of any pixel or grabs a section of an image. If no parameters are specified, the entire image is returned. Get the value of one pixel by specifying an x,y coordinate. Get a section of the display window by specifying an additional <b>width</b> and <b>height</b> parameter. If the pixel requested is outside of the image window, black is returned. The numbers returned are scaled according to the current color ranges, but only RGB values are returned by this function. For example, even though you may have drawn a shape with <b>colorMode(HSB)</b>, the numbers returned will be in RGB.
 <br /><br />
-The <b>imageMode()</b> function changes the way the parameters work. For example, a call to <b>imageMode(CORNERS)</b> will change the width and height parameters to define the x and y values of the opposite corner of the image. Be careful when using <b>imageMode(CENTER)</b> with <b>get()</b>, since it may produce unexpected (though correct) results when used with get().
+Getting the color of a single pixel with <b>get(x, y)</b> is easy, but not as fast as grabbing the data directly from <b>pixels[]</b>. The equivalent statement to "get(x, y)" using <b>pixels[]</b> is "pixels[y*width+x]". Processing requires calling <b>loadPixels()</b> to load the display window data into the <b>pixels[]</b> array before getting the values.
 <br /><br />
-Getting the color of a single pixel with <b>get(x, y)</b> is easy, but not as fast as grabbing the data directly from <b>pixels[]</b>. The equivalent statement to "get(x, y)" using <b>pixels[]</b> is "pixels[y*width+x]". The (BETA) version of Processing requires calling <b>loadPixels()</b> to load the display window data into the <b>pixels[]</b> array before getting the values.
+As of release 0149, this function ignores <b>imageMode()</b>.
 </description>
 
 <syntax>

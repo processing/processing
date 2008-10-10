@@ -22,7 +22,9 @@ image(img, 0, 0);
 </example>
 
 <description>
-Changes the color of any pixel or writes an image directly into the image. The <b>x</b> and <b>y</b> parameter specify the pixel or the upper-left corner of the image. The <b>color</b> parameter specifies the color value.<br /><br />Setting the color of a single pixel with <b>set(x, y)</b> is easy, but not as fast as putting the data directly into <b>pixels[]</b>. The equivalent statement to "set(x, y, #000000)" using <b>pixels[]</b> is "pixels[y*width+x] = #000000". The (BETA) version of Processing requires calling <b>loadPixels()</b> to load the display window data into the <b>pixels[]</b> array before getting the values and calling <b>updatePixels()</b> to update the window.
+Changes the color of any pixel or writes an image directly into the image. The <b>x</b> and <b>y</b> parameter specify the pixel or the upper-left corner of the image. The <b>color</b> parameter specifies the color value.<br /><br />Setting the color of a single pixel with <b>set(x, y)</b> is easy, but not as fast as putting the data directly into <b>pixels[]</b>. The equivalent statement to "set(x, y, #000000)" using <b>pixels[]</b> is "pixels[y*width+x] = #000000". Processing requires calling <b>loadPixels()</b> to load the display window data into the <b>pixels[]</b> array before getting the values and calling <b>updatePixels()</b> to update the window.
+<br /><br />
+As of release 0149, this function ignores <b>imageMode()</b>.
 </description>
 
 <syntax>
