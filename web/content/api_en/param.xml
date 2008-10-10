@@ -21,6 +21,7 @@ void setup() {
   String bgcolorStr = param("back");
   int bgcolor = int(bgcolorStr);
   background(bgcolor);
+}
 </code>
 </example>
 
