@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>selectInput()</name>
+
+<category>Input</category>
+
+<subcategory>Files</subcategory>
+
+<usage>Application</usage>
+
+<example>
+<image></image>
+<code>
+String loadPath = selectInput();  // Opens file chooser
+if (loadPath == null) {
+  // If a file was not selected
+  println("No file was selected...");
+} else {
+  // If a file was selected, print path to file
+  println(loadPath);
+}
+</code>
+</example>
+
+</code>
+</example>
+
+<description>
+Opens a platform-specific file chooser dialog to select a file for input. This function returns full path to the selected file as a <b>String</b>, or <b>null</b> if no selection.
+</description>
+
+<syntax>
+selectInput()
+selectInput(<c>prompt</c>)
+</syntax>
+
+<parameter>
+<label>prompt</label>
+<description>String: message you want the user to see in the file chooser</description>
+</parameter>
+
+
+<returns>String or null</returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>function</type>
+
+<partof>Core</partof>
+
+<level>Extended</level>
+
+
+</root>
