@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>public</name>
+
+<category>Structure</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+Example to come...
+</code>
+</example>
+
+<description>
+Keyword used to provide other classes access the fields and methods within a class. The <b>public</b> keyword is used before a field or method that you want to make available. In Processing, all fields and methods are public unless otherwise specified by the <b>private</b> keyword.<br />
+<br />
+This keyword is an essential part of Java programming and is not usually used with Processing. Consult a Java language reference or tutorial for more information. 
+</description>
+
+<syntax>
+public
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns></returns>
+
+<related>
+private
+</related>
+
+<availability>1.0</availability>
+
+<type>Keyword</type>
+
+<level>Extended</level>
+
+<partof>PDE</partof>
+
+
+</root>
