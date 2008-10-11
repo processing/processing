@@ -1,4 +1,4 @@
-package processing.candy;
+package processing.core;
 
 import java.awt.Paint;
 import java.awt.PaintContext;
@@ -12,15 +12,10 @@ import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 import java.util.HashMap;
 
-import processing.core.*;
 import processing.xml.XMLElement;
 
 
 /**
- * Candy is a minimal SVG import library for Processing.
- * Candy was written by Michael Chang, and later revised and
- * expanded for use as a Processing core library by Ben Fry.
- * <p>
  * SVG stands for Scalable Vector Graphics, a portable graphics format. It is 
  * a vector format so it allows for infinite resolution and relatively small
  * file sizes. Most modern media software can view SVG files, including Adobe 
@@ -55,35 +50,37 @@ import processing.xml.XMLElement;
  * <LI>With Illustrator CS2, it is also possible to use "Save As" with "SVG"
  * as the file setting, but the CSS properties should also be set similarly.
  * </UL>
- * Saving it any other way will most likely break Candy.
+ * Saving it any other way will most likely not work.
  *
  * <p> <hr noshade> <p>
  *
- * A minimal example program using Candy:
+ * A minimal example program using SVG:
  * (assuming a working moo.svg is in your data folder)
  *
  * <PRE>
- * import processing.candy.*;
- * import processing.xml.*;
- *
- * SVG moo;
+ * PShape moo;
+ * 
  * void setup() {
- *   size(400,400);
- *   moo = new SVG("moo.svg",this);
+ *   size(400, 400);
+ *   moo = loadShape("moo.svg");
  * }
  * void draw() {
- *   moo.draw();
+ *   shape(moo);
  * }
  * </PRE>
  *
- * <EM>Note that processing.xml needs to be imported as well.</EM>
- * This may not be required when running code within the Processing
- * environment, but when exported it may cause a NoClassDefError.
- * This will be fixed in later releases of Processing
- * (<A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=518">Bug 518</A>).
+ * This code is based on the Candy library written by Michael Chang, which was
+ * later revised and expanded for use as a Processing core library by Ben Fry.
  *
  * <p> <hr noshade> <p>
  *
+ * October 2008 revisions by fry (Processing 0149, pre-1.0)
+ * <UL>
+ * <LI> Candy is no longer a separate library, and is instead part of core.
+ * <LI> Loading now works through loadShape()
+ * <LI> Shapes are now drawn using the new PGraphics shape() method.
+ * </UL>
+ *  
  * August 2008 revisions by fry (Processing 0149) 
  * <UL>
  * <LI> Major changes to rework around PShape. 
@@ -130,7 +127,7 @@ import processing.xml.XMLElement;
  * For those interested, the SVG specification can be found
  * <A HREF="http://www.w3.org/TR/SVG">here</A>.
  */
-public class SVG extends PShape {
+public class PShapeSVG extends PShape {
 	XMLElement element;
 
 	float opacity;
@@ -147,7 +144,7 @@ public class SVG extends PShape {
   /**
    * Initializes a new SVG Object with the given filename.
    */
-	public SVG(PApplet parent, String filename) {
+	public PShapeSVG(PApplet parent, String filename) {
 	  // this will grab the root document, starting <svg ...>
 	  // the xml version and initial comments are ignored
 	  this(new XMLElement(parent, filename));
@@ -157,7 +154,7 @@ public class SVG extends PShape {
   /**
    * Initializes a new SVG Object from the given XMLElement.
    */
-  public SVG(XMLElement svg) {
+  public PShapeSVG(XMLElement svg) {
     this(null, svg);
 
     if (!svg.getName().equals("svg")) {
@@ -199,7 +196,7 @@ public class SVG extends PShape {
   }
   
   
-	public SVG(SVG parent, XMLElement properties) {
+	public PShapeSVG(PShapeSVG parent, XMLElement properties) {
 		//super(GROUP);
 		
 		if (parent == null) {
@@ -288,7 +285,7 @@ public class SVG extends PShape {
    */
   protected PShape parseChild(XMLElement elem) {
     String name = elem.getName();
-    SVG shape = new SVG(this, elem);
+    PShapeSVG shape = new PShapeSVG(this, elem);
     
     if (name.equals("g")) {
       //return new BaseObject(this, elem);
@@ -1038,14 +1035,14 @@ public class SVG extends PShape {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-	class Gradient extends SVG {
+	class Gradient extends PShapeSVG {
 	  AffineTransform transform;
 
 	  float[] offset;
 	  int[] color;
 	  int count;
 
-	  public Gradient(SVG parent, XMLElement properties) {
+	  public Gradient(PShapeSVG parent, XMLElement properties) {
 	    super(parent, properties);
 
 	    XMLElement elements[] = properties.getChildren();
@@ -1078,7 +1075,7 @@ public class SVG extends PShape {
 	class LinearGradient extends Gradient {
 	  float x1, y1, x2, y2;
 
-	  public LinearGradient(SVG parent, XMLElement properties) {
+	  public LinearGradient(PShapeSVG parent, XMLElement properties) {
 	    super(parent, properties);
 
 	    this.x1 = properties.getFloatAttribute("x1");
@@ -1109,7 +1106,7 @@ public class SVG extends PShape {
 	class RadialGradient extends Gradient {
 	  float cx, cy, r;
 
-	  public RadialGradient(SVG parent, XMLElement properties) {
+	  public RadialGradient(PShapeSVG parent, XMLElement properties) {
 	    super(parent, properties);
 
 	    this.cx = properties.getFloatAttribute("cx");
