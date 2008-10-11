@@ -1599,7 +1599,8 @@ public class Sketch {
     // Check if the user already has their own loader image
     File loadingImage = new File(folder, LOADING_IMAGE);
     if (!loadingImage.exists()) {
-      loadingImage = new File("lib", LOADING_IMAGE);
+      File skeletonFolder = new File(Base.getContentFolder("lib"), "export");
+      loadingImage = new File(skeletonFolder, LOADING_IMAGE);
     }
     Base.copyFile(loadingImage, new File(appletFolder, LOADING_IMAGE));
 
@@ -1696,12 +1697,13 @@ public class Sketch {
       }
     }
 
-    String bagelJar = "lib/core.jar";
+    File bagelJar = new File(Base.getContentFolder("lib"), "core.jar");
     if (separateJar) {
-      Base.copyFile(new File(bagelJar), new File(appletFolder, "core.jar"));
+      Base.copyFile(bagelJar, new File(appletFolder, "core.jar"));
       archives.append(",core.jar");
     } else {
-      packClassPathIntoZipFile(bagelJar, zos, zipFileContents);
+      String bagelJarPath = bagelJar.getAbsolutePath();
+      packClassPathIntoZipFile(bagelJarPath, zos, zipFileContents);
     }
 
     if (dataFolder.exists()) {
@@ -1996,6 +1998,10 @@ public class Sketch {
 
     File jarFolder = new File(destFolder, "lib");
 
+    
+    /// where all the skeleton info lives
+    
+    File skeletonFolder = new File(Base.getContentFolder("lib"), "export");
 
     /// on macosx, need to copy .app skeleton since that's
     /// also where the jar files will be placed
@@ -2004,7 +2010,7 @@ public class Sketch {
       dotAppFolder = new File(destFolder, name + ".app");
       String APP_SKELETON = "skeleton.app";
       //File dotAppSkeleton = new File(folder, APP_SKELETON);
-      File dotAppSkeleton = new File("lib/export/" + APP_SKELETON);
+      File dotAppSkeleton = new File(skeletonFolder, APP_SKELETON);
       Base.copyDir(dotAppSkeleton, dotAppFolder);
 
       String stubName = "Contents/MacOS/JavaApplicationStub";
@@ -2043,7 +2049,7 @@ public class Sketch {
     /// on windows, copy the exe file
 
     if (exportPlatform == PConstants.WINDOWS) {
-      Base.copyFile(new File("lib/export/application.exe"),
+      Base.copyFile(new File(skeletonFolder, "application.exe"),
                     new File(destFolder, this.name + ".exe"));
     }
 
@@ -2129,7 +2135,8 @@ public class Sketch {
     /// add core.jar to the jar destination folder
 
     //System.out.println(jarFolder);
-    Base.copyFile(new File("lib/core.jar"), new File(jarFolder, "core.jar"));
+    File bagelJar = new File(Base.getContentFolder("lib"), "core.jar");
+    Base.copyFile(bagelJar, new File(jarFolder, "core.jar"));
     jarListVector.add("core.jar");
 
 
@@ -2239,7 +2246,7 @@ public class Sketch {
       String PLIST_TEMPLATE = "template.plist";
       File plistTemplate = new File(folder, PLIST_TEMPLATE);
       if (!plistTemplate.exists()) {
-        plistTemplate = new File("lib/export/" + PLIST_TEMPLATE);
+        plistTemplate = new File(skeletonFolder, PLIST_TEMPLATE);
       }
       File plistFile = new File(dotAppFolder, "Contents/Info.plist");
       PrintWriter pw = PApplet.createWriter(plistFile);
