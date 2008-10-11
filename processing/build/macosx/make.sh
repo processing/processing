@@ -3,6 +3,10 @@
 
 ### -- SETUP WORK DIR -------------------------------------------
 
+RESOURCES=`pwd`/work/Processing.app/Contents/Resources/Java
+#echo $RESOURCES
+#exit
+
 if test -d work
 then
   BUILD_PREPROC=false
@@ -11,26 +15,6 @@ else
   BUILD_PREPROC=true
 
   mkdir work
-  cp -r ../shared/lib work/
-  cp -r ../shared/libraries work/
-  cp -r ../shared/tools work/
-
-  cp ../../app/lib/antlr.jar work/lib/
-  cp ../../app/lib/ecj.jar work/lib/
-  cp ../../app/lib/jna.jar work/lib/
-
-  echo Extracting examples...
-  unzip -q -d work/ ../shared/examples.zip
-
-  echo Extracting reference...
-  unzip -q -d work/ ../shared/reference.zip
-
-  cp -r ../../net work/libraries/
-  cp -r ../../opengl work/libraries/
-  cp -r ../../serial work/libraries/
-  cp -r ../../video work/libraries/
-  cp -r ../../pdf work/libraries/
-  cp -r ../../dxf work/libraries/
 
   # to have a copy of this guy around for messing with
   echo Copying Processing.app...
@@ -39,6 +23,28 @@ else
   cp -pR dist/Processing.app work/
   # cvs doesn't seem to want to honor the +x bit 
   chmod +x work/Processing.app/Contents/MacOS/JavaApplicationStub
+
+  cp -r ../shared/lib "$RESOURCES/"
+  cp -r ../shared/libraries "$RESOURCES/"
+  cp -r ../shared/tools "$RESOURCES/"
+
+  cp ../../app/lib/antlr.jar "$RESOURCES/"
+  cp ../../app/lib/ecj.jar "$RESOURCES/"
+  cp ../../app/lib/jna.jar "$RESOURCES/"
+
+  echo Extracting examples...
+  unzip -q -d "$RESOURCES/" ../shared/examples.zip
+
+  echo Extracting reference...
+  unzip -q -d "$RESOURCES/" ../shared/reference.zip
+
+  LIBRARIES=$RESOURCES/libraries/
+  cp -r ../../net "$LIBRARIES"
+  cp -r ../../opengl "$LIBRARIES"
+  cp -r ../../serial "$LIBRARIES"
+  cp -r ../../video "$LIBRARIES"
+  cp -r ../../pdf "$LIBRARIES"
+  cp -r ../../dxf "$LIBRARIES"
 fi
 
 
@@ -60,9 +66,17 @@ cd core
 perl preproc.pl
 
 mkdir -p bin
-javac -source 1.5 -target 1.5 -d bin src/processing/core/*.java src/processing/xml/*.java
-rm -f ../build/macosx/work/lib/core.jar
-cd bin && zip -rq ../../build/macosx/work/lib/core.jar processing/core/*.class processing/xml/*.class && cd ..
+javac -source 1.5 -target 1.5 -d bin \
+  src/processing/core/*.java \
+  src/processing/xml/*.java
+
+rm -f "$RESOURCES/core.jar"
+
+cd bin && \
+  zip -rq "$RESOURCES/core.jar" \
+  processing/core/*.class \
+  processing/xml/*.class \
+  && cd ..
 
 # head back to "processing/app"
 cd ../app
@@ -78,24 +92,22 @@ then
   # build classes/grammar for preprocessor
   echo Building antlr grammar code...
   # first build the default java goop
-  java -cp ../build/macosx/work/lib/antlr.jar antlr.Tool \
-  -o src/antlr/java \
-  src/antlr/java/java.g
+  java -cp "$RESOURCES/antlr.jar" antlr.Tool \
+    -o src/antlr/java \
+    src/antlr/java/java.g
 
   # hack to get around path mess
   cp src/antlr/java/JavaTokenTypes.txt src/processing/app/preproc/
 
   # now build the pde stuff that extends the java classes
-  java -cp ../build/macosx/work/lib/antlr.jar antlr.Tool \
-  -o src/processing/app/preproc \
-  -glib src/antlr/java/java.g src/processing/app/preproc/pde.g
+  java -cp "$RESOURCES/antlr.jar" antlr.Tool \
+    -o src/processing/app/preproc \
+    -glib src/antlr/java/java.g src/processing/app/preproc/pde.g
 fi
 
 ### -- BUILD PDE ------------------------------------------------
 
 echo Building the PDE...
-
-#../build/macosx/work/jikes -target 1.3 +D -classpath ../build/macosx/work/classes:../build/macosx/work/lib/core.jar:../build/macosx/work/lib/antlr.jar:../build/macosx/work/lib/registry.jar:$CLASSPATH -d ../build/macosx/work/classes src/processing/app/*.java src/processing/app/debug/*.java src/processing/app/syntax/*.java src/processing/app/preproc/*.java src/processing/app/tools/*.java src/antlr/*.java src/antlr/java/*.java
 
 # For some reason, javac really wants this folder to exist beforehand.
 rm -rf ../build/macosx/work/classes
@@ -104,8 +116,9 @@ mkdir ../build/macosx/work/classes
 # used by eclipse so that they don't cause conflicts.
 
 javac \
+    -Xlint:deprecation \
     -source 1.5 -target 1.5 \
-    -classpath ../build/macosx/work/lib/core.jar:../build/macosx/work/lib/antlr.jar:../build/macosx/work/lib/ecj.jar:../build/macosx/work/lib/jna.jar \
+    -classpath "$RESOURCES/core.jar:$RESOURCES/antlr.jar:$RESOURCES/ecj.jar:$RESOURCES/jna.jar" \
     -d ../build/macosx/work/classes \
     src/processing/app/*.java \
     src/processing/app/debug/*.java \
@@ -117,13 +130,13 @@ javac \
     src/antlr/java/*.java 
 
 cd ../build/macosx/work/classes
-rm -f ../lib/pde.jar
-zip -0rq ../lib/pde.jar .
+rm -f "$RESOURCES/pde.jar"
+zip -0rq "$RESOURCES/pde.jar" .
 cd ../..
 
 # get updated core.jar and pde.jar; also antlr.jar and others
-mkdir -p work/Processing.app/Contents/Resources/Java/
-cp work/lib/*.jar work/Processing.app/Contents/Resources/Java/
+#mkdir -p work/Processing.app/Contents/Resources/Java/
+#cp work/lib/*.jar work/Processing.app/Contents/Resources/Java/
 
 
 ### -- BUILD LIBRARIES ------------------------------------------------
@@ -131,9 +144,9 @@ cp work/lib/*.jar work/Processing.app/Contents/Resources/Java/
 PLATFORM=macosx
 
 
-CLASSPATH=../build/$PLATFORM/work/lib/core.jar
+CLASSPATH=$RESOURCES/core.jar
 JAVAC="javac -source 1.5 -target 1.5"
-LIBRARIES=../build/$PLATFORM/work/libraries
+LIBRARIES=$RESOURCES/libraries
 
 # move to processing/build 
 cd ..
@@ -147,10 +160,10 @@ $JAVAC \
     -classpath "library/RXTXcomm.jar:$CLASSPATH" \
     -d bin src/processing/serial/*.java 
 rm -f library/serial.jar
-find bin -name "*~" -exec rm -f {} ';'
+#find bin -name "*~" -exec rm -f {} ';'
 cd bin && zip -rq ../library/serial.jar processing/serial/*.class && cd ..
-mkdir -p $LIBRARIES/serial/library/
-cp library/serial.jar $LIBRARIES/serial/library/
+mkdir -p "$LIBRARIES/serial/library/"
+cp library/serial.jar "$LIBRARIES/serial/library/"
 
 
 # NET LIBRARY
@@ -161,10 +174,10 @@ $JAVAC \
     -classpath "$CLASSPATH" \
     -d bin src/processing/net/*.java 
 rm -f library/net.jar
-find bin -name "*~" -exec rm -f {} ';'
+#find bin -name "*~" -exec rm -f {} ';'
 cd bin && zip -rq ../library/net.jar processing/net/*.class && cd ..
-mkdir -p $LIBRARIES/net/library/
-cp library/net.jar $LIBRARIES/net/library/
+mkdir -p "$LIBRARIES/net/library/"
+cp library/net.jar "$LIBRARIES/net/library/"
 
 
 # VIDEO LIBRARY
@@ -183,10 +196,10 @@ $JAVAC \
     -classpath "$QTJAVA:$CLASSPATH" \
     -d bin src/processing/video/*.java 
 rm -f library/video.jar
-find bin -name "*~" -exec rm -f {} ';'
+#find bin -name "*~" -exec rm -f {} ';'
 cd bin && zip -rq ../library/video.jar processing/video/*.class && cd ..
-mkdir -p $LIBRARIES/video/library/
-cp library/video.jar $LIBRARIES/video/library/
+mkdir -p "$LIBRARIES/video/library/"
+cp library/video.jar "$LIBRARIES/video/library/"
 
 
 # OPENGL LIBRARY
@@ -197,10 +210,10 @@ $JAVAC \
     -classpath "library/jogl.jar:$CLASSPATH" \
     -d bin src/processing/opengl/*.java 
 rm -f library/opengl.jar
-find bin -name "*~" -exec rm -f {} ';'
+#find bin -name "*~" -exec rm -f {} ';'
 cd bin && zip -rq ../library/opengl.jar processing/opengl/*.class && cd ..
-mkdir -p $LIBRARIES/opengl/library/
-cp library/opengl.jar $LIBRARIES/opengl/library/
+mkdir -p "$LIBRARIES/opengl/library/"
+cp library/opengl.jar "$LIBRARIES/opengl/library/"
 
 
 # PDF LIBRARY
@@ -211,10 +224,10 @@ $JAVAC \
     -classpath "library/itext.jar:$CLASSPATH" \
     -d bin src/processing/pdf/*.java 
 rm -f library/pdf.jar
-find bin -name "*~" -exec rm -f {} ';'
+#find bin -name "*~" -exec rm -f {} ';'
 cd bin && zip -rq ../library/pdf.jar processing/pdf/*.class && cd ..
-mkdir -p $LIBRARIES/pdf/library/
-cp library/pdf.jar $LIBRARIES/pdf/library/
+mkdir -p "$LIBRARIES/pdf/library/"
+cp library/pdf.jar "$LIBRARIES/pdf/library/"
 
 
 # DXF LIBRARY
@@ -225,10 +238,10 @@ $JAVAC \
     -classpath "$CLASSPATH" \
     -d bin src/processing/dxf/*.java 
 rm -f library/dxf.jar
-find bin -name "*~" -exec rm -f {} ';'
+#find bin -name "*~" -exec rm -f {} ';'
 cd bin && zip -rq ../library/dxf.jar processing/dxf/*.class && cd ..
-mkdir -p $LIBRARIES/dxf/library/
-cp library/dxf.jar $LIBRARIES/dxf/library/
+mkdir -p "$LIBRARIES/dxf/library/"
+cp library/dxf.jar "$LIBRARIES/dxf/library/"
 
 
 echo

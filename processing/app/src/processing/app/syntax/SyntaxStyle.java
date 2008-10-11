@@ -10,7 +10,8 @@
 package processing.app.syntax;
 
 import java.awt.*;
-//import java.util.StringTokenizer;
+import javax.swing.JComponent;
+
 
 /**
  * A simple text style class. It can specify the color, italic flag,
@@ -87,7 +88,7 @@ public class SyntaxStyle
   /**
    * Returns the font metrics for the styled font.
    */
-  public FontMetrics getFontMetrics(Font font)
+  public FontMetrics getFontMetrics(Font font, JComponent comp)
   {
     if(font == null)
       throw new NullPointerException("font param must not"
@@ -99,7 +100,8 @@ public class SyntaxStyle
                               (bold ? Font.BOLD : 0)
                               | (italic ? Font.ITALIC : 0),
                               font.getSize());
-    fontMetrics = Toolkit.getDefaultToolkit().getFontMetrics(lastStyledFont);
+    //fontMetrics = Toolkit.getDefaultToolkit().getFontMetrics(lastStyledFont);
+    fontMetrics = comp.getFontMetrics(lastStyledFont);
     return fontMetrics;
   }
 
