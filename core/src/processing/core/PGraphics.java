@@ -3430,6 +3430,12 @@ public class PGraphics extends PImage implements PConstants {
   // MATRIX GET/SET/PRINT
 
   
+  public PMatrix getMatrix() {
+    showMissingWarning("getMatrix");
+    return null;
+  }
+  
+  
   /**
    * Copy the current transformation matrix into the specified target.
    * Pass in null to create a new matrix. 
@@ -3447,6 +3453,18 @@ public class PGraphics extends PImage implements PConstants {
   public PMatrix3D getMatrix(PMatrix3D target) {
     showMissingWarning("getMatrix");
     return null;
+  }
+
+
+  /** 
+   * Set the current transformation matrix to the contents of another.
+   */
+  public void setMatrix(PMatrix source) {
+    if (source instanceof PMatrix2D) {
+      setMatrix((PMatrix2D) source);
+    } else if (source instanceof PMatrix3D) {
+      setMatrix((PMatrix3D) source);
+    }
   }
   
   

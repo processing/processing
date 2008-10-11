@@ -2815,6 +2815,11 @@ public class PGraphics3D extends PGraphics {
   // MATRIX GET/SET/PRINT
 
 
+  public PMatrix getMatrix() {
+    return modelview.get();
+  }
+  
+  
   //public PMatrix2D getMatrix(PMatrix2D target)
 
 
@@ -2827,6 +2832,9 @@ public class PGraphics3D extends PGraphics {
   }
 
 
+  //public void setMatrix(PMatrix source)
+  
+  
   public void setMatrix(PMatrix2D source) {
     // not efficient, but at least handles the inverse stuff.
     resetMatrix();
