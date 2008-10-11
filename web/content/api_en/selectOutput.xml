@@ -23,7 +23,7 @@ if (savePath == null) {
 </example>
 
 <description>
-Open a platform-specific file save dialog to select a file for output. This function returns the full path to the selected file as a <b>String</b>, or <b>null</b> if no selection.
+Open a platform-specific file save dialog to create of select a file for output. This function returns the full path to the selected file as a <b>String</b>, or <b>null</b> if no selection. If you select an existing file, that file will be replaced. Alternatively, you can navigate to a folder and create a new file to write to. 
 </description>
 
 <syntax>
