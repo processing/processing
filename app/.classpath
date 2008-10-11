@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry excluding="processing/app/tools/format/" kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/candy"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/core"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/dxf"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/net"/>
