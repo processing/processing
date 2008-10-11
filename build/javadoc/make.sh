@@ -11,6 +11,7 @@ javadoc -public -notimestamp -d core \
 javadoc -public -notimestamp -d everything \
     -classpath ../../app/lib/antlr.jar:../../app/lib/jna.jar:../../serial/library/RXTXcomm.jar:../../opengl/library/jogl.jar:../../pdf/library/itext.jar:../../app/lib/ecj.jar \
     ../../core/src/processing/core/*.java \
+    ../../core/src/processing/xml/*.java \
     ../../app/src/antlr/*.java \
     ../../app/src/antlr/java/*.java \
     ../../app/src/processing/app/*.java \
@@ -26,7 +27,7 @@ javadoc -public -notimestamp -d everything \
     ../../opengl/src/processing/opengl/*.java \
     ../../pdf/src/processing/pdf/*.java \
     ../../serial/src/processing/serial/*.java \
-    ../../video/src/processing/video/*.java \
+    ../../video/src/processing/video/*.java 
 
 cp stylesheet.css core/
 cp stylesheet.css everything/
