@@ -244,12 +244,7 @@ public class PShapeSVG extends PShape {
 		}
 
 		element = properties;
-
 		name = properties.getStringAttribute("id");
-//		if (name != null) {
-//			table.put(name, this);
-//			//System.out.println("now parsing " + id);
-//		}
 
 		String displayStr = properties.getStringAttribute("display", "inline");
 		visible = !displayStr.equals("none");
@@ -285,43 +280,52 @@ public class PShapeSVG extends PShape {
    */
   protected PShape parseChild(XMLElement elem) {
     String name = elem.getName();
-    PShapeSVG shape = new PShapeSVG(this, elem);
+    PShapeSVG shape = null;
     
     if (name.equals("g")) {
       //return new BaseObject(this, elem);
-
+      shape = new PShapeSVG(this, elem);
+      
     } else if (name.equals("defs")) {
       // generally this will contain gradient info, so may
       // as well just throw it into a group element for parsing
       //return new BaseObject(this, elem);
-
+      shape = new PShapeSVG(this, elem);
+      
     } else if (name.equals("line")) {
       //return new Line(this, elem);
       //return new BaseObject(this, elem, LINE);
+      shape = new PShapeSVG(this, elem);
       shape.parseLine();
 
     } else if (name.equals("circle")) {
       //return new BaseObject(this, elem, ELLIPSE);
+      shape = new PShapeSVG(this, elem);
       shape.parseEllipse(true);
 
     } else if (name.equals("ellipse")) {
       //return new BaseObject(this, elem, ELLIPSE);
+      shape = new PShapeSVG(this, elem);
       shape.parseEllipse(false);
 
     } else if (name.equals("rect")) {
       //return new BaseObject(this, elem, RECT);
+      shape = new PShapeSVG(this, elem);
       shape.parseRect();
 
     } else if (name.equals("polygon")) {
       //return new BaseObject(this, elem, POLYGON);
+      shape = new PShapeSVG(this, elem);
       shape.parsePoly(true);
 
     } else if (name.equals("polyline")) {
       //return new BaseObject(this, elem, POLYGON);
+      shape = new PShapeSVG(this, elem);
       shape.parsePoly(false);
 
     } else if (name.equals("path")) {
       //return new BaseObject(this, elem, PATH);
+      shape = new PShapeSVG(this, elem);
       shape.parsePath();
 
     } else if (name.equals("radialGradient")) {
@@ -343,7 +347,7 @@ public class PShapeSVG extends PShape {
     } else {
       PGraphics.showWarning("Ignoring  <" + name + "> tag.");
     }
-    return null; 
+    return shape; 
   }
 
 	
@@ -472,6 +476,8 @@ public class PShapeSVG extends PShape {
 	  // use whitespace constant to get rid of extra spaces and CR or LF
 	  String[] pathDataKeys =
 	    PApplet.splitTokens(pathBuffer.toString(), "|" + WHITESPACE);
+	  vertices = new float[pathDataKeys.length][2];
+	  vertexCodes = new int[pathDataKeys.length];
 
 	  float cx = 0;
 	  float cy = 0;
@@ -1035,7 +1041,6 @@ public class PShapeSVG extends PShape {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-
 	static class Gradient extends PShapeSVG {
 	  AffineTransform transform;
 
@@ -1423,14 +1428,24 @@ public class PShapeSVG extends PShape {
 	 * beneath them can be used here.
 	 * <PRE>
 	 * // This code grabs "Layer 3" and the shapes beneath it.
-	 * SVG layer3 = svg.get("Layer 3");
+	 * SVG layer3 = svg.getChild("Layer 3");
 	 * </PRE>
 	 */
 	public PShape getChild(String name) {
 	  PShape found = super.getChild(name);
-	  if (found != null) return found;
-	  // otherwise try with underscores instead of spaces
-	  return super.getChild(name.replace(' ', '_'));
+	  if (found == null) {
+	    // Otherwise try with underscores instead of spaces 
+	    // (this is how Illustrator handles spaces in the layer names).
+	    found = super.getChild(name.replace(' ', '_'));
+	  }
+	  // Set bounding box based on the parent bounding box
+	  if (found != null) {
+	    found.x = this.x;
+	    found.y = this.y;
+	    found.width = this.width;
+	    found.height = this.height;
+	  }
+	  return found;
 	}
 
 
