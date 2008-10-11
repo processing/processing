@@ -9,8 +9,8 @@ releases will be super crusty.
 
 ABOUT REV 0149 - XX September 2008
 
-Very large number of bug fixes and changes. Renderers that use PGraphics
-will need to be updated for this release.
+Very large number of bug fixes and changes. All renderers that use 
+PGraphics will need to be updated for this release.
 
 This release also adds command-line support, which means that Processing
 can be integrated into all manner of environments. More info below.
@@ -38,7 +38,7 @@ Also many updates to the examples in this release.
 + Make parseFloat() with String[] array return NaN for missing values
   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1220880375
 
-+ Renaming the main tab adds .pde to the sketch folder name
++ Renaming the main tab was adding .pde to the sketch folder name
   http://dev.processing.org/bugs/show_bug.cgi?id=922
 
 + Fix problems with text in a rectangle
@@ -50,7 +50,7 @@ Also many updates to the examples in this release.
 + Tool menu not showing until the example (Mangler) was compiled.
   http://dev.processing.org/bugs/show_bug.cgi?id=892
 
-+ Hopefully fix a "transport error 202" error.
++ Hopefully fixed a "transport error 202" error.
   http://dev.processing.org/bugs/show_bug.cgi?id=895
 
 + Header not always updating on rename... this was an old bug that hasn't
@@ -98,8 +98,8 @@ Also many updates to the examples in this release.
 
 [ additions ] 
 
-+ Implement command-line support. See the reference for Commander for 
-  details on how to use it: 
++ Implement command-line support. See the reference for the new Commander 
+  class for details on how to use it: 
   http://dev.processing.org/reference/everything/javadoc/processing/app/Commander.html
   http://dev.processing.org/bugs/show_bug.cgi?id=219
   http://dev.processing.org/bugs/show_bug.cgi?id=889
@@ -113,9 +113,29 @@ Also many updates to the examples in this release.
   The old Getting Started item has been renamed to "Environment".
 
 + Added getImage() method to PImage, which returns it as a java.awt.Image.
+  (Actually it's a BufferedImage, but who's keeping track?)
 
-+ Add note to prefs dialog that multiple jar export only works w/o libs
++ Added a note to prefs dialog that multiple jar export only works w/o libs
   http://dev.processing.org/bugs/show_bug.cgi?id=907
+
+[ known problems ]
+
++ Slow response on file/sketchbook/examples menus on OS X 10.5. This is 
+  an Apple bug in Java 1.5 and 1.6 on Mac OS X 10.5 causing these menus 
+  to be extremely slow. With Apple's Java for Mac OS X 10.4 Release 7, 
+  they appear to have successfully backported the bug to OS X 10.4. 
+  Hooray! Now it affects both 10.4 and 10.5. Much success to them for 
+  their help. Some workarounds are described in the bug report:
+  http://dev.processing.org/bugs/show_bug.cgi?id=786
+  Please file a bug report with Apple if you want this fixed.
+
++ In the current Windows release, Processing may not be able to find 
+  the JDK even if you have one installed. If this happens on your machine, 
+  copy the contents of your JDK installation to a new folder titled "java"
+  inside the Processing folder. This fill be fixed in a future release.
+  http://dev.processing.org/bugs/show_bug.cgi?id=878
+
++ See dev.processing.org/bugs for more.
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
