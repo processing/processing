@@ -1090,8 +1090,8 @@ public class SVG extends PShape {
 	      properties.getStringAttribute("gradientTransform");
 	    
 	    if (transformStr != null) {
-	            float t[] = parseMatrix(transformStr).get(null);
-	            this.transform = new AffineTransform(t[0], t[3], t[1], t[4], t[2], t[5]);
+	      float t[] = parseMatrix(transformStr).get(null);
+	      this.transform = new AffineTransform(t[0], t[3], t[1], t[4], t[2], t[5]);
 
 	      Point2D t1 = transform.transform(new Point2D.Float(x1, y1), null);
 	      Point2D t2 = transform.transform(new Point2D.Float(x2, y2), null);
