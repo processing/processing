@@ -1250,6 +1250,11 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   // MATRIX GET/SET
 
 
+  public PMatrix getMatrix() {
+    return getMatrix((PMatrix2D) null);
+  }
+  
+  
   public PMatrix2D getMatrix(PMatrix2D target) {
     if (target == null) {
       target = new PMatrix2D();
@@ -1267,13 +1272,16 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   }
 
   
+  //public void setMatrix(PMatrix source)
+
+  
   public void setMatrix(PMatrix2D source) {
     g2.setTransform(new AffineTransform(source.m00, source.m10, 
                                         source.m01, source.m11,
                                         source.m02, source.m12));
   }
   
-  
+
   public void setMatrix(PMatrix3D source) {
     showVariationWarning("setMatrix");
   }
