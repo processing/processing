@@ -33,7 +33,8 @@ function windowTitle()
 <A NAME="navbar_top_firstrow"><!-- --></A>
 <TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
   <TR ALIGN="center" VALIGN="top">
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../processing/core/package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
@@ -94,7 +95,7 @@ java.lang.Object
 <DT><B>All Implemented Interfaces:</B> <DD>java.lang.Cloneable, <A HREF="../../processing/core/PConstants.html" title="interface in processing.core">PConstants</A></DD>
 </DL>
 <DL>
-<DT><B>Direct Known Subclasses:</B> <DD><A HREF="../../processing/core/PGraphics2D.html" title="class in processing.core">PGraphics2D</A>, <A HREF="../../processing/core/PGraphics3D.html" title="class in processing.core">PGraphics3D</A></DD>
+<DT><B>Direct Known Subclasses:</B> <DD><A HREF="../../processing/core/PGraphics2D.html" title="class in processing.core">PGraphics2D</A>, <A HREF="../../processing/core/PGraphics3D.html" title="class in processing.core">PGraphics3D</A>, <A HREF="../../processing/core/PGraphicsJava2D.html" title="class in processing.core">PGraphicsJava2D</A></DD>
 </DL>
 <HR>
 <DL>
@@ -103,11 +104,11 @@ java.lang.Object
 
 <P>
 Main graphics and rendering context, as well as the base API implementation.
- <p>
+ 
+ <h2>Subclassing and initializing PGraphics objects</h2>
  Starting in release 0149, subclasses of PGraphics are handled differently.
  The constructor for subclasses takes no parameters, instead a series of 
  functions are called by the hosting PApplet to specify its attributes. 
- 
  <ul>
  <li>setParent(PApplet) - is called to specify the parent PApplet. 
  <li>setPrimary(boolean) - called with true if this PGraphics will be the 
@@ -117,13 +118,68 @@ Main graphics and rendering context, as well as the base API implementation.
  <li>setSize(int, int) - this is called last, at which point it's safe for
  the renderer to complete its initialization routine.
  </ul>
- 
  The functions were broken out because of the growing number of parameters
  such as these that might be used by a renderer, yet with the exception of 
  setSize(), it's not clear which will be necessary. So while the size could
  be passed in to the constructor instead of a setSize() function, a function
  would still be needed that would notify the renderer that it was time to 
  finish its initialization. Thus, setSize() simply does both.
+ 
+ <h2>Know your rights: public vs. private methods</h2>
+ Methods that are protected are often subclassed by other renderers, however
+ they are not set 'public' because they shouldn't be part of the user-facing 
+ public API accessible from PApplet. That is, we don't want sketches calling 
+ textModeCheck() or vertexTexture() directly.
+
+ <h2>Handling warnings and exceptions</h2> 
+ Methods that are unavailable generally show a warning, unless their lack of 
+ availability will soon cause another exception. For instance, if a method 
+ like getMatrix() returns null because it is unavailable, an exception will 
+ be thrown stating that the method is unavailable, rather than waiting for 
+ the NullPointerException that will occur when the sketch tries to use that 
+ method. As of release 0149, warnings will only be shown once, and exceptions
+ have been changed to warnings where possible. 
+ 
+ <h2>Using xxxxImpl() for subclassing smoothness</h2>
+ The xxxImpl() methods are generally renderer-specific handling for some 
+ subset if tasks for a particular function (vague enough for you?) For 
+ instance, imageImpl() handles drawing an image whose x/y/w/h and u/v coords 
+ have been specified, and screen placement (independent of imageMode) has 
+ been determined. There's no point in all renderers implementing the 
+ <tt>if (imageMode == BLAH)</tt> placement/sizing logic, so that's handled 
+ by PGraphics, which then calls imageImpl() once all that is figured out.
+ 
+ <h2>His brother PImage</h2>
+ PGraphics subclasses PImage so that it can be drawn and manipulated in a 
+ similar fashion. As such, many methods are inherited from PGraphics, 
+ though many are unavailable: for instance, resize() is not likely to be 
+ implemented; the same goes for mask(), depending on the situation.
+ 
+ <h2>What's in PGraphics, what ain't</h2>
+ For the benefit of subclasses, as much as possible has been placed inside
+ PGraphics. For instance, bezier interpolation code and implementations of
+ the strokeCap() method (that simply sets the strokeCap variable) are 
+ handled here. Features that will vary widely between renderers are located
+ inside the subclasses themselves. For instance, all matrix handling code
+ is per-renderer: Java 2D uses its own AffineTransform, P2D uses a PMatrix2D,
+ and PGraphics3D needs to keep continually update forward and reverse 
+ transformations. A proper (future) OpenGL implementation will have all its 
+ matrix madness handled by the card. Lighting also falls under this 
+ category, however the base material property settings (emissive, specular, 
+ et al.) are handled in PGraphics because they use the standard colorMode() 
+ logic. Subclasses should override methods like emissiveFromCalc(), which 
+ is a point where a valid color has been defined internally, and can be
+ applied in some manner based on the calcXxxx values.
+ 
+ <h2>What's in the PGraphics documentation, what ain't</h2>
+ Some things are noted here, some things are not. For public API, always
+ refer to the <a href="http://processing.org/reference">reference</A>
+ on Processing.org for proper explanations. <b>No attempt has been made to 
+ keep the javadoc up to date or complete.</b> It's an enormous task for 
+ which we simply do not have the time. That is, it's not something that
+ to be done once&mdash;it's a matter of keeping the multiple references
+ synchronized (to say nothing of the translation issues), while targeting 
+ them for their separate audiences. Ouch.
 <P>
 
 <P>
@@ -137,30 +193,6 @@ Main graphics and rendering context, as well as the base API implementation.
 <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
 <TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
 <B>Field Summary</B></FONT></TH>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#A">A</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#AB">AB</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#AG">AG</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -188,22 +220,6 @@ Main graphics and rendering context, as well as the base API implementation.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#AR">AR</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#B">B</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;int</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/core/PGraphics.html#backgroundColor">backgroundColor</A></B></CODE>
 
@@ -212,91 +228,11 @@ Main graphics and rendering context, as well as the base API implementation.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#BEEN_LIT">BEEN_LIT</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;int</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/core/PGraphics.html#bezierDetail">bezierDetail</A></B></CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;<A HREF="../../processing/core/PMatrix3D.html" title="class in processing.core">PMatrix3D</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#camera">camera</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The camera matrix, the modelview will be set to this on beginDraw.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;float</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#cameraAspect">cameraAspect</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;float</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#cameraFar">cameraFar</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;float</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#cameraFOV">cameraFOV</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Camera field of view (in radians, as of rev 86)</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;<A HREF="../../processing/core/PMatrix3D.html" title="class in processing.core">PMatrix3D</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#cameraInv">cameraInv</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Inverse camera matrix</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;float</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#cameraNear">cameraNear</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;float</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#cameraX">cameraX</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Position of the camera</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;float</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#cameraY">cameraY</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Position of the camera</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;float</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#cameraZ">cameraZ</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Position of the camera</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -341,38 +277,6 @@ Main graphics and rendering context, as well as the base API implementation.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;float</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#currentLightFalloffConstant">currentLightFalloffConstant</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Current light falloff</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;float</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#currentLightFalloffLinear">currentLightFalloffLinear</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;float</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#currentLightFalloffQuadratic">currentLightFalloffQuadratic</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;float[]</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#currentLightSpecular">currentLightSpecular</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Current specular color for lighting</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;float</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/core/PGraphics.html#curveTightness">curveTightness</A></B></CODE>
 
 <BR>
@@ -380,56 +284,8 @@ Main graphics and rendering context, as well as the base API implementation.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#DA">DA</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#DB">DB</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#DG">DG</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#DR">DR</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#EB">EB</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#EDGE">EDGE</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#EG">EG</A></B></CODE>
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#edge">edge</A></B></CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -468,14 +324,6 @@ Main graphics and rendering context, as well as the base API implementation.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#ER">ER</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;boolean</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/core/PGraphics.html#fill">fill</A></B></CODE>
 
@@ -492,280 +340,19 @@ Main graphics and rendering context, as well as the base API implementation.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#G">G</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#height1">height1</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;java.awt.Image</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/core/PGraphics.html#image">image</A></B></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Java AWT Image object associated with this renderer.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#lightCount">lightCount</A></B></CODE>
+<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#imageMode">imageMode</A></B></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;float[][]</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#lightDiffuse">lightDiffuse</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Diffuse colors for lights.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;float[]</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#lightFalloffConstant">lightFalloffConstant</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Light falloff</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;float[]</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#lightFalloffLinear">lightFalloffLinear</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;float[]</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#lightFalloffQuadratic">lightFalloffQuadratic</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;float[][]</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#lightNormal">lightNormal</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Light direction (normalized vector)</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;float[][]</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#lightPosition">lightPosition</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Light positions</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;float[][]</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#lightSpecular">lightSpecular</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Specular colors for lights.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;float[]</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#lightSpotAngle">lightSpotAngle</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Light spot angle</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;float[]</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#lightSpotAngleCos">lightSpotAngleCos</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Cosine of light spot angle</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;float[]</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#lightSpotConcentration">lightSpotConcentration</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Light spot concentration</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;int[]</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#lightType">lightType</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Light types</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;float</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#m00">m00</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Model transformation of the form m[row][column],
- which is a "column vector" (as opposed to "row vector") matrix.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;float</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#m01">m01</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Model transformation of the form m[row][column],
- which is a "column vector" (as opposed to "row vector") matrix.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;float</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#m02">m02</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Model transformation of the form m[row][column],
- which is a "column vector" (as opposed to "row vector") matrix.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;float</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#m03">m03</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Model transformation of the form m[row][column],
- which is a "column vector" (as opposed to "row vector") matrix.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;float</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#m10">m10</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;float</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#m11">m11</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;float</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#m12">m12</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;float</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#m13">m13</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;float</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#m20">m20</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;float</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#m21">m21</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;float</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#m22">m22</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;float</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#m23">m23</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;float</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#m30">m30</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;float</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#m31">m31</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;float</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#m32">m32</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;float</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#m33">m33</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#MAX_LIGHTS">MAX_LIGHTS</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Maximum lights by default is 8, which is arbitrary,
-      but is the minimum defined by OpenGL</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;<A HREF="../../processing/core/PMatrix3D.html" title="class in processing.core">PMatrix3D</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#modelview">modelview</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The modelview matrix.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;<A HREF="../../processing/core/PMatrix3D.html" title="class in processing.core">PMatrix3D</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#modelviewInv">modelviewInv</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Inverse modelview matrix, used for lighting.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The current image alignment (read-only)</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -773,7 +360,7 @@ Main graphics and rendering context, as well as the base API implementation.
 <TD><CODE><B><A HREF="../../processing/core/PGraphics.html#normalX">normalX</A></B></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Normals</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Current normal vector.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -781,7 +368,7 @@ Main graphics and rendering context, as well as the base API implementation.
 <TD><CODE><B><A HREF="../../processing/core/PGraphics.html#normalY">normalY</A></B></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Normals</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Current normal vector.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -789,52 +376,12 @@ Main graphics and rendering context, as well as the base API implementation.
 <TD><CODE><B><A HREF="../../processing/core/PGraphics.html#normalZ">normalZ</A></B></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Normals</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#NX">NX</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#NY">NY</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#NZ">NZ</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Current normal vector.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;int</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/core/PGraphics.html#pixelCount">pixelCount</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;<A HREF="../../processing/core/PMatrix3D.html" title="class in processing.core">PMatrix3D</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#projection">projection</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#R">R</A></B></CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -849,43 +396,11 @@ Main graphics and rendering context, as well as the base API implementation.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#SA">SA</A></B></CODE>
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#shapeMode">shapeMode</A></B></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#SB">SB</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#settingsInited">settingsInited</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#SG">SG</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#SHINE">SHINE</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The current shape alignment mode (read-only)</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -897,8 +412,8 @@ Main graphics and rendering context, as well as the base API implementation.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#SPB">SPB</A></B></CODE>
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#smooth">smooth</A></B></CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -929,14 +444,6 @@ Main graphics and rendering context, as well as the base API implementation.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#SPG">SPG</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;int</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/core/PGraphics.html#sphereDetailU">sphereDetailU</A></B></CODE>
 
@@ -947,30 +454,6 @@ Main graphics and rendering context, as well as the base API implementation.
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;int</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/core/PGraphics.html#sphereDetailV">sphereDetailV</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#SPR">SPR</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#SR">SR</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;stroke argb values</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;int[]</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#stencil">stencil</A></B></CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -1017,14 +500,6 @@ Main graphics and rendering context, as well as the base API implementation.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#SW">SW</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;stroke weight</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;int</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/core/PGraphics.html#textAlign">textAlign</A></B></CODE>
 
@@ -1046,22 +521,6 @@ Main graphics and rendering context, as well as the base API implementation.
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The current text font (read-only)</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;java.awt.Font</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#textFontNative">textFontNative</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The current font if a Java version of it is installed</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;java.awt.FontMetrics</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#textFontNativeMetrics">textFontNativeMetrics</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Metrics for the current native Java font</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -1124,35 +583,11 @@ Main graphics and rendering context, as well as the base API implementation.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;float</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#textX">textX</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Last text position, because text often mixed on lines together</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;float</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#textY">textY</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Last text position, because text often mixed on lines together</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;float</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#textZ">textZ</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Last text position, because text often mixed on lines together</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;boolean</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/core/PGraphics.html#tint">tint</A></B></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;true if tint() is enabled (read-only).</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;True if tint() is enabled (read-only).</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -1162,118 +597,6 @@ Main graphics and rendering context, as well as the base API implementation.
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tint that was last set (read-only)</TD>
 </TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#TX">TX</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#TY">TY</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#TZ">TZ</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#U">U</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#V">V</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#VW">VW</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#VX">VX</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#VY">VY</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#VZ">VZ</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#width1">width1</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#X">X</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#Y">Y</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#Z">Z</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;float[]</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#zbuffer">zbuffer</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
 </TABLE>
 &nbsp;<A NAME="fields_inherited_from_class_processing.core.PImage"><!-- --></A>
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
@@ -1281,7 +604,7 @@ Main graphics and rendering context, as well as the base API implementation.
 <TH ALIGN="left"><B>Fields inherited from class processing.core.<A HREF="../../processing/core/PImage.html" title="class in processing.core">PImage</A></B></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><A HREF="../../processing/core/PImage.html#cache">cache</A>, <A HREF="../../processing/core/PImage.html#format">format</A>, <A HREF="../../processing/core/PImage.html#height">height</A>, <A HREF="../../processing/core/PImage.html#imageMode">imageMode</A>, <A HREF="../../processing/core/PImage.html#modified">modified</A>, <A HREF="../../processing/core/PImage.html#mx1">mx1</A>, <A HREF="../../processing/core/PImage.html#mx2">mx2</A>, <A HREF="../../processing/core/PImage.html#my1">my1</A>, <A HREF="../../processing/core/PImage.html#my2">my2</A>, <A HREF="../../processing/core/PImage.html#parent">parent</A>, <A HREF="../../processing/core/PImage.html#pixels">pixels</A>, <A HREF="../../processing/core/PImage.html#smooth">smooth</A>, <A HREF="../../processing/core/PImage.html#width">width</A></CODE></TD>
+<TD><CODE><A HREF="../../processing/core/PImage.html#format">format</A>, <A HREF="../../processing/core/PImage.html#height">height</A>, <A HREF="../../processing/core/PImage.html#parent">parent</A>, <A HREF="../../processing/core/PImage.html#pixels">pixels</A>, <A HREF="../../processing/core/PImage.html#width">width</A></CODE></TD>
 </TR>
 </TABLE>
 &nbsp;<A NAME="fields_inherited_from_class_processing.core.PConstants"><!-- --></A>
@@ -1290,7 +613,7 @@ Main graphics and rendering context, as well as the base API implementation.
 <TH ALIGN="left"><B>Fields inherited from interface processing.core.<A HREF="../../processing/core/PConstants.html" title="interface in processing.core">PConstants</A></B></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><A HREF="../../processing/core/PConstants.html#ADD">ADD</A>, <A HREF="../../processing/core/PConstants.html#ALPHA">ALPHA</A>, <A HREF="../../processing/core/PConstants.html#ALPHA_MASK">ALPHA_MASK</A>, <A HREF="../../processing/core/PConstants.html#ALT">ALT</A>, <A HREF="../../processing/core/PConstants.html#AMBIENT">AMBIENT</A>, <A HREF="../../processing/core/PConstants.html#ARGB">ARGB</A>, <A HREF="../../processing/core/PConstants.html#ARROW">ARROW</A>, <A HREF="../../processing/core/PConstants.html#BACKSPACE">BACKSPACE</A>, <A HREF="../../processing/core/PConstants.html#BASELINE">BASELINE</A>, <A HREF="../../processing/core/PConstants.html#BEVEL">BEVEL</A>, <A HREF="../../processing/core/PConstants.html#BLEND">BLEND</A>, <A HREF="../../processing/core/PConstants.html#BLUE_MASK">BLUE_MASK</A>, <A HREF="../../processing/core/PConstants.html#BLUR">BLUR</A>, <A HREF="../../processing/core/PConstants.html#BOTTOM">BOTTOM</A>, <A HREF="../../processing/core/PConstants.html#BURN">BURN</A>, <A HREF="../../processing/core/PConstants.html#CENTER">CENTER</A>, <A HREF="../../processing/core/PConstants.html#CENTER_RADIUS">CENTER_RADIUS</A>, <A HREF="../../processing/core/PConstants.html#CHATTER">CHATTER</A>, <A HREF="../../processing/core/PConstants.html#CLOSE">CLOSE</A>, <A HREF="../../processing/core/PConstants.html#CMYK">CMYK</A>, <A HREF="../../processing/core/PConstants.html#CODED">CODED</A>, <A HREF="../../processing/core/PConstants.html#COMPLAINT">COMPLAINT</A>, <A HREF="../../processing/core/PConstants.html#CONTROL">CONTROL</A>, <A HREF="../../processing/core/PConstants.html#CORNER">CORNER</A>, <A HREF="../../processing/core/PConstants.html#CORNERS">CORNERS</A>, <A HREF="../../processing/core/PConstants.html#CROSS">CROSS</A>, <A HREF="../../processing/core/PConstants.html#CUSTOM">CUSTOM</A>, <A HREF="../../processing/core/PConstants.html#DARKEST">DARKEST</A>, <A HREF="../../processing/core/PConstants.html#DEG_TO_RAD">DEG_TO_RAD</A>, <A HREF="../../processing/core/PConstants.html#DELETE">DELETE</A>, <A HREF="../../processing/core/PConstants.html#DIFFERENCE">DIFFERENCE</A>, <A HREF="../../processing/core/PConstants.html#DILATE">DILATE</A>, <A HREF="../../processing/core/PConstants.html#DIRECTIONAL">DIRECTIONAL</A>, <A HREF="../../processing/core/PConstants.html#DISABLE_ACCURATE_TEXTURES">DISABLE_ACCURATE_TEXTURES</A>, <A HREF="../../processing/core/PConstants.html#DISABLE_DEPTH_SORT">DISABLE_DEPTH_SORT</A>, <A HREF="../../processing/core/PConstants.html#DISABLE_DEPTH_TEST">DISABLE_DEPTH_TEST</A>, <A HREF="../../processing/core/PConstants.html#DISABLE_NATIVE_FONTS">DISABLE_NATIVE_FONTS</A>, <A HREF="../../processing/core/PConstants.html#DISABLE_OPENGL_ERROR_REPORT">DISABLE_OPENGL_ERROR_REPORT</A>, <A HREF="../../processing/core/PConstants.html#DODGE">DODGE</A>, <A HREF="../../processing/core/PConstants.html#DOWN">DOWN</A>, <A HREF="../../processing/core/PConstants.html#DXF">DXF</A>, <A HREF="../../processing/core/PConstants.html#ENABLE_ACCURATE_TEXTURES">ENABLE_ACCURATE_TEXTURES</A>, <A HREF="../../processing/core/PConstants.html#ENABLE_DEPTH_SORT">ENABLE_DEPTH_SORT</A>, <A HREF="../../processing/core/PConstants.html#ENABLE_DEPTH_TEST">ENABLE_DEPTH_TEST</A>, <A HREF="../../processing/core/PConstants.html#ENABLE_NATIVE_FONTS">ENABLE_NATIVE_FONTS</A>, <A HREF="../../processing/core/PConstants.html#ENABLE_OPENGL_2X_SMOOTH">ENABLE_OPENGL_2X_SMOOTH</A>, <A HREF="../../processing/core/PConstants.html#ENABLE_OPENGL_4X_SMOOTH">ENABLE_OPENGL_4X_SMOOTH</A>, <A HREF="../../processing/core/PConstants.html#ENABLE_OPENGL_ERROR_REPORT">ENABLE_OPENGL_ERROR_REPORT</A>, <A HREF="../../processing/core/PConstants.html#ENTER">ENTER</A>, <A HREF="../../processing/core/PConstants.html#EPSILON">EPSILON</A>, <A HREF="../../processing/core/PConstants.html#ERODE">ERODE</A>, <A HREF="../../processing/core/PConstants.html#ESC">ESC</A>, <A HREF="../../processing/core/PConstants.html#EXCLUSION">EXCLUSION</A>, <A HREF="../../processing/core/PConstants.html#GIF">GIF</A>, <A HREF="../../processing/core/PConstants.html#GRAY">GRAY</A>, <A HREF="../../processing/core/PConstants.html#GREEN_MASK">GREEN_MASK</A>, <A HREF="../../processing/core/PConstants.html#GROUP">GROUP</A>, <A HREF="../../processing/core/PConstants.html#HALF_PI">HALF_PI</A>, <A HREF="../../processing/core/PConstants.html#HAND">HAND</A>, <A HREF="../../processing/core/PConstants.html#HARD_LIGHT">HARD_LIGHT</A>, <A HREF="../../processing/core/PConstants.html#HINT_COUNT">HINT_COUNT</A>, <A HREF="../../processing/core/PConstants.html#HSB">HSB</A>, <A HREF="../../processing/core/PConstants.html#IMAGE">IMAGE</A>, <A HREF="../../processing/core/PConstants.html#INVERT">INVERT</A>, <A HREF="../../processing/core/PConstants.html#JAVA2D">JAVA2D</A>, <A HREF="../../processing/core/PConstants.html#JPEG">JPEG</A>, <A HREF="../../processing/core/PConstants.html#LEFT">LEFT</A>, <A HREF="../../processing/core/PConstants.html#LIGHTEST">LIGHTEST</A>, <A HREF="../../processing/core/PConstants.html#LINES">LINES</A>, <A HREF="../../processing/core/PConstants.html#LINUX">LINUX</A>, <A HREF="../../processing/core/PConstants.html#MACOSX">MACOSX</A>, <A HREF="../../processing/core/PConstants.html#MAX_FLOAT">MAX_FLOAT</A>, <A HREF="../../processing/core/PConstants.html#MAX_INT">MAX_INT</A>, <A HREF="../../processing/core/PConstants.html#MIN_FLOAT">MIN_FLOAT</A>, <A HREF="../../processing/core/PConstants.html#MIN_INT">MIN_INT</A>, <A HREF="../../processing/core/PConstants.html#MITER">MITER</A>, <A HREF="../../processing/core/PConstants.html#MODEL">MODEL</A>, <A HREF="../../processing/core/PConstants.html#MOVE">MOVE</A>, <A HREF="../../processing/core/PConstants.html#MULTIPLY">MULTIPLY</A>, <A HREF="../../processing/core/PConstants.html#NORMALIZED">NORMALIZED</A>, <A HREF="../../processing/core/PConstants.html#OPAQUE">OPAQUE</A>, <A HREF="../../processing/core/PConstants.html#OPEN">OPEN</A>, <A HREF="../../processing/core/PConstants.html#OPENGL">OPENGL</A>, <A HREF="../../processing/core/PConstants.html#ORTHOGRAPHIC">ORTHOGRAPHIC</A>, <A HREF="../../processing/core/PConstants.html#OTHER">OTHER</A>, <A HREF="../../processing/core/PConstants.html#OVERLAY">OVERLAY</A>, <A HREF="../../processing/core/PConstants.html#P2D">P2D</A>, <A HREF="../../processing/core/PConstants.html#P3D">P3D</A>, <A HREF="../../processing/core/PConstants.html#PDF">PDF</A>, <A HREF="../../processing/core/PConstants.html#PERSPECTIVE">PERSPECTIVE</A>, <A HREF="../../processing/core/PConstants.html#PI">PI</A>, <A HREF="../../processing/core/PConstants.html#PIXEL_CENTER">PIXEL_CENTER</A>, <A HREF="../../processing/core/PConstants.html#POINT">POINT</A>, <A HREF="../../processing/core/PConstants.html#POINTS">POINTS</A>, <A HREF="../../processing/core/PConstants.html#POLYGON">POLYGON</A>, <A HREF="../../processing/core/PConstants.html#POSTERIZE">POSTERIZE</A>, <A HREF="../../processing/core/PConstants.html#PROBLEM">PROBLEM</A>, <A HREF="../../processing/core/PConstants.html#PROJECT">PROJECT</A>, <A HREF="../../processing/core/PConstants.html#QUAD_STRIP">QUAD_STRIP</A>, <A HREF="../../processing/core/PConstants.html#QUADS">QUADS</A>, <A HREF="../../processing/core/PConstants.html#QUARTER_PI">QUARTER_PI</A>, <A HREF="../../processing/core/PConstants.html#RAD_TO_DEG">RAD_TO_DEG</A>, <A HREF="../../processing/core/PConstants.html#RADIUS">RADIUS</A>, <A HREF="../../processing/core/PConstants.html#RED_MASK">RED_MASK</A>, <A HREF="../../processing/core/PConstants.html#REPLACE">REPLACE</A>, <A HREF="../../processing/core/PConstants.html#RETURN">RETURN</A>, <A HREF="../../processing/core/PConstants.html#RGB">RGB</A>, <A HREF="../../processing/core/PConstants.html#RIGHT">RIGHT</A>, <A HREF="../../processing/core/PConstants.html#ROUND">ROUND</A>, <A HREF="../../processing/core/PConstants.html#SCREEN">SCREEN</A>, <A HREF="../../processing/core/PConstants.html#SHAPE">SHAPE</A>, <A HREF="../../processing/core/PConstants.html#SHIFT">SHIFT</A>, <A HREF="../../processing/core/PConstants.html#SOFT_LIGHT">SOFT_LIGHT</A>, <A HREF="../../processing/core/PConstants.html#SPOT">SPOT</A>, <A HREF="../../processing/core/PConstants.html#SQUARE">SQUARE</A>, <A HREF="../../processing/core/PConstants.html#SUBTRACT">SUBTRACT</A>, <A HREF="../../processing/core/PConstants.html#TAB">TAB</A>, <A HREF="../../processing/core/PConstants.html#TARGA">TARGA</A>, <A HREF="../../processing/core/PConstants.html#TEXT">TEXT</A>, <A HREF="../../processing/core/PConstants.html#THIRD_PI">THIRD_PI</A>, <A HREF="../../processing/core/PConstants.html#THRESHOLD">THRESHOLD</A>, <A HREF="../../processing/core/PConstants.html#TIFF">TIFF</A>, <A HREF="../../processing/core/PConstants.html#TOP">TOP</A>, <A HREF="../../processing/core/PConstants.html#TRIANGLE_FAN">TRIANGLE_FAN</A>, <A HREF="../../processing/core/PConstants.html#TRIANGLE_STRIP">TRIANGLE_STRIP</A>, <A HREF="../../processing/core/PConstants.html#TRIANGLES">TRIANGLES</A>, <A HREF="../../processing/core/PConstants.html#TWO_PI">TWO_PI</A>, <A HREF="../../processing/core/PConstants.html#UP">UP</A>, <A HREF="../../processing/core/PConstants.html#WAIT">WAIT</A>, <A HREF="../../processing/core/PConstants.html#WHITESPACE">WHITESPACE</A>, <A HREF="../../processing/core/PConstants.html#WINDOWS">WINDOWS</A></CODE></TD>
+<TD><CODE><A HREF="../../processing/core/PConstants.html#A">A</A>, <A HREF="../../processing/core/PConstants.html#AB">AB</A>, <A HREF="../../processing/core/PConstants.html#ADD">ADD</A>, <A HREF="../../processing/core/PConstants.html#AG">AG</A>, <A HREF="../../processing/core/PConstants.html#ALPHA">ALPHA</A>, <A HREF="../../processing/core/PConstants.html#ALPHA_MASK">ALPHA_MASK</A>, <A HREF="../../processing/core/PConstants.html#ALT">ALT</A>, <A HREF="../../processing/core/PConstants.html#AMBIENT">AMBIENT</A>, <A HREF="../../processing/core/PConstants.html#AR">AR</A>, <A HREF="../../processing/core/PConstants.html#ARC">ARC</A>, <A HREF="../../processing/core/PConstants.html#ARGB">ARGB</A>, <A HREF="../../processing/core/PConstants.html#ARROW">ARROW</A>, <A HREF="../../processing/core/PConstants.html#B">B</A>, <A HREF="../../processing/core/PConstants.html#BACKSPACE">BACKSPACE</A>, <A HREF="../../processing/core/PConstants.html#BASELINE">BASELINE</A>, <A HREF="../../processing/core/PConstants.html#BEEN_LIT">BEEN_LIT</A>, <A HREF="../../processing/core/PConstants.html#BEVEL">BEVEL</A>, <A HREF="../../processing/core/PConstants.html#BLEND">BLEND</A>, <A HREF="../../processing/core/PConstants.html#BLUE_MASK">BLUE_MASK</A>, <A HREF="../../processing/core/PConstants.html#BLUR">BLUR</A>, <A HREF="../../processing/core/PConstants.html#BOTTOM">BOTTOM</A>, <A HREF="../../processing/core/PConstants.html#BOX">BOX</A>, <A HREF="../../processing/core/PConstants.html#BURN">BURN</A>, <A HREF="../../processing/core/PConstants.html#CENTER">CENTER</A>, <A HREF="../../processing/core/PConstants.html#CHATTER">CHATTER</A>, <A HREF="../../processing/core/PConstants.html#CLOSE">CLOSE</A>, <A HREF="../../processing/core/PConstants.html#CMYK">CMYK</A>, <A HREF="../../processing/core/PConstants.html#CODED">CODED</A>, <A HREF="../../processing/core/PConstants.html#COMPLAINT">COMPLAINT</A>, <A HREF="../../processing/core/PConstants.html#CONTROL">CONTROL</A>, <A HREF="../../processing/core/PConstants.html#CORNER">CORNER</A>, <A HREF="../../processing/core/PConstants.html#CORNERS">CORNERS</A>, <A HREF="../../processing/core/PConstants.html#CROSS">CROSS</A>, <A HREF="../../processing/core/PConstants.html#CUSTOM">CUSTOM</A>, <A HREF="../../processing/core/PConstants.html#DA">DA</A>, <A HREF="../../processing/core/PConstants.html#DARKEST">DARKEST</A>, <A HREF="../../processing/core/PConstants.html#DB">DB</A>, <A HREF="../../processing/core/PConstants.html#DEG_TO_RAD">DEG_TO_RAD</A>, <A HREF="../../processing/core/PConstants.html#DELETE">DELETE</A>, <A HREF="../../processing/core/PConstants.html#DG">DG</A>, <A HREF="../../processing/core/PConstants.html#DIAMETER">DIAMETER</A>, <A HREF="../../processing/core/PConstants.html#DIFFERENCE">DIFFERENCE</A>, <A HREF="../../processing/core/PConstants.html#DILATE">DILATE</A>, <A HREF="../../processing/core/PConstants.html#DIRECTIONAL">DIRECTIONAL</A>, <A HREF="../../processing/core/PConstants.html#DISABLE_ACCURATE_TEXTURES">DISABLE_ACCURATE_TEXTURES</A>, <A HREF="../../processing/core/PConstants.html#DISABLE_DEPTH_SORT">DISABLE_DEPTH_SORT</A>, <A HREF="../../processing/core/PConstants.html#DISABLE_DEPTH_TEST">DISABLE_DEPTH_TEST</A>, <A HREF="../../processing/core/PConstants.html#DISABLE_OPENGL_ERROR_REPORT">DISABLE_OPENGL_ERROR_REPORT</A>, <A HREF="../../processing/core/PConstants.html#DODGE">DODGE</A>, <A HREF="../../processing/core/PConstants.html#DOWN">DOWN</A>, <A HREF="../../processing/core/PConstants.html#DR">DR</A>, <A HREF="../../processing/core/PConstants.html#DXF">DXF</A>, <A HREF="../../processing/core/PConstants.html#EB">EB</A>, <A HREF="../../processing/core/PConstants.html#EDGE">EDGE</A>, <A HREF="../../processing/core/PConstants.html#EG">EG</A>, <A HREF="../../processing/core/PConstants.html#ELLIPSE">ELLIPSE</A>, <A HREF="../../processing/core/PConstants.html#ENABLE_ACCURATE_TEXTURES">ENABLE_ACCURATE_TEXTURES</A>, <A HREF="../../processing/core/PConstants.html#ENABLE_DEPTH_SORT">ENABLE_DEPTH_SORT</A>, <A HREF="../../processing/core/PConstants.html#ENABLE_DEPTH_TEST">ENABLE_DEPTH_TEST</A>, <A HREF="../../processing/core/PConstants.html#ENABLE_NATIVE_FONTS">ENABLE_NATIVE_FONTS</A>, <A HREF="../../processing/core/PConstants.html#ENABLE_OPENGL_2X_SMOOTH">ENABLE_OPENGL_2X_SMOOTH</A>, <A HREF="../../processing/core/PConstants.html#ENABLE_OPENGL_4X_SMOOTH">ENABLE_OPENGL_4X_SMOOTH</A>, <A HREF="../../processing/core/PConstants.html#ENABLE_OPENGL_ERROR_REPORT">ENABLE_OPENGL_ERROR_REPORT</A>, <A HREF="../../processing/core/PConstants.html#ENTER">ENTER</A>, <A HREF="../../processing/core/PConstants.html#EPSILON">EPSILON</A>, <A HREF="../../processing/core/PConstants.html#ER">ER</A>, <A HREF="../../processing/core/PConstants.html#ERODE">ERODE</A>, <A HREF="../../processing/core/PConstants.html#ERROR_BACKGROUND_IMAGE_FORMAT">ERROR_BACKGROUND_IMAGE_FORMAT</A>, <A HREF="../../processing/core/PConstants.html#ERROR_BACKGROUND_IMAGE_SIZE">ERROR_BACKGROUND_IMAGE_SIZE</A>, <A HREF="../../processing/core/PConstants.html#ERROR_PUSHMATRIX_OVERFLOW">ERROR_PUSHMATRIX_OVERFLOW</A>, <A HREF="../../processing/core/PConstants.html#ERROR_PUSHMATRIX_UNDERFLOW">ERROR_PUSHMATRIX_UNDERFLOW</A>, <A HREF="../../processing/core/PConstants.html#ERROR_TEXTFONT_NULL_PFONT">ERROR_TEXTFONT_NULL_PFONT</A>, <A HREF="../../processing/core/PConstants.html#ESC">ESC</A>, <A HREF="../../processing/core/PConstants.html#EXCLUSION">EXCLUSION</A>, <A HREF="../../processing/core/PConstants.html#G">G</A>, <A HREF="../../processing/core/PConstants.html#GIF">GIF</A>, <A HREF="../../processing/core/PConstants.html#GRAY">GRAY</A>, <A HREF="../../processing/core/PConstants.html#GREEN_MASK">GREEN_MASK</A>, <A HREF="../../processing/core/PConstants.html#HALF_PI">HALF_PI</A>, <A HREF="../../processing/core/PConstants.html#HAND">HAND</A>, <A HREF="../../processing/core/PConstants.html#HARD_LIGHT">HARD_LIGHT</A>, <A HREF="../../processing/core/PConstants.html#HINT_COUNT">HINT_COUNT</A>, <A HREF="../../processing/core/PConstants.html#HSB">HSB</A>, <A HREF="../../processing/core/PConstants.html#IMAGE">IMAGE</A>, <A HREF="../../processing/core/PConstants.html#INVERT">INVERT</A>, <A HREF="../../processing/core/PConstants.html#JAVA2D">JAVA2D</A>, <A HREF="../../processing/core/PConstants.html#JPEG">JPEG</A>, <A HREF="../../processing/core/PConstants.html#LEFT">LEFT</A>, <A HREF="../../processing/core/PConstants.html#LIGHTEST">LIGHTEST</A>, <A HREF="../../processing/core/PConstants.html#LINE">LINE</A>, <A HREF="../../processing/core/PConstants.html#LINES">LINES</A>, <A HREF="../../processing/core/PConstants.html#LINUX">LINUX</A>, <A HREF="../../processing/core/PConstants.html#MACOSX">MACOSX</A>, <A HREF="../../processing/core/PConstants.html#MAX_FLOAT">MAX_FLOAT</A>, <A HREF="../../processing/core/PConstants.html#MAX_INT">MAX_INT</A>, <A HREF="../../processing/core/PConstants.html#MIN_FLOAT">MIN_FLOAT</A>, <A HREF="../../processing/core/PConstants.html#MIN_INT">MIN_INT</A>, <A HREF="../../processing/core/PConstants.html#MITER">MITER</A>, <A HREF="../../processing/core/PConstants.html#MODEL">MODEL</A>, <A HREF="../../processing/core/PConstants.html#MOVE">MOVE</A>, <A HREF="../../processing/core/PConstants.html#MULTIPLY">MULTIPLY</A>, <A HREF="../../processing/core/PConstants.html#NORMAL">NORMAL</A>, <A HREF="../../processing/core/PConstants.html#NORMALIZED">NORMALIZED</A>, <A HREF="../../processing/core/PConstants.html#NX">NX</A>, <A HREF="../../processing/core/PConstants.html#NY">NY</A>, <A HREF="../../processing/core/PConstants.html#NZ">NZ</A>, <A HREF="../../processing/core/PConstants.html#OPAQUE">OPAQUE</A>, <A HREF="../../processing/core/PConstants.html#OPEN">OPEN</A>, <A HREF="../../processing/core/PConstants.html#OPENGL">OPENGL</A>, <A HREF="../../processing/core/PConstants.html#ORTHOGRAPHIC">ORTHOGRAPHIC</A>, <A HREF="../../processing/core/PConstants.html#OTHER">OTHER</A>, <A HREF="../../processing/core/PConstants.html#OVERLAY">OVERLAY</A>, <A HREF="../../processing/core/PConstants.html#P2D">P2D</A>, <A HREF="../../processing/core/PConstants.html#P3D">P3D</A>, <A HREF="../../processing/core/PConstants.html#PATH">PATH</A>, <A HREF="../../processing/core/PConstants.html#PDF">PDF</A>, <A HREF="../../processing/core/PConstants.html#PERSPECTIVE">PERSPECTIVE</A>, <A HREF="../../processing/core/PConstants.html#PI">PI</A>, <A HREF="../../processing/core/PConstants.html#POINT">POINT</A>, <A HREF="../../processing/core/PConstants.html#POINTS">POINTS</A>, <A HREF="../../processing/core/PConstants.html#POLYGON">POLYGON</A>, <A HREF="../../processing/core/PConstants.html#POSTERIZE">POSTERIZE</A>, <A HREF="../../processing/core/PConstants.html#PROBLEM">PROBLEM</A>, <A HREF="../../processing/core/PConstants.html#PROJECT">PROJECT</A>, <A HREF="../../processing/core/PConstants.html#QUAD">QUAD</A>, <A HREF="../../processing/core/PConstants.html#QUAD_STRIP">QUAD_STRIP</A>, <A HREF="../../processing/core/PConstants.html#QUADS">QUADS</A>, <A HREF="../../processing/core/PConstants.html#QUARTER_PI">QUARTER_PI</A>, <A HREF="../../processing/core/PConstants.html#R">R</A>, <A HREF="../../processing/core/PConstants.html#RAD_TO_DEG">RAD_TO_DEG</A>, <A HREF="../../processing/core/PConstants.html#RADIUS">RADIUS</A>, <A HREF="../../processing/core/PConstants.html#RECT">RECT</A>, <A HREF="../../processing/core/PConstants.html#RED_MASK">RED_MASK</A>, <A HREF="../../processing/core/PConstants.html#REPLACE">REPLACE</A>, <A HREF="../../processing/core/PConstants.html#RETURN">RETURN</A>, <A HREF="../../processing/core/PConstants.html#RGB">RGB</A>, <A HREF="../../processing/core/PConstants.html#RIGHT">RIGHT</A>, <A HREF="../../processing/core/PConstants.html#ROUND">ROUND</A>, <A HREF="../../processing/core/PConstants.html#SA">SA</A>, <A HREF="../../processing/core/PConstants.html#SB">SB</A>, <A HREF="../../processing/core/PConstants.html#SCREEN">SCREEN</A>, <A HREF="../../processing/core/PConstants.html#SG">SG</A>, <A HREF="../../processing/core/PConstants.html#SHAPE">SHAPE</A>, <A HREF="../../processing/core/PConstants.html#SHIFT">SHIFT</A>, <A HREF="../../processing/core/PConstants.html#SHINE">SHINE</A>, <A HREF="../../processing/core/PConstants.html#SOFT_LIGHT">SOFT_LIGHT</A>, <A HREF="../../processing/core/PConstants.html#SPB">SPB</A>, <A HREF="../../processing/core/PConstants.html#SPG">SPG</A>, <A HREF="../../processing/core/PConstants.html#SPHERE">SPHERE</A>, <A HREF="../../processing/core/PConstants.html#SPOT">SPOT</A>, <A HREF="../../processing/core/PConstants.html#SPR">SPR</A>, <A HREF="../../processing/core/PConstants.html#SQUARE">SQUARE</A>, <A HREF="../../processing/core/PConstants.html#SR">SR</A>, <A HREF="../../processing/core/PConstants.html#SUBTRACT">SUBTRACT</A>, <A HREF="../../processing/core/PConstants.html#SW">SW</A>, <A HREF="../../processing/core/PConstants.html#TAB">TAB</A>, <A HREF="../../processing/core/PConstants.html#TARGA">TARGA</A>, <A HREF="../../processing/core/PConstants.html#TEXT">TEXT</A>, <A HREF="../../processing/core/PConstants.html#THIRD_PI">THIRD_PI</A>, <A HREF="../../processing/core/PConstants.html#THRESHOLD">THRESHOLD</A>, <A HREF="../../processing/core/PConstants.html#TIFF">TIFF</A>, <A HREF="../../processing/core/PConstants.html#TOP">TOP</A>, <A HREF="../../processing/core/PConstants.html#TRIANGLE">TRIANGLE</A>, <A HREF="../../processing/core/PConstants.html#TRIANGLE_FAN">TRIANGLE_FAN</A>, <A HREF="../../processing/core/PConstants.html#TRIANGLE_STRIP">TRIANGLE_STRIP</A>, <A HREF="../../processing/core/PConstants.html#TRIANGLES">TRIANGLES</A>, <A HREF="../../processing/core/PConstants.html#TWO_PI">TWO_PI</A>, <A HREF="../../processing/core/PConstants.html#TX">TX</A>, <A HREF="../../processing/core/PConstants.html#TY">TY</A>, <A HREF="../../processing/core/PConstants.html#TZ">TZ</A>, <A HREF="../../processing/core/PConstants.html#U">U</A>, <A HREF="../../processing/core/PConstants.html#UP">UP</A>, <A HREF="../../processing/core/PConstants.html#V">V</A>, <A HREF="../../processing/core/PConstants.html#VERTEX_FIELD_COUNT">VERTEX_FIELD_COUNT</A>, <A HREF="../../processing/core/PConstants.html#VW">VW</A>, <A HREF="../../processing/core/PConstants.html#VX">VX</A>, <A HREF="../../processing/core/PConstants.html#VY">VY</A>, <A HREF="../../processing/core/PConstants.html#VZ">VZ</A>, <A HREF="../../processing/core/PConstants.html#WAIT">WAIT</A>, <A HREF="../../processing/core/PConstants.html#WHITESPACE">WHITESPACE</A>, <A HREF="../../processing/core/PConstants.html#WINDOWS">WINDOWS</A>, <A HREF="../../processing/core/PConstants.html#X">X</A>, <A HREF="../../processing/core/PConstants.html#Y">Y</A>, <A HREF="../../processing/core/PConstants.html#Z">Z</A></CODE></TD>
 </TR>
 </TABLE>
 &nbsp;
@@ -1414,6 +737,30 @@ Main graphics and rendering context, as well as the base API implementation.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#applyMatrix(processing.core.PMatrix)">applyMatrix</A></B>(<A HREF="../../processing/core/PMatrix.html" title="interface in processing.core">PMatrix</A>&nbsp;source)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#applyMatrix(processing.core.PMatrix2D)">applyMatrix</A></B>(<A HREF="../../processing/core/PMatrix2D.html" title="class in processing.core">PMatrix2D</A>&nbsp;source)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#applyMatrix(processing.core.PMatrix3D)">applyMatrix</A></B>(<A HREF="../../processing/core/PMatrix3D.html" title="class in processing.core">PMatrix3D</A>&nbsp;source)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/core/PGraphics.html#arc(float, float, float, float, float, float)">arc</A></B>(float&nbsp;a,
     float&nbsp;b,
     float&nbsp;c,
@@ -1512,7 +859,7 @@ Main graphics and rendering context, as well as the base API implementation.
 <TD><CODE><B><A HREF="../../processing/core/PGraphics.html#beginRaw(processing.core.PGraphics)">beginRaw</A></B>(<A HREF="../../processing/core/PGraphics.html" title="class in processing.core">PGraphics</A>&nbsp;rawGraphics)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Record individual lines and triangles by echoing them to another renderer.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -1623,7 +970,7 @@ Main graphics and rendering context, as well as the base API implementation.
              float&nbsp;z4)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;See notes with the bezier() function.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -1790,7 +1137,7 @@ Main graphics and rendering context, as well as the base API implementation.
 <TD><CODE><B><A HREF="../../processing/core/PGraphics.html#colorMode(int)">colorMode</A></B>(int&nbsp;mode)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Callback to handle clearing the background when begin/endRaw is in use.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -1906,7 +1253,7 @@ Main graphics and rendering context, as well as the base API implementation.
             float&nbsp;y)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;See notes with the curve() function.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -1916,7 +1263,15 @@ Main graphics and rendering context, as well as the base API implementation.
             float&nbsp;z)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;See notes with the curve() function.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#dimensional()">dimensional</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return true if this renderer supports 3D drawing.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -1946,6 +1301,14 @@ Main graphics and rendering context, as well as the base API implementation.
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Handle any takedown for this graphics context.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#edge(boolean)">edge</A></B>(boolean&nbsp;edge)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets whether the upcoming vertex is part of an edge.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -2090,12 +1453,52 @@ Main graphics and rendering context, as well as the base API implementation.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#flush()">flush</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/core/PGraphics.html#frustum(float, float, float, float, float, float)">frustum</A></B>(float&nbsp;left,
         float&nbsp;right,
         float&nbsp;bottom,
         float&nbsp;top,
         float&nbsp;near,
         float&nbsp;far)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../processing/core/PMatrix2D.html" title="class in processing.core">PMatrix2D</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#getMatrix(processing.core.PMatrix2D)">getMatrix</A></B>(<A HREF="../../processing/core/PMatrix2D.html" title="class in processing.core">PMatrix2D</A>&nbsp;target)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copy the current transformation matrix into the specified target.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../processing/core/PMatrix3D.html" title="class in processing.core">PMatrix3D</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#getMatrix(processing.core.PMatrix3D)">getMatrix</A></B>(<A HREF="../../processing/core/PMatrix3D.html" title="class in processing.core">PMatrix3D</A>&nbsp;target)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copy the current transformation matrix into the specified target.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../processing/core/PStyle.html" title="class in processing.core">PStyle</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#getStyle()">getStyle</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../processing/core/PStyle.html" title="class in processing.core">PStyle</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#getStyle(processing.core.PStyle)">getStyle</A></B>(<A HREF="../../processing/core/PStyle.html" title="class in processing.core">PStyle</A>&nbsp;s)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -2162,6 +1565,14 @@ Main graphics and rendering context, as well as the base API implementation.
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;u, v coordinates are always based on image space location,
  regardless of the current textureMode().</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#imageMode(int)">imageMode</A></B>(int&nbsp;mode)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The mode can only be set to CORNERS, CORNER, and CENTER.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -2238,31 +1649,6 @@ Main graphics and rendering context, as well as the base API implementation.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#loadMatrix()">loadMatrix</A></B>()</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Loads the current matrix into m00, m01 etc (or modelview and
- projection when using 3D) so that the values can be read.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#mask(int[])">mask</A></B>(int[]&nbsp;alpha)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Use with caution on PGraphics.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#mask(processing.core.PImage)">mask</A></B>(<A HREF="../../processing/core/PImage.html" title="class in processing.core">PImage</A>&nbsp;alpha)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Use with caution on PGraphics.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;float</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/core/PGraphics.html#modelX(float, float, float)">modelX</A></B>(float&nbsp;x,
        float&nbsp;y,
@@ -2315,7 +1701,15 @@ Main graphics and rendering context, as well as the base API implementation.
        float&nbsp;nz)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the current normal vector.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#noSmooth()">noSmooth</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Disable smoothing.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -2416,6 +1810,14 @@ Main graphics and rendering context, as well as the base API implementation.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#popStyle()">popStyle</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/core/PGraphics.html#printCamera()">printCamera</A></B>()</CODE>
 
 <BR>
@@ -2448,6 +1850,14 @@ Main graphics and rendering context, as well as the base API implementation.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#pushStyle()">pushStyle</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/core/PGraphics.html#quad(float, float, float, float, float, float, float, float)">quad</A></B>(float&nbsp;x1,
      float&nbsp;y1,
      float&nbsp;x2,
@@ -2463,10 +1873,10 @@ Main graphics and rendering context, as well as the base API implementation.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#rect(float, float, float, float)">rect</A></B>(float&nbsp;x1,
-     float&nbsp;y1,
-     float&nbsp;x2,
-     float&nbsp;y2)</CODE>
+<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#rect(float, float, float, float)">rect</A></B>(float&nbsp;a,
+     float&nbsp;b,
+     float&nbsp;c,
+     float&nbsp;d)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -2628,6 +2038,22 @@ Main graphics and rendering context, as well as the base API implementation.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#setMatrix(processing.core.PMatrix2D)">setMatrix</A></B>(<A HREF="../../processing/core/PMatrix2D.html" title="class in processing.core">PMatrix2D</A>&nbsp;source)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set the current transformation to the contents of the specified source.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#setMatrix(processing.core.PMatrix3D)">setMatrix</A></B>(<A HREF="../../processing/core/PMatrix3D.html" title="class in processing.core">PMatrix3D</A>&nbsp;source)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set the current transformation to the contents of the specified source.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/core/PGraphics.html#setParent(processing.core.PApplet)">setParent</A></B>(<A HREF="../../processing/core/PApplet.html" title="class in processing.core">PApplet</A>&nbsp;parent)</CODE>
 
 <BR>
@@ -2652,11 +2078,49 @@ Main graphics and rendering context, as well as the base API implementation.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#setSize(int, int)">setSize</A></B>(int&nbsp;iwidth,
-        int&nbsp;iheight)</CODE>
+<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#setSize(int, int)">setSize</A></B>(int&nbsp;w,
+        int&nbsp;h)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The final step in setting up a renderer, set its size of this renderer.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#shape(processing.core.PShape)">shape</A></B>(<A HREF="../../processing/core/PShape.html" title="class in processing.core">PShape</A>&nbsp;shape)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#shape(processing.core.PShape, float, float)">shape</A></B>(<A HREF="../../processing/core/PShape.html" title="class in processing.core">PShape</A>&nbsp;shape,
+      float&nbsp;x,
+      float&nbsp;y)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Convenience method to draw at a particular location.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#shape(processing.core.PShape, float, float, float, float)">shape</A></B>(<A HREF="../../processing/core/PShape.html" title="class in processing.core">PShape</A>&nbsp;shape,
+      float&nbsp;x,
+      float&nbsp;y,
+      float&nbsp;c,
+      float&nbsp;d)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#shapeMode(int)">shapeMode</A></B>(int&nbsp;mode)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set the orientation for the shape() command (like imageMode() or rectMode()).</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -2665,6 +2129,31 @@ Main graphics and rendering context, as well as the base API implementation.
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#showException(java.lang.String)">showException</A></B>(java.lang.String&nbsp;msg)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Show an renderer-related exception that halts the program.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#showWarning(java.lang.String)">showWarning</A></B>(java.lang.String&nbsp;msg)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Show a renderer error, and keep track of it so that it's only shown once.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#smooth()">smooth</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If true in PImage, use bilinear interpolation for copy()
+ operations.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -2698,7 +2187,7 @@ Main graphics and rendering context, as well as the base API implementation.
 <TD><CODE><B><A HREF="../../processing/core/PGraphics.html#sphere(float)">sphere</A></B>(float&nbsp;r)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Draw a sphere with radius r centered at coordinate 0, 0, 0.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -2715,7 +2204,7 @@ Main graphics and rendering context, as well as the base API implementation.
              int&nbsp;vres)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set the detail level for approximating a sphere.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -2810,6 +2299,14 @@ Main graphics and rendering context, as well as the base API implementation.
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/core/PGraphics.html#strokeWeight(float)">strokeWeight</A></B>(float&nbsp;weight)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#style(processing.core.PStyle)">style</A></B>(<A HREF="../../processing/core/PStyle.html" title="class in processing.core">PStyle</A>&nbsp;s)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -3140,6 +2637,15 @@ Main graphics and rendering context, as well as the base API implementation.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#vertex(float[])">vertex</A></B>(float[]&nbsp;v)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Used by renderer subclasses or PShape to efficiently pass in already 
+ formatted vertex information.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/core/PGraphics.html#vertex(float, float)">vertex</A></B>(float&nbsp;x,
        float&nbsp;y)</CODE>
 
@@ -3186,7 +2692,7 @@ Main graphics and rendering context, as well as the base API implementation.
 <TH ALIGN="left"><B>Methods inherited from class processing.core.<A HREF="../../processing/core/PImage.html" title="class in processing.core">PImage</A></B></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><A HREF="../../processing/core/PImage.html#blend(int, int, int, int, int, int, int, int, int)">blend</A>, <A HREF="../../processing/core/PImage.html#blend(processing.core.PImage, int, int, int, int, int, int, int, int, int)">blend</A>, <A HREF="../../processing/core/PImage.html#blendColor(int, int, int)">blendColor</A>, <A HREF="../../processing/core/PImage.html#clone()">clone</A>, <A HREF="../../processing/core/PImage.html#copy(int, int, int, int, int, int, int, int)">copy</A>, <A HREF="../../processing/core/PImage.html#copy(processing.core.PImage, int, int, int, int, int, int, int, int)">copy</A>, <A HREF="../../processing/core/PImage.html#filter(int)">filter</A>, <A HREF="../../processing/core/PImage.html#filter(int, float)">filter</A>, <A HREF="../../processing/core/PImage.html#get()">get</A>, <A HREF="../../processing/core/PImage.html#get(int, int)">get</A>, <A HREF="../../processing/core/PImage.html#get(int, int, int, int)">get</A>, <A HREF="../../processing/core/PImage.html#getImage()">getImage</A>, <A HREF="../../processing/core/PImage.html#imageMode(int)">imageMode</A>, <A HREF="../../processing/core/PImage.html#init(int, int, int)">init</A>, <A HREF="../../processing/core/PImage.html#loadPixels()">loadPixels</A>, <A HREF="../../processing/core/PImage.html#noSmooth()">noSmooth</A>, <A HREF="../../processing/core/PImage.html#resize(int, int)">resize</A>, <A HREF="../../processing/core/PImage.html#save(java.lang.String)">save</A>, <A HREF="../../processing/core/PImage.html#set(int, int, int)">set</A>, <A HREF="../../processing/core/PImage.html#set(int, int, processing.core.PImage)">set</A>, <A HREF="../../processing/core/PImage.html#smooth()">smooth</A>, <A HREF="../../processing/core/PImage.html#updatePixels()">updatePixels</A>, <A HREF="../../processing/core/PImage.html#updatePixels(int, int, int, int)">updatePixels</A></CODE></TD>
+<TD><CODE><A HREF="../../processing/core/PImage.html#blend(int, int, int, int, int, int, int, int, int)">blend</A>, <A HREF="../../processing/core/PImage.html#blend(processing.core.PImage, int, int, int, int, int, int, int, int, int)">blend</A>, <A HREF="../../processing/core/PImage.html#blendColor(int, int, int)">blendColor</A>, <A HREF="../../processing/core/PImage.html#clone()">clone</A>, <A HREF="../../processing/core/PImage.html#copy(int, int, int, int, int, int, int, int)">copy</A>, <A HREF="../../processing/core/PImage.html#copy(processing.core.PImage, int, int, int, int, int, int, int, int)">copy</A>, <A HREF="../../processing/core/PImage.html#filter(int)">filter</A>, <A HREF="../../processing/core/PImage.html#filter(int, float)">filter</A>, <A HREF="../../processing/core/PImage.html#get()">get</A>, <A HREF="../../processing/core/PImage.html#get(int, int)">get</A>, <A HREF="../../processing/core/PImage.html#get(int, int, int, int)">get</A>, <A HREF="../../processing/core/PImage.html#getCache(java.lang.Object)">getCache</A>, <A HREF="../../processing/core/PImage.html#getImage()">getImage</A>, <A HREF="../../processing/core/PImage.html#isModified()">isModified</A>, <A HREF="../../processing/core/PImage.html#loadPixels()">loadPixels</A>, <A HREF="../../processing/core/PImage.html#mask(int[])">mask</A>, <A HREF="../../processing/core/PImage.html#mask(processing.core.PImage)">mask</A>, <A HREF="../../processing/core/PImage.html#removeCache(java.lang.Object)">removeCache</A>, <A HREF="../../processing/core/PImage.html#resize(int, int)">resize</A>, <A HREF="../../processing/core/PImage.html#save(java.lang.String)">save</A>, <A HREF="../../processing/core/PImage.html#set(int, int, int)">set</A>, <A HREF="../../processing/core/PImage.html#set(int, int, processing.core.PImage)">set</A>, <A HREF="../../processing/core/PImage.html#setCache(java.lang.Object, java.lang.Object)">setCache</A>, <A HREF="../../processing/core/PImage.html#setModified()">setModified</A>, <A HREF="../../processing/core/PImage.html#setModified(boolean)">setModified</A>, <A HREF="../../processing/core/PImage.html#updatePixels()">updatePixels</A>, <A HREF="../../processing/core/PImage.html#updatePixels(int, int, int, int)">updatePixels</A></CODE></TD>
 </TR>
 </TABLE>
 &nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
@@ -3211,430 +2717,6 @@ Main graphics and rendering context, as well as the base API implementation.
 </TR>
 </TABLE>
 
-<A NAME="X"><!-- --></A><H3>
-X</H3>
-<PRE>
-public static final int <B>X</B></PRE>
-<DL>
-<DL>
-<DT><B>See Also:</B><DD><A HREF="../../constant-values.html#processing.core.PGraphics.X">Constant Field Values</A></DL>
-</DL>
-<HR>
-
-<A NAME="Y"><!-- --></A><H3>
-Y</H3>
-<PRE>
-public static final int <B>Y</B></PRE>
-<DL>
-<DL>
-<DT><B>See Also:</B><DD><A HREF="../../constant-values.html#processing.core.PGraphics.Y">Constant Field Values</A></DL>
-</DL>
-<HR>
-
-<A NAME="Z"><!-- --></A><H3>
-Z</H3>
-<PRE>
-public static final int <B>Z</B></PRE>
-<DL>
-<DL>
-<DT><B>See Also:</B><DD><A HREF="../../constant-values.html#processing.core.PGraphics.Z">Constant Field Values</A></DL>
-</DL>
-<HR>
-
-<A NAME="R"><!-- --></A><H3>
-R</H3>
-<PRE>
-public static final int <B>R</B></PRE>
-<DL>
-<DL>
-<DT><B>See Also:</B><DD><A HREF="../../constant-values.html#processing.core.PGraphics.R">Constant Field Values</A></DL>
-</DL>
-<HR>
-
-<A NAME="G"><!-- --></A><H3>
-G</H3>
-<PRE>
-public static final int <B>G</B></PRE>
-<DL>
-<DL>
-<DT><B>See Also:</B><DD><A HREF="../../constant-values.html#processing.core.PGraphics.G">Constant Field Values</A></DL>
-</DL>
-<HR>
-
-<A NAME="B"><!-- --></A><H3>
-B</H3>
-<PRE>
-public static final int <B>B</B></PRE>
-<DL>
-<DL>
-<DT><B>See Also:</B><DD><A HREF="../../constant-values.html#processing.core.PGraphics.B">Constant Field Values</A></DL>
-</DL>
-<HR>
-
-<A NAME="A"><!-- --></A><H3>
-A</H3>
-<PRE>
-public static final int <B>A</B></PRE>
-<DL>
-<DL>
-<DT><B>See Also:</B><DD><A HREF="../../constant-values.html#processing.core.PGraphics.A">Constant Field Values</A></DL>
-</DL>
-<HR>
-
-<A NAME="U"><!-- --></A><H3>
-U</H3>
-<PRE>
-public static final int <B>U</B></PRE>
-<DL>
-<DL>
-<DT><B>See Also:</B><DD><A HREF="../../constant-values.html#processing.core.PGraphics.U">Constant Field Values</A></DL>
-</DL>
-<HR>
-
-<A NAME="V"><!-- --></A><H3>
-V</H3>
-<PRE>
-public static final int <B>V</B></PRE>
-<DL>
-<DL>
-<DT><B>See Also:</B><DD><A HREF="../../constant-values.html#processing.core.PGraphics.V">Constant Field Values</A></DL>
-</DL>
-<HR>
-
-<A NAME="NX"><!-- --></A><H3>
-NX</H3>
-<PRE>
-public static final int <B>NX</B></PRE>
-<DL>
-<DL>
-<DT><B>See Also:</B><DD><A HREF="../../constant-values.html#processing.core.PGraphics.NX">Constant Field Values</A></DL>
-</DL>
-<HR>
-
-<A NAME="NY"><!-- --></A><H3>
-NY</H3>
-<PRE>
-public static final int <B>NY</B></PRE>
-<DL>
-<DL>
-<DT><B>See Also:</B><DD><A HREF="../../constant-values.html#processing.core.PGraphics.NY">Constant Field Values</A></DL>
-</DL>
-<HR>
-
-<A NAME="NZ"><!-- --></A><H3>
-NZ</H3>
-<PRE>
-public static final int <B>NZ</B></PRE>
-<DL>
-<DL>
-<DT><B>See Also:</B><DD><A HREF="../../constant-values.html#processing.core.PGraphics.NZ">Constant Field Values</A></DL>
-</DL>
-<HR>
-
-<A NAME="EDGE"><!-- --></A><H3>
-EDGE</H3>
-<PRE>
-public static final int <B>EDGE</B></PRE>
-<DL>
-<DL>
-<DT><B>See Also:</B><DD><A HREF="../../constant-values.html#processing.core.PGraphics.EDGE">Constant Field Values</A></DL>
-</DL>
-<HR>
-
-<A NAME="SR"><!-- --></A><H3>
-SR</H3>
-<PRE>
-public static final int <B>SR</B></PRE>
-<DL>
-<DD>stroke argb values
-<P>
-<DL>
-<DT><B>See Also:</B><DD><A HREF="../../constant-values.html#processing.core.PGraphics.SR">Constant Field Values</A></DL>
-</DL>
-<HR>
-
-<A NAME="SG"><!-- --></A><H3>
-SG</H3>
-<PRE>
-public static final int <B>SG</B></PRE>
-<DL>
-<DL>
-<DT><B>See Also:</B><DD><A HREF="../../constant-values.html#processing.core.PGraphics.SG">Constant Field Values</A></DL>
-</DL>
-<HR>
-
-<A NAME="SB"><!-- --></A><H3>
-SB</H3>
-<PRE>
-public static final int <B>SB</B></PRE>
-<DL>
-<DL>
-<DT><B>See Also:</B><DD><A HREF="../../constant-values.html#processing.core.PGraphics.SB">Constant Field Values</A></DL>
-</DL>
-<HR>
-
-<A NAME="SA"><!-- --></A><H3>
-SA</H3>
-<PRE>
-public static final int <B>SA</B></PRE>
-<DL>
-<DL>
-<DT><B>See Also:</B><DD><A HREF="../../constant-values.html#processing.core.PGraphics.SA">Constant Field Values</A></DL>
-</DL>
-<HR>
-
-<A NAME="SW"><!-- --></A><H3>
-SW</H3>
-<PRE>
-public static final int <B>SW</B></PRE>
-<DL>
-<DD>stroke weight
-<P>
-<DL>
-<DT><B>See Also:</B><DD><A HREF="../../constant-values.html#processing.core.PGraphics.SW">Constant Field Values</A></DL>
-</DL>
-<HR>
-
-<A NAME="TX"><!-- --></A><H3>
-TX</H3>
-<PRE>
-public static final int <B>TX</B></PRE>
-<DL>
-<DL>
-<DT><B>See Also:</B><DD><A HREF="../../constant-values.html#processing.core.PGraphics.TX">Constant Field Values</A></DL>
-</DL>
-<HR>
-
-<A NAME="TY"><!-- --></A><H3>
-TY</H3>
-<PRE>
-public static final int <B>TY</B></PRE>
-<DL>
-<DL>
-<DT><B>See Also:</B><DD><A HREF="../../constant-values.html#processing.core.PGraphics.TY">Constant Field Values</A></DL>
-</DL>
-<HR>
-
-<A NAME="TZ"><!-- --></A><H3>
-TZ</H3>
-<PRE>
-public static final int <B>TZ</B></PRE>
-<DL>
-<DL>
-<DT><B>See Also:</B><DD><A HREF="../../constant-values.html#processing.core.PGraphics.TZ">Constant Field Values</A></DL>
-</DL>
-<HR>
-
-<A NAME="VX"><!-- --></A><H3>
-VX</H3>
-<PRE>
-public static final int <B>VX</B></PRE>
-<DL>
-<DL>
-<DT><B>See Also:</B><DD><A HREF="../../constant-values.html#processing.core.PGraphics.VX">Constant Field Values</A></DL>
-</DL>
-<HR>
-
-<A NAME="VY"><!-- --></A><H3>
-VY</H3>
-<PRE>
-public static final int <B>VY</B></PRE>
-<DL>
-<DL>
-<DT><B>See Also:</B><DD><A HREF="../../constant-values.html#processing.core.PGraphics.VY">Constant Field Values</A></DL>
-</DL>
-<HR>
-
-<A NAME="VZ"><!-- --></A><H3>
-VZ</H3>
-<PRE>
-public static final int <B>VZ</B></PRE>
-<DL>
-<DL>
-<DT><B>See Also:</B><DD><A HREF="../../constant-values.html#processing.core.PGraphics.VZ">Constant Field Values</A></DL>
-</DL>
-<HR>
-
-<A NAME="VW"><!-- --></A><H3>
-VW</H3>
-<PRE>
-public static final int <B>VW</B></PRE>
-<DL>
-<DL>
-<DT><B>See Also:</B><DD><A HREF="../../constant-values.html#processing.core.PGraphics.VW">Constant Field Values</A></DL>
-</DL>
-<HR>
-
-<A NAME="AR"><!-- --></A><H3>
-AR</H3>
-<PRE>
-public static final int <B>AR</B></PRE>
-<DL>
-<DL>
-<DT><B>See Also:</B><DD><A HREF="../../constant-values.html#processing.core.PGraphics.AR">Constant Field Values</A></DL>
-</DL>
-<HR>
-
-<A NAME="AG"><!-- --></A><H3>
-AG</H3>
-<PRE>
-public static final int <B>AG</B></PRE>
-<DL>
-<DL>
-<DT><B>See Also:</B><DD><A HREF="../../constant-values.html#processing.core.PGraphics.AG">Constant Field Values</A></DL>
-</DL>
-<HR>
-
-<A NAME="AB"><!-- --></A><H3>
-AB</H3>
-<PRE>
-public static final int <B>AB</B></PRE>
-<DL>
-<DL>
-<DT><B>See Also:</B><DD><A HREF="../../constant-values.html#processing.core.PGraphics.AB">Constant Field Values</A></DL>
-</DL>
-<HR>
-
-<A NAME="DR"><!-- --></A><H3>
-DR</H3>
-<PRE>
-public static final int <B>DR</B></PRE>
-<DL>
-<DL>
-<DT><B>See Also:</B><DD><A HREF="../../constant-values.html#processing.core.PGraphics.DR">Constant Field Values</A></DL>
-</DL>
-<HR>
-
-<A NAME="DG"><!-- --></A><H3>
-DG</H3>
-<PRE>
-public static final int <B>DG</B></PRE>
-<DL>
-<DL>
-<DT><B>See Also:</B><DD><A HREF="../../constant-values.html#processing.core.PGraphics.DG">Constant Field Values</A></DL>
-</DL>
-<HR>
-
-<A NAME="DB"><!-- --></A><H3>
-DB</H3>
-<PRE>
-public static final int <B>DB</B></PRE>
-<DL>
-<DL>
-<DT><B>See Also:</B><DD><A HREF="../../constant-values.html#processing.core.PGraphics.DB">Constant Field Values</A></DL>
-</DL>
-<HR>
-
-<A NAME="DA"><!-- --></A><H3>
-DA</H3>
-<PRE>
-public static final int <B>DA</B></PRE>
-<DL>
-<DL>
-<DT><B>See Also:</B><DD><A HREF="../../constant-values.html#processing.core.PGraphics.DA">Constant Field Values</A></DL>
-</DL>
-<HR>
-
-<A NAME="SPR"><!-- --></A><H3>
-SPR</H3>
-<PRE>
-public static final int <B>SPR</B></PRE>
-<DL>
-<DL>
-<DT><B>See Also:</B><DD><A HREF="../../constant-values.html#processing.core.PGraphics.SPR">Constant Field Values</A></DL>
-</DL>
-<HR>
-
-<A NAME="SPG"><!-- --></A><H3>
-SPG</H3>
-<PRE>
-public static final int <B>SPG</B></PRE>
-<DL>
-<DL>
-<DT><B>See Also:</B><DD><A HREF="../../constant-values.html#processing.core.PGraphics.SPG">Constant Field Values</A></DL>
-</DL>
-<HR>
-
-<A NAME="SPB"><!-- --></A><H3>
-SPB</H3>
-<PRE>
-public static final int <B>SPB</B></PRE>
-<DL>
-<DL>
-<DT><B>See Also:</B><DD><A HREF="../../constant-values.html#processing.core.PGraphics.SPB">Constant Field Values</A></DL>
-</DL>
-<HR>
-
-<A NAME="SHINE"><!-- --></A><H3>
-SHINE</H3>
-<PRE>
-public static final int <B>SHINE</B></PRE>
-<DL>
-<DL>
-<DT><B>See Also:</B><DD><A HREF="../../constant-values.html#processing.core.PGraphics.SHINE">Constant Field Values</A></DL>
-</DL>
-<HR>
-
-<A NAME="ER"><!-- --></A><H3>
-ER</H3>
-<PRE>
-public static final int <B>ER</B></PRE>
-<DL>
-<DL>
-<DT><B>See Also:</B><DD><A HREF="../../constant-values.html#processing.core.PGraphics.ER">Constant Field Values</A></DL>
-</DL>
-<HR>
-
-<A NAME="EG"><!-- --></A><H3>
-EG</H3>
-<PRE>
-public static final int <B>EG</B></PRE>
-<DL>
-<DL>
-<DT><B>See Also:</B><DD><A HREF="../../constant-values.html#processing.core.PGraphics.EG">Constant Field Values</A></DL>
-</DL>
-<HR>
-
-<A NAME="EB"><!-- --></A><H3>
-EB</H3>
-<PRE>
-public static final int <B>EB</B></PRE>
-<DL>
-<DL>
-<DT><B>See Also:</B><DD><A HREF="../../constant-values.html#processing.core.PGraphics.EB">Constant Field Values</A></DL>
-</DL>
-<HR>
-
-<A NAME="BEEN_LIT"><!-- --></A><H3>
-BEEN_LIT</H3>
-<PRE>
-public static final int <B>BEEN_LIT</B></PRE>
-<DL>
-<DL>
-<DT><B>See Also:</B><DD><A HREF="../../constant-values.html#processing.core.PGraphics.BEEN_LIT">Constant Field Values</A></DL>
-</DL>
-<HR>
-
-<A NAME="width1"><!-- --></A><H3>
-width1</H3>
-<PRE>
-public int <B>width1</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="height1"><!-- --></A><H3>
-height1</H3>
-<PRE>
-public int <B>height1</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
 <A NAME="pixelCount"><!-- --></A><H3>
 pixelCount</H3>
 <PRE>
@@ -3645,20 +2727,10 @@ public int <B>pixelCount</B></PRE>
 </DL>
 <HR>
 
-<A NAME="settingsInited"><!-- --></A><H3>
-settingsInited</H3>
+<A NAME="smooth"><!-- --></A><H3>
+smooth</H3>
 <PRE>
-public boolean <B>settingsInited</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="image"><!-- --></A><H3>
-image</H3>
-<PRE>
-public java.awt.Image <B>image</B></PRE>
+public boolean <B>smooth</B></PRE>
 <DL>
 <DL>
 </DL>
@@ -3730,12 +2802,13 @@ tint</H3>
 <PRE>
 public boolean <B>tint</B></PRE>
 <DL>
-<DD>true if tint() is enabled (read-only).
+<DD>True if tint() is enabled (read-only).
+ 
  Using tint/tintColor seems a better option for naming than
  tintEnabled/tint because the latter seems ugly, even though
  g.tint as the actual color seems a little more intuitive,
  it's just that g.tintEnabled is even more unintuitive.
- Same goes for fill and stroke et al.
+ Same goes for fill and stroke, et al.
 <P>
 <DL>
 </DL>
@@ -3802,18 +2875,6 @@ public int <B>strokeColor</B></PRE>
 </DL>
 <HR>
 
-<A NAME="backgroundColor"><!-- --></A><H3>
-backgroundColor</H3>
-<PRE>
-public int <B>backgroundColor</B></PRE>
-<DL>
-<DD>Last background color that was set, zero if an image
-<P>
-<DL>
-</DL>
-</DL>
-<HR>
-
 <A NAME="strokeWeight"><!-- --></A><H3>
 strokeWeight</H3>
 <PRE>
@@ -3856,198 +2917,6 @@ public int <B>strokeCap</B></PRE>
 </DL>
 <HR>
 
-<A NAME="m00"><!-- --></A><H3>
-m00</H3>
-<PRE>
-public float <B>m00</B></PRE>
-<DL>
-<DD>Model transformation of the form m[row][column],
- which is a "column vector" (as opposed to "row vector") matrix.
-<P>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="m01"><!-- --></A><H3>
-m01</H3>
-<PRE>
-public float <B>m01</B></PRE>
-<DL>
-<DD>Model transformation of the form m[row][column],
- which is a "column vector" (as opposed to "row vector") matrix.
-<P>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="m02"><!-- --></A><H3>
-m02</H3>
-<PRE>
-public float <B>m02</B></PRE>
-<DL>
-<DD>Model transformation of the form m[row][column],
- which is a "column vector" (as opposed to "row vector") matrix.
-<P>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="m03"><!-- --></A><H3>
-m03</H3>
-<PRE>
-public float <B>m03</B></PRE>
-<DL>
-<DD>Model transformation of the form m[row][column],
- which is a "column vector" (as opposed to "row vector") matrix.
-<P>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="m10"><!-- --></A><H3>
-m10</H3>
-<PRE>
-public float <B>m10</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="m11"><!-- --></A><H3>
-m11</H3>
-<PRE>
-public float <B>m11</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="m12"><!-- --></A><H3>
-m12</H3>
-<PRE>
-public float <B>m12</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="m13"><!-- --></A><H3>
-m13</H3>
-<PRE>
-public float <B>m13</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="m20"><!-- --></A><H3>
-m20</H3>
-<PRE>
-public float <B>m20</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="m21"><!-- --></A><H3>
-m21</H3>
-<PRE>
-public float <B>m21</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="m22"><!-- --></A><H3>
-m22</H3>
-<PRE>
-public float <B>m22</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="m23"><!-- --></A><H3>
-m23</H3>
-<PRE>
-public float <B>m23</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="m30"><!-- --></A><H3>
-m30</H3>
-<PRE>
-public float <B>m30</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="m31"><!-- --></A><H3>
-m31</H3>
-<PRE>
-public float <B>m31</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="m32"><!-- --></A><H3>
-m32</H3>
-<PRE>
-public float <B>m32</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="m33"><!-- --></A><H3>
-m33</H3>
-<PRE>
-public float <B>m33</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="bezierDetail"><!-- --></A><H3>
-bezierDetail</H3>
-<PRE>
-public int <B>bezierDetail</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="curveTightness"><!-- --></A><H3>
-curveTightness</H3>
-<PRE>
-public float <B>curveTightness</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
 <A NAME="rectMode"><!-- --></A><H3>
 rectMode</H3>
 <PRE>
@@ -4072,36 +2941,36 @@ public int <B>ellipseMode</B></PRE>
 </DL>
 <HR>
 
+<A NAME="shapeMode"><!-- --></A><H3>
+shapeMode</H3>
+<PRE>
+public int <B>shapeMode</B></PRE>
+<DL>
+<DD>The current shape alignment mode (read-only)
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="imageMode"><!-- --></A><H3>
+imageMode</H3>
+<PRE>
+public int <B>imageMode</B></PRE>
+<DL>
+<DD>The current image alignment (read-only)
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
 <A NAME="textFont"><!-- --></A><H3>
 textFont</H3>
 <PRE>
 public <A HREF="../../processing/core/PFont.html" title="class in processing.core">PFont</A> <B>textFont</B></PRE>
 <DL>
 <DD>The current text font (read-only)
-<P>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="textFontNative"><!-- --></A><H3>
-textFontNative</H3>
-<PRE>
-public java.awt.Font <B>textFontNative</B></PRE>
-<DL>
-<DD>The current font if a Java version of it is installed
-<P>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="textFontNativeMetrics"><!-- --></A><H3>
-textFontNativeMetrics</H3>
-<PRE>
-public java.awt.FontMetrics <B>textFontNativeMetrics</B></PRE>
-<DL>
-<DD>Metrics for the current native Java font
 <P>
 <DL>
 </DL>
@@ -4162,90 +3031,6 @@ textLeading</H3>
 public float <B>textLeading</B></PRE>
 <DL>
 <DD>The current text leading (read-only)
-<P>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="textX"><!-- --></A><H3>
-textX</H3>
-<PRE>
-public float <B>textX</B></PRE>
-<DL>
-<DD>Last text position, because text often mixed on lines together
-<P>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="textY"><!-- --></A><H3>
-textY</H3>
-<PRE>
-public float <B>textY</B></PRE>
-<DL>
-<DD>Last text position, because text often mixed on lines together
-<P>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="textZ"><!-- --></A><H3>
-textZ</H3>
-<PRE>
-public float <B>textZ</B></PRE>
-<DL>
-<DD>Last text position, because text often mixed on lines together
-<P>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="modelview"><!-- --></A><H3>
-modelview</H3>
-<PRE>
-public <A HREF="../../processing/core/PMatrix3D.html" title="class in processing.core">PMatrix3D</A> <B>modelview</B></PRE>
-<DL>
-<DD>The modelview matrix.
-<P>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="modelviewInv"><!-- --></A><H3>
-modelviewInv</H3>
-<PRE>
-public <A HREF="../../processing/core/PMatrix3D.html" title="class in processing.core">PMatrix3D</A> <B>modelviewInv</B></PRE>
-<DL>
-<DD>Inverse modelview matrix, used for lighting.
-<P>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="camera"><!-- --></A><H3>
-camera</H3>
-<PRE>
-public <A HREF="../../processing/core/PMatrix3D.html" title="class in processing.core">PMatrix3D</A> <B>camera</B></PRE>
-<DL>
-<DD>The camera matrix, the modelview will be set to this on beginDraw.
-<P>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="cameraInv"><!-- --></A><H3>
-cameraInv</H3>
-<PRE>
-public <A HREF="../../processing/core/PMatrix3D.html" title="class in processing.core">PMatrix3D</A> <B>cameraInv</B></PRE>
-<DL>
-<DD>Inverse camera matrix
 <P>
 <DL>
 </DL>
@@ -4352,307 +3137,93 @@ public float <B>shininess</B></PRE>
 </DL>
 <HR>
 
-<A NAME="cameraFOV"><!-- --></A><H3>
-cameraFOV</H3>
+<A NAME="backgroundColor"><!-- --></A><H3>
+backgroundColor</H3>
 <PRE>
-public float <B>cameraFOV</B></PRE>
+public int <B>backgroundColor</B></PRE>
 <DL>
-<DD>Camera field of view (in radians, as of rev 86)
+<DD>Last background color that was set, zero if an image
 <P>
 <DL>
 </DL>
 </DL>
 <HR>
 
-<A NAME="cameraX"><!-- --></A><H3>
-cameraX</H3>
+<A NAME="image"><!-- --></A><H3>
+image</H3>
 <PRE>
-public float <B>cameraX</B></PRE>
+public java.awt.Image <B>image</B></PRE>
 <DL>
-<DD>Position of the camera
+<DD>Java AWT Image object associated with this renderer. For P2D and P3D, 
+ this will be associated with their MemoryImageSource. For PGraphicsJava2D, 
+ it will be the offscreen drawing buffer.
 <P>
 <DL>
 </DL>
 </DL>
 <HR>
 
-<A NAME="cameraY"><!-- --></A><H3>
-cameraY</H3>
+<A NAME="bezierDetail"><!-- --></A><H3>
+bezierDetail</H3>
 <PRE>
-public float <B>cameraY</B></PRE>
+public int <B>bezierDetail</B></PRE>
 <DL>
-<DD>Position of the camera
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="curveTightness"><!-- --></A><H3>
+curveTightness</H3>
+<PRE>
+public float <B>curveTightness</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="edge"><!-- --></A><H3>
+edge</H3>
+<PRE>
+public boolean <B>edge</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="normalX"><!-- --></A><H3>
+normalX</H3>
+<PRE>
+public float <B>normalX</B></PRE>
+<DL>
+<DD>Current normal vector.
 <P>
 <DL>
 </DL>
 </DL>
 <HR>
 
-<A NAME="cameraZ"><!-- --></A><H3>
-cameraZ</H3>
+<A NAME="normalY"><!-- --></A><H3>
+normalY</H3>
 <PRE>
-public float <B>cameraZ</B></PRE>
+public float <B>normalY</B></PRE>
 <DL>
-<DD>Position of the camera
+<DD>Current normal vector.
 <P>
 <DL>
 </DL>
 </DL>
 <HR>
 
-<A NAME="cameraNear"><!-- --></A><H3>
-cameraNear</H3>
+<A NAME="normalZ"><!-- --></A><H3>
+normalZ</H3>
 <PRE>
-public float <B>cameraNear</B></PRE>
+public float <B>normalZ</B></PRE>
 <DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="cameraFar"><!-- --></A><H3>
-cameraFar</H3>
-<PRE>
-public float <B>cameraFar</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="cameraAspect"><!-- --></A><H3>
-cameraAspect</H3>
-<PRE>
-public float <B>cameraAspect</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="projection"><!-- --></A><H3>
-projection</H3>
-<PRE>
-public <A HREF="../../processing/core/PMatrix3D.html" title="class in processing.core">PMatrix3D</A> <B>projection</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="stencil"><!-- --></A><H3>
-stencil</H3>
-<PRE>
-public int[] <B>stencil</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="zbuffer"><!-- --></A><H3>
-zbuffer</H3>
-<PRE>
-public float[] <B>zbuffer</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="MAX_LIGHTS"><!-- --></A><H3>
-MAX_LIGHTS</H3>
-<PRE>
-public static final int <B>MAX_LIGHTS</B></PRE>
-<DL>
-<DD>Maximum lights by default is 8, which is arbitrary,
-      but is the minimum defined by OpenGL
+<DD>Current normal vector.
 <P>
-<DL>
-<DT><B>See Also:</B><DD><A HREF="../../constant-values.html#processing.core.PGraphics.MAX_LIGHTS">Constant Field Values</A></DL>
-</DL>
-<HR>
-
-<A NAME="lightCount"><!-- --></A><H3>
-lightCount</H3>
-<PRE>
-public int <B>lightCount</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="lightType"><!-- --></A><H3>
-lightType</H3>
-<PRE>
-public int[] <B>lightType</B></PRE>
-<DL>
-<DD>Light types
-<P>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="lightPosition"><!-- --></A><H3>
-lightPosition</H3>
-<PRE>
-public float[][] <B>lightPosition</B></PRE>
-<DL>
-<DD>Light positions
-<P>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="lightNormal"><!-- --></A><H3>
-lightNormal</H3>
-<PRE>
-public float[][] <B>lightNormal</B></PRE>
-<DL>
-<DD>Light direction (normalized vector)
-<P>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="lightFalloffConstant"><!-- --></A><H3>
-lightFalloffConstant</H3>
-<PRE>
-public float[] <B>lightFalloffConstant</B></PRE>
-<DL>
-<DD>Light falloff
-<P>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="lightFalloffLinear"><!-- --></A><H3>
-lightFalloffLinear</H3>
-<PRE>
-public float[] <B>lightFalloffLinear</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="lightFalloffQuadratic"><!-- --></A><H3>
-lightFalloffQuadratic</H3>
-<PRE>
-public float[] <B>lightFalloffQuadratic</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="lightSpotAngle"><!-- --></A><H3>
-lightSpotAngle</H3>
-<PRE>
-public float[] <B>lightSpotAngle</B></PRE>
-<DL>
-<DD>Light spot angle
-<P>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="lightSpotAngleCos"><!-- --></A><H3>
-lightSpotAngleCos</H3>
-<PRE>
-public float[] <B>lightSpotAngleCos</B></PRE>
-<DL>
-<DD>Cosine of light spot angle
-<P>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="lightSpotConcentration"><!-- --></A><H3>
-lightSpotConcentration</H3>
-<PRE>
-public float[] <B>lightSpotConcentration</B></PRE>
-<DL>
-<DD>Light spot concentration
-<P>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="lightDiffuse"><!-- --></A><H3>
-lightDiffuse</H3>
-<PRE>
-public float[][] <B>lightDiffuse</B></PRE>
-<DL>
-<DD>Diffuse colors for lights.
-  For an ambient light, this will hold the ambient color.
-  Internally these are stored as numbers between 0 and 1.
-<P>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="lightSpecular"><!-- --></A><H3>
-lightSpecular</H3>
-<PRE>
-public float[][] <B>lightSpecular</B></PRE>
-<DL>
-<DD>Specular colors for lights.
-      Internally these are stored as numbers between 0 and 1.
-<P>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="currentLightSpecular"><!-- --></A><H3>
-currentLightSpecular</H3>
-<PRE>
-public float[] <B>currentLightSpecular</B></PRE>
-<DL>
-<DD>Current specular color for lighting
-<P>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="currentLightFalloffConstant"><!-- --></A><H3>
-currentLightFalloffConstant</H3>
-<PRE>
-public float <B>currentLightFalloffConstant</B></PRE>
-<DL>
-<DD>Current light falloff
-<P>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="currentLightFalloffLinear"><!-- --></A><H3>
-currentLightFalloffLinear</H3>
-<PRE>
-public float <B>currentLightFalloffLinear</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="currentLightFalloffQuadratic"><!-- --></A><H3>
-currentLightFalloffQuadratic</H3>
-<PRE>
-public float <B>currentLightFalloffQuadratic</B></PRE>
-<DL>
 <DL>
 </DL>
 </DL>
@@ -4703,42 +3274,6 @@ textureImage</H3>
 public <A HREF="../../processing/core/PImage.html" title="class in processing.core">PImage</A> <B>textureImage</B></PRE>
 <DL>
 <DD>Current image being used as a texture
-<P>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="normalX"><!-- --></A><H3>
-normalX</H3>
-<PRE>
-public float <B>normalX</B></PRE>
-<DL>
-<DD>Normals
-<P>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="normalY"><!-- --></A><H3>
-normalY</H3>
-<PRE>
-public float <B>normalY</B></PRE>
-<DL>
-<DD>Normals
-<P>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="normalZ"><!-- --></A><H3>
-normalZ</H3>
-<PRE>
-public float <B>normalZ</B></PRE>
-<DL>
-<DD>Normals
 <P>
 <DL>
 </DL>
@@ -4845,8 +3380,8 @@ public void <B>setPath</B>(java.lang.String&nbsp;path)</PRE>
 <A NAME="setSize(int, int)"><!-- --></A><H3>
 setSize</H3>
 <PRE>
-public void <B>setSize</B>(int&nbsp;iwidth,
-                    int&nbsp;iheight)</PRE>
+public void <B>setSize</B>(int&nbsp;w,
+                    int&nbsp;h)</PRE>
 <DL>
 <DD>The final step in setting up a renderer, set its size of this renderer.
  This was formerly handled by the constructor, but instead it's been broken
@@ -4857,6 +3392,26 @@ public void <B>setSize</B>(int&nbsp;iwidth,
  super.setSize(), and 2) will cause the renderer to be resized from the
  event thread (EDT), causing a nasty crash as it collides with the
  animation thread.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="dispose()"><!-- --></A><H3>
+dispose</H3>
+<PRE>
+public void <B>dispose</B>()</PRE>
+<DL>
+<DD>Handle any takedown for this graphics context.
+ <p>
+ This is called when a sketch is shut down and this renderer was
+ specified using the size() command, or inside endRecord() and
+ endRaw(), in order to shut things off.
 <P>
 <DD><DL>
 </DL>
@@ -4912,6 +3467,20 @@ public void <B>endDraw</B>()</PRE>
  When creating your own PGraphics, you should call this when
  you're finished drawing.
 <P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="flush()"><!-- --></A><H3>
+flush</H3>
+<PRE>
+public void <B>flush</B>()</PRE>
+<DL>
 <DD><DL>
 </DL>
 </DD>
@@ -5003,6 +3572,23 @@ public void <B>beginShape</B>(int&nbsp;kind)</PRE>
 </DL>
 <HR>
 
+<A NAME="edge(boolean)"><!-- --></A><H3>
+edge</H3>
+<PRE>
+public void <B>edge</B>(boolean&nbsp;edge)</PRE>
+<DL>
+<DD>Sets whether the upcoming vertex is part of an edge.
+ Equivalent to glEdgeFlag(), for people familiar with OpenGL.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
 <A NAME="normal(float, float, float)"><!-- --></A><H3>
 normal</H3>
 <PRE>
@@ -5010,6 +3596,20 @@ public void <B>normal</B>(float&nbsp;nx,
                    float&nbsp;ny,
                    float&nbsp;nz)</PRE>
 <DL>
+<DD>Sets the current normal vector. Only applies with 3D rendering 
+ and inside a beginShape/endShape block.
+ <P/>
+ This is for drawing three dimensional shapes and surfaces,
+ allowing you to specify a vector perpendicular to the surface
+ of the shape, which determines how lighting affects it.
+ <P/>
+ For the most part, PGraphics3D will attempt to automatically
+ assign normals to shapes, but since that's imperfect,
+ this is a better option when you want more control.
+ <P/>
+ For people familiar with OpenGL, this function is basically
+ identical to glNormal3f().
+<P>
 <DD><DL>
 </DL>
 </DD>
@@ -5084,6 +3684,23 @@ public void <B>vertex</B>(float&nbsp;x,
 </DL>
 <HR>
 
+<A NAME="vertex(float[])"><!-- --></A><H3>
+vertex</H3>
+<PRE>
+public void <B>vertex</B>(float[]&nbsp;v)</PRE>
+<DL>
+<DD>Used by renderer subclasses or PShape to efficiently pass in already 
+ formatted vertex information.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>v</CODE> - vertex parameters, as a float array of length VERTEX_FIELD_COUNT</DL>
+</DD>
+</DL>
+<HR>
+
 <A NAME="vertex(float, float, float, float)"><!-- --></A><H3>
 vertex</H3>
 <PRE>
@@ -5110,84 +3727,6 @@ public void <B>vertex</B>(float&nbsp;x,
                    float&nbsp;u,
                    float&nbsp;v)</PRE>
 <DL>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="bezierVertex(float, float, float, float, float, float)"><!-- --></A><H3>
-bezierVertex</H3>
-<PRE>
-public void <B>bezierVertex</B>(float&nbsp;x2,
-                         float&nbsp;y2,
-                         float&nbsp;x3,
-                         float&nbsp;y3,
-                         float&nbsp;x4,
-                         float&nbsp;y4)</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="bezierVertex(float, float, float, float, float, float, float, float, float)"><!-- --></A><H3>
-bezierVertex</H3>
-<PRE>
-public void <B>bezierVertex</B>(float&nbsp;x2,
-                         float&nbsp;y2,
-                         float&nbsp;z2,
-                         float&nbsp;x3,
-                         float&nbsp;y3,
-                         float&nbsp;z3,
-                         float&nbsp;x4,
-                         float&nbsp;y4,
-                         float&nbsp;z4)</PRE>
-<DL>
-<DD>See notes with the bezier() function.
-<P>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="curveVertex(float, float)"><!-- --></A><H3>
-curveVertex</H3>
-<PRE>
-public void <B>curveVertex</B>(float&nbsp;x,
-                        float&nbsp;y)</PRE>
-<DL>
-<DD>See notes with the curve() function.
-<P>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="curveVertex(float, float, float)"><!-- --></A><H3>
-curveVertex</H3>
-<PRE>
-public void <B>curveVertex</B>(float&nbsp;x,
-                        float&nbsp;y,
-                        float&nbsp;z)</PRE>
-<DL>
-<DD>See notes with the curve() function.
-<P>
 <DD><DL>
 </DL>
 </DD>
@@ -5231,6 +3770,78 @@ public void <B>endShape</B>()</PRE>
 endShape</H3>
 <PRE>
 public void <B>endShape</B>(int&nbsp;mode)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="bezierVertex(float, float, float, float, float, float)"><!-- --></A><H3>
+bezierVertex</H3>
+<PRE>
+public void <B>bezierVertex</B>(float&nbsp;x2,
+                         float&nbsp;y2,
+                         float&nbsp;x3,
+                         float&nbsp;y3,
+                         float&nbsp;x4,
+                         float&nbsp;y4)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="bezierVertex(float, float, float, float, float, float, float, float, float)"><!-- --></A><H3>
+bezierVertex</H3>
+<PRE>
+public void <B>bezierVertex</B>(float&nbsp;x2,
+                         float&nbsp;y2,
+                         float&nbsp;z2,
+                         float&nbsp;x3,
+                         float&nbsp;y3,
+                         float&nbsp;z3,
+                         float&nbsp;x4,
+                         float&nbsp;y4,
+                         float&nbsp;z4)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="curveVertex(float, float)"><!-- --></A><H3>
+curveVertex</H3>
+<PRE>
+public void <B>curveVertex</B>(float&nbsp;x,
+                        float&nbsp;y)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="curveVertex(float, float, float)"><!-- --></A><H3>
+curveVertex</H3>
+<PRE>
+public void <B>curveVertex</B>(float&nbsp;x,
+                        float&nbsp;y,
+                        float&nbsp;z)</PRE>
 <DL>
 <DD><DL>
 </DL>
@@ -5365,10 +3976,10 @@ public void <B>rectMode</B>(int&nbsp;mode)</PRE>
 <A NAME="rect(float, float, float, float)"><!-- --></A><H3>
 rect</H3>
 <PRE>
-public void <B>rect</B>(float&nbsp;x1,
-                 float&nbsp;y1,
-                 float&nbsp;x2,
-                 float&nbsp;y2)</PRE>
+public void <B>rect</B>(float&nbsp;a,
+                 float&nbsp;b,
+                 float&nbsp;c,
+                 float&nbsp;d)</PRE>
 <DL>
 <DD><DL>
 </DL>
@@ -5487,6 +4098,12 @@ sphereDetail</H3>
 public void <B>sphereDetail</B>(int&nbsp;ures,
                          int&nbsp;vres)</PRE>
 <DL>
+<DD>Set the detail level for approximating a sphere. The ures and vres params
+ control the horizontal and vertical resolution.
+
+ Code for sphereDetail() submitted by toxi [031031].
+ Code for enhanced u/v version from davbol [080801].
+<P>
 <DD><DL>
 </DL>
 </DD>
@@ -5501,6 +4118,27 @@ sphere</H3>
 <PRE>
 public void <B>sphere</B>(float&nbsp;r)</PRE>
 <DL>
+<DD>Draw a sphere with radius r centered at coordinate 0, 0, 0.
+ <P>
+ Implementation notes:
+ <P>
+ cache all the points of the sphere in a static array
+ top and bottom are just a bunch of triangles that land
+ in the center point
+ <P>
+ sphere is a series of concentric circles who radii vary
+ along the shape, based on, er.. cos or something
+ <PRE>
+ [toxi 031031] new sphere code. removed all multiplies with
+ radius, as scale() will take care of that anyway
+
+ [toxi 031223] updated sphere code (removed modulos)
+ and introduced sphereAt(x,y,z,r)
+ to avoid additional translate()'s on the user/sketch side
+
+ [davbol 080801] now using separate sphereDetailU/V
+ </PRE>
+<P>
 <DD><DL>
 </DL>
 </DD>
@@ -5787,6 +4425,57 @@ public void <B>curve</B>(float&nbsp;x1,
 </DL>
 <HR>
 
+<A NAME="smooth()"><!-- --></A><H3>
+smooth</H3>
+<PRE>
+public void <B>smooth</B>()</PRE>
+<DL>
+<DD>If true in PImage, use bilinear interpolation for copy()
+ operations. When inherited by PGraphics, also controls shapes.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="noSmooth()"><!-- --></A><H3>
+noSmooth</H3>
+<PRE>
+public void <B>noSmooth</B>()</PRE>
+<DL>
+<DD>Disable smoothing. See smooth().
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="imageMode(int)"><!-- --></A><H3>
+imageMode</H3>
+<PRE>
+public void <B>imageMode</B>(int&nbsp;mode)</PRE>
+<DL>
+<DD>The mode can only be set to CORNERS, CORNER, and CENTER.
+ <p/>
+ Support for CENTER was added in release 0146.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
 <A NAME="image(processing.core.PImage, float, float)"><!-- --></A><H3>
 image</H3>
 <PRE>
@@ -5837,6 +4526,72 @@ public void <B>image</B>(<A HREF="../../processing/core/PImage.html" title="clas
 <DD>u, v coordinates are always based on image space location,
  regardless of the current textureMode().
 <P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="shapeMode(int)"><!-- --></A><H3>
+shapeMode</H3>
+<PRE>
+public void <B>shapeMode</B>(int&nbsp;mode)</PRE>
+<DL>
+<DD>Set the orientation for the shape() command (like imageMode() or rectMode()).
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>which</CODE> - Either CORNER, CORNERS, or CENTER.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="shape(processing.core.PShape)"><!-- --></A><H3>
+shape</H3>
+<PRE>
+public void <B>shape</B>(<A HREF="../../processing/core/PShape.html" title="class in processing.core">PShape</A>&nbsp;shape)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="shape(processing.core.PShape, float, float)"><!-- --></A><H3>
+shape</H3>
+<PRE>
+public void <B>shape</B>(<A HREF="../../processing/core/PShape.html" title="class in processing.core">PShape</A>&nbsp;shape,
+                  float&nbsp;x,
+                  float&nbsp;y)</PRE>
+<DL>
+<DD>Convenience method to draw at a particular location.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="shape(processing.core.PShape, float, float, float, float)"><!-- --></A><H3>
+shape</H3>
+<PRE>
+public void <B>shape</B>(<A HREF="../../processing/core/PShape.html" title="class in processing.core">PShape</A>&nbsp;shape,
+                  float&nbsp;x,
+                  float&nbsp;y,
+                  float&nbsp;c,
+                  float&nbsp;d)</PRE>
+<DL>
 <DD><DL>
 </DL>
 </DD>
@@ -6270,6 +5025,38 @@ public void <B>text</B>(float&nbsp;num,
 </DL>
 <HR>
 
+<A NAME="pushMatrix()"><!-- --></A><H3>
+pushMatrix</H3>
+<PRE>
+public void <B>pushMatrix</B>()</PRE>
+<DL>
+<DD>Push a copy of the current transformation matrix onto the stack.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="popMatrix()"><!-- --></A><H3>
+popMatrix</H3>
+<PRE>
+public void <B>popMatrix</B>()</PRE>
+<DL>
+<DD>Replace the current transformation matrix with the top of the stack.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
 <A NAME="translate(float, float)"><!-- --></A><H3>
 translate</H3>
 <PRE>
@@ -6453,38 +5240,6 @@ public void <B>scale</B>(float&nbsp;x,
 </DL>
 <HR>
 
-<A NAME="pushMatrix()"><!-- --></A><H3>
-pushMatrix</H3>
-<PRE>
-public void <B>pushMatrix</B>()</PRE>
-<DL>
-<DD>Push a copy of the current transformation matrix onto the stack.
-<P>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="popMatrix()"><!-- --></A><H3>
-popMatrix</H3>
-<PRE>
-public void <B>popMatrix</B>()</PRE>
-<DL>
-<DD>Replace the current transformation matrix with the top of the stack.
-<P>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
-
 <A NAME="resetMatrix()"><!-- --></A><H3>
 resetMatrix</H3>
 <PRE>
@@ -6492,6 +5247,34 @@ public void <B>resetMatrix</B>()</PRE>
 <DL>
 <DD>Set the current transformation matrix to identity.
 <P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="applyMatrix(processing.core.PMatrix)"><!-- --></A><H3>
+applyMatrix</H3>
+<PRE>
+public void <B>applyMatrix</B>(<A HREF="../../processing/core/PMatrix.html" title="interface in processing.core">PMatrix</A>&nbsp;source)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="applyMatrix(processing.core.PMatrix2D)"><!-- --></A><H3>
+applyMatrix</H3>
+<PRE>
+public void <B>applyMatrix</B>(<A HREF="../../processing/core/PMatrix2D.html" title="class in processing.core">PMatrix2D</A>&nbsp;source)</PRE>
+<DL>
 <DD><DL>
 </DL>
 </DD>
@@ -6513,6 +5296,20 @@ public void <B>applyMatrix</B>(float&nbsp;n00,
 <DL>
 <DD>Apply a 3x2 affine transformation matrix.
 <P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="applyMatrix(processing.core.PMatrix3D)"><!-- --></A><H3>
+applyMatrix</H3>
+<PRE>
+public void <B>applyMatrix</B>(<A HREF="../../processing/core/PMatrix3D.html" title="class in processing.core">PMatrix3D</A>&nbsp;source)</PRE>
+<DL>
 <DD><DL>
 </DL>
 </DD>
@@ -6553,16 +5350,62 @@ public void <B>applyMatrix</B>(float&nbsp;n00,
 </DL>
 <HR>
 
-<A NAME="loadMatrix()"><!-- --></A><H3>
-loadMatrix</H3>
+<A NAME="getMatrix(processing.core.PMatrix2D)"><!-- --></A><H3>
+getMatrix</H3>
 <PRE>
-public void <B>loadMatrix</B>()</PRE>
+public <A HREF="../../processing/core/PMatrix2D.html" title="class in processing.core">PMatrix2D</A> <B>getMatrix</B>(<A HREF="../../processing/core/PMatrix2D.html" title="class in processing.core">PMatrix2D</A>&nbsp;target)</PRE>
 <DL>
-<DD>Loads the current matrix into m00, m01 etc (or modelview and
- projection when using 3D) so that the values can be read.
- <P/>
- Note that there is no "updateMatrix" because that gets too
- complicated (unnecessary) when considering the 3D matrices.
+<DD>Copy the current transformation matrix into the specified target.
+ Pass in null to create a new matrix.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getMatrix(processing.core.PMatrix3D)"><!-- --></A><H3>
+getMatrix</H3>
+<PRE>
+public <A HREF="../../processing/core/PMatrix3D.html" title="class in processing.core">PMatrix3D</A> <B>getMatrix</B>(<A HREF="../../processing/core/PMatrix3D.html" title="class in processing.core">PMatrix3D</A>&nbsp;target)</PRE>
+<DL>
+<DD>Copy the current transformation matrix into the specified target.
+ Pass in null to create a new matrix.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setMatrix(processing.core.PMatrix2D)"><!-- --></A><H3>
+setMatrix</H3>
+<PRE>
+public void <B>setMatrix</B>(<A HREF="../../processing/core/PMatrix2D.html" title="class in processing.core">PMatrix2D</A>&nbsp;source)</PRE>
+<DL>
+<DD>Set the current transformation to the contents of the specified source.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setMatrix(processing.core.PMatrix3D)"><!-- --></A><H3>
+setMatrix</H3>
+<PRE>
+public void <B>setMatrix</B>(<A HREF="../../processing/core/PMatrix3D.html" title="class in processing.core">PMatrix3D</A>&nbsp;source)</PRE>
+<DL>
+<DD>Set the current transformation to the contents of the specified source.
 <P>
 <DD><DL>
 </DL>
@@ -6932,10 +5775,10 @@ public float <B>modelZ</B>(float&nbsp;x,
 </DL>
 <HR>
 
-<A NAME="colorMode(int)"><!-- --></A><H3>
-colorMode</H3>
+<A NAME="pushStyle()"><!-- --></A><H3>
+pushStyle</H3>
 <PRE>
-public void <B>colorMode</B>(int&nbsp;mode)</PRE>
+public void <B>pushStyle</B>()</PRE>
 <DL>
 <DD><DL>
 </DL>
@@ -6946,11 +5789,10 @@ public void <B>colorMode</B>(int&nbsp;mode)</PRE>
 </DL>
 <HR>
 
-<A NAME="colorMode(int, float)"><!-- --></A><H3>
-colorMode</H3>
+<A NAME="popStyle()"><!-- --></A><H3>
+popStyle</H3>
 <PRE>
-public void <B>colorMode</B>(int&nbsp;mode,
-                      float&nbsp;max)</PRE>
+public void <B>popStyle</B>()</PRE>
 <DL>
 <DD><DL>
 </DL>
@@ -6961,22 +5803,11 @@ public void <B>colorMode</B>(int&nbsp;mode,
 </DL>
 <HR>
 
-<A NAME="colorMode(int, float, float, float)"><!-- --></A><H3>
-colorMode</H3>
+<A NAME="style(processing.core.PStyle)"><!-- --></A><H3>
+style</H3>
 <PRE>
-public void <B>colorMode</B>(int&nbsp;mode,
-                      float&nbsp;maxX,
-                      float&nbsp;maxY,
-                      float&nbsp;maxZ)</PRE>
+public void <B>style</B>(<A HREF="../../processing/core/PStyle.html" title="class in processing.core">PStyle</A>&nbsp;s)</PRE>
 <DL>
-<DD>Set the colorMode and the maximum values for (r, g, b)
- or (h, s, b).
- <P>
- Note that this doesn't set the maximum for the alpha value,
- which might be confusing if for instance you switched to
- <PRE>colorMode(HSB, 360, 100, 100);</PRE>
- because the alpha values were still between 0 and 255.
-<P>
 <DD><DL>
 </DL>
 </DD>
@@ -6986,14 +5817,24 @@ public void <B>colorMode</B>(int&nbsp;mode,
 </DL>
 <HR>
 
-<A NAME="colorMode(int, float, float, float, float)"><!-- --></A><H3>
-colorMode</H3>
+<A NAME="getStyle()"><!-- --></A><H3>
+getStyle</H3>
 <PRE>
-public void <B>colorMode</B>(int&nbsp;mode,
-                      float&nbsp;maxX,
-                      float&nbsp;maxY,
-                      float&nbsp;maxZ,
-                      float&nbsp;maxA)</PRE>
+public <A HREF="../../processing/core/PStyle.html" title="class in processing.core">PStyle</A> <B>getStyle</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getStyle(processing.core.PStyle)"><!-- --></A><H3>
+getStyle</H3>
+<PRE>
+public <A HREF="../../processing/core/PStyle.html" title="class in processing.core">PStyle</A> <B>getStyle</B>(<A HREF="../../processing/core/PStyle.html" title="class in processing.core">PStyle</A>&nbsp;s)</PRE>
 <DL>
 <DD><DL>
 </DL>
@@ -7173,8 +6014,7 @@ tint</H3>
 <PRE>
 public void <B>tint</B>(int&nbsp;rgb)</PRE>
 <DL>
-<DD>Set the tint to either a grayscale or ARGB value. See notes
- attached to the fill() function.
+<DD>Set the tint to either a grayscale or ARGB value.
 <P>
 <DD><DL>
 </DL>
@@ -7282,23 +6122,6 @@ fill</H3>
 public void <B>fill</B>(int&nbsp;rgb)</PRE>
 <DL>
 <DD>Set the fill to either a grayscale value or an ARGB int.
- <P>
- The problem with this code is that it has to detect between
- these two situations automatically. This is done by checking
- to see if the high bits (the alpha for 0xAA000000) is set,
- and if not, whether the color value that follows is less than
- colorModeX (the first param passed to colorMode).
- <P>
- This auto-detect would break in the following situation:
- <PRE>size(256, 256);
- for (int i = 0; i < 256; i++) {
-   color c = color(0, 0, 0, i);
-   stroke(c);
-   line(i, 0, i, 256);
- }</PRE>
- ...on the first time through the loop, where (i == 0),
- since the color itself is zero (black) then it would appear
- indistinguishable from someone having written fill(0).
 <P>
 <DD><DL>
 </DL>
@@ -7815,17 +6638,93 @@ background</H3>
 <PRE>
 public void <B>background</B>(<A HREF="../../processing/core/PImage.html" title="class in processing.core">PImage</A>&nbsp;image)</PRE>
 <DL>
-<DD>Takes an RGB or ARGB image and sets it as the background.
+<DD>Takes an RGB or ARGB image and sets it as the background. 
+ The width and height of the image must be the same size as the sketch. 
+ Use image.resize(width, height) to make short work of such a task.
  <P>
- Note that even if the image is set as RGB, the high 8 bits of
- each pixel should be set opaque (0xFF000000), because the image data
- will be copied directly to the screen, and non-opaque background
- images may have strange behavior. Using image.filter(OPAQUE)
- will handle this easily.
+ Note that even if the image is set as RGB, the high 8 bits of each pixel 
+ should be set opaque (0xFF000000), because the image data will be copied 
+ directly to the screen, and non-opaque background images may have strange
+ behavior. Using image.filter(OPAQUE) will handle this easily.
  <P>
- When using 3D, this will also clear out the zbuffer and
- stencil buffer if they exist.
+ When using 3D, this will also clear the zbuffer (if it exists).
 <P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="colorMode(int)"><!-- --></A><H3>
+colorMode</H3>
+<PRE>
+public void <B>colorMode</B>(int&nbsp;mode)</PRE>
+<DL>
+<DD>Callback to handle clearing the background when begin/endRaw is in use.
+ Handled as separate function for OpenGL (or other) subclasses that 
+ override backgroundImpl() but still needs this to work properly.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="colorMode(int, float)"><!-- --></A><H3>
+colorMode</H3>
+<PRE>
+public void <B>colorMode</B>(int&nbsp;mode,
+                      float&nbsp;max)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="colorMode(int, float, float, float)"><!-- --></A><H3>
+colorMode</H3>
+<PRE>
+public void <B>colorMode</B>(int&nbsp;mode,
+                      float&nbsp;maxX,
+                      float&nbsp;maxY,
+                      float&nbsp;maxZ)</PRE>
+<DL>
+<DD>Set the colorMode and the maximum values for (r, g, b)
+ or (h, s, b).
+ <P>
+ Note that this doesn't set the maximum for the alpha value,
+ which might be confusing if for instance you switched to
+ <PRE>colorMode(HSB, 360, 100, 100);</PRE>
+ because the alpha values were still between 0 and 255.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="colorMode(int, float, float, float, float)"><!-- --></A><H3>
+colorMode</H3>
+<PRE>
+public void <B>colorMode</B>(int&nbsp;mode,
+                      float&nbsp;maxX,
+                      float&nbsp;maxY,
+                      float&nbsp;maxZ,
+                      float&nbsp;maxA)</PRE>
+<DL>
 <DD><DL>
 </DL>
 </DD>
@@ -8110,47 +7009,13 @@ public static int <B>lerpColor</B>(int&nbsp;c1,
 </DL>
 <HR>
 
-<A NAME="mask(int[])"><!-- --></A><H3>
-mask</H3>
-<PRE>
-public void <B>mask</B>(int[]&nbsp;alpha)</PRE>
-<DL>
-<DD>Use with caution on PGraphics. This should not be used with
- the base PGraphics that's tied to a PApplet, but it can be used
- with user-created PGraphics objects that are drawn to the screen.
-<P>
-<DD><DL>
-<DT><B>Overrides:</B><DD><CODE><A HREF="../../processing/core/PImage.html#mask(int[])">mask</A></CODE> in class <CODE><A HREF="../../processing/core/PImage.html" title="class in processing.core">PImage</A></CODE></DL>
-</DD>
-<DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="mask(processing.core.PImage)"><!-- --></A><H3>
-mask</H3>
-<PRE>
-public void <B>mask</B>(<A HREF="../../processing/core/PImage.html" title="class in processing.core">PImage</A>&nbsp;alpha)</PRE>
-<DL>
-<DD>Use with caution on PGraphics. This should not be used with
- the base PGraphics that's tied to a PApplet, but it can be used
- with user-created PGraphics objects that are drawn to the screen.
-<P>
-<DD><DL>
-<DT><B>Overrides:</B><DD><CODE><A HREF="../../processing/core/PImage.html#mask(processing.core.PImage)">mask</A></CODE> in class <CODE><A HREF="../../processing/core/PImage.html" title="class in processing.core">PImage</A></CODE></DL>
-</DD>
-<DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
-
 <A NAME="beginRaw(processing.core.PGraphics)"><!-- --></A><H3>
 beginRaw</H3>
 <PRE>
 public void <B>beginRaw</B>(<A HREF="../../processing/core/PGraphics.html" title="class in processing.core">PGraphics</A>&nbsp;rawGraphics)</PRE>
 <DL>
+<DD>Record individual lines and triangles by echoing them to another renderer.
+<P>
 <DD><DL>
 </DL>
 </DD>
@@ -8174,16 +7039,30 @@ public void <B>endRaw</B>()</PRE>
 </DL>
 <HR>
 
-<A NAME="dispose()"><!-- --></A><H3>
-dispose</H3>
+<A NAME="showWarning(java.lang.String)"><!-- --></A><H3>
+showWarning</H3>
 <PRE>
-public void <B>dispose</B>()</PRE>
+public static void <B>showWarning</B>(java.lang.String&nbsp;msg)</PRE>
 <DL>
-<DD>Handle any takedown for this graphics context.
- <p>
- This is called when a sketch is shut down and this renderer was
- specified using the size() command, or inside endRecord() and
- endRaw(), in order to shut things off.
+<DD>Show a renderer error, and keep track of it so that it's only shown once.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>msg</CODE> - the error message (which will be stored for later comparison)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="showException(java.lang.String)"><!-- --></A><H3>
+showException</H3>
+<PRE>
+public static void <B>showException</B>(java.lang.String&nbsp;msg)</PRE>
+<DL>
+<DD>Show an renderer-related exception that halts the program. Currently just
+ wraps the message as a RuntimeException and throws it, but might do 
+ something more specific might be used in the future.
 <P>
 <DD><DL>
 </DL>
@@ -8199,11 +7078,28 @@ displayable</H3>
 <PRE>
 public boolean <B>displayable</B>()</PRE>
 <DL>
-<DD>Return true if this renderer should be drawn to the screen.
- Overridden for subclasses like PDF so that an enormous window
- doesn't open up.
- showFrame, displayable, isVisible, visible, shouldDisplay,
+<DD>Return true if this renderer should be drawn to the screen. Defaults to 
+ returning true, since nearly all renderers are on-screen beasts. But can 
+ be overridden for subclasses like PDF so that a window doesn't open up.
+ <br/> <br/>
+ A better name? showFrame, displayable, isVisible, visible, shouldDisplay, 
  what to call this?
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="dimensional()"><!-- --></A><H3>
+dimensional</H3>
+<PRE>
+public boolean <B>dimensional</B>()</PRE>
+<DL>
+<DD>Return true if this renderer supports 3D drawing. Defaults to false.
 <P>
 <DD><DL>
 </DL>
@@ -8225,7 +7121,8 @@ public boolean <B>displayable</B>()</PRE>
 <A NAME="navbar_bottom_firstrow"><!-- --></A>
 <TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
   <TR ALIGN="center" VALIGN="top">
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../processing/core/package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
