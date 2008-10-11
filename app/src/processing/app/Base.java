@@ -802,14 +802,15 @@ public class Base {
     // reset the table mapping imports to libraries
     importToLibraryTable = new HashMap<String, File>();
     
-    // Add from the "libraries" subfolder in the Processing directory
+    // Add libraries found in the sketchbook folder
     try {
-      boolean found = addLibraries(importMenu, getSketchbookFolder());
+      File sketchbookLibraries = new File(getSketchbookFolder(), "libraries");
+      boolean found = addLibraries(importMenu, sketchbookLibraries);
       if (found) importMenu.addSeparator();
     } catch (IOException e) {
       e.printStackTrace();
     }
-    // Add libraries found in the sketchbook folder
+    // Add from the "libraries" subfolder in the Processing directory
     try {
       addLibraries(importMenu, librariesFolder);
     } catch (IOException e) {

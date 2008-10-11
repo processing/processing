@@ -50,6 +50,8 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=945
 structural 
 X processing.candy has been removed
 X processing.xml is now part of core.jar, no need to import
+X user-contributed tools and libraries should only be placed in the sketchbook
+X   in the next release, will be banning unofficial stuff from the p5 folder
 
 reference
 X do some edits on the "getting started" text
@@ -93,9 +95,6 @@ X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=displ
 
 shiffman
 X update match(), write new reference for matchAll()
-
-this release: start specifically supporting libraries in the sketchbook folder via a 'libraries' subfolder
-next release: osx inside .app, sketchbook/libraries and sketchbook/tools folders, improved native support for libraries with better export.txt
 
 _ third tab throws NullPointerException
 _   http://dev.processing.org/bugs/show_bug.cgi?id=940
