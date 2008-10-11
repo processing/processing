@@ -25,14 +25,34 @@ package processing.core;
 
 import java.util.HashMap;
 
-// take a look at the obj loader to see how this fits with things
 
-// PShape.line() PShape.ellipse()?
-// PShape s = beginShape()
-// line()
-// endShape(s)
-
-abstract public class PShape implements PConstants {
+/**
+ * In-progress class to handle shape data, currently to be considered of  
+ * alpha or beta quality. Major structural work may be performed on this class
+ * after the release of Processing 1.0. Such changes may include:
+ *  
+ * <ul> 
+ * <li> addition of proper accessors to read shape vertex and coloring data
+ * (this is the second most important part of having a PShape class after all).
+ * <li> a means of creating PShape objects ala beginShape() and endShape().
+ * <li> load(), update(), and cache methods ala PImage, so that shapes can 
+ * have renderer-specific optimizations, such as vertex arrays in OpenGL.
+ * <li> splitting this class into multiple classes to handle different
+ * varieties of shape data (primitives vs collections of vertices vs paths) 
+ * <li> change of package declaration, for instance moving the code into  
+ * package processing.shape (if the code grows too much). 
+ * </ul>
+ * 
+ * <p>For the time being, this class and its shape() and loadShape() friends in 
+ * PApplet exist as placeholders for more exciting things to come. If you'd 
+ * like to work with this class, make a subclass (see how PShapeSVG works) 
+ * and you can play with its internal methods all you like.</p> 
+ * 
+ * <p>Library developers are encouraged to create PShape objects when loading 
+ * shape data, so that they can eventually hook into the bounty that will be
+ * the PShape interface, and the ease of loadShape() and shape().</p>  
+ */
+public class PShape implements PConstants {
 
   protected String name;
   protected HashMap<String,PShape> nameTable;
@@ -252,6 +272,7 @@ abstract public class PShape implements PConstants {
                       matrix.m30, matrix.m31, matrix.m32, matrix.m33);
       }
       */
+      g.pushMatrix();
       g.applyMatrix(matrix);
     }
 
@@ -343,6 +364,7 @@ abstract public class PShape implements PConstants {
    * Draws the SVG document.
    */
   public void drawImpl(PGraphics g) {
+    //System.out.println("drawing " + family);
     if (family == GROUP) {
       drawGroup(g);
     } else if (family == PRIMITIVE) {
@@ -561,19 +583,16 @@ abstract public class PShape implements PConstants {
   }
   
   
-  public PShape getChild(String who) {
-    if (name != null && name.equals(who)) {
+  public PShape getChild(String target) {
+    if (name != null && name.equals(target)) {
       return this;
     }
     if (nameTable != null) {
-      for (String n : nameTable.keySet()) {
-        if (n.equals(name)) {
-          return nameTable.get(name);
-        }
-      }
+      PShape found = nameTable.get(target);
+      if (found != null) return found;
     }
     for (int i = 0; i < childCount; i++) {
-      PShape found = children[i].getChild(name);
+      PShape found = children[i].getChild(target);
       if (found != null) return found;
     }
     return null;
@@ -584,12 +603,12 @@ abstract public class PShape implements PConstants {
    * Same as getChild(name), except that it first walks all the way up the 
    * hierarchy to the farthest parent, so that children can be found anywhere. 
    */
-  public PShape findChild(String name) {
+  public PShape findChild(String target) {
     if (parent == null) {
-      return getChild(name);
+      return getChild(target);
       
     } else {
-      return parent.findChild(name);
+      return parent.findChild(target);
     }
   }
 

@@ -31,8 +31,6 @@ else
   cp -r ../../video work/libraries/
   cp -r ../../pdf work/libraries/
   cp -r ../../dxf work/libraries/
-  cp -r ../../xml work/libraries/
-  cp -r ../../candy work/libraries/
 
   # to have a copy of this guy around for messing with
   echo Copying Processing.app...
@@ -62,9 +60,9 @@ cd core
 perl preproc.pl
 
 mkdir -p bin
-javac -source 1.5 -target 1.5 -d bin src/processing/core/*.java
+javac -source 1.5 -target 1.5 -d bin src/processing/core/*.java src/processing/xml/*.java
 rm -f ../build/macosx/work/lib/core.jar
-cd bin && zip -rq ../../build/macosx/work/lib/core.jar processing/core/*.class && cd ..
+cd bin && zip -rq ../../build/macosx/work/lib/core.jar processing/core/*.class processing/xml/*.class && cd ..
 
 # head back to "processing/app"
 cd ../app
@@ -231,34 +229,6 @@ find bin -name "*~" -exec rm -f {} ';'
 cd bin && zip -rq ../library/dxf.jar processing/dxf/*.class && cd ..
 mkdir -p $LIBRARIES/dxf/library/
 cp library/dxf.jar $LIBRARIES/dxf/library/
-
-
-# XML LIBRARY
-echo Building XML library...
-cd ../xml
-mkdir -p bin
-$JAVAC \
-    -classpath "$CLASSPATH" \
-    -d bin src/processing/xml/*.java 
-rm -f library/xml.jar
-find bin -name "*~" -exec rm -f {} ';'
-cd bin && zip -rq ../library/xml.jar processing/xml/*.class && cd ..
-mkdir -p $LIBRARIES/xml/library/
-cp library/xml.jar $LIBRARIES/xml/library/
-
-
-# CANDY SVG LIBRARY
-echo Building Candy SVG library...
-cd ../candy
-mkdir -p bin
-$JAVAC \
-    -classpath "../xml/library/xml.jar:$CLASSPATH" \
-    -d bin src/processing/candy/*.java 
-rm -f library/candy.jar
-find bin -name "*~" -exec rm -f {} ';'
-cd bin && zip -rq ../library/candy.jar processing/candy/*.class && cd ..
-mkdir -p $LIBRARIES/candy/library/
-cp library/candy.jar $LIBRARIES/candy/library/
 
 
 echo
