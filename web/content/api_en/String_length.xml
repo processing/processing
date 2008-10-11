@@ -21,7 +21,9 @@ println(l1 + ":" + l2);  // Prints '4:6'
 </example>
 
 <description>
-Returns the total number of characters included in the string as an integer number. <br />Note: You find the size of an array with the length field which works a little differently from String's <b>length()</b> method.
+Returns the total number of characters included in the <b>String</b> as an integer number.
+<br /><br />
+People are often confused by the use of <b>length()</b> to get the size of a String and <b>length</b> to get the size of an array. Notice the absence of the parentheses when working with arrays. 
 </description>
 
 <syntax>

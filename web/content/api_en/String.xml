@@ -63,8 +63,6 @@ There are more string methods than those linked from this page. Additional <b>St
 <description></description>
 </parameter>
 
-<field></field>
-
 <method>
 <mname>charAt()</mname>
 <mdescription>Returns the character at the specified index</mdescription>
