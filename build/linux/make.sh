@@ -31,8 +31,6 @@ else
   cp -r ../../video work/libraries/
   cp -r ../../pdf work/libraries/
   cp -r ../../dxf work/libraries/
-  cp -r ../../xml work/libraries/
-  cp -r ../../candy work/libraries/
 
   install -m 755 dist/processing work/processing
 
@@ -75,10 +73,12 @@ mkdir -p bin
 ../build/linux/work/java/bin/java \
     -cp ../build/linux/work/java/lib/tools.jar \
     com.sun.tools.javac.Main \
-    -d bin -source 1.5 -target 1.5 src/processing/core/*.java
+    -d bin -source 1.5 -target 1.5 \
+    src/processing/core/*.java src/processing/xml/*.java
 #find bin -name "*~" -exec rm -f {} ';'
 rm -f ../build/linux/work/lib/core.jar
-cd bin && zip -rq ../../build/linux/work/lib/core.jar processing/core/*.class && cd ..
+cd bin && zip -rq ../../build/linux/work/lib/core.jar \
+  processing/core/*.class processing/xml/*.class && cd ..
 
 # back to base processing dir
 cd ..
@@ -228,34 +228,6 @@ find bin -name "*~" -exec rm -f {} ';'
 cd bin && zip -rq ../library/dxf.jar processing/dxf/*.class && cd ..
 mkdir -p $LIBRARIES/dxf/library/
 cp library/dxf.jar $LIBRARIES/dxf/library/
-
-
-# XML LIBRARY
-echo Building XML library...
-cd ../xml
-mkdir -p bin
-$JAVAC \
-    -classpath "$CORE" \
-    -d bin src/processing/xml/*.java 
-rm -f library/xml.jar
-find bin -name "*~" -exec rm -f {} ';'
-cd bin && zip -rq ../library/xml.jar processing/xml/*.class && cd ..
-mkdir -p $LIBRARIES/xml/library/
-cp library/xml.jar $LIBRARIES/xml/library/
-
-
-# CANDY SVG LIBRARY
-echo Building Candy SVG library...
-cd ../candy
-mkdir -p bin
-$JAVAC \
-    -classpath "../xml/library/xml.jar:$CORE" \
-    -d bin src/processing/candy/*.java 
-rm -f library/candy.jar
-find bin -name "*~" -exec rm -f {} ';'
-cd bin && zip -rq ../library/candy.jar processing/candy/*.class && cd ..
-mkdir -p $LIBRARIES/candy/library/
-cp library/candy.jar $LIBRARIES/candy/library/
 
 
 echo
