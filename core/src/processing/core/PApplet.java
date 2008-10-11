@@ -6289,6 +6289,9 @@ public class PApplet extends Applet
    * </PRE>
    */
   static public void main(String args[]) {
+    // Disable abyssmally slow Sun renderer on OS X 10.5.
+    System.setProperty("apple.awt.graphics.UseQuartz", "true");
+    
     if (args.length < 1) {
       System.err.println("Usage: PApplet <appletname>");
       System.err.println("For additional options, " +
@@ -7287,6 +7290,11 @@ public class PApplet extends Applet
   }
 
 
+  public PMatrix getMatrix() {
+    return g.getMatrix();
+  }
+
+
   public PMatrix2D getMatrix(PMatrix2D target) {
     return g.getMatrix(target);
   }
@@ -7294,6 +7302,12 @@ public class PApplet extends Applet
 
   public PMatrix3D getMatrix(PMatrix3D target) {
     return g.getMatrix(target);
+  }
+
+
+  public void setMatrix(PMatrix source) {
+    if (recorder != null) recorder.setMatrix(source);
+    g.setMatrix(source);
   }
 
 

@@ -48,6 +48,8 @@ X   this is an opengl restriction, should we stick with it elsewhere?
 X   and changing stroke weight in general (with lines/shapes)
 o   no renderer does this, we should probably disable it
 X   added a note to the reference about it
+X may need to add to PApplet.main() for OS X 10.5
+X   System.setProperty("apple.awt.graphics.UseQuartz", "true");
 
 cleaning
 o chooseFile() and chooseFolder() with named fxn callbacks
@@ -96,52 +98,45 @@ X   in case the hint() has been enabled in the meantime
 X   or rather, always load native font, even w/o the hint() being set
 
 PGraphics API changes
-setMainDrawingSurface() -> setPrimarySurface()
-mainDrawingSurface = primarySurface;
-resize() -> setSize() (roughly)
-endShape() with no params is no longer 'final'
-X/Y/Z -> TX/TY/TZ
-MX/MY/MZ -> X/Y/Z (for sake of PShape)
-render_triangles -> renderTriangles()
-depth_sort_triangles -> sortTriangles()
-render_lines -> renderLines()
-depth_sort_lines -> sortLines()
-no longer any abstract methods in PGraphics itself
-removed support for specular alpha (and its 'SPA' constant)
-clear() -> backgroundImpl()
-add DIAMETER as synonym for CENTER for ellipseMode and friends
-textFontNative and textFontNativeMetrics have been removed
-  they require a font rendering context on which to draw
-  and were a weird sort of hack
-  see how the classes implement them now
-hint(ENABLE_NATIVE_FONTS) goes away
-  need to mention in createFont() reference
-  also maybe cover in the loadFont() reference? (maybe problem...)
-image.cache has been removed, replaced with get/set/removeCache()
-  this allows per-renderer image cache data to be stored
-removed textFontNative and textFontNativeMetrics carp
-imageMode ignored for get(), set(), blend() and copy()
-smooth is now part of PGraphics, moved out of PImage
-imageMode has been removed from PImage, too awkward
-raw must handle points, lines, triangles, and textures
-light position and normal are now PVector object
-change NORMALIZED to NORMAL for textureMode()
+X setMainDrawingSurface() -> setPrimarySurface()
+X mainDrawingSurface = primarySurface;
+X resize() -> setSize() (roughly)
+X endShape() with no params is no longer 'final'
+X X/Y/Z -> TX/TY/TZ
+X MX/MY/MZ -> X/Y/Z (for sake of PShape)
+X render_triangles -> renderTriangles()
+X depth_sort_triangles -> sortTriangles()
+X render_lines -> renderLines()
+X depth_sort_lines -> sortLines()
+X no longer any abstract methods in PGraphics itself
+X removed support for specular alpha (and its 'SPA' constant)
+X clear() -> backgroundImpl()
+X add DIAMETER as synonym for CENTER for ellipseMode and friends
+X textFontNative and textFontNativeMetrics have been removed
+X   they've been re-implemented per-PGraphics in a less hacky way
+X hint(ENABLE_NATIVE_FONTS) goes away
+X   need to mention in createFont() reference
+X   also maybe cover in the loadFont() reference? (maybe problem...)
+X image.cache has been removed, replaced with get/set/removeCache()
+X   this allows per-renderer image cache data to be stored
+X imageMode has been removed from PImage, too awkward
+X   this also means that imageMode ignored for get(), set(), blend() and copy()
+X smooth is now part of PGraphics, moved out of PImage
+X raw must handle points, lines, triangles, and textures
+X light position and normal are now PVector object
+X changed NORMALIZED to NORMAL for textureMode()
 
-
-_ may need to add to PApplet.main() for OS X 10.5
-_   System.setProperty("apple.awt.graphics.UseQuartz","true");
-
-svg/pshape/pgraphics priority before 0149
+shapes
 X maybe finish off the svg crap for this release
 X working on pshape
 X   add shape() methods to PGraphics/PApplet
 X   test and fix svg examples
-_ revisions.txt for x/y/z/ tx/ty/tz.. other changes in api.txt
+X revisions.txt for x/y/z/ tx/ty/tz.. other changes in api.txt
 X bring svg into main lib 
 X need to straighten out 'table' object for quick object lookup
 X   maybe add to all parent tables? (no, this gets enormous quickly)
 X fix svg caps/joins for opengl with svg library
-_   http://dev.processing.org/bugs/show_bug.cgi?id=628
+X   http://dev.processing.org/bugs/show_bug.cgi?id=628
 X save/restore more of the p5 graphics drawing state
 X   not setting colorMode(), strokeCap, etc.
 X ignoreStyles is broken - how to handle
