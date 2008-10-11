@@ -19,9 +19,7 @@ Keyword used to disallow other classes access the fields and methods within a cl
 This keyword is an essential part of Java programming and is not usually used with Processing. Consult a Java language reference or tutorial for more information. 
 </description>
 
-<syntax>
-private
-</syntax>
+<syntax></syntax>
 
 <parameter>
 <label></label>

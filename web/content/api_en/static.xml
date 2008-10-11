@@ -47,9 +47,7 @@ Keyword used to define a variable as a "class variable" and a method as a "class
 This keyword is an essential part of Java programming and is not usually used with Processing. Consult a Java language reference or tutorial for more information, such as <a href="http://java.sun.com/docs/books/tutorial/java/javaOO/classvars.html">this one</a>. 
 </description>
 
-<syntax>
-static
-</syntax>
+<syntax></syntax>
 
 <parameter>
 <label></label>

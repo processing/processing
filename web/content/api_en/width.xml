@@ -22,9 +22,7 @@ rect(0, 60, width/2, 20);
 System variable which stores the width of the display window. This value is set by the first parameter of the <b>size()</b> function. For example, the function call <b>size(320, 240)</b> sets the <b>width</b> variable to the value 320. The value of <b>width</b> is zero until <b>size()</b> is called.
 </description>
 
-<syntax>
-width
-</syntax>
+<syntax></syntax>
 
 <parameter>
 <label></label>

@@ -28,9 +28,7 @@ You may find that <b>pmouseX</b> and <b>pmouseY</b> have different values inside
 </description>
 
 <syntax>
-pmouseY
-mouseX
-mouseY
+pmouseX
 </syntax>
 
 <parameter>
@@ -44,11 +42,6 @@ mouseY
 pmouseY
 mouseX
 mouseY
-mousePressed
-mousePressed()
-mouseReleased()
-mouseMoved()
-mouseDragged()
 </related>
 
 <availability>1.0</availability>

@@ -23,9 +23,7 @@ Keyword used to state that a value, class, or method can't be changed. If the <b
 This keyword is an essential part of Java programming and is not usually used with Processing. Consult a Java language reference or tutorial for more information, such as <a href="http://en.wikipedia.org/wiki/Final_(Java)">this one</a>. 
 </description>
 
-<syntax>
-final
-</syntax>
+<syntax></syntax>
 
 <parameter>
 <label></label>

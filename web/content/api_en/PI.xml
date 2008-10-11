@@ -25,9 +25,7 @@ endShape();
 PI is a mathematical constant with the value 3.14159265358979323846. It is the ratio of the circumference of a circle to its diameter. It is useful in combination with the trigonometric functions <b>sin()</b> and <b>cos()</b>. 
 </description>
 
-<syntax>
-PI
-</syntax>
+<syntax></syntax>
 
 <parameter>
 <label></label>

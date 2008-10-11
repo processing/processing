@@ -54,9 +54,7 @@ void draw() {
 Refers to the current object (i.e. "this object"). In Processing, it's most common to use <b>this</b> to pass a reference from the current object into one of the libraries. The keyword <b>this</b> can also be used in another way, but it is often not necessay. For example, if you are calling the <b>filter()</b> method of a <b>PImage</b> object named <b>tree</b> from another object, you would write <b>tree.filter()</b>. To call this method inside PImage itself one could simply write <b>filter()</b> or could more explicity write <b>this.filter()</b>. It's not incorrect to say <b>this.filter()</b> but it is not necessary as this is always implied. 
 </description>
 
-<syntax>
-this
-</syntax>
+<syntax></syntax>
 
 <parameter>
 <label></label>

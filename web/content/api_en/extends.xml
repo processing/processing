@@ -43,9 +43,7 @@ class DrawDot extends Dot {
 Allows a new class to <i>inherit</i> the methods and fields (data members) from an existing class. In code, state the name of the new class, followed by the keyword <b>extends</b> and the name of the <i>base class</i>. The concept of inheritance is one of the fundamental principles of object oriented programming.
 </description>
 
-<syntax>
-extends
-</syntax>
+<syntax></syntax>
 
 <parameter>
 <label></label>

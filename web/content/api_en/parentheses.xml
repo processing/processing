@@ -41,7 +41,7 @@ Grouping and containing expressions and parameters. Parentheses have multiple fu
 
 <parameter>
 <label>structure</label>
-<description>Control structure such as if(), for(), while()</description>
+<description>Control structure such as if, for, while</description>
 </parameter>
 
 <parameter>

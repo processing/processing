@@ -23,9 +23,7 @@ void draw()
 The system variable <b>mouseX</b> always contains the current horizontal coordinate of the mouse.
 </description>
 
-<syntax>
-mouseX
-</syntax>
+<syntax></syntax>
 
 <parameter>
 <label></label>

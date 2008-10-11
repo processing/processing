@@ -31,9 +31,7 @@ switch(letter) {
 Ends the execution of a structure such as switch(), for(), or while() and jumps to the next statement after.
 </description>
 
-<syntax>
-<c>break</c>
-</syntax>
+<syntax></syntax>
 
 <parameter>
 <label></label>

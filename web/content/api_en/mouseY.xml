@@ -23,9 +23,7 @@ void draw()
 The system variable <b>mouseY</b> always contains the current vertical coordinate of the mouse.
 </description>
 
-<syntax>
-mouseY
-</syntax>
+<syntax></syntax>
 
 <parameter>
 <label></label>

@@ -22,12 +22,10 @@ if(b == false) {
 </example>
 
 <description>
-Reserved word representing the logical value "false". Only variables of type <b>boolean</b> may be assigned the value <b>false</b>
+Reserved word representing the logical value "false". Only variables of type <b>boolean</b> may be assigned the value <b>false</b>.
 </description>
 
-<syntax>
-false
-</syntax>
+<syntax></syntax>
 
 <parameter>
 <label></label>

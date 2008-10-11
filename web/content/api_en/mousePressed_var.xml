@@ -28,8 +28,7 @@ void draw() {
 Variable storing if a mouse button is pressed. The value of the system variable <b>mousePressed</b> is true if a mouse button is pressed and false if a button is not pressed.
 </description>
 
-<syntax>
-</syntax>
+<syntax></syntax>
 
 <parameter>
 <label></label>
