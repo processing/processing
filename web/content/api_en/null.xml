@@ -11,19 +11,14 @@
 
 <example>
 <image></image>
-<code>
-Coming soon...
-
-</code>
+<code></code>
 </example>
 
 <description>
 Special value used to signify the target is not a valid data element. In Processing, you may run across the keyword <b>null</b> when trying to access data which is not there.
 </description>
 
-<syntax>
-null
-</syntax>
+<syntax></syntax>
 
 <parameter>
 <label></label>

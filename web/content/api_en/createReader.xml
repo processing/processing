@@ -35,7 +35,7 @@ void draw() {
 </example>
 
 <description>
-Creates a <b>BufferedReader</b> object that can be used to read files line-by-line as individual <b>String</b> objects. This is the complement to the <b>createWriter</b> function.
+Creates a <b>BufferedReader</b> object that can be used to read files line-by-line as individual <b>String</b> objects. This is the complement to the <b>createWriter()</b> function.
 <br/> <br/>
 Starting with Processing release 0134, all files loaded and saved by the Processing API use UTF-8 encoding. In previous releases, the default encoding for your platform was used, which causes problems when files are moved to other platforms.
 </description>
@@ -46,7 +46,7 @@ createReader(<c>filename</c>)
 
 <parameter>
 <label>filename</label>
-<description>Name of the file to be opened</description>
+<description>String: name of the file to be opened</description>
 </parameter>
 
 <returns>BufferedReader or null</returns>

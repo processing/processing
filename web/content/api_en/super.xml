@@ -39,9 +39,7 @@ class DragDrop extends Button {
 Keyword used to reference the superclass of a subclass.
 </description>
 
-<syntax>
-super
-</syntax>
+<syntax></syntax>
 
 <parameter>
 <label></label>
