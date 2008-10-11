@@ -7,7 +7,7 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-ABOUT REV 0149 - XX September 2008
+ABOUT REV 0149 - 11 October 2008
 
 Very large number of bug fixes and changes. All renderers that use 
 PGraphics will need to be updated for this release.
@@ -20,7 +20,80 @@ Also many updates to the examples in this release.
 * RELEASES SINCE 0135 CONTAIN MANY SIGNIFICANT CHANGES, PLEASE READ *
 *  THE NOTES IN THIS FILE FOR ANY RELEASE THAT YOU'VE NOT YET USED. *
 
+[ changes ] 
+
++ Change how PGraphics objects are created for better consistency. Sadly, 
+  this will require any libraries that subclass PGraphics to be rebuilt 
+  for this release. (However, internally it's a great improvement.) 
+  Renderer library authors please read the reference for PGraphics:
+  http://dev.processing.org/reference/core/javadoc/processing/core/PGraphics.html
+  For library developers, a gritty list of the internal function changes 
+  can be found in processing/core/done.txt in the revision 0149 section under 
+  the heading "PGraphics API changes". (It's not poetic, but it's real.)
+
++ We've decided that vector geometry is as important as image data, so the
+  Candy library has been removed, and replaced by a built-in loadShape()
+  method in PApplet, which returns a PShape object. (Candy lives on as the
+  PShapeSVG class, which is the PShape subclass created by loadShape.)
+  A shape() command has been added (like the image() command for images). 
+  See the new SVG examples for more information. In the future, we'd like 
+  to support other vector formats (such as OBJ) with loadShape(), or 
+  provide a means for libraries to register themselves to load shape data.
+
++ The PShape object is just a container for now, but will someday provide
+  methods for accessing actual vertex information. 
+
++ Because of the SVG changes, the XML library is now built into the core.
+  This means that processing.xml will be imported by default (no need for 
+  "import processing.xml" in your sketch). This also means that "XML"
+  will no longer be seen in the "Import Library" menu.
+
++ Altered how createInput(), save(), and saveFrame() work so that they
+  are more friendly to signed applets.
+
++ Implemented new error/warning system inside PGraphics so that errors
+  are only shown once, and non-fatal errors do not shut down the sketch.
+
++ The unhint() method has been removed, see the hint() reference for changes.
+
++ Changes to how match() works to bring back in line with other regexp
+  implementations. Instead of only returning matching groups, match 0
+  is the matching sequence, and array elements [1] and higher represent 
+  each of the groups (sequences found in parens). 
+  Also starting in this release, multiline matching (Pattern.MULTILINE) 
+  and dotall mode (Pattern.DOTALL) are used by default, so that ^ and $ 
+  match the beginning and end of any lines found in the source, 
+  and the . operator will also pick up newline characters.
+
++ Removed MACOS9 constant from processing.core.PConstants. Bye bye 2001.
+
++ Deprecated the NORMALIZED constant, use NORMAL instead.
+
++ Removed some items from the default imports because they're 1) likely
+  to cause naming collisions and 2) more likely to be used by advanced 
+  users (who can add 'em themselves anyway). The removed items include:
+  javax.sound.midi,javax.sound.midi.spi,
+  javax.sound.sampled,javax.sound.sampled.spi,
+  javax.xml.parsers,javax.xml.transform,javax.xml.transform.dom,
+  javax.xml.transform.sax,javax.xml.transform.stream,
+  org.xml.sax,org.xml.sax.ext,org.xml.sax.helpers
+  You can add default imports to your preferences.txt file by adding to
+  the preproc.imports line. But keep in mind that this will make your 
+  code incompatible with Processing on any machine that doesn't have 
+  its preferences.txt mangled in the same manner.
+
++ Update Quaqua to 4.4.7 on Mac OS X (http://www.randelshofer.ch/quaqua/)
+
++ Disable abyssmally slow Sun renderer on OS X 10.5, by setting 
+  apple.awt.graphics.UseQuartz to true inside PApplet.main().
+
 [ bug fixes ] 
+
++ Prevent caps/joins from throwing an error and halting the render. 
+  This was a problem when drawing SVG files with OpenGL:
+  http://dev.processing.org/bugs/show_bug.cgi?id=628
+  However, complex shapes or shapes with holes will produce an error in OpenGL:
+  http://dev.processing.org/bugs/show_bug.cgi?id=947
 
 + The point() command should now work always and consistently 
   in OpenGL as well as Java 2D. 
@@ -66,44 +139,16 @@ Also many updates to the examples in this release.
   been seen or confirmed recently, closing it.
   http://dev.processing.org/bugs/show_bug.cgi?id=56
 
-[ changes ] 
++ Add additional newline hack so that Auto Format has less errors.
 
-+ Change how PGraphics objects are created for better consistency. Sadly, 
-  this will require any libraries that subclass PGraphics to be rebuilt 
-  for this release. (However, internally it's a great improvement.) 
-  Renderer library authors please read the reference for PGraphics:
-  http://dev.processing.org/reference/core/javadoc/processing/core/PGraphics.html
++ Fix video capture problems with OpenGL on Mac OS X.
+  http://dev.processing.org/bugs/show_bug.cgi?id=882
 
-+ Altered how createInput(), save(), and saveFrame() work so that they
-  are more friendly to signed applets.
++ Sketch export results in 100x100 default size, regardless of size() setting
+  http://dev.processing.org/bugs/show_bug.cgi?id=945
 
-+ The unhint() method has been removed, see the hint() reference for changes.
-
-+ Changes to how match() works to bring back in line with other regexp
-  implementations. Instead of only returning matching groups, match 0
-  is the matching sequence, and array elements [1] and higher represent 
-  each of the groups (sequences found in parens). 
-  Also starting in this release, multiline matching (Pattern.MULTILINE) 
-  and dotall mode (Pattern.DOTALL) are used by default, so that ^ and $ 
-  match the beginning and end of any lines found in the source, 
-  and the . operator will also pick up newline characters.
-
-+ Removed MACOS9 constant from processing.core.PConstants. Bye bye 2001.
-
-+ Removed some items from the default imports because they're 1) likely
-  to cause naming collisions and 2) more likely to be used by advanced 
-  users (who can add 'em themselves anyway). The removed items include:
-  javax.sound.midi,javax.sound.midi.spi,
-  javax.sound.sampled,javax.sound.sampled.spi,
-  javax.xml.parsers,javax.xml.transform,javax.xml.transform.dom,
-  javax.xml.transform.sax,javax.xml.transform.stream,
-  org.xml.sax,org.xml.sax.ext,org.xml.sax.helpers
-  You can add default imports to your preferences.txt file by adding to
-  the preproc.imports line. But keep in mind that this will make your 
-  code incompatible with Processing on any machine that doesn't have 
-  its preferences.txt mangled in the same manner.
-
-+ Update Quaqua to 4.4.7 on Mac OS X (http://www.randelshofer.ch/quaqua/)
++ Fix case where creating a new tab throws a NullPointerException.
+  http://dev.processing.org/bugs/show_bug.cgi?id=940
 
 [ additions ] 
 
