@@ -613,7 +613,8 @@ public class Editor extends JFrame implements RunnerListener {
 
     addInternalTools(menu);
     addTools(menu, Base.getToolsFolder());
-    addTools(menu, base.getSketchbookFolder());
+    File sketchbookTools = new File(base.getSketchbookFolder(), "tools");
+    addTools(menu, sketchbookTools);
 
     return menu;
   }
