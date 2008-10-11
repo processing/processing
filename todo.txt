@@ -47,6 +47,10 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=882
 X sketch export results in 100x100 default size, regardless of size() setting
 X   http://dev.processing.org/bugs/show_bug.cgi?id=945
 
+structural 
+X processing.candy has been removed
+X processing.xml is now part of core.jar, no need to import
+
 reference
 X do some edits on the "getting started" text
 X   make sure visualization not mentioned
