@@ -38,7 +38,7 @@ if (p.equals("potato")) {
 <image></image>
 <code>
 // Use a backslash to include quotes in a String
-String quoted = "This one has \"quotes\"";
+String quoted = "This one has \\"quotes\\"";
 println(quoted);  // This one has "quotes"
 </code>
 </example>
@@ -51,7 +51,7 @@ A string is a sequence of characters. The class <b>String</b> includes methods f
 <br /> <br />
 To compare the contents of two Strings, use the equals() method, as in "if (a.equals(b))", instead of "if (a == b)". A String is an Object, so comparing them with the == operator only compares whether both Strings are stored in the same memory location. Using the equals() method will ensure that the actual contents are compared. (The <a href="http://processing.org/reference/troubleshooting/index.html#strings">troubleshooting</a> reference has a longer explanation.)
 <br /> <br />
-Because a String is defined within quotes, including quotes in a String requires the \ (backslash) character to be used (see the second example above). This is known as an <em>escape sequence</em>. Other escape sequences include \t for the tab character, and \n for new line. A single backslash is indicated by \\.
+Because a String is defined within quotes, including quotes in a String requires the \\ (backslash) character to be used (see the second example above). This is known as an <em>escape sequence</em>. Other escape sequences include \\t for the tab character, and \\n for new line. A single backslash is indicated by \\.
 <br /> <br />
 There are more string methods than those linked from this page. Additional <b>String</b> documentation is located at <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/">http://java.sun.com/j2se/1.4.2/docs/api/</A>.
 </description>
