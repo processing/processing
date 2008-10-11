@@ -26,11 +26,13 @@ void setup() {
 void draw() {
   background(255);
 
-  // With an array, we say balls.length, with an ArrayList, we say balls.size()
-  // The length of an ArrayList is dynamic. Notice how we are looping through the 
-  // ArrayList backwards, this is because we are deleting elements from the list  
+  // With an array, we say balls.length, with an ArrayList, 
+  // we say balls.size(). The length of an ArrayList is dynamic. 
+  // Notice how we are looping through the ArrayList backwards, this 
+  // is because we are deleting elements from the list  
   for (int i = balls.size()-1; i &gt;= 0; i--) { 
-    // An ArrayList doesn't know what it is storing so we have to cast the object coming out
+    // An ArrayList doesn't know what it is storing so we have 
+    // to cast the object coming out
     Ball ball = (Ball) balls.get(i);
     ball.move();
     ball.display();
@@ -50,9 +52,9 @@ void mousePressed() {
 
 
 <description>
-Blah
+An <b>ArrayList</b> stores a variable number of objects. This is similar to making an array of objects, but with an <b>ArrayList</b>, items can be easily added and removed from the ArrayList and it is resized dynamically. This can be very convenient, but it's slower than making an array of objects when using many elements.
 <br /><br />
-An ArrayList is a resizable-array implementation of the Java List interface. It has many methods used to control and search its contents. For example, the length of the <b>ArrayList</b> is returned by its <b>size()</b> method, which is an integer value for the total number of elements in the list. An element is added to an <b>ArrayList</b> with the <b>add()</b> method and is deleted with the <b>remove()</b> method. See the above example for context. For a complete list of the numerous other <b>ArrayList</b> features, please read the <a href="http://java.sun.com/javase/6/docs/api/java/util/ArrayList.html">Java reference description</a>.
+An ArrayList is a resizable-array implementation of the Java List interface. It has many methods used to control and search its contents. For example, the length of the <b>ArrayList</b> is returned by its <b>size()</b> method, which is an integer value for the total number of elements in the list. An element is added to an <b>ArrayList</b> with the <b>add()</b> method and is deleted with the <b>remove()</b> method. See the above example for context. For a complete list of the numerous other <b>ArrayList</b> features, please read the <a href="http://java.sun.com/j2se/1.4.2/docs/api/java/util/ArrayList.html">Java reference description</a>.
 </description>
 
 <syntax>
