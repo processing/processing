@@ -164,7 +164,7 @@ public class XMLWriter
       } else {
          this.writer.print('<');
          this.writer.print(xml.getName());
-         Vector nsprefixes = new Vector();
+         Vector<String> nsprefixes = new Vector<String>();
 
          if (xml.getNamespace() != null) {
             if (xml.getLocalName().equals(xml.getName())) {
@@ -178,7 +178,7 @@ public class XMLWriter
             }
          }
 
-         Enumeration en = xml.enumerateAttributeNames();
+         Enumeration<?> en = xml.enumerateAttributeNames();
 
          while (en.hasMoreElements()) {
             String key = (String) en.nextElement();

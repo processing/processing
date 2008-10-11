@@ -49,7 +49,7 @@ public class StdXMLBuilder
    /**
     * This stack contains the current element and its parents.
     */
-   private Stack stack;
+   private Stack<XMLElement> stack;
 
 
    /**
@@ -118,7 +118,7 @@ public class StdXMLBuilder
    public void startBuilding(String systemID,
                              int    lineNr)
    {
-      this.stack = new Stack();
+      this.stack = new Stack<XMLElement>();
       this.root = null;
    }
 
