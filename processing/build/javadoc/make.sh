@@ -1,7 +1,8 @@
 #!/bin/sh
 
 javadoc -public -notimestamp -d core \
-    ../../core/src/processing/core/*.java
+    ../../core/src/processing/core/*.java \
+    ../../core/src/processing/xml/*.java
 
 # These have to be done in a certain order... Most classes need to know about
 # core, and SVG needs to have the XML library opened earler. I'm probably not
@@ -26,8 +27,6 @@ javadoc -public -notimestamp -d everything \
     ../../pdf/src/processing/pdf/*.java \
     ../../serial/src/processing/serial/*.java \
     ../../video/src/processing/video/*.java \
-    ../../xml/src/processing/xml/*.java \
-    ../../candy/src/processing/candy/*.java 
 
 cp stylesheet.css core/
 cp stylesheet.css everything/

@@ -44,8 +44,6 @@ cp -r ../../serial processing/libraries/
 cp -r ../../video processing/libraries/
 cp -r ../../pdf processing/libraries/
 cp -r ../../dxf processing/libraries/
-cp -r ../../xml processing/libraries/
-cp -r ../../candy processing/libraries/
 
 # add java (jre) files
 unzip -q -d processing jre.zip
