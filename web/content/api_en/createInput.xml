@@ -15,18 +15,20 @@
 
 
 <description>
-Simplified method to open a Java InputStream. This method is useful if you want to use the facilities provided by PApplet to easily open things from the data folder or from a URL, but want an InputStream object so that you can use other Java methods to take more control of how the stream is read.
+This is a method for advanced programmers to open a Java InputStream. The method is useful if you want to use the facilities provided by PApplet to easily open files from the data folder or from a URL, but want an InputStream object so that you can use other Java methods to take more control of how the stream is read.
 <br /><br />
-If the requested item doesn't exist, null is returned. (Prior to Processing version 0096, <b>die()</b> would be called, killing the applet.) For 0096+, the "data" folder is exported intact with subfolders, and <b>openStream()</b> properly handles subdirectories from the data folder. 
+If the requested item doesn't exist, null is returned. 
 <br /><br />
-If not online, this will also check to see if the user is asking for a file whose name isn't properly capitalized. This helps prevent issues when a sketch is exported to the web, where case sensitivity matters, as opposed to Windows and the Mac OS default where case sensitivity is preserved but ignored.
+In earlier releases, this method was called <b>openStream()</b>.
+<br /><br />
+If not online, this will also check to see if the user is asking for a file whose name isn't properly capitalized. If capitalization is different an error will be printed to the console. This helps prevent issues that appear when a sketch is exported to the web, where case sensitivity matters, as opposed to running from inside the Processing Development Environment on Windows or Mac OS, where case sensitivity is preserved but ignored.
 <br /><br />
 The filename passed in can be:<br />
 - A URL, for instance openStream("http://processing.org/");<br />
 - A file in the sketch's data folder<br />
-- Another file to be opened locally (when running as an application)
+- The full path to a file to be opened locally (when running as an application)
 <br /><br />
-A related function called <b>createInputRaw()</b> does the same thing, but without automatic gzip decompression.
+If the file ends with <b>.gz</b>, the stream will automatically be gzip decompressed. If you don't want the automatic decompression, use the related function <b>createInputRaw()</b>.
 </description>
 
 <syntax>
