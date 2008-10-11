@@ -1874,8 +1874,8 @@ public class PGraphicsOpenGL extends PGraphics3D {
   //////////////////////////////////////////////////////////////
   
   // STROKE CAP/JOIN/WEIGHT
-  
-  
+
+
   public void strokeWeight(float weight) {
     this.strokeWeight = weight;
   }
