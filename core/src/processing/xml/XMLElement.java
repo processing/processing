@@ -56,13 +56,13 @@ public class XMLElement implements Serializable {
     /**
      * The attributes of the element.
      */
-    private Vector attributes;
+    private Vector<XMLAttribute> attributes;
 
 
     /**
      * The child elements.
      */
-    private Vector children;
+    private Vector<XMLElement> children;
 
 
     /**
@@ -178,8 +178,8 @@ public class XMLElement implements Serializable {
                       String namespace,
                       String systemID,
                       int    lineNr) {
-        this.attributes = new Vector();
-        this.children = new Vector(8);
+        this.attributes = new Vector<XMLAttribute>();
+        this.children = new Vector<XMLElement>(8);
         this.fullName = fullName;
         if (namespace == null) {
             this.name = fullName;
@@ -481,7 +481,7 @@ public class XMLElement implements Serializable {
      *
      * @return the non-null enumeration
      */
-    public Enumeration enumerateChildren() {
+    public Enumeration<XMLElement> enumerateChildren() {
         return this.children.elements();
     }
 
@@ -767,7 +767,7 @@ public class XMLElement implements Serializable {
      * @return the attribute, or null if the attribute does not exist.
      */
     private XMLAttribute findAttribute(String fullName) {
-        Enumeration en = this.attributes.elements();
+        Enumeration<XMLAttribute> en = this.attributes.elements();
         while (en.hasMoreElements()) {
             XMLAttribute attr = (XMLAttribute) en.nextElement();
             if (attr.getFullName().equals(fullName)) {
@@ -788,7 +788,7 @@ public class XMLElement implements Serializable {
      */
     private XMLAttribute findAttribute(String name,
                                        String namespace) {
-        Enumeration en = this.attributes.elements();
+        Enumeration<XMLAttribute> en = this.attributes.elements();
         while (en.hasMoreElements()) {
             XMLAttribute attr = (XMLAttribute) en.nextElement();
             boolean found = attr.getName().equals(name);
@@ -1136,9 +1136,9 @@ public class XMLElement implements Serializable {
      *
      * @return the non-null enumeration.
      */
-    public Enumeration enumerateAttributeNames() {
-        Vector result = new Vector();
-        Enumeration en = this.attributes.elements();
+    public Enumeration<String> enumerateAttributeNames() {
+        Vector<String> result = new Vector<String>();
+        Enumeration<XMLAttribute> en = this.attributes.elements();
         while (en.hasMoreElements()) {
             XMLAttribute attr = (XMLAttribute) en.nextElement();
             result.addElement(attr.getFullName());
@@ -1175,7 +1175,7 @@ public class XMLElement implements Serializable {
      */
     public Properties getAttributes() {
         Properties result = new Properties();
-        Enumeration en = this.attributes.elements();
+        Enumeration<XMLAttribute> en = this.attributes.elements();
         while (en.hasMoreElements()) {
             XMLAttribute attr = (XMLAttribute) en.nextElement();
             result.put(attr.getFullName(), attr.getValue());
@@ -1193,7 +1193,7 @@ public class XMLElement implements Serializable {
      */
     public Properties getAttributesInNamespace(String namespace) {
         Properties result = new Properties();
-        Enumeration en = this.attributes.elements();
+        Enumeration<XMLAttribute> en = this.attributes.elements();
         while (en.hasMoreElements()) {
             XMLAttribute attr = (XMLAttribute) en.nextElement();
             if (namespace == null) {
@@ -1285,7 +1285,7 @@ public class XMLElement implements Serializable {
         if (this.attributes.size() != rawElement.getAttributeCount()) {
             return false;
         }
-        Enumeration en = this.attributes.elements();
+        Enumeration<XMLAttribute> en = this.attributes.elements();
         while (en.hasMoreElements()) {
             XMLAttribute attr = (XMLAttribute) en.nextElement();
             if (! rawElement.hasAttribute(attr.getName(), attr.getNamespace())) {

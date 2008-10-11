@@ -78,7 +78,7 @@ public class StdXMLReader
    /**
     * The stack of readers.
     */
-   private Stack readers;
+   private Stack<StackedReader> readers;
 
 
    /**
@@ -158,7 +158,7 @@ public class StdXMLReader
       }
 
       this.currentReader = new StackedReader();
-      this.readers = new Stack();
+      this.readers = new Stack<StackedReader>();
       Reader reader = this.openStream(publicID, systemIDasURL.toString());
       this.currentReader.lineReader = new LineNumberReader(reader);
       this.currentReader.pbReader
@@ -174,7 +174,7 @@ public class StdXMLReader
    public StdXMLReader(Reader reader)
    {
       this.currentReader = new StackedReader();
-      this.readers = new Stack();
+      this.readers = new Stack<StackedReader>();
       this.currentReader.lineReader = new LineNumberReader(reader);
       this.currentReader.pbReader
          = new PushbackReader(this.currentReader.lineReader, 2);
@@ -349,7 +349,7 @@ public class StdXMLReader
       StringBuffer charsRead = new StringBuffer();
       Reader reader = this.stream2reader(stream, charsRead);
       this.currentReader = new StackedReader();
-      this.readers = new Stack();
+      this.readers = new Stack<StackedReader>();
       this.currentReader.lineReader = new LineNumberReader(reader);
       this.currentReader.pbReader
          = new PushbackReader(this.currentReader.lineReader, 2);
