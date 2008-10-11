@@ -1035,7 +1035,8 @@ public class PShapeSVG extends PShape {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-	class Gradient extends PShapeSVG {
+
+	static class Gradient extends PShapeSVG {
 	  AffineTransform transform;
 
 	  float[] offset;
@@ -1334,7 +1335,7 @@ public class PShapeSVG extends PShape {
 	  }
 	}
 
-	
+
 	protected Paint calcGradientPaint(Gradient gradient) {
 	  if (gradient instanceof LinearGradient) {
 	    LinearGradient grad = (LinearGradient) gradient;
