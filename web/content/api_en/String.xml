@@ -63,10 +63,7 @@ There are more string methods than those linked from this page. Additional <b>St
 <description></description>
 </parameter>
 
-<field>
-<fname></fname>
-<fdescription></fdescription>
-</field>
+<field></field>
 
 <method>
 <mname>charAt()</mname>
