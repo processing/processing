@@ -3457,6 +3457,23 @@ public class PApplet extends Applet
 
   //////////////////////////////////////////////////////////////
 
+  // SHAPE I/O
+  
+  
+  /**
+   * Load a geometry from a file as a PShape. Currently only supports SVG data.
+   */
+  public PShape loadShape(String filename) {
+    if (filename.toLowerCase().endsWith(".svg")) {
+      return new PShapeSVG(this, filename);
+    }
+    return null;
+  }
+
+  
+
+  //////////////////////////////////////////////////////////////
+
   // FONT I/O
 
 
@@ -6718,6 +6735,12 @@ public class PApplet extends Applet
   public void vertex(float x, float y, float z) {
     if (recorder != null) recorder.vertex(x, y, z);
     g.vertex(x, y, z);
+  }
+
+
+  public void vertex(float[] v) {
+    if (recorder != null) recorder.vertex(v);
+    g.vertex(v);
   }
 
 
