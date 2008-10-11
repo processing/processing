@@ -95,7 +95,7 @@ X also try to check native font on textFont() commands
 X   in case the hint() has been enabled in the meantime
 X   or rather, always load native font, even w/o the hint() being set
 
-api changes
+PGraphics API changes
 setMainDrawingSurface() -> setPrimarySurface()
 mainDrawingSurface = primarySurface;
 resize() -> setSize() (roughly)
