@@ -3630,7 +3630,7 @@ public class PApplet extends Applet
             (filename == null) ? null : new File(directory, filename);
         }
       });
-      return selectedFile.getAbsolutePath();
+      return (selectedFile == null) ? null : selectedFile.getAbsolutePath();
 
     } catch (Exception e) {
       e.printStackTrace();
@@ -3665,22 +3665,25 @@ public class PApplet extends Applet
             System.setProperty("apple.awt.fileDialogForDirectories", "true");
             fileDialog.setVisible(true);
             System.setProperty("apple.awt.fileDialogForDirectories", "false");
-
+            String filename = fileDialog.getFile();
+            selectedFile = (filename == null) ? null :
+              new File(fileDialog.getDirectory(), fileDialog.getFile());
           } else {
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.setDialogTitle(prompt);
             fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
             int returned = fileChooser.showOpenDialog(parentFrame);
-            if (returned == JFileChooser.APPROVE_OPTION) {
-              selectedFile = fileChooser.getSelectedFile();
-            } else {
+            System.out.println(returned);
+            if (returned == JFileChooser.CANCEL_OPTION) {
               selectedFile = null;
+            } else {
+              selectedFile = fileChooser.getSelectedFile();
             }
           }
         }
       });
-      return selectedFile.getAbsolutePath();
+      return (selectedFile == null) ? null : selectedFile.getAbsolutePath();
 
     } catch (Exception e) {
       e.printStackTrace();
