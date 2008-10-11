@@ -29,7 +29,7 @@ void draw() {
   // With an array, we say balls.length, with an ArrayList, we say balls.size()
   // The length of an ArrayList is dynamic. Notice how we are looping through the 
   // ArrayList backwards, this is because we are deleting elements from the list  
-  for (int i = balls.size()-1; i >= 0; i--) { 
+  for (int i = balls.size()-1; i &gt;= 0; i--) { 
     // An ArrayList doesn't know what it is storing so we have to cast the object coming out
     Ball ball = (Ball) balls.get(i);
     ball.move();
@@ -50,7 +50,7 @@ void mousePressed() {
 
 
 <description>
-An array is a list of data. It is possible to have an array of any type of data. Each piece of data in an array is identified by an index number representing its position in the array. The first element in the array is <b>[0]</b>, the second element is <b>[1]</b>, and so on. Arrays are similar to objects, so they must be created with the keyword <b>new</b>. 
+Blah
 <br /><br />
 An ArrayList is a resizable-array implementation of the Java List interface. It has many methods used to control and search its contents. For example, the length of the <b>ArrayList</b> is returned by its <b>size()</b> method, which is an integer value for the total number of elements in the list. An element is added to an <b>ArrayList</b> with the <b>add()</b> method and is deleted with the <b>remove()</b> method. See the above example for context. For a complete list of the numerous other <b>ArrayList</b> features, please read the <a href="http://java.sun.com/javase/6/docs/api/java/util/ArrayList.html">Java reference description</a>.
 </description>
