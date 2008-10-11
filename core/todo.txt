@@ -85,6 +85,16 @@ o   point() being funneled through beginShape is terribly slow
 X     go the other way 'round
 X   sometimes broken, could be a problem with java 1.5? (was using win2k)
 
+font
+X fix getFontMetrics() warning
+X   need to have a getGraphics() to get the actual Graphics object
+X   where drawing is happening. parent.getGraphics() works except for OpenGL
+X Java2D textLinePlacedImpl should check for ENABLE_NATIVE_FONTS hint
+X   http://dev.processing.org/bugs/show_bug.cgi?id=633
+X also try to check native font on textFont() commands
+X   in case the hint() has been enabled in the meantime
+X   or rather, always load native font, even w/o the hint() being set
+
 api changes
 setMainDrawingSurface() -> setPrimarySurface()
 mainDrawingSurface = primarySurface;
@@ -233,18 +243,10 @@ _   same will go for blend()
 
 
 rework some text/font code [1.0]
-_ PFont not working well with all characters
+_ PFont not working well with lots of characters
 _   only create bitmap chars on the fly when needed (in createFont)
 _ text placement is ugly, seems like fractional metrics problem
 _   http://dev.processing.org/bugs/show_bug.cgi?id=866
-_ fix getFontMetrics() warning
-_   need to have a getGraphics() to get the actual Graphics object
-_   where drawing is happening. parent.getGraphics() works except for OpenGL
-_ Java2D textLinePlacedImpl should check for ENABLE_NATIVE_FONTS hint
-_   http://dev.processing.org/bugs/show_bug.cgi?id=633
-_ also try to check native font on textFont() commands
-_   in case the hint() has been enabled in the meantime
-_   or rather, always load native font, even w/o the hint() being set
 _ text(char c) with char 0 and undefined should print nothing
 _   perhaps also DEL or other nonprintables?
 _   book example 25-03
