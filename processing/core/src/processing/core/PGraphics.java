@@ -1119,9 +1119,11 @@ public class PGraphics extends PImage implements PConstants {
     else if (textureV > 1) textureV = 1;
   }
 
-  
+
   /** This feature is in testing, do not use or rely upon its implementation */
   public void breakShape() {
+    showWarning("This renderer cannot currently handle concave shapes, " +
+                "or shapes with holes.");
   }
 
 
@@ -1155,6 +1157,7 @@ public class PGraphics extends PImage implements PConstants {
   public void bezierVertex(float x2, float y2,
                            float x3, float y3,
                            float x4, float y4) {
+    bezierInitCheck();
     bezierVertexCheck();
     PMatrix3D draw = bezierDrawMatrix;
 
@@ -1181,6 +1184,7 @@ public class PGraphics extends PImage implements PConstants {
   public void bezierVertex(float x2, float y2, float z2,
                            float x3, float y3, float z3,
                            float x4, float y4, float z4) {
+    bezierInitCheck();
     bezierVertexCheck();
     PMatrix3D draw = bezierDrawMatrix;
 
@@ -1965,7 +1969,8 @@ public class PGraphics extends PImage implements PConstants {
   
   protected void bezierInit() {
     // overkill to be broken out, but better parity with the curve stuff below
-    bezierDetail(bezierDetail);
+    bezierDetail(bezierDetail);    
+    bezierInited = true;
   }
 
   
@@ -1984,8 +1989,6 @@ public class PGraphics extends PImage implements PConstants {
     //mult_spline_matrix(bezierForwardMatrix, bezier_basis, bezierDrawMatrix, 4);
     //bezierDrawMatrix.set(bezierForwardMatrix);
     bezierDrawMatrix.apply(bezierBasisMatrix);
-    
-    bezierInited = true;
   }
 
 
