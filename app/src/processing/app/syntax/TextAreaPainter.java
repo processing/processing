@@ -356,7 +356,7 @@ implements TabExpander, Printable
   public void setFont(Font font)
   {
     super.setFont(font);
-    fm = Toolkit.getDefaultToolkit().getFontMetrics(font);
+    fm = super.getFontMetrics(font);
     textArea.recalculateVisibleLines();
   }
 
