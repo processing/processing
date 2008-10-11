@@ -22,6 +22,10 @@ Also many updates to the examples in this release.
 
 [ bug fixes ] 
 
++ The point() command should now work always and consistently 
+  in OpenGL as well as Java 2D. 
+  http://dev.processing.org/bugs/show_bug.cgi?id=121
+
 + Fix GLDrawableFactory.chooseGraphicsConfiguration() error with OpenGL
   http://dev.processing.org/bugs/show_bug.cgi?id=891
   http://dev.processing.org/bugs/show_bug.cgi?id=908
@@ -53,6 +57,11 @@ Also many updates to the examples in this release.
 + Hopefully fixed a "transport error 202" error.
   http://dev.processing.org/bugs/show_bug.cgi?id=895
 
++ hint(DISABLE_DEPTH_TEST) now clears the depth buffer so that there's no
+  longer a need for a kludgey workaround (messing with g.zbuffer or dropping
+  into OpenGL code to call gl.glClear(GL.GL_DEPTH_BUFFER_BIT))
+  http://dev.processing.org/bugs/show_bug.cgi?id=827
+
 + Header not always updating on rename... this was an old bug that hasn't
   been seen or confirmed recently, closing it.
   http://dev.processing.org/bugs/show_bug.cgi?id=56
@@ -65,7 +74,7 @@ Also many updates to the examples in this release.
   Renderer library authors please read the reference for PGraphics:
   http://dev.processing.org/reference/core/javadoc/processing/core/PGraphics.html
 
-+ Alter how createInput(), save(), and saveFrame() work so that they
++ Altered how createInput(), save(), and saveFrame() work so that they
   are more friendly to signed applets.
 
 + The unhint() method has been removed, see the hint() reference for changes.
@@ -79,7 +88,7 @@ Also many updates to the examples in this release.
   match the beginning and end of any lines found in the source, 
   and the . operator will also pick up newline characters.
 
-+ Removed MACOS9 constant from processing.core.PConstants.
++ Removed MACOS9 constant from processing.core.PConstants. Bye bye 2001.
 
 + Removed some items from the default imports because they're 1) likely
   to cause naming collisions and 2) more likely to be used by advanced 
@@ -98,11 +107,17 @@ Also many updates to the examples in this release.
 
 [ additions ] 
 
-+ Implement command-line support. See the reference for the new Commander 
-  class for details on how to use it: 
++ Command-line support is now implemented. See the reference for the new
+  Commander class for details on how to use it: 
   http://dev.processing.org/reference/everything/javadoc/processing/app/Commander.html
   http://dev.processing.org/bugs/show_bug.cgi?id=219
   http://dev.processing.org/bugs/show_bug.cgi?id=889
+
++ PVector is a simple 3-dimensional vector (x, y, z) or point class, 
+  based on code from Dan Shiffman. No more roll-your-own vectorishness.
+
++ PMatrix interface, along with PMatrix2D (3x2 affine) and PMatrix3D (4x4)
+  implementations for use with the renderers (and your own code). 
 
 + Added matchAll() method, which is identical to match(), except that 
   it returns an array of all matches in the specified String, rather 
@@ -405,6 +420,9 @@ been ironed out.
 
 + text(String, float, float, float, float) drawing text outside box
   http://dev.processing.org/bugs/show_bug.cgi?id=844
+
++ For consistency, changed how hint(ENABLE_NATIVE_FONTS) works.
+  http://dev.processing.org/bugs/show_bug.cgi?id=633
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 

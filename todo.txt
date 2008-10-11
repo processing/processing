@@ -48,6 +48,9 @@ X sketch export results in 100x100 default size, regardless of size() setting
 X   http://dev.processing.org/bugs/show_bug.cgi?id=945
 X third tab throws NullPointerException
 X   http://dev.processing.org/bugs/show_bug.cgi?id=940
+o sketch must be saved to use a constructor
+X   http://dev.processing.org/bugs/show_bug.cgi?id=929
+X   reference bug, example cannot have same name as an inner class
 
 structural 
 X processing.candy has been removed
@@ -61,6 +64,8 @@ X   make sure visualization not mentioned
 X   change references to help > getting started
 X   add vida reference
 X background() with an image ignores the tint.. it's basically like set()
+X selectInput(), selectOutput(), selectFolder()
+X createInput() (nee openStream), createInputRaw(), createOutput()
 
 cleanup
 o how to grab the java2d object from PGraphics2D
@@ -98,8 +103,7 @@ X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=displ
 shiffman
 X update match(), write new reference for matchAll()
 
-_ sketch must be saved to use a constructor
-_   http://dev.processing.org/bugs/show_bug.cgi?id=929
+
 _ get new version of examples and reference
 
 
@@ -119,6 +123,7 @@ _   http://dev.eclipse.org/viewcvs/index.cgi/platform-launcher/library/win32/ecl
 
 thread hang/block problem
 _ serial.available() broken with video
+_   this may be fixed with 0149
 _   http://dev.processing.org/bugs/show_bug.cgi?id=829
 
 _ don't open more than one "create font" or "color selector"
@@ -330,8 +335,6 @@ _   using expand and arrays to move quickly
 
 DOC / Write Me
 
-_ selectInput(), selectOutput(), selectFolder()
-_ createInput() (nee openStream), createInputRaw(), createOutput()
 _ PDE locks up during setup() (since no window shown)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=687
 _   maybe better to do an example of running code on another thread
@@ -545,7 +548,7 @@ _ simple method for having a clickable region or sprite with rollover
 
 DOC / Hacks
 
-_ clipboard implementation as example or as part of api
+_ clipboard implementation example
 _   http://dev.processing.org/bugs/show_bug.cgi?id=167
 _ JAI handles setting image size for png (check javax.imageio?) 
 _   PNGEncodeParam png = PNGEncodeParam.getDefaultEncodeParam(bufImage);
