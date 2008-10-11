@@ -50,7 +50,7 @@ function windowTitle()
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../../processing/candy/package-summary.html"><B>PREV PACKAGE</B></A>&nbsp;
+&nbsp;<A HREF="../../processing/app/windows/package-summary.html"><B>PREV PACKAGE</B></A>&nbsp;
 &nbsp;<A HREF="../../processing/dxf/package-summary.html"><B>NEXT PACKAGE</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../index.html?processing/core/package-summary.html" target="_top"><B>FRAMES</B></A>  &nbsp;
@@ -87,6 +87,10 @@ Package processing.core
 <TD WIDTH="15%"><B><A HREF="../../processing/core/PConstants.html" title="interface in processing.core">PConstants</A></B></TD>
 <TD>Numbers shared throughout processing.core.</TD>
 </TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../processing/core/PMatrix.html" title="interface in processing.core">PMatrix</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
 </TABLE>
 &nbsp;
 
@@ -111,8 +115,8 @@ Package processing.core
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="../../processing/core/PGraphics2D.html" title="class in processing.core">PGraphics2D</A></B></TD>
-<TD>Subclass of PGraphics that handles fast 2D rendering,
- more commonly referred to as P2D.</TD>
+<TD>Subclass of PGraphics that handles fast 2D rendering using a 
+ MemoryImageSource.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="../../processing/core/PGraphics3D.html" title="class in processing.core">PGraphics3D</A></B></TD>
@@ -131,12 +135,8 @@ Package processing.core
 <TD>Code for rendering lines.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="../../processing/core/PMaterial.html" title="class in processing.core">PMaterial</A></B></TD>
-<TD>&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="../../processing/core/PMatrix2D.html" title="class in processing.core">PMatrix2D</A></B></TD>
-<TD>4x4 matrix implementation.</TD>
+<TD>3x2 affine matrix implementation.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="../../processing/core/PMatrix3D.html" title="class in processing.core">PMatrix3D</A></B></TD>
@@ -148,11 +148,24 @@ Package processing.core
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="../../processing/core/PShape.html" title="class in processing.core">PShape</A></B></TD>
+<TD>In-progress class to handle shape data, currently to be considered of  
+ alpha or beta quality.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../processing/core/PShapeSVG.html" title="class in processing.core">PShapeSVG</A></B></TD>
+<TD>SVG stands for Scalable Vector Graphics, a portable graphics format.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../processing/core/PStyle.html" title="class in processing.core">PStyle</A></B></TD>
 <TD>&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="../../processing/core/PTriangle.html" title="class in processing.core">PTriangle</A></B></TD>
 <TD>Handles rendering of single (tesselated) triangles in 3D.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A></B></TD>
+<TD>A class to describe a two or three dimensional vector.</TD>
 </TR>
 </TABLE>
 &nbsp;
@@ -203,7 +216,7 @@ Package processing.core
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../../processing/candy/package-summary.html"><B>PREV PACKAGE</B></A>&nbsp;
+&nbsp;<A HREF="../../processing/app/windows/package-summary.html"><B>PREV PACKAGE</B></A>&nbsp;
 &nbsp;<A HREF="../../processing/dxf/package-summary.html"><B>NEXT PACKAGE</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../index.html?processing/core/package-summary.html" target="_top"><B>FRAMES</B></A>  &nbsp;
