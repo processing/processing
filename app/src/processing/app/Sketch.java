@@ -67,6 +67,13 @@ public class Sketch {
 
   private SketchCode current;
   private int currentIndex;
+  /** 
+   * Number of sketchCode objects (tabs) in the current sketch. Note that this
+   * will be the same as code.length, because the getCode() method returns 
+   * just the code[] array, rather than a copy of it, or an array that's been
+   * resized to just the relevant files themselves. 
+   * http://dev.processing.org/bugs/show_bug.cgi?id=940
+   */
   private int codeCount;
   private SketchCode[] code;
 
@@ -219,7 +226,7 @@ public class Sketch {
 
     // add file to the code/codeCount list, resort the list
     if (codeCount == code.length) {
-      code = (SketchCode[]) PApplet.expand(code);
+      code = (SketchCode[]) PApplet.append(code, newCode);
     }
     code[codeCount++] = newCode;
   }
@@ -482,6 +489,7 @@ public class Sketch {
         return;
       }
       SketchCode newCode = new SketchCode(newFile, newExtension);
+      System.out.println("new code is named " + newCode.getPrettyName() + " " + newCode.getFile());
       insertCode(newCode);
     }
 
