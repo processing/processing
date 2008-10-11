@@ -201,9 +201,9 @@ public class Base {
 
     // Get paths for the libraries and examples in the Processing folder
     //String workingDirectory = System.getProperty("user.dir");
-    examplesFolder = getContentFolder("examples");
-    librariesFolder = getContentFolder("libraries");
-    toolsFolder = getContentFolder("tools");
+    examplesFolder = getContentFile("examples");
+    librariesFolder = getContentFile("libraries");
+    toolsFolder = getContentFile("tools");
 
     // Get the sketchbook path, and make sure it's set properly
     String sketchbookPath = Preferences.get("sketchbook.path");
@@ -1402,7 +1402,7 @@ public class Base {
 
 
   static public void showReference(String filename) {
-    File referenceFolder = Base.getContentFolder("reference");
+    File referenceFolder = Base.getContentFile("reference");
     File referenceFile = new File(referenceFolder, filename);
     openURL(referenceFile.getAbsolutePath());
     //openURL(Base.getContentsPath("reference" + File.separator + referenceFile));
@@ -1526,7 +1526,7 @@ public class Base {
   }
   */
   
-  static public File getContentFolder(String name) {
+  static public File getContentFile(String name) {
     String path = System.getProperty("user.dir");
     
     // Get a path to somewhere inside the .app folder
@@ -1550,7 +1550,7 @@ public class Base {
     Image image = null;
     Toolkit tk = Toolkit.getDefaultToolkit();
 
-    File imageLocation = new File(getContentFolder("lib"), name);
+    File imageLocation = new File(getContentFile("lib"), name);
     //image = tk.getImage(getLibContentsPath(name));
     image = tk.getImage(imageLocation.getAbsolutePath());
     MediaTracker tracker = new MediaTracker(who);
@@ -1567,7 +1567,7 @@ public class Base {
    */
   static public InputStream getStream(String filename) throws IOException {
     //return new FileInputStream(getLibContentsPath(filename));
-    return new FileInputStream(new File(getContentFolder("lib"), filename));
+    return new FileInputStream(new File(getContentFile("lib"), filename));
   }
 
 
