@@ -65,6 +65,9 @@ class Ref
 		$this->partof		= getValue($xml, 'partof');
 		$this->level		= getValue($xml, 'level');
 		$this->type         = getValue($xml, 'type');
+		
+		$this->hasParameter  = getValue($xml, 'label');  // Added for 149
+		$this->hasCode       = getValue($xml, 'code');   // Added for 149
         
 		$this->description	= innerHTML($xml, 'description');
 		$this->syntax		= innerHTML($xml, 'syntax');
@@ -109,24 +112,28 @@ class Ref
         
 		$html .= refTableRow('<!--*-->Name<!--*-->', '<h3>'.$this->name.'</h3>', 'name-row');
         
-        $examples = '';
-		$count = 0;
-        foreach ($this->examples as $ex) {
-        	//echo $ex[code];
-        	//echo 'BBBBBBBBRERRRRRRRREEEEEEEEEAAAAAAAAAKKKKKKKKK';
-        	$ex[code] = codeExampleConvert($ex[code]); // Adding this line to try to fix problems with match() and matchAll()
-        	echo $ex[code];
-            $examples .= '<div class="example">';
-            $path = ($lang != 'en' ? '../media' : 'media');
-            $examples .= !empty($ex['image']) ? "<img src=\"$path/$ex[image]\" alt=\"example pic\" />" : '';
-            $examples .= !empty($ex['image']) ? "<pre class=\"margin\">$ex[code]</pre>" : "<pre>$ex[code]</pre>";
-            $examples .= '</div>';
-			if (count($this->examples) != ++$count && empty($ex['image'])) {
-				$examples .= '<hr class="noShade" noshade="noshade" size="1" />';
-			}
-        }
-        $html .= refTableRow('<!--*-->Examples<!--*-->', $examples);
+        if(!empty($this->hasCode)) {  // Change for 149!
+          $examples = '';
+		  $count = 0;
+          foreach ($this->examples as $ex) {
+        	  //echo $ex[code];
+        	  //echo 'BBBBBBBBRERRRRRRRREEEEEEEEEAAAAAAAAAKKKKKKKKK';
+        	  $ex[code] = codeExampleConvert($ex[code]); // Adding this line to try to fix problems with match() and matchAll()
+        	  echo $ex[code];
+              $examples .= '<div class="example">';
+              $path = ($lang != 'en' ? '../media' : 'media');
+              $examples .= !empty($ex['image']) ? "<img src=\"$path/$ex[image]\" alt=\"example pic\" />" : '';
+              $examples .= !empty($ex['image']) ? "<pre class=\"margin\">$ex[code]</pre>" : "<pre>$ex[code]</pre>";
+              $examples .= '</div>';
+			  if (count($this->examples) != ++$count && empty($ex['image'])) {
+			  	$examples .= '<hr class="noShade" noshade="noshade" size="1" />';
+		  	  }
+          }
+          $html .= refTableRow('<!--*-->Examples<!--*-->', $examples);
+          }
+        
         $html .= refTableRow('<!--*-->Description<!--*-->', $this->description);
+        
         if (!empty($this->syntax)) {
             $html .= refTableRow('<!--*-->Syntax<!--*-->', '<pre>'.$this->syntax.'</pre>');
         }
@@ -159,7 +166,7 @@ class Ref
             $html .= refTableRow('<!--*-->Constructor<!--*-->', '<pre>'.$this->constructor.'</pre>');
         }
         
-        if (!empty($this->parameters)) {
+        if (!empty($this->hasParameter)) {  // Change for 149!
             $parameters = '<table cellpadding="0" cellspacing="0" border="0">';
             foreach ($this->parameters as $p) {
                 $parameters .= refTableRow($p['label'], $p['description']);
