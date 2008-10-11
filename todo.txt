@@ -46,6 +46,8 @@ X video capture problems with opengl (on mac os x)
 X   http://dev.processing.org/bugs/show_bug.cgi?id=882
 X sketch export results in 100x100 default size, regardless of size() setting
 X   http://dev.processing.org/bugs/show_bug.cgi?id=945
+X third tab throws NullPointerException
+X   http://dev.processing.org/bugs/show_bug.cgi?id=940
 
 structural 
 X processing.candy has been removed
@@ -96,8 +98,6 @@ X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=displ
 shiffman
 X update match(), write new reference for matchAll()
 
-_ third tab throws NullPointerException
-_   http://dev.processing.org/bugs/show_bug.cgi?id=940
 _ sketch must be saved to use a constructor
 _   http://dev.processing.org/bugs/show_bug.cgi?id=929
 _ get new version of examples and reference
