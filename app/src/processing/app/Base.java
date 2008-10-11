@@ -200,10 +200,10 @@ public class Base {
     platform.init(this);
 
     // Get paths for the libraries and examples in the Processing folder
-    String workingDirectory = System.getProperty("user.dir");
-    examplesFolder = new File(workingDirectory, "examples");
-    librariesFolder = new File(workingDirectory, "libraries");
-    toolsFolder = new File(workingDirectory, "tools");
+    //String workingDirectory = System.getProperty("user.dir");
+    examplesFolder = getContentFolder("examples");
+    librariesFolder = getContentFolder("libraries");
+    toolsFolder = getContentFolder("tools");
 
     // Get the sketchbook path, and make sure it's set properly
     String sketchbookPath = Preferences.get("sketchbook.path");
@@ -1401,8 +1401,11 @@ public class Base {
   // .................................................................
 
 
-  static public void showReference(String referenceFile) {
-    openURL(Base.getContentsPath("reference" + File.separator + referenceFile));
+  static public void showReference(String filename) {
+    File referenceFolder = Base.getContentFolder("reference");
+    File referenceFile = new File(referenceFolder, filename);
+    openURL(referenceFile.getAbsolutePath());
+    //openURL(Base.getContentsPath("reference" + File.separator + referenceFile));
   }
 
 
@@ -1491,21 +1494,22 @@ public class Base {
    * may refer to the Contents subfolder of Processing.app, if we bundle things
    * up as a single .app file with no additional folders.
    */
-  static public String getContentsPath(String filename) {
-    String basePath = System.getProperty("user.dir");
-    /*
-      // do this later, when moving to .app package
-    if (PApplet.platform == PConstants.MACOSX) {
-      basePath = System.getProperty("processing.contents");
-    }
-    */
-    return basePath + File.separator + filename;
-  }
+//  static public String getContentsPath(String filename) {
+//    String basePath = System.getProperty("user.dir");
+//    /*
+//      // do this later, when moving to .app package
+//    if (PApplet.platform == PConstants.MACOSX) {
+//      basePath = System.getProperty("processing.contents");
+//    }
+//    */
+//    return basePath + File.separator + filename;
+//  }
 
 
   /**
    * Get a path for something in the Processing lib folder.
    */
+  /*
   static public String getLibContentsPath(String filename) {
     String libPath = getContentsPath("lib/" + filename);
     File libDir = new File(libPath);
@@ -1520,6 +1524,23 @@ public class Base {
 //    }
     return null;
   }
+  */
+  
+  static public File getContentFolder(String name) {
+    String path = System.getProperty("user.dir");
+    
+    // Get a path to somewhere inside the .app folder
+    if (PApplet.platform == PConstants.MACOSX) {
+//      <key>javaroot</key>
+//      <string>$JAVAROOT</string>
+      String javaroot = System.getProperty("javaroot");
+      if (javaroot != null) {
+        path = javaroot; 
+      }
+    }
+    File working = new File(path);
+    return new File(working, name);
+  }
 
 
   /**
@@ -1529,7 +1550,9 @@ public class Base {
     Image image = null;
     Toolkit tk = Toolkit.getDefaultToolkit();
 
-    image = tk.getImage(getLibContentsPath(name));
+    File imageLocation = new File(getContentFolder("lib"), name);
+    //image = tk.getImage(getLibContentsPath(name));
+    image = tk.getImage(imageLocation.getAbsolutePath());
     MediaTracker tracker = new MediaTracker(who);
     tracker.addImage(image, 0);
     try {
@@ -1543,7 +1566,8 @@ public class Base {
    * Return an InputStream for a file inside the Processing lib folder.
    */
   static public InputStream getStream(String filename) throws IOException {
-    return new FileInputStream(getLibContentsPath(filename));
+    //return new FileInputStream(getLibContentsPath(filename));
+    return new FileInputStream(new File(getContentFolder("lib"), filename));
   }
 
 
