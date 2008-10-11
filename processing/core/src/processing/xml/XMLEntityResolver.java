@@ -46,7 +46,7 @@ public class XMLEntityResolver
    /**
     * The entities.
     */
-   private Hashtable entities;
+   private Hashtable<String, Object> entities;
 
 
    /**
@@ -54,7 +54,7 @@ public class XMLEntityResolver
     */
    public XMLEntityResolver()
    {
-      this.entities = new Hashtable();
+      this.entities = new Hashtable<String, Object>();
       this.entities.put("amp", "&#38;");
       this.entities.put("quot", "&#34;");
       this.entities.put("apos", "&#39;");

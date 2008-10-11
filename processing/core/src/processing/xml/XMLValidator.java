@@ -59,13 +59,13 @@ public class XMLValidator
     * Contains the default values for attributes for the different element
     * types.
     */
-   protected Hashtable attributeDefaultValues;
+   protected Hashtable<String, Properties> attributeDefaultValues;
 
 
    /**
     * The stack of elements to be processed.
     */
-   protected Stack currentElements;
+   protected Stack<Properties> currentElements;
 
 
    /**
@@ -73,8 +73,8 @@ public class XMLValidator
     */
    public XMLValidator()
    {
-      this.attributeDefaultValues = new Hashtable();
-      this.currentElements = new Stack();
+      this.attributeDefaultValues = new Hashtable<String, Properties>();
+      this.currentElements = new Stack<Properties>();
       this.parameterEntityResolver = new XMLEntityResolver();
    }
 
@@ -586,7 +586,7 @@ public class XMLValidator
                                           int        lineNr)
    {
       Properties props = (Properties) this.currentElements.pop();
-      Enumeration en = props.keys();
+      Enumeration<?> en = props.keys();
 
       while (en.hasMoreElements()) {
          String key = (String) en.nextElement();

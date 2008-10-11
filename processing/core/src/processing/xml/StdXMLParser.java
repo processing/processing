@@ -461,9 +461,9 @@ public class StdXMLParser {
          name = name.substring(colonIndex + 1);
       }
 
-      Vector attrNames = new Vector();
-      Vector attrValues = new Vector();
-      Vector attrTypes = new Vector();
+      Vector<String> attrNames = new Vector<String>();
+      Vector<String> attrValues = new Vector<String>();
+      Vector<String> attrTypes = new Vector<String>();
 
       this.validator.elementStarted(fullName,
                                     this.reader.getSystemID(),
@@ -487,7 +487,7 @@ public class StdXMLParser {
                                                 extraAttributes,
                                                 this.reader.getSystemID(),
                                                 this.reader.getLineNr());
-      Enumeration en = extraAttributes.keys();
+      Enumeration<?> en = extraAttributes.keys();
 
       while (en.hasMoreElements()) {
          String key = (String) en.nextElement();
@@ -656,9 +656,9 @@ public class StdXMLParser {
     * @throws java.lang.Exception
     *     if something went wrong
     */
-   protected void processAttribute(Vector attrNames,
-                                   Vector attrValues,
-                                   Vector attrTypes)
+   protected void processAttribute(Vector<String> attrNames,
+                                   Vector<String> attrValues,
+                                   Vector<String> attrTypes)
       throws Exception
    {
       String key = XMLUtil.scanIdentifier(this.reader);
