@@ -549,7 +549,7 @@ public class JEditTextArea extends JComponent
             if(id == Token.NULL)
               fm = painter.getFontMetrics();
             else
-              fm = styles[id].getFontMetrics(defaultFont);
+              fm = styles[id].getFontMetrics(defaultFont, this);
 
             int length = tokens.length;
 
@@ -646,7 +646,7 @@ public class JEditTextArea extends JComponent
             if(id == Token.NULL)
               fm = painter.getFontMetrics();
             else
-              fm = styles[id].getFontMetrics(defaultFont);
+              fm = styles[id].getFontMetrics(defaultFont, this);
 
             int length = tokens.length;
 

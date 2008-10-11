@@ -1599,7 +1599,7 @@ public class Sketch {
     // Check if the user already has their own loader image
     File loadingImage = new File(folder, LOADING_IMAGE);
     if (!loadingImage.exists()) {
-      File skeletonFolder = new File(Base.getContentFolder("lib"), "export");
+      File skeletonFolder = new File(Base.getContentFile("lib"), "export");
       loadingImage = new File(skeletonFolder, LOADING_IMAGE);
     }
     Base.copyFile(loadingImage, new File(appletFolder, LOADING_IMAGE));
@@ -1697,7 +1697,7 @@ public class Sketch {
       }
     }
 
-    File bagelJar = new File(Base.getContentFolder("lib"), "core.jar");
+    File bagelJar = Base.getContentFile("core.jar");
     if (separateJar) {
       Base.copyFile(bagelJar, new File(appletFolder, "core.jar"));
       archives.append(",core.jar");
@@ -2001,7 +2001,7 @@ public class Sketch {
     
     /// where all the skeleton info lives
     
-    File skeletonFolder = new File(Base.getContentFolder("lib"), "export");
+    File skeletonFolder = new File(Base.getContentFile("lib"), "export");
 
     /// on macosx, need to copy .app skeleton since that's
     /// also where the jar files will be placed
@@ -2135,7 +2135,7 @@ public class Sketch {
     /// add core.jar to the jar destination folder
 
     //System.out.println(jarFolder);
-    File bagelJar = new File(Base.getContentFolder("lib"), "core.jar");
+    File bagelJar = Base.getContentFile("core.jar");
     Base.copyFile(bagelJar, new File(jarFolder, "core.jar"));
     jarListVector.add("core.jar");
 
