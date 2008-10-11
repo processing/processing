@@ -388,8 +388,9 @@ public class PdePreprocessor {
 
   int writeImports(PrintStream out) {
     out.println("import processing.core.*; ");
+    out.println("import processing.xml.*; ");
     out.println();
-    int count = 2;
+    int count = 3;
 
     if (programImports.size() != 0) {
       for (String item : programImports) {
