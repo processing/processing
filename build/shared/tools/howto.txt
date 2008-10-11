@@ -53,7 +53,8 @@ Where to put Tools
 Core tools live inside the "tools" subfolder of the Processing distribution, 
 however users should install "contributed" tools in their sketchbook folder, 
 which will prevent them from having to move the tools with new Processing 
-releases. 
+releases. Starting with release 0149, tools should be placed in a folder
+named "tools" inside the sketchbook folder.
 
 If a tool works only with a particular release of Processing, then it may make
 sense for the user to put things into the Processing tools folder, however we'd
