@@ -862,6 +862,8 @@ public class Editor extends JFrame implements RunnerListener {
     JMenu menu = new JMenu("Help");
     JMenuItem item;
 
+    /*
+    // testing internal web server to serve up docs from a zip file
     item = new JMenuItem("Web Server Test");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
@@ -880,6 +882,7 @@ public class Editor extends JFrame implements RunnerListener {
         }
       });
     menu.add(item);
+    */
 
     /*
     item = new JMenuItem("Browser Test");
