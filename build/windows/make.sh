@@ -133,7 +133,7 @@ fi
 cd app
 
 # has to be present, otherwise javac will complain of file writing errors
-zip -r ../build/windows/work/classes
+rm -rf ../build/windows/work/classes
 mkdir ../build/windows/work/classes
 
 ../build/windows/work/java/bin/java \
@@ -153,7 +153,7 @@ mkdir ../build/windows/work/classes
 
 cd ../build/windows/work/classes
 rm -f ../lib/pde.jar
-zip -0rq ../lib/pde.jar .
+zip -rq ../lib/pde.jar .
 cd ../..
 
 
