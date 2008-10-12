@@ -35,10 +35,17 @@ else
   echo Extracting enormous JRE...
   unzip -q -d work jre.zip
 
-  echo Compiling processing.exe
-  cd launcher
+  # build the export launcher
+  cd export
   make 
-  make application.exe
+  cd ..
+
+  # build the processing.exe bundle
+  # there are a few hacks in the source to launch4j-3.0.1
+  # to build them, use the following:
+  # cd head_src/gui_head && make -f Makefile.win
+  cd launcher
+  ./launch4j/launch4jc.exe config.xml
   cd ..
 
   # chmod +x the crew
