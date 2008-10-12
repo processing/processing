@@ -58,18 +58,24 @@
 		<ex file="Noise3D.html">Noise 3D</ex>
 		<ex file="NoiseWave.html">NoiseWave</ex>
 	</cat>
-	<cat label="Typography">
-		<ex file="Letters.html">Letters</ex>
-		<ex file="Words.html">Words</ex>
-	</cat>
 	<cat label="Image">
-		<ex file="Displaying.html">Displaying</ex>
+		<ex file="GettingStarted_Image.html">Getting Started - Image</ex>
 		<ex file="BackgroundImage.html">Background Image</ex>
 		<ex file="Pointillism.html">Pointillism</ex>
 		<ex file="Transparency.html">Transparency</ex>
 		<ex file="Sprite.html">Sprite</ex>
 		<ex file="Alphamask.html">Alphamask</ex>
 		<ex file="CreateImage.html">CreateImage</ex>
+	</cat>
+	<cat label="Shape">
+		<ex file="GettingStarted_Shape.html">Getting Started - Shape</ex>
+		<ex file="DisableStyle.html">Disable Style</ex>
+		<ex file="Scale.html">Scale</ex>
+		<ex file="GetChild.html">Get Child/ex>
+	</cat>
+	<cat label="Typography">
+		<ex file="Letters.html">Letters</ex>
+		<ex file="Words.html">Words</ex>
 	</cat>
 	<cat label="Color">
 		<ex file="Hue.html">Hue</ex>
@@ -82,13 +88,6 @@
 		<ex file="LinearGradient.html">Linear Gradient</ex>
 		<ex file="RadialGradient.html">Radial Gradient</ex>
 		<ex file="WaveGradient.html">Wave Gradient</ex>
-	</cat>
-	<cat label="Transform">
-		<ex file="Translate.html">Translate</ex>
-		<ex file="Scale.html">Scale</ex>
-		<ex file="Rotate.html">Rotate</ex>
-		<ex file="TriangleFlower.html">Triangle Flower</ex>
-		<ex file="Arm.html">Arm</ex>
 	</cat>
 	<cat label="Input">
 		<ex file="Mouse1D.html">Mouse 1D</ex>
@@ -103,6 +102,13 @@
 		<ex file="KeyboardFunctions.html">Keyboard Functions</ex>
 		<ex file="Milliseconds.html">Milliseconds</ex>
 		<ex file="Clock.html">Clock</ex>
+	</cat>
+	<cat label="Transform">
+		<ex file="Translate.html">Translate</ex>
+		<ex file="Scale.html">Scale</ex>
+		<ex file="Rotate.html">Rotate</ex>
+		<ex file="TriangleFlower.html">Triangle Flower</ex>
+		<ex file="Arm.html">Arm</ex>
 	</cat>
 	<cat label="Arrays">
 		<ex file="Array.html">Array</ex>

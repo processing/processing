@@ -18,6 +18,13 @@
 		<ex file="YahooSearch.html">Yahoo! Search</ex>
 		<ex file="CarnivoreClient.html">Carnivore Client</ex>
 	</cat>
+	<cat label="Serial">
+		<ex file="SimpleRead.html">Simple Read</ex>
+		<ex file="SimpleWrite.html">Simple Write</ex>
+		<ex file="SerialCallResponse.html">Call / Response</ex>
+		<ex file="SerialDuplex.html">Duplex</ex>
+		<ex file="SerialMultiple.html">Multiple Ports</ex>
+	</cat>
 	<cat label="Video (Capture)">
 		<ex file="GettingStartedCapture.html">Getting Started (Capture)</ex>
 		<ex file="FrameDifferencing.html">Frame Differencing</ex>
@@ -38,11 +45,6 @@
 		<ex file="Loop.html">Loop</ex>
 		<ex file="Pixelate.html">Pixelate</ex>
 	</cat>
-	<cat label="Candy (SVG Import)">
-		<ex file="GettingStartedSVG.html">Getting Started (SVG)</ex>
-		<ex file="Scale.html">Scale</ex>
-		<ex file="IgnoreStyles.html">IgnoreStyles</ex>
-	</cat>
 	<cat label="PDF Export">
 		<ex file="OneFrame.html">One Frame</ex>
 		<ex file="MultipleFrames.html">Multiple Frames</ex>
@@ -53,18 +55,22 @@
 		<ex file="RandomBook.html">Random Book</ex>
 		<ex file="Complex3D.html">Complex 3D</ex>
 	</cat>
-	<cat label="Serial">
-		<ex file="SimpleRead.html">Simple Read</ex>
-		<ex file="SimpleWrite.html">Simple Write</ex>
-		<ex file="SerialCallResponse.html">Call / Response</ex>
-		<ex file="SerialDuplex.html">Duplex</ex>
-		<ex file="SerialMultiple.html">Multiple Ports</ex>
-	</cat>
-	<cat label="Ess (Sound)">
-		<ex file="SamplePlayback.html">Sample Playback</ex>
-		<ex file="Synthesizer1.html">Synthesizer 1</ex>
-		<ex file="Synthesizer2.html">Synthesizer 2</ex>
-		<ex file="AudioAnalysis.html">Audio Analysis</ex>
-		<ex file="EffectsProcessor.html">Effects Processor</ex>
+	<cat label="Minim (Sound)">
+		<ex file="AddListener.html">Add Listener</ex>
+		<ex file="BandPassFilter.html">Band Pass Filter</ex>
+		<ex file="ForwardFFT.html">Forward FFT</ex>
+		<ex file="FrequencyEnergy.html">Frequency Energy</ex>
+		<ex file="GetLineIn.html">Get Line In</ex>
+		<ex file="GetLineOut.html">Get Line Out</ex>
+		<ex file="GetMetaData.html">Get Meta Data</ex>
+		<ex file="GetSetPan.html">Get Set Pan</ex>
+		<ex file="LinearAverages.html">Linear Averages</ex>
+		<ex file="LoadFile.html">Load File</ex>
+		<ex file="LoadSample.html">Load Sample</ex>
+		<ex file="LoadSnippet.html">Load Snippet</ex>
+		<ex file="RecordLineIn.html">Record Line In</ex>
+		<ex file="SineWaveSignal.html">Sine Wave Signal</ex>
+		<ex file="UserDefinedEffect.html">User Defined Effect</ex>
+		<ex file="UserDefinedSignal.html">User Defined Signal</ex>
 	</cat>
 </examples>
