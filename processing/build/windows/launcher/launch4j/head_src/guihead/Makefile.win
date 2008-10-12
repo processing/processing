@@ -7,12 +7,17 @@ WINDRES = windres.exe
 RES  = 
 OBJ  = ../../head/guihead.o ../../head/head.o $(RES)
 LINKOBJ  = ../../head/guihead.o ../../head/head.o $(RES)
-LIBS =  -L"C:/Dev-Cpp/lib" -mwindows -n  -s 
-INCS =  -I"C:/Dev-Cpp/include" 
-CXXINCS =  -I"C:/Dev-Cpp/lib/gcc/mingw32/3.4.2/include"  -I"C:/Dev-Cpp/include/c++/3.4.2/backward"  -I"C:/Dev-Cpp/include/c++/3.4.2/mingw32"  -I"C:/Dev-Cpp/include/c++/3.4.2"  -I"C:/Dev-Cpp/include" 
+
+# removed dev-cpp flags, replacing for cygwin/mingw [fry]
+CXXFLAGS = -mwindows -mno-cygwin -O2 -Wall
+CFLAGS = -mwindows -mno-cygwin -O2 -Wall
+#CFLAGS = -I/cygdrive/c/cygwin/usr/include/mingw
+#LIBS =  -L"C:/Dev-Cpp/lib" -mwindows -n  -s 
+#INCS =  -I"C:/Dev-Cpp/include" 
+#CXXINCS =  -I"C:/Dev-Cpp/lib/gcc/mingw32/3.4.2/include"  -I"C:/Dev-Cpp/include/c++/3.4.2/backward"  -I"C:/Dev-Cpp/include/c++/3.4.2/mingw32"  -I"C:/Dev-Cpp/include/c++/3.4.2"  -I"C:/Dev-Cpp/include" 
 BIN  = guihead.exe
-CXXFLAGS = $(CXXINCS)   -fexpensive-optimizations -O3
-CFLAGS = $(INCS)   -fexpensive-optimizations -O3
+#CXXFLAGS = $(CXXINCS)   -fexpensive-optimizations -O3
+#CFLAGS = $(INCS)   -fexpensive-optimizations -O3
 RM = rm -f
 
 .PHONY: all all-before all-after clean clean-custom
