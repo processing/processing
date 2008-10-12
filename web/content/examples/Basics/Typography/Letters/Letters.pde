@@ -1,7 +1,8 @@
 /**
  * Letters. 
  * 
- * Draws letters to the screen.
+ * Draws letters to the screen. This requires loading a font, 
+ * setting the font, and then drawing the letters.
  */
 
 PFont fontA;
@@ -14,8 +15,12 @@ void setup()
   // directory of your sketch. A font must first be created
   // using the 'Create Font...' option in the Tools menu.
   fontA = loadFont("CourierNew36.vlw");
-  textFont(fontA, 36);
   textAlign(CENTER);
+
+  // Set the font and its size (in units of pixels)
+  textFont(fontA, 32);
+
+  // Only draw once
   noLoop();
 } 
 

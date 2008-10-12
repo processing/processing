@@ -17,9 +17,9 @@ void setup()
   num = width/unit * width/unit;
   mods = new Module[num];
   
-  for (int i=0; i<height/unit; i++) {
-    for(int j=0; j<height/unit; j++) {
-      int index = i*height/unit + j;
+  for (int i = 0; i < height/unit; i++) {
+    for (int j = 0; j < height/unit; j++) {
+      int index = (i * height/unit) + j;
       mods[index] = new Module(j*unit, i*unit, unit/2, unit/2, random(0.05, 0.8));  
     }
   }
@@ -27,7 +27,7 @@ void setup()
 
 void draw() 
 {
-  for(int i=0; i<num; i++) {
+  for (int i = 0; i < num; i++) {
     mods[i].update();
     mods[i].draw();
   }
