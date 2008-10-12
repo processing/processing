@@ -1,0 +1,41 @@
+<launch4jConfig>
+  <dontWrapJar>true</dontWrapJar>
+  <headerType>gui</headerType>
+  <jar>lib</jar>
+  <outfile>C:\processing\build\windows\work\processing.exe</outfile>
+  <errTitle></errTitle>
+  <cmdLine></cmdLine>
+  <chdir>.</chdir>
+  <priority>normal</priority>
+  <downloadUrl>http://java.sun.com/javase/downloads/</downloadUrl>
+  <supportUrl></supportUrl>
+  <customProcName>false</customProcName>
+  <stayAlive>false</stayAlive>
+  <manifest></manifest>
+  <icon>C:\processing\build\windows\launcher\application.ico</icon>
+  <singleInstance>
+    <mutexName>Processing</mutexName>
+    <windowTitle></windowTitle>
+  </singleInstance>
+  <classPath>
+    <mainClass>processing.app.Base</mainClass>
+    <cp>lib/pde.jar</cp>
+    <cp>lib/core.jar</cp>
+    <cp>lib/jna.jar</cp>
+    <cp>lib/ecj.jar</cp>
+    <cp>lib/antlr.jar</cp>
+  </classPath>
+  <jre>
+    <path>java</path>
+    <minVersion>1.5.0</minVersion>
+    <maxVersion></maxVersion>
+    <jdkPreference>jdkOnly</jdkPreference>
+    <opt>-Xms128m -Xmx128m</opt>
+  </jre>
+  <splash>
+    <file>C:\processing\build\windows\launcher\about.bmp</file>
+    <waitForWindow>true</waitForWindow>
+    <timeout>60</timeout>
+    <timeoutErr>true</timeoutErr>
+  </splash>
+</launch4jConfig>
