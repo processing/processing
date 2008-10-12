@@ -12,7 +12,7 @@ $lang = isset($_POST['lang']) ? $_POST['lang'] : 'en';
 $translation = new Translation($lang);
 
 // each lib
-$libraries = array('net', 'serial', 'video', 'opengl', 'dxf', 'pdf', 'xml', 'candy');
+$libraries = array('net', 'serial', 'video', 'opengl', 'dxf', 'pdf', 'xml');
 
 $lib_dir = DISTDIR.'libraries';
 

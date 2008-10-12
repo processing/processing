@@ -12,7 +12,7 @@
 #$dir = "API";
 $dir = "../content/api_en/";
 # This path is for the configuration on Casey's local machine
-$path = "../../processing/build/shared/lib/";
+$path = "../../Processing/build/shared/lib/";
 
 # Open base file and copy into array
 open (BASE, "keywords_base.txt") || die "can't open keywords_base.txt: $!";
@@ -130,7 +130,7 @@ sub strip_name
 sub set_category
 {
     if($type =~ s/constant/constant/i) {
-        $category = "LITERAL1";
+        $category = "LITERAL2";
     } elsif ($type =~ s/variable/variable/i || $type =~ s/field/field/i ) {
         $category = "LITERAL2";
     } elsif ($type =~ s/datatype/datatype/i || $type =~ s/structure/structure/i ||

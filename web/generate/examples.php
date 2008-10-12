@@ -19,7 +19,7 @@ putenv('HOME=' . CONTENTDIR);
 //`cd /var/www/processing && /usr/local/bin/svn co svn://processing.org/trunk/web/content/`;
 
 `cd $there && /usr/local/bin/svn update examples.xml`;
-`cd $there && /usr/local/bin/svn update examples_3D*.xml`;
+`cd $there && /usr/local/bin/svn update examples_3D.xml`;
 `cd $there && /usr/local/bin/svn update examples_libraries.xml`;
 `cd $there && /usr/local/bin/svn update examples_topics.xml`;
 `cd $where && /usr/local/bin/svn update`;
@@ -50,7 +50,7 @@ writeFile('learning/gettingstarted/index.html', $page->out());
 # --------------------------------- Basics
 
 $categories = get_examples_list('examples.xml');
-$break_after = array('Control', 'Color');
+$break_after = array('Math', 'Color');
 $subdir = 'Basics';
 $dir = CONTENTDIR.'examples/'.$subdir.'/';
 
@@ -189,7 +189,7 @@ writeFile('learning/'.strtolower($subdir).'/index.html', $page->out());
 
 
 $categories = get_examples_list('examples_libraries.xml');
-$break_after = array('Network', 'Candy (SVG Import)');
+$break_after = array('Serial', 'Video (Movie)');
 $subdir = 'Libraries';
 $dir = CONTENTDIR.'examples/'.$subdir.'/';
 
