@@ -46,6 +46,7 @@ else
   # cd head_src/gui_head && make -f Makefile.win
   cd launcher
   ./launch4j/launch4jc.exe config.xml
+  cp processing.exe ../work/
   cd ..
 
   # chmod +x the crew
