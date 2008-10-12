@@ -27,8 +27,8 @@ void setup() {
 
   // Load file and chop it up
   String[] lines = loadStrings("dracula.txt");
-  String allText = join(lines," ");
-  tokens = splitTokens(allText," ,.?!:;[]-");
+  String allText = join(lines, " ");
+  tokens = splitTokens(allText, " ,.?!:;[]-");
   f = createFont("Georgia", 36, true);  
 }
 
