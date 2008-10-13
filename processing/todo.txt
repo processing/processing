@@ -169,22 +169,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=830
 _ make processing tools use the tools api
 _   http://dev.processing.org/bugs/show_bug.cgi?id=886
 
-_ use macosx dialogs for all of the editor stuff
-_   see about doing the same on windows, linux?
-_   the others seem to respond ok to the lucida grande since they use defaults
-_   vista style dialogs
-_     http://msdn.microsoft.com/en-us/library/bb328626.aspx
-_   confirmation dialogs (save and don't save.. who'd a thunk it)
-_     http://msdn.microsoft.com/en-us/library/aa511273.aspx
-_     http://i.msdn.microsoft.com/Aa511273.Confirmations03(en-us,MSDN.10).png
-_   scrollable stack trace
-_     http://www.javalobby.org/java/forums/t19012.html
-
-_ should open() not return a Process object? (exec() instead?)
-_   pro: can write out error messages (or output)
-_   con: loses cross platform ability
-_   but: open() is platform specific anyway, ppl can use exec()
-
 
 [ needs verification ] 
 
@@ -1248,6 +1232,16 @@ How the environment gets packed up, downloaded, and installed.
 
 DIST / General 
 
+_ use macosx dialogs for all of the editor stuff
+_   see about doing the same on windows, linux?
+_   the others seem to respond ok to the lucida grande since they use defaults
+_   vista style dialogs
+_     http://msdn.microsoft.com/en-us/library/bb328626.aspx
+_   confirmation dialogs (save and don't save.. who'd a thunk it)
+_     http://msdn.microsoft.com/en-us/library/aa511273.aspx
+_     http://i.msdn.microsoft.com/Aa511273.Confirmations03(en-us,MSDN.10).png
+_   scrollable stack trace
+_     http://www.javalobby.org/java/forums/t19012.html
 _ shut off javac warnings
 _   http://dev.processing.org/bugs/show_bug.cgi?id=812
 _ use pack200/unpack200 to make p5 download smaller
@@ -1336,3 +1330,7 @@ LATER
 _ rename location is awkward, do it on the tab?
 _ method of including/excluding data files in the JAR
 _   or at least a boolean for the whole folder?
+_ should open() not return a Process object? (exec() instead?)
+_   pro: can write out error messages (or output)
+_   con: loses cross platform ability
+_   but: open() is platform specific anyway, ppl can use exec()
