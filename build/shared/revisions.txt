@@ -7,22 +7,58 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-ABOUT REV 0149 - 11 October 2008
+ABOUT REV 0149 - 1X October 2008
 
 Very large number of bug fixes and changes. All renderers that use 
-PGraphics will need to be updated for this release.
+PGraphics will need to be updated for this release. (That means you'll
+need a new GLGraphics, P5Sunflow, etc.) 
 
 This release also adds command-line support, which means that Processing
 can be integrated into all manner of environments. More info below.
 
-Also many updates to the examples in this release.
+Also many, many updates to the examples and reference in this release.
 
 * RELEASES SINCE 0135 CONTAIN MANY SIGNIFICANT CHANGES, PLEASE READ *
 *  THE NOTES IN THIS FILE FOR ANY RELEASE THAT YOU'VE NOT YET USED. *
 
+[ libraries & tools ]
+
++ Beginning with this release, all libraries should be placed in the sketchbook
+  folder, inside a folder called "libraries". It's a bad idea to put them in
+  the Processing libraries folder, because 1) users may not have access to that
+  folder in lab environments, and 2) it's now hidden on OS X (see below).
+
++ Also in this release, all tools should be placed in a folder named "tools" 
+  inside your sketchbook folder. Same reasons as above.
+
+[ launchers ]
+
++ The Mac OS X release is now a single .app file, simplifying the install and
+  bringing us into closer Steve compliance.
+
++ The Windows release has a new launcher based on a hacked/tweaked version 
+  of launch4j-3.0.1, an excellent app bundling tool for Windows. Many thanks
+  to its developer(s) for their hard work. http://launch4j.sourceforge.net/
+
++ Fixed a Windows problem with the JDK not being found, even when installed.
+  http://dev.processing.org/bugs/show_bug.cgi?id=878
+
++ Fixed a problem with older/badder JDKs being used on Windows.
+  http://dev.processing.org/bugs/show_bug.cgi?id=545
+
++ Made PDE files double-clickable on Windows.
+  http://dev.processing.org/bugs/show_bug.cgi?id=683
+  By default we now set the registry associations to launch the most recently
+  run version of processing.exe (it must be called that, at least for now)
+  when a .pde file is double-clicked. The behavior can be disabled in the
+  Preferences dialog.
+
++ With the new launcher, we even have a splash screen (the about box) that
+  shows up while Java is roused from bed.
+
 [ changes ] 
 
-+ Change how PGraphics objects are created for better consistency. Sadly, 
++ Changed how PGraphics objects are created for better consistency. Sadly, 
   this will require any libraries that subclass PGraphics to be rebuilt 
   for this release. (However, internally it's a great improvement.) 
   Renderer library authors please read the reference for PGraphics:
@@ -56,14 +92,17 @@ Also many updates to the examples in this release.
 
 + The unhint() method has been removed, see the hint() reference for changes.
 
-+ Changes to how match() works to bring back in line with other regexp
++ Changed how match() works to bring back in line with other regexp
   implementations. Instead of only returning matching groups, match 0
   is the matching sequence, and array elements [1] and higher represent 
-  each of the groups (sequences found in parens). 
-  Also starting in this release, multiline matching (Pattern.MULTILINE) 
-  and dotall mode (Pattern.DOTALL) are used by default, so that ^ and $ 
-  match the beginning and end of any lines found in the source, 
-  and the . operator will also pick up newline characters.
+  each of the groups (sequences found in parens). This brings us into 
+  compliance with how "everyone else" does it. Please direct complaints, 
+  jeers, or accolades to Dan Shiffman, who advocated the change.
+
++ Also starting in this release, the match() commands use multiline 
+  matching (Pattern.MULTILINE) and dotall mode (Pattern.DOTALL) by default 
+  so that ^ and $ match the beginning and end of any lines found in the 
+  source, and the . operator will also pick up newline characters.
 
 + Removed MACOS9 constant from processing.core.PConstants. Bye bye 2001.
 
@@ -150,6 +189,13 @@ Also many updates to the examples in this release.
 + Fix case where creating a new tab throws a NullPointerException.
   http://dev.processing.org/bugs/show_bug.cgi?id=940
 
++ Disable image smoothing with default renderer (JAVA2D) until smooth() called
+  http://dev.processing.org/bugs/show_bug.cgi?id=685
+
++ Call flush() to emit any geometry before addFrame() in MovieMaker
+  http://dev.processing.org/bugs/show_bug.cgi?id=692
+
+
 [ additions ] 
 
 + Command-line support is now implemented. See the reference for the new
@@ -188,12 +234,6 @@ Also many updates to the examples in this release.
   their help. Some workarounds are described in the bug report:
   http://dev.processing.org/bugs/show_bug.cgi?id=786
   Please file a bug report with Apple if you want this fixed.
-
-+ In the current Windows release, Processing may not be able to find 
-  the JDK even if you have one installed. If this happens on your machine, 
-  copy the contents of your JDK installation to a new folder titled "java"
-  inside the Processing folder. This fill be fixed in a future release.
-  http://dev.processing.org/bugs/show_bug.cgi?id=878
 
 + See dev.processing.org/bugs for more.
 
