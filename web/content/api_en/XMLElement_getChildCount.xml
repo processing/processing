@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <root>
 
-<name>getName()</name>
+<name>getChildCount()</name>
 
 <category>XMLElement</category>
 
-<subcategory></subcategory>
+<subcategory>Method</subcategory>
 
 <usage>Web &amp; Application</usage>
 
@@ -18,10 +18,8 @@ import processing.xml.*;
 // in the code below. It must be in the project's "data" directory
 // &#60;?xml version="1.0"?&#62;
 // &#60;websites&#62;
-//   &#60;site&#62;
-//     &#60;name&#62;Processing&#60;/name&#62;
-//     &#60;url&#62;www.processing.org&#60;/url&#62;
-//   &#60;/site&#62;
+//   &#60;site id="0" url="processing.org"&#62;Processing&#60;/site&#62;
+//   &#60;site id="1" url="mobile.processing.org"&#62;Processing Mobile&#60;/site&#62;
 // &#60;/websites&#62;
 
 XMLElement xml;
@@ -29,21 +27,18 @@ XMLElement xml;
 void setup() {
   size(200, 200);
   xml = new XMLElement(this, "sites.xml");
-  XMLElement site = xml.getChild(0);
-  XMLElement[] siteData = site.getChildren();
-  String s1 = siteData[0].getName();
-  String s2 = siteData[1].getName();
-  println(s1 + " : " + s2);  // Prints "name : url"
+  int numSites = xml.getChildCount();
+  println(numSites); // Prints "2"
 }
 </code>
 </example>
 
 <description>
-Returns the name of the element.
+Returns the number of children for the element.
 </description>
 
 <syntax>
-<c>xml</c>.getName()
+<c>xml</c>.getChildCount()
 </syntax>
 
 <parameter>
@@ -51,15 +46,20 @@ Returns the name of the element.
 <description>any variable of type XMLElement</description>
 </parameter>
 
-<returns>String</returns>
+<returns>int</returns>
 
-<related></related>
+<related>
+XMLElement_getChild()
+XMLElement_getChildren()
+</related>
 
 <availability>1.0</availability>
 
 <type>Method</type>
 
-<partof>Library</partof>
+<partof>Core</partof>
+
+<level>Extended</level>
 
 
 </root>

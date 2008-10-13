@@ -28,8 +28,13 @@ Compares two strings to see if they are the same. This method is necessary becau
 </description>
 
 <syntax>
-equals(<c>str</c>)
+<c>str</c>.equals(<c>str</c>)
 </syntax>
+
+<parameter>
+<label>str</label>
+<description>String: any variable of type String</description>
+</parameter>
 
 <parameter>
 <label>str</label>

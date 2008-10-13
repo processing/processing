@@ -25,12 +25,12 @@ Converts all of the characters in the string to uppercase. For example, "abc" wi
 </description>
 
 <syntax>
-toUpperCase()
+<c>str</c>.toUpperCase()
 </syntax>
 
 <parameter>
-<label></label>
-<description></description>
+<label>str</label>
+<description>String: any variable of type String</description>
 </parameter>
 
 <returns>String</returns>

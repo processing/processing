@@ -25,9 +25,14 @@ Tests to see if a substring is embedded in a string and returns the index positi
 </description>
 
 <syntax>
-indexOf(<c>str</c>)
-indexOf(<c>str</c>, <c>fromIndex</c>)
+<c>str</c>.indexOf(<c>str</c>)
+<c>str</c>.indexOf(<c>str</c>, <c>fromIndex</c>)
 </syntax>
+
+<parameter>
+<label>str</label>
+<description>String: any variable of type String</description>
+</parameter>
 
 <parameter>
 <label>str</label>

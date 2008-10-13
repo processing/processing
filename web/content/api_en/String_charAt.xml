@@ -25,8 +25,13 @@ Returns the character at the specified index. An index ranges from 0 to the leng
 </description>
 
 <syntax>
-charAt(<c>index</c>)
+<c>str</c>.charAt(<c>index</c>)
 </syntax>
+
+<parameter>
+<label>str</label>
+<description>String: any variable of type String</description>
+</parameter>
 
 <parameter>
 <label>index</label>

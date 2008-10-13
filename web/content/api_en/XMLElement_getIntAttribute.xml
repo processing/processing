@@ -5,7 +5,7 @@
 
 <category>XMLElement</category>
 
-<subcategory></subcategory>
+<subcategory>Method</subcategory>
 
 <usage>Web &amp; Application</usage>
 
@@ -72,7 +72,9 @@ Returns an integer attribute of the element. If the <b>default</b> parameter is 
 
 <type>Method</type>
 
-<partof>Library</partof>
+<partof>Core</partof>
+
+<level>Extended</level>
 
 
 </root>

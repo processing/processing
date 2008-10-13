@@ -25,12 +25,12 @@ Converts all of the characters in the string to lowercase. For example, "ABC" wi
 </description>
 
 <syntax>
-toLowerCase()
+<c>str</c>.toLowerCase()
 </syntax>
 
 <parameter>
-<label></label>
-<description></description>
+<label>str</label>
+<description>String: any variable of type String</description>
 </parameter>
 
 <returns>String</returns>

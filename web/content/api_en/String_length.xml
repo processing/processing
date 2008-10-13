@@ -27,8 +27,13 @@ People are often confused by the use of <b>length()</b> to get the size of a Str
 </description>
 
 <syntax>
-charAt()
+<c>str</c>.charAt()
 </syntax>
+
+<parameter>
+<label>str</label>
+<description>String: any variable of type String</description>
+</parameter>
 
 <parameter>
 <label></label>

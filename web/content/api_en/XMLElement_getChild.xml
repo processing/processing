@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <root>
 
-<name>getChildren()</name>
+<name>getChild()</name>
 
 <category>XMLElement</category>
 
-<subcategory></subcategory>
+<subcategory>Method</subcategory>
 
 <usage>Web &amp; Application</usage>
 
@@ -20,18 +20,16 @@ import processing.xml.*;
 // &#60;websites&#62;
 //   &#60;site id="0" url="processing.org"&#62;Processing&#60;/site&#62;
 //   &#60;site id="1" url="mobile.processing.org"&#62;Processing Mobile&#60;/site&#62;
-// &#60;/websites&#60;
+// &#60;/websites&#62;
 
 XMLElement xml;
 
 void setup() {
   size(200, 200);
   xml = new XMLElement(this, "sites.xml");
-  XMLElement[] kids = xml.getChildren();
-  for (int i=0; i &#60; kids.length; i++) {
-    String site = kids[i].getContent();
-    println(site); 
-  }
+  XMLElement kid = xml.getChild(0);
+  String site = kid.getContent();
+  println(site);    
 }
 </code>
 </example>
@@ -45,23 +43,22 @@ void setup() {
   // Download RSS feed of news stories from yahoo.com
   String url = "http://rss.news.yahoo.com/rss/topstories";
   XMLElement rss = new XMLElement(this, url);
-  // Get all &lt;link&gt; elements
-  XMLElement[] links = rss.getChildren("channel/item/link");
-  for (int i = 0; i &#60; links.length; i++) {
-    println(links[i].getContent());
-  }
+  // Get the &#60;description&#62; element from inside &#60;channel&#62;
+  XMLElement desc = rss.getChild("channel/description");
+  println(desc.getContent());
 }
 </code>
 </example>
 
+
 <description>
-Returns all of the children as an XMLElement array.
+Returns the child XMLElement as specified by the <b>index</b> parameter. The value of the <b>index</b> parameter must be less than the total number of children to avoid going out of the array storing the child elements.
 When the <b>path</b> parameter is specified, then it will return all children that match that path. The path is a series of elements and sub-elements, separated by slashes.
 </description>
 
 <syntax>
-<c>xml</c>.getChildren()
-<c>xml</c>.getChildren(<c>path</c>)
+<c>xml</c>.getChild(<c>index</c>)
+<c>xml</c>.getChild(<c>path</c>)
 </syntax>
 
 <parameter>
@@ -69,18 +66,29 @@ When the <b>path</b> parameter is specified, then it will return all children th
 <description>any variable of type XMLElement</description>
 </parameter>
 
-<returns>XMLElement[]</returns>
+<parameter>
+<label>index</label>
+<description>int: the element</description>
+</parameter>
+
+<parameter>
+<label>path</label>
+<description>String: path to a particular element</description>
+</parameter>
+
+<returns>XMLElement</returns>
 
 <related>
 XMLElement_getChildCount()
-XMLElement_getChild()
+XMLElement_getChildren()
 </related>
 
 <availability>1.0</availability>
 
 <type>Method</type>
 
-<partof>Library</partof>
+<partof>Core</partof>
 
+<level>Extended</level>
 
 </root>

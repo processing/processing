@@ -5,7 +5,7 @@
 
 <category>XMLElement</category>
 
-<subcategory></subcategory>
+<subcategory>Method</subcategory>
 
 <usage>Web &amp; Application</usage>
 
@@ -58,7 +58,9 @@ Returns the content of an element. If there is no such content, <b>null</b> is r
 
 <type>Method</type>
 
-<partof>Library</partof>
+<partof>Core</partof>
+
+<level>Extended</level>
 
 
 </root>

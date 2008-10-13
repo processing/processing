@@ -26,9 +26,14 @@ Returns a new string that is a part of the original string. When using the <b>en
 </description>
 
 <syntax>
-substring(<b>beginIndex</b>)
-substring(<b>beginIndex</b>, <b>endIndex</b>)
+<c>str</c>.substring(<b>beginIndex</b>)
+<c>str</c>.substring(<b>beginIndex</b>, <b>endIndex</b>)
 </syntax>
+
+<parameter>
+<label>str</label>
+<description>String: any variable of type String</description>
+</parameter>
 
 <parameter>
 <label>beginIndex</label>

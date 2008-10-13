@@ -3,9 +3,9 @@
 
 <name>XMLElement</name>
 
-<category>XML</category>
+<category>Data</category>
 
-<subcategory></subcategory>
+<subcategory>Composite</subcategory>
 
 <usage>Web &amp; Application</usage>
 
@@ -113,6 +113,8 @@ XML(<c>parent</c>, <c>file</c>)
 
 <type>Object</type>
 
-<partof>Library</partof>
+<partof>Core</partof>
+
+<level>Extended</level>
 
 </root>
