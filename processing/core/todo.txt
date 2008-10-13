@@ -50,6 +50,7 @@ o   no renderer does this, we should probably disable it
 X   added a note to the reference about it
 X may need to add to PApplet.main() for OS X 10.5
 X   System.setProperty("apple.awt.graphics.UseQuartz", "true");
+X deprecate arraycopy(), change to arrayCopy()
 
 cleaning
 o chooseFile() and chooseFolder() with named fxn callbacks
