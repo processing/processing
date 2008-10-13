@@ -267,6 +267,8 @@ public class MovieMaker {
 
   // A simple add function to just add whatever is in the parent window
   public void addFrame() {
+    // http://dev.processing.org/bugs/show_bug.cgi?id=692
+    parent.flush();
     parent.loadPixels();
     addFrame(parent.pixels, parent.width, parent.height);
   }

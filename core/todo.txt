@@ -150,6 +150,10 @@ X PMatrix now PMatrix3D (maybe not yet?)
 X change svg library reference
 
 
+_ random AIOOBE with P3D and points
+_   http://dev.processing.org/bugs/show_bug.cgi?id=937
+
+
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
@@ -172,21 +176,18 @@ _   may be fixed, but not verified
 
 
 hint/unhint/enable/disable
-_ option to have renderer errors show up
-_   1) as text warnings 2) as runtime exceptions 3) never
-_ add warning system for pgraphics, rather than runtime exceptions
-_   keep array of warning strings, and booleans for whether they've called
-_ ENABLE_DEPTH_SORT not really working for GL
-_   because the zbuffer is still there, it's still calculating
-_   actually, this is probably because it happens after the frame
-_   so really, flush is required whenever the depth sort is called
-_   need to check this--isn't this referring to DISABLE_DEPTH_TEST?
-_ ENABLE_DEPTH_SORT causing trouble with MovieMaker
-_   need to make the flush() api accessible
-_   http://dev.processing.org/bugs/show_bug.cgi?id=692
-_ textMode(SHAPE) and hint(SMOOTHING) calls are really awkward
-_   maybe need to add properties to the size() command?
-_   or use a getXxxx() method?
+X option to have renderer errors show up
+X   1) as text warnings 2) as runtime exceptions 3) never
+X add warning system for pgraphics, rather than runtime exceptions
+X   keep array of warning strings, and booleans for whether they've called
+X ENABLE_DEPTH_SORT not really working for GL
+X   because the zbuffer is still there, it's still calculating
+X   actually, this is probably because it happens after the frame
+X   so really, flush is required whenever the depth sort is called
+X   need to check this--isn't this referring to DISABLE_DEPTH_TEST?
+X ENABLE_DEPTH_SORT causing trouble with MovieMaker
+X   need to make the flush() api accessible
+X   http://dev.processing.org/bugs/show_bug.cgi?id=692
 _ image smoothing 
 _   straighten out default vs. ACCURATE vs. whatever
 _   Java2D and P3D and OpenGL are all inconsistent
@@ -799,3 +800,6 @@ _ curves
 _   non-homogenous coloring for curve vertices
 _ textMode(SHAPE) and textMode(IMAGE)?
 _   textMode(SCREEN) is out of its league?
+_ textMode(SHAPE) and hint(SMOOTHING) calls are really awkward
+_   maybe need to add properties to the size() command?
+_   or use a getXxxx() method?
