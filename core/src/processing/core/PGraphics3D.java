@@ -1417,7 +1417,7 @@ public class PGraphics3D extends PGraphics {
     if (vertexOrder.length != vertices.length) {
       int[] temp = new int[vertices.length];
       // since vertex_start may not be zero, might need to keep old stuff around
-      PApplet.arraycopy(vertexOrder, temp, vertexCount);
+      PApplet.arrayCopy(vertexOrder, temp, vertexCount);
       vertexOrder = temp;
     }
 

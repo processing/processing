@@ -4500,7 +4500,7 @@ public class PApplet extends Applet
    * avoid people needing to learn about the System object
    * before they can just copy an array.
    */
-  static public void arraycopy(Object src, int srcPosition,
+  static public void arrayCopy(Object src, int srcPosition,
                                Object dst, int dstPosition,
                                int length) {
     System.arraycopy(src, srcPosition, dst, dstPosition, length);
@@ -4511,7 +4511,7 @@ public class PApplet extends Applet
    * Convenience method for arraycopy().
    * Identical to <CODE>arraycopy(src, 0, dst, 0, length);</CODE>
    */
-  static public void arraycopy(Object src, Object dst, int length) {
+  static public void arrayCopy(Object src, Object dst, int length) {
     System.arraycopy(src, 0, dst, 0, length);
   }
 
@@ -4520,6 +4520,31 @@ public class PApplet extends Applet
    * Shortcut to copy the entire contents of
    * the source into the destination array.
    * Identical to <CODE>arraycopy(src, 0, dst, 0, src.length);</CODE>
+   */
+  static public void arrayCopy(Object src, Object dst) {
+    System.arraycopy(src, 0, dst, 0, Array.getLength(src));
+  }
+
+  //
+  
+  /**
+   * @deprecated Use arrayCopy() instead.
+   */
+  static public void arraycopy(Object src, int srcPosition,
+                               Object dst, int dstPosition,
+                               int length) {
+    System.arraycopy(src, srcPosition, dst, dstPosition, length);
+  }
+  
+  /**
+   * @deprecated Use arrayCopy() instead.
+   */
+  static public void arraycopy(Object src, Object dst, int length) {
+    System.arraycopy(src, 0, dst, 0, length);
+  }
+
+  /**
+   * @deprecated Use arrayCopy() instead.
    */
   static public void arraycopy(Object src, Object dst) {
     System.arraycopy(src, 0, dst, 0, Array.getLength(src));
