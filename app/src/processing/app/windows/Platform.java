@@ -22,10 +22,11 @@
 
 package processing.app.windows;
 
-import java.io.*;
-import javax.swing.*;
+import java.io.File;
+import java.io.UnsupportedEncodingException;
 
 import processing.app.Base;
+import processing.app.Preferences;
 import processing.app.windows.Registry.REGISTRY_ROOT_KEY;
 
 
@@ -40,7 +41,7 @@ public class Platform extends processing.app.Platform {
   static final String openCommand =
     System.getProperty("user.dir").replace('/', '\\') +
     "\\processing.exe \"%1\"";
-  static final String doc = "Processing.Document";
+  static final String DOC = "Processing.Document";
 
   public void init(Base base) {
     super.init(base);
@@ -48,9 +49,10 @@ public class Platform extends processing.app.Platform {
     try {
       String knownCommand =
         Registry.getStringValue(REGISTRY_ROOT_KEY.CLASSES_ROOT,
-                                doc + "\\shell\\open\\command", "");
+                                DOC + "\\shell\\open\\command", "");
       //System.out.println("known is " + knownCommand);
       if (knownCommand == null) {
+        /*
         String prompt =
           "Processing is not set to handle .pde files.\n" +
           "Would you like to make it the default?";
@@ -62,11 +64,16 @@ public class Platform extends processing.app.Platform {
         if (result == JOptionPane.YES_OPTION) {
           setAssociations();
         }
+        */
+        if (Preferences.getBoolean("platform.auto_file_type_associations")) {
+          setAssociations();
+        }
 
       } else if (!knownCommand.equals(openCommand)) {
         // If the value is set differently, just change the registry setting.
 
-        String prompt =
+
+        /*String prompt =
           "This version of Processing is not the default application\n" +
           "to open .pde files. Would you like to make it the default?";
         int result =
@@ -75,6 +82,10 @@ public class Platform extends processing.app.Platform {
                                         JOptionPane.QUESTION_MESSAGE);
 
         if (result == JOptionPane.YES_OPTION) {
+          setAssociations();
+        }
+        */
+        if (Preferences.getBoolean("platform.auto_file_type_associations")) {
           setAssociations();
         }
       }
@@ -91,25 +102,26 @@ public class Platform extends processing.app.Platform {
     if (Registry.createKey(REGISTRY_ROOT_KEY.CLASSES_ROOT,
                            "", ".pde") &&
         Registry.setStringValue(REGISTRY_ROOT_KEY.CLASSES_ROOT,
-                                ".pde", "", doc) &&
+                                ".pde", "", DOC) &&
 
-        Registry.createKey(REGISTRY_ROOT_KEY.CLASSES_ROOT, "", doc) &&
-        Registry.setStringValue(REGISTRY_ROOT_KEY.CLASSES_ROOT, doc, "",
+        Registry.createKey(REGISTRY_ROOT_KEY.CLASSES_ROOT, "", DOC) &&
+        Registry.setStringValue(REGISTRY_ROOT_KEY.CLASSES_ROOT, DOC, "",
                                 "Processing Source Code") &&
 
         Registry.createKey(REGISTRY_ROOT_KEY.CLASSES_ROOT,
-                           doc, "shell") &&
+                           DOC, "shell") &&
         Registry.createKey(REGISTRY_ROOT_KEY.CLASSES_ROOT,
-                           doc + "\\shell", "open") &&
+                           DOC + "\\shell", "open") &&
         Registry.createKey(REGISTRY_ROOT_KEY.CLASSES_ROOT,
-                           doc + "\\shell\\open", "command") &&
+                           DOC + "\\shell\\open", "command") &&
         Registry.setStringValue(REGISTRY_ROOT_KEY.CLASSES_ROOT,
-                                doc + "\\shell\\open\\command", "",
+                                DOC + "\\shell\\open\\command", "",
                                 openCommand)) {
       // everything ok
+      // hooray!
 
     } else {
-      // not ok
+      Preferences.setBoolean("platform.auto_file_type_associations", false);
     }
   }
 
