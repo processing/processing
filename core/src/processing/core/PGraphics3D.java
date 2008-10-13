@@ -2567,9 +2567,7 @@ public class PGraphics3D extends PGraphics {
   }
 
 
-  public void noSmooth() {
-    // no need to do an error here, really...
-  }
+  //public void noSmooth()  // no error necessary
 
 
 
