@@ -23,7 +23,9 @@
 package processing.app.windows;
 
 import java.io.*;
+import javax.swing.*;
 
+import processing.app.Base;
 import processing.app.windows.Registry.REGISTRY_ROOT_KEY;
 
 
@@ -34,6 +36,83 @@ import processing.app.windows.Registry.REGISTRY_ROOT_KEY;
 // HKEY_LOCAL_MACHINE\SOFTWARE\JavaSoft\Java Development Kit\CurrentVersion\1.6\JavaHome -> c:\jdk-1.6.0_05
 
 public class Platform extends processing.app.Platform {
+
+  static final String openCommand =
+    System.getProperty("user.dir").replace('/', '\\') +
+    "\\processing.exe \"%1\"";
+  static final String doc = "Processing.Document";
+
+  public void init(Base base) {
+    super.init(base);
+
+    try {
+      String knownCommand =
+        Registry.getStringValue(REGISTRY_ROOT_KEY.CLASSES_ROOT,
+                                doc + "\\shell\\open\\command", "");
+      //System.out.println("known is " + knownCommand);
+      if (knownCommand == null) {
+        String prompt =
+          "Processing is not set to handle .pde files.\n" +
+          "Would you like to make it the default?";
+        int result =
+          JOptionPane.showConfirmDialog(this, prompt, "Reassign .pde files",
+                                        JOptionPane.YES_NO_OPTION,
+                                        JOptionPane.QUESTION_MESSAGE);
+
+        if (result == JOptionPane.YES_OPTION) {
+          setAssociations();
+        }
+
+      } else if (!knownCommand.equals(openCommand)) {
+        // If the value is set differently, just change the registry setting.
+
+        String prompt =
+          "This version of Processing is not the default application\n" +
+          "to open .pde files. Would you like to make it the default?";
+        int result =
+          JOptionPane.showConfirmDialog(this, prompt, "Reassign .pde files",
+                                        JOptionPane.YES_NO_OPTION,
+                                        JOptionPane.QUESTION_MESSAGE);
+
+        if (result == JOptionPane.YES_OPTION) {
+          setAssociations();
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+
+  /**
+   * Associate .pde files with this version of Processing.
+   */
+  protected void setAssociations() throws UnsupportedEncodingException {
+    if (Registry.createKey(REGISTRY_ROOT_KEY.CLASSES_ROOT,
+                           "", ".pde") &&
+        Registry.setStringValue(REGISTRY_ROOT_KEY.CLASSES_ROOT,
+                                ".pde", "", doc) &&
+
+        Registry.createKey(REGISTRY_ROOT_KEY.CLASSES_ROOT, "", doc) &&
+        Registry.setStringValue(REGISTRY_ROOT_KEY.CLASSES_ROOT, doc, "",
+                                "Processing Source Code") &&
+
+        Registry.createKey(REGISTRY_ROOT_KEY.CLASSES_ROOT,
+                           doc, "shell") &&
+        Registry.createKey(REGISTRY_ROOT_KEY.CLASSES_ROOT,
+                           doc + "\\shell", "open") &&
+        Registry.createKey(REGISTRY_ROOT_KEY.CLASSES_ROOT,
+                           doc + "\\shell\\open", "command") &&
+        Registry.setStringValue(REGISTRY_ROOT_KEY.CLASSES_ROOT,
+                                doc + "\\shell\\open\\command", "",
+                                openCommand)) {
+      // everything ok
+
+    } else {
+      // not ok
+    }
+  }
+
 
   // looking for Documents and Settings/blah/Application Data/Processing
   public File getSettingsFolder() throws Exception {

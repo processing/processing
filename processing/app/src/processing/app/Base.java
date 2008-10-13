@@ -45,8 +45,8 @@ public class Base {
   static final int VERSION = 149;
   static final String VERSION_NAME = "0149 Beta";
 
-  static final int[] platforms = new int[] { 
-    PConstants.WINDOWS, PConstants.MACOSX, PConstants.LINUX 
+  static final int[] platforms = new int[] {
+    PConstants.WINDOWS, PConstants.MACOSX, PConstants.LINUX
   };
 
   static HashMap<Integer, String> platformNames = new HashMap();
@@ -65,7 +65,7 @@ public class Base {
   static Platform platform;
 
   static private boolean commandLine;
-  
+
   // A single instance of the preferences window
   Preferences preferencesFrame;
 
@@ -135,7 +135,7 @@ public class Base {
     // Use native popups so they don't look so crappy on osx
     JPopupMenu.setDefaultLightWeightPopupEnabled(false);
 
-    // Don't put anything above this line that might make GUI, 
+    // Don't put anything above this line that might make GUI,
     // because the platform has to be inited properly first.
 
     // Make sure a full JDK is installed
@@ -146,26 +146,26 @@ public class Base {
     Preferences.init(null);
 //    } catch (Exception e) {
 //      e.printStackTrace();
-//    }    
+//    }
 
     // Create a location for untitled sketches
     untitledFolder = createTempFolder("untitled");
     untitledFolder.deleteOnExit();
-    
+
     new Base(args);
   }
-  
-  
+
+
   static protected void setCommandLine() {
     commandLine = true;
   }
-  
-  
+
+
   static protected boolean isCommandLine() {
     return commandLine;
   }
-  
-  
+
+
   static protected void initPlatform() {
     try {
       Class platformClass = Class.forName("processing.app.Platform");
@@ -181,8 +181,8 @@ public class Base {
                      "platform-specific code for your machine.", e);
     }
   }
-  
-  
+
+
   static protected void initRequirements() {
     try {
       Class.forName("com.sun.jdi.VirtualMachine");
@@ -194,8 +194,8 @@ public class Base {
                      "More information can be found in the reference.", cnfe);
     }
   }
-  
-  
+
+
   public Base(String[] args) {
     platform.init(this);
 
@@ -801,7 +801,7 @@ public class Base {
 
     // reset the table mapping imports to libraries
     importToLibraryTable = new HashMap<String, File>();
-    
+
     // Add libraries found in the sketchbook folder
     try {
       File sketchbookLibraries = new File(getSketchbookFolder(), "libraries");
@@ -1046,24 +1046,24 @@ public class Base {
   static public int[] getPlatforms() {
     return platforms;
   }
-  
-  
+
+
   /**
    * Map a platform constant to its name.
-   * @param which PConstants.WINDOWS, PConstants.MACOSX, PConstants.LINUX 
+   * @param which PConstants.WINDOWS, PConstants.MACOSX, PConstants.LINUX
    * @return one of "windows", "macosx", or "linux"
    */
   static public String getPlatformName(int which) {
     return platformNames.get(which);
   }
-  
-  
+
+
   static public int getPlatformIndex(String what) {
     Integer entry = platformIndices.get(what);
     return (entry == null) ? -1 : entry.intValue();
   }
-  
-  
+
+
   /**
    * returns true if Processing is running on a Mac OS X machine.
    */
@@ -1438,10 +1438,10 @@ public class Base {
    */
   static public void showMessage(String title, String message) {
     if (title == null) title = "Message";
-    
+
     if (commandLine) {
       System.out.println(title + ": " + message);
-      
+
     } else {
       JOptionPane.showMessageDialog(new Frame(), message, title,
                                     JOptionPane.INFORMATION_MESSAGE);
@@ -1457,7 +1457,7 @@ public class Base {
 
     if (commandLine) {
       System.out.println(title + ": " + message);
-      
+
     } else {
       JOptionPane.showMessageDialog(new Frame(), message, title,
                                     JOptionPane.WARNING_MESSAGE);
@@ -1473,10 +1473,10 @@ public class Base {
    */
   static public void showError(String title, String message, Throwable e) {
     if (title == null) title = "Error";
-    
+
     if (commandLine) {
       System.err.println(title + ": " + message);
-      
+
     } else {
       JOptionPane.showMessageDialog(new Frame(), message, title,
                                     JOptionPane.ERROR_MESSAGE);
@@ -1525,17 +1525,17 @@ public class Base {
     return null;
   }
   */
-  
+
   static public File getContentFile(String name) {
     String path = System.getProperty("user.dir");
-    
+
     // Get a path to somewhere inside the .app folder
     if (PApplet.platform == PConstants.MACOSX) {
 //      <key>javaroot</key>
 //      <string>$JAVAROOT</string>
       String javaroot = System.getProperty("javaroot");
       if (javaroot != null) {
-        path = javaroot; 
+        path = javaroot;
       }
     }
     File working = new File(path);
@@ -1573,9 +1573,9 @@ public class Base {
 
   // ...................................................................
 
-  
+
   /**
-   * Get the number of lines in a file by counting the number of newline 
+   * Get the number of lines in a file by counting the number of newline
    * characters inside a String (and adding 1).
    */
   static public int countLines(String what) {
@@ -1585,7 +1585,7 @@ public class Base {
     }
     return count;
   }
-  
+
 
   /**
    * Same as PApplet.loadBytes(), however never does gzip decoding.
