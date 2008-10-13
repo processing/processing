@@ -55,7 +55,7 @@ public class Platform extends processing.app.Platform {
           "Processing is not set to handle .pde files.\n" +
           "Would you like to make it the default?";
         int result =
-          JOptionPane.showConfirmDialog(this, prompt, "Reassign .pde files",
+          JOptionPane.showConfirmDialog(null, prompt, "Reassign .pde files",
                                         JOptionPane.YES_NO_OPTION,
                                         JOptionPane.QUESTION_MESSAGE);
 
@@ -70,7 +70,7 @@ public class Platform extends processing.app.Platform {
           "This version of Processing is not the default application\n" +
           "to open .pde files. Would you like to make it the default?";
         int result =
-          JOptionPane.showConfirmDialog(this, prompt, "Reassign .pde files",
+          JOptionPane.showConfirmDialog(null, prompt, "Reassign .pde files",
                                         JOptionPane.YES_NO_OPTION,
                                         JOptionPane.QUESTION_MESSAGE);
 
