@@ -34,9 +34,6 @@ import processing.app.syntax.*;
 import processing.core.PApplet;
 
 
-// TODO change this to use the Java Preferences API
-// http://www.onjava.com/pub/a/onjava/synd/2001/10/17/j2se.html
-// http://www.particle.kth.se/~lindsey/JavaCourse/Book/Part1/Java/Chapter10/Preferences.html
 
 
 /**
@@ -46,9 +43,25 @@ import processing.core.PApplet;
  * properties files are iso8859-1, which is highly likely to
  * be a problem when trying to save sketch folders and locations.
  * <p>
- * This is very poorly put together, that the prefs panel and the
- * actual prefs i/o is part of the same code. But there hasn't yet
- * been a compelling reason to bother with the separation.
+ * The GUI portion in here is really ugly, as it uses exact layout. This was
+ * done in frustration one evening (and pre-Swing), but that's long since past,
+ * and it should all be moved to a proper swing layout like BoxLayout.
+ * <p>
+ * This is very poorly put together, that the preferences panel and the actual
+ * preferences i/o is part of the same code. But there hasn't yet been a 
+ * compelling reason to bother with the separation aside from concern about 
+ * being lectured by strangers who feel that it doesn't look like what they 
+ * learned in CS class.
+ * <p>
+ * Would also be possible to change this to use the Java Preferences API. 
+ * Some useful articles 
+ * <a href="http://www.onjava.com/pub/a/onjava/synd/2001/10/17/j2se.html">here</a> and
+ * <a href="http://www.particle.kth.se/~lindsey/JavaCourse/Book/Part1/Java/Chapter10/Preferences.html">here</a>.
+ * However, haven't implemented this yet for lack of time, but more 
+ * importantly, because it would entail writing to the registry (on Windows), 
+ * or an obscure file location (on Mac OS X) and make it far more difficult to
+ * find the preferences to tweak them by hand (no! stay out of regedit!)
+ * or to reset the preferences by simply deleting the preferences.txt file.
  */
 public class Preferences {
 
@@ -119,6 +132,7 @@ public class Preferences {
   JTextField memoryField;
   JCheckBox checkUpdatesBox;
   JTextField fontSizeField;
+  JCheckBox autoAssociateBox;
 
 
   // the calling editor, so updates can be applied
@@ -377,11 +391,22 @@ public class Preferences {
     right = Math.max(right, left + d.width);
     top += d.height + GUI_BETWEEN;
 
+    
+    // [ ] Automatically associate .pde files with Processing
+    
+    if (Base.isWindows()) {
+      autoAssociateBox = 
+        new JCheckBox("Automatically associate .pde files with Processing");
+      pain.add(autoAssociateBox);
+      d = autoAssociateBox.getPreferredSize();
+      autoAssociateBox.setBounds(left, top, d.width + 10, d.height);
+      right = Math.max(right, left + d.width);
+      top += d.height + GUI_BETWEEN;
+    }
 
     // More preferences are in the ...
 
     label = new JLabel("More preferences can be edited directly in the file");
-
     pain.add(label);
     d = label.getPreferredSize();
     label.setForeground(Color.gray);
@@ -576,6 +601,12 @@ public class Preferences {
     } catch (Exception e) {
       System.err.println("ignoring invalid font size " + newSizeText);
     }
+    
+    if (autoAssociateBox != null) {
+      setBoolean("platform.auto_file_type_associations", 
+                 autoAssociateBox.isSelected());
+    }
+
     editor.applyPreferences();
   }
 
@@ -602,6 +633,11 @@ public class Preferences {
       setSelected(getBoolean("run.options.memory"));
     memoryField.
       setText(get("run.options.memory.maximum"));
+
+    if (autoAssociateBox != null) {
+      autoAssociateBox.
+        setSelected(getBoolean("platform.auto_file_type_associations"));
+    }
 
     dialog.setVisible(true);
   }
