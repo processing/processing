@@ -92,6 +92,14 @@ o on first OutOfMemoryError, offer to send to the docs
 o   again, a warning checkbox
 X   fixed up OutOfMemoryError issues to show better error message
 X write docs for begin/endRaw
+o winamp/audio getting starved or crackly while applets running
+o   thread priority too high? or something weird
+X mac standard key combinations for moving around in the editor
+o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1093116515
+X   these were done a long time ago
+o also out of cvs
+o   check for necessary tools to be installed
+o   zip, unzip, jikes, etc
 
 ira
 X How do I move the mouse cursor to another location? (java robot example)
@@ -103,6 +111,45 @@ X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=displ
 shiffman
 X update match(), write new reference for matchAll()
 
+windows launcher
+X windows jdk sometimes not getting picked up, even if it's there
+X   notes somewhere about choosing the right jvm...
+X   http://dev.processing.org/bugs/show_bug.cgi?id=878
+X finding older versions of java on windows
+X   http://dev.processing.org/bugs/show_bug.cgi?id=545
+o eclipse launcher for windows
+o   http://dev.eclipse.org/viewcvs/index.cgi/platform-launcher/library/win32/eclipseWin.c?view=markup&content-type=text%2Fvnd.viewcvs-markup&revision=1.12
+X make .pde files double-clickable from windows
+X   http://dev.processing.org/bugs/show_bug.cgi?id=683
+X   on drag, are these already passed to argv[]?
+o   http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dllproc/base/getcommandline.asp
+o   http://msdn.microsoft.com/library/default.asp?url=/library/en-us/shellcc/platform/shell/programmersguide/shell_basics/shell_basics_extending/fileassociations/fa_intro.asp
+o   http://groups.google.com/group/comp.os.ms-windows.programmer.misc/browse_thread/thread/4095cb6fc807863/ecdb3b35b0787116%23ecdb3b35b0787116?sa=X&oi=groupsr&start=0&num=3
+o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1094149466
+X   figure out proper registry key for windows
+X     can be handled when the app first run (jni?)
+X   write handler for main() to take document names
+o track down the cause of the processing.exe not starting bugs
+o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062794781
+o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067764732
+o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1094148057
+X need splash screen, startup takes a long time
+X processing.exe: problem if expert version is run, and no java installed
+X   call the person a genius and tell them to install java
+o NullPointerException when alt is pressed
+o   (not our bug, but log it in the bug db anyways)
+o   might be something to do with the applet frame being an awt not swing
+o   event first goes to the applet listener, needs to consume the event
+o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1061802316
+o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077058974
+o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081751451
+
+macosx launcher
+X for the .app file, $APP_PACKAGE will give the path
+X   $JAVAROOT will give Contents/Resources/Java location
+X would be nice to have macosx packaged up as a single .app file
+X   should recommend that people install libraries into their sketchbook
+
 
 _ get new version of examples and reference
 
@@ -111,15 +158,6 @@ _ get new version of examples and reference
 
 
 after 0149
-
-major windows launcher problem
-_ windows jdk sometimes not getting picked up, even if it's there
-_   notes somewhere about choosing the right jvm...
-_   http://dev.processing.org/bugs/show_bug.cgi?id=878
-_ finding older versions of java on windows
-_   http://dev.processing.org/bugs/show_bug.cgi?id=545
-_ eclipse launcher for windows
-_   http://dev.eclipse.org/viewcvs/index.cgi/platform-launcher/library/win32/eclipseWin.c?view=markup&content-type=text%2Fvnd.viewcvs-markup&revision=1.12
 
 thread hang/block problem
 _ serial.available() broken with video
@@ -1225,9 +1263,6 @@ _   also update build/howto.txt (of course) because it says no ant
 _ need .pde document icons
 _ need .psk file icon
 _ need exported application icons
-_ also out of cvs
-_   check for necessary tools to be installed
-_   zip, unzip, jikes, etc
 _ need more comprehensive list of 'known bugs'
 _ need more comprehensive list of 'known suggestions'
 _ javadoc "advanced" reference by beta
@@ -1254,32 +1289,6 @@ _   and include an md5hash to see if the file is correct
 
 DIST / Windows
 
-_ make .pde files double-clickable from windows
-_   http://dev.processing.org/bugs/show_bug.cgi?id=683
-X   on drag, are these already passed to argv[]?
-_   http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dllproc/base/getcommandline.asp
-_   http://msdn.microsoft.com/library/default.asp?url=/library/en-us/shellcc/platform/shell/programmersguide/shell_basics/shell_basics_extending/fileassociations/fa_intro.asp
-_   http://groups.google.com/group/comp.os.ms-windows.programmer.misc/browse_thread/thread/4095cb6fc807863/ecdb3b35b0787116%23ecdb3b35b0787116?sa=X&oi=groupsr&start=0&num=3
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1094149466
-_   figure out proper registry key for windows
-_     can be handled when the app first run (jni?)
-_   write handler for main() to take document names
-_ track down the cause of the processing.exe not starting bugs
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062794781
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067764732
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1094148057
-_ winamp/audio getting starved or crackly while applets running
-_   thread priority too high? or something weird
-_ need splash screen, startup takes a long time
-_ processing.exe: problem if expert version is run, and no java installed
-_   call the person a genius and tell them to install java
-_ NullPointerException when alt is pressed
-_   (not our bug, but log it in the bug db anyways)
-_   might be something to do with the applet frame being an awt not swing
-_   event first goes to the applet listener, needs to consume the event
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1061802316
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077058974
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081751451
 _ icon is skewed on vista 64
 _   http://dev.processing.org/bugs/show_bug.cgi?id=801
 _ "Fatal exception occurred. Program will exit." on startup
@@ -1291,21 +1300,15 @@ DIST / Mac OS X
 
 _ if someone has monaco disabled in font book, the app won't start
 _   http://dev.processing.org/bugs/show_bug.cgi?id=562
-_ for the .app file, $APP_PACKAGE will give the path
-_   $JAVAROOT will give Contents/Resources/Java location
 _ we're breaking some mac human interface guidelines
 _   should be using a menu factory to create menubar for all sub-windows
 _   http://developer.apple.com/technotes/tn/tn2042.html
 _   and the general warning dialogs are just ass ugly
 _   (i.e. we really need those replacements for JOptionPane)
-_ would be nice to have macosx packaged up as a single .app file
-_   should recommend that people install libraries into their sketchbook
 _ set nice background for disk image on macosx
 _ track down error in PdeCompiler for message parsing
 _   was missing the error about a package being gone
 _   can comment out /System/Library/ as a test
-_ mac standard key combinations for moving around in the editor
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1093116515
 _ put stdout/stderr into ~/Library/Logs
 _   and have a .log extension so it can be browsed properly
 _ processing cancels shutdown on mac os x
