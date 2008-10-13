@@ -759,7 +759,7 @@ public class PGraphics extends PImage implements PConstants {
       smooth();
     } else {
       // Don't bother setting this, cuz it'll anger P3D.
-      //noSmooth();
+      noSmooth();
     }
     if (textFont != null) {
 //      System.out.println("  textFont in reapply is " + textFont);
