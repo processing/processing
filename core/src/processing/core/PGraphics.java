@@ -668,6 +668,8 @@ public class PGraphics extends PImage implements PConstants {
   protected void defaultSettings() {  // ignore
 //    System.out.println("PGraphics.defaultSettings() " + width + " " + height);
 
+    noSmooth();  // 0149
+
     colorMode(RGB, 255);
     fill(255);
     stroke(0);
