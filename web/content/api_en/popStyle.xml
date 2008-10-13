@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>popStyle()</name>
+
+<category>Structure</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>pushStyle.gif</image>
+<code>
+smooth();
+ellipse(0, 50, 33, 33);    // Left
+pushStyle();               // Start a new style
+strokeWeight(10);
+fill(204, 153, 0);
+ellipse(50, 50, 33, 33);   // Middle
+popStyle();                // Restore original style
+ellipse(100, 50, 33, 33);  // Right
+</code>
+</example>
+
+<example>
+<image>pushStyle-2.gif</image>
+<code>
+smooth();
+ellipse(0, 50, 33, 33);    // Left
+pushStyle();               // Start a new style
+strokeWeight(10);
+fill(204, 153, 0);
+ellipse(33, 50, 33, 33);   // Left-Middle
+pushStyle();               // Start another new style
+stroke(0, 102, 153);
+ellipse(66, 50, 33, 33);   // Right-Middle
+popStyle();                // Restore the previous style
+popStyle();                // Restore original style
+ellipse(100, 50, 33, 33);  // Right
+</code>
+</example>
+
+<description>
+The <b>pushStyle()</b> function saves the current style settings and <b>popStyle()</b> restores the prior settings; these functions are always used together. They allow you to change the style settings and later return to what you had. When a new style is started with <b>pushStyle()</b>, it builds on the current style information. The <b>pushStyle()</b> and <b>popStyle()</b> functions can be embedded to provide more control (see the second example above for a demonstration.)
+</description>
+
+<syntax>
+popStyle()
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+pushStyle()
+</related>
+
+<availability>1.0</availability>
+
+<type>Processing Function</type>
+
+<partof>Core</partof>
+
+<level>Extended</level>
+
+
+</root>
