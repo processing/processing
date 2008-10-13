@@ -65,6 +65,8 @@ last.sketch.count=0
 # on how many people are using Processing)
 update.check = true
 
+# on windows, automatically associate .pde files with processing.exe
+platform.auto_file_type_associations = true
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
