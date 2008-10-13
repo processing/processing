@@ -172,10 +172,6 @@ o   imageDetail(), textDetail(), etc?
 o   decisions on image smoothing vs. text smoothing vs. all
 
 
-_ random AIOOBE with P3D and points
-_   http://dev.processing.org/bugs/show_bug.cgi?id=937
-
-
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
@@ -529,6 +525,8 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=104
 
 CORE / PGraphics3D
 
+_ random AIOOBE with P3D and points
+_   http://dev.processing.org/bugs/show_bug.cgi?id=937
 _ ortho() behaving differently in P3D vs OPENGL
 _   http://dev.processing.org/bugs/show_bug.cgi?id=100
 _   shows a blank canvas

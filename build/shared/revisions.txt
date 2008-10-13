@@ -104,6 +104,11 @@ Also many, many updates to the examples and reference in this release.
   so that ^ and $ match the beginning and end of any lines found in the 
   source, and the . operator will also pick up newline characters.
 
++ The arraycopy() method is now arrayCopy(), for better consistency with 
+  the rest of the API (think framerate vs. frameRate). Because books have
+  been printed with the lowercase version, we're keeping both, but in 
+  Java parlance, we've deprecated the lowercase version.
+
 + Removed MACOS9 constant from processing.core.PConstants. Bye bye 2001.
 
 + Deprecated the NORMALIZED constant, use NORMAL instead.
