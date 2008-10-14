@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>shapeMode()</name>
+
+<category>Shape</category>
+
+<subcategory>Loading &amp; Displaying</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>shapeMode.jpg</image>
+<code>
+PShape bot = loadShape("bot1.svg");
+smooth();
+shapeMode(CENTER);
+shape(bot, 35, 35, 50, 50);
+shapeMode(CORNER);
+fill(102);
+shape(bot, 35, 35, 50, 50);
+</example>
+
+<description>
+Modifies the location from which shapes draw. The default mode is <b>shapeMode(CORNER)</b>, which specifies the location to be the upper left corner of the shape and uses the third and fourth parameters of <b>shape()</b> to specify the width and height. The syntax <b>shapeMode(CORNERS)</b> uses the first and second parameters of <b>shape()</b> to set the location of one corner and uses the third and fourth parameters to set the opposite corner. The syntax <b>shapeMode(CENTER)</b> draws the shape from its center point and uses the third and forth parameters of <b>shape()</b> to specify the width and height. The parameter must be written in "ALL CAPS" because Processing is a case sensitive language.
+</description>
+
+<syntax>
+shapeMode(<c>MODE</c>)
+</syntax>
+
+<parameter>
+<label>MODE</label>
+<description>Either CORNER, CORNERS, CENTER</description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+shape()
+rectMode()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>
