@@ -27,6 +27,8 @@ if (s.isVisible() == false) {  // of if (!s.isVisible) {
 
 <description>
 Sets the shape to be visible or invisible. This is determined by the value of the <b>visible</b> parameter.
+<br/> <br/>
+The visibility of a shape is usually controlled by whatever program created the SVG file. For instance, this parameter is controlled by showing or hiding the shape in the layers palette in Adobe Illustrator.
 </description>
 
 <syntax>
