@@ -18,6 +18,7 @@ shape(bot, 35, 35, 50, 50);
 shapeMode(CORNER);
 fill(102);
 shape(bot, 35, 35, 50, 50);
+</code>
 </example>
 
 <description>
