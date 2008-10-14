@@ -9,18 +9,27 @@
 <usage>Web &amp; Application</usage>
 
 <example>
-<image></image>
+<image>PShape_scale.jpg</image>
 <code>
-...
+// The file "bot.svg" must be in the data folder
+// of the current sketch to load successfully
+PShape s;
+s = loadShape("bot.svg");
+smooth();
+shape(s);      // Large shape
+s.scale(0.2);  // Scale to 20%
+shape(s);      // Small shape
 </code>
 </example>
 
 <description>
-...
+Increases or decreases the size of a shape by expanding and contracting vertices. Shapes always scale from their relative origin of their bounding box. Scale values are specified as decimal percentages. For example, the function call <b>scale(2.0)</b> increases the dimension of a shape by 200%. Transformations apply to everything that happens after and subsequent calls to the function multiply the effect. For example, calling <b>scale(2.0)</b> and then <b>scale(1.5)</b> is the same as <b>scale(3.0)</b>. Using this fuction with the <b>z</b> parameter requires passing P3D or OPENGL into the size() parameter.
 </description>
 
 <syntax>
-<c>sh</c>.???
+<c>sh</c>.scale(<c>size</c>);
+<c>sh</c>.scale(<c>x</c>, <c>y</c>);
+<c>sh</c>.scale(<c>x</c>, <c>y</c>, <c>z</c>);
 </syntax>
 
 <parameter>
@@ -28,7 +37,28 @@
 <description>PShape: any variable of type PShape</description>
 </parameter>
 
-<returns>none</returns>
+<parameter>
+<label>size</label>
+<description>float: percentage to scale the object</description>
+</parameter>
+
+<parameter>
+<label>x</label>
+<description>float: percentage to scale the object in the x-axis</description>
+</parameter>
+
+<parameter>
+<label>y</label>
+<description>float: percentage to scale the object in the y-axis</description>
+</parameter>
+
+<parameter>
+<label>z</label>
+<description>float: percentage to scale the object in the z-axis</description>
+</parameter>
+
+<returns>None</returns>
+
 
 <related>
 </related>

@@ -9,18 +9,27 @@
 <usage>Web &amp; Application</usage>
 
 <example>
-<image></image>
+<image>PShape_getChild.jpg</image>
 <code>
-...
+PShape states;
+PShape ohio;
+states = loadShape("tristate.svg");
+ohio = states.getChild("OH");
+smooth();
+background(0);
+shape(states, -48, 5);
+ohio.disableStyle();
+fill(102, 0, 0);
+shape(ohio, -48, 5);
 </code>
 </example>
 
 <description>
-...
+Extracts a child shape from a parent shape. Specify the name of the shape with the <b>target</b> parameter. The shape is returned as a <b>PShape</b> object, or <b>null</b> is returned if there is an error.
 </description>
 
 <syntax>
-<c>sh</c>.???
+<c>sh</c>.getChild(<c>target</c>)
 </syntax>
 
 <parameter>
@@ -28,7 +37,12 @@
 <description>PShape: any variable of type PShape</description>
 </parameter>
 
-<returns>none</returns>
+<parameter>
+<label>target</label>
+<description>String: the name of the shape to get</description>
+</parameter>
+
+<returns>PShape or null</returns>
 
 <related>
 </related>

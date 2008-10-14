@@ -9,24 +9,48 @@
 <usage>Web &amp; Application</usage>
 
 <example>
-<image></image>
+<image>PShape_translate.jpg</image>
 <code>
-...
+// The file "bot.svg" must be in the data folder
+// of the current sketch to load successfully
+PShape s;
+s = loadShape("bot.svg");
+smooth();
+shape(s);      // Left shape
+s.translate(35, 0);  // Move 35 pixels right
+shape(s);      // Right shape
 </code>
 </example>
 
 <description>
-...
+Specifies an amount to displace objects within the display window. The <b>x</b> parameter specifies left/right translation, the <b>y</b> parameter specifies up/down translation, and the <b>z</b> parameter specifies translations toward/away from the screen. Using this function with the <b>z</b> parameter requires using the P3D or OPENGL parameter in combination with size. Transformations apply to everything that happens after and subsequent calls to the function accumulates the effect. For example, calling <b>translate(50, 0)</b> and then <b>translate(20, 0)</b> is the same as <b>translate(70, 0)</b>. If <b>translate()</b> is called within <b>draw()</b>, the transformation is reset when the loop begins again.
 </description>
 
 <syntax>
-<c>sh</c>.???
+<c>sh</c>.translate(<c>x</c>, <c>y</c>);
+<c>sh</c>.translate(<c>x</c>, <c>y</c>, <c>z</c>);
 </syntax>
 
 <parameter>
 <label>sh</label>
 <description>PShape: any variable of type PShape</description>
 </parameter>
+
+<parameter>
+<label>x</label>
+<description>int or float: left/right translation</description>
+</parameter>
+
+<parameter>
+<label>y</label>
+<description>int or float: up/down translation</description>
+</parameter>
+
+<parameter>
+<label>z</label>
+<description>int or float: forward/back translation</description>
+</parameter>
+
 
 <returns>none</returns>
 
