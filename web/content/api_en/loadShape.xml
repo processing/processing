@@ -39,7 +39,7 @@ void draw() {
 
 
 <description>
-Loads an image into a variable of type <b>PSHape</b>. Currently only SVG files may be loaded. To load correctly, shapes must be located in the data directory of the current sketch. In most cases, load all shapes in <b>setup()</b> to preload them at the start of the program. Loading shapes inside <b>draw()</b> will reduce the speed of a program. 
+Loads an image into a variable of type <b>PShape</b>. Currently only SVG files may be loaded. To load correctly, shapes must be located in the data directory of the current sketch. In most cases, load all shapes in <b>setup()</b> to preload them at the start of the program. Loading shapes inside <b>draw()</b> will reduce the speed of a program. 
 <br/> <br/>
 The <b>filename</b> parameter can also be a URL to a file found online. For security reasons, a Processing sketch found online can only download files from the same server from which it came. Getting around this restriction requires a <A HREF="http://processing.org/hacks/doku.php?id=hacks:signapplet">signed applet</A>.
 <br/> <br/>
