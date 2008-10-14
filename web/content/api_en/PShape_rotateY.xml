@@ -9,24 +9,33 @@
 <usage>Web &amp; Application</usage>
 
 <example>
-<image>PShape_rotateY.gif</image>
+<image></image>
 <code>
-size(100, 100, P3D);
-// The file "ohio.svg" must be in the data folder
-// of the current sketch to load successfully
 PShape s;
-s = loadShape("ohio.svg");
-s.rotateY(-PI/6);
-shape(s, 10, 0);
+
+void setup() {
+  size(100, 100, P3D);
+  s = loadShape("ohio.svg");
+}
+
+void draw() {
+  background(204);
+  shape(s);
+}
+
+void mousePressed() {
+  // Rotate the shape around the y-axis each time the mouse is pressed
+  s.rotateY(0.1);  
+}
 </code>
 </example>
 
 <description>
-Rotates a shape around the y-axis the amount specified by the <b>angle</b> parameter. Angles should be specified in radians (values from 0 to TWO_PI) or converted to radians with the <b>radians()</b> function.
+Rotates a shape around the y-axis the amount specified by the <b>angle</b> parameter. Angles should be specified in radians (values from 0 to TWO_PI) or converted to radians with the <b>radians()</b> method.
 <br /><br />
-Shapes are always rotated around the upper-left corner of their bounding box. Positive numbers rotate objects in a clockwise direction. Transformations apply to everything that happens after and subsequent calls to the function accumulates the effect. For example, calling <b>rotate(HALF_PI)</b> and then <b>rotate(HALF_PI)</b> is the same as <b>rotate(PI)</b>. All tranformations are reset when <b>draw()</b> begins again.
+Shapes are always rotated around the upper-left corner of their bounding box. Positive numbers rotate objects in a clockwise direction. Subsequent calls to the method accumulates the effect. For example, calling <b>rotateY(HALF_PI)</b> and then <b>rotateY(HALF_PI)</b> is the same as <b>rotateY(PI)</b>. This transformation is applied directly to the shape, it's not refreshed each time <b>draw()</b> is run. 
 <br /><br />
-This function requires a 3D renderer. You need to pass P3D or OPENGL as a third parameter into the <b>size()</b> function as shown in the example above.
+This method requires a 3D renderer. You need to pass P3D or OPENGL as a third parameter into the <b>size()</b> method as shown in the example above.
 </description>
 
 <syntax>
