@@ -14,7 +14,7 @@
 PShape s;
 s = loadShape("bot.svg");
 smooth();
-shape(s, 0, 0);
+shape(s, 10, 10, 80, 80);
 </code>
 </example>
 
@@ -32,7 +32,7 @@ void setup() {
 }
 
 void draw() {
-  shape(s, 0, 0);
+  shape(s, 10, 10, 80, 80);
 }
 </code>
 </example>
