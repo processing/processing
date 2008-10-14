@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>shape()</name>
+
+<category>Shape</category>
+
+<subcategory>Loading &amp; Displaying</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<shape>svg.jpg</shape>
+<code>
+PShape s;
+s = loadShape("bot.svg");
+smooth();
+shape(s, 0, 0);
+</code>
+</example>
+
+<example>
+<shape>svg.jpg</shape>
+<code>
+// Loading a shape when using setup() and draw()
+
+PShape s;
+
+void setup() {
+  s = loadShape("bot.svg");
+  smooth();
+  noLoop();
+}
+
+void draw() {
+  shape(s, 0, 0);
+}
+</code>
+</example>
+
+
+<description>
+Diplays shapes to the screen. The shapes must be in the sketch's "data" directory to load correctly. Select "Add file..." from the "Sketch" menu to add the shape. Processing currently works with SVG shapes only. The <b>sh</b> parameter specifies the shape to display and the <b>x</b> and <b>y</b> parameters define the location of the shape from its upper-left corner. The shape is displayed at its original size unless the <b>width</b> and <b>height</b> parameters specify a different size. The <b>shapeMode()</b> function changes the way the parameters work. A call to <b>shapeMode(CORNERS)</b>, for example, will change the width and height parameters to define the x and y values of the opposite corner of the shape.
+</description>
+
+<syntax>
+shape(<c>sh</c>, <c>x</c>, <c>y</c>)
+shape(<c>sh</c>, <c>x</c>, <c>y</c>, <c>width</c>, <c>height</c>)
+</syntax>
+
+<parameter>
+<label>sh</label>
+<description>PShape: the shape to display</description>
+</parameter>
+
+<parameter>
+<label>x</label>
+<description>int or float: x-coordinate of the shape</description>
+</parameter>
+
+<parameter>
+<label>y</label>
+<description>int or float: y-coordinate of the shape</description>
+</parameter>
+
+<parameter>
+<label>width</label>
+<description>int or float: width to display the shape</description>
+</parameter>
+
+<parameter>
+<label>height</label>
+<description>int or float: height to display the shape</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+PShape
+loadShape() 
+shapeMode() 
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+
+</root>
