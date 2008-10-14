@@ -9,18 +9,28 @@
 <usage>Web &amp; Application</usage>
 
 <example>
-<image></image>
+<image>PShape_visible.jpg</image>
 <code>
-...
+// The file "bot.svg" must be in the data folder
+// of the current sketch to load successfully
+PShape s;
+s = loadShape("bot.svg");
+smooth();
+shape(s, 10, 10, 80, 80);      // Right shape
+s.setVisible(false);
+if (s.isVisible() == false) {  // of if (!s.isVisible) {
+  noFill();
+  rect(5, 5, 90, 90); 
+}
 </code>
 </example>
 
 <description>
-...
+Returns a boolean value "true" if the image is set to be visible, "false" if not. This is modified with the <b>setVisible()</b> parameter.
 </description>
 
 <syntax>
-<c>sh</c>.???
+<c>sh</c>.isVisible()
 </syntax>
 
 <parameter>

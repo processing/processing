@@ -23,11 +23,11 @@ shape(s, 50, 10, 80, 80);
 </example>
 
 <description>
-...
+Disables the shape's style data and uses Processing's current styles. Styles include attributes such as colors, stroke weight, and stroke joints. 
 </description>
 
 <syntax>
-<c>sh</c>.???
+<c>sh</c>.disableStyle()
 </syntax>
 
 <parameter>
