@@ -19,6 +19,10 @@ putenv('HOME=' . CONTENTDIR);
 // do things here
 `cd $where && /usr/local/bin/svn update`;
 
+$where = CONTENTDIR . 'static';
+
+`cd $where && /usr/local/bin/svn update`;
+
 $benchmark_end = microtime_float();
 $execution_time = round($benchmark_end - $benchmark_start, 4);
 
