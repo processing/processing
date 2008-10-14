@@ -53,12 +53,12 @@ Datatype for storing shapes. Processing can currently load and display SVG shape
 
 <method>
 <mname>translate()</mname>
-<mdescription>Displaces the shape within the display window</mdescription>
+<mdescription>Displaces the shape</mdescription>
 </method>
 
 <method>
 <mname>rotate()</mname>
-<mdescription>Rotates the shape around the z-axis</mdescription>
+<mdescription>Rotates the shape</mdescription>
 </method>
 
 <method>
