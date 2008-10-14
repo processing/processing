@@ -28,57 +28,57 @@ Datatype for storing shapes. Processing can currently load and display SVG shape
 
 <method>
 <mname>isVisible()</mname>
-<mdescription>...</mdescription>
-</method>
-
-<method>
-<mname>isVisible()</mname>
-<mdescription>...</mdescription>
+<mdescription>Returns a boolean value "true" if the image is set to be visible, "false" if not</mdescription>
 </method>
 
 <method>
 <mname>setVisible()</mname>
-<mdescription>...</mdescription>
+<mdescription>Sets the shape to be visible or invisible</mdescription>
 </method>
 
 <method>
 <mname>disableStyle()</mname>
-<mdescription>...</mdescription>
+<mdescription>Disables the shape's style data and uses Processing styles</mdescription>
 </method>
 
 <method>
 <mname>enableStyle()</mname>
-<mdescription>...</mdescription>
+<mdescription>Enables the shape's style data and ignores the Processing styles</mdescription>
 </method>
 
 <method>
 <mname>getChild()</mname>
-<mdescription>...</mdescription>
+<mdescription>Returns a child element of a shape as a PShape object</mdescription>
 </method>
 
 <method>
 <mname>translate()</mname>
-<mdescription>...</mdescription>
+<mdescription>Displaces the shape within the display window</mdescription>
+</method>
+
+<method>
+<mname>rotate()</mname>
+<mdescription>Rotates the shape around the z-axis</mdescription>
 </method>
 
 <method>
 <mname>rotateX()</mname>
-<mdescription>...</mdescription>
+<mdescription>Rotates the shape around the x-axis</mdescription>
 </method>
 
 <method>
 <mname>rotateY()</mname>
-<mdescription>...</mdescription>
+<mdescription>Rotates the shape around the y-axis</mdescription>
 </method>
 
 <method>
 <mname>rotateZ()</mname>
-<mdescription>...</mdescription>
+<mdescription>Rotates the shape around the z-axis</mdescription>
 </method>
 
 <method>
 <mname>scale()</mname>
-<mdescription>...</mdescription>
+<mdescription>Increases and decreases the size of a shape</mdescription>
 </method>
 
 <constructor>
