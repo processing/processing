@@ -12,8 +12,6 @@
 <example>
 <image></image>
 <code>
-import processing.xml.*;
-
 // The following short XML file called "sites.xml" is parsed 
 // in the code below. It must be in the project's "data" directory
 // &#60;?xml version="1.0"? &#62;
