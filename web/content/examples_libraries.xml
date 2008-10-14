@@ -45,6 +45,9 @@
 		<ex file="Loop.html">Loop</ex>
 		<ex file="Pixelate.html">Pixelate</ex>
 	</cat>
+	<cat label="Video (MovieMaker)">
+		<ex file="DrawingMovie.html">DrawingMovie</ex>
+	</cat>
 	<cat label="PDF Export">
 		<ex file="OneFrame.html">One Frame</ex>
 		<ex file="MultipleFrames.html">Multiple Frames</ex>
@@ -54,6 +57,9 @@
 		<ex file="ManyPDFs.html">Many PDFs</ex>
 		<ex file="RandomBook.html">Random Book</ex>
 		<ex file="Complex3D.html">Complex 3D</ex>
+	</cat>
+	<cat label="DXF Export">
+		<ex file="SimpleExport.html">Simple Export</ex>
 	</cat>
 	<cat label="Minim (Sound)">
 		<ex file="AddListener.html">Add Listener</ex>
