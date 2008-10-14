@@ -1,7 +1,13 @@
+/**
+ * Drawing Movie. 
+ * 
+ * Makes a QuickTime movie of a line drawn by the mouse. Press
+ * the spacebar to finish and save the movie. 
+ */
+
 import processing.video.*;
 
 MovieMaker mm;
-
 
 void setup() {
   size(320, 240);
@@ -22,7 +28,7 @@ void draw() {
   strokeWeight(4);
 
   // Draw if mouse is pressed
-  if (mousePressed) {
+  if (mousePressed && pmouseX != 0 && mouseY != 0) {
     line(pmouseX, pmouseY, mouseX, mouseY);
   }
 
@@ -39,3 +45,4 @@ void keyPressed() {
     exit();
   }
 }
+
