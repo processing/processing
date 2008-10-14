@@ -9,7 +9,7 @@
 <usage>Web &amp; Application</usage>
 
 <example>
-<shape>svg.jpg</shape>
+<image>svg.jpg</image>
 <code>
 PShape s;
 s = loadShape("bot.svg");
@@ -19,7 +19,7 @@ shape(s, 0, 0);
 </example>
 
 <example>
-<shape>svg.jpg</shape>
+<image>svg.jpg</image>
 <code>
 // Loading a shape when using setup() and draw()
 
