@@ -50,7 +50,7 @@
 	<cat label="Shape">
 		<ex file="GettingStarted_Shape.html">Getting Started - Shape</ex>
 		<ex file="DisableStyle.html">Disable Style</ex>
-		<ex file="Scale.html">Scale</ex>
+		<ex file="ScaleShape.html">Scale Shape</ex>
 		<ex file="GetChild.html">Get Child</ex>
 	</cat>
 	<cat label="Typography">
