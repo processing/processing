@@ -38,26 +38,6 @@
 		<ex file="Conditionals2.html">Conditionals 2</ex>
 		<ex file="LogicalOperators.html">Logical Operators</ex>
 	</cat>
-	<cat label="Math">
-		<ex file="IncrementDecrement.html">Increment/Decrement</ex>
-		<ex file="OperatorPrecedence.html">Operator Precedence</ex>
-		<ex file="Modulo.html">Modulo</ex>
-		<ex file="Distance1D.html">Distance 1D</ex>
-		<ex file="Distance2D.html">Distance 2D</ex>
-		<ex file="Sine.html">Sine</ex>
-		<ex file="SineCosine.html">Sine and Cosine</ex>
-		<ex file="SineWave.html">Sine Wave</ex>
-		<ex file="AdditiveWave.html">Additive Wave</ex>
-		<ex file="PolarToCartesian.html">Polar to Cartesian</ex>
-		<ex file="Arctangent.html">Arctangent</ex>
-		<ex file="Graphing2DEquation.html">Graphing 2D Equation</ex>
-		<ex file="Random.html">Random</ex>
-		<ex file="DoubleRandom.html">Double Random</ex>
-		<ex file="Noise1D.html">Noise 1D</ex>
-		<ex file="Noise2D.html">Noise 2D</ex>
-		<ex file="Noise3D.html">Noise 3D</ex>
-		<ex file="NoiseWave.html">NoiseWave</ex>
-	</cat>
 	<cat label="Image">
 		<ex file="GettingStarted_Image.html">Getting Started - Image</ex>
 		<ex file="BackgroundImage.html">Background Image</ex>
@@ -88,6 +68,26 @@
 		<ex file="LinearGradient.html">Linear Gradient</ex>
 		<ex file="RadialGradient.html">Radial Gradient</ex>
 		<ex file="WaveGradient.html">Wave Gradient</ex>
+	</cat>
+	<cat label="Math">
+		<ex file="IncrementDecrement.html">Increment/Decrement</ex>
+		<ex file="OperatorPrecedence.html">Operator Precedence</ex>
+		<ex file="Modulo.html">Modulo</ex>
+		<ex file="Distance1D.html">Distance 1D</ex>
+		<ex file="Distance2D.html">Distance 2D</ex>
+		<ex file="Sine.html">Sine</ex>
+		<ex file="SineCosine.html">Sine and Cosine</ex>
+		<ex file="SineWave.html">Sine Wave</ex>
+		<ex file="AdditiveWave.html">Additive Wave</ex>
+		<ex file="PolarToCartesian.html">Polar to Cartesian</ex>
+		<ex file="Arctangent.html">Arctangent</ex>
+		<ex file="Graphing2DEquation.html">Graphing 2D Equation</ex>
+		<ex file="Random.html">Random</ex>
+		<ex file="DoubleRandom.html">Double Random</ex>
+		<ex file="Noise1D.html">Noise 1D</ex>
+		<ex file="Noise2D.html">Noise 2D</ex>
+		<ex file="Noise3D.html">Noise 3D</ex>
+		<ex file="NoiseWave.html">NoiseWave</ex>
 	</cat>
 	<cat label="Input">
 		<ex file="Mouse1D.html">Mouse 1D</ex>
