@@ -50,7 +50,7 @@ writeFile('learning/gettingstarted/index.html', $page->out());
 # --------------------------------- Basics
 
 $categories = get_examples_list('examples.xml');
-$break_after = array('Math', 'Color');
+$break_after = array('Control', 'Math');
 $subdir = 'Basics';
 $dir = CONTENTDIR.'examples/'.$subdir.'/';
 
