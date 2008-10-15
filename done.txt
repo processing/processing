@@ -1,3 +1,10 @@
+0150 pde
+X ArrayIndexOutOfBoundsException after pressing Run with release 0149
+X   http://dev.processing.org/bugs/show_bug.cgi?id=949
+X update java to release 1.6.0_07 on windows and linux
+X   http://dev.processing.org/bugs/show_bug.cgi?id=950
+
+
 0149 pde
 X fix problem with error line highlighting
 X   http://dev.processing.org/bugs/show_bug.cgi?id=888
