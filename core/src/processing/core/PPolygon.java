@@ -34,6 +34,7 @@ public class PPolygon implements PConstants {
 
   // identical to the constants from PGraphics
 
+  /*
   static final int X = 0; // transformed xyzw
   static final int Y = 1; // formerly SX SY SZ
 //  static final int Z = 2;
@@ -47,9 +48,10 @@ public class PPolygon implements PConstants {
   static final int V = 7;
   
   static final int FIELD_COUNT = 8;
+  */
 
   static final int DEFAULT_SIZE = 64; // this is needed for spheres
-  float vertices[][] = new float[DEFAULT_SIZE][FIELD_COUNT];
+  float vertices[][] = new float[DEFAULT_SIZE][VERTEX_FIELD_COUNT];
   int vertexCount;
 
   float r[]   = new float[DEFAULT_SIZE]; // storage used by incrementalize
@@ -115,7 +117,7 @@ public class PPolygon implements PConstants {
   }
 
 
-  public void reset(int count) {
+  protected void reset(int count) {
     vertexCount = count;
     interpX = true;
 //    interpZ = true;
@@ -125,11 +127,9 @@ public class PPolygon implements PConstants {
   }
 
 
-  public float[] nextVertex() {
+  protected float[] nextVertex() {
     if (vertexCount == vertices.length) {
-      //parent.message(CHATTER, "re-allocating for " +
-      //             (vertexCount*2) + " vertices");
-      float temp[][] = new float[vertexCount<<1][FIELD_COUNT];
+      float temp[][] = new float[vertexCount<<1][VERTEX_FIELD_COUNT];
       System.arraycopy(vertices, 0, temp, 0, vertexCount);
       vertices = temp;
 
@@ -166,20 +166,45 @@ public class PPolygon implements PConstants {
   */
 
 
-  public void texture(PImage image) {
+  protected void texture(PImage image) {
     this.timage = image;
-    this.tpixels = image.pixels;
-    this.twidth = image.width;
-    this.theight = image.height;
-    this.tformat = image.format;
 
-    twidth1 = twidth - 1;
-    theight1 = theight - 1;
-    interpUV = true;
+    if (image != null) {
+      this.tpixels = image.pixels;
+      this.twidth = image.width;
+      this.theight = image.height;
+      this.tformat = image.format;
+
+      twidth1 = twidth - 1;
+      theight1 = theight - 1;
+      interpUV = true;
+      
+    } else {
+      interpUV = false;      
+    }
   }
 
 
-  public void render() {
+  protected void renderPolygon(float[][] v, int count) {
+//    reset(count); 
+//    texture(tex);
+    System.arraycopy(v, 0, vertices, 0, count);
+//    for (int i = 0; i < count; i++) {
+//      float[] vert = nextVertex();
+//      System.arraycopy()
+//    }
+  }
+
+
+  protected void renderTriangle(float[] v1, float[] v2, float[] v3) {
+//    reset(3);
+    vertices[0] = v1;
+    vertices[1] = v2;
+    vertices[2] = v3;
+  }
+  
+  
+  protected void render() {
     if (vertexCount < 3) return;
 
     // these may have changed due to a resize()
