@@ -7,6 +7,29 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0150 - 15 October 2008
+
+Read the 0149 release notes! This release only includes two small tweaks.
+
+[ bug fix ] 
+
++ ArrayIndexOutOfBoundsException after pressing Run with release 0149.
+  Compile errors that weren't associated with a particular line number 
+  caused a strange error message to show up.
+  http://dev.processing.org/bugs/show_bug.cgi?id=949
+
+[ change ]
+
++ Updated Java to release 1.6.0_07 on Windows and Linux. This doesn't 
+  mean you can use Java 5 or 6 syntax with the environment, but does
+  help us with some random bugs in the older Java 5 releases (on Linux
+  especially) and hopefully improves performance (on Windows especially).
+  http://dev.processing.org/bugs/show_bug.cgi?id=950
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0149 - 15 October 2008
 
 Very large number of bug fixes and changes. All renderers that use 
