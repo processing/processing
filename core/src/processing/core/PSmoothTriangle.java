@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-07 Ben Fry and Casey Reas
+  Copyright (c) 2004-08 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This library is free software; you can redistribute it and/or
@@ -26,12 +26,13 @@ package processing.core;
 
 
 /**
- * Smoothed triangle renderer.
- * 
+ * Smoothed triangle renderer for P3D.
+ *
  * Based off of the PPolygon class in old versions of Processing.
+ * Name and location of this class will change in a future release.
  */
 public class PSmoothTriangle implements PConstants {
-	
+
   // really this is "debug" but..
   private static final boolean EWJORDAN = false;
   private static final boolean FRY = false;
@@ -112,7 +113,7 @@ public class PSmoothTriangle implements PConstants {
   int aaleftmin, aarightmin;
   int aaleftmax, aarightmax;
   int aaleftfull, aarightfull;
-  
+
   /* Variables needed for accurate texturing. */
   private PMatrix textureMatrix = new PMatrix3D();
   private float[] camX = new float[3];
@@ -166,28 +167,6 @@ public class PSmoothTriangle implements PConstants {
   }
 
 
-  /**
-   * Return true if this vertex is redundant. If so, will also
-   * decrement the vertex count.
-   */
-  /*
-  public boolean redundantVertex(float x, float y, float z) {
-    // because vertexCount will be 2 when setting vertex[1]
-    if (vertexCount < 2) return false;
-
-    // vertexCount-1 is the current vertex that would be used
-    // vertexCount-2 would be the previous feller
-    if ((Math.abs(vertices[vertexCount-2][MX] - x) < EPSILON) &&
-        (Math.abs(vertices[vertexCount-2][MY] - y) < EPSILON) &&
-        (Math.abs(vertices[vertexCount-2][MZ] - z) < EPSILON)) {
-      vertexCount--;
-      return true;
-    }
-    return false;
-  }
-  */
-
-
   public void texture(PImage image) {
     this.timage = image;
     this.tpixels = image.pixels;
@@ -203,14 +182,14 @@ public class PSmoothTriangle implements PConstants {
   public void render() {
     if (vertexCount < 3) return;
 
-	smooth = true;//TODO
+    smooth = true;//TODO
     // these may have changed due to a resize()
     // so they should be refreshed here
     pixels = parent.pixels;
     zbuffer = parent.zbuffer;
 
     noDepthTest = false;//parent.hints[DISABLE_DEPTH_TEST];
-    
+
     // In 0148+, should always be true if this code is called at all
     //smooth = parent.smooth;
 
@@ -237,25 +216,6 @@ public class PSmoothTriangle implements PConstants {
     for (int i = 0; i < vertexCount; i++) {
       r[i] = 0; dr[i] = 0; l[i] = 0; dl[i] = 0;
     }
-
-    // hack to not make polygons fly into the screen
-    // TODO ewjordan: see whether this is necessary
-    // anymore, or if PGraphics3D handles it all before
-    // we reach this code
-//    if (parent.hints[DISABLE_FLYING_POO]) {
-//      float nwidth2 = -width * 2;
-//      float nheight2 = -height * 2;
-//      float width2 = width * 2;
-//      float height2 = height * 2;
-//      for (int i = 0; i < vertexCount; i++) {
-//        if ((vertices[i][X] < nwidth2) ||
-//            (vertices[i][X] > width2) ||
-//            (vertices[i][Y] < nheight2) ||
-//            (vertices[i][Y] > height2)) {
-//          return;  // this is a bad poly
-//        }
-//      }
-//    }
 
     if (smooth) {
       for (int i = 0; i < vertexCount; i++) {
@@ -393,7 +353,7 @@ public class PSmoothTriangle implements PConstants {
       lastModY = mody;  // moved up here (before the return) 031001
       // not the eighth (or lastY) line, so not scanning this time
       if ((mody != SUBYRES1) && (y != lastY)) return;
-        //lastModY = mody;  // eeK! this was missing
+      //lastModY = mody;  // eeK! this was missing
       //return;
 
       //if (y == lastY) {
@@ -428,12 +388,12 @@ public class PSmoothTriangle implements PConstants {
     int tr, tg, tb, ta;
     //System.out.println("lx: "+lx + "\nrx: "+rx);
     for (int x = lx; x <= rx; x++) {
-    	
+
       // added == because things on same plane weren't replacing each other
       // makes for strangeness in 3D [ewj: yup!], but totally necessary for 2D
       if (noDepthTest || (sp[Z] < zbuffer[offset+x])) {
-      //if (noDepthTest || (sp[Z] <= zbuffer[offset+x])) {
-      //if (true) {
+        //if (noDepthTest || (sp[Z] <= zbuffer[offset+x])) {
+        //if (true) {
 
         // map texture based on U, V coords in sp[U] and sp[V]
         if (interpUV) {
@@ -449,26 +409,26 @@ public class PSmoothTriangle implements PConstants {
           //System.out.println("tu: "+tu+" ; tv: "+tv+" ; txy: "+txy);
           float[] uv = new float[2];
           txy = getTextureIndex(x, y*1.0f/SUBYRES, uv);
-//          txy = getTextureIndex(x* 1.0f/SUBXRES, y*1.0f/SUBYRES, uv);
-          
+          //          txy = getTextureIndex(x* 1.0f/SUBXRES, y*1.0f/SUBYRES, uv);
+
           tu = (int)uv[0]; tv = (int)uv[1];
-//          if (tu > twidth1) tu = twidth1;
-//          if (tv > theight1) tv = theight1;
-//          if (tu < 0) tu = 0;
-//          if (tv < 0) tv = 0;
+          //          if (tu > twidth1) tu = twidth1;
+          //          if (tv > theight1) tv = theight1;
+          //          if (tu < 0) tu = 0;
+          //          if (tv < 0) tv = 0;
           txy = twidth*tv + tu;
-//          if (EWJORDAN) System.out.println("x/y/txy:"+x + " " + y + " " +txy);
+          //          if (EWJORDAN) System.out.println("x/y/txy:"+x + " " + y + " " +txy);
           //PApplet.println(sp);
-          
-//smooth = true;
+
+          //smooth = true;
           if (smooth || texture_smooth) {
             //if (FRY) System.out.println("sp u v = " + sp[U] + " " + sp[V]);
             //System.out.println("sp u v = " + sp[U] + " " + sp[V]);
             // tuf1/tvf1 is the amount of coverage for the adjacent
             // pixel, which is the decimal percentage.
-//            int tuf1 = (int) (255f * (sp[U] - (float)tu));
-//            int tvf1 = (int) (255f * (sp[V] - (float)tv));
-            
+            //            int tuf1 = (int) (255f * (sp[U] - (float)tu));
+            //            int tvf1 = (int) (255f * (sp[V] - (float)tv));
+
             int tuf1 = (int) (255f * (uv[0] - tu));
             int tvf1 = (int) (255f * (uv[1] - tv));
 
@@ -482,8 +442,8 @@ public class PSmoothTriangle implements PConstants {
             int pixel01 = (tv < theight1) ? tpixels[txy + twidth] : tpixels[txy];
             int pixel10 = (tu < twidth1)  ? tpixels[txy + 1]      : tpixels[txy];
             int pixel11 = ((tv < theight1) && (tu < twidth1)) ? tpixels[txy + twidth + 1] : tpixels[txy];
-//System.out.println("1: "+pixel00);
-//check
+            //System.out.println("1: "+pixel00);
+            //check
             int p00, p01, p10, p11;
             int px0, px1; //, pxy;
 
@@ -503,10 +463,10 @@ public class PSmoothTriangle implements PConstants {
               ta = (((px0*tvf + px1*tvf1) >> 8) *
                     (interpARGB ? ((int) (sp[A]*255)) : a2orig)) >> 8;
             } else {  // RGB image, no alpha
-            	//ACCTEX: Getting here when smooth is on
+              //ACCTEX: Getting here when smooth is on
               ta = interpARGB ? ((int) (sp[A]*255)) : a2orig;
-//System.out.println("4: "+ta + " " +interpARGB + " " + sp[A] + " " + a2orig);
-//check
+              //System.out.println("4: "+ta + " " +interpARGB + " " + sp[A] + " " + a2orig);
+              //check
             }
 
             if ((tformat == RGB) || (tformat == ARGB)) {
@@ -518,7 +478,7 @@ public class PSmoothTriangle implements PConstants {
               px0 = (p00*tuf + p10*tuf1) >> 8;
               px1 = (p01*tuf + p11*tuf1) >> 8;
               tr = (((px0*tvf + px1*tvf1) >> 8) * (interpARGB ? ((int) (sp[R]*255)) : r2)) >> 8;
-              
+
               p00 = (pixel00 >> 8) & 0xff;  // green
               p01 = (pixel01 >> 8) & 0xff;
               p10 = (pixel10 >> 8) & 0xff;
@@ -537,8 +497,8 @@ public class PSmoothTriangle implements PConstants {
               px0 = (p00*tuf + p10*tuf1) >> 8;
               px1 = (p01*tuf + p11*tuf1) >> 8;
               tb = (((px0*tvf + px1*tvf1) >> 8) * (interpARGB ? ((int) (sp[B]*255)) : b2)) >> 8;
-//System.out.println("5: "+tr + " " + tg + " " +tb);
-//check
+              //System.out.println("5: "+tr + " " + tg + " " +tb);
+              //check
             } else {  // alpha image, only use current fill color
               if (interpARGB) {
                 tr = (int) (sp[R] * 255);
@@ -557,8 +517,8 @@ public class PSmoothTriangle implements PConstants {
             int weight = smooth ? coverage(x) : 255;
             if (weight != 255) ta = (ta*weight) >> 8;
             //System.out.println(ta);
-//System.out.println("8");
-//check
+            //System.out.println("8");
+            //check
           } else {  // no smooth, just get the pixels
             int tpixel = tpixels[txy];
             // TODO i doubt splitting these guys really gets us
@@ -605,21 +565,21 @@ public class PSmoothTriangle implements PConstants {
             int r1 = (pixels[offset+x] >> 16) & 0xff;
             int g1 = (pixels[offset+x] >> 8) & 0xff;
             int b1 = (pixels[offset+x]) & 0xff;
-            
+
 
             pixels[offset+x] =
-            	0xff000000 |
+              0xff000000 |
               (((tr*ta + r1*a1) >> 8) << 16) |
               ((tg*ta + g1*a1) & 0xff00) |
               ((tb*ta + b1*a1) >> 8);
 
-//System.out.println("17"); 
-//check
+            //System.out.println("17");
+            //check
             if (ta > ZBUFFER_MIN_COVERAGE) zbuffer[offset+x] = sp[Z];
           }
 
-//System.out.println("18");
-//check
+          //System.out.println("18");
+          //check
         } else {  // no image applied
           int weight = smooth ? coverage(x) : 255;
 
@@ -661,8 +621,8 @@ public class PSmoothTriangle implements PConstants {
       // for the pixel in the stretch out version
       // of the scanline used to get smooth edges.
       if (!smooth || ((x >= truelx) && (x <= truerx))) {
-        //if (!smooth) 
-        	increment(sp, sdp);
+        //if (!smooth)
+        increment(sp, sdp);
       }
     }
     firstModY = -1;
@@ -776,10 +736,10 @@ public class PSmoothTriangle implements PConstants {
 
       //if (smooth) {
       //p[U] = p1[U];
-        // offset for the damage that will be done by the
-        // 8 consecutive calls to scanline
-        // agh.. this won't work b/c not always 8 calls before render
-        // maybe lastModY - firstModY + 1 instead?
+      // offset for the damage that will be done by the
+      // 8 consecutive calls to scanline
+      // agh.. this won't work b/c not always 8 calls before render
+      // maybe lastModY - firstModY + 1 instead?
       if (FRY) System.out.println("before inc x p[V] = " + p[V] + " " + p1[V] + " " + p2[V]);
       //p[V] = p1[V] - SUBXRES1 * fraction;
 
@@ -807,8 +767,8 @@ public class PSmoothTriangle implements PConstants {
       p[V] += dp[V];
     }
   }
-  
-  
+
+
   /**
    * Pass camera-space coordinates for the triangle.
    * Needed to render if hint(ENABLE_ACCURATE_TEXTURES) enabled.
@@ -816,8 +776,8 @@ public class PSmoothTriangle implements PConstants {
    * currently called from PGraphics3D.render_triangles()
    */
   public void setCamVertices(float x0, float y0, float z0,
-                          float x1, float y1, float z1,
-                          float x2, float y2, float z2) {
+                             float x1, float y1, float z1,
+                             float x2, float y2, float z2) {
     camX[0] = x0;
     camX[1] = x1;
     camX[2] = x2;
@@ -830,115 +790,115 @@ public class PSmoothTriangle implements PConstants {
     camZ[1] = z1;
     camZ[2] = z2;
   }
-  
+
   public void setVertices(float x0, float y0, float z0,
-		  				  float x1, float y1, float z1,
-		  				  float x2, float y2, float z2) {
-	vertices[0][X] = x0;
-	vertices[1][X] = x1;
-	vertices[2][X] = x2;
+                          float x1, float y1, float z1,
+                          float x2, float y2, float z2) {
+    vertices[0][X] = x0;
+    vertices[1][X] = x1;
+    vertices[2][X] = x2;
 
-	vertices[0][Y] = y0;
-	vertices[1][Y] = y1;
-	vertices[2][Y] = y2;
+    vertices[0][Y] = y0;
+    vertices[1][Y] = y1;
+    vertices[2][Y] = y2;
 
-	vertices[0][Z] = z0;
-	vertices[1][Z] = z1;
-	vertices[2][Z] = z2;
+    vertices[0][Z] = z0;
+    vertices[1][Z] = z1;
+    vertices[2][Z] = z2;
   }
-  
 
-  
+
+
   /**
    * Precompute a bunch of variables needed to perform
    * texture mapping.
    * @return True unless texture mapping is degenerate
    */
   boolean precomputeAccurateTexturing() {
-	  int o0 = 0;
-	  int o1 = 1;
-	  int o2 = 2;
-	  
-	  PMatrix3D myMatrix = new PMatrix3D(vertices[o0][U], vertices[o0][V], 1, 0,
-				  	  				 vertices[o1][U], vertices[o1][V], 1, 0,
-				  	  				 vertices[o2][U], vertices[o2][V], 1, 0,
-				  	  				 0,           	  0,           	   0, 1);
-	  
-	  // A 3x3 inversion would be more efficient here, 
-	  // given that the fourth r/c are unity
-	  boolean invertSuccess = myMatrix.invert();// = myMatrix.invert();
-	  
-	  // If the matrix inversion had trouble, let the caller know.
-	  // Note that this does not catch everything that could go wrong
-	  // here, like if the renderer is in ortho() mode (which really
-	  // must be caught in PGraphics3D instead of here).
-	  if (!invertSuccess) return false;
+    int o0 = 0;
+    int o1 = 1;
+    int o2 = 2;
 
-	  float m00, m01, m02, m10, m11, m12, m20, m21, m22;
-	  m00 = myMatrix.m00*camX[o0]+myMatrix.m01*camX[o1]+myMatrix.m02*camX[o2];
-	  m01 = myMatrix.m10*camX[o0]+myMatrix.m11*camX[o1]+myMatrix.m12*camX[o2];
-	  m02 = myMatrix.m20*camX[o0]+myMatrix.m21*camX[o1]+myMatrix.m22*camX[o2];
-	  m10 = myMatrix.m00*camY[o0]+myMatrix.m01*camY[o1]+myMatrix.m02*camY[o2];
-	  m11 = myMatrix.m10*camY[o0]+myMatrix.m11*camY[o1]+myMatrix.m12*camY[o2];
-	  m12 = myMatrix.m20*camY[o0]+myMatrix.m21*camY[o1]+myMatrix.m22*camY[o2];
-	  m20 = -(myMatrix.m00*camZ[o0]+myMatrix.m01*camZ[o1]+myMatrix.m02*camZ[o2]);
-	  m21 = -(myMatrix.m10*camZ[o0]+myMatrix.m11*camZ[o1]+myMatrix.m12*camZ[o2]);
-	  m22 = -(myMatrix.m20*camZ[o0]+myMatrix.m21*camZ[o1]+myMatrix.m22*camZ[o2]);
+    PMatrix3D myMatrix = new PMatrix3D(vertices[o0][U], vertices[o0][V], 1, 0,
+                                       vertices[o1][U], vertices[o1][V], 1, 0,
+                                       vertices[o2][U], vertices[o2][V], 1, 0,
+                                       0,               0,               0, 1);
 
-	  float px = m02;
-	  float py = m12;
-	  float pz = m22;
+    // A 3x3 inversion would be more efficient here,
+    // given that the fourth r/c are unity
+    boolean invertSuccess = myMatrix.invert();// = myMatrix.invert();
 
-	  float TEX_WIDTH = this.twidth;
-	  float TEX_HEIGHT = this.theight;
-	  
-	  float resultT0x = m00*TEX_WIDTH+m02;
-	  float resultT0y = m10*TEX_WIDTH+m12;
-	  float resultT0z = m20*TEX_WIDTH+m22;
-	  float result0Tx = m01*TEX_HEIGHT+m02;
-	  float result0Ty = m11*TEX_HEIGHT+m12;
-	  float result0Tz = m21*TEX_HEIGHT+m22;
-	  float mx = resultT0x-m02;
-	  float my = resultT0y-m12;
-	  float mz = resultT0z-m22;
-	  float nx = result0Tx-m02;
-	  float ny = result0Ty-m12;
-	  float nz = result0Tz-m22;
+    // If the matrix inversion had trouble, let the caller know.
+    // Note that this does not catch everything that could go wrong
+    // here, like if the renderer is in ortho() mode (which really
+    // must be caught in PGraphics3D instead of here).
+    if (!invertSuccess) return false;
 
-	  //avec = p x n
-	  ax = (py*nz-pz*ny)*TEX_WIDTH; //F_TEX_WIDTH/HEIGHT?
-	  ay = (pz*nx-px*nz)*TEX_WIDTH;
-	  az = (px*ny-py*nx)*TEX_WIDTH;
-	  //bvec = m x p
-	  bx = (my*pz-mz*py)*TEX_HEIGHT;
-	  by = (mz*px-mx*pz)*TEX_HEIGHT;
-	  bz = (mx*py-my*px)*TEX_HEIGHT;
-	  //cvec = n x m
-	  cx = ny*mz-nz*my;
-	  cy = nz*mx-nx*mz;
-	  cz = nx*my-ny*mx;
-  
-	  //System.out.println("a/b/c: "+ax+" " + ay + " " + az + " " + bx + " " + by + " " + bz + " " + cx + " " + cy + " " + cz);
+    float m00, m01, m02, m10, m11, m12, m20, m21, m22;
+    m00 = myMatrix.m00*camX[o0]+myMatrix.m01*camX[o1]+myMatrix.m02*camX[o2];
+    m01 = myMatrix.m10*camX[o0]+myMatrix.m11*camX[o1]+myMatrix.m12*camX[o2];
+    m02 = myMatrix.m20*camX[o0]+myMatrix.m21*camX[o1]+myMatrix.m22*camX[o2];
+    m10 = myMatrix.m00*camY[o0]+myMatrix.m01*camY[o1]+myMatrix.m02*camY[o2];
+    m11 = myMatrix.m10*camY[o0]+myMatrix.m11*camY[o1]+myMatrix.m12*camY[o2];
+    m12 = myMatrix.m20*camY[o0]+myMatrix.m21*camY[o1]+myMatrix.m22*camY[o2];
+    m20 = -(myMatrix.m00*camZ[o0]+myMatrix.m01*camZ[o1]+myMatrix.m02*camZ[o2]);
+    m21 = -(myMatrix.m10*camZ[o0]+myMatrix.m11*camZ[o1]+myMatrix.m12*camZ[o2]);
+    m22 = -(myMatrix.m20*camZ[o0]+myMatrix.m21*camZ[o1]+myMatrix.m22*camZ[o2]);
 
-	  nearPlaneWidth = (parent.rightScreen-parent.leftScreen);
-	  nearPlaneHeight = (parent.topScreen-parent.bottomScreen);
-	  nearPlaneDepth = parent.nearPlane;
-	  
-	  // one pixel width in nearPlane coordinates
-	  xmult = nearPlaneWidth / parent.width;
-	  ymult = nearPlaneHeight / parent.height;
-	  // Extra scalings to map screen plane units to pixel units
-	  newax = ax*xmult;
-	  newbx = bx*xmult;
-	  newcx = cx*xmult;
-	  
+    float px = m02;
+    float py = m12;
+    float pz = m22;
 
-//	    System.out.println("nearplane: "+ nearPlaneWidth + " " + nearPlaneHeight + " " + nearPlaneDepth);
-//	    System.out.println("mults: "+ xmult + " " + ymult);
-//	    System.out.println("news: "+ newax + " " + newbx + " " + newcx);
-	  return true;
+    float TEX_WIDTH = this.twidth;
+    float TEX_HEIGHT = this.theight;
+
+    float resultT0x = m00*TEX_WIDTH+m02;
+    float resultT0y = m10*TEX_WIDTH+m12;
+    float resultT0z = m20*TEX_WIDTH+m22;
+    float result0Tx = m01*TEX_HEIGHT+m02;
+    float result0Ty = m11*TEX_HEIGHT+m12;
+    float result0Tz = m21*TEX_HEIGHT+m22;
+    float mx = resultT0x-m02;
+    float my = resultT0y-m12;
+    float mz = resultT0z-m22;
+    float nx = result0Tx-m02;
+    float ny = result0Ty-m12;
+    float nz = result0Tz-m22;
+
+    //avec = p x n
+    ax = (py*nz-pz*ny)*TEX_WIDTH; //F_TEX_WIDTH/HEIGHT?
+    ay = (pz*nx-px*nz)*TEX_WIDTH;
+    az = (px*ny-py*nx)*TEX_WIDTH;
+    //bvec = m x p
+    bx = (my*pz-mz*py)*TEX_HEIGHT;
+    by = (mz*px-mx*pz)*TEX_HEIGHT;
+    bz = (mx*py-my*px)*TEX_HEIGHT;
+    //cvec = n x m
+    cx = ny*mz-nz*my;
+    cy = nz*mx-nx*mz;
+    cz = nx*my-ny*mx;
+
+    //System.out.println("a/b/c: "+ax+" " + ay + " " + az + " " + bx + " " + by + " " + bz + " " + cx + " " + cy + " " + cz);
+
+    nearPlaneWidth = (parent.rightScreen-parent.leftScreen);
+    nearPlaneHeight = (parent.topScreen-parent.bottomScreen);
+    nearPlaneDepth = parent.nearPlane;
+
+    // one pixel width in nearPlane coordinates
+    xmult = nearPlaneWidth / parent.width;
+    ymult = nearPlaneHeight / parent.height;
+    // Extra scalings to map screen plane units to pixel units
+    newax = ax*xmult;
+    newbx = bx*xmult;
+    newcx = cx*xmult;
+
+
+    //          System.out.println("nearplane: "+ nearPlaneWidth + " " + nearPlaneHeight + " " + nearPlaneDepth);
+    //          System.out.println("mults: "+ xmult + " " + ymult);
+    //          System.out.println("news: "+ newax + " " + newbx + " " + newcx);
+    return true;
   }
-  
+
   /**
    * Get the texture map location based on the current screen
    * coordinates.  Assumes precomputeAccurateTexturing() has
@@ -948,58 +908,58 @@ public class PSmoothTriangle implements PConstants {
    * @return
    */
   private int getTextureIndex(float sx, float sy, float[] uv) {
-	  if (EWJORDAN) System.out.println("Getting texel at "+sx + ", "+sy);
-	  //System.out.println("Screen: "+ sx + " " + sy);
-	  sx = xmult*(sx-(parent.width/2.0f) +.5f);//+.5f)
-      sy = ymult*(sy-(parent.height/2.0f)+.5f);//+.5f)
-      //sx /= SUBXRES;
-      //sy /= SUBYRES;
-      float sz = nearPlaneDepth;
-	  float a = sx * ax + sy * ay + sz * az;
-	  float b = sx * bx + sy * by + sz * bz;
-	  float c = sx * cx + sy * cy + sz * cz;
-	  int u = (int)(a / c);
-	  int v = (int)(b / c);
-	  uv[0] = a / c;
-	  uv[1] = b / c;
-	  if (uv[0] < 0) {
-		  uv[0] = u = 0;
-	  }
-	  if (uv[1] < 0) {
-		  uv[1] = v = 0;
-	  }
-	  if (uv[0] >= twidth) {
-		  uv[0] = twidth-1;
-		  u = twidth-1;
-	  }
-	  if (uv[1] >= theight) {
-		  uv[1] = theight-1;
-		  v = theight-1;
-	  }
-	  int result = v*twidth + u;
-	  //System.out.println("a/b/c: "+a + " " + b + " " + c);
-	  //System.out.println("cx/y/z: "+cx + " " + cy + " " + cz);
-	  //if (result < 0) result = 0;
-	  //if (result >= timage.pixels.length-2) result = timage.pixels.length - 2;
-	  if (EWJORDAN) System.out.println("Got texel "+result);
-	  return result;
+    if (EWJORDAN) System.out.println("Getting texel at "+sx + ", "+sy);
+    //System.out.println("Screen: "+ sx + " " + sy);
+    sx = xmult*(sx-(parent.width/2.0f) +.5f);//+.5f)
+    sy = ymult*(sy-(parent.height/2.0f)+.5f);//+.5f)
+    //sx /= SUBXRES;
+    //sy /= SUBYRES;
+    float sz = nearPlaneDepth;
+    float a = sx * ax + sy * ay + sz * az;
+    float b = sx * bx + sy * by + sz * bz;
+    float c = sx * cx + sy * cy + sz * cz;
+    int u = (int)(a / c);
+    int v = (int)(b / c);
+    uv[0] = a / c;
+    uv[1] = b / c;
+    if (uv[0] < 0) {
+      uv[0] = u = 0;
+    }
+    if (uv[1] < 0) {
+      uv[1] = v = 0;
+    }
+    if (uv[0] >= twidth) {
+      uv[0] = twidth-1;
+      u = twidth-1;
+    }
+    if (uv[1] >= theight) {
+      uv[1] = theight-1;
+      v = theight-1;
+    }
+    int result = v*twidth + u;
+    //System.out.println("a/b/c: "+a + " " + b + " " + c);
+    //System.out.println("cx/y/z: "+cx + " " + cy + " " + cz);
+    //if (result < 0) result = 0;
+    //if (result >= timage.pixels.length-2) result = timage.pixels.length - 2;
+    if (EWJORDAN) System.out.println("Got texel "+result);
+    return result;
   }
 
 
-public void setIntensities(float ar, float ag, float ab, float aa, float br,
-		float bg, float bb, float ba, float cr, float cg, float cb, float ca) {
-	vertices[0][R] = ar;
-	vertices[0][G] = ag;
-	vertices[0][B] = ab;
-	vertices[0][A] = aa;
-	vertices[1][R] = br;
-	vertices[1][G] = bg;
-	vertices[1][B] = bb;
-	vertices[1][A] = ba;
-	vertices[2][R] = cr;
-	vertices[2][G] = cg;
-	vertices[2][B] = cb;
-	vertices[2][A] = ca;
-}
-  
+  public void setIntensities(float ar, float ag, float ab, float aa,
+                             float br, float bg, float bb, float ba,
+                             float cr, float cg, float cb, float ca) {
+    vertices[0][R] = ar;
+    vertices[0][G] = ag;
+    vertices[0][B] = ab;
+    vertices[0][A] = aa;
+    vertices[1][R] = br;
+    vertices[1][G] = bg;
+    vertices[1][B] = bb;
+    vertices[1][A] = ba;
+    vertices[2][R] = cr;
+    vertices[2][G] = cg;
+    vertices[2][B] = cb;
+    vertices[2][A] = ca;
+  }
 }
