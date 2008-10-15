@@ -78,7 +78,7 @@ find work -name ".cvsignore" -exec rm -rf {} ';'
 find work -name ".svn" -exec rm -rf {} 2> /dev/null ';'
 
 NICE_APP="work/Processing $SHORT_REVISION.app"
-mv work/Processing.app "$NICE_APP"
+cp -p work/Processing.app "$NICE_APP"
 
 #NICE_FOLDER="Processing $SHORT_REVISION"
 #mv processing "$NICE_FOLDER"
