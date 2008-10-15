@@ -70,7 +70,7 @@ public class Platform extends processing.app.Platform {
       Process p = Runtime.getRuntime().exec(new String[] { "gnome-open" });
       /*int result =*/ p.waitFor();
       // Not installed will throw an IOException (JDK 1.4.2, Ubuntu 7.04)
-      Preferences.set("launcher.linux", "gnome-open");
+      Preferences.set("launcher", "gnome-open");
       return true;
     } catch (Exception e) { }
 
@@ -78,7 +78,7 @@ public class Platform extends processing.app.Platform {
     try {
       Process p = Runtime.getRuntime().exec(new String[] { "kde-open" });
       /*int result =*/ p.waitFor();
-      Preferences.set("launcher.linux", "kde-open");
+      Preferences.set("launcher", "kde-open");
       return true;
     } catch (Exception e) { }
 
@@ -87,6 +87,18 @@ public class Platform extends processing.app.Platform {
 
 
   public void openFolder(File file) throws Exception {
-
+    if (openFolderAvailable()) {
+      String lunch = Preferences.get("launcher");
+      try {
+        String[] params = new String[] { lunch, file.getAbsolutePath() };
+        //processing.core.PApplet.println(params);
+        Process p = Runtime.getRuntime().exec(params);
+        /*int result =*/ //p.waitFor();
+      } catch (Exception e) { 
+        e.printStackTrace();
+      }
+    } else {
+      System.out.println("not available");
+    }
   }
 }
