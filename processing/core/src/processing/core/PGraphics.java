@@ -1231,7 +1231,10 @@ public class PGraphics extends PImage implements PConstants {
     }
 
     if (curveVertexCount == curveVertices.length) {
-      curveVertices = (float[][]) PApplet.expand(curveVertices);
+      // Can't use PApplet.expand() cuz it doesn't do the copy properly
+      float[][] temp = new float[curveVertexCount << 1][3];
+      System.arraycopy(curveVertices, 0, temp, 0, curveVertexCount);
+      curveVertices = temp; 
     }
     curveInitCheck();
   }  
