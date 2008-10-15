@@ -934,6 +934,18 @@ Base class for all sketches that use processing.core.
           int&nbsp;length)</CODE>
 
 <BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>Use arrayCopy() instead.</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PApplet.html#arrayCopy(java.lang.Object, int, java.lang.Object, int, int)">arrayCopy</A></B>(java.lang.Object&nbsp;src,
+          int&nbsp;srcPosition,
+          java.lang.Object&nbsp;dst,
+          int&nbsp;dstPosition,
+          int&nbsp;length)</CODE>
+
+<BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Calls System.arraycopy(), included here so that we can
  avoid people needing to learn about the System object
  before they can just copy an array.</TD>
@@ -945,6 +957,15 @@ Base class for all sketches that use processing.core.
           java.lang.Object&nbsp;dst)</CODE>
 
 <BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>Use arrayCopy() instead.</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PApplet.html#arrayCopy(java.lang.Object, java.lang.Object)">arrayCopy</A></B>(java.lang.Object&nbsp;src,
+          java.lang.Object&nbsp;dst)</CODE>
+
+<BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shortcut to copy the entire contents of
  the source into the destination array.</TD>
 </TR>
@@ -952,6 +973,16 @@ Base class for all sketches that use processing.core.
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/core/PApplet.html#arraycopy(java.lang.Object, java.lang.Object, int)">arraycopy</A></B>(java.lang.Object&nbsp;src,
+          java.lang.Object&nbsp;dst,
+          int&nbsp;length)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>Use arrayCopy() instead.</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PApplet.html#arrayCopy(java.lang.Object, java.lang.Object, int)">arrayCopy</A></B>(java.lang.Object&nbsp;src,
           java.lang.Object&nbsp;dst,
           int&nbsp;length)</CODE>
 
@@ -2418,6 +2449,14 @@ Base class for all sketches that use processing.core.
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;java.lang.Object</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/core/PApplet.html#getCache(java.lang.Object)">getCache</A></B>(java.lang.Object&nbsp;parent)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../processing/core/PMatrix.html" title="interface in processing.core">PMatrix</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PApplet.html#getMatrix()">getMatrix</A></B>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -4633,6 +4672,14 @@ Base class for all sketches that use processing.core.
 <CODE>&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/core/PApplet.html#setCache(java.lang.Object, java.lang.Object)">setCache</A></B>(java.lang.Object&nbsp;parent,
          java.lang.Object&nbsp;storage)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PApplet.html#setMatrix(processing.core.PMatrix)">setMatrix</A></B>(<A HREF="../../processing/core/PMatrix.html" title="interface in processing.core">PMatrix</A>&nbsp;source)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -10304,10 +10351,10 @@ public static java.lang.String[] <B>sort</B>(java.lang.String[]&nbsp;what,
 </DL>
 <HR>
 
-<A NAME="arraycopy(java.lang.Object, int, java.lang.Object, int, int)"><!-- --></A><H3>
-arraycopy</H3>
+<A NAME="arrayCopy(java.lang.Object, int, java.lang.Object, int, int)"><!-- --></A><H3>
+arrayCopy</H3>
 <PRE>
-public static void <B>arraycopy</B>(java.lang.Object&nbsp;src,
+public static void <B>arrayCopy</B>(java.lang.Object&nbsp;src,
                              int&nbsp;srcPosition,
                              java.lang.Object&nbsp;dst,
                              int&nbsp;dstPosition,
@@ -10326,6 +10373,64 @@ public static void <B>arraycopy</B>(java.lang.Object&nbsp;src,
 </DL>
 <HR>
 
+<A NAME="arrayCopy(java.lang.Object, java.lang.Object, int)"><!-- --></A><H3>
+arrayCopy</H3>
+<PRE>
+public static void <B>arrayCopy</B>(java.lang.Object&nbsp;src,
+                             java.lang.Object&nbsp;dst,
+                             int&nbsp;length)</PRE>
+<DL>
+<DD>Convenience method for arraycopy().
+ Identical to <CODE>arraycopy(src, 0, dst, 0, length);</CODE>
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="arrayCopy(java.lang.Object, java.lang.Object)"><!-- --></A><H3>
+arrayCopy</H3>
+<PRE>
+public static void <B>arrayCopy</B>(java.lang.Object&nbsp;src,
+                             java.lang.Object&nbsp;dst)</PRE>
+<DL>
+<DD>Shortcut to copy the entire contents of
+ the source into the destination array.
+ Identical to <CODE>arraycopy(src, 0, dst, 0, src.length);</CODE>
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="arraycopy(java.lang.Object, int, java.lang.Object, int, int)"><!-- --></A><H3>
+arraycopy</H3>
+<PRE>
+public static void <B>arraycopy</B>(java.lang.Object&nbsp;src,
+                             int&nbsp;srcPosition,
+                             java.lang.Object&nbsp;dst,
+                             int&nbsp;dstPosition,
+                             int&nbsp;length)</PRE>
+<DL>
+<DD><B>Deprecated.</B>&nbsp;<I>Use arrayCopy() instead.</I>
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
 <A NAME="arraycopy(java.lang.Object, java.lang.Object, int)"><!-- --></A><H3>
 arraycopy</H3>
 <PRE>
@@ -10333,8 +10438,7 @@ public static void <B>arraycopy</B>(java.lang.Object&nbsp;src,
                              java.lang.Object&nbsp;dst,
                              int&nbsp;length)</PRE>
 <DL>
-<DD>Convenience method for arraycopy().
- Identical to <CODE>arraycopy(src, 0, dst, 0, length);</CODE>
+<DD><B>Deprecated.</B>&nbsp;<I>Use arrayCopy() instead.</I>
 <P>
 <DD><DL>
 </DL>
@@ -10351,9 +10455,7 @@ arraycopy</H3>
 public static void <B>arraycopy</B>(java.lang.Object&nbsp;src,
                              java.lang.Object&nbsp;dst)</PRE>
 <DL>
-<DD>Shortcut to copy the entire contents of
- the source into the destination array.
- Identical to <CODE>arraycopy(src, 0, dst, 0, src.length);</CODE>
+<DD><B>Deprecated.</B>&nbsp;<I>Use arrayCopy() instead.</I>
 <P>
 <DD><DL>
 </DL>
@@ -14672,6 +14774,20 @@ public void <B>applyMatrix</B>(float&nbsp;n00,
 </DL>
 <HR>
 
+<A NAME="getMatrix()"><!-- --></A><H3>
+getMatrix</H3>
+<PRE>
+public <A HREF="../../processing/core/PMatrix.html" title="interface in processing.core">PMatrix</A> <B>getMatrix</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
 <A NAME="getMatrix(processing.core.PMatrix2D)"><!-- --></A><H3>
 getMatrix</H3>
 <PRE>
@@ -14690,6 +14806,20 @@ public <A HREF="../../processing/core/PMatrix2D.html" title="class in processing
 getMatrix</H3>
 <PRE>
 public <A HREF="../../processing/core/PMatrix3D.html" title="class in processing.core">PMatrix3D</A> <B>getMatrix</B>(<A HREF="../../processing/core/PMatrix3D.html" title="class in processing.core">PMatrix3D</A>&nbsp;target)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setMatrix(processing.core.PMatrix)"><!-- --></A><H3>
+setMatrix</H3>
+<PRE>
+public void <B>setMatrix</B>(<A HREF="../../processing/core/PMatrix.html" title="interface in processing.core">PMatrix</A>&nbsp;source)</PRE>
 <DL>
 <DD><DL>
 </DL>
