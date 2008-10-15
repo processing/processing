@@ -7,7 +7,7 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-ABOUT REV 0149 - 14 October 2008
+ABOUT REV 0149 - 15 October 2008
 
 Very large number of bug fixes and changes. All renderers that use 
 PGraphics will need to be updated for this release. That means you'll
@@ -158,6 +158,9 @@ Also many, many updates to the examples and reference in this release.
 
 + "IllegalMonitorStateException: current thread not owner" with delay()
   http://dev.processing.org/bugs/show_bug.cgi?id=894
+
++ Fix "Show Sketch Folder" on Linux, and prevent launcher error whenever
+  exporting a sketch on Linux. (Regression since ~0140)
 
 + Make parseFloat() with String[] array return NaN for missing values
   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1220880375

@@ -173,6 +173,8 @@ public class Base {
         platformClass = Class.forName("processing.app.macosx.Platform");
       } else if (Base.isWindows()) {
         platformClass = Class.forName("processing.app.windows.Platform");
+      } else if (Base.isLinux()) {
+        platformClass = Class.forName("processing.app.linux.Platform");
       }
       platform = (Platform) platformClass.newInstance();
     } catch (Exception e) {
