@@ -102,7 +102,6 @@ _ use opengl tesselator when in opengl mode
 _ gl smoothing.. how to disable polygon but keep line enabled
 _   or at least make a note of this?
 _   leave smooth off, get the gl object, then enable line smooth
-_ repeating texture support
 _ PPolygon no longer in use and PLine is a mess
 _   make a version of PGraphics3 that uses it for more accurate rendering?
 
@@ -110,6 +109,7 @@ _   make a version of PGraphics3 that uses it for more accurate rendering?
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+threading and exiting
 _ pdf sketches exiting before writing has finished
 _ writing image file (missing a flush() call?) on exit() fails
 _   lots of zero length files
@@ -117,10 +117,6 @@ _ saveFrame() at the end of a draw mode program is problematic
 _   app might exit before the file has finished writing to disk
 _   need to block other activity inside screenGrab until finished
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081706752
-
-_ should we do joins when alpha is turned off?
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1210007450
-
 _ what's up with stop() vs exit()?
 _   need to get this straightened for p5 (i.e. bc has this problem)
 _   make sure the main() doesn't exit until the applet has finished
@@ -128,10 +124,9 @@ _   i.e. problem with main calling itself multiple times in Alpheus
 _   if exit() (or stop) is called, then System.exit() gets called,
 _   even though the main() wants to keep going
 
-_ should beginRecord inherit settings from its parent renderer?
-_   textFont() is null on beginRecord
-_   same would be the case for strokeWeight, background, etc.
-_   http://dev.processing.org/bugs/show_bug.cgi?id=346
+_ should we do joins when alpha is turned off?
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1210007450
+
 _ add texture support to begin/endRaw
 _ for begin/endRecord, use a piggyback mechanism
 _   that way won't have to pass a PApplet around
@@ -143,16 +138,12 @@ _ when closing a sketch via the close box, make sure stop() getting called
 X   found a problem for release 0133
 _   test to see if it's working
 
-_ updatePixels() is slow to create a BufferedImage
-_   therefore the incomplete rendering
-_   could this be an issue fixed by a MediaTracker?
-
 _ ArrayIndexOutOfBoundsException in PLine
 _   http://dev.processing.org/bugs/show_bug.cgi?id=246
 _   http://dev.processing.org/bugs/show_bug.cgi?id=462
 
-_ dataFolder() might be flawed b/c it's referring to contents of jar file
-_   for input, better to use openStream
+o dataFolder() might be flawed b/c it's referring to contents of jar file
+o   for input, better to use openStream
 _   clear up the documentation on this
 
 _ STROKE_WEIGHT field in PGraphics3 is a disaster, because it's an int
@@ -412,6 +403,9 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=342
 _ when drawing an image, sense whether drawn rotated
 _   specifically, if drawn rotated 90 in either direction, or 180
 _   if just rotate/translate, then can use SCREEN_SPACE for fonts
+_ updatePixels() is slow to create a BufferedImage
+_   therefore the incomplete rendering
+_   could this be an issue fixed by a MediaTracker?
 
 
 CORE / PShape
@@ -636,3 +630,8 @@ _   textMode(SCREEN) is out of its league?
 _ textMode(SHAPE) and hint(SMOOTHING) calls are really awkward
 _   maybe need to add properties to the size() command?
 _   or use a getXxxx() method?
+_ should beginRecord inherit settings from its parent renderer?
+_   textFont() is null on beginRecord
+_   same would be the case for strokeWeight, background, etc.
+_   http://dev.processing.org/bugs/show_bug.cgi?id=346
+_ repeating texture support
