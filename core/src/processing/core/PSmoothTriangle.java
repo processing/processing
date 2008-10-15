@@ -115,7 +115,7 @@ public class PSmoothTriangle implements PConstants {
   int aaleftfull, aarightfull;
 
   /* Variables needed for accurate texturing. */
-  private PMatrix textureMatrix = new PMatrix3D();
+  //private PMatrix textureMatrix = new PMatrix3D();
   private float[] camX = new float[3];
   private float[] camY = new float[3];
   private float[] camZ = new float[3];
@@ -123,7 +123,7 @@ public class PSmoothTriangle implements PConstants {
   private float bx,by,bz;
   private float cx,cy,cz;
   private float nearPlaneWidth, nearPlaneHeight, nearPlaneDepth;
-  private float newax, newbx, newcx;
+  //private float newax, newbx, newcx;
   private float xmult, ymult;
 
 
@@ -888,9 +888,9 @@ public class PSmoothTriangle implements PConstants {
     xmult = nearPlaneWidth / parent.width;
     ymult = nearPlaneHeight / parent.height;
     // Extra scalings to map screen plane units to pixel units
-    newax = ax*xmult;
-    newbx = bx*xmult;
-    newcx = cx*xmult;
+//    newax = ax*xmult;
+//    newbx = bx*xmult;
+//    newcx = cx*xmult;
 
 
     //          System.out.println("nearplane: "+ nearPlaneWidth + " " + nearPlaneHeight + " " + nearPlaneDepth);
