@@ -7,11 +7,14 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-ABOUT REV 0149 - 1X October 2008
+ABOUT REV 0149 - 14 October 2008
 
 Very large number of bug fixes and changes. All renderers that use 
-PGraphics will need to be updated for this release. (That means you'll
-need a new GLGraphics, P5Sunflow, etc.) 
+PGraphics will need to be updated for this release. That means you'll
+need a new GLGraphics, P5Sunflow, etc. Lots of libraries will need to
+be updated for 0149.
+
+Important! library and tool folders have changed--see notes below.
 
 This release also adds command-line support, which means that Processing
 can be integrated into all manner of environments. More info below.
