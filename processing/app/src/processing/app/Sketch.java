@@ -687,7 +687,7 @@ public class Sketch {
     String newParentDir = null;
     String newName = null;
 
-    if (PApplet.platform == PConstants.LINUX) {
+    /*
       JFileChooser fc = new JFileChooser();
       fc.setDialogTitle("Save sketch folder as...");
       if (isReadOnly() || isUntitled()) {
@@ -705,25 +705,24 @@ public class Sketch {
         newParentDir = selection.getParent();
         newName = selection.getName();
       }
+    */
 
+    // get new name for folder
+    FileDialog fd = new FileDialog(editor,
+                                   "Save sketch folder as...",
+                                   FileDialog.SAVE);
+    if (isReadOnly() || isUntitled()) {
+      // default to the sketchbook folder
+      fd.setDirectory(Preferences.get("sketchbook.path"));
     } else {
-      // get new name for folder
-      FileDialog fd = new FileDialog(editor,
-                                     "Save sketch folder as...",
-                                     FileDialog.SAVE);
-      if (isReadOnly() || isUntitled()) {
-        // default to the sketchbook folder
-        fd.setDirectory(Preferences.get("sketchbook.path"));
-      } else {
-        // default to the parent folder of where this was
-        fd.setDirectory(folder.getParent());
-      }
-      fd.setFile(folder.getName());
-
-      fd.setVisible(true);
-      newParentDir = fd.getDirectory();
-      newName = fd.getFile();
+      // default to the parent folder of where this was
+      fd.setDirectory(folder.getParent());
     }
+    fd.setFile(folder.getName());
+    
+    fd.setVisible(true);
+    newParentDir = fd.getDirectory();
+    newName = fd.getFile();
 
     // user cancelled selection
     if (newName == null) return false;
