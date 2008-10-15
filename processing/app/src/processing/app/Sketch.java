@@ -687,7 +687,6 @@ public class Sketch {
     String newParentDir = null;
     String newName = null;
 
-    /*
     if (PApplet.platform == PConstants.LINUX) {
       JFileChooser fc = new JFileChooser();
       fc.setDialogTitle("Save sketch folder as...");
@@ -707,7 +706,7 @@ public class Sketch {
         newName = selection.getName();
       }
 
-      } else {*/
+    } else {
       // get new name for folder
       FileDialog fd = new FileDialog(editor,
                                      "Save sketch folder as...",
@@ -724,7 +723,7 @@ public class Sketch {
       fd.setVisible(true);
       newParentDir = fd.getDirectory();
       newName = fd.getFile();
-      //}
+    }
 
     // user cancelled selection
     if (newName == null) return false;
