@@ -17,7 +17,7 @@ make_necessary_directories($path."images/file");
 $files = array('index.html','java.html','actionscript.html', 'lingo.html', 'python.html', 'dbn.html');
 
 foreach ($files as $file) {
-	$page = new LocalPage('Comparison', 'Comparison', 'Comparison', '../');
+	$page = new LocalPage('Compare', 'Compare', 'Compare', '../');
 	$page->content(file_get_contents($source.$file));
 	$page->language($lang);
 	writeFile("distribution/compare/$file", $page->out());
