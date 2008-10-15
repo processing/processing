@@ -1088,6 +1088,7 @@ public class PApplet extends Applet
     if (irenderer.equals("P2D")) {
       PGraphics.showWarning("The P2D renderer is currently disabled, " +
                             "please use P3D or JAVA2D.");
+      irenderer = P3D;
     }
 
     String openglError =
