@@ -16,10 +16,10 @@ fi
 echo Creating P5 distribution for revision $REVISION...
 
 # remove any old boogers
-mv processing ~/.Trash/
-mv Processing* ~/.Trash/
-mv processing-* ~/.Trash/
-mv work ~/.Trash/
+rm -rf processing
+rm -rf Processing*
+rm -rf processing-*
+rm -rf work
 
 ./make.sh
 
@@ -88,6 +88,6 @@ mv "$NICE_APP" processing-$REVISION/
 
 chmod +x mkdmg
 ./mkdmg processing-$REVISION
-mv processing-$REVISION ~/.Trash/
+rm -rf processing-$REVISION
 
 echo Done.
