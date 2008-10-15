@@ -37,25 +37,18 @@ import java.util.Arrays;
  */
 public class PGraphics2D extends PGraphics {
 
-  //public float m00, m01, m02;
-  //public float m10, m11, m12;
   PMatrix2D ctm;
 
-  PPolygon polygon;     // general polygon to use for shape
+  //PPolygon polygon;     // general polygon to use for shape
   PPolygon fpolygon;    // used to fill polys for tri or quad strips
   PPolygon spolygon;    // stroke/line polygon
   float svertices[][];  // temp vertices used for stroking end of poly
+  
+  PPolygon tpolygon;
+  int[] vertexOrder;
 
   PLine line;
 
-  //boolean untransformed;
-  boolean strokeChanged = true;
-  boolean fillChanged = true;
-
-//  static final int CVERTEX_ALLOC = 128;
-//  float cvertex[][] = new float[CVERTEX_ALLOC][VERTEX_FIELD_COUNT];
-//  int cvertexIndex;
-  
   float[][] matrixStack = new float[MATRIX_STACK_DEPTH][6];
   int matrixStackDepth;
   
@@ -69,12 +62,21 @@ public class PGraphics2D extends PGraphics {
   public PGraphics2D() { }
 
 
+  //public void setParent(PApplet parent)
+  
+  
+  //public void setPrimary(boolean primary)
+  
+  
+  //public void setPath(String path)
+  
+  
+  //public void setSize(int iwidth, int iheight)
+  
+
   protected void allocate() {
     pixelCount = width * height;
     pixels = new int[pixelCount];
-
-    // Not necessary because background will be called almost immediately
-    //Arrays.fill(pixels, backgroundColor);
 
     if (primarySurface) {
       cm = new DirectColorModel(32, 0x00ff0000, 0x0000ff00, 0x000000ff);;
@@ -83,11 +85,12 @@ public class PGraphics2D extends PGraphics {
       mis.setAnimated(true);
       image = Toolkit.getDefaultToolkit().createImage(mis);
     }
-
-    // can't un-set this because this may be only a resize (Bug #463)
-    //defaultsInited = false;
   }
 
+  
+  //public void dispose()
+
+  
 
   //////////////////////////////////////////////////////////////
 
@@ -95,19 +98,15 @@ public class PGraphics2D extends PGraphics {
   public boolean canDraw() {
     return true;
   }
-  
-  
-  public void beginDraw() {
-//    insideResizeWait();
-//    insideDraw = true;
 
-    // need to call defaults(), but can only be done when it's ok
-    // to draw (i.e. for opengl, no drawing can be done outside
-    // beginDraw/endDraw).
+
+  public void beginDraw() {
+    // need to call defaults(), but can only be done when it's ok to draw 
+    // (i.e. for OpenGL, no drawing can be done outside beginDraw/endDraw).
     if (!settingsInited) {
       defaultSettings();
 
-      polygon  = new PPolygon(this);
+//      polygon  = new PPolygon(this);
       fpolygon = new PPolygon(this);
       spolygon = new PPolygon(this);
       spolygon.vertexCount = 4;
@@ -122,89 +121,131 @@ public class PGraphics2D extends PGraphics {
 
 
   public void endDraw() {
-    // moving this back here (post-68) because of macosx thread problem
     if (mis != null) {
       mis.newPixels(pixels, cm, 0, width);
     }
     // mark pixels as having been updated, so that they'll work properly
     // when this PGraphics is drawn using image().
     updatePixels();
-
-//    insideDraw = false;
   }
   
   
-  // public void flush() -> inherited from PGraphics 
+  // public void flush() 
 
+
+  
+  //////////////////////////////////////////////////////////////
+
+  
+  //protected void checkSettings()
+  
+  
+  //protected void defaultSettings()
+  
+  
+  //protected void reapplySettings()
+  
+  
 
   //////////////////////////////////////////////////////////////
 
+  
+  //public void hint(int which)
 
+  
+  
+  //////////////////////////////////////////////////////////////
+
+
+  //public void beginShape()
+
+  
   public void beginShape(int kind) {
     shape = kind;
     vertexCount = 0;
     curveVertexCount = 0;
 
-    polygon.reset(0);
+//    polygon.reset(0);
     fpolygon.reset(4);
     spolygon.reset(4);
 
-    polygon.interpUV = false;
+    textureImage = null;
+//    polygon.interpUV = false;
   }
 
 
-  public void vertex(float x, float y, float u, float v) {
-    vertexTexture(u, v);
-    vertex(x, y);
+  //public void edge(boolean e)
+  
+  
+  //public void normal(float nx, float ny, float nz)
+  
+  
+  //public void textureMode(int mode)
+  
+  
+  //public void texture(PImage image)
+
+
+  /*
+  public void vertex(float x, float y) {
+    if (shape == POINTS) {
+      point(x, y);
+    } else {
+      super.vertex(x, y);
+    }
   }
-
-
+  */
+  
+  
   public void vertex(float x, float y, float z) {
     showDepthWarningXYZ("vertex");
   }
+
+
+  //public void vertex(float x, float y, float u, float v)
 
 
   public void vertex(float x, float y, float z, float u, float v) {
     showDepthWarningXYZ("vertex");
   }
 
+  
+  //protected void vertexTexture(float u, float v);
+  
+  
+  public void breakShape() {
+    showWarning("This renderer cannot handle concave shapes " +
+                "or shapes with holes.");
+  }
+  
+  
+  //public void endShape()
+
 
   public void endShape(int mode) {
-    // clear the 'shape drawing' flag in case of early exit
-    //shape = 0;
-    // hm can't do anymore..
-
-    int polyVertexCount = polygon.vertexCount;
-    float polyVertices[][] = polygon.vertices;
-
     if (untransformed()) {
-      for (int i = 0; i < polyVertexCount; i++) {
-        polyVertices[i][TX] = polyVertices[i][X];
-        polyVertices[i][TY] = polyVertices[i][Y];
+      for (int i = 0; i < vertexCount; i++) {
+        vertices[i][TX] = vertices[i][X];
+        vertices[i][TY] = vertices[i][Y];
       }
     } else {
-      for (int i = 0; i < polyVertexCount; i++) {
-        polyVertices[i][TX] = ctm.multX(polyVertices[i][X], polyVertices[i][Y]);
-        polyVertices[i][TX] = ctm.multY(polyVertices[i][X], polyVertices[i][Y]);
-//        polyVertices[i][TX] = m00*polyVertices[i][X] + m01*polyVertices[i][Y] + m02;
-//        polyVertices[i][TY] = m10*polyVertices[i][X] + m11*polyVertices[i][Y] + m12;
+      for (int i = 0; i < vertexCount; i++) {
+        vertices[i][TX] = ctm.multX(vertices[i][X], vertices[i][Y]);
+        vertices[i][TX] = ctm.multY(vertices[i][X], vertices[i][Y]);
       }
     }
 
     // ------------------------------------------------------------------
     // TEXTURES
 
-    if (polygon.interpUV) {
-      fpolygon.texture(textureImage); //polygon.timage);
-    }
-
+    fpolygon.texture(textureImage);
 
     // ------------------------------------------------------------------
     // COLORS
     // calculate RGB for each vertex
 
-    spolygon.interpARGB = strokeChanged; //false;
-    fpolygon.interpARGB = fillChanged; //false;
+    spolygon.interpARGB = true; //strokeChanged; //false;
+    fpolygon.interpARGB = true; //fillChanged; //false;
 
     // all the values for r, g, b have been set with calls to vertex()
     // (no need to re-calculate anything here)
@@ -217,65 +258,25 @@ public class PGraphics2D extends PGraphics {
 
     switch (shape) {
     case POINTS:
-      if (untransformed() && (strokeWeight == 1)) {
-        if (!strokeChanged) {
-          for (int i = 0; i < polyVertexCount; i++) {
-            thin_point((int) polyVertices[i][TX], (int) polyVertices[i][TY],
-                0, strokeColor);
-          }
-        } else {
-          for (int i = 0; i < polyVertexCount; i++) {
-            thin_point((int) polyVertices[i][TX], (int) polyVertices[i][TY],
-                0, float_color(polyVertices[i][SR],
-                    polyVertices[i][SG],
-                    polyVertices[i][SB]));
-          }
-          //strokei = strokeiSaved;
+      // stroke cannot change inside beginShape(POINTS);
+      if ((ctm.m00 == ctm.m11) && (strokeWeight == 1)) {
+        for (int i = 0; i < vertexCount; i++) {
+          thin_point(vertices[i][TX], vertices[i][TY], strokeColor);
         }
       } else {
-        float f[] = polyVertices[0];
-
-        for (int i = 0; i < polyVertexCount; i++) {
-          float v[] = polyVertices[i];
-
-          // if this is the first time (i == 0)
-          // or if lighting is enabled
-          // or the stroke color has changed inside beginShape/endShape
-          // then re-calculate the color at this vertex
-          if ((i == 0) || strokeChanged) {
-            // push calculated color into 'f' (this way, f is always valid)
-            calc_lighting(v[SR], v[SG], v[SB],
-                          v[TX], v[TY], v[TZ],
-                          v[NX], v[NY], v[NZ],  f, R);
-          }
-          // uses [SA], since stroke alpha isn't moved into [A] the
-          // way that [SR] goes to [R] etc on the calc_lighting call
-          // (there's no sense in copying it to [A], except consistency
-          // in the code.. but why the extra slowness?)
-          thick_point(v[TX], v[TY], v[TZ],  f[R], f[G], f[B], f[SA]);
+        for (int i = 0; i < vertexCount; i++) {
+          float[] v = vertices[i];
+          thick_point(v[TX], v[TY], v[TZ],  v[SR], v[SG], v[SB], v[SA]);
         }
       }
       break;
 
     case LINES:
-    //case LINE_STRIP:
-    //case LINE_LOOP:
-      if (!stroke) return;
-
-      // if it's a line loop, copy the vertex data to the last element
-      //if (shape == LINE_LOOP) {
-      if (mode == CLOSE) {
-        float v0[] = polygon.vertices[0];
-        float v1[] = polygon.nextVertex();
-        polyVertexCount++; // since it had already been read above
-
-        v1[TX] = v0[TX]; v1[TY] = v0[TY]; v1[TZ] = v0[TZ];
-        v1[SR] = v0[SR]; v1[SG] = v0[SG]; v1[SB] = v0[SB];
+      if (stroke) {
+        // increment by two for individual lines
+        increment = (shape == LINES) ? 2 : 1;
+        draw_lines(vertices, vertexCount-1, 1, increment, 0);
       }
-
-      // increment by two for individual lines
-      increment = (shape == LINES) ? 2 : 1;
-      draw_lines(polyVertices, polyVertexCount-1, 1, increment, 0);
       break;
 
     case TRIANGLES:
@@ -285,20 +286,20 @@ public class PGraphics2D extends PGraphics {
       // the lines will be stroked more than necessary
       if (fill) {
         fpolygon.vertexCount = 3;
-        for (int i = 0; i < polyVertexCount-2; i += increment) {
+        for (int i = 0; i < vertexCount-2; i += increment) {
           for (int j = 0; j < 3; j++) {
-            fpolygon.vertices[j][R] = polyVertices[i+j][R];
-            fpolygon.vertices[j][G] = polyVertices[i+j][G];
-            fpolygon.vertices[j][B] = polyVertices[i+j][B];
-            fpolygon.vertices[j][A] = polyVertices[i+j][A];
+            fpolygon.vertices[j][R] = vertices[i+j][R];
+            fpolygon.vertices[j][G] = vertices[i+j][G];
+            fpolygon.vertices[j][B] = vertices[i+j][B];
+            fpolygon.vertices[j][A] = vertices[i+j][A];
 
-            fpolygon.vertices[j][TX] = polyVertices[i+j][TX];
-            fpolygon.vertices[j][TY] = polyVertices[i+j][TY];
-            fpolygon.vertices[j][TZ] = polyVertices[i+j][TZ];
+            fpolygon.vertices[j][TX] = vertices[i+j][TX];
+            fpolygon.vertices[j][TY] = vertices[i+j][TY];
+            fpolygon.vertices[j][TZ] = vertices[i+j][TZ];
 
-            if (polygon.interpUV) {
-              fpolygon.vertices[j][U] = polyVertices[i+j][U];
-              fpolygon.vertices[j][V] = polyVertices[i+j][V];
+            if (textureImage != null) {
+              fpolygon.vertices[j][U] = vertices[i+j][U];
+              fpolygon.vertices[j][V] = vertices[i+j][V];
             }
           }
           fpolygon.render();
@@ -307,13 +308,13 @@ public class PGraphics2D extends PGraphics {
       if (stroke) {
         // first draw all vertices as a line strip
         if (shape == TRIANGLE_STRIP) {
-          draw_lines(polyVertices, polyVertexCount-1, 1, 1, 0);
+          draw_lines(vertices, vertexCount-1, 1, 1, 0);
         } else {
-          draw_lines(polyVertices, polyVertexCount-1, 1, 1, 3);
+          draw_lines(vertices, vertexCount-1, 1, 1, 3);
         }
         // then draw from vertex (n) to (n+2)
         // incrementing n using the same as above
-        draw_lines(polyVertices, polyVertexCount-2, 2, increment, 0);
+        draw_lines(vertices, vertexCount-2, 2, increment, 0);
         // changed this to vertexCount-2, because it seemed
         // to be adding an extra (nonexistant) line
       }
@@ -325,20 +326,20 @@ public class PGraphics2D extends PGraphics {
       increment = (shape == QUADS) ? 4 : 2;
       if (fill) {
         fpolygon.vertexCount = 4;
-        for (int i = 0; i < polyVertexCount-3; i += increment) {
+        for (int i = 0; i < vertexCount-3; i += increment) {
           for (int j = 0; j < 4; j++) {
-            fpolygon.vertices[j][R] = polyVertices[i+j][R];
-            fpolygon.vertices[j][G] = polyVertices[i+j][G];
-            fpolygon.vertices[j][B] = polyVertices[i+j][B];
-            fpolygon.vertices[j][A] = polyVertices[i+j][A];
+            fpolygon.vertices[j][R] = vertices[i+j][R];
+            fpolygon.vertices[j][G] = vertices[i+j][G];
+            fpolygon.vertices[j][B] = vertices[i+j][B];
+            fpolygon.vertices[j][A] = vertices[i+j][A];
 
-            fpolygon.vertices[j][TX] = polyVertices[i+j][TX];
-            fpolygon.vertices[j][TY] = polyVertices[i+j][TY];
-            fpolygon.vertices[j][TZ] = polyVertices[i+j][TZ];
+            fpolygon.vertices[j][TX] = vertices[i+j][TX];
+            fpolygon.vertices[j][TY] = vertices[i+j][TY];
+            fpolygon.vertices[j][TZ] = vertices[i+j][TZ];
 
-            if (polygon.interpUV) {
-              fpolygon.vertices[j][U] = polyVertices[i+j][U];
-              fpolygon.vertices[j][V] = polyVertices[i+j][V];
+            if (textureImage != null) {
+              fpolygon.vertices[j][U] = vertices[i+j][U];
+              fpolygon.vertices[j][V] = vertices[i+j][V];
             }
           }
           fpolygon.render();
@@ -347,31 +348,31 @@ public class PGraphics2D extends PGraphics {
       if (stroke) {
         // first draw all vertices as a line strip
         if (shape == QUAD_STRIP) {
-          draw_lines(polyVertices, polyVertexCount-1, 1, 1, 0);
+          draw_lines(vertices, vertexCount-1, 1, 1, 0);
         } else {  // skip every few for quads
-          draw_lines(polyVertices, polyVertexCount, 1, 1, 4);
+          draw_lines(vertices, vertexCount, 1, 1, 4);
         }
         // then draw from vertex (n) to (n+3)
         // incrementing n by the same increment as above
-        draw_lines(polyVertices, polyVertexCount-2, 3, increment, 0);
+        draw_lines(vertices, vertexCount-2, 3, increment, 0);
       }
       break;
 
     case POLYGON:
       if (isConvex()) {
         if (fill) {
-          polygon.render();
-          if (stroke) polygon.unexpand();
+          fpolygon.renderPolygon(vertices, vertexCount);
+          //if (stroke) polygon.unexpand();
         }
 
         if (stroke) {
-          draw_lines(polyVertices, polyVertexCount-1, 1, 1, 0);
+          draw_lines(vertices, vertexCount-1, 1, 1, 0);
           // draw the last line connecting back to the first point in poly
-          svertices[0] = polyVertices[polyVertexCount-1];
-          svertices[1] = polyVertices[0];
+          svertices[0] = vertices[vertexCount-1];
+          svertices[1] = vertices[0];
           draw_lines(svertices, 1, 1, 1, 0);
         }
-      } else {
+      } else {  // not convex
         if (fill) {
           // the triangulator produces polygons that don't align
           // when smoothing is enabled. but if there is a stroke around
@@ -385,12 +386,14 @@ public class PGraphics2D extends PGraphics {
         }
 
         if (stroke) {
-          draw_lines(polyVertices, polyVertexCount-1, 1, 1, 0);
-          // draw the last line connecting back
-          // to the first point in poly
-          svertices[0] = polyVertices[polyVertexCount-1];
-          svertices[1] = polyVertices[0];
-          draw_lines(svertices, 1, 1, 1, 0);
+          draw_lines(vertices, vertexCount-1, 1, 1, 0);
+          if (mode == CLOSE) {
+            // draw the last line connecting back
+            // to the first point in poly
+            svertices[0] = vertices[vertexCount-1];
+            svertices[1] = vertices[0];
+            draw_lines(svertices, 1, 1, 1, 0);
+          }
         }
       }
       break;
@@ -413,23 +416,23 @@ public class PGraphics2D extends PGraphics {
     //int j,k;
     //float tol = 0.001f;
 
-    if (polygon.vertexCount < 3) {
-      // ERROR: this is a line or a point, render with CONVEX
+    if (vertexCount < 3) {
+      // ERROR: this is a line or a point, render as convex
       return true;
     }
 
     int flag = 0;
     // iterate along border doing dot product.
     // if the sign of the result changes, then is concave
-    for (int i = 0; i < polygon.vertexCount; i++) {
-      float[] vi = polygon.vertices[i];
-      float[] vj = polygon.vertices[(i + 1) % polygon.vertexCount];
-      float[] vk = polygon.vertices[(i + 2) % polygon.vertexCount];
-      float z = ((vj[TX] - vi[TX]) * (vk[TY] - vj[TY]) -
-                 (vj[TY] - vi[TY]) * (vk[TX] - vj[TX]));
-      if (z < 0) {
+    for (int i = 0; i < vertexCount; i++) {
+      float[] vi = vertices[i];
+      float[] vj = vertices[(i + 1) % vertexCount];
+      float[] vk = vertices[(i + 2) % vertexCount];
+      float calc = ((vj[TX] - vi[TX]) * (vk[TY] - vj[TY]) -
+                    (vj[TY] - vi[TY]) * (vk[TX] - vj[TX]));
+      if (calc < 0) {
         flag |= 1;
-      } else if (z > 0) {
+      } else if (calc > 0) {
         flag |= 2;
       }
       if (flag == 3) {
@@ -446,15 +449,136 @@ public class PGraphics2D extends PGraphics {
   }
 
 
-  // triangulate the current polygon
-  private void concaveRender() {
+  /**
+   * Triangulate the current polygon.
+   * <BR> <BR>
+   * Simple ear clipping polygon triangulation adapted from code by
+   * John W. Ratcliff (jratcliff at verant.com). Presumably
+   * <A HREF="http://www.flipcode.org/cgi-bin/fcarticles.cgi?show=63943">this</A>
+   * bit of code from the web.
+   */
+  protected void concaveRender() {
+    if (vertexOrder == null || vertexOrder.length != vertices.length) {
+      vertexOrder = new int[vertices.length];
+//      int[] temp = new int[vertices.length];
+//      // since vertex_start may not be zero, might need to keep old stuff around
+//      PApplet.arrayCopy(vertexOrder, temp, vertexCount);
+//      vertexOrder = temp;
+    }
+
+    if (tpolygon == null) {
+      tpolygon = new PPolygon(this);
+    }
+    tpolygon.reset(3);
+
+    // first we check if the polygon goes clockwise or counterclockwise
+    float area = 0;
+    for (int p = vertexCount - 1, q = 0; q < vertexCount; p = q++) {
+      area += (vertices[q][X] * vertices[p][Y] -
+               vertices[p][X] * vertices[q][Y]);
+    }
+    // ain't nuthin there
+    if (area == 0) return;
+
+    // don't allow polygons to come back and meet themselves,
+    // otherwise it will anger the triangulator
+    // http://dev.processing.org/bugs/show_bug.cgi?id=97
+    float vfirst[] = vertices[0];
+    float vlast[] = vertices[vertexCount-1];
+    if ((Math.abs(vfirst[X] - vlast[X]) < EPSILON) &&
+        (Math.abs(vfirst[Y] - vlast[Y]) < EPSILON) &&
+        (Math.abs(vfirst[Z] - vlast[Z]) < EPSILON)) {
+      vertexCount--;
+    }
+
+    // then sort the vertices so they are always in a counterclockwise order
+    for (int i = 0; i < vertexCount; i++) {
+      vertexOrder[i] = (area > 0) ? i : (vertexCount-1 - i);
+    }
+
+    // remove vc-2 Vertices, creating 1 triangle every time
+    int vc = vertexCount;  // vc will be decremented while working
+    int count = 2*vc;  // complex polygon detection
+
+    for (int m = 0, v = vc - 1; vc > 2; ) {
+      boolean snip = true;
+
+      // if we start over again, is a complex polygon
+      if (0 >= (count--)) {
+        break; // triangulation failed
+      }
+
+      // get 3 consecutive vertices <u,v,w>
+      int u = v ; if (vc <= u) u = 0;    // previous
+      v = u + 1; if (vc <= v) v = 0;     // current
+      int w = v + 1; if (vc <= w) w = 0; // next
+
+      // Upgrade values to doubles, and multiply by 10 so that we can have
+      // some better accuracy as we tessellate. This seems to have negligible
+      // speed differences on Windows and Intel Macs, but causes a 50% speed
+      // drop for PPC Macs with the bug's example code that draws ~200 points
+      // in a concave polygon. Apple has abandoned PPC so we may as well too.
+      // http://dev.processing.org/bugs/show_bug.cgi?id=774
+
+      // triangle A B C
+      double Ax = -10 * vertices[vertexOrder[u]][X];
+      double Ay =  10 * vertices[vertexOrder[u]][Y];
+      double Bx = -10 * vertices[vertexOrder[v]][X];
+      double By =  10 * vertices[vertexOrder[v]][Y];
+      double Cx = -10 * vertices[vertexOrder[w]][X];
+      double Cy =  10 * vertices[vertexOrder[w]][Y];
+
+      // first we check if <u,v,w> continues going ccw
+      if (EPSILON > (((Bx-Ax) * (Cy-Ay)) - ((By-Ay) * (Cx-Ax)))) {
+        continue;
+      }
+
+      for (int p = 0; p < vc; p++) {
+        if ((p == u) || (p == v) || (p == w)) {
+          continue;
+        }
+
+        double Px = -10 * vertices[vertexOrder[p]][X];
+        double Py =  10 * vertices[vertexOrder[p]][Y];
+
+        double ax  = Cx - Bx;  double ay  = Cy - By;
+        double bx  = Ax - Cx;  double by  = Ay - Cy;
+        double cx  = Bx - Ax;  double cy  = By - Ay;
+        double apx = Px - Ax;  double apy = Py - Ay;
+        double bpx = Px - Bx;  double bpy = Py - By;
+        double cpx = Px - Cx;  double cpy = Py - Cy;
+
+        double aCROSSbp = ax * bpy - ay * bpx;
+        double cCROSSap = cx * apy - cy * apx;
+        double bCROSScp = bx * cpy - by * cpx;
+
+        if ((aCROSSbp >= 0.0) && (bCROSScp >= 0.0) && (cCROSSap >= 0.0)) {
+          snip = false;
+        }
+      }
+
+      if (snip) {
+        tpolygon.renderTriangle(vertices[vertexOrder[u]], 
+                                vertices[vertexOrder[v]],
+                                vertices[vertexOrder[w]]);
+        m++;
+
+        // remove v from remaining polygon
+        for (int s = v, t = v + 1; t < vc; s++, t++) {
+          vertexOrder[s] = vertexOrder[t];
+        }
+        vc--;
+
+        // reset error detection counter
+        count = 2 * vc;
+      }
+    }
   }
+
   
   /*
-    // WARNING: code is not in optimum form
-    // local initiations of some variables are made to
-    // keep the code modular and easy to integrate
-    // restet triangle
+  // triangulate the current polygon
+  private void concaveRender() {
     float polyVertices[][] = polygon.vertices;
 
     if (tpolygon == null) {
@@ -472,7 +596,6 @@ public class PGraphics2D extends PGraphics {
     }
 
     tpolygon.interpX = polygon.interpX;
-    tpolygon.interpZ = polygon.interpZ;
     tpolygon.interpUV = polygon.interpUV;
     tpolygon.interpARGB = polygon.interpARGB;
 
@@ -652,8 +775,75 @@ public class PGraphics2D extends PGraphics {
   }
   */
 
+  
+  
+  //////////////////////////////////////////////////////////////
+
+  // BEZIER VERTICES
+  
+  
+  //public void bezierVertex(float x2, float y2,
+  //                         float x3, float y3,
+  //                         float x4, float y4)
+  
+  
+  //public void bezierVertex(float x2, float y2, float z2,
+  //                         float x3, float y3, float z3,
+  //                         float x4, float y4, float z4)
+
+  
+  
+  //////////////////////////////////////////////////////////////
+
+  // CURVE VERTICES
+  
+  
+  //public void curveVertex(float x, float y)
+  
+  
+  //public void curveVertex(float x, float y, float z)
 
 
+
+  //////////////////////////////////////////////////////////////
+
+  // FLUSH
+  
+  
+  //public void flush()
+  
+  
+
+  //////////////////////////////////////////////////////////////
+
+  // PRIMITIVES
+  
+  
+  //public void point(float x, float y)
+  
+  
+  public void point(float x, float y, float z) {
+    showDepthWarningXYZ("point");
+  }
+  
+  
+  //public void line(float x1, float y1, float x2, float y2)
+  
+  
+  //public void line(float x1, float y1, float z1,
+  //                 float x2, float y2, float z2)
+  
+  
+  //public void triangle(float x1, float y1, 
+  //                     float x2, float y2,
+  //                     float x3, float y3)
+  
+  
+  //public void quad(float x1, float y1, float x2, float y2,
+  //                 float x3, float y3, float x4, float y4)
+
+  
+  
   //////////////////////////////////////////////////////////////
 
   // RECT
@@ -810,10 +1000,10 @@ public class PGraphics2D extends PGraphics {
   private void flat_circle_stroke(int xC, int yC, int r) {
     int x = 0, y = r, u = 1, v = 2 * r - 1, E = 0;
     while (x < y) {
-      thin_point(xC + x, yC + y, 0, strokeColor); // NNE
-      thin_point(xC + y, yC - x, 0, strokeColor); // ESE
-      thin_point(xC - x, yC - y, 0, strokeColor); // SSW
-      thin_point(xC - y, yC + x, 0, strokeColor); // WNW
+      thin_point(xC + x, yC + y, strokeColor); // NNE
+      thin_point(xC + y, yC - x, strokeColor); // ESE
+      thin_point(xC - x, yC - y, strokeColor); // SSW
+      thin_point(xC - y, yC + x, strokeColor); // WNW
 
       x++; E += u; u += 2;
       if (v < 2 * E) {
@@ -821,10 +1011,10 @@ public class PGraphics2D extends PGraphics {
       }
       if (x > y) break;
 
-      thin_point(xC + y, yC + x, 0, strokeColor); // ENE
-      thin_point(xC + x, yC - y, 0, strokeColor); // SSE
-      thin_point(xC - y, yC - x, 0, strokeColor); // WSW
-      thin_point(xC - x, yC + y, 0, strokeColor); // NNW
+      thin_point(xC + y, yC + x, strokeColor); // ENE
+      thin_point(xC + x, yC - y, strokeColor); // SSE
+      thin_point(xC - y, yC - x, strokeColor); // WSW
+      thin_point(xC - x, yC + y, strokeColor); // NNW
     }
   }
 
@@ -844,16 +1034,16 @@ public class PGraphics2D extends PGraphics {
     int x = 0, y = r, u = 1, v = 2 * r - 1, E = 0;
     while (x < y) {
       for (int xx = xc; xx < xc + x; xx++) {  // NNE
-        thin_point(xx, yc + y, 0, fillColor);
+        thin_point(xx, yc + y, fillColor);
       }
       for (int xx = xc; xx < xc + y; xx++) {  // ESE
-        thin_point(xx, yc - x, 0, fillColor);
+        thin_point(xx, yc - x, fillColor);
       }
       for (int xx = xc - x; xx < xc; xx++) {  // SSW
-        thin_point(xx, yc - y, 0, fillColor);
+        thin_point(xx, yc - y, fillColor);
       }
       for (int xx = xc - y; xx < xc; xx++) {  // WNW
-        thin_point(xx, yc + x, 0, fillColor);
+        thin_point(xx, yc + x, fillColor);
       }
 
       x++; E += u; u += 2;
@@ -863,16 +1053,16 @@ public class PGraphics2D extends PGraphics {
       if (x > y) break;
 
       for (int xx = xc; xx < xc + y; xx++) {  // ENE
-        thin_point(xx, yc + x, 0, fillColor);
+        thin_point(xx, yc + x, fillColor);
       }
       for (int xx = xc; xx < xc + x; xx++) {  // SSE
-        thin_point(xx, yc - y, 0, fillColor);
+        thin_point(xx, yc - y, fillColor);
       }
       for (int xx = xc - y; xx < xc; xx++) {  // WSW
-        thin_point(xx, yc - x, 0, fillColor);
+        thin_point(xx, yc - x, fillColor);
       }
       for (int xx = xc - x; xx < xc; xx++) {  // NNW
-        thin_point(xx, yc + y, 0, fillColor);
+        thin_point(xx, yc + y, fillColor);
       }
     }
   }
@@ -885,14 +1075,14 @@ public class PGraphics2D extends PGraphics {
                                            boolean filling) {
     if (filling) {
       for (int i = centerX - ellipseX + 1; i < centerX + ellipseX; i++) {
-        thin_point(i, centerY - ellipseY, 0, fillColor);
-        thin_point(i, centerY + ellipseY, 0, fillColor);
+        thin_point(i, centerY - ellipseY, fillColor);
+        thin_point(i, centerY + ellipseY, fillColor);
       }
     } else {
-      thin_point(centerX - ellipseX, centerY + ellipseY, 0, strokeColor);
-      thin_point(centerX + ellipseX, centerY + ellipseY, 0, strokeColor);
-      thin_point(centerX - ellipseX, centerY - ellipseY, 0, strokeColor);
-      thin_point(centerX + ellipseX, centerY - ellipseY, 0, strokeColor);
+      thin_point(centerX - ellipseX, centerY + ellipseY, strokeColor);
+      thin_point(centerX + ellipseX, centerY + ellipseY, strokeColor);
+      thin_point(centerX - ellipseX, centerY - ellipseY, strokeColor);
+      thin_point(centerX + ellipseX, centerY - ellipseY, strokeColor);
     }
   }
 
@@ -1154,9 +1344,7 @@ public class PGraphics2D extends PGraphics {
       pixels[offset] = color;
     }
 
-    // points are inherently flat, but always tangent
-    // to the screen surface. the z is only so that things
-    // get scaled properly if the pt is way in back
+    
     private void thick_point(float x, float y, float z, // note floats
                              float r, float g, float b, float a) {
       spolygon.reset(4);
@@ -1510,7 +1698,7 @@ public class PGraphics2D extends PGraphics {
 
       } else {  // use old line code for thickness > 1
 
-          if ((strokeWeight < 2) && !strokeChanged) {
+          if (strokeWeight < 2) {  // && !strokeChanged) {
             // need to set color at least once?
 
             // THIS PARTICULAR CASE SHOULD NO LONGER BE REACHABLE
@@ -1538,23 +1726,19 @@ public class PGraphics2D extends PGraphics {
 
     //////////////////////////////////////////////////////////////
 
-    // UGLY RENDERING SHIT
+    // UGLY RENDERING SHITE
 
 
-    private void thin_point(int x, int y, float z, int color) {
-      // necessary? [fry] yes! [toxi]
-      if (x<0 || x>width1 || y<0 || y>height1) return;
+    private void thin_point(float fx, float fy, int color) {
+      int x = (int) (fx + 0.4999f);
+      int y = (int) (fy + 0.4999f);
+      if (x < 0 || x > width1 || y < 0 || y > height1) return;
 
       int index = y*width + x;
       if ((color & 0xff000000) == 0xff000000) {  // opaque
         pixels[index] = color;
 
       } else {  // transparent
-        // couldn't seem to get this working correctly
-
-        //pixels[index] = _blend(pixels[index],
-        //                     color & 0xffffff, (color >> 24) & 0xff);
-
         // a1 is how much of the orig pixel
         int a2 = (color >> 24) & 0xff;
         int a1 = a2 ^ 0xff;
@@ -1567,18 +1751,6 @@ public class PGraphics2D extends PGraphics {
         int b = (a1 * ( p1        & 0xff) + a2 * ( p2        & 0xff)) >> 8;
 
         pixels[index] =  0xff000000 | (r << 8) | g | b;
-
-        //pixels[index] = _blend(pixels[index],
-        //                     color & 0xffffff, (color >> 24) & 0xff);
-        /*
-        pixels[index] = 0xff000000 |
-          ((((a1 * ((pixels[index] >> 16) & 0xff) +
-              a2 * ((color         >> 16) & 0xff)) & 0xff00) << 24) << 8) |
-          (((a1 * ((pixels[index] >>  8) & 0xff) +
-             a2 * ((color         >>  8) & 0xff)) & 0xff00) << 16) |
-          (((a1 * ( pixels[index]        & 0xff) +
-             a2 * ( color                & 0xff)) >> 8));
-        */
       }
     }
 
@@ -1843,22 +2015,22 @@ public class PGraphics2D extends PGraphics {
 
 
     // doesn't really do lighting per se...
-    private void calc_lighting(float r, float g, float b,
-                               float ix, float iy, float iz,
-                               float nx, float ny, float nz,
-                               float target[], int toffset) {
-      target[toffset + 0] = r;
-      target[toffset + 1] = g;
-      target[toffset + 2] = b;
-    }
+//    private void calc_lighting(float r, float g, float b,
+//                               float ix, float iy, float iz,
+//                               float nx, float ny, float nz,
+//                               float target[], int toffset) {
+//      target[toffset + 0] = r;
+//      target[toffset + 1] = g;
+//      target[toffset + 2] = b;
+//    }
 
 
-    static private final int float_color(float r, float g, float b) {
-      return (0xff000000 |
-              ((int) (255.0f * r)) << 16 |
-              ((int) (255.0f * g)) << 8 |
-              ((int) (255.0f * b)));
-    }
+//    static private final int float_color(float r, float g, float b) {
+//      return (0xff000000 |
+//              ((int) (255.0f * r)) << 16 |
+//              ((int) (255.0f * g)) << 8 |
+//              ((int) (255.0f * b)));
+//    }
 
     public final static int _blend(int p1, int p2, int a2) {
       // scale alpha by alpha of incoming pixel
