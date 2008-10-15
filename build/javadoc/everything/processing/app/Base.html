@@ -180,7 +180,7 @@ The base class for the main processing application.
 <TD><CODE><B><A HREF="../../processing/app/Base.html#countLines(java.lang.String)">countLines</A></B>(java.lang.String&nbsp;what)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get the number of lines in a file by counting the number of newline 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get the number of lines in a file by counting the number of newline
  characters inside a String (and adding 1).</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
@@ -202,11 +202,11 @@ The base class for the main processing application.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/app/Base.html#getContentsPath(java.lang.String)">getContentsPath</A></B>(java.lang.String&nbsp;filename)</CODE>
+<CODE>static&nbsp;java.io.File</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Base.html#getContentFile(java.lang.String)">getContentFile</A></B>(java.lang.String&nbsp;name)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieve a path to something in the Processing folder.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get a path for something in the Processing lib folder.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -215,14 +215,6 @@ The base class for the main processing application.
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/app/Base.html#getLibContentsPath(java.lang.String)">getLibContentsPath</A></B>(java.lang.String&nbsp;filename)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get a path for something in the Processing lib folder.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -592,7 +584,7 @@ The base class for the main processing application.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/app/Base.html#showReference(java.lang.String)">showReference</A></B>(java.lang.String&nbsp;referenceFile)</CODE>
+<TD><CODE><B><A HREF="../../processing/app/Base.html#showReference(java.lang.String)">showReference</A></B>(java.lang.String&nbsp;filename)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -1099,7 +1091,7 @@ public static void <B>registerWindowCloseKeys</B>(javax.swing.JRootPane&nbsp;roo
 <A NAME="showReference(java.lang.String)"><!-- --></A><H3>
 showReference</H3>
 <PRE>
-public static void <B>showReference</B>(java.lang.String&nbsp;referenceFile)</PRE>
+public static void <B>showReference</B>(java.lang.String&nbsp;filename)</PRE>
 <DL>
 <DD><DL>
 </DL>
@@ -1198,25 +1190,10 @@ public static void <B>showError</B>(java.lang.String&nbsp;title,
 </DL>
 <HR>
 
-<A NAME="getContentsPath(java.lang.String)"><!-- --></A><H3>
-getContentsPath</H3>
+<A NAME="getContentFile(java.lang.String)"><!-- --></A><H3>
+getContentFile</H3>
 <PRE>
-public static java.lang.String <B>getContentsPath</B>(java.lang.String&nbsp;filename)</PRE>
-<DL>
-<DD>Retrieve a path to something in the Processing folder. Eventually this
- may refer to the Contents subfolder of Processing.app, if we bundle things
- up as a single .app file with no additional folders.
-<P>
-<DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="getLibContentsPath(java.lang.String)"><!-- --></A><H3>
-getLibContentsPath</H3>
-<PRE>
-public static java.lang.String <B>getLibContentsPath</B>(java.lang.String&nbsp;filename)</PRE>
+public static java.io.File <B>getContentFile</B>(java.lang.String&nbsp;name)</PRE>
 <DL>
 <DD>Get a path for something in the Processing lib folder.
 <P>
@@ -1261,7 +1238,7 @@ countLines</H3>
 <PRE>
 public static int <B>countLines</B>(java.lang.String&nbsp;what)</PRE>
 <DL>
-<DD>Get the number of lines in a file by counting the number of newline 
+<DD>Get the number of lines in a file by counting the number of newline
  characters inside a String (and adding 1).
 <P>
 <DD><DL>

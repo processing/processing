@@ -1473,6 +1473,14 @@ Main graphics and rendering context, as well as the base API implementation.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../processing/core/PMatrix.html" title="interface in processing.core">PMatrix</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#getMatrix()">getMatrix</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;<A HREF="../../processing/core/PMatrix2D.html" title="class in processing.core">PMatrix2D</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/core/PGraphics.html#getMatrix(processing.core.PMatrix2D)">getMatrix</A></B>(<A HREF="../../processing/core/PMatrix2D.html" title="class in processing.core">PMatrix2D</A>&nbsp;target)</CODE>
 
@@ -2034,6 +2042,14 @@ Main graphics and rendering context, as well as the base API implementation.
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Maps a three dimensional point to its placement on-screen.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#setMatrix(processing.core.PMatrix)">setMatrix</A></B>(<A HREF="../../processing/core/PMatrix.html" title="interface in processing.core">PMatrix</A>&nbsp;source)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set the current transformation matrix to the contents of another.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -5350,6 +5366,20 @@ public void <B>applyMatrix</B>(float&nbsp;n00,
 </DL>
 <HR>
 
+<A NAME="getMatrix()"><!-- --></A><H3>
+getMatrix</H3>
+<PRE>
+public <A HREF="../../processing/core/PMatrix.html" title="interface in processing.core">PMatrix</A> <B>getMatrix</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
 <A NAME="getMatrix(processing.core.PMatrix2D)"><!-- --></A><H3>
 getMatrix</H3>
 <PRE>
@@ -5374,6 +5404,22 @@ public <A HREF="../../processing/core/PMatrix3D.html" title="class in processing
 <DL>
 <DD>Copy the current transformation matrix into the specified target.
  Pass in null to create a new matrix.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setMatrix(processing.core.PMatrix)"><!-- --></A><H3>
+setMatrix</H3>
+<PRE>
+public void <B>setMatrix</B>(<A HREF="../../processing/core/PMatrix.html" title="interface in processing.core">PMatrix</A>&nbsp;source)</PRE>
+<DL>
+<DD>Set the current transformation matrix to the contents of another.
 <P>
 <DD><DL>
 </DL>
