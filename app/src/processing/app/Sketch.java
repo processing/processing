@@ -1697,7 +1697,9 @@ public class Sketch {
       }
     }
 
-    File bagelJar = Base.getContentFile("core.jar");
+    File bagelJar = Base.isMacOS() ? 
+      Base.getContentFile("core.jar") :
+      Base.getContentFile("lib/core.jar");
     if (separateJar) {
       Base.copyFile(bagelJar, new File(appletFolder, "core.jar"));
       archives.append(",core.jar");
@@ -2134,8 +2136,9 @@ public class Sketch {
 
     /// add core.jar to the jar destination folder
 
-    //System.out.println(jarFolder);
-    File bagelJar = Base.getContentFile("core.jar");
+    File bagelJar = Base.isMacOS() ? 
+      Base.getContentFile("core.jar") :
+      Base.getContentFile("lib/core.jar");
     Base.copyFile(bagelJar, new File(jarFolder, "core.jar"));
     jarListVector.add("core.jar");
 
