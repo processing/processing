@@ -1,4 +1,6 @@
 0151 core
+X NullPointerException on curveVertex() when using more than 128 vertices
+X   http://dev.processing.org/bugs/show_bug.cgi?id=952
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
