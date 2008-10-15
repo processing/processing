@@ -2218,8 +2218,12 @@ public class Editor extends JFrame implements RunnerListener {
             line--;
           }
         }
-        textarea.select(textarea.getLineStartOffset(line),
-                        textarea.getLineStopOffset(line) - 1);
+        if (line < 0 || line >= textarea.getLineCount()) {
+          System.err.println("Bad error line: " + line);
+        } else {
+          textarea.select(textarea.getLineStartOffset(line),
+                          textarea.getLineStopOffset(line) - 1);
+        }
       }
     }
 

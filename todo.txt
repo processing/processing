@@ -1,4 +1,13 @@
 0150 pde
+X ArrayIndexOutOfBoundsException after pressing Run with release 0149
+X   http://dev.processing.org/bugs/show_bug.cgi?id=949
+X update java to release 1.6.0_07 on windows and linux
+X   http://dev.processing.org/bugs/show_bug.cgi?id=950
+
+
+0151 pde
+_ Fix error message spew on Linux when using "Save As"
+_   http://dev.processing.org/bugs/show_bug.cgi?id=951
 
 
 thread hang/block problem
