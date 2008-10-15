@@ -179,7 +179,9 @@ public class Compiler {
           }
         }
         //System.out.println("preproc offset is " + sketch.getCode(codeIndex).preprocOffset);
-        codeLine = dotJavaLineIndex - sketch.getCode(codeIndex).getPreprocOffset();
+        if (codeLine != -1) {
+          codeLine = dotJavaLineIndex - sketch.getCode(codeIndex).getPreprocOffset();
+        }
         //System.out.println("code line now " + codeLine);
         exception = new RunnerException(errorMessage, codeIndex, codeLine, -1, false);
 
@@ -212,6 +214,9 @@ public class Compiler {
           //import poo.shoe.blah.*;
           String what = errorMessage.substring("The import ".length());
           what = what.substring(0, what.indexOf(' '));
+          System.err.println("Starting with release 0149, libraries must be " + 
+                             "installed in a folder named 'libraries' " +
+                             "inside the 'sketchbook' folder.");
           exception.setMessage("The package " + 
                                "\u201C" + what + "\u201D" + 
                                " does not exist. " + 
