@@ -967,8 +967,10 @@ public class PGraphicsOpenGL extends PGraphics3D {
       gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER,
                          GL.GL_LINEAR_MIPMAP_LINEAR);
 
-      gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP);
-      gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP);
+//      gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP);
+//      gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP);
+      gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE);
+      gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_EDGE);
 
       //
 
@@ -2441,6 +2443,26 @@ public class PGraphicsOpenGL extends PGraphics3D {
       }
       yindex -= width*2;
     }
+    
+    // When height is an odd number, the middle line needs to be 
+    // endian swapped, but not y-swapped.
+    // http://dev.processing.org/bugs/show_bug.cgi?id=944
+    if ((height % 2) == 1) {
+      index = (height / 2) * width;
+      if (BIG_ENDIAN) {
+        for (int x = 0; x < width; x++) {
+          // ignores alpha component, just sets it opaque
+          pixels[index] = 0xff000000 | ((pixels[index] >> 8)  & 0x00ffffff);
+        }
+      } else {
+        for (int x = 0; x < width; x++) {
+          pixels[index] = 0xff000000 |
+            ((pixels[index] << 16) & 0xff0000) |
+             (pixels[index] & 0xff00) |
+            ((pixels[index] >> 16) & 0xff);
+        }
+      }
+    }
   }
 
 
@@ -2969,10 +2991,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
   // SAVE
   
   
-  public void save(String filename) {
-    loadPixels();
-    super.save(filename);
-  }
+  //public void save(String filename)  // PImage calls loadPixels()
 
   
 
