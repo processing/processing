@@ -1624,7 +1624,10 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   //public boolean displayable()  // true
   
   
-  //public boolean dimensional()  // false
+  //public boolean is2D()  // true
+  
+  
+  //public boolean is3D()  // false
 
   
 

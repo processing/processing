@@ -3,6 +3,57 @@ file is a list of changes between each release. this is not a general
 reference of how to use processing, because the information for older
 releases will be super crusty. 
 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
+ABOUT REV 0151 - 16 October 2008
+
+Read the 0149 release notes! This release contains only additions and
+a couple bug fixes.
+
+[ bug fixes ] 
+
++ Fix NullPointerException on curveVertex() when using more than 128 vertices
+  http://dev.processing.org/bugs/show_bug.cgi?id=952
+
++ Fix text(x, y, w, h) once again. That text just won't stay in the box.
+  http://dev.processing.org/bugs/show_bug.cgi?id=954
+
+[ changes / additions ] 
+
++ Your childhood friend the smooth() command is returning to P3D. Right now 
+  internal lines of shapes may be visible when smoothing is enabled in P3D, 
+  but that will be fixed in a future release.
+  http://dev.processing.org/bugs/show_bug.cgi?id=957
+
++ Crazy old Uncle Strokeweight is also returning to P3D, however he still 
+  hasn't turned himself around and retains his old baggage:
+
+  With P2D, P3D, and OPENGL, series of connected lines (such as the stroke 
+  around a polygon, triangle, or ellipse) produce unattractive results when 
+  strokeWeight is set.
+  http://dev.processing.org/bugs/show_bug.cgi?id=955
+
+  When used with P3D, strokeWeight does not interpolate the Z-coordinates 
+  of the lines, which means that when rotated, these flat lines may 
+  disappear. (Since, uh, lines are, you know, flat.) The OPENGL renderer 
+  setting does not share this problem because it always draws lines 
+  perpendicular to the screen (which we hope to do in a future release).
+  http://dev.processing.org/bugs/show_bug.cgi?id=956
+
+  The original strokeWeight() bug, which also contains a code 
+  example for those wanting to do their own thick line code:
+  http://dev.processing.org/bugs/show_bug.cgi?id=123
+
++ Library authors note that the dimensional() method in PGraphics has been 
+  split into is2D() and is3D() for better congruence with use.
+
+[ cannot fix ]
+
++ Some file dialogs on Linux produce a stream of error chatter to the
+  console. This has been identified as a Sun bug. 
+  http://dev.processing.org/bugs/show_bug.cgi?id=951
+
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 

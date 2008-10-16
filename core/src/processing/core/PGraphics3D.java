@@ -1025,12 +1025,12 @@ public class PGraphics3D extends PGraphics {
     for (int i = start; i < stop; i++) {
       float a[] = vertices[lines[i][VERTEX1]];
 
-      if (raw.dimensional()) {
+      if (raw.is3D()) {
         if (a[VW] != 0) {
           raw.stroke(a[SR], a[SG], a[SB], a[SA]);
           raw.vertex(a[VX] / a[VW], a[VY] / a[VW], a[VZ] / a[VW]);
         }
-      } else {
+      } else {  // if is2D()
         raw.stroke(a[SR], a[SG], a[SB], a[SA]);
         raw.vertex(a[TX], a[TY]);
       }
@@ -1105,8 +1105,7 @@ public class PGraphics3D extends PGraphics {
   }
 
   
-  protected void renderLines(int start, int stop) {
-    //for (int i = 0; i < lineCount; i ++) {
+  protected void renderLines(int start, int stop) {    
     for (int i = start; i < stop; i++) {
       float a[] = vertices[lines[i][VERTEX1]];
       float b[] = vertices[lines[i][VERTEX2]];
@@ -1143,31 +1142,108 @@ public class PGraphics3D extends PGraphics {
       */
       // end 2d-hack
 
-      line.reset();
+      if (a[SW] > 1.25f || a[SW] < 0.75f) {
+        float ox1 = a[TX];
+        float oy1 = a[TY];
+        float ox2 = b[TX];
+        float oy2 = b[TY];
+        
+        float dX = ox2 - ox1 + EPSILON;
+        float dY = oy2 - oy1 + EPSILON;
+        float len = (float) Math.sqrt(dX*dX + dY*dY);
 
-      line.setIntensities(a[SR], a[SG], a[SB], a[SA],
-                          b[SR], b[SG], b[SB], b[SA]);
+        // TODO strokeWidth should be transformed!
+        float rh = a[SW] / len;
 
-      line.setVertices(a[TX], a[TY], a[TZ],
-                       b[TX], b[TY], b[TZ]);
+        float dx0 = rh * dY;
+        float dy0 = rh * dX;
+        float dx1 = rh * dY;
+        float dy1 = rh * dX;
+        
+        float ax1 = ox1+dx0;
+        float ay1 = oy1-dy0;
+        
+        float ax2 = ox1-dx0;
+        float ay2 = oy1+dy0;
 
-      /*
-      // Seems okay to remove this because these vertices are not used again,
-      // but if problems arise, this needs to be uncommented because the above
-      // change is destructive and may need to be undone before proceeding.
-      if (drawing2D() && a[MZ] == 0) {
-        a[X] -= 0.01;
-        a[Y] -= 0.01;
-        a[VX] -= 0.01*a[VW];
-        a[VY] -= 0.01*a[VW];
-        b[X] -= 0.01;
-        b[Y] -= 0.01;
-        b[VX] -= 0.01*b[VW];
-        b[VY] -= 0.01*b[VW];
+        float bx1 = ox2+dx1;
+        float by1 = oy2-dy1;
+
+        float bx2 = ox2-dx1;
+        float by2 = oy2+dy1;
+
+        if (smooth) {
+          smoothTriangle.reset(3);
+          smoothTriangle.smooth = true;
+          smoothTriangle.interpARGB = true;  // ?
+
+          // render first triangle for thick line
+          smoothTriangle.setVertices(ax1, ay1, a[TZ],
+                               bx2, by2, b[TZ],
+                               ax2, ay2, a[TZ]);
+          smoothTriangle.setIntensities(a[SR], a[SG], a[SB], a[SA],
+                                  b[SR], b[SG], b[SB], b[SA],
+                                  a[SR], a[SG], a[SB], a[SA]);
+          smoothTriangle.render();
+
+          // render second triangle for thick line
+          smoothTriangle.setVertices(ax1, ay1, a[TZ],
+                               bx2, by2, b[TZ],
+                               bx1, by1, b[TZ]);
+          smoothTriangle.setIntensities(a[SR], a[SG], a[SB], a[SA],
+                                  b[SR], b[SG], b[SB], b[SA],
+                                  b[SR], b[SG], b[SB], b[SA]);
+          smoothTriangle.render();
+
+        } else {
+          triangle.reset();
+
+          // render first triangle for thick line
+          triangle.setVertices(ax1, ay1, a[TZ],
+                               bx2, by2, b[TZ],
+                               ax2, ay2, a[TZ]);
+          triangle.setIntensities(a[SR], a[SG], a[SB], a[SA],
+                                  b[SR], b[SG], b[SB], b[SA],
+                                  a[SR], a[SG], a[SB], a[SA]);
+          triangle.render();
+
+          // render second triangle for thick line
+          triangle.setVertices(ax1, ay1, a[TZ],
+                               bx2, by2, b[TZ],
+                               bx1, by1, b[TZ]);
+          triangle.setIntensities(a[SR], a[SG], a[SB], a[SA],
+                                  b[SR], b[SG], b[SB], b[SA],
+                                  b[SR], b[SG], b[SB], b[SA]);
+          triangle.render();
+        }
+
+      } else {
+        line.reset();
+
+        line.setIntensities(a[SR], a[SG], a[SB], a[SA],
+                            b[SR], b[SG], b[SB], b[SA]);
+
+        line.setVertices(a[TX], a[TY], a[TZ],
+                         b[TX], b[TY], b[TZ]);
+        
+        /*
+        // Seems okay to remove this because these vertices are not used again,
+        // but if problems arise, this needs to be uncommented because the above
+        // change is destructive and may need to be undone before proceeding.
+        if (drawing2D() && a[MZ] == 0) {
+          a[X] -= 0.01;
+          a[Y] -= 0.01;
+          a[VX] -= 0.01*a[VW];
+          a[VY] -= 0.01*a[VW];
+          b[X] -= 0.01;
+          b[Y] -= 0.01;
+          b[VX] -= 0.01*b[VW];
+          b[VY] -= 0.01*b[VW];
+        }
+        */
+
+        line.draw();
       }
-      */
-
-      line.draw();
     }
   }
   
@@ -1195,14 +1271,14 @@ public class PGraphics3D extends PGraphics {
       float a[] = vertices[lines[i][VERTEX1]];
       float b[] = vertices[lines[i][VERTEX2]];
 
-      if (raw.dimensional()) {
+      if (raw.is3D()) {
         if ((a[VW] != 0) && (b[VW] != 0)) {
           raw.stroke(a[SR], a[SG], a[SB], a[SA]);
           raw.vertex(a[VX] / a[VW], a[VY] / a[VW], a[VZ] / a[VW]);
           raw.stroke(b[SR], b[SG], b[SB], b[SA]);
           raw.vertex(b[VX] / b[VW], b[VY] / b[VW], b[VZ] / b[VW]);
         }
-      } else {
+      } else if (raw.is2D()) {
         raw.stroke(a[SR], a[SG], a[SB], a[SA]);
         raw.vertex(a[TX], a[TY]);
         raw.stroke(b[SR], b[SG], b[SB], b[SA]);
@@ -2252,7 +2328,7 @@ public class PGraphics3D extends PGraphics {
       int tex = triangles[i][TEXTURE_INDEX];
       PImage texImage = (tex > -1) ? textures[tex] : null;
       if (texImage != null) {
-        if (raw.dimensional()) {  // drawing to a 3D renderer
+        if (raw.is3D()) {
           if ((a[VW] != 0) && (b[VW] != 0) && (c[VW] != 0)) {
             raw.fill(ar, ag, ab, a[A]);
             raw.vertex(a[VX] / a[VW], a[VY] / a[VW], a[VZ] / a[VW], a[U], a[V]);
@@ -2261,7 +2337,7 @@ public class PGraphics3D extends PGraphics {
             raw.fill(cr, cg, cb, c[A]);
             raw.vertex(c[VX] / c[VW], c[VY] / c[VW], c[VZ] / c[VW], c[U], c[V]);
           }
-        } else {  // drawing to a 2D renderer
+        } else if (raw.is2D()) {
           raw.fill(ar, ag, ab, a[A]);
           raw.vertex(a[TX], a[TY], a[U], a[V]);
           raw.fill(br, bg, bb, b[A]);
@@ -2270,7 +2346,7 @@ public class PGraphics3D extends PGraphics {
           raw.vertex(c[TX], c[TY], c[U], c[V]);
         }
       } else {  // no texture
-        if (raw.dimensional()) {
+        if (raw.is3D()) {
           if ((a[VW] != 0) && (b[VW] != 0) && (c[VW] != 0)) {
             raw.fill(ar, ag, ab, a[A]);
             raw.vertex(a[VX] / a[VW], a[VY] / a[VW], a[VZ] / a[VW]);
@@ -2279,7 +2355,7 @@ public class PGraphics3D extends PGraphics {
             raw.fill(cr, cg, cb, c[A]);
             raw.vertex(c[VX] / c[VW], c[VY] / c[VW], c[VZ] / c[VW]);
           }
-        } else {  // raw instanceof PGraphics2D
+        } else if (raw.is2D()){  
           raw.fill(ar, ag, ab, a[A]);
           raw.vertex(a[TX], a[TY]);
           raw.fill(br, bg, bb, b[A]);
@@ -3491,11 +3567,11 @@ public class PGraphics3D extends PGraphics {
   // STROKE CAP/JOIN/WEIGHT
   
   
-  public void strokeWeight(float weight) {
-    if (weight != DEFAULT_STROKE_WEIGHT) {
-      showMethodWarning("strokeWeight");
-    }
-  }
+//  public void strokeWeight(float weight) {
+//    if (weight != DEFAULT_STROKE_WEIGHT) {
+//      showMethodWarning("strokeWeight");
+//    }
+//  }
 
 
   public void strokeJoin(int join) {
@@ -3997,12 +4073,14 @@ public class PGraphics3D extends PGraphics {
   
   
   //public boolean displayable()
+
+
+  public boolean is2D() {
+    return false;
+  }
   
   
-  /**
-   * Returns true because this renderer supports 3D drawing.
-   */
-  public boolean dimensional() {
+  public boolean is3D() {
     return true;
   }
   

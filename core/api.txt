@@ -358,7 +358,8 @@
   static public void showException(String msg)
 
   public boolean displayable()
-  public boolean dimensional()  // better name for this?
+  public boolean is2D()
+  public boolean is3D()
 
 //
 

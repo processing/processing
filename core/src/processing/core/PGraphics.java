@@ -5092,9 +5092,17 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Return true if this renderer supports 3D drawing. Defaults to false.
+   * Return true if this renderer supports 2D drawing. Defaults to true.
    */
-  public boolean dimensional() {
+  public boolean is2D() {
+    return true;
+  }
+  
+  
+  /**
+   * Return true if this renderer supports 2D drawing. Defaults to true.
+   */
+  public boolean is3D() {
     return false;
   }
 }
