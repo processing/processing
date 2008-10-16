@@ -6,6 +6,11 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=954
 o dataFolder() might be flawed b/c it's referring to contents of jar file
 o   for input, better to use openStream
 X   clear up the javadoc on this
+X odd-size height will make blue line across image in saveFrame()
+X   http://dev.processing.org/bugs/show_bug.cgi?id=944
+X   probably the pixel flipping code (and endian sorting) not happening
+X   because the blue comes from the byte order flip
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=post;num=1219196429
 
 earlier
 X alter bezier and curve matrices to use PMatrix
@@ -445,6 +450,8 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 
 LIBRARIES / PGraphicsOpenGL
 
+_ OpenGL is rendering darker in 0149+ 
+_   http://dev.processing.org/bugs/show_bug.cgi?id=958
 _ switch to glWindowPos() instead of glRasterPos() silliness
 _ implement setImpl() instead of set() inside PGraphicsOpenGL
 _   http://dev.processing.org/bugs/show_bug.cgi?id=943
@@ -456,11 +463,6 @@ _ copy() does not update the screen with OpenGL
 _   http://dev.processing.org/bugs/show_bug.cgi?id=933
 _ set() requires updatePixels() with OpenGL
 _   http://dev.processing.org/bugs/show_bug.cgi?id=705
-_ odd-size height will make blue line across image in saveFrame()
-_   http://dev.processing.org/bugs/show_bug.cgi?id=944
-_   probably the pixel flipping code (and endian sorting) not happening
-_   because the blue comes from the byte order flip
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=post;num=1219196429
 _ first few frames of OpenGL sketches on Windows run slowly
 _   http://dev.processing.org/bugs/show_bug.cgi?id=874
 _ updatePixels wth OpenGL requires a lot of memory, need better texture update
