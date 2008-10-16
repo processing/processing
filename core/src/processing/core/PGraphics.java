@@ -2935,7 +2935,12 @@ public class PGraphics extends PImage implements PConstants {
     }
 
     float boxHeight = y2 - y1;
-    int lineFitCount = 1 + PApplet.floor((boxHeight - textAscent()) / textLeading);
+    //int lineFitCount = 1 + PApplet.floor((boxHeight - textAscent()) / textLeading);
+    // incorporate textAscent() for the top (baseline will be y1 + ascent)
+    // and textDescent() for the bottom, so that lower parts of letters aren't
+    // outside the box. [0151]
+    float topAndBottom = textAscent() + textDescent();
+    int lineFitCount = 1 + PApplet.floor((boxHeight - topAndBottom) / textLeading);
     int lineCount = Math.min(textBreakCount, lineFitCount);
 
     if (textAlignY == CENTER) {
@@ -2986,14 +2991,10 @@ public class PGraphics extends PImage implements PConstants {
         if (runningX + wordWidth > boxWidth) {
           if (runningX != 0) {
             // Next word is too big, output the current line and advance
-            //textLineImpl(buffer, lineStart, index, x, y);
+            index = wordStart;
             textSentenceBreak(lineStart, index);
-            // only increment index if a word wasn't broken inside the
-            // do/while loop below..
-
             // Eat whitespace because multiple spaces don't count for s*
             // when they're at the end of a line.
-            //index = wordStop;  // back that azz up
             while ((index < stop) && (buffer[index] == ' ')) {
               index++;
             }
@@ -3017,8 +3018,6 @@ public class PGraphics extends PImage implements PConstants {
           lineStart = index;
           wordStart = index;
           runningX = 0;
-//          y += textLeading;
-//          if (y > y2) return y;  // box is now full
 
         } else if (index == stop) {
           // last line in the block, time to unload

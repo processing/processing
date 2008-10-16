@@ -2232,7 +2232,7 @@ public class PApplet extends Applet
     try {
       g.save(savePath("screen-" + nf(frameCount, 4) + ".tif"));
     } catch (SecurityException se) {
-      System.err.println("Can't use saveFrame() when running in a browser, " + 
+      System.err.println("Can't use saveFrame() when running in a browser, " +
                          "unless using a signed applet.");
     }
   }
@@ -2252,7 +2252,7 @@ public class PApplet extends Applet
     try {
       g.save(savePath(insertFrame(what)));
     } catch (SecurityException se) {
-      System.err.println("Can't use saveFrame() when running in a browser, " + 
+      System.err.println("Can't use saveFrame() when running in a browser, " +
                          "unless using a signed applet.");
     }
   }
@@ -3464,8 +3464,8 @@ public class PApplet extends Applet
   //////////////////////////////////////////////////////////////
 
   // SHAPE I/O
-  
-  
+
+
   /**
    * Load a geometry from a file as a PShape. Currently only supports SVG data.
    */
@@ -3476,7 +3476,7 @@ public class PApplet extends Applet
     return null;
   }
 
-  
+
 
   //////////////////////////////////////////////////////////////
 
@@ -3584,7 +3584,7 @@ public class PApplet extends Applet
 
 
   /**
-   * Open a platform-specific file chooser dialog to select a file for input. 
+   * Open a platform-specific file chooser dialog to select a file for input.
    * @return full path to the selected file, or null if no selection.
    */
   public String selectInput() {
@@ -3603,7 +3603,7 @@ public class PApplet extends Applet
 
 
   /**
-   * Open a platform-specific file save dialog to select a file for output. 
+   * Open a platform-specific file save dialog to select a file for output.
    * @return full path to the file entered, or null if canceled.
    */
   public String selectOutput() {
@@ -3612,7 +3612,7 @@ public class PApplet extends Applet
 
 
   /**
-   * Open a platform-specific file save dialog to select a file for output. 
+   * Open a platform-specific file save dialog to select a file for output.
    * @param prompt Mesage to show the user when prompting for a file.
    * @return full path to the file entered, or null if canceled.
    */
@@ -3646,7 +3646,7 @@ public class PApplet extends Applet
 
 
   /**
-   * Open a platform-specific folder chooser dialog. 
+   * Open a platform-specific folder chooser dialog.
    * @return full path to the selected folder, or null if no selection.
    */
   public String selectFolder() {
@@ -3655,7 +3655,7 @@ public class PApplet extends Applet
 
 
   /**
-   * Open a platform-specific folder chooser dialog. 
+   * Open a platform-specific folder chooser dialog.
    * @param prompt Mesage to show the user when prompting for a file.
    * @return full path to the selected folder, or null if no selection.
    */
@@ -3909,7 +3909,7 @@ public class PApplet extends Applet
     // calling getResourceAsStream() on a directory lists its contents.
     // http://dev.processing.org/bugs/show_bug.cgi?id=716
     try {
-      // First see if it's in a data folder. This may fail by throwing  
+      // First see if it's in a data folder. This may fail by throwing
       // a SecurityException. If so, this whole block will be skipped.
       File file = new File(dataPath(filename));
       if (!file.exists()) {
@@ -4383,10 +4383,11 @@ public class PApplet extends Applet
    * <p>
    * In this method, the data path is defined not as the applet's actual
    * data path, but a folder titled "data" in the sketch's working
-   * directory. This is because in an application, the "data" folder is
-   * exported as part of the jar file, and it's not as though you're gonna
-   * write into the jar file itself. If you need to get things out of
-   * the jar file, you should use openStream().
+   * directory. When running inside the PDE, this will be the sketch's
+   * "data" folder. However, when exported (as application or applet),
+   * sketch's data folder is exported as part of the applications jar file,
+   * and it's not possible to read/write from the jar file in a generic way.
+   * If you need to read data from the jar file, you should use createInput().
    */
   public String dataPath(String where) {
     // isAbsolute() could throw an access exception, but so will writing
@@ -4399,6 +4400,7 @@ public class PApplet extends Applet
 
   /**
    * Return a full path to an item in the data folder as a File object.
+   * See the dataPath() method for more information.
    */
   public File dataFile(String where) {
     return new File(dataPath(where));
@@ -4532,7 +4534,7 @@ public class PApplet extends Applet
   }
 
   //
-  
+
   /**
    * @deprecated Use arrayCopy() instead.
    */
@@ -4541,7 +4543,7 @@ public class PApplet extends Applet
                                int length) {
     System.arraycopy(src, srcPosition, dst, dstPosition, length);
   }
-  
+
   /**
    * @deprecated Use arrayCopy() instead.
    */
@@ -5228,8 +5230,8 @@ public class PApplet extends Applet
 
 
   /**
-   * Match a string with a regular expression, and returns the match as an 
-   * array. The first index is the matching expression, and array elements 
+   * Match a string with a regular expression, and returns the match as an
+   * array. The first index is the matching expression, and array elements
    * [1] and higher represent each of the groups (sequences found in parens).
    *
    * This uses multiline matching (Pattern.MULTILINE) and dotall mode
@@ -5250,11 +5252,11 @@ public class PApplet extends Applet
     }
     return null;
   }
-  
-  
+
+
   /**
-   * Identical to match(), except that it returns an array of all matches in 
-   * the specified String, rather than just the first. 
+   * Identical to match(), except that it returns an array of all matches in
+   * the specified String, rather than just the first.
    */
   static public String[][] matchAll(String what, String regexp) {
     Pattern p = Pattern.compile(regexp, Pattern.MULTILINE | Pattern.DOTALL);
@@ -6322,7 +6324,7 @@ public class PApplet extends Applet
   static public void main(String args[]) {
     // Disable abyssmally slow Sun renderer on OS X 10.5.
     System.setProperty("apple.awt.graphics.UseQuartz", "true");
-    
+
     if (args.length < 1) {
       System.err.println("Usage: PApplet <appletname>");
       System.err.println("For additional options, " +
@@ -7342,7 +7344,7 @@ public class PApplet extends Applet
   }
 
 
-  public void setMatrix(PMatrix2D source) {  
+  public void setMatrix(PMatrix2D source) {
     if (recorder != null) recorder.setMatrix(source);
     g.setMatrix(source);
   }
@@ -7418,8 +7420,8 @@ public class PApplet extends Applet
   }
 
 
-  public void frustum(float left, float right, 
-                      float bottom, float top, 
+  public void frustum(float left, float right,
+                      float bottom, float top,
                       float near, float far) {
     if (recorder != null) recorder.frustum(left, right, bottom, top, near, far);
     g.frustum(left, right, bottom, top, near, far);
