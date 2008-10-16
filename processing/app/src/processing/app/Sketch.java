@@ -2775,12 +2775,11 @@ public class Sketch {
     String newName = sanitizeName(origName);
 
     if (!newName.equals(origName)) {
-      Base.showMessage("Naming issue",
-                       "The sketch name had to be modified.\n" +
-                       "You can only use basic letters and numbers\n" +
-                       "to name a sketch (ascii only and no spaces,\n" +
-                       "it can't start with a number, and should be\n" +
-                       "less than 64 characters long)");
+      String msg = 
+        "The sketch name had to be modified. Sketch names can only consist\n" +
+        "of ASCII characters and numbers, and cannot start with a number.\n" +
+        "They should also be less less than 64 characters long)\n";
+      System.out.println(msg);
     }
     return newName;
   }
