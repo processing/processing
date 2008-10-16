@@ -1,6 +1,13 @@
 0151 core
 X NullPointerException on curveVertex() when using more than 128 vertices
 X   http://dev.processing.org/bugs/show_bug.cgi?id=952
+X Text not bounding correctly with x, y, w, h
+X   http://dev.processing.org/bugs/show_bug.cgi?id=954
+
+earlier
+X alter bezier and curve matrices to use PMatrix
+X   float array stuff is redundant with code that's in PMatrix
+X   and PMatrix has to be included even w/o P3D so...
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -272,9 +279,8 @@ _   and then does 5 step sizes for each curveto
 
 CORE / PGraphics
 
-_ alter bezier and curve matrices to use PMatrix
-_   float array stuff is redundant with code that's in PMatrix
-_   and PMatrix has to be included even w/o P3D so...
+_ strokeCap() and strokeJoin() for use with P2D, P3D and OPENGL
+_   http://dev.processing.org/bugs/show_bug.cgi?id=955
 _ y2 position of rectangles not same as y2 position of lines
 _   happens when the rectangle is flipped on the x or y axis
 _   probably a hack that draws the "last" point differently
@@ -319,17 +325,6 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 _ mgorbet stroke transparency problem
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076383048;start=0
 _ make sure line() commands don't try to have a fill
-_ box is not opaque
-_   problem is that lines are drawn second
-_   one pixel lines have no z value.. argh
-_   bug re: 3d depth sorting on lines
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1043894019;start=0
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042004618
-_   translate(58, 48, 0); 
-_   rotateY(0.5);
-_   box(40);
-_ line endcaps and line joins. strokeMode()
-_   lower priority, but at least leave room
 
 
 CORE / PGraphicsJava2D
@@ -347,6 +342,8 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=104
 
 CORE / PGraphics3D
 
+_ make thick lines draw perpendicular to the screen with P3D
+_   http://dev.processing.org/bugs/show_bug.cgi?id=956
 _ random AIOOBE with P3D and points
 _   http://dev.processing.org/bugs/show_bug.cgi?id=937
 _ ortho() behaving differently in P3D vs OPENGL
@@ -386,6 +383,15 @@ _     or at least that things get ridiculously slow
 _     clipping issues here.. but also something in scan converter
 _     not clipping areas from offscreen
 _       huge geometry slows things way down
+_ box is not opaque
+_   problem is that lines are drawn second
+_   one pixel lines have no z value.. argh
+_   bug re: 3d depth sorting on lines
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1043894019;start=0
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042004618
+_   translate(58, 48, 0); 
+_   rotateY(0.5);
+_   box(40);
 
 
 CORE / PImage
