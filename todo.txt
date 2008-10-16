@@ -2,6 +2,7 @@
 o Fix error message spew on Linux when using "Save As"
 X   http://dev.processing.org/bugs/show_bug.cgi?id=951
 X   can't fix, it's a sun bug
+X Change sketch naming error to only print to the console
 
 
 thread hang/block problem
