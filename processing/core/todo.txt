@@ -12,7 +12,13 @@ X   probably the pixel flipping code (and endian sorting) not happening
 X   because the blue comes from the byte order flip
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=post;num=1219196429
 
-earlier
+X ArrayIndexOutOfBoundsException in PLine
+X   http://dev.processing.org/bugs/show_bug.cgi?id=246
+X   http://dev.processing.org/bugs/show_bug.cgi?id=462
+X random AIOOBE with P3D and points
+X   http://dev.processing.org/bugs/show_bug.cgi?id=937
+
+cleanup
 X alter bezier and curve matrices to use PMatrix
 X   float array stuff is redundant with code that's in PMatrix
 X   and PMatrix has to be included even w/o P3D so...
@@ -26,6 +32,8 @@ o gl smoothing.. how to disable polygon but keep line enabled
 o   or at least make a note of this?
 o   leave smooth off, get the gl object, then enable line smooth
 X   don't bother, this is a workaround for another bug
+o PPolygon no longer in use and PLine is a mess
+o   make a version of PGraphics3 that uses it for more accurate rendering?
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -84,10 +92,11 @@ _   or it's the PGraphics object, which does an updatePixels() immediately
 _ if (modified) don't loadPixels again, just ignore it
 _   make a note that updatePixels() only sets a flag in PImage
 _     (but not PGraphics, which does it immediately)
-_ filter() doesn't need a loadPixels
-_   but if you want to filter *and* mess w/ pixels (avoid double load)
-_   then do loadPixels() /before/ filter, and updatePixels after messing
-_   same will go for blend()
+o filter() doesn't need a loadPixels
+o   but if you want to filter *and* mess w/ pixels (avoid double load)
+o   then do loadPixels() /before/ filter, and updatePixels after messing
+o   same will go for blend()
+_   make sure that filter, blend, copy, etc say that no loadPixels necessary
 
 
 rework some text/font code [1.0]
@@ -100,6 +109,7 @@ _   perhaps also DEL or other nonprintables?
 _   book example 25-03
 _ when using createFont("xxxx.ttf"), should use textMode(SHAPE) with PDF
 _   because ttf files will not be installed on the system when opening pdf
+_   maybe just add this to the reference so that people know
 _ text position is quantized in JAVA2D
 _   http://dev.processing.org/bugs/show_bug.cgi?id=806
 _ accessors inside PFont need a lot of work
@@ -115,9 +125,9 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=466
 _ textAlign(CENTER) with P3D and OPENGL produces messy result
 _   probably rounding error with the images
 _   http://dev.processing.org/bugs/show_bug.cgi?id=475
-_ textures truly did get worse in P3D
+X textures truly did get worse in P3D
 _   problem is that bilinear is turned on by default starting in 0124(?)
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1205171649
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1205171649
 _ when turning smoothing on, internal lines of shapes are visible
 _   add an edge flag when tesselating 
 _   mind the opengl tesselation flags
@@ -127,8 +137,6 @@ _ in opengl mode, use its tesselator
 _   because the vertex calls can just come right back to regular vertex calls
 _   this way we can also implement breakShape() for opengl
 _   http://dev.processing.org/bugs/show_bug.cgi?id=947
-_ PPolygon no longer in use and PLine is a mess
-_   make a version of PGraphics3 that uses it for more accurate rendering?
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -158,10 +166,6 @@ _     so that the file size can be much smaller
 _ when closing a sketch via the close box, make sure stop() getting called
 X   found a problem for release 0133
 _   test to see if it's working
-
-_ ArrayIndexOutOfBoundsException in PLine
-_   http://dev.processing.org/bugs/show_bug.cgi?id=246
-_   http://dev.processing.org/bugs/show_bug.cgi?id=462
 
 _ STROKE_WEIGHT field in PGraphics3 is a disaster, because it's an int
 _   use the SW from vertex instead.. why set stroke in triangle vars at all?
@@ -354,8 +358,6 @@ CORE / PGraphics3D
 
 _ make thick lines draw perpendicular to the screen with P3D
 _   http://dev.processing.org/bugs/show_bug.cgi?id=956
-_ random AIOOBE with P3D and points
-_   http://dev.processing.org/bugs/show_bug.cgi?id=937
 _ ortho() behaving differently in P3D vs OPENGL
 _   http://dev.processing.org/bugs/show_bug.cgi?id=100
 _   shows a blank canvas
