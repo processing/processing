@@ -3,11 +3,24 @@ X NullPointerException on curveVertex() when using more than 128 vertices
 X   http://dev.processing.org/bugs/show_bug.cgi?id=952
 X Text not bounding correctly with x, y, w, h
 X   http://dev.processing.org/bugs/show_bug.cgi?id=954
+o dataFolder() might be flawed b/c it's referring to contents of jar file
+o   for input, better to use openStream
+X   clear up the javadoc on this
 
 earlier
 X alter bezier and curve matrices to use PMatrix
 X   float array stuff is redundant with code that's in PMatrix
 X   and PMatrix has to be included even w/o P3D so...
+X add texture support to begin/endRaw
+X should we do joins when alpha is turned off?
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1210007450
+X   no, because it's too processor intensive to draw a lotta ellipses
+X   but added a note about it to the reference for 0151
+X strokeWeight() doesn't work in opengl or p3d
+o gl smoothing.. how to disable polygon but keep line enabled
+o   or at least make a note of this?
+o   leave smooth off, get the gl object, then enable line smooth
+X   don't bother, this is a workaround for another bug
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -105,10 +118,10 @@ _   add an edge flag when tesselating
 _   mind the opengl tesselation flags
 _   need to turn off smoothing for the interior of shapes
 _   http://dev.processing.org/bugs/show_bug.cgi?id=200
-_ use opengl tesselator when in opengl mode
-_ gl smoothing.. how to disable polygon but keep line enabled
-_   or at least make a note of this?
-_   leave smooth off, get the gl object, then enable line smooth
+_ in opengl mode, use its tesselator
+_   because the vertex calls can just come right back to regular vertex calls
+_   this way we can also implement breakShape() for opengl
+_   http://dev.processing.org/bugs/show_bug.cgi?id=947
 _ PPolygon no longer in use and PLine is a mess
 _   make a version of PGraphics3 that uses it for more accurate rendering?
 
@@ -131,10 +144,6 @@ _   i.e. problem with main calling itself multiple times in Alpheus
 _   if exit() (or stop) is called, then System.exit() gets called,
 _   even though the main() wants to keep going
 
-_ should we do joins when alpha is turned off?
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1210007450
-
-_ add texture support to begin/endRaw
 _ for begin/endRecord, use a piggyback mechanism
 _   that way won't have to pass a PApplet around
 _   this has a big impact on the SVG library
@@ -148,10 +157,6 @@ _   test to see if it's working
 _ ArrayIndexOutOfBoundsException in PLine
 _   http://dev.processing.org/bugs/show_bug.cgi?id=246
 _   http://dev.processing.org/bugs/show_bug.cgi?id=462
-
-o dataFolder() might be flawed b/c it's referring to contents of jar file
-o   for input, better to use openStream
-_   clear up the documentation on this
 
 _ STROKE_WEIGHT field in PGraphics3 is a disaster, because it's an int
 _   use the SW from vertex instead.. why set stroke in triangle vars at all?
@@ -440,7 +445,6 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 
 LIBRARIES / PGraphicsOpenGL
 
-
 _ switch to glWindowPos() instead of glRasterPos() silliness
 _ implement setImpl() instead of set() inside PGraphicsOpenGL
 _   http://dev.processing.org/bugs/show_bug.cgi?id=943
@@ -461,10 +465,6 @@ _ first few frames of OpenGL sketches on Windows run slowly
 _   http://dev.processing.org/bugs/show_bug.cgi?id=874
 _ updatePixels wth OpenGL requires a lot of memory, need better texture update
 _   http://dev.processing.org/bugs/show_bug.cgi?id=610
-_ strokeWeight() doesn't work in opengl or p3d
-_ in opengl mode, use its tesselator
-_   because the vertex calls can just come right back to regular vertex calls
-_   this way we can also implement breakShape() for opengl
 _ with opengl optimizations via call lists..
 _   watch out to make sure raw recording still works
 _   (optimizations will have to be disabled to some extent)
