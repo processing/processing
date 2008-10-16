@@ -52,6 +52,9 @@ a couple bug fixes.
   example for those wanting to do their own thick line code:
   http://dev.processing.org/bugs/show_bug.cgi?id=123
 
++ Removed the error dialog that popped up to nag about sketch naming, 
+  now we're only writing it to the console. 
+
 + Library authors note that the dimensional() method in PGraphics has been 
   split into is2D() and is3D() for better congruence with use.
 
