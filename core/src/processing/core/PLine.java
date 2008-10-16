@@ -763,9 +763,11 @@ public class PLine implements PConstants
       length += y0;
       for (int j = 0x8000 + (x0<<16); y0 <= length; ++y0) {
         offset = y0 * SCREEN_WIDTH + (j>>16);
-        if (iz <= m_zbuffer[offset]) {
-          m_pixels[offset] = m_stroke;
-          m_zbuffer[offset] = iz;
+        if (offset < m_pixels.length) {
+          if (iz <= m_zbuffer[offset]) {
+            m_pixels[offset] = m_stroke;
+            m_zbuffer[offset] = iz;
+          }
         }
         iz+=dz;
         j+=dt;
@@ -775,9 +777,11 @@ public class PLine implements PConstants
       length += x0;
       for (int j = 0x8000 + (y0<<16); x0 <= length; ++x0) {
         offset = (j>>16) * SCREEN_WIDTH + x0;
-        if (iz <= m_zbuffer[offset]) {
-          m_pixels[offset] = m_stroke;
-          m_zbuffer[offset] = iz;
+        if (offset < m_pixels.length) {
+          if (iz <= m_zbuffer[offset]) {
+            m_pixels[offset] = m_stroke;
+            m_zbuffer[offset] = iz;
+          }
         }
         iz+=dz;
         j+=dt;
@@ -801,20 +805,21 @@ public class PLine implements PConstants
       length += y0;
       for (int j = 0x8000 + (x0<<16); y0 <= length; ++y0) {
         offset = y0 * SCREEN_WIDTH + (j>>16);
+        if (offset < m_pixels.length) {
+          if (iz <= m_zbuffer[offset]) {
+            int alpha = ia >> 16;
+            int r0 = m_pixels[offset];
+            int g0 = r0 & 0xFF00;
+            int b0 = r0 & 0xFF;
+            r0 &= 0xFF0000;
+            r0 = r0 + (((pr - r0) * alpha) >> 8);
+            g0 = g0 + (((pg - g0) * alpha) >> 8);
+            b0 = b0 + (((pb - b0) * alpha) >> 8);
 
-        if (iz <= m_zbuffer[offset]) {
-          int alpha = ia >> 16;
-          int r0 = m_pixels[offset];
-          int g0 = r0 & 0xFF00;
-          int b0 = r0 & 0xFF;
-          r0 &= 0xFF0000;
-          r0 = r0 + (((pr - r0) * alpha) >> 8);
-          g0 = g0 + (((pg - g0) * alpha) >> 8);
-          b0 = b0 + (((pb - b0) * alpha) >> 8);
-
-          m_pixels[offset] = 0xFF000000 |
-            (r0 & 0xFF0000) | (g0 & 0xFF00) | (b0 & 0xFF);
-          //m_zbuffer[offset] = iz;
+            m_pixels[offset] = 0xFF000000 |
+              (r0 & 0xFF0000) | (g0 & 0xFF00) | (b0 & 0xFF);
+            //m_zbuffer[offset] = iz;
+          }
         }
         iz +=dz;
         ia += da;
@@ -826,19 +831,21 @@ public class PLine implements PConstants
       for (int j = 0x8000 + (y0<<16); x0 <= length; ++x0) {
         offset = (j>>16) * SCREEN_WIDTH + x0;
 
-        if (iz <= m_zbuffer[offset]) {
-          int alpha = ia >> 16;
-          int r0 = m_pixels[offset];
-          int g0 = r0 & 0xFF00;
-          int b0 = r0 & 0xFF;
-          r0&=0xFF0000;
-          r0 = r0 + (((pr - r0) * alpha) >> 8);
-          g0 = g0 + (((pg - g0) * alpha) >> 8);
-          b0 = b0 + (((pb - b0) * alpha) >> 8);
+        if (offset < m_pixels.length) {
+          if (iz <= m_zbuffer[offset]) {
+            int alpha = ia >> 16;
+            int r0 = m_pixels[offset];
+            int g0 = r0 & 0xFF00;
+            int b0 = r0 & 0xFF;
+            r0&=0xFF0000;
+            r0 = r0 + (((pr - r0) * alpha) >> 8);
+            g0 = g0 + (((pg - g0) * alpha) >> 8);
+            b0 = b0 + (((pb - b0) * alpha) >> 8);
 
-          m_pixels[offset] = 0xFF000000 |
-            (r0 & 0xFF0000) | (g0 & 0xFF00) | (b0 & 0xFF);
-          //m_zbuffer[offset] = iz;
+            m_pixels[offset] = 0xFF000000 |
+              (r0 & 0xFF0000) | (g0 & 0xFF00) | (b0 & 0xFF);
+            //m_zbuffer[offset] = iz;
+          }
         }
         iz += dz;
         ia += da;
@@ -1017,9 +1024,8 @@ public class PLine implements PConstants
           m_zbuffer[offset] = iz;
         }
 
-        // this if() makes things slow. there shoudl be
-        // a better way to check if the second pixel is
-        // withing the image array [rocha]
+        // this if() makes things slow. there should be a better way to check 
+        // if the second pixel is within the image array [rocha]
         temp = ((xi>>16)+1);
         if (temp >= SCREEN_WIDTH) {
           xi += dt;
