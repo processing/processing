@@ -1,4 +1,5 @@
 import processing.core.*; 
+import processing.xml.*; 
 
 import java.applet.*; 
 import java.awt.*; 
@@ -24,6 +25,7 @@ public class BouncyBubbles extends PApplet {
 int numBalls = 12;
 float spring = 0.05f;
 float gravity = 0.03f;
+float friction = -0.9f;
 Ball[] balls = new Ball[numBalls];
 
 public void setup() 
@@ -88,19 +90,19 @@ class Ball {
     y += vy;
     if (x + diameter/2 > width) {
       x = width - diameter/2;
-      vx += -0.9f; 
+      vx *= friction; 
     }
     else if (x - diameter/2 < 0) {
       x = diameter/2;
-      vx *= -0.9f;
+      vx *= friction;
     }
     if (y + diameter/2 > height) {
       y = height - diameter/2;
-      vy *= -0.9f; 
+      vy *= friction; 
     } 
     else if (y - diameter/2 < 0) {
       y = diameter/2;
-      vy *= -0.9f;
+      vy *= friction;
     }
   }
   

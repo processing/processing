@@ -9,6 +9,7 @@
 int numBalls = 12;
 float spring = 0.05;
 float gravity = 0.03;
+float friction = -0.9;
 Ball[] balls = new Ball[numBalls];
 
 void setup() 
@@ -73,19 +74,19 @@ class Ball {
     y += vy;
     if (x + diameter/2 > width) {
       x = width - diameter/2;
-      vx += -0.9; 
+      vx *= friction; 
     }
     else if (x - diameter/2 < 0) {
       x = diameter/2;
-      vx *= -0.9;
+      vx *= friction;
     }
     if (y + diameter/2 > height) {
       y = height - diameter/2;
-      vy *= -0.9; 
+      vy *= friction; 
     } 
     else if (y - diameter/2 < 0) {
       y = diameter/2;
-      vy *= -0.9;
+      vy *= friction;
     }
   }
   
