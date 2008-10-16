@@ -19,6 +19,13 @@ a couple bug fixes.
 + Fix text(x, y, w, h) once again. That text just won't stay in the box.
   http://dev.processing.org/bugs/show_bug.cgi?id=954
 
++ Fix seams that show up at the edge of textures with OpenGL.
+
++ Fix problem where size(w, h) with an odd number for height will make 
+  blue line across image in saveFrame(). This also affected any other pixel
+  operations in OpenGL, because it was breaking loadPixels().
+  http://dev.processing.org/bugs/show_bug.cgi?id=944
+
 [ changes / additions ] 
 
 + Your childhood friend the smooth() command is returning to P3D. Right now 
@@ -53,6 +60,11 @@ a couple bug fixes.
 + Some file dialogs on Linux produce a stream of error chatter to the
   console. This has been identified as a Sun bug. 
   http://dev.processing.org/bugs/show_bug.cgi?id=951
+
+[ regression ]
+
++ OpenGL rendering is more dim/darker in release 0149 and later.
+  http://dev.processing.org/bugs/show_bug.cgi?id=958
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
