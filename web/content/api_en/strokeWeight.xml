@@ -22,7 +22,11 @@ line(20, 70, 80, 70);
 </example>
 
 <description>
-Sets the width of the stroke used for lines, points, and the border around shapes. All widths are set in units of pixels. This function does not work with the P3D renderer (please see the size() reference for more information).
+Sets the width of the stroke used for lines, points, and the border around shapes. All widths are set in units of pixels. 
+<br/> <br/>
+With P2D, P3D, and OPENGL, series of connected lines (such as the stroke around a polygon, triangle, or ellipse) produce unattractive results when strokeWeight is set (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=955">Bug 955</a>).
+<br/> <br/>
+When used with P3D, strokeWeight does not interpolate the Z-coordinates of the lines, which means that when rotated, these flat lines will disappear (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=956">Bug 956</a>). The OPENGL renderer setting does not share this problem because it always draws lines perpendicular to the screen.
 </description>
 
 <syntax>
