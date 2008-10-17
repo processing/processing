@@ -1984,14 +1984,6 @@ Base class for all sketches that use processing.core.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PApplet.html#dimensional()">dimensional</A></B>()</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/core/PApplet.html#directionalLight(float, float, float, float, float, float)">directionalLight</A></B>(float&nbsp;red,
                  float&nbsp;green,
@@ -2950,7 +2942,7 @@ Base class for all sketches that use processing.core.
       java.lang.String&nbsp;regexp)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Match a string with a regular expression, and returns the match as an 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Match a string with a regular expression, and returns the match as an
  array.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
@@ -2960,7 +2952,7 @@ Base class for all sketches that use processing.core.
          java.lang.String&nbsp;regexp)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Identical to match(), except that it returns an array of all matches in 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Identical to match(), except that it returns an array of all matches in
  the specified String, rather than just the first.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
@@ -10161,10 +10153,11 @@ public java.lang.String <B>dataPath</B>(java.lang.String&nbsp;where)</PRE>
  <p>
  In this method, the data path is defined not as the applet's actual
  data path, but a folder titled "data" in the sketch's working
- directory. This is because in an application, the "data" folder is
- exported as part of the jar file, and it's not as though you're gonna
- write into the jar file itself. If you need to get things out of
- the jar file, you should use openStream().
+ directory. When running inside the PDE, this will be the sketch's
+ "data" folder. However, when exported (as application or applet),
+ sketch's data folder is exported as part of the applications jar file,
+ and it's not possible to read/write from the jar file in a generic way.
+ If you need to read data from the jar file, you should use createInput().
 <P>
 <DD><DL>
 </DL>
@@ -10181,6 +10174,7 @@ dataFile</H3>
 public java.io.File <B>dataFile</B>(java.lang.String&nbsp;where)</PRE>
 <DL>
 <DD>Return a full path to an item in the data folder as a File object.
+ See the dataPath() method for more information.
 <P>
 <DD><DL>
 </DL>
@@ -11670,8 +11664,8 @@ match</H3>
 public static java.lang.String[] <B>match</B>(java.lang.String&nbsp;what,
                                        java.lang.String&nbsp;regexp)</PRE>
 <DL>
-<DD>Match a string with a regular expression, and returns the match as an 
- array. The first index is the matching expression, and array elements 
+<DD>Match a string with a regular expression, and returns the match as an
+ array. The first index is the matching expression, and array elements
  [1] and higher represent each of the groups (sequences found in parens).
 
  This uses multiline matching (Pattern.MULTILINE) and dotall mode
@@ -11694,7 +11688,7 @@ matchAll</H3>
 public static java.lang.String[][] <B>matchAll</B>(java.lang.String&nbsp;what,
                                             java.lang.String&nbsp;regexp)</PRE>
 <DL>
-<DD>Identical to match(), except that it returns an array of all matches in 
+<DD>Identical to match(), except that it returns an array of all matches in
  the specified String, rather than just the first.
 <P>
 <DD><DL>
@@ -16182,20 +16176,6 @@ public static int <B>lerpColor</B>(int&nbsp;c1,
 displayable</H3>
 <PRE>
 public boolean <B>displayable</B>()</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="dimensional()"><!-- --></A><H3>
-dimensional</H3>
-<PRE>
-public boolean <B>dimensional</B>()</PRE>
 <DL>
 <DD><DL>
 </DL>

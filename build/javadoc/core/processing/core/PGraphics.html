@@ -1267,14 +1267,6 @@ Main graphics and rendering context, as well as the base API implementation.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#dimensional()">dimensional</A></B>()</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return true if this renderer supports 3D drawing.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/core/PGraphics.html#directionalLight(float, float, float, float, float, float)">directionalLight</A></B>(float&nbsp;red,
                  float&nbsp;green,
@@ -1581,6 +1573,22 @@ Main graphics and rendering context, as well as the base API implementation.
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The mode can only be set to CORNERS, CORNER, and CENTER.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#is2D()">is2D</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return true if this renderer supports 2D drawing.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#is3D()">is3D</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return true if this renderer supports 2D drawing.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -7140,12 +7148,28 @@ public boolean <B>displayable</B>()</PRE>
 </DL>
 <HR>
 
-<A NAME="dimensional()"><!-- --></A><H3>
-dimensional</H3>
+<A NAME="is2D()"><!-- --></A><H3>
+is2D</H3>
 <PRE>
-public boolean <B>dimensional</B>()</PRE>
+public boolean <B>is2D</B>()</PRE>
 <DL>
-<DD>Return true if this renderer supports 3D drawing. Defaults to false.
+<DD>Return true if this renderer supports 2D drawing. Defaults to true.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="is3D()"><!-- --></A><H3>
+is3D</H3>
+<PRE>
+public boolean <B>is3D</B>()</PRE>
+<DL>
+<DD>Return true if this renderer supports 2D drawing. Defaults to true.
 <P>
 <DD><DL>
 </DL>
