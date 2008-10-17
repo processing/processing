@@ -26,10 +26,9 @@ package processing.core;
 
 
 /**
- * Code for rendering lines.
- * <P>
- * This code will soon be removed.
- * Written by Carlos Rocha.
+ * Code for rendering lines with P2D and P3D.
+ * @author rocha
+ * @author fry
  */
 public class PLine implements PConstants
 {

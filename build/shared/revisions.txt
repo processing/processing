@@ -6,7 +6,7 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-ABOUT REV 0151 - 16 October 2008
+ABOUT REV 0151 - 17 October 2008
 
 Read the 0149 release notes! This release contains only additions and
 a couple bug fixes.
@@ -25,6 +25,11 @@ a couple bug fixes.
   blue line across image in saveFrame(). This also affected any other pixel
   operations in OpenGL, because it was breaking loadPixels().
   http://dev.processing.org/bugs/show_bug.cgi?id=944
+
++ Fix ArrayIndexOutOfBoundsException showing up when drawing lines or points.
+  http://dev.processing.org/bugs/show_bug.cgi?id=246
+  http://dev.processing.org/bugs/show_bug.cgi?id=462
+  http://dev.processing.org/bugs/show_bug.cgi?id=937
 
 [ changes / additions ] 
 
