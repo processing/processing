@@ -11,7 +11,6 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=944
 X   probably the pixel flipping code (and endian sorting) not happening
 X   because the blue comes from the byte order flip
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=post;num=1219196429
-
 X ArrayIndexOutOfBoundsException in PLine
 X   http://dev.processing.org/bugs/show_bug.cgi?id=246
 X   http://dev.processing.org/bugs/show_bug.cgi?id=462
