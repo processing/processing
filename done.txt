@@ -1,3 +1,10 @@
+0151 pde
+o Fix error message spew on Linux when using "Save As"
+X   http://dev.processing.org/bugs/show_bug.cgi?id=951
+X   can't fix, it's a sun bug
+X Change sketch naming error to only print to the console
+
+
 0150 pde
 X ArrayIndexOutOfBoundsException after pressing Run with release 0149
 X   http://dev.processing.org/bugs/show_bug.cgi?id=949
