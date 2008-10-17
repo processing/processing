@@ -23,7 +23,9 @@ line(20, 70, 80, 70);
 </example>
 
 <description>
-Sets the style for rendering line endings. These ends are either squared, extended, or rounded and specified with the corresponding parameters SQUARE, PROJECT, and ROUND. The default cap is ROUND. This function does not work with the P2D, P3D, OR OPENGL renderers (please see the size() reference for more information).
+Sets the style for rendering line endings. These ends are either squared, extended, or rounded and specified with the corresponding parameters SQUARE, PROJECT, and ROUND. The default cap is ROUND. 
+<br/> <br/>
+This function is not available with the P2D, P3D, or OPENGL renderers (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=955">. More information about the renderers can be found in the <b>size()</b> reference.
 </description>
 
 <syntax>
@@ -41,6 +43,7 @@ strokeCap(<c>MODE</c>)
 stroke()
 strokeWeight()
 strokeJoin()
+size()
 </related>
 
 <availability>1.0</availability>

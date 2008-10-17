@@ -54,7 +54,9 @@ endShape();
 </example>
 
 <description>
-Sets the style of the joints which connect line segments. These joints are either mitered, beveled, or rounded and specified with the corresponding parameters MITER, BEVEL, and ROUND. The default joint is MITER. This function does not work with the P2D, P3D, OR OPENGL renderers (please see the size() reference for more information).
+Sets the style of the joints which connect line segments. These joints are either mitered, beveled, or rounded and specified with the corresponding parameters MITER, BEVEL, and ROUND. The default joint is MITER. 
+<br/> <br/>
+This function is not available with the P2D, P3D, or OPENGL renderers (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=955">. More information about the renderers can be found in the <b>size()</b> reference.
 </description>
 
 <syntax>

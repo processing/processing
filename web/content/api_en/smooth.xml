@@ -21,7 +21,9 @@ ellipse(70, 48, 36, 36);
 <description>
 Draws all geometry with smooth (anti-aliased) edges. This will slow down the frame rate of the application, but will enhance the visual refinement. 
 <br/><br/>
-Starting with release 0124, when using the default (JAVA2D) renderer, smooth() will also improve image quality of resized images.
+Note that smooth() will also improve image quality of resized images, and noSmooth() will disable image (and font) smoothing altogether.
+<br/><br/>
+Starting with release 0151, smooth() has been re-enabled for P3D.
 </description>
 
 <syntax>
