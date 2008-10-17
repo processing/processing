@@ -6,6 +6,17 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0152 - XX Xxxxxxx 2008
+
+I neglected to mention in the 0151 release notes that the polygon smoothing
+work was brought back from the alpha releases by Eric Jordan who re-integrated
+the code into the more recent source and added proper perspective correction
+and smoothing for textures. Many thanks to ewjordan!
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0151 - 17 October 2008
 
 Read the 0149 release notes! This release contains only additions and

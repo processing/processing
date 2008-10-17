@@ -1,38 +1,4 @@
-0151 core
-X NullPointerException on curveVertex() when using more than 128 vertices
-X   http://dev.processing.org/bugs/show_bug.cgi?id=952
-X Text not bounding correctly with x, y, w, h
-X   http://dev.processing.org/bugs/show_bug.cgi?id=954
-o dataFolder() might be flawed b/c it's referring to contents of jar file
-o   for input, better to use openStream
-X   clear up the javadoc on this
-X odd-size height will make blue line across image in saveFrame()
-X   http://dev.processing.org/bugs/show_bug.cgi?id=944
-X   probably the pixel flipping code (and endian sorting) not happening
-X   because the blue comes from the byte order flip
-X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=post;num=1219196429
-X ArrayIndexOutOfBoundsException in PLine
-X   http://dev.processing.org/bugs/show_bug.cgi?id=246
-X   http://dev.processing.org/bugs/show_bug.cgi?id=462
-X random AIOOBE with P3D and points
-X   http://dev.processing.org/bugs/show_bug.cgi?id=937
-
-cleanup
-X alter bezier and curve matrices to use PMatrix
-X   float array stuff is redundant with code that's in PMatrix
-X   and PMatrix has to be included even w/o P3D so...
-X add texture support to begin/endRaw
-X should we do joins when alpha is turned off?
-X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1210007450
-X   no, because it's too processor intensive to draw a lotta ellipses
-X   but added a note about it to the reference for 0151
-X strokeWeight() doesn't work in opengl or p3d
-o gl smoothing.. how to disable polygon but keep line enabled
-o   or at least make a note of this?
-o   leave smooth off, get the gl object, then enable line smooth
-X   don't bother, this is a workaround for another bug
-o PPolygon no longer in use and PLine is a mess
-o   make a version of PGraphics3 that uses it for more accurate rendering?
+0152 core
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
