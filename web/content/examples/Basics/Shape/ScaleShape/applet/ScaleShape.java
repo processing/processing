@@ -16,7 +16,7 @@ public class ScaleShape extends PApplet {
 
 /**
  * Scale Shape.  
- * Illustration by George Brower
+ * Illustration by George Brower. 
  * 
  * Move the mouse left and right to zoom the SVG file.
  * This shows how, unlike an imported image, the lines
