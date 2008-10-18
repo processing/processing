@@ -25,7 +25,7 @@ line(20, 70, 80, 70);
 <description>
 Sets the style for rendering line endings. These ends are either squared, extended, or rounded and specified with the corresponding parameters SQUARE, PROJECT, and ROUND. The default cap is ROUND. 
 <br/> <br/>
-This function is not available with the P2D, P3D, or OPENGL renderers (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=955">. More information about the renderers can be found in the <b>size()</b> reference.
+This function is not available with the P2D, P3D, or OPENGL renderers (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=955">see bug report</a>). More information about the renderers can be found in the <b>size()</b> reference.
 </description>
 
 <syntax>
