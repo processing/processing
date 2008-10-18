@@ -2,6 +2,17 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <curated>
 
+<software name="Mæve" by="Interface Design Team of FH Potsdam" scroll="yes" resize="yes" width="1024" height="800">
+        <image>images/maeve.jpg</image>
+          <description>
+             Provides visual and tangible access to the conceptual networks behind architectural projects. 
+             The installation is part of the 11th International Architecture Exhibition of the Venice Biennale.
+          </description>
+          <location>http://portal.mace-project.eu/maeve/</location>
+          <link href="http://interface.fh-potsdam.de">FH Potsdam</link>
+          <link href="http://www.mace-project.eu">MACE</link>
+        </software>
+        
 <software name="YMYI" by="Joao Martinho Moura and Jorge Sousa" scroll="yes" resize="yes" width="1024" height="800">
         <image>images/ymyi.jpg</image>
           <description>
