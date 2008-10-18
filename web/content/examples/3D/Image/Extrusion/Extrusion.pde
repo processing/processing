@@ -29,7 +29,6 @@ void draw() {
   
   // Update the angle
   angle += 0.005;
-  //if (angle > TWO_PI) { angle = 0; }
   
   // Rotate around the center axis
   translate(width/2, 0, -128);
