@@ -1,8 +1,4 @@
-0152 pde
-X movie.read() breaking, which breaks the examples
-X   http://dev.processing.org/bugs/show_bug.cgi?id=961
-X movie width/height broken
-X   http://dev.processing.org/bugs/show_bug.cgi?id=962
+0153 pde
 
 
 _ don't open more than one "create font" or "color selector"
