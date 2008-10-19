@@ -137,7 +137,7 @@ public class Capture extends PImage implements Runnable {
    * is defined in the host PApplet, then it will be called every
    * time a new frame is available from the capture device.
    */
-  public Capture(final PApplet parent, 
+  public Capture(final PApplet parent,
                  final int requestWidth, final int requestHeight,
                  final String name, final int frameRate) {
       // Running on EDT because of weird hang on OS X
@@ -146,14 +146,14 @@ public class Capture extends PImage implements Runnable {
       // being run from the EDT. Not sure if that's a mistaken expectation in
       // QTJava (we hadn't had trouble in the past because we did everything
       // on the EDT) or if something broken in more recent QTJ. Or (maybe most
-      // likely) we're simply hitting some other threading strangeness, and 
+      // likely) we're simply hitting some other threading strangeness, and
       // using invokeLater() isolates us from that. Which is a nice way of
       // saying that it's a hack.
-      SwingUtilities.invokeLater(new Runnable() {
-          public void run() {
-              init(parent, requestWidth, requestHeight, name, frameRate);
-          }
-      });
+    //SwingUtilities.invokeLater(new Runnable() {
+    //  public void run() {
+    init(parent, requestWidth, requestHeight, name, frameRate);
+    //}
+    //});
   }
 
 

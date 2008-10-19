@@ -98,14 +98,14 @@ public class Movie extends PImage implements PConstants, Runnable {
     super(1, 1, RGB);
 
     // http://dev.processing.org/bugs/show_bug.cgi?id=882
-    SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        init(parent, filename, ifps);
-      }
-    });
+    //SwingUtilities.invokeLater(new Runnable() {
+    //public void run() {
+    init(parent, filename, ifps);
+    //}
+    //});
   }
-  
-  
+
+
   public void init(PApplet parent, String filename, int fps) {
     this.parent = parent;
     this.fps = fps;
@@ -680,7 +680,7 @@ public class Movie extends PImage implements PConstants, Runnable {
         if (movieEventMethod == null) {
           // If no special handling, then automatically read from the movie.
           read();
-            
+
         } else {
           try {
             movieEventMethod.invoke(parent, new Object[] { this });
@@ -725,8 +725,8 @@ public class Movie extends PImage implements PConstants, Runnable {
     runner = null;
     QTSession.close();
   }
-  
-  
+
+
   /**
    * General error reporting, all corraled here just in case
    * I think of something slightly more intelligent to do.
