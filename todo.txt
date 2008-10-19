@@ -1,10 +1,9 @@
 0152 pde
+X movie.read() breaking, which breaks the examples
+X   http://dev.processing.org/bugs/show_bug.cgi?id=961
+X movie width/height broken
+X   http://dev.processing.org/bugs/show_bug.cgi?id=962
 
-
-thread hang/block problem
-_ serial.available() broken with video
-_   this may be fixed with 0149
-_   http://dev.processing.org/bugs/show_bug.cgi?id=829
 
 _ don't open more than one "create font" or "color selector"
 _   http://dev.processing.org/bugs/show_bug.cgi?id=830
@@ -30,12 +29,18 @@ _   need someone to go out and test all scenarios of this
 
 [ known bugs ]
 
+_ video library threading problems with other libraries
+_   http://dev.processing.org/bugs/show_bug.cgi?id=882
+_ serial.available() broken with video
+_   http://dev.processing.org/bugs/show_bug.cgi?id=829
 _ first few frames of OpenGL sketches on Windows run slowly
 _   http://dev.processing.org/bugs/show_bug.cgi?id=874
 _ Slow response or spinning wheel from the menu bar on Mac OS X
 _   http://dev.processing.org/bugs/show_bug.cgi?id=786
 _   bug 6034650
 _ sometimes not launching
+_   this seems to be a threading problem, like an NPE on load/open
+_   probaby related to the other load/save sync errors
 _   (in particular while cpu load is a little higher on g5?)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=852
 _   this may just be a macosx (ppc?) bug
