@@ -6,12 +6,53 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-ABOUT REV 0152 - XX Xxxxxxx 2008
+ABOUT REV 0152 - 19 October 2008
+
+Read the release notes for revision 0149! There were major changes to 
+library installation, and the Candy and XML libraries have been moved.
+
+This release contains a bug fix, and now includes Damien Di Fede's 
+excellent Minim audio library as part of the download. (Thanks!)
 
 I neglected to mention in the 0151 release notes that the polygon smoothing
 work was brought back from the alpha releases by Eric Jordan who re-integrated
 the code into the more recent source and added proper perspective correction
 and smoothing for textures. Many thanks to ewjordan!
+
+[ bug fixes ] 
+
++ Fix video library breaking due to a fix for another video library bug.
+  http://dev.processing.org/bugs/show_bug.cgi?id=961
+  http://dev.processing.org/bugs/show_bug.cgi?id=962
+  The changes have been removed, so the original bug has been reopened:
+  http://dev.processing.org/bugs/show_bug.cgi?id=882
+
+[ known problems ] 
+
++ Slow response on file/sketchbook/examples menus on OS X 10.5. This is 
+  an Apple bug in Java 1.5 and 1.6 on Mac OS X 10.5 causing these menus 
+  to be extremely slow. With Apple's Java for Mac OS X 10.4 Release 7, 
+  they appear to have successfully backported the bug to OS X 10.4. 
+  Hooray! Now it affects both 10.4 and 10.5. Much success to them for 
+  their help. Some workarounds are described in the bug report:
+  http://dev.processing.org/bugs/show_bug.cgi?id=786
+  Please file a bug report with Apple if you want this fixed. 
+  The problem has existed since the spring, and we first filed a bug 
+  with them in June, and we have received no response.
+
++ Sketches that use the video library sometimes hang when used with 
+  other libraries (serial or opengl). This may be Mac-only.
+  http://dev.processing.org/bugs/show_bug.cgi?id=882
+  http://dev.processing.org/bugs/show_bug.cgi?id=829
+
++ OpenGL rendering is more dim/darker in release 0149 and later.
+  http://dev.processing.org/bugs/show_bug.cgi?id=958
+  Any help tracking this down would be most appreciated.
+
++ The first few frames of OpenGL sketches on Windows run slowly.
+  http://dev.processing.org/bugs/show_bug.cgi?id=874
+
++ See dev.processing.org/bugs for more.
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
