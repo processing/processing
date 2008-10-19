@@ -19,6 +19,15 @@ work was brought back from the alpha releases by Eric Jordan who re-integrated
 the code into the more recent source and added proper perspective correction
 and smoothing for textures. Many thanks to ewjordan!
 
+[ changes ] 
+
++ Unlike Candy, you can no longer use shape.width and shape.height to get
+  the dimensions of an object. To get the width and height of a PShape, 
+  use getWidth() and getHeight(). We neglected to include these in the
+  PShape/loadShape reference. The reason for the change is that sometimes
+  time-consuming calculations will be required to figure out the dimensions 
+  of a shape.
+
 [ bug fixes ] 
 
 + Fix video library breaking due to a fix for another video library bug.
