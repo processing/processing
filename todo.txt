@@ -2,6 +2,9 @@
 X delete files before adding, otherwise case changes are not preserved
 X   http://dev.processing.org/bugs/show_bug.cgi?id=969
 
+_ ClassNotFoundException: quicktime.std.StdQTException with release 0152
+_   http://dev.processing.org/bugs/show_bug.cgi?id=970
+
 previous
 o put the "had to rename sketch" message in the msg bar
 o   it's ugly/annoying/intrusive
