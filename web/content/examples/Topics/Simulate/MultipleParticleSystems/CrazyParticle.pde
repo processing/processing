@@ -7,7 +7,7 @@ class CrazyParticle extends Particle {
   float theta;
 
   // The CrazyParticle constructor can call the parent class (super class) constructor
-  CrazyParticle(Vector3D l) {
+  CrazyParticle(PVector l) {
     // "super" means do everything from the constructor in Particle
     super(l);
     // One more line of code to deal with the new variable, theta
@@ -21,7 +21,7 @@ class CrazyParticle extends Particle {
   void update() {
     super.update();
     // Increment rotation based on horizontal velocity
-    float theta_vel = (vel.x * vel.magnitude()) / 10.0f;
+    float theta_vel = (vel.x * vel.mag()) / 10.0f;
     theta += theta_vel;
   }
 

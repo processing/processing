@@ -3,9 +3,9 @@
 class ParticleSystem {
 
   ArrayList particles;    // An arraylist for all the particles
-  Vector3D origin;        // An origin point for where particles are birthed
+  PVector origin;        // An origin point for where particles are birthed
 
-  ParticleSystem(int num, Vector3D v) {
+  ParticleSystem(int num, PVector v) {
     particles = new ArrayList();              // Initialize the arraylist
     origin = v.copy();                        // Store the origin point
     for (int i = 0; i < num; i++) {

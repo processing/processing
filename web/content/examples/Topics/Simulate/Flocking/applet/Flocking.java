@@ -1,4 +1,5 @@
 import processing.core.*; 
+import processing.xml.*; 
 
 import java.applet.*; 
 import java.awt.*; 
@@ -31,7 +32,7 @@ public void setup() {
   flock = new Flock();
   // Add an initial set of boids into the system
   for (int i = 0; i < 150; i++) {
-    flock.addBoid(new Boid(new Vector3D(width/2,height/2),2.0f,0.05f));
+    flock.addBoid(new Boid(new PVector(width/2,height/2),2.0f,0.05f));
   }
   smooth();
 }
@@ -43,22 +44,22 @@ public void draw() {
 
 // Add a new boid into the System
 public void mousePressed() {
-  flock.addBoid(new Boid(new Vector3D(mouseX,mouseY),2.0f,0.05f));
+  flock.addBoid(new Boid(new PVector(mouseX,mouseY),2.0f,0.05f));
 }
 // The Boid class
 
 class Boid {
 
-  Vector3D loc;
-  Vector3D vel;
-  Vector3D acc;
+  PVector loc;
+  PVector vel;
+  PVector acc;
   float r;
   float maxforce;    // Maximum steering force
   float maxspeed;    // Maximum speed
 
-  Boid(Vector3D l, float ms, float mf) {
-    acc = new Vector3D(0,0);
-    vel = new Vector3D(random(-1,1),random(-1,1));
+  Boid(PVector l, float ms, float mf) {
+    acc = new PVector(0,0);
+    vel = new PVector(random(-1,1),random(-1,1));
     loc = l.copy();
     r = 2.0f;
     maxspeed = ms;
@@ -74,9 +75,9 @@ class Boid {
 
   // We accumulate a new acceleration each time based on three rules
   public void flock(ArrayList boids) {
-    Vector3D sep = separate(boids);   // Separation
-    Vector3D ali = align(boids);      // Alignment
-    Vector3D coh = cohesion(boids);   // Cohesion
+    PVector sep = separate(boids);   // Separation
+    PVector ali = align(boids);      // Alignment
+    PVector coh = cohesion(boids);   // Cohesion
     // Arbitrarily weight these forces
     sep.mult(2.0f);
     ali.mult(1.0f);
@@ -95,23 +96,23 @@ class Boid {
     vel.limit(maxspeed);
     loc.add(vel);
     // Reset accelertion to 0 each cycle
-    acc.setXYZ(0,0,0);
+    acc.mult(0);
   }
 
-  public void seek(Vector3D target) {
+  public void seek(PVector target) {
     acc.add(steer(target,false));
   }
  
-  public void arrive(Vector3D target) {
+  public void arrive(PVector target) {
     acc.add(steer(target,true));
   }
 
   // A method that calculates a steering vector towards a target
   // Takes a second argument, if true, it slows down as it approaches the target
-  public Vector3D steer(Vector3D target, boolean slowdown) {
-    Vector3D steer;  // The steering vector
-    Vector3D desired = target.sub(target,loc);  // A vector pointing from the location to the target
-    float d = desired.magnitude(); // Distance from the target is the magnitude of the vector
+  public PVector steer(PVector target, boolean slowdown) {
+    PVector steer;  // The steering vector
+    PVector desired = target.sub(target,loc);  // A vector pointing from the location to the target
+    float d = desired.mag(); // Distance from the target is the magnitude of the vector
     // If the distance is greater than 0, calc steering (otherwise return zero vector)
     if (d > 0) {
       // Normalize desired
@@ -123,7 +124,7 @@ class Boid {
       steer = target.sub(desired,vel);
       steer.limit(maxforce);  // Limit to maximum steering force
     } else {
-      steer = new Vector3D(0,0);
+      steer = new PVector(0,0);
     }
     return steer;
   }
@@ -154,18 +155,18 @@ class Boid {
 
   // Separation
   // Method checks for nearby boids and steers away
-  public Vector3D separate (ArrayList boids) {
+  public PVector separate (ArrayList boids) {
     float desiredseparation = 25.0f;
-    Vector3D sum = new Vector3D(0,0,0);
+    PVector sum = new PVector(0,0,0);
     int count = 0;
     // For every boid in the system, check if it's too close
     for (int i = 0 ; i < boids.size(); i++) {
       Boid other = (Boid) boids.get(i);
-      float d = loc.distance(loc,other.loc);
+      float d = loc.dist(other.loc);
       // If the distance is greater than 0 and less than an arbitrary amount (0 when you are yourself)
       if ((d > 0) && (d < desiredseparation)) {
         // Calculate vector pointing away from neighbor
-        Vector3D diff = loc.sub(loc,other.loc);
+        PVector diff = loc.sub(loc,other.loc);
         diff.normalize();
         diff.div(d);        // Weight by distance
         sum.add(diff);
@@ -181,13 +182,13 @@ class Boid {
   
   // Alignment
   // For every nearby boid in the system, calculate the average velocity
-  public Vector3D align (ArrayList boids) {
+  public PVector align (ArrayList boids) {
     float neighbordist = 50.0f;
-    Vector3D sum = new Vector3D(0,0,0);
+    PVector sum = new PVector(0,0,0);
     int count = 0;
     for (int i = 0 ; i < boids.size(); i++) {
       Boid other = (Boid) boids.get(i);
-      float d = loc.distance(loc,other.loc);
+      float d = loc.dist(other.loc);
       if ((d > 0) && (d < neighbordist)) {
         sum.add(other.vel);
         count++;
@@ -202,13 +203,13 @@ class Boid {
 
   // Cohesion
   // For the average location (i.e. center) of all nearby boids, calculate steering vector towards that location
-  public Vector3D cohesion (ArrayList boids) {
+  public PVector cohesion (ArrayList boids) {
     float neighbordist = 50.0f;
-    Vector3D sum = new Vector3D(0,0,0);   // Start with empty vector to accumulate all locations
+    PVector sum = new PVector(0,0);   // Start with empty vector to accumulate all locations
     int count = 0;
     for (int i = 0 ; i < boids.size(); i++) {
       Boid other = (Boid) boids.get(i);
-      float d = loc.distance(loc,other.loc);
+      float d = loc.dist(other.loc);
       if ((d > 0) && (d < neighbordist)) {
         sum.add(other.loc); // Add location
         count++;

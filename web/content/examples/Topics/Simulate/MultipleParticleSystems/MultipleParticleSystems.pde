@@ -35,7 +35,7 @@ void draw() {
 
 // When the mouse is pressed, add a new particle system
 void mousePressed() {
-  psystems.add(new ParticleSystem(int(random(5,25)),new Vector3D(mouseX,mouseY)));
+  psystems.add(new ParticleSystem(int(random(5,25)),new PVector(mouseX,mouseY)));
 }
 
 

@@ -4,10 +4,10 @@
 class ParticleSystem {
 
   ArrayList particles;    // An arraylist for all the particles
-  Vector3D origin;        // An origin point for where particles are birthed
+  PVector origin;        // An origin point for where particles are birthed
   PImage img;
   
-  ParticleSystem(int num, Vector3D v, PImage img_) {
+  ParticleSystem(int num, PVector v, PImage img_) {
     particles = new ArrayList();              // Initialize the arraylist
     origin = v.copy();                        // Store the origin point
     img = img_;
@@ -28,7 +28,7 @@ class ParticleSystem {
   }
   
   // Method to add a force vector to all particles currently in the system
-  void add_force(Vector3D dir) {
+  void add_force(PVector dir) {
     for (int i = particles.size()-1; i >= 0; i--) {
       Particle p = (Particle) particles.get(i);
       p.add_force(dir);

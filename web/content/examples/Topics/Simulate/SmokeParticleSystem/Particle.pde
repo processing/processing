@@ -2,14 +2,14 @@
 // A simple Particle class, renders the particle as an image
 
 class Particle {
-  Vector3D loc;
-  Vector3D vel;
-  Vector3D acc;
+  PVector loc;
+  PVector vel;
+  PVector acc;
   float timer;
   PImage img;
 
   // One constructor
-  Particle(Vector3D a, Vector3D v, Vector3D l, PImage img_) {
+  Particle(PVector a, PVector v, PVector l, PImage img_) {
     acc = a.copy();
     vel = v.copy();
     loc = l.copy();
@@ -18,11 +18,11 @@ class Particle {
   }
 
   // Another constructor (the one we are using here)
-  Particle(Vector3D l,PImage img_) {
-    acc = new Vector3D(0.0,0.0,0.0);
+  Particle(PVector l,PImage img_) {
+    acc = new PVector(0.0,0.0,0.0);
     float x = (float) generator.nextGaussian()*0.3f;
     float y = (float) generator.nextGaussian()*0.3f - 1.0f;
-    vel = new Vector3D(x,y,0);
+    vel = new PVector(x,y,0);
     loc = l.copy();
     timer = 100.0;
     img = img_;
@@ -35,7 +35,7 @@ class Particle {
   
   // Method to apply a force vector to the Particle object
   // Note we are ignoring "mass" here
-  void add_force(Vector3D f) {
+  void add_force(PVector f) {
     acc.add(f);
   }  
 
@@ -44,7 +44,7 @@ class Particle {
     vel.add(acc);
     loc.add(vel);
     timer -= 2.5;
-    acc.setXY(0,0);
+    acc.mult(0);
   }
 
   // Method to display

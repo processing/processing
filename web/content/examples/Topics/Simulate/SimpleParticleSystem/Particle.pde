@@ -1,16 +1,16 @@
 // A simple Particle class
 
 class Particle {
-  Vector3D loc;
-  Vector3D vel;
-  Vector3D acc;
+  PVector loc;
+  PVector vel;
+  PVector acc;
   float r;
   float timer;
   
   // Another constructor (the one we are using here)
-  Particle(Vector3D l) {
-    acc = new Vector3D(0,0.05,0);
-    vel = new Vector3D(random(-1,1),random(-2,0),0);
+  Particle(PVector l) {
+    acc = new PVector(0,0.05,0);
+    vel = new PVector(random(-1,1),random(-2,0),0);
     loc = l.copy();
     r = 10.0;
     timer = 100.0;
@@ -34,7 +34,7 @@ class Particle {
     stroke(255,timer);
     fill(100,timer);
     ellipse(loc.x,loc.y,r,r);
-    vel.display(loc.x,loc.y,10);
+    displayVector(vel,loc.x,loc.y,10);
   }
   
   // Is the particle still useful?
@@ -45,5 +45,23 @@ class Particle {
       return false;
     }
   }
+  
+   void displayVector(PVector v, float x, float y, float scayl) {
+    pushMatrix();
+    float arrowsize = 4;
+    // Translate to location to render vector
+    translate(x,y);
+    stroke(255);
+    // Call vector heading function to get direction (note that pointing up is a heading of 0) and rotate
+    rotate(v.heading2D());
+    // Calculate length of vector & scale it to be bigger or smaller if necessary
+    float len = v.mag()*scayl;
+    // Draw three lines to make an arrow (draw pointing up since we've rotate to the proper direction)
+    line(0,0,len,0);
+    line(len,0,len-arrowsize,+arrowsize/2);
+    line(len,0,len-arrowsize,-arrowsize/2);
+    popMatrix();
+  } 
+
 }
 

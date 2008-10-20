@@ -16,7 +16,7 @@ void setup() {
   flock = new Flock();
   // Add an initial set of boids into the system
   for (int i = 0; i < 150; i++) {
-    flock.addBoid(new Boid(new Vector3D(width/2,height/2),2.0,0.05));
+    flock.addBoid(new Boid(new PVector(width/2,height/2),2.0,0.05));
   }
   smooth();
 }
@@ -28,5 +28,5 @@ void draw() {
 
 // Add a new boid into the System
 void mousePressed() {
-  flock.addBoid(new Boid(new Vector3D(mouseX,mouseY),2.0f,0.05f));
+  flock.addBoid(new Boid(new PVector(mouseX,mouseY),2.0f,0.05f));
 }
