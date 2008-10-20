@@ -22,7 +22,7 @@ println(s.getWidth());  // Prints 281.0, the width of the shape
 </example>
 
 <description>
-Calculates and returns the width of a PShape. 
+Calculates and returns the width of the PShape. 
 </description>
 
 <syntax>
