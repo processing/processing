@@ -46,45 +46,26 @@ public class Platform extends processing.app.Platform {
   public void init(Base base) {
     super.init(base);
 
+    checkAssociations();
+    checkQuickTime();
+  }
+
+
+  /**
+   * Make sure that .pde files are associated with processing.exe.
+   */
+  protected void checkAssociations() {
     try {
       String knownCommand =
         Registry.getStringValue(REGISTRY_ROOT_KEY.CLASSES_ROOT,
                                 DOC + "\\shell\\open\\command", "");
-      //System.out.println("known is " + knownCommand);
       if (knownCommand == null) {
-        /*
-        String prompt =
-          "Processing is not set to handle .pde files.\n" +
-          "Would you like to make it the default?";
-        int result =
-          JOptionPane.showConfirmDialog(null, prompt, "Reassign .pde files",
-                                        JOptionPane.YES_NO_OPTION,
-                                        JOptionPane.QUESTION_MESSAGE);
-
-        if (result == JOptionPane.YES_OPTION) {
-          setAssociations();
-        }
-        */
         if (Preferences.getBoolean("platform.auto_file_type_associations")) {
           setAssociations();
         }
 
       } else if (!knownCommand.equals(openCommand)) {
         // If the value is set differently, just change the registry setting.
-
-
-        /*String prompt =
-          "This version of Processing is not the default application\n" +
-          "to open .pde files. Would you like to make it the default?";
-        int result =
-          JOptionPane.showConfirmDialog(null, prompt, "Reassign .pde files",
-                                        JOptionPane.YES_NO_OPTION,
-                                        JOptionPane.QUESTION_MESSAGE);
-
-        if (result == JOptionPane.YES_OPTION) {
-          setAssociations();
-        }
-        */
         if (Preferences.getBoolean("platform.auto_file_type_associations")) {
           setAssociations();
         }
@@ -122,6 +103,28 @@ public class Platform extends processing.app.Platform {
 
     } else {
       Preferences.setBoolean("platform.auto_file_type_associations", false);
+    }
+  }
+
+
+  /**
+   * Find QuickTime for Java installation.
+   */
+  protected void checkQuickTime() {
+    String qtsystemPath =
+      Registry.getStringValue(REGISTRY_ROOT_KEY.LOCAL_MACHINE,
+                              "Software\\Apple Computer, Inc.\\QuickTime",
+                              "QTSysDir");
+    if (qtsystemPath == null) {
+      System.err.println("QuickTime not installed");
+    } else {
+      File qtjavaZip = new File(qtsystemPath, "QTJava.zip");
+      if (qtjavaZip.exists()) {
+        String qtjavaZipPath = qtjavaZip.getAbsolutePath();
+        String cp = System.getProperty("java.class.path");
+        System.setProperty("java.class.path",
+                           cp + File.pathSeparator + qtjavaZipPath);
+      }
     }
   }
 
