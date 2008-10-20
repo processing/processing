@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>PVector</name>
+
+<category>Math</category>
+
+<subcategory>PVector</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+PVector v1, v2;
+
+void setup() {
+  smooth();
+  noLoop();
+  v1 = new PVector(40, 20);
+  v2 = new PVector(25, 50); 
+}
+
+void draw() {
+  ellipse(v1.x, v1.y, 12, 12);
+  ellipse(v2.x, v2.y, 12, 12);
+  v2.add(v1);
+  ellipse(v2.x, v2.y, 24, 24);
+}
+</code>
+</example>
+
+<description>
+Datatype that stores two or three variables that are commonly used as a position, velocity, and/or acceleration. Technically, <em>position</em> is a point and <em>velocity</em> and <em>acceleration</em> are vectors, but this is often simplified to consider all three as vectors. For example, if you consider a rectangle moving across the screen, at any given instant it has a position (the object’s location, expressed as a point.), a velocity (the rate at which the object’s position changes per time unit, expressed as a vector), and acceleration (the rate at which the object’s velocity changes per time unit, expressed as a vector). Since vectors represent groupings of values, we cannot simply use traditional addition/multiplication/etc. Instead, we’ll need to do some "vector" math, which is made easy by the methods inside the PVector class.
+</description>
+
+<syntax></syntax>
+
+<parameters></parameters>
+
+<field>
+<fname>x</fname>
+<fdescription>x-component of the vector</fdescription>
+</field>
+<field>
+<fname>y</fname>
+<fdescription>y-component of the vector</fdescription>
+</field>
+<field>
+<fname>z</fname>
+<fdescription>z-component of the vector</fdescription>
+</field>
+
+<method>
+<mname>blah()</mname>
+<mdescription>blah</mdescription>
+</method>
+
+<constructor>
+PVector()
+PVector(<c>x</c>, <c>y</c>)
+PVector(<c>x</c>, <c>y</c>, <c>z</c>)
+</constructor>
+
+<cparameter>
+<clabel>x</clabel>
+<cdescription>float: x component</cdescription>
+</cparameter>
+
+<cparameter>
+<clabel>y</clabel>
+<cdescription>float: y component</cdescription>
+</cparameter>
+
+<cparameter>
+<clabel>z</clabel>
+<cdescription>float: z component</cdescription>
+</cparameter>
+
+
+<returns></returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Object</type>
+
+<partof>Core</partof>
+
+<level>Extended</level>
+
+
+</root>
