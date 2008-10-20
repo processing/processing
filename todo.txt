@@ -1,5 +1,11 @@
 0153 pde
+X delete files before adding, otherwise case changes are not preserved
+X   http://dev.processing.org/bugs/show_bug.cgi?id=969
 
+previous
+o put the "had to rename sketch" message in the msg bar
+o   it's ugly/annoying/intrusive
+X   just print it to the console
 
 _ don't open more than one "create font" or "color selector"
 _   http://dev.processing.org/bugs/show_bug.cgi?id=830
@@ -563,6 +569,13 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=281
 
 PDE / Editor
 
+_ should really be doing the 'right' thing with sketch file handling
+_   create temporary file when saving
+_   once done writing, use remove the original and rename the old
+_   some basic stuff like this..
+_   http://dev.processing.org/bugs/show_bug.cgi?id=968
+_ when disk is full, Processing zeroes files when it tries to save changes
+_   http://dev.processing.org/bugs/show_bug.cgi?id=967
 _ sketch marked as modified too aggressively
 _   http://dev.processing.org/bugs/show_bug.cgi?id=328
 _ Closing the last window doesn't cause PDE to save its position/contents/etc
@@ -586,6 +599,7 @@ _   but the window is not properly set as untitled
 _   http://dev.processing.org/bugs/show_bug.cgi?id=700
 _ strange NullPointerException problem prevents launch
 _   some kind of NPE in handleOpenInternal and friends
+_   appears to be a synchronization problem with the loading
 _ when opening from double-click on the mac, doesn't replace untitled
 _   or in general, issues between opening new window and another launching
 _   probably need to synchronize the file open methods inside Base
@@ -606,8 +620,6 @@ _     the contents in the files are not the same, but the main-tab is
 _     showing the contents of the .java tab, so if you press save 
 _     you will overwrite your original code from the main-tab. 
 _ after fixing name of sketch, ensure sketch of that name does not exist
-_ put the "had to rename sketch" message in the msg bar
-_   it's ugly/annoying/intrusive
 _ do quick fix for tab bar
 _   don't show tabs when there are too many
 _   maybe move the list of files to the top?
@@ -621,10 +633,6 @@ _ add auto-save to the editor
 _   http://dev.processing.org/bugs/show_bug.cgi?id=739
 _ dragging title bar while sketch running causes strange selection behavior
 _   http://dev.processing.org/bugs/show_bug.cgi?id=504
-_ should really be doing the 'right' thing with sketch file handling
-_   create temporary file when saving
-_   once done writing, use remove the original and rename the old
-_   some basic stuff like this..
 _ shortcuts not working after rename? (osx only?)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=505
 _ convert tabs to spaces when pasting text
