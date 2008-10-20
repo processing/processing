@@ -9,7 +9,6 @@ import processing.video.*;
 
 Movie myMovie;
 
-
 void setup() {
   size(640, 480, P3D);
   background(0);
@@ -18,11 +17,9 @@ void setup() {
   myMovie.loop();
 }
 
-
 void movieEvent(Movie myMovie) {
   myMovie.read();
 }
-
 
 void draw() {
   tint(255, 20);

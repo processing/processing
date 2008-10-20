@@ -15,7 +15,6 @@ int blockSize = 10;
 Movie myMovie;
 color myMovieColors[];
 
-
 void setup() {
   size(640, 480, P3D);
   noStroke();
@@ -25,7 +24,6 @@ void setup() {
   numPixels = width / blockSize;
   myMovieColors = new color[numPixels * numPixels];
 }
-
 
 // Read new values from movie
 void movieEvent(Movie m) {
@@ -38,7 +36,6 @@ void movieEvent(Movie m) {
     }
   }
 }
-
 
 // Display values from movie
 void draw()  {
