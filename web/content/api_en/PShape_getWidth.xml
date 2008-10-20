@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>getWidth()</name>
+
+<category>PShape</category>
+
+<subcategory>Method</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+// The file "bot.svg" must be in the data folder
+// of the current sketch to load successfully
+PShape s;
+s = loadShape("bot.svg");
+smooth();
+shape(s);
+println(s.getWidth());  // Prints 281.0, the width of the shape
+</code>
+</example>
+
+<description>
+Calculates and returns the width of a PShape. 
+</description>
+
+<syntax>
+<c>sh</c>.getWidth()
+</syntax>
+
+<parameter>
+<label>sh</label>
+<description>PShape: any variable of type PShape</description>
+</parameter>
+
+<returns>float</returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type>Method</type>
+
+<partof>Core</partof>
+
+
+</root>
