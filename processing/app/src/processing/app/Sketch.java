@@ -67,11 +67,11 @@ public class Sketch {
 
   private SketchCode current;
   private int currentIndex;
-  /** 
+  /**
    * Number of sketchCode objects (tabs) in the current sketch. Note that this
-   * will be the same as code.length, because the getCode() method returns 
+   * will be the same as code.length, because the getCode() method returns
    * just the code[] array, rather than a copy of it, or an array that's been
-   * resized to just the relevant files themselves. 
+   * resized to just the relevant files themselves.
    * http://dev.processing.org/bugs/show_bug.cgi?id=940
    */
   private int codeCount;
@@ -719,7 +719,7 @@ public class Sketch {
       fd.setDirectory(folder.getParent());
     }
     fd.setFile(folder.getName());
-    
+
     fd.setVisible(true);
     newParentDir = fd.getDirectory();
     newName = fd.getFile();
@@ -945,6 +945,19 @@ public class Sketch {
       }
     }
 
+    // If it's a replacement, delete the old file first,
+    // otherwise case changes will not be preserved.
+    // http://dev.processing.org/bugs/show_bug.cgi?id=969
+    if (replacement) {
+      boolean muchSuccess = destFile.delete();
+      if (!muchSuccess) {
+        Base.showWarning("Error adding file",
+                         "Could not delete the existing '" +
+                         filename + "' file.", null);
+        return false;
+      }
+    }
+
     // make sure they aren't the same file
     if ((codeExtension == null) && sourceFile.equals(destFile)) {
       Base.showWarning("You can't fool me",
@@ -1052,7 +1065,7 @@ public class Sketch {
 
     current = code[which];
     currentIndex = which;
-    
+
     editor.setCode(current);
     editor.header.rebuild();
   }
@@ -1696,7 +1709,7 @@ public class Sketch {
       }
     }
 
-    File bagelJar = Base.isMacOS() ? 
+    File bagelJar = Base.isMacOS() ?
       Base.getContentFile("core.jar") :
       Base.getContentFile("lib/core.jar");
     if (separateJar) {
@@ -1999,9 +2012,9 @@ public class Sketch {
 
     File jarFolder = new File(destFolder, "lib");
 
-    
+
     /// where all the skeleton info lives
-    
+
     File skeletonFolder = new File(Base.getContentFile("lib"), "export");
 
     /// on macosx, need to copy .app skeleton since that's
@@ -2135,7 +2148,7 @@ public class Sketch {
 
     /// add core.jar to the jar destination folder
 
-    File bagelJar = Base.isMacOS() ? 
+    File bagelJar = Base.isMacOS() ?
       Base.getContentFile("core.jar") :
       Base.getContentFile("lib/core.jar");
     Base.copyFile(bagelJar, new File(jarFolder, "core.jar"));
@@ -2775,7 +2788,7 @@ public class Sketch {
     String newName = sanitizeName(origName);
 
     if (!newName.equals(origName)) {
-      String msg = 
+      String msg =
         "The sketch name had to be modified. Sketch names can only consist\n" +
         "of ASCII characters and numbers, and cannot start with a number.\n" +
         "They should also be less less than 64 characters long)\n";
