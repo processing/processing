@@ -29,6 +29,16 @@ This library was specifically tested using SVG files created from Adobe Illustra
 <parameters></parameters>
 
 <method>
+<mname>getWidth()</mname>
+<mdescription>Returns the width of the PShape</mdescription>
+</method>
+
+<method>
+<mname>getHeight()</mname>
+<mdescription>Returns the height of the PShape</mdescription>
+</method>
+
+<method>
 <mname>isVisible()</mname>
 <mdescription>Returns a boolean value "true" if the image is set to be visible, "false" if not</mdescription>
 </method>
