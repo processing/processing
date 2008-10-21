@@ -1,9 +1,13 @@
 0154 core
 X only set apple.awt.graphics.UseQuartz on osx, otherwise security error
 X   http://dev.processing.org/bugs/show_bug.cgi?id=976
+X add skewX() and skewY() to PMatrix
+X Add support style attribute for path tag to Candy SVG (ricard)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=771
 
 _ remove copy() from PVector? 
 _ add mult() and div() with vector inputs?
+_ rename GettingStarted_Shape example
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -498,8 +502,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=727
 LIBRARIES / Candy 
 
 _ breaking up classes / figure out how to handle fonts subclass
-_ Add support style attribute for path tag to Candy SVG (ricard)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=771
 _ when using get(), reset the bounds for the objects
 _   otherwise it's always relative to the original document
 _ support for text (shouldn't be too bad, use createFont)

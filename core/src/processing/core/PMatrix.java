@@ -72,6 +72,10 @@ public interface PMatrix {
   public void scale(float sx, float sy);
 
   public void scale(float x, float y, float z);
+  
+  public void skewX(float angle);
+  
+  public void skewY(float angle);
 
   /** 
    * Multiply this matrix by another.
