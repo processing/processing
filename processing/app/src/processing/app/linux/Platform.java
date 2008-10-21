@@ -92,7 +92,7 @@ public class Platform extends processing.app.Platform {
       try {
         String[] params = new String[] { lunch, file.getAbsolutePath() };
         //processing.core.PApplet.println(params);
-        Process p = Runtime.getRuntime().exec(params);
+        /*Process p =*/ Runtime.getRuntime().exec(params);
         /*int result =*/ //p.waitFor();
       } catch (Exception e) { 
         e.printStackTrace();
