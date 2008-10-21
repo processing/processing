@@ -78,6 +78,8 @@ _   maybe just add this to the reference so that people know
 _ text position is quantized in JAVA2D
 _   http://dev.processing.org/bugs/show_bug.cgi?id=806
 _ accessors inside PFont need a lot of work
+_ osx 10.5 (not 10.4) performing text width calculation differently
+_   http://dev.processing.org/bugs/show_bug.cgi?id=972
 
 
 P2D, P3D, PPolygon [1.0]
