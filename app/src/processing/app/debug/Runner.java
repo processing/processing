@@ -47,10 +47,10 @@ import com.sun.jdi.event.ExceptionEvent;
 public class Runner implements MessageConsumer {
 
   private boolean presenting;
-  
-  // Object that listens for error messages or exceptions. 
+
+  // Object that listens for error messages or exceptions.
   private RunnerListener listener;
-  
+
   // Running remote VM
   private VirtualMachine vm;
 
@@ -89,19 +89,19 @@ public class Runner implements MessageConsumer {
 //  private MessageSiphon processError;
 
 
-  public Runner(Sketch sketch, String appletClassName, 
+  public Runner(Sketch sketch, String appletClassName,
                 boolean presenting, RunnerListener listener) {
     this.sketch = sketch;
     this.appletClassName = appletClassName;
     this.presenting = presenting;
     this.listener = listener;
-    
+
     if (listener instanceof Editor) {
       this.editor = (Editor) listener;
     }
   }
 
-  
+
   public void launch() {
     // TODO entire class is a total mess as of release 0136.
     // This will be cleaned up significantly over the next couple months.
@@ -625,10 +625,24 @@ public class Runner implements MessageConsumer {
   }
 
 
+  boolean badQuickTimeWarning;
+
+  // This may be called more than one time per error in the VM,
+  // presumably because exceptions might be wrapped inside others,
+  // and this will fire for both.
   protected void reportException(String message, ThreadReference thread) {
     try {
       int codeIndex = -1;
       int lineNumber = -1;
+
+      String badQuickTime =
+        "ClassNotFoundException: quicktime.std.StdQTException";
+      if (message.equals(badQuickTime) && !badQuickTimeWarning) {
+        Base.showWarning("QuickTime not installed",
+                         "Could not find a QuickTime installation.\n" +
+                         "Please reinstall QuickTime 7 or later.", null);
+        badQuickTimeWarning = true;
+      }
 
 //      System.out.println("reporting ex");
       List<StackFrame> frames = thread.frames();
@@ -677,7 +691,7 @@ public class Runner implements MessageConsumer {
             return;
           }
         } catch (AbsentInformationException e) {
-          e.printStackTrace();  // do i really want to print a trace?
+          //e.printStackTrace();  // do i really want to print a trace?
         }
       }
     } catch (IncompatibleThreadStateException e) {
