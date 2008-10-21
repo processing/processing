@@ -24,7 +24,6 @@ package processing.app.windows;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 
 import processing.app.Base;
 import processing.app.Preferences;
