@@ -39,7 +39,7 @@
 		<ex file="LogicalOperators.html">Logical Operators</ex>
 	</cat>
 	<cat label="Image">
-		<ex file="LoadDisplayingImage.html">Load and Display Image</ex>
+		<ex file="LoadDisplayImage.html">Load and Display Image</ex>
 		<ex file="BackgroundImage.html">Background Image</ex>
 		<ex file="Transparency.html">Transparency</ex>
 		<ex file="Sprite.html">Sprite</ex>
