@@ -131,18 +131,8 @@ Datatype that stores two or three variables that are commonly used as a position
 </method>
 
 <method>
-<mname>heading2D()</mname>
-<mdescription>Calculates the angle of rotation for the vector (only 2D vectors)</mdescription>
-</method>
-
-<method>
 <mname>angleBetween()</mname>
 <mdescription>Calculates the angle between two vectors</mdescription>
-</method>
-
-<method>
-<mname>toString()</mname>
-<mdescription>Returns the x, y, and z components as a String</mdescription>
 </method>
 
 <method>
