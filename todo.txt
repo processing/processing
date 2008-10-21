@@ -1,7 +1,42 @@
 0154 pde
+X clean up PATH for users who have garbage in the PATH
+X   http://dev.processing.org/bugs/show_bug.cgi?id=974
+X disallow .java tabs with same name as the sketch
+X   a .java tab with same name as the sketch is allowed (oog!)
+X   particularly look at "save as" scenario
+X   http://dev.processing.org/bugs/show_bug.cgi?id=543
+X   bug report:
+X     create a new sketch, write something in it
+X     create a new tab, name it "something.java", write something into it
+X     rename main tab (sketch) to "something" (without ".java")
+X     the contents in the files are not the same, but the main-tab is 
+X     showing the contents of the .java tab, so if you press save 
+X     you will overwrite your original code from the main-tab. 
 
-_ clean up PATH for users who have garbage in the PATH
+_ com.sun.jdi.AbsentInformationException when running a sketch
+_   http://dev.processing.org/bugs/show_bug.cgi?id=971
+
+_ move library examples to the examples menu
 _   http://dev.processing.org/bugs/show_bug.cgi?id=974
+
+cleaning
+X processing cancels shutdown on mac os x
+X   http://dev.processing.org/bugs/show_bug.cgi?id=539
+X   fixed in an older version
+X jikes bugs mean some code just won't compile:
+X   include javac? would this be a good solution for linux?
+X   http://dev.processing.org/bugs/show_bug.cgi?id=8
+X an empty .java tab will throw an error
+X   http://dev.processing.org/bugs/show_bug.cgi?id=10
+X warn about writing non-1.1 code. 
+X   http://dev.processing.org/bugs/show_bug.cgi?id=11
+X java.lang.NoClassDefFoundError: quicktime/std/StdQTException
+X   people not installing qt? no QTJAVA set?
+X   http://dev.processing.org/bugs/show_bug.cgi?id=669
+o   simulate this by removing qtjava.zip, then make a handler for it
+o   which will open the reference for it
+X   use the registry key, and warn the user when it's not there
+
 
 _ don't open more than one "create font" or "color selector"
 _   http://dev.processing.org/bugs/show_bug.cgi?id=830
@@ -507,16 +542,9 @@ _   http://processing.org/bugs/show_bug.cgi?id=6
 _ allow doubles in preproc
 _   (for casting, etc) particularly for Math.cos() et al
 _   http://processing.org/bugs/show_bug.cgi?id=7
-_ jikes bugs mean some code just won't compile:
-_   include javac? would this be a good solution for linux?
-_   http://dev.processing.org/bugs/show_bug.cgi?id=8
 _ don't allow goofy case versions of reserved words
 _   keypressed should maybe throw an error
 _   http://dev.processing.org/bugs/show_bug.cgi?id=9
-_ an empty .java tab will throw an error
-_   http://dev.processing.org/bugs/show_bug.cgi?id=10
-_ warn about writing non-1.1 code. 
-_   http://dev.processing.org/bugs/show_bug.cgi?id=11
 _ missing semicolons - better error message
 _   http://dev.processing.org/bugs/show_bug.cgi?id=12
 _ missing brackets, unmatched brackets
@@ -604,17 +632,6 @@ _ editors opening up at the same time on load?
 _   either synchronize the open (at a minimum)
 _   or wait for mac handlers to register an open event
 _   can also cause problems with opening multiple copies of same sketch
-_ disallow .java tabs with same name as the sketch
-_   a .java tab with same name as the sketch is allowed (oog!)
-_   particularly look at "save as" scenario
-_   http://dev.processing.org/bugs/show_bug.cgi?id=543
-_   bug report:
-_     create a new sketch, write something in it
-_     create a new tab, name it "something.java", write something into it
-_     rename main tab (sketch) to "something" (without ".java")
-_     the contents in the files are not the same, but the main-tab is 
-_     showing the contents of the .java tab, so if you press save 
-_     you will overwrite your original code from the main-tab. 
 _ after fixing name of sketch, ensure sketch of that name does not exist
 _ do quick fix for tab bar
 _   don't show tabs when there are too many
@@ -996,11 +1013,6 @@ _ threading problems with video
 _   http://dev.processing.org/bugs/show_bug.cgi?id=868
 _ audio stops working after two seconds
 _   http://dev.processing.org/bugs/show_bug.cgi?id=277
-_ java.lang.NoClassDefFoundError: quicktime/std/StdQTException
-_   people not installing qt? no QTJAVA set?
-_   http://dev.processing.org/bugs/show_bug.cgi?id=669
-_   simulate this by removing qtjava.zip, then make a handler for it
-_   which will open the reference for it
 _ add more information about multiple camera inputs
 _ add info about "access" errors being quicktime errors
 _ documented in faq, add something to the lib "camera not installed"
@@ -1152,8 +1164,6 @@ _   was missing the error about a package being gone
 _   can comment out /System/Library/ as a test
 _ put stdout/stderr into ~/Library/Logs
 _   and have a .log extension so it can be browsed properly
-_ processing cancels shutdown on mac os x
-_   http://dev.processing.org/bugs/show_bug.cgi?id=539
 _ try LSMinimumSystemVersion in Info.plist
 
 

@@ -379,24 +379,34 @@ public class Sketch {
       newName = sanitaryName + "." + newExtension;
     }
 
-    // create the new file, new SketchCode object and load it
-    File newFile = new File(folder, newName);
-    if (newFile.exists()) {  // yay! users will try anything
-      Base.showMessage("Nope",
-                       "A file named \"" + newFile + "\" already exists\n" +
-                       "in \"" + folder.getAbsolutePath() + "\"");
-      return;
+    // Make sure no .pde *and* no .java files with the same name already exist
+    // http://dev.processing.org/bugs/show_bug.cgi?id=543
+    for (SketchCode c : code) {
+      if (sanitaryName.equals(c.getPrettyName())) {
+        Base.showMessage("Nope",
+                         "A file named \"" + c.getFileName() + "\" already exists\n" +
+                         "in \"" + folder.getAbsolutePath() + "\"");
+        return;
+      }
     }
 
-    File newFileHidden = new File(folder, newName + ".x");
-    if (newFileHidden.exists()) {
-      // don't let them get away with it if they try to create something
-      // with the same name as something hidden
-      Base.showMessage("No Way",
-                       "A hidden tab with the same name already exists.\n" +
-                       "Use \"Unhide\" to bring it back.");
-      return;
-    }
+    File newFile = new File(folder, newName);
+//    if (newFile.exists()) {  // yay! users will try anything
+//      Base.showMessage("Nope",
+//                       "A file named \"" + newFile + "\" already exists\n" +
+//                       "in \"" + folder.getAbsolutePath() + "\"");
+//      return;
+//    }
+
+//    File newFileHidden = new File(folder, newName + ".x");
+//    if (newFileHidden.exists()) {
+//      // don't let them get away with it if they try to create something
+//      // with the same name as something hidden
+//      Base.showMessage("No Way",
+//                       "A hidden tab with the same name already exists.\n" +
+//                       "Use \"Unhide\" to bring it back.");
+//      return;
+//    }
 
     if (renamingCode) {
       if (currentIndex == 0) {
@@ -718,24 +728,30 @@ public class Sketch {
       // default to the parent folder of where this was
       fd.setDirectory(folder.getParent());
     }
-    fd.setFile(folder.getName());
+    String oldName = folder.getName();
+    fd.setFile(oldName);
 
     fd.setVisible(true);
     newParentDir = fd.getDirectory();
     newName = fd.getFile();
 
-    // user cancelled selection
+    // user canceled selection
     if (newName == null) return false;
     newName = Sketch.checkName(newName);
 
+    if (newName.equals(oldName)) {
+      return false;  // Can't save a sketch over itself
+    }
+
     // make sure there doesn't exist a tab with that name already
     // (but allow it if it's just the main tab resaving itself.. oops)
-    File codeAlready = new File(folder, newName + ".pde");
-    if (codeAlready.exists() && (!newName.equals(name))) {
-      Base.showMessage("Nope",
-                       "You can't save the sketch as \"" + newName + "\"\n" +
-                       "because the sketch already has a tab with that name.");
-      return false;
+    for (SketchCode c : code) {
+      if (newName.equals(c.getPrettyName())) {
+        Base.showMessage("Nope",
+                         "You can't save the sketch as \"" + newName + "\"\n" +
+        "because the sketch already has a tab with that name.");
+        return false;
+      }
     }
 
     // make sure there doesn't exist a tab with that name already
