@@ -111,20 +111,24 @@ public class Platform extends processing.app.Platform {
    * Find QuickTime for Java installation.
    */
   protected void checkQuickTime() {
-    String qtsystemPath =
-      Registry.getStringValue(REGISTRY_ROOT_KEY.LOCAL_MACHINE,
-                              "Software\\Apple Computer, Inc.\\QuickTime",
-                              "QTSysDir");
-    if (qtsystemPath == null) {
-      System.err.println("QuickTime not installed");
-    } else {
-      File qtjavaZip = new File(qtsystemPath, "QTJava.zip");
-      if (qtjavaZip.exists()) {
-        String qtjavaZipPath = qtjavaZip.getAbsolutePath();
-        String cp = System.getProperty("java.class.path");
-        System.setProperty("java.class.path",
-                           cp + File.pathSeparator + qtjavaZipPath);
+    try {
+      String qtsystemPath =
+        Registry.getStringValue(REGISTRY_ROOT_KEY.LOCAL_MACHINE,
+                                "Software\\Apple Computer, Inc.\\QuickTime",
+                                "QTSysDir");
+      // Could show a warning message here if QT not installed, but that
+      // would annoy people who don't want anything to do with QuickTime.
+      if (qtsystemPath != null) {
+        File qtjavaZip = new File(qtsystemPath, "QTJava.zip");
+        if (qtjavaZip.exists()) {
+          String qtjavaZipPath = qtjavaZip.getAbsolutePath();
+          String cp = System.getProperty("java.class.path");
+          System.setProperty("java.class.path",
+                             cp + File.pathSeparator + qtjavaZipPath);
+        }
       }
+    } catch (UnsupportedEncodingException e) {
+      e.printStackTrace();
     }
   }
 
