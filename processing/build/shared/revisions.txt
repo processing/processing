@@ -7,6 +7,64 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0154 - 21 October 2008
+
+Read the release notes for revision 0149 (and for the others since that
+release, for that matter.) There were major changes to library installation, 
+and the Candy and XML libraries have been moved.
+
+[ fixes/changes ] 
+
++ Clean up PATH for users who have garbage in the Windows PATH variable
+  http://dev.processing.org/bugs/show_bug.cgi?id=974
+
++ Disable renaming of a sketch to the name of a file already in the sketch
+  http://dev.processing.org/bugs/show_bug.cgi?id=543
+
++ Deal with com.sun.jdi.AbsentInformationException when running a sketch
+  http://dev.processing.org/bugs/show_bug.cgi?id=971
+
++ Only set apple.awt.graphics.UseQuartz on osx, otherwise security error
+  http://dev.processing.org/bugs/show_bug.cgi?id=976
+
++ Added skewX() and skewY() to PMatrix/2D/3D
+
++ Added support style attributes to SVG support, thanks Ricard Marxer Piñón
+  for the implementation help.
+  http://dev.processing.org/bugs/show_bug.cgi?id=771
+
++ Remove setX/Y/Z methods from PVector (not needed with full access to the
+  x, y, and z fields). Also removed copy() (use get() instead), and added 
+  mult() and div() methods that act on whole PVector objects.
+
+[ known problems ] 
+
++ Slow response on file/sketchbook/examples menus on OS X 10.5. This is 
+  an Apple bug in Java 1.5 and 1.6 on Mac OS X 10.5 causing these menus 
+  to be extremely slow. Some workarounds are described in the bug report:
+  http://dev.processing.org/bugs/show_bug.cgi?id=786
+  Please file a bug report with Apple if you want this fixed. 
+  The problem has existed since the spring, and we first filed a bug 
+  with them in June, and we have received no response.
+
++ Sketches that use the video library sometimes hang when used with 
+  other libraries (Serial or OpenGL). This may be Mac-only.
+  http://dev.processing.org/bugs/show_bug.cgi?id=882
+  http://dev.processing.org/bugs/show_bug.cgi?id=829
+
++ OpenGL rendering is more dim/darker in release 0149 and later.
+  http://dev.processing.org/bugs/show_bug.cgi?id=958
+  Any help tracking this down would be most appreciated.
+
++ The first few frames of OpenGL sketches on Windows run slowly.
+  http://dev.processing.org/bugs/show_bug.cgi?id=874
+
++ See dev.processing.org/bugs for more.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0153 - 21 October 2008
 
 Read the release notes for revision 0149! There were major changes to 
