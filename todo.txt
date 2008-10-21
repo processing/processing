@@ -12,12 +12,13 @@ X     rename main tab (sketch) to "something" (without ".java")
 X     the contents in the files are not the same, but the main-tab is 
 X     showing the contents of the .java tab, so if you press save 
 X     you will overwrite your original code from the main-tab. 
+X problems with Windows PATH prevent sketch from running
+X   http://dev.processing.org/bugs/show_bug.cgi?id=974
 
 _ com.sun.jdi.AbsentInformationException when running a sketch
 _   http://dev.processing.org/bugs/show_bug.cgi?id=971
 
 _ move library examples to the examples menu
-_   http://dev.processing.org/bugs/show_bug.cgi?id=974
 
 cleaning
 X processing cancels shutdown on mac os x
@@ -36,6 +37,8 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=669
 o   simulate this by removing qtjava.zip, then make a handler for it
 o   which will open the reference for it
 X   use the registry key, and warn the user when it's not there
+X mouse wheel broken in the text editor? (windows jdk 1.5?) 
+X   http://dev.processing.org/bugs/show_bug.cgi?id=24
 
 
 _ don't open more than one "create font" or "color selector"
@@ -659,8 +662,6 @@ _ when running with external editor, hide the editor text area
 _   http://dev.processing.org/bugs/show_bug.cgi?id=20
 _ horizontal scroller gets weird sometimes
 _   http://dev.processing.org/bugs/show_bug.cgi?id=23
-_ mouse wheel broken in the text editor? (windows jdk 1.5?) 
-_   http://dev.processing.org/bugs/show_bug.cgi?id=24
 _ lock the minimum size for the main processing editor frame
 _   if it's made too small, stuff from the bottom disappears
 _   http://dev.processing.org/bugs/show_bug.cgi?id=25
