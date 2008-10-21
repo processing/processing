@@ -1,5 +1,5 @@
 /**
- * Getting Started SVG. 
+ * Load and Display a Shape. 
  * Illustration by George Brower. 
  * 
  * The loadShape() command is used to read simple SVG (Scalable Vector Graphics)

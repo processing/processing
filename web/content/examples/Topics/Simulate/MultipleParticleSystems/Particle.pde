@@ -9,9 +9,9 @@ class Particle {
 
   // One constructor
   Particle(PVector a, PVector v, PVector l, float r_) {
-    acc = a.copy();
-    vel = v.copy();
-    loc = l.copy();
+    acc = a.get();
+    vel = v.get();
+    loc = l.get();
     r = r_;
     timer = 100.0;
   }
@@ -20,7 +20,7 @@ class Particle {
   Particle(PVector l) {
     acc = new PVector(0,0.05,0);
     vel = new PVector(random(-1,1),random(-2,0),0);
-    loc = l.copy();
+    loc = l.get();
     r = 10.0;
     timer = 100.0;
   }

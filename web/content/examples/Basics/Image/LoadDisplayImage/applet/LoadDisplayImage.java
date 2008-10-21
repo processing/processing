@@ -12,7 +12,7 @@ import java.util.*;
 import java.util.zip.*; 
 import java.util.regex.*; 
 
-public class GettingStarted_Image extends PApplet {
+public class LoadDisplayImage extends PApplet {
 
 /**
  * Load and Display 
@@ -39,6 +39,6 @@ public void draw() {
 }
 
   static public void main(String args[]) {
-    PApplet.main(new String[] { "GettingStarted_Image" });
+    PApplet.main(new String[] { "LoadDisplayImage" });
   }
 }

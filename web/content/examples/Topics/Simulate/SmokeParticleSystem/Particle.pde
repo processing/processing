@@ -10,9 +10,9 @@ class Particle {
 
   // One constructor
   Particle(PVector a, PVector v, PVector l, PImage img_) {
-    acc = a.copy();
-    vel = v.copy();
-    loc = l.copy();
+    acc = a.get();
+    vel = v.get();
+    loc = l.get();
     timer = 100.0;
     img = img_;
   }
@@ -23,7 +23,7 @@ class Particle {
     float x = (float) generator.nextGaussian()*0.3f;
     float y = (float) generator.nextGaussian()*0.3f - 1.0f;
     vel = new PVector(x,y,0);
-    loc = l.copy();
+    loc = l.get();
     timer = 100.0;
     img = img_;
   }

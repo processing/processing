@@ -59,7 +59,7 @@ void drawImages(){
   }
 }
 
-// loading animation
+// Loading animation
 void runLoaderAni(){
   // Only run when images are loading
   if (!checkLoadStates()){

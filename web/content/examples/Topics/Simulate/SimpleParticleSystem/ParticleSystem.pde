@@ -8,7 +8,7 @@ class ParticleSystem {
 
   ParticleSystem(int num, PVector v) {
     particles = new ArrayList();              // Initialize the arraylist
-    origin = v.copy();                        // Store the origin point
+    origin = v.get();                        // Store the origin point
     for (int i = 0; i < num; i++) {
       particles.add(new Particle(origin));    // Add "num" amount of particles to the arraylist
     }

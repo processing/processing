@@ -7,7 +7,7 @@ class ParticleSystem {
 
   ParticleSystem(int num, PVector v) {
     particles = new ArrayList();              // Initialize the arraylist
-    origin = v.copy();                        // Store the origin point
+    origin = v.get();                        // Store the origin point
     for (int i = 0; i < num; i++) {
       // We have a 50% chance of adding each kind of particle
       if (random(1) < 0.5) {
