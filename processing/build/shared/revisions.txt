@@ -3,6 +3,29 @@ file is a list of changes between each release. this is not a general
 reference of how to use processing, because the information for older
 releases will be super crusty. 
 
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
+ABOUT REV 0153 - 21 October 2008
+
+Read the release notes for revision 0149! There were major changes to 
+library installation, and the Candy and XML libraries have been moved.
+
+[ fixes/changes ] 
+
++ Fix ClassNotFoundException: quicktime.std.StdQTException with release 0152
+  http://dev.processing.org/bugs/show_bug.cgi?id=970
+
++ Delete files before adding, otherwise case changes are not preserved.
+  http://dev.processing.org/bugs/show_bug.cgi?id=969
+
++ In a previous release, moved the nag about "had to rename sketch" into
+  the console instead of bringing up a new dialog box.
+
++ For library authors, PImage.init() is now public again.
+
+
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
