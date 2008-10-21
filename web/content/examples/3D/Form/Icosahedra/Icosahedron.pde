@@ -1,49 +1,46 @@
-class Icosahedron extends Shape3D {
+class Icosahedron extends Shape3D{
 
   // icosahedron
-  Vector3D topPoint;
-  Vector3D[] topPent = new Vector3D[5];
-  Vector3D bottomPoint;
-  Vector3D[] bottomPent = new Vector3D[5];
+  PVector topPoint;
+  PVector[] topPent = new PVector[5];
+  PVector bottomPoint;
+  PVector[] bottomPent = new PVector[5];
   float angle = 0, radius = 150;
   float triDist;
   float triHt;
   float a, b, c;
 
   // constructor
-  Icosahedron(float radius) {
+  Icosahedron(float radius){
     this.radius = radius;
     init();
   }
 
-  Icosahedron(Vector3D v, float radius) {
+  Icosahedron(PVector v, float radius){
     super(v);
     this.radius = radius;
     init();
   }
 
   // calculate geometry
-  void init() {
-    c = dist(cos(0)*radius, sin(0)*radius, 
-             cos(radians(72))*radius,  sin(radians(72))*radius);
+  void init(){
+    c = dist(cos(0)*radius, sin(0)*radius, cos(radians(72))*radius,  sin(radians(72))*radius);
     b = radius;
     a = (float)(Math.sqrt(((c*c)-(b*b))));
 
     triHt = (float)(Math.sqrt((c*c)-((c/2)*(c/2))));
 
-    for (int i = 0; i < topPent.length; i++){
-      topPent[i] = new Vector3D(cos(angle)*radius, 
-                                sin(angle)*radius, triHt/2.0);
+    for (int i=0; i<topPent.length; i++){
+      topPent[i] = new PVector(cos(angle)*radius, sin(angle)*radius, triHt/2.0f);
       angle+=radians(72);
     }
-    topPoint = new Vector3D(0, 0, triHt/2.0+a);
-    angle = 72.0/2.0;
-    for (int i = 0; i < topPent.length; i++){
-      bottomPent[i] = new Vector3D(cos(angle)*radius, 
-                                   sin(angle)*radius, -triHt/2.0);
+    topPoint = new PVector(0, 0, triHt/2.0f+a);
+    angle = 72.0f/2.0f;
+    for (int i=0; i<topPent.length; i++){
+      bottomPent[i] = new PVector(cos(angle)*radius, sin(angle)*radius, -triHt/2.0f);
       angle+=radians(72);
     }
-    bottomPoint = new Vector3D(0, 0, -(triHt/2.0+a));
+    bottomPoint = new PVector(0, 0, -(triHt/2.0f+a));
   }
 
   // draws icosahedron 
@@ -157,4 +154,6 @@ class Icosahedron extends Shape3D {
   void rotY(float theta){
   }
 
+
 }
+

@@ -7,7 +7,7 @@
  */
 
 Orb orb;
-Vect2D velocity;
+PVector velocity;
 float gravity = .05, damping = 0.8;
 int segments = 40;
 Ground[] ground = new Ground[segments];
@@ -17,7 +17,7 @@ void setup(){
   size(640, 200);
   smooth();
   orb = new Orb(50, 50, 3);
-  velocity = new Vect2D(.5, 0);
+  velocity = new PVector(.5, 0);
 
   // Calculate ground peak heights 
   for (int i=0; i<peakHeights.length; i++){
@@ -42,9 +42,9 @@ void draw(){
   rect(0, 0, width, height);
 
   // Move orb
-  orb.x += velocity.vx;
-  velocity.vy += gravity;
-  orb.y += velocity.vy;
+  orb.x += velocity.x;
+  velocity.y += gravity;
+  orb.y += velocity.y;
 
   // Draw ground
   fill(127);
@@ -73,13 +73,13 @@ void draw(){
 void checkWallCollision(){
   if (orb.x > width-orb.r){
     orb.x = width-orb.r;
-    velocity.vx *= -1;
-    velocity.vx *= damping;
+    velocity.x *= -1;
+    velocity.x *= damping;
   } 
   else if (orb.x < orb.r){
     orb.x = orb.r;
-    velocity.vx *= -1;
-    velocity.vx *= damping;
+    velocity.x *= -1;
+    velocity.x *= damping;
   }
 }
 
@@ -98,8 +98,8 @@ void checkGroundCollision(Ground groundSegment) {
    orthogonal collision calculations */
   float groundXTemp = cosine * deltaX + sine * deltaY;
   float groundYTemp = cosine * deltaY - sine * deltaX;
-  float velocityXTemp = cosine * velocity.vx + sine * velocity.vy;
-  float velocityYTemp = cosine * velocity.vy - sine * velocity.vx;
+  float velocityXTemp = cosine * velocity.x + sine * velocity.y;
+  float velocityYTemp = cosine * velocity.y - sine * velocity.x;
 
   /* Ground collision - check for surface 
    collision and also that orb is within 
@@ -117,59 +117,12 @@ void checkGroundCollision(Ground groundSegment) {
   // Reset ground, velocity and orb
   deltaX = cosine * groundXTemp - sine * groundYTemp;
   deltaY = cosine * groundYTemp + sine * groundXTemp;
-  velocity.vx = cosine * velocityXTemp - sine * velocityYTemp;
-  velocity.vy = cosine * velocityYTemp + sine * velocityXTemp;
+  velocity.x = cosine * velocityXTemp - sine * velocityYTemp;
+  velocity.y = cosine * velocityYTemp + sine * velocityXTemp;
   orb.x = groundSegment.x + deltaX;
   orb.y = groundSegment.y + deltaY;
 }
 
 
-class Ground {
-  float x1, y1, x2, y2;  
-  float x, y, len, rot;
 
-  // Default constructor
-  Ground(){
-  }
-
-  // Constructor
-  Ground(float x1, float y1, float x2, float y2) {
-    this.x1 = x1;
-    this.y1 = y1;
-    this.x2 = x2;
-    this.y2 = y2;
-    x = (x1+x2)/2;
-    y = (y1+y2)/2;
-    len = dist(x1, y1, x2, y2);
-    rot = atan2((y2-y1), (x2-x1));
-  }
-}
-
-
-class Orb{
-  float x, y, r;
-
-  // Default constructor
-  Orb() {
-  }
-
-  Orb(float x, float y, float r) {
-    this.x = x;
-    this.y = y;
-    this.r = r;
-  }
-}
-
-class Vect2D{
-  float vx, vy;
-
-  // Default constructor
-  Vect2D() {
-  }
-
-  Vect2D(float vx, float vy) {
-    this.vx = vx;
-    this.vy = vy;
-  }
-}
 

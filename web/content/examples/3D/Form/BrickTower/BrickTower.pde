@@ -1,11 +1,10 @@
 /**
  * Brick Tower
  * by Ira Greenberg. 
- * 
+ *
  * 3D castle tower constructed out of individual bricks.
- * Uses the Point3D and Cube classes. 
+ * Uses the PVector and Cube classes. 
  */
-
 
 float bricksPerLayer = 16.0;
 float brickLayers = 18.0;

@@ -1,30 +1,30 @@
-abstract class Shape3D {
-  
+abstract class Shape3D{
   float x, y, z;
   float w, h, d;
 
-  Shape3D() { }
+  Shape3D(){
+  }
 
-  Shape3D(float x, float y, float z) {
+  Shape3D(float x, float y, float z){
     this.x = x;
     this.y = y;
     this.z = z;
   }
 
-  Shape3D(Vector3D p) {
+  Shape3D(PVector p){
     x = p.x;
     y = p.y;
     z = p.z;
   }
 
 
-  Shape3D(Dimension3D dim) {
+  Shape3D(Dimension3D dim){
     w = dim.w;
     h = dim.h;
     d = dim.d;
   }
 
-  Shape3D(float x, float y, float z, float w, float h, float d) {
+  Shape3D(float x, float y, float z, float w, float h, float d){
     this.x = x;
     this.y = y;
     this.z = z;
@@ -33,7 +33,7 @@ abstract class Shape3D {
     this.d = d;
   }
 
-  Shape3D(float x, float y, float z, Dimension3D dim) {
+  Shape3D(float x, float y, float z, Dimension3D dim){
     this.x = x;
     this.y = y;
     this.z = z;
@@ -42,7 +42,7 @@ abstract class Shape3D {
     d = dim.d;
   }
 
-  Shape3D(Vector3D p, Dimension3D dim) {
+  Shape3D(PVector p, Dimension3D dim){
     x = p.x;
     y = p.y;
     z = p.z;
@@ -51,13 +51,13 @@ abstract class Shape3D {
     d = dim.d;
   }
 
-  void setLoc(Vector3D p) {
+  void setLoc(PVector p){
     x=p.x;
     y=p.y;
     z=p.z;
   }
 
-  void setLoc(float x, float y, float z) {
+  void setLoc(float x, float y, float z){
     this.x=x;
     this.y=y;
     this.z=z;
@@ -65,13 +65,13 @@ abstract class Shape3D {
 
 
   // override if you need these
-  void rotX(float theta) {
+  void rotX(float theta){
   }
 
-  void rotY(float theta) {
+  void rotY(float theta){
   }
 
-  void rotZ(float theta) {
+  void rotZ(float theta){
   }
 
 
@@ -79,3 +79,4 @@ abstract class Shape3D {
   abstract void init();
   abstract void create();
 }
+
