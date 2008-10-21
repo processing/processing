@@ -19,6 +19,7 @@ _ com.sun.jdi.AbsentInformationException when running a sketch
 _   http://dev.processing.org/bugs/show_bug.cgi?id=971
 
 _ move library examples to the examples menu
+_   do this once the library documentation has been fixed up
 
 cleaning
 X processing cancels shutdown on mac os x

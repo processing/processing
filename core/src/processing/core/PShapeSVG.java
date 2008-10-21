@@ -24,10 +24,10 @@ import processing.xml.XMLElement;
  * We have no intention of turning this into a full-featured SVG library.
  * The goal of this project is a basic shape importer that is small enough
  * to be included with applets, meaning that its download size should be
- * in the neighborhood of 25-30k. Because of this size, it is not made part
- * of processing.core, as it's not a feature that will be used by the majority
- * of our audience.
- *
+ * in the neighborhood of 25-30k. Starting with release 0149, this library
+ * has been incorporated into the core via the loadShape() command, because
+ * vector shape data is just as important as the image data from loadImage().
+ * <p>
  * For more sophisticated import/export, consider the
  * <A HREF="http://xmlgraphics.apache.org/batik/">Batik</A>
  * library from the Apache Software Foundation. Future improvements to this
@@ -35,22 +35,6 @@ import processing.xml.XMLElement;
  * for instance the simpler SVG profiles known as
  * <A HREF="http://www.w3.org/TR/SVGMobile/">SVG Tiny or Basic</A>,
  * although we still would not support the interactivity options.
- * <p>
- * This library was specifically tested under SVG files created with Adobe
- * Illustrator. We can't guarantee that it will work for any SVGs created with
- * other software. In the future we would like to improve compatibility with
- * Open Source software such as Inkscape, however initial tests show its
- * base implementation produces more complicated files, and this will require
- * more time.
- * <p>
- * An SVG created under Illustrator must be created in one of two ways:
- * <UL>
- * <LI>File &rarr; Save for Web (or control-alt-shift-s on a PC). Under
- * settings, make sure the CSS properties is set to "Presentation Attributes".
- * <LI>With Illustrator CS2, it is also possible to use "Save As" with "SVG"
- * as the file setting, but the CSS properties should also be set similarly.
- * </UL>
- * Saving it any other way will most likely not work.
  *
  * <p> <hr noshade> <p>
  *
@@ -65,14 +49,21 @@ import processing.xml.XMLElement;
  *   moo = loadShape("moo.svg");
  * }
  * void draw() {
- *   shape(moo);
+ *   background(255);
+ *   shape(moo, mouseX, mouseY);
  * }
  * </PRE>
  *
  * This code is based on the Candy library written by Michael Chang, which was
  * later revised and expanded for use as a Processing core library by Ben Fry.
+ * Thanks to Ricard Marxer Piñón for help with better Inkscape support in 0154.
  *
  * <p> <hr noshade> <p>
+ *
+ * Late October 2008 revisions from ricardmp, incorporated by fry (0154)
+ * <UL>
+ * <LI>Better style attribute handling, enabling better Inkscape support.
+ * </UL>
  *
  * October 2008 revisions by fry (Processing 0149, pre-1.0)
  * <UL>
