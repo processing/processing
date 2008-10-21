@@ -1,5 +1,7 @@
 0154 pde
 
+_ clean up PATH for users who have garbage in the PATH
+_   http://dev.processing.org/bugs/show_bug.cgi?id=974
 
 _ don't open more than one "create font" or "color selector"
 _   http://dev.processing.org/bugs/show_bug.cgi?id=830
