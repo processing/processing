@@ -12,14 +12,8 @@ X     rename main tab (sketch) to "something" (without ".java")
 X     the contents in the files are not the same, but the main-tab is 
 X     showing the contents of the .java tab, so if you press save 
 X     you will overwrite your original code from the main-tab. 
-X problems with Windows PATH prevent sketch from running
-X   http://dev.processing.org/bugs/show_bug.cgi?id=974
-
-_ com.sun.jdi.AbsentInformationException when running a sketch
-_   http://dev.processing.org/bugs/show_bug.cgi?id=971
-
-_ move library examples to the examples menu
-_   do this once the library documentation has been fixed up
+X com.sun.jdi.AbsentInformationException when running a sketch
+X   http://dev.processing.org/bugs/show_bug.cgi?id=971
 
 cleaning
 X processing cancels shutdown on mac os x
@@ -42,6 +36,8 @@ X mouse wheel broken in the text editor? (windows jdk 1.5?)
 X   http://dev.processing.org/bugs/show_bug.cgi?id=24
 
 
+_ move library examples to the examples menu
+_   do this once the library documentation has been fixed up
 _ don't open more than one "create font" or "color selector"
 _   http://dev.processing.org/bugs/show_bug.cgi?id=830
 _ make processing tools use the tools api
