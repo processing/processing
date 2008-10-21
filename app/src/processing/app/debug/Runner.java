@@ -412,10 +412,6 @@ public class Runner implements MessageConsumer {
       //System.out.println(p);
       String[] errorStrings = PApplet.loadStrings(p.getErrorStream());
       /*String[] inputStrings =*/ PApplet.loadStrings(p.getInputStream());
-      //System.out.println("error:");
-      PApplet.println(errorStrings);
-      //System.out.println("input:");
-      //PApplet.println(inputStrings);
 
       if (errorStrings != null && errorStrings.length > 1) {
         if (errorStrings[0].indexOf("Invalid maximum heap size") != -1) {
@@ -423,6 +419,10 @@ public class Runner implements MessageConsumer {
                            "Please lower the value for \u201Cmaximum available memory\u201D in the\n" +
                            "Preferences window. For more information, read Help \u2192 Troubleshooting.",
                            exc);
+        } else {
+          PApplet.println(errorStrings);
+          System.err.println("Using startup command:");
+          PApplet.println(arguments);
         }
       } else {
         exc.printStackTrace();
