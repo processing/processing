@@ -1,3 +1,7 @@
+0153 core
+X make PImage.init() public again
+
+
 0152 core
 X no changes to 0152 core
 
