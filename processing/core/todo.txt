@@ -1,4 +1,9 @@
 0154 core
+X only set apple.awt.graphics.UseQuartz on osx, otherwise security error
+X   http://dev.processing.org/bugs/show_bug.cgi?id=976
+
+_ remove copy() from PVector? 
+_ add mult() and div() with vector inputs?
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 

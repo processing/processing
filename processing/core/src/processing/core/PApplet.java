@@ -6323,7 +6323,11 @@ public class PApplet extends Applet
    */
   static public void main(String args[]) {
     // Disable abyssmally slow Sun renderer on OS X 10.5.
-    System.setProperty("apple.awt.graphics.UseQuartz", "true");
+    if (platform == MACOSX) {
+      // Only run this on OS X otherwise it can cause a permissions error.
+      // http://dev.processing.org/bugs/show_bug.cgi?id=976
+      System.setProperty("apple.awt.graphics.UseQuartz", "true");
+    }
 
     if (args.length < 1) {
       System.err.println("Usage: PApplet <appletname>");
@@ -7344,7 +7348,7 @@ public class PApplet extends Applet
   }
 
 
-  public void setMatrix(PMatrix2D source) {  
+  public void setMatrix(PMatrix2D source) {
     if (recorder != null) recorder.setMatrix(source);
     g.setMatrix(source);
   }
@@ -7420,8 +7424,8 @@ public class PApplet extends Applet
   }
 
 
-  public void frustum(float left, float right, 
-                      float bottom, float top, 
+  public void frustum(float left, float right,
+                      float bottom, float top,
                       float near, float far) {
     if (recorder != null) recorder.frustum(left, right, bottom, top, near, far);
     g.frustum(left, right, bottom, top, near, far);
