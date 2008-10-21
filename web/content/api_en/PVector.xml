@@ -39,115 +39,115 @@ Datatype that stores two or three variables that are commonly used as a position
 
 <field>
 <fname>x</fname>
-<fdescription>x-component of the vector</fdescription>
+<fdescription>x component of the vector</fdescription>
 </field>
 <field>
 <fname>y</fname>
-<fdescription>y-component of the vector</fdescription>
+<fdescription>y component of the vector</fdescription>
 </field>
 <field>
 <fname>z</fname>
-<fdescription>z-component of the vector</fdescription>
+<fdescription>z component of the vector</fdescription>
 </field>
 
 <method>
 <mname>setX()</mname>
-<mdescription>...</mdescription>
+<mdescription>Sets the x component</mdescription>
 </method>
 
 <method>
 <mname>setY()</mname>
-<mdescription>...</mdescription>
+<mdescription>Sets the y component</mdescription>
 </method>
 
 <method>
 <mname>setZ()</mname>
-<mdescription>...</mdescription>
+<mdescription>Sets the z component</mdescription>
 </method>
 
 <method>
 <mname>set()</mname>
-<mdescription>...</mdescription>
+<mdescription>Sets the x, y, z component</mdescription>
 </method>
 
 <method>
 <mname>get()</mname>
-<mdescription>...</mdescription>
+<mdescription>Gets a copy of the vector</mdescription>
 </method>
 
 <method>
 <mname>copy()</mname>
-<mdescription>...</mdescription>
+<mdescription>Copies the vector (synonym for get())</mdescription>
 </method>
 
 <method>
 <mname>mag()</mname>
-<mdescription>...</mdescription>
+<mdescription>Calculate the magnitude (length) of the vector</mdescription>
 </method>
 
 <method>
 <mname>add()</mname>
-<mdescription>...</mdescription>
+<mdescription>Adds one vector to another</mdescription>
 </method>
 
 <method>
 <mname>sub()</mname>
-<mdescription>...</mdescription>
+<mdescription>Subtracts one vector from another</mdescription>
 </method>
 
 <method>
 <mname>mult()</mname>
-<mdescription>...</mdescription>
+<mdescription>Multiplies the vector by a scalar</mdescription>
 </method>
 
 <method>
 <mname>div()</mname>
-<mdescription>...</mdescription>
+<mdescription>Divides the vector by a scalar</mdescription>
 </method>
 
 <method>
 <mname>dist()</mname>
-<mdescription>...</mdescription>
+<mdescription>Calculate the Euclidean distance between two points</mdescription>
 </method>
 
 <method>
 <mname>dot()</mname>
-<mdescription>...</mdescription>
+<mdescription>Calculates the dot product</mdescription>
 </method>
 
 <method>
 <mname>cross()</mname>
-<mdescription>...</mdescription>
+<mdescription>Calculates the cross product</mdescription>
 </method>
 
 <method>
 <mname>normalize()</mname>
-<mdescription>...</mdescription>
+<mdescription>Normalizes the vector</mdescription>
 </method>
 
 <method>
 <mname>limit()</mname>
-<mdescription>...</mdescription>
+<mdescription>Limits the magnitude of the vector</mdescription>
 </method>
 
 <method>
 <mname>heading2D()</mname>
-<mdescription>...</mdescription>
+<mdescription>Calculates the angle of rotation for the vector (only 2D vectors)</mdescription>
 </method>
 
 <method>
 <mname>angleBetween()</mname>
-<mdescription>...</mdescription>
+<mdescription>Calculates the angle between two vectors</mdescription>
 </method>
 
 <method>
 <mname>toString()</mname>
-<mdescription>...</mdescription>
+<mdescription>Returns the x, y, and z components as a String</mdescription>
 </method>
 
 <method>
 <mname>array()</mname>
-<mdescription>...</mdescription>
+<mdescription>Return a representation of the vector as an array</mdescription>
 </method>
 
 
