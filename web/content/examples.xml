@@ -39,7 +39,7 @@
 		<ex file="LogicalOperators.html">Logical Operators</ex>
 	</cat>
 	<cat label="Image">
-		<ex file="GettingStarted_Image.html">Getting Started - Image</ex>
+		<ex file="LoadDisplayingImage.html">Load and Display Image</ex>
 		<ex file="BackgroundImage.html">Background Image</ex>
 		<ex file="Transparency.html">Transparency</ex>
 		<ex file="Sprite.html">Sprite</ex>
@@ -49,7 +49,7 @@
 		<ex file="Pointillism.html">Pointillism</ex>
 	</cat>
 	<cat label="Shape">
-		<ex file="GettingStarted_Shape.html">Getting Started - Shape</ex>
+		<ex file="LoadDisplayShape.html">Load and Display Shape</ex>
 		<ex file="DisableStyle.html">Disable Style</ex>
 		<ex file="ScaleShape.html">Scale Shape</ex>
 		<ex file="GetChild.html">Get Child</ex>
