@@ -618,14 +618,15 @@ public class Runner implements MessageConsumer {
     } else if (exceptionName.equals("java.lang.NoSuchMethodError") || exceptionName.equals("java.lang.NoSuchFieldError")) {
       listener.statusError(exceptionName.substring(10) + ": You're probably using a library that's incompatible with this version of Processing.");
 
+    } else if (message.equals("ClassNotFoundException: quicktime.std.StdQTException")) {
+      listener.statusError("Could not find QuickTime, please reinstall QuickTime 7 or later.");
+      
     } else {
       reportException(message, event.thread());
     }
     editor.internalRunnerClosed();
   }
 
-
-  boolean badQuickTimeWarning;
 
   // This may be called more than one time per error in the VM,
   // presumably because exceptions might be wrapped inside others,
@@ -634,15 +635,6 @@ public class Runner implements MessageConsumer {
     try {
       int codeIndex = -1;
       int lineNumber = -1;
-
-      String badQuickTime =
-        "ClassNotFoundException: quicktime.std.StdQTException";
-      if (message.equals(badQuickTime) && !badQuickTimeWarning) {
-        Base.showWarning("QuickTime not installed",
-                         "Could not find a QuickTime installation.\n" +
-                         "Please reinstall QuickTime 7 or later.", null);
-        badQuickTimeWarning = true;
-      }
 
 //      System.out.println("reporting ex");
       List<StackFrame> frames = thread.frames();
