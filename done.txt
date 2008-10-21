@@ -1,3 +1,15 @@
+0153 pde
+X delete files before adding, otherwise case changes are not preserved
+X   http://dev.processing.org/bugs/show_bug.cgi?id=969
+X ClassNotFoundException: quicktime.std.StdQTException with release 0152
+X   http://dev.processing.org/bugs/show_bug.cgi?id=970
+
+previous
+o put the "had to rename sketch" message in the msg bar
+o   it's ugly/annoying/intrusive
+X   just print it to the console
+
+
 0152 pde
 X movie.read() breaking, which breaks the examples
 X   http://dev.processing.org/bugs/show_bug.cgi?id=961
