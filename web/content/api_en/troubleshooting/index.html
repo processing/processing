@@ -363,11 +363,13 @@ Could not create the Java virtual machine.
 On Windows with 1G of RAM, the limit seems to be in
 the neighborhood of 1.5 GB. Mac OS X and Linux seem to allow up to 
 just shy of 4 GB, depending on how much RAM you have installed. 
-Usually you can allocate 50% more RAM than you have installed. 
+Usually you can allocate almost 50% more RAM than you have installed. 
 i.e. for a machine with 1 GB of physical memory, about 1.5 GB is
 the maximum that can be used. Your mileage will also vary with 
 different versions of Java (1.3, 1.4, 1.5, 1.6...) 
-and your operating system.
+and your operating system. 
+<br /> <br />
+On the other hand, Java on Windows XP, for instance, cannot address more than 2GB properly. So with OS and JVM overhead, the total possible memory available is in the neighborhood of 1.5 GB (no matter how much RAM you have). 
 <br /> <br />
 Unfortunately the memory limitations of Java set an upper bound 
 that is outside our control. If you're having trouble creating very 
@@ -375,6 +377,8 @@ large images for this reason, you might look into the PDF or DXF
 libraries that are included with Processing, or the contributed 
 Illustrator or SVG vector export libraries that can be found on the 
 libraries page as another alternative for creating large format images.
+<br /> <br />
+Memory is like any constraint found in other media, you simply need to be more clever about how to deal with the limitations.
 <br /> <br />
 To check the amount of memory that's used so far, or how much is available, 
 use Java's Runtime object:
