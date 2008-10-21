@@ -38,20 +38,20 @@ public class PMatrix2D implements PMatrix {
   }
 
 
-  public PMatrix2D(float m00, float m01, float m02, 
+  public PMatrix2D(float m00, float m01, float m02,
                    float m10, float m11, float m12) {
     set(m00, m01, m02,
         m10, m11, m12);
   }
-  
-  
+
+
   public PMatrix2D(PMatrix matrix) {
     set(matrix);
   }
-  
+
 
   public void reset() {
-    set(1, 0, 0, 
+    set(1, 0, 0,
         0, 1, 0);
   }
 
@@ -64,8 +64,8 @@ public class PMatrix2D implements PMatrix {
     outgoing.set(this);
     return outgoing;
   }
-  
-  
+
+
   /**
    * Copies the matrix contents into a 6 entry float array.
    * If target is null (or not the correct size), a new array will be created.
@@ -77,14 +77,14 @@ public class PMatrix2D implements PMatrix {
     target[0] = m00;
     target[1] = m01;
     target[2] = m02;
-    
+
     target[3] = m10;
     target[4] = m11;
     target[5] = m12;
 
     return target;
   }
-  
+
 
   public void set(PMatrix matrix) {
     if (matrix instanceof PMatrix2D) {
@@ -95,8 +95,8 @@ public class PMatrix2D implements PMatrix {
       throw new IllegalArgumentException("PMatrix2D.set() only accepts PMatrix2D objects.");
     }
   }
-  
-  
+
+
   public void set(PMatrix3D src) {
   }
 
@@ -110,34 +110,34 @@ public class PMatrix2D implements PMatrix {
     m11 = source[4];
     m12 = source[5];
   }
-  
-  
-  public void set(float m00, float m01, float m02, 
+
+
+  public void set(float m00, float m01, float m02,
                   float m10, float m11, float m12) {
-    this.m00 = m00; this.m01 = m01; this.m02 = m02; 
+    this.m00 = m00; this.m01 = m01; this.m02 = m02;
     this.m10 = m10; this.m11 = m11; this.m12 = m12;
   }
-  
-  
+
+
   public void set(float m00, float m01, float m02, float m03,
                   float m10, float m11, float m12, float m13,
                   float m20, float m21, float m22, float m23,
                   float m30, float m31, float m32, float m33) {
-    
+
   }
 
 
-  public void translate(float tx, float ty) {    
+  public void translate(float tx, float ty) {
     m02 = tx*m00 + ty*m01 + m02;
     m12 = tx*m10 + ty*m11 + m12;
   }
-  
-  
+
+
   public void translate(float x, float y, float z) {
     throw new IllegalArgumentException("Cannot use translate(x, y, z) on a PMatrix2D.");
   }
 
-  
+
   // Implementation roughly based on AffineTransform.
   public void rotate(float angle) {
     float s = sin(angle);
@@ -180,13 +180,23 @@ public class PMatrix2D implements PMatrix {
 
 
   public void scale(float sx, float sy) {
-    m00 *= sx;  m01 *= sy;  
-    m10 *= sx;  m11 *= sy;  
+    m00 *= sx;  m01 *= sy;
+    m10 *= sx;  m11 *= sy;
   }
 
 
   public void scale(float x, float y, float z) {
     throw new IllegalArgumentException("Cannot use this version of scale() on a PMatrix2D.");
+  }
+
+
+  public void skewX(float angle) {
+    apply(1, 0, 1,  angle, 0, 0);
+  }
+
+
+  public void skewY(float angle) {
+    apply(1, 0, 1,  0, angle, 0);
   }
 
 
@@ -197,20 +207,20 @@ public class PMatrix2D implements PMatrix {
       apply((PMatrix3D) source);
     }
   }
-  
+
 
   public void apply(PMatrix2D source) {
-    apply(source.m00, source.m01, source.m02, 
+    apply(source.m00, source.m01, source.m02,
           source.m10, source.m11, source.m12);
   }
-  
-  
+
+
   public void apply(PMatrix3D source) {
     throw new IllegalArgumentException("Cannot use apply(PMatrix3D) on a PMatrix2D.");
   }
-  
-  
-  public void apply(float n00, float n01, float n02, 
+
+
+  public void apply(float n00, float n01, float n02,
                     float n10, float n11, float n12) {
     float t0 = m00;
     float t1 = m01;
@@ -222,7 +232,7 @@ public class PMatrix2D implements PMatrix {
     t1 = m11;
     m10  = n00 * t0 + n10 * t1;
     m11  = n01 * t0 + n11 * t1;
-    m12 += n02 * t0 + n12 * t1;    
+    m12 += n02 * t0 + n12 * t1;
   }
 
 
@@ -241,8 +251,8 @@ public class PMatrix2D implements PMatrix {
     preApply(left.m00, left.m01, left.m02,
              left.m10, left.m11, left.m12);
   }
-  
-  
+
+
   public void preApply(PMatrix3D left) {
     throw new IllegalArgumentException("Cannot use preApply(PMatrix3D) on a PMatrix2D.");
   }
@@ -266,7 +276,7 @@ public class PMatrix2D implements PMatrix {
     t0 = m01;
     t1 = m11;
     m01 = t0 * n00 + t1 * n01;
-    m11 = t0 * n10 + t1 * n11;  
+    m11 = t0 * n10 + t1 * n11;
   }
 
 
@@ -293,17 +303,17 @@ public class PMatrix2D implements PMatrix {
     return target;
   }
 
-  
-  /** 
-   * Multiply a two element vector against this matrix. 
+
+  /**
+   * Multiply a two element vector against this matrix.
    * If out is null or not length four, a new float array will be returned.
-   * The values for vec and out can be the same (though that's less efficient). 
+   * The values for vec and out can be the same (though that's less efficient).
    */
   public float[] mult(float vec[], float out[]) {
     if (out == null || out.length != 2) {
       out = new float[2];
     }
-    
+
     if (vec == out) {
       float tx = m00*vec[0] + m01*vec[1] + m02;
       float ty = m10*vec[0] + m11*vec[1] + m12;
@@ -315,21 +325,21 @@ public class PMatrix2D implements PMatrix {
       out[0] = m00*vec[0] + m01*vec[1] + m02;
       out[1] = m10*vec[0] + m11*vec[1] + m12;
     }
-    
+
     return out;
   }
-  
-  
+
+
   public float multX(float x, float y) {
     return m00*x + m01*y + m02;
   }
-  
-  
+
+
   public float multY(float x, float y) {
     return m10*x + m11*y + m12;
   }
-  
-  
+
+
   /**
    * Transpose this matrix.
    */
@@ -346,12 +356,12 @@ public class PMatrix2D implements PMatrix {
     if (Math.abs(determinant) <= Float.MIN_VALUE) {
       return false;
     }
-    
-    float t00 = m00; 
-    float t01 = m01; 
+
+    float t00 = m00;
+    float t01 = m01;
     float t02 = m02;
-    float t10 = m10; 
-    float t11 = m11; 
+    float t10 = m10;
+    float t11 = m11;
     float t12 = m12;
 
     m00 =  t11 / determinant;
@@ -359,12 +369,12 @@ public class PMatrix2D implements PMatrix {
     m01 = -t01 / determinant;
     m11 =  t00 / determinant;
     m02 = (t01 * t12 - t11 * t02) / determinant;
-    m12 = (t10 * t02 - t00 * t12) / determinant;    
-    
+    m12 = (t10 * t02 - t00 * t12) / determinant;
+
     return true;
   }
-  
-  
+
+
   /**
    * @return the determinant of the matrix
    */
@@ -372,7 +382,7 @@ public class PMatrix2D implements PMatrix {
     return m00 * m11 - m01 * m10;
   }
 
-  
+
   //////////////////////////////////////////////////////////////
 
 
