@@ -54,17 +54,12 @@ There are additional methods and other ways to use some of these methods in the 
 
 <method>
 <mname>set()</mname>
-<mdescription>Sets the x, y, z component</mdescription>
+<mdescription>Sets the x, y, z component of the vector</mdescription>
 </method>
 
 <method>
 <mname>get()</mname>
-<mdescription>Gets a copy of the vector</mdescription>
-</method>
-
-<method>
-<mname>copy()</mname>
-<mdescription>Copies the vector (synonym for get())</mdescription>
+<mdescription>Gets the x, y, z component of the vector</mdescription>
 </method>
 
 <method>
