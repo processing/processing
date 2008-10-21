@@ -41,11 +41,12 @@
 	<cat label="Image">
 		<ex file="GettingStarted_Image.html">Getting Started - Image</ex>
 		<ex file="BackgroundImage.html">Background Image</ex>
-		<ex file="Pointillism.html">Pointillism</ex>
 		<ex file="Transparency.html">Transparency</ex>
 		<ex file="Sprite.html">Sprite</ex>
 		<ex file="Alphamask.html">Alphamask</ex>
 		<ex file="CreateImage.html">CreateImage</ex>
+		<ex file="RequestImage.html">RequestImage</ex>
+		<ex file="Pointillism.html">Pointillism</ex>
 	</cat>
 	<cat label="Shape">
 		<ex file="GettingStarted_Shape.html">Getting Started - Shape</ex>
