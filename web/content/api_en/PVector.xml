@@ -30,7 +30,9 @@ void draw() {
 </example>
 
 <description>
-Datatype that stores two or three variables that are commonly used as a position, velocity, and/or acceleration. Technically, <em>position</em> is a point and <em>velocity</em> and <em>acceleration</em> are vectors, but this is often simplified to consider all three as vectors. For example, if you consider a rectangle moving across the screen, at any given instant it has a position (the object’s location, expressed as a point.), a velocity (the rate at which the object’s position changes per time unit, expressed as a vector), and acceleration (the rate at which the object’s velocity changes per time unit, expressed as a vector). Since vectors represent groupings of values, we cannot simply use traditional addition/multiplication/etc. Instead, we’ll need to do some "vector" math, which is made easy by the methods inside the PVector class.
+A class to describe a two or three dimensional vector. This datatype stores two or three variables that are commonly used as a position, velocity, and/or acceleration. Technically, <em>position</em> is a point and <em>velocity</em> and <em>acceleration</em> are vectors, but this is often simplified to consider all three as vectors. For example, if you consider a rectangle moving across the screen, at any given instant it has a position (the object’s location, expressed as a point.), a velocity (the rate at which the object’s position changes per time unit, expressed as a vector), and acceleration (the rate at which the object’s velocity changes per time unit, expressed as a vector). Since vectors represent groupings of values, we cannot simply use traditional addition/multiplication/etc. Instead, we’ll need to do some "vector" math, which is made easy by the methods inside the PVector class.
+<br /><br />
+There are additional methods and other ways to use some of these methods in the <a href="http://dev.processing.org/source/index.cgi/trunk/processing/">developers reference.</a>
 </description>
 
 <syntax></syntax>
@@ -49,21 +51,6 @@ Datatype that stores two or three variables that are commonly used as a position
 <fname>z</fname>
 <fdescription>z component of the vector</fdescription>
 </field>
-
-<method>
-<mname>setX()</mname>
-<mdescription>Sets the x component</mdescription>
-</method>
-
-<method>
-<mname>setY()</mname>
-<mdescription>Sets the y component</mdescription>
-</method>
-
-<method>
-<mname>setZ()</mname>
-<mdescription>Sets the z component</mdescription>
-</method>
 
 <method>
 <mname>set()</mname>

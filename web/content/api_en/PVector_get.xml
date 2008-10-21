@@ -11,14 +11,26 @@
 
 <example>
 <image></image>
-<code></code>
+<code>PVector v1, v2;
+
+void setup() {
+  size(100, 100);
+  v1 = new PVector(20.0, 30.0, 40.0);
+  v2 = new PVector();
+  v2 = v1.get();
+  println(v2.x);  // Prints "20.0"
+  println(v2.y);  // Prints "30.0"
+  println(v2.z);  // Prints "40.0"
+}
+</code>
 </example>
 
 <description>
+Gets a copy of the vector, returns a PVector object.
 </description>
 
 <syntax>
-<c>vec</c>.
+<c>vec</c>.get()
 </syntax>
 
 <parameter>
@@ -26,7 +38,7 @@
 <description>any variable of type PVector</description>
 </parameter>
 
-<returns></returns>
+<returns>PVector</returns>
 
 <related></related>
 

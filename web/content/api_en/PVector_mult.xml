@@ -15,10 +15,12 @@
 </example>
 
 <description>
+Multiplies a vector by a scalar. A static version of this method returns a PVector and the other...
 </description>
 
 <syntax>
-<c>vec</c>.
+<c>vec</c>.mult(<c>scalar</c>)
+<c>vec</c>.mult(<c>v</c>, <c>scalar</c>)
 </syntax>
 
 <parameter>
@@ -26,7 +28,17 @@
 <description>any variable of type PVector</description>
 </parameter>
 
-<returns></returns>
+<parameter>
+<label>scalar</label>
+<description>float: the number to multiply with the vector</description>
+</parameter>
+
+<parameter>
+<label>v</label>
+<description>PVector: the vector to multiply by the scalar</description>
+</parameter>
+
+<returns>None or PVector</returns>
 
 <related></related>
 
