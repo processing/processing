@@ -24,10 +24,12 @@ package processing.app.windows;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 
 import processing.app.Base;
 import processing.app.Preferences;
 import processing.app.windows.Registry.REGISTRY_ROOT_KEY;
+import processing.core.PApplet;
 
 
 // http://developer.apple.com/documentation/QuickTime/Conceptual/QT7Win_Update_Guide/Chapter03/chapter_3_section_1.html
@@ -48,6 +50,7 @@ public class Platform extends processing.app.Platform {
 
     checkAssociations();
     checkQuickTime();
+    checkPath();
   }
 
 
@@ -129,6 +132,41 @@ public class Platform extends processing.app.Platform {
       }
     } catch (UnsupportedEncodingException e) {
       e.printStackTrace();
+    }
+  }
+  
+  
+  /**
+   * Remove extra quotes, slashes, and garbage from the Windows PATH.
+   */
+  protected void checkPath() {
+    String path = System.getProperty("java.library.path");
+    String[] pieces = PApplet.split(path, File.pathSeparatorChar);
+    String[] legit = new String[pieces.length];
+    int legitCount = 0;
+    for (String item : pieces) {
+      if (item.startsWith("\"")) {
+        item = item.substring(1);
+      }
+      if (item.endsWith("\"")) {
+        item = item.substring(0, item.length() - 1);
+      }
+      if (item.endsWith(File.separator)) {
+        item = item.substring(0, item.length() - File.separator.length());
+      }
+      File directory = new File(item);
+      if (!directory.exists()) {
+        continue;
+      }
+      if (item.trim().length() == 0) {
+        continue;
+      }
+      legit[legitCount++] = item;
+    }
+    legit = PApplet.subset(legit, 0, legitCount);
+    String newPath = PApplet.join(legit, File.pathSeparator);
+    if (!newPath.equals(path)) {
+      System.setProperty("java.library.path", newPath);
     }
   }
 
