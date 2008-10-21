@@ -57,22 +57,22 @@ public class PImage implements PConstants, Cloneable {
    */
   public PApplet parent;
 
-  
-  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
   /** for subclasses that need to store info about the image */
-  protected HashMap<Object,Object> cacheMap; 
+  protected HashMap<Object,Object> cacheMap;
 
 
   /** modified portion of the image */
   protected boolean modified;
   protected int mx1, my1, mx2, my2;
 
-  
-  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
-  
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
   // private fields
   private int fracU, ifU, fracV, ifV, u1, u2, v1, v2, sX, sY, iw, iw1, ih1;
   private int ul, ll, ur, lr, cUL, cLL, cUR, cLR;
@@ -132,11 +132,13 @@ public class PImage implements PConstants, Cloneable {
 
 
   /**
-   * Function to be used by subclasses to setup their own bidness.
+   * Function to be used by subclasses of PImage to init later than
+   * at the constructor, or re-init later when things changes.
    * Used by Capture and Movie classes (and perhaps others),
    * because the width/height will not be known when super() is called.
+   * (Leave this public so that other libraries can do the same.)
    */
-  protected void init(int width, int height, int format) {  // ignore
+  public void init(int width, int height, int format) {  // ignore
     this.width = width;
     this.height = height;
     this.pixels = new int[width*height];
@@ -163,8 +165,8 @@ public class PImage implements PConstants, Cloneable {
 
 
   //////////////////////////////////////////////////////////////
-  
-  
+
+
   /**
    * Construct a new PImage from a java.awt.Image. This constructor assumes
    * that you've done the work of making sure a MediaTracker has been used
@@ -200,8 +202,8 @@ public class PImage implements PConstants, Cloneable {
    */
   public java.awt.Image getImage() {
     loadPixels();
-    int type = (format == RGB) ? 
-      BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB; 
+    int type = (format == RGB) ?
+      BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB;
     BufferedImage image = new BufferedImage(width, height, type);
     WritableRaster wr = image.getRaster();
     wr.setDataElements(0, 0, width, height, pixels);
@@ -211,24 +213,24 @@ public class PImage implements PConstants, Cloneable {
 
   //////////////////////////////////////////////////////////////
 
-  
+
   /**
    * Store data of some kind for a renderer that requires extra metadata of
-   * some kind. Usually this is a renderer-specific representation of the 
-   * image data, for instance a BufferedImage with tint() settings applied for 
+   * some kind. Usually this is a renderer-specific representation of the
+   * image data, for instance a BufferedImage with tint() settings applied for
    * PGraphicsJava2D, or resized image data and OpenGL texture indices for
-   * PGraphicsOpenGL. 
+   * PGraphicsOpenGL.
    */
   public void setCache(Object parent, Object storage) {
     if (cacheMap == null) cacheMap = new HashMap<Object, Object>();
     cacheMap.put(parent, storage);
   }
-  
-  
+
+
   /**
    * Get cache storage data for the specified renderer. Because each renderer
    * will cache data in different formats, it's necessary to store cache data
-   * keyed by the renderer object. Otherwise, attempting to draw the same 
+   * keyed by the renderer object. Otherwise, attempting to draw the same
    * image to both a PGraphicsJava2D and a PGraphicsOpenGL will cause errors.
    * @param parent The PGraphics object (or any object, really) associated
    * @return data stored for the specified parent
@@ -237,7 +239,7 @@ public class PImage implements PConstants, Cloneable {
     if (cacheMap == null) return null;
     return cacheMap.get(parent);
   }
-  
+
 
   /**
    * Remove information associated with this renderer from the cache, if any.
@@ -248,9 +250,9 @@ public class PImage implements PConstants, Cloneable {
       cacheMap.remove(parent);
     }
   }
-  
-  
-  
+
+
+
   //////////////////////////////////////////////////////////////
 
   // MARKING IMAGE AS MODIFIED / FOR USE w/ GET/SET
@@ -259,18 +261,18 @@ public class PImage implements PConstants, Cloneable {
   public boolean isModified() {  // ignore
     return modified;
   }
-  
-  
+
+
   public void setModified() {  // ignore
     modified = true;
   }
-  
-  
+
+
   public void setModified(boolean m) {  // ignore
     modified = m;
   }
-  
-  
+
+
   /**
    * Call this when you want to mess with the pixels[] array.
    * <p/>
@@ -316,7 +318,7 @@ public class PImage implements PConstants, Cloneable {
   protected void updatePixelsImpl(int x, int y, int w, int h) {
     int x2 = x + w;
     int y2 = y + h;
-    
+
     if (!modified) {
       mx1 = x;
       mx2 = x2;
@@ -466,7 +468,7 @@ public class PImage implements PConstants, Cloneable {
 
     if (x + w > width) w = width - x;
     if (y + h > height) h = height - y;
-    
+
     return getImpl(x, y, w, h);
   }
 
@@ -516,7 +518,7 @@ public class PImage implements PConstants, Cloneable {
 
   /**
    * Efficient method of drawing an image's pixels directly to this surface.
-   * No variations are employed, meaning that any scale, tint, or imageMode 
+   * No variations are employed, meaning that any scale, tint, or imageMode
    * settings will be ignored.
    */
   public void set(int x, int y, PImage src) {
@@ -613,12 +615,12 @@ public class PImage implements PConstants, Cloneable {
   }
 
 
-  
+
   //////////////////////////////////////////////////////////////
-  
+
   // IMAGE FILTERS
-  
-  
+
+
   /**
    * Method to apply a variety of basic filters to this image.
    * <P>
@@ -1188,10 +1190,10 @@ public class PImage implements PConstants, Cloneable {
   }
 
 
-  
+
   //////////////////////////////////////////////////////////////
 
-  // COPY 
+  // COPY
 
 
   /**
@@ -1214,10 +1216,10 @@ public class PImage implements PConstants, Cloneable {
   }
 
 
-  
+
   //////////////////////////////////////////////////////////////
 
-  // BLEND 
+  // BLEND
 
 
   /**
@@ -1411,7 +1413,7 @@ public class PImage implements PConstants, Cloneable {
 
   //////////////////////////////////////////////////////////////
 
-  
+
   /**
    * Internal blitter/resizer/copier from toxi.
    * Uses bilinear filtering if smooth() has been enabled
@@ -1433,7 +1435,7 @@ public class PImage implements PConstants, Cloneable {
     int destH = destY2 - destY1;
 
     boolean smooth = true;  // may as well go with the smoothing these days
-    
+
     if (!smooth) {
       srcW++; srcH++;
     }
@@ -2662,7 +2664,7 @@ public class PImage implements PConstants, Cloneable {
 
     // Make sure the pixel data is ready to go
     loadPixels();
-    
+
     try {
       OutputStream os = null;
 
