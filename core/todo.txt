@@ -1,4 +1,5 @@
 0153 core
+X make PImage.init() public again
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
