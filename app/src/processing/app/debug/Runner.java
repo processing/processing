@@ -620,7 +620,7 @@ public class Runner implements MessageConsumer {
 
     } else if (message.equals("ClassNotFoundException: quicktime.std.StdQTException")) {
       listener.statusError("Could not find QuickTime, please reinstall QuickTime 7 or later.");
-      
+
     } else {
       reportException(message, event.thread());
     }
@@ -636,56 +636,59 @@ public class Runner implements MessageConsumer {
       int codeIndex = -1;
       int lineNumber = -1;
 
-//      System.out.println("reporting ex");
+      // Any of the thread.blah() methods can throw an AbsentInformationEx
+      // if that bit of data is missing. If so, just write out the error
+      // message to the console.
       List<StackFrame> frames = thread.frames();
       for (StackFrame frame : frames) {
         //System.out.println("frame: " + frame);
         Location location = frame.location();
         String filename = null;
-        try {
-          filename = location.sourceName();
-          lineNumber = location.lineNumber();
-//          System.out.println("file/line " + filename + "/" + lineNumber);
+        filename = location.sourceName();
+        lineNumber = location.lineNumber();
 
-          String appletJavaFile = appletClassName + ".java";
-          SketchCode errorCode = null;
-          if (filename.equals(appletJavaFile)) {
-            for (SketchCode code : sketch.getCode()) {
-              if (code.isExtension("pde")) {
-                if (lineNumber >= code.getPreprocOffset()) {
-                  errorCode = code;
-                }
-              }
-            }
-          } else {
-            for (SketchCode code : sketch.getCode()) {
-              if (code.isExtension("java")) {
-                if (filename.equals(code.getFileName())) {
-                  errorCode = code;
-                }
+        String appletJavaFile = appletClassName + ".java";
+        SketchCode errorCode = null;
+        if (filename.equals(appletJavaFile)) {
+          for (SketchCode code : sketch.getCode()) {
+            if (code.isExtension("pde")) {
+              if (lineNumber >= code.getPreprocOffset()) {
+                errorCode = code;
               }
             }
           }
-          codeIndex = sketch.getCodeIndex(errorCode);
-
-          if (codeIndex != -1) {
-            //System.out.println("got line num " + lineNumber);
-            // in case this was a tab that got embedded into the main .java
-            lineNumber -= sketch.getCode(codeIndex).getPreprocOffset();
-
-            // lineNumber is 1-indexed, but editor wants zero-indexed
-            lineNumber--;
-
-            // getMessage() will be what's shown in the editor
-            exception = new RunnerException(message, codeIndex, lineNumber, -1);
-            exception.hideStackTrace();
-            listener.statusError(exception);
-            return;
+        } else {
+          for (SketchCode code : sketch.getCode()) {
+            if (code.isExtension("java")) {
+              if (filename.equals(code.getFileName())) {
+                errorCode = code;
+              }
+            }
           }
-        } catch (AbsentInformationException e) {
-          //e.printStackTrace();  // do i really want to print a trace?
+        }
+        codeIndex = sketch.getCodeIndex(errorCode);
+
+        if (codeIndex != -1) {
+          //System.out.println("got line num " + lineNumber);
+          // in case this was a tab that got embedded into the main .java
+          lineNumber -= sketch.getCode(codeIndex).getPreprocOffset();
+
+          // lineNumber is 1-indexed, but editor wants zero-indexed
+          lineNumber--;
+
+          // getMessage() will be what's shown in the editor
+          exception = new RunnerException(message, codeIndex, lineNumber, -1);
+          exception.hideStackTrace();
+          listener.statusError(exception);
+          return;
         }
       }
+    } catch (AbsentInformationException e) {
+      //e.printStackTrace();  // not useful
+      exception = new RunnerException(message);
+      exception.hideStackTrace();
+      listener.statusError(exception);
+
     } catch (IncompatibleThreadStateException e) {
       e.printStackTrace();
     }
