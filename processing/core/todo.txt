@@ -4,9 +4,10 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=976
 X add skewX() and skewY() to PMatrix
 X Add support style attribute for path tag to Candy SVG (ricard)
 X   http://dev.processing.org/bugs/show_bug.cgi?id=771
+X remove setX/Y/Z from PVector, copy() (use get() instead), add mult/div
+X   remove copy() from PVector? 
+X   add mult() and div() with vector inputs?
 
-_ remove copy() from PVector? 
-_ add mult() and div() with vector inputs?
 _ rename GettingStarted_Shape example
 
 
