@@ -1,39 +1,4 @@
-0154 pde
-X clean up PATH for users who have garbage in the PATH
-X   http://dev.processing.org/bugs/show_bug.cgi?id=974
-X disallow .java tabs with same name as the sketch
-X   a .java tab with same name as the sketch is allowed (oog!)
-X   particularly look at "save as" scenario
-X   http://dev.processing.org/bugs/show_bug.cgi?id=543
-X   bug report:
-X     create a new sketch, write something in it
-X     create a new tab, name it "something.java", write something into it
-X     rename main tab (sketch) to "something" (without ".java")
-X     the contents in the files are not the same, but the main-tab is 
-X     showing the contents of the .java tab, so if you press save 
-X     you will overwrite your original code from the main-tab. 
-X com.sun.jdi.AbsentInformationException when running a sketch
-X   http://dev.processing.org/bugs/show_bug.cgi?id=971
-
-cleaning
-X processing cancels shutdown on mac os x
-X   http://dev.processing.org/bugs/show_bug.cgi?id=539
-X   fixed in an older version
-X jikes bugs mean some code just won't compile:
-X   include javac? would this be a good solution for linux?
-X   http://dev.processing.org/bugs/show_bug.cgi?id=8
-X an empty .java tab will throw an error
-X   http://dev.processing.org/bugs/show_bug.cgi?id=10
-X warn about writing non-1.1 code. 
-X   http://dev.processing.org/bugs/show_bug.cgi?id=11
-X java.lang.NoClassDefFoundError: quicktime/std/StdQTException
-X   people not installing qt? no QTJAVA set?
-X   http://dev.processing.org/bugs/show_bug.cgi?id=669
-o   simulate this by removing qtjava.zip, then make a handler for it
-o   which will open the reference for it
-X   use the registry key, and warn the user when it's not there
-X mouse wheel broken in the text editor? (windows jdk 1.5?) 
-X   http://dev.processing.org/bugs/show_bug.cgi?id=24
+0155 pde
 
 
 _ move library examples to the examples menu

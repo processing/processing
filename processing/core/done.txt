@@ -1,3 +1,14 @@
+0154 core
+X only set apple.awt.graphics.UseQuartz on osx, otherwise security error
+X   http://dev.processing.org/bugs/show_bug.cgi?id=976
+X add skewX() and skewY() to PMatrix
+X Add support style attribute for path tag to Candy SVG (ricard)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=771
+X remove setX/Y/Z from PVector, copy() (use get() instead), add mult/div
+X   remove copy() from PVector? 
+X   add mult() and div() with vector inputs?
+
+
 0153 core
 X make PImage.init() public again
 
