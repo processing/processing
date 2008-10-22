@@ -37,6 +37,8 @@ and the Candy and XML libraries have been moved.
   x, y, and z fields). Also removed copy() (use get() instead), and added 
   mult() and div() methods that act on whole PVector objects.
 
++ Updated reference and examples for changes and new API.
+
 [ known problems ] 
 
 + Slow response on file/sketchbook/examples menus on OS X 10.5. This is 
