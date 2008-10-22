@@ -711,6 +711,22 @@ java.lang.Object
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PMatrix3D.html#skewX(float)">skewX</A></B>(float&nbsp;angle)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PMatrix3D.html#skewY(float)">skewY</A></B>(float&nbsp;angle)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/core/PMatrix3D.html#translate(float, float)">translate</A></B>(float&nbsp;tx,
           float&nbsp;ty)</CODE>
 
@@ -1260,6 +1276,34 @@ public void <B>scale</B>(float&nbsp;x,
 </DL>
 <HR>
 
+<A NAME="skewX(float)"><!-- --></A><H3>
+skewX</H3>
+<PRE>
+public void <B>skewX</B>(float&nbsp;angle)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../processing/core/PMatrix.html#skewX(float)">skewX</A></CODE> in interface <CODE><A HREF="../../processing/core/PMatrix.html" title="interface in processing.core">PMatrix</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="skewY(float)"><!-- --></A><H3>
+skewY</H3>
+<PRE>
+public void <B>skewY</B>(float&nbsp;angle)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../processing/core/PMatrix.html#skewY(float)">skewY</A></CODE> in interface <CODE><A HREF="../../processing/core/PMatrix.html" title="interface in processing.core">PMatrix</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
 <A NAME="apply(processing.core.PMatrix)"><!-- --></A><H3>
 apply</H3>
 <PRE>
@@ -1458,7 +1502,7 @@ mult</H3>
 public float[] <B>mult</B>(float[]&nbsp;source,
                     float[]&nbsp;target)</PRE>
 <DL>
-<DD>Multiply a three or four element vector against this matrix. If out is 
+<DD>Multiply a three or four element vector against this matrix. If out is
  null or not length 3 or 4, a new float array (length 3) will be returned.
 <P>
 <DD><DL>

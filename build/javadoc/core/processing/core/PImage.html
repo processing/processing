@@ -364,6 +364,17 @@ Storage class for pixel data. This is the base class for most image and
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PImage.html#init(int, int, int)">init</A></B>(int&nbsp;width,
+     int&nbsp;height,
+     int&nbsp;format)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Function to be used by subclasses of PImage to init later than
+ at the constructor, or re-init later when things changes.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;boolean</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/core/PImage.html#isModified()">isModified</A></B>()</CODE>
 
@@ -628,6 +639,28 @@ public <B>PImage</B>(java.awt.Image&nbsp;img)</PRE>
 </TR>
 </TABLE>
 
+<A NAME="init(int, int, int)"><!-- --></A><H3>
+init</H3>
+<PRE>
+public void <B>init</B>(int&nbsp;width,
+                 int&nbsp;height,
+                 int&nbsp;format)</PRE>
+<DL>
+<DD>Function to be used by subclasses of PImage to init later than
+ at the constructor, or re-init later when things changes.
+ Used by Capture and Movie classes (and perhaps others),
+ because the width/height will not be known when super() is called.
+ (Leave this public so that other libraries can do the same.)
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
 <A NAME="getImage()"><!-- --></A><H3>
 getImage</H3>
 <PRE>
@@ -651,8 +684,8 @@ public void <B>setCache</B>(java.lang.Object&nbsp;parent,
                      java.lang.Object&nbsp;storage)</PRE>
 <DL>
 <DD>Store data of some kind for a renderer that requires extra metadata of
- some kind. Usually this is a renderer-specific representation of the 
- image data, for instance a BufferedImage with tint() settings applied for 
+ some kind. Usually this is a renderer-specific representation of the
+ image data, for instance a BufferedImage with tint() settings applied for
  PGraphicsJava2D, or resized image data and OpenGL texture indices for
  PGraphicsOpenGL.
 <P>
@@ -672,7 +705,7 @@ public java.lang.Object <B>getCache</B>(java.lang.Object&nbsp;parent)</PRE>
 <DL>
 <DD>Get cache storage data for the specified renderer. Because each renderer
  will cache data in different formats, it's necessary to store cache data
- keyed by the renderer object. Otherwise, attempting to draw the same 
+ keyed by the renderer object. Otherwise, attempting to draw the same
  image to both a PGraphicsJava2D and a PGraphicsOpenGL will cause errors.
 <P>
 <DD><DL>
@@ -939,7 +972,7 @@ public void <B>set</B>(int&nbsp;x,
                 <A HREF="../../processing/core/PImage.html" title="class in processing.core">PImage</A>&nbsp;src)</PRE>
 <DL>
 <DD>Efficient method of drawing an image's pixels directly to this surface.
- No variations are employed, meaning that any scale, tint, or imageMode 
+ No variations are employed, meaning that any scale, tint, or imageMode
  settings will be ignored.
 <P>
 <DD><DL>

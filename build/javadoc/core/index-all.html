@@ -390,7 +390,7 @@ Static variable in class processing.core.<A HREF="./processing/core/PApplet.html
 <DD>&nbsp;
 <DT><A HREF="./processing/core/PVector.html#array()"><B>array()</B></A> - 
 Method in class processing.core.<A HREF="./processing/core/PVector.html" title="class in processing.core">PVector</A>
-<DD>Return a representation of this vector as an array.
+<DD>Return a representation of this vector as a float array.
 <DT><A HREF="./processing/core/PApplet.html#arrayCopy(java.lang.Object, int, java.lang.Object, int, int)"><B>arrayCopy(Object, int, Object, int, int)</B></A> - 
 Static method in class processing.core.<A HREF="./processing/core/PApplet.html" title="class in processing.core">PApplet</A>
 <DD>Calls System.arraycopy(), included here so that we can
@@ -970,9 +970,6 @@ Method in class processing.core.<A HREF="./processing/core/PImage.html" title="c
 <DT><A HREF="./processing/core/PImage.html#copy(processing.core.PImage, int, int, int, int, int, int, int, int)"><B>copy(PImage, int, int, int, int, int, int, int, int)</B></A> - 
 Method in class processing.core.<A HREF="./processing/core/PImage.html" title="class in processing.core">PImage</A>
 <DD>Copies area of one image into another PImage object.
-<DT><A HREF="./processing/core/PVector.html#copy()"><B>copy()</B></A> - 
-Method in class processing.core.<A HREF="./processing/core/PVector.html" title="class in processing.core">PVector</A>
-<DD>Copy the vector (synonym for get()).
 <DT><A HREF="./processing/core/PConstants.html#CORNER"><B>CORNER</B></A> - 
 Static variable in interface processing.core.<A HREF="./processing/core/PConstants.html" title="interface in processing.core">PConstants</A>
 <DD>Draw mode convention to use (x, y) to (width, height)
@@ -1060,7 +1057,7 @@ Method in class processing.core.<A HREF="./processing/core/PVector.html" title="
 <DD>Return a vector composed of the cross product between this and another.
 <DT><A HREF="./processing/core/PVector.html#cross(processing.core.PVector, processing.core.PVector)"><B>cross(PVector, PVector)</B></A> - 
 Method in class processing.core.<A HREF="./processing/core/PVector.html" title="class in processing.core">PVector</A>
-<DD>Perform cross product between this and another vector, and store the 
+<DD>Perform cross product between this and another vector, and store the
  result in 'target'.
 <DT><A HREF="./processing/core/PVector.html#cross(processing.core.PVector, processing.core.PVector, processing.core.PVector)"><B>cross(PVector, PVector, PVector)</B></A> - 
 Static method in class processing.core.<A HREF="./processing/core/PVector.html" title="class in processing.core">PVector</A>
@@ -1299,6 +1296,17 @@ Static method in class processing.core.<A HREF="./processing/core/PVector.html" 
 <DT><A HREF="./processing/core/PVector.html#div(processing.core.PVector, float, processing.core.PVector)"><B>div(PVector, float, PVector)</B></A> - 
 Static method in class processing.core.<A HREF="./processing/core/PVector.html" title="class in processing.core">PVector</A>
 <DD>&nbsp;
+<DT><A HREF="./processing/core/PVector.html#div(processing.core.PVector)"><B>div(PVector)</B></A> - 
+Method in class processing.core.<A HREF="./processing/core/PVector.html" title="class in processing.core">PVector</A>
+<DD>Divide each element of one vector by the elements of another vector.
+<DT><A HREF="./processing/core/PVector.html#div(processing.core.PVector, processing.core.PVector)"><B>div(PVector, PVector)</B></A> - 
+Static method in class processing.core.<A HREF="./processing/core/PVector.html" title="class in processing.core">PVector</A>
+<DD>Multiply each element of one vector by the individual elements of another 
+ vector, and return the result as a new PVector.
+<DT><A HREF="./processing/core/PVector.html#div(processing.core.PVector, processing.core.PVector, processing.core.PVector)"><B>div(PVector, PVector, PVector)</B></A> - 
+Static method in class processing.core.<A HREF="./processing/core/PVector.html" title="class in processing.core">PVector</A>
+<DD>Divide each element of one vector by the individual elements of another 
+ vector, and write the result into a target vector.
 <DT><A HREF="./processing/core/PConstants.html#DODGE"><B>DODGE</B></A> - 
 Static variable in interface processing.core.<A HREF="./processing/core/PConstants.html" title="interface in processing.core">PConstants</A>
 <DD>&nbsp;
@@ -2197,6 +2205,10 @@ Method in class processing.core.<A HREF="./processing/core/PFont.html" title="cl
 <DT><A HREF="./processing/core/PApplet.html#init()"><B>init()</B></A> - 
 Method in class processing.core.<A HREF="./processing/core/PApplet.html" title="class in processing.core">PApplet</A>
 <DD>&nbsp;
+<DT><A HREF="./processing/core/PImage.html#init(int, int, int)"><B>init(int, int, int)</B></A> - 
+Method in class processing.core.<A HREF="./processing/core/PImage.html" title="class in processing.core">PImage</A>
+<DD>Function to be used by subclasses of PImage to init later than
+ at the constructor, or re-init later when things changes.
 <DT><A HREF="./processing/xml/XMLElement.html#insertChild(processing.xml.XMLElement, int)"><B>insertChild(XMLElement, int)</B></A> - 
 Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
 <DD>Inserts a child element.
@@ -2847,6 +2859,17 @@ Static method in class processing.core.<A HREF="./processing/core/PVector.html" 
 <DT><A HREF="./processing/core/PVector.html#mult(processing.core.PVector, float, processing.core.PVector)"><B>mult(PVector, float, PVector)</B></A> - 
 Static method in class processing.core.<A HREF="./processing/core/PVector.html" title="class in processing.core">PVector</A>
 <DD>Multiply a vector by a scalar, and write the result into a target PVector.
+<DT><A HREF="./processing/core/PVector.html#mult(processing.core.PVector)"><B>mult(PVector)</B></A> - 
+Method in class processing.core.<A HREF="./processing/core/PVector.html" title="class in processing.core">PVector</A>
+<DD>Multiply each element of one vector by the elements of another vector.
+<DT><A HREF="./processing/core/PVector.html#mult(processing.core.PVector, processing.core.PVector)"><B>mult(PVector, PVector)</B></A> - 
+Static method in class processing.core.<A HREF="./processing/core/PVector.html" title="class in processing.core">PVector</A>
+<DD>Multiply each element of one vector by the individual elements of another 
+ vector, and return the result as a new PVector.
+<DT><A HREF="./processing/core/PVector.html#mult(processing.core.PVector, processing.core.PVector, processing.core.PVector)"><B>mult(PVector, PVector, PVector)</B></A> - 
+Static method in class processing.core.<A HREF="./processing/core/PVector.html" title="class in processing.core">PVector</A>
+<DD>Multiply each element of one vector by the individual elements of another 
+ vector, and write the result into a target vector.
 <DT><A HREF="./processing/core/PConstants.html#MULTIPLY"><B>MULTIPLY</B></A> - 
 Static variable in interface processing.core.<A HREF="./processing/core/PConstants.html" title="interface in processing.core">PConstants</A>
 <DD>&nbsp;
@@ -4492,15 +4515,6 @@ Method in class processing.core.<A HREF="./processing/core/PShape.html" title="c
 <DT><A HREF="./processing/core/PFont.html#setWidth"><B>setWidth</B></A> - 
 Variable in class processing.core.<A HREF="./processing/core/PFont.html" title="class in processing.core">PFont</A>
 <DD>&nbsp;
-<DT><A HREF="./processing/core/PVector.html#setX(float)"><B>setX(float)</B></A> - 
-Method in class processing.core.<A HREF="./processing/core/PVector.html" title="class in processing.core">PVector</A>
-<DD>Set the x coordinate.
-<DT><A HREF="./processing/core/PVector.html#setY(float)"><B>setY(float)</B></A> - 
-Method in class processing.core.<A HREF="./processing/core/PVector.html" title="class in processing.core">PVector</A>
-<DD>Set the y coordinate.
-<DT><A HREF="./processing/core/PVector.html#setZ(float)"><B>setZ(float)</B></A> - 
-Method in class processing.core.<A HREF="./processing/core/PVector.html" title="class in processing.core">PVector</A>
-<DD>Set the z coordinate.
 <DT><A HREF="./processing/core/PConstants.html#SG"><B>SG</B></A> - 
 Static variable in interface processing.core.<A HREF="./processing/core/PConstants.html" title="interface in processing.core">PConstants</A>
 <DD>&nbsp;
@@ -4609,6 +4623,24 @@ Variable in class processing.core.<A HREF="./processing/core/PApplet.html" title
 Method in class processing.core.<A HREF="./processing/core/PApplet.html" title="class in processing.core">PApplet</A>
 <DD>Prepend the sketch folder path to the filename (or path) that is
  passed in.
+<DT><A HREF="./processing/core/PMatrix.html#skewX(float)"><B>skewX(float)</B></A> - 
+Method in interface processing.core.<A HREF="./processing/core/PMatrix.html" title="interface in processing.core">PMatrix</A>
+<DD>&nbsp;
+<DT><A HREF="./processing/core/PMatrix2D.html#skewX(float)"><B>skewX(float)</B></A> - 
+Method in class processing.core.<A HREF="./processing/core/PMatrix2D.html" title="class in processing.core">PMatrix2D</A>
+<DD>&nbsp;
+<DT><A HREF="./processing/core/PMatrix3D.html#skewX(float)"><B>skewX(float)</B></A> - 
+Method in class processing.core.<A HREF="./processing/core/PMatrix3D.html" title="class in processing.core">PMatrix3D</A>
+<DD>&nbsp;
+<DT><A HREF="./processing/core/PMatrix.html#skewY(float)"><B>skewY(float)</B></A> - 
+Method in interface processing.core.<A HREF="./processing/core/PMatrix.html" title="interface in processing.core">PMatrix</A>
+<DD>&nbsp;
+<DT><A HREF="./processing/core/PMatrix2D.html#skewY(float)"><B>skewY(float)</B></A> - 
+Method in class processing.core.<A HREF="./processing/core/PMatrix2D.html" title="class in processing.core">PMatrix2D</A>
+<DD>&nbsp;
+<DT><A HREF="./processing/core/PMatrix3D.html#skewY(float)"><B>skewY(float)</B></A> - 
+Method in class processing.core.<A HREF="./processing/core/PMatrix3D.html" title="class in processing.core">PMatrix3D</A>
+<DD>&nbsp;
 <DT><A HREF="./processing/core/PApplet.html#smooth()"><B>smooth()</B></A> - 
 Method in class processing.core.<A HREF="./processing/core/PApplet.html" title="class in processing.core">PApplet</A>
 <DD>&nbsp;

@@ -96,15 +96,15 @@ java.lang.Object
 </PRE>
 
 <P>
-A class to describe a two or three dimensional vector. When 
+A class to describe a two or three dimensional vector. 
  <p>
- The result of all functions are applied to the vector itself, with the 
+ The result of all functions are applied to the vector itself, with the
  exception of cross(), which returns a new PVector (or writes to a specified
- 'target' PVector). That is, add() will add the contents of one vector to 
- this one. Using add() with additional parameters allows you to put the 
- result into a new PVector. Functions that act on multiple vectors also 
+ 'target' PVector). That is, add() will add the contents of one vector to
+ this one. Using add() with additional parameters allows you to put the
+ result into a new PVector. Functions that act on multiple vectors also
  include static versions. Because creating new objects can be computationally
- expensive, most functions include an optional 'target' PVector, so that a 
+ expensive, most functions include an optional 'target' PVector, so that a
  new PVector object is not created with each operation.
  <p>
  Initially based on the Vector3D class by <a href="http://www.shiffman.net">Dan Shiffman</a>.
@@ -239,15 +239,7 @@ A class to describe a two or three dimensional vector. When
 <TD><CODE><B><A HREF="../../processing/core/PVector.html#array()">array</A></B>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return a representation of this vector as an array.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;<A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PVector.html#copy()">copy</A></B>()</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copy the vector (synonym for get()).</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return a representation of this vector as a float array.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -264,7 +256,7 @@ A class to describe a two or three dimensional vector. When
       <A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A>&nbsp;target)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Perform cross product between this and another vector, and store the 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Perform cross product between this and another vector, and store the
  result in 'target'.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
@@ -304,6 +296,14 @@ A class to describe a two or three dimensional vector. When
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PVector.html#div(processing.core.PVector)">div</A></B>(<A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A>&nbsp;v)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Divide each element of one vector by the elements of another vector.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;<A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/core/PVector.html#div(processing.core.PVector, float)">div</A></B>(<A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A>&nbsp;v,
     float&nbsp;n)</CODE>
@@ -320,6 +320,27 @@ A class to describe a two or three dimensional vector. When
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PVector.html#div(processing.core.PVector, processing.core.PVector)">div</A></B>(<A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A>&nbsp;v1,
+    <A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A>&nbsp;v2)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Multiply each element of one vector by the individual elements of another 
+ vector, and return the result as a new PVector.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PVector.html#div(processing.core.PVector, processing.core.PVector, processing.core.PVector)">div</A></B>(<A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A>&nbsp;v1,
+    <A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A>&nbsp;v2,
+    <A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A>&nbsp;target)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Divide each element of one vector by the individual elements of another 
+ vector, and write the result into a target vector.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -389,6 +410,14 @@ A class to describe a two or three dimensional vector. When
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PVector.html#mult(processing.core.PVector)">mult</A></B>(<A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A>&nbsp;v)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Multiply each element of one vector by the elements of another vector.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;<A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/core/PVector.html#mult(processing.core.PVector, float)">mult</A></B>(<A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A>&nbsp;v,
      float&nbsp;n)</CODE>
@@ -405,6 +434,27 @@ A class to describe a two or three dimensional vector. When
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Multiply a vector by a scalar, and write the result into a target PVector.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PVector.html#mult(processing.core.PVector, processing.core.PVector)">mult</A></B>(<A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A>&nbsp;v1,
+     <A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A>&nbsp;v2)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Multiply each element of one vector by the individual elements of another 
+ vector, and return the result as a new PVector.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PVector.html#mult(processing.core.PVector, processing.core.PVector, processing.core.PVector)">mult</A></B>(<A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A>&nbsp;v1,
+     <A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A>&nbsp;v2,
+     <A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A>&nbsp;target)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Multiply each element of one vector by the individual elements of another 
+ vector, and write the result into a target vector.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -447,30 +497,6 @@ A class to describe a two or three dimensional vector. When
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set x, y, and z coordinates from a Vector3D object.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PVector.html#setX(float)">setX</A></B>(float&nbsp;x)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set the x coordinate.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PVector.html#setY(float)">setY</A></B>(float&nbsp;y)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set the y coordinate.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PVector.html#setZ(float)">setZ</A></B>(float&nbsp;z)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set the z coordinate.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -631,45 +657,6 @@ public <B>PVector</B>(float&nbsp;x,
 </TR>
 </TABLE>
 
-<A NAME="setX(float)"><!-- --></A><H3>
-setX</H3>
-<PRE>
-public void <B>setX</B>(float&nbsp;x)</PRE>
-<DL>
-<DD>Set the x coordinate.
-<P>
-<DD><DL>
-<DT><B>Parameters:</B><DD><CODE>x</CODE> - the x coordinate.</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="setY(float)"><!-- --></A><H3>
-setY</H3>
-<PRE>
-public void <B>setY</B>(float&nbsp;y)</PRE>
-<DL>
-<DD>Set the y coordinate.
-<P>
-<DD><DL>
-<DT><B>Parameters:</B><DD><CODE>y</CODE> - the y coordinate.</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="setZ(float)"><!-- --></A><H3>
-setZ</H3>
-<PRE>
-public void <B>setZ</B>(float&nbsp;z)</PRE>
-<DL>
-<DD>Set the z coordinate.
-<P>
-<DD><DL>
-<DT><B>Parameters:</B><DD><CODE>z</CODE> - the z coordinate.</DL>
-</DD>
-</DL>
-<HR>
-
 <A NAME="set(float, float, float)"><!-- --></A><H3>
 set</H3>
 <PRE>
@@ -733,20 +720,6 @@ public float[] <B>get</B>(float[]&nbsp;target)</PRE>
 <DD><DL>
 <DT><B>Parameters:</B><DD><CODE>target</CODE> - 
 <DT><B>Returns:</B><DD></DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="copy()"><!-- --></A><H3>
-copy</H3>
-<PRE>
-public <A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A> <B>copy</B>()</PRE>
-<DL>
-<DD>Copy the vector (synonym for get()).
-<P>
-<DD><DL>
-
-<DT><B>Returns:</B><DD>a copy of the vector</DL>
 </DD>
 </DL>
 <HR>
@@ -920,6 +893,50 @@ public static <A HREF="../../processing/core/PVector.html" title="class in proce
 </DL>
 <HR>
 
+<A NAME="mult(processing.core.PVector)"><!-- --></A><H3>
+mult</H3>
+<PRE>
+public void <B>mult</B>(<A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A>&nbsp;v)</PRE>
+<DL>
+<DD>Multiply each element of one vector by the elements of another vector.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>n</CODE> - the value to multiply by</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="mult(processing.core.PVector, processing.core.PVector)"><!-- --></A><H3>
+mult</H3>
+<PRE>
+public static <A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A> <B>mult</B>(<A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A>&nbsp;v1,
+                           <A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A>&nbsp;v2)</PRE>
+<DL>
+<DD>Multiply each element of one vector by the individual elements of another 
+ vector, and return the result as a new PVector.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="mult(processing.core.PVector, processing.core.PVector, processing.core.PVector)"><!-- --></A><H3>
+mult</H3>
+<PRE>
+public static <A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A> <B>mult</B>(<A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A>&nbsp;v1,
+                           <A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A>&nbsp;v2,
+                           <A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A>&nbsp;target)</PRE>
+<DL>
+<DD>Multiply each element of one vector by the individual elements of another 
+ vector, and write the result into a target vector.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>v1</CODE> - the first vector<DD><CODE>v2</CODE> - the second vector<DD><CODE>target</CODE> - PVector to store the result</DL>
+</DD>
+</DL>
+<HR>
+
 <A NAME="div(float)"><!-- --></A><H3>
 div</H3>
 <PRE>
@@ -957,6 +974,50 @@ public static <A HREF="../../processing/core/PVector.html" title="class in proce
 <DL>
 <DD><DL>
 </DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="div(processing.core.PVector)"><!-- --></A><H3>
+div</H3>
+<PRE>
+public void <B>div</B>(<A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A>&nbsp;v)</PRE>
+<DL>
+<DD>Divide each element of one vector by the elements of another vector.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="div(processing.core.PVector, processing.core.PVector)"><!-- --></A><H3>
+div</H3>
+<PRE>
+public static <A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A> <B>div</B>(<A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A>&nbsp;v1,
+                          <A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A>&nbsp;v2)</PRE>
+<DL>
+<DD>Multiply each element of one vector by the individual elements of another 
+ vector, and return the result as a new PVector.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="div(processing.core.PVector, processing.core.PVector, processing.core.PVector)"><!-- --></A><H3>
+div</H3>
+<PRE>
+public static <A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A> <B>div</B>(<A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A>&nbsp;v1,
+                          <A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A>&nbsp;v2,
+                          <A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A>&nbsp;target)</PRE>
+<DL>
+<DD>Divide each element of one vector by the individual elements of another 
+ vector, and write the result into a target vector.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>v1</CODE> - the first vector<DD><CODE>v2</CODE> - the second vector<DD><CODE>target</CODE> - PVector to store the result</DL>
 </DD>
 </DL>
 <HR>
@@ -1036,7 +1097,7 @@ cross</H3>
 public <A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A> <B>cross</B>(<A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A>&nbsp;v,
                      <A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A>&nbsp;target)</PRE>
 <DL>
-<DD>Perform cross product between this and another vector, and store the 
+<DD>Perform cross product between this and another vector, and store the
  result in 'target'. If target is null, a new vector is created.
 <P>
 <DD><DL>
@@ -1146,8 +1207,9 @@ array</H3>
 <PRE>
 public float[] <B>array</B>()</PRE>
 <DL>
-<DD>Return a representation of this vector as an array. This is only for
- temporary use. If used in any other fashion, the contents should be copied.
+<DD>Return a representation of this vector as a float array. This is only for
+ temporary use. If used in any other fashion, the contents should be copied
+ by using the get() command to copy into your own array.
 <P>
 <DD><DL>
 </DL>
