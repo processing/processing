@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <root>
 
-<name>dist()</name>
+<name>dot()</name>
 
 <category>PVector</category>
 
@@ -11,14 +11,30 @@
 
 <example>
 <image></image>
-<code></code>
+<code>
+PVector  v = new PVector(10, 20, 0);
+float d = v.dot(60, 80, 0);
+println(d);  // Prints "2200.0"
+</code>
+</example>
+
+<example>
+<image></image>
+<code>
+PVector  v1 = new PVector(10, 20, 0);
+PVector  v2 = new PVector(60, 80, 0); 
+float d = v1.dot(v2);
+println(d);  // Prints "2200.0"
+</code>
 </example>
 
 <description>
+Calculates the dot product of two vectors.
 </description>
 
 <syntax>
-<c>vec</c>.
+<c>vec</c>.dot(<c>x</c>, <c>y</c>, <c>z</c>)
+<c>vec</c>.dot(<c>v</c>)
 </syntax>
 
 <parameter>
@@ -26,7 +42,28 @@
 <description>any variable of type PVector</description>
 </parameter>
 
-<returns></returns>
+<parameter>
+<label>x</label>
+<description>float: the x component of a vector</description>
+</parameter>
+
+<parameter>
+<label>y</label>
+<description>float: the y component of a vector</description>
+</parameter>
+
+<parameter>
+<label>z</label>
+<description>float: the z component of a vector</description>
+</parameter>
+
+<parameter>
+<label>v</label>
+<description>PVector: the x, y, and z components from a PVector object</description>
+</parameter>
+
+
+<returns>float</returns>
 
 <related></related>
 

@@ -11,14 +11,31 @@
 
 <example>
 <image></image>
-<code></code>
+<code>
+PVector  v1 = new PVector(10, 20, 0);
+PVector  v2 = new PVector(60, 80, 0); 
+float d = v1.dist(v2);
+println(d);  // Prints "78.10249"
+</code>
+</example>
+
+<example>
+<image></image>
+<code>
+PVector  v1 = new PVector(10, 20, 0);
+PVector  v2 = new PVector(60, 80, 0); 
+float d = PVector.dist(v1, v2);
+println(d);  // Prints "78.10249"
+</code>
 </example>
 
 <description>
+Calculates the Euclidean distance between two points (considering a point as a vector object).
 </description>
 
 <syntax>
-<c>vec</c>.
+<c>vec</c>.dist(<c>v</c>)
+PVector.dist(<c>v1</c>, <c>v2</c>)
 </syntax>
 
 <parameter>
@@ -26,7 +43,23 @@
 <description>any variable of type PVector</description>
 </parameter>
 
-<returns></returns>
+<parameter>
+<label>v</label>
+<description>PVector: the x, y, and z coordinates of a PVector object</description>
+</parameter>
+
+<parameter>
+<label>v1</label>
+<description>PVector: the x, y, and z coordinates of a PVector object</description>
+</parameter>
+
+<parameter>
+<label>v2</label>
+<description>PVector: the x, y, and z coordinates of a PVector object</description>
+</parameter>
+
+
+<returns>float</returns>
 
 <related></related>
 

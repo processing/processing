@@ -11,14 +11,20 @@
 
 <example>
 <image></image>
-<code></code>
+<code>
+PVector v1 = new PVector(10, 20, 2);
+PVector v2 = new PVector(60, 80, 6); 
+PVector v3 = v1.cross(v2);
+println(v3);  // Prints "[ -40.0, 60.0, -400.0 ]"
+</code>
 </example>
 
 <description>
+Calculates and returns a vector composed of the cross product between two vectors.
 </description>
 
 <syntax>
-<c>vec</c>.
+<c>vec</c>.cross(<c>v</c>)
 </syntax>
 
 <parameter>
@@ -26,7 +32,12 @@
 <description>any variable of type PVector</description>
 </parameter>
 
-<returns></returns>
+<parameter>
+<label>v</label>
+<description>PVector: the vector to calculate the cross product with</description>
+</parameter>
+
+<returns>PVector</returns>
 
 <related></related>
 

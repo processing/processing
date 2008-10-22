@@ -11,14 +11,20 @@
 
 <example>
 <image></image>
-<code></code>
+<code>
+PVector v1 = new PVector(10, 20);
+PVector v2 = new PVector(60, 80); 
+float a = PVector.angleBetween(v1, v2);
+println(degrees(a));  // Prints "10.304827"
+</code>
 </example>
 
 <description>
+Calculates and returns the angle (in radians) between two vectors.
 </description>
 
 <syntax>
-<c>vec</c>.
+PVector.angleBetween(<c>v1</c>, <c>v2</c>)
 </syntax>
 
 <parameter>
@@ -26,7 +32,18 @@
 <description>any variable of type PVector</description>
 </parameter>
 
-<returns></returns>
+<parameter>
+<label>v1</label>
+<description>PVector: the x, y, and z components of a PVector object</description>
+</parameter>
+
+<parameter>
+<label>v2</label>
+<description>PVector: the x, y, and z components of a PVector object</description>
+</parameter>
+
+
+<returns>Float</returns>
 
 <related></related>
 

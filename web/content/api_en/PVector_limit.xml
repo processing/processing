@@ -11,14 +11,19 @@
 
 <example>
 <image></image>
-<code></code>
+<code>
+PVector v = new PVector(10, 20, 2);
+v.limit(5);
+println(v);  // Prints "[ 2.2271771, 4.4543543, 0.4454354 ]"
+</code>
 </example>
 
 <description>
+Limit the magnitude of this vector to the value used for the <b>max</b> parameter.
 </description>
 
 <syntax>
-<c>vec</c>.
+<c>vec</c>.limit(<c>max</c>)
 </syntax>
 
 <parameter>
@@ -26,7 +31,12 @@
 <description>any variable of type PVector</description>
 </parameter>
 
-<returns></returns>
+<parameter>
+<label>max</label>
+<description>float: the maximum magnitude for the vector</description>
+</parameter>
+
+<returns>None</returns>
 
 <related></related>
 
