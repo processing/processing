@@ -13,17 +13,17 @@
 <code>
 PImage img = loadImage("tower.jpg");
 int dimension = (img.width*img.height);
-loadPixels();
+img.loadPixels();
 for (int i=0; i &lt; dimension; i+=2) { 
   img.pixels[i] = color(0, 0, 0); 
 } 
-updatePixels();
+img.updatePixels();
 image(img, 0, 0);
 </code>
 </example>
 
 <description>
-Array containing the values for all the pixels in the image. These values are of the color datatype. This array is the size of the image, meaning if the image is 100x100 pixels, there will be 10000 values and if the window is 200x300 pixels, there will be 60000 values. The <b>index</b> value defines the position of a value within the array. For example, the statement <b>color b = img.pixels[230]</b> will set the variable <b>b</b> equal to the value at that location in the array. Before accessing this array, the data must loaded with the <b>loadPixels()</b> functions. After the array data has been modified, the <b>updatePixels()</b> function must be loaded to update the changes. Without <b>loadPixels()</b>, running the code may (or will in future releases) result in a NullPointerException.
+Array containing the values for all the pixels in the image. These values are of the color datatype. This array is the size of the image, meaning if the image is 100x100 pixels, there will be 10000 values and if the window is 200x300 pixels, there will be 60000 values. The <b>index</b> value defines the position of a value within the array. For example, the statement <b>color b = img.pixels[230]</b> will set the variable <b>b</b> equal to the value at that location in the array. Before accessing this array, the data must loaded with the <b>loadPixels()</b> method. After the array data has been modified, the <b>updatePixels()</b> method must be run to update the changes. Without <b>loadPixels()</b>, running the code may (or will in future releases) result in a NullPointerException.
 </description>
 
 <syntax>
