@@ -109,7 +109,6 @@ PI	LITERAL2
 PIXEL_CENTER	LITERAL2
 POINT	LITERAL2
 POINTS	LITERAL2	
-POLYGON	LITERAL2
 POSTERIZE	LITERAL2
 PROBLEM	LITERAL2	
 PROJECT	LITERAL2
@@ -239,7 +238,7 @@ applyMatrix	KEYWORD2	applyMatrix_
 arc	KEYWORD2	arc_
 Array	KEYWORD1	Array
 []		arrayaccess
-arraycopy	KEYWORD2	arraycopy_
+arrayCopy	KEYWORD2	arrayCopy_
 ArrayList	KEYWORD1	ArrayList
 asin	KEYWORD2	asin_
 =		assign
@@ -481,7 +480,10 @@ PShape	KEYWORD1	PShape
 disableStyle	KEYWORD2	PShape_disableStyle_
 enableStyle	KEYWORD2	PShape_enableStyle_
 getChild	KEYWORD2	PShape_getChild_
+getHeight	KEYWORD2	PShape_getHeight_
+getWidth	KEYWORD2	PShape_getWidth_
 isVisible	KEYWORD2	PShape_isVisible_
+resetMatrix	KEYWORD2	PShape_resetMatrix_
 rotate	KEYWORD2	PShape_rotate_
 rotateX	KEYWORD2	PShape_rotateX_
 rotateY	KEYWORD2	PShape_rotateY_
@@ -492,6 +494,25 @@ translate	KEYWORD2	PShape_translate_
 public	KEYWORD1	public
 pushMatrix	KEYWORD2	pushMatrix_
 pushStyle	KEYWORD3	pushStyle_
+PVector	KEYWORD1	PVector
+add	KEYWORD2	PVector_add_
+angleBetween	KEYWORD2	PVector_angleBetween_
+array	KEYWORD2	PVector_array_
+copy	KEYWORD2	PVector_copy_
+cross	KEYWORD2	PVector_cross_
+dist	KEYWORD2	PVector_dist_
+div	KEYWORD2	PVector_div_
+dot	KEYWORD2	PVector_dot_
+get	KEYWORD2	PVector_get_
+limit	KEYWORD2	PVector_limit_
+mag	KEYWORD2	PVector_mag_
+mult	KEYWORD2	PVector_mult_
+normalize	KEYWORD2	PVector_normalize_
+set	KEYWORD2	PVector_set_
+sub	KEYWORD2	PVector_sub_
+x	LITERAL2	PVector_x
+y	LITERAL2	PVector_y
+z	LITERAL2	PVector_z
 quad	KEYWORD2	quad_
 radians	KEYWORD2	radians_
 random	KEYWORD2	random_
