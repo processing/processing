@@ -151,7 +151,7 @@ WAIT	LITERAL2
 WHITESPACE	LITERAL2		
 
 
-# KEYWORD1 specifies datatypes
+# KEYWORD1 specifies datatypes and keywords
 
 ArrayList	KEYWORD1
 Boolean	KEYWORD1	
@@ -215,6 +215,11 @@ try	KEYWORD1
 void	KEYWORD1	
 volatile	KEYWORD1
 while	KEYWORD1	
+
+# Depricated API
+
+arraycopy	KEYWORD2	arraycopy_
+openStream	KEYWORD2	openStream_
 
 
 # KEYWORD2 specifies methods and functions
