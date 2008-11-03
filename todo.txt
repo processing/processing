@@ -9,6 +9,15 @@ _ make processing tools use the tools api
 _   http://dev.processing.org/bugs/show_bug.cgi?id=886
 
 
+waiting for input
+_ moviemaker can't make exact 30fps output
+_   http://dev.processing.org/bugs/show_bug.cgi?id=988
+_ launch4j "An error occurred while starting the application" 
+_   http://dev.processing.org/bugs/show_bug.cgi?id=986
+_ tabs menu not working on osx ppc (can't confirm)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=993
+
+
 [ needs verification ] 
 
 _ check to see whether this bug is fixed once 0140 is released
@@ -29,6 +38,7 @@ _   need someone to go out and test all scenarios of this
 
 _ video library threading problems with other libraries
 _   http://dev.processing.org/bugs/show_bug.cgi?id=882
+_   using Capture.list() before size() sometimes works
 _ serial.available() broken with video
 _   http://dev.processing.org/bugs/show_bug.cgi?id=829
 _ first few frames of OpenGL sketches on Windows run slowly
@@ -852,6 +862,7 @@ _ some type of sketch archive format for posting examples (.psk?)
 _   would be nice to open a sketch directly from a zip file
 _   http://dev.processing.org/bugs/show_bug.cgi?id=88
 _   maybe just open from a zip file, since psk doesn't help anything
+_   also have a means of importing sketches
 
 
 

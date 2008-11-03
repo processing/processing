@@ -72,13 +72,13 @@ public class PGraphics3D extends PGraphics {
   /** Current projection matrix. */
   public PMatrix3D projection;
 
-  
+
   //////////////////////////////////////////////////////////////
 
-  
-  /** 
+
+  /**
    * Maximum lights by default is 8, which is arbitrary for this renderer,
-   * but is the minimum defined by OpenGL 
+   * but is the minimum defined by OpenGL
    */
   public static final int MAX_LIGHTS = 8;
 
@@ -126,10 +126,10 @@ public class PGraphics3D extends PGraphics {
   public float currentLightFalloffLinear;
   public float currentLightFalloffQuadratic;
 
-  
+
   //////////////////////////////////////////////////////////////
 
-  
+
   static public final int TRI_DIFFUSE_R = 0;
   static public final int TRI_DIFFUSE_G = 1;
   static public final int TRI_DIFFUSE_B = 2;
@@ -195,18 +195,18 @@ public class PGraphics3D extends PGraphics {
   protected float nearPlane; //depth of near clipping plane
 
   /** true if frustum has been called to set perspective, false if ortho */
-  private boolean frustumMode = false; 
-  
-  /** 
+  private boolean frustumMode = false;
+
+  /**
    * Use PSmoothTriangle for rendering instead of PTriangle?
    * Usually set by calling smooth() or noSmooth()
    */
   static protected boolean s_enableAccurateTextures = false; //maybe just use smooth instead?
-  
+
   /** Used for anti-aliased and perspective corrected rendering. */
   public PSmoothTriangle smoothTriangle;
-  
-  
+
+
   // ........................................................
 
   // pos of first vertex of current shape in vertices array
@@ -226,7 +226,7 @@ public class PGraphics3D extends PGraphics {
 
   // ........................................................
 
-  // This is done to keep track of start/stop information for lines in the 
+  // This is done to keep track of start/stop information for lines in the
   // line array, so that lines can be shown as a single path, rather than just
   // individual segments. Currently only in use inside PGraphicsOpenGL.
   protected int pathCount;
@@ -240,7 +240,7 @@ public class PGraphics3D extends PGraphics {
   static protected final int VERTEX1 = 0;
   static protected final int VERTEX2 = 1;
   static protected final int VERTEX3 = 2;        // (triangles only)
-  /** used to store the strokeColor int for efficient drawing. */ 
+  /** used to store the strokeColor int for efficient drawing. */
   static protected final int STROKE_COLOR = 1;   // (points only)
   static protected final int TEXTURE_INDEX = 3;  // (triangles only)
   //static protected final int STROKE_MODE = 2;    // (lines only)
@@ -254,7 +254,7 @@ public class PGraphics3D extends PGraphics {
   static final int DEFAULT_POINTS = 512;
   protected int[][] points = new int[DEFAULT_POINTS][POINT_FIELD_COUNT];
   protected int pointCount;
-  
+
   // lines
   static final int DEFAULT_LINES = 512;
   public PLine line;  // used for drawing
@@ -280,7 +280,7 @@ public class PGraphics3D extends PGraphics {
   int textureIndex;
 
   // ........................................................
-  
+
   DirectColorModel cm;
   MemoryImageSource mis;
 
@@ -292,14 +292,14 @@ public class PGraphics3D extends PGraphics {
 
 
   //public void setParent(PApplet parent)
-  
-  
+
+
   //public void setPrimary(boolean primary)
-  
-  
+
+
   //public void setPath(String path)
 
-  
+
   /**
    * Called in repsonse to a resize event, handles setting the
    * new width and height internally, as well as re-allocating
@@ -393,13 +393,13 @@ public class PGraphics3D extends PGraphics {
     smoothTriangle = new PSmoothTriangle(this);
   }
 
-  
+
   //public void dispose()
 
 
   ////////////////////////////////////////////////////////////
 
-  
+
   //public boolean canDraw()
 
 
@@ -467,7 +467,7 @@ public class PGraphics3D extends PGraphics {
 
   ////////////////////////////////////////////////////////////
 
-  
+
   //protected void checkSettings()
 
 
@@ -487,30 +487,32 @@ public class PGraphics3D extends PGraphics {
     specular(0.5f);
     shininess(1.0f);
   }
-  
-  
+
+
   //protected void reapplySettings()
-  
-  
+
+
   ////////////////////////////////////////////////////////////
-  
-  
+
+
   public void hint(int which) {
     if (which == DISABLE_DEPTH_SORT) {
       flush();
     } else if (which == DISABLE_DEPTH_TEST) {
-      Arrays.fill(zbuffer, Float.MAX_VALUE);
+      if (zbuffer != null) {  // will be null in OpenGL and others
+        Arrays.fill(zbuffer, Float.MAX_VALUE);
+      }
     }
     super.hint(which);
   }
 
-  
+
   //////////////////////////////////////////////////////////////
 
 
   //public void beginShape()
-  
-  
+
+
   public void beginShape(int kind) {
     shape = kind;
 
@@ -535,7 +537,7 @@ public class PGraphics3D extends PGraphics {
       if (triangle != null) triangle.reset();  // necessary?
       triangleCount = 0;
     }
-    
+
     textureImage = null;
     curveVertexCount = 0;
     normalMode = NORMAL_MODE_AUTO;
@@ -544,11 +546,11 @@ public class PGraphics3D extends PGraphics {
 
 
   //public void normal(float nx, float ny, float nz)
-  
-  
+
+
   //public void textureMode(int mode)
-  
-  
+
+
   public void texture(PImage image) {
     textureImage = image;
 
@@ -563,15 +565,15 @@ public class PGraphics3D extends PGraphics {
 
 
   public void vertex(float x, float y) {
-    // override so that the default 3D implementation will be used, 
+    // override so that the default 3D implementation will be used,
     // which will pick up all 3D settings (e.g. emissive, ambient)
     vertex(x, y, 0);
   }
 
 
   //public void vertex(float x, float y, float z)
-  
-  
+
+
   public void vertex(float x, float y, float u, float v) {
     // see vertex(x, y) for note
     vertex(x, y, 0, u, v);
@@ -582,11 +584,11 @@ public class PGraphics3D extends PGraphics {
 
 
   //public void breakShape()
-  
-  
+
+
   //public void endShape()
-  
-  
+
+
   public void endShape(int mode) {
     shapeLast = vertexCount;
     shapeLastPlusClipped = shapeLast;
@@ -598,7 +600,7 @@ public class PGraphics3D extends PGraphics {
       return;
     }
 
-    // convert points from model (X/Y/Z) to camera space (VX/VY/VZ). 
+    // convert points from model (X/Y/Z) to camera space (VX/VY/VZ).
     // Do this now because we will be clipping them on add_triangle.
     endShapeModelToCamera(shapeFirst, shapeLast);
 
@@ -617,7 +619,7 @@ public class PGraphics3D extends PGraphics {
     // (this appears to be wasted time with the OpenGL renderer)
     endShapeCameraToScreen(shapeFirst, shapeLastPlusClipped);
 
-    // render shape and fill here if not saving the shapes for later 
+    // render shape and fill here if not saving the shapes for later
     // if true, the shapes will be rendered on endDraw
     if (!hints[ENABLE_DEPTH_SORT]) {
       if (fill) {
@@ -639,8 +641,8 @@ public class PGraphics3D extends PGraphics {
 
     shape = 0;
   }
-  
-  
+
+
   protected void endShapeModelToCamera(int start, int stop) {
     for (int i = start; i < stop; i++) {
       float vertex[] = vertices[i];
@@ -929,13 +931,13 @@ public class PGraphics3D extends PGraphics {
     }
   }
 
-  
-  
+
+
   /////////////////////////////////////////////////////////////////////////////
-  
+
   // POINTS
-  
-  
+
+
   protected void addPoint(int a) {
     if (pointCount == points.length) {
       int[][] temp = new int[pointCount << 1][LINE_FIELD_COUNT];
@@ -947,9 +949,9 @@ public class PGraphics3D extends PGraphics {
     points[pointCount][STROKE_COLOR] = strokeColor;
     //points[pointCount][STROKE_WEIGHT] = (int) (strokeWeight + 0.5f); // hmm
     pointCount++;
-  }  
+  }
 
-  
+
   protected void renderPoints(int start, int stop) {
     for (int i = start; i < stop; i++) {
       float[] a = vertices[points[i][VERTEX1]];
@@ -961,9 +963,9 @@ public class PGraphics3D extends PGraphics {
     }
   }
 
-  
+
   // alternative implementations of point rendering code...
-  
+
   /*
       int sx = (int) (screenX(x, y, z) + 0.5f);
       int sy = (int) (screenY(x, y, z) + 0.5f);
@@ -973,7 +975,7 @@ public class PGraphics3D extends PGraphics {
       zbuffer[index] = screenZ(x, y, z);
 
    */
-  
+
   /*
   protected void renderPoints(int start, int stop) {
     for (int i = start; i < stop; i++) {
@@ -988,7 +990,7 @@ public class PGraphics3D extends PGraphics {
                        a[TX] + 0.5f, a[TY] + 0.5f, a[TZ] + 0.5f);
 
       line.draw();
-    }  
+    }
   }
   */
 
@@ -1041,10 +1043,10 @@ public class PGraphics3D extends PGraphics {
 
 
   /////////////////////////////////////////////////////////////////////////////
-  
+
   // LINES
-  
-  
+
+
   /**
    * Begin a new section of stroked geometry.
    */
@@ -1104,8 +1106,8 @@ public class PGraphics3D extends PGraphics {
     pathLength[pathCount-1]++;
   }
 
-  
-  protected void renderLines(int start, int stop) {    
+
+  protected void renderLines(int start, int stop) {
     for (int i = start; i < stop; i++) {
       float a[] = vertices[lines[i][VERTEX1]];
       float b[] = vertices[lines[i][VERTEX2]];
@@ -1147,7 +1149,7 @@ public class PGraphics3D extends PGraphics {
         float oy1 = a[TY];
         float ox2 = b[TX];
         float oy2 = b[TY];
-        
+
         float dX = ox2 - ox1 + EPSILON;
         float dY = oy2 - oy1 + EPSILON;
         float len = (float) Math.sqrt(dX*dX + dY*dY);
@@ -1159,10 +1161,10 @@ public class PGraphics3D extends PGraphics {
         float dy0 = rh * dX;
         float dx1 = rh * dY;
         float dy1 = rh * dX;
-        
+
         float ax1 = ox1+dx0;
         float ay1 = oy1-dy0;
-        
+
         float ax2 = ox1-dx0;
         float ay2 = oy1+dy0;
 
@@ -1225,7 +1227,7 @@ public class PGraphics3D extends PGraphics {
 
         line.setVertices(a[TX], a[TY], a[TZ],
                          b[TX], b[TY], b[TZ]);
-        
+
         /*
         // Seems okay to remove this because these vertices are not used again,
         // but if problems arise, this needs to be uncommented because the above
@@ -1246,18 +1248,18 @@ public class PGraphics3D extends PGraphics {
       }
     }
   }
-  
+
 
   /**
-   * Handle echoing line data to a raw shape recording renderer. This has been 
+   * Handle echoing line data to a raw shape recording renderer. This has been
    * broken out of the renderLines() procedure so that renderLines() can be
    * optimized per-renderer without having to deal with this code. This code,
    * for instance, will stay the same when OpenGL is in use, but renderLines()
    * can be optimized significantly.
    * <br/> <br/>
-   * Values for start and stop are specified, so that in the future, sorted 
-   * rendering can be implemented, which will require sequences of lines, 
-   * triangles, or points to be rendered in the neighborhood of one another. 
+   * Values for start and stop are specified, so that in the future, sorted
+   * rendering can be implemented, which will require sequences of lines,
+   * triangles, or points to be rendered in the neighborhood of one another.
    * That is, if we're gonna depth sort, we can't just draw all the triangles
    * and then draw all the lines, cuz that defeats the purpose.
    */
@@ -1287,9 +1289,9 @@ public class PGraphics3D extends PGraphics {
     }
     raw.endShape();
   }
-  
 
-  
+
+
   /////////////////////////////////////////////////////////////////////////////
 
   // TRIANGLES
@@ -1299,7 +1301,7 @@ public class PGraphics3D extends PGraphics {
     addTriangleWithClip(a, b, c);
   }
 
-  
+
   protected final void addTriangleWithClip(int a, int b, int c) {
     boolean aClipped = false;
     boolean bClipped = false;
@@ -1320,7 +1322,7 @@ public class PGraphics3D extends PGraphics {
     }
     if (clippedCount == 0) {
       addTriangleWithoutClip(a, b, c);
-      
+
     } else if (clippedCount == 3) {
       // In this case there is only one visible point.            |/|
       // So we'll have to make two new points on the clip line   <| |
@@ -1418,7 +1420,7 @@ public class PGraphics3D extends PGraphics {
            pa * va[Z] + pb * vb[Z]);
     int irv = vertexCount - 1;
     shapeLastPlusClipped++;
-    
+
     float[] rv = vertices[irv];
 
     rv[TX] = pa * va[TX] + pb * vb[TX];
@@ -1494,7 +1496,7 @@ public class PGraphics3D extends PGraphics {
     triangleCount++;
   }
 
-  
+
   /**
    * Triangulate the current polygon.
    * <BR> <BR>
@@ -1683,7 +1685,7 @@ public class PGraphics3D extends PGraphics {
     }
   }
 
-  
+
   private void toWorldNormal(float nx, float ny, float nz, float[] out) {
     out[0] =
       modelviewInv.m00*nx + modelviewInv.m10*ny +
@@ -1710,18 +1712,18 @@ public class PGraphics3D extends PGraphics {
     }
   }
 
-  
+
   //private PVector calcLightingNorm = new PVector();
   //private PVector calcLightingWorldNorm = new PVector();
   float[] worldNormal = new float[4];
-  
-  
+
+
   private void calcLightingContribution(int vIndex,
                                         float[] contribution) {
     calcLightingContribution(vIndex, contribution, false);
   }
 
-  
+
   private void calcLightingContribution(int vIndex,
                                         float[] contribution,
                                         boolean normalIsWorld) {
@@ -1744,16 +1746,16 @@ public class PGraphics3D extends PGraphics {
 //      System.out.println("um, hello?");
 //      calcLightingNorm.set(nx, ny, nz);
 //      //modelviewInv.mult(calcLightingNorm, calcLightingWorldNorm);
-//      
+//
 ////      PMatrix3D mvi = modelViewInv;
 ////      float ox = mvi.m00*nx + mvi.m10*ny + mvi*m20+nz +
 //      modelviewInv.cmult(calcLightingNorm, calcLightingWorldNorm);
-//      
+//
 //      calcLightingWorldNorm.normalize();
 //      nx = calcLightingWorldNorm.x;
 //      ny = calcLightingWorldNorm.y;
 //      nz = calcLightingWorldNorm.z;
-      
+
       toWorldNormal(v[NX], v[NY], v[NZ], worldNormal);
       nx = worldNormal[X];
       ny = worldNormal[Y];
@@ -1763,12 +1765,12 @@ public class PGraphics3D extends PGraphics {
 //      float wny = modelviewInv.multY(nx, ny, nz);
 //      float wnz = modelviewInv.multZ(nx, ny, nz);
 //      float wnw = modelviewInv.multW(nx, ny, nz);
-      
+
 //      if (wnw != 0 && wnw != 1) {
 //        wnx /= wnw;
 //        wny /= wnw;
 //        wnz /= wnw;
-//      } 
+//      }
 //      float nlen = mag(wnx, wny, wnw);
 //      if (nlen != 0 && nlen != 1) {
 //        nx = wnx / nlen;
@@ -2075,9 +2077,9 @@ public class PGraphics3D extends PGraphics {
 
       cross(dv1, dv2, norm);
       */
-      
-      cross(vertices[vIndex2][VX] - vertices[vIndex][VX], 
-            vertices[vIndex2][VY] - vertices[vIndex][VY], 
+
+      cross(vertices[vIndex2][VX] - vertices[vIndex][VX],
+            vertices[vIndex2][VY] - vertices[vIndex][VY],
             vertices[vIndex2][VZ] - vertices[vIndex][VZ],
             vertices[vIndex3][VX] - vertices[vIndex][VX],
             vertices[vIndex3][VY] - vertices[vIndex][VY],
@@ -2125,19 +2127,19 @@ public class PGraphics3D extends PGraphics {
         vIndex = triangles[triIndex][VERTEX1];
         int vIndex2 = triangles[triIndex][VERTEX2];
         int vIndex3 = triangles[triIndex][VERTEX3];
-        
+
         /*
         dv1[0] = vertices[vIndex2][VX] - vertices[vIndex][VX];
         dv1[1] = vertices[vIndex2][VY] - vertices[vIndex][VY];
         dv1[2] = vertices[vIndex2][VZ] - vertices[vIndex][VZ];
-        
+
         dv2[0] = vertices[vIndex3][VX] - vertices[vIndex][VX];
         dv2[1] = vertices[vIndex3][VY] - vertices[vIndex][VY];
         dv2[2] = vertices[vIndex3][VZ] - vertices[vIndex][VZ];
 
         cross(dv1, dv2, norm);
         */
-        
+
         cross(vertices[vIndex2][VX] - vertices[vIndex][VX],
               vertices[vIndex2][VY] - vertices[vIndex][VY],
               vertices[vIndex2][VZ] - vertices[vIndex][VZ],
@@ -2173,7 +2175,7 @@ public class PGraphics3D extends PGraphics {
     }
   }
 
-  
+
   protected void renderTriangles(int start, int stop) {
     for (int i = start; i < stop; i++) {
       float a[] = vertices[triangles[i][VERTEX1]];
@@ -2206,7 +2208,7 @@ public class PGraphics3D extends PGraphics {
 
       triangle.reset();
 
-      // This is only true when not textured. 
+      // This is only true when not textured.
       // We really should pass specular straight through to triangle rendering.
       float ar = clamp(triangleColors[i][0][TRI_DIFFUSE_R] + triangleColors[i][0][TRI_SPECULAR_R]);
       float ag = clamp(triangleColors[i][0][TRI_DIFFUSE_G] + triangleColors[i][0][TRI_SPECULAR_G]);
@@ -2221,47 +2223,47 @@ public class PGraphics3D extends PGraphics {
       // ACCURATE TEXTURE CODE
       boolean failedToPrecalc = false;
       if (s_enableAccurateTextures && frustumMode){
-    	boolean textured = true;
-		smoothTriangle.reset(3);
-		smoothTriangle.smooth = true;
-		smoothTriangle.interpARGB = true;
-		smoothTriangle.setIntensities(ar, ag, ab, a[A],
-  			  						  br, bg, bb, b[A],
-  			  						  cr, cg, cb, c[A]);
-		if (tex > -1 && textures[tex] != null) {
-			smoothTriangle.setCamVertices(a[VX], a[VY], a[VZ],
-										  b[VX], b[VY], b[VZ],
-										  c[VX], c[VY], c[VZ]);
-			smoothTriangle.interpUV = true;
-			smoothTriangle.texture(textures[tex]);
-			float umult = textures[tex].width; //apparently no check for textureMode is needed here
-			float vmult = textures[tex].height;
-			smoothTriangle.vertices[0][U] = a[U]*umult;
-			smoothTriangle.vertices[0][V] = a[V]*vmult;
-			smoothTriangle.vertices[1][U] = b[U]*umult;
-			smoothTriangle.vertices[1][V] = b[V]*vmult;
-			smoothTriangle.vertices[2][U] = c[U]*umult;
-			smoothTriangle.vertices[2][V] = c[V]*vmult;
-		} else {
-			smoothTriangle.interpUV = false;
-			textured = false;
-		}
-		
+        boolean textured = true;
+                smoothTriangle.reset(3);
+                smoothTriangle.smooth = true;
+                smoothTriangle.interpARGB = true;
+                smoothTriangle.setIntensities(ar, ag, ab, a[A],
+                                                                          br, bg, bb, b[A],
+                                                                          cr, cg, cb, c[A]);
+                if (tex > -1 && textures[tex] != null) {
+                        smoothTriangle.setCamVertices(a[VX], a[VY], a[VZ],
+                                                                                  b[VX], b[VY], b[VZ],
+                                                                                  c[VX], c[VY], c[VZ]);
+                        smoothTriangle.interpUV = true;
+                        smoothTriangle.texture(textures[tex]);
+                        float umult = textures[tex].width; //apparently no check for textureMode is needed here
+                        float vmult = textures[tex].height;
+                        smoothTriangle.vertices[0][U] = a[U]*umult;
+                        smoothTriangle.vertices[0][V] = a[V]*vmult;
+                        smoothTriangle.vertices[1][U] = b[U]*umult;
+                        smoothTriangle.vertices[1][V] = b[V]*vmult;
+                        smoothTriangle.vertices[2][U] = c[U]*umult;
+                        smoothTriangle.vertices[2][V] = c[V]*vmult;
+                } else {
+                        smoothTriangle.interpUV = false;
+                        textured = false;
+                }
+
         smoothTriangle.setVertices(a[TX], a[TY], a[TZ],
-                		 		   b[TX], b[TY], b[TZ],
-                		 		   c[TX], c[TY], c[TZ]);
-        
-        
+                                                   b[TX], b[TY], b[TZ],
+                                                   c[TX], c[TY], c[TZ]);
+
+
         if (!textured || smoothTriangle.precomputeAccurateTexturing()){
-        	smoothTriangle.render();
+                smoothTriangle.render();
         } else {
-        	// Something went wrong with the precomputation,
-        	// so we need to fall back on normal PTriangle
-        	// rendering.
-        	failedToPrecalc = true;
+                // Something went wrong with the precomputation,
+                // so we need to fall back on normal PTriangle
+                // rendering.
+                failedToPrecalc = true;
         }
-      } 
-      
+      }
+
       // Normal triangle rendering
       // Note: this is not an end-if from the smoothed texturing mode
       // because it's possible that the precalculation will fail and we
@@ -2280,7 +2282,7 @@ public class PGraphics3D extends PGraphics {
                            b[TX], b[TY], b[TZ],
                            c[TX], c[TY], c[TZ]);
 
-    	  triangle.render();
+          triangle.render();
       }
 
       /*
@@ -2355,7 +2357,7 @@ public class PGraphics3D extends PGraphics {
             raw.fill(cr, cg, cb, c[A]);
             raw.vertex(c[VX] / c[VW], c[VY] / c[VW], c[VZ] / c[VW]);
           }
-        } else if (raw.is2D()){  
+        } else if (raw.is2D()){
           raw.fill(ar, ag, ab, a[A]);
           raw.vertex(a[TX], a[TY]);
           raw.fill(br, bg, bb, b[A]);
@@ -2365,38 +2367,38 @@ public class PGraphics3D extends PGraphics {
         }
       }
     }
-    
+
     raw.endShape();
   }
 
 
   //////////////////////////////////////////////////////////////
 
-  
+
   //public void bezierVertex(float x2, float y2,
   //                         float x3, float y3,
   //                         float x4, float y4)
-  
-  
+
+
   //public void bezierVertex(float x2, float y2, float z2,
   //                         float x3, float y3, float z3,
   //                         float x4, float y4, float z4)
 
-  
-  
+
+
   //////////////////////////////////////////////////////////////
 
-  
+
   //public void curveVertex(float x, float y)
-  
-  
+
+
   //public void curveVertex(float x, float y, float z)
 
 
-  
+
   ////////////////////////////////////////////////////////////
 
-  
+
   /**
    * Emit any sorted geometry that's been collected on this frame.
    */
@@ -2405,7 +2407,7 @@ public class PGraphics3D extends PGraphics {
       sort();
     }
     render();
-    
+
     /*
     if (triangleCount > 0) {
       if (hints[ENABLE_DEPTH_SORT]) {
@@ -2426,8 +2428,8 @@ public class PGraphics3D extends PGraphics {
     lineCount = 0;
     */
   }
-  
-  
+
+
   protected void render() {
     if (pointCount > 0) {
       renderPoints(0, pointCount);
@@ -2452,11 +2454,11 @@ public class PGraphics3D extends PGraphics {
       triangleCount = 0;
     }
   }
-  
-  
+
+
   /**
-   * Handle depth sorting of geometry. Currently this only handles triangles, 
-   * however in the future it will be expanded for points and lines, which 
+   * Handle depth sorting of geometry. Currently this only handles triangles,
+   * however in the future it will be expanded for points and lines, which
    * will also need to be interspersed with one another while rendering.
    */
   protected void sort() {
@@ -2518,25 +2520,25 @@ public class PGraphics3D extends PGraphics {
              vertices[triangles[a][VERTEX3]][TZ]));
   }
 
-  
-  
+
+
   //////////////////////////////////////////////////////////////
 
   // POINT, LINE, TRIANGLE, QUAD
 
   // Because vertex(x, y) is mapped to vertex(x, y, 0), none of these commands
   // need to be overridden from their default implementation in PGraphics.
-  
-  
+
+
   //public void point(float x, float y)
 
 
   //public void point(float x, float y, float z)
 
-  
+
   //public void line(float x1, float y1, float x2, float y2)
-  
-  
+
+
   //public void line(float x1, float y1, float z1,
   //                 float x2, float y2, float z2)
 
@@ -2553,38 +2555,38 @@ public class PGraphics3D extends PGraphics {
   //////////////////////////////////////////////////////////////
 
   // RECT
-  
-  
+
+
   //public void rectMode(int mode)
-  
-  
+
+
   //public void rect(float a, float b, float c, float d)
-  
-  
+
+
   //protected void rectImpl(float x1, float y1, float x2, float y2)
 
-  
-  
+
+
   //////////////////////////////////////////////////////////////
-  
+
   // ELLIPSE
-  
-  
+
+
   //public void ellipseMode(int mode)
-  
-  
+
+
   //public void ellipse(float a, float b, float c, float d)
-  
-  
+
+
   //public void arc(float a, float b, float c, float d,
   //                float start, float stop)
-  
-  
+
+
   //protected void arcImpl(float x, float y, float w, float h,
   //                       float start, float stop)
 
-  
-  
+
+
   //////////////////////////////////////////////////////////////
 
   // BOX
@@ -2622,7 +2624,7 @@ public class PGraphics3D extends PGraphics {
     if (triangle != null) {  // triangle is null in gl
       triangle.setCulling(true);
     }
-    
+
     super.sphere(r);
 
     if (triangle != null) {  // triangle is null in gl
@@ -2636,22 +2638,22 @@ public class PGraphics3D extends PGraphics {
 
   // BEZIER
 
-  
+
   //public float bezierPoint(float a, float b, float c, float d, float t)
-  
-  
+
+
   //public float bezierTangent(float a, float b, float c, float d, float t)
-  
-  
+
+
   //public void bezierDetail(int detail)
-  
-  
+
+
   //public void bezier(float x1, float y1,
   //                   float x2, float y2,
   //                   float x3, float y3,
   //                   float x4, float y4)
-  
-  
+
+
   //public void bezier(float x1, float y1, float z1,
   //                   float x2, float y2, float z2,
   //                   float x3, float y3, float z3,
@@ -2663,16 +2665,16 @@ public class PGraphics3D extends PGraphics {
 
   // CATMULL-ROM CURVES
 
-  
+
   //public float curvePoint(float a, float b, float c, float d, float t)
-  
-  
+
+
   //public float curveTangent(float a, float b, float c, float d, float t)
-  
-  
+
+
   //public void curveDetail(int detail)
-  
-  
+
+
   //public void curveTightness(float tightness)
 
 
@@ -2680,30 +2682,30 @@ public class PGraphics3D extends PGraphics {
   //                  float x2, float y2,
   //                  float x3, float y3,
   //                  float x4, float y4)
-  
-  
+
+
   //public void curve(float x1, float y1, float z1,
   //                  float x2, float y2, float z2,
   //                  float x3, float y3, float z3,
   //                  float x4, float y4, float z4)
 
-  
-  
+
+
   //////////////////////////////////////////////////////////////
 
   // SMOOTH
-  
-  
+
+
   public void smooth() {
     //showMethodWarning("smooth");
-	  s_enableAccurateTextures = true;
-	  smooth = true;
+          s_enableAccurateTextures = true;
+          smooth = true;
   }
 
 
   public void noSmooth() {
-	  s_enableAccurateTextures = false;
-	  smooth = false;
+          s_enableAccurateTextures = false;
+          smooth = false;
   }
 
 
@@ -2711,17 +2713,17 @@ public class PGraphics3D extends PGraphics {
   //////////////////////////////////////////////////////////////
 
   // IMAGES
-  
-  
+
+
   //public void imageMode(int mode)
-  
-  
+
+
   //public void image(PImage image, float x, float y)
-  
-  
+
+
   //public void image(PImage image, float x, float y, float c, float d)
-  
-  
+
+
   //public void image(PImage image,
   //                  float a, float b, float c, float d,
   //                  int u1, int v1, int u2, int v2)
@@ -2731,55 +2733,55 @@ public class PGraphics3D extends PGraphics {
   //                         float x1, float y1, float x2, float y2,
   //                         int u1, int v1, int u2, int v2)
 
-  
+
 
   //////////////////////////////////////////////////////////////
 
   // SHAPE
-  
-  
+
+
   //public void shapeMode(int mode)
-  
-  
+
+
   //public void shape(PShape shape)
 
-  
+
   //public void shape(PShape shape, float x, float y)
-  
-  
+
+
   //public void shape(PShape shape, float x, float y, float c, float d)
-  
-  
+
+
 
   //////////////////////////////////////////////////////////////
 
   // TEXT SETTINGS
-  
-  // Only textModeCheck overridden from PGraphics, no textAlign, textAscent, 
-  // textDescent, textFont, textLeading, textMode, textSize, textWidth 
 
-  
+  // Only textModeCheck overridden from PGraphics, no textAlign, textAscent,
+  // textDescent, textFont, textLeading, textMode, textSize, textWidth
+
+
   protected boolean textModeCheck(int mode) {
     return (textMode == MODEL) || (textMode == SCREEN);
   }
 
-  
-  
+
+
   //////////////////////////////////////////////////////////////
 
   // TEXT
-  
+
   // None of the variations of text() are overridden from PGraphics.
-  
-  
-  
+
+
+
   //////////////////////////////////////////////////////////////
 
   // TEXT IMPL
-  
+
   // Not even the text drawing implementation stuff is overridden.
-  
-  
+
+
 
   //////////////////////////////////////////////////////////////
 
@@ -2901,10 +2903,10 @@ public class PGraphics3D extends PGraphics {
 
   public void applyMatrix(PMatrix2D source) {
     applyMatrix(source.m00, source.m01, source.m02,
-                source.m10, source.m11, source.m12); 
+                source.m10, source.m11, source.m12);
   }
-  
-  
+
+
   public void applyMatrix(float n00, float n01, float n02,
                           float n10, float n11, float n12) {
     applyMatrix(n00, n01, n02, 0,
@@ -2919,7 +2921,7 @@ public class PGraphics3D extends PGraphics {
                 source.m10, source.m11, source.m12, source.m13,
                 source.m20, source.m21, source.m22, source.m23,
                 source.m30, source.m31, source.m32, source.m33);
-  }  
+  }
 
 
   /**
@@ -2953,8 +2955,8 @@ public class PGraphics3D extends PGraphics {
   public PMatrix getMatrix() {
     return modelview.get();
   }
-  
-  
+
+
   //public PMatrix2D getMatrix(PMatrix2D target)
 
 
@@ -2968,15 +2970,15 @@ public class PGraphics3D extends PGraphics {
 
 
   //public void setMatrix(PMatrix source)
-  
-  
+
+
   public void setMatrix(PMatrix2D source) {
     // not efficient, but at least handles the inverse stuff.
     resetMatrix();
     applyMatrix(source);
   }
-  
-  
+
+
   /**
    * Set the current transformation to the contents of the specified source.
    */
@@ -2985,8 +2987,8 @@ public class PGraphics3D extends PGraphics {
     resetMatrix();
     applyMatrix(source);
   }
-  
-  
+
+
   /**
    * Print the current model (or "transformation") matrix.
    */
@@ -3031,11 +3033,11 @@ public class PGraphics3D extends PGraphics {
   }
   */
 
-  
-  
+
+
   //////////////////////////////////////////////////////////////
 
-  // CAMERA 
+  // CAMERA
 
 
   /**
@@ -3298,7 +3300,7 @@ public class PGraphics3D extends PGraphics {
 
   //////////////////////////////////////////////////////////////
 
-  // PROJECTION 
+  // PROJECTION
 
 
   /**
@@ -3552,21 +3554,21 @@ public class PGraphics3D extends PGraphics {
     return (ow != 0) ? oz / ow : oz;
   }
 
-  
+
 
   //////////////////////////////////////////////////////////////
-  
+
   // STYLE
-  
-  // pushStyle(), popStyle(), style() and getStyle() inherited. 
+
+  // pushStyle(), popStyle(), style() and getStyle() inherited.
 
 
-  
+
   //////////////////////////////////////////////////////////////
 
   // STROKE CAP/JOIN/WEIGHT
-  
-  
+
+
 //  public void strokeWeight(float weight) {
 //    if (weight != DEFAULT_STROKE_WEIGHT) {
 //      showMethodWarning("strokeWeight");
@@ -3591,23 +3593,23 @@ public class PGraphics3D extends PGraphics {
 
   //////////////////////////////////////////////////////////////
 
-  // STROKE COLOR 
+  // STROKE COLOR
 
   // All methods inherited from PGraphics.
-  
-  
-  
+
+
+
   //////////////////////////////////////////////////////////////
 
-  // TINT COLOR 
+  // TINT COLOR
 
   // All methods inherited from PGraphics.
-  
-  
-  
+
+
+
   //////////////////////////////////////////////////////////////
 
-  // FILL COLOR 
+  // FILL COLOR
 
 
   protected void fillFromCalc() {
@@ -3616,20 +3618,20 @@ public class PGraphics3D extends PGraphics {
   }
 
 
-  
+
   //////////////////////////////////////////////////////////////
 
-  // MATERIAL PROPERTIES 
+  // MATERIAL PROPERTIES
 
-  // ambient, specular, shininess, and emissive all inherited.  
-  
+  // ambient, specular, shininess, and emissive all inherited.
 
-  
+
+
   //////////////////////////////////////////////////////////////
 
   // LIGHTS
 
-  
+
   PVector lightPositionVec = new PVector();
   PVector lightDirectionVec = new PVector();
 
@@ -3949,7 +3951,7 @@ public class PGraphics3D extends PGraphics {
    * based on the current modelview matrix.
    */
   protected void lightDirection(int num, float x, float y, float z) {
-    lightNormal[num].set(modelviewInv.m00*x + modelviewInv.m10*y + modelviewInv.m20*z + modelviewInv.m30, 
+    lightNormal[num].set(modelviewInv.m00*x + modelviewInv.m10*y + modelviewInv.m20*z + modelviewInv.m30,
                          modelviewInv.m01*x + modelviewInv.m11*y + modelviewInv.m21*z + modelviewInv.m31,
                          modelviewInv.m02*x + modelviewInv.m12*y + modelviewInv.m22*z + modelviewInv.m32);
     lightNormal[num].normalize();
@@ -3963,7 +3965,7 @@ public class PGraphics3D extends PGraphics {
     lightNormal[num].normalize();
     System.out.println("setting light direction " + lightNormal[num]);
     */
-    
+
     /*
     // Multiply by inverse transpose.
     lightNormal[num][0] =
@@ -3992,7 +3994,7 @@ public class PGraphics3D extends PGraphics {
   // BACKGROUND
 
   // Base background() variations inherited from PGraphics.
-  
+
 
   protected void backgroundImpl(PImage image) {
     System.arraycopy(image.pixels, 0, pixels, 0, pixels.length);
@@ -4008,15 +4010,15 @@ public class PGraphics3D extends PGraphics {
     Arrays.fill(zbuffer, Float.MAX_VALUE);
   }
 
-  
-  
+
+
   //////////////////////////////////////////////////////////////
 
   // COLOR MODE
 
   // all colorMode() variations inherited from PGraphics.
 
-  
+
 
   //////////////////////////////////////////////////////////////
 
@@ -4025,74 +4027,74 @@ public class PGraphics3D extends PGraphics {
   // protected colorCalc and colorCalcARGB inherited.
 
 
-  
+
   //////////////////////////////////////////////////////////////
 
   // COLOR DATATYPE STUFFING
-  
+
   // final color() variations inherited.
 
-  
-  
+
+
   //////////////////////////////////////////////////////////////
 
   // COLOR DATATYPE EXTRACTION
-  
-  // final methods alpha, red, green, blue,  
+
+  // final methods alpha, red, green, blue,
   // hue, saturation, and brightness all inherited.
 
 
-  
+
   //////////////////////////////////////////////////////////////
 
   // COLOR DATATYPE INTERPOLATION
-  
+
   // both lerpColor variants inherited.
-  
-  
-  
+
+
+
   //////////////////////////////////////////////////////////////
 
   // BEGIN/END RAW
 
   // beginRaw, endRaw() both inherited.
 
-  
-  
+
+
   //////////////////////////////////////////////////////////////
 
   // WARNINGS and EXCEPTIONS
-  
+
   // showWarning and showException inherited.
-  
+
 
 
   //////////////////////////////////////////////////////////////
 
   // RENDERER SUPPORT QUERIES
-  
-  
+
+
   //public boolean displayable()
 
 
   public boolean is2D() {
     return false;
   }
-  
-  
+
+
   public boolean is3D() {
     return true;
   }
-  
-  
+
+
 
   //////////////////////////////////////////////////////////////
-  
+
   // PIMAGE METHODS
-  
-  // All these methods are inherited, because this render has a 
-  // pixels[] array that can be accessed directly. 
-  
+
+  // All these methods are inherited, because this render has a
+  // pixels[] array that can be accessed directly.
+
   // getImage
   // setCache, getCache, removeCache
   // isModified, setModified
@@ -4102,9 +4104,9 @@ public class PGraphics3D extends PGraphics {
   // mask
   // filter
   // copy
-  // blendColor, blend  
+  // blendColor, blend
 
-  
+
 
   //////////////////////////////////////////////////////////////
 
@@ -4120,42 +4122,42 @@ public class PGraphics3D extends PGraphics {
     return (float) Math.sqrt(a*a + b*b + c*c);
   }
 
-  
+
   private final float clamp(float a) {
     return (a < 1) ? a : 1;
   }
-  
-  
+
+
   private final float abs(float a) {
     return (a < 0) ? -a : a;
   }
 
-  
+
   private float dot(float ax, float ay, float az,
                     float bx, float by, float bz) {
     return ax*bx + ay*by + az*bz;
   }
 
-  
+
   /*
   private final void cross(float a0, float a1, float a2,
-                           float b0, float b1, float b2, 
+                           float b0, float b1, float b2,
                            float[] out) {
     out[0] = a1*b2 - a2*b1;
     out[1] = a2*b0 - a0*b2;
     out[2] = a0*b1 - a1*b0;
   }
   */
-  
+
 
   private final void cross(float a0, float a1, float a2,
-                           float b0, float b1, float b2, 
+                           float b0, float b1, float b2,
                            PVector out) {
     out.x = a1*b2 - a2*b1;
     out.y = a2*b0 - a0*b2;
     out.z = a0*b1 - a1*b0;
   }
-  
+
 
   /*
   private final void cross(float[] a, float[] b, float[] out) {
