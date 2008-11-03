@@ -499,7 +499,7 @@ public class Sketch {
         return;
       }
       SketchCode newCode = new SketchCode(newFile, newExtension);
-      System.out.println("new code is named " + newCode.getPrettyName() + " " + newCode.getFile());
+      //System.out.println("new code is named " + newCode.getPrettyName() + " " + newCode.getFile());
       insertCode(newCode);
     }
 
