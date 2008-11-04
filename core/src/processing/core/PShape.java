@@ -258,20 +258,6 @@ public class PShape implements PConstants {
 
   protected void pre(PGraphics g) {
     if (matrix != null) {
-      /*
-      boolean flat = g instanceof PGraphics2D;
-
-      g.pushMatrix();
-      if (flat) {
-        g.applyMatrix(matrix.m00, matrix.m01, matrix.m03,  // PMatrix3D
-                      matrix.m10, matrix.m11, matrix.m13);
-      } else {
-        g.applyMatrix(matrix.m00, matrix.m01, matrix.m02, matrix.m03,
-                      matrix.m10, matrix.m11, matrix.m12, matrix.m13,
-                      matrix.m20, matrix.m21, matrix.m22, matrix.m23,
-                      matrix.m30, matrix.m31, matrix.m32, matrix.m33);
-      }
-      */
       g.pushMatrix();
       g.applyMatrix(matrix);
     }
@@ -290,8 +276,8 @@ public class PShape implements PConstants {
     ellipseModeSaved = g.ellipseMode;
     shapeModeSaved = g.shapeMode;
     */
-    g.pushStyle();
     if (style) {
+      g.pushStyle();
       styles(g);
     }
   }
@@ -337,10 +323,13 @@ public class PShape implements PConstants {
 
     g.ellipseMode = ellipseModeSaved;
     */
-    g.popStyle();
 
     if (matrix != null) {
       g.popMatrix();
+    }
+
+    if (style) {
+      g.popStyle();
     }
   }
   
@@ -351,7 +340,6 @@ public class PShape implements PConstants {
    * shape(s);
    */
   public void draw(PGraphics g) {
-    //System.out.println("drawing " + getClass().getName());
     if (visible) {
       pre(g);
       drawImpl(g);
@@ -514,6 +502,10 @@ public class PShape implements PConstants {
 
 
   protected void drawPath(PGraphics g) {
+    // Paths might be empty (go figure)
+    // http://dev.processing.org/bugs/show_bug.cgi?id=982
+    if (vertices == null) return;
+    
     g.beginShape();
     int index = 0;
     
