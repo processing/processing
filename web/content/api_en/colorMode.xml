@@ -37,14 +37,14 @@ for (int i = 0; i &lt; 100; i++) {
 </example>
 
 <example>
-<image></image>
+<image>colorMode_3.gif</image>
 <code>
 // If the color is defined here, it won't be 
 // affected by the colorMode() in setup(). 
 // Instead, just declare the variable here and 
 // assign the value after the colorMode() in setup()
 //color bg = color(180, 50, 50);  // No
-color bg;  // Yes,but assign it in setup()
+color bg;  // Yes, but assign it in setup()
 
 void setup() {
   size(100, 100);
