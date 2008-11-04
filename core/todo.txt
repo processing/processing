@@ -421,7 +421,7 @@ _ add better support for attributes buried in styles (support ai9/10/11)
 _ test what happens when transparency is used with gradient fill
 _ look into transformation issues... guessing this is probably wrong
 _   this may be what's throwing off the radial radius transform
-_ implement A and a (arcs)
+_ implement A and a (elliptical arcs)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=996
 _ check for any other pieces of missing path api
 _   multiple sets of coordinates after a command not supported

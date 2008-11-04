@@ -127,7 +127,9 @@ public class MovieMaker {
 
   private boolean readyForFrames;
 
-  private int TIME_SCALE = 1000;
+  // Changed from 1000 to 600 in release 0154 to enable exact 30 fps output.
+  // http://dev.processing.org/bugs/show_bug.cgi?id=988
+  private int TIME_SCALE = 600;
 
   // QT Stuff
   private VideoMedia videoMedia;
