@@ -4,6 +4,8 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=987
 X when saving a sketch over itself with "Save As", just do "Save" instead
 X fix loadShape() transformation parsing and empty paths (thanks ricardmp)
 X   http://dev.processing.org/bugs/show_bug.cgi?id=982
+X moviemaker can't make exact 30fps output
+X   http://dev.processing.org/bugs/show_bug.cgi?id=988
 
 _ move library examples to the examples menu
 _   do this once the library documentation has been fixed up
@@ -14,8 +16,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=886
 
 
 waiting for input
-_ moviemaker can't make exact 30fps output
-_   http://dev.processing.org/bugs/show_bug.cgi?id=988
 _ launch4j "An error occurred while starting the application" 
 _   http://dev.processing.org/bugs/show_bug.cgi?id=986
 _ tabs menu not working on osx ppc (can't confirm)
