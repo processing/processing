@@ -25,7 +25,7 @@ rect(50, 0, 50, 100);
 </example>
 
 <description>
-Datatype for storing color values. Colors may be assigned with <b>get()</b> and <b>color()</b> or they may be specified directly using hexadecimal notation such as <b>#FFCC00</b> or 0xFFFFCCOO. 
+Datatype for storing color values. Colors may be assigned with <b>get()</b> and <b>color()</b> or they may be specified directly using hexadecimal notation such as <b>#FFCC00</b> or <b>0xFFFFCCOO</b>. 
 <br/> <br/>
 Using <b>print()</b> or <b>println()</b> on a color will produce strange results (usually negative numbers) because of the way colors are stored in memory. A better method is to use the <b>hex()</b> function to format the color data, or use the <b>red()</b>, <b>green()</b>, and <b>blue()</b> functions to get individual values and print those. The <b>hue()</b>, <b>saturation()</b>, and <b>brightness()</b> functions work in a similar fashion. To extract red, green, and blue values more quickly (for instance when analyzing an image or a frame of video), use <a href="rightshift.html">bit shifting</a>.
 <br/> <br/>
