@@ -758,8 +758,7 @@ public class PShapeSVG extends PShape {
       System.err.println("Could not parse transform " + matrixStr);
       return null;
     }
-    float[] m = PApplet.parseFloat(PApplet.splitTokens(pieces[2]));
-
+    float[] m = PApplet.parseFloat(PApplet.splitTokens(pieces[2], ", "));
     if (pieces[1].equals("matrix")) {
       return new PMatrix2D(m[0], m[2], m[4], m[1], m[3], m[5]);
 
