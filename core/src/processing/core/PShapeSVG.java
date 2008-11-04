@@ -56,7 +56,7 @@ import processing.xml.XMLElement;
  *
  * This code is based on the Candy library written by Michael Chang, which was
  * later revised and expanded for use as a Processing core library by Ben Fry.
- * Thanks to Ricard Marxer Piñón for help with better Inkscape support in 0154.
+ * Thanks to Ricard Marxer Piï¿½ï¿½n for help with better Inkscape support in 0154.
  *
  * <p> <hr noshade> <p>
  *
@@ -682,6 +682,11 @@ public class PShapeSVG extends PShape {
           PApplet.join(PApplet.subset(pathDataKeys, i), ",");
         System.err.println("parsed: " + parsed);
         System.err.println("unparsed: " + unparsed);
+        if (pathDataKeys[i].equals("a") || pathDataKeys[i].equals("A")) {
+          String msg = "Sorry, elliptical arc support for SVG files " +
+            "is not yet implemented (See bug #996 for details)";
+          throw new RuntimeException(msg);
+        }
         throw new RuntimeException("shape command not handled: " + pathDataKeys[i]);
       }
     }
