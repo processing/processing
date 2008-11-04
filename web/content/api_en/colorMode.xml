@@ -13,8 +13,8 @@
 <code>
 noStroke();
 colorMode(RGB, 100);
-for(int i=0; i&lt;100; i++) {
-  for(int j=0; j&lt;100; j++) {
+for (int i = 0; i &lt; 100; i++) {
+  for (int j = 0; j &lt; 100; j++) {
     stroke(i, j, 0);
     point(i, j);
   }
@@ -27,8 +27,8 @@ for(int i=0; i&lt;100; i++) {
 <code>
 noStroke();
 colorMode(HSB, 100);
-for(int i=0; i&lt;100; i++) {
-  for(int j=0; j&lt;100; j++) {
+for (int i = 0; i &lt; 100; i++) {
+  for (int j = 0; j &lt; 100; j++) {
     stroke(i, j, 100);
     point(i, j);
   }
@@ -37,7 +37,7 @@ for(int i=0; i&lt;100; i++) {
 </example>
 
 <description>
-Changes the way Processing interprets color data. By default, <b>fill()</b>, <b>stroke()</b>, and <b>background()</b> colors are set by values between 0 and 255 using the RGB color model. It is possible to change the numerical range used for specifying colors and to switch color systems. For example, calling <b>colorMode(RGB, 1.0)</b> will specify that values are specified between 0 and 1. The limits for defining colors are altered by setting the parameters range1, range2, range3, and range 4.
+Changes the way Processing interprets color data. By default, the parameters for <b>fill()</b>, <b>stroke()</b>, <b>background()</b>, and <b>color()</b> are defined by values between 0 and 255 using the RGB color model. The <b>colorMode()</b> function is used to change the numerical range used for specifying colors and to switch color systems. For example, calling <b>colorMode(RGB, 1.0)</b> will specify that values are specified between 0 and 1. The limits for defining colors are altered by setting the parameters range1, range2, range3, and range 4. 
 </description>
 
 <syntax>
