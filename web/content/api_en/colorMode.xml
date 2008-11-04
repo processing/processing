@@ -37,7 +37,7 @@ for (int i = 0; i &lt; 100; i++) {
 </example>
 
 <example>
-<image>colorMode_.jpg</image>
+<image></image>
 <code>
 // If the color is defined here, it won't be 
 // affected by the colorMode() in setup(). 
