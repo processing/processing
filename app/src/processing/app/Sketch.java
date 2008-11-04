@@ -739,44 +739,34 @@ public class Sketch {
     if (newName == null) return false;
     newName = Sketch.checkName(newName);
 
-    if (newName.equals(oldName)) {
-      return false;  // Can't save a sketch over itself
-    }
+    File newFolder = new File(newParentDir, newName);
+//    String newPath = newFolder.getAbsolutePath();
+//    String oldPath = folder.getAbsolutePath();
+
+//    if (newPath.equals(oldPath)) {
+//      return false;  // Can't save a sketch over itself
+//    }
 
     // make sure there doesn't exist a tab with that name already
-    // (but allow it if it's just the main tab resaving itself.. oops)
-    for (SketchCode c : code) {
-      if (newName.equals(c.getPrettyName())) {
+    // but ignore this situation for the first tab, since it's probably being
+    // resaved (with the same name) to another location/folder.
+    for (int i = 1; i < codeCount; i++) { 
+      if (newName.equals(code[i].getPrettyName())) {
         Base.showMessage("Nope",
                          "You can't save the sketch as \"" + newName + "\"\n" +
-        "because the sketch already has a tab with that name.");
+                         "because the sketch already has a tab with that name.");
         return false;
       }
     }
 
-    // make sure there doesn't exist a tab with that name already
-    File hiddenAlready = new File(folder, newName + ".pde.x");
-    if (hiddenAlready.exists()) {
-      Base.showMessage("Nope",
-                       "You can't save the sketch as \"" + newName + "\"\n" +
-                       "because the sketch already has a " +
-                       "hidden tab with that name.");
-      return false;
-    }
-
-    // new sketch folder
-    File newFolder = new File(newParentDir, newName);
-
-    // make sure the paths aren't the same
+    // check if the paths are identical
     if (newFolder.equals(folder)) {
-      Base.showWarning("You can't fool me",
-                       "The new sketch name and location are the same as\n" +
-                       "the old. I ain't not doin nuthin' not now.", null);
-      return false;
+      // just use "save" here instead, because the user will have received a
+      // message (from the operating system) about "do you want to replace?"
+      return save();
     }
 
-    // check to see if the user is trying to save this sketch
-    // inside the same sketch
+    // check to see if the user is trying to save this sketch inside itself
     try {
       String newPath = newFolder.getCanonicalPath() + File.separator;
       String oldPath = folder.getCanonicalPath() + File.separator;
