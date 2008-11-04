@@ -1,5 +1,9 @@
 0155 pde
-
+X "Save canceled" message when saving untitled sketches without first renaming
+X   http://dev.processing.org/bugs/show_bug.cgi?id=987
+X when saving a sketch over itself with "Save As", just do "Save" instead
+X fix loadShape() transformation parsing and empty paths (thanks ricardmp)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=982
 
 _ move library examples to the examples menu
 _   do this once the library documentation has been fixed up
