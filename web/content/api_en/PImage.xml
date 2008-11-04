@@ -76,6 +76,14 @@ To create a new image, use the <b>createImage()</b> function (do not use <b>new 
 <mname>resize()</mname>
 <mdescription>Changes the size of an image to a new width and height</mdescription>
 </method>
+<method>
+<mname>loadPixels()</mname>
+<mdescription>Loads the pixel data for the image into its pixels[] array</mdescription>
+</method>
+<method>
+<mname>updatePixels()</mname>
+<mdescription>Updates the image with the data in its pixels[] array</mdescription>
+</method>
 
 <constructor>
 PImage()
