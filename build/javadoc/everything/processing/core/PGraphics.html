@@ -104,14 +104,14 @@ java.lang.Object
 
 <P>
 Main graphics and rendering context, as well as the base API implementation.
- 
+
  <h2>Subclassing and initializing PGraphics objects</h2>
  Starting in release 0149, subclasses of PGraphics are handled differently.
- The constructor for subclasses takes no parameters, instead a series of 
- functions are called by the hosting PApplet to specify its attributes. 
+ The constructor for subclasses takes no parameters, instead a series of
+ functions are called by the hosting PApplet to specify its attributes.
  <ul>
- <li>setParent(PApplet) - is called to specify the parent PApplet. 
- <li>setPrimary(boolean) - called with true if this PGraphics will be the 
+ <li>setParent(PApplet) - is called to specify the parent PApplet.
+ <li>setPrimary(boolean) - called with true if this PGraphics will be the
  primary drawing surface used by the sketch, or false if not.
  <li>setPath(String) - called when the renderer needs a filename or output
  path, such as with the PDF or DXF renderers.
@@ -119,66 +119,66 @@ Main graphics and rendering context, as well as the base API implementation.
  the renderer to complete its initialization routine.
  </ul>
  The functions were broken out because of the growing number of parameters
- such as these that might be used by a renderer, yet with the exception of 
+ such as these that might be used by a renderer, yet with the exception of
  setSize(), it's not clear which will be necessary. So while the size could
  be passed in to the constructor instead of a setSize() function, a function
- would still be needed that would notify the renderer that it was time to 
+ would still be needed that would notify the renderer that it was time to
  finish its initialization. Thus, setSize() simply does both.
- 
+
  <h2>Know your rights: public vs. private methods</h2>
  Methods that are protected are often subclassed by other renderers, however
- they are not set 'public' because they shouldn't be part of the user-facing 
- public API accessible from PApplet. That is, we don't want sketches calling 
+ they are not set 'public' because they shouldn't be part of the user-facing
+ public API accessible from PApplet. That is, we don't want sketches calling
  textModeCheck() or vertexTexture() directly.
 
- <h2>Handling warnings and exceptions</h2> 
- Methods that are unavailable generally show a warning, unless their lack of 
- availability will soon cause another exception. For instance, if a method 
- like getMatrix() returns null because it is unavailable, an exception will 
- be thrown stating that the method is unavailable, rather than waiting for 
- the NullPointerException that will occur when the sketch tries to use that 
+ <h2>Handling warnings and exceptions</h2>
+ Methods that are unavailable generally show a warning, unless their lack of
+ availability will soon cause another exception. For instance, if a method
+ like getMatrix() returns null because it is unavailable, an exception will
+ be thrown stating that the method is unavailable, rather than waiting for
+ the NullPointerException that will occur when the sketch tries to use that
  method. As of release 0149, warnings will only be shown once, and exceptions
- have been changed to warnings where possible. 
- 
+ have been changed to warnings where possible.
+
  <h2>Using xxxxImpl() for subclassing smoothness</h2>
- The xxxImpl() methods are generally renderer-specific handling for some 
- subset if tasks for a particular function (vague enough for you?) For 
- instance, imageImpl() handles drawing an image whose x/y/w/h and u/v coords 
- have been specified, and screen placement (independent of imageMode) has 
- been determined. There's no point in all renderers implementing the 
- <tt>if (imageMode == BLAH)</tt> placement/sizing logic, so that's handled 
+ The xxxImpl() methods are generally renderer-specific handling for some
+ subset if tasks for a particular function (vague enough for you?) For
+ instance, imageImpl() handles drawing an image whose x/y/w/h and u/v coords
+ have been specified, and screen placement (independent of imageMode) has
+ been determined. There's no point in all renderers implementing the
+ <tt>if (imageMode == BLAH)</tt> placement/sizing logic, so that's handled
  by PGraphics, which then calls imageImpl() once all that is figured out.
- 
+
  <h2>His brother PImage</h2>
- PGraphics subclasses PImage so that it can be drawn and manipulated in a 
- similar fashion. As such, many methods are inherited from PGraphics, 
- though many are unavailable: for instance, resize() is not likely to be 
+ PGraphics subclasses PImage so that it can be drawn and manipulated in a
+ similar fashion. As such, many methods are inherited from PGraphics,
+ though many are unavailable: for instance, resize() is not likely to be
  implemented; the same goes for mask(), depending on the situation.
- 
+
  <h2>What's in PGraphics, what ain't</h2>
  For the benefit of subclasses, as much as possible has been placed inside
  PGraphics. For instance, bezier interpolation code and implementations of
- the strokeCap() method (that simply sets the strokeCap variable) are 
+ the strokeCap() method (that simply sets the strokeCap variable) are
  handled here. Features that will vary widely between renderers are located
  inside the subclasses themselves. For instance, all matrix handling code
  is per-renderer: Java 2D uses its own AffineTransform, P2D uses a PMatrix2D,
- and PGraphics3D needs to keep continually update forward and reverse 
- transformations. A proper (future) OpenGL implementation will have all its 
- matrix madness handled by the card. Lighting also falls under this 
- category, however the base material property settings (emissive, specular, 
- et al.) are handled in PGraphics because they use the standard colorMode() 
- logic. Subclasses should override methods like emissiveFromCalc(), which 
+ and PGraphics3D needs to keep continually update forward and reverse
+ transformations. A proper (future) OpenGL implementation will have all its
+ matrix madness handled by the card. Lighting also falls under this
+ category, however the base material property settings (emissive, specular,
+ et al.) are handled in PGraphics because they use the standard colorMode()
+ logic. Subclasses should override methods like emissiveFromCalc(), which
  is a point where a valid color has been defined internally, and can be
  applied in some manner based on the calcXxxx values.
- 
+
  <h2>What's in the PGraphics documentation, what ain't</h2>
  Some things are noted here, some things are not. For public API, always
  refer to the <a href="http://processing.org/reference">reference</A>
- on Processing.org for proper explanations. <b>No attempt has been made to 
- keep the javadoc up to date or complete.</b> It's an enormous task for 
+ on Processing.org for proper explanations. <b>No attempt has been made to
+ keep the javadoc up to date or complete.</b> It's an enormous task for
  which we simply do not have the time. That is, it's not something that
  to be done once&mdash;it's a matter of keeping the multiple references
- synchronized (to say nothing of the translation issues), while targeting 
+ synchronized (to say nothing of the translation issues), while targeting
  them for their separate audiences. Ouch.
 <P>
 
@@ -2664,7 +2664,7 @@ Main graphics and rendering context, as well as the base API implementation.
 <TD><CODE><B><A HREF="../../processing/core/PGraphics.html#vertex(float[])">vertex</A></B>(float[]&nbsp;v)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Used by renderer subclasses or PShape to efficiently pass in already 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Used by renderer subclasses or PShape to efficiently pass in already
  formatted vertex information.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
@@ -2827,7 +2827,7 @@ tint</H3>
 public boolean <B>tint</B></PRE>
 <DL>
 <DD>True if tint() is enabled (read-only).
- 
+
  Using tint/tintColor seems a better option for naming than
  tintEnabled/tint because the latter seems ugly, even though
  g.tint as the actual color seems a little more intuitive,
@@ -3178,8 +3178,8 @@ image</H3>
 <PRE>
 public java.awt.Image <B>image</B></PRE>
 <DL>
-<DD>Java AWT Image object associated with this renderer. For P2D and P3D, 
- this will be associated with their MemoryImageSource. For PGraphicsJava2D, 
+<DD>Java AWT Image object associated with this renderer. For P2D and P3D,
+ this will be associated with their MemoryImageSource. For PGraphicsJava2D,
  it will be the offscreen drawing buffer.
 <P>
 <DL>
@@ -3620,7 +3620,7 @@ public void <B>normal</B>(float&nbsp;nx,
                    float&nbsp;ny,
                    float&nbsp;nz)</PRE>
 <DL>
-<DD>Sets the current normal vector. Only applies with 3D rendering 
+<DD>Sets the current normal vector. Only applies with 3D rendering
  and inside a beginShape/endShape block.
  <P/>
  This is for drawing three dimensional shapes and surfaces,
@@ -3713,7 +3713,7 @@ vertex</H3>
 <PRE>
 public void <B>vertex</B>(float[]&nbsp;v)</PRE>
 <DL>
-<DD>Used by renderer subclasses or PShape to efficiently pass in already 
+<DD>Used by renderer subclasses or PShape to efficiently pass in already
  formatted vertex information.
 <P>
 <DD><DL>
@@ -4570,7 +4570,7 @@ public void <B>shapeMode</B>(int&nbsp;mode)</PRE>
 </DL>
 </DD>
 <DD><DL>
-<DT><B>Parameters:</B><DD><CODE>which</CODE> - Either CORNER, CORNERS, or CENTER.</DL>
+<DT><B>Parameters:</B><DD><CODE>mode</CODE> - Either CORNER, CORNERS, or CENTER.</DL>
 </DD>
 </DL>
 <HR>
@@ -6692,12 +6692,12 @@ background</H3>
 <PRE>
 public void <B>background</B>(<A HREF="../../processing/core/PImage.html" title="class in processing.core">PImage</A>&nbsp;image)</PRE>
 <DL>
-<DD>Takes an RGB or ARGB image and sets it as the background. 
- The width and height of the image must be the same size as the sketch. 
+<DD>Takes an RGB or ARGB image and sets it as the background.
+ The width and height of the image must be the same size as the sketch.
  Use image.resize(width, height) to make short work of such a task.
  <P>
- Note that even if the image is set as RGB, the high 8 bits of each pixel 
- should be set opaque (0xFF000000), because the image data will be copied 
+ Note that even if the image is set as RGB, the high 8 bits of each pixel
+ should be set opaque (0xFF000000), because the image data will be copied
  directly to the screen, and non-opaque background images may have strange
  behavior. Using image.filter(OPAQUE) will handle this easily.
  <P>
@@ -6718,7 +6718,7 @@ colorMode</H3>
 public void <B>colorMode</B>(int&nbsp;mode)</PRE>
 <DL>
 <DD>Callback to handle clearing the background when begin/endRaw is in use.
- Handled as separate function for OpenGL (or other) subclasses that 
+ Handled as separate function for OpenGL (or other) subclasses that
  override backgroundImpl() but still needs this to work properly.
 <P>
 <DD><DL>
@@ -7115,7 +7115,7 @@ showException</H3>
 public static void <B>showException</B>(java.lang.String&nbsp;msg)</PRE>
 <DL>
 <DD>Show an renderer-related exception that halts the program. Currently just
- wraps the message as a RuntimeException and throws it, but might do 
+ wraps the message as a RuntimeException and throws it, but might do
  something more specific might be used in the future.
 <P>
 <DD><DL>
@@ -7132,11 +7132,11 @@ displayable</H3>
 <PRE>
 public boolean <B>displayable</B>()</PRE>
 <DL>
-<DD>Return true if this renderer should be drawn to the screen. Defaults to 
- returning true, since nearly all renderers are on-screen beasts. But can 
+<DD>Return true if this renderer should be drawn to the screen. Defaults to
+ returning true, since nearly all renderers are on-screen beasts. But can
  be overridden for subclasses like PDF so that a window doesn't open up.
  <br/> <br/>
- A better name? showFrame, displayable, isVisible, visible, shouldDisplay, 
+ A better name? showFrame, displayable, isVisible, visible, shouldDisplay,
  what to call this?
 <P>
 <DD><DL>

@@ -750,7 +750,7 @@ public class Sketch {
     // make sure there doesn't exist a tab with that name already
     // but ignore this situation for the first tab, since it's probably being
     // resaved (with the same name) to another location/folder.
-    for (int i = 1; i < codeCount; i++) { 
+    for (int i = 1; i < codeCount; i++) {
       if (newName.equals(code[i].getPrettyName())) {
         Base.showMessage("Nope",
                          "You can't save the sketch as \"" + newName + "\"\n" +
@@ -1182,7 +1182,6 @@ public class Sketch {
    * successful, re-export with purty set to true.
    *
    * @param buildPath Location to copy all the .java files
-   * @param purty true if output should use indents and newlines
    * @return null if compilation failed, main class name if not
    */
   public String preprocess(String buildPath) throws RunnerException {
