@@ -42,8 +42,8 @@ import processing.core.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
-  static final int VERSION = 155;
-  static final String VERSION_NAME = "0155 Beta";
+  static final int VERSION = 156;
+  static final String VERSION_NAME = "0156 Beta";
 
   static final int[] platforms = new int[] {
     PConstants.WINDOWS, PConstants.MACOSX, PConstants.LINUX
@@ -1196,8 +1196,8 @@ public class Base {
   static public File getSketchbookFolder() {
     return new File(Preferences.get("sketchbook.path"));
   }
-  
-  
+
+
   static public File getSketchbookLibrariesFolder() {
     return new File(getSketchbookFolder(), "libraries");
   }

@@ -1,12 +1,4 @@
-0155 pde
-X "Save canceled" message when saving untitled sketches without first renaming
-X   http://dev.processing.org/bugs/show_bug.cgi?id=987
-X when saving a sketch over itself with "Save As", just do "Save" instead
-X fix loadShape() transformation parsing and empty paths (thanks ricardmp)
-X   http://dev.processing.org/bugs/show_bug.cgi?id=982
-X moviemaker can't make exact 30fps output
-X   http://dev.processing.org/bugs/show_bug.cgi?id=988
-X automatically create and open the 'libraries' folder when there's an error
+0156 pde
 
 
 _ move library examples to the examples menu
