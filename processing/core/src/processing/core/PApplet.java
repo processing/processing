@@ -7348,7 +7348,7 @@ public class PApplet extends Applet
   }
 
 
-  public void setMatrix(PMatrix2D source) {  
+  public void setMatrix(PMatrix2D source) {
     if (recorder != null) recorder.setMatrix(source);
     g.setMatrix(source);
   }
@@ -7424,8 +7424,8 @@ public class PApplet extends Applet
   }
 
 
-  public void frustum(float left, float right, 
-                      float bottom, float top, 
+  public void frustum(float left, float right,
+                      float bottom, float top,
                       float near, float far) {
     if (recorder != null) recorder.frustum(left, right, bottom, top, near, far);
     g.frustum(left, right, bottom, top, near, far);
