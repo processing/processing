@@ -130,8 +130,8 @@ public class PdePreprocessor {
 
   String[] defaultImports;
 
-  // these ones have the .* at the end, since a class name might be at the end 
-  // instead of .* which would make trouble other classes using this can lop 
+  // these ones have the .* at the end, since a class name might be at the end
+  // instead of .* which would make trouble other classes using this can lop
   // off the . and anything after it to produce a package name consistently.
   //public String extraImports[];
   ArrayList<String> programImports;
@@ -149,8 +149,8 @@ public class PdePreprocessor {
   static public boolean foundMain;
 
   String indent;
-  
-  PrintStream stream; 
+
+  PrintStream stream;
   Reader programReader;
   String buildPath;
   String name;
@@ -181,7 +181,7 @@ public class PdePreprocessor {
     char[] indentChars = new char[tabSize];
     Arrays.fill(indentChars, ' ');
     indent = new String(indentChars);
-    
+
     // need to reset whether or not this has a main()
     foundMain = false;
 
@@ -270,7 +270,7 @@ public class PdePreprocessor {
     File streamFile = new File(buildPath, name + ".java");
     stream = new PrintStream(new FileOutputStream(streamFile));
     int importsLength = writeImports(stream);
-    
+
     // return the length of the imports plus the extra lines for declarations
     return importsLength + 2;
   }
@@ -278,7 +278,6 @@ public class PdePreprocessor {
 
   /**
    * preprocesses a pde file and write out a java file
-   * @param pretty true if should also space out/indent lines
    * @return the classname of the exported Java
    */
   //public String write(String program, String buildPath, String name,
@@ -368,7 +367,7 @@ public class PdePreprocessor {
     return name;
   }
 
-  
+
   protected void writeParseTree(String filename, AST ast) {
     try {
     PrintStream stream = new PrintStream(new FileOutputStream(filename));
@@ -382,7 +381,7 @@ public class PdePreprocessor {
     stream.println("</document>");
     writer.close();
     } catch (IOException e) {
-      
+
     }
   }
 
@@ -413,11 +412,11 @@ public class PdePreprocessor {
     }
     out.println();
     count += defaultImports.length + 1;
-    
+
     return count;
   }
-  
-  
+
+
   /**
    * Write any required header material (eg imports, class decl stuff)
    *
@@ -428,21 +427,21 @@ public class PdePreprocessor {
   void writeDeclaration(PrintStream out, String className) {
 
     String indent = "  ";
-    
+
     if (programType == JAVA) {
       // Print two blank lines so that the offset doesn't change
       out.println();
       out.println();
-      
+
     } else if (programType == ACTIVE) {
       // Print an extra blank line so the offset is identical to the others
       out.println("public class " + className + " extends PApplet {");
       out.println();
-      
+
     } else if (programType == STATIC) {
       out.println("public class " + className + " extends PApplet {");
       out.print(indent + "public void setup() {");
-    }    
+    }
   }
 
   /**
@@ -469,8 +468,8 @@ public class PdePreprocessor {
       out.println("}");
     }
   }
-  
-  
+
+
   public ArrayList<String> getExtraImports() {
     return programImports;
   }
