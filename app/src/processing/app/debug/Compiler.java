@@ -222,6 +222,14 @@ public class Compiler {
                                " does not exist. " + 
                                "You might be missing a library.");
 
+          // Actually create the folder and open it for the user
+          File sketchbookLibraries = Base.getSketchbookLibrariesFolder();
+          if (!sketchbookLibraries.exists()) {
+            if (sketchbookLibraries.mkdirs()) {
+              Base.openFolder(sketchbookLibraries);
+            }
+          }
+
         } else if (errorMessage.endsWith("cannot be resolved to a type")) {
           // xxx cannot be resolved to a type
           //xxx c;
