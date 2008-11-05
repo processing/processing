@@ -1,6 +1,4 @@
-0155 core
-X hint(DISABLE_DEPTH_TEST) throws null pointer exception with OpenGL
-X   http://dev.processing.org/bugs/show_bug.cgi?id=984
+0156 core
 
 
 _ present mode broken in general?
