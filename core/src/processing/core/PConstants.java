@@ -67,9 +67,9 @@ public interface PConstants {
   /** stroke weight */
   static public final int SW = 17;
 
-  
-  // transformations (2D and 3D) 
-  
+
+  // transformations (2D and 3D)
+
   static public final int TX = 18; // transformed xyzw
   static public final int TY = 19;
   static public final int TZ = 20;
@@ -79,9 +79,9 @@ public interface PConstants {
   static public final int VZ = 23;
   static public final int VW = 24;
 
-  
-  // material properties 
-  
+
+  // material properties
+
   // Ambient color (usually to be kept the same as diffuse)
   // fill(_) sets both ambient and diffuse.
   static public final int AR = 25;
@@ -111,7 +111,7 @@ public interface PConstants {
 
   static public final int VERTEX_FIELD_COUNT = 36;
 
-  
+
   // renderers known to processing.core
 
   static final String P2D    = "processing.core.PGraphics2D";
@@ -276,17 +276,17 @@ public interface PConstants {
 
   static final int POLYGON         = 20;
   static final int PATH            = 21;
-  
+
   static final int RECT            = 30;
   static final int ELLIPSE         = 31;
   static final int ARC             = 32;
-  
+
   static final int SPHERE          = 40;
   static final int BOX             = 41;
-  
-  
-  // shape closing modes 
-  
+
+
+  // shape closing modes
+
   static final int OPEN = 1;
   static final int CLOSE = 2;
 
@@ -299,13 +299,13 @@ public interface PConstants {
   static final int CORNERS  = 1;
   /** Draw mode from the center, and using the radius */
   static final int RADIUS   = 2;
-  /** 
+  /**
    * Draw from the center, using second pair of values as the diameter.
    * Formerly called CENTER_DIAMETER in alpha releases.
    */
   static final int CENTER   = 3;
-  /** 
-   * Synonym for the CENTER constant. Draw from the center, 
+  /**
+   * Synonym for the CENTER constant. Draw from the center,
    * using second pair of values as the diameter.
    */
   static final int DIAMETER = 3;
@@ -325,7 +325,7 @@ public interface PConstants {
 
   /** texture coordinates in 0..1 range */
   static final int NORMAL     = 1;
-  /** @deprecated, use NORMAL instead */
+  /** @deprecated use NORMAL instead */
   static final int NORMALIZED = 1;
   /** texture coordinates based on image width/height */
   static final int IMAGE      = 2;
@@ -417,8 +417,8 @@ public interface PConstants {
   static final int WAIT  = Cursor.WAIT_CURSOR;
 
 
-  // hints - hint values are positive for the alternate version, 
-  // negative of the same value returns to the normal/default state 
+  // hints - hint values are positive for the alternate version,
+  // negative of the same value returns to the normal/default state
 
   static final int ENABLE_OPENGL_2X_SMOOTH     =  1;
   static final int ENABLE_OPENGL_4X_SMOOTH     =  2;
@@ -427,27 +427,27 @@ public interface PConstants {
 
   static final int DISABLE_DEPTH_TEST          =  4;
   static final int ENABLE_DEPTH_TEST           = -4;
-  
+
   static final int ENABLE_DEPTH_SORT           =  5;
   static final int DISABLE_DEPTH_SORT          = -5;
-  
+
   static final int DISABLE_OPENGL_ERROR_REPORT =  6;
   static final int ENABLE_OPENGL_ERROR_REPORT  = -6;
-  
+
   static final int ENABLE_ACCURATE_TEXTURES    =  7;
   static final int DISABLE_ACCURATE_TEXTURES   = -7;
 
   static final int HINT_COUNT                  = 10;
-  
-  
+
+
   // error messages
 
-  static final String ERROR_BACKGROUND_IMAGE_SIZE = 
+  static final String ERROR_BACKGROUND_IMAGE_SIZE =
     "background image must be the same size as your application";
   static final String ERROR_BACKGROUND_IMAGE_FORMAT =
     "background images should be RGB or ARGB";
 
-  static final String ERROR_TEXTFONT_NULL_PFONT = 
+  static final String ERROR_TEXTFONT_NULL_PFONT =
     "A null PFont was passed to textFont()";
 
   static final String ERROR_PUSHMATRIX_OVERFLOW =
