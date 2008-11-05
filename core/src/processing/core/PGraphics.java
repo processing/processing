@@ -30,14 +30,14 @@ import java.util.HashMap;
 
 /**
  * Main graphics and rendering context, as well as the base API implementation.
- * 
+ *
  * <h2>Subclassing and initializing PGraphics objects</h2>
  * Starting in release 0149, subclasses of PGraphics are handled differently.
- * The constructor for subclasses takes no parameters, instead a series of 
- * functions are called by the hosting PApplet to specify its attributes. 
+ * The constructor for subclasses takes no parameters, instead a series of
+ * functions are called by the hosting PApplet to specify its attributes.
  * <ul>
- * <li>setParent(PApplet) - is called to specify the parent PApplet. 
- * <li>setPrimary(boolean) - called with true if this PGraphics will be the 
+ * <li>setParent(PApplet) - is called to specify the parent PApplet.
+ * <li>setPrimary(boolean) - called with true if this PGraphics will be the
  * primary drawing surface used by the sketch, or false if not.
  * <li>setPath(String) - called when the renderer needs a filename or output
  * path, such as with the PDF or DXF renderers.
@@ -45,75 +45,75 @@ import java.util.HashMap;
  * the renderer to complete its initialization routine.
  * </ul>
  * The functions were broken out because of the growing number of parameters
- * such as these that might be used by a renderer, yet with the exception of 
+ * such as these that might be used by a renderer, yet with the exception of
  * setSize(), it's not clear which will be necessary. So while the size could
  * be passed in to the constructor instead of a setSize() function, a function
- * would still be needed that would notify the renderer that it was time to 
+ * would still be needed that would notify the renderer that it was time to
  * finish its initialization. Thus, setSize() simply does both.
- * 
+ *
  * <h2>Know your rights: public vs. private methods</h2>
  * Methods that are protected are often subclassed by other renderers, however
- * they are not set 'public' because they shouldn't be part of the user-facing 
- * public API accessible from PApplet. That is, we don't want sketches calling 
+ * they are not set 'public' because they shouldn't be part of the user-facing
+ * public API accessible from PApplet. That is, we don't want sketches calling
  * textModeCheck() or vertexTexture() directly.
  *
- * <h2>Handling warnings and exceptions</h2> 
- * Methods that are unavailable generally show a warning, unless their lack of 
- * availability will soon cause another exception. For instance, if a method 
- * like getMatrix() returns null because it is unavailable, an exception will 
- * be thrown stating that the method is unavailable, rather than waiting for 
- * the NullPointerException that will occur when the sketch tries to use that 
+ * <h2>Handling warnings and exceptions</h2>
+ * Methods that are unavailable generally show a warning, unless their lack of
+ * availability will soon cause another exception. For instance, if a method
+ * like getMatrix() returns null because it is unavailable, an exception will
+ * be thrown stating that the method is unavailable, rather than waiting for
+ * the NullPointerException that will occur when the sketch tries to use that
  * method. As of release 0149, warnings will only be shown once, and exceptions
- * have been changed to warnings where possible. 
- * 
+ * have been changed to warnings where possible.
+ *
  * <h2>Using xxxxImpl() for subclassing smoothness</h2>
- * The xxxImpl() methods are generally renderer-specific handling for some 
- * subset if tasks for a particular function (vague enough for you?) For 
- * instance, imageImpl() handles drawing an image whose x/y/w/h and u/v coords 
- * have been specified, and screen placement (independent of imageMode) has 
- * been determined. There's no point in all renderers implementing the 
- * <tt>if (imageMode == BLAH)</tt> placement/sizing logic, so that's handled 
+ * The xxxImpl() methods are generally renderer-specific handling for some
+ * subset if tasks for a particular function (vague enough for you?) For
+ * instance, imageImpl() handles drawing an image whose x/y/w/h and u/v coords
+ * have been specified, and screen placement (independent of imageMode) has
+ * been determined. There's no point in all renderers implementing the
+ * <tt>if (imageMode == BLAH)</tt> placement/sizing logic, so that's handled
  * by PGraphics, which then calls imageImpl() once all that is figured out.
- * 
+ *
  * <h2>His brother PImage</h2>
- * PGraphics subclasses PImage so that it can be drawn and manipulated in a 
- * similar fashion. As such, many methods are inherited from PGraphics, 
- * though many are unavailable: for instance, resize() is not likely to be 
+ * PGraphics subclasses PImage so that it can be drawn and manipulated in a
+ * similar fashion. As such, many methods are inherited from PGraphics,
+ * though many are unavailable: for instance, resize() is not likely to be
  * implemented; the same goes for mask(), depending on the situation.
- * 
+ *
  * <h2>What's in PGraphics, what ain't</h2>
  * For the benefit of subclasses, as much as possible has been placed inside
  * PGraphics. For instance, bezier interpolation code and implementations of
- * the strokeCap() method (that simply sets the strokeCap variable) are 
+ * the strokeCap() method (that simply sets the strokeCap variable) are
  * handled here. Features that will vary widely between renderers are located
  * inside the subclasses themselves. For instance, all matrix handling code
  * is per-renderer: Java 2D uses its own AffineTransform, P2D uses a PMatrix2D,
- * and PGraphics3D needs to keep continually update forward and reverse 
- * transformations. A proper (future) OpenGL implementation will have all its 
- * matrix madness handled by the card. Lighting also falls under this 
- * category, however the base material property settings (emissive, specular, 
- * et al.) are handled in PGraphics because they use the standard colorMode() 
- * logic. Subclasses should override methods like emissiveFromCalc(), which 
+ * and PGraphics3D needs to keep continually update forward and reverse
+ * transformations. A proper (future) OpenGL implementation will have all its
+ * matrix madness handled by the card. Lighting also falls under this
+ * category, however the base material property settings (emissive, specular,
+ * et al.) are handled in PGraphics because they use the standard colorMode()
+ * logic. Subclasses should override methods like emissiveFromCalc(), which
  * is a point where a valid color has been defined internally, and can be
  * applied in some manner based on the calcXxxx values.
- * 
+ *
  * <h2>What's in the PGraphics documentation, what ain't</h2>
  * Some things are noted here, some things are not. For public API, always
  * refer to the <a href="http://processing.org/reference">reference</A>
- * on Processing.org for proper explanations. <b>No attempt has been made to 
- * keep the javadoc up to date or complete.</b> It's an enormous task for 
+ * on Processing.org for proper explanations. <b>No attempt has been made to
+ * keep the javadoc up to date or complete.</b> It's an enormous task for
  * which we simply do not have the time. That is, it's not something that
  * to be done once&mdash;it's a matter of keeping the multiple references
- * synchronized (to say nothing of the translation issues), while targeting 
+ * synchronized (to say nothing of the translation issues), while targeting
  * them for their separate audiences. Ouch.
  */
 public class PGraphics extends PImage implements PConstants {
 
   // ........................................................
-  
+
   // width and height are already inherited from PImage
-  
-  
+
+
   /// width minus one (useful for many calculations)
   protected int width1;
 
@@ -125,9 +125,9 @@ public class PGraphics extends PImage implements PConstants {
 
   /// true if smoothing is enabled (read-only)
   public boolean smooth = false;
-  
+
   // ........................................................
-  
+
   /// true if defaults() has been called a first time
   protected boolean settingsInited;
 
@@ -135,7 +135,7 @@ public class PGraphics extends PImage implements PConstants {
   protected PGraphics raw;
 
   // ........................................................
-  
+
   /** path to the file being saved for this renderer (if any) */
   protected String path;
 
@@ -146,7 +146,7 @@ public class PGraphics extends PImage implements PConstants {
    * are also added to the sketch.
    */
   protected boolean primarySurface;
-  
+
   // ........................................................
 
   /**
@@ -161,15 +161,15 @@ public class PGraphics extends PImage implements PConstants {
    * The hints[] array is allocated early on because it might
    * be used inside beginDraw(), allocate(), etc.
    */
-  protected boolean[] hints = new boolean[HINT_COUNT]; 
+  protected boolean[] hints = new boolean[HINT_COUNT];
 
-  
+
   ////////////////////////////////////////////////////////////
 
   // STYLE PROPERTIES
-  
-  // Also inherits imageMode() and smooth() (among others) from PImage. 
-  
+
+  // Also inherits imageMode() and smooth() (among others) from PImage.
+
   /** The current colorMode */
   public int colorMode; // = RGB;
 
@@ -194,10 +194,10 @@ public class PGraphics extends PImage implements PConstants {
   // ........................................................
 
   // Tint color for images
-  
+
   /**
    * True if tint() is enabled (read-only).
-   * 
+   *
    * Using tint/tintColor seems a better option for naming than
    * tintEnabled/tint because the latter seems ugly, even though
    * g.tint as the actual color seems a little more intuitive,
@@ -216,7 +216,7 @@ public class PGraphics extends PImage implements PConstants {
   // ........................................................
 
   // Fill color
-  
+
   /** true if fill() is enabled, (read-only) */
   public boolean fill;
 
@@ -230,7 +230,7 @@ public class PGraphics extends PImage implements PConstants {
   // ........................................................
 
   // Stroke color
-  
+
   /** true if stroke() is enabled, (read-only) */
   public boolean stroke;
 
@@ -243,8 +243,8 @@ public class PGraphics extends PImage implements PConstants {
 
   // ........................................................
 
-  // Additional stroke properties 
-  
+  // Additional stroke properties
+
   static protected final float DEFAULT_STROKE_WEIGHT = 1;
   static protected final int DEFAULT_STROKE_JOIN = MITER;
   static protected final int DEFAULT_STROKE_CAP = ROUND;
@@ -281,17 +281,17 @@ public class PGraphics extends PImage implements PConstants {
 
   /** The current ellipse mode (read-only) */
   public int ellipseMode;
-  
+
   /** The current shape alignment mode (read-only) */
   public int shapeMode;
 
   /** The current image alignment (read-only) */
   public int imageMode = CORNER;
-  
+
   // ........................................................
 
   // Text and font properties
-  
+
   /** The current text font (read-only) */
   public PFont textFont;
 
@@ -309,7 +309,7 @@ public class PGraphics extends PImage implements PConstants {
 
   /** The current text leading (read-only) */
   public float textLeading;
- 
+
   // ........................................................
 
   // Material properties
@@ -322,8 +322,8 @@ public class PGraphics extends PImage implements PConstants {
   public float specularR, specularG, specularB;
   public float emissiveR, emissiveG, emissiveB;
   public float shininess;
-  
-  
+
+
   // Style stack
 
   static final int STYLE_STACK_DEPTH = 64;
@@ -333,7 +333,7 @@ public class PGraphics extends PImage implements PConstants {
 
   ////////////////////////////////////////////////////////////
 
-  
+
   /** Last background color that was set, zero if an image */
   public int backgroundColor = 0xffCCCCCC;
 
@@ -342,7 +342,7 @@ public class PGraphics extends PImage implements PConstants {
   protected int backgroundRi, backgroundGi, backgroundBi, backgroundAi;
 
   // ........................................................
-  
+
   /**
    * Current model-view matrix transformation of the form m[row][column],
    * which is a "column vector" (as opposed to "row vector") matrix.
@@ -362,10 +362,10 @@ public class PGraphics extends PImage implements PConstants {
 
   // ........................................................
 
-  /** 
-   * Java AWT Image object associated with this renderer. For P2D and P3D, 
-   * this will be associated with their MemoryImageSource. For PGraphicsJava2D, 
-   * it will be the offscreen drawing buffer. 
+  /**
+   * Java AWT Image object associated with this renderer. For P2D and P3D,
+   * this will be associated with their MemoryImageSource. For PGraphicsJava2D,
+   * it will be the offscreen drawing buffer.
    */
   public Image image;
 
@@ -383,7 +383,7 @@ public class PGraphics extends PImage implements PConstants {
   float[] cacheHsbValue = new float[3];
 
   // ........................................................
-  
+
   /**
    * Type of shape passed to beginShape(),
    * zero if no shape is currently being drawn.
@@ -454,7 +454,7 @@ public class PGraphics extends PImage implements PConstants {
   }
 
   // ........................................................
-  
+
   /** The current font if a Java version of it is installed */
   //protected Font textFontNative;
 
@@ -478,7 +478,7 @@ public class PGraphics extends PImage implements PConstants {
   // ........................................................
 
   public boolean edge = true;
-  
+
   // ........................................................
 
   /// normal calculated per triangle
@@ -491,7 +491,7 @@ public class PGraphics extends PImage implements PConstants {
   /// Current mode for normals, one of AUTO, SHAPE, or VERTEX
   protected int normalMode;
 
-  /// Keep track of how many calls to normal, to determine the mode. 
+  /// Keep track of how many calls to normal, to determine the mode.
   //protected int normalCount;
 
   /** Current normal vector. */
@@ -632,7 +632,7 @@ public class PGraphics extends PImage implements PConstants {
    * When creating your own PGraphics, you should call this before
    * drawing anything.
    */
-  public void beginDraw() {  // ignore 
+  public void beginDraw() {  // ignore
   }
 
 
@@ -645,12 +645,12 @@ public class PGraphics extends PImage implements PConstants {
   public void endDraw() {  // ignore
   }
 
-  
+
   public void flush() {
     // no-op, mostly for P3D to write sorted stuff
   }
 
-  
+
   protected void checkSettings() {
     if (!settingsInited) defaultSettings();
   }
@@ -735,8 +735,8 @@ public class PGraphics extends PImage implements PConstants {
     }
     if (stroke) {
       stroke(strokeColor);
-      
-      // The if() statements should be handled inside the functions, 
+
+      // The if() statements should be handled inside the functions,
       // otherwise an actual reset/revert won't work properly.
       //if (strokeWeight != DEFAULT_STROKE_WEIGHT) {
       strokeWeight(strokeWeight);
@@ -775,7 +775,7 @@ public class PGraphics extends PImage implements PConstants {
     //reapplySettings = false;
   }
 
-  
+
   //////////////////////////////////////////////////////////////
 
   // HINTS
@@ -852,12 +852,12 @@ public class PGraphics extends PImage implements PConstants {
    * Equivalent to glEdgeFlag(), for people familiar with OpenGL.
    */
   public void edge(boolean edge) {
-   this.edge = edge; 
+   this.edge = edge;
   }
-  
-  
+
+
   /**
-   * Sets the current normal vector. Only applies with 3D rendering 
+   * Sets the current normal vector. Only applies with 3D rendering
    * and inside a beginShape/endShape block.
    * <P/>
    * This is for drawing three dimensional shapes and surfaces,
@@ -916,7 +916,7 @@ public class PGraphics extends PImage implements PConstants {
     textureImage = image;
   }
 
-  
+
   protected void vertexCheck() {
     if (vertexCount == vertices.length) {
       float temp[][] = new float[vertexCount << 1][VERTEX_FIELD_COUNT];
@@ -956,7 +956,7 @@ public class PGraphics extends PImage implements PConstants {
       vertex[U] = textureU;
       vertex[V] = textureV;
     }
-    
+
     vertexCount++;
   }
 
@@ -982,8 +982,8 @@ public class PGraphics extends PImage implements PConstants {
       }
     }
 
-    // User called vertex(), so that invalidates anything queued up for curve 
-    // vertices. If this is internally called by curveVertexSegment, 
+    // User called vertex(), so that invalidates anything queued up for curve
+    // vertices. If this is internally called by curveVertexSegment,
     // then curveVertexCount will be saved and restored.
     curveVertexCount = 0;
 
@@ -1047,14 +1047,14 @@ public class PGraphics extends PImage implements PConstants {
     vertex[NZ] = normalZ;
 
     vertex[BEEN_LIT] = 0;
-    
+
     vertexCount++;
   }
 
 
-  /** 
-   * Used by renderer subclasses or PShape to efficiently pass in already 
-   * formatted vertex information. 
+  /**
+   * Used by renderer subclasses or PShape to efficiently pass in already
+   * formatted vertex information.
    * @param v vertex parameters, as a float array of length VERTEX_FIELD_COUNT
    */
   public void vertex(float[] v) {
@@ -1064,29 +1064,29 @@ public class PGraphics extends PImage implements PConstants {
     System.arraycopy(v, 0, vertex, 0, VERTEX_FIELD_COUNT);
     vertexCount++;
   }
-  
-  
+
+
   public void vertex(float x, float y, float u, float v) {
     vertexTexture(u, v);
     vertex(x, y);
   }
 
-  
+
   public void vertex(float x, float y, float z, float u, float v) {
     vertexTexture(u, v);
     vertex(x, y, z);
   }
-  
+
 
   /**
    * Internal method to copy all style information for the given vertex.
    * Can be overridden by subclasses to handle only properties pertinent to
    * that renderer. (e.g. no need to copy the emissive color in P2D)
    */
-//  protected void vertexStyle() {    
+//  protected void vertexStyle() {
 //  }
-  
-  
+
+
   /**
    * Set (U, V) coords for the next vertex in the current shape.
    * This is ugly as its own function, and will (almost?) always be
@@ -1142,8 +1142,8 @@ public class PGraphics extends PImage implements PConstants {
   //////////////////////////////////////////////////////////////
 
   // CURVE/BEZIER VERTEX HANDLING
-  
-  
+
+
   protected void bezierVertexCheck() {
     if (shape == 0 || shape != POLYGON) {
       throw new RuntimeException("beginShape() or beginShape(POLYGON) " +
@@ -1154,8 +1154,8 @@ public class PGraphics extends PImage implements PConstants {
                                  "before bezierVertex()");
     }
   }
-  
-  
+
+
   public void bezierVertex(float x2, float y2,
                            float x3, float y3,
                            float x4, float y4) {
@@ -1222,7 +1222,7 @@ public class PGraphics extends PImage implements PConstants {
    */
   protected void curveVertexCheck() {
     if (shape != POLYGON) {
-      throw new RuntimeException("You must use beginShape() or " + 
+      throw new RuntimeException("You must use beginShape() or " +
                                  "beginShape(POLYGON) before curveVertex()");
     }
     // to improve code init time, allocate on first use.
@@ -1234,11 +1234,11 @@ public class PGraphics extends PImage implements PConstants {
       // Can't use PApplet.expand() cuz it doesn't do the copy properly
       float[][] temp = new float[curveVertexCount << 1][3];
       System.arraycopy(curveVertices, 0, temp, 0, curveVertexCount);
-      curveVertices = temp; 
+      curveVertices = temp;
     }
     curveInitCheck();
-  }  
-  
+  }
+
 
   public void curveVertex(float x, float y) {
     curveVertexCheck();
@@ -1259,8 +1259,8 @@ public class PGraphics extends PImage implements PConstants {
                          curveVertices[curveVertexCount-1][Y]);
     }
   }
-  
-  
+
+
   public void curveVertex(float x, float y, float z) {
     curveVertexCheck();
     float[] vertex = curveVertices[curveVertexCount];
@@ -1285,21 +1285,21 @@ public class PGraphics extends PImage implements PConstants {
                          curveVertices[curveVertexCount-1][Z]);
     }
   }
-  
-  
+
+
   /**
-   * Handle emitting a specific segment of Catmull-Rom curve. This can be 
+   * Handle emitting a specific segment of Catmull-Rom curve. This can be
    * overridden by subclasses that need more efficient rendering options.
    */
-  protected void curveVertexSegment(float x1, float y1,  
-                                    float x2, float y2, 
-                                    float x3, float y3, 
+  protected void curveVertexSegment(float x1, float y1,
+                                    float x2, float y2,
+                                    float x3, float y3,
                                     float x4, float y4) {
-    float x0 = x2; 
+    float x0 = x2;
     float y0 = y2;
 
     PMatrix3D draw = curveDrawMatrix;
-    
+
     float xplot1 = draw.m10*x1 + draw.m11*x2 + draw.m12*x3 + draw.m13*x4;
     float xplot2 = draw.m20*x1 + draw.m21*x2 + draw.m22*x3 + draw.m23*x4;
     float xplot3 = draw.m30*x1 + draw.m31*x2 + draw.m32*x3 + draw.m33*x4;
@@ -1317,19 +1317,19 @@ public class PGraphics extends PImage implements PConstants {
       y0 += yplot1; yplot1 += yplot2; yplot2 += yplot3;
       vertex(x0, y0);
     }
-    curveVertexCount = savedCount;  
+    curveVertexCount = savedCount;
   }
 
 
   /**
-   * Handle emitting a specific segment of Catmull-Rom curve. This can be 
+   * Handle emitting a specific segment of Catmull-Rom curve. This can be
    * overridden by subclasses that need more efficient rendering options.
    */
-  protected void curveVertexSegment(float x1, float y1, float z1, 
+  protected void curveVertexSegment(float x1, float y1, float z1,
                                     float x2, float y2, float z2,
                                     float x3, float y3, float z3,
                                     float x4, float y4, float z4) {
-    float x0 = x2; 
+    float x0 = x2;
     float y0 = y2;
     float z0 = z2;
 
@@ -1357,11 +1357,11 @@ public class PGraphics extends PImage implements PConstants {
       z0 += zplot1; zplot1 += zplot2; zplot2 += zplot3;
       vertex(x0, y0, z0);
     }
-    curveVertexCount = savedCount;  
+    curveVertexCount = savedCount;
   }
 
-  
-  
+
+
   //////////////////////////////////////////////////////////////
 
   // SIMPLE SHAPES WITH ANALOGUES IN beginShape()
@@ -1710,7 +1710,7 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  // TODO not the least bit efficient, it even redraws lines  
+  // TODO not the least bit efficient, it even redraws lines
   // along the vertices. ugly ugly ugly!
   public void box(float w, float h, float d) {
     float x1 = -w/2f; float x2 = w/2f;
@@ -1855,7 +1855,7 @@ public class PGraphics extends PImage implements PConstants {
     pushMatrix();
     scale(r);
     edge(false);
-    
+
     // 1st ring from south pole
     beginShape(TRIANGLE_STRIP);
     for (int i = 0; i < sphereDetailU; i++) {
@@ -1871,7 +1871,7 @@ public class PGraphics extends PImage implements PConstants {
     endShape();
 
     int v1,v11,v2;
-    
+
     // middle rings
     int voff = 0;
     for (int i = 2; i < sphereDetailV; i++) {
@@ -1971,14 +1971,14 @@ public class PGraphics extends PImage implements PConstants {
     }
   }
 
-  
+
   protected void bezierInit() {
     // overkill to be broken out, but better parity with the curve stuff below
-    bezierDetail(bezierDetail);    
+    bezierDetail(bezierDetail);
     bezierInited = true;
   }
 
-  
+
   public void bezierDetail(int detail) {
     bezierDetail = detail;
 
@@ -2209,7 +2209,7 @@ public class PGraphics extends PImage implements PConstants {
    * vertex of the segment, rather than running the mathematically
    * expensive cubic equation.
    * @param segments number of curve segments to use when drawing
-   * @param matrix target object for the new matrix 
+   * @param matrix target object for the new matrix
    */
   protected void splineForward(int segments, PMatrix3D matrix) {
     float f  = 1.0f / segments;
@@ -2227,7 +2227,7 @@ public class PGraphics extends PImage implements PConstants {
   //////////////////////////////////////////////////////////////
 
   // SMOOTHING
-  
+
 
   /**
    * If true in PImage, use bilinear interpolation for copy()
@@ -2245,7 +2245,7 @@ public class PGraphics extends PImage implements PConstants {
     smooth = false;
   }
 
-  
+
 
   //////////////////////////////////////////////////////////////
 
@@ -2396,13 +2396,13 @@ public class PGraphics extends PImage implements PConstants {
 
   /**
    * Set the orientation for the shape() command (like imageMode() or rectMode()).
-   * @param which Either CORNER, CORNERS, or CENTER.
+   * @param mode Either CORNER, CORNERS, or CENTER.
    */
   public void shapeMode(int mode) {
     this.shapeMode = mode;
   }
-  
-  
+
+
   public void shape(PShape shape) {
     if (shape.isVisible()) {  // don't do expensive matrix ops if invisible
       if (shapeMode == CENTER) {
@@ -2440,7 +2440,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public void shape(PShape shape, float x, float y, float c, float d) {
-    if (shape.isVisible()) {  // don't do expensive matrix ops if invisible    
+    if (shape.isVisible()) {  // don't do expensive matrix ops if invisible
       pushMatrix();
 
       if (shapeMode == CENTER) {
@@ -2465,9 +2465,9 @@ public class PGraphics extends PImage implements PConstants {
       popMatrix();
     }
   }
-  
-  
-  
+
+
+
   //////////////////////////////////////////////////////////////
 
   // TEXT/FONTS
@@ -2514,7 +2514,7 @@ public class PGraphics extends PImage implements PConstants {
   public float textDescent() {
     if (textFont == null) {
       showTextFontException("textDescent");
-    }      
+    }
     return textFont.descent() * ((textMode == SCREEN) ? textFont.size : textSize);
   }
 
@@ -2609,7 +2609,7 @@ public class PGraphics extends PImage implements PConstants {
         case MODEL: modeStr = "MODEL"; break;
         case SHAPE: modeStr = "SHAPE"; break;
       }
-      showWarning("textMode(" + modeStr + ") is not supported by this renderer."); 
+      showWarning("textMode(" + modeStr + ") is not supported by this renderer.");
     }
 
     // reset the font to its natural size
@@ -2622,8 +2622,8 @@ public class PGraphics extends PImage implements PConstants {
     //throw new RuntimeException("use textFont() before textMode()");
     //}
   }
-  
-  
+
+
   protected boolean textModeCheck(int mode) {
     return true;
   }
@@ -3093,13 +3093,13 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  
+
   //////////////////////////////////////////////////////////////
 
   // TEXT IMPL
-  
-  // These are most likely to be overridden by subclasses, since the other 
-  // (public) functions handle generic features like setting alignment.  
+
+  // These are most likely to be overridden by subclasses, since the other
+  // (public) functions handle generic features like setting alignment.
 
 
   /**
@@ -3119,7 +3119,7 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  /** 
+  /**
    * Implementation of actual drawing for a line of text.
    */
   protected void textLineImpl(char buffer[], int start, int stop,
@@ -3252,7 +3252,7 @@ public class PGraphics extends PImage implements PConstants {
     }
   }
 
-  
+
 
   //////////////////////////////////////////////////////////////
 
@@ -3374,12 +3374,12 @@ public class PGraphics extends PImage implements PConstants {
     showMissingWarning("scale");
   }
 
-  
+
   //////////////////////////////////////////////////////////////
 
   // MATRIX FULL MONTY
 
-  
+
   /**
    * Set the current transformation matrix to identity.
    */
@@ -3396,13 +3396,13 @@ public class PGraphics extends PImage implements PConstants {
     }
   }
 
-  
+
   public void applyMatrix(PMatrix2D source) {
-    applyMatrix(source.m00, source.m01, source.m02, 
+    applyMatrix(source.m00, source.m01, source.m02,
                 source.m10, source.m11, source.m12);
   }
-  
-  
+
+
   /**
    * Apply a 3x2 affine transformation matrix.
    */
@@ -3418,8 +3418,8 @@ public class PGraphics extends PImage implements PConstants {
                 source.m20, source.m21, source.m22, source.m23,
                 source.m30, source.m31, source.m32, source.m33);
   }
-  
-  
+
+
   /**
    * Apply a 4x4 transformation matrix.
    */
@@ -3430,22 +3430,22 @@ public class PGraphics extends PImage implements PConstants {
     showMissingWarning("applyMatrix");
   }
 
-  
-  
+
+
   //////////////////////////////////////////////////////////////
 
   // MATRIX GET/SET/PRINT
 
-  
+
   public PMatrix getMatrix() {
     showMissingWarning("getMatrix");
     return null;
   }
-  
-  
+
+
   /**
    * Copy the current transformation matrix into the specified target.
-   * Pass in null to create a new matrix. 
+   * Pass in null to create a new matrix.
    */
   public PMatrix2D getMatrix(PMatrix2D target) {
     showMissingWarning("getMatrix");
@@ -3455,7 +3455,7 @@ public class PGraphics extends PImage implements PConstants {
 
   /**
    * Copy the current transformation matrix into the specified target.
-   * Pass in null to create a new matrix. 
+   * Pass in null to create a new matrix.
    */
   public PMatrix3D getMatrix(PMatrix3D target) {
     showMissingWarning("getMatrix");
@@ -3463,7 +3463,7 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  /** 
+  /**
    * Set the current transformation matrix to the contents of another.
    */
   public void setMatrix(PMatrix source) {
@@ -3473,24 +3473,24 @@ public class PGraphics extends PImage implements PConstants {
       setMatrix((PMatrix3D) source);
     }
   }
-  
-  
+
+
   /**
    * Set the current transformation to the contents of the specified source.
    */
-  public void setMatrix(PMatrix2D source) {  
+  public void setMatrix(PMatrix2D source) {
     showMissingWarning("setMatrix");
   }
-  
-  
+
+
   /**
    * Set the current transformation to the contents of the specified source.
    */
   public void setMatrix(PMatrix3D source) {
     showMissingWarning("setMatrix");
   }
-  
-  
+
+
   /**
    * Print the current model (or "transformation") matrix.
    */
@@ -3503,30 +3503,30 @@ public class PGraphics extends PImage implements PConstants {
   //////////////////////////////////////////////////////////////
 
   // CAMERA
-  
+
 
   public void beginCamera() {
     showMethodWarning("beginCamera");
   }
-  
+
 
   public void endCamera() {
     showMethodWarning("endCamera");
   }
 
-  
+
   public void camera() {
     showMissingWarning("camera");
   }
 
-  
+
   public void camera(float eyeX, float eyeY, float eyeZ,
                      float centerX, float centerY, float centerZ,
                      float upX, float upY, float upZ) {
     showMissingWarning("camera");
   }
 
-  
+
   public void printCamera() {
     showMethodWarning("printCamera");
   }
@@ -3542,31 +3542,31 @@ public class PGraphics extends PImage implements PConstants {
     showMissingWarning("ortho");
   }
 
-  
+
   public void ortho(float left, float right,
                     float bottom, float top,
                     float near, float far) {
     showMissingWarning("ortho");
   }
 
-  
+
   public void perspective() {
     showMissingWarning("perspective");
   }
-  
+
 
   public void perspective(float fovy, float aspect, float zNear, float zFar) {
     showMissingWarning("perspective");
   }
 
-  
-  public void frustum(float left, float right, 
-                      float bottom, float top, 
+
+  public void frustum(float left, float right,
+                      float bottom, float top,
                       float near, float far) {
     showMethodWarning("frustum");
   }
 
-  
+
   public void printProjection() {
     showMethodWarning("printCamera");
   }
@@ -3734,8 +3734,8 @@ public class PGraphics extends PImage implements PConstants {
     strokeCap(s.strokeCap);
     strokeJoin(s.strokeJoin);
 
-    // Set the colorMode() for the material properties. 
-    // TODO this is really inefficient, need to just have a material() method, 
+    // Set the colorMode() for the material properties.
+    // TODO this is really inefficient, need to just have a material() method,
     // but this has the least impact to the API.
     colorMode(RGB, 1);
     ambient(s.ambientR, s.ambientG, s.ambientB);
@@ -3757,17 +3757,17 @@ public class PGraphics extends PImage implements PConstants {
      */
     //  material(s.ambientR, s.ambientG, s.ambientB,
     //           s.emissiveR, s.emissiveG, s.emissiveB,
-    //           s.specularR, s.specularG, s.specularB, 
+    //           s.specularR, s.specularG, s.specularB,
     //           s.shininess);
 
     // Set this after the material properties.
-    colorMode(s.colorMode, 
+    colorMode(s.colorMode,
               s.colorModeX, s.colorModeY, s.colorModeZ, s.colorModeA);
 
     // This is a bit asymmetric, since there's no way to do "noFont()",
     // and a null textFont will produce an error (since usually that means that
     // the font couldn't load properly). So in some cases, the font won't be
-    // 'cleared' to null, even though that's technically correct. 
+    // 'cleared' to null, even though that's technically correct.
     if (s.textFont != null) {
       textFont(s.textFont, s.textSize);
       textLeading(s.textLeading);
@@ -3781,18 +3781,18 @@ public class PGraphics extends PImage implements PConstants {
   public PStyle getStyle() {  // ignore
     return getStyle(null);
   }
-  
-  
+
+
   public PStyle getStyle(PStyle s) {  // ignore
     if (s == null) {
       s = new PStyle();
     }
-    
+
     s.imageMode = imageMode;
     s.rectMode = rectMode;
     s.ellipseMode = ellipseMode;
     s.shapeMode = shapeMode;
-    
+
     s.colorMode = colorMode;
     s.colorModeX = colorModeX;
     s.colorModeY = colorModeY;
@@ -3808,7 +3808,7 @@ public class PGraphics extends PImage implements PConstants {
     s.strokeWeight = strokeWeight;
     s.strokeCap = strokeCap;
     s.strokeJoin = strokeJoin;
-    
+
     s.ambientR = ambientR;
     s.ambientG = ambientG;
     s.ambientB = ambientB;
@@ -3819,14 +3819,14 @@ public class PGraphics extends PImage implements PConstants {
     s.emissiveG = emissiveG;
     s.emissiveB = emissiveB;
     s.shininess = shininess;
-    
+
     s.textFont = textFont;
     s.textAlign = textAlign;
     s.textAlignY = textAlignY;
     s.textMode = textMode;
     s.textSize = textSize;
     s.textLeading = textLeading;
-    
+
     return s;
   }
 
@@ -3835,29 +3835,29 @@ public class PGraphics extends PImage implements PConstants {
   //////////////////////////////////////////////////////////////
 
   // STROKE CAP/JOIN/WEIGHT
-  
-  
+
+
   public void strokeWeight(float weight) {
     strokeWeight = weight;
   }
-  
-  
+
+
   public void strokeJoin(int join) {
     strokeJoin = join;
   }
-  
+
 
   public void strokeCap(int cap) {
     strokeCap = cap;
   }
-  
-  
-  
+
+
+
   //////////////////////////////////////////////////////////////
 
-  // STROKE COLOR 
-  
-  
+  // STROKE COLOR
+
+
   public void noStroke() {
     stroke = false;
   }
@@ -3931,12 +3931,12 @@ public class PGraphics extends PImage implements PConstants {
     strokeAlpha = calcAlpha;
   }
 
-  
+
 
   //////////////////////////////////////////////////////////////
 
   // TINT COLOR
-  
+
 
   public void noTint() {
     tint = false;
@@ -3944,7 +3944,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Set the tint to either a grayscale or ARGB value. 
+   * Set the tint to either a grayscale or ARGB value.
    */
   public void tint(int rgb) {
 //    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {
@@ -4008,12 +4008,12 @@ public class PGraphics extends PImage implements PConstants {
     tintAlpha = calcAlpha;
   }
 
-  
+
 
   //////////////////////////////////////////////////////////////
 
   // FILL COLOR
-  
+
 
   public void noFill() {
     fill = false;
@@ -4087,13 +4087,13 @@ public class PGraphics extends PImage implements PConstants {
     fillAlpha = calcAlpha;
   }
 
-  
+
 
   //////////////////////////////////////////////////////////////
 
   // MATERIAL PROPERTIES
 
-  
+
   public void ambient(int rgb) {
 //    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {
 //      ambient((float) rgb);
@@ -4200,10 +4200,10 @@ public class PGraphics extends PImage implements PConstants {
 
   // LIGHTS
 
-  // The details of lighting are very implementation-specific, so this base 
-  // class does not handle any details of settings lights. It does however 
-  // display warning messages that the functions are not available. 
-  
+  // The details of lighting are very implementation-specific, so this base
+  // class does not handle any details of settings lights. It does however
+  // display warning messages that the functions are not available.
+
 
   public void lights() {
     showMethodWarning("lights");
@@ -4376,18 +4376,18 @@ public class PGraphics extends PImage implements PConstants {
     backgroundAi = (format == RGB) ? 255 : calcAi;
     backgroundAlpha = (format == RGB) ? false : calcAlpha;
     backgroundColor = calcColor;
-    
+
     backgroundImpl();
   }
 
 
   /**
-   * Takes an RGB or ARGB image and sets it as the background. 
-   * The width and height of the image must be the same size as the sketch. 
+   * Takes an RGB or ARGB image and sets it as the background.
+   * The width and height of the image must be the same size as the sketch.
    * Use image.resize(width, height) to make short work of such a task.
    * <P>
-   * Note that even if the image is set as RGB, the high 8 bits of each pixel 
-   * should be set opaque (0xFF000000), because the image data will be copied 
+   * Note that even if the image is set as RGB, the high 8 bits of each pixel
+   * should be set opaque (0xFF000000), because the image data will be copied
    * directly to the screen, and non-opaque background images may have strange
    * behavior. Using image.filter(OPAQUE) will handle this easily.
    * <P>
@@ -4403,10 +4403,10 @@ public class PGraphics extends PImage implements PConstants {
     backgroundColor = 0;  // just zero it out for images
     backgroundImpl(image);
   }
-  
-  
+
+
   /**
-   * Actually set the background image. This is separated from the error 
+   * Actually set the background image. This is separated from the error
    * handling and other semantic goofiness that is shared across renderers.
    */
   protected void backgroundImpl(PImage image) {
@@ -4416,9 +4416,9 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Actual implementation of clearing the background, now that the 
-   * internal variables for background color have been set. Called by the 
-   * backgroundFromCalc() method, which is what all the other background() 
+   * Actual implementation of clearing the background, now that the
+   * internal variables for background color have been set. Called by the
+   * backgroundFromCalc() method, which is what all the other background()
    * methods call once the work is done.
    */
   protected void backgroundImpl() {
@@ -4434,7 +4434,7 @@ public class PGraphics extends PImage implements PConstants {
 
   /**
    * Callback to handle clearing the background when begin/endRaw is in use.
-   * Handled as separate function for OpenGL (or other) subclasses that 
+   * Handled as separate function for OpenGL (or other) subclasses that
    * override backgroundImpl() but still needs this to work properly.
    */
 //  protected void backgroundRawImpl() {
@@ -4497,7 +4497,7 @@ public class PGraphics extends PImage implements PConstants {
     colorModeA = maxA;
 
     // if color max values are all 1, then no need to scale
-    colorModeScale = 
+    colorModeScale =
       ((maxA != 1) || (maxX != maxY) || (maxY != maxZ) || (maxZ != maxA));
 
     // if color is rgb/0..255 this will make it easier for the
@@ -4507,7 +4507,7 @@ public class PGraphics extends PImage implements PConstants {
       (colorModeY == 255) && (colorModeZ == 255);
   }
 
-  
+
 
   //////////////////////////////////////////////////////////////
 
@@ -4515,21 +4515,21 @@ public class PGraphics extends PImage implements PConstants {
 
   // Given input values for coloring, these functions will fill the calcXxxx
   // variables with values that have been properly filtered through the
-  // current colorMode settings.  
-  
+  // current colorMode settings.
+
   // Renderers that need to subclass any drawing properties such as fill or
   // stroke will usally want to override methods like fillFromCalc (or the
-  // same for stroke, ambient, etc.) That way the color calcuations are 
+  // same for stroke, ambient, etc.) That way the color calcuations are
   // covered by this based PGraphics class, leaving only a single function
   // to override/implement in the subclass.
 
-  
+
   /**
    * Set the fill to either a grayscale value or an ARGB int.
    * <P>
-   * The problem with this code is that it has to detect between these two 
+   * The problem with this code is that it has to detect between these two
    * situations automatically. This is done by checking to see if the high bits
-   * (the alpha for 0xAA000000) is set, and if not, whether the color value 
+   * (the alpha for 0xAA000000) is set, and if not, whether the color value
    * that follows is less than colorModeX (first param passed to colorMode).
    * <P>
    * This auto-detect would break in the following situation:
@@ -4539,8 +4539,8 @@ public class PGraphics extends PImage implements PConstants {
    *   stroke(c);
    *   line(i, 0, i, 256);
    * }</PRE>
-   * ...on the first time through the loop, where (i == 0), since the color 
-   * itself is zero (black) then it would appear indistinguishable from code 
+   * ...on the first time through the loop, where (i == 0), since the color
+   * itself is zero (black) then it would appear indistinguishable from code
    * that reads "fill(0)". The solution is to use the four parameter versions
    * of stroke or fill to more directly specify the desired result.
    */
@@ -4563,7 +4563,7 @@ public class PGraphics extends PImage implements PConstants {
     }
   }
 
-    
+
   protected void colorCalc(float gray) {
     colorCalc(gray, colorModeA);
   }
@@ -4680,7 +4680,7 @@ public class PGraphics extends PImage implements PConstants {
     calcAlpha = (calcAi != 255);
   }
 
-  
+
 
   //////////////////////////////////////////////////////////////
 
@@ -4689,7 +4689,7 @@ public class PGraphics extends PImage implements PConstants {
   // The 'color' primitive type in Processing syntax is in fact a 32-bit int.
   // These functions handle stuffing color values into a 32-bit cage based
   // on the current colorMode settings.
-  
+
   // These functions are really slow (because they take the current colorMode
   // into account), but they're easy to use. Advanced users can write their
   // own bit shifting operations to setup 'color' data types.
@@ -4710,7 +4710,7 @@ public class PGraphics extends PImage implements PConstants {
     return calcColor;
   }
 
-  
+
   public final int color(float gray) {  // ignore
     colorCalc(gray);
     return calcColor;
@@ -4732,7 +4732,7 @@ public class PGraphics extends PImage implements PConstants {
     return calcColor;
   }
 
-  
+
   /**
    * @param rgb can be packed ARGB or a gray in this case
    */
@@ -4745,7 +4745,7 @@ public class PGraphics extends PImage implements PConstants {
     return calcColor;
   }
 
-  
+
   public final int color(float gray, float alpha) {  // ignore
     colorCalc(gray, alpha);
     return calcColor;
@@ -4765,7 +4765,7 @@ public class PGraphics extends PImage implements PConstants {
     return calcColor;
   }
 
-  
+
   public final int color(float x, float y, float z) {  // ignore
     colorCalc(x, y, z);
     return calcColor;
@@ -4786,18 +4786,18 @@ public class PGraphics extends PImage implements PConstants {
     return calcColor;
   }
 
-  
+
   public final int color(float x, float y, float z, float a) {  // ignore
     colorCalc(x, y, z, a);
     return calcColor;
   }
 
-  
+
 
   //////////////////////////////////////////////////////////////
 
   // COLOR DATATYPE EXTRACTION
-  
+
   // Vee have veys of making the colors talk.
 
 
@@ -4807,21 +4807,21 @@ public class PGraphics extends PImage implements PConstants {
     return (c / 255.0f) * colorModeA;
   }
 
-  
+
   public final float red(int what) {
     float c = (what >> 16) & 0xff;
     if (colorModeDefault) return c;
     return (c / 255.0f) * colorModeX;
   }
 
-  
+
   public final float green(int what) {
     float c = (what >> 8) & 0xff;
     if (colorModeDefault) return c;
     return (c / 255.0f) * colorModeY;
   }
 
-  
+
   public final float blue(int what) {
     float c = (what) & 0xff;
     if (colorModeDefault) return c;
@@ -4838,7 +4838,7 @@ public class PGraphics extends PImage implements PConstants {
     return cacheHsbValue[0] * colorModeX;
   }
 
-  
+
   public final float saturation(int what) {
     if (what != cacheHsbKey) {
       Color.RGBtoHSB((what >> 16) & 0xff, (what >> 8) & 0xff,
@@ -4848,7 +4848,7 @@ public class PGraphics extends PImage implements PConstants {
     return cacheHsbValue[1] * colorModeY;
   }
 
-  
+
   public final float brightness(int what) {
     if (what != cacheHsbKey) {
       Color.RGBtoHSB((what >> 16) & 0xff, (what >> 8) & 0xff,
@@ -4859,14 +4859,14 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  
+
   //////////////////////////////////////////////////////////////
 
   // COLOR DATATYPE INTERPOLATION
-  
+
   // Against our better judgement.
 
-  
+
   /**
    * Interpolate between two colors, using the current color mode.
    */
@@ -4946,15 +4946,15 @@ public class PGraphics extends PImage implements PConstants {
     return 0;
   }
 
-  
+
 
   //////////////////////////////////////////////////////////////
 
   // BEGINRAW/ENDRAW
-  
+
 
   /**
-   * Record individual lines and triangles by echoing them to another renderer. 
+   * Record individual lines and triangles by echoing them to another renderer.
    */
   public void beginRaw(PGraphics rawGraphics) {  // ignore
     this.raw = rawGraphics;
@@ -4984,11 +4984,11 @@ public class PGraphics extends PImage implements PConstants {
 
 
   static protected HashMap<String, Object> warnings;
-  
+
 
   /**
    * Show a renderer error, and keep track of it so that it's only shown once.
-   * @param msg the error message (which will be stored for later comparison) 
+   * @param msg the error message (which will be stored for later comparison)
    */
   static public void showWarning(String msg) {  // ignore
     if (warnings == null) {
@@ -5000,13 +5000,13 @@ public class PGraphics extends PImage implements PConstants {
     }
   }
 
-  
+
   /**
    * Display a warning that the specified method is only available with 3D.
    * @param method The method name (no parentheses)
    */
   static protected void showDepthWarning(String method) {
-    showWarning(method + "() can only be used with a renderer that " + 
+    showWarning(method + "() can only be used with a renderer that " +
                 "supports 3D, such as P3D or OPENGL.");
   }
 
@@ -5018,7 +5018,7 @@ public class PGraphics extends PImage implements PConstants {
    */
   static protected void showDepthWarningXYZ(String method) {
     showWarning(method + "() with x, y, and z coordinates " +
-                "can only be used with a renderer that " + 
+                "can only be used with a renderer that " +
                 "supports 3D, such as P3D or OPENGL. " +
                 "Use a version without a z-coordinate instead.");
   }
@@ -5030,17 +5030,17 @@ public class PGraphics extends PImage implements PConstants {
   static protected void showMethodWarning(String method) {
     showWarning(method + "() is not available with this renderer.");
   }
-  
-  
+
+
   /**
    * Error that a particular variation of a method is unavailable (even though
-   * other variations are). For instance, if vertex(x, y, u, v) is not 
+   * other variations are). For instance, if vertex(x, y, u, v) is not
    * available, but vertex(x, y) is just fine.
    */
   static protected void showVariationWarning(String str) {
     showWarning(str + " is not available with this renderer.");
   }
-  
+
 
   /**
    * Display a warning that the specified method is not implemented, meaning
@@ -5051,18 +5051,18 @@ public class PGraphics extends PImage implements PConstants {
     showWarning(method + "(), or this particular variation of it, " +
                 "is not available with this renderer.");
   }
-  
-  
+
+
   /**
    * Show an renderer-related exception that halts the program. Currently just
-   * wraps the message as a RuntimeException and throws it, but might do 
+   * wraps the message as a RuntimeException and throws it, but might do
    * something more specific might be used in the future.
    */
   static public void showException(String msg) {  // ignore
     throw new RuntimeException(msg);
   }
 
-  
+
   /**
    * Throw an exeption that halts the program because textFont() has not been
    * used prior to the specified method.
@@ -5076,14 +5076,14 @@ public class PGraphics extends PImage implements PConstants {
   //////////////////////////////////////////////////////////////
 
   // RENDERER SUPPORT QUERIES
-  
+
 
   /**
-   * Return true if this renderer should be drawn to the screen. Defaults to 
-   * returning true, since nearly all renderers are on-screen beasts. But can 
+   * Return true if this renderer should be drawn to the screen. Defaults to
+   * returning true, since nearly all renderers are on-screen beasts. But can
    * be overridden for subclasses like PDF so that a window doesn't open up.
    * <br/> <br/>
-   * A better name? showFrame, displayable, isVisible, visible, shouldDisplay, 
+   * A better name? showFrame, displayable, isVisible, visible, shouldDisplay,
    * what to call this?
    */
   public boolean displayable() {
@@ -5097,8 +5097,8 @@ public class PGraphics extends PImage implements PConstants {
   public boolean is2D() {
     return true;
   }
-  
-  
+
+
   /**
    * Return true if this renderer supports 2D drawing. Defaults to true.
    */

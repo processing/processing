@@ -25,7 +25,7 @@
 package processing.core;
 
 /**
- * A class to describe a two or three dimensional vector. 
+ * A class to describe a two or three dimensional vector.
  * <p>
  * The result of all functions are applied to the vector itself, with the
  * exception of cross(), which returns a new PVector (or writes to a specified
@@ -130,18 +130,12 @@ public class PVector {
 
   /**
    * Get a copy of this vector.
-   * @return
    */
   public PVector get() {
     return new PVector(x, y, z);
   }
 
 
-  /**
-   *
-   * @param target
-   * @return
-   */
   public float[] get(float[] target) {
     if (target == null) {
       return new float[] { x, y, z };
@@ -292,7 +286,7 @@ public class PVector {
 
   /**
    * Multiply each element of one vector by the elements of another vector.
-   * @param n the value to multiply by
+   * @param v the vector to multiply by
    */
   public void mult(PVector v) {
     x *= v.x;
@@ -302,7 +296,7 @@ public class PVector {
 
 
   /**
-   * Multiply each element of one vector by the individual elements of another 
+   * Multiply each element of one vector by the individual elements of another
    * vector, and return the result as a new PVector.
    */
   static public PVector mult(PVector v1, PVector v2) {
@@ -311,7 +305,7 @@ public class PVector {
 
 
   /**
-   * Multiply each element of one vector by the individual elements of another 
+   * Multiply each element of one vector by the individual elements of another
    * vector, and write the result into a target vector.
    * @param v1 the first vector
    * @param v2 the second vector
@@ -358,7 +352,7 @@ public class PVector {
     return target;
   }
 
-  
+
   /**
    * Divide each element of one vector by the elements of another vector.
    */
@@ -370,7 +364,7 @@ public class PVector {
 
 
   /**
-   * Multiply each element of one vector by the individual elements of another 
+   * Multiply each element of one vector by the individual elements of another
    * vector, and return the result as a new PVector.
    */
   static public PVector div(PVector v1, PVector v2) {
@@ -379,7 +373,7 @@ public class PVector {
 
 
   /**
-   * Divide each element of one vector by the individual elements of another 
+   * Divide each element of one vector by the individual elements of another
    * vector, and write the result into a target vector.
    * @param v1 the first vector
    * @param v2 the second vector
