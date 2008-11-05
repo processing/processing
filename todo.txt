@@ -6,6 +6,7 @@ X fix loadShape() transformation parsing and empty paths (thanks ricardmp)
 X   http://dev.processing.org/bugs/show_bug.cgi?id=982
 X moviemaker can't make exact 30fps output
 X   http://dev.processing.org/bugs/show_bug.cgi?id=988
+X automatically create and open the 'libraries' folder when there's an error
 
 _ move library examples to the examples menu
 _   do this once the library documentation has been fixed up
