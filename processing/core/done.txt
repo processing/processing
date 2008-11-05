@@ -1,3 +1,8 @@
+0155 core
+X hint(DISABLE_DEPTH_TEST) throws null pointer exception with OpenGL
+X   http://dev.processing.org/bugs/show_bug.cgi?id=984
+
+
 0154 core
 X only set apple.awt.graphics.UseQuartz on osx, otherwise security error
 X   http://dev.processing.org/bugs/show_bug.cgi?id=976
