@@ -3,6 +3,7 @@ X hint(DISABLE_DEPTH_TEST) throws null pointer exception with OpenGL
 X   http://dev.processing.org/bugs/show_bug.cgi?id=984
 
 
+_ present mode broken in general?
 _ placement of elements in present mode is messed up
 _   "stop" button hops around, window not centered on screen
 _   http://dev.processing.org/bugs/show_bug.cgi?id=923

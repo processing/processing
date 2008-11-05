@@ -806,7 +806,7 @@ public class Base {
 
     // Add libraries found in the sketchbook folder
     try {
-      File sketchbookLibraries = new File(getSketchbookFolder(), "libraries");
+      File sketchbookLibraries = getSketchbookLibrariesFolder();
       boolean found = addLibraries(importMenu, sketchbookLibraries);
       if (found) importMenu.addSeparator();
     } catch (IOException e) {
@@ -1193,8 +1193,13 @@ public class Base {
   }
 
 
-  public File getSketchbookFolder() {
+  static public File getSketchbookFolder() {
     return new File(Preferences.get("sketchbook.path"));
+  }
+  
+  
+  static public File getSketchbookLibrariesFolder() {
+    return new File(getSketchbookFolder(), "libraries");
   }
 
 
