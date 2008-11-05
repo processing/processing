@@ -8,6 +8,7 @@ X moviemaker can't make exact 30fps output
 X   http://dev.processing.org/bugs/show_bug.cgi?id=988
 X automatically create and open the 'libraries' folder when there's an error
 
+
 _ move library examples to the examples menu
 _   do this once the library documentation has been fixed up
 _ don't open more than one "create font" or "color selector"

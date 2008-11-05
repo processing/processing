@@ -7,6 +7,42 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0155 - 4 November 2008
+
+Bug fix release to deal with a handful of recently reported problems.
+
+[ bug fixes ] 
+
++ "Save canceled" message when saving untitled sketches without first renaming
+   http://dev.processing.org/bugs/show_bug.cgi?id=987
+
++ Fix loadShape() transformation parsing and empty paths (thanks ricardmp)
+  http://dev.processing.org/bugs/show_bug.cgi?id=982
+
++ Fix hint(DISABLE_DEPTH_TEST) NullPointerException with OpenGL
+  http://dev.processing.org/bugs/show_bug.cgi?id=984
+
+[ changes ] 
+
++ When saving a sketch over itself with "Save As", just do "Save" instead
+
++ MovieMaker can't make exact 30fps output
+  http://dev.processing.org/bugs/show_bug.cgi?id=988
+
++ Automatically create and open the 'libraries' folder if it doesn't exist
+  and a missing library error occurs.
+
+[ known problems ] 
+
++ Present mode has been deteriorating in recent releases
+  http://dev.processing.org/bugs/show_bug.cgi?id=923
+
++ More 'known problems' listed under the 0154 release notes below.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0154 - 21 October 2008
 
 Read the release notes for revision 0149 (and for the others since that
