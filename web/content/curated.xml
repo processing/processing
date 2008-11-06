@@ -2,6 +2,16 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <curated>
 
+<software name="NPZvisualizer" by="Neil Banas" scroll="yes" resize="yes" width="1024" height="800">
+        <image>images/npz.jpg</image>
+          <description>
+             Tool for exploring the dynamics of coastal marine ecosystems.         Exchanges between plankton populations push the system sometimes         toward equilibrium, sometimes into simple cycles, sometimes into         chaos.
+          </description>
+          <location>http://coast.ocean.washington.edu/~neil/NPZvisualizer/</location>
+          <link href="http://neilbanas.com">Banas' design</link>
+          <link href="http://coast.ocean.washington.edu/~neil/">Banas' oceanography</link>
+        </software>
+        
 <software name="Mæve" by="Interface Design Team of FH Potsdam" scroll="yes" resize="yes" width="1024" height="800">
         <image>images/maeve.jpg</image>
           <description>
