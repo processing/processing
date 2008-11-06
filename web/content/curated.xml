@@ -3,7 +3,7 @@
 <curated>
 
 <software name="NPZvisualizer" by="Neil Banas" scroll="yes" resize="yes" width="1024" height="800">
-        <image>images/npz.jpg</image>
+        <image>images/npz.gif</image>
           <description>
              Tool for exploring the dynamics of coastal marine ecosystems.         Exchanges between plankton populations push the system sometimes         toward equilibrium, sometimes into simple cycles, sometimes into         chaos.
           </description>
