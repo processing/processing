@@ -27,8 +27,6 @@ import processing.core.*;
 
 import java.lang.reflect.*;
 
-import javax.swing.SwingUtilities;
-
 import quicktime.*;
 import quicktime.qd.*;
 import quicktime.std.*;
