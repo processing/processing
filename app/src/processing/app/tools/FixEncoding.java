@@ -32,16 +32,21 @@ import javax.swing.JOptionPane;
 import processing.app.*;
 
 
-public class FixEncoding {
+public class FixEncoding implements Tool {
   Editor editor;
 
 
-  public FixEncoding(Editor editor) {
+  public String getMenuTitle() {
+    return "Fix Encoding & Reload";
+  }
+  
+  
+  public void init(Editor editor) {
     this.editor = editor;
   }
   
 
-  public void show() {
+  public void run() {
     Sketch sketch = editor.getSketch();
     //SketchCode code = sketch.current;
     

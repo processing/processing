@@ -1547,7 +1547,9 @@ public class Sketch {
         final String message =
           "The size of this applet could not automatically be\n" +
           "determined from your code. You'll have to edit the\n" +
-          "HTML file to set the size of the applet.";
+          "HTML file to set the size of the applet.\n" +
+          "Use only numeric values (not variables) for the size()\n" +
+          "command. See the size() reference for an explanation.";
 
         Base.showWarning("Could not find applet size", message, null);
       }
@@ -2795,8 +2797,8 @@ public class Sketch {
     if (!newName.equals(origName)) {
       String msg =
         "The sketch name had to be modified. Sketch names can only consist\n" +
-        "of ASCII characters and numbers, and cannot start with a number.\n" +
-        "They should also be less less than 64 characters long)";
+        "of ASCII characters and numbers (but cannot start with a number).\n" +
+        "They should also be less less than 64 characters long.";
       System.out.println(msg);
     }
     return newName;
