@@ -59,7 +59,7 @@ else
   find work -name "*.exe" -exec chmod +x {} ';'
   find work -name "*.html" -exec chmod +x {} ';'
 fi
-  BUILD_PREPROC=true
+
 cd ../..
 
 
