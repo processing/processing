@@ -7,6 +7,37 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0156 - 10 November 2008
+
+Bug fix release to fix Present mode (full screen) and some errors not
+being reported properly.
+
+[ bug fixes ] 
+
++ For some errors, the line wasn't being highlighted correctly.
+
++ Present mode was broken (bad placement, no window appearing).
+  http://dev.processing.org/bugs/show_bug.cgi?id=923
+
++ Fixed typo in sketch renaming notice message.
+
++ Don't open more than one "Create Font" or "Color Selector".
+  http://dev.processing.org/bugs/show_bug.cgi?id=830
+
+[ changes ] 
+
++ Clarify the "no variables in size() command" rule
+  http://dev.processing.org/bugs/show_bug.cgi?id=992
+
++ Disable P2D for size() and createGraphics() since it's not ready yet.
+
++ Rebuilt the Tools menu to use the Tools API
+  http://dev.processing.org/bugs/show_bug.cgi?id=886
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0155 - 4 November 2008
 
 Bug fix release to deal with a handful of recently reported problems.
