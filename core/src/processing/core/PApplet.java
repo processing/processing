@@ -1085,10 +1085,9 @@ public class PApplet extends Applet
       }
     }
 
-    if (irenderer.equals("P2D")) {
-      PGraphics.showWarning("The P2D renderer is currently disabled, " +
-                            "please use P3D or JAVA2D.");
-      irenderer = P3D;
+    if (irenderer.equals(P2D)) {
+      throw new RuntimeException("The P2D renderer is currently disabled, " +
+                                 "please use P3D or JAVA2D.");
     }
 
     String openglError =
@@ -6459,6 +6458,11 @@ public class PApplet extends Applet
       applet.args = PApplet.subset(args, 1);
       applet.external = external;
 
+      // Need to save the window bounds at full screen,
+      // because pack() will cause the bounds to go to zero.
+      // http://dev.processing.org/bugs/show_bug.cgi?id=923
+      Rectangle fullScreenRect = null;
+
       // For 0149, moving this code (up to the pack() method) before init().
       // For OpenGL (and perhaps other renderers in the future), a peer is
       // needed before a GLDrawable can be created. So pack() needs to be
@@ -6470,6 +6474,7 @@ public class PApplet extends Applet
         frame.setUndecorated(true);
         frame.setBackground(backgroundColor);
         displayDevice.setFullScreenWindow(frame);
+        fullScreenRect = frame.getBounds();
       }
       frame.setLayout(null);
       frame.add(applet);
@@ -6494,14 +6499,10 @@ public class PApplet extends Applet
       //println("  (g width/height is " + applet.g.width + "x" + applet.g.height + ")");
 
       if (present) {
-//        frame.setUndecorated(true);
-//        frame.setBackground(backgroundColor);
-//        displayDevice.setFullScreenWindow(frame);
-
-//        frame.add(applet);
-        Dimension fullscreen = frame.getSize();
-        applet.setBounds((fullscreen.width - applet.width) / 2,
-                         (fullscreen.height - applet.height) / 2,
+        // After the pack(), the screen bounds are gonna be 0s
+        frame.setBounds(fullScreenRect);
+        applet.setBounds((fullScreenRect.width - applet.width) / 2,
+                         (fullScreenRect.height - applet.height) / 2,
                          applet.width, applet.height);
 
         if (!hideStop) {
@@ -6519,7 +6520,7 @@ public class PApplet extends Applet
           //System.out.println("label width is " + labelSize.width);
           labelSize = new Dimension(100, labelSize.height);
           label.setSize(labelSize);
-          label.setLocation(20, fullscreen.height - labelSize.height - 20);
+          label.setLocation(20, fullScreenRect.height - labelSize.height - 20);
         }
 
         // not always running externally when in present mode

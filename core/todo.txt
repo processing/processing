@@ -1,13 +1,18 @@
 0156 core
-
-
-_ present mode broken in general?
-_ placement of elements in present mode is messed up
-_   "stop" button hops around, window not centered on screen
+X clarify the "no variables in size() command" rule
+X   http://dev.processing.org/bugs/show_bug.cgi?id=992
+X present mode broken in general?
+X   placement of elements in present mode is messed up
+X   "stop" button hops around, window not centered on screen
 _   http://dev.processing.org/bugs/show_bug.cgi?id=923
+X disable P2D for size() and createGraphics() before releasing
+X   already was disabled, just a bug in detecting it
 
 
-_ rename GettingStarted_Shape example
+_ No textures render with hint(ENABLE_ACCURATE_TEXTURES)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=985
+_   need to remove the hint from the reference
+_   need to throw an error when it's used
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -113,6 +118,10 @@ _ in opengl mode, use its tesselator
 _   because the vertex calls can just come right back to regular vertex calls
 _   this way we can also implement breakShape() for opengl
 _   http://dev.processing.org/bugs/show_bug.cgi?id=947
+_ smooth in P3D has zbuffer glitches
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1000
+_ smoothing is slow
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1001
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -331,6 +340,7 @@ CORE / PGraphics3D
 
 _ make thick lines draw perpendicular to the screen with P3D
 _   http://dev.processing.org/bugs/show_bug.cgi?id=956
+_   ewjordan suggests building the quad in screen coords after perspective
 _ ortho() behaving differently in P3D vs OPENGL
 _   http://dev.processing.org/bugs/show_bug.cgi?id=100
 _   shows a blank canvas
@@ -432,6 +442,10 @@ _   http://www.adobe.com/svg/eol.html
 
 CORE / Mac OS X
 
+_ set the application name to sketch name (not processing.core.PApplet)
+_   System.setProperty("com.apple.mrj.application.apple.menu.about.name", ...)
+_   -Xdock:name=<application name>
+_   -Xdock:icon=<path to icon file>
 _ first line of applets is missing on java 1.4+ on the mac
 _   http://dev.processing.org/bugs/show_bug.cgi?id=283
 _ cursor() broken in applets on macosx?
@@ -548,6 +562,8 @@ _     it's too significant a change, and not enough time to test
 
 LATER (post 1.0)
 
+_ add getSketchSize() and getSketchRenderer()
+_   these could simply have the defaults at the outset
 _ opengl.jar with eclipse
 _   auto-extract native libs from opengl.jar 
 _   to remove java.library.path problems (!)
