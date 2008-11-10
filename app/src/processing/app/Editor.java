@@ -613,7 +613,7 @@ public class Editor extends JFrame implements RunnerListener {
 
     addInternalTools(menu);
     addTools(menu, Base.getToolsFolder());
-    File sketchbookTools = new File(base.getSketchbookFolder(), "tools");
+    File sketchbookTools = new File(Base.getSketchbookFolder(), "tools");
     addTools(menu, sketchbookTools);
 
     return menu;
@@ -751,15 +751,36 @@ public class Editor extends JFrame implements RunnerListener {
   }
 
 
+  protected JMenuItem createToolMenuItem(String className) {
+    try {
+      Class toolClass = Class.forName(className);
+      final Tool tool = (Tool) toolClass.newInstance();
+
+      JMenuItem item = new JMenuItem(tool.getMenuTitle());
+      
+      tool.init(Editor.this);
+
+      item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          SwingUtilities.invokeLater(tool);
+        }
+      });
+      return item;
+      
+    } catch (Exception e) {
+      e.printStackTrace();
+      return null;
+    }
+  }
+  
+  
   protected JMenu addInternalTools(JMenu menu) {
     JMenuItem item;
 
+          /*
     item = newJMenuItem("Auto Format", 'T');
     item.addActionListener(new ActionListener() {
         synchronized public void actionPerformed(ActionEvent e) {
-          new AutoFormat(Editor.this).show();
-
-          /*
           Jalopy jalopy = new Jalopy();
           jalopy.setInput(getText(), sketch.current.file.getAbsolutePath());
           StringBuffer buffer = new StringBuffer();
@@ -774,53 +795,20 @@ public class Editor extends JFrame implements RunnerListener {
             System.out.println(" formatted with warnings");
           else if (jalopy.getState() == Jalopy.State.ERROR)
             System.out.println(" could not be formatted");
+        }
+      });
+    menu.add(item);
           */
-        }
-      });
+
+    item = createToolMenuItem("processing.app.tools.AutoFormat");
+    int modifiers = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+    item.setAccelerator(KeyStroke.getKeyStroke('T', modifiers));
     menu.add(item);
 
-    item = new JMenuItem("Create Font...");
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          new CreateFont(Editor.this).setVisible(true);
-        }
-      });
-    menu.add(item);
-
-    item = new JMenuItem("Color Selector");
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          SwingUtilities.invokeLater(new Runnable() {
-              public void run() {
-                new ColorSelector(Editor.this).show();
-              }
-            });
-        }
-      });
-    menu.add(item);
-
-    item = new JMenuItem("Archive Sketch");
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          new Archiver(Editor.this).show();
-          //Archiver archiver = new Archiver();
-          //archiver.setup(Editor.this);
-          //archiver.show();
-        }
-      });
-    menu.add(item);
-
-    item = new JMenuItem("Fix Encoding & Reload");
-    item.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        SwingUtilities.invokeLater(new Runnable() {
-          public void run() {
-            new FixEncoding(Editor.this).show();
-          }
-        });
-      }
-    });
-    menu.add(item);
+    menu.add(createToolMenuItem("processing.app.tools.CreateFont"));
+    menu.add(createToolMenuItem("processing.app.tools.ColorSelector"));
+    menu.add(createToolMenuItem("processing.app.tools.Archiver"));
+    menu.add(createToolMenuItem("processing.app.tools.FixEncoding"));
 
     /*
     item = new JMenuItem("Export Folder...");
@@ -869,7 +857,7 @@ public class Editor extends JFrame implements RunnerListener {
         public void actionPerformed(ActionEvent e) {
           //WebServer ws = new WebServer();
           SwingUtilities.invokeLater(new Runnable() {
-            public void run() {              
+            public void run() {
               try {
                 int port = WebServer.launch("/Users/fry/coconut/processing/build/shared/reference.zip");
                 Base.openURL("http://127.0.0.1:" + port + "/reference/setup_.html");

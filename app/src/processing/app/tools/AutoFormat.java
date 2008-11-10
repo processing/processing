@@ -32,7 +32,7 @@ import java.io.*;
  * Alternate handler for dealing with auto format.
  * Contributed by Martin Gomez, additional bug fixes by Ben Fry.
  */
-public class AutoFormat {
+public class AutoFormat implements Tool {
   Editor editor;
 
   static final int BLOCK_MAXLEN = 1024;
@@ -81,10 +81,14 @@ public class AutoFormat {
   //static int outfil;  // temporary
 
 
-  public AutoFormat(Editor editor) {
+  public void init(Editor editor) {
     this.editor = editor;
   }
 
+  
+  public String getMenuTitle() {
+    return "Auto Format";
+  }
 
   public void comment() throws IOException {
     int save_s_flg;
@@ -432,7 +436,7 @@ public class AutoFormat {
   }
 
 
-  public void show() {
+  public void run() {
     StringBuffer onechar;
 
     // Adding an additional newline as a hack around other errors

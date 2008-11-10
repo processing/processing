@@ -32,7 +32,7 @@ import java.util.*;
 import java.util.zip.*;
 
 
-public class Archiver {
+public class Archiver implements Tool {
   Editor editor;
 
   // someday these will be settable
@@ -43,7 +43,12 @@ public class Archiver {
   SimpleDateFormat dateFormat;
 
 
-  public Archiver(Editor editor) {
+  public String getMenuTitle() {
+    return "Archive Sketch";
+  }
+  
+  
+  public void init(Editor editor) {
     this.editor = editor;
 
     numberFormat = NumberFormat.getInstance();
@@ -54,7 +59,7 @@ public class Archiver {
   }
 
 
-  public void show() {
+  public void run() {
     Sketch sketch = editor.getSketch();
     
     // first save the sketch so that things don't archive strangely

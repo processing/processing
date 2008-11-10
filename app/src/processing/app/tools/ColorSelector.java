@@ -41,7 +41,7 @@ import javax.swing.text.*;
  * auto-insert of colorMode() or fill() or stroke() code cuz we couldn't
  * decide on a good way to do this.. your contributions welcome).
  */
-public class ColorSelector implements DocumentListener {
+public class ColorSelector implements Tool, DocumentListener {
 
   Editor editor;
   JFrame frame;
@@ -60,7 +60,12 @@ public class ColorSelector implements DocumentListener {
   JPanel colorPanel;
 
 
-  public ColorSelector(Editor editor) {
+  public String getMenuTitle() {
+    return "Color Selector";
+  }
+  
+  
+  public void init(Editor editor) {
     this.editor = editor;
 
     frame = new JFrame("Color Selector");
@@ -129,7 +134,7 @@ public class ColorSelector implements DocumentListener {
   }
 
 
-  public void show() {
+  public void run() {
     frame.setVisible(true);
     // You've got to be f--ing kidding me.. why did the following line 
     // get deprecated for the pile of s-- that follows it?
