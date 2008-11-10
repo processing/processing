@@ -28,8 +28,6 @@ import processing.core.*;
 import java.io.*;
 import java.lang.reflect.*;
 
-import javax.swing.SwingUtilities;
-
 import quicktime.*;
 import quicktime.io.QTFile;
 import quicktime.qd.*;
