@@ -25,6 +25,7 @@ import java.io.*;
  * tree - the ROOT_ID node that represents a Java file.
  */
 
+@SuppressWarnings("unused")
 public class PdeEmitter implements PdeTokenTypes
 {
   private PrintStream out = System.out;
