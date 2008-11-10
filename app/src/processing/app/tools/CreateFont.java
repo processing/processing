@@ -39,9 +39,9 @@ import javax.swing.event.*;
 /**
  * gui interface to font creation heaven/hell.
  */
-public class CreateFont extends JFrame {
-  //File targetFolder;
-  Sketch sketch;
+public class CreateFont extends JFrame implements Tool {
+  Editor editor;
+  //Sketch sketch;
 
   Dimension windowSize;
 
@@ -63,6 +63,7 @@ public class CreateFont extends JFrame {
   String[] list;
   int selection = -1;
 
+
   //static {
   //System.out.println("yep yep yep");
   //}
@@ -71,12 +72,19 @@ public class CreateFont extends JFrame {
   //};
 
 
-  public CreateFont(Editor editor) {
+  public CreateFont() {
     super("Create Font");
-
-    //targetFolder = editor.getSketch().getDataFolder();
-    sketch = editor.getSketch();
-
+  }
+  
+  
+  public String getMenuTitle() {
+    return "Create Font...";
+  }
+  
+  
+  public void init(Editor editor) {
+    this.editor = editor;
+    
     Container paine = getContentPane();
     paine.setLayout(new BorderLayout()); //10, 10));
 
@@ -246,6 +254,11 @@ public class CreateFont extends JFrame {
   }
 
 
+  public void run() {
+    setVisible(true);
+  }
+
+
   /**
    * make the window vertically resizable
    */
@@ -316,8 +329,7 @@ public class CreateFont extends JFrame {
       PFont f = new PFont(font, smooth, all ? null : PFont.DEFAULT_CHARSET);
 
       // make sure the 'data' folder exists
-      //if (!targetFolder.exists()) targetFolder.mkdirs();
-      File folder = sketch.prepareDataFolder();
+      File folder = editor.getSketch().prepareDataFolder();
       f.save(new FileOutputStream(new File(folder, filename)));
 
     } catch (IOException e) {

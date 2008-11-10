@@ -1385,15 +1385,6 @@ public class Base {
    */
   static public void registerWindowCloseKeys(JRootPane root, //Window window,
                                              ActionListener disposer) {
-    /*
-    JRootPane root = null;
-    if (window instanceof JFrame) {
-      root = ((JFrame)window).getRootPane();
-    } else if (window instanceof JDialog) {
-      root = ((JDialog)window).getRootPane();
-    }
-    */
-
     KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
     root.registerKeyboardAction(disposer, stroke,
                                 JComponent.WHEN_IN_FOCUSED_WINDOW);
