@@ -1,3 +1,14 @@
+0156 core
+X clarify the "no variables in size() command" rule
+X   http://dev.processing.org/bugs/show_bug.cgi?id=992
+X present mode broken in general?
+X   placement of elements in present mode is messed up
+X   "stop" button hops around, window not centered on screen
+X   http://dev.processing.org/bugs/show_bug.cgi?id=923
+X disable P2D for size() and createGraphics() before releasing
+X   already was disabled, just a bug in detecting it
+
+
 0155 core
 X hint(DISABLE_DEPTH_TEST) throws null pointer exception with OpenGL
 X   http://dev.processing.org/bugs/show_bug.cgi?id=984

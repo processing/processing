@@ -1,3 +1,20 @@
+0156 pde
+X fix typo in sketch renaming notice message
+X line numbers not showing up for unknown var or class names
+o   "anything named" error is weird
+X don't open more than one "create font" or "color selector"
+X   http://dev.processing.org/bugs/show_bug.cgi?id=830
+X make processing tools use the tools api
+X   http://dev.processing.org/bugs/show_bug.cgi?id=886
+X rename GettingStarted_Shape example
+
+invalid
+o launch4j "An error occurred while starting the application" 
+o   http://dev.processing.org/bugs/show_bug.cgi?id=986
+o tabs menu not working on osx ppc (can't confirm)
+o   http://dev.processing.org/bugs/show_bug.cgi?id=993
+
+
 0155 pde
 X "Save canceled" message when saving untitled sketches without first renaming
 X   http://dev.processing.org/bugs/show_bug.cgi?id=987
