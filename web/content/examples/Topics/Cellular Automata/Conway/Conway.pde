@@ -22,7 +22,6 @@ void setup()
   sx = width;
   sy = height;
   world = new int[sx][sy][2]; 
-  stroke(255); 
    
   // Set random cells to 'on' 
   for (int i = 0; i < sx * sy * density; i++) { 
@@ -42,7 +41,7 @@ void draw()
       if ((world[x][y][1] == 1) || (world[x][y][1] == 0 && world[x][y][0] == 1)) 
       { 
         world[x][y][0] = 1; 
-        point(x, y); 
+        set(x, y, #FFFFFF); 
       } 
       if (world[x][y][1] == -1) 
       { 
