@@ -6,6 +6,7 @@ X don't open more than one "create font" or "color selector"
 X   http://dev.processing.org/bugs/show_bug.cgi?id=830
 X make processing tools use the tools api
 X   http://dev.processing.org/bugs/show_bug.cgi?id=886
+X rename GettingStarted_Shape example
 
 invalid
 o launch4j "An error occurred while starting the application" 
@@ -16,8 +17,6 @@ o   http://dev.processing.org/bugs/show_bug.cgi?id=993
 
 _ hitting ESC inside Color Selector will quit Processing
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1006
-
-_ rename GettingStarted_Shape example
 
 
 [ needs verification ] 
