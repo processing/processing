@@ -1,5 +1,129 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <networked>
+    <software name="Film Galaxy" by="Andy Hattemer">
+        <location>http://scriptedlife.com/processing/film_galaxy_v2/</location>
+        <date>10 Nov &apos;08</date>
+    </software>
+    <software name="Marketscape" by="Christian Marc Schmidt">
+        <location>http://www.christianmarcschmidt.com/index.php?template=project&amp;id=marketscape</location>
+        <date>09 Nov &apos;08</date>
+    </software>
+    <software name="EmbeddedProject" by="aaajiao">
+        <location>http://www.eventstructure.com/works/embeddedproject/</location>
+        <date>09 Nov &apos;08</date>
+    </software>
+    <software name="Relational Topics" by="Antonis Mitsopoulos">
+        <location>http://antonis.mitsopoulos.co.uk/relationaltopics</location>
+        <date>07 Nov &apos;08</date>
+    </software>
+    <software name="Bicubic patch" by="tom3k">
+        <location>http://www.lep.pl/processing/bicubic_patch/</location>
+        <date>07 Nov &apos;08</date>
+    </software>
+    <software name="randomly lines in a 5d-space" by="fr">
+        <location>http://www.flickr.com/photos/28120841@N03/3007211705/</location>
+        <date>06 Nov &apos;08</date>
+    </software>
+    <software name="Shadow Cast Shapes" by="Don Havey">
+        <location>http://www.donhavey.com/blog/tutorials/processing/shadow-casting-strips/</location>
+        <date>05 Nov &apos;08</date>
+    </software>
+    <software name="Video Terrain" by="Don Havey">
+        <location>http://www.donhavey.com/blog/tutorials/processing/video-terrain/</location>
+        <date>05 Nov &apos;08</date>
+    </software>
+    <software name="Life Variations" by="Kyle McDonald">
+        <location>http://flickr.com/photos/kylemcdonald/sets/72157608649138962/</location>
+        <date>04 Nov &apos;08</date>
+    </software>
+    <software name="S/T" by="Tomas Rawski">
+        <location>http://www.tomasrawski.com.ar/essay/s-t</location>
+        <date>29 Oct &apos;08</date>
+    </software>
+    <software name="Pumpbeats (arduino &amp; processing)" by="Daniel Dihardja">
+        <location>http://www.xciba.de/pumpbeats</location>
+        <date>29 Oct &apos;08</date>
+    </software>
+    <software name="Syntype" by="Dimitre Lima">
+        <location>http://dmtr.org/syntype/</location>
+        <date>28 Oct &apos;08</date>
+    </software>
+    <software name="Catch Thy Frog" by="Fabricio Magalhães">
+        <location>http://www.fabriciodore.com/catch-thy-frog/</location>
+        <date>28 Oct &apos;08</date>
+    </software>
+    <software name="Fluid fire simulation" by="Peter Blaskovic [stones]">
+        <location>http://www.escapemotions.com/experiments/processing/fluid_fire/applet/index.html</location>
+        <date>27 Oct &apos;08</date>
+    </software>
+    <software name="polyhedron stereo projection" by="dmarec">
+        <location>http://www.imagedesmaths.fr/atelierPerso/polyStereoProjection/</location>
+        <date>26 Oct &apos;08</date>
+    </software>
+    <software name="The Reporter" by="Mark Nystrom">
+        <location>http://www.marknystrom.com/reporterweb.php</location>
+        <date>24 Oct &apos;08</date>
+    </software>
+    <software name="Zellomat 01" by="Michael Busch">
+        <location>http://www.busch-rosbach.de/processing/startup_MB.html</location>
+        <date>24 Oct &apos;08</date>
+    </software>
+    <software name="Captain Flow - Wiimote paintings" by="Max Werner">
+        <location>http://www.captainflow.com/tiltviewer/</location>
+        <date>23 Oct &apos;08</date>
+    </software>
+    <software name="Seaing - Application Using BlobDetection" by="Karin Lindstrom">
+        <location>http://www.karinlindstrom.com/Seaing/index.html</location>
+        <date>20 Oct &apos;08</date>
+    </software>
+    <software name="Canadian Election Visualization" by="Patrick Dinnen">
+        <location>http://www.hogtownconsulting.com/wordpress/archives/canadian-election-2008-visualization/</location>
+        <date>20 Oct &apos;08</date>
+    </software>
+    <software name="urbantrails" by="henrik">
+        <location>http://urbantrails.hippk.de/index.php</location>
+        <date>19 Oct &apos;08</date>
+    </software>
+    <software name="Binned Strata" by="Kyle McDonald">
+        <location>http://flickr.com/photos/kylemcdonald/sets/72157608139490801/</location>
+        <date>17 Oct &apos;08</date>
+    </software>
+    <software name="allRGB" by="Alexander Christiaan Jacob">
+        <location>http://allrgb.com/</location>
+        <date>17 Oct &apos;08</date>
+    </software>
+    <software name="Wandering vine + camera" by="Don Havey">
+        <location>http://www.donhavey.com/blog/tutorials/reverse-engineered-metamorphosis-part-ii/</location>
+        <date>17 Oct &apos;08</date>
+    </software>
+    <software name="dendriforms" by="Modestos Stavrakis">
+        <location>http://xylem.aegean.gr/~modestos/mo.blog/?p=341</location>
+        <date>16 Oct &apos;08</date>
+    </software>
+    <software name="Tokyo Tuesday: Japan, right now." by="Jonathan Soma">
+        <location>http://www.xoxosoma.com/tokyo-tuesday/</location>
+        <date>16 Oct &apos;08</date>
+    </software>
+    <software name="Lignes Horizontales" by="InnerStaad">
+        <location>http://www.innerstaad.com/frozen-music/lignes-horizontales</location>
+        <date>16 Oct &apos;08</date>
+    </software>
+    <software name="BITALIZER - bending bits into structure" by="Brian Reavis">
+        <location>http://random.inwo.com/bitalizer/</location>
+        <date>15 Oct &apos;08</date>
+    </software>
+    <software name="Solar System for ASU&apos;s IAP 368" by="Karin Lindstrom">
+        <location>http://karinlindstrom.com/processing/SolarSystem/applet/</location>
+        <date>10 Oct &apos;08</date>
+    </software>
+    <software name="I Am David Sparkle - Jaded Afghan video" by="Eduardo Omine">
+        <location>http://blog.omine.net/2008/10/08/i-am-david-sparkle-jaded-afghan/</location>
+        <date>09 Oct &apos;08</date>
+    </software>
+    <software name="Synesketch" by="Uros Krcadinac">
+        <location>http://www.synesketch.krcadinac.com/</location>
+        <date>04 Oct &apos;08</date>
+    </software>
     <software name="dadode_plus - exploring dodecahedrons" by="pikappa">
         <location>http://pikappa.ch/dadode/processing/dadode2/applet/</location>
         <date>01 Oct &apos;08</date>
