@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="processing/app/tools/format/|processing/app/macosx/" kind="src" path="src"/>
+	<classpathentry excluding="processing/app/tools/format/" kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/core"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/dxf"/>
@@ -16,6 +16,5 @@
 	<classpathentry kind="lib" path="lib/antlr.jar"/>
 	<classpathentry kind="lib" path="lib/jna.jar"/>
 	<classpathentry kind="lib" path="lib/ecj.jar"/>
-	<classpathentry kind="lib" path="C:/Users/fry/processing/build/windows/work/java/lib/tools.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
