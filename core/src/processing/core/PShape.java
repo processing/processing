@@ -27,30 +27,30 @@ import java.util.HashMap;
 
 
 /**
- * In-progress class to handle shape data, currently to be considered of  
+ * In-progress class to handle shape data, currently to be considered of
  * alpha or beta quality. Major structural work may be performed on this class
  * after the release of Processing 1.0. Such changes may include:
- *  
- * <ul> 
+ *
+ * <ul>
  * <li> addition of proper accessors to read shape vertex and coloring data
  * (this is the second most important part of having a PShape class after all).
  * <li> a means of creating PShape objects ala beginShape() and endShape().
- * <li> load(), update(), and cache methods ala PImage, so that shapes can 
+ * <li> load(), update(), and cache methods ala PImage, so that shapes can
  * have renderer-specific optimizations, such as vertex arrays in OpenGL.
  * <li> splitting this class into multiple classes to handle different
- * varieties of shape data (primitives vs collections of vertices vs paths) 
- * <li> change of package declaration, for instance moving the code into  
- * package processing.shape (if the code grows too much). 
+ * varieties of shape data (primitives vs collections of vertices vs paths)
+ * <li> change of package declaration, for instance moving the code into
+ * package processing.shape (if the code grows too much).
  * </ul>
- * 
- * <p>For the time being, this class and its shape() and loadShape() friends in 
- * PApplet exist as placeholders for more exciting things to come. If you'd 
- * like to work with this class, make a subclass (see how PShapeSVG works) 
- * and you can play with its internal methods all you like.</p> 
- * 
- * <p>Library developers are encouraged to create PShape objects when loading 
+ *
+ * <p>For the time being, this class and its shape() and loadShape() friends in
+ * PApplet exist as placeholders for more exciting things to come. If you'd
+ * like to work with this class, make a subclass (see how PShapeSVG works)
+ * and you can play with its internal methods all you like.</p>
+ *
+ * <p>Library developers are encouraged to create PShape objects when loading
  * shape data, so that they can eventually hook into the bounty that will be
- * the PShape interface, and the ease of loadShape() and shape().</p>  
+ * the PShape interface, and the ease of loadShape() and shape().</p>
  */
 public class PShape implements PConstants {
 
@@ -67,12 +67,12 @@ public class PShape implements PConstants {
   static public final int GEOMETRY = 3;
   /** The shape type, one of GROUP, PRIMITIVE, PATH, or GEOMETRY. */
   protected int family;
-  
+
   /** ELLIPSE, LINE, QUAD; TRIANGLE_FAN, QUAD_STRIP; etc. */
   protected int kind;
-  
+
   protected PMatrix matrix;
-  
+
   /** Texture or image data associated with this shape. */
   protected PImage image;
 
@@ -81,7 +81,7 @@ public class PShape implements PConstants {
   protected float y;
   protected float width;
   protected float height;
-  
+
   // set to false if the object is hidden in the layers palette
   protected boolean visible = true;
 
@@ -93,7 +93,7 @@ public class PShape implements PConstants {
 
   protected boolean fill;
   protected int fillColor;
-  
+
   /** Temporary toggle for whether styles should be honored. */
   protected boolean style = true;
 
@@ -102,11 +102,11 @@ public class PShape implements PConstants {
 
   protected int vertexCount;
   /**
-   * When drawing POLYGON shapes, the second param is an array of length 
+   * When drawing POLYGON shapes, the second param is an array of length
    * VERTEX_FIELD_COUNT. When drawing PATH shapes, the second param has only
    * two variables.
    */
-  protected float[][] vertices;  
+  protected float[][] vertices;
 
   static public final int VERTEX = 0;
   static public final int BEZIER_VERTEX = 1;
@@ -117,7 +117,7 @@ public class PShape implements PConstants {
   protected int[] vertexCodes;
   /** True if this is a closed path. */
   protected boolean close;
-  
+
   // should this be called vertices (consistent with PGraphics internals)
   // or does that hurt flexibility?
 
@@ -160,8 +160,8 @@ public class PShape implements PConstants {
   public PShape() {
     this.family = GROUP;
   }
-  
-  
+
+
   public PShape(int family) {
     this.family = family;
   }
@@ -170,26 +170,26 @@ public class PShape implements PConstants {
   public void setName(String name) {
     this.name = name;
   }
-  
-  
+
+
   public String getName() {
     return name;
   }
-  
-  
+
+
   public boolean isVisible() {
     return visible;
   }
-  
-  
+
+
   public void setVisible(boolean visible) {
     this.visible = visible;
   }
 
 
   /**
-   * Overrides this shape's style information and uses PGraphics styles and 
-   * colors. Identical to ignoreStyles(true). Also disables styles for all 
+   * Overrides this shape's style information and uses PGraphics styles and
+   * colors. Identical to ignoreStyles(true). Also disables styles for all
    * child shapes.
    */
   public void disableStyle() {
@@ -206,13 +206,13 @@ public class PShape implements PConstants {
    */
   public void enableStyle() {
     style = true;
-    
+
     for (int i = 0; i < childCount; i++) {
       children[i].enableStyle();
     }
   }
 
-  
+
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
@@ -223,14 +223,14 @@ public class PShape implements PConstants {
       height = 1;
     }
   }
-  
-  
+
+
   public float getWidth() {
     checkBounds();
     return width;
   }
-  
-  
+
+
   public float getHeight() {
     checkBounds();
     return height;
@@ -239,14 +239,14 @@ public class PShape implements PConstants {
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-  
+
   /*
   boolean strokeSaved;
   int strokeColorSaved;
   float strokeWeightSaved;
   int strokeCapSaved;
   int strokeJoinSaved;
-  
+
   boolean fillSaved;
   int fillColorSaved;
 
@@ -254,7 +254,7 @@ public class PShape implements PConstants {
   int ellipseModeSaved;
   int shapeModeSaved;
   */
-  
+
 
   protected void pre(PGraphics g) {
     if (matrix != null) {
@@ -281,8 +281,8 @@ public class PShape implements PConstants {
       styles(g);
     }
   }
-  
-  
+
+
   protected void styles(PGraphics g) {
     // should not be necessary because using only the int version of color
     //parent.colorMode(PConstants.RGB, 255);
@@ -332,7 +332,7 @@ public class PShape implements PConstants {
       g.popStyle();
     }
   }
-  
+
 
   /**
    * Called by the following (the shape() command adds the g)
@@ -346,7 +346,7 @@ public class PShape implements PConstants {
       post(g);
     }
   }
-  
+
 
   /**
    * Draws the SVG document.
@@ -363,36 +363,36 @@ public class PShape implements PConstants {
       drawPath(g);
     }
   }
-  
-  
+
+
   protected void drawGroup(PGraphics g) {
     for (int i = 0; i < childCount; i++) {
       children[i].draw(g);
     }
   }
-  
+
 
   protected void drawPrimitive(PGraphics g) {
     if (kind == POINT) {
       g.point(params[0], params[1]);
-      
+
     } else if (kind == LINE) {
       if (params.length == 4) {  // 2D
-        g.line(params[0], params[1], 
+        g.line(params[0], params[1],
                params[2], params[3]);
       } else {  // 3D
-        g.line(params[0], params[1], params[2], 
+        g.line(params[0], params[1], params[2],
                params[3], params[4], params[5]);
       }
 
     } else if (kind == TRIANGLE) {
-      g.triangle(params[0], params[1], 
+      g.triangle(params[0], params[1],
                  params[2], params[3],
                  params[4], params[5]);
-      
+
     } else if (kind == QUAD) {
-      g.quad(params[0], params[1], 
-             params[2], params[3], 
+      g.quad(params[0], params[1],
+             params[2], params[3],
              params[4], params[5],
              params[6], params[7]);
 
@@ -408,18 +408,18 @@ public class PShape implements PConstants {
     } else if (kind == ELLIPSE) {
       g.ellipseMode(CORNER);
       g.ellipse(params[0], params[1], params[2], params[3]);
-    
+
     } else if (kind == ARC) {
       g.ellipseMode(CORNER);
       g.arc(params[0], params[1], params[2], params[3], params[4], params[5]);
-    
+
     } else if (kind == BOX) {
       if (params.length == 1) {
         g.box(params[0]);
       } else {
         g.box(params[0], params[1], params[2]);
       }
-      
+
     } else if (kind == SPHERE) {
       g.sphere(params[0]);
     }
@@ -469,10 +469,10 @@ public class PShape implements PConstants {
           }
         }
         g.edge(vert[i][EDGE] == 1);
-        
+
         if (code[i] == VERTEX) {
           g.vertex(vert[i]);
-          
+
         } else if (code[i] == BEZIER_VERTEX) {
           float z0 = vert[i+0][Z];
           float z1 = vert[i+1][Z];
@@ -505,56 +505,70 @@ public class PShape implements PConstants {
     // Paths might be empty (go figure)
     // http://dev.processing.org/bugs/show_bug.cgi?id=982
     if (vertices == null) return;
-    
+
     g.beginShape();
-    int index = 0;
-    
-    if (vertices[0].length == 2) {
-      for (int j = 0; j < vertexCodeCount; j++) {
-        switch (vertexCodes[j]) {
 
-        case VERTEX:
-          g.vertex(vertices[index][X], vertices[index][Y]);
-          index++;
-          break;
-
-        case BEZIER_VERTEX:
-          g.bezierVertex(vertices[index+0][X], vertices[index+0][Y],
-                         vertices[index+1][X], vertices[index+1][Y],
-                         vertices[index+2][X], vertices[index+2][Y]);
-          index += 3;
-          break;
-
-        case CURVE_VERTEX:
-          g.curveVertex(vertices[index][X], vertices[index][Y]);
-          index++;
-
-        case BREAK:
-          g.breakShape();
+    if (vertexCodeCount == 0) {  // each point is a simple vertex
+      if (vertices[0].length == 2) {  // drawing 2D vertices
+        for (int i = 0; i < vertexCount; i++) {
+          g.vertex(vertices[i][X], vertices[i][Y]);
+        }
+      } else {  // drawing 3D vertices
+        for (int i = 0; i < vertexCount; i++) {
+          g.vertex(vertices[i][X], vertices[i][Y], vertices[i][Z]);
         }
       }
-    } else {
-      for (int j = 0; j < vertexCodeCount; j++) {
-        switch (vertexCodes[j]) {
 
-        case VERTEX:
-          g.vertex(vertices[index][X], vertices[index][Y], vertices[index][Z]);
-          index++;
-          break;
+    } else {  // coded set of vertices
+      int index = 0;
+      
+      if (vertices[0].length == 2) {  // drawing a 2D path
+        for (int j = 0; j < vertexCodeCount; j++) {
+          switch (vertexCodes[j]) {
 
-        case BEZIER_VERTEX:
-          g.bezierVertex(vertices[index+0][X], vertices[index+0][Y], vertices[index+0][Z],
-                         vertices[index+1][X], vertices[index+1][Y], vertices[index+1][Z],
-                         vertices[index+2][X], vertices[index+2][Y], vertices[index+2][Z]);
-          index += 3;
-          break;
+          case VERTEX:
+            g.vertex(vertices[index][X], vertices[index][Y]);
+            index++;
+            break;
 
-        case CURVE_VERTEX:
-          g.curveVertex(vertices[index][X], vertices[index][Y], vertices[index][Z]);
-          index++;
+          case BEZIER_VERTEX:
+            g.bezierVertex(vertices[index+0][X], vertices[index+0][Y],
+                           vertices[index+1][X], vertices[index+1][Y],
+                           vertices[index+2][X], vertices[index+2][Y]);
+            index += 3;
+            break;
 
-        case BREAK:
-          g.breakShape();
+          case CURVE_VERTEX:
+            g.curveVertex(vertices[index][X], vertices[index][Y]);
+            index++;
+
+          case BREAK:
+            g.breakShape();
+          }
+        }
+      } else {  // drawing a 3D path
+        for (int j = 0; j < vertexCodeCount; j++) {
+          switch (vertexCodes[j]) {
+
+          case VERTEX:
+            g.vertex(vertices[index][X], vertices[index][Y], vertices[index][Z]);
+            index++;
+            break;
+
+          case BEZIER_VERTEX:
+            g.bezierVertex(vertices[index+0][X], vertices[index+0][Y], vertices[index+0][Z],
+                           vertices[index+1][X], vertices[index+1][Y], vertices[index+1][Z],
+                           vertices[index+2][X], vertices[index+2][Y], vertices[index+2][Z]);
+            index += 3;
+            break;
+
+          case CURVE_VERTEX:
+            g.curveVertex(vertices[index][X], vertices[index][Y], vertices[index][Z]);
+            index++;
+
+          case BREAK:
+            g.breakShape();
+          }
         }
       }
     }
@@ -564,17 +578,17 @@ public class PShape implements PConstants {
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-  
+
   public int getChildCount() {
     return childCount;
   }
-  
-  
+
+
   public PShape getChild(int index) {
     return children[index];
   }
-  
-  
+
+
   public PShape getChild(String target) {
     if (name != null && name.equals(target)) {
       return this;
@@ -589,22 +603,22 @@ public class PShape implements PConstants {
     }
     return null;
   }
-  
-  
+
+
   /**
-   * Same as getChild(name), except that it first walks all the way up the 
-   * hierarchy to the farthest parent, so that children can be found anywhere. 
+   * Same as getChild(name), except that it first walks all the way up the
+   * hierarchy to the farthest parent, so that children can be found anywhere.
    */
   public PShape findChild(String target) {
     if (parent == null) {
       return getChild(target);
-      
+
     } else {
       return parent.findChild(target);
     }
   }
 
-  
+
   // can't be just 'add' because that suggests additive geometry
   public void addChild(PShape who) {
     if (children == null) {
@@ -659,7 +673,7 @@ public class PShape implements PConstants {
     matrix.translate(tx, ty);
   }
 
-  
+
   public void translate(float tx, float ty, float tz) {
     checkMatrix(3);
     matrix.translate(tx, ty, 0);
@@ -670,12 +684,12 @@ public class PShape implements PConstants {
     rotate(angle, 1, 0, 0);
   }
 
-  
+
   public void rotateY(float angle) {
     rotate(angle, 0, 1, 0);
   }
 
-  
+
   public void rotateZ(float angle) {
     rotate(angle, 0, 0, 1);
   }
@@ -686,7 +700,7 @@ public class PShape implements PConstants {
     matrix.rotate(angle);
   }
 
-  
+
   public void rotate(float angle, float v0, float v1, float v2) {
     checkMatrix(3);
     matrix.rotate(angle, v0, v1, v2);
@@ -701,13 +715,13 @@ public class PShape implements PConstants {
     matrix.scale(s);
   }
 
-  
+
   public void scale(float sx, float sy) {
     checkMatrix(2);
     matrix.scale(sx, sy);
   }
 
-  
+
   public void scale(float x, float y, float z) {
     checkMatrix(3);
     matrix.scale(x, y, z);
@@ -721,8 +735,8 @@ public class PShape implements PConstants {
     checkMatrix(2);
     matrix.reset();
   }
-  
-  
+
+
   public void applyMatrix(PMatrix source) {
     if (source instanceof PMatrix2D) {
       applyMatrix((PMatrix2D) source);
@@ -730,16 +744,16 @@ public class PShape implements PConstants {
       applyMatrix((PMatrix3D) source);
     }
   }
-  
-  
+
+
   public void applyMatrix(PMatrix2D source) {
-    applyMatrix(source.m00, source.m01, 0, source.m02, 
+    applyMatrix(source.m00, source.m01, 0, source.m02,
                 source.m10, source.m11, 0, source.m12,
                 0, 0, 1, 0,
                 0, 0, 0, 1);
   }
 
-  
+
   public void applyMatrix(float n00, float n01, float n02,
                           float n10, float n11, float n12) {
     checkMatrix(2);
@@ -749,7 +763,7 @@ public class PShape implements PConstants {
                  0,   0,   0,   1);
   }
 
-  
+
   public void apply(PMatrix3D source) {
     applyMatrix(source.m00, source.m01, source.m02, source.m03,
                 source.m10, source.m11, source.m12, source.m13,
@@ -774,7 +788,7 @@ public class PShape implements PConstants {
 
 
   /**
-   * Make sure that the shape's matrix is 1) not null, and 2) has a matrix 
+   * Make sure that the shape's matrix is 1) not null, and 2) has a matrix
    * that can handle <em>at least</em> the specified number of dimensions.
    */
   protected void checkMatrix(int dimensions) {
@@ -785,7 +799,7 @@ public class PShape implements PConstants {
         matrix = new PMatrix3D();
       }
     } else if (dimensions == 3 && (matrix instanceof PMatrix2D)) {
-      // time for an upgrayedd for a double dose of my pimpin' 
+      // time for an upgrayedd for a double dose of my pimpin'
       matrix = new PMatrix3D(matrix);
     }
   }

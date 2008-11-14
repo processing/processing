@@ -56,7 +56,7 @@ import processing.xml.XMLElement;
  *
  * This code is based on the Candy library written by Michael Chang, which was
  * later revised and expanded for use as a Processing core library by Ben Fry.
- * Thanks to Ricard Marxer Pi��n for help with better Inkscape support in 0154.
+ * Thanks to Ricard Marxer Pinon for help with better Inkscape support in 0154.
  *
  * <p> <hr noshade> <p>
  *
