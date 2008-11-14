@@ -1,5 +1,20 @@
 0157 pde
 
+_ disallow add file to sketch if it's an example or read-only
+
+_ if untitled, and not modified, and closing on macosx (only)
+_   don't close the sketch and create a new one
+_   put up dialog box telling the user to use 'quit' or change the preference
+_   or just automatically quit at that point?
+
+_ opengl broken on vista laptop with articulate
+_   when background() is not called to clear the buffers, causes flashing
+_   need to disable swapping buffers until background() is used?
+_   (happens with 0135, 0148 on this machine as well)
+_   may need to add explicit noBackground() call
+
+_ when exporting to application (or applet) don't copy .java files from folder
+_   (they'll be copied as source files later)
 
 _ hitting ESC inside Color Selector will quit Processing
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1006
