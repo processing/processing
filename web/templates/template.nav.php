@@ -71,7 +71,7 @@ $pages = array(
     'Collection'    => array('/exhibition/curated_page_new.html', 2),
     #'Network Links'    => array($networkPages, 2),
     'Network Links'    => array('/exhibition/network_page_new.html', 2),
-    #'Features'    => array('/exhibition/index.html', 2),
+    'Features'    => array('/exhibition/features/', 2),
     
     'Learning'      => array('/learning/index.html', 1),
     #'Examples'     => array('/learning/index.html', 2),
@@ -112,8 +112,8 @@ function navigation($section = '')
     #$learn = array('Learning', 'Examples', 'Tutorials');
     #$learn = array('Learning', 'Overview', 'Getting Started', 'Basics', 'Topics', '3D & OpenGL', 'Library Examples', 'Books', 'Hacks');
     $learn = array('Learning', 'Overview', 'Getting Started', 'Examples', 'Tutorials', 'Books');
-    #$exhib = array('Exhibition', 'Index', 'Collection', 'Network Links', 'Features');    
-    $exhib = array('Exhibition', 'Index', 'Collection', 'Network Links');    
+    $exhib = array('Exhibition', 'Index', 'Collection', 'Network Links', 'Features');    
+    #$exhib = array('Exhibition', 'Index', 'Collection', 'Network Links');    
 
     $html = "\t\t\t".'<div id="navigation">'."\n";
 
@@ -138,9 +138,9 @@ function navigation($section = '')
 	
          $html .= "\t\t\t\t\t" . l('Index', $section == 'Index') . " \\\n";
          $html .= "\t\t\t\t\t" . l('Collection', $section == 'Collection') . " \\\n";
-	 $html .= "\t\t\t\t\t" . l('Network Links', $section == 'Network Links') . " \n";
-	 #$html .= "\t\t\t\t\t" . l('Interviews', $section == 'Interviews') . " \n";
-	 $html .= "\t\t\t\t</div>\n";    
+	 	 $html .= "\t\t\t\t\t" . l('Network Links', $section == 'Network Links') . " \n";
+	 	 $html .= "\t\t\t\t\t" . l('Features', $section == 'Features') . " \n";
+	 	 $html .= "\t\t\t\t</div>\n";    
    
      } else if (in_array($section, $ref)) {
         $html .= "\t\t\t\t" . '<div class="navBar" id="subNav">' . "\n";
