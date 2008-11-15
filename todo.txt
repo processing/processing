@@ -1,4 +1,7 @@
 0157 pde
+X show sketch folder fails for directories containing umlauts
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1010
+
 
 _ update to java 6u10 for linux and windows
 _ update applet.html to point at java 6u10 with the new auto-update stuff

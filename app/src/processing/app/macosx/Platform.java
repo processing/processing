@@ -103,6 +103,11 @@ public class Platform extends processing.app.Platform {
 
   public void openURL(String url) throws Exception {
     if (!url.startsWith("http://")) {
+      // Assume this is a file instead, and just open it.
+      // Extension of http://dev.processing.org/bugs/show_bug.cgi?id=1010
+      processing.core.PApplet.open(url);
+
+      /*
       // prepend file:// on this guy since it's a file
       url = "file://" + url;
 
@@ -122,6 +127,7 @@ public class Platform extends processing.app.Platform {
         }
         url = sb.toString();
       }
+      */
     }
     com.apple.eio.FileManager.openURL(url);
   }

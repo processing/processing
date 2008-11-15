@@ -1402,8 +1402,7 @@ public class Base {
   static public void showReference(String filename) {
     File referenceFolder = Base.getContentFile("reference");
     File referenceFile = new File(referenceFolder, filename);
-    //openURL(referenceFile.getAbsolutePath());
-    PApplet.open(referenceFile.getAbsolutePath());
+    openURL(referenceFile.getAbsolutePath());
   }
 
 
