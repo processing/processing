@@ -138,7 +138,7 @@ function navigation($section = '')
 	
          $html .= "\t\t\t\t\t" . l('Index', $section == 'Index') . " \\\n";
          $html .= "\t\t\t\t\t" . l('Collection', $section == 'Collection') . " \\\n";
-	 	 $html .= "\t\t\t\t\t" . l('Network Links', $section == 'Network Links') . " \n";
+	 	 $html .= "\t\t\t\t\t" . l('Network Links', $section == 'Network Links') . " \\\n";
 	 	 $html .= "\t\t\t\t\t" . l('Features', $section == 'Features') . " \n";
 	 	 $html .= "\t\t\t\t</div>\n";    
    
