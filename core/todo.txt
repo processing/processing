@@ -13,6 +13,7 @@ _   need to throw an error when it's used
 
 _ OPENGL sketches flicker w/ Vista when background() is not used inside draw()
 _   http://dev.processing.org/bugs/show_bug.cgi?id=930
+_   Disabling Aero scheme prevents the problem
 _ Present mode and OPENGL not working in 0156 with Windows Vista
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1009
 

@@ -34,10 +34,10 @@ import processing.app.Base;
 
 
 /**
- * Platform handler for Mac OS X. 
+ * Platform handler for Mac OS X.
  */
 public class Platform extends processing.app.Platform {
-  
+
   public void setLookAndFeel() throws Exception {
     // Use the Quaqua L & F on OS X to make JFileChooser less awful
     UIManager.setLookAndFeel("ch.randelshofer.quaqua.QuaquaLookAndFeel");
@@ -46,7 +46,7 @@ public class Platform extends processing.app.Platform {
     UIManager.put("Component.visualMargin", new Insets(1, 1, 1, 1));
   }
 
-  
+
   public void init(Base base) {
     ThinkDifferent.init(base);
     /*
@@ -77,21 +77,21 @@ public class Platform extends processing.app.Platform {
     }
     */
   }
-  
-  
+
+
   public File getSettingsFolder() throws Exception {
     return new File(getLibraryFolder(), "Processing");
   }
-  
-  
+
+
   public File getDefaultSketchbookFolder() throws Exception {
     return new File(getDocumentsFolder(), "Processing");
     /*
-    // looking for /Users/blah/Documents/Processing      
+    // looking for /Users/blah/Documents/Processing
     try {
       Class clazz = Class.forName("processing.app.BaseMacOS");
       Method m = clazz.getMethod("getDocumentsFolder", new Class[] { });
-      String documentsPath = (String) m.invoke(null, new Object[] { });        
+      String documentsPath = (String) m.invoke(null, new Object[] { });
       sketchbookFolder = new File(documentsPath, "Processing");
 
     } catch (Exception e) {
@@ -99,8 +99,8 @@ public class Platform extends processing.app.Platform {
     }
     */
   }
-  
-  
+
+
   public void openURL(String url) throws Exception {
     if (!url.startsWith("http://")) {
       // prepend file:// on this guy since it's a file
@@ -125,24 +125,25 @@ public class Platform extends processing.app.Platform {
     }
     com.apple.eio.FileManager.openURL(url);
   }
-  
-  
+
+
   public boolean openFolderAvailable() {
     return true;
   }
-  
-  
-  public void openFolder(File file) throws Exception {
-    openURL(file.getAbsolutePath());  // handles char replacement, etc
-  }
-  
-  
-  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-  
 
-  // Some of these are supposedly constants in com.apple.eio.FileManager, 
+
+  public void openFolder(File file) throws Exception {
+    //openURL(file.getAbsolutePath());  // handles char replacement, etc
+    processing.core.PApplet.open(file.getAbsolutePath());
+  }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  // Some of these are supposedly constants in com.apple.eio.FileManager,
   // however they don't seem to link properly from Eclipse.
-  
+
   static final int kDocumentsFolderType =
     ('d' << 24) | ('o' << 16) | ('c' << 8) | 's';
   //static final int kPreferencesFolderType =
@@ -151,11 +152,11 @@ public class Platform extends processing.app.Platform {
     ('d' << 24) | ('l' << 16) | ('i' << 8) | 'b';
   static final short kUserDomain = -32763;
 
-  
+
   // apple java extensions documentation
   // http://developer.apple.com/documentation/Java/Reference/1.5.0
   //   /appledoc/api/com/apple/eio/FileManager.html
-  
+
   // carbon folder constants
   // http://developer.apple.com/documentation/Carbon/Reference
   //   /Folder_Manager/folder_manager_ref/constant_6.html#/
@@ -169,8 +170,8 @@ public class Platform extends processing.app.Platform {
   protected String getLibraryFolder() throws FileNotFoundException {
     return FileManager.findFolder(kUserDomain, kDomainLibraryFolderType);
   }
-  
-  
+
+
   protected String getDocumentsFolder() throws FileNotFoundException {
     return FileManager.findFolder(kUserDomain, kDocumentsFolderType);
   }

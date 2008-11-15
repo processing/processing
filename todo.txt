@@ -1,5 +1,12 @@
 0157 pde
 
+_ update to java 6u10 for linux and windows
+_ update applet.html to point at java 6u10 with the new auto-update stuff
+_ also update applet on the home page to do the same
+
+_ show sketch folder fails for directories containing umlauts
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1010
+
 _ disallow add file to sketch if it's an example or read-only
 
 _ if untitled, and not modified, and closing on macosx (only)
