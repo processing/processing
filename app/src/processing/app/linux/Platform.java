@@ -53,9 +53,11 @@ public class Platform extends processing.app.Platform {
 
 
   public void openURL(String url) throws Exception {
-    String launcher = Preferences.get("launcher.linux");
-    if (launcher != null) {
-      Runtime.getRuntime().exec(new String[] { launcher, url });
+    if (openFolderAvailable()) {
+      String launcher = Preferences.get("launcher");
+      if (launcher != null) {
+        Runtime.getRuntime().exec(new String[] { launcher, url });
+      }
     }
   }
 
@@ -94,7 +96,7 @@ public class Platform extends processing.app.Platform {
         //processing.core.PApplet.println(params);
         /*Process p =*/ Runtime.getRuntime().exec(params);
         /*int result =*/ //p.waitFor();
-      } catch (Exception e) { 
+      } catch (Exception e) {
         e.printStackTrace();
       }
     } else {
