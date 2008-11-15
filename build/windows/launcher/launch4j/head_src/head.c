@@ -789,6 +789,8 @@ BOOL appendToPathVar(const char* path) {
 	return SetEnvironmentVariable("Path", chBuf);
 }
 
+// may need to ignore STILL_ACTIVE (error code 259) here
+// http://msdn.microsoft.com/en-us/library/ms683189(VS.85).aspx
 DWORD execute(const BOOL wait) {
 	STARTUPINFO si;
     memset(&pi, 0, sizeof(pi));
