@@ -2273,9 +2273,18 @@ public class PGraphics extends PImage implements PConstants {
     // loadImageAsync() sets width and height to -1 when loading fails.
     if (image.width == -1 || image.height == -1) return;
 
-    imageImpl(image,
-              x, y, x+image.width, y+image.height,
-              0, 0, image.width, image.height);
+    if (imageMode == CORNER || imageMode == CORNERS) {
+      imageImpl(image,
+                x, y, x+image.width, y+image.height,
+                0, 0, image.width, image.height);
+
+    } else if (imageMode == CENTER) {
+      float x1 = x - image.width/2;
+      float y1 = y - image.height/2;
+      imageImpl(image,
+                x1, y1, x1+image.width, y1+image.height,
+                0, 0, image.width, image.height);
+    }
   }
 
 
