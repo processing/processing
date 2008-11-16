@@ -1,21 +1,22 @@
 0157 core
 X SVG polygon shapes not drawing since loadShape() and PShape changes
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1005
-
-_ image(a, x, y) not honoring imageMode()
-_   need to just pass image(a, x, y) to image(a, x, y, a.width, a.height)
-_   rather than passing it directly to imageImpl()
-
-_ No textures render with hint(ENABLE_ACCURATE_TEXTURES)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=985
-_   need to remove the hint from the reference
-_   need to throw an error when it's used
+X image(a, x, y) not honoring imageMode(CENTER)
+X   need to just pass image(a, x, y) to image(a, x, y, a.width, a.height)
+X   rather than passing it directly to imageImpl()
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1013
 
 _ OPENGL sketches flicker w/ Vista when background() is not used inside draw()
 _   http://dev.processing.org/bugs/show_bug.cgi?id=930
 _   Disabling Aero scheme prevents the problem
 _ Present mode and OPENGL not working in 0156 with Windows Vista
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1009
+_   -Dsun.java2d.d3d=false seems to fix the problem
+
+_ No textures render with hint(ENABLE_ACCURATE_TEXTURES)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=985
+_   need to remove the hint from the reference
+_   need to throw an error when it's used
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
