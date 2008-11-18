@@ -917,7 +917,7 @@ public class PGraphics2D extends PGraphics {
       for (int y = y1; y < y2; y++) {
         int index = y*width + x1;
         for (int x = 0; x < ww; x++) {
-          pixels[index] = _blendFill(pixels[index]);
+          pixels[index] = blend_fill(pixels[index]);
           index++;
         }
       }
@@ -1321,17 +1321,19 @@ public class PGraphics2D extends PGraphics {
 
   //////////////////////////////////////////////////////////////
 
+  // UGLY RENDERING SHITE
+
 
   // expects properly clipped coords, hence does
     // NOT check if x/y are in bounds [toxi]
-    private void thin_pointAt(int x, int y, float z, int color) {
+    private void thin_point_at(int x, int y, float z, int color) {
       int index = y*width+x; // offset values are pre-calced in constructor
       pixels[index] = color;
     }
 
     // expects offset/index in pixelbuffer array instead of x/y coords
     // used by optimized parts of thin_flat_line() [toxi]
-    private void thin_pointAtIndex(int offset, float z, int color) {
+    private void thin_point_at_index(int offset, float z, int color) {
       pixels[offset] = color;
     }
 
@@ -1377,8 +1379,8 @@ public class PGraphics2D extends PGraphics {
       int nx1,ny1,nx2,ny2;
 
       // get the "dips" for the points to clip
-      int code1 = thin_flat_lineClipCode(x1, y1);
-      int code2 = thin_flat_lineClipCode(x2, y2);
+      int code1 = thin_flat_line_clip_code(x1, y1);
+      int code2 = thin_flat_line_clip_code(x2, y2);
 
       if ((code1 & code2)!=0) {
         return;
@@ -1389,7 +1391,7 @@ public class PGraphics2D extends PGraphics {
           float a1 = 0, a2 = 1, a = 0;
           for (int i=0;i<4;i++) {
             if (((dip>>i)%2)==1) {
-              a = thin_flat_lineSlope((float)x1, (float)y1,
+              a = thin_flat_line_slope((float)x1, (float)y1,
                                       (float)x2, (float)y2, i+1);
               if (((code1>>i)%2)==1) {
                 a1 = (float)Math.max(a, a1);
@@ -1433,7 +1435,7 @@ public class PGraphics2D extends PGraphics {
         if (ny1>ny2) { int ty=ny1; ny1=ny2; ny2=ty; }
         int offset=ny1*width+nx1;
         for(int j=ny1; j<=ny2; j++) {
-          thin_pointAtIndex(offset,0,strokeColor);
+          thin_point_at_index(offset,0,strokeColor);
           offset+=width;
         }
         return;
@@ -1441,44 +1443,46 @@ public class PGraphics2D extends PGraphics {
         // special case: horizontal line
         if (nx1>nx2) { int tx=nx1; nx1=nx2; nx2=tx; }
         int offset=ny1*width+nx1;
-        for(int j=nx1; j<=nx2; j++) thin_pointAtIndex(offset++,0,strokeColor);
+        for(int j=nx1; j<=nx2; j++) thin_point_at_index(offset++,0,strokeColor);
         return;
       } else if (yLonger) {
         if (longLen>0) {
           longLen+=ny1;
           for (int j=0x8000+(nx1<<16);ny1<=longLen;++ny1) {
-            thin_pointAt(j>>16, ny1, 0, strokeColor);
+            thin_point_at(j>>16, ny1, 0, strokeColor);
             j+=decInc;
           }
           return;
         }
         longLen+=ny1;
         for (int j=0x8000+(nx1<<16);ny1>=longLen;--ny1) {
-          thin_pointAt(j>>16, ny1, 0, strokeColor);
+          thin_point_at(j>>16, ny1, 0, strokeColor);
           j-=decInc;
         }
         return;
       } else if (longLen>0) {
         longLen+=nx1;
         for (int j=0x8000+(ny1<<16);nx1<=longLen;++nx1) {
-          thin_pointAt(nx1, j>>16, 0, strokeColor);
+          thin_point_at(nx1, j>>16, 0, strokeColor);
           j+=decInc;
         }
         return;
       }
       longLen+=nx1;
       for (int j=0x8000+(ny1<<16);nx1>=longLen;--nx1) {
-        thin_pointAt(nx1, j>>16, 0, strokeColor);
+        thin_point_at(nx1, j>>16, 0, strokeColor);
         j-=decInc;
       }
     }
 
-    private int thin_flat_lineClipCode(float x, float y) {
+    
+    private int thin_flat_line_clip_code(float x, float y) {
       return ((y < 0 ? 8 : 0) | (y > height1 ? 4 : 0) |
               (x < 0 ? 2 : 0) | (x > width1 ? 1 : 0));
     }
 
-    private float thin_flat_lineSlope(float x1, float y1,
+    
+    private float thin_flat_line_slope(float x1, float y1,
                                       float x2, float y2, int border) {
       switch (border) {
       case 4: {
@@ -1498,29 +1502,6 @@ public class PGraphics2D extends PGraphics {
     }
 
 
-    private boolean flat_line_retribution(float x1, float y1,
-                                          float x2, float y2,
-                                          float r1, float g1, float b1) {
-      /*
-      // assume that if it is/isn't big in one dir, then the
-      // other doesn't matter, cuz that's a weird case
-      float lwidth  = m00*strokeWeight + m01*strokeWeight;
-      //float lheight = m10*strokeWeight + m11*strokeWeight;
-      // lines of stroke thickness 1 can be anywhere from -1.41 to 1.41
-      if ((strokeWeight < TWO) && (!hints[SCALE_STROKE_WIDTH])) {
-        //if (abs(lwidth) < 1.5f) {
-        //System.out.println("flat line retribution " + r1 + " " + g1 + " " + b1);
-        int strokeSaved = strokeColor;
-        strokeColor = float_color(r1, g1, b1);
-        thin_flat_line((int)x1, (int)y1, (int)x2, (int)y2);
-        strokeColor = strokeSaved;
-        return true;
-      }
-      */
-      return false;
-    }
-
-
     private void thick_flat_line(float ox1, float oy1,
                                  float r1, float g1, float b1, float a1,
                                  float ox2, float oy2,
@@ -1528,16 +1509,11 @@ public class PGraphics2D extends PGraphics {
       spolygon.interpARGB = (r1 != r2) || (g1 != g2) || (b1 != b2) || (a1 != a2);
 //      spolygon.interpZ = false;
 
-      if (!spolygon.interpARGB &&
-          flat_line_retribution(ox1, oy1, ox2, oy2, r1, g1, b1)) {
-        return;
-      }
-
       float dX = ox2-ox1 + EPSILON;
       float dY = oy2-oy1 + EPSILON;
       float len = (float) Math.sqrt(dX*dX + dY*dY);
 
-      // TODO strokeWidth should be transformed!
+      // TODO stroke width should be transformed!
       float rh = strokeWeight / len;
 
       float dx0 = rh * dY;
@@ -1548,32 +1524,32 @@ public class PGraphics2D extends PGraphics {
       spolygon.reset(4);
 
       float svertex[] = spolygon.vertices[0];
-      svertex[X] = ox1+dx0;
-      svertex[Y] = oy1-dy0;
+      svertex[TX] = ox1+dx0;
+      svertex[TY] = oy1-dy0;
       svertex[R] = r1;
       svertex[G] = g1;
       svertex[B] = b1;
       svertex[A] = a1;
 
       svertex = spolygon.vertices[1];
-      svertex[X] = ox1-dx0;
-      svertex[Y] = oy1+dy0;
+      svertex[TX] = ox1-dx0;
+      svertex[TY] = oy1+dy0;
       svertex[R] = r1;
       svertex[G] = g1;
       svertex[B] = b1;
       svertex[A] = a1;
 
       svertex = spolygon.vertices[2];
-      svertex[X] = ox2-dx1;
-      svertex[Y] = oy2+dy1;
+      svertex[TX] = ox2-dx1;
+      svertex[TY] = oy2+dy1;
       svertex[R] = r2;
       svertex[G] = g2;
       svertex[B] = b2;
       svertex[A] = a2;
 
       svertex = spolygon.vertices[3];
-      svertex[X] = ox2+dx1;
-      svertex[Y] = oy2-dy1;
+      svertex[TX] = ox2+dx1;
+      svertex[TY] = oy2-dy1;
       svertex[R] = r2;
       svertex[G] = g2;
       svertex[B] = b2;
@@ -1583,94 +1559,15 @@ public class PGraphics2D extends PGraphics {
     }
 
 
-    /*
-    // OPT version without z coords can save 8 multiplies and some other
-    private void spatial_line(float x1, float y1,
-                              float r1, float g1, float b1,
-                              float x2, float y2,
-                              float r2, float g2, float b2) {
-      spatial_line(x1, y1, 0, r1, g1, b1,
-                   x2, y2, 0, r2, g2, b2);
-    }
-
-
-    // the incoming values are transformed,
-    // and the colors have been calculated
-
-    private void spatial_line(float x1, float y1, float z1,
-                              float r1, float g1, float b1,
-                              float x2, float y2, float z2,
-                              float r2, float g2, float b2) {
-      spolygon.interpARGB = (r1 != r2) || (g1 != g2) || (b1 != b2);
-      if (!spolygon.interpARGB &&
-          flat_line_retribution(x1, y1, x2, y2, r1, g1, b1)) {
-        return;
-      }
-
-      spolygon.interpZ = true;
-
-      float ox1 = x1; float oy1 = y1; float oz1 = z1;
-      float ox2 = x2; float oy2 = y2; float oz2 = z2;
-
-      float dX = ox2-ox1 + 0.0001f;
-      float dY = oy2-oy1 + 0.0001f;
-      float len = sqrt(dX*dX + dY*dY);
-
-      //float x0 = m00*0 + m01*0 + m03;
-
-      float rh = strokeWeight / len;
-
-      float dx0 = rh * dY;
-      float dy0 = rh * dX;
-      float dx1 = rh * dY;
-      float dy1 = rh * dX;
-
-      spolygon.reset(4);
-
-      float svertex[] = spolygon.vertices[0];
-      svertex[X] = ox1+dx0;
-      svertex[Y] = oy1-dy0;
-      svertex[Z] = oz1;
-      svertex[R] = r1; //calcR1;
-      svertex[G] = g1; //calcG1;
-      svertex[B] = b1; //calcB1;
-
-      svertex = spolygon.vertices[1];
-      svertex[X] = ox1-dx0;
-      svertex[Y] = oy1+dy0;
-      svertex[Z] = oz1;
-      svertex[R] = r1; //calcR1;
-      svertex[G] = g1; //calcG1;
-      svertex[B] = b1; //calcB1;
-
-      svertex = spolygon.vertices[2];
-      svertex[X] = ox2-dx1;
-      svertex[Y] = oy2+dy1;
-      svertex[Z] = oz2;
-      svertex[R] = r2; //calcR2;
-      svertex[G] = g2; //calcG2;
-      svertex[B] = b2; //calcB2;
-
-      svertex = spolygon.vertices[3];
-      svertex[X] = ox2+dx1;
-      svertex[Y] = oy2-dy1;
-      svertex[Z] = oz2;
-      svertex[R] = r2; //calcR2;
-      svertex[G] = g2; //calcG2;
-      svertex[B] = b2; //calcB2;
-
-      spolygon.render();
-    }
-    */
-
-
-    // max is what to count to
-    // offset is offset to the 'next' vertex
-    // increment is how much to increment in the loop
+    /**
+     * @param max is what to count to
+     * @param offset is offset to the 'next' vertex
+     * @param increment is how much to increment in the loop
+     */
     private void draw_lines(float vertices[][], int max,
                             int offset, int increment, int skip) {
 
-      if (strokeWeight < 2) {
+      if (strokeWeight == 1) {
         for (int i = 0; i < max; i += increment) {
           if ((skip != 0) && (((i+offset) % skip) == 0)) continue;
 
@@ -1688,36 +1585,16 @@ public class PGraphics2D extends PGraphics {
         }
 
       } else {  // use old line code for thickness > 1
-
-          if (strokeWeight < 2) {  // && !strokeChanged) {
-            // need to set color at least once?
-
-            // THIS PARTICULAR CASE SHOULD NO LONGER BE REACHABLE
-
-            for (int i = 0; i < max; i += increment) {
-              if ((skip != 0) && (((i+offset) % skip) == 0)) continue;
-              thin_flat_line((int) vertices[i][TX],
-                             (int) vertices[i][TY],
-                             (int) vertices[i+offset][TX],
-                             (int) vertices[i+offset][TY]);
-            }
-          } else {
-            for (int i = 0; i < max; i += increment) {
-              if ((skip != 0) && (((i+offset) % skip) == 0)) continue;
-              float v1[] = vertices[i];
-              float v2[] = vertices[i+offset];
-              thick_flat_line(v1[TX], v1[TY],  v1[SR], v1[SG], v1[SB], v1[SA],
-                              v2[TX], v2[TY],  v2[SR], v2[SG], v2[SB], v2[SA]);
-            }
-          }
+        for (int i = 0; i < max; i += increment) {
+          if ((skip != 0) && (((i+offset) % skip) == 0)) continue;
+          
+          float v1[] = vertices[i];
+          float v2[] = vertices[i+offset];
+          thick_flat_line(v1[TX], v1[TY],  v1[SR], v1[SG], v1[SB], v1[SA],
+                          v2[TX], v2[TY],  v2[SR], v2[SG], v2[SB], v2[SA]);
+        }
       }
     }
-
-
-
-    //////////////////////////////////////////////////////////////
-
-    // UGLY RENDERING SHITE
 
 
     private void thin_point(float fx, float fy, int color) {
@@ -2005,7 +1882,7 @@ public class PGraphics2D extends PGraphics {
 
 
     // only call this if there's an alpha in the fill
-    private final int _blendFill(int p1) {
+    private final int blend_fill(int p1) {
       int a2 = fillAi;
       int a1 = a2 ^ 0xff;
 
