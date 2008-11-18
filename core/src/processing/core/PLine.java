@@ -388,7 +388,11 @@ public class PLine implements PConstants
 
     // draw normal strokes
     if (SMOOTH) {
-      drawLine_smooth(xi, yi, dt, length, yLonger);
+      if ((m_drawFlags & R_SPATIAL) != 0) {
+        drawLine_smooth_spatial(xi, yi, dt, length, yLonger);
+      } else {
+        drawLine_smooth(xi, yi, dt, length, yLonger);
+      }
 
     } else {
       if (m_drawFlags == 0) {
@@ -517,9 +521,14 @@ public class PLine implements PConstants
     float iz = m_z0;
     int offset = y0 * SCREEN_WIDTH + x0;
 
-    if (iz <= m_zbuffer[offset]) {
+    if (m_zbuffer == null) {
       m_pixels[offset] = m_stroke;
-      m_zbuffer[offset] = iz;
+      
+    } else {
+      if (iz <= m_zbuffer[offset]) {
+        m_pixels[offset] = m_stroke;
+        m_zbuffer[offset] = iz;
+      }
     }
   }
 
@@ -568,7 +577,7 @@ public class PLine implements PConstants
       for (int j = 0x8000 + (x0<<16); y0 <= length; ++y0) {
         offset = y0 * SCREEN_WIDTH + (j>>16);
         m_pixels[offset] = m_stroke;
-        m_zbuffer[offset] = m_z0;
+        if (m_zbuffer != null) m_zbuffer[offset] = m_z0;
         j+=dt;
       }
 
@@ -578,7 +587,7 @@ public class PLine implements PConstants
       for (int j = 0x8000 + (y0<<16); x0 <= length; ++x0) {
         offset = (j>>16) * SCREEN_WIDTH + x0;
         m_pixels[offset] = m_stroke;
-        //m_zbuffer[offset] = m_z0;
+        if (m_zbuffer != null) m_zbuffer[offset] = m_z0;
         j+=dt;
       }
     }
@@ -978,8 +987,8 @@ public class PLine implements PConstants
   }
 
 
-  void drawLine_smooth(int x0, int y0, int dt,
-                       int length, boolean vertical) {
+  void drawLine_smooth_spatial(int x0, int y0, int dt,
+                               int length, boolean vertical) {
     int xi, yi; // these must be >=32 bits
     int offset = 0;
     int temp;
@@ -1129,176 +1138,138 @@ public class PLine implements PConstants
     }
   }
 
+  
+  void drawLine_smooth(int x0, int y0, int dt,
+                       int length, boolean vertical) {
+    int xi, yi; // these must be >=32 bits
+    int offset = 0;
+    int temp;
+    int end;
 
-  /**
-   * Special "blender" line code by sami,
-   * used for anti-aliasing polygon edges
-   */
-  /*
-  private void drawline_blender(double x0, double y0, double x1, double y1)
-  {
-    double tmp;
-    double dx = x1-x0;
-    double dy = y1-y0;
-    double adx = (dx >= 0) ? dx : -dx;
-    double ady = (dy >= 0) ? dy : -dy;
+    int ir = (int) m_r0;
+    int ig = (int) m_g0;
+    int ib = (int) m_b0;
+    int ia = (int) m_a0;
 
-    // VERY small line --> skip
-    if (adx < 0.0001d && ady < 0.0001d)
-      return;
+    if (vertical) {
+      xi = x0 << 16;
+      yi = y0 << 16;
 
-    // pixel color
-    int pxl;
+      end = length + y0;
 
-    // vaakaviiva
-    if (adx > ady) {
-      // flip if x0 > x1
-      if (x0 > x1) {
-        tmp = x0;
-        x0 = x1;
-        x1 = tmp;
-        tmp = y0;
-        y0 = y1;
-        y1 = tmp;
-        dx = x1-x0;
-        dy = y1-y0;
-      }
+      while ((yi >> 16) < end) {
+        offset = (yi>>16) * SCREEN_WIDTH + (xi>>16);
 
-      // add interpolation params here
-      double addy = dy / dx;
+        int pr = ir & 0xFF0000;
+        int pg = (ig >> 8) & 0xFF00;
+        int pb = (ib >> 16);
 
-      int ix0 = (int) (x0 + PIXEL_CENTER);
-      if (ix0 < 0)
-        ix0 = 0;
+        int alpha = (((~xi >> 8) & 0xFF) * (ia >> 16)) >> 8;
 
-      int ix1 = (int) (x1 + PIXEL_CENTER);
-      if (ix1 > SCREEN_WIDTH)
-        ix1 = SCREEN_WIDTH;
+        int r0 = m_pixels[offset];
+        int g0 = r0 & 0xFF00;
+        int b0 = r0 & 0xFF;
+        r0 &= 0xFF0000;
 
-      double delta = (ix0 + PIXEL_CENTER) - x0;
-      double ys = y0 + delta * addy;
+        r0 = r0 + (((pr - r0) * alpha) >> 8);
+        g0 = g0 + (((pg - g0) * alpha) >> 8);
+        b0 = b0 + (((pb - b0) * alpha) >> 8);
 
-      for (int a = ix0; a < ix1; a++,ys+=addy) {
-        int iy = (int) (ys - PIXEL_CENTER);
-        if ((iy >= 0) && (iy < SCREEN_HEIGHT1)) {
-          int ofs1 = iy * SCREEN_WIDTH + a;
-          int ofs2 = ofs1 + SCREEN_WIDTH;
+        m_pixels[offset] = 0xFF000000 |
+          (r0 & 0xFF0000) | (g0 & 0xFF00) | (b0 & 0xFF);
 
-          if (m_stencil[ofs1] == m_index) {
-            pxl = m_pixels[ofs1];
-          } else if (m_stencil[ofs2] == m_index) {
-            pxl = m_pixels[ofs2];
-          } else {
-            //m_pixels[ofs1] = 0xFFFFFF;
-            //m_pixels[ofs2] = 0xFFFFFF;
-            continue;
-          }
-
-          double frcf = ys - PIXEL_CENTER;
-
-          int frac1 = ((int) (frcf * 256f) & 0xFF);
-          int frac2 = 255 - frac1;
-          int pr = (pxl & 0xFF0000);
-          int pg = (pxl & 0xFF00);
-          int pb = (pxl & 0xFF);
-
-          int r0 = m_pixels[ofs1];
-          int g0 = (r0 & 0xFF00);
-          int b0 = (r0 & 0xFF);
-          r0 = (r0 & 0xFF0000);
-          r0 = r0 + (((pr - r0) * frac2) >> 8);
-          g0 = g0 + (((pg - g0) * frac2) >> 8);
-          b0 = b0 + (((pb - b0) * frac2) >> 8);
-          m_pixels[ofs1] = 0xFF000000 |
-            (r0 & 0xFF0000) | (g0 & 0xFF00) | (b0 & 0xFF);
-
-          r0 = m_pixels[ofs2];
-          g0 = (r0 & 0xFF00);
-          b0 = (r0 & 0xFF);
-          r0 = (r0 & 0xFF0000);
-          r0 = r0 + (((pr - r0) * frac1) >> 8);
-          g0 = g0 + (((pg - g0) * frac1) >> 8);
-          b0 = b0 + (((pb - b0) * frac1) >> 8);
-          m_pixels[ofs2] = 0xFF000000 |
-            (r0 & 0xFF0000) | (g0 & 0xFF00) | (b0 & 0xFF);
-
-          //m_pixels[ofs1] = 0xFF00FF;
-          //m_pixels[ofs2] = 0xFFFF00;
+        // this if() makes things slow. there should be a better way to check 
+        // if the second pixel is within the image array [rocha]
+        temp = ((xi>>16)+1);
+        if (temp >= SCREEN_WIDTH) {
+          xi += dt;
+          yi += (1 << 16);
+          continue;
         }
+
+        offset = (yi>>16) * SCREEN_WIDTH + temp;
+
+        alpha = (((xi >> 8) & 0xFF) * (ia >> 16)) >> 8;
+
+        r0 = m_pixels[offset];
+        g0 = r0 & 0xFF00;
+        b0 = r0 & 0xFF;
+        r0 &= 0xFF0000;
+
+        r0 = r0 + (((pr - r0) * alpha) >> 8);
+        g0 = g0 + (((pg - g0) * alpha) >> 8);
+        b0 = b0 + (((pb - b0) * alpha) >> 8);
+
+        m_pixels[offset] = 0xFF000000 |
+          (r0 & 0xFF0000) | (g0 & 0xFF00) | (b0 & 0xFF);
+
+        xi += dt;
+        yi += (1 << 16);
+
+        ir += dr;
+        ig += dg;
+        ib += db;
+        ia += da;
       }
-    } else {  // pystyviiva
-      // flip if y1 > y0
-      if (y0 > y1) {
-        tmp = x0;
-        x0 = x1;
-        x1 = tmp;
-        tmp = y0;
-        y0 = y1;
-        y1 = tmp;
-        dx = x1-x0;
-        dy = y1-y0;
-      }
 
-      double addx = dx / dy;
-      int iy0 = (int) (y0 + PIXEL_CENTER);
-      if (iy0 < 0)
-        iy0 = 0;
-      int iy1 = (int) (y1 + PIXEL_CENTER);
-      if (iy1 > SCREEN_HEIGHT)
-        iy1 = SCREEN_HEIGHT;
+    } else {  // horizontal
+      xi = x0 << 16;
+      yi = y0 << 16;
+      end = length + x0;
 
-      double delta = (iy0 + PIXEL_CENTER) - y0;
-      double xs = x0 + delta * addx;
+      while ((xi >> 16) < end) {
+        offset = (yi>>16) * SCREEN_WIDTH + (xi>>16);
 
-      iy0*=SCREEN_WIDTH;
-      iy1*=SCREEN_WIDTH;
-      for (int a = iy0; a < iy1; a+=SCREEN_WIDTH,xs+=addx) {
-        int ix = (int) (xs - PIXEL_CENTER);
-        if ((ix >= 0) && (ix < SCREEN_WIDTH1)) {
-          int ofs1 = a + ix;
-          int ofs2 = ofs1+1;
+        int pr = ir & 0xFF0000;
+        int pg = (ig >> 8) & 0xFF00;
+        int pb = (ib >> 16);
 
-          if (m_stencil[ofs1] == m_index) {
-            pxl = m_pixels[ofs1];
-          } else if (m_stencil[ofs2] == m_index) {
-            pxl = m_pixels[ofs2];
-          } else {
-            //m_pixels[ofs1] = 0xFFFFFF;
-            //m_pixels[ofs2] = 0xFFFFFF;
-            continue;
-          }
+        int alpha = (((~yi >> 8) & 0xFF) * (ia >> 16)) >> 8;
 
-          int pr = (pxl & 0xFF0000);
-          int pg = (pxl & 0xFF00);
-          int pb = (pxl & 0xFF);
+        int r0 = m_pixels[offset];
+        int g0 = r0 & 0xFF00;
+        int b0 = r0 & 0xFF;
+        r0 &= 0xFF0000;
 
-          double frcf = xs - PIXEL_CENTER;
-          int frac1 = ((int) (frcf * 256f) & 0xFF);
-          int frac2 = 255 - frac1;
+        r0 = r0 + (((pr - r0) * alpha) >> 8);
+        g0 = g0 + (((pg - g0) * alpha) >> 8);
+        b0 = b0 + (((pb - b0) * alpha) >> 8);
 
-          int r0 = m_pixels[ofs1];
-          int g0 = (r0 & 0xFF00);
-          int b0 = (r0 & 0xFF);
-          r0 = (r0 & 0xFF0000);
-          r0 = r0 + (((pr - r0) * frac2) >> 8);
-          g0 = g0 + (((pg - g0) * frac2) >> 8);
-          b0 = b0 + (((pb - b0) * frac2) >> 8);
-          m_pixels[ofs1] = 0xFF000000 |
-            (r0 & 0xFF0000) | (g0 & 0xFF00) | (b0 & 0xFF);
+        m_pixels[offset] = 0xFF000000 |
+          (r0 & 0xFF0000) | (g0 & 0xFF00) | (b0 & 0xFF);
 
-          r0 = m_pixels[ofs2];
-          g0 = (r0 & 0xFF00);
-          b0 = (r0 & 0xFF);
-          r0 = (r0 & 0xFF0000);
-          r0 = r0 + (((pr - r0) * frac1) >> 8);
-          g0 = g0 + (((pg - g0) * frac1) >> 8);
-          b0 = b0 + (((pb - b0) * frac1) >> 8);
-
-          //m_pixels[ofs1] = 0x0000FF;
-          //m_pixels[ofs2] = 0x00FFFF;
+        // see above [rocha]
+        temp = ((yi>>16)+1);
+        if (temp >= SCREEN_HEIGHT) {
+          xi += (1 << 16);
+          yi += dt;
+          continue;
         }
+
+        offset = temp * SCREEN_WIDTH + (xi>>16);
+
+        alpha = (((yi >> 8) & 0xFF) * (ia >> 16)) >> 8;
+
+        r0 = m_pixels[offset];
+        g0 = r0 & 0xFF00;
+        b0 = r0 & 0xFF;
+        r0 &= 0xFF0000;
+
+        r0 = r0 + (((pr - r0) * alpha) >> 8);
+        g0 = g0 + (((pg - g0) * alpha) >> 8);
+        b0 = b0 + (((pb - b0) * alpha) >> 8);
+
+        m_pixels[offset] = 0xFF000000 |
+          (r0 & 0xFF0000) | (g0 & 0xFF00) | (b0 & 0xFF);
+
+        xi += (1 << 16);
+        yi += dt;
+
+        ir+= dr;
+        ig+= dg;
+        ib+= db;
+        ia+= da;
       }
     }
   }
-  */
 }

@@ -411,7 +411,27 @@ public class PMatrix2D implements PMatrix {
 
   //////////////////////////////////////////////////////////////
 
+  // TODO these need to be added as regular API, but the naming and 
+  // implementation needs to be improved first. (e.g. actually keeping track
+  // of whether the matrix is in fact identity internally.)
 
+  
+  protected boolean isIdentity() {
+    return ((m00 == 1) && (m01 == 0) && (m02 == 0) &&
+            (m10 == 0) && (m11 == 1) && (m12 == 0));
+  }
+
+
+  // TODO make this more efficient, or move into PMatrix2D
+  protected boolean isWarped() {
+    return ((m00 != 1) || (m01 != 0) && 
+            (m10 != 0) || (m11 != 1));
+  }
+
+
+  //////////////////////////////////////////////////////////////
+
+  
   private final float max(float a, float b) {
     return (a > b) ? a : b;
   }

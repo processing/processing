@@ -37,7 +37,7 @@ import java.util.Arrays;
  */
 public class PGraphics2D extends PGraphics {
 
-  PMatrix2D ctm;
+  PMatrix2D ctm = new PMatrix2D();
 
   //PPolygon polygon;     // general polygon to use for shape
   PPolygon fpolygon;    // used to fill polys for tri or quad strips
@@ -223,7 +223,7 @@ public class PGraphics2D extends PGraphics {
 
 
   public void endShape(int mode) {
-    if (untransformed()) {
+    if (ctm.isIdentity()) {
       for (int i = 0; i < vertexCount; i++) {
         vertices[i][TX] = vertices[i][X];
         vertices[i][TY] = vertices[i][Y];
@@ -231,7 +231,7 @@ public class PGraphics2D extends PGraphics {
     } else {
       for (int i = 0; i < vertexCount; i++) {
         vertices[i][TX] = ctm.multX(vertices[i][X], vertices[i][Y]);
-        vertices[i][TX] = ctm.multY(vertices[i][X], vertices[i][Y]);
+        vertices[i][TY] = ctm.multY(vertices[i][X], vertices[i][Y]);
       }
     }
 
@@ -775,8 +775,8 @@ public class PGraphics2D extends PGraphics {
   }
   */
 
-  
-  
+
+
   //////////////////////////////////////////////////////////////
 
   // BEZIER VERTICES
@@ -791,8 +791,8 @@ public class PGraphics2D extends PGraphics {
   //                         float x3, float y3, float z3,
   //                         float x4, float y4, float z4)
 
-  
-  
+
+
   //////////////////////////////////////////////////////////////
 
   // CURVE VERTICES
@@ -850,14 +850,19 @@ public class PGraphics2D extends PGraphics {
 
 
   protected void rectImpl(float x1f, float y1f, float x2f, float y2f) {
+    if (ctm.isWarped()) {
+      // screw the efficiency, send this off to beginShape().
+      super.rectImpl(x1f, y1f, x2f, y2f);
 
-    if (untransformed() && !fillAlpha) {
-      int x1 = (int) x1f;
-      int y1 = (int) y1f;
-      int x2 = (int) x2f;
-      int y2 = (int) y2f;
+    } else {
+      int x1 = (int) (x1f + ctm.m02);
+      int y1 = (int) (y1f + ctm.m12);
+      int x2 = (int) (x2f + ctm.m02);
+      int y2 = (int) (y2f + ctm.m12);
 
-      rectImplFillUntranSolidRGB(x1, y1, x2, y2);
+      if (fill) {
+        rect_fill_simple(x1, y1, x2, y2);
+      }
 
       if (stroke) {
         if (strokeWeight == 1) {
@@ -867,69 +872,72 @@ public class PGraphics2D extends PGraphics {
           thin_flat_line(x1, y2, x1, y1);
 
         } else {
-          thick_flat_line(x1, y1, fillR, fillG, fillB, fillA,
-                          x2, y1, fillR, fillG, fillB, fillA);
-          thick_flat_line(x2, y1, fillR, fillG, fillB, fillA,
-                          x2, y2, fillR, fillG, fillB, fillA);
-          thick_flat_line(x2, y2, fillR, fillG, fillB, fillA,
-                          x1, y2, fillR, fillG, fillB, fillA);
-          thick_flat_line(x1, y2, fillR, fillG, fillB, fillA,
-                          x1, y1, fillR, fillG, fillB, fillA);
+          thick_flat_line(x1, y1, strokeR, strokeG, strokeB, strokeA,
+                          x2, y1, strokeR, strokeG, strokeB, strokeA);
+          thick_flat_line(x2, y1, strokeR, strokeG, strokeB, strokeA,
+                          x2, y2, strokeR, strokeG, strokeB, strokeA);
+          thick_flat_line(x2, y2, strokeR, strokeG, strokeB, strokeA,
+                          x1, y2, strokeR, strokeG, strokeB, strokeA);
+          thick_flat_line(x1, y2, strokeR, strokeG, strokeB, strokeA,
+                          x1, y1, strokeR, strokeG, strokeB, strokeA);
         }
       }
-
-    } else {
-      beginShape(QUADS);
-      vertex(x1f, y1f);
-      vertex(x2f, y1f);
-      vertex(x2f, y2f);
-      vertex(x1f, y2f);
-      endShape();
     }
   }
 
 
   /**
-   * Draw an untransformed rectangle with no alpha.
+   * Draw a rectangle that hasn't been warped by the CTM (though it may be 
+   * translated). Just fill a bunch of pixels, or blend them if there's alpha.
    */
-  private void rectImplFillUntranSolidRGB(int x1, int y1, int x2, int y2) {
-    //System.out.println("flat quad");
+  private void rect_fill_simple(int x1, int y1, int x2, int y2) {
     if (y2 < y1) {
       int temp = y1; y1 = y2; y2 = temp;
     }
     if (x2 < x1) {
       int temp = x1; x1 = x2; x2 = temp;
     }
-    // checking to watch out for boogers
+    // check to see if completely off-screen (e.g. if the left edge of the 
+    // rectangle is bigger than the width, and so on.)
     if ((x1 > width1) || (x2 < 0) ||
         (y1 > height1) || (y2 < 0)) return;
 
-    //if (fill) {
-    int fx1 = x1;
-    int fy1 = y1;
-    int fx2 = x2;
-    int fy2 = y2;
-
     // these only affect the fill, not the stroke
     // (otherwise strange boogers at edges b/c frame changes shape)
-    if (fx1 < 0) fx1 = 0;
-    if (fx2 > width) fx2 = width;
-    if (fy1 < 0) fy1 = 0;
-    if (fy2 > height) fy2 = height;
+    if (x1 < 0) x1 = 0;
+    if (x2 > width) x2 = width;
+    if (y1 < 0) y1 = 0;
+    if (y2 > height) y2 = height;
 
-    // [toxi 031223]
-    // on avg. 20-25% faster fill routine using System.arraycopy()
-    int ww = fx2 - fx1;
-    int hh = fy2 - fy1;
-    int[] row = new int[ww];
-    for (int i = 0; i < ww; i++) row[i] = fillColor;
-    int idx = fy1 * width + fx1;
-    for (int y = 0; y < hh; y++) {
-      System.arraycopy(row, 0, pixels, idx, ww);
-      idx += width;
+    int ww = x2 - x1;
+
+    if (fillAlpha) {
+      for (int y = y1; y < y2; y++) {
+        int index = y*width + x1;
+        for (int x = 0; x < ww; x++) {
+          pixels[index] = _blendFill(pixels[index]);
+          index++;
+        }
+      }
+
+    } else {
+      // on avg. 20-25% faster fill routine using System.arraycopy() [toxi 031223]
+      // removed temporary row[] array for (hopefully) better performance [fry 081117]
+      int hh = y2 - y1;
+      //    int[] row = new int[ww];
+      //    for (int i = 0; i < ww; i++) row[i] = fillColor;
+      int index = y1 * width + x1;      
+      int rowIndex = index;
+      for (int i = 0; i < ww; i++) {
+        pixels[index + i] = fillColor;
+      }
+      for (int y = 0; y < hh; y++) {
+        //      System.arraycopy(row, 0, pixels, idx, ww);
+        System.arraycopy(pixels, rowIndex, pixels, index, ww);
+        index += width;
+      }
+      //    row = null;
     }
-    row = null;
-    //}
   }
 
 
@@ -941,34 +949,27 @@ public class PGraphics2D extends PGraphics {
 
   protected void ellipseImpl(float x1, float y1, float w, float h) {
     if (!smooth && (strokeWeight == 1) &&
-        !fillAlpha && !strokeAlpha && untransformed()) {
+        !fillAlpha && !strokeAlpha && !ctm.isWarped()) {
       float hradius = w / 2f;
       float vradius = h / 2f;
 
-      int centerX = (int) (x1 + hradius);
-      int centerY = (int) (y1 + vradius);
+      int centerX = (int) (x1 + hradius + ctm.m02);
+      int centerY = (int) (y1 + vradius + ctm.m12);
+      
+      int hradiusi = (int) hradius;
+      int vradiusi = (int) vradius;
 
-      if (hradius == vradius) {
-        flat_circle(centerX, centerY, (int)hradius);
+      if (hradiusi == vradiusi) {
+        if (fill) flat_circle_fill(centerX, centerY, hradiusi);
+        if (stroke) flat_circle_stroke(centerX, centerY, hradiusi);
 
       } else {
-        flat_ellipse(centerX, centerY, (int)hradius, (int)vradius);
+        if (fill) flat_ellipse_internal(centerX, centerY, hradiusi, vradiusi, true);
+        if (stroke) flat_ellipse_internal(centerX, centerY, hradiusi, vradiusi, false);
       }
     } else {
       super.ellipseImpl(x1, y1, w, h);
     }
-  }
-
-
-  private void flat_circle(int centerX, int centerY, int radius) {
-    if (unwarped()) {
-      float x = ctm.multX(centerX, centerY);  //m00*centerX + m01*centerY + m02;
-      float y = ctm.multY(centerX, centerY);  //m10*centerX + m11*centerY + m12;
-      centerX = (int)x;
-      centerY = (int)y;
-    }
-    if (fill) flat_circle_fill(centerX, centerY, radius);
-    if (stroke) flat_circle_stroke(centerX, centerY, radius);
   }
 
 
@@ -1133,18 +1134,6 @@ public class PGraphics2D extends PGraphics {
   }
 
 
-  private void flat_ellipse(int centerX, int centerY, int a, int b) {
-    if (unwarped()) {
-      float x = ctm.multX(centerX, centerY);  //m00*centerX + m01*centerY + m02;
-      float y = ctm.multY(centerX, centerY);  //m10*centerX + m11*centerY + m12;
-      centerX = (int)x;
-      centerY = (int)y;
-    }
-    if (fill) flat_ellipse_internal(centerX, centerY, a, b, true);
-    if (stroke) flat_ellipse_internal(centerX, centerY, a, b, false);
-  }
-
-
   // TODO really need a decent arc function in here..
 
   //protected void arcImpl(float x1, float y1, float w, float h,
@@ -1218,7 +1207,7 @@ public class PGraphics2D extends PGraphics {
                            int u1, int v1, int u2, int v2) {
     if ((x2 - x1 == image.width) &&
         (y2 - y1 == image.height) &&
-        !tint && unwarped()) {
+        !tint && !ctm.isWarped()) {
       flat_image(image, (int) (x1 + ctm.m02), (int) (y1 + ctm.m12), u1, v1, u2, v2);
 
     } else {
@@ -2000,39 +1989,51 @@ public class PGraphics2D extends PGraphics {
 
 
     // TODO make this more efficient, or move into PMatrix2D
-    private boolean untransformed() {
-      return ((ctm.m00 == 1) && (ctm.m01 == 0) && (ctm.m02 == 0) &&
-              (ctm.m10 == 0) && (ctm.m11 == 1) && (ctm.m12 == 0));
-    }
-
-
-    // TODO make this more efficient, or move into PMatrix2D
-    private boolean unwarped() {
-      return ((ctm.m00 == 1) && (ctm.m01 == 0) && 
-              (ctm.m10 == 0) && (ctm.m11 == 1));
-    }
-
-
-
-    // doesn't really do lighting per se...
-//    private void calc_lighting(float r, float g, float b,
-//                               float ix, float iy, float iz,
-//                               float nx, float ny, float nz,
-//                               float target[], int toffset) {
-//      target[toffset + 0] = r;
-//      target[toffset + 1] = g;
-//      target[toffset + 2] = b;
+//    private boolean untransformed() {
+//      return ((ctm.m00 == 1) && (ctm.m01 == 0) && (ctm.m02 == 0) &&
+//              (ctm.m10 == 0) && (ctm.m11 == 1) && (ctm.m12 == 0));
+//    }
+//
+//
+//    // TODO make this more efficient, or move into PMatrix2D
+//    private boolean unwarped() {
+//      return ((ctm.m00 == 1) && (ctm.m01 == 0) && 
+//              (ctm.m10 == 0) && (ctm.m11 == 1));
 //    }
 
 
-//    static private final int float_color(float r, float g, float b) {
-//      return (0xff000000 |
-//              ((int) (255.0f * r)) << 16 |
-//              ((int) (255.0f * g)) << 8 |
-//              ((int) (255.0f * b)));
-//    }
+    // only call this if there's an alpha in the fill
+    private final int _blendFill(int p1) {
+      int a2 = fillAi;
+      int a1 = a2 ^ 0xff;
 
-    public final static int _blend(int p1, int p2, int a2) {
+      int r = (a1 * ((p1 >> 16) & 0xff)) + (a2 * fillRi) & 0xff00;
+      int g = (a1 * ((p1 >>  8) & 0xff)) + (a2 * fillGi) & 0xff00;
+      int b = (a1 * ( p1        & 0xff)) + (a2 * fillBi) & 0xff00; 
+
+      return 0xff000000 | (r << 8) | g | (b >> 8);
+    }
+    
+    
+    private final int _blend(int p1, int p2) {
+      int a2 = (p2 >>> 24);
+      
+      if (a2 == 0xff) {
+        // full replacement
+        return p2;
+        
+      } else {
+        int a1 = a2 ^ 0xff;
+        int r = (a1 * ((p1 >> 16) & 0xff) + a2 * ((p2 >> 16) & 0xff)) & 0xff00;
+        int g = (a1 * ((p1 >>  8) & 0xff) + a2 * ((p2 >>  8) & 0xff)) & 0xff00;
+        int b = (a1 * ( p1        & 0xff) + a2 * ( p2        & 0xff)) >> 8;
+
+        return 0xff000000 | (r << 8) | g | b;
+      }
+    }
+
+    
+    private final int _blend(int p1, int p2, int a2) {
       // scale alpha by alpha of incoming pixel
       a2 = (a2 * (p2 >>> 24)) >> 8;
 
