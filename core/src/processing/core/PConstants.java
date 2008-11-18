@@ -120,7 +120,6 @@ public interface PConstants {
   static final String OPENGL = "processing.opengl.PGraphicsOpenGL";
   static final String PDF    = "processing.pdf.PGraphicsPDF";
   static final String DXF    = "processing.dxf.RawDXF";
-  //static final String SVG    = "processing.svg.PGraphicsSVG";
 
 
   // platform IDs for PApplet.platform
@@ -130,12 +129,12 @@ public interface PConstants {
   static final int MACOSX  = 2;
   static final int LINUX   = 3;
 
+  static final String[] platformNames = {
+    "other", "windows", "macosx", "linux"
+  };
 
-  // for better parity between c++ version (at no speed cost)
-
-  static final float EPSILON   = 0.0001f;
-  // was around for auto-port to mobile version
-  //static final float ONE       = 1.0f;
+  
+  static final float EPSILON = 0.0001f;
 
 
   // max/min values for numbers
