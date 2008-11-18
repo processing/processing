@@ -6,7 +6,7 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=1012
 
 X default font on osx 10.5 is gross
 X   fix bug with reading the default prefs file
-_ in this release, check if platform is MACOSX and font is monospaced
+_ in this release, check if platform is MACOSX and font is monospaced (?)
 _   if so, nuke the setting and change it back to Monaco
 
 _ check into use of platform names in export sketch / export application
