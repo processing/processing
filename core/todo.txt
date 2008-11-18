@@ -5,6 +5,8 @@ X image(a, x, y) not honoring imageMode(CENTER)
 X   need to just pass image(a, x, y) to image(a, x, y, a.width, a.height)
 X   rather than passing it directly to imageImpl()
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1013
+_ disable P2D before releasing (unless implementation is finished)
+
 
 _ OPENGL sketches flicker w/ Vista when background() is not used inside draw()
 _   http://dev.processing.org/bugs/show_bug.cgi?id=930
