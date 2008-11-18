@@ -184,23 +184,28 @@ public class PApplet extends Applet
    * <P>
    * Equivalent to System.getProperty("os.name"), just used internally.
    */
-  static public String platformName =
-    System.getProperty("os.name");
 
   /**
    * Current platform in use, one of the
    * PConstants WINDOWS, MACOSX, MACOS9, LINUX or OTHER.
    */
   static public int platform;
+  
+  /**
+   * Name associated with the current 'platform' (see PConstants.platformNames)
+   */
+  //static public String platformName;
 
   static {
-    if (platformName.indexOf("Mac") != -1) {
+    String osname = System.getProperty("os.name");
+    
+    if (osname.indexOf("Mac") != -1) {
       platform = MACOSX;
 
-    } else if (platformName.indexOf("Windows") != -1) {
+    } else if (osname.indexOf("Windows") != -1) {
       platform = WINDOWS;
 
-    } else if (platformName.equals("Linux")) {  // true for the ibm vm
+    } else if (osname.equals("Linux")) {  // true for the ibm vm
       platform = LINUX;
 
     } else {
@@ -1085,10 +1090,10 @@ public class PApplet extends Applet
       }
     }
 
-    if (irenderer.equals(P2D)) {
-      throw new RuntimeException("The P2D renderer is currently disabled, " +
-                                 "please use P3D or JAVA2D.");
-    }
+//    if (irenderer.equals(P2D)) {
+//      throw new RuntimeException("The P2D renderer is currently disabled, " +
+//                                 "please use P3D or JAVA2D.");
+//    }
 
     String openglError =
       "Before using OpenGL, first select " +

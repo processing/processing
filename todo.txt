@@ -4,7 +4,12 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=1010
 X Find in Reference does not open Firefox in 0156 for Linux
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1012
 
-_ default font on osx 10.5 is gross
+X default font on osx 10.5 is gross
+X   fix bug with reading the default prefs file
+_ in this release, check if platform is MACOSX and font is monospaced
+_   if so, nuke the setting and change it back to Monaco
+
+_ check into use of platform names in export sketch / export application
 
 _ update to java 6u10 for linux and windows
 _ update applet.html to point at java 6u10 with the new auto-update stuff
