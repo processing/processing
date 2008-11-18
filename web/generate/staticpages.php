@@ -50,7 +50,7 @@ $page = new Page("Igoe Interview", "Features");
 $page->content(file_get_contents($source."igoe.html"));
 writeFile('exhibition/features/igoe/index.html', $page->out());
 
-$page = new Page("Hodgin Interview", "Hodgin Interview");
+$page = new Page("Hodgin Interview", "Features");
 $page->content(file_get_contents($source."hodgin.html"));
 writeFile('exhibition/features/hodgin/index.html', $page->out());
 
