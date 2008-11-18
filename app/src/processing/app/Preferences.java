@@ -31,7 +31,7 @@ import java.util.*;
 import javax.swing.*;
 
 import processing.app.syntax.*;
-import processing.core.PApplet;
+import processing.core.*;
 
 
 
@@ -48,17 +48,17 @@ import processing.core.PApplet;
  * and it should all be moved to a proper swing layout like BoxLayout.
  * <p>
  * This is very poorly put together, that the preferences panel and the actual
- * preferences i/o is part of the same code. But there hasn't yet been a 
- * compelling reason to bother with the separation aside from concern about 
- * being lectured by strangers who feel that it doesn't look like what they 
+ * preferences i/o is part of the same code. But there hasn't yet been a
+ * compelling reason to bother with the separation aside from concern about
+ * being lectured by strangers who feel that it doesn't look like what they
  * learned in CS class.
  * <p>
- * Would also be possible to change this to use the Java Preferences API. 
- * Some useful articles 
+ * Would also be possible to change this to use the Java Preferences API.
+ * Some useful articles
  * <a href="http://www.onjava.com/pub/a/onjava/synd/2001/10/17/j2se.html">here</a> and
  * <a href="http://www.particle.kth.se/~lindsey/JavaCourse/Book/Part1/Java/Chapter10/Preferences.html">here</a>.
- * However, haven't implemented this yet for lack of time, but more 
- * importantly, because it would entail writing to the registry (on Windows), 
+ * However, haven't implemented this yet for lack of time, but more
+ * importantly, because it would entail writing to the registry (on Windows),
  * or an obscure file location (on Mac OS X) and make it far more difficult to
  * find the preferences to tweak them by hand (no! stay out of regedit!)
  * or to reset the preferences by simply deleting the preferences.txt file.
@@ -72,9 +72,9 @@ public class Preferences {
 
   // platform strings (used to get settings for specific platforms)
 
-  static final String platforms[] = {
-    "other", "windows", "macos9", "macosx", "linux"
-  };
+  //static final String platforms[] = {
+  //  "other", "windows", "macosx", "linux"
+  //};
 
 
   // prompt text stuff
@@ -159,7 +159,7 @@ public class Preferences {
     }
 
     // check for platform-specific properties in the defaults
-    String platformExt = "." + platforms[PApplet.platform];
+    String platformExt = "." + PConstants.platformNames[PApplet.platform];
     int platformExtLength = platformExt.length();
     Enumeration e = table.keys();
     while (e.hasMoreElements()) {
@@ -185,7 +185,7 @@ public class Preferences {
 
       } catch (Exception poe) {
         Base.showError("Error",
-                       "Could not read preferences from " + 
+                       "Could not read preferences from " +
                        commandLinePrefs, poe);
       }
     } else if (!Base.isCommandLine()) {
@@ -391,11 +391,11 @@ public class Preferences {
     right = Math.max(right, left + d.width);
     top += d.height + GUI_BETWEEN;
 
-    
+
     // [ ] Automatically associate .pde files with Processing
-    
+
     if (Base.isWindows()) {
-      autoAssociateBox = 
+      autoAssociateBox =
         new JCheckBox("Automatically associate .pde files with Processing");
       pain.add(autoAssociateBox);
       d = autoAssociateBox.getPreferredSize();
@@ -601,9 +601,9 @@ public class Preferences {
     } catch (Exception e) {
       System.err.println("ignoring invalid font size " + newSizeText);
     }
-    
+
     if (autoAssociateBox != null) {
-      setBoolean("platform.auto_file_type_associations", 
+      setBoolean("platform.auto_file_type_associations",
                  autoAssociateBox.isSelected());
     }
 
