@@ -193,6 +193,7 @@ public class PPolygon implements PConstants {
 //      float[] vert = nextVertex();
 //      System.arraycopy()
 //    }
+    render();
   }
 
 
@@ -201,6 +202,7 @@ public class PPolygon implements PConstants {
     vertices[0] = v1;
     vertices[1] = v2;
     vertices[2] = v3;
+    render();
   }
   
   
