@@ -46,7 +46,7 @@ $page = new Page("Features", "Features");
 $page->content(file_get_contents($source."features.html"));
 writeFile('exhibition/features/index.html', $page->out());
 
-$page = new Page("Features", "Igoe Interview");
+$page = new Page("Features", "Features");
 $page->content(file_get_contents($source."igoe.html"));
 writeFile('exhibition/features/igoe/index.html', $page->out());
 
