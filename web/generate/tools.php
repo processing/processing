@@ -14,7 +14,7 @@ writeFile($tools_dir.'/index.html', $page->out());
 //copydirr(CONTENTDIR."api_$lang/LIB_images", BASEDIR.$tools_dir.'/images');
 
 // copy over the files for the contributed libraries
-copy(CONTENTDIR."static/tools.html", BASEDIR.$tools_dir.'/tools.html');
+//copy(CONTENTDIR."static/tools.html", BASEDIR.$tools_dir.'/tools.html');
 
 $benchmark_end = microtime_float();
 $execution_time = round($benchmark_end - $benchmark_start, 4);
