@@ -454,6 +454,61 @@ h2 { margin-bottom: 0; margin-top: 0;}
 #Books td { vertical-align: top; font-size: 1.0em}
 
 
+/************************************************************** Tools Indices ***/
+#Tools-index .colone {
+	width: 300px;
+	float: left;
+	margin-right: 40px;
+}
+
+#Tools-index .twocol {
+	width: 330px;
+	float: left; 
+}
+
+#Tools-index .full {
+	width: 650px;
+	float: left;
+	margin-right: 0px;
+	margin-top: 30px;
+}
+
+#Tools .content {
+        margin-left    : 55px;
+        margin-right   : 0px;
+        position: relative;
+}
+
+#Tools-index .content {
+        margin-left    : 55px;
+        margin-right   : 0px;
+        position: relative;
+}
+
+
+#Tools-index h5 { margin-bottom: 0; font-size: 1em; }
+#Tools-index .twocol p { margin-top: 0; }
+.lib-nav { display: block; 
+	margin-bottom: 10px; 
+	margin-left: -30px; 
+	padding: 7px 0 3px 30px; 
+	background: url(/img/back_off.gif) no-repeat 
+}
+
+#Tools-index pre { margin-left: 30px; margin-bottom: 30px; }
+
+#Tools h2 { margin-top: 2em; }
+#Tools h5 { font-size: 1em; margin: 0; font-weight: bold; }
+#Tools h5 a { font-weight: bold; }
+#Tools h3 { clear: both; margin-bottom: 0; }
+#Tools h4 { font-size: 1em; margin-bottom: .5em; }
+#Tools h4 a {float:left; margin-left:-30px; martin-top:-5px; }
+
+
+#Tools .threecol { float: left; width: 210px; margin-right: 20px; }
+#Tools .threecol p { margin-top: 0; margin-bottom: 2em; }
+
+
 /************************************************************** Library Indices ***/
 #Library-index .colone {
 	width: 300px;
