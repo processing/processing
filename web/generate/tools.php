@@ -6,6 +6,7 @@ $benchmark_start = microtime_float();
 
 // arguments
 $lang = isset($_POST['lang']) ? $_POST['lang'] : 'en';
+$tools_dir = 'reference/'.($lang != 'en' ? "$lang/" : '').'tools';
 
 // get translation file
 $translation = new Translation($lang);
