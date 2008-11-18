@@ -1,45 +1,40 @@
-<h2><img src="images/header.gif" width="675" height="48" alt="Libraries. Extending Processing beyond graphics and image, libraries enable audio, video, and communicating with other devices." /></h2>
+<h2><img src="images/header.gif" width="675" height="48" alt="Tools. Extending the Processing environment, tools allow." /></h2>
 
 <p class="libraries-top">
 <i>The following tools are included with the Processing software. To add one to a project, select its name from the "Import Library..." option in the Sketch menu. These libraries are open source; the code is distributed with Processing.</i></p>
 
 <div class="threecol">
-    <h5><a href="video/index.html">Video</a></h5>
-    <p>Interface to Apple's QuickTime for using a camera, playing movie files, and creating movies.</p>
-        
-	<h5><a href="net/index.html">Network</a></h5>
-    <p>Sending and receiving data via the Internet through the creation of simple clients and servers.</p>
-	
-    <h5><a href="serial/index.html">Serial</a></h5>
-    <p>Supports sending data between Processing and external hardware via serial communication (RS-232).</p>
-    	
-	<h5><a href="pdf/index.html">PDF Export</a></h5>
-    <p>Generates PDF files.</p>
+    <h5>Auto Format</h5>
+    <p>Attempts to format the code into a more human-readable layout. Auto Format 
+      was previously called Beautify. It can be run using the key shortcut Ctrl-T  
+      (Apple-T on Mac).</p>
+    
+    <h5>Create Font</h5>
+    <p>Converts fonts into the Processing font format and adds to the current sketch. 
+      Opens a dialog box which give options for setting the font, its size, if 
+      it is anti-aliased, and if all characters should be generated. If the "All 
+      Characters" options is selected, non-English characters such as ü and Å 
+      are generated, but the font file is larger in size. The amount of memory 
+      required for the font is also determined by the size selected. Processing 
+      fonts are textures, so larger fonts require more image data.</p>
 </div>
 
 <div class="threecol">
-    <h5><a href="opengl/index.html">OpenGL</a></h5>
-    <p>Support for exporting OpenGL accelerated sketches. Utilizes the JOGL library.</p>
+    <h5>Color Selector</h5>
+    <p>Simple interface for selecting colors as RGB, HSB, and Hex.</p>
     
- 	<h5><a href="http://code.compartmental.net/tools/minim/">&raquo; Minim</a></h5>
-    <p>Uses the JavaSound API to provide an easy-to-use audio library. A simple API while 
-    still providing a reasonable amount of flexibility for more advanced users.</p>
-    
-    <h5><a href="dxf/index.html">DXF Export</a></h5>
-    <p>Lines and triangles from P3D or OPENGL rendering modes can be sent directly to a DXF file. </p>
+    <h5>Archive Sketch</h5>
+    <p>Archives a copy of the current sketch in .zip format. The archive is placed in 
+    the same directory as the sketch.</p>
 </div>
 
 <div class="threecol">
-    <h5><a href="http://developer.mozilla.org/En/Core_JavaScript_1.5_Guide/LiveConnect_Overview" target="_new">&raquo; Netscape.JavaScript</a></h5>
-    <p>Methods for interfacing between Javascript and Java Applets exported from Processing.</p>
-       
-	<h5>Candy SVG Import</h5>
-    <p>This library has been moved to the Processing core code as of version 149. To load
-    SVG files, check out the reference for PShape(), loadShape(), and shape().</p>
-	
-	<h5>XML Import</h5>
-    <p>This library has been moved to the Processing core as of version 149. To load
-    XML data, check out the reference for XMLElement in the extended reference.</p>
+    <h5>Fix Encoding &amp; Reload</h5>
+    <p>Sketches that contain non-ASCII characters and were saved with Processing 0140 
+    and earlier may look strange when opened. Garbled text and odd characters may appear
+    where umlauts, cedillas, and Japanese formerly lived. This will reload your sketch 
+    using the same method as previous versions of Processing, at which point you can 
+    re-save it which will write a proper UTF-8 version.</p>
 </div>
 
 <h3 id="libraries"><br /><img src="images/contributions.gif" width="200" height="20" alt="Contributions" /></h3>
