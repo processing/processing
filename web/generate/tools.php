@@ -13,7 +13,7 @@ $translation = new Translation($lang);
 
 // get tools index
 $index = CONTENTDIR."api_en/tools/index.html";
-$page = new Page('Tools \\ Processing 1.0', 'Tools');
+$page = new Page('Tools', 'Tools');
 $page->content(file_get_contents($index));
 //make_necessary_directories(BASEDIR.$tools_dir.'/images/include.php');
 writeFile($tools_dir.'/index.html', $page->out());

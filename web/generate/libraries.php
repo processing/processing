@@ -18,7 +18,7 @@ $lib_dir = 'reference/'.($lang != 'en' ? "$lang/" : '').'libraries';
 
 // get library index
 $index = CONTENTDIR."api_$lang/libraries/index.html";
-$page = new Page('Libraries \\ Processing 1.0 (BETA)', 'Libraries');
+$page = new Page('Libraries', 'Libraries');
 $page->content(file_get_contents($index));
 make_necessary_directories(BASEDIR.$lib_dir.'/images/include.php');
 writeFile($lib_dir.'/index.html', $page->out());
