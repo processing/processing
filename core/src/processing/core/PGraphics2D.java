@@ -361,6 +361,7 @@ public class PGraphics2D extends PGraphics {
     case POLYGON:
       if (isConvex()) {
         if (fill) {
+          System.out.println("convex");
           fpolygon.renderPolygon(vertices, vertexCount);
           //if (stroke) polygon.unexpand();
         }
@@ -373,6 +374,7 @@ public class PGraphics2D extends PGraphics {
           draw_lines(svertices, 1, 1, 1, 0);
         }
       } else {  // not convex
+        System.out.println("concave");
         if (fill) {
           // the triangulator produces polygons that don't align
           // when smoothing is enabled. but if there is a stroke around
