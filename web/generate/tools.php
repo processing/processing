@@ -1,9 +1,14 @@
 <?
 
 require_once('../config.php');
+require_once('lib/Translation.class.php');
 $benchmark_start = microtime_float();
 
-$tools_dir = 'reference/tools';
+// arguments
+$lang = isset($_POST['lang']) ? $_POST['lang'] : 'en';
+
+// get translation file
+$translation = new Translation($lang);
 
 // get tools index
 $index = CONTENTDIR."api_en/tools/index.html";
