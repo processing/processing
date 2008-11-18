@@ -186,23 +186,34 @@ public class PPolygon implements PConstants {
 
 
   protected void renderPolygon(float[][] v, int count) {
-//    reset(count); 
-//    texture(tex);
-    System.arraycopy(v, 0, vertices, 0, count);
-//    for (int i = 0; i < count; i++) {
-//      float[] vert = nextVertex();
-//      System.arraycopy()
-//    }
+    vertices = v;
+    vertexCount = count;
+
     render();
+    checkExpand();
   }
 
 
   protected void renderTriangle(float[] v1, float[] v2, float[] v3) {
-//    reset(3);
+    // Calling code will have already done reset(3).
+    // Can't do it here otherwise would nuke any texture settings.
+
     vertices[0] = v1;
     vertices[1] = v2;
     vertices[2] = v3;
+    
     render();
+    checkExpand();
+  }
+  
+  
+  protected void checkExpand() {
+    if (smooth) {
+      for (int i = 0; i < vertexCount; i++) {
+        vertices[i][TX] /= SUBXRES;
+        vertices[i][TY] /= SUBYRES;
+      }
+    }
   }
   
   
@@ -249,10 +260,10 @@ public class PPolygon implements PConstants {
       float width2 = width * 2;
       float height2 = height * 2;
       for (int i = 0; i < vertexCount; i++) {
-        if ((vertices[i][X] < nwidth2) ||
-            (vertices[i][X] > width2) ||
-            (vertices[i][Y] < nheight2) ||
-            (vertices[i][Y] > height2)) {
+        if ((vertices[i][TX] < nwidth2) ||
+            (vertices[i][TX] > width2) ||
+            (vertices[i][TY] < nheight2) ||
+            (vertices[i][TY] > height2)) {
           return;  // this is a bad poly
         }
       }
@@ -261,22 +272,24 @@ public class PPolygon implements PConstants {
 
     if (smooth) {
       for (int i = 0; i < vertexCount; i++) {
-        vertices[i][X] *= SUBXRES;
-        vertices[i][Y] *= SUBYRES;
+        vertices[i][TX] *= SUBXRES;
+        vertices[i][TY] *= SUBYRES;
       }
       firstModY = -1;
     }
 
     // find top vertex (y is zero at top, higher downwards)
     int topi = 0;
-    float ymin = vertices[0][Y];
-    float ymax = vertices[0][Y]; // fry 031001
+    float ymin = vertices[0][TY];
+    float ymax = vertices[0][TY]; // fry 031001
     for (int i = 1; i < vertexCount; i++) {
-      if (vertices[i][Y] < ymin) {
-        ymin = vertices[i][Y];
+      if (vertices[i][TY] < ymin) {
+        ymin = vertices[i][TY];
         topi = i;
       }
-      if (vertices[i][Y] > ymax) ymax = vertices[i][Y];
+      if (vertices[i][TY] > ymax) {
+        ymax = vertices[i][TY];
+      }
     }
 
     // the last row is an exceptional case, because there won't
@@ -307,7 +320,7 @@ public class PPolygon implements PConstants {
         // step ccw down left side
         int i = (lefti != 0) ? (lefti-1) : (vertexCount-1);
         incrementalizeY(vertices[lefti], vertices[i], l, dl, y);
-        lefty = (int) (vertices[i][Y] + 0.5f);
+        lefty = (int) (vertices[i][TY] + 0.5f);
         lefti = i;
       }
 
@@ -317,7 +330,7 @@ public class PPolygon implements PConstants {
         // step cw down right edge
         int i = (righti != vertexCount-1) ? (righti + 1) : 0;
         incrementalizeY(vertices[righti], vertices[i], r, dr, y);
-        righty = (int) (vertices[i][Y] + 0.5f);
+        righty = (int) (vertices[i][TY] + 0.5f);
         righti = i;
       }
 
@@ -331,7 +344,7 @@ public class PPolygon implements PConstants {
 
         if ((y >= 0) && (y < height)) {
           //try {  // hopefully this bug is fixed
-          if (l[X] <= r[X]) scanline(y, l, r);
+          if (l[TX] <= r[TX]) scanline(y, l, r);
           else scanline(y, r, l);
           //} catch (ArrayIndexOutOfBoundsException e) {
           //e.printStackTrace();
@@ -350,16 +363,6 @@ public class PPolygon implements PConstants {
   }
 
 
-  public void unexpand() {
-    if (smooth) {
-      for (int i = 0; i < vertexCount; i++) {
-        vertices[i][X] /= SUBXRES;
-        vertices[i][Y] /= SUBYRES;
-      }
-    }
-  }
-
-
   private void scanline(int y, float l[], float r[]) {
     //System.out.println("scanline " + y);
     for (int i = 0; i < vertexCount; i++) {  // should be moved later
@@ -367,9 +370,9 @@ public class PPolygon implements PConstants {
     }
 
     // this rounding doesn't seem to be relevant with smooth
-    int lx = (int) (l[X] + 0.49999f);  // ceil(l[X]-.5);
+    int lx = (int) (l[TX] + 0.49999f);  // ceil(l[TX]-.5);
     if (lx < 0) lx = 0;
-    int rx = (int) (r[X] - 0.5f);
+    int rx = (int) (r[TX] - 0.5f);
     if (rx > width1) rx = width1;
 
     if (lx > rx) return;
@@ -671,13 +674,13 @@ public class PPolygon implements PConstants {
 
   private void incrementalizeY(float p1[], float p2[],
                                float p[], float dp[], int y) {
-    float delta = p2[Y] - p1[Y];
+    float delta = p2[TY] - p1[TY];
     if (delta == 0) delta = 1;
-    float fraction = y + 0.5f - p1[Y];
+    float fraction = y + 0.5f - p1[TY];
 
     if (interpX) {
-      dp[X] = (p2[X] - p1[X]) / delta;
-      p[X] = p1[X] + dp[X] * fraction;
+      dp[TX] = (p2[TX] - p1[TX]) / delta;
+      p[TX] = p1[TX] + dp[TX] * fraction;
     }
 //    if (interpZ) {
 //      dp[Z] = (p2[Z] - p1[Z]) / delta;
@@ -707,17 +710,17 @@ public class PPolygon implements PConstants {
 
   private void incrementalizeX(float p1[], float p2[],
                                float p[], float dp[], int x) {
-    float delta = p2[X] - p1[X];
+    float delta = p2[TX] - p1[TX];
     if (delta == 0) delta = 1;
-    float fraction = x + 0.5f - p1[X];
+    float fraction = x + 0.5f - p1[TX];
     if (smooth) {
       delta /= SUBXRES;
       fraction /= SUBXRES;
     }
 
     if (interpX) {
-      dp[X] = (p2[X] - p1[X]) / delta;
-      p[X] = p1[X] + dp[X] * fraction;
+      dp[TX] = (p2[TX] - p1[TX]) / delta;
+      p[TX] = p1[TX] + dp[TX] * fraction;
     }
 //    if (interpZ) {
 //      dp[Z] = (p2[Z] - p1[Z]) / delta;
@@ -746,7 +749,7 @@ public class PPolygon implements PConstants {
 
 
   private void increment(float p[], float dp[]) {
-    if (interpX) p[X] += dp[X];
+    if (interpX) p[TX] += dp[TX];
 //    if (interpZ) p[Z] += dp[Z];
 
     if (interpARGB) {
