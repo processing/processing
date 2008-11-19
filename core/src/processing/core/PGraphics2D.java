@@ -30,9 +30,9 @@ import java.util.Arrays;
 
 
 /**
- * Subclass of PGraphics that handles fast 2D rendering using a 
- * MemoryImageSource. The renderer found in this class is not as accurate as 
- * PGraphicsJava2D, but offers certain speed tradeoffs, particular when 
+ * Subclass of PGraphics that handles fast 2D rendering using a
+ * MemoryImageSource. The renderer found in this class is not as accurate as
+ * PGraphicsJava2D, but offers certain speed tradeoffs, particular when
  * messing with the pixels array, or displaying image or video data.
  */
 public class PGraphics2D extends PGraphics {
@@ -43,7 +43,7 @@ public class PGraphics2D extends PGraphics {
   PPolygon fpolygon;    // used to fill polys for tri or quad strips
   PPolygon spolygon;    // stroke/line polygon
   float svertices[][];  // temp vertices used for stroking end of poly
-  
+
   PPolygon tpolygon;
   int[] vertexOrder;
 
@@ -51,7 +51,7 @@ public class PGraphics2D extends PGraphics {
 
   float[][] matrixStack = new float[MATRIX_STACK_DEPTH][6];
   int matrixStackDepth;
-  
+
   DirectColorModel cm;
   MemoryImageSource mis;
 
@@ -63,16 +63,16 @@ public class PGraphics2D extends PGraphics {
 
 
   //public void setParent(PApplet parent)
-  
-  
+
+
   //public void setPrimary(boolean primary)
-  
-  
+
+
   //public void setPath(String path)
-  
-  
+
+
   //public void setSize(int iwidth, int iheight)
-  
+
 
   protected void allocate() {
     pixelCount = width * height;
@@ -87,10 +87,10 @@ public class PGraphics2D extends PGraphics {
     }
   }
 
-  
+
   //public void dispose()
 
-  
+
 
   //////////////////////////////////////////////////////////////
 
@@ -101,7 +101,7 @@ public class PGraphics2D extends PGraphics {
 
 
   public void beginDraw() {
-    // need to call defaults(), but can only be done when it's ok to draw 
+    // need to call defaults(), but can only be done when it's ok to draw
     // (i.e. for OpenGL, no drawing can be done outside beginDraw/endDraw).
     if (!settingsInited) {
       defaultSettings();
@@ -128,38 +128,38 @@ public class PGraphics2D extends PGraphics {
     // when this PGraphics is drawn using image().
     updatePixels();
   }
-  
-  
-  // public void flush() 
 
 
-  
+  // public void flush()
+
+
+
   //////////////////////////////////////////////////////////////
 
-  
+
   //protected void checkSettings()
-  
-  
+
+
   //protected void defaultSettings()
-  
-  
+
+
   //protected void reapplySettings()
-  
-  
+
+
 
   //////////////////////////////////////////////////////////////
 
-  
+
   //public void hint(int which)
 
-  
-  
+
+
   //////////////////////////////////////////////////////////////
 
 
   //public void beginShape()
 
-  
+
   public void beginShape(int kind) {
     shape = kind;
     vertexCount = 0;
@@ -175,14 +175,14 @@ public class PGraphics2D extends PGraphics {
 
 
   //public void edge(boolean e)
-  
-  
+
+
   //public void normal(float nx, float ny, float nz)
-  
-  
+
+
   //public void textureMode(int mode)
-  
-  
+
+
   //public void texture(PImage image)
 
 
@@ -195,8 +195,8 @@ public class PGraphics2D extends PGraphics {
     }
   }
   */
-  
-  
+
+
   public void vertex(float x, float y, float z) {
     showDepthWarningXYZ("vertex");
   }
@@ -209,16 +209,16 @@ public class PGraphics2D extends PGraphics {
     showDepthWarningXYZ("vertex");
   }
 
-  
+
   //protected void vertexTexture(float u, float v);
-  
-  
+
+
   public void breakShape() {
     showWarning("This renderer cannot handle concave shapes " +
                 "or shapes with holes.");
   }
-  
-  
+
+
   //public void endShape()
 
 
@@ -360,7 +360,7 @@ public class PGraphics2D extends PGraphics {
     case POLYGON:
       if (isConvex()) {
         if (fill) {
-          System.out.println("convex");
+          //System.out.println("convex");
           fpolygon.renderPolygon(vertices, vertexCount);
           //if (stroke) polygon.unexpand();
         }
@@ -373,7 +373,7 @@ public class PGraphics2D extends PGraphics {
           draw_lines(svertices, 1, 1, 1, 0);
         }
       } else {  // not convex
-        System.out.println("concave");
+        //System.out.println("concave");
         if (fill) {
           // the triangulator produces polygons that don't align
           // when smoothing is enabled. but if there is a stroke around
@@ -559,7 +559,7 @@ public class PGraphics2D extends PGraphics {
       }
 
       if (snip) {
-        tpolygon.renderTriangle(vertices[vertexOrder[u]], 
+        tpolygon.renderTriangle(vertices[vertexOrder[u]],
                                 vertices[vertexOrder[v]],
                                 vertices[vertexOrder[w]]);
         m++;
@@ -576,7 +576,7 @@ public class PGraphics2D extends PGraphics {
     }
   }
 
-  
+
   /*
   // triangulate the current polygon
   private void concaveRender() {
@@ -781,13 +781,13 @@ public class PGraphics2D extends PGraphics {
   //////////////////////////////////////////////////////////////
 
   // BEZIER VERTICES
-  
-  
+
+
   //public void bezierVertex(float x2, float y2,
   //                         float x3, float y3,
   //                         float x4, float y4)
-  
-  
+
+
   //public void bezierVertex(float x2, float y2, float z2,
   //                         float x3, float y3, float z3,
   //                         float x4, float y4, float z4)
@@ -797,11 +797,11 @@ public class PGraphics2D extends PGraphics {
   //////////////////////////////////////////////////////////////
 
   // CURVE VERTICES
-  
-  
+
+
   //public void curveVertex(float x, float y)
-  
-  
+
+
   //public void curveVertex(float x, float y, float z)
 
 
@@ -809,42 +809,42 @@ public class PGraphics2D extends PGraphics {
   //////////////////////////////////////////////////////////////
 
   // FLUSH
-  
-  
+
+
   //public void flush()
-  
-  
+
+
 
   //////////////////////////////////////////////////////////////
 
   // PRIMITIVES
-  
-  
+
+
   //public void point(float x, float y)
-  
-  
+
+
   public void point(float x, float y, float z) {
     showDepthWarningXYZ("point");
   }
-  
-  
+
+
   //public void line(float x1, float y1, float x2, float y2)
-  
-  
+
+
   //public void line(float x1, float y1, float z1,
   //                 float x2, float y2, float z2)
-  
-  
-  //public void triangle(float x1, float y1, 
+
+
+  //public void triangle(float x1, float y1,
   //                     float x2, float y2,
   //                     float x3, float y3)
-  
-  
+
+
   //public void quad(float x1, float y1, float x2, float y2,
   //                 float x3, float y3, float x4, float y4)
 
-  
-  
+
+
   //////////////////////////////////////////////////////////////
 
   // RECT
@@ -888,7 +888,7 @@ public class PGraphics2D extends PGraphics {
 
 
   /**
-   * Draw a rectangle that hasn't been warped by the CTM (though it may be 
+   * Draw a rectangle that hasn't been warped by the CTM (though it may be
    * translated). Just fill a bunch of pixels, or blend them if there's alpha.
    */
   private void simple_rect_fill(int x1, int y1, int x2, int y2) {
@@ -898,7 +898,7 @@ public class PGraphics2D extends PGraphics {
     if (x2 < x1) {
       int temp = x1; x1 = x2; x2 = temp;
     }
-    // check to see if completely off-screen (e.g. if the left edge of the 
+    // check to see if completely off-screen (e.g. if the left edge of the
     // rectangle is bigger than the width, and so on.)
     if ((x1 > width1) || (x2 < 0) ||
         (y1 > height1) || (y2 < 0)) return;
@@ -927,7 +927,7 @@ public class PGraphics2D extends PGraphics {
       int hh = y2 - y1;
       //    int[] row = new int[ww];
       //    for (int i = 0; i < ww; i++) row[i] = fillColor;
-      int index = y1 * width + x1;      
+      int index = y1 * width + x1;
       int rowIndex = index;
       for (int i = 0; i < ww; i++) {
         pixels[index + i] = fillColor;
@@ -956,7 +956,7 @@ public class PGraphics2D extends PGraphics {
 
       int centerX = (int) (x1 + hradius + ctm.m02);
       int centerY = (int) (y1 + vradius + ctm.m12);
-      
+
       int hradiusi = (int) hradius;
       int vradiusi = (int) vradius;
 
@@ -1070,7 +1070,7 @@ public class PGraphics2D extends PGraphics {
     }
   }
 
-  
+
   // unfortunately this can't handle fill and stroke simultaneously,
   // because the fill will later replace some of the stroke points
 
@@ -1146,7 +1146,7 @@ public class PGraphics2D extends PGraphics {
 
   //////////////////////////////////////////////////////////////
 
-  // BOX 
+  // BOX
 
 
   public void box(float size) {
@@ -1157,11 +1157,11 @@ public class PGraphics2D extends PGraphics {
     showDepthWarning("box");
   }
 
-  
-  
+
+
   //////////////////////////////////////////////////////////////
 
-  // SPHERE 
+  // SPHERE
 
 
   public void sphereDetail(int res) {
@@ -1176,7 +1176,7 @@ public class PGraphics2D extends PGraphics {
     showDepthWarning("sphere");
   }
 
-  
+
 
   //////////////////////////////////////////////////////////////
 
@@ -1333,7 +1333,7 @@ public class PGraphics2D extends PGraphics {
       pixels[offset] = color;
     }
 
-    
+
     private void thick_point(float x, float y, float z, // note floats
                              float r, float g, float b, float a) {
       spolygon.reset(4);
@@ -1471,13 +1471,13 @@ public class PGraphics2D extends PGraphics {
       }
     }
 
-    
+
     private int thin_flat_line_clip_code(float x, float y) {
       return ((y < 0 ? 8 : 0) | (y > height1 ? 4 : 0) |
               (x < 0 ? 2 : 0) | (x > width1 ? 1 : 0));
     }
 
-    
+
     private float thin_flat_line_slope(float x1, float y1,
                                       float x2, float y2, int border) {
       switch (border) {
@@ -1583,7 +1583,7 @@ public class PGraphics2D extends PGraphics {
       } else {  // use old line code for thickness > 1
         for (int i = 0; i < max; i += increment) {
           if ((skip != 0) && (((i+offset) % skip) == 0)) continue;
-          
+
           float v1[] = vertices[i];
           float v2[] = vertices[i+offset];
           thick_flat_line(v1[TX], v1[TY],  v1[SR], v1[SG], v1[SB], v1[SA],
@@ -1721,7 +1721,7 @@ public class PGraphics2D extends PGraphics {
      */
     public void applyMatrix(float n00, float n01, float n02,
                             float n10, float n11, float n12) {
-      ctm.apply(n00, n01, n02, 
+      ctm.apply(n00, n01, n02,
                 n10, n11, n12);
 //
 //      float r00 = m00*n00 + m01*n10;
@@ -1818,8 +1818,8 @@ public class PGraphics2D extends PGraphics {
     }
 
     public void ambient(float x, float y, float z) {
-      // This doesn't take 
-      if ((x != PMaterial.DEFAULT_AMBIENT) || 
+      // This doesn't take
+      if ((x != PMaterial.DEFAULT_AMBIENT) ||
           (y != PMaterial.DEFAULT_AMBIENT) ||
           (z != PMaterial.DEFAULT_AMBIENT)) {
         showDepthError("ambient");
@@ -1856,8 +1856,8 @@ public class PGraphics2D extends PGraphics {
     }
     */
 
-    
-    
+
+
     //////////////////////////////////////////////////////////////
 
     // INTERNAL SCHIZZLE
@@ -1872,7 +1872,7 @@ public class PGraphics2D extends PGraphics {
 //
 //    // TODO make this more efficient, or move into PMatrix2D
 //    private boolean unwarped() {
-//      return ((ctm.m00 == 1) && (ctm.m01 == 0) && 
+//      return ((ctm.m00 == 1) && (ctm.m01 == 0) &&
 //              (ctm.m10 == 0) && (ctm.m11 == 1));
 //    }
 
@@ -1884,19 +1884,19 @@ public class PGraphics2D extends PGraphics {
 
       int r = (a1 * ((p1 >> 16) & 0xff)) + (a2 * fillRi) & 0xff00;
       int g = (a1 * ((p1 >>  8) & 0xff)) + (a2 * fillGi) & 0xff00;
-      int b = (a1 * ( p1        & 0xff)) + (a2 * fillBi) & 0xff00; 
+      int b = (a1 * ( p1        & 0xff)) + (a2 * fillBi) & 0xff00;
 
       return 0xff000000 | (r << 8) | g | (b >> 8);
     }
-    
-    
+
+
     private final int blend_color(int p1, int p2) {
       int a2 = (p2 >>> 24);
-      
+
       if (a2 == 0xff) {
         // full replacement
         return p2;
-        
+
       } else {
         int a1 = a2 ^ 0xff;
         int r = (a1 * ((p1 >> 16) & 0xff) + a2 * ((p2 >> 16) & 0xff)) & 0xff00;
@@ -1907,7 +1907,7 @@ public class PGraphics2D extends PGraphics {
       }
     }
 
-    
+
     private final int blend_color_alpha(int p1, int p2, int a2) {
       // scale alpha by alpha of incoming pixel
       a2 = (a2 * (p2 >>> 24)) >> 8;
