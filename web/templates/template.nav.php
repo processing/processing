@@ -149,8 +149,8 @@ function navigation($section = '')
         if ($lang == 'en') {
 
           $html .= "\t\t\t\t\t" . l('Language', $section == 'Language') . " \\\n";
-          $html .= "\t\t\t\t\t" . l('Tools', $section == 'Tools') . " \\\n";
           $html .= "\t\t\t\t\t" . l('Libraries', $section == 'Libraries') . " \\\n";
+          $html .= "\t\t\t\t\t" . l('Tools', $section == 'Tools') . " \\\n";
           $html .= "\t\t\t\t\t" . l('Environment', $section == 'Environment') . " \\\n";
 	  	  $html .= "\t\t\t\t\t" . l('Compare', $section == 'Compare') . " \\\n";
           $html .= "\t\t\t\t\t" . l('Troubleshooting', $section == 'Troubleshooting') . "\n";
