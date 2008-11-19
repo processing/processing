@@ -2294,8 +2294,9 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * u, v coordinates are always based on image space location,
-   * regardless of the current textureMode().
+   * Draw an image(), also specifying u/v coordinates.
+   * In this method, the  u, v coordinates are always based on image space 
+   * location, regardless of the current textureMode().
    */
   public void image(PImage image,
                     float a, float b, float c, float d,

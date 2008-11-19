@@ -384,6 +384,9 @@ public class PSmoothTriangle implements PConstants {
       if (rx > parent.width1) rx = parent.width1;
     }
 
+//    System.out.println("P3D interp uv " + interpUV + " " + 
+//                       vertices[2][U] + " " + vertices[2][V]);
+
     interpX = false;
     int tr, tg, tb, ta;
     //System.out.println("lx: "+lx + "\nrx: "+rx);

@@ -431,11 +431,13 @@ public class PPolygon implements PConstants {
     interpX = false;
     int tr, tg, tb, ta;
 
+//    System.out.println("P2D interp uv " + interpUV + " " + 
+//                       vertices[2][U] + " " + vertices[2][V]);
     for (int x = lx; x <= rx; x++) {
       // map texture based on U, V coords in sp[U] and sp[V]
       if (interpUV) {
-        int tu = (int)sp[U];
-        int tv = (int)sp[V];
+        int tu = (int) (sp[U] * twidth);
+        int tv = (int) (sp[V] * theight);
 
         if (tu > twidth1) tu = twidth1;
         if (tv > theight1) tv = theight1;
@@ -447,8 +449,8 @@ public class PPolygon implements PConstants {
 //        if (smooth || texture_smooth) {   
           // tuf1/tvf1 is the amount of coverage for the adjacent
           // pixel, which is the decimal percentage.
-        int tuf1 = (int) (255f * (sp[U] - (float)tu));
-        int tvf1 = (int) (255f * (sp[V] - (float)tv));
+        int tuf1 = (int) (255f * (sp[U]*twidth - (float)tu));
+        int tvf1 = (int) (255f * (sp[V]*theight - (float)tv));
 
           // the closer sp[U or V] is to the decimal being zero
           // the more coverage it should get of the original pixel
