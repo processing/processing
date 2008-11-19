@@ -296,25 +296,19 @@ information about how the syntax differs so that people can make the
 transition).</p>
 
     <p>We could have saved a lot of time if we just wanted to build a better
-Flash. And in the end, as two people, do you really think we can or
+Flash. But as two people, do you really think we can or
 should bother competing with a company as large as Macromedia?
-Macrodobe? Does anyone really want a better Flash? </p>
+Macrodobe? Does anyone really want a "better" Flash? 
+We certainly don't, so that's not an interesting goal for us.</p>
 
     <p>There are things that are always going to be better in Flash,
 and other types of work that will always be better in Processing. But
-fundamentally (and this cannot be emphasized enough), there is no
+fundamentally (and this cannot be emphasized enough), this is not an
 all-or-nothing game&hellip; We're talking about tools. Do people refuse
 to use pencils because pens exist? No, you just use them for different
 things, and for specific reasons. If Processing works for you, then
 use it. If not, don't. It's easy! It's free! You're not being forced
 to do anything.</p>
-
-    <p>As we have heard, Flash 8 will be better at doing some of the pixel
-editing/image stuff you can do in Processing, but there are still lots
-of things we're covering that's not focused on moving pixels (OpenGL
-acceleration, easy serial port access, video input) and other things
-that are incomplete in beta but just around the corner ("Export to
-Application" and more).</p>
 
 
 <h5 id="java"><a href="#top"><img src="img/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
@@ -325,13 +319,13 @@ I know Java, is this Java? How do I use it that way?
 
 <p>The main rule when using Java code: You cannot use most of the AWT or Swing (which is built on the AWT), because it will interfere with the graphics model. If you want to add scroll bars and buttons to your projects, you should make them using Processing code, or embed your Processing applet inside another Swing or AWT application (see below). Even if they appear to work, such sketches will usually break when you try to run on other operating systems or other versions of Java.</p>
 
-<p><em>We currently only support Java 1.4 (and earlier) syntax.</em> You cannot currently use 1.5 syntax in the Processing Development Environment. This means no generics, templates, enum, varargs, foreach, <A HREF="http://java.sun.com/developer/technicalArticles/releases/j2se15langfeat/">and the rest</A>. If you want to use Java 1.5 (or later), take core.jar and develop your project with another Java IDE (again, see below). More about Java versions can be found on the <A HREF="/reference/environment/platforms.html#java">platforms</A> page. A couple of these features are very useful (the enhanced for loop, some aspects of generics) so if you would like to help get things running with 1.5 syntax, please contribute. You can start by visiting <A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=598">this bug</A> which describes the obstacles to 1.5 support.</p>
+<p><em>We currently only support Java 1.4 (and earlier) syntax.</em> You cannot currently use 1.5 syntax in the Processing Development Environment. This means no generics, templates, enum, varargs, foreach, <A HREF="http://java.sun.com/developer/technicalArticles/releases/j2se15langfeat/">and the rest</A>. If you want to use Java 1.5 (or later), take core.jar and develop your project with another Java IDE (again, see below). More about Java versions can be found on the <A HREF="/reference/environment/platforms.html#java">platforms</A> page. A couple of the syntax features in Java 1.5 are very useful (the enhanced for loop, some aspects of generics) so if you would like to use them in Processing, please give us a hand. You can start by visiting <A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=598">this bug</A> which describes the obstacles to 1.5 support.</p>
 
 <p>Since we can't really support anything and everything that you might want to do when interfacing with Java or using core.jar inside a Java environment, we have a separate <A HREF="http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Integrate">discussion area</A> on the discourse board for asking questions relatd to using Processing to interface with regular Java code.</p>
 
 <p>If you want to embed Processing into another Java application, visit the developer's reference for <A HREF="http://dev.processing.org/reference/core/javadoc/processing/core/PApplet.html">PApplet</A>. A discussion of how to use Processing with Eclipse is found <A HREF="http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Integrate;action=display;num=1117133941">here</A>.</p>
 
-<p>Also note that when using Processing outside the development environment, the headaches of the Java CLASSPATH and PATH return, and using libraries gets much nastier. These issues are just one of the ugly things that we try to hide in the Processing environment, things that separate Processing from straight Java coding. We feel that it is important to put the good stuff at the surface, and that those details don't teach students much anyway (and they annoy advanced users too).</p>
+<p>Also note that when using the Processing API or libraries outside the PDE, the headaches of the Java CLASSPATH and PATH return, and using libraries gets much nastier. These are some of the headaches that we try to hide in the Processing environment, things that separate Processing from straight Java coding. We feel that it is important to put the good stuff at the surface, and that those details don't teach students much anyway (and they annoy advanced users too).</p>
 
 
 <h5 id="dbn"><a href="#top"><img src="img/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
@@ -339,7 +333,7 @@ Where does this project come from? Is this DBN?
 </h5>
 <p>Processing is a descendant of the <A HREF="http://dbn.media.mit.edu">Design By Numbers</A> (DBN) project and other initiatives at the <A HREF="http://acg.media.mit.edu/">ACG</A>. DBN is a simplified programming language that was developed to teach the structure and interpretation of software in a visual manner. Design By Numbers was created by John Maeda and accompanied a book of the same name. While at the ACG, Ben and Casey were involved in the development and maintenance of the DBN software and courseware, and that experience provided the basis for the Processing project.</p>
 <p>While working on DBN, Ben developed several experimental versions that included other programming languages (Python and Scheme) and drawing features (color, changing the window size, magnification, movie recording, and even OpenGL support), but it was clear that these did not make sense for the DBN project because they interfered with Maeda's intention of a simplified programming language and environment.</p>
-<p>At the time (between 1998-2000), work at the ACG was usually developed via sketches written in Java and later moved to applications written in C++ using OpenGL. We were interested in melding the idea of "sketching" in code with the pedagogical aspect of DBN. Development of Processing began formally in the Spring of 2001 with discussions between Casey and Ben about API and feature set, and the first version of Processing would be used in August 2001 for a <A HREF="http://dbn.media.mit.edu/workshops/musabi/">workshop</A> at Musashino Art University in Japan.</p>
+<p>At the time (between 1998-2000), work at the ACG was usually developed via sketches written in Java and later moved to applications written in C++ using OpenGL. We were interested in melding the idea of "sketching" in code with the pedagogical aspect of DBN. Development of Processing began formally in the Spring of 2001 with discussions between Casey and Ben about API and feature set, and the first few versions of Processing (releases 0001, 0003, and 0005) were used in August 2001 at a <A HREF="http://dbn.media.mit.edu/workshops/musabi/">workshop</A> at Musashino Art University in Japan.</p>
 
 
 <h5 id="update"><a href="#top"><img src="img/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
