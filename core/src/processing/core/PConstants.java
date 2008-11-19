@@ -133,7 +133,7 @@ public interface PConstants {
     "other", "windows", "macosx", "linux"
   };
 
-  
+
   static final float EPSILON = 0.0001f;
 
 
