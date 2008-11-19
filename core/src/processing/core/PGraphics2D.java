@@ -250,7 +250,6 @@ public class PGraphics2D extends PGraphics {
     // all the values for r, g, b have been set with calls to vertex()
     // (no need to re-calculate anything here)
 
-
     // ------------------------------------------------------------------
     // RENDER SHAPES
 
@@ -863,7 +862,7 @@ public class PGraphics2D extends PGraphics {
       int y2 = (int) (y2f + ctm.m12);
 
       if (fill) {
-        rect_fill_simple(x1, y1, x2, y2);
+        simple_rect_fill(x1, y1, x2, y2);
       }
 
       if (stroke) {
@@ -892,7 +891,7 @@ public class PGraphics2D extends PGraphics {
    * Draw a rectangle that hasn't been warped by the CTM (though it may be 
    * translated). Just fill a bunch of pixels, or blend them if there's alpha.
    */
-  private void rect_fill_simple(int x1, int y1, int x2, int y2) {
+  private void simple_rect_fill(int x1, int y1, int x2, int y2) {
     if (y2 < y1) {
       int temp = y1; y1 = y2; y2 = temp;
     }
@@ -1021,6 +1020,7 @@ public class PGraphics2D extends PGraphics {
     }
   }
 
+
   /**
    * Heavily adapted version of the above algorithm that handles
    * filling the ellipse. Works by drawing from the center and
@@ -1070,6 +1070,7 @@ public class PGraphics2D extends PGraphics {
     }
   }
 
+  
   // unfortunately this can't handle fill and stroke simultaneously,
   // because the fill will later replace some of the stroke points
 
@@ -1210,7 +1211,7 @@ public class PGraphics2D extends PGraphics {
     if ((x2 - x1 == image.width) &&
         (y2 - y1 == image.height) &&
         !tint && !ctm.isWarped()) {
-      flat_image(image, (int) (x1 + ctm.m02), (int) (y1 + ctm.m12), u1, v1, u2, v2);
+      simple_image(image, (int) (x1 + ctm.m02), (int) (y1 + ctm.m12), u1, v1, u2, v2);
 
     } else {
       super.imageImpl(image, x1, y1, x2, y2, u1, v1, u2, v2);
@@ -1227,15 +1228,8 @@ public class PGraphics2D extends PGraphics {
    * @param  sx1    x coordinate of upper-lefthand corner in screen space
    * @param  sy1    y coordinate of upper-lefthand corner in screen space
    */
-  private void flat_image(PImage image, int sx1, int sy1,
-                          int ix1, int iy1, int ix2, int iy2) {
-    /*
-    int ix1 = 0;
-    int iy1 = 0;
-    int ix2 = image.width;
-    int iy2 = image.height;
-    */
-
+  private void simple_image(PImage image, int sx1, int sy1,
+                            int ix1, int iy1, int ix2, int iy2) {
     if (imageMode == CENTER) {
       sx1 -= image.width / 2;
       sy1 -= image.height / 2;
@@ -1275,9 +1269,11 @@ public class PGraphics2D extends PGraphics {
 
         for (int x = sx1; x < sx2; x++) {
           pixels[target + x] =
-            _blend(pixels[target + x],
-                   image.pixels[source + tx],
-                   image.pixels[source + tx++] >>> 24);
+//            _blend(pixels[target + x],
+//                   image.pixels[source + tx],
+//                   image.pixels[source + tx++] >>> 24);
+          blend_color(pixels[target + x],
+                      image.pixels[source + tx++]);
         }
         source += image.width;
         target += width;
@@ -1288,9 +1284,9 @@ public class PGraphics2D extends PGraphics {
 
         for (int x = sx1; x < sx2; x++) {
           pixels[target + x] =
-            _blend(pixels[target + x],
-                   fillColor,
-                   image.pixels[source + tx++]);
+            blend_color_alpha(pixels[target + x],
+                              fillColor,
+                              image.pixels[source + tx++]);
         }
         source += image.width;
         target += width;
@@ -1894,7 +1890,7 @@ public class PGraphics2D extends PGraphics {
     }
     
     
-    private final int _blend(int p1, int p2) {
+    private final int blend_color(int p1, int p2) {
       int a2 = (p2 >>> 24);
       
       if (a2 == 0xff) {
@@ -1912,7 +1908,7 @@ public class PGraphics2D extends PGraphics {
     }
 
     
-    private final int _blend(int p1, int p2, int a2) {
+    private final int blend_color_alpha(int p1, int p2, int a2) {
       // scale alpha by alpha of incoming pixel
       a2 = (a2 * (p2 >>> 24)) >> 8;
 
