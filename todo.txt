@@ -1,14 +1,7 @@
-0157 pde
-X show sketch folder fails for directories containing umlauts
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1010
-X Find in Reference does not open Firefox in 0156 for Linux
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1012
-X add error message when trying to open sketch from the menu
-X check into use of platform names in export sketch / export application
-X   opting not to deal with this because of size of populations
-X default font on osx 10.5 is gross
-X   fix bug with reading the default prefs file
+0158 pde
 
+
+_ fix up mkdmg script to work with leopard properly
 
 _ go through other sketch-opening menus to check for disappearing sketches
 
