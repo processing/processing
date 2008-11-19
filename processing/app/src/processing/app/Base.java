@@ -855,14 +855,18 @@ public class Base {
 
     ActionListener listener = new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-//          Component source = (Component) e.getSource();
-//          Component parent = source.getParent();
-//          if (parent.isValid()) {
-//            // parent component (the menu) will be valid when it's a popup
-          if (openReplaces) {
-            handleOpenReplace(e.getActionCommand());
+          String path = e.getActionCommand();
+          if (new File(path).exists()) {
+            if (openReplaces) {
+              handleOpenReplace(path);
+            } else {
+              handleOpen(path);
+            }
           } else {
-            handleOpen(e.getActionCommand());
+            showWarning("Sketch Does Not Exist",
+                        "The selected sketch no longer exists.\n" +
+                        "You may need to restart Processing to update\n" +
+                        "the sketchbook menu.", null);
           }
         }
       };
