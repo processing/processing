@@ -7,6 +7,40 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0157 - 18 November 2008
+
+The return of P2D and a handful of bug fixes. 
+
+[ changes ] 
+
++ P2D has returned for the first time since alpha (release 0069).
+  It's probably not yet complete, please test and file bugs if you
+  find things that are missing or not behaving correctly. 
+
+[ bug fixes ] 
+
++ Show sketch folder failing for directories containing umlauts.
+  http://dev.processing.org/bugs/show_bug.cgi?id=1010
+
++ Find in Reference does not open Firefox in 0156 for Linux.
+  http://dev.processing.org/bugs/show_bug.cgi?id=1012
+
++ Fixed a problem where the default per-platform preference settings
+  were not being set properly, resulting in sadness like ugly default
+  fonts in the editor. You may want to remove your preferences.txt file 
+  to reset your settings if your afflicted by an ugly monospaced font
+  in your editor.
+
++ SVG polygon shapes not drawing since loadShape() and PShape changes.
+  http://dev.processing.org/bugs/show_bug.cgi?id=1005
+
++ image(img, x, y) was not honoring imageMode(CENTER), now fixed.
+  http://dev.processing.org/bugs/show_bug.cgi?id=1013
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0156 - 10 November 2008
 
 Bug fix release to fix Present mode (full screen) and some errors not
