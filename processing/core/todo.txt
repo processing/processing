@@ -7,6 +7,8 @@ X   rather than passing it directly to imageImpl()
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1013
 _ disable P2D before releasing (unless implementation is finished)
 
+_ Writing XML files (clean up the API)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=964
 
 _ OPENGL sketches flicker w/ Vista when background() is not used inside draw()
 _   http://dev.processing.org/bugs/show_bug.cgi?id=930
@@ -121,10 +123,11 @@ _   add an edge flag when tesselating
 _   mind the opengl tesselation flags
 _   need to turn off smoothing for the interior of shapes
 _   http://dev.processing.org/bugs/show_bug.cgi?id=200
-_ in opengl mode, use its tesselator
+_ Implement support for complex shapes when using the OpenGL renderer 
+_   http://dev.processing.org/bugs/show_bug.cgi?id=947
+_   in opengl mode, use its tesselator
 _   because the vertex calls can just come right back to regular vertex calls
 _   this way we can also implement breakShape() for opengl
-_   http://dev.processing.org/bugs/show_bug.cgi?id=947
 _ smooth in P3D has zbuffer glitches
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1000
 _ smoothing is slow
