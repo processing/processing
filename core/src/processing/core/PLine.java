@@ -143,7 +143,7 @@ public class PLine implements PConstants
                           float x1, float y1, float z1) {
     // [rocha] fixed z drawing, so whenever a line turns on
     // z interpolation, all the lines are z interpolated
-    if (z0 != z1 || z0!=0.0f || z1!=0.0f || INTERPOLATE_Z) {
+    if (z0 != z1 || z0 != 0.0f || z1 != 0.0f || INTERPOLATE_Z) {
       INTERPOLATE_Z = true;
       m_drawFlags |= R_SPATIAL;
     } else {
@@ -160,6 +160,7 @@ public class PLine implements PConstants
     y_array[0] = y0;
     y_array[1] = y1;
   }
+
 
   public void setIntensities(float r0, float g0, float b0, float a0,
                              float r1, float g1, float b1, float a1) {
@@ -541,7 +542,7 @@ public class PLine implements PConstants
     float iz = m_z0;
     int offset = y0 * SCREEN_WIDTH + x0;
 
-    if (iz <= m_zbuffer[offset]) {
+    if ((m_zbuffer == null) || iz <= m_zbuffer[offset]) {
       int alpha = ia >> 16;
       int r0 = m_pixels[offset];
       int g0 = r0 & 0xFF00;
@@ -554,7 +555,7 @@ public class PLine implements PConstants
 
       m_pixels[offset] = 0xFF000000 |
         (r0 & 0xFF0000) | (g0 & 0xFF00) | (b0 & 0xFF);
-      //m_zbuffer[offset] = iz;
+      if (m_zbuffer != null) m_zbuffer[offset] = iz;
     }
   }
 
@@ -620,7 +621,7 @@ public class PLine implements PConstants
 
         m_pixels[offset] = 0xFF000000 |
           (r0 & 0xFF0000) | (g0 & 0xFF00) | (b0 & 0xFF);
-        m_zbuffer[offset] = m_z0;
+        //m_zbuffer[offset] = m_z0;  // don't set zbuffer w/ alpha lines
 
         ia += da;
         j += dt;
@@ -642,7 +643,7 @@ public class PLine implements PConstants
 
         m_pixels[offset] = 0xFF000000 |
           (r0 & 0xFF0000) | (g0 & 0xFF00) | (b0 & 0xFF);
-        m_zbuffer[offset] = m_z0;
+        //m_zbuffer[offset] = m_z0;  // no zbuffer w/ alpha lines
 
         ia += da;
         j += dt;
@@ -665,7 +666,7 @@ public class PLine implements PConstants
         offset = y0 * SCREEN_WIDTH + (j>>16);
         m_pixels[offset] = 0xFF000000 |
           ((ir & 0xFF0000) | ((ig >> 8) & 0xFF00) | (ib >> 16));
-        m_zbuffer[offset] = m_z0;
+        if (m_zbuffer != null) m_zbuffer[offset] = m_z0;
         ir += dr;
         ig += dg;
         ib += db;
@@ -678,7 +679,7 @@ public class PLine implements PConstants
         offset = (j>>16) * SCREEN_WIDTH + x0;
         m_pixels[offset] = 0xFF000000 |
           ((ir & 0xFF0000) | ((ig >> 8) & 0xFF00) | (ib >> 16));
-        m_zbuffer[offset] = m_z0;
+        if (m_zbuffer != null) m_zbuffer[offset] = m_z0;
         ir += dr;
         ig += dg;
         ib += db;
@@ -719,7 +720,7 @@ public class PLine implements PConstants
 
         m_pixels[offset] = 0xFF000000 |
           (r0 & 0xFF0000) | (g0 & 0xFF00) | (b0 & 0xFF);
-        m_zbuffer[offset] = m_z0;
+        if (m_zbuffer != null) m_zbuffer[offset] = m_z0;
 
         ir+= dr;
         ig+= dg;
@@ -750,7 +751,7 @@ public class PLine implements PConstants
 
         m_pixels[offset] = 0xFF000000 |
           (r0 & 0xFF0000) | (g0 & 0xFF00) | (b0 & 0xFF);
-        m_zbuffer[offset] = m_z0;
+        if (m_zbuffer != null) m_zbuffer[offset] = m_z0;
 
         ir+= dr;
         ig+= dg;
@@ -826,7 +827,7 @@ public class PLine implements PConstants
 
             m_pixels[offset] = 0xFF000000 |
               (r0 & 0xFF0000) | (g0 & 0xFF00) | (b0 & 0xFF);
-            //m_zbuffer[offset] = iz;
+            m_zbuffer[offset] = iz;
           }
         }
         iz +=dz;
@@ -852,7 +853,7 @@ public class PLine implements PConstants
 
             m_pixels[offset] = 0xFF000000 |
               (r0 & 0xFF0000) | (g0 & 0xFF00) | (b0 & 0xFF);
-            //m_zbuffer[offset] = iz;
+            m_zbuffer[offset] = iz;
           }
         }
         iz += dz;
