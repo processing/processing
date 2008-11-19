@@ -1,11 +1,4 @@
-0157 core
-X SVG polygon shapes not drawing since loadShape() and PShape changes
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1005
-X image(a, x, y) not honoring imageMode(CENTER)
-X   need to just pass image(a, x, y) to image(a, x, y, a.width, a.height)
-X   rather than passing it directly to imageImpl()
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1013
-o disable P2D before releasing (unless implementation is finished)
+0158 core
 
 
 _ Writing XML files (clean up the API)
