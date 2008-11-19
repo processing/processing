@@ -96,6 +96,7 @@ $pages = array(
 
     'Language'      => array('/reference/index.html', 1),
     'Environment'   	=> array('/reference/environment/index.html', 2),
+    'Tools'   	=> array('/reference/tools/index.html', 2),
     'Libraries'     	=> array('/reference/libraries/index.html', 2),
     'Compare'    	=> array('/reference/compare/index.html', 2),
     'Troubleshooting'	=> array('/reference/troubleshooting/index.html', 2)
@@ -108,7 +109,7 @@ function navigation($section = '')
     global $translation;
     $tr = $translation->navigation;
 
-    $ref = array('Reference', 'Language', 'Environment', 'Libraries', 'Compare', 'Troubleshooting');
+    $ref = array('Reference', 'Tools', 'Language', 'Environment', 'Libraries', 'Compare', 'Troubleshooting');
     #$learn = array('Learning', 'Examples', 'Tutorials');
     #$learn = array('Learning', 'Overview', 'Getting Started', 'Basics', 'Topics', '3D & OpenGL', 'Library Examples', 'Books', 'Hacks');
     $learn = array('Learning', 'Overview', 'Getting Started', 'Examples', 'Tutorials', 'Books');
@@ -148,15 +149,17 @@ function navigation($section = '')
         if ($lang == 'en') {
 
           $html .= "\t\t\t\t\t" . l('Language', $section == 'Language') . " \\\n";
+          $html .= "\t\t\t\t\t" . l('Tools', $section == 'Tools') . " \\\n";
           $html .= "\t\t\t\t\t" . l('Libraries', $section == 'Libraries') . " \\\n";
           $html .= "\t\t\t\t\t" . l('Environment', $section == 'Environment') . " \\\n";
-	  $html .= "\t\t\t\t\t" . l('Compare', $section == 'Compare') . " \\\n";
+	  	  $html .= "\t\t\t\t\t" . l('Compare', $section == 'Compare') . " \\\n";
           $html .= "\t\t\t\t\t" . l('Troubleshooting', $section == 'Troubleshooting') . "\n";
         
 	} else {
 
           $html .= "\t\t\t\t\t<a href=\"/reference/$lang/index.html\"" . ($section == 'Language' ? ' class="active"' : '') . ">$tr[language]</a> \\ \n";
           $html .= "\t\t\t\t\t<a href=\"/reference/$lang/libraries/index.html\"" . ($section == 'Libraries' ? ' class="active"' : '') . ">$tr[libraries]</a> \\ \n";
+          $html .= "\t\t\t\t\t<a href=\"/reference/$lang/tools/index.html\"" . ($section == 'Tools' ? ' class="active"' : '') . ">$tr[tools]</a> \\ \n";
           $html .= "\t\t\t\t\t<a href=\"/reference/$lang/environment/index.html\"" . ($section == 'Environment' ? ' class="active"' : '') . ">$tr[environment]</a> \\ \n";
           $html .= "\t\t\t\t\t<a href=\"/reference/$lang/compare/index.html\"" . ($section == 'Compare' ? 'class="active"' : '') . ">$tr[comparison]</a> \\ \n";
           $html .= "\t\t\t\t\t<a href=\"/reference/$lang/troubleshooting/index.html\"" . ($section == 'Troubleshooting' ? 'class="active"' : '') . ">$tr[troubleshooting]</a>\n";
