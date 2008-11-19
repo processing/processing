@@ -4,15 +4,16 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=1010
 X Find in Reference does not open Firefox in 0156 for Linux
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1012
 X add error message when trying to open sketch from the menu
+X check into use of platform names in export sketch / export application
+X   opting not to deal with this because of size of populations
+X default font on osx 10.5 is gross
+X   fix bug with reading the default prefs file
+
 
 _ go through other sketch-opening menus to check for disappearing sketches
 
-X default font on osx 10.5 is gross
-X   fix bug with reading the default prefs file
-_ in this release, check if platform is MACOSX and font is monospaced (?)
+_ check if platform is MACOSX and font is monospaced (?)
 _   if so, nuke the setting and change it back to Monaco
-
-_ check into use of platform names in export sketch / export application
 
 _ update to java 6u10 for linux and windows
 _ update applet.html to point at java 6u10 with the new auto-update stuff
