@@ -2738,6 +2738,16 @@ public class PGraphics extends PImage implements PConstants {
 
     if (textMode == SCREEN) loadPixels();
 
+    if (textAlignY == CENTER) {
+      y += textAscent() / 2;
+    } else if (textAlignY == TOP) {
+      y += textAscent();
+    } else if (textAlignY == BOTTOM) {
+      y -= textDescent();
+    //} else if (textAlignY == BASELINE) {
+      // do nothing
+    }
+
     textBuffer[0] = c;
     textLineAlignImpl(textBuffer, 0, 1, x, y);
 
