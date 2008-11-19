@@ -25,7 +25,7 @@ void setup(){
   size(200, 200);
   background(127);
   smooth();
-  ellipseMode(CENTER_RADIUS);
+  ellipseMode(RADIUS);
   noStroke();
  // you can substitue TINT for SHADE argument
  createWheel(width/2, height/2, SHADE);
