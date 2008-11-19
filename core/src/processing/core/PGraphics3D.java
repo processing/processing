@@ -2224,34 +2224,34 @@ public class PGraphics3D extends PGraphics {
       boolean failedToPrecalc = false;
       if (s_enableAccurateTextures && frustumMode){
         boolean textured = true;
-                smoothTriangle.reset(3);
-                smoothTriangle.smooth = true;
-                smoothTriangle.interpARGB = true;
-                smoothTriangle.setIntensities(ar, ag, ab, a[A],
-                                                                          br, bg, bb, b[A],
-                                                                          cr, cg, cb, c[A]);
-                if (tex > -1 && textures[tex] != null) {
-                        smoothTriangle.setCamVertices(a[VX], a[VY], a[VZ],
-                                                                                  b[VX], b[VY], b[VZ],
-                                                                                  c[VX], c[VY], c[VZ]);
-                        smoothTriangle.interpUV = true;
-                        smoothTriangle.texture(textures[tex]);
-                        float umult = textures[tex].width; //apparently no check for textureMode is needed here
-                        float vmult = textures[tex].height;
-                        smoothTriangle.vertices[0][U] = a[U]*umult;
-                        smoothTriangle.vertices[0][V] = a[V]*vmult;
-                        smoothTriangle.vertices[1][U] = b[U]*umult;
-                        smoothTriangle.vertices[1][V] = b[V]*vmult;
-                        smoothTriangle.vertices[2][U] = c[U]*umult;
-                        smoothTriangle.vertices[2][V] = c[V]*vmult;
-                } else {
-                        smoothTriangle.interpUV = false;
-                        textured = false;
-                }
+        smoothTriangle.reset(3);
+        smoothTriangle.smooth = true;
+        smoothTriangle.interpARGB = true;
+        smoothTriangle.setIntensities(ar, ag, ab, a[A],
+                                      br, bg, bb, b[A],
+                                      cr, cg, cb, c[A]);
+        if (tex > -1 && textures[tex] != null) {
+          smoothTriangle.setCamVertices(a[VX], a[VY], a[VZ],
+                                        b[VX], b[VY], b[VZ],
+                                        c[VX], c[VY], c[VZ]);
+          smoothTriangle.interpUV = true;
+          smoothTriangle.texture(textures[tex]);
+          float umult = textures[tex].width;  // apparently no check for textureMode is needed here
+          float vmult = textures[tex].height;
+          smoothTriangle.vertices[0][U] = a[U]*umult;
+          smoothTriangle.vertices[0][V] = a[V]*vmult;
+          smoothTriangle.vertices[1][U] = b[U]*umult;
+          smoothTriangle.vertices[1][V] = b[V]*vmult;
+          smoothTriangle.vertices[2][U] = c[U]*umult;
+          smoothTriangle.vertices[2][V] = c[V]*vmult;
+        } else {
+          smoothTriangle.interpUV = false;
+          textured = false;
+        }
 
         smoothTriangle.setVertices(a[TX], a[TY], a[TZ],
-                                                   b[TX], b[TY], b[TZ],
-                                                   c[TX], c[TY], c[TZ]);
+                                   b[TX], b[TY], b[TZ],
+                                   c[TX], c[TY], c[TZ]);
 
 
         if (!textured || smoothTriangle.precomputeAccurateTexturing()){
