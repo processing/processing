@@ -26,29 +26,9 @@ package processing.core;
 
 
 /**
- * zbuffer polygon rendering object for PGraphics.
- * <P>
- * Likely to be removed before 1.0 as it's no longer particularly used.
+ * Z-buffer polygon rendering object used by PGraphics2D.
  */
 public class PPolygon implements PConstants {
-
-  // identical to the constants from PGraphics
-
-  /*
-  static final int X = 0; // transformed xyzw
-  static final int Y = 1; // formerly SX SY SZ
-//  static final int Z = 2;
-
-  static final int R = 2;  // actual rgb, after lighting
-  static final int G = 3;  // fill stored here, transform in place
-  static final int B = 4;
-  static final int A = 5;
-
-  static final int U = 6; // texture
-  static final int V = 7;
-  
-  static final int FIELD_COUNT = 8;
-  */
 
   static final int DEFAULT_SIZE = 64; // this is needed for spheres
   float vertices[][] = new float[DEFAULT_SIZE][VERTEX_FIELD_COUNT];
@@ -61,16 +41,12 @@ public class PPolygon implements PConstants {
   float sp[]  = new float[DEFAULT_SIZE]; // temporary storage for scanline
   float sdp[] = new float[DEFAULT_SIZE];
 
-  // color and xyz are always interpolated
   protected boolean interpX;
-//  boolean interpZ;
   protected boolean interpUV; // is this necessary? could just check timage != null
   protected boolean interpARGB;
 
   private int rgba;
   private int r2, g2, b2, a2, a2orig;
-
-//  private boolean noDepthTest;
 
   PGraphics parent;
   int[] pixels;
@@ -85,9 +61,6 @@ public class PPolygon implements PConstants {
   int theight, twidth;
   int theight1, twidth1;
   int tformat;
-
-  // temp fix to behave like SMOOTH_IMAGES
-  //boolean texture_smooth;
 
   // for anti-aliasing
   static final int SUBXRES  = 8;
@@ -542,47 +515,6 @@ public class PPolygon implements PConstants {
           int weight = smooth ? coverage(x) : 255;
           if (weight != 255) ta = ta*weight >> 8;
 
-//        } else {  // no smooth, just get the pixels
-//          int tpixel = tpixels[txy];
-//
-//          // TODO i doubt splitting these guys really gets us
-//          // all that much speed.. is it worth it?
-//          if (tformat == ALPHA) {
-//            ta = tpixel;
-//
-//            if (interpARGB) {
-//              tr = (int) sp[R]*255;
-//              tg = (int) sp[G]*255;
-//              tb = (int) sp[B]*255;
-//              if (sp[A] != 1) {
-//                ta = (((int) sp[A]*255) * ta) >> 8;
-//              }
-//
-//            } else {
-//              tr = r2;
-//              tg = g2;
-//              tb = b2;
-//              ta = (a2orig * ta) >> 8;
-//            }
-//
-//          } else {  // RGB or ARGB
-//            ta = (tformat == RGB) ? 255 : (tpixel >> 24) & 0xff;
-//
-//            if (interpARGB) {
-//              tr = (((int) sp[R]*255) * ((tpixel >> 16) & 0xff)) >> 8;
-//              tg = (((int) sp[G]*255) * ((tpixel >> 8) & 0xff)) >> 8;
-//              tb = (((int) sp[B]*255) * ((tpixel) & 0xff)) >> 8;
-//              ta = (((int) sp[A]*255) * ta) >> 8;
-//
-//            } else {
-//              tr = (r2 * ((tpixel >> 16) & 0xff)) >> 8;
-//              tg = (g2 * ((tpixel >> 8) & 0xff)) >> 8;
-//              tb = (b2 * ((tpixel) & 0xff)) >> 8;
-//              ta = (a2orig * ta) >> 8;
-//            }
-//          }
-//        }
-
         if ((ta == 254) || (ta == 255)) {  // if (ta & 0xf8) would be good
           // no need to blend
           pixels[offset+x] = 0xff000000 | (tr << 16) | (tg << 8) | tb;
@@ -652,8 +584,8 @@ public class PPolygon implements PConstants {
   // x is in screen, not huge 8x coordinates
   private int coverage(int x) {
     if ((x >= aaleftfull) && (x <= aarightfull) &&
-        // important since not all SUBYRES lines may have been covered
-        (firstModY == 0) && (lastModY == SUBYRES1)) {
+      // important since not all SUBYRES lines may have been covered
+      (firstModY == 0) && (lastModY == SUBYRES1)) {
       return 255;
     }
 
@@ -684,10 +616,6 @@ public class PPolygon implements PConstants {
       dp[TX] = (p2[TX] - p1[TX]) / delta;
       p[TX] = p1[TX] + dp[TX] * fraction;
     }
-//    if (interpZ) {
-//      dp[Z] = (p2[Z] - p1[Z]) / delta;
-//      p[Z] = p1[Z] + dp[Z] * fraction;
-//    }
 
     if (interpARGB) {
       dp[R] = (p2[R] - p1[R]) / delta;
@@ -724,10 +652,6 @@ public class PPolygon implements PConstants {
       dp[TX] = (p2[TX] - p1[TX]) / delta;
       p[TX] = p1[TX] + dp[TX] * fraction;
     }
-//    if (interpZ) {
-//      dp[Z] = (p2[Z] - p1[Z]) / delta;
-//      p[Z] = p1[Z] + dp[Z] * fraction;
-//    }
 
     if (interpARGB) {
       dp[R] = (p2[R] - p1[R]) / delta;
@@ -752,7 +676,6 @@ public class PPolygon implements PConstants {
 
   private void increment(float p[], float dp[]) {
     if (interpX) p[TX] += dp[TX];
-//    if (interpZ) p[Z] += dp[Z];
 
     if (interpARGB) {
       p[R] += dp[R];
