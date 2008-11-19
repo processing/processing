@@ -1,4 +1,7 @@
 0158 core
+X arc() broken in P2D
+X   also a typo in the ColorWheel example
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1019
 
 
 _ Writing XML files (clean up the API)

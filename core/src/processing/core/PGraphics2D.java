@@ -278,6 +278,63 @@ public class PGraphics2D extends PGraphics {
       }
       break;
 
+    case TRIANGLE_FAN:
+      // do fill and stroke separately because otherwise
+      // the lines will be stroked more than necessary
+      if (fill) {
+        fpolygon.vertexCount = 3;
+        
+        for (int i = 1; i < vertexCount-1; i++) {
+//          System.out.println(i + " of " + vertexCount);
+
+          fpolygon.vertices[2][R] = vertices[0][R];
+          fpolygon.vertices[2][G] = vertices[0][G];
+          fpolygon.vertices[2][B] = vertices[0][B];
+          fpolygon.vertices[2][A] = vertices[0][A];
+
+          fpolygon.vertices[2][TX] = vertices[0][TX];
+          fpolygon.vertices[2][TY] = vertices[0][TY];
+
+          if (textureImage != null) {
+            fpolygon.vertices[2][U] = vertices[0][U];
+            fpolygon.vertices[2][V] = vertices[0][V];
+          }
+//          System.out.println(fpolygon.vertices[2][TX] + " " + fpolygon.vertices[2][TY]);
+
+          for (int j = 0; j < 2; j++) {
+            fpolygon.vertices[j][R] = vertices[i+j][R];
+            fpolygon.vertices[j][G] = vertices[i+j][G];
+            fpolygon.vertices[j][B] = vertices[i+j][B];
+            fpolygon.vertices[j][A] = vertices[i+j][A];
+
+            fpolygon.vertices[j][TX] = vertices[i+j][TX];
+            fpolygon.vertices[j][TY] = vertices[i+j][TY];
+            
+//            System.out.println(fpolygon.vertices[j][TX] + " " + fpolygon.vertices[j][TY]);
+
+            if (textureImage != null) {
+              fpolygon.vertices[j][U] = vertices[i+j][U];
+              fpolygon.vertices[j][V] = vertices[i+j][V];
+            }
+          }
+//          System.out.println();
+          fpolygon.render();
+        }
+      }
+      if (stroke) {
+        // draw internal lines
+        for (int i = 1; i < vertexCount; i++) {
+          draw_line(vertices[0], vertices[i]);
+        }
+        // draw a ring around the outside
+        for (int i = 1; i < vertexCount-1; i++) {
+          draw_line(vertices[i], vertices[i+1]);
+        }
+        // close the shape
+        draw_line(vertices[vertexCount-1], vertices[1]);
+      }
+      break;
+
     case TRIANGLES:
     case TRIANGLE_STRIP:
       increment = (shape == TRIANGLES) ? 3 : 1;
@@ -1555,6 +1612,24 @@ public class PGraphics2D extends PGraphics {
     }
 
 
+    private void draw_line(float[] v1, float[] v2) {
+      if (strokeWeight == 1) {
+        if (line == null) line = new PLine(this);
+
+        line.reset();
+        line.setIntensities(v1[SR], v1[SG], v1[SB], v1[SA],
+                            v2[SR], v2[SG], v2[SB], v2[SA]);
+        line.setVertices(v1[TX], v1[TY], v1[TZ],
+                         v2[TX], v2[TY], v2[TZ]);
+        line.draw();
+
+      } else {  // use old line code for thickness != 1
+        thick_flat_line(v1[TX], v1[TY],  v1[SR], v1[SG], v1[SB], v1[SA],
+                        v2[TX], v2[TY],  v2[SR], v2[SG], v2[SB], v2[SA]);
+      }
+    }
+
+    
     /**
      * @param max is what to count to
      * @param offset is offset to the 'next' vertex
@@ -1580,7 +1655,7 @@ public class PGraphics2D extends PGraphics {
           line.draw();
         }
 
-      } else {  // use old line code for thickness > 1
+      } else {  // use old line code for thickness != 1
         for (int i = 0; i < max; i += increment) {
           if ((skip != 0) && (((i+offset) % skip) == 0)) continue;
 
