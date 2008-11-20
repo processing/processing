@@ -10,8 +10,9 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=1028 (mark as dupe)
 X arc() center transparent
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1027
 X   mark as dupe of bug #200
+X P2D - alpha stroke rendered at full opacity
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1024
 
-. . . 
 
 _ Writing XML files (clean up the API)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=964
@@ -21,12 +22,18 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=930
 _   Disabling Aero scheme prevents the problem (maybe?)
 _ Present mode and OPENGL not working in 0156 with Windows Vista
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1009
+_   Seems to be limited to Java 6u10 (but verify)
 _   -Dsun.java2d.d3d=false seems to fix the problem
+_   can probably add that to PApplet.main()
 
 _ No textures render with hint(ENABLE_ACCURATE_TEXTURES)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=985
 _   need to remove the hint from the reference
 _   need to throw an error when it's used
+
+_ blend() accuracy when using ADD
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1008
+_   includes code for a slow but more accurate mode
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
