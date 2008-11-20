@@ -23,7 +23,8 @@ writeFile('distribution/tools/index.html', $page->out());
 copydirr(CONTENTDIR."api_$lang/TOOL_images", BASEDIR.'tools/images');
 
 // copy over the files for the contributed libraries
-copy(CONTENTDIR."static/tools.html", BASEDIR.'tools/tools.html');
+copy(CONTENTDIR."static/tools.html", DISTDIR.'tools/tools.html');
+//copy(CONTENTDIR."static/tools.html", BASEDIR.$tools_dir.'/tools.html');
 //copydirr(CONTENTDIR.$source.'/images', DISTDIR.$destination.'/images');
 
 
