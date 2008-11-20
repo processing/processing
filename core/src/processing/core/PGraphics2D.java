@@ -426,9 +426,10 @@ public class PGraphics2D extends PGraphics {
           draw_lines(vertices, vertexCount-1, 1, 1, 0);
           if (mode == CLOSE) {
             // draw the last line connecting back to the first point in poly
-            svertices[0] = vertices[vertexCount-1];
-            svertices[1] = vertices[0];
-            draw_lines(svertices, 1, 1, 1, 0);
+            //svertices[0] = vertices[vertexCount-1];
+            //svertices[1] = vertices[0];
+            //draw_lines(svertices, 1, 1, 1, 0);
+            draw_line(vertices[vertexCount-1], vertices[0]);
           }
         }
       } else {  // not convex
@@ -450,9 +451,10 @@ public class PGraphics2D extends PGraphics {
           if (mode == CLOSE) {
             // draw the last line connecting back
             // to the first point in poly
-            svertices[0] = vertices[vertexCount-1];
-            svertices[1] = vertices[0];
-            draw_lines(svertices, 1, 1, 1, 0);
+//            svertices[0] = vertices[vertexCount-1];
+//            svertices[1] = vertices[0];
+//            draw_lines(svertices, 1, 1, 1, 0);
+            draw_line(vertices[vertexCount-1], vertices[0]);
           }
         }
       }
@@ -1007,14 +1009,65 @@ public class PGraphics2D extends PGraphics {
   // ELLIPSE AND ARC
 
 
-  protected void ellipseImpl(float x1, float y1, float w, float h) {
-    if (!smooth && (strokeWeight == 1) &&
-        !fillAlpha && !strokeAlpha && !ctm.isWarped()) {
+  protected void ellipseImpl(float x, float y, float w, float h) {
+    if (smooth || (strokeWeight != 1) ||
+        fillAlpha || strokeAlpha || ctm.isWarped()) {
+      // identical to PGraphics version, but uses POLYGON 
+      // for the fill instead of a TRIANGLE_FAN
+      float radiusH = w / 2;
+      float radiusV = h / 2;
+
+      float centerX = x + radiusH;
+      float centerY = y + radiusV;
+      
+      float sx1 = screenX(x, y);
+      float sy1 = screenY(x, y);
+      float sx2 = screenX(x+w, y+h);
+      float sy2 = screenY(x+w, y+h);
+      int accuracy = (int) (TWO_PI * PApplet.dist(sx1, sy1, sx2, sy2) / 8);
+      if (accuracy < 4) return;  // don't bother?
+      //System.out.println("diameter " + w + " " + h + " -> " + accuracy);
+
+      float inc = (float)SINCOS_LENGTH / accuracy;
+
+      float val = 0;
+
+      if (fill) {
+        boolean savedStroke = stroke;
+        stroke = false;
+
+        beginShape();
+        for (int i = 0; i < accuracy; i++) {
+          vertex(centerX + cosLUT[(int) val] * radiusH,
+                 centerY + sinLUT[(int) val] * radiusV);
+          val += inc;
+        }
+        endShape(CLOSE);
+
+        stroke = savedStroke;
+      }
+
+      if (stroke) {
+        boolean savedFill = fill;
+        fill = false;
+
+        val = 0;
+        beginShape();
+        for (int i = 0; i < accuracy; i++) {
+          vertex(centerX + cosLUT[(int) val] * radiusH,
+                 centerY + sinLUT[(int) val] * radiusV);
+          val += inc;
+        }
+        endShape(CLOSE);
+
+        fill = savedFill;
+      }
+    } else {
       float hradius = w / 2f;
       float vradius = h / 2f;
 
-      int centerX = (int) (x1 + hradius + ctm.m02);
-      int centerY = (int) (y1 + vradius + ctm.m12);
+      int centerX = (int) (x + hradius + ctm.m02);
+      int centerY = (int) (y + vradius + ctm.m12);
 
       int hradiusi = (int) hradius;
       int vradiusi = (int) vradius;
@@ -1027,8 +1080,6 @@ public class PGraphics2D extends PGraphics {
         if (fill) flat_ellipse_internal(centerX, centerY, hradiusi, vradiusi, true);
         if (stroke) flat_ellipse_internal(centerX, centerY, hradiusi, vradiusi, false);
       }
-    } else {
-      super.ellipseImpl(x1, y1, w, h);
     }
   }
 
@@ -1198,8 +1249,62 @@ public class PGraphics2D extends PGraphics {
 
   // TODO really need a decent arc function in here..
 
-  //protected void arcImpl(float x1, float y1, float w, float h,
-  //                       float start, float stop)
+  protected void arcImpl(float x, float y, float w, float h,
+                         float start, float stop) {
+    float hr = w / 2f;
+    float vr = h / 2f;
+
+    float centerX = x + hr;
+    float centerY = y + vr;
+
+    if (fill) {
+      // shut off stroke for a minute
+      boolean savedStroke = stroke;
+      stroke = false;
+
+      int startLUT = (int) (-0.5f + (start / TWO_PI) * SINCOS_LENGTH);
+      int stopLUT = (int) (0.5f + (stop / TWO_PI) * SINCOS_LENGTH);
+
+      beginShape();
+      vertex(centerX, centerY);
+      for (int i = startLUT; i < stopLUT; i++) {
+        int ii = i % SINCOS_LENGTH;
+        // modulo won't make the value positive
+        if (ii < 0) ii += SINCOS_LENGTH;
+        vertex(centerX + cosLUT[ii] * hr,
+               centerY + sinLUT[ii] * vr);
+      }
+      endShape(CLOSE);
+
+      stroke = savedStroke;
+    }
+
+    if (stroke) {
+      // Almost identical to above, but this uses a LINE_STRIP
+      // and doesn't include the first (center) vertex.
+
+      boolean savedFill = fill;
+      fill = false;
+
+      int startLUT = (int) (0.5f + (start / TWO_PI) * SINCOS_LENGTH);
+      int stopLUT = (int) (0.5f + (stop / TWO_PI) * SINCOS_LENGTH);
+
+      beginShape(); //LINE_STRIP);
+      int increment = 1; // what's a good algorithm? stopLUT - startLUT;
+      for (int i = startLUT; i < stopLUT; i += increment) {
+        int ii = i % SINCOS_LENGTH;
+        if (ii < 0) ii += SINCOS_LENGTH;
+        vertex(centerX + cosLUT[ii] * hr,
+               centerY + sinLUT[ii] * vr);
+      }
+      // draw last point explicitly for accuracy
+      vertex(centerX + cosLUT[stopLUT % SINCOS_LENGTH] * hr,
+             centerY + sinLUT[stopLUT % SINCOS_LENGTH] * vr);
+      endShape();
+
+      fill = savedFill;
+    }
+  }
 
 
 
@@ -1869,6 +1974,22 @@ public class PGraphics2D extends PGraphics {
 //      System.out.println();
     }
 
+
+
+    //////////////////////////////////////////////////////////////
+
+    // SCREEN TRANSFORMS
+
+
+    public float screenX(float x, float y) {
+      return ctm.m00 * x + ctm.m01 * y + ctm.m02;
+    }
+
+
+    public float screenY(float x, float y) {
+      return ctm.m10 * x + ctm.m11 * y + ctm.m12;
+    }
+    
 
 
     //////////////////////////////////////////////////////////////
