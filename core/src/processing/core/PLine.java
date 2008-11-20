@@ -389,11 +389,11 @@ public class PLine implements PConstants
 
     // draw normal strokes
     if (SMOOTH) {
-      if ((m_drawFlags & R_SPATIAL) != 0) {
-        drawLine_smooth_spatial(xi, yi, dt, length, yLonger);
-      } else {
-        drawLine_smooth(xi, yi, dt, length, yLonger);
-      }
+//      if ((m_drawFlags & R_SPATIAL) != 0) {
+//        drawLine_smooth_spatial(xi, yi, dt, length, yLonger);
+//      } else {
+      drawLine_smooth(xi, yi, dt, length, yLonger);
+//      }
 
     } else {
       if (m_drawFlags == 0) {
@@ -988,7 +988,7 @@ public class PLine implements PConstants
   }
 
 
-  void drawLine_smooth_spatial(int x0, int y0, int dt,
+  private void drawLine_smooth(int x0, int y0, int dt,
                                int length, boolean vertical) {
     int xi, yi; // these must be >=32 bits
     int offset = 0;
@@ -1016,7 +1016,7 @@ public class PLine implements PConstants
         int pg = (ig >> 8) & 0xFF00;
         int pb = (ib >> 16);
 
-        if (iz <= m_zbuffer[offset]) {
+        if ((m_zbuffer == null) || (iz <= m_zbuffer[offset])) {
           int alpha = (((~xi >> 8) & 0xFF) * (ia >> 16)) >> 8;
 
           int r0 = m_pixels[offset];
@@ -1030,7 +1030,7 @@ public class PLine implements PConstants
 
           m_pixels[offset] = 0xFF000000 |
             (r0 & 0xFF0000) | (g0 & 0xFF00) | (b0 & 0xFF);
-          m_zbuffer[offset] = iz;
+          if (m_zbuffer != null) m_zbuffer[offset] = iz;
         }
 
         // this if() makes things slow. there should be a better way to check 
@@ -1044,7 +1044,7 @@ public class PLine implements PConstants
 
         offset = (yi>>16) * SCREEN_WIDTH + temp;
 
-        if (iz <= m_zbuffer[offset]) {
+        if ((m_zbuffer == null) || (iz <= m_zbuffer[offset])) {
           int alpha = (((xi >> 8) & 0xFF) * (ia >> 16)) >> 8;
 
           int r0 = m_pixels[offset];
@@ -1058,7 +1058,7 @@ public class PLine implements PConstants
 
           m_pixels[offset] = 0xFF000000 |
             (r0 & 0xFF0000) | (g0 & 0xFF00) | (b0 & 0xFF);
-          m_zbuffer[offset] = iz;
+          if (m_zbuffer != null) m_zbuffer[offset] = iz;
         }
 
         xi += dt;
@@ -1083,7 +1083,7 @@ public class PLine implements PConstants
         int pg = (ig >> 8) & 0xFF00;
         int pb = (ib >> 16);
 
-        if (iz <= m_zbuffer[offset]) {
+        if ((m_zbuffer == null) || (iz <= m_zbuffer[offset])) {
           int alpha = (((~yi >> 8) & 0xFF) * (ia >> 16)) >> 8;
 
           int r0 = m_pixels[offset];
@@ -1097,7 +1097,7 @@ public class PLine implements PConstants
 
           m_pixels[offset] = 0xFF000000 |
             (r0 & 0xFF0000) | (g0 & 0xFF00) | (b0 & 0xFF);
-          m_zbuffer[offset] = iz;
+          if (m_zbuffer != null) m_zbuffer[offset] = iz;
         }
 
         // see above [rocha]
@@ -1110,7 +1110,7 @@ public class PLine implements PConstants
 
         offset = temp * SCREEN_WIDTH + (xi>>16);
 
-        if (iz <= m_zbuffer[offset]) {
+        if ((m_zbuffer == null) || (iz <= m_zbuffer[offset])) {
           int alpha = (((yi >> 8) & 0xFF) * (ia >> 16)) >> 8;
 
           int r0 = m_pixels[offset];
@@ -1124,22 +1124,23 @@ public class PLine implements PConstants
 
           m_pixels[offset] = 0xFF000000 |
             (r0 & 0xFF0000) | (g0 & 0xFF00) | (b0 & 0xFF);
-          m_zbuffer[offset] = iz;
+          if (m_zbuffer != null) m_zbuffer[offset] = iz;
         }
 
         xi += (1 << 16);
         yi += dt;
 
-        iz+=dz;
-        ir+= dr;
-        ig+= dg;
-        ib+= db;
-        ia+= da;
+        iz += dz;
+        ir += dr;
+        ig += dg;
+        ib += db;
+        ia += da;
       }
     }
   }
 
   
+  /*
   void drawLine_smooth(int x0, int y0, int dt,
                        int length, boolean vertical) {
     int xi, yi; // these must be >=32 bits
@@ -1273,4 +1274,5 @@ public class PLine implements PConstants
       }
     }
   }
+  */
 }
