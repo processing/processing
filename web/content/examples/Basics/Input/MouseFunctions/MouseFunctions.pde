@@ -18,7 +18,7 @@ void setup()
   size(200, 200);
   bx = width/2.0;
   by = height/2.0;
-  rectMode(CENTER_RADIUS);  
+  rectMode(RADIUS);  
 }
 
 void draw() 

@@ -14,10 +14,10 @@
 
 int segs = 12;
 int steps = 6;
-float rotAdjust = radians(360.0/segs/2.0);
+float rotAdjust = radians(360.0 / segs / 2.0);
 float radius = 95.0;
-float segWidth = radius/steps;
-float interval = TWO_PI/segs;
+float segWidth = radius / steps;
+float interval = TWO_PI / segs;
 int SHADE = 0;
 int TINT = 1;
 
@@ -27,14 +27,14 @@ void setup(){
   smooth();
   ellipseMode(RADIUS);
   noStroke();
- // you can substitue TINT for SHADE argument
- createWheel(width/2, height/2, SHADE);
+  // You can substitue TINT for SHADE argument
+  createWheel(width/2, height/2, SHADE);
 }
 
 void createWheel(int x, int y, int valueShift){
   if (valueShift == SHADE){
-    for (int j=0; j<steps; j++){
-      color[]cols = { 
+    for (int j = 0; j < steps; j++){
+      color[] cols = { 
         color(255-(255/steps)*j, 255-(255/steps)*j, 0), 
         color(255-(255/steps)*j, (255/1.5)-((255/1.5)/steps)*j, 0), 
         color(255-(255/steps)*j, (255/2)-((255/2)/steps)*j, 0), 
@@ -47,14 +47,15 @@ void createWheel(int x, int y, int valueShift){
         color(0, 255-(255/steps)*j, (255/2.5)-((255/2.5)/steps)*j), 
         color(0, 255-(255/steps)*j, 0), 
         color((255/2)-((255/2)/steps)*j, 255-(255/steps)*j, 0) };
-      for (int i=0; i< segs; i++){
+      for (int i = 0; i < segs; i++){
         fill(cols[i]);
         arc(x, y, radius, radius, interval*i+rotAdjust, interval*(i+1)+rotAdjust);
       }
       radius -= segWidth;
     }
-  } else  if (valueShift == TINT){
-    for (int j=0; j<steps; j++){
+  } 
+  else  if (valueShift == TINT){
+    for (int j = 0; j < steps; j++){
       color[]cols = { 
         color((255/steps)*j, (255/steps)*j, 0), 
         color((255/steps)*j, ((255/1.5)/steps)*j, 0), 
@@ -67,8 +68,8 @@ void createWheel(int x, int y, int valueShift){
         color(0, 0, (255/steps)*j),
         color(0, (255/steps)*j, ((255/2.5)/steps)*j), 
         color(0, (255/steps)*j, 0), 
-        color(((255/2)/steps)*j, (255/steps)*j, 0) };
-      for (int i=0; i< segs; i++){
+        color(((255/2)/steps)*j, (255/steps)*j, 0)       };
+      for (int i = 0; i < segs; i++){
         fill(cols[i]);
         arc(x, y, radius, radius, interval*i+rotAdjust, interval*(i+1)+rotAdjust);
       }
@@ -76,4 +77,5 @@ void createWheel(int x, int y, int valueShift){
     }
   } 
 }
+
 

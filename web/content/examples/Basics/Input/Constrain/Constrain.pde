@@ -16,7 +16,7 @@ void setup()
   size(200, 200);
   noStroke(); 
   smooth();
-  ellipseMode(CENTER_RADIUS);  
+  ellipseMode(RADIUS);  
 }
 
 void draw() 
