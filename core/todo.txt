@@ -18,6 +18,8 @@ X   sort of works, just not great
 X improve (slightly) the quality of ellipse() and arc() with P2D
 X   don't use TRIANGLE_FAN on ellipseImpl() and arcImpl() with P2D
 X   split out ellipseImpl and arcImpl from PGraphics into P2D and P3D
+X figure out better model for adaptive sizing of circles
+X   also goes for arcs, though will be weighted based on arc size
 
 
 _ OPENGL sketches flicker w/ Vista when background() is not used inside draw()
@@ -314,8 +316,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=1022
 _   don't allow you to draw stroked items unless stroke() is called
 _   don't allow beginShape() if shape is already set
 _     (otherwise will cause some very strange errors)
-_ figure out a good model for adaptive sizing of circles
-_   also goes for arcs, though will be weighted based on arc size
 _ lines
 _   z value hack for lines is causing trouble for 2D
 _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1089737928;start=0
