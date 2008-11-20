@@ -127,6 +127,7 @@ li { margin-bottom: 1em; }
 </p>
 <p>		<a href="#" onclick="remote_link('reference_local.php'); return false;">Reference</a> \ 
 		<a href="#" onclick="remote_link('libraries_local.php'); return false;">Libraries</a> \ 
+		<a href="#" onclick="remote_link('tools_local.php'); return false;">Tools</a> \ 
 		<a href="#" onclick="remote_link('environment_local.php'); return false;">Environment and Troubleshooting</a> \ 
 		<a href="#" onclick="remote_link('compare_local.php'); return false;">Compare</a> \ <br />
 		<a href="#" onclick="remote_link('staticpages_local.php'); return false;">Static Pages (FAQ, Copyright, People)</a>
