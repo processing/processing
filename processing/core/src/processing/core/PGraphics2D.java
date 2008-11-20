@@ -424,10 +424,12 @@ public class PGraphics2D extends PGraphics {
 
         if (stroke) {
           draw_lines(vertices, vertexCount-1, 1, 1, 0);
-          // draw the last line connecting back to the first point in poly
-          svertices[0] = vertices[vertexCount-1];
-          svertices[1] = vertices[0];
-          draw_lines(svertices, 1, 1, 1, 0);
+          if (mode == CLOSE) {
+            // draw the last line connecting back to the first point in poly
+            svertices[0] = vertices[vertexCount-1];
+            svertices[1] = vertices[0];
+            draw_lines(svertices, 1, 1, 1, 0);
+          }
         }
       } else {  // not convex
         //System.out.println("concave");
@@ -908,7 +910,7 @@ public class PGraphics2D extends PGraphics {
 
 
   protected void rectImpl(float x1f, float y1f, float x2f, float y2f) {
-    if (ctm.isWarped()) {
+    if (smooth || strokeAlpha || ctm.isWarped()) {
       // screw the efficiency, send this off to beginShape().
       super.rectImpl(x1f, y1f, x2f, y2f);
 

@@ -1,15 +1,24 @@
 0158 core
-X arc() broken in P2D
+X beginShape(TRIANGLE_FAN), and therefore arc(), broken in P2D
 X   also a typo in the ColorWheel example
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1019
+X P2D - null pointer exception drawing line with alpha stroke
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1023
+X P2D endShape() is working like endShape(CLOSE) 
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1021
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1028 (mark as dupe)
+X arc() center transparent
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1027
+X   mark as dupe of bug #200
 
+. . . 
 
 _ Writing XML files (clean up the API)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=964
 
 _ OPENGL sketches flicker w/ Vista when background() is not used inside draw()
 _   http://dev.processing.org/bugs/show_bug.cgi?id=930
-_   Disabling Aero scheme prevents the problem
+_   Disabling Aero scheme prevents the problem (maybe?)
 _ Present mode and OPENGL not working in 0156 with Windows Vista
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1009
 _   -Dsun.java2d.d3d=false seems to fix the problem
@@ -100,6 +109,8 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=806
 _ accessors inside PFont need a lot of work
 _ osx 10.5 (not 10.4) performing text width calculation differently
 _   http://dev.processing.org/bugs/show_bug.cgi?id=972
+_ Automatically use textMode(SCREEN) with text() when possible
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1020
 
 
 P2D, P3D, PPolygon [1.0]
@@ -289,6 +300,7 @@ _   happens when the rectangle is flipped on the x or y axis
 _   probably a hack that draws the "last" point differently
 _ beginShape() 
 _   better lockout inside beginShape() to keep other things from happening
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1022
 _   don't allow you to draw stroked items unless stroke() is called
 _   don't allow beginShape() if shape is already set
 _     (otherwise will cause some very strange errors)
@@ -641,3 +653,5 @@ _   textFont() is null on beginRecord
 _   same would be the case for strokeWeight, background, etc.
 _   http://dev.processing.org/bugs/show_bug.cgi?id=346
 _ repeating texture support
+_ exactly how should pixel filling work with single pixel strokes?
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1025
