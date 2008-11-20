@@ -2576,16 +2576,131 @@ public class PGraphics3D extends PGraphics {
 
 
   //public void ellipse(float a, float b, float c, float d)
+  
+  
+  protected void ellipseImpl(float x, float y, float w, float h) {
+    float radiusH = w / 2;
+    float radiusV = h / 2;
+
+    float centerX = x + radiusH;
+    float centerY = y + radiusV;
+    
+    float sx1 = screenX(x, y);
+    float sy1 = screenY(x, y);
+    float sx2 = screenX(x+w, y+h);
+    float sy2 = screenY(x+w, y+h);
+    int accuracy = (int) (TWO_PI * PApplet.dist(sx1, sy1, sx2, sy2) / 8);
+    if (accuracy < 4) return;  // don't bother?
+    //System.out.println("diameter " + w + " " + h + " -> " + accuracy);
+
+    float inc = (float)SINCOS_LENGTH / accuracy;
+
+    float val = 0;
+
+    if (fill) {
+      boolean savedStroke = stroke;
+      stroke = false;
+
+      beginShape(TRIANGLE_FAN);
+      normal(0, 0, 1);
+      vertex(centerX, centerY);
+      for (int i = 0; i < accuracy; i++) {
+        vertex(centerX + cosLUT[(int) val] * radiusH,
+               centerY + sinLUT[(int) val] * radiusV);
+        val += inc;
+      }
+      // back to the beginning
+      vertex(centerX + cosLUT[0] * radiusH,
+             centerY + sinLUT[0] * radiusV);
+      endShape();
+
+      stroke = savedStroke;
+    }
+
+    if (stroke) {
+      boolean savedFill = fill;
+      fill = false;
+
+      val = 0;
+      beginShape();
+      for (int i = 0; i < accuracy; i++) {
+        vertex(centerX + cosLUT[(int) val] * radiusH,
+               centerY + sinLUT[(int) val] * radiusV);
+        val += inc;
+      }
+      endShape(CLOSE);
+
+      fill = savedFill;
+    }
+  }
 
 
   //public void arc(float a, float b, float c, float d,
   //                float start, float stop)
 
 
-  //protected void arcImpl(float x, float y, float w, float h,
-  //                       float start, float stop)
+  protected void arcImpl(float x, float y, float w, float h,
+                         float start, float stop) {
+    float hr = w / 2f;
+    float vr = h / 2f;
 
+    float centerX = x + hr;
+    float centerY = y + vr;
 
+    if (fill) {
+      // shut off stroke for a minute
+      boolean savedStroke = stroke;
+      stroke = false;
+
+      int startLUT = (int) (0.5f + (start / TWO_PI) * SINCOS_LENGTH);
+      int stopLUT = (int) (0.5f + (stop / TWO_PI) * SINCOS_LENGTH);
+
+      beginShape(TRIANGLE_FAN);
+      vertex(centerX, centerY);
+      int increment = 1; // what's a good algorithm? stopLUT - startLUT;
+      for (int i = startLUT; i < stopLUT; i += increment) {
+        int ii = i % SINCOS_LENGTH;
+        // modulo won't make the value positive
+        if (ii < 0) ii += SINCOS_LENGTH;
+        vertex(centerX + cosLUT[ii] * hr,
+               centerY + sinLUT[ii] * vr);
+      }
+      // draw last point explicitly for accuracy
+      vertex(centerX + cosLUT[stopLUT % SINCOS_LENGTH] * hr,
+             centerY + sinLUT[stopLUT % SINCOS_LENGTH] * vr);
+      endShape();
+
+      stroke = savedStroke;
+    }
+
+    if (stroke) {
+      // Almost identical to above, but this uses a LINE_STRIP
+      // and doesn't include the first (center) vertex.
+
+      boolean savedFill = fill;
+      fill = false;
+
+      int startLUT = (int) (0.5f + (start / TWO_PI) * SINCOS_LENGTH);
+      int stopLUT = (int) (0.5f + (stop / TWO_PI) * SINCOS_LENGTH);
+
+      beginShape(); //LINE_STRIP);
+      int increment = 1; // what's a good algorithm? stopLUT - startLUT;
+      for (int i = startLUT; i < stopLUT; i += increment) {
+        int ii = i % SINCOS_LENGTH;
+        if (ii < 0) ii += SINCOS_LENGTH;
+        vertex(centerX + cosLUT[ii] * hr,
+               centerY + sinLUT[ii] * vr);
+      }
+      // draw last point explicitly for accuracy
+      vertex(centerX + cosLUT[stopLUT % SINCOS_LENGTH] * hr,
+             centerY + sinLUT[stopLUT % SINCOS_LENGTH] * vr);
+      endShape();
+
+      fill = savedFill;
+    }
+  }
+
+  
 
   //////////////////////////////////////////////////////////////
 
