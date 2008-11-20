@@ -20,7 +20,7 @@ $page->content(file_get_contents($index));
 //make_necessary_directories(BASEDIR.$tools_dir.'/images/include.php');
 writeFile('distribution/tools/index.html', $page->out());
 
-copydirr(CONTENTDIR."api_$lang/TOOL_images", BASEDIR.'tools/images');
+copydirr(CONTENTDIR."api_$lang/TOOL_images", DISTDIR.'tools/images');
 
 // copy over the files for the contributed libraries
 copy(CONTENTDIR."static/tools.html", DISTDIR.'tools/tools.html');
