@@ -162,6 +162,15 @@ public class PPolygon implements PConstants {
     vertices = v;
     vertexCount = count;
 
+    if (r.length < vertexCount) {
+      r   = new float[vertexCount]; // storage used by incrementalize
+      dr  = new float[vertexCount];
+      l   = new float[vertexCount]; // more storage for incrementalize
+      dl  = new float[vertexCount];
+      sp  = new float[vertexCount]; // temporary storage for scanline
+      sdp = new float[vertexCount];
+    }
+
     render();
     checkExpand();
   }
