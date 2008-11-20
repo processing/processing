@@ -94,12 +94,15 @@ public class Base {
   // p5 icon for the window
   static Image icon;
 
-  int editorCount;
-  Editor[] editors;
+//  int editorCount;
+//  Editor[] editors;
+  java.util.List<Editor> editors =  
+    Collections.synchronizedList(new ArrayList<Editor>());
+//  ArrayList editors = Collections.synchronizedList(new ArrayList<Editor>());
   Editor activeEditor;
 
-  int nextEditorX;
-  int nextEditorY;
+//  int nextEditorX;
+//  int nextEditorY;
 
 
   static public void main(String args[]) {
@@ -326,19 +329,23 @@ public class Base {
     String untitledPath = untitledFolder.getAbsolutePath();
 
     // Save the sketch path and window placement for each open sketch
-    Preferences.setInteger("last.sketch.count", editorCount);
-    //System.out.println("saving sketch count " + editorCount);
-    for (int i = 0; i < editorCount; i++) {
-      String path = editors[i].getSketch().getMainFilePath();
-      if (path.startsWith(untitledPath)) {
-        path = "";  // this will prevent it from opening
+    int index = 0;
+    for (Editor editor : editors) {
+      String path = editor.getSketch().getMainFilePath();
+      // In case of a crash, save untitled sketches if they contain changes.
+      // (Added this for release 0158, may not be a good idea.)
+      if (path.startsWith(untitledPath) && 
+          !editor.getSketch().isModified()) {
+        continue;
       }
-      Preferences.set("last.sketch" + i + ".path", path);
+      Preferences.set("last.sketch" + index + ".path", path);
 
-      int[] location = editors[i].getPlacement();
+      int[] location = editor.getPlacement();
       String locationStr = PApplet.join(PApplet.str(location), ",");
-      Preferences.set("last.sketch" + i + ".location", locationStr);
+      Preferences.set("last.sketch" + index + ".location", locationStr);
+      index++;
     }
+    Preferences.setInteger("last.sketch.count", index);
   }
 
 
@@ -479,21 +486,22 @@ public class Base {
     }
     // Close the running window, avoid window boogers with multiple sketches
     activeEditor.internalCloseRunner();
+
     // Actually replace things
     handleNewReplaceImpl();
   }
 
 
-  protected void handleNewReplaceImpl() {
+  protected boolean handleNewReplaceImpl() {
     try {
       String path = createNewUntitled();
       activeEditor.handleOpenInternal(path);
       activeEditor.untitled = true;
-
+      return true;
+      
     } catch (IOException e) {
-      if (activeEditor != null) {
-        activeEditor.statusError(e);
-      }
+      activeEditor.statusError(e);
+      return false;
     }
   }
 
@@ -567,10 +575,10 @@ public class Base {
     if (!file.exists()) return null;
 
     // Cycle through open windows to make sure that it's not already open.
-    for (int i = 0; i < editorCount; i++) {
-      if (editors[i].getSketch().getMainFilePath().equals(path)) {
-        editors[i].toFront();
-        return editors[i];
+    for (Editor editor : editors) {
+      if (editor.getSketch().getMainFilePath().equals(path)) {
+        editor.toFront();
+        return editor;
       }
     }
 
@@ -595,13 +603,14 @@ public class Base {
       return null;  // Just walk away quietly
     }
 
-    if (editors == null) {
-      editors = new Editor[5];
-    }
-    if (editorCount == editors.length) {
-      editors = (Editor[]) PApplet.expand(editors);
-    }
-    editors[editorCount++] = editor;
+//    if (editors == null) {
+//      editors = new Editor[5];
+//    }
+//    if (editorCount == editors.length) {
+//      editors = (Editor[]) PApplet.expand(editors);
+//    }
+//    editors[editorCount++] = editor;
+    editors.add(editor);
 
 //    if (markedForClose != null) {
 //      Point p = markedForClose.getLocation();
@@ -624,65 +633,62 @@ public class Base {
    * @param quitting True if this is being called by File &rarr; Quit.
    * @return true if succeeded in closing, false if canceled.
    */
-  public boolean handleClose(Editor editor, boolean quitting) {
+  public boolean handleClose(Editor editor) {
     // Check if modified
-    if (!editor.checkModified(quitting)) {  //false)) {  // was false in 0126
+    if (!editor.checkModified(false)) {
       return false;
-    }
-
-    // If quitting, this is all that needs to be done
-    if (quitting) {
-      return true;
     }
 
     // Close the running window, avoid window boogers with multiple sketches
     editor.internalCloseRunner();
 
-    if (editorCount == 1) {
-      if (Preferences.getBoolean("sketchbook.closing_last_window_quits")) {
+    //if (editorCount == 1) {
+    if (editors.size() == 1) {
+      System.out.println("editor count is 1, " + editor.untitled);
+      // For 0158, when closing the last window /and/ it was already an 
+      // untitled sketch, just give up and let the user quit.
+      if (Preferences.getBoolean("sketchbook.closing_last_window_quits") ||
+          (editor.untitled && !editor.getSketch().isModified())) {
         // This will store the sketch count as zero
-        editorCount = 0;
+        editors.remove(editor);
         storeSketches();
 
         // Save out the current prefs state
         Preferences.save();
 
-        // Clean out empty sketches
-        //Base.cleanSketchbook();
-
-        // Since this wasn't an actual Quit event,
-        // System.exit() needs to be called for Mac OS X.
-        //if (PApplet.platform == PConstants.MACOSX) {
+        // Since this wasn't an actual Quit event, call System.exit()
         System.exit(0);
 
       } else {
-        try {
-          // open an untitled document in the last remaining window
-          String path = createNewUntitled();
-          activeEditor.handleOpenInternal(path);
-          return true;  // or false?
-
-        } catch (IOException e) {
-          e.printStackTrace();
-          return false;
-        }
+        return handleNewReplaceImpl();
+//        try {
+//          // open an untitled document in the last remaining window
+//          String path = createNewUntitled();
+//          editor.handleOpenInternal(path);
+//          editor.untitled = true;
+//          return true;  // or false?
+//
+//        } catch (IOException e) {
+//          e.printStackTrace();
+//          return false;
+//        }
       }
     } else {
       // More than one editor window open,
       // proceed with closing the current window.
       editor.setVisible(false);
       editor.dispose();
-
-      for (int i = 0; i < editorCount; i++) {
-        if (editor == editors[i]) {
-          for (int j = i; j < editorCount-1; j++) {
-            editors[j] = editors[j+1];
-          }
-          editorCount--;
-          // Set to null so that garbage collection occurs
-          editors[editorCount] = null;
-        }
-      }
+//      for (int i = 0; i < editorCount; i++) {
+//        if (editor == editors[i]) {
+//          for (int j = i; j < editorCount-1; j++) {
+//            editors[j] = editors[j+1];
+//          }
+//          editorCount--;
+//          // Set to null so that garbage collection occurs
+//          editors[editorCount] = null;
+//        }
+//      }
+      editors.remove(editor);
     }
     return true;
   }
@@ -697,36 +703,42 @@ public class Base {
     // by a later handleQuit() that is not canceled.
     storeSketches();
 
-    boolean canceled = false;
-    for (int i = 0; i < editorCount; i++) {
-      Editor editor = editors[i];
-      if (!handleClose(editor, true)) {
-        canceled = true;
-        break;
-      } else {
-        // Update to the new/final sketch path for this fella
-        storeSketchPath(editor, i);
+    if (handleQuitEach()) {
+      // make sure running sketches close before quitting
+      for (Editor editor : editors) {
+        editor.internalCloseRunner();
       }
-    }
-    // make sure running sketches close before quitting
-    for (int i = 0; i < editorCount; i++) {
-      editors[i].internalCloseRunner();
-    }
-    if (!canceled) {
-      // Clean out empty sketches
-      //Base.cleanSketchbook();
-
       // Save out the current prefs state
       Preferences.save();
-      //console.handleQuit();
 
       if (PApplet.platform != PConstants.MACOSX) {
         // If this was fired from the menu or an AppleEvent (the Finder),
         // then Mac OS X will send the terminate signal itself.
         System.exit(0);
       }
+      return true;
     }
-    return !canceled;
+    return false;
+  }
+  
+
+  /**
+   * Attempt to close each open sketch in preparation for quitting.
+   * @return false if canceled along the way
+   */
+  protected boolean handleQuitEach() {
+    int index = 0;
+    for (Editor editor : editors) {
+      if (editor.checkModified(true)) {
+        // Update to the new/final sketch path for this fella
+        storeSketchPath(editor, index);
+        index++;
+      
+      } else {
+        return false;
+      }
+    }
+    return true;
   }
 
 
