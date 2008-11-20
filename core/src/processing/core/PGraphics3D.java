@@ -2584,53 +2584,63 @@ public class PGraphics3D extends PGraphics {
 
     float centerX = x + radiusH;
     float centerY = y + radiusV;
-    
+
     float sx1 = screenX(x, y);
     float sy1 = screenY(x, y);
     float sx2 = screenX(x+w, y+h);
     float sy2 = screenY(x+w, y+h);
-    int accuracy = (int) (TWO_PI * PApplet.dist(sx1, sy1, sx2, sy2) / 8);
-    if (accuracy < 4) return;  // don't bother?
-    //System.out.println("diameter " + w + " " + h + " -> " + accuracy);
-
-    float inc = (float)SINCOS_LENGTH / accuracy;
-
-    float val = 0;
 
     if (fill) {
-      boolean savedStroke = stroke;
-      stroke = false;
+      int accuracy = (int) (TWO_PI * PApplet.dist(sx1, sy1, sx2, sy2) / 20);
+      if (accuracy > 3) {
+        float inc = (float)SINCOS_LENGTH / accuracy;
+        float val = 0;
 
-      beginShape(TRIANGLE_FAN);
-      normal(0, 0, 1);
-      vertex(centerX, centerY);
-      for (int i = 0; i < accuracy; i++) {
-        vertex(centerX + cosLUT[(int) val] * radiusH,
-               centerY + sinLUT[(int) val] * radiusV);
-        val += inc;
+        boolean strokeSaved = stroke;
+        stroke = false;
+        boolean smoothSaved = smooth;
+        if (smooth && stroke) {
+          smooth = false;
+        }
+
+        beginShape(TRIANGLE_FAN);
+        normal(0, 0, 1);
+        vertex(centerX, centerY);
+        for (int i = 0; i < accuracy; i++) {
+          vertex(centerX + cosLUT[(int) val] * radiusH,
+                 centerY + sinLUT[(int) val] * radiusV);
+          val += inc;
+        }
+        // back to the beginning
+        vertex(centerX + cosLUT[0] * radiusH,
+               centerY + sinLUT[0] * radiusV);
+        endShape();
+
+        stroke = strokeSaved;
+        smooth = smoothSaved;
       }
-      // back to the beginning
-      vertex(centerX + cosLUT[0] * radiusH,
-             centerY + sinLUT[0] * radiusV);
-      endShape();
-
-      stroke = savedStroke;
     }
 
     if (stroke) {
-      boolean savedFill = fill;
-      fill = false;
+      int accuracy = (int) (TWO_PI * PApplet.dist(sx1, sy1, sx2, sy2) / 8);
+      if (accuracy > 3) {
+        float inc = (float)SINCOS_LENGTH / accuracy;
+        float val = 0;
 
-      val = 0;
-      beginShape();
-      for (int i = 0; i < accuracy; i++) {
-        vertex(centerX + cosLUT[(int) val] * radiusH,
-               centerY + sinLUT[(int) val] * radiusV);
-        val += inc;
+        boolean savedFill = fill;
+        fill = false;
+
+        val = 0;
+        beginShape();
+        for (int i = 0; i < accuracy; i++) {
+          vertex(centerX + cosLUT[(int) val] * radiusH,
+                 centerY + sinLUT[(int) val] * radiusV);
+          val += inc;
+        }
+        endShape(CLOSE);
+
+        fill = savedFill;
       }
-      endShape(CLOSE);
-
-      fill = savedFill;
     }
   }
 
