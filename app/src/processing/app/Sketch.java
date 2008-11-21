@@ -1904,18 +1904,47 @@ public class Sketch {
 
 
   public boolean exportApplicationPrompt() throws IOException, RunnerException {
-    //JPanel panel = new JPanel();
-    //panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-    Box panel = Box.createVerticalBox();
-    
-    String msg = "<html><body>Export to Application creates a standalone, " + 
-    "double-clickable application for the selected plaforms.";
-    JLabel label = new JLabel(msg, SwingConstants.LEFT);
+    JPanel panel = new JPanel();
+    panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+    panel.add(Box.createVerticalStrut(6));
 
-    panel.add(label);
+    //Box panel = Box.createVerticalBox();
+
+    //Box labelBox = Box.createHorizontalBox();
+//    String msg = "<html>Click Export to Application to create a standalone, " + 
+//      "double-clickable application for the selected plaforms.";
+    
+//    String msg = "Export to Application creates a standalone, \n" + 
+//      "double-clickable application for the selected plaforms.";
+    String line1 = "Export to Application creates double-clickable,";
+    String line2 = "standalone applications for the selected plaforms.";
+    JLabel label1 = new JLabel(line1); //, SwingConstants.LEFT);
+    JLabel label2 = new JLabel(line2); //, SwingConstants.LEFT);
+    label1.setAlignmentX(Component.LEFT_ALIGNMENT);
+    label2.setAlignmentX(Component.LEFT_ALIGNMENT);
+//    label1.setAlignmentX();
+//    label2.setAlignmentX(0);
+    panel.add(label1);
+    panel.add(label2);
+    int wide = label2.getPreferredSize().width;
+    panel.add(Box.createVerticalStrut(12));
+
+//    JLabel label = new JLabel(msg, SwingConstants.CENTER);
+//    System.out.println(label.getMinimumSize());
+//    System.out.println(label.getPreferredSize());
+//    label.setMaximumSize(label.getPreferredSize());
+//    label.setBackground(Color.RED);
+    //label.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+    //labelBox.add(label);
+    //labelBox.add(Box.createHorizontalGlue());
+    //labelBox.add(Box.createHorizontal
+//    panel.setAlignmentX(Component.LEFT_ALIGNMENT);
+//    panel.add(label);
+    //panel.add(labelBox);
     
     final JCheckBox windowsButton = new JCheckBox("Windows");
-    windowsButton.setMnemonic(KeyEvent.VK_W);
+    //windowsButton.setMnemonic(KeyEvent.VK_W);
     windowsButton.setSelected(Preferences.getBoolean("export.application.platform.windows"));
     windowsButton.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
@@ -1924,7 +1953,7 @@ public class Sketch {
     });
     
     final JCheckBox macosxButton = new JCheckBox("Mac OS X");
-    macosxButton.setMnemonic(KeyEvent.VK_M);
+    //macosxButton.setMnemonic(KeyEvent.VK_M);
     macosxButton.setSelected(Preferences.getBoolean("export.application.platform.macosx"));
     macosxButton.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
@@ -1933,7 +1962,7 @@ public class Sketch {
     });
     
     final JCheckBox linuxButton = new JCheckBox("Linux");
-    linuxButton.setMnemonic(KeyEvent.VK_L);
+    //linuxButton.setMnemonic(KeyEvent.VK_L);
     linuxButton.setSelected(Preferences.getBoolean("export.application.platform.linux"));
     linuxButton.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
@@ -1944,13 +1973,18 @@ public class Sketch {
     JPanel platformPanel = new JPanel();
     //platformPanel.setLayout(new BoxLayout(platformPanel, BoxLayout.X_AXIS));
     platformPanel.add(windowsButton);
+    platformPanel.add(Box.createHorizontalStrut(6));
     platformPanel.add(macosxButton);
+    platformPanel.add(Box.createHorizontalStrut(6));
     platformPanel.add(linuxButton);
     platformPanel.setBorder(new TitledBorder("Platforms"));
+    Dimension goodIdea = new Dimension(wide, platformPanel.getPreferredSize().height);
+    platformPanel.setMaximumSize(goodIdea);
+    platformPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
     panel.add(platformPanel);
 
     final JCheckBox fullscreenButton = new JCheckBox("Full Screen (Present mode)");
-    fullscreenButton.setMnemonic(KeyEvent.VK_F);
+    //fullscreenButton.setMnemonic(KeyEvent.VK_F);
     fullscreenButton.setSelected(Preferences.getBoolean("export.application.fullscreen"));
     fullscreenButton.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
@@ -1962,6 +1996,9 @@ public class Sketch {
     //optionPanel.setLayout(new BoxLayout(optionPanel, BoxLayout.Y_AXIS));
     optionPanel.add(fullscreenButton);
     optionPanel.setBorder(new TitledBorder("Options"));
+    goodIdea = new Dimension(wide, optionPanel.getPreferredSize().height);
+    optionPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+    optionPanel.setMaximumSize(goodIdea);
     panel.add(optionPanel);
    
 //    JPanel actionPanel = new JPanel();
@@ -2013,6 +2050,10 @@ public class Sketch {
       }
     });
     dialog.pack();
+    
+    Rectangle bounds = editor.getBounds();
+    dialog.setLocation(bounds.x + (bounds.width - dialog.getSize().width) / 2,
+                       bounds.y + (bounds.height - dialog.getSize().height) / 2);    
     dialog.setVisible(true);
 
     Object value = optionPane.getValue();
