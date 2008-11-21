@@ -235,10 +235,18 @@ sketchbook.closing_last_window_quits.macosx = false
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-history.recording = true
+#history.recording = true
 
 # for advanced users, enable option to export a library
-export.library = false
+#export.library = false
+
+# which platforms to export by default
+export.application.platform.windows = true
+export.application.platform.macosx = true
+export.application.platform.linux = true
+
+# whether or not to export as full screen (present) mode
+export.application.fullscreen = false
 
 # false will place all exported files into a single .jar
 export.applet.separate_jar_files = false
