@@ -6,6 +6,10 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=12
 _   need to highlight the previous line as well (or instead)
 X clean up some of the new/open code internally
 
+_ confirm "Do you want to Quit?"
+_   remove the preference for auto-quit
+
+_ coloring for CENTER and DIAMETER, turn off coloring for deprecated
 _ export to application options dialog
 
 _ overlapping editor windows caused by activeEditor not being called in time
