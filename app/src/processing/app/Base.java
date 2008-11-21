@@ -106,6 +106,14 @@ public class Base {
 
 
   static public void main(String args[]) {
+//    if (System.getProperty("mrj.version") != null) {
+//      //String jv = System.getProperty("java.version");
+//      String ov = System.getProperty("os.version");
+//      if (ov.startsWith("10.5")) {
+//        System.setProperty("apple.laf.useScreenMenuBar", "true");
+//      }
+//    }
+
     /*
     commandLine = false;
     if (args.length >= 2) {
@@ -150,6 +158,52 @@ public class Base {
 //    } catch (Exception e) {
 //      e.printStackTrace();
 //    }
+
+    if (Base.isMacOS()) {
+      String fiasco = "apple.laf.useScreenMenuBar";
+      String menubar = Preferences.get(fiasco);
+      if (menubar == null) {
+        String ov = System.getProperty("os.version");
+        if (ov.startsWith("10.5")) {
+          String warning =
+            "<html> " +
+            "<head> <style type=\"text/css\">"+
+            "b { font: 13pt \"Lucida Grande\" }"+
+            "p { font: 11pt \"Lucida Grande\"; margin-top: 8px }"+
+            "</style> </head>" +
+            "<b>The standard menu bar has been disabled.</b>" +
+            "<p>Due to an Apple bug, the Processing menu bar is " + 
+            "unusable when run on Mac OS X 10.5 (Leopard). " + 
+            "As a workaround, the menu bar will be placed inside " +
+            "the editor window.</p>" +
+            "</html>";
+//          String warning =
+//            "Due to an Apple bug, the Processing menu bar is\n" + 
+//            "unusable when run on Mac OS X 10.5 (Leopard).\n" + 
+//            "As a workaround, the menu bar is placed inside\n" +
+//            "the editor window.";
+          Object[] options = { "OK", "More Info" };
+          int result = JOptionPane.showOptionDialog(new Frame(),
+                                                    warning, 
+                                                    "Menu Bar Problem",
+                                                    JOptionPane.YES_NO_OPTION,
+                                                    JOptionPane.WARNING_MESSAGE,
+                                                    null,
+                                                    options,
+                                                    options[0]);
+          menubar = "false";
+          if (result == -1) {
+            // do nothing, they hit ESC or closed the window
+          } else {
+            Preferences.set(fiasco, menubar);
+            if (result == 1) {  // More Info
+              Base.openURL("http://dev.processing.org/bugs/show_bug.cgi?id=786");
+            }
+          } 
+        }
+      }
+      System.setProperty("apple.laf.useScreenMenuBar", menubar);
+    }
 
     // Create a location for untitled sketches
     untitledFolder = createTempFolder("untitled");

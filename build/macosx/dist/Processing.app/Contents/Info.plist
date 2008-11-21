@@ -63,8 +63,8 @@
 	<key>javaroot</key>
 	<string>$JAVAROOT</string>
 	<!-- http://developer.apple.com/releasenotes/Java/java141/system_properties/chapter_4_section_1.html#//apple_ref/doc/uid/TP30000285 -->
-	<key>apple.laf.useScreenMenuBar</key>
-	<string>true</string>
+<!--	<key>apple.laf.useScreenMenuBar</key>
+	<string>true</string>-->
 	<key>apple.awt.showGrowBox</key>
 	<string>false</string>
 	<key>com.apple.smallTabs</key>
