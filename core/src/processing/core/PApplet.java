@@ -86,6 +86,11 @@ import javax.swing.SwingUtilities;
  * PApplet, you can instead embed the PApplet inside another GUI the way you
  * would any other Component.
  * <p/>
+ * It is also possible to resize the Processing window by including
+ * <tt>frame.setResizable(true)</tt> inside your <tt>setup()</tt> method.
+ * Note that the Java method <tt>frame.setSize()</tt> will not work unless
+ * you first set the frame to be resizable.
+ * <p/>
  * Because the default animation thread will run at 60 frames per second,
  * an embedded PApplet can make the parent sluggish. You can use frameRate()
  * to make it update less often, or you can use noLoop() and loop() to disable
@@ -190,7 +195,7 @@ public class PApplet extends Applet
    * PConstants WINDOWS, MACOSX, MACOS9, LINUX or OTHER.
    */
   static public int platform;
-  
+
   /**
    * Name associated with the current 'platform' (see PConstants.platformNames)
    */
@@ -198,7 +203,7 @@ public class PApplet extends Applet
 
   static {
     String osname = System.getProperty("os.name");
-    
+
     if (osname.indexOf("Mac") != -1) {
       platform = MACOSX;
 

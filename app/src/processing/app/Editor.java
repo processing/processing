@@ -2063,11 +2063,12 @@ public class Editor extends JFrame implements RunnerListener {
         public void run() {
           statusNotice("Exporting application...");
           try {
-            if (sketch.exportApplication()) {
+            if (sketch.exportApplicationPrompt()) {
               Base.openFolder(sketch.getFolder());
               statusNotice("Done exporting.");
             } else {
               // error message will already be visible
+              // or there was no error, in which case it was canceled.
             }
           } catch (Exception e) {
             statusNotice("Error during export.");

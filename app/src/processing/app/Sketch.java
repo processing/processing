@@ -29,11 +29,14 @@ import processing.app.preproc.*;
 import processing.core.*;
 
 import java.awt.*;
+import java.awt.event.*;
+import java.beans.*;
 import java.io.*;
 import java.util.*;
 import java.util.zip.*;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 
 
 /**
@@ -1900,64 +1903,159 @@ public class Sketch {
   }
 
 
+  public boolean exportApplicationPrompt() throws IOException, RunnerException {
+    JPanel panel = new JPanel();
+    panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+    
+    panel.add(new JLabel("Export to Application"));
+    
+    final JCheckBox windowsButton = new JCheckBox("Windows");
+    windowsButton.setMnemonic(KeyEvent.VK_W);
+    windowsButton.setSelected(Preferences.getBoolean("export.application.platform.windows"));
+    windowsButton.addItemListener(new ItemListener() {
+      public void itemStateChanged(ItemEvent e) {
+        Preferences.setBoolean("export.application.platform.windows", windowsButton.isSelected());
+      }  
+    });
+    
+    final JCheckBox macosxButton = new JCheckBox("Mac OS X");
+    macosxButton.setMnemonic(KeyEvent.VK_M);
+    macosxButton.setSelected(Preferences.getBoolean("export.application.platform.macosx"));
+    macosxButton.addItemListener(new ItemListener() {
+      public void itemStateChanged(ItemEvent e) {
+        Preferences.setBoolean("export.application.platform.macosx", macosxButton.isSelected());
+      }  
+    });
+    
+    final JCheckBox linuxButton = new JCheckBox("Linux");
+    linuxButton.setMnemonic(KeyEvent.VK_L);
+    linuxButton.setSelected(Preferences.getBoolean("export.application.platform.linux"));
+    linuxButton.addItemListener(new ItemListener() {
+      public void itemStateChanged(ItemEvent e) {
+        Preferences.setBoolean("export.application.platform.linux", linuxButton.isSelected());
+      }  
+    });
+    
+    JPanel platformPanel = new JPanel();
+    platformPanel.setLayout(new BoxLayout(platformPanel, BoxLayout.X_AXIS));
+    platformPanel.add(windowsButton);
+    platformPanel.add(macosxButton);
+    platformPanel.add(linuxButton);
+    platformPanel.setBorder(new TitledBorder("Platforms"));
+    panel.add(platformPanel);
+
+    final JCheckBox fullscreenButton = new JCheckBox("Full Screen (Present mode)");
+    fullscreenButton.setMnemonic(KeyEvent.VK_F);
+    fullscreenButton.setSelected(Preferences.getBoolean("export.application.fullscreen"));
+    fullscreenButton.addItemListener(new ItemListener() {
+      public void itemStateChanged(ItemEvent e) {
+        Preferences.setBoolean("export.application.fullscreen", fullscreenButton.isSelected());
+      }  
+    });
+    
+    JPanel optionPanel = new JPanel();
+    optionPanel.setLayout(new BoxLayout(optionPanel, BoxLayout.Y_AXIS));
+    optionPanel.add(fullscreenButton);
+    optionPanel.setBorder(new TitledBorder("Options"));
+    panel.add(optionPanel);
+   
+    JPanel actionPanel = new JPanel();
+    optionPanel.setLayout(new BoxLayout(optionPanel, BoxLayout.X_AXIS));
+    optionPanel.add(Box.createHorizontalGlue());
+    
+//    final JDialog frame = new JDialog(editor, "Export to Application");
+    
+//    JButton cancelButton = new JButton("Cancel");
+//    cancelButton.addActionListener(new ActionListener() {
+//      public void actionPerformed(ActionEvent e) {
+//        frame.dispose();
+//        return false;
+//      }
+//    });
+
+    // Add the buttons in platform-specific order
+//    if (PApplet.platform == PConstants.MACOSX) {
+//      optionPanel.add(cancelButton);
+//      optionPanel.add(exportButton);
+//    } else {
+//      optionPanel.add(exportButton);
+//      optionPanel.add(cancelButton);
+//    }
+    String[] options = { "Export", "Cancel" };
+    final JOptionPane optionPane = new JOptionPane(panel,
+                                                   JOptionPane.QUESTION_MESSAGE,
+                                                   JOptionPane.YES_NO_OPTION,
+                                                   null,
+                                                   options,
+                                                   options[0]);
+    
+    final JDialog dialog = new JDialog(editor, "Export to Application", true);
+    dialog.setContentPane(optionPane);
+    
+    optionPane.addPropertyChangeListener(new PropertyChangeListener() {
+      public void propertyChange(PropertyChangeEvent e) {
+        String prop = e.getPropertyName();
+
+        if (dialog.isVisible() && 
+            (e.getSource() == optionPane) && 
+            (prop.equals(JOptionPane.VALUE_PROPERTY))) {
+          //If you were going to check something
+          //before closing the window, you'd do
+          //it here.
+          dialog.setVisible(false);
+        }
+      }
+    });
+    dialog.pack();
+    dialog.setVisible(true);
+
+    Object value = optionPane.getValue();
+    if (value.equals(options[0])) {
+      return exportApplication();
+    } else if (value.equals(options[1]) || value.equals(new Integer(-1))) {
+      // closed window by hitting Cancel or ESC
+      editor.statusNotice("Export to Application canceled.");
+    }
+    return false;
+
+//    frame.add(panel);
+//    frame.pack();
+//    frame.setVisible(true);
+  }
+
+  
   /**
-   * Export to application.
-   * <PRE>
-   * +-------------------------------------------------------+
-   * +                                                       +
-   * + Export to:  [ Application            + ]    [  OK  ]  +
-   * +                                                       +
-   * + > Advanced                                            +
-   * + - - - - - - - - - - - - - - - - - - - - - - - - - - - +
-   * +   Version: [ Java 1.1   + ]                           +
-   * +                                                       +
-   * +   Not much point to using Java 1.1 for applications.  +
-   * +   To run applications, all users will have to         +
-   * +   install Java, in which case they'll most likely     +
-   * +   have version 1.3 or later.                          +
-   * + - - - - - - - - - - - - - - - - - - - - - - - - - - - +
-   * +   Version: [ Java 1.3   + ]                           +
-   * +                                                       +
-   * +   Java 1.3 is the recommended setting for exporting   +
-   * +   applications. Applications will run on any Windows  +
-   * +   or Unix machine with Java installed. Mac OS X has   +
-   * +   Java installed with the operation system, so there  +
-   * +   is no additional installation will be required.     +
-   * +                                                       +
-   * + - - - - - - - - - - - - - - - - - - - - - - - - - - - +
-   * +                                                       +
-   * +   Platform: [ Mac OS X   + ]    <-- defaults to current platform
-   * +                                                       +
-   * +   Exports the application as a double-clickable       +
-   * +   .app package, compatible with Mac OS X.             +
-   * + - - - - - - - - - - - - - - - - - - - - - - - - - - - +
-   * +   Platform: [ Windows    + ]                          +
-   * +                                                       +
-   * +   Exports the application as a double-clickable       +
-   * +   .exe and a handful of supporting files.             +
-   * + - - - - - - - - - - - - - - - - - - - - - - - - - - - +
-   * +   Platform: [ jar file   + ]                          +
-   * +                                                       +
-   * +   A jar file can be used on any platform that has     +
-   * +   Java installed. Simply doube-click the jar (or type +
-   * +   "java -jar sketch.jar" at a command prompt) to run  +
-   * +   the application. It is the least fancy method for   +
-   * +   exporting.                                          +
-   * +                                                       +
-   * +-------------------------------------------------------+
-   * </PRE>
+   * Export to application via GUI. 
    */
   protected boolean exportApplication() throws IOException, RunnerException {
-    String windowsPath = new File(folder, "application.windows").getAbsolutePath();
-    String macosxPath = new File(folder, "application.macosx").getAbsolutePath();
-    String linuxPath = new File(folder, "application.linux").getAbsolutePath();
-
-    return (exportApplication(windowsPath, PConstants.WINDOWS) &&
-            exportApplication(macosxPath, PConstants.MACOSX) &&
-            exportApplication(linuxPath, PConstants.LINUX));
+    if (Preferences.getBoolean("export.application.platform.windows")) {
+      String windowsPath = 
+        new File(folder, "application.windows").getAbsolutePath();
+      if (!exportApplication(windowsPath, PConstants.WINDOWS)) {
+        return false;
+      }
+    }
+    if (Preferences.getBoolean("export.application.platform.macosx")) {
+      String macosxPath = 
+        new File(folder, "application.macosx").getAbsolutePath();
+      if (!exportApplication(macosxPath, PConstants.MACOSX)) {
+        return false;
+      }
+    }
+    if (Preferences.getBoolean("export.application.platform.linux")) {
+      String linuxPath = 
+        new File(folder, "application.linux").getAbsolutePath();
+      if (!exportApplication(linuxPath, PConstants.LINUX)) {
+        return false;
+      }
+    }
+    return true;
   }
 
 
+  /**
+   * Export to application without GUI.
+   */
   public boolean exportApplication(String destPath,
                                    int exportPlatform) throws IOException, RunnerException {
     // make sure the user didn't hide the sketch folder
