@@ -298,6 +298,8 @@ public interface PConstants {
   static final int CORNERS  = 1;
   /** Draw mode from the center, and using the radius */
   static final int RADIUS   = 2;
+  /** @deprecated Use RADIUS instead. */ 
+  static final int CENTER_RADIUS = 2;
   /**
    * Draw from the center, using second pair of values as the diameter.
    * Formerly called CENTER_DIAMETER in alpha releases.
@@ -308,8 +310,10 @@ public interface PConstants {
    * using second pair of values as the diameter.
    */
   static final int DIAMETER = 3;
+  /** @deprecated Use DIAMETER instead. */ 
+  static final int CENTER_DIAMETER = 3;
 
-
+  
   // vertically alignment modes for text
 
   /** Default vertical alignment for text placement */

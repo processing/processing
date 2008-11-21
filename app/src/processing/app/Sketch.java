@@ -1904,10 +1904,15 @@ public class Sketch {
 
 
   public boolean exportApplicationPrompt() throws IOException, RunnerException {
-    JPanel panel = new JPanel();
-    panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+    //JPanel panel = new JPanel();
+    //panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+    Box panel = Box.createVerticalBox();
     
-    panel.add(new JLabel("Export to Application"));
+    String msg = "<html><body>Export to Application creates a standalone, " + 
+    "double-clickable application for the selected plaforms.";
+    JLabel label = new JLabel(msg, SwingConstants.LEFT);
+
+    panel.add(label);
     
     final JCheckBox windowsButton = new JCheckBox("Windows");
     windowsButton.setMnemonic(KeyEvent.VK_W);
@@ -1937,7 +1942,7 @@ public class Sketch {
     });
     
     JPanel platformPanel = new JPanel();
-    platformPanel.setLayout(new BoxLayout(platformPanel, BoxLayout.X_AXIS));
+    //platformPanel.setLayout(new BoxLayout(platformPanel, BoxLayout.X_AXIS));
     platformPanel.add(windowsButton);
     platformPanel.add(macosxButton);
     platformPanel.add(linuxButton);
@@ -1954,14 +1959,14 @@ public class Sketch {
     });
     
     JPanel optionPanel = new JPanel();
-    optionPanel.setLayout(new BoxLayout(optionPanel, BoxLayout.Y_AXIS));
+    //optionPanel.setLayout(new BoxLayout(optionPanel, BoxLayout.Y_AXIS));
     optionPanel.add(fullscreenButton);
     optionPanel.setBorder(new TitledBorder("Options"));
     panel.add(optionPanel);
    
-    JPanel actionPanel = new JPanel();
-    optionPanel.setLayout(new BoxLayout(optionPanel, BoxLayout.X_AXIS));
-    optionPanel.add(Box.createHorizontalGlue());
+//    JPanel actionPanel = new JPanel();
+//    optionPanel.setLayout(new BoxLayout(optionPanel, BoxLayout.X_AXIS));
+//    optionPanel.add(Box.createHorizontalGlue());
     
 //    final JDialog frame = new JDialog(editor, "Export to Application");
     
@@ -1983,13 +1988,14 @@ public class Sketch {
 //    }
     String[] options = { "Export", "Cancel" };
     final JOptionPane optionPane = new JOptionPane(panel,
-                                                   JOptionPane.QUESTION_MESSAGE,
+                                                   JOptionPane.PLAIN_MESSAGE,
+                                                   //JOptionPane.QUESTION_MESSAGE,
                                                    JOptionPane.YES_NO_OPTION,
                                                    null,
                                                    options,
                                                    options[0]);
     
-    final JDialog dialog = new JDialog(editor, "Export to Application", true);
+    final JDialog dialog = new JDialog(editor, "Export Options", true);
     dialog.setContentPane(optionPane);
     
     optionPane.addPropertyChangeListener(new PropertyChangeListener() {
