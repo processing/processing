@@ -460,7 +460,11 @@ public class PdePreprocessor {
     if ((programType == STATIC) || (programType == ACTIVE)) {
       if (!PdePreprocessor.foundMain) {
         out.println(indent + "static public void main(String args[]) {");
-        out.println(indent + indent + "PApplet.main(new String[] { \"" + className + "\" });");
+        out.print(indent + indent + "PApplet.main(new String[] { ");
+        if (Preferences.getBoolean("export.application.fullscreen")) {
+          out.print("\"--present\", ");
+        }
+        out.println("\"" + className + "\" });");
         out.println(indent + "}");
       }
 
