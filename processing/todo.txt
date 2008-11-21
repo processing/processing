@@ -1,6 +1,4 @@
 0158 pde
-X Bring back CENTER_RADIUS but deprecate it
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1035
 X missing semicolons - better error message
 _   http://dev.processing.org/bugs/show_bug.cgi?id=12
 _   need to highlight the previous line as well (or instead)
