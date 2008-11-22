@@ -23,7 +23,9 @@ Draws all geometry with smooth (anti-aliased) edges. This will slow down the fra
 <br/><br/>
 Note that smooth() will also improve image quality of resized images, and noSmooth() will disable image (and font) smoothing altogether.
 <br/><br/>
-Starting with release 0151, smooth() has been re-enabled for P3D.
+Starting in Processing 1.0, smoothing is always enabled with the OPENGL renderer setting. The smooth() and noSmooth() methods are ignored. See the hint() reference for information on disabling smoothing with OpenGL.
+<br/><br/>
+In the current release, smoothing is imperfect with the P2D and P3D renderers. In some situations, drawing with smooth() will create <a href="http://dev.processing.org/bugs/show_bug.cgi?id=200">small hairlines inside filled shapes</a> or <a href="http://dev.processing.org/bugs/show_bug.cgi?id=1000">inaccuracies with shape depth</a> can cause odd visual artifacts at the edges of shapes.
 </description>
 
 <syntax>
@@ -37,7 +39,11 @@ smooth()
 
 <returns>None</returns>
 
-<related>noSmooth()</related>
+<related>
+noSmooth()
+hint
+size
+</related>
 
 <availability>1.0</availability>
 
