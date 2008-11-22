@@ -9,7 +9,7 @@ X   add a preference to toggle the menubar on osx
 X confirm "Do you want to Quit?"
 X   remove the preference for auto-quit
 o tarbell substrate to P2D
-_ change sketch naming with the dates
+X change sketch naming with the dates
 _ prefs window doesn't swap ok/cancel properly for mac vs. windows/linux
 
 _ rewrite preferences window to use proper layout?
