@@ -133,15 +133,15 @@ public class Base {
 
     initPlatform();
 
-    // Set the look and feel before opening the window
-    try {
-      platform.setLookAndFeel();
-    } catch (Exception e) {
-      System.err.println("Non-fatal error while setting the Look & Feel.");
-      System.err.println("The error message follows, however Processing should run fine.");
-      System.err.println(e.getMessage());
-      //e.printStackTrace();
-    }
+//    // Set the look and feel before opening the window
+//    try {
+//      platform.setLookAndFeel();
+//    } catch (Exception e) {
+//      System.err.println("Non-fatal error while setting the Look & Feel.");
+//      System.err.println("The error message follows, however Processing should run fine.");
+//      System.err.println(e.getMessage());
+//      //e.printStackTrace();
+//    }
 
     // Use native popups so they don't look so crappy on osx
     JPopupMenu.setDefaultLightWeightPopupEnabled(false);
@@ -153,11 +153,7 @@ public class Base {
     initRequirements();
 
     // run static initialization that grabs all the prefs
-//    try {
     Preferences.init(null);
-//    } catch (Exception e) {
-//      e.printStackTrace();
-//    }
 
     if (Base.isMacOS()) {
       String fiasco = "apple.laf.useScreenMenuBar";
@@ -175,7 +171,8 @@ public class Base {
             "<p>Due to an Apple bug, the Processing menu bar is " + 
             "unusable when run on Mac OS X 10.5 (Leopard). " + 
             "As a workaround, the menu bar will be placed inside " +
-            "the editor window.</p>" +
+            "the editor window. This setting can be changed in the " +
+            "Preferences window.</p>" +
             "</html>";
 //          String warning =
 //            "Due to an Apple bug, the Processing menu bar is\n" + 
@@ -205,6 +202,17 @@ public class Base {
       System.setProperty("apple.laf.useScreenMenuBar", menubar);
     }
 
+    // Set the look and feel before opening the window
+    // For 0158, moving it lower so that the apple.laf.useScreenMenuBar stuff works
+    try {
+      platform.setLookAndFeel();
+    } catch (Exception e) {
+      System.err.println("Non-fatal error while setting the Look & Feel.");
+      System.err.println("The error message follows, however Processing should run fine.");
+      System.err.println(e.getMessage());
+      //e.printStackTrace();
+    }
+    
     // Create a location for untitled sketches
     untitledFolder = createTempFolder("untitled");
     untitledFolder.deleteOnExit();
@@ -698,11 +706,31 @@ public class Base {
 
     //if (editorCount == 1) {
     if (editors.size() == 1) {
-      System.out.println("editor count is 1, " + editor.untitled);
       // For 0158, when closing the last window /and/ it was already an 
       // untitled sketch, just give up and let the user quit.
-      if (Preferences.getBoolean("sketchbook.closing_last_window_quits") ||
-          (editor.untitled && !editor.getSketch().isModified())) {
+//      if (Preferences.getBoolean("sketchbook.closing_last_window_quits") ||
+//          (editor.untitled && !editor.getSketch().isModified())) {
+      Object[] options = { "OK", "Cancel" };
+      String prompt = Base.isMacOS() ? 
+        "<html> " +
+        "<head> <style type=\"text/css\">"+
+        "b { font: 13pt \"Lucida Grande\" }"+
+        "p { font: 11pt \"Lucida Grande\"; margin-top: 8px }"+
+        "</style> </head>" +
+        "<b>Are you sure you want to Quit?</b>" +
+        "<p>Closing the last open sketch will quit Processing." :
+        "Are you sure you want to Quit?";
+
+      int result = JOptionPane.showOptionDialog(editor,
+                                                prompt,
+                                                "Quit",
+                                                JOptionPane.YES_NO_OPTION,
+                                                JOptionPane.QUESTION_MESSAGE,
+                                                null,
+                                                options,
+                                                options[0]);
+      if (result == JOptionPane.YES_OPTION) {
+        
         // This will store the sketch count as zero
         editors.remove(editor);
         storeSketches();
@@ -713,19 +741,8 @@ public class Base {
         // Since this wasn't an actual Quit event, call System.exit()
         System.exit(0);
 
-      } else {
-        return handleNewReplaceImpl();
-//        try {
-//          // open an untitled document in the last remaining window
-//          String path = createNewUntitled();
-//          editor.handleOpenInternal(path);
-//          editor.untitled = true;
-//          return true;  // or false?
-//
-//        } catch (IOException e) {
-//          e.printStackTrace();
-//          return false;
-//        }
+//      } else {
+//        return handleNewReplaceImpl();
       }
     } else {
       // More than one editor window open,

@@ -1,19 +1,36 @@
 0158 pde
 X missing semicolons - better error message
-_   http://dev.processing.org/bugs/show_bug.cgi?id=12
-_   need to highlight the previous line as well (or instead)
+o   http://dev.processing.org/bugs/show_bug.cgi?id=12
+o   need to highlight the previous line as well (or instead)
 X clean up some of the new/open code internally
+X export to application options dialog
+X implement error message regarding the apple menu bug on leopard
+X   add a preference to toggle the menubar on osx
+X confirm "Do you want to Quit?"
+X   remove the preference for auto-quit
+o tarbell substrate to P2D
+_ change sketch naming with the dates
 
-_ confirm "Do you want to Quit?"
-_   remove the preference for auto-quit
-
-_ coloring for CENTER and DIAMETER, turn off coloring for deprecated
-_ export to application options dialog
+_ rewrite preferences window to use proper layout?
+_   is there already a bug for this?
 
 _ overlapping editor windows caused by activeEditor not being called in time
 _   see handleActivated in Base, and do placement differently
 _   may also need to deal w/ sync problems
 _ also make sure that it'll start at the top again when done
+
+_ fix up mkdmg script to work with leopard properly
+_   even though the error suggests on thing, seems to be something earlier
+_   need to also detect whether running 10.4 or 10.5
+
+_ if untitled, and not modified, and closing on macosx (only)
+_   don't close the sketch and create a new one
+_   put up dialog box telling the user to use 'quit' or change the preference
+_   or just automatically quit at that point?
+
+. . . 
+
+_ coloring for CENTER and DIAMETER, turn off coloring for deprecated
 
 _ add bug voting to the bugs db before 1.0 release?
 
@@ -21,10 +38,6 @@ _ "An error occurred while starting the application" with Processing 0154+
 _   Maybe provide the old exe or another alternative?
 _   Have someone try this on lab machines until we can find one that breaks
 _   http://dev.processing.org/bugs/show_bug.cgi?id=986
-
-_ fix up mkdmg script to work with leopard properly
-_   even though the error suggests on thing, seems to be something earlier
-_   need to also detect whether running 10.4 or 10.5
 
 _ go through other sketch-opening menus to check for disappearing sketches
 
@@ -36,11 +49,9 @@ _ update applet.html to point at java 6u10 with the new auto-update stuff
 _ also update applet on the home page to do the same
 
 _ disallow add file to sketch if it's an example or read-only
-
-_ if untitled, and not modified, and closing on macosx (only)
-_   don't close the sketch and create a new one
-_   put up dialog box telling the user to use 'quit' or change the preference
-_   or just automatically quit at that point?
+_   export as well
+_   pretty much anything inside the sketch?
+_   but don't do this with untitled, cuz it kinda stinks
 
 _ opengl broken on vista laptop with articulate
 _   when background() is not called to clear the buffers, causes flashing
@@ -602,6 +613,8 @@ _   but right now there's a hack to add a CR in PdePreprocessor
 _   http://dev.processing.org/bugs/show_bug.cgi?id=5
 _ Parsing error when using char literals
 _   http://dev.processing.org/bugs/show_bug.cgi?id=281
+_ Improve detection and handling of missing semicolons
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1036
 
 
 PDE / Editor
