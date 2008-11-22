@@ -14,27 +14,46 @@ X if untitled, and not modified, and closing on macosx (only)
 X   don't close the sketch and create a new one
 X   put up dialog box telling the user to use 'quit' or change the preference
 X   or just automatically quit at that point?
+X fix up mkdmg script to work with leopard properly
+X   even though the error suggests one thing, seems to be something earlier
+X   need to also detect whether running 10.4 or 10.5
+X change ref re: last window closing will prompt re: quit
+X   quitting will not prompt re: quit
+o opengl broken on vista laptop with articulate
+o   when background() is not called to clear the buffers, causes flashing
+o   need to disable swapping buffers until background() is used?
+o   (happens with 0135, 0148 on this machine as well)
+o   may need to add explicit noBackground() call
+X   this seems to have fixed itself
 
-_ change reference re: smoothing in opengl
-_   hint(), smooth(), and size()
+design updates
+X update about box in windows app and lib folder
+_ update icon.gif in the source code
+_ add in new buttons from casey
+_ move all editor theme graphics into their own subfolder
+_ add space between run/stop and the others
 
-_ fix up mkdmg script to work with leopard properly
-_   even though the error suggests on thing, seems to be something earlier
-_   need to also detect whether running 10.4 or 10.5
+_ change windows and linux to use jdk 6u10
 
-. . . 
+_ textured sphere example needs to set normals
+
+_ replace applet.html and applet-opengl.html
+
+_ deal with isManagingFocus() warning in the editor src
 
 _ overlapping editor windows caused by activeEditor not being called in time
 _   see handleActivated in Base, and do placement differently
 _   may also need to deal w/ sync problems
 _ also make sure that it'll start at the top again when done
 
+_ prefs window doesn't swap ok/cancel properly for mac vs. windows/linux
+_   don't bother having a "cancel" for the prefs window
 _ rewrite preferences window to use proper layout?
 _   is there already a bug for this?
-
-_ prefs window doesn't swap ok/cancel properly for mac vs. windows/linux
+_ make prefs dialog modal?
 
 _ coloring for CENTER and DIAMETER, turn off coloring for deprecated
+_ also deal with hint() changes
 
 _ add bug voting to the bugs db before 1.0 release?
 
@@ -56,12 +75,6 @@ _ disallow add file to sketch if it's an example or read-only
 _   export as well
 _   pretty much anything inside the sketch?
 _   but don't do this with untitled, cuz it kinda stinks
-
-_ opengl broken on vista laptop with articulate
-_   when background() is not called to clear the buffers, causes flashing
-_   need to disable swapping buffers until background() is used?
-_   (happens with 0135, 0148 on this machine as well)
-_   may need to add explicit noBackground() call
 
 _ when exporting to application (or applet) don't copy .java files from folder
 _   (they'll be copied as source files later)
