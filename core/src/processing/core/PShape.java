@@ -77,10 +77,12 @@ public class PShape implements PConstants {
   protected PImage image;
 
   // boundary box of this shape
-  protected float x;
-  protected float y;
-  protected float width;
-  protected float height;
+  //protected float x;
+  //protected float y;
+  //protected float width;
+  //protected float height;
+  public float width;
+  public float height;
 
   // set to false if the object is hidden in the layers palette
   protected boolean visible = true;
@@ -216,23 +218,29 @@ public class PShape implements PConstants {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  protected void checkBounds() {
-    if (width == 0 || height == 0) {
-      // calculate bounds here (also take kids into account)
-      width = 1;
-      height = 1;
-    }
-  }
+//  protected void checkBounds() {
+//    if (width == 0 || height == 0) {
+//      // calculate bounds here (also take kids into account)
+//      width = 1;
+//      height = 1;
+//    }
+//  }
 
 
+  /**
+   * Get the width of the drawing area (not necessarily the shape boundary). 
+   */
   public float getWidth() {
-    checkBounds();
+    //checkBounds();
     return width;
   }
 
 
+  /**
+   * Get the height of the drawing area (not necessarily the shape boundary). 
+   */
   public float getHeight() {
-    checkBounds();
+    //checkBounds();
     return height;
   }
 
@@ -521,7 +529,7 @@ public class PShape implements PConstants {
 
     } else {  // coded set of vertices
       int index = 0;
-      
+
       if (vertices[0].length == 2) {  // drawing a 2D path
         for (int j = 0; j < vertexCodeCount; j++) {
           switch (vertexCodes[j]) {
