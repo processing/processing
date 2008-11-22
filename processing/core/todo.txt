@@ -24,19 +24,26 @@ X Bring back CENTER_RADIUS but deprecate it
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1035
 X enable smoothing by default in opengl
 X   change hints to instead only be able to DISABLE 2X or 4X
+X bring back .width and .height fields for PShape
+o   need to update the examples to reflect
+X   no examples to update
+X change reference re: smoothing in opengl
+X   hint(), smooth(), and size()
+_   rev the version number
 
-_ change reference re: smoothing in opengl
-_   hint(), smooth(), and size()
 
+_ do we need to do glEnable for multisample with gl?
 
-_ OPENGL sketches flicker w/ Vista when background() is not used inside draw()
-_   http://dev.processing.org/bugs/show_bug.cgi?id=930
-_   Disabling Aero scheme prevents the problem (maybe?)
 _ Present mode and OPENGL not working in 0156 with Windows Vista
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1009
 _   Seems to be limited to Java 6u10 (but verify)
 _   -Dsun.java2d.d3d=false seems to fix the problem
 _   can probably add that to PApplet.main()
+
+_ OPENGL sketches flicker w/ Vista when background() is not used inside draw()
+_   http://dev.processing.org/bugs/show_bug.cgi?id=930
+_   Disabling Aero scheme sometimes prevents the problem
+_   Updating graphics drivers may prevent the problem 
 
 _ No textures render with hint(ENABLE_ACCURATE_TEXTURES)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=985
