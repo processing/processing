@@ -55,7 +55,7 @@
       <key>JVMVersion</key>
       <string>1.5*</string>
       <key>ClassPath</key>
-      <!-- in 0149, removed :/System/Library/Java -->
+      <!-- in 0149, removed /System/Library/Java because of problems -->
       <string>$JAVAROOT/pde.jar:$JAVAROOT/core.jar:$JAVAROOT/antlr.jar:$JAVAROOT/ecj.jar:$JAVAROOT/registry.jar:$JAVAROOT/quaqua.jar</string>
       <key>Properties</key>
       <dict>
@@ -63,6 +63,7 @@
 	<key>javaroot</key>
 	<string>$JAVAROOT</string>
 	<!-- http://developer.apple.com/releasenotes/Java/java141/system_properties/chapter_4_section_1.html#//apple_ref/doc/uid/TP30000285 -->
+	<!-- in release 0158, removing the menubar option and controlling it by a preference. -->
 <!--	<key>apple.laf.useScreenMenuBar</key>
 	<string>true</string>-->
 	<key>apple.awt.showGrowBox</key>
