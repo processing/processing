@@ -1519,8 +1519,8 @@ public class PShapeSVG extends PShape {
     }
     // Set bounding box based on the parent bounding box
     if (found != null) {
-      found.x = this.x;
-      found.y = this.y;
+//      found.x = this.x;
+//      found.y = this.y;
       found.width = this.width;
       found.height = this.height;
     }
