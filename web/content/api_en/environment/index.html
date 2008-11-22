@@ -370,12 +370,16 @@ void draw() {
 </pre>
     <h5 id="Rendering_modes"><a href="#top"><img src="images/up_arrow.gif" alt="Top" /></a> 
       Rendering Modes</h5>
-    <p>Processing currently has three rendering modes. The programs written with 
+    <p>Processing currently has four rendering modes. The programs written with 
       Processing can be rendered using the Java 2D drawing libraries, a custom 
-      3D engine called P3D, and through OpenGL using the JOGL interface. The rendering 
-      mode is specified through the size() function. A large effort has been made 
-      to make the Processing language behave similarly across the different rendering 
-      modes, but there are currently some inconsistencies.</p>
+      3D engine called P3D, and through OpenGL using the JOGL interface, and a custon 2D
+      engine called P2D. The rendering mode is specified through the size() function. 
+      A large effort has been made to make the Processing language behave similarly across 
+      the different rendering modes, but there are currently some inconsistencies.</p>
+      
+    <p>For more information, see the <a href="../size_.html">size() reference entry</a>.</b>
+    
+    <!--
     <h6>JAVA2D</h6>
     <p>Utilizes the Java 2D graphics library for drawing 2D images. This is the 
       default rendering mode for Processing so if none is specified, it draws 
@@ -437,4 +441,4 @@ void draw() {
   rect(-200, -200, 400, 400);
   a += 0.01;
 }
-</pre>
+</pre>-->
