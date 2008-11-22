@@ -126,7 +126,7 @@ public class Preferences {
 
   JTextField sketchbookLocationField;
   JCheckBox exportSeparateBox;
-  JCheckBox closingLastQuitsBox;
+//  JCheckBox closingLastQuitsBox;
   JCheckBox externalEditorBox;
   JCheckBox memoryOverrideBox;
   JTextField memoryField;
@@ -237,21 +237,8 @@ public class Preferences {
     int h, vmax;
 
 
-    // [ ] Use multiple .jar files when exporting applets
-
-    exportSeparateBox =
-      new JCheckBox("Use multiple .jar files when exporting applets\n" +
-                    "(ignored when using libraries)");
-    pain.add(exportSeparateBox);
-    d = exportSeparateBox.getPreferredSize();
-    // adding +10 because ubuntu + jre 1.5 truncating items
-    exportSeparateBox.setBounds(left, top, d.width + 10, d.height);
-    right = Math.max(right, left + d.width);
-    top += d.height + GUI_BETWEEN;
-
-
     // [ ] Quit after closing last sketch window
-
+    /*
     closingLastQuitsBox =
       new JCheckBox("Quit after closing last sketch window");
     pain.add(closingLastQuitsBox);
@@ -259,9 +246,8 @@ public class Preferences {
     closingLastQuitsBox.setBounds(left, top, d.width + 10, d.height);
     right = Math.max(right, left + d.width);
     top += d.height + GUI_BETWEEN;
+    */
 
-
-    //sketchbook.closing_last_window_quits
 
     /*
     // [ ] Prompt for name and folder when creating new sketch
@@ -370,6 +356,19 @@ public class Preferences {
     pain.add(memoryBox);
     d = memoryBox.getPreferredSize();
     memoryBox.setBounds(left, top, d.width, d.height);
+    top += d.height + GUI_BETWEEN;
+
+
+    // [ ] Use multiple .jar files when exporting applets
+
+    exportSeparateBox =
+      new JCheckBox("Use multiple .jar files when exporting applets\n" +
+                    "(ignored when using libraries)");
+    pain.add(exportSeparateBox);
+    d = exportSeparateBox.getPreferredSize();
+    // adding +10 because ubuntu + jre 1.5 truncating items
+    exportSeparateBox.setBounds(left, top, d.width + 10, d.height);
+    right = Math.max(right, left + d.width);
     top += d.height + GUI_BETWEEN;
 
 
@@ -569,8 +568,8 @@ public class Preferences {
     // put each of the settings into the table
     setBoolean("export.applet.separate_jar_files",
                exportSeparateBox.isSelected());
-    setBoolean("sketchbook.closing_last_window_quits",
-               closingLastQuitsBox.isSelected());
+//    setBoolean("sketchbook.closing_last_window_quits",
+//               closingLastQuitsBox.isSelected());
     //setBoolean("sketchbook.prompt", sketchPromptBox.isSelected());
     //setBoolean("sketchbook.auto_clean", sketchCleanBox.isSelected());
 
@@ -640,8 +639,8 @@ public class Preferences {
     // set all settings entry boxes to their actual status
     exportSeparateBox.
       setSelected(getBoolean("export.applet.separate_jar_files"));
-    closingLastQuitsBox.
-      setSelected(getBoolean("sketchbook.closing_last_window_quits"));
+    //closingLastQuitsBox.
+    //  setSelected(getBoolean("sketchbook.closing_last_window_quits"));
     //sketchPromptBox.
     //  setSelected(getBoolean("sketchbook.prompt"));
     //sketchCleanBox.
