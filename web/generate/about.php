@@ -25,7 +25,7 @@ $source = CONTENTDIR."static/";
 #$path = BASEDIR;
 
 $page = new Page("Basics", "Basics");
-$page->content(file_get_contents($source."faq.html"));
+$page->content(file_get_contents($source."basics.html"));
 writeFile('about/basics.html', $page->out());
 #copydirr($source.'/images', $path.'/images');
 
