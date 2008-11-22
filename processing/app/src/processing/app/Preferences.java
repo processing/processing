@@ -133,6 +133,7 @@ public class Preferences {
   JCheckBox checkUpdatesBox;
   JTextField fontSizeField;
   JCheckBox autoAssociateBox;
+  JCheckBox menubarWorkaroundBox;
 
 
   // the calling editor, so updates can be applied
@@ -403,6 +404,23 @@ public class Preferences {
       right = Math.max(right, left + d.width);
       top += d.height + GUI_BETWEEN;
     }
+    
+    
+    // [ ] Place menu bar inside 
+    
+    if (Base.isMacOS()) {
+      if (System.getProperty("os.version").startsWith("10.5")) {
+        menubarWorkaroundBox = 
+          new JCheckBox("Place menus inside editor window to avoid " +
+                        "Apple Java bug (requires restart)");
+        pain.add(menubarWorkaroundBox);
+        d = menubarWorkaroundBox.getPreferredSize();
+        menubarWorkaroundBox.setBounds(left, top, d.width + 10, d.height);
+        right = Math.max(right, left + d.width);
+        top += d.height + GUI_BETWEEN;
+      }
+    }
+    
 
     // More preferences are in the ...
 
@@ -607,6 +625,11 @@ public class Preferences {
                  autoAssociateBox.isSelected());
     }
 
+    if (menubarWorkaroundBox != null) {
+      setBoolean("apple.laf.useScreenMenuBar", 
+                 !menubarWorkaroundBox.isSelected());
+    }
+
     editor.applyPreferences();
   }
 
@@ -637,6 +660,11 @@ public class Preferences {
     if (autoAssociateBox != null) {
       autoAssociateBox.
         setSelected(getBoolean("platform.auto_file_type_associations"));
+    }
+
+    if (menubarWorkaroundBox != null) {
+      menubarWorkaroundBox.
+        setSelected(!getBoolean("apple.laf.useScreenMenuBar"));
     }
 
     dialog.setVisible(true);
