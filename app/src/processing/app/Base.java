@@ -503,8 +503,9 @@ public class Base {
 
     // Use a generic name like sketch_031008a, the date plus a char
     int index = 0;
-    SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd");
-    String purty = formatter.format(new Date());
+    //SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd");
+    SimpleDateFormat formatter = new SimpleDateFormat("MMMdd");
+    String purty = formatter.format(new Date()).toLowerCase();
     do {
       newbieName = "sketch_" + purty + ((char) ('a' + index));
       newbieDir = new File(newbieParentDir, newbieName);
