@@ -228,8 +228,8 @@ run.display = 1
 # (otherwise, the environment will quit)
 # default to the relative norm for the different platforms, 
 # but the setting can be changed in the prefs dialog anyway
-sketchbook.closing_last_window_quits = true
-sketchbook.closing_last_window_quits.macosx = false
+#sketchbook.closing_last_window_quits = true
+#sketchbook.closing_last_window_quits.macosx = false
 
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
