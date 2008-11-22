@@ -10,26 +10,29 @@ X confirm "Do you want to Quit?"
 X   remove the preference for auto-quit
 o tarbell substrate to P2D
 X change sketch naming with the dates
-_ prefs window doesn't swap ok/cancel properly for mac vs. windows/linux
+X if untitled, and not modified, and closing on macosx (only)
+X   don't close the sketch and create a new one
+X   put up dialog box telling the user to use 'quit' or change the preference
+X   or just automatically quit at that point?
 
-_ rewrite preferences window to use proper layout?
-_   is there already a bug for this?
+_ change reference re: smoothing in opengl
+_   hint(), smooth(), and size()
+
+_ fix up mkdmg script to work with leopard properly
+_   even though the error suggests on thing, seems to be something earlier
+_   need to also detect whether running 10.4 or 10.5
+
+. . . 
 
 _ overlapping editor windows caused by activeEditor not being called in time
 _   see handleActivated in Base, and do placement differently
 _   may also need to deal w/ sync problems
 _ also make sure that it'll start at the top again when done
 
-_ fix up mkdmg script to work with leopard properly
-_   even though the error suggests on thing, seems to be something earlier
-_   need to also detect whether running 10.4 or 10.5
+_ rewrite preferences window to use proper layout?
+_   is there already a bug for this?
 
-_ if untitled, and not modified, and closing on macosx (only)
-_   don't close the sketch and create a new one
-_   put up dialog box telling the user to use 'quit' or change the preference
-_   or just automatically quit at that point?
-
-. . . 
+_ prefs window doesn't swap ok/cancel properly for mac vs. windows/linux
 
 _ coloring for CENTER and DIAMETER, turn off coloring for deprecated
 

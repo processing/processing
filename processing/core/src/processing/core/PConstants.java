@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-07 Ben Fry and Casey Reas
+  Copyright (c) 2004-08 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This library is free software; you can redistribute it and/or
@@ -298,7 +298,7 @@ public interface PConstants {
   static final int CORNERS  = 1;
   /** Draw mode from the center, and using the radius */
   static final int RADIUS   = 2;
-  /** @deprecated Use RADIUS instead. */ 
+  /** @deprecated Use RADIUS instead. */
   static final int CENTER_RADIUS = 2;
   /**
    * Draw from the center, using second pair of values as the diameter.
@@ -310,10 +310,10 @@ public interface PConstants {
    * using second pair of values as the diameter.
    */
   static final int DIAMETER = 3;
-  /** @deprecated Use DIAMETER instead. */ 
+  /** @deprecated Use DIAMETER instead. */
   static final int CENTER_DIAMETER = 3;
 
-  
+
   // vertically alignment modes for text
 
   /** Default vertical alignment for text placement */
@@ -423,7 +423,8 @@ public interface PConstants {
   // hints - hint values are positive for the alternate version,
   // negative of the same value returns to the normal/default state
 
-  static final int ENABLE_OPENGL_2X_SMOOTH     =  1;
+  static final int DISABLE_OPENGL_2X_SMOOTH    =  1;
+  static final int ENABLE_OPENGL_2X_SMOOTH     = -1;
   static final int ENABLE_OPENGL_4X_SMOOTH     =  2;
 
   static final int ENABLE_NATIVE_FONTS         =  3;
