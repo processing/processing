@@ -107,6 +107,7 @@ li { margin-bottom: 1em; }
 <strong>Generate English site files</strong>
 <p>	
     <a href="#" onclick="remote_link('cover.php');return false;">Cover</a> \ 
+    <a href="#" onclick="remote_link('about.php');return false;">About</a> \ 
 	<a href="#" onclick="remote_link('exhibition.php'); return false;">Exhibition and archives</a> \ 
 	<a href="#" onclick="remote_link('examples.php'); return false;">Examples</a> \ 
 	<a href="#" onclick="remote_link('tutorials.php'); return false;">Tutorials</a> \ 
