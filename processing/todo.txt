@@ -45,9 +45,11 @@ documentation
 X coloring for CENTER and DIAMETER, turn off coloring for deprecated
 X also deal with hint() changes
 
+
 _ write revisions.txt
 _ update revisions.html
 _ update known problems reference
+_ write revisions.txt updates based on 0158 changes
 
 _ move the color settings out of the preferences file
 _   otherwise running new/old p5 causes problems
