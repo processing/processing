@@ -180,14 +180,15 @@ public class Base {
             "<head> <style type=\"text/css\">"+
             "b { font: 13pt \"Lucida Grande\" }"+
             "p { font: 11pt \"Lucida Grande\"; margin-top: 8px }"+
-            "</style> </head>" +
+            "</style> </head> <body>" +
             "<b>The standard menu bar has been disabled.</b>" +
             "<p>Due to an Apple bug, the Processing menu bar " +
-            "is unusable on Mac OS X 10.5 (Leopard). " +
+            "is unusable on Mac OS X 10.5. <br>" +
             "As a workaround, the menu bar will be placed inside " +
-            "the editor window. This setting can be changed in the " +
-            "Preferences window.</p>" +
-            "</html>";
+            "the editor window. This <br>setting can be changed in the " +
+            "Preferences window. If this bug makes you sad, <br>" +
+            "please contact Apple via bugreporter.apple.com.</p>" +
+            "</body> </html>";
           Object[] options = { "OK", "More Info" };
           int result = JOptionPane.showOptionDialog(new Frame(),
                                                     warning,
@@ -497,6 +498,8 @@ public class Base {
   // .................................................................
 
 
+  boolean breakTime = false;
+  
   /**
    * Handle creating a sketch folder, return its base .pde file
    * or null if the operation was canceled.
@@ -518,6 +521,18 @@ public class Base {
     SimpleDateFormat formatter = new SimpleDateFormat("MMMdd");
     String purty = formatter.format(new Date()).toLowerCase();
     do {
+      if (index == 26) {
+        if (!breakTime) {
+          Base.showWarning("Time for a Break", 
+                           "You've reached the limit for auto naming of new sketches\n" +
+                           "for the day. How about going for walk instead?", null);
+          breakTime = true;
+        } else {
+          Base.showWarning("Sunshine", 
+                           "No really, time for some fresh air for you.", null);
+        }
+        return null;
+      }
       newbieName = "sketch_" + purty + ((char) ('a' + index));
       newbieDir = new File(newbieParentDir, newbieName);
       index++;
@@ -540,8 +555,10 @@ public class Base {
   public void handleNew() {
     try {
       String path = createNewUntitled();
-      Editor editor = handleOpen(path);
-      editor.untitled = true;
+      if (path != null) {
+        Editor editor = handleOpen(path);
+        editor.untitled = true;
+      }
 
     } catch (IOException e) {
       if (activeEditor != null) {
@@ -566,16 +583,18 @@ public class Base {
   }
 
 
-  protected boolean handleNewReplaceImpl() {
+  protected void handleNewReplaceImpl() {
     try {
       String path = createNewUntitled();
-      activeEditor.handleOpenInternal(path);
-      activeEditor.untitled = true;
-      return true;
+      if (path != null) {
+        activeEditor.handleOpenInternal(path);
+        activeEditor.untitled = true;
+      }
+//      return true;
 
     } catch (IOException e) {
       activeEditor.statusError(e);
-      return false;
+//      return false;
     }
   }
 
