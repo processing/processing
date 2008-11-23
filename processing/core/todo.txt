@@ -32,6 +32,8 @@ X   hint(), smooth(), and size()
 X   rev the version number
 
 
+_ command line support is currently broken (why?)
+
 _ do we need to do glEnable for multisample with gl?
 
 _ Present mode and OPENGL not working in 0156 with Windows Vista
