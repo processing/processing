@@ -7,8 +7,44 @@
    	<p>Portions of this work are from the book, <a href="http://www.learningprocessing.com">Learning Processing</a>, by Daniel Shiffman, published by Morgan Kaufmann Publishers, Copyright 2008 Elsevier Inc. All rights reserved.</p>
    	
    	<p class="ref-notice">This tutorial is for Processing (BETA) version 148+. <em>If you see any errors or have comments, please <a href="http://processing.org/discourse/yabb_beta/YaBB.cgi?board=WebsiteBugs">let us know</a>.</em></p>
-   	
-   	
+
+
+<h5>Grayscale Color</h5>
+
+In the digital world, when we want to talk about a color, precision is required. Saying "Hey, can you make that circle bluish-green?"  will not do. Color, rather, is defined as a 
+range of numbers. Let's start with the simplest case:  black & white or grayscale.   0 means black, 255 means white. In between, every other number - 50, 87, 162, 209, and so on - is a 
+shade of gray ranging from black to white. 
+<br /><br />
+<img src="imgs/grayscale.jpg" border="1">
+<br /><br />
+<table width="100%" border="0" cellpadding="20" bgcolor="#DEDEDE">
+<tr><td><em>Does 0-255 seem arbitary to you?</em><br />
+Color for a given shape needs to be stored in the computer’s memory. Th is memory is just a lonsequence of 0’s and 1’s (a whole bunch of on or off  switches.) 
+Each one of these switches is a bit, eight of them together is a byte. Imagine if we had eight bits (one byte) in sequence — how many ways can we 
+configure these switches? The answer is (and doing a little research into binary numbers will prove this point) 256 possibilities, or a range 
+of numbers between 0 and 255. We will use eight bit color for our grayscale range and 24 bit for full color (eight bits for each of the red, green, and blue color components).      
+</td></tr></table>
+<br /><br />
+By adding the <strong><a href="http://processing.org/reference/stroke_.html">stroke()</a></strong> and 
+<strong><a href="http://processing.org/reference/fill_.html">fill()</a></strong> functions before something is drawn, we can set the color of any given shape.  There is also the function   
+<strong><a href="http://processing.org/reference/background.html">background()</a></strong>, which sets a background color for the window.  Here's an example.
+
+
+<pre>
+background(255);    // Setting the background to white
+stroke(0);          // Setting the outline (stroke) to black
+fill(150);          // Setting the interior of a shape (fill) to grey 
+rect(50,50,75,100); // Drawing the rectangle
+</pre>
+
+Stroke or fill can be eliminated with the functions: <a href="http://processing.org/reference/noStroke_.html">noStroke()</a> and <a href="http://processing.org/reference/noFill_.html">noFill()</a>. 
+Our instinct might be to say  "stroke(0)"  for no outline, however, it is important to remember that 0 is not "nothing", but rather denotes the color black. 
+Also, remember not to eliminate both — with <strong>noStroke()</strong> and <strong>noFill()</strong>, nothing will appear!
+<br /><br />
+In addition, if we draw two shapes, Processing will always use the most recently specified stroke and fill, reading the code from top to bottom.
+<br /><br />
+<img src="imgs/order.jpg" border="1">
+
 <h5>RGB Color</h5> 
 <p>
 <img src="imgs/rgb.png" width = 200><br />
