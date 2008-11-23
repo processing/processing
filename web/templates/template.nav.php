@@ -142,7 +142,7 @@ function navigation($section = '')
     $html .= "\t\t\t\t</div>\n";
     
     if (in_array($section, $abo)) {
-         $html .= "\t\t\t\t" . '<div class="navBar exhib" id="subNav">' . "\n";
+         $html .= "\t\t\t\t" . '<div class="navBar abo" id="subNav">' . "\n";
 	
          $html .= "\t\t\t\t\t" . l('Basics', $section == 'Basics') . " \\\n";
          $html .= "\t\t\t\t\t" . l('People', $section == 'People') . " \\\n";
