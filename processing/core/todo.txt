@@ -1,9 +1,8 @@
 0159 core
 
 
-_ command line support is currently broken (why?)
-
 _ do we need to do glEnable for multisample with gl?
+_   just need to test this on a few platforms
 
 _ Present mode and OPENGL not working in 0156 with Windows Vista
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1009
