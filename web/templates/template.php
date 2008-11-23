@@ -18,7 +18,7 @@ class Page
 		$this->xhtml->set('header', $section == 'Cover' ? HEADER : HEADER_LINK);
 		$this->section = $section;
 		$this->xhtml->set('bodyid', ($bodyid == '') ? $section : $bodyid);
-		$title = ($title == '') ? 'Processing 1.0 (BETA)' : $title . ' \ Processing 1.0 (BETA)';
+		$title = ($title == '') ? 'Processing 1.0' : $title . ' \ Processing 1.0';
 		$this->xhtml->set('title', $title);
 		$this->xhtml->set('navigation', navigation($section));
     }
