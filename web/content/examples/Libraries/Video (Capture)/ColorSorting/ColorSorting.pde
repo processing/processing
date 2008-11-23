@@ -5,8 +5,8 @@
  * Example that sorts all colors from the incoming video
  * and arranges them into vertical bars.
  */
- 
- 
+
+
 import processing.video.*;
 
 Capture video;
@@ -20,13 +20,13 @@ int[] bright;
 int increment = 5;
 
 
-public void setup() {
+void setup() {
   size(800, 600, P3D);
 
   noCursor();
   // Uses the default video input, see the reference if this causes an error
   video = new Capture(this, 80, 60, 15);
-  
+
   int count = (video.width * video.height) / (increment * increment);
   bright = new int[count];
   captureColors = new Tuple[count];
@@ -38,10 +38,10 @@ public void setup() {
 }
 
 
-public void draw() {
+void draw() {
   if (video.available()) {
     video.read();
-    
+
     background(0);
     noStroke();
 
@@ -84,10 +84,11 @@ public void draw() {
 }
 
 
-public void keyPressed() {
+void keyPressed() {
   if (key == 'g') {
     saveFrame();
-  } else if (key == 'c') {
+  } 
+  else if (key == 'c') {
     cheatScreen = !cheatScreen;
   }
 }
@@ -141,3 +142,4 @@ void sortSub(int[] a, Tuple[] stuff, int lo0, int hi0) {
       sortSub(a, stuff, lo, hi0);
   }
 }
+

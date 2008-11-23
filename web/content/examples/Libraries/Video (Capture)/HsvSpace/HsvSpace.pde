@@ -35,7 +35,7 @@ boolean motion;
 boolean blobby = false;
 
 
-public void setup() {
+void setup() {
   size(640, 480, P3D);
   //size(screen.width, screen.height, OPENGL);
 

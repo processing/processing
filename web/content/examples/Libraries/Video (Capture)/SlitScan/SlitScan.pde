@@ -19,7 +19,7 @@ int drawPositionX;
 
 
 void setup() {
-  size(600, 240);
+  size(600, 240, P2D);
   
   // Uses the default video input, see the reference if this causes an error
   video = new Capture(this, 320, 240, 30);

@@ -31,7 +31,7 @@ void setup() {
   size(640, 360);
 
   // Create buffered image for lens effect
-  lensEffect = createGraphics(width, height, JAVA2D);
+  lensEffect = createGraphics(width, height, P2D);
 
   // Load background image 
   lensEffect.beginDraw();
@@ -40,8 +40,8 @@ void setup() {
   lensEffect.endDraw();
 
   // Create buffered image for image to warp
-  lensImage = createGraphics(lensD, lensD, JAVA2D);
-  lensImage2 = createGraphics(lensD, lensD, JAVA2D);
+  lensImage = createGraphics(lensD, lensD, P2D);
+  lensImage2 = createGraphics(lensD, lensD, P2D);
 
   // Lens algorithm (transformation array)
   int magFactor = 40;  // Magnification factor
@@ -78,7 +78,7 @@ void draw() {
   xx += dx;
   yy += dy;
 
-  lensImage = createGraphics(lensD, lensD, JAVA2D);
+  lensImage = createGraphics(lensD, lensD, P2D);
 
   // save the backgrounlensD of lensHeight*lensWilensDth pixels rectangle at the coorlensDinates 
   // where the lens effect will be applielensD.

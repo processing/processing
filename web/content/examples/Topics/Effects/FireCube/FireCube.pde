@@ -24,7 +24,7 @@ int[] calc1,calc2,calc3,calc4,calc5;
 PGraphics pg;
 
 void setup(){
-  size(640, 360, P3D);
+  size(640, 360, P2D);
   
   // Create buffered image for 3d cube
   pg = createGraphics(width, height, P3D);

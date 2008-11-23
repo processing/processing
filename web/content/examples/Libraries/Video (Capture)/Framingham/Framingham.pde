@@ -18,7 +18,7 @@ int[] scoot;
 
 
 void setup() {
-  size(640, 480, P3D);
+  size(640, 480, P2D);
 
   // Uses the default video input, see the reference if this causes an error
   video = new Capture(this, 32, 24);

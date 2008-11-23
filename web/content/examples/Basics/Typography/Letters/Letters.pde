@@ -11,6 +11,7 @@ void setup()
 {
   size(200, 200);
   background(0);
+  smooth();
   // Load the font. Fonts must be placed within the data 
   // directory of your sketch. A font must first be created
   // using the 'Create Font...' option in the Tools menu.

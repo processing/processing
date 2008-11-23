@@ -27,7 +27,7 @@ float fontSize = 1.5;
 
 
 public void setup() {
-  size(640, 480, P3D);
+  size(640, 480, P2D);
   // Or run full screen, more fun! Use with Sketch -> Present
   //size(screen.width, screen.height, OPENGL);
 

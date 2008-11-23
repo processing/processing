@@ -12,7 +12,7 @@ PImage wormImg, wormTexture;
 int[] reg = new int[15];
 
 void setup() {
-  size(640, 360);
+  size(640, 360, P2D);
   noSmooth();
 
   // Reference image used to transpose texture 
@@ -57,7 +57,7 @@ void draw() {
   // Loop through all pixels
   for (int i = 0; i < pixels.length; i++){
     // Map texture to wormhole in a bit shift blue 
-    pixels[i] = wormTexture.pixels[constrain(wormImg.pixels[i] & 0xFF , 0 , 224)];
+    pixels[i] = wormTexture.pixels[constrain(wormImg.pixels[i] & 0xFF, 0, 224)];
   }  
 
   updatePixels();
