@@ -10,7 +10,7 @@ import processing.video.*;
 Movie myMovie;
 
 void setup() {
-  size(640, 480, P3D);
+  size(640, 480, P2D);
   background(0);
   // Load and play the video in a loop
   myMovie = new Movie(this, "station.mov");

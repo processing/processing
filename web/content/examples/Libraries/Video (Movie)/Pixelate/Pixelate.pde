@@ -16,7 +16,7 @@ Movie myMovie;
 color myMovieColors[];
 
 void setup() {
-  size(640, 480, P3D);
+  size(640, 480, P2D);
   noStroke();
   background(0);
   myMovie = new Movie(this, "station.mov");
