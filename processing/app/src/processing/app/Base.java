@@ -182,8 +182,8 @@ public class Base {
             "p { font: 11pt \"Lucida Grande\"; margin-top: 8px }"+
             "</style> </head>" +
             "<b>The standard menu bar has been disabled.</b>" +
-            "<p>Due to an Apple bug, the Processing menu bar is " +
-            "unusable when run on Mac OS X 10.5 (Leopard). " +
+            "<p>Due to an Apple bug, the Processing menu bar " +
+            "is unusable on Mac OS X 10.5 (Leopard). " +
             "As a workaround, the menu bar will be placed inside " +
             "the editor window. This setting can be changed in the " +
             "Preferences window.</p>" +
