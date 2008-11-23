@@ -214,7 +214,7 @@ public class Preferences {
       
       // Theme settings always override preferences
       try {
-        load(Base.getStream("theme/settings.txt"));
+        load(Base.getStream("theme/theme.txt"));
       } catch (Exception te) {
         Base.showError(null, "Could not read color theme settings.\n" +
                              "You'll need to reinstall Processing.", te);
