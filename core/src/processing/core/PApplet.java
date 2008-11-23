@@ -6268,7 +6268,7 @@ public class PApplet extends Applet
   /**
    * GIF image of the Processing logo.
    */
-  static final byte[] ICON_IMAGE = {
+  static public final byte[] ICON_IMAGE = {
     71, 73, 70, 56, 57, 97, 16, 0, 16, 0, -77, 0, 0, 0, 0, 0, -1, -1, -1, 12,
     12, 13, -15, -15, -14, 45, 57, 74, 54, 80, 111, 47, 71, 97, 62, 88, 117,
     1, 14, 27, 7, 41, 73, 15, 52, 85, 2, 31, 55, 4, 54, 94, 18, 69, 109, 37,
