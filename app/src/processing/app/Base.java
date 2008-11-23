@@ -1638,7 +1638,6 @@ public class Base {
     Toolkit tk = Toolkit.getDefaultToolkit();
 
     File imageLocation = new File(getContentFile("lib"), name);
-    //image = tk.getImage(getLibContentsPath(name));
     image = tk.getImage(imageLocation.getAbsolutePath());
     MediaTracker tracker = new MediaTracker(who);
     tracker.addImage(image, 0);
