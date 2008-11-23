@@ -1042,6 +1042,8 @@ _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=
 
 LIBRARIES / Video
 
+_ if read() hasn't been called, can cause an error with java2d
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1041
 _ threading problems with video
 _   http://dev.processing.org/bugs/show_bug.cgi?id=868
 _ audio stops working after two seconds
