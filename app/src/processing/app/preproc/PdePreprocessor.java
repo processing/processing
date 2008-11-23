@@ -464,6 +464,9 @@ public class PdePreprocessor {
         if (Preferences.getBoolean("export.application.fullscreen")) {
           out.print("\"--present\", ");
         }
+        if (!Preferences.getBoolean("export.application.stop")) {
+          out.print("\"--hide-stop\", ");
+        }
         out.println("\"" + className + "\" });");
         out.println(indent + "}");
       }
