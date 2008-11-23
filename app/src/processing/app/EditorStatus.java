@@ -77,16 +77,14 @@ public class EditorStatus extends JPanel /*implements ActionListener*/ {
 
     if (bgcolor == null) {
       bgcolor = new Color[3]; //4];
-      bgcolor[0] = Preferences.getColor("status.notice.bgcolor");
-      bgcolor[1] = Preferences.getColor("status.error.bgcolor");
-      bgcolor[2] = Preferences.getColor("status.edit.bgcolor");
-      //bgcolor[3] = Preferences.getColor("status.prompt.bgcolor");
+      bgcolor[0] = Theme.getColor("status.notice.bgcolor");
+      bgcolor[1] = Theme.getColor("status.error.bgcolor");
+      bgcolor[2] = Theme.getColor("status.edit.bgcolor");
 
       fgcolor = new Color[3]; //4];
-      fgcolor[0] = Preferences.getColor("status.notice.fgcolor");
-      fgcolor[1] = Preferences.getColor("status.error.fgcolor");
-      fgcolor[2] = Preferences.getColor("status.edit.fgcolor");
-      //fgcolor[3] = Preferences.getColor("status.prompt.fgcolor");
+      fgcolor[0] = Theme.getColor("status.notice.fgcolor");
+      fgcolor[1] = Theme.getColor("status.error.fgcolor");
+      fgcolor[2] = Theme.getColor("status.edit.fgcolor");
     }
   }
 
@@ -214,7 +212,7 @@ public class EditorStatus extends JPanel /*implements ActionListener*/ {
 
     Graphics g = offscreen.getGraphics();
     if (font == null) {
-      font = Preferences.getFont("status.font");
+      font = Theme.getFont("status.font");
       //new Font("SansSerif", Font.PLAIN, 12));
       g.setFont(font);
       metrics = g.getFontMetrics();

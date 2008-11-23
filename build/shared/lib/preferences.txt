@@ -211,3 +211,7 @@ browser.linux = mozilla
 
 # set to the program to be used for launching apps on linux
 #launcher.linux = gnome-open
+
+# FULL SCREEN (PRESENT MODE)
+run.present.bgcolor = #666666
+run.present.stop.color = #cccccc

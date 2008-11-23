@@ -154,6 +154,9 @@ public class Base {
 
     // run static initialization that grabs all the prefs
     Preferences.init(null);
+    
+    // setup the theme coloring fun
+    Theme.init();
 
     if (Base.isMacOS()) {
       String fiasco = "apple.laf.useScreenMenuBar";
@@ -188,7 +191,9 @@ public class Base {
                                                     options,
                                                     options[0]);
           if (result == -1) {
-            // do nothing, they hit ESC or closed the window
+            // They hit ESC or closed the window, so just hide it for now
+            System.setProperty(fiasco, "false");
+            // But don't bother setting the preference in the file
           } else {
             Preferences.set(fiasco, menubar);
             if (result == 1) {  // More Info
@@ -198,7 +203,6 @@ public class Base {
           }
         }
       }
-      System.setProperty(fiasco, menubar);
     }
 
     // Set the look and feel before opening the window
