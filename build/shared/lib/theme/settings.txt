@@ -1,7 +1,24 @@
-status.notice.bgcolor=#818b95
-header.bgcolor=#818b95
-buttons.bgcolor=#4a545e
+status.notice.fgcolor = #000000
+status.notice.bgcolor = #818b95
+status.error.fgcolor  = #ffffff
+status.error.bgcolor  = #662000
+status.edit.fgcolor   = #000000
+status.edit.bgcolor   = #cc9900
+status.font           = SansSerif,plain,12
+
+# settings for the tabs at the top
+# actual tab images are stored in the lib/theme folder
+header.bgcolor               = #818b95
+header.text.selected.color   = #1A1A00
+header.text.unselected.color = #ffffff
+header.text.font             = SansSerif,plain,12
+
+buttons.bgcolor      = #4a545e
+buttons.status.font  = SansSerif,plain,12
+buttons.status.color = #FFFFFF
+
 linestatus.bgcolor=#29333d
+
 editor.external.bgcolor=#c8d2dc
 editor.linehighlight.color=#c8d2dc
 editor.comment2.style=#777755,plain
@@ -9,3 +26,5 @@ editor.comment1.style=#777755,plain
 editor.keyword2.style=#cc6600,plain
 editor.literal1.style=#006699,plain
 editor.literal2.style=#006699,plain
+editor.comment2.style=#7e7e7e,plain
+editor.comment1.style=#7e7e7e,plain

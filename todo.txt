@@ -33,6 +33,9 @@ X add in new buttons from casey
 X move all editor theme graphics into their own subfolder
 o add space between run/stop and the others
 
+_ move the color settings out of the preferences file
+_   otherwise running new/old p5 causes problems
+_   just need to rename each of the prefs
 _ change windows and linux to use jdk 6u10
 
 _ verify that the spacing is ok between the buttons

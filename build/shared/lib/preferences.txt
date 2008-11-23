@@ -77,11 +77,7 @@ default.window.height = 600
 
 # font size for editor
 editor.font=Monospaced,plain,12
-
-# monospaced on java 1.3 was monaco, but on 1.4 it has changed
-# to courier, which actually matches other platforms better.
-# (and removes the 12 point being too large issue)
-# monaco is nicer on macosx, so use that explicitly
+# Monaco is nicer on Mac OS X, so use that explicitly
 editor.font.macosx = Monaco,plain,10
 
 # anti-aliased text, turned off by default
@@ -143,17 +139,6 @@ editor.eolmarkers.color=#99991A
 editor.invalid=false
 editor.invalid.style=#7E7E00,bold
 
-buttons.bgcolor      = #66665A
-buttons.status.font  = SansSerif,plain,12
-buttons.status.color = #FFFFFF
-
-# settings for the tabs at the top
-# actual tab images are stored in the lib/ folder
-header.bgcolor               = #999988
-header.text.selected.color   = #1A1A00
-header.text.unselected.color = #ffffff
-header.text.font             = SansSerif,plain,12
-
 console			 = true
 console.color            = #000000
 console.output.color     = #ccccbb
@@ -171,17 +156,6 @@ console.auto_clear = true
 # set the maximum number of lines remembered by the console
 # the default is 500, lengthen at your own peril
 console.length = 500
-
-#status.notice.fgcolor = #ffffff
-status.notice.fgcolor = #000000
-status.notice.bgcolor = #bbbbaa
-status.error.fgcolor  = #ffffff
-status.error.bgcolor  = #662000
-status.edit.fgcolor = #000000
-status.edit.bgcolor = #cc9900
-#status.prompt.fgcolor = #000000
-#status.prompt.bgcolor = #cc9900
-status.font           = SansSerif,plain,12
 
 # convert tabs to spaces? how many spaces?
 editor.tabs.expand = true
