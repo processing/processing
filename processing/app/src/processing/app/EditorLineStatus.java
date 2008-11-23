@@ -49,10 +49,10 @@ public class EditorLineStatus extends JComponent {
     this.textarea = textarea;
     textarea.editorLineStatus = this;
 
-    background = Preferences.getColor("linestatus.bgcolor");
-    font = Preferences.getFont("linestatus.font");
-    foreground = Preferences.getColor("linestatus.color");
-    high = Preferences.getInteger("linestatus.height");
+    background = Theme.getColor("linestatus.bgcolor");
+    font = Theme.getFont("linestatus.font");
+    foreground = Theme.getColor("linestatus.color");
+    high = Theme.getInteger("linestatus.height");
 
     if (Base.isMacOS()) {
       resize = Base.getThemeImage("resize.gif", this);

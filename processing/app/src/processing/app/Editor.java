@@ -375,13 +375,13 @@ public class Editor extends JFrame implements RunnerListener {
     TextAreaPainter painter = textarea.getPainter();
     if (external) {
       // disable line highlight and turn off the caret when disabling
-      Color color = Preferences.getColor("editor.external.bgcolor");
+      Color color = Theme.getColor("editor.external.bgcolor");
       painter.setBackground(color);
       painter.setLineHighlightEnabled(false);
       textarea.setCaretVisible(false);
 
     } else {
-      Color color = Preferences.getColor("editor.bgcolor");
+      Color color = Theme.getColor("editor.bgcolor");
       painter.setBackground(color);
       boolean highlight = Preferences.getBoolean("editor.linehighlight");
       painter.setLineHighlightEnabled(highlight);

@@ -86,10 +86,10 @@ public class EditorConsole extends JScrollPane {
     consoleDoc.setParagraphAttributes(0, 0, standard, true);
 
     // build styles for different types of console output
-    Color bgColor    = Preferences.getColor("console.color");
-    Color fgColorOut = Preferences.getColor("console.output.color");
-    Color fgColorErr = Preferences.getColor("console.error.color");
-    Font font        = Preferences.getFont("console.font");
+    Color bgColor    = Theme.getColor("console.color");
+    Color fgColorOut = Theme.getColor("console.output.color");
+    Color fgColorErr = Theme.getColor("console.error.color");
+    Font font        = Theme.getFont("console.font");
 
     stdStyle = new SimpleAttributeSet();
     StyleConstants.setForeground(stdStyle, fgColorOut);
