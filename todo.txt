@@ -13,21 +13,18 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=1039
 X   AIOOBE when you get to z on new sketches
 X improve export application window layout spacing (osx)
 X   also disable stop button item when full screen not selected
-o disable present mode? (weirdness with placements on mac)
-X   deal with some present mode issues
-X   use FSE on mac within the PDE
-X   when exporting, never use FSE
-_   document changes re: can specify --exclusive on command line
+o Focus not returning to editor properly on Linux
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1031
+X   can't get this to replicate
 
-in previous release
+in previous release (0158)
 X move the color settings out of the preferences file
 X   otherwise running new/old p5 causes problems
 X   just need to rename each of the prefs
+X update to java 6u10 for linux and windows
+
 
 _ do we need to shore up server setup for 1.0 release pounding?
-
-_ add option to use full screen exclusive mode on present inside pde?
-_   override default setting of macosx (yes) and linux/win (no)
 
 _ key command for prev/next tab works, but not menu
 _   menu options are actually disabled (go figure)
@@ -40,19 +37,19 @@ _   be more descriptive, use a second line in latest.txt
 _ write revisions.txt
 _ update revisions.html
 _ update known problems reference
-
+_ add disk image icon
 _ fix dist scripts so that the name "1.0" can be used
-
-_ textured sphere example needs to set normals
-
 _ replace applet.html and applet-opengl.html
+_   update applet.html to point at java 6u10 with the new auto-update stuff
+_   also update applet on the home page to do the same
 
 _ deal with isManagingFocus() warning in the editor src
 
-_ overlapping editor windows caused by activeEditor not being called in time
-_   see handleActivated in Base, and do placement differently
-_   may also need to deal w/ sync problems
-_ also make sure that it'll start at the top again when done
+_ fix editor window placement
+_   overlapping editor windows caused by activeEditor not being called in time
+_     see handleActivated in Base, and do placement differently
+_     may also need to deal w/ sync problems
+_   also make sure that it'll start at the top again when done
 
 _ prefs window doesn't swap ok/cancel properly for mac vs. windows/linux
 _   don't bother having a "cancel" for the prefs window
@@ -64,10 +61,6 @@ _ add bug voting to the bugs db before 1.0 release?
 
 _ go through other sketch-opening menus to check for disappearing sketches
 
-_ update to java 6u10 for linux and windows
-_ update applet.html to point at java 6u10 with the new auto-update stuff
-_ also update applet on the home page to do the same
-
 _ disallow add file to sketch if it's an example or read-only
 _   export as well
 _   pretty much anything inside the sketch?
@@ -75,9 +68,6 @@ _   but don't do this with untitled, cuz it kinda stinks
 
 _ when exporting to application (or applet) don't copy .java files from folder
 _   (they'll be copied as source files later)
-
-_ hitting ESC inside Color Selector will quit Processing
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1006
 
 
 [ needs verification ] 
@@ -836,6 +826,9 @@ _   make hooks to history api so others can write tools around it
 
 PDE / Preferences
 
+_ add option to use full screen exclusive mode on present inside pde?
+_   override default setting of macosx (yes) and linux/win (no)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1043
 _ prefs window not visible on windows taskbar
 _   http://dev.processing.org/bugs/show_bug.cgi?id=438
 _ split Preferences and PreferencesFrame?
@@ -977,6 +970,8 @@ _   update will update classes from shared in the current folder
 
 TOOLS / Color Picker
 
+_ hitting ESC inside Color Selector will quit Processing
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1006
 _ pasting into color picker doesn't update the color values
 _   http://dev.processing.org/bugs/show_bug.cgi?id=503
 
@@ -1190,6 +1185,8 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=801
 _ "Fatal exception occurred. Program will exit." on startup
 _   seems to be font related, deleting prefs will fix it
 _   http://dev.processing.org/bugs/show_bug.cgi?id=688
+_ Processing IDE icon ALT + Tab low res in Windows XP
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1040
 
 
 DIST / Mac OS X
