@@ -211,6 +211,14 @@ public class Preferences {
                          " and restart Processing.", ex);
         }
       }
+      
+      // Theme settings always override preferences
+      try {
+        load(Base.getStream("theme/settings.txt"));
+      } catch (Exception te) {
+        Base.showError(null, "Could not read color theme settings.\n" +
+                             "You'll need to reinstall Processing.", te);
+      }
     }
   }
 
