@@ -16,7 +16,7 @@ $files = getRefFiles($lang);
 
 // create Ref objects for each file
 foreach ($files as $file) {
-    $refs[] = new Ref("api_$lang/".$file);
+     $refs[] = new Ref("api_$lang/".$file);
 }
 
 // create ReferencePage object
