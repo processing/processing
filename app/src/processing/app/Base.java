@@ -199,8 +199,8 @@ public class Base {
             Base.openURL("http://dev.processing.org/bugs/show_bug.cgi?id=786");
           }
         }
-        System.setProperty("apple.laf.useScreenMenuBar", menubar);
       }
+      System.setProperty("apple.laf.useScreenMenuBar", menubar);
     }
 
     // Set the look and feel before opening the window
@@ -1436,15 +1436,8 @@ public class Base {
    * Give this Frame a Processing icon.
    */
   static public void setIcon(Frame frame) {
-    // set the window icon
-    if (icon == null) {
-      try {
-        icon = Base.getLibImage("icon.gif", frame);
-      } catch (Exception e) { } // fail silently, no big whup
-    }
-    if (icon != null) {
-      frame.setIconImage(icon);
-    }
+    Image image = Toolkit.getDefaultToolkit().createImage(PApplet.ICON_IMAGE);
+    frame.setIconImage(image);
   }
 
 
@@ -1629,6 +1622,14 @@ public class Base {
   }
 
 
+  /** 
+   * Get an image associated with the current color theme.
+   */
+  static public Image getThemeImage(String name, Component who) {
+    return getLibImage("theme/" + name, who);
+  }
+  
+  
   /**
    * Return an Image object from inside the Processing lib folder.
    */
