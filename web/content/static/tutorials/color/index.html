@@ -1,4 +1,4 @@
-<h1>RGB Color</h1>
+<h1>Color</h1>
 	
 <p>
 <table width="656">
@@ -19,7 +19,7 @@ shade of gray ranging from black to white.
 <br /><br />
 <table width="100%" border="0" cellpadding="20" bgcolor="#DEDEDE">
 <tr><td><em>Does 0-255 seem arbitary to you?</em><br />
-Color for a given shape needs to be stored in the computer's memory. Th is memory is just a lonsequence of 0's and 1's (a whole bunch of on or off  switches.) 
+Color for a given shape needs to be stored in the computer's memory. This memory is just a long sequence of 0's and 1's (a whole bunch of on or off switches.) 
 Each one of these switches is a bit, eight of them together is a byte. Imagine if we had eight bits (one byte) in sequence - how many ways can we 
 configure these switches? The answer is (and doing a little research into binary numbers will prove this point) 256 possibilities, or a range 
 of numbers between 0 and 255. We will use eight bit color for our grayscale range and 24 bit for full color (eight bits for each of the red, green, and blue color components).      
@@ -29,6 +29,7 @@ By adding the <strong><a href="http://processing.org/reference/stroke_.html">str
 <strong><a href="http://processing.org/reference/fill_.html">fill()</a></strong> functions before something is drawn, we can set the color of any given shape.  There is also the function   
 <strong><a href="http://processing.org/reference/background.html">background()</a></strong>, which sets a background color for the window.  Here's an example.
 
+<br /><br />
 
 <pre>
 background(255);    // Setting the background to white
@@ -36,10 +37,11 @@ stroke(0);          // Setting the outline (stroke) to black
 fill(150);          // Setting the interior of a shape (fill) to grey 
 rect(50,50,75,100); // Drawing the rectangle
 </pre>
+<br /><br />
 
 Stroke or fill can be eliminated with the functions: <a href="http://processing.org/reference/noStroke_.html">noStroke()</a> and <a href="http://processing.org/reference/noFill_.html">noFill()</a>. 
 Our instinct might be to say  "stroke(0)"  for no outline, however, it is important to remember that 0 is not "nothing", but rather denotes the color black. 
-Also, remember not to eliminate both Ñ with <strong>noStroke()</strong> and <strong>noFill()</strong>, nothing will appear!
+Also, remember not to eliminate both - with <strong>noStroke()</strong> and <strong>noFill()</strong>, nothing will appear!
 <br /><br />
 In addition, if we draw two shapes, Processing will always use the most recently specified stroke and fill, reading the code from top to bottom.
 <br /><br />
