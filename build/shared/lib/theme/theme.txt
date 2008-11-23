@@ -16,6 +16,8 @@ header.text.unselected.color = #ffffff
 header.text.font = SansSerif,plain,12
 
 # GUI - CONSOLE
+console.font = Monospaced,plain,11
+console.font.macosx = Monaco,plain,10
 console.color = #000000
 console.output.color = #cccccc
 console.error.color = #ff3000
@@ -85,14 +87,15 @@ editor.operator.style = #000000,plain
 # like in case statements or goto
 editor.label.style = #7e7e7e,bold
 
-
 # TEXT - COMMENTS
-
 editor.comment1.style = #7e7e7e,plain
 editor.comment2.style = #7e7e7e,plain
-
 
 # FULL SCREEN (PRESENT MODE)
 run.present.bgcolor = #666666
 run.present.stop.color = #cccccc
 
+
+# LINE STATUS - editor line number status bar at the bottom of the screen
+linestatus.font	   = SansSerif,plain,10
+linestatus.height  = 20
