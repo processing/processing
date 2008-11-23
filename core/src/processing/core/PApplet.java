@@ -6346,7 +6346,11 @@ public class PApplet extends Applet
     if (platform == WINDOWS) {
       // For now, disable the D3D renderer on Java 6u10 because 
       // it causes problems with Present mode.
+      // http://dev.processing.org/bugs/show_bug.cgi?id=1009
+      System.out.println("setting the property now");
       System.setProperty("sun.java2d.d3d", "false");
+    } else {
+      System.out.println("not setting");
     }
 
     if (args.length < 1) {
