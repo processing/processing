@@ -495,6 +495,8 @@ public class PApplet extends Applet
 
   static public final String ARGS_PRESENT = "--present";
 
+  static public final String ARGS_EXCLUSIVE = "--exclusive";
+
   static public final String ARGS_STOP_COLOR = "--stop-color";
 
   static public final String ARGS_HIDE_STOP = "--hide-stop";
@@ -6306,6 +6308,10 @@ public class PApplet extends Applet
    *
    * --present             put the applet into full screen presentation
    *                       mode. requires java 1.4 or later.
+   *                       
+   * --exclusive           use full screen exclusive mode when presenting.
+   *                       disables new windows or interaction with other 
+   *                       monitors, this is like a "game" mode.
    *
    * --hide-stop           use to hide the stop button in situations where
    *                       you don't want to allow users to exit. also
@@ -6360,11 +6366,12 @@ public class PApplet extends Applet
 
     try {
       boolean external = false;
-      int location[] = null;
-      int editorLocation[] = null;
+      int[] location = null;
+      int[] editorLocation = null;
 
       String name = null;
       boolean present = false;
+      boolean exclusive = false;
       Color backgroundColor = Color.BLACK;
       Color stopColor = Color.GRAY;
       GraphicsDevice displayDevice = null;
@@ -6425,6 +6432,9 @@ public class PApplet extends Applet
         } else {
           if (args[argIndex].equals(ARGS_PRESENT)) {
             present = true;
+
+          } else if (args[argIndex].equals(ARGS_EXCLUSIVE)) {
+            exclusive = true;
 
           } else if (args[argIndex].equals(ARGS_HIDE_STOP)) {
             hideStop = true;
@@ -6496,7 +6506,7 @@ public class PApplet extends Applet
       if (present) {
         frame.setUndecorated(true);
         frame.setBackground(backgroundColor);
-        if (platform == MACOSX) {
+        if (exclusive) {
           displayDevice.setFullScreenWindow(frame);
           fullScreenRect = frame.getBounds();
         } else {
