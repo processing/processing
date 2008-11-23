@@ -6343,10 +6343,16 @@ public class PApplet extends Applet
       System.setProperty("apple.awt.graphics.UseQuartz", "true");
     }
 
+    if (platform == WINDOWS) {
+      // For now, disable the D3D renderer on Java 6u10 because 
+      // it causes problems with Present mode.
+      System.setProperty("sun.java2d.d3d", "false");
+    }
+
     if (args.length < 1) {
       System.err.println("Usage: PApplet <appletname>");
       System.err.println("For additional options, " +
-                         "see the javadoc for PApplet");
+                         "see the Javadoc for PApplet");
       System.exit(1);
     }
 

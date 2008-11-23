@@ -29,7 +29,7 @@ o   need to update the examples to reflect
 X   no examples to update
 X change reference re: smoothing in opengl
 X   hint(), smooth(), and size()
-_   rev the version number
+X   rev the version number
 
 
 _ do we need to do glEnable for multisample with gl?
@@ -40,7 +40,7 @@ _   Seems to be limited to Java 6u10 (but verify)
 _   -Dsun.java2d.d3d=false seems to fix the problem
 _   can probably add that to PApplet.main()
 
-_ OPENGL sketches flicker w/ Vista when background() is not used inside draw()
+_ OPENGL sketches flicker w/ Vista when background() not used inside draw()
 _   http://dev.processing.org/bugs/show_bug.cgi?id=930
 _   Disabling Aero scheme sometimes prevents the problem
 _   Updating graphics drivers may prevent the problem 
