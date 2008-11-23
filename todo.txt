@@ -31,10 +31,11 @@ X update about box in windows app and lib folder
 X update icon.gif in the source code
 X add in new buttons from casey
 X move all editor theme graphics into their own subfolder
-_ add space between run/stop and the others
+o add space between run/stop and the others
 
 _ change windows and linux to use jdk 6u10
 
+_ verify that the spacing is ok between the buttons
 _ textured sphere example needs to set normals
 
 _ replace applet.html and applet-opengl.html
