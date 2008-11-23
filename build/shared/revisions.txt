@@ -7,6 +7,15 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0158 - 22 November 2008
+
+Pre-release for 1.0. See done.txt and core/done.txt for information 
+about changes. More later.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0157 - 18 November 2008
 
 The return of P2D and a handful of bug fixes. 
