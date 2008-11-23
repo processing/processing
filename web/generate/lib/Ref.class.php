@@ -93,7 +93,7 @@ class Ref
     
     function title()
     {
-        return (($this->type == 'Method') ? $this->category . '::' : '') . $this->name;
+        return (($this->type == 'Method' || $this->type == 'Field') ? $this->category . '::' : '') . $this->name;
     }
     
     function index()
@@ -106,7 +106,7 @@ class Ref
         global $lang;
         $html = '<table cellpadding="0" cellspacing="0" border="0" class="ref-item">';
         
-        if ($this->type == 'Method') {
+        if ($this->type == 'Method' || $this->type == 'Field') {
             $html .= refTableRow('<!--*-->Class<!--*-->', '<p>'.$this->category.'</p>');
         }
         
