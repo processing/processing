@@ -30,6 +30,9 @@ X pressing run turns up nothing
 o   (in particular while cpu load is a little higher on g5?)
 o   http://dev.processing.org/bugs/show_bug.cgi?id=852
 o   this may just be a macosx (ppc?) bug
+o check if platform is MACOSX and font is monospaced (?)
+o   if so, nuke the setting and change it back to Monaco
+X   not gonna bother, it's just a few releases
 
 design updates
 X update about box in windows app and lib folder
@@ -38,11 +41,13 @@ X add in new buttons from casey
 X move all editor theme graphics into their own subfolder
 o add space between run/stop and the others
 
-_ coloring for CENTER and DIAMETER, turn off coloring for deprecated
-_ also deal with hint() changes
+documentation
+X coloring for CENTER and DIAMETER, turn off coloring for deprecated
+X also deal with hint() changes
 
-_ check if platform is MACOSX and font is monospaced (?)
-_   if so, nuke the setting and change it back to Monaco
+_ write revisions.txt
+_ update revisions.html
+_ update known problems reference
 
 _ move the color settings out of the preferences file
 _   otherwise running new/old p5 causes problems
