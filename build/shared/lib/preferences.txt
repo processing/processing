@@ -89,15 +89,6 @@ editor.external=false
 # caret blinking
 editor.caret.blink=true
 
-# highlight for the current line
-editor.linehighlight=true
-
-# bracket/brace highlighting
-editor.brackethighlight=true
-
-# little pooties at the end of lines that show where they finish
-editor.eolmarkers=false
-
 # area that's not in use by the text (replaced with tildes)
 editor.invalid=false
 
@@ -172,6 +163,9 @@ export.application.platform.linux = true
 
 # whether or not to export as full screen (present) mode
 export.application.fullscreen = false
+
+# whether to show the stop button when exporting to application
+export.application.stop = true
 
 # false will place all exported files into a single .jar
 export.applet.separate_jar_files = false

@@ -2000,6 +2000,8 @@ public class Sketch {
     optionPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
     optionPanel.setMaximumSize(goodIdea);
     panel.add(optionPanel);
+
+    //export.application.stop
    
 //    JPanel actionPanel = new JPanel();
 //    optionPanel.setLayout(new BoxLayout(optionPanel, BoxLayout.X_AXIS));
