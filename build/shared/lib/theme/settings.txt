@@ -1,0 +1,11 @@
+status.notice.bgcolor=#818b95
+header.bgcolor=#818b95
+buttons.bgcolor=#4a545e
+linestatus.bgcolor=#29333d
+editor.external.bgcolor=#c8d2dc
+editor.linehighlight.color=#c8d2dc
+editor.comment2.style=#777755,plain
+editor.comment1.style=#777755,plain
+editor.keyword2.style=#cc6600,plain
+editor.literal1.style=#006699,plain
+editor.literal2.style=#006699,plain
