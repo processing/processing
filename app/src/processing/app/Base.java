@@ -42,8 +42,8 @@ import processing.core.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
-  static final int VERSION = 159;
-  static final String VERSION_NAME = "0159 Beta";
+  static final int VERSION = 160;
+  static final String VERSION_NAME = "0160 Beta";
 
   static final int[] platforms = new int[] {
     PConstants.WINDOWS, PConstants.MACOSX, PConstants.LINUX
@@ -499,7 +499,7 @@ public class Base {
 
 
   boolean breakTime = false;
-  
+
   /**
    * Handle creating a sketch folder, return its base .pde file
    * or null if the operation was canceled.
@@ -523,12 +523,12 @@ public class Base {
     do {
       if (index == 26) {
         if (!breakTime) {
-          Base.showWarning("Time for a Break", 
+          Base.showWarning("Time for a Break",
                            "You've reached the limit for auto naming of new sketches\n" +
                            "for the day. How about going for walk instead?", null);
           breakTime = true;
         } else {
-          Base.showWarning("Sunshine", 
+          Base.showWarning("Sunshine",
                            "No really, time for some fresh air for you.", null);
         }
         return null;
