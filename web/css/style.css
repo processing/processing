@@ -148,7 +148,8 @@ a:link:visited {
 #footer #copyright,
 #footer #colophon {
 	padding: 5px 0 5px 50px;
-	}
+	color: white;
+}
 
 #footer #copyright {
 	background-color: #5A5A5A;
