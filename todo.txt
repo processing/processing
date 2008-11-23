@@ -10,6 +10,9 @@ X   not sure why, but just inserted <br> elements to fix it
 X write revisions.txt updates based on 0158 changes
 X Error after creating more than 26 temporary sketches in one day
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1039
+X   AIOOBE when you get to z on new sketches
+X improve export application window layout spacing (osx)
+X   also disable stop button item when full screen not selected
 
 in previous release
 X move the color settings out of the preferences file
@@ -18,12 +21,9 @@ X   just need to rename each of the prefs
 
 _ disable present mode? (weirdness with placements on mac)
 
-_ improve export application window layout spacing (osx)
-
 _ key command for prev/next tab works, but not menu
 _   menu options are actually disabled (go figure)
 _   file this but mark it as a P5 (bug)
-_ AIOOBE when you get to z on new sketches
 _ setup() and draw() are not bold on osx (10.4)
 
 _ a new release (1.0.1) is available

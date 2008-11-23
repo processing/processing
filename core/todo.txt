@@ -7,8 +7,9 @@ _   just need to test this on a few platforms
 _ Present mode and OPENGL not working in 0156 with Windows Vista
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1009
 _   Seems to be limited to Java 6u10 (but verify)
-_   -Dsun.java2d.d3d=false seems to fix the problem
-_   can probably add that to PApplet.main()
+o   -Dsun.java2d.d3d=false seems to fix the problem
+o   can probably add that to PApplet.main()
+X   does not work
 
 _ OPENGL sketches flicker w/ Vista when background() not used inside draw()
 _   http://dev.processing.org/bugs/show_bug.cgi?id=930
@@ -351,6 +352,8 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=104
 
 CORE / PGraphics3D
 
+_ stroked lines drawing on top of everything else in P3D
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1032
 _ make thick lines draw perpendicular to the screen with P3D
 _   http://dev.processing.org/bugs/show_bug.cgi?id=956
 _   ewjordan suggests building the quad in screen coords after perspective
