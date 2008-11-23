@@ -2452,6 +2452,10 @@ public class Sketch {
             sb.replace(index, index + "@@classpath@@".length(),
                        exportClassPath.toString());
           }
+          while ((index = sb.indexOf("@@lsuipresentationmode@@")) != -1) {
+            sb.replace(index, index + "@@lsuipresentationmode@@".length(), 
+                       Preferences.getBoolean("export.application.fullscreen") ? "4" : "0"); 
+          }
           lines[i] = sb.toString();
         }
         // explicit newlines to avoid Windows CRLF
