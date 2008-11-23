@@ -13,13 +13,21 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=1039
 X   AIOOBE when you get to z on new sketches
 X improve export application window layout spacing (osx)
 X   also disable stop button item when full screen not selected
+o disable present mode? (weirdness with placements on mac)
+X   deal with some present mode issues
+X   use FSE on mac within the PDE
+X   when exporting, never use FSE
+_   document changes re: can specify --exclusive on command line
 
 in previous release
 X move the color settings out of the preferences file
 X   otherwise running new/old p5 causes problems
 X   just need to rename each of the prefs
 
-_ disable present mode? (weirdness with placements on mac)
+_ do we need to shore up server setup for 1.0 release pounding?
+
+_ add option to use full screen exclusive mode on present inside pde?
+_   override default setting of macosx (yes) and linux/win (no)
 
 _ key command for prev/next tab works, but not menu
 _   menu options are actually disabled (go figure)

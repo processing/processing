@@ -22,6 +22,9 @@
 	<string>sketch.icns</string>
 	<key>CFBundleIdentifier</key> 
 	<string>@@sketch@@</string>
+<!-- http://developer.apple.com/documentation/MacOSX/Conceptual/BPRuntimeConfig/Articles/PListKeys.html#//apple_ref/doc/uid/20001431-113616 -->
+        <key>LSUIPresentationMode</key>
+        <integer>@@lsuipresentationmode@@</integer>
 	<key>Java</key>
 	<dict>
 		<key>VMOptions</key>
