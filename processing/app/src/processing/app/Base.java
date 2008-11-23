@@ -155,52 +155,50 @@ public class Base {
     // run static initialization that grabs all the prefs
     Preferences.init(null);
 
-    if (Base.isMacOS() &&
-        // 10.4 is not affected, 10.5 (and prolly 10.6) are
-        !System.getProperty("os.version").startsWith("10.4")) {
+    if (Base.isMacOS()) {
       String fiasco = "apple.laf.useScreenMenuBar";
       String menubar = Preferences.get(fiasco);
       if (menubar == null) {
-        //String ov = System.getProperty("os.version");
-        //if (ov.startsWith("10.5")) {
-        String warning =
-          "<html> " +
-          "<head> <style type=\"text/css\">"+
-          "b { font: 13pt \"Lucida Grande\" }"+
-          "p { font: 11pt \"Lucida Grande\"; margin-top: 8px }"+
-          "</style> </head>" +
-          "<b>The standard menu bar has been disabled.</b>" +
-          "<p>Due to an Apple bug, the Processing menu bar is " +
-          "unusable when run on Mac OS X 10.5 (Leopard). " +
-          "As a workaround, the menu bar will be placed inside " +
-          "the editor window. This setting can be changed in the " +
-          "Preferences window.</p>" +
-          "</html>";
-//          String warning =
-//            "Due to an Apple bug, the Processing menu bar is\n" +
-//            "unusable when run on Mac OS X 10.5 (Leopard).\n" +
-//            "As a workaround, the menu bar is placed inside\n" +
-//            "the editor window.";
-        Object[] options = { "OK", "More Info" };
-        int result = JOptionPane.showOptionDialog(new Frame(),
-                                                  warning,
-                                                  "Menu Bar Problem",
-                                                  JOptionPane.YES_NO_OPTION,
-                                                  JOptionPane.WARNING_MESSAGE,
-                                                  null,
-                                                  options,
-                                                  options[0]);
-        menubar = "false";
-        if (result == -1) {
-          // do nothing, they hit ESC or closed the window
-        } else {
+        if (System.getProperty("os.version").startsWith("10.4")) {
+          menubar = "true";
           Preferences.set(fiasco, menubar);
-          if (result == 1) {  // More Info
-            Base.openURL("http://dev.processing.org/bugs/show_bug.cgi?id=786");
+
+        } else {
+          // 10.4 is not affected, 10.5 (and prolly 10.6) are
+          String warning =
+            "<html> " +
+            "<head> <style type=\"text/css\">"+
+            "b { font: 13pt \"Lucida Grande\" }"+
+            "p { font: 11pt \"Lucida Grande\"; margin-top: 8px }"+
+            "</style> </head>" +
+            "<b>The standard menu bar has been disabled.</b>" +
+            "<p>Due to an Apple bug, the Processing menu bar is " +
+            "unusable when run on Mac OS X 10.5 (Leopard). " +
+            "As a workaround, the menu bar will be placed inside " +
+            "the editor window. This setting can be changed in the " +
+            "Preferences window.</p>" +
+            "</html>";
+          Object[] options = { "OK", "More Info" };
+          int result = JOptionPane.showOptionDialog(new Frame(),
+                                                    warning,
+                                                    "Menu Bar Problem",
+                                                    JOptionPane.YES_NO_OPTION,
+                                                    JOptionPane.WARNING_MESSAGE,
+                                                    null,
+                                                    options,
+                                                    options[0]);
+          if (result == -1) {
+            // do nothing, they hit ESC or closed the window
+          } else {
+            Preferences.set(fiasco, menubar);
+            if (result == 1) {  // More Info
+              Base.openURL("http://dev.processing.org/bugs/show_bug.cgi?id=786");
+            }
+            System.setProperty("apple.laf.useScreenMenuBar", "false");
           }
         }
       }
-      System.setProperty("apple.laf.useScreenMenuBar", menubar);
+      System.setProperty(fiasco, menubar);
     }
 
     // Set the look and feel before opening the window
