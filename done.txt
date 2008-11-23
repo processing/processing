@@ -1,3 +1,29 @@
+0159 pde
+X caret not blinking
+X width of export application on windows is bad
+X add option to hide the stop button
+X menu bar showing up inside the window on osx 10.4
+X update quaqua to release 5.0.1
+X verify that the spacing is ok between the buttons
+o why is quaqua making the error window enormous?
+X   not sure why, but just inserted <br> elements to fix it
+X write revisions.txt updates based on 0158 changes
+X Error after creating more than 26 temporary sketches in one day
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1039
+X   AIOOBE when you get to z on new sketches
+X improve export application window layout spacing (osx)
+X   also disable stop button item when full screen not selected
+o Focus not returning to editor properly on Linux
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1031
+X   can't get this to replicate
+
+in previous release (0158)
+X move the color settings out of the preferences file
+X   otherwise running new/old p5 causes problems
+X   just need to rename each of the prefs
+X update to java 6u10 for linux and windows
+
+
 0158 pde
 X missing semicolons - better error message
 o   http://dev.processing.org/bugs/show_bug.cgi?id=12

@@ -1,18 +1,4 @@
-0159 core
-o disable present mode? (weirdness with placements on mac)
-X   deal with some present mode issues
-X   use FSE on mac within the PDE
-X   when exporting, never use FSE
-_   document changes re: can specify --exclusive on command line
-X do we need to do glEnable for multisample with gl?
-o   just need to test this on a few platforms
-X   doesn't seem to be the case
-X Present mode and OPENGL not working in 0156 with Windows Vista
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1009
-X   Seems to be limited to Java 6u10 (but verify)
-o   -Dsun.java2d.d3d=false seems to fix the problem
-o   can probably add that to PApplet.main()
-X   does not work
+0160 core
 
 
 [ known problems ]
