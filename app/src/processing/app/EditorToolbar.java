@@ -96,7 +96,7 @@ public class EditorToolbar extends JComponent implements MouseInputListener {
     this.menu = menu;
     
     if (buttons == null) {
-      buttons = Base.getLibImage("buttons.gif", this);
+      buttons = Base.getThemeImage("buttons.gif", this);
     }
 
     buttonCount = 0;

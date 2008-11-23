@@ -81,8 +81,8 @@ public class EditorHeader extends JComponent {
       pieces = new Image[STATUS.length][WHERE.length];
       for (int i = 0; i < STATUS.length; i++) {
         for (int j = 0; j < WHERE.length; j++) {
-          pieces[i][j] = Base.getLibImage("tab-" + STATUS[i] + "-" +
-              WHERE[j] + ".gif", this);
+          String path = "theme/tab-" + STATUS[i] + "-" + WHERE[j] + ".gif";
+          pieces[i][j] = Base.getThemeImage(path, this);
         }
       }
     }
