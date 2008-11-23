@@ -1918,8 +1918,8 @@ public class Sketch {
 //      "double-clickable application for the selected plaforms.";
     String line1 = "Export to Application creates double-clickable,";
     String line2 = "standalone applications for the selected plaforms.";
-    JLabel label1 = new JLabel(line1); //, SwingConstants.LEFT);
-    JLabel label2 = new JLabel(line2); //, SwingConstants.LEFT);
+    JLabel label1 = new JLabel(line1, SwingConstants.CENTER);
+    JLabel label2 = new JLabel(line2, SwingConstants.CENTER);
     label1.setAlignmentX(Component.LEFT_ALIGNMENT);
     label2.setAlignmentX(Component.LEFT_ALIGNMENT);
 //    label1.setAlignmentX();
@@ -1929,20 +1929,6 @@ public class Sketch {
     int wide = label2.getPreferredSize().width;
     panel.add(Box.createVerticalStrut(12));
 
-//    JLabel label = new JLabel(msg, SwingConstants.CENTER);
-//    System.out.println(label.getMinimumSize());
-//    System.out.println(label.getPreferredSize());
-//    label.setMaximumSize(label.getPreferredSize());
-//    label.setBackground(Color.RED);
-    //label.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-    //labelBox.add(label);
-    //labelBox.add(Box.createHorizontalGlue());
-    //labelBox.add(Box.createHorizontal
-//    panel.setAlignmentX(Component.LEFT_ALIGNMENT);
-//    panel.add(label);
-    //panel.add(labelBox);
-    
     final JCheckBox windowsButton = new JCheckBox("Windows");
     //windowsButton.setMnemonic(KeyEvent.VK_W);
     windowsButton.setSelected(Preferences.getBoolean("export.application.platform.windows"));
@@ -1978,31 +1964,52 @@ public class Sketch {
     platformPanel.add(Box.createHorizontalStrut(6));
     platformPanel.add(linuxButton);
     platformPanel.setBorder(new TitledBorder("Platforms"));
-    Dimension goodIdea = new Dimension(wide, platformPanel.getPreferredSize().height);
-    platformPanel.setMaximumSize(goodIdea);
+    //Dimension goodIdea = new Dimension(wide, platformPanel.getPreferredSize().height);
+    //platformPanel.setMaximumSize(goodIdea);
+    wide = Math.max(wide, platformPanel.getPreferredSize().width);
     platformPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
     panel.add(platformPanel);
 
-    final JCheckBox fullscreenButton = new JCheckBox("Full Screen (Present mode)");
+    final JCheckBox fullScreenButton = new JCheckBox("Full Screen (Present mode)");
     //fullscreenButton.setMnemonic(KeyEvent.VK_F);
-    fullscreenButton.setSelected(Preferences.getBoolean("export.application.fullscreen"));
-    fullscreenButton.addItemListener(new ItemListener() {
+    fullScreenButton.setSelected(Preferences.getBoolean("export.application.fullscreen"));
+    fullScreenButton.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
-        Preferences.setBoolean("export.application.fullscreen", fullscreenButton.isSelected());
+        Preferences.setBoolean("export.application.fullscreen", fullScreenButton.isSelected());
       }  
     });
-    
+
+    final JCheckBox showStopButton = new JCheckBox("Show a Stop button in Full Screen");
+    //showStopButton.setMnemonic(KeyEvent.VK_S);
+    showStopButton.setSelected(Preferences.getBoolean("export.application.stop"));
+    showStopButton.addItemListener(new ItemListener() {
+      public void itemStateChanged(ItemEvent e) {
+        Preferences.setBoolean("export.application.stop", showStopButton.isSelected());
+      }  
+    });
+
     JPanel optionPanel = new JPanel();
-    //optionPanel.setLayout(new BoxLayout(optionPanel, BoxLayout.Y_AXIS));
-    optionPanel.add(fullscreenButton);
+    optionPanel.setLayout(new BoxLayout(optionPanel, BoxLayout.Y_AXIS));
+    optionPanel.add(fullScreenButton);
+    optionPanel.add(showStopButton);
     optionPanel.setBorder(new TitledBorder("Options"));
-    goodIdea = new Dimension(wide, optionPanel.getPreferredSize().height);
+    wide = Math.max(wide, platformPanel.getPreferredSize().width);
+    //goodIdea = new Dimension(wide, optionPanel.getPreferredSize().height);
     optionPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-    optionPanel.setMaximumSize(goodIdea);
+    //optionPanel.setMaximumSize(goodIdea);
     panel.add(optionPanel);
 
-    //export.application.stop
-   
+    Dimension good;
+    //label1, label2, platformPanel, optionPanel 
+    good = new Dimension(wide, label1.getPreferredSize().height);
+    label1.setMaximumSize(good);
+    good = new Dimension(wide, label2.getPreferredSize().height);
+    label2.setMaximumSize(good);
+    good = new Dimension(wide, platformPanel.getPreferredSize().height);
+    platformPanel.setMaximumSize(good);
+    good = new Dimension(wide, optionPanel.getPreferredSize().height);
+    optionPanel.setMaximumSize(good);
+    
 //    JPanel actionPanel = new JPanel();
 //    optionPanel.setLayout(new BoxLayout(optionPanel, BoxLayout.X_AXIS));
 //    optionPanel.add(Box.createHorizontalGlue());
@@ -2052,6 +2059,7 @@ public class Sketch {
       }
     });
     dialog.pack();
+    dialog.setResizable(false);
     
     Rectangle bounds = editor.getBounds();
     dialog.setLocation(bounds.x + (bounds.width - dialog.getSize().width) / 2,
@@ -2066,10 +2074,6 @@ public class Sketch {
       editor.statusNotice("Export to Application canceled.");
     }
     return false;
-
-//    frame.add(panel);
-//    frame.pack();
-//    frame.setVisible(true);
   }
 
   
