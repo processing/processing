@@ -1,59 +1,24 @@
-0158 pde
-X missing semicolons - better error message
-o   http://dev.processing.org/bugs/show_bug.cgi?id=12
-o   need to highlight the previous line as well (or instead)
-X clean up some of the new/open code internally
-X export to application options dialog
-X implement error message regarding the apple menu bug on leopard
-X   add a preference to toggle the menubar on osx
-X confirm "Do you want to Quit?"
-X   remove the preference for auto-quit
-o tarbell substrate to P2D
-X change sketch naming with the dates
-X if untitled, and not modified, and closing on macosx (only)
-X   don't close the sketch and create a new one
-X   put up dialog box telling the user to use 'quit' or change the preference
-X   or just automatically quit at that point?
-X fix up mkdmg script to work with leopard properly
-X   even though the error suggests one thing, seems to be something earlier
-X   need to also detect whether running 10.4 or 10.5
-X change ref re: last window closing will prompt re: quit
-X   quitting will not prompt re: quit
-o opengl broken on vista laptop with articulate
-o   when background() is not called to clear the buffers, causes flashing
-o   need to disable swapping buffers until background() is used?
-o   (happens with 0135, 0148 on this machine as well)
-o   may need to add explicit noBackground() call
-X   this seems to have fixed itself
-X change windows and linux to use jdk 6u10
-X pressing run turns up nothing
-o   (in particular while cpu load is a little higher on g5?)
-o   http://dev.processing.org/bugs/show_bug.cgi?id=852
-o   this may just be a macosx (ppc?) bug
-o check if platform is MACOSX and font is monospaced (?)
-o   if so, nuke the setting and change it back to Monaco
-X   not gonna bother, it's just a few releases
+0159 pde
 
-design updates
-X update about box in windows app and lib folder
-X update icon.gif in the source code
-X add in new buttons from casey
-X move all editor theme graphics into their own subfolder
-o add space between run/stop and the others
+_ caret not blinking
 
-documentation
-X coloring for CENTER and DIAMETER, turn off coloring for deprecated
-X also deal with hint() changes
+_ menu bar showing up inside the window on osx 10.4
 
+_ a new release (1.0.1) is available
+
+_ width of export application on windows is bad
+_ add option to hide the stop button
 
 _ write revisions.txt
 _ update revisions.html
 _ update known problems reference
 _ write revisions.txt updates based on 0158 changes
 
-_ move the color settings out of the preferences file
-_   otherwise running new/old p5 causes problems
-_   just need to rename each of the prefs
+_ fix dist scripts so that the name "1.0" can be used
+
+X move the color settings out of the preferences file
+X   otherwise running new/old p5 causes problems
+X   just need to rename each of the prefs
 
 _ verify that the spacing is ok between the buttons
 _ textured sphere example needs to set normals

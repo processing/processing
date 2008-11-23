@@ -42,8 +42,8 @@ import processing.core.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
-  static final int VERSION = 158;
-  static final String VERSION_NAME = "0158 Beta";
+  static final int VERSION = 159;
+  static final String VERSION_NAME = "0159 Beta";
 
   static final int[] platforms = new int[] {
     PConstants.WINDOWS, PConstants.MACOSX, PConstants.LINUX
@@ -154,22 +154,29 @@ public class Base {
 
     // run static initialization that grabs all the prefs
     Preferences.init(null);
-    
+
     // setup the theme coloring fun
     Theme.init();
 
     if (Base.isMacOS()) {
-      String fiasco = "apple.laf.useScreenMenuBar";
-      String menubar = Preferences.get(fiasco);
-      if (menubar == null) {
+      String properMenuBar = "apple.laf.useScreenMenuBar";
+      String menubar = Preferences.get(properMenuBar);
+      if (menubar != null) {
+        // Get the current menu bar setting and use it
+        System.setProperty(properMenuBar, menubar);
+
+      } else {
+        // 10.4 is not affected, 10.5 (and prolly 10.6) are
         if (System.getProperty("os.version").startsWith("10.4")) {
-          menubar = "true";
-          Preferences.set(fiasco, menubar);
+          // Don't bother checking next time
+          Preferences.set(properMenuBar, "true");
+          // Also set the menubar now
+          System.setProperty(properMenuBar, "true");
 
         } else {
-          // 10.4 is not affected, 10.5 (and prolly 10.6) are
+          // Running 10.5 or 10.6 or whatever, give 'em the business
           String warning =
-            "<html> " +
+            "<html>" +
             "<head> <style type=\"text/css\">"+
             "b { font: 13pt \"Lucida Grande\" }"+
             "p { font: 11pt \"Lucida Grande\"; margin-top: 8px }"+
@@ -192,15 +199,16 @@ public class Base {
                                                     options[0]);
           if (result == -1) {
             // They hit ESC or closed the window, so just hide it for now
-            System.setProperty(fiasco, "false");
             // But don't bother setting the preference in the file
           } else {
-            Preferences.set(fiasco, menubar);
+            // Shut off in the preferences for next time
+            Preferences.set(properMenuBar, "false");
             if (result == 1) {  // More Info
               Base.openURL("http://dev.processing.org/bugs/show_bug.cgi?id=786");
             }
-            System.setProperty("apple.laf.useScreenMenuBar", "false");
           }
+          // Whether or not canceled, set to false (right now) if we're on 10.5
+          System.setProperty(properMenuBar, "false");
         }
       }
     }
@@ -1624,14 +1632,14 @@ public class Base {
   }
 
 
-  /** 
+  /**
    * Get an image associated with the current color theme.
    */
   static public Image getThemeImage(String name, Component who) {
     return getLibImage("theme/" + name, who);
   }
-  
-  
+
+
   /**
    * Return an Image object from inside the Processing lib folder.
    */
