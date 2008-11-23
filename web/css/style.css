@@ -106,17 +106,21 @@ a:link:visited {
 #mainnav_noSub { background: #5a5a5a; margin-bottom: 40px; }
 #mainnav, #mainnav_noSub { position: relative; color: #cccccc !important; }
 
-#subNav { margin-left: 220px; 
+#subNav { margin-left: 264px;   /* Is this for the reference??? */
 	background: #5a5a5a url(../img/nav_bottomarrow.gif) no-repeat; 
 	padding-left: 33px;
 	margin-bottom: 30px;
 }
-#subNav.learning { margin-left: 157px; }
+#subNav.learning { margin-left: 204px; }
 .active { color: #cccccc !important; }
 .activeSub { color: #000000 !important; }
 .faq { position: absolute; right: 10px; color: #cccccc }
 
-#subNav.exhib { margin-left: 92px; }
+#subNav.exhib { margin-left: 137px; }
+.active { color: #cccccc !important; }
+.faq { position: absolute; right: 10px; color: #cccccc }
+
+#subNav.abo { margin-left: 92px; }
 .active { color: #cccccc !important; }
 .faq { position: absolute; right: 10px; color: #cccccc }
 
