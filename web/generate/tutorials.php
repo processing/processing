@@ -40,7 +40,7 @@ writeFile('learning/tutorials/basics/index.html', $page->out());
 if (!is_dir($path.'learning/tutorials/basics/imgs')) { mkdir($path.'learning/tutorials/basics/imgs', '0757'); }
 copydirr($source.'basics/imgs', $path.'learning/tutorials/basics/imgs', null, 0757, true);
 
-$page = new Page("RGB Color", "Tutorials");
+$page = new Page("Color", "Tutorials");
 $page->content(file_get_contents($source."color/index.html"));
 writeFile('learning/tutorials/color/index.html', $page->out());
 if (!is_dir($path.'learning/tutorials/color/imgs')) { mkdir($path.'learning/tutorials/color/imgs', '0757'); }
