@@ -64,6 +64,11 @@ function network_xml2($num)
 
 $pages = array(
     'Cover'         => array('/', 0),
+    
+    'About'    => array('/about/basics.html', 1),
+    'Basics'        => array('/about/basics.html', 2),
+    'People'        => array('/about/people.html', 2),
+    'Patrons'        => array('/about/patrons.html', 2),
 
     'Exhibition'    => array('/exhibition/index.html', 1),
     'Index'        => array('/exhibition/index.html', 2),
@@ -109,6 +114,7 @@ function navigation($section = '')
     global $translation;
     $tr = $translation->navigation;
 
+	$abo = array('About', 'Basics', 'People', 'Patrons');
     $ref = array('Reference', 'Tools', 'Language', 'Environment', 'Libraries', 'Compare', 'Troubleshooting');
     #$learn = array('Learning', 'Examples', 'Tutorials');
     #$learn = array('Learning', 'Overview', 'Getting Started', 'Basics', 'Topics', '3D & OpenGL', 'Library Examples', 'Books', 'Hacks');
@@ -122,6 +128,7 @@ function navigation($section = '')
     $html .= "\t\t\t\t".'<div class="navBar" id="'.$id.'">'."\n";
     
     $html .= "\t\t\t\t\t" . l('Cover', $section == 'Cover') . " \\\n";
+    $html .= "\t\t\t\t\t" . l('About', $section == 'About') . " \\\n";
     #$html .= "\t\t\t\t\t" . l('Exhibition', $section == 'Exhibition') . " \\\n";
     $html .= "\t\t\t\t\t" . l('Exhibition', in_array($section, $exhib)) . " \\\n";
     $html .= "\t\t\t\t\t" . l('Learning', in_array($section, $learn)) . " \\\n";
@@ -133,8 +140,16 @@ function navigation($section = '')
     $html .= "\t\t\t\t\t" . "<a href=\"/faq.html\"" . ($section == 'FAQ' ? ' class="active faq"' : 'class="faq"') . ">FAQ</a>\n";
        
     $html .= "\t\t\t\t</div>\n";
-
-    if (in_array($section, $exhib)) {
+    
+    if (in_array($section, $abo)) {
+         $html .= "\t\t\t\t" . '<div class="navBar exhib" id="subNav">' . "\n";
+	
+         $html .= "\t\t\t\t\t" . l('Basics', $section == 'Basics') . " \\\n";
+         $html .= "\t\t\t\t\t" . l('People', $section == 'People') . " \\\n";
+	 	 $html .= "\t\t\t\t\t" . l('Patrons', $section == 'Patrons') . " \n";
+	 	 $html .= "\t\t\t\t</div>\n";    
+   
+     } else if (in_array($section, $exhib)) {
          $html .= "\t\t\t\t" . '<div class="navBar exhib" id="subNav">' . "\n";
 	
          $html .= "\t\t\t\t\t" . l('Index', $section == 'Index') . " \\\n";
