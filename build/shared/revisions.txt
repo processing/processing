@@ -9,8 +9,37 @@ releases will be super crusty.
 
 ABOUT REV 0158 - 22 November 2008
 
-Pre-release for 1.0. See done.txt and core/done.txt for information 
-about changes. More later.
+Pre-release for 1.0. 
+
+[ changes ] 
+
++ New design for 1.0: new icons, toolbar, colors, etc. 
+
++ Add Export to Application options dialog.
+
++ Confirm "Do you want to Quit?" and remove the preference for auto-quit.
+  Was too confusing for users on OS X which would create multiple incrementing
+
++ Change sketch naming to spell out the current month. Makes it easier to
+  read, and dropping the year because it's not necessary.
+
++ Linux and Windows now inlude Java 6 update 10 with the download.
+
++ All options related to theme (colors, 
+
+[ bug fixes ]
+
++ Clean up some of the new/open code internally.
+
++ Implement error message regarding the Apple menu bug on Leopard.
+  Add a preference to toggle the menubar on OS X.
+
++ Fix OS X dist script to run on Leopard.
+
+documentation
+X coloring for CENTER and DIAMETER, turn off coloring for deprecated
+X also deal with hint() changes
+
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
