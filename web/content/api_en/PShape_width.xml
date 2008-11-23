@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <root>
-<name>getWidth()</name>
+<name>width</name>
 
 <category>PShape</category>
 
-<subcategory>Method</subcategory>
+<subcategory>field</subcategory>
 
 <usage>Web &amp; Application</usage>
 
@@ -17,16 +17,16 @@ PShape s;
 s = loadShape("bot.svg");
 smooth();
 shape(s);
-println(s.getWidth());  // Prints 281.0, the width of the shape
+println(s.width);  // Prints 281.0, the width of the shape
 </code>
 </example>
 
 <description>
-Calculates and returns the width of the PShape. 
+The width of the PShape document.
 </description>
 
 <syntax>
-<c>sh</c>.getWidth()
+<c>sh</c>.width
 </syntax>
 
 <parameter>
@@ -34,16 +34,16 @@ Calculates and returns the width of the PShape.
 <description>PShape: any variable of type PShape</description>
 </parameter>
 
-<returns>float</returns>
+<returns></returns>
 
 <related>
+height
 </related>
 
 <availability>1.0</availability>
 
-<type>Method</type>
+<type>Field</type>
 
 <partof>Core</partof>
-
 
 </root>

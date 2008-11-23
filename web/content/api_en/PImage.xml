@@ -33,15 +33,17 @@ To create a new image, use the <b>createImage()</b> function (do not use <b>new 
 
 <field>
 <fname>width</fname>
-<fdescription>image width</fdescription>
+<fdescription>Image width</fdescription>
 </field>
+
 <field>
 <fname>height</fname>
-<fdescription>image height</fdescription>
+<fdescription>Image height</fdescription>
 </field>
+
 <field>
 <fname>pixels[]</fname>
-<fdescription>array containing the color of every pixel in the image</fdescription>
+<fdescription>Array containing the color of every pixel in the image</fdescription>
 </field>
 
 <method>

@@ -28,15 +28,15 @@ The <b>loadShape()</b> method supports SVG files created with Inkscape and Adobe
 
 <parameters></parameters>
 
-<method>
-<mname>getWidth()</mname>
-<mdescription>Returns the width of the PShape</mdescription>
-</method>
+<field>
+<fname>width</fname>
+<fdescription>Shape document width</fdescription>
+</field>
 
-<method>
-<mname>getHeight()</mname>
-<mdescription>Returns the height of the PShape</mdescription>
-</method>
+<field>
+<fname>height</fname>
+<fdescription>Shape document height</fdescription>
+</field>
 
 <method>
 <mname>isVisible()</mname>
