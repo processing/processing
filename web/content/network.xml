@@ -1,5 +1,45 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <networked>
+    <software name="World Peace" by="Jeff Clark">
+        <location>http://www.neoformix.com/2008/WorldPeace.html</location>
+        <date>21 Nov &apos;08</date>
+    </software>
+    <software name="Vienna Building Regulations" by="Richard Schaffranek">
+        <location>http://herdeundarchitektur.blogspot.com/2008/11/vienna-building-regulations.html</location>
+        <date>20 Nov &apos;08</date>
+    </software>
+    <software name="stereotomic" by="a f">
+        <location>http://www.ultramoderne.net/stereotomic</location>
+        <date>20 Nov &apos;08</date>
+    </software>
+    <software name="Uncle Bob Helps Out" by="Chris Basmajian">
+        <location>http://basmajian.net/work/uncle_bob/</location>
+        <date>19 Nov &apos;08</date>
+    </software>
+    <software name="Le spectre visible" by="Jimmy Roussel">
+        <location>http://perso.ensc-rennes.fr/jimmy.roussel/index.php?page=accueil_simuler&amp;simu=spectre</location>
+        <date>19 Nov &apos;08</date>
+    </software>
+    <software name="Tiction" by="Hans Kuder">
+        <location>http://www.tinkthank.net/software/tiction</location>
+        <date>15 Nov &apos;08</date>
+    </software>
+    <software name="Música Vista 1.0" by="El Artista">
+        <location>http://www.youtube.com/watch?v=rwoKXuMjPPs</location>
+        <date>14 Nov &apos;08</date>
+    </software>
+    <software name="Enjoy Surveillance" by="Michael Schieben">
+        <location>http://www.rockitbaby.de/projects/enjoy-surveillance-en/</location>
+        <date>12 Nov &apos;08</date>
+    </software>
+    <software name="CuBeat" by="Sun-Art.Org">
+        <location>http://www.sun-art.org/public/progetti/processing/cubeat/index.html</location>
+        <date>11 Nov &apos;08</date>
+    </software>
+    <software name="Portfolio Project Browser" by="Jenna Fizel">
+        <location>http://homepage.mac.com/jftesser/Java/browser/Browser.html</location>
+        <date>11 Nov &apos;08</date>
+    </software>
     <software name="Film Galaxy" by="Andy Hattemer">
         <location>http://scriptedlife.com/processing/film_galaxy_v2/</location>
         <date>10 Nov &apos;08</date>
