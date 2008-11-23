@@ -111,6 +111,7 @@ a:link:visited {
 	padding-left: 33px;
 	margin-bottom: 30px;
 }
+
 #subNav.learning { margin-left: 204px; }
 .active { color: #cccccc !important; }
 .activeSub { color: #000000 !important; }
@@ -615,4 +616,13 @@ pre.code { clear: both; margin-top: 10px; }
 #examples-nav img { display: absolute; top: 15px; left: 100px; }
 
 #Examples h1 { margin-bottom: 0; }
+
+
+div.updateRequired {
+	color:#999;
+}
+div.updateRequired a {
+	color:#999;
+}
+
 
