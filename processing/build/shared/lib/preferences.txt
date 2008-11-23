@@ -104,8 +104,6 @@ editor.invalid=false
 console			 = true
 console.output.file      = stdout.txt
 console.error.file       = stderr.txt
-console.font             = Monospaced,plain,11
-console.font.macosx      = Monaco,plain,10
 console.lines            = 4
 
 # set to false to disable automatically clearing the console
@@ -213,7 +211,3 @@ browser.linux = mozilla
 
 # set to the program to be used for launching apps on linux
 #launcher.linux = gnome-open
-
-# coloring for the editor line number status bar at the bottom of the screen
-linestatus.font	   = SansSerif,plain,10
-linestatus.height  = 20
