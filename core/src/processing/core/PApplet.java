@@ -6343,12 +6343,13 @@ public class PApplet extends Applet
       System.setProperty("apple.awt.graphics.UseQuartz", "true");
     }
 
-    if (platform == WINDOWS) {
-      // For now, disable the D3D renderer on Java 6u10 because
-      // it causes problems with Present mode.
-      // http://dev.processing.org/bugs/show_bug.cgi?id=1009
-      System.setProperty("sun.java2d.d3d", "false");
-    }
+    // This doesn't do anything.
+//    if (platform == WINDOWS) {
+//      // For now, disable the D3D renderer on Java 6u10 because
+//      // it causes problems with Present mode.
+//      // http://dev.processing.org/bugs/show_bug.cgi?id=1009
+//      System.setProperty("sun.java2d.d3d", "false");
+//    }
 
     if (args.length < 1) {
       System.err.println("Usage: PApplet <appletname>");
@@ -6364,8 +6365,8 @@ public class PApplet extends Applet
 
       String name = null;
       boolean present = false;
-      Color backgroundColor = Color.black; //BLACK;
-      Color stopColor = Color.gray; //GRAY;
+      Color backgroundColor = Color.BLACK;
+      Color stopColor = Color.GRAY;
       GraphicsDevice displayDevice = null;
       boolean hideStop = false;
 
@@ -6495,12 +6496,20 @@ public class PApplet extends Applet
       if (present) {
         frame.setUndecorated(true);
         frame.setBackground(backgroundColor);
-        displayDevice.setFullScreenWindow(frame);
-        fullScreenRect = frame.getBounds();
+        if (platform == MACOSX) {
+          displayDevice.setFullScreenWindow(frame);
+          fullScreenRect = frame.getBounds();
+        } else {
+          DisplayMode mode = displayDevice.getDisplayMode();
+          fullScreenRect = new Rectangle(0, 0, mode.getWidth(), mode.getHeight());
+          frame.setBounds(fullScreenRect);
+          frame.setVisible(true);
+        }
       }
       frame.setLayout(null);
       frame.add(applet);
-      frame.pack();
+      //frame.pack();
+      frame.validate();
 
       applet.init();
 
