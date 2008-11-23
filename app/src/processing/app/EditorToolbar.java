@@ -87,12 +87,10 @@ public class EditorToolbar extends JComponent implements MouseInputListener {
   String status;
   Font statusFont;
   Color statusColor;
-  //int statusY;
 
 
-  public EditorToolbar(Editor editor, JMenu menu) {  //JPopupMenu popup) {
+  public EditorToolbar(Editor editor, JMenu menu) {
     this.editor = editor;
-    //this.popup = popup;
     this.menu = menu;
     
     if (buttons == null) {
@@ -112,14 +110,12 @@ public class EditorToolbar extends JComponent implements MouseInputListener {
 
     currentRollover = -1;
 
-    bgcolor = Preferences.getColor("buttons.bgcolor");
+    bgcolor = Theme.getColor("buttons.bgcolor");
 
     status = "";
 
-    statusFont = Preferences.getFont("buttons.status.font");
-    statusColor = Preferences.getColor("buttons.status.color");
-
-    //statusY = (BUTTON_COUNT + 1) * BUTTON_HEIGHT;
+    statusFont = Theme.getFont("buttons.status.font");
+    statusColor = Theme.getColor("buttons.status.color");
 
     addMouseListener(this);
     addMouseMotionListener(this);

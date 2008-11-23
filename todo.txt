@@ -25,6 +25,11 @@ o   need to disable swapping buffers until background() is used?
 o   (happens with 0135, 0148 on this machine as well)
 o   may need to add explicit noBackground() call
 X   this seems to have fixed itself
+X change windows and linux to use jdk 6u10
+X pressing run turns up nothing
+o   (in particular while cpu load is a little higher on g5?)
+o   http://dev.processing.org/bugs/show_bug.cgi?id=852
+o   this may just be a macosx (ppc?) bug
 
 design updates
 X update about box in windows app and lib folder
@@ -33,10 +38,15 @@ X add in new buttons from casey
 X move all editor theme graphics into their own subfolder
 o add space between run/stop and the others
 
+_ coloring for CENTER and DIAMETER, turn off coloring for deprecated
+_ also deal with hint() changes
+
+_ check if platform is MACOSX and font is monospaced (?)
+_   if so, nuke the setting and change it back to Monaco
+
 _ move the color settings out of the preferences file
 _   otherwise running new/old p5 causes problems
 _   just need to rename each of the prefs
-_ change windows and linux to use jdk 6u10
 
 _ verify that the spacing is ok between the buttons
 _ textured sphere example needs to set normals
@@ -56,9 +66,6 @@ _ rewrite preferences window to use proper layout?
 _   is there already a bug for this?
 _ make prefs dialog modal?
 
-_ coloring for CENTER and DIAMETER, turn off coloring for deprecated
-_ also deal with hint() changes
-
 _ add bug voting to the bugs db before 1.0 release?
 
 _ "An error occurred while starting the application" with Processing 0154+
@@ -67,9 +74,6 @@ _   Have someone try this on lab machines until we can find one that breaks
 _   http://dev.processing.org/bugs/show_bug.cgi?id=986
 
 _ go through other sketch-opening menus to check for disappearing sketches
-
-_ check if platform is MACOSX and font is monospaced (?)
-_   if so, nuke the setting and change it back to Monaco
 
 _ update to java 6u10 for linux and windows
 _ update applet.html to point at java 6u10 with the new auto-update stuff
@@ -119,9 +123,6 @@ _   bug 6034650
 _ sometimes not launching
 _   this seems to be a threading problem, like an NPE on load/open
 _   probaby related to the other load/save sync errors
-_   (in particular while cpu load is a little higher on g5?)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=852
-_   this may just be a macosx (ppc?) bug
 
 
 with casey

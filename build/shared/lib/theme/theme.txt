@@ -37,9 +37,8 @@ linestatus.bgcolor = #29333d
 editor.fgcolor = #000000
 editor.bgcolor = #ffffff
 
-# NOTE TO CASEY THIS LINE NEEDS TO BE CHANGED
 # highlight for the current line
-editor.linehighlight.color = #c8d2dc
+editor.linehighlight.color=#e2e2e2
 
 # caret blinking and caret color
 editor.caret.color = #333300
@@ -87,13 +86,10 @@ editor.operator.style = #000000,plain
 # like in case statements or goto
 editor.label.style = #7e7e7e,bold
 
+
 # TEXT - COMMENTS
 editor.comment1.style = #7e7e7e,plain
 editor.comment2.style = #7e7e7e,plain
-
-# FULL SCREEN (PRESENT MODE)
-run.present.bgcolor = #666666
-run.present.stop.color = #cccccc
 
 
 # LINE STATUS - editor line number status bar at the bottom of the screen
