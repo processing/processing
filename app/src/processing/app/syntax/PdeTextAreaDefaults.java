@@ -133,60 +133,60 @@ public class PdeTextAreaDefaults extends TextAreaDefaults {
     styles = new SyntaxStyle[Token.ID_COUNT];
 
     // comments
-    styles[Token.COMMENT1] = Preferences.getStyle("comment1");
-    styles[Token.COMMENT2] = Preferences.getStyle("comment2");
+    styles[Token.COMMENT1] = Theme.getStyle("comment1");
+    styles[Token.COMMENT2] = Theme.getStyle("comment2");
 
     // abstract, final, private
-    styles[Token.KEYWORD1] = Preferences.getStyle("keyword1");
+    styles[Token.KEYWORD1] = Theme.getStyle("keyword1");
 
     // beginShape, point, line
-    styles[Token.KEYWORD2] = Preferences.getStyle("keyword2");
+    styles[Token.KEYWORD2] = Theme.getStyle("keyword2");
 
     // byte, char, short, color
-    styles[Token.KEYWORD3] = Preferences.getStyle("keyword3");
+    styles[Token.KEYWORD3] = Theme.getStyle("keyword3");
 
     // constants: null, true, this, RGB, TWO_PI
-    styles[Token.LITERAL1] = Preferences.getStyle("literal1");
+    styles[Token.LITERAL1] = Theme.getStyle("literal1");
 
     // p5 built in variables: mouseX, width, pixels
-    styles[Token.LITERAL2] = Preferences.getStyle("literal2");
+    styles[Token.LITERAL2] = Theme.getStyle("literal2");
 
     // ??
-    styles[Token.LABEL] = Preferences.getStyle("label");
+    styles[Token.LABEL] = Theme.getStyle("label");
 
     // + - = /
-    styles[Token.OPERATOR] = Preferences.getStyle("operator");
+    styles[Token.OPERATOR] = Theme.getStyle("operator");
 
     // area that's not in use by the text (replaced with tildes)
-    styles[Token.INVALID] = Preferences.getStyle("invalid");
+    styles[Token.INVALID] = Theme.getStyle("invalid");
 
 
     // moved from TextAreaPainter
 
     font = Preferences.getFont("editor.font");
 
-    fgcolor = Preferences.getColor("editor.fgcolor");
-    bgcolor = Preferences.getColor("editor.bgcolor");
+    fgcolor = Theme.getColor("editor.fgcolor");
+    bgcolor = Theme.getColor("editor.bgcolor");
 
     caretVisible = true;
-    caretBlinks = Preferences.getBoolean("editor.caret.blink");
-    caretColor = Preferences.getColor("editor.caret.color");
+    caretBlinks = Theme.getBoolean("editor.caret.blink");
+    caretColor = Theme.getColor("editor.caret.color");
 
-    selectionColor = Preferences.getColor("editor.selection.color");
+    selectionColor = Theme.getColor("editor.selection.color");
 
     lineHighlight =
-      Preferences.getBoolean("editor.linehighlight");
+      Theme.getBoolean("editor.linehighlight");
     lineHighlightColor =
-      Preferences.getColor("editor.linehighlight.color");
+      Theme.getColor("editor.linehighlight.color");
 
     bracketHighlight =
-      Preferences.getBoolean("editor.brackethighlight");
+      Theme.getBoolean("editor.brackethighlight");
     bracketHighlightColor =
-      Preferences.getColor("editor.brackethighlight.color");
+      Theme.getColor("editor.brackethighlight.color");
 
-    eolMarkers = Preferences.getBoolean("editor.eolmarkers");
-    eolMarkerColor = Preferences.getColor("editor.eolmarkers.color");
+    eolMarkers = Theme.getBoolean("editor.eolmarkers");
+    eolMarkerColor = Theme.getColor("editor.eolmarkers.color");
 
-    paintInvalid = Preferences.getBoolean("editor.invalid");
+    paintInvalid = Theme.getBoolean("editor.invalid");
   }
 }

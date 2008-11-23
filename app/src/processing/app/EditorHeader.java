@@ -89,11 +89,11 @@ public class EditorHeader extends JComponent {
 
     if (backgroundColor == null) {
       backgroundColor =
-        Preferences.getColor("header.bgcolor");
+        Theme.getColor("header.bgcolor");
       textColor[SELECTED] =
-        Preferences.getColor("header.text.selected.color");
+        Theme.getColor("header.text.selected.color");
       textColor[UNSELECTED] =
-        Preferences.getColor("header.text.unselected.color");
+        Theme.getColor("header.text.unselected.color");
     }
 
     addMouseListener(new MouseAdapter() {
@@ -149,7 +149,7 @@ public class EditorHeader extends JComponent {
 
     Graphics g = offscreen.getGraphics();
     if (font == null) {
-      font = Preferences.getFont("header.text.font");
+      font = Theme.getFont("header.text.font");
     }
     g.setFont(font);  // need to set this each time through
     metrics = g.getFontMetrics();

@@ -213,12 +213,12 @@ public class Preferences {
       }
       
       // Theme settings always override preferences
-      try {
-        load(Base.getStream("theme/theme.txt"));
-      } catch (Exception te) {
-        Base.showError(null, "Could not read color theme settings.\n" +
-                             "You'll need to reinstall Processing.", te);
-      }
+//      try {
+//        load(Base.getStream("theme/theme.txt"));
+//      } catch (Exception te) {
+//        Base.showError(null, "Could not read color theme settings.\n" +
+//                             "You'll need to reinstall Processing.", te);
+//      }
     }
   }
 
@@ -682,12 +682,8 @@ public class Preferences {
 
 
   static protected void load(InputStream input) throws IOException {
-    BufferedReader reader =
-      new BufferedReader(new InputStreamReader(input));
-
-    //table = new Hashtable();
-    String line = null;
-    while ((line = reader.readLine()) != null) {
+    String[] lines = PApplet.loadStrings(input);
+    for (String line : lines) {
       if ((line.length() == 0) ||
           (line.charAt(0) == '#')) continue;
 
@@ -699,7 +695,6 @@ public class Preferences {
         table.put(key, value);
       }
     }
-    reader.close();
   }
 
 
@@ -815,7 +810,6 @@ public class Preferences {
 
 
   static public void set(String attribute, String value) {
-    //preferences.put(attribute, value);
     table.put(attribute, value);
   }
 
@@ -870,10 +864,9 @@ public class Preferences {
   }
 
 
-  static public Color getColor(String name /*, Color otherwise*/) {
+  static public Color getColor(String name) {
     Color parsed = null;
-    String s = get(name); //, null);
-    //System.out.println(name + " = " + s);
+    String s = get(name);
     if ((s != null) && (s.indexOf("#") == 0)) {
       try {
         int v = Integer.parseInt(s.substring(1), 16);
@@ -881,7 +874,6 @@ public class Preferences {
       } catch (Exception e) {
       }
     }
-    //if (parsed == null) return otherwise;
     return parsed;
   }
 
@@ -923,27 +915,13 @@ public class Preferences {
     }
     int size = PApplet.parseInt(pieces[2], 12);
     Font font = new Font(name, style, size);
-    //System.out.println(f);
 
     // replace bad font with the default
     if (replace) {
-      //System.out.println(attr + " > " + value);
-      //setString(attr, font.getName() + ",plain," + font.getSize());
       set(attr, value);
     }
 
     return font;
-    //return new Font(name, style, size);
-
-    /*
-    StringTokenizer st = new StringTokenizer(str, ",");
-    String fontname = st.nextToken();
-    String fontstyle = st.nextToken();
-    return new Font(fontname,
-                    ((fontstyle.indexOf("bold") != -1) ? Font.BOLD : 0) |
-                    ((fontstyle.indexOf("italic") != -1) ? Font.ITALIC : 0),
-                    Integer.parseInt(st.nextToken()));
-     */
   }
 
 
