@@ -1981,10 +1981,11 @@ public class Sketch {
         Preferences.setBoolean("export.application.stop", showStopButton.isSelected());
       }
     });
+    showStopButton.setEnabled(Preferences.getBoolean("export.application.fullscreen"));
     showStopButton.setBorder(new EmptyBorder(3, 13, 6, 13));
 //  indentPanel.add(showStopButton);
 //  indentPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-
+    
     final JCheckBox fullScreenButton = new JCheckBox("Full Screen (Present mode)");
     //fullscreenButton.setMnemonic(KeyEvent.VK_F);
     fullScreenButton.setSelected(Preferences.getBoolean("export.application.fullscreen"));
