@@ -1981,7 +1981,7 @@ public class Sketch {
         Preferences.setBoolean("export.application.stop", showStopButton.isSelected());
       }
     });
-    showStopButton.setBorder(new EmptyBorder(6, 13, 6, 13));
+    showStopButton.setBorder(new EmptyBorder(3, 13, 6, 13));
 //  indentPanel.add(showStopButton);
 //  indentPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
@@ -1995,7 +1995,7 @@ public class Sketch {
         showStopButton.setEnabled(sal);
       }
     });
-    fullScreenButton.setBorder(new EmptyBorder(6, 13, 0, 13));
+    fullScreenButton.setBorder(new EmptyBorder(3, 13, 3, 13));
 
     JPanel optionPanel = new JPanel();
     optionPanel.setLayout(new BoxLayout(optionPanel, BoxLayout.Y_AXIS));
