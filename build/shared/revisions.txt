@@ -25,7 +25,16 @@ Pre-release for 1.0.
 
 + Linux and Windows now inlude Java 6 update 10 with the download.
 
-+ All options related to theme (colors, 
++ All options related to theme (colors, images) are found in lib/theme.
+  This lays the groundwork for a future effort to make the color scheme
+  more customizable by users.
+
++ Bring back CENTER_RADIUS (for older code) but deprecate it.
+  http://dev.processing.org/bugs/show_bug.cgi?id=1035
+
++ Enable 2x full-screen anti-aliasing by default with OpenGL.
+  This can be disabled with hint(DISABLE_OPENGL_2X_SMOOTH), or you can 
+  enable 4x smoothing with hint(ENABLE_OPENGL_4X_SMOOTH).
 
 [ bug fixes ]
 
@@ -36,10 +45,29 @@ Pre-release for 1.0.
 
 + Fix OS X dist script to run on Leopard.
 
-documentation
-X coloring for CENTER and DIAMETER, turn off coloring for deprecated
-X also deal with hint() changes
++ beginShape(TRIANGLE_FAN), and therefore arc(), broken in P2D
+  also a typo in the ColorWheel example
+  http://dev.processing.org/bugs/show_bug.cgi?id=1019
 
++ NullPointerException drawing line with alpha stroke (P2D)
+  http://dev.processing.org/bugs/show_bug.cgi?id=1023
+
++ P2D endShape() is working like endShape(CLOSE) 
+  http://dev.processing.org/bugs/show_bug.cgi?id=1021
+  http://dev.processing.org/bugs/show_bug.cgi?id=1028
+
++ arc() center transparent with P2D and smooth()
+  http://dev.processing.org/bugs/show_bug.cgi?id=1027
+
++ Alpha stroke rendered at full opacity in P2D
+  http://dev.processing.org/bugs/show_bug.cgi?id=1024
+
+X bring back .width and .height fields for PShape
+o   need to update the examples to reflect
+X   no examples to update
+X change reference re: smoothing in opengl
+X   hint(), smooth(), and size()
+X   rev the version number
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 

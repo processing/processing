@@ -36,6 +36,7 @@ import java.util.*;
 import java.util.zip.*;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
 
@@ -1970,28 +1971,36 @@ public class Sketch {
     platformPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
     panel.add(platformPanel);
 
-    final JCheckBox fullScreenButton = new JCheckBox("Full Screen (Present mode)");
-    //fullscreenButton.setMnemonic(KeyEvent.VK_F);
-    fullScreenButton.setSelected(Preferences.getBoolean("export.application.fullscreen"));
-    fullScreenButton.addItemListener(new ItemListener() {
-      public void itemStateChanged(ItemEvent e) {
-        Preferences.setBoolean("export.application.fullscreen", fullScreenButton.isSelected());
-      }  
-    });
-
-    final JCheckBox showStopButton = new JCheckBox("Show a Stop button in Full Screen");
+//  Box indentPanel = Box.createHorizontalBox();
+//  indentPanel.add(Box.createHorizontalStrut(new JCheckBox().getPreferredSize().width));
+    final JCheckBox showStopButton = new JCheckBox("Show a Stop button");
     //showStopButton.setMnemonic(KeyEvent.VK_S);
     showStopButton.setSelected(Preferences.getBoolean("export.application.stop"));
     showStopButton.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
         Preferences.setBoolean("export.application.stop", showStopButton.isSelected());
-      }  
+      }
+    });
+    showStopButton.setBorder(new EmptyBorder(50, 50, 50, 50));
+//  indentPanel.add(showStopButton);
+//  indentPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+    final JCheckBox fullScreenButton = new JCheckBox("Full Screen (Present mode)");
+    //fullscreenButton.setMnemonic(KeyEvent.VK_F);
+    fullScreenButton.setSelected(Preferences.getBoolean("export.application.fullscreen"));
+    fullScreenButton.addItemListener(new ItemListener() {
+      public void itemStateChanged(ItemEvent e) {
+        boolean sal = fullScreenButton.isSelected();
+        Preferences.setBoolean("export.application.fullscreen", sal);
+        showStopButton.setEnabled(sal);
+      }
     });
 
     JPanel optionPanel = new JPanel();
     optionPanel.setLayout(new BoxLayout(optionPanel, BoxLayout.Y_AXIS));
     optionPanel.add(fullScreenButton);
     optionPanel.add(showStopButton);
+//    optionPanel.add(indentPanel);
     optionPanel.setBorder(new TitledBorder("Options"));
     wide = Math.max(wide, platformPanel.getPreferredSize().width);
     //goodIdea = new Dimension(wide, optionPanel.getPreferredSize().height);
