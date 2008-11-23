@@ -17,7 +17,7 @@ PShape s;
 s = loadShape("bot.svg");
 smooth();
 shape(s);
-println(s.getHeight());  // Prints 285.0, the height of the shape
+println(s.height);  // Prints 285.0, the height of the shape
 </code>
 </example>
 
