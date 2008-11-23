@@ -34,8 +34,10 @@ closedir(DIR);
 foreach $temp (@tempfiles) {
   if($temp =~ ".xml" && !($temp =~ "~")) {
     get_data("$temp"); 
-    if(strip_name($name) ne "") {
-      push(@modfiles, strip_name($name) . "\t" . set_category() . "\t" . file_name_convert($temp));
+    $tempname = strip_name($name);
+    $namelength = length($tempname);
+    if ($tempname ne "x" && $tempname ne "y" && $tempname ne "z" && $tempname ne "") {
+        push(@modfiles, strip_name($name) . "\t" . set_category() . "\t" . file_name_convert($temp));
     }
   }
  }
