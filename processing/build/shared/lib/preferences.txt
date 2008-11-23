@@ -83,67 +83,26 @@ editor.font.macosx = Monaco,plain,10
 # anti-aliased text, turned off by default
 editor.antialias=false
 
-# foreground and background colors
-editor.fgcolor=#000000
-editor.bgcolor=#ffffff
-
 # color to be used for background when 'external editor' enabled
 editor.external=false
-editor.external.bgcolor=#ddddbb
 
-# styles for various types of text
-
-# comments
-editor.comment1.style=#777755,plain
-editor.comment2.style=#777755,plain
-
-# e.g abstract, final, private
-editor.keyword1.style=#cc6600,plain
-# e.g. beginShape, point, line
-editor.keyword2.style=#996600,plain
-# e.g. byte, char, short, color
-editor.keyword3.style=#993300,bold
-
-# constants: e.g. null, true, this, RGB, TWO_PI
-editor.literal1.style=#cc0000,plain
-# p5 built in variables: e.g. mouseX, width, pixels
-editor.literal2.style=#cc0000,plain
-
-# ?? maybe this is for words followed by a colon
-# like in case statements or goto
-editor.label.style=#7E7E00,bold
-
-# e.g. + - = /
-editor.operator.style=#000000,plain
-
-# caret blinking and caret color
+# caret blinking
 editor.caret.blink=true
-editor.caret.color=#333300
-
-# selection color
-editor.selection.color=#ffcc00
 
 # highlight for the current line
 editor.linehighlight=true
-editor.linehighlight.color=#ddddbb
 
 # bracket/brace highlighting
 editor.brackethighlight=true
-editor.brackethighlight.color=#000000
 
 # little pooties at the end of lines that show where they finish
 editor.eolmarkers=false
-editor.eolmarkers.color=#99991A
 
 # area that's not in use by the text (replaced with tildes)
 editor.invalid=false
-editor.invalid.style=#7E7E00,bold
 
 console			 = true
-console.color            = #000000
-console.output.color     = #ccccbb
 console.output.file      = stdout.txt
-console.error.color      = #ff3000
 console.error.file       = stderr.txt
 console.font             = Monospaced,plain,11
 console.font.macosx      = Monaco,plain,10
@@ -171,9 +130,6 @@ editor.divider.size = 0
 # but keeps it from being annoyingly obtrusive
 editor.divider.size.windows = 2
 
-# background color for full-screen presentation mode
-run.present.bgcolor = #666666
-
 # any additional java options when running externally
 # (for applets that are run external to the environment...
 # those with a code folder, or using any libraries)
@@ -187,9 +143,6 @@ run.options.memory.maximum = 256
 
 # example of increasing the memory size for applets run externally
 #run.options = -Xms128m -Xmx1024m
-
-# color of the stop button when running in present mode
-run.present.stop.color = #cccccc
 
 # index of the default display to use for present mode
 # (this setting not yet completely implemented)
@@ -262,7 +215,5 @@ browser.linux = mozilla
 #launcher.linux = gnome-open
 
 # coloring for the editor line number status bar at the bottom of the screen
-linestatus.bgcolor = #66665a
 linestatus.font	   = SansSerif,plain,10
-linestatus.color   = #ffffff
 linestatus.height  = 20
