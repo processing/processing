@@ -1,10 +1,14 @@
 0159 pde
 X caret not blinking
+X width of export application on windows is bad
+X add option to hide the stop button
 
 in previous release
 X move the color settings out of the preferences file
 X   otherwise running new/old p5 causes problems
 X   just need to rename each of the prefs
+
+_ command line support is currently broken (why?)
 
 _ disable present mode? (weirdness with placements on mac)
 _ key command for prev/next tab works, but not menu (10.4)
@@ -15,9 +19,6 @@ _ menu bar showing up inside the window on osx 10.4
 
 _ a new release (1.0.1) is available
 _   be more descriptive, use a second line in latest.txt
-
-_ width of export application on windows is bad
-_ add option to hide the stop button
 
 _ write revisions.txt
 _ update revisions.html

@@ -196,7 +196,7 @@ public class EditorToolbar extends JComponent implements MouseInputListener {
     */
     //int statusY = (BUTTON_HEIGHT + statusFont.getAscent()) / 2;
     int statusY = (BUTTON_HEIGHT + g.getFontMetrics().getAscent()) / 2;
-    g.drawString(status, buttonCount * BUTTON_WIDTH + 2 * BUTTON_GAP, statusY);
+    g.drawString(status, buttonCount * BUTTON_WIDTH + 3 * BUTTON_GAP, statusY);
 
     screen.drawImage(offscreen, 0, 0, null);
   }
