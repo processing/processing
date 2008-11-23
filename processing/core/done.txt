@@ -1,3 +1,37 @@
+0158 core
+X beginShape(TRIANGLE_FAN), and therefore arc(), broken in P2D
+X   also a typo in the ColorWheel example
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1019
+X P2D - null pointer exception drawing line with alpha stroke
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1023
+X P2D endShape() is working like endShape(CLOSE) 
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1021
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1028 (mark as dupe)
+X arc() center transparent
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1027
+X   mark as dupe of bug #200
+X   but fixed for the P2D case, still afflicts P2D
+X P2D - alpha stroke rendered at full opacity
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1024
+X smooth() on single line ellipses not coming out smooth
+X   sort of works, just not great
+X improve (slightly) the quality of ellipse() and arc() with P2D
+X   don't use TRIANGLE_FAN on ellipseImpl() and arcImpl() with P2D
+X   split out ellipseImpl and arcImpl from PGraphics into P2D and P3D
+X figure out better model for adaptive sizing of circles
+X   also goes for arcs, though will be weighted based on arc size
+X Bring back CENTER_RADIUS but deprecate it
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1035
+X enable smoothing by default in opengl
+X   change hints to instead only be able to DISABLE 2X or 4X
+X bring back .width and .height fields for PShape
+o   need to update the examples to reflect
+X   no examples to update
+X change reference re: smoothing in opengl
+X   hint(), smooth(), and size()
+X   rev the version number
+
+
 0157 core
 X SVG polygon shapes not drawing since loadShape() and PShape changes
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1005

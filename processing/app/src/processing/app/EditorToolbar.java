@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-06 Ben Fry and Casey Reas
+  Copyright (c) 2004-08 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -39,11 +39,12 @@ public class EditorToolbar extends JComponent implements MouseInputListener {
   };
 
   static final int BUTTON_COUNT  = title.length;
-  /// height, width of the toolbar buttons
+  /** Width of each toolbar button. */
   static final int BUTTON_WIDTH  = 27;
+  /** Height of each toolbar button. */
   static final int BUTTON_HEIGHT = 32;
-  /// amount of space between groups of buttons on the toolbar
-  static final int BUTTON_GAP = 15;
+  /** The amount of space between groups of buttons on the toolbar. */
+  static final int BUTTON_GAP    = 5;
 
   static final int RUN      = 0;
   static final int STOP     = 1;
@@ -92,7 +93,7 @@ public class EditorToolbar extends JComponent implements MouseInputListener {
   public EditorToolbar(Editor editor, JMenu menu) {
     this.editor = editor;
     this.menu = menu;
-    
+
     if (buttons == null) {
       buttons = Base.getThemeImage("buttons.gif", this);
     }
@@ -145,7 +146,7 @@ public class EditorToolbar extends JComponent implements MouseInputListener {
         g.drawImage(buttons, -(i*IMAGE_SIZE) - 3, -0*IMAGE_SIZE, null);
       }
     }
-    
+
     // this happens once per instance of EditorToolbar
     if (stateImage == null) {
       state = new int[buttonCount];
@@ -158,7 +159,7 @@ public class EditorToolbar extends JComponent implements MouseInputListener {
       x1 = new int[buttonCount];
       x2 = new int[buttonCount];
     }
-    
+
     Dimension size = getSize();
     if ((offscreen == null) ||
         (size.width != width) || (size.height != height)) {

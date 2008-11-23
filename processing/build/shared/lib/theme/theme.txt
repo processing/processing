@@ -39,6 +39,8 @@ editor.bgcolor = #ffffff
 
 # highlight for the current line
 editor.linehighlight.color=#e2e2e2
+# highlight for the current line
+editor.linehighlight=true
 
 # caret blinking and caret color
 editor.caret.color = #333300
@@ -53,9 +55,11 @@ editor.selection.color = #ffcc00
 editor.invalid.style = #7e7e7e,bold
 
 # little pooties at the end of lines that show where they finish
+editor.eolmarkers = false
 editor.eolmarkers.color = #999999
 
 # bracket/brace highlighting
+editor.brackethighlight = true
 editor.brackethighlight.color = #006699
 
 
@@ -65,10 +69,10 @@ editor.brackethighlight.color = #006699
 editor.keyword1.style = #cc6600,plain
 
 # e.g. beginShape, point, line
-editor.keyword2.style = #996600,plain
+editor.keyword2.style = #cc6600,plain
 
 # e.g. byte, char, short, color
-editor.keyword3.style = #996600,bold
+editor.keyword3.style = #cc6600,bold
 
 
 # TEXT - LITERALS

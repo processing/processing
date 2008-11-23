@@ -169,7 +169,7 @@ public class PdeTextAreaDefaults extends TextAreaDefaults {
     bgcolor = Theme.getColor("editor.bgcolor");
 
     caretVisible = true;
-    caretBlinks = Theme.getBoolean("editor.caret.blink");
+    caretBlinks = Preferences.getBoolean("editor.caret.blink");
     caretColor = Theme.getColor("editor.caret.color");
 
     selectionColor = Theme.getColor("editor.selection.color");
