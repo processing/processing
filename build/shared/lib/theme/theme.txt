@@ -1,30 +1,98 @@
+# GUI - STATUS
 status.notice.fgcolor = #000000
 status.notice.bgcolor = #818b95
-status.error.fgcolor  = #ffffff
-status.error.bgcolor  = #662000
-status.edit.fgcolor   = #000000
-status.edit.bgcolor   = #cc9900
-status.font           = SansSerif,plain,12
+status.error.fgcolor = #ffffff
+status.error.bgcolor = #662000
+status.edit.fgcolor = #000000
+status.edit.bgcolor = #cc9900
+status.font = SansSerif,plain,12
 
+# GUI - TABS
 # settings for the tabs at the top
-# actual tab images are stored in the lib/theme folder
-header.bgcolor               = #818b95
-header.text.selected.color   = #1A1A00
+# (tab images are stored in the lib/theme folder)
+header.bgcolor = #818b95
+header.text.selected.color = #1a1a00
 header.text.unselected.color = #ffffff
-header.text.font             = SansSerif,plain,12
+header.text.font = SansSerif,plain,12
 
-buttons.bgcolor      = #4a545e
-buttons.status.font  = SansSerif,plain,12
-buttons.status.color = #FFFFFF
+# GUI - CONSOLE
+console.color = #000000
+console.output.color = #cccccc
+console.error.color = #ff3000
 
-linestatus.bgcolor=#29333d
+# GUI - BUTTONS
+buttons.bgcolor = #4a545e
+buttons.status.font = SansSerif,plain,12
+buttons.status.color = #ffffff
 
-editor.external.bgcolor=#c8d2dc
-editor.linehighlight.color=#c8d2dc
-editor.comment2.style=#777755,plain
-editor.comment1.style=#777755,plain
-editor.keyword2.style=#cc6600,plain
-editor.literal1.style=#006699,plain
-editor.literal2.style=#006699,plain
-editor.comment2.style=#7e7e7e,plain
-editor.comment1.style=#7e7e7e,plain
+# GUI - LINESTATUS
+linestatus.color = #ffffff
+linestatus.bgcolor = #29333d
+
+# EDITOR - DETAILS
+
+# foreground and background colors
+editor.fgcolor = #000000
+editor.bgcolor = #ffffff
+
+# NOTE TO CASEY THIS LINE NEEDS TO BE CHANGED
+# highlight for the current line
+editor.linehighlight.color = #c8d2dc
+
+# caret blinking and caret color
+editor.caret.color = #333300
+
+# color to be used for background when 'external editor' enabled
+editor.external.bgcolor = #c8d2dc
+
+# selection color
+editor.selection.color = #ffcc00
+
+# area that's not in use by the text (replaced with tildes)
+editor.invalid.style = #7e7e7e,bold
+
+# little pooties at the end of lines that show where they finish
+editor.eolmarkers.color = #999999
+
+# bracket/brace highlighting
+editor.brackethighlight.color = #006699
+
+
+# TEXT - KEYWORDS
+
+# e.g abstract, final, private
+editor.keyword1.style = #cc6600,plain
+
+# e.g. beginShape, point, line
+editor.keyword2.style = #996600,plain
+
+# e.g. byte, char, short, color
+editor.keyword3.style = #996600,bold
+
+
+# TEXT - LITERALS
+
+# constants: e.g. null, true, this, RGB, TWO_PI
+editor.literal1.style = #006699,plain
+
+# p5 built in variables: e.g. mouseX, width, pixels
+editor.literal2.style = #006699,plain
+
+# e.g. + - = /
+editor.operator.style = #000000,plain
+
+# ?? maybe this is for words followed by a colon
+# like in case statements or goto
+editor.label.style = #7e7e7e,bold
+
+
+# TEXT - COMMENTS
+
+editor.comment1.style = #7e7e7e,plain
+editor.comment2.style = #7e7e7e,plain
+
+
+# FULL SCREEN (PRESENT MODE)
+run.present.bgcolor = #666666
+run.present.stop.color = #cccccc
+
