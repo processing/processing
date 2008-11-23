@@ -1,33 +1,29 @@
 0159 core
-
-
-_ do we need to do glEnable for multisample with gl?
-_   just need to test this on a few platforms
-
-_ Present mode and OPENGL not working in 0156 with Windows Vista
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1009
-_   Seems to be limited to Java 6u10 (but verify)
+o disable present mode? (weirdness with placements on mac)
+X   deal with some present mode issues
+X   use FSE on mac within the PDE
+X   when exporting, never use FSE
+_   document changes re: can specify --exclusive on command line
+X do we need to do glEnable for multisample with gl?
+o   just need to test this on a few platforms
+X   doesn't seem to be the case
+X Present mode and OPENGL not working in 0156 with Windows Vista
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1009
+X   Seems to be limited to Java 6u10 (but verify)
 o   -Dsun.java2d.d3d=false seems to fix the problem
 o   can probably add that to PApplet.main()
 X   does not work
+
+
+[ known problems ]
 
 _ OPENGL sketches flicker w/ Vista when background() not used inside draw()
 _   http://dev.processing.org/bugs/show_bug.cgi?id=930
 _   Disabling Aero scheme sometimes prevents the problem
 _   Updating graphics drivers may prevent the problem 
 
-_ No textures render with hint(ENABLE_ACCURATE_TEXTURES)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=985
-_   need to remove the hint from the reference
-_   need to throw an error when it's used
-
-_ blend() accuracy when using ADD
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1008
-_   includes code for a slow but more accurate mode
-
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-
 
 
 [ need problem sketch ] 
@@ -137,6 +133,14 @@ _ smooth in P3D has zbuffer glitches
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1000
 _ smoothing is slow
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1001
+_ No textures render with hint(ENABLE_ACCURATE_TEXTURES)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=985
+_   need to remove the hint from the reference
+_   need to throw an error when it's used
+_ deal with issue of single pixel seam at the edge of textures
+_   ??? what is the bug # for this one?
+_ textured sphere example needs to set normals
+_   also needs fix for last edge and the seam
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -290,6 +294,8 @@ _   and then does 5 step sizes for each curveto
 
 CORE / PGraphics
 
+_ stroke showing above fill when used with P3D
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1032
 _ strokeCap() and strokeJoin() for use with P2D, P3D and OPENGL
 _   http://dev.processing.org/bugs/show_bug.cgi?id=955
 _ y2 position of rectangles not same as y2 position of lines
@@ -407,6 +413,9 @@ _   box(40);
 
 CORE / PImage
 
+_ improve blend() accuracy when using ADD
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1008
+_   includes code for a slow but more accurate mode
 _ for a PGraphics2D, should its image cache object be the memoryimagesource?
 _ loading lots of images is a problem, describe how to unload
 _   is it possible? necessary to call delay(5) or something?

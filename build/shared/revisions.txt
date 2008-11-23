@@ -7,6 +7,24 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0159 - 23 November 2008
+
+Another pre-release for 1.0. This list is incomplete, and will be updated
+for the next release. 
+
+[ changes ] 
+
++ Change how Present mode is handled. When run inside the PDE, only Mac OS X
+  uses exclusive mode with Present. Windows and Linux just do full screen
+  windows. When run outside the PDE, all three simply create an undecorated
+  window the size of the entire screen, and on the Mac, an option is added 
+  to the Info.plist file to hide the dock and menubar (since that cannot be
+  done programatically from Java). 
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0158 - 22 November 2008
 
 Pre-release for 1.0. 
