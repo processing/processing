@@ -96,11 +96,11 @@ java.lang.Object
                       <IMG SRC="../../../resources/inherit.gif" ALT="extended by "><B>processing.app.tools.CreateFont</B>
 </PRE>
 <DL>
-<DT><B>All Implemented Interfaces:</B> <DD>java.awt.image.ImageObserver, java.awt.MenuContainer, java.io.Serializable, javax.accessibility.Accessible, javax.swing.RootPaneContainer, javax.swing.WindowConstants</DD>
+<DT><B>All Implemented Interfaces:</B> <DD>java.awt.image.ImageObserver, java.awt.MenuContainer, java.io.Serializable, java.lang.Runnable, javax.accessibility.Accessible, javax.swing.RootPaneContainer, javax.swing.WindowConstants, <A HREF="../../../processing/app/tools/Tool.html" title="interface in processing.app.tools">Tool</A></DD>
 </DL>
 <HR>
 <DL>
-<DT><PRE>public class <B>CreateFont</B><DT>extends javax.swing.JFrame</DL>
+<DT><PRE>public class <B>CreateFont</B><DT>extends javax.swing.JFrame<DT>implements <A HREF="../../../processing/app/tools/Tool.html" title="interface in processing.app.tools">Tool</A></DL>
 </PRE>
 
 <P>
@@ -177,7 +177,7 @@ gui interface to font creation heaven/hell.
 <B>Constructor Summary</B></FONT></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../processing/app/tools/CreateFont.html#CreateFont(processing.app.Editor)">CreateFont</A></B>(<A HREF="../../../processing/app/Editor.html" title="class in processing.app">Editor</A>&nbsp;editor)</CODE>
+<TD><CODE><B><A HREF="../../../processing/app/tools/CreateFont.html#CreateFont()">CreateFont</A></B>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -210,8 +210,32 @@ gui interface to font creation heaven/hell.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../processing/app/tools/CreateFont.html#getMenuTitle()">getMenuTitle</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;java.awt.Dimension</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../processing/app/tools/CreateFont.html#getMinimumSize()">getMinimumSize</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../processing/app/tools/CreateFont.html#init(processing.app.Editor)">init</A></B>(<A HREF="../../../processing/app/Editor.html" title="class in processing.app">Editor</A>&nbsp;editor)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../processing/app/tools/CreateFont.html#run()">run</A></B>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -301,10 +325,10 @@ gui interface to font creation heaven/hell.
 </TR>
 </TABLE>
 
-<A NAME="CreateFont(processing.app.Editor)"><!-- --></A><H3>
+<A NAME="CreateFont()"><!-- --></A><H3>
 CreateFont</H3>
 <PRE>
-public <B>CreateFont</B>(<A HREF="../../../processing/app/Editor.html" title="class in processing.app">Editor</A>&nbsp;editor)</PRE>
+public <B>CreateFont</B>()</PRE>
 <DL>
 </DL>
 
@@ -317,6 +341,48 @@ public <B>CreateFont</B>(<A HREF="../../../processing/app/Editor.html" title="cl
 <B>Method Detail</B></FONT></TH>
 </TR>
 </TABLE>
+
+<A NAME="getMenuTitle()"><!-- --></A><H3>
+getMenuTitle</H3>
+<PRE>
+public java.lang.String <B>getMenuTitle</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../processing/app/tools/Tool.html#getMenuTitle()">getMenuTitle</A></CODE> in interface <CODE><A HREF="../../../processing/app/tools/Tool.html" title="interface in processing.app.tools">Tool</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="init(processing.app.Editor)"><!-- --></A><H3>
+init</H3>
+<PRE>
+public void <B>init</B>(<A HREF="../../../processing/app/Editor.html" title="class in processing.app">Editor</A>&nbsp;editor)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../processing/app/tools/Tool.html#init(processing.app.Editor)">init</A></CODE> in interface <CODE><A HREF="../../../processing/app/tools/Tool.html" title="interface in processing.app.tools">Tool</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="run()"><!-- --></A><H3>
+run</H3>
+<PRE>
+public void <B>run</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>run</CODE> in interface <CODE>java.lang.Runnable</CODE><DT><B>Specified by:</B><DD><CODE><A HREF="../../../processing/app/tools/Tool.html#run()">run</A></CODE> in interface <CODE><A HREF="../../../processing/app/tools/Tool.html" title="interface in processing.app.tools">Tool</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
 
 <A NAME="getMaximumSize()"><!-- --></A><H3>
 getMaximumSize</H3>
@@ -356,6 +422,9 @@ public void <B>update</B>()</PRE>
 <DD><DL>
 </DL>
 </DD>
+<DD><DL>
+</DL>
+</DD>
 </DL>
 <HR>
 
@@ -364,6 +433,9 @@ build</H3>
 <PRE>
 public void <B>build</B>()</PRE>
 <DL>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 </DL>
 </DD>

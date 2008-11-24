@@ -170,6 +170,14 @@ Stores information about files in the current sketch
                   int&nbsp;exportPlatform)</CODE>
 
 <BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Export to application without GUI.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Sketch.html#exportApplicationPrompt()">exportApplicationPrompt</A></B>()</CODE>
+
+<BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
@@ -797,6 +805,22 @@ public static java.lang.String <B>scrubComments</B>(java.lang.String&nbsp;what)<
 </DL>
 <HR>
 
+<A NAME="exportApplicationPrompt()"><!-- --></A><H3>
+exportApplicationPrompt</H3>
+<PRE>
+public boolean <B>exportApplicationPrompt</B>()
+                                throws java.io.IOException,
+                                       <A HREF="../../processing/app/debug/RunnerException.html" title="class in processing.app.debug">RunnerException</A></PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE>
+<DD><CODE><A HREF="../../processing/app/debug/RunnerException.html" title="class in processing.app.debug">RunnerException</A></CODE></DL>
+</DD>
+</DL>
+<HR>
+
 <A NAME="exportApplication(java.lang.String, int)"><!-- --></A><H3>
 exportApplication</H3>
 <PRE>
@@ -805,6 +829,8 @@ public boolean <B>exportApplication</B>(java.lang.String&nbsp;destPath,
                           throws java.io.IOException,
                                  <A HREF="../../processing/app/debug/RunnerException.html" title="class in processing.app.debug">RunnerException</A></PRE>
 <DL>
+<DD>Export to application without GUI.
+<P>
 <DD><DL>
 
 <DT><B>Throws:</B>
