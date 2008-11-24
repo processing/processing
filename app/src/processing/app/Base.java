@@ -42,8 +42,8 @@ import processing.core.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
-  static final int VERSION = 160;
-  static final String VERSION_NAME = "0160 Beta";
+  static final int VERSION = 161;
+  static final String VERSION_NAME = "0161 Beta";
 
   static final int[] platforms = new int[] {
     PConstants.WINDOWS, PConstants.MACOSX, PConstants.LINUX
@@ -471,12 +471,12 @@ public class Base {
 
   protected int[] nextEditorLocation() {
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-    int defaultWidth = Preferences.getInteger("default.window.width"); 
+    int defaultWidth = Preferences.getInteger("default.window.width");
     int defaultHeight = Preferences.getInteger("default.window.height");
-    
+
     if (activeEditor == null) {
       // If no current active editor, use default placement
-      return new int[] { 
+      return new int[] {
           (screen.width - defaultWidth) / 2,
           (screen.height - defaultHeight) / 2,
           defaultWidth, defaultHeight, 0
@@ -495,12 +495,12 @@ public class Base {
         location[0] += OVER;
         location[1] += OVER;
 
-        if (location[0] == OVER || 
+        if (location[0] == OVER ||
             location[2] == OVER ||
             location[0] + location[2] > screen.width ||
             location[1] + location[3] > screen.height) {
           // Warp the next window to a randomish location on screen.
-          return new int[] { 
+          return new int[] {
               (int) (Math.random() * (screen.width - defaultWidth)),
               (int) (Math.random() * (screen.height - defaultHeight)),
               defaultWidth, defaultHeight, 0
@@ -511,7 +511,7 @@ public class Base {
       }
     }
   }
-  
+
 
   // .................................................................
 
