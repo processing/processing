@@ -15,7 +15,7 @@ $translation = new Translation($lang);
 // get tools index
 $index = CONTENTDIR."api_en/tools/index.html";
 //$page = new Page('Tools', 'Tools');
-$page = new LocalPage('Tools \\ Processing 1.0 (BETA)', 'Tools', 'Tools', '../');
+$page = new LocalPage('Tools', 'Tools', 'Tools', '../');
 $page->content(file_get_contents($index));
 //make_necessary_directories(BASEDIR.$tools_dir.'/images/include.php');
 writeFile('distribution/tools/index.html', $page->out());
