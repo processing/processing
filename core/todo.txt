@@ -1,7 +1,4 @@
-0161 core
-X present on macosx causing strange flicker/jump while window opens
-X   using validate() for present mode, pack() otherwise
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1051
+0162 core
 
 
 [ known problems ]
@@ -113,6 +110,8 @@ _   add an edge flag when tesselating
 _   mind the opengl tesselation flags
 _   need to turn off smoothing for the interior of shapes
 _   http://dev.processing.org/bugs/show_bug.cgi?id=200
+_ Implement support for complex shapes when using P2D and P3D
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1053
 _ Implement support for complex shapes when using the OpenGL renderer 
 _   http://dev.processing.org/bugs/show_bug.cgi?id=947
 _   in opengl mode, use its tesselator

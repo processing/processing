@@ -1,16 +1,8 @@
-0161 pde
-X run javadoc, and upload to server
-X set background for disk image on macosx
-X fix dist scripts so that the name "1.0" can be used
-X Ignore dot files (.DS_Store), dot folders (.svn) while copying
-X on mac, window opens to prevent quit on close
-X   but the window is not properly set as untitled
-X   http://dev.processing.org/bugs/show_bug.cgi?id=700
-X   doesn't need to be fixed because of new setup for closing
+0162 pde (1.0)
+X update revisions.html
 
-
+_ update Base.java to change to Processing 1.0 instead of the beta stuff
 _ write revisions.txt
-_ update revisions.html
 _   in 0149, removed /System/Library/Java 
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1045
 _ update known problems reference
