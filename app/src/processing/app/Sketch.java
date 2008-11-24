@@ -2135,26 +2135,6 @@ public class Sketch {
       }
     }
 
-    /*
-    String exportPlatformStr = null;
-    if (exportPlatform == PConstants.WINDOWS) {
-      exportPlatformStr = "windows";
-    } else if (exportPlatform == PConstants.MACOSX) {
-      exportPlatformStr = "macosx";
-    } else if (exportPlatform == PConstants.LINUX) {
-      exportPlatformStr = "linux";
-    } else {
-      exportPlatform = -1;
-    }
-
-    String folderName = "application";
-    if (exportPlatform != -1) {
-      folderName += "." + exportPlatformStr;
-    }
-
-    // nuke the old folder because it can cause trouble
-    File destFolder = new File(folder, folderName);
-    */
     File destFolder = new File(destPath);
     if (Preferences.getBoolean("export.delete_target_folder")) {
       Base.removeDir(destFolder);
@@ -2330,6 +2310,7 @@ public class Sketch {
     // a list of the files that should be exported.
     // otherwise, all files are exported.
     for (File libraryFolder : importedLibraries) {
+      //System.out.println(libraryFolder + " " + libraryFolder.getAbsolutePath());
       // in the list is a File object that points the
       // library sketch's "library" folder
       File exportSettings = new File(libraryFolder, "export.txt");
