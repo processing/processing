@@ -126,6 +126,7 @@ public class Preferences {
 
   JTextField sketchbookLocationField;
   JCheckBox exportSeparateBox;
+  JCheckBox deletePreviousBox;
 //  JCheckBox closingLastQuitsBox;
   JCheckBox externalEditorBox;
   JCheckBox memoryOverrideBox;
@@ -211,7 +212,7 @@ public class Preferences {
                          " and restart Processing.", ex);
         }
       }
-      
+
       // Theme settings always override preferences
 //      try {
 //        load(Base.getStream("theme/theme.txt"));
@@ -370,12 +371,23 @@ public class Preferences {
     // [ ] Use multiple .jar files when exporting applets
 
     exportSeparateBox =
-      new JCheckBox("Use multiple .jar files when exporting applets\n" +
+      new JCheckBox("Use multiple .jar files when exporting applets " +
                     "(ignored when using libraries)");
     pain.add(exportSeparateBox);
     d = exportSeparateBox.getPreferredSize();
     // adding +10 because ubuntu + jre 1.5 truncating items
     exportSeparateBox.setBounds(left, top, d.width + 10, d.height);
+    right = Math.max(right, left + d.width);
+    top += d.height + GUI_BETWEEN;
+
+
+    // [ ] Delete previous applet or application folder on export
+
+    deletePreviousBox =
+      new JCheckBox("Delete previous applet or application folder on export");
+    pain.add(deletePreviousBox);
+    d = deletePreviousBox.getPreferredSize();
+    deletePreviousBox.setBounds(left, top, d.width + 10, d.height);
     right = Math.max(right, left + d.width);
     top += d.height + GUI_BETWEEN;
 
@@ -411,13 +423,13 @@ public class Preferences {
       right = Math.max(right, left + d.width);
       top += d.height + GUI_BETWEEN;
     }
-    
-    
-    // [ ] Place menu bar inside 
-    
+
+
+    // [ ] Place menu bar inside
+
     if (Base.isMacOS()) {
       if (System.getProperty("os.version").startsWith("10.5")) {
-        menubarWorkaroundBox = 
+        menubarWorkaroundBox =
           new JCheckBox("Place menus inside editor window to avoid " +
                         "Apple Java bug (requires restart)");
         pain.add(menubarWorkaroundBox);
@@ -427,7 +439,7 @@ public class Preferences {
         top += d.height + GUI_BETWEEN;
       }
     }
-    
+
 
     // More preferences are in the ...
 
@@ -576,6 +588,9 @@ public class Preferences {
     // put each of the settings into the table
     setBoolean("export.applet.separate_jar_files",
                exportSeparateBox.isSelected());
+    setBoolean("export.delete_target_folder",
+               deletePreviousBox.isSelected());
+
 //    setBoolean("sketchbook.closing_last_window_quits",
 //               closingLastQuitsBox.isSelected());
     //setBoolean("sketchbook.prompt", sketchPromptBox.isSelected());
@@ -633,7 +648,7 @@ public class Preferences {
     }
 
     if (menubarWorkaroundBox != null) {
-      setBoolean("apple.laf.useScreenMenuBar", 
+      setBoolean("apple.laf.useScreenMenuBar",
                  !menubarWorkaroundBox.isSelected());
     }
 
@@ -647,12 +662,16 @@ public class Preferences {
     // set all settings entry boxes to their actual status
     exportSeparateBox.
       setSelected(getBoolean("export.applet.separate_jar_files"));
+    deletePreviousBox.
+      setSelected(getBoolean("export.delete_target_folder"));
+
     //closingLastQuitsBox.
     //  setSelected(getBoolean("sketchbook.closing_last_window_quits"));
     //sketchPromptBox.
     //  setSelected(getBoolean("sketchbook.prompt"));
     //sketchCleanBox.
     //  setSelected(getBoolean("sketchbook.auto_clean"));
+
     sketchbookLocationField.
       setText(get("sketchbook.path"));
     externalEditorBox.
