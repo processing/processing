@@ -107,17 +107,17 @@ Storage class for user preferences and environment settings.
  and it should all be moved to a proper swing layout like BoxLayout.
  <p>
  This is very poorly put together, that the preferences panel and the actual
- preferences i/o is part of the same code. But there hasn't yet been a 
- compelling reason to bother with the separation aside from concern about 
- being lectured by strangers who feel that it doesn't look like what they 
+ preferences i/o is part of the same code. But there hasn't yet been a
+ compelling reason to bother with the separation aside from concern about
+ being lectured by strangers who feel that it doesn't look like what they
  learned in CS class.
  <p>
- Would also be possible to change this to use the Java Preferences API. 
- Some useful articles 
+ Would also be possible to change this to use the Java Preferences API.
+ Some useful articles
  <a href="http://www.onjava.com/pub/a/onjava/synd/2001/10/17/j2se.html">here</a> and
  <a href="http://www.particle.kth.se/~lindsey/JavaCourse/Book/Part1/Java/Chapter10/Preferences.html">here</a>.
- However, haven't implemented this yet for lack of time, but more 
- importantly, because it would entail writing to the registry (on Windows), 
+ However, haven't implemented this yet for lack of time, but more
+ importantly, because it would entail writing to the registry (on Windows),
  or an obscure file location (on Mac OS X) and make it far more difficult to
  find the preferences to tweak them by hand (no! stay out of regedit!)
  or to reset the preferences by simply deleting the preferences.txt file.

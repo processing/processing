@@ -91,11 +91,11 @@ java.lang.Object
   <IMG SRC="../../../resources/inherit.gif" ALT="extended by "><B>processing.app.tools.ColorSelector</B>
 </PRE>
 <DL>
-<DT><B>All Implemented Interfaces:</B> <DD>java.util.EventListener, javax.swing.event.DocumentListener</DD>
+<DT><B>All Implemented Interfaces:</B> <DD>java.lang.Runnable, java.util.EventListener, javax.swing.event.DocumentListener, <A HREF="../../../processing/app/tools/Tool.html" title="interface in processing.app.tools">Tool</A></DD>
 </DL>
 <HR>
 <DL>
-<DT><PRE>public class <B>ColorSelector</B><DT>extends java.lang.Object<DT>implements javax.swing.event.DocumentListener</DL>
+<DT><PRE>public class <B>ColorSelector</B><DT>extends java.lang.Object<DT>implements <A HREF="../../../processing/app/tools/Tool.html" title="interface in processing.app.tools">Tool</A>, javax.swing.event.DocumentListener</DL>
 </PRE>
 
 <P>
@@ -146,7 +146,7 @@ Color selector tool for the Tools menu.
 <B>Constructor Summary</B></FONT></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../processing/app/tools/ColorSelector.html#ColorSelector(processing.app.Editor)">ColorSelector</A></B>(<A HREF="../../../processing/app/Editor.html" title="class in processing.app">Editor</A>&nbsp;editor)</CODE>
+<TD><CODE><B><A HREF="../../../processing/app/tools/ColorSelector.html#ColorSelector()">ColorSelector</A></B>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -171,6 +171,22 @@ Color selector tool for the Tools menu.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../processing/app/tools/ColorSelector.html#getMenuTitle()">getMenuTitle</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../processing/app/tools/ColorSelector.html#init(processing.app.Editor)">init</A></B>(<A HREF="../../../processing/app/Editor.html" title="class in processing.app">Editor</A>&nbsp;editor)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../processing/app/tools/ColorSelector.html#insertUpdate(javax.swing.event.DocumentEvent)">insertUpdate</A></B>(javax.swing.event.DocumentEvent&nbsp;e)</CODE>
 
@@ -188,7 +204,7 @@ Color selector tool for the Tools menu.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../processing/app/tools/ColorSelector.html#show()">show</A></B>()</CODE>
+<TD><CODE><B><A HREF="../../../processing/app/tools/ColorSelector.html#run()">run</A></B>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -216,10 +232,10 @@ Color selector tool for the Tools menu.
 </TR>
 </TABLE>
 
-<A NAME="ColorSelector(processing.app.Editor)"><!-- --></A><H3>
+<A NAME="ColorSelector()"><!-- --></A><H3>
 ColorSelector</H3>
 <PRE>
-public <B>ColorSelector</B>(<A HREF="../../../processing/app/Editor.html" title="class in processing.app">Editor</A>&nbsp;editor)</PRE>
+public <B>ColorSelector</B>()</PRE>
 <DL>
 </DL>
 
@@ -233,13 +249,41 @@ public <B>ColorSelector</B>(<A HREF="../../../processing/app/Editor.html" title=
 </TR>
 </TABLE>
 
-<A NAME="show()"><!-- --></A><H3>
-show</H3>
+<A NAME="getMenuTitle()"><!-- --></A><H3>
+getMenuTitle</H3>
 <PRE>
-public void <B>show</B>()</PRE>
+public java.lang.String <B>getMenuTitle</B>()</PRE>
 <DL>
 <DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../processing/app/tools/Tool.html#getMenuTitle()">getMenuTitle</A></CODE> in interface <CODE><A HREF="../../../processing/app/tools/Tool.html" title="interface in processing.app.tools">Tool</A></CODE></DL>
+</DD>
+<DD><DL>
 </DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="init(processing.app.Editor)"><!-- --></A><H3>
+init</H3>
+<PRE>
+public void <B>init</B>(<A HREF="../../../processing/app/Editor.html" title="class in processing.app">Editor</A>&nbsp;editor)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../processing/app/tools/Tool.html#init(processing.app.Editor)">init</A></CODE> in interface <CODE><A HREF="../../../processing/app/tools/Tool.html" title="interface in processing.app.tools">Tool</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="run()"><!-- --></A><H3>
+run</H3>
+<PRE>
+public void <B>run</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>run</CODE> in interface <CODE>java.lang.Runnable</CODE><DT><B>Specified by:</B><DD><CODE><A HREF="../../../processing/app/tools/Tool.html#run()">run</A></CODE> in interface <CODE><A HREF="../../../processing/app/tools/Tool.html" title="interface in processing.app.tools">Tool</A></CODE></DL>
 </DD>
 <DD><DL>
 </DL>
