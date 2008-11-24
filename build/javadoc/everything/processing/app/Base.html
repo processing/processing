@@ -300,6 +300,15 @@ The base class for the main processing application.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.awt.Image</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Base.html#getThemeImage(java.lang.String, java.awt.Component)">getThemeImage</A></B>(java.lang.String&nbsp;name,
+              java.awt.Component&nbsp;who)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get an image associated with the current color theme.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;java.io.File</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/app/Base.html#getToolsFolder()">getToolsFolder</A></B>()</CODE>
 
@@ -325,8 +334,7 @@ The base class for the main processing application.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/app/Base.html#handleClose(processing.app.Editor, boolean)">handleClose</A></B>(<A HREF="../../processing/app/Editor.html" title="class in processing.app">Editor</A>&nbsp;editor,
-            boolean&nbsp;quitting)</CODE>
+<TD><CODE><B><A HREF="../../processing/app/Base.html#handleClose(processing.app.Editor)">handleClose</A></B>(<A HREF="../../processing/app/Editor.html" title="class in processing.app">Editor</A>&nbsp;editor)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Close a sketch as specified by its editor window.</TD>
@@ -752,11 +760,10 @@ public <A HREF="../../processing/app/Editor.html" title="class in processing.app
 </DL>
 <HR>
 
-<A NAME="handleClose(processing.app.Editor, boolean)"><!-- --></A><H3>
+<A NAME="handleClose(processing.app.Editor)"><!-- --></A><H3>
 handleClose</H3>
 <PRE>
-public boolean <B>handleClose</B>(<A HREF="../../processing/app/Editor.html" title="class in processing.app">Editor</A>&nbsp;editor,
-                           boolean&nbsp;quitting)</PRE>
+public boolean <B>handleClose</B>(<A HREF="../../processing/app/Editor.html" title="class in processing.app">Editor</A>&nbsp;editor)</PRE>
 <DL>
 <DD>Close a sketch as specified by its editor window.
 <P>
@@ -1215,6 +1222,20 @@ getContentFile</H3>
 public static java.io.File <B>getContentFile</B>(java.lang.String&nbsp;name)</PRE>
 <DL>
 <DD>Get a path for something in the Processing lib folder.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getThemeImage(java.lang.String, java.awt.Component)"><!-- --></A><H3>
+getThemeImage</H3>
+<PRE>
+public static java.awt.Image <B>getThemeImage</B>(java.lang.String&nbsp;name,
+                                           java.awt.Component&nbsp;who)</PRE>
+<DL>
+<DD>Get an image associated with the current color theme.
 <P>
 <DD><DL>
 </DL>

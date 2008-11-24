@@ -90,7 +90,9 @@ Class Hierarchy
 <LI TYPE="circle">javax.swing.text.PlainDocument<UL>
 <LI TYPE="circle">processing.app.syntax.<A HREF="processing/app/syntax/SyntaxDocument.html" title="class in processing.app.syntax"><B>SyntaxDocument</B></A></UL>
 </UL>
-<LI TYPE="circle">processing.app.tools.<A HREF="processing/app/tools/Archiver.html" title="class in processing.app.tools"><B>Archiver</B></A><LI TYPE="circle">processing.app.tools.<A HREF="processing/app/tools/AutoFormat.html" title="class in processing.app.tools"><B>AutoFormat</B></A><LI TYPE="circle">processing.app.<A HREF="processing/app/Base.html" title="class in processing.app"><B>Base</B></A><LI TYPE="circle">antlr.BaseAST (implements antlr.collections.AST, java.io.Serializable)
+<LI TYPE="circle">processing.app.tools.<A HREF="processing/app/tools/Archiver.html" title="class in processing.app.tools"><B>Archiver</B></A> (implements processing.app.tools.<A HREF="processing/app/tools/Tool.html" title="interface in processing.app.tools">Tool</A>)
+<LI TYPE="circle">processing.app.tools.<A HREF="processing/app/tools/AutoFormat.html" title="class in processing.app.tools"><B>AutoFormat</B></A> (implements processing.app.tools.<A HREF="processing/app/tools/Tool.html" title="interface in processing.app.tools">Tool</A>)
+<LI TYPE="circle">processing.app.<A HREF="processing/app/Base.html" title="class in processing.app"><B>Base</B></A><LI TYPE="circle">antlr.BaseAST (implements antlr.collections.AST, java.io.Serializable)
 <UL>
 <LI TYPE="circle">antlr.CommonAST<UL>
 <LI TYPE="circle">antlr.CommonASTWithHiddenTokens<UL>
@@ -103,7 +105,7 @@ Class Hierarchy
 <LI TYPE="circle">processing.app.preproc.<A HREF="processing/app/preproc/PdeLexer.html" title="class in processing.app.preproc"><B>PdeLexer</B></A> (implements processing.app.preproc.<A HREF="processing/app/preproc/PdeTokenTypes.html" title="interface in processing.app.preproc">PdeTokenTypes</A>, antlr.TokenStream)
 </UL>
 <LI TYPE="circle">processing.net.<A HREF="processing/net/Client.html" title="class in processing.net"><B>Client</B></A> (implements java.lang.Runnable)
-<LI TYPE="circle">processing.app.tools.<A HREF="processing/app/tools/ColorSelector.html" title="class in processing.app.tools"><B>ColorSelector</B></A> (implements javax.swing.event.DocumentListener)
+<LI TYPE="circle">processing.app.tools.<A HREF="processing/app/tools/ColorSelector.html" title="class in processing.app.tools"><B>ColorSelector</B></A> (implements javax.swing.event.DocumentListener, processing.app.tools.<A HREF="processing/app/tools/Tool.html" title="interface in processing.app.tools">Tool</A>)
 <LI TYPE="circle">processing.app.<A HREF="processing/app/Commander.html" title="class in processing.app"><B>Commander</B></A> (implements processing.app.debug.<A HREF="processing/app/debug/RunnerListener.html" title="interface in processing.app.debug">RunnerListener</A>)
 <LI TYPE="circle">processing.app.debug.<A HREF="processing/app/debug/Compiler.html" title="class in processing.app.debug"><B>Compiler</B></A><LI TYPE="circle">java.awt.Component (implements java.awt.image.ImageObserver, java.awt.MenuContainer, java.io.Serializable)
 <UL>
@@ -133,14 +135,16 @@ Class Hierarchy
 <UL>
 <LI TYPE="circle">javax.swing.JFrame (implements javax.accessibility.Accessible, javax.swing.RootPaneContainer, javax.swing.WindowConstants)
 <UL>
-<LI TYPE="circle">processing.app.tools.<A HREF="processing/app/tools/CreateFont.html" title="class in processing.app.tools"><B>CreateFont</B></A><LI TYPE="circle">processing.app.<A HREF="processing/app/Editor.html" title="class in processing.app"><B>Editor</B></A> (implements processing.app.debug.<A HREF="processing/app/debug/RunnerListener.html" title="interface in processing.app.debug">RunnerListener</A>)
+<LI TYPE="circle">processing.app.tools.<A HREF="processing/app/tools/CreateFont.html" title="class in processing.app.tools"><B>CreateFont</B></A> (implements processing.app.tools.<A HREF="processing/app/tools/Tool.html" title="interface in processing.app.tools">Tool</A>)
+<LI TYPE="circle">processing.app.<A HREF="processing/app/Editor.html" title="class in processing.app"><B>Editor</B></A> (implements processing.app.debug.<A HREF="processing/app/debug/RunnerListener.html" title="interface in processing.app.debug">RunnerListener</A>)
 <LI TYPE="circle">processing.app.<A HREF="processing/app/FindReplace.html" title="class in processing.app"><B>FindReplace</B></A> (implements java.awt.event.ActionListener)
 </UL>
 </UL>
 </UL>
 </UL>
 </UL>
-<LI TYPE="circle">processing.app.tools.<A HREF="processing/app/tools/DiscourseFormat.html" title="class in processing.app.tools"><B>DiscourseFormat</B></A><LI TYPE="circle">processing.app.<A HREF="processing/app/EditorListener.html" title="class in processing.app"><B>EditorListener</B></A><LI TYPE="circle">processing.app.tools.<A HREF="processing/app/tools/FixEncoding.html" title="class in processing.app.tools"><B>FixEncoding</B></A><LI TYPE="circle">javax.media.opengl.glu.GLUtessellatorCallbackAdapter (implements javax.media.opengl.glu.GLUtessellatorCallback)
+<LI TYPE="circle">processing.app.tools.<A HREF="processing/app/tools/DiscourseFormat.html" title="class in processing.app.tools"><B>DiscourseFormat</B></A><LI TYPE="circle">processing.app.<A HREF="processing/app/EditorListener.html" title="class in processing.app"><B>EditorListener</B></A><LI TYPE="circle">processing.app.tools.<A HREF="processing/app/tools/FixEncoding.html" title="class in processing.app.tools"><B>FixEncoding</B></A> (implements processing.app.tools.<A HREF="processing/app/tools/Tool.html" title="interface in processing.app.tools">Tool</A>)
+<LI TYPE="circle">javax.media.opengl.glu.GLUtessellatorCallbackAdapter (implements javax.media.opengl.glu.GLUtessellatorCallback)
 <UL>
 <LI TYPE="circle">processing.opengl.<A HREF="processing/opengl/PGraphicsOpenGL.TessCallback.html" title="class in processing.opengl"><B>PGraphicsOpenGL.TessCallback</B></A></UL>
 <LI TYPE="circle">processing.app.syntax.<A HREF="processing/app/syntax/InputHandler.backspace.html" title="class in processing.app.syntax"><B>InputHandler.backspace</B></A> (implements java.awt.event.ActionListener)
@@ -211,7 +215,7 @@ Class Hierarchy
 <LI TYPE="circle">processing.app.windows.<A HREF="processing/app/windows/Advapi32.SERVICE_STATUS.html" title="class in processing.app.windows"><B>Advapi32.SERVICE_STATUS</B></A><LI TYPE="circle">processing.app.windows.<A HREF="processing/app/windows/Advapi32.SERVICE_TABLE_ENTRY.html" title="class in processing.app.windows"><B>Advapi32.SERVICE_TABLE_ENTRY</B></A><LI TYPE="circle">processing.app.windows.<A HREF="processing/app/windows/WINBASE.FILETIME.html" title="class in processing.app.windows"><B>WINBASE.FILETIME</B></A><LI TYPE="circle">processing.app.windows.<A HREF="processing/app/windows/WINBASE.SECURITY_ATTRIBUTES.html" title="class in processing.app.windows"><B>WINBASE.SECURITY_ATTRIBUTES</B></A></UL>
 <LI TYPE="circle">processing.app.syntax.<A HREF="processing/app/syntax/SyntaxStyle.html" title="class in processing.app.syntax"><B>SyntaxStyle</B></A><LI TYPE="circle">processing.app.syntax.<A HREF="processing/app/syntax/SyntaxUtilities.html" title="class in processing.app.syntax"><B>SyntaxUtilities</B></A><LI TYPE="circle">processing.app.syntax.<A HREF="processing/app/syntax/TextAreaDefaults.html" title="class in processing.app.syntax"><B>TextAreaDefaults</B></A><UL>
 <LI TYPE="circle">processing.app.syntax.<A HREF="processing/app/syntax/PdeTextAreaDefaults.html" title="class in processing.app.syntax"><B>PdeTextAreaDefaults</B></A></UL>
-<LI TYPE="circle">processing.app.syntax.<A HREF="processing/app/syntax/TextUtilities.html" title="class in processing.app.syntax"><B>TextUtilities</B></A><LI TYPE="circle">processing.app.macosx.<A HREF="processing/app/macosx/ThinkDifferent.html" title="class in processing.app.macosx"><B>ThinkDifferent</B></A> (implements com.apple.eawt.ApplicationListener)
+<LI TYPE="circle">processing.app.syntax.<A HREF="processing/app/syntax/TextUtilities.html" title="class in processing.app.syntax"><B>TextUtilities</B></A><LI TYPE="circle">processing.app.<A HREF="processing/app/Theme.html" title="class in processing.app"><B>Theme</B></A><LI TYPE="circle">processing.app.macosx.<A HREF="processing/app/macosx/ThinkDifferent.html" title="class in processing.app.macosx"><B>ThinkDifferent</B></A> (implements com.apple.eawt.ApplicationListener)
 <LI TYPE="circle">java.lang.Thread (implements java.lang.Runnable)
 <UL>
 <LI TYPE="circle">processing.app.debug.<A HREF="processing/app/debug/EventThread.html" title="class in processing.app.debug"><B>EventThread</B></A><LI TYPE="circle">processing.app.debug.<A HREF="processing/app/debug/StreamRedirectThread.html" title="class in processing.app.debug"><B>StreamRedirectThread</B></A></UL>
