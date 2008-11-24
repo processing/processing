@@ -6518,7 +6518,11 @@ public class PApplet extends Applet
       }
       frame.setLayout(null);
       frame.add(applet);
-      frame.pack();
+      if (present) {
+        frame.invalidate();
+      } else {
+        frame.pack();
+      }
       // insufficient, places the 100x100 sketches offset strangely
       //frame.validate();
 
@@ -6643,50 +6647,13 @@ public class PApplet extends Applet
 
         // handle frame resizing events
         applet.setupFrameResizeListener();
-
+        
         // all set for rockin
         if (applet.displayable()) {
           frame.setVisible(true);
         }
       }
 
-//      frame.addWindowListener(new WindowListener() {
-//
-//        public void windowActivated(WindowEvent e) {
-//          applet.requestFocus(); 
-//        }
-//
-//        public void windowClosed(WindowEvent e) {
-//          // TODO Auto-generated method stub
-//          
-//        }
-//
-//        public void windowClosing(WindowEvent e) {
-//          // TODO Auto-generated method stub
-//          
-//        }
-//
-//        public void windowDeactivated(WindowEvent e) {
-//          // TODO Auto-generated method stub
-//          
-//        }
-//
-//        public void windowDeiconified(WindowEvent e) {
-//          // TODO Auto-generated method stub
-//          
-//        }
-//
-//        public void windowIconified(WindowEvent e) {
-//          // TODO Auto-generated method stub
-//          
-//        }
-//
-//        public void windowOpened(WindowEvent e) {
-//          // TODO Auto-generated method stub
-//          
-//        }
-//        
-//      });
       applet.requestFocus(); // ask for keydowns
       //System.out.println("exiting main()");
 
