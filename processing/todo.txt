@@ -1,13 +1,4 @@
-0160 pde
-X fix editor window placement
-X   overlapping editor windows caused by activeEditor not being called in time
-X     see handleActivated in Base, and do placement differently
-X     may also need to deal w/ sync problems
-X   also make sure that it'll start at the top again when done
-X   implement check to see if the windows are running off screen
-X add option to preferences for "export.delete_target_folder"
-X set background color for present mode on export application
-X set stop button for export to application
+0161 pde
 
 
 _ a new release (1.0.1) is available

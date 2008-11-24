@@ -1,3 +1,9 @@
+0160 core
+X stroked lines drawing on top of everything else in P3D
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1032
+X 100x100 sketches not working
+
+
 0159 core
 o disable present mode? (weirdness with placements on mac)
 X   deal with some present mode issues
