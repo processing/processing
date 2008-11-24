@@ -2,8 +2,8 @@
 
 require(TEMPLATEDIR.'template.nav.php');
 
-define('HEADER', '<img src="/img/processing_beta_cover.gif" alt="Processing cover" />');
-define('HEADER_LINK', '<a href="http://processing.org/"><img src="/img/processing_beta.gif" alt="Processing cover" title="Back to the cover." /></a>');
+define('HEADER', '<img src="/img/processing_cover.gif" alt="Processing cover" />');
+define('HEADER_LINK', '<a href="http://processing.org/"><img src="/img/processing.gif" alt="Processing cover" title="Back to the cover." /></a>');
 
 class Page
 {
@@ -191,7 +191,7 @@ class LocalPage extends Page
     function LocalPage($title = '', $section = '', $bodyid = '', $rel_path = '')
     {
         $this->xhtml = new xhtml_page(TEMPLATEDIR.'template.local.html');
-        $this->xhtml->set('header', '<a href="http://processing.org/"><img src="'.$rel_path.'img/processing_beta_cover.gif" alt="Processing cover" title="Go to Processing.org" /></a>');
+        $this->xhtml->set('header', '<a href="http://processing.org/"><img src="'.$rel_path.'img/processing_cover.gif" alt="Processing cover" title="Go to Processing.org" /></a>');
         $title = ($title == '') ? 'Processing 1.0' : $title . ' \ Processing 1.0';
         $this->xhtml->set('title', $title);
         $this->xhtml->set('navigation', local_nav($section, $rel_path));
@@ -213,7 +213,7 @@ class LocalReferencePage extends ReferencePage
         $title = $ref->title() .' \ Language (API) \ Processing 1.0';
         
         $xhtml = new xhtml_page(TEMPLATEDIR.'template.local.html');
-        $xhtml->set('header', '<a href="http://processing.org/"><img src="img/processing_beta.gif" alt="Processing cover" title="Back to the reference index." /></a>');
+        $xhtml->set('header', '<a href="http://processing.org/"><img src="img/processing.gif" alt="Processing cover" title="Back to the reference index." /></a>');
         $xhtml->set('title', $title);
         $xhtml->set('bodyid', 'Langauge');
         $xhtml->set('navigation', local_nav('Language'));
@@ -253,7 +253,7 @@ class LocalLibReferencePage extends ReferencePage
         $title = $ref->title() . "\\ $lib \\ Language (API) \\ Processing 1.0";
         
         $xhtml = new xhtml_page(TEMPLATEDIR.'template.local.html');
-        $xhtml->set('header', '<a href="http://processing.org/"><img src="'.$rel_path.'img/processing_beta.gif" alt="Processing.org" title="Back to the reference index." /></a>');
+        $xhtml->set('header', '<a href="http://processing.org/"><img src="'.$rel_path.'img/processing.gif" alt="Processing.org" title="Back to the reference index." /></a>');
         $xhtml->set('title', $title);
         $xhtml->set('bodyid', 'Library-ref');
         
