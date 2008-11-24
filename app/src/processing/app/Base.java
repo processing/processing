@@ -1818,12 +1818,19 @@ public class Base {
   }
 
 
+  /**
+   * Copy a folder from one place to another. This ignores all dot files and
+   * folders found in the source directory, to avoid copying silly .DS_Store
+   * files and potentially troublesome .svn folders.
+   */
   static public void copyDir(File sourceDir,
                              File targetDir) throws IOException {
     targetDir.mkdirs();
     String files[] = sourceDir.list();
     for (int i = 0; i < files.length; i++) {
-      if (files[i].equals(".") || files[i].equals("..")) continue;
+      // Ignore dot files (.DS_Store), dot folders (.svn) while copying
+      if (files[i].charAt(0) == '.') continue;
+      //if (files[i].equals(".") || files[i].equals("..")) continue;
       File source = new File(sourceDir, files[i]);
       File target = new File(targetDir, files[i]);
       if (source.isDirectory()) {
