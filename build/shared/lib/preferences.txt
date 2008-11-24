@@ -209,3 +209,7 @@ browser.linux = mozilla
 # FULL SCREEN (PRESENT MODE)
 run.present.bgcolor = #666666
 run.present.stop.color = #cccccc
+# starting in release 0159, don't use full screen exclusive anymore
+run.present.exclusive = false
+# use this by default to hide the menu bar and dock on osx
+run.present.exclusive.macosx = true
