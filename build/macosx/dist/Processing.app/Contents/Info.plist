@@ -4,8 +4,15 @@
   <dict>
     <key>CFBundleName</key>
     <string>Processing</string>
+
+    <!-- all these need to change for new releases -->
+    <key>CFBundleGetInfoString</key>
+    <string>1.0, Copyright © Ben Fry and Casey Reas</string>
     <key>CFBundleVersion</key>
-    <string>10.2</string>
+    <string>1.0</string>
+    <key>CFBundleShortVersionString</key>
+    <string>1.0</string>
+
     <key>CFBundleAllowMixedLocalizations</key>
     <string>true</string>
     <key>CFBundleExecutable</key>
@@ -50,22 +57,33 @@
     <dict>
       <key>VMOptions</key>
       <string>-Xms128M -Xmx256M</string>
+
       <key>MainClass</key>
       <string>processing.app.Base</string>
+
       <key>JVMVersion</key>
       <string>1.5*</string>
+
       <key>ClassPath</key>
-      <!-- in 0149, removed /System/Library/Java because of problems -->
+      <!-- In 0149, removed /System/Library/Java from the CLASSPATH because
+           it can cause problems if users have installed weird files there.
+           http://dev.processing.org/bugs/show_bug.cgi?id=1045 -->
       <string>$JAVAROOT/pde.jar:$JAVAROOT/core.jar:$JAVAROOT/antlr.jar:$JAVAROOT/ecj.jar:$JAVAROOT/registry.jar:$JAVAROOT/quaqua.jar</string>
+
       <key>Properties</key>
       <dict>
-	<!-- pass the full path of Contents/Resources/Java to the PDE -->
+	<!-- Pass the full path of Contents/Resources/Java to the PDE -->
 	<key>javaroot</key>
 	<string>$JAVAROOT</string>
-	<!-- http://developer.apple.com/releasenotes/Java/java141/system_properties/chapter_4_section_1.html#//apple_ref/doc/uid/TP30000285 -->
-	<!-- in release 0158, removing the menubar option and controlling it by a preference. -->
-<!--	<key>apple.laf.useScreenMenuBar</key>
-	<string>true</string>-->
+
+	<!-- More properties can be found in http://developer.apple.com/releasenotes/Java/java141/system_properties/chapter_4_section_1.html#//apple_ref/doc/uid/TP30000285 -->
+
+	<!-- 
+        In release 0158, removed the menubar option from the .app and instead controlling it from the preferences window. By default, the menu bar is inside the editor window because of the Apple Java bug.
+	<key>apple.laf.useScreenMenuBar</key>
+	<string>true</string>
+        -->
+
 	<key>apple.awt.showGrowBox</key>
 	<string>false</string>
 	<key>com.apple.smallTabs</key>
