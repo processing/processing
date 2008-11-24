@@ -461,11 +461,22 @@ public class PdePreprocessor {
       if (!PdePreprocessor.foundMain) {
         out.println(indent + "static public void main(String args[]) {");
         out.print(indent + indent + "PApplet.main(new String[] { ");
+        
         if (Preferences.getBoolean("export.application.fullscreen")) {
-          out.print("\"--present\", ");
-        }
-        if (!Preferences.getBoolean("export.application.stop")) {
-          out.print("\"--hide-stop\", ");
+          out.print("\"" + PApplet.ARGS_PRESENT + "\", ");
+          
+          String farbe = Preferences.get("run.present.bgcolor");
+          out.print("\"" + PApplet.ARGS_BGCOLOR + "=" + farbe + "\", ");
+          
+          if (Preferences.getBoolean("export.application.stop")) {
+            farbe = Preferences.get("run.present.stop.color");
+            out.print("\"" + PApplet.ARGS_STOP_COLOR + "=" + farbe + "\", ");
+          } else {
+            out.print("\"" + PApplet.ARGS_HIDE_STOP + "\", ");
+          }          
+        } else {
+          String farbe = Preferences.get("run.window.bgcolor");
+          out.print("\"" + PApplet.ARGS_BGCOLOR + "=" + farbe + "\", ");
         }
         out.println("\"" + className + "\" });");
         out.println(indent + "}");
