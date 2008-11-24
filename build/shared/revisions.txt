@@ -120,12 +120,7 @@ Pre-release for 1.0.
 + Alpha stroke rendered at full opacity in P2D
   http://dev.processing.org/bugs/show_bug.cgi?id=1024
 
-X bring back .width and .height fields for PShape
-o   need to update the examples to reflect
-X   no examples to update
-X change reference re: smoothing in opengl
-X   hint(), smooth(), and size()
-X   rev the version number
++ Bring back the .width and .height fields for PShape
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 

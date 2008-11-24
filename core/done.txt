@@ -1,3 +1,9 @@
+0161 core
+X present on macosx causing strange flicker/jump while window opens
+X   using validate() for present mode, pack() otherwise
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1051
+
+
 0160 core
 X stroked lines drawing on top of everything else in P3D
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1032
