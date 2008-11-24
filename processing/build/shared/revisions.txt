@@ -7,7 +7,37 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-ABOUT REV 0161 - 23 November 2008
+PROCESSING 1.0 (REV 0162) - 24 November 2008
+
+Coming soon...
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
+ABOUT REV 0161 - 24 November 2008
+
+Fourth pre-release for 1.0, with two code changes and the final disk 
+image for OS X, but still missing the final documentation.
+
+[ bug fixes ] 
+
++ Ignore dot files (.DS_Store), dot folders (.svn) with Export and 
+  Save As. These were causing trouble, especially with SVN.
+  http://dev.processing.org/bugs/show_bug.cgi?id=761
+
++ Present mode on OS X causing strange flicker/jump while window opens.
+  http://dev.processing.org/bugs/show_bug.cgi?id=1051
+
+[ changes ] 
+
++ Final disk image artwork and new distribution setup for 1.0.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
+ABOUT REV 0160 - 24 November 2008
 
 Third pre-release for 1.0, this is hopefully the last of the code 
 changes, though some distribution and documentation issues need

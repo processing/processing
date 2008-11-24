@@ -2,6 +2,11 @@
 X run javadoc, and upload to server
 X set background for disk image on macosx
 X fix dist scripts so that the name "1.0" can be used
+X Ignore dot files (.DS_Store), dot folders (.svn) while copying
+X on mac, window opens to prevent quit on close
+X   but the window is not properly set as untitled
+X   http://dev.processing.org/bugs/show_bug.cgi?id=700
+X   doesn't need to be fixed because of new setup for closing
 
 
 _ write revisions.txt
@@ -612,9 +617,6 @@ _ [LaunchRunner Error] processing.app.Base.main(String[]) threw an exception
 _   http://dev.processing.org/bugs/show_bug.cgi?id=821
 _ file-save stops running sketch
 _   http://dev.processing.org/bugs/show_bug.cgi?id=810
-_ on mac, window opens to prevent quit on close
-_   but the window is not properly set as untitled
-_   http://dev.processing.org/bugs/show_bug.cgi?id=700
 _ strange NullPointerException problem prevents launch
 _   some kind of NPE in handleOpenInternal and friends
 _   appears to be a synchronization problem with the loading
@@ -736,6 +738,8 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=59
 
 PDE / Export
 
+_ failed export still copies random files
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1050
 _ when exporting to application (or applet) don't copy .java files from folder
 _   (they'll be copied as source files later)
 _   make .java files and friends go to correct locations on export (app)
@@ -759,8 +763,6 @@ _ exporting application copies .java files
 _   .java files are copied to the root folder as well as the source folder
 _ javadoc comment in a static mode app doesn't get moved to the top
 _   http://dev.processing.org/bugs/show_bug.cgi?id=924
-_ don't copy hidden files (.svn especially) on export/save as
-_   http://dev.processing.org/bugs/show_bug.cgi?id=761
 
 
 PDE / Find & Replace

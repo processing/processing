@@ -1,7 +1,8 @@
 0161 core
 X present on macosx causing strange flicker/jump while window opens
 X   using validate() for present mode, pack() otherwise
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1051
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1051
+
 
 [ known problems ]
 
