@@ -1,10 +1,7 @@
 #!/bin/sh
 
 
-#SHORT_REVISION=`head -1 ../../todo.txt | cut -c 2-4`
-REVISION=`head -1 ../../todo.txt | cut -c 1-4`
-# as of 100, just use 0100 everywhere to avoid confusion
-SHORT_REVISION=$REVISION
+REVISION=`head -1 ../../todo.txt | awk '{print $1}'`
 
 VERSIONED=`cat ../../app/src/processing/app/Base.java | grep $REVISION`
 if [ -z "$VERSIONED" ]
@@ -15,13 +12,16 @@ fi
 
 echo Creating P5 distribution for revision $REVISION...
 
-# remove any old boogers
+# remove any unfinished builds or old builds
 rm -rf processing
 rm -rf Processing*
 rm -rf processing-*
 rm -rf work
 
 ./make.sh
+
+
+echo Cleaning file boogers...
 
 # remove boogers
 find work -name "*~" -exec rm -f {} ';'
@@ -35,22 +35,33 @@ find work -name "CVS" -exec rm -rf {} ';' 2> /dev/null
 find work -name ".cvsignore" -exec rm -rf {} ';'
 find work -name ".svn" -exec rm -rf {} 2> /dev/null ';'
 
-#NICE_APP="work/Processing $SHORT_REVISION.app"
-#cp -rp work/Processing.app "$NICE_APP"
-# for 1.0 release, removing the revision from the app name
-NICE_APP="work/Processing.app"
+echo Done.
 
-DMG_NAME="processing-$REVISION"
-mkdir $DMG_NAME
-mv "$NICE_APP" $DMG_NAME/
 
-mkdir $DMG_NAME/.background
-cp dist/background.jpg $DMG_NAME/.background/background.jpg 
-ln -s /Applications $DMG_NAME/Applications
-cp dist/DS_Store $DMG_NAME/.DS_Store
+# the following was adopted from the makefile by Remko Troncon:
+# http://el-tramo.be/guides/fancy-dmg
 
-chmod +x mkdmg
-./mkdmg $DMG_NAME
-rm -rf $DMG_NAME
+echo Creating disk image...
+
+SOURCE_DIR="work"
+SOURCE_FILES="Processing.app"
+OUTPUT_DMG="processing-$REVISION"
+WORK_DMG="working.dmg"
+WORK_DIR="working_dir"
+
+gzip -cd template.dmg.gz > "$WORK_DMG"
+mkdir -p "$WORK_DIR"
+hdiutil attach "$WORK_DMG" -noautoopen -quiet -mountpoint "$WORK_DIR"
+for i in "$SOURCE_FILES"; do
+	rm -rf "$WORK_DIR/$i"
+	ditto -rsrc "$SOURCE_DIR/$i" "$WORK_DIR/$i"
+done
+WC_DEV=`hdiutil info | grep "$WORK_DIR" | awk '{print $1}'` && hdiutil detach $WC_DEV -quiet -force
+hdiutil convert "$WORK_DMG" -quiet -format UDZO -imagekey zlib-level=9 -o "$OUTPUT_DMG"
+rm -rf "$WORK_DIR"
+rm -f "$WORK_DMG"
+
+# for later, if we need to resize, etc
+#hdiutil resize -size 200mb -growonly -imageonly working.dmg
 
 echo Done.
