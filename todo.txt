@@ -1,38 +1,35 @@
 0160 pde
+X fix editor window placement
+X   overlapping editor windows caused by activeEditor not being called in time
+X     see handleActivated in Base, and do placement differently
+X     may also need to deal w/ sync problems
+X   also make sure that it'll start at the top again when done
+X   implement check to see if the windows are running off screen
+X add option to preferences for "export.delete_target_folder"
+X set background color for present mode on export application
+X set stop button for export to application
 
-
-_ do we need to shore up server setup for 1.0 release pounding?
-
-_ key command for prev/next tab works, but not menu
-_   menu options are actually disabled (go figure)
-_   file this but mark it as a P5 (bug)
 _ setup() and draw() are not bold on osx (10.4)
+_   likely osx refuses to do monaco bold
+_   ??? file bug, then place under dist
 
 _ a new release (1.0.1) is available
 _   be more descriptive, use a second line in latest.txt
+_   maybe just include the full text of the update message there?
 
 _ write revisions.txt
 _ update revisions.html
 _ update known problems reference
+_   extendo thing for tabs
+_   strokeweight/cap
 _ add disk image icon
 _ fix dist scripts so that the name "1.0" can be used
 _ replace applet.html and applet-opengl.html
 _   update applet.html to point at java 6u10 with the new auto-update stuff
 _   also update applet on the home page to do the same
-
-_ deal with isManagingFocus() warning in the editor src
-
-_ fix editor window placement
-_   overlapping editor windows caused by activeEditor not being called in time
-_     see handleActivated in Base, and do placement differently
-_     may also need to deal w/ sync problems
-_   also make sure that it'll start at the top again when done
-
-_ prefs window doesn't swap ok/cancel properly for mac vs. windows/linux
-_   don't bother having a "cancel" for the prefs window
-_ rewrite preferences window to use proper layout?
-_   is there already a bug for this?
-_ make prefs dialog modal?
+_ run javadoc, and upload to server
+_ do we need to shore up server setup for 1.0 release pounding?
+_   what's the deal with disk space?
 
 _ add bug voting to the bugs db before 1.0 release?
 
@@ -42,9 +39,14 @@ _ disallow add file to sketch if it's an example or read-only
 _   export as well
 _   pretty much anything inside the sketch?
 _   but don't do this with untitled, cuz it kinda stinks
+_   this is too weird--just put examples into individual zip files
+_   mark example files as untitled
+_   though will that require the sketch to be saved before export?
 
 _ when exporting to application (or applet) don't copy .java files from folder
 _   (they'll be copied as source files later)
+
+_ deal with isManagingFocus() warning in the editor src
 
 
 [ needs verification ] 
@@ -731,6 +733,9 @@ PDE / Editor Header
 _ make some fancy extendo things because the tabs get too big
 _   either condense or popdown menu thingy
 _   http://dev.processing.org/bugs/show_bug.cgi?id=54
+_ key command for prev/next tab works, but not menu
+_   menu options are actually disabled because of inconsistency
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1044
 
 
 PDE / Editor Status
@@ -803,6 +808,11 @@ _   make hooks to history api so others can write tools around it
 
 PDE / Preferences
 
+_ prefs window doesn't swap ok/cancel properly for mac vs. windows/linux
+_   don't bother having a "cancel" for the prefs window
+_ rewrite preferences window to use proper layout?
+_   is there already a bug for this?
+_ make prefs dialog modal?
 _ add option to use full screen exclusive mode on present inside pde?
 _   override default setting of macosx (yes) and linux/win (no)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1043
