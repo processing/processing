@@ -1,6 +1,16 @@
 #!/bin/sh
 
-REVISION=`head -c 4 ../../todo.txt`
+#REVISION=`head -c 4 ../../todo.txt`
+REVISION=`head -1 ../../todo.txt | awk '{print $1}'`
+
+if [ $1 ]
+then
+  RELEASE=$1
+  echo Creating Processing release $RELEASE...
+else 
+  RELEASE=$REVISION
+  echo Creating Processing distribution for revision $REVISION...
+fi
 
 ARCH=`uname -m`
 if [ $ARCH != "i686" ]
@@ -10,8 +20,6 @@ then
 fi
 
 ./make.sh
-
-echo Creating linux distribution for revision $REVISION...
 
 # remove any old boogers
 rm -rf processing
@@ -67,11 +75,11 @@ find processing -name ".svn" -exec rm -rf {} 2> /dev/null ';'
 
 # zip it all up for release
 echo Creating tarball and finishing...
-P5=processing-$REVISION
+P5=processing-$RELEASE
 mv processing $P5
 
 tar cfz $P5.tgz $P5
 # nah, keep the new directory around
 #rm -rf $P5
 
-#echo Done.
+echo Done.
