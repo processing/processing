@@ -470,30 +470,48 @@ public class Base {
 
 
   protected int[] nextEditorLocation() {
-    int[] location;
-
+    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+    int defaultWidth = Preferences.getInteger("default.window.width"); 
+    int defaultHeight = Preferences.getInteger("default.window.height");
+    
     if (activeEditor == null) {
       // If no current active editor, use default placement
-      location = new int[5];
-
-      // Get default window width and height
-      location[2] = Preferences.getInteger("default.window.width");
-      location[3] = Preferences.getInteger("default.window.height");
-
-      Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-      location[0] = (screen.width - location[2]) / 2;
-      location[1] = (screen.height - location[3]) / 2;
+      return new int[] { 
+          (screen.width - defaultWidth) / 2,
+          (screen.height - defaultHeight) / 2,
+          defaultWidth, defaultHeight, 0
+      };
 
     } else {
       // With a currently active editor, open the new window
       // using the same dimensions, but offset slightly.
-      location = activeEditor.getPlacement();
-      location[0] += 50;
-      location[1] += 50;
-    }
-    return location;
-  }
+      synchronized (editors) {
+        final int OVER = 50;
+        // In release 0160, don't
+        //location = activeEditor.getPlacement();
+        Editor lastOpened = editors.get(editors.size() - 1);
+        int[] location = lastOpened.getPlacement();
+        // Just in case the bounds for that window are bad
+        location[0] += OVER;
+        location[1] += OVER;
 
+        if (location[0] == OVER || 
+            location[2] == OVER ||
+            location[0] + location[2] > screen.width ||
+            location[1] + location[3] > screen.height) {
+          // Warp the next window to a randomish location on screen.
+          return new int[] { 
+              (int) (Math.random() * (screen.width - defaultWidth)),
+              (int) (Math.random() * (screen.height - defaultHeight)),
+              defaultWidth, defaultHeight, 0
+          };
+        }
+
+        return location;
+      }
+    }
+  }
+  
 
   // .................................................................
 
@@ -522,6 +540,7 @@ public class Base {
     String purty = formatter.format(new Date()).toLowerCase();
     do {
       if (index == 26) {
+        // In 0159, avoid running past z by sending people outdoors.
         if (!breakTime) {
           Base.showWarning("Time for a Break",
                            "You've reached the limit for auto naming of new sketches\n" +
