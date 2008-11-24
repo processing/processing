@@ -48,9 +48,9 @@ foreach ($libraries as $lib) {
     // template and copy index
     $index = CONTENTDIR.$source.'/index.html';
     if($lib == 'pdf' || $lib == 'dxf') {
-	  $page = new Page(strtoupper($lib) . ' \\ Libraries \\ Processing 1.0 (BETA)', 'Libraries', 'Library-index');
+	  $page = new Page(strtoupper($lib) . ' \\ Libraries', 'Libraries', 'Library-index');
 	} else {
-	  $page = new Page(ucfirst($lib) . ' \\ Libraries \\ Processing 1.0 (BETA)', 'Libraries', 'Library-index');
+	  $page = new Page(ucfirst($lib) . ' \\ Libraries', 'Library-index');
 	}
 	$page->language($lang);
     $page->content(file_get_contents($index));

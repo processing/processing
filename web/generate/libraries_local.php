@@ -18,7 +18,7 @@ $lib_dir = DISTDIR.'libraries';
 
 // get library index
 $index = CONTENTDIR."api_$lang/libraries/index.html";
-$page = new LocalPage('Libraries \\ Processing 1.0 (BETA)', 'Libraries', 'Libraries', '../');
+$page = new LocalPage('Libraries', 'Libraries', 'Libraries', '../');
 $page->content(file_get_contents($index));
 make_necessary_directories(DISTDIR.'libraries/images/include.php');
 writeFile('distribution/libraries/index.html', $page->out());
@@ -43,7 +43,7 @@ foreach ($libraries as $lib) {
 
     // template and copy index
     $index = CONTENTDIR.$source.'/index.html';
-    $page = new LocalPage(ucfirst($lib) . ' \\ Libraries \\ Processing 1.0 (BETA)', 'Libraries', 'Library-index', '../../');
+    $page = new LocalPage(ucfirst($lib) . ' \\ Libraries', 'Libraries', 'Library-index', '../../');
     $page->content(file_get_contents($index));
     writeFile('distribution/'.$destination.'/index.html', $page->out());
  
