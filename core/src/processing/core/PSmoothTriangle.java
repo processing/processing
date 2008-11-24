@@ -384,7 +384,7 @@ public class PSmoothTriangle implements PConstants {
       if (rx > parent.width1) rx = parent.width1;
     }
 
-//    System.out.println("P3D interp uv " + interpUV + " " + 
+//    System.out.println("P3D interp uv " + interpUV + " " +
 //                       vertices[2][U] + " " + vertices[2][V]);
 
     interpX = false;
@@ -394,8 +394,8 @@ public class PSmoothTriangle implements PConstants {
 
       // added == because things on same plane weren't replacing each other
       // makes for strangeness in 3D [ewj: yup!], but totally necessary for 2D
-      if (noDepthTest || (sp[Z] < zbuffer[offset+x])) {
-        //if (noDepthTest || (sp[Z] <= zbuffer[offset+x])) {
+      //if (noDepthTest || (sp[Z] < zbuffer[offset+x])) {
+      if (noDepthTest || (sp[Z] <= zbuffer[offset+x])) {
         //if (true) {
 
         // map texture based on U, V coords in sp[U] and sp[V]
