@@ -9,9 +9,6 @@ X add option to preferences for "export.delete_target_folder"
 X set background color for present mode on export application
 X set stop button for export to application
 
-_ setup() and draw() are not bold on osx (10.4)
-_   likely osx refuses to do monaco bold
-_   ??? file bug, then place under dist
 
 _ a new release (1.0.1) is available
 _   be more descriptive, use a second line in latest.txt
@@ -19,10 +16,12 @@ _   maybe just include the full text of the update message there?
 
 _ write revisions.txt
 _ update revisions.html
+_   in 0149, removed /System/Library/Java 
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1045
 _ update known problems reference
 _   extendo thing for tabs
 _   strokeweight/cap
-_ add disk image icon
+_ set background for disk image on macosx
 _ fix dist scripts so that the name "1.0" can be used
 _ replace applet.html and applet-opengl.html
 _   update applet.html to point at java 6u10 with the new auto-update stuff
@@ -31,32 +30,9 @@ _ run javadoc, and upload to server
 _ do we need to shore up server setup for 1.0 release pounding?
 _   what's the deal with disk space?
 
-_ add bug voting to the bugs db before 1.0 release?
-
-_ go through other sketch-opening menus to check for disappearing sketches
-
-_ disallow add file to sketch if it's an example or read-only
-_   export as well
-_   pretty much anything inside the sketch?
-_   but don't do this with untitled, cuz it kinda stinks
-_   this is too weird--just put examples into individual zip files
-_   mark example files as untitled
-_   though will that require the sketch to be saved before export?
-
-_ when exporting to application (or applet) don't copy .java files from folder
-_   (they'll be copied as source files later)
-
-_ deal with isManagingFocus() warning in the editor src
-
 
 [ needs verification ] 
 
-_ check to see whether this bug is fixed once 0140 is released
-_   properly handle non-ascii chars in p5 folder name
-_   http://dev.processing.org/bugs/show_bug.cgi?id=49
-_   (could also just warn user to install elsewhere)
-o   perhaps the get around this by building into sketch folder
-o     when non-ascii chars in use, just launch everything externally
 _ export and export to application fail with umlauts in folder name
 _   http://dev.processing.org/bugs/show_bug.cgi?id=252
 _ stop button needs to update itself and work properly [1.0]
@@ -68,6 +44,7 @@ _   need someone to go out and test all scenarios of this
 [ known bugs ]
 
 _ command line support is currently broken (why?)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1048
 _ "An error occurred while starting the application" with Processing 0154+
 _   Maybe provide the old exe or another alternative?
 _   Have someone try this on lab machines until we can find one that breaks
@@ -82,7 +59,6 @@ _ first few frames of OpenGL sketches on Windows run slowly
 _   http://dev.processing.org/bugs/show_bug.cgi?id=874
 _ Slow response or spinning wheel from the menu bar on Mac OS X
 _   http://dev.processing.org/bugs/show_bug.cgi?id=786
-_   bug 6034650
 _ sometimes not launching
 _   this seems to be a threading problem, like an NPE on load/open
 _   probaby related to the other load/save sync errors
@@ -94,6 +70,14 @@ _ link books and sample chapters from the "getting started" portion of the faq
 _ keep examples.zip in a zip file? (5000 files @ 30 MB instead of 15 MB zip)
 _   mark examples as untitled (rather than read-only)
 _   maybe even pull these directly from the zip file?
+_ load examples from zip files
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1049
+_   disallow add file to sketch, export, export application
+_   pretty much anything inside the sketch?
+_   but don't do this with untitled, cuz it kinda stinks
+_   this is too weird--just put examples into individual zip files
+_   mark example files as untitled
+_   though will that require the sketch to be saved before export?
 _ find in reference issues
 _   if() and for() don't work, they look for for_.html instead of for.html
 _   XMLElement is not linked for find in ref
@@ -196,6 +180,7 @@ X   nice idea but too error-prone
 
 DOC / Bugzilla 
 
+_ add bug voting to the bugs db before 1.0 release?
 _ remove LATER, REMIND, WORKSFORME as categories; add VERIFY
 _ set default reported bug priority to 4 or 5
 _ * disable changes to a bug (except by admin) after closed *
@@ -604,6 +589,8 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=1036
 
 PDE / Editor
 
+_ go through other sketch-opening menus to check for disappearing sketches
+_ deal with isManagingFocus() warning in the editor src
 _ should really be doing the 'right' thing with sketch file handling
 _   create temporary file when saving
 _   once done writing, use remove the original and rename the old
@@ -753,6 +740,8 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=59
 
 PDE / Export
 
+_ when exporting to application (or applet) don't copy .java files from folder
+_   (they'll be copied as source files later)
 _ warn on export when people call their sketches things like Server
 _ warn if someone extends PApplet but mis-names the sketch
 _   or don't allow it to be exported
@@ -1167,6 +1156,12 @@ _   and include an md5hash to see if the file is correct
 
 DIST / Windows
 
+_ check to see whether this bug is fixed once 0140 is released
+_   properly handle non-ascii chars in p5 folder name
+_   http://dev.processing.org/bugs/show_bug.cgi?id=49
+_   (could also just warn user to install elsewhere)
+o   perhaps the get around this by building into sketch folder
+o     when non-ascii chars in use, just launch everything externally
 _ icon is skewed on vista 64
 _   http://dev.processing.org/bugs/show_bug.cgi?id=801
 _ "Fatal exception occurred. Program will exit." on startup
@@ -1178,6 +1173,9 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=1040
 
 DIST / Mac OS X
 
+_ setup() and draw() are not bold on osx (10.4)
+_   likely osx refuses to do monaco bold
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1047
 _ if someone has monaco disabled in font book, the app won't start
 _   http://dev.processing.org/bugs/show_bug.cgi?id=562
 _ we're breaking some mac human interface guidelines
@@ -1185,13 +1183,14 @@ _   should be using a menu factory to create menubar for all sub-windows
 _   http://developer.apple.com/technotes/tn/tn2042.html
 _   and the general warning dialogs are just ass ugly
 _   (i.e. we really need those replacements for JOptionPane)
-_ set nice background for disk image on macosx
 _ track down error in PdeCompiler for message parsing
 _   was missing the error about a package being gone
 _   can comment out /System/Library/ as a test
 _ put stdout/stderr into ~/Library/Logs
 _   and have a .log extension so it can be browsed properly
 _ try LSMinimumSystemVersion in Info.plist
+_ Horizontal two finger scroll doesn't work in OS X
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1046
 
 
 DIST / Linux
