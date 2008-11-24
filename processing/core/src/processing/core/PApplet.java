@@ -6318,7 +6318,7 @@ public class PApplet extends Applet
    *                       see the FAQ on information for capturing the ESC
    *                       key when running in presentation mode.
    *
-   * --stop-color          color of the 'stop' text used to quit an
+   * --stop-color=#xxxxxx  color of the 'stop' text used to quit an
    *                       sketch when it's in present mode.
    *
    * --bgcolor=#xxxxxx     background color of the window.
@@ -6483,7 +6483,7 @@ public class PApplet extends Applet
 
 //    Class c = Class.forName(name);
       Class<?> c = Thread.currentThread().getContextClassLoader().loadClass(name);
-      PApplet applet = (PApplet) c.newInstance();
+      final PApplet applet = (PApplet) c.newInstance();
 
       // these are needed before init/start
       applet.frame = frame;
@@ -6518,8 +6518,8 @@ public class PApplet extends Applet
       }
       frame.setLayout(null);
       frame.add(applet);
-      //frame.pack();
-      frame.validate();
+      frame.pack();
+      //frame.validate();
 
       applet.init();
 
@@ -6649,8 +6649,43 @@ public class PApplet extends Applet
         }
       }
 
-      //System.out.println("showing frame");
-      //System.out.println("applet requesting focus");
+//      frame.addWindowListener(new WindowListener() {
+//
+//        public void windowActivated(WindowEvent e) {
+//          applet.requestFocus(); 
+//        }
+//
+//        public void windowClosed(WindowEvent e) {
+//          // TODO Auto-generated method stub
+//          
+//        }
+//
+//        public void windowClosing(WindowEvent e) {
+//          // TODO Auto-generated method stub
+//          
+//        }
+//
+//        public void windowDeactivated(WindowEvent e) {
+//          // TODO Auto-generated method stub
+//          
+//        }
+//
+//        public void windowDeiconified(WindowEvent e) {
+//          // TODO Auto-generated method stub
+//          
+//        }
+//
+//        public void windowIconified(WindowEvent e) {
+//          // TODO Auto-generated method stub
+//          
+//        }
+//
+//        public void windowOpened(WindowEvent e) {
+//          // TODO Auto-generated method stub
+//          
+//        }
+//        
+//      });
       applet.requestFocus(); // ask for keydowns
       //System.out.println("exiting main()");
 
