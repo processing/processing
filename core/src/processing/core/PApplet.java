@@ -6519,6 +6519,7 @@ public class PApplet extends Applet
       frame.setLayout(null);
       frame.add(applet);
       frame.pack();
+      // insufficient, places the 100x100 sketches offset strangely
       //frame.validate();
 
       applet.init();
