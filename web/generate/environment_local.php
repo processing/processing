@@ -11,7 +11,7 @@ $lang = isSet($_POST['lang']) ? $_POST['lang'] : 'en';
 $source = CONTENTDIR."/api_$lang/troubleshooting/";
 $path = DISTDIR."/troubleshooting/";
 make_necessary_directories($path."images/file");
-$page = new LocalPage('Troubleshooting \\ Processing 1.0 (BETA)', 'Troubleshooting', 'Troubleshooting', '../');
+$page = new LocalPage('Troubleshooting', 'Troubleshooting', 'Troubleshooting', '../');
 $page->content(file_get_contents($source."index.html"));
 $page->language($lang);
 writeFile('distribution/troubleshooting/index.html', $page->out());

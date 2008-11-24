@@ -25,11 +25,11 @@ $source = CONTENTDIR."static/";
 #$page->content(file_get_contents($source."contribute.html"));
 #writeFile('distribution/contribute/index.html', $page->out());
 
-$page = new LocalPage('Copyright \\ Processing 1.0 (BETA)', "Copyright", "Copyright", './');
+$page = new LocalPage('Copyright', "Copyright", "Copyright", './');
 $page->content(file_get_contents($source."copyright.html"));
 writeFile('distribution/copyright.html', $page->out());
 
-$page = new LocalPage('People \\ Processing 1.0 (BETA)', "People", "People", './');
+$page = new LocalPage('People', "People", "People", './');
 $page->content(file_get_contents($source."people.html"));
 writeFile('distribution/people.html', $page->out());
 
