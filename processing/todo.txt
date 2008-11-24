@@ -1,9 +1,8 @@
 0161 pde
+X run javadoc, and upload to server
+X set background for disk image on macosx
+X fix dist scripts so that the name "1.0" can be used
 
-
-_ a new release (1.0.1) is available
-_   be more descriptive, use a second line in latest.txt
-_   maybe just include the full text of the update message there?
 
 _ write revisions.txt
 _ update revisions.html
@@ -12,14 +11,17 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=1045
 _ update known problems reference
 _   extendo thing for tabs
 _   strokeweight/cap
-_ set background for disk image on macosx
-_ fix dist scripts so that the name "1.0" can be used
 _ replace applet.html and applet-opengl.html
 _   update applet.html to point at java 6u10 with the new auto-update stuff
 _   also update applet on the home page to do the same
-_ run javadoc, and upload to server
+_ remove the bugs forum
 _ do we need to shore up server setup for 1.0 release pounding?
 _   what's the deal with disk space?
+
+_ setup phplist
+_ delete the old announce list
+_ change signup instructions for announce list
+_ move the old logs off the server
 
 
 [ needs verification ] 
@@ -580,6 +582,9 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=1036
 
 PDE / Editor
 
+_ improve update check message "a new release (1.0.1) is available"
+_   be more descriptive, use a second line in latest.txt
+_   maybe just include the full text of the update message there?
 _ go through other sketch-opening menus to check for disappearing sketches
 _ deal with isManagingFocus() warning in the editor src
 _ should really be doing the 'right' thing with sketch file handling
@@ -708,12 +713,12 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=37
 
 PDE / Editor Header
 
-_ make some fancy extendo things because the tabs get too big
-_   either condense or popdown menu thingy
-_   http://dev.processing.org/bugs/show_bug.cgi?id=54
-_ key command for prev/next tab works, but not menu
-_   menu options are actually disabled because of inconsistency
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1044
+2 _ make some fancy extendo things because the tabs get too big
+2 _   either condense or popdown menu thingy
+2 _   http://dev.processing.org/bugs/show_bug.cgi?id=54
+5 _ key command for prev/next tab works, but not menu
+5 _   menu options are actually disabled because of inconsistency
+5 _   http://dev.processing.org/bugs/show_bug.cgi?id=1044
 
 
 PDE / Editor Status
@@ -733,6 +738,7 @@ PDE / Export
 
 _ when exporting to application (or applet) don't copy .java files from folder
 _   (they'll be copied as source files later)
+_   make .java files and friends go to correct locations on export (app)
 _ warn on export when people call their sketches things like Server
 _ warn if someone extends PApplet but mis-names the sketch
 _   or don't allow it to be exported
@@ -755,7 +761,6 @@ _ javadoc comment in a static mode app doesn't get moved to the top
 _   http://dev.processing.org/bugs/show_bug.cgi?id=924
 _ don't copy hidden files (.svn especially) on export/save as
 _   http://dev.processing.org/bugs/show_bug.cgi?id=761
-_ make .java files and friends go to correct locations on export (app)
 
 
 PDE / Find & Replace

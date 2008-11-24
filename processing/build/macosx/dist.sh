@@ -3,14 +3,21 @@
 
 REVISION=`head -1 ../../todo.txt | awk '{print $1}'`
 
+if [ $1 ]
+then
+  RELEASE=$1
+  echo Creating Processing release $RELEASE...
+else 
+  RELEASE=$REVISION
+  echo Creating Processing distribution for revision $REVISION...
+fi
+
 VERSIONED=`cat ../../app/src/processing/app/Base.java | grep $REVISION`
 if [ -z "$VERSIONED" ]
 then
   echo Fix the revision number in Base.java
   exit
 fi
-
-echo Creating P5 distribution for revision $REVISION...
 
 # remove any unfinished builds or old builds
 rm -rf processing
@@ -35,8 +42,6 @@ find work -name "CVS" -exec rm -rf {} ';' 2> /dev/null
 find work -name ".cvsignore" -exec rm -rf {} ';'
 find work -name ".svn" -exec rm -rf {} 2> /dev/null ';'
 
-echo Done.
-
 
 # the following was adopted from the makefile by Remko Troncon:
 # http://el-tramo.be/guides/fancy-dmg
@@ -45,7 +50,7 @@ echo Creating disk image...
 
 SOURCE_DIR="work"
 SOURCE_FILES="Processing.app"
-OUTPUT_DMG="processing-$REVISION"
+OUTPUT_DMG="processing-$RELEASE"
 WORK_DMG="working.dmg"
 WORK_DIR="working_dir"
 
