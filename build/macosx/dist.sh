@@ -23,48 +23,6 @@ rm -rf work
 
 ./make.sh
 
-#mkdir processing
-#cp -r ../shared/lib processing/
-#cp -r ../shared/libraries processing/
-#cp -r ../shared/tools processing/
-#cp ../../app/lib/antlr.jar processing/lib/
-#cp ../../app/lib/ecj.jar processing/lib/
-#cp ../../app/lib/jna.jar processing/lib/
-#cp ../shared/revisions.txt processing/
-
-#echo Extracting examples...
-#unzip -q -d processing/ ../shared/examples.zip
-
-#echo Extracting reference...
-#unzip -q -d processing/ ../shared/reference.zip
-
-# add the libraries folder with source
-#cp -r ../../net processing/libraries/
-#cp -r ../../opengl processing/libraries/
-#cp -r ../../serial processing/libraries/
-#cp -r ../../video processing/libraries/
-#cp -r ../../pdf processing/libraries/
-#cp -r ../../dxf processing/libraries/
-
-# get ds_store file (!)
-#cp dist/DS_Store processing/.DS_Store
-
-# get package from the dist dir
-#cp -pR dist/Processing.app processing/
-#chmod +x processing/Processing.app/Contents/MacOS/JavaApplicationStub
-
-# put jar files into the resource dir, leave the rest in lib
-#RES=processing/Processing.app/Contents/Resources/Java
-#mkdir -p $RES
-#mv processing/lib/*.jar $RES/
-
-# grab pde.jar and export from the working dir
-#cp work/lib/pde.jar $RES/
-#cp work/lib/core.jar processing/lib/
-
-# get platform-specific goodies from the dist dir
-#chmod a+x processing/Processing.app/Contents/MacOS/JavaApplicationStub
-
 # remove boogers
 find work -name "*~" -exec rm -f {} ';'
 # need to leave ds store stuff cuz one of those is important
@@ -77,22 +35,22 @@ find work -name "CVS" -exec rm -rf {} ';' 2> /dev/null
 find work -name ".cvsignore" -exec rm -rf {} ';'
 find work -name ".svn" -exec rm -rf {} 2> /dev/null ';'
 
-NICE_APP="work/Processing $SHORT_REVISION.app"
-cp -rp work/Processing.app "$NICE_APP"
+#NICE_APP="work/Processing $SHORT_REVISION.app"
+#cp -rp work/Processing.app "$NICE_APP"
+# for 1.0 release, removing the revision from the app name
+NICE_APP="work/Processing.app"
 
-#NICE_FOLDER="Processing $SHORT_REVISION"
-#mv processing "$NICE_FOLDER"
-mkdir processing-$REVISION
-#mv "$NICE_FOLDER" processing-$REVISION/
-mv "$NICE_APP" processing-$REVISION/
+DMG_NAME="processing-$REVISION"
+mkdir $DMG_NAME
+mv "$NICE_APP" $DMG_NAME/
 
-mkdir processing-$REVISION/.background
-cp dist/background.jpg processing-$REVISION/.background/background.jpg 
-ln -s /Applications processing-$REVISION/Applications
-cp dist/DS_Store processing-$REVISION/.DS_Store
+mkdir $DMG_NAME/.background
+cp dist/background.jpg $DMG_NAME/.background/background.jpg 
+ln -s /Applications $DMG_NAME/Applications
+cp dist/DS_Store $DMG_NAME/.DS_Store
 
 chmod +x mkdmg
-./mkdmg processing-$REVISION
-rm -rf processing-$REVISION
+./mkdmg $DMG_NAME
+rm -rf $DMG_NAME
 
 echo Done.
