@@ -43,7 +43,7 @@ AudioSnippet snip;
 
 void setup()
 {
-  size(512, 200, P3D);
+  size(512, 200);
   
   minim = new Minim(this);
   snip = minim.loadSnippet("groove.mp3");

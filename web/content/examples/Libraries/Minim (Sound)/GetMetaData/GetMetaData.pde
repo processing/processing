@@ -20,17 +20,17 @@ AudioMetaData meta;
 
 void setup()
 {
-  size(512, 256, P3D);
+  size(512, 256, P2D);
   
   minim = new Minim(this);
   groove = minim.loadFile("groove.mp3");
   meta = groove.getMetaData();
   
-  textFont( loadFont("serif.vlw") );
+  textFont(createFont("Serif", 12));
   textMode(SCREEN);
 }
 
-int ys = 15;
+int ys = 25;
 int yi = 15;
 
 void draw()

@@ -18,8 +18,7 @@ String windowName;
 
 void setup()
 {
-  size(512, 200, P3D);
-  textMode(SCREEN);
+  size(512, 200);
   minim = new Minim(this);
   
   jingle = minim.loadFile("jingle.mp3", 2048);
@@ -28,7 +27,7 @@ void setup()
   // note that this needs to be a power of two and that it means the size of the spectrum
   // will be 512. see the online tutorial for more info.
   fft = new FFT(jingle.bufferSize(), jingle.sampleRate());
-  textFont(createFont("Arial", 16));
+  textFont(createFont("SanSerif", 12));
   windowName = "None";
 }
 

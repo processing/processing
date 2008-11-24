@@ -18,7 +18,7 @@ AudioRecorder recorder;
 
 void setup()
 {
-  size(512, 200, P3D);
+  size(512, 200, P2D);
   textMode(SCREEN); 
   
   minim = new Minim(this);
@@ -32,7 +32,7 @@ void setup()
   // the file will be located in the sketch's root folder.
   recorder = minim.createRecorder(in, "myrecording.wav", true);
   
-  textFont(createFont("Arial", 12));
+  textFont(createFont("SanSerif", 12));
 }
 
 void draw()

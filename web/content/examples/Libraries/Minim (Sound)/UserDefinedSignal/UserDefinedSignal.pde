@@ -15,7 +15,7 @@ MouseSaw msaw;
 
 void setup()
 {
-  size(512, 200, P3D);
+  size(512, 200, P2D);
   
   minim = new Minim(this);
   

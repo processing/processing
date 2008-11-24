@@ -41,6 +41,6 @@ void setup()
  
 void draw() 
 { 
-  frame = (frame+1)%numFrames;  // Use % to cycle through frames
-  image(images[frame], 0, 0);
+  frame = (frame+1) % numFrames;  // Use % to cycle through frames
+  image(images[frame], 50, 50);
 }

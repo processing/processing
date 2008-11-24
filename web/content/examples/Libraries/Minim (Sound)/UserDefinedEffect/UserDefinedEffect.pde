@@ -15,7 +15,7 @@ ReverseEffect reffect;
 
 void setup()
 {
-  size(512, 200, P3D);
+  size(512, 200, P2D);
   
   minim = new Minim(this);
   // try changing the buffer size to see how it changes the effect

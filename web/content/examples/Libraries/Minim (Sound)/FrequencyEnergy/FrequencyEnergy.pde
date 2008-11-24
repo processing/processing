@@ -28,7 +28,8 @@ float kickSize, snareSize, hatSize;
 
 void setup()
 {
-  size(512, 200, P3D);
+  size(512, 200);
+  smooth();
   
   minim = new Minim(this);
   
@@ -48,7 +49,7 @@ void setup()
   kickSize = snareSize = hatSize = 16;
   // make a new beat listener, so that we won't miss any buffers for the analysis
   bl = new BeatListener(beat, song);  
-  textFont(createFont("Helvetica", 16));
+  textFont(createFont("SanSerif", 16));
   textAlign(CENTER);
 }
 

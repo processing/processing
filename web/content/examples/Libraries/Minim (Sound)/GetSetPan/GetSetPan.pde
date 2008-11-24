@@ -43,7 +43,7 @@ void setup()
   // see the example Recordable >> addListener for more about this
   out.addListener(waveform); 
   
-  textFont(createFont("Arial", 12));
+  textFont(createFont("SanSerif", 12));
 }
 
 void draw()
@@ -59,11 +59,11 @@ void draw()
     // if a pan control is not available, this will do nothing
     out.setPan(val); 
     // if a pan control is not available this will report zero
-    text("The current pan is " + out.getPan() + ".", 5, 15);
+    text("The current pan is " + out.getPan() + ".", 5, 20);
   }
   else
   {
-    text("The output doesn't have a pan control.", 5, 15);
+    text("The output doesn't have a pan control.", 5, 20);
   }
 }
 

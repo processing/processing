@@ -32,7 +32,7 @@ SineWave sine;
 
 void setup()
 {
-  size(512, 200, P3D);
+  size(512, 200, P2D);
   
   minim = new Minim(this);
   // get a line out from Minim, default bufferSize is 1024, default sample rate is 44100, bit depth is 16

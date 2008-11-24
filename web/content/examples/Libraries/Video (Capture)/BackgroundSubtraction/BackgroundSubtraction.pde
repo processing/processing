@@ -15,7 +15,7 @@ Capture video;
 
 void setup() {
   // Change size to 320 x 240 if too slow at 640 x 480
-  size(640, 480); 
+  size(640, 480, P2D); 
   
   video = new Capture(this, width, height, 24);
   numPixels = video.width * video.height;
@@ -51,9 +51,9 @@ void draw() {
       // Add these differences to the running tally
       presenceSum += diffR + diffG + diffB;
       // Render the difference image to the screen
-      pixels[i] = color(diffR, diffG, diffB);
+      //pixels[i] = color(diffR, diffG, diffB);
       // The following line does the same thing much faster, but is more technical
-      //pixels[i] = 0xFF000000 | (diffR << 16) | (diffG << 8) | diffB;
+      pixels[i] = 0xFF000000 | (diffR << 16) | (diffG << 8) | diffB;
     }
     updatePixels(); // Notify that the pixels[] array has changed
     println(presenceSum); // Print out the total amount of movement

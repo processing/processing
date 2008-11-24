@@ -4,11 +4,9 @@
  * Reading and displaying an image from an attached Capture device. 
  */ 
  
- 
 import processing.video.*;
 
 Capture cam;
-
 
 void setup() {
   size(640, 480);
@@ -20,6 +18,7 @@ void setup() {
   // list all available capture devices to the console to find your camera.
   //String[] devices = Capture.list();
   //println(devices);
+  
   // Change devices[0] to the proper index for your camera.
   //cam = new Capture(this, width, height, devices[0]);
 

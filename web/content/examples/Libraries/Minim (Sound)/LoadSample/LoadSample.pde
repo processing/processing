@@ -41,7 +41,7 @@ AudioSample kick;
 
 void setup()
 {
-  size(512, 200, P3D);
+  size(512, 200, P2D);
   // always start Minim before you do anything with it
   minim = new Minim(this);
   // load BD.mp3 from the data folder with a 1024 sample buffer

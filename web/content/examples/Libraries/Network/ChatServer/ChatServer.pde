@@ -8,7 +8,6 @@
 
 import processing.net.*;
 
-PFont font;
 int port = 10002;
 boolean myServerRunning = true;
 int bgColor = 0;
@@ -20,9 +19,7 @@ Server myServer;
 void setup()
 {
   size(400, 400);
-  background(0);
-  font = loadFont("ScalaSans-Caps-32.vlw");
-  textFont(font, 18);
+  textFont(createFont("SanSerif", 16));
   myServer = new Server(this, port); // Starts a myServer on port 10002
   background(0);
 }
@@ -38,7 +35,7 @@ void draw()
 {
   if (myServerRunning == true)
   {
-    text("server", 15, 25);
+    text("server", 15, 45);
     Client thisClient = myServer.available();
     if (thisClient != null) {
       if (thisClient.available() > 0) {
@@ -49,7 +46,7 @@ void draw()
   } 
   else 
   {
-    text("server", 15, 60);
-    text("stopped", 15, 95);
+    text("server", 15, 45);
+    text("stopped", 15, 65);
   }
 }
