@@ -90,9 +90,12 @@ Class AutoFormat</H2>
 java.lang.Object
   <IMG SRC="../../../resources/inherit.gif" ALT="extended by "><B>processing.app.tools.AutoFormat</B>
 </PRE>
+<DL>
+<DT><B>All Implemented Interfaces:</B> <DD>java.lang.Runnable, <A HREF="../../../processing/app/tools/Tool.html" title="interface in processing.app.tools">Tool</A></DD>
+</DL>
 <HR>
 <DL>
-<DT><PRE>public class <B>AutoFormat</B><DT>extends java.lang.Object</DL>
+<DT><PRE>public class <B>AutoFormat</B><DT>extends java.lang.Object<DT>implements <A HREF="../../../processing/app/tools/Tool.html" title="interface in processing.app.tools">Tool</A></DL>
 </PRE>
 
 <P>
@@ -114,7 +117,7 @@ Alternate handler for dealing with auto format.
 <B>Constructor Summary</B></FONT></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../processing/app/tools/AutoFormat.html#AutoFormat(processing.app.Editor)">AutoFormat</A></B>(<A HREF="../../../processing/app/Editor.html" title="class in processing.app">Editor</A>&nbsp;editor)</CODE>
+<TD><CODE><B><A HREF="../../../processing/app/tools/AutoFormat.html#AutoFormat()">AutoFormat</A></B>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -171,6 +174,14 @@ Alternate handler for dealing with auto format.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../processing/app/tools/AutoFormat.html#getMenuTitle()">getMenuTitle</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;int</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../processing/app/tools/AutoFormat.html#getnl()">getnl</A></B>()</CODE>
 
@@ -197,6 +208,14 @@ Alternate handler for dealing with auto format.
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../processing/app/tools/AutoFormat.html#indent_puts()">indent_puts</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../processing/app/tools/AutoFormat.html#init(processing.app.Editor)">init</A></B>(<A HREF="../../../processing/app/Editor.html" title="class in processing.app">Editor</A>&nbsp;editor)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -236,7 +255,7 @@ Alternate handler for dealing with auto format.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../processing/app/tools/AutoFormat.html#show()">show</A></B>()</CODE>
+<TD><CODE><B><A HREF="../../../processing/app/tools/AutoFormat.html#run()">run</A></B>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -264,10 +283,10 @@ Alternate handler for dealing with auto format.
 </TR>
 </TABLE>
 
-<A NAME="AutoFormat(processing.app.Editor)"><!-- --></A><H3>
+<A NAME="AutoFormat()"><!-- --></A><H3>
 AutoFormat</H3>
 <PRE>
-public <B>AutoFormat</B>(<A HREF="../../../processing/app/Editor.html" title="class in processing.app">Editor</A>&nbsp;editor)</PRE>
+public <B>AutoFormat</B>()</PRE>
 <DL>
 </DL>
 
@@ -281,12 +300,43 @@ public <B>AutoFormat</B>(<A HREF="../../../processing/app/Editor.html" title="cl
 </TR>
 </TABLE>
 
+<A NAME="init(processing.app.Editor)"><!-- --></A><H3>
+init</H3>
+<PRE>
+public void <B>init</B>(<A HREF="../../../processing/app/Editor.html" title="class in processing.app">Editor</A>&nbsp;editor)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../processing/app/tools/Tool.html#init(processing.app.Editor)">init</A></CODE> in interface <CODE><A HREF="../../../processing/app/tools/Tool.html" title="interface in processing.app.tools">Tool</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getMenuTitle()"><!-- --></A><H3>
+getMenuTitle</H3>
+<PRE>
+public java.lang.String <B>getMenuTitle</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../processing/app/tools/Tool.html#getMenuTitle()">getMenuTitle</A></CODE> in interface <CODE><A HREF="../../../processing/app/tools/Tool.html" title="interface in processing.app.tools">Tool</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
 <A NAME="comment()"><!-- --></A><H3>
 comment</H3>
 <PRE>
 public void <B>comment</B>()
              throws java.io.IOException</PRE>
 <DL>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 
 <DT><B>Throws:</B>
@@ -301,6 +351,9 @@ get_string</H3>
 public char <B>get_string</B>()
                 throws java.io.IOException</PRE>
 <DL>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 
 <DT><B>Throws:</B>
@@ -317,6 +370,9 @@ public void <B>indent_puts</B>()</PRE>
 <DD><DL>
 </DL>
 </DD>
+<DD><DL>
+</DL>
+</DD>
 </DL>
 <HR>
 
@@ -325,6 +381,9 @@ fprintf</H3>
 <PRE>
 public void <B>fprintf</B>(java.lang.String&nbsp;out_string)</PRE>
 <DL>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 </DL>
 </DD>
@@ -339,6 +398,9 @@ public int <B>grabLines</B>()</PRE>
 <DD><DL>
 </DL>
 </DD>
+<DD><DL>
+</DL>
+</DD>
 </DL>
 <HR>
 
@@ -347,6 +409,9 @@ putcoms</H3>
 <PRE>
 public void <B>putcoms</B>()</PRE>
 <DL>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 </DL>
 </DD>
@@ -359,6 +424,9 @@ cpp_comment</H3>
 public void <B>cpp_comment</B>()
                  throws java.io.IOException</PRE>
 <DL>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 
 <DT><B>Throws:</B>
@@ -375,6 +443,9 @@ public void <B>p_tabs</B>()</PRE>
 <DD><DL>
 </DL>
 </DD>
+<DD><DL>
+</DL>
+</DD>
 </DL>
 <HR>
 
@@ -384,6 +455,9 @@ getchr</H3>
 public char <B>getchr</B>()
             throws java.io.IOException</PRE>
 <DL>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 
 <DT><B>Throws:</B>
@@ -400,6 +474,9 @@ public void <B>gotelse</B>()</PRE>
 <DD><DL>
 </DL>
 </DD>
+<DD><DL>
+</DL>
+</DD>
 </DL>
 <HR>
 
@@ -409,6 +486,9 @@ getnl</H3>
 public int <B>getnl</B>()
           throws java.io.IOException</PRE>
 <DL>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 
 <DT><B>Throws:</B>
@@ -425,6 +505,9 @@ public int <B>lookup</B>(java.lang.String&nbsp;keyword)</PRE>
 <DD><DL>
 </DL>
 </DD>
+<DD><DL>
+</DL>
+</DD>
 </DL>
 <HR>
 
@@ -436,14 +519,20 @@ public int <B>lookup_com</B>(java.lang.String&nbsp;keyword)</PRE>
 <DD><DL>
 </DL>
 </DD>
+<DD><DL>
+</DL>
+</DD>
 </DL>
 <HR>
 
-<A NAME="show()"><!-- --></A><H3>
-show</H3>
+<A NAME="run()"><!-- --></A><H3>
+run</H3>
 <PRE>
-public void <B>show</B>()</PRE>
+public void <B>run</B>()</PRE>
 <DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>run</CODE> in interface <CODE>java.lang.Runnable</CODE><DT><B>Specified by:</B><DD><CODE><A HREF="../../../processing/app/tools/Tool.html#run()">run</A></CODE> in interface <CODE><A HREF="../../../processing/app/tools/Tool.html" title="interface in processing.app.tools">Tool</A></CODE></DL>
+</DD>
 <DD><DL>
 </DL>
 </DD>
