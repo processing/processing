@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2005-06 Ignacio Manuel González Moreta.
+  Copyright (c) 2005-06 Ignacio Manuel Gonzalez Moreta.
   Copyright (c) 2006-08 Ben Fry and Casey Reas
 
   This program is free software; you can redistribute it and/or modify
@@ -36,7 +36,7 @@ import processing.core.PApplet;
  * <p/>
  * Original code by <A HREF="http://usuarios.iponet.es/imoreta">owd</A>.
  * Revised and updated for revision 0108 by Ben Fry (10 March 2006).
- * This code may later be moved to its own 'Tool' plugin, but is included  
+ * This code may later be moved to its own 'Tool' plugin, but is included
  * with release 0108+ while features for the "Tools" menu are in testing.
  * <p/>
  * Updated for 0122 to simply copy the code directly to the clipboard,
@@ -56,7 +56,7 @@ public class DiscourseFormat {
   // JTextArea of the actual Editor
   JEditTextArea textarea;
 
-  
+
   /**
    * Creates a new window with the formated (YaBB tags) sketchcode
    * from the actual Processing Tab ready to send to the processing discourse
@@ -77,10 +77,10 @@ public class DiscourseFormat {
 
     int selStart = textarea.getSelectionStart();
     int selStop = textarea.getSelectionStop();
-    
+
     int startLine = textarea.getSelectionStartLine();
     int stopLine = textarea.getSelectionStopLine();
-    
+
     // If no selection, convert all the lines
     if (selStart == selStop) {
       startLine = 0;
@@ -91,7 +91,7 @@ public class DiscourseFormat {
         stopLine--;
       }
     }
-    
+
     // Read the code line by line
     for (int i = startLine; i <= stopLine; i++) {
       appendFormattedLine(cf, i);
