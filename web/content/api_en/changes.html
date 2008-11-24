@@ -25,9 +25,49 @@ changes are presented on this page." /></h1>
 	   <a href="http://processing.org/download/revisions.txt">here</a>.
     </p>
 <p>
-This page was updated prior to release 0126, to clean up a couple inconsistencies.
+This page was updated prior to release 1.0.
 </p>
 	
+	<p>&nbsp;</p>
+	
+	   <h5 id="116"><a href="#top"><img src="environment/images/up_arrow.gif" alt="Top" /></a> Changes in Processing 1.0 (revision 0162)</h5>
+
+The biggest changes in the months prior to release 1.0 are as follows:
+
+<ul>
+
+<li><b>Libraries</b> - All libraries must be placed in a folder named "libraries", inside the sketchbook folder. Do not use the main "libraries" directory in the Processing distribution, as it is reserved for the core libraries, and is not visible on Mac OS X.
+
+<li><b>XML</b> - The XML library is now included by default, so you won't find it in the Import Library menu anymore. In addition, the XML library since 0135 has been greatly improved, making it compatible with far more documents.
+
+<li><b>Processing.app</b> - The Mac OS X release of Processing is now a single .app file, more befitting an OS X application.
+
+<li><b>Processing.exe</b> - The Windows release has a new launcher based on <a href="http://launch4j.sourceforge.net/">launch4j</a>. Unfortunately, some machines <a href="http://dev.processing.org/bugs/show_bug.cgi?id=986">have a problem</a> with the new launcher that we haven't been able to track down. If you have trouble, please <a href="http://dev.processing.org/bugs/show_bug.cgi?id=986">help us find the problem</a>. PDE files are also now double-clickable on Windows.
+
+<li><b>OpenGL</b> - All OpenGL sketches now use 2x full screen anti-aliasing. This means that these sketches are always smooth, and the smooth() and noSmooth() commands are ignored. To return to the behavior found in the beta releases, see the <a href="http://processing.org/reference/hint_.html">hint()</a> reference.
+
+<li><b>P2D and P3D</b> - The P2D renderer has returned (see the <a href="http://processing.org/reference/size_.html">size()</a> reference) and smoothing is now enabled for both P2D and P3D. Smoothing support is unfortunately incomplete, however, and sometimes thin lines can be seen inside shapes. This is a very high priority <a href="http://dev.processing.org/bugs/show_bug.cgi?id=200">bug</a> to be fixed in a future release.
+
+<li><b>Candy and PShape</b> - The Candy SVG library has been merged into the core, which brings along a new <a href="http://processing.org/reference/loadShape_.html">loadShape()</a> command and a new <a href="http://processing.org/reference/PShape.html">PShape</a> object. The special powers of PShape will be rolled out in future releases. For the time being, loadShape() works best with the default renderer (JAVA2D). Complex shapes will often appear jagged or not at all when rendered with <a href="http://dev.processing.org/bugs/show_bug.cgi?id=1053">P2D, P3D,</a> and <a href="http://dev.processing.org/bugs/show_bug.cgi?id=947">OPENGL</a>. We've also added better support for SVG files created with Inkscape.
+
+<li><b>PVector</b> - We've added a new class called <a href="http://processing.org/reference/PVector.html">PVector</a>, which is a simple three-dimensional vector (also known as point or tuple) class. This is useful for storing point data, or operations on 3D points.
+
+<li><b>Tools</b> - A new Tools API has been created for developers who want to contribute code that extends the Processing Development Environment in some fashion. Let your creativity flow with fantastical contributions like "Color Selector 2.0", "ROT13 Code Mangler", and "I Am Rich". Visit the <a href="http://dev.processing.org/tools/">developer page on tools</a> for more information. Similar to libraries, tools are installed in a folder of the same name within your sketchbook folder.
+
+<li><b>Asynchronouse Images</b> - Big JPEGs and small pipes? We've added a new <a href="http://processing.org/reference/requestImage_.html">requestImage()</a> that loads an image in the background so that your sketch doesn't freeze when loading lots of large images over a slow connection. 
+
+<li><b>Present</b> - Present mode (full screen) is handled differently. When run inside the PDE, only Mac OS X uses exclusive mode with Present. Windows and Linux just do full screen windows. When run outside the PDE, all three simply create an undecorated window the size of the entire screen, and on the Mac, an option is added to the Info.plist file to hide the dock and menubar (since that cannot be done programatically from Java). 
+
+<li><b>Compiler</b> - We've removed the old Jikes compiler and are now using another. We've also tried hard to improve the quality of error messages, though some are still real gems that invoke the complaints of mainframe computers in 1970s films.
+
+<li><b>Internationalization</b> - For better internationalization support, we've changed to UTF-8 encoding when loading and saving sketches. Sketches that contain non-ASCII characters and were saved with Processing 0140 and earlier may look strange when opened. Garbled text and odd characters may appear where umlauts, cedillas, and Japanese formerly lived. If this happens, use the "Fix Encoding & Reload" option under the Tools menu. This will reload your sketch using the same method as previous versions of Processing, at which point you can re-save it which will write a proper UTF-8 version.
+
+<li><b>Java</b> - Linux and Windows now inlude Java 6 update 10 with the download. We still <a href="http://dev.processing.org/bugs/show_bug.cgi?id=598">don't have support</a> for Java 1.5 syntax yet, but we hope that the performance boosts in Java 6 will help applications run well. 
+
+</ul>
+
+Under the old numbering system, Processing 1.0 is revision 0162. 
+
 	<p>&nbsp;</p>
 	
 	   <h5 id="116"><a href="#top"><img src="environment/images/up_arrow.gif" alt="Top" /></a> Changes in 0116+ (approaching 1.0)</h5>
