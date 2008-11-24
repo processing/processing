@@ -86,6 +86,11 @@ mkdir processing-$REVISION
 #mv "$NICE_FOLDER" processing-$REVISION/
 mv "$NICE_APP" processing-$REVISION/
 
+mkdir processing-$REVISION/.background
+cp dist/background.jpg processing-$REVISION/.background/background.jpg 
+ln -s /Applications processing-$REVISION/Applications
+cp dist/DS_Store processing-$REVISION/.DS_Store
+
 chmod +x mkdmg
 ./mkdmg processing-$REVISION
 rm -rf processing-$REVISION
