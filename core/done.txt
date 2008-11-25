@@ -1,3 +1,7 @@
+0162 core (1.0)
+X no additional changes for 1.0
+
+
 0161 core
 X present on macosx causing strange flicker/jump while window opens
 X   using validate() for present mode, pack() otherwise
