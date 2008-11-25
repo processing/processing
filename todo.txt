@@ -1,12 +1,4 @@
-0162 pde (1.0)
-X update revisions.html
-X write revisions.txt
-X in 0149, removed /System/Library/Java 
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1045
-X do we need to shore up server setup for 1.0 release pounding?
-o   what's the deal with disk space?
-o update known problems reference
-X update Base.java to change to Processing 1.0 instead of the beta stuff
+0163 pde
 
 
 [ needs verification ] 
