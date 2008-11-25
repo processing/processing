@@ -77,7 +77,7 @@ public class UpdateCheck implements Runnable {
     try {
       String info;
       info = URLEncoder.encode(id + "\t" +
-                        PApplet.nf(Base.VERSION, 4) + "\t" +
+                        PApplet.nf(Base.REVISION, 4) + "\t" +
                         System.getProperty("java.version") + "\t" +
                         System.getProperty("java.vendor") + "\t" +
                         System.getProperty("os.name") + "\t" +
@@ -102,7 +102,7 @@ public class UpdateCheck implements Runnable {
         "would you like to visit the Processing download page?";
 
       if (base.activeEditor != null) {
-        if (latest > Base.VERSION) {
+        if (latest > Base.REVISION) {
           Object[] options = { "Yes", "No" };
           int result = JOptionPane.showOptionDialog(base.activeEditor,
                                                     prompt,

@@ -1,4 +1,5 @@
-0162 core
+0162 core (1.0)
+X no additional changes for 1.0
 
 
 [ known problems ]
@@ -7,10 +8,6 @@ _ OPENGL sketches flicker w/ Vista when background() not used inside draw()
 _   http://dev.processing.org/bugs/show_bug.cgi?id=930
 _   Disabling Aero scheme sometimes prevents the problem
 _   Updating graphics drivers may prevent the problem 
-
-
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-
 
 [ need problem sketch ] 
 
