@@ -9,7 +9,71 @@ releases will be super crusty.
 
 PROCESSING 1.0 (REV 0162) - 24 November 2008
 
-Coming soon...
+Processing 1.0 has arrived! This release contains no additional changes 
+to the code since the revision 0161. See earlier release notes for details.
+
+[ known issues ] 
+
++ Sketches that size(w, h, OPENGL) and do not clear the background on each 
+  frame can cause major flickering or problems when the screen clears anyway.
+  There are several possible solutions:
+
+  1. You may need to disable the default 2x smoothing by using
+     hint(DISABLE_OPENGL_2X_SMOOTH).
+  
+  2. Update the drivers for your graphics card.
+
+  3. Get a decent graphics card -- the OpenGL renderer is for advanced
+     use, we don't support using it with cheaper built-in graphics hardware 
+     like the Intel GMA 950. 
+
+  4. If you're running Windows Vista, try disabling the Aero theme. 
+
+  This flickering issue is being tracked here:
+  http://dev.processing.org/bugs/show_bug.cgi?id=1056
+
++ "An error occurred while starting the application" when launching
+  Processing.exe on Windows. This is a high priority however we cannot
+  reproduce it on any of our test machines, which has delayed a fix.
+  http://dev.processing.org/bugs/show_bug.cgi?id=986
+
++ With P2D, P3D, and OPENGL, series of connected lines (such as the stroke 
+  around a polygon, triangle, or ellipse) produce unattractive results when 
+  strokeWeight is set.
+  http://dev.processing.org/bugs/show_bug.cgi?id=955
+
++ Unlike most applications, the menu bar is inside the editor window 
+  when Processing is used with Mac OS X 10.5. This is a workaround for
+  an Apple bug in Java 1.5 and 1.6 on Mac OS X 10.5 that causes the menu
+  bar to be so excessively slow that the application appears to have crashed.
+  http://dev.processing.org/bugs/show_bug.cgi?id=786
+  Please file a bug report with Apple if you want this fixed. 
+  The problem has existed since the spring, and we first filed a bug 
+  with them in June, and we have received no indication that it when 
+  it will be fixed, or if it will ever be fixed.
+  And if you want to take your chances with the slow menu bar, you can
+  change the default setting in the Preferences window.
+
++ Sketches that use the video library plus OpenGL have a problem on some
+  OS X machines. The workaround is listed in Comment #16 of this bug:
+  http://dev.processing.org/bugs/show_bug.cgi?id=882#c16
+
++ Command line support arrived in a recent release, but is not working yet.
+  http://dev.processing.org/bugs/show_bug.cgi?id=1048
+
++ OpenGL rendering is more dim/darker in release 0149 and later.
+  http://dev.processing.org/bugs/show_bug.cgi?id=958
+  Any help tracking this down would be most appreciated.
+
++ The first few frames of OpenGL sketches on Windows run slowly.
+  http://dev.processing.org/bugs/show_bug.cgi?id=874
+
++ When used with P3D, strokeWeight does not interpolate the Z-coordinates 
+  of the lines, which means that when rotated, these flat lines may 
+  disappear. (Since, uh, lines are, you know, flat.) The OPENGL renderer 
+  setting does not share this problem because it always draws lines 
+  perpendicular to the screen (which we hope to do in a future release).
+  http://dev.processing.org/bugs/show_bug.cgi?id=956
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -43,6 +107,24 @@ Third pre-release for 1.0, this is hopefully the last of the code
 changes, though some distribution and documentation issues need
 to be finished up.
 
+[ changes ] 
+
++ Add option to preferences to enable/disable removing the applet or
+  application folder when exporting. 
+
++ Set background color for present mode on Export to Application.
+
++ Set stop button color for Export to Application.
+
+[ bug fixes ] 
+
++ Fix placement of new editor windows to avoid overlap.
+
++ Stroked lines drawing on top of everything else in P3D
+  http://dev.processing.org/bugs/show_bug.cgi?id=1032
+
++ Placement of 100x100 sketches is incorrect.
+
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
@@ -52,7 +134,18 @@ ABOUT REV 0159 - 23 November 2008
 Another pre-release for 1.0. This list is incomplete, and will be updated
 for the next release. 
 
-[ changes ] 
+[ bug fixes ] 
+
++ Editor caret was not blinking. 
+
++ The width of the export application on windows was incorrect on Windows.
+  Improve export application window layout spacing on OS X. Also disable 
+  the stop button item when full screen not selected.
+
++ Error after creating more than 26 temporary sketches in one day.
+  http://dev.processing.org/bugs/show_bug.cgi?id=1039
+
+[ changes ]
 
 + Change how Present mode is handled. When run inside the PDE, only Mac OS X
   uses exclusive mode with Present. Windows and Linux just do full screen
@@ -60,6 +153,15 @@ for the next release.
   window the size of the entire screen, and on the Mac, an option is added 
   to the Info.plist file to hide the dock and menubar (since that cannot be
   done programatically from Java). 
+
++ Update to Java 6 update 10 for Linux and Windows.
+
++ Update Quaqua to release 5.0.1.
+
++ Add option to hide the stop button in Export to Application
+
++ Move the color settings out of the preferences.txt file, and into a 
+  single theme.txt file found inside lib/theme.
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
