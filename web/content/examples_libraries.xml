@@ -8,7 +8,6 @@
 		<ex file="Yellowtail.html">Yellowtail</ex>
 		<ex file="TexturedSphere.html">Textured Sphere</ex>
 		<ex file="SpaceJunk.html">Space Junk</ex>
-		<ex file="FullScreenApp.html">Full Screen Application</ex>
 	</cat>
 	<cat label="Network">
 		<ex file="SharedCanvasClient.html">Shared Canvas (Client)</ex>
@@ -35,7 +34,6 @@
 		<ex file="Mirror2.html">Mirror2</ex>
 		<ex file="ColorSorting.html">Color Sorting</ex>
 		<ex file="AsciiVideo.html">ASCII Video</ex>
-		<ex file="Disgrand.html">Disgrand</ex>
 		<ex file="Framingham.html">Framingham</ex>
 		<ex file="HsvSpace.html">HSV Space</ex>
 		<ex file="LivePocky.html">Live Pocky</ex>
