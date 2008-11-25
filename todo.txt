@@ -1,24 +1,12 @@
 0162 pde (1.0)
 X update revisions.html
-
-_ update Base.java to change to Processing 1.0 instead of the beta stuff
-_ write revisions.txt
-_   in 0149, removed /System/Library/Java 
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1045
-_ update known problems reference
-_   extendo thing for tabs
-_   strokeweight/cap
-_ replace applet.html and applet-opengl.html
-_   update applet.html to point at java 6u10 with the new auto-update stuff
-_   also update applet on the home page to do the same
-_ remove the bugs forum
-_ do we need to shore up server setup for 1.0 release pounding?
-_   what's the deal with disk space?
-
-_ setup phplist
-_ delete the old announce list
-_ change signup instructions for announce list
-_ move the old logs off the server
+X write revisions.txt
+X in 0149, removed /System/Library/Java 
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1045
+X do we need to shore up server setup for 1.0 release pounding?
+o   what's the deal with disk space?
+o update known problems reference
+X update Base.java to change to Processing 1.0 instead of the beta stuff
 
 
 [ needs verification ] 
@@ -730,6 +718,10 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=59
 
 PDE / Export
 
+1 _ replace applet.html and applet-opengl.html
+1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1057
+1 _   update applet.html to point at java 6u10 with the new auto-update stuff
+1 _   also update applet on the home page to do the same
 _ failed export still copies random files
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1050
 _ when exporting to application (or applet) don't copy .java files from folder
@@ -1146,6 +1138,9 @@ _   and include an md5hash to see if the file is correct
 
 DIST / Windows
 
+2 _ Windows problem with some lab machines "Processing cannot run because 
+2 _   it could not create a folder to store your settings"
+2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1016
 _ check to see whether this bug is fixed once 0140 is released
 _   properly handle non-ascii chars in p5 folder name
 _   http://dev.processing.org/bugs/show_bug.cgi?id=49
