@@ -5,7 +5,7 @@
  * rect(), quad(), and ellipse(). Squares are made
  * with rect() and circles are made with
  * ellipse(). Each of these functions requires a number
- * of parameters which determines the shape's position and size. 
+ * of parameters to determine the shape's position and size. 
  */
  
 size(200, 200);
