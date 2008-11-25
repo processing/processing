@@ -1,16 +1,8 @@
-caution: the beverage you're about to enjoy is extremely hot. this
-file is a list of changes between each release. this is not a general
-reference of how to use processing, because the information for older
-releases will be super crusty. 
-
-
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-
 
 PROCESSING 1.0 (REV 0162) - 24 November 2008
 
-Processing 1.0 has arrived! This release contains no additional changes 
-to the code since the revision 0161. See earlier release notes for details.
+Processing 1.0 has arrived! You can read an overview of changes introduced
+in the last few months here: http://processing.org/reference/changes.html
 
 [ known issues ] 
 
@@ -42,17 +34,19 @@ to the code since the revision 0161. See earlier release notes for details.
   strokeWeight is set.
   http://dev.processing.org/bugs/show_bug.cgi?id=955
 
-+ Unlike most applications, the menu bar is inside the editor window 
-  when Processing is used with Mac OS X 10.5. This is a workaround for
-  an Apple bug in Java 1.5 and 1.6 on Mac OS X 10.5 that causes the menu
-  bar to be so excessively slow that the application appears to have crashed.
++ Unlike most applications, the menu bar is inside the editor window when
+  Processing is used with Mac OS X 10.5. This is a workaround for an Apple 
+  bug in Java 1.5 and 1.6 on Mac OS X 10.5 that causes the menu bar to be 
+  so excessively slow that the application appears to have crashed.
   http://dev.processing.org/bugs/show_bug.cgi?id=786
-  Please file a bug report with Apple if you want this fixed. 
-  The problem has existed since the spring, and we first filed a bug 
-  with them in June, and we have received no indication that it when 
+
+  Please file a bug report with Apple at bugreporter.apple.com if you want
+  this fixed. The problem has existed since the spring, and we first filed 
+  a bug  with them in June, and we have received no indication that it when 
   it will be fixed, or if it will ever be fixed.
-  And if you want to take your chances with the slow menu bar, you can
-  change the default setting in the Preferences window.
+
+  Or if you want to take your chances with the slow menu bar, 
+  you can change the default setting in the Preferences window.
 
 + Sketches that use the video library plus OpenGL have a problem on some
   OS X machines. The workaround is listed in Comment #16 of this bug:
