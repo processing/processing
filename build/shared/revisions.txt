@@ -691,6 +691,11 @@ Also many, many updates to the examples and reference in this release.
 + Disable abyssmally slow Sun renderer on OS X 10.5, by setting 
   apple.awt.graphics.UseQuartz to true inside PApplet.main().
 
++ Removed /System/Library/Java from the CLASSPATH in the Processing.app 
+  Info.plist file on Mac OS X. This disables the com.apple.* classes,
+  but those are mostly deprecated anyway.
+  http://dev.processing.org/bugs/show_bug.cgi?id=1045
+
 [ bug fixes ] 
 
 + Prevent caps/joins from throwing an error and halting the render. 

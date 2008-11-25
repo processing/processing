@@ -42,8 +42,9 @@ import processing.core.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
-  static final int VERSION = 162;
-  static final String VERSION_NAME = "0162 Beta";
+  static final int REVISION = 162;
+  //static final String REVISION_NAME = "0162";
+  static final String VERSION_NAME = "1.0";
 
   static final int[] platforms = new int[] {
     PConstants.WINDOWS, PConstants.MACOSX, PConstants.LINUX
