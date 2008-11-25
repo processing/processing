@@ -11,7 +11,7 @@ $lang = isSet($_POST['lang']) ? $_POST['lang'] : 'en';
 // make changes file
 $lib_dir = 'reference/';
 $index = CONTENTDIR."api_$lang/changes.html";
-$page = new Page('Language (API) \\ Processing 1.0 (BETA)', 'Language');
+$page = new Page('Language (API)', 'Language');
 $page->content(file_get_contents($index));
 //make_necessary_directories(BASEDIR.$lib_dir.'/images/include.php');
 writeFile($lib_dir.'/changes.html', $page->out());
