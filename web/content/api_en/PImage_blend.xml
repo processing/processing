@@ -150,7 +150,7 @@ As of release 0149, this function ignores <b>imageMode()</b>.
 
 <parameter>
 <label>MODE</label>
-<description>Either BLEND, ADD, SUBTRACT, LIGHTEST, DARKEST, DIFFERENCE, EXCLUSION, MULTIPLY, SCREEN, OVERLAY, OVERLAY, SOFT_LIGHT, DODGE, BURN</description>
+<description>Either BLEND, ADD, SUBTRACT, LIGHTEST, DARKEST, DIFFERENCE, EXCLUSION, MULTIPLY, SCREEN, OVERLAY, HARD_LIGHT, SOFT_LIGHT, DODGE, BURN</description>
 </parameter>
 
 

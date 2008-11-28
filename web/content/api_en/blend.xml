@@ -137,7 +137,7 @@ blend(<c>srcImg</c>, <c>x</c>, <c>y</c>, <c>width</c>, <c>height</c>, <c>dx</c>,
 
 <parameter>
 <label>MODE</label>
-<description>Either BLEND, ADD, SUBTRACT, LIGHTEST, DARKEST, DIFFERENCE, EXCLUSION, MULTIPLY, SCREEN, OVERLAY, OVERLAY, SOFT_LIGHT, DODGE, BURN</description>
+<description>Either BLEND, ADD, SUBTRACT, LIGHTEST, DARKEST, DIFFERENCE, EXCLUSION, MULTIPLY, SCREEN, OVERLAY, HARD_LIGHT, SOFT_LIGHT, DODGE, BURN</description>
 </parameter>
 
 
