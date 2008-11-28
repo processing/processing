@@ -518,6 +518,10 @@ public class Base {
 
 
   boolean breakTime = false;
+  String[] months = {
+    "jan", "feb", "mar", "apr", "may", "jun",
+    "jul", "aug", "sep", "oct", "nov", "dec"
+  };
 
   /**
    * Handle creating a sketch folder, return its base .pde file
@@ -537,15 +541,19 @@ public class Base {
     // Use a generic name like sketch_031008a, the date plus a char
     int index = 0;
     //SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd");
-    SimpleDateFormat formatter = new SimpleDateFormat("MMMdd");
-    String purty = formatter.format(new Date()).toLowerCase();
+    //SimpleDateFormat formatter = new SimpleDateFormat("MMMdd");
+    //String purty = formatter.format(new Date()).toLowerCase();
+    Calendar cal = Calendar.getInstance(); 
+    int day = cal.get(Calendar.DAY_OF_MONTH);  // 1..31
+    int month = cal.get(Calendar.MONTH);  // 0..11
+    String purty = months[month] + PApplet.nf(day, 2);
     do {
       if (index == 26) {
         // In 0159, avoid running past z by sending people outdoors.
         if (!breakTime) {
           Base.showWarning("Time for a Break",
                            "You've reached the limit for auto naming of new sketches\n" +
-                           "for the day. How about going for walk instead?", null);
+                           "for the day. How about going for a walk instead?", null);
           breakTime = true;
         } else {
           Base.showWarning("Sunshine",
