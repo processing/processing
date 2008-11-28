@@ -1,4 +1,36 @@
 0163 pde
+_ the changes page doesn't have a toc entry for the 1.0 release notes
+_ add minim to the changes page 
+_ windows bug is the biggest problem
+_ proper libraries warning dialog
+_   check if libraries folder does not exist
+_   check to see if other libraries are installed
+_   warn user about moving libraries and restarting
+
+1 _ "An error occurred while starting the application" with Processing 0154+
+1 _   Maybe provide the old exe or another alternative?
+1 _   Have someone try this on lab machines until we can find one that breaks
+1 _   http://dev.processing.org/bugs/show_bug.cgi?id=986
+1 _   might be related to bug #1063 (below) 
+1 _   need to do a better job of error handling inside main()
+1 _ "[JavaAppLauncher Error] CallStaticVoidMethod() threw an exception" 
+1 _   on startup with OS X
+1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1063
+1 X ArrayIndexOutOfBoundsException with File > New (Processing 1.0)
+1 X   maybe a /tmp permissions problem? 
+1 X   are we not checking errors properly on this route?
+1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1067
+1 _   need to look into why this didn't give a better error message
+
+
+not /as/ important, but soon
+4 _ mangled menu text with java 6u10
+4 _   need to try adding the d3d flag to the .exe
+4 _   http://dev.processing.org/bugs/show_bug.cgi?id=1065
+2 _ "space-import-space-quote-semicolon" Causes Error in String or Comment
+2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1064
+5 _ "editor.indent" setting does not work properly
+5 _   http://dev.processing.org/bugs/show_bug.cgi?id=1073
 
 
 [ needs verification ] 
@@ -15,10 +47,6 @@ _   need someone to go out and test all scenarios of this
 
 _ command line support is currently broken (why?)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1048
-_ "An error occurred while starting the application" with Processing 0154+
-_   Maybe provide the old exe or another alternative?
-_   Have someone try this on lab machines until we can find one that breaks
-_   http://dev.processing.org/bugs/show_bug.cgi?id=986
 _ video library threading problems with other libraries
 _   http://dev.processing.org/bugs/show_bug.cgi?id=882
 _   using Capture.list() before size() sometimes works
@@ -714,8 +742,10 @@ PDE / Export
 1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1057
 1 _   update applet.html to point at java 6u10 with the new auto-update stuff
 1 _   also update applet on the home page to do the same
-_ failed export still copies random files
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1050
+4 _ failed export still copies random files
+4 _   Failed compile on Export or Export to Application 
+4 _   still creates folder and leaves mess behind
+4 _   http://dev.processing.org/bugs/show_bug.cgi?id=1050
 _ when exporting to application (or applet) don't copy .java files from folder
 _   (they'll be copied as source files later)
 _   make .java files and friends go to correct locations on export (app)
@@ -1166,8 +1196,11 @@ _   can comment out /System/Library/ as a test
 _ put stdout/stderr into ~/Library/Logs
 _   and have a .log extension so it can be browsed properly
 _ try LSMinimumSystemVersion in Info.plist
-_ Horizontal two finger scroll doesn't work in OS X
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1046
+5 _ Horizontal two finger scroll doesn't work in OS X
+5 _   also applies to horizontal scrolling on the mouse
+5 _   http://dev.processing.org/bugs/show_bug.cgi?id=1046
+5 _ Exiting a sketch with Command-Q or File > Quit doesn't call stop() on OS X
+5 _   http://dev.processing.org/bugs/show_bug.cgi?id=1069
 
 
 DIST / Linux
