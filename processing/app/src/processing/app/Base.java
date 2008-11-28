@@ -26,7 +26,6 @@ package processing.app;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import javax.swing.*;
@@ -543,7 +542,7 @@ public class Base {
     //SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd");
     //SimpleDateFormat formatter = new SimpleDateFormat("MMMdd");
     //String purty = formatter.format(new Date()).toLowerCase();
-    Calendar cal = Calendar.getInstance(); 
+    Calendar cal = Calendar.getInstance();
     int day = cal.get(Calendar.DAY_OF_MONTH);  // 1..31
     int month = cal.get(Calendar.MONTH);  // 0..11
     String purty = months[month] + PApplet.nf(day, 2);
@@ -763,46 +762,45 @@ public class Base {
     // Close the running window, avoid window boogers with multiple sketches
     editor.internalCloseRunner();
 
-    //if (editorCount == 1) {
     if (editors.size() == 1) {
       // For 0158, when closing the last window /and/ it was already an
       // untitled sketch, just give up and let the user quit.
 //      if (Preferences.getBoolean("sketchbook.closing_last_window_quits") ||
 //          (editor.untitled && !editor.getSketch().isModified())) {
-      Object[] options = { "OK", "Cancel" };
-      String prompt = Base.isMacOS() ?
-        "<html> " +
-        "<head> <style type=\"text/css\">"+
-        "b { font: 13pt \"Lucida Grande\" }"+
-        "p { font: 11pt \"Lucida Grande\"; margin-top: 8px }"+
-        "</style> </head>" +
-        "<b>Are you sure you want to Quit?</b>" +
-        "<p>Closing the last open sketch will quit Processing." :
-        "Are you sure you want to Quit?";
+      if (Base.isMacOS()) {
+        Object[] options = { "OK", "Cancel" };
+        String prompt =
+          "<html> " +
+          "<head> <style type=\"text/css\">"+
+          "b { font: 13pt \"Lucida Grande\" }"+
+          "p { font: 11pt \"Lucida Grande\"; margin-top: 8px }"+
+          "</style> </head>" +
+          "<b>Are you sure you want to Quit?</b>" +
+          "<p>Closing the last open sketch will quit Processing.";
 
-      int result = JOptionPane.showOptionDialog(editor,
-                                                prompt,
-                                                "Quit",
-                                                JOptionPane.YES_NO_OPTION,
-                                                JOptionPane.QUESTION_MESSAGE,
-                                                null,
-                                                options,
-                                                options[0]);
-      if (result == JOptionPane.YES_OPTION) {
-
-        // This will store the sketch count as zero
-        editors.remove(editor);
-        storeSketches();
-
-        // Save out the current prefs state
-        Preferences.save();
-
-        // Since this wasn't an actual Quit event, call System.exit()
-        System.exit(0);
-
-//      } else {
-//        return handleNewReplaceImpl();
+        int result = JOptionPane.showOptionDialog(editor,
+                                                  prompt,
+                                                  "Quit",
+                                                  JOptionPane.YES_NO_OPTION,
+                                                  JOptionPane.QUESTION_MESSAGE,
+                                                  null,
+                                                  options,
+                                                  options[0]);
+        if (result == JOptionPane.NO_OPTION) {
+          return false;
+        }
       }
+
+      // This will store the sketch count as zero
+      editors.remove(editor);
+      storeSketches();
+
+      // Save out the current prefs state
+      Preferences.save();
+
+      // Since this wasn't an actual Quit event, call System.exit()
+      System.exit(0);
+
     } else {
       // More than one editor window open,
       // proceed with closing the current window.
