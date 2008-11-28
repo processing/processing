@@ -7,6 +7,10 @@ _   check if libraries folder does not exist
 _   check to see if other libraries are installed
 _   warn user about moving libraries and restarting
 
+_ implement multi-line tab via tab key (also outdent)
+_   add preference for indent size
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1075
+
 1 _ "An error occurred while starting the application" with Processing 0154+
 1 _   Maybe provide the old exe or another alternative?
 1 _   Have someone try this on lab machines until we can find one that breaks
