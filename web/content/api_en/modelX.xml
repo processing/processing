@@ -11,7 +11,6 @@
 <example>
 <image></image>
 <code>
-// Adapted from http://dev.processing.org/bugs/show_bug.cgi?id=486 
 void setup() {
   size(500, 500, P3D);
   noFill();
@@ -22,7 +21,7 @@ void draw() {
  
   pushMatrix();
   // start at the middle of the screen
-  translate(width/2, height/2);     
+  translate(width/2, height/2, -200);     
   // some random rotation to make things interesting
   rotateY(1.0); //yrot);
   rotateZ(2.0); //zrot);
