@@ -5233,10 +5233,23 @@ public class PApplet extends Applet
 
 
   /**
-   * Split a String on a specific delimiter.
+   * Split a String on a specific delimiter. Unlike Java's String.split() 
+   * method, this does not parse the delimiter as a regexp because it's more
+   * confusing than necessary, and String.split() is always available for
+   * those who want regexp. 
    */
   static public String[] split(String what, String delim) {
-    return what.split(delim);
+    ArrayList<String> items = new ArrayList<String>();
+    int index;
+    int offset = 0;
+    while ((index = what.indexOf(delim, offset)) != -1) {
+      items.add(what.substring(offset, index));
+      offset = index + delim.length();
+    }
+    items.add(what.substring(offset));
+    String[] outgoing = new String[items.size()];
+    items.toArray(outgoing);
+    return outgoing;
   }
 
 
