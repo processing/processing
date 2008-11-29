@@ -1,6 +1,5 @@
 #!/bin/sh
 
-#REVISION=`head -c 4 ../../todo.txt`
 REVISION=`head -1 ../../todo.txt | awk '{print $1}'`
 
 if [ $1 ]
@@ -31,6 +30,12 @@ mkdir processing
 cp -r ../shared/lib processing/
 cp -r ../shared/libraries processing/
 cp -r ../shared/tools processing/
+
+if [ $1 ]
+then
+  # write the release version number into the output directory
+  echo $1 > processing/lib/version.txt
+fi
 
 cp ../../app/lib/antlr.jar processing/lib/
 cp ../../app/lib/ecj.jar processing/lib/
