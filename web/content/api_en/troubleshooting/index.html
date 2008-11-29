@@ -15,7 +15,7 @@ a problem? Hopefully the information on this page will help." /></h1>
 <a href="#opengl">Problems with OpenGL</a> <br />
 <a href="#issues">Common Issues (not bugs)</a> <br />
 <a href="#cantfix">Things that we probably can't fix</a> <br />
-<a href="#known">Known Bugs</a>
+<a href="#known">Known Issues</a>
 </p>
 
 <!-- NEXT SECTION -->
@@ -695,28 +695,84 @@ affect anything.
 
 	
 	<h5 id="known"><a href="#top"><img src="images/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
-      Known Bugs</h5>
+      Known Issues</h5>
 	<p><em>This section is incomplete, but contains some links to the bug
       database's Greatest Hits collection.</em>
 <br> <br>
-Automatically updated <A HREF="http://dev.processing.org/bugs/buglist.cgi?bug_status=ASSIGNED&bug_status=NEW&query_format=advanced&order=bugs.priority,bugs.bug_status%2Cbugs.bug_id&query_based_on=">list of new and confirmed bugs</A>. These are the things that are on our radar to be fixed. (That list does not include feature requests or things slated for a much later release).
-<br> <br>
-And of course, if these and others give you a burr in the
-saddle, <A HREF="http://dev.processing.org">join us</A> and help!
-<UL>
-<LI>strokeWeight() is disabled in P3D and OPENGL. Not really a bug
-per se (how do you define a stroke in 3D?), but something we'd like to
-fix someday. 
-(<A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=123">Bug 123</A>)
+Automatically updated <A HREF="http://dev.processing.org/bugs/buglist.cgi?bug_status=ASSIGNED&bug_status=NEW&query_format=advanced&order=bugs.priority,bugs.bug_status%2Cbugs.bug_id&query_based_on=">list of new and confirmed bugs</A>. These are the things that are on our radar to be fixed. (That list does not include feature requests or things slated for a much later release). And of course, if these and others give you a burr in the saddle, <A HREF="http://dev.processing.org">join us</A> and help!
+<ul>
+<li>Sketches that size(w, h, OPENGL) and do not clear the background on each 
+  frame can cause major flickering or problems when the screen clears anyway.
+  There are several possible solutions:
+<ol> 
+<li> You may need to disable the default 2x smoothing by using <tt>hint(DISABLE_OPENGL_2X_SMOOTH).</tt>
+  
+<li> Update the drivers for your graphics card.
+
+<li> Get a decent graphics card &mdash; the OpenGL renderer is for advanced use, we don't support using it with cheaper built-in graphics hardware like the Intel GMA 950. 
+
+<li> If you're running Windows Vista, try disabling the Aero theme. 
+</ol>
+
+  This flickering issue is being tracked 
+  <a href="http://dev.processing.org/bugs/show_bug.cgi?id=1056">here</a>.
+
+<li>On some Windows machines, the text of menus is mangled, or other strange artifacts show up when using Processing 1.0. The issue is being tracked <a href="http://dev.processing.org/bugs/show_bug.cgi?id=1065">here</a>, and is a result of bad interactions between Java 6 update 10 and some graphics hardware.
+
+<li> "An error occurred while starting the application" when launching
+  Processing.exe on Windows. This is a high priority however we cannot
+  reproduce it on any of our test machines, which has delayed a fix.
+  (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=986">Bug 986</a>)
+
+<li> With P2D, P3D, and OPENGL, series of connected lines (such as the stroke 
+  around a polygon, triangle, or ellipse) produce unattractive results when 
+  strokeWeight is set. (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=955">Bug 955</a>)
+
+<li> Unlike most applications, the menu bar is inside the editor window when
+  Processing is used with Mac OS X 10.5. This is a workaround for an Apple 
+  bug in Java 1.5 and 1.6 on Mac OS X 10.5 that causes the menu bar to be 
+  so excessively slow that the application appears to have crashed.
+  (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=786">Bug 786</a>)
+  <br /> 
+  Please file a bug report with Apple at <a href="http://bugreporter.apple.com">bugreporter.apple.com</a> if you want
+  this fixed. The problem has existed since the spring 2008, and we first filed 
+  a bug with them in June, and we have received no indication that it when 
+  it will be fixed, or if it will ever be fixed.
+  <br /> 
+  Or if you want to take your chances with the slow menu bar, 
+  you can change the default setting in the Preferences window.
+
+<li> Sketches that use the video library plus OpenGL have a problem on some
+  OS X machines. The workaround is listed 
+  <a href="http://dev.processing.org/bugs/show_bug.cgi?id=882#c16">here</a>.
+
+<li> Command line support arrived in a recent release, but is not working yet.
+  (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=1048">Bug 1048</a>)
+
+<li> OpenGL rendering is more dim/darker in release 0149 and later
+  (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=958">Bug 958</a>).
+  Any help tracking this down would be most appreciated.
+
+<li> The first few frames of OpenGL sketches on Windows run slowly.
+  (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=874">Bug 874</a>)
+
+<li> When used with P3D, strokeWeight does not interpolate the Z-coordinates 
+  of the lines, which means that when rotated, these flat lines may 
+  disappear. (Since, uh, lines are, you know, flat.) The OPENGL renderer 
+  setting does not share this problem because it always draws lines 
+  perpendicular to the screen (which we hope to do in a future release).
+  (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=956">Bug 956</a>)
+
+
 <LI>int() and float() don't always work, use ((int) blah) or ((float)
-blah) instead for the time being. or toInt(blah) and toFloat(blah). (<A
+blah) instead for the time being, or parseInt(blah) and parseFloat(blah). (<A
 HREF="http://as.processing.org/bugs/show_bug.cgi?id=4">Bug 4</A>)
 <LI>When you have too many tabs, things get ugly (<A
 HREF="http://processing.org/bugs/show_bug.cgi?id=54">Bug 54</A>)
 <LI>Error messages after you hit Run are often too long to read or too
 weird to understand
 (<A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=57">Bug 57</A>)
-<LI>Lots of little UI things like proper focus or key shortcuts 
+<LI>Lots of little UI things like proper key shortcuts 
 (<A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=26">Bug 26</A> 
 and many others)
 </UL></p>

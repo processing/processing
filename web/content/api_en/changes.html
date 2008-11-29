@@ -12,9 +12,9 @@ The Processing Language changes as the software evolves. Some of the most import
 changes are presented on this page." /></h1>
 
    <p><a href="#used">This used to work and now it doesn't</a><br />
-<!--   <a href="#125">Changes in 0125</a> <br />-->
-   <a href="#116">Changes in 0116 (approaching 1.0)</a><br />
-   <a href="#alpha">Changes between Alpha (Release 0069) and Beta (Release 0085)</a>
+   <a href="#0162">Changes in Processing 1.0</a> <br />
+   <a href="#0116">Changes in Beta 0116 (approaching 1.0)</a><br />
+   <a href="#0085">Changes between Alpha (Release 0069) and Beta (Release 0085)</a>
    </p>
 
 	<h5 id="used"><a href="#top"><img src="environment/images/up_arrow.gif" alt="Top" /></a> This used to work and now it doesn't</h5>
@@ -30,7 +30,7 @@ This page was updated prior to release 1.0.
 	
 	<p>&nbsp;</p>
 	
-	   <h5 id="116"><a href="#top"><img src="environment/images/up_arrow.gif" alt="Top" /></a> Changes in Processing 1.0 (revision 0162)</h5>
+	   <h5 id="0162"><a href="#top"><img src="environment/images/up_arrow.gif" alt="Top" /></a> Changes in Processing 1.0 (revision 0162)</h5>
 
 The biggest changes in the months prior to release 1.0 are as follows:
 
@@ -56,6 +56,8 @@ The biggest changes in the months prior to release 1.0 are as follows:
 
 <li><b>Asynchronouse Images</b> - Big JPEGs and small pipes? We've added a new <a href="http://processing.org/reference/requestImage_.html">requestImage()</a> that loads an image in the background so that your sketch doesn't freeze when loading lots of large images over a slow connection. 
 
+<li><b>Sound</b> - We've added <a href="http://code.compartmental.net/tools/minim/">Minim</a> to the download. It uses the JavaSound API to provide an easy-to-use audio library. Minim has a simple API while still providing a reasonable amount of flexibility for more advanced users.
+
 <li><b>Present</b> - Present mode (full screen) is handled differently. When run inside the PDE, only Mac OS X uses exclusive mode with Present. Windows and Linux just do full screen windows. When run outside the PDE, all three simply create an undecorated window the size of the entire screen, and on the Mac, an option is added to the Info.plist file to hide the dock and menubar (since that cannot be done programatically from Java). 
 
 <li><b>Compiler</b> - We've removed the old Jikes compiler and are now using another. We've also tried hard to improve the quality of error messages, though some are still real gems that invoke the complaints of mainframe computers in 1970s films.
@@ -70,7 +72,7 @@ Under the old numbering system, Processing 1.0 is revision 0162.
 
 	<p>&nbsp;</p>
 	
-	   <h5 id="116"><a href="#top"><img src="environment/images/up_arrow.gif" alt="Top" /></a> Changes in 0116+ (approaching 1.0)</h5>
+	   <h5 id="0116"><a href="#top"><img src="environment/images/up_arrow.gif" alt="Top" /></a> Changes in Beta 0116+ (approaching 1.0)</h5>
 
 Release 0116 contains many changes, frameRate(), beginShape(), 
 and endShape() are the biggest ones.
@@ -214,7 +216,7 @@ and endShape() are the biggest ones.
     
 	<p>&nbsp;</p>
 	
-	   <h5 id="alpha"><a href="#top"><img src="environment/images/up_arrow.gif" alt="Top" /></a> Changes between Alpha (Release 0069) and Beta (Release 0085)</h5>
+	   <h5 id="0085"><a href="#top"><img src="environment/images/up_arrow.gif" alt="Top" /></a> Changes between Alpha (Release 0069) and Beta (Release 0085)</h5>
 
        <p>Between revision 0069 (the last public alpha) and the beta release (0085), 
 many, many functions have been added, and are detailed in the 
