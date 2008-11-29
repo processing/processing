@@ -25,7 +25,15 @@ past week following the announcement.
 
 + Fixed some "An error occurred while starting the application" problems
 
-+ Added minim to the changes page 
++ Added a note about the Minim library to the changes page.
+
++ Disable parsing of regexps with the split() command
+  http://dev.processing.org/bugs/show_bug.cgi?id=1060
+
++ Fixed ArrayIndexOutOfBoundsException in ellipseImpl().
+  http://dev.processing.org/bugs/show_bug.cgi?id=1068
+
++ Fixed problem where small ellipses weren't showing up.
 
 [ changes ] 
 
