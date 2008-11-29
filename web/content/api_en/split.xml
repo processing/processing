@@ -30,7 +30,7 @@ int[] nums = int(split(numbers, ' '));
 <image></image>
 <code>
 String men = "Chernenko ] Andropov ] Brezhnev";
-String[] list = split(men, " \\] ");
+String[] list = split(men, " \\\\] ");
 // list[0] is now Chernenko, list[1] is Andropov, ...
 </code>
 </example>
@@ -42,7 +42,7 @@ If the result is a set of numbers, you can convert the String[] array to to a fl
 <br/> <br/> 
 The <b>splitTokens()</b> function works in a similar fashion, except that it splits using a range of characters instead of a specific character or sequence.
 <br /><br />
-This function uses regular expressions to determine how the <b>delim</b> parameter divides the <b>str</b> parameter. Therefore, if you use characters such parentheses and brackets that are used with regular expressions as a part of the <b>delim</b> parameter, you'll need to put two blackslashes (\\) in front of the character (see example above). You can read more about <a href="http://en.wikipedia.org/wiki/Regular_expression">regular expressions</a> and <a href="http://en.wikipedia.org/wiki/Escape_character">escape characters</a> on Wikipedia.
+This function uses regular expressions to determine how the <b>delim</b> parameter divides the <b>str</b> parameter. Therefore, if you use characters such parentheses and brackets that are used with regular expressions as a part of the <b>delim</b> parameter, you'll need to put two blackslashes (\\\\) in front of the character (see example above). You can read more about <a href="http://en.wikipedia.org/wiki/Regular_expression">regular expressions</a> and <a href="http://en.wikipedia.org/wiki/Escape_character">escape characters</a> on Wikipedia.
 </description>
 
 <syntax>
