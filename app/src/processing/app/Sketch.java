@@ -1804,9 +1804,9 @@ public class Sketch {
     }
     if (is == null) {
       if (renderer.equals("OPENGL")) {
-        is = Base.getStream("export/applet-opengl.html");
+        is = Base.getLibStream("export/applet-opengl.html");
       } else {
-        is = Base.getStream("export/applet.html");
+        is = Base.getLibStream("export/applet.html");
       }
     }
     BufferedReader reader = PApplet.createReader(is);
