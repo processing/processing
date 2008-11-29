@@ -27,6 +27,11 @@ rm -rf work
 
 ./make.sh
 
+if [ $1 ]
+then
+  # write the release version number into the output directory
+  echo $1 > work/Processing.app/Contents/Resources/Java/lib/version.txt
+fi
 
 echo Cleaning file boogers...
 
