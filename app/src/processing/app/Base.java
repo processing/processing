@@ -102,7 +102,7 @@ public class Base {
 
   static public void main(String args[]) {
     try {
-      File versionFile = getContentFile("version.txt");
+      File versionFile = getContentFile("lib/version.txt");
       if (versionFile.exists()) {
         VERSION_NAME = PApplet.loadStrings(versionFile)[0];
       }
@@ -1754,8 +1754,7 @@ public class Base {
   /**
    * Return an InputStream for a file inside the Processing lib folder.
    */
-  static public InputStream getStream(String filename) throws IOException {
-    //return new FileInputStream(getLibContentsPath(filename));
+  static public InputStream getLibStream(String filename) throws IOException {
     return new FileInputStream(new File(getContentFile("lib"), filename));
   }
 

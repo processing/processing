@@ -59,7 +59,7 @@ public class PdeKeywords extends CTokenMarker {
         keywordColoring = new KeywordMap(false);
         keywordToReference = new Hashtable();
 
-        InputStream input = Base.getStream("keywords.txt");
+        InputStream input = Base.getLibStream("keywords.txt");
         InputStreamReader isr = new InputStreamReader(input);
         BufferedReader reader = new BufferedReader(isr);
 

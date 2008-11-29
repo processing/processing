@@ -46,7 +46,7 @@ public class Theme {
 
   static protected void init() {
     try {
-      load(Base.getStream("theme/theme.txt"));
+      load(Base.getLibStream("theme/theme.txt"));
     } catch (Exception te) {
       Base.showError(null, "Could not read color theme settings.\n" +
                            "You'll need to reinstall Processing.", te);
