@@ -701,7 +701,7 @@ public class Preferences {
 
 
   static protected void load(InputStream input) throws IOException {
-    String[] lines = PApplet.loadStrings(input);
+    String[] lines = PApplet.loadStrings(input);  // Reads as UTF-8
     for (String line : lines) {
       if ((line.length() == 0) ||
           (line.charAt(0) == '#')) continue;
@@ -721,83 +721,27 @@ public class Preferences {
 
 
   static protected void save() {
-    try {
-      // on startup, don't worry about it
-      // this is trying to update the prefs for who is open
-      // before Preferences.init() has been called.
-      if (preferencesFile == null) return;
+//    try {
+    // on startup, don't worry about it
+    // this is trying to update the prefs for who is open
+    // before Preferences.init() has been called.
+    if (preferencesFile == null) return;
 
-      FileOutputStream output = new FileOutputStream(preferencesFile);
-      PrintWriter writer = new PrintWriter(new OutputStreamWriter(output));
+    // Fix for 0163 to properly use Unicode when writing preferences.txt
+    PrintWriter writer = PApplet.createWriter(preferencesFile);
 
-      Enumeration e = table.keys(); //properties.propertyNames();
-      while (e.hasMoreElements()) {
-        String key = (String) e.nextElement();
-        writer.println(key + "=" + ((String) table.get(key)));
-      }
-
-      writer.flush();
-      writer.close();
-
-      /*
-      FileOutputStream output = null;
-
-      if ((Base.platform == Base.MACOSX) ||
-          (Base.platform == Base.MACOS9)) {
-        output = new FileOutputStream("lib/preferences.txt");
-
-      } else { // win95/98/ME doesn't set cwd properly
-        URL url = getClass().getResource("buttons.gif");
-        String urlstr = url.getFile();
-        urlstr = urlstr.substring(0, urlstr.lastIndexOf("/") + 1) +
-          ".properties";
-        output = new FileOutputStream(URLDecoder.decode(urlstr));
-      }
-      */
-
-      /*
-      //base.storePreferences();
-
-      Properties skprops = new Properties();
-
-      //Rectangle window = Base.frame.getBounds();
-      Rectangle window = editor.getBounds();
-      Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-
-      skprops.put("last.window.x", String.valueOf(window.x));
-      skprops.put("last.window.y", String.valueOf(window.y));
-      skprops.put("last.window.w", String.valueOf(window.width));
-      skprops.put("last.window.h", String.valueOf(window.height));
-
-      skprops.put("last.screen.w", String.valueOf(screen.width));
-      skprops.put("last.screen.h", String.valueOf(screen.height));
-
-      skprops.put("last.sketch.name", sketchName);
-      skprops.put("last.sketch.directory", sketchDir.getAbsolutePath());
-      //skprops.put("user.name", userName);
-
-      skprops.put("last.divider.location",
-                  String.valueOf(splitPane.getDividerLocation()));
-
-      //
-
-      skprops.put("editor.external", externalEditor ? "true" : "false");
-
-      //skprops.put("serial.port", Preferences.get("serial.port", "unspecified"));
-
-      // save() is deprecated, and didn't properly
-      // throw exceptions when it wasn't working
-      skprops.store(output, "Settings for processing. " +
-                    "See lib/preferences.txt for defaults.");
-
-      // need to close the stream.. didn't do this before
-      skprops.close();
-      */
-
-    } catch (IOException ex) {
-      Base.showWarning(null, "Error while saving the settings file", ex);
-      //e.printStackTrace();
+    Enumeration e = table.keys(); //properties.propertyNames();
+    while (e.hasMoreElements()) {
+      String key = (String) e.nextElement();
+      writer.println(key + "=" + ((String) table.get(key)));
     }
+
+    writer.flush();
+    writer.close();
+
+//    } catch (Exception ex) {
+//      Base.showWarning(null, "Error while saving the settings file", ex);
+//    }
   }
 
 
