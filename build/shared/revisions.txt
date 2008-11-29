@@ -1,4 +1,44 @@
 
+PROCESSING 1.0.1 (REV 0163) - 29 November 2008
+
+Processing 1.0 has arrived! You can read an overview of changes introduced
+in the last few months here: http://processing.org/reference/changes.html
+
+Also see the "known issues" section of the troubleshooting page:
+http://processing.org/reference/troubleshooting/#known
+
+This release (1.0.1) fixes a handful of issues that only showed up once we 
+had more testing, particularly with the wider audience we've received in the
+past week following the announcement.
+
+[ bug fixes ] 
+
++ ArrayIndexOutOfBoundsException with File > New
+  http://dev.processing.org/bugs/show_bug.cgi?id=1067
+
++ "CallStaticVoidMethod() threw an exception" on some Mac OS X machines
+  http://dev.processing.org/bugs/show_bug.cgi?id=1063
+  http://dev.processing.org/bugs/show_bug.cgi?id=1078
+
++ "editor.indent" preference setting does not work properly
+  http://dev.processing.org/bugs/show_bug.cgi?id=1073
+
++ Fixed some "An error occurred while starting the application" problems
+
++ Added minim to the changes page 
+
+[ changes ] 
+
++ Implement multi-line tab via tab key (also outdent)
+  http://dev.processing.org/bugs/show_bug.cgi?id=1075
+
++ Code with 'import' and a space incorrectly parsed as an import statement
+  http://dev.processing.org/bugs/show_bug.cgi?id=1064
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING 1.0 (REV 0162) - 24 November 2008
 
 Processing 1.0 has arrived! You can read an overview of changes introduced
