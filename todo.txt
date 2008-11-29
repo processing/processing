@@ -16,10 +16,11 @@ X   the bracket isn't working on osx because of an apple menu bug
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1075
 X "editor.indent" setting does not work properly
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1073
+X "space-import-space-quote-semicolon" Causes Error in String or Comment
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1064
+X the changes page doesn't have a toc entry for the 1.0 release notes
+X add minim to the changes page 
 
-_ the changes page doesn't have a toc entry for the 1.0 release notes
-_ add minim to the changes page 
-_ windows bug is the biggest problem
 _ proper libraries warning dialog
 _   check if libraries folder does not exist
 _   check to see if other libraries are installed
@@ -36,8 +37,6 @@ not /as/ important, but soon
 4 _ mangled menu text with java 6u10
 4 _   need to try adding the d3d flag to the .exe
 4 _   http://dev.processing.org/bugs/show_bug.cgi?id=1065
-2 _ "space-import-space-quote-semicolon" Causes Error in String or Comment
-2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1064
 
 
 [ needs verification ] 
