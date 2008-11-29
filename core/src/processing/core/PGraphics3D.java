@@ -2592,55 +2592,55 @@ public class PGraphics3D extends PGraphics {
 
     if (fill) {
       int accuracy = (int) (TWO_PI * PApplet.dist(sx1, sy1, sx2, sy2) / 20);
-      if (accuracy > 3) {
-        float inc = (float)SINCOS_LENGTH / accuracy;
-        float val = 0;
+      if (accuracy < 6) accuracy = 6;
 
-        boolean strokeSaved = stroke;
-        stroke = false;
-        boolean smoothSaved = smooth;
-        if (smooth && stroke) {
-          smooth = false;
-        }
+      float inc = (float)SINCOS_LENGTH / accuracy;
+      float val = 0;
 
-        beginShape(TRIANGLE_FAN);
-        normal(0, 0, 1);
-        vertex(centerX, centerY);
-        for (int i = 0; i < accuracy; i++) {
-          vertex(centerX + cosLUT[(int) val] * radiusH,
-                 centerY + sinLUT[(int) val] * radiusV);
-          val += inc;
-        }
-        // back to the beginning
-        vertex(centerX + cosLUT[0] * radiusH,
-               centerY + sinLUT[0] * radiusV);
-        endShape();
-
-        stroke = strokeSaved;
-        smooth = smoothSaved;
+      boolean strokeSaved = stroke;
+      stroke = false;
+      boolean smoothSaved = smooth;
+      if (smooth && stroke) {
+        smooth = false;
       }
+
+      beginShape(TRIANGLE_FAN);
+      normal(0, 0, 1);
+      vertex(centerX, centerY);
+      for (int i = 0; i < accuracy; i++) {
+        vertex(centerX + cosLUT[(int) val] * radiusH,
+               centerY + sinLUT[(int) val] * radiusV);
+        val = (val + inc) % SINCOS_LENGTH;
+      }
+      // back to the beginning
+      vertex(centerX + cosLUT[0] * radiusH,
+             centerY + sinLUT[0] * radiusV);
+      endShape();
+
+      stroke = strokeSaved;
+      smooth = smoothSaved;
     }
 
     if (stroke) {
       int accuracy = (int) (TWO_PI * PApplet.dist(sx1, sy1, sx2, sy2) / 8);
-      if (accuracy > 3) {
-        float inc = (float)SINCOS_LENGTH / accuracy;
-        float val = 0;
+      if (accuracy < 6) accuracy = 6;
 
-        boolean savedFill = fill;
-        fill = false;
+      float inc = (float)SINCOS_LENGTH / accuracy;
+      float val = 0;
 
-        val = 0;
-        beginShape();
-        for (int i = 0; i < accuracy; i++) {
-          vertex(centerX + cosLUT[(int) val] * radiusH,
-                 centerY + sinLUT[(int) val] * radiusV);
-          val += inc;
-        }
-        endShape(CLOSE);
+      boolean savedFill = fill;
+      fill = false;
 
-        fill = savedFill;
+      val = 0;
+      beginShape();
+      for (int i = 0; i < accuracy; i++) {
+        vertex(centerX + cosLUT[(int) val] * radiusH,
+               centerY + sinLUT[(int) val] * radiusV);
+        val = (val + inc) % SINCOS_LENGTH;
       }
+      endShape(CLOSE);
+
+      fill = savedFill;
     }
   }
 
