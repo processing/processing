@@ -1,4 +1,22 @@
 0163 pde
+X ArrayIndexOutOfBoundsException with File > New (Processing 1.0)
+X   maybe a /tmp permissions problem? 
+X   are we not checking errors properly on this route?
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1067
+X   need to look into why this didn't give a better error message
+X "[JavaAppLauncher Error] CallStaticVoidMethod() threw an exception" 
+X   on startup with OS X
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1063
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1078
+X Fix some "An error occurred while starting the application" problems
+X   due to the weird sketch folder naming issue
+X implement multi-line tab via tab key (also outdent)
+o   add preference for indent size
+X   the bracket isn't working on osx because of an apple menu bug
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1075
+X "editor.indent" setting does not work properly
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1073
+
 _ the changes page doesn't have a toc entry for the 1.0 release notes
 _ add minim to the changes page 
 _ windows bug is the biggest problem
@@ -7,24 +25,11 @@ _   check if libraries folder does not exist
 _   check to see if other libraries are installed
 _   warn user about moving libraries and restarting
 
-_ implement multi-line tab via tab key (also outdent)
-_   add preference for indent size
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1075
-
 1 _ "An error occurred while starting the application" with Processing 0154+
 1 _   Maybe provide the old exe or another alternative?
 1 _   Have someone try this on lab machines until we can find one that breaks
 1 _   http://dev.processing.org/bugs/show_bug.cgi?id=986
-1 _   might be related to bug #1063 (below) 
-1 _   need to do a better job of error handling inside main()
-1 _ "[JavaAppLauncher Error] CallStaticVoidMethod() threw an exception" 
-1 _   on startup with OS X
-1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1063
-1 X ArrayIndexOutOfBoundsException with File > New (Processing 1.0)
-1 X   maybe a /tmp permissions problem? 
-1 X   are we not checking errors properly on this route?
-1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1067
-1 _   need to look into why this didn't give a better error message
+1 _ need to do a better job of error handling inside main()
 
 
 not /as/ important, but soon
@@ -33,8 +38,6 @@ not /as/ important, but soon
 4 _   http://dev.processing.org/bugs/show_bug.cgi?id=1065
 2 _ "space-import-space-quote-semicolon" Causes Error in String or Comment
 2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1064
-5 _ "editor.indent" setting does not work properly
-5 _   http://dev.processing.org/bugs/show_bug.cgi?id=1073
 
 
 [ needs verification ] 

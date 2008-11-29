@@ -53,7 +53,7 @@ public class Theme {
     }
 
     // check for platform-specific properties in the defaults
-    String platformExt = "." + PConstants.platformNames[PApplet.platform];
+    String platformExt = "." + Base.getPlatformName();
     int platformExtLength = platformExt.length();
     Enumeration e = table.keys();
     while (e.hasMoreElements()) {
