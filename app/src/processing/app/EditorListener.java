@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-06 Ben Fry and Casey Reas
+  Copyright (c) 2004-08 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -43,18 +43,18 @@ import java.awt.event.*;
  * smarter parser/formatter, rather than continuing to hack this class.
  */
 public class EditorListener {
-  Editor editor;
-  JEditTextArea textarea;
+  private Editor editor;
+  private JEditTextArea textarea;
 
-  boolean externalEditor;
-  boolean tabsExpand;
-  boolean tabsIndent;
-  int tabSize;
-  String tabString;
-  boolean autoIndent;
+  private boolean externalEditor;
+  private boolean tabsExpand;
+  private boolean tabsIndent;
+  private int tabSize;
+  private String tabString;
+  private boolean autoIndent;
 
-  int selectionStart, selectionEnd;
-  int position;
+//  private int selectionStart, selectionEnd;
+//  private int position;
 
   /** ctrl-alt on windows and linux, cmd-alt on mac os x */
   static final int CTRL_ALT = ActionEvent.ALT_MASK |
@@ -107,7 +107,7 @@ public class EditorListener {
     //System.out.println();
 
     Sketch sketch = editor.getSketch();
-    
+
     if ((event.getModifiers() & CTRL_ALT) == CTRL_ALT) {
       if (code == KeyEvent.VK_LEFT) {
         sketch.handlePrevCode();
@@ -208,8 +208,12 @@ public class EditorListener {
 
     switch ((int) c) {
 
-    case 9:
-      if (tabsExpand) {  // expand tabs
+    case 9:  // TAB
+      if (textarea.isSelectionActive()) {
+        boolean outdent = (event.getModifiers() & KeyEvent.SHIFT_MASK) != 0;
+        editor.handleIndentOutdent(!outdent);
+
+      } else if (tabsExpand) {  // expand tabs
         textarea.setSelectedText(tabString);
         event.consume();
         return true;
@@ -393,12 +397,15 @@ public class EditorListener {
             }
           }
         }
-
-        // mark this event as already handled
-        event.consume();
-        return true;
+      } else {
+        // Enter/Return was being consumed by somehow even if false
+        // was returned, so this is a band-aid to simply fire the event again.
+        // http://dev.processing.org/bugs/show_bug.cgi?id=1073
+        textarea.setSelectedText(String.valueOf(c));
       }
-      break;
+      // mark this event as already handled (all but ignored)
+      event.consume();
+      return true;
 
     case '}':
       if (autoIndent) {
@@ -434,59 +441,9 @@ public class EditorListener {
         if (!finished) return false;  // brace with no start
         int lineStartIndex = index;
 
-        /*
-        // now that we know things are ok to be indented, walk
-        // backwards to the last { to see how far its line is indented.
-        // this isn't perfect cuz it'll pick up commented areas,
-        // but that's not really a big deal and can be fixed when
-        // this is all given a more complete (proper) solution.
-        index = prevCharIndex;
-        int braceDepth = 1;
-        finished = false;
-        while ((index != -1) && (!finished)) {
-          if (contents[index] == '}') {
-            // aww crap, this means we're one deeper
-            // and will have to find one more extra {
-            braceDepth++;
-            index--;
-          } else if (contents[index] == '{') {
-            braceDepth--;
-            if (braceDepth == 0) {
-              finished = true;
-            } // otherwise just teasing, keep going..
-          } else {
-            index--;
-          }
-        }
-        // never found a proper brace, be safe and don't do anything
-        if (!finished) return false;
-
-        // check how many spaces on the line with the matching open brace
-        int pairedSpaceCount = calcSpaceCount(index, contents);
-        //System.out.println(pairedSpaceCount);
-        */
         int pairedSpaceCount = calcBraceIndent(prevCharIndex, contents); //, 1);
         if (pairedSpaceCount == -1) return false;
 
-        /*
-        // now walk forward and figure out how many spaces there are
-        while ((index < contents.length) && (index >= 0) &&
-               (contents[index++] == ' ')) {
-          spaceCount++;
-        }
-        */
-
-        // number of spaces found on this line
-        //int newSpaceCount = Math.max(0, spaceCount - tabSize);
-        // number of spaces on this current line
-        //int spaceCount = calcSpaces(caretIndex, contents);
-        //System.out.println("spaces is " + spaceCount);
-        //String insertion = "\n" + Editor.EMPTY.substring(0, spaceCount);
-        //int differential = newSpaceCount - spaceCount;
-        //System.out.println("diff is " + differential);
-        //int newStart = textarea.getSelectionStart() + differential;
-        //textarea.setSelectionStart(newStart);
-        //textarea.setSelectedText("}");
         textarea.setSelectionStart(lineStartIndex);
         textarea.setSelectedText(Editor.EMPTY.substring(0, pairedSpaceCount));
 
@@ -500,16 +457,8 @@ public class EditorListener {
   }
 
 
-  /** Cmd-Shift or Ctrl-Shift depending on the platform */
-  //static final int CMD_SHIFT = ActionEvent.SHIFT_MASK |
-  //  Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
-  /** ctrl-alt on windows and linux, cmd-alt on mac os x */
-  //static final int CTRL_ALT = ActionEvent.ALT_MASK |
-  //  Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
-
   public boolean keyTyped(KeyEvent event) {
     char c = event.getKeyChar();
-    //int code = event.getKeyCode();
 
     if ((event.getModifiers() & KeyEvent.CTRL_MASK) != 0) {
       // on linux, ctrl-comma (prefs) being passed through to the editor
@@ -519,21 +468,6 @@ public class EditorListener {
       }
     }
     return false;
-
-    /*
-    if ((event.getModifiers() & CMD_ALT) == CMD_ALT) {
-      if (code == KeyEvent.VK_LEFT) {
-      //if (c == '[') {
-        editor.sketch.prevCode();
-        return true;
-      } else if (code == KeyEvent.VK_RIGHT) {
-        //} else if (c == ']') {
-        editor.sketch.nextCode();
-        return true;
-      }
-    }
-    return false;
-    */
   }
 
 
