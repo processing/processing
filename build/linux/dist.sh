@@ -34,6 +34,12 @@ cp ../../app/lib/ecj.jar processing/lib/
 cp ../../app/lib/jna.jar processing/lib/
 cp ../shared/revisions.txt processing/
 
+if [ $1 ]
+then
+  # write the release version number into the output directory
+  echo $1 > processing/lib/version.txt
+fi
+
 echo Extracting examples...
 unzip -q -d processing/ ../shared/examples.zip
 
