@@ -379,7 +379,7 @@ public class Runner implements MessageConsumer {
     //String addr = "localhost:" + (8000 + (int) (Math.random() * 1000));
     //String addr = "" + (8000 + (int) (Math.random() * 1000));
 
-    String commandArgs = (PApplet.platform == PConstants.WINDOWS) ?
+    String commandArgs = Base.isWindows() ?
       "java -Xrunjdwp:transport=dt_shmem,address=" + addr + ",suspend=y " :
       "java -Xrunjdwp:transport=dt_socket,address=" + addr + ",suspend=y ";
     //String commandArgs = "java -agentlib:jdwp=transport=dt_socket,address=" + addr + ",suspend=y ";

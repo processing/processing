@@ -50,9 +50,6 @@ public class Editor extends JFrame implements RunnerListener {
 
   Base base;
 
-  // yeah
-  static final String WINDOW_TITLE = "Processing " + Base.VERSION_NAME;
-
   // otherwise, if the window is resized with the message label
   // set to blank, it's preferredSize() will be fukered
   static protected final String EMPTY =
@@ -130,7 +127,7 @@ public class Editor extends JFrame implements RunnerListener {
 
 
   public Editor(Base ibase, String path, int[] location) {
-    super(WINDOW_TITLE);
+    super("Processing");
     this.base = ibase;
 
     Base.setIcon(this);
@@ -576,22 +573,14 @@ public class Editor extends JFrame implements RunnerListener {
     }
     sketchMenu.add(importMenu);
 
-    //if (Base.isWindows() || Base.isMacOS()) {
-    // no way to do an 'open in file browser' on other platforms
-    // since there isn't any sort of standard
     item = newJMenuItem("Show Sketch Folder", 'K');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          //Base.openFolder(sketchDir);
           Base.openFolder(sketch.getFolder());
         }
       });
     sketchMenu.add(item);
-    if (!Base.openFolderAvailable()) {
-      item.setEnabled(false);
-    }
-
-    //menu.addSeparator();
+    item.setEnabled(Base.openFolderAvailable());
 
     item = new JMenuItem("Add File...");
     item.addActionListener(new ActionListener() {
@@ -601,8 +590,6 @@ public class Editor extends JFrame implements RunnerListener {
       });
     sketchMenu.add(item);
 
-    // TODO re-enable history
-    //history.attachMenu(menu);
     return sketchMenu;
   }
 
@@ -776,29 +763,6 @@ public class Editor extends JFrame implements RunnerListener {
   protected JMenu addInternalTools(JMenu menu) {
     JMenuItem item;
 
-          /*
-    item = newJMenuItem("Auto Format", 'T');
-    item.addActionListener(new ActionListener() {
-        synchronized public void actionPerformed(ActionEvent e) {
-          Jalopy jalopy = new Jalopy();
-          jalopy.setInput(getText(), sketch.current.file.getAbsolutePath());
-          StringBuffer buffer = new StringBuffer();
-          jalopy.setOutput(buffer);
-          jalopy.setInspect(false);
-          jalopy.format();
-          setText(buffer.toString(), 0, 0);
-
-          if (jalopy.getState() == Jalopy.State.OK)
-            System.out.println("successfully formatted");
-          else if (jalopy.getState() == Jalopy.State.WARN)
-            System.out.println(" formatted with warnings");
-          else if (jalopy.getState() == Jalopy.State.ERROR)
-            System.out.println(" could not be formatted");
-        }
-      });
-    menu.add(item);
-          */
-
     item = createToolMenuItem("processing.app.tools.AutoFormat");
     int modifiers = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
     item.setAccelerator(KeyStroke.getKeyStroke('T', modifiers));
@@ -808,38 +772,6 @@ public class Editor extends JFrame implements RunnerListener {
     menu.add(createToolMenuItem("processing.app.tools.ColorSelector"));
     menu.add(createToolMenuItem("processing.app.tools.Archiver"));
     menu.add(createToolMenuItem("processing.app.tools.FixEncoding"));
-
-    /*
-    item = new JMenuItem("Export Folder...");
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          SwingUtilities.invokeLater(new Runnable() {
-              public void run() {
-                new ExportFolder(Editor.this).show();
-              }
-            });
-        }
-      });
-    menu.add(item);
-    */
-
-    /*
-    item = new JMenuItem("Open in External Editor");
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          Preferences.setBoolean("editor.external", true);
-          applyPreferences();
-
-          String path = sketch.current.file.getAbsolutePath();
-          try {
-            Runtime.getRuntime().exec(new String[] {
-              "cmd", "/c", "c:\\emacs-20.7\\bin\\runemacs.exe", path
-            });
-          } catch (Exception ex) { }
-        }
-      });
-    menu.add(item);
-    */
 
     return menu;
   }
@@ -1724,7 +1656,7 @@ public class Editor extends JFrame implements RunnerListener {
 
     String prompt = "Save changes to " + sketch.getName() + "?  ";
 
-    if (PApplet.platform != PConstants.MACOSX) {
+    if (!Base.isMacOS()) {
       int result =
         JOptionPane.showConfirmDialog(this, prompt, "Close",
                                       JOptionPane.YES_NO_CANCEL_OPTION,
@@ -1903,7 +1835,7 @@ public class Editor extends JFrame implements RunnerListener {
     }
     header.rebuild();
     // Set the title of the window to "sketch_070752a - Processing 0126"
-    setTitle(sketch.getName() + " | " + WINDOW_TITLE);
+    setTitle(sketch.getName() + " | Processing " + Base.VERSION_NAME);
     // Disable untitled setting from previous document, if any
     untitled = false;
 

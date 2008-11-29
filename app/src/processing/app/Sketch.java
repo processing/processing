@@ -641,7 +641,7 @@ public class Sketch {
     }
     editor.header.repaint();
 
-    if (PApplet.platform == PConstants.MACOSX) {
+    if (Base.isMacOS()) {
       // http://developer.apple.com/qa/qa2001/qa1146.html
       Object modifiedParam = modified ? Boolean.TRUE : Boolean.FALSE;
       editor.getRootPane().putClientProperty("windowModified", modifiedParam);
@@ -1735,7 +1735,7 @@ public class Sketch {
       String dataFiles[] = Base.listFiles(dataFolder, false);
       int offset = folder.getAbsolutePath().length() + 1;
       for (int i = 0; i < dataFiles.length; i++) {
-        if (PApplet.platform == PApplet.WINDOWS) {
+        if (Base.isWindows()) {
           dataFiles[i] = dataFiles[i].replace('\\', '/');
         }
         File dataFile = new File(dataFiles[i]);
@@ -2179,10 +2179,10 @@ public class Sketch {
       String stubName = "Contents/MacOS/JavaApplicationStub";
       // need to set the stub to executable
       // will work on osx or *nix, but just dies on windows, oh well..
-      if (PApplet.platform == PConstants.WINDOWS) {
+      if (Base.isWindows()) {
         File warningFile = new File(destFolder, "readme.txt");
         PrintWriter pw = PApplet.createWriter(warningFile);
-        pw.println("This application was created on Windows, which doesn't");
+        pw.println("This application was created on Windows, which does not");
         pw.println("properly support setting files as \"executable\",");
         pw.println("a necessity for applications on Mac OS X.");
         pw.println();
@@ -2253,7 +2253,7 @@ public class Sketch {
       String dataFiles[] = Base.listFiles(dataFolder, false);
       int offset = folder.getAbsolutePath().length() + 1;
       for (int i = 0; i < dataFiles.length; i++) {
-        if (PApplet.platform == PApplet.WINDOWS) {
+        if (Base.isWindows()) {
           dataFiles[i] = dataFiles[i].replace('\\', '/');
         }
         File dataFile = new File(dataFiles[i]);
@@ -2478,7 +2478,7 @@ public class Sketch {
 
       String shellPath = shellScript.getAbsolutePath();
       // will work on osx or *nix, but just dies on windows, oh well..
-      if (PApplet.platform != PConstants.WINDOWS) {
+      if (!Base.isWindows()) {
         Runtime.getRuntime().exec(new String[] { "chmod", "+x", shellPath });
       }
     }
