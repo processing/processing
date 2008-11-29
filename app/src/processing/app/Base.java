@@ -42,12 +42,7 @@ import processing.core.*;
  */
 public class Base {
   static final int REVISION = 163;
-  //static final String REVISION_NAME = "0163";
-  static final String VERSION_NAME = "1.0 (0163)";
-
-  static final int[] platforms = new int[] {
-    PConstants.WINDOWS, PConstants.MACOSX, PConstants.LINUX
-  };
+  static String VERSION_NAME = "0163";    
 
   static HashMap<Integer, String> platformNames = new HashMap();
   static {
@@ -106,6 +101,15 @@ public class Base {
 
 
   static public void main(String args[]) {
+    try {
+      File versionFile = getContentFile("version.txt");
+      if (versionFile.exists()) {
+        VERSION_NAME = PApplet.loadStrings(versionFile)[0];
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
 //    if (System.getProperty("mrj.version") != null) {
 //      //String jv = System.getProperty("java.version");
 //      String ov = System.getProperty("os.version");
@@ -839,7 +843,7 @@ public class Base {
       // Save out the current prefs state
       Preferences.save();
 
-      if (PApplet.platform != PConstants.MACOSX) {
+      if (!Base.isMacOS()) {
         // If this was fired from the menu or an AppleEvent (the Finder),
         // then Mac OS X will send the terminate signal itself.
         System.exit(0);
@@ -1189,11 +1193,47 @@ public class Base {
   /**
    * Get list of platform constants.
    */
-  static public int[] getPlatforms() {
-    return platforms;
+//  static public int[] getPlatforms() {
+//    return platforms;
+//  }
+
+
+//  static public int getPlatform() {
+//    String osname = System.getProperty("os.name");
+//
+//    if (osname.indexOf("Mac") != -1) {
+//      return PConstants.MACOSX;
+//
+//    } else if (osname.indexOf("Windows") != -1) {
+//      return PConstants.WINDOWS;
+//
+//    } else if (osname.equals("Linux")) {  // true for the ibm vm
+//      return PConstants.LINUX;
+//
+//    } else {
+//      return PConstants.OTHER;
+//    }
+//  }
+
+
+  static public String getPlatformName() {
+    String osname = System.getProperty("os.name");
+
+    if (osname.indexOf("Mac") != -1) {
+      return "macosx";
+
+    } else if (osname.indexOf("Windows") != -1) {
+      return "windows";
+
+    } else if (osname.equals("Linux")) {  // true for the ibm vm
+      return "linux";
+
+    } else {
+      return "other";
+    }
   }
-
-
+  
+  
   /**
    * Map a platform constant to its name.
    * @param which PConstants.WINDOWS, PConstants.MACOSX, PConstants.LINUX
@@ -1209,12 +1249,18 @@ public class Base {
     return (entry == null) ? -1 : entry.intValue();
   }
 
+  
+  // These were changed to no longer rely on PApplet and PConstants because
+  // of conflicts that could happen with older versions of core.jar, where
+  // the MACOSX constant would instead read as the LINUX constant. 
+
 
   /**
    * returns true if Processing is running on a Mac OS X machine.
    */
   static public boolean isMacOS() {
-    return PApplet.platform == PConstants.MACOSX;
+    //return PApplet.platform == PConstants.MACOSX;
+    return System.getProperty("os.name").indexOf("Mac") != -1;
   }
 
 
@@ -1222,7 +1268,8 @@ public class Base {
    * returns true if running on windows.
    */
   static public boolean isWindows() {
-    return PApplet.platform == PConstants.WINDOWS;
+    //return PApplet.platform == PConstants.WINDOWS;
+    return System.getProperty("os.name").indexOf("Windows") != -1;
   }
 
 
@@ -1230,7 +1277,8 @@ public class Base {
    * true if running on linux.
    */
   static public boolean isLinux() {
-    return PApplet.platform == PConstants.LINUX;
+    //return PApplet.platform == PConstants.LINUX;
+    return System.getProperty("os.name").indexOf("Linux") != -1;
   }
 
 
@@ -1664,7 +1712,7 @@ public class Base {
     String path = System.getProperty("user.dir");
 
     // Get a path to somewhere inside the .app folder
-    if (PApplet.platform == PConstants.MACOSX) {
+    if (Base.isMacOS()) {
 //      <key>javaroot</key>
 //      <string>$JAVAROOT</string>
       String javaroot = System.getProperty("javaroot");
