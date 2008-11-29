@@ -240,7 +240,8 @@ public class PdePreprocessor {
     String prefsLine = Preferences.get("preproc.imports");
     defaultImports = PApplet.splitTokens(prefsLine, ", ");
 
-    String importRegexp = "(?:^|\\s|;)(import\\s+)(\\S+)(\\s*;)";
+    //String importRegexp = "(?:^|\\s|;)(import\\s+)(\\S+)(\\s*;)";
+    String importRegexp = "(?:^|;)\\s*(import\\s+)(\\S+)(\\s*;)";
     programImports = new ArrayList<String>();
 
     do {
