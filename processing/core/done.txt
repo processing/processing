@@ -1,3 +1,10 @@
+0163 core  (1.0.1)
+X do not parse split() with regexp
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1060
+X ArrayIndexOutOfBoundsException in ellipseImpl() with 1.0
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1068
+
+
 0162 core (1.0)
 X no additional changes for 1.0
 
