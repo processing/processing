@@ -62,18 +62,24 @@
     a javadoc comment, the text can (and should) be any valid html since it will 
     be embedded directly in the page. Asterisks at the left of each line will 
     be removed.</p> 
+    
+    <!-- Application Export -->
+    
     <h5 id="application"><a href="#top"><img src="images/up_arrow.gif" alt="Top" /></a> 
       Application Export</h5>
     <p> In addition to exporting Java Applets for the Web, Processing can also 
-      export Java Applications for the Linux, Macintosh, and Windows platforms 
-      (as of release 0097). When &quot;Export Application&quot; is selected from 
-      the &quot;File&quot; menu, folders will be created for each of the operating 
-      systems specified in the Preferences. Each folder contains the application, 
-      the source code for the sketch, and all required libraries for a specific 
-      platform.</p>
+      export Java Applications for the Linux, Macintosh, and Windows platforms. 
+      When &quot;Export Application&quot; is selected from 
+      the &quot;File&quot; menu, a dialog box opens and you can select which platforms
+      you want to export to. You may also select if you want the application to 
+      run full screen (in present mode). A folder will be created for each of the operating 
+      systems selected; each folder contains the application, the source code for the sketch, 
+      and all required libraries for a specific platform.</p>
+      
     <p>Making applications can be trickier than applets. Some hints and notes 
       follow below. If you find problems, <A HREF="http://dev.processing.org/bugs/">file 
       a bug</A>. 
+    
     <UL>
       <LI>Just like when exporting as an applet, the "application.xxxx" folders 
         will be removed completely on export. 
@@ -93,17 +99,17 @@ static public void main(String args[]) {
         variables not being properly set up. If you opt not to use PApplet.main(), 
         make sure you read the source code for it so that you understand how it 
         works, and don't whine if it breaks. 
-      <LI>To make an exported application run in "present" mode, you'll have to 
+      <!-- <LI>To make an exported application run in "present" mode, you'll have to 
         write your own main(). It needs to look something like this: 
         <PRE>
 static public void main(String args[]) {
   PApplet.main(new String[] { "--present", "YourClassName" });
 }
-</PRE>
-        Other advanced options (like how to hide the stop button) can be read 
+</PRE>-->
+        <!-- Other advanced options (like how to hide the stop button) can be read 
         in the <A HREF="http://dev.processing.org/reference/core/javadoc/processing/core/PApplet.html#main(java.lang.String[])">developer's 
         reference</A> for main(). In a future release, this will be part of an 
-        export options dialog. 
+        export options dialog.--> 
       <LI>The "Movie" and "Capture" examples do not yet work properly, this will 
         be fixed shortly. (<A
 HREF="http://dev.processing.org/bugs/show_bug.cgi?id=230">Bug 230</A>) 
@@ -111,9 +117,9 @@ HREF="http://dev.processing.org/bugs/show_bug.cgi?id=230">Bug 230</A>)
         clear the extent of this issue (<A
 HREF="http://dev.processing.org/bugs/show_bug.cgi?id=231">Bug 231</A>), but it 
         will be repaired for a future release. 
-      <LI>Export to Application will create sketches for Windows, Mac OS X, and 
+      <!--<LI>Export to Application will create sketches for Windows, Mac OS X, and 
         Linux. Someday we might implement a dialog box that lets you select which 
-        one you actually want, but for now, enjoy the bounty. 
+        one you actually want, but for now, enjoy the bounty.--> 
       <LI>When exporting for Mac OS X from Windows, be sure to read through the 
         readme.txt file in the application.macosx folder&mdash;your application 
         likely won't work on Mac OS X without a minor modification. 
@@ -196,7 +202,7 @@ or use the Java package maker whatchamacallit on Mac OS X).
 
 void keyPressed() {
   if (key == ESC) {
-    key = 0;  // fools! don't let them escape!
+    key = 0;  // Fools! don't let them escape!
   }
 }
 
