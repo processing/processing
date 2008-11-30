@@ -1,25 +1,5 @@
-0163 pde
-X ArrayIndexOutOfBoundsException with File > New (Processing 1.0)
-X   maybe a /tmp permissions problem? 
-X   are we not checking errors properly on this route?
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1067
-X   need to look into why this didn't give a better error message
-X "[JavaAppLauncher Error] CallStaticVoidMethod() threw an exception" 
-X   on startup with OS X
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1063
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1078
-X Fix some "An error occurred while starting the application" problems
-X   due to the weird sketch folder naming issue
-X implement multi-line tab via tab key (also outdent)
-o   add preference for indent size
-X   the bracket isn't working on osx because of an apple menu bug
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1075
-X "editor.indent" setting does not work properly
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1073
-X "space-import-space-quote-semicolon" Causes Error in String or Comment
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1064
-X the changes page doesn't have a toc entry for the 1.0 release notes
-X add minim to the changes page 
+0164 pde 
+
 
 _ proper libraries warning dialog
 _   check if libraries folder does not exist
