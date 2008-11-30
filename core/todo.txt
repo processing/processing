@@ -1,8 +1,5 @@
-0163 core
-X do not parse split() with regexp
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1060
-X ArrayIndexOutOfBoundsException in ellipseImpl() with 1.0
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1068
+0164 core
+
 
 _ focus not coming through, ESC no longer working 
 

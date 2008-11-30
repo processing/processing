@@ -41,8 +41,8 @@ import processing.core.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
-  static final int REVISION = 163;
-  static String VERSION_NAME = "0163";    
+  static final int REVISION = 164;
+  static String VERSION_NAME = "0165";
 
   static HashMap<Integer, String> platformNames = new HashMap();
   static {
@@ -1232,8 +1232,8 @@ public class Base {
       return "other";
     }
   }
-  
-  
+
+
   /**
    * Map a platform constant to its name.
    * @param which PConstants.WINDOWS, PConstants.MACOSX, PConstants.LINUX
@@ -1249,10 +1249,10 @@ public class Base {
     return (entry == null) ? -1 : entry.intValue();
   }
 
-  
+
   // These were changed to no longer rely on PApplet and PConstants because
   // of conflicts that could happen with older versions of core.jar, where
-  // the MACOSX constant would instead read as the LINUX constant. 
+  // the MACOSX constant would instead read as the LINUX constant.
 
 
   /**
