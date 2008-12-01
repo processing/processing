@@ -1643,8 +1643,7 @@ public class Sketch {
     // unpacks all jar files, unless multi jar files selected in prefs
     if (codeFolder.exists()) {
       String includes = Compiler.contentsToClassPath(codeFolder);
-      System.out.println(includes);
-      String codeList[] = PApplet.split(includes, File.separatorChar);
+      String[] codeList = PApplet.splitTokens(includes, File.separator);
       String cp = "";
       for (int i = 0; i < codeList.length; i++) {
         if (codeList[i].toLowerCase().endsWith(".jar") ||
@@ -2273,7 +2272,8 @@ public class Sketch {
     // add the contents of the code folder to the jar
     if (codeFolder.exists()) {
       String includes = Compiler.contentsToClassPath(codeFolder);
-      String codeList[] = PApplet.split(includes, File.separatorChar);
+      // Use tokens to get rid of extra blanks, which causes huge exports
+      String[] codeList = PApplet.splitTokens(includes, File.separator);
       String cp = "";
       for (int i = 0; i < codeList.length; i++) {
         if (codeList[i].toLowerCase().endsWith(".jar") ||
@@ -2576,10 +2576,7 @@ public class Sketch {
                                           ZipOutputStream zos,
                                           Hashtable zipFileContents)
     throws IOException {
-    String pieces[] = PApplet.split(path, File.pathSeparatorChar);
-    //new Exception().printStackTrace();
-    //PApplet.println(pieces);
-    //PApplet.println();
+    String[] pieces = PApplet.split(path, File.pathSeparatorChar);
 
     for (int i = 0; i < pieces.length; i++) {
       if (pieces[i].length() == 0) continue;
