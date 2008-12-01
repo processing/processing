@@ -167,22 +167,7 @@ It seems that this happens when an older version of <a href="http://fink.sourcef
 Linux
 
 <UL>
-<li><strike>If you get an error reading <TT>jikes: error while loading 
-shared libraries: libstdc++.so.5: cannot open shared object file: 
-No such file or directory</TT>,
-It's because Processing requires libstdc++-libc6.2-2.so.3 for jikes. 
-You should either install it or, since it's old, install the rpm/package 
-for compat-libstdc++ before Processing will run. Or find/rebuild a different 
-version of jikes that's compatible with your distro. Jikes is available 
-<a href="http://sourceforge.net/project/showfiles.php?group_id=128803">here</a>, and it's an easy ./configure, make, and then copy src/jikes to the 
-processing-XXXX folder and you should be all set. (<A
-HREF="http://as.processing.org/bugs/show_bug.cgi?id=47">Bug 47</A>)
-<li>Or if you encounter a problem like this one: <TT>jikes: relocation
-error: /opt/processing-0087/./jikes: undefined symbol:
-__dynamic_cast_2</TT>, then that also means that jikes is incompatible
-with your distro. (Also <A
-HREF="http://as.processing.org/bugs/show_bug.cgi?id=47">Bug 47</A>)</strike>
-As of release 0140, we're no longer using Jikes, so this problem has gone away.
+See the <a href="../environment/platforms.html#linux">Linux</a> section for troubleshooting tips.
 </UL>
 Any Platform
 

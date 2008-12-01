@@ -55,7 +55,7 @@ Unfortunately Apple management seems to
 have a completely arrogant attitude about Java and wants developers to
 build their applications using Cocoa, seemingly unaware 
 of their current marketshare.
-For best performance, use Processing with Linux or Windows.
+For best performance, use Processing with Windows XP.
 <br> <br>
 <UL>
 <LI>If you're having trouble with Mac OS X, check the console. It's found in Applications &rarr; Utilities &rarr; Console.app. Information posted there may tell you what the problem is, or provide an error message that someone (perhaps from the discourse section of the Processing site) can help with.
@@ -84,20 +84,12 @@ More information about Java on OS X can be found at Apple's
 	<h5 id="linux"><a href="#top"><img src="images/up_arrow.gif" alt="Top" /></a> 
       Linux</h5>
 	<p>
-For the Linux version, you guys can support yourselves. If you're
-enough of a hacker weenie to get a Linux box set up, you oughta know
-what's going on. For lack of time, we won't be testing extensively
-under linux, but would be really happy to hear about any bugs or
-issues you might run into. Actually, we don't get happy that you're
-having issues, but if you're going to have issues, we're happy that
-you tell us about them, so we can fix them.
+On Linux, the Processing application is just a shell script. If you set up a launcher (e.g. in Ubuntu), be sure to set the working directory to the folder that contains the shell script. It's not smart enough to find its own path. (If you can write a version that's smarter, please <a href="http://dev.processing.org/bugs/show_bug.cgi?id=825">let us know</a>). 
 <br> <br>
-The Processing application is just a shell script, you can use this
-as a guide to getting Processing to run with your specific configuration,
-because who knows what sort of setup you have. 
-Replacing (or making a symlink to) the
-contents of the &lsquo;java&rsquo; folder will let you tie in a
-preferred Java VM for your machine. As of release 0140, this must be a 
+Most problems on Linux come from the version of Java that's included 
+in the download being incompatible with the OS. Replacing (or making a 
+symlink to) the contents of the &lsquo;java&rsquo; folder will let you 
+tie in a preferred Java VM for your machine. This must be a 
 symlink to a full JDK, not a JRE. Be sure that the symlink is set up
 relative to the &lsquo;processing&rsquo; shell script
 such that ./java/bin/java points to the &lsquo;java&rsquo; binary.
@@ -110,18 +102,6 @@ this as those projects progress.
 If you get Processing to run properly, the Sketch &rarr; Show Sketch Folder command may not be available. Processing will attempt to find kde-open and gnome-open, and if neither is available, the menu item will be dimmed. To fix this, you must set a launcher for your platform. Add a line to ~/.processing/preferences.txt that specifies its location: <BR>
 <TT>launcher.linux = /path/to/launcher_app</TT> <BR>
 <br> <br>
-<strike>Getting Processing to run on Linux can be tricky, mostly because of Jikes. 
-Some information on getting it to work can be found 
-<a href="../troubleshooting/index.html#wontstart">here</a> under the Linux section. Similar to 
-the Java folder, you can symlink a proper jikes in place of the distributed
-version and you should be all set. However make sure that you're using 
-Jikes 1.22, otherwise things may not work properly.
-<br> <br>
-If anyone out there knows how to properly build a version of Jikes that's 
-compatible across all (or at least a wide range of) distros, please 
-<a href="http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Collaboration">let us know</a>. We're not Linux gurus so we don't know all the tricks.
-<br> <br>
-Using Fedora Core 4, I had to install compat-libstdc++-33 and xorg-x11-deprecated-libs in order to get things to run properly with the current distribution. Let's hear it for library dependencies!</strike> As of release 0140, we are no longer using Jikes, so these problems are no longer present.
   </p>
 	
 	<h5 id="other"><a href="#top"><img src="images/up_arrow.gif" alt="Top" /></a> 
