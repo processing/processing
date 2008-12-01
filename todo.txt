@@ -1,6 +1,11 @@
 0164 pde 
+X Empty "code" folder causes problems with Export
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1084
 
+_ add general outline of 1.5 and 2.0 releases to the faq
 
+_ move library examples to the examples menu
+_   do this once the library documentation has been fixed up
 _ proper libraries warning dialog
 _   check if libraries folder does not exist
 _   check to see if other libraries are installed
@@ -79,8 +84,6 @@ _   needs to link TRIANGLE_STRIP to the beginShape() reference
 
 
 libraries and classpaths [1.0]
-_ move library examples to the examples menu
-_   do this once the library documentation has been fixed up
 _ versioning info 
 _   http://java.sun.com/j2se/1.5.0/docs/guide/extensions/versioning.html
 _ java.ext.dirs for /System/Library/Java/Extensions
