@@ -583,17 +583,19 @@ public class PApplet extends Applet
       // Component objects, its size() may already be set externally (perhaps
       // by a LayoutManager). In this case, honor that size as the default.
       // Size of the component is set, just create a renderer.
-      g = makeGraphics(size.width, size.height, JAVA2D, null, true);
+      g = makeGraphics(size.width, size.height, getSketchRenderer(), null, true);
       // This doesn't call setSize() or setPreferredSize() because the fact
       // that a size was already set means that someone is already doing it.
 
     } else {
       // Set the default size, until the user specifies otherwise
       this.defaultSize = true;
-      g = makeGraphics(DEFAULT_WIDTH, DEFAULT_HEIGHT, JAVA2D, null, true);
+      int w = getSketchWidth();
+      int h = getSketchHeight();
+      g = makeGraphics(w, h, getSketchRenderer(), null, true);
       // Fire component resize event
-      setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
-      setPreferredSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
+      setSize(w, h);
+      setPreferredSize(new Dimension(w, h));
     }
     width = g.width;
     height = g.height;
@@ -604,8 +606,23 @@ public class PApplet extends Applet
     // though it's here for applications anyway
     start();
   }
+  
+  
+  public int getSketchWidth() {
+    return DEFAULT_WIDTH;
+  }
+  
+  
+  public int getSketchHeight() {
+    return DEFAULT_HEIGHT;
+  }
 
 
+  public String getSketchRenderer() {
+    return JAVA2D;
+  }
+  
+  
   /**
    * Called by the browser or applet viewer to inform this applet that it
    * should start its execution. It is called after the init method and
