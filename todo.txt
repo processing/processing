@@ -1,8 +1,15 @@
 0164 pde 
 X Empty "code" folder causes problems with Export
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1084
+_ 8.3 filenames being used when opening sketch
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1089
+
+_ can't rename a .pde file as a .java file
+_ shift-tab with no selection should go back two spaces
 
 _ add general outline of 1.5 and 2.0 releases to the faq
+_   video is on its way out, no good/simple solution for fixing now
+_   andreas' library will do good things eventually
 
 _ move library examples to the examples menu
 _   do this once the library documentation has been fixed up
@@ -1083,7 +1090,8 @@ _   bufferUntil() fires an event but continues to fill up the buffer
 _   bug report includes patch from mellis
 _   http://dev.processing.org/bugs/show_bug.cgi?id=96
 _ add prompt() method to Serial (simple dialog box that pops up)
-
+E4 _ Add Mark and Space parity to the Serial library
+E4 _   http://dev.processing.org/bugs/show_bug.cgi?id=1087
 
 
 ////////////////////////////////////////////////////////////////////
