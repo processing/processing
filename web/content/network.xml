@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <networked>
+    <software name="barcode music" by="salvatore iaconesi">
+        <location>http://www.artisopensource.net/productslife/sk1</location>
+        <date>11 Dec &apos;08</date>
+    </software>
+    <software name="Art Deco Machine" by="Dorian Damon">
+        <location>http://people.clarkson.edu/~damondt/DA250/project_2/</location>
+        <date>07 Dec &apos;08</date>
+    </software>
     <software name="Metamorfose" by="laboratorio">
         <location>http://laboratorio.us/projects/metamorfose</location>
         <date>04 Dec &apos;08</date>
