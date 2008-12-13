@@ -2,6 +2,17 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <curated>
 
+<software name="The Emergence Project" by="Daniel Sauter, Mark Hereld" scroll="yes" resize="yes" width="1024" height="800">
+        <image>images/emergence.jpg</image>
+          <description>
+             Realtime art installation that explores how complex systems and patterns arise out of 
+             a multiplicity of simple interactions.
+          </description>
+          <location>http://emergenceproject.org/blog/?page_id=180</location>
+          <link href="http://emergenceproject.org/blog/">The Emergence Project</link>
+          <link href="http://daniel-sauter.com/">Daniel Sauter</link>
+        </software>
+        
 <software name="Roots" by="Memo Akten, Owen Vallis, Jordan Hochenbaum" scroll="yes" resize="yes" width="1024" height="800">
         <image>images/roots.jpg</image>
           <description>
