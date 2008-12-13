@@ -301,7 +301,7 @@ public class PGraphics3D extends PGraphics {
 
 
   /**
-   * Called in repsonse to a resize event, handles setting the
+   * Called in response to a resize event, handles setting the
    * new width and height internally, as well as re-allocating
    * the pixel buffer for the new size.
    *
