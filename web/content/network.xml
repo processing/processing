@@ -12,14 +12,6 @@
         <location>http://laboratorio.us/projects/metamorfose</location>
         <date>04 Dec &apos;08</date>
     </software>
-    <software name="Metamorfose" by="laboratorio">
-        <location>http://laboratorio.us/projects/metamorfose</location>
-        <date>04 Dec &apos;08</date>
-    </software>
-    <software name="Metamorfose" by="laboratorio">
-        <location>http://laboratorio.us/projects/metamorfose</location>
-        <date>04 Dec &apos;08</date>
-    </software>
     <software name="Lighter Than Air" by="Chris Basmajian">
         <location>http://basmajian.net/work/lighter_than_air/</location>
         <date>04 Dec &apos;08</date>
@@ -36,10 +28,6 @@
         <location>http://www.nodesign.net/wablog/</location>
         <date>29 Nov &apos;08</date>
     </software>
-    <software name="WaBlog" by="NoDesign">
-        <location>http://www.nodesign.net/wablog/</location>
-        <date>29 Nov &apos;08</date>
-    </software>
     <software name="WikiWeb" by="Anthony Mattox">
         <location>http://wikiweb.anthonymattox.com/</location>
         <date>27 Nov &apos;08</date>
@@ -47,10 +35,6 @@
     <software name="the Life of Things" by="salvatore iaconesi">
         <location>http://www.artisopensource.net/productslife/index.php</location>
         <date>27 Nov &apos;08</date>
-    </software>
-    <software name="Wormtopia" by="Michele Menezes">
-        <location>http://processingme.blogspot.com/</location>
-        <date>26 Nov &apos;08</date>
     </software>
     <software name="Wormtopia" by="Michele Menezes">
         <location>http://processingme.blogspot.com/</location>
