@@ -1,5 +1,89 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <networked>
+    <software name="IT Data centres" by="On365">
+        <location>http://www.on365.co.uk/Products/UPS.aspx?categoryID=4</location>
+        <date>01 Jan &apos;09</date>
+    </software>
+    <software name="Custom Built Exhibition Stands" by="Dimi Petrova">
+        <location>http://www.justdisplays.co.uk/custom.asp</location>
+        <date>01 Jan &apos;09</date>
+    </software>
+    <software name="the coded wall" by="make&amp;do studio">
+        <location>http://www.makeanddo.com.au/blog/2008/09/the-coded-wall/</location>
+        <date>31 Dec &apos;08</date>
+    </software>
+    <software name="SameGame trial" by="42Bastian">
+        <location>http://www.monlynx.de/samegame/index.html</location>
+        <date>31 Dec &apos;08</date>
+    </software>
+    <software name="Tracing 3D" by="Alcys">
+        <location>http://www.alcys.com/p5/Alcys_Tracing3D/applet/index.html</location>
+        <date>30 Dec &apos;08</date>
+    </software>
+    <software name="Soap Bubbles" by="Luis Gonzalez">
+        <location>http://luis.net/projects/processing/bubble/</location>
+        <date>28 Dec &apos;08</date>
+    </software>
+    <software name="Algorithmic Brushing" by="gever tulley">
+        <location>http://gevertulley.wordpress.com/2008/12/26/algorithmic-brushing/</location>
+        <date>25 Dec &apos;08</date>
+    </software>
+    <software name="sight analysis" by="samuel bravo silva">
+        <location>http://openprocessing.org/visuals/?visualID=764</location>
+        <date>24 Dec &apos;08</date>
+    </software>
+    <software name="Script Cylinder" by="Alcys">
+        <location>http://www.alcys.com/p5/Alcys_ScriptCylindre/applet/index.html</location>
+        <date>22 Dec &apos;08</date>
+    </software>
+    <software name="QuickHandNote - A handwriting note application" by="Jordi Linares">
+        <location>http://sourceforge.net/projects/quickhandnote/</location>
+        <date>22 Dec &apos;08</date>
+    </software>
+    <software name="Moggio (a processing monster)" by="Andreas">
+        <location>http://www.ertdfgcvb.ch/p1/moggio.html</location>
+        <date>22 Dec &apos;08</date>
+    </software>
+    <software name="okdeluxe xmas &apos;08" by="Mikkel Koser">
+        <location>http://www.okdeluxe.co.uk/xmas08/</location>
+        <date>19 Dec &apos;08</date>
+    </software>
+    <software name="ScriptBall" by="Alcys">
+        <location>http://www.alcys.com/p5/Alcys_ScriptkBall/applet/index.html</location>
+        <date>19 Dec &apos;08</date>
+    </software>
+    <software name="Vector View (a 3D vector visualization program)" by="Mihai Pruna">
+        <location>http://www.solvengineer.com/vectorview.html</location>
+        <date>18 Dec &apos;08</date>
+    </software>
+    <software name="Asteroid Invasion (a space game)" by="Mihai Pruna">
+        <location>http://www.solvengineer.com/asteroid-invasion.html</location>
+        <date>18 Dec &apos;08</date>
+    </software>
+    <software name="Gradual Prelude" by="Kenneth Dun">
+        <location>http://www.ecuad.ca/~knewby/gradualprelude/</location>
+        <date>18 Dec &apos;08</date>
+    </software>
+    <software name="Twitter Venn" by="Jeff Clark">
+        <location>http://www.neoformix.com/Projects/TwitterVenn/view.php</location>
+        <date>17 Dec &apos;08</date>
+    </software>
+    <software name="pagina en construccion (site under construction)" by="fabian rios">
+        <location>http://www.venusdegavetas.com/</location>
+        <date>17 Dec &apos;08</date>
+    </software>
+    <software name="THE MACHINE IS AN ORACLE" by="stilomatic">
+        <location>http://www.stilomatic.net/07/index.php?option=com_content&amp;task=view&amp;id=46&amp;Itemid=1</location>
+        <date>15 Dec &apos;08</date>
+    </software>
+    <software name="NameFlake" by="David Hunter">
+        <location>http://nameflake.davidhunterdesign.com/</location>
+        <date>15 Dec &apos;08</date>
+    </software>
+    <software name="Happy 2009 !" by="Michel Cleempoel">
+        <location>http://michelcleempoel.net/happy_2009/</location>
+        <date>14 Dec &apos;08</date>
+    </software>
     <software name="barcode music" by="salvatore iaconesi">
         <location>http://www.artisopensource.net/productslife/sk1</location>
         <date>11 Dec &apos;08</date>
