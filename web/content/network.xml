@@ -1,13 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <networked>
-    <software name="IT Data centres" by="On365">
-        <location>http://www.on365.co.uk/Products/UPS.aspx?categoryID=4</location>
-        <date>01 Jan &apos;09</date>
-    </software>
-    <software name="Custom Built Exhibition Stands" by="Dimi Petrova">
-        <location>http://www.justdisplays.co.uk/custom.asp</location>
-        <date>01 Jan &apos;09</date>
-    </software>
     <software name="the coded wall" by="make&amp;do studio">
         <location>http://www.makeanddo.com.au/blog/2008/09/the-coded-wall/</location>
         <date>31 Dec &apos;08</date>
