@@ -1,4 +1,6 @@
 0164 core
+X requestImage() causing problems with JAVA2D
+
 P1 _ OutOfMemoryError with ellipse() in P3D and OPENGL
 P1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1086
 P4 _ point(x,y) ignores noStroke() (in some renderers)
