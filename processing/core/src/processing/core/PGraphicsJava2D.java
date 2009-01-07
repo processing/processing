@@ -786,6 +786,9 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   protected void imageImpl(PImage who,
                            float x1, float y1, float x2, float y2,
                            int u1, int v1, int u2, int v2) {
+    // Image not ready yet, or an error
+    if (who.width <= 0 || who.height <= 0) return;
+    
     if (who.getCache(this) == null) {
       //System.out.println("making new image cache");
       who.setCache(this, new ImageCache(who));
