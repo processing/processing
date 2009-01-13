@@ -52,6 +52,12 @@ writeFile('learning/tutorials/objects/index.html', $page->out());
 if (!is_dir($path.'learning/tutorials/objects/imgs')) { mkdir($path.'learning/tutorials/objects/imgs', '0757'); }
 copydirr($source.'objects/imgs', $path.'learning/tutorials/objects/imgs', null, 0757, true);
 
+$page = new Page("Two-Dimensional Arrays", "Tutorials");
+$page->content(file_get_contents($source."2darrays/index.html"));
+writeFile('learning/tutorials/2darrays/index.html', $page->out());
+if (!is_dir($path.'learning/tutorials/2darrays/imgs')) { mkdir($path.'learning/tutorials/2darrays/imgs', '0757'); }
+copydirr($source.'2darrays/imgs', $path.'learning/tutorials/2darrays/imgs', null, 0757, true);
+
 $page = new Page("Trig", "Tutorials");
 $page->content(file_get_contents($source."trig/index.html"));
 writeFile('learning/tutorials/trig/index.html', $page->out());
