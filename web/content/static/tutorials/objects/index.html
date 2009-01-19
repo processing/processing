@@ -213,6 +213,7 @@ In order to initialize a variable (i.e., give it a starting value), we use an as
 // Variable Initialization   
 var = 10;  // var equals 10     
 </pre>
+<br /> 
 Initializing an object is a bit more complex. Instead of simply assigning it a value, like with an integer or floating point number, we have to construct the object. An object is made with the <strong><em>new</em></strong> operator. 
 <pre>
 // Object Initialization    
@@ -249,13 +250,14 @@ Car myCar2 = new Car();
 <br /> 
 This accomplishes our goal; the code will produce two car objects, one stored in the variable myCar1 and one in myCar2. However, if you study the Car class, you will notice that these two cars will be identical: each one will be colored white, start in the middle of the screen, and have a speed of 1. In English, the above reads: 
 <br /><br />
-<em>Make a new car.</em>
+<strong><em>Make a new car.</em></strong>
+<br /> <br /> 
 We want to instead say: 
 <br /><br />
-<em>Make a new red car, at location (0,10) with a speed of 1.</em>
+<strong><em>Make a new red car, at location (0,10) with a speed of 1.</em></strong>
 So that we could also say: 
 <br /><br />
-<em>Make a new blue car, at location (0,100) with a speed of 2.</em>
+<strong><em>Make a new blue car, at location (0,100) with a speed of 2.</em></strong>
 <br /><br />   
 We can do this by placing arguments inside of the constructor method.  
 <pre>
