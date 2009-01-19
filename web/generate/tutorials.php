@@ -73,13 +73,13 @@ if (is_dir($path.'learning/tutorials/color/imgs')) {
 //}
 
 $page = new Page("Two-Dimensional Arrays", "Tutorials");
-$page->content(file_get_contents($source."2darrays/index.html"));
-writeFile('learning/tutorials/2darrays/index.html', $page->out());
-if (!is_dir($path.'learning/tutorials/2darrays/imgs')) { 
-	mkdir($path.'learning/tutorials/2darrays/imgs', '0757'); 
+$page->content(file_get_contents($source."2darray/index.html"));
+writeFile('learning/tutorials/2darray/index.html', $page->out());
+if (!is_dir($path.'learning/tutorials/2darray/imgs')) { 
+	mkdir($path.'learning/tutorials/2darray/imgs', '0757'); 
 }
-if (is_dir($path.'learning/tutorials/2darrays/imgs')) { 
-	copydirr($source.'2darrays/imgs', $path.'learning/tutorials/2darrays/imgs', null, 0757, true);
+if (is_dir($path.'learning/tutorials/2darray/imgs')) { 
+	copydirr($source.'2darray/imgs', $path.'learning/tutorials/2darray/imgs', null, 0757, true);
 }
 
 $page = new Page("Trig", "Tutorials");
