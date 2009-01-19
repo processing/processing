@@ -10,7 +10,7 @@
 
    <h5>I'm Down with OOP</h5>
 <p>
-Before we begin examining the details of how object-oriented programming (OOP) works in  Processing, let's embark on a short conceptual discussion of “objects”  themselves. Imagine you were not programming in  Processing, but were instead writing out a program for your day, a list of instructions, if you will. It might start out something like: 
+Before we begin examining the details of how object-oriented programming (OOP) works in  Processing, let's embark on a short conceptual discussion of "objects"  themselves. Imagine you were not programming in  Processing, but were instead writing out a program for your day, a list of instructions, if you will. It might start out something like: 
 
 <ul>
 	<li>Wake up.</li>
@@ -20,11 +20,11 @@ Before we begin examining the details of how object-oriented programming (OOP) w
 </ul>
 
 What is involved here? Specifically, what things are involved? First, although it may not be immediately apparent from how we wrote the above instructions, the main thing is  you , a human being, a person. You exhibit certain properties. You look a certain way; perhaps you have brown hair, wear glasses, and appear slightly nerdy. You also have the ability to do stuff , such as wake up (presumably you can also sleep), eat, or ride the subway. An object is just like you, a thing that has properties and can do stuff. 
-</br></br>
+<br /><br />
 So how does this relate to programming? The properties of an object are variables; and the things an object can do are functions. Object-oriented programming is the marriage of all of the programming fundamentals: data and functionality.
-</br></br>
+<br /><br />
 Let's map out the data and functions for a very simple human object: 
-</br></br>    
+<br /><br />    
 Human data 
 <ul>
 	<li>Height.</li>  
@@ -42,15 +42,15 @@ Human functions
 </ul>
 
 Now, before we get too much further, we need to embark on a brief metaphysical digression. The above structure is not a human being itself; it simply describes the idea, or the concept, behind a human being. It describes what it is to be human. To be human is to have height, hair, to sleep, to eat, and so on. Th is is a crucial distinction for programming objects. This human being template is known as a <em>class</em>. A <em>class</em> is different from an <em>object</em>. You are an object. I am an object. That guy on the subway is an object. Albert Einstein is an object. We are all people, real world <em>instances</em> of the idea of a human being. 
-</br></br> 
+<br /><br /> 
 Think of a cookie cutter. A cookie cutter makes cookies, but it is not a cookie itself. The cookie cutter is the <em>class</em>, the cookies are the <em>objects</em>. 
 
 <h5>Using an Object</h5>
 
 Before we look at the actual writing of a class itself, let's briefly look at how using objects in our main program (i.e., <strong>setup()</strong> and <strong>draw()</strong>) makes the world a better place. 
-</br></br> 
+<br /><br /> 
 Consider the pseudo-code for a simple sketch that moves a rectangle horizontally across the window (we'll think of this rectangle as a "car").  
-</br></br> 
+<br /><br /> 
 <strong>Data (Global Variables)</strong>:   
 <ul>
 	<li>Car color.</li>
@@ -101,9 +101,9 @@ void display() {
 </pre>
  
 Object-oriented programming allows us to take all of the variables and functions out of the main program and store them inside a car object. A car object will know about its data — <em>color</em>, <em>location</em>, <em>speed</em>.  The object will also know about the <em>stuff it can do</em>, the methods (functions inside an object) - the car can <em>move</em> and it can be <em>displayed</em>. 
-</br></br> 
+<br /><br /> 
 Using object-oriented design, the pseudocode improves to look something like this: 
-</br></br> 
+<br /><br /> 
 <strong>Data (Global Variables)</strong>:   
 <ul>
 	<li>Car object.</li>
@@ -119,7 +119,7 @@ Using object-oriented design, the pseudocode improves to look something like thi
    <li>Move car object.</li>
 </ul>
 Notice we removed all of the global variables from the first example. Instead of having separate variables for car color, car location, and car speed, we now have only one variable, a Car variable! And instead of initializing those three variables, we initialize one thing, the Car object. Where did those variables go? They still exist, only now they live inside of the Car object (and will be defined in the Car class, which we will get to in a moment). 
-</br></br>
+<br /><br />
 Moving beyond pseudocode, the actual body of the sketch might look like: 
 <pre>
 Car myCar;
@@ -141,22 +141,22 @@ We are going to get into the details regarding the above code in a moment, but b
 
 The simple Car example above demonstrates how the use of object in Processing makes for clean, readable code. The hard work goes into writing the object template, that is the class itself. When you are first learning about object-oriented programming, it is often a useful exercise to take a program written without objects and, not changing the functionality at all, rewrite it using objects. We will do exactly this 
 with the car example, recreating exactly the same look and behavior in an object-oriented manner.
-</br></br>
+<br /><br />
 All classes must include four elements: name, data, constructor, and methods. (Technically, the only actual required element is the class name, but the point of doing object-oriented programming is to include all of these.) 
-</br></br>
+<br /><br />
 Here is how we can take the elements from a simple non-object-oriented sketch and place them into a Car class, from which we will then be able to make Car objects.
-</br></br>
+<br /><br />
 <img src="imgs/class.jpg">
-</br></br>
+<br /><br />
 <strong>Class Name</strong>: The name is specified by "class WhateverNameYouChoose". We then enclose all of the code for the class inside curly brackets after the name declaration. Class names are traditionally capitalized (to distinguish them from variable names, which traditionally are lowercase).
-</br></br>
+<br /><br />
 <strong>Data</strong>: The data for a class is a collection of variables. These variables are often referred to as instance variables since each  instance of an object contains this set of variables.  
-</br></br>
+<br /><br />
 <strong>Constructor</strong>: The constructor is a special function inside of a class that creates the instance of the object itself. It is where you give the instructions on how to set up the object. It is just like Processing's <strong>setup()</strong> function, only here it is used to create an individual object within the sketch, whenever a new object is created from this class.  It always has the same name as the class and is 
 called by invoking the new operator: "Car myCar = new Car();".  
-</br></br>
+<br /><br />
 <strong>Functionality</strong>: We can add functionality to our object by writing methods.
-</br></br>
+<br /><br />
 Note that the code for a class exists as its own block and can be placed anywhere outside of <strong>setup()</strong> and <strong>draw()</strong>. 
 
 <pre>
@@ -195,18 +195,18 @@ void draw()  {
 </pre>
 
 Let's look at the details behind the above three steps outlining how to use an object in your sketch.
-</br></br>
+<br /><br />
 <strong>Step 1.  Declaring an object variable.</strong> 
-</br></br>
+<br /><br />
 A variable is always declared by specifying a type and a name.  With a primitive data type, such as an integer, it looks like this:
 <pre>
 // Variable Declaration    
 int var;  // type name     
 </pre> 
 Primitive data types are singular pieces of information: an integer, a float, a character, etc. Declaring a variable that holds onto an object is quite similar. The diff erence is that here the type is the class name, something we will make up, in this case "Car." Objects, incidentally, are not primitives and are considered  complex  data types. (This is because they store multiple pieces of information: data and functionality. Primitives only store data.)
-</br></br> 
+<br /><br /> 
 <strong>Step 2.  Initializing an object.</strong> 
-</br></br> 
+<br /><br /> 
 In order to initialize a variable (i.e., give it a starting value), we use an assignment operation — variable equals something.  With a primitive (such as integer), it looks like this:
 <pre>
 // Variable Initialization   
@@ -218,16 +218,16 @@ Initializing an object is a bit more complex. Instead of simply assigning it a v
 myCar = new Car(); // The new operator is used to make a new object. 
 </pre>
 In the above example, "myCar" is the object variable name and "=" indicates we are setting it equal to something, that something being a new   instance of a Car object. What we are really doing here is initializing a Car object. When you initialize a primitive variable, such as an integer, you just set it equal to a number. But an object may contain multiple pieces of data. Recalling the Car class, we see that this line of code calls the <em>constructor</em>, a special function named <strong>Car()</strong> that initializes all of the object's variables and makes sure the Car object is ready to go. 
-</br></br> 
+<br /><br /> 
 One other thing; with the primitive integer "var," if you had forgotten to initialize it (set it equal to 10), Processing  would have assigned it a default value, zero. An object (such as "myCar"), however, has no default value. If you forget to initialize an object,  Processing will give it the value <em>null</em>. <em>null</em> means nothing. Not zero. Not negative one. Utter nothingness. Emptiness. If you encounter an error in the message window that says "NullPointerException" (and this is a pretty common error), that error is most likely caused by having forgotten to initialize an object.
-</br></br> 
+<br /><br /> 
 <strong>Step 3.  Using an object</strong> 
-</br></br> 
+<br /><br /> 
 Once we have successfully declared and initialized an object variable, we can use it. Using an object involves calling functions that are built into that object. A human object can eat, a car can drive, a dog can bark. Calling a function inside of an object is accomplished via dot syntax: variableName.objectFunction(Function Arguments);
-</br></br>     
+<br /><br />     
 In the case of the car, none of the available functions has an argument so it looks like: 
 <pre>
-// Functions are called with the “dot syntax”. 
+// Functions are called with the "dot syntax". 
 myCar.draw();   
 myCar.display();     
 </pre>
@@ -244,15 +244,15 @@ Car myCar1 = new Car();
 Car myCar2 = new Car();     
 </pre>
 This accomplishes our goal; the code will produce two car objects, one stored in the variable myCar1 and one in myCar2. However, if you study the Car class, you will notice that these two cars will be identical: each one will be colored white, start in the middle of the screen, and have a speed of 1. In English, the above reads: 
-</br></br>
+<br /><br />
 <em>Make a new car.</em>
 We want to instead say: 
-</br></br>
+<br /><br />
 <em>Make a new red car, at location (0,10) with a speed of 1.</em>
 So that we could also say: 
-</br></br>
+<br /><br />
 <em>Make a new blue car, at location (0,100) with a speed of 2.</em>
-</br></br>   
+<br /><br />   
 We can do this by placing arguments inside of the constructor method.  
 <pre>
 Car myCar =  new Car(color(255,0,0),0,100,2);     
@@ -266,15 +266,15 @@ Car(color tempC, float tempXpos, float tempYpos, float tempXspeed)  {
   xspeed = tempXspeed;   
 }</pre>
 In my experience, the use of constructor arguments to initialize object variables can be somewhat bewildering. Please do not blame yourself. Th e code is strange-looking and can seem awfully redundant: "For every single variable I want argument to that constructor?" 
-</br></br>
+<br /><br />
 Nevertheless, this is quite an important skill to learn, and, ultimately, is one of the things that makes object-oriented programming powerful. But for now, it may feel painful. Let's looks at how parameter works in this context.
-</br></br>
+<br /><br />
 <img src="imgs/constructor_arguments.jpg">
-</br></br>
+<br /><br />
 Arguments are local variables used inside the body of a function that get filled with values when the function is called. In the examples, they have <em>one purpose only</em>, to initialize the variables inside of an object. These are the variables that count, the car's actual car, the car's actual <em>x</em> location, and so on. The constructor's arguments are just <em>temporary</em>, and exist solely to pass a value from where the object is made into the object itself. 
-</br></br>
+<br /><br />
 This allows us to make a variety of objects using the same constructor. You might also just write the word <em>temp</em> in your argument names to remind you of what is going on (c vs. tempC). You will also see programmers use an underscore (c vs. c_) in many examples. You can name these whatever you want, of course. However, it is advisable to choose a name that makes sense to you, and also to stay consistent. We can now take a look at the same program with multiple object instances, each with unique properties.    
-</br></br>
+<br /><br />
 We can now take a look at the same sketch with multiple object instances, each with unique properties.    
 <pre>
 // <a href="http://www.learningprocessing.com/examples/chapter-8/example-8-2/">Example: Two Car objects</a>
@@ -330,9 +330,9 @@ class Car {
 <h5>Objects are data types too!</h5> 
 
 Assuming this is your first experience with object-oriented programming, it's important to take it easy. The examples here just one class and make, at most, two or three objects from that class. Nevertheless, there are no actual limitations. A Processing sketch can include as many classes as you feel like writing. 
-</br></br>
+<br /><br />
 If you were programming the Space Invaders game, for example, you might create a <em>Spaceship</em> class, an <em>Enemy</em> class, and a <em>Bullet</em> class, using an object for each entity in your game.
-</br></br>
+<br /><br />
 In addition, although not  primitive, classes are data types just like integers and floats. And since classes are made up of data, an object can therefore contain other objects! For example, let's assume you had just finished programming a <em>Fork</em> and <em>Spoon</em> class. Moving on to a <em>PlaceSetting</em> class, you would likely include variables for both a <em>Fork</em> object and a <em>Spoon</em> object inside that class itself. Th is is perfectly reasonable and quite common in object-oriented programming. 
 <pre>
 class PlaceSetting  {    
