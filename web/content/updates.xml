@@ -902,6 +902,10 @@ Download here</a>.</description>
                	<date>13 December 2008</date>
                 <description>Software from Daniel Sauter and Mark Hereld added to the <a href="http://processing.org/exhibition/">exhibition</a>.</description>
         </item>
+        <item>
+               	<date>19 January 2009</date>
+                <description>Two new libraries added to <a href="http://processing.org/reference/libraries/">Contributions</a>: XlsReader by Florian Jenett, point2line by Carl Emil Carlsen. Contributed libraries not yet updated for Processing 1.0 were removed from the list.</description>
+        </item>
 </updates>
 
 
