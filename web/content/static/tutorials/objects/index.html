@@ -264,6 +264,7 @@ We can do this by placing arguments inside of the constructor method.
 <pre>
 Car myCar =  new Car(color(255,0,0),0,100,2);     
 </pre>
+<br /> 
 The constructor must be rewritten to incorporate these arguments:
 <pre>
 Car(color tempC, float tempXpos, float tempYpos, float tempXspeed)  {    
@@ -272,6 +273,7 @@ Car(color tempC, float tempXpos, float tempYpos, float tempXspeed)  {
   ypos = tempYpos;   
   xspeed = tempXspeed;   
 }</pre>
+<br /> 
 In my experience, the use of constructor arguments to initialize object variables can be somewhat bewildering. Please do not blame yourself. Th e code is strange-looking and can seem awfully redundant: "For every single variable I want argument to that constructor?" 
 <br /><br />
 Nevertheless, this is quite an important skill to learn, and, ultimately, is one of the things that makes object-oriented programming powerful. But for now, it may feel painful. Let's looks at how parameter works in this context.
