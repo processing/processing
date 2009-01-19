@@ -2668,16 +2668,14 @@ public class PImage implements PConstants, Cloneable {
     try {
       OutputStream os = null;
 
-      if (PApplet.javaVersion >= 1.4f) {
-        if (saveImageFormats == null) {
-          saveImageFormats = javax.imageio.ImageIO.getWriterFormatNames();
-        }
-        if (saveImageFormats != null) {
-          for (int i = 0; i < saveImageFormats.length; i++) {
-            if (path.endsWith("." + saveImageFormats[i])) {
-              saveImageIO(path);
-              return;
-            }
+      if (saveImageFormats == null) {
+        saveImageFormats = javax.imageio.ImageIO.getWriterFormatNames();
+      }
+      if (saveImageFormats != null) {
+        for (int i = 0; i < saveImageFormats.length; i++) {
+          if (path.endsWith("." + saveImageFormats[i])) {
+            saveImageIO(path);
+            return;
           }
         }
       }

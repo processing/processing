@@ -6,6 +6,7 @@ P1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1086
 P4 _ point(x,y) ignores noStroke() (in some renderers)
 P4 _   http://dev.processing.org/bugs/show_bug.cgi?id=1090
 
+_ public PImage(java.awt.Image) sets format to RGB (but could be ARGB)
 _ focus not coming through, ESC no longer working 
 
 
