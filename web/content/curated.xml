@@ -2,6 +2,17 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <curated>
 
+
+<software name="Big Screens 2" by="NYU ITP" scroll="yes" resize="yes" width="1024" height="700">
+        <image>images/itp2.jpg</image>
+          <description>
+             For the second year, Dan Shiffman's NYU students write software for a 120 by 12 
+             foot video wall at IAC's world headquarters in NYC.          
+          </description>
+          <location>http://gizmodo.com/5110633/120-feet-of-video-art-final-exams-at-nyus-big-screens-class</location>
+          <link href="http://www.shiffman.net/">Shiffman.net</link>
+        </software>
+        
 <software name="The Emergence Project" by="Daniel Sauter, Mark Hereld" scroll="yes" resize="yes" width="1024" height="800">
         <image>images/emergence.jpg</image>
           <description>
