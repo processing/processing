@@ -56,10 +56,10 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   boolean breakShape;
 
   /// coordinates for internal curve calculation
-  float[] curveCoordX = new float[4];
-  float[] curveCoordY = new float[4];
-  float[] curveDrawX = new float[4];
-  float[] curveDrawY = new float[4];
+  float[] curveCoordX;
+  float[] curveCoordY;
+  float[] curveDrawX;
+  float[] curveDrawY;
 
   int transformCount;
   AffineTransform transformStack[] =
@@ -404,10 +404,12 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   protected void curveVertexCheck() {
     super.curveVertexCheck();
 
-    curveCoordX = new float[4];
-    curveCoordY = new float[4];
-    curveDrawX = new float[4];
-    curveDrawY = new float[4];
+    if (curveCoordX == null) {
+      curveCoordX = new float[4];
+      curveCoordY = new float[4];
+      curveDrawX = new float[4];
+      curveDrawY = new float[4];
+    }
   }
 
 
@@ -571,17 +573,17 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
         stop = temp;
       }
     }
-    float span = stop - start;
+    float sweep = stop - start;
 
     // stroke as Arc2D.OPEN, fill as Arc2D.PIE
     if (fill) {
       //System.out.println("filla");
-      arc.setArc(x, y, w, h, start, span, Arc2D.PIE);
+      arc.setArc(x, y, w, h, start, sweep, Arc2D.PIE);
       fillShape(arc);
     }
     if (stroke) {
       //System.out.println("strokey");
-      arc.setArc(x, y, w, h, start, span, Arc2D.OPEN);
+      arc.setArc(x, y, w, h, start, sweep, Arc2D.OPEN);
       strokeShape(arc);
     }
   }
