@@ -261,22 +261,24 @@ public class PFont implements PConstants {
    * (Public so that it can be used by OpenGL or other renderers.)
    */
   public Font findFont() {
-    if (!fontSearched) {
-      // this font may or may not be installed
-      font = new Font(name, Font.PLAIN, size);
-      // if the ps name matches, then we're in fine shape
-      if (!font.getPSName().equals(psname)) {
-        // on osx java 1.4 (not 1.3.. ugh), you can specify the ps name
-        // of the font, so try that in case this .vlw font was created on pc
-        // and the name is different, but the ps name is found on the
-        // java 1.4 mac that's currently running this sketch.
-        font = new Font(psname, Font.PLAIN, size);
+    if (font == null) {
+      if (!fontSearched) {
+        // this font may or may not be installed
+        font = new Font(name, Font.PLAIN, size);
+        // if the ps name matches, then we're in fine shape
+        if (!font.getPSName().equals(psname)) {
+          // on osx java 1.4 (not 1.3.. ugh), you can specify the ps name
+          // of the font, so try that in case this .vlw font was created on pc
+          // and the name is different, but the ps name is found on the
+          // java 1.4 mac that's currently running this sketch.
+          font = new Font(psname, Font.PLAIN, size);
+        }
+        // check again, and if still bad, screw em
+        if (!font.getPSName().equals(psname)) {
+          font = null;
+        }
+        fontSearched = true;
       }
-      // check again, and if still bad, screw em
-      if (!font.getPSName().equals(psname)) {
-        font = null;
-      }
-      fontSearched = true;
     }
     return font;
   }
