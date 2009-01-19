@@ -25,7 +25,7 @@ So how does this relate to programming? The properties of an object are variable
 <br /><br />
 Let's map out the data and functions for a very simple human object: 
 <br /><br />    
-Human data 
+<strong>Human data</strong> 
 <ul>
 	<li>Height.</li>  
     <li>Weight.</li>  
@@ -33,7 +33,7 @@ Human data
 	<li>Eye color.</li>  
     <li>Hair color.</li>   
 </ul>
-Human functions 
+<strong>Human functions </strong> 
 <ul>
 	<li>Sleep.</li> 
 	<li>Wake up.</li>
@@ -99,8 +99,8 @@ void display() {
   rect(x,y,30,10);
 }
 </pre>
- 
-Object-oriented programming allows us to take all of the variables and functions out of the main program and store them inside a car object. A car object will know about its data — <em>color</em>, <em>location</em>, <em>speed</em>.  The object will also know about the <em>stuff it can do</em>, the methods (functions inside an object) - the car can <em>move</em> and it can be <em>displayed</em>. 
+<br /> 
+Object-oriented programming allows us to take all of the variables and functions out of the main program and store them inside a car object. A car object will know about its data - <em>color</em>, <em>location</em>, <em>speed</em>.  The object will also know about the <em>stuff it can do</em>, the methods (functions inside an object) - the car can <em>move</em> and it can be <em>displayed</em>. 
 <br /><br /> 
 Using object-oriented design, the pseudocode improves to look something like this: 
 <br /><br /> 
@@ -134,7 +134,7 @@ void draw()  {
   myCar.display();   
 }              
 </pre>
-
+<br />
 We are going to get into the details regarding the above code in a moment, but before we do so, let's take a look at how the Car class itself is written.
 
 <h5>Writing the Cookie Cutter</h5>
@@ -178,17 +178,17 @@ class Car() {
 Earlier, we took a quick peek at how an object can greatly simplify the main parts of a Processing sketch (i.e. <strong>setup()</strong> and <strong>draw()</strong>).
 
 <pre>
-// Step 1. Declare an object.
+<strong>// Step 1. Declare an object.</strong>
 Car myCar;
 
 void setup()  {    
-  // Step 2. Initialize object.
+  <strong>// Step 2. Initialize object.</strong>
   myCar = new Car();   
 }    
 
 void draw()  {    
   background(255);  
-  // Step 3. Call methods on the object. 
+  <strong>// Step 3. Call methods on the object.</strong> 
   myCar.move();   
   myCar.display();   
 }      
@@ -203,11 +203,12 @@ A variable is always declared by specifying a type and a name.  With a primitive
 // Variable Declaration    
 int var;  // type name     
 </pre> 
+<br /> 
 Primitive data types are singular pieces of information: an integer, a float, a character, etc. Declaring a variable that holds onto an object is quite similar. The diff erence is that here the type is the class name, something we will make up, in this case "Car." Objects, incidentally, are not primitives and are considered  complex  data types. (This is because they store multiple pieces of information: data and functionality. Primitives only store data.)
 <br /><br /> 
 <strong>Step 2.  Initializing an object.</strong> 
 <br /><br /> 
-In order to initialize a variable (i.e., give it a starting value), we use an assignment operation — variable equals something.  With a primitive (such as integer), it looks like this:
+In order to initialize a variable (i.e., give it a starting value), we use an assignment operation - variable equals something.  With a primitive (such as integer), it looks like this:
 <pre>
 // Variable Initialization   
 var = 10;  // var equals 10     
@@ -217,6 +218,7 @@ Initializing an object is a bit more complex. Instead of simply assigning it a v
 // Object Initialization    
 myCar = new Car(); // The new operator is used to make a new object. 
 </pre>
+<br /> 
 In the above example, "myCar" is the object variable name and "=" indicates we are setting it equal to something, that something being a new   instance of a Car object. What we are really doing here is initializing a Car object. When you initialize a primitive variable, such as an integer, you just set it equal to a number. But an object may contain multiple pieces of data. Recalling the Car class, we see that this line of code calls the <em>constructor</em>, a special function named <strong>Car()</strong> that initializes all of the object's variables and makes sure the Car object is ready to go. 
 <br /><br /> 
 One other thing; with the primitive integer "var," if you had forgotten to initialize it (set it equal to 10), Processing  would have assigned it a default value, zero. An object (such as "myCar"), however, has no default value. If you forget to initialize an object,  Processing will give it the value <em>null</em>. <em>null</em> means nothing. Not zero. Not negative one. Utter nothingness. Emptiness. If you encounter an error in the message window that says "NullPointerException" (and this is a pretty common error), that error is most likely caused by having forgotten to initialize an object.
@@ -237,12 +239,14 @@ In the above examples, the car object was initialized using the new operator fol
 <pre>
 Car myCar= new Car();  
 </pre>
+<br /> 
 This was a useful simplification while we learned the basics of OOP. Nonetheless, there is a rather serious problem with the above code. What if we wanted to write a program with two car objects? 
 <pre>
 // Creating two car objects    
 Car myCar1 = new Car();   
 Car myCar2 = new Car();     
 </pre>
+<br /> 
 This accomplishes our goal; the code will produce two car objects, one stored in the variable myCar1 and one in myCar2. However, if you study the Car class, you will notice that these two cars will be identical: each one will be colored white, start in the middle of the screen, and have a speed of 1. In English, the above reads: 
 <br /><br />
 <em>Make a new car.</em>
@@ -277,13 +281,14 @@ This allows us to make a variety of objects using the same constructor. You migh
 <br /><br />
 We can now take a look at the same sketch with multiple object instances, each with unique properties.    
 <pre>
-// <a href="http://www.learningprocessing.com/examples/chapter-8/example-8-2/">Example: Two Car objects</a>
+<strong><a href="http://www.learningprocessing.com/examples/chapter-8/example-8-2/">// Example: Two Car objects</a></strong>
 Car myCar1;
 Car myCar2; // Two objects!
 
 void setup() {
   size(200,200);
-  myCar1 = new Car(color(255,0,0),0,100,2); // Parameters go inside the parentheses when the object is constructed.
+  // Parameters go inside the parentheses when the object is constructed.
+  myCar1 = new Car(color(255,0,0),0,100,2); 
   myCar2 = new Car(color(0,0,255),0,10,1);
 }
 
@@ -347,7 +352,7 @@ class PlaceSetting  {
 
 }  
 </pre>    
-
+<br /> 
 Objects, just like any data type, can also be passed in as arguments to a function. In the Space Invaders game example, if the spaceship shoots the bullet at the enemy, we would probably want to write a function inside the Enemy class to determine if the Enemy had been hit by the bullet. 
 <pre>
 void hit(Bullet b)  {    
@@ -355,7 +360,7 @@ void hit(Bullet b)  {
   // the bullet struck the enemy   
 }    
 </pre>
-  
+<br />   
 When a primitive value (integer, float, etc.) is passed in a function, a copy is made. With objects, this is not the case, and the result is a bit more intuitive. If changes are made to an object after it is passed into a function, those changes will affect that object used anywhere else throughout the sketch. This is known as <em>pass by reference</em>  since instead of a copy, a reference to the actual object itself is passed into the function. 
 
 </p>
