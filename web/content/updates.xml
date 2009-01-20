@@ -906,6 +906,14 @@ Download here</a>.</description>
                	<date>19 January 2009</date>
                 <description>Two new libraries added to <a href="http://processing.org/reference/libraries/">Contributions</a>: XlsReader by Florian Jenett, point2line by Carl Emil Carlsen. Contributed libraries not yet updated for Processing 1.0 were removed from the list.</description>
         </item>
+        <item>
+                <date>19 January 2009</date>
+                <description>Software from Dan Shiffman's students at NYU's ITP added to the <a href="http://processing.org/exhibition">exhibition</a>.</description>
+       </item>
+       <item>
+                <date>19 January 2009</date>
+                <description>New <a href="http://processing.org/learning/tutorials/">tutorials</a> for Objects and 2D Arrays.</description>
+       </item>
 </updates>
 
 
