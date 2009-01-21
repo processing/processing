@@ -914,6 +914,12 @@ Download here</a>.</description>
                 <date>19 January 2009</date>
                 <description>New <a href="http://processing.org/learning/tutorials/">tutorials</a> for Objects and 2D Arrays.</description>
        </item>
+       
+       <item>
+               	<date>20 January 2009</date>
+                <description>Four new libraries added to <a href="http://processing.org/reference/libraries/">Contributions</a>: themidibus by Severin Smith, sDrop by Andreas Schlegel, peasycam and patchy by Jonathan Feinberg.</description>
+        </item>
+        
 </updates>
 
 
