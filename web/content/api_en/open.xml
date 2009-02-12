@@ -21,7 +21,7 @@ void draw() {
 
 void mousePressed() {
   println("Opening Process_4");
-  open("Process_4.exe");
+  open("/Applications/Process_4.app");
 }
 
 </code>
@@ -40,7 +40,7 @@ void draw() {
 }
 
 void mousePressed() {
-  String[] params = { "jikes", "-help" };
+  String[] params = { "/usr/bin/jikes", "-help" };
   open(params);
 }
 
@@ -48,17 +48,15 @@ void mousePressed() {
 </example>
 
 <description>
-Attempts to open an application or file using your platform's launcher. The <b>file</b> parameter is a String specifying the file name and location. When running sketches from the Processing environment the default location is the same folder as the Processing application itself. 
-<br/> <br/>
-It's also possible (and safer) to use a file's absolute path. Be sure to make the file executable before attempting to open it (chmod +x). 
+Attempts to open an application or file using your platform's launcher. The <b>file</b> parameter is a String specifying the file name and location. The location parameter must be a full path name, or the name of an executable in the system's PATH. In most cases, using a full path is the best option, rather than relying on the system PATH. Be sure to make the file executable before attempting to open it (chmod +x). 
 <br/> <br/>
 The <b>args</b> parameter is a String or String array which is passed to the command line. If you have multiple parameters, e.g. an application and a document, or a command with multiple switches, use the version that takes a String array, and place each individual item in a separate element. 
 <br/> <br/>
 If args is a String (not an array), then it can only be a single file or application with no parameters. It's not the same as executing that String using a shell. For instance, open("jikes -help") will not work properly.
 <br/> <br/>
-This function behaves differently on each platform. On Windows, the parameters are sent to the Windows shell via "cmd /c". On Mac OS X, the "open" command is used (type "man open" in Terminal.app for documentation). On Linux, it first tries gnome-open, then kde-open, but if neither are available, it sends the command to the shell without any alterations. In release 0125, this function was modified for Mac OS X and Linux support, and to better handle spaces in command names.
+This function behaves differently on each platform. On Windows, the parameters are sent to the Windows shell via "cmd /c". On Mac OS X, the "open" command is used (type "man open" in Terminal.app for documentation). On Linux, it first tries gnome-open, then kde-open, but if neither are available, it sends the command to the shell without any alterations. 
 <br/> <br/>
-For Java users, this is not quite the same as Runtime.exec(), because the launcher command is prepended. The method <b>exec(String[])</b> is a shortcut for Runtime.getRuntime.exec(String[]). 
+For users familiar with Java, this is not quite the same as Runtime.exec(), because the launcher command is prepended. Instead, the <b>exec(String[])</b> function is a shortcut for Runtime.getRuntime.exec(String[]). 
 </description>
 
 <syntax>
