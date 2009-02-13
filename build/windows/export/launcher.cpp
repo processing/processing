@@ -66,9 +66,14 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
   char *app_classpath = (char *)malloc(10 * strlen(exe_directory) + 4096);
 
   FILE *argsfile = fopen(args_file_path, "r");
-  if (argsfile == NULL) {  // won't exist for processing.exe
-    strcpy(java_args, "-Xms128m -Xmx128m");
-    strcpy(java_main_class, "processing.app.Base");
+  if (argsfile == NULL) {
+    sprintf(app_classpath, 
+            "This program is missing the \"lib\" folder, "
+            "which should be located at\n%s", 
+            exe_directory);
+    MessageBox(NULL, app_classpath, "Folder Missing",  MB_OK);
+    return 0;
+    /*
     sprintf(app_classpath, 
             "%s\\lib;"
             "%s\\lib\\pde.jar;"
@@ -79,6 +84,8 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
             exe_directory, 
             exe_directory, exe_directory, 
             exe_directory, exe_directory, exe_directory);
+    */
+    
   } else {
     fgets(java_args, 511, argsfile);
     removeLineEndings(java_args);
