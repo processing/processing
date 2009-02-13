@@ -3,6 +3,15 @@
 <curated>
 
 
+<software name="Monsters" by="Lukas Vojir (Ed.)" scroll="yes" resize="yes" width="1024" height="700">
+        <image>images/monsters.gif</image>
+          <description>
+             Black and white, reactive monsters created by the Processing community.       
+          </description>
+          <location>http://www.rmx.cz/monsters/</location>
+          <link href="http://www.rmx.cz/">Rmx</link>
+        </software>
+        
 <software name="Big Screens 2" by="NYU ITP" scroll="yes" resize="yes" width="1024" height="700">
         <image>images/itp2.jpg</image>
           <description>
