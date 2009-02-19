@@ -1,10 +1,27 @@
 0164 core
 X requestImage() causing problems with JAVA2D
+X fix minor strokeWeight bug with OpenGL
+X text() with char array
+_   add documentation
+_   add this for text in a rectangle?
+X minor bug fix to svg files that weren't being resized properly
+
+xml
+X fix for xml elements that have null names
+X added listChildren() method
+X added optional toString(boolean) parameter to enable/disable indents
+
+_ OpenGL is rendering darker in 0149+ 
+_   http://dev.processing.org/bugs/show_bug.cgi?id=958
+_   the fix has been found, just incorporate it
 
 P1 _ OutOfMemoryError with ellipse() in P3D and OPENGL
 P1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1086
 P4 _ point(x,y) ignores noStroke() (in some renderers)
 P4 _   http://dev.processing.org/bugs/show_bug.cgi?id=1090
+
+_ if no draw() method, and renderer is not displayable, then exit
+_   static mode PDFs shouldn't just hang
 
 _ public PImage(java.awt.Image) sets format to RGB (but could be ARGB)
 _ focus not coming through, ESC no longer working 
@@ -478,8 +495,6 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 
 LIBRARIES / PGraphicsOpenGL
 
-_ OpenGL is rendering darker in 0149+ 
-_   http://dev.processing.org/bugs/show_bug.cgi?id=958
 _ switch to glWindowPos() instead of glRasterPos() silliness
 _ implement setImpl() instead of set() inside PGraphicsOpenGL
 _   http://dev.processing.org/bugs/show_bug.cgi?id=943

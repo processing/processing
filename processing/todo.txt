@@ -4,6 +4,13 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=1084
 _ 8.3 filenames being used when opening sketch
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1089
 
+_ windows exported exe problems (pcho)
+_   lib folder goes missing, give an error
+_   also any .jar files that are missing, give an error
+_   showing more debug messages (command line?)
+
+_ try adding a space to the name of the help menu for beachball problems
+
 _ can't rename a .pde file as a .java file
 _ shift-tab with no selection should go back two spaces
 
@@ -482,6 +489,8 @@ PDE - Processing Development Environment
 
 PDE / Warnings
 
+_ proper dialog support
+_   http://javagraphics.blogspot.com/2008/06/joptionpane-making-alternative.html
 _ two-tiered dialogs for everything - use big font/little font style throughout
 _ option to suppress warning dialogs
 _   starting with the one about modifying the sketch name for spaces
