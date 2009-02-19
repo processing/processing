@@ -3807,6 +3807,7 @@ public class PApplet extends Applet
    */
   static public PrintWriter createWriter(File file) {
     try {
+      createPath(file);  // make sure in-between folders exist
       OutputStream output = new FileOutputStream(file);
       if (file.getName().toLowerCase().endsWith(".gz")) {
         output = new GZIPOutputStream(output);
@@ -4188,6 +4189,7 @@ public class PApplet extends Applet
 
   static public OutputStream createOutput(File file) {
     try {
+      createPath(file);  // make sure the path exists
       FileOutputStream fos = new FileOutputStream(file);
       if (file.getName().toLowerCase().endsWith(".gz")) {
         return new GZIPOutputStream(fos);
@@ -4441,15 +4443,20 @@ public class PApplet extends Applet
    * may not actually exist.
    */
   static public void createPath(String path) {
+    createPath(new File(path));
+  }
+  
+  
+  static public void createPath(File file) {
     try {
-      File file = new File(path);
       String parent = file.getParent();
       if (parent != null) {
         File unit = new File(parent);
         if (!unit.exists()) unit.mkdirs();
       }
     } catch (SecurityException se) {
-      System.err.println("You don't have permissions to create " + path);
+      System.err.println("You don't have permissions to create " + 
+                         file.getAbsolutePath());
     }
   }
 
