@@ -32,6 +32,7 @@ import java.nio.*;
 
 import javax.media.opengl.*;
 import javax.media.opengl.glu.*;
+
 import com.sun.opengl.util.*;
 
 
@@ -560,18 +561,18 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
 
   protected void renderPoints(int start, int stop) {
-    gl.glBegin(GL.GL_POINTS);
     float sw = vertices[lines[start][VERTEX1]][SW];
     if (sw > 0) {
       gl.glPointSize(sw);  // can only be set outside glBegin/glEnd
+      gl.glBegin(GL.GL_POINTS);
       for (int i = start; i < stop; i++) {
         float[] a = vertices[points[i][VERTEX1]];
 
         gl.glColor4f(a[SR], a[SG], a[SB], a[SA]);
         gl.glVertex3f(a[VX], a[VY], a[VZ]);
       }
+      gl.glEnd();
     }
-    gl.glEnd();
   }
 
 
