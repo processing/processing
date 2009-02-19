@@ -527,6 +527,20 @@ public class XMLElement implements Serializable {
 
 
     /**
+     * Put the names of all children into an array. Same as looping through 
+     * each child and calling getName() on each XMLElement.
+     */
+    public String[] listChildren() {
+      int childCount = getChildCount();
+      String[] outgoing = new String[childCount];
+      for (int i = 0; i < childCount; i++) {
+        outgoing[i] = getChild(i).getName();
+      }
+      return outgoing;
+    }
+    
+    
+    /**
      * Returns an array containing all the child elements.
      */
     public XMLElement[] getChildren() {
@@ -559,7 +573,8 @@ public class XMLElement implements Serializable {
         int childCount = getChildCount();
         for (int i = 0; i < childCount; i++) {
             XMLElement kid = getChild(i);
-            if (kid.getName().equals(name)) {
+            String kidName = kid.getName();
+            if (kidName != null && kidName.equals(name)) {
                 return kid;
             }
         }
@@ -587,7 +602,8 @@ public class XMLElement implements Serializable {
         int childCount = getChildCount();
         for (int i = 0; i < childCount; i++) {
             XMLElement kid = getChild(i);
-            if (kid.getName().equals(items[offset])) {
+            String kidName = kid.getName();
+            if (kidName != null && kidName.equals(items[offset])) {
                 if (offset == items.length-1) {
                     return kid;
                 } else {
@@ -685,7 +701,8 @@ public class XMLElement implements Serializable {
         int matchCount = 0;
         for (int i = 0; i < childCount; i++) {
         	XMLElement kid = getChild(i);
-        	if (kid.getName().equals(name)) {
+        	String kidName = kid.getName();
+        	if (kidName != null && kidName.equals(name)) {
         		matches[matchCount++] = kid;
         	}
         }
@@ -1318,12 +1335,16 @@ public class XMLElement implements Serializable {
     }
 
 
-    public String toString() {
+    public String toString(boolean pretty) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         OutputStreamWriter osw = new OutputStreamWriter(baos);
         XMLWriter writer = new XMLWriter(osw);
         try {
+          if (pretty) {
             writer.write(this, true, 2, true);
+          } else {
+            writer.write(this, false, 0, true);
+          }
         } catch (IOException e) {
             e.printStackTrace();
         }
