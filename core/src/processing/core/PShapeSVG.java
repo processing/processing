@@ -1038,85 +1038,6 @@ public class PShapeSVG extends PShape {
   }
 
 
-    // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-
-
-    // these are a set of hacks so that gradients can be hacked into Java 2D.
-
-    /*
-    protected Paint getGradient(String name, float cx, float cy, float r) {
-        BaseObject obj = (BaseObject) findChild(name);
-
-        if (obj != null) {
-            if (obj.fillGradient != null) {
-                return obj.calcGradientPaint(obj.fillGradient, cx, cy, r);
-            }
-        }
-        throw new RuntimeException("No gradient found for shape " + name);
-    }
-
-
-    protected Paint getGradient(String name, float x1, float y1, float x2, float y2) {
-        BaseObject obj = (BaseObject) findChild(name);
-
-        if (obj != null) {
-            if (obj.fillGradient != null) {
-                return obj.calcGradientPaint(obj.fillGradient, x1, y1, x2, y2);
-            }
-        }
-        throw new RuntimeException("No gradient found for shape " + name);
-    }
-
-
-    protected void strokeGradient(PGraphics g, String name, float x, float y, float r) {
-        Paint paint = getGradient(name, x, y, r);
-
-        if (g instanceof PGraphicsJava2D) {
-            PGraphicsJava2D p2d = (PGraphicsJava2D) g;
-
-            p2d.strokeGradient = true;
-            p2d.strokeGradientObject = paint;
-        }
-    }
-
-
-    protected void strokeGradient(PGraphics g, String name, float x1, float y1, float x2, float y2) {
-        Paint paint = getGradient(name, x1, y1, x2, y2);
-
-        if (g instanceof PGraphicsJava2D) {
-            PGraphicsJava2D p2d = (PGraphicsJava2D) g;
-
-            p2d.strokeGradient = true;
-            p2d.strokeGradientObject = paint;
-        }
-    }
-
-
-    protected void fillGradient(PGraphics g, String name, float x, float y, float r) {
-        Paint paint = getGradient(name, x, y, r);
-
-        if (g instanceof PGraphicsJava2D) {
-            PGraphicsJava2D p2d = (PGraphicsJava2D) g;
-
-            p2d.fillGradient = true;
-            p2d.fillGradientObject = paint;
-        }
-    }
-
-
-    protected void fillGradient(PGraphics g, String name, float x1, float y1, float x2, float y2) {
-        Paint paint = getGradient(name, x1, y1, x2, y2);
-
-        if (g instanceof PGraphicsJava2D) {
-            PGraphicsJava2D p2d = (PGraphicsJava2D) g;
-
-            p2d.fillGradient = true;
-            p2d.fillGradientObject = paint;
-        }
-    }
-    */
-
-
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
@@ -1153,6 +1074,8 @@ public class PShapeSVG extends PShape {
           count++;
         }
       }
+      offset = PApplet.subset(offset, 0, count);
+      color = PApplet.subset(color, 0, count);
     }
   }
 
@@ -1182,7 +1105,6 @@ public class PShapeSVG extends PShape {
         this.y1 = (float) t1.getY();
         this.x2 = (float) t2.getX();
         this.y2 = (float) t2.getY();
-
       }
     }
   }
@@ -1437,28 +1359,28 @@ public class PShapeSVG extends PShape {
   }
 
 
-  protected Paint calcGradientPaint(Gradient gradient,
-                                    float x1, float y1, float x2, float y2) {
-    if (gradient instanceof LinearGradient) {
-      LinearGradient grad = (LinearGradient) gradient;
-      return new LinearGradientPaint(x1, y1, x2, y2,
-                                     grad.offset, grad.color, grad.count,
-                                     opacity);
-    }
-    throw new RuntimeException("Not a linear gradient.");
-  }
+//  protected Paint calcGradientPaint(Gradient gradient,
+//                                    float x1, float y1, float x2, float y2) {
+//    if (gradient instanceof LinearGradient) {
+//      LinearGradient grad = (LinearGradient) gradient;
+//      return new LinearGradientPaint(x1, y1, x2, y2,
+//                                     grad.offset, grad.color, grad.count,
+//                                     opacity);
+//    }
+//    throw new RuntimeException("Not a linear gradient.");
+//  }
 
 
-  protected Paint calcGradientPaint(Gradient gradient,
-                                    float cx, float cy, float r) {
-    if (gradient instanceof RadialGradient) {
-      RadialGradient grad = (RadialGradient) gradient;
-      return new RadialGradientPaint(cx, cy, r,
-                                     grad.offset, grad.color, grad.count,
-                                     opacity);
-    }
-    throw new RuntimeException("Not a radial gradient.");
-  }
+//  protected Paint calcGradientPaint(Gradient gradient,
+//                                    float cx, float cy, float r) {
+//    if (gradient instanceof RadialGradient) {
+//      RadialGradient grad = (RadialGradient) gradient;
+//      return new RadialGradientPaint(cx, cy, r,
+//                                     grad.offset, grad.color, grad.count,
+//                                     opacity);
+//    }
+//    throw new RuntimeException("Not a radial gradient.");
+//  }
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
