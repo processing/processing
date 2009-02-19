@@ -2672,11 +2672,20 @@ public class PGraphics extends PImage implements PConstants {
       textBuffer = new char[length + 10];
     }
     str.getChars(0, length, textBuffer, 0);
+    text(textBuffer, 0, length, x, y);
+  }
 
+
+  /**
+   * Method to draw text from an array of chars. This method will usually be 
+   * more efficient than drawing from a String object, because the String will 
+   * not be converted to a char array before drawing. 
+   */
+  public void text(char[] chars, int start, int stop, float x, float y) {
     // If multiple lines, sum the height of the additional lines
     float high = 0; //-textAscent();
-    for (int i = 0; i < length; i++) {
-      if (textBuffer[i] == '\n') {
+    for (int i = start; i < stop; i++) {
+      if (chars[i] == '\n') {
         high += textLeading;
       }
     }
@@ -2697,18 +2706,18 @@ public class PGraphics extends PImage implements PConstants {
       // do nothing
     }
 
-    int start = 0;
+//    int start = 0;
     int index = 0;
-    while (index < length) {
-      if (textBuffer[index] == '\n') {
-        textLineAlignImpl(textBuffer, start, index, x, y);
+    while (index < stop) { //length) {
+      if (chars[index] == '\n') {
+        textLineAlignImpl(chars, start, index, x, y);
         start = index + 1;
         y += textLeading;
       }
       index++;
     }
-    if (start < length) {
-      textLineAlignImpl(textBuffer, start, index, x, y);
+    if (start < stop) {  //length) {
+      textLineAlignImpl(chars, start, index, x, y);
     }
     if (textMode == SCREEN) updatePixels();
   }
@@ -2718,20 +2727,26 @@ public class PGraphics extends PImage implements PConstants {
    * Same as above but with a z coordinate.
    */
   public void text(String str, float x, float y, float z) {
-//    if ((z != 0) && (textMode == SCREEN)) {
-//      String msg = "textMode(SCREEN) cannot have a z coordinate";
-//      throw new RuntimeException(msg);
-//    }
-
     if (z != 0) translate(0, 0, z);  // slow!
 
     text(str, x, y);
     textZ = z;
 
-    if (z != 0) translate(0, 0, -z);
+    if (z != 0) translate(0, 0, -z);  // inaccurate!
   }
 
 
+  public void text(char[] chars, int start, int stop, 
+                   float x, float y, float z) {
+    if (z != 0) translate(0, 0, z);  // slow!
+
+    text(chars, start, stop, x, y);
+    textZ = z;
+
+    if (z != 0) translate(0, 0, -z);  // inaccurate!
+  }
+  
+  
   /**
    * Draw text in a box that is constrained to a particular size.
    * The current rectMode() determines what the coordinates mean
@@ -2945,11 +2960,6 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public void text(String s, float x1, float y1, float x2, float y2, float z) {
-//    if ((z != 0) && (textMode == SCREEN)) {
-//      String msg = "textMode(SCREEN) cannot have a z coordinate";
-//      throw new RuntimeException(msg);
-//    }
-
     if (z != 0) translate(0, 0, z);  // slowness, badness
 
     text(s, x1, y1, x2, y2);
