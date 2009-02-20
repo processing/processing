@@ -5,6 +5,15 @@ X 8.3 filenames being used when opening sketch
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1089
 X add -X switch to cp on osx build so that extended attrs are not copied
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1098
+_ after deleting a tab code still get's preprocessed, pde file is not forgotten
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1092
+
+_ multipage pdf works not like described in the docs
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1131
+
+invalid
+X Sketchbook sub-menu is empty after changing Sketchbook location preference
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1123
 
 X try adding a space to the name of the help menu for beachball problems
 _   this works, might be useful to make the switch
@@ -22,6 +31,8 @@ _ update to java 6u12
 
 
 0165 pde (or later)
+
+_ fix isManagingFocus error inside JEditTextArea
 
 _ windows exported exe problems (pcho)
 _   lib folder goes missing, give an error
