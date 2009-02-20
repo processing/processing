@@ -10,16 +10,15 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=958
 X   the fix has been found, just incorporate it
 X   thanks to dave bollinger
 _   add a note about this to the changes file
+X OutOfMemoryError with ellipse() in P3D and OPENGL
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1086
+X point(x,y) ignores noStroke() (in some renderers)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1090
 
 xml
 X fix for xml elements that have null names
 X added listChildren() method
 X added optional toString(boolean) parameter to enable/disable indents
-
-X OutOfMemoryError with ellipse() in P3D and OPENGL
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1086
-P4 _ point(x,y) ignores noStroke() (in some renderers)
-P4 _   http://dev.processing.org/bugs/show_bug.cgi?id=1090
 
 _ if no draw() method, and renderer is not displayable, then exit
 _   static mode PDFs shouldn't just hang
