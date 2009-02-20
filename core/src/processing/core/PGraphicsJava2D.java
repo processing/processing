@@ -466,10 +466,12 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 
   
   public void point(float x, float y) {
-    if (strokeWeight > 1) {
-      line(x, y, x + EPSILON, y + EPSILON);
-    } else {
-      set((int) screenX(x, y), (int) screenY(x, y), strokeColor);
+    if (stroke) {
+      if (strokeWeight > 1) {
+        line(x, y, x + EPSILON, y + EPSILON);
+      } else {
+        set((int) screenX(x, y), (int) screenY(x, y), strokeColor);
+      }
     }
   }
 
