@@ -1411,7 +1411,9 @@ public class Sketch {
     importedLibraries = new ArrayList<File>();
     for (String item : preprocessor.getExtraImports()) {
       // remove things up to the last dot
-      String entry = item.substring(0, item.lastIndexOf('.'));
+      int dot = item.lastIndexOf('.');
+      // http://dev.processing.org/bugs/show_bug.cgi?id=1145
+      String entry = (dot == -1) ? item : item.substring(0, dot);
       File libFolder = (File) Base.importToLibraryTable.get(entry);
 
       if (libFolder != null) {
