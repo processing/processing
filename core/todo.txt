@@ -9,7 +9,6 @@ X OpenGL is rendering darker in 0149+
 X   http://dev.processing.org/bugs/show_bug.cgi?id=958
 X   the fix has been found, just incorporate it
 X   thanks to dave bollinger
-_   add a note about this to the changes file
 X OutOfMemoryError with ellipse() in P3D and OPENGL
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1086
 X point(x,y) ignores noStroke() (in some renderers)
@@ -20,11 +19,11 @@ X fix for xml elements that have null names
 X added listChildren() method
 X added optional toString(boolean) parameter to enable/disable indents
 
+
 _ if no draw() method, and renderer is not displayable, then exit
 _   static mode PDFs shouldn't just hang
-
 _ public PImage(java.awt.Image) sets format to RGB (but could be ARGB)
-_ focus not coming through, ESC no longer working 
+_ focus not coming through, ESC no longer working(?)
 
 
 [ known problems ]
