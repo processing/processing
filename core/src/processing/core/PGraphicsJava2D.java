@@ -1731,7 +1731,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 
   public void set(int x, int y, int argb) {
     if ((x < 0) || (y < 0) || (x >= width) || (y >= height)) return;
-    //((BufferedImage) image).setRGB(x, y, argb);
+//    ((BufferedImage) image).setRGB(x, y, argb);
     getset[0] = argb;
     WritableRaster raster = ((BufferedImage) image).getRaster();
     raster.setDataElements(x, y, getset);
