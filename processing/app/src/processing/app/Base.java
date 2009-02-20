@@ -42,7 +42,7 @@ import processing.core.*;
  */
 public class Base {
   static final int REVISION = 164;
-  static String VERSION_NAME = "0165";
+  static String VERSION_NAME = "0164";
 
   static HashMap<Integer, String> platformNames = new HashMap();
   static {
