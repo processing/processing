@@ -23,7 +23,7 @@ X nextPage() not working properly with PDF as the renderer
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1131
 X save styles when nextPage() is called
 
-invalid
+invalid/wontfix/dupe
 X Processing will not start with non-standard disk partitioning on OS X
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1127
 X Got NoClassDefFoundError exception when accessing quicktime API
@@ -38,6 +38,12 @@ X PImage.save() does not create parent directories
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1124
 X sketch turning blue and not working on osx
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1164
+X dupe: blend() inaccurary
+X  http://dev.processing.org/bugs/show_bug.cgi?id=1008
+X glPushAttrib style function
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1150
+X calling saveFrame() in noLoop() (update reference)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1155
 xml
 X fix for xml elements that have null names
 X added listChildren() method

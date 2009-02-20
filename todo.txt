@@ -14,6 +14,20 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=1145
 invalid
 X Sketchbook sub-menu is empty after changing Sketchbook location preference
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1123
+X something about setting memory options
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1159
+X something bizarre about syntax errors
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1161
+X "JDWP unable to initialize: Error 111 from JNI GetEnv" on Mac OS X PPC
+X   http://dev.processing.org/bugs/show_bug.cgi?id=959
+X Saving sketch with the same name as a class or primitive breaks sketch
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1165
+
+earlier
+X "An error occurred while starting the application" with Processing 0154+
+X   Maybe provide the old exe or another alternative?
+X   Have someone try this on lab machines until we can find one that breaks
+X   http://dev.processing.org/bugs/show_bug.cgi?id=986
 
 X try adding a space to the name of the help menu for beachball problems
 _   this works, might be useful to make the switch
@@ -49,11 +63,7 @@ _   andreas' library will do good things eventually
 _ move library examples to the examples menu
 _   do this once the library documentation has been fixed up
 
-1 _ "An error occurred while starting the application" with Processing 0154+
-1 _   Maybe provide the old exe or another alternative?
-1 _   Have someone try this on lab machines until we can find one that breaks
-1 _   http://dev.processing.org/bugs/show_bug.cgi?id=986
-1 _ need to do a better job of error handling inside main()
+_ need to do a better job of error handling inside main()
 
 4 _ mangled menu text with java 6u10
 4 _   need to try adding the d3d flag to the .exe
@@ -1118,6 +1128,8 @@ _   or also add a method for getting the vectors?
 
 LIBRARIES / Serial
 
+_ syslog issues on macosx
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1147
 _ port buffering not working properly
 _   may just be a problem with thread starvation
 _   bufferUntil() fires an event but continues to fill up the buffer
