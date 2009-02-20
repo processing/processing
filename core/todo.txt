@@ -19,6 +19,9 @@ X fix startup problem when scheme coloring was odd
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1109
 X fix several point() problems with P3D
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1110
+X nextPage() not working properly with PDF as the renderer
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1131
+X save styles when nextPage() is called
 
 invalid
 X Processing will not start with non-standard disk partitioning on OS X
