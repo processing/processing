@@ -37,6 +37,7 @@ public class PGraphicsPDF extends PGraphicsJava2D {
   Document document;
   PdfWriter writer;
   PdfContentByte content;
+//  PdfTemplate template;
   DefaultFontMapper mapper;
 
   // BaseFont baseFont = mapper.awtToPdf(java.awt.Font awtFont)
@@ -159,6 +160,7 @@ public class PGraphicsPDF extends PGraphicsJava2D {
         writer = PdfWriter.getInstance(document, bos);
         document.open();
         content = writer.getDirectContent();
+//        template = content.createTemplate(width, height);
 
       } catch (Exception e) {
         e.printStackTrace();
@@ -241,11 +243,14 @@ public class PGraphicsPDF extends PGraphicsJava2D {
           }
         }
       }
-
       g2 = content.createGraphics(width, height, mapper);
+//      g2 = template.createGraphics(width, height, mapper);
     }
     super.beginDraw();
   }
+
+  
+  // public void endDraw()
 
 
   /**
@@ -253,7 +258,8 @@ public class PGraphicsPDF extends PGraphicsJava2D {
    * used to look for removable media without showing a system
    * dialog if the media is not present. Workaround pulled from the
    * <A HREF="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4089199">
-   * bug report</A> on bugs.sun.com.
+   * bug report</A> on bugs.sun.com. This bug was fixed in Java 6, and we
+   * can remove the workaround when we start requiring Java 6.  
    */
   protected static boolean fileExists(File file) {
     try {
@@ -313,6 +319,7 @@ public class PGraphicsPDF extends PGraphicsJava2D {
       } else if (mode == MODEL) {
         g2.dispose();
         g2 = content.createGraphics(width, height, mapper);
+//        g2 = template.createGraphics(width, height, mapper);
       } else if (mode == SCREEN) {
         throw new RuntimeException("textMode(SCREEN) not supported with PDF");
       } else {
@@ -326,49 +333,27 @@ public class PGraphicsPDF extends PGraphicsJava2D {
    * Call to explicitly go to the next page from within a single draw().
    */
   public void nextPage() {
+	  PStyle savedStyle = getStyle();
     g2.dispose();
+    
     try {
+//    writer.setPageEmpty(false);  // maybe useful later
       document.newPage();  // is this bad if no addl pages are made?
     } catch (Exception e) {
       e.printStackTrace();
     }
-    g2 = content.createGraphicsShapes(width, height);
+    if (textMode == SHAPE) {
+      g2 = content.createGraphicsShapes(width, height);
+    } else if (textMode == MODEL) {
+      g2 = content.createGraphics(width, height, mapper);
+    }
+    style(savedStyle);
 
     // should there be a beginDraw/endDraw in here?
   }
 
 
-  public void endDraw() {
-    //System.out.println("endDraw()");
-
-    /*
-    String text1 = "This text has \u0634\u0627\u062f\u062c\u0645\u0647\u0648\u0631 123,456 \u0645\u0646 (Arabic)";
-    java.awt.Font font = new java.awt.Font("arial", 0, 18);
-    g2.setFont(font);
-    g2.drawString(text1, 100, 100);
-    */
-
-    /*
-    content.addTemplate(tp, 0, 0); //50, 400);
-    */
-
-    /*
-    try {
-      document.newPage();  // is this bad if no addl pages are made?
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    */
-
-    /*
-      g2.dispose();
-      document.close();  // can't be done in finalize, not always called
-    */
-  }
-
-
   public void dispose() {
-    //System.out.println("calling dispose");
     if (document != null) {
       g2.dispose();
       document.close();  // can't be done in finalize, not always called
