@@ -803,7 +803,8 @@ public class Base {
                                                   null,
                                                   options,
                                                   options[0]);
-        if (result == JOptionPane.NO_OPTION) {
+        if (result == JOptionPane.NO_OPTION || 
+            result == JOptionPane.CLOSED_OPTION) {
           return false;
         }
       }
