@@ -2585,14 +2585,20 @@ public class PGraphics3D extends PGraphics {
     float centerX = x + radiusH;
     float centerY = y + radiusV;
 
-    float sx1 = screenX(x, y);
-    float sy1 = screenY(x, y);
-    float sx2 = screenX(x+w, y+h);
-    float sy2 = screenY(x+w, y+h);
+//    float sx1 = screenX(x, y);
+//    float sy1 = screenY(x, y);
+//    float sx2 = screenX(x+w, y+h);
+//    float sy2 = screenY(x+w, y+h);
 
+    // returning to pre-1.0 version of algorithm because of problems
+    int rough = (int)(4+Math.sqrt(w+h)*3);
+    int accuracy = PApplet.constrain(rough, 6, 100);
+    
     if (fill) {
-      int accuracy = (int) (TWO_PI * PApplet.dist(sx1, sy1, sx2, sy2) / 20);
-      if (accuracy < 6) accuracy = 6;
+      // returning to pre-1.0 version of algorithm because of problems
+//      int rough = (int)(4+Math.sqrt(w+h)*3);
+//      int rough = (int) (TWO_PI * PApplet.dist(sx1, sy1, sx2, sy2) / 20);
+//      int accuracy = PApplet.constrain(rough, 6, 100);
 
       float inc = (float)SINCOS_LENGTH / accuracy;
       float val = 0;
@@ -2622,8 +2628,8 @@ public class PGraphics3D extends PGraphics {
     }
 
     if (stroke) {
-      int accuracy = (int) (TWO_PI * PApplet.dist(sx1, sy1, sx2, sy2) / 8);
-      if (accuracy < 6) accuracy = 6;
+//      int rough = (int) (TWO_PI * PApplet.dist(sx1, sy1, sx2, sy2) / 8);
+//      int accuracy = PApplet.constrain(rough, 6, 100);
 
       float inc = (float)SINCOS_LENGTH / accuracy;
       float val = 0;
