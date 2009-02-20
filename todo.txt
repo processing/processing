@@ -1,15 +1,32 @@
 0164 pde 
 X Empty "code" folder causes problems with Export
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1084
-_ 8.3 filenames being used when opening sketch
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1089
+X 8.3 filenames being used when opening sketch
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1089
+X add -X switch to cp on osx build so that extended attrs are not copied
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1098
+
+X try adding a space to the name of the help menu for beachball problems
+_   this works, might be useful to make the switch
+_ disable sketchbook and examples menus on os x?
+
+_ proper libraries warning dialog
+_   check if libraries folder does not exist
+_   check to see if other libraries are installed
+_   warn user about moving libraries and restarting
+
+_ update to java 6u12
+
+
+. . . 
+
+
+0165 pde (or later)
 
 _ windows exported exe problems (pcho)
 _   lib folder goes missing, give an error
 _   also any .jar files that are missing, give an error
 _   showing more debug messages (command line?)
-
-_ try adding a space to the name of the help menu for beachball problems
 
 _ can't rename a .pde file as a .java file
 _ shift-tab with no selection should go back two spaces
@@ -20,10 +37,6 @@ _   andreas' library will do good things eventually
 
 _ move library examples to the examples menu
 _   do this once the library documentation has been fixed up
-_ proper libraries warning dialog
-_   check if libraries folder does not exist
-_   check to see if other libraries are installed
-_   warn user about moving libraries and restarting
 
 1 _ "An error occurred while starting the application" with Processing 0154+
 1 _   Maybe provide the old exe or another alternative?
@@ -31,8 +44,6 @@ _   warn user about moving libraries and restarting
 1 _   http://dev.processing.org/bugs/show_bug.cgi?id=986
 1 _ need to do a better job of error handling inside main()
 
-
-not /as/ important, but soon
 4 _ mangled menu text with java 6u10
 4 _   need to try adding the d3d flag to the .exe
 4 _   http://dev.processing.org/bugs/show_bug.cgi?id=1065
@@ -50,8 +61,9 @@ _   need someone to go out and test all scenarios of this
 
 [ known bugs ]
 
-_ command line support is currently broken (why?)
+_ command line support is currently broken
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1048
+_   some fixes can be found in the bug report
 _ video library threading problems with other libraries
 _   http://dev.processing.org/bugs/show_bug.cgi?id=882
 _   using Capture.list() before size() sometimes works
@@ -65,6 +77,8 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=786
 _ sometimes not launching
 _   this seems to be a threading problem, like an NPE on load/open
 _   probaby related to the other load/save sync errors
+_ significant point() and set() slowdown on OS X
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1094
 
 
 with casey
