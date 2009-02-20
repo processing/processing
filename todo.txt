@@ -12,6 +12,8 @@ X StringIndexOutOfBoundsException caused by import statements with no dots
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1145
 X Pressing <Esc> in "Are you sure you want to Quit?" dialog quits Processing
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1134
+X Fix QUADS and QUAD_STRIP with P2D
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1162
 
 invalid
 X Sketchbook sub-menu is empty after changing Sketchbook location preference
