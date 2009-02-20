@@ -630,6 +630,12 @@ public class PGraphics3D extends PGraphics {
         triangleCount = 0;
       }
       if (stroke) {
+        renderPoints(0, pointCount);
+        if (raw != null) {
+          rawPoints(0, pointCount);
+        }
+        pointCount = 0;
+
         renderLines(0, lineCount);
         if (raw != null) {
           rawLines(0, lineCount);
@@ -677,8 +683,12 @@ public class PGraphics3D extends PGraphics {
     {
       int stop = shapeLast;
       for (int i = shapeFirst; i < stop; i++) {
-        addLineBreak();  // total overkill for points
-        addLine(i, i);
+        if (strokeWeight == 1) {
+          addPoint(i);
+        } else {
+          addLineBreak();  // total overkill for points
+          addLine(i, i);
+        }
       }
     }
     break;
@@ -953,6 +963,9 @@ public class PGraphics3D extends PGraphics {
 
 
   protected void renderPoints(int start, int stop) {
+    if (strokeWeight != 1) {
+      
+    }
     for (int i = start; i < stop; i++) {
       float[] a = vertices[points[i][VERTEX1]];
       int sx = (int) (a[TX] + 0.4999f);
@@ -1150,6 +1163,12 @@ public class PGraphics3D extends PGraphics {
         float ox2 = b[TX];
         float oy2 = b[TY];
 
+        // when drawing points with stroke weight, need to extend a bit
+        if (ox1 == ox2 && oy1 == oy2) {
+          oy1 -= a[SW];
+          oy2 += a[SW];
+        }
+        
         float dX = ox2 - ox1 + EPSILON;
         float dY = oy2 - oy1 + EPSILON;
         float len = (float) Math.sqrt(dX*dX + dY*dY);
