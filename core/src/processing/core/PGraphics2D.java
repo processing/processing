@@ -258,14 +258,16 @@ public class PGraphics2D extends PGraphics {
     switch (shape) {
     case POINTS:
       // stroke cannot change inside beginShape(POINTS);
-      if ((ctm.m00 == ctm.m11) && (strokeWeight == 1)) {
-        for (int i = 0; i < vertexCount; i++) {
-          thin_point(vertices[i][TX], vertices[i][TY], strokeColor);
-        }
-      } else {
-        for (int i = 0; i < vertexCount; i++) {
-          float[] v = vertices[i];
-          thick_point(v[TX], v[TY], v[TZ],  v[SR], v[SG], v[SB], v[SA]);
+      if (stroke) {
+        if ((ctm.m00 == ctm.m11) && (strokeWeight == 1)) {
+          for (int i = 0; i < vertexCount; i++) {
+            thin_point(vertices[i][TX], vertices[i][TY], strokeColor);
+          }
+        } else {
+          for (int i = 0; i < vertexCount; i++) {
+            float[] v = vertices[i];
+            thick_point(v[TX], v[TY], v[TZ],  v[SR], v[SG], v[SB], v[SA]);
+          }
         }
       }
       break;
