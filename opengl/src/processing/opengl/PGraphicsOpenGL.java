@@ -1976,6 +1976,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
 
   protected void ambientFromCalc() {
+    super.ambientFromCalc();
     calcColorBuffer();
     gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT, colorBuffer, 0);
   }
@@ -2003,6 +2004,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
 
   protected void specularFromCalc() {
+    super.specularFromCalc();
     calcColorBuffer();
     gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, colorBuffer, 0);
   }
@@ -2036,6 +2038,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
 
   protected void emissiveFromCalc() {
+    super.emissiveFromCalc();
     calcColorBuffer();
     gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_EMISSION, colorBuffer, 0);
   }
