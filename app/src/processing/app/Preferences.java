@@ -828,25 +828,24 @@ public class Preferences {
 
 
   static public Color getColor(String name) {
-    Color parsed = null;
+    Color parsed = Color.GRAY;  // set a default  
     String s = get(name);
     if ((s != null) && (s.indexOf("#") == 0)) {
       try {
-        int v = Integer.parseInt(s.substring(1), 16);
-        parsed = new Color(v);
-      } catch (Exception e) {
-      }
+        parsed = new Color(Integer.parseInt(s.substring(1), 16));
+      } catch (Exception e) { }
     }
     return parsed;
   }
 
 
   static public void setColor(String attr, Color what) {
-    String r = Integer.toHexString(what.getRed());
-    String g = Integer.toHexString(what.getGreen());
-    String b = Integer.toHexString(what.getBlue());
-    set(attr, "#" + r.substring(r.length() - 2) +
-        g.substring(g.length() - 2) + b.substring(b.length() - 2));
+//    String r = Integer.toHexString(what.getRed());
+//    String g = Integer.toHexString(what.getGreen());
+//    String b = Integer.toHexString(what.getBlue());
+//    set(attr, "#" + r.substring(r.length() - 2) +
+//        g.substring(g.length() - 2) + b.substring(b.length() - 2));
+    set(attr, "#" + PApplet.hex(what.getRGB() & 0xffffff, 6));
   }
 
 
@@ -895,7 +894,10 @@ public class Preferences {
 
     String s = st.nextToken();
     if (s.indexOf("#") == 0) s = s.substring(1);
-    Color color = new Color(Integer.parseInt(s, 16));
+    Color color = Color.DARK_GRAY; 
+    try {
+      color = new Color(Integer.parseInt(s, 16));
+    } catch (Exception e) { }
 
     s = st.nextToken();
     boolean bold = (s.indexOf("bold") != -1);
