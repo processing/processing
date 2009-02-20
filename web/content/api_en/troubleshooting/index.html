@@ -727,6 +727,8 @@ Automatically updated <A HREF="http://dev.processing.org/bugs/buglist.cgi?bug_st
   Or if you want to take your chances with the slow menu bar, 
   you can change the default setting in the Preferences window.
 
+<li>Due to what appears to be (another) bug in Apple's Java implementation, the point() and set() methods are extremely slow in some circumstances when used with the default renderer. Using P2D or P3D will fix the problem. Grouping many calls to point() or set() together can also help. (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=1094">Bug 1094</a>)
+
 <li> Sketches that use the video library plus OpenGL have a problem on some
   OS X machines. The workaround is listed 
   <a href="http://dev.processing.org/bugs/show_bug.cgi?id=882#c16">here</a>.
@@ -734,9 +736,9 @@ Automatically updated <A HREF="http://dev.processing.org/bugs/buglist.cgi?bug_st
 <li> Command line support arrived in a recent release, but is not working yet.
   (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=1048">Bug 1048</a>)
 
-<li> OpenGL rendering is more dim/darker in release 0149 and later
+<li> <strike>OpenGL rendering is more dim/darker in release 0149 and later
   (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=958">Bug 958</a>).
-  Any help tracking this down would be most appreciated.
+  Any help tracking this down would be most appreciated.</strike> Fixed for 1.0.2 with help from Dave Bollinger. Thanks, Dave!
 
 <li> The first few frames of OpenGL sketches on Windows run slowly.
   (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=874">Bug 874</a>)
@@ -747,7 +749,6 @@ Automatically updated <A HREF="http://dev.processing.org/bugs/buglist.cgi?bug_st
   setting does not share this problem because it always draws lines 
   perpendicular to the screen (which we hope to do in a future release).
   (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=956">Bug 956</a>)
-
 
 <LI>int() and float() don't always work, use ((int) blah) or ((float)
 blah) instead for the time being, or parseInt(blah) and parseFloat(blah). (<A
