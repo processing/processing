@@ -84,6 +84,13 @@
 	<string>true</string>
         -->
 
+	<key>JVMArchs</key>  
+	<array>  
+	  <!--<string>x86_64</string>--> <!-- currently no 64 bit support -->
+	  <string>i386</string>  
+	  <string>ppc</string>  
+	</array>
+
 	<key>apple.awt.showGrowBox</key>
 	<string>false</string>
 	<key>com.apple.smallTabs</key>
