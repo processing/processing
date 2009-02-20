@@ -1527,8 +1527,11 @@ public class PGraphics3D extends PGraphics {
   protected void addPolygonTriangles() {
     if (vertexOrder.length != vertices.length) {
       int[] temp = new int[vertices.length];
-      // since vertex_start may not be zero, might need to keep old stuff around
-      PApplet.arrayCopy(vertexOrder, temp, vertexCount);
+      // vertex_start may not be zero, might need to keep old stuff around
+      // also, copy vertexOrder.length, not vertexCount because vertexCount
+      // may be larger than vertexOrder.length (since this is a post-processing
+      // step that happens after the vertex arrays are built).
+      PApplet.arrayCopy(vertexOrder, temp, vertexOrder.length);
       vertexOrder = temp;
     }
 
