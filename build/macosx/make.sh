@@ -20,17 +20,17 @@ else
   echo Copying Processing.app...
   #cp -a dist/Processing.app work/   # #@$(* bsd switches
   #/sw/bin/cp -a dist/Processing.app work/
-  cp -pR dist/Processing.app work/
+  cp -pRX dist/Processing.app work/
   # cvs doesn't seem to want to honor the +x bit 
   chmod +x work/Processing.app/Contents/MacOS/JavaApplicationStub
 
-  cp -r ../shared/lib "$RESOURCES/"
-  cp -r ../shared/libraries "$RESOURCES/"
-  cp -r ../shared/tools "$RESOURCES/"
+  cp -rX ../shared/lib "$RESOURCES/"
+  cp -rX ../shared/libraries "$RESOURCES/"
+  cp -rX ../shared/tools "$RESOURCES/"
 
-  cp ../../app/lib/antlr.jar "$RESOURCES/"
-  cp ../../app/lib/ecj.jar "$RESOURCES/"
-  cp ../../app/lib/jna.jar "$RESOURCES/"
+  cp -X ../../app/lib/antlr.jar "$RESOURCES/"
+  cp -X ../../app/lib/ecj.jar "$RESOURCES/"
+  cp -X ../../app/lib/jna.jar "$RESOURCES/"
 
   echo Extracting examples...
   unzip -q -d "$RESOURCES/" ../shared/examples.zip
@@ -39,12 +39,12 @@ else
   unzip -q -d "$RESOURCES/" ../shared/reference.zip
 
   LIBRARIES=$RESOURCES/libraries/
-  cp -r ../../net "$LIBRARIES"
-  cp -r ../../opengl "$LIBRARIES"
-  cp -r ../../serial "$LIBRARIES"
-  cp -r ../../video "$LIBRARIES"
-  cp -r ../../pdf "$LIBRARIES"
-  cp -r ../../dxf "$LIBRARIES"
+  cp -rX ../../net "$LIBRARIES"
+  cp -rX ../../opengl "$LIBRARIES"
+  cp -rX ../../serial "$LIBRARIES"
+  cp -rX ../../video "$LIBRARIES"
+  cp -rX ../../pdf "$LIBRARIES"
+  cp -rX ../../dxf "$LIBRARIES"
 fi
 
 
@@ -97,7 +97,7 @@ then
     src/antlr/java/java.g
 
   # hack to get around path mess
-  cp src/antlr/java/JavaTokenTypes.txt src/processing/app/preproc/
+  cp -X src/antlr/java/JavaTokenTypes.txt src/processing/app/preproc/
 
   # now build the pde stuff that extends the java classes
   java -cp "$RESOURCES/antlr.jar" antlr.Tool \
