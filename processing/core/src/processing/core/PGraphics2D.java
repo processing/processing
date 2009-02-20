@@ -379,40 +379,70 @@ public class PGraphics2D extends PGraphics {
       break;
 
     case QUADS:
-    case QUAD_STRIP:
-      //System.out.println("pooping out a quad");
-      increment = (shape == QUADS) ? 4 : 2;
       if (fill) {
         fpolygon.vertexCount = 4;
-        for (int i = 0; i < vertexCount-3; i += increment) {
+        for (int i = 0; i < vertexCount-3; i += 4) {
           for (int j = 0; j < 4; j++) {
-            fpolygon.vertices[j][R] = vertices[i+j][R];
-            fpolygon.vertices[j][G] = vertices[i+j][G];
-            fpolygon.vertices[j][B] = vertices[i+j][B];
-            fpolygon.vertices[j][A] = vertices[i+j][A];
+            int jj = i+j;
+            if (j == 2) jj = i+3;  // swap 2nd and 3rd vertex
+            if (j == 3) jj = i+2;
 
-            fpolygon.vertices[j][TX] = vertices[i+j][TX];
-            fpolygon.vertices[j][TY] = vertices[i+j][TY];
-            fpolygon.vertices[j][TZ] = vertices[i+j][TZ];
+            fpolygon.vertices[j][R] = vertices[jj][R];
+            fpolygon.vertices[j][G] = vertices[jj][G];
+            fpolygon.vertices[j][B] = vertices[jj][B];
+            fpolygon.vertices[j][A] = vertices[jj][A];
+
+            fpolygon.vertices[j][TX] = vertices[jj][TX];
+            fpolygon.vertices[j][TY] = vertices[jj][TY];
+            fpolygon.vertices[j][TZ] = vertices[jj][TZ];
 
             if (textureImage != null) {
-              fpolygon.vertices[j][U] = vertices[i+j][U];
-              fpolygon.vertices[j][V] = vertices[i+j][V];
+              fpolygon.vertices[j][U] = vertices[jj][U];
+              fpolygon.vertices[j][V] = vertices[jj][V];
             }
           }
           fpolygon.render();
         }
       }
       if (stroke) {
-        // first draw all vertices as a line strip
-        if (shape == QUAD_STRIP) {
-          draw_lines(vertices, vertexCount-1, 1, 1, 0);
-        } else {  // skip every few for quads
-          draw_lines(vertices, vertexCount, 1, 1, 4);
+        draw_lines(vertices, vertexCount-1, 1, 2, 4); // works
+        draw_lines(vertices, vertexCount-1, 2, 4, 0);
+        for (int i = 1; i < vertexCount-2; i += 4) {
+          draw_line(vertices[i], vertices[i+2]);
         }
-        // then draw from vertex (n) to (n+3)
-        // incrementing n by the same increment as above
-        draw_lines(vertices, vertexCount-2, 3, increment, 0);
+//        draw_lines(vertices, vertexCount-2, 2, 2, 0);  
+      }
+      break;
+
+    case QUAD_STRIP:
+      if (fill) {
+        fpolygon.vertexCount = 4;
+        for (int i = 0; i < vertexCount-3; i += 2) {
+          for (int j = 0; j < 4; j++) {
+            int jj = i+j;
+            if (j == 2) jj = i+3;  // swap 2nd and 3rd vertex
+            if (j == 3) jj = i+2;
+            
+            fpolygon.vertices[j][R] = vertices[jj][R];
+            fpolygon.vertices[j][G] = vertices[jj][G];
+            fpolygon.vertices[j][B] = vertices[jj][B];
+            fpolygon.vertices[j][A] = vertices[jj][A];
+
+            fpolygon.vertices[j][TX] = vertices[jj][TX];
+            fpolygon.vertices[j][TY] = vertices[jj][TY];
+            fpolygon.vertices[j][TZ] = vertices[jj][TZ];
+
+            if (textureImage != null) {
+              fpolygon.vertices[j][U] = vertices[jj][U];
+              fpolygon.vertices[j][V] = vertices[jj][V];
+            }
+          }
+          fpolygon.render();
+        }
+      }
+      if (stroke) {
+        draw_lines(vertices, vertexCount-1, 1, 2, 0);  // inner lines
+        draw_lines(vertices, vertexCount-2, 2, 1, 0);  // outer lines
       }
       break;
 
