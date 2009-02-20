@@ -30,11 +30,14 @@ X Got NoClassDefFoundError exception when accessing quicktime API
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1128
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1129
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1130
-X http://dev.processing.org/bugs/show_bug.cgi?id=1138
-X http://dev.processing.org/bugs/show_bug.cgi?id=1140
+X not using present mode correctly
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1138
+X apparent graphics driver conflict on vista
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1140
 X PImage.save() does not create parent directories
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1124
-
+X sketch turning blue and not working on osx
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1164
 xml
 X fix for xml elements that have null names
 X added listChildren() method
