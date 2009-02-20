@@ -320,7 +320,20 @@ public class Base {
 
     // Check if any files were passed in on the command line
     for (int i = 0; i < args.length; i++) {
-      if (handleOpen(args[i]) != null) {
+      String path = args[i];
+      // Fix a problem with systems that use a non-ASCII languages. Paths are
+      // being passed in with 8.3 syntax, which makes the sketch loader code 
+      // unhappy, since the sketch folder naming doesn't match up correctly.
+      // http://dev.processing.org/bugs/show_bug.cgi?id=1089
+      if (isWindows()) {
+        try {
+          File file = new File(args[i]);
+          path = file.getCanonicalPath();
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      }
+      if (handleOpen(path) != null) {
         opened = true;
       }
     }
