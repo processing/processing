@@ -210,7 +210,7 @@ public class Compiler {
           //import poo.shoe.blah.*;
           String what = errorMessage.substring("The import ".length());
           what = what.substring(0, what.indexOf(' '));
-          System.err.println("Starting with release 0149, libraries must be " +
+          System.err.println("Note that release 1.0, libraries must be " +
                              "installed in a folder named 'libraries' " +
                              "inside the 'sketchbook' folder.");
           exception.setMessage("The package " +
