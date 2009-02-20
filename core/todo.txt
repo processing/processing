@@ -1,22 +1,23 @@
-0164 core
+0164 core (1.0.2?)
 X requestImage() causing problems with JAVA2D
 X fix minor strokeWeight bug with OpenGL
 X text() with char array
 _   add documentation
 _   add this for text in a rectangle?
 X minor bug fix to svg files that weren't being resized properly
+X OpenGL is rendering darker in 0149+ 
+X   http://dev.processing.org/bugs/show_bug.cgi?id=958
+X   the fix has been found, just incorporate it
+X   thanks to dave bollinger
+_   add a note about this to the changes file
 
 xml
 X fix for xml elements that have null names
 X added listChildren() method
 X added optional toString(boolean) parameter to enable/disable indents
 
-_ OpenGL is rendering darker in 0149+ 
-_   http://dev.processing.org/bugs/show_bug.cgi?id=958
-_   the fix has been found, just incorporate it
-
-P1 _ OutOfMemoryError with ellipse() in P3D and OPENGL
-P1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1086
+X OutOfMemoryError with ellipse() in P3D and OPENGL
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1086
 P4 _ point(x,y) ignores noStroke() (in some renderers)
 P4 _   http://dev.processing.org/bugs/show_bug.cgi?id=1090
 
