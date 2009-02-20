@@ -1283,10 +1283,10 @@ public class PApplet extends Applet
       // Seen on applet destroy, maybe can ignore?
       e.printStackTrace();
 
-    } finally {
-      if (g != null) {
-        g.dispose();
-      }
+//    } finally {
+//      if (g != null) {
+//        g.dispose();
+//      }
     }
   }
 

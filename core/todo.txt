@@ -11,8 +11,26 @@ X   the fix has been found, just incorporate it
 X   thanks to dave bollinger
 X OutOfMemoryError with ellipse() in P3D and OPENGL
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1086
+X   should also fix problem with AIOOBE
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1117
 X point(x,y) ignores noStroke() (in some renderers)
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1090
+X fix startup problem when scheme coloring was odd
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1109
+X fix several point() problems with P3D
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1110
+
+invalid
+X Processing will not start with non-standard disk partitioning on OS X
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1127
+X Got NoClassDefFoundError exception when accessing quicktime API
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1128
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1129
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1130
+X http://dev.processing.org/bugs/show_bug.cgi?id=1138
+X http://dev.processing.org/bugs/show_bug.cgi?id=1140
+X PImage.save() does not create parent directories
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1124
 
 xml
 X fix for xml elements that have null names
@@ -111,6 +129,8 @@ _ osx 10.5 (not 10.4) performing text width calculation differently
 _   http://dev.processing.org/bugs/show_bug.cgi?id=972
 _ Automatically use textMode(SCREEN) with text() when possible
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1020
+_ Implement better caching mechanism when creating large fonts
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1111
 
 
 P2D, P3D, PPolygon [1.0]
