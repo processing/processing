@@ -556,25 +556,19 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
     // 0 to 90 in java would be 0 to -90 for p5 renderer
     // but that won't work, so -90 to 0?
 
-    if (stop - start >= TWO_PI) {
-      start = 0;
-      stop = 360;
+    start = -start * RAD_TO_DEG;
+    stop = -stop * RAD_TO_DEG;
 
-    } else {
-      start = -start * RAD_TO_DEG;
-      stop = -stop * RAD_TO_DEG;
-
-      // ok to do this because already checked for NaN
-      while (start < 0) {
-        start += 360;
-        stop += 360;
-      }
-      if (start > stop) {
-        float temp = start;
-        start = stop;
-        stop = temp;
-      }
-    }
+    // ok to do this because already checked for NaN
+//    while (start < 0) {
+//      start += 360;
+//      stop += 360;
+//    }
+//    if (start > stop) {
+//      float temp = start;
+//      start = stop;
+//      stop = temp;
+//    }
     float sweep = stop - start;
 
     // stroke as Arc2D.OPEN, fill as Arc2D.PIE
