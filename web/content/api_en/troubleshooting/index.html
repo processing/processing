@@ -702,12 +702,13 @@ Automatically updated <A HREF="http://dev.processing.org/bugs/buglist.cgi?bug_st
   This flickering issue is being tracked 
   <a href="http://dev.processing.org/bugs/show_bug.cgi?id=1056">here</a>.
 
-<li>On some Windows machines, the text of menus is mangled, or other strange artifacts show up when using Processing 1.0. The issue is being tracked <a href="http://dev.processing.org/bugs/show_bug.cgi?id=1065">here</a>, and is a result of bad interactions between Java 6 update 10 and some graphics hardware.
+<li>On some Windows machines, parts of the user interface (menus, buttons, etc) are mangled, or other strange artifacts show up when using Processing 1.0. The issue is being tracked <a href="http://dev.processing.org/bugs/show_bug.cgi?id=1065">here</a>, and is a result of bad interactions between Java 6 update 10 and some graphics hardware.
 
 <li> "An error occurred while starting the application" when launching
-  Processing.exe on Windows. This is a high priority however we cannot
+  Processing.exe on Windows. <!--This is a high priority however we cannot
   reproduce it on any of our test machines, which has delayed a fix.
-  (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=986">Bug 986</a>)
+  (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=986">Bug 986</a>)-->
+  We think we've found the problems causing this error in releases 1.0.1 and 1.0.2, but if you find it again, please file a report in the <a href="http://dev.processing.org/bugs/">bugs database</a>.
 
 <li> With P2D, P3D, and OPENGL, series of connected lines (such as the stroke 
   around a polygon, triangle, or ellipse) produce unattractive results when 
