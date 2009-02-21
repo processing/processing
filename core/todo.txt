@@ -22,6 +22,9 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=1110
 X nextPage() not working properly with PDF as the renderer
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1131
 X save styles when nextPage() is called
+X beginRaw() broken (no DXF, etc working)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1099
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1144
 
 invalid/wontfix/dupe
 X Processing will not start with non-standard disk partitioning on OS X
