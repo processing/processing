@@ -1,9 +1,9 @@
-0164 core (1.0.2?)
+0164 core (1.0.2)
 X requestImage() causing problems with JAVA2D
 X fix minor strokeWeight bug with OpenGL
 X text() with char array
-_   add documentation
-_   add this for text in a rectangle?
+o   add documentation
+o   add this for text in a rectangle?
 X minor bug fix to svg files that weren't being resized properly
 X OpenGL is rendering darker in 0149+ 
 X   http://dev.processing.org/bugs/show_bug.cgi?id=958
@@ -29,6 +29,10 @@ X Fix algorithm for quadratic to cubic curve conversion
 X   wrong algorithm in PGraphicsOpenGL and PShapeSVG
 X   (thanks to user 'shambles')
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1122
+_ tint() not working in P2D
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1132
+_ blend() y coordinates inverted when using OpenGL
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1137
 
 invalid/wontfix/dupe
 X Processing will not start with non-standard disk partitioning on OS X
@@ -51,11 +55,14 @@ X glPushAttrib style function
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1150
 X calling saveFrame() in noLoop() (update reference)
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1155
+
 xml
 X fix for xml elements that have null names
 X added listChildren() method
 X added optional toString(boolean) parameter to enable/disable indents
 
+
+0165 core (1.0.3) or later
 
 _ if no draw() method, and renderer is not displayable, then exit
 _   static mode PDFs shouldn't just hang
