@@ -41,8 +41,8 @@ import processing.core.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
-  static final int REVISION = 164;
-  static String VERSION_NAME = "0164";
+  static final int REVISION = 165;
+  static String VERSION_NAME = "0165";
 
   static HashMap<Integer, String> platformNames = new HashMap();
   static {
@@ -322,7 +322,7 @@ public class Base {
     for (int i = 0; i < args.length; i++) {
       String path = args[i];
       // Fix a problem with systems that use a non-ASCII languages. Paths are
-      // being passed in with 8.3 syntax, which makes the sketch loader code 
+      // being passed in with 8.3 syntax, which makes the sketch loader code
       // unhappy, since the sketch folder naming doesn't match up correctly.
       // http://dev.processing.org/bugs/show_bug.cgi?id=1089
       if (isWindows()) {
@@ -803,7 +803,7 @@ public class Base {
                                                   null,
                                                   options,
                                                   options[0]);
-        if (result == JOptionPane.NO_OPTION || 
+        if (result == JOptionPane.NO_OPTION ||
             result == JOptionPane.CLOSED_OPTION) {
           return false;
         }
