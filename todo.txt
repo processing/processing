@@ -1,46 +1,7 @@
-0164 pde 
-X Empty "code" folder causes problems with Export
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1084
-X 8.3 filenames being used when opening sketch
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1089
-X add -X switch to cp on osx build so that extended attrs are not copied
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1098
-X add JVMArchs to Info.plist so that stupid Apple error msg doesn't appear
-X StringIndexOutOfBoundsException caused by import statements with no dots
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1145
-X Pressing <Esc> in "Are you sure you want to Quit?" dialog quits Processing
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1134
-X Fix QUADS and QUAD_STRIP with P2D
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1162
-X ArrayIndexOutOfBoundsException when drawing curves in P3D and OPENGL
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1153
-X problems with negatve arc() angles in OpenGL, P3D, other inconsistencies
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1095
-
-invalid
-X Sketchbook sub-menu is empty after changing Sketchbook location preference
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1123
-X something about setting memory options
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1159
-X something bizarre about syntax errors
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1161
-X "JDWP unable to initialize: Error 111 from JNI GetEnv" on Mac OS X PPC
-X   http://dev.processing.org/bugs/show_bug.cgi?id=959
-X Saving sketch with the same name as a class or primitive breaks sketch
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1165
-
-earlier
-X "An error occurred while starting the application" with Processing 0154+
-X   Maybe provide the old exe or another alternative?
-X   Have someone try this on lab machines until we can find one that breaks
-X   http://dev.processing.org/bugs/show_bug.cgi?id=986
+0165 pde
 
 
-. . . 
-
-
-0165 pde (or later)
-
+_ update to newer itext
 _ update to java 6u12
 
 X try adding a space to the name of the help menu for beachball problems
