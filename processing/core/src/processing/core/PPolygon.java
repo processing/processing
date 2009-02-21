@@ -252,6 +252,11 @@ public class PPolygon implements PConstants {
     }
     */
 
+//    for (int i = 0; i < 4; i++) {
+//      System.out.println(vertices[i][R] + " " + vertices[i][G] + " " + vertices[i][B]);
+//    }
+//    System.out.println();
+    
     if (smooth) {
       for (int i = 0; i < vertexCount; i++) {
         vertices[i][TX] *= SUBXRES;
@@ -414,7 +419,7 @@ public class PPolygon implements PConstants {
     int tr, tg, tb, ta;
 
 //    System.out.println("P2D interp uv " + interpUV + " " + 
-//                       vertices[2][U] + " " + vertices[2][V]);
+//                       vertices[2][U] + " " + vertices[2][V]);    
     for (int x = lx; x <= rx; x++) {
       // map texture based on U, V coords in sp[U] and sp[V]
       if (interpUV) {
@@ -428,106 +433,102 @@ public class PPolygon implements PConstants {
 
         int txy = tv*twidth + tu;
 
-//        if (smooth || texture_smooth) {   
-          // tuf1/tvf1 is the amount of coverage for the adjacent
-          // pixel, which is the decimal percentage.
         int tuf1 = (int) (255f * (sp[U]*twidth - (float)tu));
         int tvf1 = (int) (255f * (sp[V]*theight - (float)tv));
 
-          // the closer sp[U or V] is to the decimal being zero
-          // the more coverage it should get of the original pixel
-          int tuf = 255 - tuf1;
-          int tvf = 255 - tvf1;
+        // the closer sp[U or V] is to the decimal being zero
+        // the more coverage it should get of the original pixel
+        int tuf = 255 - tuf1;
+        int tvf = 255 - tvf1;
 
-          // this code sucks! filled with bugs and slow as hell!
-          int pixel00 = tpixels[txy];
-          int pixel01 = (tv < theight1) ?
-            tpixels[txy + twidth] : tpixels[txy];
-          int pixel10 = (tu < twidth1) ?
-            tpixels[txy + 1] : tpixels[txy];
-          int pixel11 = ((tv < theight1) && (tu < twidth1)) ?
-            tpixels[txy + twidth + 1] : tpixels[txy];
+        // this code sucks! filled with bugs and slow as hell!
+        int pixel00 = tpixels[txy];
+        int pixel01 = (tv < theight1) ?
+          tpixels[txy + twidth] : tpixels[txy];
+        int pixel10 = (tu < twidth1) ?
+          tpixels[txy + 1] : tpixels[txy];
+        int pixel11 = ((tv < theight1) && (tu < twidth1)) ?
+          tpixels[txy + twidth + 1] : tpixels[txy];
 
-          int p00, p01, p10, p11;
-          int px0, px1; //, pxy;
+        int p00, p01, p10, p11;
+        int px0, px1; //, pxy;
 
-          if (tformat == ALPHA) {
-            px0 = (pixel00*tuf + pixel10*tuf1) >> 8;
-            px1 = (pixel01*tuf + pixel11*tuf1) >> 8;
-            ta = (((px0*tvf + px1*tvf1) >> 8) *
-                  (interpARGB ? ((int) (sp[A]*255)) : a2orig)) >> 8;
+        
+        // calculate alpha component (ta)
+        
+        if (tformat == ALPHA) {
+          px0 = (pixel00*tuf + pixel10*tuf1) >> 8;
+          px1 = (pixel01*tuf + pixel11*tuf1) >> 8;
+          ta = (((px0*tvf + px1*tvf1) >> 8) *
+            (interpARGB ? ((int) (sp[A]*255)) : a2orig)) >> 8;
 
-          } else if (tformat == ARGB) {
-            p00 = (pixel00 >> 24) & 0xff;
-            p01 = (pixel01 >> 24) & 0xff;
-            p10 = (pixel10 >> 24) & 0xff;
-            p11 = (pixel11 >> 24) & 0xff;
+        } else if (tformat == ARGB) {
+          p00 = (pixel00 >> 24) & 0xff;
+          p01 = (pixel01 >> 24) & 0xff;
+          p10 = (pixel10 >> 24) & 0xff;
+          p11 = (pixel11 >> 24) & 0xff;
 
-            px0 = (p00*tuf + p10*tuf1) >> 8;
-            px1 = (p01*tuf + p11*tuf1) >> 8;
-            ta = (((px0*tvf + px1*tvf1) >> 8) *
-                  (interpARGB ? ((int) (sp[A]*255)) : a2orig)) >> 8;
+          px0 = (p00*tuf + p10*tuf1) >> 8;
+          px1 = (p01*tuf + p11*tuf1) >> 8;
+          ta = (((px0*tvf + px1*tvf1) >> 8) *
+                (interpARGB ? ((int) (sp[A]*255)) : a2orig)) >> 8;
 
-          } else {  // RGB image, no alpha
-            ta = interpARGB ? ((int) (sp[A]*255)) : a2orig;
+        } else {  // RGB image, no alpha
+          ta = interpARGB ? ((int) (sp[A]*255)) : a2orig;
+        }
+
+        // calculate r,g,b components (tr, tg, tb)
+        
+        if ((tformat == RGB) || (tformat == ARGB)) {
+          p00 = (pixel00 >> 16) & 0xff;  // red
+          p01 = (pixel01 >> 16) & 0xff;
+          p10 = (pixel10 >> 16) & 0xff;
+          p11 = (pixel11 >> 16) & 0xff;
+
+          px0 = (p00*tuf + p10*tuf1) >> 8;
+          px1 = (p01*tuf + p11*tuf1) >> 8;
+          tr = (((px0*tvf + px1*tvf1) >> 8) *
+                (interpARGB ? ((int) (sp[R]*255)) : r2)) >> 8;
+                
+          p00 = (pixel00 >> 8) & 0xff;  // green
+          p01 = (pixel01 >> 8) & 0xff;
+          p10 = (pixel10 >> 8) & 0xff;
+          p11 = (pixel11 >> 8) & 0xff;
+
+          px0 = (p00*tuf + p10*tuf1) >> 8;
+          px1 = (p01*tuf + p11*tuf1) >> 8;
+          tg = (((px0*tvf + px1*tvf1) >> 8) *
+                (interpARGB ? ((int) (sp[G]*255)) : g2)) >> 8;
+
+          p00 = pixel00 & 0xff;  // blue
+          p01 = pixel01 & 0xff;
+          p10 = pixel10 & 0xff;
+          p11 = pixel11 & 0xff;
+
+          px0 = (p00*tuf + p10*tuf1) >> 8;
+          px1 = (p01*tuf + p11*tuf1) >> 8;
+          tb = (((px0*tvf + px1*tvf1) >> 8) *
+                (interpARGB ? ((int) (sp[B]*255)) : b2)) >> 8;
+
+        } else {  // alpha image, only use current fill color
+          if (interpARGB) {
+            tr = (int) (sp[R] * 255);
+            tg = (int) (sp[G] * 255);
+            tb = (int) (sp[B] * 255);
+
+          } else {
+            tr = r2;
+            tg = g2;
+            tb = b2;
           }
+        }
 
-          if ((tformat == RGB) || (tformat == ARGB)) {
-            p00 = (pixel00 >> 16) & 0xff;  // red
-            p01 = (pixel01 >> 16) & 0xff;
-            p10 = (pixel10 >> 16) & 0xff;
-            p11 = (pixel11 >> 16) & 0xff;
-
-            px0 = (p00*tuf + p10*tuf1) >> 8;
-            px1 = (p01*tuf + p11*tuf1) >> 8;
-            tr = (((px0*tvf + px1*tvf1) >> 8) *
-                  (interpARGB ? ((int) sp[R]*255) : r2)) >> 8;
-
-
-            p00 = (pixel00 >> 8) & 0xff;  // green
-            p01 = (pixel01 >> 8) & 0xff;
-            p10 = (pixel10 >> 8) & 0xff;
-            p11 = (pixel11 >> 8) & 0xff;
-
-            px0 = (p00*tuf + p10*tuf1) >> 8;
-            px1 = (p01*tuf + p11*tuf1) >> 8;
-            tg = (((px0*tvf + px1*tvf1) >> 8) *
-                  (interpARGB ? ((int) sp[G]*255) : g2)) >> 8;
-
-
-            p00 = pixel00 & 0xff;  // blue
-            p01 = pixel01 & 0xff;
-            p10 = pixel10 & 0xff;
-            p11 = pixel11 & 0xff;
-
-            px0 = (p00*tuf + p10*tuf1) >> 8;
-            px1 = (p01*tuf + p11*tuf1) >> 8;
-            tb = (((px0*tvf + px1*tvf1) >> 8) *
-                  (interpARGB ? ((int) sp[B]*255) : b2)) >> 8;
-
-          } else {  // alpha image, only use current fill color
-            if (interpARGB) {
-              tr = (int) (sp[R] * 255);
-              tg = (int) (sp[G] * 255);
-              tb = (int) (sp[B] * 255);
-
-            } else {
-              tr = r2;
-              tg = g2;
-              tb = b2;
-            }
-          }
-
-          // get coverage for pixel if smooth
-          // checks smooth again here because of
-          // hints[SMOOTH_IMAGES] used up above
-          int weight = smooth ? coverage(x) : 255;
-          if (weight != 255) ta = ta*weight >> 8;
-
+        int weight = smooth ? coverage(x) : 255;
+        if (weight != 255) ta = ta*weight >> 8;
+        
         if ((ta == 254) || (ta == 255)) {  // if (ta & 0xf8) would be good
           // no need to blend
           pixels[offset+x] = 0xff000000 | (tr << 16) | (tg << 8) | tb;
-          //zbuffer[offset+x] = sp[Z];
 
         } else {
           // blend with pixel on screen
@@ -540,7 +541,6 @@ public class PPolygon implements PConstants {
             (((tr*ta + r1*a1) >> 8) << 16) |
             ((tg*ta + g1*a1) & 0xff00) |
             ((tb*ta + b1*a1) >> 8);
-          //if (ta > ZBUFFER_MIN_COVERAGE) zbuffer[offset+x] = sp[Z];
         }
 
       } else {  // no image applied
