@@ -384,9 +384,6 @@ public class PGraphics2D extends PGraphics {
         for (int i = 0; i < vertexCount-3; i += 4) {
           for (int j = 0; j < 4; j++) {
             int jj = i+j;
-            if (j == 2) jj = i+3;  // swap 2nd and 3rd vertex
-            if (j == 3) jj = i+2;
-
             fpolygon.vertices[j][R] = vertices[jj][R];
             fpolygon.vertices[j][G] = vertices[jj][G];
             fpolygon.vertices[j][B] = vertices[jj][B];
@@ -405,12 +402,12 @@ public class PGraphics2D extends PGraphics {
         }
       }
       if (stroke) {
-        draw_lines(vertices, vertexCount-1, 1, 2, 4); // works
-        draw_lines(vertices, vertexCount-1, 2, 4, 0);
-        for (int i = 1; i < vertexCount-2; i += 4) {
-          draw_line(vertices[i], vertices[i+2]);
+        for (int i = 0; i < vertexCount-3; i += 4) {
+          draw_line(vertices[i+0], vertices[i+1]);
+          draw_line(vertices[i+1], vertices[i+2]);
+          draw_line(vertices[i+2], vertices[i+3]);
+          draw_line(vertices[i+3], vertices[i+0]);
         }
-//        draw_lines(vertices, vertexCount-2, 2, 2, 0);  
       }
       break;
 
