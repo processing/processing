@@ -25,6 +25,10 @@ X save styles when nextPage() is called
 X beginRaw() broken (no DXF, etc working)
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1099
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1144
+X Fix algorithm for quadratic to cubic curve conversion 
+X   wrong algorithm in PGraphicsOpenGL and PShapeSVG
+X   (thanks to user 'shambles')
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1122
 
 invalid/wontfix/dupe
 X Processing will not start with non-standard disk partitioning on OS X
