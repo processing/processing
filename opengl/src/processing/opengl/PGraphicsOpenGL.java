@@ -1613,10 +1613,15 @@ public class PGraphicsOpenGL extends PGraphics3D {
         for (int i = 1; i < bezierDetail; i++) {
           float t = (float)i / (float)bezierDetail;
           vertex = new double[] {
-            x + bezierPoint(lastX, textPoints[0],
-                            textPoints[2], textPoints[2], t),
-            y + bezierPoint(lastY, textPoints[1],
-                            textPoints[3], textPoints[3], t), 0
+            x + bezierPoint(lastX, 
+                            lastX + (float) ((textPoints[0] - lastX) * 2/3.0),
+                            textPoints[2] + (float) ((textPoints[0] - textPoints[2]) * 2/3.0), 
+                            textPoints[2], t),
+            y + bezierPoint(lastY, 
+                            lastY + (float) ((textPoints[1] - lastY) * 2/3.0),
+                            textPoints[3] + (float) ((textPoints[1] - textPoints[3]) * 2/3.0), 
+                            textPoints[3], t), 
+            0.0f
           };
           glu.gluTessVertex(tobj, vertex, 0, vertex);
         }
