@@ -610,7 +610,7 @@ public class PShapeSVG extends PShape {
         float ctrlY = PApplet.parseFloat(pathDataKeys[i + 2]);
         float endX = PApplet.parseFloat(pathDataKeys[i + 3]);
         float endY = PApplet.parseFloat(pathDataKeys[i + 4]);
-        parsePathCurveto(ctrlX, ctrlY, ctrlX, ctrlY, endX, endY);
+        parsePathQuadto(cx, cy, ctrlX, ctrlY, endX, endY);
         cx = endX;
         cy = endY;
         i += 5;
@@ -623,7 +623,7 @@ public class PShapeSVG extends PShape {
         float ctrlY = cy + PApplet.parseFloat(pathDataKeys[i + 2]);
         float endX = cx + PApplet.parseFloat(pathDataKeys[i + 3]);
         float endY = cy + PApplet.parseFloat(pathDataKeys[i + 4]);
-        parsePathCurveto(ctrlX, ctrlY, ctrlX, ctrlY, endX, endY);
+        parsePathQuadto(cx, cy, ctrlX, ctrlY, endX, endY);
         cx = endX;
         cy = endY;
         i += 5;
@@ -645,7 +645,7 @@ public class PShapeSVG extends PShape {
         float ctrlY = py + (py - ppy);
         float endX = PApplet.parseFloat(pathDataKeys[i + 1]);
         float endY = PApplet.parseFloat(pathDataKeys[i + 2]);
-        parsePathCurveto(ctrlX, ctrlY, ctrlX, ctrlY, endX, endY);
+        parsePathQuadto(cx, cy, ctrlX, ctrlY, endX, endY);
         cx = endX;
         cy = endY;
         i += 3;
@@ -662,7 +662,7 @@ public class PShapeSVG extends PShape {
         float ctrlY = py + (py - ppy);
         float endX = cx + PApplet.parseFloat(pathDataKeys[i + 1]);
         float endY = cy + PApplet.parseFloat(pathDataKeys[i + 2]);
-        parsePathCurveto(ctrlX, ctrlY, ctrlX, ctrlY, endX, endY);
+        parsePathQuadto(cx, cy, ctrlX, ctrlY, endX, endY);
         cx = endX;
         cy = endY;
         i += 3;
@@ -745,6 +745,16 @@ public class PShapeSVG extends PShape {
     parsePathVertex(x1, y1);
     parsePathVertex(x2, y2);
     parsePathVertex(x3, y3);
+  }
+
+  private void parsePathQuadto(float x1, float y1, 
+                               float cx, float cy,
+                               float x2, float y2) {
+    parsePathCode(BEZIER_VERTEX);
+    // x1/y1 already covered by last moveto, lineto, or curveto
+    parsePathVertex(x1 + ((cx-x1)*2/3.0f), y1 + ((cy-y1)*2/3.0f));
+    parsePathVertex(x2 + ((cx-x2)*2/3.0f), y2 + ((cy-y2)*2/3.0f));
+    parsePathVertex(x2, y2);
   }
 
 
