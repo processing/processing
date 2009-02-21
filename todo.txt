@@ -16,6 +16,8 @@ X Fix QUADS and QUAD_STRIP with P2D
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1162
 X ArrayIndexOutOfBoundsException when drawing curves in P3D and OPENGL
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1153
+X problems with negatve arc() angles in OpenGL, P3D, and inconsistencies
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1095
 
 invalid
 X Sketchbook sub-menu is empty after changing Sketchbook location preference
@@ -51,6 +53,9 @@ _ update to java 6u12
 
 
 0165 pde (or later)
+
+E2 _ Default wildcard imports are causing naming conflicts
+E2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1103
 
 _ fix isManagingFocus error inside JEditTextArea
 
@@ -1257,6 +1262,8 @@ DIST / Linux
 _ finish up debian package support (see the processing.mess folder)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=596
 _   these bits need to be checked to ensure that they work on other distros
+_ Editor stops receiving keyboard input after running a program
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1161
 _ not being able to make a link to the processing app
 _   argh.. more path and shell issues..
 _ computationally intensive stuff runs really slow inside p5

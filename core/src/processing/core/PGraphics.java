@@ -1555,7 +1555,19 @@ public class PGraphics extends PImage implements PConstants {
 
     // make sure this loop will exit before starting while
     if (Float.isInfinite(start) || Float.isInfinite(stop)) return;
-    while (stop < start) stop += TWO_PI;
+//    while (stop < start) stop += TWO_PI;
+    if (stop < start) return;  // why bother
+    
+    // make sure that we're starting at a useful point
+    while (start < 0) {
+      start += TWO_PI;
+      stop += TWO_PI;
+    }
+
+    if (stop - start > TWO_PI) {
+      start = 0;
+      stop = TWO_PI;
+    }
 
     arcImpl(x, y, w, h, start, stop);
   }
