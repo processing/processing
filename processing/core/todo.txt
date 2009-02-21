@@ -29,10 +29,10 @@ X Fix algorithm for quadratic to cubic curve conversion
 X   wrong algorithm in PGraphicsOpenGL and PShapeSVG
 X   (thanks to user 'shambles')
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1122
-_ tint() not working in P2D
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1132
-_ blend() y coordinates inverted when using OpenGL
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1137
+X tint() not working in P2D
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1132
+X blend() y coordinates inverted when using OpenGL
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1137
 
 invalid/wontfix/dupe
 X Processing will not start with non-standard disk partitioning on OS X

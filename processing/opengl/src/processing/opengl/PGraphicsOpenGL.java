@@ -2973,12 +2973,16 @@ public class PGraphicsOpenGL extends PGraphics3D {
   //static public int blendColor(int c1, int c2, int mode)
 
 
-  public void blend(PImage src,
-                    int sx, int sy, int dx, int dy, int mode) {
-    set(dx, dy, PImage.blendColor(src.get(sx, sy), get(dx, dy), mode));
-  }
+  // this function was removed
+//  public void blend(PImage src,
+//                    int sx, int sy, int dx, int dy, int mode) {
+//    set(dx, dy, PImage.blendColor(src.get(sx, sy), get(dx, dy), mode));
+//  }
 
 
+  // the following two were removed for 1.0.2 because loadPixels and  
+  // updatePixels are now called in the superclass.
+  // http://dev.processing.org/bugs/show_bug.cgi?id=1137
   /**
    * Extremely slow and not optimized, should use GL methods instead.
    * Currently calls a beginPixels() on the whole canvas, then does the copy,
@@ -2986,21 +2990,21 @@ public class PGraphicsOpenGL extends PGraphics3D {
    * <A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=941">Bug 941</A>,
    * <A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=942">Bug 942</A>.
    */
-  public void blend(int sx1, int sy1, int sx2, int sy2,
-                    int dx1, int dy1, int dx2, int dy2, int mode) {
-    loadPixels();
-    super.blend(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
-    updatePixels();
-  }
+//  public void blend(int sx1, int sy1, int sx2, int sy2,
+//                    int dx1, int dy1, int dx2, int dy2, int mode) {
+//    loadPixels();
+//    super.blend(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
+//    updatePixels();
+//  }
 
 
-  public void blend(PImage src,
-                    int sx1, int sy1, int sx2, int sy2,
-                    int dx1, int dy1, int dx2, int dy2, int mode) {
-    loadPixels();
-    super.blend(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
-    updatePixels();
-  }
+//  public void blend(PImage src,
+//                    int sx1, int sy1, int sx2, int sy2,
+//                    int dx1, int dy1, int dx2, int dy2, int mode) {
+//    loadPixels();
+//    super.blend(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
+//    updatePixels();
+//  }
 
 
 
