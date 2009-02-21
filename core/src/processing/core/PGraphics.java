@@ -937,11 +937,31 @@ public class PGraphics extends PImage implements PConstants {
 
     vertex[EDGE] = edge ? 1 : 0;
 
-    if (fill) {
-      vertex[R] = fillR;
-      vertex[G] = fillG;
-      vertex[B] = fillB;
-      vertex[A] = fillA;
+//    if (fill) {
+//      vertex[R] = fillR;
+//      vertex[G] = fillG;
+//      vertex[B] = fillB;
+//      vertex[A] = fillA;
+//    }
+    if (fill || textureImage != null) {
+      if (textureImage == null) {
+        vertex[R] = fillR;
+        vertex[G] = fillG;
+        vertex[B] = fillB;
+        vertex[A] = fillA;
+      } else {
+        if (tint) {
+          vertex[R] = tintR;
+          vertex[G] = tintG;
+          vertex[B] = tintB;
+          vertex[A] = tintA;
+        } else {
+          vertex[R] = 1;
+          vertex[G] = 1;
+          vertex[B] = 1;
+          vertex[A] = 1;
+        }
+      }
     }
 
     if (stroke) {
@@ -2239,30 +2259,30 @@ public class PGraphics extends PImage implements PConstants {
                            float x1, float y1, float x2, float y2,
                            int u1, int v1, int u2, int v2) {
     boolean savedStroke = stroke;
-    boolean savedFill = fill;
+//    boolean savedFill = fill;
     int savedTextureMode = textureMode;
 
     stroke = false;
-    fill = true;
+//    fill = true;
     textureMode = IMAGE;
 
-    float savedFillR = fillR;
-    float savedFillG = fillG;
-    float savedFillB = fillB;
-    float savedFillA = fillA;
-
-    if (tint) {
-      fillR = tintR;
-      fillG = tintG;
-      fillB = tintB;
-      fillA = tintA;
-
-    } else {
-      fillR = 1;
-      fillG = 1;
-      fillB = 1;
-      fillA = 1;
-    }
+//    float savedFillR = fillR;
+//    float savedFillG = fillG;
+//    float savedFillB = fillB;
+//    float savedFillA = fillA;
+//
+//    if (tint) {
+//      fillR = tintR;
+//      fillG = tintG;
+//      fillB = tintB;
+//      fillA = tintA;
+//
+//    } else {
+//      fillR = 1;
+//      fillG = 1;
+//      fillB = 1;
+//      fillA = 1;
+//    }
 
     beginShape(QUADS);
     texture(image);
@@ -2273,13 +2293,13 @@ public class PGraphics extends PImage implements PConstants {
     endShape();
 
     stroke = savedStroke;
-    fill = savedFill;
+//    fill = savedFill;
     textureMode = savedTextureMode;
 
-    fillR = savedFillR;
-    fillG = savedFillG;
-    fillB = savedFillB;
-    fillA = savedFillA;
+//    fillR = savedFillR;
+//    fillG = savedFillG;
+//    fillB = savedFillB;
+//    fillA = savedFillA;
   }
 
 
