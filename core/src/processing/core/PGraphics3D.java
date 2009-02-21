@@ -623,24 +623,30 @@ public class PGraphics3D extends PGraphics {
     // if true, the shapes will be rendered on endDraw
     if (!hints[ENABLE_DEPTH_SORT]) {
       if (fill) {
-        renderTriangles(0, triangleCount);
-        if (raw != null) {
-          rawTriangles(0, triangleCount);
+        if (triangleCount > 0) {
+          renderTriangles(0, triangleCount);
+          if (raw != null) {
+            rawTriangles(0, triangleCount);
+          }
+          triangleCount = 0;
         }
-        triangleCount = 0;
       }
       if (stroke) {
-        renderPoints(0, pointCount);
-        if (raw != null) {
-          rawPoints(0, pointCount);
+        if (pointCount > 0) {
+          renderPoints(0, pointCount);
+          if (raw != null) {
+            rawPoints(0, pointCount);
+          }
+          pointCount = 0;
         }
-        pointCount = 0;
 
-        renderLines(0, lineCount);
-        if (raw != null) {
-          rawLines(0, lineCount);
+        if (lineCount > 0) {
+          renderLines(0, lineCount);
+          if (raw != null) {
+            rawLines(0, lineCount);
+          }
+          lineCount = 0;
         }
-        lineCount = 0;
       }
       pathCount = 0;
     }
