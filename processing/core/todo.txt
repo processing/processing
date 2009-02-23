@@ -5,7 +5,9 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=1169
 X problem with beginRaw/endRaw and OpenGL
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1171
 X set strokeWeight with begin/endRaw
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1172
 X fix strokeWeight with P3D (better version of line hack)
+X make P3D use proper weights
 
 _ if no draw() method, and renderer is not displayable, then exit
 _   static mode PDFs shouldn't just hang
