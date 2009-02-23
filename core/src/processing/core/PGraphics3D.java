@@ -1180,18 +1180,20 @@ public class PGraphics3D extends PGraphics {
       float ox2 = b[TX];
       float oy2 = b[TY];
 
+      // TODO strokeWeight should be transformed!
+      float weight = a[SW] / 2; 
+
       // when drawing points with stroke weight, need to extend a bit
       if (ox1 == ox2 && oy1 == oy2) {
-        oy1 -= a[SW];
-        oy2 += a[SW];
+        oy1 -= weight;
+        oy2 += weight;
       }
 
       float dX = ox2 - ox1 + EPSILON;
       float dY = oy2 - oy1 + EPSILON;
       float len = (float) Math.sqrt(dX*dX + dY*dY);
 
-      // TODO strokeWidth should be transformed!
-      float rh = a[SW] / len;
+      float rh = weight / len;
 
       float dx0 = rh * dY;
       float dy0 = rh * dX;
