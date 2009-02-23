@@ -163,7 +163,7 @@ The base class for the main processing application.
         java.io.File&nbsp;targetDir)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copy a folder from one place to another.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -235,6 +235,14 @@ The base class for the main processing application.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.io.InputStream</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Base.html#getLibStream(java.lang.String)">getLibStream</A></B>(java.lang.String&nbsp;filename)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return an InputStream for a file inside the Processing lib folder.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;int</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/app/Base.html#getPlatformIndex(java.lang.String)">getPlatformIndex</A></B>(java.lang.String&nbsp;what)</CODE>
 
@@ -244,18 +252,18 @@ The base class for the main processing application.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Base.html#getPlatformName()">getPlatformName</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get list of platform constants.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/app/Base.html#getPlatformName(int)">getPlatformName</A></B>(int&nbsp;which)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Map a platform constant to its name.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;int[]</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/app/Base.html#getPlatforms()">getPlatforms</A></B>()</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get list of platform constants.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -289,14 +297,6 @@ The base class for the main processing application.
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;java.io.InputStream</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/app/Base.html#getStream(java.lang.String)">getStream</A></B>(java.lang.String&nbsp;filename)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return an InputStream for a file inside the Processing lib folder.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -768,7 +768,7 @@ public boolean <B>handleClose</B>(<A HREF="../../processing/app/Editor.html" tit
 <DD>Close a sketch as specified by its editor window.
 <P>
 <DD><DL>
-<DT><B>Parameters:</B><DD><CODE>editor</CODE> - Editor object of the sketch to be closed.<DD><CODE>quitting</CODE> - True if this is being called by File &rarr; Quit.
+<DT><B>Parameters:</B><DD><CODE>editor</CODE> - Editor object of the sketch to be closed.
 <DT><B>Returns:</B><DD>true if succeeded in closing, false if canceled.</DL>
 </DD>
 </DL>
@@ -836,10 +836,10 @@ public void <B>handlePrefs</B>()</PRE>
 </DL>
 <HR>
 
-<A NAME="getPlatforms()"><!-- --></A><H3>
-getPlatforms</H3>
+<A NAME="getPlatformName()"><!-- --></A><H3>
+getPlatformName</H3>
 <PRE>
-public static int[] <B>getPlatforms</B>()</PRE>
+public static java.lang.String <B>getPlatformName</B>()</PRE>
 <DL>
 <DD>Get list of platform constants.
 <P>
@@ -1257,11 +1257,11 @@ public static java.awt.Image <B>getLibImage</B>(java.lang.String&nbsp;name,
 </DL>
 <HR>
 
-<A NAME="getStream(java.lang.String)"><!-- --></A><H3>
-getStream</H3>
+<A NAME="getLibStream(java.lang.String)"><!-- --></A><H3>
+getLibStream</H3>
 <PRE>
-public static java.io.InputStream <B>getStream</B>(java.lang.String&nbsp;filename)
-                                     throws java.io.IOException</PRE>
+public static java.io.InputStream <B>getLibStream</B>(java.lang.String&nbsp;filename)
+                                        throws java.io.IOException</PRE>
 <DL>
 <DD>Return an InputStream for a file inside the Processing lib folder.
 <P>
@@ -1358,6 +1358,10 @@ public static void <B>copyDir</B>(java.io.File&nbsp;sourceDir,
                            java.io.File&nbsp;targetDir)
                     throws java.io.IOException</PRE>
 <DL>
+<DD>Copy a folder from one place to another. This ignores all dot files and
+ folders found in the source directory, to avoid copying silly .DS_Store
+ files and potentially troublesome .svn folders.
+<P>
 <DD><DL>
 
 <DT><B>Throws:</B>
