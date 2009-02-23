@@ -1,7 +1,13 @@
 0165 pde
 
 
-_ update to newer itext
+_ add option to use full screen exclusive mode on present inside pde?
+_   override default setting of macosx (yes) and linux/win (no)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1043
+_   linux present mode isn't working properly
+
+_ make better version of the windows launcher for debugging
+
 _ update to java 6u12
 
 X try adding a space to the name of the help menu for beachball problems
@@ -819,9 +825,6 @@ _   don't bother having a "cancel" for the prefs window
 _ rewrite preferences window to use proper layout?
 _   is there already a bug for this?
 _ make prefs dialog modal?
-_ add option to use full screen exclusive mode on present inside pde?
-_   override default setting of macosx (yes) and linux/win (no)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1043
 _ prefs window not visible on windows taskbar
 _   http://dev.processing.org/bugs/show_bug.cgi?id=438
 _ split Preferences and PreferencesFrame?
