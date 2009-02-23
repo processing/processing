@@ -767,7 +767,6 @@ public class Base {
   /**
    * Close a sketch as specified by its editor window.
    * @param editor Editor object of the sketch to be closed.
-   * @param quitting True if this is being called by File &rarr; Quit.
    * @return true if succeeded in closing, false if canceled.
    */
   public boolean handleClose(Editor editor) {
