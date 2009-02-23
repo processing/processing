@@ -689,12 +689,12 @@ public class PGraphics3D extends PGraphics {
     {
       int stop = shapeLast;
       for (int i = shapeFirst; i < stop; i++) {
-        if (strokeWeight == 1) {
-          addPoint(i);
-        } else {
-          addLineBreak();  // total overkill for points
-          addLine(i, i);
-        }
+//        if (strokeWeight == 1) {
+        addPoint(i);
+//        } else {
+//          addLineBreak();  // total overkill for points
+//          addLine(i, i);
+//        }
       }
     }
     break;
@@ -970,15 +970,21 @@ public class PGraphics3D extends PGraphics {
 
   protected void renderPoints(int start, int stop) {
     if (strokeWeight != 1) {
-      
-    }
-    for (int i = start; i < stop; i++) {
-      float[] a = vertices[points[i][VERTEX1]];
-      int sx = (int) (a[TX] + 0.4999f);
-      int sy = (int) (a[TY] + 0.4999f);
-      int index = sy*width + sx;
-      pixels[index] = points[i][STROKE_COLOR];
-      zbuffer[index] = a[TZ];
+      for (int i = start; i < stop; i++) {
+        float[] a = vertices[points[i][VERTEX1]];
+        renderLineVertices(a, a);
+      }
+    } else {
+      for (int i = start; i < stop; i++) {
+        float[] a = vertices[points[i][VERTEX1]];
+        int sx = (int) (a[TX] + 0.4999f);
+        int sy = (int) (a[TY] + 0.4999f);
+        if (sx >= 0 && sx < width && sy >= 0 && sy < height) {
+          int index = sy*width + sx;
+          pixels[index] = points[i][STROKE_COLOR];
+          zbuffer[index] = a[TZ];
+        }
+      }
     }
   }
 
@@ -1041,6 +1047,7 @@ public class PGraphics3D extends PGraphics {
   protected void rawPoints(int start, int stop) {
     raw.colorMode(RGB, 1);
     raw.noFill();
+    raw.strokeWeight(vertices[lines[start][VERTEX1]][SW]);
     raw.beginShape(POINTS);
 
     for (int i = start; i < stop; i++) {
@@ -1128,27 +1135,31 @@ public class PGraphics3D extends PGraphics {
 
   protected void renderLines(int start, int stop) {
     for (int i = start; i < stop; i++) {
-      float a[] = vertices[lines[i][VERTEX1]];
-      float b[] = vertices[lines[i][VERTEX2]];
+      renderLineVertices(vertices[lines[i][VERTEX1]], 
+                         vertices[lines[i][VERTEX2]]);
+    }
+  }
+  
+  
+  protected void renderLineVertices(float[] a, float[] b) {
+    // 2D hack added by ewjordan 6/13/07
+    // Offset coordinates by a little bit if drawing 2D graphics.
+    // http://dev.processing.org/bugs/show_bug.cgi?id=95
 
-      // 2D hack added by ewjordan 6/13/07
-      // Offset coordinates by a little bit if drawing 2D graphics.
-      // http://dev.processing.org/bugs/show_bug.cgi?id=95
+    // This hack fixes a bug caused by numerical precision issues when
+    // applying the 3D transformations to coordinates in the screen plane
+    // that should actually not be altered under said transformations.
+    // It will not be applied if any transformations other than translations
+    // are active, nor should it apply in OpenGL mode (PGraphicsOpenGL
+    // overrides render_lines(), so this should be fine).
+    // This fix exposes a last-pixel bug in the lineClipCode() function
+    // of PLine.java, so that fix must remain in place if this one is used.
 
-      // This hack fixes a bug caused by numerical precision issues when
-      // applying the 3D transformations to coordinates in the screen plane
-      // that should actually not be altered under said transformations.
-      // It will not be applied if any transformations other than translations
-      // are active, nor should it apply in OpenGL mode (PGraphicsOpenGL
-      // overrides render_lines(), so this should be fine).
-      // This fix exposes a last-pixel bug in the lineClipCode() function
-      // of PLine.java, so that fix must remain in place if this one is used.
+    // Note: the "true" fix for this bug is to change the pixel coverage
+    // model so that the threshold for display does not lie on an integer
+    // boundary. Search "diamond exit rule" for info the OpenGL approach.
 
-      // Note: the "true" fix for this bug is to change the pixel coverage
-      // model so that the threshold for display does not lie on an integer
-      // boundary. Search "diamond exit rule" for info the OpenGL approach.
-
-      /*
+    /*
       // removing for 0149 with the return of P2D
       if (drawing2D() && a[Z] == 0) {
         a[TX] += 0.01;
@@ -1160,98 +1171,98 @@ public class PGraphics3D extends PGraphics {
         b[VX] += 0.01*b[VW];
         b[VY] += 0.01*b[VW];
       }
-      */
-      // end 2d-hack
+     */
+    // end 2d-hack
 
-      if (a[SW] > 1.25f || a[SW] < 0.75f) {
-        float ox1 = a[TX];
-        float oy1 = a[TY];
-        float ox2 = b[TX];
-        float oy2 = b[TY];
+    if (a[SW] > 1.25f || a[SW] < 0.75f) {
+      float ox1 = a[TX];
+      float oy1 = a[TY];
+      float ox2 = b[TX];
+      float oy2 = b[TY];
 
-        // when drawing points with stroke weight, need to extend a bit
-        if (ox1 == ox2 && oy1 == oy2) {
-          oy1 -= a[SW];
-          oy2 += a[SW];
-        }
-        
-        float dX = ox2 - ox1 + EPSILON;
-        float dY = oy2 - oy1 + EPSILON;
-        float len = (float) Math.sqrt(dX*dX + dY*dY);
+      // when drawing points with stroke weight, need to extend a bit
+      if (ox1 == ox2 && oy1 == oy2) {
+        oy1 -= a[SW];
+        oy2 += a[SW];
+      }
 
-        // TODO strokeWidth should be transformed!
-        float rh = a[SW] / len;
+      float dX = ox2 - ox1 + EPSILON;
+      float dY = oy2 - oy1 + EPSILON;
+      float len = (float) Math.sqrt(dX*dX + dY*dY);
 
-        float dx0 = rh * dY;
-        float dy0 = rh * dX;
-        float dx1 = rh * dY;
-        float dy1 = rh * dX;
+      // TODO strokeWidth should be transformed!
+      float rh = a[SW] / len;
 
-        float ax1 = ox1+dx0;
-        float ay1 = oy1-dy0;
+      float dx0 = rh * dY;
+      float dy0 = rh * dX;
+      float dx1 = rh * dY;
+      float dy1 = rh * dX;
 
-        float ax2 = ox1-dx0;
-        float ay2 = oy1+dy0;
+      float ax1 = ox1+dx0;
+      float ay1 = oy1-dy0;
 
-        float bx1 = ox2+dx1;
-        float by1 = oy2-dy1;
+      float ax2 = ox1-dx0;
+      float ay2 = oy1+dy0;
 
-        float bx2 = ox2-dx1;
-        float by2 = oy2+dy1;
+      float bx1 = ox2+dx1;
+      float by1 = oy2-dy1;
 
-        if (smooth) {
-          smoothTriangle.reset(3);
-          smoothTriangle.smooth = true;
-          smoothTriangle.interpARGB = true;  // ?
+      float bx2 = ox2-dx1;
+      float by2 = oy2+dy1;
 
-          // render first triangle for thick line
-          smoothTriangle.setVertices(ax1, ay1, a[TZ],
-                               bx2, by2, b[TZ],
-                               ax2, ay2, a[TZ]);
-          smoothTriangle.setIntensities(a[SR], a[SG], a[SB], a[SA],
-                                  b[SR], b[SG], b[SB], b[SA],
-                                  a[SR], a[SG], a[SB], a[SA]);
-          smoothTriangle.render();
+      if (smooth) {
+        smoothTriangle.reset(3);
+        smoothTriangle.smooth = true;
+        smoothTriangle.interpARGB = true;  // ?
 
-          // render second triangle for thick line
-          smoothTriangle.setVertices(ax1, ay1, a[TZ],
-                               bx2, by2, b[TZ],
-                               bx1, by1, b[TZ]);
-          smoothTriangle.setIntensities(a[SR], a[SG], a[SB], a[SA],
-                                  b[SR], b[SG], b[SB], b[SA],
-                                  b[SR], b[SG], b[SB], b[SA]);
-          smoothTriangle.render();
+        // render first triangle for thick line
+        smoothTriangle.setVertices(ax1, ay1, a[TZ],
+                                   bx2, by2, b[TZ],
+                                   ax2, ay2, a[TZ]);
+        smoothTriangle.setIntensities(a[SR], a[SG], a[SB], a[SA],
+                                      b[SR], b[SG], b[SB], b[SA],
+                                      a[SR], a[SG], a[SB], a[SA]);
+        smoothTriangle.render();
 
-        } else {
-          triangle.reset();
-
-          // render first triangle for thick line
-          triangle.setVertices(ax1, ay1, a[TZ],
-                               bx2, by2, b[TZ],
-                               ax2, ay2, a[TZ]);
-          triangle.setIntensities(a[SR], a[SG], a[SB], a[SA],
-                                  b[SR], b[SG], b[SB], b[SA],
-                                  a[SR], a[SG], a[SB], a[SA]);
-          triangle.render();
-
-          // render second triangle for thick line
-          triangle.setVertices(ax1, ay1, a[TZ],
-                               bx2, by2, b[TZ],
-                               bx1, by1, b[TZ]);
-          triangle.setIntensities(a[SR], a[SG], a[SB], a[SA],
-                                  b[SR], b[SG], b[SB], b[SA],
-                                  b[SR], b[SG], b[SB], b[SA]);
-          triangle.render();
-        }
+        // render second triangle for thick line
+        smoothTriangle.setVertices(ax1, ay1, a[TZ],
+                                   bx2, by2, b[TZ],
+                                   bx1, by1, b[TZ]);
+        smoothTriangle.setIntensities(a[SR], a[SG], a[SB], a[SA],
+                                      b[SR], b[SG], b[SB], b[SA],
+                                      b[SR], b[SG], b[SB], b[SA]);
+        smoothTriangle.render();
 
       } else {
-        line.reset();
+        triangle.reset();
 
-        line.setIntensities(a[SR], a[SG], a[SB], a[SA],
-                            b[SR], b[SG], b[SB], b[SA]);
+        // render first triangle for thick line
+        triangle.setVertices(ax1, ay1, a[TZ],
+                             bx2, by2, b[TZ],
+                             ax2, ay2, a[TZ]);
+        triangle.setIntensities(a[SR], a[SG], a[SB], a[SA],
+                                b[SR], b[SG], b[SB], b[SA],
+                                a[SR], a[SG], a[SB], a[SA]);
+        triangle.render();
 
-        line.setVertices(a[TX], a[TY], a[TZ],
-                         b[TX], b[TY], b[TZ]);
+        // render second triangle for thick line
+        triangle.setVertices(ax1, ay1, a[TZ],
+                             bx2, by2, b[TZ],
+                             bx1, by1, b[TZ]);
+        triangle.setIntensities(a[SR], a[SG], a[SB], a[SA],
+                                b[SR], b[SG], b[SB], b[SA],
+                                b[SR], b[SG], b[SB], b[SA]);
+        triangle.render();
+      }
+
+    } else {
+      line.reset();
+
+      line.setIntensities(a[SR], a[SG], a[SB], a[SA],
+                          b[SR], b[SG], b[SB], b[SA]);
+
+      line.setVertices(a[TX], a[TY], a[TZ],
+                       b[TX], b[TY], b[TZ]);
 
         /*
         // Seems okay to remove this because these vertices are not used again,
@@ -1269,8 +1280,7 @@ public class PGraphics3D extends PGraphics {
         }
         */
 
-        line.draw();
-      }
+      line.draw();
     }
   }
 
@@ -1293,10 +1303,10 @@ public class PGraphics3D extends PGraphics {
     raw.noFill();
     raw.beginShape(LINES);
 
-    //for (int i = 0; i < lineCount; i ++) {
     for (int i = start; i < stop; i++) {
       float a[] = vertices[lines[i][VERTEX1]];
       float b[] = vertices[lines[i][VERTEX2]];
+      raw.strokeWeight(vertices[lines[i][VERTEX2]][SW]);
 
       if (raw.is3D()) {
         if ((a[VW] != 0) && (b[VW] != 0)) {

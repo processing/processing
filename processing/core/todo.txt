@@ -4,6 +4,8 @@ X endRecord or endRaw produces RuntimeException with PDF library
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1169
 X problem with beginRaw/endRaw and OpenGL
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1171
+X set strokeWeight with begin/endRaw
+X fix strokeWeight with P3D (better version of line hack)
 
 _ if no draw() method, and renderer is not displayable, then exit
 _   static mode PDFs shouldn't just hang
