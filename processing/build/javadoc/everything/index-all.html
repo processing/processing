@@ -979,15 +979,6 @@ Method in class processing.core.<A HREF="./processing/core/PImage.html" title="c
 <DT><A HREF="./processing/core/PImage.html#blend(processing.core.PImage, int, int, int, int, int, int, int, int, int)"><B>blend(PImage, int, int, int, int, int, int, int, int, int)</B></A> - 
 Method in class processing.core.<A HREF="./processing/core/PImage.html" title="class in processing.core">PImage</A>
 <DD>Copies area of one image into another PImage object.
-<DT><A HREF="./processing/opengl/PGraphicsOpenGL.html#blend(processing.core.PImage, int, int, int, int, int)"><B>blend(PImage, int, int, int, int, int)</B></A> - 
-Method in class processing.opengl.<A HREF="./processing/opengl/PGraphicsOpenGL.html" title="class in processing.opengl">PGraphicsOpenGL</A>
-<DD>TODO - extremely slow and not optimized.
-<DT><A HREF="./processing/opengl/PGraphicsOpenGL.html#blend(int, int, int, int, int, int, int, int, int)"><B>blend(int, int, int, int, int, int, int, int, int)</B></A> - 
-Method in class processing.opengl.<A HREF="./processing/opengl/PGraphicsOpenGL.html" title="class in processing.opengl">PGraphicsOpenGL</A>
-<DD>Extremely slow and not optimized, should use GL methods instead.
-<DT><A HREF="./processing/opengl/PGraphicsOpenGL.html#blend(processing.core.PImage, int, int, int, int, int, int, int, int, int)"><B>blend(PImage, int, int, int, int, int, int, int, int, int)</B></A> - 
-Method in class processing.opengl.<A HREF="./processing/opengl/PGraphicsOpenGL.html" title="class in processing.opengl">PGraphicsOpenGL</A>
-<DD>&nbsp;
 <DT><A HREF="./processing/pdf/PGraphicsPDF.html#blend(int, int, int, int, int)"><B>blend(int, int, int, int, int)</B></A> - 
 Method in class processing.pdf.<A HREF="./processing/pdf/PGraphicsPDF.html" title="class in processing.pdf">PGraphicsPDF</A>
 <DD>&nbsp;
@@ -1726,7 +1717,7 @@ Method in class processing.pdf.<A HREF="./processing/pdf/PGraphicsPDF.html" titl
 <DD>&nbsp;
 <DT><A HREF="./processing/app/Base.html#copyDir(java.io.File, java.io.File)"><B>copyDir(File, File)</B></A> - 
 Static method in class processing.app.<A HREF="./processing/app/Base.html" title="class in processing.app">Base</A>
-<DD>&nbsp;
+<DD>Copy a folder from one place to another.
 <DT><A HREF="./processing/app/Base.html#copyFile(java.io.File, java.io.File)"><B>copyFile(File, File)</B></A> - 
 Static method in class processing.app.<A HREF="./processing/app/Base.html" title="class in processing.app">Base</A>
 <DD>&nbsp;
@@ -1801,6 +1792,9 @@ Static method in class processing.core.<A HREF="./processing/core/PApplet.html" 
 Static method in class processing.core.<A HREF="./processing/core/PApplet.html" title="class in processing.core">PApplet</A>
 <DD>Takes a path and creates any in-between folders if they don't
  already exist.
+<DT><A HREF="./processing/core/PApplet.html#createPath(java.io.File)"><B>createPath(File)</B></A> - 
+Static method in class processing.core.<A HREF="./processing/core/PApplet.html" title="class in processing.core">PApplet</A>
+<DD>&nbsp;
 <DT><A HREF="./processing/xml/XMLElement.html#createPCDataElement()"><B>createPCDataElement()</B></A> - 
 Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
 <DD>Creates an element to be used for #PCDATA content.
@@ -3600,6 +3594,9 @@ Static method in class processing.app.<A HREF="./processing/app/Base.html" title
 <DT><A HREF="./processing/app/Sketch.html#getLibraryPath()"><B>getLibraryPath()</B></A> - 
 Method in class processing.app.<A HREF="./processing/app/Sketch.html" title="class in processing.app">Sketch</A>
 <DD>&nbsp;
+<DT><A HREF="./processing/app/Base.html#getLibStream(java.lang.String)"><B>getLibStream(String)</B></A> - 
+Static method in class processing.app.<A HREF="./processing/app/Base.html" title="class in processing.app">Base</A>
+<DD>Return an InputStream for a file inside the Processing lib folder.
 <DT><A HREF="./processing/app/Editor.html#getLineCount()"><B>getLineCount()</B></A> - 
 Method in class processing.app.<A HREF="./processing/app/Editor.html" title="class in processing.app">Editor</A>
 <DD>Get the number of lines in the currently displayed buffer.
@@ -3799,12 +3796,12 @@ Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title=
 <DT><A HREF="./processing/app/Base.html#getPlatformIndex(java.lang.String)"><B>getPlatformIndex(String)</B></A> - 
 Static method in class processing.app.<A HREF="./processing/app/Base.html" title="class in processing.app">Base</A>
 <DD>&nbsp;
+<DT><A HREF="./processing/app/Base.html#getPlatformName()"><B>getPlatformName()</B></A> - 
+Static method in class processing.app.<A HREF="./processing/app/Base.html" title="class in processing.app">Base</A>
+<DD>Get list of platform constants.
 <DT><A HREF="./processing/app/Base.html#getPlatformName(int)"><B>getPlatformName(int)</B></A> - 
 Static method in class processing.app.<A HREF="./processing/app/Base.html" title="class in processing.app">Base</A>
 <DD>Map a platform constant to its name.
-<DT><A HREF="./processing/app/Base.html#getPlatforms()"><B>getPlatforms()</B></A> - 
-Static method in class processing.app.<A HREF="./processing/app/Base.html" title="class in processing.app">Base</A>
-<DD>Get list of platform constants.
 <DT><A HREF="./processing/app/EditorHeader.html#getPreferredSize()"><B>getPreferredSize()</B></A> - 
 Method in class processing.app.<A HREF="./processing/app/EditorHeader.html" title="class in processing.app">EditorHeader</A>
 <DD>&nbsp;
@@ -3941,12 +3938,18 @@ Static method in class processing.app.<A HREF="./processing/app/Base.html" title
 <DT><A HREF="./processing/app/Base.html#getSketchbookLibrariesFolder()"><B>getSketchbookLibrariesFolder()</B></A> - 
 Static method in class processing.app.<A HREF="./processing/app/Base.html" title="class in processing.app">Base</A>
 <DD>&nbsp;
+<DT><A HREF="./processing/core/PApplet.html#getSketchHeight()"><B>getSketchHeight()</B></A> - 
+Method in class processing.core.<A HREF="./processing/core/PApplet.html" title="class in processing.core">PApplet</A>
+<DD>&nbsp;
 <DT><A HREF="./processing/app/Editor.html#getSketchLocation()"><B>getSketchLocation()</B></A> - 
 Method in class processing.app.<A HREF="./processing/app/Editor.html" title="class in processing.app">Editor</A>
 <DD>Get the last location of the sketch's run window.
-<DT><A HREF="./processing/app/Base.html#getStream(java.lang.String)"><B>getStream(String)</B></A> - 
-Static method in class processing.app.<A HREF="./processing/app/Base.html" title="class in processing.app">Base</A>
-<DD>Return an InputStream for a file inside the Processing lib folder.
+<DT><A HREF="./processing/core/PApplet.html#getSketchRenderer()"><B>getSketchRenderer()</B></A> - 
+Method in class processing.core.<A HREF="./processing/core/PApplet.html" title="class in processing.core">PApplet</A>
+<DD>&nbsp;
+<DT><A HREF="./processing/core/PApplet.html#getSketchWidth()"><B>getSketchWidth()</B></A> - 
+Method in class processing.core.<A HREF="./processing/core/PApplet.html" title="class in processing.core">PApplet</A>
+<DD>&nbsp;
 <DT><A HREF="./processing/xml/StdXMLReader.html#getStreamLevel()"><B>getStreamLevel()</B></A> - 
 Method in class processing.xml.<A HREF="./processing/xml/StdXMLReader.html" title="class in processing.xml">StdXMLReader</A>
 <DD>Returns the current "level" of the stream on the stack of streams.
@@ -4987,7 +4990,7 @@ Method in class processing.core.<A HREF="./processing/core/PApplet.html" title="
 <DD>See keyPressed().
 <DT><A HREF="./processing/app/EditorListener.html#keyTyped(java.awt.event.KeyEvent)"><B>keyTyped(KeyEvent)</B></A> - 
 Method in class processing.app.<A HREF="./processing/app/EditorListener.html" title="class in processing.app">EditorListener</A>
-<DD>ctrl-alt on windows and linux, cmd-alt on mac os x
+<DD>&nbsp;
 <DT><A HREF="./processing/app/syntax/DefaultInputHandler.html#keyTyped(java.awt.event.KeyEvent)"><B>keyTyped(KeyEvent)</B></A> - 
 Method in class processing.app.syntax.<A HREF="./processing/app/syntax/DefaultInputHandler.html" title="class in processing.app.syntax">DefaultInputHandler</A>
 <DD>Handle a key typed event.
@@ -5245,6 +5248,9 @@ Static method in class processing.serial.<A HREF="./processing/serial/Serial.htm
 <DT><A HREF="./processing/video/Capture.html#list()"><B>list()</B></A> - 
 Static method in class processing.video.<A HREF="./processing/video/Capture.html" title="class in processing.video">Capture</A>
 <DD>Get a list of all available captures as a String array.
+<DT><A HREF="./processing/xml/XMLElement.html#listChildren()"><B>listChildren()</B></A> - 
+Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
+<DD>Put the names of all children into an array.
 <DT><A HREF="./processing/app/Base.html#listFiles(java.lang.String, boolean)"><B>listFiles(String, boolean)</B></A> - 
 Static method in class processing.app.<A HREF="./processing/app/Base.html" title="class in processing.app">Base</A>
 <DD>Recursively creates a list of all files within the specified folder,
@@ -9491,7 +9497,7 @@ Method in class processing.core.<A HREF="./processing/core/PGraphics.html" title
 <DD>The final step in setting up a renderer, set its size of this renderer.
 <DT><A HREF="./processing/core/PGraphics3D.html#setSize(int, int)"><B>setSize(int, int)</B></A> - 
 Method in class processing.core.<A HREF="./processing/core/PGraphics3D.html" title="class in processing.core">PGraphics3D</A>
-<DD>Called in repsonse to a resize event, handles setting the
+<DD>Called in response to a resize event, handles setting the
  new width and height internally, as well as re-allocating
  the pixel buffer for the new size.
 <DT><A HREF="./processing/core/PGraphicsJava2D.html#setSize(int, int)"><B>setSize(int, int)</B></A> - 
@@ -10501,7 +10507,13 @@ Method in class processing.core.<A HREF="./processing/core/PApplet.html" title="
 <DT><A HREF="./processing/core/PApplet.html#text(java.lang.String, float, float)"><B>text(String, float, float)</B></A> - 
 Method in class processing.core.<A HREF="./processing/core/PApplet.html" title="class in processing.core">PApplet</A>
 <DD>&nbsp;
+<DT><A HREF="./processing/core/PApplet.html#text(char[], int, int, float, float)"><B>text(char[], int, int, float, float)</B></A> - 
+Method in class processing.core.<A HREF="./processing/core/PApplet.html" title="class in processing.core">PApplet</A>
+<DD>&nbsp;
 <DT><A HREF="./processing/core/PApplet.html#text(java.lang.String, float, float, float)"><B>text(String, float, float, float)</B></A> - 
+Method in class processing.core.<A HREF="./processing/core/PApplet.html" title="class in processing.core">PApplet</A>
+<DD>&nbsp;
+<DT><A HREF="./processing/core/PApplet.html#text(char[], int, int, float, float, float)"><B>text(char[], int, int, float, float, float)</B></A> - 
 Method in class processing.core.<A HREF="./processing/core/PApplet.html" title="class in processing.core">PApplet</A>
 <DD>&nbsp;
 <DT><A HREF="./processing/core/PApplet.html#text(java.lang.String, float, float, float, float)"><B>text(String, float, float, float, float)</B></A> - 
@@ -10540,9 +10552,15 @@ Method in class processing.core.<A HREF="./processing/core/PGraphics.html" title
 <DT><A HREF="./processing/core/PGraphics.html#text(java.lang.String, float, float)"><B>text(String, float, float)</B></A> - 
 Method in class processing.core.<A HREF="./processing/core/PGraphics.html" title="class in processing.core">PGraphics</A>
 <DD>Draw a chunk of text.
+<DT><A HREF="./processing/core/PGraphics.html#text(char[], int, int, float, float)"><B>text(char[], int, int, float, float)</B></A> - 
+Method in class processing.core.<A HREF="./processing/core/PGraphics.html" title="class in processing.core">PGraphics</A>
+<DD>Method to draw text from an array of chars.
 <DT><A HREF="./processing/core/PGraphics.html#text(java.lang.String, float, float, float)"><B>text(String, float, float, float)</B></A> - 
 Method in class processing.core.<A HREF="./processing/core/PGraphics.html" title="class in processing.core">PGraphics</A>
 <DD>Same as above but with a z coordinate.
+<DT><A HREF="./processing/core/PGraphics.html#text(char[], int, int, float, float, float)"><B>text(char[], int, int, float, float, float)</B></A> - 
+Method in class processing.core.<A HREF="./processing/core/PGraphics.html" title="class in processing.core">PGraphics</A>
+<DD>&nbsp;
 <DT><A HREF="./processing/core/PGraphics.html#text(java.lang.String, float, float, float, float)"><B>text(String, float, float, float, float)</B></A> - 
 Method in class processing.core.<A HREF="./processing/core/PGraphics.html" title="class in processing.core">PGraphics</A>
 <DD>Draw text in a box that is constrained to a particular size.
@@ -10854,7 +10872,7 @@ Method in class processing.app.syntax.<A HREF="./processing/app/syntax/Token.htm
 <DT><A HREF="./processing/core/PVector.html#toString()"><B>toString()</B></A> - 
 Method in class processing.core.<A HREF="./processing/core/PVector.html" title="class in processing.core">PVector</A>
 <DD>&nbsp;
-<DT><A HREF="./processing/xml/XMLElement.html#toString()"><B>toString()</B></A> - 
+<DT><A HREF="./processing/xml/XMLElement.html#toString(boolean)"><B>toString(boolean)</B></A> - 
 Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
 <DD>&nbsp;
 <DT><A HREF="./processing/xml/XMLException.html#toString()"><B>toString()</B></A> - 
