@@ -581,6 +581,14 @@ XMLElement is an XML element. This is the base class used for the
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#listChildren()">listChildren</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Put the names of all children into an array.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#removeAttribute(java.lang.String)">removeAttribute</A></B>(java.lang.String&nbsp;name)</CODE>
 
@@ -659,7 +667,7 @@ XMLElement is an XML element. This is the base class used for the
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;java.lang.String</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#toString()">toString</A></B>()</CODE>
+<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#toString(boolean)">toString</A></B>(boolean&nbsp;pretty)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -671,7 +679,7 @@ XMLElement is an XML element. This is the base class used for the
 <TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE>getClass, hashCode, notify, notifyAll, wait, wait, wait</CODE></TD>
+<TD><CODE>getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
 </TR>
 </TABLE>
 &nbsp;
@@ -1058,6 +1066,23 @@ public int <B>getChildCount</B>()</PRE>
 <DD><DL>
 
 <DT><B>Returns:</B><DD>the count.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="listChildren()"><!-- --></A><H3>
+listChildren</H3>
+<PRE>
+public java.lang.String[] <B>listChildren</B>()</PRE>
+<DL>
+<DD>Put the names of all children into an array. Same as looping through 
+ each child and calling getName() on each XMLElement.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
 </DD>
 </DL>
 <HR>
@@ -1727,13 +1752,13 @@ public boolean <B>equalsXMLElement</B>(<A HREF="../../processing/xml/XMLElement.
 </DL>
 <HR>
 
-<A NAME="toString()"><!-- --></A><H3>
+<A NAME="toString(boolean)"><!-- --></A><H3>
 toString</H3>
 <PRE>
-public java.lang.String <B>toString</B>()</PRE>
+public java.lang.String <B>toString</B>(boolean&nbsp;pretty)</PRE>
 <DL>
 <DD><DL>
-<DT><B>Overrides:</B><DD><CODE>toString</CODE> in class <CODE>java.lang.Object</CODE></DL>
+</DL>
 </DD>
 <DD><DL>
 </DL>
