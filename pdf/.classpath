@@ -3,6 +3,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/core"/>
-	<classpathentry kind="lib" path="library/itext.jar" sourcepath="iText-src-2.1.2u.zip"/>
+	<classpathentry kind="lib" path="library/itext.jar" sourcepath="itext-src.zip"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
