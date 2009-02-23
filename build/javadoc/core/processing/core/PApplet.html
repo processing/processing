@@ -1743,6 +1743,14 @@ Base class for all sketches that use processing.core.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PApplet.html#createPath(java.io.File)">createPath</A></B>(java.io.File&nbsp;file)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/core/PApplet.html#createPath(java.lang.String)">createPath</A></B>(java.lang.String&nbsp;path)</CODE>
 
 <BR>
@@ -2478,6 +2486,30 @@ Base class for all sketches that use processing.core.
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;<A HREF="../../processing/core/PMatrix3D.html" title="class in processing.core">PMatrix3D</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/core/PApplet.html#getMatrix(processing.core.PMatrix3D)">getMatrix</A></B>(<A HREF="../../processing/core/PMatrix3D.html" title="class in processing.core">PMatrix3D</A>&nbsp;target)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PApplet.html#getSketchHeight()">getSketchHeight</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PApplet.html#getSketchRenderer()">getSketchRenderer</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PApplet.html#getSketchWidth()">getSketchWidth</A></B>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -5578,6 +5610,31 @@ Base class for all sketches that use processing.core.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PApplet.html#text(char[], int, int, float, float)">text</A></B>(char[]&nbsp;chars,
+     int&nbsp;start,
+     int&nbsp;stop,
+     float&nbsp;x,
+     float&nbsp;y)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PApplet.html#text(char[], int, int, float, float, float)">text</A></B>(char[]&nbsp;chars,
+     int&nbsp;start,
+     int&nbsp;stop,
+     float&nbsp;x,
+     float&nbsp;y,
+     float&nbsp;z)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/core/PApplet.html#text(char, float, float)">text</A></B>(char&nbsp;c,
      float&nbsp;x,
      float&nbsp;y)</CODE>
@@ -6824,6 +6881,48 @@ public void <B>init</B>()</PRE>
 <DL>
 <DD><DL>
 <DT><B>Overrides:</B><DD><CODE>init</CODE> in class <CODE>java.applet.Applet</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getSketchWidth()"><!-- --></A><H3>
+getSketchWidth</H3>
+<PRE>
+public int <B>getSketchWidth</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getSketchHeight()"><!-- --></A><H3>
+getSketchHeight</H3>
+<PRE>
+public int <B>getSketchHeight</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getSketchRenderer()"><!-- --></A><H3>
+getSketchRenderer</H3>
+<PRE>
+public java.lang.String <B>getSketchRenderer</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
 </DD>
 <DD><DL>
 </DL>
@@ -10221,6 +10320,20 @@ public static void <B>createPath</B>(java.lang.String&nbsp;path)</PRE>
 </DL>
 <HR>
 
+<A NAME="createPath(java.io.File)"><!-- --></A><H3>
+createPath</H3>
+<PRE>
+public static void <B>createPath</B>(java.io.File&nbsp;file)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
 <A NAME="sort(byte[])"><!-- --></A><H3>
 sort</H3>
 <PRE>
@@ -11665,7 +11778,10 @@ split</H3>
 public static java.lang.String[] <B>split</B>(java.lang.String&nbsp;what,
                                        java.lang.String&nbsp;delim)</PRE>
 <DL>
-<DD>Split a String on a specific delimiter.
+<DD>Split a String on a specific delimiter. Unlike Java's String.split() 
+ method, this does not parse the delimiter as a regexp because it's more
+ confusing than necessary, and String.split() is always available for
+ those who want regexp.
 <P>
 <DD><DL>
 </DL>
@@ -14392,10 +14508,47 @@ public void <B>text</B>(java.lang.String&nbsp;str,
 </DL>
 <HR>
 
+<A NAME="text(char[], int, int, float, float)"><!-- --></A><H3>
+text</H3>
+<PRE>
+public void <B>text</B>(char[]&nbsp;chars,
+                 int&nbsp;start,
+                 int&nbsp;stop,
+                 float&nbsp;x,
+                 float&nbsp;y)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
 <A NAME="text(java.lang.String, float, float, float)"><!-- --></A><H3>
 text</H3>
 <PRE>
 public void <B>text</B>(java.lang.String&nbsp;str,
+                 float&nbsp;x,
+                 float&nbsp;y,
+                 float&nbsp;z)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="text(char[], int, int, float, float, float)"><!-- --></A><H3>
+text</H3>
+<PRE>
+public void <B>text</B>(char[]&nbsp;chars,
+                 int&nbsp;start,
+                 int&nbsp;stop,
                  float&nbsp;x,
                  float&nbsp;y,
                  float&nbsp;z)</PRE>

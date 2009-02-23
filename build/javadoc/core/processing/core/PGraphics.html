@@ -2345,6 +2345,31 @@ Main graphics and rendering context, as well as the base API implementation.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#text(char[], int, int, float, float)">text</A></B>(char[]&nbsp;chars,
+     int&nbsp;start,
+     int&nbsp;stop,
+     float&nbsp;x,
+     float&nbsp;y)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Method to draw text from an array of chars.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PGraphics.html#text(char[], int, int, float, float, float)">text</A></B>(char[]&nbsp;chars,
+     int&nbsp;start,
+     int&nbsp;stop,
+     float&nbsp;x,
+     float&nbsp;y,
+     float&nbsp;z)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/core/PGraphics.html#text(char, float, float)">text</A></B>(char&nbsp;c,
      float&nbsp;x,
      float&nbsp;y)</CODE>
@@ -4909,6 +4934,28 @@ public void <B>text</B>(java.lang.String&nbsp;str,
 </DL>
 <HR>
 
+<A NAME="text(char[], int, int, float, float)"><!-- --></A><H3>
+text</H3>
+<PRE>
+public void <B>text</B>(char[]&nbsp;chars,
+                 int&nbsp;start,
+                 int&nbsp;stop,
+                 float&nbsp;x,
+                 float&nbsp;y)</PRE>
+<DL>
+<DD>Method to draw text from an array of chars. This method will usually be 
+ more efficient than drawing from a String object, because the String will 
+ not be converted to a char array before drawing.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
 <A NAME="text(java.lang.String, float, float, float)"><!-- --></A><H3>
 text</H3>
 <PRE>
@@ -4919,6 +4966,25 @@ public void <B>text</B>(java.lang.String&nbsp;str,
 <DL>
 <DD>Same as above but with a z coordinate.
 <P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="text(char[], int, int, float, float, float)"><!-- --></A><H3>
+text</H3>
+<PRE>
+public void <B>text</B>(char[]&nbsp;chars,
+                 int&nbsp;start,
+                 int&nbsp;stop,
+                 float&nbsp;x,
+                 float&nbsp;y,
+                 float&nbsp;z)</PRE>
+<DL>
 <DD><DL>
 </DL>
 </DD>
