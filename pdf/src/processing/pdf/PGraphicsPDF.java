@@ -250,7 +250,11 @@ public class PGraphicsPDF extends PGraphicsJava2D {
   }
 
   
-  // public void endDraw()
+   public void endDraw() {
+     // This needs to be overridden so that the endDraw() from PGraphicsJava2D
+     // is not inherited (it calls loadPixels).
+     // http://dev.processing.org/bugs/show_bug.cgi?id=1169
+   }
 
 
   /**
