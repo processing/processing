@@ -8,6 +8,8 @@ X set strokeWeight with begin/endRaw
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1172
 X fix strokeWeight with P3D (better version of line hack)
 X make P3D use proper weights
+X ArrayIndexOutOfBoundsException with point()
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1168
 
 _ if no draw() method, and renderer is not displayable, then exit
 _   static mode PDFs shouldn't just hang
