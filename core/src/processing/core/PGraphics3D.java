@@ -2339,7 +2339,6 @@ public class PGraphics3D extends PGraphics {
     raw.noStroke();
     raw.beginShape(TRIANGLES);
 
-    //for (int i = 0; i < triangleCount; i ++) {
     for (int i = start; i < stop; i++) {
       float a[] = vertices[triangles[i][VERTEX1]];
       float b[] = vertices[triangles[i][VERTEX2]];
@@ -2385,7 +2384,7 @@ public class PGraphics3D extends PGraphics {
             raw.fill(cr, cg, cb, c[A]);
             raw.vertex(c[VX] / c[VW], c[VY] / c[VW], c[VZ] / c[VW]);
           }
-        } else if (raw.is2D()){
+        } else if (raw.is2D()) {
           raw.fill(ar, ag, ab, a[A]);
           raw.vertex(a[TX], a[TY]);
           raw.fill(br, bg, bb, b[A]);
