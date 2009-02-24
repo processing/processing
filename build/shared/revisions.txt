@@ -1,3 +1,29 @@
+PROCESSING 1.0.3 (REV 0165) - 24 February 2009
+
+Bug fix release to repair a couple of regressions caused by changes in 1.0.2, 
+as well as a couple other new problems encountered since.
+
+[ bug fixes ]
+
++ endRecord or endRaw produces a RuntimeException with the PDF library
+  http://dev.processing.org/bugs/show_bug.cgi?id=1169
+
++ Problem with beginRaw/endRaw and OpenGL
+  http://dev.processing.org/bugs/show_bug.cgi?id=1171
+
++ Set strokeWeight on points and lines with begin/endRaw
+  http://dev.processing.org/bugs/show_bug.cgi?id=1172
+
++ Fix strokeWeight quirks with P3D when used with points and lines
+
++ ArrayIndexOutOfBoundsException with point()
+  http://dev.processing.org/bugs/show_bug.cgi?id=1168
+
+[ changes ] 
+
++ Update to iText 2.1.4 for the PDF library
+
+
 PROCESSING 1.0.2 (REV 0164) - 21 February 2009
 
 This release fixes many bugs and adds two minor functions to the XML library.
