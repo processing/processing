@@ -11,10 +11,10 @@ X make P3D use proper weights
 X ArrayIndexOutOfBoundsException with point()
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1168
 
+
 _ if no draw() method, and renderer is not displayable, then exit
 _   static mode PDFs shouldn't just hang
 _ public PImage(java.awt.Image) sets format to RGB (but could be ARGB)
-_ focus not coming through, ESC no longer working(?)
 
 
 [ known problems ]
@@ -37,6 +37,7 @@ _   * this may just be an OutOfMemoryError happening
 _ Frame skipping with processor intensive applets using 1.6
 _   http://dev.processing.org/bugs/show_bug.cgi?id=766
 _   may be fixed, but not verified
+_ focus not coming through, ESC no longer working(?)
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
