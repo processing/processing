@@ -37,8 +37,6 @@ void setup() {
 <example>
 <image></image>
 <code>
-import processing.xml.*;
-
 void setup() {
   // Download RSS feed of news stories from yahoo.com
   String url = "http://rss.news.yahoo.com/rss/topstories";

@@ -37,6 +37,7 @@ PI is a mathematical constant with the value 3.14159265358979323846. It is the r
 <related>
 TWO_PI
 HALF_PI
+QUARTER_PI
 </related>
 
 <availability>1.0</availability>

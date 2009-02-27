@@ -37,6 +37,7 @@ TWO_PI is a mathematical constant with the value 6.28318530717958647693. It is t
 <related>
 PI
 HALF_PI
+QUARTER_PI
 </related>
 
 <availability>1.0</availability>

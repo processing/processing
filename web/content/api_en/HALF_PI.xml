@@ -37,6 +37,7 @@ HALF_PI is a mathematical constant with the value 1.57079632679489661923. It is 
 <related>
 PI
 TWO_PI
+QUARTER_PI
 </related>
 
 <availability>1.0</availability>
