@@ -1,22 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <networked>
-    <software name="interactive table" by="Loodik">
-        <location>http://www.vimeo.com/2242300</location>
-        <date>26 Feb &apos;09</date>
-    </software>
-    <software name="interactive table" by="Loodik">
-        <location>http://www.vimeo.com/2242373</location>
-        <date>26 Feb &apos;09</date>
-    </software>
-    <software name="interactive table" by="Loodik">
-        <location>http://www.vimeo.com/2242340</location>
-        <date>26 Feb &apos;09</date>
-    </software>
     <software name="submersed songs" by="Loodik">
-        <location>http://www.vimeo.com/1896923</location>
-        <date>26 Feb &apos;09</date>
-    </software>
-    <software name="interactive table" by="Loodik">
         <location>http://www.vimeo.com/1896923</location>
         <date>26 Feb &apos;09</date>
     </software>
@@ -170,10 +154,6 @@
     </software>
     <software name="Emotional connection" by="wei zhou">
         <location>http://weizhoudesign.com/p2.html</location>
-        <date>17 Jan &apos;09</date>
-    </software>
-    <software name="digital self" by="wei zhou">
-        <location>http://weizhoudesign.com/p11.html</location>
         <date>17 Jan &apos;09</date>
     </software>
     <software name="Digital Self" by="wei zhou">
