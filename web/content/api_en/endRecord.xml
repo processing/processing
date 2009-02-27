@@ -19,15 +19,13 @@ void setup() {
 }
 
 void draw() {
-  point(mouseX, mouseY);
+  ellipse(mouseX, mouseY, 10, 10);
 }
 
-void keyPressed() {
-  if (key == ' ') {
-    endRecord();
-    exit();
-  }
-}
+void mousePressed() {
+  endRecord();
+  exit();
+} 
 </code>
 </example>
 
