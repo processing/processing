@@ -3,6 +3,16 @@
 <curated>
 
 
+<software name="Platonic Solids" by="Michael Hansmeyer" scroll="yes" resize="yes" width="1024" height="700">
+        <image>images/platonic.jpg</image>
+          <description>
+             Three-dimensional subdivision of platonic solids, inspired by Ernst Haeckel's 'Kunstformen der Natur.'
+             </description>
+          <location>http://michael-hansmeyer.com/projects/project4.html</location>
+          <link href="http://michael-hansmeyer.com">Michael Hansmeyer</link>
+          <lint href="http://flickr.com/photos/junearch/sets/72157602857326020/">Subdivision Flickr Set</link>
+        </software>
+        
 <software name="Monsters" by="Lukas Vojir (Ed.)" scroll="yes" resize="yes" width="1024" height="700">
         <image>images/monsters.gif</image>
           <description>
