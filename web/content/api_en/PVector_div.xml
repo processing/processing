@@ -107,12 +107,12 @@ PVector.div(<c>v1</c>, <c>v2</c>)
 
 <parameter>
 <label>scalar</label>
-<description>float: the number to multiply with the vector</description>
+<description>float: the number to divide with the vector</description>
 </parameter>
 
 <parameter>
 <label>v</label>
-<description>PVector: the vector to multiply by the scalar</description>
+<description>PVector: the vector to divide by the scalar</description>
 </parameter>
 
 <parameter>
