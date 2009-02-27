@@ -44,7 +44,7 @@ ellipse(100, 50, 33, 33);  // Right
 The <b>pushStyle()</b> function saves the current style settings and <b>popStyle()</b> restores the prior settings. Note that these functions are always used together. They allow you to change the style settings and later return to what you had. When a new style is started with <b>pushStyle()</b>, it builds on the current style information. The <b>pushStyle()</b> and <b>popStyle()</b> functions can be embedded to provide more control (see the second example above for a demonstration.)
 <br /><br />
 The style information controlled by the following functions are included in the style:
-fill(), stroke(), tint(), strokeWeight(), strokeCap(), strokeJoin(), imageMode(), rectMode(), ellipseMode(), shapeMode(), colorMode(), textAlign(), textMode(), textSize(), textLeading(), emissive(), specular(), shininess(), ambient() 
+fill(), stroke(), tint(), strokeWeight(), strokeCap(), strokeJoin(), imageMode(), rectMode(), ellipseMode(), shapeMode(), colorMode(), textAlign(), textFont(), textMode(), textSize(), textLeading(), emissive(), specular(), shininess(), ambient() 
 </description>
 
 <syntax>
