@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>QUARTER_PI (0.78539...)</name>
+
+<category>Constants</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+float f = 0.0;
+beginShape(POLYGON);
+while(f &lt; QUARTER_PI) {
+  vertex(width/2 + cos(f)*40, height/2 + sin(f)*40);
+  f += PI/12.0;
+}
+endShape();
+</code>
+</example>
+
+<description>
+QUARTER_PI is a mathematical constant with the value 0.7853982. It is one quarter the ratio of the circumference of a circle to its diameter. It is useful in combination with the trigonometric functions <b>sin()</b> and <b>cos()</b>. 
+</description>
+
+<syntax></syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns></returns>
+
+<related>
+PI
+TWO_PI
+HALF_PI
+</related>
+
+<availability>1.0</availability>
+
+<type>Constant</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>
