@@ -41,8 +41,8 @@ smooth()
 
 <related>
 noSmooth()
-hint
-size
+hint()
+size()
 </related>
 
 <availability>1.0</availability>
