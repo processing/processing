@@ -30,7 +30,7 @@ println(sf);  // prints "009.01200"
 </example>
 
 <description>
-Utility function for formatting numbers into strings. There are two versions, one for formatting floats and one for formatting ints. The values for the <b>digits</b>, <b>left</b>, and <b>right</b> parameters should always be positive integers.
+Utility function for formatting numbers into strings. There are two versions, one for formatting floats and one for formatting ints. The values for the <b>digits</b>, <b>left</b>, and <b>right</b> parameters should always be positive integers.<br /><br />As shown in the above example, <b>nf()</b> is used to add zeros to the left and/or right of a number. This is typically for aligning a list of numbers. To <em>remove</em> digits from a floating-point number, use the <b>int()</b>, <b>ceil()</b>, <b>floor()</b>, or <b>round()</b> functions.  
 </description>
 
 <syntax>
