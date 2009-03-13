@@ -11,7 +11,7 @@ $lang = isSet($_POST['lang']) ? $_POST['lang'] : 'en';
 $translation = new Translation($lang);
 
 $source = CONTENTDIR."/api_$lang/compare/";
-$path = REFERENCEDIR . ($lang == 'en' ? '' : "/$lang") . "/compare/";
+$path = EXAMPLESDIR . ($lang == 'en' ? '' : "/$lang") . "/compare/";
 make_necessary_directories($path."images/file");
 
 $files = array('index.html','java.html','actionscript.html', 'lingo.html', 'python.html', 'dbn.html');
@@ -20,7 +20,7 @@ foreach ($files as $file) {
 	$page = new Page('Compare', 'Compare');
 	$page->content(file_get_contents($source.$file));
 	$page->language($lang);
-	writeFile('reference/'.($lang=='en'?'':"$lang/")."compare/$file", $page->out());
+	writeFile('learning/'.($lang=='en'?'':"$lang/")."compare/$file", $page->out());
 }
 copydirr($source.'/images', $path.'/images');
 

@@ -21,75 +21,85 @@ putenv('HOME=' . CONTENTDIR);
 `cd $where && /usr/local/bin/svn update`;
 
 // Copy over the images for the tutorials index
-if (!is_dir($path.'learning/tutorials/imgs')) { 
-	mkdir($path.'learning/tutorials/imgs', '0757'); 
+if (!is_dir($path.'learning/imgs')) { 
+	mkdir($path.'learning/imgs', '0757'); 
 }
-if (is_dir($path.'learning/tutorials/imgs')) { 
-	copydirr($source.'imgs', $path.'learning/tutorials/imgs', null, 0757, true);
+if (is_dir($path.'learning/imgs')) { 
+	copydirr($source.'imgs', $path.'learning/imgs', null, 0757, true);
 }
 
 $page = new Page("Tutorials", "Tutorials");
 $page->content(file_get_contents($source."index.html"));
-writeFile('learning/tutorials/index.html', $page->out());
+writeFile('learning/index.html', $page->out());
+
+$page = new Page("Getting Started", "Tutorials");
+$page->content(file_get_contents($source."gettingstarted/index.html"));
+writeFile('learning/gettingstarted/index.html', $page->out());
+if (!is_dir($path.'learning/gettingstarted/imgs')) { 
+	mkdir($path.'learning/gettingstarted/imgs', '0757'); 
+}
+if (is_dir($path.'learning/gettingstarted/imgs')) { 
+	copydirr($source.'gettingstarted/imgs', $path.'learning/gettingstarted/imgs', null, 0757, true);
+}
 
 $page = new Page("Processing in Eclipse", "Tutorials");
 $page->content(file_get_contents($source."eclipse/index.html"));
-writeFile('learning/tutorials/eclipse/index.html', $page->out());
-if (!is_dir($path.'learning/tutorials/eclipse/imgs')) { 
-	mkdir($path.'learning/tutorials/eclipse/imgs', '0757'); 
+writeFile('learning/eclipse/index.html', $page->out());
+if (!is_dir($path.'learning/eclipse/imgs')) { 
+	mkdir($path.'learning/eclipse/imgs', '0757'); 
 }
-if (is_dir($path.'learning/tutorials/eclipse/imgs')) { 
-	copydirr($source.'eclipse/imgs', $path.'learning/tutorials/eclipse/imgs', null, 0757, true);
+if (is_dir($path.'learning/eclipse/imgs')) { 
+	copydirr($source.'eclipse/imgs', $path.'learning/eclipse/imgs', null, 0757, true);
 }
 
 $page = new Page("Basics", "Tutorials");
 $page->content(file_get_contents($source."basics/index.html"));
-writeFile('learning/tutorials/basics/index.html', $page->out());
-if (!is_dir($path.'learning/tutorials/basics/imgs')) { 
-	mkdir($path.'learning/tutorials/basics/imgs', '0757'); 
+writeFile('learning/basics/index.html', $page->out());
+if (!is_dir($path.'learning/basics/imgs')) { 
+	mkdir($path.'learning/basics/imgs', '0757'); 
 }
-if (is_dir($path.'learning/tutorials/basics/imgs')) { 
-	copydirr($source.'basics/imgs', $path.'learning/tutorials/basics/imgs', null, 0757, true);
+if (is_dir($path.'learning/basics/imgs')) { 
+	copydirr($source.'basics/imgs', $path.'learning/basics/imgs', null, 0757, true);
 }
 
 $page = new Page("Color", "Tutorials");
 $page->content(file_get_contents($source."color/index.html"));
-writeFile('learning/tutorials/color/index.html', $page->out());
-if (!is_dir($path.'learning/tutorials/color/imgs')) { 
-	mkdir($path.'learning/tutorials/color/imgs', '0757'); 
+writeFile('learning/color/index.html', $page->out());
+if (!is_dir($path.'learning/color/imgs')) { 
+	mkdir($path.'learning/color/imgs', '0757'); 
 }
-if (is_dir($path.'learning/tutorials/color/imgs')) { 
-	copydirr($source.'color/imgs', $path.'learning/tutorials/color/imgs', null, 0757, true);
+if (is_dir($path.'learning/color/imgs')) { 
+	copydirr($source.'color/imgs', $path.'learning/color/imgs', null, 0757, true);
 }
 
 $page = new Page("Objects", "Tutorials");
 $page->content(file_get_contents($source."objects/index.html"));
-writeFile('learning/tutorials/objects/index.html', $page->out());
-if (!is_dir($path.'learning/tutorials/objects/imgs')) { 
-	mkdir($path.'learning/tutorials/objects/imgs', '0757'); 
+writeFile('learning/objects/index.html', $page->out());
+if (!is_dir($path.'learning/objects/imgs')) { 
+	mkdir($path.'learning/objects/imgs', '0757'); 
 }
-if (is_dir($path.'learning/tutorials/objects/imgs')) { 
-	copydirr($source.'objects/imgs', $path.'learning/tutorials/objects/imgs', null, 0757, true);
+if (is_dir($path.'learning/objects/imgs')) { 
+	copydirr($source.'objects/imgs', $path.'learning/objects/imgs', null, 0757, true);
 }
 
 $page = new Page("Two-Dimensional Arrays", "Tutorials");
 $page->content(file_get_contents($source."2darray/index.html"));
-writeFile('learning/tutorials/2darray/index.html', $page->out());
-if (!is_dir($path.'learning/tutorials/2darray/imgs')) { 
-	mkdir($path.'learning/tutorials/2darray/imgs', '0757'); 
+writeFile('learning/2darray/index.html', $page->out());
+if (!is_dir($path.'learning/2darray/imgs')) { 
+	mkdir($path.'learning/2darray/imgs', '0757'); 
 }
-if (is_dir($path.'learning/tutorials/2darray/imgs')) { 
-	copydirr($source.'2darray/imgs', $path.'learning/tutorials/2darray/imgs', null, 0757, true);
+if (is_dir($path.'learning/2darray/imgs')) { 
+	copydirr($source.'2darray/imgs', $path.'learning/2darray/imgs', null, 0757, true);
 }
 
 $page = new Page("Trig", "Tutorials");
 $page->content(file_get_contents($source."trig/index.html"));
-writeFile('learning/tutorials/trig/index.html', $page->out());
-if (!is_dir($path.'learning/tutorials/trig/imgs')) { 
-	mkdir($path.'learning/tutorials/trig/imgs', '0757'); 
+writeFile('learning/trig/index.html', $page->out());
+if (!is_dir($path.'learning/trig/imgs')) { 
+	mkdir($path.'learning/trig/imgs', '0757'); 
 }
-if (is_dir($path.'learning/tutorials/trig/imgs')) { 
-	copydirr($source.'trig/imgs', $path.'learning/tutorials/trig/imgs', null, 0757, true); 
+if (is_dir($path.'learning/trig/imgs')) { 
+	copydirr($source.'trig/imgs', $path.'learning/trig/imgs', null, 0757, true); 
 }
 
 $benchmark_end = microtime_float();
@@ -102,4 +112,4 @@ $execution_time = round($benchmark_end - $benchmark_start, 4);
 <p>Generated files in <?=$execution_time?> seconds.</p>
 <!--<p>Page put here: <?=$source."faq.html"?></p>-->
 <!--<p>Page put here: <?=$path.'faq.html'?></p>-->
-<!--<p><?=$path.'learning/tutorials/eclipse/imgs'?></p>-->
+<!--<p><?=$path.'learning/eclipse/imgs'?></p>-->

@@ -24,11 +24,12 @@ putenv('HOME=' . CONTENTDIR);
 `cd $there && /usr/local/bin/svn update examples_topics.xml`;
 `cd $where && /usr/local/bin/svn update`;
 
+// Removed this page 11 March 2009 - CR
 // Make the intro page
 $source = CONTENTDIR."static/";
-$page = new Page("Learning", "Learning");
-$page->content(file_get_contents($source."learning.html"));
-writeFile('learning/index.html', $page->out());
+#$page = new Page("Learning", "Learning");
+#$page->content(file_get_contents($source."learning.html"));
+#writeFile('learning/index.html', $page->out());
 
 // Make the Books page
 $page = new Page("Books", "Books");
@@ -36,9 +37,9 @@ $page->content(file_get_contents($source."books.html"));
 writeFile('learning/books/index.html', $page->out());
 
 // Make the Getting Started
-$page = new Page("Getting Started", "Getting Started");
-$page->content(file_get_contents($source."gettingstarted.html"));
-writeFile('learning/gettingstarted/index.html', $page->out());
+//$page = new Page("Getting Started", "Getting Started");
+//$page->content(file_get_contents($source."gettingstarted.html"));
+//writeFile('learning/gettingstarted/index.html', $page->out());
 
 // Disabled by REAS 10 Sept 2008
 // Make the hacks page
@@ -68,7 +69,7 @@ foreach ($categories as $cat => $array) {
 	}
 }
 
-$page = new Page('Examples', 'Examples');
+$page = new Page('Basics', 'Basics');
 $page->subtemplate('template.examples.html');
 
 $html = "<div class=\"ref-col\">\n";
@@ -114,7 +115,7 @@ foreach ($categories as $cat => $array) {
 	}
 }
 
-$page = new Page('Examples', 'Examples');
+$page = new Page('3D', '3D');
 $page->subtemplate('template.examples-3d.html');
 
 $html = "<div class=\"ref-col\">\n";
@@ -160,7 +161,7 @@ foreach ($categories as $cat => $array) {
 	}
 }
 
-$page = new Page('Examples', 'Examples');
+$page = new Page('Topics', 'Topics');
 $page->subtemplate('template.examples-topics.html');
 
 $html = "<div class=\"ref-col\">\n";
@@ -207,7 +208,7 @@ foreach ($categories as $cat => $array) {
 	}
 }
 
-$page = new Page('Examples', 'Examples');
+$page = new Page('Library', 'Library');
 $page->subtemplate('template.examples-libraries.html');
 
 $html = "<div class=\"ref-col\">\n";

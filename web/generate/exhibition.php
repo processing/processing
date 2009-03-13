@@ -175,11 +175,11 @@ if (!defined('COVER')) {
     $nnum_pages = ceil($ntotal / NETWORK_PER_PAGE);
     
     // create and write the first page
-    $page = new Page('Exhibition', 'Index');
-    $page->subtemplate('template.exhibition.html');
-    $page->set('exhibition', get_curated_one($curated, 0, CURATED_PER_PAGE/2));
-    $page->set('network', get_network_list($network, NETWORK_FIRST_PAGE));
-    writeFile("exhibition/index.html", $page->out());
+    #$page = new Page('Exhibition', 'Index');
+    #$page->subtemplate('template.exhibition.html');
+    #$page->set('exhibition', get_curated_one($curated, 0, CURATED_PER_PAGE/2));
+    #$page->set('network', get_network_list($network, NETWORK_FIRST_PAGE));
+    #writeFile("exhibition/index.html", $page->out());
     
     // create and write the other pages
     for ($i = 0; $i <= $cnum_pages; $i++) {
@@ -189,7 +189,7 @@ if (!defined('COVER')) {
         $page->set('exhibition', get_curated_three($curated, CURATED_PER_PAGE*$i, CURATED_PER_PAGE));
         //$pagename = sprintf("curated_page_%d.html", $i+1);
         if ($i == 0 ) {
-          $pagename = sprintf("curated_page_new.html");
+          $pagename = sprintf("index.html");
         } else {
           $pagename = sprintf("curated_page_%d.html", $cnum_pages-$i);
         }
@@ -204,9 +204,9 @@ if (!defined('COVER')) {
         $page->set('network', get_network_table($network, NETWORK_PER_PAGE*$i, NETWORK_PER_PAGE));
         //$pagename = sprintf("network_page_%d.html", $i);
         if ($i == 0 ) {
-          $pagename = sprintf("network_page_new.html");
+          $pagename = sprintf("network/index.html");
         } else {
-          $pagename = sprintf("network_page_%d.html", $nnum_pages-$i);
+          $pagename = sprintf("network/network_page_%d.html", $nnum_pages-$i);
         }
         writeFile("exhibition/".$pagename, $page->out());
     }
@@ -232,7 +232,7 @@ function curated_nav($num, $current)
     //}
     for ($i = $num; $i > 0; $i--) {
     	if ($i == $num) {
-    	  $links[] = sprintf("<a href=\"curated_page_new.html\">%d</a>", $i);
+    	  $links[] = sprintf("<a href=\"./\">%d</a>", $i);
     	} else {
           $links[] = (($num-$i+1) == $current) ? $i : sprintf("<a href=\"curated_page_%d.html\">%d</a>", $i, $i);
     	}
@@ -262,7 +262,7 @@ function network_nav($num, $current)
     //$links[] = '<a href="network_page_1.html">1</a>';
     for ($i = $num; $i > 0; $i--) {
     	if ($i == $num) {
-    	  $links[] = sprintf("<a href=\"network_page_new.html\">%d</a>", $i);
+    	  $links[] = sprintf("<a href=\"./\">%d</a>", $i);
     	} else {
           $links[] = (($num-$i+1) == $current) ? $i : sprintf("<a href=\"network_page_%d.html\">%d</a>", $i, $i);
     	}

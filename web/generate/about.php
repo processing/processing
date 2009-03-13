@@ -24,18 +24,18 @@ putenv('HOME=' . CONTENTDIR);
 $source = CONTENTDIR."static/";
 #$path = BASEDIR;
 
-$page = new Page("Basics", "Basics");
-$page->content(file_get_contents($source."basics.html"));
-writeFile('about/basics.html', $page->out());
+$page = new Page("Overview", "Overview");
+$page->content(file_get_contents($source."overview.html"));
+writeFile('about/index.html', $page->out());
 #copydirr($source.'/images', $path.'/images');
 
 $page = new Page("Patrons", "Patrons");
 $page->content(file_get_contents($source."patrons.html"));
-writeFile('about/patrons.html', $page->out());
+writeFile('about/patrons/index.html', $page->out());
 
 $page = new Page("People", "People");
 $page->content(file_get_contents($source."people.html"));
-writeFile('about/people.html', $page->out());
+writeFile('about/people/index.html', $page->out());
 
 
 $benchmark_end = microtime_float();
