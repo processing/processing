@@ -26,13 +26,13 @@ void draw()
   background( 51 );
   
   targetX = mouseX;
-  float dx = mouseX - x;
+  float dx = targetX - x;
   if(abs(dx) > 1) {
     x += dx * easing;
   }
   
   targetY = mouseY;
-  float dy = mouseY - y;
+  float dy = targetY - y;
   if(abs(dy) > 1) {
     y += dy * easing;
   }
