@@ -52,14 +52,14 @@ if (is_dir($path.'learning/eclipse/imgs')) {
 	copydirr($source.'eclipse/imgs', $path.'learning/eclipse/imgs', null, 0757, true);
 }
 
-$page = new Page("Basics", "Tutorials");
-$page->content(file_get_contents($source."basics/index.html"));
-writeFile('learning/basics/index.html', $page->out());
-if (!is_dir($path.'learning/basics/imgs')) { 
-	mkdir($path.'learning/basics/imgs', '0757'); 
+$page = new Page("Drawing", "Tutorials");
+$page->content(file_get_contents($source."drawing/index.html"));
+writeFile('learning/drawing/index.html', $page->out());
+if (!is_dir($path.'learning/drawing/imgs')) { 
+	mkdir($path.'learning/drawing/imgs', '0757'); 
 }
-if (is_dir($path.'learning/basics/imgs')) { 
-	copydirr($source.'basics/imgs', $path.'learning/basics/imgs', null, 0757, true);
+if (is_dir($path.'learning/drawing/imgs')) { 
+	copydirr($source.'drawing/imgs', $path.'learning/drawing/imgs', null, 0757, true);
 }
 
 $page = new Page("Color", "Tutorials");
