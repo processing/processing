@@ -106,22 +106,22 @@ a:link:visited {
 #mainnav_noSub { background: #5a5a5a; margin-bottom: 40px; }
 #mainnav, #mainnav_noSub { position: relative; color: #cccccc !important; }
 
-#subNav { margin-left: 264px;   /* Is this for the reference??? */
+#subNav { margin-left: 157px;   /* 264  Is this for the reference??? */
 	background: #5a5a5a url(../img/nav_bottomarrow.gif) no-repeat; 
 	padding-left: 33px;
 	margin-bottom: 30px;
 }
 
-#subNav.learning { margin-left: 204px; }
+#subNav.learning { margin-left: 225px; }
 .active { color: #cccccc !important; }
 .activeSub { color: #000000 !important; }
 .faq { position: absolute; right: 10px; color: #cccccc }
 
-#subNav.exhib { margin-left: 137px; }
+#subNav.exhib { margin-left: 90px; }
 .active { color: #cccccc !important; }
 .faq { position: absolute; right: 10px; color: #cccccc }
 
-#subNav.abo { margin-left: 92px; }
+#subNav.abo { margin-left: 490px; }
 .active { color: #cccccc !important; }
 .faq { position: absolute; right: 10px; color: #cccccc }
 
@@ -612,7 +612,7 @@ pre.code { clear: both; margin-top: 10px; }
 
 /* #examples-nav { margin-left: -44px; display: relative; } */
 //#examples-nav { margin-left: 0px; display: relative; }
-.examples-nav-div { margin-left: 200px; margin-top: -35px; width: 480px; display: relative; align: right; }
+.examples-nav-div { margin-left: -44px; margin-top: -10px; width: 480px; display: relative; align: left; }
 #examples-nav img { display: absolute; top: 15px; left: 100px; }
 
 #Examples h1 { margin-bottom: 0; }
