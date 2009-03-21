@@ -14,7 +14,7 @@ $where = CONTENTDIR . 'api_' . $lang;
 putenv('HOME=' . CONTENTDIR);
 
 // do the initial checkout
-//`cd /var/www/processing && /usr/local/bin/svn co svn://processing.org/trunk/web/content`;
+`cd /var/www/processing && /usr/local/bin/svn co svn://processing.org/trunk/web/content`;
 
 // do things here
 `cd $where && /usr/local/bin/svn update`;
