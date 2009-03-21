@@ -245,6 +245,7 @@ li {margin-bottom: 1em; }
 #Cover h3 { margin: 40px 0 0 0; }
 .exhibition-small { padding: 0; margin: 0; }
 .exhibition-small h3 { margin-top: 0px !important; }
+p.exhibition-small { margin-top: 20px; margin-bottom: 10px; }
 
 dl { margin: 0; }
 dt { font-style: italic; }
