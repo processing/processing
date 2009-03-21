@@ -2,7 +2,15 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <curated>
 
-
+<software name="Oasis" by="Yunsil Heo, Hyunwoo Bang" scroll="yes" resize="yes" width="1024" height="700">
+        <image>images/oasis.gif</image>
+          <description>
+             A playful space where people discover and explore virtual life.
+             </description>
+          <location>http://everyware.kr/portfolio/contents/09_oasis/</location>
+          <link href="http://everyware.kr">everywhere</link>
+        </software>
+        
 <software name="Platonic Solids" by="Michael Hansmeyer" scroll="yes" resize="yes" width="1024" height="700">
         <image>images/platonic.jpg</image>
           <description>
