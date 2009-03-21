@@ -44,19 +44,19 @@ The code inside <b>serverEvent()</b> is run when a new client connects to a serv
 </description>
 
 <syntax>
-void serverEvent(<c>client</c>, <c>server</c>) {
+void serverEvent(<c>server</c>, <c>client</c>) {
   <c>statements</c>
 }
 </syntax>
 
 <parameter>
-<label>client</label>
-<description>Client: client connecting to the server</description>
+<label>server</label>
+<description>Server: server the client is connecting to</description>
 </parameter>
 
 <parameter>
-<label>server</label>
-<description>Server: server the client is connecting to</description>
+<label>client</label>
+<description>Client: client connecting to the server</description>
 </parameter>
 
 <parameter>
