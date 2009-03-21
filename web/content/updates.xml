@@ -922,7 +922,7 @@ Download here</a>.</description>
         
         <item>
                	<date>13 February 2009</date>
-                <description>Seven new libraries added to <a href="http://processing.org/reference/libraries/">Contributions</a>: openCV by Stephane Cousot and Douglas Edric Stanley, motion and unzipit by Yonas Sandbaek, romeFeeder by Bruno Nadeau, colorlib by Andreas Koeberle and Jan VanTomme, supercad by Guillaume Labelle, jmcvideo by Angus Forbes, ical4p by Nikolaus Gradwohl </description>
+                <description>Seven new libraries added to <a href="http://processing.org/reference/libraries/">Contributions</a>: openCV by Stephane Cousot and Douglas Edric Stanley, motion and unzipit by Yonas Sandbaek, romeFeeder by Bruno Nadeau, colorlib by Andreas Koeberle and Jan VanTomme, supercad by Guillaume Labelle, jmcvideo by Angus Forbes, ical4p by Nikolaus Gradwohl.</description>
         </item>
         
        <item>
@@ -940,6 +940,14 @@ Download here</a>.</description>
          <item>
                 <date>26 February 2009</date>
                 <description>Software from Michael Hansmeyer added to the <a href="http://processing.org/exhibition">exhibition</a>.</description>
+       </item>
+       <item>
+                <date>20 March 2009</date>
+                <description>Five new libraries added to <a href="http://processing.org/reference/libraries/">Contributions</a>: superPoint by JohnG, SoundCipher by Andrew R. Brown, fluid forms libs by Stephen Williams, fullscreen api by Hansi Raber, BoxWrap2D by ewjordan.</description>
+       </item>
+       <item>
+                <date>21 March 2009</date>
+                <description>Software from Yunsil Heo and Hyunwoo Bang added to the <a href="http://processing.org/exhibition">exhibition</a>.</description>
        </item>
         
 </updates>
