@@ -9,15 +9,15 @@ class Boid {
   float maxforce;    // Maximum steering force
   float maxspeed;    // Maximum speed
 
-  Boid(PVector l, float ms, float mf) {
+    Boid(PVector l, float ms, float mf) {
     acc = new PVector(0,0);
     vel = new PVector(random(-1,1),random(-1,1));
-    loc = l.copy();
+    loc = l.get();
     r = 2.0;
     maxspeed = ms;
     maxforce = mf;
   }
-  
+
   void run(ArrayList boids) {
     flock(boids);
     update();
@@ -31,7 +31,7 @@ class Boid {
     PVector ali = align(boids);      // Alignment
     PVector coh = cohesion(boids);   // Cohesion
     // Arbitrarily weight these forces
-    sep.mult(2.0);
+    sep.mult(1.5);
     ali.mult(1.0);
     coh.mult(1.0);
     // Add the force vectors to acceleration
@@ -39,7 +39,7 @@ class Boid {
     acc.add(ali);
     acc.add(coh);
   }
-  
+
   // Method to update location
   void update() {
     // Update velocity
@@ -54,7 +54,7 @@ class Boid {
   void seek(PVector target) {
     acc.add(steer(target,false));
   }
- 
+
   void arrive(PVector target) {
     acc.add(steer(target,true));
   }
@@ -75,12 +75,13 @@ class Boid {
       // Steering = Desired minus Velocity
       steer = target.sub(desired,vel);
       steer.limit(maxforce);  // Limit to maximum steering force
-    } else {
+    } 
+    else {
       steer = new PVector(0,0);
     }
     return steer;
   }
-  
+
   void render() {
     // Draw a triangle rotated in the direction of velocity
     float theta = vel.heading2D() + PI/2;
@@ -96,7 +97,7 @@ class Boid {
     endShape();
     popMatrix();
   }
-  
+
   // Wraparound
   void borders() {
     if (loc.x < -r) loc.x = width+r;
@@ -108,55 +109,72 @@ class Boid {
   // Separation
   // Method checks for nearby boids and steers away
   PVector separate (ArrayList boids) {
-    float desiredseparation = 25.0;
-    PVector sum = new PVector(0,0,0);
+    float desiredseparation = 20.0;
+    PVector steer = new PVector(0,0,0);
     int count = 0;
     // For every boid in the system, check if it's too close
     for (int i = 0 ; i < boids.size(); i++) {
       Boid other = (Boid) boids.get(i);
-      float d = loc.dist(other.loc);
+      float d = PVector.dist(loc,other.loc);
       // If the distance is greater than 0 and less than an arbitrary amount (0 when you are yourself)
       if ((d > 0) && (d < desiredseparation)) {
         // Calculate vector pointing away from neighbor
-        PVector diff = loc.sub(loc,other.loc);
+        PVector diff = PVector.sub(loc,other.loc);
         diff.normalize();
         diff.div(d);        // Weight by distance
-        sum.add(diff);
+        steer.add(diff);
         count++;            // Keep track of how many
       }
     }
     // Average -- divide by how many
     if (count > 0) {
-      sum.div((float)count);
+      steer.div((float)count);
     }
-    return sum;
+
+    // As long as the vector is greater than 0
+    if (steer.mag() > 0) {
+      // Implement Reynolds: Steering = Desired - Velocity
+      steer.normalize();
+      steer.mult(maxspeed);
+      steer.sub(vel);
+      steer.limit(maxforce);
+    }
+    return steer;
   }
-  
+
   // Alignment
   // For every nearby boid in the system, calculate the average velocity
   PVector align (ArrayList boids) {
-    float neighbordist = 50.0;
-    PVector sum = new PVector(0,0,0);
+    float neighbordist = 25.0;
+    PVector steer = new PVector(0,0,0);
     int count = 0;
     for (int i = 0 ; i < boids.size(); i++) {
       Boid other = (Boid) boids.get(i);
-      float d = loc.dist(other.loc);
+      float d = PVector.dist(loc,other.loc);
       if ((d > 0) && (d < neighbordist)) {
-        sum.add(other.vel);
+        steer.add(other.vel);
         count++;
       }
     }
     if (count > 0) {
-      sum.div((float)count);
-      sum.limit(maxforce);
+      steer.div((float)count);
     }
-    return sum;
+
+    // As long as the vector is greater than 0
+    if (steer.mag() > 0) {
+      // Implement Reynolds: Steering = Desired - Velocity
+      steer.normalize();
+      steer.mult(maxspeed);
+      steer.sub(vel);
+      steer.limit(maxforce);
+    }
+    return steer;
   }
 
   // Cohesion
   // For the average location (i.e. center) of all nearby boids, calculate steering vector towards that location
   PVector cohesion (ArrayList boids) {
-    float neighbordist = 50.0;
+    float neighbordist = 25.0;
     PVector sum = new PVector(0,0);   // Start with empty vector to accumulate all locations
     int count = 0;
     for (int i = 0 ; i < boids.size(); i++) {
@@ -174,4 +192,5 @@ class Boid {
     return sum;
   }
 }
+
 
