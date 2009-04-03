@@ -4,6 +4,8 @@
 # changes by hand, i.e. use the linux version of the export, and modify its 
 # contents to include the necessary files for your platform.
 
+name = OpenGL
+
 application.macosx = opengl.jar, jogl.jar, libjogl.jnilib, libjogl_awt.jnilib, libjogl_cg.jnilib, gluegen-rt.jar, libgluegen-rt.jnilib
 
 application.windows = opengl.jar, jogl.jar, jogl.dll, jogl_awt.dll, jogl_cg.dll, gluegen-rt.jar, gluegen-rt.dll

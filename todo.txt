@@ -1,5 +1,49 @@
 0166 pde
+X try adding a space to the name of the help menu for beachball problems
+X   this works, might be useful to make the switch
+X remove isManagingFocus problem inside JEditTextArea
 
+_ catch antlr conflicts, and put up an error message
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1225
+
+3 _ shortcuts not working after rename? (osx and windows confirmed)
+3 _   http://dev.processing.org/bugs/show_bug.cgi?id=505
+3 _ cmd-shift-n not creating new tab (related to 505?)
+3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1081
+
+_ when disk is full, Processing zeroes files when it tries to save changes
+_   http://dev.processing.org/bugs/show_bug.cgi?id=967
+_ sketch marked as modified too aggressively
+_   http://dev.processing.org/bugs/show_bug.cgi?id=328
+
+_ fix regex documentation
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1202
+
+_ move library examples to the examples menu
+_   do this once the library documentation has been fixed up
+_ proper libraries warning dialog
+_   check if libraries folder does not exist
+_   check to see if other libraries are installed
+_   warn user about moving libraries and restarting
+
+E2 _ Default wildcard imports are causing naming conflicts
+E2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1103
+
+_ -X option not supported in 10.4
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1179
+
+_ disable sketchbook and examples menus on os x?
+
+4 _ mangled menu text with java 6u10
+4 _   need to try adding the d3d flag to the .exe
+4 _   http://dev.processing.org/bugs/show_bug.cgi?id=1065
+4 _   -Dsun.java2d.noddraw=true
+
+_ Closing the last window doesn't cause PDE to save its position/contents/etc
+_   (when the pref for close last window = quit is set)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=835
+_ not remembering window size/placement preferences
+_   http://dev.processing.org/bugs/show_bug.cgi?id=837
 
 _ add option to use full screen exclusive mode on present inside pde?
 _   override default setting of macosx (yes) and linux/win (no)
@@ -10,22 +54,8 @@ _ make better version of the windows launcher for debugging
 
 _ update to java 6u12
 
-X try adding a space to the name of the help menu for beachball problems
-_   this works, might be useful to make the switch
-_ disable sketchbook and examples menus on os x?
-
 _ after deleting a tab code still get's preprocessed, pde file is not forgotten
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1092
-
-_ proper libraries warning dialog
-_   check if libraries folder does not exist
-_   check to see if other libraries are installed
-_   warn user about moving libraries and restarting
-
-E2 _ Default wildcard imports are causing naming conflicts
-E2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1103
-
-_ fix isManagingFocus error inside JEditTextArea
 
 _ windows exported exe problems (pcho)
 _   lib folder goes missing, give an error
@@ -39,14 +69,7 @@ _ add general outline of 1.5 and 2.0 releases to the faq
 _   video is on its way out, no good/simple solution for fixing now
 _   andreas' library will do good things eventually
 
-_ move library examples to the examples menu
-_   do this once the library documentation has been fixed up
-
 _ need to do a better job of error handling inside main()
-
-4 _ mangled menu text with java 6u10
-4 _   need to try adding the d3d flag to the .exe
-4 _   http://dev.processing.org/bugs/show_bug.cgi?id=1065
 
 
 [ needs verification ] 
@@ -506,6 +529,7 @@ PDE / Warnings
 _ proper dialog support
 _   http://javagraphics.blogspot.com/2008/06/joptionpane-making-alternative.html
 _ two-tiered dialogs for everything - use big font/little font style throughout
+_   http://javagraphics.blogspot.com/2008/06/joptionpane-making-alternative.html
 _ option to suppress warning dialogs
 _   starting with the one about modifying the sketch name for spaces
 _   http://processing.org/bugs/show_bug.cgi?id=3
@@ -602,10 +626,14 @@ _ Parsing error when using char literals
 _   http://dev.processing.org/bugs/show_bug.cgi?id=281
 _ Improve detection and handling of missing semicolons
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1036
+5 _ support for assertions
+5 _   http://dev.processing.org/bugs/show_bug.cgi?id=1188
 
 
 PDE / Editor
 
+3 _ not saving sketch when exiting (only with windows lan setup)
+3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1193
 _ improve update check message "a new release (1.0.1) is available"
 _   be more descriptive, use a second line in latest.txt
 _   maybe just include the full text of the update message there?
@@ -616,15 +644,6 @@ _   create temporary file when saving
 _   once done writing, use remove the original and rename the old
 _   some basic stuff like this..
 _   http://dev.processing.org/bugs/show_bug.cgi?id=968
-_ when disk is full, Processing zeroes files when it tries to save changes
-_   http://dev.processing.org/bugs/show_bug.cgi?id=967
-_ sketch marked as modified too aggressively
-_   http://dev.processing.org/bugs/show_bug.cgi?id=328
-_ Closing the last window doesn't cause PDE to save its position/contents/etc
-_   (when the pref for close last window = quit is set)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=835
-_ not remembering window size/placement preferences
-_   http://dev.processing.org/bugs/show_bug.cgi?id=837
 _ saved window positions.. if displays has changed, becomes a problem
 _   record the display that it was on?
 _     GraphicsDevice gd = frame.getGraphicsConfiguration().getDevice();
@@ -661,8 +680,6 @@ _ add auto-save to the editor
 _   http://dev.processing.org/bugs/show_bug.cgi?id=739
 _ dragging title bar while sketch running causes strange selection behavior
 _   http://dev.processing.org/bugs/show_bug.cgi?id=504
-_ shortcuts not working after rename? (osx only?)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=505
 _ convert tabs to spaces when pasting text
 _   http://dev.processing.org/bugs/show_bug.cgi?id=506
 _ add "recent files" list to open menu?
@@ -1224,11 +1241,13 @@ _ try LSMinimumSystemVersion in Info.plist
 
 DIST / Linux
 
+5 _ strange insets for PApplet on certain window managers
+5 _   http://dev.processing.org/bugs/show_bug.cgi?id=1187
 _ finish up debian package support (see the processing.mess folder)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=596
 _   these bits need to be checked to ensure that they work on other distros
-_ Editor stops receiving keyboard input after running a program
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1161
+5 _ Editor stops receiving keyboard input after running a program (8.10)
+5 _   http://dev.processing.org/bugs/show_bug.cgi?id=1161
 _ not being able to make a link to the processing app
 _   argh.. more path and shell issues..
 _ computationally intensive stuff runs really slow inside p5
