@@ -606,13 +606,13 @@ public class PApplet extends Applet
     // though it's here for applications anyway
     start();
   }
-  
-  
+
+
   public int getSketchWidth() {
     return DEFAULT_WIDTH;
   }
-  
-  
+
+
   public int getSketchHeight() {
     return DEFAULT_HEIGHT;
   }
@@ -621,8 +621,8 @@ public class PApplet extends Applet
   public String getSketchRenderer() {
     return JAVA2D;
   }
-  
-  
+
+
   /**
    * Called by the browser or applet viewer to inform this applet that it
    * should start its execution. It is called after the init method and
@@ -4417,7 +4417,8 @@ public class PApplet extends Applet
    * "data" folder. However, when exported (as application or applet),
    * sketch's data folder is exported as part of the applications jar file,
    * and it's not possible to read/write from the jar file in a generic way.
-   * If you need to read data from the jar file, you should use createInput().
+   * If you need to read data from the jar file, you should use other methods
+   * such as createInput(), createReader(), or loadStrings().
    */
   public String dataPath(String where) {
     // isAbsolute() could throw an access exception, but so will writing
@@ -4445,8 +4446,8 @@ public class PApplet extends Applet
   static public void createPath(String path) {
     createPath(new File(path));
   }
-  
-  
+
+
   static public void createPath(File file) {
     try {
       String parent = file.getParent();
@@ -4455,7 +4456,7 @@ public class PApplet extends Applet
         if (!unit.exists()) unit.mkdirs();
       }
     } catch (SecurityException se) {
-      System.err.println("You don't have permissions to create " + 
+      System.err.println("You don't have permissions to create " +
                          file.getAbsolutePath());
     }
   }
@@ -5257,10 +5258,10 @@ public class PApplet extends Applet
 
 
   /**
-   * Split a String on a specific delimiter. Unlike Java's String.split() 
+   * Split a String on a specific delimiter. Unlike Java's String.split()
    * method, this does not parse the delimiter as a regexp because it's more
    * confusing than necessary, and String.split() is always available for
-   * those who want regexp. 
+   * those who want regexp.
    */
   static public String[] split(String what, String delim) {
     ArrayList<String> items = new ArrayList<String>();
@@ -6345,9 +6346,9 @@ public class PApplet extends Applet
    *
    * --present             put the applet into full screen presentation
    *                       mode. requires java 1.4 or later.
-   *                       
+   *
    * --exclusive           use full screen exclusive mode when presenting.
-   *                       disables new windows or interaction with other 
+   *                       disables new windows or interaction with other
    *                       monitors, this is like a "game" mode.
    *
    * --hide-stop           use to hide the stop button in situations where
@@ -6684,7 +6685,7 @@ public class PApplet extends Applet
 
         // handle frame resizing events
         applet.setupFrameResizeListener();
-        
+
         // all set for rockin
         if (applet.displayable()) {
           frame.setVisible(true);
@@ -7267,7 +7268,7 @@ public class PApplet extends Applet
   }
 
 
-  public void text(char[] chars, int start, int stop, 
+  public void text(char[] chars, int start, int stop,
                    float x, float y, float z) {
     if (recorder != null) recorder.text(chars, start, stop, x, y, z);
     g.text(chars, start, stop, x, y, z);
