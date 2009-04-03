@@ -75,6 +75,9 @@ public class Base {
   static private File librariesFolder;
   static private File toolsFolder;
 
+  ArrayList<LibraryFolder> builtinLibraries;
+  ArrayList<LibraryFolder> contribLibraries;
+                
   // maps imported packages to their library folder
   static HashMap<String, File> importToLibraryTable;
 
@@ -87,7 +90,7 @@ public class Base {
   static File untitledFolder;
 
   // p5 icon for the window
-  static Image icon;
+//  static Image icon;
 
 //  int editorCount;
 //  Editor[] editors;
@@ -99,8 +102,24 @@ public class Base {
 //  int nextEditorX;
 //  int nextEditorY;
 
+//  import com.sun.jna.Library;
+//  import com.sun.jna.Native;
+
+//  public interface CLibrary extends Library {
+//    CLibrary INSTANCE = (CLibrary)Native.loadLibrary("c", CLibrary.class);
+//      int setenv(String name, String value, int overwrite);
+//    String getenv(String name);
+//    int unsetenv(String name);
+//    int putenv(String string);
+//  }
+
 
   static public void main(String args[]) {
+//    /Users/fry/coconut/sketchbook/libraries/gsvideo/library
+//    CLibrary clib = CLibrary.INSTANCE;
+//    clib.setenv("DYLD_LIBRARY_PATH", "/Users/fry/coconut/sketchbook/libraries/gsvideo/library", 1);
+//    System.out.println("env is now " + clib.getenv("DYLD_LIBRARY_PATH"));
+    
     try {
       File versionFile = getContentFile("lib/version.txt");
       if (versionFile.exists()) {
@@ -961,17 +980,23 @@ public class Base {
     // reset the table mapping imports to libraries
     importToLibraryTable = new HashMap<String, File>();
 
-    // Add libraries found in the sketchbook folder
-    try {
-      File sketchbookLibraries = getSketchbookLibrariesFolder();
-      boolean found = addLibraries(importMenu, sketchbookLibraries);
-      if (found) importMenu.addSeparator();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
     // Add from the "libraries" subfolder in the Processing directory
     try {
       addLibraries(importMenu, librariesFolder);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    // Add libraries found in the sketchbook folder
+    int separatorIndex = importMenu.getItemCount();
+    try {
+      File sketchbookLibraries = getSketchbookLibrariesFolder();
+      boolean found = addLibraries(importMenu, sketchbookLibraries);
+      if (found) {
+        JMenuItem contrib = new JMenuItem("Contributed");
+        contrib.setEnabled(false);
+        importMenu.insert(contrib, separatorIndex);
+        importMenu.insertSeparator(separatorIndex);
+      }
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -1079,7 +1104,7 @@ public class Base {
     return ifound;  // actually ignored, but..
   }
 
-
+  
   protected boolean addLibraries(JMenu menu, File folder) throws IOException {
     if (!folder.isDirectory()) return false;
 
@@ -1106,21 +1131,35 @@ public class Base {
 
     boolean ifound = false;
 
-    for (String libraryName : list) {
-      File subfolder = new File(folder, libraryName);
+    for (String potentialName : list) {
+      File subfolder = new File(folder, potentialName);
       File libraryFolder = new File(subfolder, "library");
-      File libraryJar = new File(libraryFolder, libraryName + ".jar");
+      File libraryJar = new File(libraryFolder, potentialName + ".jar");
       // If a .jar file of the same prefix as the folder exists
       // inside the 'library' subfolder of the sketch
       if (libraryJar.exists()) {
-        String sanityCheck = Sketch.sanitizeName(libraryName);
-        if (!sanityCheck.equals(libraryName)) {
+        String sanityCheck = Sketch.sanitizeName(potentialName);
+        if (!sanityCheck.equals(potentialName)) {
           String mess =
-            "The library \"" + libraryName + "\" cannot be used.\n" +
+            "The library \"" + potentialName + "\" cannot be used.\n" +
             "Library names must contain only basic letters and numbers.\n" +
-            "(ascii only and no spaces, and it cannot start with a number)";
+            "(ASCII only and no spaces, and it cannot start with a number)";
           Base.showMessage("Ignoring bad library name", mess);
           continue;
+        }
+        
+        String libraryName = potentialName;
+        File exportFile = new File(libraryFolder, "export.txt");
+//        System.out.println(exportFile.getAbsolutePath());
+        if (exportFile.exists()) {
+          String[] exportLines = PApplet.loadStrings(exportFile);
+          for (String line : exportLines) {
+            String[] pieces = PApplet.trim(PApplet.split(line, '='));
+//            System.out.println(pieces);
+            if (pieces[0].equals("name")) {
+              libraryName = pieces[1].trim();
+            }
+          }
         }
 
         // get the path for all .jar files in this code folder
@@ -1144,7 +1183,7 @@ public class Base {
         ifound = true;
 
       } else {  // not a library, but is still a folder, so recurse
-        JMenu submenu = new JMenu(libraryName);
+        JMenu submenu = new JMenu(potentialName);
         // needs to be separate var, otherwise would set ifound to false
         boolean found = addLibraries(submenu, subfolder);
         if (found) {
