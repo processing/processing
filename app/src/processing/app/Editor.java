@@ -778,7 +778,10 @@ public class Editor extends JFrame implements RunnerListener {
 
 
   protected JMenu buildHelpMenu() {
-    JMenu menu = new JMenu("Help");
+    // To deal with a Mac OS X 10.5 bug, add an extra space after the name  
+    // so that the OS doesn't try to insert its slow help menu.
+    // 
+    JMenu menu = new JMenu("Help ");
     JMenuItem item;
 
     /*
