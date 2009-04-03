@@ -2,6 +2,16 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <curated>
 
+<software name="BallDroppings" by="Josh Nimoy" scroll="yes" resize="yes" width="1024" height="700">
+        <image>images/balldroppings.gif</image>
+          <description>
+              Turn your sound up. Draw lines on the black screen to bounce the balls. Enjoy the music.
+             </description>
+          <location>http://balldroppings.com/js/</location>
+          <link href="http://balldroppings.com/">BallDroppings</link>
+          <link href="http://www.jtnimoy.net/">JTNimoy.net</link>
+        </software>
+        
 <software name="Oasis" by="Yunsil Heo, Hyunwoo Bang" scroll="yes" resize="yes" width="1024" height="700">
         <image>images/oasis.gif</image>
           <description>
