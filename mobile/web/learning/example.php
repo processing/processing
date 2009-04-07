@@ -46,6 +46,17 @@ if (file_exists('examples/'. $name .'/'. $name .'.png')) {
 <br>
 Code:<br>
 <a href="examples/<?php echo $name ?>/<?php echo $name ?>.pde"><?php echo $name ?>.pde</a><br>
+<?php
+$listing = scandir("examples/{$name}");
+foreach ($listing as $filename) {
+  if ((strpos($filename, '.pde') > 0) &&
+      (strpos($filename, "{$name}.pde") === false)) {
+?>
+<a href="examples/<?php echo $name ?>/<?php echo $filename ?>"><?php echo $filename ?></a><br />
+<?php
+  }
+}
+?>
 <br>
 Download:<br>
 <a href="examples/<?php echo $name ?>/midlet/<?php echo $name ?>.jad"><?php echo $name ?>.jad</a><br>
