@@ -47,8 +47,8 @@ if (file_exists('examples/'. $name .'/'. $name .'.png')) {
 Code:<br>
 <a href="examples/<?php echo $name ?>/<?php echo $name ?>.pde"><?php echo $name ?>.pde</a><br>
 <?php
-$listing = scandir("examples/{$name}");
-foreach ($listing as $filename) {
+$dirhandle = opendir("examples/{$name}");
+while (false !== ($filename = readdir($dirhandle))) {
   if ((strpos($filename, '.pde') > 0) &&
       (strpos($filename, "{$name}.pde") === false)) {
 ?>
