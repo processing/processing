@@ -2,6 +2,10 @@
 X disable point() going to set() from PGraphicsJava2D
 X   set() doesn't honor alpha consistently
 X   also causes problems with PDF
+X preliminary thread() implementation
+
+_ reset matrices when using beginRecord() with PDF
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1227
 
 _ noCursor() doesn't work in present mode
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1177

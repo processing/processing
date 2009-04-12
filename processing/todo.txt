@@ -3,6 +3,11 @@ X try adding a space to the name of the help menu for beachball problems
 X   this works, might be useful to make the switch
 X remove isManagingFocus problem inside JEditTextArea
 
+_ update license info to state gplv2 not v3
+
+_ finder info on application says 1.0.1 for 1.0.3
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1226
+
 _ catch antlr conflicts, and put up an error message
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1225
 
