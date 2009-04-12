@@ -2233,6 +2233,47 @@ public class PApplet extends Applet
   }
 
 
+
+  //////////////////////////////////////////////////////////////
+
+  
+//new Thread() {
+//public void run() {
+//}
+//}.start();
+
+  public void thread(String name) {
+    final Object o = this;
+    final Class<?> c = getClass();
+    try {
+      final Method method = c.getMethod(name, new Class[] {});
+      Thread later = new Thread() {
+        public void run() {
+          try {
+            method.invoke(o, new Object[] { });
+
+          } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+          } catch (IllegalAccessException e) {
+            e.printStackTrace();
+          } catch (InvocationTargetException e) {
+            e.getTargetException().printStackTrace();
+          }
+        }
+      };
+      later.start();
+
+    } catch (NoSuchMethodException nsme) {
+      System.err.println("There is no " + name + "() method " + 
+                         "in the class " + getClass().getName());
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+
+  
   //////////////////////////////////////////////////////////////
 
   // SCREEN GRABASS
