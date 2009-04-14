@@ -2237,11 +2237,39 @@ public class PApplet extends Applet
   //////////////////////////////////////////////////////////////
 
   
-//new Thread() {
-//public void run() {
-//}
-//}.start();
+  public void method(String name) {
+//    final Object o = this;
+//    final Class<?> c = getClass();
+    try {
+      Method method = getClass().getMethod(name, new Class[] {});
+      method.invoke(this, new Object[] { });
 
+    } catch (IllegalArgumentException e) {
+      e.printStackTrace();
+    } catch (IllegalAccessException e) {
+      e.printStackTrace();
+    } catch (InvocationTargetException e) {
+      e.getTargetException().printStackTrace();
+    } catch (NoSuchMethodException nsme) {
+      System.err.println("There is no " + name + "() method " + 
+                         "in the class " + getClass().getName());
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+  
+  
+  public void thread(final String name) {
+    Thread later = new Thread() {
+      public void run() {
+        method(name);
+      }
+    }; 
+    later.start();
+  }
+  
+
+  /*
   public void thread(String name) {
     final Object o = this;
     final Class<?> c = getClass();
@@ -2271,6 +2299,7 @@ public class PApplet extends Applet
       e.printStackTrace();
     }
   }
+  */
 
 
   
