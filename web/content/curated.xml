@@ -2,6 +2,15 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <curated>
 
+<software name="People Mover" by="Aeolab" scroll="yes" resize="yes" width="1024" height="700">
+        <image>images/aeolab.jpg</image>
+          <description>
+              A clockwork of colorful 'mobiles' assembles and unwinds according to data collected by three users of Nokia N95 smartphones over a period of several months.
+             </description>
+          <location>http://www.aeolab.com/projects/peoplemover/applet/</location>
+          <link href="http://www.aeolab.com/">Aeolab</link>
+        </software>
+        
 <software name="BallDroppings" by="Josh Nimoy" scroll="yes" resize="yes" width="1024" height="700">
         <image>images/balldroppings.gif</image>
           <description>
