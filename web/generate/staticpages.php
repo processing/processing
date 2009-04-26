@@ -54,6 +54,10 @@ $page = new Page("Hodgin Interview", "Features");
 $page->content(file_get_contents($source."hodgin.html"));
 writeFile('exhibition/features/hodgin/index.html', $page->out());
 
+$page = new Page("Koblin Interview", "Features");
+$page->content(file_get_contents($source."koblin.html"));
+writeFile('exhibition/features/koblin/index.html', $page->out());
+
 $benchmark_end = microtime_float();
 $execution_time = round($benchmark_end - $benchmark_start, 4);
 
