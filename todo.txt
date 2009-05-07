@@ -1,12 +1,16 @@
-0166 pde
+0166 pde (1.0.4?)
 X try adding a space to the name of the help menu for beachball problems
-X   this works, might be useful to make the switch
+_   this works, might be useful to make the switch
 X remove isManagingFocus problem inside JEditTextArea
+X IDE crashed when changing color scheme on windows 
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1237
+
+X update to java 6u13 on windows
+_ update to java 6u13 on linux
+_ switch to better deployment script for applets (download java kernel)
 
 _ problem with keyboard shortcuts when building from source
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1231
-
-_ update to java 6u13 (coming for macosx)
 
 _ -X option not supported in 10.4
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1179
