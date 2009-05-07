@@ -2881,6 +2881,13 @@ public class PApplet extends Applet
                                 float ostart, float ostop) {
     return ostart + (ostop - ostart) * ((value - istart) / (istop - istart));
   }
+  
+  
+  static public final double map(double value,
+                                 double istart, double istop,
+                                 double ostart, double ostop) {
+    return ostart + (ostop - ostart) * ((value - istart) / (istop - istart));
+  }
 
 
 
