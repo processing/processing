@@ -3,9 +3,31 @@ X try adding a space to the name of the help menu for beachball problems
 X   this works, might be useful to make the switch
 X remove isManagingFocus problem inside JEditTextArea
 
+_ problem with keyboard shortcuts when building from source
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1231
+
+_ update to java 6u13 (coming for macosx)
+
+_ -X option not supported in 10.4
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1179
+
+_ better exe export.. maybe using jexegen or launch4j
+
+_ disable sketchbook and examples menus on os x?
+
+_ npe if library is removed before compile
+_   always check library folders to make sure they're still valid
+
+_ setting files executable on export:
+_   http://java.sun.com/javase/6/docs/api/java/io/File.html#setExecutable(boolean,%20boolean)
+
+_ add note to linux troubleshooting re: key input
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1161
+
 _ update license info to state gplv2 not v3
 
 _ finder info on application says 1.0.1 for 1.0.3
+_   fix build script to catch this / make it update the file
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1226
 
 _ catch antlr conflicts, and put up an error message
@@ -34,11 +56,6 @@ _   warn user about moving libraries and restarting
 E2 _ Default wildcard imports are causing naming conflicts
 E2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1103
 
-_ -X option not supported in 10.4
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1179
-
-_ disable sketchbook and examples menus on os x?
-
 4 _ mangled menu text with java 6u10
 4 _   need to try adding the d3d flag to the .exe
 4 _   http://dev.processing.org/bugs/show_bug.cgi?id=1065
@@ -56,8 +73,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=1043
 _   linux present mode isn't working properly
 
 _ make better version of the windows launcher for debugging
-
-_ update to java 6u12
 
 _ after deleting a tab code still get's preprocessed, pde file is not forgotten
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1092
