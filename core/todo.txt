@@ -3,6 +3,15 @@ X disable point() going to set() from PGraphicsJava2D
 X   set() doesn't honor alpha consistently
 X   also causes problems with PDF
 X preliminary thread() implementation
+X double param version of map()
+_   what other methods should work with doubles? math?
+
+_ what's the difference with ascent on loadFont vs. createFont?
+
+_ imageMode(CENTER) doesn't work properly with P2D
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1232
+
+_ add version of math functions that use doubles?
 
 _ reset matrices when using beginRecord() with PDF
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1227
