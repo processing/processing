@@ -828,7 +828,7 @@ public class Preferences {
 
 
   static public Color getColor(String name) {
-    Color parsed = Color.GRAY;  // set a default  
+    Color parsed = Color.GRAY;  // set a default
     String s = get(name);
     if ((s != null) && (s.indexOf("#") == 0)) {
       try {
@@ -840,11 +840,6 @@ public class Preferences {
 
 
   static public void setColor(String attr, Color what) {
-//    String r = Integer.toHexString(what.getRed());
-//    String g = Integer.toHexString(what.getGreen());
-//    String b = Integer.toHexString(what.getBlue());
-//    set(attr, "#" + r.substring(r.length() - 2) +
-//        g.substring(g.length() - 2) + b.substring(b.length() - 2));
     set(attr, "#" + PApplet.hex(what.getRGB() & 0xffffff, 6));
   }
 
@@ -894,7 +889,7 @@ public class Preferences {
 
     String s = st.nextToken();
     if (s.indexOf("#") == 0) s = s.substring(1);
-    Color color = Color.DARK_GRAY; 
+    Color color = Color.DARK_GRAY;
     try {
       color = new Color(Integer.parseInt(s, 16));
     } catch (Exception e) { }

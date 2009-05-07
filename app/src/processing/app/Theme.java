@@ -142,11 +142,7 @@ public class Theme {
 
 
   static public void setColor(String attr, Color what) {
-    String r = Integer.toHexString(what.getRed());
-    String g = Integer.toHexString(what.getGreen());
-    String b = Integer.toHexString(what.getBlue());
-    set(attr, "#" + r.substring(r.length() - 2) +
-        g.substring(g.length() - 2) + b.substring(b.length() - 2));
+    set(attr, "#" + PApplet.hex(what.getRGB() & 0xffffff, 6));
   }
 
 
