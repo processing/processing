@@ -8,6 +8,10 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=1237
 X update to java 6u13 on windows
 _ update to java 6u13 on linux
 _ switch to better deployment script for applets (download java kernel)
+_   http://java.sun.com/javase/6/docs/technotes/guides/jweb/deployment_advice.html#deplToolkit
+
+_ make sure javadoc builds and uploads, also the zip files
+_   add additional caveats about incompletion
 
 _ problem with keyboard shortcuts when building from source
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1231
