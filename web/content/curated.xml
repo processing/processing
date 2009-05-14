@@ -2,6 +2,15 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <curated>
 
+<software name="Interim Camp" by="Marcus Wendt, Vera-Maria Glahn, Arran Poole" scroll="yes" resize="yes" width="1024" height="700">
+        <image>images/camp.jpg</image>
+          <description>
+              An experimental animation film based on drifting and morphing surface structures, created with a custom generative software tool. A meditation about the pursuit of an idea; about obstacles, struggle and failure along the way.
+             </description>
+          <location>http://www.field.io/project/interim-camp</location>
+          <link href="http://www.field.io/">field</link>
+        </software>
+        
 <software name="People Mover" by="Aeolab" scroll="yes" resize="yes" width="1024" height="700">
         <image>images/aeolab.jpg</image>
           <description>
