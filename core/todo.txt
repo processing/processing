@@ -5,6 +5,9 @@ X   also causes problems with PDF
 X preliminary thread() implementation
 X double param version of map()
 _   what other methods should work with doubles? math?
+X PImage cacheMap problem when using PImage.get() 
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1245
+
 
 _ what's the difference with ascent on loadFont vs. createFont?
 
