@@ -499,7 +499,11 @@ public class PImage implements PConstants, Cloneable {
    */
   public PImage get() {
     try {
-      return (PImage) clone();
+      PImage clone = (PImage) clone();
+      // don't want to pass this down to the others
+      // http://dev.processing.org/bugs/show_bug.cgi?id=1245
+      clone.cacheMap = null;
+      return clone;
     } catch (CloneNotSupportedException e) {
       return null;
     }
