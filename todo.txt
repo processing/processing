@@ -6,13 +6,34 @@ X IDE crashed when changing color scheme on windows
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1237
 X space in front of linux shell script prevents it from running
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1250
+X macosx finder info on application says 1.0.1 for 1.0.3
+X   fix build script to catch this / make it update the file
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1226
+X update to java 6u13 on windows
+X fix error message "Non-String for 8 value in 'Properties' sub-dictionary in 'Java' sub-dictionary of Info.plist"
 
+_ command line support is currently broken
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1048
+_   some fixes can be found in the bug report
+_ Slow response or spinning wheel from the menu bar on Mac OS X
+_   http://dev.processing.org/bugs/show_bug.cgi?id=786
+_ significant point() and set() slowdown on OS X
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1094
+
+_ NPE when opening a sketch (Mac OS X?)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1251
+
+_ disable sketchbook and examples menus on os x?
+
+_ NPE when double-clicking PDE on Mac OS X
+_   is thread sync the problem? rebuild menus being called 2x?
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1251
 _ problem with startup on vista 64
 _   try this with windows 7 64-bit (install on laptop?)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1246
 
-X update to java 6u13 on windows
-_ update to java 6u13 on linux
+_ update to java 6u14 on windows
+_ update to java 6u14 on linux
 _ switch to better deployment script for applets (download java kernel)
 _   http://java.sun.com/javase/6/docs/technotes/guides/jweb/deployment_advice.html#deplToolkit
 
@@ -27,8 +48,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=1179
 
 _ better exe export.. maybe using jexegen or launch4j
 
-_ disable sketchbook and examples menus on os x?
-
 _ npe if library is removed before compile
 _   always check library folders to make sure they're still valid
 
@@ -39,10 +58,6 @@ _ add note to linux troubleshooting re: key input
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1161
 
 _ update license info to state gplv2 not v3
-
-_ finder info on application says 1.0.1 for 1.0.3
-_   fix build script to catch this / make it update the file
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1226
 
 _ catch antlr conflicts, and put up an error message
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1225
@@ -69,11 +84,6 @@ _   warn user about moving libraries and restarting
 
 E2 _ Default wildcard imports are causing naming conflicts
 E2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1103
-
-4 _ mangled menu text with java 6u10
-4 _   need to try adding the d3d flag to the .exe
-4 _   http://dev.processing.org/bugs/show_bug.cgi?id=1065
-4 _   -Dsun.java2d.noddraw=true
 
 _ Closing the last window doesn't cause PDE to save its position/contents/etc
 _   (when the pref for close last window = quit is set)
@@ -118,9 +128,10 @@ _   need someone to go out and test all scenarios of this
 
 [ known bugs ]
 
-_ command line support is currently broken
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1048
-_   some fixes can be found in the bug report
+4 _ mangled menu text with java 6u10
+4 _   need to try adding the d3d flag to the .exe
+4 _   http://dev.processing.org/bugs/show_bug.cgi?id=1065
+4 _   -Dsun.java2d.noddraw=true
 _ video library threading problems with other libraries
 _   http://dev.processing.org/bugs/show_bug.cgi?id=882
 _   using Capture.list() before size() sometimes works
@@ -129,13 +140,9 @@ _ serial.available() broken with video
 _   http://dev.processing.org/bugs/show_bug.cgi?id=829
 _ first few frames of OpenGL sketches on Windows run slowly
 _   http://dev.processing.org/bugs/show_bug.cgi?id=874
-_ Slow response or spinning wheel from the menu bar on Mac OS X
-_   http://dev.processing.org/bugs/show_bug.cgi?id=786
 _ sometimes not launching
 _   this seems to be a threading problem, like an NPE on load/open
 _   probaby related to the other load/save sync errors
-_ significant point() and set() slowdown on OS X
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1094
 
 
 with casey

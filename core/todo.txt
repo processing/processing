@@ -8,6 +8,8 @@ _   what other methods should work with doubles? math?
 X PImage cacheMap problem when using PImage.get() 
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1245
 
+_ memory leak problem with fonts in JAVA2D
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1252
 
 _ what's the difference with ascent on loadFont vs. createFont?
 
