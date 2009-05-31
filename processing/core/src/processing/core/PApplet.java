@@ -1391,6 +1391,9 @@ public class PApplet extends Applet
       //System.out.println("handleDraw() " + frameCount);
 
       g.beginDraw();
+      if (recorder != null) {
+        recorder.beginDraw();
+      }
 
       long now = System.nanoTime();
 
@@ -1442,6 +1445,9 @@ public class PApplet extends Applet
       }
 
       g.endDraw();
+      if (recorder != null) {
+        recorder.endDraw();
+      }
 
       frameRateLastNanos = now;
       frameCount++;
@@ -2236,7 +2242,7 @@ public class PApplet extends Applet
 
   //////////////////////////////////////////////////////////////
 
-  
+
   public void method(String name) {
 //    final Object o = this;
 //    final Class<?> c = getClass();
@@ -2251,23 +2257,23 @@ public class PApplet extends Applet
     } catch (InvocationTargetException e) {
       e.getTargetException().printStackTrace();
     } catch (NoSuchMethodException nsme) {
-      System.err.println("There is no " + name + "() method " + 
+      System.err.println("There is no " + name + "() method " +
                          "in the class " + getClass().getName());
     } catch (Exception e) {
       e.printStackTrace();
     }
   }
-  
-  
+
+
   public void thread(final String name) {
     Thread later = new Thread() {
       public void run() {
         method(name);
       }
-    }; 
+    };
     later.start();
   }
-  
+
 
   /*
   public void thread(String name) {
@@ -2292,7 +2298,7 @@ public class PApplet extends Applet
       later.start();
 
     } catch (NoSuchMethodException nsme) {
-      System.err.println("There is no " + name + "() method " + 
+      System.err.println("There is no " + name + "() method " +
                          "in the class " + getClass().getName());
 
     } catch (Exception e) {
@@ -2302,7 +2308,7 @@ public class PApplet extends Applet
   */
 
 
-  
+
   //////////////////////////////////////////////////////////////
 
   // SCREEN GRABASS
@@ -2881,8 +2887,8 @@ public class PApplet extends Applet
                                 float ostart, float ostop) {
     return ostart + (ostop - ostart) * ((value - istart) / (istop - istart));
   }
-  
-  
+
+
   static public final double map(double value,
                                  double istart, double istop,
                                  double ostart, double ostop) {
