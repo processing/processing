@@ -196,8 +196,11 @@ public class PGraphicsOpenGL extends PGraphics3D {
       settingsInited = false;
 
     } else {
-      // changing for 0100, need to resize rather than re-allocate
-      //System.out.println("PGraphicsOpenGL.allocate() again for " + width + " " + height);
+      // The following three lines are a fix for Bug #1176
+      // http://dev.processing.org/bugs/show_bug.cgi?id=1176
+      context.destroy();
+      context = drawable.createContext(null);
+      gl = context.getGL();
       reapplySettings();
     }
   }
@@ -1612,14 +1615,14 @@ public class PGraphicsOpenGL extends PGraphics3D {
         for (int i = 1; i < bezierDetail; i++) {
           float t = (float)i / (float)bezierDetail;
           vertex = new double[] {
-            x + bezierPoint(lastX, 
+            x + bezierPoint(lastX,
                             lastX + (float) ((textPoints[0] - lastX) * 2/3.0),
-                            textPoints[2] + (float) ((textPoints[0] - textPoints[2]) * 2/3.0), 
+                            textPoints[2] + (float) ((textPoints[0] - textPoints[2]) * 2/3.0),
                             textPoints[2], t),
-            y + bezierPoint(lastY, 
+            y + bezierPoint(lastY,
                             lastY + (float) ((textPoints[1] - lastY) * 2/3.0),
-                            textPoints[3] + (float) ((textPoints[1] - textPoints[3]) * 2/3.0), 
-                            textPoints[3], t), 
+                            textPoints[3] + (float) ((textPoints[1] - textPoints[3]) * 2/3.0),
+                            textPoints[3], t),
             0.0f
           };
           glu.gluTessVertex(tobj, vertex, 0, vertex);
@@ -2979,7 +2982,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
 //  }
 
 
-  // the following two were removed for 1.0.2 because loadPixels and  
+  // the following two were removed for 1.0.2 because loadPixels and
   // updatePixels are now called in the superclass.
   // http://dev.processing.org/bugs/show_bug.cgi?id=1137
   /**
