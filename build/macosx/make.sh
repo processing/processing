@@ -11,6 +11,7 @@ then
   exit
 else
   if [ "$OSX_VERSION" != "10.5" ] 
+  then
     echo "Note: This script has not been tested on this "
     echo "release of Mac OS and may cause errors."
   fi
