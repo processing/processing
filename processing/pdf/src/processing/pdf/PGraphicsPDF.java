@@ -44,10 +44,10 @@ public class PGraphicsPDF extends PGraphicsJava2D {
 
 
   public PGraphicsPDF() { }
-  
-  
+
+
   public void setPath(String path) {
-	this.path = path;
+        this.path = path;
     if (path != null) {
       file = new File(path);
       if (!file.isAbsolute()) file = null;
@@ -147,11 +147,6 @@ public class PGraphicsPDF extends PGraphicsJava2D {
   */
 
   public void beginDraw() {
-    // temporary
-    //file = new File(filename); //"test.pdf");
-    //System.out.println("pdf beginDraw()");
-    //document = new Document();
-
     if (document == null) {
       document = new Document(new Rectangle(width, height));
       try {
@@ -212,13 +207,6 @@ public class PGraphicsPDF extends PGraphicsJava2D {
 
         // find the windows fonts folder
         File roots[] = File.listRoots();
-        /*
-        PApplet.println(roots);
-        roots = new File[] { new File("A:\\"),
-                             new File("C:\\"),
-                             new File("D:\\") };
-        PApplet.println(roots);
-        */
         for (int i = 0; i < roots.length; i++) {
           if (roots[i].toString().startsWith("A:")) {
             // Seems to be a problem with some machines that the A:
@@ -249,7 +237,7 @@ public class PGraphicsPDF extends PGraphicsJava2D {
     super.beginDraw();
   }
 
-  
+
    public void endDraw() {
      // This needs to be overridden so that the endDraw() from PGraphicsJava2D
      // is not inherited (it calls loadPixels).
@@ -263,7 +251,7 @@ public class PGraphicsPDF extends PGraphicsJava2D {
    * dialog if the media is not present. Workaround pulled from the
    * <A HREF="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4089199">
    * bug report</A> on bugs.sun.com. This bug was fixed in Java 6, and we
-   * can remove the workaround when we start requiring Java 6.  
+   * can remove the workaround when we start requiring Java 6.
    */
   protected static boolean fileExists(File file) {
     try {
@@ -287,7 +275,7 @@ public class PGraphicsPDF extends PGraphicsJava2D {
         try {
           exitCode = process.exitValue();
           haveExitCode = true;
-        } catch ( IllegalThreadStateException e ) {
+        } catch (IllegalThreadStateException e) {
           // Not yet complete.
           Thread.sleep(100);
         }
@@ -299,7 +287,7 @@ public class PGraphicsPDF extends PGraphicsJava2D {
       System.out.println("Unable to check for file: " + file + " : " + e);
       return false;
 
-    } catch ( InterruptedException e ) {
+    } catch (InterruptedException e) {
       System.out.println("Unable to check for file.  Interrupted: " +
                          file + " : " + e);
       return false;
@@ -337,9 +325,9 @@ public class PGraphicsPDF extends PGraphicsJava2D {
    * Call to explicitly go to the next page from within a single draw().
    */
   public void nextPage() {
-	  PStyle savedStyle = getStyle();
+    PStyle savedStyle = getStyle();
     g2.dispose();
-    
+
     try {
 //    writer.setPageEmpty(false);  // maybe useful later
       document.newPage();  // is this bad if no addl pages are made?
