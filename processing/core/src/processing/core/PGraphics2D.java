@@ -285,7 +285,7 @@ public class PGraphics2D extends PGraphics {
       // the lines will be stroked more than necessary
       if (fill) {
         fpolygon.vertexCount = 3;
-        
+
         for (int i = 1; i < vertexCount-1; i++) {
 //          System.out.println(i + " of " + vertexCount);
 
@@ -311,7 +311,7 @@ public class PGraphics2D extends PGraphics {
 
             fpolygon.vertices[j][TX] = vertices[i+j][TX];
             fpolygon.vertices[j][TY] = vertices[i+j][TY];
-            
+
 //            System.out.println(fpolygon.vertices[j][TX] + " " + fpolygon.vertices[j][TY]);
 
             if (textureImage != null) {
@@ -419,7 +419,7 @@ public class PGraphics2D extends PGraphics {
             int jj = i+j;
             if (j == 2) jj = i+3;  // swap 2nd and 3rd vertex
             if (j == 3) jj = i+2;
-            
+
             fpolygon.vertices[j][R] = vertices[jj][R];
             fpolygon.vertices[j][G] = vertices[jj][G];
             fpolygon.vertices[j][B] = vertices[jj][B];
@@ -1041,14 +1041,14 @@ public class PGraphics2D extends PGraphics {
   protected void ellipseImpl(float x, float y, float w, float h) {
     if (smooth || (strokeWeight != 1) ||
         fillAlpha || strokeAlpha || ctm.isWarped()) {
-      // identical to PGraphics version, but uses POLYGON 
+      // identical to PGraphics version, but uses POLYGON
       // for the fill instead of a TRIANGLE_FAN
       float radiusH = w / 2;
       float radiusV = h / 2;
 
       float centerX = x + radiusH;
       float centerY = y + radiusV;
-      
+
       float sx1 = screenX(x, y);
       float sy1 = screenY(x, y);
       float sx2 = screenX(x+w, y+h);
@@ -1423,11 +1423,6 @@ public class PGraphics2D extends PGraphics {
    */
   private void simple_image(PImage image, int sx1, int sy1,
                             int ix1, int iy1, int ix2, int iy2) {
-    if (imageMode == CENTER) {
-      sx1 -= image.width / 2;
-      sy1 -= image.height / 2;
-    }
-
     int sx2 = sx1 + image.width;
     int sy2 = sy1 + image.height;
 
@@ -1765,7 +1760,7 @@ public class PGraphics2D extends PGraphics {
       }
     }
 
-    
+
     /**
      * @param max is what to count to
      * @param offset is offset to the 'next' vertex
@@ -2018,7 +2013,7 @@ public class PGraphics2D extends PGraphics {
     public float screenY(float x, float y) {
       return ctm.m10 * x + ctm.m11 * y + ctm.m12;
     }
-    
+
 
 
     //////////////////////////////////////////////////////////////
