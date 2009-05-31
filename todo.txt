@@ -11,6 +11,10 @@ X   fix build script to catch this / make it update the file
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1226
 X update to java 6u13 on windows
 X fix error message "Non-String for 8 value in 'Properties' sub-dictionary in 'Java' sub-dictionary of Info.plist"
+X -X option not supported in 10.4
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1179
+
+_ add code for setting the l&f from the prefs file for linux
 
 _ command line support is currently broken
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1048
@@ -43,9 +47,6 @@ _   add additional caveats about incompletion
 _ problem with keyboard shortcuts when building from source
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1231
 
-_ -X option not supported in 10.4
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1179
-
 _ better exe export.. maybe using jexegen or launch4j
 
 _ npe if library is removed before compile
@@ -58,6 +59,7 @@ _ add note to linux troubleshooting re: key input
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1161
 
 _ update license info to state gplv2 not v3
+_   also need to add license info for all the projects in there
 
 _ catch antlr conflicts, and put up an error message
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1225

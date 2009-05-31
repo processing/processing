@@ -4,47 +4,47 @@ X   set() doesn't honor alpha consistently
 X   also causes problems with PDF
 X preliminary thread() implementation
 X double param version of map()
-_   what other methods should work with doubles? math?
 X PImage cacheMap problem when using PImage.get() 
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1245
-
-_ memory leak problem with fonts in JAVA2D
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1252
+X problems with > 512 points and P3D/OPENGL
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1255
+X imageMode(CENTER) doesn't work properly with P2D
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1232
+X reset matrices when using beginRecord() with PDF
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1227
+X resizing window distorts gl graphics
+X   patch from Pablo Funes
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1176
 
 _ what's the difference with ascent on loadFont vs. createFont?
-
-_ imageMode(CENTER) doesn't work properly with P2D
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1232
-
-_ add version of math functions that use doubles?
-
-_ reset matrices when using beginRecord() with PDF
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1227
-
 _ noCursor() doesn't work in present mode
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1177
 _ modelx/y/z broken when aiming a camera
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1074
-_ resizing window distorts gl graphics
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1176
 _ in P2D, two vertex() line calls with fill() causes duplicate output
 _   works fine in other renderers, has to do with tesselation
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1191
 _ extra triangles being seen in P2D
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1192
+_ noloop ref even says that redraw will be called on resize, make sure it is
+_ public PImage(java.awt.Image) sets format to RGB (but could be ARGB)
 
+
+[ features ] 
+
+_ add version of math functions that use doubles?
+_   what other methods should work with doubles? all math functions?
+_   seems like internal (mostly static) things, but not graphics api
 _ look into replacing nanoxml
 _   http://www.exampledepot.com/egs/javax.xml.parsers/pkg.html
-
-_ noloop ref even says that redraw will be called on resize, make sure it is
-
 _ if no draw() method, and renderer is not displayable, then exit
 _   static mode PDFs shouldn't just hang
-_ public PImage(java.awt.Image) sets format to RGB (but could be ARGB)
 
 
 [ known problems ]
 
+_ memory leak problem with fonts in JAVA2D
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1252
 _ OPENGL sketches flicker w/ Vista when background() not used inside draw()
 _   http://dev.processing.org/bugs/show_bug.cgi?id=930
 _   Disabling Aero scheme sometimes prevents the problem
