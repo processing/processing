@@ -1,23 +1,4 @@
-0166 pde (1.0.4)
-X try adding a space to the name of the help menu for beachball problems
-X   this works, might be useful to make the switch (done)
-X remove isManagingFocus problem inside JEditTextArea
-X IDE crashed when changing color scheme on windows 
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1237
-X space in front of linux shell script prevents it from running
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1250
-X macosx finder info on application says 1.0.1 for 1.0.3
-X   fix build script to catch this / make it update the file
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1226
-X update to java 6u13 on windows
-X fix error message "Non-String for 8 value in 'Properties' sub-dictionary in 'Java' sub-dictionary of Info.plist"
-X -X option not supported in 10.4
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1179
-X Slow response or spinning wheel from the menu bar on Mac OS X
-X   http://dev.processing.org/bugs/show_bug.cgi?id=786
-X   disable sketchbook and examples menus on os x?
-X update to java 6u14 on windows
-X update to java 6u14 on linux
+0167 pde (1.0.5?)
 
 
 _ add code for setting the l&f from the prefs file for linux
