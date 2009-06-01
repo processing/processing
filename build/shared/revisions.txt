@@ -1,3 +1,81 @@
+PROCESSING 1.0.4 (REV 0166) - 31 May 2009
+
+Bug fix release. 
+
+[ changes ] 
+
++ Changed the workaround for Apple's Java bug related to the menus in OS X.
+  Rather than placing the menubar inside the sketch window, File > Sketchbook
+  and File > Examples are simply dimmed out. Instead, use the Open button
+  on the toolbar, which provides access to the same items. The preference
+  to place the menu bar inside the window is still available, in case you 
+  prefer the previous workaround.
+  http://dev.processing.org/bugs/show_bug.cgi?id=786
+
++ Also updated the included runtime on Windows and Linux to Java 6u14.
+
+[ bug fixes ]
+
++ Fixed IDE crash when changing color scheme on windows 
+  http://dev.processing.org/bugs/show_bug.cgi?id=1237
+
++ Typo in the Linux shell script was preventing it from running
+  http://dev.processing.org/bugs/show_bug.cgi?id=1250
+
++ OS X finder info on application updated to say 1.0.4
+  http://dev.processing.org/bugs/show_bug.cgi?id=1226
+
++ Removed warning message "Non-String for 8 value in 'Properties' 
+  sub-dictionary in 'Java' sub-dictionary of Info.plist" on OS X
+
++ Added warning to build script for users on OS X 10.4
+  http://dev.processing.org/bugs/show_bug.cgi?id=1179
+
++ Disable point() going to set() from PGraphicsJava2D. The set() command 
+  doesn't honor alpha consistently, and it also causes problems with PDF
+
++ PImage cacheMap problem when using PImage.get() 
+  http://dev.processing.org/bugs/show_bug.cgi?id=1245
+
++ Fix problems with > 512 points and P3D/OPENGL
+  http://dev.processing.org/bugs/show_bug.cgi?id=1255
+  Thanks to user DopeShow for the patch
+
++ imageMode(CENTER) doesn't work properly with P2D
+  http://dev.processing.org/bugs/show_bug.cgi?id=1232
+
++ Reset matrices when using beginRecord() with PDF
+  http://dev.processing.org/bugs/show_bug.cgi?id=1227
+
++ Resizing window no longer distorts OpenGL graphics
+  http://dev.processing.org/bugs/show_bug.cgi?id=1176
+  Many thanks to Pablo Funes for the patch
+
++ Fix significant point() and set() slowdown on OS X
+  http://dev.processing.org/bugs/show_bug.cgi?id=1094
+
+[ known issues ] 
+
++ Currently no 64-bit support for any platforms. On some platforms, you'll 
+  simply need to replace the Java folder with the distribution with something
+  more suitable for your operating system. 
+
++ Command line support is currently broken
+  http://dev.processing.org/bugs/show_bug.cgi?id=1048
+
++ Text of menus/interface elements sometimes mangled (e.g. toolbar repeats
+  several times, other oddness). See bug report for a workaround
+  http://dev.processing.org/bugs/show_bug.cgi?id=1065
+
++ Video library threading problems with other libraries
+  http://dev.processing.org/bugs/show_bug.cgi?id=882
+
++ See dev.processing.org/bugs for much, much more!
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING 1.0.3 (REV 0165) - 24 February 2009
 
 Bug fix release to repair a couple of regressions caused by changes in 1.0.2, 
@@ -22,6 +100,9 @@ as well as a couple other new problems encountered since.
 [ changes ] 
 
 + Update to iText 2.1.4 for the PDF library
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
 PROCESSING 1.0.2 (REV 0164) - 21 February 2009
