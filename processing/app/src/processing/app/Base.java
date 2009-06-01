@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-08 Ben Fry and Casey Reas
+  Copyright (c) 2004-09 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -77,7 +77,7 @@ public class Base {
 
   ArrayList<LibraryFolder> builtinLibraries;
   ArrayList<LibraryFolder> contribLibraries;
-                
+
   // maps imported packages to their library folder
   static HashMap<String, File> importToLibraryTable;
 
@@ -119,7 +119,7 @@ public class Base {
 //    CLibrary clib = CLibrary.INSTANCE;
 //    clib.setenv("DYLD_LIBRARY_PATH", "/Users/fry/coconut/sketchbook/libraries/gsvideo/library", 1);
 //    System.out.println("env is now " + clib.getenv("DYLD_LIBRARY_PATH"));
-    
+
     try {
       File versionFile = getContentFile("lib/version.txt");
       if (versionFile.exists()) {
@@ -204,12 +204,14 @@ public class Base {
             "b { font: 13pt \"Lucida Grande\" }"+
             "p { font: 11pt \"Lucida Grande\"; margin-top: 8px }"+
             "</style> </head> <body>" +
-            "<b>The standard menu bar has been disabled.</b>" +
-            "<p>Due to an Apple bug, the Processing menu bar " +
-            "is unusable on Mac OS X 10.5. <br>" +
-            "As a workaround, the menu bar will be placed inside " +
-            "the editor window. This <br>setting can be changed in the " +
-            "Preferences window. If this bug makes you sad, <br>" +
+            "<b>Some menus have been disabled.</b>" +
+            "<p>Due to an Apple bug, the Sketchbook and Example menus " +
+            "are unusable. <br>" +
+            "As a workaround, these items will be disabled from the " +
+            "standard menu bar, <br>" +
+            "but you can use the Open button on " +
+            "the toolbar to access the same items. <br>" +
+            "If this bug makes you sad, " +
             "please contact Apple via bugreporter.apple.com.</p>" +
             "</body> </html>";
           Object[] options = { "OK", "More Info" };
@@ -226,13 +228,18 @@ public class Base {
             // But don't bother setting the preference in the file
           } else {
             // Shut off in the preferences for next time
-            Preferences.set(properMenuBar, "false");
+            //Preferences.set(properMenuBar, "false");
+            // For 1.0.4, we'll stick with the Apple menu bar,
+            // and just disable the sketchbook and examples sub-menus.
+            Preferences.set(properMenuBar, "true");
             if (result == 1) {  // More Info
               Base.openURL("http://dev.processing.org/bugs/show_bug.cgi?id=786");
             }
           }
           // Whether or not canceled, set to false (right now) if we're on 10.5
-          System.setProperty(properMenuBar, "false");
+          //System.setProperty(properMenuBar, "false");
+          // Changing this behavior for 1.0.4
+          System.setProperty(properMenuBar, "true");
         }
       }
     }
@@ -1104,7 +1111,7 @@ public class Base {
     return ifound;  // actually ignored, but..
   }
 
-  
+
   protected boolean addLibraries(JMenu menu, File folder) throws IOException {
     if (!folder.isDirectory()) return false;
 
@@ -1147,7 +1154,7 @@ public class Base {
           Base.showMessage("Ignoring bad library name", mess);
           continue;
         }
-        
+
         String libraryName = potentialName;
         File exportFile = new File(libraryFolder, "export.txt");
 //        System.out.println(exportFile.getAbsolutePath());

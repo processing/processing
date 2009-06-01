@@ -6,7 +6,7 @@ X preliminary thread() implementation
 X double param version of map()
 X PImage cacheMap problem when using PImage.get() 
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1245
-X problems with > 512 points and P3D/OPENGL
+X problems with > 512 points and P3D/OPENGL (thx DopeShow)
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1255
 X imageMode(CENTER) doesn't work properly with P2D
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1232
@@ -15,6 +15,9 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=1227
 X resizing window distorts gl graphics
 X   patch from Pablo Funes
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1176
+X significant point() and set() slowdown on OS X
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1094
+
 
 _ what's the difference with ascent on loadFont vs. createFont?
 _ noCursor() doesn't work in present mode
