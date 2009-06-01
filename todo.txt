@@ -1,4 +1,4 @@
-0166 pde (1.0.4?)
+0166 pde (1.0.4)
 X try adding a space to the name of the help menu for beachball problems
 X   this works, might be useful to make the switch (done)
 X remove isManagingFocus problem inside JEditTextArea
@@ -16,18 +16,11 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=1179
 X Slow response or spinning wheel from the menu bar on Mac OS X
 X   http://dev.processing.org/bugs/show_bug.cgi?id=786
 X   disable sketchbook and examples menus on os x?
+X update to java 6u14 on windows
+X update to java 6u14 on linux
 
-_ update to java 6u14 on windows
-_ update to java 6u14 on linux
 
 _ add code for setting the l&f from the prefs file for linux
-
-_ command line support is currently broken
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1048
-_   some fixes can be found in the bug report
-_   need to deal with setting path to sketchbook/examples
-_   also deal with the script not being in the right folder
-_   
 
 _ NPE when double-clicking PDE on Mac OS X
 _   is thread sync the problem? rebuild menus being called 2x?
@@ -129,6 +122,11 @@ _   need someone to go out and test all scenarios of this
 
 [ known bugs ]
 
+_ command line support is currently broken
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1048
+_   some fixes can be found in the bug report
+_   need to deal with setting path to sketchbook/examples
+_   also deal with the script not being in the right folder
 4 _ mangled menu text with java 6u10
 4 _   need to try adding the d3d flag to the .exe
 4 _   http://dev.processing.org/bugs/show_bug.cgi?id=1065
