@@ -1,3 +1,24 @@
+0166 core (1.0.4)
+X disable point() going to set() from PGraphicsJava2D
+X   set() doesn't honor alpha consistently
+X   also causes problems with PDF
+X preliminary thread() implementation
+X double param version of map()
+X PImage cacheMap problem when using PImage.get() 
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1245
+X problems with > 512 points and P3D/OPENGL (thx DopeShow)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1255
+X imageMode(CENTER) doesn't work properly with P2D
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1232
+X reset matrices when using beginRecord() with PDF
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1227
+X resizing window distorts gl graphics
+X   patch from Pablo Funes
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1176
+X significant point() and set() slowdown on OS X
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1094
+
+
 0165 core (1.0.3)
 X update to itext 2.1.4
 X endRecord or endRaw produces RuntimeException with PDF library
