@@ -1,6 +1,6 @@
 0166 pde (1.0.4?)
 X try adding a space to the name of the help menu for beachball problems
-_   this works, might be useful to make the switch
+X   this works, might be useful to make the switch (done)
 X remove isManagingFocus problem inside JEditTextArea
 X IDE crashed when changing color scheme on windows 
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1237
@@ -13,21 +13,21 @@ X update to java 6u13 on windows
 X fix error message "Non-String for 8 value in 'Properties' sub-dictionary in 'Java' sub-dictionary of Info.plist"
 X -X option not supported in 10.4
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1179
+X Slow response or spinning wheel from the menu bar on Mac OS X
+X   http://dev.processing.org/bugs/show_bug.cgi?id=786
+X   disable sketchbook and examples menus on os x?
+
+_ update to java 6u14 on windows
+_ update to java 6u14 on linux
 
 _ add code for setting the l&f from the prefs file for linux
 
 _ command line support is currently broken
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1048
 _   some fixes can be found in the bug report
-_ Slow response or spinning wheel from the menu bar on Mac OS X
-_   http://dev.processing.org/bugs/show_bug.cgi?id=786
-_ significant point() and set() slowdown on OS X
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1094
-
-_ NPE when opening a sketch (Mac OS X?)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1251
-
-_ disable sketchbook and examples menus on os x?
+_   need to deal with setting path to sketchbook/examples
+_   also deal with the script not being in the right folder
+_   
 
 _ NPE when double-clicking PDE on Mac OS X
 _   is thread sync the problem? rebuild menus being called 2x?
@@ -36,8 +36,6 @@ _ problem with startup on vista 64
 _   try this with windows 7 64-bit (install on laptop?)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1246
 
-_ update to java 6u14 on windows
-_ update to java 6u14 on linux
 _ switch to better deployment script for applets (download java kernel)
 _   http://java.sun.com/javase/6/docs/technotes/guides/jweb/deployment_advice.html#deplToolkit
 
@@ -104,7 +102,8 @@ _ after deleting a tab code still get's preprocessed, pde file is not forgotten
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1092
 
 _ windows exported exe problems (pcho)
-_   lib folder goes missing, give an error
+_   unexplainable problems with apps not starting up
+_ lib folder goes missing from export, give an error
 _   also any .jar files that are missing, give an error
 _   showing more debug messages (command line?)
 
