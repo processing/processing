@@ -437,15 +437,26 @@ public class Editor extends JFrame implements RunnerListener {
       });
     fileMenu.add(item);
 
+    boolean nativeButBroken = Base.isMacOS() ?
+      Preferences.getBoolean("apple.laf.useScreenMenuBar") : false;
+
     if (sketchbookMenu == null) {
       sketchbookMenu = new JMenu("Sketchbook");
-      base.rebuildSketchbookMenu(sketchbookMenu);
+      if (nativeButBroken) {
+        sketchbookMenu.setEnabled(false);
+      } else {
+        base.rebuildSketchbookMenu(sketchbookMenu);
+      }
     }
     fileMenu.add(sketchbookMenu);
 
     if (examplesMenu == null) {
       examplesMenu = new JMenu("Examples");
-      base.rebuildExamplesMenu(examplesMenu);
+      if (nativeButBroken) {
+        examplesMenu.setEnabled(false);
+      } else {
+        base.rebuildExamplesMenu(examplesMenu);
+      }
     }
     fileMenu.add(examplesMenu);
 
@@ -743,7 +754,7 @@ public class Editor extends JFrame implements RunnerListener {
       final Tool tool = (Tool) toolClass.newInstance();
 
       JMenuItem item = new JMenuItem(tool.getMenuTitle());
-      
+
       tool.init(Editor.this);
 
       item.addActionListener(new ActionListener() {
@@ -752,14 +763,14 @@ public class Editor extends JFrame implements RunnerListener {
         }
       });
       return item;
-      
+
     } catch (Exception e) {
       e.printStackTrace();
       return null;
     }
   }
-  
-  
+
+
   protected JMenu addInternalTools(JMenu menu) {
     JMenuItem item;
 
@@ -778,9 +789,8 @@ public class Editor extends JFrame implements RunnerListener {
 
 
   protected JMenu buildHelpMenu() {
-    // To deal with a Mac OS X 10.5 bug, add an extra space after the name  
+    // To deal with a Mac OS X 10.5 bug, add an extra space after the name
     // so that the OS doesn't try to insert its slow help menu.
-    // 
     JMenu menu = new JMenu("Help ");
     JMenuItem item;
 

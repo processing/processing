@@ -36,28 +36,28 @@ import processing.app.debug.*;
  * Class to handle running Processing from the command line.
  * <PRE>
  * --help               Show the help text.
- * 
+ *
  * --sketch=&lt;name&rt;      Specify the sketch folder (required)
  * --output=&lt;name&rt;      Specify the output folder (required and
  *                      cannot be the same as the sketch folder.)
- * 
+ *
  * --preprocess         Preprocess a sketch into .java files.
  * --build              Preprocess and compile a sketch into .class files.
  * --run                Preprocess, compile, and run a sketch.
  * --present            Preprocess, compile, and run a sketch full screen.
- * 
+ *
  * --export-applet      Export an applet.
  * --export-application Export an application.
  * --platform           Specify the platform (export to application only).
  *                      Should be one of 'windows', 'macosx', or 'linux'.
- * 
+ *
  * --preferences=&lt;file&rt; Specify a preferences file to use (optional).
  * </PRE>
- * 
- * To build the command line version, first build for your platform, 
- * then cd to processing/build/cmd and type 'dist.sh'. This will create a 
- * usable installation plus a zip file of the same. 
- * 
+ *
+ * To build the command line version, first build for your platform,
+ * then cd to processing/build/cmd and type 'dist.sh'. This will create a
+ * usable installation plus a zip file of the same.
+ *
  * @author fry
  */
 public class Commander implements RunnerListener {
@@ -80,11 +80,13 @@ public class Commander implements RunnerListener {
   static final int PRESENT = 3;
   static final int EXPORT_APPLET = 4;
   static final int EXPORT_APPLICATION = 5;
-  
+
   Sketch sketch;
 
 
   static public void main(String[] args) {
+    // Do this early so that error messages go to the console
+    Base.setCommandLine();
     // init the platform so that prefs and other native code is ready to go
     Base.initPlatform();
     // make sure a full JDK is installed
@@ -107,7 +109,7 @@ public class Commander implements RunnerListener {
     for (String arg : args) {
       if (arg.length() == 0) {
         // ignore it, just the crappy shell script
-        
+
       } else if (arg.equals(helpArg)) {
         // mode already set to HELP
 
@@ -128,13 +130,13 @@ public class Commander implements RunnerListener {
 
       } else if (arg.equals(exportApplicationArg)) {
         mode = EXPORT_APPLICATION;
-        
+
       } else if (arg.startsWith(platformArg)) {
         String platformStr = arg.substring(platformArg.length());
         platformIndex = Base.getPlatformIndex(platformStr);
         if (platformIndex == -1) {
-          complainAndQuit(platformStr + " should instead be " + 
-                          "'windows', 'macosx', or 'linux'.");          
+          complainAndQuit(platformStr + " should instead be " +
+                          "'windows', 'macosx', or 'linux'.");
         }
       } else if (arg.startsWith(sketchArg)) {
         sketchFolder = arg.substring(sketchArg.length());
@@ -144,27 +146,27 @@ public class Commander implements RunnerListener {
 
       } else if (arg.startsWith(outputArg)) {
         outputPath = arg.substring(outputArg.length());
-        
+
       } else {
         complainAndQuit("I don't know anything about " + arg + ".");
       }
     }
 
     if ((outputPath == null) &&
-        (mode == PREPROCESS || mode == BUILD || 
+        (mode == PREPROCESS || mode == BUILD ||
          mode == RUN || mode == PRESENT)) {
-      complainAndQuit("An output path must be specified when using " + 
-                      preprocArg + ", " + buildArg + ", " + 
+      complainAndQuit("An output path must be specified when using " +
+                      preprocArg + ", " + buildArg + ", " +
                       runArg + ", or " + presentArg + ".");
     }
-    
+
     if (mode == HELP) {
       printCommandLine(System.out);
       System.exit(0);
     }
 
     // --present --platform=windows "--sketch=/Applications/Processing 0148/examples/Basics/Arrays/Array" --output=test-build
-    
+
     File outputFolder = new File(outputPath);
     if (!outputFolder.exists()) {
       if (!outputFolder.mkdirs()) {
@@ -178,15 +180,15 @@ public class Commander implements RunnerListener {
 
     if (sketchFolder == null) {
       complainAndQuit("No sketch path specified.");
-      
+
     } else if (outputPath.equals(pdePath)) {
       complainAndQuit("The sketch path and output path cannot be identical.");
-      
+
     } else if (!pdePath.toLowerCase().endsWith(".pde")) {
       complainAndQuit("Sketch path must point to the main .pde file.");
-      
+
     } else {
-      //Sketch sketch = null; 
+      //Sketch sketch = null;
       boolean success = false;
 
       try {
@@ -201,14 +203,14 @@ public class Commander implements RunnerListener {
           String className = sketch.build(outputPath);
           if (className != null) {
             success = true;
-            Runner runner = 
+            Runner runner =
               new Runner(sketch, className, mode == PRESENT, this);
             runner.launch();
 
           } else {
             success = false;
           }
-          
+
         } else if (mode == EXPORT_APPLET) {
           if (outputPath != null) {
             success = sketch.exportApplet(outputPath);
@@ -220,10 +222,10 @@ public class Commander implements RunnerListener {
           if (outputPath != null) {
             success = sketch.exportApplication(outputPath, platformIndex);
           } else {
-            //String sketchFolder = 
+            //String sketchFolder =
             //  pdePath.substring(0, pdePath.lastIndexOf(File.separatorChar));
-            outputPath = 
-              sketchFolder + File.separatorChar + 
+            outputPath =
+              sketchFolder + File.separatorChar +
               "application." + Base.getPlatformName(platformIndex);
             success = sketch.exportApplication(outputPath, platformIndex);
           }
@@ -232,7 +234,7 @@ public class Commander implements RunnerListener {
 
       } catch (RunnerException re) {
         statusError(re);
-        
+
       } catch (IOException e) {
         e.printStackTrace();
         System.exit(1);
@@ -256,16 +258,16 @@ public class Commander implements RunnerListener {
       int line = re.getCodeLine();
       int column = re.getCodeColumn();
       if (column == -1) column = 0;
-      // TODO if column not specified, should just select the whole line. 
-      System.err.println(filename + ":" + 
-                         line + ":" + column + ":" + 
+      // TODO if column not specified, should just select the whole line.
+      System.err.println(filename + ":" +
+                         line + ":" + column + ":" +
                          line + ":" + column + ":" + " " + re.getMessage());
     } else {
       exception.printStackTrace();
     }
   }
 
-  
+
   static void complainAndQuit(String lastWords) {
     printCommandLine(System.err);
     System.err.println(lastWords);
@@ -290,7 +292,7 @@ public class Commander implements RunnerListener {
     out.println("--export-applet      Export an applet.");
     out.println("--export-application Export an application.");
     out.println("--platform           Specify the platform (export to application only).");
-    out.println("                     Should be one of 'windows', 'macosx', or 'linux'."); 
+    out.println("                     Should be one of 'windows', 'macosx', or 'linux'.");
     out.println();
     out.println("--preferences=<file> Specify a preferences file to use (optional).");
   }
