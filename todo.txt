@@ -1,11 +1,22 @@
 0167 pde (1.0.5?)
 
+_ fix tab key and focus issue in the editor
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1267
+
+_ duplicate entries for sketchbook in the file menu
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1260
+
+_ Support for smooth text in the PDE editor
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1266
 
 _ add code for setting the l&f from the prefs file for linux
 
 _ NPE when double-clicking PDE on Mac OS X
 _   is thread sync the problem? rebuild menus being called 2x?
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1251
+_ blank sketch opened even if another opened by double-click
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1261
+
 _ problem with startup on vista 64
 _   try this with windows 7 64-bit (install on laptop?)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1246
