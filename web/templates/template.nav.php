@@ -162,9 +162,9 @@ function local_nav($section, $rel_path='')
 
     //$html .= "\t\t\t\t\t" . l('Language', $section == 'Language') . " (";
 
-    $html .= "\t\t\t\t\t<a href=\"{$rel_path}index.html\"" . ($section == 'Language' ? ' class="active"' : '') . ">Language</a> . " (";
+    $html .= "\t\t\t\t\t<a href=\"{$rel_path}index.html\"" . ($section == 'Language' ? ' class="active"' : '') . ">Language</a> (";
     //$html .= l('A-Z', $section == 'A-Z') . ") \\ \n";
-    $html .= "<a href=\"{$rel_path}index_alpha.html\"" . . ($section == 'Language' ? ' class="active"' : '') . ">A-Z</a> . ")" \\ \n";
+    $html .= "<a href=\"{$rel_path}index_alpha.html\"" . ($section == 'Language' ? ' class="active"' : '') . ">A-Z</a> ) \\ \n";
     $html .= "\t\t\t\t\t<a href=\"{$rel_path}libraries/index.html\"" . ($section == 'Libraries' ? ' class="active"' : '') . ">Libraries</a> \\ \n";
     $html .= "\t\t\t\t\t<a href=\"{$rel_path}tools/index.html\"" . ($section == 'Tools' ? ' class="active"' : '') . ">Tools</a> \\ \n";
     $html .= "\t\t\t\t\t<a href=\"{$rel_path}environment/index.html\"" . ($section == 'Environment' ? ' class="active"' : '') . ">Environment</a> \\ \n";
