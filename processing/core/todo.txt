@@ -1,4 +1,5 @@
 0167 core (1.0.5?)
+X changed text layout methods from private to protected
 
 
 _ what's the difference with ascent on loadFont vs. createFont?
