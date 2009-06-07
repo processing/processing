@@ -2,6 +2,16 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <curated>
 
+<software name="MTV Brazil ID 2009" by="Dimitre Lima" scroll="yes" resize="yes" width="1024" height="700">
+        <image>images/mtv.gif</image>
+          <description>
+             A software particle system creates variations of the MTV logotype.
+          </description>
+          <location>http://dmtr.org/mtv_rewind/</location>
+          <link href="http://dmtr.org/">Dmtr.org</link>
+          <link href="http://piloto.tv/refresh-mtv-2009/">Piloto</link>
+        </software>
+        
 <software name="Interim Camp" by="Marcus Wendt, Vera-Maria Glahn, Arran Poole" scroll="yes" resize="yes" width="1024" height="700">
         <image>images/camp.jpg</image>
           <description>
