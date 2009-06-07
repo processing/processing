@@ -1,4 +1,4 @@
-0167 pde (1.0.5?)
+0167 pde (1.0.5)
 X fix tab key and focus issue in the editor
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1267
 X Support for smooth text in the PDE editor
