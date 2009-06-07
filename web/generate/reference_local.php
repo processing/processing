@@ -111,7 +111,7 @@ $page->language($lang);
 writeFile($path.'index.html', $page->out());
 
 // complete alpha
-$page = new LocalPage('Langauge A-Z (API)', 'A-Z');
+$page = new LocalPage('Language A-Z (API)', 'A-Z');
 $page->subtemplate('template.ref.index.html');
 $page->content(alpha_index($complete_alpha));
 $page->set('reference_nav', reference_nav());
