@@ -99,7 +99,7 @@ writeFile($path.'index_alpha.html', $page->out());
 */
 
 // complete reference
-$page = new LocalPage('Complete Language (API)', 'Language');
+$page = new LocalPage('Language (API)', 'Language');
 $page->subtemplate('template.ref.index.html');
 $page->content(category_index($complete));
 $page->set('reference_nav', reference_nav());
@@ -111,7 +111,7 @@ $page->language($lang);
 writeFile($path.'index.html', $page->out());
 
 // complete alpha
-$page = new LocalPage('Alphabetical Complete Langauge (API)', 'Language');
+$page = new LocalPage('Langauge A-Z (API)', 'A-Z');
 $page->subtemplate('template.ref.index.html');
 $page->content(alpha_index($complete_alpha));
 $page->set('reference_nav', reference_nav());
