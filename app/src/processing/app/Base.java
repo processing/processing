@@ -7,9 +7,8 @@
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation; either version 2 of the License, or
-  (at your option) any later version.
+  it under the terms of the GNU General Public License version 2 
+  as published by the Free Software Foundation.
 
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -971,9 +970,16 @@ public class Base {
   protected void rebuildSketchbookMenu(JMenu menu) {
     //System.out.println("rebuilding sketchbook menu");
     //new Exception().printStackTrace();
+    boolean nativeButBroken = Base.isMacOS() ?
+      Preferences.getBoolean("apple.laf.useScreenMenuBar") : false;
+
     try {
-      menu.removeAll();
-      addSketches(menu, getSketchbookFolder(), false);
+      if (nativeButBroken) {  // osx workaround
+        menu.setEnabled(false);
+      } else {
+        menu.removeAll();
+        addSketches(menu, getSketchbookFolder(), false);
+      }
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -1012,10 +1018,16 @@ public class Base {
 
   public void rebuildExamplesMenu(JMenu menu) {
     //System.out.println("rebuilding examples menu");
+    boolean nativeButBroken = Base.isMacOS() ?
+      Preferences.getBoolean("apple.laf.useScreenMenuBar") : false;
 
     try {
-      menu.removeAll();
-      addSketches(menu, examplesFolder, false);
+      if (nativeButBroken) {  // osx workaround
+        menu.setEnabled(false);
+      } else {
+        menu.removeAll();
+        addSketches(menu, examplesFolder, false);
+      }
     } catch (IOException e) {
       e.printStackTrace();
     }
