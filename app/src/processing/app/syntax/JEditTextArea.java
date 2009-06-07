@@ -103,6 +103,9 @@ public class JEditTextArea extends JComponent
     painter.addMouseListener(new MouseHandler());
     painter.addMouseMotionListener(new DragHandler());
     addFocusListener(new FocusHandler());
+    // send tab keys through to the text area
+    // http://dev.processing.org/bugs/show_bug.cgi?id=1267
+    setFocusTraversalKeysEnabled(false);
 
     // Load the defaults
     setInputHandler(defaults.inputHandler);
@@ -1028,8 +1031,8 @@ public class JEditTextArea extends JComponent
   {
     select(selectionStart,selectionEnd);
   }
-  
-  
+
+
   public final boolean isSelectionActive()
   {
     return(selectionStart != selectionEnd);
