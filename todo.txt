@@ -3,9 +3,9 @@ X fix tab key and focus issue in the editor
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1267
 X Support for smooth text in the PDE editor
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1266
+X duplicate entries for sketchbook in the file menu
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1260
 
-_ duplicate entries for sketchbook in the file menu
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1260
 
 _ add code for setting the l&f from the prefs file for linux
 
@@ -192,6 +192,7 @@ _   jogl jar files, or jogl install will cause trouble
 _     /System/Library/Java/Extensions or /Library/Java/Extensions
 _     the /System one contains qtjava
 _     the /Library one is empty (by default), maybe skip it?
+_     http://dev.processing.org/bugs/show_bug.cgi?id=1259
 _ when a conflicting library is found, need to report it
 _   altho prolly only when it's actually different (md5hash it?)
 _   this seems to be causing a lot of trouble with recent releases
