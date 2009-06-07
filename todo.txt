@@ -1,7 +1,6 @@
 0167 pde (1.0.5?)
-
-_ fix tab key and focus issue in the editor
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1267
+X fix tab key and focus issue in the editor
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1267
 
 _ duplicate entries for sketchbook in the file menu
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1260
