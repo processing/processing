@@ -3,13 +3,12 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-08 Ben Fry and Casey Reas
+  Copyright (c) 2004-09 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation; either version 2 of the License, or
-  (at your option) any later version.
+  it under the terms of the GNU General Public License version 2 
+  as published by the Free Software Foundation.
 
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -146,12 +145,21 @@ public class Editor extends JFrame implements RunnerListener {
     // When bringing a window to front, let the Base know
     addWindowListener(new WindowAdapter() {
         public void windowActivated(WindowEvent e) {
+//          System.err.println("activate");  // not coming through
           base.handleActivated(Editor.this);
-
           // re-add the sub-menus that are shared by all windows
           fileMenu.insert(sketchbookMenu, 2);
           fileMenu.insert(examplesMenu, 3);
           sketchMenu.insert(importMenu, 4);
+        }
+
+        // added for 1.0.5
+        // http://dev.processing.org/bugs/show_bug.cgi?id=1260
+        public void windowDeactivated(WindowEvent e) {
+//          System.err.println("deactivate");  // not coming through
+          fileMenu.remove(sketchbookMenu);
+          fileMenu.remove(examplesMenu);
+          sketchMenu.remove(importMenu);
         }
       });
 
@@ -437,26 +445,15 @@ public class Editor extends JFrame implements RunnerListener {
       });
     fileMenu.add(item);
 
-    boolean nativeButBroken = Base.isMacOS() ?
-      Preferences.getBoolean("apple.laf.useScreenMenuBar") : false;
-
     if (sketchbookMenu == null) {
       sketchbookMenu = new JMenu("Sketchbook");
-      if (nativeButBroken) {
-        sketchbookMenu.setEnabled(false);
-      } else {
-        base.rebuildSketchbookMenu(sketchbookMenu);
-      }
+      base.rebuildSketchbookMenu(sketchbookMenu);
     }
     fileMenu.add(sketchbookMenu);
 
     if (examplesMenu == null) {
       examplesMenu = new JMenu("Examples");
-      if (nativeButBroken) {
-        examplesMenu.setEnabled(false);
-      } else {
-        base.rebuildExamplesMenu(examplesMenu);
-      }
+      base.rebuildExamplesMenu(examplesMenu);
     }
     fileMenu.add(examplesMenu);
 
