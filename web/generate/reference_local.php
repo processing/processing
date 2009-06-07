@@ -76,6 +76,7 @@ $path = 'distribution/';
 
 /*** category_index() and alpha_index() are found in lib/functions.inc.php ***/
 
+/**
 // abridged reference
 $page = new LocalPage('Language (API)', 'Language');
 $page->subtemplate('template.ref.index.html');
@@ -95,6 +96,7 @@ $page->set('language_nav', language_nav($lang));
 $page->set_array($translation->meta);
 $page->language($lang);
 writeFile($path.'index_alpha.html', $page->out());
+*/
 
 // complete reference
 $page = new LocalPage('Complete Language (API)', 'Language');
@@ -105,7 +107,8 @@ $page->set('language_nav', language_nav($lang));
 $page->set_array($translation->meta);
 $page->set('abridged_notice', '');
 $page->language($lang);
-writeFile($path.'index_ext.html', $page->out());
+//writeFile($path.'index_ext.html', $page->out());
+writeFile($path.'index.html', $page->out());
 
 // complete alpha
 $page = new LocalPage('Alphabetical Complete Langauge (API)', 'Language');
@@ -116,7 +119,9 @@ $page->set('language_nav', language_nav($lang));
 $page->set_array($translation->meta);
 $page->set('abridged_notice', '');
 $page->language($lang);
-writeFile($path.'index_alpha_ext.html', $page->out());
+//writeFile($path.'index_alpha_ext.html', $page->out());
+writeFile($path.'index_alpha.html', $page->out());
+
 
 /*******************************************************
 media
