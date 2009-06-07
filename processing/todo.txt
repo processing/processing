@@ -1,12 +1,11 @@
 0167 pde (1.0.5?)
 X fix tab key and focus issue in the editor
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1267
+X Support for smooth text in the PDE editor
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1266
 
 _ duplicate entries for sketchbook in the file menu
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1260
-
-_ Support for smooth text in the PDE editor
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1266
 
 _ add code for setting the l&f from the prefs file for linux
 

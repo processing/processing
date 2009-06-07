@@ -30,6 +30,8 @@ implements TabExpander, Printable
 {
   /** True if inside printing, will handle disabling the highlight */
   boolean printing;
+  /** Current setting for editor.antialias preference */
+  boolean antialias;
 
   /**
    * Creates a new repaint manager. This should be not be called
@@ -53,6 +55,8 @@ implements TabExpander, Printable
     setFont(defaults.font);
     setForeground(defaults.fgcolor);
     setBackground(defaults.bgcolor);
+
+    antialias = Preferences.getBoolean("editor.antialias");
 
     blockCaret = defaults.blockCaret;
     styles = defaults.styles;
@@ -366,11 +370,11 @@ implements TabExpander, Printable
    */
   public void paint(Graphics gfx)
   {
-    if (Base.isMacOS()) {
-      Graphics2D g2 = (Graphics2D) gfx;
-      g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-                          RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
-    }
+    Graphics2D g2 = (Graphics2D) gfx;
+    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                        antialias ?
+                        RenderingHints.VALUE_TEXT_ANTIALIAS_ON :
+                        RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
 
     tabSize = fm.charWidth(' ') * ((Integer)textArea.getDocument().getProperty(PlainDocument.tabSizeAttribute)).intValue();
 
