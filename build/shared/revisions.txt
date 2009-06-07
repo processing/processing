@@ -1,3 +1,27 @@
+PROCESSING 1.0.5 (REV 0167) - 7 June 2009
+
+Bug fix release, mostly dealing with regressions from 1.0.4.
+
+[ bug fixes ] 
+
++ Make the tab key work again inside the editor
+  http://dev.processing.org/bugs/show_bug.cgi?id=1267
+
++ Deal with duplicate entries for sketchbook in the file menu
+  http://dev.processing.org/bugs/show_bug.cgi?id=1260
+
+[ changes ]
+
++ Support for smooth text in the PDE editor. Set editor.antialias=true
+  inside preferences.txt to enable smooth text.
+  http://dev.processing.org/bugs/show_bug.cgi?id=1266
+
++ Updated reference files.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING 1.0.4 (REV 0166) - 31 May 2009
 
 Bug fix release. 
