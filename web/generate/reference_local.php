@@ -120,7 +120,7 @@ $page->set_array($translation->meta);
 $page->set('abridged_notice', '');
 $page->language($lang);
 //writeFile($path.'index_alpha_ext.html', $page->out());
-writeFile($path.'index_alpha.html', $page->out());
+writeFile($path.'alpha.html', $page->out());
 
 
 /*******************************************************
