@@ -1,3 +1,12 @@
+0167 pde (1.0.5)
+X fix tab key and focus issue in the editor
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1267
+X Support for smooth text in the PDE editor
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1266
+X duplicate entries for sketchbook in the file menu
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1260
+
+
 0166 pde (1.0.4)
 X try adding a space to the name of the help menu for beachball problems
 X   this works, might be useful to make the switch (done)
