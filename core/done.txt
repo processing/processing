@@ -1,3 +1,7 @@
+0167 core (1.0.5)
+X changed text layout methods from private to protected
+
+
 0166 core (1.0.4)
 X disable point() going to set() from PGraphicsJava2D
 X   set() doesn't honor alpha consistently
