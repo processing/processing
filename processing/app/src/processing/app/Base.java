@@ -7,7 +7,7 @@
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License version 2 
+  it under the terms of the GNU General Public License version 2
   as published by the Free Software Foundation.
 
   This program is distributed in the hope that it will be useful,
@@ -40,8 +40,8 @@ import processing.core.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
-  static final int REVISION = 167;
-  static String VERSION_NAME = "0167";
+  static final int REVISION = 168;
+  static String VERSION_NAME = "0168";
 
   static HashMap<Integer, String> platformNames = new HashMap();
   static {
