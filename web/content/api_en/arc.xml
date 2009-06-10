@@ -49,12 +49,12 @@ arc(<c>x</c>, <c>y</c>, <c>width</c>, <c>height</c>, <c>start</c>, <c>stop</c>)
 
 <parameter>
 <label>start</label>
-<description>int or float: angle to start the arc, specified in radians or degrees depending on the current angle mode</description>
+<description>int or float: angle to start the arc, specified in radians</description>
 </parameter>
 
 <parameter>
 <label>stop</label>
-<description>int or float: angle to stop the arc, specified in radians or degrees depending on the current angle mode</description>
+<description>int or float: angle to stop the arc, specified in radians</description>
 </parameter>
 
 <returns>None</returns>
