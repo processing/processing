@@ -1,12 +1,11 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2005-06 Ben Fry and Casey Reas
+  Copyright (c) 2005-09 Ben Fry and Casey Reas
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
+  License version 2.1 as published by the Free Software Foundation.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -31,14 +30,11 @@ import processing.core.*;
 
 
 public class PGraphicsPDF extends PGraphicsJava2D {
-
-  File temp;
-  File file;
-  Document document;
-  PdfWriter writer;
-  PdfContentByte content;
-//  PdfTemplate template;
-  DefaultFontMapper mapper;
+  protected File file;
+  protected Document document;
+  protected PdfWriter writer;
+  protected PdfContentByte content;
+  protected DefaultFontMapper mapper;
 
   // BaseFont baseFont = mapper.awtToPdf(java.awt.Font awtFont)
 
@@ -57,58 +53,8 @@ public class PGraphicsPDF extends PGraphicsJava2D {
                                  "for the location of the output file.");
     }
   }
-
-    //if (applet != null) {
-    //  applet.registerDispose(this);
-    //}
-
-    //System.out.println("making " + path);
-
-    //if (path == null) path = "output.pdf";
-    //this.file = new File(path);
-
-    // don't want to require PApplet as the way to do this.. but how?
-    //if (applet != null) {
-    //applet.registerDispose(this);
-    //}
-
-    /*
-    mapper = new DefaultFontMapper();
-    FontFactory.registerDirectories();
-
-    // ummm.. problematic?
-    //mapper.insertDirectory("c:\\winxp\\fonts");
-    mapper.insertDirectory("/System/Library/Fonts");
-    mapper.insertDirectory("/Library/Fonts");
-    mapper.insertDirectory("/Users/fry/Library/Fonts");
-    */
-
-    // seems to only pick up ttf and otf fonts
-    //FontFactory.registerDirectory("/System/Library/Fonts");
-    //FontFactory.registerDirectory("/Library/Fonts");
-    //FontFactory.registerDirectory("/Users/fry/Library/Fonts");
-
-    /*
-    Set registered = FontFactory.getRegisteredFonts();
-    for (Iterator i = registered.iterator(); i.hasNext(); ) {
-      System.out.println((String) i.next());
-    }
-    */
-
-
-//  public void setPrimarySurface() {
-//    // set as main drawing surface
-//    primarySurface = true;
-//    // this shouldn't actually affect anything
-//    format = RGB;
-//    // don't bother adding listeners for this guy
-//    //parent.addListeners();
-//  }
-
-
-  // create a temporary file and put the graphics crap there
-  // don't start a fresh page if frameCount is zero (setup isn't its own page)
-
+  
+  
   /**
    * all the init stuff happens in here, in case someone calls size()
    * along the way and wants to hork things up.
@@ -119,32 +65,6 @@ public class PGraphicsPDF extends PGraphicsJava2D {
     // (since super() called right at the beginning of the constructor)
   }
 
-
-  /*
-  public void defaults() {
-    System.out.println("PGraphicsPDF.defaults()");
-    super.defaults();
-  }
-  */
-
-
-  // if the File object changes, then need to start a new file
-  //
-  /*
-  public void record(int frameCount, File ifile) {
-    this.frameCount = frameCount;
-    if (ifile == file) {
-      // same shit, different pile
-      // start a new page on the file that's currently open
-      return;
-
-    } else {
-
-    if (!file.getName().endsWith(".pdf")) {
-      // yeaeaargh
-    }
-  }
-  */
 
   public void beginDraw() {
     if (document == null) {
@@ -562,28 +482,6 @@ public class PGraphicsPDF extends PGraphicsJava2D {
    * however not all those fonts are available by default.
    */
   public String[] listFonts() {
-     /*
-      //System.out.println("list of fonts");
-      HashMap map = mapper.getAliases();
-      //KeySet keys = map.keySet();
-      Set entries = map.entrySet();
-      Iterator it = entries.iterator();
-      while (it.hasNext()) {
-        Map.Entry entry = (Map.Entry) it.next();
-        System.out.println(entry.getKey() + "-->" + entry.getValue());
-      }
-     */
-
-     /*
-    HashMap map = mapper.getAliases();
-    KeySet keys = map.keySet();
-    Iterator it = entries.iterator();
-    while (it.hasNext()) {
-      Map.Entry entry = (Map.Entry) it.next();
-      System.out.println(entry.getKey() + "-->" + entry.getValue());
-    }
-     */
-
     HashMap map = mapper.getAliases();
     Set entries = map.entrySet();
     String list[] = new String[entries.size()];
