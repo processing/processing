@@ -1,4 +1,15 @@
 0168 pde (1.0.6?)
+X suggest declaring PDF's members protected
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1276
+
+_ problems with jogl expired certificates
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1271
+
+fixed earlier (java 6 update)
+X mangled menu text with java 6u10
+o   need to try adding the d3d flag to the .exe
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1065
+o   -Dsun.java2d.noddraw=true
 
 
 _ add code for setting the l&f from the prefs file for linux
@@ -111,10 +122,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=1048
 _   some fixes can be found in the bug report
 _   need to deal with setting path to sketchbook/examples
 _   also deal with the script not being in the right folder
-4 _ mangled menu text with java 6u10
-4 _   need to try adding the d3d flag to the .exe
-4 _   http://dev.processing.org/bugs/show_bug.cgi?id=1065
-4 _   -Dsun.java2d.noddraw=true
 _ video library threading problems with other libraries
 _   http://dev.processing.org/bugs/show_bug.cgi?id=882
 _   using Capture.list() before size() sometimes works
