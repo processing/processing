@@ -1,5 +1,6 @@
 0168 core (1.0.6?)
-
+X getImage() setting the wrong image type
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1282
 
 _ what's the difference with ascent on loadFont vs. createFont?
 _ noCursor() doesn't work in present mode
