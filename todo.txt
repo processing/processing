@@ -2,7 +2,23 @@
 X suggest declaring PDF's members protected
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1276
 
+_ items from the 'code' folder not included with applet export
+_ deleting open sketch (with only one window) attempts to quit
+_   (and still deletes, but doesn't close, even if quitting is canceled)
+
+_ need an "install library" option to deal with urls.. oy
+
+_ apple bug may have been fixed
+_   http://dev.processing.org/bugs/show_bug.cgi?id=786
+
+_ preferences.txt selectable (or open parent folder)
+_   but probably needs to prevent people from editing while in use
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1279
+_   maybe need to separate prefs and sketch state info?
+_     this would mean prefs being rewritten far less
+
 _ problems with jogl expired certificates
+_   https://jogl.dev.java.net/servlets/ProjectDocumentList?folderID=9260&expandFolder=9260&folderID=0
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1271
 
 fixed earlier (java 6 update)
@@ -11,14 +27,23 @@ o   need to try adding the d3d flag to the .exe
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1065
 o   -Dsun.java2d.noddraw=true
 
+_ now that we can wrap exceptions, do die() and warn() methods
+_   this way, people can make use of exceptions if they would rather
+_   or shut them off if they don't want to 
+_   also need to explain exception handling in general
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1281
 
 _ add code for setting the l&f from the prefs file for linux
 
 _ NPE when double-clicking PDE on Mac OS X
 _   is thread sync the problem? rebuild menus being called 2x?
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1251
+_ multiple entries in file menu
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1260
 _ blank sketch opened even if another opened by double-click
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1261
+_ also can have case of opening two of same sketch at once
+_   if sketch was open, then restart by dragging the .pde to p5.app
 
 _ problem with startup on vista 64
 _   try this with windows 7 64-bit (install on laptop?)
@@ -65,6 +90,8 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=1202
 
 _ move library examples to the examples menu
 _   do this once the library documentation has been fixed up
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1278
+
 _ proper libraries warning dialog
 _   check if libraries folder does not exist
 _   check to see if other libraries are installed

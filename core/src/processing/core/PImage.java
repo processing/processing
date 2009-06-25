@@ -203,7 +203,7 @@ public class PImage implements PConstants, Cloneable {
   public java.awt.Image getImage() {
     loadPixels();
     int type = (format == RGB) ?
-      BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB;
+      BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
     BufferedImage image = new BufferedImage(width, height, type);
     WritableRaster wr = image.getRaster();
     wr.setDataElements(0, 0, width, height, pixels);
