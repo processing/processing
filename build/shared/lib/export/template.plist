@@ -5,7 +5,7 @@
 	<key>CFBundleName</key>
 	<string>@@sketch@@</string>
 	<key>CFBundleVersion</key>
-	<string>10.2</string>
+	<string>1.0</string>
 	<key>CFBundleAllowMixedLocalizations</key>
 	<string>true</string>
 	<key>CFBundleExecutable</key>
@@ -33,6 +33,11 @@
 		<string>@@sketch@@</string>
 		<key>JVMVersion</key>
 		<string>1.5*</string>
+                <key>JVMArchs</key>
+		<array>
+		  <string>i386</string>
+		  <string>ppc</string>
+		</array> 
 		<key>ClassPath</key>
 		<string>@@classpath@@</string>
 
