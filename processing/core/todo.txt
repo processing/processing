@@ -1,7 +1,11 @@
 0168 core (1.0.6?)
 X getImage() setting the wrong image type
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1282
+X strokeWeight() makes lines 2x too thick with P2D
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1283
 
+_ resizing opengl destroys context and textures
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1176
 _ what's the difference with ascent on loadFont vs. createFont?
 _ noCursor() doesn't work in present mode
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1177
