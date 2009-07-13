@@ -1,31 +1,36 @@
 0168 pde (1.0.6?)
 X suggest declaring PDF's members protected
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1276
-
-_ items from the 'code' folder not included with applet export
-_ deleting open sketch (with only one window) attempts to quit
-_   (and still deletes, but doesn't close, even if quitting is canceled)
-
-_ need an "install library" option to deal with urls.. oy
-
-_ apple bug may have been fixed
-_   http://dev.processing.org/bugs/show_bug.cgi?id=786
-
-_ preferences.txt selectable (or open parent folder)
-_   but probably needs to prevent people from editing while in use
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1279
-_   maybe need to separate prefs and sketch state info?
-_     this would mean prefs being rewritten far less
-
-_ problems with jogl expired certificates
-_   https://jogl.dev.java.net/servlets/ProjectDocumentList?folderID=9260&expandFolder=9260&folderID=0
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1271
+X update Info.plist to be 32/64 explicit and also the stubs for update 4
+X problems with jogl expired certificates
+X   https://jogl.dev.java.net/servlets/ProjectDocumentList?folderID=9260&expandFolder=9260&folderID=0
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1271
+X preferences.txt selectable (or open parent folder)
+X   but probably needs to prevent people from editing while in use
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1279
 
 fixed earlier (java 6 update)
 X mangled menu text with java 6u10
 o   need to try adding the d3d flag to the .exe
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1065
 o   -Dsun.java2d.noddraw=true
+
+
+_ need an "install library" option to deal with urls.. oy
+_ move library examples to the examples menu
+_   do this once the library documentation has been fixed up
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1278
+_ proper libraries warning dialog
+_   check if libraries folder does not exist
+_   check to see if other libraries are installed
+_   warn user about moving libraries and restarting
+
+_ items from the 'code' folder not included with applet export
+_ deleting open sketch (with only one window) attempts to quit
+_   (and still deletes, but doesn't close, even if quitting is canceled)
+
+_ apple bug may have been fixed
+_   http://dev.processing.org/bugs/show_bug.cgi?id=786
 
 _ now that we can wrap exceptions, do die() and warn() methods
 _   this way, people can make use of exceptions if they would rather
@@ -51,6 +56,7 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=1246
 
 _ switch to better deployment script for applets (download java kernel)
 _   http://java.sun.com/javase/6/docs/technotes/guides/jweb/deployment_advice.html#deplToolkit
+_   http://java.sun.com/javase/6/webnotes/family-clsid.html
 
 _ make sure javadoc builds and uploads, also the zip files
 _   add additional caveats about incompletion
@@ -87,15 +93,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=328
 
 _ fix regex documentation
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1202
-
-_ move library examples to the examples menu
-_   do this once the library documentation has been fixed up
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1278
-
-_ proper libraries warning dialog
-_   check if libraries folder does not exist
-_   check to see if other libraries are installed
-_   warn user about moving libraries and restarting
 
 E2 _ Default wildcard imports are causing naming conflicts
 E2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1103
@@ -896,6 +893,8 @@ _   make hooks to history api so others can write tools around it
 
 PDE / Preferences
 
+_ separate prefs and sketch state info?
+_   this would mean prefs being rewritten far less
 _ prefs window doesn't swap ok/cancel properly for mac vs. windows/linux
 _   don't bother having a "cancel" for the prefs window
 _ rewrite preferences window to use proper layout?
