@@ -452,6 +452,20 @@ public class Preferences {
     top += d.height; // + GUI_SMALL;
 
     label = new JLabel(preferencesFile.getAbsolutePath());
+    final JLabel clickable = label;
+    label.addMouseListener(new MouseAdapter() {
+        public void mousePressed(MouseEvent e) {
+          Base.openFolder(Base.getSettingsFolder());
+        }
+        
+        public void mouseEntered(MouseEvent e) {
+          clickable.setForeground(new Color(0, 0, 140));
+        }
+
+        public void mouseExited(MouseEvent e) {
+          clickable.setForeground(Color.BLACK);
+        }
+      });
     pain.add(label);
     d = label.getPreferredSize();
     label.setBounds(left, top, d.width, d.height);
