@@ -24,6 +24,7 @@
 package processing.app.tools;
 
 import processing.app.*;
+import processing.core.PApplet;
 
 import java.io.*;
 
@@ -561,6 +562,10 @@ public class AutoFormat implements Tool {
 
         case '{':
           if(lookup(w_else) == 1)gotelse();
+          if (s_if_lev.length == c_level) {
+            s_if_lev = PApplet.expand(s_if_lev);
+            s_if_flg = PApplet.expand(s_if_flg);
+          }
           s_if_lev[c_level] = if_lev;
           s_if_flg[c_level] = if_flg;
           if_lev = if_flg = 0;
