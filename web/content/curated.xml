@@ -2,6 +2,17 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <curated>
 
+<software name="MOSstack" by="MOS (Michael Meredith, Hilary Sample, William Macfarlane)" scroll="yes" resize="yes" width="1024" height="700">
+        <image>images/mos.gif</image>
+          <description>
+             The MOSstack software is for stacking blocks within an environment of forces. As each unit is stacked it simultaneously calculates its own weight and balance in real-time to produce strange structural forms.
+          </description>
+          <location>http://www.mos-office.net/project/2008_Onthevergeofcollapse</location>
+          <link href="http://www.mos-office.net/project/2008_MOScat">MOScat</link>
+          <link href="http://www.mos-office.net/project/2008_9_ComputationalPile">ComputationalPile</link>
+          <link href="http://www.mos-office.net/project/2008_Arcade">Arcade</link>
+        </software>
+        
 <software name="Terre Natale (Exits 2)" by="Stewart Smith, Robert Gerard Pietrusko, Aaron Meyers, Michael Doherty, and Hans-Christoph Steiner" scroll="yes" resize="yes" width="1024" height="700">
         <image>images/terre.jpg</image>
           <description>
