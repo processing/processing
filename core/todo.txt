@@ -4,6 +4,12 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=1282
 X strokeWeight() makes lines 2x too thick with P2D
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1283
 
+_ image() doesn't work with P2D and P3D if noFill() is in use
+_   maybe using rgb instead of tint inside drawing loops?
+
+_ file chooser fails with opengl on linux
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1221
+
 _ resizing opengl destroys context and textures
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1176
 _ what's the difference with ascent on loadFont vs. createFont?
