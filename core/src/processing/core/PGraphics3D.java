@@ -608,7 +608,7 @@ public class PGraphics3D extends PGraphics {
       endShapeStroke(mode);
     }
 
-    if (fill) {
+    if (fill || textureImage != null) {
       endShapeFill();
     }
 
@@ -622,7 +622,7 @@ public class PGraphics3D extends PGraphics {
     // render shape and fill here if not saving the shapes for later
     // if true, the shapes will be rendered on endDraw
     if (!hints[ENABLE_DEPTH_SORT]) {
-      if (fill) {
+      if (fill || textureImage != null) {
         if (triangleCount > 0) {
           renderTriangles(0, triangleCount);
           if (raw != null) {
