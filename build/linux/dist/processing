@@ -2,16 +2,18 @@
 
 # This script runs Processing, using the JDK in the Processing 
 # installation directory if possible.
-#
+
 # If no JDK was installed with Processing then the script tries to use 
 # the preferred Java version of the machine, i.e. what is executed 
 # by the "java" console command. This must be a Sun JDK (for details, see
 # http://processing.org/reference/environment/platforms.html#java).
-#
+
 # In order to run Processing with an already installed JDK that is *not* 
 # the preferred Java version of the machine, create a symlink named "java" 
 # in the Processing installation directory that points to the JDK home
 # directory.
+
+# Thanks to Ferdinand Kasper for this build script. [fry]
 
 
 # JARs required from JDK (anywhere in/below the JDK home directory)
