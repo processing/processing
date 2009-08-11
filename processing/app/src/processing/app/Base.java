@@ -43,14 +43,14 @@ public class Base {
   static final int REVISION = 168;
   static String VERSION_NAME = "0168";
 
-  static HashMap<Integer, String> platformNames = new HashMap();
+  static HashMap<Integer, String> platformNames = new HashMap<Integer, String>();
   static {
     platformNames.put(PConstants.WINDOWS, "windows");
     platformNames.put(PConstants.MACOSX, "macosx");
     platformNames.put(PConstants.LINUX, "linux");
   }
 
-  static HashMap<String, Integer> platformIndices = new HashMap();
+  static HashMap<String, Integer> platformIndices = new HashMap<String, Integer>();
   static {
     platformIndices.put("windows", PConstants.WINDOWS);
     platformIndices.put("macosx", PConstants.MACOSX);
@@ -733,13 +733,17 @@ public class Base {
 
 
   protected Editor handleOpen(String path, int[] location) {
+//    System.err.println("entering handleOpen " + path);
+    
     File file = new File(path);
     if (!file.exists()) return null;
 
+//    System.err.println("  editors: " + editors);
     // Cycle through open windows to make sure that it's not already open.
     for (Editor editor : editors) {
       if (editor.getSketch().getMainFilePath().equals(path)) {
         editor.toFront();
+//        System.err.println("  handleOpen: already opened");
         return editor;
       }
     }
@@ -758,10 +762,23 @@ public class Base {
 //      }
 //    }
 
+//    System.err.println("  creating new editor");
     Editor editor = new Editor(this, path, location);
-
+//    Editor editor = null;
+//    try {
+//      editor = new Editor(this, path, location);
+//    } catch (Exception e) {
+//      e.printStackTrace();
+//      System.err.flush();
+//      System.out.flush();
+//      System.exit(1);
+//    }
+//    System.err.println("  done creating new editor");
+//    EditorConsole.systemErr.println("  done creating new editor");
+    
     // Make sure that the sketch actually loaded
     if (editor.getSketch() == null) {
+//      System.err.println("sketch was null, getting out of handleOpen");
       return null;  // Just walk away quietly
     }
 
@@ -784,6 +801,8 @@ public class Base {
     // now that we're ready, show the window
     // (don't do earlier, cuz we might move it based on a window being closed)
     editor.setVisible(true);
+
+//    System.err.println("exiting handleOpen");
 
     return editor;
   }
