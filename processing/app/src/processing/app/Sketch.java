@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-08 Ben Fry and Casey Reas
+  Copyright (c) 2004-09 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -1508,7 +1508,7 @@ public class Sketch {
     // Create a fresh applet folder (needed before preproc is run below)
     appletFolder.mkdirs();
 
-    Hashtable zipFileContents = new Hashtable();
+    HashMap<String,Object> zipFileContents = new HashMap<String,Object>();
 
     // build the sketch
     String foundName = build(appletFolder.getPath());
@@ -1676,7 +1676,7 @@ public class Sketch {
       // library sketch's "library" folder
 //      File libraryFolder = (File)en.nextElement();
       File exportSettings = new File(libraryFolder, "export.txt");
-      Hashtable exportTable = readSettings(exportSettings);
+      HashMap<String,String> exportTable = readSettings(exportSettings);
       String appletList = (String) exportTable.get("applet");
       String exportList[] = null;
       if (appletList != null) {
@@ -2220,12 +2220,12 @@ public class Sketch {
 
     /// start copying all jar files
 
-    Vector jarListVector = new Vector();
+    Vector<String> jarListVector = new Vector<String>();
 
 
     /// create the main .jar file
 
-    Hashtable zipFileContents = new Hashtable();
+    HashMap<String,Object> zipFileContents = new HashMap<String,Object>();
 
     FileOutputStream zipOutputFile =
       new FileOutputStream(new File(jarFolder, name + ".jar"));
@@ -2316,7 +2316,7 @@ public class Sketch {
       // in the list is a File object that points the
       // library sketch's "library" folder
       File exportSettings = new File(libraryFolder, "export.txt");
-      Hashtable exportTable = readSettings(exportSettings);
+      HashMap<String,String> exportTable = readSettings(exportSettings);
       String commaList = null;
       String exportList[] = null;
 
@@ -2351,7 +2351,15 @@ public class Sketch {
           System.err.println("File " + exportList[i] + " does not exist");
 
         } else if (exportFile.isDirectory()) {
-          System.err.println("Ignoring sub-folder \"" + exportList[i] + "\"");
+          //System.err.println("Ignoring sub-folder \"" + exportList[i] + "\"");
+          if (exportPlatform == PConstants.MACOSX) {
+            // For OS X, copy subfolders to Contents/Resources/Java
+            Base.copyDir(exportFile, new File(jarFolder, exportFile.getName()));
+          } else {
+            // For other platforms, just copy the folder to the same directory
+            // as the application.
+            Base.copyDir(exportFile, new File(destFolder, exportFile.getName()));
+          }
 
         } else if (exportFile.getName().toLowerCase().endsWith(".zip") ||
                    exportFile.getName().toLowerCase().endsWith(".jar")) {
@@ -2545,8 +2553,8 @@ public class Sketch {
    * Read from a file with a bunch of attribute/value pairs
    * that are separated by = and ignore comments with #.
    */
-  protected Hashtable readSettings(File inputFile) {
-    Hashtable outgoing = new Hashtable();
+  protected HashMap<String,String> readSettings(File inputFile) {
+    HashMap<String,String> outgoing = new HashMap<String,String>();
     if (!inputFile.exists()) return outgoing;  // return empty hash
 
     String lines[] = PApplet.loadStrings(inputFile);
@@ -2576,7 +2584,7 @@ public class Sketch {
    */
   protected void packClassPathIntoZipFile(String path,
                                           ZipOutputStream zos,
-                                          Hashtable zipFileContents)
+                                          HashMap<String,Object> zipFileContents)
     throws IOException {
     String[] pieces = PApplet.split(path, File.pathSeparatorChar);
 
@@ -2588,7 +2596,7 @@ public class Sketch {
           pieces[i].toLowerCase().endsWith(".zip")) {
         try {
           ZipFile file = new ZipFile(pieces[i]);
-          Enumeration entries = file.entries();
+          Enumeration<?> entries = file.entries();
           while (entries.hasMoreElements()) {
             ZipEntry entry = (ZipEntry) entries.nextElement();
             if (entry.isDirectory()) {
