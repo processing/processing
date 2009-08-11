@@ -1,17 +1,98 @@
 #!/bin/sh
- 
-APPDIR="$(dirname -- "${0}")"
- 
-for LIB in \
-    java/lib/rt.jar \
-    java/lib/tools.jar \
-    lib/*.jar \
-    ;
-do
-    CLASSPATH="${CLASSPATH}:${APPDIR}/${LIB}"
+
+# This script runs Processing, using the JDK in the Processing 
+# installation directory if possible.
+#
+# If no JDK was installed with Processing then the script tries to use 
+# the preferred Java version of the machine, i.e. what is executed 
+# by the "java" console command. This must be a Sun JDK (for details, see
+# http://processing.org/reference/environment/platforms.html#java).
+#
+# In order to run Processing with an already installed JDK that is *not* 
+# the preferred Java version of the machine, create a symlink named "java" 
+# in the Processing installation directory that points to the JDK home
+# directory.
+
+
+# JARs required from JDK (anywhere in/below the JDK home directory)
+JDKLIBS="rt.jar tools.jar"
+
+# Set this to non-zero for logging
+LOGGING=0
+
+# Logs name and value of a variable to stdout if LOGGING is non-zero.
+# Expects the variable name as parameter $1.
+log() {
+  if [ $LOGGING -ne 0 ]; then
+    eval echo $1=\$$1
+  fi
+}
+
+
+# Locates JDKLIBS in a directory and its subdirectories and saves their
+# absolute paths as list to JDKCP. Expects the directory as parameter $1.
+# Sets SUCCESS to 1 if all libraries were found, to 0 otherwise.
+make_jdkcp() {
+  # Back out of JRE directory if apparently located inside a JDK
+  if [ -f "$1/../bin/java" ]; then
+    DIR="$1/.."
+  else
+    DIR="$1"
+  fi
+  log DIR
+
+  JDKCP=
+  SUCCESS=1
+
+  # Locate JDKLIBS
+  for L in $JDKLIBS; do
+    # Locate only the first library with a matching name
+    LIB=`find "$DIR" -name $L 2>/dev/null | head -n 1`
+    log L
+    log LIB
+
+    # Library found?
+    if [ -n "$LIB" ]; then
+      JDKCP="$JDKCP"${JDKCP:+:}"$LIB"
+    else
+      SUCCESS=0
+    fi
+  done
+
+  log JDKCP
+}
+
+
+# Get absolute path of directory where this script is located
+APPDIR=`readlink -f "$0"`
+APPDIR=`dirname "$APPDIR"`
+log APPDIR
+
+# Try using a local JDK from the same directory as this script
+JDKDIR=`readlink -f "$APPDIR/java"`
+make_jdkcp "$JDKDIR"
+log SUCCESS
+
+# Local JDK found?
+if [ $SUCCESS -ne 1 ]; then
+  # No, try using the preferred system JRE/JDK (if any)
+  JDKDIR=`which java` && JDKDIR=`readlink -e "$JDKDIR"` && JDKDIR=`dirname "$JDKDIR"`/..
+  make_jdkcp "$JDKDIR"
+  log SUCCESS
+fi
+
+# Add all required JARs to CLASSPATH
+CLASSPATH="$CLASSPATH"${CLASSPATH:+:}"$JDKCP"
+for LIB in "$APPDIR"/lib/*.jar; do
+  CLASSPATH="$CLASSPATH"${CLASSPATH:+:}"$LIB"
 done
 export CLASSPATH
+log CLASSPATH
 
-export PATH="${APPDIR}/java/bin:${PATH}"
+# Make all JDK binaries available in PATH
+export PATH="$JDKDIR/bin":"$PATH"
+log PATH
 
-java processing.app.Base
+# Start Processing in the same directory as this script
+cd "$APPDIR"
+java processing.app.Base &
