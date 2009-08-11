@@ -8,6 +8,9 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=1271
 X preferences.txt selectable (or open parent folder)
 X   but probably needs to prevent people from editing while in use
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1279
+X Auto format problem with program deeper then 10 levels
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1297
+X fix a crash on startup problem (console being null)
 
 fixed earlier (java 6 update)
 X mangled menu text with java 6u10
@@ -15,6 +18,15 @@ o   need to try adding the d3d flag to the .exe
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1065
 o   -Dsun.java2d.noddraw=true
 
+contributed
+X can't launch from a symlink in /usr/bin
+X   http://dev.processing.org/bugs/show_bug.cgi?id=825
+X   fixed by Ferdinand Kasper of Vienna
+
+_ java update 15 for windows and linux
+
+_ osx not opening a sketch at all on double-click? (though opening the app)
+_ with the same sketch open, a handleOpen() might open a second on top of it
 
 _ need an "install library" option to deal with urls.. oy
 _ move library examples to the examples menu
@@ -146,6 +158,8 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=1048
 _   some fixes can be found in the bug report
 _   need to deal with setting path to sketchbook/examples
 _   also deal with the script not being in the right folder
+_   problems with imports and prefs file
+_     http://dev.processing.org/bugs/show_bug.cgi?id=1298
 _ video library threading problems with other libraries
 _   http://dev.processing.org/bugs/show_bug.cgi?id=882
 _   using Capture.list() before size() sometimes works
@@ -1312,8 +1326,6 @@ _ computationally intensive stuff runs really slow inside p5
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1116872745
 _ some reports of it not quitting properly, but not confirmed
 _ splash screen
-_ can't launch from a symlink in /usr/bin
-_   http://dev.processing.org/bugs/show_bug.cgi?id=825
 
 
 LATER

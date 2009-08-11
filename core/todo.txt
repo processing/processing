@@ -3,9 +3,12 @@ X getImage() setting the wrong image type
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1282
 X strokeWeight() makes lines 2x too thick with P2D
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1283
+X image() doesn't work with P2D, P3D, and OPENGL with noFill()
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1299
+o   maybe using rgb instead of tint inside drawing loops?
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1222
 
-_ image() doesn't work with P2D and P3D if noFill() is in use
-_   maybe using rgb instead of tint inside drawing loops?
+_ should map() actually constrain to the low and high values?
 
 _ file chooser fails with opengl on linux
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1221
