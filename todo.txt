@@ -11,6 +11,8 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=1279
 X Auto format problem with program deeper then 10 levels
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1297
 X fix a crash on startup problem (console being null)
+X Recursive subfolder copy when exporting application
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1295
 
 fixed earlier (java 6 update)
 X mangled menu text with java 6u10
