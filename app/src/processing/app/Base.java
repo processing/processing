@@ -40,8 +40,8 @@ import processing.core.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
-  static final int REVISION = 168;
-  static String VERSION_NAME = "0168";
+  static final int REVISION = 169;
+  static String VERSION_NAME = "0169";
 
   static HashMap<Integer, String> platformNames = new HashMap<Integer, String>();
   static {
@@ -734,7 +734,7 @@ public class Base {
 
   protected Editor handleOpen(String path, int[] location) {
 //    System.err.println("entering handleOpen " + path);
-    
+
     File file = new File(path);
     if (!file.exists()) return null;
 
@@ -775,7 +775,7 @@ public class Base {
 //    }
 //    System.err.println("  done creating new editor");
 //    EditorConsole.systemErr.println("  done creating new editor");
-    
+
     // Make sure that the sketch actually loaded
     if (editor.getSketch() == null) {
 //      System.err.println("sketch was null, getting out of handleOpen");

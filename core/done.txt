@@ -1,3 +1,14 @@
+0168 core (1.0.6)
+X getImage() setting the wrong image type
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1282
+X strokeWeight() makes lines 2x too thick with P2D
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1283
+X image() doesn't work with P2D, P3D, and OPENGL with noFill()
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1299
+o   maybe using rgb instead of tint inside drawing loops?
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1222
+
+
 0167 core (1.0.5)
 X changed text layout methods from private to protected
 
