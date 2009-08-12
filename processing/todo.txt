@@ -1,30 +1,4 @@
-0168 pde (1.0.6?)
-X suggest declaring PDF's members protected
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1276
-X update Info.plist to be 32/64 explicit and also the stubs for update 4
-X problems with jogl expired certificates
-X   https://jogl.dev.java.net/servlets/ProjectDocumentList?folderID=9260&expandFolder=9260&folderID=0
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1271
-X preferences.txt selectable (or open parent folder)
-X   but probably needs to prevent people from editing while in use
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1279
-X Auto format problem with program deeper then 10 levels
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1297
-X fix a crash on startup problem (console being null)
-X Recursive subfolder copy when exporting application
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1295
-X java update 15 for windows and linux
-
-fixed earlier (java 6 update)
-X mangled menu text with java 6u10
-o   need to try adding the d3d flag to the .exe
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1065
-o   -Dsun.java2d.noddraw=true
-
-contributed
-X can't launch from a symlink in /usr/bin
-X   http://dev.processing.org/bugs/show_bug.cgi?id=825
-X   fixed by Ferdinand Kasper of Vienna
+0169 pde
 
 
 _ osx not opening a sketch at all on double-click? (though opening the app)
