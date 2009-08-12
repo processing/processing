@@ -13,6 +13,7 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=1297
 X fix a crash on startup problem (console being null)
 X Recursive subfolder copy when exporting application
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1295
+X java update 15 for windows and linux
 
 fixed earlier (java 6 update)
 X mangled menu text with java 6u10
@@ -25,7 +26,6 @@ X can't launch from a symlink in /usr/bin
 X   http://dev.processing.org/bugs/show_bug.cgi?id=825
 X   fixed by Ferdinand Kasper of Vienna
 
-_ java update 15 for windows and linux
 
 _ osx not opening a sketch at all on double-click? (though opening the app)
 _ with the same sketch open, a handleOpen() might open a second on top of it
