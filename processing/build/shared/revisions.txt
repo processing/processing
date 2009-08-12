@@ -1,3 +1,60 @@
+PROCESSING 1.0.6 (REV 0168) - 12 August 2009
+
+Bug fixes and minor changes. Most important are replacement JOGL libraries
+so that OpenGL applets won't present an "expired certificate" error.
+
+[ bug fixes ] 
+
++ Replaced the faulty JOGL library that had expired certificates (Sun bug).
+  http://dev.processing.org/bugs/show_bug.cgi?id=1271
+  https://jogl.dev.java.net/servlets/ProjectDocumentList?folderID=9260&expandFolder=9260&folderID=0
+
++ Updated the Linux launcher script that enables Processing to be run
+  from other directories, symlinks, or from launch items.
+  http://dev.processing.org/bugs/show_bug.cgi?id=825
+  Thanks to Ferdinand Kasper for the fix!
+
++ strokeWeight() was making lines 2x too thick with P2D
+  http://dev.processing.org/bugs/show_bug.cgi?id=1283
+
++ PImage.getImage() setting the wrong image type
+  http://dev.processing.org/bugs/show_bug.cgi?id=1282
+
++ image() not working with P2D, P3D, and OPENGL when noFill() used
+  http://dev.processing.org/bugs/show_bug.cgi?id=1299
+  http://dev.processing.org/bugs/show_bug.cgi?id=1222
+
++ Auto format problem with program deeper then 10 levels
+  http://dev.processing.org/bugs/show_bug.cgi?id=1297
+
++ Fixed a crash on startup problem (console being null)
+
++ Recursive subfolder copy of library folders when exporting application
+  http://dev.processing.org/bugs/show_bug.cgi?id=1295
+
+[ changes ]
+
++ PDF member functions set protected instead of private
+  http://dev.processing.org/bugs/show_bug.cgi?id=1276
+
++ On OS X, update Info.plist to be 32/64 explicit and also updated 
+  JavaApplicationStub for update 4.
+
++ Clicking the preferences location in the Preferences window will 
+  now open the parent folder for the preferences file. 
+  http://dev.processing.org/bugs/show_bug.cgi?id=1279
+
++ Update to Java 6 update 15 for the Windows and Linux releases.
+
+[ fixed earlier ] 
+
++ Mangled menu text with Java 6u10.
+  http://dev.processing.org/bugs/show_bug.cgi?id=1065
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING 1.0.5 (REV 0167) - 7 June 2009
 
 Bug fix release, mostly dealing with regressions from 1.0.4.
