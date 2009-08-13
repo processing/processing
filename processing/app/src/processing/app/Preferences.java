@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-06 Ben Fry and Casey Reas
+  Copyright (c) 2004-09 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -144,8 +144,8 @@ public class Preferences {
 
   // data model
 
-  static Hashtable defaults;
-  static Hashtable table = new Hashtable();;
+  static HashMap<String,String> defaults;
+  static HashMap<String,String> table = new HashMap<String,String>();;
   static File preferencesFile;
 
 
@@ -163,9 +163,7 @@ public class Preferences {
     // check for platform-specific properties in the defaults
     String platformExt = "." + PConstants.platformNames[PApplet.platform];
     int platformExtLength = platformExt.length();
-    Enumeration e = table.keys();
-    while (e.hasMoreElements()) {
-      String key = (String) e.nextElement();
+    for (String key : table.keySet()) {
       if (key.endsWith(platformExt)) {
         // this is a key specific to a particular platform
         String actualKey = key.substring(0, key.length() - platformExtLength);
@@ -175,7 +173,7 @@ public class Preferences {
     }
 
     // clone the hash table
-    defaults = (Hashtable) table.clone();
+    defaults = (HashMap<String, String>) table.clone();
 
     // other things that have to be set explicitly for the defaults
     setColor("run.window.bgcolor", SystemColor.control);
@@ -744,10 +742,8 @@ public class Preferences {
     // Fix for 0163 to properly use Unicode when writing preferences.txt
     PrintWriter writer = PApplet.createWriter(preferencesFile);
 
-    Enumeration e = table.keys(); //properties.propertyNames();
-    while (e.hasMoreElements()) {
-      String key = (String) e.nextElement();
-      writer.println(key + "=" + ((String) table.get(key)));
+    for (String key : table.keySet()) {
+      writer.println(key + "=" + table.get(key));
     }
 
     writer.flush();
@@ -769,7 +765,7 @@ public class Preferences {
   //}
 
   static public String get(String attribute /*, String defaultValue */) {
-    return (String) table.get(attribute);
+    return table.get(attribute);
     /*
     //String value = (properties != null) ?
     //properties.getProperty(attribute) : applet.getParameter(attribute);
@@ -782,7 +778,7 @@ public class Preferences {
 
 
   static public String getDefault(String attribute) {
-    return (String) defaults.get(attribute);
+    return defaults.get(attribute);
   }
 
 
