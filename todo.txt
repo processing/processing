@@ -1,5 +1,25 @@
 0169 pde
+X Erroneous line highlighting is off by one if there is no setup() routine
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1263
 
+
+_ use launch4j when exporting applications for windows?
+
+_ post to web example 
+_   particularly for uploading image data
+_   along with php script to handle receive
+_   this is in hacks, but 
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=display;num=1117194066#7
+_ ftp upload sketch
+_ courseware
+_   export sketch as applet when uploading
+_   save sketch zip files
+_   have a means to load them from "teacher" version of p5
+_   figure out how to use the 
+
+
+_ add proper copyright and license information for all included projects
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1303
 
 _ osx not opening a sketch at all on double-click? (though opening the app)
 _ with the same sketch open, a handleOpen() might open a second on top of it
@@ -539,11 +559,6 @@ _   JAI.create("filestore", bufImage, filename+".png", "PNG");
 _ also an example of setting the jpeg compression (included in bug report)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=342
 _ write a timer class/example library
-_ post to web example 
-_   particularly for uploading image data
-_   along with php script to handle receive
-_   this is in hacks, but 
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=display;num=1117194066#7
 _ how do i add gui to a sketch?
 _   don't use awt components
 _   how to use swing and embed components inside p5
@@ -1016,13 +1031,7 @@ _   and gives info about what to do next (how to edit)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=143
 _ tool to run in appletviewer? sun.applet.Main is appletviewer
 _ import sketch from url (takes a zip from archive sketch)
-_ ftp upload sketch
 _ archive sketch direct to bug report
-_ courseware
-_   export sketch as applet when uploading
-_   save sketch zip files
-_   have a means to load them from "teacher" version of p5
-_   figure out how to use the 
 _ shared code
 _   Integrator / FloatThing / CameraStuff -- Update
 _   to pull code from a local folder
