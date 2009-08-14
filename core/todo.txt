@@ -1,5 +1,10 @@
 0169 core
+X remove major try/catch block from PApplet.main()
+X   hopefully will allow some exception stuff to come through properly
 
+
+_ Semitransparent rect drawn over image not rendered correctly
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1280
 
 _ should map() actually constrain to the low and high values?
 

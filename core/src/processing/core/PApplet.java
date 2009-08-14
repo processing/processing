@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-08 Ben Fry and Casey Reas
+  Copyright (c) 2004-09 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This library is free software; you can redistribute it and/or
@@ -6485,104 +6485,103 @@ public class PApplet extends Applet
       System.exit(1);
     }
 
+    boolean external = false;
+    int[] location = null;
+    int[] editorLocation = null;
+
+    String name = null;
+    boolean present = false;
+    boolean exclusive = false;
+    Color backgroundColor = Color.BLACK;
+    Color stopColor = Color.GRAY;
+    GraphicsDevice displayDevice = null;
+    boolean hideStop = false;
+
+    String param = null, value = null;
+
+    // try to get the user folder. if running under java web start,
+    // this may cause a security exception if the code is not signed.
+    // http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Integrate;action=display;num=1159386274
+    String folder = null;
     try {
-      boolean external = false;
-      int[] location = null;
-      int[] editorLocation = null;
+      folder = System.getProperty("user.dir");
+    } catch (Exception e) { }
 
-      String name = null;
-      boolean present = false;
-      boolean exclusive = false;
-      Color backgroundColor = Color.BLACK;
-      Color stopColor = Color.GRAY;
-      GraphicsDevice displayDevice = null;
-      boolean hideStop = false;
+    int argIndex = 0;
+    while (argIndex < args.length) {
+      int equals = args[argIndex].indexOf('=');
+      if (equals != -1) {
+        param = args[argIndex].substring(0, equals);
+        value = args[argIndex].substring(equals + 1);
 
-      String param = null, value = null;
+        if (param.equals(ARGS_EDITOR_LOCATION)) {
+          external = true;
+          editorLocation = parseInt(split(value, ','));
 
-      // try to get the user folder. if running under java web start,
-      // this may cause a security exception if the code is not signed.
-      // http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Integrate;action=display;num=1159386274
-      String folder = null;
-      try {
-        folder = System.getProperty("user.dir");
-      } catch (Exception e) { }
+        } else if (param.equals(ARGS_DISPLAY)) {
+          int deviceIndex = Integer.parseInt(value) - 1;
 
-      int argIndex = 0;
-      while (argIndex < args.length) {
-        int equals = args[argIndex].indexOf('=');
-        if (equals != -1) {
-          param = args[argIndex].substring(0, equals);
-          value = args[argIndex].substring(equals + 1);
+          //DisplayMode dm = device.getDisplayMode();
+          //if ((dm.getWidth() == 1024) && (dm.getHeight() == 768)) {
 
-          if (param.equals(ARGS_EDITOR_LOCATION)) {
-            external = true;
-            editorLocation = parseInt(split(value, ','));
-
-          } else if (param.equals(ARGS_DISPLAY)) {
-            int deviceIndex = Integer.parseInt(value) - 1;
-
-            //DisplayMode dm = device.getDisplayMode();
-            //if ((dm.getWidth() == 1024) && (dm.getHeight() == 768)) {
-
-            GraphicsEnvironment environment =
-              GraphicsEnvironment.getLocalGraphicsEnvironment();
-            GraphicsDevice devices[] = environment.getScreenDevices();
-            if ((deviceIndex >= 0) && (deviceIndex < devices.length)) {
-              displayDevice = devices[deviceIndex];
-            } else {
-              System.err.println("Display " + value + " does not exist, " +
-                                 "using the default display instead.");
-            }
-
-          } else if (param.equals(ARGS_BGCOLOR)) {
-            if (value.charAt(0) == '#') value = value.substring(1);
-            backgroundColor = new Color(Integer.parseInt(value, 16));
-
-          } else if (param.equals(ARGS_STOP_COLOR)) {
-            if (value.charAt(0) == '#') value = value.substring(1);
-            stopColor = new Color(Integer.parseInt(value, 16));
-
-          } else if (param.equals(ARGS_SKETCH_FOLDER)) {
-            folder = value;
-
-          } else if (param.equals(ARGS_LOCATION)) {
-            location = parseInt(split(value, ','));
+          GraphicsEnvironment environment =
+            GraphicsEnvironment.getLocalGraphicsEnvironment();
+          GraphicsDevice devices[] = environment.getScreenDevices();
+          if ((deviceIndex >= 0) && (deviceIndex < devices.length)) {
+            displayDevice = devices[deviceIndex];
+          } else {
+            System.err.println("Display " + value + " does not exist, " +
+                               "using the default display instead.");
           }
+
+        } else if (param.equals(ARGS_BGCOLOR)) {
+          if (value.charAt(0) == '#') value = value.substring(1);
+          backgroundColor = new Color(Integer.parseInt(value, 16));
+
+        } else if (param.equals(ARGS_STOP_COLOR)) {
+          if (value.charAt(0) == '#') value = value.substring(1);
+          stopColor = new Color(Integer.parseInt(value, 16));
+
+        } else if (param.equals(ARGS_SKETCH_FOLDER)) {
+          folder = value;
+
+        } else if (param.equals(ARGS_LOCATION)) {
+          location = parseInt(split(value, ','));
+        }
+
+      } else {
+        if (args[argIndex].equals(ARGS_PRESENT)) {
+          present = true;
+
+        } else if (args[argIndex].equals(ARGS_EXCLUSIVE)) {
+          exclusive = true;
+
+        } else if (args[argIndex].equals(ARGS_HIDE_STOP)) {
+          hideStop = true;
+
+        } else if (args[argIndex].equals(ARGS_EXTERNAL)) {
+          external = true;
 
         } else {
-          if (args[argIndex].equals(ARGS_PRESENT)) {
-            present = true;
-
-          } else if (args[argIndex].equals(ARGS_EXCLUSIVE)) {
-            exclusive = true;
-
-          } else if (args[argIndex].equals(ARGS_HIDE_STOP)) {
-            hideStop = true;
-
-          } else if (args[argIndex].equals(ARGS_EXTERNAL)) {
-            external = true;
-
-          } else {
-            name = args[argIndex];
-            break;
-          }
+          name = args[argIndex];
+          break;
         }
-        argIndex++;
       }
+      argIndex++;
+    }
 
-      // Set this property before getting into any GUI init code
-      //System.setProperty("com.apple.mrj.application.apple.menu.about.name", name);
-      // This )*)(*@#$ Apple crap don't work no matter where you put it
-      // (static method of the class, at the top of main, wherever)
+    // Set this property before getting into any GUI init code
+    //System.setProperty("com.apple.mrj.application.apple.menu.about.name", name);
+    // This )*)(*@#$ Apple crap don't work no matter where you put it
+    // (static method of the class, at the top of main, wherever)
 
-      if (displayDevice == null) {
-        GraphicsEnvironment environment =
-          GraphicsEnvironment.getLocalGraphicsEnvironment();
-        displayDevice = environment.getDefaultScreenDevice();
-      }
+    if (displayDevice == null) {
+      GraphicsEnvironment environment =
+        GraphicsEnvironment.getLocalGraphicsEnvironment();
+      displayDevice = environment.getDefaultScreenDevice();
+    }
 
-      Frame frame = new Frame(displayDevice.getDefaultConfiguration());
+    Frame frame = new Frame(displayDevice.getDefaultConfiguration());
       /*
       Frame frame = null;
       if (displayDevice != null) {
@@ -6593,195 +6592,191 @@ public class PApplet extends Applet
       */
       //Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
 
-      // remove the grow box by default
-      // users who want it back can call frame.setResizable(true)
-      frame.setResizable(false);
+    // remove the grow box by default
+    // users who want it back can call frame.setResizable(true)
+    frame.setResizable(false);
 
-      // Set the trimmings around the image
-      Image image = Toolkit.getDefaultToolkit().createImage(ICON_IMAGE);
-      frame.setIconImage(image);
-      frame.setTitle(name);
+    // Set the trimmings around the image
+    Image image = Toolkit.getDefaultToolkit().createImage(ICON_IMAGE);
+    frame.setIconImage(image);
+    frame.setTitle(name);
 
-//    Class c = Class.forName(name);
+    final PApplet applet;
+    try {
       Class<?> c = Thread.currentThread().getContextClassLoader().loadClass(name);
-      final PApplet applet = (PApplet) c.newInstance();
-
-      // these are needed before init/start
-      applet.frame = frame;
-      applet.sketchPath = folder;
-      applet.args = PApplet.subset(args, 1);
-      applet.external = external;
-
-      // Need to save the window bounds at full screen,
-      // because pack() will cause the bounds to go to zero.
-      // http://dev.processing.org/bugs/show_bug.cgi?id=923
-      Rectangle fullScreenRect = null;
-
-      // For 0149, moving this code (up to the pack() method) before init().
-      // For OpenGL (and perhaps other renderers in the future), a peer is
-      // needed before a GLDrawable can be created. So pack() needs to be
-      // called on the Frame before applet.init(), which itself calls size(),
-      // and launches the Thread that will kick off setup().
-      // http://dev.processing.org/bugs/show_bug.cgi?id=891
-      // http://dev.processing.org/bugs/show_bug.cgi?id=908
-      if (present) {
-        frame.setUndecorated(true);
-        frame.setBackground(backgroundColor);
-        if (exclusive) {
-          displayDevice.setFullScreenWindow(frame);
-          fullScreenRect = frame.getBounds();
-        } else {
-          DisplayMode mode = displayDevice.getDisplayMode();
-          fullScreenRect = new Rectangle(0, 0, mode.getWidth(), mode.getHeight());
-          frame.setBounds(fullScreenRect);
-          frame.setVisible(true);
-        }
-      }
-      frame.setLayout(null);
-      frame.add(applet);
-      if (present) {
-        frame.invalidate();
-      } else {
-        frame.pack();
-      }
-      // insufficient, places the 100x100 sketches offset strangely
-      //frame.validate();
-
-      applet.init();
-
-      // Wait until the applet has figured out its width.
-      // In a static mode app, this will be after setup() has completed,
-      // and the empty draw() has set "finished" to true.
-      // TODO make sure this won't hang if the applet has an exception.
-      while (applet.defaultSize && !applet.finished) {
-        //System.out.println("default size");
-        try {
-          Thread.sleep(5);
-
-        } catch (InterruptedException e) {
-          //System.out.println("interrupt");
-        }
-      }
-      //println("not default size " + applet.width + " " + applet.height);
-      //println("  (g width/height is " + applet.g.width + "x" + applet.g.height + ")");
-
-      if (present) {
-        // After the pack(), the screen bounds are gonna be 0s
-        frame.setBounds(fullScreenRect);
-        applet.setBounds((fullScreenRect.width - applet.width) / 2,
-                         (fullScreenRect.height - applet.height) / 2,
-                         applet.width, applet.height);
-
-        if (!hideStop) {
-          Label label = new Label("stop");
-          label.setForeground(stopColor);
-          label.addMouseListener(new MouseAdapter() {
-              public void mousePressed(MouseEvent e) {
-                System.exit(0);
-              }
-            });
-          frame.add(label);
-
-          Dimension labelSize = label.getPreferredSize();
-          // sometimes shows up truncated on mac
-          //System.out.println("label width is " + labelSize.width);
-          labelSize = new Dimension(100, labelSize.height);
-          label.setSize(labelSize);
-          label.setLocation(20, fullScreenRect.height - labelSize.height - 20);
-        }
-
-        // not always running externally when in present mode
-        if (external) {
-          applet.setupExternalMessages();
-        }
-
-      } else {  // if not presenting
-        // can't do pack earlier cuz present mode don't like it
-        // (can't go full screen with a frame after calling pack)
-//        frame.pack();  // get insets. get more.
-        Insets insets = frame.getInsets();
-
-        int windowW = Math.max(applet.width, MIN_WINDOW_WIDTH) +
-          insets.left + insets.right;
-        int windowH = Math.max(applet.height, MIN_WINDOW_HEIGHT) +
-          insets.top + insets.bottom;
-
-        frame.setSize(windowW, windowH);
-
-        if (location != null) {
-          // a specific location was received from PdeRuntime
-          // (applet has been run more than once, user placed window)
-          frame.setLocation(location[0], location[1]);
-
-        } else if (external) {
-          int locationX = editorLocation[0] - 20;
-          int locationY = editorLocation[1];
-
-          if (locationX - windowW > 10) {
-            // if it fits to the left of the window
-            frame.setLocation(locationX - windowW, locationY);
-
-          } else {  // doesn't fit
-            // if it fits inside the editor window,
-            // offset slightly from upper lefthand corner
-            // so that it's plunked inside the text area
-            locationX = editorLocation[0] + 66;
-            locationY = editorLocation[1] + 66;
-
-            if ((locationX + windowW > applet.screen.width - 33) ||
-                (locationY + windowH > applet.screen.height - 33)) {
-              // otherwise center on screen
-              locationX = (applet.screen.width - windowW) / 2;
-              locationY = (applet.screen.height - windowH) / 2;
-            }
-            frame.setLocation(locationX, locationY);
-          }
-        } else {  // just center on screen
-          frame.setLocation((applet.screen.width - applet.width) / 2,
-                            (applet.screen.height - applet.height) / 2);
-        }
-
-//        frame.setLayout(null);
-//        frame.add(applet);
-
-        if (backgroundColor == Color.black) {  //BLACK) {
-          // this means no bg color unless specified
-          backgroundColor = SystemColor.control;
-        }
-        frame.setBackground(backgroundColor);
-
-        int usableWindowH = windowH - insets.top - insets.bottom;
-        applet.setBounds((windowW - applet.width)/2,
-                         insets.top + (usableWindowH - applet.height)/2,
-                         applet.width, applet.height);
-
-        if (external) {
-          applet.setupExternalMessages();
-
-        } else {  // !external
-          frame.addWindowListener(new WindowAdapter() {
-              public void windowClosing(WindowEvent e) {
-                System.exit(0);
-              }
-            });
-        }
-
-        // handle frame resizing events
-        applet.setupFrameResizeListener();
-
-        // all set for rockin
-        if (applet.displayable()) {
-          frame.setVisible(true);
-        }
-      }
-
-      applet.requestFocus(); // ask for keydowns
-      //System.out.println("exiting main()");
-
+      applet = (PApplet) c.newInstance();
     } catch (Exception e) {
-      e.printStackTrace();
-      System.exit(1);
+      throw new RuntimeException(e);
     }
+
+    // these are needed before init/start
+    applet.frame = frame;
+    applet.sketchPath = folder;
+    applet.args = PApplet.subset(args, 1);
+    applet.external = external;
+
+    // Need to save the window bounds at full screen,
+    // because pack() will cause the bounds to go to zero.
+    // http://dev.processing.org/bugs/show_bug.cgi?id=923
+    Rectangle fullScreenRect = null;
+
+    // For 0149, moving this code (up to the pack() method) before init().
+    // For OpenGL (and perhaps other renderers in the future), a peer is
+    // needed before a GLDrawable can be created. So pack() needs to be
+    // called on the Frame before applet.init(), which itself calls size(),
+    // and launches the Thread that will kick off setup().
+    // http://dev.processing.org/bugs/show_bug.cgi?id=891
+    // http://dev.processing.org/bugs/show_bug.cgi?id=908
+    if (present) {
+      frame.setUndecorated(true);
+      frame.setBackground(backgroundColor);
+      if (exclusive) {
+        displayDevice.setFullScreenWindow(frame);
+        fullScreenRect = frame.getBounds();
+      } else {
+        DisplayMode mode = displayDevice.getDisplayMode();
+        fullScreenRect = new Rectangle(0, 0, mode.getWidth(), mode.getHeight());
+        frame.setBounds(fullScreenRect);
+        frame.setVisible(true);
+      }
+    }
+    frame.setLayout(null);
+    frame.add(applet);
+    if (present) {
+      frame.invalidate();
+    } else {
+      frame.pack();
+    }
+    // insufficient, places the 100x100 sketches offset strangely
+    //frame.validate();
+
+    applet.init();
+
+    // Wait until the applet has figured out its width.
+    // In a static mode app, this will be after setup() has completed,
+    // and the empty draw() has set "finished" to true.
+    // TODO make sure this won't hang if the applet has an exception.
+    while (applet.defaultSize && !applet.finished) {
+      //System.out.println("default size");
+      try {
+        Thread.sleep(5);
+
+      } catch (InterruptedException e) {
+        //System.out.println("interrupt");
+      }
+    }
+    //println("not default size " + applet.width + " " + applet.height);
+    //println("  (g width/height is " + applet.g.width + "x" + applet.g.height + ")");
+
+    if (present) {
+      // After the pack(), the screen bounds are gonna be 0s
+      frame.setBounds(fullScreenRect);
+      applet.setBounds((fullScreenRect.width - applet.width) / 2,
+                       (fullScreenRect.height - applet.height) / 2,
+                       applet.width, applet.height);
+
+      if (!hideStop) {
+        Label label = new Label("stop");
+        label.setForeground(stopColor);
+        label.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
+              System.exit(0);
+            }
+          });
+        frame.add(label);
+
+        Dimension labelSize = label.getPreferredSize();
+        // sometimes shows up truncated on mac
+        //System.out.println("label width is " + labelSize.width);
+        labelSize = new Dimension(100, labelSize.height);
+        label.setSize(labelSize);
+        label.setLocation(20, fullScreenRect.height - labelSize.height - 20);
+      }
+
+      // not always running externally when in present mode
+      if (external) {
+        applet.setupExternalMessages();
+      }
+
+    } else {  // if not presenting
+      // can't do pack earlier cuz present mode don't like it
+      // (can't go full screen with a frame after calling pack)
+      //        frame.pack();  // get insets. get more.
+      Insets insets = frame.getInsets();
+
+      int windowW = Math.max(applet.width, MIN_WINDOW_WIDTH) +
+        insets.left + insets.right;
+      int windowH = Math.max(applet.height, MIN_WINDOW_HEIGHT) +
+        insets.top + insets.bottom;
+
+      frame.setSize(windowW, windowH);
+
+      if (location != null) {
+        // a specific location was received from PdeRuntime
+        // (applet has been run more than once, user placed window)
+        frame.setLocation(location[0], location[1]);
+
+      } else if (external) {
+        int locationX = editorLocation[0] - 20;
+        int locationY = editorLocation[1];
+
+        if (locationX - windowW > 10) {
+          // if it fits to the left of the window
+          frame.setLocation(locationX - windowW, locationY);
+
+        } else {  // doesn't fit
+          // if it fits inside the editor window,
+          // offset slightly from upper lefthand corner
+          // so that it's plunked inside the text area
+          locationX = editorLocation[0] + 66;
+          locationY = editorLocation[1] + 66;
+
+          if ((locationX + windowW > applet.screen.width - 33) ||
+              (locationY + windowH > applet.screen.height - 33)) {
+            // otherwise center on screen
+            locationX = (applet.screen.width - windowW) / 2;
+            locationY = (applet.screen.height - windowH) / 2;
+          }
+          frame.setLocation(locationX, locationY);
+        }
+      } else {  // just center on screen
+        frame.setLocation((applet.screen.width - applet.width) / 2,
+                          (applet.screen.height - applet.height) / 2);
+      }
+
+      if (backgroundColor == Color.black) {  //BLACK) {
+        // this means no bg color unless specified
+        backgroundColor = SystemColor.control;
+      }
+      frame.setBackground(backgroundColor);
+
+      int usableWindowH = windowH - insets.top - insets.bottom;
+      applet.setBounds((windowW - applet.width)/2,
+                       insets.top + (usableWindowH - applet.height)/2,
+                       applet.width, applet.height);
+
+      if (external) {
+        applet.setupExternalMessages();
+
+      } else {  // !external
+        frame.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+              System.exit(0);
+            }
+          });
+      }
+
+      // handle frame resizing events
+      applet.setupFrameResizeListener();
+
+      // all set for rockin
+      if (applet.displayable()) {
+        frame.setVisible(true);
+      }
+    }
+
+    applet.requestFocus(); // ask for keydowns
+    //System.out.println("exiting main()");
   }
 
 
@@ -7351,7 +7346,7 @@ public class PApplet extends Applet
   }
 
 
-  public void text(char[] chars, int start, int stop, 
+  public void text(char[] chars, int start, int stop,
                    float x, float y, float z) {
     if (recorder != null) recorder.text(chars, start, stop, x, y, z);
     g.text(chars, start, stop, x, y, z);
