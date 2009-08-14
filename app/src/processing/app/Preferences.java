@@ -34,8 +34,6 @@ import processing.app.syntax.*;
 import processing.core.*;
 
 
-
-
 /**
  * Storage class for user preferences and environment settings.
  * <P>
@@ -158,18 +156,6 @@ public class Preferences {
     } catch (Exception e) {
       Base.showError(null, "Could not read default settings.\n" +
                            "You'll need to reinstall Processing.", e);
-    }
-
-    // check for platform-specific properties in the defaults
-    String platformExt = "." + PConstants.platformNames[PApplet.platform];
-    int platformExtLength = platformExt.length();
-    for (String key : table.keySet()) {
-      if (key.endsWith(platformExt)) {
-        // this is a key specific to a particular platform
-        String actualKey = key.substring(0, key.length() - platformExtLength);
-        String value = get(key);
-        table.put(actualKey, value);
-      }
     }
 
     // clone the hash table
@@ -713,6 +699,10 @@ public class Preferences {
 
 
   static protected void load(InputStream input) throws IOException {
+    // check for platform-specific properties in the defaults
+    String platformExt = "." + PConstants.platformNames[PApplet.platform];
+    int platformExtLength = platformExt.length();
+    
     String[] lines = PApplet.loadStrings(input);  // Reads as UTF-8
     for (String line : lines) {
       if ((line.length() == 0) ||
@@ -722,6 +712,19 @@ public class Preferences {
       int equals = line.indexOf('=');
       if (equals != -1) {
         String key = line.substring(0, equals).trim();
+        
+        // check if this is a platform-specific key, and if so, shave things
+        if (key.endsWith(platformExt)) {
+          // this is a key specific to this platform
+          key = key.substring(0, key.length() - platformExtLength);
+        } else {
+          if (table.get(key) != null) {
+            // don't over-write keys that may already be set, since it might
+            // be the platform-specific version that's already in there.
+            // e.g. blah.blah.linux being set before blah.blah in the defaults
+            continue;
+          }
+        }
         String value = line.substring(equals + 1).trim();
         table.put(key, value);
       }
