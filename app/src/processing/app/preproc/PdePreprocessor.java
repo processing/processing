@@ -441,7 +441,7 @@ public class PdePreprocessor {
 
     } else if (programType == STATIC) {
       out.println("public class " + className + " extends PApplet {");
-      out.print(indent + "public void setup() {");
+      out.println(indent + "public void setup() {");
     }
   }
 
