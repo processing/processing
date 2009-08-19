@@ -2,10 +2,20 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <curated>
 
+<software name="Mud Tub" by="Tom Gerhardt" scroll="yes" resize="yes" width="1024" height="700">
+        <image>images/mud.jpg</image>
+          <description>
+             This experimental organic interface allows people to control a computer while playing in the mud. Through an API built with Processing, artists and designers develop mud-controlled games, physics simulations, and expressive tools.
+          </description>
+          <location>http://tomgerhardt.com/mudtub</location>
+          <link href="http://tomgerhardt.com/">tomgerhardt.com</link>
+          <link href="http://itp.nyu.edu/itp/">NYU ITP</link>
+        </software>
+        
 <software name="MOSstack" by="MOS (Michael Meredith, Hilary Sample, William Macfarlane)" scroll="yes" resize="yes" width="1024" height="700">
         <image>images/mos.gif</image>
           <description>
-             The MOSstack software is for stacking blocks within an environment of forces. As each unit is stacked it simultaneously calculates its own weight and balance in real-time to produce strange structural forms.
+             This software is for stacking blocks within an environment of forces. As each unit is stacked it simultaneously calculates its own weight and balance in real-time to produce strange structural forms.
           </description>
           <location>http://www.mos-office.net/project/2008_Onthevergeofcollapse</location>
           <link href="http://www.mos-office.net/project/2008_MOScat">MOScat</link>

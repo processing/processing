@@ -986,8 +986,18 @@ Download here</a>.</description>
        </item>
        
        <item>
-                <date>26 July 2009</date>
+                <date>30 July 2009</date>
                 <description>Software from MOS (Michael Meredith, Hilary Sample, William Macfarlane) added to the <a href="http://processing.org/exhibition">exhibition</a>. This is the one hundred and twenty-fourth project added to the exhibition. Have a look at the history.</description>
+       </item>
+       
+       <item>
+                <date>12 August 2009</date>
+                <description>Processing 1.0.6 released. <a href="http://processing.org/download/">Download here</a>.</description>
+       </item>
+       
+       <item>
+                <date>19 August 2009</date>
+                <description>Software from Tom Gerhardt added to the <a href="http://processing.org/exhibition">exhibition</a>.</description>
        </item>
         
 </updates>
