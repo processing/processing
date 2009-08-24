@@ -999,6 +999,12 @@ Download here</a>.</description>
                 <date>19 August 2009</date>
                 <description>Software from Tom Gerhardt added to the <a href="http://processing.org/exhibition">exhibition</a>.</description>
        </item>
+       
+              <item>
+                <date>24 August 2009</date>
+                <description>Nine new libraries added to <a href="http://processing.org/reference/libraries/">Contributions</a>: ttslib by Nikolaus Gradwohl, MRI3DS and ObjImport by Victor Martins, integralhistogram by Giovanni Tarducci and Alessio Barducci, P-SURF by Claudio Fantacci and Alessandro Martini, CbModel by Federico Bartoli, UnwrappingLib by Martin Fuchs, Voltron by Joseph Scully, Arduino Library by David A. Mellis.</description>
+       </item>
+
         
 </updates>
 
