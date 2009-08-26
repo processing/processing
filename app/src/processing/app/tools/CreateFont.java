@@ -54,7 +54,7 @@ public class CreateFont extends JFrame implements Tool {
   JButton okButton;
   JTextField filenameField;
 
-  Hashtable table;
+  HashMap<String,Font> table;
   boolean smooth = true;
   boolean all = false;
 
@@ -117,7 +117,7 @@ public class CreateFont extends JFrame implements Tool {
     Font fonts[] = ge.getAllFonts();
     
     String flist[] = new String[fonts.length];
-    table = new Hashtable();
+    table = new HashMap<String,Font>();
 
     int index = 0;
     for (int i = 0; i < fonts.length; i++) {
