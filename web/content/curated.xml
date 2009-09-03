@@ -2,6 +2,16 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <curated>
 
+<software name="Wayfarer" by="Ben Hemmendinger" scroll="yes" resize="yes" width="1024" height="700">
+        <image>images/wf3.png</image>
+          <description>
+             Wayfarer is a developing roguelike game with retro, quasi-3D graphics. Explore randomly generated dungeons and battle peculiar foes! Perish horribly!
+          </description>
+          <location>http://benhem.com/games/wayfarer</location>
+          <link href="http://benhem.com/">benhem.com</link>
+          <link href="http://roguebasin.roguelikedevelopment.org/index.php?title=Wayfarer">RogueBasin</link>
+        </software>
+        
 <software name="Mud Tub" by="Tom Gerhardt" scroll="yes" resize="yes" width="1024" height="700">
         <image>images/mud.jpg</image>
           <description>
