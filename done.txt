@@ -1,3 +1,11 @@
+0169 pde (1.0.7)
+X Erroneous line highlighting is off by one if there is no setup() routine
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1263
+X Auto-format kills Unicode characters
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1312
+X tweaks for Mac OS X Snow Leopard, to force it to run in 32-bit mode
+
+
 0168 pde (1.0.6)
 X suggest declaring PDF's members protected
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1276
