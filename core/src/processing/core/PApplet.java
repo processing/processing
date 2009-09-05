@@ -8,8 +8,7 @@
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
+  License as published by the Free Software Foundation, version 2.1.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -825,7 +824,7 @@ public class PApplet extends Applet
       meth.add(o, method);
 
     } catch (NoSuchMethodException nsme) {
-      die("There is no " + name + "() method in the class " +
+      die("There is no public " + name + "() method in the class " +
           o.getClass().getName());
 
     } catch (Exception e) {
@@ -842,7 +841,7 @@ public class PApplet extends Applet
       meth.add(o, method);
 
     } catch (NoSuchMethodException nsme) {
-      die("There is no " + name + "() method in the class " +
+      die("There is no public " + name + "() method in the class " +
           o.getClass().getName());
 
     } catch (Exception e) {
@@ -2257,7 +2256,7 @@ public class PApplet extends Applet
     } catch (InvocationTargetException e) {
       e.getTargetException().printStackTrace();
     } catch (NoSuchMethodException nsme) {
-      System.err.println("There is no " + name + "() method " +
+      System.err.println("There is no public " + name + "() method " +
                          "in the class " + getClass().getName());
     } catch (Exception e) {
       e.printStackTrace();
@@ -7304,6 +7303,11 @@ public class PApplet extends Applet
   }
 
 
+  public float textWidth(char[] chars, int start, int length) {
+    return g.textWidth(chars, start, length);
+  }
+
+
   public void text(char c) {
     if (recorder != null) recorder.text(c);
     g.text(c);
@@ -7346,7 +7350,7 @@ public class PApplet extends Applet
   }
 
 
-  public void text(char[] chars, int start, int stop,
+  public void text(char[] chars, int start, int stop, 
                    float x, float y, float z) {
     if (recorder != null) recorder.text(chars, start, stop, x, y, z);
     g.text(chars, start, stop, x, y, z);
