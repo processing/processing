@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-08 Ben Fry and Casey Reas
+  Copyright (c) 2004-09 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -379,11 +379,16 @@ public class Runner implements MessageConsumer {
     //String addr = "localhost:" + (8000 + (int) (Math.random() * 1000));
     //String addr = "" + (8000 + (int) (Math.random() * 1000));
 
-    String commandArgs = Base.isWindows() ?
-      "java -Xrunjdwp:transport=dt_shmem,address=" + addr + ",suspend=y " :
+    String commandArgs =
       "java -Xrunjdwp:transport=dt_socket,address=" + addr + ",suspend=y ";
-    //String commandArgs = "java -agentlib:jdwp=transport=dt_socket,address=" + addr + ",suspend=y ";
-    //String commandArgs = "java -agentlib:jdwp=transport=dt_socket,address=" + addr + ",server=n,suspend=y ";
+    if (Base.isWindows()) {
+      commandArgs =
+        "java -Xrunjdwp:transport=dt_shmem,address=" + addr + ",suspend=y ";
+    } else if (Base.isMacOS()) {
+      commandArgs =
+        "java -d32 -Xrunjdwp:transport=dt_socket,address=" + addr + ",suspend=y ";
+    }
+
     for (int i = 0; i < vmParams.length; i++) {
       commandArgs = addArgument(commandArgs, vmParams[i], ' ');
     }
