@@ -1,8 +1,11 @@
 0169 pde
 X Erroneous line highlighting is off by one if there is no setup() routine
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1263
+X Auto-format kills Unicode characters
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1312
+X tweaks for Mac OS X Snow Leopard, to force it to run in 32-bit mode
 
-
+_ System.getProperty("sun.arch.data.model").equals("32").
 _ use launch4j when exporting applications for windows?
 
 _ post to web example 
@@ -16,6 +19,28 @@ _   export sketch as applet when uploading
 _   save sketch zip files
 _   have a means to load them from "teacher" version of p5
 _   figure out how to use the 
+
+
+package processing.app.debug;
+
+import com.sun.jna.Library;
+import com.sun.jna.Native;
+
+public interface CLibrary extends Library {
+  CLibrary INSTANCE = (CLibrary)Native.loadLibrary("c", CLibrary.class);
+    int setenv(String name, String value, int overwrite);
+  String getenv(String name);
+  int unsetenv(String name);
+  int putenv(String string);
+}
+
+and then, in Runner.launch(), right before the vm = launcVirtualMachine(....) line I do:
+
+CLibrary clib = CLibrary.INSTANCE;
+clib.setenv("DYLD_LIBRARY_PATH", "/blah/blah", 1);
+
+It compiles ok, but when I try to run Processing with run.sh, it fails with the following error:
+java.lang.NoClassDefFoundError:  com/sun/jna/Libray
 
 
 _ add proper copyright and license information for all included projects
