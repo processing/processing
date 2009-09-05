@@ -2604,6 +2604,14 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  /** 
+   * TODO not sure if this stays...
+   */
+  public float textWidth(char[] chars, int start, int length) {
+    return textWidthImpl(chars, start, start + length);
+  }
+  
+  
   /**
    * Implementation of returning the text width of
    * the chars [start, stop) in the buffer.
