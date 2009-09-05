@@ -7,7 +7,7 @@
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License version 2 
+  it under the terms of the GNU General Public License version 2
   as published by the Free Software Foundation.
 
   This program is distributed in the hope that it will be useful,
@@ -649,7 +649,7 @@ public class Editor extends JFrame implements RunnerListener {
 
         URL[] urlList = new URL[archives.length];
         for (int j = 0; j < urlList.length; j++) {
-          urlList[j] = archives[j].toURL();
+          urlList[j] = archives[j].toURI().toURL();
         }
         URLClassLoader loader = new URLClassLoader(urlList);
 
