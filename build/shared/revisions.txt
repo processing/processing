@@ -1,3 +1,29 @@
+PROCESSING 1.0.7 (REV 0169) - 4 September 2009
+
+Bug fixes and updates, also some tweaks for Mac OS X Snow Leopard. 
+
+[ changes ] 
+
++ Tweaks for Mac OS X Snow Leopard, to force it to run in 32-bit mode.
+  This should bring back the video library (if temporarily), and hopefully
+  fix serial as well, though I didn't have a serial device handy to test. 
+
++ Fix problem where line highlighting was off in 'static' mode.
+  http://dev.processing.org/bugs/show_bug.cgi?id=1263
+
++ Auto-format was killing Unicode characters (how did this last so long?)
+  http://dev.processing.org/bugs/show_bug.cgi?id=1312
+
++ PVector.angleDistance() returning NaN due to precision errors
+  http://dev.processing.org/bugs/show_bug.cgi?id=1316
+
++ Removed a major try/catch block from PApplet.main(), hopefully 
+  this will allow some exception stuff to come through properly.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING 1.0.6 (REV 0168) - 12 August 2009
 
 Bug fixes and minor changes. Most important are replacement JOGL libraries
