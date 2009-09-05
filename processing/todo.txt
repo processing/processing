@@ -5,6 +5,7 @@ X Auto-format kills Unicode characters
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1312
 X tweaks for Mac OS X Snow Leopard, to force it to run in 32-bit mode
 
+
 _ System.getProperty("sun.arch.data.model").equals("32").
 _ use launch4j when exporting applications for windows?
 
