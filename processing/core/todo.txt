@@ -1,5 +1,12 @@
 0170 core
+X added some min/max functions that work with doubles
+X   not sure if those are staying in or not
 
+_ key and mouse events delivered out of order
+_   http://dev.processing.org/bugs/show_bug.cgi?id=638
+_ key/mouse events have concurrency problems with noLoop()
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1323
+_   need to say "no drawing inside mouse/key events w/ noLoop"
 
 _ make the index lookup use numbers up to 256?
 
@@ -232,8 +239,6 @@ _ PApplet.main(new String[] { "classname" }) won't pass in args
 _   this means that no args are after passed to the class
 _   the fix would be to use the following as the call to main()
 _   PApplet.main(append(new String[] { "classname }, args));
-_ key and mouse events delivered out of order
-_   http://dev.processing.org/bugs/show_bug.cgi?id=638
 _ figure out why 1024x768 image takes 3.5 seconds to load
 _   would using a BufferedImage work better?
 _   is the image actually a BufferedImage so PixelGrabber is a waste?

@@ -182,6 +182,7 @@ public class PImage implements PConstants, Cloneable {
       raster.getDataElements(0, 0, width, height, pixels);
 
     } else {  // go the old school java 1.0 route
+//        System.out.println(img.getClass().getName());
       width = img.getWidth(null);
       height = img.getHeight(null);
       pixels = new int[width * height];
