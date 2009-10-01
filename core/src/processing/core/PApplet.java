@@ -2687,6 +2687,10 @@ public class PApplet extends Applet
     return (a > b) ? a : b;
   }
 
+  static public final double max(double a, double b) {
+    return (a > b) ? a : b;
+  }
+
 
   static public final int max(int a, int b, int c) {
     return (a > b) ? ((a > c) ? a : c) : ((b > c) ? b : c);
@@ -2732,11 +2736,33 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * Find the maximum value in an array.
+   * Throws an ArrayIndexOutOfBoundsException if the array is length 0.
+   * @param list the source array
+   * @return The maximum value
+   */
+  static public final double max(double[] list) {
+    if (list.length == 0) {
+      throw new ArrayIndexOutOfBoundsException(ERROR_MIN_MAX);
+    }
+    double max = list[0];
+    for (int i = 1; i < list.length; i++) {
+      if (list[i] > max) max = list[i];
+    }
+    return max;
+  }
+
+
   static public final int min(int a, int b) {
     return (a < b) ? a : b;
   }
 
   static public final float min(float a, float b) {
+    return (a < b) ? a : b;
+  }
+
+  static public final double min(double a, double b) {
     return (a < b) ? a : b;
   }
 
@@ -2746,6 +2772,10 @@ public class PApplet extends Applet
   }
 
   static public final float min(float a, float b, float c) {
+    return (a < b) ? ((a < c) ? a : c) : ((b < c) ? b : c);
+  }
+
+  static public final double min(double a, double b, double c) {
     return (a < b) ? ((a < c) ? a : c) : ((b < c) ? b : c);
   }
 
@@ -2766,6 +2796,8 @@ public class PApplet extends Applet
     }
     return min;
   }
+  
+  
   /**
    * Find the minimum value in an array.
    * Throws an ArrayIndexOutOfBoundsException if the array is length 0.
@@ -2777,6 +2809,24 @@ public class PApplet extends Applet
       throw new ArrayIndexOutOfBoundsException(ERROR_MIN_MAX);
     }
     float min = list[0];
+    for (int i = 1; i < list.length; i++) {
+      if (list[i] < min) min = list[i];
+    }
+    return min;
+  }
+
+
+  /**
+   * Find the minimum value in an array.
+   * Throws an ArrayIndexOutOfBoundsException if the array is length 0.
+   * @param list the source array
+   * @return The minimum value
+   */
+  static public final double min(double[] list) {
+    if (list.length == 0) {
+      throw new ArrayIndexOutOfBoundsException(ERROR_MIN_MAX);
+    }
+    double min = list[0];
     for (int i = 1; i < list.length; i++) {
       if (list[i] < min) min = list[i];
     }
