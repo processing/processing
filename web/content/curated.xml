@@ -2,6 +2,16 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <curated>
 
+<software name="Telekom Realtime Information Graphics" by="Zum Kuckuck" scroll="yes" resize="yes" width="1024" height="700">
+        <image>images/realtime.jpg</image>
+          <description>
+             Realtime Information Graphics showing the international data interchange and the network traffic at the Product Experience Center of the Deutsche Telekom in Darmstadt, Germany.
+          </description>
+          <location>http://projects.zumkuckuck.com/realtime/</location>
+          <link href="http://www.zumkuckuck.com">Zum Kuckuck</link>
+          <link href="http://www.markgraph.com">Atelier Markgraph</link>
+        </software>
+        
 <software name="Wayfarer" by="Ben Hemmendinger" scroll="yes" resize="yes" width="1024" height="700">
         <image>images/wf3.png</image>
           <description>

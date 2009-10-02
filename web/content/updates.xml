@@ -992,7 +992,7 @@ Download here</a>.</description>
        
        <item>
                 <date>12 August 2009</date>
-                <description>Processing 1.0.6 released. <a href="http://processing.org/download/">Download here</a>.</description>
+                <description>Processing 1.0.6 released.<a href="http://processing.org/download/">Download here</a>.</description>
        </item>
        
        <item>
@@ -1008,6 +1008,16 @@ Download here</a>.</description>
         <item>
                 <date>3 September 2009</date>
                 <description>Software from Ben Hemmendinger added to the <a href="http://processing.org/exhibition">exhibition</a>.</description>
+       </item>
+       
+       <item>
+                <date>4 September 2009</date>
+                <description>Processing 1.0.7 released.</description>
+       </item>
+       
+       <item>
+                <date>2 October 2009</date>
+                <description>Software from Zum Kuckuck added to the <a href="http://processing.org/exhibition">exhibition</a>.</description>
        </item>
 </updates>
 
