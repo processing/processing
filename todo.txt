@@ -1,5 +1,39 @@
 0170 pde
+_ new version of minim: 2.0.2
+_   http://code.compartmental.net/tools/minim/
+_   it also has its own examples, so those need to work with the ex menu too
+X update quaqua to 6.0.1
+_ "Unrecognized option: -d32" on OS X 10.4
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1324
 
+_ osx not opening a sketch at all on double-click? (though opening the app)
+_ with the same sketch open, a handleOpen() might open a second on top of it
+_ NPE when double-clicking PDE on Mac OS X
+_   is thread sync the problem? rebuild menus being called 2x?
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1251
+_ multiple entries in file menu
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1260
+_ blank sketch opened even if another opened by double-click
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1261
+_ also can have case of opening two of same sketch at once
+_   if sketch was open, then restart by dragging the .pde to p5.app
+
+_ when disk is full, Processing zeroes files when it tries to save changes
+_   even saveStream() does this.. simple fix, b/c it's all one fxn
+_   or at least should be routed through a single fxn
+_   http://dev.processing.org/bugs/show_bug.cgi?id=967
+
+_ Outdated "Get the latest Java Plug-in here"
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1331
+
+_ check into apple.awt.graphics.UseQuartz again
+_   both for p5.app and for the exported app
+_   also need to look at the main to see what it's doing
+<key>Properties</key>
+<dict>
+	<key>apple.awt.graphics.UseQuartz</key>
+	<string>true</string>
+</dict>
 
 _ System.getProperty("sun.arch.data.model").equals("32").
 _ use launch4j when exporting applications for windows?
@@ -42,9 +76,6 @@ java.lang.NoClassDefFoundError:  com/sun/jna/Libray
 _ add proper copyright and license information for all included projects
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1303
 
-_ osx not opening a sketch at all on double-click? (though opening the app)
-_ with the same sketch open, a handleOpen() might open a second on top of it
-
 _ need an "install library" option to deal with urls.. oy
 _ move library examples to the examples menu
 _   do this once the library documentation has been fixed up
@@ -68,16 +99,6 @@ _   also need to explain exception handling in general
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1281
 
 _ add code for setting the l&f from the prefs file for linux
-
-_ NPE when double-clicking PDE on Mac OS X
-_   is thread sync the problem? rebuild menus being called 2x?
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1251
-_ multiple entries in file menu
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1260
-_ blank sketch opened even if another opened by double-click
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1261
-_ also can have case of opening two of same sketch at once
-_   if sketch was open, then restart by dragging the .pde to p5.app
 
 _ problem with startup on vista 64
 _   try this with windows 7 64-bit (install on laptop?)
@@ -115,8 +136,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=1225
 3 _ cmd-shift-n not creating new tab (related to 505?)
 3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1081
 
-_ when disk is full, Processing zeroes files when it tries to save changes
-_   http://dev.processing.org/bugs/show_bug.cgi?id=967
 _ sketch marked as modified too aggressively
 _   http://dev.processing.org/bugs/show_bug.cgi?id=328
 
@@ -765,6 +784,7 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=504
 _ convert tabs to spaces when pasting text
 _   http://dev.processing.org/bugs/show_bug.cgi?id=506
 _ add "recent files" list to open menu?
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1335
 _ unchecking 'use external editor' sketch should not set modified
 _   dangerous if a version that hasn't been re-loaded has possibility
 _   to overwrite. i.e. make a change and save in external editor,
