@@ -691,7 +691,7 @@ public class PImage implements PConstants, Cloneable {
         throw new RuntimeException("Use filter(POSTERIZE, int levels) " +
         "instead of filter(POSTERIZE)");
 
-      case RGB:
+      case OPAQUE:
         for (int i = 0; i < pixels.length; i++) {
           pixels[i] |= 0xff000000;
         }
