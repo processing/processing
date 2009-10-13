@@ -86,6 +86,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
   protected float[] lightArray = new float[] { 1, 1, 1 };
 
   static int maxTextureSize;
+  static Boolean npotTextures;
 
   int[] textureDeleteQueue = new int[10];
   int textureDeleteQueueCount = 0;
@@ -822,10 +823,16 @@ public class PGraphicsOpenGL extends PGraphics3D {
       //System.out.println("got index " + tindex);
 
       // bit shifting this might be more efficient
-      int width2 = nextPowerOfTwo(source.width);
-      //(int) Math.pow(2, Math.ceil(Math.log(source.width) / Math.log(2)));
-      int height2 = nextPowerOfTwo(source.height);
-      //(int) Math.pow(2, Math.ceil(Math.log(source.height) / Math.log(2)));
+      if (npotTextures == null) {
+        npotTextures = gl.isExtensionAvailable("GL_ARB_texture_non_power_of_two") ? 
+          Boolean.TRUE : Boolean.FALSE;
+      }
+      int width2 = source.width;
+      int height2 = source.height;
+      if (npotTextures == Boolean.FALSE) {
+        width2 = nextPowerOfTwo(source.width);
+        height2 = nextPowerOfTwo(source.height);
+      }
 
       // use glGetIntegerv with the argument GL_MAX_TEXTURE_SIZE
       // to figure out min/max texture sizes
@@ -838,7 +845,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
       if ((width2 > maxTextureSize) || (height2 > maxTextureSize)) {
         throw new RuntimeException("Image width and height cannot be" +
                                    " larger than " + maxTextureSize +
-                                   " with your graphics card.");
+                                   " with this graphics card.");
       }
 
       if ((width2 > twidth) || (height2 > theight)) {
@@ -2786,6 +2793,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
   protected PImage getImpl(int x, int y, int w, int h) {
     PImage newbie = new PImage(w, h); //new int[w*h], w, h, ARGB);
+    newbie.parent = parent;
 
     IntBuffer newbieBuffer = BufferUtil.newIntBuffer(w*h);
     gl.glReadPixels(x, y, w, h, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, newbieBuffer);
