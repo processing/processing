@@ -290,37 +290,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
       gl.glDisable(GL.GL_LIGHT0 + i);
     }
 
-    gl.glMatrixMode(GL.GL_PROJECTION);
-    if (projectionFloats == null) {
-      projectionFloats = new float[] {
-        projection.m00, projection.m10, projection.m20, projection.m30,
-        projection.m01, projection.m11, projection.m21, projection.m31,
-        projection.m02, projection.m12, projection.m22, projection.m32,
-        projection.m03, projection.m13, projection.m23, projection.m33
-      };
-    } else {
-      projectionFloats[0] = projection.m00;
-      projectionFloats[1] = projection.m10;
-      projectionFloats[2] = projection.m20;
-      projectionFloats[3] = projection.m30;
-
-      projectionFloats[4] = projection.m01;
-      projectionFloats[5] = projection.m11;
-      projectionFloats[6] = projection.m21;
-      projectionFloats[7] = projection.m31;
-
-      projectionFloats[8] = projection.m02;
-      projectionFloats[9] = projection.m12;
-      projectionFloats[10] = projection.m22;
-      projectionFloats[11] = projection.m32;
-
-      projectionFloats[12] = projection.m03;
-      projectionFloats[13] = projection.m13;
-      projectionFloats[14] = projection.m23;
-      projectionFloats[15] = projection.m33;
-    }
-    //projection.print();
-    gl.glLoadMatrixf(projectionFloats, 0);
+    updateProjection();
 
     gl.glMatrixMode(GL.GL_MODELVIEW);
     gl.glLoadIdentity();
@@ -360,8 +330,8 @@ public class PGraphicsOpenGL extends PGraphics3D {
     // are there other things to do here?
     //System.out.println("beginDraw() stop error " + PApplet.hex(gl.glGetError()));
   }
-
-
+  
+  
   public void endDraw() {
     //System.out.println("endDraw() error " + PApplet.hex(gl.glGetError()));
 
@@ -1844,6 +1814,44 @@ public class PGraphicsOpenGL extends PGraphics3D {
   //public void frustum(float left, float right,
   //                    float bottom, float top,
   //                    float near, float far)
+  
+  /**
+   * Move the projection matrix over to OpenGL.
+   */
+  protected void updateProjection() {
+    gl.glMatrixMode(GL.GL_PROJECTION);
+    if (projectionFloats == null) {
+      projectionFloats = new float[] {
+        projection.m00, projection.m10, projection.m20, projection.m30,
+        projection.m01, projection.m11, projection.m21, projection.m31,
+        projection.m02, projection.m12, projection.m22, projection.m32,
+        projection.m03, projection.m13, projection.m23, projection.m33
+      };
+    } else {
+      projectionFloats[0] = projection.m00;
+      projectionFloats[1] = projection.m10;
+      projectionFloats[2] = projection.m20;
+      projectionFloats[3] = projection.m30;
+
+      projectionFloats[4] = projection.m01;
+      projectionFloats[5] = projection.m11;
+      projectionFloats[6] = projection.m21;
+      projectionFloats[7] = projection.m31;
+
+      projectionFloats[8] = projection.m02;
+      projectionFloats[9] = projection.m12;
+      projectionFloats[10] = projection.m22;
+      projectionFloats[11] = projection.m32;
+
+      projectionFloats[12] = projection.m03;
+      projectionFloats[13] = projection.m13;
+      projectionFloats[14] = projection.m23;
+      projectionFloats[15] = projection.m33;
+    }
+    //projection.print();
+    gl.glLoadMatrixf(projectionFloats, 0);
+  }
+
   //public void printProjection()
 
   //public float screenX(float x, float y)
@@ -2796,6 +2804,8 @@ public class PGraphicsOpenGL extends PGraphics3D {
     newbie.parent = parent;
 
     IntBuffer newbieBuffer = BufferUtil.newIntBuffer(w*h);
+    // glReadPixels runs from y being the bottom of the screen
+    //gl.glReadPixels(x, (height-1) - y, w, h, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, newbieBuffer);
     gl.glReadPixels(x, y, w, h, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, newbieBuffer);
     newbieBuffer.get(newbie.pixels);
 
