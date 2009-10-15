@@ -3,6 +3,30 @@ X added some min/max functions that work with doubles
 X   not sure if those are staying in or not
 X filter(RGB) supposed to be filter(OPAQUE) 
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1346
+X implement non-power-of-2 textures
+X fix get() when used with save() in OpenGL mode
+X immediately update projection with OpenGL 
+X   in the past, projection updates required a new frame
+X   also prevents camera/project from being reset with setSize() (regression?)
+X     which was a problem anyway because it made GL calls outside draw()
+
+_ should vertexTexture() divide by width/height or width-1/height-1?
+
+_ open up the pdf library more (philho)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1343
+_ changing vertex alpha in P3D in a QUAD_STRIP is ignored
+_   with smoothing, it works fine, but with PTriangle, it's not
+_ smooth() not working with applets an createGraphics(JAVA2D)
+_   but works fine with applications
+
+_ get() with OPENGL is grabbing the wrong coords
+
+_ No textures render with hint(ENABLE_ACCURATE_TEXTURES)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=985
+_   need to remove the hint from the reference
+_   need to throw an error when it's used
+_ deal with issue of single pixel seam at the edge of textures
+_   http://dev.processing.org/bugs/show_bug.cgi?id=602
 
 _ opengl camera does not update on current frame (has to do a second frame)
 
@@ -180,12 +204,6 @@ _ smooth in P3D has zbuffer glitches
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1000
 _ smoothing is slow
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1001
-_ No textures render with hint(ENABLE_ACCURATE_TEXTURES)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=985
-_   need to remove the hint from the reference
-_   need to throw an error when it's used
-_ deal with issue of single pixel seam at the edge of textures
-_   ??? what is the bug # for this one?
 _ textured sphere example needs to set normals
 _   also needs fix for last edge and the seam
 
