@@ -1,37 +1,4 @@
-0170 pde (1.0.8)
-X update java on linux/windows to 6u16
-X update quaqua to 6.0.1
-X preferences broken
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1320
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1322
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1325
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1329
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1336
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1337
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1344
-X check for usequartz problems in snow leopard
-X "Unrecognized option: -d32" on OS X 10.4
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1324
-X slow response or spinning wheel on osx
-X   remove menu dimming code
-X   http://dev.processing.org/bugs/show_bug.cgi?id=786
-X new version of minim: 2.0.2
-X   http://code.compartmental.net/tools/minim/
-X Outdated "Get the latest Java Plug-in here"
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1331
-X when disk is full, Processing zeroes files when it tries to save changes
-X   even saveStream() does this.. simple fix, b/c it's all one fxn
-X   or at least should be routed through a single fxn
-X   http://dev.processing.org/bugs/show_bug.cgi?id=967
-X problems with save on close
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1193
-X deleting new tab causes troubles
-X   florian had another version of this
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1332
-X Saving the project with the same name as an existing tab may delete code
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1102
-X after deleting a tab code still get's preprocessed, pde file is not forgotten
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1092
+0171 pde (1.0.9? 1.5?)
 
 
 _ the code[] array in Sketch is super hokey... switch to an arraylist
