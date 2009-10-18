@@ -2796,8 +2796,8 @@ public class PApplet extends Applet
     }
     return min;
   }
-  
-  
+
+
   /**
    * Find the minimum value in an array.
    * Throws an ArrayIndexOutOfBoundsException if the array is length 0.
@@ -4443,6 +4443,8 @@ public class PApplet extends Applet
 
 
   static public void saveStrings(File file, String strings[]) {
+    saveStrings(createOutput(file), strings);
+    /*
     try {
       String location = file.getAbsolutePath();
       createPath(location);
@@ -4456,18 +4458,16 @@ public class PApplet extends Applet
     } catch (IOException e) {
       e.printStackTrace();
     }
+    */
   }
 
 
   static public void saveStrings(OutputStream output, String strings[]) {
-    try {
-      OutputStreamWriter osw = new OutputStreamWriter(output, "UTF-8");
-      PrintWriter writer = new PrintWriter(osw);
-      for (int i = 0; i < strings.length; i++) {
-        writer.println(strings[i]);
-      }
-      writer.flush();
-    } catch (UnsupportedEncodingException e) { }  // will not happen
+    PrintWriter writer = createWriter(output);
+    for (int i = 0; i < strings.length; i++) {
+      writer.println(strings[i]);
+    }
+    writer.flush();
   }
 
 
@@ -7400,7 +7400,7 @@ public class PApplet extends Applet
   }
 
 
-  public void text(char[] chars, int start, int stop, 
+  public void text(char[] chars, int start, int stop,
                    float x, float y, float z) {
     if (recorder != null) recorder.text(chars, start, stop, x, y, z);
     g.text(chars, start, stop, x, y, z);
