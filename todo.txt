@@ -1,10 +1,62 @@
-0170 pde
-_ new version of minim: 2.0.2
-_   http://code.compartmental.net/tools/minim/
-_   it also has its own examples, so those need to work with the ex menu too
+0170 pde (1.0.8)
+X update java on linux/windows to 6u16
 X update quaqua to 6.0.1
-_ "Unrecognized option: -d32" on OS X 10.4
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1324
+X preferences broken
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1320
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1322
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1325
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1329
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1336
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1337
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1344
+X check for usequartz problems in snow leopard
+X "Unrecognized option: -d32" on OS X 10.4
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1324
+X slow response or spinning wheel on osx
+X   remove menu dimming code
+X   http://dev.processing.org/bugs/show_bug.cgi?id=786
+X new version of minim: 2.0.2
+X   http://code.compartmental.net/tools/minim/
+X Outdated "Get the latest Java Plug-in here"
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1331
+X when disk is full, Processing zeroes files when it tries to save changes
+X   even saveStream() does this.. simple fix, b/c it's all one fxn
+X   or at least should be routed through a single fxn
+X   http://dev.processing.org/bugs/show_bug.cgi?id=967
+X problems with save on close
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1193
+_ deleting new tab causes troubles
+_   florian had another version of this
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1332
+--- Sketch.java	2009-09-19 01:32:33.000000000 -0500
++++ Sketch.new.java	2009-09-19 01:32:27.000000000 -0500
+@@ -594,7 +594,8 @@
+         for (int j = i; j < codeCount-1; j++) {
+           code[j] = code[j+1];
+         }
+-        codeCount--;
++        code = (SketchCode[]) PApplet.shorten(code);
++	codeCount--;
+         return;
+       }
+     }
+
+_ for Java 1.6 on osx, replace com.apple.eio.FileManager.openURL(url); 
+_   with java.awt.Desktop.browse() and java.awt.Desktop.open()
+
+_ add to troubleshooting:
+_   remove/rename the preferences file
+_   change sketchbook folder to a new location and restart
+_   need to only load p5 libs from the p5 directory
+_   update the text on the bugzilla page
+
+NSMenu.setMenubarVisible(false);
+Then we used Cocoa via JNI:
+if([NSMenu menuBarVisible]){
+	[NSMenu setMenuBarVisible:NO];
+}
+You can't do that from the AWT event thread. You need to do a -performSelectorOnMainThread to do that on the AppKit event thread.
+Please see <http://developer.apple.com/mac/library/technotes/tn2005/tn2147.html> for more information, particularly the section about "Calling AppKit from AWT/Swing".
 
 _ osx not opening a sketch at all on double-click? (though opening the app)
 _ with the same sketch open, a handleOpen() might open a second on top of it
@@ -18,14 +70,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=1261
 _ also can have case of opening two of same sketch at once
 _   if sketch was open, then restart by dragging the .pde to p5.app
 
-_ when disk is full, Processing zeroes files when it tries to save changes
-_   even saveStream() does this.. simple fix, b/c it's all one fxn
-_   or at least should be routed through a single fxn
-_   http://dev.processing.org/bugs/show_bug.cgi?id=967
-
-_ Outdated "Get the latest Java Plug-in here"
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1331
-
 _ check into apple.awt.graphics.UseQuartz again
 _   both for p5.app and for the exported app
 _   also need to look at the main to see what it's doing
@@ -36,7 +80,8 @@ _   also need to look at the main to see what it's doing
 </dict>
 
 _ System.getProperty("sun.arch.data.model").equals("32").
-_ use launch4j when exporting applications for windows?
+_ use launch4j when exporting applications for windows
+_   yes, for 1.5
 
 _ post to web example 
 _   particularly for uploading image data
