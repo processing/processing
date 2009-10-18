@@ -61,11 +61,11 @@ Combination of <b>readBytesUntil()</b> and <b>readString()</b>. Returns <b>null<
 </parameter>
 
 <parameter>
-<label>serial</label>
+<label>interesting</label>
 <description>byte: character designated to mark the end of the data</description>
 </parameter>
 
-<returns>int</returns>
+<returns>String</returns>
 
 <related></related>
 

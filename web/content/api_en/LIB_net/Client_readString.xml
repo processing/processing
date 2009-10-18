@@ -47,7 +47,7 @@ Returns the all the data from the buffer as a String. This method assumes the in
 </syntax>
 
 <parameter>
-<label>mov</label>
+<label>client</label>
 <description>any variable of type Client</description>
 </parameter>
 

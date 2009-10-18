@@ -19,8 +19,6 @@ void setup()
 {
   size(200, 200);
 
-  myCapture = new Capture(this, width, height, 30);
-
   // The name of the capture device is dependent those
   // plugged into the computer. To get a list of the 
   // choices, uncomment the following line 
@@ -28,6 +26,10 @@ void setup()
   // And to specify the camera, replace "Camera Name" 
   // in the next line with one from Capture.list()
   // myCapture = new Capture(this, width, height, "Camera Name", 30);
+  
+  // This code will try to use the last device used
+  // by a QuickTime program
+  myCapture = new Capture(this, width, height, 30);
 }
 
 void captureEvent(Capture myCapture) {

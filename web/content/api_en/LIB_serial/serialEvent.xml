@@ -22,7 +22,7 @@ int lf = 10;      // ASCII linefeed
  
 void setup() { 
   size(400,200); 
-  // Make your own font. It's fun! 
+  // You'll need to make this font with the Create Font Tool 
   myFont = loadFont("ArialMS-18.vlw"); 
   textFont(myFont, 18); 
   // List all the available serial ports: 
@@ -40,24 +40,24 @@ void draw() {
 } 
  
 void serialEvent(Serial p) { 
-  inString = (myPort.readString()); 
+  inString = p.readString(); 
 } 
 
 </code>
 </example>
 
 <description>
-Called when data is available. Use the <b>read()</b> method to capture this data. The <b>serialEvent()</b> can be set with <b>buffer()</b> to only trigger after a certain number of data elements are read and can be set with <b>bufferUntil()</b> to only trigger after a specific character is read. The <b>which</b> parameter contains the name of the port where new data is available, but is only useful when there is more than one serial connection open and it's necessary to distinguish between the two. 
+Called when data is available. Use one of the <b>read()</b> methods to capture this data. The <b>serialEvent()</b> can be set with <b>buffer()</b> to only trigger after a certain number of data elements are read and can be set with <b>bufferUntil()</b> to only trigger after a specific character is read. The <b>which</b> parameter contains the name of the port where new data is available, but is only useful when there is more than one serial connection open and it's necessary to distinguish between the two. 
 </description>
 
 <syntax>
-void serialEvent(Serial <c>which</c>) {
+void serialEvent(Serial <c>whichPort</c>) {
   <c>statements</c>
 }
 </syntax>
 
 <parameter>
-<label>which</label>
+<label>whichPort</label>
 <description>Serial: the port where new data is available</description>
 </parameter>
 

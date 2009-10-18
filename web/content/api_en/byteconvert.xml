@@ -12,7 +12,7 @@
 <image></image>
 <code>
 char c = 'E';
-b = byte(c);
+byte b = byte(c);
 println(c + " : " + b);  // Prints "E : 69"
 
 int i = 130;

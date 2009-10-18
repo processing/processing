@@ -31,7 +31,7 @@ sphere(20);
 </example>
 
 <description>
-Sets the amount of gloss in the surface of shapes. Used in combination with <b>ambient</b>, <b>specular()</b>, and <b>emissive()</b> in setting the materal properties of shapes.
+Sets the amount of gloss in the surface of shapes. Used in combination with <b>ambient()</b>, <b>specular()</b>, and <b>emissive()</b> in setting the materal properties of shapes.
 </description>
 
 <syntax>

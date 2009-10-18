@@ -34,7 +34,7 @@ image(b, 50, 0);
 </example>
 
 <description>
-Filters an image as defined by one of the following modes:<br /><br />THRESHOLD - converts the image to black and white pixels depending if they are above or below the threshold defined by the level parameter. The level must be between 0.0 (black) and 1.0(white). If no level is specified, 0.5 is used.<br /><br />GRAY - converts any colors in the image to grayscale equivalents<br /><br />INVERT - sets each pixel to its inverse value<br /><br />POSTERIZE - limits each channel of the image to the number of colors specified as the level parameter<br /><br />BLUR - executes a Guassian blur with the level parameter specifying the extent of the blurring. If no level parameter is used, the blur is equivalent to Guassian blur of radius 1.<br /><br />OPAQUE - sets the alpha channel to entirely opaque.
+Filters an image as defined by one of the following modes:<br /><br />THRESHOLD - converts the image to black and white pixels depending if they are above or below the threshold defined by the level parameter. The level must be between 0.0 (black) and 1.0(white). If no level is specified, 0.5 is used.<br /><br />GRAY - converts any colors in the image to grayscale equivalents<br /><br />INVERT - sets each pixel to its inverse value<br /><br />POSTERIZE - limits each channel of the image to the number of colors specified as the level parameter<br /><br />BLUR - executes a Guassian blur with the level parameter specifying the extent of the blurring. If no level parameter is used, the blur is equivalent to Guassian blur of radius 1.<br /><br />OPAQUE - sets the alpha channel to entirely opaque.<br /><br />ERODE - reduces the light areas with the amount defined by the level parameter.<br /><br />DILATE - increases the light areas with the amount defined by the level parameter
 </description>
 
 <syntax>
@@ -49,7 +49,7 @@ Filters an image as defined by one of the following modes:<br /><br />THRESHOLD 
 
 <parameter>
 <label>MODE</label>
-<description>Either THRESHOLD, GRAY, INVERT, POSTERIZE, BLUR, or OPAQUE</description>
+<description>Either THRESHOLD, GRAY, INVERT, POSTERIZE, BLUR, OPAQUE, ERODE, or DILATE</description>
 </parameter>
 
 <parameter>

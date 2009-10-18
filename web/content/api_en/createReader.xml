@@ -58,7 +58,7 @@ createReader(<c>filename</c>)
 
 <related>
 BufferedReader
-createWriter
+createWriter()
 PrintWriter
 </related>
 

@@ -31,7 +31,7 @@ println(s);  // Prints aardvark, bear, cat, deer, elephant on separate lines
 <code>
 String[] s = { "deer", "elephant", "bear", "aardvark", "cat" };
 s = sort(s, 3);
-println(s);  // Prints bear, dear, elephant on separate lines
+println(s);  // Prints bear, dear, elephant, aardvark, cat on separate lines
 </code>
 </example>
 

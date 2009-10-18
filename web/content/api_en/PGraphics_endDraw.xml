@@ -48,9 +48,7 @@ Finalizes the rendering of a PGraphics object so that it can be shown on screen.
 
 <returns></returns>
 
-<related>
-beginDraw()
-</related>
+<related></related>
 
 <availability>1.0</availability>
 

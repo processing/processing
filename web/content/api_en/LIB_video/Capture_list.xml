@@ -16,7 +16,7 @@ import processing.video.*;
  
 void setup() { 
   size(200, 200);
-  print(Capture.list()); 
+  println(Capture.list()); 
 } 
  
 </code>

@@ -29,7 +29,7 @@ sphere(30);
 </example>
 
 <description>
-Sets the specular color of the materials used for shapes drawn to the screen, which sets the color of hightlights. Specular refers to light which bounces off a surface in a perferred direction (rather than bouncing in all directions like a diffuse light). Used in combination with <b>emissive</b>, <b>ambient()</b>, and <b>shininess()</b> in setting the materal properties of shapes.
+Sets the specular color of the materials used for shapes drawn to the screen, which sets the color of hightlights. Specular refers to light which bounces off a surface in a perferred direction (rather than bouncing in all directions like a diffuse light). Used in combination with <b>emissive()</b>, <b>ambient()</b>, and <b>shininess()</b> in setting the materal properties of shapes.
 </description>
 
 <syntax>

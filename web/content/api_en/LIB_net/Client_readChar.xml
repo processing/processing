@@ -46,7 +46,7 @@ Returns the next byte in the buffer as a char. Returns -1 or 0xffff if nothing i
 <description>any variable of type Client</description>
 </parameter>
 
-<returns>int</returns>
+<returns>char</returns>
 
 <related></related>
 

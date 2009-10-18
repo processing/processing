@@ -24,7 +24,7 @@ sphere(30);
 </example>
 
 <description>
-Sets the emissive color of the material used for drawing shapes drawn to the screen. Used in combination with <b>ambient</b>, <b>specular()</b>, and <b>shininess()</b> in setting the materal properties of shapes.
+Sets the emissive color of the material used for drawing shapes drawn to the screen. Used in combination with <b>ambient()</b>, <b>specular()</b>, and <b>shininess()</b> in setting the materal properties of shapes.
 </description>
 
 <syntax>
