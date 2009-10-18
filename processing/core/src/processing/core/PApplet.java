@@ -4405,18 +4405,34 @@ public class PApplet extends Applet
    * Saves bytes to a specific File location specified by the user.
    */
   static public void saveBytes(File file, byte buffer[]) {
+    File tempFile = null;
     try {
+      File parentDir = file.getParentFile();
+      tempFile = File.createTempFile(file.getName(), null, parentDir);
+
+      /*
       String filename = file.getAbsolutePath();
       createPath(filename);
       OutputStream output = new FileOutputStream(file);
       if (file.getName().toLowerCase().endsWith(".gz")) {
         output = new GZIPOutputStream(output);
       }
+      */
+      OutputStream output = createOutput(tempFile);
       saveBytes(output, buffer);
       output.close();
+      output = null;
+
+      if (!tempFile.renameTo(file)) {
+        System.err.println("Could not rename temporary file " +
+                           tempFile.getAbsolutePath());
+      }
 
     } catch (IOException e) {
       System.err.println("error saving bytes to " + file);
+      if (tempFile != null) {
+        tempFile.delete();
+      }
       e.printStackTrace();
     }
   }
@@ -4468,6 +4484,7 @@ public class PApplet extends Applet
       writer.println(strings[i]);
     }
     writer.flush();
+    writer.close();
   }
 
 
@@ -7400,7 +7417,7 @@ public class PApplet extends Applet
   }
 
 
-  public void text(char[] chars, int start, int stop,
+  public void text(char[] chars, int start, int stop, 
                    float x, float y, float z) {
     if (recorder != null) recorder.text(chars, start, stop, x, y, z);
     g.text(chars, start, stop, x, y, z);
