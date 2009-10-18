@@ -25,22 +25,13 @@ X   or at least should be routed through a single fxn
 X   http://dev.processing.org/bugs/show_bug.cgi?id=967
 X problems with save on close
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1193
-_ deleting new tab causes troubles
-_   florian had another version of this
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1332
---- Sketch.java	2009-09-19 01:32:33.000000000 -0500
-+++ Sketch.new.java	2009-09-19 01:32:27.000000000 -0500
-@@ -594,7 +594,8 @@
-         for (int j = i; j < codeCount-1; j++) {
-           code[j] = code[j+1];
-         }
--        codeCount--;
-+        code = (SketchCode[]) PApplet.shorten(code);
-+	codeCount--;
-         return;
-       }
-     }
+X deleting new tab causes troubles
+X   florian had another version of this
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1332
 
+
+_ the code[] array in Sketch is super hokey... switch to an arraylist
+_   and add compare method to SketchCode so that it can be sorted by name
 
 _ for Java 1.6 on osx, replace com.apple.eio.FileManager.openURL(url); 
 _   with java.awt.Desktop.browse() and java.awt.Desktop.open()
