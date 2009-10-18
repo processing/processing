@@ -751,7 +751,8 @@ public class Base {
    */
   public boolean handleClose(Editor editor) {
     // Check if modified
-    if (!editor.checkModified(false)) {
+    boolean immediate = editors.size() == 1;
+    if (!editor.checkModified(immediate)) {
       return false;
     }
 
