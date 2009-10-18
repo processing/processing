@@ -41,6 +41,7 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=1332
        }
      }
 
+
 _ for Java 1.6 on osx, replace com.apple.eio.FileManager.openURL(url); 
 _   with java.awt.Desktop.browse() and java.awt.Desktop.open()
 
