@@ -14,6 +14,7 @@ o   http://dev.processing.org/bugs/show_bug.cgi?id=602
 X some camera problems may be coming from "cameraNear = -8" line
 X   this may cause other problems with drawing/clipping however
 X opengl camera does not update on current frame (has to do a second frame)
+X remove methods from PApplet that use doubles
 
 
 _ open up the pdf library more (philho)
