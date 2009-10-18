@@ -7417,7 +7417,7 @@ public class PApplet extends Applet
   }
 
 
-  public void text(char[] chars, int start, int stop, 
+  public void text(char[] chars, int start, int stop,
                    float x, float y, float z) {
     if (recorder != null) recorder.text(chars, start, stop, x, y, z);
     g.text(chars, start, stop, x, y, z);
