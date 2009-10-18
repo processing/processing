@@ -2,6 +2,18 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <curated>
 
+<software name="Branching Morphogenesis" by="Sabin+Jones LabStudio" scroll="yes" resize="yes" width="1024" height="700">
+        <image>images/branching.jpg</image>
+          <description>
+             Explores fundamental processes in living systems and their potential application in architecture. The installation materializes five slices in time that capture the force network exerted by interacting vascular cells.
+          </description>
+          <location>http://www.sabin-jones.com/arselectronica.html</location>
+          <link href="http://www.sabin-jones.com/">Sabin+Jones LabStudio</link>
+          <link href="http://www.jennysabin.com/">Jenny Sabin</link>
+          <link href="http://www.andrewlucia.com/">Andrew Lucia</link>
+          <link href="http://www.uphs.upenn.edu/ime/PJones/">Jones Lab</link>
+        </software>
+        
 <software name="Telekom Realtime Information Graphics" by="Zum Kuckuck" scroll="yes" resize="yes" width="1024" height="700">
         <image>images/realtime.jpg</image>
           <description>
