@@ -781,6 +781,13 @@ public class Editor extends JFrame implements RunnerListener {
     menu.add(createToolMenuItem("processing.app.tools.Archiver"));
     menu.add(createToolMenuItem("processing.app.tools.FixEncoding"));
 
+    /*
+    //menu.add(createToolMenuItem("processing.app.tools.android.Build"));
+    item = createToolMenuItem("processing.app.tools.android.Build");
+    item.setAccelerator(KeyStroke.getKeyStroke('D', modifiers));
+    menu.add(item);
+    */
+
     return menu;
   }
 
