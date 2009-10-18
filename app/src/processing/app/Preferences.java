@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-06 Ben Fry and Casey Reas
+  Copyright (c) 2004-09 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -70,13 +70,6 @@ public class Preferences {
   static final String PREFS_FILE = "preferences.txt";
 
 
-  // platform strings (used to get settings for specific platforms)
-
-  //static final String platforms[] = {
-  //  "other", "windows", "macosx", "linux"
-  //};
-
-
   // prompt text stuff
 
   static final String PROMPT_YES     = "Yes";
@@ -99,12 +92,6 @@ public class Preferences {
    * inside a static block.
    */
   static public int BUTTON_HEIGHT = 24;
-  /*
-  // remove this for 0121, because quaqua takes care of it
-  static {
-    if (Base.isMacOS()) BUTTON_HEIGHT = 29;
-  }
-  */
 
   // value for the size bars, buttons, etc
 
@@ -127,14 +114,12 @@ public class Preferences {
   JTextField sketchbookLocationField;
   JCheckBox exportSeparateBox;
   JCheckBox deletePreviousBox;
-//  JCheckBox closingLastQuitsBox;
   JCheckBox externalEditorBox;
   JCheckBox memoryOverrideBox;
   JTextField memoryField;
   JCheckBox checkUpdatesBox;
   JTextField fontSizeField;
   JCheckBox autoAssociateBox;
-  JCheckBox menubarWorkaroundBox;
 
 
   // the calling editor, so updates can be applied
@@ -212,14 +197,6 @@ public class Preferences {
                          " and restart Processing.", ex);
         }
       }
-
-      // Theme settings always override preferences
-//      try {
-//        load(Base.getStream("theme/theme.txt"));
-//      } catch (Exception te) {
-//        Base.showError(null, "Could not read color theme settings.\n" +
-//                             "You'll need to reinstall Processing.", te);
-//      }
     }
   }
 
@@ -246,43 +223,6 @@ public class Preferences {
     int h, vmax;
 
 
-    // [ ] Quit after closing last sketch window
-    /*
-    closingLastQuitsBox =
-      new JCheckBox("Quit after closing last sketch window");
-    pain.add(closingLastQuitsBox);
-    d = closingLastQuitsBox.getPreferredSize();
-    closingLastQuitsBox.setBounds(left, top, d.width + 10, d.height);
-    right = Math.max(right, left + d.width);
-    top += d.height + GUI_BETWEEN;
-    */
-
-
-    /*
-    // [ ] Prompt for name and folder when creating new sketch
-
-    sketchPromptBox =
-      new JCheckBox("Prompt for name when opening or creating a sketch");
-    pain.add(sketchPromptBox);
-    d = sketchPromptBox.getPreferredSize();
-    sketchPromptBox.setBounds(left, top, d.width + 10, d.height);
-    right = Math.max(right, left + d.width);
-    top += d.height + GUI_BETWEEN;
-    */
-
-
-    // [ ] Delete empty sketches on Quit
-
-    /*
-    sketchCleanBox = new JCheckBox("Delete empty sketches on Quit");
-    pain.add(sketchCleanBox);
-    d = sketchCleanBox.getPreferredSize();
-    sketchCleanBox.setBounds(left, top, d.width + 10, d.height);
-    right = Math.max(right, left + d.width);
-    top += d.height + GUI_BETWEEN;
-    */
-
-
     // Sketchbook location:
     // [...............................]  [ Browse ]
 
@@ -299,17 +239,6 @@ public class Preferences {
     button = new JButton(PROMPT_BROWSE);
     button.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          /*
-          JFileChooser fc = new JFileChooser();
-          fc.setSelectedFile(new File(sketchbookLocationField.getText()));
-          fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-
-          int returned = fc.showOpenDialog(new JDialog());
-          if (returned == JFileChooser.APPROVE_OPTION) {
-            File file = fc.getSelectedFile();
-            sketchbookLocationField.setText(file.getAbsolutePath());
-          }
-          */
           File dflt = new File(sketchbookLocationField.getText());
           File file =
             Base.selectFolder("Select new sketchbook location", dflt, dialog);
@@ -323,13 +252,9 @@ public class Preferences {
 
     // take max height of all components to vertically align em
     vmax = Math.max(d.height, d2.height);
-    //label.setBounds(left, top + (vmax-d.height)/2,
-    //              d.width, d.height);
-
-    //h = left + d.width + GUI_BETWEEN;
     sketchbookLocationField.setBounds(left, top + (vmax-d.height)/2,
                                       d.width, d.height);
-    h = left + d.width + GUI_SMALL; //GUI_BETWEEN;
+    h = left + d.width + GUI_SMALL;
     button.setBounds(h, top + (vmax-d2.height)/2,
                      d2.width, d2.height);
 
@@ -425,22 +350,6 @@ public class Preferences {
     }
 
 
-    // [ ] Place menu bar inside
-
-    if (Base.isMacOS()) {
-      if (System.getProperty("os.version").startsWith("10.5")) {
-        menubarWorkaroundBox =
-          new JCheckBox("Place menus inside editor window to avoid " +
-                        "Apple Java bug (requires restart)");
-        pain.add(menubarWorkaroundBox);
-        d = menubarWorkaroundBox.getPreferredSize();
-        menubarWorkaroundBox.setBounds(left, top, d.width + 10, d.height);
-        right = Math.max(right, left + d.width);
-        top += d.height + GUI_BETWEEN;
-      }
-    }
-
-
     // More preferences are in the ...
 
     label = new JLabel("More preferences can be edited directly in the file");
@@ -457,7 +366,7 @@ public class Preferences {
         public void mousePressed(MouseEvent e) {
           Base.openFolder(Base.getSettingsFolder());
         }
-        
+
         public void mouseEntered(MouseEvent e) {
           clickable.setForeground(new Color(0, 0, 140));
         }
@@ -514,7 +423,6 @@ public class Preferences {
 
     wide = right + GUI_BIG;
     high = top + GUI_SMALL;
-    //setSize(wide, high);
 
 
     // closing the window is same as hitting cancel button
@@ -556,26 +464,6 @@ public class Preferences {
         }
       });
   }
-
-
-  /*
-  protected JRootPane createRootPane() {
-    System.out.println("creating root pane esc received");
-
-    ActionListener actionListener = new ActionListener() {
-        public void actionPerformed(ActionEvent actionEvent) {
-          //setVisible(false);
-          System.out.println("esc received");
-        }
-      };
-
-    JRootPane rootPane = new JRootPane();
-    KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-    rootPane.registerKeyboardAction(actionListener, stroke,
-                                    JComponent.WHEN_IN_FOCUSED_WINDOW);
-    return rootPane;
-  }
-  */
 
 
   public Dimension getPreferredSize() {
@@ -661,11 +549,6 @@ public class Preferences {
                  autoAssociateBox.isSelected());
     }
 
-    if (menubarWorkaroundBox != null) {
-      setBoolean("apple.laf.useScreenMenuBar",
-                 !menubarWorkaroundBox.isSelected());
-    }
-
     editor.applyPreferences();
   }
 
@@ -700,11 +583,6 @@ public class Preferences {
     if (autoAssociateBox != null) {
       autoAssociateBox.
         setSelected(getBoolean("platform.auto_file_type_associations"));
-    }
-
-    if (menubarWorkaroundBox != null) {
-      menubarWorkaroundBox.
-        setSelected(!getBoolean("apple.laf.useScreenMenuBar"));
     }
 
     dialog.setVisible(true);
