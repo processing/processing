@@ -2687,9 +2687,11 @@ public class PApplet extends Applet
     return (a > b) ? a : b;
   }
 
+  /*
   static public final double max(double a, double b) {
     return (a > b) ? a : b;
   }
+  */
 
 
   static public final int max(int a, int b, int c) {
@@ -2742,6 +2744,7 @@ public class PApplet extends Applet
    * @param list the source array
    * @return The maximum value
    */
+  /*
   static public final double max(double[] list) {
     if (list.length == 0) {
       throw new ArrayIndexOutOfBoundsException(ERROR_MIN_MAX);
@@ -2752,6 +2755,7 @@ public class PApplet extends Applet
     }
     return max;
   }
+  */
 
 
   static public final int min(int a, int b) {
@@ -2762,9 +2766,11 @@ public class PApplet extends Applet
     return (a < b) ? a : b;
   }
 
+  /*
   static public final double min(double a, double b) {
     return (a < b) ? a : b;
   }
+  */
 
 
   static public final int min(int a, int b, int c) {
@@ -2775,9 +2781,11 @@ public class PApplet extends Applet
     return (a < b) ? ((a < c) ? a : c) : ((b < c) ? b : c);
   }
 
+  /*
   static public final double min(double a, double b, double c) {
     return (a < b) ? ((a < c) ? a : c) : ((b < c) ? b : c);
   }
+  */
 
 
   /**
@@ -2822,6 +2830,7 @@ public class PApplet extends Applet
    * @param list the source array
    * @return The minimum value
    */
+  /*
   static public final double min(double[] list) {
     if (list.length == 0) {
       throw new ArrayIndexOutOfBoundsException(ERROR_MIN_MAX);
@@ -2832,7 +2841,7 @@ public class PApplet extends Applet
     }
     return min;
   }
-
+  */
 
   static public final int constrain(int amt, int low, int high) {
     return (amt < low) ? low : ((amt > high) ? high : amt);
@@ -2938,11 +2947,13 @@ public class PApplet extends Applet
   }
 
 
+  /*
   static public final double map(double value,
                                  double istart, double istop,
                                  double ostart, double ostop) {
     return ostart + (ostop - ostart) * ((value - istart) / (istop - istart));
   }
+  */
 
 
 
