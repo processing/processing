@@ -40,7 +40,7 @@ void draw() {
 </example>
 
 <description>
-The <b>try</b> keyword is used with <b>catch</b> to handle exceptions. Sun's Java documentation defines an exception as "an event, which occurs during the execution of a program, that disrupts the normal flow of the program's instructions." This could be, for example, an error while a file is read. Although it's not necessary, <b>try</b> and <b>catch</b> typically work together.
+The <b>try</b> keyword is used with <b>catch</b> to handle exceptions. Sun's Java documentation defines an exception as "an event, which occurs during the execution of a program, that disrupts the normal flow of the program's instructions." This could be, for example, an error while a file is read.
 </description>
 
 <syntax>
