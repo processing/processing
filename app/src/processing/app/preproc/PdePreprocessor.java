@@ -386,7 +386,7 @@ public class PdePreprocessor {
     }
   }
 
-  int writeImports(PrintStream out) {
+  protected int writeImports(PrintStream out) {
     out.println("import processing.core.*; ");
     out.println("import processing.xml.*; ");
     out.println();
@@ -425,7 +425,7 @@ public class PdePreprocessor {
    * @param exporting           Is this being exported from PDE?
    * @param name                Name of the class being created.
    */
-  void writeDeclaration(PrintStream out, String className) {
+  protected void writeDeclaration(PrintStream out, String className) {
 
     String indent = "  ";
 
@@ -450,7 +450,7 @@ public class PdePreprocessor {
    *
    * @param out PrintStream to write it to.
    */
-  void writeFooter(PrintStream out, String className) {
+  protected void writeFooter(PrintStream out, String className) {
 
     if (programType == STATIC) {
       // close off draw() definition
