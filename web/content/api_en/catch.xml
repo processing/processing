@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>catch</name>
+
+<category>Structure</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+BufferedReader reader;
+String line;
+ 
+void setup() {
+  // Open the file from the createWriter() example
+  reader = createReader("positions.txt");    
+}
+ 
+void draw() {
+  try {
+    line = reader.readLine();
+  } catch (IOException e) {
+    e.printStackTrace();
+    line = null;
+  }
+  if (line == null) {
+    // Nothing left in the file, stop reading.
+    noLoop();  
+  } else {
+    String[] pieces = split(line, TAB);
+    int x = int(pieces[0]);
+    int y = int(pieces[1]);
+    point(x, y);
+  }
+}
+</code>
+</example>
+
+<description>
+The <b>catch</b> keyword is used with <b>try</b> to handle exceptions. Sun's Java documentation defines an exception as "an event, which occurs during the execution of a program, that disrupts the normal flow of the program's instructions." This could be, for example, an error while a file is read. Although it's not necessary, <b>try</b> and <b>catch</b> typically work together.
+</description>
+
+<syntax>
+try {
+  tryStatements
+} catch (<c>exception</c>) {
+  catchStatements
+} 
+</syntax>
+
+<parameter>
+<label>tryStatements</label>
+<description>if this code throws and exception, the code in catch is run</description>
+</parameter>
+
+<parameter>
+<label>exception</label>
+<description>a Java exception</description>
+</parameter>
+
+<parameter>
+<label>catchStatements</label>
+<description>code that handles the exception</description>
+</parameter>
+
+<returns></returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Keyword</type>
+
+<partof>PDE</partof>
+
+
+</root>
