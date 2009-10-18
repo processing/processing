@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>BufferedReader</name>
+
+<category>Input</category>
+
+<subcategory>Files</subcategory>
+
+<usage>Application</usage>
+
+<example>
+<image></image>
+<code>
+BufferedReader reader;
+String line;
+ 
+void setup() {
+  // Open the file from the createWriter() example
+  reader = createReader("positions.txt");    
+}
+ 
+void draw() {
+  try {
+    line = reader.readLine();
+  } catch (IOException e) {
+    e.printStackTrace();
+    line = null;
+  }
+  if (line == null) {
+    // Nothing left in the file, stop reading.
+    noLoop();  
+  } else {
+    String[] pieces = split(line, TAB);
+    int x = int(pieces[0]);
+    int y = int(pieces[1]);
+    point(x, y);
+  }
+} 
+</code>
+</example>
+
+<description>
+A <b>BufferedReader</b> object is used to read files line-by-line as individual <b>String</b> objects.
+<br/><br/>
+Starting with Processing release 0134, all files loaded and saved by the Processing API use UTF-8 encoding. In previous releases, the default encoding for your platform was used, which causes problems when files are moved to other platforms.
+</description>
+
+<method>
+<mname>readLine()</mname>
+<mdescription>returns a String that is the current line in the text file</mdescription>
+</method>
+
+<syntax></syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns></returns>
+
+<related>
+createReader()
+try
+catch
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+</root>
