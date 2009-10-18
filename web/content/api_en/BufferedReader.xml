@@ -27,7 +27,7 @@ void draw() {
     line = null;
   }
   if (line == null) {
-    // Nothing left in the file, stop reading.
+    // Stop reading because of an error or file is empty
     noLoop();  
   } else {
     String[] pieces = split(line, TAB);
