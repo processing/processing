@@ -9,8 +9,12 @@ X immediately update projection with OpenGL
 X   in the past, projection updates required a new frame
 X   also prevents camera/project from being reset with setSize() (regression?)
 X     which was a problem anyway because it made GL calls outside draw()
+X partial fix for texture edge problems with opengl
+o   http://dev.processing.org/bugs/show_bug.cgi?id=602
+X some camera problems may be coming from "cameraNear = -8" line
+X   this may cause other problems with drawing/clipping however
+X opengl camera does not update on current frame (has to do a second frame)
 
-_ should vertexTexture() divide by width/height or width-1/height-1?
 
 _ open up the pdf library more (philho)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1343
@@ -18,8 +22,8 @@ _ changing vertex alpha in P3D in a QUAD_STRIP is ignored
 _   with smoothing, it works fine, but with PTriangle, it's not
 _ smooth() not working with applets an createGraphics(JAVA2D)
 _   but works fine with applications
-
 _ get() with OPENGL is grabbing the wrong coords
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1349
 
 _ No textures render with hint(ENABLE_ACCURATE_TEXTURES)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=985
@@ -27,10 +31,7 @@ _   need to remove the hint from the reference
 _   need to throw an error when it's used
 _ deal with issue of single pixel seam at the edge of textures
 _   http://dev.processing.org/bugs/show_bug.cgi?id=602
-
-_ opengl camera does not update on current frame (has to do a second frame)
-
-_ camera problems may be coming from "cameraNear = -8" line
+_   should vertexTexture() divide by width/height or width-1/height-1?
 
 _ key and mouse events delivered out of order
 _   http://dev.processing.org/bugs/show_bug.cgi?id=638
