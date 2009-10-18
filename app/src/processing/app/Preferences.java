@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-09 Ben Fry and Casey Reas
+  Copyright (c) 2004-06 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -32,6 +32,8 @@ import javax.swing.*;
 
 import processing.app.syntax.*;
 import processing.core.*;
+
+
 
 
 /**
@@ -142,8 +144,8 @@ public class Preferences {
 
   // data model
 
-  static HashMap<String,String> defaults;
-  static HashMap<String,String> table = new HashMap<String,String>();;
+  static Hashtable defaults;
+  static Hashtable table = new Hashtable();;
   static File preferencesFile;
 
 
@@ -158,8 +160,22 @@ public class Preferences {
                            "You'll need to reinstall Processing.", e);
     }
 
+    // check for platform-specific properties in the defaults
+    String platformExt = "." + PConstants.platformNames[PApplet.platform];
+    int platformExtLength = platformExt.length();
+    Enumeration e = table.keys();
+    while (e.hasMoreElements()) {
+      String key = (String) e.nextElement();
+      if (key.endsWith(platformExt)) {
+        // this is a key specific to a particular platform
+        String actualKey = key.substring(0, key.length() - platformExtLength);
+        String value = get(key);
+        table.put(actualKey, value);
+      }
+    }
+
     // clone the hash table
-    defaults = (HashMap<String, String>) table.clone();
+    defaults = (Hashtable) table.clone();
 
     // other things that have to be set explicitly for the defaults
     setColor("run.window.bgcolor", SystemColor.control);
@@ -699,10 +715,6 @@ public class Preferences {
 
 
   static protected void load(InputStream input) throws IOException {
-    // check for platform-specific properties in the defaults
-    String platformExt = "." + PConstants.platformNames[PApplet.platform];
-    int platformExtLength = platformExt.length();
-    
     String[] lines = PApplet.loadStrings(input);  // Reads as UTF-8
     for (String line : lines) {
       if ((line.length() == 0) ||
@@ -712,19 +724,6 @@ public class Preferences {
       int equals = line.indexOf('=');
       if (equals != -1) {
         String key = line.substring(0, equals).trim();
-        
-        // check if this is a platform-specific key, and if so, shave things
-        if (key.endsWith(platformExt)) {
-          // this is a key specific to this platform
-          key = key.substring(0, key.length() - platformExtLength);
-        } else {
-          if (table.get(key) != null) {
-            // don't over-write keys that may already be set, since it might
-            // be the platform-specific version that's already in there.
-            // e.g. blah.blah.linux being set before blah.blah in the defaults
-            continue;
-          }
-        }
         String value = line.substring(equals + 1).trim();
         table.put(key, value);
       }
@@ -745,8 +744,10 @@ public class Preferences {
     // Fix for 0163 to properly use Unicode when writing preferences.txt
     PrintWriter writer = PApplet.createWriter(preferencesFile);
 
-    for (String key : table.keySet()) {
-      writer.println(key + "=" + table.get(key));
+    Enumeration e = table.keys(); //properties.propertyNames();
+    while (e.hasMoreElements()) {
+      String key = (String) e.nextElement();
+      writer.println(key + "=" + ((String) table.get(key)));
     }
 
     writer.flush();
@@ -768,7 +769,7 @@ public class Preferences {
   //}
 
   static public String get(String attribute /*, String defaultValue */) {
-    return table.get(attribute);
+    return (String) table.get(attribute);
     /*
     //String value = (properties != null) ?
     //properties.getProperty(attribute) : applet.getParameter(attribute);
@@ -781,7 +782,7 @@ public class Preferences {
 
 
   static public String getDefault(String attribute) {
-    return defaults.get(attribute);
+    return (String) defaults.get(attribute);
   }
 
 
