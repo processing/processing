@@ -7,11 +7,11 @@
 
     <!-- all these need to change for new releases -->
     <key>CFBundleGetInfoString</key>
-    <string>1.0.7, Copyright © Ben Fry and Casey Reas</string>
+    <string>1.0.8, Copyright © Ben Fry and Casey Reas</string>
     <key>CFBundleVersion</key>
-    <string>1.0.7</string>
+    <string>1.0.8</string>
     <key>CFBundleShortVersionString</key>
-    <string>1.0.7</string>
+    <string>1.0.8</string>
     <!-- now stop changing things and get outta here -->
 
     <key>CFBundleAllowMixedLocalizations</key>
@@ -88,12 +88,9 @@
 	<key>javaroot</key>
 	<string>$JAVAROOT</string>
 
-	<!-- 
-        In release 0158, removed the menubar option from the .app and instead controlling it from the preferences window. By default, the menu bar is inside the editor window because of the Apple Java bug.
-        http://dev.processing.org/bugs/show_bug.cgi?id=786
+	<!-- as of 1.0.8, it's safe to use this option again -->
         <key>apple.laf.useScreenMenuBar</key>
         <string>true</string>
-        -->
 
 	<key>apple.awt.showGrowBox</key>
 	<string>false</string>
