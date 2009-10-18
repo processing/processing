@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>readLine()</name>
+
+<category>BufferedReader</category>
+
+<subcategory>Method</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+BufferedReader reader;
+String line;
+ 
+void setup() {
+  // Open the file from the createWriter() example
+  reader = createReader("positions.txt");    
+}
+ 
+void draw() {
+  try {
+    line = reader.readLine();
+  } catch (IOException e) {
+    e.printStackTrace();
+    line = null;
+  }
+  if (line == null) {
+    // Nothing left in the file, stop reading.
+    noLoop();  
+  } else {
+    String[] pieces = split(line, TAB);
+    int x = int(pieces[0]);
+    int y = int(pieces[1]);
+    point(x, y);
+  }
+} 
+</code>
+</example>
+
+<description>
+Returns a String that is the current line in the BufferedReader.
+</description>
+
+<syntax>
+<c>br</c>.readLine()
+</syntax>
+
+<parameter>
+<label>br</label>
+<description>any object of the type BufferedReader</description>
+</parameter>
+
+
+<returns>String</returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Method</type>
+
+<partof>Core</partof>
+
+
+</root>
