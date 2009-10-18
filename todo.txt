@@ -28,6 +28,10 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=1193
 X deleting new tab causes troubles
 X   florian had another version of this
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1332
+X Saving the project with the same name as an existing tab may delete code
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1102
+X after deleting a tab code still get's preprocessed, pde file is not forgotten
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1092
 
 
 _ the code[] array in Sketch is super hokey... switch to an arraylist
