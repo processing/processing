@@ -229,10 +229,11 @@ public class Sketch {
     ensureExistence();
 
     // add file to the code/codeCount list, resort the list
-    if (codeCount == code.length) {
-      code = (SketchCode[]) PApplet.append(code, newCode);
-    }
-    code[codeCount++] = newCode;
+    //if (codeCount == code.length) {
+    code = (SketchCode[]) PApplet.append(code, newCode);
+    codeCount++;
+    //}
+    //code[codeCount++] = newCode;
   }
 
 
@@ -595,6 +596,7 @@ public class Sketch {
           code[j] = code[j+1];
         }
         codeCount--;
+        code = (SketchCode[]) PApplet.shorten(code);
         return;
       }
     }
@@ -1191,8 +1193,8 @@ public class Sketch {
   public String preprocess(String buildPath) throws RunnerException {
     return preprocess(buildPath, new PdePreprocessor());
   }
-  
-  
+
+
   public String preprocess(String buildPath, PdePreprocessor preprocessor) throws RunnerException {
     // make sure the user didn't hide the sketch folder
     ensureExistence();
@@ -1918,10 +1920,10 @@ public class Sketch {
     //Box panel = Box.createVerticalBox();
 
     //Box labelBox = Box.createHorizontalBox();
-//    String msg = "<html>Click Export to Application to create a standalone, " + 
+//    String msg = "<html>Click Export to Application to create a standalone, " +
 //      "double-clickable application for the selected plaforms.";
-    
-//    String msg = "Export to Application creates a standalone, \n" + 
+
+//    String msg = "Export to Application creates a standalone, \n" +
 //      "double-clickable application for the selected plaforms.";
     String line1 = "Export to Application creates double-clickable,";
     String line2 = "standalone applications for the selected plaforms.";
@@ -1942,27 +1944,27 @@ public class Sketch {
     windowsButton.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
         Preferences.setBoolean("export.application.platform.windows", windowsButton.isSelected());
-      }  
+      }
     });
-    
+
     final JCheckBox macosxButton = new JCheckBox("Mac OS X");
     //macosxButton.setMnemonic(KeyEvent.VK_M);
     macosxButton.setSelected(Preferences.getBoolean("export.application.platform.macosx"));
     macosxButton.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
         Preferences.setBoolean("export.application.platform.macosx", macosxButton.isSelected());
-      }  
+      }
     });
-    
+
     final JCheckBox linuxButton = new JCheckBox("Linux");
     //linuxButton.setMnemonic(KeyEvent.VK_L);
     linuxButton.setSelected(Preferences.getBoolean("export.application.platform.linux"));
     linuxButton.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
         Preferences.setBoolean("export.application.platform.linux", linuxButton.isSelected());
-      }  
+      }
     });
-    
+
     JPanel platformPanel = new JPanel();
     //platformPanel.setLayout(new BoxLayout(platformPanel, BoxLayout.X_AXIS));
     platformPanel.add(windowsButton);
@@ -1991,7 +1993,7 @@ public class Sketch {
     showStopButton.setBorder(new EmptyBorder(3, 13, 6, 13));
 //  indentPanel.add(showStopButton);
 //  indentPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-    
+
     final JCheckBox fullScreenButton = new JCheckBox("Full Screen (Present mode)");
     //fullscreenButton.setMnemonic(KeyEvent.VK_F);
     fullScreenButton.setSelected(Preferences.getBoolean("export.application.fullscreen"));
@@ -2017,7 +2019,7 @@ public class Sketch {
     panel.add(optionPanel);
 
     Dimension good;
-    //label1, label2, platformPanel, optionPanel 
+    //label1, label2, platformPanel, optionPanel
     good = new Dimension(wide, label1.getPreferredSize().height);
     label1.setMaximumSize(good);
     good = new Dimension(wide, label2.getPreferredSize().height);
@@ -2026,13 +2028,13 @@ public class Sketch {
     platformPanel.setMaximumSize(good);
     good = new Dimension(wide, optionPanel.getPreferredSize().height);
     optionPanel.setMaximumSize(good);
-    
+
 //    JPanel actionPanel = new JPanel();
 //    optionPanel.setLayout(new BoxLayout(optionPanel, BoxLayout.X_AXIS));
 //    optionPanel.add(Box.createHorizontalGlue());
-    
+
 //    final JDialog frame = new JDialog(editor, "Export to Application");
-    
+
 //    JButton cancelButton = new JButton("Cancel");
 //    cancelButton.addActionListener(new ActionListener() {
 //      public void actionPerformed(ActionEvent e) {
@@ -2057,16 +2059,16 @@ public class Sketch {
                                                    null,
                                                    options,
                                                    options[0]);
-    
+
     final JDialog dialog = new JDialog(editor, "Export Options", true);
     dialog.setContentPane(optionPane);
-    
+
     optionPane.addPropertyChangeListener(new PropertyChangeListener() {
       public void propertyChange(PropertyChangeEvent e) {
         String prop = e.getPropertyName();
 
-        if (dialog.isVisible() && 
-            (e.getSource() == optionPane) && 
+        if (dialog.isVisible() &&
+            (e.getSource() == optionPane) &&
             (prop.equals(JOptionPane.VALUE_PROPERTY))) {
           //If you were going to check something
           //before closing the window, you'd do
@@ -2077,10 +2079,10 @@ public class Sketch {
     });
     dialog.pack();
     dialog.setResizable(false);
-    
+
     Rectangle bounds = editor.getBounds();
     dialog.setLocation(bounds.x + (bounds.width - dialog.getSize().width) / 2,
-                       bounds.y + (bounds.height - dialog.getSize().height) / 2);    
+                       bounds.y + (bounds.height - dialog.getSize().height) / 2);
     dialog.setVisible(true);
 
     Object value = optionPane.getValue();
@@ -2093,27 +2095,27 @@ public class Sketch {
     return false;
   }
 
-  
+
   /**
-   * Export to application via GUI. 
+   * Export to application via GUI.
    */
   protected boolean exportApplication() throws IOException, RunnerException {
     if (Preferences.getBoolean("export.application.platform.windows")) {
-      String windowsPath = 
+      String windowsPath =
         new File(folder, "application.windows").getAbsolutePath();
       if (!exportApplication(windowsPath, PConstants.WINDOWS)) {
         return false;
       }
     }
     if (Preferences.getBoolean("export.application.platform.macosx")) {
-      String macosxPath = 
+      String macosxPath =
         new File(folder, "application.macosx").getAbsolutePath();
       if (!exportApplication(macosxPath, PConstants.MACOSX)) {
         return false;
       }
     }
     if (Preferences.getBoolean("export.application.platform.linux")) {
-      String linuxPath = 
+      String linuxPath =
         new File(folder, "application.linux").getAbsolutePath();
       if (!exportApplication(linuxPath, PConstants.LINUX)) {
         return false;
@@ -2449,8 +2451,8 @@ public class Sketch {
                        exportClassPath.toString());
           }
           while ((index = sb.indexOf("@@lsuipresentationmode@@")) != -1) {
-            sb.replace(index, index + "@@lsuipresentationmode@@".length(), 
-                       Preferences.getBoolean("export.application.fullscreen") ? "4" : "0"); 
+            sb.replace(index, index + "@@lsuipresentationmode@@".length(),
+                       Preferences.getBoolean("export.application.fullscreen") ? "4" : "0");
           }
           lines[i] = sb.toString();
         }
