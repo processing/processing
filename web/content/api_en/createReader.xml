@@ -2,11 +2,11 @@
 <root>
 <name>createReader()</name>
 
-<category>Output</category>
+<category>Input</category>
 
 <subcategory>Files</subcategory>
 
-<usage>Application</usage>
+<usage>Web &amp; Application</usage>
 
 <example>
 <image></image>
@@ -27,7 +27,7 @@ void draw() {
     line = null;
   }
   if (line == null) {
-    // Nothing left in the file, stop reading.
+    // Stop reading because of an error or file is empty
     noLoop();  
   } else {
     String[] pieces = split(line, TAB);
@@ -60,6 +60,8 @@ createReader(<c>filename</c>)
 BufferedReader
 createWriter()
 PrintWriter
+try
+catch
 </related>
 
 <availability>1.0</availability>
