@@ -39,6 +39,7 @@ _   and add compare method to SketchCode so that it can be sorted by name
 
 _ for Java 1.6 on osx, replace com.apple.eio.FileManager.openURL(url); 
 _   with java.awt.Desktop.browse() and java.awt.Desktop.open()
+_   causes a deprecation warning whenever building on osx
 
 _ add to troubleshooting:
 _   remove/rename the preferences file
