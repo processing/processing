@@ -1,5 +1,7 @@
 0171 core
-
+X Blurred PImages in OPENGL sketches
+X   removed NPOT texture support (for further testing)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1352
 
 _ open up the pdf library more (philho)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1343
