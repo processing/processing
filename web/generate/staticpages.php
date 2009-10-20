@@ -33,6 +33,10 @@ $page = new Page("Contribute", "Contribute");
 $page->content(file_get_contents($source."contribute.html"));
 writeFile('contribute/index.html', $page->out());
 
+$page = new Page("Books", "Books");
+$page->content(file_get_contents($source."books.html"));
+writeFile('learning/books/index.html', $page->out());
+
 $page = new Page("Copyright", "Copyright");
 $page->content(file_get_contents($source."copyright.html"));
 writeFile('copyright.html', $page->out());
