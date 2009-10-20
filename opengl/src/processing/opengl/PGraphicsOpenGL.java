@@ -86,7 +86,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
   protected float[] lightArray = new float[] { 1, 1, 1 };
 
   static int maxTextureSize;
-  static Boolean npotTextures;
+  //static Boolean npotTextures;
 
   int[] textureDeleteQueue = new int[10];
   int textureDeleteQueueCount = 0;
@@ -330,8 +330,8 @@ public class PGraphicsOpenGL extends PGraphics3D {
     // are there other things to do here?
     //System.out.println("beginDraw() stop error " + PApplet.hex(gl.glGetError()));
   }
-  
-  
+
+
   public void endDraw() {
     //System.out.println("endDraw() error " + PApplet.hex(gl.glGetError()));
 
@@ -792,17 +792,16 @@ public class PGraphicsOpenGL extends PGraphics3D {
       tindex = tmp[0];
       //System.out.println("got index " + tindex);
 
-      // bit shifting this might be more efficient
-      if (npotTextures == null) {
-        npotTextures = gl.isExtensionAvailable("GL_ARB_texture_non_power_of_two") ? 
-          Boolean.TRUE : Boolean.FALSE;
-      }
-      int width2 = source.width;
-      int height2 = source.height;
-      if (npotTextures == Boolean.FALSE) {
-        width2 = nextPowerOfTwo(source.width);
-        height2 = nextPowerOfTwo(source.height);
-      }
+      //if (npotTextures == null) {
+      //  npotTextures = gl.isExtensionAvailable("GL_ARB_texture_non_power_of_two") ?
+      //    Boolean.TRUE : Boolean.FALSE;
+      //}
+      //int width2 = source.width;
+      //int height2 = source.height;
+      //if (npotTextures == Boolean.FALSE) {
+      int width2 = nextPowerOfTwo(source.width);
+      int height2 = nextPowerOfTwo(source.height);
+      //}
 
       // use glGetIntegerv with the argument GL_MAX_TEXTURE_SIZE
       // to figure out min/max texture sizes
@@ -963,6 +962,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
     }
 
 
+    // bit shifting this might be more efficient
     private int nextPowerOfTwo(int val) {
       int ret = 1;
       while (ret < val) {
@@ -1814,7 +1814,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
   //public void frustum(float left, float right,
   //                    float bottom, float top,
   //                    float near, float far)
-  
+
   /**
    * Move the projection matrix over to OpenGL.
    */
