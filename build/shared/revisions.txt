@@ -1,3 +1,16 @@
+PROCESSING 1.0.9 (REV 0171) - 20 October 2009
+
++ Removed NPOT texture support until further testing, because it was 
+  resulting in blurring images in OPENGL sketches.
+  http://dev.processing.org/bugs/show_bug.cgi?id=1352
+
++ Complete the excision of the Apple menu bug code.
+  http://dev.processing.org/bugs/show_bug.cgi?id=786
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING 1.0.8 (REV 0170) - 18 October 2009
 
 A bonfire of bug fixes. 
