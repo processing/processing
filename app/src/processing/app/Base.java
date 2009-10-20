@@ -926,16 +926,9 @@ public class Base {
   protected void rebuildSketchbookMenu(JMenu menu) {
     //System.out.println("rebuilding sketchbook menu");
     //new Exception().printStackTrace();
-    boolean nativeButBroken = Base.isMacOS() ?
-      Preferences.getBoolean("apple.laf.useScreenMenuBar") : false;
-
     try {
-      if (nativeButBroken) {  // osx workaround
-        menu.setEnabled(false);
-      } else {
-        menu.removeAll();
-        addSketches(menu, getSketchbookFolder(), false);
-      }
+      menu.removeAll();
+      addSketches(menu, getSketchbookFolder(), false);
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -974,16 +967,9 @@ public class Base {
 
   public void rebuildExamplesMenu(JMenu menu) {
     //System.out.println("rebuilding examples menu");
-    boolean nativeButBroken = Base.isMacOS() ?
-      Preferences.getBoolean("apple.laf.useScreenMenuBar") : false;
-
     try {
-      if (nativeButBroken) {  // osx workaround
-        menu.setEnabled(false);
-      } else {
-        menu.removeAll();
-        addSketches(menu, examplesFolder, false);
-      }
+      menu.removeAll();
+      addSketches(menu, examplesFolder, false);
     } catch (IOException e) {
       e.printStackTrace();
     }
