@@ -1,5 +1,22 @@
 0171 pde (1.0.9? 1.5?)
+X ugh, remove the dimmed menus
+X   http://dev.processing.org/bugs/show_bug.cgi?id=786
 
+
+_ available in the developer previews
+_   could check for availability of method
+_   and if it's there, don't require people to quit
+The com.apple.eawt.Application now has a setDefaultMenuBar(JFrame) method that sets a default menu bar in your application when no other Frames are open. This feature requires your app to use both the Aqua Look and Feel and apple.laf.useScreenMenuBar=true property to hook up the native menu bar delegates correctly. This long-requested feature should remove the need to create an invisible or offscreen window to simulate the appearance of a true "default" menu bar. 
+
+The com.apple.eio.FileManager now has two new desktop interaction methods, revealInFinder(File) and moveToTrash(File). You can use revealInFinder() to open a Finder window in the parent directory of of a file and select it. You can use moveToTrash() to move a file to the most appropriate Trash directory for the volume that contains that file. 
+
+_ problem changing sketchbook to new location (e.g. from ex to regular) 
+_   new libraries are not picked up
+
+_ switch to better deployment script for applets (download java kernel)
+_   http://java.sun.com/javase/6/docs/technotes/guides/jweb/deployment_advice.html#deplToolkit
+_   http://java.sun.com/javase/6/webnotes/family-clsid.html
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1353
 
 _ the code[] array in Sketch is super hokey... switch to an arraylist
 _   and add compare method to SketchCode so that it can be sorted by name
@@ -112,10 +129,6 @@ _ add code for setting the l&f from the prefs file for linux
 _ problem with startup on vista 64
 _   try this with windows 7 64-bit (install on laptop?)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1246
-
-_ switch to better deployment script for applets (download java kernel)
-_   http://java.sun.com/javase/6/docs/technotes/guides/jweb/deployment_advice.html#deplToolkit
-_   http://java.sun.com/javase/6/webnotes/family-clsid.html
 
 _ make sure javadoc builds and uploads, also the zip files
 _   add additional caveats about incompletion
