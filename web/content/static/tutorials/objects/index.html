@@ -70,7 +70,7 @@ Consider the pseudo-code for a simple sketch that moves a rectangle horizontally
    <li>Display car at location with color.</li>  
    <li>Increment car's location by speed.</li>
 </ul>
-To implement the above pseudo-code, we would define global variables at the top of the program, initialized them in setup(), and call functions  to move and display the car in draw().  Something like:
+To implement the above pseudo-code, we would define global variables at the top of the program, initialized them in setup(), and call functions to move and display the car in draw().  Something like:
 <pre>
 color c = color(0);
 float x = 0;
@@ -100,7 +100,7 @@ void display() {
 }
 </pre>
 <br /> 
-Object-oriented programming allows us to take all of the variables and functions out of the main program and store them inside a car object. A car object will know about its data - <em>color</em>, <em>location</em>, <em>speed</em>.  The object will also know about the <em>stuff it can do</em>, the methods (functions inside an object) - the car can <em>move</em> and it can be <em>displayed</em>. 
+Object-oriented programming allows us to take all of the variables and functions out of the main program and store them inside a car object. A car object will know about its data - <em>color</em>, <em>location</em>, <em>speed</em>.  The object will also know about the <em>stuff it can do</em>, the methods (functions inside an object) - the car can <em>drive</em> and it can be <em>displayed</em>. 
 <br /><br /> 
 Using object-oriented design, the pseudocode improves to look something like this: 
 <br /><br /> 
@@ -116,7 +116,7 @@ Using object-oriented design, the pseudocode improves to look something like thi
 <ul>
 	<li>Fill background.</li>  
    <li>Display car object.</li>  
-   <li>Move car object.</li>
+   <li>Drive car object.</li>
 </ul>
 Notice we removed all of the global variables from the first example. Instead of having separate variables for car color, car location, and car speed, we now have only one variable, a Car variable! And instead of initializing those three variables, we initialize one thing, the Car object. Where did those variables go? They still exist, only now they live inside of the Car object (and will be defined in the Car class, which we will get to in a moment). 
 <br /><br />
@@ -130,7 +130,7 @@ void setup()  {
 
 void draw()  {    
   background(255);   
-  myCar.move();   
+  myCar.drive();   
   myCar.display();   
 }              
 </pre>
@@ -189,7 +189,7 @@ void setup()  {
 void draw()  {    
   background(255);  
   <strong>// Step 3. Call methods on the object.</strong> 
-  myCar.move();   
+  myCar.drive();   
   myCar.display();   
 }      
 </pre>
@@ -231,7 +231,7 @@ Once we have successfully declared and initialized an object variable, we can us
 In the case of the car, none of the available functions has an argument so it looks like: 
 <pre>
 // Functions are called with the "dot syntax". 
-myCar.draw();   
+myCar.drive();   
 myCar.display();     
 </pre>
 
@@ -299,9 +299,9 @@ void setup() {
 
 void draw() {
   background(255);
-  myCar1.move();
+  myCar1.drive();
   myCar1.display();
-  myCar2.move();
+  myCar2.drive();
   myCar2.display();
 }
 
@@ -328,7 +328,7 @@ class Car {
     rect(xpos,ypos,20,10);
   }
 
-  void move() {
+  void drive() {
     xpos = xpos + xspeed;
     if (xpos > width) {
       xpos = 0;
