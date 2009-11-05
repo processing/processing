@@ -1,7 +1,5 @@
-0171 core
-X Blurred PImages in OPENGL sketches
-X   removed NPOT texture support (for further testing)
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1352
+0172 core
+
 
 _ open up the pdf library more (philho)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1343
@@ -11,6 +9,9 @@ _ smooth() not working with applets an createGraphics(JAVA2D)
 _   but works fine with applications
 _ get() with OPENGL is grabbing the wrong coords
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1349
+
+_ gl power of 2 with textures
+_   P3D also seems to have trouble w/ textures edges.. bad math?
 
 _ No textures render with hint(ENABLE_ACCURATE_TEXTURES)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=985
