@@ -1,3 +1,9 @@
+0171 core
+X Blurred PImages in OPENGL sketches
+X   removed NPOT texture support (for further testing)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1352
+
+
 0170 core (1.0.8)
 X added some min/max functions that work with doubles
 X   not sure if those are staying in or not
