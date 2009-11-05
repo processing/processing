@@ -22,6 +22,7 @@
 
 package processing.app;
 
+
 import processing.app.debug.*;
 import processing.app.syntax.*;
 import processing.app.tools.*;
@@ -40,11 +41,6 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
 import javax.swing.undo.*;
-
-//import org.netbeans.api.java.source.ui.DialogBinding;
-//import org.openide.filesystems.*;
-//import org.openide.loaders.DataObject;
-//import org.openide.text.CloneableEditorSupport;
 
 
 /**
@@ -105,7 +101,6 @@ public class Editor extends JFrame implements RunnerListener {
 
   EditorLineStatus lineStatus;
 
-  boolean newEditor = true;
   JEditorPane editorPane;
   
   JEditTextArea textarea;
@@ -215,22 +210,7 @@ public class Editor extends JFrame implements RunnerListener {
     lineStatus = new EditorLineStatus(textarea);
     consolePanel.add(lineStatus, BorderLayout.SOUTH);
 
-//    if (newEditor) {
-//      try {
-//        setupEditorPane();
-//        upper.add(editorPane);
-//      } catch (Exception e1) {
-//        PrintWriter w = PApplet.createWriter(new File("/Users/fry/Desktop/blah.txt"));
-//        w.println(e1.getMessage());
-//        e1.printStackTrace(w);
-//        w.flush();
-//        w.close();
-////        e1.printStackTrace());
-////        e1.printStackTrace(System.out);
-//      }
-//    } else {
     upper.add(textarea);
-//    }
     splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
                                upper, consolePanel);
 
@@ -345,46 +325,6 @@ public class Editor extends JFrame implements RunnerListener {
     //setVisible(true);
   }
 
-
-  /*
-  // http://wiki.netbeans.org/DevFaqEditorCodeCompletionAnyJEditorPane
-  void setupEditorPane() throws IOException {
-    editorPane = new JEditorPane();
-
-    // This will find the Java editor kit and associate it with
-    // our editor pane. But that does not give us code completion 
-    // just yet because we have no Java context (i.e. no class path, etc.).
-    // However, this does give us syntax coloring.
-    EditorKit kit = CloneableEditorSupport.getEditorKit("text/x-java");
-    editorPane.setEditorKit(kit);
-    
-    // You can specify any ".java" file.
-    // If the file does not exist, it will be created.
-    // The contents of the file does not matter.
-    // The extension must be ".java", however.
-//    String newSourcePath = "/Users/fry/Desktop/tmp.java";
-
-//    File tmpFile = new File(newSourcePath);
-//    System.out.println(tmpFile.getParent() + " " + tmpFile.getName());
-//  FileObject fob = FileUtil.createData(tmpFile);
-    File tmpFile = File.createTempFile("temp", ".java");
-    FileObject fob = FileUtil.toFileObject(FileUtil.normalizeFile(tmpFile));
-
-    DataObject dob = DataObject.find(fob);
-    editorPane.getDocument().putProperty(Document.StreamDescriptionProperty, dob);
-
-    // This sets up a default class path for us so that
-    // we can find all the JDK classes via code completion.
-    DialogBinding.bindComponentToFile(fob, 0, 0, editorPane);
-
-    // Last but not least, we need to fill the editor pane with
-    // some initial dummy code - as it seems somehow required to
-    // kick-start code completion.
-    // A simple dummy package declaration will do.
-    editorPane.setText("package dummy;");
-  }
-  */
-  
   
   protected void setPlacement(int[] location) {
     setBounds(location[0], location[1], location[2], location[3]);
