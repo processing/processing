@@ -26,27 +26,15 @@ package processing.video;
 
 import java.io.File;
 
-import quicktime.Errors;
-import quicktime.QTException;
-import quicktime.QTSession;
-import quicktime.io.OpenMovieFile;
-import quicktime.io.QTFile;
-import quicktime.qd.QDConstants;
-import quicktime.qd.QDGraphics;
-import quicktime.qd.QDRect;
-import quicktime.std.StdQTConstants;
-import quicktime.std.StdQTException;
-import quicktime.std.image.CSequence;
-import quicktime.std.image.CodecComponent;
-import quicktime.std.image.CompressedFrameInfo;
-import quicktime.std.image.ImageDescription;
-import quicktime.std.image.QTImage;
+import quicktime.*;
+import quicktime.io.*;
+import quicktime.qd.*;
+import quicktime.std.*;
+import quicktime.std.image.*;
 import quicktime.std.movies.Movie;
 import quicktime.std.movies.Track;
 import quicktime.std.movies.media.VideoMedia;
-import quicktime.util.QTHandle;
-import quicktime.util.QTUtils;
-import quicktime.util.RawEncodedImage;
+import quicktime.util.*;
 
 import processing.core.*;
 
@@ -93,6 +81,7 @@ import processing.core.*;
  * }
  * </PRE>
  */
+@SuppressWarnings("deprecation")
 public class MovieMaker {
 
   public static final int RAW = StdQTConstants.kRawCodecType;
