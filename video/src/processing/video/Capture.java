@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-08 Ben Fry and Casey Reas
+  Copyright (c) 2004-09 Ben Fry and Casey Reas
   The previous version of this code was developed by Hernando Barragan
 
   This library is free software; you can redistribute it and/or
@@ -23,6 +23,7 @@
 */
 
 package processing.video;
+
 import processing.core.*;
 
 import java.lang.reflect.*;
@@ -37,6 +38,7 @@ import quicktime.util.RawEncodedImage;
 /**
  * Watchin' shit on the telly.
  */
+@SuppressWarnings("deprecation")
 public class Capture extends PImage implements Runnable {
 
   // there are more, but these are all we'll provide for now

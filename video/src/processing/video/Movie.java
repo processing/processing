@@ -23,6 +23,7 @@
 */
 
 package processing.video;
+
 import processing.core.*;
 
 import java.io.*;
@@ -37,6 +38,7 @@ import quicktime.util.QTHandle;
 import quicktime.util.RawEncodedImage;
 
 
+@SuppressWarnings("deprecation")
 public class Movie extends PImage implements PConstants, Runnable {
   // no longer needing a reference to the parent because PImage has one
   //PApplet parent;
