@@ -1,5 +1,9 @@
 PROCESSING 1.0.9 (REV 0171) - 20 October 2009
 
+Happy birthday to Casey!
+
+[ bug fixes ]
+
 + Removed NPOT texture support until further testing, because it was 
   resulting in blurring images in OPENGL sketches.
   http://dev.processing.org/bugs/show_bug.cgi?id=1352
