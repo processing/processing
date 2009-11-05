@@ -1,3 +1,8 @@
+0171 pde
+X ugh, remove the dimmed menus
+X   http://dev.processing.org/bugs/show_bug.cgi?id=786
+
+
 0170 pde (1.0.8)
 X update java on linux/windows to 6u16
 X update quaqua to 6.0.1
