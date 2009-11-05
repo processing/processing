@@ -204,7 +204,7 @@ preproc.imports = java.applet,java.awt,java.awt.image,java.awt.event,java.io,jav
 browser.linux = mozilla
 
 # set to the program to be used for launching apps on linux
-#launcher.linux = gnome-open
+#launcher.linux = xdg-open
 
 # FULL SCREEN (PRESENT MODE)
 run.present.bgcolor = #666666
