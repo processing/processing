@@ -62,6 +62,22 @@ $page = new Page("Koblin Interview", "Features");
 $page->content(file_get_contents($source."koblin.html"));
 writeFile('exhibition/features/koblin/index.html', $page->out());
 
+// Copy over the images for the shop index
+if (!is_dir($path.'shop')) { 
+	mkdir($path.'shop', '0757'); 
+}
+if (!is_dir($path.'shop/imgs')) { 
+	mkdir($path.'shop/imgs', '0757'); 
+}
+if (is_dir($path.'shop/imgs')) { 
+	copydirr($source.'shop/'.'imgs', $path.'shop/imgs', null, 0757, true);
+}
+
+$page = new Page("Shop", "Shop");
+$page->content(file_get_contents($source.'shop/'."index.html"));
+writeFile('shop/index.html', $page->out());
+
+
 $benchmark_end = microtime_float();
 $execution_time = round($benchmark_end - $benchmark_start, 4);
 
