@@ -12,21 +12,18 @@
 <image></image>
 <code>
 int pos = 0;
+
 void draw() {
   background(204);
   pos++;
   line(pos, 20, pos, 80);
-  if(pos &gt; width) {
-    pos = 0;
-  }
   delay(250);  // Stops the program for 250 milliseconds
 }
 </code>
 </example>
 
 <description>
-Forces the program to stop running for a specified time. Delay times are specified in thousandths of a second. The function call <b>delay(3000)</b> will stop the program for three seconds. <br/><br/>
-Because the screen is updated only at the end of <b>draw()</b>, the program may appear to "freeze", because the screen will not update when the <b>delay()</b> method is used.<br/><br/>
+Forces the program to stop running for a specified time. Delay times are specified in thousandths of a second, therefore the function call <b>delay(3000)</b> will stop the program for three seconds. Because the screen is updated only at the end of <b>draw()</b>, the program may appear to "freeze", because the screen will not update when the <b>delay()</b> method is used. This function has no affect inside <b>setup()</b>.<br/><br/>
 </description>
 
 <syntax>
