@@ -1,5 +1,485 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <networked>
+    <software name="AVATAR*" by="Román Torre.">
+        <location>http://www.vimeo.com/7625911</location>
+        <date>16 Nov &apos;09</date>
+    </software>
+    <software name="AVATAR*" by="Román Torre.">
+        <location>http://avatarsolo.blogspot.com</location>
+        <date>16 Nov &apos;09</date>
+    </software>
+    <software name="Short Circuit - a video &amp; dance combination" by="Marcus Graf">
+        <location>http://www.vimeo.com/7571306</location>
+        <date>12 Nov &apos;09</date>
+    </software>
+    <software name="Stockastic resonance" by="Jimmy ROUSSEL">
+        <location>http://perso.ensc-rennes.fr/jimmy.roussel/simuler/stochastique/applet/index.html</location>
+        <date>10 Nov &apos;09</date>
+    </software>
+    <software name="Salute the Brave, Reckless Gods in Another" by="Michael Lawrie">
+        <location>http://michaellawrie.com/stbrgia.php</location>
+        <date>08 Nov &apos;09</date>
+    </software>
+    <software name="mar-in-a- skecth 01" by="Alba G. Corral">
+        <location>http://blog.albagcorral.com/2009/10/29/mar-in-a-sketch-01/</location>
+        <date>08 Nov &apos;09</date>
+    </software>
+    <software name="Visualizing Twitter Conversations" by="Walter Rafelsberger">
+        <location>http://bit.ly/visualize-unibrennt</location>
+        <date>03 Nov &apos;09</date>
+    </software>
+    <software name="Visualizing Twitter Conversations" by="Walter Rafelsberger">
+        <location>http://bit.ly/visualize-unibrennt</location>
+        <date>03 Nov &apos;09</date>
+    </software>
+    <software name="Agency Graph" by="Dan Spiteri">
+        <location>http://www.agencygraph.org/</location>
+        <date>21 Oct &apos;09</date>
+    </software>
+    <software name="Conway&apos;s Game of Life" by="J.J. Guy">
+        <location>http://jjguy.com/life/</location>
+        <date>19 Oct &apos;09</date>
+    </software>
+    <software name="Handys ohne Vertrag" by="Heinz Ullrich">
+        <location>http://www.mexseam.de/</location>
+        <date>17 Oct &apos;09</date>
+    </software>
+    <software name="HaikuBlaster" by="Patrick Dinnen">
+        <location>http://www.writingonwalls.ca/products/haiku-blaster/</location>
+        <date>16 Oct &apos;09</date>
+    </software>
+    <software name="Bathroom" by="Lindy">
+        <location>http://bathroomtrade.co.uk/</location>
+        <date>15 Oct &apos;09</date>
+    </software>
+    <software name="Bezier Line Drawing" by="Sungdae Hong">
+        <location>http://165.194.29.36/project/493</location>
+        <date>14 Oct &apos;09</date>
+    </software>
+    <software name="Vergleich Bootsversicherung" by="Klaus Müller">
+        <location>http://www.gast-coll.de/bootsversicherung</location>
+        <date>13 Oct &apos;09</date>
+    </software>
+    <software name="Superdupershape Explorer" by="Martin Schneider">
+        <location>http://www.k2g2.org/blog:bit.craft:superdupershape_explorer</location>
+        <date>12 Oct &apos;09</date>
+    </software>
+    <software name="sketchPatch - The programming playground" by="sketchPatch team">
+        <location>http://www.sketchpatch.net/</location>
+        <date>12 Oct &apos;09</date>
+    </software>
+    <software name="juegos::urbanos" by="mariana carranza">
+        <location>http://urbsludica.wordpress.com/</location>
+        <date>29 Sep &apos;09</date>
+    </software>
+    <software name="Bloom" by="Andrew Richardson">
+        <location>http://vimeo.com/6714886</location>
+        <date>28 Sep &apos;09</date>
+    </software>
+    <software name="Colors" by="Andreas">
+        <location>http://www.gysin-vanetti.com/show?id=140</location>
+        <date>27 Sep &apos;09</date>
+    </software>
+    <software name="Collection of Generative and Interactive Art" by="Anthony Mattox">
+        <location>http://www.anthonymattox.com/interactive/</location>
+        <date>21 Sep &apos;09</date>
+    </software>
+    <software name="The Mesmerizer" by="Devin Smith">
+        <location>http://www.devinsmithmusic.com/theMesmerizer</location>
+        <date>20 Sep &apos;09</date>
+    </software>
+    <software name="VisualMusic" by="Semifer">
+        <location>http://semifershome.free.fr/semifer/index.php?2009/09/19/55--processing-visualmusic-10</location>
+        <date>18 Sep &apos;09</date>
+    </software>
+    <software name="VisualMusic" by="Semifer">
+        <location>http://semifershome.free.fr/semifer/index.php?2009/09/19/55--processing-visualmusic-10</location>
+        <date>18 Sep &apos;09</date>
+    </software>
+    <software name="Limite (miedo)" by="esteban gutierrez">
+        <location>http://www.vimeo.com/user1723469</location>
+        <date>18 Sep &apos;09</date>
+    </software>
+    <software name="aab - engineering aesthetics" by="Gian Chatz">
+        <location>http://prototy.blogspot.com/2009/09/aab-processing-release-1.html</location>
+        <date>17 Sep &apos;09</date>
+    </software>
+    <software name="A Day In The Life Of The Colour Economy" by="Wes Grubbs">
+        <location>http://www.pitchinteractive.com/colour_economy/</location>
+        <date>06 Sep &apos;09</date>
+    </software>
+    <software name="Moirage" by="www.yelele.eu">
+        <location>http://www.yelele.eu/processing/moirage/index.html</location>
+        <date>02 Sep &apos;09</date>
+    </software>
+    <software name="DHISH, a simulation of EVOLUTION" by="Rafael Cosman">
+        <location>http://www.openprocessing.org/visuals/?visualID=4207</location>
+        <date>01 Sep &apos;09</date>
+    </software>
+    <software name="Tower of Letters" by="mediaarchitecture">
+        <location>http://vimeo.com/5152685</location>
+        <date>01 Sep &apos;09</date>
+    </software>
+    <software name="Bathrooms" by="dimi">
+        <location>http://www.wdbathrooms.co.uk/acatalog/Shower_Doors___Bath_Screens.html</location>
+        <date>31 Aug &apos;09</date>
+    </software>
+    <software name="Highlight &amp; Format Processing Code for the Web" by="Anthony Mattox">
+        <location>http://www.anthonymattox.com/code_formatter/</location>
+        <date>27 Aug &apos;09</date>
+    </software>
+    <software name="Visual Silence" by="InnerStaad">
+        <location>http://vimeo.com/6089249</location>
+        <date>27 Aug &apos;09</date>
+    </software>
+    <software name="Branching Morphogenesis" by="Sabin+Jones LabStudio">
+        <location>http://www.sabin-jones.com/arselectronica.html</location>
+        <date>24 Aug &apos;09</date>
+    </software>
+    <software name="low frequency entity" by="christian bannister">
+        <location>http://www.bannister-design.nu/blog/?p=31</location>
+        <date>19 Aug &apos;09</date>
+    </software>
+    <software name="Virtual Urbanity" by="Rafail Bakolas">
+        <location>http://www.youtube.com/watch?v=6KhiZQsUUGs</location>
+        <date>19 Aug &apos;09</date>
+    </software>
+    <software name="Pitch to Rhythm:Rhythm to Pitch " by="Andrew Lucia">
+        <location>http://www.andrewlucia.com/works_stockhausen.htm</location>
+        <date>17 Aug &apos;09</date>
+    </software>
+    <software name="Plane Deformation" by="Luis Gonzalez">
+        <location>http://luis.net/projects/processing/deformation/</location>
+        <date>14 Aug &apos;09</date>
+    </software>
+    <software name="~IDENTITÄT - The »Gestalt« of digital identity" by="Steffen Fiedler">
+        <location>http://www.digital-identities.com/</location>
+        <date>13 Aug &apos;09</date>
+    </software>
+    <software name="TYPOllution" by="Benjamin Gattet">
+        <location>http://www.benjamingattet.com/typollution.html</location>
+        <date>10 Aug &apos;09</date>
+    </software>
+    <software name="TYPOllution" by="Benjamin Gattet">
+        <location>http://www.benjamingattet.com/typollution.html</location>
+        <date>10 Aug &apos;09</date>
+    </software>
+    <software name="Typo Mesh Project" by="zeebee">
+        <location>http://www.zeebee.co.uk/#/MOTION%20/Typo%20Mesh%20Project</location>
+        <date>07 Aug &apos;09</date>
+    </software>
+    <software name="Typo Mesh" by="Zeebee">
+        <location>http://vimeo.com/5509115</location>
+        <date>07 Aug &apos;09</date>
+    </software>
+    <software name="fib" by="Gian Chatz">
+        <location>http://prototy.blogspot.com/2009/08/fib-release-3.html</location>
+        <date>06 Aug &apos;09</date>
+    </software>
+    <software name="fib" by="Gian Chatz">
+        <location>http://prototy.blogspot.com/2009/08/fib-release-3.html</location>
+        <date>06 Aug &apos;09</date>
+    </software>
+    <software name="fib" by="Gian Chatz">
+        <location>http://prototy.blogspot.com/2009/08/fib-release-3.html</location>
+        <date>06 Aug &apos;09</date>
+    </software>
+    <software name="KONG" by="Andreas">
+        <location>http://www.ertdfgcvb.ch/p1/kong.html</location>
+        <date>04 Aug &apos;09</date>
+    </software>
+    <software name="Image Webcam Effects " by="shiningmorning">
+        <location>http://www.shiningmorning.com/</location>
+        <date>30 Jul &apos;09</date>
+    </software>
+    <software name="Magic Camera - Webcam Effects" by="ShiningMorning">
+        <location>http://www.shiningmorning.com/</location>
+        <date>30 Jul &apos;09</date>
+    </software>
+    <software name="FeatherLight - Decortica Music Video" by="Nick Sayes">
+        <location>http://www.derail.co.nz/nick/27/07/2009/featherlight-script/</location>
+        <date>26 Jul &apos;09</date>
+    </software>
+    <software name="TN7" by="Gian Chatz">
+        <location>http://prototy.blogspot.com/2009/07/tn7-tn6-release-3.html</location>
+        <date>26 Jul &apos;09</date>
+    </software>
+    <software name="Division" by="Frederik Vanhoutte (W:Blut)">
+        <location>http://www.wblut.com/</location>
+        <date>24 Jul &apos;09</date>
+    </software>
+    <software name="Imprevionism: Lake Morey, Vermont" by="Jacek Szamrej">
+        <location>http://www.vimeo.com/5689667</location>
+        <date>23 Jul &apos;09</date>
+    </software>
+    <software name="IOn" by="mediaarchitecture.de">
+        <location>http://vimeo.com/4890161</location>
+        <date>23 Jul &apos;09</date>
+    </software>
+    <software name="Host this virus" by="Daniel González">
+        <location>http://www.degafolio.info/hostthisvirus/</location>
+        <date>20 Jul &apos;09</date>
+    </software>
+    <software name="virtual gravity - the physical weight of data" by="Silke Hilsing">
+        <location>http://virtualgravity.de/</location>
+        <date>18 Jul &apos;09</date>
+    </software>
+    <software name="Form Resonance Audio Visualization Widgets" by="effzehn">
+        <location>http://www.effzehn.de/work/2009/frwidgets/frwidgets.html</location>
+        <date>18 Jul &apos;09</date>
+    </software>
+    <software name="Soft Body" by="www.yelele.eu">
+        <location>http://www.yelele.eu/processing/softbody</location>
+        <date>09 Jul &apos;09</date>
+    </software>
+    <software name="Dice Art" by="Luis Gonzalez">
+        <location>http://luis.net/projects/processing/dice/</location>
+        <date>06 Jul &apos;09</date>
+    </software>
+    <software name="2.5d cellular automata . 3d game of life" by="Kai Franz">
+        <location>http://www.ca.kaifranz.de/</location>
+        <date>04 Jul &apos;09</date>
+    </software>
+    <software name="Monte Carlo simulation of a rainbow" by="jimmy roussel">
+        <location>http://perso.ensc-rennes.fr/jimmy.roussel/simuler/arcenciel/applet/index.html</location>
+        <date>30 Jun &apos;09</date>
+    </software>
+    <software name="McDunCo" by="Clement Valla">
+        <location>http://clementvalla.com/index.php?/projects/mcdunco/</location>
+        <date>26 Jun &apos;09</date>
+    </software>
+    <software name="Geon" by="Tomasz Wlodarczyk">
+        <location>http://blog.arsthanea.com/2009/06/25/geon/</location>
+        <date>26 Jun &apos;09</date>
+    </software>
+    <software name="Rotozoomer" by="Luis Gonzalez">
+        <location>http://luis.net/projects/processing/rotozoomer/</location>
+        <date>25 Jun &apos;09</date>
+    </software>
+    <software name="9 Books" by="Andre Hoffmann">
+        <location>http://www.effzehn.de/effzehn3/works/9books/9books.html</location>
+        <date>25 Jun &apos;09</date>
+    </software>
+    <software name="Sixth Platonic Solid" by="Clement Valla">
+        <location>http://clementvalla.com/index.php?/projects/the-sixth-platonic-solid/</location>
+        <date>24 Jun &apos;09</date>
+    </software>
+    <software name="tracking bots" by="frank richter">
+        <location>http://www.4d-screen.de/art-gal/video.htm</location>
+        <date>23 Jun &apos;09</date>
+    </software>
+    <software name="Browsing In May" by="Michael Schieben">
+        <location>http://browsing-in-may.com/</location>
+        <date>23 Jun &apos;09</date>
+    </software>
+    <software name="Forsythe Cue Visualizer" by="Michael Andereck">
+        <location>http://synchronousobjects.osu.edu/tools/cueVisualizer.html</location>
+        <date>22 Jun &apos;09</date>
+    </software>
+    <software name="Ink Painting" by="burn">
+        <location>http://www.burncg.cn/burnblog/article.asp?id=184</location>
+        <date>22 Jun &apos;09</date>
+    </software>
+    <software name="ImpulsBauhaus - interactive table - weimar" by="mediaarchitecture.de">
+        <location>http://mediaarchitecture.de/projekte/impuls_bauhaus-interaktiver-tisch-interactive-table/</location>
+        <date>18 Jun &apos;09</date>
+    </software>
+    <software name="1834 Roller Rider" by="Patrick Dinnen">
+        <location>http://medialabtoronto.ca/2009/05/1834-roller-rider</location>
+        <date>17 Jun &apos;09</date>
+    </software>
+    <software name="Hands On Jukebox" by="Ben Hughes / Ryan Barkataki">
+        <location>http://www.hands-on-media.org/</location>
+        <date>16 Jun &apos;09</date>
+    </software>
+    <software name="VisualMOA: sequenced microbial genomes browser" by="Catherine Holloway">
+        <location>http://ratite.cs.dal.ca/visualmoa</location>
+        <date>15 Jun &apos;09</date>
+    </software>
+    <software name="Terzetto 1 &amp; 2" by="Active Creative Design">
+        <location>http://www.activecreativedesign.com/</location>
+        <date>14 Jun &apos;09</date>
+    </software>
+    <software name="Wellips" by="Daniel Tauber, Cem Sever, Matthieu Rudaz">
+        <location>http://vimeo.com/4336314</location>
+        <date>14 Jun &apos;09</date>
+    </software>
+    <software name="Urbanization in Iceland" by="Hjalmar Gislason">
+        <location>http://blog.datamarket.net/2009/06/10/icelands-urbanization/</location>
+        <date>12 Jun &apos;09</date>
+    </software>
+    <software name="Map of NY Times articles on African Countries" by="Ryan Briggs">
+        <location>http://ryancbriggs.net/post/107012001/the-new-york-times-api-is-really-fantastic</location>
+        <date>08 Jun &apos;09</date>
+    </software>
+    <software name="student UW-Milwaukee PSOA" by="Paul Bartolone">
+        <location>https://pantherfile.uwm.edu/pjb2/WWW/Tye-Dye_Gen_web/index.html</location>
+        <date>03 Jun &apos;09</date>
+    </software>
+    <software name="cuboïd construction v0.9" by="David Marec">
+        <location>http://www.imathematics.fr/</location>
+        <date>02 Jun &apos;09</date>
+    </software>
+    <software name="Gardening tools" by="Gardening tools">
+        <location>http://www.lbsgardenwarehouse.co.uk/</location>
+        <date>31 May &apos;09</date>
+    </software>
+    <software name="Questions &amp; Answers" by="Scott Murray">
+        <location>http://alignedleft.com/projects/2009/QuestionsAnswers/</location>
+        <date>28 May &apos;09</date>
+    </software>
+    <software name="Glowdoodle" by="Eric Rosenbaum">
+        <location>http://glowdoodle.com/</location>
+        <date>26 May &apos;09</date>
+    </software>
+    <software name="Glowdoodle" by="Eric Rosenbaum">
+        <location>http://glowdoodle.com/</location>
+        <date>26 May &apos;09</date>
+    </software>
+    <software name="Light Dusts - OpenGl, Blending, Lights, Physics" by="TM">
+        <location>http://www.fuck-dance-lets-art.com/light-dusts</location>
+        <date>18 May &apos;09</date>
+    </software>
+    <software name="Navagunjara, The facade as a canvas" by="Experiential Design Lab">
+        <location>http://experiential-lab.com/eng/portfolio_009.htm</location>
+        <date>18 May &apos;09</date>
+    </software>
+    <software name="Navagunjara, The facade as a canvas" by="Experiential Design Lab">
+        <location>http://experiential-lab.com/eng/portfolio_009.htm</location>
+        <date>18 May &apos;09</date>
+    </software>
+    <software name="Navagunjara, The facade as a canvas" by="Anurag Sehgal">
+        <location>http://experiential-lab.com/eng/portfolio_009.htm</location>
+        <date>18 May &apos;09</date>
+    </software>
+    <software name="Concert on WRO" by="Piotr Welk">
+        <location>http://wro.gargulio.pl/</location>
+        <date>17 May &apos;09</date>
+    </software>
+    <software name="cuboïd construction" by="d.marec">
+        <location>http://www.imathematics.fr/processing/cuboidV04</location>
+        <date>17 May &apos;09</date>
+    </software>
+    <software name="Die Ästhetik der Assoziation" by="Carlo Grabowski">
+        <location>http://www.carlograbowski.de/aa</location>
+        <date>16 May &apos;09</date>
+    </software>
+    <software name="Die Ästhetik der Assoziation" by="Carlo Grabowski">
+        <location>http://www.carlograbowski.de/aa</location>
+        <date>16 May &apos;09</date>
+    </software>
+    <software name="LOGO: MultiTurtles" by="LaBelle">
+        <location>http://anar.ch/examples/p5.php?p=Test04zTurtleMulti</location>
+        <date>05 May &apos;09</date>
+    </software>
+    <software name="Wasted time" by="Greger Stolt Nilsen">
+        <location>http://dyn.gregerstoltnilsen.net/work/17</location>
+        <date>04 May &apos;09</date>
+    </software>
+    <software name="RANDOM WALK - The Visualization of Randomness" by="Daniel A. Becker">
+        <location>http://www.random-walk.com/</location>
+        <date>04 May &apos;09</date>
+    </software>
+    <software name="RANDOM WALK - The Visualization of Randomness" by="Daniel A. Becker">
+        <location>http://www.random-walk.com/</location>
+        <date>04 May &apos;09</date>
+    </software>
+    <software name="Metatunnel" by="Luis Gonzalez">
+        <location>http://luis.net/projects/processing/metatunnel/</location>
+        <date>04 May &apos;09</date>
+    </software>
+    <software name="T-Cell" by="Gendou">
+        <location>http://gendou.com/tcell</location>
+        <date>01 May &apos;09</date>
+    </software>
+    <software name="T-Cell" by="Gendou">
+        <location>http://gendou.com/tcell</location>
+        <date>01 May &apos;09</date>
+    </software>
+    <software name="Girinos (tadpoles)" by="Dimitre">
+        <location>http://dmtr.org/girinos/</location>
+        <date>30 Apr &apos;09</date>
+    </software>
+    <software name="body in a box" by="Frederik Vanhoutte (W:Blut)">
+        <location>http://www.wblut.com/</location>
+        <date>28 Apr &apos;09</date>
+    </software>
+    <software name="10,000 Items or Less (All at Once)" by="Kyle McDonald">
+        <location>http://www.flickr.com/photos/kylemcdonald/sets/72157617311617145/</location>
+        <date>27 Apr &apos;09</date>
+    </software>
+    <software name="Konica Copiers" by="Konica Copiers">
+        <location>http://www.stinkyinkshop.co.uk/acatalog/Konica_Minolta_Copiers_and_Printers.html</location>
+        <date>26 Apr &apos;09</date>
+    </software>
+    <software name="Protest Gegen Netzsperren on spreeblick.com" by="Michael Schieben">
+        <location>http://www.twoantennas.com/projects/protest-gegen-internetsperren/interaktiv/</location>
+        <date>24 Apr &apos;09</date>
+    </software>
+    <software name="Tread Water" by="Chris Basmajian">
+        <location>http://basmajian.net/work/tread_water/</location>
+        <date>22 Apr &apos;09</date>
+    </software>
+    <software name="Capture" by="Chris Basmajian">
+        <location>http://basmajian.net/work/capture/</location>
+        <date>22 Apr &apos;09</date>
+    </software>
+    <software name="M Digital Design - Grow your own Logotype" by="Mitchell Whitelaw">
+        <location>http://creative.canberra.edu.au/mitchell/dd/</location>
+        <date>22 Apr &apos;09</date>
+    </software>
+    <software name="threeDclock" by="lloydy">
+        <location>http://www.lloydharrison.co.uk/threeDclock/index.html</location>
+        <date>20 Apr &apos;09</date>
+    </software>
+    <software name="Online Games with Topscores" by="Anna Smith">
+        <location>http://www.freeonlinegames1.net/</location>
+        <date>19 Apr &apos;09</date>
+    </software>
+    <software name="diachronic anamorphosis" by="marginalia project">
+        <location>http://vimeo.com/4205136</location>
+        <date>18 Apr &apos;09</date>
+    </software>
+    <software name="Superfluid vs Psychedelics PArticles " by="jimmy hertz/ Memo Akten/ NUI Group">
+        <location>http://vimeo.com/4085335</location>
+        <date>13 Apr &apos;09</date>
+    </software>
+    <software name="snippets I" by="Frederik Vanhoutte (W:Blut)">
+        <location>http://www.wblut.com/</location>
+        <date>12 Apr &apos;09</date>
+    </software>
+    <software name="processing at Eurographics 2009" by="Jordi Linares">
+        <location>http://www.dsic.upv.es/~jlinares/processing.pdf</location>
+        <date>11 Apr &apos;09</date>
+    </software>
+    <software name="random graphs" by="generative art">
+        <location>http://www.flickr.com/photos/28120841@N03/3420258443/</location>
+        <date>10 Apr &apos;09</date>
+    </software>
+    <software name="Tunnel Visions" by="InnerStaad">
+        <location>http://vimeo.com/4026452</location>
+        <date>10 Apr &apos;09</date>
+    </software>
+    <software name="Balloon Light" by="Patrick Dinnen">
+        <location>http://medialabtoronto.ca/2009/03/luminato-balloons-video</location>
+        <date>02 Apr &apos;09</date>
+    </software>
+    <software name="A Game Video Trailer -all in Processing -physics" by="TM">
+        <location>http://sosobering.free.fr/art/?p=553</location>
+        <date>01 Apr &apos;09</date>
+    </software>
+    <software name="Vectorballs" by="Luis Gonzalez">
+        <location>http://luis.net/projects/processing/vectorball/</location>
+        <date>30 Mar &apos;09</date>
+    </software>
+    <software name="The Art Machine (Kunstautomat)" by="Andres Wanner">
+        <location>http://pixelstorm.ch/pro_kunstautomat.php?lang=en</location>
+        <date>28 Mar &apos;09</date>
+    </software>
+    <software name="No hidden message" by="Mia">
+        <location>http://nohiddenmessage.com/</location>
+        <date>24 Mar &apos;09</date>
+    </software>
     <software name="submersed songs" by="Loodik">
         <location>http://www.vimeo.com/1896923</location>
         <date>26 Feb &apos;09</date>
