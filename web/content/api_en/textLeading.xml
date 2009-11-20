@@ -15,8 +15,8 @@ PFont font;
 // The font must be located in the sketch's 
 // "data" directory to load successfully 
 font = loadFont("EurekaMonoCond-Bold-14.vlw");
-// Text to display. The "/\n" is a "new line" character
-String lines = "LIN1/\nLIN2/\nLIN3"; 
+// Text to display. The "\\n" is a "new line" character
+String lines = "LIN1\\nLIN2\\nLIN3"; 
 textFont(font, 14); 
 textLeading(10);
 text(lines, 5, 25); 
