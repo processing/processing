@@ -250,10 +250,19 @@ public class Build {
   
   
   class Preproc extends PdePreprocessor {
+    
     public int writeImports(PrintStream out) {
       out.println("package " + getPackageName() + ";");
       out.println();
       return super.writeImports(out);
+    }
+    
+    public String[] getCoreImports() {
+      return new String[] { 
+        "import processing.android.core.*;",
+        "import processing.android.opengl.*;",  // temporary
+        "import processing.android.xml.*;"
+      };
     }
   }
 

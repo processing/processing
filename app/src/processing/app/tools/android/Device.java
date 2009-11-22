@@ -209,9 +209,19 @@ public class Device {
         "1" // start with key down
     };
     try {
-      Runtime.getRuntime().exec(cmd).waitFor();
+      int result;
+      int attempts = 0;
+      do {
+        result = Runtime.getRuntime().exec(cmd).waitFor();
+        attempts++;
+      } while (result != 0 && attempts < 5);
+      
+      attempts = 0;
       cmd[cmd.length - 1] = "0";  // send key up
-      Runtime.getRuntime().exec(cmd).waitFor();
+      do {
+        result = Runtime.getRuntime().exec(cmd).waitFor();
+        attempts++;
+      } while (result != 0 && attempts < 5);
       
     } catch (InterruptedException ie) { }
   }
