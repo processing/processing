@@ -18,6 +18,8 @@ else
   cp ../../app/lib/antlr.jar work/lib/
   cp ../../app/lib/ecj.jar work/lib/
   cp ../../app/lib/jna.jar work/lib/
+  cp ../../app/lib/ant.jar work/lib/
+  cp ../../app/lib/ant-launcher.jar work/lib/
 
   echo Extracting examples...
   unzip -q -d work/ ../shared/examples.zip
@@ -130,7 +132,7 @@ mkdir ../build/linux/work/classes
     -cp ../build/linux/work/java/lib/tools.jar \
     com.sun.tools.javac.Main \
     -source 1.5 -target 1.5 \
-    -classpath ../build/linux/work/lib/core.jar:../build/linux/work/lib/antlr.jar:../build/linux/work/lib/ecj.jar:../build/linux/work/lib/jna.jar:../build/linux/work/java/lib/tools.jar \
+    -classpath ../build/linux/work/lib/core.jar:../build/linux/work/lib/antlr.jar:../build/linux/work/lib/ant.jar:../build/linux/work/lib/ant-launcher.jar:../build/linux/work/lib/ecj.jar:../build/linux/work/lib/jna.jar:../build/linux/work/java/lib/tools.jar \
     -d ../build/linux/work/classes \
     src/processing/app/*.java \
     src/processing/app/debug/*.java \
