@@ -1,109 +1,158 @@
 package processing.app.tools.android;
 
-//import java.awt.*;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-//import javax.swing.*;
+import org.apache.tools.ant.*;
 
 import processing.app.*;
 import processing.app.debug.RunnerException;
 import processing.app.preproc.PdePreprocessor;
-import processing.app.tools.Tool;
 import processing.core.PApplet;
 
 
-public class Build implements Tool {
+// build/create apk 
+// build non-debug version of apk
+//   call this "export to application" or something?
+//   "Export to Package" cmd-shift-E
+// install to device (release version)
+//   "Export to Device" cmd-E
+// run/debug in emulator
+//   cmd-r
+// run/debug on device
+//   cmd-shift-r (like present mode)
+
+// download/install sdk
+// create new avd for debugging
+// set the avd to use
+// set the sdk location
+//   does this require PATH to be set as well? 
+//   or can it be done with $ANDROID_SDK?
+//   or do we need to set PATH each time P5 starts up
+
+/*
+android bugs/wishes
+
++ uninstalled sdk version 3, without first uninstalling google APIs v3
+  removes the google APIs from the list (so no way to uninstall)
+  and produces the following error every time it's loaded:
+  Error: Ignoring add-on 'google_apis-3-r03': Unable to find base platform with API level '3'
+  
++ install android sdk from command line (and download components)
+
++ syntax for "create avd" is WWWxHHH not WWW-HHH
+  http://developer.android.com/guide/developing/tools/avd.html
+  
++ half the tools use --option-name the other half use -option-name
+
++ http://developer.android.com/guide/developing/other-ide.html
+  set JAVA_HOME=c:\Prora~1\Java\
+  that should be progra~1 (it's missing a G)
+  
++ "If there is no emulator/device running, adb returns no device." 
+  not true, it just shows up blank
+  http://developer.android.com/guide/developing/tools/adb.html
+*/
+
+/*
+android create project -t 3 -n test_name -p test_path -a test_activity -k test.pkg
+file:///opt/android/docs/guide/developing/other-ide.html
+# compile code for a project
+ant debug
+# this pulls in tons of other .jar files for android ant 
+# local.properties (in the android folder) has the sdk location
+   */
+
+public class Build {
+  static SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMdd.HHmm");
+
+  static String basePackage = "processing.android.test";
+  static String sdkLocation = "/opt/android";
+  
   Editor editor;
 
-  SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMdd.HHmm");
-  
-  String defaultPackage = "processing.android.test";
-  String sdkLocation = "/opt/android";
+  String className;
+  File androidFolder;
+  File buildFile;
   
 
-  public String getMenuTitle() {
-    return "Android";
+  public Build(Editor editor) {
+    this.editor = editor;
   }
-
   
-  public void init(Editor parent) {
-    this.editor = parent;
-    
-    /*
-    SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        JMenuBar mb = null;
-        while (mb == null) {
-          mb = editor.getJMenuBar();
-          if (mb != null) {
-            int menuCount = mb.getMenuCount();
-            for (int i = 0; i < menuCount; i++) {
-              JMenu menu = mb.getMenu(i);
-              String menuName = menu.getName();
-              System.out.println(menu.getName());
-              if (menuName == null) continue;
-              //if (menu.getName().equals("Tools")) {
-//              if (menuName.equals("Tools")) {
-                int itemCount = menu.getItemCount();
-                for (int j = 0; j < itemCount; j++) {
-                  JMenuItem item = menu.getItem(j);
-                  System.out.println(item.getName());
-                  if (item.getName().equals("Android")) {
-                    System.out.println("done");
-                    int modifiers = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
-                    item.setAccelerator(KeyStroke.getKeyStroke('D', modifiers));
-                    //item.setShortcut(new MenuShortcut('D'));
-                    return;
-                  }
-                }
-//              }
-            }
-          } 
-          try {
-            Thread.sleep(100);
-          } catch (InterruptedException e) {
-            e.printStackTrace();
-          }
-        }
+
+  protected int[] getSketchSize() {
+    int wide = Device.DEFAULT_WIDTH;
+    int high = Device.DEFAULT_HEIGHT;
+//    String renderer = "";
+
+    // This matches against any uses of the size() function, whether numbers
+    // or variables or whatever. This way, no warning is shown if size() isn't
+    // actually used in the applet, which is the case especially for anyone
+    // who is cutting/pasting from the reference.
+    String sizeRegex =
+      "(?:^|\\s|;)size\\s*\\(\\s*(\\S+)\\s*,\\s*(\\d+),?\\s*([^\\)]*)\\s*\\)";
+
+    Sketch sketch = editor.getSketch();
+    String scrubbed = Sketch.scrubComments(sketch.getCode(0).getProgram());
+    String[] matches = PApplet.match(scrubbed, sizeRegex);
+
+    if (matches != null) {
+      try {
+        wide = Integer.parseInt(matches[1]);
+        high = Integer.parseInt(matches[2]);
+
+        // Adding back the trim() for 0136 to handle Bug #769
+//        if (matches.length == 4) renderer = matches[3].trim();
+
+      } catch (NumberFormatException e) {
+        // found a reference to size, but it didn't
+        // seem to contain numbers
+        final String message =
+          "The size of this applet could not automatically be\n" +
+          "determined from your code.\n" +
+          "Use only numeric values (not variables) for the size()\n" +
+          "command. See the size() reference for an explanation.";
+
+        Base.showWarning("Could not find sketch size", message, null);
       }
-    });
-    */
+    }  // else no size() command found
+    return new int[] { wide, high };
   }
-
   
-  public void run() {
+  
+  public boolean createProject() {
     Sketch sketch = editor.getSketch();
     
     // Create the 'android' build folder, and move any existing version out. 
-    File androidFolder = new File(sketch.getFolder(), "android");
+    androidFolder = new File(sketch.getFolder(), "android");
     if (androidFolder.exists()) {
       Date mod = new Date(androidFolder.lastModified());
       File dest = new File(sketch.getFolder(), "android." + dateFormat.format(mod));
       boolean result = androidFolder.renameTo(dest);
       if (!result) {
         Base.showWarning("Failed to rename", 
-                         "Could not rename the old \"android\" build folder.\n" + 
+                         "Could not rename the old “android” build folder.\n" + 
                          "Please delete, close, or rename the folder\n" + 
                          androidFolder.getAbsolutePath() + "\n" +  
                          "and try again." , null);
         Base.openFolder(sketch.getFolder());
-        return;
+        return false;
       }
     } else {
       boolean result = androidFolder.mkdirs();
       if (!result) {
         Base.showWarning("Folders, folders, folders", 
                          "Could not create the necessary folders to build.\n" +
-                         "Perhaps you have some permissions to sort out?", null);
-        return;
+                         "Perhaps you have some file permissions to sort out?", null);
+        return false;
       }
     }
 
     // Create the 'src' folder with the preprocessed code.
     File srcFolder = new File(androidFolder, "src");
-    File javaFolder = new File(srcFolder, defaultPackage.replace('.', '/'));
+    File javaFolder = new File(srcFolder, getPackageName().replace('.', '/'));
     javaFolder.mkdirs();
     //File srcFile = new File(actualSrc, className + ".java");
     String buildPath = javaFolder.getAbsolutePath();
@@ -115,77 +164,114 @@ public class Build implements Tool {
     try {
       // need to change to a better set of imports here
 
-      String className = sketch.preprocess(buildPath, new Preproc());
+      className = sketch.preprocess(buildPath, new Preproc());
       if (className != null) {
-        writeAndroidManifest(new File(androidFolder, "AndroidManifest.xml"), className);      
+        File androidXML = new File(androidFolder, "AndroidManifest.xml");
+        writeAndroidManifest(androidXML, sketch.getName(), className);      
         writeBuildProps(new File(androidFolder, "build.properties"));
-        File buildFile = new File(androidFolder, "build.xml");
+        buildFile = new File(androidFolder, "build.xml");
         writeBuildXML(buildFile, sketch.getName());
         writeDefaultProps(new File(androidFolder, "default.properties"));
         writeLocalProps(new File(androidFolder, "local.properties"));
         writeRes(new File(androidFolder, "res"), className);
         writeLibs(new File(androidFolder, "libs"));
-        Base.openFolder(androidFolder);
+        //Base.openFolder(androidFolder);
 
         // looking for BUILD SUCCESSFUL or BUILD FAILED
 //        Process p = Runtime.getRuntime().exec(new String[] { 
 //          "ant", "-f", buildFile.getAbsolutePath()
 //        });
 //        BufferedReader stdout = PApplet.createReader(p.getInputStream());
-//        String line = null; 
+//        String line = null;         
       }
 //    } catch (IOException ioe) {
 //      ioe.printStackTrace();
     } catch (RunnerException e) {
-      e.printStackTrace();
+      //e.printStackTrace();
+      editor.statusError(e);
+      // set this back, even if there's an error
+      Preferences.set("preproc.imports", prefsLine);
+      return false;
     }
+    return true;
+  }
+  
+  
+  /**
+   * @param buildFile location of the build.xml for the sketch
+   * @param target "debug" or "release"
+   */
+  boolean antBuild(String target) {
+    Project p = new Project();
+    p.setUserProperty("ant.file", buildFile.getAbsolutePath());
     
-    // set this back, even if there's an error
-    Preferences.set("preproc.imports", prefsLine);    
+    DefaultLogger consoleLogger = new DefaultLogger();
+    consoleLogger.setErrorPrintStream(System.err);
+    consoleLogger.setOutputPrintStream(System.out);
+    consoleLogger.setMessageOutputLevel(Project.MSG_INFO);
+    p.addBuildListener(consoleLogger);
+
+    try {
+      editor.statusNotice("Building sketch for Android...");
+      p.fireBuildStarted();
+      p.init();
+      ProjectHelper helper = ProjectHelper.getProjectHelper();
+      p.addReference("ant.projectHelper", helper);
+      helper.parse(p, buildFile);
+      //p.executeTarget(p.getDefaultTarget());
+      p.executeTarget("debug");
+      editor.statusNotice("Finished building sketch.");
+      return true;
+
+    } catch (BuildException e) {
+      p.fireBuildFinished(e);
+      //e.printStackTrace();  // ??
+      editor.statusError(e);
+    }
+    return false;
+  }
+
+  
+  String getPackageName() {
+    return basePackage + "." + editor.getSketch().getName().toLowerCase();
+  }
+  
+  
+  String getClassName() {
+    return className;
+  }
+  
+  
+  String getPathForAPK(String target) {
+    Sketch sketch = editor.getSketch();
+    File apkFile = new File(androidFolder, "bin/" + sketch.getName() + "-" + target + ".apk");
+    return apkFile.getAbsolutePath();
   }
   
   
   class Preproc extends PdePreprocessor {
     public int writeImports(PrintStream out) {
-      out.println("package " + defaultPackage + ";");
+      out.println("package " + getPackageName() + ";");
       out.println();
       return super.writeImports(out);
     }
   }
 
 
-  /*
-android create project -t 3 -n test_name -p test_path -a test_activity -k test.pkg
-file:///opt/android/docs/guide/developing/other-ide.html
-# compile code for a project
-ant debug
-# this pulls in tons of other .jar files for android ant 
-# local.properties (in the android folder) has the sdk location
-
-# starts and uses port 5554 for communication (but not logs)
-emulator -avd gee1 -port 5554
-
-# only informative messages and up (emulator -help-logcat for more info)
-emulator -avd gee1 -logcat '*:i'
-# faster boot
-emulator -avd gee1 -logcat '*:i' -no-boot-anim 
-# only get System.out and System.err
-emulator -avd gee1 -logcat 'System.*:i' -no-boot-anim 
-# though lots of messages aren't through System.*, so that's not great
-
-# need to instead use the adb interface
-   */
-
-
-  void writeAndroidManifest(File file, String className) {
+  void writeAndroidManifest(File file, String sketchName, String className) {
     PrintWriter writer = PApplet.createWriter(file);
     writer.println("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
     writer.println("<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\" ");
-    writer.println("          package=\"" + defaultPackage + "\" ");
+    writer.println("          package=\"" + getPackageName() + "\" ");
     writer.println("          android:versionCode=\"1\" ");
     writer.println("          android:versionName=\"1.0\">");
+    
+    writer.println("  <uses-sdk android:minSdkVersion=" + q("4") + " />");
+    
     writer.println("  <application android:label=\"@string/app_name\">");
-    writer.println("    <activity android:name=\"." + className + "\"");
+//    writer.println("  <application android:label=" + q(sketchName) + ">");
+    writer.println("    <activity android:name=" + q("." + className));
+//    writer.println("              android:label=" + q(sketchName) + ">");
     writer.println("              android:label=\"@string/app_name\">");
     writer.println("      <intent-filter>");
     writer.println("        <action android:name=\"android.intent.action.MAIN\" />");
@@ -201,7 +287,7 @@ emulator -avd gee1 -logcat 'System.*:i' -no-boot-anim
   
   void writeBuildProps(File file) {
     PrintWriter writer = PApplet.createWriter(file);
-    writer.println("application-package=" + defaultPackage);
+    writer.println("application-package=" + getPackageName());
     writer.flush();
     writer.close();
   }
@@ -238,7 +324,7 @@ emulator -avd gee1 -logcat 'System.*:i' -no-boot-anim
   
   void writeDefaultProps(File file) {
     PrintWriter writer = PApplet.createWriter(file);
-    writer.println("target=Google Inc.:Google APIs:3");
+    writer.println("target=Google Inc.:Google APIs:4");
     writer.flush();
     writer.close();
   }
@@ -284,6 +370,7 @@ emulator -avd gee1 -logcat 'System.*:i' -no-boot-anim
   }
   
   
+  /** This recommended to be a string resource so that it can be localized. */
   void writeResValuesStrings(File file, String className) {
     PrintWriter writer = PApplet.createWriter(file);
     writer.println("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
@@ -299,5 +386,14 @@ emulator -avd gee1 -logcat 'System.*:i' -no-boot-anim
     libsFolder.mkdirs();
     InputStream input = getClass().getResourceAsStream("processing-core.zip");
     PApplet.saveStream(new File(libsFolder, "processing-core.jar"), input);
+  }
+ 
+  
+  /**
+   * Place quotes around a string to avoid dreadful syntax mess of escaping
+   * quotes near quoted strings. Mmmm!
+   */
+  static final String q(String what) {
+    return "\"" + what + "\"";
   }
 }
