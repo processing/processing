@@ -4,7 +4,7 @@
   PdePreprocessor - wrapper for default ANTLR-generated parser
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-08 Ben Fry and Casey Reas
+  Copyright (c) 2004-09 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   ANTLR-generated parser and several supporting classes written
@@ -387,10 +387,11 @@ public class PdePreprocessor {
   }
 
   protected int writeImports(PrintStream out) {
-    out.println("import processing.core.*; ");
-    out.println("import processing.xml.*; ");
-    out.println();
-    int count = 3;
+    int count = 1;
+    for (String s : getCoreImports()) {
+      out.println(s);
+      count++;
+    }
 
     if (programImports.size() != 0) {
       for (String item : programImports) {
@@ -491,6 +492,14 @@ public class PdePreprocessor {
 
   public ArrayList<String> getExtraImports() {
     return programImports;
+  }
+  
+
+  public String[] getCoreImports() {
+    return new String[] { 
+      "import processing.core.*;",
+      "import processing.xml.*;"
+    };
   }
 
 
