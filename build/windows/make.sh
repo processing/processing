@@ -155,6 +155,7 @@ mkdir ../build/windows/work/classes
     src/processing/app/syntax/*.java \
     src/processing/app/preproc/*.java \
     src/processing/app/tools/*.java \
+    src/processing/app/tools/android/*.java \
     src/processing/app/windows/*.java \
     src/antlr/*.java \
     src/antlr/java/*.java 

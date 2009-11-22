@@ -1,4 +1,5 @@
 /*
+
  * @(#)StreamRedirectThread.java	1.4 03/01/23
  *
  * Copyright 2003 Sun Microsystems, Inc. All rights reserved.
@@ -31,7 +32,7 @@
  * facility. Licensee represents and warrants that it will not use or
  * redistribute the Software for such purposes.
  */
-package processing.app.debug;
+package processing.app;
 
 import java.io.*;
 
@@ -49,6 +50,7 @@ public class StreamRedirectThread extends Thread {
 
   private static final int BUFFER_SIZE = 2048;
 
+  
   /**
    * Set up for copy.
    * @param name  Name of the thread
@@ -61,6 +63,15 @@ public class StreamRedirectThread extends Thread {
     this.out = new OutputStreamWriter(out);
     setPriority(Thread.MAX_PRIORITY-1);
   }
+  
+  
+  public StreamRedirectThread(String name, Reader in, Writer out) {
+    super(name);
+    this.in = in;
+    this.out = out;
+    setPriority(Thread.MAX_PRIORITY-1);
+  }
+  
 
   /**
    * Copy.
