@@ -18,6 +18,8 @@ else
   cp ../../app/lib/antlr.jar work/lib/
   cp ../../app/lib/ecj.jar work/lib/
   cp ../../app/lib/jna.jar work/lib/
+  cp ../../app/lib/ant.jar work/lib/
+  cp ../../app/lib/ant-launcher.jar work/lib/
 
   echo Extracting examples...
   unzip -q -d work/ ../shared/examples.zip

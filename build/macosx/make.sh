@@ -42,6 +42,8 @@ else
   cp -X ../../app/lib/antlr.jar "$RESOURCES/"
   cp -X ../../app/lib/ecj.jar "$RESOURCES/"
   cp -X ../../app/lib/jna.jar "$RESOURCES/"
+  cp -X ../../app/lib/ant.jar "$RESOURCES/"
+  cp -X ../../app/lib/ant-launcher.jar "$RESOURCES/"
 
   echo Extracting examples...
   unzip -q -d "$RESOURCES/" ../shared/examples.zip
@@ -129,7 +131,7 @@ mkdir ../build/macosx/work/classes
 javac \
     -Xlint:deprecation \
     -source 1.5 -target 1.5 \
-    -classpath "$RESOURCES/core.jar:$RESOURCES/antlr.jar:$RESOURCES/ecj.jar:$RESOURCES/jna.jar" \
+    -classpath "$RESOURCES/core.jar:$RESOURCES/antlr.jar:$RESOURCES/ant.jar:$RESOURCES/ant-launcher.jar:$RESOURCES/ecj.jar:$RESOURCES/jna.jar" \
     -d ../build/macosx/work/classes \
     src/processing/app/*.java \
     src/processing/app/debug/*.java \
