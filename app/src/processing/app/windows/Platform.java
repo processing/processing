@@ -25,8 +25,12 @@ package processing.app.windows;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 
+import com.sun.jna.Library;
+import com.sun.jna.Native;
+
 import processing.app.Base;
 import processing.app.Preferences;
+import processing.app.Platform.CLibrary;
 import processing.app.windows.Registry.REGISTRY_ROOT_KEY;
 import processing.core.PApplet;
 
@@ -264,5 +268,37 @@ public class Platform extends processing.app.Platform {
 
     // not tested
     //Runtime.getRuntime().exec("start explorer \"" + folder + "\"");
+  }
+  
+  
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  
+  
+  
+  public interface WinLibC extends Library {
+    WinLibC INSTANCE = (WinLibC) Native.loadLibrary("msvcrt", WinLibC.class);
+
+    public int _putenv(String name);
+//    int setenv(String name, String value, int overwrite);
+//    String getenv(String name);
+//    int unsetenv(String name);
+//    int putenv(String string);
+  }
+
+  
+  public void setenv(String variable, String value) {
+    WinLibC clib = WinLibC.INSTANCE;
+    clib._putenv(variable + "=" + value);
+  }
+
+  
+  public String getenv(String variable) {
+    return System.getenv(variable);
+  }
+
+
+  public int unsetenv(String variable) {
+    WinLibC clib = WinLibC.INSTANCE;
+    clib._putenv(variable + "=");
+    return 0;
   }
 }

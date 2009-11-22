@@ -69,16 +69,17 @@ public class Android implements Tool {
 
 
   static protected void checkPath() {
+    Platform platform = Base.getPlatform();
     //  System.out.println("PATH is " + Base.getenv("PATH"));
     //  System.out.println("PATH from System is " + System.getenv("PATH"));
-    if (Base.getenv("ANDROID_SDK") == null) {
-      Base.setenv("ANDROID_SDK", "/opt/android");
+    if (platform.getenv("ANDROID_SDK") == null) {
+      platform.setenv("ANDROID_SDK", "/opt/android");
     }
-    sdkPath = Base.getenv("ANDROID_SDK");
+    sdkPath = platform.getenv("ANDROID_SDK");
 //    System.out.println("sdk path is " + sdkPath);
     //  sdkPath = "/opt/android";
     String toolsPath = sdkPath + File.separator + "tools";
-    Base.setenv("PATH", Base.getenv("PATH") + File.pathSeparator + toolsPath);
+    platform.setenv("PATH", platform.getenv("PATH") + File.pathSeparator + toolsPath);
 //    System.out.println("path after set is " + Base.getenv("PATH")); 
   }
 
