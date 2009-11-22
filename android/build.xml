@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- this is not a proper build file. 
+     the proper method is to build with eclipse. -->
+
+<project default="blah" name="Create zip for core">
+
+<target name="blah">
+
+<!-- this makes an assumption that the processing folder is checked out
+     at the same level as this folder. not a good assumption. -->
+<zip destfile="../processing/app/src/processing/app/tools/android/processing-core.zip">
+<fileset dir="core/bin" includes="processing/android/core/*.class" />
+<fileset dir="core/bin" includes="processing/android/opengl/*.class" />
+<fileset dir="core/bin" includes="processing/android/xml/*.class" />
+</zip>
+
+</target>
+</project>
