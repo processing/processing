@@ -3,6 +3,37 @@ X use xdg-open as launcher on linux
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1358
 X change to different class id for export and export-opengl
 
+_ write quicktime uncompressed (w/o qtjava)
+_   http://blog.hslu.ch/rawcoder/2008/06/21/writing-quicktime-movies-in-pure-java/
+
+The only platform on which I can ever recall this happening was Netscape 4.5, where they would stop() and start() the applet in response to users scrolling.  I don't think ANY current browser every actually start()s an applet after stop().
+Sadly, Safari does on Snow Leopard - it calls stop() when switching tabs and start() when you switch back.
+
+import javax.swing.*;
+public class StopCalled2 extends JApplet {
+    public StopCalled2() {
+        System.err.println("Created.");
+    }
+    public void stop() {
+        System.err.println("Stop called.");
+    }
+    public void start() {
+        System.err.println("Start called.");
+    }
+}
+
+and switching tabs produces: 
+Oct  6 15:49:08 Shiny [0x0-0x12d12d].com.apple.Safari[3059]: Created.
+Oct  6 15:49:08 Shiny [0x0-0x12d12d].com.apple.Safari[3059]: Start called.
+Oct  6 15:49:11 Shiny [0x0-0x12d12d].com.apple.Safari[3059]: Stop called.
+Oct  6 15:49:14 Shiny [0x0-0x12d12d].com.apple.Safari[3059]: Start called.
+Oct  6 15:49:16 Shiny [0x0-0x12d12d].com.apple.Safari[3059]: Stop called.
+Oct  6 15:49:18 Shiny [0x0-0x12d12d].com.apple.Safari[3059]: Start called.
+
+_ console output has wrong character encoding
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1367
+_   message(new String(b, offset, length), err, false);
+
 _ improve the speed of file copying
 _   use FileChannels, see FileInputStream.getChannel(), 
 _   and use transferFrom() or transferTo().)

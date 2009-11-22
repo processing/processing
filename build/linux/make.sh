@@ -138,6 +138,7 @@ mkdir ../build/linux/work/classes
     src/processing/app/preproc/*.java \
     src/processing/app/syntax/*.java \
     src/processing/app/tools/*.java \
+    src/processing/app/tools/android/*.java \
     src/antlr/*.java \
     src/antlr/java/*.java 
 
