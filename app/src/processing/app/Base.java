@@ -29,9 +29,6 @@ import java.util.*;
 
 import javax.swing.*;
 
-import com.sun.jna.Library;
-import com.sun.jna.Native;
-
 import processing.app.debug.Compiler;
 import processing.core.*;
 
