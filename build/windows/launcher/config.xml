@@ -20,6 +20,8 @@
     <cp>lib/jna.jar</cp>
     <cp>lib/ecj.jar</cp>
     <cp>lib/antlr.jar</cp>
+    <cp>lib/ant.jar</cp>
+    <cp>lib/ant-launcher.jar</cp>
   </classPath>
   <jre>
     <path>java</path>
