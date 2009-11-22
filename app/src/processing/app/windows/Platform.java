@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2008 Ben Fry and Casey Reas
+  Copyright (c) 2008-2009 Ben Fry and Casey Reas
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -30,7 +30,6 @@ import com.sun.jna.Native;
 
 import processing.app.Base;
 import processing.app.Preferences;
-import processing.app.Platform.CLibrary;
 import processing.app.windows.Registry.REGISTRY_ROOT_KEY;
 import processing.core.PApplet;
 
@@ -274,14 +273,14 @@ public class Platform extends processing.app.Platform {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  
   
   
+  // Code partially thanks to Richard Quirk from:
+  // http://quirkygba.blogspot.com/2009/11/setting-environment-variables-in-java.html
+
+    
   public interface WinLibC extends Library {
     WinLibC INSTANCE = (WinLibC) Native.loadLibrary("msvcrt", WinLibC.class);
 
     public int _putenv(String name);
-//    int setenv(String name, String value, int overwrite);
-//    String getenv(String name);
-//    int unsetenv(String name);
-//    int putenv(String string);
   }
 
   
