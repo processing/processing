@@ -29,6 +29,9 @@ import java.util.*;
 
 import javax.swing.*;
 
+import com.sun.jna.Library;
+import com.sun.jna.Native;
+
 import processing.app.debug.Compiler;
 import processing.core.*;
 
@@ -98,27 +101,8 @@ public class Base {
 //  ArrayList editors = Collections.synchronizedList(new ArrayList<Editor>());
   Editor activeEditor;
 
-//  int nextEditorX;
-//  int nextEditorY;
-
-//  import com.sun.jna.Library;
-//  import com.sun.jna.Native;
-
-//  public interface CLibrary extends Library {
-//    CLibrary INSTANCE = (CLibrary)Native.loadLibrary("c", CLibrary.class);
-//      int setenv(String name, String value, int overwrite);
-//    String getenv(String name);
-//    int unsetenv(String name);
-//    int putenv(String string);
-//  }
-
-
+  
   static public void main(String args[]) {
-//    /Users/fry/coconut/sketchbook/libraries/gsvideo/library
-//    CLibrary clib = CLibrary.INSTANCE;
-//    clib.setenv("DYLD_LIBRARY_PATH", "/Users/fry/coconut/sketchbook/libraries/gsvideo/library", 1);
-//    System.out.println("env is now " + clib.getenv("DYLD_LIBRARY_PATH"));
-
     try {
       File versionFile = getContentFile("lib/version.txt");
       if (versionFile.exists()) {
@@ -184,10 +168,12 @@ public class Base {
     try {
       platform.setLookAndFeel();
     } catch (Exception e) {
-      System.err.println("Non-fatal error while setting the Look & Feel.");
-      System.err.println("The error message follows, however Processing should run fine.");
-      System.err.println(e.getMessage());
-      //e.printStackTrace();
+      String mess = e.getMessage();
+      if (mess.indexOf("ch.randelshofer.quaqua.QuaquaLookAndFeel") == -1) {
+        System.err.println("Non-fatal error while setting the Look & Feel.");
+        System.err.println("The error message follows, however Processing should run fine.");
+        System.err.println(mess);
+      }
     }
 
     // Create a location for untitled sketches
@@ -1775,6 +1761,33 @@ public class Base {
   // ...................................................................
 
 
+  public interface CLibrary extends Library {
+    CLibrary INSTANCE = (CLibrary)Native.loadLibrary("c", CLibrary.class);
+    int setenv(String name, String value, int overwrite);
+    String getenv(String name);
+    int unsetenv(String name);
+    int putenv(String string);
+  }
+
+  
+  static public void setenv(String variable, String value) {
+    CLibrary clib = CLibrary.INSTANCE;
+    clib.setenv(variable, value, 1);
+  }
+
+  
+  static public String getenv(String variable) {
+    CLibrary clib = CLibrary.INSTANCE;
+    return clib.getenv(variable);
+  }
+
+
+  static public int unsetenv(String variable) {
+    CLibrary clib = CLibrary.INSTANCE;
+    return clib.unsetenv(variable);
+  }
+
+  
   /**
    * Get the number of lines in a file by counting the number of newline
    * characters inside a String (and adding 1).

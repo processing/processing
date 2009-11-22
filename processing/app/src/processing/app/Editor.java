@@ -115,7 +115,7 @@ public class Editor extends JFrame implements RunnerListener {
   JMenuItem saveAsMenuItem;
 
   boolean running;
-  boolean presenting;
+  //boolean presenting;
 
   // undo fellers
   JMenuItem undoItem, redoItem;
@@ -126,6 +126,11 @@ public class Editor extends JFrame implements RunnerListener {
   CompoundEdit compoundEdit;
 
   FindReplace find;
+  
+  Runnable runHandler;
+  Runnable presentHandler;
+  Runnable exportHandler;
+  Runnable exportAppHandler;
 
 
   public Editor(Base ibase, String path, int[] location) {
@@ -133,6 +138,9 @@ public class Editor extends JFrame implements RunnerListener {
     this.base = ibase;
 
     Base.setIcon(this);
+
+    // Install default actions for Run, Present, etc.
+    resetHandlers();
 
     // add listener to handle window close box hit event
     addWindowListener(new WindowAdapter() {
@@ -784,12 +792,10 @@ public class Editor extends JFrame implements RunnerListener {
     menu.add(createToolMenuItem("processing.app.tools.Archiver"));
     menu.add(createToolMenuItem("processing.app.tools.FixEncoding"));
 
-    /*
     //menu.add(createToolMenuItem("processing.app.tools.android.Build"));
-    item = createToolMenuItem("processing.app.tools.android.Build");
+    item = createToolMenuItem("processing.app.tools.android.Android");
     item.setAccelerator(KeyStroke.getKeyStroke('D', modifiers));
     menu.add(item);
-    */
 
     return menu;
   }
@@ -1144,6 +1150,32 @@ public class Editor extends JFrame implements RunnerListener {
   }
 
 
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+  
+  
+  // these will be done in a more generic way soon, more like:
+  // setHandler("action name", Runnable);
+  // but for the time being, working out the kinks of how many things to 
+  // abstract from the editor in this fashion.
+
+
+  public void setHandlers(Runnable runHandler, Runnable presentHandler,
+                          Runnable exportHandler, Runnable exportAppHandler) {
+    this.runHandler = runHandler;
+    this.presentHandler = presentHandler;
+    this.exportHandler = exportHandler;
+    this.exportAppHandler = exportAppHandler;
+  }
+  
+  
+  public void resetHandlers() {
+    runHandler = new DefaultRunHandler();
+    presentHandler = new DefaultPresentHandler();
+    exportHandler = new DefaultExportHandler();
+    exportAppHandler = new DefaultExportAppHandler();
+  }
+
+  
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
@@ -1578,28 +1610,42 @@ public class Editor extends JFrame implements RunnerListener {
       console.clear();
     }
 
-    presenting = present;
-
-    try {
-      String appletClassName = sketch.compile();
-      if (appletClassName != null) {
-        runtime = new Runner(sketch, appletClassName, presenting, Editor.this);
-
-        // Cannot use invokeLater() here, otherwise it gets
-        // placed on the event thread and causes a hang--bad idea all around.
-        Thread t = new Thread(new Runnable() {
-          public void run() {
-            runtime.launch();
-          }
-        });
-        t.start();
-        //runtime.start(appletLocation);
+    // Cannot use invokeLater() here, otherwise it gets
+    // placed on the event thread and causes a hang--bad idea all around.
+    if (present) {
+      new Thread(presentHandler).start();
+    } else {
+      new Thread(runHandler).start();
+    }
+  }
+  
+  
+  class DefaultRunHandler implements Runnable {
+    public void run() {
+      try {
+        String appletClassName = sketch.compile();
+        if (appletClassName != null) {
+          runtime = new Runner(sketch, appletClassName, false, Editor.this);
+          runtime.launch();
+        }
+      } catch (Exception e) {
+        statusError(e);
       }
-
-    } catch (Exception e) {
-      //System.err.println("exception reached editor");
-      //e.printStackTrace();
-      statusError(e);
+    }
+  }
+  
+  
+  class DefaultPresentHandler implements Runnable {
+    public void run() {
+      try {
+        String appletClassName = sketch.compile();
+        if (appletClassName != null) {
+          runtime = new Runner(sketch, appletClassName, true, Editor.this);
+          runtime.launch();
+        }
+      } catch (Exception e) {
+        statusError(e);
+      }
     }
   }
 
@@ -1981,25 +2027,27 @@ public class Editor extends JFrame implements RunnerListener {
     if (!handleExportCheckModified()) return;
     toolbar.activate(EditorToolbar.EXPORT);
 
-    //SwingUtilities.invokeLater(new Runnable() {
-    Thread t = new Thread(new Runnable() {
-        public void run() {
-          try {
-            boolean success = sketch.exportApplet();
-            if (success) {
-              File appletFolder = new File(sketch.getFolder(), "applet");
-              Base.openFolder(appletFolder);
-              statusNotice("Done exporting.");
-            } else {
-              // error message will already be visible
-            }
-          } catch (Exception e) {
-            statusError(e);
-          }
-          //toolbar.clear();
-          toolbar.deactivate(EditorToolbar.EXPORT);
-        }});
-    t.start();
+    new Thread(exportHandler).start();
+  }
+  
+  
+  class DefaultExportHandler implements Runnable {
+    public void run() {
+      try {
+        boolean success = sketch.exportApplet();
+        if (success) {
+          File appletFolder = new File(sketch.getFolder(), "applet");
+          Base.openFolder(appletFolder);
+          statusNotice("Done exporting.");
+        } else {
+          // error message will already be visible
+        }
+      } catch (Exception e) {
+        statusError(e);
+      }
+      //toolbar.clear();
+      toolbar.deactivate(EditorToolbar.EXPORT);
+    }
   }
 
 
@@ -2010,25 +2058,29 @@ public class Editor extends JFrame implements RunnerListener {
     if (!handleExportCheckModified()) return;
     toolbar.activate(EditorToolbar.EXPORT);
 
-    //SwingUtilities.invokeLater(new Runnable() {
-    SwingUtilities.invokeLater(new Runnable() {
-        public void run() {
-          statusNotice("Exporting application...");
-          try {
-            if (sketch.exportApplicationPrompt()) {
-              Base.openFolder(sketch.getFolder());
-              statusNotice("Done exporting.");
-            } else {
-              // error message will already be visible
-              // or there was no error, in which case it was canceled.
-            }
-          } catch (Exception e) {
-            statusNotice("Error during export.");
-            e.printStackTrace();
-          }
-          //toolbar.clear();
-          toolbar.deactivate(EditorToolbar.EXPORT);
-        }});
+    // previous was using SwingUtilities.invokeLater()
+    new Thread(exportAppHandler).start();
+  }
+  
+  
+  class DefaultExportAppHandler implements Runnable {
+    public void run() {
+      statusNotice("Exporting application...");
+      try {
+        if (sketch.exportApplicationPrompt()) {
+          Base.openFolder(sketch.getFolder());
+          statusNotice("Done exporting.");
+        } else {
+          // error message will already be visible
+          // or there was no error, in which case it was canceled.
+        }
+      } catch (Exception e) {
+        statusNotice("Error during export.");
+        e.printStackTrace();
+      }
+      //toolbar.clear();
+      toolbar.deactivate(EditorToolbar.EXPORT);
+    }
   }
 
 
@@ -2318,4 +2370,3 @@ public class Editor extends JFrame implements RunnerListener {
     }
   }
 }
-
