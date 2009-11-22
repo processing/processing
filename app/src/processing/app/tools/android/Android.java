@@ -46,7 +46,7 @@ public class Android implements Tool {
 
   
   public String getMenuTitle() {
-    return "Android";
+    return "Android Mode";
   }
 
 
@@ -59,12 +59,15 @@ public class Android implements Tool {
     editor.statusNotice("Loading Android tools.");
     
     checkPath();
-    Device.checkDefaults();
-
-    editor.setHandlers(new RunHandler(this), new PresentHandler(this), 
-                       new ExportHandler(this), new ExportAppHandler(this));
-    build = new Build(editor);
-    editor.statusNotice("Done loading Android tools.");
+    boolean success = Device.checkDefaults();
+    if (success) {
+      editor.setHandlers(new RunHandler(this), new PresentHandler(this), 
+                         new ExportHandler(this), new ExportAppHandler(this));
+      build = new Build(editor);
+      editor.statusNotice("Done loading Android tools.");
+    } else {
+      editor.statusError("Could not load Android tools.");
+    }
   }
 
 
