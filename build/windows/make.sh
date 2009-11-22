@@ -150,7 +150,8 @@ mkdir ../build/windows/work/classes
     -classpath "..\\build\\windows\\work\\java\\lib\\tools.jar" \
     com.sun.tools.javac.Main \
     -source 1.5 -target 1.5 \
-    -classpath "..\\build\\windows\\work\\lib\\core.jar;..\\build\\windows\\work\\lib\antlr.jar;..\\build\\windows\\work\\lib\\ecj.jar;..\\build\\windows\\work\\lib\\jna.jar;..\\build\\windows\\work\\java\\lib\\tools.jar" \
+    -encoding UTF-8 \
+    -classpath "..\\build\\windows\\work\\lib\\core.jar;..\\build\\windows\\work\\lib\antlr.jar;..\\build\\windows\\work\\lib\ant.jar;..\\build\\windows\\work\\lib\ant-launcher.jar;..\\build\\windows\\work\\lib\\ecj.jar;..\\build\\windows\\work\\lib\\jna.jar;..\\build\\windows\\work\\java\\lib\\tools.jar" \
     -d ..\\build\\windows\\work\\classes \
     src/processing/app/*.java \
     src/processing/app/debug/*.java \
