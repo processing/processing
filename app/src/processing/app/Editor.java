@@ -1753,6 +1753,7 @@ public class Editor extends JFrame implements RunnerListener {
 
       } else if (result == JOptionPane.CANCEL_OPTION) {
         return false;
+
       } else {
         throw new IllegalStateException();
       }
