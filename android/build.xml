@@ -15,5 +15,9 @@
 <fileset dir="core/bin" includes="processing/android/xml/*.class" />
 </zip>
 
+<!-- copy file to bin folder as well -->
+
+<copy file="../processing/app/src/processing/app/tools/android/processing-core.zip" tofile="../processing/app/bin/processing/app/tools/android/processing-core.zip" />
+
 </target>
 </project>

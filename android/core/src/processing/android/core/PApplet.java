@@ -28,101 +28,24 @@ import android.content.*;
 import android.content.res.AssetManager;
 import android.graphics.*;
 
-//import java.applet.*;
-//import java.awt.*;
-//import java.awt.event.*;
-//import java.awt.image.*;
 import java.io.*;
 import java.lang.reflect.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-//import java.net.*;
-//import java.text.*;
 import java.text.NumberFormat;
 import java.util.*;
-//import java.util.concurrent.Semaphore;
 import java.util.regex.*;
 import java.util.zip.*;
 
-//import javax.microedition.khronos.opengles.GL10;
-
-//import processing.opengl.EglHelper;
-
 import android.app.Activity;
 import android.os.Bundle;
-//import android.os.Handler;
-//import android.util.AttributeSet;
 import android.view.*;
 
 
-public class PApplet extends Activity implements PConstants, Runnable
-{
-  /**
-   * Full name of the Java version (i.e. 1.5.0_11).
-   * Prior to 0125, this was only the first three digits.
-   */
-//  public static final String javaVersionName =
-//    System.getProperty("java.version");
-
-  /**
-   * Version of Java that's in use, whether 1.1 or 1.3 or whatever,
-   * stored as a float.
-   * <P>
-   * Note that because this is stored as a float, the values may
-   * not be <EM>exactly</EM> 1.3 or 1.4. Instead, make sure you're
-   * comparing against 1.3f or 1.4f, which will have the same amount
-   * of error (i.e. 1.40000001). This could just be a double, but
-   * since Processing only uses floats, it's safer for this to be a float
-   * because there's no good way to specify a double with the preproc.
-   */
-//  public static final float javaVersion =
-//    new Float(javaVersionName.substring(0, 3)).floatValue();
-
-  /**
-   * Current platform in use.
-   * <P>
-   * Equivalent to System.getProperty("os.name"), just used internally.
-   */
-
-  /**
-   * Current platform in use, one of the
-   * PConstants WINDOWS, MACOSX, MACOS9, LINUX or OTHER.
-   */
-//  static public int platform;
-
-  /**
-   * Name associated with the current 'platform' (see PConstants.platformNames)
-   */
-  //static public String platformName;
-
-//  static {
-//    String osname = System.getProperty("os.name");
-//
-//    if (osname.indexOf("Mac") != -1) {
-//      platform = MACOSX;
-//
-//    } else if (osname.indexOf("Windows") != -1) {
-//      platform = WINDOWS;
-//
-//    } else if (osname.equals("Linux")) {  // true for the ibm vm
-//      platform = LINUX;
-//
-//    } else {
-//      platform = OTHER;
-//    }
-//  }
-
-  /**
-   * Modifier flags for the shortcut key used to trigger menus.
-   * (Cmd on Mac OS X, Ctrl on Linux and Windows)
-   */
-//  static public final int MENU_SHORTCUT =
-//    Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
-
+public class PApplet extends Activity implements PConstants, Runnable {
+	
   /** The PGraphics renderer associated with this PApplet */
   public PGraphics g;
-
-  //protected Object glock = new Object(); // for sync
 
   /** The frame containing this applet (if any) */
 //  public Frame frame;
@@ -148,11 +71,6 @@ public class PApplet extends Activity implements PConstants, Runnable
 //  public Dimension screen =
 //    Toolkit.getDefaultToolkit().getScreenSize();
 //  int screenWidth, screenHeight;
-
-  /**
-   * A leech graphics object that is echoing all events.
-   */
-  public PGraphics recorder;
 
   /**
    * Command line options passed in from main().
@@ -375,11 +293,6 @@ public class PApplet extends Activity implements PConstants, Runnable
 
   Thread thread;
 
-  protected RegisteredMethods sizeMethods;
-  protected RegisteredMethods preMethods, drawMethods, postMethods;
-  protected RegisteredMethods motionEventMethods, keyEventMethods;
-  protected RegisteredMethods disposeMethods;
-
   // messages to send if attached as an external vm
 
   /**
@@ -480,7 +393,7 @@ public class PApplet extends Activity implements PConstants, Runnable
     // Inflate our UI from its XML layout description.
 //    setContentView(bageldroid.articulate.R.layout.skeleton_activity);
 
-    println("maybe?");
+//    println("maybe?");
     surfaceView = new SketchSurfaceView(this);
     //setContentView(surfaceView);
     getWindow().setContentView(surfaceView);  // attempt to fix full-screen
@@ -699,12 +612,12 @@ public class PApplet extends Activity implements PConstants, Runnable
     public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
       // Surface size or format has changed. This should not happen in this
       // example.
-      System.out.println("surfaceChanged() " + w + " " + h);
+//      System.out.println("surfaceChanged() " + w + " " + h);
       
       width = w;
       height = h;
       
-      println("and more");
+//      println("and more");
       if (sketchRenderer().equals(A2D)) {
         g = new PGraphicsAndroid2D();
       } else if (sketchRenderer().equals(A3D)) {
@@ -715,7 +628,7 @@ public class PApplet extends Activity implements PConstants, Runnable
       g.setParent(PApplet.this);
       g.setPrimary(true);
 
-      println("and out");
+//      println("and out");
 
       // kick things off...should this go before or after the g setup?
       init();
@@ -765,10 +678,10 @@ public class PApplet extends Activity implements PConstants, Runnable
 //      mGLThread.onWindowFocusChanged(hasFocus);
       focused = hasFocus;
       if (focused) {
-        println("got focus");
+//        println("got focus");
         focusGained();
       } else {
-        println("lost focus");
+//        println("lost focus");
         focusLost();
       }
     }
@@ -787,8 +700,13 @@ public class PApplet extends Activity implements PConstants, Runnable
 //    }
 
 
+    /**
+     * If you override this function without calling super.onTouchEvent(), 
+     * then motionX, motionY, motionPressed, and motionEvent will not be set.
+     */
     public boolean onTouchEvent(MotionEvent event) {
       checkMotionEvent(event);
+      System.out.println(event);
       return super.onTouchEvent(event);
     }
 
@@ -1093,15 +1011,6 @@ public class PApplet extends Activity implements PConstants, Runnable
     redraw = true;  // draw this guy once
     firstMotion = true;
 
-    // these need to be inited before setup
-    sizeMethods = new RegisteredMethods();
-    preMethods = new RegisteredMethods();
-    drawMethods = new RegisteredMethods();
-    postMethods = new RegisteredMethods();
-    motionEventMethods = new RegisteredMethods();
-    keyEventMethods = new RegisteredMethods();
-    disposeMethods = new RegisteredMethods();
-
 //    try {
 //      getAppletContext();
 //      online = true;
@@ -1203,10 +1112,6 @@ public class PApplet extends Activity implements PConstants, Runnable
 
     // call to shut down renderer, in case it needs it (pdf does)
     if (g != null) g.dispose();
-
-    // maybe this should be done earlier? might help ensure it gets called
-    // before the vm just craps out since 1.5 craps out so aggressively.
-    disposeMethods.handle();
   }
 
 
@@ -1322,129 +1227,6 @@ public class PApplet extends Activity implements PConstants, Runnable
         }
       }
       return -1;
-    }
-  }
-
-
-  public void registerSize(Object o) {
-    Class<?> methodArgs[] = new Class[] { Integer.TYPE, Integer.TYPE };
-    registerWithArgs(sizeMethods, "size", o, methodArgs);
-  }
-
-  public void registerPre(Object o) {
-    registerNoArgs(preMethods, "pre", o);
-  }
-
-  public void registerDraw(Object o) {
-    registerNoArgs(drawMethods, "draw", o);
-  }
-
-  public void registerPost(Object o) {
-    registerNoArgs(postMethods, "post", o);
-  }
-
-  public void registerMotionEvent(Object o) {
-    Class<?> methodArgs[] = new Class[] { MotionEvent.class };
-    registerWithArgs(motionEventMethods, "motionEvent", o, methodArgs);
-  }
-
-
-  public void registerKeyEvent(Object o) {
-    Class<?> methodArgs[] = new Class[] { KeyEvent.class };
-    registerWithArgs(keyEventMethods, "keyEvent", o, methodArgs);
-  }
-
-  public void registerDispose(Object o) {
-    registerNoArgs(disposeMethods, "dispose", o);
-  }
-
-
-  protected void registerNoArgs(RegisteredMethods meth,
-                                String name, Object o) {
-    Class<?> c = o.getClass();
-    try {
-      Method method = c.getMethod(name, new Class[] {});
-      meth.add(o, method);
-
-    } catch (NoSuchMethodException nsme) {
-      die("There is no " + name + "() method in the class " +
-          o.getClass().getName());
-
-    } catch (Exception e) {
-      die("Could not register " + name + " + () for " + o, e);
-    }
-  }
-
-
-  protected void registerWithArgs(RegisteredMethods meth,
-                                  String name, Object o, Class<?> cargs[]) {
-    Class<?> c = o.getClass();
-    try {
-      Method method = c.getMethod(name, cargs);
-      meth.add(o, method);
-
-    } catch (NoSuchMethodException nsme) {
-      die("There is no " + name + "() method in the class " +
-          o.getClass().getName());
-
-    } catch (Exception e) {
-      die("Could not register " + name + " + () for " + o, e);
-    }
-  }
-
-
-  public void unregisterSize(Object o) {
-    Class<?> methodArgs[] = new Class[] { Integer.TYPE, Integer.TYPE };
-    unregisterWithArgs(sizeMethods, "size", o, methodArgs);
-  }
-
-  public void unregisterPre(Object o) {
-    unregisterNoArgs(preMethods, "pre", o);
-  }
-
-  public void unregisterDraw(Object o) {
-    unregisterNoArgs(drawMethods, "draw", o);
-  }
-
-  public void unregisterPost(Object o) {
-    unregisterNoArgs(postMethods, "post", o);
-  }
-
-  public void unregisterMouseEvent(Object o) {
-    Class<?> methodArgs[] = new Class[] { MotionEvent.class };
-    unregisterWithArgs(motionEventMethods, "motionEvent", o, methodArgs);
-  }
-
-  public void unregisterKeyEvent(Object o) {
-    Class<?> methodArgs[] = new Class[] { KeyEvent.class };
-    unregisterWithArgs(keyEventMethods, "keyEvent", o, methodArgs);
-  }
-
-  public void unregisterDispose(Object o) {
-    unregisterNoArgs(disposeMethods, "dispose", o);
-  }
-
-
-  protected void unregisterNoArgs(RegisteredMethods meth,
-                                  String name, Object o) {
-    Class<?> c = o.getClass();
-    try {
-      Method method = c.getMethod(name, new Class[] {});
-      meth.remove(o, method);
-    } catch (Exception e) {
-      die("Could not unregister " + name + "() for " + o, e);
-    }
-  }
-
-
-  protected void unregisterWithArgs(RegisteredMethods meth,
-                                    String name, Object o, Class<?> cargs[]) {
-    Class<?> c = o.getClass();
-    try {
-      Method method = c.getMethod(name, cargs);
-      meth.remove(o, method);
-    } catch (Exception e) {
-      die("Could not unregister " + name + "() for " + o, e);
     }
   }
 
@@ -1865,8 +1647,6 @@ public class PApplet extends Activity implements PConstants, Runnable
         float instantaneousRate = (float) rate / 1000.0f;
         frameRate = (frameRate * 0.9f) + (instantaneousRate * 0.1f);
 
-        preMethods.handle();
-
         // use dmouseX/Y as previous mouse pos, since this is the
         // last position the mouse was in during the previous draw.
         pmouseX = dmouseX;
@@ -1891,8 +1671,6 @@ public class PApplet extends Activity implements PConstants, Runnable
         dequeueMouseEvents();
         dequeueKeyEvents();
 
-        drawMethods.handle();
-
         redraw = false;  // unset 'redraw' flag in case it was set
         // (only do this once draw() has run, not just setup())
 
@@ -1902,14 +1680,6 @@ public class PApplet extends Activity implements PConstants, Runnable
 
       frameRateLastNanos = now;
       frameCount++;
-
-      // Actively render the screen
-//      paint();
-
-//    repaint();
-//    getToolkit().sync();  // force repaint now (proper method)
-
-      postMethods.handle();
     }
   }
 
@@ -2030,23 +1800,6 @@ public class PApplet extends Activity implements PConstants, Runnable
 
     motionEvent = event;
 
-//    int modifiers = event.getModifiers();
-//    if ((modifiers & InputEvent.BUTTON1_MASK) != 0) {
-//      mouseButton = LEFT;
-//    } else if ((modifiers & InputEvent.BUTTON2_MASK) != 0) {
-//      mouseButton = CENTER;
-//    } else if ((modifiers & InputEvent.BUTTON3_MASK) != 0) {
-//      mouseButton = RIGHT;
-//    }
-//    // if running on macos, allow ctrl-click as right mouse
-//    if (platform == MACOSX) {
-//      if (motionEvent.isPopupTrigger()) {
-//        mouseButton = RIGHT;
-//      }
-//    }
-
-    motionEventMethods.handle(new Object[] { event });
-
     // this used to only be called on mouseMoved and mouseDragged
     // change it back if people run into trouble
     if (firstMotion) {
@@ -2076,9 +1829,9 @@ public class PApplet extends Activity implements PConstants, Runnable
       break;
     case MotionEvent.ACTION_MOVE:
       int count = event.getHistorySize();
-      if (count > 1) {
-        System.out.println("count is " + count);
-      }
+//      if (count > 1) {
+//      System.out.println("history count is " + count);
+//      }
       for (int pos = 0; pos < count; pos++) {
         mouseX = (int) event.getHistoricalX(pos);
         mouseY = (int) event.getHistoricalY(pos);
@@ -2119,16 +1872,6 @@ public class PApplet extends Activity implements PConstants, Runnable
   }
 
 
-  /**
-   * If you override this function without calling super.onTouchEvent(), 
-   * then motionX, motionY, motionPressed, and motionEvent will not be set.
-   */
-//  public boolean onTouchEvent(MotionEvent event) {
-//    checkMotionEvent(event);
-//    return super.onTouchEvent(event);
-//  }
-  
-  
   public void mousePressed() { }
 
   public void mouseReleased() { }
@@ -2176,8 +1919,6 @@ public class PApplet extends Activity implements PConstants, Runnable
     }
       
     keyCode = event.getKeyCode();
-
-    keyEventMethods.handle(new Object[] { event });
 
     int action = event.getAction();
     if (action == KeyEvent.ACTION_DOWN) {
@@ -6723,17 +6464,12 @@ public class PApplet extends Activity implements PConstants, Runnable
    * Begin recording (echoing) commands to the specified PGraphics object.
    */
   public void beginRecord(PGraphics recorder) {
-    this.recorder = recorder;
-    recorder.beginDraw();
+	PGraphics.showMethodWarning("beginRecord");
   }
 
 
   public void endRecord() {
-    if (recorder != null) {
-      recorder.endDraw();
-      recorder.dispose();
-      recorder = null;
-    }
+    PGraphics.showMethodWarning("endRecord");
   }
 
 
@@ -6807,97 +6543,81 @@ public class PApplet extends Activity implements PConstants, Runnable
 
 
   public void flush() {
-    if (recorder != null) recorder.flush();
     g.flush();
   }
 
 
   public void hint(int which) {
-    if (recorder != null) recorder.hint(which);
     g.hint(which);
   }
 
 
   public void beginShape() {
-    if (recorder != null) recorder.beginShape();
     g.beginShape();
   }
 
 
   public void beginShape(int kind) {
-    if (recorder != null) recorder.beginShape(kind);
     g.beginShape(kind);
   }
 
 
   public void edge(boolean edge) {
-    if (recorder != null) recorder.edge(edge);
     g.edge(edge);
   }
 
 
   public void normal(float nx, float ny, float nz) {
-    if (recorder != null) recorder.normal(nx, ny, nz);
     g.normal(nx, ny, nz);
   }
 
 
   public void textureMode(int mode) {
-    if (recorder != null) recorder.textureMode(mode);
     g.textureMode(mode);
   }
 
 
   public void texture(PImage image) {
-    if (recorder != null) recorder.texture(image);
     g.texture(image);
   }
 
 
   public void vertex(float x, float y) {
-    if (recorder != null) recorder.vertex(x, y);
     g.vertex(x, y);
   }
 
 
   public void vertex(float x, float y, float z) {
-    if (recorder != null) recorder.vertex(x, y, z);
     g.vertex(x, y, z);
   }
 
 
   public void vertex(float[] v) {
-    if (recorder != null) recorder.vertex(v);
     g.vertex(v);
   }
 
 
   public void vertex(float x, float y, float u, float v) {
-    if (recorder != null) recorder.vertex(x, y, u, v);
     g.vertex(x, y, u, v);
   }
 
 
   public void vertex(float x, float y, float z, float u, float v) {
-    if (recorder != null) recorder.vertex(x, y, z, u, v);
     g.vertex(x, y, z, u, v);
   }
 
 
   public void breakShape() {
-    if (recorder != null) recorder.breakShape();
     g.breakShape();
   }
 
 
   public void endShape() {
-    if (recorder != null) recorder.endShape();
     g.endShape();
   }
 
 
   public void endShape(int mode) {
-    if (recorder != null) recorder.endShape(mode);
     g.endShape(mode);
   }
 
@@ -6905,7 +6625,6 @@ public class PApplet extends Activity implements PConstants, Runnable
   public void bezierVertex(float x2, float y2,
                            float x3, float y3,
                            float x4, float y4) {
-    if (recorder != null) recorder.bezierVertex(x2, y2, x3, y3, x4, y4);
     g.bezierVertex(x2, y2, x3, y3, x4, y4);
   }
 
@@ -6913,119 +6632,100 @@ public class PApplet extends Activity implements PConstants, Runnable
   public void bezierVertex(float x2, float y2, float z2,
                            float x3, float y3, float z3,
                            float x4, float y4, float z4) {
-    if (recorder != null) recorder.bezierVertex(x2, y2, z2, x3, y3, z3, x4, y4, z4);
     g.bezierVertex(x2, y2, z2, x3, y3, z3, x4, y4, z4);
   }
 
 
   public void curveVertex(float x, float y) {
-    if (recorder != null) recorder.curveVertex(x, y);
     g.curveVertex(x, y);
   }
 
 
   public void curveVertex(float x, float y, float z) {
-    if (recorder != null) recorder.curveVertex(x, y, z);
     g.curveVertex(x, y, z);
   }
 
 
   public void point(float x, float y) {
-    if (recorder != null) recorder.point(x, y);
     g.point(x, y);
   }
 
 
   public void point(float x, float y, float z) {
-    if (recorder != null) recorder.point(x, y, z);
     g.point(x, y, z);
   }
 
 
   public void line(float x1, float y1, float x2, float y2) {
-    if (recorder != null) recorder.line(x1, y1, x2, y2);
     g.line(x1, y1, x2, y2);
   }
 
 
   public void line(float x1, float y1, float z1,
                    float x2, float y2, float z2) {
-    if (recorder != null) recorder.line(x1, y1, z1, x2, y2, z2);
     g.line(x1, y1, z1, x2, y2, z2);
   }
 
 
   public void triangle(float x1, float y1, float x2, float y2,
                        float x3, float y3) {
-    if (recorder != null) recorder.triangle(x1, y1, x2, y2, x3, y3);
     g.triangle(x1, y1, x2, y2, x3, y3);
   }
 
 
   public void quad(float x1, float y1, float x2, float y2,
                    float x3, float y3, float x4, float y4) {
-    if (recorder != null) recorder.quad(x1, y1, x2, y2, x3, y3, x4, y4);
     g.quad(x1, y1, x2, y2, x3, y3, x4, y4);
   }
 
 
   public void rectMode(int mode) {
-    if (recorder != null) recorder.rectMode(mode);
     g.rectMode(mode);
   }
 
 
   public void rect(float a, float b, float c, float d) {
-    if (recorder != null) recorder.rect(a, b, c, d);
     g.rect(a, b, c, d);
   }
 
 
   public void ellipseMode(int mode) {
-    if (recorder != null) recorder.ellipseMode(mode);
     g.ellipseMode(mode);
   }
 
 
   public void ellipse(float a, float b, float c, float d) {
-    if (recorder != null) recorder.ellipse(a, b, c, d);
     g.ellipse(a, b, c, d);
   }
 
 
   public void arc(float a, float b, float c, float d,
                   float start, float stop) {
-    if (recorder != null) recorder.arc(a, b, c, d, start, stop);
     g.arc(a, b, c, d, start, stop);
   }
 
 
   public void box(float size) {
-    if (recorder != null) recorder.box(size);
     g.box(size);
   }
 
 
   public void box(float w, float h, float d) {
-    if (recorder != null) recorder.box(w, h, d);
     g.box(w, h, d);
   }
 
 
   public void sphereDetail(int res) {
-    if (recorder != null) recorder.sphereDetail(res);
     g.sphereDetail(res);
   }
 
 
   public void sphereDetail(int ures, int vres) {
-    if (recorder != null) recorder.sphereDetail(ures, vres);
     g.sphereDetail(ures, vres);
   }
 
 
   public void sphere(float r) {
-    if (recorder != null) recorder.sphere(r);
     g.sphere(r);
   }
 
@@ -7041,7 +6741,6 @@ public class PApplet extends Activity implements PConstants, Runnable
 
 
   public void bezierDetail(int detail) {
-    if (recorder != null) recorder.bezierDetail(detail);
     g.bezierDetail(detail);
   }
 
@@ -7050,7 +6749,6 @@ public class PApplet extends Activity implements PConstants, Runnable
                      float x2, float y2,
                      float x3, float y3,
                      float x4, float y4) {
-    if (recorder != null) recorder.bezier(x1, y1, x2, y2, x3, y3, x4, y4);
     g.bezier(x1, y1, x2, y2, x3, y3, x4, y4);
   }
 
@@ -7059,7 +6757,6 @@ public class PApplet extends Activity implements PConstants, Runnable
                      float x2, float y2, float z2,
                      float x3, float y3, float z3,
                      float x4, float y4, float z4) {
-    if (recorder != null) recorder.bezier(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
     g.bezier(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
   }
 
@@ -7075,13 +6772,11 @@ public class PApplet extends Activity implements PConstants, Runnable
 
 
   public void curveDetail(int detail) {
-    if (recorder != null) recorder.curveDetail(detail);
     g.curveDetail(detail);
   }
 
 
   public void curveTightness(float tightness) {
-    if (recorder != null) recorder.curveTightness(tightness);
     g.curveTightness(tightness);
   }
 
@@ -7090,7 +6785,6 @@ public class PApplet extends Activity implements PConstants, Runnable
                     float x2, float y2,
                     float x3, float y3,
                     float x4, float y4) {
-    if (recorder != null) recorder.curve(x1, y1, x2, y2, x3, y3, x4, y4);
     g.curve(x1, y1, x2, y2, x3, y3, x4, y4);
   }
 
@@ -7099,37 +6793,31 @@ public class PApplet extends Activity implements PConstants, Runnable
                     float x2, float y2, float z2,
                     float x3, float y3, float z3,
                     float x4, float y4, float z4) {
-    if (recorder != null) recorder.curve(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
     g.curve(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
   }
 
 
   public void smooth() {
-    if (recorder != null) recorder.smooth();
     g.smooth();
   }
 
 
   public void noSmooth() {
-    if (recorder != null) recorder.noSmooth();
     g.noSmooth();
   }
 
 
   public void imageMode(int mode) {
-    if (recorder != null) recorder.imageMode(mode);
     g.imageMode(mode);
   }
 
 
   public void image(PImage image, float x, float y) {
-    if (recorder != null) recorder.image(image, x, y);
     g.image(image, x, y);
   }
 
 
   public void image(PImage image, float x, float y, float c, float d) {
-    if (recorder != null) recorder.image(image, x, y, c, d);
     g.image(image, x, y, c, d);
   }
 
@@ -7137,43 +6825,36 @@ public class PApplet extends Activity implements PConstants, Runnable
   public void image(PImage image,
                     float a, float b, float c, float d,
                     int u1, int v1, int u2, int v2) {
-    if (recorder != null) recorder.image(image, a, b, c, d, u1, v1, u2, v2);
     g.image(image, a, b, c, d, u1, v1, u2, v2);
   }
 
 
   public void shapeMode(int mode) {
-    if (recorder != null) recorder.shapeMode(mode);
     g.shapeMode(mode);
   }
 
 
   public void shape(PShape shape) {
-    if (recorder != null) recorder.shape(shape);
     g.shape(shape);
   }
 
 
   public void shape(PShape shape, float x, float y) {
-    if (recorder != null) recorder.shape(shape, x, y);
     g.shape(shape, x, y);
   }
 
 
   public void shape(PShape shape, float x, float y, float c, float d) {
-    if (recorder != null) recorder.shape(shape, x, y, c, d);
     g.shape(shape, x, y, c, d);
   }
 
 
   public void textAlign(int align) {
-    if (recorder != null) recorder.textAlign(align);
     g.textAlign(align);
   }
 
 
   public void textAlign(int alignX, int alignY) {
-    if (recorder != null) recorder.textAlign(alignX, alignY);
     g.textAlign(alignX, alignY);
   }
 
@@ -7189,31 +6870,26 @@ public class PApplet extends Activity implements PConstants, Runnable
 
 
   public void textFont(PFont which) {
-    if (recorder != null) recorder.textFont(which);
     g.textFont(which);
   }
 
 
   public void textFont(PFont which, float size) {
-    if (recorder != null) recorder.textFont(which, size);
     g.textFont(which, size);
   }
 
 
   public void textLeading(float leading) {
-    if (recorder != null) recorder.textLeading(leading);
     g.textLeading(leading);
   }
 
 
   public void textMode(int mode) {
-    if (recorder != null) recorder.textMode(mode);
     g.textMode(mode);
   }
 
 
   public void textSize(float size) {
-    if (recorder != null) recorder.textSize(size);
     g.textSize(size);
   }
 
@@ -7229,176 +6905,147 @@ public class PApplet extends Activity implements PConstants, Runnable
 
 
   public void text(char c) {
-    if (recorder != null) recorder.text(c);
     g.text(c);
   }
 
 
   public void text(char c, float x, float y) {
-    if (recorder != null) recorder.text(c, x, y);
     g.text(c, x, y);
   }
 
 
   public void text(char c, float x, float y, float z) {
-    if (recorder != null) recorder.text(c, x, y, z);
     g.text(c, x, y, z);
   }
 
 
   public void text(String str) {
-    if (recorder != null) recorder.text(str);
     g.text(str);
   }
 
 
   public void text(String str, float x, float y) {
-    if (recorder != null) recorder.text(str, x, y);
     g.text(str, x, y);
   }
 
 
   public void text(String str, float x, float y, float z) {
-    if (recorder != null) recorder.text(str, x, y, z);
     g.text(str, x, y, z);
   }
 
 
   public void text(String str, float x1, float y1, float x2, float y2) {
-    if (recorder != null) recorder.text(str, x1, y1, x2, y2);
     g.text(str, x1, y1, x2, y2);
   }
 
 
   public void text(String s, float x1, float y1, float x2, float y2, float z) {
-    if (recorder != null) recorder.text(s, x1, y1, x2, y2, z);
     g.text(s, x1, y1, x2, y2, z);
   }
 
 
   public void text(int num, float x, float y) {
-    if (recorder != null) recorder.text(num, x, y);
     g.text(num, x, y);
   }
 
 
   public void text(int num, float x, float y, float z) {
-    if (recorder != null) recorder.text(num, x, y, z);
     g.text(num, x, y, z);
   }
 
 
   public void text(float num, float x, float y) {
-    if (recorder != null) recorder.text(num, x, y);
     g.text(num, x, y);
   }
 
 
   public void text(float num, float x, float y, float z) {
-    if (recorder != null) recorder.text(num, x, y, z);
     g.text(num, x, y, z);
   }
 
 
   public void pushMatrix() {
-    if (recorder != null) recorder.pushMatrix();
     g.pushMatrix();
   }
 
 
   public void popMatrix() {
-    if (recorder != null) recorder.popMatrix();
     g.popMatrix();
   }
 
 
   public void translate(float tx, float ty) {
-    if (recorder != null) recorder.translate(tx, ty);
     g.translate(tx, ty);
   }
 
 
   public void translate(float tx, float ty, float tz) {
-    if (recorder != null) recorder.translate(tx, ty, tz);
     g.translate(tx, ty, tz);
   }
 
 
   public void rotate(float angle) {
-    if (recorder != null) recorder.rotate(angle);
     g.rotate(angle);
   }
 
 
   public void rotateX(float angle) {
-    if (recorder != null) recorder.rotateX(angle);
     g.rotateX(angle);
   }
 
 
   public void rotateY(float angle) {
-    if (recorder != null) recorder.rotateY(angle);
     g.rotateY(angle);
   }
 
 
   public void rotateZ(float angle) {
-    if (recorder != null) recorder.rotateZ(angle);
     g.rotateZ(angle);
   }
 
 
   public void rotate(float angle, float vx, float vy, float vz) {
-    if (recorder != null) recorder.rotate(angle, vx, vy, vz);
     g.rotate(angle, vx, vy, vz);
   }
 
 
   public void scale(float s) {
-    if (recorder != null) recorder.scale(s);
     g.scale(s);
   }
 
 
   public void scale(float sx, float sy) {
-    if (recorder != null) recorder.scale(sx, sy);
     g.scale(sx, sy);
   }
 
 
   public void scale(float x, float y, float z) {
-    if (recorder != null) recorder.scale(x, y, z);
     g.scale(x, y, z);
   }
 
 
   public void resetMatrix() {
-    if (recorder != null) recorder.resetMatrix();
     g.resetMatrix();
   }
 
 
   public void applyMatrix(PMatrix source) {
-    if (recorder != null) recorder.applyMatrix(source);
     g.applyMatrix(source);
   }
 
 
   public void applyMatrix(PMatrix2D source) {
-    if (recorder != null) recorder.applyMatrix(source);
     g.applyMatrix(source);
   }
 
 
   public void applyMatrix(float n00, float n01, float n02,
                           float n10, float n11, float n12) {
-    if (recorder != null) recorder.applyMatrix(n00, n01, n02, n10, n11, n12);
     g.applyMatrix(n00, n01, n02, n10, n11, n12);
   }
 
 
   public void applyMatrix(PMatrix3D source) {
-    if (recorder != null) recorder.applyMatrix(source);
     g.applyMatrix(source);
   }
 
@@ -7407,7 +7054,6 @@ public class PApplet extends Activity implements PConstants, Runnable
                           float n10, float n11, float n12, float n13,
                           float n20, float n21, float n22, float n23,
                           float n30, float n31, float n32, float n33) {
-    if (recorder != null) recorder.applyMatrix(n00, n01, n02, n03, n10, n11, n12, n13, n20, n21, n22, n23, n30, n31, n32, n33);
     g.applyMatrix(n00, n01, n02, n03, n10, n11, n12, n13, n20, n21, n22, n23, n30, n31, n32, n33);
   }
 
@@ -7428,43 +7074,36 @@ public class PApplet extends Activity implements PConstants, Runnable
 
 
   public void setMatrix(PMatrix source) {
-    if (recorder != null) recorder.setMatrix(source);
     g.setMatrix(source);
   }
 
 
   public void setMatrix(PMatrix2D source) {
-    if (recorder != null) recorder.setMatrix(source);
     g.setMatrix(source);
   }
 
 
   public void setMatrix(PMatrix3D source) {
-    if (recorder != null) recorder.setMatrix(source);
     g.setMatrix(source);
   }
 
 
   public void printMatrix() {
-    if (recorder != null) recorder.printMatrix();
     g.printMatrix();
   }
 
 
   public void beginCamera() {
-    if (recorder != null) recorder.beginCamera();
     g.beginCamera();
   }
 
 
   public void endCamera() {
-    if (recorder != null) recorder.endCamera();
     g.endCamera();
   }
 
 
   public void camera() {
-    if (recorder != null) recorder.camera();
     g.camera();
   }
 
@@ -7472,19 +7111,16 @@ public class PApplet extends Activity implements PConstants, Runnable
   public void camera(float eyeX, float eyeY, float eyeZ,
                      float centerX, float centerY, float centerZ,
                      float upX, float upY, float upZ) {
-    if (recorder != null) recorder.camera(eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ);
     g.camera(eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ);
   }
 
 
   public void printCamera() {
-    if (recorder != null) recorder.printCamera();
     g.printCamera();
   }
 
 
   public void ortho() {
-    if (recorder != null) recorder.ortho();
     g.ortho();
   }
 
@@ -7492,19 +7128,16 @@ public class PApplet extends Activity implements PConstants, Runnable
   public void ortho(float left, float right,
                     float bottom, float top,
                     float near, float far) {
-    if (recorder != null) recorder.ortho(left, right, bottom, top, near, far);
     g.ortho(left, right, bottom, top, near, far);
   }
 
 
   public void perspective() {
-    if (recorder != null) recorder.perspective();
     g.perspective();
   }
 
 
   public void perspective(float fovy, float aspect, float zNear, float zFar) {
-    if (recorder != null) recorder.perspective(fovy, aspect, zNear, zFar);
     g.perspective(fovy, aspect, zNear, zFar);
   }
 
@@ -7512,13 +7145,11 @@ public class PApplet extends Activity implements PConstants, Runnable
   public void frustum(float left, float right,
                       float bottom, float top,
                       float near, float far) {
-    if (recorder != null) recorder.frustum(left, right, bottom, top, near, far);
     g.frustum(left, right, bottom, top, near, far);
   }
 
 
   public void printProjection() {
-    if (recorder != null) recorder.printProjection();
     g.printProjection();
   }
 
@@ -7564,262 +7195,219 @@ public class PApplet extends Activity implements PConstants, Runnable
 
 
   public void pushStyle() {
-    if (recorder != null) recorder.pushStyle();
     g.pushStyle();
   }
 
 
   public void popStyle() {
-    if (recorder != null) recorder.popStyle();
     g.popStyle();
   }
 
 
   public void style(PStyle s) {
-    if (recorder != null) recorder.style(s);
     g.style(s);
   }
 
 
   public void strokeWeight(float weight) {
-    if (recorder != null) recorder.strokeWeight(weight);
     g.strokeWeight(weight);
   }
 
 
   public void strokeJoin(int join) {
-    if (recorder != null) recorder.strokeJoin(join);
     g.strokeJoin(join);
   }
 
 
   public void strokeCap(int cap) {
-    if (recorder != null) recorder.strokeCap(cap);
     g.strokeCap(cap);
   }
 
 
   public void noStroke() {
-    if (recorder != null) recorder.noStroke();
     g.noStroke();
   }
 
 
   public void stroke(int rgb) {
-    if (recorder != null) recorder.stroke(rgb);
     g.stroke(rgb);
   }
 
 
   public void stroke(int rgb, float alpha) {
-    if (recorder != null) recorder.stroke(rgb, alpha);
     g.stroke(rgb, alpha);
   }
 
 
   public void stroke(float gray) {
-    if (recorder != null) recorder.stroke(gray);
     g.stroke(gray);
   }
 
 
   public void stroke(float gray, float alpha) {
-    if (recorder != null) recorder.stroke(gray, alpha);
     g.stroke(gray, alpha);
   }
 
 
   public void stroke(float x, float y, float z) {
-    if (recorder != null) recorder.stroke(x, y, z);
     g.stroke(x, y, z);
   }
 
 
   public void stroke(float x, float y, float z, float a) {
-    if (recorder != null) recorder.stroke(x, y, z, a);
     g.stroke(x, y, z, a);
   }
 
 
   public void noTint() {
-    if (recorder != null) recorder.noTint();
     g.noTint();
   }
 
 
   public void tint(int rgb) {
-    if (recorder != null) recorder.tint(rgb);
     g.tint(rgb);
   }
 
 
   public void tint(int rgb, float alpha) {
-    if (recorder != null) recorder.tint(rgb, alpha);
     g.tint(rgb, alpha);
   }
 
 
   public void tint(float gray) {
-    if (recorder != null) recorder.tint(gray);
     g.tint(gray);
   }
 
 
   public void tint(float gray, float alpha) {
-    if (recorder != null) recorder.tint(gray, alpha);
     g.tint(gray, alpha);
   }
 
 
   public void tint(float x, float y, float z) {
-    if (recorder != null) recorder.tint(x, y, z);
     g.tint(x, y, z);
   }
 
 
   public void tint(float x, float y, float z, float a) {
-    if (recorder != null) recorder.tint(x, y, z, a);
     g.tint(x, y, z, a);
   }
 
 
   public void noFill() {
-    if (recorder != null) recorder.noFill();
     g.noFill();
   }
 
 
   public void fill(int rgb) {
-    if (recorder != null) recorder.fill(rgb);
     g.fill(rgb);
   }
 
 
   public void fill(int rgb, float alpha) {
-    if (recorder != null) recorder.fill(rgb, alpha);
     g.fill(rgb, alpha);
   }
 
 
   public void fill(float gray) {
-    if (recorder != null) recorder.fill(gray);
     g.fill(gray);
   }
 
 
   public void fill(float gray, float alpha) {
-    if (recorder != null) recorder.fill(gray, alpha);
     g.fill(gray, alpha);
   }
 
 
   public void fill(float x, float y, float z) {
-    if (recorder != null) recorder.fill(x, y, z);
     g.fill(x, y, z);
   }
 
 
   public void fill(float x, float y, float z, float a) {
-    if (recorder != null) recorder.fill(x, y, z, a);
     g.fill(x, y, z, a);
   }
 
 
   public void ambient(int rgb) {
-    if (recorder != null) recorder.ambient(rgb);
     g.ambient(rgb);
   }
 
 
   public void ambient(float gray) {
-    if (recorder != null) recorder.ambient(gray);
     g.ambient(gray);
   }
 
 
   public void ambient(float x, float y, float z) {
-    if (recorder != null) recorder.ambient(x, y, z);
     g.ambient(x, y, z);
   }
 
 
   public void specular(int rgb) {
-    if (recorder != null) recorder.specular(rgb);
     g.specular(rgb);
   }
 
 
   public void specular(float gray) {
-    if (recorder != null) recorder.specular(gray);
     g.specular(gray);
   }
 
 
   public void specular(float x, float y, float z) {
-    if (recorder != null) recorder.specular(x, y, z);
     g.specular(x, y, z);
   }
 
 
   public void shininess(float shine) {
-    if (recorder != null) recorder.shininess(shine);
     g.shininess(shine);
   }
 
 
   public void emissive(int rgb) {
-    if (recorder != null) recorder.emissive(rgb);
     g.emissive(rgb);
   }
 
 
   public void emissive(float gray) {
-    if (recorder != null) recorder.emissive(gray);
     g.emissive(gray);
   }
 
 
   public void emissive(float x, float y, float z) {
-    if (recorder != null) recorder.emissive(x, y, z);
     g.emissive(x, y, z);
   }
 
 
   public void lights() {
-    if (recorder != null) recorder.lights();
     g.lights();
   }
 
 
   public void noLights() {
-    if (recorder != null) recorder.noLights();
     g.noLights();
   }
 
 
   public void ambientLight(float red, float green, float blue) {
-    if (recorder != null) recorder.ambientLight(red, green, blue);
     g.ambientLight(red, green, blue);
   }
 
 
   public void ambientLight(float red, float green, float blue,
                            float x, float y, float z) {
-    if (recorder != null) recorder.ambientLight(red, green, blue, x, y, z);
     g.ambientLight(red, green, blue, x, y, z);
   }
 
 
   public void directionalLight(float red, float green, float blue,
                                float nx, float ny, float nz) {
-    if (recorder != null) recorder.directionalLight(red, green, blue, nx, ny, nz);
     g.directionalLight(red, green, blue, nx, ny, nz);
   }
 
 
   public void pointLight(float red, float green, float blue,
                          float x, float y, float z) {
-    if (recorder != null) recorder.pointLight(red, green, blue, x, y, z);
     g.pointLight(red, green, blue, x, y, z);
   }
 
@@ -7828,86 +7416,72 @@ public class PApplet extends Activity implements PConstants, Runnable
                         float x, float y, float z,
                         float nx, float ny, float nz,
                         float angle, float concentration) {
-    if (recorder != null) recorder.spotLight(red, green, blue, x, y, z, nx, ny, nz, angle, concentration);
     g.spotLight(red, green, blue, x, y, z, nx, ny, nz, angle, concentration);
   }
 
 
   public void lightFalloff(float constant, float linear, float quadratic) {
-    if (recorder != null) recorder.lightFalloff(constant, linear, quadratic);
     g.lightFalloff(constant, linear, quadratic);
   }
 
 
   public void lightSpecular(float x, float y, float z) {
-    if (recorder != null) recorder.lightSpecular(x, y, z);
     g.lightSpecular(x, y, z);
   }
 
 
   public void background(int rgb) {
-    if (recorder != null) recorder.background(rgb);
     g.background(rgb);
   }
 
 
   public void background(int rgb, float alpha) {
-    if (recorder != null) recorder.background(rgb, alpha);
     g.background(rgb, alpha);
   }
 
 
   public void background(float gray) {
-    if (recorder != null) recorder.background(gray);
     g.background(gray);
   }
 
 
   public void background(float gray, float alpha) {
-    if (recorder != null) recorder.background(gray, alpha);
     g.background(gray, alpha);
   }
 
 
   public void background(float x, float y, float z) {
-    if (recorder != null) recorder.background(x, y, z);
     g.background(x, y, z);
   }
 
 
   public void background(float x, float y, float z, float a) {
-    if (recorder != null) recorder.background(x, y, z, a);
     g.background(x, y, z, a);
   }
 
 
   public void background(PImage image) {
-    if (recorder != null) recorder.background(image);
     g.background(image);
   }
 
 
   public void colorMode(int mode) {
-    if (recorder != null) recorder.colorMode(mode);
     g.colorMode(mode);
   }
 
 
   public void colorMode(int mode, float max) {
-    if (recorder != null) recorder.colorMode(mode, max);
     g.colorMode(mode, max);
   }
 
 
   public void colorMode(int mode, float maxX, float maxY, float maxZ) {
-    if (recorder != null) recorder.colorMode(mode, maxX, maxY, maxZ);
     g.colorMode(mode, maxX, maxY, maxZ);
   }
 
 
   public void colorMode(int mode,
                         float maxX, float maxY, float maxZ, float maxA) {
-    if (recorder != null) recorder.colorMode(mode, maxX, maxY, maxZ, maxA);
     g.colorMode(mode, maxX, maxY, maxZ, maxA);
   }
 
@@ -7963,7 +7537,6 @@ public class PApplet extends Activity implements PConstants, Runnable
 
 
   public void setCache(Object parent, Object storage) {
-    if (recorder != null) recorder.setCache(parent, storage);
     g.setCache(parent, storage);
   }
 
@@ -7974,7 +7547,6 @@ public class PApplet extends Activity implements PConstants, Runnable
 
 
   public void removeCache(Object parent) {
-    if (recorder != null) recorder.removeCache(parent);
     g.removeCache(parent);
   }
 
@@ -7995,44 +7567,37 @@ public class PApplet extends Activity implements PConstants, Runnable
 
 
   public void set(int x, int y, int c) {
-    if (recorder != null) recorder.set(x, y, c);
     g.set(x, y, c);
   }
 
 
   public void set(int x, int y, PImage src) {
-    if (recorder != null) recorder.set(x, y, src);
     g.set(x, y, src);
   }
 
 
   public void mask(int alpha[]) {
-    if (recorder != null) recorder.mask(alpha);
     g.mask(alpha);
   }
 
 
   public void mask(PImage alpha) {
-    if (recorder != null) recorder.mask(alpha);
     g.mask(alpha);
   }
 
 
   public void filter(int kind) {
-    if (recorder != null) recorder.filter(kind);
     g.filter(kind);
   }
 
 
   public void filter(int kind, float param) {
-    if (recorder != null) recorder.filter(kind, param);
     g.filter(kind, param);
   }
 
 
   public void copy(int sx, int sy, int sw, int sh,
                    int dx, int dy, int dw, int dh) {
-    if (recorder != null) recorder.copy(sx, sy, sw, sh, dx, dy, dw, dh);
     g.copy(sx, sy, sw, sh, dx, dy, dw, dh);
   }
 
@@ -8040,7 +7605,6 @@ public class PApplet extends Activity implements PConstants, Runnable
   public void copy(PImage src,
                    int sx, int sy, int sw, int sh,
                    int dx, int dy, int dw, int dh) {
-    if (recorder != null) recorder.copy(src, sx, sy, sw, sh, dx, dy, dw, dh);
     g.copy(src, sx, sy, sw, sh, dx, dy, dw, dh);
   }
 
@@ -8052,7 +7616,6 @@ public class PApplet extends Activity implements PConstants, Runnable
 
   public void blend(int sx, int sy, int sw, int sh,
                     int dx, int dy, int dw, int dh, int mode) {
-    if (recorder != null) recorder.blend(sx, sy, sw, sh, dx, dy, dw, dh, mode);
     g.blend(sx, sy, sw, sh, dx, dy, dw, dh, mode);
   }
 
@@ -8060,7 +7623,6 @@ public class PApplet extends Activity implements PConstants, Runnable
   public void blend(PImage src,
                     int sx, int sy, int sw, int sh,
                     int dx, int dy, int dw, int dh, int mode) {
-    if (recorder != null) recorder.blend(src, sx, sy, sw, sh, dx, dy, dw, dh, mode);
     g.blend(src, sx, sy, sw, sh, dx, dy, dw, dh, mode);
   }
 }
