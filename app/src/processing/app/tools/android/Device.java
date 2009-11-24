@@ -132,10 +132,12 @@ public class Device {
 
 
   protected boolean create() throws IOException {
+    // not using "-s", width + "x" + height, because that can be specified
+    // on startup, which will be easier to do for Processing apps anyway.
     String[] cmd = { "android", "create", "avd", 
         "-n", name,
-        "-t", target
-//        "-s", width + "x" + height
+        "-t", target, 
+        "-c", "64M"
     };
     //System.out.println(PApplet.join(cmd, " "));
     Process p = Runtime.getRuntime().exec(cmd);

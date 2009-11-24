@@ -29,6 +29,8 @@ import java.util.*;
 
 import javax.swing.*;
 
+import com.sun.codemodel.internal.JOp;
+
 import processing.app.debug.Compiler;
 import processing.core.*;
 
@@ -1671,6 +1673,127 @@ public class Base {
 
   // ...................................................................
 
+
+ 
+  // incomplete
+  static public int showYesNoCancelQuestion(Editor editor, String title, 
+                                            String primary, String secondary) {
+    if (!Base.isMacOS()) {
+      int result =
+        JOptionPane.showConfirmDialog(null, primary + "\n" + secondary, title,
+                                      JOptionPane.YES_NO_CANCEL_OPTION,
+                                      JOptionPane.QUESTION_MESSAGE);
+      return result;
+//    if (result == JOptionPane.YES_OPTION) {
+//
+//    } else if (result == JOptionPane.NO_OPTION) {
+//      return true;  // ok to continue
+//
+//    } else if (result == JOptionPane.CANCEL_OPTION) {
+//      return false;
+//
+//    } else {
+//      throw new IllegalStateException();
+//    }
+
+    } else {
+      // Pane formatting adapted from the Quaqua guide
+      // http://www.randelshofer.ch/quaqua/guide/joptionpane.html
+      JOptionPane pane =
+        new JOptionPane("<html> " +
+                        "<head> <style type=\"text/css\">"+
+                        "b { font: 13pt \"Lucida Grande\" }"+
+                        "p { font: 11pt \"Lucida Grande\"; margin-top: 8px }"+
+                        "</style> </head>" +
+                        "<b>Do you want to save changes to this sketch<BR>" +
+                        " before closing?</b>" +
+                        "<p>If you don't save, your changes will be lost.",
+                        JOptionPane.QUESTION_MESSAGE);
+
+      String[] options = new String[] {
+          "Save", "Cancel", "Don't Save"
+      };
+      pane.setOptions(options);
+
+      // highlight the safest option ala apple hig
+      pane.setInitialValue(options[0]);
+
+      // on macosx, setting the destructive property places this option
+      // away from the others at the lefthand side
+      pane.putClientProperty("Quaqua.OptionPane.destructiveOption",
+                             new Integer(2));
+
+      JDialog dialog = pane.createDialog(editor, null);
+      dialog.setVisible(true);
+
+      Object result = pane.getValue();
+      if (result == options[0]) {
+        return JOptionPane.YES_OPTION;
+      } else if (result == options[1]) {
+        return JOptionPane.CANCEL_OPTION;
+      } else if (result == options[2]) {
+        return JOptionPane.NO_OPTION;
+      } else {
+        return JOptionPane.CLOSED_OPTION;
+      }
+    }
+  }
+  
+
+//if (result == JOptionPane.YES_OPTION) {
+  //
+//      } else if (result == JOptionPane.NO_OPTION) {
+//        return true;  // ok to continue
+  //
+//      } else if (result == JOptionPane.CANCEL_OPTION) {
+//        return false;
+  //
+//      } else {
+//        throw new IllegalStateException();
+//      }
+
+  static public int showYesNoQuestion(Editor editor, String title, 
+                                            String primary, String secondary) {
+    if (!Base.isMacOS()) {
+      return JOptionPane.showConfirmDialog(editor, 
+                                           primary + "\n" + secondary, title,
+                                           JOptionPane.YES_NO_OPTION,
+                                           JOptionPane.QUESTION_MESSAGE);
+    } else {
+      // Pane formatting adapted from the Quaqua guide
+      // http://www.randelshofer.ch/quaqua/guide/joptionpane.html
+      JOptionPane pane =
+        new JOptionPane("<html> " +
+                        "<head> <style type=\"text/css\">"+
+                        "b { font: 13pt \"Lucida Grande\" }"+
+                        "p { font: 11pt \"Lucida Grande\"; margin-top: 8px }"+
+                        "</style> </head>" +
+                        "<b>" + primary + "</b>" +
+                        "<p>" + secondary + "</p>",
+                        JOptionPane.QUESTION_MESSAGE);
+
+      String[] options = new String[] {
+          "Yes", "No"
+      };
+      pane.setOptions(options);
+
+      // highlight the safest option ala apple hig
+      pane.setInitialValue(options[0]);
+
+      JDialog dialog = pane.createDialog(editor, null);
+      dialog.setVisible(true);
+
+      Object result = pane.getValue();
+      if (result == options[0]) {
+        return JOptionPane.YES_OPTION;
+      } else if (result == options[1]) {
+        return JOptionPane.NO_OPTION;
+      } else {
+        return JOptionPane.CLOSED_OPTION;
+      }
+    }
+  }
+  
 
   /**
    * Retrieve a path to something in the Processing folder. Eventually this
