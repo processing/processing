@@ -3,6 +3,8 @@ X use xdg-open as launcher on linux
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1358
 X change to different class id for export and export-opengl
 
+_ add warning message when not using a version of sun java w/ p5
+
 _ write quicktime uncompressed (w/o qtjava)
 _   http://blog.hslu.ch/rawcoder/2008/06/21/writing-quicktime-movies-in-pure-java/
 

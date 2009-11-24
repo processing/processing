@@ -129,6 +129,7 @@ public class Editor extends JFrame implements RunnerListener {
   
   Runnable runHandler;
   Runnable presentHandler;
+  Runnable stopHandler;
   Runnable exportHandler;
   Runnable exportAppHandler;
 
@@ -1160,9 +1161,11 @@ public class Editor extends JFrame implements RunnerListener {
 
 
   public void setHandlers(Runnable runHandler, Runnable presentHandler,
+                          Runnable stopHandler,
                           Runnable exportHandler, Runnable exportAppHandler) {
     this.runHandler = runHandler;
     this.presentHandler = presentHandler;
+    this.stopHandler = stopHandler;
     this.exportHandler = exportHandler;
     this.exportAppHandler = exportAppHandler;
   }
@@ -1171,6 +1174,7 @@ public class Editor extends JFrame implements RunnerListener {
   public void resetHandlers() {
     runHandler = new DefaultRunHandler();
     presentHandler = new DefaultPresentHandler();
+    stopHandler = new DefaultStopHandler();
     exportHandler = new DefaultExportHandler();
     exportAppHandler = new DefaultExportAppHandler();
   }
@@ -1648,6 +1652,17 @@ public class Editor extends JFrame implements RunnerListener {
       }
     }
   }
+  
+  
+  class DefaultStopHandler implements Runnable {
+    public void run() {
+      try {
+        
+      } catch (Exception e) {
+        statusError(e);
+      }
+    }
+  }
 
 
   /**
@@ -1685,8 +1700,10 @@ public class Editor extends JFrame implements RunnerListener {
 
 
   /**
-   * Called by Runner to notify that the sketch has stopped running.
-   * Tools should not call this function, use handleStop() instead.
+   * Deactivate the Run button. This is called by Runner to notify that the 
+   * sketch has stopped running, usually in response to an error (or maybe
+   * the sketch completing and exiting?) Tools should not call this function.  
+   * To initiate a "stop" action, call handleStop() instead.
    */
   public void internalRunnerClosed() {
     running = false;
