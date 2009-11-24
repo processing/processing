@@ -61,8 +61,9 @@ public class Android implements Tool {
     checkPath();
     boolean success = Device.checkDefaults();
     if (success) {
-      editor.setHandlers(new RunHandler(this), new PresentHandler(this), 
-                         new ExportHandler(this), new ExportAppHandler(this));
+      editor.setHandlers(new RunHandler(), new PresentHandler(), 
+                         new StopHandler(),
+                         new ExportHandler(), new ExportAppHandler());
       build = new Build(editor);
       editor.statusNotice("Done loading Android tools.");
     } else {
@@ -141,21 +142,29 @@ public class Android implements Tool {
     
     // launch emulator because it's not running yet
     try {
+      if (emulatorProcess != null) {
+        // see if it's done yet
+        try {
+          int result = emulatorProcess.exitValue();
+          emulatorProcess.destroy();
+          
+        } catch (IllegalThreadStateException itse) {
+          // not done yet
+        }
+        
+        //if (emulatorProcess.)
+      }
+      
       editor.statusNotice("Starting new Android emulator.");
-      emulatorProcess = Runtime.getRuntime().exec(new String[] { 
+      String[] cmd = new String[] { 
           "emulator", 
           "-avd", getDefaultDevice(),
           "-port", portString,
           "-logcat", "'*:i'",
           "-no-boot-anim"
-      });
-      System.out.println(PApplet.join(new String[] { 
-          "emulator", 
-          "-avd", getDefaultDevice(),
-          "-port", portString,
-          "-logcat", "'*:i'",
-          "-no-boot-anim"
-      }, " "));
+      };
+      emulatorProcess = Runtime.getRuntime().exec(cmd);
+      System.out.println(PApplet.join(cmd, " "));
       // make sure that the streams are drained properly
       new StreamRedirectThread("android-emulator-out", 
                                emulatorProcess.getInputStream(), System.out).start();
@@ -228,9 +237,6 @@ public class Android implements Tool {
     //System.out.println("ant build complete " + success);
     if (!success) return;
 
-    //  // if no emulator is running, start an emulator
-    //  String name = findEmulator();
-
     success = installSketch(device);
     if (!success) return;
     
@@ -251,6 +257,7 @@ public class Android implements Tool {
       String[] cmd = new String[] { 
           "adb",
           "-s", device,
+          "wait-for-device",
           "install", "-r",  // safe to always use -r switch
           build.getPathForAPK("debug")
       };
@@ -339,5 +346,42 @@ public class Android implements Tool {
     } catch (InterruptedException e) { }
     
     return false;
+  }
+  
+  
+  class RunHandler implements Runnable {
+    public void run() {
+      installAndRun("debug", findEmulator());
+    } 
+  }
+  
+  
+  class PresentHandler implements Runnable {
+    public void run() {
+      String device = findDevice();
+      if (device == null) {
+        editor.statusError("No device found.");
+      } else {
+        installAndRun("debug", device);
+      }
+    }
+  }
+
+  
+  class StopHandler implements Runnable {
+    public void run() {
+    }
+  }
+  
+  
+  class ExportHandler implements Runnable {  
+    public void run() {      
+    }
+  }
+
+
+  class ExportAppHandler implements Runnable {  
+    public void run() {      
+    }
   }
 }
