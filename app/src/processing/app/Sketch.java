@@ -1140,7 +1140,14 @@ public class Sketch {
    *    X. afterwards, some of these steps need a cleanup function
    * </PRE>
    */
-  protected String compile() throws RunnerException {
+  //protected String compile() throws RunnerException {
+
+
+  /**
+   * When running from the editor, take care of preparations before running 
+   * the build. 
+   */
+  protected void prepare() {
     // make sure the user didn't hide the sketch folder
     ensureExistence();
 
@@ -1169,12 +1176,12 @@ public class Sketch {
     // can happen so many different ways.. and this will be
     // better connected to the dataFolder stuff below.
     cleanup();
-
-    // handle preprocessing the main file's code
-    return build(tempBuildFolder.getAbsolutePath());
+  
+//    // handle preprocessing the main file's code
+//    return build(tempBuildFolder.getAbsolutePath());
   }
-
-
+  
+  
   /**
    * Build all the code for this sketch.
    *
@@ -1463,6 +1470,16 @@ public class Sketch {
       }
     }
     return primaryClassName;
+  }
+
+
+  /**
+   * Run the build inside the temporary build folder.
+   * @return null if compilation failed, main class name if not
+   * @throws RunnerException
+   */
+  public String build() throws RunnerException {
+    return build(tempBuildFolder.getAbsolutePath());
   }
 
 
