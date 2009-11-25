@@ -2076,9 +2076,12 @@ public class PApplet extends Applet
         } else if (platform == MACOSX) {
           //com.apple.mrj.MRJFileUtils.openURL(url);
           try {
-            Class<?> mrjFileUtils = Class.forName("com.apple.mrj.MRJFileUtils");
+//            Class<?> mrjFileUtils = Class.forName("com.apple.mrj.MRJFileUtils");
+//            Method openMethod =
+//              mrjFileUtils.getMethod("openURL", new Class[] { String.class });
+            Class<?> eieio = Class.forName("com.apple.eio.FileManager");
             Method openMethod =
-              mrjFileUtils.getMethod("openURL", new Class[] { String.class });
+              eieio.getMethod("openURL", new Class[] { String.class });
             openMethod.invoke(null, new Object[] { url });
           } catch (Exception e) {
             e.printStackTrace();
