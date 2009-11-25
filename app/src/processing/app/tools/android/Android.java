@@ -600,8 +600,8 @@ public class Android implements Tool {
 
       System.out.println("launching vm");
       AndroidRunner ar = new AndroidRunner(editor);
-      ar.launch("29892");
-      System.out.println("vm launched");
+      return ar.launch("29892");
+      //System.out.println("vm launched");
 
     } catch (IOException e) {
       editor.statusError(e);

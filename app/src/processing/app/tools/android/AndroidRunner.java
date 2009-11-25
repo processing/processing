@@ -74,14 +74,18 @@ public class AndroidRunner extends Runner {
 
   public AndroidRunner(RunnerListener listener) {
     super(listener);
+    
+    System.out.println("editor is " + editor);
   }
 
 
-  public void launch(String port) {
+  public boolean launch(String port) {
     vm = launchVirtualMachine(port);
     if (vm != null) {
       generateTrace(null);
+      return true;
     }
+    return false;
   }
   
   
@@ -252,45 +256,26 @@ public class AndroidRunner extends Runner {
     Connector.Argument portArg =
       (Connector.Argument)arguments.get("port");
     portArg.setValue(port);
+    
+    ((Connector.Argument) arguments.get("hostname")).setValue("localhost");
+    ((Connector.Argument) arguments.get("timeout")).setValue("5000");
 
     try {
+      PApplet.println(connector);
+      PApplet.println(arguments);
+
       return connector.attach(arguments);
-    } catch (IOException exc) {
-      throw new Error("Unable to launch target VM: " + exc);
-    } catch (IllegalConnectorArgumentsException exc) {
-      throw new Error("Internal error: " + exc);
-//    } catch (VMStartException exc) {
-//      Process p = exc.process();
-//      //System.out.println(p);
-//      String[] errorStrings = PApplet.loadStrings(p.getErrorStream());
-//      /*String[] inputStrings =*/ PApplet.loadStrings(p.getInputStream());
-//
-//      if (errorStrings != null && errorStrings.length > 1) {
-////        if (errorStrings[0].indexOf("Invalid maximum heap size") != -1) {
-////          Base.showWarning("Way Too High",
-////                           "Please lower the value for \u201Cmaximum available memory\u201D in the\n" +
-////                           "Preferences window. For more information, read Help \u2192 Troubleshooting.",
-////                           exc);
-////        } else {
-//        PApplet.println(errorStrings);
-//        System.err.println("Using startup command:");
-//        PApplet.println(arguments);
-////        }
-//      } else {
-//        exc.printStackTrace();
-//        System.err.println("Could not run the sketch (Target VM failed to initialize).");
-//        if (Preferences.getBoolean("run.options.memory")) {
-//          // Only mention this if they've even altered the memory setup
-//          System.err.println("Make sure that you haven't set the maximum available memory too high.");
-//        }
-//        System.err.println("For more information, read revisions.txt and Help \u2192 Troubleshooting.");
-//      }
-//      // changing this to separate editor and listener [091124]
-//      //if (editor != null) {
-//      listener.statusError("Could not run the sketch.");
-//      //}
-//      return null;
+      
+    } catch (IOException ioe) {
+      //throw new Error("Unable to launch target VM: " + exc);
+      ioe.printStackTrace();
+      editor.statusError(ioe);
+
+    } catch (IllegalConnectorArgumentsException icae) {
+      //throw new Error("Internal error: " + exc);
+      editor.statusError(icae);
     }
+    return null;
   }
 
 
