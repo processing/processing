@@ -312,10 +312,11 @@ public class Android implements Tool {
     success = installSketch(device);
     if (!success) return;
 
-    success = startSketch(device);
-    if (!success) return;
+    // Returns the last JDWP port that in use before launching
+    String prevPort = startSketch(device);
+    if (prevPort == null) return;
     
-    success = debugSketch(device);
+    success = debugSketch(device, prevPort);
   }
   
   
@@ -350,6 +351,8 @@ public class Android implements Tool {
 //        error.finish();
 //        output.finish();
         
+        p.printLines();
+        /*
 //        for (String err : error.getLines()) {
         for (String err : p.getErrorLines()) {
           if (err.length() != 0) {
@@ -362,6 +365,7 @@ public class Android implements Tool {
             System.out.println("out: " + out);
           }
         }
+        */
         
         try {
           Thread.sleep(1000);
@@ -439,8 +443,8 @@ public class Android implements Tool {
     editor.statusNotice("Sending sketch to the " + 
                         (emu ? "emulator" : "phone") + ".");
     try {
-      Device.sendMenuButton(device);  // wake up
-      Device.sendHomeButton(device);  // kill any running app
+//      Device.sendMenuButton(device);  // wake up
+//      Device.sendHomeButton(device);  // kill any running app
       
       String[] cmd = new String[] { 
           "adb",
@@ -503,10 +507,12 @@ public class Android implements Tool {
 
   // better version that actually runs through JDI:
   // http://asantoso.wordpress.com/2009/09/26/using-jdb-with-adb-to-debugging-of-android-app-on-a-real-device/
-  boolean startSketch(String device) {
+  String startSketch(String device) {
     try {
-      Device.sendMenuButton(device);  // wake up
-      Device.sendHomeButton(device);  // kill any running app
+//      Device.sendMenuButton(device);  // wake up
+//      Device.sendHomeButton(device);  // kill any running app
+      
+      String lastPort = getJdwpPort(device);
       
       //"am start -a android.intent.action.MAIN -n com.android.browser/.BrowserActivity"
       Process p = Runtime.getRuntime().exec(new String[] { 
@@ -528,21 +534,37 @@ public class Android implements Tool {
         editor.statusNotice("Sketch started on the " + 
                             (emu ? "emulator" : "phone") + ".");
         
-        return true;
+        return lastPort;
       }
     } catch (IOException e) {
       editor.statusError(e);
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
-    return false;
+    return null;
   }
   
   
   
-  boolean debugSketch(String device) {
+  boolean debugSketch(String device, String prevPort) {
     try {
-      String port = getJdwpPort(device);
+      String port = null;
+      long timeout = System.currentTimeMillis() + 15 * 1000;
+      //while (port == null || port.equals(prevPort)) {
+      while (System.currentTimeMillis() < timeout) {
+        if (port != null) {
+          System.out.println("Waiting for application to launch...");
+          try {
+            Thread.sleep(500);
+          } catch (InterruptedException ie) { }
+        }
+        port = getJdwpPort(device);
+        if (!port.equals(prevPort)) {
+          System.out.println("I'm digging port " + port + 
+                             " instead of " + prevPort + ".");
+          break;
+        }
+      }
 
       // Originally based on helpful notes by Agus Santoso (http://j.mp/7zV69M)
       
@@ -557,7 +579,7 @@ public class Android implements Tool {
       String[] cmd = new String[] {
           "adb",
           "-s", device,
-          "-d", "forward", 
+          "forward", 
           "tcp:29892",
           "jdwp:" + port
       };
@@ -570,7 +592,7 @@ public class Android implements Tool {
       int result = fwd.waitFor();
       fwd.printLines();
       System.out.println("done with forward");
-      
+
       if (result != 0) {
         editor.statusError("Could not connect for debugging.");
         return false;
@@ -578,7 +600,7 @@ public class Android implements Tool {
 
       System.out.println("launching vm");
       AndroidRunner ar = new AndroidRunner(editor);
-      ar.launch(port);
+      ar.launch("29892");
       System.out.println("vm launched");
 
     } catch (IOException e) {
