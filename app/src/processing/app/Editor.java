@@ -1627,10 +1627,11 @@ public class Editor extends JFrame implements RunnerListener {
   class DefaultRunHandler implements Runnable {
     public void run() {
       try {
-        String appletClassName = sketch.compile();
+        sketch.prepare();
+        String appletClassName = sketch.build();
         if (appletClassName != null) {
-          runtime = new Runner(sketch, appletClassName, false, Editor.this);
-          runtime.launch();
+          runtime = new Runner(Editor.this);
+          runtime.launch(sketch, appletClassName, false);
         }
       } catch (Exception e) {
         statusError(e);
@@ -1642,10 +1643,11 @@ public class Editor extends JFrame implements RunnerListener {
   class DefaultPresentHandler implements Runnable {
     public void run() {
       try {
-        String appletClassName = sketch.compile();
+        sketch.prepare();
+        String appletClassName = sketch.build();
         if (appletClassName != null) {
-          runtime = new Runner(sketch, appletClassName, true, Editor.this);
-          runtime.launch();
+          runtime = new Runner(Editor.this);
+          runtime.launch(sketch, appletClassName, true);
         }
       } catch (Exception e) {
         statusError(e);
