@@ -306,18 +306,20 @@ public class Android implements Tool {
     //System.out.println("ant build complete " + success);
     if (!success) return;
 
-    int port = waitUntilReady(device);
+    success = waitUntilReady(device);
+    if (!success) return;
+    
+    success = installSketch(device);
+    if (!success) return;
 
-    if (port != 0) {
-      success = installSketch(device);
-      if (!success) return;
-
-      success = startSketch(device, port);
-    }
+    success = startSketch(device);
+    if (!success) return;
+    
+    success = debugSketch(device);
   }
   
   
-  protected int waitUntilReady(String device) {
+  protected boolean waitUntilReady(String device) {
     long timeout = System.currentTimeMillis() + 30 * 1000;  // 15 sec
 
     try {
@@ -333,38 +335,32 @@ public class Android implements Tool {
             "-s", device,
             "jdwp"  // come and play!
         };
-        Process p = Runtime.getRuntime().exec(cmd);
+        Pavarotti p = new Pavarotti(cmd);
+//        Process p = Runtime.getRuntime().exec(cmd);
 
         //      System.out.println();
         //      System.out.print("Checking for JDWP connection: ");
         //      System.out.println(PApplet.join(cmd, " "));
 
-        StringRedirectThread error = new StringRedirectThread(p.getErrorStream());
-        StringRedirectThread output = new StringRedirectThread(p.getInputStream());
+//        StringRedirectThread error = new StringRedirectThread(p.getErrorStream());
+//        StringRedirectThread output = new StringRedirectThread(p.getInputStream());
 
         int result = p.waitFor();
-        error.finish();
-        output.finish();
+        if (result == 0) return true;
+//        error.finish();
+//        output.finish();
         
-        for (String err : error.getLines()) {
+//        for (String err : error.getLines()) {
+        for (String err : p.getErrorLines()) {
           if (err.length() != 0) {
             System.err.println("err: " + err);
           }
         }
-        for (String out : output.getLines()) {
+//        for (String out : output.getLines()) {
+        for (String out : p.getOutputLines()) {
           if (out.length() != 0) {
             System.out.println("out: " + out);
           }
-        }
-
-        if (result == 0) {
-          String[] lines = output.getLines();
-          String last = lines[lines.length - 1];
-          if (last.length() == 0) {
-            last = lines[lines.length - 2];
-          }
-          System.out.println("last is " + last);
-          return PApplet.parseInt(last);
         }
         
         try {
@@ -374,7 +370,65 @@ public class Android implements Tool {
     } catch (Exception e) {
       e.printStackTrace();
     }
-    return 0;
+    return false;
+  }
+
+
+  protected String getJdwpPort(String device) {
+    long timeout = System.currentTimeMillis() + 30 * 1000;  // 15 sec
+
+    try {
+      while (System.currentTimeMillis() < timeout) {
+        // adb -s emulator-5566 jdwp
+        // prints a list of connections that can be made to the device
+        // the final port will be the entry of the most recently started application
+        // while launching, will say 'error: device offline'
+        // when not running, will say 'error: device not found'
+
+        String[] cmd = new String[] {
+            "adb",
+            "-s", device,
+            "jdwp"  // come and play!
+        };
+        Pavarotti p = new Pavarotti(cmd);
+        int result = p.waitFor();
+
+//        for (String err : p.getErrorLines()) {
+//          if (err.length() != 0) {
+//            System.err.println("err: " + err);
+//          }
+//        }
+//        for (String out : p.getOutputLines()) {
+//          if (out.length() != 0) {
+//            System.out.println("out: " + out);
+//          }
+//        }
+
+        if (result == 0) {
+          String[] lines = p.getOutputLines();
+          String last = lines[lines.length - 1];
+          if (last.trim().length() == 0) {
+            last = lines[lines.length - 2];
+          }
+          //System.out.println("last is " + last);
+          return last.trim();
+          
+        } else {
+          for (String err : p.getErrorLines()) {
+            if (err.length() != 0) {
+              System.err.println("err: " + err);
+            }
+          }
+        }
+        
+        try {
+          Thread.sleep(1000);
+        } catch (InterruptedException ie) { }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return null;
   }
   
   
@@ -449,7 +503,7 @@ public class Android implements Tool {
 
   // better version that actually runs through JDI:
   // http://asantoso.wordpress.com/2009/09/26/using-jdb-with-adb-to-debugging-of-android-app-on-a-real-device/
-  boolean startSketch(String device, int port) {
+  boolean startSketch(String device) {
     try {
       Device.sendMenuButton(device);  // wake up
       Device.sendHomeButton(device);  // kill any running app
@@ -467,7 +521,7 @@ public class Android implements Tool {
       int result = p.waitFor();
       if (result != 0) {
         editor.statusError("Could not start the sketch.");
-        System.out.println("“adb shell” for “am start” returned " + result + ".");
+        System.err.println("“adb shell” for “am start” returned " + result + ".");
         
       } else {
         boolean emu = device.startsWith("emulator");
@@ -476,6 +530,19 @@ public class Android implements Tool {
         
         return true;
       }
+    } catch (IOException e) {
+      editor.statusError(e);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    return false;
+  }
+  
+  
+  
+  boolean debugSketch(String device) {
+    try {
+      String port = getJdwpPort(device);
 
       // Originally based on helpful notes by Agus Santoso (http://j.mp/7zV69M)
       
@@ -487,31 +554,32 @@ public class Android implements Tool {
 
       // adb -s emulator-5566 -d forward tcp:29882 jdwp:736
       // jdb -connect com.sun.jdi.SocketAttach:hostname=localhost,port=29882
-      Process fwd = Runtime.getRuntime().exec(new String[] {
+      String[] cmd = new String[] {
           "adb",
           "-s", device,
           "-d", "forward", 
           "tcp:29892",
           "jdwp:" + port
-      });
-      StringRedirectThread error = new StringRedirectThread(p.getErrorStream());
-      StringRedirectThread output = new StringRedirectThread(p.getInputStream());
+      };
+      PApplet.println(cmd);
+      Pavarotti fwd = new Pavarotti(cmd);
+//      StringRedirectThread error = new StringRedirectThread(p.getErrorStream());
+//      StringRedirectThread output = new StringRedirectThread(p.getInputStream());
 
-      result = fwd.waitFor();
-      for (String err : error.getLines()) {
-        System.err.println("err: " + err);
-      }
-      for (String out : output.getLines()) {
-        System.out.println("out: " + out);
-      }
+      System.out.println("waiting for forward");
+      int result = fwd.waitFor();
+      fwd.printLines();
+      System.out.println("done with forward");
       
       if (result != 0) {
         editor.statusError("Could not connect for debugging.");
         return false;
       }
 
+      System.out.println("launching vm");
       AndroidRunner ar = new AndroidRunner(editor);
-      ar.launch(String.valueOf(port));
+      ar.launch(port);
+      System.out.println("vm launched");
 
     } catch (IOException e) {
       editor.statusError(e);

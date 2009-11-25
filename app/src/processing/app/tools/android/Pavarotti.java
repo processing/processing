@@ -1,0 +1,71 @@
+/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+
+/*
+  Part of the Processing project - http://processing.org
+
+  Copyright (c) 2009 Ben Fry and Casey Reas
+
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License version 2
+  as published by the Free Software Foundation.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software Foundation,
+  Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
+package processing.app.tools.android;
+
+import java.io.IOException;
+
+
+public class Pavarotti {
+  Process process;
+
+  StringRedirectThread error; 
+  StringRedirectThread output; 
+
+
+  public Pavarotti(String[] cmd) throws IOException {
+    process = Runtime.getRuntime().exec(cmd);
+    error = new StringRedirectThread(process.getErrorStream());
+    output = new StringRedirectThread(process.getInputStream());
+  }
+
+
+  int waitFor() throws InterruptedException {
+    int result = process.waitFor();
+    error.finish();
+    output.finish();
+    return result;
+  }
+  
+
+  public String[] getErrorLines() {
+    return error.getLines();
+  }
+  
+  
+  public String[] getOutputLines() {
+    return output.getLines();
+  }
+  
+  
+  public void printLines() {
+    for (String err : getErrorLines()) {
+      //if (err.length() > 0) System.err.println("err: " + err);
+      //if (err.length() > 0) System.err.println(err);
+      System.err.println(err);
+    }
+    for (String out : getOutputLines()) {
+      //if (out.length() > 0) System.out.println("out: " + out);
+      //if (out.length() > 0) System.out.println(out);
+      System.out.println(out);
+    }
+  }
+}

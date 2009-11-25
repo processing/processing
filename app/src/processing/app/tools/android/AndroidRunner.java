@@ -243,8 +243,8 @@ public class AndroidRunner extends Runner {
   // http://java.sun.com/j2se/1.5.0/docs/guide/jpda/conninv.html
   protected VirtualMachine launchVirtualMachine(String port) {
     // hostname, port, and timeout (ms) are the only items needed here
-    LaunchingConnector connector =
-      findLaunchingConnector("com.sun.jdi.SocketAttach");
+    AttachingConnector connector = 
+      (AttachingConnector) findConnector("com.sun.jdi.SocketAttach");
     //PApplet.println(connector);  // gets the defaults
 
     Map arguments = connector.defaultArguments();
@@ -254,42 +254,42 @@ public class AndroidRunner extends Runner {
     portArg.setValue(port);
 
     try {
-      return connector.launch(arguments);
+      return connector.attach(arguments);
     } catch (IOException exc) {
       throw new Error("Unable to launch target VM: " + exc);
     } catch (IllegalConnectorArgumentsException exc) {
       throw new Error("Internal error: " + exc);
-    } catch (VMStartException exc) {
-      Process p = exc.process();
-      //System.out.println(p);
-      String[] errorStrings = PApplet.loadStrings(p.getErrorStream());
-      /*String[] inputStrings =*/ PApplet.loadStrings(p.getInputStream());
-
-      if (errorStrings != null && errorStrings.length > 1) {
-//        if (errorStrings[0].indexOf("Invalid maximum heap size") != -1) {
-//          Base.showWarning("Way Too High",
-//                           "Please lower the value for \u201Cmaximum available memory\u201D in the\n" +
-//                           "Preferences window. For more information, read Help \u2192 Troubleshooting.",
-//                           exc);
-//        } else {
-        PApplet.println(errorStrings);
-        System.err.println("Using startup command:");
-        PApplet.println(arguments);
+//    } catch (VMStartException exc) {
+//      Process p = exc.process();
+//      //System.out.println(p);
+//      String[] errorStrings = PApplet.loadStrings(p.getErrorStream());
+//      /*String[] inputStrings =*/ PApplet.loadStrings(p.getInputStream());
+//
+//      if (errorStrings != null && errorStrings.length > 1) {
+////        if (errorStrings[0].indexOf("Invalid maximum heap size") != -1) {
+////          Base.showWarning("Way Too High",
+////                           "Please lower the value for \u201Cmaximum available memory\u201D in the\n" +
+////                           "Preferences window. For more information, read Help \u2192 Troubleshooting.",
+////                           exc);
+////        } else {
+//        PApplet.println(errorStrings);
+//        System.err.println("Using startup command:");
+//        PApplet.println(arguments);
+////        }
+//      } else {
+//        exc.printStackTrace();
+//        System.err.println("Could not run the sketch (Target VM failed to initialize).");
+//        if (Preferences.getBoolean("run.options.memory")) {
+//          // Only mention this if they've even altered the memory setup
+//          System.err.println("Make sure that you haven't set the maximum available memory too high.");
 //        }
-      } else {
-        exc.printStackTrace();
-        System.err.println("Could not run the sketch (Target VM failed to initialize).");
-        if (Preferences.getBoolean("run.options.memory")) {
-          // Only mention this if they've even altered the memory setup
-          System.err.println("Make sure that you haven't set the maximum available memory too high.");
-        }
-        System.err.println("For more information, read revisions.txt and Help \u2192 Troubleshooting.");
-      }
-      // changing this to separate editor and listener [091124]
-      //if (editor != null) {
-      listener.statusError("Could not run the sketch.");
-      //}
-      return null;
+//        System.err.println("For more information, read revisions.txt and Help \u2192 Troubleshooting.");
+//      }
+//      // changing this to separate editor and listener [091124]
+//      //if (editor != null) {
+//      listener.statusError("Could not run the sketch.");
+//      //}
+//      return null;
     }
   }
 
