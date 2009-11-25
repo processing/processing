@@ -39,6 +39,15 @@ public class StringRedirectThread extends Thread {
   }
 
 
+  public void finish() {
+    while (!finished) {
+      try {
+        Thread.sleep(50);
+      } catch (InterruptedException e) { }
+    }
+  }
+
+
   public boolean isFinished() {
     return finished;
   }
