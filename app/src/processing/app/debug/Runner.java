@@ -377,7 +377,7 @@ public class Runner implements MessageConsumer {
    * start threads to forward remote error and output streams,
    * resume the remote VM, wait for the final event, and shutdown.
    */
-  void generateTrace(PrintWriter writer) {
+  protected void generateTrace(PrintWriter writer) {
     vm.setDebugTraceMode(debugTraceMode);
 
     EventThread eventThread = null;
@@ -441,7 +441,7 @@ public class Runner implements MessageConsumer {
   /**
    * Find a com.sun.jdi.CommandLineLaunch connector
    */
-  LaunchingConnector findLaunchingConnector(String connectorName) {
+  protected LaunchingConnector findLaunchingConnector(String connectorName) {
     //VirtualMachineManager mgr = Bootstrap.virtualMachineManager();
 
     // Get the default connector.

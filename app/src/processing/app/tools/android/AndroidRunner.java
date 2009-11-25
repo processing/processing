@@ -36,9 +36,9 @@ import com.sun.jdi.connect.*;
 import com.sun.jdi.event.ExceptionEvent;
 
 
-public class AndroidRunner extends processing.app.debug.Runner {
+public class AndroidRunner extends Runner {
 
-  private boolean presenting;
+//  private boolean presenting;
 
   // Object that listens for error messages or exceptions.
   private RunnerListener listener;
@@ -47,23 +47,23 @@ public class AndroidRunner extends processing.app.debug.Runner {
   private VirtualMachine vm;
 
   // Thread transferring remote error stream to our error stream
-  private Thread errThread = null;
+//  private Thread errThread = null;
 
   // Thread transferring remote output stream to our output stream
-  private Thread outThread = null;
+//  private Thread outThread = null;
 
   // Mode for tracing the Trace program (default= 0 off)
-  private int debugTraceMode = 0;
+//  private int debugTraceMode = 0;
 
   //  Do we want to watch assignments to fields
-  private boolean watchFields = false;
+//  private boolean watchFields = false;
 
   // Class patterns for which we don't want events
-  private String[] excludes = {
-      "java.*", "javax.*", "sun.*", "com.sun.*",
-      "apple.*",
-      "processing.*"
-  };
+//  private String[] excludes = {
+//      "java.*", "javax.*", "sun.*", "com.sun.*",
+//      "apple.*",
+//      "processing.*"
+//  };
 
   private RunnerException exception;
 
@@ -77,6 +77,15 @@ public class AndroidRunner extends processing.app.debug.Runner {
   }
 
 
+  public void launch(String port) {
+    vm = launchVirtualMachine(port);
+    if (vm != null) {
+      generateTrace(null);
+    }
+  }
+  
+  
+  /*
   public void launch(Sketch sketch, String appletClassName, 
                      boolean presenting) {
     this.sketch = sketch;
@@ -228,63 +237,22 @@ public class AndroidRunner extends processing.app.debug.Runner {
 //    return outgoing;
     return (String[]) params.toArray(new String[0]);
   }
+  */
 
 
-  protected VirtualMachine launchVirtualMachine(String[] vmParams,
-                                                String[] classParams) {
-    //vm = launchTarget(sb.toString());
+  // http://java.sun.com/j2se/1.5.0/docs/guide/jpda/conninv.html
+  protected VirtualMachine launchVirtualMachine(String port) {
+    // hostname, port, and timeout (ms) are the only items needed here
     LaunchingConnector connector =
-      findLaunchingConnector("com.sun.jdi.RawCommandLineLaunch");
+      findLaunchingConnector("com.sun.jdi.SocketAttach");
     //PApplet.println(connector);  // gets the defaults
 
-    //Map arguments = connectorArguments(connector, mainArgs);
     Map arguments = connector.defaultArguments();
 
-    Connector.Argument commandArg =
-      (Connector.Argument)arguments.get("command");
-    // Using localhost instead of 127.0.0.1 sometimes causes a
-    // "Transport Error 202" error message when trying to run.
-    // http://dev.processing.org/bugs/show_bug.cgi?id=895
-    String addr = "127.0.0.1:" + (8000 + (int) (Math.random() * 1000));
-    //String addr = "localhost:" + (8000 + (int) (Math.random() * 1000));
-    //String addr = "" + (8000 + (int) (Math.random() * 1000));
+    Connector.Argument portArg =
+      (Connector.Argument)arguments.get("port");
+    portArg.setValue(port);
 
-    String commandArgs =
-      "java -Xrunjdwp:transport=dt_socket,address=" + addr + ",suspend=y ";
-    if (Base.isWindows()) {
-      commandArgs =
-        "java -Xrunjdwp:transport=dt_shmem,address=" + addr + ",suspend=y ";
-    } else if (Base.isMacOS()) {
-      if (System.getProperty("os.version").startsWith("10.4")) {
-        // -d32 not understood by 10.4 (and not needed)
-        commandArgs =
-          "java -Xrunjdwp:transport=dt_socket,address=" + addr + ",suspend=y ";
-      } else {
-        commandArgs =
-          "java -d32 -Xrunjdwp:transport=dt_socket,address=" + addr + ",suspend=y ";
-      }
-    }
-
-    for (int i = 0; i < vmParams.length; i++) {
-      commandArgs = addArgument(commandArgs, vmParams[i], ' ');
-    }
-    if (classParams != null) {
-      for (int i = 0; i < classParams.length; i++) {
-        commandArgs = addArgument(commandArgs, classParams[i], ' ');
-      }
-    }
-    commandArg.setValue(commandArgs);
-
-    Connector.Argument addressArg =
-      (Connector.Argument)arguments.get("address");
-    addressArg.setValue(addr);
-
-    //PApplet.println(connector);  // prints the current
-    //com.sun.tools.jdi.AbstractLauncher al;
-    //com.sun.tools.jdi.RawCommandLineLauncher rcll;
-
-    //System.out.println(PApplet.javaVersion);
-    // http://java.sun.com/j2se/1.5.0/docs/guide/jpda/conninv.html#sunlaunch
     try {
       return connector.launch(arguments);
     } catch (IOException exc) {
@@ -298,16 +266,16 @@ public class AndroidRunner extends processing.app.debug.Runner {
       /*String[] inputStrings =*/ PApplet.loadStrings(p.getInputStream());
 
       if (errorStrings != null && errorStrings.length > 1) {
-        if (errorStrings[0].indexOf("Invalid maximum heap size") != -1) {
-          Base.showWarning("Way Too High",
-                           "Please lower the value for \u201Cmaximum available memory\u201D in the\n" +
-                           "Preferences window. For more information, read Help \u2192 Troubleshooting.",
-                           exc);
-        } else {
-          PApplet.println(errorStrings);
-          System.err.println("Using startup command:");
-          PApplet.println(arguments);
-        }
+//        if (errorStrings[0].indexOf("Invalid maximum heap size") != -1) {
+//          Base.showWarning("Way Too High",
+//                           "Please lower the value for \u201Cmaximum available memory\u201D in the\n" +
+//                           "Preferences window. For more information, read Help \u2192 Troubleshooting.",
+//                           exc);
+//        } else {
+        PApplet.println(errorStrings);
+        System.err.println("Using startup command:");
+        PApplet.println(arguments);
+//        }
       } else {
         exc.printStackTrace();
         System.err.println("Could not run the sketch (Target VM failed to initialize).");
@@ -326,44 +294,13 @@ public class AndroidRunner extends processing.app.debug.Runner {
   }
 
 
-  private static boolean hasWhitespace(String string) {
-    int length = string.length();
-    for (int i = 0; i < length; i++) {
-      if (Character.isWhitespace(string.charAt(i))) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-
-  private static String addArgument(String string, String argument, char sep) {
-    if (hasWhitespace(argument) || argument.indexOf(',') != -1) {
-      // Quotes were stripped out for this argument, add 'em back.
-      StringBuffer buffer = new StringBuffer(string);
-      buffer.append('"');
-      for (int i = 0; i < argument.length(); i++) {
-        char c = argument.charAt(i);
-        if (c == '"') {
-          buffer.append('\\');
-        }
-        buffer.append(c);
-      }
-      buffer.append('\"');
-      buffer.append(sep);
-      return buffer.toString();
-    } else {
-      return string + argument + String.valueOf(sep);
-    }
-  }
-
-
   /**
    * Generate the trace.
    * Enable events, start thread to display events,
    * start threads to forward remote error and output streams,
    * resume the remote VM, wait for the final event, and shutdown.
    */
+  /*
   void generateTrace(PrintWriter writer) {
     vm.setDebugTraceMode(debugTraceMode);
 
@@ -423,11 +360,13 @@ public class AndroidRunner extends processing.app.debug.Runner {
     //System.out.println("and leaving");
     if (writer != null) writer.close();
   }
+  */
 
 
   /**
    * Find a com.sun.jdi.CommandLineLaunch connector
    */
+  /*
   LaunchingConnector findLaunchingConnector(String connectorName) {
     //VirtualMachineManager mgr = Bootstrap.virtualMachineManager();
 
@@ -454,6 +393,7 @@ public class AndroidRunner extends processing.app.debug.Runner {
     }
     throw new Error("No launching connector");
   }
+  */
 
 
   public void exception(ExceptionEvent event) {
@@ -478,10 +418,10 @@ public class AndroidRunner extends processing.app.debug.Runner {
     }
 //    System.out.println("mess type " + messageValue.type());
     //StringReference messageReference = (StringReference) messageValue.type();
-
 //    System.out.println(or.referenceType().fields());
-//    if (name.startsWith("java.lang.")) {
-//      name = name.substring(10);
+
+    reportException(message, event.thread());
+    /*
     if (exceptionName.equals("java.lang.OutOfMemoryError")) {
       listener.statusError("OutOfMemoryError: You may need to increase the memory setting in Preferences.");
       System.err.println("An OutOfMemoryError means that your code is either using up too much memory");
@@ -512,6 +452,7 @@ public class AndroidRunner extends processing.app.debug.Runner {
     } else {
       reportException(message, event.thread());
     }
+    */
     if (editor != null) {
       editor.internalRunnerClosed();
     }
@@ -600,25 +541,6 @@ public class AndroidRunner extends processing.app.debug.Runner {
       }
       vm = null;
     }
-
-    //if (window != null) window.hide();
-//    if (window != null) {
-//      //System.err.println("disposing window");
-//      window.dispose();
-//      window = null;
-//    }
-
-    /*
-    if (process != null) {
-      try {
-        process.destroy();
-      } catch (Exception e) {
-        //System.err.println("(ignored) error while destroying");
-        //e.printStackTrace();
-      }
-      process = null;
-    }
-    */
   }
 
 
@@ -682,193 +604,5 @@ public class AndroidRunner extends processing.app.debug.Runner {
     System.err.print(s);
     //System.err.println("[" + s.length() + "] " + s);
     System.err.flush();
-
-//    // exit here because otherwise the exception name
-//    // may be titled with a blank string
-//    if (s.trim().length() == 0) return;
-//
-//    // annoying, because it seems as though the terminators
-//    // aren't being sent properly
-//    //System.err.println(s);
-//
-//    //if (newMessage && s.length() > 2) {
-//    if (newMessage) {
-//      exception = new RunnerException(s);  // type of java ex
-//      exception.hideStackTrace();
-//      //System.out.println("setting ex type to " + s);
-//      newMessage = false;
-//      foundMessageSource = false;
-//      messageLineCount = 0;
-//
-//    } else {
-//      messageLineCount++;
-//
-//      /*
-//java.lang.NullPointerException
-//        at javatest.<init>(javatest.java:5)
-//        at Temporary_2425_1153.draw(Temporary_2425_1153.java:11)
-//        at PApplet.nextFrame(PApplet.java:481)
-//        at PApplet.run(PApplet.java:428)
-//        at java.lang.Thread.run(Unknown Source)
-//      */
-//
-//      if (!foundMessageSource) {
-//        //    "     at javatest.<init>(javatest.java:5)"
-//        // -> "javatest.<init>(javatest.java:5)"
-//        int atIndex = s.indexOf("at ");
-//        if (atIndex == -1) {
-//          //System.err.println(s);  // stop double-printing exceptions
-//          return;
-//        }
-//        s = s.substring(atIndex + 3);
-//
-//        // added for 0124 to improve error handling
-//        // not highlighting lines if it's in the p5 code
-//        if (s.startsWith("processing.")) return;
-//        // no highlight if it's java.lang.whatever
-//        if (s.startsWith("java.")) return;
-//
-//        //    "javatest.<init>(javatest.java:5)"
-//        // -> "javatest.<init>" and "(javatest.java:5)"
-//        int startParen = s.indexOf('(');
-//        // at javatest.<init>(javatest.java:5)
-//        //String pkgClassFxn = null;
-//        //String fileLine = null;
-//        int codeIndex = -1;
-//        int lineNumber = -1;
-//
-//        if (startParen == -1) {
-//          //pkgClassFxn = s;
-//
-//        } else {
-//          //pkgClassFxn = s.substring(0, startParen);
-//
-//          // "(javatest.java:5)"
-//          String fileAndLine = s.substring(startParen + 1);
-//          int stopParen = fileAndLine.indexOf(')');
-//          //fileAndLine = fileAndLine.substring(0, fileAndLine.length() - 1);
-//          fileAndLine = fileAndLine.substring(0, stopParen);
-//          //System.out.println("file 'n line " + fileAndLine);
-//
-//          //if (!fileAndLine.equals("Unknown Source")) {
-//          // "javatest.java:5"
-//          int colonIndex = fileAndLine.indexOf(':');
-//          if (colonIndex != -1) {
-//            String filename = fileAndLine.substring(0, colonIndex);
-//            // "javatest.java" and "5"
-//            //System.out.println("filename = " + filename);
-//            //System.out.println("pre0 = " + sketch.code[0].preprocName);
-//            //for (int i = 0; i < sketch.codeCount; i++) {
-//            //System.out.println(i + " " + sketch.code[i].lineOffset + " " +
-//            //                   sketch.code[i].preprocName);
-//            //}
-//            lineNumber =
-//              Integer.parseInt(fileAndLine.substring(colonIndex + 1)) - 1;
-//
-//            for (int i = 0; i < sketch.getCodeCount(); i++) {
-//              SketchCode code = sketch.getCode(i);
-//              //System.out.println(code.preprocName + " " + lineNumber + " " +
-//              //                 code.preprocOffset);
-//              if (((code.preprocName == null) &&
-//                   (lineNumber >= code.preprocOffset)) ||
-//                  ((code.preprocName != null) &&
-//                   code.preprocName.equals(filename))) {
-//                codeIndex = i;
-//                //System.out.println("got codeindex " + codeIndex);
-//                //break;
-//                //} else if (
-//              }
-//            }
-//
-//            if (codeIndex != -1) {
-//              //System.out.println("got line num " + lineNumber);
-//              // in case this was a tab that got embedded into the main .java
-//              lineNumber -= sketch.getCode(codeIndex).preprocOffset;
-//
-//              // this may have a paren on the end, if so need to strip
-//              // down to just the digits
-//              /*
-//              int lastNumberIndex = colonIndex + 1;
-//              while ((lastNumberIndex < fileAndLine.length()) &&
-//                     Character.isDigit(fileAndLine.charAt(lastNumberIndex))) {
-//                lastNumberIndex++;
-//              }
-//              */
-//
-//              // lineNumber is 1-indexed, but editor wants zero-indexed
-//              // getMessage() will be what's shown in the editor
-//              exception =
-//                new RunnerException(exception.getMessage(),
-//                                    codeIndex, lineNumber, -1);
-//              exception.hideStackTrace();
-//              foundMessageSource = true;
-//            }
-//          }
-//        }
-//        editor.error(exception);
-//
-//      /*
-//      int index = s.indexOf(className + ".java");
-//      if (index != -1) {
-//        int len = (className + ".java").length();
-//        String lineNumberStr = s.substring(index + len + 1);
-//        index = lineNumberStr.indexOf(')');
-//        lineNumberStr = lineNumberStr.substring(0, index);
-//        try {
-//          exception.line = Integer.parseInt(lineNumberStr) - 1; //2;
-//        } catch (NumberFormatException e) { }
-//          //e.printStackTrace();  // a recursive error waiting to happen?
-//        // if nfe occurs, who cares, still send the error on up
-//        editor.error(exception);
-//      */
-//
-//        /*
-//          // WARNING THESE ARE DISABLED!!
-//      } else if ((index = s.indexOf(className + ".class")) != -1) {
-//        // code to check for:
-//        // at Temporary_484_3845.loop(Compiled Code)
-//        // would also probably get:
-//        // at Temporary_484_3845.loop
-//        // which (i believe) is used by the mac and/or jview
-//        String functionStr = s.substring(index +
-//                                         (className + ".class").length() + 1);
-//        index = functionStr.indexOf('(');
-//        if (index != -1) {
-//          functionStr = functionStr.substring(0, index);
-//        }
-//        exception = new RunnerException(//"inside \"" + functionStr + "()\": " +
-//                                     exception.getMessage() +
-//                                     " inside " + functionStr + "() " +
-//                                     "[add Compiler.disable() to setup()]");
-//        editor.error(exception);
-//        // this will fall through in tihs example:
-//        // at Temporary_4636_9696.pootie(Compiled Code)
-//        // at Temporary_4636_9696.loop(Temporary_4636_9696.java:24)
-//        // because pootie() (re)sets the exception title
-//        // and throws it, but then the line number gets set
-//        // because of the line that comes after
-//        */
-//
-//      } else if (messageLineCount > 10) {  // 5 -> 10 for 0088
-//        // this means the class name may not be mentioned
-//        // in the stack trace.. this is just a general purpose
-//        // error, but needs to make it through anyway.
-//        // so if five lines have gone past, might as well signal
-//        messageLineCount = -100;
-//        exception = new RunnerException(exception.getMessage());
-//        exception.hideStackTrace();
-//        editor.error(exception);
-//
-//      } else {
-//        //System.err.print(s);
-//      }
-//      //System.out.println("got it " + s);
-//    }
   }
-
-
-  //////////////////////////////////////////////////////////////
-
-
-
 }
