@@ -1,14 +1,14 @@
 package processing.app;
 
-import java.awt.event.*;
-import java.io.*;
-import java.util.*;
-
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-
-import processing.app.debug.Compiler;
-import processing.core.PApplet;
+//import java.awt.event.*;
+//import java.io.*;
+//import java.util.*;
+//
+//import javax.swing.JMenu;
+//import javax.swing.JMenuItem;
+//
+//import processing.app.debug.Compiler;
+//import processing.core.PApplet;
 
 
 public class LibraryFolder implements Comparable {

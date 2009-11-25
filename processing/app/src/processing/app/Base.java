@@ -29,8 +29,6 @@ import java.util.*;
 
 import javax.swing.*;
 
-import com.sun.codemodel.internal.JOp;
-
 import processing.app.debug.Compiler;
 import processing.core.*;
 
