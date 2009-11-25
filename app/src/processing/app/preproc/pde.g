@@ -1,8 +1,6 @@
 /* -*- mode: antlr; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 header {
 package processing.app.preproc;
-
-import processing.app.*;
 }
 
 class PdeRecognizer extends JavaRecognizer;
@@ -73,7 +71,7 @@ constant
 // of the form #cc008f in PDE
 webcolor_literal
     :   w:WEBCOLOR_LITERAL 
-    { Preferences.getBoolean("preproc.web_colors") && 
+    { processing.app.Preferences.getBoolean("preproc.web_colors") && 
       w.getText().length() == 6 }?  // must be exactly 6 hex digits
     ;
 
@@ -97,7 +95,7 @@ builtInConsCastType
 builtInType
     :   builtInConsCastType
     |   "color"              // aliased to an int in PDE
-        { Preferences.getBoolean("preproc.color_datatype") }? 
+        { processing.app.Preferences.getBoolean("preproc.color_datatype") }? 
     ;
 
 // constructor style casts.
@@ -170,7 +168,7 @@ colorMethodCall
 // alternatives
 primaryExpression
     :   (consCastTypeSpec[false] LPAREN) => constructorCast   
-            { Preferences.getBoolean("preproc.enhanced_casting") }?
+            { processing.app.Preferences.getBoolean("preproc.enhanced_casting") }?
     |   identPrimary ( options {greedy=true;} : DOT^ "class" )?
     |   constant
     |   "true"
