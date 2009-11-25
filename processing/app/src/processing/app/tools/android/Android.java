@@ -172,6 +172,19 @@ public class Android implements Tool {
    * @return The name of the emulator.
    */
   public String findEmulator() {
+    if (emulatorProcess != null) {
+      // see if it's done yet
+      try {
+        //int result = emulatorProcess.exitValue();
+        //emulatorProcess.destroy();
+        emulatorProcess.exitValue();
+        emulatorProcess = null;
+
+      } catch (IllegalThreadStateException itse) {
+        // not done yet, let's continue
+      }
+    }
+    
     String portString = Preferences.get("android.emulator.port");
     if (portString == null) {
       portString = "5566";
@@ -179,6 +192,11 @@ public class Android implements Tool {
     }
     //int port = Integer.parseInt(portString);
     String name = "emulator-" + portString;
+    
+    if (emulatorProcess != null) {  // this must be it, if we're running
+      System.out.println("Found a perfectly good emulator. Trying that.");
+      return name;
+    }
     
     try {
       String[] devices = Debug.listDevices();
@@ -203,28 +221,24 @@ public class Android implements Tool {
     //emulator -avd gee1 -logcat 'System.*:i' -no-boot-anim 
     //# though lots of messages aren't through System.*, so that's not great
     //# need to instead use the adb interface
+
+    // adb -s emulator-5566 jdwp
+    // prints a list of connections that can be made to the device
+    // the final port will be the entry of the most recently started application
+    // while launching, will say 'error: device offline'
+    // when not running, will say 'error: device not found'
+
+    // adb -s emulator-5566 -d forward tcp:29882 jdwp:736
+    // jdb -connect com.sun.jdi.SocketAttach:hostname=localhost,port=29882
     
     // launch emulator because it's not running yet
     try {
-      if (emulatorProcess != null) {
-        // see if it's done yet
-        try {
-          int result = emulatorProcess.exitValue();
-          emulatorProcess.destroy();
-          
-        } catch (IllegalThreadStateException itse) {
-          // not done yet
-        }
-        
-        //if (emulatorProcess.)
-      }
-      
       editor.statusNotice("Starting new Android emulator.");
       String[] cmd = new String[] { 
           "emulator", 
           "-avd", getDefaultDevice(),
           "-port", portString,
-          "-logcat", "'*:i'",
+          //"-logcat", "'*:i'",
           "-no-boot-anim"
       };
       emulatorProcess = Runtime.getRuntime().exec(cmd);
@@ -321,7 +335,7 @@ public class Android implements Tool {
       String[] cmd = new String[] { 
           "adb",
           "-s", device,
-          "wait-for-device",
+          //"wait-for-device",
           "install", "-r",  // safe to always use -r switch
           build.getPathForAPK("debug")
       };
