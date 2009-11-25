@@ -246,8 +246,8 @@ public class Runner implements MessageConsumer {
   protected VirtualMachine launchVirtualMachine(String[] vmParams,
                                                 String[] classParams) {
     //vm = launchTarget(sb.toString());
-    LaunchingConnector connector =
-      findLaunchingConnector("com.sun.jdi.RawCommandLineLaunch");
+    LaunchingConnector connector = (LaunchingConnector)
+      findConnector("com.sun.jdi.RawCommandLineLaunch");
     //PApplet.println(connector);  // gets the defaults
 
     //Map arguments = connectorArguments(connector, mainArgs);
@@ -441,6 +441,7 @@ public class Runner implements MessageConsumer {
   /**
    * Find a com.sun.jdi.CommandLineLaunch connector
    */
+  /*
   protected LaunchingConnector findLaunchingConnector(String connectorName) {
     //VirtualMachineManager mgr = Bootstrap.virtualMachineManager();
 
@@ -466,6 +467,27 @@ public class Runner implements MessageConsumer {
       }
     }
     throw new Error("No launching connector");
+  }
+  */
+  
+  protected Connector findConnector(String connectorName) {
+    List connectors = Bootstrap.virtualMachineManager().allConnectors();
+
+    // code to list available connectors
+//    Iterator iter2 = connectors.iterator();
+//    while (iter2.hasNext()) {
+//      Connector connector = (Connector)iter2.next();
+//      System.out.println("connector name is " + connector.name());
+//    }
+
+    Iterator iter = connectors.iterator();
+    while (iter.hasNext()) {
+      Connector connector = (Connector)iter.next();
+      if (connector.name().equals(connectorName)) {
+        return connector;
+      }
+    }
+    throw new Error("No connector");
   }
 
 
