@@ -41,10 +41,10 @@ public class AndroidRunner extends Runner {
 //  private boolean presenting;
 
   // Object that listens for error messages or exceptions.
-  private RunnerListener listener;
+//  private RunnerListener listener;
 
   // Running remote VM
-  private VirtualMachine vm;
+//  private VirtualMachine vm;
 
   // Thread transferring remote error stream to our error stream
 //  private Thread errThread = null;
@@ -65,26 +65,28 @@ public class AndroidRunner extends Runner {
 //      "processing.*"
 //  };
 
-  private RunnerException exception;
+//  private RunnerException exception;
 
-  private Editor editor;
-  private Sketch sketch;
-  private String appletClassName;
+//  private Editor editor;
+//  private Sketch sketch;
+//  private String appletClassName;
 
 
   public AndroidRunner(RunnerListener listener) {
     super(listener);
-    
-    System.out.println("editor is " + editor);
   }
 
 
   public boolean launch(String port) {
     vm = launchVirtualMachine(port);
+    System.out.println("vm launched");
     if (vm != null) {
+      System.out.println("starting trace");
       generateTrace(null);
+      System.out.println("done starting trace");
       return true;
     }
+    System.out.println("no trace for you");
     return false;
   }
   
@@ -257,14 +259,19 @@ public class AndroidRunner extends Runner {
       (Connector.Argument)arguments.get("port");
     portArg.setValue(port);
     
-    ((Connector.Argument) arguments.get("hostname")).setValue("localhost");
-    ((Connector.Argument) arguments.get("timeout")).setValue("5000");
+    ((Connector.Argument) arguments.get("hostname")).setValue("127.0.0.1");
+//    ((Connector.Argument) arguments.get("hostname")).setValue("localhost");
+//    ((Connector.Argument) arguments.get("timeout")).setValue("5000");
 
     try {
       PApplet.println(connector);
       PApplet.println(arguments);
 
-      return connector.attach(arguments);
+      PApplet.println("attaching now...");
+      //return connector.attach(arguments);
+      VirtualMachine machine = connector.attach(arguments);
+      PApplet.println("attached");
+      return machine;
       
     } catch (IOException ioe) {
       //throw new Error("Unable to launch target VM: " + exc);
@@ -285,8 +292,7 @@ public class AndroidRunner extends Runner {
    * start threads to forward remote error and output streams,
    * resume the remote VM, wait for the final event, and shutdown.
    */
-  /*
-  void generateTrace(PrintWriter writer) {
+  protected void generateTrace(PrintWriter writer) {
     vm.setDebugTraceMode(debugTraceMode);
 
     EventThread eventThread = null;
@@ -300,36 +306,28 @@ public class AndroidRunner extends Runner {
 
     Process process = vm.process();
 
-//  processInput = new SystemOutSiphon(process.getInputStream());
-//  processError = new MessageSiphon(process.getErrorStream(), this);
+    if (process != null) {
+      MessageSiphon ms = new MessageSiphon(process.getErrorStream(), this);
+      errThread = ms.getThread();
 
-    // Copy target's output and error to our output and error.
-//    errThread = new StreamRedirectThread("error reader",
-//        process.getErrorStream(),
-//        System.err);
-    MessageSiphon ms = new MessageSiphon(process.getErrorStream(), this);
-    errThread = ms.getThread();
+      outThread = new StreamRedirectThread("output reader",
+                                           process.getInputStream(),
+                                           System.out);
 
-    outThread = new StreamRedirectThread("output reader",
-        process.getInputStream(),
-        System.out);
-
-    errThread.start();
-    outThread.start();
+      errThread.start();
+      outThread.start();
+    } else {
+      System.out.println("process is null, so no streams...");
+    }
 
     vm.resume();
-    //System.out.println("done with resume");
+    System.out.println("done with resume");
 
     // Shutdown begins when event thread terminates
     try {
       if (eventThread != null) eventThread.join();
-//      System.out.println("in here");
-      // Bug #852 tracked to this next line in the code.
-      // http://dev.processing.org/bugs/show_bug.cgi?id=852
-      errThread.join(); // Make sure output is forwarded
-//      System.out.println("and then");
-      outThread.join(); // before we exit
-//      System.out.println("out of it");
+//      errThread.join(); // Make sure output is forwarded
+//      outThread.join(); // before we exit
 
       // At this point, disable the run button.
       // This happens when the sketch is exited by hitting ESC,
@@ -345,7 +343,6 @@ public class AndroidRunner extends Runner {
     //System.out.println("and leaving");
     if (writer != null) writer.close();
   }
-  */
 
 
   /**
@@ -457,7 +454,7 @@ public class AndroidRunner extends Runner {
       // message to the console.
       List<StackFrame> frames = thread.frames();
       for (StackFrame frame : frames) {
-//        System.out.println("frame: " + frame);
+        System.out.println("frame: " + frame);
         Location location = frame.location();
         String filename = null;
         filename = location.sourceName();
