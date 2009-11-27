@@ -49,36 +49,36 @@ public class Runner implements MessageConsumer {
   private boolean presenting;
 
   // Object that listens for error messages or exceptions.
-  private RunnerListener listener;
+  protected RunnerListener listener;
 
   // Running remote VM
-  private VirtualMachine vm;
+  protected VirtualMachine vm;
 
   // Thread transferring remote error stream to our error stream
-  private Thread errThread = null;
+  protected Thread errThread = null;
 
   // Thread transferring remote output stream to our output stream
-  private Thread outThread = null;
+  protected Thread outThread = null;
 
   // Mode for tracing the Trace program (default= 0 off)
-  private int debugTraceMode = 0;
+  protected int debugTraceMode = 0;
 
   //  Do we want to watch assignments to fields
-  private boolean watchFields = false;
+  protected boolean watchFields = false;
 
   // Class patterns for which we don't want events
-  private String[] excludes = {
+  protected String[] excludes = {
       "java.*", "javax.*", "sun.*", "com.sun.*",
       "apple.*",
       "processing.*"
   };
 
-  private RunnerException exception;
+  protected RunnerException exception;
   //private PrintStream leechErr;
 
-  private Editor editor;
-  private Sketch sketch;
-  private String appletClassName;
+  protected Editor editor;
+  protected Sketch sketch;
+  protected String appletClassName;
 
 
   public Runner(RunnerListener listener) {
@@ -86,6 +86,8 @@ public class Runner implements MessageConsumer {
 
     if (listener instanceof Editor) {
       this.editor = (Editor) listener;
+//    } else {
+//      System.out.println("actually it's a " + listener.getClass().getName());
     }
   }
 

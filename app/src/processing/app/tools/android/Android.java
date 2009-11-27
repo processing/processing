@@ -61,6 +61,8 @@ public class Android implements Tool {
   static final String ANDROID_SDK_URL = 
     "http://developer.android.com/sdk/";
   
+  static final String ADB_SOCKET_PORT = "29892";
+
   
   public String getMenuTitle() {
     return "Android Mode";
@@ -410,12 +412,20 @@ public class Android implements Tool {
 
         if (result == 0) {
           String[] lines = p.getOutputLines();
-          String last = lines[lines.length - 1];
-          if (last.trim().length() == 0) {
-            last = lines[lines.length - 2];
+          PApplet.println(lines);
+//          String last = lines[lines.length - 1];
+//          if (last.trim().length() == 0) {
+//            last = lines[lines.length - 2];
+//          }
+//          //System.out.println("last is " + last);
+//          return last.trim();
+          for (int i = lines.length-1; i >= 0; --i) {
+            String s = lines[i].trim(); 
+            if (s.length() != 0) {
+              return s;
+            }
           }
-          //System.out.println("last is " + last);
-          return last.trim();
+          return null;
           
         } else {
           for (String err : p.getErrorLines()) {
@@ -560,11 +570,12 @@ public class Android implements Tool {
         }
         port = getJdwpPort(device);
         if (!port.equals(prevPort)) {
-          System.out.println("I'm digging port " + port + 
-                             " instead of " + prevPort + ".");
+//          System.out.println("I'm digging port " + port + 
+//                             " instead of " + prevPort + ".");
           break;
         }
       }
+      System.out.println("Found application on port " + port + ".");
 
       // Originally based on helpful notes by Agus Santoso (http://j.mp/7zV69M)
       
@@ -580,27 +591,29 @@ public class Android implements Tool {
           "adb",
           "-s", device,
           "forward", 
-          "tcp:29892",
+          "tcp:" + ADB_SOCKET_PORT,
           "jdwp:" + port
       };
-      PApplet.println(cmd);
+//      PApplet.println(cmd);
       Pavarotti fwd = new Pavarotti(cmd);
 //      StringRedirectThread error = new StringRedirectThread(p.getErrorStream());
 //      StringRedirectThread output = new StringRedirectThread(p.getInputStream());
 
-      System.out.println("waiting for forward");
+      //System.out.println("waiting for forward");
       int result = fwd.waitFor();
       fwd.printLines();
-      System.out.println("done with forward");
+      //System.out.println("done with forward");
 
       if (result != 0) {
         editor.statusError("Could not connect for debugging.");
         return false;
       }
 
-      System.out.println("launching vm");
+      System.out.println("creating runner");
+      //System.out.println("editor from Android is " + editor);
       AndroidRunner ar = new AndroidRunner(editor);
-      return ar.launch("29892");
+      System.out.println("launching vm");
+      return ar.launch(ADB_SOCKET_PORT);
       //System.out.println("vm launched");
 
     } catch (IOException e) {

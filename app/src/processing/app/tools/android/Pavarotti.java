@@ -59,13 +59,13 @@ public class Pavarotti {
   public void printLines() {
     for (String err : getErrorLines()) {
       //if (err.length() > 0) System.err.println("err: " + err);
-      //if (err.length() > 0) System.err.println(err);
-      System.err.println(err);
+      if (err.length() > 0) System.err.println(err);
+//      System.err.println(err);
     }
     for (String out : getOutputLines()) {
       //if (out.length() > 0) System.out.println("out: " + out);
-      //if (out.length() > 0) System.out.println(out);
-      System.out.println(out);
+      if (out.length() > 0) System.out.println(out);
+//      System.out.println(out);
     }
   }
 }
