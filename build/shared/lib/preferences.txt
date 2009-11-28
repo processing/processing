@@ -197,8 +197,8 @@ preproc.substitute_unicode = true
 # viewed in (at least) Mozilla or IE.  useful when debugging the preprocessor.
 preproc.output_parse_tree = false
 
-# imports to use by default (changed for 0149, some imports removed)
-preproc.imports = java.applet,java.awt,java.awt.image,java.awt.event,java.io,java.net,java.text,java.util,java.util.zip,java.util.regex
+# Changed after 1.0.9 to a new name, and also includes the specific entries
+preproc.default_imports = java.applet.*,java.awt.Dimension,java.awt.Frame,java.awt.event.MouseEvent,java.awt.event.KeyEvent,java.awt.event.FocusEvent,java.awt.Image,java.io.*,java.net.*,java.text.*,java.util.*,java.util.zip.*,java.util.regex.*
 
 # set the browser to be used on linux
 browser.linux = mozilla
