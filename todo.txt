@@ -2,6 +2,8 @@
 X use xdg-open as launcher on linux
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1358
 X change to different class id for export and export-opengl
+X Default wildcard imports are causing naming conflicts
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1103
 
 _ add warning message when not using a version of sun java w/ p5
 
@@ -207,9 +209,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=328
 
 _ fix regex documentation
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1202
-
-E2 _ Default wildcard imports are causing naming conflicts
-E2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1103
 
 _ Closing the last window doesn't cause PDE to save its position/contents/etc
 _   (when the pref for close last window = quit is set)

@@ -247,7 +247,7 @@ public class AndroidRunner extends Runner {
 
 
   // http://java.sun.com/j2se/1.5.0/docs/guide/jpda/conninv.html
-  protected VirtualMachine launchVirtualMachine(String port) {
+  protected VirtualMachine launchVirtualMachine(String localPort) {
     // hostname, port, and timeout (ms) are the only items needed here
     AttachingConnector connector = 
       (AttachingConnector) findConnector("com.sun.jdi.SocketAttach");
@@ -255,9 +255,10 @@ public class AndroidRunner extends Runner {
 
     Map arguments = connector.defaultArguments();
 
-    Connector.Argument portArg =
-      (Connector.Argument)arguments.get("port");
-    portArg.setValue(port);
+//    Connector.Argument portArg =
+//      (Connector.Argument)arguments.get("port");
+//    portArg.setValue(port);
+    ((Connector.Argument) arguments.get("port")).setValue(localPort);
     
     ((Connector.Argument) arguments.get("hostname")).setValue("127.0.0.1");
 //    ((Connector.Argument) arguments.get("hostname")).setValue("localhost");
@@ -403,38 +404,7 @@ public class AndroidRunner extends Runner {
 //    System.out.println(or.referenceType().fields());
 
     reportException(message, event.thread());
-    /*
-    if (exceptionName.equals("java.lang.OutOfMemoryError")) {
-      listener.statusError("OutOfMemoryError: You may need to increase the memory setting in Preferences.");
-      System.err.println("An OutOfMemoryError means that your code is either using up too much memory");
-      System.err.println("because of a bug (e.g. creating an array that's too large, or unintentionally");
-      System.err.println("loading thousands of images), or that your sketch may need more memory to run.");
-      System.err.println("If your sketch uses a lot of memory (for instance if it loads a lot of data files)");
-      System.err.println("you can increase the memory available to your sketch using the Preferences window.");
 
-    } else if (exceptionName.equals("java.lang.StackOverflowError")) {
-      listener.statusError("StackOverflowError: This sketch is attempting too much recursion.");
-      System.err.println("A StackOverflowError means that you have a bug that's causing a function");
-      System.err.println("to be called recursively (it's calling itself and going in circles),");
-      System.err.println("or you're intentionally calling a recursive function too much,");
-      System.err.println("and your code should be rewritten in a more efficient manner.");
-
-    } else if (exceptionName.equals("java.lang.UnsupportedClassVersionError")) {
-      listener.statusError("UnsupportedClassVersionError: A library is using code compiled with an unsupported version of Java.");
-      System.err.println("This version of Processing only supports libraries and JAR files compiled for Java 1.5.");
-      System.err.println("A library used by this sketch was compiled for Java 1.6 or later, ");
-      System.err.println("and needs to be recompiled to be compatible with Java 1.5.");
-
-    } else if (exceptionName.equals("java.lang.NoSuchMethodError") || exceptionName.equals("java.lang.NoSuchFieldError")) {
-      listener.statusError(exceptionName.substring(10) + ": You're probably using a library that's incompatible with this version of Processing.");
-
-    } else if (message.equals("ClassNotFoundException: quicktime.std.StdQTException")) {
-      listener.statusError("Could not find QuickTime, please reinstall QuickTime 7 or later.");
-
-    } else {
-      reportException(message, event.thread());
-    }
-    */
     if (editor != null) {
       editor.internalRunnerClosed();
     }
@@ -455,11 +425,10 @@ public class AndroidRunner extends Runner {
 
       Sketch sketch = editor.getSketch();
       String appletClassName = sketch.getName();  // TODO * not yet correct! * 
-      
-      List<StackFrame> framey = thread.frames();
-      for (StackFrame frame : framey) {
-        System.out.println("frame: " + frame);
-      }
+
+//      for (StackFrame frame : thread.frames()) {
+//        System.out.println("frame: " + frame);
+//      }
       List<StackFrame> frames = thread.frames();
       for (StackFrame frame : frames) {
 //        System.out.println("frame: " + frame);

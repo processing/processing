@@ -23,18 +23,33 @@ package processing.app.tools.android;
 
 import java.io.IOException;
 
+import processing.core.PApplet;
+
 
 public class Pavarotti {
   Process process;
+  String[] cmd;
 
   StringRedirectThread error; 
   StringRedirectThread output; 
 
 
   public Pavarotti(String[] cmd) throws IOException {
+    this.cmd = cmd;
+
     process = Runtime.getRuntime().exec(cmd);
     error = new StringRedirectThread(process.getErrorStream());
     output = new StringRedirectThread(process.getInputStream());
+  }
+  
+  
+  public void printCommand() {
+    System.out.println(PApplet.join(cmd, " "));
+  }
+  
+  
+  public void printArgs() {
+    PApplet.println(cmd);
   }
 
 

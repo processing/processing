@@ -157,9 +157,9 @@ public class Build {
     //File srcFile = new File(actualSrc, className + ".java");
     String buildPath = javaFolder.getAbsolutePath();
     
-    String prefsLine = Preferences.get("preproc.imports");
+//    String prefsLine = Preferences.get("preproc.imports");
 //    System.out.println("imports are " + prefsLine);
-    Preferences.set("preproc.imports", "");
+//    Preferences.set("preproc.imports", "");
     
     try {
       // need to change to a better set of imports here
@@ -190,7 +190,7 @@ public class Build {
       //e.printStackTrace();
       editor.statusError(e);
       // set this back, even if there's an error
-      Preferences.set("preproc.imports", prefsLine);
+//      Preferences.set("preproc.imports", prefsLine);
       return false;
     }
     return true;
@@ -254,7 +254,8 @@ public class Build {
     public int writeImports(PrintStream out) {
       out.println("package " + getPackageName() + ";");
       out.println();
-      return super.writeImports(out);
+      // add two lines for the package above
+      return 2 + super.writeImports(out);
     }
     
     public String[] getCoreImports() {
@@ -262,6 +263,15 @@ public class Build {
         "import processing.android.core.*;",
         "import processing.android.opengl.*;",  // temporary
         "import processing.android.xml.*;"
+      };
+    }
+    
+    public String[] getDefaultImports() {
+      return new String[] { 
+        // Currently, no additional imports for Android APIs,
+        // though we should probably add MotionEvent and others soon.
+        // In the future, this may include standard classes for phone or
+        // accelerometer access within the Android APIs.
       };
     }
   }
@@ -277,10 +287,9 @@ public class Build {
     
     writer.println("  <uses-sdk android:minSdkVersion=" + q("4") + " />");
     
-    writer.println("  <application android:label=\"@string/app_name\">");
-//    writer.println("  <application android:label=" + q(sketchName) + ">");
+    writer.println("  <application android:label=" + q("@string/app_name") +
+                   "               android:debuggable=" + q("true") + ">");
     writer.println("    <activity android:name=" + q("." + className));
-//    writer.println("              android:label=" + q(sketchName) + ">");
     writer.println("              android:label=\"@string/app_name\">");
     writer.println("      <intent-filter>");
     writer.println("        <action android:name=\"android.intent.action.MAIN\" />");
