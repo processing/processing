@@ -1914,7 +1914,8 @@ public class Sketch {
             break;
 
           } else {
-            index++;
+            // continue blanking this area
+            p[index++] = ' ';
           }
         }
         if (!endOfRainbow) {

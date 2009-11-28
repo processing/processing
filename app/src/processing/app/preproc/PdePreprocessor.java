@@ -169,18 +169,18 @@ public class PdePreprocessor {
   /**
    * Setup a new preprocessor.
    */
-  public PdePreprocessor() { }
+  public PdePreprocessor() { 
+    int tabSize = Preferences.getInteger("editor.tabs.size");
+    char[] indentChars = new char[tabSize];
+    Arrays.fill(indentChars, ' ');
+    indent = new String(indentChars);
+  }
 
 
   public int writePrefix(String program, String buildPath,
                          String name, String codeFolderPackages[]) throws FileNotFoundException {
     this.buildPath = buildPath;
     this.name = name;
-
-    int tabSize = Preferences.getInteger("editor.tabs.size");
-    char[] indentChars = new char[tabSize];
-    Arrays.fill(indentChars, ' ');
-    indent = new String(indentChars);
 
     // need to reset whether or not this has a main()
     foundMain = false;
@@ -194,45 +194,12 @@ public class PdePreprocessor {
     // an OutOfMemoryError or NullPointerException will happen.
     // again, not gonna bother tracking this down, but here's a hack.
     // http://dev.processing.org/bugs/show_bug.cgi?id=16
-    Sketch.scrubComments(program);
-    // this returns the scrubbed version, but more important for this
-    // function, it'll check to see if there are errors with the comments.
+    String scrubbed = Sketch.scrubComments(program);
+    System.out.println(scrubbed);
+    // If there are errors, an exception is thrown and this fxn exits.
 
     if (Preferences.getBoolean("preproc.substitute_unicode")) {
-      // check for non-ascii chars (these will be/must be in unicode format)
-      char p[] = program.toCharArray();
-      int unicodeCount = 0;
-      for (int i = 0; i < p.length; i++) {
-        if (p[i] > 127) unicodeCount++;
-      }
-      // if non-ascii chars are in there, convert to unicode escapes
-      if (unicodeCount != 0) {
-        // add unicodeCount * 5.. replacing each unicode char
-        // with six digit uXXXX sequence (xxxx is in hex)
-        // (except for nbsp chars which will be a replaced with a space)
-        int index = 0;
-        char p2[] = new char[p.length + unicodeCount*5];
-        for (int i = 0; i < p.length; i++) {
-          if (p[i] < 128) {
-            p2[index++] = p[i];
-
-          } else if (p[i] == 160) {  // unicode for non-breaking space
-            p2[index++] = ' ';
-
-          } else {
-            int c = p[i];
-            p2[index++] = '\\';
-            p2[index++] = 'u';
-            char str[] = Integer.toHexString(c).toCharArray();
-            // add leading zeros, so that the length is 4
-            //for (int i = 0; i < 4 - str.length; i++) p2[index++] = '0';
-            for (int m = 0; m < 4 - str.length; m++) p2[index++] = '0';
-            System.arraycopy(str, 0, p2, index, str.length);
-            index += str.length;
-          }
-        }
-        program = new String(p2, 0, index);
-      }
+      program = substituteUnicode(program);
     }
 
     //String importRegexp = "(?:^|\\s|;)(import\\s+)(\\S+)(\\s*;)";
@@ -240,7 +207,9 @@ public class PdePreprocessor {
     programImports = new ArrayList<String>();
 
     do {
-      String[] pieces = PApplet.match(program, importRegexp);
+      // Use scrubbed version of code for the imports, 
+      // so that commented-out import statements are ignored.
+      String[] pieces = PApplet.match(scrubbed, importRegexp);
       // Stop the loop if we've removed all the importy lines
       if (pieces == null) break;
 
@@ -248,9 +217,14 @@ public class PdePreprocessor {
       int len = piece.length();  // how much to trim out
 
       programImports.add(pieces[2]);  // the package name
-      int idx = program.indexOf(piece);
-      // just remove altogether?
+
+      // find index of this import in the program
+      int idx = scrubbed.indexOf(piece);
+
+      // Remove the comment from the main program
       program = program.substring(0, idx) + program.substring(idx + len);
+      // Remove from the scrubbed version as well, to keep offsets identical. 
+      scrubbed = scrubbed.substring(0, idx) + scrubbed.substring(idx + len);
 
     } while (true);
 
@@ -267,8 +241,48 @@ public class PdePreprocessor {
     stream = new PrintStream(new FileOutputStream(streamFile));
     int importsLength = writeImports(stream);
 
-    // return the length of the imports plus the extra lines for declarations
+    // return the length of the imports plus the extra lines 
+    // added by calling writeDeclarations()
     return importsLength + 2;
+  }
+  
+  
+  static String substituteUnicode(String program) {
+    // check for non-ascii chars (these will be/must be in unicode format)
+    char p[] = program.toCharArray();
+    int unicodeCount = 0;
+    for (int i = 0; i < p.length; i++) {
+      if (p[i] > 127) unicodeCount++;
+    }
+    // if non-ascii chars are in there, convert to unicode escapes
+    if (unicodeCount != 0) {
+      // add unicodeCount * 5.. replacing each unicode char
+      // with six digit uXXXX sequence (xxxx is in hex)
+      // (except for nbsp chars which will be a replaced with a space)
+      int index = 0;
+      char p2[] = new char[p.length + unicodeCount*5];
+      for (int i = 0; i < p.length; i++) {
+        if (p[i] < 128) {
+          p2[index++] = p[i];
+
+        } else if (p[i] == 160) {  // unicode for non-breaking space
+          p2[index++] = ' ';
+
+        } else {
+          int c = p[i];
+          p2[index++] = '\\';
+          p2[index++] = 'u';
+          char str[] = Integer.toHexString(c).toCharArray();
+          // add leading zeros, so that the length is 4
+          //for (int i = 0; i < 4 - str.length; i++) p2[index++] = '0';
+          for (int m = 0; m < 4 - str.length; m++) p2[index++] = '0';
+          System.arraycopy(str, 0, p2, index, str.length);
+          index += str.length;
+        }
+      }
+      program = new String(p2, 0, index);
+    }
+    return program;
   }
 
 
@@ -383,35 +397,29 @@ public class PdePreprocessor {
 
 
   protected int writeImports(PrintStream out) {
-    int count = 1;
-    for (String s : getCoreImports()) {
-      out.println(s);
+    int count = writeImportList(out, getCoreImports());
+    count += writeImportList(out, programImports);
+    count += writeImportList(out, codeFolderImports);
+    count += writeImportList(out, getDefaultImports());
+    return count;
+  }
+
+
+  protected int writeImportList(PrintStream out, ArrayList<String> imports) {
+    return writeImportList(out, (String[]) imports.toArray(new String[0]));
+  }
+  
+
+  protected int writeImportList(PrintStream out, String[] imports) {
+    int count = 0;
+    if (imports != null && imports.length != 0) {
+      for (String item : imports) {
+        out.println("import " + item + "; ");
+        count++;
+      }
+      out.println();
       count++;
     }
-
-    if (programImports.size() != 0) {
-      for (String item : programImports) {
-        out.println("import " + item + "; ");
-      }
-      out.println();
-      count += programImports.size() + 1;
-    }
-
-    if (codeFolderImports.size() != 0) {
-      for (String item : codeFolderImports) {
-        out.println("import " + item + "; ");
-      }
-      out.println();
-      count += codeFolderImports.size() + 1;
-    }
-
-    String[] defaultImports = getDefaultImports();
-    for (String item : defaultImports) {
-      out.println("import " + item + "; ");
-    }
-    out.println();
-    count += defaultImports.length + 1;
-
     return count;
   }
 
@@ -424,9 +432,6 @@ public class PdePreprocessor {
    * @param name                Name of the class being created.
    */
   protected void writeDeclaration(PrintStream out, String className) {
-
-    String indent = "  ";
-
     if (programType == JAVA) {
       // Print two blank lines so that the offset doesn't change
       out.println();
@@ -450,7 +455,6 @@ public class PdePreprocessor {
    * @param out PrintStream to write it to.
    */
   protected void writeFooter(PrintStream out, String className) {
-
     if (programType == STATIC) {
       // close off draw() definition
       out.println(indent + "noLoop();");
@@ -495,8 +499,8 @@ public class PdePreprocessor {
 
   public String[] getCoreImports() {
     return new String[] { 
-      "import processing.core.*;",
-      "import processing.xml.*;"
+      "processing.core.*",
+      "processing.xml.*"
     };
   }
 
