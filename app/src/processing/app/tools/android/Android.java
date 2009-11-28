@@ -300,6 +300,10 @@ public class Android implements Tool {
   public void installAndRun(String target, String device) {
     boolean success;
   
+    // Simply reset the debug bridge, since it seems so prone to getting
+    // into bad states and not producing error messages.
+    //resetServer();
+    
     Build build = getBuilder();
     success = build.createProject();
     if (!success) return;
@@ -531,8 +535,9 @@ public class Android implements Tool {
           "-s", device,
           //"-d",  // this is for a single USB device 
           "shell", "am", "start",  // kick things off
-          "-D",  // debug
-//          "-e", "debug", "true",
+          // -D causes a hang with "waiting for the debugger to attach"
+//          "-D",  // debug
+          "-e", "debug", "true",
           "-a", "android.intent.action.MAIN",
           "-c", "android.intent.category.LAUNCHER",
           "-n", build.getPackageName() + "/." + build.getClassName()
@@ -566,7 +571,8 @@ public class Android implements Tool {
       //while (port == null || port.equals(prevPort)) {
       while (System.currentTimeMillis() < timeout) {
         if (port != null) {
-          System.out.println("Waiting for application to launch...");
+          System.out.println("Waiting a half second " + 
+                             "for the application to launch...");
           try {
             Thread.sleep(500);
           } catch (InterruptedException ie) { }
@@ -602,10 +608,11 @@ public class Android implements Tool {
 //      StringRedirectThread error = new StringRedirectThread(p.getErrorStream());
 //      StringRedirectThread output = new StringRedirectThread(p.getInputStream());
 
-      //System.out.println("waiting for forward");
+//      System.out.println("waiting for forward");
+      fwd.printCommand();
       int result = fwd.waitFor();
       fwd.printLines();
-      //System.out.println("done with forward");
+//      System.out.println("done with forward");
 
       if (result != 0) {
         editor.statusError("Could not connect for debugging.");

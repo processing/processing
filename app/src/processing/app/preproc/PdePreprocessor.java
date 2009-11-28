@@ -128,7 +128,7 @@ import antlr.collections.*;
  */
 public class PdePreprocessor {
 
-  String[] defaultImports;
+//  String[] defaultImports;
 
   // these ones have the .* at the end, since a class name might be at the end
   // instead of .* which would make trouble other classes using this can lop
@@ -234,11 +234,6 @@ public class PdePreprocessor {
         program = new String(p2, 0, index);
       }
     }
-
-    // These may change in-between (if the prefs panel adds this option)
-    // so grab them here on construction.
-    String prefsLine = Preferences.get("preproc.imports");
-    defaultImports = PApplet.splitTokens(prefsLine, ", ");
 
     //String importRegexp = "(?:^|\\s|;)(import\\s+)(\\S+)(\\s*;)";
     String importRegexp = "(?:^|;)\\s*(import\\s+)(\\S+)(\\s*;)";
@@ -386,6 +381,7 @@ public class PdePreprocessor {
     }
   }
 
+
   protected int writeImports(PrintStream out) {
     int count = 1;
     for (String s : getCoreImports()) {
@@ -409,8 +405,9 @@ public class PdePreprocessor {
       count += codeFolderImports.size() + 1;
     }
 
+    String[] defaultImports = getDefaultImports();
     for (String item : defaultImports) {
-      out.println("import " + item + ".*; ");
+      out.println("import " + item + "; ");
     }
     out.println();
     count += defaultImports.length + 1;
@@ -445,6 +442,7 @@ public class PdePreprocessor {
       out.println(indent + "public void setup() {");
     }
   }
+
 
   /**
    * Write any necessary closing text.
@@ -493,13 +491,20 @@ public class PdePreprocessor {
   public ArrayList<String> getExtraImports() {
     return programImports;
   }
-  
+
 
   public String[] getCoreImports() {
     return new String[] { 
       "import processing.core.*;",
       "import processing.xml.*;"
     };
+  }
+
+  
+  public String[] getDefaultImports() {
+    // These may change in-between (if the prefs panel adds this option)
+    String prefsLine = Preferences.get("preproc.default_imports");
+    return PApplet.splitTokens(prefsLine, ", ");
   }
 
 
