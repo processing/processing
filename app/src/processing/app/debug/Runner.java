@@ -77,8 +77,8 @@ public class Runner implements MessageConsumer {
   //private PrintStream leechErr;
 
   protected Editor editor;
-  protected Sketch sketch;
-  protected String appletClassName;
+  private Sketch sketch;
+  private String appletClassName;
 
 
   public Runner(RunnerListener listener) {
