@@ -236,6 +236,7 @@ public class Android implements Tool {
       };
       emulatorProcess = Runtime.getRuntime().exec(cmd);
       System.out.println(PApplet.join(cmd, " "));
+      // "emulator: ERROR: the user data image is used by another emulator. aborting"
       // make sure that the streams are drained properly
       new StreamRedirectThread("android-emulator-out", 
                                emulatorProcess.getInputStream(), System.out).start();
@@ -530,9 +531,11 @@ public class Android implements Tool {
           "-s", device,
           //"-d",  // this is for a single USB device 
           "shell", "am", "start",  // kick things off
-          "-e", "debug", "true",
-          "-a", "android.intent.action.MAIN", "-n",
-          build.getPackageName() + "/." + build.getClassName()
+          "-D",  // debug
+//          "-e", "debug", "true",
+          "-a", "android.intent.action.MAIN",
+          "-c", "android.intent.category.LAUNCHER",
+          "-n", build.getPackageName() + "/." + build.getClassName()
       });
       int result = p.waitFor();
       if (result != 0) {
