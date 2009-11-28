@@ -452,14 +452,23 @@ public class AndroidRunner extends Runner {
       // Any of the thread.blah() methods can throw an AbsentInformationEx
       // if that bit of data is missing. If so, just write out the error
       // message to the console.
+
+      Sketch sketch = editor.getSketch();
+      String appletClassName = sketch.getName();  // TODO * not yet correct! * 
+      
+      List<StackFrame> framey = thread.frames();
+      for (StackFrame frame : framey) {
+        System.out.println("frame: " + frame);
+      }
       List<StackFrame> frames = thread.frames();
       for (StackFrame frame : frames) {
-        System.out.println("frame: " + frame);
+//        System.out.println("frame: " + frame);
         Location location = frame.location();
         String filename = null;
         filename = location.sourceName();
         lineNumber = location.lineNumber();
 
+        
         String appletJavaFile = appletClassName + ".java";
         SketchCode errorCode = null;
         if (filename.equals(appletJavaFile)) {
