@@ -7,7 +7,7 @@ import java.util.Date;
 import org.apache.tools.ant.*;
 
 import processing.app.*;
-import processing.app.debug.RunnerException;
+import processing.app.debug.*;
 import processing.app.preproc.PdePreprocessor;
 import processing.core.PApplet;
 
@@ -197,6 +197,31 @@ public class Build {
   }
   
   
+  /*
+  boolean ecjBuild() {
+    //String primaryClassName = sketch.preprocess(buildPath, new Preproc());
+
+    String androidClassPath = 
+      Android.sdkPath + "platforms/android-1.6/android.jar";
+
+    // compile the program. errors will happen as a RunnerException
+    // that will bubble up to whomever called build().
+    Compiler compiler = new Compiler();
+    return compiler.compile(this, buildPath, primaryClassName, androidClassPath);
+  }
+  */
+
+
+  boolean execAntCompile() {
+    //java -cp ant.jar:ant-launcher.jar org.apache.tools.ant.Main -f ~/coconut/sketchbook/Brightness3/android/build.xml compile
+
+    org.apache.tools.ant.Main.main(new String[] { "-f", buildFile.getAbsolutePath() });
+//    String[] cmd = "ant"
+//    Pavarotti p = new Pavarotti(cmd);
+    return true;
+  }
+  
+  
   /**
    * @param buildFile location of the build.xml for the sketch
    * @param target "debug" or "release"
@@ -204,13 +229,32 @@ public class Build {
   boolean antBuild(String target) {
     Project p = new Project();
     p.setUserProperty("ant.file", buildFile.getAbsolutePath());
-    
+    // deals with a problem where javac error messages weren't coming through
+    p.setUserProperty("build.compiler", "extJavac");
+    //p.setUserProperty("build.compiler.emacs", "true");  // does nothing
+
     DefaultLogger consoleLogger = new DefaultLogger();
     consoleLogger.setErrorPrintStream(System.err);
     consoleLogger.setOutputPrintStream(System.out);
     consoleLogger.setMessageOutputLevel(Project.MSG_INFO);
     p.addBuildListener(consoleLogger);
-
+    
+    DefaultLogger errorLogger = new DefaultLogger();
+    //errorLogger.setEmacsMode(true);  // seems to do nothing
+//    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//    PrintStream ps = new PrintStream(baos);
+//    //errorLogger.setErrorPrintStream(ps);
+//    errorLogger.setErrorPrintStream(new PrintStream(new ByteArrayOutputStream()));
+//    errorLogger.setOutputPrintStream(ps);
+    ByteArrayOutputStream errb = new ByteArrayOutputStream();
+    PrintStream errp = new PrintStream(errb);
+    errorLogger.setErrorPrintStream(errp);
+    ByteArrayOutputStream outb = new ByteArrayOutputStream();
+    PrintStream outp = new PrintStream(outb);
+    errorLogger.setOutputPrintStream(outp);
+    errorLogger.setMessageOutputLevel(Project.MSG_INFO);
+    p.addBuildListener(errorLogger);
+    
     try {
       editor.statusNotice("Building sketch for Android...");
       p.fireBuildStarted();
@@ -224,8 +268,91 @@ public class Build {
       return true;
 
     } catch (BuildException e) {
+      // Send a "build finished" event to the build listeners for this project.
       p.fireBuildFinished(e);
-      //e.printStackTrace();  // ??
+
+//      PApplet.println(new String(errb.toByteArray()));
+//      PApplet.println(new String(outb.toByteArray()));
+
+//      String errorOutput = new String(errb.toByteArray());
+//      String[] errorLines = errorOutput.split(System.getProperty("line.separator"));
+//      PApplet.println(errorLines);
+
+      String outPile = new String(outb.toByteArray()); 
+      String[] outLines = outPile.split(System.getProperty("line.separator"));
+      //PApplet.println(outLines);
+      
+      for (String line : outLines) {
+        String javacPrefix = "[javac]";
+        int javacIndex = line.indexOf(javacPrefix);
+        if (javacIndex != -1) {
+//          System.out.println("checking: " + line);
+          Sketch sketch = editor.getSketch();
+          //String sketchPath = sketch.getFolder().getAbsolutePath();
+          int offset = javacIndex + javacPrefix.length() + 1;
+          String[] pieces = 
+            PApplet.match(line.substring(offset), "^(.+):([0-9]+):\\s+(.+)$");
+          if (pieces != null) {
+//            PApplet.println(pieces);
+            String fileName = pieces[1];
+            // remove the path from the front of the filename
+            fileName = fileName.substring(fileName.lastIndexOf('/') + 1);
+            int lineNumber = PApplet.parseInt(pieces[2]);
+//            PApplet.println("looking for " + fileName + " line " + lineNumber);
+            RunnerException rex = 
+              sketch.placeException(pieces[3], fileName, lineNumber);
+            if (rex != null) {
+              editor.statusError(rex);
+              return false;  // get outta here
+            }
+          }
+        }
+      }
+      
+//      String errorOutput = new String(errb.toByteArray());
+//      String[] errorLines = errorOutput.split(System.getProperty("line.separator"));
+//      PApplet.println(errorLines);
+
+      /*
+//      System.out.println("ex was " + e.getException());
+//      System.out.println("cause was " + e.getCause());
+
+//      // Try to place the error within the code.
+//      Location location = e.getLocation();
+//      //System.out.println("location is " + location);
+//      if (location != null) {
+//        String filename = location.getFileName();
+//        int line = location.getLineNumber();
+//        System.out.println("file/line: " + filename + ", " + line);
+      String errorOutput = new String(baos.toByteArray());
+      String[] errorLines = errorOutput.split(System.getProperty("line.separator"));
+      if (errorLines.length > 0) {
+        Sketch sketch = editor.getSketch();
+        String sketchPath = sketch.getFolder().getAbsolutePath();
+        // emacs syntax, needs conversion to java syntax
+        //String regexp = "^\\s-*\\[[^]]*\\]\\s-*\\(.+\\):\\([0-9]+\\):";  
+        String regexp = "^(.+):([0-9]+):(.+)$";  // this works fine
+        String[] pieces = PApplet.match(errorLines[2], regexp);
+        if (pieces != null) {
+          PApplet.println(pieces);
+        } else {
+          PApplet.println("nuthin");
+          PApplet.println(errorLines);
+        }
+        //String[] pieces = PApplet.match(errorLines[0], "(.*\.java):(\\d+):(.*)$");
+        //if (errorLines[0].startsWith(sketchPath)) {
+        //  String[] pieces = PApplet.split(errorLines[0], ':');
+        //}
+//        RunnerException rex = 
+//          sketch.placeException(e.getMessage(), filename, line);
+//        if (rex != null) {
+//          editor.statusError(rex);
+//        } else {
+//          editor.statusError(e);
+//        }
+//      } else {
+      }
+      */
       editor.statusError(e);
     }
     return false;
@@ -260,9 +387,9 @@ public class Build {
     
     public String[] getCoreImports() {
       return new String[] { 
-        "import processing.android.core.*;",
-        "import processing.android.opengl.*;",  // temporary
-        "import processing.android.xml.*;"
+        "processing.android.core.*",
+        "processing.android.opengl.*",  // temporary
+        "processing.android.xml.*"
       };
     }
     
@@ -333,7 +460,22 @@ public class Build {
     writer.println("           classpathref=\"android.antlibs\" />");
 
     writer.println("  <setup />");
-    
+
+    // copy the 'compile' target to the main build file, since the error 
+    // stream from javac isn't being passed through properly
+//    writer.println("<target name=\"compile\" depends=\"resource-src, aidl\">");
+//    writer.println("  <javac encoding=\"ascii\" target=\"1.5\" debug=\"true\" extdirs=\"\"");
+//    writer.println("         destdir=\"${out-classes}\"");
+//    writer.println("         bootclasspathref=\"android.target.classpath\">");
+//    writer.println("    <src path=\"${source-folder}\" />");
+//    writer.println("    <src path=\"${gen-folder}\" />");
+//    writer.println("    <classpath>");
+//    writer.println("      <fileset dir=\"${external-libs-folder}\" includes=\"*.jar\"/>");
+//    writer.println("      <pathelement path=\"${main-out-classes}\"/>");
+//    writer.println("    </classpath>");
+//    writer.println("  </javac>");
+//    writer.println("</target>");
+
     writer.println("</project>");
     writer.flush();
     writer.close();

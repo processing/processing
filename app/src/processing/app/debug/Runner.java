@@ -557,11 +557,49 @@ public class Runner implements MessageConsumer {
 
   // This may be called more than one time per error in the VM,
   // presumably because exceptions might be wrapped inside others,
-  // and this will fire for both.
+  // and this will fire for both.  
   protected void reportException(String message, ThreadReference thread) {
     try {
-      int codeIndex = -1;
-      int lineNumber = -1;
+      RunnerException rex = searchStackForSketchError(message, thread);
+      if (rex != null) {
+        listener.statusError(rex);
+      }
+    } catch (IncompatibleThreadStateException itse) {
+      itse.printStackTrace();
+    }
+    listener.statusError(message);
+  }
+  
+  
+  RunnerException searchStackForSketchError(String message, ThreadReference thread) 
+  throws IncompatibleThreadStateException {
+    // Any of the thread.blah() methods can throw an AbsentInformationEx
+    // if that bit of data is missing. If so, just write out the error
+    // message to the console.
+    List<StackFrame> frames = thread.frames();
+    for (StackFrame frame : frames) {
+      //System.out.println("frame: " + frame);
+      Location location = frame.location();
+      try {
+        String filename = location.sourceName();
+        int line = location.lineNumber() - 1;
+        RunnerException rex = sketch.placeException(message, filename, line);
+        if (rex != null) {
+          return rex;
+        }
+      } catch (AbsentInformationException e) {
+        // ignore this and move on
+        e.printStackTrace();
+      }
+    }
+    return null;
+  }
+
+  
+  protected void reportException_old(String message, ThreadReference thread) {
+    try {
+//      int codeIndex = -1;
+//      int lineNumber = -1;
 
       // Any of the thread.blah() methods can throw an AbsentInformationEx
       // if that bit of data is missing. If so, just write out the error
@@ -570,10 +608,18 @@ public class Runner implements MessageConsumer {
       for (StackFrame frame : frames) {
 //        System.out.println("frame: " + frame);
         Location location = frame.location();
-        String filename = null;
-        filename = location.sourceName();
-        lineNumber = location.lineNumber();
+        String filename = location.sourceName();
+        int lineNumber = location.lineNumber();
+        
+        RunnerException rex = 
+          sketch.placeException(message, filename, lineNumber);
+        if (rex != null) {
+          listener.statusError(rex);
+        } else {
+          listener.statusError(message);
+        }
 
+        /*
         String appletJavaFile = appletClassName + ".java";
         SketchCode errorCode = null;
         if (filename.equals(appletJavaFile)) {
@@ -609,6 +655,7 @@ public class Runner implements MessageConsumer {
           listener.statusError(exception);
           return;
         }
+        */
       }
     } catch (AbsentInformationException e) {
       //e.printStackTrace();  // not useful
