@@ -707,6 +707,7 @@ public class Editor extends JFrame implements RunnerListener {
         item.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             SwingUtilities.invokeLater(tool);
+            //new Thread(tool).start();
           }
         });
         //menu.add(item);
@@ -793,10 +794,12 @@ public class Editor extends JFrame implements RunnerListener {
     menu.add(createToolMenuItem("processing.app.tools.Archiver"));
     menu.add(createToolMenuItem("processing.app.tools.FixEncoding"));
 
-    //menu.add(createToolMenuItem("processing.app.tools.android.Build"));
+    // These are temporary entries while Android mode is being worked out.
+    // The mode will not be in the tools menu, and won't involve a cmd-key
     item = createToolMenuItem("processing.app.tools.android.Android");
     item.setAccelerator(KeyStroke.getKeyStroke('D', modifiers));
     menu.add(item);
+    menu.add(createToolMenuItem("processing.app.tools.android.Reset"));
 
     return menu;
   }

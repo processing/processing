@@ -12,58 +12,6 @@ import processing.app.preproc.PdePreprocessor;
 import processing.core.PApplet;
 
 
-// build/create apk 
-// build non-debug version of apk
-//   call this "export to application" or something?
-//   "Export to Package" cmd-shift-E
-// install to device (release version)
-//   "Export to Device" cmd-E
-// run/debug in emulator
-//   cmd-r
-// run/debug on device
-//   cmd-shift-r (like present mode)
-
-// download/install sdk
-// create new avd for debugging
-// set the avd to use
-// set the sdk location
-//   does this require PATH to be set as well? 
-//   or can it be done with $ANDROID_SDK?
-//   or do we need to set PATH each time P5 starts up
-
-/*
-android bugs/wishes
-
-+ uninstalled sdk version 3, without first uninstalling google APIs v3
-  removes the google APIs from the list (so no way to uninstall)
-  and produces the following error every time it's loaded:
-  Error: Ignoring add-on 'google_apis-3-r03': Unable to find base platform with API level '3'
-  
-+ install android sdk from command line (and download components)
-
-+ syntax for "create avd" is WWWxHHH not WWW-HHH
-  http://developer.android.com/guide/developing/tools/avd.html
-  
-+ half the tools use --option-name the other half use -option-name
-
-+ http://developer.android.com/guide/developing/other-ide.html
-  set JAVA_HOME=c:\Prora~1\Java\
-  that should be progra~1 (it's missing a G)
-  
-+ "If there is no emulator/device running, adb returns no device." 
-  not true, it just shows up blank
-  http://developer.android.com/guide/developing/tools/adb.html
-*/
-
-/*
-android create project -t 3 -n test_name -p test_path -a test_activity -k test.pkg
-file:///opt/android/docs/guide/developing/other-ide.html
-# compile code for a project
-ant debug
-# this pulls in tons of other .jar files for android ant 
-# local.properties (in the android folder) has the sdk location
-   */
-
 public class Build {
   static SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMdd.HHmm");
 
@@ -132,13 +80,34 @@ public class Build {
       File dest = new File(sketch.getFolder(), "android." + dateFormat.format(mod));
       boolean result = androidFolder.renameTo(dest);
       if (!result) {
-        Base.showWarning("Failed to rename", 
-                         "Could not rename the old “android” build folder.\n" + 
-                         "Please delete, close, or rename the folder\n" + 
-                         androidFolder.getAbsolutePath() + "\n" +  
-                         "and try again." , null);
-        Base.openFolder(sketch.getFolder());
-        return false;
+        int what = -1;
+        Pavarotti mv;
+        try {
+          System.out.println("createProject renameTo() failed, resorting to mv/move instead.");
+          mv = new Pavarotti(new String[] { 
+              "mv", 
+              androidFolder.getAbsolutePath(),
+              dest.getAbsolutePath()
+          });
+          what = mv.waitFor();
+          
+        } catch (IOException e) {
+          editor.statusError(e);
+          return false;
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+          return false;
+        }
+        if (what != 0) {
+          mv.printLines();
+          Base.showWarning("Failed to rename", 
+                           "Could not rename the old “android” build folder.\n" + 
+                           "Please delete, close, or rename the folder\n" + 
+                           androidFolder.getAbsolutePath() + "\n" +  
+                           "and try again." , null);
+          Base.openFolder(sketch.getFolder());
+          return false;
+        }
       }
     } else {
       boolean result = androidFolder.mkdirs();
@@ -307,6 +276,7 @@ public class Build {
             RunnerException rex = 
               sketch.placeException(pieces[3], fileName, lineNumber);
             if (rex != null) {
+              rex.hideStackTrace();
               editor.statusError(rex);
               return false;  // get outta here
             }

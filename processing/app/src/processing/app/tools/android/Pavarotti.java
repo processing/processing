@@ -26,6 +26,10 @@ import java.io.IOException;
 import processing.core.PApplet;
 
 
+/**
+ * Class to handle calling Runtime.exec() and stuffing input and error streams
+ * into String arrays that can be dealt with more easily. 
+ */
 public class Pavarotti {
   Process process;
   String[] cmd;
@@ -71,16 +75,26 @@ public class Pavarotti {
   }
   
   
-  public void printLines() {
+  public void printErrorLines() {
     for (String err : getErrorLines()) {
       //if (err.length() > 0) System.err.println("err: " + err);
       if (err.length() > 0) System.err.println(err);
 //      System.err.println(err);
     }
+  }
+  
+  
+  public void printOutputLines() {
     for (String out : getOutputLines()) {
       //if (out.length() > 0) System.out.println("out: " + out);
       if (out.length() > 0) System.out.println(out);
 //      System.out.println(out);
     }
+  }
+
+
+  public void printLines() {
+    printOutputLines();
+    printErrorLines();
   }
 }
