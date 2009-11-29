@@ -1633,8 +1633,8 @@ public class Editor extends JFrame implements RunnerListener {
         sketch.prepare();
         String appletClassName = sketch.build();
         if (appletClassName != null) {
-          runtime = new Runner(Editor.this);
-          runtime.launch(sketch, appletClassName, false);
+          runtime = new Runner(Editor.this, sketch);
+          runtime.launch(appletClassName, false);
         }
       } catch (Exception e) {
         statusError(e);
@@ -1649,8 +1649,8 @@ public class Editor extends JFrame implements RunnerListener {
         sketch.prepare();
         String appletClassName = sketch.build();
         if (appletClassName != null) {
-          runtime = new Runner(Editor.this);
-          runtime.launch(sketch, appletClassName, true);
+          runtime = new Runner(Editor.this, sketch);
+          runtime.launch(appletClassName, true);
         }
       } catch (Exception e) {
         statusError(e);
