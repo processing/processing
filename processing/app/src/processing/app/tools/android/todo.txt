@@ -1,0 +1,43 @@
+P1 this is embarrassing, need to fix ASAP
+P2 need to fix before beta release
+P3 would like to fix before final release
+P4 not an immediate need, but very nice to have
+P5 nice to have
+
+http://dev.processing.org/bugs/buglist.cgi?bug_status=&field0-0-0=product&type0-0-0=substring&value0-0-0=android&field0-0-1=component&type0-0-1=substring&value0-0-1=android&field0-0-2=short_desc&type0-0-2=substring&value0-0-2=android&field0-0-3=status_whiteboard&type0-0-3=substring&value0-0-3=android&order=bugs.bug_status%2Cbugs.bug_id
+
+P1 _ get stdout and stderr from the emulator/device
+P1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1381
+P1 _   how to do this via jdb?
+P1 _   or is this jdi/jdwp?
+P1 _     connect to emulator with the proper io sockets
+P1 _       don't rely on getinput/getoutput from process (via logcat)
+P1 _     also connect to the external device when running code there
+P1 _ why aren't mouse drag events coming through?
+P1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1382
+P1 _ errors that happen inside events (e.g. keys) not highlighting lines
+P1 _   useful stack trace information not coming through.. why?
+P1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1384
+
+P2 _ android mode is currently per-editor (and clunky)
+P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1379
+P2 _ save state re: whether sketches are android or java mode (or others?)
+P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1380
+P2 _ need to prevent hitting 'run' twice (threaded, so would work)
+P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1387
+P2 _ move the android tools into its own source package in SVN
+P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1388
+P2 _ 'stop' is now a no-op for the android tools
+P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1386
+P2 _ implement method for selecting donut or eclair AVD
+P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1390
+
+P3 _ don't require android tools to be installed already
+P3 _   or implement automatic download/install of android tools
+P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1383
+P3 _ remove various debug messages on the console
+P3 _   right now, there are too many places where errors occur
+P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1385
+P3 _ for now, only runs on the first device (findDevice()) found
+P3 _   --> implement selector to choose the default device for debugging
+P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1389
