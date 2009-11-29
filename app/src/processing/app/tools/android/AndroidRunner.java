@@ -36,58 +36,21 @@ import com.sun.jdi.event.ExceptionEvent;
 
 public class AndroidRunner extends Runner {
 
-//  private boolean presenting;
-
-  // Object that listens for error messages or exceptions.
-//  private RunnerListener listener;
-
-  // Running remote VM
-//  private VirtualMachine vm;
-
-  // Thread transferring remote error stream to our error stream
-//  private Thread errThread = null;
-
-  // Thread transferring remote output stream to our output stream
-//  private Thread outThread = null;
-
-  // Mode for tracing the Trace program (default= 0 off)
-//  private int debugTraceMode = 0;
-
-  //  Do we want to watch assignments to fields
-//  private boolean watchFields = false;
-
-  // Class patterns for which we don't want events
-//  private String[] excludes = {
-//      "java.*", "javax.*", "sun.*", "com.sun.*",
-//      "apple.*",
-//      "processing.*"
-//  };
-
-//  private RunnerException exception;
-
-//  private Editor editor;
-//  private Sketch sketch;
-//  private String appletClassName;
-
-
-  public AndroidRunner(RunnerListener listener) {
-    super(listener);
-    if (editor != null) {
-      sketch = editor.getSketch();
-    }
+  public AndroidRunner(RunnerListener listener, Sketch sketch) {
+    super(listener, sketch);    
   }
 
 
   public boolean launch(String port) {
     vm = launchVirtualMachine(port);
-    System.out.println("vm launched");
+//    System.out.println("vm launched");
     if (vm != null) {
-      System.out.println("starting trace");
+//      System.out.println("starting trace");
       generateTrace(null);
-      System.out.println("done starting trace");
+//      System.out.println("done starting trace");
       return true;
     }
-    System.out.println("no trace for you");
+//    System.out.println("no trace for you");
     return false;
   }
   
@@ -271,7 +234,10 @@ public class AndroidRunner extends Runner {
 
 //      PApplet.println("attaching now...");
       //return connector.attach(arguments);
+      System.out.println("Attaching to the debugger. If this command hangs, ");
+      System.out.println("you may need to use Tools \u2192 " + Reset.MENU_TITLE + ".");
       VirtualMachine machine = connector.attach(arguments);
+      System.out.println("Debugger successfully attached, nevermind that last bit.");
 //      PApplet.println("attached");
       return machine;
       
