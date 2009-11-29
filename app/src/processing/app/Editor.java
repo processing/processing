@@ -2253,7 +2253,7 @@ public class Editor extends JFrame implements RunnerListener {
       }
       statusError(mess);
     }
-    e.printStackTrace();
+//    e.printStackTrace();
   }
 
 

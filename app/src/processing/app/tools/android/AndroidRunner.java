@@ -416,15 +416,15 @@ public class AndroidRunner extends Runner {
   // and this will fire for both.
   protected void reportException(String message, ThreadReference thread) {
     try {
-      int codeIndex = -1;
-      int lineNumber = -1;
+//      int codeIndex = -1;
+//      int lineNumber = -1;
 
       // Any of the thread.blah() methods can throw an AbsentInformationEx
       // if that bit of data is missing. If so, just write out the error
       // message to the console.
 
       Sketch sketch = editor.getSketch();
-      String appletClassName = sketch.getName();  // TODO * not yet correct! * 
+//      String appletClassName = sketch.getName();  // TODO * not yet correct! * 
 
 //      for (StackFrame frame : thread.frames()) {
 //        System.out.println("frame: " + frame);
@@ -435,43 +435,13 @@ public class AndroidRunner extends Runner {
         Location location = frame.location();
         String filename = null;
         filename = location.sourceName();
-        lineNumber = location.lineNumber();
-
-        
-        String appletJavaFile = appletClassName + ".java";
-        SketchCode errorCode = null;
-        if (filename.equals(appletJavaFile)) {
-          for (SketchCode code : sketch.getCode()) {
-            if (code.isExtension("pde")) {
-              if (lineNumber >= code.getPreprocOffset()) {
-                errorCode = code;
-              }
-            }
-          }
+        int lineNumber = location.lineNumber();
+        RunnerException rex = 
+          sketch.placeException(message, filename, lineNumber);
+        if (rex != null) {
+          listener.statusError(rex);
         } else {
-          for (SketchCode code : sketch.getCode()) {
-            if (code.isExtension("java")) {
-              if (filename.equals(code.getFileName())) {
-                errorCode = code;
-              }
-            }
-          }
-        }
-        codeIndex = sketch.getCodeIndex(errorCode);
-
-        if (codeIndex != -1) {
-          //System.out.println("got line num " + lineNumber);
-          // in case this was a tab that got embedded into the main .java
-          lineNumber -= sketch.getCode(codeIndex).getPreprocOffset();
-
-          // lineNumber is 1-indexed, but editor wants zero-indexed
-          lineNumber--;
-
-          // getMessage() will be what's shown in the editor
-          exception = new RunnerException(message, codeIndex, lineNumber, -1);
-          exception.hideStackTrace();
-          listener.statusError(exception);
-          return;
+          listener.statusError(message);
         }
       }
     } catch (AbsentInformationException e) {

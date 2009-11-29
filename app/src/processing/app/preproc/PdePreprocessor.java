@@ -195,7 +195,6 @@ public class PdePreprocessor {
     // again, not gonna bother tracking this down, but here's a hack.
     // http://dev.processing.org/bugs/show_bug.cgi?id=16
     String scrubbed = Sketch.scrubComments(program);
-    System.out.println(scrubbed);
     // If there are errors, an exception is thrown and this fxn exits.
 
     if (Preferences.getBoolean("preproc.substitute_unicode")) {
