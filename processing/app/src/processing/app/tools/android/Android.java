@@ -308,6 +308,27 @@ public class Android implements Tool {
     success = build.createProject();
     if (!success) return;
 
+    /*
+    <!-- Compile this project's .java files into .class files. -->
+    <target name="compile" depends="resource-src, aidl">
+        <javac encoding="ascii" target="1.5" debug="true" extdirs=""
+                destdir="${out-classes}"
+                bootclasspathref="android.target.classpath">
+            <src path="${source-folder}" />
+            <src path="${gen-folder}" />
+            <classpath>
+                <fileset dir="${external-libs-folder}" includes="*.jar"/>
+                <pathelement path="${main-out-classes}"/>
+            </classpath>
+         </javac>
+    </target>
+     */
+    // first build the code (.java -> .class) separately
+    //success = build.antBuild("compile");
+//    PApplet.println("umm compile");
+//    success = build.execAntCompile();
+//    PApplet.println("umm yeah compile");
+
     // now run the ant debug or release version
     success = build.antBuild("debug");
     //System.out.println("ant build complete " + success);

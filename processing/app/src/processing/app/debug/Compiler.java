@@ -41,7 +41,7 @@ public class Compiler {
   public Compiler() { }
 
   /**
-   * Compile with ECJ.
+   * Compile with ECJ. See http://j.mp/8paifz for documentation.
    *
    * @param sketch Sketch object to be compiled.
    * @param buildPath Where the temporary files live and will be built from.
@@ -50,7 +50,8 @@ public class Compiler {
    */
   public boolean compile(Sketch sketch,
                          String buildPath,
-                         String primaryClassName) throws RunnerException {
+                         String primaryClassName, 
+                         String bootClassPath) throws RunnerException {
     // This will be filled in if anyone gets angry
     RunnerException exception = null;
     boolean success = false;
@@ -145,6 +146,10 @@ public class Compiler {
         int dotJavaLineIndex = PApplet.parseInt(pieces[2]) - 1;
         String errorMessage = pieces[4];
 
+        exception = sketch.placeException(errorMessage, 
+                                          dotJavaFilename, 
+                                          dotJavaLineIndex);
+        /*
         int codeIndex = 0; //-1;
         int codeLine = -1;
 
@@ -173,13 +178,14 @@ public class Compiler {
               }
             }
           }
-
-          //if (codeLine != -1) {
-          //codeLine = dotJavaLineIndex - sketch.getCode(codeIndex).getPreprocOffset();
-          //}
         }
         //System.out.println("code line now " + codeLine);
         exception = new RunnerException(errorMessage, codeIndex, codeLine, -1, false);
+        */
+
+        if (exception == null) {
+          exception = new RunnerException(errorMessage);
+        }
 
         // for a test case once message parsing is implemented,
         // use new Font(...) since that wasn't getting picked up properly.
