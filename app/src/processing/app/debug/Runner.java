@@ -81,8 +81,9 @@ public class Runner implements MessageConsumer {
   private String appletClassName;
 
 
-  public Runner(RunnerListener listener) {
+  public Runner(RunnerListener listener, Sketch sketch) {
     this.listener = listener;
+    this.sketch = sketch;
 
     if (listener instanceof Editor) {
       this.editor = (Editor) listener;
@@ -92,9 +93,7 @@ public class Runner implements MessageConsumer {
   }
 
 
-  public void launch(Sketch sketch, String appletClassName, 
-                     boolean presenting) {
-    this.sketch = sketch;
+  public void launch(String appletClassName, boolean presenting) {
     this.appletClassName = appletClassName;
     this.presenting = presenting;
     

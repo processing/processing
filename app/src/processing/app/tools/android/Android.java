@@ -729,7 +729,7 @@ public class Android implements Tool {
 
       System.out.println("creating runner");
       //System.out.println("editor from Android is " + editor);
-      AndroidRunner ar = new AndroidRunner(editor);
+      AndroidRunner ar = new AndroidRunner(editor, editor.getSketch());
       System.out.println("launching vm");
       return ar.launch(ADB_SOCKET_PORT);
       //System.out.println("vm launched");

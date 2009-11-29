@@ -203,8 +203,8 @@ public class Commander implements RunnerListener {
           String className = sketch.build(outputPath);
           if (className != null) {
             success = true;
-            Runner runner = new Runner(this);
-            runner.launch(sketch, className, mode == PRESENT);
+            Runner runner = new Runner(this, sketch);
+            runner.launch(className, mode == PRESENT);
 
           } else {
             success = false;
