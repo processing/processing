@@ -77,7 +77,7 @@ public class Runner implements MessageConsumer {
   //private PrintStream leechErr;
 
   protected Editor editor;
-  private Sketch sketch;
+  protected Sketch sketch;
   private String appletClassName;
 
 
@@ -539,9 +539,9 @@ public class Runner implements MessageConsumer {
   RunnerException findException(String message, ThreadReference thread) {
     try {
       // use to dump the stack for debugging
-//    for (StackFrame frame : thread.frames()) {
-//      System.out.println("frame: " + frame);
-//    }
+      for (StackFrame frame : thread.frames()) {
+        System.out.println("frame: " + frame);
+      }
 
       List<StackFrame> frames = thread.frames();
       for (StackFrame frame : frames) {
@@ -571,7 +571,10 @@ public class Runner implements MessageConsumer {
       e.printStackTrace();
     }
     // Give up, nothing found inside the pile of stack frames
-    return new RunnerException(message);
+    RunnerException rex = new RunnerException(message);
+    // exception is being created /here/, so stack trace is not useful
+    rex.hideStackTrace();
+    return rex;
   }
 
 
