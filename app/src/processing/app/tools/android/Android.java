@@ -76,12 +76,23 @@ public class Android implements Tool {
 
   public void run() {
     editor.statusNotice("Loading Android tools.");
-    
+
     boolean success = checkPath();
     if (!success) {
       editor.statusNotice("Android mode canceled.");
       return;
     }
+    
+    //adb get-state
+    try {
+      System.out.print("adb get state: ");
+      Pavarotti p = new Pavarotti(new String[] { "adb", "get-state" });
+      p.waitFor();
+      p.printLines();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
     success = Device.checkDefaults();
     if (!success) {
       editor.statusError("Could not load Android tools.");
@@ -300,6 +311,16 @@ public class Android implements Tool {
   public void installAndRun(String target, String device) {
     boolean success;
   
+    //adb get-state
+    try {
+      System.out.print("(installAndRun) adb get state: ");
+      Pavarotti p = new Pavarotti(new String[] { "adb", "get-state" });
+      p.waitFor();
+      p.printLines();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
     // Simply reset the debug bridge, since it seems so prone to getting
     // into bad states and not producing error messages.
     //resetServer();
@@ -438,7 +459,7 @@ public class Android implements Tool {
 
         if (result == 0) {
           String[] lines = p.getOutputLines();
-          PApplet.println(lines);
+//          PApplet.println(lines);
 //          String last = lines[lines.length - 1];
 //          if (last.trim().length() == 0) {
 //            last = lines[lines.length - 2];
