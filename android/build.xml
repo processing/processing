@@ -1,23 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- this is not a proper build file. 
-     the proper method is to build with eclipse. -->
+<!-- Hi there! This is not a proper build file. The proper method is to
+     build with Eclipse. I'm what's called a stopgap. A temporary hack, 
+     if you will. -->
 
-<project default="blah" name="Create zip for core">
+<project default="core" name="Create .zip file for core">
 
-<target name="blah">
+<target name="core">
 
 <!-- this makes an assumption that the processing folder is checked out
      at the same level as this folder. not a good assumption. -->
-<zip destfile="../processing/app/src/processing/app/tools/android/processing-core.zip">
+<zip destfile="../app/src/processing/app/tools/android/processing-core.zip">
 <fileset dir="core/bin" includes="processing/android/core/*.class" />
 <fileset dir="core/bin" includes="processing/android/opengl/*.class" />
 <fileset dir="core/bin" includes="processing/android/xml/*.class" />
 </zip>
 
-<!-- copy file to bin folder as well -->
-
-<copy file="../processing/app/src/processing/app/tools/android/processing-core.zip" tofile="../processing/app/bin/processing/app/tools/android/processing-core.zip" />
+<!-- copy file to bin folder as well, so that we don't 
+     have to wait for eclipse to move things over. -->
+<copy file="../app/src/processing/app/tools/android/processing-core.zip" 
+      tofile="../app/bin/processing/app/tools/android/processing-core.zip" />
 
 </target>
 </project>
