@@ -38,7 +38,7 @@ import processing.core.PApplet;
 
 public class Android implements Tool {
   static String sdkPath;
-  static String toolsPath;
+//  static String toolsPath;
 
   private Editor editor;
   Build build;
@@ -75,6 +75,9 @@ public class Android implements Tool {
 
 
   public void run() {
+//    System.out.println("being called like so:");
+//    new Exception().printStackTrace();
+    
     editor.statusNotice("Loading Android tools.");
 
     boolean success = checkPath();
@@ -82,17 +85,10 @@ public class Android implements Tool {
       editor.statusNotice("Android mode canceled.");
       return;
     }
-    
-    //adb get-state
-    try {
-      System.out.print("adb get state: ");
-      Pavarotti p = new Pavarotti(new String[] { "adb", "get-state" });
-      p.waitFor();
-      p.printLines();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
 
+    // Make sure things are going to behave properly.
+    checkServer();
+    
     success = Device.checkDefaults();
     if (!success) {
       editor.statusError("Could not load Android tools.");
@@ -104,7 +100,7 @@ public class Android implements Tool {
     build = new Build(editor);
     editor.statusNotice("Done loading Android tools.");
   }
-
+  
 
   protected boolean checkPath() {
     Platform platform = Base.getPlatform();
@@ -157,11 +153,81 @@ public class Android implements Tool {
     //  sdkPath = "/opt/android";
 
     // Make sure that the tools are in the PATH
-    toolsPath = sdkPath + File.separator + "tools";
+    String toolsPath = sdkPath + File.separator + "tools";
     String path = platform.getenv("PATH");
     platform.setenv("PATH", path + File.pathSeparator + toolsPath);
     //System.out.println("path after set is " + Base.getenv("PATH"));
     return true;
+  }
+
+
+  /**
+   * <s>And by "check" server, I mean kill it and start it again. For now, the 
+   * debug bridge seems to get into a bad state frequently, and it's not clear
+   * how to properly query whether that's the case.</s>
+   * <p/>
+   * On second thought, that's been scratched because the forced start/stop
+   * seems to cause even more instability.
+   */ 
+  protected boolean checkServer() {
+    // when "adb get-state" returns "unknown", that means that the SocketAttach
+    // will probably fail, however it happily returns "device" in other cases
+    // when the debug bridge is clearly unhappy.
+    /*
+    try {
+      System.out.print("adb get state: ");
+      Pavarotti p = new Pavarotti(new String[] { "adb", "get-state" });
+      p.waitFor();
+      p.printLines();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    */
+    return true;
+  }
+
+
+  /**
+   * The debug bridge seems to get into a bad state frequently, and it's not 
+   * clear how to properly query whether that's the case. 
+   * <p/>
+   * For instance, when loading the Android tools and checking installed 
+   * AVDs, the check will commonly return no entries, even though the 
+   * defaults have been created. Then the code tries to create the AVDs
+   * again, only to return an error.
+   * <p/>
+   * In other cases, launching connector.attach() from AndroidRunner will 
+   * simply hang, rather than returning an error or (ever) timing out. 
+   * (Even if the timeout arg is set for SocketAttach.) There doesn't seem to
+   * be a good way to query whether this is going to happen before it happens.  
+   */
+  static protected boolean resetServer(Editor editor) {
+    try {
+      Pavarotti killer = new Pavarotti(new String[] { "adb", "kill-server" });
+      // don't really care about this result...
+      killer.waitFor();
+      killer.printLines();
+      
+      Thread.sleep(1000);  // just take a quick break so that the server can die
+
+      // ...we only care about whether it was able to start successfully.
+      Pavarotti starter = new Pavarotti(new String[] { "adb", "start-server" });
+      int result = starter.waitFor();
+      starter.printLines();
+      if (result == 0) {
+        return true;
+      } 
+      killer.printLines();  // okay maybe now we care about these
+      starter.printLines();  // something to confuse the user a bit
+      editor.statusError("Could not start Android debug server."); 
+
+    } catch (IOException e) {
+      editor.statusError(e);
+      
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    return false;
   }
 
 
@@ -212,7 +278,7 @@ public class Android implements Tool {
     }
     
     try {
-      String[] devices = Debug.listDevices();
+      String[] devices = Device.list();
       for (String s : devices) {
         if (s.equals(name)) {
           return name;
@@ -272,7 +338,7 @@ public class Android implements Tool {
   public String findDevice() {
     String[] devices;
     try {
-      devices = Debug.listDevices();
+      devices = Device.list();
     } catch (IOException e) {
       editor.statusError(e);
       //e.printStackTrace();
@@ -311,15 +377,15 @@ public class Android implements Tool {
   public void installAndRun(String target, String device) {
     boolean success;
   
-    //adb get-state
-    try {
-      System.out.print("(installAndRun) adb get state: ");
-      Pavarotti p = new Pavarotti(new String[] { "adb", "get-state" });
-      p.waitFor();
-      p.printLines();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+//    //adb get-state
+//    try {
+//      System.out.print("(installAndRun) adb get state: ");
+//      Pavarotti p = new Pavarotti(new String[] { "adb", "get-state" });
+//      p.waitFor();
+//      p.printLines();
+//    } catch (Exception e) {
+//      e.printStackTrace();
+//    }
 
     // Simply reset the debug bridge, since it seems so prone to getting
     // into bad states and not producing error messages.
@@ -677,20 +743,73 @@ public class Android implements Tool {
   }
   
   
+  /**
+   * Build the sketch and run it inside an emulator with the debugger.
+   */
   class RunHandler implements Runnable {
     public void run() {
-      installAndRun("debug", findEmulator());
+      //installAndRun("debug", findEmulator());
+      checkServer();
+      String device = findEmulator();
+      boolean success;
+      
+      Build build = getBuilder();
+      success = build.createProject();
+      if (!success) return;
+
+      // now run the ant debug or release version
+      success = build.antBuild("debug");
+      //System.out.println("ant build complete " + success);
+      if (!success) return;
+
+      success = waitUntilReady(device);
+      if (!success) return;
+
+      success = installSketch(device);
+      if (!success) return;
+
+      // Returns the last JDWP port that in use before launching
+      String prevPort = startSketch(device);
+      if (prevPort == null) return;
+
+      success = debugSketch(device, prevPort);
     } 
   }
   
   
+  /**
+   * Build the sketch and run it on a device with the debugger connected.
+   */
   class PresentHandler implements Runnable {
     public void run() {
+      checkServer();      
       String device = findDevice();
       if (device == null) {
         editor.statusError("No device found.");
       } else {
-        installAndRun("debug", device);
+        //installAndRun("debug", device);
+        boolean success;
+        
+        Build build = getBuilder();
+        success = build.createProject();
+        if (!success) return;
+
+        // now run the ant debug or release version
+        success = build.antBuild("debug");
+        //System.out.println("ant build complete " + success);
+        if (!success) return;
+
+        success = waitUntilReady(device);
+        if (!success) return;
+
+        success = installSketch(device);
+        if (!success) return;
+
+        // Returns the last JDWP port that in use before launching
+        String prevPort = startSketch(device);
+        if (prevPort == null) return;
+
+        success = debugSketch(device, prevPort);
       }
     }
   }
@@ -702,12 +821,19 @@ public class Android implements Tool {
   }
   
   
+  /**
+   * Create a release build of the sketch and have its apk files ready. 
+   */
   class ExportHandler implements Runnable {  
-    public void run() {      
+    public void run() {
     }
   }
 
 
+  /**
+   * Create a release build of the sketch and install its apk files on the
+   * attached device. 
+   */
   class ExportAppHandler implements Runnable {  
     public void run() {      
     }
