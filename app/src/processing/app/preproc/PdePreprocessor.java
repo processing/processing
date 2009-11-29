@@ -153,6 +153,7 @@ public class PdePreprocessor {
   PrintStream stream;
   Reader programReader;
   String buildPath;
+  // starts as sketch name, ends as main class name
   String name;
 
   // used for calling the ASTFactory to get the root node
@@ -178,9 +179,9 @@ public class PdePreprocessor {
 
 
   public int writePrefix(String program, String buildPath,
-                         String name, String codeFolderPackages[]) throws FileNotFoundException {
+                         String sketchName, String codeFolderPackages[]) throws FileNotFoundException {
     this.buildPath = buildPath;
-    this.name = name;
+    this.name = sketchName;
 
     // need to reset whether or not this has a main()
     foundMain = false;
@@ -236,7 +237,8 @@ public class PdePreprocessor {
     // do this after the program gets re-combobulated
     this.programReader = new StringReader(program);
 
-    File streamFile = new File(buildPath, name + ".java");
+    //File streamFile = new File(buildPath, getJavaFileName());
+    File streamFile = new File(buildPath, sketchName + ".java");
     stream = new PrintStream(new FileOutputStream(streamFile));
     int importsLength = writeImports(stream);
 
@@ -244,6 +246,14 @@ public class PdePreprocessor {
     // added by calling writeDeclarations()
     return importsLength + 2;
   }
+  
+
+//  /**
+//   * Returns the name of the .java file that was created from the .pde files.  
+//   */
+//  String getJavaFileName() {
+//    return name + ".java";
+//  }
   
   
   static String substituteUnicode(String program) {
@@ -286,8 +296,8 @@ public class PdePreprocessor {
 
 
   /**
-   * preprocesses a pde file and write out a java file
-   * @return the classname of the exported Java
+   * preprocesses a pde file and writes out a java file
+   * @return the class name of the exported Java
    */
   //public String write(String program, String buildPath, String name,
   //                  String extraImports[]) throws java.lang.Exception {

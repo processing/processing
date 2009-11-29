@@ -435,7 +435,7 @@ public class AndroidRunner extends Runner {
         Location location = frame.location();
         String filename = null;
         filename = location.sourceName();
-        int lineNumber = location.lineNumber();
+        int lineNumber = location.lineNumber() - 1;
         RunnerException rex = 
           sketch.placeException(message, filename, lineNumber);
         if (rex != null) {
