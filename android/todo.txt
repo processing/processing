@@ -33,6 +33,8 @@ P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1386
 P2 _ implement method for selecting donut or eclair AVD
 P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1390
 
+P3 _ remove the need for a "Reset Android" menu option
+P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1392
 P3 _ don't require android tools to be installed already
 P3 _   or implement automatic download/install of android tools
 P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1383
