@@ -212,6 +212,8 @@ public class Build {
   */
 
 
+  /*
+  // this calls exit(), so would need to do java -cp with the jar files from p5
   boolean execAntCompile() {
     //java -cp ant.jar:ant-launcher.jar org.apache.tools.ant.Main -f ~/coconut/sketchbook/Brightness3/android/build.xml compile
 
@@ -220,6 +222,7 @@ public class Build {
 //    Pavarotti p = new Pavarotti(cmd);
     return true;
   }
+  */
   
   
   /**
@@ -297,7 +300,7 @@ public class Build {
             String fileName = pieces[1];
             // remove the path from the front of the filename
             fileName = fileName.substring(fileName.lastIndexOf('/') + 1);
-            int lineNumber = PApplet.parseInt(pieces[2]);
+            int lineNumber = PApplet.parseInt(pieces[2]) - 1;
 //            PApplet.println("looking for " + fileName + " line " + lineNumber);
             RunnerException rex = 
               sketch.placeException(pieces[3], fileName, lineNumber);
