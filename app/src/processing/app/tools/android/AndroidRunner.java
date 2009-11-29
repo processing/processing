@@ -72,6 +72,9 @@ public class AndroidRunner extends Runner {
 
   public AndroidRunner(RunnerListener listener) {
     super(listener);
+    if (editor != null) {
+      sketch = editor.getSketch();
+    }
   }
 
 

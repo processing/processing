@@ -6,7 +6,10 @@ X Default wildcard imports are causing naming conflicts
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1103
 X imports inside comments are being included
 
-_ add warning message when not using a version of sun java w/ p5
+_ add warning message when not using a version of sun java w/ p5 on linux
+
+_ for tools, maybe don't run on event thread? (makes the gui hang)
+_   but instead, things that affect gui need to be called w/ invokeLater?
 
 _ write quicktime uncompressed (w/o qtjava)
 _   http://blog.hslu.ch/rawcoder/2008/06/21/writing-quicktime-movies-in-pure-java/

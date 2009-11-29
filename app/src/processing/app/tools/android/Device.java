@@ -66,6 +66,10 @@ public class Device {
     "Android SDK is installed properly, and that the Android\n" +
     "and Google APIs are installed for levels 4 and 5.";
   
+  static final String ADB_DEVICES_ERROR = 
+    "Received unfamiliar output from “adb devices”.\n" +
+    "The device list may have errors.";    
+
   static final int DEFAULT_WIDTH = 320;
   static final int DEFAULT_HEIGHT = 480;
 
@@ -103,15 +107,17 @@ public class Device {
   
   protected boolean exists() throws IOException {
     String[] cmd = { "android", "list", "avds" };
-    Process p = Runtime.getRuntime().exec(cmd);
-    StringRedirectThread error = new StringRedirectThread(p.getErrorStream());
-    StringRedirectThread output = new StringRedirectThread(p.getInputStream());
+//    Process p = Runtime.getRuntime().exec(cmd);
+//    StringRedirectThread error = new StringRedirectThread(p.getErrorStream());
+//    StringRedirectThread output = new StringRedirectThread(p.getInputStream());
+    Pavarotti p = new Pavarotti(cmd);
 
     try {
       int result = p.waitFor();
       //System.out.println("res is " + result);
       if (result == 0) {
-        String[] lines = output.getLines();
+//        String[] lines = output.getLines();
+        String[] lines = p.getOutputLines();
         //PApplet.println(lines);
         for (String line : lines) {
           String[] m = PApplet.match(line, "\\s+Name:\\s+(\\S+)");
@@ -121,9 +127,7 @@ public class Device {
           }
         }
       } else {
-        for (String s : error.getLines()) {
-          System.err.println(s);
-        }
+        p.printLines();
       }
     } catch (InterruptedException ie) { }
     
@@ -226,5 +230,82 @@ public class Device {
       } while (result != 0 && attempts < 5);
       
     } catch (InterruptedException ie) { }
+  }
+  
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+  
+
+  static protected String[] list() throws IOException {
+    String[] cmd = { "adb", "devices" };
+    Pavarotti p = new Pavarotti(cmd);
+//    Process p = Runtime.getRuntime().exec(cmd);
+//    StringRedirectThread error = new StringRedirectThread(p.getErrorStream());
+//    StringRedirectThread output = new StringRedirectThread(p.getInputStream());
+
+    try {
+      int result = p.waitFor();
+      if (result == 0) {
+        String[] lines = p.getOutputLines();
+        // First line starts "List of devices", last line is blank.
+
+        // when an emulator is started with a debug port, then it shows up 
+        // in the list of devices.
+
+//        List of devices attached 
+//        HT91MLC00031  device
+//        emulator-5554 offline
+
+//        List of devices attached 
+//        HT91MLC00031  device
+//        emulator-5554 device
+        
+//        for (String s : lines) {
+//          System.out.println("Device.list(): '" + s + ".");
+//        }
+        
+        if (lines == null || lines.length == 0) {
+          // result was 0, so we're ok, but this is odd.
+          System.out.println("No devices found.");
+          return new String[] { };
+        }
+
+        if (lines[0].startsWith("* daemon not running. starting it now *")) {
+          // just pretend he didn't say that.
+          lines = PApplet.subset(lines, 1);
+        }
+        
+        if (lines[0].startsWith("* daemon started successfully *")) {
+          // ignore that too
+          lines = PApplet.subset(lines, 1);
+        }
+
+        // might read "List of devices attached"
+        if (!lines[0].startsWith("List of devices") ||
+            lines[lines.length-1].trim().length() != 0) {
+          Base.showWarning("Android Error", ADB_DEVICES_ERROR, null);
+        }
+        String[] devices = new String[lines.length - 2];
+        int deviceIndex = 0;
+        for (int i = 1; i < lines.length - 1; i++) {
+          int tab = lines[i].indexOf('\t');
+          if (tab != -1) {
+            devices[deviceIndex++] = lines[i].substring(0, tab);
+          } else if (lines[i].trim().length() != 0) {
+            System.out.println("Unknown “adb devices” response: " + lines[i]);
+          }
+        }
+        devices = PApplet.subset(devices, 0, deviceIndex);
+        return devices;
+
+      } else {
+        for (String s : p.getErrorLines()) {
+          System.err.println(s);
+        }
+      }
+    } catch (InterruptedException ie) { 
+      // ignored, just other thread fun 
+    }
+    return null;
   }
 }
