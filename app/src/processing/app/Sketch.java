@@ -1231,14 +1231,6 @@ public class Sketch {
     // 1. concatenate all .pde files to the 'main' pde
     //    store line number for starting point of each code bit
 
-    // Unfortunately, the header has to be written on a single line, because
-    // there's no way to determine how long it will be until the code has
-    // already been preprocessed. The header will vary in length based on
-    // the programming mode (STATIC, ACTIVE, or JAVA), which is determined
-    // by the preprocessor. So the preprocOffset for the primary class remains
-    // zero, even though it'd be nice to have a legitimate offset, and be able
-    // to remove the 'pretty' boolean for preproc.write().
-
     StringBuffer bigCode = new StringBuffer();
     int bigCount = 0;
     for (SketchCode sc : code) {
@@ -1249,6 +1241,7 @@ public class Sketch {
         bigCount += sc.getLineCount();
       }
     }
+    System.out.println(bigCode.toString());
 
     // Note that the headerOffset isn't applied until compile and run, because
     // it only applies to the code after it's been written to the .java file.
@@ -1462,60 +1455,64 @@ public class Sketch {
    * @return A RunnerException to be sent to the editor, or null if it wasn't
    *         possible to place the exception to the sketch code.
    */
-  public RunnerException placeExceptionAlt(String message, 
-                                        String filename, int line) {
-    String appletJavaFile = appletClassName + ".java";
-    SketchCode errorCode = null;
-    if (filename.equals(appletJavaFile)) {
-      for (SketchCode code : getCode()) {
-        if (code.isExtension("pde")) {
-          if (line >= code.getPreprocOffset()) {
-            errorCode = code;
-          }
-        }
-      }
-    } else {
-      for (SketchCode code : getCode()) {
-        if (code.isExtension("java")) {
-          if (filename.equals(code.getFileName())) {
-            errorCode = code;
-          }
-        }
-      }
-    }
-    int codeIndex = getCodeIndex(errorCode);
-
-    if (codeIndex != -1) {
-      //System.out.println("got line num " + lineNumber);
-      // in case this was a tab that got embedded into the main .java
-      line -= getCode(codeIndex).getPreprocOffset();
-
-      // lineNumber is 1-indexed, but editor wants zero-indexed
-      line--;
-
-      // getMessage() will be what's shown in the editor
-      RunnerException exception = 
-        new RunnerException(message, codeIndex, line, -1);
-      exception.hideStackTrace();
-      return exception;
-    }
-    return null;
-  }
+//  public RunnerException placeExceptionAlt(String message, 
+//                                        String filename, int line) {
+//    String appletJavaFile = appletClassName + ".java";
+//    SketchCode errorCode = null;
+//    if (filename.equals(appletJavaFile)) {
+//      for (SketchCode code : getCode()) {
+//        if (code.isExtension("pde")) {
+//          if (line >= code.getPreprocOffset()) {
+//            errorCode = code;
+//          }
+//        }
+//      }
+//    } else {
+//      for (SketchCode code : getCode()) {
+//        if (code.isExtension("java")) {
+//          if (filename.equals(code.getFileName())) {
+//            errorCode = code;
+//          }
+//        }
+//      }
+//    }
+//    int codeIndex = getCodeIndex(errorCode);
+//
+//    if (codeIndex != -1) {
+//      //System.out.println("got line num " + lineNumber);
+//      // in case this was a tab that got embedded into the main .java
+//      line -= getCode(codeIndex).getPreprocOffset();
+//
+//      // lineNumber is 1-indexed, but editor wants zero-indexed
+//      line--;
+//
+//      // getMessage() will be what's shown in the editor
+//      RunnerException exception = 
+//        new RunnerException(message, codeIndex, line, -1);
+//      exception.hideStackTrace();
+//      return exception;
+//    }
+//    return null;
+//  }
   
 
   /**
-   * @param message error message associated
-   * @param dotJavaFilename name of the .java file where the error was found
-   * @param dotJavaLine line where error occurred (zero indexed!)
-   * @return
+   * Map an error from a set of processed .java files back to its location
+   * in the actual sketch.
+   * @param message The error message.
+   * @param filename The .java file where the exception was found.
+   * @param line Line number of the .java file for the exception (0-indexed!)
+   * @return A RunnerException to be sent to the editor, or null if it wasn't
+   *         possible to place the exception to the sketch code.
    */
   public RunnerException placeException(String message, 
-                                        String dotJavaFilename, int dotJavaLine) {
+                                        String dotJavaFilename, 
+                                        int dotJavaLine) {
     int codeIndex = 0; //-1;
     int codeLine = -1;
 
-    System.out.println("placing " + dotJavaFilename + " " + dotJavaLine);
-    System.out.println("code count is " + getCodeCount());
+//    System.out.println("placing " + dotJavaFilename + " " + dotJavaLine);
+//    System.out.println("code count is " + getCodeCount());
 
     // first check to see if it's a .java file
     for (int i = 0; i < getCodeCount(); i++) {
@@ -1529,6 +1526,7 @@ public class Sketch {
     }
 
     // if it's not a .java file, codeIndex will still be 0
+    // this section searches through the list of .pde files
     if (codeIndex == 0) {  // main class, figure out which tab
       for (int i = 0; i < getCodeCount(); i++) {
         SketchCode code = getCode(i);
@@ -1544,8 +1542,12 @@ public class Sketch {
         }
       }
     }
-    if (codeLine == -1) {
-      // could not find a proper line number, so deal with this differently
+    // could not find a proper line number, so deal with this differently.
+    // but if it was in fact the .java file we're looking for, though, 
+    // send the error message through.
+    // this is necessary because 'import' statements will be at a line
+    // that has a lower number than the preproc offset, for instance.
+    if (codeLine == -1 && !dotJavaFilename.equals(name + ".java")) {
       return null;
     }
     return new RunnerException(message, codeIndex, codeLine, 0, false);
