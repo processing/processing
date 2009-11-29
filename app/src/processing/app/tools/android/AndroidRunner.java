@@ -25,9 +25,7 @@ package processing.app.tools.android;
 
 import processing.app.*;
 import processing.app.debug.*;
-import processing.core.*;
 
-import java.awt.Point;
 import java.io.*;
 import java.util.*;
 
@@ -265,13 +263,13 @@ public class AndroidRunner extends Runner {
 //    ((Connector.Argument) arguments.get("timeout")).setValue("5000");
 
     try {
-      PApplet.println(connector);
-      PApplet.println(arguments);
+//      PApplet.println(connector);
+//      PApplet.println(arguments);
 
-      PApplet.println("attaching now...");
+//      PApplet.println("attaching now...");
       //return connector.attach(arguments);
       VirtualMachine machine = connector.attach(arguments);
-      PApplet.println("attached");
+//      PApplet.println("attached");
       return machine;
       
     } catch (IOException ioe) {
@@ -414,21 +412,16 @@ public class AndroidRunner extends Runner {
   // This may be called more than one time per error in the VM,
   // presumably because exceptions might be wrapped inside others,
   // and this will fire for both.
+  /*
   protected void reportException(String message, ThreadReference thread) {
     try {
-//      int codeIndex = -1;
-//      int lineNumber = -1;
-
-      // Any of the thread.blah() methods can throw an AbsentInformationEx
-      // if that bit of data is missing. If so, just write out the error
-      // message to the console.
-
       Sketch sketch = editor.getSketch();
-//      String appletClassName = sketch.getName();  // TODO * not yet correct! * 
-
+      
+      // a bit for debugging
 //      for (StackFrame frame : thread.frames()) {
 //        System.out.println("frame: " + frame);
 //      }
+
       List<StackFrame> frames = thread.frames();
       for (StackFrame frame : frames) {
 //        System.out.println("frame: " + frame);
@@ -440,11 +433,16 @@ public class AndroidRunner extends Runner {
           sketch.placeException(message, filename, lineNumber);
         if (rex != null) {
           listener.statusError(rex);
-        } else {
-          listener.statusError(message);
+          return;
         }
       }
+      // Give up, nothing found inside the pile of stack frames
+      listener.statusError(message);
+
     } catch (AbsentInformationException e) {
+      // Any of the thread.blah() methods can throw an AbsentInformationEx
+      // if that bit of data is missing. If so, just write out the error
+      // message to the console.
       //e.printStackTrace();  // not useful
       exception = new RunnerException(message);
       exception.hideStackTrace();
@@ -454,8 +452,10 @@ public class AndroidRunner extends Runner {
       e.printStackTrace();
     }
   }
+  */
 
 
+  /*
   public void close() {
     // TODO make sure stop() has already been called to exit the sketch
 
@@ -472,11 +472,13 @@ public class AndroidRunner extends Runner {
       vm = null;
     }
   }
+  */
 
 
   // made synchronized for rev 87
   // attempted to remove synchronized for 0136 to fix bug #775 (no luck tho)
   // http://dev.processing.org/bugs/show_bug.cgi?id=775
+  /*
   synchronized public void message(String s) {
     //System.out.println("M" + s.length() + ":" + s.trim()); // + "MMM" + s.length());
 
@@ -509,30 +511,27 @@ public class AndroidRunner extends Runner {
 
     // Removed while doing cleaning for 0145,
     // it seems that this is never actually printed out.
-    /*
     // this is PApplet sending a message saying "i'm about to spew
     // a stack trace because an error occurred during PApplet.run()"
-    if (s.indexOf(PApplet.LEECH_WAKEUP) == 0) {
-      // newMessage being set to 'true' means that the next time
-      // message() is called, expect the first line of the actual
-      // error message & stack trace to be sent from the applet.
-      newMessage = true;
-      return;  // this line ignored
-    }
-    */
+//    if (s.indexOf(PApplet.LEECH_WAKEUP) == 0) {
+//      // newMessage being set to 'true' means that the next time
+//      // message() is called, expect the first line of the actual
+//      // error message & stack trace to be sent from the applet.
+//      newMessage = true;
+//      return;  // this line ignored
+//    }
 
     // these are used for debugging, in case there are concerns
     // that some errors aren't coming through properly
-    /*
-    if (s.length() > 2) {
-      System.err.println(newMessage);
-      System.err.println("message " + s.length() + ":" + s);
-    }
-    */
+//    if (s.length() > 2) {
+//      System.err.println(newMessage);
+//      System.err.println("message " + s.length() + ":" + s);
+//    }
     // always shove out the mesage, since it might not fall under
     // the same setup as we're expecting
     System.err.print(s);
     //System.err.println("[" + s.length() + "] " + s);
     System.err.flush();
   }
+  */
 }

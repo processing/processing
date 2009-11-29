@@ -164,6 +164,8 @@ public class Build {
     try {
       // need to change to a better set of imports here
 
+      // grab code from current editing window
+      sketch.prepare(); 
       className = sketch.preprocess(buildPath, new Preproc());
       if (className != null) {
         File androidXML = new File(androidFolder, "AndroidManifest.xml");
