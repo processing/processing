@@ -40,8 +40,8 @@ import processing.core.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
-  static final int REVISION = 172;
-  static String VERSION_NAME = "0172";
+  static final int REVISION = 173;
+  static String VERSION_NAME = "0173";
 
   static HashMap<Integer, String> platformNames = new HashMap<Integer, String>();
   static {
@@ -98,7 +98,7 @@ public class Base {
 //  ArrayList editors = Collections.synchronizedList(new ArrayList<Editor>());
   Editor activeEditor;
 
-  
+
   static public void main(String args[]) {
     try {
       File versionFile = getContentFile("lib/version.txt");
@@ -1215,8 +1215,8 @@ public class Base {
   static public Platform getPlatform() {
     return platform;
   }
-  
-  
+
+
   static public String getPlatformName() {
     String osname = System.getProperty("os.name");
 
@@ -1672,9 +1672,9 @@ public class Base {
   // ...................................................................
 
 
- 
+
   // incomplete
-  static public int showYesNoCancelQuestion(Editor editor, String title, 
+  static public int showYesNoCancelQuestion(Editor editor, String title,
                                             String primary, String secondary) {
     if (!Base.isMacOS()) {
       int result =
@@ -1736,7 +1736,7 @@ public class Base {
       }
     }
   }
-  
+
 
 //if (result == JOptionPane.YES_OPTION) {
   //
@@ -1750,10 +1750,10 @@ public class Base {
 //        throw new IllegalStateException();
 //      }
 
-  static public int showYesNoQuestion(Editor editor, String title, 
+  static public int showYesNoQuestion(Editor editor, String title,
                                             String primary, String secondary) {
     if (!Base.isMacOS()) {
-      return JOptionPane.showConfirmDialog(editor, 
+      return JOptionPane.showConfirmDialog(editor,
                                            primary + "\n" + secondary, title,
                                            JOptionPane.YES_NO_OPTION,
                                            JOptionPane.QUESTION_MESSAGE);
@@ -1791,7 +1791,7 @@ public class Base {
       }
     }
   }
-  
+
 
   /**
    * Retrieve a path to something in the Processing folder. Eventually this
