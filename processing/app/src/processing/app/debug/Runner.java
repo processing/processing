@@ -431,7 +431,6 @@ public class Runner implements MessageConsumer {
       if (editor != null) {
         editor.internalRunnerClosed();
       }
-
     } catch (InterruptedException exc) {
       // we don't interrupt
     }
@@ -440,42 +439,10 @@ public class Runner implements MessageConsumer {
   }
 
 
-  /**
-   * Find a com.sun.jdi.CommandLineLaunch connector
-   */
-  /*
-  protected LaunchingConnector findLaunchingConnector(String connectorName) {
-    //VirtualMachineManager mgr = Bootstrap.virtualMachineManager();
-
-    // Get the default connector.
-    // Not useful here since they all need different args.
-//      System.out.println(Bootstrap.virtualMachineManager().defaultConnector());
-//      return Bootstrap.virtualMachineManager().defaultConnector();
-
-    List connectors = Bootstrap.virtualMachineManager().allConnectors();
-
-    // code to list available connectors
-//    Iterator iter2 = connectors.iterator();
-//    while (iter2.hasNext()) {
-//      Connector connector = (Connector)iter2.next();
-//      System.out.println("connector name is " + connector.name());
-//    }
-
-    Iterator iter = connectors.iterator();
-    while (iter.hasNext()) {
-      Connector connector = (Connector)iter.next();
-      if (connector.name().equals(connectorName)) {
-        return (LaunchingConnector)connector;
-      }
-    }
-    throw new Error("No launching connector");
-  }
-  */
-  
   protected Connector findConnector(String connectorName) {
     List connectors = Bootstrap.virtualMachineManager().allConnectors();
 
-    // code to list available connectors
+    // debug: code to list available connectors
 //    Iterator iter2 = connectors.iterator();
 //    while (iter2.hasNext()) {
 //      Connector connector = (Connector)iter2.next();
@@ -555,117 +522,56 @@ public class Runner implements MessageConsumer {
   }
 
 
-  // This may be called more than one time per error in the VM,
+  // TODO: This may be called more than one time per error in the VM,
   // presumably because exceptions might be wrapped inside others,
-  // and this will fire for both.  
+  // and this will fire for both.
   protected void reportException(String message, ThreadReference thread) {
-    try {
-      RunnerException rex = searchStackForSketchError(message, thread);
-      if (rex != null) {
-        listener.statusError(rex);
-      }
-    } catch (IncompatibleThreadStateException itse) {
-      itse.printStackTrace();
-    }
-    listener.statusError(message);
+    listener.statusError(findException(message, thread));
   }
   
-  
-  RunnerException searchStackForSketchError(String message, ThreadReference thread) 
-  throws IncompatibleThreadStateException {
-    // Any of the thread.blah() methods can throw an AbsentInformationEx
-    // if that bit of data is missing. If so, just write out the error
-    // message to the console.
-    List<StackFrame> frames = thread.frames();
-    for (StackFrame frame : frames) {
-      //System.out.println("frame: " + frame);
-      Location location = frame.location();
-      try {
-        String filename = location.sourceName();
-        int line = location.lineNumber() - 1;
-        RunnerException rex = sketch.placeException(message, filename, line);
-        if (rex != null) {
-          return rex;
-        }
-      } catch (AbsentInformationException e) {
-        // ignore this and move on
-        e.printStackTrace();
-      }
-    }
-    return null;
-  }
 
-  
-  protected void reportException_old(String message, ThreadReference thread) {
+  /**
+   * Move through a list of stack frames, searching for references to code
+   * found in the current sketch. Return with a RunnerException that contains
+   * the location of the error, or if nothing is found, just return with a
+   * RunnerException that wraps the error message itself.
+   */
+  RunnerException findException(String message, ThreadReference thread) {
     try {
-//      int codeIndex = -1;
-//      int lineNumber = -1;
+      // use to dump the stack for debugging
+//    for (StackFrame frame : thread.frames()) {
+//      System.out.println("frame: " + frame);
+//    }
 
-      // Any of the thread.blah() methods can throw an AbsentInformationEx
-      // if that bit of data is missing. If so, just write out the error
-      // message to the console.
       List<StackFrame> frames = thread.frames();
       for (StackFrame frame : frames) {
-//        System.out.println("frame: " + frame);
-        Location location = frame.location();
-        String filename = location.sourceName();
-        int lineNumber = location.lineNumber();
-        
-        RunnerException rex = 
-          sketch.placeException(message, filename, lineNumber);
-        if (rex != null) {
-          listener.statusError(rex);
-        } else {
-          listener.statusError(message);
-        }
-
-        /*
-        String appletJavaFile = appletClassName + ".java";
-        SketchCode errorCode = null;
-        if (filename.equals(appletJavaFile)) {
-          for (SketchCode code : sketch.getCode()) {
-            if (code.isExtension("pde")) {
-              if (lineNumber >= code.getPreprocOffset()) {
-                errorCode = code;
-              }
-            }
+        try {
+          Location location = frame.location();
+          String filename = null;
+          filename = location.sourceName();
+          int lineNumber = location.lineNumber() - 1;
+          RunnerException rex = 
+            sketch.placeException(message, filename, lineNumber);
+          if (rex != null) {
+            return rex;
           }
-        } else {
-          for (SketchCode code : sketch.getCode()) {
-            if (code.isExtension("java")) {
-              if (filename.equals(code.getFileName())) {
-                errorCode = code;
-              }
-            }
-          }
-        }
-        codeIndex = sketch.getCodeIndex(errorCode);
-
-        if (codeIndex != -1) {
-          //System.out.println("got line num " + lineNumber);
-          // in case this was a tab that got embedded into the main .java
-          lineNumber -= sketch.getCode(codeIndex).getPreprocOffset();
-
-          // lineNumber is 1-indexed, but editor wants zero-indexed
-          lineNumber--;
-
-          // getMessage() will be what's shown in the editor
-          exception = new RunnerException(message, codeIndex, lineNumber, -1);
+        } catch (AbsentInformationException e) {
+          // Any of the thread.blah() methods can throw an AbsentInformationEx
+          // if that bit of data is missing. If so, just write out the error
+          // message to the console.
+          //e.printStackTrace();  // not useful
+          exception = new RunnerException(message);
           exception.hideStackTrace();
           listener.statusError(exception);
-          return;
         }
-        */
       }
-    } catch (AbsentInformationException e) {
-      //e.printStackTrace();  // not useful
-      exception = new RunnerException(message);
-      exception.hideStackTrace();
-      listener.statusError(exception);
-
     } catch (IncompatibleThreadStateException e) {
+      // This shouldn't happen, but if it does, print the exception in case
+      // it's something that needs to be debugged separately.
       e.printStackTrace();
     }
+    // Give up, nothing found inside the pile of stack frames
+    return new RunnerException(message);
   }
 
 

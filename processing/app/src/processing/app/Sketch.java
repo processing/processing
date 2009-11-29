@@ -1147,7 +1147,7 @@ public class Sketch {
    * When running from the editor, take care of preparations before running 
    * the build. 
    */
-  protected void prepare() {
+  public void prepare() {
     // make sure the user didn't hide the sketch folder
     ensureExistence();
 
@@ -1241,7 +1241,6 @@ public class Sketch {
         bigCount += sc.getLineCount();
       }
     }
-    System.out.println(bigCode.toString());
 
     // Note that the headerOffset isn't applied until compile and run, because
     // it only applies to the code after it's been written to the .java file.
@@ -1521,24 +1520,29 @@ public class Sketch {
         if (dotJavaFilename.equals(code.getFileName())) {
           codeIndex = i;
           codeLine = dotJavaLine;
+          return new RunnerException(message, codeIndex, codeLine);
         }
       }
     }
 
+    // If not the preprocessed file at this point, then need to get out
+    if (!dotJavaFilename.equals(name + ".java")) {
+      return null;
+    }
+
     // if it's not a .java file, codeIndex will still be 0
     // this section searches through the list of .pde files
-    if (codeIndex == 0) {  // main class, figure out which tab
-      for (int i = 0; i < getCodeCount(); i++) {
-        SketchCode code = getCode(i);
+    codeIndex = 0;
+    for (int i = 0; i < getCodeCount(); i++) {
+      SketchCode code = getCode(i);
 
-        if (code.isExtension("pde")) {
-//          System.out.println("preproc offset is " + code.getPreprocOffset());
-//          System.out.println("looking for line " + dotJavaLine);
-          if (code.getPreprocOffset() <= dotJavaLine) {
-            codeIndex = i;
-//            System.out.println("i'm thinkin file " + i);
-            codeLine = dotJavaLine - code.getPreprocOffset();
-          }
+      if (code.isExtension("pde")) {
+//        System.out.println("preproc offset is " + code.getPreprocOffset());
+//        System.out.println("looking for line " + dotJavaLine);
+        if (code.getPreprocOffset() <= dotJavaLine) {
+          codeIndex = i;
+//          System.out.println("i'm thinkin file " + i);
+          codeLine = dotJavaLine - code.getPreprocOffset();
         }
       }
     }
@@ -1547,10 +1551,10 @@ public class Sketch {
     // send the error message through.
     // this is necessary because 'import' statements will be at a line
     // that has a lower number than the preproc offset, for instance.
-    if (codeLine == -1 && !dotJavaFilename.equals(name + ".java")) {
-      return null;
-    }
-    return new RunnerException(message, codeIndex, codeLine, 0, false);
+//    if (codeLine == -1 && !dotJavaFilename.equals(name + ".java")) {
+//      return null;
+//    }
+    return new RunnerException(message, codeIndex, codeLine);
   }
 
 
