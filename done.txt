@@ -1,4 +1,13 @@
-0171 pde
+0172 pde (private)
+X use xdg-open as launcher on linux
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1358
+X change to different class id for export and export-opengl
+X Default wildcard imports are causing naming conflicts
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1103
+X imports inside comments are being included
+
+
+0171 pde (1.0.9)
 X ugh, remove the dimmed menus
 X   http://dev.processing.org/bugs/show_bug.cgi?id=786
 

@@ -1,4 +1,8 @@
-0171 core
+0172 core (private)
+X no changes to the core (or were there?) 
+
+
+0171 core (1.0.9)
 X Blurred PImages in OPENGL sketches
 X   removed NPOT texture support (for further testing)
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1352
