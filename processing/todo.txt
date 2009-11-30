@@ -4,6 +4,8 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=1394
 X fix problem with Android HTML dialog box
 X   several <BR> items showing up when first loading
 
+_ automatically add version numbers to Info.plist
+_   would help with beta releases, and not having to edit by hand
 
 _ add warning message when not using a version of sun java w/ p5 on linux
 
