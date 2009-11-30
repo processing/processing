@@ -76,6 +76,7 @@ mkdir -p bin
     -cp ../build/linux/work/java/lib/tools.jar \
     com.sun.tools.javac.Main \
     -d bin -source 1.5 -target 1.5 \
+    -encoding UTF-8 \
     src/processing/core/*.java src/processing/xml/*.java
 #find bin -name "*~" -exec rm -f {} ';'
 rm -f ../build/linux/work/lib/core.jar
@@ -132,6 +133,7 @@ mkdir ../build/linux/work/classes
     -cp ../build/linux/work/java/lib/tools.jar \
     com.sun.tools.javac.Main \
     -source 1.5 -target 1.5 \
+    -encoding UTF-8 \
     -classpath ../build/linux/work/lib/core.jar:../build/linux/work/lib/antlr.jar:../build/linux/work/lib/ant.jar:../build/linux/work/lib/ant-launcher.jar:../build/linux/work/lib/ecj.jar:../build/linux/work/lib/jna.jar:../build/linux/work/java/lib/tools.jar \
     -d ../build/linux/work/classes \
     src/processing/app/*.java \
@@ -156,7 +158,7 @@ cd build/linux
 
 PLATFORM=linux
 
-JAVAC="../build/linux/work/java/bin/java -cp ../build/linux/work/java/lib/tools.jar com.sun.tools.javac.Main -source 1.5 -target 1.5"
+JAVAC="../build/linux/work/java/bin/java -cp ../build/linux/work/java/lib/tools.jar com.sun.tools.javac.Main -source 1.5 -target 1.5 -encoding UTF-8"
 CORE=../build/$PLATFORM/work/lib/core.jar
 LIBRARIES=../build/$PLATFORM/work/libraries
 

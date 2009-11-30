@@ -79,7 +79,9 @@ cd core
 perl preproc.pl
 
 mkdir -p bin
-javac -source 1.5 -target 1.5 -d bin \
+javac -source 1.5 -target 1.5 \
+  -encoding UTF-8 \
+  -d bin \
   src/processing/core/*.java \
   src/processing/xml/*.java
 
@@ -131,6 +133,7 @@ mkdir ../build/macosx/work/classes
 javac \
     -Xlint:deprecation \
     -source 1.5 -target 1.5 \
+    -encoding UTF-8 \
     -classpath "$RESOURCES/core.jar:$RESOURCES/antlr.jar:$RESOURCES/ant.jar:$RESOURCES/ant-launcher.jar:$RESOURCES/ecj.jar:$RESOURCES/jna.jar" \
     -d ../build/macosx/work/classes \
     src/processing/app/*.java \
@@ -159,7 +162,7 @@ PLATFORM=macosx
 
 
 CLASSPATH=$RESOURCES/core.jar
-JAVAC="javac -source 1.5 -target 1.5"
+JAVAC="javac -source 1.5 -target 1.5 -encoding UTF-8 -encoding UTF-8"
 LIBRARIES=$RESOURCES/libraries
 
 # move to processing/build 

@@ -1,4 +1,5 @@
 0173 pde (private)
+X change build scripts to use UTF-8 for encoding with javac
 
 
 _ add warning message when not using a version of sun java w/ p5 on linux
