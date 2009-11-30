@@ -1350,7 +1350,10 @@ public class PGraphics3D extends PGraphics {
     boolean bClipped = false;
     int clippedCount = 0;
 
-//    cameraNear = -8;
+    // This is a hack for temporary clipping. Clipping still needs to
+    // be implemented properly, however. Please help!
+    // http://dev.processing.org/bugs/show_bug.cgi?id=1393
+    cameraNear = -8;
     if (vertices[a][VZ] > cameraNear) {
       aClipped = true;
       clippedCount++;
@@ -1364,15 +1367,15 @@ public class PGraphics3D extends PGraphics {
       clippedCount++;
     }
     if (clippedCount == 0) {
-//        if (vertices[a][VZ] < cameraFar && 
-//                vertices[b][VZ] < cameraFar && 
+//        if (vertices[a][VZ] < cameraFar &&
+//                vertices[b][VZ] < cameraFar &&
 //                vertices[c][VZ] < cameraFar) {
       addTriangleWithoutClip(a, b, c);
 //        }
 
 //    } else if (true) {
 //        return;
-        
+
     } else if (clippedCount == 3) {
       // In this case there is only one visible point.            |/|
       // So we'll have to make two new points on the clip line   <| |
