@@ -82,6 +82,7 @@ mkdir -p bin
     -classpath "..\\build\\windows\\work\\java\\lib\\tools.jar" \
     com.sun.tools.javac.Main \
     -source 1.5 -target 1.5 -d bin \
+    -encoding UTF-8 \
     src/processing/core/*.java src/processing/xml/*.java
 
 rm -f ../build/windows/work/lib/core.jar
@@ -177,7 +178,7 @@ PLATFORM=windows
 #CLASSPATH="..\\build\\$PLATFORM\\work\\lib\\core.jar;..\\build\\$PLATFORM\\work\\java\\lib\\rt.jar"
 #CLASSPATH="..\\build\\$PLATFORM\\work\\lib\\core.jar"
 
-JAVAC="../build/windows/work/java/bin/java -classpath ..\\build\\windows\\work\\java\\lib\\tools.jar com.sun.tools.javac.Main -source 1.5 -target 1.5"
+JAVAC="../build/windows/work/java/bin/java -classpath ..\\build\\windows\\work\\java\\lib\\tools.jar com.sun.tools.javac.Main -source 1.5 -target 1.5 -encoding UTF-8"
 CORE="..\\build\\$PLATFORM\\work\\lib\\core.jar"
 LIBRARIES="..\\build\\$PLATFORM\\work\\libraries"
 
