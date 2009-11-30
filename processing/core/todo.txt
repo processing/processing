@@ -1,4 +1,7 @@
 0173 core
+X Re-enabled hack for temporary clipping. 
+X   Clipping still needs to be implemented properly, however. Please help!
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1393
 
 
 _ open up the pdf library more (philho)
@@ -434,11 +437,9 @@ _ images are losing pixels at the edges
 _   http://dev.processing.org/bugs/show_bug.cgi?id=102
 _ odd error with some pixels from images not drawing properly
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115681453
-_ clipping not yet completely implemented
+_ clipping not implemented
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1393
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114184516
-_ Stroking a rect() leaves off the upper right pixel
-_   http://dev.processing.org/bugs/show_bug.cgi?id=501
-_ clipping planes
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1058491568;start=0
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1052313604;start=0
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1095170607;start=0
@@ -450,6 +451,8 @@ _     or at least that things get ridiculously slow
 _     clipping issues here.. but also something in scan converter
 _     not clipping areas from offscreen
 _       huge geometry slows things way down
+_ Stroking a rect() leaves off the upper right pixel
+_   http://dev.processing.org/bugs/show_bug.cgi?id=501
 _ box is not opaque
 _   problem is that lines are drawn second
 _   one pixel lines have no z value.. argh
