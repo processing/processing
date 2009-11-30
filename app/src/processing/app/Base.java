@@ -1754,7 +1754,9 @@ public class Base {
                                             String primary, String secondary) {
     if (!Base.isMacOS()) {
       return JOptionPane.showConfirmDialog(editor,
-                                           primary + "\n" + secondary, title,
+                                           "<html><body>" +
+                                           "<b>" + primary + "</b>" + 
+                                           "<br>" + secondary, title,
                                            JOptionPane.YES_NO_OPTION,
                                            JOptionPane.QUESTION_MESSAGE);
     } else {
