@@ -32,6 +32,8 @@ cp -r ../shared/tools processing/
 cp ../../app/lib/antlr.jar processing/lib/
 cp ../../app/lib/ecj.jar processing/lib/
 cp ../../app/lib/jna.jar processing/lib/
+cp ../../app/lib/ant.jar processing/lib/
+cp ../../app/lib/ant-launcher.jar processing/lib/
 cp ../shared/revisions.txt processing/
 
 if [ $1 ]
