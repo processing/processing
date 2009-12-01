@@ -1,6 +1,8 @@
-0137 pde (private)
+0174 pde (private)
 X fix ant.jar/ant-launcher.jar error in the windows/linux build scripts
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1403
+
+svn copy svn://processing.org/trunk/processing svn://processing.org/tags/processing-01XX
 
 _ automatically add version numbers to Info.plist
 _   would help with beta releases, and not having to edit by hand
