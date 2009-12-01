@@ -20,6 +20,15 @@ P1 _ errors that happen inside events (e.g. keys) not highlighting lines
 P1 _   useful stack trace information not coming through.. why?
 P1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1384
 
+
+P2 _ separate "PApplet" into separate View and Activity classes
+P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1398
+P2 _ too many temporary objects (particularly w/ color) created with A2D
+P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1399
+P2 _ size() command is currently ignored in Android
+P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1397
+P2 _ Implement P3D, OpenGL, A3D for Android
+P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1396
 P2 _ android mode is currently per-editor (and clunky)
 P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1379
 P2 _ save state re: whether sketches are android or java mode (or others?)
@@ -33,6 +42,12 @@ P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1386
 P2 _ implement method for selecting donut or eclair AVD
 P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1390
 
+P3 _ remove unnecessary processing.xml.* code from android-core
+P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1400
+P3 _ remove processing.opengl.* classes and finish PGraphicsAndroid3D
+P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1401
+P3 _ remove legacy PGraphics3D class from processing.core.android
+P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1402
 P3 _ remove the need for a "Reset Android" menu option
 P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1392
 P3 _ don't require android tools to be installed already

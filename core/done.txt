@@ -1,3 +1,9 @@
+0173 core (private)
+X Re-enabled hack for temporary clipping. 
+X   Clipping still needs to be implemented properly, however. Please help!
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1393
+
+
 0172 core (private)
 X no changes to the core (or were there?) 
 

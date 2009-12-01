@@ -1,7 +1,4 @@
-0173 core
-X Re-enabled hack for temporary clipping. 
-X   Clipping still needs to be implemented properly, however. Please help!
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1393
+0174 core (private)
 
 
 _ open up the pdf library more (philho)
