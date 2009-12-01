@@ -40,8 +40,8 @@ import processing.core.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
-  static final int REVISION = 173;
-  static String VERSION_NAME = "0173";
+  static final int REVISION = 174;
+  static String VERSION_NAME = "0174";
 
   static HashMap<Integer, String> platformNames = new HashMap<Integer, String>();
   static {
@@ -1755,7 +1755,7 @@ public class Base {
     if (!Base.isMacOS()) {
       return JOptionPane.showConfirmDialog(editor,
                                            "<html><body>" +
-                                           "<b>" + primary + "</b>" + 
+                                           "<b>" + primary + "</b>" +
                                            "<br>" + secondary, title,
                                            JOptionPane.YES_NO_OPTION,
                                            JOptionPane.QUESTION_MESSAGE);
