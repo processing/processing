@@ -1,3 +1,10 @@
+0174 (private)
+X not handling key characters correctly (space bar, tab, others)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1405
+X why aren't mouse drag events coming through?
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1382
+
+
 P1 this is embarrassing, need to fix ASAP
 P2 need to fix before beta release
 P3 would like to fix before final release
@@ -7,6 +14,8 @@ P5 nice to have
 android bugs, sorted by priority
 http://dev.processing.org/bugs/buglist.cgi?bug_status=&field0-0-0=product&type0-0-0=substring&value0-0-0=android&field0-0-1=component&type0-0-1=substring&value0-0-1=android&field0-0-2=short_desc&type0-0-2=substring&value0-0-2=android&field0-0-3=status_whiteboard&type0-0-3=substring&value0-0-3=android&query_format=advanced&order=bugs.priority,bugs.bug_status%2Cbugs.bug_id&query_based_on=
 
+P1 _ app not pausing or closing when switching to another activity
+P1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1404
 P1 _ get stdout and stderr from the emulator/device
 P1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1381
 P1 _   how to do this via jdb?
@@ -14,8 +23,6 @@ P1 _   or is this jdi/jdwp?
 P1 _     connect to emulator with the proper io sockets
 P1 _       don't rely on getinput/getoutput from process (via logcat)
 P1 _     also connect to the external device when running code there
-P1 _ why aren't mouse drag events coming through?
-P1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1382
 P1 _ errors that happen inside events (e.g. keys) not highlighting lines
 P1 _   useful stack trace information not coming through.. why?
 P1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1384
