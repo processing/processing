@@ -193,7 +193,7 @@ public class Base {
 
   static protected void initPlatform() {
     try {
-      Class platformClass = Class.forName("processing.app.Platform");
+      Class<?> platformClass = Class.forName("processing.app.Platform");
       if (Base.isMacOS()) {
         platformClass = Class.forName("processing.app.macosx.Platform");
       } else if (Base.isWindows()) {
@@ -2075,7 +2075,7 @@ public class Base {
 
   static public String[] listFiles(File folder, boolean relative) {
     String path = folder.getAbsolutePath();
-    Vector vector = new Vector();
+    Vector<String> vector = new Vector<String>();
     listFiles(relative ? (path + File.separator) : "", path, vector);
     String outgoing[] = new String[vector.size()];
     vector.copyInto(outgoing);
@@ -2084,7 +2084,7 @@ public class Base {
 
 
   static protected void listFiles(String basePath,
-                                  String path, Vector vector) {
+                                  String path, Vector<String> vector) {
     File folder = new File(path);
     String list[] = folder.list();
     if (list == null) return;
