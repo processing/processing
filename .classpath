@@ -7,5 +7,7 @@
 	<classpathentry kind="lib" path="app/lib/apple.jar"/>
 	<classpathentry kind="lib" path="app/lib/ecj.jar"/>
 	<classpathentry kind="lib" path="app/lib/jna.jar"/>
+	<classpathentry kind="lib" path="app/lib/ant-launcher.jar"/>
+	<classpathentry kind="lib" path="app/lib/ant.jar"/>
 	<classpathentry kind="output" path="app/bin"/>
 </classpath>
