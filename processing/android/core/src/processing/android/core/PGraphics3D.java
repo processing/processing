@@ -197,19 +197,13 @@ public class PGraphics3D extends PGraphics {
   protected float bottomScreen;
   protected float nearPlane; //depth of near clipping plane
 
-  /** true if frustum has been called to set perspective, false if ortho */
-  private boolean frustumMode = false;
-
   /**
    * Use PSmoothTriangle for rendering instead of PTriangle?
    * Usually set by calling smooth() or noSmooth()
    */
   static protected boolean s_enableAccurateTextures = false; //maybe just use smooth instead?
 
-  /** Used for anti-aliased and perspective corrected rendering. */
-  public PSmoothTriangle smoothTriangle;
-
-
+  
   // ........................................................
 
   // pos of first vertex of current shape in vertices array
@@ -393,7 +387,6 @@ public class PGraphics3D extends PGraphics {
 
     line = new PLine(this);
     triangle = new PTriangle(this);
-    smoothTriangle = new PSmoothTriangle(this);
   }
 
 
@@ -1177,50 +1170,25 @@ public class PGraphics3D extends PGraphics {
         float bx2 = ox2-dx1;
         float by2 = oy2+dy1;
 
-        if (smooth) {
-          smoothTriangle.reset(3);
-          smoothTriangle.smooth = true;
-          smoothTriangle.interpARGB = true;  // ?
+        triangle.reset();
 
-          // render first triangle for thick line
-          smoothTriangle.setVertices(ax1, ay1, a[TZ],
-                               bx2, by2, b[TZ],
-                               ax2, ay2, a[TZ]);
-          smoothTriangle.setIntensities(a[SR], a[SG], a[SB], a[SA],
-                                  b[SR], b[SG], b[SB], b[SA],
-                                  a[SR], a[SG], a[SB], a[SA]);
-          smoothTriangle.render();
+        // render first triangle for thick line
+        triangle.setVertices(ax1, ay1, a[TZ],
+        		bx2, by2, b[TZ],
+        		ax2, ay2, a[TZ]);
+        triangle.setIntensities(a[SR], a[SG], a[SB], a[SA],
+        		b[SR], b[SG], b[SB], b[SA],
+        		a[SR], a[SG], a[SB], a[SA]);
+        triangle.render();
 
-          // render second triangle for thick line
-          smoothTriangle.setVertices(ax1, ay1, a[TZ],
-                               bx2, by2, b[TZ],
-                               bx1, by1, b[TZ]);
-          smoothTriangle.setIntensities(a[SR], a[SG], a[SB], a[SA],
-                                  b[SR], b[SG], b[SB], b[SA],
-                                  b[SR], b[SG], b[SB], b[SA]);
-          smoothTriangle.render();
-
-        } else {
-          triangle.reset();
-
-          // render first triangle for thick line
-          triangle.setVertices(ax1, ay1, a[TZ],
-                               bx2, by2, b[TZ],
-                               ax2, ay2, a[TZ]);
-          triangle.setIntensities(a[SR], a[SG], a[SB], a[SA],
-                                  b[SR], b[SG], b[SB], b[SA],
-                                  a[SR], a[SG], a[SB], a[SA]);
-          triangle.render();
-
-          // render second triangle for thick line
-          triangle.setVertices(ax1, ay1, a[TZ],
-                               bx2, by2, b[TZ],
-                               bx1, by1, b[TZ]);
-          triangle.setIntensities(a[SR], a[SG], a[SB], a[SA],
-                                  b[SR], b[SG], b[SB], b[SA],
-                                  b[SR], b[SG], b[SB], b[SA]);
-          triangle.render();
-        }
+        // render second triangle for thick line
+        triangle.setVertices(ax1, ay1, a[TZ],
+        		bx2, by2, b[TZ],
+        		bx1, by1, b[TZ]);
+        triangle.setIntensities(a[SR], a[SG], a[SB], a[SA],
+        		b[SR], b[SG], b[SB], b[SA],
+        		b[SR], b[SG], b[SB], b[SA]);
+        triangle.render();
 
       } else {
         line.reset();
@@ -2223,55 +2191,7 @@ public class PGraphics3D extends PGraphics {
       float cg = clamp(triangleColors[i][2][TRI_DIFFUSE_G] + triangleColors[i][2][TRI_SPECULAR_G]);
       float cb = clamp(triangleColors[i][2][TRI_DIFFUSE_B] + triangleColors[i][2][TRI_SPECULAR_B]);
 
-      // ACCURATE TEXTURE CODE
-      boolean failedToPrecalc = false;
-      if (s_enableAccurateTextures && frustumMode){
-        boolean textured = true;
-        smoothTriangle.reset(3);
-        smoothTriangle.smooth = true;
-        smoothTriangle.interpARGB = true;
-        smoothTriangle.setIntensities(ar, ag, ab, a[A],
-                                      br, bg, bb, b[A],
-                                      cr, cg, cb, c[A]);
-        if (tex > -1 && textures[tex] != null) {
-          smoothTriangle.setCamVertices(a[VX], a[VY], a[VZ],
-                                        b[VX], b[VY], b[VZ],
-                                        c[VX], c[VY], c[VZ]);
-          smoothTriangle.interpUV = true;
-          smoothTriangle.texture(textures[tex]);
-          float umult = textures[tex].width;  // apparently no check for textureMode is needed here
-          float vmult = textures[tex].height;
-          smoothTriangle.vertices[0][U] = a[U]*umult;
-          smoothTriangle.vertices[0][V] = a[V]*vmult;
-          smoothTriangle.vertices[1][U] = b[U]*umult;
-          smoothTriangle.vertices[1][V] = b[V]*vmult;
-          smoothTriangle.vertices[2][U] = c[U]*umult;
-          smoothTriangle.vertices[2][V] = c[V]*vmult;
-        } else {
-          smoothTriangle.interpUV = false;
-          textured = false;
-        }
-
-        smoothTriangle.setVertices(a[TX], a[TY], a[TZ],
-                                   b[TX], b[TY], b[TZ],
-                                   c[TX], c[TY], c[TZ]);
-
-
-        if (!textured || smoothTriangle.precomputeAccurateTexturing()){
-                smoothTriangle.render();
-        } else {
-                // Something went wrong with the precomputation,
-                // so we need to fall back on normal PTriangle
-                // rendering.
-                failedToPrecalc = true;
-        }
-      }
-
       // Normal triangle rendering
-      // Note: this is not an end-if from the smoothed texturing mode
-      // because it's possible that the precalculation will fail and we
-      // need to fall back on normal rendering.
-      if (!s_enableAccurateTextures || failedToPrecalc || (frustumMode == false)){
       if (tex > -1 && textures[tex] != null) {
         triangle.setTexture(textures[tex]);
         triangle.setUV(a[U], a[V], b[U], b[V], c[U], c[V]);
@@ -2285,26 +2205,7 @@ public class PGraphics3D extends PGraphics {
                            b[TX], b[TY], b[TZ],
                            c[TX], c[TY], c[TZ]);
 
-          triangle.render();
-      }
-
-      /*
-      // removing for 0149 with the return of P2D
-      if (drawing2D() && shifted){
-        a[TX] -= shift;
-        a[TY] -= shift;
-        a[VX] -= shift*a[VW];
-        a[VY] -= shift*a[VW];
-        b[TX] -= shift;
-        b[TY] -= shift;
-        b[VX] -= shift*b[VW];
-        b[VY] -= shift*b[VW];
-        c[TX] -= shift;
-        c[TY] -= shift;
-        c[VX] -= shift*c[VW];
-        c[VY] -= shift*c[VW];
-      }
-      */
+      triangle.render();
     }
   }
 
@@ -3460,8 +3361,6 @@ public class PGraphics3D extends PGraphics {
                    0, y, 0, ty,
                    0, 0, z, tz,
                    0, 0, 0, 1);
-
-    frustumMode = false;
   }
 
 
@@ -3520,7 +3419,6 @@ public class PGraphics3D extends PGraphics {
     bottomScreen = bottom;
     topScreen = top;
     nearPlane = znear;
-    frustumMode = true;
 
     //System.out.println(projection);
     projection.set((2*znear)/(right-left), 0, (right+left)/(right-left), 0,
