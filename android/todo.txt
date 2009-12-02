@@ -27,7 +27,6 @@ P1 _ errors that happen inside events (e.g. keys) not highlighting lines
 P1 _   useful stack trace information not coming through.. why?
 P1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1384
 
-
 P2 _ separate "PApplet" into separate View and Activity classes
 P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1398
 P2 _ too many temporary objects (particularly w/ color) created with A2D
@@ -66,3 +65,6 @@ P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1385
 P3 _ for now, only runs on the first device (findDevice()) found
 P3 _   --> implement selector to choose the default device for debugging
 P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1389
+P3 _ mouseClicked() is currently missing
+P3 _   implement tap methods to handle mouseClicked() 
+P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1406
