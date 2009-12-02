@@ -126,7 +126,7 @@ public class Runner implements MessageConsumer {
 
 
   protected String[] getMachineParams() {
-    ArrayList params = new ArrayList();
+    ArrayList<String> params = new ArrayList<String>();
 
     //params.add("-Xint"); // interpreted mode
     //params.add("-Xprof");  // profiler

@@ -28,6 +28,7 @@ import java.awt.event.*;
 import java.io.*;
 import javax.swing.*;
 import javax.swing.text.*;
+
 import java.util.*;
 
 
@@ -389,7 +390,7 @@ public class EditorConsole extends JScrollPane {
  * swing event thread, so they need to be synchronized
  */
 class BufferedStyledDocument extends DefaultStyledDocument {
-  ArrayList elements = new ArrayList();
+  ArrayList<ElementSpec> elements = new ArrayList<ElementSpec>();
   int maxLineLength, maxLineCount;
   int currentLineLength = 0;
   boolean needLineBreak = false;

@@ -22,7 +22,6 @@
 
 package processing.app;
 
-
 import processing.app.debug.*;
 import processing.app.syntax.*;
 import processing.app.tools.*;
@@ -248,64 +247,7 @@ public class Editor extends JFrame implements RunnerListener {
     listener = new EditorListener(this, textarea);
     pain.add(box);
 
-    pain.setTransferHandler(new TransferHandler() {
-
-        public boolean canImport(JComponent dest, DataFlavor[] flavors) {
-          return true;
-        }
-
-        public boolean importData(JComponent src, Transferable transferable) {
-          int successful = 0;
-
-          try {
-            DataFlavor uriListFlavor =
-              new DataFlavor("text/uri-list;class=java.lang.String");
-
-            if (transferable.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
-              java.util.List list = (java.util.List)
-                transferable.getTransferData(DataFlavor.javaFileListFlavor);
-              for (int i = 0; i < list.size(); i++) {
-                File file = (File) list.get(i);
-                if (sketch.addFile(file)) {
-                  successful++;
-                }
-              }
-            } else if (transferable.isDataFlavorSupported(uriListFlavor)) {
-              //System.out.println("uri list");
-              String data = (String)transferable.getTransferData(uriListFlavor);
-              String[] pieces = PApplet.splitTokens(data, "\r\n");
-              //PApplet.println(pieces);
-              for (int i = 0; i < pieces.length; i++) {
-                if (pieces[i].startsWith("#")) continue;
-
-                String path = null;
-                if (pieces[i].startsWith("file:///")) {
-                  path = pieces[i].substring(7);
-                } else if (pieces[i].startsWith("file:/")) {
-                  path = pieces[i].substring(5);
-                }
-                if (sketch.addFile(new File(path))) {
-                  successful++;
-                }
-              }
-            }
-          } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-          }
-
-          if (successful == 0) {
-            statusError("No files were added to the sketch.");
-
-          } else if (successful == 1) {
-            statusNotice("One file added to the sketch.");
-
-          } else {
-            statusNotice(successful + " files added to the sketch.");
-          }
-          return true;
-        }
-      });
+    pain.setTransferHandler(new FileDropHandler());
 
 //    System.out.println("t1");
 
@@ -332,6 +274,71 @@ public class Editor extends JFrame implements RunnerListener {
 
     // All set, now show the window
     //setVisible(true);
+  }
+  
+  
+  /**
+   * Handles files dragged & dropped from the desktop and into the editor
+   * window. Dragging files into the editor window is the same as using
+   * "Sketch &rarr; Add File" for each file.
+   */
+  class FileDropHandler extends TransferHandler {
+    public boolean canImport(JComponent dest, DataFlavor[] flavors) {
+      return true;
+    }
+
+    @SuppressWarnings("unchecked")
+    public boolean importData(JComponent src, Transferable transferable) {
+      int successful = 0;
+
+      try {
+        DataFlavor uriListFlavor =
+          new DataFlavor("text/uri-list;class=java.lang.String");
+
+        if (transferable.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
+          java.util.List list = (java.util.List)
+            transferable.getTransferData(DataFlavor.javaFileListFlavor);
+          for (int i = 0; i < list.size(); i++) {
+            File file = (File) list.get(i);
+            if (sketch.addFile(file)) {
+              successful++;
+            }
+          }
+        } else if (transferable.isDataFlavorSupported(uriListFlavor)) {
+          // Some platforms (Mac OS X and Linux, when this began) preferred
+          // this method of moving files. 
+          String data = (String)transferable.getTransferData(uriListFlavor);
+          String[] pieces = PApplet.splitTokens(data, "\r\n");
+          for (int i = 0; i < pieces.length; i++) {
+            if (pieces[i].startsWith("#")) continue;
+
+            String path = null;
+            if (pieces[i].startsWith("file:///")) {
+              path = pieces[i].substring(7);
+            } else if (pieces[i].startsWith("file:/")) {
+              path = pieces[i].substring(5);
+            }
+            if (sketch.addFile(new File(path))) {
+              successful++;
+            }
+          }
+        }
+      } catch (Exception e) {
+        e.printStackTrace();
+        return false;
+      }
+
+      if (successful == 0) {
+        statusError("No files were added to the sketch.");
+
+      } else if (successful == 1) {
+        statusNotice("One file added to the sketch.");
+
+      } else {
+        statusNotice(successful + " files added to the sketch.");
+      }
+      return true;
+    }
   }
 
   
@@ -627,7 +634,7 @@ public class Editor extends JFrame implements RunnerListener {
 
 
   protected void addTools(JMenu menu, File sourceFolder) {
-    HashMap toolItems = new HashMap();
+    HashMap<String, JMenuItem> toolItems = new HashMap<String, JMenuItem>();
 
     File[] folders = sourceFolder.listFiles(new FileFilter() {
       public boolean accept(File folder) {
@@ -697,7 +704,7 @@ public class Editor extends JFrame implements RunnerListener {
         // If no class name found, just move on.
         if (className == null) continue;
 
-        Class toolClass = Class.forName(className, true, loader);
+        Class<?> toolClass = Class.forName(className, true, loader);
         final Tool tool = (Tool) toolClass.newInstance();
 
         tool.init(Editor.this);
@@ -717,7 +724,7 @@ public class Editor extends JFrame implements RunnerListener {
         e.printStackTrace();
       }
     }
-    ArrayList<String> toolList = new ArrayList(toolItems.keySet());
+    ArrayList<String> toolList = new ArrayList<String>(toolItems.keySet());
     if (toolList.size() == 0) return;
 
     menu.addSeparator();
@@ -734,7 +741,7 @@ public class Editor extends JFrame implements RunnerListener {
 
     try {
       ZipFile zipFile = new ZipFile(file);
-      Enumeration entries = zipFile.entries();
+      Enumeration<?> entries = zipFile.entries();
       while (entries.hasMoreElements()) {
         ZipEntry entry = (ZipEntry) entries.nextElement();
 
@@ -760,7 +767,7 @@ public class Editor extends JFrame implements RunnerListener {
 
   protected JMenuItem createToolMenuItem(String className) {
     try {
-      Class toolClass = Class.forName(className);
+      Class<?> toolClass = Class.forName(className);
       final Tool tool = (Tool) toolClass.newInstance();
 
       JMenuItem item = new JMenuItem(tool.getMenuTitle());
