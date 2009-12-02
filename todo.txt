@@ -2,7 +2,8 @@
 X fix ant.jar/ant-launcher.jar error in the windows/linux build scripts
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1403
 
-_ imports break the yellowtail example
+_ lack of java.awt.Polygon import breaks the yellowtail example
+_   just add a simple poly class? or don't use a poly?
 
 svn copy svn://processing.org/trunk/processing svn://processing.org/tags/processing-01XX
 
