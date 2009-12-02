@@ -190,7 +190,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
   
   public boolean mousePressed;
   
-  public MotionEvent motionEvent;
+//  public MotionEvent motionEvent;
   
   
   /**
@@ -218,7 +218,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
   /**
    * the last KeyEvent object passed into a mouse function.
    */
-  public KeyEvent keyEvent;
+//  public KeyEvent keyEvent;
 
   /**
    * Gets set to true/false as the applet gains/loses focus.
@@ -413,12 +413,15 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
   protected void onResume() {
     // TODO need to bring back app state here!
+//    surfaceView.onResume();
+    System.out.println("PApplet.onResume() called");
     super.onResume();
   }
 
   
   protected void onPause() {
     // TODO need to save all application state here!
+    System.out.println("PApplet.onPause() called");
     super.onPause();
   }
   
@@ -494,6 +497,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
   
   
   public void onDestroy() {
+    System.out.println("PApplet.onDestroy() called");
     super.onDestroy();
   }
   
@@ -651,6 +655,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
      * Inform the view that the activity is paused.
      */
     public void onPause() {
+      System.out.println("SurfaceView.onPause() called");
       //mGLThread.onPause();
       synchronized (this) {
         paused = true;
@@ -662,6 +667,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
      * Inform the view that the activity is resumed.
      */
     public void onResume() {
+      System.out.println("SurfaceView.onResume() called");
       //mGLThread.onResume();
       synchronized (this) {
         paused = false;
@@ -713,14 +719,14 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 
     public boolean onKeyDown(int code, KeyEvent event) {
-      System.out.println("got onKeyDown for " + code + " " + event);
+//      System.out.println("got onKeyDown for " + code + " " + event);
       checkKeyEvent(event);
       return super.onKeyDown(code, event);
     }
 
     
     public boolean onKeyUp(int code, KeyEvent event) {
-      System.out.println("got onKeyUp for " + code + " " + event);
+//      System.out.println("got onKeyUp for " + code + " " + event);
       checkKeyEvent(event);
       return super.onKeyDown(code, event);
     }
@@ -1929,8 +1935,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
   protected void dequeueKeyEvents() {
     synchronized (keyEventQueue) {
       for (int i = 0; i < keyEventCount; i++) {
-        keyEvent = keyEventQueue[i];
-        handleKeyEvent(keyEvent);
+        handleKeyEvent(keyEventQueue[i]);
       }
       keyEventCount = 0;
     }
@@ -1938,7 +1943,6 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 
   protected void handleKeyEvent(KeyEvent event) {
-    keyEvent = event;
     // event.isPrintingKey() returns false for whitespace and others,
     // which is a problem if the space bar or tab key are used. 
     key = (char) event.getUnicodeChar();

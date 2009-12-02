@@ -1,0 +1,42 @@
+[ changes between processing.android.core and processing.core ]
+
++ For compatability, mouseX and mouseY work similar to the original API, 
+  and always contain the most recent mouse position. In addition, the
+  motionX, motionY, pmotionX, pmotionY, and motionPressure events can be
+  used to track relative motion (the native way Android handles input).
+  Unlike mouseX/mouseY, those variables are also float values.
+
++ The mouseButton variable is not available, for obvious reasions.
+
++ The keyEvent and mouseEvent variables are not available. If you want to 
+  work with event objects, you'll need to override the key and motion handlers:
+
+  public boolean onTouchEvent(MotionEvent event) {
+    // your code here
+
+    // if you want the variables for motionX/motionY, mouseX/mouseY etc.
+    // to work properly, you'll need to call super.onTouchEvent().
+    return super.onTouchEvent(event);
+  }
+
+  The key methods work in a similar fashion:
+
+  public boolean onKeyDown(int code, KeyEvent event) {
+    return super.onKeyDown(code, event);
+  }
+    
+  public boolean onKeyUp(int code, KeyEvent event) {
+    return super.onKeyDown(code, event);
+  }
+
+  These three functions behave a bit differently than their counterparts in
+  java.awt, so make sure you know what you're doing before messing with them.
+
+  The reason that the variables are not kept around is because the KeyEvent
+  and MotionEvent objects are reused, which means they can't be reused without
+  an expensive clone operation. And because it's so rare that they're used
+  in Processing code, it's better to simply remove them and let advanced users
+  who would otherwise rely on the events to handle the overrides themselves.
+
+
+
