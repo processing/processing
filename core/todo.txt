@@ -1,6 +1,9 @@
 0174 core (private)
-X no changes
+X svg paths that use 'e' (exponent) not handled properly
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1408
 
+_ consider bringing back text/image using cache/names
+_   fonts might not be as bad
 
 _ open up the pdf library more (philho)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1343
