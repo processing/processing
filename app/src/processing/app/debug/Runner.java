@@ -538,9 +538,9 @@ public class Runner implements MessageConsumer {
   RunnerException findException(String message, ThreadReference thread) {
     try {
       // use to dump the stack for debugging
-      for (StackFrame frame : thread.frames()) {
-        System.out.println("frame: " + frame);
-      }
+//      for (StackFrame frame : thread.frames()) {
+//        System.out.println("frame: " + frame);
+//      }
 
       List<StackFrame> frames = thread.frames();
       for (StackFrame frame : frames) {
