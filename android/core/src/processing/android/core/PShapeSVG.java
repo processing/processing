@@ -450,7 +450,11 @@ public class PShapeSVG extends PShape {
         separate = false;
       }
       if (c == '-' && !lastSeparate) {
-        pathBuffer.append("|");
+        // allow for 'e' notation in numbers, e.g. 2.10e-9
+        // http://dev.processing.org/bugs/show_bug.cgi?id=1408
+        if (i == 0 || pathDataChars[i-1] != 'e') {
+          pathBuffer.append("|");
+        }
       }
       if (c != ',') {
         pathBuffer.append(c); //"" + pathDataBuffer.charAt(i));
@@ -1449,17 +1453,17 @@ public class PShapeSVG extends PShape {
     int[] colors = new int[gradient.count];
     int opacityMask = ((int) (opacity * 255)) << 24;
     for (int i = 0; i < gradient.count; i++) {
-      colors[i] = opacityMask | (gradient.color[i] & 0xFFFFFF); 
+      colors[i] = opacityMask | (gradient.color[i] & 0xFFFFFF);
     }
-    
+
     if (gradient instanceof LinearGradient) {
       LinearGradient grad = (LinearGradient) gradient;
 //      return new LinearGradientPaint(grad.x1, grad.y1, grad.x2, grad.y2,
 //                                     grad.offset, grad.color, grad.count,
 //                                     opacity);
-      return new android.graphics.LinearGradient(grad.x1, grad.y1, 
+      return new android.graphics.LinearGradient(grad.x1, grad.y1,
                                                  grad.x2, grad.y2,
-                                                 colors, grad.offset, 
+                                                 colors, grad.offset,
                                                  Shader.TileMode.CLAMP );
 
     } else if (gradient instanceof RadialGradient) {
@@ -1467,8 +1471,8 @@ public class PShapeSVG extends PShape {
 //      return new RadialGradientPaint(grad.cx, grad.cy, grad.r,
 //                                     grad.offset, grad.color, grad.count,
 //                                     opacity);
-      return new android.graphics.RadialGradient(grad.cx, grad.cy, grad.r, 
-                                                 colors, grad.offset, 
+      return new android.graphics.RadialGradient(grad.cx, grad.cy, grad.r,
+                                                 colors, grad.offset,
                                                  Shader.TileMode.CLAMP);
     }
     return null;
@@ -1511,8 +1515,8 @@ public class PShapeSVG extends PShape {
       if (strokeGradient != null) {
 //        gg.strokeGradient = true;
 //        gg.strokeGradientObject = strokeGradientPaint;
-        gg.strokePaint.setShader(strokeGradientPaint);        
-      } 
+        gg.strokePaint.setShader(strokeGradientPaint);
+      }
       if (fillGradient != null) {
 //        p2d.fillGradient = true;
 //        p2d.fillGradientObject = fillGradientPaint;
