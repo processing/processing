@@ -38,5 +38,5 @@
   in Processing code, it's better to simply remove them and let advanced users
   who would otherwise rely on the events to handle the overrides themselves.
 
-
-
++ Registering methods (registerPost(), registerDraw(), etc) is not supported.
+  Too much overhead for too little benefit.
