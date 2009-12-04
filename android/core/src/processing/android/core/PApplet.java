@@ -414,18 +414,42 @@ public class PApplet extends Activity implements PConstants, Runnable {
   protected void onResume() {
     // TODO need to bring back app state here!
 //    surfaceView.onResume();
-    System.out.println("PApplet.onResume() called");
+//    System.out.println("PApplet.onResume() called");
+    paused = false;
+    start();  // kick the thread back on
+    resume();
     super.onResume();
   }
 
   
   protected void onPause() {
     // TODO need to save all application state here!
-    System.out.println("PApplet.onPause() called");
+//    System.out.println("PApplet.onPause() called");
+    paused = true;
+    pause();  // handler for others to write
+//  synchronized (this) {
+//  paused = true;
+//}
     super.onPause();
   }
-  
-  
+
+
+  /**
+   * Developers can override here to save state. The 'paused' variable will be
+   * set before this function is called.
+   */
+  public void pause() {
+  }
+
+
+  /**
+   * Developers can override here to restore state. The 'paused' variable 
+   * will be cleared before this function is called.
+   */
+  public void resume() {
+  }
+
+
   /**
    * Called when your activity's options menu needs to be created.
    */
@@ -577,10 +601,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 
     // part of SurfaceHolder.Callback
-    public void surfaceCreated(SurfaceHolder holder) {
-      
-      // 
-      
+    public void surfaceCreated(SurfaceHolder holder) {      
       // this was part of the constructor...
       
 //      println("and more");
@@ -615,13 +636,11 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
     // part of SurfaceHolder.Callback
     public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
-      // Surface size or format has changed. This should not happen in this
-      // example.
-//      System.out.println("surfaceChanged() " + w + " " + h);
+      System.out.println("surfaceChanged() " + w + " " + h);
       
       width = w;
       height = h;
-      
+
 //      println("and more");
       if (sketchRenderer().equals(A2D)) {
         g = new PGraphicsAndroid2D();
@@ -654,26 +673,26 @@ public class PApplet extends Activity implements PConstants, Runnable {
     /**
      * Inform the view that the activity is paused.
      */
-    public void onPause() {
-      System.out.println("SurfaceView.onPause() called");
-      //mGLThread.onPause();
-      synchronized (this) {
-        paused = true;
-      }
-    }
+//    public void onPause() {
+//      System.out.println("SurfaceView.onPause() called");
+//      //mGLThread.onPause();
+//      synchronized (this) {
+//        paused = true;
+//      }
+//    }
 
     
     /**
      * Inform the view that the activity is resumed.
      */
-    public void onResume() {
-      System.out.println("SurfaceView.onResume() called");
-      //mGLThread.onResume();
-      synchronized (this) {
-        paused = false;
-        notify();
-      }
-    }
+//    public void onResume() {
+//      System.out.println("SurfaceView.onResume() called");
+//      //mGLThread.onResume();
+//      synchronized (this) {
+//        paused = false;
+//        notify();
+//      }
+//    }
 
     
     /**
@@ -1156,88 +1175,6 @@ public class PApplet extends Activity implements PConstants, Runnable {
 //  }
 
 
-
-  //////////////////////////////////////////////////////////////
-
-
-  public class RegisteredMethods {
-    int count;
-    Object objects[];
-    Method methods[];
-
-
-    // convenience version for no args
-    public void handle() {
-      handle(new Object[] { });
-    }
-
-    public void handle(Object oargs[]) {
-      for (int i = 0; i < count; i++) {
-        try {
-          //System.out.println(objects[i] + " " + args);
-          methods[i].invoke(objects[i], oargs);
-        } catch (Exception e) {
-          e.printStackTrace();
-        }
-      }
-    }
-
-    public void add(Object object, Method method) {
-      if (objects == null) {
-        objects = new Object[5];
-        methods = new Method[5];
-      }
-      if (count == objects.length) {
-        objects = (Object[]) PApplet.expand(objects);
-        methods = (Method[]) PApplet.expand(methods);
-//        Object otemp[] = new Object[count << 1];
-//        System.arraycopy(objects, 0, otemp, 0, count);
-//        objects = otemp;
-//        Method mtemp[] = new Method[count << 1];
-//        System.arraycopy(methods, 0, mtemp, 0, count);
-//        methods = mtemp;
-      }
-      objects[count] = object;
-      methods[count] = method;
-      count++;
-    }
-
-
-    /**
-     * Removes first object/method pair matched (and only the first,
-     * must be called multiple times if object is registered multiple times).
-     * Does not shrink array afterwards, silently returns if method not found.
-     */
-    public void remove(Object object, Method method) {
-      int index = findIndex(object, method);
-      if (index != -1) {
-        // shift remaining methods by one to preserve ordering
-        count--;
-        for (int i = index; i < count; i++) {
-          objects[i] = objects[i+1];
-          methods[i] = methods[i+1];
-        }
-        // clean things out for the gc's sake
-        objects[count] = null;
-        methods[count] = null;
-      }
-    }
-
-    protected int findIndex(Object object, Method method) {
-      for (int i = 0; i < count; i++) {
-        if (objects[i] == object && methods[i].equals(method)) {
-          //objects[i].equals() might be overridden, so use == for safety
-          // since here we do care about actual object identity
-          //methods[i]==method is never true even for same method, so must use
-          // equals(), this should be safe because of object identity
-          return i;
-        }
-      }
-      return -1;
-    }
-  }
-
-
   //////////////////////////////////////////////////////////////
 
 
@@ -1611,26 +1548,26 @@ public class PApplet extends Activity implements PConstants, Runnable {
       beforeTime = System.nanoTime();
     }
 
-    stop();  // call to shutdown libs?
+    // if this isn't just a pause, shut it all down
+    if (!paused) {
+      stop();  // call to shutdown libs?
 
-    // If the user called the exit() function, the window should close,
-    // rather than the sketch just halting.
-    if (exitCalled) {
-      exit2();
+      // If the user called the exit() function, the window should close,
+      // rather than the sketch just halting.
+      if (exitCalled) {
+        exit2();
+      }
     }
   }
 
 
-  //synchronized public void handleDisplay() {
   public void handleDraw() {
-    if (g != null && (looping || redraw)) {
+    if (g != null && !paused && (looping || redraw)) {
       if (!g.canDraw()) {
         // Don't draw if the renderer is not yet ready.
         // (e.g. OpenGL has to wait for a peer to be on screen)
         return;
       }
-
-      //System.out.println("handleDraw() " + frameCount);
 
       g.beginDraw();
 
