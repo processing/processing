@@ -23,6 +23,7 @@ package processing.app.tools.android;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 import javax.swing.JOptionPane;
 //import java.util.ArrayList;
@@ -63,6 +64,11 @@ public class Android implements Tool {
   
   static final String ADB_SOCKET_PORT = "29892";
 
+  static final String ANDROID_CORE_URL =
+    "http://dev.processing.org/android/core.zip";
+  static final String ANDROID_CORE_FILENAME =
+    "processing-android-core.zip";
+
   
   public String getMenuTitle() {
     return "Android Mode";
@@ -94,6 +100,10 @@ public class Android implements Tool {
       editor.statusError("Could not load Android tools.");
       return;
     }
+    
+    // Make sure that the processing.android.core.* classes are available
+    checkCore();
+    
     editor.setHandlers(new RunHandler(), new PresentHandler(), 
                        new StopHandler(),
                        new ExportHandler(), new ExportAppHandler());
@@ -183,6 +193,22 @@ public class Android implements Tool {
       e.printStackTrace();
     }
     */
+    return true;
+  }
+  
+  
+  protected boolean checkCore() {
+    File target = new File(Base.getSketchbookFolder(), ANDROID_CORE_FILENAME);
+    if (!target.exists()) {
+      try {
+        URL url = new URL(ANDROID_CORE_URL);
+        PApplet.saveStream(target, url.openStream());
+      } catch (Exception e) {
+        Base.showWarning("Download Error", 
+                         "Could not download Android core.zip", e);
+        return false;
+      }
+    }
     return true;
   }
 
