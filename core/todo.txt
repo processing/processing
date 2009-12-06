@@ -1,6 +1,5 @@
-0174 core (private)
-X svg paths that use 'e' (exponent) not handled properly
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1408
+0175 core (private) 
+
 
 _ consider bringing back text/image using cache/names
 _   fonts might not be as bad

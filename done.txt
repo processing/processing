@@ -1,3 +1,12 @@
+0174 pde (private)
+X fix ant.jar/ant-launcher.jar error in the windows/linux build scripts
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1403
+X replace com.apple.eawt.Application invocation to deal with deprecation
+X   this may cause problems with older releases (or on 10.4 or 10.5), not sure
+X   application = new com.apple.eawt.Application();
+X   application = com.apple.eawt.Application.getApplication();
+
+
 0173 pde (private)
 X change build scripts to use UTF-8 for encoding with javac
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1394
