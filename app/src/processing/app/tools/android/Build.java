@@ -16,7 +16,6 @@ public class Build {
   static SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMdd.HHmm");
 
   static String basePackage = "processing.android.test";
-  static String sdkLocation = "/opt/android";
   
   Editor editor;
 
@@ -467,7 +466,7 @@ public class Build {
   
   void writeLocalProps(File file) {
     PrintWriter writer = PApplet.createWriter(file);
-    writer.println("sdk-location=" + sdkLocation);
+    writer.println("sdk-location=" + Android.sdkPath);
     writer.flush();
     writer.close();
   }
