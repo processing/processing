@@ -10,7 +10,7 @@
 
 <!-- this makes an assumption that the processing folder is checked out
      at the same level as this folder. not a good assumption. -->
-<zip destfile="../app/src/processing/app/tools/android/processing-core.zip">
+<zip destfile="core.zip">
 <fileset dir="core/bin" includes="processing/android/core/*.class" />
 <fileset dir="core/bin" includes="processing/android/opengl/*.class" />
 <fileset dir="core/bin" includes="processing/android/xml/*.class" />
@@ -18,8 +18,12 @@
 
 <!-- copy file to bin folder as well, so that we don't 
      have to wait for eclipse to move things over. -->
-<copy file="../app/src/processing/app/tools/android/processing-core.zip" 
+<!--
+<copy file="core.zip"
+      tofile="../app/src/processing/app/tools/android/processing-core.zip"
+<copy file="core.zip" 
       tofile="../app/bin/processing/app/tools/android/processing-core.zip" />
+-->
 
 </target>
 </project>
