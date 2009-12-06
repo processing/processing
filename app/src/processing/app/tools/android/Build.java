@@ -518,7 +518,10 @@ public class Build {
   
   void writeLibs(File libsFolder) {
     libsFolder.mkdirs();
-    InputStream input = getClass().getResourceAsStream("processing-core.zip");
+    //InputStream input = getClass().getResourceAsStream("processing-core.zip");
+    File file = 
+      new File(Base.getSketchbookFolder(), Android.ANDROID_CORE_FILENAME);
+    InputStream input = PApplet.createInput(file); 
     PApplet.saveStream(new File(libsFolder, "processing-core.jar"), input);
   }
  
