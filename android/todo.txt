@@ -3,7 +3,8 @@ X not handling key characters correctly (space bar, tab, others)
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1405
 X why aren't mouse drag events coming through?
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1382
-
+X "taskdef class com.android.ant.SetupTask cannot be found" on Linux
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1407
 
 P1 this is embarrassing, need to fix ASAP
 P2 need to fix before beta release
