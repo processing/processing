@@ -1,6 +1,11 @@
 0174 pde (private)
 X fix ant.jar/ant-launcher.jar error in the windows/linux build scripts
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1403
+X replace com.apple.eawt.Application invocation to deal with deprecation
+X   this may cause problems with older releases (or on 10.4 or 10.5), not sure
+X   application = new com.apple.eawt.Application();
+X   application = com.apple.eawt.Application.getApplication();
+
 
 _ move build scripts to something better like ant
 _   too much to maintain the multiple versions, too much code
@@ -9,6 +14,8 @@ _   also update build/howto.txt (of course) because it says no ant
 _   this would also mean requiring a java installation for building
 _   so may as well move the jdk stuff outside of the build
 _     http://ant.apache.org/manual/CoreTasks/get.html
+
+The com.apple.eawt.Application now has a setDefaultMenuBar(JMenuBar) method that sets a default menu bar when no other Frames are open. 
 
 _ lack of java.awt.Polygon import breaks the yellowtail example
 _   just add a simple poly class? or don't use a poly?

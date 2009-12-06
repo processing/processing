@@ -65,7 +65,7 @@ public class Android implements Tool {
   static final String ADB_SOCKET_PORT = "29892";
 
   static final String ANDROID_CORE_URL =
-    "http://dev.processing.org/android/core.zip";
+    "http://dev.processing.org/processing/android/core.zip";
   static final String ANDROID_CORE_FILENAME =
     "processing-android-core.zip";
 
@@ -195,10 +195,35 @@ public class Android implements Tool {
     */
     return true;
   }
+
+
+  static protected File getCoreZipFile() {
+    // for debugging only, check to see if this is an svn checkout
+    File debugFile = new File("../../../android/core.zip");
+    if (!debugFile.exists() && Base.isMacOS()) {
+      // current path might be inside Processing.app, so need to go much higher
+      debugFile = new File("../../../../../../../android/core.zip");
+    }
+    if (debugFile.exists()) {
+      System.out.println("Using version of core.zip from local SVN checkout.");
+      return debugFile;
+//    } else {
+//      //System.out.println("no core.zip at " + debugFile.getAbsolutePath());
+//      try {
+//        System.out.println("no core.zip at " + debugFile.getCanonicalPath());
+//      } catch (IOException e) {
+//        e.printStackTrace();
+//      }
+    }
+
+    // otherwise do the usual
+    return new File(Base.getSketchbookFolder(), ANDROID_CORE_FILENAME);
+  }
   
   
   protected boolean checkCore() {
-    File target = new File(Base.getSketchbookFolder(), ANDROID_CORE_FILENAME);
+    //File target = new File(Base.getSketchbookFolder(), ANDROID_CORE_FILENAME);
+    File target = getCoreZipFile();
     if (!target.exists()) {
       try {
         URL url = new URL(ANDROID_CORE_URL);
@@ -756,7 +781,7 @@ public class Android implements Tool {
       System.out.println("creating runner");
       //System.out.println("editor from Android is " + editor);
       AndroidRunner ar = new AndroidRunner(editor, editor.getSketch());
-      System.out.println("launching vm");
+//      System.out.println("launching vm");
       return ar.launch(ADB_SOCKET_PORT);
       //System.out.println("vm launched");
 

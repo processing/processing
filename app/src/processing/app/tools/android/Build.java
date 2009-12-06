@@ -422,11 +422,16 @@ public class Build {
     writer.println("  <property file=\"default.properties\"/>");
 
     writer.println("  <path id=\"android.antlibs\">");
-    writer.println("    <pathelement path=\"${sdk-location}/tools/lib/anttasks.jar\" />");
-    writer.println("    <pathelement path=\"${sdk-location}/tools/lib/sdklib.jar\" />");
-    writer.println("    <pathelement path=\"${sdk-location}/tools/lib/androidprefs.jar\" />");
-    writer.println("    <pathelement path=\"${sdk-location}/tools/lib/apkbuilder.jar\" />");
-    writer.println("    <pathelement path=\"${sdk-location}/tools/lib/jarutils.jar\" />");
+//    writer.println("    <pathelement path=\"${sdk-location}/tools/lib/anttasks.jar\" />");
+//    writer.println("    <pathelement path=\"${sdk-location}/tools/lib/sdklib.jar\" />");
+//    writer.println("    <pathelement path=\"${sdk-location}/tools/lib/androidprefs.jar\" />");
+//    writer.println("    <pathelement path=\"${sdk-location}/tools/lib/apkbuilder.jar\" />");
+//    writer.println("    <pathelement path=\"${sdk-location}/tools/lib/jarutils.jar\" />");
+    writer.println("    <pathelement path=\"${sdk.dir}/tools/lib/anttasks.jar\" />");
+    writer.println("    <pathelement path=\"${sdk.dir}/tools/lib/sdklib.jar\" />");
+    writer.println("    <pathelement path=\"${sdk.dir}/tools/lib/androidprefs.jar\" />");
+    writer.println("    <pathelement path=\"${sdk.dir}/tools/lib/apkbuilder.jar\" />");
+    writer.println("    <pathelement path=\"${sdk.dir}/tools/lib/jarutils.jar\" />");
     writer.println("  </path>");
 
     writer.println("  <taskdef name=\"setup\"");
@@ -466,7 +471,8 @@ public class Build {
   
   void writeLocalProps(File file) {
     PrintWriter writer = PApplet.createWriter(file);
-    writer.println("sdk-location=" + Android.sdkPath);
+    //writer.println("sdk-location=" + Android.sdkPath);  // r3 of the sdk
+    writer.println("sdk.dir=" + Android.sdkPath);  // r4 of the sdk
     writer.flush();
     writer.close();
   }
@@ -519,9 +525,7 @@ public class Build {
   void writeLibs(File libsFolder) {
     libsFolder.mkdirs();
     //InputStream input = getClass().getResourceAsStream("processing-core.zip");
-    File file = 
-      new File(Base.getSketchbookFolder(), Android.ANDROID_CORE_FILENAME);
-    InputStream input = PApplet.createInput(file); 
+    InputStream input = PApplet.createInput(Android.getCoreZipFile()); 
     PApplet.saveStream(new File(libsFolder, "processing-core.jar"), input);
   }
  

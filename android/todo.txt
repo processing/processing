@@ -5,6 +5,9 @@ X why aren't mouse drag events coming through?
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1382
 X "taskdef class com.android.ant.SetupTask cannot be found" on Linux
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1407
+X update to r4 of android sdk
+X   this release will not run on r3 or earlier
+X download core.zip from local files
 
 P1 this is embarrassing, need to fix ASAP
 P2 need to fix before beta release
