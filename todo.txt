@@ -2,6 +2,14 @@
 X fix ant.jar/ant-launcher.jar error in the windows/linux build scripts
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1403
 
+_ move build scripts to something better like ant
+_   too much to maintain the multiple versions, too much code
+_   http://dev.processing.org/bugs/show_bug.cgi?id=151
+_   also update build/howto.txt (of course) because it says no ant
+_   this would also mean requiring a java installation for building
+_   so may as well move the jdk stuff outside of the build
+_     http://ant.apache.org/manual/CoreTasks/get.html
+
 _ lack of java.awt.Polygon import breaks the yellowtail example
 _   just add a simple poly class? or don't use a poly?
 
@@ -1310,10 +1318,6 @@ _ drag and drop
 _   including the number of items would be especially nice
 _ implement automatic update
 _   http://dev.processing.org/bugs/show_bug.cgi?id=374
-_ move build scripts to something better like ant
-_   too much to maintain the multiple versions, too much code
-_   http://dev.processing.org/bugs/show_bug.cgi?id=151
-_   also update build/howto.txt (of course) because it says no ant
 _ need .pde document icons
 _ need .psk file icon
 _ need exported application icons
