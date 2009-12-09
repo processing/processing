@@ -1,5 +1,6 @@
 0175 pde (private)
 
+_ "not a valid android install" msg on windows (not checking .exe)
 
 _ move build scripts to something better like ant
 _   too much to maintain the multiple versions, too much code
