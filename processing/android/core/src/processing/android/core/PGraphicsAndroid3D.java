@@ -23,7 +23,7 @@ import processing.android.opengl.EglHelper;
 
 public class PGraphicsAndroid3D extends PGraphics3D {
   SurfaceHolder holder;
-  
+
   public GL10 gl;
   public GLU glu;
 
@@ -48,7 +48,7 @@ public class PGraphicsAndroid3D extends PGraphics3D {
 
   /// IntBuffer to go with the pixels[] array
   protected IntBuffer pixelBuffer;
-  
+
   /**
    * Set to true if the host system is big endian (PowerPC, MIPS, SPARC),
    * false if little endian (x86 Intel for Mac or PC).
@@ -56,24 +56,24 @@ public class PGraphicsAndroid3D extends PGraphics3D {
   static public boolean BIG_ENDIAN =
     ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN;
 
-  
+
   private EglHelper mEglHelper;
 
-  
+
   public PGraphicsAndroid3D() {
     glu = new GLU();  // or maybe not until used?
   }
-  
-  
+
+
   //public void setParent(PApplet parent)
-  
-  
+
+
   //public void setPrimary(boolean primary)
-  
-  
+
+
   //public void setPath(String path)
-  
-  
+
+
   public void setSize(int iwidth, int iheight) {
 //    public void sizeChanged(GL10 gl, int width, int height) {
     gl.glViewport(0, 0, width, height);
@@ -91,14 +91,14 @@ public class PGraphicsAndroid3D extends PGraphics3D {
   public void setSurfaceHolder(SurfaceHolder holder) {
     this.holder = holder;
   }
-  
-  
+
+
   protected void allocate() {
     mEglHelper.start();  // excessive, but it'll check if it's started or not
     gl = (GL10) mEglHelper.createSurface(holder);
 
 //    public void surfaceCreated(GL10 gl) {
-    
+
     // By default, OpenGL enables features that improve quality
     // but reduce performance. One might want to tweak that
     // especially on software renderer.
@@ -119,12 +119,12 @@ public class PGraphicsAndroid3D extends PGraphics3D {
     gl.glEnable(GL10.GL_DEPTH_TEST);
   }
 
-  
+
   public void dispose() {
     mEglHelper.finish();
   }
-  
-  
+
+
 
   //////////////////////////////////////////////////////////////
 
@@ -141,14 +141,19 @@ public class PGraphicsAndroid3D extends PGraphics3D {
   }
 
 
+  public void requestDraw() {
+    // set a flag so that parent.handleDraw() is called when GL is ready
+  }
+
+
   public void beginDraw() {
-    // originally created at the start of guardedRun(), instead create on 
+    // originally created at the start of guardedRun(), instead create on
     // first use inside beginDraw(). can't do this in constructor cuz opengl
     // won't be ready yet (and semaphore not locked, etc).
     if (mEglHelper == null) {
       mEglHelper = new EglHelper();
     }
-    
+
 //    // When using an offscreen buffer, the drawable instance will be null.
 //    // The offscreen buffer uses the drawing context of the main PApplet.
 //    if (drawable != null) {
@@ -164,7 +169,7 @@ public class PGraphicsAndroid3D extends PGraphics3D {
 //      }
 //      detainContext();
 //    }
-    
+
 
     // On the first frame that's guaranteed to be on screen,
     // and the component valid and all that, ask for focus.
@@ -199,7 +204,7 @@ public class PGraphicsAndroid3D extends PGraphics3D {
 
     mAngle += 1.2f;
      */
-    
+
     gl.glDisable(GL10.GL_LIGHTING);
     for (int i = 0; i < MAX_LIGHTS; i++) {
       gl.glDisable(GL10.GL_LIGHT0 + i);
@@ -340,8 +345,8 @@ public class PGraphicsAndroid3D extends PGraphics3D {
     // remove the p5 modelview from opengl
     gl.glPopMatrix();
   }
-  
-  
+
+
   ////////////////////////////////////////////////////////////
 
   // SETTINGS
@@ -372,7 +377,7 @@ public class PGraphicsAndroid3D extends PGraphics3D {
       // TODO throw an error?
 
     } else if (which == ENABLE_OPENGL_4X_SMOOTH) {
-      // TODO throw an error?      
+      // TODO throw an error?
     }
   }
 
@@ -391,21 +396,21 @@ public class PGraphicsAndroid3D extends PGraphics3D {
   //public void normal(float nx, float ny, float nz)
   //public void textureMode(int mode)
   //public void texture(PImage image)
-  
-  
+
+
   private IntBuffer vertexBuffer;
   private IntBuffer colorBuffer;
   private IntBuffer textureBuffer;
   private IntBuffer normalBuffer;
-  
+
   static public int toFixed32(float x) {
     return (int) (x * 65536.0f);
   }
-  
+
   static public int toFixed16(float x) {
     return (int) (x * 4096.0f);
   }
-  
+
   protected void vertexCheck() {
     super.vertexCheck();
 
@@ -426,14 +431,14 @@ public class PGraphicsAndroid3D extends PGraphics3D {
       ByteBuffer tbb = ByteBuffer.allocateDirect(vertexAlloc * 2);
       tbb.order(ByteOrder.nativeOrder());
       textureBuffer = tbb.asIntBuffer();
-      
+
       ByteBuffer nbb = ByteBuffer.allocateDirect(vertexAlloc * 3);
       nbb.order(ByteOrder.nativeOrder());
       normalBuffer = nbb.asIntBuffer();
     }
   }
 
-  
+
   //public void vertex(float x, float y)
   //public void vertex(float x, float y, float z)
   //public void vertex(float x, float y, float u, float v)
@@ -528,21 +533,21 @@ public class PGraphicsAndroid3D extends PGraphics3D {
 //  mIndexBuffer = ByteBuffer.allocateDirect(indices.length);
 //  mIndexBuffer.put(indices);
 //  mIndexBuffer.position(0);
-  
+
 //  gl.glFrontFace(gl.GL_CW);
 //  gl.glVertexPointer(3, gl.GL_FIXED, 0, mVertexBuffer);
 //  gl.glColorPointer(4, gl.GL_FIXED, 0, mColorBuffer);
 //  gl.glDrawElements(gl.GL_TRIANGLES, 36, gl.GL_UNSIGNED_BYTE, mIndexBuffer);
 
-  
-  
+
+
   protected void renderPoints(int start, int stop) {
     gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
     gl.glEnableClientState(GL10.GL_COLOR_ARRAY);
 
     vertexBuffer.rewind();
     colorBuffer.rewind();
-    
+
     float sw = vertices[lines[start][VERTEX1]][SW];
     if (sw > 0) {
       gl.glPointSize(sw);  // can only be set outside glBegin/glEnd
@@ -641,9 +646,9 @@ public class PGraphicsAndroid3D extends PGraphics3D {
           colorBuffer.put(toFixed16(b[SG]));
           colorBuffer.put(toFixed16(b[SB]));
           colorBuffer.put(toFixed16(b[SA]));
-          
+
           //gl.glEdgeFlag(a[EDGE] == 1);
-          
+
 //          gl.glVertex3f(b[VX], b[VY], b[VZ]);
           vertexBuffer.put(toFixed32(b[VX]));
           vertexBuffer.put(toFixed32(b[VY]));
@@ -653,7 +658,7 @@ public class PGraphicsAndroid3D extends PGraphics3D {
 //        gl.glEnd();
         gl.glVertexPointer(3, GL10.GL_FIXED, 0, vertexBuffer);
         gl.glColorPointer(4, GL10.GL_FIXED, 0, colorBuffer);
-        gl.glDrawArrays(GL10.GL_LINE_STRIP, 0, pathLength[j] + 1);        
+        gl.glDrawArrays(GL10.GL_LINE_STRIP, 0, pathLength[j] + 1);
       }
     }
     report("render_lines out");
@@ -686,7 +691,7 @@ public class PGraphicsAndroid3D extends PGraphics3D {
 
     float uscale = 0;
     float vscale = 0;
-    
+
     for (int i = start; i < stop; i++) {
       float a[] = vertices[triangles[i][VERTEX1]];
       float b[] = vertices[triangles[i][VERTEX2]];
@@ -730,9 +735,9 @@ public class PGraphicsAndroid3D extends PGraphics3D {
       if (textureIndex != -1) {
         textureBuffer.rewind();
       }
-        
+
       // vertex A
-        
+
         //System.out.println(a[U] + " " + a[V] + " " + uscale + " " + vscale);
         //System.out.println(ar + " " + ag + " " + ab + " " + a[A]);
         //ar = ag = ab = 1;
@@ -741,27 +746,27 @@ public class PGraphicsAndroid3D extends PGraphics3D {
       colorBuffer.put(toFixed16(ag));
       colorBuffer.put(toFixed16(ab));
       colorBuffer.put(toFixed16(a[A]));
-        
+
 //        gl.glTexCoord2f(a[U] * uscale, a[V] * vscale);
       if (textureIndex != -1) {
         textureBuffer.put(toFixed32(a[U] * uscale));
         textureBuffer.put(toFixed32(a[V] * vscale));
       }
-        
+
 //        gl.glNormal3f(a[NX], a[NY], a[NZ]);
       normalBuffer.put(toFixed32(a[NX]));
       normalBuffer.put(toFixed32(a[NY]));
       normalBuffer.put(toFixed32(a[NZ]));
-        
+
 //        gl.glEdgeFlag(a[EDGE] == 1);
-        
+
 //        gl.glVertex3f(a[VX], a[VY], a[VZ]);
       vertexBuffer.put(toFixed32(a[VX]));
       vertexBuffer.put(toFixed32(a[VY]));
       vertexBuffer.put(toFixed32(a[VZ]));
 
       // vertex B
-        
+
 //        gl.glColor4f(br, bg, bb, b[A]);
       colorBuffer.put(toFixed16(br));
       colorBuffer.put(toFixed16(bg));
@@ -780,14 +785,14 @@ public class PGraphicsAndroid3D extends PGraphics3D {
       normalBuffer.put(toFixed32(b[NZ]));
 
 //        gl.glEdgeFlag(a[EDGE] == 1);
-        
+
 //        gl.glVertex3f(b[VX], b[VY], b[VZ]);
       vertexBuffer.put(toFixed32(b[VX]));
       vertexBuffer.put(toFixed32(b[VY]));
       vertexBuffer.put(toFixed32(b[VZ]));
 
       // vertex C
-        
+
 //      gl.glColor4f(cr, cg, cb, c[A]);
       colorBuffer.put(toFixed16(cr));
       colorBuffer.put(toFixed16(cg));
@@ -799,14 +804,14 @@ public class PGraphicsAndroid3D extends PGraphics3D {
         textureBuffer.put(toFixed32(c[U] * uscale));
         textureBuffer.put(toFixed32(c[V] * vscale));
       }
-      
+
 //      gl.glNormal3f(c[NX], c[NY], c[NZ]);
       normalBuffer.put(toFixed32(c[NX]));
       normalBuffer.put(toFixed32(c[NY]));
       normalBuffer.put(toFixed32(c[NZ]));
-      
+
 //      gl.glEdgeFlag(a[EDGE] == 1);
-      
+
 //      gl.glVertex3f(c[VX], c[VY], c[VZ]);
       vertexBuffer.put(toFixed32(c[VX]));
       vertexBuffer.put(toFixed32(c[VY]));
@@ -816,7 +821,7 @@ public class PGraphicsAndroid3D extends PGraphics3D {
       gl.glVertexPointer(3, GL10.GL_FIXED, 0, vertexBuffer);
       gl.glColorPointer(4, GL10.GL_FIXED, 0, colorBuffer);
       gl.glNormalPointer(GL10.GL_FIXED, 3, normalBuffer);
-      gl.glDrawArrays(GL10.GL_TRIANGLES, 0, 3);        
+      gl.glDrawArrays(GL10.GL_TRIANGLES, 0, 3);
 
       report("non-binding 6");
       if (textureIndex != -1) {
@@ -2010,7 +2015,7 @@ public class PGraphicsAndroid3D extends PGraphics3D {
 
 
   private void glLightPosition(int num) {
-    gl.glLightfv(GL10.GL_LIGHT0 + num, 
+    gl.glLightfv(GL10.GL_LIGHT0 + num,
                  GL10.GL_POSITION, lightPosition[num].array(), 0);
   }
 
@@ -2578,7 +2583,7 @@ public class PGraphicsAndroid3D extends PGraphics3D {
     getsetBuffer.rewind();
     //gl.glRasterPos2f(x + EPSILON, y + EPSILON);
     setRasterPos(x, (height-y) - 1);
-    // TODO whither drawPixels? 
+    // TODO whither drawPixels?
 //    gl.glDrawPixels(1, 1, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, getsetBuffer);
   }
 
@@ -2782,7 +2787,7 @@ public class PGraphicsAndroid3D extends PGraphics3D {
 
   protected final float clamp(float a) {
     return (a < 1) ? a : 1;
-  }  
+  }
 }
 
 

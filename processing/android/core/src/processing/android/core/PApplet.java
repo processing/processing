@@ -44,7 +44,7 @@ import android.view.*;
 
 
 public class PApplet extends Activity implements PConstants, Runnable {
-	
+
   /** The PGraphics renderer associated with this PApplet */
   public PGraphics g;
 
@@ -147,7 +147,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
   /** Last reported pressure of the current motion event */
   public float motionPressure;
-  
+
   /**
    * Previous x/y position of the mouse. This will be a different value
    * when inside a mouse handler (like the mouseMoved() method) versus
@@ -187,12 +187,12 @@ public class PApplet extends Activity implements PConstants, Runnable {
   public boolean firstMotion;
 
 //  public int mouseButton;
-  
+
   public boolean mousePressed;
-  
+
 //  public MotionEvent motionEvent;
-  
-  
+
+
   /**
    * Last key pressed.
    * <P>
@@ -224,7 +224,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
    * Gets set to true/false as the applet gains/loses focus.
    */
   public boolean focused = false;
-  
+
   protected boolean windowFocused = false;
   protected boolean viewFocused = false;
 
@@ -280,11 +280,11 @@ public class PApplet extends Activity implements PConstants, Runnable {
    * true if this applet has had it.
    */
   public boolean finished;
-  
-  /** 
-   * For Android, true if the activity has been paused. 
+
+  /**
+   * For Android, true if the activity has been paused.
    */
-  protected boolean paused; 
+  protected boolean paused;
 
   /**
    * true if exit() has been called so that things shut down
@@ -361,23 +361,23 @@ public class PApplet extends Activity implements PConstants, Runnable {
   //////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////
 
-  
+
 //  static final private int BACK_ID = Menu.FIRST;
 //  static final private int CLEAR_ID = Menu.FIRST + 1;
 //  private EditText mEditor;
-  
-  
+
+
 //  public BagelDroid() {
 //  }
 
 //  SurfaceView surfaceView;
 
-  
+
   /** Called with the activity is first created. */
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    
+
     // adaptation from
     // http://www.evan129.com/2008/03/08/howto-set-full-screen-on-android/
     // from http://groups.google.com/group/android-developers/msg/1d7497e5626896a7
@@ -388,9 +388,9 @@ public class PApplet extends Activity implements PConstants, Runnable {
                          WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
 
     // This does the actual full screen work
-    getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
-                         WindowManager.LayoutParams.FLAG_FULLSCREEN); 
-    
+    getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                         WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
     // Inflate our UI from its XML layout description.
 //    setContentView(bageldroid.articulate.R.layout.skeleton_activity);
 
@@ -421,7 +421,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
     super.onResume();
   }
 
-  
+
   protected void onPause() {
     // TODO need to save all application state here!
 //    System.out.println("PApplet.onPause() called");
@@ -443,7 +443,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 
   /**
-   * Developers can override here to restore state. The 'paused' variable 
+   * Developers can override here to restore state. The 'paused' variable
    * will be cleared before this function is called.
    */
   public void resume() {
@@ -466,7 +466,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 //      return true;
 //  }
 
-  
+
   /**
    * Called right before your activity's option menu is displayed.
    */
@@ -481,7 +481,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 //      return true;
 //  }
 
-  
+
   /**
    * Called when a menu item is selected.
    */
@@ -499,7 +499,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 //      return super.onOptionsItemSelected(item);
 //  }
 
-  
+
   /**
    * A call-back for when the user presses the back button.
    */
@@ -509,7 +509,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 //      }
 //  };
 
-  
+
   /**
    * A call-back for when the user presses the clear button.
    */
@@ -518,33 +518,33 @@ public class PApplet extends Activity implements PConstants, Runnable {
 //          mEditor.setText("");
 //      }
 //  };
-  
-  
+
+
   public void onDestroy() {
     System.out.println("PApplet.onDestroy() called");
     super.onDestroy();
   }
-  
-  
+
+
   // file:///Applications/android-sdk/docs/reference/android/app/Activity.html
 
-  
-    
+
+
   //////////////////////////////////////////////////////////////
 
   // ANDROID SURFACE VIEW
-  
-  
+
+
   SketchSurfaceView surfaceView;
   SurfaceHolder surfaceHolder;
-  
-  
+
+
   public SurfaceHolder getSurfaceHolder() {
     //return surfaceView.getHolder();
     return surfaceHolder;
   }
-  
-  
+
+
   public class SketchSurfaceView extends android.view.SurfaceView implements SurfaceHolder.Callback {
 //    private SketchThread mGLThread;
     //    private GLWrapper mGLWrapper;
@@ -566,13 +566,13 @@ public class PApplet extends Activity implements PConstants, Runnable {
       init();
     }
 
-    
+
     public SketchSurfaceView(Context context, AttributeSet attrs) {
       super(context, attrs);
       init();
     }
 
-    
+
     private void init() {
       // Install a SurfaceHolder.Callback so we get notified when the
       // underlying surface is created and destroyed
@@ -582,17 +582,17 @@ public class PApplet extends Activity implements PConstants, Runnable {
     }
     */
 
-    
+
 //    public SurfaceHolder getSurfaceHolder() {
 //      return surfaceHolder;
 //    }
 
-    
+
 //      public void setGLWrapper(GLWrapper glWrapper) {
 //          mGLWrapper = glWrapper;
 //      }
 
-    
+
 //    public void setRenderer(GLRenderer renderer) {
 //    public void setRenderer(PGraphics renderer) {
 //      mGLThread = new SketchThread(renderer);
@@ -601,9 +601,9 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 
     // part of SurfaceHolder.Callback
-    public void surfaceCreated(SurfaceHolder holder) {      
+    public void surfaceCreated(SurfaceHolder holder) {
       // this was part of the constructor...
-      
+
 //      println("and more");
 //      if (sketchRenderer().equals(A2D)) {
 //        g = new PGraphicsAndroid2D();
@@ -617,15 +617,15 @@ public class PApplet extends Activity implements PConstants, Runnable {
 //      println("and out");
 //
 //      // kick things off...should this go before or after the g setup?
-//      init(); 
-//      
+//      init();
+//
 //      //
-//      
+//
 //      //mGLThread.surfaceCreated();
 //      g.allocate();
     }
 
-    
+
     // part of SurfaceHolder.Callback
     public void surfaceDestroyed(SurfaceHolder holder) {
       // Surface will be destroyed when we return
@@ -637,7 +637,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
     // part of SurfaceHolder.Callback
     public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
       System.out.println("surfaceChanged() " + w + " " + h);
-      
+
       width = w;
       height = h;
 
@@ -656,20 +656,20 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
       // kick things off...should this go before or after the g setup?
       init();
-      
+
       setFocusable(true);
       setFocusableInTouchMode(true);
       requestFocus();
-      
+
       //
-      
+
       //mGLThread.surfaceCreated();
 //      g.allocate();  // setSize() now doing this
 //      g.resize(w, h);  // probably bad... (!)
 //      mGLThread.onWindowResize(w, h);
     }
 
-    
+
     /**
      * Inform the view that the activity is paused.
      */
@@ -681,7 +681,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 //      }
 //    }
 
-    
+
     /**
      * Inform the view that the activity is resumed.
      */
@@ -694,11 +694,11 @@ public class PApplet extends Activity implements PConstants, Runnable {
 //      }
 //    }
 
-    
+
     /**
      * Inform the view that the window focus has changed.
      */
-    @Override 
+    @Override
     public void onWindowFocusChanged(boolean hasFocus) {
       super.onWindowFocusChanged(hasFocus);
 //      mGLThread.onWindowFocusChanged(hasFocus);
@@ -727,7 +727,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 
     /**
-     * If you override this function without calling super.onTouchEvent(), 
+     * If you override this function without calling super.onTouchEvent(),
      * then motionX, motionY, motionPressed, and motionEvent will not be set.
      */
     public boolean onTouchEvent(MotionEvent event) {
@@ -743,7 +743,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
       return super.onKeyDown(code, event);
     }
 
-    
+
     public boolean onKeyUp(int code, KeyEvent event) {
 //      System.out.println("got onKeyUp for " + code + " " + event);
       checkKeyEvent(event);
@@ -754,21 +754,21 @@ public class PApplet extends Activity implements PConstants, Runnable {
     @Override
     protected void onDetachedFromWindow() {
       super.onDetachedFromWindow();
-      //mGLThread.requestExitAndWait();  
+      //mGLThread.requestExitAndWait();
       stop();
     }
   }
-  
+
 
 
   //////////////////////////////////////////////////////////////
 
   // ANDROID ANIMATION THREAD
-  
-  // TODO rename this to p5 graphics semaphore 
+
+  // TODO rename this to p5 graphics semaphore
 //  private static final Semaphore sEglSemaphore = new Semaphore(1);
 
-  
+
   /**
    * A generic GL Thread. Takes care of initializing EGL and GL. Delegates
    * to a Renderer instance to do the actual drawing.
@@ -788,7 +788,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
     private ArrayList<Runnable> mEventQueue = new ArrayList<Runnable>();
 //    private EglHelper mEglHelper;
 
-    
+
 //    SketchThread(GLRenderer renderer) {
 //    SketchThread(PGraphics renderer) {
     SketchThread() {
@@ -799,7 +799,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 //      mRenderer = renderer;
       setName("Processing Animation Thread");
     }
-    
+
 
     @Override
     public void run() {
@@ -823,7 +823,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
       }
     }
 
-    
+
     private void guardedRun() throws InterruptedException {
 //      mEglHelper = new EglHelper();
 
@@ -855,7 +855,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 //        };
 //        return configSpec;
 //      }
-      
+
 //      mEglHelper.start(configSpec);
 
 //      GL10 gl = null;
@@ -924,13 +924,13 @@ public class PApplet extends Activity implements PConstants, Runnable {
       mRenderer.dispose();
     }
 
-    
+
     private boolean needToWait() {
       return (!mDone) &&
-        (mPaused || (!focused) || (!mHasSurface) || mContextLost); 
+        (mPaused || (!focused) || (!mHasSurface) || mContextLost);
     }
 
-    
+
     public void surfaceCreated() {
       synchronized(this) {
         mHasSurface = true;
@@ -939,7 +939,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
       }
     }
 
-    
+
     public void surfaceDestroyed() {
       synchronized(this) {
         mHasSurface = false;
@@ -947,14 +947,14 @@ public class PApplet extends Activity implements PConstants, Runnable {
       }
     }
 
-    
+
     public void onPause() {
       synchronized (this) {
         mPaused = true;
       }
     }
 
-    
+
     public void onResume() {
       synchronized (this) {
         mPaused = false;
@@ -962,7 +962,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
       }
     }
 
-    
+
 //    public void onWindowFocusChanged(boolean hasFocus) {
 //      synchronized (this) {
 //        mHasFocus = hasFocus;
@@ -971,8 +971,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
 //        }
 //      }
 //    }
-    
-    
+
+
     public void onWindowResize(int w, int h) {
       synchronized (this) {
         mWidth = w;
@@ -981,7 +981,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
       }
     }
 
-    
+
     public void requestExitAndWait() {
       // don't call this from GLThread thread or it is a guaranteed deadlock!
       synchronized(this) {
@@ -1015,13 +1015,13 @@ public class PApplet extends Activity implements PConstants, Runnable {
 //    }
   }
    */
-  
-  
+
+
   //////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////
-  
-  
+
+
   public void init() {
 //    println("Calling init()");
 
@@ -1080,7 +1080,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
     // though it's here for applications anyway
     start();
   }
-  
+
 
   /*
   public int sketchWidth() {
@@ -1097,8 +1097,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
   public String sketchRenderer() {
     return A2D;
   }
-  
-  
+
+
   /**
    * Called by the browser or applet viewer to inform this applet that it
    * should start its execution. It is called after the init method and
@@ -1503,7 +1503,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
 //      }
 
       // render a single frame
-      handleDraw();
+      //handleDraw();
+      requestDraw();  // for GL we can only ask nicely
 
       // removed in android
 //      if (frameCount == 1) {
@@ -1683,7 +1684,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 //        resizeWidth = bounds.width;
 //        resizeHeight = bounds.height;
 //      }
-//    });    
+//    });
 //  }
 
 
@@ -1691,9 +1692,9 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 
   class PMotionEvent {
-	  int action;
-	  float motionX, motionY;
-	  float motionPressure;
+          int action;
+          float motionX, motionY;
+          float motionPressure;
     int mouseX, mouseY;
   }
 
@@ -1729,12 +1730,12 @@ public class PApplet extends Activity implements PConstants, Runnable {
       pme.motionPressure = event.getPressure();  // should this be constrained?
       pme.mouseX = (int) event.getRawX();
       pme.mouseY = (int) event.getRawY();
-      
+
       // historical events happen before the 'current' values
-      if (pme.action == MotionEvent.ACTION_MOVE && historyCount > 0) { 
+      if (pme.action == MotionEvent.ACTION_MOVE && historyCount > 0) {
         float rawOffsetX = pme.mouseX - pme.motionX;
         float rawOffsetY = pme.mouseY - pme.motionY;
-        
+
         for (int i = 0; i < historyCount; i++) {
           PMotionEvent hist = motionEventQueue[motionEventCount++];
           hist.action = pme.action;
@@ -1745,9 +1746,9 @@ public class PApplet extends Activity implements PConstants, Runnable {
           hist.mouseY = (int) (hist.motionY + rawOffsetY);
         }
       }
-      
+
       // now step over the last one that we used to assign 'pme'
-      // if historyCount is 0, this just steps over the last 
+      // if historyCount is 0, this just steps over the last
       motionEventCount++;
     }
   }
@@ -1760,8 +1761,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
       motionEventCount = 0;
     }
   }
-  
-  
+
+
   /**
    * Take action based on a motion event.
    * Internally updates mouseX, mouseY, mousePressed, and mouseEvent.
@@ -1777,10 +1778,10 @@ public class PApplet extends Activity implements PConstants, Runnable {
     motionPressure = pme.motionPressure;
 
     // replace previous mouseX/Y with the last from the event handlers
-    pmouseX = emouseX;  
+    pmouseX = emouseX;
     pmouseY = emouseY;
     mouseX = pme.mouseX;
-    mouseY = pme.mouseY;    
+    mouseY = pme.mouseY;
 
     // this used to only be called on mouseMoved and mouseDragged
     // change it back if people run into trouble
@@ -1789,7 +1790,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
       pmouseY = mouseY;
       dmouseX = mouseX;  // set it as the first value to be used inside draw() too
       dmouseY = mouseY;
-      
+
       pmotionX = motionX;
       pmotionY = motionY;
       dmotionX = motionX;
@@ -1834,7 +1835,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
     enqueueMotionEvent(event);
 
     // if not looping, then remove from the queue immediately
-    // in this case, the queue serves as a temporary safe place for the events 
+    // in this case, the queue serves as a temporary safe place for the events
     // to be unpacked into individual events (instead of mixed w/ history)
     if (!looping) {
       dequeueMotionEvents();
@@ -1853,7 +1854,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
   public void mouseMoved() { }
 
 
-  
+
   //////////////////////////////////////////////////////////////
 
 
@@ -1881,7 +1882,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
   protected void handleKeyEvent(KeyEvent event) {
     // event.isPrintingKey() returns false for whitespace and others,
-    // which is a problem if the space bar or tab key are used. 
+    // which is a problem if the space bar or tab key are used.
     key = (char) event.getUnicodeChar();
     // if not mappable to a unicode character, instead mark as coded key
     if (key == 0) {
@@ -2006,7 +2007,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 
   //////////////////////////////////////////////////////////////
-  
+
 
   public void focusGained() { }
 
@@ -3179,7 +3180,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
   public int requestImageMax = 4;
   volatile int requestImageCount;
 
-  // Removed 'extension' from the android version. If the extension is needed 
+  // Removed 'extension' from the android version. If the extension is needed
   // later, re-copy this from the original PApplet code.
   class AsyncImageLoader extends Thread {
     String filename;
@@ -3611,7 +3612,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
     // TODO finish this
 //    Context context = getApplicationContext();
 //    // MODE_PRIVATE is default, should we use that instead?
-//    context.openFileInput(filename);  
+//    context.openFileInput(filename);
 
     InputStream stream = null;
 
@@ -3899,7 +3900,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
       Context context = getApplicationContext();
       // MODE_PRIVATE is default, should we use that instead?
       return context.openFileOutput(filename, MODE_WORLD_READABLE);
-      
+
     } catch (Exception e) {
       e.printStackTrace();
       return null;
@@ -4973,10 +4974,10 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 
   /**
-   * Split a String on a specific delimiter. Unlike Java's String.split() 
+   * Split a String on a specific delimiter. Unlike Java's String.split()
    * method, this does not parse the delimiter as a regexp because it's more
    * confusing than necessary, and String.split() is always available for
-   * those who want regexp. 
+   * those who want regexp.
    */
   static public String[] split(String what, String delim) {
     ArrayList<String> items = new ArrayList<String>();
@@ -6058,9 +6059,9 @@ public class PApplet extends Activity implements PConstants, Runnable {
    *
    * --present             put the applet into full screen presentation
    *                       mode. requires java 1.4 or later.
-   *                       
+   *
    * --exclusive           use full screen exclusive mode when presenting.
-   *                       disables new windows or interaction with other 
+   *                       disables new windows or interaction with other
    *                       monitors, this is like a "game" mode.
    *
    * --hide-stop           use to hide the stop button in situations where
@@ -6094,7 +6095,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
   static public void main(String args[]) {
     // just do a no-op for now
   }
-  
+
 //  static public void main(String args[]) {
 //    // Disable abyssmally slow Sun renderer on OS X 10.5.
 //    if (platform == MACOSX) {
@@ -6401,7 +6402,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 //
 //        // handle frame resizing events
 //        applet.setupFrameResizeListener();
-//        
+//
 //        // all set for rockin
 //        if (applet.displayable()) {
 //          frame.setVisible(true);
@@ -6437,7 +6438,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
    * Begin recording (echoing) commands to the specified PGraphics object.
    */
   public void beginRecord(PGraphics recorder) {
-	PGraphics.showMethodWarning("beginRecord");
+        PGraphics.showMethodWarning("beginRecord");
   }
 
 
