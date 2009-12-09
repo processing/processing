@@ -630,6 +630,13 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
+   * Try to draw, or put a draw request on the queue.
+   */
+  public void requestDraw() {  // ignore
+  }
+
+
+  /**
    * Prepares the PGraphics for drawing.
    * <p/>
    * When creating your own PGraphics, you should call this before
@@ -2171,7 +2178,7 @@ public class PGraphics extends PImage implements PConstants {
 
   /**
    * Draw an image(), also specifying u/v coordinates.
-   * In this method, the  u, v coordinates are always based on image space 
+   * In this method, the  u, v coordinates are always based on image space
    * location, regardless of the current textureMode().
    */
   public void image(PImage image,
@@ -4835,13 +4842,13 @@ public class PGraphics extends PImage implements PConstants {
       }
       float ho = (PApplet.lerp(lerpColorHSB1[0], lerpColorHSB2[0], amt)) % 1.0f;
       */
-      
+
 //      float ho = PActivity.lerp(lerpColorHSB1[0], lerpColorHSB2[0], amt);
 //      float so = PActivity.lerp(lerpColorHSB1[1], lerpColorHSB2[1], amt);
 //      float bo = PActivity.lerp(lerpColorHSB1[2], lerpColorHSB2[2], amt);
 //    return alfa | (Color.HSVtoRGB(ho, so, bo) & 0xFFFFFF);
 //    return Color.HSVToColor(alfa, new float[] { ho, so, bo });
-      
+
       lerpColorHSB3[0] = PApplet.lerp(lerpColorHSB1[0], lerpColorHSB2[0], amt);
       lerpColorHSB3[1] = PApplet.lerp(lerpColorHSB1[1], lerpColorHSB2[1], amt);
       lerpColorHSB3[2] = PApplet.lerp(lerpColorHSB1[2], lerpColorHSB2[2], amt);

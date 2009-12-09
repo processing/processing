@@ -50,7 +50,7 @@ import android.graphics.Paint.Style;
 public class PGraphicsAndroid2D extends PGraphics {
 
   Canvas canvas;  // like g2 for PGraphicsJava2D
-  
+
   /// break the shape at the next vertex (next vertex() call is a moveto())
   boolean breakShape;
 
@@ -91,7 +91,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   // INTERNAL
 
 
-  public PGraphicsAndroid2D() { 
+  public PGraphicsAndroid2D() {
 //    transformStack = new Matrix[MATRIX_STACK_DEPTH];
 //    transform = new float[6];
     transform = new float[9];
@@ -105,13 +105,13 @@ public class PGraphicsAndroid2D extends PGraphics {
     strokePaint.setStyle(Style.STROKE);
   }
 
-  
+
   //public void setParent(PApplet parent)
-  
-  
+
+
   //public void setPrimary(boolean primary)
-  
-  
+
+
   //public void setPath(String path)
 
 
@@ -135,16 +135,16 @@ public class PGraphicsAndroid2D extends PGraphics {
 
   protected void allocate() {
     image = Bitmap.createBitmap(width, height, Config.ARGB_8888);
-    canvas = new Canvas(image); 
+    canvas = new Canvas(image);
 //    image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-//    canvas = (Graphics2D) image.getGraphics();    
+//    canvas = (Graphics2D) image.getGraphics();
   }
 
-  
+
   public void dispose() {
     // called when paused.
   }
-  
+
 
 
   //////////////////////////////////////////////////////////////
@@ -157,6 +157,11 @@ public class PGraphicsAndroid2D extends PGraphics {
   }
 
 
+  public void requestDraw() {
+    parent.handleDraw();
+  }
+
+
   public void beginDraw() {
 //    if (primarySurface) {
 //      canvas = parent.getSurfaceHolder().lockCanvas(null);
@@ -166,9 +171,9 @@ public class PGraphicsAndroid2D extends PGraphics {
 //    } else {
 //      throw new RuntimeException("not primary surface");
 //    }
-    
+
     checkSettings();
-    
+
     resetMatrix(); // reset model matrix
 
     // reset vertices
@@ -211,37 +216,37 @@ public class PGraphicsAndroid2D extends PGraphics {
 
 
   //////////////////////////////////////////////////////////////
-  
+
   // SETTINGS
-  
-  
+
+
   //protected void checkSettings()
-  
-  
+
+
   //protected void defaultSettings()
-  
-  
+
+
   //protected void reapplySettings()
 
-  
+
 
   //////////////////////////////////////////////////////////////
 
   // HINT
-  
-  
+
+
   //public void hint(int which)
-  
-  
-  
+
+
+
   //////////////////////////////////////////////////////////////
 
   // SHAPES
 
 
   //public void beginShape(int kind)
-  
-  
+
+
   public void beginShape(int kind) {
     //super.beginShape(kind);
     shape = kind;
@@ -256,14 +261,14 @@ public class PGraphicsAndroid2D extends PGraphics {
     //path = null;
     path.reset();
   }
-  
-  
+
+
   //public boolean edge(boolean e)
 
 
   //public void normal(float nx, float ny, float nz) {
 
-  
+
   //public void textureMode(int mode)
 
 
@@ -396,7 +401,7 @@ public class PGraphicsAndroid2D extends PGraphics {
     showDepthWarningXYZ("vertex");
   }
 
-  
+
   public void breakShape() {
     breakShape = true;
   }
@@ -415,16 +420,16 @@ public class PGraphicsAndroid2D extends PGraphics {
   }
 
 
-  
+
   //////////////////////////////////////////////////////////////
 
   // BEZIER VERTICES
-  
-  
+
+
   public void bezierVertex(float x1, float y1,
                            float x2, float y2,
                            float x3, float y3) {
-    bezierVertexCheck();    
+    bezierVertexCheck();
     path.cubicTo(x1, y1, x2, y2, x3, y3);
   }
 
@@ -435,13 +440,13 @@ public class PGraphicsAndroid2D extends PGraphics {
     showDepthWarningXYZ("bezierVertex");
   }
 
-  
+
 
   //////////////////////////////////////////////////////////////
 
   // CURVE VERTICES
-  
-  
+
+
   protected void curveVertexCheck() {
     super.curveVertexCheck();
 
@@ -454,9 +459,9 @@ public class PGraphicsAndroid2D extends PGraphics {
   }
 
 
-  protected void curveVertexSegment(float x1, float y1,  
-                                    float x2, float y2, 
-                                    float x3, float y3, 
+  protected void curveVertexSegment(float x1, float y1,
+                                    float x2, float y2,
+                                    float x3, float y3,
                                     float x4, float y4) {
     curveCoordX[0] = x1;
     curveCoordY[0] = y1;
@@ -484,8 +489,8 @@ public class PGraphicsAndroid2D extends PGraphics {
                   curveDrawX[2], curveDrawY[2],
                   curveDrawX[3], curveDrawY[3]);
   }
-  
-  
+
+
   public void curveVertex(float x, float y, float z) {
     showDepthWarningXYZ("curveVertex");
   }
@@ -495,17 +500,17 @@ public class PGraphicsAndroid2D extends PGraphics {
   //////////////////////////////////////////////////////////////
 
   // RENDERER
-  
-  
+
+
   //public void flush()
-  
-    
-  
+
+
+
   //////////////////////////////////////////////////////////////
 
   // POINT, LINE, TRIANGLE, QUAD
 
-  
+
   public void point(float x, float y) {
     if (strokeWeight > 1) {
       line(x, y, x + EPSILON, y + EPSILON);
@@ -546,19 +551,19 @@ public class PGraphicsAndroid2D extends PGraphics {
     drawPath();
   }
 
-  
+
 
   //////////////////////////////////////////////////////////////
 
   // RECT
 
-  
+
   //public void rectMode(int mode)
-  
-  
+
+
   //public void rect(float a, float b, float c, float d)
 
-  
+
   protected void rectImpl(float x1, float y1, float x2, float y2) {
 //    rect.setFrame(x1, y1, x2-x1, y2-y1);
 //    drawShape(rect);
@@ -571,23 +576,23 @@ public class PGraphicsAndroid2D extends PGraphics {
     }
   }
 
-  
+
 
   //////////////////////////////////////////////////////////////
 
   // ELLIPSE
 
-  
+
   //public void ellipseMode(int mode)
-  
-  
+
+
   //public void ellipse(float a, float b, float c, float d)
 
-  
+
   protected void ellipseImpl(float x, float y, float w, float h) {
 //    ellipse.setFrame(x, y, w, h);
 //    drawShape(ellipse);
-    rect.set(x, y, x+w, y+h); 
+    rect.set(x, y, x+w, y+h);
     if (fill) {
       canvas.drawOval(rect, fillPaint);
     }
@@ -596,7 +601,7 @@ public class PGraphicsAndroid2D extends PGraphics {
     }
   }
 
-  
+
 
   //////////////////////////////////////////////////////////////
 
@@ -606,7 +611,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   //public void arc(float a, float b, float c, float d,
   //                float start, float stop)
 
-  
+
   protected void arcImpl(float x, float y, float w, float h,
                          float start, float stop) {
     // 0 to 90 in java would be 0 to -90 for p5 renderer
@@ -649,13 +654,13 @@ public class PGraphicsAndroid2D extends PGraphics {
     }
   }
 
-  
-  
+
+
   //////////////////////////////////////////////////////////////
 
   // JAVA2D SHAPE/PATH HANDLING
 
-  
+
 //  protected void fillShape(Shape s) {
 //    if (fillGradient) {
 //      canvas.setPaint(fillGradientObject);
@@ -666,7 +671,7 @@ public class PGraphicsAndroid2D extends PGraphics {
 //    }
 //  }
 
-  
+
 //  protected void strokeShape(Shape s) {
 //    if (strokeGradient) {
 //      canvas.setPaint(strokeGradientObject);
@@ -677,7 +682,7 @@ public class PGraphicsAndroid2D extends PGraphics {
 //    }
 //  }
 
-  
+
 //  protected void drawShape(Shape s) {
 //    if (fillGradient) {
 //      canvas.setPaint(fillGradientObject);
@@ -694,8 +699,8 @@ public class PGraphicsAndroid2D extends PGraphics {
 //      canvas.draw(s);
 //    }
 //  }
-  
-  
+
+
   protected void drawPath() {
     if (fill) {
       canvas.drawPath(path, fillPaint);
@@ -705,115 +710,115 @@ public class PGraphicsAndroid2D extends PGraphics {
     }
   }
 
-  
+
 
   //////////////////////////////////////////////////////////////
-  
+
   // BOX
 
-  
+
   //public void box(float size)
-  
-  
+
+
   public void box(float w, float h, float d) {
     showMethodWarning("box");
   }
 
-  
-  
+
+
   //////////////////////////////////////////////////////////////
-  
+
   // SPHERE
 
-  
+
   //public void sphereDetail(int res)
-  
-  
+
+
   //public void sphereDetail(int ures, int vres)
-  
-  
+
+
   public void sphere(float r) {
     showMethodWarning("sphere");
   }
 
-  
+
 
   //////////////////////////////////////////////////////////////
 
   // BEZIER
 
-  
+
   //public float bezierPoint(float a, float b, float c, float d, float t)
-  
-  
+
+
   //public float bezierTangent(float a, float b, float c, float d, float t)
-  
-  
+
+
   //protected void bezierInitCheck()
-  
-  
+
+
   //protected void bezierInit()
-  
-  
+
+
   /** Ignored (not needed) in Java 2D. */
   public void bezierDetail(int detail) {
   }
-  
-  
+
+
   //public void bezier(float x1, float y1,
   //                   float x2, float y2,
   //                   float x3, float y3,
   //                   float x4, float y4)
-  
-  
+
+
   //public void bezier(float x1, float y1, float z1,
   //                   float x2, float y2, float z2,
   //                   float x3, float y3, float z3,
   //                   float x4, float y4, float z4)
 
 
-  
+
   //////////////////////////////////////////////////////////////
 
   // CURVE
 
-  
+
   //public float curvePoint(float a, float b, float c, float d, float t)
-  
-  
+
+
   //public float curveTangent(float a, float b, float c, float d, float t)
 
-  
+
   /** Ignored (not needed) in Java 2D. */
   public void curveDetail(int detail) {
   }
-  
+
   //public void curveTightness(float tightness)
-  
-  
+
+
   //protected void curveInitCheck()
-  
-  
+
+
   //protected void curveInit()
-  
-  
+
+
   //public void curve(float x1, float y1,
   //                  float x2, float y2,
   //                  float x3, float y3,
   //                  float x4, float y4)
-  
-  
+
+
   //public void curve(float x1, float y1, float z1,
   //                  float x2, float y2, float z2,
   //                  float x3, float y3, float z3,
   //                  float x4, float y4, float z4)
 
 
-  
+
   //////////////////////////////////////////////////////////////
-  
+
   // SMOOTH
-  
+
 
   public void smooth() {
     smooth = true;
@@ -837,21 +842,21 @@ public class PGraphicsAndroid2D extends PGraphics {
   }
 
 
-  
+
   //////////////////////////////////////////////////////////////
 
   // IMAGE
-  
-  
+
+
   //public void imageMode(int mode)
-  
-  
+
+
   //public void image(PImage image, float x, float y)
-  
-  
+
+
   //public void image(PImage image, float x, float y, float c, float d)
-  
-  
+
+
   //public void image(PImage image,
   //                  float a, float b, float c, float d,
   //                  int u1, int v1, int u2, int v2)
@@ -863,8 +868,8 @@ public class PGraphicsAndroid2D extends PGraphics {
   protected void imageImpl(PImage who,
                            float x1, float y1, float x2, float y2,
                            int u1, int v1, int u2, int v2) {
-//    canvas.drawBitmap(who.pixels, 0, who.width, 
-//                      x1, y1, (x2-x1), (y2-y1), 
+//    canvas.drawBitmap(who.pixels, 0, who.width,
+//                      x1, y1, (x2-x1), (y2-y1),
 //                      who.format == ARGB, tint ? tintPaint : null);
     rect.set(x1, y1, x2, y2);
     canvas.drawBitmap(who.image, null, rect, tint ? tintPaint : null);
@@ -1015,40 +1020,40 @@ public class PGraphicsAndroid2D extends PGraphics {
 //    }
 //  }
 
-  
+
 
   //////////////////////////////////////////////////////////////
 
   // SHAPE
 
-  
+
   //public void shapeMode(int mode)
-  
-  
+
+
   //public void shape(PShape shape)
-  
-  
+
+
   //public void shape(PShape shape, float x, float y)
-  
-  
+
+
   //public void shape(PShape shape, float x, float y, float c, float d)
 
 
-  
+
   //////////////////////////////////////////////////////////////
 
   // TEXT ATTRIBTUES
 
-  
+
   //public void textAlign(int align)
-  
-  
+
+
   //public void textAlign(int alignX, int alignY)
-  
+
 
   public float textAscent() {
-//    Font font = textFont.getFont();    
-    Typeface font = textFont.getFont();    
+//    Font font = textFont.getFont();
+    Typeface font = textFont.getFont();
     if (font == null) {
       return super.textAscent();
     }
@@ -1074,21 +1079,21 @@ public class PGraphicsAndroid2D extends PGraphics {
     super.textFont(which);
     fillPaint.setTypeface(which.getFont());
   }
-  
-  
+
+
   //public void textFont(PFont which, float size)
-  
-  
+
+
   //public void textLeading(float leading)
-  
-  
+
+
   //public void textMode(int mode)
-  
-  
+
+
   protected boolean textModeCheck(int mode) {
     return (mode == MODEL) || (mode == SCREEN);
   }
-  
+
 
   /**
    * Same as parent, but override for native version of the font.
@@ -1114,10 +1119,10 @@ public class PGraphicsAndroid2D extends PGraphics {
 
 
   //public float textWidth(char c)
-  
-  
+
+
   //public float textWidth(String str)
-  
+
 
   protected float textWidthImpl(char buffer[], int start, int stop) {
 //    Font font = textFont.getFont();
@@ -1137,20 +1142,20 @@ public class PGraphicsAndroid2D extends PGraphics {
   //////////////////////////////////////////////////////////////
 
   // TEXT
-  
+
   // None of the variations of text() are overridden from PGraphics.
-  
-  
-  
+
+
+
   //////////////////////////////////////////////////////////////
 
   // TEXT IMPL
-  
-  
+
+
   //protected void textLineAlignImpl(char buffer[], int start, int stop,
   //                                 float x, float y)
 
-  
+
   protected void textLineImpl(char buffer[], int start, int stop,
                               float x, float y) {
     Typeface font = textFont.getFont();
@@ -1199,7 +1204,7 @@ public class PGraphicsAndroid2D extends PGraphics {
     int length = stop - start;
 //    canvas.drawChars(buffer, start, length, (int) (x + 0.5f), (int) (y + 0.5f));
     canvas.drawText(buffer, start, length, x, y, fillPaint);
-    
+
     // return to previous smoothing state if it was changed
 //    canvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antialias);
     fillPaint.setAntiAlias(smooth);
@@ -1210,11 +1215,11 @@ public class PGraphicsAndroid2D extends PGraphics {
   }
 
 
-  
+
   //////////////////////////////////////////////////////////////
 
   // MATRIX STACK
-  
+
 
   public void pushMatrix() {
 //    if (transformCount == transformStack.length) {
@@ -1238,11 +1243,11 @@ public class PGraphicsAndroid2D extends PGraphics {
   }
 
 
-  
+
   //////////////////////////////////////////////////////////////
 
   // MATRIX TRANSFORMS
-  
+
 
   public void translate(float tx, float ty) {
     canvas.translate(tx, ty);
@@ -1250,28 +1255,28 @@ public class PGraphicsAndroid2D extends PGraphics {
 
 
   //public void translate(float tx, float ty, float tz)
-  
+
 
   public void rotate(float angle) {
     canvas.rotate(angle);
   }
 
-  
+
   public void rotateX(float angle) {
     showDepthWarning("rotateX");
   }
-  
-  
+
+
   public void rotateY(float angle) {
     showDepthWarning("rotateY");
   }
-  
-  
+
+
   public void rotateZ(float angle) {
     showDepthWarning("rotateZ");
   }
-  
-  
+
+
   public void rotate(float angle, float vx, float vy, float vz) {
     showVariationWarning("rotate");
   }
@@ -1286,18 +1291,18 @@ public class PGraphicsAndroid2D extends PGraphics {
     canvas.scale(sx, sy);
   }
 
-  
+
   public void scale(float sx, float sy, float sz) {
     showDepthWarningXYZ("scale");
   }
 
-  
+
 
   //////////////////////////////////////////////////////////////
 
   // MATRIX MORE
 
-  
+
   public void resetMatrix() {
 //    canvas.setTransform(new AffineTransform());
     canvas.setMatrix(new Matrix());
@@ -1305,24 +1310,24 @@ public class PGraphicsAndroid2D extends PGraphics {
 
 
   //public void applyMatrix(PMatrix2D source)
-  
+
 
   public void applyMatrix(float n00, float n01, float n02,
                           float n10, float n11, float n12) {
 //    canvas.transform(new AffineTransform(n00, n10, n01, n11, n02, n12));
-    // TODO optimize 
+    // TODO optimize
     Matrix m = new Matrix();
-    m.setValues(new float[] { 
-      n00, n01, n02,  
+    m.setValues(new float[] {
+      n00, n01, n02,
       n10, n11, n12,
       0,   0,   1
     });
     canvas.concat(m);
   }
-  
-  
+
+
   //public void applyMatrix(PMatrix3D source)
-  
+
 
   public void applyMatrix(float n00, float n01, float n02, float n03,
                           float n10, float n11, float n12, float n13,
@@ -1331,7 +1336,7 @@ public class PGraphicsAndroid2D extends PGraphics {
     showVariationWarning("applyMatrix");
   }
 
-  
+
 
   //////////////////////////////////////////////////////////////
 
@@ -1341,8 +1346,8 @@ public class PGraphicsAndroid2D extends PGraphics {
   public PMatrix getMatrix() {
     return getMatrix((PMatrix2D) null);
   }
-  
-  
+
+
   public PMatrix2D getMatrix(PMatrix2D target) {
     if (target == null) {
       target = new PMatrix2D();
@@ -1351,55 +1356,55 @@ public class PGraphicsAndroid2D extends PGraphics {
     Matrix m = new Matrix();
     canvas.getMatrix(m);
     m.getValues(transform);
-//    target.set((float) transform[0], (float) transform[2], (float) transform[4], 
+//    target.set((float) transform[0], (float) transform[2], (float) transform[4],
 //               (float) transform[1], (float) transform[3], (float) transform[5]);
-    target.set((float) transform[0], (float) transform[1], (float) transform[2], 
+    target.set((float) transform[0], (float) transform[1], (float) transform[2],
                (float) transform[3], (float) transform[4], (float) transform[5]);
     return target;
   }
 
-  
+
   public PMatrix3D getMatrix(PMatrix3D target) {
     showVariationWarning("getMatrix");
     return target;
   }
 
-  
+
   //public void setMatrix(PMatrix source)
 
-  
+
   public void setMatrix(PMatrix2D source) {
-//    canvas.setTransform(new AffineTransform(source.m00, source.m10, 
+//    canvas.setTransform(new AffineTransform(source.m00, source.m10,
 //                                            source.m01, source.m11,
 //                                            source.m02, source.m12));
     Matrix matrix = new Matrix();
-    matrix.setValues(new float[] { 
+    matrix.setValues(new float[] {
       source.m00, source.m01, source.m02,
       source.m10, source.m11, source.m12,
       0, 0, 1
     });
     canvas.setMatrix(matrix);
   }
-  
+
 
   public void setMatrix(PMatrix3D source) {
     showVariationWarning("setMatrix");
   }
-  
-  
+
+
   public void printMatrix() {
     getMatrix((PMatrix2D) null).print();
   }
 
-  
+
 
   //////////////////////////////////////////////////////////////
-  
+
   // CAMERA and PROJECTION
-  
-  // Inherit the plaintive warnings from PGraphics  
-  
-  
+
+  // Inherit the plaintive warnings from PGraphics
+
+
   //public void beginCamera()
   //public void endCamera()
   //public void camera()
@@ -1414,12 +1419,12 @@ public class PGraphicsAndroid2D extends PGraphics {
   //                  float near, float far)
   //public void perspective()
   //public void perspective(float fov, float aspect, float near, float far)
-  //public void frustum(float left, float right, 
-  //                    float bottom, float top, 
+  //public void frustum(float left, float right,
+  //                    float bottom, float top,
   //                    float near, float far)
   //public void printProjection()
 
-  
+
 
   //////////////////////////////////////////////////////////////
 
@@ -1452,51 +1457,51 @@ public class PGraphicsAndroid2D extends PGraphics {
     return screenPoint[1];
   }
 
-  
+
   public float screenX(float x, float y, float z) {
     showDepthWarningXYZ("screenX");
     return 0;
   }
-  
-  
+
+
   public float screenY(float x, float y, float z) {
     showDepthWarningXYZ("screenY");
     return 0;
   }
-  
-  
+
+
   public float screenZ(float x, float y, float z) {
     showDepthWarningXYZ("screenZ");
     return 0;
   }
-  
-  
+
+
   //public float modelX(float x, float y, float z)
-  
-  
+
+
   //public float modelY(float x, float y, float z)
-  
-  
+
+
   //public float modelZ(float x, float y, float z)
 
 
-  
+
   //////////////////////////////////////////////////////////////
-  
+
   // STYLE
-  
-  // pushStyle(), popStyle(), style() and getStyle() inherited. 
+
+  // pushStyle(), popStyle(), style() and getStyle() inherited.
 
 
-  
+
   //////////////////////////////////////////////////////////////
 
   // STROKE CAP/JOIN/WEIGHT
-  
+
 
   public void strokeCap(int cap) {
     super.strokeCap(cap);
-    
+
     if (strokeCap == ROUND) {
       strokePaint.setStrokeCap(Paint.Cap.ROUND);
     } else if (strokeCap == PROJECT) {
@@ -1509,7 +1514,7 @@ public class PGraphicsAndroid2D extends PGraphics {
 
   public void strokeJoin(int join) {
     super.strokeJoin(join);
-    
+
     if (strokeJoin == MITER) {
       strokePaint.setStrokeJoin(Paint.Join.MITER);
     } else if (strokeJoin == ROUND) {
@@ -1532,7 +1537,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   // STROKE
 
   // noStroke() and stroke() inherited from PGraphics.
-  
+
 
   protected void strokeFromCalc() {
     super.strokeFromCalc();
@@ -1542,14 +1547,14 @@ public class PGraphicsAndroid2D extends PGraphics {
     strokePaint.setShader(null);
   }
 
-  
-  
+
+
   //////////////////////////////////////////////////////////////
 
   // TINT
 
   // noTint() and tint() inherited from PGraphics.
-  
+
 
   protected void tintFromCalc() {
     super.tintFromCalc();
@@ -1557,14 +1562,14 @@ public class PGraphicsAndroid2D extends PGraphics {
     tintPaint.setColor(tintColor);
   }
 
-  
-  
+
+
   //////////////////////////////////////////////////////////////
 
   // FILL
 
   // noFill() and fill() inherited from PGraphics.
-  
+
 
   protected void fillFromCalc() {
     super.fillFromCalc();
@@ -1579,8 +1584,8 @@ public class PGraphicsAndroid2D extends PGraphics {
   //////////////////////////////////////////////////////////////
 
   // MATERIAL PROPERTIES
-  
-  
+
+
   //public void ambient(int rgb)
   //public void ambient(float gray)
   //public void ambient(float x, float y, float z)
@@ -1595,12 +1600,12 @@ public class PGraphicsAndroid2D extends PGraphics {
   //public void emissive(float x, float y, float z )
   //protected void emissiveFromCalc()
 
-  
+
 
   //////////////////////////////////////////////////////////////
 
   // LIGHTS
-  
+
 
   //public void lights()
   //public void noLights()
@@ -1620,30 +1625,30 @@ public class PGraphicsAndroid2D extends PGraphics {
   //protected void lightPosition(int num, float x, float y, float z)
   //protected void lightDirection(int num, float x, float y, float z)
 
-  
+
 
   //////////////////////////////////////////////////////////////
 
   // BACKGROUND
 
-  // background() methods inherited from PGraphics, along with the 
+  // background() methods inherited from PGraphics, along with the
   // PImage version of backgroundImpl(), since it just calls set().
 
-  
+
   //public void backgroundImpl(PImage image)
-  
-  
+
+
 //  int[] clearPixels;
 
   public void backgroundImpl() {
     canvas.drawColor(backgroundColor);
-    
+
 //    if (backgroundAlpha) {
 //      WritableRaster raster = ((BufferedImage) image).getRaster();
 //      if ((clearPixels == null) || (clearPixels.length < width)) {
 //        clearPixels = new int[width];
 //      }
-//      java.util.Arrays.fill(clearPixels, backgroundColor);      
+//      java.util.Arrays.fill(clearPixels, backgroundColor);
 //      for (int i = 0; i < height; i++) {
 //        raster.setDataElements(0, i, width, 1, clearPixels);
 //      }
@@ -1662,51 +1667,51 @@ public class PGraphicsAndroid2D extends PGraphics {
 
 
   //////////////////////////////////////////////////////////////
-  
+
   // COLOR MODE
-  
+
   // All colorMode() variations are inherited from PGraphics.
 
-  
+
 
   //////////////////////////////////////////////////////////////
-  
+
   // COLOR CALC
-  
+
   // colorCalc() and colorCalcARGB() inherited from PGraphics.
 
-  
+
 
   //////////////////////////////////////////////////////////////
 
   // COLOR DATATYPE STUFFING
-  
+
   // final color() variations inherited.
 
-  
-  
+
+
   //////////////////////////////////////////////////////////////
 
   // COLOR DATATYPE EXTRACTION
-  
-  // final methods alpha, red, green, blue,  
+
+  // final methods alpha, red, green, blue,
   // hue, saturation, and brightness all inherited.
 
 
-  
+
   //////////////////////////////////////////////////////////////
 
   // COLOR DATATYPE INTERPOLATION
-  
+
   // both lerpColor variants inherited.
-  
-  
-  
+
+
+
   //////////////////////////////////////////////////////////////
 
   // BEGIN/END RAW
 
-  
+
   public void beginRaw(PGraphics recorderRaw) {
     showMethodWarning("beginRaw");
   }
@@ -1717,35 +1722,35 @@ public class PGraphicsAndroid2D extends PGraphics {
   }
 
 
-  
+
   //////////////////////////////////////////////////////////////
 
   // WARNINGS and EXCEPTIONS
-  
+
   // showWarning and showException inherited.
-  
+
 
 
   //////////////////////////////////////////////////////////////
 
   // RENDERER SUPPORT QUERIES
-  
-  
+
+
   //public boolean displayable()  // true
-  
-  
+
+
   //public boolean is2D()  // true
-  
-  
+
+
   //public boolean is3D()  // false
 
-  
+
 
   //////////////////////////////////////////////////////////////
-  
+
   // PIMAGE METHODS
 
-  
+
   // getImage, setCache, getCache, removeCache, isModified, setModified
 
 
@@ -1786,18 +1791,18 @@ public class PGraphicsAndroid2D extends PGraphics {
     }
     updatePixels();
   }
-  
-  
+
+
   public void resize(int wide, int high) {
     showMethodWarning("resize");
   }
 
-  
+
 
   //////////////////////////////////////////////////////////////
 
   // GET/SET
-  
+
 
   static int getset[] = new int[1];
 
@@ -1813,7 +1818,7 @@ public class PGraphicsAndroid2D extends PGraphics {
 
   //public PImage get(int x, int y, int w, int h)
 
-  
+
   public PImage getImpl(int x, int y, int w, int h) {
     PImage output = new PImage(w, h);
     output.parent = parent;
@@ -1821,7 +1826,7 @@ public class PGraphicsAndroid2D extends PGraphics {
 //    WritableRaster raster = ((BufferedImage) image).getRaster();
 //    raster.getDataElements(x, y, w, h, output.pixels);
     Bitmap bitsy = Bitmap.createBitmap(image, x, y, w, h);
-    bitsy.getPixels(output.pixels, 0, w, 0, 0, w, h); 
+    bitsy.getPixels(output.pixels, 0, w, 0, 0, w, h);
 
     return output;
   }
@@ -1852,13 +1857,13 @@ public class PGraphicsAndroid2D extends PGraphics {
 //      raster.setDataElements(dx, dy, temp.width, temp.height, temp.pixels);
 //    }
 //  }
-  
+
 
 
   //////////////////////////////////////////////////////////////
 
   // MASK
-  
+
 
   public void mask(int alpha[]) {
     showMethodWarning("mask");
@@ -1870,26 +1875,26 @@ public class PGraphicsAndroid2D extends PGraphics {
   }
 
 
-  
+
   //////////////////////////////////////////////////////////////
 
   // FILTER
-  
-  // Because the PImage versions call loadPixels() and 
+
+  // Because the PImage versions call loadPixels() and
   // updatePixels(), no need to override anything here.
 
-  
+
   //public void filter(int kind)
 
 
   //public void filter(int kind, float param)
-  
+
 
 
   //////////////////////////////////////////////////////////////
 
   // COPY
-  
+
 
   public void copy(int sx, int sy, int sw, int sh,
                    int dx, int dy, int dw, int dh) {
@@ -1921,30 +1926,30 @@ public class PGraphicsAndroid2D extends PGraphics {
 //  }
 
 
-  
+
   //////////////////////////////////////////////////////////////
 
   // BLEND
-  
+
 
 //  static public int blendColor(int c1, int c2, int mode)
-  
-  
+
+
 //  public void blend(int sx, int sy, int sw, int sh,
 //                    int dx, int dy, int dw, int dh, int mode)
-  
-  
+
+
 //  public void blend(PImage src,
 //                    int sx, int sy, int sw, int sh,
 //                    int dx, int dy, int dw, int dh, int mode)
 
 
-  
+
   //////////////////////////////////////////////////////////////
 
   // SAVE
 
-  
+
 //  public void save(String filename) {
 //    loadPixels();
 //    super.save(filename);
