@@ -1,4 +1,5 @@
 0175 (private)
+X fix problem with windows claiming "does not appear to contain an Android SDK"
 
 
 P1 this is embarrassing, need to fix ASAP

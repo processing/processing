@@ -43,25 +43,25 @@ public class Android implements Tool {
 
   private Editor editor;
   Build build;
-  
+
   String emulator;
   Process emulatorProcess;
 
-  static final String ANDROID_SDK_PRIMARY = 
+  static final String ANDROID_SDK_PRIMARY =
     "Is the Android SDK installed?";
-  static final String ANDROID_SDK_SECONDARY = 
+  static final String ANDROID_SDK_SECONDARY =
     "The Android SDK does not appear to be installed, <br>" +
     "because the ANDROID_SDK variable is not set. <br>" +
     "If it is installed, click “Yes” to select the <br>" +
-    "location of the SDK, or “No” to visit the SDK<br>" + 
+    "location of the SDK, or “No” to visit the SDK<br>" +
     "download site at http://developer.android.com/sdk.";
-  static final String SELECT_ANDROID_SDK_FOLDER = 
+  static final String SELECT_ANDROID_SDK_FOLDER =
     "Choose the location of the Android SDK";
-  static final String NOT_ANDROID_SDK = 
+  static final String NOT_ANDROID_SDK =
     "The selected folder does not appear to contain an Android SDK.";
-  static final String ANDROID_SDK_URL = 
+  static final String ANDROID_SDK_URL =
     "http://developer.android.com/sdk/";
-  
+
   static final String ADB_SOCKET_PORT = "29892";
 
   static final String ANDROID_CORE_URL =
@@ -69,7 +69,7 @@ public class Android implements Tool {
   static final String ANDROID_CORE_FILENAME =
     "processing-android-core.zip";
 
-  
+
   public String getMenuTitle() {
     return "Android Mode";
   }
@@ -83,7 +83,7 @@ public class Android implements Tool {
   public void run() {
 //    System.out.println("being called like so:");
 //    new Exception().printStackTrace();
-    
+
     editor.statusNotice("Loading Android tools.");
 
     boolean success = checkPath();
@@ -94,33 +94,33 @@ public class Android implements Tool {
 
     // Make sure things are going to behave properly.
     checkServer();
-    
+
     success = Device.checkDefaults();
     if (!success) {
       editor.statusError("Could not load Android tools.");
       return;
     }
-    
+
     // Make sure that the processing.android.core.* classes are available
     checkCore();
-    
-    editor.setHandlers(new RunHandler(), new PresentHandler(), 
+
+    editor.setHandlers(new RunHandler(), new PresentHandler(),
                        new StopHandler(),
                        new ExportHandler(), new ExportAppHandler());
     build = new Build(editor);
     editor.statusNotice("Done loading Android tools.");
   }
-  
+
 
   protected boolean checkPath() {
     Platform platform = Base.getPlatform();
-    
+
     // The environment variable is king. The preferences.txt entry is a page.
     String envPath = platform.getenv("ANDROID_SDK");
     if (envPath != null) {
       sdkPath = envPath;
-      // Just set the pref, in case it the ANDROID_SDK variable gets 
-      // knocked out later. For instance, by that pesky Eclipse,  
+      // Just set the pref, in case it the ANDROID_SDK variable gets
+      // knocked out later. For instance, by that pesky Eclipse,
       // which nukes all env variables when launching from the IDE.
       Preferences.set("android.sdk.path", envPath);
 
@@ -128,17 +128,19 @@ public class Android implements Tool {
       sdkPath = Preferences.get("android.sdk.path");
 
       if (sdkPath == null) {
-        int result = Base.showYesNoQuestion(editor, "Android SDK", 
+        int result = Base.showYesNoQuestion(editor, "Android SDK",
                                             ANDROID_SDK_PRIMARY,
                                             ANDROID_SDK_SECONDARY);
         if (result == JOptionPane.YES_OPTION) {
-          File folder = 
+          File folder =
             Base.selectFolder(SELECT_ANDROID_SDK_FOLDER, null, editor);
           if (folder != null) {
-            boolean basicCheck = new File(folder, "tools/android").exists();
+            boolean basicCheck = Base.isWindows() ?
+              new File(folder, "tools/android.exe").exists() :
+              new File(folder, "tools/android").exists();
             if (basicCheck) {
               sdkPath = folder.getAbsolutePath();
-              Preferences.set("android.sdk.path", sdkPath);              
+              Preferences.set("android.sdk.path", sdkPath);
             } else {
               // tools/android not found in the selected folder
               JOptionPane.showMessageDialog(editor, NOT_ANDROID_SDK);
@@ -172,13 +174,13 @@ public class Android implements Tool {
 
 
   /**
-   * <s>And by "check" server, I mean kill it and start it again. For now, the 
+   * <s>And by "check" server, I mean kill it and start it again. For now, the
    * debug bridge seems to get into a bad state frequently, and it's not clear
    * how to properly query whether that's the case.</s>
    * <p/>
    * On second thought, that's been scratched because the forced start/stop
    * seems to cause even more instability.
-   */ 
+   */
   protected boolean checkServer() {
     // when "adb get-state" returns "unknown", that means that the SocketAttach
     // will probably fail, however it happily returns "device" in other cases
@@ -219,8 +221,8 @@ public class Android implements Tool {
     // otherwise do the usual
     return new File(Base.getSketchbookFolder(), ANDROID_CORE_FILENAME);
   }
-  
-  
+
+
   protected boolean checkCore() {
     //File target = new File(Base.getSketchbookFolder(), ANDROID_CORE_FILENAME);
     File target = getCoreZipFile();
@@ -229,7 +231,7 @@ public class Android implements Tool {
         URL url = new URL(ANDROID_CORE_URL);
         PApplet.saveStream(target, url.openStream());
       } catch (Exception e) {
-        Base.showWarning("Download Error", 
+        Base.showWarning("Download Error",
                          "Could not download Android core.zip", e);
         return false;
       }
@@ -239,18 +241,18 @@ public class Android implements Tool {
 
 
   /**
-   * The debug bridge seems to get into a bad state frequently, and it's not 
-   * clear how to properly query whether that's the case. 
+   * The debug bridge seems to get into a bad state frequently, and it's not
+   * clear how to properly query whether that's the case.
    * <p/>
-   * For instance, when loading the Android tools and checking installed 
-   * AVDs, the check will commonly return no entries, even though the 
+   * For instance, when loading the Android tools and checking installed
+   * AVDs, the check will commonly return no entries, even though the
    * defaults have been created. Then the code tries to create the AVDs
    * again, only to return an error.
    * <p/>
-   * In other cases, launching connector.attach() from AndroidRunner will 
-   * simply hang, rather than returning an error or (ever) timing out. 
+   * In other cases, launching connector.attach() from AndroidRunner will
+   * simply hang, rather than returning an error or (ever) timing out.
    * (Even if the timeout arg is set for SocketAttach.) There doesn't seem to
-   * be a good way to query whether this is going to happen before it happens.  
+   * be a good way to query whether this is going to happen before it happens.
    */
   static protected boolean resetServer(Editor editor) {
     try {
@@ -258,7 +260,7 @@ public class Android implements Tool {
       // don't really care about this result...
       killer.waitFor();
       killer.printLines();
-      
+
       Thread.sleep(1000);  // just take a quick break so that the server can die
 
       // ...we only care about whether it was able to start successfully.
@@ -267,14 +269,14 @@ public class Android implements Tool {
       starter.printLines();
       if (result == 0) {
         return true;
-      } 
+      }
       killer.printLines();  // okay maybe now we care about these
       starter.printLines();  // something to confuse the user a bit
-      editor.statusError("Could not start Android debug server."); 
+      editor.statusError("Could not start Android debug server.");
 
     } catch (IOException e) {
       editor.statusError(e);
-      
+
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
@@ -285,8 +287,8 @@ public class Android implements Tool {
   public Editor getEditor() {
     return editor;
   }
-  
-  
+
+
   public Sketch getSketch() {
     return editor.getSketch();
   }
@@ -295,8 +297,8 @@ public class Android implements Tool {
   public Build getBuilder() {
     return build;
   }
-  
-  
+
+
   /**
    * Launch an emulator if not already running.
    * @return The name of the emulator.
@@ -314,7 +316,7 @@ public class Android implements Tool {
         // not done yet, let's continue
       }
     }
-    
+
     String portString = Preferences.get("android.emulator.port");
     if (portString == null) {
       portString = "5566";
@@ -322,12 +324,12 @@ public class Android implements Tool {
     }
     //int port = Integer.parseInt(portString);
     String name = "emulator-" + portString;
-    
+
     if (emulatorProcess != null) {  // this must be it, if we're running
       System.out.println("Found a perfectly good emulator. Trying that.");
       return name;
     }
-    
+
     try {
       String[] devices = Device.list();
       for (String s : devices) {
@@ -340,23 +342,23 @@ public class Android implements Tool {
       editor.statusError(e);
       return null;
     }
-    
+
     //# starts and uses port 5554 for communication (but not logs)
     //emulator -avd gee1 -port 5554
     //# only informative messages and up (emulator -help-logcat for more info)
     //emulator -avd gee1 -logcat '*:i'
     //# faster boot
-    //emulator -avd gee1 -logcat '*:i' -no-boot-anim 
+    //emulator -avd gee1 -logcat '*:i' -no-boot-anim
     //# only get System.out and System.err
-    //emulator -avd gee1 -logcat 'System.*:i' -no-boot-anim 
+    //emulator -avd gee1 -logcat 'System.*:i' -no-boot-anim
     //# though lots of messages aren't through System.*, so that's not great
     //# need to instead use the adb interface
-    
+
     // launch emulator because it's not running yet
     try {
       editor.statusNotice("Starting new Android emulator.");
-      String[] cmd = new String[] { 
-          "emulator", 
+      String[] cmd = new String[] {
+          "emulator",
           "-avd", getDefaultDevice(),
           "-port", portString,
           //"-logcat", "'*:i'",
@@ -366,12 +368,12 @@ public class Android implements Tool {
       System.out.println(PApplet.join(cmd, " "));
       // "emulator: ERROR: the user data image is used by another emulator. aborting"
       // make sure that the streams are drained properly
-      new StreamRedirectThread("android-emulator-out", 
+      new StreamRedirectThread("android-emulator-out",
                                emulatorProcess.getInputStream(), System.out).start();
-      new StreamRedirectThread("android-emulator-err", 
+      new StreamRedirectThread("android-emulator-err",
                                emulatorProcess.getErrorStream(), System.err).start();
       return name;
-      
+
     } catch (IOException e) {
       //e.printStackTrace();
       editor.statusError(e);
@@ -406,16 +408,16 @@ public class Android implements Tool {
     }
     return null;
   }
-  
-  
+
+
 //adb -s emulator-5556 install helloWorld.apk
 
-//: adb -s HT91MLC00031 install bin/Brightness-debug.apk 
+//: adb -s HT91MLC00031 install bin/Brightness-debug.apk
 //532 KB/s (190588 bytes in 0.349s)
 //  pkg: /data/local/tmp/Brightness-debug.apk
 //Failure [INSTALL_FAILED_ALREADY_EXISTS]
 
-//: adb -s HT91MLC00031 install -r bin/Brightness-debug.apk 
+//: adb -s HT91MLC00031 install -r bin/Brightness-debug.apk
 //1151 KB/s (190588 bytes in 0.161s)
 //  pkg: /data/local/tmp/Brightness-debug.apk
 //Success
@@ -424,10 +426,10 @@ public class Android implements Tool {
 
   // if user asks for 480x320, 320x480, 854x480 etc, then launch like that
   // though would need to query the emulator to see if it can do that
-  
+
   public void installAndRun(String target, String device) {
     boolean success;
-  
+
 //    //adb get-state
 //    try {
 //      System.out.print("(installAndRun) adb get state: ");
@@ -441,7 +443,7 @@ public class Android implements Tool {
     // Simply reset the debug bridge, since it seems so prone to getting
     // into bad states and not producing error messages.
     //resetServer();
-    
+
     Build build = getBuilder();
     success = build.createProject();
     if (!success) return;
@@ -474,18 +476,18 @@ public class Android implements Tool {
 
     success = waitUntilReady(device);
     if (!success) return;
-    
+
     success = installSketch(device);
     if (!success) return;
 
     // Returns the last JDWP port that in use before launching
     String prevPort = startSketch(device);
     if (prevPort == null) return;
-    
+
     success = debugSketch(device, prevPort);
   }
-  
-  
+
+
   protected boolean waitUntilReady(String device) {
     long timeout = System.currentTimeMillis() + 30 * 1000;  // 15 sec
 
@@ -516,7 +518,7 @@ public class Android implements Tool {
         if (result == 0) return true;
 //        error.finish();
 //        output.finish();
-        
+
         p.printLines();
         /*
 //        for (String err : error.getLines()) {
@@ -532,7 +534,7 @@ public class Android implements Tool {
           }
         }
         */
-        
+
         try {
           Thread.sleep(1000);
         } catch (InterruptedException ie) { }
@@ -584,13 +586,13 @@ public class Android implements Tool {
 //          //System.out.println("last is " + last);
 //          return last.trim();
           for (int i = lines.length-1; i >= 0; --i) {
-            String s = lines[i].trim(); 
+            String s = lines[i].trim();
             if (s.length() != 0) {
               return s;
             }
           }
           return null;
-          
+
         } else {
           for (String err : p.getErrorLines()) {
             if (err.length() != 0) {
@@ -598,7 +600,7 @@ public class Android implements Tool {
             }
           }
         }
-        
+
         try {
           Thread.sleep(1000);
         } catch (InterruptedException ie) { }
@@ -608,19 +610,19 @@ public class Android implements Tool {
     }
     return null;
   }
-  
-  
+
+
   boolean installSketch(String device) {
     // install the new package into the emulator
     //System.out.println("installing onto emulator/device");
     boolean emu = device.startsWith("emulator");
-    editor.statusNotice("Sending sketch to the " + 
+    editor.statusNotice("Sending sketch to the " +
                         (emu ? "emulator" : "phone") + ".");
     try {
 //      Device.sendMenuButton(device);  // wake up
 //      Device.sendHomeButton(device);  // kill any running app
-      
-      String[] cmd = new String[] { 
+
+      String[] cmd = new String[] {
           "adb",
           "-s", device,
           //"wait-for-device",
@@ -628,7 +630,7 @@ public class Android implements Tool {
           build.getPathForAPK("debug")
       };
       Process p = Runtime.getRuntime().exec(cmd);
-      
+
       System.out.println();
       System.out.print("Install command: ");
       System.out.println(PApplet.join(cmd, " "));
@@ -646,7 +648,7 @@ public class Android implements Tool {
         editor.statusError("Could not install the sketch.");
         System.out.println("“adb install” returned " + result + ".");
         return false;
-        
+
       } else {
         String errorMsg = null;
         for (String out : output.getLines()) {
@@ -674,9 +676,9 @@ public class Android implements Tool {
       editor.statusError(e);
 
     } catch (InterruptedException e) { }
-    
+
     return false;
-  }    
+  }
 
 
   // better version that actually runs through JDI:
@@ -685,14 +687,14 @@ public class Android implements Tool {
     try {
 //      Device.sendMenuButton(device);  // wake up
 //      Device.sendHomeButton(device);  // kill any running app
-      
+
       String lastPort = getJdwpPort(device);
-      
+
       //"am start -a android.intent.action.MAIN -n com.android.browser/.BrowserActivity"
-      Process p = Runtime.getRuntime().exec(new String[] { 
+      Process p = Runtime.getRuntime().exec(new String[] {
           "adb",
           "-s", device,
-          //"-d",  // this is for a single USB device 
+          //"-d",  // this is for a single USB device
           "shell", "am", "start",  // kick things off
           // -D causes a hang with "waiting for the debugger to attach"
 //          "-D",  // debug
@@ -705,12 +707,12 @@ public class Android implements Tool {
       if (result != 0) {
         editor.statusError("Could not start the sketch.");
         System.err.println("“adb shell” for “am start” returned " + result + ".");
-        
+
       } else {
         boolean emu = device.startsWith("emulator");
-        editor.statusNotice("Sketch started on the " + 
+        editor.statusNotice("Sketch started on the " +
                             (emu ? "emulator" : "phone") + ".");
-        
+
         return lastPort;
       }
     } catch (IOException e) {
@@ -720,9 +722,9 @@ public class Android implements Tool {
     }
     return null;
   }
-  
-  
-  
+
+
+
   boolean debugSketch(String device, String prevPort) {
     try {
       String port = null;
@@ -730,7 +732,7 @@ public class Android implements Tool {
       //while (port == null || port.equals(prevPort)) {
       while (System.currentTimeMillis() < timeout) {
         if (port != null) {
-          System.out.println("Waiting a half second " + 
+          System.out.println("Waiting a half second " +
                              "for the application to launch...");
           try {
             Thread.sleep(500);
@@ -738,7 +740,7 @@ public class Android implements Tool {
         }
         port = getJdwpPort(device);
         if (!port.equals(prevPort)) {
-//          System.out.println("I'm digging port " + port + 
+//          System.out.println("I'm digging port " + port +
 //                             " instead of " + prevPort + ".");
           break;
         }
@@ -746,7 +748,7 @@ public class Android implements Tool {
       System.out.println("Found application on port " + port + ".");
 
       // Originally based on helpful notes by Agus Santoso (http://j.mp/7zV69M)
-      
+
       // adb -s emulator-5566 jdwp
       // prints a list of connections that can be made to the device
       // the final port will be the entry of the most recently started application
@@ -758,7 +760,7 @@ public class Android implements Tool {
       String[] cmd = new String[] {
           "adb",
           "-s", device,
-          "forward", 
+          "forward",
           "tcp:" + ADB_SOCKET_PORT,
           "jdwp:" + port
       };
@@ -792,8 +794,8 @@ public class Android implements Tool {
 
     return false;
   }
-  
-  
+
+
   /**
    * Build the sketch and run it inside an emulator with the debugger.
    */
@@ -803,7 +805,7 @@ public class Android implements Tool {
       checkServer();
       String device = findEmulator();
       boolean success;
-      
+
       Build build = getBuilder();
       success = build.createProject();
       if (!success) return;
@@ -824,23 +826,23 @@ public class Android implements Tool {
       if (prevPort == null) return;
 
       success = debugSketch(device, prevPort);
-    } 
+    }
   }
-  
-  
+
+
   /**
    * Build the sketch and run it on a device with the debugger connected.
    */
   class PresentHandler implements Runnable {
     public void run() {
-      checkServer();      
+      checkServer();
       String device = findDevice();
       if (device == null) {
         editor.statusError("No device found.");
       } else {
         //installAndRun("debug", device);
         boolean success;
-        
+
         Build build = getBuilder();
         success = build.createProject();
         if (!success) return;
@@ -865,17 +867,17 @@ public class Android implements Tool {
     }
   }
 
-  
+
   class StopHandler implements Runnable {
     public void run() {
     }
   }
-  
-  
+
+
   /**
-   * Create a release build of the sketch and have its apk files ready. 
+   * Create a release build of the sketch and have its apk files ready.
    */
-  class ExportHandler implements Runnable {  
+  class ExportHandler implements Runnable {
     public void run() {
     }
   }
@@ -883,10 +885,10 @@ public class Android implements Tool {
 
   /**
    * Create a release build of the sketch and install its apk files on the
-   * attached device. 
+   * attached device.
    */
-  class ExportAppHandler implements Runnable {  
-    public void run() {      
+  class ExportAppHandler implements Runnable {
+    public void run() {
     }
   }
 }
