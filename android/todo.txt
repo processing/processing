@@ -1,5 +1,7 @@
 0175 (private)
 X fix problem with windows claiming "does not appear to contain an Android SDK"
+X add methods to request rendering
+_   need to deal with fps problems with this model
 
 
 P1 this is embarrassing, need to fix ASAP
