@@ -1,6 +1,10 @@
 0175 pde (private)
+X changes to editor toolbar
+X   make shift-new and shift-open on the toolbar open a new window
+X   when shift is down, change text of the toolbar item
 
-_ "not a valid android install" msg on windows (not checking .exe)
+_ add a check to make sure that people aren't running from the dmg
+
 
 _ move build scripts to something better like ant
 _   too much to maintain the multiple versions, too much code
