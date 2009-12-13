@@ -890,7 +890,8 @@ public class Base {
 
     // Add a list of all sketches and subfolders
     try {
-      boolean sketches = addSketches(menu, getSketchbookFolder(), true);
+      //boolean sketches = addSketches(menu, getSketchbookFolder(), true);
+      boolean sketches = addSketches(menu, getSketchbookFolder());
       if (sketches) menu.addSeparator();
     } catch (IOException e) {
       e.printStackTrace();
@@ -899,7 +900,8 @@ public class Base {
     //System.out.println("rebuilding examples menu");
     // Add each of the subfolders of examples directly to the menu
     try {
-      addSketches(menu, examplesFolder, true);
+      //addSketches(menu, examplesFolder, true);
+      addSketches(menu, examplesFolder);
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -911,7 +913,8 @@ public class Base {
     //new Exception().printStackTrace();
     try {
       menu.removeAll();
-      addSketches(menu, getSketchbookFolder(), false);
+      //addSketches(menu, getSketchbookFolder(), false);
+      addSketches(menu, getSketchbookFolder());
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -952,7 +955,8 @@ public class Base {
     //System.out.println("rebuilding examples menu");
     try {
       menu.removeAll();
-      addSketches(menu, examplesFolder, false);
+      //addSketches(menu, examplesFolder, false);
+      addSketches(menu, examplesFolder);
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -965,8 +969,7 @@ public class Base {
    * should replace the sketch in the current window, or false when the
    * sketch should open in a new window.
    */
-  protected boolean addSketches(JMenu menu, File folder,
-                                final boolean openReplaces) throws IOException {
+  protected boolean addSketches(JMenu menu, File folder) throws IOException {
     // skip .DS_Store files, etc (this shouldn't actually be necessary)
     if (!folder.isDirectory()) return false;
 
@@ -983,7 +986,8 @@ public class Base {
         public void actionPerformed(ActionEvent e) {
           String path = e.getActionCommand();
           if (new File(path).exists()) {
-            if (openReplaces) {
+//            if (openReplaces) {
+            if ((e.getModifiers() & ActionEvent.SHIFT_MASK) == 0) {
               handleOpenReplace(path);
             } else {
               handleOpen(path);
@@ -1038,7 +1042,8 @@ public class Base {
         JMenu submenu = new JMenu(list[i]);
         // needs to be separate var
         // otherwise would set ifound to false
-        boolean found = addSketches(submenu, subfolder, openReplaces); //, false);
+        //boolean found = addSketches(submenu, subfolder, openReplaces); //, false);
+        boolean found = addSketches(submenu, subfolder); //, false);
         if (found) {
           menu.add(submenu);
           ifound = true;
