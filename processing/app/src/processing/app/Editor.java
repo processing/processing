@@ -246,6 +246,9 @@ public class Editor extends JFrame implements RunnerListener {
     // (har har har.. that was wishful thinking)
     listener = new EditorListener(this, textarea);
     pain.add(box);
+    
+    // get shift down/up events so we can show the alt version of toolbar buttons
+    textarea.addKeyListener(toolbar);
 
     pain.setTransferHandler(new FileDropHandler());
 
