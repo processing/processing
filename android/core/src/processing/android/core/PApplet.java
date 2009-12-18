@@ -1504,7 +1504,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
       // render a single frame
       //handleDraw();
-      requestDraw();  // for GL we can only ask nicely
+      g.requestDraw();  // for GL we can only ask nicely
 
       // removed in android
 //      if (frameCount == 1) {
@@ -3071,7 +3071,15 @@ public class PApplet extends Activity implements PConstants, Runnable {
       System.err.println("Could not find the image " + filename + ".");
       return null;
     }
-    Bitmap bitmap = BitmapFactory.decodeStream(stream);
+    Bitmap bitmap = null;
+    try {
+      bitmap = BitmapFactory.decodeStream(stream);
+    } finally {
+      try {
+        stream.close();
+        stream = null;
+      } catch (IOException e) { }
+    }
     PImage image = new PImage(bitmap);
     image.parent = this;
     return image;
