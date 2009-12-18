@@ -3,7 +3,9 @@ X fix problem with windows claiming "does not appear to contain an Android SDK"
 X add methods to request rendering
 _   need to deal with fps problems with this model
 _ check on multiple pointers work (peter's msg)
-
+_ loadImage() and other loadXxxx() functions not yet working
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1414
+_ add clear and close to all stream methods?
 
 P1 this is embarrassing, need to fix ASAP
 P2 need to fix before beta release
