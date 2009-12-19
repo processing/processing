@@ -2,7 +2,18 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <curated>
 
-<software name="Branching Morphogenesis" by="Sabin+Jones LabStudio" scroll="yes" resize="yes" width="1024" height="700">
+<software name="COP15 Generative Identity" by="Mikkel Koser" scroll="yes" resize="yes" width="1024" height="700">
+        <image>images/cop15.jpg</image>
+          <description>
+             Software for generating the COP15 identity - the UN Climate Change Conference held in Copenhagen Dec 2009. It explores how turbulence and naturally evolving patterns can illustrate the complex decision making that goes on at the conference.
+          </description>
+          <location>http://www.okdeluxe.co.uk/cop15/</location>
+          <link href="http://www.okdeluxe.co.uk/">okdelux</link>
+          <link href="http://www.shiftcontrol.dk/">shiftcontrol</link>
+          <link href="http://www.nr2154.com/">NR2154</link>
+</software>
+        
+        <software name="Branching Morphogenesis" by="Sabin+Jones LabStudio" scroll="yes" resize="yes" width="1024" height="700">
         <image>images/branching.jpg</image>
           <description>
              Explores fundamental processes in living systems and their potential application in architecture. The installation materializes five slices in time that capture the force network exerted by interacting vascular cells.
