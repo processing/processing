@@ -1,5 +1,6 @@
 0175 core (private) 
-
+_ inconsistent anti-aliasing with OpenGL
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1413
 
 _ consider bringing back text/image using cache/names
 _   fonts might not be as bad
