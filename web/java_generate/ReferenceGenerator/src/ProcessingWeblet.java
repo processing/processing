@@ -36,6 +36,7 @@ public class ProcessingWeblet extends Standard {
 	public static boolean start(RootDoc root) {
 		setConfig(root.options());
 		createOutputDirectories();
+		
 		indexWriter = new IndexWriter();
 		
 		try {			

@@ -17,6 +17,7 @@ public class FieldWriter extends BaseWriter {
 	
 	public static void write(HashMap<String, String> vars, FieldDoc doc) throws IOException
 	{
+		//
 		String filename = getFieldAnchor(doc);
 		TemplateWriter templateWriter = new TemplateWriter();
 		String syntax = templateWriter.writePartial("Field.Syntax.partial.html", getSyntax(doc));
