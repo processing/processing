@@ -35,7 +35,7 @@ public class ProcessingWeblet extends Standard {
 
 	public static boolean start(RootDoc root) {
 		setConfig(root.options());
-		createOutputDirectories();
+		Shared.i().createBaseDirectories();
 		
 		indexWriter = new IndexWriter();
 		
@@ -60,12 +60,6 @@ public class ProcessingWeblet extends Standard {
 		}
 		System.out.println("===All finished in the weblet.===");
 		return true;
-	}
-	
-	private static void createOutputDirectories()
-	{
-		Shared.i().createOutputDirectory(Shared.i().getOutputDirectory());
-		Shared.i().createOutputDirectory(Shared.i().getLocalOutputDirectory());
 	}
 
 	private static void setConfig(String[][] configOptions) {

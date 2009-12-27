@@ -121,4 +121,12 @@ public class Shared {
 		f = new File(OUTPUT_DIRECTORY() + dir);
 		f.mkdirs();
 	}
+	
+	public void createBaseDirectories(){
+		File f = new File(LOCAL_OUTPUT_DIRECTORY());
+		f.mkdirs();
+		
+		f = new File(OUTPUT_DIRECTORY());
+		f.mkdirs();
+	}
 }

@@ -1,0 +1,25 @@
+#!/bin/sh
+
+javadoc -doclet ProcessingWeblet -docletpath bin/ -public \
+	-webref ../tmp/web \
+	-localref ../tmp/local \
+	-templatedir ../templates \
+	-examplesdir ../api_examples \
+	-includedir ../api_examples/include \
+	-imagedir images \
+	-corepackage processing.xml \
+    ../../../processing/core/src/processing/core/*.java \
+    ../../../processing/core/src/processing/xml/*.java \
+    ../../../processing/net/src/processing/net/*.java \
+    ../../../processing/video/src/processing/video/*.java \
+    ../../../processing/serial/src/processing/serial/*.java
+#encountering svn permission issues when overwriting stuff   
+#cp -r ../data/website/css	 ../generated_reference
+mkdir ../tmp/web/images
+mkdir ../tmp/local/images
+cp -r ../../content/api_media/*.jpg ../tmp/web/images/
+cp -r ../../content/api_media/*.gif ../tmp/web/images/
+cp -r ../../content/api_media/*.png ../tmp/web/images/
+cp -r ../../content/api_media/*.jpg ../tmp/local/images/
+cp -r ../../content/api_media/*.gif ../tmp/local/images/
+cp -r ../../content/api_media/*.png ../tmp/local/images/
