@@ -400,6 +400,7 @@ public class PApplet extends Applet
 
   /**
    * Gets set to true/false as the applet gains/loses focus.
+   * @webref environment
    */
   public boolean focused = false;
 
@@ -408,6 +409,7 @@ public class PApplet extends Applet
    * <P>
    * This can be used to test how the applet should behave
    * since online situations are different (no file writing, etc).
+   * @webref environment
    */
   public boolean online = false;
 
@@ -1984,6 +1986,9 @@ public class PApplet extends Applet
    * make a slow sketch go faster. Sketches have no default frame rate
    * setting, and will attempt to use maximum processor power to achieve
    * maximum speed.
+   * @webref environment
+   * @param newRateTarget the new framerate
+   * @see PApplet#delay(int)
    */
   public void frameRate(float newRateTarget) {
     frameRateTarget = newRateTarget;
@@ -2400,6 +2405,7 @@ public class PApplet extends Applet
 
   /**
    * Set the cursor type
+   * @webref environment
    */
   public void cursor(int cursorType) {
     setCursor(Cursor.getPredefinedCursor(cursorType));
