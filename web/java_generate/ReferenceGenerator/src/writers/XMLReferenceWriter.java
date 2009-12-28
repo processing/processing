@@ -60,6 +60,7 @@ public class XMLReferenceWriter extends BaseWriter {
 			String syntax = (String) xpath.evaluate("//syntax", doc, XPathConstants.STRING);
 			String parameters = (String) xpath.evaluate("//parameters", doc, XPathConstants.STRING);
 			String anchor = getAnchorFromName(name);
+			String usage = (String) xpath.evaluate("//usage", doc, XPathConstants.STRING);
 			indexWriter.addItem(category, subcategory, name, anchor);
 			
 			HashMap<String, String> vars = new HashMap<String, String>();
@@ -67,6 +68,7 @@ public class XMLReferenceWriter extends BaseWriter {
 			vars.put("name", name);
 			vars.put("description", description);
 			vars.put("syntax", syntax);
+			vars.put("usage", usage);
 			vars.put("parameters", parameters);	//need to write this out in a loop
 			vars.put("related", (String) xpath.evaluate("//related", doc, XPathConstants.STRING));
 			

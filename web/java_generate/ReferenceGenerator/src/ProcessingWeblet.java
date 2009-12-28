@@ -1,13 +1,16 @@
 import java.io.IOException;
+import java.util.HashMap;
 
 import writers.ClassWriter;
-import writers.Shared;
+import writers.FieldWriter;
 import writers.FunctionWriter;
 import writers.IndexWriter;
 import writers.LibraryWriter;
+import writers.Shared;
 import writers.XMLReferenceWriter;
 
 import com.sun.javadoc.ClassDoc;
+import com.sun.javadoc.FieldDoc;
 import com.sun.javadoc.MethodDoc;
 import com.sun.javadoc.RootDoc;
 import com.sun.javadoc.Tag;
@@ -118,9 +121,12 @@ public class ProcessingWeblet extends Standard {
 						Tag[] tags = fn.tags(Shared.i().getWebrefTagName());
 						if (tags.length != 0) {
 							// add to the index under the @webref category:sub_category
+//							System.out.println("\nAdding " + fn.name() + " to webref\n");
 							indexWriter.addItem(fn, tags[0]);
 						}
-					}					
+					}
+					//also need to add fields, duh
+					
 				} else {
 					// document a class and its public properties
 					new ClassWriter().write(classDoc);

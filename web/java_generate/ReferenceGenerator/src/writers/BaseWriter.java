@@ -74,7 +74,7 @@ public class BaseWriter {
 	{
 		String ret = getAnchorFromName(getName(doc));
 		
-		if(doc.containingClass() != null){
+		if(doc.containingClass() != null && !doc.containingClass().name().equals("PApplet")){
 			ret = doc.containingClass().name() + "_" + ret;
 		}
 		
@@ -357,6 +357,7 @@ public class BaseWriter {
 		//get parent
 		ClassDoc cd = doc.containingClass();
 		if(!cd.name().contains(Shared.i().getCoreClassName())){
+			//add the parent parameter if this isn't a function of PApplet
 			HashMap<String, String> parent = new HashMap<String, String>();
 			parent.put("name", getInstanceName(doc));
 			parent.put("description", cd.name() + ": " + getInstanceDescription(doc));
@@ -398,7 +399,7 @@ public class BaseWriter {
 			HashMap<String, String> map = new HashMap<String, String>();
 			if(tag.referencedClassName().contains(Shared.i().getCoreClassName())){
 				map.put("name", getName(tag.referencedMember()));
-				map.put("anchor", getAnchor(tag.referencedMember()));				
+				map.put("anchor", getAnchor(tag.referencedMember()));
 			} else {
 				map.put("name", getName(tag.referencedClass()));
 				map.put("anchor", getAnchor(tag.referencedClass()));

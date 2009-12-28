@@ -10,9 +10,9 @@ javadoc -doclet ProcessingWeblet -docletpath bin/ -public \
 	-corepackage processing.xml \
     ../../../processing/core/src/processing/core/*.java \
     ../../../processing/core/src/processing/xml/*.java \
-    ../../../processing/net/src/processing/net/*.java \
-    ../../../processing/video/src/processing/video/*.java \
-    ../../../processing/serial/src/processing/serial/*.java
+    # ../../../processing/net/src/processing/net/*.java \
+    # ../../../processing/video/src/processing/video/*.java \
+    # ../../../processing/serial/src/processing/serial/*.java
 cp -r ../../css	 ../tmp/web
 cp -r ../../css	 ../tmp/local
 mkdir ../tmp/web/images

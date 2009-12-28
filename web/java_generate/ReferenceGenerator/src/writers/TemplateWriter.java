@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 public class TemplateWriter extends BaseWriter {
 	
@@ -92,13 +93,16 @@ public class TemplateWriter extends BaseWriter {
 	
 	private String writeLine(String line, HashMap<String, String> map)
 	{
-		for( String key : map.keySet() )
+		for( String key : map.keySet())
 		{
 			String var = varPrefix + key + varSuffix;
 			if(line.contains(var))
 			{
 				String value = map.get(key);
 				value = value.replace("$", "\\$");
+				if( map.containsKey("name") && map.get("name").equals("frameRate()")){
+					System.out.println("Writing frameRate()\n\t" + var + "\n" + map.get(key) + "\n" + value );
+				}
 				
 				if(var.equals("")){
 					System.out.println("\n\nEMPTY STRING PASSED IN TO REPLACE");
@@ -106,6 +110,7 @@ public class TemplateWriter extends BaseWriter {
 				line = line.replaceFirst(var, value);
 				String requireStart = varPrefix + "require:" + key + varSuffix;
 				String requireEnd = varPrefix + "end" + varSuffix;
+				
 				if(value.equals(""))
 				{	//remove html around things that are absent (like images)
 					while(line.contains(requireStart))

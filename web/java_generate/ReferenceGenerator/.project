@@ -14,4 +14,11 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>processing_core</name>
+			<type>2</type>
+			<location>/Users/davidwicks/Documents/Projects/Processing_Doc/trunk/processing/core/src/processing</location>
+		</link>
+	</linkedResources>
 </projectDescription>

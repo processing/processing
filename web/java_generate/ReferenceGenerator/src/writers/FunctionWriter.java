@@ -33,6 +33,10 @@ public class FunctionWriter extends BaseWriter {
 		vars.put("parameters", getParameters(doc));
 		vars.put("related", getRelated(doc));
 		
+		if(doc.name().equals("frameRate")){
+			System.out.println("\n\nFunction:\n" + vars.get("related") + "\n" + vars.get("parameters") + "\n" + vars.size());
+		}
+		
 		templateWriter.write("Function.template.html", vars, anchor);
 	}	
 }
