@@ -20,6 +20,10 @@ import com.sun.tools.doclets.standard.Standard;
  * Flags for javadoc when running include:
  * -templatedir where to find the html templates for output
  * -examplesdir where to find the xml describing the examples to go in the reference
+ * -localref	the local reference output directory
+ * -webref		the web reference output directory
+ * -corepackage	pass in as many of these as necessary to have things considered as part of the core (not a library) e.g -corepackage processing.xml
+ * -includedir	where to find things that aren't in the source, but only in xml e.g. [] (arrayaccess)
  */
 public class ProcessingWeblet extends Standard {
 
@@ -30,6 +34,7 @@ public class ProcessingWeblet extends Standard {
 	private static String imagesFlag = "-imagedir";
 	private static String localFlag = "-localref";
 	private static String coreFlag = "-corepackage"; //to allow for exceptions like XML being in the core
+	private static String verboseFlag = "-noisy";
 	private static String exceptionsList = "";
 	private static IndexWriter indexWriter;
 
@@ -83,14 +88,18 @@ public class ProcessingWeblet extends Standard {
 				Shared.i().setLocalOutputDirectory(option[1]);
 			} else if( option[0].equals(coreFlag)){
 				Shared.i().corePackages.add(option[1]);
+			} else if(option[0].equals(verboseFlag)){
+				Shared.i().setNoisy(true);
 			}
 		}
 	}
 
 	public static int optionLength(String option) {
 		if (option.equals(templateFlag) || option.equals(examplesFlag)
-				|| option.equals(outputFlag) || option.equals(exceptionsFlag) || option.equals(imagesFlag) || option.equals(localFlag) || option.equals(coreFlag)) {
+				|| option.equals(outputFlag) || option.equals(exceptionsFlag) || option.equals(imagesFlag) || option.equals(localFlag) || option.equals(coreFlag) ) {
 			return 2;
+		} else if ( option.equals(verboseFlag) ){
+			return 1;
 		}
 		return 0;
 	}
@@ -99,28 +108,30 @@ public class ProcessingWeblet extends Standard {
 		for( ClassDoc classDoc : root.classes() ){
 
 			if(Shared.i().isCore(classDoc)){
-				//just record the methods of PApplet
-//				System.out.println( "Writing core thing from " + classDoc.containingPackage().name());
+				// Document the core functions and classes
 				if(classDoc.name().equals("PApplet")){
+					// document a function
 					MethodDoc[] functions = classDoc.methods();
 					for (MethodDoc fn : functions) {
+						// write out html reference
+						FunctionWriter.write(fn);
 						Tag[] tags = fn.tags(Shared.i().getWebrefTagName());
 						if (tags.length != 0) {
-							FunctionWriter.write(fn, tags[0]);
+							// add to the index under the @webref category:sub_category
 							indexWriter.addItem(fn, tags[0]);
 						}
 					}					
 				} else {
+					// document a class and its public properties
+					new ClassWriter().write(classDoc);
 					Tag[] classTags = classDoc.tags(Shared.i().getWebrefTagName());
 					if (classTags.length != 0) {
-						// document the class if it has a @webref tag
-						new ClassWriter().write(classDoc);
+						// add to the index under the @webref category:sub_category
 						indexWriter.addItem(classDoc, classTags[0]);
 					}
 				}
 			} else {
-//				System.out.println("Writing library thing from " + classDoc.containingPackage().name());
-				// check whether we've already written this package before
+				// Document the library passed in
 				LibraryWriter writer = new LibraryWriter(classDoc.containingPackage());
 				writer.write();
 			}

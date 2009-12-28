@@ -6,10 +6,10 @@ import java.util.HashMap;
 
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.ConstructorDoc;
-import com.sun.javadoc.Doc;
 import com.sun.javadoc.FieldDoc;
 import com.sun.javadoc.MethodDoc;
 import com.sun.javadoc.Parameter;
+import com.sun.javadoc.ProgramElementDoc;
 import com.sun.javadoc.Tag;
 
 public class ClassWriter extends BaseWriter {
@@ -21,6 +21,10 @@ public class ClassWriter extends BaseWriter {
 
 	@SuppressWarnings("unchecked")
 	public void write(ClassDoc classDoc) throws IOException {
+		if( wasWritten(classDoc)){
+			return;
+		}
+		
 		TemplateWriter templateWriter = new TemplateWriter();
 		this.classDoc = classDoc;
 		String classname = getName(classDoc);
@@ -39,18 +43,17 @@ public class ClassWriter extends BaseWriter {
 		// Write all @webref methods for core classes (the tag tells us where to link to it in the index)
 		
 		for (MethodDoc m : classDoc.methods()) {
-			if (Shared.i().isWebref(m)) {
-				MethodWriter.write((HashMap<String, String>)vars.clone(), m);
+			if(!wasWritten(m)){
+				MethodWriter.write((HashMap<String, String>)vars.clone(), m);				
 				methodSet.add(getPropertyInfo(m));
 			}
 		}
 
 		for (FieldDoc f : classDoc.fields()) {
-			if (Shared.i().isWebref(f)) {
+			if(!wasWritten(f)){
 				FieldWriter.write((HashMap<String, String>)vars.clone(), f);
-				fieldSet.add(getPropertyInfo(f));
+				fieldSet.add(getPropertyInfo(f));				
 			}
-
 		}
 		String constructors = getConstructors();
 		
@@ -89,14 +92,10 @@ public class ClassWriter extends BaseWriter {
 		return constructors;
 	}
 
-	private HashMap<String, String> getPropertyInfo(Doc doc) {
+	private HashMap<String, String> getPropertyInfo(ProgramElementDoc doc) {
 		HashMap<String, String> ret = new HashMap<String, String>();
 		ret.put("name", docName(doc));
-		if( doc instanceof MethodDoc ){
-			ret.put("anchor", getMethodAnchor((MethodDoc) doc));			
-		} else if ( doc instanceof FieldDoc ){
-			ret.put("anchor", getFieldAnchor((FieldDoc)doc));
-		}
+		ret.put("anchor", getLocalAnchor(doc));
 		ret.put("desc", basicText(doc));
 		return ret;
 	}

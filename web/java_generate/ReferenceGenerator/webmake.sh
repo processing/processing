@@ -13,8 +13,8 @@ javadoc -doclet ProcessingWeblet -docletpath bin/ -public \
     ../../../processing/net/src/processing/net/*.java \
     ../../../processing/video/src/processing/video/*.java \
     ../../../processing/serial/src/processing/serial/*.java
-#encountering svn permission issues when overwriting stuff   
-#cp -r ../data/website/css	 ../generated_reference
+cp -r ../../css	 ../tmp/web
+cp -r ../../css	 ../tmp/local
 mkdir ../tmp/web/images
 mkdir ../tmp/local/images
 cp -r ../../content/api_media/*.jpg ../tmp/web/images/

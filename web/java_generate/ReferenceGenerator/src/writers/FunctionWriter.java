@@ -1,17 +1,23 @@
 package writers;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.sun.javadoc.MethodDoc;
-import com.sun.javadoc.Tag;
 
 public class FunctionWriter extends BaseWriter {
 	
+	static ArrayList<String> writtenFunctions;
+	
 	public FunctionWriter(){}
 	
-	public static void write(MethodDoc doc, Tag webref) throws IOException
+	public static void write(MethodDoc doc) throws IOException
 	{
+		if( wasWritten(doc)){
+			return;
+		}
+		
 		String anchor = getAnchor(doc);
 		TemplateWriter templateWriter = new TemplateWriter();
 		

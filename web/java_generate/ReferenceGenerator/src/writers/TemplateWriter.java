@@ -19,7 +19,9 @@ public class TemplateWriter extends BaseWriter {
 	{
 		write( templateName, vars, outputName, false );
 		write( templateName, vars, outputName, true );
-		System.out.println("Writing " + outputName + " from template");
+		if(Shared.i().isNoisy()){			
+			System.out.println("Writing " + outputName + " from template");
+		}
 	}
 	
 	private void write( String templateName, HashMap<String, String> vars, String outputName, Boolean isLocal ) throws IOException
@@ -96,6 +98,11 @@ public class TemplateWriter extends BaseWriter {
 			if(line.contains(var))
 			{
 				String value = map.get(key);
+				value = value.replace("$", "\\$");
+				
+				if(var.equals("")){
+					System.out.println("\n\nEMPTY STRING PASSED IN TO REPLACE");
+				}
 				line = line.replaceFirst(var, value);
 				String requireStart = varPrefix + "require:" + key + varSuffix;
 				String requireEnd = varPrefix + "end" + varSuffix;

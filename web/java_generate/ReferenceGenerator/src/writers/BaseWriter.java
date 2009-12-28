@@ -33,9 +33,25 @@ import com.sun.javadoc.Tag;
 
 public class BaseWriter {
 	// Some utilities
-
+	static ArrayList<String> writtenElements;
 	public BaseWriter() {
 
+	}
+	
+	protected static boolean wasWritten(ProgramElementDoc doc){
+		if(writtenElements==null){
+			writtenElements = new ArrayList<String>();
+		}
+		
+		String pkg = (doc.containingPackage() != null ) ? doc.containingPackage().name() : "null.pkg";
+		String c = (doc.containingClass() != null) ? doc.containingClass().name() : "null.class";
+		
+		String name = pkg + c + doc.name();;
+		if(writtenElements.contains(name)){
+			return true;
+		}
+		writtenElements.add(name);
+		return false;
 	}
 	
 	protected static BufferedWriter makeWriter(String anchor) throws IOException
@@ -57,12 +73,28 @@ public class BaseWriter {
 	protected static String getAnchor(ProgramElementDoc doc)
 	{
 		String ret = getAnchorFromName(getName(doc));
+		
+		if(doc.containingClass() != null){
+			ret = doc.containingClass().name() + "_" + ret;
+		}
+		
 		if(!Shared.i().isCore(doc)){
 			//add package name to anchor
 			String[] parts = doc.containingPackage().name().split("\\."); 
 			String pkg = parts[parts.length-1] + "/";
 			ret = "libraries/" + pkg + ret;
+		}		
+		
+		return ret;
+	}
+	
+	protected static String getLocalAnchor(ProgramElementDoc doc)
+	{
+		String ret = getAnchorFromName(getName(doc));
+		if(doc.containingClass() != null){
+			ret = doc.containingClass().name() + "_" + ret;
 		}
+		
 		return ret;
 	}
 	
@@ -73,17 +105,6 @@ public class BaseWriter {
 			ret = ret.concat("()");
 		}
 		return ret;
-	}
-	
-	
-	protected static String getMethodAnchor(ProgramElementDoc doc)
-	{
-		return doc.containingClass().name() + "_" + getAnchor(doc);
-	}
-	
-	protected static String getFieldAnchor(ProgramElementDoc doc)
-	{
-		return doc.containingClass().name() + "_" + getAnchor(doc);
 	}
 
 	protected static String getAnchorFromName(String name){
@@ -107,21 +128,50 @@ public class BaseWriter {
 	
 	//
 
-	static protected String basicText(Doc doc) {
+	static protected String basicText(ProgramElementDoc doc) {
+		return basicText(longestText(doc));
+	}
+	
+	static protected String longestText(ProgramElementDoc doc){
 		String s = doc.commentText();
+		if( doc.isMethod() ){
+			for(ProgramElementDoc d : doc.containingClass().methods()){
+				if(d.name().equals(doc.name() ) ){
+					if(d.commentText().length() > s.length()){
+						s = d.commentText();
+					}
+				}
+			}			
+		} else if(doc.isField()){			
+			for(ProgramElementDoc d : doc.containingClass().fields()){
+				if(d.name().equals(doc.name() ) ){
+					if(d.commentText().length() > s.length()){
+						s = d.commentText();
+					}
+				}
+			}
+		}
+		return s;
+	}
+	
+	static protected String basicText(String s){
 		String[] sa = s.split("=advanced");
 		if (sa.length != 0)
 			s = sa[0];
 		return s;
 	}
-
-	static protected String advancedText(Doc doc) {
-		String s = doc.commentText();
+	
+	static protected String advancedText(ProgramElementDoc doc) {
+		return advancedText(longestText(doc));
+	}
+	static protected String advancedText(String	s) {
 		String[] sa = s.split("=advanced");
 		if (sa.length > 1)
 			s = sa[1];
 		return s;
 	}
+	
+	
 	
 	//
 	

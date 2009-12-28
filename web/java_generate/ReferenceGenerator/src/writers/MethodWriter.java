@@ -17,7 +17,7 @@ public class MethodWriter extends BaseWriter {
 	 */
 	public static void write( HashMap<String, String> vars, MethodDoc doc) throws IOException
 	{
-		String filename = getMethodAnchor(doc);
+		String filename = getAnchor(doc);
 		TemplateWriter templateWriter = new TemplateWriter();
 		
 		vars.put("examples", getExamples(doc));

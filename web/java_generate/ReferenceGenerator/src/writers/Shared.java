@@ -20,6 +20,7 @@ public class Shared {
 	//where things come from
 	private String templateDirectory = "templates";
 	private String exampleDirectory = "web_examples";
+	boolean noisy = false;
 	public ArrayList<String> corePackages;
 
 	private Shared(){
@@ -111,6 +112,14 @@ public class Shared {
 	
 	public boolean isWebref(ProgramElementDoc doc){
 		return doc.tags(webrefTagName).length > 0;
+	}
+	
+	public boolean isNoisy(){
+		return noisy;
+	}
+	
+	public void setNoisy(boolean b){
+		noisy = b;
 	}
 	
 	public void createOutputDirectory(String dir){
