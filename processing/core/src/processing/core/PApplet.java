@@ -157,6 +157,7 @@ import javax.swing.SwingUtilities;
  * itself (we must draw the line somewhere), because of how messy it would
  * get to start talking about multiple screens. It's also not that tough to
  * do by hand w/ some Java code.</P>
+ * @usage Web &amp; Application
  */
 public class PApplet extends Applet
   implements PConstants, Runnable,
@@ -312,16 +313,24 @@ public class PApplet extends Applet
    */
   public int pixels[];
 
-  /** width of this applet's associated PGraphics */
+  /** width of this applet's associated PGraphics
+   * @webref environment 
+   */
   public int width;
 
-  /** height of this applet's associated PGraphics */
+  /** height of this applet's associated PGraphics 
+   * @webref environment
+   * */
   public int height;
 
-  /** current x position of the mouse */
+  /** current x position of the mouse 
+   * @webref input:mouse
+   * */
   public int mouseX;
 
-  /** current y position of the mouse */
+  /** current y position of the mouse 
+   * @webref input:mouse
+   * */
   public int mouseY;
 
   /**
@@ -332,8 +341,14 @@ public class PApplet extends Applet
    * an event comes through. Be sure to use only one or the other type of
    * means for tracking pmouseX and pmouseY within your sketch, otherwise
    * you're gonna run into trouble.
+   * @webref input:mouse
    */
-  public int pmouseX, pmouseY;
+  public int pmouseX;
+  
+  /**
+   * @webref input:mouse
+   */
+  public int pmouseY;
 
   /**
    * previous mouseX/Y for the draw loop, separated out because this is
@@ -367,7 +382,10 @@ public class PApplet extends Applet
    * the left mouse).
    */
   public int mouseButton;
-
+  
+  /**
+   * @webref input:mouse
+   */
   public boolean mousePressed;
   public MouseEvent mouseEvent;
 
@@ -376,6 +394,7 @@ public class PApplet extends Applet
    * <P>
    * If it's a coded key, i.e. UP/DOWN/CTRL/SHIFT/ALT,
    * this will be set to CODED (0xffff or 65535).
+   * @webref input:keyboard
    */
   public char key;
 
@@ -385,11 +404,13 @@ public class PApplet extends Applet
    * For the arrow keys, keyCode will be one of UP, DOWN, LEFT and RIGHT.
    * Also available are ALT, CONTROL and SHIFT. A full set of constants
    * can be obtained from java.awt.event.KeyEvent, from the VK_XXXX variables.
+   * @webref input:keyboard
    */
   public int keyCode;
 
   /**
-   * true if the mouse is currently pressed.
+   * The boolean system variable <b>keyPressed</b> is <b>true</b> if any key is pressed and <b>false</b> if no keys are pressed.
+   * @webref input:keyboard
    */
   public boolean keyPressed;
 
@@ -1980,6 +2001,11 @@ public class PApplet extends Applet
 
 
   /**
+   * Specifies the number of frames to be displayed every second.
+   * If the processor is not fast enough to maintain the specified rate, it will not be achieved.
+   * For example, the function call <b>frameRate(30)</b> will attempt to refresh 30 times a second.
+   * It is recommended to set the frame rate within <b>setup()</b>. The default rate is 60 frames per second.
+   *  =advanced
    * Set a target frameRate. This will cause delay() to be called
    * after each frame so that the sketch synchronizes to a particular speed.
    * Note that this only sets the maximum frame rate, it cannot be used to
@@ -1987,7 +2013,7 @@ public class PApplet extends Applet
    * setting, and will attempt to use maximum processor power to achieve
    * maximum speed.
    * @webref environment
-   * @param newRateTarget the new framerate
+   * @param newRateTarget number of frames per second
    * @see PApplet#delay(int)
    */
   public void frameRate(float newRateTarget) {
@@ -2405,7 +2431,7 @@ public class PApplet extends Applet
 
   /**
    * Set the cursor type
-   * @webref environment
+   * @param cursorType either ARROW, CROSS, HAND, MOVE, TEXT, WAIT
    */
   public void cursor(int cursorType) {
     setCursor(Cursor.getPredefinedCursor(cursorType));
@@ -2424,6 +2450,11 @@ public class PApplet extends Applet
 
 
   /**
+   * Sets the cursor to a predefined symbol, an image, or turns it on if already hidden.
+   * If you are trying to set an image as the cursor, it is recommended to make the size 16x16 or 32x32 pixels.
+   * It is not possible to load an image as the cursor if you are exporting your program for the Web.
+   * The values for parameters <b>x</b> and <b>y</b> must be less than the dimensions of the image.
+   * =advanced
    * Set a custom cursor to an image with a specific hotspot.
    * Only works with JDK 1.2 and later.
    * Currently seems to be broken on Java 1.4 for Mac OS X
@@ -2431,6 +2462,11 @@ public class PApplet extends Applet
    * Based on code contributed by Amit Pitaru, plus additional
    * code to handle Java versions via reflection by Jonathan Feinberg.
    * Reflection removed for release 0128 and later.
+   * @webref environment
+   * @see	PApplet#noCursor()
+   * @param image	any variable of type PImage
+   * @param hotspotX	the horizonal active spot of the cursor
+   * @param hotspotY	the vertical active spot of the cursor
    */
   public void cursor(PImage image, int hotspotX, int hotspotY) {
     // don't set this as cursor type, instead use cursor_type
@@ -2464,8 +2500,12 @@ public class PApplet extends Applet
 
 
   /**
+   * Hides the cursor from view. Will not work when running the program in a web browser.
+   * =advanced
    * Hide the cursor by creating a transparent image
    * and using it as a custom cursor.
+   * @webref environment
+   * @see PApplet#cursor()
    */
   public void noCursor() {
     if (!cursorVisible) return;  // don't hide if already hidden.
