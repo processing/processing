@@ -390,27 +390,55 @@ public class PApplet extends Applet
   public MouseEvent mouseEvent;
 
   /**
+   * The system variable <b>key</b> always contains the value of the most recent key on the keyboard that was used (either pressed or released). <br><br>
+   * For non-ASCII keys, use the <b>keyCode</b> variable.
+   * The keys included in the ASCII specification (BACKSPACE, TAB, ENTER, RETURN, ESC, and DELETE) do not require checking to see if they key is coded, and you should simply use the <b>key</b> variable instead of <b>keyCode</b>
+   * If you're making cross-platform projects, note that the ENTER key is commonly used on PCs and Unix and the RETURN key is used instead on Macintosh.
+   * Check for both ENTER and RETURN to make sure your program will work for all platforms.
+   * =advanced
+   * 
    * Last key pressed.
    * <P>
    * If it's a coded key, i.e. UP/DOWN/CTRL/SHIFT/ALT,
    * this will be set to CODED (0xffff or 65535).
    * @webref input:keyboard
+   * @see PApplet#keyCode
+   * @see PApplet#keyPressed
+   * @see PApplet#keyPressed()
+   * @see PApplet#keyReleased()
    */
   public char key;
 
   /**
+   * The variable <b>keyCode</b> is used to detect special keys such as the UP, DOWN, LEFT, RIGHT arrow keys and ALT, CONTROL, SHIFT.
+   * When checking for these keys, it's first necessary to check and see if the key is coded. This is done with the conditional "if (key == CODED)" as shown in the example. 
+   * <br><br>The keys included in the ASCII specification (BACKSPACE, TAB, ENTER, RETURN, ESC, and DELETE) do not require checking to see if they key is coded, and you should simply use the <b>key</b> variable instead of <b>keyCode</b>
+   * If you're making cross-platform projects, note that the ENTER key is commonly used on PCs and Unix and the RETURN key is used instead on Macintosh.
+   * Check for both ENTER and RETURN to make sure your program will work for all platforms.
+   * <br><br>For users familiar with Java, the values for UP and DOWN are simply shorter versions of Java's KeyEvent.VK_UP and KeyEvent.VK_DOWN.
+   * Other keyCode values can be found in the Java <a href="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/event/KeyEvent.html">KeyEvent</a> reference.
+   * 
+   * =advanced
    * When "key" is set to CODED, this will contain a Java key code.
    * <P>
    * For the arrow keys, keyCode will be one of UP, DOWN, LEFT and RIGHT.
    * Also available are ALT, CONTROL and SHIFT. A full set of constants
    * can be obtained from java.awt.event.KeyEvent, from the VK_XXXX variables.
    * @webref input:keyboard
+   * @see PApplet#key
+   * @see PApplet#keyPressed
+   * @see PApplet#keyPressed()
+   * @see PApplet#keyReleased()
    */
   public int keyCode;
 
   /**
    * The boolean system variable <b>keyPressed</b> is <b>true</b> if any key is pressed and <b>false</b> if no keys are pressed.
    * @webref input:keyboard
+   * @see PApplet#key
+   * @see PApplet#keyCode
+   * @see PApplet#keyPressed()
+   * @see PApplet#keyReleased()
    */
   public boolean keyPressed;
 
@@ -1824,6 +1852,15 @@ public class PApplet extends Applet
 
 
   /**
+   * 
+   * The <b>keyPressed()</b> function is called once every time a key is pressed. The key that was pressed is stored in the <b>key</b> variable. 
+   * <br><br>For non-ASCII keys, use the <b>keyCode</b> variable.
+   * The keys included in the ASCII specification (BACKSPACE, TAB, ENTER, RETURN, ESC, and DELETE) do not require checking to see if they key is coded, and you should simply use the <b>key</b> variable instead of <b>keyCode</b>
+   * If you're making cross-platform projects, note that the ENTER key is commonly used on PCs and Unix and the RETURN key is used instead on Macintosh.
+   * Check for both ENTER and RETURN to make sure your program will work for all platforms.<br><br>Because of how operating systems handle key repeats, holding down a key may cause multiple calls to keyPressed() (and keyReleased() as well).
+   * The rate of repeat is set by the operating system and how each computer is configured.
+   * =advanced
+   * 
    * Called each time a single key on the keyboard is pressed.
    * Because of how operating systems handle key repeats, holding
    * down a key will cause multiple calls to keyPressed(), because
@@ -1869,12 +1906,23 @@ public class PApplet extends Applet
    *    Java 1.1 (Microsoft VM) passes the TAB key through normally.
    *    Not tested on other platforms or for 1.3.
    * </PRE>
+   * @see PApplet#key
+   * @see PApplet#keyCode
+   * @see PApplet#keyPressed
+   * @see PApplet#keyReleased()
+   * @webref input:keyboard
    */
   public void keyPressed() { }
 
 
   /**
-   * See keyPressed().
+   * The <b>keyReleased()</b> function is called once every time a key is released. The key that was released will be stored in the <b>key</b> variable. See <b>key</b> and <b>keyReleased</b> for more information.
+   * 
+   * @see PApplet#key
+   * @see PApplet#keyCode
+   * @see PApplet#keyPressed
+   * @see PApplet#keyPressed()
+   * @webref input:keyboard
    */
   public void keyReleased() { }
 
@@ -2506,6 +2554,7 @@ public class PApplet extends Applet
    * and using it as a custom cursor.
    * @webref environment
    * @see PApplet#cursor()
+   * @usage Application
    */
   public void noCursor() {
     if (!cursorVisible) return;  // don't hide if already hidden.
