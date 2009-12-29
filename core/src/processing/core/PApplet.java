@@ -39,6 +39,8 @@ import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
 
+import processing.core.PShape;
+
 
 /**
  * Base class for all sketches that use processing.core.
@@ -3811,7 +3813,21 @@ public class PApplet extends Applet
 
 
   /**
-   * Load a geometry from a file as a PShape. Currently only supports SVG data.
+   * Loads vector shapes into a variable of type <b>PShape</b>. Currently, only SVG files may be loaded.
+   * To load correctly, the file must be located in the data directory of the current sketch.
+   * In most cases, <b>loadShape()</b> should be used inside <b>setup()</b> because loading shapes inside <b>draw()</b> will reduce the speed of a sketch. 
+   * <br><br>
+   * The <b>filename</b> parameter can also be a URL to a file found online.
+   * For security reasons, a Processing sketch found online can only download files from the same server from which it came.
+   * Getting around this restriction requires a <a href="http://processing.org/hacks/doku.php?id=hacks:signapplet">signed applet</a>.
+   * <br><br>
+   * If a shape is not loaded successfully, the <b>null</b> value is returned and an error message will be printed to the console.
+   * The error message does not halt the program, however the null value may cause a NullPointerException if your code does not check whether the value returned from <b>loadShape()</b> is null.
+   * 
+   * @webref shape:loading_displaying
+   * @see PShape
+   * @see PApplet#shape(PShape)
+   * @see PApplet#shapeMode(int)
    */
   public PShape loadShape(String filename) {
     if (filename.toLowerCase().endsWith(".svg")) {
@@ -7467,13 +7483,26 @@ public class PApplet extends Applet
     g.image(image, a, b, c, d, u1, v1, u2, v2);
   }
 
-
+  /**
+   * Modifies the location from which shapes draw.
+   * The default mode is <b>shapeMode(CORNER)</b>,
+   * which specifies the location to be the upper left corner of the shape and
+   * uses the third and fourth parameters of <b>shape()</b> to specify the width and height.
+   * The syntax <b>shapeMode(CORNERS)</b> uses the first and second parameters of <b>shape()</b>
+   * to set the location of one corner and uses the third and fourth parameters to set the opposite corner.
+   * The syntax <b>shapeMode(CENTER)</b> draws the shape from its center point and uses the third and forth parameters of <b>shape()</b> to specify the width and height.
+   * The parameter must be written in "ALL CAPS" because Processing is a case sensitive language.
+   * @param mode One of CORNER, CORNERS, CENTER
+   * 
+   * @webref shape:loading_displaying
+   * @see PApplet#shape(PShape)
+   * @see PApplet#rectMode(int)
+   */
   public void shapeMode(int mode) {
     if (recorder != null) recorder.shapeMode(mode);
     g.shapeMode(mode);
   }
-
-
+  
   public void shape(PShape shape) {
     if (recorder != null) recorder.shape(shape);
     g.shape(shape);
@@ -7485,7 +7514,26 @@ public class PApplet extends Applet
     g.shape(shape, x, y);
   }
 
-
+  /**
+   * Displays shapes to the screen. The shapes must be in the sketch's "data" directory to load correctly. Select "Add file..." from the "Sketch" menu to add the shape.
+   * Processing currently works with SVG shapes only.
+   * The <b>sh</b> parameter specifies the shape to display and the <b>x</b> and <b>y</b> parameters define the location of the shape from its upper-left corner.
+   * The shape is displayed at its original size unless the <b>width</b> and <b>height</b> parameters specify a different size.
+   * The <b>shapeMode()</b> function changes the way the parameters work.
+   * A call to <b>shapeMode(CORNERS)</b>, for example, will change the width and height parameters to define the x and y values of the opposite corner of the shape.
+   * <br><br>Note complex shapes may draw awkwardly with P2D, P3D, and OPENGL. Those renderers do not yet support shapes that have holes or complicated breaks.
+   * 
+   * @param shape
+   * @param x x-coordinate of the shape
+   * @param y y-coordinate of the shape
+   * @param c width to display the shape
+   * @param d height to display the shape
+   * 
+   * @webref shape:loading_displaying
+   * @see PShape
+   * @see PApplet#loadShape(String)
+   * @see PApplet#shapeMode(int)
+   */
   public void shape(PShape shape, float x, float y, float c, float d) {
     if (recorder != null) recorder.shape(shape, x, y, c, d);
     g.shape(shape, x, y, c, d);
