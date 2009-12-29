@@ -396,11 +396,19 @@ public class PApplet extends Applet
   public boolean firstMouse;
 
   /**
-   * Last mouse button pressed, one of LEFT, CENTER, or RIGHT.
-   * <P>
+   * Processing automatically tracks if the mouse button is pressed and which button is pressed.
+   * The value of the system variable <b>mouseButton</b> is either <b>LEFT</b>, <b>RIGHT</b>, or <b>CENTER</b> depending on which button is pressed.
+   * =advanced
    * If running on Mac OS, a ctrl-click will be interpreted as
    * the righthand mouse button (unlike Java, which reports it as
-   * the left mouse).
+   * the left mouse). 
+   * @webref input:mouse
+   * @see PApplet#mouseX
+   * @see PApplet#mouseY
+   * @see PApplet#mousePressed()
+   * @see PApplet#mouseReleased()
+   * @see PApplet#mouseMoved()
+   * @see PApplet#mouseDragged()
    */
   public int mouseButton;
   
@@ -409,7 +417,6 @@ public class PApplet extends Applet
    * @webref input:mouse
    * @see PApplet#mouseX
    * @see PApplet#mouseY
-   * @see PApplet#mousePressed()
    * @see PApplet#mouseReleased()
    * @see PApplet#mouseMoved()
    * @see PApplet#mouseDragged()
@@ -1789,9 +1796,19 @@ public class PApplet extends Applet
   public void mouseReleased() { }
 
   /**
+   * The <b>mouseClicked()</b> function is called once after a mouse button has been pressed and then released.
+   * =advanced
    * When the mouse is clicked, mousePressed() will be called,
    * then mouseReleased(), then mouseClicked(). Note that
    * mousePressed is already false inside of mouseClicked().
+   * @webref input:mouse
+   * @see PApplet#mouseX
+   * @see PApplet#mouseY
+   * @see PApplet#mouseButton
+   * @see PApplet#mousePressed()
+   * @see PApplet#mouseReleased()
+   * @see PApplet#mouseMoved()
+   * @see PApplet#mouseDragged()
    */
   public void mouseClicked() { }
 
