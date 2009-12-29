@@ -323,13 +323,28 @@ public class PApplet extends Applet
    * */
   public int height;
 
-  /** current x position of the mouse 
+  /** 
+   * The system variable <b>mouseX</b> always contains the current horizontal coordinate of the mouse. 
    * @webref input:mouse
+   * @see PApplet#mouseY
+   * @see PApplet#mousePressed
+   * @see PApplet#mousePressed()
+   * @see PApplet#mouseReleased()
+   * @see PApplet#mouseMoved()
+   * @see PApplet#mouseDragged()
+   * 
    * */
   public int mouseX;
 
-  /** current y position of the mouse 
+  /** 
+   * The system variable <b>mouseY</b> always contains the current vertical coordinate of the mouse. 
    * @webref input:mouse
+   * @see PApplet#mouseX
+   * @see PApplet#mousePressed
+   * @see PApplet#mousePressed()
+   * @see PApplet#mouseReleased()
+   * @see PApplet#mouseMoved()
+   * @see PApplet#mouseDragged()
    * */
   public int mouseY;
 
@@ -342,11 +357,17 @@ public class PApplet extends Applet
    * means for tracking pmouseX and pmouseY within your sketch, otherwise
    * you're gonna run into trouble.
    * @webref input:mouse
+   * @see PApplet#pmouseY
+   * @see PApplet#mouseX
+   * @see PApplet#mouseY
    */
   public int pmouseX;
   
   /**
    * @webref input:mouse
+   * @see PApplet#pmouseX
+   * @see PApplet#mouseX
+   * @see PApplet#mouseY
    */
   public int pmouseY;
 
@@ -384,7 +405,14 @@ public class PApplet extends Applet
   public int mouseButton;
   
   /**
+   * Variable storing if a mouse button is pressed. The value of the system variable <b>mousePressed</b> is true if a mouse button is pressed and false if a button is not pressed.
    * @webref input:mouse
+   * @see PApplet#mouseX
+   * @see PApplet#mouseY
+   * @see PApplet#mousePressed()
+   * @see PApplet#mouseReleased()
+   * @see PApplet#mouseMoved()
+   * @see PApplet#mouseDragged()
    */
   public boolean mousePressed;
   public MouseEvent mouseEvent;
@@ -1729,18 +1757,34 @@ public class PApplet extends Applet
 
 
   /**
-   * Mouse has been pressed, and should be considered "down"
-   * until mouseReleased() is called. If you must, use
+   * The <b>mousePressed()</b> function is called once after every time a mouse button is pressed. The <b>mouseButton</b> variable (see the related reference entry) can be used to determine which button has been pressed.
+   * =advanced
+   * 
+   * If you must, use
    * int button = mouseEvent.getButton();
    * to figure out which button was clicked. It will be one of:
    * MouseEvent.BUTTON1, MouseEvent.BUTTON2, MouseEvent.BUTTON3
    * Note, however, that this is completely inconsistent across
    * platforms.
+   * @webref input:mouse
+   * @see PApplet#mouseX
+   * @see PApplet#mouseY
+   * @see PApplet#mousePressed
+   * @see PApplet#mouseReleased()
+   * @see PApplet#mouseMoved()
+   * @see PApplet#mouseDragged()
    */
   public void mousePressed() { }
 
   /**
-   * Mouse button has been released.
+   * The <b>mouseReleased()</b> function is called every time a mouse button is released.
+   * @webref input:mouse
+   * @see PApplet#mouseX
+   * @see PApplet#mouseY
+   * @see PApplet#mousePressed
+   * @see PApplet#mousePressed()
+   * @see PApplet#mouseMoved()
+   * @see PApplet#mouseDragged()
    */
   public void mouseReleased() { }
 
@@ -1752,12 +1796,26 @@ public class PApplet extends Applet
   public void mouseClicked() { }
 
   /**
-   * Mouse button is pressed and the mouse has been dragged.
+   * The <b>mouseDragged()</b> function is called once every time the mouse moves and a mouse button is pressed.
+   * @webref input:mouse
+   * @see PApplet#mouseX
+   * @see PApplet#mouseY
+   * @see PApplet#mousePressed
+   * @see PApplet#mousePressed()
+   * @see PApplet#mouseReleased()
+   * @see PApplet#mouseMoved()
    */
   public void mouseDragged() { }
 
   /**
-   * Mouse button is not pressed but the mouse has changed locations.
+   * The <b>mouseMoved()</b> function is called every time the mouse moves and a mouse button is not pressed.
+   * @webref input:mouse
+   * @see PApplet#mouseX
+   * @see PApplet#mouseY
+   * @see PApplet#mousePressed
+   * @see PApplet#mousePressed()
+   * @see PApplet#mouseReleased()
+   * @see PApplet#mouseDragged()
    */
   public void mouseMoved() { }
 
