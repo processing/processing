@@ -7436,31 +7436,59 @@ public class PApplet extends Applet
     g.arc(a, b, c, d, start, stop);
   }
 
-
+  /**
+   * 
+   * @param size dimension of the box in all dimensions, creates a cube
+   */
   public void box(float size) {
     if (recorder != null) recorder.box(size);
     g.box(size);
   }
 
-
+  /**
+   * A box is an extruded rectangle. A box with equal dimension on all sides is a cube.
+   * 
+   * @webref shape:3d_primitives
+   * @param w dimension of the box in the x-dimension
+   * @param h dimension of the box in the y-dimension
+   * @param d dimension of the box in the z-dimension
+   * 
+   * @see PApplet#sphere(float)
+   */
   public void box(float w, float h, float d) {
     if (recorder != null) recorder.box(w, h, d);
     g.box(w, h, d);
   }
 
-
+  /**
+   * 
+   * @param res number of segments (minimum of 3) used per full circle revolution
+   */
   public void sphereDetail(int res) {
     if (recorder != null) recorder.sphereDetail(res);
     g.sphereDetail(res);
   }
 
-
+  /**
+   * Controls the detail used to render a sphere by adjusting the number of vertices of the sphere mesh. The default resolution is 30, which creates a fairly detailed sphere definition with vertices every 360/30 = 12 degrees. If you're going to render a great number of spheres per frame, it is advised to reduce the level of detail using this function. The setting stays active until <b>sphereDetail()</b> is called again with a new parameter and so should <i>not</i> be called prior to every <b>sphere()</b> statement, unless you wish to render spheres with different settings, e.g. using less detail for smaller spheres or ones further away from the camera. To control the detail of the horizontal and vertical resolution independently, use the version of the functions with two parameters.
+   * 
+   * @webref shape:3d_primitives
+   * @param ures number of segments used longitudinally per full circle revolution
+   * @param vres number of segments used latitudinally from top to bottom
+   * 
+   * @see PApplet#sphere(float)
+   */
   public void sphereDetail(int ures, int vres) {
     if (recorder != null) recorder.sphereDetail(ures, vres);
     g.sphereDetail(ures, vres);
   }
 
-
+  /**
+   * A sphere is a hollow ball made from tessellated triangles.
+   * 
+   * @webref shape:3d_primitives
+   * @param r the radius of the sphere
+   */
   public void sphere(float r) {
     if (recorder != null) recorder.sphere(r);
     g.sphere(r);
