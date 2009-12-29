@@ -7466,17 +7466,55 @@ public class PApplet extends Applet
     g.sphere(r);
   }
 
-
+  /**
+   * Evaluates the Bezier at point t for points a, b, c, d. The parameter t varies between 0 and 1, a and d are points on the curve, and b and c are the control points. This can be done once with the x coordinates and a second time with the y coordinates to get the location of a bezier curve at t.
+   * 
+   * @webref shape:curves
+   * @param a coordinate of first point on the curve
+   * @param b coordinate of first control point
+   * @param c coordinate of second control point
+   * @param d coordinate of second point on the curve
+   * @param t value between 0 and 1
+   * @return
+   * 
+   * @see PApplet#bezier(float, float, float, float, float, float, float, float, float, float, float, float)
+   * @see PApplet#bezierVertex(float, float, float, float, float, float)
+   * @see PApplet#curvePoint(float, float, float, float, float)
+   */
   public float bezierPoint(float a, float b, float c, float d, float t) {
     return g.bezierPoint(a, b, c, d, t);
   }
 
-
+  /**
+   * Calculates the tangent of a point on a Bezier curve. There is a good definition of "tangent" at Wikipedia: <a href="http://en.wikipedia.org/wiki/Tangent" target="new">http://en.wikipedia.org/wiki/Tangent</a>
+   * 
+   * @webref shape:curves
+   * @param a coordinate of first point on the curve
+   * @param b coordinate of first control point
+   * @param c coordinate of second control point
+   * @param d coordinate of second point on the curve
+   * @param t value between 0 and 1
+   * @return
+   * 
+   * @see PApplet#bezier(float, float, float, float, float, float, float, float, float, float, float, float)
+   * @see PApplet#bezierVertex(float, float, float, float, float, float)
+   * @see PApplet#curvePoint(float, float, float, float, float)
+   */
   public float bezierTangent(float a, float b, float c, float d, float t) {
     return g.bezierTangent(a, b, c, d, t);
   }
 
 
+  /**
+   * Sets the resolution at which Beziers display. The default value is 20. This function is only useful when using the P3D or OPENGL renderer as the default (JAVA2D) renderer does not use this information.
+   * 
+   * @webref shape:curves
+   * @param detail resolution of the curves
+   * 
+   * @see PApplet#curve(float, float, float, float, float, float, float, float, float, float, float, float)
+   * @see PApplet#curveVertex(float, float)
+   * @see PApplet#curveTightness(float)
+   */
   public void bezierDetail(int detail) {
     if (recorder != null) recorder.bezierDetail(detail);
     g.bezierDetail(detail);
@@ -7492,6 +7530,26 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * Draws a Bezier curve on the screen. These curves are defined by a series of anchor and control points. The first two parameters specify the first anchor point and the last two parameters specify the other anchor point. The middle parameters specify the control points which define the shape of the curve. Bezier curves were developed by French engineer Pierre Bezier. Using the 3D version of requires rendering with P3D or OPENGL (see the Environment reference for more information).
+   * 
+   * @webref shape:curves
+   * @param x1 coordinates for the first anchor point
+   * @param y1 coordinates for the first anchor point
+   * @param z1 coordinates for the first anchor point
+   * @param x2 coordinates for the first control point
+   * @param y2 coordinates for the first control point
+   * @param z2 coordinates for the first control point
+   * @param x3 coordinates for the second control point
+   * @param y3 coordinates for the second control point
+   * @param z3 coordinates for the second control point
+   * @param x4 coordinates for the second anchor point
+   * @param y4 coordinates for the second anchor point
+   * @param z4 coordinates for the second anchor point
+   * 
+   * @see PApplet#bezierVertex(float, float, float, float, float, float)
+   * @see PApplet#curve(float, float, float, float, float, float, float, float, float, float, float, float)
+   */
   public void bezier(float x1, float y1, float z1,
                      float x2, float y2, float z2,
                      float x3, float y3, float z3,
@@ -7500,23 +7558,73 @@ public class PApplet extends Applet
     g.bezier(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
   }
 
-
+  /**
+   * Evalutes the curve at point t for points a, b, c, d. The parameter t varies between 0 and 1, a and d are points on the curve, and b and c are the control points. This can be done once with the x coordinates and a second time with the y coordinates to get the location of a curve at t.
+   * 
+   * @webref shape:curves
+   * @param a coordinate of first point on the curve
+   * @param b coordinate of second point on the curve
+   * @param c coordinate of third point on the curve
+   * @param d coordinate of fourth point on the curve
+   * @param t value between 0 and 1
+   * @return
+   * 
+   * @see PApplet#curve(float, float, float, float, float, float, float, float, float, float, float, float)
+   * @see PApplet#curveVertex(float, float)
+   * @see PApplet#bezierPoint(float, float, float, float, float)
+   */
   public float curvePoint(float a, float b, float c, float d, float t) {
     return g.curvePoint(a, b, c, d, t);
   }
 
 
+  /**
+   * Calculates the tangent of a point on a curve. There is a good definition of "tangent" at Wikipedia: <a href="http://en.wikipedia.org/wiki/Tangent" target="new">http://en.wikipedia.org/wiki/Tangent</a>
+   * 
+   * @webref shape:curves
+   * @param a coordinate of first point on the curve
+   * @param b coordinate of first control point
+   * @param c coordinate of second control point
+   * @param d coordinate of second point on the curve
+   * @param t value between 0 and 1
+   * @return
+   * 
+   * @see PApplet#curve(float, float, float, float, float, float, float, float, float, float, float, float)
+   * @see PApplet#curveVertex(float, float)
+   * @see PApplet#curvePoint(float, float, float, float, float)
+   * @see PApplet#bezierTangent(float, float, float, float, float)
+   */
   public float curveTangent(float a, float b, float c, float d, float t) {
     return g.curveTangent(a, b, c, d, t);
   }
 
 
+  /**
+   * Sets the resolution at which curves display. The default value is 20. This function is only useful when using the P3D or OPENGL renderer as the default (JAVA2D) renderer does not use this information.
+   * 
+   * @webref shape:curves
+   * @param detail resolution of the curves
+   * 
+   * @see PApplet#curve(float, float, float, float, float, float, float, float, float, float, float, float)
+   * @see PApplet#curveVertex(float, float)
+   * @see PApplet#curveTightness(float)
+   */
   public void curveDetail(int detail) {
     if (recorder != null) recorder.curveDetail(detail);
     g.curveDetail(detail);
   }
 
 
+  /**
+   * Modifies the quality of forms created with <b>curve()</b> and <b>curveVertex()</b>. The parameter <b>squishy</b> determines how the curve fits to the vertex points. The value 0.0 is the default value for <b>squishy</b> (this value defines the curves to be Catmull-Rom splines) and the value 1.0 connects all the points with straight lines. Values within the range -5.0 and 5.0 will deform the curves but will leave them recognizable and as values increase in magnitude, they will continue to deform.
+   * 
+   * @webref shape:curves
+   * @param tightness amount of deformation from the original vertices
+   * 
+   * @see PApplet#curve(float, float, float, float, float, float, float, float, float, float, float, float)
+   * @see PApplet#curveVertex(float, float)
+   * 
+   */
   public void curveTightness(float tightness) {
     if (recorder != null) recorder.curveTightness(tightness);
     g.curveTightness(tightness);
@@ -7531,7 +7639,27 @@ public class PApplet extends Applet
     g.curve(x1, y1, x2, y2, x3, y3, x4, y4);
   }
 
-
+/**
+ * Draws a curved line on the screen. The first and second parameters specify the beginning control point and the last two parameters specify the ending control point. The middle parameters specify the start and stop of the curve. Longer curves can be created by putting a series of <b>curve()</b> functions together or using <b>curveVertex()</b>. An additional function called <b>curveTightness()</b> provides control for the visual quality of the curve. The <b>curve()</b> function is an implementation of Catmull-Rom splines. Using the 3D version of requires rendering with P3D or OPENGL (see the Environment reference for more information).
+ * 
+ * @webref shape:curves
+ * @param x1 coordinates for the beginning control point
+ * @param y1 coordinates for the beginning control point
+ * @param z1 coordinates for the beginning control point
+ * @param x2 coordinates for the first point
+ * @param y2 coordinates for the first point
+ * @param z2 coordinates for the first point
+ * @param x3 coordinates for the second point
+ * @param y3 coordinates for the second point
+ * @param z3 coordinates for the second point
+ * @param x4 coordinates for the ending control point
+ * @param y4 coordinates for the ending control point
+ * @param z4 coordinates for the ending control point
+ * 
+ * @see PApplet#curveVertex(float, float)
+ * @see PApplet#curveTightness(float)
+ * @see PApplet#bezier(float, float, float, float, float, float, float, float, float, float, float, float)
+ */
   public void curve(float x1, float y1, float z1,
                     float x2, float y2, float z2,
                     float x3, float y3, float z3,
