@@ -1,6 +1,8 @@
 package writers;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 import com.sun.javadoc.Doc;
@@ -8,21 +10,72 @@ import com.sun.javadoc.Tag;
 
 public class IndexWriter extends BaseWriter {
 	
-	HashMap<String, String> sections;
+	HashMap<String, ArrayList<String>> sections;
 	
 	TemplateWriter templateWriter;
 	
 	public IndexWriter(){
-		sections = new HashMap<String, String>();
+		sections = new HashMap<String, ArrayList<String>>();
 		templateWriter = new TemplateWriter();
 	}
 	
-	public void write(String template, String location) throws IOException{		
-		templateWriter.write(template, sections, location+"index.html");
+	public void write() throws IOException{
+		templateWriter.write("Index.template.html", getCompressedSections(), "index.html");
+		templateWriter.write("Index.Alphabetical.template.html", getAlphabetical(), "alpha.html");
+//		System.out.println("Alphabetical:\n" + getAlphabetical().get("c2"));
 	}
 	
-	public void write() throws IOException{
-		templateWriter.write("Index.template.html", sections, "index.html");
+	private HashMap<String, String> getCompressedSections(){
+		HashMap<String, String> ret = new HashMap<String, String>();
+		
+		for(String key : sections.keySet()){
+			String value = "";
+			//make things alphabetical in their sections
+			Collections.sort(sections.get(key));
+			
+			for(String s : sections.get(key)){
+				value = value.concat("\n").concat(s);
+			}
+			ret.put(key, value);
+		}
+		return ret;
+	}
+	
+	private HashMap<String, String> getAlphabetical(){
+		HashMap<String, String> ret = new HashMap<String, String>();
+		ArrayList<String> all = new ArrayList<String>();
+		
+		for(String key : sections.keySet()){
+			for( String s : sections.get(key)){
+				all.add(s);
+			}
+		}
+		
+		Collections.sort(all);
+		String value = "";
+		float numColumns = 3.0f;
+		int currentColumn = 0;
+		float perColumn = all.size()/numColumns;
+		float counter = 0.0f;
+		
+		for(String s : all){			
+			value = value.concat(s);
+			counter++;
+			if(counter%10 == 0){
+				value = value.concat("<br/>");
+			}
+			if( counter >= perColumn ){
+				counter = 0;
+				currentColumn++;
+				ret.put("c"+currentColumn, value);
+				value = "";
+			}
+		}
+		if(counter != 0){
+			currentColumn++;
+			ret.put("c"+currentColumn, value);
+		}
+		return ret;
 	}
 	
 	public void addItem(Doc doc, Tag webref) throws IOException{
@@ -42,10 +95,11 @@ public class IndexWriter extends BaseWriter {
 		String value = templateWriter.writePartial("Index.entry.partial.html", vars);
 		if( sections.containsKey(key))
 		{
-			String s = sections.get(key).concat("\n").concat(value);
-			sections.put(key, s);
+			sections.get(key).add(value);
 		} else {
-			sections.put(key, value);			
+			ArrayList<String> a = new ArrayList<String>();
+			a.add(value);
+			sections.put(key, a);			
 		}
 	}
 	

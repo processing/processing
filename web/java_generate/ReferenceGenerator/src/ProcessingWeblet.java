@@ -1,5 +1,4 @@
 import java.io.IOException;
-import java.util.HashMap;
 
 import writers.ClassWriter;
 import writers.FieldWriter;
@@ -126,6 +125,12 @@ public class ProcessingWeblet extends Standard {
 						}
 					}
 					//also need to add fields, duh
+					for(FieldDoc doc : classDoc.fields()){
+						if(Shared.i().needsWriting(doc)){
+							FieldWriter.write(doc);
+							indexWriter.addItem(doc, doc.tags(Shared.i().getWebrefTagName())[0] );
+						}
+					}
 					
 				} else {
 					// document a class and its public properties

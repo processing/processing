@@ -24,6 +24,7 @@ import org.xml.sax.SAXException;
 
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.Doc;
+import com.sun.javadoc.FieldDoc;
 import com.sun.javadoc.MethodDoc;
 import com.sun.javadoc.ParamTag;
 import com.sun.javadoc.Parameter;
@@ -38,20 +39,21 @@ public class BaseWriter {
 
 	}
 	
-	protected static boolean wasWritten(ProgramElementDoc doc){
-		if(writtenElements==null){
-			writtenElements = new ArrayList<String>();
-		}
-		
-		String pkg = (doc.containingPackage() != null ) ? doc.containingPackage().name() : "null.pkg";
-		String c = (doc.containingClass() != null) ? doc.containingClass().name() : "null.class";
-		
-		String name = pkg + c + doc.name();;
-		if(writtenElements.contains(name)){
-			return true;
-		}
-		writtenElements.add(name);
-		return false;
+	protected static boolean needsWriting(ProgramElementDoc doc){
+		return Shared.i().needsWriting(doc);
+//		if(writtenElements==null){
+//			writtenElements = new ArrayList<String>();
+//		}
+//		
+//		String pkg = (doc.containingPackage() != null ) ? doc.containingPackage().name() : "null.pkg";
+//		String c = (doc.containingClass() != null) ? doc.containingClass().name() : "null.class";
+//		
+//		String name = pkg + c + doc.name();;
+//		if(writtenElements.contains(name)){
+//			return false;
+//		}
+//		writtenElements.add(name);
+//		return true;
 	}
 	
 	protected static BufferedWriter makeWriter(String anchor) throws IOException
@@ -132,7 +134,20 @@ public class BaseWriter {
 		return basicText(longestText(doc));
 	}
 	
+	static protected String shortText(ProgramElementDoc doc) {
+		Tag[] sta = doc.tags("brief");
+		if(sta.length > 0){
+			return sta[0].text();
+		}
+		return basicText(doc);
+	}
+	
 	static protected String longestText(ProgramElementDoc doc){
+		if(Shared.i().isWebref(doc)){
+			//override longest rule if the element has an @webref tag
+			return doc.commentText();
+		}
+		
 		String s = doc.commentText();
 		if( doc.isMethod() ){
 			for(ProgramElementDoc d : doc.containingClass().methods()){
@@ -177,12 +192,25 @@ public class BaseWriter {
 	
 	protected static String getExamplePath(ProgramElementDoc doc) {
 		String path = Shared.i().EXAMPLE_DIRECTORY();
+		String name = doc.name();
+		String suffix = ".xml";
 		if(doc.containingClass() != null){
-			if(!doc.containingClass().name().equals(Shared.i().getCoreClassName())){				
-				path = path + doc.containingClass().name() + "_";
+			if(doc.containingClass().name().equals(Shared.i().getCoreClassName())){
+				//inside PApplet
+				if(doc instanceof FieldDoc){
+					//if there is a method of the same name, append _var
+					for( Doc d : doc.containingClass().methods()){
+						if(d.name().equals(doc.name())){
+							suffix = "_var" + suffix;
+						}
+					}
+				}
+			} else {
+				name = doc.containingClass().name() + "_" + name;				
 			}
 		}
-		path = path + doc.name() +".xml";
+		path = path + name + suffix;
+		
 		return path;
 	}
 	
@@ -203,14 +231,14 @@ public class BaseWriter {
 		} catch (ParserConfigurationException e) {
 			// TODO Auto-generated catch block
 //			e.printStackTrace();
-			return "Failed to get examples";
+			return "Failed to get examples" + e.getMessage();
 		}
 		try {
 			doc = builder.parse(path);
 		} catch (SAXException e) {
 			// TODO Auto-generated catch block
 //			e.printStackTrace();
-			return "Failed to get examples";
+			return "Failed to get examples" + e.getMessage();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 //			e.printStackTrace();

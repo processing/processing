@@ -20,9 +20,15 @@ public class MethodWriter extends BaseWriter {
 		String filename = getAnchor(doc);
 		TemplateWriter templateWriter = new TemplateWriter();
 		
+		if(doc.containingClass().name().equals("PApplet")){
+			vars.put("classname", "");
+		} else {			
+			vars.put("classname", getName(doc.containingClass()));
+		}
+		
 		vars.put("examples", getExamples(doc));
 		vars.put("description", basicText(doc));
-		vars.put("methodname", getName(doc));
+		vars.put("name", getName(doc));
 		String syntax = templateWriter.writeLoop("Method.Syntax.partial.html", getSyntax(doc, getInstanceName(doc)));
 		vars.put("syntax", syntax);
 		vars.put("returns", importedName(doc.returnType().toString()));
@@ -30,7 +36,7 @@ public class MethodWriter extends BaseWriter {
 		vars.put("parameters", getParameters(doc));
 		vars.put("usage", getUsage(doc));
 		
-		templateWriter.write("Method.template.html", vars, filename);
+		templateWriter.write("Generic.template.html", vars, filename);
 	}
 	
 }

@@ -114,6 +114,10 @@ public class Shared {
 		return doc.tags(webrefTagName).length > 0;
 	}
 	
+	public boolean needsWriting(ProgramElementDoc doc){		
+		return doc.tags(webrefTagName).length > 0;
+	}
+	
 	public boolean isNoisy(){
 		return noisy;
 	}

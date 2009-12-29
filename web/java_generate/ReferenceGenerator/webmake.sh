@@ -1,5 +1,7 @@
 #!/bin/sh
-
+#remove everything old
+rm -rf ../tmp
+#generate everything new
 javadoc -doclet ProcessingWeblet -docletpath bin/ -public \
 	-webref ../tmp/web \
 	-localref ../tmp/local \
@@ -13,6 +15,7 @@ javadoc -doclet ProcessingWeblet -docletpath bin/ -public \
     # ../../../processing/net/src/processing/net/*.java \
     # ../../../processing/video/src/processing/video/*.java \
     # ../../../processing/serial/src/processing/serial/*.java
+
 cp -r ../../css	 ../tmp/web
 cp -r ../../css	 ../tmp/local
 mkdir ../tmp/web/images

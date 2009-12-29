@@ -19,16 +19,29 @@ public class FieldWriter extends BaseWriter {
 	{
 		String filename = getAnchor(doc);
 		TemplateWriter templateWriter = new TemplateWriter();
-		String syntax = templateWriter.writePartial("Field.Syntax.partial.html", getSyntax(doc));
-		vars.put("syntax", syntax);
 		vars.put("examples", getExamples(doc));
 		vars.put("description", basicText(doc));
-		vars.put("fieldname", doc.name());
-		vars.put("parameters", templateWriter.writePartial("Parameter.partial.html", getParent(doc)));
+		vars.put("name", doc.name());
 		vars.put("usage", getUsage(doc));
+		vars.put("related", getRelated(doc));
 		
-		templateWriter.write("Field.template.html", vars, filename);
+		if( ! doc.containingClass().name().equals("PApplet")){
+			vars.put("parameters", templateWriter.writePartial("Parameter.partial.html", getParent(doc)));			
+			String syntax = templateWriter.writePartial("Field.Syntax.partial.html", getSyntax(doc));
+			vars.put("syntax", syntax);
+			vars.put("classname", getName(doc.containingClass()));
+		}
+		
+		templateWriter.write("Generic.template.html", vars, filename);
 	}
+	
+	
+	public static void write(FieldDoc doc) throws IOException
+	{
+		write(new HashMap<String, String>(), doc);
+	}
+	
+	
 	
 	protected static HashMap<String, String> getSyntax(FieldDoc doc){
 		HashMap<String, String> map = new HashMap<String, String>();

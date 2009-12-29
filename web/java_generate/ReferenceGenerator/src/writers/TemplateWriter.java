@@ -4,20 +4,24 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 
 public class TemplateWriter extends BaseWriter {
 	
 	public static String varPrefix = "<!-- ";
 	public static String varSuffix = " -->";
+	static String[] genericFields = {"classname", "returns", "related", "parameters", "syntax"};
 	
 	public TemplateWriter()
 	{
-		
 	}
 	
 	public void write( String templateName, HashMap<String, String> vars, String outputName ) throws IOException
 	{
+		for(String s : genericFields){
+			if( ! vars.containsKey(s)){
+				vars.put(s, "");
+			}
+		}
 		write( templateName, vars, outputName, false );
 		write( templateName, vars, outputName, true );
 		if(Shared.i().isNoisy()){			
@@ -100,10 +104,7 @@ public class TemplateWriter extends BaseWriter {
 			{
 				String value = map.get(key);
 				value = value.replace("$", "\\$");
-				if( map.containsKey("name") && map.get("name").equals("frameRate()")){
-					System.out.println("Writing frameRate()\n\t" + var + "\n" + map.get(key) + "\n" + value );
-				}
-				
+
 				if(var.equals("")){
 					System.out.println("\n\nEMPTY STRING PASSED IN TO REPLACE");
 				}
