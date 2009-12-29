@@ -7277,7 +7277,17 @@ public class PApplet extends Applet
     g.point(x, y);
   }
 
-
+  /**
+   * Draws a point, a coordinate in space at the dimension of one pixel. The first parameter is the horizontal value for the point, the second value is the vertical value for the point, and the optional third value is the depth value. Drawing this shape in 3D using the <b>z</b> parameter requires the P3D or OPENGL parameter in combination with size as shown in the above example. 
+   * <br><br>Due to what appears to be a bug in Apple's Java implementation, the point() and set() methods are extremely slow in some circumstances when used with the default renderer. Using P2D or P3D will fix the problem. Grouping many calls to point() or set() together can also help. (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=1094">Bug 1094</a>)
+   * 
+   * @webref shape:2d_primitives
+   * @param x x-coordinate of the point
+   * @param y y-coordinate of the point
+   * @param z z-coordinate of the point
+   * 
+   * @see PApplet#beginShape()
+   */
   public void point(float x, float y, float z) {
     if (recorder != null) recorder.point(x, y, z);
     g.point(x, y, z);
@@ -7289,21 +7299,61 @@ public class PApplet extends Applet
     g.line(x1, y1, x2, y2);
   }
 
-
+  /**
+   * Draws a line (a direct path between two points) to the screen. The version of <b>line()</b> with four parameters draws the line in 2D.  To color a line, use the <b>stroke()</b> function. A line cannot be filled, therefore the <b>fill()</b> method will not affect the color of a line. 2D lines are drawn with a width of one pixel by default, but this can be changed with the <b>strokeWeight()</b> function. The version with six parameters allows the line to be placed anywhere within XYZ space. Drawing this shape in 3D using the <b>z</b> parameter requires the P3D or OPENGL parameter in combination with size as shown in the above example.
+   * 
+   * @webref shape:2d_primitives
+   * @param x1 x-coordinate of the first point
+   * @param y1 y-coordinate of the first point
+   * @param z1 z-coordinate of the first point
+   * @param x2 x-coordinate of the second point
+   * @param y2 y-coordinate of the second point
+   * @param z2 z-coordinate of the second point
+   * 
+   * @see PApplet#strokeWeight(float)
+   * @see PApplet#strokeJoin(int)
+   * @see PApplet#strokeCap(int)
+   * @see PApplet#beginShape()
+   */
   public void line(float x1, float y1, float z1,
                    float x2, float y2, float z2) {
     if (recorder != null) recorder.line(x1, y1, z1, x2, y2, z2);
     g.line(x1, y1, z1, x2, y2, z2);
   }
 
-
+  /**
+   * A triangle is a plane created by connecting three points. The first two arguments specify the first point, the middle two arguments specify the second point, and the last two arguments specify the third point.
+   * 
+   * @webref shape:2d_primitives
+   * @param x1 x-coordinate of the first point
+   * @param y1 y-coordinate of the first point
+   * @param x2 x-coordinate of the second point
+   * @param y2 y-coordinate of the second point
+   * @param x3 x-coordinate of the third point
+   * @param y3 y-coordinate of the third point
+   * 
+   * @see PApplet#beginShape()
+   */
   public void triangle(float x1, float y1, float x2, float y2,
                        float x3, float y3) {
     if (recorder != null) recorder.triangle(x1, y1, x2, y2, x3, y3);
     g.triangle(x1, y1, x2, y2, x3, y3);
   }
 
-
+  /**
+   * A quad is a quadrilateral, a four sided polygon. It is similar to a rectangle, but the angles between its edges are not constrained to ninety degrees. The first pair of parameters (x1,y1) sets the first vertex and the subsequent pairs should proceed clockwise or counter-clockwise around the defined shape.
+   * 
+   * @webref shape:2d_primitives
+   * @param x1 x-coordinate of the first corner
+   * @param y1 y-coordinate of the first corner
+   * @param x2 x-coordinate of the second corner
+   * @param y2 y-coordinate of the second corner
+   * @param x3 x-coordinate of the third corner
+   * @param y3 y-coordinate of the third corner
+   * @param x4 x-coordinate of the fourth corner
+   * @param y4 y-coordinate of the fourth corner
+   * 
+   */
   public void quad(float x1, float y1, float x2, float y2,
                    float x3, float y3, float x4, float y4) {
     if (recorder != null) recorder.quad(x1, y1, x2, y2, x3, y3, x4, y4);
@@ -7316,25 +7366,70 @@ public class PApplet extends Applet
     g.rectMode(mode);
   }
 
-
+  /**
+   * Draws a rectangle to the screen. A rectangle is a four-sided shape with every angle at ninety degrees. The first two parameters set the location, the third sets the width, and the fourth sets the height. The origin is changed with the <b>rectMode()</b> function.
+   * 
+   * @webref shape:2d_primitives
+   * @param a x-coordinate of the rectangle
+   * @param b y-coordinate of the rectangle
+   * @param c width of the rectangle
+   * @param d height of the rectangle
+   * 
+   * @see PApplet#rectMode(int)
+   * @see PApplet#quad(float, float, float, float, float, float, float, float)
+   */
   public void rect(float a, float b, float c, float d) {
     if (recorder != null) recorder.rect(a, b, c, d);
     g.rect(a, b, c, d);
   }
 
-
+  /**
+   * The origin of the ellipse is modified by the <b>ellipseMode()</b> function. The default configuration is <b>ellipseMode(CENTER)</b>, which specifies the location of the ellipse as the center of the shape. The RADIUS mode is the same, but the width and height parameters to <b>ellipse()</b> specify the radius of the ellipse, rather than the diameter. The CORNER mode draws the shape from the upper-left corner of its bounding box. The CORNERS mode uses the four parameters to <b>ellipse()</b> to set two opposing corners of the ellipse's bounding box. The parameter must be written in "ALL CAPS" because Processing is a case sensitive language.
+   * 
+   * @webref shape:attributes
+   * 
+   * @param mode  	Either CENTER, RADIUS, CORNER, or CORNERS.
+   * @see PApplet#ellipse(float, float, float, float)
+   */
   public void ellipseMode(int mode) {
     if (recorder != null) recorder.ellipseMode(mode);
     g.ellipseMode(mode);
   }
 
-
+  /**
+   * Draws an ellipse (oval) in the display window. An ellipse with an equal <b>width</b> and <b>height</b> is a circle. The first two parameters set the location, the third sets the width, and the fourth sets the height. The origin may be changed with the <b>ellipseMode()</b> function.
+   * 
+   * @webref shape:2d_primitives
+   * @param a x-coordinate of the ellipse
+   * @param b y-coordinate of the ellipse
+   * @param c width of the ellipse
+   * @param d height of the ellipse
+   * 
+   * @see PApplet#ellipseMode(int)
+   */
   public void ellipse(float a, float b, float c, float d) {
     if (recorder != null) recorder.ellipse(a, b, c, d);
     g.ellipse(a, b, c, d);
   }
 
 
+  /**
+   * Draws an arc in the display window.
+   * Arcs are drawn along the outer edge of an ellipse defined by the <b>x</b>, <b>y</b>, <b>width</b> and <b>height</b> parameters.
+   * The origin or the arc's ellipse may be changed with the <b>ellipseMode()</b> function.
+   * The <b>start</b> and <b>stop</b> parameters specify the angles at which to draw the arc.
+   * 
+   * @webref shape:2d_primitives
+   * @param a x-coordinate of the arc's ellipse
+   * @param b y-coordinate of the arc's ellipse
+   * @param c width of the arc's ellipse
+   * @param d height of the arc's ellipse
+   * @param start angle to start the arc, specified in radians
+   * @param stop angle to stop the arc, specified in radians
+   * 
+   * @see PApplet#ellipseMode(int)
+   * @see PApplet#ellipse(float, float, float, float)
+   */
   public void arc(float a, float b, float c, float d,
                   float start, float stop) {
     if (recorder != null) recorder.arc(a, b, c, d, start, stop);
