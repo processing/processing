@@ -6509,6 +6509,8 @@ public class PApplet extends Applet
 
   /**
    * As of 0116 this also takes color(#FF8800, alpha)
+   * 
+   * @param gray number specifying value between white and black
    */
   public final int color(int gray, int alpha) {
     if (g == null) {
@@ -6573,7 +6575,18 @@ public class PApplet extends Applet
     return g.color(x, y, z, a);
   }
 
-
+  /**
+   * Creates colors for storing in variables of the <b>color</b> datatype. The parameters are interpreted as RGB or HSB values depending on the current <b>colorMode()</b>. The default mode is RGB values from 0 to 255 and therefore, the function call <b>color(255, 204, 0)</b> will return a bright yellow color. More about how colors are stored can be found in the reference for the <a href="color_datatype.html">color</a> datatype.
+   * 
+   * @webref color:creating_reading
+   * @param x red or hue values relative to the current color range
+   * @param y green or saturation values relative to the current color range
+   * @param z blue or brightness values relative to the current color range
+   * @param a alpha relative to current color range
+   * 
+   * @see PApplet#colorMode(int)
+   * @ref color_datatype
+   */
   public final int color(float x, float y, float z, float a) {
     if (g == null) {
       if (a > 255) a = 255; else if (a < 0) a = 0;
@@ -8648,47 +8661,132 @@ public class PApplet extends Applet
     g.colorMode(mode, maxX, maxY, maxZ, maxA);
   }
 
-
+  /**
+   * Extracts the alpha value from a color.
+   * 
+   * @webref color:creating_reading
+   * @param what any value of the color datatype
+   */
   public final float alpha(int what) {
     return g.alpha(what);
   }
 
-
+  /**
+   * Extracts the red value from a color, scaled to match current <b>colorMode()</b>. This value is always returned as a  float so be careful not to assign it to an int value.<br><br>The red() function is easy to use and undestand, but is slower than another technique. To achieve the same results when working in <b>colorMode(RGB, 255)</b>, but with greater speed, use the &gt;&gt; (right shift) operator with a bit mask. For example, the following two lines of code are equivalent:<br><pre>float r1 = red(myColor);<br>float r2 = myColor &gt;&gt; 16 &amp; 0xFF;</pre>
+   * 
+   * @webref color:creating_reading
+   * @param what any value of the color datatype
+   * 
+   * @see PApplet#green(int)
+   * @see PApplet#blue(int)
+   * @see PApplet#hue(int)
+   * @see PApplet#saturation(int)
+   * @see PApplet#brightness(int)
+   * @ref rightshift
+   */
   public final float red(int what) {
     return g.red(what);
   }
 
-
+  /**
+   * Extracts the green value from a color, scaled to match current <b>colorMode()</b>. This value is always returned as a  float so be careful not to assign it to an int value.<br><br>The <b>green()</b> function is easy to use and undestand, but is slower than another technique. To achieve the same results when working in <b>colorMode(RGB, 255)</b>, but with greater speed, use the &gt;&gt; (right shift) operator with a bit mask. For example, the following two lines of code are equivalent:<br><pre>float r1 = green(myColor);<br>float r2 = myColor &gt;&gt; 8 &amp; 0xFF;</pre>
+   * 
+   * @webref color:creating_reading
+   * @param what any value of the color datatype
+   * 
+   * @see PApplet#red(int)
+   * @see PApplet#blue(int)
+   * @see PApplet#hue(int)
+   * @see PApplet#saturation(int)
+   * @see PApplet#brightness(int)
+   * @ref rightshift
+   */
   public final float green(int what) {
     return g.green(what);
   }
 
-
+  /**
+   * Extracts the blue value from a color, scaled to match current <b>colorMode()</b>. This value is always returned as a  float so be careful not to assign it to an int value.<br><br>The <b>blue()</b> function is easy to use and undestand, but is slower than another technique. To achieve the same results when working in <b>colorMode(RGB, 255)</b>, but with greater speed, use a bit mask to remove the other color components. For example, the following two lines of code are equivalent:<br><pre>float r1 = blue(myColor);<br>float r2 = myColor &amp; 0xFF;</pre>
+   * 
+   * @webref color:creating_reading
+   * @param what any value of the color datatype
+   * 
+   * @see PApplet#red(int)
+   * @see PApplet#green(int)
+   * @see PApplet#hue(int)
+   * @see PApplet#saturation(int)
+   * @see PApplet#brightness(int)
+   */
   public final float blue(int what) {
     return g.blue(what);
   }
 
-
+  /**
+   * Extracts the hue value from a color.
+   *  
+   * @webref color:creating_reading
+   * @param what any value of the color datatype
+   * 
+   * @see PApplet#red(int)
+   * @see PApplet#green(int)
+   * @see PApplet#blue(int)
+   * @see PApplet#saturation(int)
+   * @see PApplet#brightness(int)
+   */
   public final float hue(int what) {
     return g.hue(what);
   }
 
-
+  /**
+   * Extracts the saturation value from a color.
+   * 
+   * @webref color:creating_reading
+   * @param what any value of the color datatype
+   * 
+   * @see PApplet#red(int)
+   * @see PApplet#green(int)
+   * @see PApplet#blue(int)
+   * @see PApplet#hue(int)
+   * @see PApplet#brightness(int)
+   */
   public final float saturation(int what) {
     return g.saturation(what);
   }
 
 
+  /**
+   * Extracts the brightness value from a color.
+   * 
+   * 
+   * @webref color:creating_reading
+   * @param what any value of the color datatype
+   * 
+   * @see PApplet#red(int)
+   * @see PApplet#green(int)
+   * @see PApplet#blue(int)
+   * @see PApplet#hue(int)
+   * @see PApplet#saturation(int)
+   */
   public final float brightness(int what) {
     return g.brightness(what);
   }
 
-
+  /**
+   * Calculates a color or colors between two color at a specific increment. The <b>amt</b> parameter is the amount to interpolate between the two values where 0.0 equal to the first point, 0.1 is very near the first point, 0.5 is half-way in between, etc.
+   * 
+   * @webref color:creating_reading
+   * @param c1 interpolate from this color
+   * @param c2 interpolate to this color
+   * @param amt between 0.0 and 1.0
+   * 
+   * @see PApplet#blendColor(int, int, int)
+   * @see PApplet#color(float, float, float, float)
+   */
   public int lerpColor(int c1, int c2, float amt) {
     return g.lerpColor(c1, c2, amt);
   }
 
-
+  
   static public int lerpColor(int c1, int c2, float amt, int mode) {
     return PGraphics.lerpColor(c1, c2, amt, mode);
   }
@@ -8781,7 +8879,17 @@ public class PApplet extends Applet
     g.copy(src, sx, sy, sw, sh, dx, dy, dw, dh);
   }
 
-
+  /**
+   * Blends two color values together based on the blending mode given as the <b>MODE</b> parameter. The possible modes are described in the reference for the <b>blend()</b> function.
+   * 
+   * @webref color:creating_reading
+   * @param c1 the first color to blend
+   * @param c2 the second color to blend
+   * @param mode Either BLEND, ADD, SUBTRACT, DARKEST, LIGHTEST, DIFFERENCE, EXCLUSION, MULTIPLY, SCREEN, OVERLAY, HARD_LIGHT, SOFT_LIGHT, DODGE, or BURN
+   * 
+   * @see PApplet#blend(int, int, int, int, int, int, int, int, int)
+   * @see PApplet#color(float)
+   */
   static public int blendColor(int c1, int c2, int mode) {
     return PGraphics.blendColor(c1, c2, mode);
   }
