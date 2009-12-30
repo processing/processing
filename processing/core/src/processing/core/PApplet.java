@@ -8242,12 +8242,22 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * Disables drawing the stroke (outline). If both <b>noStroke()</b> and <b>noFill()</b> are called, nothing will be drawn to the screen.
+   * 
+   * @webref color:setting
+   * 
+   * @see PApplet#stroke(float, float, float, float)
+   */
   public void noStroke() {
     if (recorder != null) recorder.noStroke();
     g.noStroke();
   }
 
-
+  /**
+   * 
+   * @param rgb color value in hexadecimal notation (i.e. #FFCC00 or 0xFFFFCC00) or any value of the color datatype
+   */
   public void stroke(int rgb) {
     if (recorder != null) recorder.stroke(rgb);
     g.stroke(rgb);
@@ -8259,7 +8269,10 @@ public class PApplet extends Applet
     g.stroke(rgb, alpha);
   }
 
-
+  /**
+   * 
+   * @param gray specifies a value between white and black
+   */
   public void stroke(float gray) {
     if (recorder != null) recorder.stroke(gray);
     g.stroke(gray);
@@ -8277,10 +8290,20 @@ public class PApplet extends Applet
     g.stroke(x, y, z);
   }
 
-
-  public void stroke(float x, float y, float z, float a) {
-    if (recorder != null) recorder.stroke(x, y, z, a);
-    g.stroke(x, y, z, a);
+  /**
+   * Sets the color used to draw lines and borders around shapes. This color is either specified in terms of the RGB or HSB color depending on the current <b>colorMode()</b> (the default color space is RGB, with each value in the range from 0 to 255). 
+   * <br><br>When using hexadecimal notation to specify a color, use "#" or "0x" before the values (e.g. #CCFFAA, 0xFFCCFFAA). The # syntax uses six digits to specify a color (the way colors are specified in HTML and CSS). When using the hexadecimal notation starting with "0x", the hexadecimal value must be specified with eight characters; the first two characters define the alpha component and the remainder the red, green, and blue components. 
+   * <br><br>The value for the parameter "gray" must be less than or equal to the current maximum value as specified by <b>colorMode()</b>. The default maximum value is 255.
+   * 
+   * @webref color:setting
+   * @param alpha opacity of the stroke
+   * @param x red or hue value (depending on the current color mode)
+   * @param y green or saturation value (depending on the current color mode)
+   * @param z blue or brightness value (depending on the current color mode)
+   */
+  public void stroke(float x, float y, float z, float alpha) {
+    if (recorder != null) recorder.stroke(x, y, z, alpha);
+    g.stroke(x, y, z, alpha);
   }
 
 
@@ -8325,13 +8348,23 @@ public class PApplet extends Applet
     g.tint(x, y, z, a);
   }
 
-
+  /**
+   * Disables filling geometry. If both <b>noStroke()</b> and <b>noFill()</b> are called, nothing will be drawn to the screen.
+   * 
+   * @webref color:setting
+   * 
+   * @see PApplet#fill(float, float, float, float)
+   * 
+   */
   public void noFill() {
     if (recorder != null) recorder.noFill();
     g.noFill();
   }
 
-
+  /**
+   * 
+   * @param rgb color value in hexadecimal notation (i.e. #FFCC00 or 0xFFFFCC00) or any value of the color datatype
+   */
   public void fill(int rgb) {
     if (recorder != null) recorder.fill(rgb);
     g.fill(rgb);
@@ -8343,7 +8376,10 @@ public class PApplet extends Applet
     g.fill(rgb, alpha);
   }
 
-
+  /**
+   * 
+   * @param gray number specifying value between white and black
+   */
   public void fill(float gray) {
     if (recorder != null) recorder.fill(gray);
     g.fill(gray);
@@ -8361,10 +8397,27 @@ public class PApplet extends Applet
     g.fill(x, y, z);
   }
 
-
-  public void fill(float x, float y, float z, float a) {
-    if (recorder != null) recorder.fill(x, y, z, a);
-    g.fill(x, y, z, a);
+  /**
+   * Sets the color used to fill shapes. For example, if you run <b>fill(204, 102, 0)</b>, all subsequent shapes will be filled with orange. This color is either specified in terms of the RGB or HSB color depending on the current <b>colorMode()</b> (the default color space is RGB, with each value in the range from 0 to 255). 
+   * <br><br>When using hexadecimal notation to specify a color, use "#" or "0x" before the values (e.g. #CCFFAA, 0xFFCCFFAA). The # syntax uses six digits to specify a color (the way colors are specified in HTML and CSS). When using the hexadecimal notation starting with "0x", the hexadecimal value must be specified with eight characters; the first two characters define the alpha component and the remainder the red, green, and blue components. 
+   * <br><br>The value for the parameter "gray" must be less than or equal to the current maximum value as specified by <b>colorMode()</b>. The default maximum value is 255.
+   * <br><br>To change the color of an image (or a texture), use tint().
+   * 
+   * @webref color:setting
+   * @param x red or hue value
+   * @param y green or saturation value
+   * @param z blue or brightness value
+   * @param alpha opacity of the fill
+   * 
+   * @see PApplet#noFill()
+   * @see PApplet#stroke(float)
+   * @see PApplet#tint(float)
+   * @see PApplet#background(float, float, float, float)
+   * @see PApplet#colorMode(int, float, float, float, float)
+   */
+  public void fill(float x, float y, float z, float alpha) {
+    if (recorder != null) recorder.fill(x, y, z, alpha);
+    g.fill(x, y, z, alpha);
   }
 
 
@@ -8560,7 +8613,11 @@ public class PApplet extends Applet
     g.colorMode(mode);
   }
 
-
+  /**
+   * 
+   * @param mode 	Either RGB or HSB, corresponding to Red/Green/Blue and Hue/Saturation/Brightness
+   * @param max	range for all color elements
+   */
   public void colorMode(int mode, float max) {
     if (recorder != null) recorder.colorMode(mode, max);
     g.colorMode(mode, max);
@@ -8572,7 +8629,19 @@ public class PApplet extends Applet
     g.colorMode(mode, maxX, maxY, maxZ);
   }
 
-
+  /**
+   * Changes the way Processing interprets color data. By default, the parameters for <b>fill()</b>, <b>stroke()</b>, <b>background()</b>, and <b>color()</b> are defined by values between 0 and 255 using the RGB color model. The <b>colorMode()</b> function is used to change the numerical range used for specifying colors and to switch color systems. For example, calling <b>colorMode(RGB, 1.0)</b> will specify that values are specified between 0 and 1. The limits for defining colors are altered by setting the parameters range1, range2, range3, and range 4.
+   * 
+   * @webref color:setting
+   * @param maxX	range for the red or hue depending on the current color mode
+   * @param maxY	range for the green or saturation depending on the current color mode
+   * @param maxZ	range for the blue or brightness depending on the current color mode
+   * @param maxA	range for the alpha
+   * 
+   * @see PApplet#background(float)
+   * @see PApplet#fill(float)
+   * @see PApplet#stroke(float)
+   */
   public void colorMode(int mode,
                         float maxX, float maxY, float maxZ, float maxA) {
     if (recorder != null) recorder.colorMode(mode, maxX, maxY, maxZ, maxA);
