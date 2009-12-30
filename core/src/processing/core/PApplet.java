@@ -35,6 +35,7 @@ import java.util.*;
 import java.util.regex.*;
 import java.util.zip.*;
 
+import javax.annotation.processing.ProcessingEnvironment;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
@@ -6584,7 +6585,7 @@ public class PApplet extends Applet
    * @param z blue or brightness values relative to the current color range
    * @param a alpha relative to current color range
    * 
-   * @see PApplet#colorMode(int)
+   * @see processing.core.PApplet#colorMode(int)
    * @ref color_datatype
    */
   public final int color(float x, float y, float z, float a) {
