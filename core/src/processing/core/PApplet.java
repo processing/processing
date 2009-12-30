@@ -8487,19 +8487,24 @@ public class PApplet extends Applet
     g.lightSpecular(x, y, z);
   }
 
-
+  /**
+   * 
+   * @param rgb color value in hexadecimal notation (i.e. #FFCC00 or 0xFFFFCC00)<br/>or any value of the color datatype
+   */
   public void background(int rgb) {
     if (recorder != null) recorder.background(rgb);
     g.background(rgb);
   }
-
 
   public void background(int rgb, float alpha) {
     if (recorder != null) recorder.background(rgb, alpha);
     g.background(rgb, alpha);
   }
 
-
+  /**
+   * 
+   * @param gray specifies a value between white and black
+   */
   public void background(float gray) {
     if (recorder != null) recorder.background(gray);
     g.background(gray);
@@ -8518,12 +8523,32 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * The <b>background()</b> function sets the color used for the background of the Processing window. The default background is light gray. In the <b>draw()</b> function, the background color is used to clear the display window at the beginning of each frame.
+   * <br><br>An image can also be used as the background for a sketch, however its width and height must be the same size as the sketch window. To resize an image 'b' to the size of the sketch window, use b.resize(width, height).
+   * <br><br>Images used as background will ignore the current tint() setting.
+   * <br><br>It is not possible to use transparency (alpha) in background colors with the main drawing surface, however they will work properly with <b>createGraphics</b>.
+   * 
+   * @webref color:setting
+   * @param x red or hue value (depending on the current color mode)
+   * @param y green or saturation value (depending on the current color mode)
+   * @param z blue or brightness value (depending on the current color mode)
+   * @param a opacity of the background
+   * 
+   * @see PApplet#stroke(float)
+   * @see PApplet#fill(float)
+   * @see PApplet#tint(float)
+   * @see PApplet#colorMode(int)
+   */
   public void background(float x, float y, float z, float a) {
     if (recorder != null) recorder.background(x, y, z, a);
     g.background(x, y, z, a);
   }
 
-
+  /**
+   * 
+   * @param image any value of type PImage
+   */
   public void background(PImage image) {
     if (recorder != null) recorder.background(image);
     g.background(image);
