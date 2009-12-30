@@ -433,7 +433,7 @@ public class PImage implements PConstants, Cloneable {
    * @param wide the resized image width
    * @param high the resized image height
    * 
-   * @see PImage#get(int, int, int, int)
+   * @see processing.core.PImage#get(int, int, int, int)
    */
   public void resize(int wide, int high) {  // ignore
     // Make sure that the pixels[] array is valid
@@ -516,9 +516,9 @@ public class PImage implements PConstants, Cloneable {
    * @param w width of pixel rectangle to get
    * @param h height of pixel rectangle to get
    * 
-   * @see PImage#set(int, int, int)
-   * @see PImage#pixels
-   * @see PImage#copy(PImage, int, int, int, int, int, int, int, int)
+   * @see processing.core.PImage#set(int, int, int)
+   * @see processing.core.PImage#pixels
+   * @see processing.core.PImage#copy(PImage, int, int, int, int, int, int, int, int)
    */
   public PImage get(int x, int y, int w, int h) {
     /*
@@ -595,9 +595,9 @@ public class PImage implements PConstants, Cloneable {
    * @param y y-coordinate of the pixel or upper-left corner of the image
    * @param c any value of the color datatype
    * 
-   * @see PImage#get(int, int, int, int)
-   * @see PImage#pixels
-   * @see PImage#copy(PImage, int, int, int, int, int, int, int, int)
+   * @see processing.core.PImage#get(int, int, int, int)
+   * @see processing.core.PImage#pixels
+   * @see processing.core.PImage#copy(PImage, int, int, int, int, int, int, int, int)
    */
   public void set(int x, int y, int c) {
     if ((x < 0) || (y < 0) || (x >= width) || (y >= height)) return;
