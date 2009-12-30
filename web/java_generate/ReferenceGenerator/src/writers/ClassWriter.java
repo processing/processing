@@ -94,7 +94,7 @@ public class ClassWriter extends BaseWriter {
 
 	private HashMap<String, String> getPropertyInfo(ProgramElementDoc doc) {
 		HashMap<String, String> ret = new HashMap<String, String>();
-		ret.put("name", docName(doc));
+		ret.put("name", getName(doc));
 		ret.put("anchor", getLocalAnchor(doc));
 		ret.put("desc", shortText(doc));
 		return ret;

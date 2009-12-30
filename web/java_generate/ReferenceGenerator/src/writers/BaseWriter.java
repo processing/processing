@@ -105,27 +105,28 @@ public class BaseWriter {
 		if(doc instanceof MethodDoc)
 		{
 			ret = ret.concat("()");
+		} else if (doc.isField()){
+			// add [] if needed
+			FieldDoc d = (FieldDoc) doc;
+			ret = ret.concat(d.type().dimension());
 		}
 		return ret;
 	}
 
 	protected static String getAnchorFromName(String name){
 		if( name.endsWith("()") ){
+			//functions look like functionName_.html
 			name = name.replace("()", "_");
 		} else if( name.contains("(") && name.contains(")") ){
+			//get the name in parentheses
 			int start = name.indexOf("(") + 1;
 			int end = name.indexOf(")");
 			name = name.substring(start, end);
+		} else if( name.endsWith("[]")){
+			//strip off the array indicators for the name
+			name = name.replaceAll("\\[\\]", "");
 		}
 		return name.replace(" ", "").concat(".html");
-	}
-	
-	static protected String docName(Doc doc) {
-		if (doc instanceof MethodDoc) {
-			return doc.name() + "()";
-		} else {
-			return doc.name();
-		}
 	}
 	
 	//
@@ -425,9 +426,10 @@ public class BaseWriter {
 		ArrayList<HashMap<String, String>> vars = new ArrayList<HashMap<String,String>>();
 		for( SeeTag tag : doc.seeTags() ){
 			HashMap<String, String> map = new HashMap<String, String>();
-			if(tag.referencedClassName().contains(Shared.i().getCoreClassName())){
+			//add the referenced member or the referenced class if no member exists
+			if(tag.referencedMember() != null){
 				map.put("name", getName(tag.referencedMember()));
-				map.put("anchor", getAnchor(tag.referencedMember()));
+				map.put("anchor", getAnchor(tag.referencedMember()));				
 			} else {
 				map.put("name", getName(tag.referencedClass()));
 				map.put("anchor", getAnchor(tag.referencedClass()));

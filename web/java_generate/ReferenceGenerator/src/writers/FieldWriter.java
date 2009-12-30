@@ -21,7 +21,7 @@ public class FieldWriter extends BaseWriter {
 		TemplateWriter templateWriter = new TemplateWriter();
 		vars.put("examples", getExamples(doc));
 		vars.put("description", basicText(doc));
-		vars.put("name", doc.name());
+		vars.put("name", getName(doc));
 		vars.put("usage", getUsage(doc));
 		vars.put("related", getRelated(doc));
 		

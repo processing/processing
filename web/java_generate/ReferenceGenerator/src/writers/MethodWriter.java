@@ -35,6 +35,7 @@ public class MethodWriter extends BaseWriter {
 		
 		vars.put("parameters", getParameters(doc));
 		vars.put("usage", getUsage(doc));
+		vars.put("related", getRelated(doc));
 		
 		templateWriter.write("Generic.template.html", vars, filename);
 	}
