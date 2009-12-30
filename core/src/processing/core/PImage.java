@@ -32,12 +32,25 @@ import javax.imageio.ImageIO;
 
 
 /**
+ * Datatype for storing images. Processing can display <b>.gif</b>, <b>.jpg</b>, <b>.tga</b>, and <b>.png</b> images. Images may be displayed in 2D and 3D space.
+ * Before an image is used, it must be loaded with the <b>loadImage()</b> function.
+ * The <b>PImage</b> object contains fields for the <b>width</b> and <b>height</b> of the image,
+ * as well as an array called <b>pixels[]</b> which contains the values for every pixel in the image.
+ * A group of methods, described below, allow easy access to the image's pixels and alpha channel and simplify the process of compositing. 
+ * <br><br>Before using the <b>pixels[]</b> array, be sure to use the <b>loadPixels()</b> method on the image to make sure that the pixel data is properly loaded.
+ * <br><br>To create a new image, use the <b>createImage()</b> function (do not use <b>new PImage()</b>).
+ * =advanced
+ * 
  * Storage class for pixel data. This is the base class for most image and
  * pixel information, such as PGraphics and the video library classes.
  * <P>
  * Code for copying, resizing, scaling, and blending contributed
  * by <A HREF="http://www.toxi.co.uk">toxi</A>.
  * <P>
+ * 
+ * @webref image
+ * @usage Web &amp; Application
+ * @instanceName img any variable of type PImage
  */
 public class PImage implements PConstants, Cloneable {
 
@@ -48,8 +61,32 @@ public class PImage implements PConstants, Cloneable {
    */
   public int format;
 
+  /**
+   * Array containing the values for all the pixels in the image. These values are of the color datatype.
+   * This array is the size of the image, meaning if the image is 100x100 pixels, there will be 10000 values
+   * and if the window is 200x300 pixels, there will be 60000 values.
+   * The <b>index</b> value defines the position of a value within the array.
+   * For example, the statement <b>color b = img.pixels[230]</b> will set the variable <b>b</b> equal to the value at that location in the array.
+   * Before accessing this array, the data must loaded with the <b>loadPixels()</b> method.
+   * After the array data has been modified, the <b>updatePixels()</b> method must be run to update the changes.
+   * Without <b>loadPixels()</b>, running the code may (or will in future releases) result in a NullPointerException.
+   * @webref
+   * @brief  	Array containing the color of every pixel in the image
+   */
   public int[] pixels;
-  public int width, height;
+  
+  /**
+   * The width of the image in units of pixels.
+   * @webref
+   * @brief  	Image width
+   */
+  public int width;
+  /**
+   * The height of the image in units of pixels.
+   * @webref
+   * @brief  	Image height
+   */
+  public int height;
 
   /**
    * Path to parent object that will be used with save().
@@ -125,7 +162,12 @@ public class PImage implements PConstants, Cloneable {
     // toxi: agreed and same reasons why i left it out ;)
   }
 
-
+  /**
+   * 
+   * @param width image width
+   * @param height image height
+   * @param format Either RGB, ARGB, ALPHA (grayscale alpha channel)
+   */
   public PImage(int width, int height, int format) {
     init(width, height, format);
   }
@@ -171,6 +213,8 @@ public class PImage implements PConstants, Cloneable {
    * Construct a new PImage from a java.awt.Image. This constructor assumes
    * that you've done the work of making sure a MediaTracker has been used
    * to fully download the data and that the img is valid.
+   * 
+   * @param img assumes a MediaTracker has been used to fully download the data and the img is valid
    */
   public PImage(java.awt.Image img) {
     if (img instanceof BufferedImage) {
@@ -442,8 +486,20 @@ public class PImage implements PConstants, Cloneable {
 
 
   /**
-   * Grab a subsection of a PImage, and copy it into a fresh PImage.
-   * As of release 0149, no longer honors imageMode() for the coordinates.
+   * Reads the color of any pixel or grabs a group of pixels. If no parameters are specified, the entire image is returned. Get the value of one pixel by specifying an x,y coordinate. Get a section of the display window by specifing an additional <b>width</b> and <b>height</b> parameter. If the pixel requested is outside of the image window, black is returned. The numbers returned are scaled according to the current color ranges, but only RGB values are returned by this function. Even though you may have drawn a shape with <b>colorMode(HSB)</b>, the numbers returned will be in RGB.
+   * <br><br>Getting the color of a single pixel with <b>get(x, y)</b> is easy, but not as fast as grabbing the data directly from <b>pixels[]</b>. The equivalent statement to "get(x, y)" using <b>pixels[]</b> is "pixels[y*width+x]". Processing requires calling <b>loadPixels()</b> to load the display window data into the <b>pixels[]</b> array before getting the values.
+   * <br><br>As of release 0149, this function ignores <b>imageMode()</b>.
+   * 
+   * @webref
+   * @brief  	Reads the color of any pixel or grabs a rectangle of pixels
+   * @param x x-coordinate of the pixel
+   * @param y y-coordinate of the pixel
+   * @param w width of pixel rectangle to get
+   * @param h height of pixel rectangle to get
+   * 
+   * @see PImage#set(int, int, int)
+   * @see PImage#pixels
+   * @see PImage#copy(PImage, int, int, int, int, int, int, int, int)
    */
   public PImage get(int x, int y, int w, int h) {
     /*
@@ -510,9 +566,19 @@ public class PImage implements PConstants, Cloneable {
     }
   }
 
-
   /**
-   * Set a single pixel to the specified color.
+   * Changes the color of any pixel or writes an image directly into the image. The <b>x</b> and <b>y</b> parameter specify the pixel or the upper-left corner of the image. The <b>color</b> parameter specifies the color value.<br><br>Setting the color of a single pixel with <b>set(x, y)</b> is easy, but not as fast as putting the data directly into <b>pixels[]</b>. The equivalent statement to "set(x, y, #000000)" using <b>pixels[]</b> is "pixels[y*width+x] = #000000". Processing requires calling <b>loadPixels()</b> to load the display window data into the <b>pixels[]</b> array before getting the values and calling <b>updatePixels()</b> to update the window.
+   * <br><br>As of release 0149, this function ignores <b>imageMode()</b>.
+   * 
+   * @webref
+   * @brief  	Writes a color to any pixel or writes an image into another
+   * @param x x-coordinate of the pixel or upper-left corner of the image
+   * @param y y-coordinate of the pixel or upper-left corner of the image
+   * @param c any value of the color datatype
+   * 
+   * @see PImage#get(int, int, int, int)
+   * @see PImage#pixels
+   * @see PImage#copy(PImage, int, int, int, int, int, int, int, int)
    */
   public void set(int x, int y, int c) {
     if ((x < 0) || (y < 0) || (x >= width) || (y >= height)) return;
@@ -594,18 +660,20 @@ public class PImage implements PConstants, Cloneable {
    * used as the alpha color. For a fully grayscale image, this
    * is correct, but for a color image it's not 100% accurate.
    * For a more accurate conversion, first use filter(GRAY)
-   * which will make the image into a "correct" grayscake by
+   * which will make the image into a "correct" grayscale by
    * performing a proper luminance-based conversion.
+   * 
+   * @param maskArray any array of Integer numbers used as the alpha channel, needs to be same length as the image's pixel array
    */
-  public void mask(int alpha[]) {
+  public void mask(int maskArray[]) {
     loadPixels();
     // don't execute if mask image is different size
-    if (alpha.length != pixels.length) {
+    if (maskArray.length != pixels.length) {
       throw new RuntimeException("The PImage used with mask() must be " +
                                  "the same size as the applet.");
     }
     for (int i = 0; i < pixels.length; i++) {
-      pixels[i] = ((alpha[i] & 0xff) << 24) | (pixels[i] & 0xffffff);
+      pixels[i] = ((maskArray[i] & 0xff) << 24) | (pixels[i] & 0xffffff);
     }
     format = ARGB;
     updatePixels();
@@ -613,10 +681,18 @@ public class PImage implements PConstants, Cloneable {
 
 
   /**
-   * Set alpha channel for an image using another image as the source.
+   * Masks part of an image from displaying by loading another image and using it as an alpha channel.
+   *  This mask image should only contain grayscale data, but only the blue color channel is used.
+   *  The mask image needs to be the same size as the image to which it is applied.
+   *  In addition to using a mask image, an integer array containing the alpha channel data can be specified directly.
+   *  This method is useful for creating dynamically generated alpha masks.
+   *  This array must be of the same length as the target image's pixels array and should contain only grayscale data of values between 0-255.
+   * @webref
+   * @brief  	Masks part of the image from displaying
+   * @param maskImg any PImage object used as the alpha channel for "img", needs to be same size as "img"
    */
-  public void mask(PImage alpha) {
-    mask(alpha.pixels);
+  public void mask(PImage maskImg) {
+    mask(maskImg.pixels);
   }
 
 
@@ -1212,7 +1288,23 @@ public class PImage implements PConstants, Cloneable {
 
 
   /**
-   * Copies area of one image into another PImage object.
+   * Copies a region of pixels from one image into another. If the source and destination regions aren't the same size, it will automatically resize source pixels to fit the specified target region. No alpha information is used in the process, however if the source image has an alpha channel set, it will be copied as well.
+   * <br><br>As of release 0149, this function ignores <b>imageMode()</b>.
+   * 
+   * @webref
+   * @brief  	Copies the entire image
+   * @param sx X coordinate of the source's upper left corner
+   * @param sy Y coordinate of the source's upper left corner
+   * @param sw source image width
+   * @param sh source image height
+   * @param dx X coordinate of the destination's upper left corner
+   * @param dy Y coordinate of the destination's upper left corner
+   * @param dw destination image width
+   * @param dh destination image height
+   * @param src an image variable referring to the source image.
+   * 
+   * @see PApplet#alpha(int)
+   * @see PApplet#blend(PImage, int, int, int, int, int, int, int, int, int)
    */
   public void copy(PImage src,
                    int sx, int sy, int sw, int sh,
