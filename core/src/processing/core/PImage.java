@@ -31,6 +31,8 @@ import java.util.HashMap;
 import javax.imageio.ImageIO;
 
 
+
+
 /**
  * Datatype for storing images. Processing can display <b>.gif</b>, <b>.jpg</b>, <b>.tga</b>, and <b>.png</b> images. Images may be displayed in 2D and 3D space.
  * Before an image is used, it must be loaded with the <b>loadImage()</b> function.
@@ -51,6 +53,9 @@ import javax.imageio.ImageIO;
  * @webref image
  * @usage Web &amp; Application
  * @instanceName img any variable of type PImage
+ * @see processing.core.PApplet#loadImage(String)
+ * @see processing.core.PApplet#imageMode(int)
+ * @see processing.core.PApplet#createImage(int, int)
  */
 public class PImage implements PConstants, Cloneable {
 
@@ -319,31 +324,39 @@ public class PImage implements PConstants, Cloneable {
 
 
   /**
+   * Loads the pixel data for the image into its <b>pixels[]</b> array. This function must always be called before reading from or writing to <b>pixels[]</b>.
+   * <br><br>Certain renderers may or may not seem to require <b>loadPixels()</b> or <b>updatePixels()</b>. However, the rule is that any time you want to manipulate the <b>pixels[]</b> array, you must first call <b>loadPixels()</b>, and after changes have been made, call <b>updatePixels()</b>. Even if the renderer may not seem to use this function in the current Processing release, this will always be subject to change.
+   * =advanced
    * Call this when you want to mess with the pixels[] array.
    * <p/>
    * For subclasses where the pixels[] buffer isn't set by default,
    * this should copy all data into the pixels[] array
+   * 
+   * @webref
+   * @brief Loads the pixel data for the image into its pixels[] array
    */
   public void loadPixels() {  // ignore
   }
 
-
-  /**
-   * Call this when finished messing with the pixels[] array.
-   * <p/>
-   * Mark all pixels as needing update.
-   */
   public void updatePixels() {  // ignore
     updatePixelsImpl(0, 0, width, height);
   }
 
-
   /**
+   * Updates the image with the data in its <b>pixels[]</b> array. Use in conjunction with <b>loadPixels()</b>. If you're only reading pixels from the array, there's no need to call <b>updatePixels()</b>.
+   * <br><br>Certain renderers may or may not seem to require <b>loadPixels()</b> or <b>updatePixels()</b>. However, the rule is that any time you want to manipulate the <b>pixels[]</b> array, you must first call <b>loadPixels()</b>, and after changes have been made, call <b>updatePixels()</b>. Even if the renderer may not seem to use this function in the current Processing release, this will always be subject to change.
+   * <br><br>Currently, none of the renderers use the additional parameters to <b>updatePixels()</b>, however this may be implemented in the future.
+   * =advanced
    * Mark the pixels in this region as needing an update.
-   * <P>
    * This is not currently used by any of the renderers, however the api
    * is structured this way in the hope of being able to use this to
    * speed things up in the future.
+   * @webref
+   * @brief Updates the image with the data in its pixels[] array
+   * @param x
+   * @param y
+   * @param w
+   * @param h
    */
   public void updatePixels(int x, int y, int w, int h) {  // ignore
 //    if (imageMode == CORNER) {  // x2, y2 are w/h
@@ -413,8 +426,14 @@ public class PImage implements PConstants, Cloneable {
 
 
   /**
-   * Resize this image to a new width and height.
-   * Use 0 for wide or high to make that dimension scale proportionally.
+   * Resize the image to a new width and height. To make the image scale proportionally, use 0 as the value for the <b>wide</b> or <b>high</b> parameter.
+   * 
+   * @webref
+   * @brief Changes the size of an image to a new width and height
+   * @param wide the resized image width
+   * @param high the resized image height
+   * 
+   * @see PImage#get(int, int, int, int)
    */
   public void resize(int wide, int high) {  // ignore
     // Make sure that the pixels[] array is valid
@@ -700,26 +719,6 @@ public class PImage implements PConstants, Cloneable {
   //////////////////////////////////////////////////////////////
 
   // IMAGE FILTERS
-
-
-  /**
-   * Method to apply a variety of basic filters to this image.
-   * <P>
-   * <UL>
-   * <LI>filter(BLUR) provides a basic blur.
-   * <LI>filter(GRAY) converts the image to grayscale based on luminance.
-   * <LI>filter(INVERT) will invert the color components in the image.
-   * <LI>filter(OPAQUE) set all the high bits in the image to opaque
-   * <LI>filter(THRESHOLD) converts the image to black and white.
-   * <LI>filter(DILATE) grow white/light areas
-   * <LI>filter(ERODE) shrink white/light areas
-   * </UL>
-   * Luminance conversion code contributed by
-   * <A HREF="http://www.toxi.co.uk">toxi</A>
-   * <P/>
-   * Gaussian blur code contributed by
-   * <A HREF="http://incubator.quasimondo.com">Mario Klingemann</A>
-   */
   public void filter(int kind) {
     loadPixels();
 
@@ -792,20 +791,29 @@ public class PImage implements PConstants, Cloneable {
 
 
   /**
+   * Filters an image as defined by one of the following modes:<br><br>THRESHOLD - converts the image to black and white pixels depending if they are above or below the threshold defined by the level parameter. The level must be between 0.0 (black) and 1.0(white). If no level is specified, 0.5 is used.<br><br>GRAY - converts any colors in the image to grayscale equivalents<br><br>INVERT - sets each pixel to its inverse value<br><br>POSTERIZE - limits each channel of the image to the number of colors specified as the level parameter<br><br>BLUR - executes a Guassian blur with the level parameter specifying the extent of the blurring. If no level parameter is used, the blur is equivalent to Guassian blur of radius 1.<br><br>OPAQUE - sets the alpha channel to entirely opaque.<br><br>ERODE - reduces the light areas with the amount defined by the level parameter.<br><br>DILATE - increases the light areas with the amount defined by the level parameter
+   * =advanced
    * Method to apply a variety of basic filters to this image.
-   * These filters all take a parameter.
    * <P>
    * <UL>
-   * <LI>filter(BLUR, int radius) performs a gaussian blur of the
-   * specified radius.
-   * <LI>filter(POSTERIZE, int levels) will posterize the image to
-   * between 2 and 255 levels.
-   * <LI>filter(THRESHOLD, float center) allows you to set the
-   * center point for the threshold. It takes a value from 0 to 1.0.
+   * <LI>filter(BLUR) provides a basic blur.
+   * <LI>filter(GRAY) converts the image to grayscale based on luminance.
+   * <LI>filter(INVERT) will invert the color components in the image.
+   * <LI>filter(OPAQUE) set all the high bits in the image to opaque
+   * <LI>filter(THRESHOLD) converts the image to black and white.
+   * <LI>filter(DILATE) grow white/light areas
+   * <LI>filter(ERODE) shrink white/light areas
    * </UL>
+   * Luminance conversion code contributed by
+   * <A HREF="http://www.toxi.co.uk">toxi</A>
+   * <P/>
    * Gaussian blur code contributed by
    * <A HREF="http://incubator.quasimondo.com">Mario Klingemann</A>
-   * and later updated by toxi for better speed.
+   * 
+   * @webref
+   * @brief Converts the image to grayscale or black and white
+   * @param kind Either THRESHOLD, GRAY, INVERT, POSTERIZE, BLUR, OPAQUE, ERODE, or DILATE
+   * @param param in the range from 0 to 1
    */
   public void filter(int kind, float param) {
     loadPixels();
@@ -1303,8 +1311,8 @@ public class PImage implements PConstants, Cloneable {
    * @param dh destination image height
    * @param src an image variable referring to the source image.
    * 
-   * @see PApplet#alpha(int)
-   * @see PApplet#blend(PImage, int, int, int, int, int, int, int, int, int)
+   * @see processing.core.PApplet#alpha(int)
+   * @see processing.core.PApplet#blend(PImage, int, int, int, int, int, int, int, int, int)
    */
   public void copy(PImage src,
                    int sx, int sy, int sw, int sh,
@@ -1413,6 +1421,8 @@ public class PImage implements PConstants, Cloneable {
 
   /**
    * Blends one area of this image to another area.
+   * 
+   * 
    * @see processing.core.PImage#blendColor(int,int,int)
    */
   public void blend(int sx, int sy, int sw, int sh,
@@ -1422,7 +1432,39 @@ public class PImage implements PConstants, Cloneable {
 
 
   /**
-   * Copies area of one image into another PImage object.
+   * Blends a region of pixels into the image specified by the <b>img</b> parameter. These copies utilize full alpha channel support and a choice of the following modes to blend the colors of source pixels (A) with the ones of pixels in the destination image (B):<br><br>
+   * BLEND - linear interpolation of colours: C = A*factor + B<br><br>
+   * ADD - additive blending with white clip: C = min(A*factor + B, 255)<br><br>
+   * SUBTRACT - subtractive blending with black clip: C = max(B - A*factor, 0)<br><br>
+   * DARKEST - only the darkest colour succeeds: C = min(A*factor, B)<br><br>
+   * LIGHTEST - only the lightest colour succeeds: C = max(A*factor, B)<br><br>
+   * DIFFERENCE - subtract colors from underlying image.<br><br>
+   * EXCLUSION - similar to DIFFERENCE, but less extreme.<br><br>
+   * MULTIPLY - Multiply the colors, result will always be darker.<br><br>
+   * SCREEN - Opposite multiply, uses inverse values of the colors.<br><br>
+   * OVERLAY - A mix of MULTIPLY and SCREEN. Multiplies dark values, and screens light values.<br><br>
+   * HARD_LIGHT - SCREEN when greater than 50% gray, MULTIPLY when lower.<br><br>
+   * SOFT_LIGHT - Mix of DARKEST and LIGHTEST. Works like OVERLAY, but not as harsh.<br><br>
+   * DODGE - Lightens light tones and increases contrast, ignores darks. Called "Color Dodge" in Illustrator and Photoshop.<br><br>
+   * BURN - Darker areas are applied, increasing contrast, ignores lights. Called "Color Burn" in Illustrator and Photoshop.<br><br>
+   * All modes use the alpha information (highest byte) of source image pixels as the blending factor. If the source and destination regions are different sizes, the image will be automatically resized to match the destination size. If the <b>srcImg</b> parameter is not used, the display window is used as the source image.<br><br>
+   * As of release 0149, this function ignores <b>imageMode()</b>.
+   * 
+   * @webref
+   * @brief  Copies a pixel or rectangle of pixels using different blending modes
+   * @param src an image variable referring to the source image
+   * @param sx X coordinate of the source's upper left corner
+   * @param sy Y coordinate of the source's upper left corner
+   * @param sw source image width
+   * @param sh source image height
+   * @param dx X coordinate of the destinations's upper left corner
+   * @param dy Y coordinate of the destinations's upper left corner
+   * @param dw destination image width
+   * @param dh destination image height
+   * @param mode Either BLEND, ADD, SUBTRACT, LIGHTEST, DARKEST, DIFFERENCE, EXCLUSION, MULTIPLY, SCREEN, OVERLAY, HARD_LIGHT, SOFT_LIGHT, DODGE, BURN
+   * 
+   * @see processing.core.PApplet#alpha(int)
+   * @see processing.core.PApplet#copy(PImage, int, int, int, int, int, int, int, int)
    * @see processing.core.PImage#blendColor(int,int,int)
    */
   public void blend(PImage src,
@@ -2720,6 +2762,16 @@ public class PImage implements PConstants, Cloneable {
   protected String[] saveImageFormats;
 
   /**
+   * Saves the image into a file. Images are saved in TIFF, TARGA, JPEG, and PNG format depending on the extension within the <b>filename</b> parameter.
+   * For example, "image.tif" will have a TIFF image and "image.png" will save a PNG image.
+   * If no extension is included in the filename, the image will save in TIFF format and <b>.tif</b> will be added to the name.
+   * These files are saved to the sketch's folder, which may be opened by selecting "Show sketch folder" from the "Sketch" menu.
+   * It is not possible to use <b>save()</b> while running the program in a web browser.<br><br>
+   * To save an image created within the code, rather than through loading, it's necessary to make the image with the <b>createImage()</b>
+   * function so it is aware of the location of the program and can therefore save the file to the right place.
+   * See the <b>createImage()</b> reference for more information.
+   * 
+   * =advanced
    * Save this image to disk.
    * <p>
    * As of revision 0100, this function requires an absolute path,
@@ -2743,15 +2795,19 @@ public class PImage implements PConstants, Cloneable {
    * The ImageIO API claims to support wbmp files, however they probably
    * require a black and white image. Basic testing produced a zero-length
    * file with no error.
+   * 
+   * @webref
+   * @brief Saves the image to a TIFF, TARGA, PNG, or JPEG file
+   * @param filename a sequence of letters and numbers
    */
-  public void save(String path) {  // ignore
+  public void save(String filename) {  // ignore
     boolean success = false;
 
-    File file = new File(path);
+    File file = new File(filename);
     if (!file.isAbsolute()) {
       if (parent != null) {
         //file = new File(parent.savePath(filename));
-        path = parent.savePath(path);
+        filename = parent.savePath(filename);
       } else {
         String msg = "PImage.save() requires an absolute path. " +
           "Use createImage(), or pass savePath() to save().";
@@ -2770,24 +2826,24 @@ public class PImage implements PConstants, Cloneable {
       }
       if (saveImageFormats != null) {
         for (int i = 0; i < saveImageFormats.length; i++) {
-          if (path.endsWith("." + saveImageFormats[i])) {
-            saveImageIO(path);
+          if (filename.endsWith("." + saveImageFormats[i])) {
+            saveImageIO(filename);
             return;
           }
         }
       }
 
-      if (path.toLowerCase().endsWith(".tga")) {
-        os = new BufferedOutputStream(new FileOutputStream(path), 32768);
+      if (filename.toLowerCase().endsWith(".tga")) {
+        os = new BufferedOutputStream(new FileOutputStream(filename), 32768);
         success = saveTGA(os); //, pixels, width, height, format);
 
       } else {
-        if (!path.toLowerCase().endsWith(".tif") &&
-            !path.toLowerCase().endsWith(".tiff")) {
+        if (!filename.toLowerCase().endsWith(".tif") &&
+            !filename.toLowerCase().endsWith(".tiff")) {
           // if no .tif extension, add it..
-          path += ".tif";
+          filename += ".tif";
         }
-        os = new BufferedOutputStream(new FileOutputStream(path), 32768);
+        os = new BufferedOutputStream(new FileOutputStream(filename), 32768);
         success = saveTIFF(os); //, pixels, width, height);
       }
       os.flush();
