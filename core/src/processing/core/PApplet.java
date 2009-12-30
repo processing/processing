@@ -8501,16 +8501,17 @@ public class PApplet extends Applet
     g.background(rgb, alpha);
   }
 
-  /**
-   * 
-   * @param gray specifies a value between white and black
-   */
   public void background(float gray) {
     if (recorder != null) recorder.background(gray);
     g.background(gray);
   }
 
 
+  /**
+   * 
+   * @param gray specifies a value between white and black
+   * @param alpha opacity of the background
+   */
   public void background(float gray, float alpha) {
     if (recorder != null) recorder.background(gray, alpha);
     g.background(gray, alpha);
@@ -8533,16 +8534,15 @@ public class PApplet extends Applet
    * @param x red or hue value (depending on the current color mode)
    * @param y green or saturation value (depending on the current color mode)
    * @param z blue or brightness value (depending on the current color mode)
-   * @param a opacity of the background
    * 
    * @see PApplet#stroke(float)
    * @see PApplet#fill(float)
    * @see PApplet#tint(float)
    * @see PApplet#colorMode(int)
    */
-  public void background(float x, float y, float z, float a) {
-    if (recorder != null) recorder.background(x, y, z, a);
-    g.background(x, y, z, a);
+  public void background(float x, float y, float z, float alpha) {
+    if (recorder != null) recorder.background(x, y, z, alpha);
+    g.background(x, y, z, alpha);
   }
 
   /**
