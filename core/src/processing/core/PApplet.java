@@ -309,10 +309,18 @@ public class PApplet extends Applet
   volatile int resizeHeight;
 
   /**
+   * Array containing the values for all the pixels in the display window. These values are of the color datatype. This array is the size of the display window. For example, if the image is 100x100 pixels, there will be 10000 values and if the window is 200x300 pixels, there will be 60000 values. The <b>index</b> value defines the position of a value within the array. For example, the statment <b>color b = pixels[230]</b> will set the variable <b>b</b> to be equal to the value at that location in the array. <br><br> Before accessing this array, the data must loaded with the <b>loadPixels()</b> function. After the array data has been modified, the <b>updatePixels()</b> function must be run to update the changes. Without <b>loadPixels()</b>, running the code may (or will in future releases) result in a NullPointerException.
    * Pixel buffer from this applet's PGraphics.
    * <P>
    * When used with OpenGL or Java2D, this value will
    * be null until loadPixels() has been called.
+   * 
+   * @webref image:pixels
+   * @see processing.core.PApplet#loadPixels()
+   * @see processing.core.PApplet#updatePixels()
+   * @see processing.core.PApplet#get(int, int, int, int)
+   * @see processing.core.PApplet#set(int, int, int)
+   * @see processing.core.PImage
    */
   public int pixels[];
 
@@ -1308,9 +1316,21 @@ public class PApplet extends Applet
 
 
   /**
+   * Creates a new PImage (the datatype for storing images). This provides a fresh buffer of pixels to play with. Set the size of the buffer with the <b>width</b> and <b>height</b> parameters. The <b>format</b> parameter defines how the pixels are stored. See the PImage reference for more information.
+   * <br><br>Be sure to include all three parameters, specifying only the width and height (but no format) will produce a strange error.
+   * <br><br>Advanced users please note that createImage() should be used instead of the syntax <tt>new PImage()</tt>.
+   * =advanced
    * Preferred method of creating new PImage objects, ensures that a
    * reference to the parent PApplet is included, which makes save() work
    * without needing an absolute path.
+   * 
+   * @webref image
+   * @param wide width in pixels
+   * @param high height in pixels
+   * @param format Either RGB, ARGB, ALPHA (grayscale alpha channel)
+   * 
+   * @see processing.core.PImage
+   * @see processing.core.PGraphics
    */
   public PImage createImage(int wide, int high, int format) {
     PImage image = new PImage(wide, high, format);
@@ -3405,12 +3425,27 @@ public class PApplet extends Applet
 
 
   /**
+   * Loads an image into a variable of type <b>PImage</b>. Four types of images ( <b>.gif</b>, <b>.jpg</b>, <b>.tga</b>, <b>.png</b>) images may be loaded. To load correctly, images must be located in the data directory of the current sketch. In most cases, load all images in <b>setup()</b> to preload them at the start of the program. Loading images inside <b>draw()</b> will reduce the speed of a program. 
+   * <br><br>The <b>filename</b> parameter can also be a URL to a file found online. For security reasons, a Processing sketch found online can only download files from the same server from which it came. Getting around this restriction requires a <a href="http://processing.org/hacks/doku.php?id=hacks:signapplet">signed applet</a>.
+   * <br><br>The <b>extension</b> parameter is used to determine the image type in cases where the image filename does not end with a proper extension. Specify the extension as the second parameter to <b>loadImage()</b>, as shown in the third example on this page.
+   * <br><br>If an image is not loaded successfully, the <b>null</b> value is returned and an error message will be printed to the console. The error message does not halt the program, however the null value may cause a NullPointerException if your code does not check whether the value returned from <b>loadImage()</b> is null.<br><br>Depending on the type of error, a <b>PImage</b> object may still be returned, but the width and height of the image will be set to -1. This happens if bad image data is returned or cannot be decoded properly. Sometimes this happens with image URLs that produce a 403 error or that redirect to a password prompt, because <b>loadImage()</b> will attempt to interpret the HTML as image data.
+   * 
+   * =advanced
    * Identical to loadImage, but allows you to specify the type of
    * image by its extension. Especially useful when downloading from
    * CGI scripts.
    * <br/> <br/>
    * Use 'unknown' as the extension to pass off to the default
    * image loader that handles gif, jpg, and png.
+   * 
+   * @webref image:loading_displaying
+   * @param filename name of file to load, can be .gif, .jpg, .tga, or a handful of other image types depending on your platform.
+   * @param extension the type of image to load, for example "png", "gif", "jpg"
+   * 
+   * @see processing.core.PImage
+   * @see processing.core.PApplet#image(PImage, float, float, float, float)
+   * @see processing.core.PApplet#imageMode(int)
+   * @see processing.core.PApplet#background(float, float, float)
    */
   public PImage loadImage(String filename, String extension) {
     if (extension == null) {
@@ -3491,12 +3526,22 @@ public class PApplet extends Applet
     return null;
   }
 
-
   public PImage requestImage(String filename) {
     return requestImage(filename, null);
   }
 
 
+  /**
+   * This function load images on a separate thread so that your sketch does not freeze while images load during <b>setup()</b>. While the image is loading, its width and height will be 0. If an error occurs while loading the image, its width and height will be set to -1. You'll know when the image has loaded properly because its width and height will be greater than 0. Asynchronous image loading (particularly when downloading from a server) can dramatically improve performance.<br><br>
+   * The <b>extension</b> parameter is used to determine the image type in cases where the image filename does not end with a proper extension. Specify the extension as the second parameter to <b>requestImage()</b>.
+   * 
+   * @webref image:loading_displaying 
+   * @param filename name of file to load, can be .gif, .jpg, .tga, or a handful of other image types depending on your platform
+   * @param extension the type of image to load, for example "png", "gif", "jpg"
+   * 
+   * @see processing.core.PApplet#loadImage(String, String)
+   * @see processing.core.PImage
+   */
   public PImage requestImage(String filename, String extension) {
     PImage vessel = createImage(0, 0, ARGB);
     AsyncImageLoader ail =
@@ -7136,16 +7181,33 @@ public class PApplet extends Applet
 
 
   /**
+   * Loads the pixel data for the display window into the <b>pixels[]</b> array. This function must always be called before reading from or writing to <b>pixels[]</b>.
+   * <br><br>Certain renderers may or may not seem to require <b>loadPixels()</b> or <b>updatePixels()</b>. However, the rule is that any time you want to manipulate the <b>pixels[]</b> array, you must first call <b>loadPixels()</b>, and after changes have been made, call <b>updatePixels()</b>. Even if the renderer may not seem to use this function in the current Processing release, this will always be subject to change.
+   * =advanced
    * Override the g.pixels[] function to set the pixels[] array
    * that's part of the PApplet object. Allows the use of
    * pixels[] in the code, rather than g.pixels[].
+   * 
+   * @webref image:pixels
+   * @see processing.core.PApplet#pixels
+   * @see processing.core.PApplet#updatePixels()
    */
   public void loadPixels() {
     g.loadPixels();
     pixels = g.pixels;
   }
 
-
+  /**
+   * Updates the display window with the data in the <b>pixels[]</b> array. Use in conjunction with <b>loadPixels()</b>. If you're only reading pixels from the array, there's no need to call <b>updatePixels()</b> unless there are changes.
+   * <br><br>Certain renderers may or may not seem to require <b>loadPixels()</b> or <b>updatePixels()</b>. However, the rule is that any time you want to manipulate the <b>pixels[]</b> array, you must first call <b>loadPixels()</b>, and after changes have been made, call <b>updatePixels()</b>. Even if the renderer may not seem to use this function in the current Processing release, this will always be subject to change.
+   * <br><br>Currently, none of the renderers use the additional parameters to <b>updatePixels()</b>, however this may be implemented in the future.
+   * 
+   * @webref image:pixels
+   * 
+   * @see processing.core.PApplet#loadPixels()
+   * @see processing.core.PApplet#updatePixels()
+   * 
+   */
   public void updatePixels() {
     g.updatePixels();
   }
@@ -7517,7 +7579,6 @@ public class PApplet extends Applet
    * @param c coordinate of second control point
    * @param d coordinate of second point on the curve
    * @param t value between 0 and 1
-   * @return
    * 
    * @see PApplet#bezier(float, float, float, float, float, float, float, float, float, float, float, float)
    * @see PApplet#bezierVertex(float, float, float, float, float, float)
@@ -7536,7 +7597,6 @@ public class PApplet extends Applet
    * @param c coordinate of second control point
    * @param d coordinate of second point on the curve
    * @param t value between 0 and 1
-   * @return
    * 
    * @see PApplet#bezier(float, float, float, float, float, float, float, float, float, float, float, float)
    * @see PApplet#bezierVertex(float, float, float, float, float, float)
@@ -7609,7 +7669,6 @@ public class PApplet extends Applet
    * @param c coordinate of third point on the curve
    * @param d coordinate of fourth point on the curve
    * @param t value between 0 and 1
-   * @return
    * 
    * @see PApplet#curve(float, float, float, float, float, float, float, float, float, float, float, float)
    * @see PApplet#curveVertex(float, float)
@@ -7629,7 +7688,6 @@ public class PApplet extends Applet
    * @param c coordinate of second control point
    * @param d coordinate of second point on the curve
    * @param t value between 0 and 1
-   * @return
    * 
    * @see PApplet#curve(float, float, float, float, float, float, float, float, float, float, float, float)
    * @see PApplet#curveVertex(float, float)
@@ -7722,7 +7780,18 @@ public class PApplet extends Applet
     g.noSmooth();
   }
 
-
+  /**
+   * Modifies the location from which images draw. The default mode is <b>imageMode(CORNER)</b>, which specifies the location to be the upper left corner and uses the fourth and fifth parameters of <b>image()</b> to set the image's width and height. The syntax <b>imageMode(CORNERS)</b> uses the second and third parameters of <b>image()</b> to set the location of one corner of the image and uses the fourth and fifth parameters to set the opposite corner. Use <b>imageMode(CENTER)</b> to draw images centered at the given x and y position.
+   * <br><br>The parameter to <b>imageMode()</b> must be written in ALL CAPS because Processing is a case sensitive language.
+   * 
+   * @webref image:loading_displaying
+   * @param mode Either CORNER, CORNERS, or CENTER
+   * 
+   * @see processing.core.PApplet#loadImage(String, String)
+   * @see processing.core.PImage
+   * @see processing.core.PApplet#image(PImage, float, float, float, float)
+   * @see processing.core.PApplet#background(float, float, float, float)
+   */
   public void imageMode(int mode) {
     if (recorder != null) recorder.imageMode(mode);
     g.imageMode(mode);
@@ -7734,13 +7803,30 @@ public class PApplet extends Applet
     g.image(image, x, y);
   }
 
-
+  /**
+   * Displays images to the screen. The images must be in the sketch's "data" directory to load correctly. Select "Add file..." from the "Sketch" menu to add the image. Processing currently works with GIF, JPEG, and Targa images. The color of an image may be modified with the <b>tint()</b> function and if a GIF has transparency, it will maintain its transparency. The <b>img</b> parameter specifies the image to display and the <b>x</b> and <b>y</b> parameters define the location of the image from its upper-left corner. The image is displayed at its original size unless the <b>width</b> and <b>height</b> parameters specify a different size. The <b>imageMode()</b> function changes the way the parameters work. A call to <b>imageMode(CORNERS)</b> will change the width and height parameters to define the x and y values of the opposite corner of the image.
+   * <br><br>Starting with release 0124, when using the default (JAVA2D) renderer, 
+   * smooth() will also improve image quality of resized images.
+   * 
+   * @webref image:loading_displaying
+   * @param image the image to display 
+   * @param x x-coordinate of the image
+   * @param y y-coordinate of the image
+   * @param c width to display the image
+   * @param d height to display the image
+   * 
+   * @see processing.core.PApplet#loadImage(String, String)
+   * @see processing.core.PImage
+   * @see processing.core.PApplet#imageMode(int)
+   * @see processing.core.PApplet#tint(float)
+   * @see processing.core.PApplet#background(float, float, float, float)
+   * @see processing.core.PApplet#alpha(int) 
+   */
   public void image(PImage image, float x, float y, float c, float d) {
     if (recorder != null) recorder.image(image, x, y, c, d);
     g.image(image, x, y, c, d);
   }
-
-
+  
   public void image(PImage image,
                     float a, float b, float c, float d,
                     int u1, int v1, int u2, int v2) {
@@ -8320,7 +8406,13 @@ public class PApplet extends Applet
     g.stroke(x, y, z, alpha);
   }
 
-
+  /**
+   * Removes the current fill value for displaying images and reverts to displaying images with their original hues.
+   * 
+   * @webref image:loading_displaying
+   * @see processing.core.PApplet#tint(float, float, float, float)
+   * @see processing.core.PApplet#image(PImage, float, float, float, float)
+   */
   public void noTint() {
     if (recorder != null) recorder.noTint();
     g.noTint();
@@ -8332,13 +8424,20 @@ public class PApplet extends Applet
     g.tint(rgb);
   }
 
-
+  /**
+   * 
+   * @param rgb color value in hexadecimal notation (i.e. #FFCC00 or 0xFFFFCC00) or any value of the color datatype
+   * @param alpha opacity of the image
+   */
   public void tint(int rgb, float alpha) {
     if (recorder != null) recorder.tint(rgb, alpha);
     g.tint(rgb, alpha);
   }
 
-
+  /**
+   * 
+   * @param gray any valid number
+   */
   public void tint(float gray) {
     if (recorder != null) recorder.tint(gray);
     g.tint(gray);
@@ -8356,10 +8455,24 @@ public class PApplet extends Applet
     g.tint(x, y, z);
   }
 
-
-  public void tint(float x, float y, float z, float a) {
-    if (recorder != null) recorder.tint(x, y, z, a);
-    g.tint(x, y, z, a);
+  /**
+   * Sets the fill value for displaying images. Images can be tinted to specified colors or made transparent by setting the alpha. 
+   * <br><br>To make an image transparent, but not change it's color, use white as the tint color and specify an alpha value. For instance, tint(255, 128) will make an image 50% transparent (unless <b>colorMode()</b> has been used).
+   * <br><br>When using hexadecimal notation to specify a color, use "#" or "0x" before the values (e.g. #CCFFAA, 0xFFCCFFAA). The # syntax uses six digits to specify a color (the way colors are specified in HTML and CSS). When using the hexadecimal notation starting with "0x", the hexadecimal value must be specified with eight characters; the first two characters define the alpha component and the remainder the red, green, and blue components. 
+   * <br><br>The value for the parameter "gray" must be less than or equal to the current maximum value as specified by <b>colorMode()</b>. The default maximum value is 255.
+   * <br><br>The tint() method is also used to control the coloring of textures in 3D.
+   * 
+   * @webref image:loading_displaying
+   * @param x red or hue value
+   * @param y green or saturation value
+   * @param z blue or brightness value
+   * 
+   * @see processing.core.PApplet#noTint()
+   * @see processing.core.PApplet#image(PImage, float, float, float, float)
+   */
+  public void tint(float x, float y, float z, float alpha) {
+    if (recorder != null) recorder.tint(x, y, z, alpha);
+    g.tint(x, y, z, alpha);
   }
 
   /**
@@ -8819,7 +8932,21 @@ public class PApplet extends Applet
     return g.get(x, y);
   }
 
-
+  /**
+   * Reads the color of any pixel or grabs a section of an image. If no parameters are specified, the entire image is returned. Get the value of one pixel by specifying an x,y coordinate. Get a section of the display window by specifying an additional <b>width</b> and <b>height</b> parameter. If the pixel requested is outside of the image window, black is returned. The numbers returned are scaled according to the current color ranges, but only RGB values are returned by this function. For example, even though you may have drawn a shape with <b>colorMode(HSB)</b>, the numbers returned will be in RGB.
+   * <br><br>Getting the color of a single pixel with <b>get(x, y)</b> is easy, but not as fast as grabbing the data directly from <b>pixels[]</b>. The equivalent statement to "get(x, y)" using <b>pixels[]</b> is "pixels[y*width+x]". Processing requires calling <b>loadPixels()</b> to load the display window data into the <b>pixels[]</b> array before getting the values.
+   * <br><br>As of release 0149, this function ignores <b>imageMode()</b>.
+   * 
+   * @webref image:pixels
+   * @param x x-coordinate of the pixel
+   * @param y y-coordinate of the pixel
+   * @param w width of pixel rectangle to get
+   * @param h height of pixel rectangle to get
+   * 
+   * @see processing.core.PApplet#set(int, int, int)
+   * @see processing.core.PApplet#pixels
+   * @see processing.core.PApplet#imageMode(int)
+   */
   public PImage get(int x, int y, int w, int h) {
     return g.get(x, y, w, h);
   }
@@ -8829,13 +8956,26 @@ public class PApplet extends Applet
     return g.get();
   }
 
-
+  /**
+   * Changes the color of any pixel or writes an image directly into the display window. The <b>x</b> and <b>y</b> parameters specify the pixel to change and the <b>color</b> parameter specifies the color value. The color parameter is affected by the current color mode (the default is RGB values from 0 to 255). When setting an image, the x and y parameters define the coordinates for the upper-left corner of the image.
+   * <br><br>Setting the color of a single pixel with <b>set(x, y)</b> is easy, but not as fast as putting the data directly into <b>pixels[]</b>. The equivalent statement to "set(x, y, #000000)" using <b>pixels[]</b> is "pixels[y*width+x] = #000000". You must call <b>loadPixels()</b> to load the display window data into the <b>pixels[]</b> array before setting the values and calling <b>updatePixels()</b> to update the window with any changes.
+   * <br><br>As of release 1.0, this function ignores <b>imageMode()</b>.
+   * <br><br>Due to what appears to be a bug in Apple's Java implementation, the point() and set() methods are extremely slow in some circumstances when used with the default renderer. Using P2D or P3D will fix the problem. Grouping many calls to point() or set() together can also help. (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=1094">Bug 1094</a>)
+   * 
+   * @webref image:pixels
+   * @param x x-coordinate of the pixel
+   * @param y y-coordinate of the pixel
+   * @param c any value of the color datatype
+   */
   public void set(int x, int y, int c) {
     if (recorder != null) recorder.set(x, y, c);
     g.set(x, y, c);
   }
 
-
+  /**
+   * 
+   * @param src any valid variable of type PImage
+   */
   public void set(int x, int y, PImage src) {
     if (recorder != null) recorder.set(x, y, src);
     g.set(x, y, src);
@@ -8859,7 +8999,13 @@ public class PApplet extends Applet
     g.filter(kind);
   }
 
-
+  /**
+   * Filters the display window as defined by one of the following modes:<br><br>THRESHOLD - converts the image to black and white pixels depending if they are above or below the threshold defined by the level parameter. The level must be between 0.0 (black) and 1.0(white). If no level is specified, 0.5 is used.<br><br>GRAY - converts any colors in the image to grayscale equivalents<br><br>INVERT - sets each pixel to its inverse value<br><br>POSTERIZE - limits each channel of the image to the number of colors specified as the level parameter<br><br>BLUR - executes a Guassian blur with the level parameter specifying the extent of the blurring. If no level parameter is used, the blur is equivalent to Guassian blur of radius 1.<br><br>OPAQUE - sets the alpha channel to entirely opaque.<br><br>ERODE - reduces the light areas with the amount defined by the level parameter.<br><br>DILATE - increases the light areas with the amount defined by the level parameter.
+   * 
+   * @webref image:pixels
+   * @param kind Either THRESHOLD, GRAY, INVERT, POSTERIZE, BLUR, OPAQUE, ERODE, or DILATE
+   * @param param defines the quality of the filter
+   */
   public void filter(int kind, float param) {
     if (recorder != null) recorder.filter(kind, param);
     g.filter(kind, param);
@@ -8872,7 +9018,24 @@ public class PApplet extends Applet
     g.copy(sx, sy, sw, sh, dx, dy, dw, dh);
   }
 
-
+  /**
+   * Copies a region of pixels from the display window to another area of the display window and copies a region of pixels from an image used as the <b>srcImg</b> parameter into the display window. If the source and destination regions aren't the same size, it will automatically resize the source pixels to fit the specified target region. No alpha information is used in the process, however if the source image has an alpha channel set, it will be copied as well.
+   * <br><br>As of release 0149, this function ignores <b>imageMode()</b>.
+   * 
+   * @webref image:pixels
+   * @param src image variable referring to the source image
+   * @param sx X coordinate of the source's upper left corner
+   * @param sy Y coordinate of the source's upper left corner
+   * @param sw source image width
+   * @param sh source image height
+   * @param dx X coordinate of the destination's upper left corner
+   * @param dy Y coordinate of the destination's upper left corner
+   * @param dw destination image width
+   * @param dh destination image height
+   * 
+   * @see processing.core.PApplet#blend(PImage, int, int, int, int, int, int, int, int, int)
+   * @see processing.core.PApplet#get(int, int, int, int)
+   */
   public void copy(PImage src,
                    int sx, int sy, int sw, int sh,
                    int dx, int dy, int dw, int dh) {
@@ -8895,14 +9058,45 @@ public class PApplet extends Applet
     return PGraphics.blendColor(c1, c2, mode);
   }
 
-
   public void blend(int sx, int sy, int sw, int sh,
                     int dx, int dy, int dw, int dh, int mode) {
     if (recorder != null) recorder.blend(sx, sy, sw, sh, dx, dy, dw, dh, mode);
     g.blend(sx, sy, sw, sh, dx, dy, dw, dh, mode);
   }
 
-
+  /**
+   * Blends a region of pixels from one image into another (or in itself again) with full alpha channel support. There is a choice of the following modes to blend the source pixels (A) with the ones of pixels in the destination image (B):<br><br>
+   * BLEND - linear interpolation of colours: C = A*factor + B<br><br>
+   * ADD - additive blending with white clip: C = min(A*factor + B, 255)<br><br>
+   * SUBTRACT - subtractive blending with black clip: C = max(B - A*factor, 0)<br><br>
+   * DARKEST - only the darkest colour succeeds: C = min(A*factor, B)<br><br>
+   * LIGHTEST - only the lightest colour succeeds: C = max(A*factor, B)<br><br>
+   * DIFFERENCE - subtract colors from underlying image.<br><br>
+   * EXCLUSION - similar to DIFFERENCE, but less extreme.<br><br>
+   * MULTIPLY - Multiply the colors, result will always be darker.<br><br>
+   * SCREEN - Opposite multiply, uses inverse values of the colors.<br><br>
+   * OVERLAY - A mix of MULTIPLY and SCREEN. Multiplies dark values, and screens light values.<br><br>
+   * HARD_LIGHT - SCREEN when greater than 50% gray, MULTIPLY when lower.<br><br>
+   * SOFT_LIGHT - Mix of DARKEST and LIGHTEST. Works like OVERLAY, but not as harsh.<br><br>
+   * DODGE - Lightens light tones and increases contrast, ignores darks. Called "Color Dodge" in Illustrator and Photoshop.<br><br>
+   * BURN - Darker areas are applied, increasing contrast, ignores lights. Called "Color Burn" in Illustrator and Photoshop.<br><br>
+   * All modes use the alpha information (highest byte) of source image pixels as the blending factor. If the source and destination regions are different sizes, the image will be automatically resized to match the destination size. If the <b>srcImg</b> parameter is not used, the display window is used as the source image.<br><br>
+   * As of release 0149, this function ignores <b>imageMode()</b>.
+   * 
+   * @webref image:pixels
+   * @param src a image variable referring to the source image
+   * @param sx X coordinate of the source's upper left corner
+   * @param sy Y coordinate of the source's upper left corner
+   * @param sw source image width
+   * @param sh source image height
+   * @param dx X coordinate of the destinations's upper left corner
+   * @param dy Y coordinate of the destinations's upper left corner
+   * @param dw destination image width
+   * @param dh destination image height
+   * @param mode Either BLEND, ADD, SUBTRACT, LIGHTEST, DARKEST, DIFFERENCE, EXCLUSION, MULTIPLY, SCREEN, OVERLAY, HARD_LIGHT, SOFT_LIGHT, DODGE, BURN
+   * 
+   * @see PApplet#filter(int, float)
+   */
   public void blend(PImage src,
                     int sx, int sy, int sw, int sh,
                     int dx, int dy, int dw, int dh, int mode) {
