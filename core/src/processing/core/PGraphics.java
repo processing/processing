@@ -29,6 +29,13 @@ import java.util.HashMap;
 
 
 /**
+ * Main graphics and rendering context, as well as the base API implementation for processing "core".
+ * Use this class if you need to draw into an off-screen graphics buffer.
+ * A PGraphics object can be constructed with the <b>createGraphics()</b> function.
+ * The <b>beginDraw()</b> and <b>endDraw()</b> methods (see above example) are necessary to set up the buffer and to finalize it.
+ * The fields and methods for this class are extensive;
+ * for a complete list visit the developer's reference: http://dev.processing.org/reference/core/
+ * =advanced
  * Main graphics and rendering context, as well as the base API implementation.
  *
  * <h2>Subclassing and initializing PGraphics objects</h2>
@@ -106,6 +113,14 @@ import java.util.HashMap;
  * to be done once&mdash;it's a matter of keeping the multiple references
  * synchronized (to say nothing of the translation issues), while targeting
  * them for their separate audiences. Ouch.
+ * 
+ * We're working right now on synchronizing the two references, so the website reference
+ * is generated from the javadoc comments. Yay.
+ * 
+ * @webref rendering
+ * @instanceName graphics any object of the type PGraphics
+ * @usage Web &amp; Application
+ * @see processing.core.PApplet#createGraphics(int, int, String)
  */
 public class PGraphics extends PImage implements PConstants {
 
@@ -540,6 +555,7 @@ public class PGraphics extends PImage implements PConstants {
    * the defaults get set properly. In a subclass, use this(w, h)
    * as the first line of a subclass' constructor to properly set
    * the internal fields and defaults.
+   * 
    */
   public PGraphics() {
   }
@@ -627,20 +643,28 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Prepares the PGraphics for drawing.
+   * Sets the default properties for a PGraphics object. It should be called before anything is drawn into the object.
+   * =advanced
    * <p/>
    * When creating your own PGraphics, you should call this before
    * drawing anything.
+   * 
+   * @webref
+   * @brief Sets up the rendering context
    */
   public void beginDraw() {  // ignore
   }
 
 
   /**
-   * This will finalize rendering so that it can be shown on-screen.
+   * Finalizes the rendering of a PGraphics object so that it can be shown on screen.
+   * =advanced
    * <p/>
    * When creating your own PGraphics, you should call this when
    * you're finished drawing.
+   * 
+   * @webref
+   * @brief Finalizes the renderering context
    */
   public void endDraw() {  // ignore
   }

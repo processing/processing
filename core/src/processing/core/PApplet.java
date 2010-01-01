@@ -1032,6 +1032,17 @@ public class PApplet extends Applet
 
 
   /**
+   * Defines the dimension of the display window in units of pixels. The <b>size()</b> function <em>must</em> be the first line in <b>setup()</b>. If <b>size()</b> is not called, the default size of the window is 100x100 pixels. The system variables <b>width</b> and <b>height</b> are set by the parameters passed to the <b>size()</b> function. <br><br>
+   * Do not use variables as the parameters to <b>size()</b> command, because it will cause problems when exporting your sketch. When variables are used, the dimensions of your sketch cannot be determined during export. Instead, employ numeric values in the <b>size()</b> statement, and then use the built-in <b>width</b> and <b>height</b> variables inside your program when you need the dimensions of the display window are needed. <br><br>
+   * The MODE parameters selects which rendering engine to use. For example, if you will be drawing 3D shapes for the web use <b>P3D</b>, if you want to export a program with OpenGL graphics acceleration use <b>OPENGL</b>. A brief description of the four primary renderers follows:<br><br><b>JAVA2D</b> - The default renderer. This renderer supports two dimensional drawing and provides higher image quality in overall, but generally slower than P2D.<br><br><b>P2D</b> (Processing 2D) - Fast 2D renderer, best used with pixel data, but not as accurate as the JAVA2D default. <br><br><b>P3D</b> (Processing 3D) - Fast 3D renderer for the web. Sacrifices rendering quality for quick 3D drawing.<br><br><b>OPENGL</b> - High speed 3D graphics renderer that makes use of OpenGL-compatible graphics hardware is available. Keep in mind that OpenGL is not magic pixie dust that makes any sketch faster (though it's close), so other rendering options may produce better results depending on the nature of your code. Also note that with OpenGL, all graphics are smoothed: the smooth() and noSmooth() commands are ignored. <br><br><b>PDF</b> - The PDF renderer draws 2D graphics directly to an Acrobat PDF file. This produces excellent results when you need vector shapes for high resolution output or printing. You must first use Import Library &rarr; PDF to make use of the library. More information can be found in the PDF library reference.
+   * If you're manipulating pixels (using methods like get() or blend(), or manipulating the pixels[] array), P2D and P3D will usually be faster than the default (JAVA2D) setting, and often the OPENGL setting as well. Similarly, when handling lots of images, or doing video playback, P2D and P3D will tend to be faster.<br><br>
+   * The P2D, P3D, and OPENGL renderers do not support strokeCap() or strokeJoin(), which can lead to ugly results when using strokeWeight(). (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=955">Bug 955</a>) <br><br>
+   * For the most elegant and accurate results when drawing in 2D, particularly when using smooth(), use the JAVA2D renderer setting. It may be slower than the others, but is the most complete, which is why it's the default. Advanced users will want to switch to other renderers as they learn the tradeoffs. <br><br>
+   * Rendering graphics requires tradeoffs between speed, accuracy, and general usefulness of the available features. None of the renderers are perfect, so we provide multiple options so that you can decide what tradeoffs make the most sense for your project. We'd prefer all of them to have perfect visual accuracy, high performance, and support a wide range of features, but that's simply not possible. <br><br>
+   * The maximum width and height is limited by your operating system, and is usually the width and height of your actual screen. On some machines it may simply be the number of pixels on your current screen, meaning that a screen that's 800x600 could support size(1600, 300), since it's the same number of pixels. This varies widely so you'll have to try different rendering modes and sizes until you get what you're looking for. If you need something larger, use <b>createGraphics</b> to create a non-visible drawing surface.
+   * <br><br>Again, the size() method must be the first line of the code (or first item inside setup). Any code that appears before the size() command may run more than once, which can lead to confusing results.
+   *
+   * =advanced
    * Starts up and creates a two-dimensional drawing surface,
    * or resizes the current drawing surface.
    * <P>
@@ -1045,12 +1056,19 @@ public class PApplet extends Applet
    * <P>
    * If called once a renderer has already been set, this will
    * use the previous renderer and simply resize it.
+   * 
+   * @webref structure
+   * @param iwidth width of the display window in units of pixels
+   * @param iheight height of the display window in units of pixels
    */
   public void size(int iwidth, int iheight) {
     size(iwidth, iheight, JAVA2D, null);
   }
 
-
+  /**
+   * 
+   * @param irenderer  	Either P2D, P3D, JAVA2D, or OPENGL
+   */
   public void size(int iwidth, int iheight, String irenderer) {
     size(iwidth, iheight, irenderer, null);
   }
@@ -1112,6 +1130,11 @@ public class PApplet extends Applet
 
 
   /**
+   * Creates and returns a new <b>PGraphics</b> object of the types P2D, P3D, and JAVA2D. Use this class if you need to draw into an off-screen graphics buffer. It's not possible to use <b>createGraphics()</b> with OPENGL, because it doesn't allow offscreen use. The DXF and PDF renderers require the filename parameter. 
+   * <br><br>It's important to call any drawing commands between beginDraw() and endDraw() statements. This is also true for any commands that affect drawing, such as smooth() or colorMode().
+   * <br><br>Unlike the main drawing surface which is completely opaque, surfaces created with createGraphics() can have transparency. This makes it possible to draw into a graphics and maintain the alpha channel. By using save() to write a PNG or TGA file, the transparency of the graphics object will be honored. Note that transparency levels are binary: pixels are either complete opaque or transparent. For the time being (as of release 0127), this means that text characters will be opaque blocks. This will be fixed in a future release (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=641">Bug 641</a>).
+   * 
+   * =advanced
    * Create an offscreen PGraphics object for drawing. This can be used
    * for bitmap or vector images drawing or rendering.
    * <UL>
@@ -1160,6 +1183,14 @@ public class PApplet extends Applet
    * background information can be found in the developer's reference for
    * <A HREF="http://dev.processing.org/reference/core/javadoc/processing/core/PImage.html#save(java.lang.String)">PImage.save()</A>.
    * </UL>
+   * 
+   * @webref rendering
+   * @param iwidth width in pixels
+   * @param iheight height in pixels
+   * @param irenderer Either P2D (not yet implemented), P3D, JAVA2D, PDF, DXF
+   * 
+   * @see processing.core.PGraphics
+   * 
    */
   public PGraphics createGraphics(int iwidth, int iheight,
                                   String irenderer) {
@@ -1172,7 +1203,7 @@ public class PApplet extends Applet
   /**
    * Create an offscreen graphics surface for drawing, in this case
    * for a renderer that writes to a file (such as PDF or DXF).
-   * @param ipath can be an absolute or relative path
+   * @param ipath the name of the file (can be an absolute or relative path)
    */
   public PGraphics createGraphics(int iwidth, int iheight,
                                   String irenderer, String ipath) {
@@ -2172,8 +2203,16 @@ public class PApplet extends Applet
 
 
   /**
-   * Get a param from the web page, or (eventually)
-   * from a properties file.
+   * Reads the value of a param.
+   * Values are always read as a String so if you want them to be an integer or other datatype they must be converted.
+   * The <b>param()</b> function will only work in a web browser.
+   * The function should be called inside <b>setup()</b>,
+   * otherwise the applet may not yet be initialized and connected to its parent web browser.
+   * 
+   * @webref input:web
+   * @usage Web
+   * 
+   * @param what name of the param to read
    */
   public String param(String what) {
     if (online) {
@@ -2187,9 +2226,16 @@ public class PApplet extends Applet
 
 
   /**
+   * Displays message in the browser's status area. This is the text area in the lower left corner of the browser.
+   * The <b>status()</b> function will only work when the Processing program is running in a web browser.
+   * =advanced
    * Show status in the status bar of a web browser, or in the
    * System.out console. Eventually this might show status in the
    * p5 environment itself, rather than relying on the console.
+   * 
+   * @webref input:web
+   * @usage Web
+   * @param what any valid String
    */
   public void status(String what) {
     if (online) {
@@ -2207,6 +2253,8 @@ public class PApplet extends Applet
 
 
   /**
+   * Links to a webpage either in the same window or in a new window. The complete URL must be specified.
+   * =advanced
    * Link to an external page without all the muss.
    * <P>
    * When run with an applet, uses the browser to open the url,
@@ -2216,6 +2264,11 @@ public class PApplet extends Applet
    * <PRE>open(new String[] { "firefox", url });</PRE>
    * or whatever you want as your browser, since Linux doesn't
    * yet have a standard method for launching URLs.
+   * 
+   * @webref input:web
+   * @param url complete url as a String in quotes
+   * @param frameTitle name of the window to load the URL as a string in quotes
+   * 
    */
   public void link(String url, String frameTitle) {
     if (online) {
@@ -2277,7 +2330,19 @@ public class PApplet extends Applet
 
 
   /**
-   * Attempt to open a file using the platform's shell.
+   * Attempts to open an application or file using your platform's launcher. The <b>file</b> parameter is a String specifying the file name and location. The location parameter must be a full path name, or the name of an executable in the system's PATH. In most cases, using a full path is the best option, rather than relying on the system PATH. Be sure to make the file executable before attempting to open it (chmod +x). 
+   * <br><br>
+   * The <b>args</b> parameter is a String or String array which is passed to the command line. If you have multiple parameters, e.g. an application and a document, or a command with multiple switches, use the version that takes a String array, and place each individual item in a separate element. 
+   * <br><br>
+   * If args is a String (not an array), then it can only be a single file or application with no parameters. It's not the same as executing that String using a shell. For instance, open("jikes -help") will not work properly.
+   * <br><br>
+   * This function behaves differently on each platform. On Windows, the parameters are sent to the Windows shell via "cmd /c". On Mac OS X, the "open" command is used (type "man open" in Terminal.app for documentation). On Linux, it first tries gnome-open, then kde-open, but if neither are available, it sends the command to the shell without any alterations. 
+   * <br><br>
+   * For users familiar with Java, this is not quite the same as Runtime.exec(), because the launcher command is prepended. Instead, the <b>exec(String[])</b> function is a shortcut for Runtime.getRuntime.exec(String[]).
+   * 
+   * @webref input:files
+   * @param filename name of the file
+   * @usage Application
    */
   static public void open(String filename) {
     open(new String[] { filename });
@@ -2291,6 +2356,8 @@ public class PApplet extends Applet
    * to make it easier to deal with spaces in the individual elements.
    * (This avoids the situation of trying to put single or double quotes
    * around different bits).
+   * 
+   * @param list of commands passed to the command line
    */
   static public Process open(String argv[]) {
     String[] params = null;
@@ -3999,9 +4066,14 @@ public class PApplet extends Applet
 
 
   /**
-   * Open a platform-specific file chooser dialog to select a file for input.
-   * @param prompt Mesage to show the user when prompting for a file.
+   * Opens a platform-specific file chooser dialog to select a file for input. This function returns the full path to the selected file as a <b>String</b>, or <b>null</b> if no selection.
+   * 
+   * @webref input:files
+   * @param prompt message you want the user to see in the file chooser
    * @return full path to the selected file, or null if canceled.
+   * 
+   * @see processing.core.PApplet#selectOutput(String)
+   * @see processing.core.PApplet#selectFolder(String)
    */
   public String selectInput(String prompt) {
     return selectFileImpl(prompt, FileDialog.LOAD);
@@ -4018,9 +4090,17 @@ public class PApplet extends Applet
 
 
   /**
-   * Open a platform-specific file save dialog to select a file for output.
-   * @param prompt Mesage to show the user when prompting for a file.
+   * Open a platform-specific file save dialog to create of select a file for output.
+   * This function returns the full path to the selected file as a <b>String</b>, or <b>null</b> if no selection.
+   * If you select an existing file, that file will be replaced.
+   * Alternatively, you can navigate to a folder and create a new file to write to.
+   * 
+   * @param prompt message you want the user to see in the file chooser
    * @return full path to the file entered, or null if canceled.
+   *
+   * @webref input:files
+   * @see processing.core.PApplet#selectInput(String)
+   * @see processing.core.PApplet#selectFolder(String)
    */
   public String selectOutput(String prompt) {
     return selectFileImpl(prompt, FileDialog.SAVE);
@@ -4051,19 +4131,21 @@ public class PApplet extends Applet
   }
 
 
-  /**
-   * Open a platform-specific folder chooser dialog.
-   * @return full path to the selected folder, or null if no selection.
-   */
   public String selectFolder() {
     return selectFolder("Select a folder...");
   }
 
 
   /**
-   * Open a platform-specific folder chooser dialog.
-   * @param prompt Mesage to show the user when prompting for a file.
+   * Opens a platform-specific file chooser dialog to select a folder for input.
+   * This function returns the full path to the selected folder as a <b>String</b>, or <b>null</b> if no selection.
+   * 
+   * @webref input:files
+   * @param prompt message you want the user to see in the file chooser
    * @return full path to the selected folder, or null if no selection.
+   * 
+   * @see processing.core.PApplet#selectOutput(String)
+   * @see processing.core.PApplet#selectInput(String)
    */
   public String selectFolder(final String prompt) {
     checkParentFrame();
@@ -4232,6 +4314,18 @@ public class PApplet extends Applet
 
 
   /**
+   * This is a method for advanced programmers to open a Java InputStream. The method is useful if you want to use the facilities provided by PApplet to easily open files from the data folder or from a URL, but want an InputStream object so that you can use other Java methods to take more control of how the stream is read.
+   * <br><br>If the requested item doesn't exist, null is returned. 
+   * <br><br>In earlier releases, this method was called <b>openStream()</b>.
+   * <br><br>If not online, this will also check to see if the user is asking for a file whose name isn't properly capitalized. If capitalization is different an error will be printed to the console. This helps prevent issues that appear when a sketch is exported to the web, where case sensitivity matters, as opposed to running from inside the Processing Development Environment on Windows or Mac OS, where case sensitivity is preserved but ignored.
+   * <br><br>The filename passed in can be:<br>
+   * - A URL, for instance openStream("http://processing.org/");<br>
+   * - A file in the sketch's data folder<br>
+   * - The full path to a file to be opened locally (when running as an application)
+   * <br><br>
+   * If the file ends with <b>.gz</b>, the stream will automatically be gzip decompressed. If you don't want the automatic decompression, use the related function <b>createInputRaw()</b>.
+   * 
+   * =advanced
    * Simplified method to open a Java InputStream.
    * <P>
    * This method is useful if you want to use the facilities provided
@@ -4261,6 +4355,14 @@ public class PApplet extends Applet
    * <LI>A file in the sketch's data folder
    * <LI>Another file to be opened locally (when running as an application)
    * </UL>
+   * 
+   * @webref input:files
+   * @see processing.core.PApplet#createOutput(String)
+   * @see processing.core.PApplet#selectOutput(String)
+   * @see processing.core.PApplet#selectInput(String)
+   * 
+   * @param filename the name of the file to use as input
+   * 
    */
   public InputStream createInput(String filename) {
     InputStream input = createInputRaw(filename);
@@ -4435,7 +4537,18 @@ public class PApplet extends Applet
     }
   }
 
-
+  /**
+   * Reads the contents of a file or url and places it in a byte array. If a file is specified, it must be located in the sketch's "data" directory/folder.
+   * <br><br>The filename parameter can also be a URL to a file found online. For security reasons, a Processing sketch found online can only download files from the same server from which it came. Getting around this restriction requires a <a href="http://java.sun.com/developer/onlineTraining/Programming/JDCBook/signed.html">signed applet</a>.
+   * 
+   * @webref input:files
+   * @param filename name of a file in the data folder or a URL.
+   * 
+   * @see processing.core.PApplet#loadStrings(String)
+   * @see processing.core.PApplet#saveStrings(String, String[])
+   * @see processing.core.PApplet#saveBytes(String, byte[])
+   * 
+   */
   public byte[] loadBytes(String filename) {
     InputStream is = createInput(filename);
     if (is != null) return loadBytes(is);
@@ -4482,6 +4595,12 @@ public class PApplet extends Applet
 
 
   /**
+   * Reads the contents of a file or url and creates a String array of its individual lines. If a file is specified, it must be located in the sketch's "data" directory/folder.
+   * <br><br>The filename parameter can also be a URL to a file found online. For security reasons, a Processing sketch found online can only download files from the same server from which it came. Getting around this restriction requires a <a href="http://java.sun.com/developer/onlineTraining/Programming/JDCBook/signed.html">signed applet</a>.
+   * <br><br>If the file is not available or an error occurs, <b>null</b> will be returned and an error message will be printed to the console. The error message does not halt the program, however the null value may cause a NullPointerException if your code does not check whether the value returned is null.
+   * <br><br>Starting with Processing release 0134, all files loaded and saved by the Processing API use UTF-8 encoding. In previous releases, the default encoding for your platform was used, which causes problems when files are moved to other platforms.
+   * 
+   * =advanced
    * Load data from a file and shove it into a String array.
    * <P>
    * Exceptions are handled internally, when an error, occurs, an
@@ -4492,6 +4611,13 @@ public class PApplet extends Applet
    * of new users (or people who are just trying to get things done
    * in a "scripting" fashion. If you want to handle exceptions,
    * use Java methods for I/O.
+   * 
+   * @webref input:files
+   * @param filename name of the file or url to load
+   * 
+   * @see processing.core.PApplet#loadBytes(String)
+   * @see processing.core.PApplet#saveStrings(String, String[])
+   * @see processing.core.PApplet#saveBytes(String, byte[])
    */
   public String[] loadStrings(String filename) {
     InputStream is = createInput(filename);
@@ -7230,6 +7356,24 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * Set various hints and hacks for the renderer. This is used to handle obscure rendering features that cannot be implemented in a consistent manner across renderers. Many options will often graduate to standard features instead of hints over time.
+   * <br><br>hint(ENABLE_OPENGL_4X_SMOOTH) - Enable 4x anti-aliasing for OpenGL. This can help force anti-aliasing if it has not been enabled by the user. On some graphics cards, this can also be set by the graphics driver's control panel, however not all cards make this available. This hint must be called immediately after the size() command because it resets the renderer, obliterating any settings and anything drawn (and like size(), re-running the code that came before it again). 
+   * <br><br>hint(DISABLE_OPENGL_2X_SMOOTH) - In Processing 1.0, Processing always enables 2x smoothing when the OpenGL renderer is used. This hint disables the default 2x smoothing and returns the smoothing behavior found in earlier releases, where smooth() and noSmooth() could be used to enable and disable smoothing, though the quality was inferior.
+   * <br><br>hint(ENABLE_NATIVE_FONTS) - Use the native version fonts when they are installed, rather than the bitmapped version from a .vlw file. This is useful with the JAVA2D renderer setting, as it will improve font rendering speed. This is not enabled by default, because it can be misleading while testing because the type will look great on your machine (because you have the font installed) but lousy on others' machines if the identical font is unavailable. This option can only be set per-sketch, and must be called before any use of textFont().
+   * <br><br>hint(DISABLE_DEPTH_TEST) - Disable the zbuffer, allowing you to draw on top of everything at will. When depth testing is disabled, items will be drawn to the screen sequentially, like a painting. This hint is most often used to draw in 3D, then draw in 2D on top of it (for instance, to draw GUI controls in 2D on top of a 3D interface). Starting in release 0149, this will also clear the depth buffer. Restore the default with hint(ENABLE_DEPTH_TEST), but note that with the depth buffer cleared, any 3D drawing that happens later in draw() will ignore existing shapes on the screen.
+   * <br><br>hint(ENABLE_DEPTH_SORT) - Enable primitive z-sorting of triangles and lines in P3D and OPENGL. This can slow performance considerably, and the algorithm is not yet perfect. Restore the default with hint(DISABLE_DEPTH_SORT).
+   * <br><br>hint(DISABLE_OPENGL_ERROR_REPORT) - Speeds up the OPENGL renderer setting by not checking for errors while running. Undo with hint(ENABLE_OPENGL_ERROR_REPORT).
+   * <br><br><!--hint(ENABLE_ACCURATE_TEXTURES) - Enables better texture accuracy for the P3D renderer. This option will do a better job of dealing with textures in perspective. hint(DISABLE_ACCURATE_TEXTURES) returns to the default. This hint is not likely to last long.
+   * <br/> <br/>-->As of release 0149, unhint() has been removed in favor of adding additional ENABLE/DISABLE constants to reset the default behavior. This prevents the double negatives, and also reinforces which hints can be enabled or disabled.
+   *
+   * @webref rendering
+   * @param which name of the hint to be enabled or disabled
+   * 
+   * @see processing.core.PGraphics
+   * @see processing.core.PApplet#createGraphics(int, int, String, String)
+   * @see processing.core.PApplet#size(int, int)
+   */
   public void hint(int which) {
     if (recorder != null) recorder.hint(which);
     g.hint(which);
