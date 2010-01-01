@@ -2,6 +2,15 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <curated>
 
+<software name="New Year's Cards, 2001-2010" by="Golan Levin" scroll="yes" resize="yes" width="1024" height="700">
+        <image>images/golan_cards.jpg</image>
+          <description>
+             For nearly a decade, Golan Levin has used Processing to create his annual interactive holiday cards. Explore this set of modest projects which connect the dots through one artist's process -- and happy holidays!
+          </description>
+          <location>http://www.flong.com/projects/newyear/</location>
+          <link href="http://www.flong.com/">Flong</link>
+</software>
+
 <software name="COP15 Generative Identity" by="Mikkel Koser" scroll="yes" resize="yes" width="1024" height="700">
         <image>images/cop15.jpg</image>
           <description>
