@@ -2,6 +2,7 @@ package writers;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -9,11 +10,16 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+import com.sun.javadoc.ProgramElementDoc;
+import com.sun.javadoc.SeeTag;
 
 public class XMLReferenceWriter extends BaseWriter {
 	
@@ -69,8 +75,8 @@ public class XMLReferenceWriter extends BaseWriter {
 			vars.put("description", description);
 			vars.put("syntax", syntax);
 			vars.put("usage", usage);
-			vars.put("parameters", parameters);	//need to write this out in a loop
-			vars.put("related", (String) xpath.evaluate("//related", doc, XPathConstants.STRING));
+			vars.put("parameters", getParameters(doc));	//need to write this out in a loop
+			vars.put("related", getRelated(doc));
 			
 			templateWriter.write("Generic.template.html", vars, anchor);
 			
@@ -81,5 +87,65 @@ public class XMLReferenceWriter extends BaseWriter {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	protected static String getParameters(Document doc) throws IOException{
+		
+		ArrayList<HashMap<String, String>> ret = new ArrayList<HashMap<String,String>>();
+		//get parameters for this methos
+		XPath xpath = getXPath();
+		try{
+			XPathExpression expr = xpath.compile("//parameter");
+			Object result = expr.evaluate(doc, XPathConstants.NODESET);
+			NodeList parameters = (NodeList) result;
+
+			for (int i = 0; i < parameters.getLength(); i++) { 
+				String name = (String) xpath.evaluate("label", parameters.item(i), XPathConstants.STRING);
+				String desc = (String) xpath.evaluate("description", parameters.item(i), XPathConstants.STRING);
+
+				HashMap<String, String> map = new HashMap<String, String>();
+				map.put("name", name);
+				map.put("description", desc);
+				ret.add(map);						
+
+			}
+		} catch (XPathExpressionException e) {
+			// TODO: handle exception
+		}
+		
+		TemplateWriter templateWriter = new TemplateWriter();
+		return templateWriter.writeLoop("Parameter.partial.html", ret);
+	}
+	
+	protected static String getRelated(Document doc) throws IOException{
+		TemplateWriter templateWriter = new TemplateWriter();
+		ArrayList<HashMap<String, String>> vars = new ArrayList<HashMap<String,String>>();
+		
+		try{
+			XPath xpath = getXPath();
+			String relatedS = (String) xpath.evaluate("//related", doc, XPathConstants.STRING);
+			if(relatedS.equals("")){
+				return "";
+			}
+			String[] related = relatedS.split("\\n");
+			
+			for(int i=0; i < related.length; i++ ){
+				HashMap<String, String> map = new HashMap<String, String>();
+				String name = related[i];
+				if(!name.equals("")){
+					map.put("name", name);
+					map.put("anchor", getAnchorFromName(name));				
+					vars.add(map);					
+				}
+			}
+		}catch(XPathExpressionException e){
+			
+		}
+		return templateWriter.writeLoop("Related.partial.html", vars);
+	}
+	
+	static protected XPath getXPath(){
+		XPathFactory xpathFactory = XPathFactory.newInstance();
+		return xpathFactory.newXPath();
 	}
 }

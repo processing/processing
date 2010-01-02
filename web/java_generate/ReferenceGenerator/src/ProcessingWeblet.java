@@ -111,7 +111,6 @@ public class ProcessingWeblet extends Standard {
 	private static void writeContents(RootDoc root) throws IOException {		
 		for( ClassDoc classDoc : root.classes() ){
 			
-				System.out.println("Loaded class: " + classDoc.name());
 			
 
 			if(Shared.i().isCore(classDoc)){
@@ -149,7 +148,8 @@ public class ProcessingWeblet extends Standard {
 					}
 				}
 			} else {
-				// Document the library passed in
+				// Document the library passed in				
+				System.out.println("Loaded class: " + classDoc.name());
 				LibraryWriter writer = new LibraryWriter(classDoc.containingPackage());
 				writer.write();
 			}

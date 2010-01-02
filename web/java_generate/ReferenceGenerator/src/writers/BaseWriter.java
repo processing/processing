@@ -250,6 +250,7 @@ public class BaseWriter {
 	}
 	
 	static protected String getExamples(Document doc) throws IOException{
+		//Parse the examples from an XML document
 		TemplateWriter templateWriter = new TemplateWriter();
 		ArrayList<HashMap<String, String>> exampleList = new ArrayList<HashMap<String, String>>();
 		XPathFactory xpathFactory = XPathFactory.newInstance();
