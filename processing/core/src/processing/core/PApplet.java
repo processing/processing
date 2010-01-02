@@ -2092,48 +2092,108 @@ public class PApplet extends Applet
 
 
   /**
-   * Get the number of milliseconds since the applet started.
+   * Returns the number of milliseconds (thousandths of a second) since starting an applet. This information is often used for timing animation sequences.
+   * 
+   * =advanced
    * <P>
    * This is a function, rather than a variable, because it may
    * change multiple times per frame.
+   * 
+   * @webref input:time_date 
+   * @see processing.core.PApplet#second()
+   * @see processing.core.PApplet#minute()
+   * @see processing.core.PApplet#hour()
+   * @see processing.core.PApplet#day()
+   * @see processing.core.PApplet#month()
+   * @see processing.core.PApplet#year()
+   * 
    */
   public int millis() {
     return (int) (System.currentTimeMillis() - millisOffset);
   }
 
-  /** Seconds position of the current time. */
+  /** Seconds position of the current time.
+   * 
+   * @webref input:time_date
+   * @see processing.core.PApplet#millis()
+   * @see processing.core.PApplet#minute()
+   * @see processing.core.PApplet#hour()
+   * @see processing.core.PApplet#day()
+   * @see processing.core.PApplet#month()
+   * @see processing.core.PApplet#year()
+   * */
   static public int second() {
     return Calendar.getInstance().get(Calendar.SECOND);
   }
 
-  /** Minutes position of the current time. */
+  /** 
+   * Processing communicates with the clock on your computer. The <b>minute()</b> function returns the current minute as a value from 0 - 59.
+   * 
+   * @webref input:time_date
+   * @see processing.core.PApplet#millis()
+   * @see processing.core.PApplet#second()
+   * @see processing.core.PApplet#hour()
+   * @see processing.core.PApplet#day()
+   * @see processing.core.PApplet#month()
+   * @see processing.core.PApplet#year()
+   * 
+   * */
   static public int minute() {
     return Calendar.getInstance().get(Calendar.MINUTE);
   }
 
   /**
+   * Processing communicates with the clock on your computer. The <b>hour()</b> function returns the current hour as a value from 0 - 23.
+   * =advanced
    * Hour position of the current time in international format (0-23).
    * <P>
    * To convert this value to American time: <BR>
    * <PRE>int yankeeHour = (hour() % 12);
    * if (yankeeHour == 0) yankeeHour = 12;</PRE>
+   * 
+   * @webref input:time_date
+   * @see processing.core.PApplet#millis()
+   * @see processing.core.PApplet#second()
+   * @see processing.core.PApplet#minute()
+   * @see processing.core.PApplet#day()
+   * @see processing.core.PApplet#month()
+   * @see processing.core.PApplet#year()
+   * 
    */
   static public int hour() {
     return Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
   }
 
   /**
+   * Processing communicates with the clock on your computer. The <b>day()</b> function returns the current day as a value from 1 - 31.
+   * =advanced
    * Get the current day of the month (1 through 31).
    * <P>
    * If you're looking for the day of the week (M-F or whatever)
    * or day of the year (1..365) then use java's Calendar.get()
+   * 
+   * @webref input:time_date
+   * @see processing.core.PApplet#millis()
+   * @see processing.core.PApplet#second()
+   * @see processing.core.PApplet#minute()
+   * @see processing.core.PApplet#hour()
+   * @see processing.core.PApplet#month()
+   * @see processing.core.PApplet#year()
    */
   static public int day() {
     return Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
   }
 
   /**
-   * Get the current month in range 1 through 12.
+   * Processing communicates with the clock on your computer. The <b>month()</b> function returns the current month as a value from 1 - 12.
+   * 
+   * @webref input:time_date
+   * @see processing.core.PApplet#millis()
+   * @see processing.core.PApplet#second()
+   * @see processing.core.PApplet#minute()
+   * @see processing.core.PApplet#hour()
+   * @see processing.core.PApplet#day()
+   * @see processing.core.PApplet#year()
    */
   static public int month() {
     // months are number 0..11 so change to colloquial 1..12
@@ -2141,7 +2201,16 @@ public class PApplet extends Applet
   }
 
   /**
-   * Get the current year.
+   * Processing communicates with the clock on your computer.
+   * The <b>year()</b> function returns the current year as an integer (2003, 2004, 2005, etc).
+   * 
+   * @webref input:time_date
+   * @see processing.core.PApplet#millis()
+   * @see processing.core.PApplet#second()
+   * @see processing.core.PApplet#minute()
+   * @see processing.core.PApplet#hour()
+   * @see processing.core.PApplet#day()
+   * @see processing.core.PApplet#month()
    */
   static public int year() {
     return Calendar.getInstance().get(Calendar.YEAR);
