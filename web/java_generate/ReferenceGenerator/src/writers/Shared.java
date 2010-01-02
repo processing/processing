@@ -22,10 +22,13 @@ public class Shared {
 	private String exampleDirectory = "web_examples";
 	boolean noisy = false;
 	public ArrayList<String> corePackages;
+	public ArrayList<String> rootClasses;
 
 	private Shared(){
 		corePackages = new ArrayList<String>();
+		rootClasses = new ArrayList<String>();
 	}
+	
 	public static Shared i()
 	{
 		if(instance == null)
@@ -116,6 +119,14 @@ public class Shared {
 	
 	public boolean needsWriting(ProgramElementDoc doc){		
 		return doc.tags(webrefTagName).length > 0;
+	}
+	
+	public boolean isRootLevel(ProgramElementDoc doc){
+		if(doc.isClass() || doc.isInterface()){
+			return rootClasses.contains(doc.name());
+		} else {			
+			return rootClasses.contains(doc.containingClass().name());
+		}
 	}
 	
 	public boolean isNoisy(){

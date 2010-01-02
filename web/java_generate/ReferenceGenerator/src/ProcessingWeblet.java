@@ -72,6 +72,8 @@ public class ProcessingWeblet extends Standard {
 	private static void setConfig(String[][] configOptions) {
 		// 
 		Shared.i().corePackages.add("processing.core");
+		Shared.i().rootClasses.add("PApplet");
+		Shared.i().rootClasses.add("PConstants");
 		// look at all possible options (this .equals thing kills switch statements...or does it?)
 		for (String[] option : configOptions) {
 			if (option[0].equals(templateFlag)) {
@@ -108,11 +110,16 @@ public class ProcessingWeblet extends Standard {
 
 	private static void writeContents(RootDoc root) throws IOException {		
 		for( ClassDoc classDoc : root.classes() ){
+			
+				System.out.println("Loaded class: " + classDoc.name());
+			
 
 			if(Shared.i().isCore(classDoc)){
 				// Document the core functions and classes
-				if(classDoc.name().equals("PApplet")){
-					// document a function
+				if(Shared.i().isRootLevel(classDoc)){
+					//if it is in PApplet, PConstants or other classes where users can get
+					//the variables without using dot syntax
+					// document functions
 					MethodDoc[] functions = classDoc.methods();
 					for (MethodDoc fn : functions) {
 						// write out html reference

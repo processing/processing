@@ -20,10 +20,8 @@ public class MethodWriter extends BaseWriter {
 		String filename = getAnchor(doc);
 		TemplateWriter templateWriter = new TemplateWriter();
 		
-		if(doc.containingClass().name().equals("PApplet")){
+		if(Shared.i().isRootLevel(doc.containingClass())){
 			vars.put("classname", "");
-		} else {			
-			vars.put("classname", getName(doc.containingClass()));
 		}
 		
 		vars.put("examples", getExamples(doc));

@@ -76,7 +76,7 @@ public class BaseWriter {
 	{
 		String ret = getAnchorFromName(getName(doc));
 		
-		if(doc.containingClass() != null && !doc.containingClass().name().equals("PApplet")){
+		if(doc.containingClass() != null && !Shared.i().isRootLevel(doc.containingClass())){
 			ret = doc.containingClass().name() + "_" + ret;
 		}
 		
@@ -196,8 +196,8 @@ public class BaseWriter {
 		String name = doc.name();
 		String suffix = ".xml";
 		if(doc.containingClass() != null){
-			if(doc.containingClass().name().equals(Shared.i().getCoreClassName())){
-				//inside PApplet
+			if(Shared.i().isRootLevel(doc.containingClass())){
+				//inside PApplet or other root-level class
 				if(doc instanceof FieldDoc){
 					//if there is a method of the same name, append _var
 					for( Doc d : doc.containingClass().methods()){

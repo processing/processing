@@ -25,11 +25,12 @@ public class FieldWriter extends BaseWriter {
 		vars.put("usage", getUsage(doc));
 		vars.put("related", getRelated(doc));
 		
-		if( ! doc.containingClass().name().equals("PApplet")){
+		if(Shared.i().isRootLevel(doc.containingClass())){
+			vars.put("classname", "");
+		} else {
 			vars.put("parameters", templateWriter.writePartial("Parameter.partial.html", getParent(doc)));			
 			String syntax = templateWriter.writePartial("Field.Syntax.partial.html", getSyntax(doc));
-			vars.put("syntax", syntax);
-			vars.put("classname", getName(doc.containingClass()));
+			vars.put("syntax", syntax);	
 		}
 		
 		templateWriter.write("Generic.template.html", vars, filename);
