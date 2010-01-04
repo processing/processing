@@ -23,7 +23,9 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import com.sun.javadoc.ClassDoc;
+import com.sun.javadoc.ConstructorDoc;
 import com.sun.javadoc.Doc;
+import com.sun.javadoc.ExecutableMemberDoc;
 import com.sun.javadoc.FieldDoc;
 import com.sun.javadoc.MethodDoc;
 import com.sun.javadoc.ParamTag;
@@ -203,6 +205,7 @@ public class BaseWriter {
 					for( Doc d : doc.containingClass().methods()){
 						if(d.name().equals(doc.name())){
 							suffix = "_var" + suffix;
+							break;	//don't append multiple times
 						}
 					}
 				}
@@ -210,9 +213,14 @@ public class BaseWriter {
 				name = doc.containingClass().name() + "_" + name;				
 			}
 		}
-		path = path + name + suffix;
 		
-		return path;
+		if( !Shared.i().isCore(doc)){
+			//if documentation is for a library element
+			String[] pkg = doc.containingPackage().name().split("\\.");
+			path = path + "LIB_" + pkg[pkg.length-1] + "/";
+		}
+		
+		return path + name + suffix;
 	}
 	
 	static protected String getExamples(ProgramElementDoc doc) throws IOException{
@@ -325,6 +333,9 @@ public class BaseWriter {
 		
 		for( MethodDoc methodDoc : doc.containingClass().methods() )
 		{
+			if(Shared.i().omit(methodDoc)){
+				continue;
+			}
 			if( methodDoc.name().equals(doc.name() ))
 			{	
 				HashMap<String, String> map = new HashMap<String, String>();
@@ -338,8 +349,13 @@ public class BaseWriter {
 					paramMap.put("parameter", p.name());
 					parameters.add(paramMap);
 				}
-				map.put("parameters", templateWriter.writeLoop("Method.Parameter.partial.html", parameters, ", "));
-				ret.add(map);
+				String params = templateWriter.writeLoop("Method.Parameter.partial.html", parameters, ", ");
+				
+				map.put("parameters", params);
+				if(! ret.contains(map)){
+					//don't put in duplicate function syntax
+					ret.add(map);					
+				}
 			}
 		}
 		return ret;
@@ -381,12 +397,12 @@ public class BaseWriter {
 		return "";
 	}
 	
-	protected static String getParameters(MethodDoc doc) throws IOException{
-		ArrayList<HashMap<String, String>> ret = new ArrayList<HashMap<String,String>>();
-		
+	protected static String getParameters(MethodDoc doc) throws IOException{		
 		//get parent
 		ClassDoc cd = doc.containingClass();
-		if(!cd.name().contains(Shared.i().getCoreClassName())){
+		ArrayList<HashMap<String, String>> ret = new ArrayList<HashMap<String,String>>();
+		
+		if(!Shared.i().isRootLevel(cd)){
 			//add the parent parameter if this isn't a function of PApplet
 			HashMap<String, String> parent = new HashMap<String, String>();
 			parent.put("name", getInstanceName(doc));
@@ -395,31 +411,69 @@ public class BaseWriter {
 		}
 		
 		//get parameters from this and all other declarations of method
-		for( MethodDoc m : doc.containingClass().methods() ){
+		for( MethodDoc m : cd.methods() ){
+			if(Shared.i().omit(m)){
+				continue;
+			}
 			if(m.name().equals(doc.name())){
-				for( Parameter param : m.parameters()){
-					
-					String type = importedName(param.type().toString()).concat(": "); 
-					String name = param.name();
-					String desc = "";
-					
-					for( ParamTag tag : m.paramTags() ){
-						if(tag.parameterName().equals(name)){			
-							desc = desc.concat( tag.parameterComment() );
-						}
-					}
-					
-					if(!desc.equals("")){
-						HashMap<String, String> map = new HashMap<String, String>();
-						map.put("name", name);
-						map.put("description", type + desc);
-						ret.add(map);						
+				ret.addAll(parseParameters(m));
+			}
+		}
+		
+		//combine duplicate parameter names
+		for(HashMap<String, String> map : ret){
+			if(!map.get("description").endsWith(": ")){
+				for(HashMap<String, String> map2 : ret){
+					if(map2.get("description").endsWith(": ") && map2.get("name").equals(map.get("name"))){
+						String newDescription = map2.get("description").replace(":", ",") + map.get("description");
+						map.put("description", newDescription);
 					}
 				}
 			}
 		}
+		//remove parameters without descriptions
+		for(int i=ret.size()-1; i >= 0; i-- ){
+			if(ret.get(i).get("description").endsWith(": ")){
+				ret.remove(i);
+			}
+		}
+		
+		
 		TemplateWriter templateWriter = new TemplateWriter();
 		return templateWriter.writeLoop("Parameter.partial.html", ret);
+	}
+	
+	protected static String getParameters(ClassDoc doc) throws IOException{
+		ArrayList<HashMap<String, String>> ret = new ArrayList<HashMap<String,String>>();
+		for( ConstructorDoc m : doc.constructors() ){
+			if(Shared.i().omit(m)){
+				continue;
+			}
+			ret.addAll(parseParameters(m));			
+		}
+		TemplateWriter templateWriter = new TemplateWriter();
+		return templateWriter.writeLoop("Parameter.partial.html", ret);
+	}
+	
+	protected static ArrayList<HashMap<String, String>> parseParameters(ExecutableMemberDoc doc){
+		ArrayList<HashMap<String, String>> ret = new ArrayList<HashMap<String,String>>();
+		for( Parameter param : doc.parameters()){
+			String type = importedName(param.type().toString()).concat(": "); 
+			String name = param.name();
+			String desc = "";
+
+			for( ParamTag tag : doc.paramTags() ){
+				if(tag.parameterName().equals(name)){			
+					desc = desc.concat( tag.parameterComment() );
+				}
+			}
+			
+			HashMap<String, String> map = new HashMap<String, String>();
+			map.put("name", name);
+			map.put("description", type + desc);
+			ret.add(map);
+		}
+		return ret;
 	}
 	
 	protected static String getRelated(ProgramElementDoc doc) throws IOException{

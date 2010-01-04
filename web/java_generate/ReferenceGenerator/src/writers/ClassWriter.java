@@ -60,6 +60,7 @@ public class ClassWriter extends BaseWriter {
 			vars.put("fields", fields);
 			vars.put("examples", getExamples(classDoc));
 			vars.put("constructors", constructors);
+			vars.put("parameters", getParameters(classDoc));
 			vars.put("related", getRelated(classDoc));
 			
 			Tag[] tags = classDoc.tags("usage");
@@ -77,6 +78,10 @@ public class ClassWriter extends BaseWriter {
 		String constructors = "";
 		for( ConstructorDoc c : classDoc.constructors() )
 		{
+			if(Shared.i().omit(c)){
+				continue;
+			}
+			
 			String constructor = c.name() + "(";
 			
 			for( Parameter p : c.parameters() )

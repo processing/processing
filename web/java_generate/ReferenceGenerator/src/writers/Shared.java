@@ -3,6 +3,7 @@ package writers;
 import java.io.File;
 import java.util.ArrayList;
 
+import com.sun.javadoc.Doc;
 import com.sun.javadoc.ProgramElementDoc;
 
 public class Shared {
@@ -152,5 +153,9 @@ public class Shared {
 		
 		f = new File(OUTPUT_DIRECTORY());
 		f.mkdirs();
+	}
+	
+	public boolean omit(Doc doc){
+		return doc.tags("nowebref").length > 0;
 	}
 }
