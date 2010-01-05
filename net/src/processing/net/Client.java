@@ -30,7 +30,17 @@ import java.io.*;
 import java.lang.reflect.*;
 import java.net.*;
 
-
+/**
+ * A client connects to a server and sends data back and forth.
+ * If anything goes wrong with the connection,
+ * for example the host is not there or is listening on a different port,
+ * an exception is thrown.
+ * 
+ * @webref
+ * @brief The client class is used to create client Objects which connect to a server to exchange data. 
+ * @instanceName client any variable of type Client
+ * @usage Application
+ */
 public class Client implements Runnable {
 
   PApplet parent;
@@ -50,7 +60,12 @@ public class Client implements Runnable {
   int bufferIndex;
   int bufferLast;
 
-
+  /**
+   * 
+   * @param parent typically use "this"
+   * @param host address of the server
+   * @param port port to read/write from on the server
+   */
   public Client(PApplet parent, String host, int port) {
     this.parent = parent;
     this.host = host;
@@ -95,7 +110,10 @@ public class Client implements Runnable {
     }
   }
 
-
+  /**
+   * @param socket any object of type Socket
+   * @throws IOException
+   */
   public Client(PApplet parent, Socket socket) throws IOException {
     this.socket = socket;
 
@@ -108,6 +126,8 @@ public class Client implements Runnable {
 
 
   /**
+   * Disconnects from the server. Use to shut the connection when you're finished with the Client.
+   * =advanced
    * Disconnect from the server and calls disconnectEvent(Client c)
    * in the host PApplet.
    * <P/>
@@ -115,6 +135,8 @@ public class Client implements Runnable {
    * while your applet is still running. Otherwise, it will be
    * automatically be shut down by the host PApplet
    * (using dispose, which is identical)
+   * @webref
+   * @brief Disconnects from the server
    */
   public void stop() {
     dispose();
@@ -208,7 +230,9 @@ public class Client implements Runnable {
 
 
   /**
-   * Returns the ip address of this feller as a String.
+   * Returns the IP address of the computer to which the Client is attached.
+   * @brief Returns the IP address of the machine as a String
+   * @webref
    */
   public String ip() {
     return socket.getInetAddress().getHostAddress();
@@ -216,8 +240,9 @@ public class Client implements Runnable {
 
 
   /**
-   * Returns the number of bytes that have been read from serial
-   * and are waiting to be dealt with by the user.
+   * Returns the number of bytes available. When any client has bytes available from the server, it returns the number of bytes.
+   * @webref
+   * @brief Returns the number of bytes in the buffer waiting to be read
    */
   public int available() {
     return (bufferLast - bufferIndex);
@@ -225,7 +250,10 @@ public class Client implements Runnable {
 
 
   /**
-   * Ignore all the bytes read so far and empty the buffer.
+   * Empty the buffer, removes all the data stored there.
+   * 
+   * @webref
+   * @brief Clears the buffer
    */
   public void clear() {
     bufferLast = 0;
@@ -234,10 +262,11 @@ public class Client implements Runnable {
 
 
   /**
-   * Returns a number between 0 and 255 for the next byte that's
-   * waiting in the buffer.
-   * Returns -1 if there was no byte (although the user should
-   * first check available() to see if things are ready to avoid this)
+   * Returns a number between 0 and 255 for the next byte that's waiting in the buffer.
+   * Returns -1 if there is no byte, although this should be avoided by first cheacking <b>available()</b> to see if any data is available.
+   * 
+   * @webref
+   * @brief Returns a value from the buffer
    */
   public int read() {
     if (bufferIndex == bufferLast) return -1;
@@ -256,6 +285,9 @@ public class Client implements Runnable {
   /**
    * Returns the next byte in the buffer as a char.
    * Returns -1, or 0xffff, if nothing is there.
+   * 
+   * @webref
+   * @brief Returns the next byte in the buffer as a char
    */
   public char readChar() {
     if (bufferIndex == bufferLast) return (char)(-1);
@@ -264,10 +296,20 @@ public class Client implements Runnable {
 
 
   /**
+   * Reads a group of bytes from the buffer.
+   * The version with no parameters returns a byte array of all data in the buffer.
+   * This is not efficient, but is easy to use.
+   * The version with the <b>byteBuffer</b> parameter is more memory and time efficient.
+   * It grabs the data in the buffer and puts it into the byte array passed in and returns an int value for the number of bytes read.
+   * If more bytes are available than can fit into the <b>byteBuffer</b>, only those that fit are read.
+   * =advanced
    * Return a byte array of anything that's in the serial buffer.
    * Not particularly memory/speed efficient, because it creates
    * a byte array on each read, but it's easier to use than
    * readBytes(byte b[]) (see below).
+   * 
+   * @webref
+   * @brief Reads everything in the buffer
    */
   public byte[] readBytes() {
     if (bufferIndex == bufferLast) return null;
@@ -292,14 +334,16 @@ public class Client implements Runnable {
    * Returns an int for how many bytes were read. If more bytes
    * are available than can fit into the byte array, only those
    * that will fit are read.
+   * 
+   * @param bytebuffer passed in byte array to be altered
    */
-  public int readBytes(byte outgoing[]) {
+  public int readBytes(byte bytebuffer[]) {
     if (bufferIndex == bufferLast) return 0;
 
     synchronized (buffer) {
       int length = bufferLast - bufferIndex;
-      if (length > outgoing.length) length = outgoing.length;
-      System.arraycopy(buffer, bufferIndex, outgoing, 0, length);
+      if (length > bytebuffer.length) length = bytebuffer.length;
+      System.arraycopy(buffer, bufferIndex, bytebuffer, 0, length);
 
       bufferIndex += length;
       if (bufferIndex == bufferLast) {
@@ -312,9 +356,16 @@ public class Client implements Runnable {
 
 
   /**
-   * Reads from the serial port into a buffer of bytes up to and
-   * including a particular character. If the character isn't in
-   * the serial buffer, then 'null' is returned.
+   * Reads from the port into a buffer of bytes up to and including a particular character.
+   * If the character isn't in the buffer, 'null' is returned.
+   * The version with no <b>byteBuffer</b> parameter returns a byte array of all data up to and including the <b>interesting</b> byte.
+   * This is not efficient, but is easy to use. The version with the <b>byteBuffer</b> parameter is more memory and time efficient.
+   * It grabs the data in the buffer and puts it into the byte array passed in and returns an int value for the number of bytes read.
+   * If the byte buffer is not large enough, -1 is returned and an error is printed to the message area. If nothing is in the buffer, 0 is returned.
+   * 
+   * @webref
+   * @brief Reads from the buffer of bytes up to and including a particular character
+   * @param interesting character designated to mark the end of the data
    */
   public byte[] readBytesUntil(int interesting) {
     if (bufferIndex == bufferLast) return null;
@@ -353,8 +404,10 @@ public class Client implements Runnable {
    *   and an error message is printed on the console.
    * If nothing is in the buffer, zero is returned.
    * If 'interesting' byte is not in the buffer, then 0 is returned.
+   * 
+   * @param byteBuffer passed in byte array to be altered
    */
-  public int readBytesUntil(int interesting, byte outgoing[]) {
+  public int readBytesUntil(int interesting, byte byteBuffer[]) {
     if (bufferIndex == bufferLast) return 0;
     byte what = (byte)interesting;
 
@@ -369,14 +422,14 @@ public class Client implements Runnable {
       if (found == -1) return 0;
 
       int length = found - bufferIndex + 1;
-      if (length > outgoing.length) {
+      if (length > byteBuffer.length) {
         System.err.println("readBytesUntil() byte buffer is" +
                            " too small for the " + length +
                            " bytes up to and including char " + interesting);
         return -1;
       }
       //byte outgoing[] = new byte[length];
-      System.arraycopy(buffer, bufferIndex, outgoing, 0, length);
+      System.arraycopy(buffer, bufferIndex, byteBuffer, 0, length);
 
       bufferIndex += length;
       if (bufferIndex == bufferLast) {
@@ -389,12 +442,14 @@ public class Client implements Runnable {
 
 
   /**
-   * Return whatever has been read from the serial port so far
-   * as a String. It assumes that the incoming characters are ASCII.
-   *
-   * If you want to move Unicode data, you can first convert the
-   * String to a byte stream in the representation of your choice
+   * Returns the all the data from the buffer as a String.
+   * This method assumes the incoming characters are ASCII.
+   * If you want to transfer Unicode data,
+   * first convert the String to a byte stream in the representation of your choice
    * (i.e. UTF8 or two-byte Unicode data), and send it as a byte array.
+   * 
+   * @webref
+   * @brief Returns the buffer as a String
    */
   public String readString() {
     if (bufferIndex == bufferLast) return null;
@@ -403,13 +458,16 @@ public class Client implements Runnable {
 
 
   /**
-   * Combination of readBytesUntil and readString. See caveats in
-   * each function. Returns null if it still hasn't found what
-   * you're looking for.
+   * Combination of <b>readBytesUntil()</b> and <b>readString()</b>. Returns <b>null</b> if it doesn't find what you're looking for.
+   * =advanced
    * <p/>
    * If you want to move Unicode data, you can first convert the
    * String to a byte stream in the representation of your choice
    * (i.e. UTF8 or two-byte Unicode data), and send it as a byte array.
+   * 
+   * @webref
+   * @brief Returns the buffer as a String up to and including a particular character
+   * @param interesting character designated to mark the end of the data
    */
   public String readStringUntil(int interesting) {
     byte b[] = readBytesUntil(interesting);
@@ -419,11 +477,15 @@ public class Client implements Runnable {
 
 
   /**
-   * This will handle ints, bytes and chars transparently.
+   * Writes data to a server specified when constructing the client.
+   * 
+   * @webref
+   * @brief  	Writes bytes, chars, ints, bytes[], Strings
+   * @param data data to write
    */
-  public void write(int what) {  // will also cover char
+  public void write(int data) {  // will also cover char
     try {
-      output.write(what & 0xff);  // for good measure do the &
+      output.write(data & 0xff);  // for good measure do the &
       output.flush();   // hmm, not sure if a good idea
 
     } catch (Exception e) { // null pointer or serial port dead
@@ -437,9 +499,9 @@ public class Client implements Runnable {
   }
 
 
-  public void write(byte bytes[]) {
+  public void write(byte data[]) {
     try {
-      output.write(bytes);
+      output.write(data);
       output.flush();   // hmm, not sure if a good idea
 
     } catch (Exception e) { // null pointer or serial port dead
@@ -464,8 +526,8 @@ public class Client implements Runnable {
    * String to a byte stream in the representation of your choice
    * (i.e. UTF8 or two-byte Unicode data), and send it as a byte array.
    */
-  public void write(String what) {
-    write(what.getBytes());
+  public void write(String data) {
+    write(data.getBytes());
   }
 
 

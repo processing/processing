@@ -31,7 +31,10 @@ import java.io.*;
 import java.util.*;
 import java.lang.reflect.*;
 
-
+/**
+ * Class for sending and receiving data using the serial communication protocol.
+ * @webref
+ */
 public class Serial implements SerialPortEventListener {
 
   PApplet parent;
