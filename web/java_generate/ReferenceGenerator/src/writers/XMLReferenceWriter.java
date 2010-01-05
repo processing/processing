@@ -64,6 +64,8 @@ public class XMLReferenceWriter extends BaseWriter {
         XPathFactory xpathFactory = XPathFactory.newInstance();
         XPath xpath = xpathFactory.newXPath();
 		try {			
+			HashMap<String, String> vars = new HashMap<String, String>();
+			
 			String category = (String) xpath.evaluate("//category", doc, XPathConstants.STRING);
 			String subcategory = (String) xpath.evaluate("//subcategory", doc, XPathConstants.STRING);
 			String name = (String) xpath.evaluate("//name", doc, XPathConstants.STRING);
@@ -72,13 +74,12 @@ public class XMLReferenceWriter extends BaseWriter {
 			String anchor = dst + getAnchorFromName(name);
 			String usage = (String) xpath.evaluate("//usage", doc, XPathConstants.STRING);
 			if(indexWriter instanceof LibraryIndexWriter ){				
-//				indexWriter.addItem(category, subcategory, name, anchor);
 				((LibraryIndexWriter) indexWriter).addEvent(name, anchor);
+				vars.put("csspath", "../../");
 			} else {				
 				indexWriter.addItem(category, subcategory, name, anchor);
 			}
 			
-			HashMap<String, String> vars = new HashMap<String, String>();
 			vars.put("examples", getExamples(doc));
 			vars.put("name", name);
 			vars.put("description", description);

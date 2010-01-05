@@ -19,7 +19,14 @@ import org.xml.sax.SAXException;
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.MethodDoc;
 import com.sun.javadoc.PackageDoc;
-
+/**
+ * Writes the index page of libraries.
+ * Also grabs the xml files in lib/dir/events
+ * and sends them to the XMLReferenceWriter
+ * 
+ * @author davidwicks
+ *
+ */
 public class LibraryIndexWriter extends IndexWriter {
 	HashMap<String,String> sections;
 	ArrayList<String> classes;
