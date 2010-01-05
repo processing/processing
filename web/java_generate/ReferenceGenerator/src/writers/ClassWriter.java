@@ -29,11 +29,14 @@ public class ClassWriter extends BaseWriter {
 			
 			HashMap<String, String> vars = new HashMap<String, String>();
 			
-			
+			// These vars will be inherited by method and field writers
 			vars.put("classname", classname);
 			vars.put("classanchor", anchor);
 			vars.put("description", basicText(classDoc));
-			if( !Shared.i().isCore(classDoc)){ vars.put("isLibrary", "true" ); }
+			if( !Shared.i().isCore(classDoc)){
+				vars.put("isLibrary", "true" );
+				vars.put("csspath", "../../");
+			}
 			
 			ArrayList<HashMap<String, String>> methodSet = new ArrayList<HashMap<String, String>>();
 			ArrayList<HashMap<String, String>> fieldSet = new ArrayList<HashMap<String, String>>();

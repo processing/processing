@@ -9,7 +9,7 @@ public class TemplateWriter extends BaseWriter {
 	
 	public static String varPrefix = "<!-- ";
 	public static String varSuffix = " -->";
-	static String[] genericFields = {"classname", "returns", "related", "parameters", "syntax"};
+	static String[] genericFields = {"classname", "returns", "related", "parameters", "syntax", "csspath"};
 	static String[] navFields = {"isLibrary", "isAlphabetical", "isLanguage"};
 	
 	public TemplateWriter()
