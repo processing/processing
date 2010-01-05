@@ -73,7 +73,7 @@ public class TemplateWriter extends BaseWriter {
 		out.close();
 	}
 	
-	public String writePartial( String templateName, HashMap<String, String> vars ) throws IOException
+	public String writePartial( String templateName, HashMap<String, String> vars )
 	{	//use to write partials to be assigned to vars keys
 		String[] templateFile = FileUtils.loadStrings(Shared.i().TEMPLATE_DIRECTORY()+templateName);
 		String ret = "";
@@ -87,12 +87,12 @@ public class TemplateWriter extends BaseWriter {
 		return ret;
 	}
 	
-	public String writeLoop( String templateName, ArrayList<HashMap<String, String>> varSet ) throws IOException
+	public String writeLoop( String templateName, ArrayList<HashMap<String, String>> varSet )
 	{
 		return writeLoop(templateName, varSet, "\n");
 	}
 	
-	public String writeLoop( String templateName, ArrayList<HashMap<String, String>> varSet, String separator ) throws IOException
+	public String writeLoop( String templateName, ArrayList<HashMap<String, String>> varSet, String separator )
 	{
 		String[] templateFile = FileUtils.loadStrings(Shared.i().TEMPLATE_DIRECTORY()+templateName);
 		String ret = "";

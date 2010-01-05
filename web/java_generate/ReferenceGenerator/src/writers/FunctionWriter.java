@@ -26,7 +26,7 @@ public class FunctionWriter extends BaseWriter {
 			vars.put("name", doc.name() + "()");
 			vars.put("syntax", syntax);
 			vars.put("usage", getUsage(doc));
-			vars.put("returns", importedName(doc.returnType().toString()));
+			vars.put("returns", getReturnTypes(doc));
 			vars.put("parameters", getParameters(doc));
 			vars.put("related", getRelated(doc));
 			

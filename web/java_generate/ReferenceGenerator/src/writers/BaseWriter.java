@@ -102,6 +102,18 @@ public class BaseWriter {
 		return ret;
 	}
 	
+	protected static String getReturnTypes(MethodDoc doc){
+		String ret = importedName(doc.returnType().toString());
+		if(doc.containingClass() != null){
+			for(MethodDoc m : doc.containingClass().methods()){
+				if(m.name().equals(doc.name()) && m.returnType() != doc.returnType()){
+					ret += " or " + importedName(m.returnType().toString());
+				}
+			}
+		} 
+		return ret;
+	}
+	
 	protected static String getName(Doc doc) { // handle
 		String ret = doc.name();
 		if(doc instanceof MethodDoc)
@@ -420,23 +432,7 @@ public class BaseWriter {
 			}
 		}
 		
-		//combine duplicate parameter names
-		for(HashMap<String, String> map : ret){
-			if(!map.get("description").endsWith(": ")){
-				for(HashMap<String, String> map2 : ret){
-					if(map2.get("description").endsWith(": ") && map2.get("name").equals(map.get("name"))){
-						String newDescription = map2.get("description").replace(":", ",") + map.get("description");
-						map.put("description", newDescription);
-					}
-				}
-			}
-		}
-		//remove parameters without descriptions
-		for(int i=ret.size()-1; i >= 0; i-- ){
-			if(ret.get(i).get("description").endsWith(": ")){
-				ret.remove(i);
-			}
-		}
+		removeDuplicateParameters(ret);
 		
 		
 		TemplateWriter templateWriter = new TemplateWriter();
@@ -451,8 +447,34 @@ public class BaseWriter {
 			}
 			ret.addAll(parseParameters(m));			
 		}
+		removeDuplicateParameters(ret);
+		
 		TemplateWriter templateWriter = new TemplateWriter();
 		return templateWriter.writeLoop("Parameter.partial.html", ret);
+	}
+	
+	protected static void removeDuplicateParameters(ArrayList<HashMap<String, String>> ret){
+		//combine duplicate parameter names
+		for(HashMap<String, String> map : ret){
+			String desc = map.get("description");
+			if(!desc.endsWith(": ")){
+				for(HashMap<String, String> map2 : ret){
+					String desc2 = map2.get("description");
+					if(desc2.endsWith(": ") && map2.get("name").equals(map.get("name"))){
+						if(! desc.contains(desc2.substring(0, desc2.indexOf(": ")))){
+							String newDescription = map2.get("description").replace(":", ",") + map.get("description");
+							map.put("description", newDescription);							
+						}
+					}
+				}
+			}
+		}
+		//remove parameters without descriptions
+		for(int i=ret.size()-1; i >= 0; i-- ){
+			if(ret.get(i).get("description").endsWith(": ")){
+				ret.remove(i);
+			}
+		}
 	}
 	
 	protected static ArrayList<HashMap<String, String>> parseParameters(ExecutableMemberDoc doc){

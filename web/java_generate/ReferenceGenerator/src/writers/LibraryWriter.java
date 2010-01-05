@@ -9,7 +9,7 @@ import com.sun.javadoc.PackageDoc;
 public class LibraryWriter extends BaseWriter {
 	PackageDoc doc;
 	String pkg;
-	IndexWriter indexWriter;
+	LibraryIndexWriter indexWriter;
 	String dir;
 	static TemplateWriter templateWriter;
 	static ArrayList<String> writtenLibraries;
@@ -17,6 +17,11 @@ public class LibraryWriter extends BaseWriter {
 	public LibraryWriter(PackageDoc doc){
 		
 		this.doc = doc;
+		String[] parts = doc.name().split("\\."); 
+		String pkg = parts[parts.length-1] + "/";
+		dir = "libraries/"+pkg;
+		Shared.i().createOutputDirectory(dir);
+		
 		if(templateWriter == null ){
 			templateWriter = new TemplateWriter();
 		}
@@ -24,7 +29,7 @@ public class LibraryWriter extends BaseWriter {
 			writtenLibraries = new ArrayList<String>();
 		}
 		
-		
+		indexWriter = new LibraryIndexWriter(doc, dir);
 	}
 	
 	public void write() throws IOException{
@@ -32,16 +37,13 @@ public class LibraryWriter extends BaseWriter {
 			return;
 		}
 		writtenLibraries.add(doc.name());
-		String[] parts = doc.name().split("\\."); 
-		String pkg = parts[parts.length-1] + "/";
-		Shared.i().createOutputDirectory("libraries/"+pkg);
 		
 		//grab all relevant information for the doc
 		for( ClassDoc classDoc : doc.allClasses() ){
 			// document the class if it has a @webref tag
 			new ClassWriter().write(classDoc);
-//			indexWriter.addItem(classDoc);
 		}
+		
 		
 //		indexWriter.write("Library.Index.template.html", dir);
 		//grab events from xml

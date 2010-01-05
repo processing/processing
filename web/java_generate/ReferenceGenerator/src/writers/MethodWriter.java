@@ -22,6 +22,8 @@ public class MethodWriter extends BaseWriter {
 		
 		if(Shared.i().isRootLevel(doc.containingClass())){
 			vars.put("classname", "");
+		} else {
+			vars.put("classanchor", getLocalAnchor(doc.containingClass()));
 		}
 		
 		vars.put("examples", getExamples(doc));
@@ -29,7 +31,7 @@ public class MethodWriter extends BaseWriter {
 		vars.put("name", getName(doc));
 		String syntax = templateWriter.writeLoop("Method.Syntax.partial.html", getSyntax(doc, getInstanceName(doc)));
 		vars.put("syntax", syntax);
-		vars.put("returns", importedName(doc.returnType().toString()));
+		vars.put("returns", getReturnTypes(doc));
 		
 		vars.put("parameters", getParameters(doc));
 		vars.put("usage", getUsage(doc));

@@ -39,11 +39,12 @@ public class Shared {
 		return instance;
 	}
 	
+	public String getWebrefTagName(){
+		return webrefTagName;
+	}
+	
 	public void setWebrefTagName(String webrefTagName) {
 		this.webrefTagName = webrefTagName;
-	}
-	public String getWebrefTagName() {
-		return webrefTagName;
 	}
 	public void setCoreClassName(String coreClassName) {
 		this.coreClassName = coreClassName;

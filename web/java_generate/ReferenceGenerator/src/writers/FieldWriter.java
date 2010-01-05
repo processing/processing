@@ -28,6 +28,7 @@ public class FieldWriter extends BaseWriter {
 		if(Shared.i().isRootLevel(doc.containingClass())){
 			vars.put("classname", "");
 		} else {
+			vars.put("classanchor", getLocalAnchor(doc.containingClass()));
 			vars.put("parameters", templateWriter.writePartial("Parameter.partial.html", getParent(doc)));			
 			String syntax = templateWriter.writePartial("Field.Syntax.partial.html", getSyntax(doc));
 			vars.put("syntax", syntax);	

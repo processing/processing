@@ -18,24 +18,29 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.sun.javadoc.ProgramElementDoc;
-import com.sun.javadoc.SeeTag;
-
 public class XMLReferenceWriter extends BaseWriter {
 	
 	public static void write(String sourceDir, IndexWriter indexWriter) throws IOException
 	{
+		write(sourceDir, "", indexWriter);
+	}
+	
+	public static void write(String sourceDir, String dstDir, IndexWriter indexWriter) throws IOException
+	{
 		File directory = new File(sourceDir);
 		File[] files = directory.listFiles();
 		
-		System.out.println("Loading XML files from: " + sourceDir );
+		if(files == null ){
+			return;
+		}
+		
 		for(File f : files )
 		{
-			parseFile(f, indexWriter);
+			parseFile(f, dstDir, indexWriter);
 		}
 	}
 	
-	private static void parseFile(File f, IndexWriter indexWriter)
+	private static void parseFile(File f, String dst, IndexWriter indexWriter)
 	{
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setNamespaceAware(true);
@@ -64,10 +69,14 @@ public class XMLReferenceWriter extends BaseWriter {
 			String name = (String) xpath.evaluate("//name", doc, XPathConstants.STRING);
 			String description = (String) xpath.evaluate("//description", doc, XPathConstants.STRING);
 			String syntax = (String) xpath.evaluate("//syntax", doc, XPathConstants.STRING);
-			String parameters = (String) xpath.evaluate("//parameters", doc, XPathConstants.STRING);
-			String anchor = getAnchorFromName(name);
+			String anchor = dst + getAnchorFromName(name);
 			String usage = (String) xpath.evaluate("//usage", doc, XPathConstants.STRING);
-			indexWriter.addItem(category, subcategory, name, anchor);
+			if(indexWriter instanceof LibraryIndexWriter ){				
+//				indexWriter.addItem(category, subcategory, name, anchor);
+				((LibraryIndexWriter) indexWriter).addEvent(name, anchor);
+			} else {				
+				indexWriter.addItem(category, subcategory, name, anchor);
+			}
 			
 			HashMap<String, String> vars = new HashMap<String, String>();
 			vars.put("examples", getExamples(doc));
