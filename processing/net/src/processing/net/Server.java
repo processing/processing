@@ -30,7 +30,17 @@ import java.io.*;
 import java.lang.reflect.*;
 import java.net.*;
 
-
+/**
+ * A server sends and receives data to and from its associated clients (other programs connected to it).
+ * When a server is started, it begins listening for connections on the port specified by the <b>port</b> parameter.
+ * Computers have many ports for transferring data and some are commonly used so be sure to not select one of these.
+ * For example, web servers usually use port 80 and POP mail uses port 110.
+ * 
+ * @webref
+ * @brief The server class is used to create server objects which send and receives data to and from its associated clients (other programs connected to it). 
+ * @instanceName server  	any variable of type Server
+ * @usage  	Application
+ */
 public class Server implements Runnable {
 
   PApplet parent;
@@ -45,7 +55,11 @@ public class Server implements Runnable {
   /** Array of client objects, useful length is determined by clientCount. */
   public Client[] clients;
 
-
+  /**
+   * 
+   * @param parent typically use "this"
+   * @param port port used to transfer data
+   */
   public Server(PApplet parent, int port) {
     this.parent = parent;
     this.port = port;
@@ -82,6 +96,8 @@ public class Server implements Runnable {
 
   /**
    * Disconnect a particular client.
+   * @webref
+   * @param client the client to disconnect
    */
   public void disconnect(Client client) {
     //client.stop();
@@ -128,7 +144,8 @@ public class Server implements Runnable {
   int lastAvailable = -1;
 
   /**
-   * Returns the next client in line that has something to say.
+   * Returns the next client in line with a new message
+   * @webref
    */
   public Client available() {
     synchronized (clients) {
@@ -149,11 +166,13 @@ public class Server implements Runnable {
 
 
   /**
-   * Disconnect all clients and stop the server.
+   * Disconnects all clients and stops the server
+   * =advanced
    * <p/>
    * Use this to shut down the server if you finish using it while your applet 
    * is still running. Otherwise, it will be automatically be shut down by the 
    * host PApplet using dispose(), which is identical. 
+   * @webref
    */
   public void stop() {
     dispose();
@@ -219,11 +238,15 @@ public class Server implements Runnable {
   /**
    * Write a value to all the connected clients.
    * See Client.write() for operational details.
+   * 
+   * @webref
+   * @brief Writes data to all connected clients
+   * @param data data to write
    */
-  public void write(int what) {  // will also cover char
+  public void write(int data) {  // will also cover char
     int index = 0;
     while (index < clientCount) {
-      clients[index].write(what);
+      clients[index].write(data);
       if (clients[index].active()) {
         index++;
       } else {
@@ -237,10 +260,10 @@ public class Server implements Runnable {
    * Write a byte array to all the connected clients.
    * See Client.write() for operational details.
    */
-  public void write(byte what[]) {
+  public void write(byte data[]) {
     int index = 0;
     while (index < clientCount) {
-      clients[index].write(what);
+      clients[index].write(data);
       if (clients[index].active()) {
         index++;
       } else {
@@ -254,10 +277,10 @@ public class Server implements Runnable {
    * Write a String to all the connected clients.
    * See Client.write() for operational details.
    */
-  public void write(String what) {
+  public void write(String data) {
     int index = 0;
     while (index < clientCount) {
-      clients[index].write(what);
+      clients[index].write(data);
       if (clients[index].active()) {
         index++;
       } else {
