@@ -10,6 +10,7 @@ public class TemplateWriter extends BaseWriter {
 	public static String varPrefix = "<!-- ";
 	public static String varSuffix = " -->";
 	static String[] genericFields = {"classname", "returns", "related", "parameters", "syntax"};
+	static String[] navFields = {"isLibrary", "isAlphabetical", "isLanguage"};
 	
 	public TemplateWriter()
 	{
@@ -21,7 +22,22 @@ public class TemplateWriter extends BaseWriter {
 			if( ! vars.containsKey(s)){
 				vars.put(s, "");
 			}
+		}		
+		
+		int unsetNavCount = 0;
+		for(String s : navFields){
+			if(!vars.containsKey(s)){
+				vars.put(s, "");
+				unsetNavCount++;
+			}else if(!vars.get(s).equals("")){
+				vars.put(s, "class='active'");				
+			}
+		}	
+		
+		if(unsetNavCount == navFields.length){
+			vars.put("isLanguage", "class='active'");
 		}
+		
 		write( templateName, vars, outputName, false );
 		write( templateName, vars, outputName, true );
 		if(Shared.i().isNoisy()){			
@@ -105,9 +121,6 @@ public class TemplateWriter extends BaseWriter {
 				String value = map.get(key);
 				value = value.replace("$", "\\$");
 
-				if(var.equals("")){
-					System.out.println("\n\nEMPTY STRING PASSED IN TO REPLACE");
-				}
 				line = line.replaceFirst(var, value);
 				String requireStart = varPrefix + "require:" + key + varSuffix;
 				String requireEnd = varPrefix + "end" + varSuffix;

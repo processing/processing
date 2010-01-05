@@ -75,6 +75,7 @@ public class IndexWriter extends BaseWriter {
 			currentColumn++;
 			ret.put("c"+currentColumn, value);
 		}
+		ret.put("isAlphabetical", "true");
 		return ret;
 	}
 	
