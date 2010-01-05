@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>rotateZ()</name>
+
+<category>PShape</category>
+
+<subcategory>Method</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+PShape s;
+
+void setup() {
+  size(100, 100, P3D);
+  s = loadShape("ohio.svg");
+}
+
+void draw() {
+  background(204);
+  shape(s);
+}
+
+void mousePressed() {
+  // Rotate the shape around the z-axis each time the mouse is pressed
+  s.rotateZ(0.1);  
+}
+]]></code>
+</example>
+
+<description><![CDATA[
+Rotates a shape around the z-axis the amount specified by the <b>angle</b> parameter. Angles should be specified in radians (values from 0 to TWO_PI) or converted to radians with the <b>radians()</b> method.
+<br /><br />
+Shapes are always rotated around the upper-left corner of their bounding box. Positive numbers rotate objects in a clockwise direction. Subsequent calls to the method accumulates the effect. For example, calling <b>rotateZ(HALF_PI)</b> and then <b>rotateZ(HALF_PI)</b> is the same as <b>rotateZ(PI)</b>. This transformation is applied directly to the shape, it's not refreshed each time <b>draw()</b> is run. 
+<br /><br />
+This method requires a 3D renderer. You need to pass P3D or OPENGL as a third parameter into the <b>size()</b> method as shown in the example above.
+]]></description>
+
+<syntax><![CDATA[
+<kbd>sh</kbd>.rotateZ(<kbd>angle</kbd>)
+]]></syntax>
+
+<parameter>
+<label>sh</label>
+<description><![CDATA[PShape: any variable of type PShape]]></description>
+</parameter>
+
+<parameter>
+<label>angle</label>
+<description><![CDATA[float: angle of rotation specified in radians]]></description>
+</parameter>
+
+<returns>none</returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type>Method</type>
+
+<partof>Core</partof>
+
+
+</root>

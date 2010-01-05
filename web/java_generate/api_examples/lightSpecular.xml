@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>lightSpecular()</name>
+
+<category>Lights, Camera</category>
+
+<subcategory>Lights</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>lightSpecular_.jpg</image>
+<code><![CDATA[
+size(100, 100, P3D);
+background(0);
+noStroke();
+directionalLight(102, 102, 102, 0, 0, -1);
+lightSpecular(204, 204, 204);
+directionalLight(102, 102, 102, 0, 1, -1);
+lightSpecular(102, 102, 102);
+translate(20, 50, 0);
+specular(51, 51, 51);
+sphere(30);
+translate(60, 0, 0);
+specular(102, 102, 102);
+sphere(30);
+
+]]></code>
+</example>
+
+<description><![CDATA[Sets the specular color for lights. Like <b>fill()</b>, it affects only the elements which are created after it in the code. Specular refers to light which bounces off a surface in a perferred direction (rather than bouncing in all directions like a diffuse light) and is used for creating highlights. The specular quality of a light interacts with the specular material qualities set through the <b>specular()</b> and <b>shininess()</b> functions.]]></description>
+
+<syntax><![CDATA[
+lightSpecular(<kbd>v1</kbd>, <kbd>v2</kbd>, <kbd>v3</kbd>)
+]]></syntax>
+
+
+<parameter>
+<label>v1</label>
+<description><![CDATA[int or float: red or hue value]]></description>
+</parameter>
+
+<parameter>
+<label>v2</label>
+<description><![CDATA[int or float: green or hue value]]></description>
+</parameter>
+
+<parameter>
+<label>v3</label>
+<description><![CDATA[int or float: blue or hue value]]></description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+lights()
+ambientLight()
+pointLight()
+spotLight()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+<level>Extended</level>
+
+
+
+
+
+
+</root>

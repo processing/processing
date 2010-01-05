@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>println()</name>
+
+<category>Output</category>
+
+<subcategory>Text Area</subcategory>
+
+<usage>IDE</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+println("begin");
+float f = 0.3;
+println("f is equal to " + f + " and i is equal to " + 1024);
+String s = "end";
+println(s);
+
+// The above code prints the following lines:
+// begin
+// f is equal to 0.3 and i is equal to 1024
+// end
+]]></code>
+</example>
+
+<example>
+<image></image>
+<code><![CDATA[
+float[] f = { 0.3, 0.4, 0.5 };
+println(f);
+
+// The above code prints:
+// 0.3
+// 0.4
+// 0.5
+]]></code>
+</example>
+
+<description><![CDATA[
+Writes to the text area of the Processing environment's console. This is often helpful for looking at the data a program is producing. Each call to this function creates a new line of output. Individual elements can be separated with quotes ("") and joined with the string concatenation operator (+). See <b>print()</b> for more about what to expect in the output.
+<br/><br/>
+Calling <b>println()</b> on an array (by itself) will write the contents of the array to the console. This is often helpful for looking at the data a program is producing. A new line is put between each element of the array. This function can only print one dimensional arrays. For arrays with higher dimensions, the result will be closer to that of <b>print()</b>.
+]]></description>
+
+<syntax><![CDATA[
+println(<kbd>data</kbd>)
+]]></syntax>
+
+<parameter>
+<label>data</label>
+<description><![CDATA[boolean, byte, char, color, int, float, String, Object, boolean[], byte[], char[], color[], int[], float[], String[], Object[]]]></description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+print()
+null
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>

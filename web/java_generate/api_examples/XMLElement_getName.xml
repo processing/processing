@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>getName()</name>
+
+<category>XMLElement</category>
+
+<subcategory>Method</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+// The following short XML file called "sites.xml" is parsed 
+// in the code below. It must be in the project's "data" directory
+// &#60;?xml version="1.0"?&#62;
+// &#60;websites&#62;
+//   &#60;site&#62;
+//     &#60;name&#62;Processing&#60;/name&#62;
+//     &#60;url&#62;www.processing.org&#60;/url&#62;
+//   &#60;/site&#62;
+// &#60;/websites&#62;
+
+XMLElement xml;
+
+void setup() {
+  size(200, 200);
+  xml = new XMLElement(this, "sites.xml");
+  XMLElement site = xml.getChild(0);
+  XMLElement[] siteData = site.getChildren();
+  String s1 = siteData[0].getName();
+  String s2 = siteData[1].getName();
+  println(s1 + " : " + s2);  // Prints "name : url"
+}
+]]></code>
+</example>
+
+<description><![CDATA[Returns the name of the element.]]></description>
+
+<syntax><![CDATA[
+<kbd>xml</kbd>.getName()
+]]></syntax>
+
+<parameter>
+<label>xml</label>
+<description><![CDATA[any variable of type XMLElement]]></description>
+</parameter>
+
+<returns>String</returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Method</type>
+
+<partof>Core</partof>
+
+<level>Extended</level>
+
+
+</root>

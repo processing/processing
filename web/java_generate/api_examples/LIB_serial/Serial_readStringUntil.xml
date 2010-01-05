@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>readStringUntil()</name>
+
+<category>Serial</category>
+
+<subcategory>Serial</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+// Example by Tom Igoe
+
+import processing.serial.*;
+
+int lf = 10;    // Linefeed in ASCII
+String myString = null;
+Serial myPort;  // The serial port
+
+void setup() {
+  // List all the available serial ports
+  println(Serial.list());
+  // I know that the first port in the serial list on my mac
+  // is always my  Keyspan adaptor, so I open Serial.list()[0].
+  // Open whatever port is the one you're using.
+  myPort = new Serial(this, Serial.list()[0], 9600);
+  myPort.clear();
+  // Throw out the first reading, in case we started reading 
+  // in the middle of a string from the sender.
+  myString = myPort.readStringUntil(lf);
+  myString = null;
+}
+
+void draw() {
+  while (myPort.available() &gt; 0) {
+    myString = myPort.readStringUntil(lf);
+    if (myString != null) {
+      println(myString);
+    }
+  }
+}
+
+]]></code>
+</example>
+
+<description>
+Combination of <b>readBytesUntil()</b> and <b>readString()</b>. Returns <b>null</b> if it doesn't find what you're looking for.
+</description>
+
+<syntax>
+<c>serial</c>.readStringUntil()
+<c>serial</c>.readStringUntil(<c>interesting</c>)
+</syntax>
+
+<parameter>
+<label>serial</label>
+<description>any variable of type Serial</description>
+</parameter>
+
+<parameter>
+<label>interesting</label>
+<description>byte: character designated to mark the end of the data</description>
+</parameter>
+
+<returns>String</returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Method</type>
+
+<partof>Library</partof>
+
+
+</root>

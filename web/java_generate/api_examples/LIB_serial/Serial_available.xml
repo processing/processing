@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>available()</name>
+
+<category>Serial</category>
+
+<subcategory>Serial</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+// Example by Tom Igoe
+
+import processing.serial.*;
+
+// The serial port:
+Serial myPort;
+
+void setup() {
+
+  // List all the available serial ports:
+  println(Serial.list());
+
+  /*  I know that the first port in the serial list on my mac
+  is always my  Keyspan adaptor, so I open Serial.list()[0].
+  Open whatever port is the one you're using.
+  */
+  myPort = new Serial(this, Serial.list()[0], 9600);
+}
+
+void draw() {
+  while (myPort.available() &gt; 0) {
+    int inByte = myPort.read();
+    println(inByte);
+  }
+}
+
+]]></code>
+</example>
+
+<description>
+Returns the number of bytes available.
+</description>
+
+<syntax>
+<c>serial</c>.available()
+</syntax>
+
+<parameter>
+<label>serial</label>
+<description>any variable of type Serial</description>
+</parameter>
+
+<returns>int</returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Method</type>
+
+<partof>Library</partof>
+
+
+</root>

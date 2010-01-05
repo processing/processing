@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>rectMode()</name>
+
+<category>Shape</category>
+
+<subcategory>Attributes</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>rectMode_.gif</image>
+<code><![CDATA[
+rectMode(CENTER);
+rect(35, 35, 50, 50);
+rectMode(CORNER);
+fill(102);
+rect(35, 35, 50, 50);
+]]></code>
+</example>
+
+<description><![CDATA[Modifies the location from which rectangles draw. The default mode is <b>rectMode(CORNER)</b>, which specifies the location to be the upper left corner of the shape and uses the third and fourth parameters of <b>rect()</b> to specify the width and height. The syntax <b>rectMode(CORNERS)</b> uses the first and second parameters of <b>rect()</b> to set the location of one corner and uses the third and fourth parameters to set the opposite corner. The syntax <b>rectMode(CENTER)</b> draws the image from its center point and uses the third and forth parameters of <b>rect()</b> to specify the image's width and height. The syntax <b>rectMode(RADIUS)</b> draws the image from its center point and uses the third and forth parameters of <b>rect()</b> to specify half of the image's width and height. The parameter must be written in ALL CAPS because Processing is a case sensitive language. Note: In version 125, the mode named CENTER_RADIUS was shortened to RADIUS.]]></description>
+
+<syntax><![CDATA[
+rectMode(<kbd>MODE</kbd>)
+]]></syntax>
+
+<parameter>
+<label>MODE</label>
+<description><![CDATA[Either CORNER, CORNERS, CENTER, or RADIUS]]></description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+rect()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>

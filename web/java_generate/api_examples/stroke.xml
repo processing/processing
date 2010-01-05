@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>stroke()</name>
+
+<category>Color</category>
+
+<subcategory>Setting</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>stroke_.gif</image>
+<code><![CDATA[
+stroke(153);
+rect(30, 20, 55, 55);
+]]></code>
+</example>
+
+<example>
+<image>stroke_2.gif</image>
+<code><![CDATA[
+stroke(204, 102, 0);
+rect(30, 20, 55, 55);
+]]></code>
+</example>
+
+<description><![CDATA[
+Sets the color used to draw lines and borders around shapes. This color is either specified in terms of the RGB or HSB color depending on the current <b>colorMode()</b> (the default color space is RGB, with each value in the range from 0 to 255). 
+<br/> <br/>
+When using hexadecimal notation to specify a color, use "#" or "0x" before the values (e.g. #CCFFAA, 0xFFCCFFAA). The # syntax uses six digits to specify a color (the way colors are specified in HTML and CSS). When using the hexadecimal notation starting with "0x", the hexadecimal value must be specified with eight characters; the first two characters define the alpha component and the remainder the red, green, and blue components. 
+<br/> <br/>
+The value for the parameter "gray" must be less than or equal to the current maximum value as specified by <b>colorMode()</b>. The default maximum value is 255.
+]]></description>
+
+<syntax><![CDATA[
+stroke(<kbd>gray</kbd>)
+stroke(<kbd>gray</kbd>, <kbd>alpha</kbd>)
+stroke(<kbd>value1</kbd>, <kbd>value2</kbd>, <kbd>value3</kbd>)
+stroke(<kbd>value1</kbd>, <kbd>value2</kbd>, <kbd>value3</kbd>, <kbd>alpha</kbd>)
+stroke(<kbd>color</kbd>)
+stroke(<kbd>color</kbd>, <kbd>alpha</kbd>)
+stroke(<kbd>hex</kbd>)
+stroke(<kbd>hex</kbd>, <kbd>alpha</kbd>)
+]]></syntax>
+
+<parameter>
+<label>gray</label>
+<description><![CDATA[int or float: specifies a value between white and black]]></description>
+</parameter>
+
+<parameter>
+<label>alpha</label>
+<description><![CDATA[int or float: opacity of the stroke]]></description>
+</parameter>
+
+<parameter>
+<label>value1</label>
+<description><![CDATA[int or float: red or hue value (depending on the current color mode)]]></description>
+</parameter>
+
+<parameter>
+<label>value2</label>
+<description><![CDATA[int or float: green or saturation value (depending on the current color mode)]]></description>
+</parameter>
+
+<parameter>
+<label>value3</label>
+<description><![CDATA[int or float: blue or brightness value (depending on the current color mode)]]></description>
+</parameter>
+
+<parameter>
+<label>color</label>
+<description><![CDATA[color: any value of the color datatype]]></description>
+</parameter>
+
+<parameter>
+<label>hex</label>
+<description><![CDATA[int: color value in hexadecimal notation (i.e. #FFCC00 or 0xFFFFCC00)]]></description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+noStroke()
+fill()
+tint()
+background()
+colorMode()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>

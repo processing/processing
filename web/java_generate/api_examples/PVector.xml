@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>PVector</name>
+
+<category>Math</category>
+
+<subcategory>PVector</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+PVector v1, v2;
+
+void setup() {
+  smooth();
+  noLoop();
+  v1 = new PVector(40, 20);
+  v2 = new PVector(25, 50); 
+}
+
+void draw() {
+  ellipse(v1.x, v1.y, 12, 12);
+  ellipse(v2.x, v2.y, 12, 12);
+  v2.add(v1);
+  ellipse(v2.x, v2.y, 24, 24);
+}
+]]></code>
+</example>
+
+<description><![CDATA[
+A class to describe a two or three dimensional vector. This datatype stores two or three variables that are commonly used as a position, velocity, and/or acceleration. Technically, <em>position</em> is a point and <em>velocity</em> and <em>acceleration</em> are vectors, but this is often simplified to consider all three as vectors. For example, if you consider a rectangle moving across the screen, at any given instant it has a position (the object’s location, expressed as a point.), a velocity (the rate at which the object’s position changes per time unit, expressed as a vector), and acceleration (the rate at which the object’s velocity changes per time unit, expressed as a vector). Since vectors represent groupings of values, we cannot simply use traditional addition/multiplication/etc. Instead, we’ll need to do some "vector" math, which is made easy by the methods inside the PVector class.
+<br /><br />
+There are additional methods and other ways to use some of these methods in the <a href="http://dev.processing.org/reference/core/javadoc/processing/core/PVector.html">developers reference.</a>
+]]></description>
+
+<syntax></syntax>
+
+<parameters></parameters>
+
+<field>
+<fname>x</fname>
+<fdescription>x component of the vector</fdescription>
+</field>
+<field>
+<fname>y</fname>
+<fdescription>y component of the vector</fdescription>
+</field>
+<field>
+<fname>z</fname>
+<fdescription>z component of the vector</fdescription>
+</field>
+
+<method>
+<mname>set()</mname>
+<mdescription>Sets the x, y, z component of the vector</mdescription>
+</method>
+
+<method>
+<mname>get()</mname>
+<mdescription>Gets the x, y, z component of the vector</mdescription>
+</method>
+
+<method>
+<mname>mag()</mname>
+<mdescription>Calculate the magnitude (length) of the vector</mdescription>
+</method>
+
+<method>
+<mname>add()</mname>
+<mdescription>Adds one vector to another</mdescription>
+</method>
+
+<method>
+<mname>sub()</mname>
+<mdescription>Subtracts one vector from another</mdescription>
+</method>
+
+<method>
+<mname>mult()</mname>
+<mdescription>Multiplies the vector by a scalar</mdescription>
+</method>
+
+<method>
+<mname>div()</mname>
+<mdescription>Divides the vector by a scalar</mdescription>
+</method>
+
+<method>
+<mname>dist()</mname>
+<mdescription>Calculate the Euclidean distance between two points</mdescription>
+</method>
+
+<method>
+<mname>dot()</mname>
+<mdescription>Calculates the dot product</mdescription>
+</method>
+
+<method>
+<mname>cross()</mname>
+<mdescription>Calculates the cross product</mdescription>
+</method>
+
+<method>
+<mname>normalize()</mname>
+<mdescription>Normalizes the vector</mdescription>
+</method>
+
+<method>
+<mname>limit()</mname>
+<mdescription>Limits the magnitude of the vector</mdescription>
+</method>
+
+<method>
+<mname>angleBetween()</mname>
+<mdescription>Calculates the angle between two vectors</mdescription>
+</method>
+
+<method>
+<mname>array()</mname>
+<mdescription>Return a representation of the vector as an array</mdescription>
+</method>
+
+
+
+
+
+<constructor>
+PVector()
+PVector(<kbd>x</kbd>, <kbd>y</kbd>)
+PVector(<kbd>x</kbd>, <kbd>y</kbd>, <kbd>z</kbd>)
+</constructor>
+
+<cparameter>
+<clabel>x</clabel>
+<cdescription>float: x component</cdescription>
+</cparameter>
+
+<cparameter>
+<clabel>y</clabel>
+<cdescription>float: y component</cdescription>
+</cparameter>
+
+<cparameter>
+<clabel>z</clabel>
+<cdescription>float: z component</cdescription>
+</cparameter>
+
+
+<returns></returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Object</type>
+
+<partof>Core</partof>
+
+<level>Extended</level>
+
+
+</root>

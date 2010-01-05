@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>get()</name>
+
+<category>PImage</category>
+
+<subcategory>Method</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>PImage_get.jpg</image>
+<code><![CDATA[
+PImage img = loadImage("tower.jpg");
+background(img);
+noStroke(); 
+color c = img.get(60, 90); 
+fill(c); 
+rect(25, 25, 50, 50); 
+]]></code>
+</example>
+
+<example>
+<image>PImage_get2.jpg</image>
+<code><![CDATA[
+PImage img = loadImage("tower.jpg");
+background(img);
+PImage b = img.get(50, 0, 50, 100); 
+image(b, 0, 0);  
+]]></code>
+</example>
+
+<description><![CDATA[
+Reads the color of any pixel or grabs a group of pixels. If no parameters are specified, the entire image is returned. Get the value of one pixel by specifying an x,y coordinate. Get a section of the display window by specifing an additional <b>width</b> and <b>height</b> parameter. If the pixel requested is outside of the image window, black is returned. The numbers returned are scaled according to the current color ranges, but only RGB values are returned by this function. Even though you may have drawn a shape with <b>colorMode(HSB)</b>, the numbers returned will be in RGB.
+<br /><br />
+Getting the color of a single pixel with <b>get(x, y)</b> is easy, but not as fast as grabbing the data directly from <b>pixels[]</b>. The equivalent statement to "get(x, y)" using <b>pixels[]</b> is "pixels[y*width+x]". Processing requires calling <b>loadPixels()</b> to load the display window data into the <b>pixels[]</b> array before getting the values.
+<br /><br />
+As of release 0149, this function ignores <b>imageMode()</b>.
+]]></description>
+
+<syntax><![CDATA[
+<kbd>img</kbd>.get()
+<kbd>img</kbd>.get(<kbd>x</kbd>, <kbd>y</kbd>)
+<kbd>img</kbd>.get(<kbd>x</kbd>, <kbd>y</kbd>, <kbd>width</kbd>, <kbd>height</kbd>)
+]]></syntax>
+
+<parameter>
+<label>img</label>
+<description><![CDATA[PImage: any variable of type PImage]]></description>
+</parameter>
+
+<parameter>
+<label>x</label>
+<description><![CDATA[int: x-coordinate of the pixel]]></description>
+</parameter>
+
+<parameter>
+<label>y</label>
+<description><![CDATA[int: y-coordinate of the pixel]]></description>
+</parameter>
+
+<parameter>
+<label>width</label>
+<description><![CDATA[int: width of pixel rectangle to get]]></description>
+</parameter>
+
+<parameter>
+<label>height</label>
+<description><![CDATA[int: height of pixel rectangle to get]]></description>
+</parameter>
+
+<returns>color or PImage</returns>
+
+<related>
+set()
+pixels[]
+copy()
+</related>
+
+<availability>1.0</availability>
+
+<type>Method</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>implements</name>
+
+<category>Structure</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code></code>
+</example>
+
+<description><![CDATA[Implements an <i>interface</i> or group of <i>interfaces</i>. Interfaces are used to establish a protocol between classes, they establish the form for a class (method names, return types, etc.) but no implementation. After implementation, an interface can be used and extended like any other class. Because Java doesn't allow extending more than one class at a time, interfaces are created, which means specific methods and fields can be found in the class which implements it. A Thread is an example; it implements the "Runnable" interface, which means the class has a method called "public void run()" inside it. ]]></description>
+
+<syntax></syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns></returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type>Keyword</type>
+
+<partof>PDE</partof>
+
+<level>extended</level>
+
+
+</root>

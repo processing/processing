@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>write()</name>
+
+<category>Client</category>
+
+<subcategory>Client</subcategory>
+
+<usage>Application</usage>
+
+<example>
+<image></image>
+<code>
+// Example by Tom Igoe 
+// Creates a client that sends input to a server
+
+import processing.net.*; 
+Client myClient; 
+int clicks;
+
+void setup() { 
+  // Connect to the local machine at port 10002.
+  // This example will not run if you haven't
+  // previously started a server on this port  
+  myClient = new Client(this, "127.0.0.1", 10002); 
+  // Say hello
+  myClient.write("Hi there");
+} 
+
+void mouseReleased() {
+  // Count the number of mouse clicks:
+  clicks++;
+  // Tell the server:
+  myClient.write("Mouse pressed " + clicks + " times.&#92;n");
+}
+
+void draw() { 
+  // Change the background if the mouse is pressed
+  if (mousePressed) {
+    background(255);
+  } else {
+    background(0);
+  }
+} 
+
+</code>
+</example>
+
+<description>
+Writes data to a server specified when constructing the client.
+</description>
+
+<syntax>
+<c>client</c>.write(<c>data</c>)
+</syntax>
+
+<parameter>
+<label>client</label>
+<description>any variable of type Client</description>
+</parameter>
+
+<parameter>
+<label>data</label>
+<description>byte, char, int, byte[], String: data to write</description>
+</parameter>
+
+<returns>int</returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Method</type>
+
+<partof>Library</partof>
+
+
+</root>

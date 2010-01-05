@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>angleBetween()</name>
+
+<category>PVector</category>
+
+<subcategory>Method</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+PVector v1 = new PVector(10, 20);
+PVector v2 = new PVector(60, 80); 
+float a = PVector.angleBetween(v1, v2);
+println(degrees(a));  // Prints "10.304827"
+]]></code>
+</example>
+
+<description><![CDATA[Calculates and returns the angle (in radians) between two vectors.]]></description>
+
+<syntax><![CDATA[
+PVector.angleBetween(<kbd>v1</kbd>, <kbd>v2</kbd>)
+]]></syntax>
+
+<parameter>
+<label>vec</label>
+<description><![CDATA[any variable of type PVector]]></description>
+</parameter>
+
+<parameter>
+<label>v1</label>
+<description><![CDATA[PVector: the x, y, and z components of a PVector object]]></description>
+</parameter>
+
+<parameter>
+<label>v2</label>
+<description><![CDATA[PVector: the x, y, and z components of a PVector object]]></description>
+</parameter>
+
+
+<returns>Float</returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Method</type>
+
+<partof>Core</partof>
+
+<level>Extended</level>
+
+
+</root>

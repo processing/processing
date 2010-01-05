@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<root>
+
+<name>norm()</name>
+
+<category>Math</category>
+
+<subcategory>Calculation</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+float value = 20;
+float n = norm(value, 0, 50);
+println(n);  // prints "0.4"
+]]></code>
+</example>
+
+<description><![CDATA[
+Normalizes a number from another range into a value between 0 and 1. 
+<br/> <br/>
+Identical to map(value, low, high, 0, 1);
+<br/> <br/>
+Numbers outside the range are not clamped to 0 and 1, because
+out-of-range values are often intentional and useful.
+]]></description>
+
+<syntax><![CDATA[
+norm(<kbd>value</kbd>, <kbd>low</kbd>, <kbd>high</kbd>)
+]]></syntax>
+
+<parameter>
+<label>value</label>
+<description><![CDATA[float: The incoming value to be converted]]></description>
+</parameter>
+
+<parameter>
+<label>low</label>
+<description><![CDATA[float: Lower bound of the value's current range]]></description>
+</parameter>
+
+<parameter>
+<label>high</label>
+<description><![CDATA[float: Upper bound of the value's current range]]></description>
+</parameter>
+
+<returns>float</returns>
+
+<related>
+map()
+lerp()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+</root>

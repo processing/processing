@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>join()</name>
+
+<category>Data</category>
+
+<subcategory>String Functions</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+String[] animals = new String[3]; 
+animals[0] = "cat"; 
+animals[1] = "seal"; 
+animals[2] = "bear"; 
+String joinedAnimals = join(animals, " : "); 
+println(joinedAnimals); // Prints "cat : seal : bear" 
+
+// Joining an array of ints requires first
+// converting to an array of Strings
+int[] numbers = new int[3]; 
+numbers[0] = 8; 
+numbers[1] = 67; 
+numbers[2] = 5; 
+String joinedNumbers = join(nf(numbers, 0), ", "); 
+println(joinedNumbers); // Prints "8, 67, 5" 
+
+]]></code>
+</example>
+
+<description><![CDATA[Combines an array of Strings into one String, each separated by the character(s) used for the <b>separator</b> parameter. To join arrays of ints or floats, it's necessary to first convert them to strings using <b>nf()</b> or <b>nfs()</b>.]]></description>
+
+<syntax><![CDATA[
+join(<kbd>stringArray</kbd>, <kbd>separator</kbd>)
+]]></syntax>
+
+<parameter>
+<label>stringArray</label>
+<description><![CDATA[array of Strings]]></description>
+</parameter>
+
+<parameter>
+<label>separator</label>
+<description><![CDATA[char or String: char or String to be placed between each item]]></description>
+</parameter>
+
+<returns>String</returns>
+
+<related>
+split()
+trim()
+nf()
+nfs()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+<level>Extended</level>
+
+
+
+
+
+</root>

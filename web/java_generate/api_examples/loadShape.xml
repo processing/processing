@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>loadShape()</name>
+
+<category>Shape</category>
+
+<subcategory>Loading &amp; Displaying</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>svg.jpg</image>
+<code><![CDATA[
+PShape s;
+s = loadShape("bot.svg");
+smooth();
+shape(s, 10, 10, 80, 80);
+]]></code>
+</example>
+
+<example>
+<image>svg.jpg</image>
+<code><![CDATA[
+// Loading a shape when using setup() and draw()
+
+PShape s;
+
+void setup() {
+  s = loadShape("bot.svg");
+  smooth();
+  noLoop();
+}
+
+void draw() {
+  shape(s, 10, 10, 80, 80);
+}
+]]></code>
+</example>
+
+
+<description><![CDATA[
+Loads vector shapes into a variable of type <b>PShape</b>. Currently, only SVG files may be loaded. To load correctly, the file must be located in the data directory of the current sketch. In most cases, <b>loadShape()</b> should be used inside <b>setup()</b> because loading shapes inside <b>draw()</b> will reduce the speed of a sketch. 
+<br/> <br/>
+The <b>filename</b> parameter can also be a URL to a file found online. For security reasons, a Processing sketch found online can only download files from the same server from which it came. Getting around this restriction requires a <A HREF="http://processing.org/hacks/doku.php?id=hacks:signapplet">signed applet</A>.
+<br/> <br/>
+If a shape is not loaded successfully, the <b>null</b> value is returned and an error message will be printed to the console. The error message does not halt the program, however the null value may cause a NullPointerException if your code does not check whether the value returned from <b>loadShape()</b> is null.
+]]></description>
+
+<syntax><![CDATA[
+loadShape(<kbd>filename</kbd>)
+]]></syntax>
+
+<parameter>
+<label>filename</label>
+<description><![CDATA[String: name of file to load]]></description>
+</parameter>
+
+<returns>PShape or null</returns>
+
+<related>
+PShape
+shape() 
+shapeMode() 
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+
+</root>

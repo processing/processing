@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>serialEvent()</name>
+
+<category>Movie</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+// Example by Tom Igoe 
+ 
+import processing.serial.*; 
+ 
+Serial myPort;    // The serial port: 
+PFont myFont;     // The display font: 
+String inString;  // Input string from serial port: 
+int lf = 10;      // ASCII linefeed 
+ 
+void setup() { 
+  size(400,200); 
+  // You'll need to make this font with the Create Font Tool 
+  myFont = loadFont("ArialMS-18.vlw"); 
+  textFont(myFont, 18); 
+  // List all the available serial ports: 
+  println(Serial.list()); 
+  // I know that the first port in the serial list on my mac 
+  // is always my  Keyspan adaptor, so I open Serial.list()[0]. 
+  // Open whatever port is the one you're using. 
+  myPort = new Serial(this, Serial.list()[0], 9600); 
+  myPort.bufferUntil(lf); 
+} 
+ 
+void draw() { 
+  background(0); 
+  text("received: " + inString, 10,50); 
+} 
+ 
+void serialEvent(Serial p) { 
+  inString = p.readString(); 
+} 
+
+]]></code>
+</example>
+
+<description>
+Called when data is available. Use one of the <b>read()</b> methods to capture this data. The <b>serialEvent()</b> can be set with <b>buffer()</b> to only trigger after a certain number of data elements are read and can be set with <b>bufferUntil()</b> to only trigger after a specific character is read. The <b>which</b> parameter contains the name of the port where new data is available, but is only useful when there is more than one serial connection open and it's necessary to distinguish between the two. 
+</description>
+
+<syntax>
+void serialEvent(Serial <c>whichPort</c>) {
+  <c>statements</c>
+}
+</syntax>
+
+<parameter>
+<label>whichPort</label>
+<description>Serial: the port where new data is available</description>
+</parameter>
+
+<parameter>
+<label>statements</label>
+<description>any valid statements</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+Serial
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>core</partof>
+
+</root>

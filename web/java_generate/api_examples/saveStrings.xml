@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>saveStrings()</name>
+
+<category>Output</category>
+
+<subcategory>Files</subcategory>
+
+<usage>Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+String words = "apple bear cat dog";
+String[] list = split(words, ' ');
+
+// now write the strings to a file, each on a separate line
+saveStrings("nouns.txt", list);
+]]></code>
+</example>
+
+<description><![CDATA[
+Writes an array of strings to a file, one line per string. This file is saved to the sketch's folder, which is opened by selecting "Show sketch folder" from the "Sketch" menu.
+<br/> <br/>
+It is not possible to use saveXxxxx() methods inside a web browser unless the sketch is <A HREF="http://java.sun.com/developer/onlineTraining/Programming/JDCBook/signed.html">signed</A>. To save a file back to a server, see the <A HREF="http://processinghacks.com/hacks/savetoweb?s=http+post">save to web</A> example.
+<br/> <br/>
+Starting with Processing release 0134, all files loaded and saved by the Processing API use UTF-8 encoding. In previous releases, the default encoding for your platform was used, which causes problems when files are moved to other platforms.
+]]></description>
+
+<syntax><![CDATA[
+saveStrings(<kbd>filename</kbd>, <kbd>strings</kbd>)
+]]></syntax>
+
+<parameter>
+<label>filename</label>
+<description><![CDATA[filename for output]]></description>
+</parameter>
+
+<parameter>
+<label>strings</label>
+<description><![CDATA[string array to be written]]></description>
+</parameter>
+
+<returns></returns>
+
+<related>
+loadStrings()
+loadBytes() 
+saveBytes()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+</root>

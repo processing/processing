@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>quad()</name>
+
+<category>Shape</category>
+
+<subcategory>2D Primitives</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>quad_.gif</image>
+<code><![CDATA[
+quad(38, 31, 86, 20, 69, 63, 30, 76);
+]]></code>
+</example>
+
+<description><![CDATA[A quad is a quadrilateral, a four sided polygon. It is similar to a rectangle, but the angles between its edges are not constrained to ninety degrees. The first pair of parameters (x1,y1) sets the first vertex and the subsequent pairs should proceed clockwise or counter-clockwise around the defined shape.]]></description>
+
+<syntax><![CDATA[
+quad(<kbd>x1</kbd>, <kbd>y1</kbd>, <kbd>x2</kbd>, <kbd>y2</kbd>, <kbd>x3</kbd>, <kbd>y3</kbd>, <kbd>x4</kbd>, <kbd>y4</kbd>)
+]]></syntax>
+
+<parameter>
+<label>x1</label>
+<description><![CDATA[int or float: x-coordinate of the first corner]]></description>
+</parameter>
+
+<parameter>
+<label>y1</label>
+<description><![CDATA[int or float: y-coordinate of the first corner]]></description>
+</parameter>
+
+<parameter>
+<label>x2</label>
+<description><![CDATA[int or float: x-coordinate of the second corner]]></description>
+</parameter>
+
+<parameter>
+<label>y2</label>
+<description><![CDATA[int or float: y-coordinate of the second corner]]></description>
+</parameter>
+
+<parameter>
+<label>x3</label>
+<description><![CDATA[int or float: x-coordinate of the third corner]]></description>
+</parameter>
+
+<parameter>
+<label>y3</label>
+<description><![CDATA[int or float: y-coordinate of the third corner]]></description>
+</parameter>
+
+<parameter>
+<label>x4</label>
+<description><![CDATA[int or float: x-coordinate of the fourth corner]]></description>
+</parameter>
+
+<parameter>
+<label>y4</label>
+<description><![CDATA[int or float: y-coordinate of the fourth corner]]></description>
+</parameter>
+
+<returns>None</returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>sin()</name>
+
+<category>Math</category>
+
+<subcategory>Trigonometry</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>sin_.gif</image>
+<code><![CDATA[
+float a = 0.0;
+float inc = TWO_PI/25.0;
+
+for(int i=0; i&lt;100; i=i+4) {
+  line(i, 50, i, 50+sin(a)*40.0);
+  a = a + inc;
+}
+]]></code>
+</example>
+
+<description><![CDATA[Calculates the sine of an angle. This function expects the values of the <b>angle</b> parameter to be provided in radians (values from 0 to 6.28). Values are returned in the range -1 to 1.]]></description>
+
+<syntax><![CDATA[
+sin(<kbd>rad</kbd>)
+]]></syntax>
+
+<parameter>
+<label>rad</label>
+<description><![CDATA[float: an angle in radians]]></description>
+</parameter>
+
+<returns>float</returns>
+
+<related>
+cos()
+radians()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>

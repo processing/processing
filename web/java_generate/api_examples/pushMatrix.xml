@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>pushMatrix()</name>
+
+<category>Transform</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>pushMatrix_.gif</image>
+<code><![CDATA[
+rect(0, 0, 50, 50);   //White rectangle 
+pushMatrix(); 
+translate(30, 20); 
+fill(0);  
+rect(0, 0, 50, 50);   //Black rectangle 
+popMatrix(); 
+fill(102);  
+rect(15, 10, 50, 50); //Gray rectangle 
+]]></code>
+</example>
+
+<description><![CDATA[Pushes the current transformation matrix onto the matrix stack. Understanding <b>pushMatrix()</b> and <b>popMatrix()</b> requires understanding the concept of a matrix stack. The <b>pushMatrix()</b> function saves the current coordinate system to the stack and <b>popMatrix()</b> restores the prior coordinate system. <b>pushMatrix()</b> and <b>popMatrix()</b> are used in conjuction with the other transformation methods and may be embedded to control the scope of the transformations.]]></description>
+
+<syntax><![CDATA[
+pushMatrix()
+]]></syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+popMatrix()
+translate()
+rotate()
+rotateX() 
+rotateY() 
+rotateZ() 
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>

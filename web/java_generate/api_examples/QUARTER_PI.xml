@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<example>
+<image></image>
+<code><![CDATA[
+float angle = 0.0; 
+beginShape(POLYGON); 
+vertex(width/2, height/2);
+while(angle < QUARTER_PI) { 
+  vertex(width/2 + cos(angle)*40, height/2 + sin(angle)*40); 
+  angle += PI/12.0; 
+} 
+endShape(CLOSE);]]>
+</code>
+</example>
+<availability>1.0</availability>
+</root>

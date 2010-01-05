@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>else</name>
+
+<category>Control</category>
+
+<subcategory>Conditionals</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>else.gif</image>
+<code><![CDATA[
+for(int i = 5; i &lt; 95; i += 5) {
+  if(i &lt; 35) {
+    line( 30, i, 80, i );
+  } else {
+    line( 20, i, 90, i );
+  }
+}
+]]></code>
+</example>
+
+<example>
+<image>else2.gif</image>
+<code><![CDATA[
+for(int i = 5; i &lt; 95; i += 5) {
+  if(i &lt; 35) {
+    line( 30, i, 80, i );
+  } else if (i &lt; 65) {
+    line( 20, i, 90, i );
+  } else {
+    line( 0, i, 100, i ); 
+  }
+}
+]]></code>
+</example>
+
+<description><![CDATA[Extends the <b>if()</b> structure allowing the program to choose between two or more block of code. It specifies a block of code to execute when the expression in <b>if()</b> is <b>false</b>.]]></description>
+
+<syntax><![CDATA[
+if(<kbd>expression</kbd>) { 
+  <kbd>statements</kbd> 
+} else { 
+  <kbd>statements</kbd> 
+} 
+
+if(<kbd>expression</kbd>) { 
+  <kbd>statements</kbd> 
+} else if(<kbd>expression</kbd>) { 
+  <kbd>statements</kbd> 
+} else { 
+  <kbd>statements</kbd> 
+}
+]]></syntax>
+
+<parameter>
+<label>expression</label>
+<description><![CDATA[any valid expression that evaluates to true or false]]></description>
+</parameter>
+
+<parameter>
+<label>statements</label>
+<description><![CDATA[one or more statements to be executed]]></description>
+</parameter>
+
+<returns></returns>
+
+<related>
+if
+</related>
+
+<availability>1.0</availability>
+
+<type>Keyword</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

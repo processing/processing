@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>selectFolder()</name>
+
+<category>Input</category>
+
+<subcategory>Files</subcategory>
+
+<usage>Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+String folderPath = selectFolder();  // Opens file chooser
+if (folderPath == null) {
+  // If a folder was not selected
+  println("No folder was selected...");
+} else {
+  // If a folder was selected, print path to folder
+  println(folderPath);
+}
+]]></code>
+</example>
+
+
+<description><![CDATA[Opens a platform-specific file chooser dialog to select a folder for input. This function returns the full path to the selected folder as a <b>String</b>, or <b>null</b> if no selection.]]></description>
+
+<syntax><![CDATA[
+selectFolder()
+selectFolder(<kbd>prompt</kbd>)
+]]></syntax>
+
+<parameter>
+<label>prompt</label>
+<description><![CDATA[String: message you want the user to see in the file chooser]]></description>
+</parameter>
+
+
+<returns>String or null</returns>
+
+<related>
+selectOutput()
+selectInput()
+</related>
+
+<availability>1.0</availability>
+
+<type>function</type>
+
+<partof>Core</partof>
+
+<level>Extended</level>
+
+
+</root>

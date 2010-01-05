@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>double</name>
+
+<category>Data</category>
+
+<subcategory>Primitive</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+double a;            // Declare variable "a" of type float
+a = 1.5387;          // Assign "a" the value 1.5387
+double b = -2.984;   // Declare variable "b" and assign it the value -2.984
+double c = a + b;    // Declare variable "c" and assign it the sum of "a" and "b"
+float f = (float)c;  // Converts the value of "c" from a double to a float
+]]></code>
+</example>
+
+<description><![CDATA[Datatype for floating-point numbers larger than those that can be stored in a <b>float</b>. A <b>float</b> is a 32-bit values that can be as large as 3.40282347E+38 and as low as -3.40282347E+38. A <b>double</b> can be used similarly to a float, but can have a greater magnitude because it's a 64-bit number. Processing functions don't use this datatype, so while they work in the language, you'll usually have to convert to a <b>float</b> using the <b>(float)</b> syntax before passing into a function.]]></description>
+
+<syntax><![CDATA[
+double <kbd>var</kbd>
+double <kbd>var</kbd> = <kbd>value</kbd>
+]]></syntax>
+
+<parameter>
+<label>var</label>
+<description><![CDATA[variable name referencing the float]]></description>
+</parameter>
+
+<parameter>
+<label>value</label>
+<description><![CDATA[any floating-point value]]></description>
+</parameter>
+
+<returns></returns>
+
+<related>
+float
+</related>
+
+<availability>1.0</availability>
+
+<type>Datatype</type>
+
+<partof>PDE</partof>
+
+<level>Extended</level>
+
+
+
+
+
+</root>

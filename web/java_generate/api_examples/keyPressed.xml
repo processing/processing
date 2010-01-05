@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>keyPressed()</name>
+
+<category>Input</category>
+
+<subcategory>Keyboard</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+// Click on the image to give it focus,
+// and then press any key
+
+int value = 0;
+
+void draw() {
+  fill(value);
+  rect(25, 25, 50, 50);
+}
+
+void keyPressed() {
+  if (value == 0) {
+    value = 255;
+  } else {
+    value = 0;
+  }
+}
+]]></code>
+</example>
+
+<description><![CDATA[
+The <b>keyPressed()</b> function is called once every time a key is pressed. The key that was pressed is stored in the <b>key</b> variable. 
+<br/> <br/>
+For non-ASCII keys, use the <b>keyCode</b> variable. The keys included in the ASCII specification (BACKSPACE, TAB, ENTER, RETURN, ESC, and DELETE) do not require checking to see if they key is coded, and you should simply use the <b>key</b> variable instead of <b>keyCode</b> If you're making cross-platform projects, note that the ENTER key is commonly used on PCs and Unix and the RETURN key is used instead on Macintosh. Check for both ENTER and RETURN to make sure your program will work for all platforms.
+<br/> <br/>
+Because of how operating systems handle key repeats, holding down a key may cause multiple calls to keyPressed() (and keyReleased() as well). The rate of repeat is set by the operating system and how each computer is configured.
+]]></description>
+
+<syntax><![CDATA[
+void keyPressed() { 
+  <kbd>statements</kbd>
+}
+]]></syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+keyPressed 
+key 
+keyCode
+keyReleased() 
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>

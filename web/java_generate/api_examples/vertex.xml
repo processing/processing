@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>vertex()</name>
+
+<category>Shape</category>
+
+<subcategory>Vertex</subcategory>
+
+<usage>Application &amp; Web</usage>
+
+<example>
+<image>vertex_.gif</image>
+<code><![CDATA[
+beginShape(POINTS);
+vertex(30, 20);
+vertex(85, 20);
+vertex(85, 75);
+vertex(30, 75);
+endShape();
+]]></code>
+</example>
+
+<example>
+<image>vertex_3.gif</image>
+<code><![CDATA[
+// Drawing vertices in 3D requires P3D
+// or OPENGL as a parameter to size()
+size(100, 100, P3D);
+beginShape(POINTS);
+vertex(30, 20, -50);
+vertex(85, 20, -50);
+vertex(85, 75, -50);
+vertex(30, 75, -50);
+endShape();
+]]></code>
+</example>
+
+<example>
+<image>vertex_2.gif</image>
+<code><![CDATA[
+noStroke();
+PImage a = loadImage("arch.jpg");
+beginShape();
+texture(a);
+// "arch.jpg" is 100x100 pixels in size so
+// the values 0 and 100 are used for the
+// parameters "u" and "v" to map it directly
+// to the vertex points
+vertex(10, 20, 0, 0);
+vertex(80, 5, 100, 0);
+vertex(95, 90, 100, 100);
+vertex(40, 95, 0, 100);
+endShape();
+]]></code>
+</example>
+
+<description><![CDATA[All shapes are constructed by connecting a series of vertices. <b>vertex()</b> is used to specify the vertex coordinates for points, lines, triangles, quads, and polygons and is used exclusively within the <b>beginShape()</b> and <b>endShape()</b> function. <br /><br />Drawing a vertex in 3D using the <b>z</b> parameter requires the P3D or OPENGL parameter in combination with size as shown in the above example.<br /><br />This function is also used to map a texture onto the geometry. The <b>texture()</b> function declares the texture to apply to the geometry and the <b>u</b> and <b>v</b> coordinates set define the mapping of this texture to the form. By default, the coordinates used for <b>u</b> and <b>v</b> are specified in relation to the image's size in pixels, but this relation can be changed with <b>textureMode()</b>.]]></description>
+
+<syntax><![CDATA[
+vertex(<kbd>x</kbd>, <kbd>y</kbd>); 
+vertex(<kbd>x</kbd>, <kbd>y</kbd>, <kbd>z</kbd>); 
+vertex(<kbd>x</kbd>, <kbd>y</kbd>, <kbd>u</kbd>, <kbd>v</kbd>); 
+vertex(<kbd>x</kbd>, <kbd>y</kbd>, <kbd>z</kbd>, <kbd>u</kbd>, <kbd>v</kbd>); 
+]]></syntax>
+
+<parameter>
+<label>x</label>
+<description><![CDATA[int or float: x-coordinate of the vertex]]></description>
+</parameter>
+
+<parameter>
+<label>y</label>
+<description><![CDATA[int or float: y-coordinate of the vertex]]></description>
+</parameter>
+
+<parameter>
+<label>z</label>
+<description><![CDATA[int or float: z-coordinate of the vertex]]></description>
+</parameter>
+
+<parameter>
+<label>u</label>
+<description><![CDATA[int or float: horizontal coordinate for the texture mapping]]></description>
+</parameter>
+
+<parameter>
+<label>v</label>
+<description><![CDATA[int or float: vertical coordinate for the texture mapping]]></description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+beginShape()
+endShape()
+bezierVertex()
+curveVertex()
+texture()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>

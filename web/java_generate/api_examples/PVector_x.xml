@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>x</name>
+
+<category>PVector</category>
+
+<subcategory>Field</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+PVector v;
+
+void setup() {
+  size(100, 100);
+  v = new PVector(20.0, 30.0, 40.0);
+  println(v.x);  // Prints "20.0"
+  println(v.y);  // Prints "30.0"
+  println(v.z);  // Prints "40.0"
+  v.x = 50.0; 
+  println(v.x);  // Prints "50.0"
+}
+]]></code>
+</example>
+
+<description><![CDATA[The x component of the vector. This field (variable) can be used to both get and set the value (see above example.)]]></description>
+
+<syntax><![CDATA[
+<kbd>vec</kbd>.x
+]]></syntax>
+
+<parameter>
+<label>vec</label>
+<description><![CDATA[any variable of type PVector]]></description>
+</parameter>
+
+<returns></returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Field</type>
+
+<partof>Core</partof>
+
+<level>Extended</level>
+
+
+</root>

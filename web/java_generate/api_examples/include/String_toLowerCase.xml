@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>toLowerCase()</name>
+
+<category>String</category>
+
+<subcategory>Method</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+String str1 = "CCCP"; 
+String str2 = "Rabbit"; 
+str1 = str1.toLowerCase();
+str2 = str2.toLowerCase();
+println(str1 + ":" + str2);  // Prints cccp:rabbit
+]]></code>
+</example>
+
+<description><![CDATA[Converts all of the characters in the string to lowercase. For example, "ABC" will convert to "abc".]]></description>
+
+<syntax><![CDATA[
+<kbd>str</kbd>.toLowerCase()
+]]></syntax>
+
+<parameter>
+<label>str</label>
+<description><![CDATA[String: any variable of type String]]></description>
+</parameter>
+
+<returns>String</returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type>Method</type>
+
+<partof>Core</partof>
+
+
+</root>

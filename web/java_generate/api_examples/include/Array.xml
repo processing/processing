@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>Array</name>
+
+<category>Data</category>
+
+<subcategory>Composite</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+int[] numbers = new int[3];
+numbers[0] = 90;
+numbers[1] = 150;
+numbers[2] = 30;
+int a = numbers[0] + numbers[1]; // Sets variable a to 240
+int b = numbers[1] + numbers[2]; // Sets variable b to 180 
+]]></code>
+</example>
+
+<example>
+<image></image>
+<code><![CDATA[
+int[] numbers = { 90, 150, 30 };
+int a = numbers[0] + numbers[1]; // Sets variable a to 240
+int b = numbers[1] + numbers[2]; // Sets variable b to 180
+]]></code>
+</example>
+
+<example>
+<image></image>
+<code><![CDATA[
+int degrees = 360;
+float[] cos_vals = new float[degrees];
+for(int i=0; i &lt; degrees; i++) {
+  cos_vals[i] = cos(TWO_PI/degrees * i);
+}
+]]></code>
+</example>
+
+<description><![CDATA[An array is a list of data. It is possible to have an array of any type of data. Each piece of data in an array is identified by an index number representing its position in the array. The first element in the array is <b>[0]</b>, the second element is <b>[1]</b>, and so on. Arrays are similar to objects, so they must be created with the keyword <b>new</b>. Every array has a variable <b>length</b> which is an integer value for the total number of elements in the array. (People are often confused by the use of <b>length()</b> to get the size of a String and <b>length</b> to get the size of an array. Notice the absence of the parentheses when working with arrays.)]]></description>
+
+<syntax><![CDATA[
+<kbd>datatype</kbd>[] <kbd>var</kbd>
+<kbd>var</kbd>[<kbd>element</kbd>] = <kbd>value</kbd>
+<kbd>var</kbd>.length
+]]></syntax>
+
+<parameter>
+<label>datatype</label>
+<description><![CDATA[any primitive or compound datatype, including user defined classes]]></description>
+</parameter>
+
+<parameter>
+<label>var</label>
+<description><![CDATA[any valid variable name]]></description>
+</parameter>
+
+<parameter>
+<label>element</label>
+<description><![CDATA[int: must not exceed the length of the array - 1]]></description>
+</parameter>
+
+<parameter>
+<label>value</label>
+<description><![CDATA[data to assign to the array element, must be the same datatype as the array]]></description>
+</parameter>
+
+<returns></returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Object</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+
+
+</root>

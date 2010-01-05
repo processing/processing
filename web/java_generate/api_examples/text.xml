@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>text()</name>
+
+<category>Typography</category>
+
+<subcategory>Loading &amp; Displaying</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>text_.gif</image>
+<code><![CDATA[
+PFont font;
+// The font must be located in the sketch's 
+// "data" directory to load successfully
+font = loadFont("FFScala-32.vlw"); 
+textFont(font); 
+text("word", 15, 30); 
+fill(0, 102, 153);
+text("word", 15, 60);
+fill(0, 102, 153, 51);
+text("word", 15, 90);  
+]]></code>
+</example>
+
+<example>
+<image>text_X.gif</image>
+<code><![CDATA[
+size(100, 100, P3D);
+PFont font;
+font = loadFont("FFScala-32.vlw"); 
+textFont(font); 
+text("word", 15, 60, -30); 
+fill(0, 102, 153);
+text("word", 15, 60);
+]]></code>
+</example>
+
+<example>
+<image>text_3.gif</image>
+<code><![CDATA[
+PFont font;
+font = loadFont("FFScala-Bold-12.vlw"); 
+textFont(font); 
+String s = "The quick brown fox jumped over the lazy dog.";
+text(s, 15, 20, 70, 70); 
+]]></code>
+</example>
+
+<description><![CDATA[
+Draws text to the screen. Displays the information specified in the <b>data</b> or <b>stringdata</b> parameters on the screen in the position specified by the <b>x</b> and <b>y</b> parameters and the optional <b>z</b> parameter. A font must be set with the <b>textFont()</b> function before <b>text()</b> may be called. Change the color of the text with the <b>fill()</b> function. The text displays in relation to the <b>textAlign()</b> function, which gives the option to draw to the left, right, and center of the coordinates. 
+<br/> <br/>
+The <b>width</b> and <b>height</b> parameters define a rectangular area to display within and may only be used with string data. For text drawn inside a rectangle, the coordinates are interpreted based on the current <b>rectMode()</b> setting.
+<br/> <br/>
+Use the <b>textMode()</b> function with the <b>SCREEN</b> parameter to display text in 2D at the surface of the window. 
+]]></description>
+
+<syntax><![CDATA[
+text(<kbd>data</kbd>, <kbd>x</kbd>, <kbd>y</kbd>)
+text(<kbd>data</kbd>, <kbd>x</kbd>, <kbd>y</kbd>, <kbd>z</kbd>)
+text(<kbd>stringdata</kbd>, <kbd>x</kbd>, <kbd>y</kbd>, <kbd>width</kbd>, <kbd>height</kbd>)
+text(<kbd>stringdata</kbd>, <kbd>x</kbd>, <kbd>y</kbd>, <kbd>width</kbd>, <kbd>height</kbd>, <kbd>z</kbd>)
+]]></syntax>
+
+<parameter>
+<label>data</label>
+<description><![CDATA[String, char, int, or float: the alphanumeric symbols to be displayed]]></description>
+</parameter>
+
+<parameter>
+<label>x</label>
+<description><![CDATA[int or float: x-coordinate of text]]></description>
+</parameter>
+
+<parameter>
+<label>y</label>
+<description><![CDATA[int or float: y-coordinate of text]]></description>
+</parameter>
+
+<parameter>
+<label>z</label>
+<description><![CDATA[int or float: z-coordinate of text]]></description>
+</parameter>
+
+<parameter>
+<label>stringdata</label>
+<description><![CDATA[String: letters to be displayed]]></description>
+</parameter>
+
+<parameter>
+<label>width</label>
+<description><![CDATA[int or float: width of text box]]></description>
+</parameter>
+
+<parameter>
+<label>height</label>
+<description><![CDATA[int or float: height of text box]]></description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+textAlign()
+textMode()
+loadFont() 
+PFont 
+textFont() 
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>

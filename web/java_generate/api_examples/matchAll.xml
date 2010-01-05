@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>matchAll()</name>
+
+<category>Data</category>
+
+<subcategory>String Functions</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+String s = "Inside tags, you will find &lt;tag>multiple&lt;/tag>; 
+            &lt;tag&gt;pieces&lt;/tag&gt; of &lt;tag&gt;content&lt;/tag&gt;.";
+
+String[][] m = matchAll(s, "&lt;tag&gt;(.*?)&lt;/tag&gt;");
+for (int i = 0; i &lt; m.length; i++) {
+  println("Found " + m[i][1] + " inside a tag.");
+}
+// Prints "Found multiple inside a tag. Found pieces inside a tag. Found 
+// content inside a tag." to the console
+]]></code>
+</example>
+
+<description><![CDATA[
+The matchAll() function is used to apply a regular expression to a piece of text, and return a list of matching groups (elements found inside parentheses) as a two-dimensional String array. No matches will return null. If no groups are specified in the regexp, but the sequence matches, a two dimensional array is still returned, but the second dimension is only of length one.
+<br/> <br/>
+To use the function, first check to see if the result is null. If the result is null, then the sequence did not match at all. If the sequence did match, a 2D array is returned. 
+If there are groups (specified by sets of parentheses) in the regexp, then the contents of each will be returned in the array.  
+Assuming, a loop with counter variable i, element [i][0] of a regexp match returns the entire matching string, and the match groups start at element [i][1] (the first group is [i][1], the second [i][2], and so on).
+<br/> <br/>
+The syntax can be found in the reference for Java's <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/util/regex/Pattern.html">Pattern</A> class. For regular expression syntax, read the <A HREF="http://java.sun.com/docs/books/tutorial/essential/regex/">Java Tutorial</A> on the topic. 
+<br/> <br/>
+]]></description>
+
+<syntax><![CDATA[
+matchAll(<kbd>str</kbd>, <kbd>regexp</kbd>)
+]]></syntax>
+
+<parameter>
+<label>str</label>
+<description><![CDATA[the String to search inside]]></description>
+</parameter>
+
+<parameter>
+<label>regexp</label>
+<description><![CDATA[the regexp to be used for matching]]></description>
+</parameter>
+
+<returns>String[][]</returns>
+
+<related>
+match()
+split()
+splitTokens()
+join()
+trim()
+</related>
+
+<availability>1.0</availability>
+
+<level>Extended</level>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+</root>

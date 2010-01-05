@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>mouseY</name>
+
+<category>Input</category>
+
+<subcategory>Mouse</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+void draw()
+{
+  background(204);
+  line(20, mouseY, 80, mouseY);
+}
+]]></code>
+</example>
+
+<description><![CDATA[The system variable <b>mouseY</b> always contains the current vertical coordinate of the mouse.]]></description>
+
+<syntax></syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns></returns>
+
+<related>
+mouseX
+mousePressed
+mousePressed()
+mouseReleased()
+mouseMoved()
+mouseDragged()
+</related>
+
+<availability>1.0</availability>
+
+<type>System variable</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>

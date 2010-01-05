@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>saveStream()</name>
+
+<category>Output</category>
+
+<subcategory>Files</subcategory>
+
+<usage>Application</usage>
+
+<example>
+<image></image>
+<code></code>
+</example>
+
+<description><![CDATA[
+Save the contents of a stream to a file in the sketch folder. This is basically <b>saveBytes(blah, loadBytes())</b>, but done more efficiently (and with less confusing syntax).
+<br /><br />   
+When using the <b>targetFile</b> parameter, it writes to a <b>File</b> object for greater control over the file location. (Note that unlike other api methods, this will not automatically compress or uncompress gzip files.)
+]]></description>
+
+<syntax><![CDATA[
+saveStream(<kbd>targetFilename</kbd>, <kbd>sourceLocation</kbd>)
+saveStream(<kbd>targetFile</kbd>, <kbd>sourceLocation</kbd>)
+]]></syntax>
+
+<parameter>
+<label>targetFilename</label>
+<description><![CDATA[String: name of the file to write to]]></description>
+</parameter>
+
+<parameter>
+<label>sourceLocation</label>
+<description><![CDATA[String: location to save the file]]></description>
+</parameter>
+
+<parameter>
+<label>targetFile</label>
+<description><![CDATA[File: the file to write to]]></description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+createOutput()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+<level>Extended</level>
+
+
+</root>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>lights()</name>
+
+<category>Lights, Camera</category>
+
+<subcategory>Lights</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>lights_.jpg</image>
+<code><![CDATA[
+size(100, 100, P3D);
+background(0);
+noStroke();
+// Sets the default ambient 
+// and directional light
+lights();
+translate(20, 50, 0);
+sphere(30);
+translate(60, 0, 0);
+sphere(30);
+]]></code>
+</example>
+
+<example>
+<image>lights_2.jpg</image>
+<code><![CDATA[
+void setup() {
+  size(100, 100, P3D);
+  background(0);
+  noStroke();
+}
+
+void draw() {
+  // Add lights at the beginning
+  // of draw() to keep them persistent 
+  lights();
+  translate(20, 50, 0);
+  sphere(30);
+  translate(60, 0, 0);
+  sphere(30);
+}
+
+]]></code>
+</example>
+
+<description><![CDATA[Sets the the default ambient light, directional light, falloff, and specular values. The defaults are are ambientLight(128, 128, 128) and directionalLight(128, 128, 128, 0, 0, -1), falloff(1, 0, 0), and specular(0, 0, 0). Lights need to be included in the draw() to remain persistent in a looping program. Placing them in the setup() of a looping program will cause them to only have an effect the first time through the loop.]]></description>
+
+<syntax><![CDATA[
+lights()
+]]></syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+ambientLight()
+directionalLight()
+pointLight()
+spotLight()
+noLights()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+<level>Extended</level>
+
+
+
+
+
+
+</root>

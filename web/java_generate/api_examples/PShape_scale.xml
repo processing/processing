@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>scale()</name>
+
+<category>PShape</category>
+
+<subcategory>Method</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+PShape s;
+
+void setup() {
+  s = loadShape("bot.svg");
+  smooth();
+}
+
+void draw() {
+  background(204);
+  shape(s);
+}
+
+void mousePressed() {
+  // Shrink the shape 90% each time the mouse is pressed
+  s.scale(0.9);  
+}
+]]></code>
+</example>
+
+<description><![CDATA[
+Increases or decreases the size of a shape by expanding and contracting vertices. Shapes always scale from the relative origin of their bounding box. Scale values are specified as decimal percentages. For example, the method call <b>scale(2.0)</b> increases the dimension of a shape by 200%. Subsequent calls to the method multiply the effect. For example, calling <b>scale(2.0)</b> and then <b>scale(1.5)</b> is the same as <b>scale(3.0)</b>. This transformation is applied directly to the shape, it's not refreshed each time <b>draw()</b> is run. 
+<br /><br />
+Using this fuction with the <b>z</b> parameter requires passing P3D or OPENGL into the size() parameter.
+]]></description>
+
+<syntax><![CDATA[
+<kbd>sh</kbd>.scale(<kbd>size</kbd>);
+<kbd>sh</kbd>.scale(<kbd>x</kbd>, <kbd>y</kbd>);
+<kbd>sh</kbd>.scale(<kbd>x</kbd>, <kbd>y</kbd>, <kbd>z</kbd>);
+]]></syntax>
+
+<parameter>
+<label>sh</label>
+<description><![CDATA[PShape: any variable of type PShape]]></description>
+</parameter>
+
+<parameter>
+<label>size</label>
+<description><![CDATA[float: percentage to scale the object]]></description>
+</parameter>
+
+<parameter>
+<label>x</label>
+<description><![CDATA[float: percentage to scale the object in the x-axis]]></description>
+</parameter>
+
+<parameter>
+<label>y</label>
+<description><![CDATA[float: percentage to scale the object in the y-axis]]></description>
+</parameter>
+
+<parameter>
+<label>z</label>
+<description><![CDATA[float: percentage to scale the object in the z-axis]]></description>
+</parameter>
+
+<returns>None</returns>
+
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type>Method</type>
+
+<partof>Core</partof>
+
+
+</root>

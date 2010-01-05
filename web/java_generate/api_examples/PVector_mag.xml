@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>mag()</name>
+
+<category>PVector</category>
+
+<subcategory>Method</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+PVector v;
+
+void setup() {
+  size(100, 100);
+  v = new PVector(20.0, 30.0, 40.0);
+  float m = v.mag();
+  println(m);  // Prints "53.851646"
+}
+]]></code>
+</example>
+
+<description><![CDATA[Calculates the magnitude (length) of the vector and returns the result as a float (this is simply the equation <em>sqrt(x*x + y*y + z*z)</em>.)]]></description>
+
+<syntax><![CDATA[
+<kbd>vec</kbd>.mag()
+]]></syntax>
+
+<parameter>
+<label>vec</label>
+<description><![CDATA[any variable of type PVector]]></description>
+</parameter>
+
+<returns>float</returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Method</type>
+
+<partof>Core</partof>
+
+<level>Extended</level>
+
+
+</root>

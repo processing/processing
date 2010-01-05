@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>char</name>
+
+<category>Data</category>
+
+<subcategory>Primitive</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+char m;      // Declare variable "m" of type char
+m = 'A';     // Assign "m" the value "A"
+int n = '&amp;'; // Declare variable "n" and assign it the value "&amp;"
+]]></code>
+</example>
+
+<description><![CDATA[Datatype for characters, typographic symbols such as A, d, and $. A <b>char</b> stores letters and symbols in the Unicode format, a coding system developed to support a variety of world languages. Each <b>char</b> is two bytes (16 bits) in length and is distinguished by surrounding it with single quotes. Character escapes may also stored as a <b>char</b>. For example, the representation for the "delete" key is '\377'. The first time a variable is written, it must be declared with a statement expressing its datatype. Subsequent uses of this variable must not reference the datatype because Processing will think the variable is being declared again.]]></description>
+
+<syntax><![CDATA[
+char <kbd>var</kbd>
+char <kbd>var</kbd> = <kbd>value</kbd>
+]]></syntax>
+
+<parameter>
+<label>var</label>
+<description><![CDATA[variable name referencing the value]]></description>
+</parameter>
+
+<parameter>
+<label>value</label>
+<description><![CDATA[any character]]></description>
+</parameter>
+
+<returns></returns>
+
+<related>
+String
+</related>
+
+<availability>1.0</availability>
+
+<type>Datatype</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

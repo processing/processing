@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>/= (divide assign)</name>
+
+<category>Math</category>
+
+<subcategory>Operators</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+int a = 12;
+int b = 3;
+a /= b; // sets "a" to 4
+]]></code>
+</example>
+
+<description><![CDATA[Combines division with assignment. The expression <b>a /= b</b> is equivalent to <b>a = a / b</b>. ]]></description>
+
+<syntax><![CDATA[
+<kbd>value1</kbd> /= <kbd>value2</kbd>
+]]></syntax>
+
+<parameter>
+<label>value1</label>
+<description><![CDATA[int or float]]></description>
+</parameter>
+
+<parameter>
+<label>value2</label>
+<description><![CDATA[any numerical value the same datatype as value1]]></description>
+</parameter>
+
+<returns></returns>
+
+<related>
+= (assign)
+/ (divide)
+</related>
+
+<availability>1.0</availability>
+
+<type>Operator</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>serverEvent()</name>
+
+<category>Net</category>
+
+<subcategory></subcategory>
+
+<usage>Application</usage>
+
+<example>
+<image></image>
+<code>
+// Example by Tom Igoe
+// Creates a server that prints new client's IP addresses. 
+
+import processing.net.*;
+
+int port = 10002;   
+Server myServer;    
+
+void setup()
+{
+  size(400, 400);
+  background(0);
+  myServer = new Server(this, port); // Starts a server on port 10002
+}
+
+void draw() {
+  // Nothing happens here, everything happens inside ServerEvent()
+}
+
+// ServerEvent message is generated when a new client connects 
+// to an existing server.
+void serverEvent(Server someServer, Client someClient) {
+  println("We have a new client: " + someClient.ip());
+}
+
+</code>
+</example>
+
+<description>
+The code inside <b>serverEvent()</b> is run when a new client connects to a server that has been created within the program.
+</description>
+
+<syntax>
+void serverEvent(<c>server</c>, <c>client</c>) {
+  <c>statements</c>
+}
+</syntax>
+
+<parameter>
+<label>server</label>
+<description>Server: server the client is connecting to</description>
+</parameter>
+
+<parameter>
+<label>client</label>
+<description>Client: client connecting to the server</description>
+</parameter>
+
+<parameter>
+<label>statements</label>
+<description>any valid statements</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+Server
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>core</partof>
+
+
+
+
+
+
+
+
+</root>

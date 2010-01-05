@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>alpha()</name>
+
+<category>PImage</category>
+
+<subcategory>Pixels</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>alpha_.jpg</image>
+<code><![CDATA[
+PImage img = loadImage("test.jpg");
+PImage alphaImg = loadImage("mask.jpg");
+img.alpha(alphaImg);
+image(img, 0, 0);
+image(img, 25, 0);
+]]></code>
+</example>
+
+<description><![CDATA[Set the alpha channel of an image. Because Processing can only load GIF and JPEG bitmaps, which do not support variable degrees of transparency, an image's alpha channel needs to be loaded as a separate image. This alpha image should only contain grayscale data. Only the blue color channel is used, which corresponds to values between 0 and 255. The image passed in an alpha channel needs to be of exactly the same size as the image it will be applied to.<br /><br />Instead of an alpha image, an integer array containing the alpha channel data can be specified directly. Again, this array must be of the same length as the target image's pixels array and should, as with the other version of the function, only contain grayscale data or values between 0-255. Using this array method is useful for using dynamic, generated alpha masks.]]></description>
+
+<syntax><![CDATA[
+<kbd>img</kbd>.alpha(<kbd>alphaImg</kbd>)
+<kbd>img</kbd>.alpha(<kbd>alphaArray</kbd>)
+]]></syntax>
+
+<parameter>
+<label>img</label>
+<description><![CDATA[any variable of type PImage]]></description>
+</parameter>
+
+<parameter>
+<label>alphaImg</label>
+<description><![CDATA[PImage: any PImage object used as the alpha channel for "img", needs to be same size as "img"]]></description>
+</parameter>
+
+<parameter>
+<label>alphaArray</label>
+<description><![CDATA[int[]: any array of Integer numbers used as the alpha channel, needs to be same length as the image's pixel array]]></description>
+</parameter>
+
+<returns></returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Method</type>
+
+<partof>Core</partof>
+
+
+</root>

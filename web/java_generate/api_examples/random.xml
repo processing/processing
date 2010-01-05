@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>random()</name>
+
+<category>Math</category>
+
+<subcategory>Random</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+for(int i=0; i&lt;100; i++) {
+  float r = random(50);
+  stroke(r*5);
+  line(50, i, 50+r, i);
+}
+]]></code>
+</example>
+
+<example>
+<image></image>
+<code><![CDATA[
+for (int i = 0; i &lt; 100; i++) {
+  float r = random(-50, 50);
+  println(r);
+}
+]]></code>
+</example>
+
+<example>
+<image></image>
+<code><![CDATA[
+// Get a random element from an array
+String[] words = { "apple", "bear", "cat", "dog" };
+int index = int(random(words.length));  // same as int(random(4))
+println(words[index]);  // prints one of the four words
+]]></code>
+</example>
+
+<description><![CDATA[Generates random numbers. Each time the <b>random()</b> function is called, it returns an unexpected value within the specified range. If one parameter is passed to the function it will return a <b>float</b> between zero and the value of the <b>high</b> parameter. The function call <b>random(5)</b> returns values between 0 and 5 (starting at zero, up to but not including 5). If two parameters are passed, it will return a <b>float</b> with a value between the the parameters. The function call <b>random(-5, 10.2)</b> returns values starting at -5 up to (but not including) 10.2. To convert a floating-point random number to an integer, use the <b>int()</b> function.]]></description>
+
+<syntax><![CDATA[
+random(<kbd>high</kbd>);
+random(<kbd>low</kbd>, <kbd>high</kbd>);
+]]></syntax>
+
+<parameter>
+<label>high</label>
+<description><![CDATA[int or float]]></description>
+</parameter>
+
+<parameter>
+<label>low</label>
+<description><![CDATA[int or float]]></description>
+</parameter>
+
+<returns>float</returns>
+
+<related>
+randomSeed()
+noise()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+</root>

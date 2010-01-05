@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>&gt;= (greater than or equal to)</name>
+
+<category>Control</category>
+
+<subcategory>Relational Operators</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+int a = 23;
+int b = 23;
+if(a &gt;= b) {
+  println("variable a is greater or equal to variable b ")
+}
+]]></code>
+</example>
+
+<description><![CDATA[Tests if the value on the left is larger than the value on the right or if the values are equivalent. ]]></description>
+
+<syntax><![CDATA[
+<kbd>value1</kbd> &gt;= <kbd>value2</kbd>
+]]></syntax>
+
+<parameter>
+<label>value1</label>
+<description><![CDATA[int or float]]></description>
+</parameter>
+
+<parameter>
+<label>value2</label>
+<description><![CDATA[int or float]]></description>
+</parameter>
+
+<returns></returns>
+
+<related>
+&gt; (greater than)
+&lt; (less than)
+&lt;= (less than or equal to)
+== (equality)
+!= (inequality)
+</related>
+
+<availability>1.0</availability>
+
+<type>Operator</type>
+
+<partof>PDE</partof>
+
+</root>

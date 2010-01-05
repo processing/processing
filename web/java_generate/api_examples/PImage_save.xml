@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>save()</name>
+
+<category>PImage</category>
+
+<subcategory>Method</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+PImage img = loadImage("tower.jpg");
+img.save("img.jpg");
+
+]]></code>
+</example>
+
+<example>
+<image></image>
+<code><![CDATA[
+size(100, 100);
+PImage img = loadImage("tower.jpg");
+PImage newImg = createImage(100, 100, RGB);
+newImg = img.get();
+newImg.save("newImg.jpg");
+]]></code>
+</example>
+
+<description><![CDATA[Saves the image into a file. Images are saved in TIFF, TARGA, JPEG, and PNG format depending on the extension within the <b>filename</b> parameter. For example, "image.tif" will have a TIFF image and "image.png" will save a PNG image. If no extension is included in the filename, the image will save in TIFF format and <b>.tif</b> will be added to the name. These files are saved to the sketch's folder, which may be opened by selecting "Show sketch folder" from the "Sketch" menu. It is not possible to use <b>save()</b> while running the program in a web browser.<br /><br />To save an image created within the code, rather than through loading, it's necessary to make the image with the <b>createImage()</b> function so it is aware of the location of the program and can therefore save the file to the right place. See the <b>createImage()</b> reference for more information.]]></description>
+
+<syntax><![CDATA[
+<kbd>img</kbd>.save(<kbd>filename</kbd>)
+]]></syntax>
+
+<parameter>
+<label>img</label>
+<description><![CDATA[PImage: any variable of type PImage]]></description>
+</parameter>
+
+<parameter>
+<label>filename</label>
+<description><![CDATA[String: a sequence of letters and numbers]]></description>
+</parameter>
+
+<returns>none</returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type>Method</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>

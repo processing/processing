@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>rotateZ()</name>
+
+<category>Transform</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>rotateZ_.gif</image>
+<code><![CDATA[
+size(100, 100, P3D);
+translate(width/2, height/2);
+rotateZ(PI/3.0);
+rect(-26, -26, 52, 52);
+]]></code>
+</example>
+
+<example>
+<image>rotateZ_.gif</image>
+<code><![CDATA[
+size(100, 100, P3D);
+translate(width/2, height/2);
+rotateZ(radians(60));
+rect(-26, -26, 52, 52);
+]]></code>
+</example>
+
+<description><![CDATA[Rotates a shape around the z-axis the amount specified by the <b>angle</b> parameter. Angles should be specified in radians (values from 0 to PI*2) or converted to radians with the <b>radians()</b> function. Objects are always rotated around their relative position to the origin and positive numbers rotate objects in a counterclockwise direction. Transformations apply to everything that happens after and subsequent calls to the function accumulates the effect. For example, calling <b>rotateZ(PI/2)</b> and then <b>rotateZ(PI/2)</b> is the same as <b>rotateZ(PI)</b>. If <b>rotateZ()</b> is called within the <b>draw()</b>, the transformation is reset when the loop begins again. This function requires passing P3D or OPENGL into the size() parameter as shown in the example above. ]]></description>
+
+<syntax><![CDATA[
+rotateZ(<kbd>angle</kbd>)
+]]></syntax>
+
+<parameter>
+<label>angle</label>
+<description><![CDATA[float: angle of rotation specified in radians]]></description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+rotateX() 
+rotateY() 
+translate() 
+rotate() 
+scale() 
+pushMatrix() 
+popMatrix() 
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+<level>Extended</level>
+
+
+
+
+
+</root>

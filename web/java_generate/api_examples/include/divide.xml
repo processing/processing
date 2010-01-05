@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>/ (divide)</name>
+
+<category>Math</category>
+
+<subcategory>Operators</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+int g = 50 / 5;  // Sets g 10
+int h = g / 5;   // Sets h 2
+]]></code>
+</example>
+
+<description><![CDATA[Divides the value of the second parameter by the value of the first parameter. The answer to the equation  20 / 4 is 5. The number 20 is the sum of 4 of the number 5. As an equation we see that 4 + 4 + 4 + 4 + 4 = 20.]]></description>
+
+<syntax><![CDATA[
+<kbd>value1</kbd> / <kbd>value2</kbd>
+]]></syntax>
+
+<parameter>
+<label>value1</label>
+<description><![CDATA[int or float]]></description>
+</parameter>
+
+<parameter>
+<label>value2</label>
+<description><![CDATA[int or float, but not zero (it is not possible  divide by zero)]]></description>
+</parameter>
+
+<returns></returns>
+
+<related>
+* (multiply)
+% (modulo)
+</related>
+
+<availability>1.0</availability>
+
+<type>Operator</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

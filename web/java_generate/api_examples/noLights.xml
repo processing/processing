@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>noLights()</name>
+
+<category>Lights, Camera</category>
+
+<subcategory>Lights</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<description><![CDATA[Disable all lighting. Lighting is turned off by default and enabled with the lights() method. This function can be used to disable lighting so that 2D geometry (which does not require lighting) can be drawn after a set of lighted 3D geometry.]]></description>
+
+<syntax><![CDATA[
+noLights()
+]]></syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+lights()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+<level>Extended</level>
+
+
+
+
+
+
+</root>

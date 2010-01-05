@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>nfp()</name>
+
+<category>Data</category>
+
+<subcategory>String Functions</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+int a=200, b=-40, c=90; 
+String sa = nfp(a, 10); 
+println(sa); // prints "+0000000200" 
+String sb = nfp(b, 5); 
+println(sb); // prints "-00040" 
+String sc = nfp(c, 3); 
+println(sc); // prints "+090" 
+ 
+float d = -200.94, e = 40.2, f = -9.012; 
+String sd = nfp(d, 10, 4); 
+println(sd);  // prints "-0000000200.9400" 
+String se = nfp(e, 5, 3); 
+println(se);  // prints "+00040.200" 
+String sf = nfp(f, 3, 5); 
+println(sf);  // prints "-009.01200" 
+]]></code>
+</example>
+
+<description><![CDATA[Utility function for formatting numbers into strings. Similar to <b>nf()</b> but puts a "+" in front of positive numbers and a "-" in front of negative numbers. There are two versions, one for formatting floats and one for formatting ints. The values for the <b>digits</b>, <b>left</b>, and <b>right</b> parameters should always be positive integers.]]></description>
+
+<syntax><![CDATA[
+nfp(<kbd>intValue</kbd>, <kbd>digits</kbd>)
+nfp(<kbd>floatValue</kbd>, <kbd>left</kbd>, <kbd>right</kbd>)
+]]></syntax>
+
+<parameter>
+<label>intValue</label>
+<description><![CDATA[int or int[]: the number(s) to format]]></description>
+</parameter>
+
+<parameter>
+<label>digits</label>
+<description><![CDATA[int: number of digits to pad with zeroes]]></description>
+</parameter>
+
+<parameter>
+<label>floatValue</label>
+<description><![CDATA[float or float[]: the number(s) to format]]></description>
+</parameter>
+
+<parameter>
+<label>left</label>
+<description><![CDATA[int: number of digits to the left of the decimal point]]></description>
+</parameter>
+
+<parameter>
+<label>right</label>
+<description><![CDATA[int: number of digits to the right of the decimal point]]></description>
+</parameter>
+
+<returns>String or String[]</returns>
+
+<related>
+nfs()
+nf()
+nfc()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+<level>Extended</level>
+
+
+</root>

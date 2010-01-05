@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>set()</name>
+
+<category>PImage</category>
+
+<subcategory>Method</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>PImage_set.jpg</image>
+<code><![CDATA[
+PImage img = loadImage("tower.jpg");
+color black = color(0, 0, 0);
+img.set(30, 20, black); 
+img.set(85, 20, black); 
+img.set(85, 75, black); 
+img.set(30, 75, black); 
+image(img, 0, 0);
+]]></code>
+</example>
+
+<description><![CDATA[
+Changes the color of any pixel or writes an image directly into the image. The <b>x</b> and <b>y</b> parameter specify the pixel or the upper-left corner of the image. The <b>color</b> parameter specifies the color value.<br /><br />Setting the color of a single pixel with <b>set(x, y)</b> is easy, but not as fast as putting the data directly into <b>pixels[]</b>. The equivalent statement to "set(x, y, #000000)" using <b>pixels[]</b> is "pixels[y*width+x] = #000000". Processing requires calling <b>loadPixels()</b> to load the display window data into the <b>pixels[]</b> array before getting the values and calling <b>updatePixels()</b> to update the window.
+<br /><br />
+As of release 0149, this function ignores <b>imageMode()</b>.
+]]></description>
+
+<syntax><![CDATA[
+<kbd>img</kbd>.set(<kbd>x</kbd>, <kbd>y</kbd>, <kbd>color</kbd>)
+]]></syntax>
+
+<parameter>
+<label>img</label>
+<description><![CDATA[PImage: any variable of type PImage]]></description>
+</parameter>
+
+<parameter>
+<label>x</label>
+<description><![CDATA[int: x-coordinate of the pixel or upper-left corner of the image]]></description>
+</parameter>
+
+<parameter>
+<label>y</label>
+<description><![CDATA[int: y-coordinate of the pixel or upper-left corner of the image]]></description>
+</parameter>
+
+<parameter>
+<label>color</label>
+<description><![CDATA[color: any value of the color datatype]]></description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+get()
+pixels[]
+copy()
+</related>
+
+<availability>1.0</availability>
+
+<type>Method</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>

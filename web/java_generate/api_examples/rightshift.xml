@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>&gt;&gt; (right shift)</name>
+
+<category>Math</category>
+
+<subcategory>Bitwise Operators</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+int m = 8 &gt;&gt; 3;    // In binary: 1000 to 1
+println(m);  // Prints "1"
+int n = 256 &gt;&gt; 6;  // In binary: 100000000 to 100 
+println(n);  // Prints "4"
+int o = 16 &gt;&gt; 3;   // In binary: 10000 to 10 
+println(o);  // Prints "2"
+int p = 26 &gt;&gt; 1;   // In binary: 11010 to 1101 
+println(p);  // Prints "13"
+]]></code>
+</example>
+
+<example>
+<image></image>
+<code><![CDATA[
+// Using "right shift" as a faster method than red(), green(), and blue()
+color argb = color(204, 204, 51, 255);
+int a = (argb &gt;&gt; 24) &amp; 0xFF;
+int r = (argb &gt;&gt; 16) &amp; 0xFF;  // Faster way of getting red(argb)
+int g = (argb &gt;&gt; 8) &amp; 0xFF;   // Faster way of getting green(argb)
+int b = argb &amp; 0xFF;          // Faster way of getting blue(argb)
+fill(r, g, b, a);
+rect(30, 20, 55, 55);
+]]></code>
+</example>
+
+<description><![CDATA[
+Shifts bits to the right. The number to the left of the operator is shifted the number of places specified by the number to the right. Each shift to the right halves the number, therefore each left shift divides the original number by 2. Use the right shift for fast divisions or to extract an individual number from a packed number. Right shifting only works with integers or numbers which automatically convert to an integer such at byte and char.
+<br/> <br/>
+Bit shifting is helpful when using the <b>color</b> data type. A right shift can extract red, green, blue, and alpha values from a color. A left shift can be used to quickly reassemble a color value (more quickly than the <b>color()</b> function).
+]]></description>
+
+<syntax><![CDATA[
+<kbd>value</kbd> &gt;&gt; <kbd>n</kbd>
+]]></syntax>
+
+<parameter>
+<label>value</label>
+<description><![CDATA[int: the value to shift]]></description>
+</parameter>
+
+<parameter>
+<label>n</label>
+<description><![CDATA[int: the number of places to shift right]]></description>
+</parameter>
+
+<returns></returns>
+
+<related>
+&lt;&lt; (left shift)
+</related>
+
+<availability>1.0</availability>
+
+<type>Operator</type>
+
+<partof>PDE</partof>
+
+<level>Extended</level>
+
+
+</root>

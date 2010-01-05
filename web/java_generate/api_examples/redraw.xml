@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>redraw()</name>
+
+<category>Structure</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<applet></applet>
+<code><![CDATA[
+float x = 0;
+
+void setup() {
+  size(200, 200);
+  noLoop();
+}
+
+void draw() {
+  background(204);
+  line(x, 0, x, height); 
+}
+
+void mousePressed() {
+  x += 1;
+  redraw();
+}
+]]></code>
+</example>
+
+<description><![CDATA[
+Executes the code within <b>draw()</b> one time. This functions allows the program to update the display window only when necessary, for example when an event registered by <b>mousePressed()</b> or <b>keyPressed()</b> occurs. 
+<br/><br/>
+In structuring a program, it only makes sense to call redraw() within events such as <b>mousePressed()</b>. This is because <b>redraw()</b> does not run <b>draw()</b> immediately (it only sets a flag that indicates an update is needed). 
+<br/><br/>
+Calling <b>redraw()</b> within <b>draw()</b> has no effect because <b>draw()</b> is continuously called anyway.
+]]></description>
+
+<syntax><![CDATA[
+redraw()
+]]></syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+noLoop()
+loop()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>PDE</partof>
+
+
+</root>

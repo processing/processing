@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<root>
+<name>round()</name>
+
+<category>Math</category>
+
+<subcategory>Calculation</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+float x = 9.2;  
+int rx = round(x);  // Sets rx to 9
+
+float y = 9.5;
+int ry = round(y);  // Sets ry to 10
+
+float z = 9.9;
+int rz = round(z);  // Sets rz to 10
+
+]]></code>
+</example>
+
+<description><![CDATA[Calculates the integer closest to the <b>value</b> parameter. For example, <b>round(9.2)</b> returns the value 9.]]></description>
+
+<syntax><![CDATA[
+round(<kbd>value</kbd>)
+]]></syntax>
+
+<parameter>
+<label>value</label>
+<description><![CDATA[float]]></description>
+</parameter>
+
+<returns>int</returns>
+
+<related>
+floor()
+ceil()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

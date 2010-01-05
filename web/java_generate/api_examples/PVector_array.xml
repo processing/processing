@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>array()</name>
+
+<category>PVector</category>
+
+<subcategory>Method</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+PVector v = new PVector(10.0, 20.0, 30.0);
+float[] f = v.array();
+println(f[0]);  // Prints "10.0"
+println(f[1]);  // Prints "20.0"
+println(f[2]);  // Prints "30.0"
+]]></code>
+</example>
+
+<description><![CDATA[Return a representation of this vector as a float array. This is only for temporary use. If used in any other fashion, the contents should be copied by using the <b>PVector.get()</b> method to copy into your own array.]]></description>
+
+<syntax><![CDATA[
+<kbd>vec</kbd>.array()
+]]></syntax>
+
+<parameter>
+<label>vec</label>
+<description><![CDATA[any variable of type PVector]]></description>
+</parameter>
+
+<returns>float[]</returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Method</type>
+
+<partof>Core</partof>
+
+<level>Extended</level>
+
+
+</root>

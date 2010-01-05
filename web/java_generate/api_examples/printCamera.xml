@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>printCamera()</name>
+
+<category>Lights, Camera</category>
+
+<subcategory>Camera</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+size(100, 100, P3D);
+printCamera();
+
+// The program above prints this data:
+
+// 01.0000  00.0000  00.0000 -50.0000
+// 00.0000  01.0000  00.0000 -50.0000
+// 00.0000  00.0000  01.0000 -86.6025
+// 00.0000  00.0000  00.0000  01.0000
+]]></code>
+</example>
+
+<description><![CDATA[Prints the current camera matrix to the text window.]]></description>
+
+<syntax><![CDATA[
+printCamera()
+]]></syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+camera()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+<level>Extended</level>
+
+
+</root>

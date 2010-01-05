@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>max()</name>
+
+<category>Math</category>
+
+<subcategory>Calculation</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+int a = max(5, 9);            // Sets "a" to 9
+int b = max(-4, -12);         // Sets "b" to -4
+float c = max(12.3, 230.24);  // Sets "c" to 230.24
+]]></code>
+</example>
+
+<example>
+<image></image>
+<code><![CDATA[
+int[] list = { 9, -4, 230.24 };
+int h = max(list);            // Sets "h" to 230.24
+]]></code>
+</example>
+
+<description><![CDATA[Determines the largest value in a sequence of numbers.]]></description>
+
+<syntax><![CDATA[
+max(<kbd>value1</kbd>, <kbd>value2</kbd>)
+max(<kbd>value1</kbd>, <kbd>value2</kbd>, <kbd>value 3</kbd>)
+max(<kbd>array</kbd>)
+]]></syntax>
+
+<parameter>
+<label>value1</label>
+<description><![CDATA[int or float]]></description>
+</parameter>
+
+<parameter>
+<label>value2</label>
+<description><![CDATA[int or float]]></description>
+</parameter>
+
+<parameter>
+<label>value3</label>
+<description><![CDATA[int or float]]></description>
+</parameter>
+
+<parameter>
+<label>array</label>
+<description><![CDATA[int or float array]]></description>
+</parameter>
+
+<returns>int or float (depending on the inputs)</returns>
+
+<related>
+min()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

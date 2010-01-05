@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>int()</name>
+
+<category>Data</category>
+
+<subcategory>Conversion</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+float f = 65.0;
+int i = int(f);
+println(f + " : " + i);  // Prints "65.0 : 65"
+
+char c = 'E';
+i = int(c);
+println(c + " : " + i);  // Prints "E : 69"
+]]></code>
+</example>
+
+<description><![CDATA[Converts a primitive datatype, string, or array to its integer representation.]]></description>
+
+<syntax><![CDATA[
+int(<kbd>value</kbd>)
+]]></syntax>
+
+<parameter>
+<label>value</label>
+<description><![CDATA[float, char, byte, String, float[], char[], byte[], String[]]]></description>
+</parameter>
+
+<returns>int</returns>
+
+<related>
+int
+float()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>IDE</partof>
+
+
+
+
+
+
+
+
+</root>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>readChar()</name>
+
+<category>Client</category>
+
+<subcategory>Client</subcategory>
+
+<usage>Application</usage>
+
+<example>
+<image></image>
+<code>
+// Example by Tom Igoe
+
+import processing.net.*; 
+Client myClient;
+char charIn;
+
+void setup() {
+  size(200, 200);
+  myClient = new Client(this, "127.0.0.1", 5204);
+}
+
+void draw() {
+  if (myClient.available() &gt; 0) {
+    charIn = myClient.readChar();
+    println(dataIn);
+  }
+}
+
+</code>
+</example>
+
+<description>
+Returns the next byte in the buffer as a char. Returns -1 or 0xffff if nothing is there.
+</description>
+
+<syntax>
+<c>client</c>.readChar()
+</syntax>
+
+<parameter>
+<label>client</label>
+<description>any variable of type Client</description>
+</parameter>
+
+<returns>char</returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Method</type>
+
+<partof>Library</partof>
+
+
+</root>

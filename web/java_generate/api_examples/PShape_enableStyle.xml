@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>enableStyle()</name>
+
+<category>PShape</category>
+
+<subcategory>Method</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>PShape_enableStyle.jpg</image>
+<code><![CDATA[
+// The file "bot.svg" must be in the data folder
+// of the current sketch to load successfully
+PShape s;
+s = loadShape("bot.svg");
+smooth();
+s.disableStyle();
+shape(s, -30, 10, 80, 80);
+s.enableStyle();
+shape(s, 50, 10, 80, 80);
+]]></code>
+</example>
+
+<description><![CDATA[Enables the shape's style data and ignores Processing's current styles. Styles include attributes such as colors, stroke weight, and stroke joints. ]]></description>
+
+<syntax><![CDATA[
+<kbd>sh</kbd>.enableStyle()
+]]></syntax>
+
+<parameter>
+<label>sh</label>
+<description><![CDATA[PShape: any variable of type PShape]]></description>
+</parameter>
+
+<returns>none</returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type>Method</type>
+
+<partof>Core</partof>
+
+
+</root>

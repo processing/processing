@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>textMode()</name>
+
+<category>Typography</category>
+
+<subcategory>Attributes</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>textMode_.gif</image>
+<code><![CDATA[
+PFont metaBold;
+// The font "Meta-Bold.vlw.gz" must be located in the
+// current sketch's "data" directory to load successfully
+metaBold = loadFont("Meta-Bold.vlw.gz");
+String lines = "screen";
+textFont(metaBold);
+textMode(SCREEN);
+text(lines, 3, 70);
+]]></code>
+</example>
+
+<description><![CDATA[
+Sets the way text draws to the screen. In the default configuration (the MODEL mode), it's possible to rotate, scale, and place letters in two and three dimensional space. 
+<br /><br />
+Changing to SCREEN mode draws letters directly to the front of the window and greatly increases rendering quality and speed when used with the P2D and P3D renderers. textMode(SCREEN) with OPENGL and JAVA2D (the default) renderers will generally be slower, though pixel accurate with P2D and P3D. With textMode(SCREEN), the letters draw at the actual size of the font (in pixels) and therefore calls to <b>textSize()</b> will not affect the size of the letters. To create a font at the size you desire, use the "Create font..." option in the Tools menu, or use the createFont() function. When using textMode(SCREEN), any z-coordinate passed to a text() command will be ignored, because your computer screen is...flat!
+<br /><br />
+The SHAPE mode draws text using the the glyph outlines of individual characters rather than as textures. This mode is only only supported with the PDF and OPENGL renderer settings. With the PDF renderer, you must call textMode(SHAPE) before any other drawing occurs. If the outlines are not available, then <b>textMode(SHAPE)</b> will be ignored and <b>textMode(MODEL)</b> will be used instead.
+<br /><br />
+The textMode(SHAPE) option in OPENGL mode can be combined with beginRaw() to write vector-accurate text to 2D and 3D output files, for instance DXF or PDF. textMode(SHAPE) is not currently optimized for OPENGL, so if recording shape data, use textMode(MODEL) until you're ready to capture the geometry with beginRaw().
+]]></description>
+
+<syntax><![CDATA[
+textMode(<kbd>MODE</kbd>)
+]]></syntax>
+
+<parameter>
+<label>MODE</label>
+<description><![CDATA[either MODEL, SCREEN, or SHAPE]]></description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+loadFont() 
+PFont 
+text()
+textFont() 
+createFont()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+<level>Extended</level>
+
+
+
+</root>

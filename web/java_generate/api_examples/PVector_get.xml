@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>get()</name>
+
+<category>PVector</category>
+
+<subcategory>Method</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[PVector v1, v2;
+
+void setup() {
+  size(100, 100);
+  v1 = new PVector(20.0, 30.0, 40.0);
+  v2 = new PVector();
+  v2 = v1.get();
+  println(v2.x);  // Prints "20.0"
+  println(v2.y);  // Prints "30.0"
+  println(v2.z);  // Prints "40.0"
+}
+]]></code>
+</example>
+
+<description><![CDATA[Gets a copy of the vector, returns a PVector object.]]></description>
+
+<syntax><![CDATA[
+<kbd>vec</kbd>.get()
+]]></syntax>
+
+<parameter>
+<label>vec</label>
+<description><![CDATA[any variable of type PVector]]></description>
+</parameter>
+
+<returns>PVector</returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Method</type>
+
+<partof>Core</partof>
+
+<level>Extended</level>
+
+
+</root>

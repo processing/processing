@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>screenX()</name>
+
+<category>Lights, Camera</category>
+
+<subcategory>Coordinates</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+void setup() {
+  size(100, 100, P3D);
+}
+
+void draw() {
+  background(204);
+  
+  float x = mouseX;
+  float y = mouseY;
+  float z = -100;
+  
+  // Draw "X" at z = -100
+  stroke(255);
+  line(x-10, y-10, z, x+10, y+10, z); 
+  line(x+10, y-10, z, x-10, y+10, z); 
+  
+  // Draw line in 2D at same x value
+  // Notice the parallax
+  stroke(102);
+  line(x, 0, 0, x, height, 0);
+  
+  // Draw 2D line to match the x value
+  // element drawn at z = -100 
+  stroke(0);
+  float theX = screenX(x, y, z);
+  line(theX, 0, 0, theX, height, 0);    
+}  
+]]></code>
+</example>
+
+<description><![CDATA[Takes a three-dimensional X, Y, Z position and returns the X value for where it will appear on a (two-dimensional) screen.]]></description>
+
+<syntax><![CDATA[
+screenX(<kbd>x</kbd>, <kbd>y</kbd>, <kbd>z</kbd>)
+]]></syntax>
+
+<parameter>
+<label>x</label>
+<description><![CDATA[int or float: 3D x coordinate to be mapped]]></description>
+</parameter>
+
+<parameter>
+<label>y</label>
+<description><![CDATA[int or float: 3D y coordinate to be mapped]]></description>
+</parameter>
+
+<parameter>
+<label>z</label>
+<description><![CDATA[int or float: 3D z coordinate to be mapped]]></description>
+</parameter>
+
+<returns>float</returns>
+
+<related>
+screenY()
+screenZ()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+<level>Extended</level>
+
+
+
+
+
+
+</root>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>specular()</name>
+
+<category>Lights, Camera</category>
+
+<subcategory>Material Properties</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>specular_.jpg</image>
+<code><![CDATA[
+size(100, 100, P3D);
+background(0);
+noStroke();
+background(0);
+fill(0, 51, 102);
+lightSpecular(255, 255, 255);
+directionalLight(204, 204, 204, 0, 0, -1);
+translate(20, 50, 0);
+specular(255, 255, 255);
+sphere(30);
+translate(60, 0, 0);
+specular(204, 102, 0);
+sphere(30);
+
+]]></code>
+</example>
+
+<description><![CDATA[Sets the specular color of the materials used for shapes drawn to the screen, which sets the color of hightlights. Specular refers to light which bounces off a surface in a perferred direction (rather than bouncing in all directions like a diffuse light). Used in combination with <b>emissive()</b>, <b>ambient()</b>, and <b>shininess()</b> in setting the materal properties of shapes.]]></description>
+
+<syntax><![CDATA[
+specular(<kbd>gray</kbd>)
+specular(<kbd>gray</kbd>, <kbd>alpha</kbd>)
+specular(<kbd>color</kbd>)
+specular(<kbd>v1</kbd>, <kbd>v2</kbd>, <kbd>v3</kbd>)
+specular(<kbd>v1</kbd>, <kbd>v2</kbd>, <kbd>v3</kbd>, <kbd>alpha</kbd>)
+]]></syntax>
+
+
+<parameter>
+<label>gray</label>
+<description><![CDATA[int or float: number specifying value between white and black]]></description>
+</parameter>
+
+<parameter>
+<label>alpha</label>
+<description><![CDATA[int or float: opacity]]></description>
+</parameter>
+
+<parameter>
+<label>color</label>
+<description><![CDATA[color: any value of the color datatype]]></description>
+</parameter>
+
+<parameter>
+<label>v1</label>
+<description><![CDATA[int or float: red or hue value]]></description>
+</parameter>
+
+<parameter>
+<label>v2</label>
+<description><![CDATA[int or float: green or saturation value]]></description>
+</parameter>
+
+<parameter>
+<label>v3</label>
+<description><![CDATA[int or float: blue or brightness value]]></description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+emissive()
+ambient()
+shininess()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+<level>Extended</level>
+
+
+
+
+
+
+</root>

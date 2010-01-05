@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>-- (decrement)</name>
+
+<category>Math</category>
+
+<subcategory>Operators</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+int a = 5;    // Sets "a" to 5 
+int b = a--;  // Sets "b" to 5, then decrements "a" to 4
+int c = a;    // Sets "c" to 4 
+]]></code>
+</example>
+
+<description><![CDATA[Substracts the value of an integer variable by 1. Equivalent to the operation <b>i = i - 1</b>. If the value of the variable <b>i</b> is five, then the expression <b>i--</b> decreases the value of <b>i</b> to 4.]]></description>
+
+<syntax><![CDATA[
+<kbd>var</kbd>--
+]]></syntax>
+
+<parameter>
+<label>var</label>
+<description><![CDATA[int]]></description>
+</parameter>
+
+<returns></returns>
+
+<related>
+- (minus)
+-= (subtract assign)
+++ (increment)
+</related>
+
+<availability>1.0</availability>
+
+<type>Operator</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>keyPressed</name>
+
+<category>Input</category>
+
+<subcategory>Keyboard</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+// Click on the image to give it focus
+// and press any key
+
+// Note: the rectangle in this example may 
+// flicker as the operating system may 
+// register a long key press as a repetition
+// of key presses
+
+void draw() {
+  if (keyPressed == true) {
+    fill(0);
+  } else {
+    fill(255);
+  }
+  rect(25, 25, 50, 50);
+}
+]]></code>
+</example>
+
+<description><![CDATA[The boolean system variable <b>keyPressed</b> is <b>true</b> if any key is pressed and <b>false</b> if no keys are pressed.]]></description>
+
+<syntax><![CDATA[
+keyPressed
+]]></syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns></returns>
+
+<related>
+key 
+keyCode
+keyPressed() 
+keyReleased() 
+</related>
+
+<availability>1.0</availability>
+
+<type>System variable</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>unhex()</name>
+
+<category>Data</category>
+
+<subcategory>Conversion</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+String hs = "FF006699";
+int hi = unhex(hs);
+fill(hi);
+rect(30, 20, 55, 55);
+
+]]></code>
+</example>
+
+<description><![CDATA[Converts a String representation of a hexadecimal number to its equivalent integer value.]]></description>
+
+<syntax><![CDATA[
+unhex(<kbd>str</kbd>)
+]]></syntax>
+
+<parameter>
+<label>str</label>
+<description><![CDATA[String]]></description>
+</parameter>
+
+<returns>int</returns>
+
+<related>
+hex()
+binary()
+unbinary()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>IDE</partof>
+
+<level>extended</level>
+
+
+
+
+
+
+</root>

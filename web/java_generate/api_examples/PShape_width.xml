@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>width</name>
+
+<category>PShape</category>
+
+<subcategory>field</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+// The file "bot.svg" must be in the data folder
+// of the current sketch to load successfully
+PShape s;
+s = loadShape("bot.svg");
+smooth();
+shape(s);
+println(s.width);  // Prints 281.0, the width of the shape
+]]></code>
+</example>
+
+<description><![CDATA[The width of the PShape document.]]></description>
+
+<syntax><![CDATA[
+<kbd>sh</kbd>.width
+]]></syntax>
+
+<parameter>
+<label>sh</label>
+<description><![CDATA[PShape: any variable of type PShape]]></description>
+</parameter>
+
+<returns></returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Field</type>
+
+<partof>Core</partof>
+
+</root>

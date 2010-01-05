@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>lightFalloff()</name>
+
+<category>Lights, Camera</category>
+
+<subcategory>Lights</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+Coming soon...
+
+]]></code>
+</example>
+
+<description><![CDATA[Sets the falloff rates for point lights, spot lights, and ambient lights. The parameters are used to determine the falloff with the following equation:<br /><br />d = distance from light position to vertex position<br />falloff = 1 / (CONSTANT + d * LINEAR + (d*d) * QUADRATIC)<br /><br />Like <b>fill()</b>, it affects only the elements which are created after it in the code. The default value if <b>LightFalloff(1.0, 0.0, 0.0)</b>. Thinking about an ambient light with a falloff can be tricky. It is used, for example, if you wanted a region of your scene to be lit ambiently one color and another region to be lit ambiently by another color, you would use an ambient light with location and falloff. You can think of it as a point light that doesn't care which direction a surface is facing.]]></description>
+
+<syntax><![CDATA[
+lightFalloff(<kbd>constant</kbd>, <kbd>linear</kbd>, <kbd>quadratic</kbd>)
+]]></syntax>
+
+
+<parameter>
+<label>constant</label>
+<description><![CDATA[int or float: constant value for determining falloff]]></description>
+</parameter>
+
+<parameter>
+<label>linear</label>
+<description><![CDATA[int or float: linear value for determining falloff]]></description>
+</parameter>
+
+<parameter>
+<label>quadratic</label>
+<description><![CDATA[int or float: quadratic value for determining falloff]]></description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+lights()
+ambientLight()
+pointLight()
+spotLight()
+lightSpecular()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+<level>Extended</level>
+
+
+
+
+
+
+</root>

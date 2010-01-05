@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>pmouseX</name>
+
+<category>Input</category>
+
+<subcategory>Mouse</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+// Move the mouse quickly to see the difference 
+// between the current and previous position 
+void draw() 
+{ 
+  background(204); 
+  line(mouseX, 20, pmouseX, 80); 
+} 
+]]></code>
+</example>
+
+<description><![CDATA[
+The system variable <b>pmouseX</b> always contains the horizontal position of the mouse in the frame previous to the current frame.<br />
+<br />
+You may find that <b>pmouseX</b> and <b>pmouseY</b> have different values inside <b>draw()</b> and inside events like <b>mousePressed()</b> and <b>mouseMoved()</b>. This is because they're used for different roles, so don't mix them! Inside <b>draw()</b>, <b>pmouseX</b> and <b>pmouseY</b> update only once per frame (once per trip through your <b>draw()</b>). But, inside mouse events, they update each time the event is called. If they weren't separated, then the mouse would be read only once per frame, making response choppy. If the mouse variables were always updated multiple times per frame, using <NOBR><b>line(pmouseX, pmouseY, mouseX, mouseY)</b></NOBR> inside <b>draw()</b> would have lots of gaps, because <b>pmouseX</b> may have changed several times in between the calls to <b>line()</b>. Use <b>pmouseX</b> and <b>pmouseY</b> inside <b>draw()</b> if you want values relative to the previous frame. Use <b>pmouseX</b> and <b>pmouseY</b> inside the mouse functions if you want continuous response.
+]]></description>
+
+<syntax><![CDATA[
+pmouseX
+]]></syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns></returns>
+
+<related>
+pmouseY
+mouseX
+mouseY
+</related>
+
+<availability>1.0</availability>
+
+<type>System variable</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>line()</name>
+
+<category>Shape</category>
+
+<subcategory>2D Primitives</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>line_.gif</image>
+<code><![CDATA[
+line(30, 20, 85, 75);
+]]></code>
+</example>
+
+<example>
+<image>line_2.gif</image>
+<code><![CDATA[
+line(30, 20, 85, 20);
+stroke(126);
+line(85, 20, 85, 75);
+stroke(255);
+line(85, 75, 30, 75);
+]]></code>
+</example>
+
+<example>
+<image>line_3.gif</image>
+<code><![CDATA[
+// Drawing lines in 3D requires P3D
+// or OPENGL as a parameter to size()
+size(100, 100, P3D);
+line(30, 20, 0, 85, 20, 15);
+stroke(126);
+line(85, 20, 15, 85, 75, 0);
+stroke(255);
+line(85, 75, 0, 30, 75, -50);
+]]></code>
+</example>
+
+<description><![CDATA[Draws a line (a direct path between two points) to the screen. The version of <b>line()</b> with four parameters draws the line in 2D.  To color a line, use the <b>stroke()</b> function. A line cannot be filled, therefore the <b>fill()</b> method will not affect the color of a line. 2D lines are drawn with a width of one pixel by default, but this can be changed with the <b>strokeWeight()</b> function. The version with six parameters allows the line to be placed anywhere within XYZ space. Drawing this shape in 3D using the <b>z</b> parameter requires the P3D or OPENGL parameter in combination with size as shown in the above example. ]]></description>
+
+<syntax><![CDATA[
+line(<kbd>x1</kbd>, <kbd>y1</kbd>, <kbd>x2</kbd>, <kbd>y2</kbd>)
+line(<kbd>x1</kbd>, <kbd>y1</kbd>, <kbd>z1</kbd>, <kbd>x2</kbd>, <kbd>y2</kbd>, <kbd>z2</kbd>)
+]]></syntax>
+
+<parameter>
+<label>x1</label>
+<description><![CDATA[int or float: x-coordinate of the first point]]></description>
+</parameter>
+
+<parameter>
+<label>y1</label>
+<description><![CDATA[int or float: y-coordinate of the first point]]></description>
+</parameter>
+
+<parameter>
+<label>z1</label>
+<description><![CDATA[int or float: z-coordinate of the first point]]></description>
+</parameter>
+
+<parameter>
+<label>x2</label>
+<description><![CDATA[int or float: x-coordinate of the second point]]></description>
+</parameter>
+
+<parameter>
+<label>y2</label>
+<description><![CDATA[int or float: y-coordinate of the second point]]></description>
+</parameter>
+
+<parameter>
+<label>z2</label>
+<description><![CDATA[int or float: z-coordinate of the second point]]></description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+strokeWeight()
+strokeJoin()
+strokeCap()
+beginShape()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>

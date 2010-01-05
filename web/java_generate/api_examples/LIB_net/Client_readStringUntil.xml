@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>readStringUntil()</name>
+
+<category>Client</category>
+
+<subcategory>Client</subcategory>
+
+<usage>Application</usage>
+
+<example>
+<image></image>
+<code>
+// Example by Tom Igoe
+ 
+// Creates a client that listens for input until it 
+// gets a linefeed character,and puts the bytes it gets 
+// into a byte[] buffer
+
+import processing.net.*; 
+Client myClient; 
+String inString;
+byte interesting = 10;
+
+void setup() { 
+  size (300, 100);
+  // Connect to the local machine at port 10002.
+  // This example will not run if you haven't
+  // previously started a server on this port
+  myClient = new Client(this, "127.0.0.1", 10002); 
+} 
+
+void draw() { 
+  if (myClient.available() &gt; 0) { 
+    background(0); 
+    inString = myClient.readStringUntil(interesting); 
+    println(inString); 
+  }
+} 
+
+</code>
+</example>
+
+<description>
+Combination of <b>readBytesUntil()</b> and <b>readString()</b>. Returns <b>null</b> if it doesn't find what you're looking for.
+</description>
+
+<syntax>
+<c>client</c>.readStringUntil()
+<c>client</c>.readStringUntil(<c>interesting</c>)
+</syntax>
+
+<parameter>
+<label>client</label>
+<description>any variable of type Client</description>
+</parameter>
+
+<parameter>
+<label>interesting</label>
+<description>byte: character designated to mark the end of the data</description>
+</parameter>
+
+<returns>String</returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Method</type>
+
+<partof>Library</partof>
+
+
+</root>

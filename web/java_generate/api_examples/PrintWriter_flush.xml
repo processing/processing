@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>flush()</name>
+
+<category>PrintWriter</category>
+
+<subcategory>Method</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+PrintWriter output;
+
+void setup() {
+  output = createWriter("positions.txt"); // Create a new file in the sketch directory
+}
+
+void draw() {
+  point(mouseX, mouseY);
+  output.println(mouseX); // Write the coordinate to the file
+}
+
+void keyPressed() {
+  output.flush(); // Writes the remaining data to the file
+  output.close(); // Finishes the file
+  exit(); // Stops the program
+}
+
+]]></code>
+</example>
+
+<description><![CDATA[Flushes the <b>PrintWriter</b> object. This is necessary to ensure all remaining data is written to the file before it is closed.]]></description>
+
+<syntax><![CDATA[
+<kbd>pw</kbd>.flush()
+]]></syntax>
+
+<parameter>
+<label>pw</label>
+<description><![CDATA[any object of the type PrintWriter]]></description>
+</parameter>
+
+
+<returns></returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Method</type>
+
+<partof>Core</partof>
+
+
+</root>

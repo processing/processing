@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>sort()</name>
+
+<category>Data</category>
+
+<subcategory>Array Functions</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+float[] a = { 3.4, 3.6, 2, 0, 7.1 };
+a = sort(a);
+println(a);
+]]></code>
+</example>
+
+<example>
+<image></image>
+<code><![CDATA[
+String[] s = { "deer", "elephant", "bear", "aardvark", "cat" };
+s = sort(s);
+println(s);  // Prints aardvark, bear, cat, deer, elephant on separate lines
+]]></code>
+</example>
+
+<example>
+<image></image>
+<code><![CDATA[
+String[] s = { "deer", "elephant", "bear", "aardvark", "cat" };
+s = sort(s, 3);
+println(s);  // Prints bear, dear, elephant, aardvark, cat on separate lines
+]]></code>
+</example>
+
+<description><![CDATA[Sorts an array of numbers from smallest to largest and puts an array of words in alphabetical order. The original array is not modified, a re-ordered array is returned. The <b>count</b> parameter states the number of elements to sort. For example if there are 12 elements in an array and if count is the value 5, only the first five elements on the array will be sorted. As of release 0126, the alphabetical ordering is case insensitive.]]></description>
+
+<syntax><![CDATA[
+sort(<kbd>dataArray</kbd>)
+sort(<kbd>dataArray</kbd>, <kbd>count</kbd>)
+]]></syntax>
+
+<parameter>
+<label>dataArray</label>
+<description><![CDATA[String[], int[], or float[]]]></description>
+</parameter>
+
+<parameter>
+<label>count</label>
+<description><![CDATA[int ]]></description>
+</parameter>
+
+<returns>Array (same datatype as the input)</returns>
+
+<related>
+reverse()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+</root>

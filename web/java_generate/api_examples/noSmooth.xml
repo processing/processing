@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>noSmooth()</name>
+
+<category>Shape</category>
+
+<subcategory>Attributes</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>noSmooth_.gif</image>
+<code><![CDATA[
+background(0);
+smooth();
+ellipse(70, 48, 36, 36);
+noSmooth();
+ellipse(30, 48, 36, 36);
+]]></code>
+</example>
+
+<description><![CDATA[Draws all geometry with jagged (aliased) edges.]]></description>
+
+<syntax><![CDATA[
+noSmooth()
+]]></syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+smooth()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>

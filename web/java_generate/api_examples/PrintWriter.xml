@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>PrintWriter</name>
+
+<category>Output</category>
+
+<subcategory>Files</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+PrintWriter output;
+
+void setup() {
+  // Create a new file in the sketch directory
+  output = createWriter("positions.txt"); 
+}
+
+void draw() {
+  point(mouseX, mouseY);
+  output.println(mouseX); // Write the coordinate to the file
+}
+
+void keyPressed() {
+  output.flush(); // Writes the remaining data to the file
+  output.close(); // Finishes the file
+  exit(); // Stops the program
+}
+
+]]></code>
+</example>
+
+<description><![CDATA[Allows characters to print to a text-output stream. A new PrintWriter object is created with the <b>createWriter()</b> function. For the file to be made correctly, it should be flushed and must be closed with its <b>flush()</b> and <b>close()</b> methods (see above example). ]]></description>
+
+<method>
+<mname>print()</mname>
+<mdescription>Adds data to the stream</mdescription>
+</method>
+
+<method>
+<mname>println()</mname>
+<mdescription>Adds data to the stream and starts a new line</mdescription>
+</method>
+
+<method>
+<mname>flush()</mname>
+<mdescription>Flushes the stream</mdescription>
+</method>
+
+<method>
+<mname>close()</mname>
+<mdescription>Closes the stream</mdescription>
+</method>
+
+<returns></returns>
+
+<related>
+createWriter()
+</related>
+
+<availability>1.0</availability>
+
+<type>Object</type>
+
+<partof>Core</partof>
+
+
+</root>

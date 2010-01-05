@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>- (minus)</name>
+
+<category>Math</category>
+
+<subcategory>Operators</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+int c = 50 - 5;  // Sets c to 45
+int d = c - 5;   // Sets d to 40
+int e = d - 60;  // Sets e to -20
+]]></code>
+</example>
+
+<example>
+<image></image>
+<code><![CDATA[
+int a = 5;         // Sets "a" to 5 
+int b = -a;        // Sets "b" to -5 
+int c = -(5 + 3);  // Sets "c" to -8 
+]]></code>
+</example>
+
+<description><![CDATA[Subtracts one value from another and may also be used to negate a value. As a subtraction operator, the value of the second parameter is subtracted from the first. For example, 5 - 3 yields the number 2. As a negation operator, it is equivalent to multiplying a number by -1. For example, -5 is the same as 5 * -1.  ]]></description>
+
+<syntax><![CDATA[
+-<kbd>value1</kbd>
+<kbd>value1</kbd> - <kbd>value2</kbd>
+]]></syntax>
+
+<parameter>
+<label>value1</label>
+<description><![CDATA[int or float]]></description>
+</parameter>
+
+<parameter>
+<label>value2</label>
+<description><![CDATA[int or float]]></description>
+</parameter>
+
+<returns></returns>
+
+<related>
+-- (decrement)
+-= (subtract assign)
++ (add)
+</related>
+
+<availability>1.0</availability>
+
+<type>Operator</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

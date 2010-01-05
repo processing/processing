@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>clientEvent()</name>
+
+<category>Net</category>
+
+<subcategory></subcategory>
+
+<usage>Application</usage>
+
+<example>
+<image></image>
+<code>
+import processing.net.*;
+
+Client myClient;
+int dataIn;
+
+void setup() {
+  size(200, 200);
+  myClient = new Client(this, "127.0.0.1", 5204);
+}
+
+void draw() { }  // Empty draw keeps the program running
+
+// ClientEvent message is generated when the server 
+// sends data to an existing client.
+void clientEvent(Client someClient) {
+  print("Server Says:  ");
+  dataIn = myClient.read();
+  println(dataIn);
+  background(dataIn);
+
+}
+
+</code>
+</example>
+
+<description>
+This function is called when a server sends a byte to an existing Client object.
+</description>
+
+<syntax>
+void clientEvent(<c>client</c>) {
+  <c>statements</c>
+}
+</syntax>
+
+<parameter>
+<label>statements</label>
+<description>any valid statements</description>
+</parameter>
+
+<parameter>
+<label>client</label>
+<description>the client with new data</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+Server
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>core</partof>
+
+</root>

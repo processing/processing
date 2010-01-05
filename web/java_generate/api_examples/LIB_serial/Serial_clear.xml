@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>clear()</name>
+
+<category>Serial</category>
+
+<subcategory>Serial</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+// Example by Tom Igoe
+
+import processing.serial.*;
+
+Serial myPort;  // The serial port
+char inByte;
+int i = 0;
+
+void setup() {
+  // List all the available serial ports:
+  println(Serial.list());
+  // I know that the first port in the serial list on my mac
+  // is always my  Keyspan adaptor, so I open Serial.list()[0].
+  // Open whatever port is the one you're using.
+  myPort = new Serial(this, Serial.list()[0], 9600);
+
+}
+
+void draw() {
+  // Read until we have 10 bytes, then close the port
+  if (myPort.available() &gt; 1) {
+    if (i &gt;= 10) {
+      // Clear the buffer, or available() will still be &gt; 0:
+      myPort.clear();
+      // Close the port
+      myPort.stop();
+      println("10 bytes! I'm done!");
+    } else {
+      inByte = myPort.readChar();
+      println(inByte);
+    }
+    i++;
+  }
+}
+
+]]></code>
+</example>
+
+<description>
+Empty the buffer, removes all the data stored there.
+</description>
+
+<syntax>
+<c>serial</c>.clear()
+</syntax>
+
+<parameter>
+<label>serial</label>
+<description>any variable of type Serial</description>
+</parameter>
+
+<returns>None</returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Method</type>
+
+<partof>Library</partof>
+
+
+</root>

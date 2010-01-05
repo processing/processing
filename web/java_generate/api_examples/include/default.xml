@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>default</name>
+
+<category>Control</category>
+
+<subcategory>Conditionals</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+char letter = 'F';
+
+switch(letter) {
+  case 'A': 
+    println("Alpha");  // Does not execute
+    break;
+  case 'B': 
+    println("Bravo");  // Does not execute
+    break;
+  default:
+    println("Zulu");   // Prints "Zulu"
+    break;
+}
+]]></code>
+</example>
+
+<description><![CDATA[Keyword for defining the default condition of a <b>switch()</b>. If none of the case labels match the <b>switch()</b> parameter, the statement(s) after the <b>default</b> syntax are executed. Switch structures don't require a <b>default</b>.]]></description>
+
+<syntax><![CDATA[
+default: <kbd>statements</kbd>
+]]></syntax>
+
+<parameter>
+<label>statements</label>
+<description><![CDATA[one or more valid statements to be executed]]></description>
+</parameter>
+
+<returns></returns>
+
+<related>
+switch()
+break
+case
+</related>
+
+<availability>1.0</availability>
+
+<type>Keyword</type>
+
+<partof>Java</partof>
+
+
+<level>Extended</level>
+
+
+
+
+
+</root>

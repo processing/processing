@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>split()</name>
+
+<category>Data</category>
+
+<subcategory>String Functions</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+String men = "Chernenko,Andropov,Brezhnev";
+String[] list = split(men, ',');
+// list[0] is now Chernenko, list[1] is Andropov, ...
+]]></code>
+</example>
+
+<example>
+<image></image>
+<code><![CDATA[
+String numbers = "8 67 5 309";
+int[] nums = int(split(numbers, ' '));
+// nums[0] is now 8, nums[1] is now 67, ...
+]]></code>
+</example>
+
+<example>
+<image></image>
+<code><![CDATA[
+String men = "Chernenko ] Andropov ] Brezhnev";
+String[] list = split(men, " ] ");
+// list[0] is now Chernenko, list[1] is Andropov, ...
+]]></code>
+</example>
+
+<description><![CDATA[
+The split() function breaks a string into pieces using a character or string as the divider. The <b>delim</b> parameter specifies the character or characters that mark the boundaries between each piece. A String[] array is returned that contains each of the pieces.
+<br/> <br/>
+If the result is a set of numbers, you can convert the String[] array to to a float[] or int[] array using the datatype conversion functions <b>int()</b> and <b>float()</b> (see example above).
+<br/> <br/> 
+The <b>splitTokens()</b> function works in a similar fashion, except that it splits using a range of characters instead of a specific character or sequence.
+<!--
+<br /><br />
+This function uses regular expressions to determine how the <b>delim</b> parameter divides the <b>str</b> parameter. Therefore, if you use characters such parentheses and brackets that are used with regular expressions as a part of the <b>delim</b> parameter, you'll need to put two blackslashes (\\\\) in front of the character (see example above). You can read more about <a href="http://en.wikipedia.org/wiki/Regular_expression">regular expressions</a> and <a href="http://en.wikipedia.org/wiki/Escape_character">escape characters</a> on Wikipedia.
+-->
+]]></description>
+
+<syntax><![CDATA[
+split(<kbd>str</kbd>, <kbd>delim</kbd>)
+]]></syntax>
+
+<parameter>
+<label>str</label>
+<description><![CDATA[the String to be split]]></description>
+</parameter>
+
+<parameter>
+<label>delim</label>
+<description><![CDATA[the character or String used to separate the data]]></description>
+</parameter>
+
+<returns>String[]</returns>
+
+<related>
+splitTokens()
+join()
+trim()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+</root>

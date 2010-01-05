@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>copy()</name>
+
+<category>PImage</category>
+
+<subcategory>Method</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>PImage_copy.jpg</image>
+<code><![CDATA[
+PImage img = loadImage("tower.jpg");
+img.copy(50, 0, 50, 100, 0, 0, 50, 100); 
+image(img, 0, 0);
+]]></code>
+</example>
+
+<description><![CDATA[
+Copies a region of pixels from one image into another. If the source and destination regions aren't the same size, it will automatically resize source pixels to fit the specified target region. No alpha information is used in the process, however if the source image has an alpha channel set, it will be copied as well.
+<br /><br />
+As of release 0149, this function ignores <b>imageMode()</b>.
+]]></description>
+
+<syntax><![CDATA[
+<kbd>img</kbd>.copy(<kbd>sx</kbd>, <kbd>sy</kbd>, <kbd>swidth</kbd>, <kbd>sheight</kbd>, <kbd>dx</kbd>, <kbd>dy</kbd>, <kbd>dwidth</kbd>, <kbd>dheight</kbd>);
+<kbd>img</kbd>.copy(<kbd>srcImg</kbd>, <kbd>sx</kbd>, <kbd>sy</kbd>, <kbd>swidth</kbd>,  <kbd>sheight</kbd>, <kbd>dx</kbd>, <kbd>dy</kbd>, <kbd>dwidth</kbd>, <kbd>dheight</kbd>);
+]]></syntax>
+
+<parameter>
+<label>img</label>
+<description><![CDATA[PImage: any variable of type PImage]]></description>
+</parameter>
+
+<parameter>
+<label>sx</label>
+<description><![CDATA[int: X coordinate of the source's upper left corner]]></description>
+</parameter>
+
+<parameter>
+<label>sy</label>
+<description><![CDATA[int: Y coordinate of the source's upper left corner]]></description>
+</parameter>
+
+<parameter>
+<label>swidth</label>
+<description><![CDATA[int: source image width]]></description>
+</parameter>
+
+<parameter>
+<label>sheight</label>
+<description><![CDATA[int: source image height]]></description>
+</parameter>
+
+<parameter>
+<label>dx</label>
+<description><![CDATA[int: X coordinate of the destination's upper left corner]]></description>
+</parameter>
+
+<parameter>
+<label>dy</label>
+<description><![CDATA[int: Y coordinate of the destination's upper left corner]]></description>
+</parameter>
+
+<parameter>
+<label>dwidth</label>
+<description><![CDATA[int: destination image width]]></description>
+</parameter>
+
+<parameter>
+<label>dheight</label>
+<description><![CDATA[int: destination image height]]></description>
+</parameter>
+
+<parameter>
+<label>srcImg</label>
+<description><![CDATA[PImage: a image variable referring to the source image.]]></description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+alpha()
+blend()
+</related>
+
+<availability>1.0</availability>
+
+<type>Method</type>
+
+<partof>Core</partof>
+
+
+</root>

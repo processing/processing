@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>HashMap</name>
+
+<category>Data</category>
+
+<subcategory>Composite</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+HashMap hm = new HashMap();
+
+hm.put("Ava", 1);
+hm.put("Cait", 35);
+hm.put("Casey", 36);
+
+Iterator i = hm.entrySet().iterator();  // Get an iterator
+
+while (i.hasNext()) {
+  Map.Entry me = (Map.Entry)i.next();
+  print(me.getKey() + " is ");
+  println(me.getValue());
+}
+]]></code>
+</example>
+
+
+<description><![CDATA[
+A <b>HashMap</b> stores a collection of objects, each referenced by a key. This is similar to an <b>Array</b>, only instead of accessing elements with a numeric index, a <b>String</b> is used. (If you are familiar with associative arrays from other languages, this is the same idea.) The above example covers basic use, but there's a more extensive example included with the Processing examples.
+<br /><br />
+For a list of the numerous <b>HashMap</b> features, please read the <a href="http://java.sun.com/j2se/1.4.2/docs/api/java/util/HashMap.html">Java reference description</a>.
+]]></description>
+
+<syntax></syntax>
+
+<constructor>
+HashMap()
+HashMap(<kbd>initialCapacity</kbd>)
+HashMap(<kbd>initialCapacity</kbd>, <kbd>loadFactor</kbd>)
+HashMap(<kbd>m</kbd>)
+</constructor>
+
+<cparameter>
+<clabel>initialCapacity</clabel>
+<cdescription>int: defines the initial capacity of the map, it's 16 by default</cdescription>
+</cparameter>
+
+<cparameter>
+<clabel>loadFactor</clabel>
+<cdescription>float: the load factor for the map, the default is 0.75</cdescription>
+</cparameter>
+
+<cparameter>
+<clabel>m</clabel>
+<cdescription>Map: gives the new HashMap the same mappings as this Map</cdescription>
+</cparameter>
+
+<returns></returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Object</type>
+
+<partof>PDE</partof>
+
+<level>Extended</level>
+
+
+
+</root>

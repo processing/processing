@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<root>
+
+<name>subset()</name>
+
+<category>Data</category>
+
+<subcategory>Array Functions</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+String[] sa1 = { "OH ", "NY ", "CA ", "VA ", "CO ", "IL "};
+String[] sa2 = subset(sa1, 1);
+println(sa2);  // Prints NY, CA, VA, CO, IL
+println();
+String[] sa3 = subset(sa1, 2, 3);
+println(sa3);  // Prints CA, VA, CO
+]]></code>
+</example>
+
+<description><![CDATA[
+Extracts an array of elements from an existing array. The <b>array</b> parameter defines the array from which the elements will be copied and the <b>offset</b> and <b>length</b> parameters determine which elements to extract. If no <b>length</b> is given, elements will be extracted from the <b>offset</b> to the end of the array. When specifying the <b>offset</b> remember the first array element is 0. This function does not change the source array.
+<br/> <br/>
+When using an array of objects, the data returned from the function must be cast to the object array's data type. For example: <em>SomeClass[] items = (SomeClass[]) subset(originalArray, 0, 4)</em>.
+]]></description>
+
+<syntax><![CDATA[
+subset(<kbd>array</kbd>, <kbd>offset</kbd>)
+subset(<kbd>array</kbd>, <kbd>offset</kbd>, <kbd>length</kbd>)
+]]></syntax>
+
+<parameter>
+<label>array</label>
+<description><![CDATA[boolean[], byte[], char[], int[], float[], String[], or an array of objects]]></description>
+</parameter>
+
+<parameter>
+<label>offset</label>
+<description><![CDATA[int: position to begin]]></description>
+</parameter>
+
+<parameter>
+<label>length</label>
+<description><![CDATA[int: number of values to extract]]></description>
+</parameter>
+
+<returns>Array (the same datatype as the input)</returns>
+
+<related>
+splice()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+</root>

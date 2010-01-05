@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>substring()</name>
+
+<category>String</category>
+
+<subcategory>Method</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+String str1 = "CCCP"; 
+String str2 = "Rabbit"; 
+String ss1 = str1.substring(2);     // Returns "CP"
+String ss2 = str2.substring(3);     // Returns "bit"
+String ss3 = str1.substring(0, 2);  // Returns "CC"
+println(ss1 + ":" + ss2 + ":" + ss3);  // Prints 'CP:bit:CC'
+]]></code>
+</example>
+
+<description><![CDATA[Returns a new string that is a part of the original string. When using the <b>endIndex</b> parameter, the string between <b>beginIndex</b> and <b>endIndex</b>-1 is returned.]]></description>
+
+<syntax><![CDATA[
+<kbd>str</kbd>.substring(<b>beginIndex</b>)
+<kbd>str</kbd>.substring(<b>beginIndex</b>, <b>endIndex</b>)
+]]></syntax>
+
+<parameter>
+<label>str</label>
+<description><![CDATA[String: any variable of type String]]></description>
+</parameter>
+
+<parameter>
+<label>beginIndex</label>
+<description><![CDATA[int: position from which to begin (inclusive)]]></description>
+</parameter>
+
+<parameter>
+<label>endIndex</label>
+<description><![CDATA[int: position from which to end (exclusive)]]></description>
+</parameter>
+
+<returns>String</returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type>Method</type>
+
+<partof>Core</partof>
+
+
+</root>

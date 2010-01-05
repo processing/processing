@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>color</name>
+
+<category>Data</category>
+
+<subcategory>Primitive</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>color.gif</image>
+<code><![CDATA[
+color c1 = color(204, 153, 0);
+color c2 = #FFCC00;
+noStroke();
+fill(c1);
+rect(0, 0, 25, 100);
+fill(c2);
+rect(25, 0, 25, 100);
+color c3 = get(10, 50);
+fill(c3);
+rect(50, 0, 50, 100);
+]]></code>
+</example>
+
+<description><![CDATA[
+Datatype for storing color values. Colors may be assigned with <b>get()</b> and <b>color()</b> or they may be specified directly using hexadecimal notation such as <b>#FFCC00</b> or <b>0xFFFFCCOO</b>. 
+<br/> <br/>
+Using <b>print()</b> or <b>println()</b> on a color will produce strange results (usually negative numbers) because of the way colors are stored in memory. A better method is to use the <b>hex()</b> function to format the color data, or use the <b>red()</b>, <b>green()</b>, and <b>blue()</b> functions to get individual values and print those. The <b>hue()</b>, <b>saturation()</b>, and <b>brightness()</b> functions work in a similar fashion. To extract red, green, and blue values more quickly (for instance when analyzing an image or a frame of video), use <a href="rightshift.html">bit shifting</a>.
+<br/> <br/>
+Values can also be created using web color notation. For example, "color c = #006699".
+<br/> <br/>
+Web color notation only works for opaque colors. To define a color with an alpha value, you can either use the <b>color()</b> function, or use hexadecimal notation. For hex notation, prefix the values with "0x", for instance "color c = 0xCC006699". In that example, CC (the hex value of 204) is the alpha value, and the remainder is identical to a web color. Note the alpha value is first in the hexadecimal notation (but last when used with the <b>color()</b> function, or functions like <b>fill()</b> and <b>stroke()</b>).
+<br/> <br/>
+From a technical standpoint, colors are 32 bits of information ordered as AAAAAAAARRRRRRRRGGGGGGGGBBBBBBBB where the A's contain the alpha value, the R's are the red value, G's are green, and B's are blue. Each component is 8 bits (a number between 0 and 255). These values can be manipulated with <a href="rightshift.html">bit shifting</a>.
+]]></description>
+
+<syntax><![CDATA[
+color <kbd>var</kbd>
+color <kbd>var</kbd> = <kbd>colorvalue</kbd>
+]]></syntax>
+
+<parameter>
+<label>var</label>
+<description><![CDATA[variable name referencing the value]]></description>
+</parameter>
+
+<parameter>
+<label>colorvalue</label>
+<description><![CDATA[any color value]]></description>
+</parameter>
+
+<returns></returns>
+
+<related>
+colorMode()
+color()
+hex()
+red()
+green()
+blue()
+</related>
+
+<availability>1.0</availability>
+
+<type>Datatype</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

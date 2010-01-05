@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>boolean</name>
+
+<category>Data</category>
+
+<subcategory>Primitive</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>boolean.gif</image>
+<code><![CDATA[
+boolean a = false; 
+if (!a) { 
+  rect(30, 20, 50, 50); 
+} 
+a = true; 
+if (a) { 
+  line(20, 10, 90, 80); 
+  line(20, 80, 90, 10); 
+} 
+]]></code>
+</example>
+
+<description><![CDATA[Datatype for the Boolean values <b>true</b> and <b>false</b>. It is common to use <b>boolean</b>values with control statements to determine the flow of a program. The first time a variable is written, it must be declared with a statement expressing its datatype. ]]></description>
+
+<syntax><![CDATA[
+boolean <kbd>var</kbd>
+boolean <kbd>var</kbd> = <kbd>booleanvalue</kbd>
+]]></syntax>
+
+<parameter>
+<label>var</label>
+<description><![CDATA[variable name referencing the value]]></description>
+</parameter>
+
+<parameter>
+<label>booleanvalue</label>
+<description><![CDATA[true or false]]></description>
+</parameter>
+
+<returns></returns>
+
+<related>
+true
+false
+</related>
+
+<availability>1.0</availability>
+
+<type>Datatype</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

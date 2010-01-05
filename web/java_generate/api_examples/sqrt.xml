@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>sqrt()</name>
+
+<category>Math</category>
+
+<subcategory>Calculation</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>sqrt_.gif</image>
+<code><![CDATA[
+noStroke();
+float a = sqrt(6561);  // Sets a to 81
+float b = sqrt(625);   // Sets b to 25
+float c = sqrt(1);     // Sets c to 1
+rect(0, 25, a, 10);
+rect(0, 45, b, 10);
+rect(0, 65, c, 10);
+]]></code>
+</example>
+
+<description><![CDATA[Calculates the square root of a number. The square root of a number is always positive, even though there may be a valid negative root. The square root <b>s</b> of number <b>a</b> is such that <b>s*s = a</b>. It is the opposite of squaring.]]></description>
+
+<syntax><![CDATA[
+sqrt(<kbd>value</kbd>)
+]]></syntax>
+
+<parameter>
+<label>value</label>
+<description><![CDATA[int or float: non-negative number]]></description>
+</parameter>
+
+<returns>float</returns>
+
+<related>
+pow()
+sq()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

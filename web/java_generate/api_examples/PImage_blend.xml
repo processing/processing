@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>blend()</name>
+
+<category>PImage</category>
+
+<subcategory>Method</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>PImage_blend_add.jpg</image>
+<code><![CDATA[
+PImage img = loadImage("rockies.jpg");
+PImage img2 = loadImage("degaul.jpg"); 
+img.blend(img2, 0, 0, 33, 100, 67, 0, 33, 100, ADD); 
+image(img, 0, 0);
+image(img2, 0, 0);
+]]></code>
+</example>
+
+<example>
+<image>PImage_blend_subtract.jpg</image>
+<code><![CDATA[
+PImage img = loadImage("rockies.jpg");
+PImage img2 = loadImage("degaul.jpg"); 
+img.blend(img2, 0, 0, 33, 100, 67, 0, 33, 100, SUBTRACT); 
+image(img, 0, 0);
+image(img2, 0, 0);
+]]></code>
+</example>
+
+<example>
+<image>PImage_blend_darkest.jpg</image>
+<code><![CDATA[
+PImage img = loadImage("rockies.jpg");
+PImage img2 = loadImage("degaul.jpg"); 
+img.blend(img2, 0, 0, 33, 100, 67, 0, 33, 100, DARKEST); 
+image(img, 0, 0);
+image(img2, 0, 0);
+]]></code>
+</example>
+
+<example>
+<image>PImage_blend_lightest.jpg</image>
+<code><![CDATA[
+PImage img = loadImage("rockies.jpg");
+PImage img2 = loadImage("degaul.jpg"); 
+img.blend(img2, 0, 0, 33, 100, 67, 0, 33, 100, LIGHTEST); 
+image(img, 0, 0);
+image(img2, 0, 0);
+]]></code>
+</example>
+
+<description><![CDATA[
+Blends a region of pixels into the image specified by the <b>img</b> parameter. These copies utilize full alpha channel support and a choice of the following modes to blend the colors of source pixels (A) with the ones of pixels in the destination image (B):<br />
+<br />
+BLEND - linear interpolation of colours: C = A*factor + B<br />
+<br />
+ADD - additive blending with white clip: C = min(A*factor + B, 255)<br />
+<br />
+SUBTRACT - subtractive blending with black clip: C = max(B - A*factor, 0)<br />
+<br />
+DARKEST - only the darkest colour succeeds: C = min(A*factor, B)<br />
+<br />
+LIGHTEST - only the lightest colour succeeds: C = max(A*factor, B)<br />
+<br />
+DIFFERENCE - subtract colors from underlying image.<br />
+<br />
+EXCLUSION - similar to DIFFERENCE, but less extreme.<br />
+<br />
+MULTIPLY - Multiply the colors, result will always be darker.<br />
+<br />
+SCREEN - Opposite multiply, uses inverse values of the colors.<br />
+<br />
+OVERLAY - A mix of MULTIPLY and SCREEN. Multiplies dark values,
+and screens light values.<br />
+<br />
+HARD_LIGHT - SCREEN when greater than 50% gray, MULTIPLY when lower.<br />
+<br />
+SOFT_LIGHT - Mix of DARKEST and LIGHTEST. 
+Works like OVERLAY, but not as harsh.<br />
+<br />
+DODGE - Lightens light tones and increases contrast, ignores darks.
+Called "Color Dodge" in Illustrator and Photoshop.<br />
+<br />
+BURN - Darker areas are applied, increasing contrast, ignores lights.
+Called "Color Burn" in Illustrator and Photoshop.<br />
+<br />
+All modes use the alpha information (highest byte) of source image pixels as the blending factor. If the source and destination regions are different sizes, the image will be automatically resized to match the destination size. If the <b>srcImg</b> parameter is not used, the display window is used as the source image.<br />
+<br />
+As of release 0149, this function ignores <b>imageMode()</b>.
+]]></description>
+
+<syntax><![CDATA[
+<kbd>img</kbd>.blend(<kbd>x</kbd>, <kbd>y</kbd>, <kbd>width</kbd>, <kbd>height</kbd>, <kbd>dx</kbd>, <kbd>dy</kbd>, <kbd>dwidth</kbd>, <kbd>dheight</kbd>, <kbd>MODE</kbd>)
+<kbd>img</kbd>.blend(<kbd>srcImg</kbd>, <kbd>x</kbd>, <kbd>y</kbd>, <kbd>width</kbd>, <kbd>height</kbd>, <kbd>dx</kbd>, <kbd>dy</kbd>, <kbd>dwidth</kbd>, <kbd>dheight</kbd>, <kbd>MODE</kbd>)
+]]></syntax>
+
+<parameter>
+<label>img</label>
+<description><![CDATA[PImage: any variable of type PImage]]></description>
+</parameter>
+
+<parameter>
+<label>x</label>
+<description><![CDATA[int: X coordinate of the source's upper left corner]]></description>
+</parameter>
+
+<parameter>
+<label>y</label>
+<description><![CDATA[int: Y coordinate of the source's upper left corner]]></description>
+</parameter>
+
+<parameter>
+<label>width</label>
+<description><![CDATA[int: source image width]]></description>
+</parameter>
+
+<parameter>
+<label>height</label>
+<description><![CDATA[int: source image height]]></description>
+</parameter>
+
+<parameter>
+<label>dx</label>
+<description><![CDATA[int: X coordinate of the destinations's upper left corner]]></description>
+</parameter>
+
+<parameter>
+<label>dy</label>
+<description><![CDATA[int: Y coordinate of the destinations's upper left corner]]></description>
+</parameter>
+
+<parameter>
+<label>dwidth</label>
+<description><![CDATA[int: destination image width]]></description>
+</parameter>
+
+<parameter>
+<label>dheight</label>
+<description><![CDATA[int: destination image height]]></description>
+</parameter>
+
+<parameter>
+<label>srcImg</label>
+<description><![CDATA[PImage: a image variable referring to the source image]]></description>
+</parameter>
+
+<parameter>
+<label>MODE</label>
+<description><![CDATA[Either BLEND, ADD, SUBTRACT, LIGHTEST, DARKEST, DIFFERENCE, EXCLUSION, MULTIPLY, SCREEN, OVERLAY, HARD_LIGHT, SOFT_LIGHT, DODGE, BURN]]></description>
+</parameter>
+
+
+<returns>None</returns>
+
+<related>
+alpha()
+copy()
+</related>
+
+<availability>1.0</availability>
+
+<type>Method</type>
+
+<partof>Core</partof>
+
+
+</root>

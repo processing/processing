@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>textFont()</name>
+
+<category>Typography</category>
+
+<subcategory>Loading &amp; Displaying</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>textFont_.gif</image>
+<code><![CDATA[
+PFont metaBold;
+// The font "Meta-Bold.vlw" must be located in the 
+// current sketch's "data" directory to load successfully
+metaBold = loadFont("Meta-Bold.vlw");
+textFont(metaBold, 44); 
+text("word", 15, 50); 
+]]></code>
+</example>
+
+<description><![CDATA[Sets the current font. The font must be loaded with <b>loadFont()</b> before it can be used. This font will be used in all subsequent calls to the <b>text()</b> function. If no <b>size</b> parameter is input, the font will appear at its original size (the size it was created at with the "Create Font..." tool) until it is changed with <b>textSize()</b>. <br /> <br /> Because fonts are usually bitmaped, you should create fonts at the sizes that will be used most commonly. Using textFont() without the size parameter will result in the cleanest-looking text. <br /><br /> With the JAVA2D and PDF renderers, it's also possible to enable the use of native fonts via the command hint(ENABLE_NATIVE_FONTS). This will produce vector text in JAVA2D sketches and PDF output in cases where the vector data is available: when the font is still installed, or the font is created via the createFont() function (rather than the Tool).]]></description>
+
+<syntax><![CDATA[
+textFont(<kbd>font</kbd>)
+textFont(<kbd>font</kbd>, <kbd>size</kbd>)
+]]></syntax>
+
+<parameter>
+<label>font</label>
+<description><![CDATA[PFont: any variable of the type PFont]]></description>
+</parameter>
+
+<parameter>
+<label>size</label>
+<description><![CDATA[int or float: the size of the letters in units of pixels]]></description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+createFont()
+loadFont() 
+PFont 
+text() 
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>

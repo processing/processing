@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>* (multiply)</name>
+
+<category>Math</category>
+
+<subcategory>Operators</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+int e = 50 * 5;  // Sets e to 250
+int f = e * 5;   // Sets f to 1250
+]]></code>
+</example>
+
+<description><![CDATA[Multiplies the values of the two parameters. Multiplication is equivalent to a sequence of addition. For example 5 * 4 is equivalent to 5 + 5 + 5 + 5.]]></description>
+
+<syntax><![CDATA[
+<kbd>value1</kbd> * <kbd>value2</kbd>
+]]></syntax>
+
+<parameter>
+<label>value1</label>
+<description><![CDATA[int, float, byte, or char]]></description>
+</parameter>
+
+<parameter>
+<label>value2</label>
+<description><![CDATA[int, float, byte, or char]]></description>
+</parameter>
+
+<returns></returns>
+
+<related>
++ (add)
+/ (divide)
+</related>
+
+<availability>1.0</availability>
+
+<type>Operator</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

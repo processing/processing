@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>saveFrame()</name>
+
+<category>Output</category>
+
+<subcategory>Image</subcategory>
+
+<usage>Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+int x = 0;
+void draw()
+{
+  background(204);
+  if(x &lt; 100) {
+    line(x, 0, x, 100);
+    x = x + 1;
+  } else {
+    noLoop();
+  }
+  // Saves each frame as screen-0000.tif, screen-0001.tif, etc.
+  saveFrame(); 
+}
+]]></code>
+</example>
+
+<example>
+<image></image>
+<code><![CDATA[
+int x = 0;
+void draw()
+{
+  background(204);
+  if(x &lt; 100) {
+    line(x, 0, x, 100);
+    x = x + 1;
+  } else {
+    noLoop();
+  }
+  // Saves each frame as line-0000.tif, line-0001.tif, etc.
+  saveFrame("line-####.tif"); 
+}
+]]></code>
+</example>
+
+<description><![CDATA[
+Saves a numbered sequence of images, one image each time the function is run. To save an image that is identical to the display window, run the function at the end of <b>draw()</b> or within mouse and key events such as <b>mousePressed()</b> and <b>keyPressed()</b>. If <b>saveFrame()</b> is called without parameters, it will save the files as screen-0000.tif, screen-0001.tif, etc. It is possible to specify the name of the sequence with the <b>filename</b> parameter and make the choice of saving TIFF, TARGA, PNG, or JPEG files with the <b>ext</b> parameter. These image sequences can be loaded into programs such as Apple's QuickTime software and made into movies. These files are saved to the sketch's folder, which may be opened by selecting "Show sketch folder" from the "Sketch" menu. 
+<br/> <br/>
+It is not possible to use saveXxxxx() methods inside a web browser unless the sketch is <A HREF="http://java.sun.com/developer/onlineTraining/Programming/JDCBook/signed.html">signed</A>. To save a file back to a server, see the <A HREF="http://processinghacks.com/hacks/savetoweb?s=http+post">save to web</A> example.
+<br/> <br/>
+<br/>
+All images saved from the main drawing window will be opaque. To save images without a background, use <b>createGraphics()</b>.
+]]></description>
+
+<syntax><![CDATA[
+saveFrame()
+saveFrame("<kbd>filename</kbd>-####.<kbd>ext</kbd>")
+]]></syntax>
+
+<parameter>
+<label>filename</label>
+<description><![CDATA[String: any sequence of letters and numbers]]></description>
+</parameter>
+
+<parameter>
+<label>ext</label>
+<description><![CDATA[either "tif", "tga", "jpg", "png"]]></description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+save()
+createGraphics()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>

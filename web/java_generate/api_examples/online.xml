@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>online</name>
+
+<category>Environment</category>
+
+<subcategory></subcategory>
+
+<usage>Web</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+if(online) {  // of "if (online == true)"
+  ellipse(50, 50, 60, 60);
+} else {
+  line(0, 0, 100, 100);
+  line(100, 0, 0, 100);
+}
+]]></code>
+</example>
+
+<description><![CDATA[Confirms if a Processing program is running inside a web browser. This variable is "true" if the program is online and "false" if not.]]></description>
+
+<syntax><![CDATA[
+online
+]]></syntax>
+
+<returns></returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>System variable</type>
+
+<partof>Core</partof>
+
+<level>Extended</level>
+
+</root>

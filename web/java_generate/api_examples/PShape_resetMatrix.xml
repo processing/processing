@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>resetMatrix()</name>
+
+<category>PShape</category>
+
+<subcategory>Method</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code><![CDATA[
+PShape s;
+
+void setup() {
+  size(100, 100);
+  s = loadShape("ohio.svg");
+  s.rotate(PI/6);
+}
+
+void draw() {
+  background(204);
+  shape(s);
+}
+
+void mousePressed() {
+  // Removes all transformations applied to shape
+  // Loads the identity matrix
+  s.resetMatrix();
+}
+]]></code>
+</example>
+
+<description><![CDATA[Replaces the current matrix of a shape with the identity matrix. The equivalent function in OpenGL is glLoadIdentity(). ]]></description>
+
+<syntax><![CDATA[
+<b>sh</b>.resetMatrix()
+]]></syntax>
+
+<parameter>
+<label>sh</label>
+<description><![CDATA[PShape: any variable of type PShape]]></description>
+</parameter>
+
+<returns>None</returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Method</type>
+
+<partof>Core</partof>
+
+</root>

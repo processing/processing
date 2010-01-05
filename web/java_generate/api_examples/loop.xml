@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>loop()</name>
+
+<category>Structure</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<applet></applet>
+<code><![CDATA[
+void setup() {
+  size(200, 200);
+  noLoop();
+}
+
+float x = 0;
+
+void draw() {
+  background(204);
+  x = x + .1;
+  if (x &gt; width) {
+    x = 0;
+  }
+  line(x, 0, x, height); 
+}
+
+void mousePressed() {
+  loop();
+}
+
+void mouseReleased() {
+  noLoop();
+}
+]]></code>
+</example>
+
+<description><![CDATA[Causes Processing to continuously execute the code within <b>draw()</b>. If <b>noLoop()</b> is called, the code in <b>draw()</b> stops executing.]]></description>
+
+<syntax><![CDATA[
+loop()
+redraw()
+draw()
+]]></syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+noLoop()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>PDE</partof>
+
+</root>
