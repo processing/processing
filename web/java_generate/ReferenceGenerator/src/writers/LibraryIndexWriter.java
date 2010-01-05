@@ -45,7 +45,7 @@ public class LibraryIndexWriter extends IndexWriter {
 		
 		try {
 			XMLReferenceWriter.write(examplePath + "/events", outputPath,  this);
-//			getXMLInformation(path + "/index.xml");
+			getXMLInformation(examplePath + "/index.xml");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -77,14 +77,15 @@ public class LibraryIndexWriter extends IndexWriter {
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("WARNING: no index.xml file found at: " + path );
+			return;
 		}
 		
         XPathFactory xpathFactory = XPathFactory.newInstance();
         XPath xpath = xpathFactory.newXPath();
 		try {
-			String name = (String) xpath.evaluate("//name", xmlDoc, XPathConstants.STRING);
-			String desc = "Description";
+			String name = (String) xpath.evaluate("//libraryName", xmlDoc, XPathConstants.STRING);
+			String desc = (String) xpath.evaluate("//libraryDescription", xmlDoc, XPathConstants.STRING);
 			
 			sections.put("libraryname", name);
 			sections.put("librarydescription", desc);
@@ -126,8 +127,8 @@ public class LibraryIndexWriter extends IndexWriter {
 		HashMap<String, String> cmap = new HashMap<String, String>();
 		
 		HashMap<String, String> map = new HashMap<String, String>();
-		map.put("name", getLocalAnchor(doc));
-		map.put("anchor", getName(doc));
+		map.put("name", getName(doc));
+		map.put("anchor", getLocalAnchor(doc));
 		methods.add(map);
 		
 		for(MethodDoc m : doc.methods()){

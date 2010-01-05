@@ -150,8 +150,8 @@ public class ProcessingWeblet extends Standard {
 			} else {
 				// Document the library passed in				
 				System.out.println("Loaded class: " + classDoc.name());
-				LibraryWriter writer = new LibraryWriter(classDoc.containingPackage());
-				writer.write();
+				LibraryWriter writer = new LibraryWriter();
+				writer.write(classDoc.containingPackage());
 			}
 		}
 	}
