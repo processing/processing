@@ -102,6 +102,16 @@ if (is_dir($path.'learning/trig/imgs')) {
 	copydirr($source.'trig/imgs', $path.'learning/trig/imgs', null, 0757, true); 
 }
 
+$page = new Page("Images and Pixels", "Tutorials");
+$page->content(file_get_contents($source."pixels/index.html"));
+writeFile('learning/pixels/index.html', $page->out());
+if (!is_dir($path.'learning/pixels/imgs')) { 
+	mkdir($path.'learning/pixels/imgs', '0757'); 
+}
+if (is_dir($path.'learning/pixels/imgs')) { 
+	copydirr($source.'pixels/imgs', $path.'learning/pixels/imgs', null, 0757, true); 
+}
+
 $benchmark_end = microtime_float();
 $execution_time = round($benchmark_end - $benchmark_start, 4);
 
