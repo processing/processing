@@ -307,6 +307,7 @@ for (int x = 0; x < img.width; x++) {
   }
 }
 </pre>
+<br />
 Since we are altering the image on a per pixel basis, all pixels need not be treated equally.  For example, we can alter the brightness of each pixel according to its distance from the mouse.
 <br /><br />
 <img src="imgs/flashlight.jpg">
@@ -383,12 +384,12 @@ void draw() {
   image(destination,0,0);
 }
 </pre>
-
+<br />
 
 This particular functionality is available without per pixel processing as part of Processing's filter() function.   Understanding the lower level code, however, is crucial if you want to implement your own image processing algorithms, not available with filter().  
 <br /><br />
 But if all you want to do is threshold, here is how:
-
+<br />
 <pre>// Draw the image
 image(img,0,0);
 // Filter the window with a threshold effect
@@ -403,24 +404,26 @@ In previous examples, we've seen a one-to-one relationship between source pixels
 Let's start by creating a new pixel out of a two pixels from a source image -- a pixel and its neighbor to the left.
 <br /><br />
 If we know the pixel is located at (x,y):
-
+<br />
 <pre>
 int loc = x + y*img.width;
 color pix = img.pixels[loc];
 </pre>
-
+<br />
 Then its left neighbor is located at (x-1,y):
+<br />
 <pre>
 int leftLoc = (x-1) + y*img.width;
 color leftPix = img.pixels[leftLoc];
 </pre>
-
+<br />
 We could then make a new color out of the difference between the pixel and its neighbor to the left.
+<br />
 <pre>
 float diff = abs(brightness(pix) - brightness(leftPix));
 pixels[loc] = color(diff);
 </pre>      
-
+<br />
 Here is the full algorithm:
 <br><br />
 <img src="imgs/edges.jpg">
@@ -445,8 +448,8 @@ for (int x = 1; x < width; x++) {
   }
 }
 </pre>
-
-This example is a simple vertical edge detection algorithm.  When pixels differ greatly from their neighbors, they are most likely "edge" pixels.  For example, think of a picture of white piece of paper on a black tabletop.   The edges of that paper are where the colors are most different, where white meets black.   
+<br />
+This example is a simple horizontal edge detection algorithm.  When pixels differ greatly from their neighbors, they are most likely "edge" pixels.  For example, think of a picture of white piece of paper on a black tabletop.   The edges of that paper are where the colors are most different, where white meets black.   
 <br><br />
 In the previous example, we looked at two pixels to find edges.   More sophisticated algorithms, however, usually involve looking at many pixels at a time.  After all, each pixel has 8 immediate neighbors: top left, top, top right, right, bottom right, bottom, bottom left, left.  
 <br><br />
@@ -458,6 +461,7 @@ These image processing algorithms are often referred to as a "spatial convolutio
 Different combinations of weights for each pixel result in various effects. For example, we "sharpen" an image by subtracting the neighboring pixel values and increasing the center point pixel. A blur is achieved by taking the average of all neighboring pixels. (Note that the values in the convolution matrix add up to 1). 
 <br><br />
 For example, 
+<br />
 <pre>
 Sharpen:
 -1   -1   -1
@@ -469,7 +473,7 @@ Blur:
 1/9  1/9  1/9
 1/9  1/9  1/9
 </pre>
-
+<br />
 Following is an example that performs a convolution using a 2D array (see Chapter 13, p. XX for a review of 2D arrays) to store the pixel weights of a 3x3 matrix.   This example is probably the most advanced example we've encountered in this book so far since it involves so many elements (nested loops, 2D arrays, PImage pixels, and so on.)
 <br><br />
 <img src="imgs/sharpen.jpg">
@@ -590,7 +594,7 @@ void draw() {
   ellipse(x,y,pointillize,pointillize);
 }
 </pre>
-
+<br />
 In this next example, we take the data from a two-dimensional image and using the 3D translation techniques described in chapter 14, render a rectangle for each pixel in three-dimensional space.  The z location is determined by the brightness of the color.  Brighter colors appear closer to the viewer and darker ones farther away.
 
 <br /><br />  
