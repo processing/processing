@@ -404,21 +404,21 @@ In previous examples, we've seen a one-to-one relationship between source pixels
 Let's start by creating a new pixel out of a two pixels from a source image -- a pixel and its neighbor to the left.
 <br /><br />
 If we know the pixel is located at (x,y):
-<br />
+<br /><br />
 <pre>
 int loc = x + y*img.width;
 color pix = img.pixels[loc];
 </pre>
 <br />
 Then its left neighbor is located at (x-1,y):
-<br />
+<br /><br />
 <pre>
 int leftLoc = (x-1) + y*img.width;
 color leftPix = img.pixels[leftLoc];
 </pre>
 <br />
 We could then make a new color out of the difference between the pixel and its neighbor to the left.
-<br />
+<br /><br />
 <pre>
 float diff = abs(brightness(pix) - brightness(leftPix));
 pixels[loc] = color(diff);
