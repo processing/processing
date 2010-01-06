@@ -19,10 +19,8 @@ Hopefully, you are comfortable with the idea of data types.  You probably specif
 In addition to user-defined objects (such as Ball), Processing has a bunch of handy classes all ready to go without us writing any code. In this tutorial, we'll examine <a href="http://processing.org/reference/PImage.html">PImage</a>, a class for loading and displaying an image as well as looking at its pixels.
 
 <br /><br />
-
-
 <a href="http://www.learningprocessing.com/examples/chapter-15/example-15-1/">Example: "Hello World" images</a>
-<br /><br />
+<br />
 <pre>
 // Declaring a variable of type PImage
 PImage img;	
@@ -63,12 +61,12 @@ Processing accepts the following file formats for images: GIF, JPG, TGA, PNG.
 <img src="imgs/datafolder.jpg"><br/>
 <br /><br />
 In the above example, it may seem a bit peculiar that we never called a "constructor" to instantiate the <a href="http://processing.org/reference/PImage.html">PImage</a> object, saying "new PImage()".  After all, in most object-related examples, a constructor is a must for producing an object instance.
-<br />
+<br /><br />
 <pre>
 Spaceship ss = new Spaceship();
 Flower flr = new Flower(25);
 </pre>
-<br />
+<br /><br />
 yet:
 <br />
 <pre>
@@ -275,7 +273,7 @@ void draw() {
 Now, we could certainly come up with simplifications in order to merely display the image (for example, the nested loop is not required, not to mention that using the <a href="http://processing.org/reference/image_.html">image()</a> function would allow us to skip all this pixel work entirely.) However, example 15-7 provides a basic framework for getting the red, green, and blue values for each pixel based on its spatial orientation (XY location); ultimately, this will allow us to develop more advanced image processing algorithms.
 <br /><br />
 Before we move on, I should stress that this example works because the display area has the same dimensions as the source image.  If this were not the case, you would simply have to have two pixel location calculations, one for the source image and one for the display area.  
-<br />
+<br /><br />
 <pre>
 int imageLoc = x + y*img.width;
 
