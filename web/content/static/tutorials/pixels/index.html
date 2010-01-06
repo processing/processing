@@ -13,15 +13,15 @@ A digital image is nothing more than data – numbers indicating variations of red
 
 <h5>Getting started with images.</h5>
 
-Hopefully, you are comfortable with the idea of data types.  You probably specify them often – a float variable called “speed,”,an int named “x,” etc.  These are all primitive data types, bits sitting in the computer’s memory ready for our use.   Though perhaps a bit trickier, you hopefully also use objects, complex data types that store multiple pieces of data (along with functionality) --  a "Ball" class, for example, might include floating point variables for location, size, and speed as well as methods to move, display itself, and so on.  
+Hopefully, you are comfortable with the idea of data types.  You probably specify them often – a float variable called "speed,",an int named "x," etc.  These are all primitive data types, bits sitting in the computer’s memory ready for our use.   Though perhaps a bit trickier, you hopefully also use objects, complex data types that store multiple pieces of data (along with functionality) --  a "Ball" class, for example, might include floating point variables for location, size, and speed as well as methods to move, display itself, and so on.  
 <br /><br />
 
-In addition to user-defined objects (such as Ball), Processing has a bunch of handy classes all ready to go without us writing any code. In this tutorial, we'll examine PImage, a class for loading and displaying an image as well as looking at its pixels.
+In addition to user-defined objects (such as Ball), Processing has a bunch of handy classes all ready to go without us writing any code. In this tutorial, we'll examine <a href="http://processing.org/reference/PImage.html">PImage</a>, a class for loading and displaying an image as well as looking at its pixels.
 
 <br /><br />
 
 
-<a href="http://www.learningprocessing.com/examples/chapter-15/example-15-1/">Example: “Hello World” images</a>
+<a href="http://www.learningprocessing.com/examples/chapter-15/example-15-1/">Example: "Hello World" images</a>
 <pre>
 // Declaring a variable of type PImage
 PImage img;	
@@ -29,7 +29,7 @@ PImage img;
 void setup() {
   size(320,240);
   // Make a new instance of a PImage by loading an image file
-  img = loadImage(“mysummervacation.jpg”);
+  img = loadImage("mysummervacation.jpg");
 }
 
 void draw() {
@@ -39,7 +39,7 @@ void draw() {
 }
 </pre>
 
-Using an instance of a PImage object is no different than using a user-defined class.  First, a variable of type PImage, named “img,” is declared.  Second, a new instance of a PImage object is created via the loadImage() method.  loadImage() takes one argument, a String indicating a file name, and loads the that file into memory.  loadImage() looks for image files stored in your Processing sketch’s “data” folder. 
+Using an instance of a <a href="http://processing.org/reference/PImage.html">PImage</a> object is no different than using a user-defined class.  First, a variable of type <a href="http://processing.org/reference/PImage.html">PImage</a>, named "img," is declared.  Second, a new instance of a <a href="http://processing.org/reference/PImage.html">PImage</a> object is created via the <a href="http://processing.org/reference/loadImage_.html">load<a href="http://processing.org/reference/image_.html">image()</a></a> method.  <a href="http://processing.org/reference/loadImage_.html">load<a href="http://processing.org/reference/image_.html">image()</a></a> takes one argument, a String indicating a file name, and loads the that file into memory.  <a href="http://processing.org/reference/loadImage_.html">load<a href="http://processing.org/reference/image_.html">image()</a></a> looks for image files stored in your Processing sketch’s "data" folder. 
 
 <br /><br />
 <table width="100%" border="0" cellpadding="20" bgcolor="#DEDEDE"> 
@@ -60,24 +60,24 @@ Processing accepts the following file formats for images: GIF, JPG, TGA, PNG.
 </td></tr></table>
 <img src="imgs/datafolder.jpg"><br/>
 <br /><br />
-In the above example, it may seem a bit peculiar that we never called a “constructor” to instantiate the PImage object, saying “new PImage()”.  After all, in most object-related examples, a constructor is a must for producing an object instance.
+In the above example, it may seem a bit peculiar that we never called a "constructor" to instantiate the <a href="http://processing.org/reference/PImage.html">PImage</a> object, saying "new P<a href="http://processing.org/reference/image_.html">image()</a>".  After all, in most object-related examples, a constructor is a must for producing an object instance.
 <pre>
 Spaceship ss = new Spaceship();
 Flower flr = new Flower(25);
 </pre>
 yet:
 <pre>
-PImage img = loadImage(“file.jpg”);
+PImage img = loadImage("file.jpg");
 </pre>
-In fact, the loadImage() function performs the work of a constructor, returning a brand new instance of a PImage object generated from the specified filename.   We can think of it as the PImage constructor for loading images from a file.  For creating a blank image, the createImage() function is used.
+In fact, the <a href="http://processing.org/reference/loadImage_.html">load<a href="http://processing.org/reference/image_.html">image()</a></a> function performs the work of a constructor, returning a brand new instance of a <a href="http://processing.org/reference/PImage.html">PImage</a> object generated from the specified filename.   We can think of it as the <a href="http://processing.org/reference/PImage.html">PImage</a> constructor for loading images from a file.  For creating a blank image, the create<a href="http://processing.org/reference/image_.html">image()</a> function is used.
 
 <pre>
 // Create a blank image, 200x200 pixels with RGB color
 PImage img = createImage(200,200,RGB);
 </pre>
-We should also note that the process of loading the image from the hard drive into memory is a slow one, and we should make sure our program only has to do it once, in setup().  Loading images in draw() may result in slow performance as well as “Out of Memory” errors.
+We should also note that the process of loading the image from the hard drive into memory is a slow one, and we should make sure our program only has to do it once, in setup().  Loading images in draw() may result in slow performance as well as "Out of Memory" errors.
 <br /><br />
-Once the image is loaded, it is displayed with the image() function.  The image() function must include 3 arguments -- the image to be displayed, the x location, and the y location.  Optionally two arguments can be added to resize the image to a certain width and height.
+Once the image is loaded, it is displayed with the <a href="http://processing.org/reference/image_.html">image()</a> function.  The <a href="http://processing.org/reference/image_.html">image()</a> function must include 3 arguments -- the image to be displayed, the x location, and the y location.  Optionally two arguments can be added to resize the image to a certain width and height.
 <pre>
 image(img,10,20,90,60);
 </pre>
@@ -90,8 +90,8 @@ When displaying an image, you might like to alter its appearance.  Perhaps you w
 
 For the following examples, we will assume that two images (a sunflower and a dog) have been loaded and the dog is displayed as the background (which will allow us demonstrate transparency.)  
 <pre>
-PImage sunflower = loadImage(“sunflower.jpg”);
-PImage dog = loadImage(“dog.jpg”);
+PImage sunflower = loadImage("sunflower.jpg");
+PImage dog = loadImage("dog.jpg");
 background(dog);
 </pre>
      
@@ -138,7 +138,7 @@ image(sunflower,0,0);
 
 <h5>Pixels, pixels, and more pixels</h5>
 
-If you’ve just begun using Processing you may have mistakenly thought that the only offered means for drawing to the screen is through a function call.  “Draw a line between these points” or “Fill an ellipse with red” or “load this JPG image and place it on the screen here.”  But somewhere, somehow, someone had to write code that translates these function calls into setting the individual pixels on the screen to reflect the requested shape.  A line doesn’t appear because we say line(), it appears because we color all the pixels along a linear path between two points.   Fortunately, we don’t have to manage this lower-level-pixel-setting on a day-to-day basis.  We have the developers of Processing (and Java) to thank for the many drawing functions that take care of this business.
+If you’ve just begun using Processing you may have mistakenly thought that the only offered means for drawing to the screen is through a function call.  "Draw a line between these points" or "Fill an ellipse with red" or "load this JPG image and place it on the screen here."  But somewhere, somehow, someone had to write code that translates these function calls into setting the individual pixels on the screen to reflect the requested shape.  A line doesn’t appear because we say line(), it appears because we color all the pixels along a linear path between two points.   Fortunately, we don’t have to manage this lower-level-pixel-setting on a day-to-day basis.  We have the developers of Processing (and Java) to thank for the many drawing functions that take care of this business.
 <br /><br />
 Nevertheless, from time to time, we do want to break out of our mundane shape drawing existence and deal with the pixels on the screen directly.  Processing provides this functionality via the pixels array.  
 <br /><br />
@@ -169,8 +169,8 @@ updatePixels();
 
 First, we should point out something important in the above example.  Whenever you are accessing the pixels of a Processing window, you must alert Processing to this activity.  This is accomplished with two functions:
 <ul>
-	<li>loadPixels()  This function is called before you access the pixel array, saying “load the pixels, I would like to speak with them!”</li>
-	<li>updatePixels()  This function is called after you finish with the pixel array saying “Go ahead and update the pixels, I’m all done!”</li>
+	<li><a href="http://processing.org/reference/loadPixels_.html">loadPixels()</a>  This function is called before you access the pixel array, saying "load the pixels, I would like to speak with them!"</li>
+	<li><a href="http://processing.org/reference/updatePixels.html">updatePixels()</a>  This function is called after you finish with the pixel array saying "Go ahead and update the pixels, I’m all done!"</li>
 </ul>
 In the above example, because the colors are set randomly, we didn’t have to worry about where the pixels are onscreen as we access them, since we are simply setting all the pixels with no regard to their relative location.   However, in many image processing applications, the XY location of the pixels themselves is crucial information.   A simple example of this might be, set every even column of pixels to white and every odd to black.    How could you do this with a one dimensional pixel array?  How do you know what column or row any given pixel is in?
 <br /><br />
@@ -211,12 +211,12 @@ updatePixels();
 </pre>
 
 <h5>Intro To Image Processing</h5>
-The previous section looked at examples that set pixel values according to an arbitrary calculation.  We will now look at how we might set pixels according those found in an existing PImage object.   Here is some pseudo-code.
+The previous section looked at examples that set pixel values according to an arbitrary calculation.  We will now look at how we might set pixels according those found in an existing <a href="http://processing.org/reference/PImage.html">PImage</a> object.   Here is some pseudo-code.
 <br /><br />
 (1) Load the image file into a PImage object</br>
 (2) For each pixel in the PImage, retrieve the pixel’s color and set the display pixel to that color.
 <br /><br />
-The PImage class includes some useful fields that store data related to the image -- width, height, and pixels.   Just as with our user-defined classes, we can access these fields via the dot syntax.
+The <a href="http://processing.org/reference/PImage.html">PImage</a> class includes some useful fields that store data related to the image -- width, height, and pixels.   Just as with our user-defined classes, we can access these fields via the dot syntax.
 
 <pre>
 PImage img = createImage(320,240,RGB);  // Make a PIMage object
@@ -259,7 +259,7 @@ void draw() {
 }
 </pre>
 
-Now, we could certainly come up with simplifications in order to merely display the image (for example, the nested loop is not required, not to mention that using the image() function would allow us to skip all this pixel work entirely.) However, example 15-7 provides a basic framework for getting the red, green, and blue values for each pixel based on its spatial orientation (XY location); ultimately, this will allow us to develop more advanced image processing algorithms.
+Now, we could certainly come up with simplifications in order to merely display the image (for example, the nested loop is not required, not to mention that using the <a href="http://processing.org/reference/image_.html">image()</a> function would allow us to skip all this pixel work entirely.) However, example 15-7 provides a basic framework for getting the red, green, and blue values for each pixel based on its spatial orientation (XY location); ultimately, this will allow us to develop more advanced image processing algorithms.
 </br></br>
 Before we move on, I should stress that this example works because the display area has the same dimensions as the source image.  If this were not the case, you would simply have to have two pixel location calculations, one for the source image and one for the display area.  
 <pre>
@@ -268,7 +268,7 @@ int imageLoc = x + y*img.width;
 int displayLoc = x + y*width;
 </pre>
 
-<h5>Our second image filter, making our own “tint”</h5>
+<h5>Our second image filter, making our own "tint"</h5>
 
 Just a few paragraphs ago, we were enjoying a relaxing coding session, colorizing images and adding alpha transparency with the friendly tint() method.   For basic filtering, this method did the trick.   The pixel by pixel method, however, will allow us to develop custom algorithms for mathematically altering the colors of an image.  Consider brightness – brighter colors have higher values for their red, green, and blue components.    It follows naturally that we can alter the brightness of an image by increasing or decreasing the color components of each pixel.  In the next example, we dynamically increase or decrease those values based on the mouse’s horizontal location.  (Note, the next two examples include only the image processing loop itself, the rest of the code is assumed.) 
 </br></br>
@@ -330,7 +330,7 @@ for (int x = 0; x < img.width; x++) {
 </pre>
 
 <h5>Writing to another PImage object’s pixels</h5>
-All of our image processing examples have read every pixel from a source image and written a new pixel to the Processing window directly.  However, it’s often more convenient to write the new pixels to a destination image (that you then display using the image() function).   We’ll demonstrate this technique while looking at another simple pixel operation: threshold.
+All of our image processing examples have read every pixel from a source image and written a new pixel to the Processing window directly.  However, it’s often more convenient to write the new pixels to a destination image (that you then display using the <a href="http://processing.org/reference/image_.html">image()</a> function).   We’ll demonstrate this technique while looking at another simple pixel operation: threshold.
 </br></br>
 A threshold filter displays each pixel of an image in only one of two states, black or white.    That state is set according to a particular threshold value.  If the pixel’s brightness is greater than the threshold, we color the pixel white, less than, black.  In the code below, we use an arbitrary threshold of 100.
 </br></br>
@@ -436,7 +436,7 @@ for (int x = 1; x < width; x++) {
 }
 </pre>
 
-This example is a simple vertical edge detection algorithm.  When pixels differ greatly from their neighbors, they are most likely “edge” pixels.  For example, think of a picture of white piece of paper on a black tabletop.   The edges of that paper are where the colors are most different, where white meets black.   
+This example is a simple vertical edge detection algorithm.  When pixels differ greatly from their neighbors, they are most likely "edge" pixels.  For example, think of a picture of white piece of paper on a black tabletop.   The edges of that paper are where the colors are most different, where white meets black.   
 <br></br>
 In the previous example, we looked at two pixels to find edges.   More sophisticated algorithms, however, usually involve looking at many pixels at a time.  After all, each pixel has 8 immediate neighbors: top left, top, top right, right, bottom right, bottom, bottom left, left.  
 <br></br>
@@ -542,15 +542,15 @@ color convolution(int x, int y, float[][] matrix, int matrixsize, PImage img) {
 
 <h5>Visualizing the Image</h5>
 
-You may be thinking: “Gosh, this is all very interesting, but seriously, when I want to blur an image or change its brightness, do I really need to write code?  I mean, can’t I use Photoshop?”  Indeed, what we have achieved here is an merely an introductory understanding of what highly skilled programmers at Adobe do.  The power of Processing, however, is the potential for real-time, interactive graphics applications.  There is no need for us to live within the confines of “pixel point” and “pixel group” processing.  
+You may be thinking: "Gosh, this is all very interesting, but seriously, when I want to blur an image or change its brightness, do I really need to write code?  I mean, can’t I use Photoshop?"  Indeed, what we have achieved here is an merely an introductory understanding of what highly skilled programmers at Adobe do.  The power of Processing, however, is the potential for real-time, interactive graphics applications.  There is no need for us to live within the confines of "pixel point" and "pixel group" processing.  
 </br></br>
-Following are two examples of algorithms for drawing processing shapes.  Instead of coloring the shapes randomly or with hard-coded values as we have in the past, we select colors from pixels inside of a PImage object.  The image itself is never displayed; rather, it serves as a database of information that we can exploit for a multitude of creative pursuits. 
+Following are two examples of algorithms for drawing processing shapes.  Instead of coloring the shapes randomly or with hard-coded values as we have in the past, we select colors from pixels inside of a <a href="http://processing.org/reference/PImage.html">PImage</a> object.  The image itself is never displayed; rather, it serves as a database of information that we can exploit for a multitude of creative pursuits. 
 </br></br>
-In this first example, for every cycle through draw(), we fill one ellipse at a random location onscreen with a color taken from its corresponding location in the source image.  The result is a basic “pointillist-like” effect:
+In this first example, for every cycle through draw(), we fill one ellipse at a random location onscreen with a color taken from its corresponding location in the source image.  The result is a basic "pointillist-like" effect:
 </br></br>
 <img src="imgs/pointillism.jpg">
 </br></br>
-<a href="http://www.learningprocessing.com/examples/chapter-15/example-15-14/">Example: “Pointillism”</a>
+<a href="http://www.learningprocessing.com/examples/chapter-15/example-15-14/">Example: "Pointillism"</a>
 <pre>
 PImage img;
 int pointillize = 16;
