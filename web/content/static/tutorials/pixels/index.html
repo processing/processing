@@ -109,15 +109,16 @@ tint(255);
 image(sunflower,0,0);
 </pre>
 <br /><br />
-<img src="imgs/tint2.jpg"></br>
+<img src="imgs/tint2.jpg"><br />
 <pre>
 //The image appears darker.
 tint(100);  
 image(sunflower,0,0);
 </pre>
+<br />
 A second argument will change the image's alpha transparency.
 <br /><br />
-<img src="imgs/tint3.jpg"></br>
+<img src="imgs/tint3.jpg"><br />
 <pre>
 // The image is at 50% opacity.
 tint(255,127);  
@@ -132,6 +133,7 @@ Three arguments affect the brightness of the red, green, and blue components of 
 tint(0,200,255);
 image(sunflower,0,0);
 </pre>
+<br />
 Finally, adding a fourth argument to the method manipulates the alpha (same as with 2).   Incidentally, the range of values for tint() can be specified with colorMode().
 <br /><br />
 <img src="imgs/tint5.jpg">
@@ -144,7 +146,7 @@ image(sunflower,0,0);
 
 <h5>Pixels, pixels, and more pixels</h5>
 
-If you've just begun using Processing you may have mistakenly thought that the only offered means for drawing to the screen is through a function call.  "Draw a line between these points" or "Fill an ellipse with red" or "load this JPG image and place it on the screen here."  But somewhere, somehow, someone had to write code that translates these function calls into setting the individual pixels on the screen to reflect the requested shape.  A line doesn't appear because we say line(), it appears because we color all the pixels along a linear path between two points.   Fortunately, we don't have to manage this lower-level-pixel-setting on a day-to-day basis.  We have the developers of Processing (and Java) to thank for the many drawing functions that take care of this business.
+If you've just begun using Processing you may have mistakenly thought that the only offered means for drawing to the screen is through a function call.  "Draw a line between these points" or "Fill an ellipse with red" or "load this JPG image and place it on the screen here."  But somewhere, somehow, someone had to write code that translates these function calls into setting the individual pixels on the screen to reflect the requested shape.  A line doesn't appear because we say <a href="http://processing.org/reference/line_.html">line()</a>, it appears because we color all the pixels along a linear path between two points.   Fortunately, we don't have to manage this lower-level-pixel-setting on a day-to-day basis.  We have the developers of Processing (and Java) to thank for the many drawing functions that take care of this business.
 <br /><br />
 Nevertheless, from time to time, we do want to break out of our mundane shape drawing existence and deal with the pixels on the screen directly.  Processing provides this functionality via the pixels array.  
 <br /><br />
@@ -172,7 +174,7 @@ for (int i = 0; i < pixels.length; i++) {
 // When we are finished dealing with pixels
 updatePixels(); 
 </pre>
-
+<br />
 First, we should point out something important in the above example.  Whenever you are accessing the pixels of a Processing window, you must alert Processing to this activity.  This is accomplished with two functions:
 <ul>
 	<li><a href="http://processing.org/reference/loadPixels_.html">loadPixels()</a>  This function is called before you access the pixel array, saying "load the pixels, I would like to speak with them!"</li>
@@ -219,19 +221,20 @@ updatePixels();
 <h5>Intro To Image Processing</h5>
 The previous section looked at examples that set pixel values according to an arbitrary calculation.  We will now look at how we might set pixels according those found in an existing <a href="http://processing.org/reference/PImage.html">PImage</a> object.   Here is some pseudo-code.
 <br /><br />
-(1) Load the image file into a PImage object</br>
+(1) Load the image file into a PImage object<br />
 (2) For each pixel in the PImage, retrieve the pixel's color and set the display pixel to that color.
 <br /><br />
 The <a href="http://processing.org/reference/PImage.html">PImage</a> class includes some useful fields that store data related to the image -- width, height, and pixels.   Just as with our user-defined classes, we can access these fields via the dot syntax.
-
+<br />
 <pre>
-PImage img = createImage(320,240,RGB);  // Make a PIMage object
+PImage img = createImage(320,240,RGB);  // Make a PImage object
 println(img.width);  // Yields 320
 println(img.height); // Yields 240
 img.pixels[0] = color(255,0,0); // Sets the first pixel of the image to red
 </pre>
+<br />
 Access to these fields allows us to loop through all the pixels of an image and display them onscreen.
-
+<br /><br />
 <a href="http://www.learningprocessing.com/examples/chapter-15/example-15-7/">Example: Displaying the pixels of an image</a>
 <pre>
 PImage img;
@@ -264,10 +267,11 @@ void draw() {
   updatePixels();
 }
 </pre>
-
+<br />
 Now, we could certainly come up with simplifications in order to merely display the image (for example, the nested loop is not required, not to mention that using the <a href="http://processing.org/reference/image_.html">image()</a> function would allow us to skip all this pixel work entirely.) However, example 15-7 provides a basic framework for getting the red, green, and blue values for each pixel based on its spatial orientation (XY location); ultimately, this will allow us to develop more advanced image processing algorithms.
-</br></br>
+<br /><br />
 Before we move on, I should stress that this example works because the display area has the same dimensions as the source image.  If this were not the case, you would simply have to have two pixel location calculations, one for the source image and one for the display area.  
+<br />
 <pre>
 int imageLoc = x + y*img.width;
 
@@ -276,8 +280,8 @@ int displayLoc = x + y*width;
 
 <h5>Our second image filter, making our own "tint"</h5>
 
-Just a few paragraphs ago, we were enjoying a relaxing coding session, colorizing images and adding alpha transparency with the friendly tint() method.   For basic filtering, this method did the trick.   The pixel by pixel method, however, will allow us to develop custom algorithms for mathematically altering the colors of an image.  Consider brightness – brighter colors have higher values for their red, green, and blue components.    It follows naturally that we can alter the brightness of an image by increasing or decreasing the color components of each pixel.  In the next example, we dynamically increase or decrease those values based on the mouse's horizontal location.  (Note, the next two examples include only the image processing loop itself, the rest of the code is assumed.) 
-</br></br>
+Just a few paragraphs ago, we were enjoying a relaxing coding session, colorizing images and adding alpha transparency with the friendly tint() method.   For basic filtering, this method did the trick.   The pixel by pixel method, however, will allow us to develop custom algorithms for mathematically altering the colors of an image.  Consider brightness -- brighter colors have higher values for their red, green, and blue components.    It follows naturally that we can alter the brightness of an image by increasing or decreasing the color components of each pixel.  In the next example, we dynamically increase or decrease those values based on the mouse's horizontal location.  (Note, the next two examples include only the image processing loop itself, the rest of the code is assumed.) 
+<br /><br />
 <a href="http://www.learningprocessing.com/examples/chapter-15/example-15-8/">Example:  Adjusting image brightness</a>
 <pre>
 for (int x = 0; x < img.width; x++) {
@@ -304,9 +308,9 @@ for (int x = 0; x < img.width; x++) {
 }
 </pre>
 Since we are altering the image on a per pixel basis, all pixels need not be treated equally.  For example, we can alter the brightness of each pixel according to its distance from the mouse.
-</br></br>
+<br /><br />
 <img src="imgs/flashlight.jpg">
-</br></br>
+<br /><br />
 <a href="http://www.learningprocessing.com/examples/chapter-15/example-15-9/">Example: Adjusting image brightness based on pixel location</a>
 <pre>
 for (int x = 0; x < img.width; x++) {
@@ -337,11 +341,11 @@ for (int x = 0; x < img.width; x++) {
 
 <h5>Writing to another PImage object's pixels</h5>
 All of our image processing examples have read every pixel from a source image and written a new pixel to the Processing window directly.  However, it's often more convenient to write the new pixels to a destination image (that you then display using the <a href="http://processing.org/reference/image_.html">image()</a> function).   We'll demonstrate this technique while looking at another simple pixel operation: threshold.
-</br></br>
+<br /><br />
 A threshold filter displays each pixel of an image in only one of two states, black or white.    That state is set according to a particular threshold value.  If the pixel's brightness is greater than the threshold, we color the pixel white, less than, black.  In the code below, we use an arbitrary threshold of 100.
-</br></br>
+<br /><br />
 <img src="imgs/threshold.jpg">
-</br></br>
+<br /><br />
 <a href="http://www.learningprocessing.com/examples/chapter-15/example-15-10/">Example: Brightness Threshold</a>
 <pre>
 PImage source;       // Source image
@@ -382,7 +386,7 @@ void draw() {
 
 
 This particular functionality is available without per pixel processing as part of Processing's filter() function.   Understanding the lower level code, however, is crucial if you want to implement your own image processing algorithms, not available with filter().  
-</br></br>
+<br /><br />
 But if all you want to do is threshold, here is how:
 
 <pre>// Draw the image
@@ -395,9 +399,9 @@ filter(THRESHOLD,0.5);
 <h5>Level II: Pixel Group Processing</h5>
 
 In previous examples, we've seen a one-to-one relationship between source pixels and destination pixels.   To increase an image's brightness, we take one pixel from the source image, increase the RGB values, and display one pixel in the output window.  In order to perform more advanced image processing functions, we must move beyond the one-to-one pixel paradigm into pixel group processing. 
-</br></br>
+<br /><br />
 Let's start by creating a new pixel out of a two pixels from a source image -- a pixel and its neighbor to the left.
-</br></br>
+<br /><br />
 If we know the pixel is located at (x,y):
 
 <pre>
@@ -418,9 +422,9 @@ pixels[loc] = color(diff);
 </pre>      
 
 Here is the full algorithm:
-<br></br>
+<br><br />
 <img src="imgs/edges.jpg">
-</br></br>
+<br /><br />
 <a href="http://www.learningprocessing.com/examples/chapter-15/example-15-12/">Example: Pixel neighbor differences (edges)</a>
 <pre>
 // Since we are looking at left neighbors
@@ -443,16 +447,16 @@ for (int x = 1; x < width; x++) {
 </pre>
 
 This example is a simple vertical edge detection algorithm.  When pixels differ greatly from their neighbors, they are most likely "edge" pixels.  For example, think of a picture of white piece of paper on a black tabletop.   The edges of that paper are where the colors are most different, where white meets black.   
-<br></br>
+<br><br />
 In the previous example, we looked at two pixels to find edges.   More sophisticated algorithms, however, usually involve looking at many pixels at a time.  After all, each pixel has 8 immediate neighbors: top left, top, top right, right, bottom right, bottom, bottom left, left.  
-<br></br>
+<br><br />
 
 <img src="imgs/neighbors.jpg">
-<br></br>
+<br><br />
 These image processing algorithms are often referred to as a "spatial convolution."  The process uses a weighted average of an input pixel and its neighbors to calculate an output pixel.   In other words, that new pixel is a function of an area of pixels.   Neighboring areas of different sizes can be employed, such as a 3x3 matrix, 5x5, etc.  
-<br></br>
+<br><br />
 Different combinations of weights for each pixel result in various effects. For example, we "sharpen" an image by subtracting the neighboring pixel values and increasing the center point pixel. A blur is achieved by taking the average of all neighboring pixels. (Note that the values in the convolution matrix add up to 1). 
-<br></br>
+<br><br />
 For example, 
 <pre>
 Sharpen:
@@ -467,9 +471,9 @@ Blur:
 </pre>
 
 Following is an example that performs a convolution using a 2D array (see Chapter 13, p. XX for a review of 2D arrays) to store the pixel weights of a 3x3 matrix.   This example is probably the most advanced example we've encountered in this book so far since it involves so many elements (nested loops, 2D arrays, PImage pixels, and so on.)
-<br></br>
+<br><br />
 <img src="imgs/sharpen.jpg">
-</br></br>
+<br /><br />
 <a href="http://www.learningprocessing.com/examples/chapter-15/example-15-13/">Example: Sharpen with Convolution</a>
 <pre>
 PImage img;
@@ -549,13 +553,13 @@ color convolution(int x, int y, float[][] matrix, int matrixsize, PImage img) {
 <h5>Visualizing the Image</h5>
 
 You may be thinking: "Gosh, this is all very interesting, but seriously, when I want to blur an image or change its brightness, do I really need to write code?  I mean, can't I use Photoshop?"  Indeed, what we have achieved here is an merely an introductory understanding of what highly skilled programmers at Adobe do.  The power of Processing, however, is the potential for real-time, interactive graphics applications.  There is no need for us to live within the confines of "pixel point" and "pixel group" processing.  
-</br></br>
+<br /><br />
 Following are two examples of algorithms for drawing processing shapes.  Instead of coloring the shapes randomly or with hard-coded values as we have in the past, we select colors from pixels inside of a <a href="http://processing.org/reference/PImage.html">PImage</a> object.  The image itself is never displayed; rather, it serves as a database of information that we can exploit for a multitude of creative pursuits. 
-</br></br>
+<br /><br />
 In this first example, for every cycle through draw(), we fill one ellipse at a random location onscreen with a color taken from its corresponding location in the source image.  The result is a basic "pointillist-like" effect:
-</br></br>
+<br /><br />
 <img src="imgs/pointillism.jpg">
-</br></br>
+<br /><br />
 <a href="http://www.learningprocessing.com/examples/chapter-15/example-15-14/">Example: "Pointillism"</a>
 <pre>
 PImage img;
@@ -589,9 +593,9 @@ void draw() {
 
 In this next example, we take the data from a two-dimensional image and using the 3D translation techniques described in chapter 14, render a rectangle for each pixel in three-dimensional space.  The z location is determined by the brightness of the color.  Brighter colors appear closer to the viewer and darker ones farther away.
 
-</br></br>  
+<br /><br />  
 <img src="imgs/explode1.jpg"> <img src="imgs/explode2.jpg"> <img src="imgs/explode3.jpg">
-</br></br>
+<br /><br />
 <a href="http://www.learningprocessing.com/examples/chapter-15/example-15-15/">Example: 2D image mapped to 3D</a>
 <pre>
 PImage img;       // The source image
