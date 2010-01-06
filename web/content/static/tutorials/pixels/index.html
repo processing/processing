@@ -61,41 +61,45 @@ Processing accepts the following file formats for images: GIF, JPG, TGA, PNG.
 <br />
 <img src="imgs/datafolder.jpg"><br/>
 <br /><br />
-In the above example, it may seem a bit peculiar that we never called a "constructor" to instantiate the <a href="http://processing.org/reference/PImage.html">PImage</a> object, saying "new P<a href="http://processing.org/reference/image_.html">image()</a>".  After all, in most object-related examples, a constructor is a must for producing an object instance.
+In the above example, it may seem a bit peculiar that we never called a "constructor" to instantiate the <a href="http://processing.org/reference/PImage.html">PImage</a> object, saying "new PImage()".  After all, in most object-related examples, a constructor is a must for producing an object instance.
+<br />
 <pre>
 Spaceship ss = new Spaceship();
 Flower flr = new Flower(25);
 </pre>
+<br />
 yet:
+<br />
 <pre>
 PImage img = loadImage("file.jpg");
 </pre>
-In fact, the <a href="http://processing.org/reference/loadImage_.html">load<a href="http://processing.org/reference/image_.html">image()</a></a> function performs the work of a constructor, returning a brand new instance of a <a href="http://processing.org/reference/PImage.html">PImage</a> object generated from the specified filename.   We can think of it as the <a href="http://processing.org/reference/PImage.html">PImage</a> constructor for loading images from a file.  For creating a blank image, the create<a href="http://processing.org/reference/image_.html">image()</a> function is used.
-
+<br />
+In fact, the <a href="http://processing.org/reference/loadImage_.html">loadImage()</a> function performs the work of a constructor, returning a brand new instance of a <a href="http://processing.org/reference/PImage.html">PImage</a> object generated from the specified filename.   We can think of it as the <a href="http://processing.org/reference/PImage.html">PImage</a> constructor for loading images from a file.  For creating a blank image, the create<a href="http://processing.org/reference/image_.html">image()</a> function is used.
+<br />
 <pre>
 // Create a blank image, 200x200 pixels with RGB color
 PImage img = createImage(200,200,RGB);
 </pre>
+<br />
 We should also note that the process of loading the image from the hard drive into memory is a slow one, and we should make sure our program only has to do it once, in setup().  Loading images in draw() may result in slow performance as well as "Out of Memory" errors.
 <br /><br />
 Once the image is loaded, it is displayed with the <a href="http://processing.org/reference/image_.html">image()</a> function.  The <a href="http://processing.org/reference/image_.html">image()</a> function must include 3 arguments -- the image to be displayed, the x location, and the y location.  Optionally two arguments can be added to resize the image to a certain width and height.
+<br />
 <pre>
 image(img,10,20,90,60);
 </pre>
-
-
 <h5>Your very first image processing filter</h5>
-
 When displaying an image, you might like to alter its appearance.  Perhaps you would like the image to appear darker, transparent, blue-ish, etc.  This type of simple image filtering is achieved with Processing's tint() function.  tint() is essentially the image equivalent of shape's fill(), setting the color and alpha transparency for displaying an image on screen.  An image, nevertheless, is not usually all one color.  The arguments for tint() simply specify how much of a given color to use for every pixel of that image, as well as how transparent those pixels should appear. 
 <br /><br />
 
 For the following examples, we will assume that two images (a sunflower and a dog) have been loaded and the dog is displayed as the background (which will allow us demonstrate transparency.)  
+<br />
 <pre>
 PImage sunflower = loadImage("sunflower.jpg");
 PImage dog = loadImage("dog.jpg");
 background(dog);
 </pre>
-     
+<br />     
 If tint() receives one argument, only the brightness of the image is affected.  
 <br /><br />
 <img src="imgs/tint1.jpg">
@@ -104,6 +108,7 @@ If tint() receives one argument, only the brightness of the image is affected.
 tint(255);  
 image(sunflower,0,0);
 </pre>
+<br /><br />
 <img src="imgs/tint2.jpg"></br>
 <pre>
 //The image appears darker.
@@ -118,15 +123,15 @@ A second argument will change the image's alpha transparency.
 tint(255,127);  
 image(sunflower,0,0);
 </pre>
-
+<br />
 Three arguments affect the brightness of the red, green, and blue components of each color.
 <br /><br />
 <img src="imgs/tint4.jpg">
-<Pre>
+<pre>
 // None of its red, most of its green, and all of its blue.
 tint(0,200,255);
 image(sunflower,0,0);
-</PRE>
+</pre>
 Finally, adding a fourth argument to the method manipulates the alpha (same as with 2).   Incidentally, the range of values for tint() can be specified with colorMode().
 <br /><br />
 <img src="imgs/tint5.jpg">
