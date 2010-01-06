@@ -76,7 +76,7 @@ PImage img = loadImage("file.jpg");
 </pre>
 <br />
 In fact, the <a href="http://processing.org/reference/loadImage_.html">loadImage()</a> function performs the work of a constructor, returning a brand new instance of a <a href="http://processing.org/reference/PImage.html">PImage</a> object generated from the specified filename.   We can think of it as the <a href="http://processing.org/reference/PImage.html">PImage</a> constructor for loading images from a file.  For creating a blank image, the create<a href="http://processing.org/reference/image_.html">image()</a> function is used.
-<br />
+<br /><br />
 <pre>
 // Create a blank image, 200x200 pixels with RGB color
 PImage img = createImage(200,200,RGB);
@@ -85,7 +85,7 @@ PImage img = createImage(200,200,RGB);
 We should also note that the process of loading the image from the hard drive into memory is a slow one, and we should make sure our program only has to do it once, in setup().  Loading images in draw() may result in slow performance as well as "Out of Memory" errors.
 <br /><br />
 Once the image is loaded, it is displayed with the <a href="http://processing.org/reference/image_.html">image()</a> function.  The <a href="http://processing.org/reference/image_.html">image()</a> function must include 3 arguments -- the image to be displayed, the x location, and the y location.  Optionally two arguments can be added to resize the image to a certain width and height.
-<br />
+<br /><br />
 <pre>
 image(img,10,20,90,60);
 </pre>
@@ -94,7 +94,7 @@ When displaying an image, you might like to alter its appearance.  Perhaps you w
 <br /><br />
 
 For the following examples, we will assume that two images (a sunflower and a dog) have been loaded and the dog is displayed as the background (which will allow us demonstrate transparency.)  
-<br />
+<br /><br />
 <pre>
 PImage sunflower = loadImage("sunflower.jpg");
 PImage dog = loadImage("dog.jpg");
@@ -228,7 +228,7 @@ The previous section looked at examples that set pixel values according to an ar
 (2) For each pixel in the PImage, retrieve the pixel's color and set the display pixel to that color.
 <br /><br />
 The <a href="http://processing.org/reference/PImage.html">PImage</a> class includes some useful fields that store data related to the image -- width, height, and pixels.   Just as with our user-defined classes, we can access these fields via the dot syntax.
-<br />
+<br /><br />
 <pre>
 PImage img = createImage(320,240,RGB);  // Make a PImage object
 println(img.width);  // Yields 320
@@ -469,7 +469,7 @@ These image processing algorithms are often referred to as a "spatial convolutio
 Different combinations of weights for each pixel result in various effects. For example, we "sharpen" an image by subtracting the neighboring pixel values and increasing the center point pixel. A blur is achieved by taking the average of all neighboring pixels. (Note that the values in the convolution matrix add up to 1). 
 <br><br />
 For example, 
-<br />
+<br /><br />
 <pre>
 Sharpen:
 -1   -1   -1
