@@ -1,3 +1,7 @@
+0175 core (private) 
+X changed createInputRaw() to only bother checking URLs if : present
+
+
 0174 core (private)
 X svg paths that use 'e' (exponent) not handled properly
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1408

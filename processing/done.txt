@@ -1,3 +1,9 @@
+0175 pde (private)
+X changes to editor toolbar
+X   make shift-new and shift-open on the toolbar open a new window
+X   when shift is down, change text of the toolbar item
+
+
 0174 pde (private)
 X fix ant.jar/ant-launcher.jar error in the windows/linux build scripts
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1403
