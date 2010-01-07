@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-09 Ben Fry and Casey Reas
+  Copyright (c) 2004-10 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This library is free software; you can redistribute it and/or
@@ -35,7 +35,6 @@ import java.util.*;
 import java.util.regex.*;
 import java.util.zip.*;
 
-import javax.annotation.processing.ProcessingEnvironment;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
@@ -4463,24 +4462,26 @@ public class PApplet extends Applet
 
     // safe to check for this as a url first. this will prevent online
     // access logs from being spammed with GET /sketchfolder/http://blahblah
-    try {
-      URL url = new URL(filename);
-      stream = url.openStream();
-      return stream;
+    if (filename.indexOf("://") != -1) {  // at least smells like URL
+      try {
+        URL url = new URL(filename);
+        stream = url.openStream();
+        return stream;
 
-    } catch (MalformedURLException mfue) {
-      // not a url, that's fine
+      } catch (MalformedURLException mfue) {
+        // not a url, that's fine
 
-    } catch (FileNotFoundException fnfe) {
-      // Java 1.5 likes to throw this when URL not available. (fix for 0119)
-      // http://dev.processing.org/bugs/show_bug.cgi?id=403
+      } catch (FileNotFoundException fnfe) {
+        // Java 1.5 likes to throw this when URL not available. (fix for 0119)
+        // http://dev.processing.org/bugs/show_bug.cgi?id=403
 
-    } catch (IOException e) {
-      // changed for 0117, shouldn't be throwing exception
-      e.printStackTrace();
-      //System.err.println("Error downloading from URL " + filename);
-      return null;
-      //throw new RuntimeException("Error downloading from URL " + filename);
+      } catch (IOException e) {
+        // changed for 0117, shouldn't be throwing exception
+        e.printStackTrace();
+        //System.err.println("Error downloading from URL " + filename);
+        return null;
+        //throw new RuntimeException("Error downloading from URL " + filename);
+      }
     }
 
     // Moved this earlier than the getResourceAsStream() checks, because
