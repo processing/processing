@@ -1,6 +1,12 @@
 0175 core (private) 
+X changed createInputRaw() to only bother checking URLs if :// present
+
 _ inconsistent anti-aliasing with OpenGL
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1413
+_ modify PVector to include better methods for chaining operations
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1415
+
+_ add java.io.Reader (and Writer?) to imports
 
 _ consider bringing back text/image using cache/names
 _   fonts might not be as bad
