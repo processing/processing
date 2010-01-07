@@ -1,8 +1,5 @@
-0175 (private)
-X fix problem with windows claiming "does not appear to contain an Android SDK"
-X loadImage() and other loadXxxx() functions not yet working
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1414
-X   can the data folder have subfolders? - yes
+0176 (private)
+
 
 _ add method to set the icon (and package name?)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1429

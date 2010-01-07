@@ -1,5 +1,5 @@
-0175 core (private) 
-X changed createInputRaw() to only bother checking URLs if :// present
+0176 core (private)
+
 
 _ inconsistent anti-aliasing with OpenGL
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1413
