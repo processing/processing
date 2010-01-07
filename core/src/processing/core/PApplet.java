@@ -4462,7 +4462,7 @@ public class PApplet extends Applet
 
     // safe to check for this as a url first. this will prevent online
     // access logs from being spammed with GET /sketchfolder/http://blahblah
-    if (filename.indexOf("://") != -1) {  // at least smells like URL
+    if (filename.indexOf(":") != -1) {  // at least smells like URL
       try {
         URL url = new URL(filename);
         stream = url.openStream();
