@@ -67,7 +67,7 @@ public class Android implements Tool {
   static final String ANDROID_CORE_URL =
     "http://dev.processing.org/processing/android/core.zip";
   static final String ANDROID_CORE_FILENAME =
-    "processing-android-core.zip";
+    "processing-android-core-" + Base.VERSION_NAME + ".zip";
 
 
   public String getMenuTitle() {

@@ -120,10 +120,21 @@ public class Build {
 
     // Create the 'src' folder with the preprocessed code.
     File srcFolder = new File(androidFolder, "src");
+    
     File javaFolder = new File(srcFolder, getPackageName().replace('.', '/'));
     javaFolder.mkdirs();
     //File srcFile = new File(actualSrc, className + ".java");
     String buildPath = javaFolder.getAbsolutePath();
+
+    // Copy the data folder, if one exists 
+    File sketchDataFolder = sketch.getDataFolder();
+    if (sketchDataFolder.exists()) {
+      try {
+        Base.copyDir(sketchDataFolder, srcFolder);
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
     
 //    String prefsLine = Preferences.get("preproc.imports");
 //    System.out.println("imports are " + prefsLine);
