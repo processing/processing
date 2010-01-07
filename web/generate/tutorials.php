@@ -112,6 +112,16 @@ if (is_dir($path.'learning/pixels/imgs')) {
 	copydirr($source.'pixels/imgs', $path.'learning/pixels/imgs', null, 0757, true); 
 }
 
+$page = new Page("PVector", "Tutorials");
+$page->content(file_get_contents($source."pvector/index.html"));
+writeFile('learning/pvector/index.html', $page->out());
+if (!is_dir($path.'learning/pvector/imgs')) { 
+	mkdir($path.'learning/pvector/imgs', '0757'); 
+}
+if (is_dir($path.'learning/pvector/imgs')) { 
+	copydirr($source.'pvector/imgs', $path.'learning/pvector/imgs', null, 0757, true); 
+}
+
 $benchmark_end = microtime_float();
 $execution_time = round($benchmark_end - $benchmark_start, 4);
 
