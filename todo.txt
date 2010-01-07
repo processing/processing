@@ -1,7 +1,5 @@
-0175 pde (private)
-X changes to editor toolbar
-X   make shift-new and shift-open on the toolbar open a new window
-X   when shift is down, change text of the toolbar item
+0176 pde (private)
+
 
 _ add a check to make sure that people aren't running from the dmg
 
