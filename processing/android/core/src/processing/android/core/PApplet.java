@@ -24,7 +24,6 @@
 
 package processing.android.core;
 
-
 import android.content.*;
 import android.content.res.AssetManager;
 import android.graphics.*;
@@ -641,16 +640,20 @@ public class PApplet extends Activity implements PConstants, Runnable {
       width = w;
       height = h;
 
-//      println("and more");
+      PGraphics newGraphics = null;
       if (sketchRenderer().equals(A2D)) {
-        g = new PGraphicsAndroid2D();
+        newGraphics = new PGraphicsAndroid2D();
       } else if (sketchRenderer().equals(A3D)) {
         //surfaceView.setRenderer(new CubeRenderer(false));
-        g = new PGraphicsAndroid3D();
+        newGraphics = new PGraphicsAndroid3D();
       }
-      g.setSize(w, h);
-      g.setParent(PApplet.this);
-      g.setPrimary(true);
+      newGraphics.setSize(w, h);
+      newGraphics.setParent(PApplet.this);
+      newGraphics.setPrimary(true);
+      
+      // Set the value for 'g' once everything is ready (otherwise rendering 
+      // may attempt before setSize(), setParent() etc)
+      g = newGraphics;
 
 //      println("and out");
 
@@ -1504,7 +1507,11 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
       // render a single frame
       //handleDraw();
-      g.requestDraw();  // for GL we can only ask nicely
+      if (g != null) {
+        g.requestDraw();  // for GL we can only ask nicely
+//      } else {
+//        println("skipping, g not yet ready");
+      }
 
       // removed in android
 //      if (frameCount == 1) {
@@ -3614,14 +3621,11 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 
   /**
-   * Call openStream() without automatic gzip decompression.
+   * Call createInput() without automatic gzip decompression.
    */
   public InputStream createInputRaw(String filename) {
-    // TODO finish this
-//    Context context = getApplicationContext();
-//    // MODE_PRIVATE is default, should we use that instead?
-//    context.openFileInput(filename);
-
+    // Additional considerations for Android version:
+    // http://developer.android.com/guide/topics/resources/resources-i18n.html
     InputStream stream = null;
 
     if (filename == null) return null;
@@ -3634,26 +3638,29 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
     // safe to check for this as a url first. this will prevent online
     // access logs from being spammed with GET /sketchfolder/http://blahblah
-    try {
-      URL url = new URL(filename);
-      stream = url.openStream();
-      return stream;
+    if (filename.indexOf(":") != -1) {  // at least smells like URL
+      try {
+        URL url = new URL(filename);
+        stream = url.openStream();
+        return stream;
 
-    } catch (MalformedURLException mfue) {
-      // not a url, that's fine
+      } catch (MalformedURLException mfue) {
+        // not a url, that's fine
 
-    } catch (FileNotFoundException fnfe) {
-      // Java 1.5 likes to throw this when URL not available. (fix for 0119)
-      // http://dev.processing.org/bugs/show_bug.cgi?id=403
+      } catch (FileNotFoundException fnfe) {
+        // Java 1.5 likes to throw this when URL not available. (fix for 0119)
+        // http://dev.processing.org/bugs/show_bug.cgi?id=403
 
-    } catch (IOException e) {
-      // changed for 0117, shouldn't be throwing exception
-      e.printStackTrace();
-      //System.err.println("Error downloading from URL " + filename);
-      return null;
-      //throw new RuntimeException("Error downloading from URL " + filename);
+      } catch (IOException e) {
+        // changed for 0117, shouldn't be throwing exception
+        e.printStackTrace();
+        //System.err.println("Error downloading from URL " + filename);
+        return null;
+        //throw new RuntimeException("Error downloading from URL " + filename);
+      }
     }
 
+    /*
     // Moved this earlier than the getResourceAsStream() checks, because
     // calling getResourceAsStream() on a directory lists its contents.
     // http://dev.processing.org/bugs/show_bug.cgi?id=716
@@ -3687,7 +3694,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
           }
         } catch (IOException e) { }
       }
-
+ 
       // if this file is ok, may as well just load it
       stream = new FileInputStream(file);
       if (stream != null) return stream;
@@ -3696,13 +3703,15 @@ public class PApplet extends Activity implements PConstants, Runnable {
       // catch the RuntimeException being thrown above
     } catch (IOException ioe) {
     } catch (SecurityException se) { }
+     */
 
-    // Using getClassLoader() prevents java from converting dots
+    // Using getClassLoader() prevents Java from converting dots
     // to slashes or requiring a slash at the beginning.
     // (a slash as a prefix means that it'll load from the root of
     // the jar, rather than trying to dig into the package location)
     ClassLoader cl = getClass().getClassLoader();
 
+    /*
     // by default, data files are exported to the root path of the jar.
     // (not the data folder) so check there first.
     stream = cl.getResourceAsStream("data/" + filename);
@@ -3716,6 +3725,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
         return stream;
       }
     }
+    */
 
     // When used with an online script, also need to check without the
     // data folder, in case it's not in a subfolder called 'data'.
@@ -3723,11 +3733,24 @@ public class PApplet extends Activity implements PConstants, Runnable {
     stream = cl.getResourceAsStream(filename);
     if (stream != null) {
       String cn = stream.getClass().getName();
+      // this is an irritation of sun's java plug-in, which will return
+      // a non-null stream for an object that doesn't exist. like all good
+      // things, this is probably introduced in java 1.5. awesome!
+      // http://dev.processing.org/bugs/show_bug.cgi?id=359
       if (!cn.equals("sun.plugin.cache.EmptyInputStream")) {
         return stream;
       }
     }
 
+    Context context = getApplicationContext();
+    try {
+      // MODE_PRIVATE is default, should we use something else?
+      return context.openFileInput(filename);
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    }
+    
+    /*
     try {
       // attempt to load from a local file, used when running as
       // an application, or as a signed applet
@@ -3753,6 +3776,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
       //die(e.getMessage(), e);
       e.printStackTrace();
     }
+    */
+    
     return null;
   }
 

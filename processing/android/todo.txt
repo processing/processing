@@ -1,10 +1,17 @@
 0175 (private)
 X fix problem with windows claiming "does not appear to contain an Android SDK"
+X loadImage() and other loadXxxx() functions not yet working
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1414
+X   can the data folder have subfolders? - yes
+
+_ add method to set the icon (and package name?)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1429
+_   http://developer.android.com/guide/publishing/preparing.html
+_ need to make data folder copy more efficient than just copying everything
+_   right now, first copies to src inside Build.java (which then copies to bin)
 X add methods to request rendering
 _   need to deal with fps problems with this model
-_ check on multiple pointers work (peter's msg)
-_ loadImage() and other loadXxxx() functions not yet working
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1414
+_ check on multiple pointers (peter's msg)
 _ add clear and close to all stream methods?
 
 P1 this is embarrassing, need to fix ASAP
@@ -70,3 +77,6 @@ P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1389
 P3 _ mouseClicked() is currently missing
 P3 _   implement tap methods to handle mouseClicked() 
 P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1406
+P3 _ implement certificates (self-signed) for distribution
+P3 _   http://developer.android.com/guide/publishing/app-signing.html
+P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1430
