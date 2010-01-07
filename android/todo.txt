@@ -23,6 +23,8 @@ P5 nice to have
 android bugs, sorted by priority
 http://dev.processing.org/bugs/buglist.cgi?bug_status=&field0-0-0=product&type0-0-0=substring&value0-0-0=android&field0-0-1=component&type0-0-1=substring&value0-0-1=android&field0-0-2=short_desc&type0-0-2=substring&value0-0-2=android&field0-0-3=status_whiteboard&type0-0-3=substring&value0-0-3=android&query_format=advanced&order=bugs.priority,bugs.bug_status%2Cbugs.bug_id&query_based_on=
 
+for each release, need to do an svn update on dev.processing.org
+
 P1 _ app not pausing or closing when switching to another activity
 P1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1404
 P1 _ get stdout and stderr from the emulator/device
