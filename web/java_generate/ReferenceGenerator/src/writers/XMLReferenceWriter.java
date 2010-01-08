@@ -36,7 +36,9 @@ public class XMLReferenceWriter extends BaseWriter {
 		
 		for(File f : files )
 		{
-			parseFile(f, dstDir, indexWriter);
+			if(f.getAbsolutePath().endsWith(".xml")){				
+				parseFile(f, dstDir, indexWriter);
+			}
 		}
 	}
 	
@@ -51,13 +53,13 @@ public class XMLReferenceWriter extends BaseWriter {
 			doc = builder.parse(f.getPath());
 		} catch (ParserConfigurationException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Failed to parse " + f.getAbsolutePath());
 		} catch (SAXException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Failed to parse " + f.getAbsolutePath());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Failed to parse " + f.getAbsolutePath());
 		}
 		
 		TemplateWriter templateWriter = new TemplateWriter();
@@ -92,10 +94,10 @@ public class XMLReferenceWriter extends BaseWriter {
 			
 		} catch (XPathExpressionException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Failed to parse " + f.getAbsolutePath());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Failed to parse " + f.getAbsolutePath());
 		}
 	}
 	

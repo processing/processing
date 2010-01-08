@@ -185,7 +185,8 @@ public class BaseWriter {
 	}
 	
 	static protected String basicText(String s){
-		String[] sa = s.split("=advanced");
+		String[] sa = s.split("(?i)(<h\\d>Advanced:?</h\\d>)|(=advanced)");
+//		String[] sa = s.split("=advanced");
 		if (sa.length != 0)
 			s = sa[0];
 		return s;
