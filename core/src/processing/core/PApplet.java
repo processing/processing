@@ -408,7 +408,7 @@ public class PApplet extends Applet
   /**
    * Processing automatically tracks if the mouse button is pressed and which button is pressed.
    * The value of the system variable <b>mouseButton</b> is either <b>LEFT</b>, <b>RIGHT</b>, or <b>CENTER</b> depending on which button is pressed.
-   * =advanced
+   * <h3>Advanced:</h3>
    * If running on Mac OS, a ctrl-click will be interpreted as
    * the righthand mouse button (unlike Java, which reports it as
    * the left mouse). 
