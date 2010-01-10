@@ -29,23 +29,9 @@ import android.graphics.Paint.Style;
 
 
 /**
- * Subclass for PGraphics that implements the graphics API using Java2D.
- *
- * <p>Pixel operations too slow? As of release 0085 (the first beta),
- * the default renderer uses Java2D. It's more accurate than the renderer
- * used in alpha releases of Processing (it handles stroke caps and joins,
- * and has better polygon tessellation), but it's super slow for handling
- * pixels. At least until we get a chance to get the old 2D renderer
- * (now called P2D) working in a similar fashion, you can use
- * <TT>size(w, h, P3D)</TT> instead of <TT>size(w, h)</TT> which will
- * be faster for general pixel flipping madness. </p>
- *
- * <p>To get access to the Java 2D "Graphics2D" object for the default
- * renderer, use:
- * <PRE>Graphics2D g2 = ((PGraphicsJava2D)g).g2;</PRE>
- * This will let you do Java 2D stuff directly, but is not supported in
- * any way shape or form. Which just means "have fun, but don't complain
- * if it breaks."</p>
+ * Subclass for PGraphics that implements the graphics API using 
+ * the Android 2D graphics model. Similar tradeoffss to JAVA2D mode  
+ * with the original (desktop) version of Processing. 
  */
 public class PGraphicsAndroid2D extends PGraphics {
 
@@ -152,9 +138,9 @@ public class PGraphicsAndroid2D extends PGraphics {
   // FRAME
 
 
-  public boolean canDraw() {
-    return true;
-  }
+//  public boolean canDraw() {
+//    return true;
+//  }
 
 
   public void requestDraw() {
