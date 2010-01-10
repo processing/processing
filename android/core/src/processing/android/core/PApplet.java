@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-09 Ben Fry and Casey Reas
+  Copyright (c) 2004-10 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This library is free software; you can redistribute it and/or
@@ -38,6 +38,9 @@ import java.util.regex.*;
 import java.util.zip.*;
 
 import android.app.Activity;
+import android.opengl.GLSurfaceView;
+import android.view.SurfaceView;
+import android.view.WindowManager;
 import android.os.Bundle;
 import android.view.*;
 
@@ -377,660 +380,33 @@ public class PApplet extends Activity implements PConstants, Runnable {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-    // adaptation from
-    // http://www.evan129.com/2008/03/08/howto-set-full-screen-on-android/
-    // from http://groups.google.com/group/android-developers/msg/1d7497e5626896a7
+    Window window = getWindow();
+    
+    // Take up as much area as possible
     requestWindowFeature(Window.FEATURE_NO_TITLE);
-//    this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NO_STATUS_BAR,
-//                              WindowManager.LayoutParams.FLAG_NO_STATUS_BAR);
-    getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
-                         WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
+    window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
+                    WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
 
     // This does the actual full screen work
-    getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                         WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-    // Inflate our UI from its XML layout description.
-//    setContentView(bageldroid.articulate.R.layout.skeleton_activity);
-
-//    println("maybe?");
-    surfaceView = new SketchSurfaceView(this);
-    //setContentView(surfaceView);
-    getWindow().setContentView(surfaceView);  // attempt to fix full-screen
-
-      // Find the text editor view inside the layout, because we
-      // want to do various programmatic things with it.
-//      mEditor = (EditText) findViewById(bageldroid.articulate.R.id.editor);
-
-      // Hook up button presses to the appropriate event handler.
-//      ((Button) findViewById(bageldroid.articulate.R.id.back)).setOnClickListener(mBackListener);
-//      ((Button) findViewById(bageldroid.articulate.R.id.clear)).setOnClickListener(mClearListener);
-
-//      mEditor.setText(getText(bageldroid.articulate.R.string.main_label));
-  }
-
-
-  protected void onResume() {
-    // TODO need to bring back app state here!
-//    surfaceView.onResume();
-//    System.out.println("PApplet.onResume() called");
-    paused = false;
-    start();  // kick the thread back on
-    resume();
-    super.onResume();
-  }
-
-
-  protected void onPause() {
-    // TODO need to save all application state here!
-//    System.out.println("PApplet.onPause() called");
-    paused = true;
-    pause();  // handler for others to write
-//  synchronized (this) {
-//  paused = true;
-//}
-    super.onPause();
-  }
-
-
-  /**
-   * Developers can override here to save state. The 'paused' variable will be
-   * set before this function is called.
-   */
-  public void pause() {
-  }
-
-
-  /**
-   * Developers can override here to restore state. The 'paused' variable
-   * will be cleared before this function is called.
-   */
-  public void resume() {
-  }
-
-
-  /**
-   * Called when your activity's options menu needs to be created.
-   */
-//  @Override
-//  public boolean onCreateOptionsMenu(Menu menu) {
-//      super.onCreateOptionsMenu(menu);
-//
-//      // We are going to create two menus. Note that we assign them
-//      // unique integer IDs, labels from our string resources, and
-//      // given them shortcuts.
-//      menu.add(0, BACK_ID, 0, bageldroid.articulate.R.string.back).setShortcut('0', 'b');
-//      menu.add(0, CLEAR_ID, 0, bageldroid.articulate.R.string.clear).setShortcut('1', 'c');
-//
-//      return true;
-//  }
-
-
-  /**
-   * Called right before your activity's option menu is displayed.
-   */
-//  @Override
-//  public boolean onPrepareOptionsMenu(Menu menu) {
-//      super.onPrepareOptionsMenu(menu);
-//
-//      // Before showing the menu, we need to decide whether the clear
-//      // item is enabled depending on whether there is text to clear.
-//      menu.findItem(CLEAR_ID).setVisible(mEditor.getText().length() > 0);
-//
-//      return true;
-//  }
-
-
-  /**
-   * Called when a menu item is selected.
-   */
-//  @Override
-//  public boolean onOptionsItemSelected(MenuItem item) {
-//      switch (item.getItemId()) {
-//      case BACK_ID:
-//          finish();
-//          return true;
-//      case CLEAR_ID:
-//          mEditor.setText("");
-//          return true;
-//      }
-//
-//      return super.onOptionsItemSelected(item);
-//  }
-
-
-  /**
-   * A call-back for when the user presses the back button.
-   */
-//  OnClickListener mBackListener = new OnClickListener() {
-//      public void onClick(View v) {
-//          finish();
-//      }
-//  };
-
-
-  /**
-   * A call-back for when the user presses the clear button.
-   */
-//  OnClickListener mClearListener = new OnClickListener() {
-//      public void onClick(View v) {
-//          mEditor.setText("");
-//      }
-//  };
-
-
-  public void onDestroy() {
-    System.out.println("PApplet.onDestroy() called");
-    super.onDestroy();
-  }
-
-
-  // file:///Applications/android-sdk/docs/reference/android/app/Activity.html
-
-
-
-  //////////////////////////////////////////////////////////////
-
-  // ANDROID SURFACE VIEW
-
-
-  SketchSurfaceView surfaceView;
-  SurfaceHolder surfaceHolder;
-
-
-  public SurfaceHolder getSurfaceHolder() {
-    //return surfaceView.getHolder();
-    return surfaceHolder;
-  }
-
-
-  public class SketchSurfaceView extends android.view.SurfaceView implements SurfaceHolder.Callback {
-//    private SketchThread mGLThread;
-    //    private GLWrapper mGLWrapper;
-
-
-    public SketchSurfaceView(Context context) {
-      super(context);
-      // Install a SurfaceHolder.Callback so we get notified when the
-      // underlying surface is created and destroyed
-      surfaceHolder = getHolder();
-      surfaceHolder.addCallback(this);
-      surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_GPU);
+    window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
+    
+    // window size is -1 at this point, so no sense in using attrs
+//    final WindowManager.LayoutParams attrs = window.getAttributes();
+//    println("window width = " + attrs.width);
+//    println("window height = " + attrs.height);
+    
+    if (sketchRenderer().equals(A2D)) {
+      surfaceView = new SketchSurfaceView2D(this);
+    } else if (sketchRenderer().equals(A3D)) { 
+      surfaceView = new SketchSurfaceView3D(this);
     }
-
-
-    /*
-    public SketchSurfaceView(Context context) {
-      super(context);
-      init();
-    }
-
-
-    public SketchSurfaceView(Context context, AttributeSet attrs) {
-      super(context, attrs);
-      init();
-    }
-
-
-    private void init() {
-      // Install a SurfaceHolder.Callback so we get notified when the
-      // underlying surface is created and destroyed
-      holder = getHolder();
-      holder.addCallback(this);
-      holder.setType(SurfaceHolder.SURFACE_TYPE_GPU);
-    }
-    */
-
-
-//    public SurfaceHolder getSurfaceHolder() {
-//      return surfaceHolder;
-//    }
-
-
-//      public void setGLWrapper(GLWrapper glWrapper) {
-//          mGLWrapper = glWrapper;
-//      }
-
-
-//    public void setRenderer(GLRenderer renderer) {
-//    public void setRenderer(PGraphics renderer) {
-//      mGLThread = new SketchThread(renderer);
-//      mGLThread.start();
-//    }
-
-
-    // part of SurfaceHolder.Callback
-    public void surfaceCreated(SurfaceHolder holder) {
-      // this was part of the constructor...
-
-//      println("and more");
-//      if (sketchRenderer().equals(A2D)) {
-//        g = new PGraphicsAndroid2D();
-//      } else if (sketchRenderer().equals(A3D)) {
-//        //surfaceView.setRenderer(new CubeRenderer(false));
-//        g = new PGraphicsAndroid3D();
-//      }
-//      g.setParent(PApplet.this);
-//      g.setPrimary(true);
-//
-//      println("and out");
-//
-//      // kick things off...should this go before or after the g setup?
-//      init();
-//
-//      //
-//
-//      //mGLThread.surfaceCreated();
-//      g.allocate();
-    }
-
-
-    // part of SurfaceHolder.Callback
-    public void surfaceDestroyed(SurfaceHolder holder) {
-      // Surface will be destroyed when we return
-      //mGLThread.surfaceDestroyed();
-      g.dispose();
-    }
-
-
-    // part of SurfaceHolder.Callback
-    public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
-      System.out.println("surfaceChanged() " + w + " " + h);
-
-      width = w;
-      height = h;
-
-      PGraphics newGraphics = null;
-      if (sketchRenderer().equals(A2D)) {
-        newGraphics = new PGraphicsAndroid2D();
-      } else if (sketchRenderer().equals(A3D)) {
-        //surfaceView.setRenderer(new CubeRenderer(false));
-        newGraphics = new PGraphicsAndroid3D();
-      }
-      newGraphics.setSize(w, h);
-      newGraphics.setParent(PApplet.this);
-      newGraphics.setPrimary(true);
-      
-      // Set the value for 'g' once everything is ready (otherwise rendering 
-      // may attempt before setSize(), setParent() etc)
-      g = newGraphics;
-
-//      println("and out");
-
-      // kick things off...should this go before or after the g setup?
-      init();
-
-      setFocusable(true);
-      setFocusableInTouchMode(true);
-      requestFocus();
-
-      //
-
-      //mGLThread.surfaceCreated();
-//      g.allocate();  // setSize() now doing this
-//      g.resize(w, h);  // probably bad... (!)
-//      mGLThread.onWindowResize(w, h);
-    }
-
-
-    /**
-     * Inform the view that the activity is paused.
-     */
-//    public void onPause() {
-//      System.out.println("SurfaceView.onPause() called");
-//      //mGLThread.onPause();
-//      synchronized (this) {
-//        paused = true;
-//      }
-//    }
-
-
-    /**
-     * Inform the view that the activity is resumed.
-     */
-//    public void onResume() {
-//      System.out.println("SurfaceView.onResume() called");
-//      //mGLThread.onResume();
-//      synchronized (this) {
-//        paused = false;
-//        notify();
-//      }
-//    }
-
-
-    /**
-     * Inform the view that the window focus has changed.
-     */
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-      super.onWindowFocusChanged(hasFocus);
-//      mGLThread.onWindowFocusChanged(hasFocus);
-      focused = hasFocus;
-      if (focused) {
-//        println("got focus");
-        focusGained();
-      } else {
-//        println("lost focus");
-        focusLost();
-      }
-    }
-
-
-//  focused = true;
-//  focusGained();
-
-
-    /**
-     * Queue an "event" to be run on the GL rendering thread.
-     * @param r the runnable to be run on the GL rendering thread.
-     */
-//    public void queueEvent(Runnable r) {
-//      mGLThread.queueEvent(r);
-//    }
-
-
-    /**
-     * If you override this function without calling super.onTouchEvent(),
-     * then motionX, motionY, motionPressed, and motionEvent will not be set.
-     */
-    public boolean onTouchEvent(MotionEvent event) {
-      checkMotionEvent(event);
-      //return super.onTouchEvent(event);
-      return true;
-    }
-
-
-    public boolean onKeyDown(int code, KeyEvent event) {
-//      System.out.println("got onKeyDown for " + code + " " + event);
-      checkKeyEvent(event);
-      return super.onKeyDown(code, event);
-    }
-
-
-    public boolean onKeyUp(int code, KeyEvent event) {
-//      System.out.println("got onKeyUp for " + code + " " + event);
-      checkKeyEvent(event);
-      return super.onKeyDown(code, event);
-    }
-
-
-    @Override
-    protected void onDetachedFromWindow() {
-      super.onDetachedFromWindow();
-      //mGLThread.requestExitAndWait();
-      stop();
-    }
-  }
-
-
-
-  //////////////////////////////////////////////////////////////
-
-  // ANDROID ANIMATION THREAD
-
-  // TODO rename this to p5 graphics semaphore
-//  private static final Semaphore sEglSemaphore = new Semaphore(1);
-
-
-  /**
-   * A generic GL Thread. Takes care of initializing EGL and GL. Delegates
-   * to a Renderer instance to do the actual drawing.
-   */
-  /*
-  class SketchThread extends Thread {
-    private boolean mSizeChanged = true;
-    private boolean mDone;
-    private boolean mPaused;
-//    private boolean mHasFocus;
-    private boolean mHasSurface;
-    private boolean mContextLost;
-    private int mWidth;
-    private int mHeight;
-//    private GLRenderer mRenderer;
-//    private PGraphics mRenderer;
-    private ArrayList<Runnable> mEventQueue = new ArrayList<Runnable>();
-//    private EglHelper mEglHelper;
-
-
-//    SketchThread(GLRenderer renderer) {
-//    SketchThread(PGraphics renderer) {
-    SketchThread() {
-      super();
-      mDone = false;
-      mWidth = 0;
-      mHeight = 0;
-//      mRenderer = renderer;
-      setName("Processing Animation Thread");
-    }
-
-
-    @Override
-    public void run() {
-      // When the android framework launches a second instance of
-      // an activity, the new instance's onCreate() method may be
-      // called before the first instance returns from onDestroy().
-
-      // This semaphore ensures that only one instance at a time
-      // accesses EGL.
-      try {
-        try {
-          sEglSemaphore.acquire();
-        } catch (InterruptedException e) {
-          return;
-        }
-        guardedRun();
-      } catch (InterruptedException e) {
-        // fall thru and exit normally
-      } finally {
-        sEglSemaphore.release();
-      }
-    }
-
-
-    private void guardedRun() throws InterruptedException {
-//      mEglHelper = new EglHelper();
-
-//      // Specify a configuration for our opengl session
-//      // and grab the first configuration that matches is
-//      int[] configSpec = {
-//        EGL10.EGL_DEPTH_SIZE, 16,
-//        EGL10.EGL_NONE
-//      };
-
-      //int[] configSpec = mRenderer.getConfigSpec();
-//      mTranslucentBackground) {
-//        // We want a depth buffer and an alpha buffer
-//        int[] configSpec = {
-//          EGL10.EGL_RED_SIZE,      8,
-//          EGL10.EGL_GREEN_SIZE,    8,
-//          EGL10.EGL_BLUE_SIZE,     8,
-//          EGL10.EGL_ALPHA_SIZE,    8,
-//          EGL10.EGL_DEPTH_SIZE,   16,
-//          EGL10.EGL_NONE
-//        };
-//        return configSpec;
-//      } else {
-//        // We want a depth buffer, don't care about the
-//        // details of the color buffer.
-//        int[] configSpec = {
-//          EGL10.EGL_DEPTH_SIZE,   16,
-//          EGL10.EGL_NONE
-//        };
-//        return configSpec;
-//      }
-
-//      mEglHelper.start(configSpec);
-
-//      GL10 gl = null;
-      boolean tellRendererSurfaceCreated = true;
-      boolean tellRendererSurfaceChanged = true;
-
-      // This is our main activity thread's loop, we go until asked to quit.
-      while (!mDone) {
-        // Update the asynchronous state (window size)
-        int w, h;
-        boolean changed;
-        boolean needStart = false;
-        synchronized (this) {
-          Runnable r;
-          while ((r = getEvent()) != null) {
-            r.run();
-          }
-          if (mPaused) {
-            //mEglHelper.finish();
-            g.dispose();
-            needStart = true;
-          }
-          if (needToWait()) {
-            while (needToWait()) {
-              wait();
-            }
-          }
-          if (mDone) {
-            break;
-          }
-          changed = mSizeChanged;
-          w = mWidth;
-          h = mHeight;
-          mSizeChanged = false;
-        }
-        if (needStart) {
-//          mEglHelper.start();
-          mRenderer.allocate();
-          tellRendererSurfaceCreated = true;
-          changed = true;
-        }
-        if (changed) {
-          gl = (GL10) mEglHelper.createSurface(mHolder);
-          tellRendererSurfaceChanged = true;
-        }
-        if (tellRendererSurfaceCreated) {
-          mRenderer.surfaceCreated(gl);
-          tellRendererSurfaceCreated = false;
-        }
-        if (tellRendererSurfaceChanged) {
-          mRenderer.sizeChanged(gl, w, h);
-          tellRendererSurfaceChanged = false;
-        }
-        if ((w > 0) && (h > 0)) {
-          // draw a frame here
-          mRenderer.drawFrame(gl);
-
-          // Once we're done with GL, we need to call swapBuffers()
-          // to instruct the system to display the rendered frame
-          mEglHelper.swap();
-        }
-      }
-
-      // clean-up everything...
-      //mEglHelper.finish();
-      mRenderer.dispose();
-    }
-
-
-    private boolean needToWait() {
-      return (!mDone) &&
-        (mPaused || (!focused) || (!mHasSurface) || mContextLost);
-    }
-
-
-    public void surfaceCreated() {
-      synchronized(this) {
-        mHasSurface = true;
-        mContextLost = false;
-        notify();
-      }
-    }
-
-
-    public void surfaceDestroyed() {
-      synchronized(this) {
-        mHasSurface = false;
-        notify();
-      }
-    }
-
-
-    public void onPause() {
-      synchronized (this) {
-        mPaused = true;
-      }
-    }
-
-
-    public void onResume() {
-      synchronized (this) {
-        mPaused = false;
-        notify();
-      }
-    }
-
-
-//    public void onWindowFocusChanged(boolean hasFocus) {
-//      synchronized (this) {
-//        mHasFocus = hasFocus;
-//        if (mHasFocus == true) {
-//          notify();
-//        }
-//      }
-//    }
-
-
-    public void onWindowResize(int w, int h) {
-      synchronized (this) {
-        mWidth = w;
-        mHeight = h;
-        mSizeChanged = true;
-      }
-    }
-
-
-    public void requestExitAndWait() {
-      // don't call this from GLThread thread or it is a guaranteed deadlock!
-      synchronized(this) {
-        mDone = true;
-        notify();
-      }
-      try {
-        join();
-      } catch (InterruptedException ex) {
-        Thread.currentThread().interrupt();
-      }
-    }
-
-
-    // Queue an "event" to be run on the GL rendering thread.
-    // @param r the runnable to be run on the GL rendering thread.
-//    public void queueEvent(Runnable r) {
-//      synchronized(this) {
-//        mEventQueue.add(r);
-//      }
-//    }
-
-//    private Runnable getEvent() {
-//      synchronized(this) {
-//        if (mEventQueue.size() > 0) {
-//          return mEventQueue.remove(0);
-//        }
-//
-//      }
-//      return null;
-//    }
-  }
-   */
-
-
-  //////////////////////////////////////////////////////////////
-  //////////////////////////////////////////////////////////////
-  //////////////////////////////////////////////////////////////
-
-
-  public void init() {
-//    println("Calling init()");
-
-    // send tab keys through to the PApplet
-//    setFocusTraversalKeysEnabled(false);
-
+    
+    window.setContentView(surfaceView);  // attempt to fix full-screen
+
+    
+    // code below here formerly from init()
+    
     millisOffset = System.currentTimeMillis();
 
     finished = false; // just for clarity
@@ -1039,13 +415,6 @@ public class PApplet extends Activity implements PConstants, Runnable {
     looping = true;
     redraw = true;  // draw this guy once
     firstMotion = true;
-
-//    try {
-//      getAppletContext();
-//      online = true;
-//    } catch (NullPointerException e) {
-//      online = false;
-//    }
 
     // TODO is there a better way to set the sketch path?
 //    try {
@@ -1079,10 +448,336 @@ public class PApplet extends Activity implements PConstants, Runnable {
     height = g.height;
     */
 
-    // this is automatically called in applets
-    // though it's here for applications anyway
     start();
   }
+
+
+  protected void onResume() {
+    // TODO need to bring back app state here!
+//    surfaceView.onResume();
+    System.out.println("PApplet.onResume() called");
+    paused = false;
+    start();  // kick the thread back on
+    resume();
+    super.onResume();
+//    surfaceView.onResume();
+  }
+
+
+  protected void onPause() {
+    // TODO need to save all application state here!
+//    System.out.println("PApplet.onPause() called");
+    paused = true;
+    pause();  // handler for others to write
+//  synchronized (this) {
+//  paused = true;
+//}
+    super.onPause();
+//    surfaceView.onPause();
+  }
+
+
+  /**
+   * Developers can override here to save state. The 'paused' variable will be
+   * set before this function is called.
+   */
+  public void pause() {
+  }
+
+
+  /**
+   * Developers can override here to restore state. The 'paused' variable
+   * will be cleared before this function is called.
+   */
+  public void resume() {
+  }
+
+
+  public void onDestroy() {
+    System.out.println("PApplet.onDestroy() called");
+    super.onDestroy();
+  }
+
+
+  
+  //////////////////////////////////////////////////////////////
+
+  // ANDROID SURFACE VIEW
+
+  
+  SurfaceView surfaceView;
+  SurfaceHolder surfaceHolder;
+
+
+  public SurfaceHolder getSurfaceHolder() {
+    //return surfaceView.getHolder();
+    return surfaceHolder;
+  }
+
+//  public class SketchSurfaceView {
+//
+//          SketchSurfaceView(Context context) {
+//          if (sketchRenderer().equals(A2D)) {
+//                  surfaceA2D = new SketchSurfaceView2D(context);
+//                  surfaceA3D = null;
+//          }
+//          else if (sketchRenderer().equals(A3D)) {
+//                  surfaceA2D = null;
+//                  surfaceA3D = new SketchSurfaceView3D(context);
+//          }
+//              else {
+//                  // Should throw exception here, since the renderer in unknown.
+//              }
+//          }
+//
+//          void requestDraw() {
+//                  if (surfaceA2D != null) handleDraw();
+//                  else surfaceA3D.requestRender();
+//          }
+//
+//          void onPause() {
+//                  if (surfaceA2D != null) surfaceA2D.onPause();
+//                  else surfaceA3D.onPause();
+//          }
+//
+//          void onResume() {
+//                  if (surfaceA2D != null) surfaceA2D.onResume();
+//                  else surfaceA3D.onResume();
+//          }
+//
+//          SurfaceView getSurface() {
+//                  if (surfaceA2D != null) return surfaceA2D;
+//                  else return surfaceA3D;
+//          }
+//
+//          SketchSurfaceView2D surfaceA2D;
+//          SketchSurfaceView3D surfaceA3D;
+//  }
+
+  public class SketchSurfaceView3D extends GLSurfaceView {
+
+    public SketchSurfaceView3D(Context context) {
+      super(context);
+      surfaceHolder = getHolder();
+      // are these two needed?
+      surfaceHolder.addCallback(this);
+      //surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_GPU);
+
+//      System.out.println("Creating PGraphicsAndroid3D " + width + " " + height);
+
+      // The PGraphics object needs to be created here so the renderer is not 
+      // null. This is required because PApplet.onResume events (which call 
+      // this.onResume() and thus require a valid renderer) are triggered 
+      // before surfaceChanged() is ever called.
+      PGraphics newGraphics = new PGraphicsAndroid3D();
+      // Set arbitrary size; will be set properly when surfaceChanged() called
+      newGraphics.setSize(100, 100);
+      newGraphics.setParent(PApplet.this);
+      newGraphics.setPrimary(true);
+      g = newGraphics;
+
+      // The renderer can be set only once.
+      setRenderer(((PGraphicsAndroid3D)g).getRenderer());
+      setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+      
+      setFocusable(true);
+      setFocusableInTouchMode(true);
+      requestFocus();
+    }
+
+    
+    // part of SurfaceHolder.Callback
+    public void surfaceCreated(SurfaceHolder holder) {
+      super.surfaceCreated(holder);
+      System.out.println("surfaceCreated()");
+    }
+
+    
+    // part of SurfaceHolder.Callback
+    public void surfaceDestroyed(SurfaceHolder holder) {
+      super.surfaceDestroyed(holder);
+      System.out.println("surfaceDestroyed()");
+      // I don't think we need this:
+      //g.dispose();
+    }
+
+
+    @Override
+    public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
+      super.surfaceChanged(holder, format, w, h);
+
+      //System.out.println("surfaceChanged() " + w + " " + h);
+
+      width = w;
+      height = h;
+      
+      g.setSize(w, h);
+
+      // No need to call g.setSize(width, height) b/c super.surfaceChanged() 
+      // will trigger onSurfaceChanged in the renderer, which calls setSize().
+      // -- apparently not true? (100110)
+    }
+
+
+    /**
+     * Inform the view that the window focus has changed.
+     */
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+      super.onWindowFocusChanged(hasFocus);
+      focused = hasFocus;
+      if (focused) {
+//        println("got focus");
+        focusGained();
+      } else {
+//        println("lost focus");
+        focusLost();
+      }
+    }
+
+    public boolean onTouchEvent(MotionEvent event) {
+      checkMotionEvent(event);
+      return true;
+    }
+
+    public boolean onKeyDown(int code, KeyEvent event) {
+      checkKeyEvent(event);
+      return super.onKeyDown(code, event);
+    }
+
+    public boolean onKeyUp(int code, KeyEvent event) {
+      checkKeyEvent(event);
+      return super.onKeyDown(code, event);
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+      super.onDetachedFromWindow();
+      stop();
+    }
+  }
+
+  
+  public class SketchSurfaceView2D extends SurfaceView implements SurfaceHolder.Callback {
+
+    public SketchSurfaceView2D(Context context) {
+      super(context);
+      
+      println("surface holder");
+      // Install a SurfaceHolder.Callback so we get notified when the
+      // underlying surface is created and destroyed
+      surfaceHolder = getHolder();
+      surfaceHolder.addCallback(this);
+      surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_GPU);
+      
+      println("creating graphics");
+      PGraphics newGraphics = new PGraphicsAndroid2D();
+      // Set arbitrary size; will be set properly when surfaceChanged() called
+      newGraphics.setSize(100, 100);
+//      newGraphics.setSize(getWidth(), getHeight());
+      newGraphics.setParent(PApplet.this);
+      newGraphics.setPrimary(true);
+      // Set the value for 'g' once everything is ready (otherwise rendering
+      // may attempt before setSize(), setParent() etc)
+      g = newGraphics;
+      
+      println("setting focusable, requesting focus");
+      setFocusable(true);
+      setFocusableInTouchMode(true);
+      requestFocus();
+      
+      println("done making surface view");
+    }
+
+    
+    // part of SurfaceHolder.Callback
+    public void surfaceCreated(SurfaceHolder holder) {
+    }
+
+    
+    // part of SurfaceHolder.Callback
+    public void surfaceDestroyed(SurfaceHolder holder) {
+      g.dispose();
+    }
+
+    
+    // part of SurfaceHolder.Callback
+    public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
+      System.out.println("surfaceChanged() " + w + " " + h);
+
+      width = w;
+      height = h;
+      
+      g.setSize(w, h);
+    }
+
+
+    /**
+     * Inform the view that the activity is paused.
+     */
+//    public void onPause() {
+//    }
+
+
+    /**
+     * Inform the view that the activity is resumed.
+     */
+//    public void onResume() {
+//    }
+
+
+    /**
+     * Inform the view that the window focus has changed.
+     */
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+      super.onWindowFocusChanged(hasFocus);
+      focused = hasFocus;
+      if (focused) {
+        focusGained();
+      } else {
+        focusLost();
+      }
+    }
+
+
+    /**
+     * If you override this function without calling super.onTouchEvent(),
+     * then motionX, motionY, motionPressed, and motionEvent will not be set.
+     */
+    public boolean onTouchEvent(MotionEvent event) {
+      checkMotionEvent(event);
+      //return super.onTouchEvent(event);
+      return true;
+    }
+
+
+    public boolean onKeyDown(int code, KeyEvent event) {
+//      System.out.println("got onKeyDown for " + code + " " + event);
+      checkKeyEvent(event);
+      return super.onKeyDown(code, event);
+    }
+
+
+    public boolean onKeyUp(int code, KeyEvent event) {
+//      System.out.println("got onKeyUp for " + code + " " + event);
+      checkKeyEvent(event);
+      return super.onKeyDown(code, event);
+    }
+
+
+    @Override
+    protected void onDetachedFromWindow() {
+      super.onDetachedFromWindow();
+      stop();
+    }
+  }
+
+  
+
+  //////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////
 
 
   /*
@@ -1506,12 +1201,9 @@ public class PApplet extends Activity implements PConstants, Runnable {
 //      }
 
       // render a single frame
-      //handleDraw();
-      if (g != null) {
-        g.requestDraw();  // for GL we can only ask nicely
-//      } else {
-//        println("skipping, g not yet ready");
-      }
+      if (g != null) g.requestDraw();
+//      g.requestDraw();
+//      surfaceView.requestDraw();
 
       // removed in android
 //      if (frameCount == 1) {
@@ -3568,14 +3260,6 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 
   /**
-   * @deprecated As of release 0136, use createInput() instead.
-   */
-//  public InputStream openStream(String filename) {
-//    return createInput(filename);
-//  }
-
-
-  /**
    * Simplified method to open a Java InputStream.
    * <P>
    * This method is useful if you want to use the facilities provided
@@ -3694,7 +3378,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
           }
         } catch (IOException e) { }
       }
- 
+
       // if this file is ok, may as well just load it
       stream = new FileInputStream(file);
       if (stream != null) return stream;
@@ -3742,6 +3426,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
       }
     }
 
+    // Attempt to load from a file directly from storage.
     Context context = getApplicationContext();
     try {
       // MODE_PRIVATE is default, should we use something else?
@@ -3749,35 +3434,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
     } catch (FileNotFoundException e) {
       e.printStackTrace();
     }
-    
-    /*
-    try {
-      // attempt to load from a local file, used when running as
-      // an application, or as a signed applet
-      try {  // first try to catch any security exceptions
-        try {
-          stream = new FileInputStream(dataPath(filename));
-          if (stream != null) return stream;
-        } catch (IOException e2) { }
 
-        try {
-          stream = new FileInputStream(sketchPath(filename));
-          if (stream != null) return stream;
-        } catch (Exception e) { }  // ignored
-
-        try {
-          stream = new FileInputStream(filename);
-          if (stream != null) return stream;
-        } catch (IOException e1) { }
-
-      } catch (SecurityException se) { }  // online, whups
-
-    } catch (Exception e) {
-      //die(e.getMessage(), e);
-      e.printStackTrace();
-    }
-    */
-    
     return null;
   }
 
@@ -4315,31 +3972,6 @@ public class PApplet extends Activity implements PConstants, Runnable {
    * Identical to <CODE>arraycopy(src, 0, dst, 0, src.length);</CODE>
    */
   static public void arrayCopy(Object src, Object dst) {
-    System.arraycopy(src, 0, dst, 0, Array.getLength(src));
-  }
-
-  //
-
-  /**
-   * @deprecated Use arrayCopy() instead.
-   */
-  static public void arraycopy(Object src, int srcPosition,
-                               Object dst, int dstPosition,
-                               int length) {
-    System.arraycopy(src, srcPosition, dst, dstPosition, length);
-  }
-
-  /**
-   * @deprecated Use arrayCopy() instead.
-   */
-  static public void arraycopy(Object src, Object dst, int length) {
-    System.arraycopy(src, 0, dst, 0, length);
-  }
-
-  /**
-   * @deprecated Use arrayCopy() instead.
-   */
-  static public void arraycopy(Object src, Object dst) {
     System.arraycopy(src, 0, dst, 0, Array.getLength(src));
   }
 
@@ -7395,6 +7027,10 @@ public class PApplet extends Activity implements PConstants, Runnable {
     g.noLights();
   }
 
+  public void resetLights() {
+            g.resetLights();
+          }
+
 
   public void ambientLight(float red, float green, float blue) {
     g.ambientLight(red, green, blue);
@@ -7632,4 +7268,25 @@ public class PApplet extends Activity implements PConstants, Runnable {
                     int dx, int dy, int dw, int dh, int mode) {
     g.blend(src, sx, sy, sw, sh, dx, dy, dw, dh, mode);
   }
+
+//  public void drawCube()
+//  {
+//          // By Andres. Just to render something.
+//
+//      if (g instanceof PGraphicsAndroid3D)
+//      {
+//          PApplet.println("Drawing cube with PGraphicsAndroid3D");
+//          ((PGraphicsAndroid3D)g).drawCube();
+//      }
+//      else
+//      {
+//          PApplet.println("Drawing rect with PGraphicsAndroid2D");
+//          g.rect(30, 30, 100, 100);
+//      }
+//  }
+
+  public void model(GLModel model, float x, float y, float z) {
+      g.model(model, x, y, z);
+  }
+
 }
