@@ -40,3 +40,11 @@
 
 + Registering methods (registerPost(), registerDraw(), etc) is not supported.
   Too much overhead for too little benefit.
+
++ All cursor-related methods have been removed. (They don't make sense in 
+  a touch-controlled interface.)
+
++ The all-lowercase version of arraycopy() (deprecated from the desktop version)
+  has been removed.
+
++ The deprecated openStream() method has been removed. Use createInput().

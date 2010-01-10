@@ -271,7 +271,7 @@ public interface PConstants {
 
   static final int LINE            = 4;
   static final int LINES           = 4;
-
+  
   static final int TRIANGLE        = 8;
   static final int TRIANGLES       = 9;
   static final int TRIANGLE_STRIP  = 10;
@@ -290,6 +290,10 @@ public interface PConstants {
 
   static final int SPHERE          = 40;
   static final int BOX             = 41;
+
+  static public final int LINE_STRIP    = 50;
+  static public final int LINE_LOOP     = 51;
+  static public final int POINT_SPRITES = 52;
 
 
   // shape closing modes
@@ -335,11 +339,9 @@ public interface PConstants {
   // uv texture orientation modes
 
   /** texture coordinates in 0..1 range */
-  static final int NORMAL     = 1;
-  /** @deprecated use NORMAL instead */
-  static final int NORMALIZED = 1;
+  static final int NORMAL = 1;
   /** texture coordinates based on image width/height */
-  static final int IMAGE      = 2;
+  static final int IMAGE  = 2;
 
 
   // text placement modes
