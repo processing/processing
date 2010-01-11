@@ -1,6 +1,12 @@
 0176 pde (private)
 
 
+_ remove SurfaceView2D/SurfaceView3D separation, or clean up
+_ what is resetLights() in PGraphics?
+_ remove drawCube() method from PApplet
+_ remove model() method from end of PApplet (make it shape(PShape))
+
+
 _ add a check to make sure that people aren't running from the dmg
 
 
