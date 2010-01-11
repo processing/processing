@@ -135,14 +135,20 @@ public class Android implements Tool {
           File folder =
             Base.selectFolder(SELECT_ANDROID_SDK_FOLDER, null, editor);
           if (folder != null) {
-            boolean basicCheck = Base.isWindows() ?
-              new File(folder, "tools/android.exe").exists() :
-              new File(folder, "tools/android").exists();
+            boolean basicCheck = false;
+            if (Base.isWindows()) {
+              basicCheck = (new File(folder, "tools/android.exe").exists() ||
+                            new File(folder, "tools/android.bat").exists());
+            } else {
+              basicCheck = new File(folder, "tools/android").exists();
+            }
             if (basicCheck) {
               sdkPath = folder.getAbsolutePath();
               Preferences.set("android.sdk.path", sdkPath);
             } else {
               // tools/android not found in the selected folder
+              System.err.println("Could not find the android executable at " +
+                                 folder.getAbsolutePath() + "/tools/android");
               JOptionPane.showMessageDialog(editor, NOT_ANDROID_SDK);
               return false;
             }
