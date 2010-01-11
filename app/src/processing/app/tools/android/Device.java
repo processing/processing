@@ -99,7 +99,7 @@ public class Device {
       return true;
 
     } catch (Exception e) {
-      Base.showWarning("Android Error", AVD_CREATE_ERROR, null);
+      Base.showWarning("Android Error", AVD_CREATE_ERROR, e);
     }
     return false;
   }
@@ -149,7 +149,6 @@ public class Device {
 
     try {
       int result = p.waitFor();
-      System.out.println("res is " + result);
       if (result == 0) {
         // mumble the result into the console
         //PApplet.println(output.getLines());
