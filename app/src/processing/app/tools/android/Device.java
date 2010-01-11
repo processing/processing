@@ -149,7 +149,7 @@ public class Device {
 
     try {
       int result = p.waitFor();
-      //System.out.println("res is " + res);
+      System.out.println("res is " + res);
       if (result == 0) {
         // mumble the result into the console
         //PApplet.println(output.getLines());
