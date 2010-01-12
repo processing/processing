@@ -30,7 +30,8 @@ Before we get into vectors themselves, let's look at a beginner Processing examp
 <img src="imgs/bouncingball1.jpg">
 <br />
 Example: Bouncing Ball with No Vectors
-<br /><pre>
+<pre>
+
 float x = 100;
 float y = 100;
 float xspeed = 1;
@@ -82,7 +83,8 @@ In a more advanced sketch, we could imagine this ball and world having many more
 It's becoming more and more clear that for every singular concept in this world (wind, location, acceleration, etc.), we need two variables.  And this is only a two-dimensional world, in a 3D world, we'd need x, y, z, xspeed, yspeed, zspeed, etc.   Our first goal in this chapter is learn the fundamental concepts behind using vectors and rewrite this bouncing ball example.  After all, wouldn't it be nice if we could simple write our code like the following?
 <br /><br />
 Instead of:
-<br /><pre>
+<pre>
+
 float x;
 float y;
 float xspeed;
@@ -90,7 +92,8 @@ float yspeed;
 </pre><br />
 Woudn't it be nice to have. . .
 
-<br /><pre>
+<pre>
+
 Vector location;
 Vector speed;
 </pre><br />
@@ -106,7 +109,8 @@ Technically speaking, the definition of a vector is the difference between two p
 Here are some vectors and possible translations:
 <br /><br />
 <img src="imgs/steps.jpg">
-<br /><pre>
+<pre>
+
 (  3, 5) --> Walk three steps east, turn and walk five steps north.
 (  2,-1) --> Walk two steps east, turn and walk one step south.
 (-15, 3) --> Walk fifteen steps west, turn and walk three steps north.
@@ -126,12 +130,14 @@ If velocity is a vector (the difference between two points), what is location?  
 Nevertheless, another way to describe a location is as the path taken from the origin to reach that location. Hence, a location can be represented as the vector giving the difference between location and origin.  Therefore, if we were to write code to describe a vector object, instead of creating separate Point and Vector classes, we can use a single class which is more convenient.
 <br /><br />
 Let's examine the underlying data for both location and velocity.  In the bouncing ball example we had the following:
-<br /><pre>
+<pre>
+
 location --> x,y
 velocity --> xspeed,yspeed
 </pre><br />
 Notice how we are storing the same data for both -- two floating point numbers, an x and a y. If we were to write a vector class ourselves, we'd start with something rather basic:
-<br /><pre>
+<pre>
+
 class PVector {
 
   float x;
@@ -147,26 +153,30 @@ class PVector {
 At its core, a <a href="http://processing.org/reference/PVector.html"><strong>PVector</strong></a> is just a convenient way to store two values (or three, as we'll see in 3D examples.).  
 <br /><br />
 And so this. . .
-<br /><pre>
+<pre>
+
 float x = 100;
 float y = 100;
 float xspeed = 1;
 float yspeed = 3.3;
 </pre><br />
 . . . becomes . . .
-<br /><pre>
+<pre>
+
 PVector location = new PVector(100,100);
 PVector velocity = new PVector(1,3.3);
 </pre><br />
 
 Now that we have two vector objects ("location" and "velocity") we're ready to implement the algorithm for motion -- location = location + velocity.   In the bouncing ball example, without vectors, we had:
-<br /><pre>
+<pre>
+
   // Add the current speed to the location.
   x = x + xspeed;
   y = y + yspeed;
 </pre><br />
 In an ideal world, we would just be able to rewrite the above to be:
-<br /><pre>
+<pre>
+
   // Add the current velocity vector to the location vector.
   location = location + velocity;
 </pre><br />
@@ -209,7 +219,8 @@ and therefore:
 <img src="imgs/add.jpg">
 <br /><br />
 Now that we understand how to add two vectors together, we can look at how addition is implemented in the <a href="http://processing.org/reference/PVector.html"><strong>PVector</strong></a> class itself.    Let's write a function called <strong><a href="http://processing.org/reference/PVector_add_.html"><em>add()</em></a></strong> that takes as its argument another PVector object.
-<br /><pre>
+<pre>
+
 class PVector {
 
   float x;
@@ -229,7 +240,8 @@ class PVector {
 }
 </pre><br />
 Now that we see how add is written inside of <a href="http://processing.org/reference/PVector.html"><strong>PVector</strong></a>, we can return to the location + velocity algorithm with our bouncing ball example and implement vector addition:
-<br /><pre>
+<pre>
+
   // Add the current velocity to the location.
   <del>location = location + velocity;</del>
   location.add(velocity);
@@ -237,7 +249,8 @@ Now that we see how add is written inside of <a href="http://processing.org/refe
 And here we are, ready to successfully complete our first goal -- rewrite the entire bouncing ball example using <a href="http://processing.org/reference/PVector.html"><strong>PVector</strong></a>.  
 <br /><br />
 Example: Bouncing Ball with PVector!
-<br /><pre>
+<pre>
+
 // Instead of a bunch of floats, we now just have two PVector variables.
 PVector location;
 PVector velocity;
@@ -276,15 +289,18 @@ void draw() {
 Now, you might feel somewhat disappointed.  After all, this may initially appear to have made the code more complicated than the original version.  While this is a perfectly reasonable and valid critique, it's important to understand that we haven't fully realized the power of programming with vectors just yet.   Looking at a simple bouncing ball and only implementing vector addition is just the first step.  As we move forward into looking at more a complex world of multiple objects and multiple forces (we'll cover forces in the next chapter), the benefits of <a href="http://processing.org/reference/PVector.html"><strong>PVector</strong></a> will become more apparent.
 <br /><br />
 We should, however, make note of an important aspect of the above transition to programming with vectors.  Even though we are using <a href="http://processing.org/reference/PVector.html"><strong>PVector</strong></a> objects to describe two values -- the x and y of location and the x and y of velocity -- we still often need to refer to the x and y components of each <a href="http://processing.org/reference/PVector.html"><strong>PVector</strong></a> individually.  When we go to draw an object in Processing there's no means for us to say:
-<br /><pre>
+<pre>
+
 ellipse(location,16,16);
 </pre><br />
 The <a href="http://processing.org/reference/ellipse_.html"><em><strong>ellipse()</strong></em></a> function does not allow for a <a href="http://processing.org/reference/PVector.html"><strong>PVector</strong></a> as an argument.  An ellipse can only be drawn with two scalar values, an x coordinate and a y coordinate.  And so we must dig into the <a href="http://processing.org/reference/PVector.html"><strong>PVector</strong></a> object and pull out the x and y components using object oriented dot syntax.
-<br /><pre>
+<pre>
+
 ellipse(location.x,location.y,16,16);
 </pre><br />
 The same issue arises when it comes time to test if the circle has reached the edge of the window, and we need to access the individual components of <em>both</em> vectors: location and velocity.
-<br /><pre>
+<pre>
+
 if ((location.x > width) || (location.x < 0)) {
   velocity.x = velocity.x * -1;
 }
@@ -319,7 +335,8 @@ translates to:
 <br /><strong>w</strong><sub>y</sub> = <strong>u</strong><sub>y</sub> - <strong>v</strong><sub>y</sub>
 <br /><br />
 and the function inside <a href="http://processing.org/reference/PVector.html"><strong>PVector</strong></a> therefore looks like:
-<br /><pre>
+<pre>
+
   void sub(PVector v) {
     x = x - v.x;
     y = y - v.y;
@@ -333,7 +350,8 @@ Following is an example that demonstrates vector subtraction by taking the diffe
 <img src="imgs/vector_sub.jpg" >
 <br />
 Example: Vector subtraction
-<br /><pre>
+<pre>
+
 void setup() {
   size(200,200);
   smooth();
@@ -414,7 +432,8 @@ u.mult(3); // This PVector is now three times the size and is equal to (-9,21).
 <img src="imgs/vector_mult.jpg" >
 <br />
 Example: Vector multiplication
-<br /><pre>
+<pre>
+
 void setup() {
   size(200,200);
   smooth();
@@ -440,7 +459,7 @@ void draw() {
 Division is exactly the same as multiplication, only of course using divide instead of multiply.
 <br /><br />
 <img src="imgs/div.jpg">
-<br /><pre>
+<pre>
   void div(float n) {
     x = x / n;
     y = y / n;
@@ -481,7 +500,8 @@ Armed with this lovely formula, we can now compute the magnitude of  as follows:
 <strong>||<strong>v</strong>|| = sqrt(<strong>v</strong><sub>x</sub>*<strong>v</strong><sub>x</sub> + <strong>v</strong><sub>y</sub>*<strong>v</strong><sub>y</sub>)</strong>
 <br /><br />
 or in <a href="http://processing.org/reference/PVector.html"><strong>PVector</strong></a>:
-<br/><pre>
+<pre>
+
 float mag() {
   return sqrt(x*x + y*y);
 }
@@ -489,7 +509,8 @@ float mag() {
 <img src="imgs/vector_mag.jpg" >
 <br />
 Example: Vector magnitude
-<br/><pre>
+<pre>
+
 void setup() {
   size(200,200);
   smooth();
@@ -540,14 +561,16 @@ In other words, to normalize a vector, simply divide each component by its magni
 <img src="imgs/normalize2.jpg">
 <br /><br />
 In the <a href="http://processing.org/reference/PVector.html"><strong>PVector</strong></a> class, we therefore write our normalization function as follows:
-<br/><pre>
+<pre>
+
   void normalize() {
     float m = mag();
     div(m);
   }
 </pre><br/>
 Of course, there's one small issue.  What if the magnitude of the vector is zero?  We can't divide by zero!   Some quick error checking will fix that right up:
-<br/><pre>
+<pre>
+
   void normalize() {
    float m = mag();
    if (m != 0) {
@@ -558,7 +581,8 @@ Of course, there's one small issue.  What if the magnitude of the vector is zero
 <img src="imgs/vector_norm.jpg" >
 <br />
 Example: Normalizing a Vector
-<br/><pre>
+<pre>
+
 void setup() {
   size(200,200);
   smooth();
@@ -589,11 +613,13 @@ void draw() {
 Why should we care?  Yes, all this vector math stuff sounds like something we should know about, but why exactly?  How will it actually help me write code?   The truth of the matter is that we need to have some patience.  The awesomeness of using the PVector class will take some time to fully come to light.  This is quite common actually when first learning a new data structure.   For example, when you first learn about an array, it might have seemed like much more work to use an array than to just have several variables to talk about multiple things.   But that quickly breaks down when you need a hundred, or a thousand, or ten thousand things.  The same can be true for PVector.  What might seem like more work now will pay off later, and pay off quite nicely.  
 <br /><br />
 For now, however, we want to focus on simplicity.  What does it mean to program motion using vectors?   We've seen the beginning of this in this book's first example: the bouncing ball.   An object on screen has a location (where it is at any given moment) as well as a velocity (instructions for how it should move from one moment to the next).   Velocity gets added to location:
-<br/><pre>
+<pre>
+
 location.add(velocity);
 </pre><br/>
 And then we draw the object at that location:
-<br/><pre>
+<pre>
+
 ellipse(location.x,location.y,16,16);
 </pre><br/>
 This is Motion 101.
@@ -604,7 +630,8 @@ This is Motion 101.
 In the bouncing ball example, all of this code happened in Processing's main tab, within <strong><em><a href="http://processing.org/reference/setup_.html">setup()</a></strong></em> and <strong><em><a href="http://processing.org/reference/draw_.html">draw()</a></strong></em>.   What we want to do now is move towards encapsulating all of the logic for motion inside of a <a href="http://processing.org/reference/class.html">class</a></strong></em>, this way we can create a foundation for programming moving objects in Processing.   We'll take a quick moment to review the basics  of object-oriented programming in this context now, but this book will otherwise assume knowledge of working with objects (which will be necessary for just about every example from this point forward).   However, if you need a further refresher, I encourage you to check out the <a href="http://processing.org/learning/tutorials/objects/">OOP tutorial</a>.
 <br /><br />
 The driving principle behind object-oriented programming is the bringing together of data and functionality.  Take the prototypical OOP example: a car.  A car has data -- color, size, speed, etc.  A car has functionality -- drive(), turn(), stop(), etc.   A car <a href="http://processing.org/reference/class.html">class</a></strong></em> brings all that stuff together in a template from which car instances, i.e. <a href="http://processing.org/reference/Object.html">objects</a></strong></em>, are made.   The benefit is nicely organized code that makes sense when you read it.
-<br/><pre>
+<pre>
+
 Car c = new Car(red,big,fast);
 c.drive();
 c.turn();
@@ -616,7 +643,8 @@ In our case, we're going to create a generic "Mover" class, a class to describe 
 	<li>What functionality does a Mover have?</li>
 </ol>
 Our "Motion 101" algorithm tells us the answers to these questions.  The data an object has is its location and its velocity, two PVector objects.
-<br/><pre>
+<pre>
+
 class Mover {
   
   PVector location;
@@ -624,7 +652,8 @@ class Mover {
 </pre><br/>
 
 Its functionality is just about as simple.  It needs to move and it needs to be seen.  We'll implement these as functions named update() and display().  update() is where we'll put all of our motion logic code and display() is where we will draw the object.
-<br/><pre>
+<pre>
+
   void update() {
     location.add(velocity);
   }
@@ -640,14 +669,16 @@ Its functionality is just about as simple.  It needs to move and it needs to be 
 We've forgotten one crucial item, however, the object's <strong>constructor</strong>.  The constructor is a special function inside of a class that creates the instance of the object itself. It is where you give the instructions on how to set up the object.  It always has the same name as the class and is called by invoking the <strong>new</strong> operator: "Car myCar = new Car(); ".
 <br /><br />
 In our case, let's just initialize our mover object by giving it a random location and a random velocity.
-<br/><pre>
+<pre>
+
   Mover() {
     location = new PVector(random(width),random(height));
     velocity = new PVector(random(-2,2),random(-2,2));
   }
 </pre><br/>
 Let's finish off the Mover class by incorporating a function to determine what the object should do when it reaches the edge of the window.  For now let's do something simple, and just have it wrap around the edges.
-<br/><pre>
+<pre>
+
   void checkEdges() {
 
     if (location.x > width) {
@@ -665,15 +696,18 @@ Let's finish off the Mover class by incorporating a function to determine what t
   }
 </pre><br/>
 Now that the Mover class is finished, we can then look at what we need to do in our main program.  We first declare a Mover object:
-<br/><pre>
+<pre>
+
 Mover mover;
 </pre><br/>
 Then initialize the mover in setup():
-<br/><pre>
+<pre>
+
   mover = new Mover(); 
 </pre><br/>
 and call the appropriate functions in draw():
-<br/><pre>
+<pre>
+
   mover.update();
   mover.checkEdges();
   mover.display(); 
@@ -683,7 +717,8 @@ Here is the entire example for reference:
 <img src="imgs/vector_motion.jpg" >
 <br />
 Example: Motion 101 (velocity)
-<br/><pre>
+<pre>
+
 // Declare Mover object
 Mover mover;
 
@@ -750,7 +785,8 @@ class Mover {
 Ok, at this point, we should feel comfortable with two things -- (1) What is a <a href="http://processing.org/reference/PVector.html"><strong>PVector</strong></a>? and (2) How do we use PVectors inside of an object to keep track of its location and movement?  This is an excellent first step and deserves an mild round of applause.   For standing ovations and screaming fans, however, we need to make one more, somewhat larger, step forward.   After all, watching the Motion 101 example is fairly boring -- the circle never speeds up, never slows down, and never turns.  For more interesting motion, for motion that appears in the real world around us, we need to add one more PVector to our class -- acceleration.  
 <br /><br />
 The strict definition of acceleration that we are using here is: <strong>the rate of change of velocity</strong>.  Let's think about that definition for a moment.  Is this a new concept?  Not really.  Velocity is defined as: <strong>the rate of change of location</strong>.  In essence, we are developing a "trickle down" effect.  Acceleration affects velocity which in turn affects location (for some brief foreshadowing, this point will become even more crucial in the next chapter when we see how forces affect acceleration which affects velocity which affects location.)  In code, this reads like this:
-<br /><pre>
+<pre>
+
   velocity.add(acceleration);
   location.add(velocity);
 </pre><br/>
@@ -765,7 +801,8 @@ ACCELERATION ALGORITHMS!
 </ol>
 
 Number one, though not particularly interesting, is the simplest, and will help us get started incorporating acceleration into our code.   The first thing we need to do is add another <a href="http://processing.org/reference/PVector.html"><strong>PVector</strong></a> to the Mover class:
-<br /><pre>
+<pre>
+
 class Mover {
 
   PVector location;
@@ -774,7 +811,8 @@ class Mover {
 </pre><br/>
 
 And incorporate acceleration into the update() function:
-<br /><pre>
+<pre>
+
   void update() {
     // Our motion algorithm is now two lines of code!
     velocity.add(acceleration);
@@ -782,24 +820,29 @@ And incorporate acceleration into the update() function:
   }
 </pre><br/>
 We're almost done.  The only missing piece is initialization in the constructor.  
-<br /><pre>
+<pre>
+
   Mover() {
 </pre><br/>
 Let's start the mover object in the middle of the window. . . 
-<br /><pre>
+<pre>
+
     location = new PVector(width/2,height/2);
 </pre><br/>
 . . . with an initial velocity of zero.    
-<br /><pre>
+<pre>
+
     velocity = new PVector(0,0);
 </pre><br/>
 This means that when the sketch starts, the object is at rest.  We don't have to worry about velocity anymore as we are controlling the object's motion entirely with acceleration.  Speaking of which, according to "algorithm #1" our first sketch involves constant acceleration.  So let's pick a value.
-<br /><pre>
+<pre>
+
     acceleration = new PVector(-0.001,0.01);
   }
 </pre><br/>
 Are you thinking -- "Gosh, those values seem awfully small!"   Yes, that's right, they are quite tiny.  It's important to realize that our acceleration values (measured in pixels) accumulate into the velocity over time, about thirty times per second  depending on our sketch's frame rate.   And so to keep the magnitude of the velocity vector within a reasonable range, our acceleration values should remain quite small.   We can also help this cause by incorporating the PVector function <a href="http://processing.org/reference/PVector_limit_.html">limit()</a>.   
-<br /><pre>
+<pre>
+
 // The limit() function constrains the magnitude of a vector.
 velocity.limit(10);
 </pre><br/>
@@ -813,7 +856,8 @@ Let's take a look at the changes to the Mover class now, complete with accelerat
 <img src="imgs/vector_acc.jpg" >
 <br />
 Example: Motion 101 (velocity and constant acceleration)
-<br /><pre>
+<pre>
+
 class Mover {
 
   PVector location;
@@ -848,7 +892,8 @@ Ok, algorithm #2 -- "a totally random acceleration."  In this case, instead of i
 <img src="imgs/vector_randacc.jpg" >
 <br />
 Example: Motion 101 (velocity and random acceleration)
-<br /><pre>
+<pre>
+
   void update() {
     
     acceleration = new PVector(random(-1,1),random(-1,1));
@@ -863,13 +908,15 @@ Example: Motion 101 (velocity and random acceleration)
 While normalizing acceleration is not entirely necessary, it does prove useful as it standardizing the magnitude of the vector, allowing us to try different things, such as:
 <br /><br />
 (a)	scaling the acceleration to a constant value
-<br /><pre>
+<pre>
+
    acceleration = new PVector(random(-1,1),random(-1,1));
    acceleration.normalize();
    acceleration.mult(0.5);
 </pre><br/>
 (b)	scaling the acceleration to a random value
-<br /><pre>
+<pre>
+
    acceleration = new PVector(random(-1,1),random(-1,1));
    acceleration.normalize();
    acceleration.mult(random(2));
@@ -881,14 +928,16 @@ While this may seem like an obvious point, it's crucial to understand that accel
 Before we get to acceleration algorithm #4 (accelerate towards the mouse), we need to cover one more rather important aspect of working with vectors and the PVector class, the difference between using static methods and non-static methods.
 <br /><br />
 Forgetting about vectors for a moment, take a look at the following code:
-<br /><pre>
+<pre>
+
 float x = 0;
 float y = 5;
 
 x = x + y;
 </pre><br/>
 Pretty simple right?  x has the value of 0, we add y to it, and now x is equal to 5.  We could write the corresponding code pretty easily based on what we've learned about PVector.
-<br /><pre>
+<pre>
+
 PVector v = new PVector(0,0);
 PVector u = new PVector(4,5);
 v.add(u);
@@ -896,21 +945,24 @@ v.add(u);
 The vector v has the value of (0,0), we add y to it, and now x is equal to (4,5).  Easy, right?
 <br /><br />
 Ok, let's take a look at another example of some simply floating point math:
-<br /><pre>
+<pre>
+
 float x = 0;
 float y = 5;
 
 float z = x + y;
 </pre><br/>
 x has the value of 0, we add y to it, and <strong>store the result in a new variable z</strong>.   The value of x is not changed in this example (neither is y)!  This may seem like a trivial point, and one that is quite intuitive when it comes to mathematical operations with floats.   However, it's not so obvious when it comes to mathematical operations with PVector.  Let's try to write the code based on what we know so far.
-<br /><pre>
+<pre>
+
 PVector v = new PVector(0,0);
 PVector u = new PVector(4,5);
 PVector w = v.add(u); <strong>// Donít be fooled, this is incorrect!!!</strong>
 </pre><br/>
 
 The above might seem like a good guess, but it's just not the way the PVector class works.   If we look at the definition of <strong><a href="http://processing.org/reference/PVector_add_.html"><em>add()</em></a></strong> . . .
-<br /><pre>
+<pre>
+
  void add(PVector v) {
     x = x + v.x;
     y = y + v.y;
@@ -920,7 +972,8 @@ The above might seem like a good guess, but it's just not the way the PVector cl
 <br /><br />
 Functions that we call from the class name itself (rather than from a speciﬁc object instance) are known 
 as <strong>static</strong> functions. 
-<br /><pre>
+<pre>
+
 // Assuming two PVector objects: v and u
 // Static: called off of the class name.
 PVector.add(v,u);
@@ -928,7 +981,8 @@ PVector.add(v,u);
 v.add(u);
 </pre><br/>
 Since you can't write <strong>static</strong> functions yourself in Processing, it is something you might not have encountered before.  In the case of PVector, it allows us to generically perform mathematical operations on PVector objects, without having the adjust the value of one of the input PVector's.  Let's look at how we might write the static version of add:
-<br /><pre>
+<pre>
+
   static PVector add(PVector v1, PVector v2) {
     PVector v3 = new PVector(v1.x + v2.x, v1.y + v2.y);
     return v3;
@@ -941,7 +995,8 @@ There are several differences here:
 	<li>The function creates a new PVector (v3) and returns the result of adding the components of v1 and v2 in that new PVector.</li>
 </ul>
 When you call a static function, instead of referencing an actual object instance, you simply reference the name of the class itself.
-<br /><pre>
+<pre>
+
 PVector v = new PVector(0,0);
 PVector u = new PVector(4,5);
 <del>PVector w = v.add(u);</del>
@@ -968,7 +1023,8 @@ dx = mouseX - x
 <br />dy = mouseY - y
 <br /><br />
 Let's rewrite the above using PVector syntax.   Assuming we are in the Mover class and thus have access to the object's location PVector, we then have:
-<br/><pre>
+<pre>
+
 PVector mouse = new PVector(mouseX,mouseY);
 // Look!  We're using the static reference to sub() because 
 // we want a new PVector pointing from one point to another.
@@ -977,7 +1033,8 @@ PVector dir = PVector.sub(mouse,location);
 We now have a PVector that points from the mover's location all the way to the mouse.  If the object were to actually accelerate using that vector, it would instantaneously appear at the mouse location.  This does not make for good animation, of course, and what we want to do is now decide how fast that object should accelerate towards the mouse.
 <br /><br />
 In order to set the magnitude (whatever it may be) of our acceleration PVector, we must first ________ that direction vector.  That's right, you said it.  <strong><em>Normalize.</strong></em>   If we can shrink the vector down to its unit vector (of length one) then we have a vector that tells us the direction and can easily be scaled to any value.   One multiplied by anything equals anything.  
-<br/><pre>
+<pre>
+
 float anything = ?????
 dir.normalize();
 dir.mult(anything);
@@ -993,7 +1050,8 @@ And here are those steps in the update() function itself:
 <br />
 <br />
 <img src="imgs/vector_mouse1.jpg">
-<br/><pre>
+<pre>
+
  void update() {
 
     PVector mouse = new PVector(mouseX,mouseY);
@@ -1029,7 +1087,8 @@ Let's take a look at what this example would look like with an array of Mover ob
 <img src="imgs/vector_mouse2.jpg" >
 <br />
 Example: Accelerating towards mouse
-<br/><pre>
+<pre>
+
 // Creating an array of objects.
 Mover[] movers = new Mover[20];
 
