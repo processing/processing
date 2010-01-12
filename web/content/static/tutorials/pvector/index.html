@@ -8,10 +8,9 @@ LINK TO DOWNLOAD ALL EXAMPLES
 <table width="656">
    	<tr>
    	
-   	<!--<p>Portions of this work are from the book, <a href="http://www.learningprocessing.com">Learning Processing</a>, by Daniel Shiffman, published by Morgan Kaufmann Publishers, Copyright 2008 Elsevier Inc. All rights reserved.</p>-->
+   	<p>This tutorial is excerpted from an early draft of the book, <a href="http://www.learningprocessing.com/noc/">The Nature of Code</a>, by Daniel Shiffman.  Thanks to <a href="http://www.mikewirthart.com/">Mike Wirth</a> for providing the illustrations.</p>
    	
    	<p class="ref-notice">This tutorial is for Processing version 1.0+. <em>If you see any errors or have comments, please <a href="http://processing.org/discourse/yabb_beta/YaBB.cgi?board=WebsiteBugs">let us know</a>.</em></p>
-
 
 The most basic building block for programming motion is the <em><strong>vector</strong></em>.   And so this is where we begin. Now, the word <em><strong>vector</strong></em> can mean a lot of different things:
 <br /><br /> 
@@ -946,7 +945,7 @@ x has the value of 0, we add y to it, and <strong>store the result in a new vari
 
 PVector v = new PVector(0,0);
 PVector u = new PVector(4,5);
-PVector w = v.add(u); <strong>// Donít be fooled, this is incorrect!!!</strong>
+PVector w = v.add(u); <strong>// Don't be fooled, this is incorrect!!!</strong>
 </pre><br/>
 
 The above might seem like a good guess, but it's just not the way the PVector class works.   If we look at the definition of <strong><a href="http://processing.org/reference/PVector_add_.html"><em>add()</em></a></strong> . . .
@@ -959,7 +958,7 @@ The above might seem like a good guess, but it's just not the way the PVector cl
 </pre><br/>
 . . . we see that it does not accomplish our goal.  Number one, it does not return a new PVector (the return type is "void") and number two, it changes the value of the PVector upon which it is called.  In order to add two PVector objects together and return the result as a new PVector, we must use the static <strong><a href="http://processing.org/reference/PVector_add_.html"><em>add()</em></a></strong> function.  
 <br /><br />
-Functions that we call from the class name itself (rather than from a speciﬁc object instance) are known 
+Functions that we call from the class name itself (rather than from a specific object instance) are known 
 as <strong>static</strong> functions. 
 <pre>
 
@@ -1066,9 +1065,9 @@ And here are those steps in the update() function itself:
  
 <table width="100%" border="0" cellpadding="20" bgcolor="#DEDEDE"> 
 <tr><td>
-<em>Why doesnít the circle stop when it reaches the target?</em>
+<em>Why doesn't the circle stop when it reaches the target?</em>
 <br /><br />
-The object moving has no knowledge about trying to stop at a destination, it only knows where the destination is and tries to go there as fast as possible. Going as fast as possible means it will inevitably overshoot the location and have to turn around, again going as fast as possible towards the destination, overshooting it again, and so on, and so forth.   Stay tuned  for later chapters where we see how to program an object to ìarriveî at a location (slowing down on approach.) 
+The object moving has no knowledge about trying to stop at a destination, it only knows where the destination is and tries to go there as fast as possible. Going as fast as possible means it will inevitably overshoot the location and have to turn around, again going as fast as possible towards the destination, overshooting it again, and so on, and so forth.   Stay tuned  for later chapters where we see how to program an object to "arrive"s at a location (slowing down on approach.) 
 </td></tr></table>
 <br />
 Let's take a look at what this example would look like with an array of Mover objects (rather than just one).
