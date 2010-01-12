@@ -27,7 +27,7 @@ While all interesting, these are not the definitions we are looking for.   Rathe
 
 Before we get into vectors themselves, let's look at a beginner Processing example that demonstrates why it is in the first place we should care.  If you've read any of the introductory Processing textbooks or taken a class on programming with Processing (and hopefully you've done one of these things to help prepare you for this book), you probably, at one point or another, learned to how to write a simple  bouncing ball sketch.  
 <br /><br />
-<img src="imgs/bouncingball1.jpg" border=1>
+<img src="imgs/bouncingball1.jpg">
 <br />
 Example: Bouncing Ball with No Vectors
 <br /><pre>
@@ -331,7 +331,7 @@ and the function inside <a href="http://processing.org/reference/PVector.html"><
 <br /><br />
 Following is an example that demonstrates vector subtraction by taking the difference between two points -- the mouse location and the center of the window.
 <br /><br />
-<img src="imgs/vector_sub.jpg" border=1>
+<img src="imgs/vector_sub.jpg" >
 <br />
 Example: Vector subtraction
 <br /><pre>
@@ -411,7 +411,7 @@ PVector u = new PVector(-3,7);
 u.mult(3); // This PVector is now three times the size and is equal to (-9,21).
 </pre><br/>
 
-<img src="imgs/vector_mult.jpg" border=1>
+<img src="imgs/vector_mult.jpg" >
 <br />
 Example: Vector multiplication
 <br /><pre>
@@ -486,7 +486,7 @@ float mag() {
   return sqrt(x*x + y*y);
 }
 </pre><br/>
-<img src="imgs/vector_mag.jpg" border=1>
+<img src="imgs/vector_mag.jpg" >
 <br />
 Example: Vector magnitude
 <br/><pre>
@@ -555,7 +555,7 @@ Of course, there's one small issue.  What if the magnitude of the vector is zero
    }
  }
 </pre><br/>
-<img src="imgs/vector_norm.jpg" border=1>
+<img src="imgs/vector_norm.jpg" >
 <br />
 Example: Normalizing a Vector
 <br/><pre>
@@ -680,7 +680,7 @@ and call the appropriate functions in draw():
 </pre><br/>
 Here is the entire example for reference:
 <br /><br />
-<img src="imgs/vector_motion.jpg" border=1>
+<img src="imgs/vector_motion.jpg" >
 <br />
 Example: Motion 101 (velocity)
 <br/><pre>
@@ -810,7 +810,7 @@ What is the magnitude of velocity?  If it's less than 10, no worries, just leave
 <br /><br />
 Let's take a look at the changes to the Mover class now, complete with acceleration and limit().
 <br /><br />
-<img src="imgs/vector_acc.jpg" border=1>
+<img src="imgs/vector_acc.jpg" >
 <br />
 Example: Motion 101 (velocity and constant acceleration)
 <br /><pre>
@@ -845,7 +845,7 @@ class Mover {
 </pre><br/>
 Ok, algorithm #2 -- "a totally random acceleration."  In this case, instead of initializing acceleration in the object's constructor we want to pick a new acceleration each cycle, i.e. each time update() is called.
 <br /><br />
-<img src="imgs/vector_randacc.jpg" border=1>
+<img src="imgs/vector_randacc.jpg" >
 <br />
 Example: Motion 101 (velocity and random acceleration)
 <br /><pre>
@@ -992,7 +992,7 @@ To summarize, we have the following steps:
 And here are those steps in the update() function itself:
 <br />
 <br />
-<img src="imgs/vector_mouse1.jpg" border="1">
+<img src="imgs/vector_mouse1.jpg">
 <br/><pre>
  void update() {
 
@@ -1026,7 +1026,7 @@ The object moving has no knowledge about trying to stop at a destination, it onl
 <br />
 Let's take a look at what this example would look like with an array of Mover objects (rather than just one).
 <br /><br />
-<img src="imgs/vector_mouse2.jpg" border=1>
+<img src="imgs/vector_mouse2.jpg" >
 <br />
 Example: Accelerating towards mouse
 <br/><pre>
