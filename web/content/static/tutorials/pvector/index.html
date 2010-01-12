@@ -170,7 +170,7 @@ In an ideal world, we would just be able to rewrite the above to be:
   // Add the current velocity vector to the location vector.
   location = location + velocity;
 </pre><br />
-However, in Processing, the addition operator Ô+' is reserved for primitive values (integers, floats, etc.) only.  Processing doesn't know how to add two <a href="http://processing.org/reference/PVector.html"><strong>PVector</strong></a> objects together any more than it knows how to add two PFont objects or PImage objects.   Fortunately for us, the <a href="http://processing.org/reference/PVector.html"><strong>PVector</strong></a> class is implemented with functions for common mathematical operations.
+However, in Processing, the addition operator '+' is reserved for primitive values (integers, floats, etc.) only.  Processing doesn't know how to add two <a href="http://processing.org/reference/PVector.html"><strong>PVector</strong></a> objects together any more than it knows how to add two PFont objects or PImage objects.   Fortunately for us, the <a href="http://processing.org/reference/PVector.html"><strong>PVector</strong></a> class is implemented with functions for common mathematical operations.
 
 <h5>Vectors: Addition</h5>
 
@@ -238,7 +238,6 @@ And here we are, ready to successfully complete our first goal -- rewrite the en
 <br /><br />
 Example: Bouncing Ball with PVector!
 <br /><pre>
-
 // Instead of a bunch of floats, we now just have two PVector variables.
 PVector location;
 PVector velocity;
@@ -410,7 +409,6 @@ And implementing multiplication in code is as simple as:
 PVector u = new PVector(-3,7);
 u.mult(3); // This PVector is now three times the size and is equal to (-9,21).
 </pre><br/>
-
 <img src="imgs/vector_mult.jpg" >
 <br />
 Example: Vector multiplication
