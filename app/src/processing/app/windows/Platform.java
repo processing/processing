@@ -136,8 +136,8 @@ public class Platform extends processing.app.Platform {
       e.printStackTrace();
     }
   }
-  
-  
+
+
   /**
    * Remove extra quotes, slashes, and garbage from the Windows PATH.
    */
@@ -268,36 +268,38 @@ public class Platform extends processing.app.Platform {
     // not tested
     //Runtime.getRuntime().exec("start explorer \"" + folder + "\"");
   }
-  
-  
-  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  
-  
-  
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
   // Code partially thanks to Richard Quirk from:
   // http://quirkygba.blogspot.com/2009/11/setting-environment-variables-in-java.html
 
-    
-  public interface WinLibC extends Library {
-    WinLibC INSTANCE = (WinLibC) Native.loadLibrary("msvcrt", WinLibC.class);
+  static WinLibC clib = (WinLibC) Native.loadLibrary("msvcrt", WinLibC.class);
 
+  public interface WinLibC extends Library {
+    //WinLibC INSTANCE = (WinLibC) Native.loadLibrary("msvcrt", WinLibC.class);
+    //libc = Native.loadLibrary("msvcrt", WinLibC.class);
     public int _putenv(String name);
   }
 
-  
+
   public void setenv(String variable, String value) {
-    WinLibC clib = WinLibC.INSTANCE;
+    //WinLibC clib = WinLibC.INSTANCE;
     clib._putenv(variable + "=" + value);
   }
 
-  
+
   public String getenv(String variable) {
     return System.getenv(variable);
   }
 
 
   public int unsetenv(String variable) {
-    WinLibC clib = WinLibC.INSTANCE;
-    clib._putenv(variable + "=");
-    return 0;
+    //WinLibC clib = WinLibC.INSTANCE;
+    //clib._putenv(variable + "=");
+    //return 0;
+    return clib._putenv(variable + "=");
   }
 }
