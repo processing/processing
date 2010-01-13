@@ -667,6 +667,11 @@ public class Preferences {
   static public void set(String attribute, String value) {
     table.put(attribute, value);
   }
+  
+  
+  static public void unset(String attribute) {
+    table.remove(attribute);
+  }
 
 
   static public boolean getBoolean(String attribute) {
