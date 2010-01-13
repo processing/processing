@@ -128,16 +128,16 @@ public class Android implements Tool {
     }
 
     // The environment variable is king. The preferences.txt entry is a page.
-    String envPath = platform.getenv("ANDROID_SDK");
+    String envPath = checkLegit(platform.getenv("ANDROID_SDK"));
     if (envPath != null) {
       sdkPath = envPath;
-      // Just set the pref, in case it the ANDROID_SDK variable gets
-      // knocked out later. For instance, by that pesky Eclipse,
+      // Set this value in preferences.txt, in case ANDROID_SDK
+      // gets knocked out later. For instance, by that pesky Eclipse,
       // which nukes all env variables when launching from the IDE.
       Preferences.set("android.sdk.path", envPath);
 
     } else {
-      sdkPath = Preferences.get("android.sdk.path");
+      sdkPath = checkLegit(Preferences.get("android.sdk.path"));
 
       if (sdkPath == null) {
         int result = Base.showYesNoQuestion(editor, "Android SDK",
