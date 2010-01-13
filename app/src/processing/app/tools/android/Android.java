@@ -39,6 +39,7 @@ import processing.core.PApplet;
 
 public class Android implements Tool {
   static String sdkPath;
+  static String androidName;
 //  static String toolsPath;
 
   private Editor editor;
@@ -178,7 +179,13 @@ public class Android implements Tool {
     System.out.println("path after set is " +
                        Base.getPlatform().getenv("PATH"));
 
-    String[] cmd = { "echo", "%PATH%" };
+    try {
+      PApplet.println(Device.list());
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    String[] cmd = { "echo", "$PATH" };
     try {
       Pavarotti p = new Pavarotti(cmd);
       int result = p.waitFor();
