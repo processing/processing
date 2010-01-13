@@ -551,7 +551,6 @@ public class GLTexture extends PImage implements PConstants
      */
     public void putImage(PImage img, Parameters params)
     {
-    	/*
         img.loadPixels();
         
         if ((img.width != width) || (img.height != height))
@@ -559,51 +558,14 @@ public class GLTexture extends PImage implements PConstants
             init(img.width, img.height, params);
         }
         
-        // Putting img into pixels...
-        PApplet.arrayCopy(img.pixels, pixels);
+        for (int i = 0; i < width * height; i++)
+        	pixels[i] = img.pixels[i];
         
         // ...into texture...
         loadTexture();
         
         // ...and into image.
         updatePixels();        
-        */
-    	
-    	// Image loading doesn't work for the time being, so we just do a solid color array.
-    	/*
-    	int r = 0;
-    	int g = 0;
-    	int b = 255;
-    	int a = 255;
-        */
-    	
-    	init(100, 100, params);
-    	pixels = new int[100 * 100];
-    	
-    	int ranger0 = (int)parent.random(0, 255);
-    	int ranger1 = (int)parent.random(ranger0, 255);
-
-    	int rangeg0 = (int)parent.random(0, 255);
-    	int rangeg1 = (int)parent.random(rangeg0, 255);
-    	
-    	int rangeb0 = (int)parent.random(0, 255);
-    	int rangeb1 = (int)parent.random(rangeb0, 255);
-
-    	
-    	for (int i = 0; i < 100 * 100; i++) {
-    		// Random pixels for the texture.
-        	int r  = (int)parent.random(ranger0, ranger1);
-        	int g  = (int)parent.random(rangeg0, rangeg1);    	
-        	int b  = (int)parent.random(rangeb0, rangeb1);
-        	int a = 255;    		
-    		pixels[i] = a << 24 | r << 16 | g << 8 | b; 
-    	}
-        
-        // ...into texture...
-        loadTexture();
-        
-        // ...and into image.
-        updatePixels();
     }
 
     /**
