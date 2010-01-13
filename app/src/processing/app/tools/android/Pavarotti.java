@@ -30,41 +30,42 @@ import processing.core.PApplet;
 
 /**
  * Class to handle calling Runtime.exec() and stuffing input and error streams
- * into String arrays that can be dealt with more easily. 
+ * into String arrays that can be dealt with more easily.
  */
 public class Pavarotti {
   Process process;
   String[] cmd;
 
-  StringRedirectThread error; 
-  StringRedirectThread output; 
+  StringRedirectThread error;
+  StringRedirectThread output;
 
 
   public Pavarotti(String[] cmd) throws IOException {
     this.cmd = cmd;
 
     ProcessBuilder pb = new ProcessBuilder(cmd);
-    
+
     // Make sure the ANDROID_SDK variable is set
-    Map<String,String> env = pb.environment();    
+    Map<String,String> env = pb.environment();
     env.put("ANDROID_SDK", Android.sdkPath);
     // Also make sure that the tools are included in the PATH
     String path = env.get("PATH");
     String toolsPath = Android.sdkPath + File.separator + "tools";
     env.put("PATH", path + File.pathSeparator + toolsPath);
+    System.out.println("path should be " + env.get("PATH"));
 
     process = pb.start();
     //process = Runtime.getRuntime().exec(cmd);
     error = new StringRedirectThread(process.getErrorStream());
     output = new StringRedirectThread(process.getInputStream());
   }
-  
-  
+
+
   public void printCommand() {
     System.out.println(PApplet.join(cmd, " "));
   }
-  
-  
+
+
   public void printArgs() {
     PApplet.println(cmd);
   }
@@ -76,18 +77,18 @@ public class Pavarotti {
     output.finish();
     return result;
   }
-  
+
 
   public String[] getErrorLines() {
     return error.getLines();
   }
-  
-  
+
+
   public String[] getOutputLines() {
     return output.getLines();
   }
-  
-  
+
+
   public void printErrorLines() {
     for (String err : getErrorLines()) {
       //if (err.length() > 0) System.err.println("err: " + err);
@@ -95,8 +96,8 @@ public class Pavarotti {
 //      System.err.println(err);
     }
   }
-  
-  
+
+
   public void printOutputLines() {
     for (String out : getOutputLines()) {
       //if (out.length() > 0) System.out.println("out: " + out);
