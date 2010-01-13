@@ -137,7 +137,12 @@ public class PGraphicsAndroid2D extends PGraphics {
 
   // FRAME
 
-
+  /*
+  public void requestDraw() {
+	  parent.surfaceView.requestRender();
+  }
+  */
+    
 //  public boolean canDraw() {
 //    return true;
 //  }

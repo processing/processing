@@ -207,7 +207,7 @@ public class PImage implements PConstants, Cloneable {
     this.image = image;
     this.width = image.getWidth();
     this.height = image.getHeight();
-    this.pixels = null;  // hopefully?
+    this.pixels = null;
     this.format = image.hasAlpha() ? ARGB : RGB;
   }
 
@@ -298,6 +298,9 @@ public class PImage implements PConstants, Cloneable {
    * this should copy all data into the pixels[] array
    */
   public void loadPixels() {  // ignore
+    if (pixels == null || pixels.length != width*height)  
+      this.pixels = new int[width*height];
+    this.image.getPixels(this.pixels, 0, width, 0, 0, width, height);    
   }
 
 

@@ -319,7 +319,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   public float[] zeroBufferGL = { 0.0f, 0.0f, 0.0f, 0.0f };  
   
   public PGraphicsAndroid3D() {
-//	renderer = new A3DRenderer();
+	renderer = new A3DRenderer();
     glu = new GLU();  // or maybe not until used?
   }
   
