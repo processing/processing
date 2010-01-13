@@ -128,18 +128,6 @@ public class GLTexture extends PImage implements PConstants
    * This constant identifies the linear/linear function to build mipmaps .
    */
   public static final int LINEAR_MIPMAP_LINEAR = 5;
-  
-  /**
-   * These constants identifies the texture parameter types.
-   */
-  public static final int TEX_FILTER_PARAM_INT = 0;
-  public static final int TEX_FILTER_PARAM_FLOAT = 1;
-  public static final int TEX_FILTER_PARAM_VEC2 = 2;  
-  public static final int TEX_FILTER_PARAM_VEC3 = 3;
-  public static final int TEX_FILTER_PARAM_VEC4 = 4;
-  public static final int TEX_FILTER_PARAM_MAT2 = 5;
-  public static final int TEX_FILTER_PARAM_MAT3 = 6;
-  public static final int TEX_FILTER_PARAM_MAT4 = 7;
 
   public static final int GL_DEPTH_STENCIL = 0x84F9;
   public static final int GL_UNSIGNED_INT_24_8 = 0x84FA;
