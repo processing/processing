@@ -21,7 +21,9 @@
 
 package processing.app.tools.android;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
 import processing.core.PApplet;
 
@@ -41,7 +43,18 @@ public class Pavarotti {
   public Pavarotti(String[] cmd) throws IOException {
     this.cmd = cmd;
 
-    process = Runtime.getRuntime().exec(cmd);
+    ProcessBuilder pb = new ProcessBuilder(cmd);
+    
+    // Make sure the ANDROID_SDK variable is set
+    Map<String,String> env = pb.environment();    
+    env.put("ANDROID_SDK", Android.sdkPath);
+    // Also make sure that the tools are included in the PATH
+    String path = env.get("PATH");
+    String toolsPath = Android.sdkPath + File.separator + "tools";
+    env.put("PATH", path + File.pathSeparator + toolsPath);
+
+    process = pb.start();
+    //process = Runtime.getRuntime().exec(cmd);
     error = new StringRedirectThread(process.getErrorStream());
     output = new StringRedirectThread(process.getInputStream());
   }

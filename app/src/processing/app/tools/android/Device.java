@@ -143,16 +143,18 @@ public class Device {
         "-t", target,
         "-c", "64M"
     };
-    Process p = Runtime.getRuntime().exec(cmd);
-    StringRedirectThread error = new StringRedirectThread(p.getErrorStream());
-    StringRedirectThread output = new StringRedirectThread(p.getInputStream());
+    Pavarotti p = new Pavarotti(cmd);
+//    Process p = Runtime.getRuntime().exec(cmd);
+//    StringRedirectThread error = new StringRedirectThread(p.getErrorStream());
+//    StringRedirectThread output = new StringRedirectThread(p.getInputStream());
 
     try {
       int result = p.waitFor();
       if (result == 0) {
         // mumble the result into the console
         //PApplet.println(output.getLines());
-        for (String s : output.getLines()) {
+        //for (String s : output.getLines()) {
+        for (String s : p.getOutputLines()) {
           System.out.println(s);
         }
         return true;
@@ -161,10 +163,11 @@ public class Device {
         System.out.println("Attempted: '" + PApplet.join(cmd, " ") + "'");
         // Include the stdout stuff since lots of these tools die with an
         // error, but use stdout to print their sadness instead of stderr
-        for (String s : output.getLines()) {
+        //for (String s : output.getLines()) {
+        for (String s : p.getOutputLines()) {
           System.out.println(s);
         }
-        for (String s : error.getLines()) {
+        for (String s : p.getErrorLines()) {
           System.err.println(s);
         }
       }
