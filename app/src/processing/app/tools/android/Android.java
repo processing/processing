@@ -39,7 +39,7 @@ import processing.core.PApplet;
 
 public class Android implements Tool {
   static String sdkPath;
-  static String androidName;
+  static String toolName;
 //  static String toolsPath;
 
   private Editor editor;
@@ -116,6 +116,17 @@ public class Android implements Tool {
   protected boolean checkPath() {
     Platform platform = Base.getPlatform();
 
+    // If android.sdk.path exists as a preference, make sure that the folder
+    // exists, otherwise the SDK may have been removed or deleted.
+    String oldPath = Preferences.get("android.sdk.path");
+    if (oldPath != null) {
+      File oldFolder = new File(oldPath);
+      if (!oldFolder.exists()) {
+        // Clear the preference so that it's updated below
+        Preferences.unset("android.sdk.path");
+      }
+    }
+
     // The environment variable is king. The preferences.txt entry is a page.
     String envPath = platform.getenv("ANDROID_SDK");
     if (envPath != null) {
@@ -136,20 +147,22 @@ public class Android implements Tool {
           File folder =
             Base.selectFolder(SELECT_ANDROID_SDK_FOLDER, null, editor);
           if (folder != null) {
-            boolean basicCheck = false;
             if (Base.isWindows()) {
-              basicCheck = (new File(folder, "tools/android.exe").exists() ||
-                            new File(folder, "tools/android.bat").exists());
-            } else {
-              basicCheck = new File(folder, "tools/android").exists();
+              if (new File(folder, "tools/android.exe").exists()) {
+                toolName = "android.exe";
+              } else if (new File(folder, "tools/android.bat").exists()) {
+                toolName = "android.bat";
+              }
+            } else if (new File(folder, "tools/android").exists()) {
+              toolName = "android";
             }
-            if (basicCheck) {
+            if (toolName != null) {
               sdkPath = folder.getAbsolutePath();
               Preferences.set("android.sdk.path", sdkPath);
             } else {
               // tools/android not found in the selected folder
-              System.err.println("Could not find the android executable at " +
-                                 folder.getAbsolutePath() + "/tools/android");
+              System.err.println("Could not find the android executable inside " +
+                                 folder.getAbsolutePath() + "/tools/");
               JOptionPane.showMessageDialog(editor, NOT_ANDROID_SDK);
               return false;
             }
@@ -171,6 +184,7 @@ public class Android implements Tool {
     //System.out.println("sdk path is " + sdkPath);
     //  sdkPath = "/opt/android";
 
+    /*
     // Make sure that the tools are in the PATH
     String toolsPath = sdkPath + File.separator + "tools";
     String path = platform.getenv("PATH");
@@ -195,6 +209,7 @@ public class Android implements Tool {
     } catch (Exception e) {
       e.printStackTrace();
     }
+    */
 
     return true;
   }
