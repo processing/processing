@@ -1,5 +1,7 @@
 0176 (private)
 X begin the merge of the new A3D, remove old OpenGL code
+_ Android tools on Windows are broken due to naming changes in r4 SDK
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1432
 
 
 _ add method to set the icon (and package name?)
