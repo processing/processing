@@ -173,8 +173,22 @@ public class Android implements Tool {
     // Make sure that the tools are in the PATH
     String toolsPath = sdkPath + File.separator + "tools";
     String path = platform.getenv("PATH");
+    System.out.println("path before set is " + path);
     platform.setenv("PATH", path + File.pathSeparator + toolsPath);
-    //System.out.println("path after set is " + Base.getenv("PATH"));
+    System.out.println("path after set is " +
+                       Base.getPlatform().getenv("PATH"));
+
+    String[] cmd = { "echo", "%PATH%" };
+    try {
+      Pavarotti p = new Pavarotti(cmd);
+      int result = p.waitFor();
+      if (result == 0) {
+        PApplet.println(p.getOutputLines());
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
     return true;
   }
 
