@@ -114,8 +114,6 @@ public class Android implements Tool {
 
 
   protected boolean checkPath() {
-    Platform platform = Base.getPlatform();
-
     // If android.sdk.path exists as a preference, make sure that the folder
     // exists, otherwise the SDK may have been removed or deleted.
     String oldPath = Preferences.get("android.sdk.path");
@@ -128,16 +126,17 @@ public class Android implements Tool {
     }
 
     // The environment variable is king. The preferences.txt entry is a page.
-    String envPath = checkLegit(platform.getenv("ANDROID_SDK"));
-    if (envPath != null) {
-      sdkPath = envPath;
+    Platform platform = Base.getPlatform();
+    sdkPath = findAndroidTool(platform.getenv("ANDROID_SDK"));
+    if (sdkPath != null) {
       // Set this value in preferences.txt, in case ANDROID_SDK
       // gets knocked out later. For instance, by that pesky Eclipse,
       // which nukes all env variables when launching from the IDE.
-      Preferences.set("android.sdk.path", envPath);
+      Preferences.set("android.sdk.path", sdkPath);
 
     } else {
-      sdkPath = checkLegit(Preferences.get("android.sdk.path"));
+      // See if the path was set earlier
+      sdkPath = findAndroidTool(Preferences.get("android.sdk.path"));
 
       if (sdkPath == null) {
         int result = Base.showYesNoQuestion(editor, "Android SDK",
@@ -147,17 +146,8 @@ public class Android implements Tool {
           File folder =
             Base.selectFolder(SELECT_ANDROID_SDK_FOLDER, null, editor);
           if (folder != null) {
-            if (Base.isWindows()) {
-              if (new File(folder, "tools/android.exe").exists()) {
-                toolName = "android.exe";
-              } else if (new File(folder, "tools/android.bat").exists()) {
-                toolName = "android.bat";
-              }
-            } else if (new File(folder, "tools/android").exists()) {
-              toolName = "android";
-            }
-            if (toolName != null) {
-              sdkPath = folder.getAbsolutePath();
+            sdkPath = findAndroidTool(folder.getAbsolutePath());
+            if (sdkPath != null) {
               Preferences.set("android.sdk.path", sdkPath);
             } else {
               // tools/android not found in the selected folder
@@ -176,9 +166,10 @@ public class Android implements Tool {
     if (sdkPath == null) {  // still not interested?
       return false;
     }
-    if (envPath == null) {
-      platform.setenv("ANDROID_SDK", sdkPath);
-    }
+//    if (envPath == null) {
+    platform.setenv("ANDROID_SDK", sdkPath);
+//    }
+
     //platform.setenv("ANDROID_SDK", "/opt/android");
     //sdkPath = platform.getenv("ANDROID_SDK");
     //System.out.println("sdk path is " + sdkPath);
@@ -212,6 +203,29 @@ public class Android implements Tool {
     */
 
     return true;
+  }
+  
+
+  /**
+   * Checks a path to see if there's a tools/android file inside, a rough check
+   * for the SDK installation. Also figures out the name of android/android.bat
+   * so that it can be called explicitly.
+   */
+  String findAndroidTool(String path) {
+    if (path == null) return null;  // Definitely not legit
+    
+    File folder = new File(path);
+
+    if (Base.isWindows()) {
+      if (new File(folder, "tools/android.exe").exists()) {
+        toolName = "android.exe";
+      } else if (new File(folder, "tools/android.bat").exists()) {
+        toolName = "android.bat";
+      }
+    } else if (new File(folder, "tools/android").exists()) {
+      toolName = "android";
+    }
+    return toolName != null ? path : null; 
   }
 
 
