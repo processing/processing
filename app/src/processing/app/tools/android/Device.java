@@ -106,7 +106,7 @@ public class Device {
 
 
   protected boolean exists() throws IOException {
-    String[] cmd = { "android", "list", "avds" };
+    String[] cmd = { "android.bat", "list", "avds" };
 //    Process p = Runtime.getRuntime().exec(cmd);
 //    StringRedirectThread error = new StringRedirectThread(p.getErrorStream());
 //    StringRedirectThread output = new StringRedirectThread(p.getInputStream());
@@ -206,7 +206,6 @@ public class Device {
     // home on the emulator
 //  /dev/input/event0: 0001 0066 00000001
 //  /dev/input/event0: 0001 0066 00000000
-
   }
 
 
