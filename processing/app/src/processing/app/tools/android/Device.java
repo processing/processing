@@ -106,7 +106,7 @@ public class Device {
 
 
   protected boolean exists() throws IOException {
-    String[] cmd = { "android.bat", "list", "avds" };
+    String[] cmd = { Android.toolName, "list", "avds" };
 //    Process p = Runtime.getRuntime().exec(cmd);
 //    StringRedirectThread error = new StringRedirectThread(p.getErrorStream());
 //    StringRedirectThread output = new StringRedirectThread(p.getInputStream());
@@ -138,7 +138,7 @@ public class Device {
   protected boolean create() throws IOException {
     // not using "-s", width + "x" + height, because that can be specified
     // on startup, which will be easier to do for Processing apps anyway.
-    String[] cmd = { "android", "create", "avd",
+    String[] cmd = { Android.toolName, "create", "avd",
         "-n", name,
         "-t", target,
         "-c", "64M"
