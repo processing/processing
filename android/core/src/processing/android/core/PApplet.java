@@ -82,7 +82,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
    */
   public String args[];
 
-  /** Path to sketch folder */
+  /** Path to where sketch can read/write files (read-only) */
   public String sketchPath; //folder;
 
   /** When debugging headaches */
@@ -415,13 +415,15 @@ public class PApplet extends Activity implements PConstants, Runnable {
     looping = true;
     redraw = true;  // draw this guy once
     firstMotion = true;
-
+    
     // TODO is there a better way to set the sketch path?
 //    try {
 //      if (sketchPath == null) {
 //        sketchPath = System.getProperty("user.dir");
 //      }
 //    } catch (Exception e) { }  // may be a security problem
+    Context context = getApplicationContext();
+    sketchPath = context.getFilesDir().getAbsolutePath();
 
     /*
     Dimension size = getSize();
@@ -3393,27 +3395,10 @@ public class PApplet extends Activity implements PConstants, Runnable {
     // to slashes or requiring a slash at the beginning.
     // (a slash as a prefix means that it'll load from the root of
     // the jar, rather than trying to dig into the package location)
-    ClassLoader cl = getClass().getClassLoader();
 
     /*
-    // by default, data files are exported to the root path of the jar.
-    // (not the data folder) so check there first.
-    stream = cl.getResourceAsStream("data/" + filename);
-    if (stream != null) {
-      String cn = stream.getClass().getName();
-      // this is an irritation of sun's java plug-in, which will return
-      // a non-null stream for an object that doesn't exist. like all good
-      // things, this is probably introduced in java 1.5. awesome!
-      // http://dev.processing.org/bugs/show_bug.cgi?id=359
-      if (!cn.equals("sun.plugin.cache.EmptyInputStream")) {
-        return stream;
-      }
-    }
-    */
-
-    // When used with an online script, also need to check without the
-    // data folder, in case it's not in a subfolder called 'data'.
-    // http://dev.processing.org/bugs/show_bug.cgi?id=389
+    // this works, but requires files to be stored in the src folder
+    ClassLoader cl = getClass().getClassLoader();
     stream = cl.getResourceAsStream(filename);
     if (stream != null) {
       String cn = stream.getClass().getName();
@@ -3425,14 +3410,31 @@ public class PApplet extends Activity implements PConstants, Runnable {
         return stream;
       }
     }
+     */
 
+    // Try the assets folder
+    AssetManager assets = getAssets();
+    try {
+      stream = assets.open(filename);
+      if (stream != null) {
+        return stream;
+      }
+    } catch (IOException e) {
+      // ignore this and move on
+      //e1.printStackTrace();
+    }
+    
     // Attempt to load from a file directly from storage.
     Context context = getApplicationContext();
     try {
       // MODE_PRIVATE is default, should we use something else?
-      return context.openFileInput(filename);
+      stream = context.openFileInput(filename);
+      if (stream != null) {
+        return stream;
+      }
     } catch (FileNotFoundException e) {
-      e.printStackTrace();
+      // ignore this and move on
+      //e.printStackTrace();
     }
 
     return null;
@@ -3440,6 +3442,9 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 
   static public InputStream createInput(File file) {
+    if (file == null) {
+      throw new IllegalArgumentException("File passed to openStream() was null");
+    }
     try {
       InputStream input = new FileInputStream(file);
       if (file.getName().toLowerCase().endsWith(".gz")) {
@@ -3448,14 +3453,9 @@ public class PApplet extends Activity implements PConstants, Runnable {
       return input;
 
     } catch (IOException e) {
-      if (file == null) {
-        throw new RuntimeException("File passed to openStream() was null");
-
-      } else {
-        e.printStackTrace();
-        throw new RuntimeException("Couldn't openStream() for " +
-                                   file.getAbsolutePath());
-      }
+      System.err.println("Could not openStream() for " + file);
+      e.printStackTrace();
+      return null;
     }
   }
 
@@ -3773,6 +3773,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 //                                 "or security restrictions prevented " +
 //                                 "it from determining its path.");
     }
+    
     // isAbsolute() could throw an access exception, but so will writing
     // to the local disk using the sketch path, so this is safe here.
     // for 0120, added a try/catch anyways.
@@ -3780,7 +3781,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
       if (new File(where).isAbsolute()) return where;
     } catch (Exception e) { }
 
-    return sketchPath + File.separator + where;
+    Context context = getApplicationContext();
+    return context.getFileStreamPath(where).getAbsolutePath();
   }
 
 
