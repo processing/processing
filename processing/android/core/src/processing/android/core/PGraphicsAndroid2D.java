@@ -1837,8 +1837,47 @@ public class PGraphicsAndroid2D extends PGraphics {
   }
 
 
+  public void set(int x, int y, PImage src) {
+    // set() happens in screen coordinates, so need to clear the ctm 
+    canvas.save(Canvas.MATRIX_SAVE_FLAG);
+    canvas.setMatrix(null);  // set to identity
+    canvas.drawBitmap(src.image, x, y, null);
+    canvas.restore();
+  }
+
+  
+  // elaborate but silly version, since android will happily do this work
+//  private Rect setImplSrcRect;
+//  private Rect setImplDstRect;
+//  
 //  protected void setImpl(int dx, int dy, int sx, int sy, int sw, int sh,
 //                         PImage src) {
+//    if (setImplSrcRect == null) {
+//      setImplSrcRect = new Rect(sx, sy, sx+sw, sy+sh);
+//      setImplDstRect = new Rect(dx, dy, dx+sw, dy+sh);
+//    } else {
+//      setImplSrcRect.set(sx, sy, sx+sw, sy+sh);
+//      setImplDstRect.set(dx, dy, dx+sw, dy+sh);
+//    }
+//    // set() happens in screen coordinates, so need to nuke the ctm 
+//    canvas.save(Canvas.MATRIX_SAVE_FLAG);
+//    canvas.setMatrix(null);  // set to identity
+//    canvas.drawBitmap(src.image, setImplSrcRect, setImplDstRect, null);
+//    canvas.restore();
+//  }
+
+    // PImage version
+//    int srcOffset = sy * src.width + sx;
+//    int dstOffset = dy * width + dx;
+//
+//    for (int y = sy; y < sy + sh; y++) {
+//      System.arraycopy(src.pixels, srcOffset, pixels, dstOffset, sw);
+//      srcOffset += src.width;
+//      dstOffset += width;
+//    }
+//    updatePixelsImpl(sx, sy, sx+sw, sy+sh);
+
+    // PGraphicsJava2D version
 //    WritableRaster raster = ((BufferedImage) image).getRaster();
 //    if ((sx == 0) && (sy == 0) && (sw == src.width) && (sh == src.height)) {
 //      raster.setDataElements(dx, dy, src.width, src.height, src.pixels);
@@ -1847,7 +1886,6 @@ public class PGraphicsAndroid2D extends PGraphics {
 //      PImage temp = src.get(sx, sy, sw, sh);
 //      raster.setDataElements(dx, dy, temp.width, temp.height, temp.pixels);
 //    }
-//  }
 
 
 
