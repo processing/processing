@@ -11,6 +11,8 @@ import java.nio.*;
 // Fix the setBuffer methods to make them into setTexChannel or something like that.
 // Overload the loadPixels and updatePixels so that texture info is copies to data[] array instead to
 // pixels[] when the texture is floating point.
+// Properly implement putBuffer method to copy ALPHA, RGB and RGBA buffers to the texture. Now it has been
+// quickly hacked to properly use alpha textures needed by GLFonts.
 
 /**
  * This class adds an opengl texture to a PImage object. The texture is 
@@ -69,7 +71,7 @@ public class GLTexture extends PImage implements PConstants, GLConstants
      */	 
     public GLTexture(PApplet parent, int width, int height, Parameters params)
     {
-        super(width, height, ARGB);  
+        super(width, height, params.format);  
         this.parent = parent;
        
         pgl = (PGraphicsAndroid3D)parent.g;
@@ -90,7 +92,7 @@ public class GLTexture extends PImage implements PConstants, GLConstants
      */	 
     public GLTexture(PApplet parent, int width, int height, int format)
     {
-        super(width, height, ARGB);  
+        super(width, height, format);  
         this.parent = parent;
        
         pgl = (PGraphicsAndroid3D)parent.g;
@@ -112,7 +114,7 @@ public class GLTexture extends PImage implements PConstants, GLConstants
      */	 
     public GLTexture(PApplet parent, int width, int height, int format, int filter)
     {
-        super(width, height, ARGB);  
+        super(width, height, format);  
         this.parent = parent;
        
         pgl = (PGraphicsAndroid3D)parent.g;
@@ -142,7 +144,7 @@ public class GLTexture extends PImage implements PConstants, GLConstants
 
     public GLTexture(PApplet parent, int width, int height, Parameters params, int id)
     {
-        super(width, height, ARGB);  
+        super(width, height, params.format);  
         this.parent = parent;
        
         pgl = (PGraphicsAndroid3D)parent.g;
@@ -161,7 +163,7 @@ public class GLTexture extends PImage implements PConstants, GLConstants
      */	
     public GLTexture(PApplet parent, String filename, Parameters params)
     {
-        super(1, 1, ARGB);  
+        super(1, 1, params.format);  
         this.parent = parent;
 	   
         pgl = (PGraphicsAndroid3D)parent.g;
@@ -179,7 +181,7 @@ public class GLTexture extends PImage implements PConstants, GLConstants
      */	
     public GLTexture(PApplet parent, String filename, int format)
     {
-        super(1, 1, ARGB);  
+        super(1, 1, format);  
         this.parent = parent;
 	   
         pgl = (PGraphicsAndroid3D)parent.g;
@@ -198,7 +200,7 @@ public class GLTexture extends PImage implements PConstants, GLConstants
      */	
     public GLTexture(PApplet parent, String filename, int format, int filter)
     {
-        super(1, 1, ARGB);  
+        super(1, 1, format);  
         this.parent = parent;
 	   
         pgl = (PGraphicsAndroid3D)parent.g;
@@ -237,7 +239,7 @@ public class GLTexture extends PImage implements PConstants, GLConstants
      */	 
     public GLTexture(PApplet parent, int size, Parameters params)
     {
-        super(1, 1, ARGB);  
+        super(1, 1, params.format);  
         this.parent = parent;
        
         pgl = (PGraphicsAndroid3D)parent.g;
@@ -269,8 +271,8 @@ public class GLTexture extends PImage implements PConstants, GLConstants
      */
     public void init(int width, int height, Parameters params)
     {
-        super.init(width, height, ARGB);
-		setTextureParams(params);
+        super.init(width, height, params.format);
+		    setTextureParams(params);
         initTexture(width, height);
     }	
 	
@@ -457,8 +459,19 @@ public class GLTexture extends PImage implements PConstants, GLConstants
         }
    
         // Putting into texture.
-	    putBuffer(img.pixels);
-    }
+        if (texInternalFormat == GL10.GL_RGB) 
+        {
+            putBuffer(img.pixels, RGB);
+        } 
+        if (texInternalFormat == GL10.GL_RGBA) 
+        {
+            putBuffer(img.pixels, ARGB);
+        } 
+        if (texInternalFormat == GL10.GL_ALPHA) 
+        {
+            putBuffer(img.pixels, ALPHA);
+        }     
+      }
 	
     /**
      * Puts the pixels of img inside the rectangle (x, y, x+w, y+h) into texture only.
@@ -489,7 +502,18 @@ public class GLTexture extends PImage implements PConstants, GLConstants
 	    }
    
         // Putting into texture.
-	    putBuffer(dest);
+        if (texInternalFormat == GL10.GL_RGB) 
+        {
+            putBuffer(dest, RGB);
+        } 
+        if (texInternalFormat == GL10.GL_RGBA) 
+        {
+            putBuffer(dest, ARGB);
+        } 
+        if (texInternalFormat == GL10.GL_ALPHA) 
+        {
+            putBuffer(dest, ALPHA);
+        }     
     }
 	
     /**
@@ -570,7 +594,19 @@ public class GLTexture extends PImage implements PConstants, GLConstants
      */	
     public void loadTexture()
     {
-        putBuffer(pixels);
+        // Putting into texture.
+        if (texInternalFormat == GL10.GL_RGB) 
+        {
+            putBuffer(pixels, RGB);
+        } 
+        if (texInternalFormat == GL10.GL_RGBA) 
+        {
+            putBuffer(pixels, ARGB);
+        } 
+        if (texInternalFormat == GL10.GL_ALPHA) 
+        {
+            putBuffer(pixels, ALPHA);
+        }     
     }
     
     /**
@@ -677,7 +713,7 @@ public class GLTexture extends PImage implements PConstants, GLConstants
      */	
     public void putBuffer(int[] intArray)
     {
-        putBuffer(intArray, TEX4, TEX_BYTE);
+        putBuffer(intArray, ARGB, TEX_BYTE);
     }
 
     /**
@@ -725,30 +761,28 @@ public class GLTexture extends PImage implements PConstants, GLConstants
   
         int[] convArray = intArray;
         int glFormat;
-        if (format == TEX1)
+        if (format == ALPHA)
         {
-        	glFormat = GL10.GL_LUMINANCE;
-        	if (type == TEX_BYTE)
-        	{
-        		convArray = convertToRGBA(intArray, ALPHA);
-        		/*
-        		 
-        		PApplet.println("Hey");
-        		int[] convArray2 = new int[width * height]; 
-        		for (int i = 0; i < width * height; i++)
-        		{
-        			convArray2[i] = 0x88000000;
-        		}
-        		gl.glBindTexture(texTarget, tex[0]);
-        		gl.glTexSubImage2D(texTarget, 0, 0, 0, width, height, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, IntBuffer.wrap(convArray2));
-        		gl.glBindTexture(texTarget, 0);
-        		PApplet.println("CHAU");
-        		return;
-        		*/
-        	}
+          glFormat = GL10.GL_ALPHA;
+          if (type == TEX_BYTE)
+          {
+              byte[] convArray2 = convertToAlpha(intArray);
+              gl.glBindTexture(texTarget, tex[0]);
+              gl.glTexSubImage2D(texTarget, 0, 0, 0, width, height, glFormat, GL10.GL_UNSIGNED_BYTE, ByteBuffer.wrap(convArray2));
+              gl.glBindTexture(texTarget, 0);
+              return;
+          }
         }
-        else if (format == TEX3)
+        else if (format == RGB)
         {
+          // If in the previous case, we need to use a byte array, here with RGB we should use a byte array with 3 bytes per color, 
+          // i.e.: byte[] convArray3 = byte[3 * widht * height] and then storing RGB components from intArray as follows:
+          // for (int i = 0; i < width * height; i++) { 
+          // convArray3[3 * i ] = red(intArray[i]);
+          // convArray3[3 * i + 1] = green(intArray[i]);
+          // convArray3[3 * i + 2] = blue(intArray[i]);
+          //}
+          // where the red, green, green and blue operators involve the correct bit shifting to extract the component from the int value.          
         	glFormat = GL10.GL_RGB;
         	if (type == TEX_BYTE) convArray = convertToRGBA(intArray, RGB);
         }
@@ -794,15 +828,15 @@ public class GLTexture extends PImage implements PConstants, GLConstants
      */
     public void putBuffer(float[] floatArray)
     {
-        putBuffer(floatArray, TEX4);
+        putBuffer(floatArray, 4);
     }
 
     /**
-     * Copies floatArray into the texture, using the specified format.
+     * Copies floatArray into the texture, using the specified number of channels.
      * @param floatArray float[]
-     * @param format int
+     * @param nchan int
      */
-    public void putBuffer(float[] floatArray, int format)
+    public void putBuffer(float[] floatArray, int nchan)
     {
         if (tex[0] == 0)
         {
@@ -810,8 +844,8 @@ public class GLTexture extends PImage implements PConstants, GLConstants
         }
 
         int glFormat;
-        if (format == TEX1) glFormat = GL10.GL_LUMINANCE;
-        else if (format == TEX3) glFormat = GL10.GL_RGB;
+        if (nchan == 1) glFormat = GL10.GL_LUMINANCE;
+        else if (nchan == 3) glFormat = GL10.GL_RGB;
         else glFormat = GL10.GL_RGBA;
 
         gl.glBindTexture(texTarget, tex[0]);
@@ -835,7 +869,7 @@ public class GLTexture extends PImage implements PConstants, GLConstants
      */
     public void getBuffer(int[] intArray)
     {
-        getBuffer(intArray, TEX4, TEX_BYTE);
+        getBuffer(intArray, ARGB, TEX_BYTE);
     }
 
     /**
@@ -880,12 +914,12 @@ public class GLTexture extends PImage implements PConstants, GLConstants
     {
         int mult;
         int glFormat;
-        if (format == TEX1) 
+        if (format == ALPHA) 
         { 
             mult = 1;
             glFormat = GL10.GL_LUMINANCE;
         }
-        else if (format == TEX3) 
+        else if (format == RGB) 
         { 
             mult = 3;
             glFormat = GL10.GL_RGB;
@@ -933,16 +967,16 @@ public class GLTexture extends PImage implements PConstants, GLConstants
      * @param floatArray float[]
      * @param format int
      */
-    public void getBuffer(float[] floatArray, int format)
+    public void getBuffer(float[] floatArray, int nchan)
     {
         int mult;
 //        int glFormat;
-        if (format == TEX1) 
+        if (format == 1) 
         { 
             mult = 1;
 //            glFormat = GL10.GL_LUMINANCE;
         }
-        else if (format == TEX3) 
+        else if (format == 3) 
         { 
             mult = 3;
 //            glFormat = GL10.GL_RGB;
@@ -1518,7 +1552,7 @@ public class GLTexture extends PImage implements PConstants, GLConstants
         
         return tIntArray;    
     }
-
+        
     /**
      * @invisible
      * Reorders a pixel array in RGBA format into ARGB.
@@ -1574,6 +1608,21 @@ public class GLTexture extends PImage implements PConstants, GLConstants
     
     /**
      * @invisible
+     * Creates a byte version of intArray..
+     * @param intArray int[]   
+     */    
+    protected byte[] convertToAlpha(int[] intArray)
+    {
+        byte[] tByteArray = new byte[width * height];        
+        for (int i = 0; i < width * height; i++)
+        {
+           tByteArray[i] = (byte)(intArray[i]);
+        }      
+        return tByteArray;      
+    }    
+    
+    /**
+     * @invisible
      * Creates the opengl texture object.
      * @param w int
      * @param h int	 
@@ -1597,7 +1646,7 @@ public class GLTexture extends PImage implements PConstants, GLConstants
         //if (texTarget == GL.GL_TEXTURE_1D) gl.glTexImage1D(texTarget, 0, texInternalFormat, w, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, null);
         //else gl.glTexImage2D(texTarget, 0, texInternalFormat, w, h, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, null);
         
-        gl.glTexImage2D(texTarget, 0, texInternalFormat, w, h, 0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, null);
+        gl.glTexImage2D(texTarget, 0, GL10.GL_RGBA/*texInternalFormat*/, w, h, 0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, null);
         gl.glBindTexture(texTarget, 0);
 		
         /*
@@ -1683,9 +1732,9 @@ public class GLTexture extends PImage implements PConstants, GLConstants
     protected void setTextureParams(Parameters params)
     {
 	    if (params.target == TEX_NORM)
-        {            
-            texTarget = GL10.GL_TEXTURE_2D;
-        }
+      {            
+        texTarget = GL10.GL_TEXTURE_2D;
+      }
 	    /*
 	    else if (params.target == TEX_RECT)
         {
@@ -1697,27 +1746,18 @@ public class GLTexture extends PImage implements PConstants, GLConstants
         }
         */
 	    
-	    if (params.format == COLOR)
-	    {
+        if (params.format == RGB) 
+        {
+            texInternalFormat = GL10.GL_RGB;
+        } 
+        if (params.format == ARGB) 
+        {
             texInternalFormat = GL10.GL_RGBA;
-        }
-	    /*
-	     No Float formats
-        else if (params.format == FLOAT)
+        } 
+        if (params.format == ALPHA) 
         {
-            texInternalFormat = GL10.GL_RGBA16F;            
-	    }
-	    else if (params.format == DOUBLE)
-        {
-            texInternalFormat = GL10.GL_RGBA32F_ARB;
-	    }		
-	    */
-	    
-	    else if (params.format == 3)
-	    {
-	    	PApplet.println("Setting alpha tex");
             texInternalFormat = GL10.GL_ALPHA;
-        }	    
+        }         
 	    
 
 	    if (params.minFilter == NEAREST)

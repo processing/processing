@@ -2997,7 +2997,41 @@ public class PApplet extends Activity implements PConstants, Runnable {
     return new PFont(baseFont, round(size), smooth, charset);
   }
 
+  public GLFont loadGLFont(String filename) {
+    try {
+      InputStream input = createInput(filename);
+      return new GLFont(this, input);
 
+    } catch (Exception e) {
+      die("Could not load font " + filename + ". " +
+          "Make sure that the font has been copied " +
+          "to the data folder of your sketch.", e);
+    }
+    return null;
+  }
+
+  public GLFont createGLFont(String name, float size) {
+    return createGLFont(name, size, true, GLFont.DEFAULT_CHARSET);
+  }
+
+  public GLFont createGLFont(String name, float size, boolean smooth) {
+    return createGLFont(name, size, smooth, GLFont.DEFAULT_CHARSET);
+  }
+
+  public GLFont createGLFont(String name, float size,
+                          boolean smooth, char charset[]) {
+    String lowerName = name.toLowerCase();
+    Typeface baseFont = null;
+
+    if (lowerName.endsWith(".otf") || lowerName.endsWith(".ttf")) {
+      AssetManager assets = getBaseContext().getAssets();
+      baseFont = Typeface.createFromAsset(assets, "data/" + name);
+
+    } else {
+      baseFont = PFont.findFont(name);
+    }
+    return new GLFont(this, baseFont, round(size), smooth, charset);
+  }
 
   //////////////////////////////////////////////////////////////
 
