@@ -17,9 +17,9 @@ public interface GLConstants {
   public static final int TEX_ONEDIM = 2; 
 
   /**
-   * This constant identifies the texture internal format GL_RGBA: 4 color components of 8 bits each.
+   * This constant identifies the texture internal format GL_RGBA: 4 color components of 8 bits each, identical as ARGB.
    */
-  public static final int COLOR = 0;  
+  public static final int COLOR = 2;  
   /**
    * This constant identifies the texture internal format GL_RGBA16F_ARB: 4 float compontents of 16 bits each.
    */
@@ -28,48 +28,6 @@ public interface GLConstants {
    * This constant identifies the texture internal format GL_RGBA32F_ARB: 4 float compontents of 32 bits each.
    */ 
   public static final int DOUBLE = 2;  
-
-  /**
-   * This constant identifies an image buffer that contains only RED channel info.
-   */   
-  public static final int TEX1 = 0;
-  
-  /**
-   * This constant identifies an image buffer that contains only GREEN channel info.
-   */   
-  //public static final int GREEN = 0;
-
-  /**
-   * This constant identifies an image buffer that contains only BLUE channel info.
-   */   
-  //public static final int BLUE = 0;
-  /**
-   * This constant identifies an image buffer that contains only ALPHA channel info.
-   */   
-  //public static final int ALPHA = 0; Already defined in Processing with value = 4
-
-  
-  
-  /**
-   * This constant identifies a texture with 3 color components.
-   */   
-  public static final int TEX3 = 1;
-  
-  /**
-   * This constant identifies an image buffer that contains RGB channel info.
-   */   
-  //public static final int RGB = 0;  Already defined in Processing with value = 1    
-  
-  /**
-   * This constant identifies an image buffer that contains RGB channel info.
-   */   
-  //public static final int ARGB = 0;  Already defined in Processing with value = 2   
-  
-  
-  /**
-   * This constant identifies a texture with 4 color components.
-   */   
-  public static final int TEX4 = 2;
 
   /**
    * This constant identifies an integer texture buffer.

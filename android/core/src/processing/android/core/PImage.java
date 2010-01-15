@@ -300,7 +300,7 @@ public class PImage implements PConstants, Cloneable {
   public void loadPixels() {  // ignore
     if (pixels == null || pixels.length != width*height)  
       this.pixels = new int[width*height];
-    this.image.getPixels(this.pixels, 0, width, 0, 0, width, height);    
+    if (this.image != null) this.image.getPixels(this.pixels, 0, width, 0, 0, width, height);    
   }
 
 
