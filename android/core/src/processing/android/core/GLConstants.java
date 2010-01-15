@@ -1,6 +1,5 @@
 package processing.android.core;
 
-@SuppressWarnings("unused")
 public interface GLConstants {
 /**
    * This constant identifies the texture target GL_TEXTURE_2D, 
