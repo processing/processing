@@ -4588,6 +4588,9 @@ public class PApplet extends Applet
 
 
   static public InputStream createInput(File file) {
+    if (file == null) {
+      throw new IllegalArgumentException("File passed to openStream() was null");
+    }
     try {
       InputStream input = new FileInputStream(file);
       if (file.getName().toLowerCase().endsWith(".gz")) {
@@ -4596,17 +4599,13 @@ public class PApplet extends Applet
       return input;
 
     } catch (IOException e) {
-      if (file == null) {
-        throw new RuntimeException("File passed to openStream() was null");
-
-      } else {
-        e.printStackTrace();
-        throw new RuntimeException("Couldn't openStream() for " +
-                                   file.getAbsolutePath());
-      }
+      System.err.println("Could not openStream() for " + file);
+      e.printStackTrace();
+      return null;
     }
   }
 
+  
   /**
    * Reads the contents of a file or url and places it in a byte array. If a file is specified, it must be located in the sketch's "data" directory/folder.
    * <br><br>The filename parameter can also be a URL to a file found online. For security reasons, a Processing sketch found online can only download files from the same server from which it came. Getting around this restriction requires a <a href="http://java.sun.com/developer/onlineTraining/Programming/JDCBook/signed.html">signed applet</a>.
