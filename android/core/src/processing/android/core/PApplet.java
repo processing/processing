@@ -46,7 +46,6 @@ import android.view.*;
 
 
 public class PApplet extends Activity implements PConstants, Runnable {
-
   /** The PGraphics renderer associated with this PApplet */
   public PGraphics g;
 
@@ -134,6 +133,9 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
   /** height of this applet's associated PGraphics */
   public int height;
+
+  // can't call this because causes an ex, but could set elsewhere
+  //final float screenDensity = getResources().getDisplayMetrics().density;
 
   /** absolute x position of input on screen */
   public int mouseX;
