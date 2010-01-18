@@ -33,38 +33,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   public GL10 gl;
   public GLU glu;
 
-  
-  private IntBuffer vertexBuffer;
-  private IntBuffer colorBuffer;
-  private IntBuffer textureBuffer;
-  private IntBuffer normalBuffer;
-  
-  private IntBuffer linesVertexBuffer;
-  private IntBuffer linesColorBuffer;  
-  
-  // Perspective and Camera matrices: 
-  // I just took the tranformation matrix code from PGraphics3D, so the old
-  // behaviour is kept, but in better integration with openGL. The idea is 
-  // to generate the modelview and projection matrices in the CPU, using
-  // the approach of PGraphics3D for better camera handling.
-
-  /** Array used to copy Processing's modelview matrix to OpenGL. */
-  protected float[] modelviewGL;
-  protected float[] modelviewInvGL;
-  
-  /** Array used to copy Processing's projection matrix to OpenGL. */  
-  protected float[] projectionGL;  
-  
-  protected float[] cameramat;
-  protected float[] cameramatInv;  
-  
-  boolean modelviewUpdated;
-  boolean projectionUpdated;
-
-  /** Previous image being used as a texture */
-  public PImage textureImagePrev;  
-  protected ArrayList<TexturedTriangleRange> texTriangleRanges;
-  TexturedTriangleRange currentTexTriangleRange;
+  ////////////////////////////////////////////////////////////  
   
   /** Camera field of view. */
   public float cameraFOV;
@@ -74,68 +43,44 @@ public class PGraphicsAndroid3D extends PGraphics {
   public float cameraNear, cameraFar;
   /** Aspect ratio of camera's view. */
   public float cameraAspect;
+    
+  /** Modelview and projection matrices **/ 
+  protected float[] modelview;
+  protected float[] modelviewInv;  
+  protected float[] projection;  
   
-
+  protected float[] camera;
+  protected float[] cameraInv;  
   
-  
-  /** The modelview matrix. */
-  public PMatrix3D modelview;
-
-  /** Inverse modelview matrix, used for lighting. */
-  public PMatrix3D modelviewInv;
-  
-  /**
-   * The camera matrix, the modelview will be set to this on beginDraw.
-   */
-  public PMatrix3D camera;
-
-  /** Inverse camera matrix */
-  protected PMatrix3D cameraInv;
-
-  /** Current projection matrix. */
-  public PMatrix3D projection;  
-  
-  // ........................................................
+  protected boolean modelviewUpdated;
+  protected boolean projectionUpdated;
 
   /**
    * This is turned on at beginCamera, and off at endCamera
    * Currently we don't support nested begin/end cameras.
-   * If we wanted to, this variable would have to become a stack.
    */
   protected boolean manipulatingCamera;
 
-  float[][] matrixStack = new float[MATRIX_STACK_DEPTH][16];
-  float[][] matrixInvStack = new float[MATRIX_STACK_DEPTH][16];
-  int matrixStackDepth;
+  //////////////////////////////////////////////////////////////
 
-  // These two matrices always point to either the modelview
-  // or the modelviewInv, but they are swapped during
-  // when in camera manipulation mode. That way camera transforms
-  // are automatically accumulated in inverse on the modelview matrix.
-  protected PMatrix3D forwardTransform;
-  protected PMatrix3D reverseTransform;
+  
+  private IntBuffer vertexBuffer;
+  private IntBuffer colorBuffer;
+  private IntBuffer textureBuffer;
+  private IntBuffer normalBuffer;
+  
+  private IntBuffer linesVertexBuffer;
+  private IntBuffer linesColorBuffer;  
 
-  // Added by ewjordan for accurate texturing purposes. Screen plane is
-  // not scaled to pixel-size, so these manually keep track of its size
-  // from frustum() calls. Sorry to add public vars, is there a way
-  // to compute these from something publicly available without matrix ops?
-  // (used once per triangle in PTriangle with ENABLE_ACCURATE_TEXTURES)
-  protected float leftScreen;
-  protected float rightScreen;
-  protected float topScreen;
-  protected float bottomScreen;
-  protected float nearPlane; //depth of near clipping plane
+  /** Previous image being used as a texture */
+  protected PImage textureImagePrev;  
+  protected ArrayList<TexturedTriangleRange> texTriangleRanges;
+  TexturedTriangleRange currentTexTriangleRange;  
 
-  /**
-   * Use PSmoothTriangle for rendering instead of PTriangle?
-   * Usually set by calling smooth() or noSmooth()
-   */
-  static protected boolean s_enableAccurateTextures = false; //maybe just use smooth instead?  
   
   
   
-//////////////////////////////////////////////////////////////
-
+  
 
   static public final int TRI_DIFFUSE_R = 0;
   static public final int TRI_DIFFUSE_G = 1;
@@ -267,62 +212,65 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   
   
-	// Light-related variables, taken out from PGraphics3D.
 	
   /**
    * Maximum lights by default is 8, the minimum defined by OpenGL.
    */
-  public static final int MAX_LIGHTS_GL = 8;
+  public static final int MAX_LIGHTS = 8;
 
-  public int lightCountGL = 0;
+  public int lightCount = 0;
 
   /** Light types */
-  public int[] lightTypeGL;
+  public int[] lightType;
 
   /** Light positions */
-  public float[][] lightPositionGL;
+  public float[][] lightPosition;
 
   /** Light direction (normalized vector) */
-  public float[][] lightNormalGL;
+  public float[][] lightNormal;
 
   /** Light falloff */
-  public float[] lightFalloffConstantGL;
-  public float[] lightFalloffLinearGL;
-  public float[] lightFalloffQuadraticGL;
+  public float[] lightFalloffConstant;
+  public float[] lightFalloffLinear;
+  public float[] lightFalloffQuadratic;
 
   /** Light spot angle */
-  public float[] lightSpotAngleGL;
+  public float[] lightSpotAngle;
 
   /** Cosine of light spot angle */
-  public float[] lightSpotAngleCosGL;
+  public float[] lightSpotAngleCos;
 
   /** Light spot concentration */
-  public float[] lightSpotConcentrationGL;
+  public float[] lightSpotConcentration;
 
   /** Diffuse colors for lights.
    *  For an ambient light, this will hold the ambient color.
    *  Internally these are stored as numbers between 0 and 1. */
-  public float[][] lightDiffuseGL;
+  public float[][] lightDiffuse;
 
   /** Specular colors for lights.
       Internally these are stored as numbers between 0 and 1. */
-  public float[][] lightSpecularGL;
+  public float[][] lightSpecular;
 
   /** Current specular color for lighting */
-  public float[] currentLightSpecularGL;
+  public float[] currentLightSpecular;
 
   /** Current light falloff */
-  public float currentLightFalloffConstantGL;
-  public float currentLightFalloffLinearGL;
-  public float currentLightFalloffQuadraticGL;
+  public float currentLightFalloffConstant;
+  public float currentLightFalloffLinear;
+  public float currentLightFalloffQuadratic;
   
-  public float[] zeroBufferGL = { 0.0f, 0.0f, 0.0f, 0.0f };  
+  /** Zero array to kill ambiento light **/
+  public float[] zeroLight = { 0.0f, 0.0f, 0.0f, 0.0f };  
+  
+  
+  //////////////////////////////////////////////////////////////
   
   public PGraphicsAndroid3D() {
-	renderer = new A3DRenderer();
+	  renderer = new A3DRenderer();
     glu = new GLU();  // or maybe not until used?
   }
-  
+    
   
   //public void setParent(PApplet parent)
   
@@ -337,6 +285,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     return configChooser;
   }
   
+  
   public void setSize(int iwidth, int iheight) {
     width = iwidth;
     height = iheight;
@@ -347,18 +296,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     reapplySettings();
     
     vertexCheck();
-    
-    projection = new PMatrix3D();
-    modelview = new PMatrix3D();
-    modelviewInv = new PMatrix3D();
-
-//    modelviewStack = new float[MATRIX_STACK_DEPTH][16];
-//    modelviewInvStack = new float[MATRIX_STACK_DEPTH][16];
-//    modelviewStackPointer = 0;
-
-    forwardTransform = modelview;
-    reverseTransform = modelviewInv;
-
+     
     // init perspective projection based on new dimensions
     cameraFOV = 60 * DEG_TO_RAD; // at least for now
     cameraX = width / 2.0f;
@@ -368,60 +306,45 @@ public class PGraphicsAndroid3D extends PGraphics {
     cameraFar = cameraZ * 10.0f;
     cameraAspect = (float)width / (float)height;
 
-    camera = new PMatrix3D();
-    cameraInv = new PMatrix3D();
-
-    projectionGL = new float[16];
-    modelviewGL = new float[16];
-    modelviewInvGL = new float[16];
-    cameramat = new float[16];
-    cameramatInv = new float[16];
+    // Init transformation matrices.
+    projection = new float[16];
+    modelview = new float[16];
+    modelviewInv = new float[16];
+    camera = new float[16];
+    cameraInv = new float[16];
     
-    texTriangleRanges = new ArrayList<TexturedTriangleRange>();
+    // Init lights.
+    lightType = new int[MAX_LIGHTS];
+    lightPosition = new float[MAX_LIGHTS][4];
+    lightNormal = new float[MAX_LIGHTS][4];
+    lightDiffuse = new float[MAX_LIGHTS][4];
+    lightSpecular = new float[MAX_LIGHTS][4];
+    lightFalloffConstant = new float[MAX_LIGHTS];
+    lightFalloffLinear = new float[MAX_LIGHTS];
+    lightFalloffQuadratic = new float[MAX_LIGHTS];
+    lightSpotAngle = new float[MAX_LIGHTS];
+    lightSpotAngleCos = new float[MAX_LIGHTS];
+    lightSpotConcentration = new float[MAX_LIGHTS];
+    currentLightSpecular = new float[4];
     
     
-    // init lights (in resize() instead of allocate() b/c needed by opengl)
-    lightTypeGL = new int[MAX_LIGHTS_GL];
-    lightPositionGL = new float[MAX_LIGHTS_GL][4];
-    lightNormalGL = new float[MAX_LIGHTS_GL][4];
-    lightDiffuseGL = new float[MAX_LIGHTS_GL][4];
-    lightSpecularGL = new float[MAX_LIGHTS_GL][4];
-    lightFalloffConstantGL = new float[MAX_LIGHTS_GL];
-    lightFalloffLinearGL = new float[MAX_LIGHTS_GL];
-    lightFalloffQuadraticGL = new float[MAX_LIGHTS_GL];
-    lightSpotAngleGL = new float[MAX_LIGHTS_GL];
-    lightSpotAngleCosGL = new float[MAX_LIGHTS_GL];
-    lightSpotConcentrationGL = new float[MAX_LIGHTS_GL];
-    currentLightSpecularGL = new float[4];    
-    
-    // set up the default camera
-    //camera();
-
-    // defaults to perspective, if the user has setup up their
-    // own projection, they'll need to fix it after resize anyway.
-    // this helps the people who haven't set up their own projection.
-    //perspective();
+    texTriangleRanges = new ArrayList<TexturedTriangleRange>();    
   }
 
   public void setSurfaceHolder(SurfaceHolder holder) {
     this.holder = holder;
   }
   
+  
   protected void allocate() {
   }
+  
   
   public void dispose() {
   }
   
+  
   public void recreateResources() {
-	  /*
-      gl.glDisable(GL10.GL_DITHER);
-      gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_FASTEST);
-      gl.glClearColor(1,1,1,1);
-      gl.glEnable(GL10.GL_CULL_FACE);
-      gl.glShadeModel(GL10.GL_SMOOTH);
-      gl.glEnable(GL10.GL_DEPTH_TEST);  
-      */
   }
 
   //////////////////////////////////////////////////////////////
@@ -459,18 +382,7 @@ public class PGraphicsAndroid3D extends PGraphics {
 
     textureImage = null;
     textureImagePrev = null;
-    
-    
-    /*
-    gl.glDisable(GL10.GL_DITHER);
-    gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_FASTEST);     
-    gl.glEnable(GL10.GL_CULL_FACE);
-    gl.glShadeModel(GL10.GL_SMOOTH);
-    gl.glEnable(GL10.GL_DEPTH_TEST);
-    //gl.glFrontFace(GL10.GL_CCW);
-    gl.glFrontFace(GL10.GL_CW);
-    */
-    
+        
     // these are necessary for alpha (i.e. fonts) to work
     gl.glEnable(GL10.GL_BLEND);
     gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
@@ -489,16 +401,16 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     
     gl.glViewport(0, 0, width, height);
-    
-    gl.glMatrixMode(GL10.GL_PROJECTION);
-    gl.glLoadIdentity();
-    perspective(); 
-    
-    gl.glMatrixMode(GL10.GL_MODELVIEW);
-    gl.glLoadIdentity();
+    // set up the default camera
     camera();
+
+    // defaults to perspective, if the user has setup up their
+    // own projection, they'll need to fix it after resize anyway.
+    // this helps the people who haven't set up their own projection.
+    perspective();
+
     
-    lightCountGL = 0;
+    lightCount = 0;
     lightFalloff(1, 0, 0);
     lightSpecular(0, 0, 0);    	
     
@@ -563,8 +475,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     // Not using them right now because we're doing our own lighting.
     //gl.glEnable(GL10.GL_NORMALIZE);
     //gl.glEnable(GL10.GL_AUTO_NORMAL); // I think this is OpenGL 1.2 only
-    //gl.glEnable(GL10.GL_RESCALE_NORMAL);
-    //gl.GlLightModeli(GL10.GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
+   // gl.glEnable(GL10.GL_RESCALE_NORMAL);
+    //gl.GlLightModeli(GL10.GL_LIGHT_MODEL_COLOR_CONTROL, GL10.GL_SEPARATE_SPECULAR_COLOR);
     
     report("bot beginDraw()");
   }
@@ -572,30 +484,25 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   public void endDraw() {
     report("top endDraw()");
-/*
-    
+/*    
     if (hints[ENABLE_DEPTH_SORT]) {
       flush();
     }
-
-
-    report("bot endDraw()");
-
-//    if (drawable != null) {
-//      releaseContext();
-//    }
  */
   }
 
+  
   public GL10 beginGL() {
 	  gl.glPushMatrix();
 	  gl.glScalef(1, -1, 1);
 	  return gl;
   }
 
+  
   public void endGL() {
 	  gl.glPopMatrix();
   }
+  
   
   public void model(GLModel model, float x, float y, float z) {
 	  gl.glPushMatrix();
@@ -604,14 +511,12 @@ public class PGraphicsAndroid3D extends PGraphics {
 	  gl.glPopMatrix();
   }
   
+  
   protected void defaultSettings() {
-	    super.defaultSettings();
+    super.defaultSettings();
 
-	    manipulatingCamera = false;
-	    forwardTransform = modelview;
-	    reverseTransform = modelviewInv;
-
-	    //perspective();
+    manipulatingCamera = false;
+	  perspective();
   }
   
   ////////////////////////////////////////////////////////////
@@ -624,7 +529,6 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   ////////////////////////////////////////////////////////////
 
-  
   // HINTS
 
 
@@ -648,18 +552,6 @@ public class PGraphicsAndroid3D extends PGraphics {
       // TODO throw an error?      
     }
   }
-
-
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
   
   //////////////////////////////////////////////////////////////
 
@@ -667,22 +559,85 @@ public class PGraphicsAndroid3D extends PGraphics {
 
 
   public void resetMatrix() {
-    forwardTransform.reset();
-    reverseTransform.reset();
+    gl.glLoadIdentity();
+  }
+  
+  
+  public void applyMatrix(PMatrix2D source) {
+    applyMatrix(source.m00, source.m01, source.m02,
+                source.m10, source.m11, source.m12);
+  }
+
+
+  public void applyMatrix(float n00, float n01, float n02,
+                          float n10, float n11, float n12) {
+    applyMatrix(n00, n01, n02, 0,
+                n10, n11, n12, 0,
+                0,   0,   1,   0,
+                0,   0,   0,   1);
+  }
+
+
+  public void applyMatrix(PMatrix3D source) {
+    applyMatrix(source.m00, source.m01, source.m02, source.m03,
+                source.m10, source.m11, source.m12, source.m13,
+                source.m20, source.m21, source.m22, source.m23,
+                source.m30, source.m31, source.m32, source.m33);
+  }
+
+
+  /**
+   * Apply a 4x4 transformation matrix to the modelview stack using glMultMatrix().
+   * This call will be slow because it will try to calculate the
+   * inverse of the transform. So avoid it whenever possible.
+   */
+  public void applyMatrix(float n00, float n01, float n02, float n03,
+                          float n10, float n11, float n12, float n13,
+                          float n20, float n21, float n22, float n23,
+                          float n30, float n31, float n32, float n33) {
+
+    float[]  mat = new float[16];
+    
+    mat[0] = n00;
+    mat[1] = n10;
+    mat[2] = n20;
+    mat[3] = n30;
+
+    mat[4] = n01;
+    mat[5] = n11;
+    mat[6] = n21;
+    mat[7] = n31;
+
+    mat[8] = n02;
+    mat[9] = n12;
+    mat[10] = n22;
+    mat[11] = n32;
+
+    mat[12] = n03;
+    mat[13] = n13;
+    mat[14] = n23;
+    mat[15] = n33;
+    
+    gl.glMultMatrixf(mat, 0);
+    
+    getModelviewMatrix();
+    calculateModelviewInverse();    
   }
   
   //////////////////////////////////////////////////////////////
 
   // CAMERA
 
+  
   /**
    * Set matrix mode to the camera matrix (instead of the current
    * transformation matrix). This means applyMatrix, resetMatrix, etc.
    * will affect the camera.
    * <P>
    * Note that the camera matrix is *not* the perspective matrix,
-   * it is in front of the modelview matrix (hence the name "model"
-   * and "view" for that matrix).
+   * it contains the values of the modelview matrix immediatly after the latter
+   * was initialized with ortho() or camera(), or the modelview matrix as resul
+   * of the operations applied between beginCamera()/endCamera().
    * <P>
    * beginCamera() specifies that all coordinate transforms until endCamera()
    * should be pre-applied in inverse to the camera transform matrix.
@@ -723,11 +678,11 @@ public class PGraphicsAndroid3D extends PGraphics {
       throw new RuntimeException("beginCamera() cannot be called again " +
                                  "before endCamera()");
     } else {
-      manipulatingCamera = true;
-      
+      manipulatingCamera = true;      
     }
   }
 
+  
   /**
    * Record the current settings into the camera matrix, and set
    * the matrix mode back to the current transformation matrix.
@@ -753,83 +708,87 @@ public class PGraphicsAndroid3D extends PGraphics {
     calculateModelviewInvNoScaling();
     
     // Copying modelview matrix after camera transformations to the camera matrices.
-    PApplet.arrayCopy(modelviewGL, cameramat);
-    PApplet.arrayCopy(modelviewInvGL, cameramatInv);
+    PApplet.arrayCopy(modelview, camera);
+    PApplet.arrayCopy(modelviewInv, cameraInv);
     
     // all done
     manipulatingCamera = false;
-    
-    //copyModelviewToGL();
   }
 
+  
   protected void getProjectionMatrix() {
-	    if (gl instanceof GL11) {
-	    	GL11 gl11 = (GL11) gl;
-	        gl11.glGetFloatv(GL11.GL_PROJECTION_MATRIX, projectionGL, 0);
-	        projectionUpdated = true;
-	    } 
-	    else {
-	    	// How do we get the projection matrix???
-	    	// Idea: when ony GL10 is available, then PMatrix3D versions of modelview and projection
-	    	// matrices are needed, and should be updated during the call to the transformation methods
-	    	// (rotate, translate, scale, etc).
-	    }
+	  if (gl instanceof GL11) {
+	    GL11 gl11 = (GL11) gl;
+      gl11.glGetFloatv(GL11.GL_PROJECTION_MATRIX, projection, 0);
+      projectionUpdated = true;
+	  } 
+	  else {
+      // TODO: Mechanism to get modelview matrix when no the funtion GetFloatv is available.
+	    // Idea: when ony GL10 is available, then PMatrix3D versions of modelview and projection
+	    // matrices are needed, and should be updated during the call to the transformation methods
+	    // (rotate, translate, scale, etc).
+	  }
   }
   
   
   protected void getModelviewMatrix() {
-	    if (gl instanceof GL11) {
-	    	GL11 gl11 = (GL11) gl;
-	        gl11.glGetFloatv(GL11.GL_MODELVIEW_MATRIX, modelviewGL, 0);
-	        modelviewUpdated = true;
-	    } 
-	    else {
-	    	// How do we get the modelview matrix???
-	    }
+	  if (gl instanceof GL11) {
+	    GL11 gl11 = (GL11) gl;
+	    gl11.glGetFloatv(GL11.GL_MODELVIEW_MATRIX, modelview, 0);
+	    modelviewUpdated = true;
+	  } 
+	  else {
+	 	  // TODO: Mechanism to get modelview matrix when no the funtion GetFloatv is available. 
+	  }
   }
-  
+
+  // Calculates the inverse of the modelview matrix.
+  protected void calculateModelviewInverse() {
+    // TODO: Please finish!
+  }
+    
   // Calculates the inverse of the modelview matrix, assuming that no scaling transformation was applied,
   // only translations and rotations.
   // Here is the derivation of the formula:
   // http://www-graphics.stanford.edu/courses/cs248-98-fall/Final/q4.html
   protected void calculateModelviewInvNoScaling() {
-    float ux = modelviewGL[0];
-    float uy = modelviewGL[1];
-    float uz = modelviewGL[2]; 
+    float ux = modelview[0];
+    float uy = modelview[1];
+    float uz = modelview[2]; 
 
-    float vx = modelviewGL[4];
-    float vy = modelviewGL[5];
-    float vz = modelviewGL[6];
+    float vx = modelview[4];
+    float vy = modelview[5];
+    float vz = modelview[6];
 
-    float wx = modelviewGL[8];
-    float wy = modelviewGL[9];
-    float wz = modelviewGL[10];
+    float wx = modelview[8];
+    float wy = modelview[9];
+    float wz = modelview[10];
 
-    float tx = modelviewGL[12];
-    float ty = modelviewGL[13];
-    float tz = modelviewGL[14];	  
+    float tx = modelview[12];
+    float ty = modelview[13];
+    float tz = modelview[14];	  
 
-    modelviewInvGL[0] = ux;
-    modelviewInvGL[1] = vx;
-    modelviewInvGL[2] = wx;
-    modelviewInvGL[3] = 0.0f; 
+    modelviewInv[0] = ux;
+    modelviewInv[1] = vx;
+    modelviewInv[2] = wx;
+    modelviewInv[3] = 0.0f; 
 
-    modelviewInvGL[4] =uy;
-    modelviewInvGL[5] = vy;
-    modelviewInvGL[6] = wy;
-    modelviewInvGL[7] = 0.0f;
+    modelviewInv[4] =uy;
+    modelviewInv[5] = vy;
+    modelviewInv[6] = wy;
+    modelviewInv[7] = 0.0f;
 
-    modelviewInvGL[8] = uz;
-    modelviewInvGL[9] = vz;
-    modelviewInvGL[10] = wz;
-    modelviewInvGL[11] = 0;
+    modelviewInv[8] = uz;
+    modelviewInv[9] = vz;
+    modelviewInv[10] = wz;
+    modelviewInv[11] = 0;
 
-    modelviewInvGL[12] = -(ux * tx + uy * ty + uz * tz);
-    modelviewInvGL[13] = -(vx * tx + vy * ty + vz * tz);
-    modelviewInvGL[14] = -(wx * tx + wy * ty + wz * tz);
-    modelviewInvGL[15] = 1.0f;	  
-  }
-
+    modelviewInv[12] = -(ux * tx + uy * ty + uz * tz);
+    modelviewInv[13] = -(vx * tx + vy * ty + vz * tz);
+    modelviewInv[14] = -(wx * tx + wy * ty + wz * tz);
+    modelviewInv[15] = 1.0f;	  
+  }  
+  
   /**
    * Set camera to the default settings.
    * <P>
@@ -858,36 +817,20 @@ public class PGraphicsAndroid3D extends PGraphics {
    * transformation and projection.
    * <P>
    * camera() sets the camera position, orientation, and center of the scene.
-   * It replaces the camera transform with a new one. This is different from
-   * gluLookAt(), but I think the only reason that GLU's lookat doesn't fully
-   * replace the camera matrix with the new one, but instead multiplies it,
-   * is that GL doesn't enforce the separation of camera transform and
-   * projection, so it wouldn't be safe (you'd probably stomp your projection).
+   * It replaces the camera transform with a new one.
    * <P>
    * The transformation functions are the same ones used to manipulate the
    * modelview matrix (scale, translate, rotate, etc.). But they are bracketed
    * with beginCamera(), endCamera() to indicate that they should apply
    * (in inverse), to the camera transformation matrix.
-   * <P>
-   * This differs considerably from camera transformation in OpenGL.
-   * OpenGL only lets you say, apply everything from here out to the
-   * projection or modelview matrix. This makes it very hard to treat camera
-   * manipulation as if it were a physical camera. Imagine that you want to
-   * move your camera 100 units forward. In OpenGL, you need to apply the
-   * inverse of that transformation or else you'll move your scene 100 units
-   * forward--whether or not you've specified modelview or projection matrix.
-   * Remember they're just multiplied by model coods one after another.
-   * So in order to treat a camera like a physical camera, it is necessary
-   * to pre-apply inverse transforms to a matrix that will be applied to model
-   * coordinates. OpenGL provides nothing of this sort, but Processing does!
-   * This is the camera transform matrix.
    */
   public void camera() {
     camera(cameraX, cameraY, cameraZ,
-           cameraX, cameraY, 0,
-           0, 1, 0);
+                   cameraX, cameraY, 0,
+                   0, 1, 0);
   }
 
+  
   /**
    * More flexible method for dealing with camera().
    * <P>
@@ -941,12 +884,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   public void camera(float eyeX, float eyeY, float eyeZ,
                      float centerX, float centerY, float centerZ,
                      float upX, float upY, float upZ) {
-	  
-	  
-	  
-	  
-	  
-	// Z vector  
+	  // Calculating Z vector
     float z0 = eyeX - centerX;
     float z1 = eyeY - centerY;
     float z2 = eyeZ - centerZ;
@@ -957,12 +895,12 @@ public class PGraphicsAndroid3D extends PGraphics {
       z2 /= mag;
     }
     
-    // Y vector
+    // Calculating Y vector
     float y0 = upX;
     float y1 = upY;
     float y2 = upZ;
 
-    // X vector = Y cross Z
+    // Computing X vector as Y cross Z
     float x0 =  y1*z2 - y2*z1;
     float x1 = -y0*z2 + y2*z0;
     float x2 =  y0*z1 - y1*z0;
@@ -972,9 +910,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     y1 = -z0*x2 + z2*x0;
     y2 =  z0*x1 - z1*x0;
 
-    // cross product gives area of parallelogram, which is < 1.0 for
+    // Cross product gives area of parallelogram, which is < 1.0 for
     // non-perpendicular unit-length vectors; so normalize x, y here:    
-    
     mag = sqrt(x0*x0 + x1*x1 + x2*x2);
     if (mag != 0) {
       x0 /= mag;
@@ -988,117 +925,44 @@ public class PGraphicsAndroid3D extends PGraphics {
       y1 /= mag;
       y2 /= mag;
     }
-
-    /*
-
-    // just does an apply to the main matrix,
-    // since that'll be copied out on endCamera
-    camera.set(x0, x1, x2, 0,
-               y0, y1, y2, 0,
-               z0, z1, z2, 0,
-               0,  0,  0,  1);
-    camera.translate(-eyeX, -eyeY, -eyeZ);
-
-    cameraInv.reset();
-    cameraInv.invApply(x0, x1, x2, 0,
-                       y0, y1, y2, 0,
-                       z0, z1, z2, 0,
-                       0,  0,  0,  1);
-    cameraInv.translate(eyeX, eyeY, eyeZ);
-
-    modelview.set(camera);
-    modelviewInv.set(cameraInv);
-    */
     
-    
-    modelviewGL[0] = x0;
-    modelviewGL[1] = y0;
-    modelviewGL[2] = z0;
-    modelviewGL[3] = 0.0f; 
+    modelview[0] = x0;
+    modelview[1] = y0;
+    modelview[2] = z0;
+    modelview[3] = 0.0f; 
 
-    modelviewGL[4] = x1;
-    modelviewGL[5] = y1;
-    modelviewGL[6] = z1;
-    modelviewGL[7] = 0.0f;
+    modelview[4] = x1;
+    modelview[5] = y1;
+    modelview[6] = z1;
+    modelview[7] = 0.0f;
 
-    modelviewGL[8] = x2;
-    modelviewGL[9] = y2;
-    modelviewGL[10] = z2;
-    modelviewGL[11] = 0;
+    modelview[8] = x2;
+    modelview[9] = y2;
+    modelview[10] = z2;
+    modelview[11] = 0;
 
-    modelviewGL[12] = -cameraX;
-    modelviewGL[13] = cameraY;
-    modelviewGL[14] = -cameraZ;
-    modelviewGL[15] = 1.0f;
+    modelview[12] = -cameraX;
+    modelview[13] = cameraY;
+    modelview[14] = -cameraZ;
+    modelview[15] = 1.0f;
 
-    
-    //gl.glLoadMatrixx(modelviewGL, 0);
-    gl.glMultMatrixf(modelviewGL, 0);
+    gl.glMatrixMode(GL10.GL_MODELVIEW);
+    gl.glLoadMatrixf(modelview, 0);
     modelviewUpdated = true; // CPU and GPU copies of modelview matrix match each other.
     
     calculateModelviewInvNoScaling();
-    PApplet.arrayCopy(modelviewGL, cameramat);
-    PApplet.arrayCopy(modelviewInvGL, cameramatInv);
-    
-   // gl.glTranslatef(-cameraX, cameraY, -cameraZ);
-    //gl.glScalef(1, -1, 1);
-    
-    
-    /*
-
-      modelviewGL[0] = toFixed32(modelview.m00);
-      modelviewGL[1] = toFixed32(modelview.m10);
-      modelviewGL[2] = toFixed32(modelview.m20);
-      modelviewGL[3] = toFixed32(modelview.m30);
-
-      modelviewGL[4] = toFixed32(modelview.m01);
-      modelviewGL[5] = toFixed32(modelview.m11);
-      modelviewGL[6] = toFixed32(modelview.m21);
-      modelviewGL[7] = toFixed32(modelview.m31);
-
-      modelviewGL[8] = toFixed32(modelview.m02);
-      modelviewGL[9] = toFixed32(modelview.m12);
-      modelviewGL[10] = toFixed32(modelview.m22);
-      modelviewGL[11] = toFixed32(modelview.m32);
-
-      modelviewGL[12] = toFixed32(modelview.m03);
-      modelviewGL[13] = toFixed32(modelview.m13);
-      modelviewGL[14] = toFixed32(modelview.m23);
-      modelviewGL[15] = toFixed32(modelview.m33);
-      
-
-          M(0) = x[0];
-    M(4) = x[1];
-    M(0, 2) = x[2];
-    M(0, 3) = 0.0;
-    M(1, 0) = y[0];
-    M(1, 1) = y[1];
-    M(1, 2) = y[2];
-    M(1, 3) = 0.0;
-    M(2, 0) = z[0];
-    M(2, 1) = z[1];
-    M(2, 2) = z[2];
-    M(2, 3) = 0.0;
-    M(3, 0) = 0.0;
-    M(3, 1) = 0.0;
-    M(3, 2) = 0.0;
-    M(3, 3) = 1.0;     */
-    
-    
-    // Translate Eye to Origin
-    //gl.glTranslatef(-eyeX, -eyeY, -eyeZ);    
-    
-    
-    
-    
-    //copyModelviewToGL();
+    PApplet.arrayCopy(modelview, camera);
+    PApplet.arrayCopy(modelviewInv, cameraInv);
   }
 
+  
   /**
    * Print the current camera matrix.
    */
   public void printCamera() {
-    camera.print();
+    PMatrix3D tmp = new PMatrix3D();
+    tmp.set(camera);
+    tmp.print();
   }
 
   //////////////////////////////////////////////////////////////
@@ -1114,6 +978,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     ortho(0, width, 0, height, -10, 10);
   }
 
+  
   /**
    * Similar to gluOrtho(), but wipes out the current projection matrix.
    * <P>
@@ -1130,47 +995,31 @@ public class PGraphicsAndroid3D extends PGraphics {
     float ty = -(top + bottom) / (top - bottom);
     float tz = -(far + near) / (far - near);
 
-    projectionGL[0] = x;
-    projectionGL[1] = 0.0f;
-    projectionGL[2] = 0.0f;
-    projectionGL[3] = 0.0f;
+    projection[0] = x;
+    projection[1] = 0.0f;
+    projection[2] = 0.0f;
+    projection[3] = 0.0f;
     
-    projectionGL[4] = 0.0f;
-    projectionGL[5] = y;
-    projectionGL[6] = 0.0f;
-    projectionGL[7] = 0.0f;
+    projection[4] = 0.0f;
+    projection[5] = y;
+    projection[6] = 0.0f;
+    projection[7] = 0.0f;
     
-    projectionGL[8] = 0;
-    projectionGL[9] = 0;
-    projectionGL[10] = z;
-    projectionGL[11] = 0.0f;
+    projection[8] = 0;
+    projection[9] = 0;
+    projection[10] = z;
+    projection[11] = 0.0f;
     
-    projectionGL[12] = tx;
-    projectionGL[13] = ty;
-    projectionGL[14] = tz;
-    projectionGL[15] = 1.0f;
+    projection[12] = tx;
+    projection[13] = ty;
+    projection[14] = tz;
+    projection[15] = 1.0f;
     
-    gl.glLoadMatrixf(projectionGL, 0);
+    gl.glLoadMatrixf(projection, 0);
     projectionUpdated = true; // CPU and GPU copies of projection matrix match each other.
-
-    /*
-    projection.set(x, 0, 0, tx,
-            0, y, 0, ty,
-            0, 0, z, tz,
-            0, 0, 0, 1);    
-    */
-    
-	  /*
-	  gl.glOrthox(toFixed32(left), 
-			               toFixed32(right), 
-					       toFixed32(bottom), 
-						   toFixed32(top), 
-						   toFixed32(near), 
-						   toFixed32(far));
-  */
-    
   }
 
+  
   /**
    * Calls perspective() with Processing's standard coordinate projection.
    * <P>
@@ -1196,31 +1045,16 @@ public class PGraphicsAndroid3D extends PGraphics {
     perspective(cameraFOV, cameraAspect, cameraNear, cameraFar);    
   }
 
+  
   /**
    * Similar to gluPerspective(). Implementation based on Mesa's glu.c
    */
   public void perspective(float fov, float aspect, float zNear, float zFar) {
-	    float ymax = cameraNear * (float) Math.tan(cameraFOV / 2);
-	    float ymin = -ymax;
-	    float xmin = ymin * cameraAspect;
-	    float xmax = ymax * cameraAspect;    
-	    //gl.glFrustumf(-ratio, ratio, -1, 1, 1, 10);
-	    //gl.glFrustumf(xmin, xmax, ymin, ymax, cameraNear, cameraFar);
-	  
-	    frustum(xmin, xmax, ymin, ymax, cameraNear, cameraFar);
-	    
-/*	  
-    //float ymax = zNear * tan(fovy * PI / 360.0f);
-    float ymax = zNear * (float) Math.tan(fov / 2);
-    float ymin = -ymax;
-
-    float xmin = ymin * aspect;
-    float xmax = ymax * aspect;
-
-   // frustum(xmin, xmax, ymin, ymax, zNear, zFar);
-    
-    gl.glFrustumx(toFixed32(xmin), toFixed32(xmax), toFixed32(ymin), toFixed32(ymax), toFixed32(zNear), toFixed32(zFar));   
-   */ 
+    float ymax = cameraNear * (float) Math.tan(cameraFOV / 2);
+	  float ymin = -ymax;
+	  float xmin = ymin * cameraAspect;
+    float xmax = ymax * cameraAspect;    	  
+	  frustum(xmin, xmax, ymin, ymax, cameraNear, cameraFar);
   }
 
   /**
@@ -1231,60 +1065,57 @@ public class PGraphicsAndroid3D extends PGraphics {
    */
   public void frustum(float left, float right, float bottom,
                       float top, float znear, float zfar) {
-
-    leftScreen = left;
-    rightScreen = right;
-    bottomScreen = bottom;
-    topScreen = top;
-    nearPlane = znear;
-
-    //System.out.println(projection);
-   // projection.set((2*znear)/(right-left), 0, (right+left)/(right-left), 0,
-   //                0, (2*znear)/(top-bottom), (top+bottom)/(top-bottom), 0,
-   //                0, 0, -(zfar+znear)/(zfar-znear),-(2*zfar*znear)/(zfar-znear),
-    //               0, 0, -1, 0);
-    
     float temp, temp2, temp3, temp4;
     temp = 2.0f * znear;
     temp2 = right - left;
     temp3 = top - bottom;
     temp4 = zfar - znear;
-    projectionGL[0] = temp / temp2;
-    projectionGL[1] = 0.0f;
-    projectionGL[2] = 0.0f;
-    projectionGL[3] = 0.0f;
-    projectionGL[4] = 0.0f;
-    projectionGL[5] = temp / temp3;
-    projectionGL[6] = 0.0f;
-    projectionGL[7] = 0.0f;
-    projectionGL[8] = (right + left) / temp2;
-    projectionGL[9] = (top + bottom) / temp3;
-    projectionGL[10] = (-zfar - znear) / temp4;
-    projectionGL[11] = -1.0f;
-    projectionGL[12] = 0.0f;
-    projectionGL[13] = 0.0f;
-    projectionGL[14] = (-temp * zfar) / temp4;
-    projectionGL[15] = 0.0f;
+    projection[0] = temp / temp2;
+    projection[1] = 0.0f;
+    projection[2] = 0.0f;
+    projection[3] = 0.0f;
+    projection[4] = 0.0f;
+    projection[5] = temp / temp3;
+    projection[6] = 0.0f;
+    projection[7] = 0.0f;
+    projection[8] = (right + left) / temp2;
+    projection[9] = (top + bottom) / temp3;
+    projection[10] = (-zfar - znear) / temp4;
+    projection[11] = -1.0f;
+    projection[12] = 0.0f;
+    projection[13] = 0.0f;
+    projection[14] = (-temp * zfar) / temp4;
+    projection[15] = 0.0f;
     
-    gl.glLoadMatrixf(projectionGL, 0);
+    gl.glMatrixMode(GL10.GL_PROJECTION);    
+    gl.glLoadMatrixf(projection, 0);
     projectionUpdated = true; // CPU and GPU copies of projection matrix match each other (are in synch).
+    
+    // The matrix mode is always MODELVIEW, because the user will be doing geometrical transformations,
+    // al the time, projection transformations only a few times.
+    gl.glMatrixMode(GL10.GL_MODELVIEW); 
   }
 
+  
   /**
    * Print the current projection matrix.
    */
   public void printProjection() {
-    projection.print();
+    PMatrix3D tmp = new PMatrix3D();
+    tmp.set(projection);
+    tmp.print();
   }
   
   //////////////////////////////////////////////////////////////
 
   // MATRIX STACK
+  
 
   public void pushMatrix() {
     gl.glPushMatrix();
   }
 
+  
   public void popMatrix() {
     gl.glPopMatrix();
     modelviewUpdated = false;	    
@@ -1301,7 +1132,11 @@ public class PGraphicsAndroid3D extends PGraphics {
 
 
   public void translate(float tx, float ty, float tz) {
-    gl.glTranslatef(tx, ty, tz);
+    // Translation along Y is inverted to account for Processing's inverted Y axis
+    // with respect to OpenGL. The other place where inversion occurs is when
+    // drawing the geometric primitives (vertex arrays), where a -1 scaling
+    // along Y is applied.
+    gl.glTranslatef(tx, -ty, tz);
     modelviewUpdated = false;
   }
 
@@ -1377,37 +1212,38 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // SCREEN AND MODEL COORDS
 
-  int toArrayIndex(int i, int j) { return 4 * j + i; }
-
+  
   public float screenX(float x, float y) {
     return screenX(x, y, 0);
   }
-
+  
+  
   public float screenY(float x, float y) {
     return screenY(x, y, 0);
   }
 
+  
   public float screenX(float x, float y, float z) {
-	y = -1*y; // To take into account Processsing's inverted Y axis with respect to OpenGL.
+	  y = -1*y; // To take into account Processsing's inverted Y axis with respect to OpenGL.
 	  
-	if  (!modelviewUpdated) getModelviewMatrix();
-	if (!projectionUpdated) getProjectionMatrix();
+	  if  (!modelviewUpdated) getModelviewMatrix();
+	  if (!projectionUpdated) getProjectionMatrix();
 	
     float ax =
-      modelviewGL[toArrayIndex(0,0)] * x + modelviewGL[toArrayIndex(0, 1)]*y + modelviewGL[toArrayIndex(0,2)]*z + modelviewGL[toArrayIndex(0, 3)];
+      modelview[toArrayIndex(0,0)] * x + modelview[toArrayIndex(0, 1)]*y + modelview[toArrayIndex(0,2)]*z + modelview[toArrayIndex(0, 3)];
     float ay =
-      modelviewGL[toArrayIndex(1, 0)]*x + modelviewGL[toArrayIndex(1, 1)]*y + modelviewGL[toArrayIndex(1, 2)]*z + modelviewGL[toArrayIndex(1, 3)];
+      modelview[toArrayIndex(1, 0)]*x + modelview[toArrayIndex(1, 1)]*y + modelview[toArrayIndex(1, 2)]*z + modelview[toArrayIndex(1, 3)];
     float az =
-      modelviewGL[toArrayIndex(2, 0)]*x + modelviewGL[toArrayIndex(2, 1)]*y + modelviewGL[toArrayIndex(2, 2)]*z + modelviewGL[toArrayIndex(2, 3)];
+      modelview[toArrayIndex(2, 0)]*x + modelview[toArrayIndex(2, 1)]*y + modelview[toArrayIndex(2, 2)]*z + modelview[toArrayIndex(2, 3)];
     float aw =
-      modelviewGL[toArrayIndex(3, 0)]*x + modelviewGL[toArrayIndex(3, 1)]*y + modelviewGL[toArrayIndex(3, 2)]*z + modelviewGL[toArrayIndex(3, 3)];
+      modelview[toArrayIndex(3, 0)]*x + modelview[toArrayIndex(3, 1)]*y + modelview[toArrayIndex(3, 2)]*z + modelview[toArrayIndex(3, 3)];
 
     float ox =
-      projectionGL[toArrayIndex(0 ,0)]*ax + projectionGL[toArrayIndex(0, 1)]*ay +
-      projectionGL[toArrayIndex(0, 2)]*az + projectionGL[toArrayIndex(0, 3)]*aw;
+      projection[toArrayIndex(0 ,0)]*ax + projection[toArrayIndex(0, 1)]*ay +
+      projection[toArrayIndex(0, 2)]*az + projection[toArrayIndex(0, 3)]*aw;
     float ow =
-      projectionGL[toArrayIndex(3, 0)]*ax + projectionGL[toArrayIndex(3, 1)]*ay +
-      projectionGL[toArrayIndex(3, 2)]*az + projectionGL[toArrayIndex(3, 3)]*aw;
+      projection[toArrayIndex(3, 0)]*ax + projection[toArrayIndex(3, 1)]*ay +
+      projection[toArrayIndex(3, 2)]*az + projection[toArrayIndex(3, 3)]*aw;
 
     if (ow != 0) ox /= ow;
     return width * (1 + ox) / 2.0f;
@@ -1417,24 +1253,24 @@ public class PGraphicsAndroid3D extends PGraphics {
   public float screenY(float x, float y, float z) {
     y = -1*y; // To take into account Processsing's inverted Y axis with respect to OpenGL.	  
 
-	if  (!modelviewUpdated) getModelviewMatrix();
-	if (!projectionUpdated) getProjectionMatrix();
+	  if  (!modelviewUpdated) getModelviewMatrix();
+	  if (!projectionUpdated) getProjectionMatrix();
     
     float ax =
-	  modelviewGL[toArrayIndex(0,0)] * x + modelviewGL[toArrayIndex(0, 1)]*y + modelviewGL[toArrayIndex(0,2)]*z + modelviewGL[toArrayIndex(0, 3)];
+	    modelview[toArrayIndex(0,0)] * x + modelview[toArrayIndex(0, 1)]*y + modelview[toArrayIndex(0,2)]*z + modelview[toArrayIndex(0, 3)];
     float ay =
-      modelviewGL[toArrayIndex(1, 0)]*x + modelviewGL[toArrayIndex(1, 1)]*y + modelviewGL[toArrayIndex(1, 2)]*z + modelviewGL[toArrayIndex(1, 3)];
+      modelview[toArrayIndex(1, 0)]*x + modelview[toArrayIndex(1, 1)]*y + modelview[toArrayIndex(1, 2)]*z + modelview[toArrayIndex(1, 3)];
     float az =
-      modelviewGL[toArrayIndex(2, 0)]*x + modelviewGL[toArrayIndex(2, 1)]*y + modelviewGL[toArrayIndex(2, 2)]*z + modelviewGL[toArrayIndex(2, 3)];
+      modelview[toArrayIndex(2, 0)]*x + modelview[toArrayIndex(2, 1)]*y + modelview[toArrayIndex(2, 2)]*z + modelview[toArrayIndex(2, 3)];
     float aw =
-      modelviewGL[toArrayIndex(3, 0)]*x + modelviewGL[toArrayIndex(3, 1)]*y + modelviewGL[toArrayIndex(3, 2)]*z + modelviewGL[toArrayIndex(3, 3)];
+      modelview[toArrayIndex(3, 0)]*x + modelview[toArrayIndex(3, 1)]*y + modelview[toArrayIndex(3, 2)]*z + modelview[toArrayIndex(3, 3)];
 
     float oy =
-      projectionGL[toArrayIndex(1, 0)]*ax + projectionGL[toArrayIndex(1, 1)]*ay +
-      projectionGL[toArrayIndex(1, 2)]*az + projectionGL[toArrayIndex(1, 3)]*aw;
+      projection[toArrayIndex(1, 0)]*ax + projection[toArrayIndex(1, 1)]*ay +
+      projection[toArrayIndex(1, 2)]*az + projection[toArrayIndex(1, 3)]*aw;
     float ow =
-      projectionGL[toArrayIndex(3, 0)]*ax + projectionGL[toArrayIndex(3, 1)]*ay +
-      projectionGL[toArrayIndex(3, 2)]*az + projectionGL[toArrayIndex(3, 3)]*aw;
+      projection[toArrayIndex(3, 0)]*ax + projection[toArrayIndex(3, 1)]*ay +
+      projection[toArrayIndex(3, 2)]*az + projection[toArrayIndex(3, 3)]*aw;
 
     if (ow != 0) oy /= ow;
     return height * (1 + oy) / 2.0f; 
@@ -1442,103 +1278,111 @@ public class PGraphicsAndroid3D extends PGraphics {
 
 
   public float screenZ(float x, float y, float z) {
-	y = -1*y; // To take into account Processsing's inverted Y axis with respect to OpenGL.
+  	if  (!modelviewUpdated) getModelviewMatrix();
+  	if (!projectionUpdated) getProjectionMatrix();
 
-	if  (!modelviewUpdated) getModelviewMatrix();
-	if (!projectionUpdated) getProjectionMatrix();
-	
+    y = -1*y; // To take into account Processsing's inverted Y axis with respect to OpenGL.
+  	  	
     float ax =
-      modelviewGL[toArrayIndex(0,0)] * x + modelviewGL[toArrayIndex(0, 1)]*y + modelviewGL[toArrayIndex(0,2)]*z + modelviewGL[toArrayIndex(0, 3)];
+      modelview[toArrayIndex(0,0)] * x + modelview[toArrayIndex(0, 1)]*y + modelview[toArrayIndex(0,2)]*z + modelview[toArrayIndex(0, 3)];
     float ay =
-      modelviewGL[toArrayIndex(1, 0)]*x + modelviewGL[toArrayIndex(1, 1)]*y + modelviewGL[toArrayIndex(1, 2)]*z + modelviewGL[toArrayIndex(1, 3)];
+      modelview[toArrayIndex(1, 0)]*x + modelview[toArrayIndex(1, 1)]*y + modelview[toArrayIndex(1, 2)]*z + modelview[toArrayIndex(1, 3)];
     float az =
-      modelviewGL[toArrayIndex(2, 0)]*x + modelviewGL[toArrayIndex(2, 1)]*y + modelviewGL[toArrayIndex(2, 2)]*z + modelviewGL[toArrayIndex(2, 3)];
+      modelview[toArrayIndex(2, 0)]*x + modelview[toArrayIndex(2, 1)]*y + modelview[toArrayIndex(2, 2)]*z + modelview[toArrayIndex(2, 3)];
     float aw =
-      modelviewGL[toArrayIndex(3, 0)]*x + modelviewGL[toArrayIndex(3, 1)]*y + modelviewGL[toArrayIndex(3, 2)]*z + modelviewGL[toArrayIndex(3, 3)];
+      modelview[toArrayIndex(3, 0)]*x + modelview[toArrayIndex(3, 1)]*y + modelview[toArrayIndex(3, 2)]*z + modelview[toArrayIndex(3, 3)];
 
     float oz =
-      projectionGL[toArrayIndex(2, 0)]*ax + projectionGL[toArrayIndex(2, 1)]*ay +
-      projectionGL[toArrayIndex(2, 2)]*az + projectionGL[toArrayIndex(2, 3)]*aw;
+      projection[toArrayIndex(2, 0)]*ax + projection[toArrayIndex(2, 1)]*ay +
+      projection[toArrayIndex(2, 2)]*az + projection[toArrayIndex(2, 3)]*aw;
     float ow =
-      projectionGL[toArrayIndex(3, 0)]*ax + projectionGL[toArrayIndex(3, 1)]*ay +
-      projectionGL[toArrayIndex(3, 2)]*az + projectionGL[toArrayIndex(3, 3)]*aw;
+      projection[toArrayIndex(3, 0)]*ax + projection[toArrayIndex(3, 1)]*ay +
+      projection[toArrayIndex(3, 2)]*az + projection[toArrayIndex(3, 3)]*aw;
 
     if (ow != 0) oz /= ow;
     return (oz + 1) / 2.0f;
   }
   
   public float modelX(float x, float y, float z) {
-    y = -1*y; // To take into account Processsing's inverted Y axis with respect to OpenGL.
-
     if  (!modelviewUpdated) getModelviewMatrix();
-	  
+
+    y = -1*y; // To take into account Processsing's inverted Y axis with respect to OpenGL.    
+    
     float ax =
-        modelviewGL[toArrayIndex(0,0)] * x + modelviewGL[toArrayIndex(0, 1)]*y + modelviewGL[toArrayIndex(0,2)]*z + modelviewGL[toArrayIndex(0, 3)];
+      modelview[toArrayIndex(0,0)] * x + modelview[toArrayIndex(0, 1)]*y + modelview[toArrayIndex(0,2)]*z + modelview[toArrayIndex(0, 3)];
     float ay =
-        modelviewGL[toArrayIndex(1, 0)]*x + modelviewGL[toArrayIndex(1, 1)]*y + modelviewGL[toArrayIndex(1, 2)]*z + modelviewGL[toArrayIndex(1, 3)];
+      modelview[toArrayIndex(1, 0)]*x + modelview[toArrayIndex(1, 1)]*y + modelview[toArrayIndex(1, 2)]*z + modelview[toArrayIndex(1, 3)];
     float az =
-        modelviewGL[toArrayIndex(2, 0)]*x + modelviewGL[toArrayIndex(2, 1)]*y + modelviewGL[toArrayIndex(2, 2)]*z + modelviewGL[toArrayIndex(2, 3)];
+      modelview[toArrayIndex(2, 0)]*x + modelview[toArrayIndex(2, 1)]*y + modelview[toArrayIndex(2, 2)]*z + modelview[toArrayIndex(2, 3)];
     float aw =
-        modelviewGL[toArrayIndex(3, 0)]*x + modelviewGL[toArrayIndex(3, 1)]*y + modelviewGL[toArrayIndex(3, 2)]*z + modelviewGL[toArrayIndex(3, 3)];
+      modelview[toArrayIndex(3, 0)]*x + modelview[toArrayIndex(3, 1)]*y + modelview[toArrayIndex(3, 2)]*z + modelview[toArrayIndex(3, 3)];
 
     float ox =
-        cameramatInv[toArrayIndex(0, 0)]*ax + cameramatInv[toArrayIndex(0, 1)]*ay +
-        cameramatInv[toArrayIndex(0, 2)]*az + cameramatInv[toArrayIndex(0, 3)]*aw;
+      cameraInv[toArrayIndex(0, 0)]*ax + cameraInv[toArrayIndex(0, 1)]*ay +
+      cameraInv[toArrayIndex(0, 2)]*az + cameraInv[toArrayIndex(0, 3)]*aw;
     float ow =
-        cameramatInv[toArrayIndex(3, 0)]*ax + cameramatInv[toArrayIndex(3, 1)]*ay +
-        cameramatInv[toArrayIndex(3, 2)]*az + cameramatInv[toArrayIndex(3, 3)]*aw;
+      cameraInv[toArrayIndex(3, 0)]*ax + cameraInv[toArrayIndex(3, 1)]*ay +
+      cameraInv[toArrayIndex(3, 2)]*az + cameraInv[toArrayIndex(3, 3)]*aw;
 
     return (ow != 0) ? ox / ow : ox;
   }
 
   public float modelY(float x, float y, float z) {
-    y = -1*y; // To take into account Processsing's inverted Y axis with respect to OpenGL.
 
     if  (!modelviewUpdated) getModelviewMatrix();		  
 		  
+    y = -1*y; // To take into account Processsing's inverted Y axis with respect to OpenGL.    
+    
     float ax =
-      modelviewGL[toArrayIndex(0,0)] * x + modelviewGL[toArrayIndex(0, 1)]*y + modelviewGL[toArrayIndex(0,2)]*z + modelviewGL[toArrayIndex(0, 3)];
+      modelview[toArrayIndex(0,0)] * x + modelview[toArrayIndex(0, 1)]*y + modelview[toArrayIndex(0,2)]*z + modelview[toArrayIndex(0, 3)];
     float ay =
-      modelviewGL[toArrayIndex(1, 0)]*x + modelviewGL[toArrayIndex(1, 1)]*y + modelviewGL[toArrayIndex(1, 2)]*z + modelviewGL[toArrayIndex(1, 3)];
+      modelview[toArrayIndex(1, 0)]*x + modelview[toArrayIndex(1, 1)]*y + modelview[toArrayIndex(1, 2)]*z + modelview[toArrayIndex(1, 3)];
     float az =
-      modelviewGL[toArrayIndex(2, 0)]*x + modelviewGL[toArrayIndex(2, 1)]*y + modelviewGL[toArrayIndex(2, 2)]*z + modelviewGL[toArrayIndex(2, 3)];
+      modelview[toArrayIndex(2, 0)]*x + modelview[toArrayIndex(2, 1)]*y + modelview[toArrayIndex(2, 2)]*z + modelview[toArrayIndex(2, 3)];
     float aw =
-      modelviewGL[toArrayIndex(3, 0)]*x + modelviewGL[toArrayIndex(3, 1)]*y + modelviewGL[toArrayIndex(3, 2)]*z + modelviewGL[toArrayIndex(3, 3)];
+      modelview[toArrayIndex(3, 0)]*x + modelview[toArrayIndex(3, 1)]*y + modelview[toArrayIndex(3, 2)]*z + modelview[toArrayIndex(3, 3)];
 
     float oy =
-      cameramatInv[toArrayIndex(1, 0)]*ax + cameramatInv[toArrayIndex(1, 1)]*ay +
-      cameramatInv[toArrayIndex(1, 2)]*az + cameramatInv[toArrayIndex(1, 3)]*aw;
+      cameraInv[toArrayIndex(1, 0)]*ax + cameraInv[toArrayIndex(1, 1)]*ay +
+      cameraInv[toArrayIndex(1, 2)]*az + cameraInv[toArrayIndex(1, 3)]*aw;
     float ow =
-      cameramatInv[toArrayIndex(3, 0)]*ax + cameramatInv[toArrayIndex(3, 1)]*ay +
-      cameramatInv[toArrayIndex(3, 2)]*az + cameramatInv[toArrayIndex(3, 3)]*aw;
+      cameraInv[toArrayIndex(3, 0)]*ax + cameraInv[toArrayIndex(3, 1)]*ay +
+      cameraInv[toArrayIndex(3, 2)]*az + cameraInv[toArrayIndex(3, 3)]*aw;
 
     return (ow != 0) ? oy / ow : oy;
   }
 
   public float modelZ(float x, float y, float z) {
-    y = -1*y; // To take into account Processsing's inverted Y axis with respect to OpenGL.
-
+    
     if  (!modelviewUpdated) getModelviewMatrix();		  
-		  
+		
+    y = -1*y; // To take into account Processsing's inverted Y axis with respect to OpenGL.
+    
     float ax =
-	  modelviewGL[toArrayIndex(0,0)] * x + modelviewGL[toArrayIndex(0, 1)]*y + modelviewGL[toArrayIndex(0,2)]*z + modelviewGL[toArrayIndex(0, 3)];
+	  modelview[toArrayIndex(0,0)] * x + modelview[toArrayIndex(0, 1)]*y + modelview[toArrayIndex(0,2)]*z + modelview[toArrayIndex(0, 3)];
     float ay =
-      modelviewGL[toArrayIndex(1, 0)]*x + modelviewGL[toArrayIndex(1, 1)]*y + modelviewGL[toArrayIndex(1, 2)]*z + modelviewGL[toArrayIndex(1, 3)];
+      modelview[toArrayIndex(1, 0)]*x + modelview[toArrayIndex(1, 1)]*y + modelview[toArrayIndex(1, 2)]*z + modelview[toArrayIndex(1, 3)];
     float az =
-      modelviewGL[toArrayIndex(2, 0)]*x + modelviewGL[toArrayIndex(2, 1)]*y + modelviewGL[toArrayIndex(2, 2)]*z + modelviewGL[toArrayIndex(2, 3)];
+      modelview[toArrayIndex(2, 0)]*x + modelview[toArrayIndex(2, 1)]*y + modelview[toArrayIndex(2, 2)]*z + modelview[toArrayIndex(2, 3)];
     float aw =
-      modelviewGL[toArrayIndex(3, 0)]*x + modelviewGL[toArrayIndex(3, 1)]*y + modelviewGL[toArrayIndex(3, 2)]*z + modelviewGL[toArrayIndex(3, 3)];
+      modelview[toArrayIndex(3, 0)]*x + modelview[toArrayIndex(3, 1)]*y + modelview[toArrayIndex(3, 2)]*z + modelview[toArrayIndex(3, 3)];
 
     float oz =
-      cameramatInv[toArrayIndex(2, 0)]*ax + cameramatInv[toArrayIndex(2, 1)]*ay +
-      cameramatInv[toArrayIndex(2, 2)]*az + cameramatInv[toArrayIndex(2, 3)]*aw;
+      cameraInv[toArrayIndex(2, 0)]*ax + cameraInv[toArrayIndex(2, 1)]*ay +
+      cameraInv[toArrayIndex(2, 2)]*az + cameraInv[toArrayIndex(2, 3)]*aw;
     float ow =
-      cameramatInv[toArrayIndex(3, 0)]*ax + cameramatInv[toArrayIndex(3, 1)]*ay +
-      cameramatInv[toArrayIndex(3, 2)]*az + cameramatInv[toArrayIndex(3, 3)]*aw;
+      cameraInv[toArrayIndex(3, 0)]*ax + cameraInv[toArrayIndex(3, 1)]*ay +
+      cameraInv[toArrayIndex(3, 2)]*az + cameraInv[toArrayIndex(3, 3)]*aw;
 
     return (ow != 0) ? oz / ow : oz;
   }
+  
 
+  private int toArrayIndex(int i, int j) { 
+    return 4 * j + i; 
+    }  
+  
+  
   //////////////////////////////////////////////////////////////
 
   // VERTEX SHAPES
@@ -3891,47 +3735,175 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // LIGHTING
 
-  // We're not actually turning on GL lights right now
-  // because our home-grown ones work better for now.
-
-
+/**
+   * Sets up an ambient and directional light using OpenGL. API takef from PGraphics3D.
+   * <PRE>
+   * The Lighting Skinny:
+   *
+   * The way lighting works is complicated enough that it's worth
+   * producing a document to describe it. Lighting calculations proceed
+   * pretty much exactly as described in the OpenGL red book.
+   *
+   * Light-affecting material properties:
+   *
+   *   AMBIENT COLOR
+   *   - multiplies by light's ambient component
+   *   - for believability this should match diffuse color
+   *
+   *   DIFFUSE COLOR
+   *   - multiplies by light's diffuse component
+   *
+   *   SPECULAR COLOR
+   *   - multiplies by light's specular component
+   *   - usually less colored than diffuse/ambient
+   *
+   *   SHININESS
+   *   - the concentration of specular effect
+   *   - this should be set pretty high (20-50) to see really
+   *     noticeable specularity
+   *
+   *   EMISSIVE COLOR
+   *   - constant additive color effect
+   *
+   * Light types:
+   *
+   *   AMBIENT
+   *   - one color
+   *   - no specular color
+   *   - no direction
+   *   - may have falloff (constant, linear, and quadratic)
+   *   - may have position (which matters in non-constant falloff case)
+   *   - multiplies by a material's ambient reflection
+   *
+   *   DIRECTIONAL
+   *   - has diffuse color
+   *   - has specular color
+   *   - has direction
+   *   - no position
+   *   - no falloff
+   *   - multiplies by a material's diffuse and specular reflections
+   *
+   *   POINT
+   *   - has diffuse color
+   *   - has specular color
+   *   - has position
+   *   - no direction
+   *   - may have falloff (constant, linear, and quadratic)
+   *   - multiplies by a material's diffuse and specular reflections
+   *
+   *   SPOT
+   *   - has diffuse color
+   *   - has specular color
+   *   - has position
+   *   - has direction
+   *   - has cone angle (set to half the total cone angle)
+   *   - has concentration value
+   *   - may have falloff (constant, linear, and quadratic)
+   *   - multiplies by a material's diffuse and specular reflections
+   *
+   * Normal modes:
+   *
+   * All of the primitives (rect, box, sphere, etc.) have their normals
+   * set nicely. During beginShape/endShape normals can be set by the user.
+   *
+   *   AUTO-NORMAL
+   *   - if no normal is set during the shape, we are in auto-normal mode
+   *   - auto-normal calculates one normal per triangle (face-normal mode)
+   *
+   *   SHAPE-NORMAL
+   *   - if one normal is set during the shape, it will be used for
+   *     all vertices
+   *
+   *   VERTEX-NORMAL
+   *   - if multiple normals are set, each normal applies to
+   *     subsequent vertices
+   *   - (except for the first one, which applies to previous
+   *     and subsequent vertices)
+   *
+   * Efficiency consequences:
+   *
+   *   There is a major efficiency consequence of position-dependent
+   *   lighting calculations per vertex. (See below for determining
+   *   whether lighting is vertex position-dependent.) If there is no
+   *   position dependency then the only factors that affect the lighting
+   *   contribution per vertex are its colors and its normal.
+   *   There is a major efficiency win if
+   *
+   *   1) lighting is not position dependent
+   *   2) we are in AUTO-NORMAL or SHAPE-NORMAL mode
+   *
+   *   because then we can calculate one lighting contribution per shape
+   *   (SHAPE-NORMAL) or per triangle (AUTO-NORMAL) and simply multiply it
+   *   into the vertex colors. The converse is our worst-case performance when
+   *
+   *   1) lighting is position dependent
+   *   2) we are in AUTO-NORMAL mode
+   *
+   *   because then we must calculate lighting per-face * per-vertex.
+   *   Each vertex has a different lighting contribution per face in
+   *   which it appears. Yuck.
+   *
+   * Determining vertex position dependency:
+   *
+   *   If any of the following factors are TRUE then lighting is
+   *   vertex position dependent:
+   *
+   *   1) Any lights uses non-constant falloff
+   *   2) There are any point or spot lights
+   *   3) There is a light with specular color AND there is a
+   *      material with specular color
+   *
+   * So worth noting is that default lighting (a no-falloff ambient
+   * and a directional without specularity) is not position-dependent.
+   * We should capitalize.
+   *
+   * Simon Greenwold, April 2005
+   * </PRE>
+   */
   public void lights() 
   {
-  	    gl.glEnable( GL10.GL_LIGHTING );
+    gl.glEnable(GL10.GL_LIGHTING);
 
-  	    gl.glEnable(GL10.GL_COLOR_MATERIAL);
-  	    //gl.glColorMaterial(GL10.GL_FRONT_AND_BACK, GL10.GL_AMBIENT_AND_DIFFUSE);    		
+    gl.glEnable(GL10.GL_COLOR_MATERIAL);
+  	//gl.glColorMaterial(GL10.GL_FRONT_AND_BACK, GL10.GL_AMBIENT_AND_DIFFUSE);    		
   		
-  	    // need to make sure colorMode is RGB 255 here
-  	    int colorModeSaved = colorMode;
-  	    colorMode = RGB;
+    // need to make sure colorMode is RGB 255 here
+    int colorModeSaved = colorMode;
+    colorMode = RGB;
 
-  	    lightFalloff(1, 0, 0);
-  	    lightSpecular(0, 0, 0);
+    lightFalloff(1, 0, 0);
+    lightSpecular(0, 0, 0);
 
-  	    ambientLight(colorModeX * 0.5f,
-  	                 colorModeY * 0.5f,
-  	                 colorModeZ * 0.5f);
-  	    directionalLight(colorModeX * 0.5f,
-  	                     colorModeY * 0.5f,
-  	                     colorModeZ * 0.5f,
-  	                     0, 0, -1);
+    ambientLight(colorModeX * 0.5f,
+  	                         colorModeY * 0.5f,
+                             colorModeZ * 0.5f);
+    directionalLight(colorModeX * 0.5f,
+                                  colorModeY * 0.5f,
+                                  colorModeZ * 0.5f,
+                                  0, 0, -1);
 
-  	    colorMode = colorModeSaved;    	
+    colorMode = colorModeSaved;    	
   }
   
+
+  /**
+   * Switches off all lights, but keeps lighting enabled..
+   */    
   public void resetLights() { 
-  		for (int i = 0; i < lightCountGL; i++) glLightDisable(i);
-  		lightCountGL = 0;
+    for (int i = 0; i < lightCount; i++) glLightDisable(i);
+    lightCount = 0;
   }
 
-  public void noLights() 
-  {
-  	  gl.glDisable( GL10.GL_LIGHTING );		
-      lightCountGL = 0;		       	
+  
+  /**
+   * Disables lighting.
+   */  
+  public void noLights() {
+    gl.glDisable(GL10.GL_LIGHTING);		
+    lightCount = 0;		       	
   }    
        
-  
+
   /**
    * Add an ambient light based on the current color mode.
    */
@@ -3946,151 +3918,152 @@ public class PGraphicsAndroid3D extends PGraphics {
    * where the falloff distance is used.
    */
   public void ambientLight(float r, float g, float b,
-                           float x, float y, float z) {
-    if (lightCountGL == MAX_LIGHTS_GL) {
-      throw new RuntimeException("can only create " + MAX_LIGHTS_GL + " lights");
+                                                   float x, float y, float z) {
+    if (lightCount == MAX_LIGHTS) {
+      throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
     }
     colorCalc(r, g, b);
-    lightDiffuseGL[lightCountGL][0] = calcR;
-    lightDiffuseGL[lightCountGL][1] = calcG;
-    lightDiffuseGL[lightCountGL][2] = calcB;
-    lightDiffuseGL[lightCountGL][3] = 1.0f;
+    lightDiffuse[lightCount][0] = calcR;
+    lightDiffuse[lightCount][1] = calcG;
+    lightDiffuse[lightCount][2] = calcB;
+    lightDiffuse[lightCount][3] = 1.0f;
     
-    lightTypeGL[lightCountGL] = AMBIENT;
-    lightFalloffConstantGL[lightCountGL] = currentLightFalloffConstantGL;
-    lightFalloffLinearGL[lightCountGL] = currentLightFalloffLinearGL;
-    lightFalloffQuadraticGL[lightCountGL] = currentLightFalloffQuadraticGL;
-    lightPositionGL[lightCountGL][0] = x;
-    lightPositionGL[lightCountGL][1] = y;
-    lightPositionGL[lightCountGL][2] = z;
-    lightPositionGL[lightCountGL][3] = 0.0f;
+    lightType[lightCount] = AMBIENT;
+    lightFalloffConstant[lightCount] = currentLightFalloffConstant;
+    lightFalloffLinear[lightCount] = currentLightFalloffLinear;
+    lightFalloffQuadratic[lightCount] = currentLightFalloffQuadratic;
+    lightPosition[lightCount][0] = x;
+    lightPosition[lightCount][1] = y;
+    lightPosition[lightCount][2] = z;
+    lightPosition[lightCount][3] = 0.0f;
     
-    glLightEnable(lightCountGL);
-    glLightAmbient(lightCountGL);
-    glLightPosition(lightCountGL);
-    glLightFalloff(lightCountGL);
+    glLightEnable(lightCount);
+    glLightAmbient(lightCount);
+    glLightPosition(lightCount);
+    glLightFalloff(lightCount);
     
-    lightCountGL++;
+    lightCount++;
   }
 
 
   public void directionalLight(float r, float g, float b,
                                float nx, float ny, float nz) {
-    if (lightCountGL == MAX_LIGHTS_GL) {
-        throw new RuntimeException("can only create " + MAX_LIGHTS_GL + " lights");
+    if (lightCount == MAX_LIGHTS) {
+        throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
     }
     colorCalc(r, g, b);
-    lightDiffuseGL[lightCountGL][0] = calcR;
-    lightDiffuseGL[lightCountGL][1] = calcG;
-    lightDiffuseGL[lightCountGL][2] = calcB;
-    lightDiffuseGL[lightCountGL][3] = 1.0f;      
+    lightDiffuse[lightCount][0] = calcR;
+    lightDiffuse[lightCount][1] = calcG;
+    lightDiffuse[lightCount][2] = calcB;
+    lightDiffuse[lightCount][3] = 1.0f;      
 
-    lightTypeGL[lightCountGL] = DIRECTIONAL;
-    lightFalloffConstantGL[lightCountGL] = currentLightFalloffConstantGL;
-    lightFalloffLinearGL[lightCountGL] = currentLightFalloffLinearGL;
-    lightFalloffQuadraticGL[lightCountGL] = currentLightFalloffQuadraticGL;
-    lightSpecularGL[lightCountGL][0] = currentLightSpecularGL[0];
-    lightSpecularGL[lightCountGL][1] = currentLightSpecularGL[1];
-    lightSpecularGL[lightCountGL][2] = currentLightSpecularGL[2];
-    lightSpecularGL[lightCountGL][2] = currentLightSpecularGL[3];
+    lightType[lightCount] = DIRECTIONAL;
+    lightFalloffConstant[lightCount] = currentLightFalloffConstant;
+    lightFalloffLinear[lightCount] = currentLightFalloffLinear;
+    lightFalloffQuadratic[lightCount] = currentLightFalloffQuadratic;
+    lightSpecular[lightCount][0] = currentLightSpecular[0];
+    lightSpecular[lightCount][1] = currentLightSpecular[1];
+    lightSpecular[lightCount][2] = currentLightSpecular[2];
+    lightSpecular[lightCount][2] = currentLightSpecular[3];
     
     float invn = 1.0f / PApplet.dist(0, 0, 0, nx, ny, nz);
-    lightNormalGL[lightCountGL][0] = invn * nx;
-    lightNormalGL[lightCountGL][1] = invn * ny;
-    lightNormalGL[lightCountGL][2] = invn * nz;
-    lightNormalGL[lightCountGL][3] = 0.0f;      
+    lightNormal[lightCount][0] = invn * nx;
+    lightNormal[lightCount][1] = invn * ny;
+    lightNormal[lightCount][2] = invn * nz;
+    lightNormal[lightCount][3] = 0.0f;      
     
-    glLightEnable(lightCountGL);
-    glLightNoAmbient(lightCountGL);
-    glLightDirection(lightCountGL);
-    glLightDiffuse(lightCountGL);
-    glLightSpecular(lightCountGL);
-    glLightFalloff(lightCountGL);      
+    glLightEnable(lightCount);
+    glLightNoAmbient(lightCount);
+    glLightDirection(lightCount);
+    glLightDiffuse(lightCount);
+    glLightSpecular(lightCount);
+    glLightFalloff(lightCount);      
     
-    lightCountGL++;
+    lightCount++;
   }
 
 
   public void pointLight(float r, float g, float b,
                          float x, float y, float z) {
-    if (lightCountGL == MAX_LIGHTS_GL) {
-         throw new RuntimeException("can only create " + MAX_LIGHTS_GL + " lights");
+    if (lightCount == MAX_LIGHTS) {
+         throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
     }
     colorCalc(r, g, b);
-    lightDiffuseGL[lightCountGL][0] = calcR;
-    lightDiffuseGL[lightCountGL][1] = calcG;
-    lightDiffuseGL[lightCountGL][2] = calcB;
-    lightDiffuseGL[lightCountGL][3] = 1.0f;   
+    lightDiffuse[lightCount][0] = calcR;
+    lightDiffuse[lightCount][1] = calcG;
+    lightDiffuse[lightCount][2] = calcB;
+    lightDiffuse[lightCount][3] = 1.0f;   
     
-    lightTypeGL[lightCountGL] = POINT;
-    lightFalloffConstantGL[lightCountGL] = currentLightFalloffConstantGL;
-    lightFalloffLinearGL[lightCountGL] = currentLightFalloffLinearGL;
-    lightFalloffQuadraticGL[lightCountGL] = currentLightFalloffQuadraticGL;
-    lightSpecularGL[lightCountGL][0] = currentLightSpecularGL[0];
-    lightSpecularGL[lightCountGL][1] = currentLightSpecularGL[1];
-    lightSpecularGL[lightCountGL][2] = currentLightSpecularGL[2];
+    lightType[lightCount] = POINT;
+    lightFalloffConstant[lightCount] = currentLightFalloffConstant;
+    lightFalloffLinear[lightCount] = currentLightFalloffLinear;
+    lightFalloffQuadratic[lightCount] = currentLightFalloffQuadratic;
+    lightSpecular[lightCount][0] = currentLightSpecular[0];
+    lightSpecular[lightCount][1] = currentLightSpecular[1];
+    lightSpecular[lightCount][2] = currentLightSpecular[2];
     
-    lightPositionGL[lightCountGL][0] = x;
-    lightPositionGL[lightCountGL][1] = y;
-    lightPositionGL[lightCountGL][2] = z;
-    lightPositionGL[lightCountGL][3] = 0.0f;
+    lightPosition[lightCount][0] = x;
+    lightPosition[lightCount][1] = y;
+    lightPosition[lightCount][2] = z;
+    lightPosition[lightCount][3] = 0.0f;
     
-    glLightEnable(lightCountGL);
-    glLightNoAmbient(lightCountGL);
-    glLightPosition(lightCountGL);
-    glLightDiffuse(lightCountGL);
-    glLightSpecular(lightCountGL);
-    glLightFalloff(lightCountGL);      
+    glLightEnable(lightCount);
+    glLightNoAmbient(lightCount);
+    glLightPosition(lightCount);
+    glLightDiffuse(lightCount);
+    glLightSpecular(lightCount);
+    glLightFalloff(lightCount);      
     
-    lightCountGL++;
+    lightCount++;
   }
 
+  
   public void spotLight(float r, float g, float b,
                         float x, float y, float z,
                         float nx, float ny, float nz,
                         float angle, float concentration) {
-    if (lightCountGL == MAX_LIGHTS_GL) {
-      throw new RuntimeException("can only create " + MAX_LIGHTS_GL + " lights");
+    if (lightCount == MAX_LIGHTS) {
+      throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
     }
     colorCalc(r, g, b);
-    lightDiffuseGL[lightCountGL][0] = calcR;
-    lightDiffuseGL[lightCountGL][1] = calcG;
-    lightDiffuseGL[lightCountGL][2] = calcB;
-    lightDiffuseGL[lightCountGL][3] = 1.0f;      
+    lightDiffuse[lightCount][0] = calcR;
+    lightDiffuse[lightCount][1] = calcG;
+    lightDiffuse[lightCount][2] = calcB;
+    lightDiffuse[lightCount][3] = 1.0f;      
 
-    lightTypeGL[lightCountGL] = SPOT;
-    lightFalloffConstantGL[lightCountGL] = currentLightFalloffConstantGL;
-    lightFalloffLinearGL[lightCountGL] = currentLightFalloffLinearGL;
-    lightFalloffQuadraticGL[lightCountGL] = currentLightFalloffQuadraticGL;
-    lightSpecularGL[lightCountGL][0] = currentLightSpecularGL[0];
-    lightSpecularGL[lightCountGL][1] = currentLightSpecularGL[1];
-    lightSpecularGL[lightCountGL][2] = currentLightSpecularGL[2];
+    lightType[lightCount] = SPOT;
+    lightFalloffConstant[lightCount] = currentLightFalloffConstant;
+    lightFalloffLinear[lightCount] = currentLightFalloffLinear;
+    lightFalloffQuadratic[lightCount] = currentLightFalloffQuadratic;
+    lightSpecular[lightCount][0] = currentLightSpecular[0];
+    lightSpecular[lightCount][1] = currentLightSpecular[1];
+    lightSpecular[lightCount][2] = currentLightSpecular[2];
     
-    lightPositionGL[lightCountGL][0] = x;
-    lightPositionGL[lightCountGL][1] = y;
-    lightPositionGL[lightCountGL][2] = z;
-    lightPositionGL[lightCountGL][3] = 0.0f;
+    lightPosition[lightCount][0] = x;
+    lightPosition[lightCount][1] = y;
+    lightPosition[lightCount][2] = z;
+    lightPosition[lightCount][3] = 0.0f;
     
     float invn = 1.0f / PApplet.dist(0, 0, 0, nx, ny, nz);
-    lightNormalGL[lightCountGL][0] = invn * nx;
-    lightNormalGL[lightCountGL][1] = invn * ny;
-    lightNormalGL[lightCountGL][2] = invn * nz;
-    lightNormalGL[lightCountGL][3] = 0.0f;  
+    lightNormal[lightCount][0] = invn * nx;
+    lightNormal[lightCount][1] = invn * ny;
+    lightNormal[lightCount][2] = invn * nz;
+    lightNormal[lightCount][3] = 0.0f;  
     
-    lightSpotAngleGL[lightCountGL] = angle;
-    lightSpotAngleCosGL[lightCountGL] = Math.max(0, (float) Math.cos(angle));
-    lightSpotConcentrationGL[lightCountGL] = concentration;
+    lightSpotAngle[lightCount] = angle;
+    lightSpotAngleCos[lightCount] = Math.max(0, (float) Math.cos(angle));
+    lightSpotConcentration[lightCount] = concentration;
     
-    glLightNoAmbient(lightCountGL);
-    glLightPosition(lightCountGL);
-    glLightDirection(lightCountGL);
-    glLightDiffuse(lightCountGL);
-    glLightSpecular(lightCountGL);
-    glLightFalloff(lightCountGL);
-    glLightSpotAngle(lightCountGL);
-    glLightSpotConcentration(lightCountGL);      
+    glLightNoAmbient(lightCount);
+    glLightPosition(lightCount);
+    glLightDirection(lightCount);
+    glLightDiffuse(lightCount);
+    glLightSpecular(lightCount);
+    glLightFalloff(lightCount);
+    glLightSpotAngle(lightCount);
+    glLightSpotConcentration(lightCount);      
     
-    lightCountGL++;
+    lightCount++;
   }
 
 
@@ -4099,50 +4072,55 @@ public class PGraphicsAndroid3D extends PGraphics {
    * Default is lightFalloff(1, 0, 0).
    */
   public void lightFalloff(float constant, float linear, float quadratic) {
-    currentLightFalloffConstantGL = constant;
-    currentLightFalloffLinearGL = linear;
-    currentLightFalloffQuadraticGL = quadratic;
+    currentLightFalloffConstant = constant;
+    currentLightFalloffLinear = linear;
+    currentLightFalloffQuadratic = quadratic;
   }
 
+  
   /**
    * Set the specular color of the last light created.
    */
   public void lightSpecular(float x, float y, float z) {
     colorCalc(x, y, z);
-    currentLightSpecularGL[0] = calcR;
-    currentLightSpecularGL[1] = calcG;
-    currentLightSpecularGL[2] = calcB;
-    currentLightSpecularGL[3] = 1.0f;      
+    currentLightSpecular[0] = calcR;
+    currentLightSpecular[1] = calcG;
+    currentLightSpecular[2] = calcB;
+    currentLightSpecular[3] = 1.0f;      
   }
+
   
   private void glLightAmbient(int num) {
     gl.glLightfv(GL10.GL_LIGHT0 + num,
-                 GL10.GL_AMBIENT, lightDiffuseGL[num], 0);
+                 GL10.GL_AMBIENT, lightDiffuse[num], 0);
   }
 
+  
   private void glLightNoAmbient(int num) {
     gl.glLightfv(GL10.GL_LIGHT0 + num,
-                 GL10.GL_AMBIENT, zeroBufferGL, 0);
+                 GL10.GL_AMBIENT, zeroLight, 0);
   }
 
+  
   private void glLightDiffuse(int num) {
     gl.glLightfv(GL10.GL_LIGHT0 + num,
-                 GL10.GL_DIFFUSE, lightDiffuseGL[num], 0);
+                 GL10.GL_DIFFUSE, lightDiffuse[num], 0);
   }
 
+  
   private void glLightDirection(int num) {
-    if (lightTypeGL[num] == DIRECTIONAL) {
+    if (lightType[num] == DIRECTIONAL) {
       // TODO this expects a fourth arg that will be set to 1
       //      this is why lightBuffer is length 4,
       //      and the [3] element set to 1 in the constructor.
       //      however this may be a source of problems since
       //      it seems a bit "hack"
       gl.glLightfv(GL10.GL_LIGHT0 + num, GL10.GL_POSITION,
-                   lightNormalGL[num], 0);
+                   lightNormal[num], 0);
     } else {  // spotlight
       // this one only needs the 3 arg version
       gl.glLightfv(GL10.GL_LIGHT0 + num, GL10.GL_SPOT_DIRECTION,
-                   lightNormalGL[num], 0);
+                   lightNormal[num], 0);
     }
   }
 
@@ -4151,40 +4129,44 @@ public class PGraphicsAndroid3D extends PGraphics {
     gl.glEnable(GL10.GL_LIGHT0 + num);
   }
 
+  
   private void glLightDisable(int num) {
       gl.glDisable(GL10.GL_LIGHT0 + num);
     }
   
+  
   private void glLightFalloff(int num) {
     gl.glLightf(GL10.GL_LIGHT0 + num,
-                GL10.GL_CONSTANT_ATTENUATION, lightFalloffConstantGL[num]);
+                GL10.GL_CONSTANT_ATTENUATION, lightFalloffConstant[num]);
     gl.glLightf(GL10.GL_LIGHT0 + num,
-                GL10.GL_LINEAR_ATTENUATION, lightFalloffLinearGL[num]);
+                GL10.GL_LINEAR_ATTENUATION, lightFalloffLinear[num]);
     gl.glLightf(GL10.GL_LIGHT0 + num,
-                GL10.GL_QUADRATIC_ATTENUATION, lightFalloffQuadraticGL[num]);
+                GL10.GL_QUADRATIC_ATTENUATION, lightFalloffQuadratic[num]);
   }
 
 
   private void glLightPosition(int num) {
-    gl.glLightfv(GL10.GL_LIGHT0 + num, GL10.GL_POSITION, lightPositionGL[num], 0);
+    gl.glLightfv(GL10.GL_LIGHT0 + num, GL10.GL_POSITION, lightPosition[num], 0);
   }
 
 
   private void glLightSpecular(int num) {
-    gl.glLightfv(GL10.GL_LIGHT0 + num, GL10.GL_SPECULAR, lightSpecularGL[num], 0);
+    gl.glLightfv(GL10.GL_LIGHT0 + num, GL10.GL_SPECULAR, lightSpecular[num], 0);
   }
 
 
   private void glLightSpotAngle(int num) {
     gl.glLightf(GL10.GL_LIGHT0 + num,
-                GL10.GL_SPOT_CUTOFF, lightSpotAngleGL[num]);
+                GL10.GL_SPOT_CUTOFF, lightSpotAngle[num]);
   }
 
 
   private void glLightSpotConcentration(int num) {
     gl.glLightf(GL10.GL_LIGHT0 + num,
-                GL10.GL_SPOT_EXPONENT, lightSpotConcentrationGL[num]);
+                GL10.GL_SPOT_EXPONENT, lightSpotConcentration[num]);
   }
+  
+  
   //////////////////////////////////////////////////////////////
 
   // BACKGROUND
@@ -4931,16 +4913,13 @@ public class PGraphicsAndroid3D extends PGraphics {
   // RENDERER
   
   A3DRenderer renderer;
-//  Cube mCube;  
-//  private float mAngle;  
   
   public Renderer getRenderer() {
     return renderer;
   }
   
   public class A3DRenderer implements Renderer {
-    public A3DRenderer() {   
-      //        mCube = new Cube();    	
+    public A3DRenderer() {
     }    
 
     public void onDrawFrame(GL10 igl) {
@@ -4961,29 +4940,6 @@ public class PGraphicsAndroid3D extends PGraphics {
       gl = null;
     }    
   }
-  
-  
-//  
-//  // Render test cubes with opengl.
-//  public void drawCube() {
-//      //gl.glMatrixMode(GL10.GL_MODELVIEW);
-//      //gl.glLoadIdentity();
-//      gl.glTranslatef(0, 0, -3.0f);
-//      gl.glRotatef(mAngle,        0, 1, 0);
-//      gl.glRotatef(mAngle*0.25f,  1, 0, 0);
-//
-//      gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
-//      gl.glEnableClientState(GL10.GL_COLOR_ARRAY);
-//
-//      mCube.draw(gl);
-//
-//      gl.glRotatef(mAngle*2.0f, 0, 1, 1);
-//      gl.glTranslatef(0.5f, 0.5f, 0.5f);
-//
-//      mCube.draw(gl);
-//
-//      mAngle += 1.2f;
-//  }
   
   //////////////////////////////////////////////////////////////
   
