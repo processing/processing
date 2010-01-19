@@ -953,7 +953,22 @@ public class GLTexture extends PImage implements PConstants, GLConstants
         IntBuffer buffer = BufferUtil.newIntBuffer(size);
 		
         gl.glBindTexture(texTarget, tex[0]);
-        //gl.glGetTexImage(texTarget, 0, glFormat, glType, buffer);
+        
+        // Not Available:
+        //gl.glGetTexImage(texTarget, 0, glFormat, glType, buffer); 
+        
+        // TODO:
+        // There is no GetTexImage, but if the texture is in a renderable format (RGB or RGBA, not L, A, or LA) 
+        // then you can bind it to an FBO and use glReadPixels.
+        // From: http://www.idevgames.com/forum/showthread.php?t=17044
+        // Unfortunately, FBO support seems to be available only on iPhone through an custom extension (glBindFramebufferOES, etc).
+        // Read also note on opengl page on android site:
+        // http://developer.android.com/guide/topics/graphics/opengl.html
+        // Specifically:
+        // "Finally, note that though Android does include some basic support for OpenGL ES 1.1, the support is not complete, 
+        // and should not be relied upon at this time."
+        // :-(
+        
         gl.glBindTexture(texTarget, 0);
 		
         buffer.get(intArray);
