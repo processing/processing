@@ -199,11 +199,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected float[] colorFloats;
   
   /// IntBuffer to go with the pixels[] array
-  protected IntBuffer pixelBuffer;
-
-  
-  
-  
+  protected IntBuffer pixelBuffer;  
 
   // The following variables to be deleted forever:
   
@@ -237,26 +233,6 @@ public class PGraphicsAndroid3D extends PGraphics {
 
 //  int[] textureDeleteQueue = new int[10];
 //  int textureDeleteQueueCount = 0;
-  
-  
-  
-  
-  
-  
-  
-
-
-
-
-  
-
-
-
-  
-  
-  
-	
-
   
   
   //////////////////////////////////////////////////////////////
@@ -503,15 +479,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       // TODO throw an error?      
     }
   }
-  
-  
-  
-  
-  
-  
-  
-  
-
+ 
   
   //////////////////////////////////////////////////////////////
 
@@ -521,14 +489,35 @@ public class PGraphicsAndroid3D extends PGraphics {
 
 
   //public void beginShape()
-  //public void beginShape(int kind)
+  
+  public void beginShape(int kind) {
+    shape = kind;
+    vertexCount = 0;
+    shapeFirst = 0;
+    shapeLast = 0;   
+    triangleCount = 0;
+    lineCount = 0;      
+      
+    textureImagePrev = null;      
+    texTriangleRanges.clear();
+    /*
+     TODO:
+    if (hints[ENABLE_DEPTH_SORT]) {
+      shapeFirst = vertexCount;
+      shapeLast = 0;
+    }
+    */
+  }
+  
   //public void edge(boolean e)
   //public void normal(float nx, float ny, float nz)
+  
   //public void textureMode(int mode)
-  //public void texture(PImage image)
   
-  
-
+  public void texture(PImage image) {
+    //textureImagePrev =textureImage; 
+    textureImage = image;
+  }  
   
   static public int toFixed32(float x) {
     return (int) (x * 65536.0f);
@@ -537,11 +526,6 @@ public class PGraphicsAndroid3D extends PGraphics {
   static public int toFixed16(float x) {
     return (int) (x * 4096.0f);
   }
-  
-  public void texture(PImage image) {
-    //textureImagePrev =textureImage; 
-    textureImage = image;
-  }  
   
   protected void vertexCheck() {
     super.vertexCheck();
@@ -594,25 +578,277 @@ public class PGraphicsAndroid3D extends PGraphics {
   //public void vertex(float x, float y, float z, float u, float v)
   //protected void vertexTexture(float u, float v);
   //public void breakShape()
+  
   //public void endShape()
-  //public void endShape(int mode)
+  
+  public void endShape(int mode) {
+    shapeLast = vertexCount;
+    shapeLastPlusClipped = shapeLast;
 
+    // don't try to draw if there are no vertices
+    // (fixes a bug in LINE_LOOP that re-adds a nonexistent vertex)
+    if (vertexCount == 0) {
+      shape = 0;
+      return;
+    }
+    
+    //shapeFirst 
+    //shapeLast
+    
+    if (stroke) {
+      // not ready yet.
+      endShapeStroke(mode);
+    }
 
-  /*
-  protected void endShapeLighting(boolean lights) {
-    super.endShapeLighting(lights);
+    if (fill) {
+      endShapeFill();
+    }
+      
+    if (fill) renderTriangles(0, triangleCount);
+    if (stroke) {
+      renderLines(0, lineCount);
+        pathCount = 0;
+    }
 
-    // For now do our own lighting--sum the specular and diffuse light colors
-    if (lights) {
-      for (int i = shapeFirst; i < shapeLast; i++) {
-        float v[] = vertices[i];
-        v[R] = clamp(v[R] + v[SPR]);
-        v[G] = clamp(v[G] + v[SPG]);
-        v[B] = clamp(v[B] + v[SPB]);
+    /*
+     TODO:
+    TO CHECK LATER: 
+    // render shape and fill here if not saving the shapes for later
+    // if true, the shapes will be rendered on endDraw
+    if (!hints[ENABLE_DEPTH_SORT]) {
+      if (fill) {
+        renderTriangles(0, triangleCount);
+        if (raw != null) {
+          //rawTriangles(0, triangleCount);
+        }
+        triangleCount = 0;
+      }
+      if (stroke) {
+        renderLines(0, lineCount);
+        if (raw != null) {
+          //rawLines(0, lineCount);
+        }
+        lineCount = 0;
+      }
+      pathCount = 0;
+    }    
+    */
+    
+    shape = 0;
+  }
+  
+  
+  protected void endShapeStroke(int mode) {
+      switch (shape) {
+        case POINTS:
+        {
+          int stop = shapeLast;
+          for (int i = shapeFirst; i < stop; i++) {
+            addLineBreak();  // total overkill for points
+            addLine(i, i);
+          }
+        }
+        break;
+
+        case LINES:
+        {
+          // store index of first vertex
+          int first = lineCount;
+          int stop = shapeLast - 1;
+          //increment = (shape == LINES) ? 2 : 1;
+
+          // for LINE_STRIP and LINE_LOOP, make this all one path
+          if (shape != LINES) addLineBreak();
+
+          for (int i = shapeFirst; i < stop; i += 2) {
+            // for LINES, make a new path for each segment
+            if (shape == LINES) addLineBreak();
+            addLine(i, i+1);
+          }
+
+          // for LINE_LOOP, close the loop with a final segment
+          //if (shape == LINE_LOOP) {
+          if (mode == CLOSE) {
+            addLine(stop, lines[first][VERTEX1]);
+          }
+        }
+        break;
+
+        case TRIANGLES:
+        {
+          for (int i = shapeFirst; i < shapeLast-2; i += 3) {
+            addLineBreak();
+            //counter = i - vertex_start;
+            addLine(i+0, i+1);
+            addLine(i+1, i+2);
+            addLine(i+2, i+0);
+          }
+        }
+        break;
+
+        case TRIANGLE_STRIP:
+        {
+          // first draw all vertices as a line strip
+          int stop = shapeLast-1;
+
+          addLineBreak();
+          for (int i = shapeFirst; i < stop; i++) {
+            //counter = i - vertex_start;
+            addLine(i, i+1);
+          }
+
+          // then draw from vertex (n) to (n+2)
+          stop = shapeLast-2;
+          for (int i = shapeFirst; i < stop; i++) {
+            addLineBreak();
+            addLine(i, i+2);
+          }
+        }
+        break;
+
+        case TRIANGLE_FAN:
+        {
+          // this just draws a series of line segments
+          // from the center to each exterior point
+          for (int i = shapeFirst + 1; i < shapeLast; i++) {
+            addLineBreak();
+            addLine(shapeFirst, i);
+          }
+
+          // then a single line loop around the outside.
+          addLineBreak();
+          for (int i = shapeFirst + 1; i < shapeLast-1; i++) {
+            addLine(i, i+1);
+          }
+          // closing the loop
+          addLine(shapeLast-1, shapeFirst + 1);
+        }
+        break;
+
+        case QUADS:
+        {
+          for (int i = shapeFirst; i < shapeLast; i += 4) {
+            addLineBreak();
+            //counter = i - vertex_start;
+            addLine(i+0, i+1);
+            addLine(i+1, i+2);
+            addLine(i+2, i+3);
+            addLine(i+3, i+0);
+          }
+        }
+        break;
+
+        case QUAD_STRIP:
+        {
+          for (int i = shapeFirst; i < shapeLast - 3; i += 2) {
+            addLineBreak();
+            addLine(i+0, i+2);
+            addLine(i+2, i+3);
+            addLine(i+3, i+1);
+            addLine(i+1, i+0);
+          }
+        }
+        break;
+
+        case POLYGON:
+        {
+          // store index of first vertex
+          int stop = shapeLast - 1;
+
+          addLineBreak();
+          for (int i = shapeFirst; i < stop; i++) {
+            addLine(i, i+1);
+          }
+          if (mode == CLOSE) {
+            // draw the last line connecting back to the first point in poly
+            addLine(stop, shapeFirst); //lines[first][VERTEX1]);
+          }
+        }
+        break;
       }
     }
+  
+
+  protected void endShapeFill() {
+    switch (shape) {
+    case TRIANGLE_FAN: 
+    {
+       int stop = shapeLast - 1;
+       for (int i = shapeFirst + 1; i < stop; i++) {
+         addTriangle(shapeFirst, i, i+1);
+       }
+    }
+    break;
+
+    case TRIANGLES:
+    {
+      int stop = shapeLast - 2;
+      for (int i = shapeFirst; i < stop; i += 3) {
+        // have to switch between clockwise/counter-clockwise
+        // otherwise the feller is backwards and renderer won't draw
+        if ((i % 2) == 0) {
+          addTriangle(i, i+2, i+1);
+        } else {
+          addTriangle(i, i+1, i+2);
+        }
+      }
+    }
+    break;
+
+    case TRIANGLE_STRIP:
+    {
+      int stop = shapeLast - 2;
+      for (int i = shapeFirst; i < stop; i++) {
+        // have to switch between clockwise/counter-clockwise
+        // otherwise the feller is backwards and renderer won't draw
+        if ((i % 2) == 0) {
+          addTriangle(i, i+2, i+1);
+        } else {
+          addTriangle(i, i+1, i+2);
+        }
+      }
+    }
+    break;
+
+    case QUADS:
+    {
+      int stop = vertexCount-3;
+      for (int i = shapeFirst; i < stop; i += 4) {
+        // first triangle
+        addTriangle(i, i+1, i+2);
+        // second triangle
+        addTriangle(i, i+2, i+3);
+      }
+    }
+    break;
+
+    case QUAD_STRIP:
+    {
+      int stop = vertexCount-3;
+      for (int i = shapeFirst; i < stop; i += 2) {
+        // first triangle
+        addTriangle(i+0, i+2, i+1);
+        // second triangle
+        addTriangle(i+2, i+3, i+1);
+      }
+    }
+    break;
+
+    case POLYGON:
+    {
+      addPolygonTriangles();
+    }
+    break;
   }
-*/
+      
+    if (currentTexTriangleRange != null) {
+      texTriangleRanges.add(currentTexTriangleRange);
+      currentTexTriangleRange = null;
+    }
+    if (texTriangleRanges.size() == 0) {
+      texTriangleRanges.add(new TexturedTriangleRange(0, triangleCount, null));
+    }
+  }
 
 
   //////////////////////////////////////////////////////////////
@@ -751,17 +987,24 @@ public class PGraphicsAndroid3D extends PGraphics {
   
 
   /**
-   * Add this line, but disable clipping because GL will handle it.
+   * Add this line.
    */
   protected void addLine(int a, int b) {
-	  addLineWithoutClip(a, b);
+    if (lineCount == lines.length) {
+      int temp[][] = new int[lineCount<<1][LINE_FIELD_COUNT];
+      System.arraycopy(lines, 0, temp, 0, lineCount);
+      lines = temp;
+    }
+    lines[lineCount][VERTEX1] = a;
+    lines[lineCount][VERTEX2] = b;
+
+    //lines[lineCount][STROKE_MODE] = strokeCap | strokeJoin;
+    //lines[lineCount][STROKE_WEIGHT] = (int) (strokeWeight + 0.5f); // hmm
+    lineCount++;
+
+    // mark this piece as being part of the current path
+    pathLength[pathCount-1]++;
   }
-
-
-  //protected final void addLineWithClip(int a, int b)
-
-
-  //protected final void addLineWithoutClip(int a, int b)
 
 
   /**
@@ -847,292 +1090,175 @@ public class PGraphicsAndroid3D extends PGraphics {
   //////////////////////////////////////////////////////////////
 
   // TRIANGLES
-
-  public void beginShape(int kind) {
-	    shape = kind;
-	    vertexCount = 0;
-	    shapeFirst = 0;
-	    shapeLast = 0;	 
-	    triangleCount = 0;
-	    lineCount = 0;	    
-	    
-	    textureImagePrev = null;	    
-	    texTriangleRanges.clear();
-	    /*
-	    if (hints[ENABLE_DEPTH_SORT]) {
-	      shapeFirst = vertexCount;
-	      shapeLast = 0;
-	    }
-	    */
-	  }
   
-  public void endShape(int mode) {
-    shapeLast = vertexCount;
-    shapeLastPlusClipped = shapeLast;
 
-    // don't try to draw if there are no vertices
-    // (fixes a bug in LINE_LOOP that re-adds a nonexistent vertex)
-    if (vertexCount == 0) {
-      shape = 0;
-      return;
-    }
-	  
-    //shapeFirst 
-    //shapeLast
+  /**
+   * Add the triangle.
+   */
+  protected void addTriangle(int a, int b, int c) {
+    float[] vertexa = vertices[a];
+    float[] vertexb = vertices[b];
+    float[] vertexc = vertices[c];
     
-    if (stroke) {
-      // not ready yet.
-      endShapeStroke(mode);
-    }
-
-    if (fill) {
-      endShapeFill();
-    }
-	    
-    if (fill) renderTriangles(0, triangleCount);
-    if (stroke) {
-    	renderLines(0, lineCount);
-        pathCount = 0;
-    }
-
-    /*
-    TO CHECK LATER: 
-    // render shape and fill here if not saving the shapes for later
-    // if true, the shapes will be rendered on endDraw
-    if (!hints[ENABLE_DEPTH_SORT]) {
-      if (fill) {
-        renderTriangles(0, triangleCount);
-        if (raw != null) {
-          //rawTriangles(0, triangleCount);
+    // Need to think about this more:
+    float uscale = 1.0f;
+    float vscale = 1.0f;
+    float cx = 0.0f;
+    float sx = +1.0f;
+    float cy = 0.0f;
+    float sy = +1.0f;    
+    if (textureImage != null)
+      if (textureImage instanceof GLTexture) {
+        GLTexture tex = (GLTexture)textureImage;
+        uscale *= tex.getMaxTextureCoordS();
+        vscale *= tex.getMaxTextureCoordT();
+            
+        if (tex.isFlippedX()) {
+          cx = 1.0f;			
+          sx = -1.0f;
         }
-        triangleCount = 0;
-      }
-      if (stroke) {
-        renderLines(0, lineCount);
-        if (raw != null) {
-          //rawLines(0, lineCount);
+
+        if (tex.isFlippedY()) {
+          cy = 1.0f;			
+          sy = -1.0f;
         }
-        lineCount = 0;
       }
-      pathCount = 0;
-    }    
-    */
+      else { 
+        throw new RuntimeException("A3D only accepts GLTextures for texturing!");    
+      }
     
-    shape = 0;
+    // Vertex A.
+    vertexBuffer.put(toFixed32(vertexa[X]));
+    vertexBuffer.put(toFixed32(vertexa[Y]));
+    vertexBuffer.put(toFixed32(vertexa[Z]));
+    colorBuffer.put(toFixed32(vertexa[R]));
+    colorBuffer.put(toFixed32(vertexa[G]));
+    colorBuffer.put(toFixed32(vertexa[B]));
+    colorBuffer.put(toFixed32(vertexa[A]));
+    normalBuffer.put(toFixed32(vertexa[NX]));
+    normalBuffer.put(toFixed32(vertexa[NY]));
+    normalBuffer.put(toFixed32(vertexa[NZ]));    
+    textureBuffer.put(toFixed32((cx +  sx * vertexa[U]) * uscale));
+    textureBuffer.put(toFixed32((cy +  sy * vertexa[V]) * vscale));
+    
+    // Vertex B.    
+    vertexBuffer.put(toFixed32(vertexb[X]));
+    vertexBuffer.put(toFixed32(vertexb[Y]));
+    vertexBuffer.put(toFixed32(vertexb[Z]));
+    colorBuffer.put(toFixed32(vertexb[R]));
+    colorBuffer.put(toFixed32(vertexb[G]));
+    colorBuffer.put(toFixed32(vertexb[B]));
+    colorBuffer.put(toFixed32(vertexb[A]));
+    normalBuffer.put(toFixed32(vertexb[NX]));
+    normalBuffer.put(toFixed32(vertexb[NY]));
+    normalBuffer.put(toFixed32(vertexb[NZ]));    
+    textureBuffer.put(toFixed32((cx +  sx * vertexb[U]) * uscale));
+    textureBuffer.put(toFixed32((cy +  sy * vertexb[V]) * vscale));    
+    
+    // Vertex C.    
+    vertexBuffer.put(toFixed32(vertexc[X]));
+    vertexBuffer.put(toFixed32(vertexc[Y]));
+    vertexBuffer.put(toFixed32(vertexc[Z]));
+    colorBuffer.put(toFixed32(vertexc[R]));
+    colorBuffer.put(toFixed32(vertexc[G]));
+    colorBuffer.put(toFixed32(vertexc[B]));
+    colorBuffer.put(toFixed32(vertexc[A]));
+    normalBuffer.put(toFixed32(vertexc[NX]));
+    normalBuffer.put(toFixed32(vertexc[NY]));
+    normalBuffer.put(toFixed32(vertexc[NZ]));
+    textureBuffer.put(toFixed32((cx +  sx * vertexc[U]) * uscale));
+    textureBuffer.put(toFixed32((cy +  sy * vertexc[V]) * vscale));    
+
+    triangleCount++;
+    
+    // Updating the texture assigned to this triangle.
+    if (textureImage != textureImagePrev)
+    {
+        // Add current textured triangle range, if is not null.	
+    	if (currentTexTriangleRange != null) {
+            texTriangleRanges.add(currentTexTriangleRange);
+    	}
+    	currentTexTriangleRange = new TexturedTriangleRange(triangleCount - 1,triangleCount, textureImage);
+    }
+    else if (textureImage != null) {
+    	currentTexTriangleRange.lastTriangle = triangleCount;    	
+    }
+    
+    textureImagePrev = textureImage;
+  }
+
+  protected void renderTriangles(int start, int stop) {
+    report("render_triangles in");
+
+    GLTexture tex = null;
+    boolean texturing = false;
+    
+    vertexBuffer.position(0);
+    colorBuffer.position(0);
+    normalBuffer.position(0);
+    textureBuffer.position(0);
+
+    // Last transformation: inversion of coordinate to make comaptible with Processing's inverted Y axis.
+    gl.glPushMatrix();
+    gl.glScalef(1, -1, 1);
+    
+    gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
+    gl.glEnableClientState(GL10.GL_COLOR_ARRAY);
+    gl.glEnableClientState(GL10.GL_NORMAL_ARRAY);
+        
+    TexturedTriangleRange texRange;
+    for (int i = 0; i < texTriangleRanges.size(); i++) {
+      texRange = (TexturedTriangleRange)texTriangleRanges.get(i);
+      
+      if (texRange.textureImage != null && textureImage instanceof GLTexture) {
+        tex = (GLTexture)textureImage;
+        
+        gl.glEnable(tex.getTextureTarget());
+        gl.glBindTexture(tex.getTextureTarget(), tex.getTextureID());        
+    	  
+        gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+        texturing = true;
+      }
+      else texturing = false;
+    	
+      gl.glVertexPointer(3, GL10.GL_FIXED, 0, vertexBuffer);
+      gl.glColorPointer(4, GL10.GL_FIXED, 0, colorBuffer);
+      gl.glNormalPointer(GL10.GL_FIXED, 0, normalBuffer);
+      if (texturing) gl.glTexCoordPointer(2, GL10.GL_FIXED, 0, textureBuffer);
+      gl.glDrawArrays(GL10.GL_TRIANGLES, 3 * texRange.firstTriangle, 3 * (texRange.lastTriangle - texRange.firstTriangle));
+      
+      if (texturing) {
+    	  gl.glDisable(tex.getTextureTarget());;
+          gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);  	
+      }      
+    }
+    //gl.glDrawArrays(GL10.GL_TRIANGLES, 3 * start, 3 * (stop - start));
+        
+    gl.glDisableClientState(GL10.GL_NORMAL_ARRAY);
+    gl.glDisableClientState(GL10.GL_COLOR_ARRAY);    
+    gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
+   
+    gl.glPopMatrix();
+    
+    report("render_triangles out");	    
   }
   
-  protected void endShapeStroke(int mode) {
-	    switch (shape) {
-	    case POINTS:
-	    {
-	      int stop = shapeLast;
-	      for (int i = shapeFirst; i < stop; i++) {
-	        addLineBreak();  // total overkill for points
-	        addLine(i, i);
-	      }
-	    }
-	    break;
 
-	    case LINES:
-	    {
-	      // store index of first vertex
-	      int first = lineCount;
-	      int stop = shapeLast - 1;
-	      //increment = (shape == LINES) ? 2 : 1;
+  //protected void rawTriangles(int start, int stop)  // PGraphics3D
 
-	      // for LINE_STRIP and LINE_LOOP, make this all one path
-	      if (shape != LINES) addLineBreak();
 
-	      for (int i = shapeFirst; i < stop; i += 2) {
-	        // for LINES, make a new path for each segment
-	        if (shape == LINES) addLineBreak();
-	        addLine(i, i+1);
-	      }
-
-	      // for LINE_LOOP, close the loop with a final segment
-	      //if (shape == LINE_LOOP) {
-	      if (mode == CLOSE) {
-	        addLine(stop, lines[first][VERTEX1]);
-	      }
-	    }
-	    break;
-
-	    case TRIANGLES:
-	    {
-	      for (int i = shapeFirst; i < shapeLast-2; i += 3) {
-	        addLineBreak();
-	        //counter = i - vertex_start;
-	        addLine(i+0, i+1);
-	        addLine(i+1, i+2);
-	        addLine(i+2, i+0);
-	      }
-	    }
-	    break;
-
-	    case TRIANGLE_STRIP:
-	    {
-	      // first draw all vertices as a line strip
-	      int stop = shapeLast-1;
-
-	      addLineBreak();
-	      for (int i = shapeFirst; i < stop; i++) {
-	        //counter = i - vertex_start;
-	        addLine(i, i+1);
-	      }
-
-	      // then draw from vertex (n) to (n+2)
-	      stop = shapeLast-2;
-	      for (int i = shapeFirst; i < stop; i++) {
-	        addLineBreak();
-	        addLine(i, i+2);
-	      }
-	    }
-	    break;
-
-	    case TRIANGLE_FAN:
-	    {
-	      // this just draws a series of line segments
-	      // from the center to each exterior point
-	      for (int i = shapeFirst + 1; i < shapeLast; i++) {
-	        addLineBreak();
-	        addLine(shapeFirst, i);
-	      }
-
-	      // then a single line loop around the outside.
-	      addLineBreak();
-	      for (int i = shapeFirst + 1; i < shapeLast-1; i++) {
-	        addLine(i, i+1);
-	      }
-	      // closing the loop
-	      addLine(shapeLast-1, shapeFirst + 1);
-	    }
-	    break;
-
-	    case QUADS:
-	    {
-	      for (int i = shapeFirst; i < shapeLast; i += 4) {
-	        addLineBreak();
-	        //counter = i - vertex_start;
-	        addLine(i+0, i+1);
-	        addLine(i+1, i+2);
-	        addLine(i+2, i+3);
-	        addLine(i+3, i+0);
-	      }
-	    }
-	    break;
-
-	    case QUAD_STRIP:
-	    {
-	      for (int i = shapeFirst; i < shapeLast - 3; i += 2) {
-	        addLineBreak();
-	        addLine(i+0, i+2);
-	        addLine(i+2, i+3);
-	        addLine(i+3, i+1);
-	        addLine(i+1, i+0);
-	      }
-	    }
-	    break;
-
-	    case POLYGON:
-	    {
-	      // store index of first vertex
-	      int stop = shapeLast - 1;
-
-	      addLineBreak();
-	      for (int i = shapeFirst; i < stop; i++) {
-	        addLine(i, i+1);
-	      }
-	      if (mode == CLOSE) {
-	        // draw the last line connecting back to the first point in poly
-	        addLine(stop, shapeFirst); //lines[first][VERTEX1]);
-	      }
-	    }
-	    break;
-	    }
-	  }
-  
-  
-
-  protected void endShapeFill() {
-	    switch (shape) {
-	    case TRIANGLE_FAN:
-	    {
-	      int stop = shapeLast - 1;
-	      for (int i = shapeFirst + 1; i < stop; i++) {
-	        addTriangle(shapeFirst, i, i+1);
-	      }
-	    }
-	    break;
-
-	    case TRIANGLES:
-	    {
-	      int stop = shapeLast - 2;
-	      for (int i = shapeFirst; i < stop; i += 3) {
-	        // have to switch between clockwise/counter-clockwise
-	        // otherwise the feller is backwards and renderer won't draw
-	        if ((i % 2) == 0) {
-	          addTriangle(i, i+2, i+1);
-	        } else {
-	          addTriangle(i, i+1, i+2);
-	        }
-	      }
-	    }
-	    break;
-
-	    case TRIANGLE_STRIP:
-	    {
-	      int stop = shapeLast - 2;
-	      for (int i = shapeFirst; i < stop; i++) {
-	        // have to switch between clockwise/counter-clockwise
-	        // otherwise the feller is backwards and renderer won't draw
-	        if ((i % 2) == 0) {
-	          addTriangle(i, i+2, i+1);
-	        } else {
-	          addTriangle(i, i+1, i+2);
-	        }
-	      }
-	    }
-	    break;
-
-	    case QUADS:
-	    {
-	      int stop = vertexCount-3;
-	      for (int i = shapeFirst; i < stop; i += 4) {
-	        // first triangle
-	        addTriangle(i, i+1, i+2);
-	        // second triangle
-	        addTriangle(i, i+2, i+3);
-	      }
-	    }
-	    break;
-
-	    case QUAD_STRIP:
-	    {
-	      int stop = vertexCount-3;
-	      for (int i = shapeFirst; i < stop; i += 2) {
-	        // first triangle
-	        addTriangle(i+0, i+2, i+1);
-	        // second triangle
-	        addTriangle(i+2, i+3, i+1);
-	      }
-	    }
-	    break;
-
-	    case POLYGON:
-	    {
-	      addPolygonTriangles();
-	    }
-	    break;
-	    }
-	    
-	    if (currentTexTriangleRange != null) {
-	    	texTriangleRanges.add(currentTexTriangleRange);
-	    	currentTexTriangleRange = null;
-	    }
-	    if (texTriangleRanges.size() == 0) {
-	    	texTriangleRanges.add(new TexturedTriangleRange(0, triangleCount, null));
-	    }
-	  }
+  protected class TexturedTriangleRange {
+    int firstTriangle; 
+    int lastTriangle;
+    PImage textureImage;
+    
+    TexturedTriangleRange(int first, int last, PImage img) {
+      firstTriangle = first; 
+      lastTriangle = last;
+      textureImage = img;
+    }
+  }
+	
 
   /**
    * Triangulate the current polygon.
@@ -1320,221 +1446,9 @@ public class PGraphicsAndroid3D extends PGraphics {
         count = 2 * vc;
       }
     }
-  }
-
-  
-
-  /**
-   * Add the triangle.
-   */
-  protected void addTriangle(int a, int b, int c) {
-    float[] vertexa = vertices[a];
-    float[] vertexb = vertices[b];
-    float[] vertexc = vertices[c];
-    
-    // Need to think about this more:
-    float uscale = 1.0f;
-    float vscale = 1.0f;
-    float cx = 0.0f;
-    float sx = +1.0f;
-    float cy = 0.0f;
-    float sy = +1.0f;    
-    if (textureImage != null && textureImage instanceof GLTexture) {
-      GLTexture tex = (GLTexture)textureImage;
-      uscale *= tex.getMaxTextureCoordS();
-      vscale *= tex.getMaxTextureCoordT();
-            
-      if (tex.isFlippedX())
-      {
-          cx = 1.0f;			
-          sx = -1.0f;
-      }
-
-      if (tex.isFlippedY())
-      {
-          cy = 1.0f;			
-          sy = -1.0f;
-      }
-    }
-    else { 
-      throw new RuntimeException("A3D only accepts GLTextures for texturing!");    
-    }    
-    // Vertex A.
-    vertexBuffer.put(toFixed32(vertexa[X]));
-    vertexBuffer.put(toFixed32(vertexa[Y]));
-    vertexBuffer.put(toFixed32(vertexa[Z]));
-    colorBuffer.put(toFixed32(vertexa[R]));
-    colorBuffer.put(toFixed32(vertexa[G]));
-    colorBuffer.put(toFixed32(vertexa[B]));
-    colorBuffer.put(toFixed32(vertexa[A]));
-    normalBuffer.put(toFixed32(vertexa[NX]));
-    normalBuffer.put(toFixed32(vertexa[NY]));
-    normalBuffer.put(toFixed32(vertexa[NZ]));    
-    textureBuffer.put(toFixed32((cx +  sx * vertexa[U]) * uscale));
-    textureBuffer.put(toFixed32((cy +  sy * vertexa[V]) * vscale));
-    
-    // Vertex B.    
-    vertexBuffer.put(toFixed32(vertexb[X]));
-    vertexBuffer.put(toFixed32(vertexb[Y]));
-    vertexBuffer.put(toFixed32(vertexb[Z]));
-    colorBuffer.put(toFixed32(vertexb[R]));
-    colorBuffer.put(toFixed32(vertexb[G]));
-    colorBuffer.put(toFixed32(vertexb[B]));
-    colorBuffer.put(toFixed32(vertexb[A]));
-    normalBuffer.put(toFixed32(vertexb[NX]));
-    normalBuffer.put(toFixed32(vertexb[NY]));
-    normalBuffer.put(toFixed32(vertexb[NZ]));    
-    textureBuffer.put(toFixed32((cx +  sx * vertexb[U]) * uscale));
-    textureBuffer.put(toFixed32((cy +  sy * vertexb[V]) * vscale));    
-    
-    // Vertex C.    
-    vertexBuffer.put(toFixed32(vertexc[X]));
-    vertexBuffer.put(toFixed32(vertexc[Y]));
-    vertexBuffer.put(toFixed32(vertexc[Z]));
-    colorBuffer.put(toFixed32(vertexc[R]));
-    colorBuffer.put(toFixed32(vertexc[G]));
-    colorBuffer.put(toFixed32(vertexc[B]));
-    colorBuffer.put(toFixed32(vertexc[A]));
-    normalBuffer.put(toFixed32(vertexc[NX]));
-    normalBuffer.put(toFixed32(vertexc[NY]));
-    normalBuffer.put(toFixed32(vertexc[NZ]));
-    textureBuffer.put(toFixed32((cx +  sx * vertexc[U]) * uscale));
-    textureBuffer.put(toFixed32((cy +  sy * vertexc[V]) * vscale));    
-
-    triangleCount++;
-    
-    // Updating the texture assigned to this triangle.
-    if (textureImage != textureImagePrev)
-    {
-        // Add current textured triangle range, if is not null.	
-    	if (currentTexTriangleRange != null) {
-            texTriangleRanges.add(currentTexTriangleRange);
-    	}
-    	currentTexTriangleRange = new TexturedTriangleRange(triangleCount - 1,triangleCount, textureImage);
-    }
-    else if (textureImage != null) {
-    	currentTexTriangleRange.lastTriangle = triangleCount;    	
-    }
-    
-    textureImagePrev = textureImage;
-  }
-
-  protected void renderTriangles(int start, int stop) {
-    report("render_triangles in");
-
-    GLTexture tex = null;
-    boolean texturing = false;
-    
-    vertexBuffer.position(0);
-    colorBuffer.position(0);
-    normalBuffer.position(0);
-    textureBuffer.position(0);
-
-    // Last transformation: inversion of coordinate to make comaptible with Processing's inverted Y axis.
-    gl.glPushMatrix();
-    gl.glScalef(1, -1, 1);
-    
-    gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
-    gl.glEnableClientState(GL10.GL_COLOR_ARRAY);
-    gl.glEnableClientState(GL10.GL_NORMAL_ARRAY);
-        
-    TexturedTriangleRange texRange;
-    for (int i = 0; i < texTriangleRanges.size(); i++) {
-      texRange = (TexturedTriangleRange)texTriangleRanges.get(i);
-      
-      if (texRange.textureImage != null && textureImage instanceof GLTexture) {
-        tex = (GLTexture)textureImage;
-        
-        gl.glEnable(tex.getTextureTarget());
-        gl.glBindTexture(tex.getTextureTarget(), tex.getTextureID());        
-    	  
-        gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
-        texturing = true;
-      }
-      else texturing = false;
-    	
-      gl.glVertexPointer(3, GL10.GL_FIXED, 0, vertexBuffer);
-      gl.glColorPointer(4, GL10.GL_FIXED, 0, colorBuffer);
-      gl.glNormalPointer(GL10.GL_FIXED, 0, normalBuffer);
-      if (texturing) gl.glTexCoordPointer(2, GL10.GL_FIXED, 0, textureBuffer);
-      gl.glDrawArrays(GL10.GL_TRIANGLES, 3 * texRange.firstTriangle, 3 * (texRange.lastTriangle - texRange.firstTriangle));
-      
-      if (texturing) {
-    	  gl.glDisable(tex.getTextureTarget());;
-          gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);  	
-      }      
-    }
-    //gl.glDrawArrays(GL10.GL_TRIANGLES, 3 * start, 3 * (stop - start));
-        
-    gl.glDisableClientState(GL10.GL_NORMAL_ARRAY);
-    gl.glDisableClientState(GL10.GL_COLOR_ARRAY);    
-    gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
-   
-    gl.glPopMatrix();
-    
-    report("render_triangles out");	    
-  }
-  
-
-  //protected void rawTriangles(int start, int stop)  // PGraphics3D
-
-
-
-
-
-  protected class TexturedTriangleRange {
-    int firstTriangle; 
-    int lastTriangle;
-    PImage textureImage;
-    
-    TexturedTriangleRange(int first, int last, PImage img) {
-      firstTriangle = first; 
-      lastTriangle = last;
-      textureImage = img;
-    }
-  }
-	
+  }  
   
   
-  //////////////////////////////////////////////////////////////
-
-  // ADDING GEOMETRY
-  
-  protected final void addLineWithoutClip(int a, int b) {
-	    if (lineCount == lines.length) {
-	      int temp[][] = new int[lineCount<<1][LINE_FIELD_COUNT];
-	      System.arraycopy(lines, 0, temp, 0, lineCount);
-	      lines = temp;
-	    }
-	    lines[lineCount][VERTEX1] = a;
-	    lines[lineCount][VERTEX2] = b;
-
-	    //lines[lineCount][STROKE_MODE] = strokeCap | strokeJoin;
-	    //lines[lineCount][STROKE_WEIGHT] = (int) (strokeWeight + 0.5f); // hmm
-	    lineCount++;
-
-	    // mark this piece as being part of the current path
-	    pathLength[pathCount-1]++;
-	  }  
-  
-  protected final void addTriangleWithoutClip(int a, int b, int c) {
-	    float[] vertexa = vertices[a];
-	    float[] vertexb = vertices[b];
-	    float[] vertexc = vertices[c];
-	    
-	    vertexBuffer.put(toFixed32(vertexa[X]));
-	    vertexBuffer.put(toFixed32(vertexa[Y]));
-	    vertexBuffer.put(toFixed32(vertexa[Z]));
-	      
-	    vertexBuffer.put(toFixed32(vertexb[X]));
-	    vertexBuffer.put(toFixed32(vertexb[Y]));
-	    vertexBuffer.put(toFixed32(vertexb[Z]));	      
-	    
-	    vertexBuffer.put(toFixed32(vertexc[X]));
-	    vertexBuffer.put(toFixed32(vertexc[Y]));
-	    vertexBuffer.put(toFixed32(vertexc[Z]));	      
-	  }  
-
   //////////////////////////////////////////////////////////////
 
   // RENDERING
@@ -1667,115 +1581,9 @@ public class PGraphicsAndroid3D extends PGraphics {
 	      fill = savedFill;
 	    }
 	  }
-
   
   
   //public void ellipse(float a, float b, float c, float d)
-
-  /*
-  boolean ellipseInited;
-  int ellipseFillList;
-  int ellipseStrokeList;
-
-  protected void ellipseImpl(float x1, float y1, float w, float h) {
-    float hradius = w / 2f;
-    float vradius = h / 2f;
-
-    float centerX = x1 + hradius;
-    float centerY = y1 + vradius;
-
-    // adapt accuracy to radii used w/ a minimum of 4 segments [toxi]
-    // now uses current scale factors to determine "real" transformed radius
-
-    //int cAccuracy = (int)(4+Math.sqrt(hradius*abs(m00)+vradius*abs(m11))*2);
-    //int cAccuracy = (int)(4+Math.sqrt(hradius+vradius)*2);
-
-    // notched this up to *3 instead of *2 because things were
-    // looking a little rough, i.e. the calculate->arctangent example [fry]
-
-    // also removed the m00 and m11 because those were causing weirdness
-    // need an actual measure of magnitude in there [fry]
-
-    int accuracy = (int)(4+Math.sqrt(hradius+vradius)*3);
-    //System.out.println("accuracy is " + accuracy);
-    //accuracy = 5;
-
-    // [toxi031031] adapted to use new lookup tables
-    float inc = (float)SINCOS_LENGTH / accuracy;
-
-    float val = 0;
-
-    if (fill) {
-      boolean savedStroke = stroke;
-      stroke = false;
-
-      beginShape(TRIANGLE_FAN);
-      normal(0, 0, 1);
-      vertex(centerX, centerY);
-      for (int i = 0; i < accuracy; i++) {
-        vertex(centerX + cosLUT[(int) val] * hradius,
-               centerY + sinLUT[(int) val] * vradius);
-        val += inc;
-      }
-      // back to the beginning
-      vertex(centerX + cosLUT[0] * hradius,
-             centerY + sinLUT[0] * vradius);
-      endShape();
-
-      stroke = savedStroke;
-    }
-
-    if (stroke) {
-      boolean savedFill = fill;
-      fill = false;
-
-      val = 0;
-      beginShape(); //LINE_LOOP);
-      for (int i = 0; i < accuracy; i++) {
-        vertex(centerX + cosLUT[(int) val] * hradius,
-               centerY + sinLUT[(int) val] * vradius);
-        val += inc;
-      }
-      endShape(CLOSE);
-
-      fill = savedFill;
-    }
-  }
-  */
-
-  /*
-    pgl.beginGL();
-    //PGraphics gr = PApplet.this.g;
-    //GL gl = ((PGraphicsOpenGL).gr).beginGL();
-    if (!ellipseInited) {
-      ellipseList = gl.glGenLists(1);
-      gl.glNewList(ellipseList, GL10.GL_COMPILE);
-      gl.glBegin(GL10.GL_LINE_LOOP);
-      int seg = 15;
-      float segf = 15;
-      for (int i = 0; i < seg; i++) {
-        float theta = TWO_PI * (float)i / segf;
-        gl.glVertex2f(cos(theta), sin(theta));
-      }
-      gl.glEnd();
-      gl.glEndList();
-      ellipseInited = true;
-    }
-
-    for (int i=1; i<numSegments-1; i++) {
-    gl.glPushMatrix();
-    gl.glTranslatef(x[i], y[i], z);
-    float r = w[i]/2f;
-    gl.glScalef(r, r, r);
-    gl.glColor4f(1, 1, 1, 150.0/255.0);
-    gl.glCallList(ellipseList);
-    gl.glScalef(0.5, 0.5, 0.5);
-    gl.glColor4f(1, 1, 1, 50.0/255.0);
-    gl.glCallList(ellipseList);
-    gl.glPopMatrix();
-    }
-    pgl.endGL();
-  */
 
 
   //public void arc(float a, float b, float c, float d,
@@ -1784,7 +1592,6 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   //protected void arcImpl(float x, float y, float w, float h,
   //                       float start, float stop)
-
 
 
   //////////////////////////////////////////////////////////////
@@ -2114,72 +1921,6 @@ public class PGraphicsAndroid3D extends PGraphics {
 //  }
 
 
-
-  //////////////////////////////////////////////////////////////
-
-  // MATRIX MATH
-
-  //public void pushMatrix()
-  //public void popMatrix()
-
-  //public void translate(float tx, float ty)
-  //public void translate(float tx, float ty, float tz)
-  //public void rotate(float angle)
-  //public void rotateX(float angle)
-  //public void rotateY(float angle)
-  //public void rotateZ(float angle)
-  //public void rotate(float angle, float vx, float vy, float vz)
-  //public void scale(float s)
-  //public void scale(float sx, float sy)
-  //public void scale(float x, float y, float z)
-
-  //public void resetMatrix()
-  //public void applyMatrix(PMatrix2D source)
-  //public void applyMatrix(float n00, float n01, float n02,
-  //                        float n10, float n11, float n12)
-  //public void applyMatrix(PMatrix3D source)
-  //public void applyMatrix(float n00, float n01, float n02, float n03,
-  //                        float n10, float n11, float n12, float n13,
-  //                        float n20, float n21, float n22, float n23,
-  //                        float n30, float n31, float n32, float n33)
-
-  //public getMatrix(PMatrix2D target)
-  //public getMatrix(PMatrix3D target)
-  //public void setMatrix(PMatrix2D source)
-  //public void setMatrix(PMatrix3D source)
-  //public void printMatrix()
-
-  //public void beginCamera()
-  //public void endCamera()
-  //public void camera()
-  //public void camera(float eyeX, float eyeY, float eyeZ,
-  //                   float centerX, float centerY, float centerZ,
-  //                   float upX, float upY, float upZ)
-  //public void printCamera()
-
-  //public void ortho()
-  //public void ortho(float left, float right,
-  //                  float bottom, float top,
-  //                  float near, float far)
-  //public void perspective()
-  //public void perspective(float fov, float aspect, float near, float far)
-  //public void frustum(float left, float right,
-  //                    float bottom, float top,
-  //                    float near, float far)
-  //public void printProjection()
-
-  //public float screenX(float x, float y)
-  //public float screenY(float x, float y)
-  //public float screenX(float x, float y, float z)
-  //public float screenY(float x, float y, float z)
-  //public float screenZ(float x, float y, float z)
-  //public float modelX(float x, float y, float z)
-  //public float modelY(float x, float y, float z)
-  //public float modelZ(float x, float y, float z)
-
-
-
-  //////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////
 
   // MATRIX STACK
