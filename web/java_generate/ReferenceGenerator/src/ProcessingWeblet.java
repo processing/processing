@@ -37,6 +37,7 @@ public class ProcessingWeblet extends Standard {
 	private static String localFlag = "-localref";
 	private static String coreFlag = "-corepackage"; //to allow for exceptions like XML being in the core
 	private static String verboseFlag = "-noisy";
+	private static String rootFlag = "-rootclass";
 	private static String exceptionsList = "";
 	private static IndexWriter indexWriter;
 
@@ -94,13 +95,15 @@ public class ProcessingWeblet extends Standard {
 				Shared.i().corePackages.add(option[1]);
 			} else if(option[0].equals(verboseFlag)){
 				Shared.i().setNoisy(true);
+			} else if( option[0].equals(rootFlag)){
+				Shared.i().rootClasses.add(option[1]);
 			}
 		}
 	}
 
 	public static int optionLength(String option) {
 		if (option.equals(templateFlag) || option.equals(examplesFlag)
-				|| option.equals(outputFlag) || option.equals(exceptionsFlag) || option.equals(imagesFlag) || option.equals(localFlag) || option.equals(coreFlag) ) {
+				|| option.equals(outputFlag) || option.equals(rootFlag) || option.equals(exceptionsFlag) || option.equals(imagesFlag) || option.equals(localFlag) || option.equals(coreFlag) ) {
 			return 2;
 		} else if ( option.equals(verboseFlag) ){
 			return 1;

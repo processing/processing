@@ -10,6 +10,8 @@ javadoc -doclet ProcessingWeblet -docletpath bin/ -public \
 	-includedir ../api_examples/include \
 	-imagedir images \
 	-corepackage processing.xml \
+	-rootclass PGraphics \
+	-rootclass PConstants \
     ../../../processing/core/src/processing/core/*.java \
     ../../../processing/core/src/processing/xml/*.java \
     ../../../processing/net/src/processing/net/*.java \
