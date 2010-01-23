@@ -1,0 +1,877 @@
+<!--LINK TO DOWNLOAD ALL EXAMPLES-->
+<p>
+<a href="transform2d.zip">Download the files from this tutorial.</a>
+</p>
+<h1>2-D Transformations</h1>
+    
+<table width="656">
+    <tr>
+    <td>
+    
+    
+    
+    <p class="ref-notice">This tutorial is for Processing version 1.0+. <em>If you see any errors or have comments, please <a href="http://processing.org/discourse/yabb_beta/YaBB.cgi?board=WebsiteBugs">let us know</a>.</em></p>
+
+<p>
+Processing has built-in functions that make it easy for you
+to have objects in a sketch move, spin, and grow
+or shrink. This tutorial will introduce you to the 
+<code>translate</code>, <code>rotate</code>, and
+<code>scale</code> functions so that you can use them
+in your sketches.
+</p>
+
+<h5>Translation: Moving the Grid</h5>
+
+<p>
+As you know, your Processing window works like a piece of graph paper. When you
+want to draw something, you specify its coordinates on the graph.
+Here is a simple rectangle drawn with the code
+<code>rect(20,&nbsp;20,&nbsp;40,&nbsp;40)</code>. The coordinate
+system (a fancy word for &ldquo;graph paper&rdquo;) is shown in gray.
+</p>
+
+<p><img src="imgs/original.png" alt="Black rectangle on gray numbered grid"
+    width="230" height="230" /></p>
+
+<p>
+If you want to move the rectangle 60 units right and 80 units down,
+you can just change the coordinates by adding to the <i>x</i> and <i>y</i>
+starting point:
+<code>rect(20&nbsp;+&nbsp;60,&nbsp;20&nbsp;+&nbsp;80,&nbsp;40,&nbsp;40)</code> and the rectangle will appear
+in a different place. (We put the arrow in there for dramatic effect.)
+</p>
+
+<p><img src="imgs/new_coords.png" alt="Black rectangle on gray numbered grid, moved"
+    width="230" height="230" /></p>
+
+<p>
+But there is a more interesting way to do it: <strong>move the graph paper instead</strong>.
+If you move the graph paper 60 units right and 80 units down,
+you will get exactly the same visual result. Moving
+the coordinate system is called <dfn>translation</dfn>.
+</p>
+
+<p><img src="imgs/moved_grid.png" alt="grid moved with arrow showing motion"
+    width="240" height="240" /></p>
+
+<p>
+The important thing to notice in the preceding diagram is that, as far as
+the rectangle is concerned, it hasn&rsquo;t moved at all. Its upper left
+corner is still at (20,20). When you use transformations, the things you
+draw <em>never</em> change position; the coordinate system does.
+</p>
+
+<p>
+Here is code that draws the rectangle in red by changing its coordinates,
+then draws it in blue by moving the grid. The rectangles are translucent
+so that you can see that they are (visually) at the same place. Only the method used to
+move them has changed. Copy and paste this code into Processing and give it a try.
+</p>
+
+<pre>
+void setup()
+{
+  size(200, 200);
+  background(255);
+  noStroke();
+
+  // draw the original position in gray
+  fill(192);
+  rect(20, 20, 40, 40);
+  
+  // draw a translucent red rectangle by changing the coordinates
+  fill(255, 0, 0, 128);
+  rect(20 + 60, 20 + 80, 40, 40);
+  
+  // draw a translucent blue rectangle by translating the grid
+  fill(0, 0, 255, 128);
+  pushMatrix();
+  translate(60, 80);
+  rect(20, 20, 40, 40);
+  popMatrix();
+}
+
+</pre>
+
+<p>
+Let&rsquo;s look at the translation code in more detail.
+<code>pushMatrix()</code> is a built-in function that
+saves the current position of the coordinate system. The 
+<code>translate(60,&nbsp;80)</code> moves the coordinate system 60 units right
+and 80 units down. The <code>rect(20,&nbsp;20,&nbsp;40,&nbsp;40)</code> draws the
+rectangle at the same place it was originally. Remember, the things you draw
+don&rsquo;t move&mdash;the grid moves instead. Finally,
+<code>popMatrix()</code> restores the coordinate system to the way it was
+before you did the translate.
+</p>
+
+<p>
+Yes, you could have done a <code>translate(-60,&nbsp;-80)</code> to
+move the grid back to its original position. However, when you start
+doing more sophisticated operations with the coordinate system, it&rsquo;s
+easier to use <code>pushMatrix()</code> and <code>popMatrix()</code> to
+save and restore the status rather than having to undo all your operations.
+Later on in this tutorial, you will find out why those functions
+seem to have such strange names.
+</p>
+
+<h5>What&rsquo;s the Advantage?</h5>
+<p>
+You may be thinking that picking up the coordinate system and moving it
+is a lot more trouble than just adding to coordinates. For a simple example
+like the rectangle, you are correct. But let&rsquo;s take an example of
+where <code>translate()</code> can make life easier. Here is some
+code that draws a row of houses. It uses a loop that calls
+function named <code>house()</code>, which takes
+the <i>x</i> and <i>y</i> location of the 
+house&rsquo;s upper-left corner as its parameters.</p>
+
+<p><img src="imgs/houses.png" alt="Row of stick-figure houses"
+    width="358" height="81" /></p>
+
+<pre>
+void setup()
+{
+  size(400, 100);
+  background(255);
+  for (int i = 10; i &lt; 350; i = i + 50)
+  {
+    house(i, 20);
+  }
+}
+
+</pre>
+
+<p>
+This is the code for drawing the house by changing its
+position. Look at all the additions that you
+have to keep track of.
+</p>
+
+<pre>
+void house(int x, int y)
+{
+  triangle(x + 15, y, x, y + 15, x + 30, y + 15);
+  rect(x, y + 15, 30, 30);
+  rect(x + 12, y + 30, 10, 15);
+}
+
+</pre>
+
+<p>
+Compare that to the version of the function that uses <code>translate()</code>.
+In this case, the code draws the house in the same place every time,
+with its upper left corner at (0,&nbsp;0), and lets translation do all the
+work instead.
+</p>
+
+<pre>
+void house(int x, int y)
+{
+  pushMatrix();
+  translate(x, y);
+  triangle(15, 0, 0, 15, 30, 15);
+  rect(0, 15, 30, 30);
+  rect(12, 30, 10, 15);
+  popMatrix();
+}
+
+</pre>
+
+
+<h5>Rotation</h5>
+<p>
+In addition to moving the grid, you can also rotate it with the
+<code>rotate()</code> function. This function takes one argument, which is
+the number of <i>radians</i> that you want to rotate. In Processing, all
+the functions that have to do with rotation measure angles in radians rather
+than degrees.  When you talk about angles in degrees, you say that a full circle
+has 360&#xb0;. When you talk about angles in radians, you say that a full circle has
+2&pi; radians. Here is a diagram of how Processing measures angles in degrees (black)
+and radians (red).
+</p>
+
+<p><img src="imgs/degrees.png" alt="Degrees are measured clockwise with zero being at 3 o'clock"
+    width="158" height="158" /></p>
+
+<p>
+Since most people think in degrees, Processing has a built-in <code>radians()</code> function
+which takes a number of degrees as its argument and converts it for you.  It also has
+a <code>degrees()</code> function that converts radians to degrees. Given that background,
+let&rsquo;s try rotating a square clockwise 45 degrees.
+</p>
+
+<img src="imgs/bad_rotate.png" alt="square has moved and rotated"
+    width="120" height="120" style="float: right;" />
+<pre>
+void setup()
+{
+  size(200, 200);
+  background(255);
+  smooth();
+  fill(192);
+  noStroke();
+  rect(40, 40, 40, 40);
+  
+  pushMatrix();
+  rotate(radians(45));
+  fill(0);
+  rect(40, 40, 40, 40);
+  popMatrix();
+}
+
+</pre>
+
+<p>Hey, what happened? How come the square got moved and cut off?
+The answer is: the square did not move. The <strong>grid</strong> was rotated.
+Here is what really happened. As you can see, on the rotated coordinate system,
+the square still has its upper left corner at (40,&nbsp;40).
+</p>
+
+<p><img src="imgs/rotated_grid.png" alt="shows grid rotated 45 degrees clockwise"
+    width="275" height="250" /></p>
+
+<h5>Rotating the Correct Way</h5>
+<p>
+The correct way to rotate the square is to:
+</p>
+<ol style="list-style-type: upper-alpha">
+<li>Translate the coordinate
+system&rsquo;s origin (0,&nbsp;0) to where you want
+the upper left of the square to be.</li>
+<li>Rotate the grid &pi;/4 radians (45&#xb0;)</li>
+<li>Draw the square at the origin.</li>
+</ol>
+
+<p><img src="imgs/correct_rotate_grid.png" width="310" height="250"
+    alt="Grid translated, then rotated" /></p>
+
+<p>
+And here is the code and its result, without the grid marks.
+</p>
+
+<img src="imgs/good_rotate.png" width="120" height="120"
+    alt="result of properly rotating square"
+    style="float: right;" />
+<pre>
+void setup()
+{
+  size(200, 200);
+  background(255);
+  smooth();
+  fill(192);
+  noStroke();
+  rect(40, 40, 40, 40);
+  
+  pushMatrix();
+  // move the origin to the pivot point
+  translate(40, 40); 
+  
+  // then pivot the grid
+  rotate(radians(45));
+  
+  // and draw the square at the origin
+  fill(0);
+  rect(0, 0, 40, 40);
+  popMatrix();
+}
+
+</pre>
+
+<p>
+And here is a program that generates a wheel of colors by using
+rotation. The screenshot is reduced to save space.
+</p>
+
+
+<img src="imgs/wheel.png" width="87" height="86"
+    alt="multiply rotated rectangle in different colors"
+    style="float: right;" />
+<pre>
+void setup() {
+  size(200, 200);
+  background(255);
+  smooth();
+  noStroke();
+}
+
+void draw(){
+  if (frameCount % 10 == 0) {
+    fill(frameCount * 3 % 255, frameCount * 5 % 255,
+      frameCount * 7 % 255);
+    pushMatrix();
+    translate(100, 100);
+    rotate(radians(frameCount * 2  % 360));
+    rect(0, 0, 80, 20);
+    popMatrix();
+  }
+}
+</pre>
+
+<h5>Scaling</h5>
+<p>
+The final coordinate system transformation is
+scaling, which changes the size of the grid. Take a look at this example,
+which draws a square, then scales the grid to twice its normal size,
+and draws it again.
+</p>
+
+<img src="imgs/scale1.png" width="145" height="145"
+    alt="gray square scaled up to double size"
+    style="float: right;" />
+<pre>
+void setup()
+{
+  size(200,200);
+  background(255);
+  
+  stroke(128);
+  rect(20, 20, 40, 40);
+  
+  stroke(0);
+  pushMatrix();
+  scale(2.0);
+  rect(20, 20, 40, 40);
+  popMatrix();
+}
+
+</pre>
+
+<p>
+First, you can see that the square appears to have moved. It hasn&rsquo;t, of
+course. Its upper left corner is still at (20,&nbsp;20) on the
+scaled-up grid, but that point is
+now twice as far away from the origin as it was in the original coordinate
+system. You can also see that the lines are thicker. That&rsquo;s no optical
+illusion&mdash;the lines really are twice as thick, because the coordinate system
+has been scaled to double its size.
+</p>
+
+<blockquote>
+<p>
+<strong>Programming Challenge:</strong> Scale up the black square, but keep its
+upper left corner in the same place as the gray square. Hint: use 
+<code>translate()</code> to move the origin, then use <code>scale()</code>.
+</p>
+</blockquote>
+
+<p>
+There is no law saying that you have to scale the <i>x</i> and <i>y</i> dimensions
+equally. Try using <code>scale(3.0,&nbsp;0.5)</code> to make the <i>x</i> dimension
+three times its normal size and the <i>y</i> dimension only half its normal size.
+</p>
+
+<h5>Order Matters</h5>
+<p>
+When you do multiple transformations, the order makes a difference. A rotation
+followed by a translate followed by a scale will not give the same results as a
+translate followed by a rotate by a scale. Here is some sample code and
+the results.
+</p>
+
+<img src="imgs/order.png" width="144" height="168"
+    alt="result of different orders of rotate/translate/scale" 
+    style="float: right;"/>
+<pre>
+void setup()
+{
+  size(200, 200);
+  background(255);
+  smooth();
+  line(0, 0, 200, 0); // draw axes
+  line(0, 0, 0, 200);
+  
+  pushMatrix();
+  fill(255, 0, 0); // red square
+  rotate(radians(30));
+  translate(70, 70);
+  scale(2.0);
+  rect(0, 0, 20, 20);
+  popMatrix();
+
+  pushMatrix();
+  fill(255); // white square
+  translate(70, 70);
+  rotate(radians(30));
+  scale(2.0);
+  rect(0, 0, 20, 20);
+  popMatrix();
+}
+
+</pre>
+
+<h5>The Transformation Matrix</h5>
+<p>
+Every time you do a rotation, translation, or scaling, the information
+required to do the transformation is accumulated into a table of
+numbers. This table, or <dfn>matrix</dfn> has only a few rows
+and columns, yet, through the miracle of mathematics, it contains all the
+information needed to do any series of transformations. And that&rsquo;s
+why the <code>pushMatrix()</code> and <code>popMatrix()</code> have that
+word in their name.
+</p>
+
+<h5>Push and Pop</h5>
+<p>
+What, about the <i>push</i> and <i>pop</i> part of the names? These come from a computer
+concept known as a <dfn>stack</dfn>, which works like a spring-loaded tray
+dispenser in a cafeteria. 
+When someone returns a tray to the stack, its weight pushes the platform down.
+When someone needs a tray, he takes it from the top of the stack,
+and the remaining trays pop up a little bit.
+</p>
+
+<p>In a similar manner, <code>pushMatrix()</code> puts the current status of
+the coordinate system at the top of a memory area, and <code>popMatrix()</code>
+pulls that status back out. The preceding example used
+<code>pushMatrix()</code> and <code>popMatrix()</code> to make sure that the
+coordinate system was &ldquo;clean&rdquo; before each part of the drawing.
+In all of the other examples, the calls to those two functions weren&rsquo;t
+really necessary, but it doesn&rsquo;t hurt anything to save and restore
+the grid status.
+</p>
+
+<p>
+Note: in Processing, the coordinate system is restored to its original state
+(origin at the upper left of the window, no rotation, and no scaling) every
+time that the <code>draw()</code> function is executed.
+</p>
+
+<h5>Three-dimensional Transforms</h5>
+<p>
+If you are working in three dimensions, you can call the
+<code>translate()</code> function with three arguments for the
+<i>x</i>, <i>y</i>, and <i>z</i> distances. Similarly, you can
+call <code>scale()</code> with three arguments that tell how
+much you want the grid scaled in each of those dimensions.
+</p>
+
+<p>
+For rotation, call the <code>rotateX()</code>, 
+<code>rotateY()</code>, or <code>rotateZ()</code> function
+to rotate around each of the axes. All three of these functions
+expect one argument: the number of radians to rotate.
+</p>
+
+<h5>Case Study: An Arm-Waving Robot</h5>
+<p>
+Let&rsquo;s use these transformations to animate a blue
+robot waving its arms. Rather than try to write it all at
+once, we will do the work in stages. The first step is
+to draw the robot without any animation.
+</p>
+
+<p>
+The robot is modeled on
+<a href="http://openclipart.org/media/files/mcol/4390">this
+drawing</a>, although it will not look as charming.
+First, we draw the robot so that its
+left and top side touch the <i>x</i> and <i>y</i> axes. That
+will allow us to use <code>translate()</code> to easily place
+the robot anywhere we want or to make multiple copies of
+the robot, as we did in the example of the houses.
+</p>
+
+<p>
+When we refer to left and right in this drawing, we mean your
+left and right (the left and right side of your monitor),
+not the robot&rsquo;s left and right.
+</p>
+
+
+<img src="imgs/whole_robot.png" width="84"
+    height="136" alt="blue robot, arms at sides"
+    style="float: right;" />
+<pre>
+void setup()
+{
+  size(200, 200);
+  background(255);
+  smooth();
+  drawRobot();
+}
+
+void drawRobot()
+{
+  noStroke();
+  fill(38, 38, 200);
+  rect(20, 0, 38, 30); // head
+  rect(14, 32, 50, 50); // body
+
+  rect(0, 32, 12, 37); // left arm
+  rect(66, 32, 12, 37); // right arm
+  
+  rect(22, 84, 16, 50); // left leg
+  rect(40, 84, 16, 50); // right leg
+  
+  fill(222, 222, 249);
+  ellipse(30, 12, 12, 12); // left eye
+  ellipse(47, 12, 12, 12); // right eye
+}
+
+</pre>
+
+
+<p>
+<img src="imgs/pivot.png" width="82" height="52"
+    style="float: right;" alt="robot with red dots at shoulder joints" />
+The next step is to identify the points where
+the arms pivot. That is shown in this drawing.
+The pivot points are (12,&nbsp;32) and
+(66,&nbsp;32). Note: the term &ldquo;center of rotation&rdquo;
+is a more formal term for the pivot point.
+</p>
+
+<p>
+Now, separate the code for drawing the left and right
+arms, and move the center of rotation for each arm to the origin, because
+you always rotate around the (0,&nbsp;0) point. To save space,
+we are not repeating the code for <code>setup()</code>.
+</p>
+
+<pre>
+void drawRobot()
+{
+  noStroke();
+  fill(38, 38, 200);
+  rect(20, 0, 38, 30); // head
+  rect(14, 32, 50, 50); // body
+  drawLeftArm();
+  drawRightArm();
+  rect(22, 84, 16, 50); // left leg
+  rect(40, 84, 16, 50); // right leg
+  
+  fill(222, 222, 249);
+  ellipse(30, 12, 12, 12); // left eye
+  ellipse(47, 12, 12, 12);  // right eye
+}
+
+void drawLeftArm()
+{
+  pushMatrix();
+  translate(12, 32);
+  rect(-12, 0, 12, 37);
+  popMatrix();
+}
+
+void drawRightArm()
+{
+  pushMatrix();
+  translate(66, 32);
+  rect(0, 0, 12, 37);
+  popMatrix();
+}
+
+</pre>
+
+<p>
+Now test to see if the arms rotate properly.
+Rather than attempt a full animation, we will just
+rotate the left side arm 135 degrees
+and the right side arm -45 degrees as a test. Here
+is the code that needs to be added, and the result.
+The left side arm is cut off because of the window
+boundaries, but we&rsquo;ll fix that in the final
+animation.
+</p>
+
+<img src="imgs/rotate_test.png" alt="robot with arms at angle"
+    width="109" height="72" style="float: right;" />
+<pre>
+void drawLeftArm()
+{
+  pushMatrix();
+  translate(12, 32);
+  <b>rotate(radians(135));</b>
+  rect(-12, 0, 12, 37); // left arm
+  popMatrix();
+}
+
+void drawRightArm()
+{
+  pushMatrix();
+  translate(66, 32);
+  <b>rotate(radians(-45));</b>
+  rect(0, 0, 12, 37); // right arm
+  popMatrix();
+}
+
+</pre>
+
+<p>
+Now we complete the program by putting in the animation. The
+left arm has to rotate from 0&deg; to 135&deg; and back.
+Since the arm-waving is symmetric, the
+right-arm angle will always be the negative value of
+the left-arm angle. To make things simple,
+we will go in increments of 5
+degrees. 
+</p>
+
+<pre>
+int armAngle = 0;
+int angle_change = 5;
+final int ANGLE_LIMIT = 135;
+
+void setup()
+{
+  size(200, 200);
+  smooth();
+  frameRate(30);
+}
+
+void draw()
+{
+  background(255);
+  pushMatrix();
+  translate(50, 50); // place robot so arms are always on screen
+  drawRobot();
+  armAngle += angleChange;
+  
+  // if the arm has moved past its limit,
+  // reverse direction and set within limits.
+  if (armAngle > ANGLE_LIMIT || armAngle &lt; 0)
+  {
+    angleChange = -angleChange;
+    armAngle += angleChange;
+  }
+  popMatrix();
+}
+
+void drawRobot()
+{
+  noStroke();
+  fill(38, 38, 200);
+  rect(20, 0, 38, 30); // head
+  rect(14, 32, 50, 50); // body
+  drawLeftArm();
+  drawRightArm();
+  rect(22, 84, 16, 50); // left leg
+  rect(40, 84, 16, 50); // right leg
+  
+  fill(222, 222, 249);
+  ellipse(30, 12, 12, 12); // left eye
+  ellipse(47, 12, 12, 12);  // right eye
+}
+
+void drawLeftArm()
+{
+  pushMatrix();
+  translate(12, 32);
+  rotate(radians(armAngle));
+  rect(-12, 0, 12, 37); // left arm
+  popMatrix();
+}
+
+void drawRightArm()
+{
+  pushMatrix();
+  translate(66, 32);
+  rotate(radians(-armAngle));
+  rect(0, 0, 12, 37); // right arm
+  popMatrix();
+}
+
+</pre>
+
+<h5>Case Study: Interactive Rotation</h5>
+<p>
+Instead of having the arms move on their own, we will modify the program
+so that the arms follow the mouse while the mouse button is pressed. Instead
+of just writing the program at the keyboard, we first think about the
+problem and figure out what the program needs to do. 
+</p>
+
+<p>Since the two arms move independently of
+one another, we need to have one variable for each arm&rsquo;s angle.
+It&rsquo;s easy to figure out which arm to track. If the mouse is at the
+left side of the robot&rsquo;s center, track the left arm; otherwise,
+track the right arm.
+</p>
+
+<p>
+The remaining problem is to figure out the angle of rotation. Given the
+pivot point position and the mouse position, how do you determine the
+angle of a line connecting those two points?  The answer comes from the
+<code>atan2()</code> function, which gives (in radians) the angle
+of a line from the origin to a given <i>y</i> and <i>x</i> coordinate.
+In constrast to most other functions, the <i>y</i> coordinate comes
+first. <code>atan2()</code> returns a value from -&pi; to &pi; radians,
+which is the equivalent of -180&deg; to 180&deg;.
+</p>
+
+<p>
+But what about finding the angle of a line that doesn&rsquo;t start
+from the origin, such as the line from (10,&nbsp;37) to (48,&nbsp;59)?
+No problem; it&rsquo;s the same as the angle of a line from
+(0,&nbsp;0) to (48-10,&nbsp;59-37). In general, to find the
+angle of the line from (<i>x</i><sub>0</sub>,&nbsp;<i>y</i><sub>0</sub>)
+to (<i>x</i><sub>1</sub>,&nbsp;<i>y</i><sub>1</sub>), calculate
+</p>
+
+<pre>
+   atan2(<i>y</i><sub>1</sub> - <i>y</i><sub>0</sub>, <i>x</i><sub>1</sub> - <i>x</i><sub>0</sub>)
+
+</pre>
+
+<p>
+Because this is a new concept, rather than integrate it into the robot
+program, you should write a 
+simple test program to see that you understand how <code>atan2()</code>
+works. This program draws a rectangle whose center of rotation is
+its upper left corner at (100,&nbsp;100) and tracks the mouse.
+</p>
+
+<pre>
+void setup()
+{
+  size(200, 200);
+}
+
+void draw()
+{
+  float angle = atan2(mouseY - 100, mouseX - 100);
+  
+  background(255);
+  pushMatrix();
+  translate(100, 100);
+  rotate(angle);
+  rect(0, 0, 50, 10);
+  popMatrix();
+}
+
+</pre>
+
+<p>
+That works great. What happens if we draw the rectangle so it is
+taller than it is wide? Change the preceding code to read
+<code>rect(0,&nbsp;0,&nbsp;10,&nbsp;50)</code>. How come it
+doesn&rsquo;t seem to follow the mouse any more? The answer is
+that the rectangle really <em>is</em> still follows the mouse,
+but it&rsquo;s the short side of the rectangle that does the following.
+Our eyes are trained to want the long side to be tracked. Because
+the long side is at a 90 degree angle to the short side,
+you have to subtract 90&deg; (or &pi;/2 radians) to get the
+desired effect. Change the preceding code to read
+<code>rotate(angle&nbsp;-&nbsp;HALF_PI)</code> and try it again.
+Since Processing deals almost exclusively in radians,
+the language has defined the constants <code>PI</code> (180&deg;),
+<code>HALF_PI</code> (90&deg;), <code>QUARTER_PI</code> (45&deg;)
+and <code>TWO_PI</code> (360&deg;) for your convenience.
+</p>
+
+<p>
+At this point, we can write the final version of the
+arm-tracking program. We start off with definitions
+of constants and variables. The number 39
+in the definition of <code>MIDPOINT_X</code>
+comes from the fact that the body of the robot starts at
+<i>x</i>-coordinate 14 and is 50 pixels wide, so 39 (14&nbsp;+&nbsp;25)
+is the horizontal midpoint of the robot&rsquo;s body.
+</p>
+
+<pre>
+/* Where upper left of robot appears on screen */
+final int ROBOT_X = 50;
+final int ROBOT_Y = 50;
+
+/* The robot's midpoint and arm pivot points */
+final int MIDPOINT_X = 39;
+final int LEFT_PIVOT_X = 12;
+final int RIGHT_PIVOT_X = 66;
+final int PIVOT_Y = 32;
+
+float leftArmAngle = 0.0;
+float rightArmAngle = 0.0;
+
+void setup()
+{
+  size(200, 200);
+  smooth();
+  frameRate(30);
+}
+
+</pre>
+
+<p>
+The <code>draw()</code> function is next. It determines if the
+mouse is pressed and the angle between the mouse location
+and the pivot point, setting <code>leftArmAngle</code> and
+<code>rightArmAngle</code> accordingly.
+</p>
+
+<pre>
+void draw()
+{
+  /*
+   * These variables are for mouseX and mouseY,
+   * adjusted to be relative to the robot's coordinate system
+   * instead of the window's coordinate system.
+   */
+  float mX;
+  float mY;
+  
+  background(255);
+  pushMatrix();
+  translate(ROBOT_X, ROBOT_Y); // place robot so arms are always on screen
+  if (mousePressed)
+  {
+    mX = mouseX - ROBOT_X;
+    mY = mouseY - ROBOT_Y;
+    if (mX &lt; MIDPOINT_X) // left side of robot
+    {
+      leftArmAngle = atan2(mY - PIVOT_Y, mX - LEFT_PIVOT_X)
+      - HALF_PI;
+    }
+    else
+    {
+      rightArmAngle = atan2(mY - PIVOT_Y, mX - RIGHT_PIVOT_X)
+      - HALF_PI;
+   }
+  }
+  drawRobot();
+  
+  popMatrix();
+}
+
+</pre>
+
+<p>
+The <code>drawRobot()</code> function remains unchanged, but a
+minor change to <code>drawLeftArm()</code> and <code>drawRightArm()</code>
+is now necessary. Because <code>leftArmAngle</code> and
+<code>rightArmAngle</code> are now computed in radians, the
+functions don&rsquo;t have to do any conversion. The changes
+to the two functions are in bold.
+</p>
+
+<pre>
+void drawLeftArm()
+{
+  pushMatrix();
+  translate(12, 32);
+  <b>rotate(leftArmAngle);</b>
+  rect(-12, 0, 12, 37); // left arm
+  popMatrix();
+}
+
+void drawRightArm()
+{
+  pushMatrix();
+  translate(66, 32);
+  <b>rotate(rightArmAngle);</b>
+  rect(0, 0, 12, 37); // right arm
+  popMatrix();
+}
+
+</pre>
+
+<p>
+You can <a href="transform2d.zip">download the files from this tutorial</a>,
+including the program that made the grid diagrams.
+</p>
+
+</td>
+    </tr>
+  </table>
