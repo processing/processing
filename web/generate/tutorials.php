@@ -122,6 +122,16 @@ if (is_dir($path.'learning/pvector/imgs')) {
 	copydirr($source.'pvector/imgs', $path.'learning/pvector/imgs', null, 0757, true); 
 }
 
+$page = new Page("2D Transformations", "Tutorials");
+$page->content(file_get_contents($source."transform2d/index.html"));
+writeFile('learning/transform2d/index.html', $page->out());
+if (!is_dir($path.'learning/transform2d/imgs')) { 
+	mkdir($path.'learning/transform2d/imgs', '0757'); 
+}
+if (is_dir($path.'learning/transform2d/imgs')) { 
+	copydirr($source.'transform2d/imgs', $path.'learning/transform2d/imgs', null, 0757, true); 
+}
+
 $benchmark_end = microtime_float();
 $execution_time = round($benchmark_end - $benchmark_start, 4);
 
