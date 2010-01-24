@@ -2,17 +2,17 @@
 <classpath>
 	<classpathentry excluding="processing/app/tools/format/" kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/core"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/dxf"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/net"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/opengl">
+	<classpathentry combineaccessrules="false" kind="src" path="/processing-core"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/processing-dxf"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/processing-net"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/processing-opengl">
 		<attributes>
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="opengl/library"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry combineaccessrules="false" kind="src" path="/pdf"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/serial"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/video"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/processing-pdf"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/processing-serial"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/processing-video"/>
 	<classpathentry kind="lib" path="lib/antlr.jar"/>
 	<classpathentry kind="lib" path="lib/jna.jar"/>
 	<classpathentry kind="lib" path="lib/ecj.jar"/>
