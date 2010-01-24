@@ -61,7 +61,7 @@ public class PImage implements PConstants, Cloneable {
    */
   public PApplet parent;
 
-  public Bitmap image;
+  public Bitmap bitmap;
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -204,7 +204,7 @@ public class PImage implements PConstants, Cloneable {
   }
   */
   public PImage(Bitmap image) {
-    this.image = image;
+    this.bitmap = image;
     this.width = image.getWidth();
     this.height = image.getHeight();
     this.pixels = null;
@@ -225,7 +225,7 @@ public class PImage implements PConstants, Cloneable {
 //    return image;
 //  }
   public Bitmap getImage() {
-    return image;
+    return bitmap;
   }
 
 
@@ -298,9 +298,12 @@ public class PImage implements PConstants, Cloneable {
    * this should copy all data into the pixels[] array
    */
   public void loadPixels() {  // ignore
-    if (pixels == null || pixels.length != width*height)  
-      this.pixels = new int[width*height];
-    if (this.image != null) this.image.getPixels(this.pixels, 0, width, 0, 0, width, height);    
+    if (pixels == null || pixels.length != width*height) {
+      pixels = new int[width*height];
+    }
+    if (bitmap != null) {
+      bitmap.getPixels(pixels, 0, width, 0, 0, width, height); 
+    }
   }
 
 
