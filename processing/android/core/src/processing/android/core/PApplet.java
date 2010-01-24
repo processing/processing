@@ -3457,7 +3457,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
       }
     } catch (IOException e) {
       // ignore this and move on
-      //e1.printStackTrace();
+      e.printStackTrace();
     }
     
     // Attempt to load from a file directly from storage.
@@ -3470,7 +3470,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
       }
     } catch (FileNotFoundException e) {
       // ignore this and move on
-      //e.printStackTrace();
+      e.printStackTrace();
     }
 
     return null;
@@ -3479,7 +3479,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
   static public InputStream createInput(File file) {
     if (file == null) {
-      throw new IllegalArgumentException("File passed to openStream() was null");
+      throw new IllegalArgumentException("File passed to createInput() was null");
     }
     try {
       InputStream input = new FileInputStream(file);
@@ -3489,7 +3489,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
       return input;
 
     } catch (IOException e) {
-      System.err.println("Could not openStream() for " + file);
+      System.err.println("Could not createInput() for " + file);
       e.printStackTrace();
       return null;
     }

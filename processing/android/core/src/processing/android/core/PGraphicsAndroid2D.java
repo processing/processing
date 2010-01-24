@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2005-08 Ben Fry and Casey Reas
+  Copyright (c) 2005-10 Ben Fry and Casey Reas
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -853,6 +853,9 @@ public class PGraphicsAndroid2D extends PGraphics {
   //                  int u1, int v1, int u2, int v2)
 
 
+  Rect imageImplSrcRect;
+  Rect imageImplDstRect;
+  
   /**
    * Handle renderer-specific image drawing.
    */
@@ -863,7 +866,29 @@ public class PGraphicsAndroid2D extends PGraphics {
 //                      x1, y1, (x2-x1), (y2-y1),
 //                      who.format == ARGB, tint ? tintPaint : null);
     rect.set(x1, y1, x2, y2);
-    canvas.drawBitmap(who.image, null, rect, tint ? tintPaint : null);
+    if (who.bitmap == null || 
+        who.width != who.bitmap.getWidth() || 
+        who.height != who.bitmap.getHeight()) {
+      who.bitmap = Bitmap.createBitmap(width, height, Config.ARGB_8888);
+      who.modified = true;
+    } 
+    if (who.modified) {
+      who.bitmap.setPixels(who.pixels, 0, who.width, 0, 0, who.width, who.height);
+//      int offset = 
+//      canvas.drawBitmap(who.pixels, offset, who.width, x1, y1, x2-x1, y2-y1, 
+//                        who.format == ARGB || who.format == ALPHA, tint ? tintPaint : null);
+    } 
+//    canvas.drawBitmap(who.bitmap, null, rect, tint ? tintPaint : null);
+    
+    if (imageImplSrcRect == null) {
+      imageImplSrcRect = new Rect(u1, v1, u2-u1, v2-v1);
+      imageImplDstRect = new Rect((int) x1, (int) y1, (int) (x2-x1), (int) (y2-y1));
+    } else {
+      imageImplSrcRect.set(u1, v1, u2-u1, v2-v1);
+      imageImplDstRect.set((int) x1, (int) y1, (int) (x2-x1), (int) (y2-y1));
+    }
+    canvas.drawBitmap(who.bitmap, imageImplSrcRect, imageImplDstRect, tint ? tintPaint : null);
+
 
 //    if (who.getCache(this) == null) {
 //      who.setCache(this, new ImageCache(who));
@@ -1841,7 +1866,7 @@ public class PGraphicsAndroid2D extends PGraphics {
     // set() happens in screen coordinates, so need to clear the ctm 
     canvas.save(Canvas.MATRIX_SAVE_FLAG);
     canvas.setMatrix(null);  // set to identity
-    canvas.drawBitmap(src.image, x, y, null);
+    canvas.drawBitmap(src.bitmap, x, y, null);
     canvas.restore();
   }
 

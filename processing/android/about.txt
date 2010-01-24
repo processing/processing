@@ -48,3 +48,9 @@
   has been removed.
 
 + The deprecated openStream() method has been removed. Use createInput().
+
++ PImage.image is PImage.bitmap.
+
++ Cannot use .gz files in the data or assets folder, because Android wants
+  to compress the files itself.
+
