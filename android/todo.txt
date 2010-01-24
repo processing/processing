@@ -3,6 +3,16 @@ X begin the merge of the new A3D, remove old OpenGL code
 _ Android tools on Windows are broken due to naming changes in r4 SDK
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1432
 
+
+_ implement library support for android
+_   also code folder support
+_ library support also needs android manifest changes
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1439
+
+_ make apps properly handle screen resize
+_ make change from src folder to assets folder for export
+_ what to do with other classes that rely on PApplet? (e.g. vida)
+
 from romain
 _ tint() causes crash
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1435
@@ -11,6 +21,9 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=1436
 _ createGraphics() broken
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1437
 
+_ gz files not allowed, need to remove the code from createInput() et al
+_   or maybe not, since could still come from a site or a File?
+_   just can't come from the assets file.. okok
 
 _ add method to set the icon (and package name?)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1429
