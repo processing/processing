@@ -869,7 +869,7 @@ public class PGraphicsAndroid2D extends PGraphics {
     if (who.bitmap == null || 
         who.width != who.bitmap.getWidth() || 
         who.height != who.bitmap.getHeight()) {
-      who.bitmap = Bitmap.createBitmap(width, height, Config.ARGB_8888);
+      who.bitmap = Bitmap.createBitmap(who.width, who.height, Config.ARGB_8888);
       who.modified = true;
     } 
     if (who.modified) {
