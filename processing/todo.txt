@@ -21,7 +21,9 @@ _     http://ant.apache.org/manual/CoreTasks/get.html
 The com.apple.eawt.Application now has a setDefaultMenuBar(JMenuBar) method that sets a default menu bar when no other Frames are open. 
 
 _ lack of java.awt.Polygon import breaks the yellowtail example
+_   and java.io.File (other exceptions?)
 _   just add a simple poly class? or don't use a poly?
+import java.util.Hashtable;
 
 svn copy svn://processing.org/trunk/processing svn://processing.org/tags/processing-01XX
 
