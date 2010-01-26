@@ -4209,8 +4209,33 @@ public class PGraphicsAndroid3D extends PGraphics {
 //    updatePixels();
 //  }
 
+  /**
+   * Allows to set custom blend modes for the entire scene, using openGL.
+   */  
+  public void setBlend(int mode) {
+    if (mode == BLEND) gl.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+    else if (mode == ADD) gl.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+    else if (mode == MULTIPLY) gl.glBlendFunc(GL11.GL_DST_COLOR, GL11.GL_SRC_COLOR);
+    else if (mode == SUBTRACT) gl.glBlendFunc(GL11.GL_ONE_MINUS_DST_COLOR, GL11.GL_ZERO);
+//            how to implement all these other blending modes:
+//            else if (blendMode == LIGHTEST)
+//            else if (blendMode == DIFFERENCE)
+//            else if (blendMode == EXCLUSION)
+//            else if (blendMode == SCREEN)
+//            else if (blendMode == OVERLAY)
+//            else if (blendMode == HARD_LIGHT)
+//            else if (blendMode == SOFT_LIGHT)
+//            else if (blendMode == DODGE)
+//            else if (blendMode == BURN)
+  }    
 
-
+  /**
+   * Sets Processing's default blending mode.
+   */    
+  public void defaultBlend() {
+    gl.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);    
+  }
+  
   //////////////////////////////////////////////////////////////
 
   // SAVE
