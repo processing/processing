@@ -62,7 +62,25 @@ public interface GLConstants {
    * This constant identifies the linear/linear function to build mipmaps .
    */
   public static final int LINEAR_MIPMAP_LINEAR = 5;
-
+  
+  /**
+   * Static usage mode for GLModels (vertices won't be updated after creation).
+   */
+  public static final int STATIC = 0;
+  /**
+   * Dynamic usage mode for GLModels (vertices will be updated after creation).
+   */  
+  public static final int DYNAMIC = 1;    
+    
+  
+  public static final int VERTICES = 0;
+  public static final int NORMALS = 1;
+  public static final int COLORS = 2;
+  public static final int TEXTURES = 3;
+  public static final int GROUPS = 3;
+    
+  
+  
   public static final int GL_DEPTH_STENCIL = 0x84F9;
   public static final int GL_UNSIGNED_INT_24_8 = 0x84FA;
   public static final int GL_DEPTH24_STENCIL8 = 0x88F0;
