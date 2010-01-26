@@ -63,17 +63,7 @@ public class GLModel implements GLConstants, PConstants {
   protected float[] shininess = {0};  
   
   
-  
-  /**
-   * Creates an instance of GLModel with the specified parameters: number of vertices,
-   * mode to draw the vertices (as points, sprites, lines, etc) and usage (static if the
-   * vertices will never change after the first time are initialized, dynamic if they will 
-   * change frequently or stream if they will change at every frame).
-   * @param parent PApplet
-   * @param numVert int
-   * @param mode int
-   * @param usage int 
-   */	
+  ////////////////////////////////////////////////////////////
 
   public GLModel(PApplet parent, int numVert) {
     this(parent, numVert, 0); 
@@ -146,6 +136,7 @@ public class GLModel implements GLConstants, PConstants {
     deleteNormalBuffer();
   }
   
+  ////////////////////////////////////////////////////////////
   
   public void selectTexture(int n) {
       if (updateElement != -1) {
@@ -154,6 +145,26 @@ public class GLModel implements GLConstants, PConstants {
       selectedTexture = n;
   }
 
+  public void setTexture(GLTexture tex) {
+    VertexGroup group;
+    for (int i = 0; i < groups.size(); i++) setGroupTexture(i, tex);
+  }
+
+  public GLTexture getTexture() {
+    return getGroupTexture(0);
+  }
+  
+  /**
+   * Returns the number of textures.
+   * @return int
+   */  
+  public int getNumTextures() {
+    return numTextures;
+  }
+  
+  ////////////////////////////////////////////////////////////
+  
+  // beginUpdate/endUpdate
   
   public void beginUpdate(int element) {
     if (updateElement != -1) {
@@ -279,6 +290,10 @@ public class GLModel implements GLConstants, PConstants {
     updateElement = -1;
   }
   
+  ////////////////////////////////////////////////////////////  
+  
+  // SET/GET VERTICES
+  
   public PVector getVertex(int idx) {
     if (updateElement != VERTICES) {
       throw new RuntimeException("GLModel: update mode is not set to VERTICES");
@@ -326,7 +341,7 @@ public class GLModel implements GLConstants, PConstants {
     }
 
     if (idx < firstUpdateIdx) firstUpdateIdx = idx;
-    if (firstUpdateIdx < idx) firstUpdateIdx = idx;
+    if (lastUpdateIdx < idx) lastUpdateIdx = idx;
     
     updateVertexArray[3 * idx + 0] = x;
     updateVertexArray[3 * idx + 1] = y;
@@ -349,7 +364,7 @@ public class GLModel implements GLConstants, PConstants {
     }
 
     firstUpdateIdx = 0;
-    lastUpdateIdx = numVertices;
+    lastUpdateIdx = numVertices - 1;
     
     PVector vec;
     for (int i = 0; i < numVertices; i++) {
@@ -360,6 +375,9 @@ public class GLModel implements GLConstants, PConstants {
     }
   }
 
+  ////////////////////////////////////////////////////////////
+  
+  // SET/GET COLORS
   
   public int color(float[] rgba) {
     int r = (int)(rgba[0] * 255);
@@ -381,6 +399,8 @@ public class GLModel implements GLConstants, PConstants {
     res[1] = g / 255.0f;
     res[2] = b / 255.0f;
     res[3] = a / 255.0f;
+    
+    return res;
   }
   
   public float[] getColor(int idx) {
@@ -439,7 +459,7 @@ public class GLModel implements GLConstants, PConstants {
     }
 
     if (idx < firstUpdateIdx) firstUpdateIdx = idx;
-    if (firstUpdateIdx < idx) firstUpdateIdx = idx;
+    if (lastUpdateIdx < idx) lastUpdateIdx = idx;
     
     updateColorArray[4 * idx + 0] = r;
     updateColorArray[4 * idx + 1] = g;
@@ -463,7 +483,7 @@ public class GLModel implements GLConstants, PConstants {
     }
 
     firstUpdateIdx = 0;
-    lastUpdateIdx = numVertices;
+    lastUpdateIdx = numVertices - 1;
     
     float[] rgba;
     for (int i = 0; i < numVertices; i++) {
@@ -474,6 +494,10 @@ public class GLModel implements GLConstants, PConstants {
       updateColorArray[4 * i + 3] = rgba[3];      
     }
   }
+
+  ////////////////////////////////////////////////////////////
+  
+  // SET/GET NORMALS  
   
   public PVector getNormal(int idx) {
     if (updateElement != NORMALS) {
@@ -522,7 +546,7 @@ public class GLModel implements GLConstants, PConstants {
     }
 
     if (idx < firstUpdateIdx) firstUpdateIdx = idx;
-    if (firstUpdateIdx < idx) firstUpdateIdx = idx;
+    if (lastUpdateIdx < idx) lastUpdateIdx = idx;
     
     updateNormalArray[3 * idx + 0] = x;
     updateNormalArray[3 * idx + 1] = y;
@@ -545,7 +569,7 @@ public class GLModel implements GLConstants, PConstants {
     }
 
     firstUpdateIdx = 0;
-    lastUpdateIdx = numVertices;
+    lastUpdateIdx = numVertices - 1;
     
     PVector vec;
     for (int i = 0; i < numVertices; i++) {
@@ -556,8 +580,11 @@ public class GLModel implements GLConstants, PConstants {
     }
   }
 
-  
+  ////////////////////////////////////////////////////////////  
 
+  // SET/GET TEXTURE COORDINATES
+  
+  
   public PVector getTexCoord(int idx) {
     if (updateElement != TEXTURES) {
       throw new RuntimeException("GLModel: update mode is not set to TEXTURES");
@@ -570,6 +597,7 @@ public class GLModel implements GLConstants, PConstants {
     return res;
   }
 
+  
   public float[] getTexCoordArray() {
     if (updateElement != TEXTURES) {
       throw new RuntimeException("GLModel: update mode is not set to TEXTURES");
@@ -581,6 +609,7 @@ public class GLModel implements GLConstants, PConstants {
     return res;
   }
 
+  
   public ArrayList<PVector> getTexCoordArrayList() {
     if (updateElement != TEXTURES) {
       throw new RuntimeException("GLModel: update mode is not set to TEXTURES");
@@ -594,18 +623,20 @@ public class GLModel implements GLConstants, PConstants {
     return res;
   }  
   
+  
   public void setTexCoord(int idx, float u, float v) {
     if (updateElement != TEXTURES) {
       throw new RuntimeException("GLModel: update mode is not set to TEXTURES");
     }
 
     if (idx < firstUpdateIdx) firstUpdateIdx = idx;
-    if (firstUpdateIdx < idx) firstUpdateIdx = idx;
+    if (lastUpdateIdx < idx) lastUpdateIdx = idx;
     
     updateTexCoordArray[2 * idx + 0] = u;
     updateTexCoordArray[2 * idx + 1] = v;
   }
 
+  
   public void setTexCoord(float[] data) {
     if (updateElement != TEXTURES) {
       throw new RuntimeException("GLModel: update mode is not set to TEXTURES");
@@ -616,13 +647,14 @@ public class GLModel implements GLConstants, PConstants {
     PApplet.arrayCopy(data, updateTexCoordArray);
   }
   
+  
   public void setTexCoord(ArrayList<PVector> data) {
     if (updateElement != TEXTURES) {
       throw new RuntimeException("GLModel: update mode is not set to TEXTURES");
     }
 
     firstUpdateIdx = 0;
-    lastUpdateIdx = numVertices;
+    lastUpdateIdx = numVertices - 1;
     
     PVector vec;
     for (int i = 0; i < numVertices; i++) {
@@ -632,9 +664,9 @@ public class GLModel implements GLConstants, PConstants {
     }
   }
   
+  ////////////////////////////////////////////////////////////  
   
-  
-  
+  // GROUPS   
   
   
   public void setGroup(int idx) {
@@ -642,8 +674,78 @@ public class GLModel implements GLConstants, PConstants {
   }
   
   
+  public int getNumGroups() {
+    return groups.size();
+  }
   
   
+  public int getGroupFirst(int gr) {
+    return ((VertexGroup)groups.get(gr)).first;
+  }
+  
+  public int getGroupLast(int gr) {
+    return ((VertexGroup)groups.get(gr)).last;
+  }
+  
+  
+  public void setGroupTexture(int gr, GLTexture tex) {
+    VertexGroup group = (VertexGroup)groups.get(gr);
+    group.textures[selectedTexture] = tex;
+  }
+
+  public GLTexture getGroupTexture(int gr) {
+    VertexGroup group = (VertexGroup)groups.get(gr);
+    return group.textures[selectedTexture];
+  }
+  
+  
+  public void setGroupColor(int gr, int c) {
+    int a = (c >> 24) & 0xFF;
+    int r = (c >> 16) & 0xFF;
+    int g = (c >> 8) & 0xFF;
+    int b = (c  >> 0) & 0xFF;
+    
+    setGroupColor(gr, r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f);
+  }
+  
+  
+  public void setGroupColor(int gr, float r, float g, float b) {
+    setGroupColor(gr, r, g, b, 1.0f);  
+  }
+  
+  
+  public void setGroupColor(int gr, float r, float g, float b, float a) {
+    VertexGroup group = (VertexGroup)groups.get(gr);
+    beginUpdate(COLORS);
+    firstUpdateIdx = group.first;
+    lastUpdateIdx = group.last;    
+    for (int i = group.first; i < group.last; i++) {
+      updateColorArray[4 * i + 0] = r;
+      updateColorArray[4 * i + 1] = g;
+      updateColorArray[4 * i + 2] = b;
+      updateColorArray[4 * i + 3] = a;      
+    }
+    endUpdate();
+  }
+  
+  
+  public void setGroupNormals(int i, float x, float y) {
+    setGroupNormals(i, x, y, 0.0f);  
+  }
+  
+  
+  public void setGroupNormals(int gr, float x, float y, float z) {
+    VertexGroup group = (VertexGroup)groups.get(gr);
+    beginUpdate(NORMALS);
+    firstUpdateIdx = group.first;
+    lastUpdateIdx = group.last;    
+    for (int i = group.first; i < group.last; i++) {
+      updateNormalArray[3 * i + 0] = x;
+      updateNormalArray[3 * i + 1] = y;
+      updateNormalArray[3 * i + 2] = z;
+    }
+    endUpdate();
+  }  
   
   
   protected void initGroups() {
@@ -847,837 +949,12 @@ public class GLModel implements GLConstants, PConstants {
   
   
   
-  
-  
-  
-	public GLModel(PApplet parent, int numVert, int numTex,  int mode, int usage)	{
-    initModelCommon(parent);
-    size = numVert;
-    	
-    if (mode == POINTS) vertexMode = GL11.GL_POINTS;
-    else if (mode == POINT_SPRITES) {
-      vertexMode = GL11.GL_POINTS;
-      usingPointSprites = true;
-      float[] tmp = { 0.0f };
-      gl.glGetFloatv(GL11.GL_POINT_SIZE_MAX, tmp, 0);
-      maxPointSize = tmp[0];
-      pointSize = maxPointSize;
-      spriteFadeSize = 0.6f * pointSize;
-    }
-    else if (mode == LINES) vertexMode = GL11.GL_LINES;
-    else if (mode == LINE_STRIP) vertexMode = GL11.GL_LINE_STRIP;
-    else if (mode == LINE_LOOP) vertexMode = GL11.GL_LINE_LOOP;
-    else if (mode == TRIANGLES) vertexMode = GL11.GL_TRIANGLES; 
-    else if (mode == TRIANGLE_FAN) vertexMode = GL11.GL_TRIANGLE_FAN;
-    else if (mode == TRIANGLE_STRIP) vertexMode = GL11.GL_TRIANGLE_STRIP;      
-
-    if (usage == STATIC) vboUsage = GL11.GL_STATIC_DRAW;
-    else if (usage == DYNAMIC) vboUsage = GL11.GL_DYNAMIC_DRAW;
-    // else if (usage == STREAM) vboUsage = GL11.GL_STREAM_COPY; No stream mode.
-        
-
-
-    
-
-        
-    
-    init textures
-    init normals (and set to zero)
-    init colors (and set to white)
-    
-    set one vertex group, with specified mode. 
-    
-    description = "Just another GLModel";
-	}
-
-	public GLModel(PApplet parent, float[] vertArray, int mode, int usage)	{
-    this(parent, vertArray.length / 3, mode, usage);
-    updateVertices(vertArray);
-  }
-
-	public GLModel(PApplet parent, ArrayList<PVector> vertArrayList, int mode, int usage)	{
-    this(parent, vertArrayList.size(), mode, usage);
-    
-    updateVertices(vertArrayList);
-  }	
-
-	public GLModel(PApplet parent, String filename)	{
-    initModelCommon(parent);
-
-    filename = filename.replace('\\', '/');
-    XMLElement xml = new XMLElement(parent, filename);
-    	
-    loadXML(xml);
-  }	
-	
-  public GLModel(PApplet parent, URL url) {
-    initModelCommon(parent);
-    	
-    try	{
-      String xmlText = PApplet.join(PApplet.loadStrings(url.openStream()),"\n");
-      XMLElement xml = new XMLElement(xmlText);
-      loadXML(xml);
-    } 
-    catch (IOException e)	{
-			System.err.println("Error loading effect: " + e.getMessage());
-	  }
-  }    	
-
-  public String getDescription() {
-    return description;
-  }
-    
-  /**
-   * Returns the OpenGL identifier of the Vertex Buffer Object holding the coordinates of 
-   * this model.
-   * @return int
-   */	 
-	public int getCoordsVBO() { 
-	  return vertCoordsVBO[0]; 
-  }
-	
-  /**
-   * This method creates the normals, i.e.: it creates the internal OpenGL variables
-   * to store normal data.
-   */
-	public void initNormals()	{
-    normCoordsVBO = new int[1];
-    gl.glGenBuffers(1, normCoordsVBO, 0);
-    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, normCoordsVBO[0]);
-    gl.glBufferData(GL11.GL_ARRAY_BUFFER, size * 4 * SIZEOF_FLOAT, null, vboUsage);
-    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
-        
-    ByteBuffer vbb = ByteBuffer.allocateDirect(size * 3 * 4);
-    vbb.order(ByteOrder.nativeOrder());
-    normals = vbb.asFloatBuffer();    	
-  }
-		
-  /**
-   * This method creates the colors, i.e.: it creates the internal OpenGL variables
-   * to store color data.
-   */
-  public void initColors()	{
-    colorsVBO = new int[1];
-    gl.glGenBuffers(1, colorsVBO, 0);
-    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, colorsVBO[0]);
-    gl.glBufferData(GL11.GL_ARRAY_BUFFER, size * 4 * SIZEOF_FLOAT, null, vboUsage);
-    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
-
-    ByteBuffer vbb = ByteBuffer.allocateDirect(size * 4 * 4);
-    vbb.order(ByteOrder.nativeOrder());                
-    colors = vbb.asFloatBuffer();      
-  }
-	
-  /**
-   * This method creates n textures, i.e.: it creates the internal OpenGL variables
-   * to store n textures.
-   * @param n int 
-   */	
-  public void initTexures(int n)	{
-    numTextures = n;
-
-    texCoordsVBO = new int[numTextures];
-    textures = new GLTexture[numTextures];
-    gl.glGenBuffers(numTextures, texCoordsVBO, 0);
-    for (n = 0; n < numTextures; n++)  {
-      gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, texCoordsVBO[n]); // Bind the buffer.
-      gl.glBufferData(GL11.GL_ARRAY_BUFFER, size * 2 * SIZEOF_FLOAT, null, vboUsage);
-    }
-    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
-        
-    ByteBuffer vbb = ByteBuffer.allocateDirect(size * 2 * 4);
-    vbb.order(ByteOrder.nativeOrder());                
-    texCoords = vbb.asFloatBuffer();        
-  }
-	
-  /**
-   * Sets the i-th texture.
-   * @param i int 
-   */		
-	public void setTexture(int i, GLTexture tex)	{
-    textures[i] = tex;
-  }
-	
-  /**
-   * Returns the number of textures.
-   * @return int
-   */		
-  public int getNumTextures() {
-    return numTextures;
-  }
-
-  /**
-   * Returns the i-th texture.
-   * @return GLTexture
-   */			
-  public GLTexture getTexture(int i)	{
-    return textures[i];
-  }	
-	
-
-
-  public void set(int idx, float x, float y) {
-    set(idx, x, y, 0);	
-  }
-
-  public void set(int idx, PVector vec)  {
-    set(idx, vec.x, vec.y, vec.z);  
-  }
-
-	public void set(int idx, float x, float y, float z)	{
-    if (idx < firstVertIdx) firstVertIdx = idx;
-    if (lastVertIdx < idx) lastVertIdx = idx;
-    
-    tmpVertArray[3 * idx + 0] = x;
-    tmpVertArray[3 * idx + 1] = y;
-    tmpVertArray[3 * idx + 2] = z;	
-  }
-
-  public PVector get(int idx) {
-    PVector res = new PVector(tmpVertArray[3 * idx + 0], tmpVertArray[3 * idx + 1], tmpVertArray[3 * idx + 2]);
-    return res;
-  }
-  
-  public void set(float[] data) {
-    if (data.length == 3 * size) {
-        PApplet.arrayCopy(data, tmpVertArray);
-        firstVertIdx = 0;
-        lastVertIdx = size;
-    }
-  }
-
-  public float[] get() {
-    float[] res = new float[3 * size];
-    PApplet.arrayCopy(tmpVertArray, res);
-    return res;
-  }
-    
-  public void set(ArrayList<PVector> data) {  
-  }
-  
-  public ArrayList<PVector> getArrayList() {
-    ArrayList<PVector> res = null;
-    return res;
-  }
-  
-  /*
-cube.begin(VERTICES);
-cube.group(10);
-cube.group(50);
-cube.end(); 
-   */
-  
-  public void group(int[] start, int[] stop) {
-    if (start.length == stop.length) {
-      int defMode = POINTS;
-      if (groups != null) defMode = groups[0].drawMode;
-      groups = new VertexGroup[start.length];
-      for (int i = 0; i < start.length; i++) {
-        groups[i].start = start[i];
-        groups[i].stop = stop[i];
-        groups[i].drawMode = defMode;
-      }
-    }
-  }
-  
-  public int getStart(int gr) {
-    return groups[gr].start;
-  }
-  
-  public int getStop(int gr) {
-    return groups[gr].stop;
-  }
-  
-  public int getMode(int gr) {
-    return groups[gr].drawMode;
-  }
-
-  public GLTexture[] getTextures(int gr) {
-    return groups[gr].textures;
-  }
-
-  public GLTexture getTextures(int gr, int i) {
-    return groups[gr].textures[i];
-  }
-
-  public int getNumGroups() {
-    return groups.length;
-  }
-  
 
   
-  // Sets the color to all the vertices in group gr.
-  //public void setColor(int gr, int color) {
-    
-  //}
-
-  // Sets the normals to all the vertices in group gr..  
-  public void setNormals(int gr, float x, float y, float z) {
-    
-  }
-  
-  
-  // sets tex for all the texture units for this model and all the vertex groups
-  public void setTexture(GLTexture tex) {
-    
-  }
-  
-  // sets tex for the texture unit i for this model and all the vertex groups
-  public void setTexture(int i, GLTexture tex) {
-    
-  }
-
-  // sets tex for the texture unit i for this model and all the vertex groups gr
-  public void setTexture(int gr, int i, GLTexture tex) {
-    
-  }
-
-  // sets mode for all the vertex groups
-  public void setMode(int mode) {
-    
-  }
-  
-  // sets mode for vertex group gr.
-  public void setMode(int gr, int mode) {
-    
-  }
 
   
   
   
-  
-  
-  
-	public void displaceVertex(int idx, float dx, float dy)	{	
-    displaceVertex(idx, dx, dy, 0);
-  }	
-	
-  public void displaceVertex(int idx, float dx, float dy, float dz) {	
-    if (tmpVertArray == null) {
-      tmpVertArray = new float[3 * size];
-      vertices.get(tmpVertArray);
-      vertices.rewind();
-    }
-	    
-    tmpVertArray[3 * idx + 0] += dx;
-    tmpVertArray[3 * idx + 1] += dy;
-    tmpVertArray[3 * idx + 2] += dz;
-  }
-		
-  public void updateVertices(float[] vertArray)	{
-    beginUpdateVertices();
-    vertices.put(vertArray);
-    endUpdateVertices();
-  }
-
-  public void updateVertices(ArrayList<PVector> vertArrayList)	{
-    if (vertArrayList.size() != size) {
-      System.err.println("Wrong number of vertices in the array list.");
-      return;
-    }
-		
-    float p[] = new float [3 * size];
-    for(int i = 0; i < vertArrayList.size(); i++)	{
-      PVector point = (PVector)vertArrayList.get(i);
-      p[3 * i + 0] = point.x;
-      p[3 * i + 1] = point.y;
-      p[3 * i + 2] = point.z;	
-    }
-    updateVertices(p);		
-  }	
-
-	
-	
-	
-	
-	
-	public void beginUpdateColors()
-	{
-		gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, colorsVBO[0]);
-	}
-
-	public void endUpdateColors()
-	{
-		if (tmpColorArray != null)
-		{
-			colors.put(tmpColorArray);
-			tmpColorArray = null;
-			colors.position(0);
-		}
-		gl.glBufferSubData(GL11.GL_ARRAY_BUFFER, 0, colors.capacity() * SIZEOF_FLOAT, colors);
-	    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
-	}
-
-    /**
-     * Paints the vertex i with the specified gray tone.
-     * @param gray float
-     */
-    public void updateColor(int i, float gray) 
-    {
-        int c = parent.color(gray);
-        putColorInTmpArray(i, c);
-    }
-
-    /**
-     * Paints the vertex i with the specified gray tone and alpha value.
-     * @param gray int
-     * @param alpha int
-     */
-    public void updateColor(int i, int gray, int alpha) 
-    {
-        int c = parent.color(gray, alpha);
-        putColorInTmpArray(i, c);
-    }
-
-    /**
-     * Paints the vertex i with the specified rgb color and alpha value.
-     * @param rgb int
-     * @param alpha float
-     */
-    public void updateColor(int i, int rgb, float alpha) 
-    {
-        int c = parent.color(rgb, alpha);
-        putColorInTmpArray(i, c);
-    }
-
-    /**
-     * Paints the vertex i with the specified gray tone and alpha value.
-     * @param gray float
-     * @param alpha float
-     */
-    public void updateColor(int i, float gray, float alpha)
-    {
-        int c = parent.color(gray, alpha);
-        putColorInTmpArray(i, c);
-    }
-
-    /**
-     * Paints the vertex i with the specified color components.
-     * @param x int
-     * @param y int
-     * @param z int
-     */
-    public void updateColor(int i, int x, int y, int z) 
-    {
-        int c = parent.color(x, y, z);
-        putColorInTmpArray(i, c);
-    }
-
-    /**
-     * Paints the vertex i with the specified color components.
-     * @param x float
-     * @param y float
-     * @param z float
-     */
-    public void updateColor(int i, float x, float y, float z) 
-    {
-        int c = parent.color(x, y, z);
-        putColorInTmpArray(i, c);
-    }
-
-    /**
-     * Paints the vertex i with the specified color components and alpha component.
-     * @param x int
-     * @param y int
-     * @param z int
-     * @param a int
-     */
-    public void updateColor(int i, int x, int y, int z, int a) 
-    {
-        int c = parent.color(x, y, z, a);
-        putColorInTmpArray(i, c);
-    }
-
-    /**
-     * Paints the vertex i with the specified color components and alpha component.
-     * @param x float
-     * @param y float
-     * @param z float
-     * @param a float
-     */
-    public void updateColor(int i, float x, float y, float z, float a)
-    {
-        int c = parent.color(x, y, z, a);
-        putColorInTmpArray(i, c);
-    }
-
-    /**
-     * Paints all vertices with the specified gray tone.
-     * @param gray float
-     */
-    public void setColors(float gray) 
-    {
-        int c = parent.color(gray);
-        updateAllColors(c);
-    }
-
-    /**
-     * Paints all vertices with the specified gray tone and alpha value.
-     * @param gray int
-     * @param alpha int
-     */
-    public void setColors(int gray, int alpha) 
-    {
-        int c = parent.color(gray, alpha);
-        updateAllColors(c);
-    }
-
-    /**
-     * Paints all vertices with the specified rgb color and alpha value.
-     * @param rgb int
-     * @param alpha float
-     */
-    public void setColors(int rgb, float alpha) 
-    {
-        int c = parent.color(rgb, alpha);
-        updateAllColors(c);
-    }
-
-    /**
-     * Paints all vertices with the specified gray tone and alpha value.
-     * @param gray float
-     * @param alpha float
-     */
-    public void setColors(float gray, float alpha)
-    {
-        int c = parent.color(gray, alpha);
-        updateAllColors(c);
-    }
-
-    /**
-     * Paints all vertices with the specified color components.
-     * @param x int
-     * @param y int
-     * @param z int
-     */
-    public void setColors(int x, int y, int z) 
-    {
-        int c = parent.color(x, y, z);
-        updateAllColors(c);
-    }
-
-    /**
-     * Paints all vertices with the specified color components.
-     * @param x float
-     * @param y float
-     * @param z float
-     */
-    public void setColors(float x, float y, float z) 
-    {
-        int c = parent.color(x, y, z);
-        updateAllColors(c);
-    }
-
-    /**
-     * Paints all vertices with the specified color components and alpha component.
-     * @param x int
-     * @param y int
-     * @param z int
-     * @param a int
-     */
-    public void setColors(int x, int y, int z, int a) 
-    {
-        int c = parent.color(x, y, z, a);
-        updateAllColors(c);
-    }
-
-    /**
-     * Paints all vertices with the specified color components and alpha component.
-     * @param x float
-     * @param y float
-     * @param z float
-     * @param a float
-     */
-    public void setColors(float x, float y, float z, float a)
-    {
-        int c = parent.color(x, y, z, a);
-        updateAllColors(c);
-    }    
-    
-	public void updateColors(float[] colArray)
-	{
-		beginUpdateColors();
-		colors.put(colArray);
-		endUpdateColors();
-	}
-	
-	public void updateColors(ArrayList<float[]> colArrayList)
-	{
-		if (colArrayList.size() != size)
-		{
-            System.err.println("Wrong number of colors in the array list.");
-            return;
-		}
-
-		float p[] = new float [4 * size];
-		for(int i = 0; i < colArrayList.size(); i++)
-		{
-			float[] c = (float[])colArrayList.get(i);
-					    
-			if (c.length == 4)
-			{
-			    p[4 * i + 0] = c[0];
-			    p[4 * i + 1] = c[1];
-			    p[4 * i + 2] = c[2];
-			    p[4 * i + 3] = c[3];
-			}
-		}
-		updateColors(p);
-	}	
-	
-	public void beginUpdateTexCoords(int n)
-	{
-		gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, texCoordsVBO[n]);
-	}
-	
-	public void updateTexCoord(int idx, float s, float t)
-	{
-	    if (tmpTexCoordsArray == null) {
-	    	tmpTexCoordsArray = new float[2 * size];
-	    	texCoords.get(tmpTexCoordsArray);
-	    	texCoords.rewind();	    	
-	    }
-	    
-	    tmpTexCoordsArray[2 * idx + 0] = s;
-	    tmpTexCoordsArray[2 * idx + 1] = t;
-	}
-	
-	public void displaceTexCoord(int idx, float ds, float dt)
-	{
-	    if (tmpTexCoordsArray == null)
-	    {
-	    	tmpTexCoordsArray = new float[2 * size];
-	    	texCoords.get(tmpTexCoordsArray);
-	    	texCoords.rewind();
-	    }
-	    
-	    tmpTexCoordsArray[2 * idx + 0] += ds;
-	    tmpTexCoordsArray[2 * idx + 1] += dt;
-	}	
-	
-	public void endUpdateTexCoords()
-	{
-		if (tmpTexCoordsArray != null)
-		{
-			texCoords.put(tmpTexCoordsArray);
-			tmpTexCoordsArray = null;
-			texCoords.position(0);
-		}
-		gl.glBufferSubData(GL11.GL_ARRAY_BUFFER, 0, texCoords.capacity() * SIZEOF_FLOAT, texCoords);
-	    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
-	}
-
-	public void updateTexCoords(int n, float[] texCoordsArray)
-	{
-		beginUpdateTexCoords(n);
-		texCoords.put(texCoordsArray);
-		endUpdateTexCoords();
-	}
-
-	public void updateTexCoords(int n, ArrayList<PVector> texCoordsArrayList)
-	{
-		if (texCoordsArrayList.size() != size)
-		{
-            System.err.println("Wrong number of texture coordinates in the array list.");
-            return;
-		}
-		
-		float p[] = new float [2 * size];
-		for(int i = 0; i < texCoordsArrayList.size(); i++)
-		{
-		    PVector point = (PVector)texCoordsArrayList.get(i);
-			p[2 * i + 0] = point.x;
-			p[2 * i + 1] = point.y;		
-		}
-		updateTexCoords(n, p);		
-	}	
-	
-	public void beginUpdateNormals()
-	{
-		gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, normCoordsVBO[0]);
-	}
-	
-	public void endUpdateNormals()
-	{
-		if (tmpNormalsArray != null)
-		{
-			normals.put(tmpNormalsArray);
-			tmpNormalsArray = null;
-			normals.position(0);
-		}		
-		gl.glBufferSubData(GL11.GL_ARRAY_BUFFER, 0, normals.capacity() * SIZEOF_FLOAT, normals);
-	    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
-	}
-
-	public void updateNormal(int idx, float x, float y)
-	{
-		updateNormal(idx, x, y, 0);	
-	}
-	
-	public void updateNormal(int idx, float x, float y, float z)
-	{
-	    if (tmpNormalsArray == null){
-	    	tmpNormalsArray = new float[3 * size];
-	    	normals.get(tmpNormalsArray);
-	    	normals.rewind();
-	    }
-	    
-	    tmpNormalsArray[3 * idx + 0] = x;
-	    tmpNormalsArray[3 * idx + 1] = y;
-	    tmpNormalsArray[3 * idx + 2] = z;	
-	}
-
-	public void displaceNormal(int idx, float dx, float dy)
-	{	
-		displaceNormal(idx, dx, dy, 0);
-	}	
-	
-	public void displaceNormal(int idx, float dx, float dy, float dz)
-	{	
-	    if (tmpNormalsArray == null)
-	    {
-	    	tmpNormalsArray = new float[3 * size];
-	    	normals.get(tmpNormalsArray);
-	    	normals.rewind();
-	    }
-	    
-	    tmpNormalsArray[3 * idx + 0] += dx;
-	    tmpNormalsArray[3 * idx + 1] += dy;
-	    tmpNormalsArray[3 * idx + 2] += dz;
-	}
-	
-	public void updateNormals(float[] normArray)
-	{
-		beginUpdateNormals();
-		normals.put(normArray);
-		endUpdateNormals();
-	}
-
-	public void updateNormals(ArrayList<PVector> normArrayList)
-	{
-		if (normArrayList.size() != size)
-		{
-            System.err.println("Wrong number of normals in the array list.");
-            return;
-		}
-		
-		float p[] = new float [3 * size];
-		for(int i = 0; i < normArrayList.size(); i++)
-		{
-		    PVector point = (PVector)normArrayList.get(i);
-			p[3 * i + 0] = point.x;
-			p[3 * i + 1] = point.y;
-			p[3 * i + 2] = point.z;
-		}
-		updateNormals(p);
-	}	
-	
-	/*
-	public void beginUpdateAttributes(int n)
-	{
-		gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, attribVBO[n]);
-		// attributes = gl.glMapBuffer(GL11.GL_ARRAY_BUFFER, GL11.GL_WRITE_ONLY).asFloatBuffer(); // No Map/Unmap buffer funtions! What to do??
-		curtAttrSize = attribSize[n];
-	}
-	
-	public void updateAttribute(int idx, float x)
-	{
-        updateAttribute(idx, new float[]{ x });
-	}
-	
-	public void updateAttribute(int idx, float x, float y)
-	{
-        updateAttribute(idx, new float[]{ x, y });
-	}
-
-	public void updateAttribute(int idx, float x, float y, float z)
-	{
-        updateAttribute(idx, new float[]{ x, y, z });
-	}
-
-	public void updateAttribute(int idx, float x, float y, float z, float w)
-	{
-        updateAttribute(idx, new float[]{ x, y, z, w });
-	}	
-	
-	public void updateAttribute(int idx, float[] values)
-	{
-		if (values.length == curtAttrSize)
-		{
-		    if (tmpAttributesArray == null) tmpAttributesArray = new float[curtAttrSize * size];
-
-		    for (int i = 0; i < curtAttrSize; i++) tmpAttributesArray[curtAttrSize * idx + i] = values[i];		    
-		}
-	}
-	
-	public void displaceAttribute(int idx, float dx)
-	{
-		displaceAttribute(idx, new float[]{ dx });
-	}
-	
-	public void displaceAttribute(int idx, float dx, float dy)
-	{
-		displaceAttribute(idx, new float[]{ dx, dy });
-	}
-
-	public void displaceAttribute(int idx, float x, float y, float z)
-	{
-		displaceAttribute(idx, new float[]{ x, y, z });
-	}
-
-	public void displaceAttribute(int idx, float x, float y, float z, float w)
-	{
-		displaceAttribute(idx, new float[]{ x, y, z, w });
-	}	
-	
-	public void displaceAttribute(int idx, float[] dvalues)
-	{
-		int l = attribSize[idx];
-		if (dvalues.length == l)
-		{
-		    if (tmpAttributesArray == null) tmpAttributesArray = new float[l * size];
-		
-		    for (int i = 0; i < l; i++) tmpAttributesArray[l * idx + i] += dvalues[i];		    
-		}
-	}
-	
-	public void endUpdateAttributes()
-	{
-		if (tmpAttributesArray != null)
-		{
-			attributes.put(tmpAttributesArray);
-			tmpAttributesArray = null;
-		}
-		// gl.glUnmapBuffer(GL11.GL_ARRAY_BUFFER); // No Map/Unmap buffer funtions! What to do??
-	    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
-	}
-
-	public void updateAttributes(int n, float[] attributesArray)
-	{
-		beginUpdateAttributes(n);
-		attributes.put(attributesArray);
-		endUpdateAttributes();
-	}
-	
-	public void updateAttributes(int n, ArrayList<float[]> vertAttribsArrayList)
-	{
-		if (vertAttribsArrayList.size() != size)
-		{
-            System.err.println("Wrong number of vertex attributes in the array list.");
-            return;
-		}
-		
-		int l = attribSize[n];
-		float p[] = new float [l * size];
-		for(int i = 0; i < vertAttribsArrayList.size(); i++)
-		{
-		    float[] attrib = (float[])vertAttribsArrayList.get(i);
-		    
-		    for (int j = 0; j < l; j++) p[l * i + j] = attrib[j]; 
-		}
-		updateAttributes(n, p);		
-	}
-	*/	
 	
 	public void setLineWidth(float w)
 	{
@@ -2058,15 +1335,13 @@ cube.end();
 	}
 	*/
 	
-	public void render(int first, int last /*, GLModelEffect effect*/)
+	public void render(int first, int last)
 	{
 		if (colorsVBO == null) gl.glColor4f(tintR, tintG, tintB, tintA);
-		 
-		// Setting specular and emissive colors.
-	    gl.glMaterialfv(GL11.GL_FRONT_AND_BACK, GL11.GL_SPECULAR, specularColor, 0);
-	    gl.glMaterialfv(GL11.GL_FRONT_AND_BACK, GL11.GL_SHININESS, shininess, 0);
-	    gl.glMaterialfv(GL11.GL_FRONT_AND_BACK, GL11.GL_EMISSION, emissiveColor, 0);
-	    	    
+		
+		
+		gl.glLineWidth(a3d.strokeWeight);
+		
 	    gl.glLineWidth(lineWidth);
 	    if (usingPointSprites) gl.glPointSize(PApplet.min(pointSize, maxPointSize));
 	    else gl.glPointSize(pointSize);
@@ -2200,428 +1475,7 @@ cube.end();
         //if (effect != null) effect.stop();
 	}	
 
-    /**
-     * Sets the positions corresponding to vertex i in the tmpColorArray to the specified color.
-     * @param i int
-     * @param color int
-     */
-    protected void putColorInTmpArray(int i, int color)
-    {
-        int ir, ig, ib, ia;
-        
-	    if (tmpColorArray == null) {
-	    	tmpColorArray = new float[4 * size];
-	    	colors.get(tmpColorArray);
-	    	colors.rewind();
-	    }
 
-        ia = (color >> 24) & 0xff;
-        ir = (color >> 16) & 0xff;
-        ig = (color >> 8) & 0xff;
-        ib = color & 0xff; 
-
-        tmpColorArray[4 * i + 0] = ir / 255.0f;
-        tmpColorArray[4 * i + 1] = ig / 255.0f;
-        tmpColorArray[4 * i + 2] = ib / 255.0f;
-        tmpColorArray[4 * i + 3] = ia / 255.0f; 
-    }
-
-    /**
-     * Sets all the vertices with the specified color.
-     * @param color int
-     */    
-    protected void updateAllColors(int color)
-    {
-        int ir, ig, ib, ia;
-        float fr, fg, fb, fa;
-        
-        beginUpdateColors();        
-	    if (tmpColorArray == null) {
-	    	tmpColorArray = new float[4 * size];
-	    	colors.get(tmpColorArray);
-	    	colors.rewind();	    	
-	    }
-
-        ia = (color >> 24) & 0xff;
-        ir = (color >> 16) & 0xff;
-        ig = (color >> 8) & 0xff;
-        ib = color & 0xff; 
-
-        fa = ia / 255.0f;
-        fr = ir / 255.0f;
-        fg = ig / 255.0f;
-        fb = ib / 255.0f;
-        
-        for (int i = 0; i < size; i++)
-        {
-            tmpColorArray[4 * i + 0] = fr;
-            tmpColorArray[4 * i + 1] = fg;
-            tmpColorArray[4 * i + 2] = fb;
-            tmpColorArray[4 * i + 3] = fa;
-        }
-        endUpdateColors();
-    }
-    
-  protected void initModelCommon(PApplet parent) {
-	  this.parent = parent;		
-    a3d = (PGraphicsAndroid3D)parent.g; 
-    imageMode = a3d.imageMode;        
-    if (a3d.gl instanceof GL11) {
-      gl = (GL11)a3d.gl;
-    }
-    else {
-      throw new RuntimeException("GLModel requires OpenGL ES 1.1");
-    }
-        
-    tintR = tintG = tintB = tintA = 1.0f;
-    shininess[0] = 0.0f;
-        
-    pointSize = 1.0f;
-    lineWidth = 1.0f;
-   	usingPointSprites = false;        
-   	blend = false;
-   	blendMode = ADD;
-    	
-   	tmpVertArray = null;
-   	tmpColorArray = null;
-   	tmpNormalsArray = null;
-   	tmpTexCoordsArray = null;
-   	//tmpAttributesArray = null;
-   	
-	
-  }
-
-	protected void loadXML(XMLElement xml)
-	{
-        int n = xml.getChildCount();
-        String name, content;
-        XMLElement child;
-        
-        GLTexture[] texturesList;
-        ArrayList<PVector> verticesList;
-        ArrayList<PVector>[] texCoordsList;
-        //ArrayList<float[]>[] vertexAttribsList;
-        ArrayList<PVector> normalsList;
-        ArrayList<float[]> colorsList;
-        String[] texNames;
-        //String[] attrNames;
-        //int[] attrSizes;
-        
-        texturesList = null; 
-        verticesList = new ArrayList<PVector>();
-        texCoordsList = null;
-        //vertexAttribsList = null;        
-        normalsList = new ArrayList<PVector>();
-        colorsList = new ArrayList<float[]>(); 
-        texNames = null;
-        //attrNames = null;
-        //attrSizes = null;
-        
-        for (int i = 0; i < n; i++)
-        {
-            child = xml.getChild(i);
-            name = child.getName();
-            if (name.equals("description"))
-            {
-                description = child.getContent();
-            }
-            else if (name.equals("size"))
-            {
-            	size = PApplet.parseInt(child.getContent());
-            }
-            else if (name.equals("geometry"))
-            {
-            	content = child.getContent();
-            	vertexMode = GLUtils.parsePrimitiveTypeUpperCase(content);
-            	if (vertexMode == GL11.GL_POINTS && content.equals("POINT_SPRITES"))
-            	{
-                    vertexMode = GL11.GL_POINTS;
-                    usingPointSprites = true;
-                    float[] tmp = { 0.0f };
-                    gl.glGetFloatv(GL11.GL_POINT_SIZE_MAX, tmp, 0);
-                    maxPointSize = tmp[0];
-                    pointSize = maxPointSize;
-                    spriteFadeSize = 0.6f * pointSize;
-            	}
-            }
-            else if (name.equals("mode"))
-            {
-            	vboUsage = GLUtils.parseVBOMode(child.getContent());
-            }
-            else if (name.equals("textures"))
-            {
-            	int ntex = child.getChildCount();
-                texturesList = new GLTexture[ntex];
-                texNames = new String[ntex];
-                texCoordsList = new ArrayList[ntex];
-            	
-                loadTextures(child, texturesList, texCoordsList, texNames);
-            }
-            /*
-            else if (name.equals("vertexattribs"))
-            {
-                int nattr = child.getChildCount();
-        		
-                vertexAttribsList = new ArrayList[nattr];
-                attrNames = new String[nattr];
-                attrSizes = new int[nattr];
-                
-            	loadVertexAttribs(child, vertexAttribsList, attrNames, attrSizes);
-            }
-            */
-            else if (name.equals("vertices"))
-            {
-            	loadVertices(child, verticesList);
-            }
-            else if (name.equals("texcoords"))
-            {
-            	if (texCoordsList != null)
-            	{
-                    int unit = child.getIntAttribute("unit");
-                    if (texCoordsList[unit] != null)
-                    {
-            	        loadTexCoords(child, texCoordsList[unit]);
-                    }            	    
-            	}
-            }              
-            else if (name.equals("colors"))
-            {
-            	loadColors(child, colorsList);
-            } 
-            else if (name.equals("normals"))
-            {
-            	loadNormals(child, normalsList);
-            }
-            /*
-            else if (name.equals("attribs"))
-            {
-                if (vertexAttribsList != null && attrSizes != null)
-                {
-                    int num = child.getIntAttribute("number");
-                    if (vertexAttribsList[num] != null)
-            	        loadVertexAttrib(child, vertexAttribsList[num], attrSizes[num]);
-                }
-            }
-            */            
-        }
-
-        gl.glGenBuffers(1, vertCoordsVBO, 0);
-        gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, vertCoordsVBO[0]);
-        gl.glBufferData(GL11.GL_ARRAY_BUFFER, size * 4 * SIZEOF_FLOAT, null, vboUsage);
-        gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);        
-        
-        updateVertices(verticesList);
-        
-        int ntex = texturesList.length;
-        if (0 < ntex)
-        {
-            initTexures(ntex);
-        	GLTexture tex;
-        	ArrayList<PVector> tcoords;
-            
-        	for (int j = 0; j < ntex; j++)
-        	{
-                tex = texturesList[j];
-                setTexture(j, tex);
-                // It should be something like:
-                // setTexture(j, tex, texNames[j]);
-                // but texture names are still not used.
-                
-                tcoords = (ArrayList<PVector>)texCoordsList[j];
-                if (tcoords.size() == size) updateTexCoords(j, tcoords);                
-            }
-        }        
-        
-        if (normalsList.size() == size)
-        {
-            initNormals();
-            updateNormals(normalsList);
-        }
-
-        if (colorsList.size() == size)
-        {            
-            initColors();
-            updateColors(colorsList);
-        }
-
-        /*
-        int nattr = vertexAttribsList.length;
-        if (0 < nattr)
-        {
-        	initAttributes(nattr);
-        	ArrayList<float[]> attribs;
-        	
-        	for (int j = 0; j < nattr; j++)
-        	{
-        		setAttribute(j, attrNames[j], attrSizes[j]);
-        		
-        		attribs = vertexAttribsList[j];
-        		updateAttributes(j, attribs);
-            }
-        }
-        */
-	}
-	
-	protected void loadTextures(XMLElement xml, GLTexture[] texturesList, ArrayList<PVector>[] texCoordsList, String[] texNames)
-	{
-        int n = xml.getChildCount();
-        XMLElement child;
-        String name;
-        
-        String unitStr, fn;
-        int unit;
-        for (int i = 0; i < n; i++)
-        {
-            child = xml.getChild(i);
-            name = child.getName();            
-        	if (name.equals("texture")) 
-        	{		
-        		unitStr = child.getContent();
-        		unit = PApplet.parseInt(unitStr);
-        		
-        		texCoordsList[unit] = new ArrayList<PVector>();
-        		        		
-        		texNames[unit] = child.getStringAttribute("name");
-                fn = child.getStringAttribute("file");
-                texturesList[unit] = new GLTexture(parent, fn);
-        	}
-        }
-	}
-	
-	protected void loadVertexAttribs(XMLElement xml, ArrayList<float[]>[] vertexAttribsList, String[] attrNames, int[] attrSizes)
-	{
-        int n = xml.getChildCount();
-        XMLElement child;
-        String name;	
-        
-        String numStr;
-        int num;
-        for (int i = 0; i < n; i++)
-        {
-            child = xml.getChild(i);
-            name = child.getName();
-        	if (name.equals("vertexattrib"))
-        	{
-        		numStr = child.getContent();
-        		num = PApplet.parseInt(numStr);
-        		
-        		vertexAttribsList[num] = new ArrayList<float[]>();   		
-        		
-        		attrNames[num] = child.getStringAttribute("name");
-        		attrSizes[num] = child.getIntAttribute("size");        		
-        	}
-        }
-	}
-	
-    protected void loadVertices(XMLElement xml, ArrayList<PVector> verticesList)
-    {
-        int n = xml.getChildCount();
-        XMLElement child;
-        String name;
-        
-        String coordStr;
-        float[] coord;
-        for (int i = 0; i < n; i++)
-        {
-            child = xml.getChild(i);
-            name = child.getName();
-        	if (name.equals("vertex"))
-        	{
-        		coordStr = child.getContent();
-        		coord = PApplet.parseFloat(PApplet.split(coordStr, ' '));
-        		
-        		if (coord.length == 3) verticesList.add(new PVector(coord[0], coord[1], coord[2]));
-        	}        	
-        }
-    }
-    
-    protected void loadTexCoords(XMLElement xml, ArrayList<PVector> texCoordsList)
-    {
-        int n = xml.getChildCount();
-        XMLElement child;
-        String name;
-        
-        String coordStr;
-        float[] coord;
-        for (int i = 0; i < n; i++)
-        {
-            child = xml.getChild(i);
-            name = child.getName();
-        	if (name.equals("texcoord"))
-        	{
-        		coordStr = child.getContent();
-        		coord = PApplet.parseFloat(PApplet.split(coordStr, ' '));
-        		
-        		if (coord.length == 2) texCoordsList.add(new PVector(coord[0], coord[1]));
-        	}        	
-        }
-    }
-     
-    protected void loadColors(XMLElement xml, ArrayList<float[]> colorsList)
-    {
-        int n = xml.getChildCount();
-        XMLElement child;
-        String name;
-        
-        String coordStr;
-        float[] coord;
-        for (int i = 0; i < n; i++)
-        {
-            child = xml.getChild(i);
-            name = child.getName();
-        	if (name.equals("color"))
-        	{
-        		coordStr = child.getContent();
-        		coord = PApplet.parseFloat(PApplet.split(coordStr, ' '));
-        		
-        		if (coord.length == 4) colorsList.add(coord);
-        	}        	
-        }    	
-    } 
-
-    protected void loadNormals(XMLElement xml, ArrayList<PVector> normalsList)
-    {
-        int n = xml.getChildCount();
-        XMLElement child;
-        String name;
-        
-        String coordStr;
-        float[] coord;
-        for (int i = 0; i < n; i++)
-        {
-            child = xml.getChild(i);
-            name = child.getName();
-        	if (name.equals("normal"))
-        	{
-        		coordStr = child.getContent();
-        		coord = PApplet.parseFloat(PApplet.split(coordStr, ' '));
-        		
-        		if (coord.length == 3) normalsList.add(new PVector(coord[0], coord[1], coord[2]));
-        	}        	
-        }    	
-    }
-    
-	protected void loadVertexAttrib(XMLElement xml, ArrayList<float[]> vertexAttribsList, int attrSize)
-	{
-        int n = xml.getChildCount();
-        XMLElement child;
-        String name;
-        
-        String coordStr;
-        float[] coord;
-        for (int i = 0; i < n; i++)
-        {
-            child = xml.getChild(i);
-            name = child.getName();
-        	if (name.equals("attrib"))
-        	{
-        		coordStr = child.getContent();
-        		coord = PApplet.parseFloat(PApplet.split(coordStr, ' '));
-        		
-        		if (coord.length == attrSize) vertexAttribsList.add(coord);
-        	}        	
-        }   	
-	}
 
 	
 	protected class VertexGroup {
