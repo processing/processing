@@ -1337,37 +1337,14 @@ public class GLModel implements GLConstants, PConstants {
 	
 	public void render(int first, int last)
 	{
-		if (colorsVBO == null) gl.glColor4f(tintR, tintG, tintB, tintA);
-		
+		gl.glColor4f(tintR, tintG, tintB, tintA);
 		
 		gl.glLineWidth(a3d.strokeWeight);
-		
-	    gl.glLineWidth(lineWidth);
-	    if (usingPointSprites) gl.glPointSize(PApplet.min(pointSize, maxPointSize));
-	    else gl.glPointSize(pointSize);
+		gl.glPointSize(PApplet.min(a3d.strokeWeight, maxPointSize));
 	    
         //if (effect != null) effect.start();
 	    
-	    // Setting-up blending.
-	    blend0 = gl.glIsEnabled(GL11.GL_BLEND);
-        if (blend) 
-        {
-            gl.glEnable(GL11.GL_BLEND);
-            if (blendMode == BLEND) gl.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-            else if (blendMode == ADD) gl.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
-            else if (blendMode == MULTIPLY) gl.glBlendFunc(GL11.GL_DST_COLOR, GL11.GL_SRC_COLOR);
-            else if (blendMode == SUBTRACT) gl.glBlendFunc(GL11.GL_ONE_MINUS_DST_COLOR, GL11.GL_ZERO);
-//            how to implement all these other blending modes:
-//            else if (blendMode == LIGHTEST)
-//            else if (blendMode == DIFFERENCE)
-//            else if (blendMode == EXCLUSION)
-//            else if (blendMode == SCREEN)
-//            else if (blendMode == OVERLAY)
-//            else if (blendMode == HARD_LIGHT)
-//            else if (blendMode == SOFT_LIGHT)
-//            else if (blendMode == DODGE)
-//            else if (blendMode == BURN)
-        }
+
         
 	    if (normCoordsVBO != null)
 	    {
