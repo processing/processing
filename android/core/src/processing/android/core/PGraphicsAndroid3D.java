@@ -3363,7 +3363,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     lightSpotAngle[lightCount] = angle;
     lightSpotAngleCos[lightCount] = Math.max(0, (float) Math.cos(angle));
     lightSpotConcentration[lightCount] = concentration;
-    
+
+    glLightEnable(lightCount);    
     glLightNoAmbient(lightCount);
     glLightPosition(lightCount);
     glLightDirection(lightCount);

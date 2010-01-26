@@ -250,6 +250,12 @@ public class GLTexture extends PImage implements PConstants, GLConstants
         init(width, height, params);
     }
 
+  protected void finalize() {
+    if (tex[0] != 0) {
+      releaseTexture();
+    }
+  }
+    
     /**
      * Sets the size of the image and texture to width x height. If the texture is already initialized,
      * it first destroys the current opengl texture object and then creates a new one with the specified
