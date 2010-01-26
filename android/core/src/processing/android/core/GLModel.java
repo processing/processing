@@ -50,14 +50,18 @@ public class GLModel implements GLConstants, PConstants {
   protected int updateElement;
   protected int firstUpdateIdx;
   protected int lastUpdateIdx;
-  
   protected int selectedTexture;
+    
+  protected ArrayList<Integer> groupBreaks;
+  protected ArrayList<VertexGroup> groups;
+  
+  protected static final int SIZEOF_FLOAT = 4;  
+
   
   protected float[] specularColor = {1.0f, 1.0f, 1.0f, 1.0f};
   protected float[] emissiveColor = {0.0f, 0.0f, 0.0f, 1.0f};
   protected float[] shininess = {0};  
   
-  protected ArrayList<Integer> groupBreaks;
   
   
   /**
@@ -75,9 +79,11 @@ public class GLModel implements GLConstants, PConstants {
     this(parent, numVert, 0); 
   }  
   
+  
   public GLModel(PApplet parent, int numVert, int numTex) {
     this(parent, numVert, numTex, new GLModelParameters());
   }
+  
   
   public GLModel(PApplet parent, int numVert, int numTex, GLModelParameters params) {
     this.parent = parent;
@@ -107,12 +113,12 @@ public class GLModel implements GLConstants, PConstants {
     updateColorArray = null;
     updateNormalArray = null;
     updateTexCoordArray = null;
-  
-    groupBreaks = new ArrayList<Integer>();
     
-    updateElement = -1;    
-
+    updateElement = -1;
     selectedTexture = 0;
+    
+
+    
     
     
     imageMode = a3d.imageMode;    
@@ -131,6 +137,7 @@ public class GLModel implements GLConstants, PConstants {
     gl.glGetFloatv(GL11.GL_POINT_SIZE_MAX, tmp, 0);
     maxPointSize = tmp[0];
   }
+  
 
   protected void finalize() {
     deleteVertexBuffer();
@@ -139,6 +146,7 @@ public class GLModel implements GLConstants, PConstants {
     deleteNormalBuffer();
   }
   
+  
   public void selectTexture(int n) {
       if (updateElement != -1) {
         throw new RuntimeException("GLModel: cannot select texture between beginUpdate()/endUpdate()");
@@ -146,6 +154,7 @@ public class GLModel implements GLConstants, PConstants {
       selectedTexture = n;
   }
 
+  
   public void beginUpdate(int element) {
     if (updateElement != -1) {
       throw new RuntimeException("GLModel: only one element can be updated at the time");
@@ -212,61 +221,59 @@ public class GLModel implements GLConstants, PConstants {
     if (lastUpdateIdx < firstUpdateIdx) return;  
     
     if (updateElement == VERTICES) {
-      if (updateVertexArray != null) {
-        vertices.put(updateVertexArray, firstUpdateIdx * 3, (lastUpdateIdx - firstUpdateIdx + 1) * 3);
-        vertices.position(0);
+      if (updateVertexArray == null) {
+        throw new RuntimeException("GLModel: vertex array is null");    
       }
+      
+      int offset = firstUpdateIdx * 3;
+      int size = (lastUpdateIdx - firstUpdateIdx + 1) * 3;
+      
+      vertices.put(updateVertexArray, offset, size);
+      vertices.position(0);
     
-      gl.glBufferSubData(GL11.GL_ARRAY_BUFFER, firstVertIdx * 3 * SIZEOF_FLOAT, lastVertIdx * 3 * SIZEOF_FLOAT, vertices);
+      gl.glBufferSubData(GL11.GL_ARRAY_BUFFER, offset * SIZEOF_FLOAT, size * SIZEOF_FLOAT, vertices);
       gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);      
     } else if (updateElement == COLORS) {
-      if (updateColorArray != null) {
-        colors.put(updateColorArray, firstUpdateIdx * 4, (lastUpdateIdx - firstUpdateIdx + 1) * 4);
-        colors.position(0);
+      if (updateColorArray == null) {
+        throw new RuntimeException("GLModel: color array is null");    
       }
+      
+      int offset = firstUpdateIdx * 4;
+      int size = (lastUpdateIdx - firstUpdateIdx + 1) * 4;
+            
+      colors.put(updateColorArray, size, offset);
+      colors.position(0);
     
-      gl.glBufferSubData(GL11.GL_ARRAY_BUFFER, firstVertIdx * 4 * SIZEOF_FLOAT, lastVertIdx * 4 * SIZEOF_FLOAT .., colors);
+      gl.glBufferSubData(GL11.GL_ARRAY_BUFFER, size * SIZEOF_FLOAT, offset * SIZEOF_FLOAT, colors);
       gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
-    } else if (updateElement == NORMALS) {      
-      if (updateNormalArray != null) {
-        normals.put(updateNormalArray, firstUpdateIdx * 3, (lastUpdateIdx - firstUpdateIdx + 1) * 3);
-        normals.position(0);
+    } else if (updateElement == NORMALS) {
+      if (updateNormalArray == null) {
+        throw new RuntimeException("GLModel: normal array is null");    
       }
+      
+      int offset = firstUpdateIdx * 3;
+      int size = (lastUpdateIdx - firstUpdateIdx + 1) * 3;
+      
+      normals.put(updateNormalArray, offset, size);
+      normals.position(0);
     
-      gl.glBufferSubData(GL11.GL_ARRAY_BUFFER, firstVertIdx * 3 * SIZEOF_FLOAT, lastVertIdx * 3 * SIZEOF_FLOAT, normals);
+      gl.glBufferSubData(GL11.GL_ARRAY_BUFFER, offset * SIZEOF_FLOAT, size * SIZEOF_FLOAT, normals);
       gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
     } else if (updateElement == TEXTURES) {
-      if (updateTexCoordArray != null) {
-         texCoords[selectedTexture].put(updateNormalArray, firstUpdateIdx * 2, (lastUpdateIdx - firstUpdateIdx + 1) * 2);
-         texCoords[selectedTexture].position(0);
+      if (updateTexCoordArray == null) {
+        throw new RuntimeException("GLModel: texture coordinates array is null");    
       }      
       
-      gl.glBufferSubData(GL11.GL_ARRAY_BUFFER, firstVertIdx * 2 * SIZEOF_FLOAT, lastVertIdx * 2 * SIZEOF_FLOAT, texCoords[selectedTexture]);
+      int offset = firstUpdateIdx * 2;
+      int size = (lastUpdateIdx - firstUpdateIdx + 1) * 2;
+      
+      texCoords[selectedTexture].put(updateNormalArray, offset, size);
+      texCoords[selectedTexture].position(0);
+      
+      gl.glBufferSubData(GL11.GL_ARRAY_BUFFER, offset * SIZEOF_FLOAT, size * SIZEOF_FLOAT, texCoords[selectedTexture]);
       gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);      
     } else if (updateElement == GROUPS) {
-      
-      int idx0, idx1;
-      idx0 = 0;
-      Integer idx;
-      ArrayList<int[]> groupIntervals;
-      groupIntervals = new ArrayList<int[]>(); 
-      for (int i = 0; i < groupBreaks.size(); i++) {
-        idx = (Integer)groupBreaks.get(i);
-        idx1 = idx.intValue();
-      
-        if (idx0 <= idx1) {
-          int[] interval = {idx0, idx1};
-          groupIntervals.add(interval);
-          idx0 = idx1 + 1;          
-        }
-      }
-      
-      idx1 = numVertices - 1;
-      if (idx0 <= idx1) {
-        int[] interval = {idx0, idx1};
-        groupIntervals.add(interval);
-      }
-      createGroups(groupIntervals);
+      createGroups();      
     }
     
     updateElement = -1;
@@ -353,15 +360,324 @@ public class GLModel implements GLConstants, PConstants {
     }
   }
 
-  void setGroup(int idx) {
+  
+  public int color(float[] rgba) {
+    int r = (int)(rgba[0] * 255);
+    int g = (int)(rgba[1] * 255);
+    int b = (int)(rgba[2] * 255);
+    int a = (int)(rgba[3] * 255);
+    
+    return a << 24 | r << 16 | g << 8 | b;
+  }
+  
+  public float[] rgba(int c) {
+    int a = (c >> 24) & 0xFF;
+    int r = (c >> 16) & 0xFF;
+    int g = (c >> 8) & 0xFF;
+    int b = (c  >> 0) & 0xFF;
+
+    float[] res = new float[4];
+    res[0] = r / 255.0f;
+    res[1] = g / 255.0f;
+    res[2] = b / 255.0f;
+    res[3] = a / 255.0f;
+  }
+  
+  public float[] getColor(int idx) {
+    if (updateElement != COLORS) {
+      throw new RuntimeException("GLModel: update mode is not set to COLORS");
+    }
+    
+    float[] res = new float[4];
+    PApplet.arrayCopy(updateColorArray, idx * 4, res, 0, 4);
+    
+    return res;
+  }
+  
+  
+  public int[] getColorArray() {
+    if (updateElement != COLORS) {
+      throw new RuntimeException("GLModel: update mode is not set to COLORS");
+    }
+    
+    int[] res = new int[numVertices];
+    PApplet.arrayCopy(updateColorArray, res);
+    
+    return res;
+  }
+
+  public ArrayList<float[]> getColorArrayList() {
+    if (updateElement != COLORS) {
+      throw new RuntimeException("GLModel: update mode is not set to COLORS");
+    }
+
+    ArrayList<float[]> res;
+    res = new ArrayList<float[]>();
+    
+    for (int i = 0; i < numVertices; i++) res.add(getColor(i));
+    
+    return res;
+  }
+  
+  public void setColor(int idx, int c)
+  {
+    int a = (c >> 24) & 0xFF;
+    int r = (c >> 16) & 0xFF;
+    int g = (c >> 8) & 0xFF;
+    int b = (c  >> 0) & 0xFF;
+    
+    setColor(idx, r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f);
+  }
+  
+  public void setColor(int idx, float r, float g, float b) {
+    setColor(idx, r, g, b, 1.0f);  
+  }
+  
+  public void setColor(int idx, float r, float g, float b, float a) {
+    if (updateElement != COLORS) {
+      throw new RuntimeException("GLModel: update mode is not set to COLORS");
+    }
+
+    if (idx < firstUpdateIdx) firstUpdateIdx = idx;
+    if (firstUpdateIdx < idx) firstUpdateIdx = idx;
+    
+    updateColorArray[4 * idx + 0] = r;
+    updateColorArray[4 * idx + 1] = g;
+    updateColorArray[4 * idx + 2] = b;
+    updateColorArray[4 * idx + 3] = a;    
+  }
+
+  public void setColor(float[] data) {
+    if (updateElement != COLORS) {
+      throw new RuntimeException("GLModel: update mode is not set to COLORS");
+    }
+    
+    firstUpdateIdx = 0;
+    firstUpdateIdx = numVertices;    
+    PApplet.arrayCopy(data, updateColorArray);
+  }
+  
+  public void setColor(ArrayList<float[]> data) {
+    if (updateElement != COLORS) {
+      throw new RuntimeException("GLModel: update mode is not set to COLORS");
+    }
+
+    firstUpdateIdx = 0;
+    lastUpdateIdx = numVertices;
+    
+    float[] rgba;
+    for (int i = 0; i < numVertices; i++) {
+      rgba = (float[])data.get(i);
+      updateColorArray[4 * i + 0] = rgba[0];
+      updateColorArray[4 * i + 1] = rgba[1];
+      updateColorArray[4 * i + 2] = rgba[2];
+      updateColorArray[4 * i + 3] = rgba[3];      
+    }
+  }
+  
+  public PVector getNormal(int idx) {
+    if (updateElement != NORMALS) {
+      throw new RuntimeException("GLModel: update mode is not set to NORMALS");
+    }
+
+    float x = updateNormalArray[3 * idx + 0];
+    float y = updateNormalArray[3 * idx + 1];
+    float z = updateNormalArray[3 * idx + 2];
+    
+    PVector res = new PVector(x, y, z);
+    return res;
+  }
+
+  public float[] getNormalArray() {
+    if (updateElement != NORMALS) {
+      throw new RuntimeException("GLModel: update mode is not set to NORMALS");
+    }
+    
+    float[] res = new float[numVertices * 3];
+    PApplet.arrayCopy(updateNormalArray, res);
+    
+    return res;
+  }
+
+  public ArrayList<PVector> getNormalArrayList() {
+    if (updateElement != NORMALS) {
+      throw new RuntimeException("GLModel: update mode is not set to NORMALS");
+    }
+
+    ArrayList<PVector> res;
+    res = new ArrayList<PVector>();
+    
+    for (int i = 0; i < numVertices; i++) res.add(getNormal(i));
+    
+    return res;
+  }  
+  
+  public void setNormal(int idx, float x, float y) {
+    setNormal(idx, x, y, 0);  
+  }
+  
+  public void setNormal(int idx, float x, float y, float z) {
+    if (updateElement != NORMALS) {
+      throw new RuntimeException("GLModel: update mode is not set to NORMALS");
+    }
+
+    if (idx < firstUpdateIdx) firstUpdateIdx = idx;
+    if (firstUpdateIdx < idx) firstUpdateIdx = idx;
+    
+    updateNormalArray[3 * idx + 0] = x;
+    updateNormalArray[3 * idx + 1] = y;
+    updateNormalArray[3 * idx + 2] = z;
+  }
+
+  public void setNormal(float[] data) {
+    if (updateElement != NORMALS) {
+      throw new RuntimeException("GLModel: update mode is not set to NORMALS");
+    }
+    
+    firstUpdateIdx = 0;
+    firstUpdateIdx = numVertices;    
+    PApplet.arrayCopy(data, updateNormalArray);
+  }
+  
+  public void setNormal(ArrayList<PVector> data) {
+    if (updateElement != NORMALS) {
+      throw new RuntimeException("GLModel: update mode is not set to NORMALS");
+    }
+
+    firstUpdateIdx = 0;
+    lastUpdateIdx = numVertices;
+    
+    PVector vec;
+    for (int i = 0; i < numVertices; i++) {
+      vec = (PVector)data.get(i);
+      updateNormalArray[3 * i + 0] = vec.x;
+      updateNormalArray[3 * i + 1] = vec.y;
+      updateNormalArray[3 * i + 2] = vec.z;
+    }
+  }
+
+  
+
+  public PVector getTexCoord(int idx) {
+    if (updateElement != TEXTURES) {
+      throw new RuntimeException("GLModel: update mode is not set to TEXTURES");
+    }
+
+    float s = updateTexCoordArray[2 * idx + 0];
+    float t = updateTexCoordArray[2 * idx + 1];
+    
+    PVector res = new PVector(s, t, 0);
+    return res;
+  }
+
+  public float[] getTexCoordArray() {
+    if (updateElement != TEXTURES) {
+      throw new RuntimeException("GLModel: update mode is not set to TEXTURES");
+    }
+    
+    float[] res = new float[numVertices * 2];
+    PApplet.arrayCopy(updateTexCoordArray, res);
+    
+    return res;
+  }
+
+  public ArrayList<PVector> getTexCoordArrayList() {
+    if (updateElement != TEXTURES) {
+      throw new RuntimeException("GLModel: update mode is not set to TEXTURES");
+    }
+
+    ArrayList<PVector> res;
+    res = new ArrayList<PVector>();
+    
+    for (int i = 0; i < numVertices; i++) res.add(getTexCoord(i));
+    
+    return res;
+  }  
+  
+  public void setTexCoord(int idx, float u, float v) {
+    if (updateElement != TEXTURES) {
+      throw new RuntimeException("GLModel: update mode is not set to TEXTURES");
+    }
+
+    if (idx < firstUpdateIdx) firstUpdateIdx = idx;
+    if (firstUpdateIdx < idx) firstUpdateIdx = idx;
+    
+    updateTexCoordArray[2 * idx + 0] = u;
+    updateTexCoordArray[2 * idx + 1] = v;
+  }
+
+  public void setTexCoord(float[] data) {
+    if (updateElement != TEXTURES) {
+      throw new RuntimeException("GLModel: update mode is not set to TEXTURES");
+    }
+    
+    firstUpdateIdx = 0;
+    firstUpdateIdx = numVertices;    
+    PApplet.arrayCopy(data, updateTexCoordArray);
+  }
+  
+  public void setTexCoord(ArrayList<PVector> data) {
+    if (updateElement != TEXTURES) {
+      throw new RuntimeException("GLModel: update mode is not set to TEXTURES");
+    }
+
+    firstUpdateIdx = 0;
+    lastUpdateIdx = numVertices;
+    
+    PVector vec;
+    for (int i = 0; i < numVertices; i++) {
+      vec = (PVector)data.get(i);
+      updateTexCoordArray[3 * i + 0] = vec.x;
+      updateTexCoordArray[3 * i + 1] = vec.y;
+    }
+  }
+  
+  
+  
+  
+  
+  
+  public void setGroup(int idx) {
     groupBreaks.add(new Integer(idx));
   }
   
   
-
-  protected void createGroups(ArrayList<int[]> groupIntervals) {
-  ..  
+  
+  
+  
+  
+  protected void initGroups() {
+    groupBreaks = new ArrayList<Integer>();
+    groups = new ArrayList<VertexGroup>();
+    groups.add(new VertexGroup(0, numVertices - 1, numTextures));
   }
+  
+  
+  protected void createGroups() {
+      // Constructing the intervals given the "break-point" vertices.
+      int idx0, idx1;
+      idx0 = 0;
+      Integer idx;
+      groups.clear();
+      for (int i = 0; i < groupBreaks.size(); i++) {
+        // A group ends at idx1. So the interval is (idx0, idx1).
+        idx = (Integer)groupBreaks.get(i);
+        idx1 = idx.intValue();
+      
+        if (idx0 <= idx1) {
+          groups.add(new VertexGroup(idx0, idx1, numTextures));
+          idx0 = idx1 + 1;          
+        }
+      }
+      
+      idx1 = numVertices - 1;
+      if (idx0 <= idx1) {
+        groups.add(new VertexGroup(idx0, idx1, numTextures));
+      }
+  }
+  
+  
+  
   
   protected void readParameters(GLModelParameters params) {
     pointSprites = false;
@@ -510,13 +826,16 @@ public class GLModel implements GLConstants, PConstants {
   }  
   
   
-  protected void initGroups() {
-    groups = new VertexGroup[1];
-    groups[0].start = 0;
-    groups[0].stop = numVertices - 1;
-    groups[0].textures = new GLTexture[numTextures];    
-  }
 
+  
+  
+  
+  
+  
+  
+  
+  
+  
   
   
   
@@ -785,11 +1104,12 @@ cube.end();
     return groups.length;
   }
   
-   
+
+  
   // Sets the color to all the vertices in group gr.
-  public void setColor(int gr, int color) {
+  //public void setColor(int gr, int color) {
     
-  }
+  //}
 
   // Sets the normals to all the vertices in group gr..  
   public void setNormals(int gr, float x, float y, float z) {
@@ -2305,11 +2625,14 @@ cube.end();
 
 	
 	protected class VertexGroup {
-	  int start;
-	  int stop;
-	  int drawMode;
-	  int pointSize;
-    int lineWidth;
+    VertexGroup(int n0, int n1, int numTex) {
+      first = n0;
+      last = n1;
+      textures = new GLTexture[numTex];
+    }
+	  
+	  int first;
+	  int last;
     GLTexture[] textures;      
 	}
 	
@@ -2362,10 +2685,10 @@ cube.end();
 
     //public static final int STREAM = 2;
     
-    protected static final int SIZEOF_FLOAT = 4;
+
    
 
-    protected VertexGroup[] groups;
+    //protected VertexGroup[] groups;
 
     
     
