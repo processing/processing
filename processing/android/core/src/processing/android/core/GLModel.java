@@ -1048,8 +1048,18 @@ public class GLModel implements GLConstants, PConstants {
 
   // Rendering methods
   
-	
-	public void render(int first, int last)
+
+   public void render() {
+     render(0, groups.size() - 1);
+   }
+   
+  
+	 public void render(int gr) {
+	   render(gr, gr);
+	 }
+  
+  
+	public void render(int gr0, int gr1)
 	{
 	   int texTarget = GL11.GL_TEXTURE_2D;
 	   float pointSize;
@@ -1068,7 +1078,7 @@ public class GLModel implements GLConstants, PConstants {
      gl.glColorPointer(4, GL11.GL_FLOAT, 0, 0);
      
      VertexGroup group;
-     for (int i = 0; i < groups.size(); i++) {
+     for (int i = gr0; i <= gr1; i++) {
        group = (VertexGroup)groups.get(i);
 
        if (0 < numTextures)  {
