@@ -217,7 +217,7 @@ public class GLModel implements GLConstants, PConstants {
       throw new RuntimeException("GLModel: call beginUpdate()");
     }
     
-    if (lastUpdateIdx < firstUpdateIdx) return;  
+    if (updateElement != GROUPS && lastUpdateIdx < firstUpdateIdx) return;  
     
     if (updateElement == VERTICES) {
       if (updateVertexArray == null) {
