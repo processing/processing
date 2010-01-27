@@ -77,7 +77,7 @@ public interface GLConstants {
   public static final int NORMALS = 1;
   public static final int COLORS = 2;
   public static final int TEXTURES = 3;
-  public static final int GROUPS = 3;
+  public static final int GROUPS = 4;
     
   
   
