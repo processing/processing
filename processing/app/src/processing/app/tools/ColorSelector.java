@@ -108,7 +108,7 @@ public class ColorSelector implements Tool, DocumentListener {
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     frame.setLocation((screen.width - size.width) / 2,
                       (screen.height - size.height) / 2);
-
+    
     frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
     frame.addWindowListener(new WindowAdapter() {
         public void windowClosing(WindowEvent e) {
@@ -120,6 +120,7 @@ public class ColorSelector implements Tool, DocumentListener {
           frame.setVisible(false);
         }
       });
+    
     Base.setIcon(frame);
 
     hueField.getDocument().addDocumentListener(this);
@@ -133,7 +134,7 @@ public class ColorSelector implements Tool, DocumentListener {
     hexField.setText("FFFFFF");
   }
 
-
+  
   public void run() {
     frame.setVisible(true);
     // You've got to be f--ing kidding me.. why did the following line 
@@ -444,18 +445,24 @@ public class ColorSelector implements Tool, DocumentListener {
     }
 
     public Dimension getPreferredSize() {
-      //System.out.println("getting pref " + WIDE + " " + HIGH);
       return new Dimension(WIDE, HIGH);
     }
 
     public Dimension getMinimumSize() {
-      //System.out.println("getting min " + WIDE + " " + HIGH);
       return new Dimension(WIDE, HIGH);
     }
 
     public Dimension getMaximumSize() {
-      //System.out.println("getting max " + WIDE + " " + HIGH);
       return new Dimension(WIDE, HIGH);
+    }
+    
+    public void keyPressed() {
+      if (key == ESC) {
+        ColorSelector.this.frame.setVisible(false);
+        // don't quit out of processing
+        // http://dev.processing.org/bugs/show_bug.cgi?id=1006
+        key = 0;
+      }
     }
   }
 
@@ -506,18 +513,24 @@ public class ColorSelector implements Tool, DocumentListener {
     }
 
     public Dimension getPreferredSize() {
-      //System.out.println("s getting pref " + WIDE + " " + HIGH);
       return new Dimension(WIDE, HIGH);
     }
 
     public Dimension getMinimumSize() {
-      //System.out.println("s getting min " + WIDE + " " + HIGH);
       return new Dimension(WIDE, HIGH);
     }
 
     public Dimension getMaximumSize() {
-      //System.out.println("s getting max " + WIDE + " " + HIGH);
       return new Dimension(WIDE, HIGH);
+    }
+    
+    public void keyPressed() {
+      if (key == ESC) {
+        ColorSelector.this.frame.setVisible(false);
+        // don't quit out of processing
+        // http://dev.processing.org/bugs/show_bug.cgi?id=1006
+        key = 0;
+      }
     }
   }
 
@@ -540,7 +553,7 @@ public class ColorSelector implements Tool, DocumentListener {
 
     public Dimension getPreferredSize() {
       if (!allowHex) {
-        return new Dimension(35, super.getPreferredSize().height);
+        return new Dimension(45, super.getPreferredSize().height);
       }
       return super.getPreferredSize();
     }
