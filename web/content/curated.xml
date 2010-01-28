@@ -2,6 +2,15 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <curated>
 
+<software name="The Jelly Face Experiments" by="NYX (Liina Nilsson)" scroll="yes" resize="yes" width="1024" height="700">
+        <image>images/nyx.jpg</image>
+          <description>
+             Experiments with pixel-by-pixel operations in real time exploring the possibilities of the Processing video libraries. Playing with techniques like slit scan, frame differencing, and datamoshing.
+          </description>
+          <location>http://vimeo.com/nyxvideo/videos</location>
+          <link href="http://nyxedition.wordpress.com/">NYX Blog</link>
+</software>
+
 <software name="New Year's Cards, 2001-2010" by="Golan Levin" scroll="yes" resize="yes" width="1024" height="700">
         <image>images/golan_cards.jpg</image>
           <description>
