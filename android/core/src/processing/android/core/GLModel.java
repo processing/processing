@@ -59,11 +59,11 @@ public class GLModel implements GLConstants, PConstants {
   
   
   public GLModel(PApplet parent, int numVert, int numTex) {
-    this(parent, numVert, numTex, new GLModelParameters());
+    this(parent, numVert, numTex, new Parameters());
   }
   
   
-  public GLModel(PApplet parent, int numVert, int numTex, GLModelParameters params) {
+  public GLModel(PApplet parent, int numVert, int numTex, Parameters params) {
     this.parent = parent;
     a3d = (PGraphicsAndroid3D)parent.g;
     if (a3d.gl instanceof GL11) {
@@ -877,8 +877,8 @@ public class GLModel implements GLConstants, PConstants {
   }
   
   
-  public GLModelParameters getParameters() {
-    GLModelParameters res = new GLModelParameters();
+  public Parameters getParameters() {
+    Parameters res = new Parameters();
     
     if (glMode == GL11.GL_POINTS) {
       if (pointSprites) res.drawMode = POINT_SPRITES;
@@ -898,7 +898,7 @@ public class GLModel implements GLConstants, PConstants {
   }
   
   
-  protected void readParameters(GLModelParameters params) {
+  protected void readParameters(Parameters params) {
     pointSprites = false;
     if (params.drawMode == POINTS) glMode = GL11.GL_POINTS;
     else if (params.drawMode == POINT_SPRITES) {
@@ -1157,9 +1157,13 @@ public class GLModel implements GLConstants, PConstants {
   }
 
   static public Parameters newParameters(int drawMode) {
-    return new Parameters();
+    return new Parameters(drawMode);
   }  
-  
+
+  static public Parameters newParameters(int drawMode, int updateMode) {
+    return new Parameters(drawMode, updateMode);
+  }  
+    
   static public class Parameters {
     public Parameters() {
       updateMode = STATIC;    
