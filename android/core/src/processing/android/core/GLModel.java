@@ -149,45 +149,50 @@ public class GLModel implements GLConstants, PConstants {
   
   
   public void beginUpdate(int element) {
+    beginUpdateImpl(element, 0, numVertices - 1);
+  }
+  
+  
+  protected void beginUpdateImpl(int element, int first, int last) {
     if (updateElement != -1) {
       throw new RuntimeException("GLModel: only one element can be updated at the time");
     }
     
     updateElement = element;
+    firstUpdateIdx = numVertices;
+    lastUpdateIdx = -1;
     
     if (updateElement == VERTICES) {
-      gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glVertexBufferID[0]);
-      
-      firstUpdateIdx = numVertices;
-      lastUpdateIdx = -1;
+      gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glVertexBufferID[0]);      
       
       if (updateVertexArray == null) {
         updateVertexArray = new float[vertices.capacity()];
-        vertices.get(updateVertexArray);
-        vertices.rewind();
       }      
+      int offset = first * 3;
+      int size = (last - first + 1) * 3;
+      vertices.get(updateVertexArray, offset, size);
+      vertices.rewind();
     } else if (updateElement == COLORS) {
       gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glColorBufferID[0]);
-      
-      firstUpdateIdx = numVertices;
-      lastUpdateIdx = -1;
-      
+            
       if (updateColorArray == null) {
         updateColorArray = new float[colors.capacity()];
-        colors.get(updateColorArray);
-        colors.rewind();
       }
+      int offset = first * 4;
+      int size = (last - first + 1) * 4;
+      colors.get(updateColorArray, offset, size);
+      colors.rewind();
     } else if (updateElement == NORMALS) {
       gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glNormalBufferID[0]);
-      
-      firstUpdateIdx = numVertices;
-      lastUpdateIdx = -1;
-      
+            
       if (updateNormalArray == null) {
-        updateNormalArray = new float[normals.capacity()];
-        normals.get(updateNormalArray);
-        normals.rewind();      
+        updateNormalArray = new float[normals.capacity()];    
       }
+      int offset = first * 3;
+      int size = (last - first + 1) * 3;
+      normals.get(updateNormalArray, offset, size);
+      normals.rewind();  
+        
     } else if (updateElement == TEXTURES) {
        // Check that all the groups have texture assigned.
        for (int i = 0; i < groups.size(); i++)
@@ -195,29 +200,27 @@ public class GLModel implements GLConstants, PConstants {
            throw new RuntimeException("GLModel: texture must be set first in group " + i);
       
       gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glTexCoordBufferID[selectedTexture]);
-      
-      firstUpdateIdx = numVertices;
-      lastUpdateIdx = -1;
-      
+          
       if (updateTexCoordArray == null) {
         updateTexCoordArray = new float[texCoords[selectedTexture].capacity()];
-        texCoords[selectedTexture].get(updateTexCoordArray);
-        texCoords[selectedTexture].rewind();      
       }
+      int offset = first * 2;
+      int size = (last - first + 1) * 2;      
+      texCoords[selectedTexture].get(updateTexCoordArray, offset, size);
+      texCoords[selectedTexture].rewind();          
     } else if (updateElement == GROUPS) {
       groupBreaks.clear();
     } else {
       throw new RuntimeException("GLModel: unknown element to update");  
-    }
+    }    
   }
-  
   
   public void endUpdate() {
     if (updateElement == -1) {
       throw new RuntimeException("GLModel: call beginUpdate()");
     }
     
-    if (updateElement != GROUPS && lastUpdateIdx < firstUpdateIdx) return;  
+    if (lastUpdateIdx < firstUpdateIdx) return;  
     
     if (updateElement == VERTICES) {
       if (updateVertexArray == null) {
@@ -729,6 +732,8 @@ public class GLModel implements GLConstants, PConstants {
   
   
   public void setGroup(int idx) {
+    if (idx < firstUpdateIdx) firstUpdateIdx = idx;
+    if (lastUpdateIdx < idx) lastUpdateIdx = idx;    
     groupBreaks.add(new Integer(idx));
   }
   
@@ -775,7 +780,7 @@ public class GLModel implements GLConstants, PConstants {
   
   public void setGroupColor(int gr, float r, float g, float b, float a) {
     VertexGroup group = (VertexGroup)groups.get(gr);
-    beginUpdate(COLORS);
+    beginUpdateImpl(COLORS, group.first, group.last);
     firstUpdateIdx = group.first;
     lastUpdateIdx = group.last;    
     for (int i = group.first; i <= group.last; i++) {
@@ -788,14 +793,14 @@ public class GLModel implements GLConstants, PConstants {
   }
   
   
-  public void setGroupNormals(int i, float x, float y) {
-    setGroupNormals(i, x, y, 0.0f);  
+  public void setGroupNormal(int i, float x, float y) {
+    setGroupNormal(i, x, y, 0.0f);  
   }
   
   
-  public void setGroupNormals(int gr, float x, float y, float z) {
+  public void setGroupNormal(int gr, float x, float y, float z) {
     VertexGroup group = (VertexGroup)groups.get(gr);
-    beginUpdate(NORMALS);
+    beginUpdateImpl(NORMALS, group.first, group.last);
     firstUpdateIdx = group.first;
     lastUpdateIdx = group.last;    
     for (int i = group.first; i <= group.last; i++) {
@@ -834,10 +839,10 @@ public class GLModel implements GLConstants, PConstants {
         if (idx0 <= idx1) {
           group = new VertexGroup(idx0, idx1, numTextures);
           groups.add(group);
-          idx0 = idx1 + 1;
           for (int n = idx0; n <= idx1; n++) {
             vertGroup[n] = group;
           }
+          idx0 = idx1 + 1;
         }
       }
       
@@ -951,7 +956,7 @@ public class GLModel implements GLConstants, PConstants {
     
     gl.glGenBuffers(1, glVertexBufferID, 0);
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glVertexBufferID[0]);
-    gl.glBufferData(GL11.GL_ARRAY_BUFFER, vertices.capacity(), vertices, glUsage);
+    gl.glBufferData(GL11.GL_ARRAY_BUFFER, vertices.capacity() * SIZEOF_FLOAT, vertices, glUsage);
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);        
   }
   
@@ -968,7 +973,24 @@ public class GLModel implements GLConstants, PConstants {
     
     gl.glGenBuffers(1, glColorBufferID, 0);
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glColorBufferID[0]);
-    gl.glBufferData(GL11.GL_ARRAY_BUFFER, colors.capacity(), colors, glUsage);
+    gl.glBufferData(GL11.GL_ARRAY_BUFFER, colors.capacity() * SIZEOF_FLOAT, colors, glUsage);
+    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
+  }
+  
+  
+  protected void createNormalBuffer() {
+    ByteBuffer vbb = ByteBuffer.allocateDirect(numVertices * 3 * SIZEOF_FLOAT);
+    vbb.order(ByteOrder.nativeOrder());
+    normals = vbb.asFloatBuffer();        
+
+    float[] values = new float[normals.capacity()];
+    for (int i = 0; i < values.length; i++) values[i] = 0.0f;
+    normals.put(values);
+    normals.position(0);    
+    
+    gl.glGenBuffers(1, glNormalBufferID, 0);
+    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glNormalBufferID[0]);
+    gl.glBufferData(GL11.GL_ARRAY_BUFFER, normals.capacity() * SIZEOF_FLOAT, normals, glUsage);
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
   }
   
@@ -989,26 +1011,9 @@ public class GLModel implements GLConstants, PConstants {
     gl.glGenBuffers(numTextures, glTexCoordBufferID, numTextures);
     for (int i = 0; i < numTextures; i++)  {
       gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glTexCoordBufferID[i]);
-      gl.glBufferData(GL11.GL_ARRAY_BUFFER, texCoords[i].capacity(), texCoords[i], glUsage);
+      gl.glBufferData(GL11.GL_ARRAY_BUFFER, texCoords[i].capacity() * SIZEOF_FLOAT, texCoords[i], glUsage);
     }
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);    
-  }
-  
-  
-  protected void createNormalBuffer() {
-    ByteBuffer vbb = ByteBuffer.allocateDirect(numVertices * 3 * SIZEOF_FLOAT);
-    vbb.order(ByteOrder.nativeOrder());
-    normals = vbb.asFloatBuffer();        
-
-    float[] values = new float[normals.capacity()];
-    for (int i = 0; i < values.length; i++) values[i] = 0.0f;
-    normals.put(values);
-    normals.position(0);    
-    
-    gl.glGenBuffers(1, glNormalBufferID, 0);
-    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glNormalBufferID[0]);
-    gl.glBufferData(GL11.GL_ARRAY_BUFFER, normals.capacity(), normals, glUsage);
-    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
   }
   
   
@@ -1025,21 +1030,21 @@ public class GLModel implements GLConstants, PConstants {
       gl.glDeleteBuffers(1, glColorBufferID, 0);
       glColorBufferID[0] = 0;
     }
-  }  
-
-  
-  protected void deleteTexCoordBuffer() {
-    if (glTexCoordBufferID[0] != 0) {
-      gl.glDeleteBuffers(numTextures, glTexCoordBufferID, 0);
-      for (int i = 0; i < numTextures; i++) glTexCoordBufferID[i] = 0;
-    }
   }
-
+  
   
   protected void deleteNormalBuffer() {
     if (glNormalBufferID[0] != 0) {    
       gl.glDeleteBuffers(1, glNormalBufferID, 0);
       glNormalBufferID[0] = 0;
+    }
+  }  
+  
+  
+  protected void deleteTexCoordBuffer() {
+    if (glTexCoordBufferID[0] != 0) {
+      gl.glDeleteBuffers(numTextures, glTexCoordBufferID, 0);
+      for (int i = 0; i < numTextures; i++) glTexCoordBufferID[i] = 0;
     }
   }  
   
