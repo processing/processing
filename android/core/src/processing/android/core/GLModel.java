@@ -1,13 +1,9 @@
 package processing.android.core;
 
-import java.io.IOException;
-import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
-
-import processing.android.xml.XMLElement;
 
 import javax.microedition.khronos.opengles.*;
 
@@ -1064,8 +1060,8 @@ public class GLModel implements GLConstants, PConstants {
 	 }
   
   
-	public void render(int gr0, int gr1)
-	{
+  public void render(int gr0, int gr1)
+  {
 	   int texTarget = GL11.GL_TEXTURE_2D;
 	   float pointSize;
 	  
@@ -1082,6 +1078,10 @@ public class GLModel implements GLConstants, PConstants {
      gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glColorBufferID[0]);
      gl.glColorPointer(4, GL11.GL_FLOAT, 0, 0);
      
+     gl.glEnableClientState(GL11.GL_VERTEX_ARRAY);            
+     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glVertexBufferID[0]);
+     gl.glVertexPointer(3, GL11.GL_FLOAT, 0, 0);
+      
      VertexGroup group;
      for (int i = gr0; i <= gr1; i++) {
        group = (VertexGroup)groups.get(i);
@@ -1129,10 +1129,6 @@ public class GLModel implements GLConstants, PConstants {
          }
        }
        
-      gl.glEnableClientState(GL11.GL_VERTEX_ARRAY);            
-      gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glVertexBufferID[0]);
-      gl.glVertexPointer(3, GL11.GL_FLOAT, 0, 0);
-       
       // Last transformation: inversion of coordinate to make compatible with Processing's inverted Y axis.
       gl.glPushMatrix();
       gl.glScalef(1, -1, 1);     
@@ -1140,10 +1136,7 @@ public class GLModel implements GLConstants, PConstants {
       gl.glPopMatrix();     
     }
 
-    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
-    gl.glDisableClientState(GL11.GL_VERTEX_ARRAY);
-
-    if (0 < numTextures)  {    
+    if (0 < numTextures)  {
 	    	if (pointSprites) 	{
 	    		gl.glDisable(GL11.GL_POINT_SPRITE_OES);
 	    	} 	else 	{
@@ -1151,11 +1144,47 @@ public class GLModel implements GLConstants, PConstants {
 	    	}
 	    	gl.glDisable(texTarget);
 	    }
-	    
+
+    gl.glDisableClientState(GL11.GL_VERTEX_ARRAY);    
 	  gl.glDisableClientState(GL11.GL_COLOR_ARRAY);
     gl.glDisableClientState(GL11.GL_NORMAL_ARRAY);
 	}	
 	
+  ///////////////////////////////////////////////////////////////////////////   
+  
+  static public Parameters newParameters() {
+    return new Parameters();
+  }
+
+  static public Parameters newParameters(int drawMode) {
+    return new Parameters();
+  }  
+  
+  static public class Parameters {
+    public Parameters() {
+      updateMode = STATIC;    
+      drawMode= POINTS;
+    }
+
+    public Parameters(int drawMode) {
+      updateMode = STATIC;    
+      this.drawMode= drawMode;
+    }
+
+    public Parameters(int drawMode, int updateMode) {
+      this.updateMode = updateMode;    
+      this.drawMode= drawMode;
+    }
+    
+    public Parameters(Parameters src) {
+      updateMode = src.updateMode;    
+      drawMode= src.drawMode;
+    }
+
+    public int updateMode;  
+    public int drawMode;
+  }  
+  
 	protected class VertexGroup {
     VertexGroup(int n0, int n1, int numTex) {
       first = n0;
