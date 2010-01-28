@@ -25,86 +25,97 @@ import java.nio.*;
  * only at the end if the texture is needed as a regular image.
  */
 @SuppressWarnings("unused")
-public class GLTexture extends PImage implements PConstants, GLConstants
-{ 
+public class GLTexture extends PImage implements PConstants, GLConstants { 
 
+  protected PGraphicsAndroid3D pgl;  
+  protected GL10 gl;
+
+  protected int[] tex = { 0 }; 
+  protected int texTarget;  
+  protected int texInternalFormat;
+  protected int minFilter;  
+  protected int magFilter;
   
+  protected boolean usingMipmaps; 
+  protected float maxTexCoordS;
+  protected float maxTexCoordT;
   
-    /**
-     * Creates an instance of GLTexture with size width x height. The texture is initialized (empty) to that size.
-     * @param parent PApplet
-     * @param width int 
-     * @param height int 
-     */	 
-    public GLTexture(PApplet parent, int width, int height)
-    {
-        super(width, height, ARGB);  
-        this.parent = parent;
+  protected boolean flippedX;   
+  protected boolean flippedY;
+  
+  ////////////////////////////////////////////////////////////
+  
+  // Constructors.
+  
+  /**
+   * Creates an instance of GLTexture with size width x height. The texture is initialized (empty) to that size.
+   * @param parent PApplet
+   * @param width int 
+   * @param height int 
+   */	 
+  public GLTexture(PApplet parent, int width, int height) {
+    super(width, height, ARGB);  
+    this.parent = parent;
        
-        pgl = (PGraphicsAndroid3D)parent.g;
-        gl = pgl.gl;
-        //glstate = new GLState(gl);
-	    setTextureParams(new Parameters());
+    pgl = (PGraphicsAndroid3D)parent.g;
+    gl = pgl.gl;
+	  setTextureParams(new Parameters());
        
-        initTexture(width, height);
-    }
+    initTexture(width, height);
+  }
     
-    /**
-     * Creates an instance of GLTexture with size width x height and with the specified parameters.
-     *  The texture is initialized (empty) to that size.
-     * @param parent PApplet
-     * @param width int 
-     * @param height int 
-     * @param params GLTextureParameters 			
-     */	 
-    public GLTexture(PApplet parent, int width, int height, Parameters params)
-    {
-        super(width, height, params.format);  
-        this.parent = parent;
+  
+  /**
+   * Creates an instance of GLTexture with size width x height and with the specified parameters.
+   *  The texture is initialized (empty) to that size.
+   * @param parent PApplet
+   * @param width int 
+   * @param height int 
+   * @param params Parameters 			
+   */	 
+  public GLTexture(PApplet parent, int width, int height, Parameters params) {
+    super(width, height, params.format);  
+    this.parent = parent;
        
-        pgl = (PGraphicsAndroid3D)parent.g;
-        gl = pgl.gl;
-        //glstate = new GLState(gl);
-	    setTextureParams(params);
+    pgl = (PGraphicsAndroid3D)parent.g;
+    gl = pgl.gl;
+    setTextureParams(params);
        
-        initTexture(width, height);
-    }	
+    initTexture(width, height);
+  }	
 	
 
-    /**
-     * Creates an instance of GLTexture using image file filename as source.
-     * @param parent PApplet
-     * @param filename String
-     */	
-    public GLTexture(PApplet parent, String filename)
-    {
-        super(1, 1, ARGB);  
-        this.parent = parent;
+  /**
+   * Creates an instance of GLTexture using image file filename as source.
+   * @param parent PApplet
+   * @param filename String
+   */	
+  public GLTexture(PApplet parent, String filename)  {
+    super(1, 1, ARGB);  
+    this.parent = parent;
 	   
-        pgl = (PGraphicsAndroid3D)parent.g;
-        gl = pgl.gl;
-        //glstate = new GLState(gl);		
+    pgl = (PGraphicsAndroid3D)parent.g;
+    gl = pgl.gl;
         
-        loadTexture(filename);
-    }
+    loadTexture(filename);
+  }
     
-    /**
-     * Creates an instance of GLTexture using image file filename as source and the specified texture parameters.
-     * @param parent PApplet
-     * @param filename String
-     * @param params GLTextureParameters
-     */	
-    public GLTexture(PApplet parent, String filename, Parameters params)
-    {
-        super(1, 1, params.format);  
-        this.parent = parent;
+  
+  /**
+   * Creates an instance of GLTexture using image file filename as source and the specified texture parameters.
+   * @param parent PApplet
+   * @param filename String
+   * @param params Parameters
+   */	
+  public GLTexture(PApplet parent, String filename, Parameters params)  {
+    super(1, 1, params.format);  
+    this.parent = parent;
 	   
-        pgl = (PGraphicsAndroid3D)parent.g;
-        gl = pgl.gl;
-        //glstate = new GLState(gl);		
+    pgl = (PGraphicsAndroid3D)parent.g;
+    gl = pgl.gl;	
         
-        loadTexture(filename, params);
-    }
+    loadTexture(filename, params);
+  }
 
 
   protected void finalize() {
@@ -114,7 +125,9 @@ public class GLTexture extends PImage implements PConstants, GLConstants
   }
   
   
-
+  ////////////////////////////////////////////////////////////
+  
+  // Set methods
   
   public void set(PImage img) {
     
@@ -128,39 +141,34 @@ public class GLTexture extends PImage implements PConstants, GLConstants
     
   }
   
-  
-    /**     
-     * Copy texture to pixels.
-     */   
-    public void updatePixels()
-    {
-        int size = width * height;
-        IntBuffer buffer = BufferUtil.newIntBuffer(size);
+  /**     
+   * Copy texture to pixels.
+   */   
+  public void updatePixels() {
+    int size = width * height;
+    IntBuffer buffer = BufferUtil.newIntBuffer(size);
     
-        gl.glBindTexture(texTarget, tex[0]);
-        //gl.glGetTexImage(texTarget, 0, GL10.GL.GL_RGBA, GL10.GL_UNSIGNED_BYTE, buffer);
-        gl.glBindTexture(texTarget, 0);
+    gl.glBindTexture(texTarget, tex[0]);
+    //gl.glGetTexImage(texTarget, 0, GL10.GL.GL_RGBA, GL10.GL_UNSIGNED_BYTE, buffer);
+    gl.glBindTexture(texTarget, 0);
         
-        buffer.get(pixels);
-        int[] pixelsARGB = convertToARGB(pixels);
-        PApplet.arrayCopy(pixelsARGB, pixels);        
-        if (flippedX) flipArrayOnX(pixels, 1);
-        if (flippedY) flipArrayOnY(pixels, 1);
+    buffer.get(pixels);
+    int[] pixelsARGB = convertToARGB(pixels);
+    PApplet.arrayCopy(pixelsARGB, pixels);        
+    if (flippedX) flipArrayOnX(pixels, 1);
+    if (flippedY) flipArrayOnY(pixels, 1);
         
-        super.updatePixels();
-    }
+    super.updatePixels();
+  }
+
   
-  
-  
-  
-    /**
-     * Puts img into texture, pixels and image.
-     * @param img PImage
-     */
-    public void putImage(PImage img)
-    {
-        putImage(img, new Parameters());
-    }
+  /**
+   * Puts img into texture, pixels and image.
+   * @param img PImage
+   */
+  public void putImage(PImage img)  {
+     putImage(img, new Parameters());
+  }
 
     /**
      * Puts img into texture, pixels and image.
@@ -1672,65 +1680,7 @@ public class GLTexture extends PImage implements PConstants, GLConstants
         height = h;
     }
      
-    /**
-     * @invisible
-     */	
-    protected GL10 gl;
-	
-    /**
-     * @invisible
-     */			
-    protected PGraphicsAndroid3D pgl;
-	
-    /**
-     * @invisible
-     */	
-    protected int[] tex = { 0 }; 
-	
-    /**
-     * @invisible
-     */			
-    protected int texTarget;	
-	
-    /**
-     * @invisible
-     */			
-    protected int texInternalFormat;
 
-    /**
-     * @invisible
-     */			
-    protected int minFilter;	
-
-    /**
-     * @invisible
-     */			
-    protected int magFilter;
-	
-    /**
-     * @invisible
-     */		
-    protected boolean usingMipmaps;	
-	
-    /**
-     * @invisible
-     */		
-    protected float maxTexCoordS;
-	
-    /**
-     * @invisible
-     */		
-    protected float maxTexCoordT;
-	
-    /**
-     * @invisible
-     */		
-    protected boolean flippedX;	
-	
-    /**
-     * @invisible
-     */		
-    protected boolean flippedY;
     
     
   /////////////////////////////////////////////////////////////////////////// 
