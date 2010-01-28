@@ -24,14 +24,8 @@
 
 package processing.android.core;
 
-//import java.awt.*;
-//import java.awt.image.BufferedImage;
-//import java.awt.image.Raster;
 import java.io.*;
-//import java.lang.reflect.*;
 import java.util.Arrays;
-import java.util.HashMap;
-
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
