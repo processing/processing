@@ -124,8 +124,9 @@ public class GLFont extends PFont {
 
     images = new GLTexture[charCount];
     GLTexture tex;
+    GLTexture.Parameters params = GLTexture.newParameters(ARGB);
     for (int i = 0; i < charCount; i++) {
-      tex = new GLTexture(parent, twidth, theight, ARGB);
+      tex = new GLTexture(parent, twidth, theight, params);
       tex.loadPixels();
       int bitmapSize = height[i] * width[i];
 
@@ -340,8 +341,9 @@ public class GLFont extends PFont {
     // so that this font can be used immediately by p5.
     images = new GLTexture[charCount];
     GLTexture tex;
+    GLTexture.Parameters params = GLTexture.newParameters(ARGB);
     for (int i = 0; i < charCount; i++) {
-      tex = new GLTexture(parent, mbox2, mbox2, ARGB);
+      tex = new GLTexture(parent, mbox2, mbox2, params);
       tex.loadPixels();
       for (int y = 0; y < height[i]; y++) {
         System.arraycopy(bitmaps[i].pixels, y*width[i],

@@ -27,21 +27,9 @@ import java.nio.*;
 @SuppressWarnings("unused")
 public class GLTexture extends PImage implements PConstants, GLConstants
 { 
-    /**
-     * Creates an instance of GLTexture with size 1x1. The texture is not initialized.
-     * @param parent PApplet
-     */
-    public GLTexture(PApplet parent)
-    {
-        super(1, 1, ARGB);
-        this.parent = parent;
-       
-        pgl = (PGraphicsAndroid3D)parent.g;
-        gl = pgl.gl;
-        //glstate = new GLState(gl);
-	    setTextureParams(new Parameters());
-    }  
 
+  
+  
     /**
      * Creates an instance of GLTexture with size width x height. The texture is initialized (empty) to that size.
      * @param parent PApplet
@@ -82,48 +70,6 @@ public class GLTexture extends PImage implements PConstants, GLConstants
         initTexture(width, height);
     }	
 	
-    /**
-     * Creates an instance of GLTexture with size width x height and with the specified format.
-     *  The texture is initialized (empty) to that size.
-     * @param parent PApplet
-     * @param width int 
-     * @param height int 
-     * @param format int  			
-     */	 
-    public GLTexture(PApplet parent, int width, int height, int format)
-    {
-        super(width, height, format);  
-        this.parent = parent;
-       
-        pgl = (PGraphicsAndroid3D)parent.g;
-        gl = pgl.gl;
-        //glstate = new GLState(gl);
-	    setTextureParams(new Parameters(format));
-       
-        initTexture(width, height);
-    }	
-
-    /**
-     * Creates an instance of GLTexture with size width x height and with the specified format and filtering.
-     *  The texture is initialized (empty) to that size.
-     * @param parent PApplet
-     * @param width int 
-     * @param height int 
-     * @param format int 
-     * @param filter int 
-     */	 
-    public GLTexture(PApplet parent, int width, int height, int format, int filter)
-    {
-        super(width, height, format);  
-        this.parent = parent;
-       
-        pgl = (PGraphicsAndroid3D)parent.g;
-        gl = pgl.gl;
-        //glstate = new GLState(gl);
-	    setTextureParams(new Parameters(format, filter));
-       
-        initTexture(width, height);
-    }	
 
     /**
      * Creates an instance of GLTexture using image file filename as source.
@@ -141,19 +87,6 @@ public class GLTexture extends PImage implements PConstants, GLConstants
         
         loadTexture(filename);
     }
-
-    public GLTexture(PApplet parent, int width, int height, Parameters params, int id)
-    {
-        super(width, height, params.format);  
-        this.parent = parent;
-       
-        pgl = (PGraphicsAndroid3D)parent.g;
-        gl = pgl.gl;
-        //glstate = new GLState(gl);
-	    setTextureParams(params);
-       
-        initTexture(width, height, id);
-    }	
     
     /**
      * Creates an instance of GLTexture using image file filename as source and the specified texture parameters.
@@ -173,232 +106,53 @@ public class GLTexture extends PImage implements PConstants, GLConstants
         loadTexture(filename, params);
     }
 
-    /**
-     * Creates an instance of GLTexture using image file filename as source and the specified format.
-     * @param parent PApplet
-     * @param filename String
-     * @param format int 
-     */	
-    public GLTexture(PApplet parent, String filename, int format)
-    {
-        super(1, 1, format);  
-        this.parent = parent;
-	   
-        pgl = (PGraphicsAndroid3D)parent.g;
-        gl = pgl.gl;
-        //glstate = new GLState(gl);		
-        
-        loadTexture(filename, format);
-    }
-
-    /**
-     * Creates an instance of GLTexture using image file filename as source and the specified format and filtering.
-     * @param parent PApplet
-     * @param filename String
-     * @param format int 
-     * @param filter int 
-     */	
-    public GLTexture(PApplet parent, String filename, int format, int filter)
-    {
-        super(1, 1, format);  
-        this.parent = parent;
-	   
-        pgl = (PGraphicsAndroid3D)parent.g;
-        gl = pgl.gl;
-        //glstate = new GLState(gl);		
-        
-        loadTexture(filename, format, filter);
-    }
-
-    /**
-     * Creates an instance of GLTexture with power-of-two width and height that such that width * height is the closest to size. 
-     * The texture is initialized (empty) to that size.
-     * @param parent PApplet
-     * @param size int 
-     */	
-    public GLTexture(PApplet parent, int size)
-    {
-        super(1, 1, ARGB);  
-        this.parent = parent;
-       
-        pgl = (PGraphicsAndroid3D)parent.g;
-        gl = pgl.gl;
-        //glstate = new GLState(gl);
-        
-        calculateWidthHeight(size);
-        init(width, height);
-    }
-
-    /**
-     * Creates an instance of GLTexture with power-of-two width and height that such that width 
-     * height is the closest to size, and with the specified parameters.
-     * The texture is initialized (empty) to that size.
-     * @param parent PApplet
-     * @param size int 
-     * @param params GLTextureParameters
-     */	 
-    public GLTexture(PApplet parent, int size, Parameters params)
-    {
-        super(1, 1, params.format);  
-        this.parent = parent;
-       
-        pgl = (PGraphicsAndroid3D)parent.g;
-        gl = pgl.gl;
-        //glstate = new GLState(gl);
-
-        calculateWidthHeight(size);
-        init(width, height, params);
-    }
 
   protected void finalize() {
     if (tex[0] != 0) {
       releaseTexture();
     }
   }
+  
+  
+
+  
+  public void set(PImage img) {
     
-    /**
-     * Sets the size of the image and texture to width x height. If the texture is already initialized,
-     * it first destroys the current opengl texture object and then creates a new one with the specified
-     * size.
-     * @param width int
-     * @param height int
-     */
-    public void init(int width, int height)
-    {	    init(width, height, new Parameters());
-    }
-
-    /**
-     * Sets the size of the image and texture to width x height, and the parameters of the texture to params.
-     * If the texture is already  initialized, it first destroys the current opengl texture object and then creates 
-     * a new one with the specified size.
-     * @param width int
-     * @param height int
-     * @param params GLTextureParameters 
-     */
-    public void init(int width, int height, Parameters params)
-    {
-        super.init(width, height, params.format);
-		    setTextureParams(params);
-        initTexture(width, height);
-    }	
-	
-    /**
-     * Returns true if the texture has been initialized.
-     * @return boolean
-     */  
-    public boolean available()
-    {
-        return 0 < tex[0];
-    }
+  }
+  
+  public void set(GLTexture tex) {
     
-    /**
-     * Provides the ID of the opegl texture object.
-     * @return int
-     */	
-    public int getTextureID()
-    {
-        return tex[0];
-    }
+  }
 
-    /**
-     * Returns the texture target.
-     * @return int
-     */	
-    public int getTextureTarget()
+  public void set(int[] pixels) {
+    
+  }
+  
+  
+    /**     
+     * Copy texture to pixels.
+     */   
+    public void updatePixels()
     {
-        return texTarget;
-    }    
-
-    /**
-     * Returns the texture internal format.
-     * @return int
-     */	
-    public int getTextureInternalFormat()
-    {
-        return texInternalFormat;
+        int size = width * height;
+        IntBuffer buffer = BufferUtil.newIntBuffer(size);
+    
+        gl.glBindTexture(texTarget, tex[0]);
+        //gl.glGetTexImage(texTarget, 0, GL10.GL.GL_RGBA, GL10.GL_UNSIGNED_BYTE, buffer);
+        gl.glBindTexture(texTarget, 0);
+        
+        buffer.get(pixels);
+        int[] pixelsARGB = convertToARGB(pixels);
+        PApplet.arrayCopy(pixelsARGB, pixels);        
+        if (flippedX) flipArrayOnX(pixels, 1);
+        if (flippedY) flipArrayOnY(pixels, 1);
+        
+        super.updatePixels();
     }
-
-    /**
-     * Returns the texture minimization filter.
-     * @return int
-     */	
-    public int getTextureMinFilter()
-    {
-        return minFilter;
-    }
-
-    /**
-     * Returns the texture magnification filter.
-     * @return int
-     */	
-    public int getTextureMagFilter()
-    {
-        return magFilter;
-    }
-	
-    /**
-     * Returns true or false whether or not the texture is using mipmaps.
-     * @return boolean
-     */	
-    public boolean usingMipmaps()
-    {
-        return usingMipmaps;
-    }
-	
-    /**
-     * Returns the maximum possible value for the texture coordinate S.
-     * @return float
-     */	
-    public float getMaxTextureCoordS()
-    {
-        return maxTexCoordS;
-    }
-	
-    /**
-     * Returns the maximum possible value for the texture coordinate T.
-     * @return float
-     */	
-    public float getMaxTextureCoordT()
-    {
-        return maxTexCoordT;
-    }
-	
-    /**
-     * Returns true if the texture is flipped along the horizontal direction.
-     * @return boolean;
-     */	
-    public boolean isFlippedX()
-    {
-        return flippedX;
-    }
-
-    /**
-     * Sets the texture as flipped or not flipped on the horizontal direction.
-     * @param v boolean;
-     */	
-    public void setFlippedX(boolean v)
-    {
-        flippedX = v;
-    }	
-	
-    /**
-     * Returns true if the texture is flipped along the vertical direction.
-     * @return boolean;
-     */	
-    public boolean isFlippedY()
-    {
-        return flippedY;
-    }
-
-    /**
-     * Sets the texture as flipped or not flipped on the vertical direction.
-     * @param v boolean;
-     */	
-    public void setFlippedY(boolean v)
-    {
-        flippedY = v;
-    }
-	
+  
+  
+  
+  
     /**
      * Puts img into texture, pixels and image.
      * @param img PImage
@@ -444,7 +198,7 @@ public class GLTexture extends PImage implements PConstants, GLConstants
         }
         
         for (int i = 0; i < width * height; i++)
-        	pixels[i] = img.pixels[i];
+          pixels[i] = img.pixels[i];
         
         // ...into texture...
         loadTexture();
@@ -458,7 +212,7 @@ public class GLTexture extends PImage implements PConstants, GLConstants
      * @param img PImage
      */
     public void putPixelsIntoTexture(PImage img)
-    {	
+    { 
         if ((img.width != width) || (img.height != height))
         {
             init(img.width, img.height, new Parameters());
@@ -478,7 +232,7 @@ public class GLTexture extends PImage implements PConstants, GLConstants
             putBuffer(img.pixels, ALPHA);
         }     
       }
-	
+  
     /**
      * Puts the pixels of img inside the rectangle (x, y, x+w, y+h) into texture only.
      * @param img PImage
@@ -486,26 +240,27 @@ public class GLTexture extends PImage implements PConstants, GLConstants
      * @param y int
      * @param w int
      * @param h int
-     */	
+     */ 
     public void putPixelsIntoTexture(PImage img, int x, int y, int w, int h)
-    {	
+    { 
         x = PApplet.constrain(x, 0, img.width);
         y = PApplet.constrain(y, 0, img.height);
-		        w = PApplet.constrain(w, 0, img.width - x);
+    
+        w = PApplet.constrain(w, 0, img.width - x);
         h = PApplet.constrain(h, 0, img.height - y);
-		
+    
         if ((w != width) || (h != height))
         {
             init(w, h, new Parameters());
         }
-		
+    
         int p0;
         int dest[] = new int[w * h];
         for (int j = 0; j < h; j++)
-	    {
-	        p0 = y * img.width + x + (img.width - w) * j;
-	        PApplet.arrayCopy(img.pixels, p0 + w * j, dest, w * j, w);
-	    }
+      {
+          p0 = y * img.width + x + (img.width - w) * j;
+          PApplet.arrayCopy(img.pixels, p0 + w * j, dest, w * j, w);
+      }
    
         // Putting into texture.
         if (texInternalFormat == GL10.GL_RGB) 
@@ -521,11 +276,11 @@ public class GLTexture extends PImage implements PConstants, GLConstants
             putBuffer(dest, ALPHA);
         }     
     }
-	
+  
     /**
      * Copies texture to img.
      * @param img PImage
-     */	
+     */ 
     public void getImage(PImage img)
     {
         int w = width;
@@ -597,7 +352,7 @@ public class GLTexture extends PImage implements PConstants, GLConstants
 
     /**
      * Copy pixels to texture (loadPixels should have been called beforehand).
-     */	
+     */ 
     public void loadTexture()
     {
         // Putting into texture.
@@ -618,101 +373,175 @@ public class GLTexture extends PImage implements PConstants, GLConstants
     /**
      * Copy src texture into this.
      * @param src GLTexture 
-     */	
+     */ 
     public void copy(GLTexture src)
     {
-        //glstate.copyTex(src, this);	
+        //glstate.copyTex(src, this); 
     }
     
-    /**     
-     * Copy texture to pixels (doesn't call updatePixels).
-     */		
-    public void updateTexture()
-    {
-        int size = width * height;
-        IntBuffer buffer = BufferUtil.newIntBuffer(size);
-		
-        gl.glBindTexture(texTarget, tex[0]);
-        //gl.glGetTexImage(texTarget, 0, GL10.GL.GL_RGBA, GL10.GL_UNSIGNED_BYTE, buffer);
-        gl.glBindTexture(texTarget, 0);
-        
-        buffer.get(pixels);
-        int[] pixelsARGB = convertToARGB(pixels);
-        PApplet.arrayCopy(pixelsARGB, pixels);        
-        if (flippedX) flipArrayOnX(pixels, 1);
-        if (flippedY) flipArrayOnY(pixels, 1);
-    }
-    
+  
+  
+  
+  
+  
+  
     /**
-     * Draws the texture using the opengl commands, inside a rectangle located at the origin with the original
-     * size of the texture.
-     */		
-    public void render()
-    {
-        render(0, 0, width, height);
+     * Sets the size of the image and texture to width x height. If the texture is already initialized,
+     * it first destroys the current opengl texture object and then creates a new one with the specified
+     * size.
+     * @param width int
+     * @param height int
+     */
+    public void init(int width, int height)
+    {	    init(width, height, new Parameters());
     }
 
     /**
-     * Draws the texture using the opengl commands, inside a rectangle located at (x,y) with the original
-     * size of the texture.
-     * @param x float
-     * @param y float
-     */	
-    public void render(float x, float y)
+     * Sets the size of the image and texture to width x height, and the parameters of the texture to params.
+     * If the texture is already  initialized, it first destroys the current opengl texture object and then creates 
+     * a new one with the specified size.
+     * @param width int
+     * @param height int
+     * @param params GLTextureParameters 
+     */
+    public void init(int width, int height, Parameters params)
     {
-        render(x, y, width, height);
+        super.init(width, height, params.format);
+		    setTextureParams(params);
+        initTexture(width, height);
+    }	
+
+    public void resize() {
+      
     }
     
     /**
-     * Draws the texture using the opengl commands, inside a rectangle of width w and height h
-     * located at (x,y).
-     * @param x float
-     * @param y float
-     * @param w float
-     * @param h float	 
+     * Returns true if the texture has been initialized.
+     * @return boolean
+     */  
+    public boolean available()
+    {
+        return 0 < tex[0];
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    /**
+     * Provides the ID of the opegl texture object.
+     * @return int
      */	
-    public void render(float x, float y, float w, float h)
+    protected int getTextureID()
     {
-    	render(pgl, x, y, w, h);    		
+        return tex[0];
     }
-    
-   /**
-    * Draws the texture using the opengl commands, inside a rectangle of width w and height h
-    * located at (x,y) and using the specified renderer.
-    * @param renderer PGraphicsAndroid3D
-    * @param x float
-    * @param y float
-    * @param w float
-    * @param h float	 
-    */    
-    public void render(PGraphicsAndroid3D renderer, float x, float y, float w, float h)
+
+    /**
+     * Returns the texture target.
+     * @return int
+     */	
+    protected int getTextureTarget()
     {
-    	render(renderer, x, y, w, h, 0, 0, 1, 1);
+        return texTarget;
+    }    
+
+    /**
+     * Returns the texture internal format.
+     * @return int
+     */	
+    protected int getTextureInternalFormat()
+    {
+        return texInternalFormat;
     }
-    
-    public void render(PGraphicsAndroid3D renderer, float x, float y, float w, float h, float sx, float ty, float sw, float th)
+
+    /**
+     * Returns the texture minimization filter.
+     * @return int
+     */	
+    protected int getTextureMinFilter()
     {
-    	float fw, fh;
-    	if (renderer.textureMode == IMAGE)
-    	{
-    		fw = width;
-    	    fh = height;
-    	}
-    	else
-    	{
-    		fw = 1.0f;
-    	    fh = 1.0f;
-    	}
-    		
-    	renderer.beginShape(QUADS);
-    	    renderer.texture(this);
-    	    renderer.vertex(x, y, fw * sx, fh * ty);
-    	    renderer.vertex(x + w, y, fw * sw, fh * ty);
-    	    renderer.vertex(x + w, y + h, fw * sw, fh * th);
-    	    renderer.vertex(x, y + h, fw * sx, fh * th);
-    	renderer.endShape();	
-    }        
+        return minFilter;
+    }
+
+    /**
+     * Returns the texture magnification filter.
+     * @return int
+     */	
+    protected int getTextureMagFilter()
+    {
+        return magFilter;
+    }
+	
+    /**
+     * Returns true or false whether or not the texture is using mipmaps.
+     * @return boolean
+     */	
+    protected boolean usingMipmaps()
+    {
+        return usingMipmaps;
+    }
+	
+    /**
+     * Returns the maximum possible value for the texture coordinate S.
+     * @return float
+     */	
+    protected float getMaxTextureCoordS()
+    {
+        return maxTexCoordS;
+    }
+	
+    /**
+     * Returns the maximum possible value for the texture coordinate T.
+     * @return float
+     */	
+    protected float getMaxTextureCoordT()
+    {
+        return maxTexCoordT;
+    }
+	
+    /**
+     * Returns true if the texture is flipped along the horizontal direction.
+     * @return boolean;
+     */	
+    protected boolean isFlippedX()
+    {
+        return flippedX;
+    }
+
+    /**
+     * Sets the texture as flipped or not flipped on the horizontal direction.
+     * @param v boolean;
+     */	
+    protected void setFlippedX(boolean v)
+    {
+        flippedX = v;
+    }	
+	
+    /**
+     * Returns true if the texture is flipped along the vertical direction.
+     * @return boolean;
+     */	
+    protected boolean isFlippedY()
+    {
+        return flippedY;
+    }
+
+    /**
+     * Sets the texture as flipped or not flipped on the vertical direction.
+     * @param v boolean;
+     */	
+    protected void setFlippedY(boolean v)
+    {
+        flippedY = v;
+    }
+	
     
+    
+
     /**
      * Copies intArray into the texture, assuming that the array contains 4 color components and pixels are unsigned bytes.
      * @param intArray int[]
@@ -1904,59 +1733,68 @@ public class GLTexture extends PImage implements PConstants, GLConstants
     protected boolean flippedY;
     
     
-    /////////////////////////////////////////////////////////////////////////// 
+  /////////////////////////////////////////////////////////////////////////// 
 
     
+  static public Parameters newParameters() {
+    return new Parameters();  
+  }
+
+  static public Parameters newParameters(int format) {
+    return new Parameters(format);  
+  }    
+
+  static public Parameters newParameters(int format, int filter) {
+    return new Parameters(format, filter);  
+  }        
+      
+  /**
+   * This class stores the parameters for a texture: target, internal format, minimization filter
+   * and magnification filter. 
+   */
+  static public class Parameters {
     /**
-     * This class stores the parameters for a texture: target, internal format, minimization filter
-     * and magnification filter. 
+     * Creates an instance of GLTextureParameters, setting all the parameters to default values.
      */
-    public class Parameters //implements PConstants 
-    {
-        /**
-         * Creates an instance of GLTextureParameters, setting all the parameters to default values.
-         */
-        public Parameters()
-        {
-            target = GLTexture.TEX_NORM;
-            format = GLTexture.COLOR;
-            minFilter = GLTexture.LINEAR;
-            magFilter = GLTexture.LINEAR;   
-        }
-      
-        public Parameters(int format)
-        {
-            target = GLTexture.TEX_NORM;
-            this.format = format;
-            minFilter = GLTexture.LINEAR;
-            magFilter = GLTexture.LINEAR;   
-        }
-
-        public Parameters(int format, int filter) {
-            target = GLTexture.TEX_NORM;
-            this.format = format;
-            minFilter = filter;
-            magFilter = filter;   
-        }
-
-        /**
-         * Texture target.
-         */
-        public int target;
-      
-        /**
-         * Texture internal format.
-         */
-        public int format;
-      
-        /**
-         * Texture minimization filter.
-         */
-        public int minFilter;
-      
-        /**
-         * Texture magnification filter.
-         */
-        public int magFilter; 
+    public Parameters() {
+      target = GLTexture.TEX_NORM;
+      format = GLTexture.COLOR;
+      minFilter = GLTexture.LINEAR;
+      magFilter = GLTexture.LINEAR;   
     }
+      
+    public Parameters(int format) {
+      target = GLTexture.TEX_NORM;
+      this.format = format;
+      minFilter = GLTexture.LINEAR;
+      magFilter = GLTexture.LINEAR;   
+    }
+
+    public Parameters(int format, int filter) {
+      target = GLTexture.TEX_NORM;
+      this.format = format;
+      minFilter = filter;
+      magFilter = filter;   
+    }
+
+    /**
+     * Texture target.
+     */
+    public int target;
+      
+    /**
+     * Texture internal format.
+     */
+    public int format;
+      
+    /**
+     * Texture minimization filter.
+     */
+    public int minFilter;
+      
+    /**
+     * Texture magnification filter.
+     */
+    public int magFilter; 
+  }
 }
