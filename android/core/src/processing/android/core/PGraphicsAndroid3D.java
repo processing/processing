@@ -1214,7 +1214,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         tex = (GLTexture)textureImage;
         
         gl.glEnable(tex.getTextureTarget());
-        gl.glBindTexture(tex.getTextureTarget(), tex.getTextureID());        
+        gl.glBindTexture(tex.getTextureTarget(), tex.getGLTexID());        
     	  
         gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
         texturing = true;
