@@ -22,6 +22,7 @@ import java.awt.event.*;
 import java.awt.*;
 import java.util.Enumeration;
 import java.util.Vector;
+import java.awt.im.InputMethodRequests;
 
 /**
  * jEdit's text area component. It is more suited for editing program
@@ -127,6 +128,16 @@ public class JEditTextArea extends JComponent
       });
   }
 
+  /**
+  * Inline Input Method Support for Japanese.
+  */
+  private InputMethodSupport inputMethodSupport = null;
+  public InputMethodRequests getInputMethodRequests() {
+		if (inputMethodSupport == null) {
+			inputMethodSupport = new InputMethodSupport(this);
+		}
+		return inputMethodSupport;
+  }
 
   /**
    * Get current position of the vertical scroll bar. [fry]
@@ -216,7 +227,7 @@ public class JEditTextArea extends JComponent
    * Blinks the caret.
    */
   public final void blinkCaret() {
-    if (caretBlinks)  {
+    if (caretBlinks && !((InputMethodSupport)getInputMethodRequests()).getIsComposing())  {
       blink = !blink;
       painter.invalidateSelectedLines();
     } else {

@@ -1,6 +1,6 @@
 0176 core (private)
-
 _ consider adding skewX/Y
+_   do them as shearX/Y
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1448
 
 _ inconsistent anti-aliasing with OpenGL
