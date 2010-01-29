@@ -7,22 +7,11 @@ import javax.microedition.khronos.opengles.*;
 import java.nio.*;
 
 // TODO:
-// add texture name property.
-// Fix the setBuffer methods to make them into setTexChannel or something like that.
-// Overload the loadPixels and updatePixels so that texture info is copies to data[] array instead to
-// pixels[] when the texture is floating point.
 // Properly implement putBuffer method to copy ALPHA, RGB and RGBA buffers to the texture. Now it has been
 // quickly hacked to properly use alpha textures needed by GLFonts.
 
 /**
- * This class adds an opengl texture to a PImage object. The texture is 
- * handled in a similar way to the pixels property: image data can be copied 
- * to and from the texture using loadTexture and updateTexture methods.
- * However, bringing the texture down to image or pixels data can slow down 
- * the application considerably (since involves copying texture data from GPU 
- * to CPU), especially when handling large textures. So it is recommended 
- * to do all the texture handling without calling updateTexture, and doing so 
- * only at the end if the texture is needed as a regular image.
+ * This class adds an opengl texture to a PImage object.
  */
 @SuppressWarnings("unused")
 public class GLTexture extends PImage implements PConstants, GLConstants { 
@@ -30,11 +19,11 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
   protected PGraphicsAndroid3D pgl;  
   protected GL10 gl;
 
-  protected int[] tex = { 0 }; 
-  protected int texTarget;  
-  protected int texInternalFormat;
-  protected int minFilter;  
-  protected int magFilter;
+  protected int[] glTexID = { 0 }; 
+  protected int glTexTarget;  
+  protected int glTexInternalFormat;
+  protected int glMinFilter;  
+  protected int glMagFilter;
   
   protected boolean usingMipmaps; 
   protected float maxTexCoordS;
@@ -119,38 +108,181 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
 
 
   protected void finalize() {
-    if (tex[0] != 0) {
+    if (glTexID[0] != 0) {
       releaseTexture();
     }
   }
+
   
+  ////////////////////////////////////////////////////////////
+  
+  // Init, resize methods
+  
+  /**
+   * Sets the size of the image and texture to width x height. If the texture is already initialized,
+   * it first destroys the current opengl texture object and then creates a new one with the specified
+   * size.
+   * @param width int
+   * @param height int
+   */
+  public void init(int width, int height) {
+    init(width, height, new Parameters());
+  }
+
+  /**
+   * Sets the size of the image and texture to width x height, and the parameters of the texture to params.
+   * If the texture is already  initialized, it first destroys the current opengl texture object and then creates 
+   * a new one with the specified size.
+   * @param width int
+   * @param height int
+   * @param params GLTextureParameters 
+   */
+  public void init(int width, int height, Parameters params)  {
+    super.init(width, height, params.format);
+    setTextureParams(params);
+    initTexture(width, height);
+  } 
+
+
+  public void resize(int wide, int high) {
+   // super.resize(wide, high);
+  }
+
+  
+  /**
+   * Returns true if the texture has been initialized.
+   * @return boolean
+   */  
+  public boolean available()  {
+    return 0 < glTexID[0];
+  }
+
   
   ////////////////////////////////////////////////////////////
   
   // Set methods
   
   public void set(PImage img) {
+    if (img.width != width || img.height != height) {
+      super.init(width, height, format);
+      initTexture(width, height);      
+    }
+    // or:
+    // img -> tmp
+    // resize tmp to size of this.
+    // copy tmp to tex of this.
     
+    img.loadPixels();
+    set(img.pixels, img.format);
+  }
+  
+  public void set(PImage img, int x, int y, int w, int h) {
+  // copy (x, y, x+w, y+h) of img to tmp
+    // resize tmp to size of this
+    // copy tmp to tex of this
   }
   
   public void set(GLTexture tex) {
-    
+   // by interpolation, size of this doesn't change. 
   }
 
   public void set(int[] pixels) {
-    
+    set(pixels, ARGB); 
   }
+
+  public void set(int[] pixels, int format) {
+    
+    if (pixels.length != width * height)
+      throw ...
+    
+        if (glTexID[0] == 0)
+        {
+            initTexture(width, height);
+        }      
+  
+        int[] convArray = pixels;
+        int glFormat;
+        if (format == ALPHA)
+        {
+          glFormat = GL10.GL_ALPHA;
+
+              byte[] convArray2 = convertToAlpha(pixels);
+              gl.glBindTexture(glTexTarget, glTexID[0]);
+              gl.glTexSubImage2D(glTexTarget, 0, 0, 0, width, height, glFormat, GL10.GL_UNSIGNED_BYTE, ByteBuffer.wrap(convArray2));
+              gl.glBindTexture(glTexTarget, 0);
+              return;
+        }
+        else if (format == RGB)
+        {
+          // If in the previous case, we need to use a byte array, here with RGB we should use a byte array with 3 bytes per color, 
+          // i.e.: byte[] convArray3 = byte[3 * widht * height] and then storing RGB components from intArray as follows:
+          // for (int i = 0; i < width * height; i++) { 
+          // convArray3[3 * i ] = red(intArray[i]);
+          // convArray3[3 * i + 1] = green(intArray[i]);
+          // convArray3[3 * i + 2] = blue(intArray[i]);
+          //}
+          // where the red, green, green and blue operators involve the correct bit shifting to extract the component from the int value.          
+          glFormat = GL10.GL_RGB;
+          convArray = convertToRGBA(pixels, RGB);
+        }
+        else
+        {
+          glFormat = GL10.GL_RGBA;
+          convArray = convertToRGBA(pixels, ARGB);
+        }
+        
+        int glType;
+        
+        // No GL_INT in ES
+        //if (type == TEX_INT) glType = GL10.GL_INT;
+        //else glType = GL10.GL_UNSIGNED_BYTE;
+        glType = GL10.GL_UNSIGNED_BYTE;
+        
+        gl.glBindTexture(glTexTarget, glTexID[0]);
+                
+        /*
+        // Apparently no 1D textures and mipmaps in OpenGL ES.
+        if (texTarget == GL10.GL_TEXTURE_1D)
+        {
+            gl.glTexSubImage1D(texTarget, 0, 0, width, glFormat, glType, IntBuffer.wrap(convArray));
+        }
+        else
+        {
+            if (usingMipmaps)
+                GLState.glu.gluBuild2DMipmaps(texTarget, texInternalFormat, width, height, glFormat, glType, IntBuffer.wrap(convArray));
+            else
+              gl.glTexSubImage2D(texTarget, 0, 0, 0, width, height, glFormat, glType, IntBuffer.wrap(convArray));
+        }
+        */
+        
+        gl.glTexSubImage2D(glTexTarget, 0, 0, 0, width, height, glFormat, glType, IntBuffer.wrap(convArray));
+
+        gl.glBindTexture(glTexTarget, 0);
+
+        
+    
+  }  
+  
+    /**
+     * Load texture, pixels and image from file.
+     * @param filename String
+     */
+    public void loadTexture(String filename) {
+    {
+        PImage img = parent.loadImage(filename);
+        set(img);
+    }  
   
   /**     
    * Copy texture to pixels.
    */   
-  public void updatePixels() {
+  public void updatePixels() { // doesn't work yet...
     int size = width * height;
     IntBuffer buffer = BufferUtil.newIntBuffer(size);
     
-    gl.glBindTexture(texTarget, tex[0]);
+    gl.glBindTexture(glTexTarget, glTexID[0]);
     //gl.glGetTexImage(texTarget, 0, GL10.GL.GL_RGBA, GL10.GL_UNSIGNED_BYTE, buffer);
-    gl.glBindTexture(texTarget, 0);
+    gl.glBindTexture(glTexTarget, 0);
         
     buffer.get(pixels);
     int[] pixelsARGB = convertToARGB(pixels);
@@ -161,6 +293,14 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
     super.updatePixels();
   }
 
+  
+  
+  
+  
+  
+  
+  
+  
   
   /**
    * Puts img into texture, pixels and image.
@@ -227,15 +367,15 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
         }
    
         // Putting into texture.
-        if (texInternalFormat == GL10.GL_RGB) 
+        if (glTexInternalFormat == GL10.GL_RGB) 
         {
             putBuffer(img.pixels, RGB);
         } 
-        if (texInternalFormat == GL10.GL_RGBA) 
+        if (glTexInternalFormat == GL10.GL_RGBA) 
         {
             putBuffer(img.pixels, ARGB);
         } 
-        if (texInternalFormat == GL10.GL_ALPHA) 
+        if (glTexInternalFormat == GL10.GL_ALPHA) 
         {
             putBuffer(img.pixels, ALPHA);
         }     
@@ -271,15 +411,15 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
       }
    
         // Putting into texture.
-        if (texInternalFormat == GL10.GL_RGB) 
+        if (glTexInternalFormat == GL10.GL_RGB) 
         {
             putBuffer(dest, RGB);
         } 
-        if (texInternalFormat == GL10.GL_RGBA) 
+        if (glTexInternalFormat == GL10.GL_RGBA) 
         {
             putBuffer(dest, ARGB);
         } 
-        if (texInternalFormat == GL10.GL_ALPHA) 
+        if (glTexInternalFormat == GL10.GL_ALPHA) 
         {
             putBuffer(dest, ALPHA);
         }     
@@ -301,9 +441,9 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
      
         int size = w * h;
         IntBuffer buffer = BufferUtil.newIntBuffer(size);
-        gl.glBindTexture(texTarget, tex[0]);
+        gl.glBindTexture(glTexTarget, glTexID[0]);
         //gl.glGetTexImage(texTarget, 0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, buffer);
-        gl.glBindTexture(texTarget, 0);       
+        gl.glBindTexture(glTexTarget, 0);       
        
         buffer.get(img.pixels);
         
@@ -364,15 +504,15 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
     public void loadTexture()
     {
         // Putting into texture.
-        if (texInternalFormat == GL10.GL_RGB) 
+        if (glTexInternalFormat == GL10.GL_RGB) 
         {
             putBuffer(pixels, RGB);
         } 
-        if (texInternalFormat == GL10.GL_RGBA) 
+        if (glTexInternalFormat == GL10.GL_RGBA) 
         {
             putBuffer(pixels, ARGB);
         } 
-        if (texInternalFormat == GL10.GL_ALPHA) 
+        if (glTexInternalFormat == GL10.GL_ALPHA) 
         {
             putBuffer(pixels, ALPHA);
         }     
@@ -393,44 +533,6 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
   
   
   
-    /**
-     * Sets the size of the image and texture to width x height. If the texture is already initialized,
-     * it first destroys the current opengl texture object and then creates a new one with the specified
-     * size.
-     * @param width int
-     * @param height int
-     */
-    public void init(int width, int height)
-    {	    init(width, height, new Parameters());
-    }
-
-    /**
-     * Sets the size of the image and texture to width x height, and the parameters of the texture to params.
-     * If the texture is already  initialized, it first destroys the current opengl texture object and then creates 
-     * a new one with the specified size.
-     * @param width int
-     * @param height int
-     * @param params GLTextureParameters 
-     */
-    public void init(int width, int height, Parameters params)
-    {
-        super.init(width, height, params.format);
-		    setTextureParams(params);
-        initTexture(width, height);
-    }	
-
-    public void resize() {
-      
-    }
-    
-    /**
-     * Returns true if the texture has been initialized.
-     * @return boolean
-     */  
-    public boolean available()
-    {
-        return 0 < tex[0];
-    }
     
     
     
@@ -443,9 +545,9 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
      * Provides the ID of the opegl texture object.
      * @return int
      */	
-    protected int getTextureID()
+    protected int getGLTexID()
     {
-        return tex[0];
+        return glTexID[0];
     }
 
     /**
@@ -454,7 +556,7 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
      */	
     protected int getTextureTarget()
     {
-        return texTarget;
+        return glTexTarget;
     }    
 
     /**
@@ -463,7 +565,7 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
      */	
     protected int getTextureInternalFormat()
     {
-        return texInternalFormat;
+        return glTexInternalFormat;
     }
 
     /**
@@ -472,7 +574,7 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
      */	
     protected int getTextureMinFilter()
     {
-        return minFilter;
+        return glMinFilter;
     }
 
     /**
@@ -481,7 +583,7 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
      */	
     protected int getTextureMagFilter()
     {
-        return magFilter;
+        return glMagFilter;
     }
 	
     /**
@@ -597,7 +699,7 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
      */	
     public void putBuffer(int[] intArray, int format, int type)
     {
-        if (tex[0] == 0)
+        if (glTexID[0] == 0)
         {
             initTexture(width, height);
         }      
@@ -610,9 +712,9 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
           if (type == TEX_BYTE)
           {
               byte[] convArray2 = convertToAlpha(intArray);
-              gl.glBindTexture(texTarget, tex[0]);
-              gl.glTexSubImage2D(texTarget, 0, 0, 0, width, height, glFormat, GL10.GL_UNSIGNED_BYTE, ByteBuffer.wrap(convArray2));
-              gl.glBindTexture(texTarget, 0);
+              gl.glBindTexture(glTexTarget, glTexID[0]);
+              gl.glTexSubImage2D(glTexTarget, 0, 0, 0, width, height, glFormat, GL10.GL_UNSIGNED_BYTE, ByteBuffer.wrap(convArray2));
+              gl.glBindTexture(glTexTarget, 0);
               return;
           }
         }
@@ -642,7 +744,7 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
         //else glType = GL10.GL_UNSIGNED_BYTE;
         glType = GL10.GL_UNSIGNED_BYTE;
         
-        gl.glBindTexture(texTarget, tex[0]);
+        gl.glBindTexture(glTexTarget, glTexID[0]);
                 
         /*
         // Apparently no 1D textures and mipmaps in OpenGL ES.
@@ -659,9 +761,9 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
         }
         */
         
-        gl.glTexSubImage2D(texTarget, 0, 0, 0, width, height, glFormat, glType, IntBuffer.wrap(convArray));
+        gl.glTexSubImage2D(glTexTarget, 0, 0, 0, width, height, glFormat, glType, IntBuffer.wrap(convArray));
 
-        gl.glBindTexture(texTarget, 0);
+        gl.glBindTexture(glTexTarget, 0);
     }
     
     /**
@@ -681,7 +783,7 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
      */
     public void putBuffer(float[] floatArray, int nchan)
     {
-        if (tex[0] == 0)
+        if (glTexID[0] == 0)
         {
             initTexture(width, height);
         }
@@ -691,7 +793,7 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
         else if (nchan == 3) glFormat = GL10.GL_RGB;
         else glFormat = GL10.GL_RGBA;
 
-        gl.glBindTexture(texTarget, tex[0]);
+        gl.glBindTexture(glTexTarget, glTexID[0]);
 
         /*
         if (texTarget == GL.GL_TEXTURE_1D)
@@ -700,9 +802,9 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
             gl.glTexSubImage2D(texTarget, 0, 0, 0, width, height, glFormat, GL10.GL_FLOAT, FloatBuffer.wrap(floatArray));
         */
         
-        gl.glTexSubImage2D(texTarget, 0, 0, 0, width, height, glFormat, GL10.GL_FLOAT, FloatBuffer.wrap(floatArray));
+        gl.glTexSubImage2D(glTexTarget, 0, 0, 0, width, height, glFormat, GL10.GL_FLOAT, FloatBuffer.wrap(floatArray));
         
-        gl.glBindTexture(texTarget, 0);
+        gl.glBindTexture(glTexTarget, 0);
     }
 
     /**
@@ -795,7 +897,7 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
 
         IntBuffer buffer = BufferUtil.newIntBuffer(size);
 		
-        gl.glBindTexture(texTarget, tex[0]);
+        gl.glBindTexture(glTexTarget, glTexID[0]);
         
         // Not Available:
         //gl.glGetTexImage(texTarget, 0, glFormat, glType, buffer); 
@@ -812,7 +914,7 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
         // and should not be relied upon at this time."
         // :-(
         
-        gl.glBindTexture(texTarget, 0);
+        gl.glBindTexture(glTexTarget, 0);
 		
         buffer.get(intArray);
         
@@ -855,9 +957,9 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
         //FloatBuffer buffer = BufferUtil.newFloatBuffer(size);
         FloatBuffer buffer = FloatBuffer.allocate(size);
 		
-        gl.glBindTexture(texTarget, tex[0]);
+        gl.glBindTexture(glTexTarget, glTexID[0]);
         //gl.glGetTexImage(texTarget, 0, glFormat, GL10.GL_FLOAT, buffer);
-        gl.glBindTexture(texTarget, 0);
+        gl.glBindTexture(glTexTarget, 0);
 		
         buffer.get(floatArray);
 
@@ -1487,25 +1589,25 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
      */
     protected void initTexture(int w, int h)
     {
-        if (tex[0] != 0)
+        if (glTexID[0] != 0)
         {
             releaseTexture();
         }
         
-        gl.glGenTextures(1, tex, 0);
-        gl.glBindTexture(texTarget, tex[0]);
-        gl.glTexParameterf(texTarget, GL10.GL_TEXTURE_MIN_FILTER, minFilter);
-        gl.glTexParameterf(texTarget, GL10.GL_TEXTURE_MAG_FILTER, magFilter);
-        gl.glTexParameterf(texTarget, GL10.GL_TEXTURE_WRAP_S, GL10.GL_CLAMP_TO_EDGE);
-        gl.glTexParameterf(texTarget, GL10.GL_TEXTURE_WRAP_T, GL10.GL_CLAMP_TO_EDGE);
+        gl.glGenTextures(1, glTexID, 0);
+        gl.glBindTexture(glTexTarget, glTexID[0]);
+        gl.glTexParameterf(glTexTarget, GL10.GL_TEXTURE_MIN_FILTER, glMinFilter);
+        gl.glTexParameterf(glTexTarget, GL10.GL_TEXTURE_MAG_FILTER, glMagFilter);
+        gl.glTexParameterf(glTexTarget, GL10.GL_TEXTURE_WRAP_S, GL10.GL_CLAMP_TO_EDGE);
+        gl.glTexParameterf(glTexTarget, GL10.GL_TEXTURE_WRAP_T, GL10.GL_CLAMP_TO_EDGE);
         
         
         
         //if (texTarget == GL.GL_TEXTURE_1D) gl.glTexImage1D(texTarget, 0, texInternalFormat, w, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, null);
         //else gl.glTexImage2D(texTarget, 0, texInternalFormat, w, h, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, null);
         
-        gl.glTexImage2D(texTarget, 0, GL10.GL_RGBA/*texInternalFormat*/, w, h, 0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, null);
-        gl.glBindTexture(texTarget, 0);
+        gl.glTexImage2D(glTexTarget, 0, GL10.GL_RGBA/*texInternalFormat*/, w, h, 0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, null);
+        gl.glBindTexture(glTexTarget, 0);
 		
         /*
         No GL10.GL_TEXTURE_RECTANGLE
@@ -1525,51 +1627,6 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
         
     }
 
-    /**
-     * @invisible
-     * Initializes the texture with a pre-existing OpenGL texture ID.
-     * @param w int
-     * @param h int
-     * @param id int
-     */    
-    protected void initTexture(int w, int h, int id)
-    {
-        if (tex[0] != 0)
-        {
-            releaseTexture();
-        }
-        
-      
-        
-        tex[0] = id;
-        gl.glBindTexture(texTarget, tex[0]);
-        gl.glTexParameterf(texTarget, GL10.GL_TEXTURE_MIN_FILTER, minFilter);
-        gl.glTexParameterf(texTarget, GL10.GL_TEXTURE_MAG_FILTER, magFilter);
-        gl.glTexParameterf(texTarget, GL10.GL_TEXTURE_WRAP_S, GL10.GL_CLAMP_TO_EDGE);
-        gl.glTexParameterf(texTarget, GL10.GL_TEXTURE_WRAP_T, GL10.GL_CLAMP_TO_EDGE);
-        
-        //if (texTarget == GL.GL_TEXTURE_1D) gl.glTexImage1D(texTarget, 0, texInternalFormat, w, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, null);
-        //else gl.glTexImage2D(texTarget, 0, texInternalFormat, w, h, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, null);
-        
-        gl.glTexImage2D(texTarget, 0, texInternalFormat, w, h, 0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, null);
-        gl.glBindTexture(texTarget, 0);
-		
-        /*
-        No GL10.GL_TEXTURE_RECTANGLE
-        if (texTarget == GL10.GL_TEXTURE_RECTANGLE)
-        {
-            maxTexCoordS = w;
-            maxTexCoordT = h;
-        }
-        else
-        {
-            maxTexCoordS = 1.0f;
-            maxTexCoordT = 1.0f; 
-        }
-        */
-        maxTexCoordS = 1.0f;
-        maxTexCoordT = 1.0f; 
-    }
     
     /**
      * @invisible
@@ -1577,8 +1634,8 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
      */
     protected void releaseTexture()
     {
-        gl.glDeleteTextures(1, tex, 0);  
-        tex[0] = 0;
+        gl.glDeleteTextures(1, glTexID, 0);  
+        glTexID[0] = 0;
     }
     
     /**
@@ -1591,7 +1648,7 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
     {
 	    if (params.target == TEX_NORM)
       {            
-        texTarget = GL10.GL_TEXTURE_2D;
+        glTexTarget = GL10.GL_TEXTURE_2D;
       }
 	    /*
 	    else if (params.target == TEX_RECT)
@@ -1606,56 +1663,56 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
 	    
         if (params.format == RGB) 
         {
-            texInternalFormat = GL10.GL_RGB;
+            glTexInternalFormat = GL10.GL_RGB;
         } 
         if (params.format == ARGB) 
         {
-            texInternalFormat = GL10.GL_RGBA;
+            glTexInternalFormat = GL10.GL_RGBA;
         } 
         if (params.format == ALPHA) 
         {
-            texInternalFormat = GL10.GL_ALPHA;
+            glTexInternalFormat = GL10.GL_ALPHA;
         }         
 	    
 
 	    if (params.minFilter == NEAREST)
 	    {
-            minFilter = GL10.GL_NEAREST;
+            glMinFilter = GL10.GL_NEAREST;
         }
 	    else if (params.minFilter == LINEAR)
         {
-            minFilter = GL10.GL_LINEAR;
+            glMinFilter = GL10.GL_LINEAR;
 	    }
 	    else if (params.minFilter == NEAREST_MIPMAP_NEAREST)
         {
-            minFilter = GL10.GL_NEAREST_MIPMAP_NEAREST;
+            glMinFilter = GL10.GL_NEAREST_MIPMAP_NEAREST;
 	    }
 	    else if (params.minFilter == LINEAR_MIPMAP_NEAREST)
         {
-            minFilter = GL10.GL_LINEAR_MIPMAP_NEAREST;
+            glMinFilter = GL10.GL_LINEAR_MIPMAP_NEAREST;
 	    }		
 	    else if (params.minFilter == NEAREST_MIPMAP_LINEAR)
         {
-            minFilter = GL10.GL_NEAREST_MIPMAP_LINEAR;
+            glMinFilter = GL10.GL_NEAREST_MIPMAP_LINEAR;
 	    }
 	    else if (params.minFilter == LINEAR_MIPMAP_LINEAR)
         {
-            minFilter = GL10.GL_LINEAR_MIPMAP_LINEAR;
+            glMinFilter = GL10.GL_LINEAR_MIPMAP_LINEAR;
 	    }		
 
 	    if (params.magFilter == NEAREST)
 	    {
-            magFilter = GL10.GL_NEAREST;
+            glMagFilter = GL10.GL_NEAREST;
         }
 	        else if (params.magFilter == LINEAR)
         {
-            magFilter = GL10.GL_LINEAR;
+            glMagFilter = GL10.GL_LINEAR;
 	    }
 
-        usingMipmaps = (minFilter == GL10.GL_NEAREST_MIPMAP_NEAREST) ||
-                       (minFilter == GL10.GL_LINEAR_MIPMAP_NEAREST) ||
-                       (minFilter == GL10.GL_NEAREST_MIPMAP_LINEAR) ||
-                       (minFilter == GL10.GL_LINEAR_MIPMAP_LINEAR);
+        usingMipmaps = (glMinFilter == GL10.GL_NEAREST_MIPMAP_NEAREST) ||
+                       (glMinFilter == GL10.GL_LINEAR_MIPMAP_NEAREST) ||
+                       (glMinFilter == GL10.GL_NEAREST_MIPMAP_LINEAR) ||
+                       (glMinFilter == GL10.GL_LINEAR_MIPMAP_LINEAR);
 					   
         flippedX = false;
         flippedY = false;		

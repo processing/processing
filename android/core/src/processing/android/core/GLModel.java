@@ -1093,7 +1093,7 @@ public class GLModel implements GLConstants, PConstants {
          // Binding texture units.
          for (int n = 0; n < numTextures; n++) {
            gl.glActiveTexture(GL11.GL_TEXTURE0 + n);
-           gl.glBindTexture(GL11.GL_TEXTURE_2D, textures[n].getTextureID()); 
+           gl.glBindTexture(GL11.GL_TEXTURE_2D, textures[n].getGLTexID()); 
          }
          if (pointSprites) {
            // Texturing with point sprites.
