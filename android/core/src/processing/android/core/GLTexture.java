@@ -19,11 +19,15 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
   protected PGraphicsAndroid3D pgl;  
   protected GL10 gl;
 
+  
   protected int[] glTexID = { 0 }; 
   protected int glTexTarget;  
   protected int glTexInternalFormat;
   protected int glMinFilter;  
   protected int glMagFilter;
+
+  protected int twidth;
+  protected int theight;    
   
   protected boolean usingMipmaps; 
   protected float maxTexCoordS;
@@ -50,6 +54,14 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
     gl = pgl.gl;
 	  setTextureParams(new Parameters());
        
+     int maxSize[] = new int[1];	  
+	   gl.glGetIntegerv(GL10.GL_MAX_TEXTURE_SIZE, maxSize, 0);
+	   
+	   String extensions = gl.glGetString(GL10.GL_EXTENSIONS);
+	   if (extensions.indexOf("GL_ARB_texture_non_power_of_two") == -1)  {
+	     
+	   }
+	  
     initTexture(width, height);
   }
     
@@ -86,6 +98,14 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
     pgl = (PGraphicsAndroid3D)parent.g;
     gl = pgl.gl;
         
+     int maxSize[] = new int[1];    
+     gl.glGetIntegerv(GL10.GL_MAX_TEXTURE_SIZE, maxSize, 0);
+     
+     String extensions = gl.glGetString(GL10.GL_EXTENSIONS);
+     if (extensions.indexOf("GL_ARB_texture_non_power_of_two") == -1)  {
+       
+     }    
+    
     loadTexture(filename);
   }
     
@@ -146,6 +166,9 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
 
   public void resize(int wide, int high) {
    // super.resize(wide, high);
+    //gl.glReadBuffer(GL10.GL_FRONT);
+    
+    //gl
   }
 
   
@@ -192,8 +215,9 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
 
   public void set(int[] pixels, int format) {
     
-    if (pixels.length != width * height)
-      throw ...
+    if (pixels.length != width * height) {
+      throw new RuntimeException("GLTexture: wrong length of pixels array");
+    }
     
         if (glTexID[0] == 0)
         {
@@ -268,7 +292,6 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
      * @param filename String
      */
     public void loadTexture(String filename) {
-    {
         PImage img = parent.loadImage(filename);
         set(img);
     }  
@@ -454,15 +477,13 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
         img.updatePixels();       
     }
 
-    /**
-     * Load texture, pixels and image from file.
-     * @param filename String
-     */
+    /*
     public void loadTexture(String filename)
     {
         PImage img = parent.loadImage(filename);
         putImage(img);
     }
+    */
 
     /**
      * Load texture, pixels and image from file using the specified texture parameters.
@@ -1738,6 +1759,15 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
     }
      
 
+  // bit shifting this might be more efficient
+  private int nextPowerOfTwo(int val) {
+    int ret = 1;
+    while (ret < val) {
+      ret <<= 1;
+    }
+    return ret;
+  }    
+    
     
     
   /////////////////////////////////////////////////////////////////////////// 
