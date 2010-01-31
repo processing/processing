@@ -4,6 +4,8 @@ import java.nio.IntBuffer;
 
 import javax.microedition.khronos.opengles.*;
 
+import javax.microedition.khronos.egl.EGL10;
+
 import java.nio.*;
 
 // TODO:
@@ -100,11 +102,29 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
         
      int maxSize[] = new int[1];    
      gl.glGetIntegerv(GL10.GL_MAX_TEXTURE_SIZE, maxSize, 0);
+     /*
+     GL_OES_byte_coordinates 
+     GL_OES_fixed_point 
+     GL_OES_single_precision 
+     GL_OES_read_format 
+     GL_OES_compressed_paletted_texture 
+     GL_OES_draw_texture 
+     GL_OES_matrix_get 
+     GL_OES_query_matrix 
+     GL_ARB_texture_compression 
+     GL_ARB_texture_non_power_of_two 
+     GL_ANDROID_direct_texture 
+     GL_ANDROID_user_clip_plane 
+     GL_ANDROID_vertex_buffer_object 
+     GL_ANDROID_generate_mipmap 
+     */
+
+     //EGL10 egl;
+     //egl.eglCreatePbufferSurface(arg0, arg1, arg2);
+
      
-     String extensions = gl.glGetString(GL10.GL_EXTENSIONS);
-     if (extensions.indexOf("GL_ARB_texture_non_power_of_two") == -1)  {
-       
-     }    
+     
+  
     
     loadTexture(filename);
   }
