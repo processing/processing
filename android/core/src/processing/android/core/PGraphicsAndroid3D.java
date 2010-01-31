@@ -199,8 +199,15 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected float[] colorFloats;
   
   /// IntBuffer to go with the pixels[] array
-  protected IntBuffer pixelBuffer;  
+  protected IntBuffer pixelBuffer;
 
+  
+  protected boolean npotTexSupported;
+  protected boolean  mipmapSupported;    
+  protected boolean matrixGetSupported;
+  protected boolean vboSupported; 
+  protected boolean fboSupported;
+  
   // The following variables to be deleted forever:
   
   // cheap picking someday
@@ -267,7 +274,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     reapplySettings();
     
     vertexCheck();
-     
+    
+    
     // init perspective projection based on new dimensions
     cameraFOV = 60 * DEG_TO_RAD; // at least for now
     cameraX = width / 2.0f;
@@ -336,8 +344,7 @@ public class PGraphicsAndroid3D extends PGraphics {
 //    return true;
 //    //return parent.isDisplayable();
 //  }
-
-
+  
   public void beginDraw() {
     if (!settingsInited) defaultSettings();
 
@@ -397,12 +404,14 @@ public class PGraphicsAndroid3D extends PGraphics {
     //gl.glEnable(GL10.GL_AUTO_NORMAL); // I think this is OpenGL 1.2 only
     gl.glEnable(GL10.GL_RESCALE_NORMAL);
     //gl.GlLightModeli(GL10.GL_LIGHT_MODEL_COLOR_CONTROL, GL10.GL_SEPARATE_SPECULAR_COLOR);
+
     
     report("bot beginDraw()");
   }
 
 
   public void endDraw() {
+    
     report("top endDraw()");
 /*    
     if (hints[ENABLE_DEPTH_SORT]) {
@@ -533,7 +542,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     int vertexAlloc = vertices.length;
     
  // Taking square because the buffers will contain repeated vertices... Need better estimation though.
-    int triangleAlloc = 3 * vertexAlloc;;
+    int triangleAlloc = 3 * vertexAlloc;
     int lineAlloc = 2 * vertexAlloc;
     if (vertexBuffer == null || vertexBuffer.capacity() < triangleAlloc) {
       ByteBuffer vbb = ByteBuffer.allocateDirect(triangleAlloc * 3);
@@ -4272,6 +4281,29 @@ public class PGraphicsAndroid3D extends PGraphics {
 
     public void onSurfaceCreated(GL10 igl, EGLConfig config) {
       gl = igl;
+      
+      npotTexSupported = false;
+      mipmapSupported = false;    
+      matrixGetSupported = false;
+      vboSupported = false; 
+      fboSupported = false;
+      String extensions = gl.glGetString(GL10.GL_EXTENSIONS);
+      if (-1 < extensions.indexOf("GL_ARB_texture_non_power_of_two"))  {
+        npotTexSupported = true;  
+       } 
+       if (-1 < extensions.indexOf("GL_ANDROID_generate_mipmap"))  {
+         mipmapSupported = true;
+       }  
+       if (extensions.indexOf("GL_OES_matrix_get") == -1)  {
+         matrixGetSupported = true;
+       }
+       if (-1 < extensions.indexOf("GL_ANDROID_vertex_buffer_object"))  {
+         vboSupported = true;   
+       }
+       if (-1 < extensions.indexOf("GL_OES_framebuffer_object"))  {
+         fboSupported = true;   
+       }      
+      
       recreateResources();
       gl = null;
     }    
