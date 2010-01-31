@@ -12,6 +12,7 @@ import javax.microedition.khronos.opengles.*;
  * texture coordinates (also per vertex). All this data is stored in Vertex Buffer Objects
  * (VBO) in GPU memory for very fast access. 
  */
+@SuppressWarnings("unused")
 public class GLModel implements GLConstants, PConstants {
   protected PApplet parent;    
   protected GL11 gl;  
@@ -66,16 +67,20 @@ public class GLModel implements GLConstants, PConstants {
   public GLModel(PApplet parent, int numVert, int numTex, Parameters params) {
     this.parent = parent;
     a3d = (PGraphicsAndroid3D)parent.g;
-    if (a3d.gl instanceof GL11) {
-      gl = (GL11)a3d.gl;
-    } else {
+    
+    gl = a3d.gl11;
+    if (gl == null) {
       throw new RuntimeException("GLModel: OpenGL ES 1.1 required");
+    }
+    
+    if (!a3d.vboSupported) {
+       throw new RuntimeException("GLModel: Vertex Buffer Objects are not available");
     }
     
     numVertices = numVert;
     numTextures = numTex;
     
-    readParameters(params);
+    setParameters(params);
     
     initBufferIDs();
         
@@ -898,7 +903,7 @@ public class GLModel implements GLConstants, PConstants {
   }
   
   
-  protected void readParameters(Parameters params) {
+  protected void setParameters(Parameters params) {
     pointSprites = false;
     if (params.drawMode == POINTS) glMode = GL11.GL_POINTS;
     else if (params.drawMode == POINT_SPRITES) {
@@ -1088,12 +1093,12 @@ public class GLModel implements GLConstants, PConstants {
 
        if (0 < numTextures)  {
          GLTexture[] textures = group.textures;
-         texTarget = textures[0].getTextureTarget();
+         texTarget = textures[0].getGLTarget();
          gl.glEnable(texTarget);
          // Binding texture units.
          for (int n = 0; n < numTextures; n++) {
            gl.glActiveTexture(GL11.GL_TEXTURE0 + n);
-           gl.glBindTexture(GL11.GL_TEXTURE_2D, textures[n].getGLTexID()); 
+           gl.glBindTexture(GL11.GL_TEXTURE_2D, textures[n].getGLTextureID()); 
          }
          if (pointSprites) {
            // Texturing with point sprites.
@@ -1152,19 +1157,26 @@ public class GLModel implements GLConstants, PConstants {
 	
   ///////////////////////////////////////////////////////////////////////////   
   
+  
   static public Parameters newParameters() {
     return new Parameters();
   }
 
+  
   static public Parameters newParameters(int drawMode) {
     return new Parameters(drawMode);
   }  
 
+  
   static public Parameters newParameters(int drawMode, int updateMode) {
     return new Parameters(drawMode, updateMode);
   }  
-    
+  
+  
   static public class Parameters {
+    public int updateMode;  
+    public int drawMode;
+    
     public Parameters() {
       updateMode = STATIC;    
       drawMode= POINTS;
@@ -1184,9 +1196,6 @@ public class GLModel implements GLConstants, PConstants {
       updateMode = src.updateMode;    
       drawMode= src.drawMode;
     }
-
-    public int updateMode;  
-    public int drawMode;
   }  
   
 	protected class VertexGroup {

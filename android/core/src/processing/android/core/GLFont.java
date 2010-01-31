@@ -141,7 +141,7 @@ public class GLFont extends PFont {
         }
         //System.out.println();
       }
-      tex.loadTexture();
+      tex.update();
       images[i] = tex;
       //System.out.println();
     }
@@ -344,7 +344,7 @@ public class GLFont extends PFont {
                          tex.pixels, y*mbox2,
                          width[i]);
       }
-      tex.loadTexture();
+      tex.update();
       images[i] = tex;
       bitmaps[i] = null;
     }
