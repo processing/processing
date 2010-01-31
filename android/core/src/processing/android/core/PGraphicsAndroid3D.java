@@ -11,13 +11,11 @@ import android.opengl.GLSurfaceView.EGLConfigChooser;
 import android.opengl.GLSurfaceView.Renderer;
 import android.view.SurfaceHolder;
 
-//import javax.microedition.khronos.egl.EGL;
-import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.*;
+import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLDisplay;
 
-//import processing.android.opengl.Cube;
 
 // drawPixels is missing...calls to glDrawPixels are commented out
 //   setRasterPos() is also commented out
@@ -31,6 +29,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   public SurfaceHolder holder;
   
   public GL10 gl;
+  public GL11 gl11;
   public GLU glu;
 
   ////////////////////////////////////////////////////////////  
@@ -207,6 +206,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected boolean matrixGetSupported;
   protected boolean vboSupported; 
   protected boolean fboSupported;
+  protected int maxTextureSize;
   
   // The following variables to be deleted forever:
   
@@ -1116,26 +1116,28 @@ public class PGraphicsAndroid3D extends PGraphics {
     float sx = +1.0f;
     float cy = 0.0f;
     float sy = +1.0f;    
-    if (textureImage != null)
-      if (textureImage instanceof GLTexture) {
-        GLTexture tex = (GLTexture)textureImage;
-        uscale *= tex.getMaxTextureCoordS();
-        vscale *= tex.getMaxTextureCoordT();
+    if (textureImage != null) {
+      GLTexture tex;
+      try {
+        tex = (GLTexture)textureImage;
+      } catch (ClassCastException cce) {
+        throw new RuntimeException("A3D only accepts GLTextures for texturing!");  
+      }
+        
+      uscale *= tex.getMaxTextureCoordS();
+      vscale *= tex.getMaxTextureCoordT();
             
-        if (tex.isFlippedX()) {
-          cx = 1.0f;			
-          sx = -1.0f;
-        }
+      if (tex.isFlippedX()) {
+        cx = 1.0f;			
+        sx = -1.0f;
+      }
 
-        if (tex.isFlippedY()) {
-          cy = 1.0f;			
-          sy = -1.0f;
-        }
+      if (tex.isFlippedY()) {
+        cy = 1.0f;			
+        sy = -1.0f;
       }
-      else { 
-        throw new RuntimeException("A3D only accepts GLTextures for texturing!");    
-      }
-    
+    }
+  
     // Vertex A.
     vertexBuffer.put(toFixed32(vertexa[X]));
     vertexBuffer.put(toFixed32(vertexa[Y]));
@@ -1181,8 +1183,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     triangleCount++;
     
     // Updating the texture assigned to this triangle.
-    if (textureImage != textureImagePrev)
-    {
+    if (textureImage != textureImagePrev) {
         // Add current textured triangle range, if is not null.	
     	if (currentTexTriangleRange != null) {
             texTriangleRanges.add(currentTexTriangleRange);
@@ -1207,7 +1208,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     normalBuffer.position(0);
     textureBuffer.position(0);
 
-    // Last transformation: inversion of coordinate to make comaptible with Processing's inverted Y axis.
+    // Last transformation: inversion of coordinate to make compatible with Processing's inverted Y axis.
     gl.glPushMatrix();
     gl.glScalef(1, -1, 1);
     
@@ -1219,16 +1220,20 @@ public class PGraphicsAndroid3D extends PGraphics {
     for (int i = 0; i < texTriangleRanges.size(); i++) {
       texRange = (TexturedTriangleRange)texTriangleRanges.get(i);
       
-      if (texRange.textureImage != null && textureImage instanceof GLTexture) {
-        tex = (GLTexture)textureImage;
+      if (texRange.textureImage != null) { 
+          
+        try {
+          tex = (GLTexture)texRange.textureImage;
+        } catch (ClassCastException cce) {
+          throw new RuntimeException("A3D only accepts GLTextures for texturing!");  
+        }
         
-        gl.glEnable(tex.getTextureTarget());
-        gl.glBindTexture(tex.getTextureTarget(), tex.getGLTexID());        
+        gl.glEnable(tex.getGLTarget());
+        gl.glBindTexture(tex.getGLTarget(), tex.getGLTextureID());        
     	  
         gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
         texturing = true;
-      }
-      else texturing = false;
+      } else texturing = false;
     	
       gl.glVertexPointer(3, GL10.GL_FIXED, 0, vertexBuffer);
       gl.glColorPointer(4, GL10.GL_FIXED, 0, colorBuffer);
@@ -1237,11 +1242,10 @@ public class PGraphicsAndroid3D extends PGraphics {
       gl.glDrawArrays(GL10.GL_TRIANGLES, 3 * texRange.firstTriangle, 3 * (texRange.lastTriangle - texRange.firstTriangle));
       
       if (texturing) {
-    	  gl.glDisable(tex.getTextureTarget());;
+    	  gl.glDisable(tex.getGLTarget());;
           gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);  	
       }      
     }
-    //gl.glDrawArrays(GL10.GL_TRIANGLES, 3 * start, 3 * (stop - start));
         
     gl.glDisableClientState(GL10.GL_NORMAL_ARRAY);
     gl.glDisableClientState(GL10.GL_COLOR_ARRAY);    
@@ -2287,9 +2291,8 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
 
   
-  protected void getProjectionMatrix() {
-    if (gl instanceof GL11) {
-      GL11 gl11 = (GL11) gl;
+  protected void getProjectionMatrix() {    
+    if (gl11 != null && matrixGetSupported) {
       gl11.glGetFloatv(GL11.GL_PROJECTION_MATRIX, projection, 0);
       projectionUpdated = true;
     } 
@@ -2303,8 +2306,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   
   protected void getModelviewMatrix() {
-    if (gl instanceof GL11) {
-      GL11 gl11 = (GL11) gl;
+    if (gl11 != null && matrixGetSupported) {
       gl11.glGetFloatv(GL11.GL_MODELVIEW_MATRIX, modelview, 0);
       modelviewUpdated = true;
     } 
@@ -2312,12 +2314,14 @@ public class PGraphicsAndroid3D extends PGraphics {
       // TODO: Mechanism to get modelview matrix when no the funtion GetFloatv is available. 
     }
   }
+  
 
   // Calculates the inverse of the modelview matrix.
   protected void calculateModelviewInverse() {
     // TODO: Please finish!
   }
-    
+  
+  
   // Calculates the inverse of the modelview matrix, assuming that no scaling transformation was applied,
   // only translations and rotations.
   // Here is the derivation of the formula:
@@ -4269,12 +4273,26 @@ public class PGraphicsAndroid3D extends PGraphics {
 
     public void onDrawFrame(GL10 igl) {
       gl = igl;
+      
+      try {
+        gl11 = (GL11)gl;
+      } catch (ClassCastException cce) {
+        gl11 = null;
+      }
+      
       parent.handleDraw();
       gl = null;        
     }
 
     public void onSurfaceChanged(GL10 igl, int iwidth, int iheight) {
       gl = igl;
+      
+      try {
+        gl11 = (GL11)gl;
+      } catch (ClassCastException cce) {
+        gl11 = null;
+      }      
+      
       setSize(iwidth, iheight);
       gl = null;    	
     }
@@ -4294,7 +4312,7 @@ public class PGraphicsAndroid3D extends PGraphics {
        if (-1 < extensions.indexOf("GL_ANDROID_generate_mipmap"))  {
          mipmapSupported = true;
        }  
-       if (extensions.indexOf("GL_OES_matrix_get") == -1)  {
+       if (-1 < extensions.indexOf("GL_OES_matrix_get"))  {
          matrixGetSupported = true;
        }
        if (-1 < extensions.indexOf("GL_ANDROID_vertex_buffer_object"))  {
@@ -4302,7 +4320,12 @@ public class PGraphicsAndroid3D extends PGraphics {
        }
        if (-1 < extensions.indexOf("GL_OES_framebuffer_object"))  {
          fboSupported = true;   
-       }      
+       }
+       
+     int maxSize[] = new int[1];    
+     gl.glGetIntegerv(GL10.GL_MAX_TEXTURE_SIZE, maxSize, 0);
+     maxTextureSize = maxSize[0]; 
+       
       
       recreateResources();
       gl = null;
