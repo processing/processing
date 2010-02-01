@@ -96,6 +96,7 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
     gl = a3d.gl;	
         
     PImage img = parent.loadImage(filename);
+    setParameters(params);
     set(img);
   }
 
@@ -164,7 +165,7 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
   
   public void set(PImage img) {
     if (img.width != width || img.height != height) {
-      super.init(img.width, img.height, img.format);
+      super.init(img.width, img.height, format);
       createTexture(width, height);      
     }
     
@@ -219,9 +220,9 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
   }
 
   
-  public void set(int[] pixels, int format) {
+  public void set(int[] intArray, int arrayFormat) {
     
-    if (pixels.length != width * height) {
+    if (intArray.length != width * height) {
       throw new RuntimeException("GLTexture: wrong length of pixels array");
     }
     
@@ -229,16 +230,7 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
       createTexture(width, height);
     }   
     
-    int[] convArray = pixels;
-    int glFormat;
-    if (format == ALPHA) {
-      glFormat = GL10.GL_ALPHA;
-    } else if (format == RGB)  {
-      glFormat = GL10.GL_RGB;
-    } else {
-      glFormat = GL10.GL_RGBA;
-    }
-    convArray = convertToRGBA(pixels, format);    
+    int[] convArray = convertToRGBA(intArray, arrayFormat);    
     
     gl.glBindTexture(glTarget, glTextureID[0]);
                 
@@ -250,7 +242,7 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
         // http://insanitydesign.com/wp/2009/08/01/android-opengl-es-mipmaps/
       }
     }
-    gl.glTexSubImage2D(glTarget, 0, 0, 0, glWidth, glHeight, glFormat, GL10.GL_UNSIGNED_BYTE, IntBuffer.wrap(convArray));
+    gl.glTexSubImage2D(glTarget, 0, 0, 0, glWidth, glHeight, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, IntBuffer.wrap(convArray));
 
     gl.glBindTexture(glTarget, 0);
   }  
@@ -300,7 +292,7 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
    * Copy pixels to texture. Involves main memory to video memory transfer (slow).
    */     
   void update() {
-    set(this.pixels);
+    set(this.pixels, this.format);
   }
     
     
