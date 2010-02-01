@@ -19,7 +19,6 @@ public class GLModel implements GLConstants, PConstants {
   protected PGraphicsAndroid3D a3d;
   
   protected int numVertices;
-  protected int numTextures;
   protected int glMode;
   protected int glUsage;
   protected boolean pointSprites;
@@ -32,7 +31,7 @@ public class GLModel implements GLConstants, PConstants {
   protected FloatBuffer vertices;
   protected FloatBuffer colors;
   protected FloatBuffer normals;
-  protected FloatBuffer[] texCoords;  
+  protected FloatBuffer texCoords;  
     
   protected float[] updateVertexArray;
   protected float[] updateColorArray;
@@ -42,29 +41,22 @@ public class GLModel implements GLConstants, PConstants {
   protected int updateElement;
   protected int firstUpdateIdx;
   protected int lastUpdateIdx;
-  protected int selectedTexture;
     
   protected ArrayList<Integer> groupBreaks;
   protected ArrayList<VertexGroup> groups;
   protected VertexGroup[] vertGroup;
-
-  protected float MAX_POINTSIZE;  
+  
   protected static final int SIZEOF_FLOAT = 4;
   
     
   ////////////////////////////////////////////////////////////
 
   public GLModel(PApplet parent, int numVert) {
-    this(parent, numVert, 0); 
+    this(parent, numVert, new Parameters()); 
   }  
+
   
-  
-  public GLModel(PApplet parent, int numVert, int numTex) {
-    this(parent, numVert, numTex, new Parameters());
-  }
-  
-  
-  public GLModel(PApplet parent, int numVert, int numTex, Parameters params) {
+  public GLModel(PApplet parent, int numVert, Parameters params) {
     this.parent = parent;
     a3d = (PGraphicsAndroid3D)parent.g;
     
@@ -78,7 +70,6 @@ public class GLModel implements GLConstants, PConstants {
     }
     
     numVertices = numVert;
-    numTextures = numTex;
     
     setParameters(params);
     
@@ -97,11 +88,6 @@ public class GLModel implements GLConstants, PConstants {
     updateTexCoordArray = null;
     
     updateElement = -1;
-    selectedTexture = 0;
-    
-    float[] tmp = { 0.0f };
-    gl.glGetFloatv(GL11.GL_POINT_SIZE_MAX, tmp, 0);
-    MAX_POINTSIZE = tmp[0];
   }
   
 
@@ -117,14 +103,6 @@ public class GLModel implements GLConstants, PConstants {
   // Textures
   
   
-  public void selectTexture(int n) {
-      if (updateElement != -1) {
-        throw new RuntimeException("GLModel: cannot select texture between beginUpdate()/endUpdate()");
-      }
-      selectedTexture = n;
-  }
-
-  
   public void setTexture(GLTexture tex) {
     for (int i = 0; i < groups.size(); i++) setGroupTexture(i, tex);
   }
@@ -132,15 +110,6 @@ public class GLModel implements GLConstants, PConstants {
   
   public GLTexture getTexture() {
     return getGroupTexture(0);
-  }
-  
-  
-  /**
-   * Returns the number of textures.
-   * @return int
-   */  
-  public int getNumTextures() {
-    return numTextures;
   }
   
   
@@ -197,18 +166,18 @@ public class GLModel implements GLConstants, PConstants {
     } else if (updateElement == TEXTURES) {
        // Check that all the groups have texture assigned.
        for (int i = 0; i < groups.size(); i++)
-         if (((VertexGroup)groups.get(i)).textures[selectedTexture] == null)
+         if (((VertexGroup)groups.get(i)).texture == null)
            throw new RuntimeException("GLModel: texture must be set first in group " + i);
       
-      gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glTexCoordBufferID[selectedTexture]);
+      gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glTexCoordBufferID[0]);
           
       if (updateTexCoordArray == null) {
-        updateTexCoordArray = new float[texCoords[selectedTexture].capacity()];
+        updateTexCoordArray = new float[texCoords.capacity()];
       }
       int offset = first * 2;
       int size = (last - first + 1) * 2;      
-      texCoords[selectedTexture].get(updateTexCoordArray, offset, size);
-      texCoords[selectedTexture].rewind();          
+      texCoords.get(updateTexCoordArray, offset, size);
+      texCoords.rewind();          
     } else if (updateElement == GROUPS) {
       groupBreaks.clear();
     } else {
@@ -270,10 +239,10 @@ public class GLModel implements GLConstants, PConstants {
       int offset = firstUpdateIdx * 2;
       int size = (lastUpdateIdx - firstUpdateIdx + 1) * 2;
       
-      texCoords[selectedTexture].put(updateNormalArray, offset, size);
-      texCoords[selectedTexture].position(0);
+      texCoords.put(updateNormalArray, offset, size);
+      texCoords.position(0);
       
-      gl.glBufferSubData(GL11.GL_ARRAY_BUFFER, offset * SIZEOF_FLOAT, size * SIZEOF_FLOAT, texCoords[selectedTexture]);
+      gl.glBufferSubData(GL11.GL_ARRAY_BUFFER, offset * SIZEOF_FLOAT, size * SIZEOF_FLOAT, texCoords);
       gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);      
     } else if (updateElement == GROUPS) {
       createGroups();      
@@ -612,8 +581,8 @@ public class GLModel implements GLConstants, PConstants {
     float t = updateTexCoordArray[2 * idx + 1];
     
     if (a3d.imageMode == IMAGE) {
-      s *= vertGroup[idx].textures[selectedTexture].width;
-      t *= vertGroup[idx].textures[selectedTexture].height;
+      s *= vertGroup[idx].texture.width;
+      t *= vertGroup[idx].texture.height;
     }
     
     PVector res = new PVector(s, t, 0);
@@ -635,8 +604,8 @@ public class GLModel implements GLConstants, PConstants {
         u = res[2 * i + 0];
         v = res[2 * i + 1];        
         
-        u *= vertGroup[i].textures[selectedTexture].width;
-        v *= vertGroup[i].textures[selectedTexture].height;
+        u *= vertGroup[i].texture.width;
+        v *= vertGroup[i].texture.height;
 
         res[2 * i + 0] = u;
         res[2 * i + 1] = v;
@@ -670,8 +639,8 @@ public class GLModel implements GLConstants, PConstants {
     if (lastUpdateIdx < idx) lastUpdateIdx = idx;
 
     if (a3d.imageMode == IMAGE) {
-      u /= vertGroup[idx].textures[selectedTexture].width;
-      v /= vertGroup[idx].textures[selectedTexture].height; 
+      u /= vertGroup[idx].texture.width;
+      v /= vertGroup[idx].texture.height; 
     }
     
     updateTexCoordArray[2 * idx + 0] = u;
@@ -693,8 +662,8 @@ public class GLModel implements GLConstants, PConstants {
         u = data[2 * i + 0];
         v = data[2 * i + 1];        
         
-        u /= vertGroup[i].textures[selectedTexture].width;
-        v /= vertGroup[i].textures[selectedTexture].height;
+        u /= vertGroup[i].texture.width;
+        v /= vertGroup[i].texture.height;
 
         updateTexCoordArray[2 * i + 0] = u;
         updateTexCoordArray[2 * i + 1] = v;
@@ -718,8 +687,8 @@ public class GLModel implements GLConstants, PConstants {
       vec = (PVector)data.get(i);
       
       if (a3d.imageMode == IMAGE) {
-        updateTexCoordArray[2 * i + 0] = vec.x / vertGroup[i].textures[selectedTexture].width;
-        updateTexCoordArray[2 * i + 1] = vec.y / vertGroup[i].textures[selectedTexture].height;
+        updateTexCoordArray[2 * i + 0] = vec.x / vertGroup[i].texture.width;
+        updateTexCoordArray[2 * i + 1] = vec.y / vertGroup[i].texture.height;
       } else {
         updateTexCoordArray[2 * i + 0] = vec.x;
         updateTexCoordArray[2 * i + 1] = vec.y;
@@ -748,19 +717,21 @@ public class GLModel implements GLConstants, PConstants {
     return ((VertexGroup)groups.get(gr)).first;
   }
   
+  
   public int getGroupLast(int gr) {
     return ((VertexGroup)groups.get(gr)).last;
   }
-  
+
   
   public void setGroupTexture(int gr, GLTexture tex) {
     VertexGroup group = (VertexGroup)groups.get(gr);
-    group.textures[selectedTexture] = tex;
+    group.texture = tex;
   }
 
+  
   public GLTexture getGroupTexture(int gr) {
     VertexGroup group = (VertexGroup)groups.get(gr);
-    return group.textures[selectedTexture];
+    return group.texture;
   }
   
   
@@ -816,7 +787,7 @@ public class GLModel implements GLConstants, PConstants {
   protected void initGroups() {
     groupBreaks = new ArrayList<Integer>();
     groups = new ArrayList<VertexGroup>();
-    VertexGroup group = new VertexGroup(0, numVertices - 1, numTextures);
+    VertexGroup group = new VertexGroup(0, numVertices - 1);
     groups.add(group);
     vertGroup = new VertexGroup[numVertices];
     for (int i = 0; i < numVertices; i++) {
@@ -838,7 +809,7 @@ public class GLModel implements GLConstants, PConstants {
         idx1 = idx.intValue();
       
         if (idx0 <= idx1) {
-          group = new VertexGroup(idx0, idx1, numTextures);
+          group = new VertexGroup(idx0, idx1);
           groups.add(group);
           for (int n = idx0; n <= idx1; n++) {
             vertGroup[n] = group;
@@ -849,7 +820,7 @@ public class GLModel implements GLConstants, PConstants {
       
       idx1 = numVertices - 1;
       if (idx0 <= idx1) {
-        group = new VertexGroup(idx0, idx1, numTextures);
+        group = new VertexGroup(idx0, idx1);
         groups.add(group);
         for (int n = idx0; n <= idx1; n++) {
           vertGroup[n] = group;
@@ -937,9 +908,8 @@ public class GLModel implements GLConstants, PConstants {
     glVertexBufferID = new int[1];
     glColorBufferID = new int[1];
     glNormalBufferID = new int[1];
-    glVertexBufferID[0] = glColorBufferID[0] = glNormalBufferID[0] = 0;
-    glTexCoordBufferID = new int[numTextures];
-    for (int i = 0; i < numTextures; i++) glTexCoordBufferID[i] = 0;    
+    glTexCoordBufferID = new int[1];
+    glVertexBufferID[0] = glColorBufferID[0] = glNormalBufferID[0] = glTexCoordBufferID[0] = 0;
   }
   
   
@@ -997,23 +967,19 @@ public class GLModel implements GLConstants, PConstants {
   
   
   protected void createTexCoordBuffer() {
+    
+    ByteBuffer vbb = ByteBuffer.allocateDirect(numVertices * 2 * SIZEOF_FLOAT);
+    vbb.order(ByteOrder.nativeOrder());
+    texCoords = vbb.asFloatBuffer();
+
     float[] values = new float[numVertices * 2];
-    for (int i = 0; i < values.length; i++) values[i] = 0.0f;
+    for (int i = 0; i < values.length; i++) values[i] = 0.0f;    
+    texCoords.put(values);
+    texCoords.position(0);    
     
-    for (int i =0; i < numTextures; i++) {
-      ByteBuffer vbb = ByteBuffer.allocateDirect(numVertices * 2 * SIZEOF_FLOAT);
-      vbb.order(ByteOrder.nativeOrder());
-      texCoords[i] = vbb.asFloatBuffer();
-      
-      texCoords[i].put(values);
-      texCoords[i].position(0);    
-    }
-    
-    gl.glGenBuffers(numTextures, glTexCoordBufferID, numTextures);
-    for (int i = 0; i < numTextures; i++)  {
-      gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glTexCoordBufferID[i]);
-      gl.glBufferData(GL11.GL_ARRAY_BUFFER, texCoords[i].capacity() * SIZEOF_FLOAT, texCoords[i], glUsage);
-    }
+    gl.glGenBuffers(1, glTexCoordBufferID, 0);
+    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glTexCoordBufferID[0]);
+    gl.glBufferData(GL11.GL_ARRAY_BUFFER, texCoords.capacity() * SIZEOF_FLOAT, texCoords, glUsage);
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);    
   }
   
@@ -1044,8 +1010,8 @@ public class GLModel implements GLConstants, PConstants {
   
   protected void deleteTexCoordBuffer() {
     if (glTexCoordBufferID[0] != 0) {
-      gl.glDeleteBuffers(numTextures, glTexCoordBufferID, 0);
-      for (int i = 0; i < numTextures; i++) glTexCoordBufferID[i] = 0;
+      gl.glDeleteBuffers(1, glTexCoordBufferID, 0);
+      glTexCoordBufferID[0] = 0;
     }
   }  
   
@@ -1065,98 +1031,99 @@ public class GLModel implements GLConstants, PConstants {
 	 }
   
   
-  public void render(int gr0, int gr1)
-  {
-	   int texTarget = GL11.GL_TEXTURE_2D;
-	   float pointSize;
+  public void render(int gr0, int gr1) {
+	  int texTarget = GL11.GL_TEXTURE_2D;
+	  GLTexture tex;
+	  float pointSize;
 	  
-	   // Setting line width and point size from stroke value.
-		 gl.glLineWidth(a3d.strokeWeight);
-		 pointSize = PApplet.min(a3d.strokeWeight, MAX_POINTSIZE);
-     gl.glPointSize(pointSize);
+	  // Setting line width and point size from stroke value.
+		gl.glLineWidth(a3d.strokeWeight);
+		pointSize = PApplet.min(a3d.strokeWeight, a3d.maxPointSize);
+    gl.glPointSize(pointSize);
 	    
-     gl.glEnableClientState(GL11.GL_NORMAL_ARRAY);
-     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glNormalBufferID[0]);
-     gl.glNormalPointer(GL11.GL_FLOAT, 0, 0);
+    gl.glEnableClientState(GL11.GL_NORMAL_ARRAY);
+    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glNormalBufferID[0]);
+    gl.glNormalPointer(GL11.GL_FLOAT, 0, 0);
 
-     gl.glEnableClientState(GL11.GL_COLOR_ARRAY);
-     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glColorBufferID[0]);
-     gl.glColorPointer(4, GL11.GL_FLOAT, 0, 0);
+    gl.glEnableClientState(GL11.GL_COLOR_ARRAY);
+    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glColorBufferID[0]);
+    gl.glColorPointer(4, GL11.GL_FLOAT, 0, 0);
      
-     gl.glEnableClientState(GL11.GL_VERTEX_ARRAY);            
-     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glVertexBufferID[0]);
-     gl.glVertexPointer(3, GL11.GL_FLOAT, 0, 0);
+    gl.glEnableClientState(GL11.GL_VERTEX_ARRAY);            
+    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glVertexBufferID[0]);
+    gl.glVertexPointer(3, GL11.GL_FLOAT, 0, 0);
       
-     VertexGroup group;
-     for (int i = gr0; i <= gr1; i++) {
-       group = (VertexGroup)groups.get(i);
+    VertexGroup group;
+    for (int i = gr0; i <= gr1; i++) {
+      group = (VertexGroup)groups.get(i);
 
-       if (0 < numTextures)  {
-         GLTexture[] textures = group.textures;
-         texTarget = textures[0].getGLTarget();
-         gl.glEnable(texTarget);
-         // Binding texture units.
-         for (int n = 0; n < numTextures; n++) {
-           gl.glActiveTexture(GL11.GL_TEXTURE0 + n);
-           gl.glBindTexture(GL11.GL_TEXTURE_2D, textures[n].getGLTextureID()); 
-         }
-         if (pointSprites) {
-           // Texturing with point sprites.
+      tex = group.texture; 
+      if (tex != null)  {
+         
+        texTarget = group.texture.getGLTarget();
+        gl.glEnable(texTarget);
+        // Binding texture units.
+         
+        gl.glActiveTexture(GL11.GL_TEXTURE0);
+        gl.glBindTexture(GL11.GL_TEXTURE_2D, group.texture.getGLTextureID()); 
+         
+        if (pointSprites) {
+          // Texturing with point sprites.
               
-           // This is how will our point sprite's size will be modified by 
-           // distance from the viewer             
-           float quadratic[] = {1.0f, 0.0f, 0.01f, 1};
-           ByteBuffer temp = ByteBuffer.allocateDirect(16);
-           temp.order(ByteOrder.nativeOrder());              
-           gl.glPointParameterfv(GL11.GL_POINT_DISTANCE_ATTENUATION, (FloatBuffer)temp.asFloatBuffer().put(quadratic).flip());
+          // This is how will our point sprite's size will be modified by 
+          // distance from the viewer             
+          float quadratic[] = {1.0f, 0.0f, 0.01f, 1};
+          ByteBuffer temp = ByteBuffer.allocateDirect(16);
+          temp.order(ByteOrder.nativeOrder());              
+          gl.glPointParameterfv(GL11.GL_POINT_DISTANCE_ATTENUATION, (FloatBuffer)temp.asFloatBuffer().put(quadratic).flip());
            
-           // The alpha of a point is calculated to allow the fading of points 
-           // instead of shrinking them past a defined threshold size. The threshold 
-           // is defined by GL_POINT_FADE_THRESHOLD_SIZE_ARB and is not clamped to 
-           // the minimum and maximum point sizes.
-           gl.glPointParameterf(GL11.GL_POINT_FADE_THRESHOLD_SIZE, 0.6f * pointSize);
-           gl.glPointParameterf(GL11.GL_POINT_SIZE_MIN, 1.0f);
-           gl.glPointParameterf(GL11.GL_POINT_SIZE_MAX, MAX_POINTSIZE);
+          // The alpha of a point is calculated to allow the fading of points 
+          // instead of shrinking them past a defined threshold size. The threshold 
+          // is defined by GL_POINT_FADE_THRESHOLD_SIZE_ARB and is not clamped to 
+          // the minimum and maximum point sizes.
+          gl.glPointParameterf(GL11.GL_POINT_FADE_THRESHOLD_SIZE, 0.6f * pointSize);
+          gl.glPointParameterf(GL11.GL_POINT_SIZE_MIN, 1.0f);
+          gl.glPointParameterf(GL11.GL_POINT_SIZE_MAX, a3d.maxPointSize);
 
-           // Specify point sprite texture coordinate replacement mode for each 
-           // texture unit
-           gl.glTexEnvf(GL11.GL_POINT_SPRITE_OES, GL11.GL_COORD_REPLACE_OES, GL11.GL_TRUE);
+          // Specify point sprite texture coordinate replacement mode for each 
+          // texture unit
+          gl.glTexEnvf(GL11.GL_POINT_SPRITE_OES, GL11.GL_COORD_REPLACE_OES, GL11.GL_TRUE);
 
-           gl.glEnable(GL11.GL_POINT_SPRITE_OES);           
-         } else {
-           // Regular texturing.
-           gl.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
-           for (int n = 0; n < numTextures; n++) {
-             gl.glClientActiveTexture(GL11.GL_TEXTURE0 + n);
-             gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glTexCoordBufferID[n]);
-             gl.glTexCoordPointer(2, GL11.GL_FLOAT, 0, 0);
-           }           
-         }
-       }
+          gl.glEnable(GL11.GL_POINT_SPRITE_OES);           
+        } else {
+          // Regular texturing.
+          gl.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
+          gl.glClientActiveTexture(GL11.GL_TEXTURE0);
+          gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glTexCoordBufferID[0]);
+          gl.glTexCoordPointer(2, GL11.GL_FLOAT, 0, 0);
+        }
+      }
        
       // Last transformation: inversion of coordinate to make compatible with Processing's inverted Y axis.
       gl.glPushMatrix();
       gl.glScalef(1, -1, 1);     
       gl.glDrawArrays(glMode, group.first, group.last - group.first + 1);
-      gl.glPopMatrix();     
+      gl.glPopMatrix();
+      
+      if (tex != null)  {
+        if (pointSprites)   {
+          gl.glDisable(GL11.GL_POINT_SPRITE_OES);
+        } else  {
+          gl.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
+        }
+        gl.glDisable(texTarget);
+      }       
     }
-
-    if (0 < numTextures)  {
-	    	if (pointSprites) 	{
-	    		gl.glDisable(GL11.GL_POINT_SPRITE_OES);
-	    	} 	else 	{
-	    	    gl.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
-	    	}
-	    	gl.glDisable(texTarget);
-	    }
 
     gl.glDisableClientState(GL11.GL_VERTEX_ARRAY);    
 	  gl.glDisableClientState(GL11.GL_COLOR_ARRAY);
     gl.glDisableClientState(GL11.GL_NORMAL_ARRAY);
 	}	
+  
 	
   ///////////////////////////////////////////////////////////////////////////   
   
+  // Parameters
   
   static public Parameters newParameters() {
     return new Parameters();
@@ -1199,14 +1166,14 @@ public class GLModel implements GLConstants, PConstants {
   }  
   
 	protected class VertexGroup {
-    VertexGroup(int n0, int n1, int numTex) {
+    VertexGroup(int n0, int n1) {
       first = n0;
-      last = n1;
-      textures = new GLTexture[numTex];
+      last = n1; 
+      texture = null;
     }
 	  
 	  int first;
-	  int last;
-    GLTexture[] textures;      
+	  int last;	  
+    GLTexture texture;      
 	}
 }
