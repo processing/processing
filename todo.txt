@@ -2,7 +2,7 @@
 X hitting ESC inside Color Selector will quit Processing
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1006
 _ processing 0142 japanese input problem
-_   
+_   http://dev.processing.org/bugs/show_bug.cgi?id=854
 
 
 _ need to set exported applications to only run as 32-bit on osx
