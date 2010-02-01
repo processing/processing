@@ -2998,6 +2998,10 @@ public class PApplet extends Activity implements PConstants, Runnable {
     }
     return new PFont(baseFont, round(size), smooth, charset);
   }
+  
+  //////////////////////////////////////////////////////////////
+  
+  // GL-methods
 
   public GLFont loadGLFont(String filename) {
     try {
@@ -3033,6 +3037,10 @@ public class PApplet extends Activity implements PConstants, Runnable {
       baseFont = PFont.findFont(name);
     }
     return new GLFont(this, baseFont, round(size), smooth, charset);
+  }
+  
+  public GLTexture loadGLTexture(String filename) {
+    return new GLTexture(this, filename);
   }
 
   //////////////////////////////////////////////////////////////
