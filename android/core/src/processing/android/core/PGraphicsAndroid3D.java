@@ -207,6 +207,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected boolean vboSupported; 
   protected boolean fboSupported;
   protected int maxTextureSize;
+  protected float maxPointSize;
   
   // The following variables to be deleted forever:
   
@@ -4300,6 +4301,12 @@ public class PGraphicsAndroid3D extends PGraphics {
     public void onSurfaceCreated(GL10 igl, EGLConfig config) {
       gl = igl;
       
+      try {
+        gl11 = (GL11)gl;
+      } catch (ClassCastException cce) {
+        gl11 = null;
+      }          
+      
       npotTexSupported = false;
       mipmapSupported = false;    
       matrixGetSupported = false;
@@ -4322,10 +4329,15 @@ public class PGraphicsAndroid3D extends PGraphics {
          fboSupported = true;   
        }
        
-     int maxSize[] = new int[1];    
-     gl.glGetIntegerv(GL10.GL_MAX_TEXTURE_SIZE, maxSize, 0);
-     maxTextureSize = maxSize[0]; 
-       
+       int maxTexSize[] = new int[1];    
+       gl.glGetIntegerv(GL10.GL_MAX_TEXTURE_SIZE, maxTexSize, 0);
+       maxTextureSize = maxTexSize[0]; 
+     
+      if (gl11 != null) {
+        float[] maxPtSize = { 0.0f };
+        gl11.glGetFloatv(GL11.GL_POINT_SIZE_MAX, maxPtSize, 0);
+        maxPointSize = maxPtSize[0];             
+      }       
       
       recreateResources();
       gl = null;
