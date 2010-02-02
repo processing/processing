@@ -32,7 +32,11 @@ public class GLModel implements GLConstants, PConstants {
   protected FloatBuffer colors;
   protected FloatBuffer normals;
   protected FloatBuffer texCoords;  
-    
+
+  // TODO: maybe, instead of allocating memory for this arrays, we could just use
+  // updateVertexArray = vertices.array(),
+  // updateColorArray = colors.array(),
+  // etc.
   protected float[] updateVertexArray;
   protected float[] updateColorArray;
   protected float[] updateNormalArray;
@@ -41,16 +45,24 @@ public class GLModel implements GLConstants, PConstants {
   protected int updateElement;
   protected int firstUpdateIdx;
   protected int lastUpdateIdx;
-    
-  protected ArrayList<Integer> groupBreaks;
+  
+  //protected ArrayList<Integer> groupBreaks;
   protected ArrayList<VertexGroup> groups;
   protected VertexGroup[] vertGroup;
+  protected boolean creatingGroup;
+  protected boolean firstSetGroup;
+  protected int grIdx0;
+  protected int grIdx1;
   
+  
+  // TODO: this should be calculated depending on the platform.
   protected static final int SIZEOF_FLOAT = 4;
   
     
   ////////////////////////////////////////////////////////////
 
+  // Constructors.
+  
   public GLModel(PApplet parent, int numVert) {
     this(parent, numVert, new Parameters()); 
   }  
@@ -60,33 +72,22 @@ public class GLModel implements GLConstants, PConstants {
     this.parent = parent;
     a3d = (PGraphicsAndroid3D)parent.g;
     
+    // Checking we have what we need:
     gl = a3d.gl11;
     if (gl == null) {
       throw new RuntimeException("GLModel: OpenGL ES 1.1 required");
     }
-    
     if (!a3d.vboSupported) {
        throw new RuntimeException("GLModel: Vertex Buffer Objects are not available");
     }
     
-    numVertices = numVert;
-    
     setParameters(params);
+    createModel(numVert);    
     
-    initBufferIDs();
-        
-    createVertexBuffer();
-    createColorBuffer();
-    createNormalBuffer();    
-    createTexCoordBuffer();
-
-    initGroups();
-
     updateVertexArray = null;
     updateColorArray = null;
     updateNormalArray = null;
-    updateTexCoordArray = null;
-    
+    updateTexCoordArray = null;    
     updateElement = -1;
   }
   
@@ -142,6 +143,10 @@ public class GLModel implements GLConstants, PConstants {
       int size = (last - first + 1) * 3;
       vertices.get(updateVertexArray, offset, size);
       vertices.rewind();
+      
+      // For group creation inside update vertices block.
+      creatingGroup = false;
+      firstSetGroup = true;
     } else if (updateElement == COLORS) {
       gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glColorBufferID[0]);
             
@@ -163,12 +168,7 @@ public class GLModel implements GLConstants, PConstants {
       normals.get(updateNormalArray, offset, size);
       normals.rewind();  
         
-    } else if (updateElement == TEXTURES) {
-       // Check that all the groups have texture assigned.
-       for (int i = 0; i < groups.size(); i++)
-         if (((VertexGroup)groups.get(i)).texture == null)
-           throw new RuntimeException("GLModel: texture must be set first in group " + i);
-      
+    } else if (updateElement == TEXTURES) {      
       gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glTexCoordBufferID[0]);
           
       if (updateTexCoordArray == null) {
@@ -179,18 +179,22 @@ public class GLModel implements GLConstants, PConstants {
       texCoords.get(updateTexCoordArray, offset, size);
       texCoords.rewind();          
     } else if (updateElement == GROUPS) {
-      groupBreaks.clear();
+      groups.clear();
     } else {
       throw new RuntimeException("GLModel: unknown element to update");  
     }    
   }
   
+  
   public void endUpdate() {
     if (updateElement == -1) {
-      throw new RuntimeException("GLModel: call beginUpdate()");
+      throw new RuntimeException("GLModel: call beginUpdate() first");
     }
     
-    if (lastUpdateIdx < firstUpdateIdx) return;  
+    if (lastUpdateIdx < firstUpdateIdx) {
+      updateElement = -1;
+      return;  
+    }
     
     if (updateElement == VERTICES) {
       if (updateVertexArray == null) {
@@ -204,7 +208,12 @@ public class GLModel implements GLConstants, PConstants {
       vertices.position(0);
     
       gl.glBufferSubData(GL11.GL_ARRAY_BUFFER, offset * SIZEOF_FLOAT, size * SIZEOF_FLOAT, vertices);
-      gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);      
+      gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
+      
+      if (creatingGroup) {
+        // The last group being created is added.
+        addGroup(grIdx0, grIdx1, null);
+      }
     } else if (updateElement == COLORS) {
       if (updateColorArray == null) {
         throw new RuntimeException("GLModel: color array is null");    
@@ -245,7 +254,7 @@ public class GLModel implements GLConstants, PConstants {
       gl.glBufferSubData(GL11.GL_ARRAY_BUFFER, offset * SIZEOF_FLOAT, size * SIZEOF_FLOAT, texCoords);
       gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);      
     } else if (updateElement == GROUPS) {
-      createGroups();      
+      // TODO: check consistency of newly created groups (make sure that there are not overlapping groups)      
     }
     
     updateElement = -1;
@@ -309,6 +318,13 @@ public class GLModel implements GLConstants, PConstants {
 
     if (idx < firstUpdateIdx) firstUpdateIdx = idx;
     if (lastUpdateIdx < idx) lastUpdateIdx = idx;
+    
+    if (creatingGroup) {
+      if (grIdx0 == -1) {
+        grIdx0 = idx;
+      }
+      grIdx1 = idx;  
+    }
     
     updateVertexArray[3 * idx + 0] = x;
     updateVertexArray[3 * idx + 1] = y;
@@ -577,15 +593,18 @@ public class GLModel implements GLConstants, PConstants {
       throw new RuntimeException("GLModel: update mode is not set to TEXTURES");
     }
 
-    float s = updateTexCoordArray[2 * idx + 0];
-    float t = updateTexCoordArray[2 * idx + 1];
+    float u = updateTexCoordArray[2 * idx + 0];
+    float v = updateTexCoordArray[2 * idx + 1];
     
     if (a3d.imageMode == IMAGE) {
-      s *= vertGroup[idx].texture.width;
-      t *= vertGroup[idx].texture.height;
+      if (vertGroup[idx].texture == null) {
+        throw new RuntimeException("GLModel: when setting texture coordinates in IMAGE mode, the textures need to be assigned first");
+      }      
+      u *= vertGroup[idx].texture.width;
+      v *= vertGroup[idx].texture.height;
     }
     
-    PVector res = new PVector(s, t, 0);
+    PVector res = new PVector(u, v, 0);
     return res;
   }
 
@@ -601,6 +620,10 @@ public class GLModel implements GLConstants, PConstants {
     if (a3d.imageMode == IMAGE) {
       float u, v;
       for (int i = 0; i < numVertices; i++) {
+        if (vertGroup[i].texture == null) {
+          throw new RuntimeException("GLModel: when setting texture coordinates in IMAGE mode, the textures need to be assigned first");
+        }        
+        
         u = res[2 * i + 0];
         v = res[2 * i + 1];        
         
@@ -639,6 +662,9 @@ public class GLModel implements GLConstants, PConstants {
     if (lastUpdateIdx < idx) lastUpdateIdx = idx;
 
     if (a3d.imageMode == IMAGE) {
+      if (vertGroup[idx].texture == null) {
+        throw new RuntimeException("GLModel: when setting texture coordinates in IMAGE mode, the textures need to be assigned first");
+      }
       u /= vertGroup[idx].texture.width;
       v /= vertGroup[idx].texture.height; 
     }
@@ -659,6 +685,10 @@ public class GLModel implements GLConstants, PConstants {
     if (a3d.imageMode == IMAGE) {
       float u, v;
       for (int i = 0; i < numVertices; i++) {
+        if (vertGroup[i].texture == null) {
+          throw new RuntimeException("GLModel: when setting texture coordinates in IMAGE mode, the textures need to be assigned first");
+        }      
+        
         u = data[2 * i + 0];
         v = data[2 * i + 1];        
         
@@ -687,6 +717,9 @@ public class GLModel implements GLConstants, PConstants {
       vec = (PVector)data.get(i);
       
       if (a3d.imageMode == IMAGE) {
+        if (vertGroup[i].texture == null) {
+          throw new RuntimeException("GLModel: when setting texture coordinates in IMAGE mode, the textures need to be assigned first");
+        }      
         updateTexCoordArray[2 * i + 0] = vec.x / vertGroup[i].texture.width;
         updateTexCoordArray[2 * i + 1] = vec.y / vertGroup[i].texture.height;
       } else {
@@ -695,17 +728,65 @@ public class GLModel implements GLConstants, PConstants {
       }
     }
   }
+
   
   ////////////////////////////////////////////////////////////  
   
   // GROUPS   
   
   
-  public void setGroup(int idx) {
-    if (idx < firstUpdateIdx) firstUpdateIdx = idx;
-    if (lastUpdateIdx < idx) lastUpdateIdx = idx;    
-    groupBreaks.add(new Integer(idx));
+  public void setGroup(int gr) {
+    if (updateElement != VERTICES) {
+      throw new RuntimeException("GLModel: setGroup() with group number as only argument must be used while updating vertices");
+    }
+    
+    if (firstSetGroup) {
+      // The first time the method setGroup is called inside the update vertices block, all the current groups
+      // are erased.
+      firstSetGroup = false; 
+      groups.clear();
+    }
+    
+    if (creatingGroup) {
+      // One group was being specified. Now it is finished, before we start a new one.
+      addGroup(grIdx0, grIdx1, null);
+    }
+    
+    creatingGroup = true;
+    grIdx0 =  grIdx1 = -1;
   }
+  
+  
+  public void setGroup(int gr, int idx0, int idx1) {
+    if (updateElement != GROUPS) {
+      throw new RuntimeException("GLModel: update mode is not set to GROUPS");
+    }
+
+    if (groups.size() != gr) {
+      throw new RuntimeException("GLModel: wrong group index");
+    }
+
+    if (idx0 < firstUpdateIdx) firstUpdateIdx = idx0;
+    if (lastUpdateIdx < idx1) lastUpdateIdx = idx1;
+        
+    addGroup(idx0, idx1, null);
+  }  
+  
+  
+public void setGroup(int gr, int idx0, int idx1, GLTexture tex) {
+    if (updateElement != GROUPS) {
+      throw new RuntimeException("GLModel: update mode is not set to GROUPS");
+    }
+
+    if (groups.size() != gr) {
+      throw new RuntimeException("GLModel: wrong group index");
+    }
+        
+    if (idx0 < firstUpdateIdx) firstUpdateIdx = idx0;
+    if (lastUpdateIdx < idx1) lastUpdateIdx = idx1;
+    
+    addGroup(idx0, idx1, tex);
+  }  
   
   
   public int getNumGroups() {
@@ -785,47 +866,20 @@ public class GLModel implements GLConstants, PConstants {
   
   
   protected void initGroups() {
-    groupBreaks = new ArrayList<Integer>();
     groups = new ArrayList<VertexGroup>();
-    VertexGroup group = new VertexGroup(0, numVertices - 1);
-    groups.add(group);
     vertGroup = new VertexGroup[numVertices];
-    for (int i = 0; i < numVertices; i++) {
-      vertGroup[i] = group;
-    }
+    addGroup(0, numVertices - 1, null);
   }
   
   
-  protected void createGroups() {
-      // Constructing the intervals given the "break-point" vertices.
-      VertexGroup group;
-      int idx0, idx1;
-      idx0 = 0;
-      Integer idx;
-      groups.clear();
-      for (int i = 0; i < groupBreaks.size(); i++) {
-        // A group ends at idx1. So the interval is (idx0, idx1).
-        idx = (Integer)groupBreaks.get(i);
-        idx1 = idx.intValue();
-      
-        if (idx0 <= idx1) {
-          group = new VertexGroup(idx0, idx1);
-          groups.add(group);
-          for (int n = idx0; n <= idx1; n++) {
-            vertGroup[n] = group;
-          }
-          idx0 = idx1 + 1;
-        }
+  protected void addGroup(int idx0, int idx1, GLTexture tex) {
+    if (0 <= idx0 && idx0 <=  idx1) {
+      VertexGroup group = new VertexGroup(idx0, idx1, tex);
+      groups.add(group);
+      for (int n = idx0; n <= idx1; n++) {
+        vertGroup[n] = group;
       }
-      
-      idx1 = numVertices - 1;
-      if (idx0 <= idx1) {
-        group = new VertexGroup(idx0, idx1);
-        groups.add(group);
-        for (int n = idx0; n <= idx1; n++) {
-          vertGroup[n] = group;
-        }        
-      }
+    }
   }
   
   
@@ -901,7 +955,20 @@ public class GLModel implements GLConstants, PConstants {
   
   ////////////////////////////////////////////////////////////  
   
-  // Buffer handling.
+  // Data allocation, deletion.
+
+  
+  void createModel(int numVert) {
+    numVertices = numVert;
+    initBufferIDs();
+ 
+    createVertexBuffer();
+    createColorBuffer();
+    createNormalBuffer();    
+    createTexCoordBuffer();
+
+    initGroups();    
+  }
   
   
   void initBufferIDs() {
@@ -925,6 +992,8 @@ public class GLModel implements GLConstants, PConstants {
     vertices.put(values);
     vertices.position(0);
     
+    deleteVertexBuffer();  // Just in case.
+    
     gl.glGenBuffers(1, glVertexBufferID, 0);
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glVertexBufferID[0]);
     gl.glBufferData(GL11.GL_ARRAY_BUFFER, vertices.capacity() * SIZEOF_FLOAT, vertices, glUsage);
@@ -941,6 +1010,8 @@ public class GLModel implements GLConstants, PConstants {
     for (int i = 0; i < values.length; i++) values[i] = 1.0f;
     colors.put(values);
     colors.position(0);
+    
+    deleteColorBuffer();  // Just in case.
     
     gl.glGenBuffers(1, glColorBufferID, 0);
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glColorBufferID[0]);
@@ -959,6 +1030,8 @@ public class GLModel implements GLConstants, PConstants {
     normals.put(values);
     normals.position(0);    
     
+    deleteNormalBuffer();  // Just in case.
+    
     gl.glGenBuffers(1, glNormalBufferID, 0);
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glNormalBufferID[0]);
     gl.glBufferData(GL11.GL_ARRAY_BUFFER, normals.capacity() * SIZEOF_FLOAT, normals, glUsage);
@@ -976,6 +1049,8 @@ public class GLModel implements GLConstants, PConstants {
     for (int i = 0; i < values.length; i++) values[i] = 0.0f;    
     texCoords.put(values);
     texCoords.position(0);    
+    
+    deleteTexCoordBuffer(); // Just in case.
     
     gl.glGenBuffers(1, glTexCoordBufferID, 0);
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glTexCoordBufferID[0]);
@@ -1171,7 +1246,13 @@ public class GLModel implements GLConstants, PConstants {
       last = n1; 
       texture = null;
     }
-	  
+
+    VertexGroup(int n0, int n1, GLTexture tex) {
+      first = n0;
+      last = n1; 
+      texture = tex;
+    }
+    
 	  int first;
 	  int last;	  
     GLTexture texture;      
