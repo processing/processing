@@ -45,15 +45,14 @@ public class GLModel implements GLConstants, PConstants {
   protected int updateElement;
   protected int firstUpdateIdx;
   protected int lastUpdateIdx;
+  protected GLTexture updateTexture;
   
-  //protected ArrayList<Integer> groupBreaks;
   protected ArrayList<VertexGroup> groups;
   protected VertexGroup[] vertGroup;
   protected boolean creatingGroup;
   protected boolean firstSetGroup;
   protected int grIdx0;
   protected int grIdx1;
-  
   
   // TODO: this should be calculated depending on the platform.
   protected static final int SIZEOF_FLOAT = 4;
@@ -105,7 +104,11 @@ public class GLModel implements GLConstants, PConstants {
   
   
   public void setTexture(GLTexture tex) {
-    for (int i = 0; i < groups.size(); i++) setGroupTexture(i, tex);
+    if (updateElement == -1) { 
+      for (int i = 0; i < groups.size(); i++) setGroupTexture(i, tex);
+    } else if (updateElement == TEXTURES) {
+      updateTexture = tex;  
+    }
   }
 
   
@@ -179,7 +182,7 @@ public class GLModel implements GLConstants, PConstants {
       texCoords.get(updateTexCoordArray, offset, size);
       texCoords.rewind();          
     } else if (updateElement == GROUPS) {
-      groups.clear();
+      deleteGroups();
     } else {
       throw new RuntimeException("GLModel: unknown element to update");  
     }    
@@ -597,7 +600,7 @@ public class GLModel implements GLConstants, PConstants {
     float v = updateTexCoordArray[2 * idx + 1];
     
     if (a3d.imageMode == IMAGE) {
-      if (vertGroup[idx].texture == null) {
+      if (vertGroup[idx] != null && vertGroup[idx].texture == null) {
         throw new RuntimeException("GLModel: when setting texture coordinates in IMAGE mode, the textures need to be assigned first");
       }      
       u *= vertGroup[idx].texture.width;
@@ -620,7 +623,7 @@ public class GLModel implements GLConstants, PConstants {
     if (a3d.imageMode == IMAGE) {
       float u, v;
       for (int i = 0; i < numVertices; i++) {
-        if (vertGroup[i].texture == null) {
+        if (vertGroup[i] != null && vertGroup[i].texture == null) {
           throw new RuntimeException("GLModel: when setting texture coordinates in IMAGE mode, the textures need to be assigned first");
         }        
         
@@ -660,9 +663,13 @@ public class GLModel implements GLConstants, PConstants {
 
     if (idx < firstUpdateIdx) firstUpdateIdx = idx;
     if (lastUpdateIdx < idx) lastUpdateIdx = idx;
+    
+    if (updateTexture != null && vertGroup[idx] != null) {
+      vertGroup[idx].texture = updateTexture;
+    }
 
     if (a3d.imageMode == IMAGE) {
-      if (vertGroup[idx].texture == null) {
+      if (vertGroup[idx] != null && vertGroup[idx].texture == null) {
         throw new RuntimeException("GLModel: when setting texture coordinates in IMAGE mode, the textures need to be assigned first");
       }
       u /= vertGroup[idx].texture.width;
@@ -685,7 +692,7 @@ public class GLModel implements GLConstants, PConstants {
     if (a3d.imageMode == IMAGE) {
       float u, v;
       for (int i = 0; i < numVertices; i++) {
-        if (vertGroup[i].texture == null) {
+        if (vertGroup[i] != null && vertGroup[i].texture == null) {
           throw new RuntimeException("GLModel: when setting texture coordinates in IMAGE mode, the textures need to be assigned first");
         }      
         
@@ -717,7 +724,7 @@ public class GLModel implements GLConstants, PConstants {
       vec = (PVector)data.get(i);
       
       if (a3d.imageMode == IMAGE) {
-        if (vertGroup[i].texture == null) {
+        if (vertGroup[i] != null && vertGroup[i].texture == null) {
           throw new RuntimeException("GLModel: when setting texture coordinates in IMAGE mode, the textures need to be assigned first");
         }      
         updateTexCoordArray[2 * i + 0] = vec.x / vertGroup[i].texture.width;
@@ -743,8 +750,8 @@ public class GLModel implements GLConstants, PConstants {
     if (firstSetGroup) {
       // The first time the method setGroup is called inside the update vertices block, all the current groups
       // are erased.
-      firstSetGroup = false; 
-      groups.clear();
+      firstSetGroup = false;
+      deleteGroups();
     }
     
     if (creatingGroup) {
@@ -879,6 +886,14 @@ public void setGroup(int gr, int idx0, int idx1, GLTexture tex) {
       for (int n = idx0; n <= idx1; n++) {
         vertGroup[n] = group;
       }
+    }
+  }
+  
+  
+  protected void deleteGroups() {
+    groups.clear();
+    for (int n = 0; n < numVertices; n++) {
+       vertGroup[n] = null;
     }
   }
   
