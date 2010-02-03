@@ -623,7 +623,6 @@ public class GLModel implements GLConstants, PConstants {
     PVector res = new PVector(u, v, 0);
     return res;
   }
-
   
   public float[] getTexCoordArray() {
     if (updateElement != TEXTURES) {
@@ -631,6 +630,8 @@ public class GLModel implements GLConstants, PConstants {
     }
     
     float[] res = new float[numVertices * 2];
+    getTexCoordArrayImpl(res, 0, numVertices);
+    
     PApplet.arrayCopy(updateTexCoordArray, res);
     
     if (a3d.imageMode == IMAGE) {
@@ -652,6 +653,12 @@ public class GLModel implements GLConstants, PConstants {
     }
     
     return res;
+  }
+
+
+  protected float[] getTexCoordArrayImpl(float[] data, int first, int last) {
+    PApplet.arrayCopy(updateTexCoordArray, first * 2, data, first * 2,  (last - first + 1) * 2);
+    return  data;   
   }
 
   
@@ -922,6 +929,58 @@ public void setGroup(int gr, int idx0, int idx1, GLTexture tex) {
     for (int n = 0; n < numVertices; n++) {
        vertGroup[n] = null;
     }
+  }
+  
+  
+  ////////////////////////////////////////////////////////////  
+  
+  // Resize   
+
+  
+  public void resize(int numVert) {
+    // Getting the current data stored in the model.
+    float[] tmpVertexArray = new float[numVert * 3];
+    float[] tmpColorArray = new float[numVert * 4];
+    float[] tmpNormalArray = new float[numVert * 3];
+    float[] tmpTexCoordArray = new float[numVert * 2];    
+    
+    int numVerticesOld = numVertices; 
+    int first = 0;
+    int last = numVertices - 1;
+    int offset = 0; 
+    int size;
+    
+    size = (last - first + 1) * 3;
+    vertices.get(tmpVertexArray, offset, size);
+    normals.get(tmpNormalArray, offset, size);
+    size = (last - first + 1) * 2;
+    texCoords.get(tmpTexCoordArray, offset, size);
+    size = (last - first + 1) * 4;
+    colors.get(tmpColorArray, offset, size);
+    
+    // Recreating the model with the new number of vertices.
+    createModel(numVert);    
+    updateVertexArray = null;
+    updateColorArray = null;
+    updateNormalArray = null;
+    updateTexCoordArray = null;    
+    updateElement = -1;
+    
+    beginUpdateImpl(VERTICES, 0, numVerticesOld);
+    setVertex(tmpVertexArray);
+    endUpdate();
+
+    beginUpdateImpl(COLORS, 0, numVerticesOld);
+    setColor(tmpColorArray);
+    endUpdate();
+
+    beginUpdateImpl(NORMALS, 0, numVerticesOld);
+    setColor(tmpNormalArray);
+    endUpdate();
+    
+    beginUpdateImpl(TEXTURES, 0, numVerticesOld);
+    setColor(tmpTexCoordArray);
+    endUpdate();
   }
   
   
