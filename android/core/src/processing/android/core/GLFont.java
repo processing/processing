@@ -34,6 +34,11 @@ import android.graphics.Typeface;
 import android.graphics.Bitmap.Config;
 
 
+/**
+ * Font class using GLTextures to store the individual glyphs.
+ * By Andres Colubri
+ *  
+ */
 public class GLFont extends PFont {
   public GLFont(PApplet parent, InputStream input) throws IOException {
     DataInputStream is = new DataInputStream(input);
@@ -141,7 +146,7 @@ public class GLFont extends PFont {
         }
         //System.out.println();
       }
-      tex.update();
+      tex.update(); // Copies pixels array to texture in video memory
       images[i] = tex;
       //System.out.println();
     }
@@ -344,7 +349,7 @@ public class GLFont extends PFont {
                          tex.pixels, y*mbox2,
                          width[i]);
       }
-      tex.update();
+      tex.update(); // Copies pixels array to texture in video memory
       images[i] = tex;
       bitmaps[i] = null;
     }
