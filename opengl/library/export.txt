@@ -12,4 +12,8 @@ application.windows = opengl.jar, jogl.jar, jogl.dll, jogl_awt.dll, jogl_cg.dll,
 
 application.linux = opengl.jar, jogl.jar, gluegen-rt.jar, libjogl.so, libjogl_awt.so, libjogl_cg.so, libgluegen-rt.so
 
-applet = opengl.jar, jogl.jar, jogl.jar.pack.gz, jogl-natives-linux-i586.jar, jogl-natives-linux-amd64.jar, jogl-natives-macosx-ppc.jar, jogl-natives-macosx-universal.jar, jogl-natives-windows-i586.jar, jogl-natives-windows-amd64.jar, gluegen-rt.jar, gluegen-rt.jar.pack.gz, gluegen-rt-natives-linux-amd64.jar, gluegen-rt-natives-windows-amd64.jar, gluegen-rt-natives-linux-i586.jar, gluegen-rt-natives-windows-i586.jar, gluegen-rt-natives-macosx-ppc.jar, gluegen-rt-natives-macosx-universal.jar
+# In releases later than (but not including) 1.0.9, the applet JAR files 
+# are downloaded directly from Sun, so that a single version is cached
+# on the user's computer, rather than increasing the download size with
+# the versions for each platform.
+applet = opengl.jar
