@@ -61,6 +61,7 @@ public class GLModel implements GLConstants, PConstants {
   ////////////////////////////////////////////////////////////
 
   // Constructors.
+
   
   public GLModel(PApplet parent, int numVert) {
     this(parent, numVert, new Parameters()); 
@@ -97,6 +98,7 @@ public class GLModel implements GLConstants, PConstants {
     deleteTexCoordBuffer();
     deleteNormalBuffer();
   }
+
   
   ////////////////////////////////////////////////////////////
   
@@ -341,7 +343,13 @@ public class GLModel implements GLConstants, PConstants {
     }
     
     firstUpdateIdx = 0;
-    firstUpdateIdx = numVertices;    
+    lastUpdateIdx = numVertices - 1;    
+    
+    if (creatingGroup) {
+      grIdx0 = 0;
+      grIdx1 = numVertices - 1;
+    }
+    
     PApplet.arrayCopy(data, updateVertexArray);
   }
   
@@ -353,7 +361,12 @@ public class GLModel implements GLConstants, PConstants {
 
     firstUpdateIdx = 0;
     lastUpdateIdx = numVertices - 1;
-    
+
+    if (creatingGroup) {
+      grIdx0 = 0;
+      grIdx1 = numVertices - 1;
+    }
+        
     PVector vec;
     for (int i = 0; i < numVertices; i++) {
       vec = (PVector)data.get(i);
@@ -469,7 +482,7 @@ public class GLModel implements GLConstants, PConstants {
     }
     
     firstUpdateIdx = 0;
-    firstUpdateIdx = numVertices;    
+    firstUpdateIdx = numVertices - 1;   
     PApplet.arrayCopy(data, updateColorArray);
   }
   
@@ -563,7 +576,7 @@ public class GLModel implements GLConstants, PConstants {
     }
     
     firstUpdateIdx = 0;
-    firstUpdateIdx = numVertices;    
+    firstUpdateIdx = numVertices - 1;    
     PApplet.arrayCopy(data, updateNormalArray);
   }
   
@@ -687,7 +700,14 @@ public class GLModel implements GLConstants, PConstants {
     }
     
     firstUpdateIdx = 0;
-    firstUpdateIdx = numVertices;
+    firstUpdateIdx = numVertices - 1;
+        
+    if (updateTexture != null) {
+      for (int i = 0; i < numVertices; i++) 
+        if (vertGroup[i] != null) {
+          vertGroup[i].texture = updateTexture;
+        }
+    }
     
     if (a3d.imageMode == IMAGE) {
       float u, v;
@@ -718,6 +738,13 @@ public class GLModel implements GLConstants, PConstants {
 
     firstUpdateIdx = 0;
     lastUpdateIdx = numVertices - 1;
+
+    if (updateTexture != null) {
+      for (int i = 0; i < numVertices; i++) 
+        if (vertGroup[i] != null) {
+          vertGroup[i].texture = updateTexture;
+        }
+    }    
     
     PVector vec;
     for (int i = 0; i < numVertices; i++) {
