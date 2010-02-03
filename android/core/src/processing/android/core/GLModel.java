@@ -291,11 +291,17 @@ public class GLModel implements GLConstants, PConstants {
     }
     
     float[] res = new float[numVertices * 3];
-    PApplet.arrayCopy(updateVertexArray, res);
+    getVertexArrayImpl(res, 0, numVertices, 0);
     
     return res;
   }
+
   
+  protected float[] getVertexArrayImpl(float[] data, int firstUpd, int length, int firstData) {
+    PApplet.arrayCopy(updateVertexArray, firstUpd * 3, data, firstData * 3,  length * 3);
+    return  data;
+  }
+    
 
   public ArrayList<PVector> getVertexArrayList() {
     if (updateElement != VERTICES) {
@@ -420,17 +426,23 @@ public class GLModel implements GLConstants, PConstants {
   }
   
   
-  public int[] getColorArray() {
+  public float[] getColorArray() {
     if (updateElement != COLORS) {
       throw new RuntimeException("GLModel: update mode is not set to COLORS");
     }
     
-    int[] res = new int[numVertices];
-    PApplet.arrayCopy(updateColorArray, res);
+    float[] res = new float[numVertices];
+    getColorArrayImpl(res, 0, numVertices, 0);
     
     return res;
   }
 
+
+  protected float[] getColorArrayImpl(float[] data, int firstUpd, int length, int firstData) {
+    PApplet.arrayCopy(updateColorArray, firstUpd * 4, data, firstData * 4,  length * 4);
+    return  data;
+  }
+    
   
   public ArrayList<float[]> getColorArrayList() {
     if (updateElement != COLORS) {
@@ -531,11 +543,17 @@ public class GLModel implements GLConstants, PConstants {
     }
     
     float[] res = new float[numVertices * 3];
-    PApplet.arrayCopy(updateNormalArray, res);
+    getNormalArrayImpl(res, 0, numVertices, 0);
     
     return res;
   }
 
+
+  protected float[] getNormalArrayImpl(float[] data, int firstUpd, int length, int firstData) {
+    PApplet.arrayCopy(updateNormalArray, firstUpd * 3, data, firstData * 3, length * 3);
+    return  data;
+  }
+  
   
   public ArrayList<PVector> getNormalArrayList() {
     if (updateElement != NORMALS) {
@@ -630,7 +648,7 @@ public class GLModel implements GLConstants, PConstants {
     }
     
     float[] res = new float[numVertices * 2];
-    getTexCoordArrayImpl(res, 0, numVertices);
+    getTexCoordArrayImpl(res, 0, numVertices, 0);
     
     PApplet.arrayCopy(updateTexCoordArray, res);
     
@@ -656,8 +674,8 @@ public class GLModel implements GLConstants, PConstants {
   }
 
 
-  protected float[] getTexCoordArrayImpl(float[] data, int first, int last) {
-    PApplet.arrayCopy(updateTexCoordArray, first * 2, data, first * 2,  (last - first + 1) * 2);
+  protected float[] getTexCoordArrayImpl(float[] data, int firstUpd, int length, int firstData) {
+    PApplet.arrayCopy(updateTexCoordArray, firstUpd * 2, data, firstData * 2,  length * 2);
     return  data;   
   }
 
@@ -936,7 +954,14 @@ public void setGroup(int gr, int idx0, int idx1, GLTexture tex) {
   
   // Resize   
 
-  
+  /*
+   * This method resizes the model to numVert vertices, and keeps 
+   * the data already stored in it by copying to the beginning of the 
+   * new buffers. 
+   * 
+   * No tested yet.
+   *  
+   */
   public void resize(int numVert) {
     // Getting the current data stored in the model.
     float[] tmpVertexArray = new float[numVert * 3];
@@ -944,19 +969,24 @@ public void setGroup(int gr, int idx0, int idx1, GLTexture tex) {
     float[] tmpNormalArray = new float[numVert * 3];
     float[] tmpTexCoordArray = new float[numVert * 2];    
     
-    int numVerticesOld = numVertices; 
-    int first = 0;
-    int last = numVertices - 1;
-    int offset = 0; 
-    int size;
+    // Getting current data.
+    beginUpdate(VERTICES);
+    getVertexArrayImpl(tmpVertexArray, 0, numVertices, 0);
+    endUpdate();
     
-    size = (last - first + 1) * 3;
-    vertices.get(tmpVertexArray, offset, size);
-    normals.get(tmpNormalArray, offset, size);
-    size = (last - first + 1) * 2;
-    texCoords.get(tmpTexCoordArray, offset, size);
-    size = (last - first + 1) * 4;
-    colors.get(tmpColorArray, offset, size);
+    beginUpdate(COLORS);
+    getColorArrayImpl(tmpColorArray, 0, numVertices, 0);
+    endUpdate();
+
+    beginUpdate(NORMALS);
+    getNormalArrayImpl(tmpNormalArray, 0, numVertices, 0);
+    endUpdate();
+    
+    beginUpdate(TEXTURES);
+    getTexCoordArrayImpl(tmpTexCoordArray, 0, numVertices, 0);
+    endUpdate();
+
+    int numVert0 = numVertices;
     
     // Recreating the model with the new number of vertices.
     createModel(numVert);    
@@ -965,21 +995,24 @@ public void setGroup(int gr, int idx0, int idx1, GLTexture tex) {
     updateNormalArray = null;
     updateTexCoordArray = null;    
     updateElement = -1;
+
+    // Setting the old data.
+    int n = PApplet.min(numVert0, numVert);
     
-    beginUpdateImpl(VERTICES, 0, numVerticesOld);
+    beginUpdateImpl(VERTICES, 0, n);
     setVertex(tmpVertexArray);
     endUpdate();
 
-    beginUpdateImpl(COLORS, 0, numVerticesOld);
+    beginUpdateImpl(COLORS, 0, n);
     setColor(tmpColorArray);
     endUpdate();
 
-    beginUpdateImpl(NORMALS, 0, numVerticesOld);
-    setColor(tmpNormalArray);
+    beginUpdateImpl(NORMALS, 0,n);
+    setNormal(tmpNormalArray);
     endUpdate();
     
-    beginUpdateImpl(TEXTURES, 0, numVerticesOld);
-    setColor(tmpTexCoordArray);
+    beginUpdateImpl(TEXTURES, 0, n);
+    setTexCoord(tmpTexCoordArray);
     endUpdate();
   }
   
