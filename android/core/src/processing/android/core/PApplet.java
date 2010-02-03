@@ -3003,6 +3003,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
   
   // GL-methods
 
+  
   public GLFont loadGLFont(String filename) {
     try {
       InputStream input = createInput(filename);
@@ -3016,14 +3017,17 @@ public class PApplet extends Activity implements PConstants, Runnable {
     return null;
   }
 
+  
   public GLFont createGLFont(String name, float size) {
     return createGLFont(name, size, true, GLFont.DEFAULT_CHARSET);
   }
+
 
   public GLFont createGLFont(String name, float size, boolean smooth) {
     return createGLFont(name, size, smooth, GLFont.DEFAULT_CHARSET);
   }
 
+  
   public GLFont createGLFont(String name, float size,
                           boolean smooth, char charset[]) {
     String lowerName = name.toLowerCase();
@@ -3039,10 +3043,17 @@ public class PApplet extends Activity implements PConstants, Runnable {
     return new GLFont(this, baseFont, round(size), smooth, charset);
   }
   
+  
   public GLTexture loadGLTexture(String filename) {
     return new GLTexture(this, filename);
   }
 
+  
+  public GLModel loadGLModel(String filename) {
+    return new GLModel(this, filename);
+  }
+  
+  
   //////////////////////////////////////////////////////////////
 
   // FILE/FOLDER SELECTION

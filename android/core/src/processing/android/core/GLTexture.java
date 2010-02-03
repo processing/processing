@@ -12,6 +12,8 @@ import java.nio.*;
 
 /**
  * This class adds an opengl texture to a PImage object.
+ * By Andres Colubri
+ *  
  */
 @SuppressWarnings("unused")
 public class GLTexture extends PImage implements PConstants, GLConstants { 
