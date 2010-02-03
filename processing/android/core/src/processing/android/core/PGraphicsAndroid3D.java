@@ -25,6 +25,11 @@ import javax.microedition.khronos.egl.EGLDisplay;
 // mipmaps are disabled
 
 
+/*
+ * Android 3D renderer implemented with pure OpenGL ES 1.0/1.1
+ * By Andres Colubri
+ * 
+ */
 public class PGraphicsAndroid3D extends PGraphics {
   public SurfaceHolder holder;
   

@@ -11,6 +11,8 @@ import javax.microedition.khronos.opengles.*;
  * This class holds a 3D model composed of vertices, normals, colors (per vertex) and 
  * texture coordinates (also per vertex). All this data is stored in Vertex Buffer Objects
  * (VBO) in GPU memory for very fast access. 
+ * By Andres Colubri
+ * 
  */
 @SuppressWarnings("unused")
 public class GLModel implements GLConstants, PConstants {
@@ -67,6 +69,12 @@ public class GLModel implements GLConstants, PConstants {
     this(parent, numVert, new Parameters()); 
   }  
 
+  
+  // TODO: implement loading from obj and mdl files.
+  public GLModel(PApplet parent, String filename) { // Ignore
+    
+  }  
+  
   
   public GLModel(PApplet parent, int numVert, Parameters params) {
     this.parent = parent;
