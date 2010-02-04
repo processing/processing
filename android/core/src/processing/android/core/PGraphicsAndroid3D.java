@@ -22,9 +22,6 @@ import javax.microedition.khronos.egl.EGLDisplay;
 //   setRasterPos() is also commented out
 // remove the BufferUtil class at the end (verify the endian order, rewind, etc)
 
-// other changes:
-// mipmaps are disabled
-
 
 /*
  * Android 3D renderer implemented with pure OpenGL ES 1.0/1.1
@@ -59,6 +56,8 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   protected boolean modelviewUpdated;
   protected boolean projectionUpdated;
+  
+  protected boolean matricesAllocated = false;
 
   /**
    * This is turned on at beginCamera, and off at endCamera
@@ -116,10 +115,13 @@ public class PGraphicsAndroid3D extends PGraphics {
   public float currentLightFalloffQuadratic;
   
   /** Used to store empty values to be passed when a light has no ambient value **/
-  public float[] zeroLight = { 0.0f, 0.0f, 0.0f, 0.0f };  
+  public float[] zeroLight = { 0.0f, 0.0f, 0.0f, 0.0f };
+  
+  boolean lightsAllocated = false;
   
   //////////////////////////////////////////////////////////////  
   
+  static final int DEFAULT_TRIANGLES = 256;
   
   private IntBuffer vertexBuffer;
   private IntBuffer colorBuffer;
@@ -136,6 +138,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected ArrayList<TexturedTriangleRange> texTriangleRanges;
   TexturedTriangleRange currentTexTriangleRange;  
   
+  protected boolean buffersAllocated = false; 
   
    /**
    * Set to true if the host system is big endian (PowerPC, MIPS, SPARC),
@@ -144,6 +147,9 @@ public class PGraphicsAndroid3D extends PGraphics {
   static public boolean BIG_ENDIAN =
     ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN;
   
+  // TODO: this should be obtained on runtime.
+  // Size of an int (in bytes).
+  static protected int SIZEOF_INT = 4;
   
   // ........................................................
 
@@ -218,31 +224,6 @@ public class PGraphicsAndroid3D extends PGraphics {
   // data when there is a context change or surface creation in Android.
   protected ArrayList<GLResource> recreateResourceMethods;
   
-   
-  // The following variables to be deleted forever:  
-  // cheap picking someday
-  //public int shape_index;
-  //static final int DEFAULT_TEXTURES = 3;
-  //protected PImage[] textures = new PImage[DEFAULT_TEXTURES];
-  //int textureIndex;
-/*
-  static public final int TRI_DIFFUSE_R = 0;
-  static public final int TRI_DIFFUSE_G = 1;
-  static public final int TRI_DIFFUSE_B = 2;
-  static public final int TRI_DIFFUSE_A = 3;
-  static public final int TRI_SPECULAR_R = 4;
-  static public final int TRI_SPECULAR_G = 5;
-  static public final int TRI_SPECULAR_B = 6;
-  static public final int TRI_COLOR_COUNT = 7;
-  */    
-  //  protected float[] projectionFloats;
-  /// Buffer to hold light values before they're sent to OpenGL
-  //protected FloatBuffer lightBuffer;
-//  protected float[] lightArray = new float[] { 1, 1, 1 };
-  //static int maxTextureSize;
-//  int[] textureDeleteQueue = new int[10];
-//  int textureDeleteQueueCount = 0;
-  
   
   //////////////////////////////////////////////////////////////
   
@@ -288,29 +269,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     cameraFar = cameraZ * 10.0f;
     cameraAspect = (float)width / (float)height;
 
-    // Init transformation matrices.
-    projection = new float[16];
-    modelview = new float[16];
-    modelviewInv = new float[16];
-    camera = new float[16];
-    cameraInv = new float[16];
     
-    // Init lights.
-    lightType = new int[MAX_LIGHTS];
-    lightPosition = new float[MAX_LIGHTS][4];
-    lightNormal = new float[MAX_LIGHTS][4];
-    lightDiffuse = new float[MAX_LIGHTS][4];
-    lightSpecular = new float[MAX_LIGHTS][4];
-    lightFalloffConstant = new float[MAX_LIGHTS];
-    lightFalloffLinear = new float[MAX_LIGHTS];
-    lightFalloffQuadratic = new float[MAX_LIGHTS];
-    lightSpotAngle = new float[MAX_LIGHTS];
-    lightSpotAngleCos = new float[MAX_LIGHTS];
-    lightSpotConcentration = new float[MAX_LIGHTS];
-    currentLightSpecular = new float[4];
-    
-    
-    texTriangleRanges = new ArrayList<TexturedTriangleRange>();    
+  
   }
 
   public void setSurfaceHolder(SurfaceHolder holder) {
@@ -319,6 +279,52 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   
   protected void allocate() {
+    if (!matricesAllocated) {
+      projection = new float[16];
+      modelview = new float[16];
+      modelviewInv = new float[16];
+      camera = new float[16];
+      cameraInv = new float[16];
+      matricesAllocated = true;      
+    }
+    
+    if (!lightsAllocated) {
+      lightType = new int[MAX_LIGHTS];
+      lightPosition = new float[MAX_LIGHTS][4];
+      lightNormal = new float[MAX_LIGHTS][4];
+      lightDiffuse = new float[MAX_LIGHTS][4];
+      lightSpecular = new float[MAX_LIGHTS][4];
+      lightFalloffConstant = new float[MAX_LIGHTS];
+      lightFalloffLinear = new float[MAX_LIGHTS];
+      lightFalloffQuadratic = new float[MAX_LIGHTS];
+      lightSpotAngle = new float[MAX_LIGHTS];
+      lightSpotAngleCos = new float[MAX_LIGHTS];
+      lightSpotConcentration = new float[MAX_LIGHTS];
+      currentLightSpecular = new float[4];
+      lightsAllocated = true;
+    }
+    
+    if (!buffersAllocated) {
+      ByteBuffer vbb = ByteBuffer.allocateDirect(DEFAULT_TRIANGLES * 3 * SIZEOF_INT);
+      vbb.order(ByteOrder.nativeOrder());
+      vertexBuffer = vbb.asIntBuffer();
+
+      ByteBuffer cbb = ByteBuffer.allocateDirect(DEFAULT_TRIANGLES * 4 * SIZEOF_INT);
+      cbb.order(ByteOrder.nativeOrder());
+      colorBuffer = cbb.asIntBuffer();
+
+      ByteBuffer tbb = ByteBuffer.allocateDirect(DEFAULT_TRIANGLES * 2 * SIZEOF_INT);
+      tbb.order(ByteOrder.nativeOrder());
+      textureBuffer = tbb.asIntBuffer();
+      
+      ByteBuffer nbb = ByteBuffer.allocateDirect(DEFAULT_TRIANGLES * 3 * SIZEOF_INT);
+      nbb.order(ByteOrder.nativeOrder());
+      normalBuffer = nbb.asIntBuffer();  
+      
+      
+      texTriangleRanges = new ArrayList<TexturedTriangleRange>();  
+      buffersAllocated = true;
+    }
   }
   
   
@@ -432,6 +438,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     gl.glEnable(GL10.GL_RESCALE_NORMAL);
     //gl.GlLightModeli(GL10.GL_LIGHT_MODEL_COLOR_CONTROL, GL10.GL_SEPARATE_SPECULAR_COLOR);
 
+    shapeFirst = 0;
     
     report("bot beginDraw()");
   }
@@ -548,28 +555,25 @@ public class PGraphicsAndroid3D extends PGraphics {
       
       lineCount = 0;
       triangleCount = 0;
-      
-      // TODO: are the following two assignements correct?
-      shapeFirst = 0;
-      shapeLast = 0;   
     }
       
     textureImagePrev = null;      
     texTriangleRanges.clear();
     
-    // TODO: check if this feature is working
     normalMode = NORMAL_MODE_AUTO;    
   }
   
+  
   //public void edge(boolean e)
   //public void normal(float nx, float ny, float nz)
-  
   //public void textureMode(int mode)
+  
   
   public void texture(PImage image) {
     //textureImagePrev =textureImage; 
     textureImage = image;
   }  
+  
   
   static public int toFixed32(float x) {
     return (int) (x * 65536.0f);
@@ -583,41 +587,14 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   protected void vertexCheck() {
     super.vertexCheck();
-
     int vertexAlloc = vertices.length;
     
- // Taking square because the buffers will contain repeated vertices... 
-    // TODO: Need better estimation though.
-    int triangleAlloc = 3 * vertexAlloc;
     int lineAlloc = 2 * vertexAlloc;
-    if (vertexBuffer == null || vertexBuffer.capacity() < triangleAlloc) {
-      ByteBuffer vbb = ByteBuffer.allocateDirect(triangleAlloc * 3);
-      vbb.order(ByteOrder.nativeOrder());
-      vertexBuffer = vbb.asIntBuffer();
-//      vertexBuffer.put(vertices);
-//      vertexBuffer.position(0);
 
-      ByteBuffer cbb = ByteBuffer.allocateDirect(triangleAlloc * 4);
-      cbb.order(ByteOrder.nativeOrder());
-      colorBuffer = cbb.asIntBuffer();
-//      mColorBuffer.put(colors);
-//      mColorBuffer.position(0);
-
-      ByteBuffer tbb = ByteBuffer.allocateDirect(triangleAlloc * 2);
-      tbb.order(ByteOrder.nativeOrder());
-      textureBuffer = tbb.asIntBuffer();
-      
-      ByteBuffer nbb = ByteBuffer.allocateDirect(triangleAlloc * 3);
-      nbb.order(ByteOrder.nativeOrder());
-      normalBuffer = nbb.asIntBuffer();      
-    }
-    
     if (linesVertexBuffer == null || linesVertexBuffer.capacity() < lineAlloc) {
         ByteBuffer vbb = ByteBuffer.allocateDirect(lineAlloc * 3);
         vbb.order(ByteOrder.nativeOrder());
         linesVertexBuffer = vbb.asIntBuffer();
-//        vertexBuffer.put(vertices);
-//        vertexBuffer.position(0);
 
         ByteBuffer cbb = ByteBuffer.allocateDirect(lineAlloc * 4);
         cbb.order(ByteOrder.nativeOrder());
@@ -654,14 +631,6 @@ public class PGraphicsAndroid3D extends PGraphics {
       endShapeFill();
     }
    
-    /*
-    if (fill) renderTriangles(0, triangleCount);
-    if (stroke) {
-      renderLines(0, lineCount);
-        pathCount = 0;
-    }
-*/
-    
     // render shape and fill here if not saving the shapes for later
     // if true, the shapes will be rendered on endDraw
     if (!hints[ENABLE_DEPTH_SORT]) {
@@ -1179,7 +1148,11 @@ public class PGraphicsAndroid3D extends PGraphics {
       }
     }
   
-    // Vertex A.
+    if (3 * vertexBuffer.capacity() == 3 * (triangleCount - 1)) {
+      resizeTriangleBuffers();  
+    }    
+
+     // Vertex A.
     vertexBuffer.put(toFixed32(vertexa[X]));
     vertexBuffer.put(toFixed32(vertexa[Y]));
     vertexBuffer.put(toFixed32(vertexa[Z]));
@@ -1236,7 +1209,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     	currentTexTriangleRange = new TexturedTriangleRange(triangleCount - 1,triangleCount, textureImage);
     }
     else if (textureImage != null) {
-      // Updates the last triangle index of the current rangte.
+      // Updates the last triangle index of the current range.
     	currentTexTriangleRange.lastTriangle = triangleCount;    	
     }
     
@@ -1249,6 +1222,7 @@ public class PGraphicsAndroid3D extends PGraphics {
 
     GLTexture tex = null;
     boolean texturing = false;
+    TexturedTriangleRange texRange;
     
     vertexBuffer.position(0);
     colorBuffer.position(0);
@@ -1262,8 +1236,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
     gl.glEnableClientState(GL10.GL_COLOR_ARRAY);
     gl.glEnableClientState(GL10.GL_NORMAL_ARRAY);
-        
-    TexturedTriangleRange texRange;
+    
     for (int i = 0; i < texTriangleRanges.size(); i++) {
       texRange = (TexturedTriangleRange)texTriangleRanges.get(i);
       
@@ -1306,7 +1279,8 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   //protected void rawTriangles(int start, int stop)  // PGraphics3D
 
-
+  // This class specifies a range of textured triangles, this is,
+  // a number of contiguous triangles with the same texture.
   protected class TexturedTriangleRange {
     int firstTriangle; 
     int lastTriangle;
@@ -1507,6 +1481,56 @@ public class PGraphicsAndroid3D extends PGraphics {
       }
     }
   }  
+  
+  
+  protected void resizeTriangleBuffers() {
+    int newSize = triangleCount << 1;
+    int oldVertSize = vertexBuffer.capacity();
+    int oldColorSize = colorBuffer.capacity();
+    int oldTexSize = textureBuffer.capacity();
+    int oldNormalSize = normalBuffer.capacity();
+    
+    int[] tmpVertData = new int[newSize * 3];
+    int[] tmpColorData = new int[newSize * 4];
+    int[] tmpTexData = new int[newSize * 2];
+    int[] tmpNormalData = new int[newSize * 3];
+    
+    vertexBuffer.rewind();
+    vertexBuffer.get(tmpVertData, 0, vertexBuffer.capacity() * SIZEOF_INT);
+    
+    colorBuffer.rewind();
+    colorBuffer.get(tmpColorData, 0, colorBuffer.capacity() * SIZEOF_INT);
+    
+    textureBuffer.rewind();
+    textureBuffer.get(tmpTexData, 0, textureBuffer.capacity() * SIZEOF_INT);
+    
+    normalBuffer.rewind();
+    normalBuffer.get(tmpNormalData, 0, normalBuffer.capacity() * SIZEOF_INT);
+    
+    ByteBuffer vbb = ByteBuffer.allocateDirect(newSize * 3);
+    vbb.order(ByteOrder.nativeOrder());
+    vertexBuffer = vbb.asIntBuffer();
+    vertexBuffer.put(tmpVertData);
+    vertexBuffer.position(oldVertSize);
+   
+    ByteBuffer cbb = ByteBuffer.allocateDirect(newSize * 4 * SIZEOF_INT);
+    cbb.order(ByteOrder.nativeOrder());
+    colorBuffer = cbb.asIntBuffer();
+    colorBuffer.put(tmpColorData);
+    colorBuffer.position(oldColorSize);
+    
+    ByteBuffer tbb = ByteBuffer.allocateDirect(newSize * 2 * SIZEOF_INT);
+    tbb.order(ByteOrder.nativeOrder());
+    textureBuffer = tbb.asIntBuffer();
+    textureBuffer.put(tmpTexData);
+    textureBuffer.position(oldTexSize);
+    
+    ByteBuffer nbb = ByteBuffer.allocateDirect(newSize * 3 * SIZEOF_INT);
+    nbb.order(ByteOrder.nativeOrder());
+    normalBuffer = nbb.asIntBuffer();
+    normalBuffer.put(tmpNormalData);
+    normalBuffer.position(oldNormalSize);
+  }
   
   
   //////////////////////////////////////////////////////////////
@@ -4277,7 +4301,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     else if (mode == ADD) gl.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
     else if (mode == MULTIPLY) gl.glBlendFunc(GL11.GL_DST_COLOR, GL11.GL_SRC_COLOR);
     else if (mode == SUBTRACT) gl.glBlendFunc(GL11.GL_ONE_MINUS_DST_COLOR, GL11.GL_ZERO);
-//            how to implement all these other blending modes:
+    // TODO: implement all these other blending modes:
 //            else if (blendMode == LIGHTEST)
 //            else if (blendMode == DIFFERENCE)
 //            else if (blendMode == EXCLUSION)
