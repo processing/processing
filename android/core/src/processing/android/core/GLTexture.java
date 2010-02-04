@@ -222,6 +222,7 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
   
   
   public void set(GLTexture tex) { // Ignore
+    // TODO:
     // It doesn't work yet because efficient texture copy requires either FBO or pbuffers
     // Read this thread for more info:
     // http://www.opengl.org/discussion_boards/ubbthreads.php?ubb=showflat&Number=247142
@@ -281,6 +282,7 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
    * Copy texture to pixels. Involves video memory to main memory transfer (slow).
    */   
   public void updatePixels() { // Ignore. 
+    // TODO:
     // It doesn't work yet, because there is no GetTexImage.
     // But:if the texture is in a renderable format (RGB or RGBA, not L, A, or LA) then you can bind it to an FBO and use glReadPixels.
     // From: http://www.idevgames.com/forum/showthread.php?t=17044
