@@ -1745,12 +1745,13 @@ public class Editor extends JFrame implements RunnerListener {
 
   /**
    * Check if the sketch is modified and ask user to save changes.
-   * Immediately should be set true when quitting, or when the save should
-   * not happen asynchronously. Come to think of it, that's always now?
    * @return false if canceling the close/quit operation
    */
-  protected boolean checkModified(boolean immediately) {
+  protected boolean checkModified() {
     if (!sketch.isModified()) return true;
+
+    // As of Processing 1.0.10, this always happens immediately.
+    // http://dev.processing.org/bugs/show_bug.cgi?id=1456
 
     String prompt = "Save changes to " + sketch.getName() + "?  ";
 
@@ -1761,7 +1762,7 @@ public class Editor extends JFrame implements RunnerListener {
                                       JOptionPane.QUESTION_MESSAGE);
 
       if (result == JOptionPane.YES_OPTION) {
-        return handleSave(immediately);
+        return handleSave(true);
 
       } else if (result == JOptionPane.NO_OPTION) {
         return true;  // ok to continue
@@ -1813,7 +1814,7 @@ public class Editor extends JFrame implements RunnerListener {
 
       Object result = pane.getValue();
       if (result == options[0]) {  // save (and close/quit)
-        return handleSave(immediately);
+        return handleSave(true);
 
       } else if (result == options[2]) {  // don't save (still close/quit)
         return true;
