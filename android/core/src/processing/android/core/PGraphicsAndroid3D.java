@@ -1,5 +1,6 @@
 package processing.android.core;
 
+import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
@@ -135,7 +136,7 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   
   
-    /**
+   /**
    * Set to true if the host system is big endian (PowerPC, MIPS, SPARC),
    * false if little endian (x86 Intel for Mac or PC).
    */
@@ -213,18 +214,19 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected boolean fboSupported;
   protected int maxTextureSize;
   protected float maxPointSize;
+
+  // This array contains the recreateResource methods of all the GL objects
+  // created in Processing. These methods are used to recreate the open GL
+  // data when there is a context change or surface creation in Android.
+  protected ArrayList<GLResource> recreateResourceMethods;
   
-  // The following variables to be deleted forever:
-  
+   
+  // The following variables to be deleted forever:  
   // cheap picking someday
   //public int shape_index;
-
-  // ........................................................
-
   //static final int DEFAULT_TEXTURES = 3;
   //protected PImage[] textures = new PImage[DEFAULT_TEXTURES];
   //int textureIndex;
-
 /*
   static public final int TRI_DIFFUSE_R = 0;
   static public final int TRI_DIFFUSE_G = 1;
@@ -234,16 +236,12 @@ public class PGraphicsAndroid3D extends PGraphics {
   static public final int TRI_SPECULAR_G = 5;
   static public final int TRI_SPECULAR_B = 6;
   static public final int TRI_COLOR_COUNT = 7;
-  */  
-  
+  */    
   //  protected float[] projectionFloats;
-
   /// Buffer to hold light values before they're sent to OpenGL
   //protected FloatBuffer lightBuffer;
 //  protected float[] lightArray = new float[] { 1, 1, 1 };
-  
   //static int maxTextureSize;
-
 //  int[] textureDeleteQueue = new int[10];
 //  int textureDeleteQueueCount = 0;
   
@@ -253,6 +251,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   public PGraphicsAndroid3D() {
 	  renderer = new A3DRenderer();
     glu = new GLU();  // or maybe not until used?
+    recreateResourceMethods = new ArrayList<GLResource>(); 
   }
     
   
@@ -330,8 +329,32 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   
   public void recreateResources() {
+    // Recreate the openGL resources of the registered GL objects (GLTexture, GLModel)
+    for (int i = 0; i < recreateResourceMethods.size(); i++) {
+      GLResource resource = (GLResource)recreateResourceMethods.get(i);
+      try {
+        resource.method.invoke(resource.object, new Object[] { this } );  
+      } catch (Exception e)  {
+        System.err.println("Error, opengl resources in " + resource.object + " cannot be recreated.");
+        e.printStackTrace();
+      }
+    }
   }
 
+
+  protected int addRecreateResourceMethod(Object obj, Method meth) {
+    recreateResourceMethods.add(new GLResource(obj, meth));
+    return recreateResourceMethods.size() - 1;
+  }
+
+  
+  protected void removeRecreateResourceMethod(int idx) {
+    if (-1 < idx && idx < recreateResourceMethods.size()) {
+      recreateResourceMethods.remove(idx);
+    }
+  }
+  
+  
   //////////////////////////////////////////////////////////////
 
   // FRAME
@@ -4409,7 +4432,17 @@ public class PGraphicsAndroid3D extends PGraphics {
 //    out.x = a1*b2 - a2*b1;
 //    out.y = a2*b0 - a0*b2;
 //    out.z = a0*b1 - a1*b0;
-//  }  
+//  }
+  
+  protected class GLResource {
+    Object object;
+    Method method;
+    GLResource(Object obj, Method meth) {
+      object = obj;
+      method = meth;
+    }
+    
+  }
 }
 
 

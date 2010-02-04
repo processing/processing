@@ -1,5 +1,6 @@
 package processing.android.core;
 
+import java.lang.reflect.Method;
 import java.nio.IntBuffer;
 
 import javax.microedition.khronos.opengles.*;
@@ -36,6 +37,9 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
   
   protected boolean flippedX;   
   protected boolean flippedY;
+
+  protected int recreateResourceIdx;
+  protected String filenameSaved;
   
   ////////////////////////////////////////////////////////////
   
@@ -69,8 +73,16 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
     a3d = (PGraphicsAndroid3D)parent.g;
     gl = a3d.gl;
     
+    filenameSaved = "";
     setParameters(params);
     createTexture(width, height);
+    
+    try {
+      Method meth = this.getClass().getMethod("recreateResource", new Class[] { PGraphicsAndroid3D.class });
+      recreateResourceIdx =  a3d.addRecreateResourceMethod(this, meth);
+    } catch (Exception e) {
+      recreateResourceIdx = -1;
+    }        
   }	
 	
 
@@ -96,14 +108,23 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
 	   
     a3d = (PGraphicsAndroid3D)parent.g;
     gl = a3d.gl;	
-        
+
+    filenameSaved = filename;
     PImage img = parent.loadImage(filename);
     setParameters(params);
     set(img);
+    
+    try {
+      Method meth = this.getClass().getMethod("recreateResource", new Class[] { PGraphicsAndroid3D.class });
+      recreateResourceIdx =  a3d.addRecreateResourceMethod(this, meth);
+    } catch (Exception e) {
+      recreateResourceIdx = -1;
+    }        
   }
 
 
   protected void finalize() {
+    a3d.removeRecreateResourceMethod(recreateResourceIdx);    
     deleteTexture();
   }
 
@@ -188,6 +209,7 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
       createTexture(w, h); 
     }
     
+    img.loadPixels();
     int p0;
     int dest[] = new int[w * h];
     for (int j = 0; j < h; j++) {
@@ -293,8 +315,10 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
   /**
    * Copy pixels to texture. Involves main memory to video memory transfer (slow).
    */     
-  void update() {
-    set(this.pixels, this.format);
+  public void update() {
+    if (this.pixels != null) {
+      set(this.pixels, this.format);  
+    }
   }
     
     
@@ -696,7 +720,23 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
     }
   }
   
-  
+
+  protected void recreateResource(PGraphicsAndroid3D renderer) {
+    createTexture(width, height);
+    
+    if (filenameSaved.equals("")) {
+      // The texture was not set with an image, hopefully the data
+      // will be still stored in the pixels array...
+      update();  
+    } else {
+      // The texture was initially set from a file image, loading the
+      // image again:
+      PImage img = parent.loadImage(filenameSaved);
+      set(img);
+    }
+  }
+
+    
   ///////////////////////////////////////////////////////////  
   
   // Parameter handling
