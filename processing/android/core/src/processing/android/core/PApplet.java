@@ -3054,6 +3054,11 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
   
   
+  public void model(GLModel model, float x, float y, float z) {
+      g.model(model, x, y, z);
+  }
+  
+  
   //////////////////////////////////////////////////////////////
 
   // FILE/FOLDER SELECTION
@@ -7324,26 +7329,6 @@ public class PApplet extends Activity implements PConstants, Runnable {
                     int sx, int sy, int sw, int sh,
                     int dx, int dy, int dw, int dh, int mode) {
     g.blend(src, sx, sy, sw, sh, dx, dy, dw, dh, mode);
-  }
-
-//  public void drawCube()
-//  {
-//          // By Andres. Just to render something.
-//
-//      if (g instanceof PGraphicsAndroid3D)
-//      {
-//          PApplet.println("Drawing cube with PGraphicsAndroid3D");
-//          ((PGraphicsAndroid3D)g).drawCube();
-//      }
-//      else
-//      {
-//          PApplet.println("Drawing rect with PGraphicsAndroid2D");
-//          g.rect(30, 30, 100, 100);
-//      }
-//  }
-
-  public void model(GLModel model, float x, float y, float z) {
-      g.model(model, x, y, z);
   }
 
 }
