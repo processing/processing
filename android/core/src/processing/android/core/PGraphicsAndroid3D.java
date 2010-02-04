@@ -129,11 +129,12 @@ public class PGraphicsAndroid3D extends PGraphics {
   private IntBuffer linesVertexBuffer;
   private IntBuffer linesColorBuffer;  
 
-  /** Previous image being used as a texture */
+  // Texturing with vertex arrays works by specifying a range of triangles that are
+  // textured with a given GLTexture image. These ranges are stored in TexturedTriangleRange
+  // objects:
   protected PImage textureImagePrev;  
   protected ArrayList<TexturedTriangleRange> texTriangleRanges;
   TexturedTriangleRange currentTexTriangleRange;  
-
   
   
    /**
@@ -153,9 +154,6 @@ public class PGraphicsAndroid3D extends PGraphics {
   // and is separate from vertexCount for occasions where drawing happens
   // on endDraw() with all the triangles being depth sorted
   protected int shapeLast;
-
-  // vertices may be added during clipping against the near plane.
-  protected int shapeLastPlusClipped;
 
   // used for sorting points when triangulating a polygon
   // warning - maximum number of vertices for a polygon is DEFAULT_VERTICES
@@ -530,21 +528,37 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   public void beginShape(int kind) {
     shape = kind;
-    vertexCount = 0;
-    shapeFirst = 0;
-    shapeLast = 0;   
-    triangleCount = 0;
-    lineCount = 0;      
+    
+    if (hints[ENABLE_DEPTH_SORT]) {
+     // TODO:
+     // Implement depth sorting with vertex arrays.
+      
+      // continue with previous vertex, line and triangle count
+      // all shapes are rendered at endDraw();
+      shapeFirst = vertexCount;
+      shapeLast = 0;
+
+    } else {
+      // reset vertex, line and triangle information
+      // every shape is rendered at endShape();
+      vertexCount = 0;
+      
+      // TODO: check point/line rendering:
+      if (line != null) line.reset();  // necessary?
+      
+      lineCount = 0;
+      triangleCount = 0;
+      
+      // TODO: are the following two assignements correct?
+      shapeFirst = 0;
+      shapeLast = 0;   
+    }
       
     textureImagePrev = null;      
     texTriangleRanges.clear();
-    /*
-     TODO:
-    if (hints[ENABLE_DEPTH_SORT]) {
-      shapeFirst = vertexCount;
-      shapeLast = 0;
-    }
-    */
+    
+    // TODO: check if this feature is working
+    normalMode = NORMAL_MODE_AUTO;    
   }
   
   //public void edge(boolean e)
@@ -561,16 +575,19 @@ public class PGraphicsAndroid3D extends PGraphics {
     return (int) (x * 65536.0f);
   }
   
+  
   static public int toFixed16(float x) {
     return (int) (x * 4096.0f);
   }
+  
   
   protected void vertexCheck() {
     super.vertexCheck();
 
     int vertexAlloc = vertices.length;
     
- // Taking square because the buffers will contain repeated vertices... Need better estimation though.
+ // Taking square because the buffers will contain repeated vertices... 
+    // TODO: Need better estimation though.
     int triangleAlloc = 3 * vertexAlloc;
     int lineAlloc = 2 * vertexAlloc;
     if (vertexBuffer == null || vertexBuffer.capacity() < triangleAlloc) {
@@ -621,7 +638,6 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   public void endShape(int mode) {
     shapeLast = vertexCount;
-    shapeLastPlusClipped = shapeLast;
 
     // don't try to draw if there are no vertices
     // (fixes a bug in LINE_LOOP that re-adds a nonexistent vertex)
@@ -630,27 +646,22 @@ public class PGraphicsAndroid3D extends PGraphics {
       return;
     }
     
-    //shapeFirst 
-    //shapeLast
-    
     if (stroke) {
-      // not ready yet.
       endShapeStroke(mode);
     }
 
     if (fill) {
       endShapeFill();
     }
-      
+   
+    /*
     if (fill) renderTriangles(0, triangleCount);
     if (stroke) {
       renderLines(0, lineCount);
         pathCount = 0;
     }
-
-    /*
-     TODO:
-    TO CHECK LATER: 
+*/
+    
     // render shape and fill here if not saving the shapes for later
     // if true, the shapes will be rendered on endDraw
     if (!hints[ENABLE_DEPTH_SORT]) {
@@ -669,8 +680,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         lineCount = 0;
       }
       pathCount = 0;
-    }    
-    */
+    }
     
     shape = 0;
   }
@@ -964,7 +974,7 @@ public class PGraphicsAndroid3D extends PGraphics {
 //  gl.glDrawElements(gl.GL_TRIANGLES, 36, gl.GL_UNSIGNED_BYTE, mIndexBuffer);
 
   
-  
+  // TODO: do we need this?
   protected void renderPoints(int start, int stop) {
     gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
     gl.glEnableClientState(GL10.GL_COLOR_ARRAY);
@@ -1010,6 +1020,8 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   //protected final void addLineBreak()  // PGraphics3D
 
+  // TODO: check line creation and rendering...
+  
   /**
    * Begin a new section of stroked geometry.
    */
@@ -1213,18 +1225,24 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     // Updating the texture assigned to this triangle.
     if (textureImage != textureImagePrev) {
-        // Add current textured triangle range, if is not null.	
-    	if (currentTexTriangleRange != null) {
-            texTriangleRanges.add(currentTexTriangleRange);
+      // A new texture started to be used, so a new textured triangle range
+      // needs to be created. 
+      
+      if (currentTexTriangleRange != null) {
+    	  // Add current textured triangle range, if is not null, before creating new one.  
+        texTriangleRanges.add(currentTexTriangleRange);
     	}
+    	
     	currentTexTriangleRange = new TexturedTriangleRange(triangleCount - 1,triangleCount, textureImage);
     }
     else if (textureImage != null) {
+      // Updates the last triangle index of the current rangte.
     	currentTexTriangleRange.lastTriangle = triangleCount;    	
     }
     
     textureImagePrev = textureImage;
   }
+  
 
   protected void renderTriangles(int start, int stop) {
     report("render_triangles in");
