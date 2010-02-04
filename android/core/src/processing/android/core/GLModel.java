@@ -1,5 +1,6 @@
 package processing.android.core;
 
+import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -55,6 +56,8 @@ public class GLModel implements GLConstants, PConstants {
   protected boolean firstSetGroup;
   protected int grIdx0;
   protected int grIdx1;
+
+  protected int recreateResourceIdx;
   
   // TODO: this should be calculated depending on the platform.
   protected static final int SIZEOF_FLOAT = 4;
@@ -91,16 +94,25 @@ public class GLModel implements GLConstants, PConstants {
     
     setParameters(params);
     createModel(numVert);    
-    
+        
     updateVertexArray = null;
     updateColorArray = null;
     updateNormalArray = null;
     updateTexCoordArray = null;    
     updateElement = -1;
+
+    try {
+      Method meth = this.getClass().getMethod("recreateResource", new Class[] { PGraphicsAndroid3D.class });
+      recreateResourceIdx =  a3d.addRecreateResourceMethod(this, meth);
+    } catch (Exception e) {
+      recreateResourceIdx = -1;
+    }
   }
   
 
   protected void finalize() {
+    a3d.removeRecreateResourceMethod(recreateResourceIdx);
+    
     deleteVertexBuffer();
     deleteColorBuffer();
     deleteTexCoordBuffer();
@@ -1104,9 +1116,13 @@ public void setGroup(int gr, int idx0, int idx1, GLTexture tex) {
     numVertices = numVert;
     initBufferIDs();
  
-    createVertexBuffer();
+    initVertexData();
+    createVertexBuffer();   
+    initColorData();
     createColorBuffer();
-    createNormalBuffer();    
+    initNormalData();
+    createNormalBuffer();
+    initTexCoordData();
     createTexCoordBuffer();
 
     initGroups();    
@@ -1121,8 +1137,7 @@ public void setGroup(int gr, int idx0, int idx1, GLTexture tex) {
     glVertexBufferID[0] = glColorBufferID[0] = glNormalBufferID[0] = glTexCoordBufferID[0] = 0;
   }
   
-  
-  protected void createVertexBuffer() {
+  protected void initVertexData() {
     // Creating the float buffer to hold vertices as a direct byte buffer. Each vertex has 3 coordinates
     // and each coordinate takes SIZEOF_FLOAT bytes (one float).
     ByteBuffer vbb = ByteBuffer.allocateDirect(numVertices * 3 * SIZEOF_FLOAT);
@@ -1132,8 +1147,11 @@ public void setGroup(int gr, int idx0, int idx1, GLTexture tex) {
     float[] values = new float[vertices.capacity()];
     for (int i = 0; i < values.length; i++) values[i] = 0.0f;
     vertices.put(values);
-    vertices.position(0);
-    
+    vertices.position(0);    
+  }
+  
+  
+  protected void createVertexBuffer() {    
     deleteVertexBuffer();  // Just in case.
     
     gl.glGenBuffers(1, glVertexBufferID, 0);
@@ -1142,8 +1160,8 @@ public void setGroup(int gr, int idx0, int idx1, GLTexture tex) {
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);        
   }
   
-  
-  protected void createColorBuffer() {
+
+  protected void initColorData() {
     ByteBuffer vbb = ByteBuffer.allocateDirect(numVertices * 4 * SIZEOF_FLOAT);
     vbb.order(ByteOrder.nativeOrder());                
     colors = vbb.asFloatBuffer();          
@@ -1152,7 +1170,10 @@ public void setGroup(int gr, int idx0, int idx1, GLTexture tex) {
     for (int i = 0; i < values.length; i++) values[i] = 1.0f;
     colors.put(values);
     colors.position(0);
-    
+  }  
+  
+  
+  protected void createColorBuffer() {
     deleteColorBuffer();  // Just in case.
     
     gl.glGenBuffers(1, glColorBufferID, 0);
@@ -1161,8 +1182,8 @@ public void setGroup(int gr, int idx0, int idx1, GLTexture tex) {
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
   }
   
-  
-  protected void createNormalBuffer() {
+
+  protected void initNormalData() {
     ByteBuffer vbb = ByteBuffer.allocateDirect(numVertices * 3 * SIZEOF_FLOAT);
     vbb.order(ByteOrder.nativeOrder());
     normals = vbb.asFloatBuffer();        
@@ -1171,7 +1192,10 @@ public void setGroup(int gr, int idx0, int idx1, GLTexture tex) {
     for (int i = 0; i < values.length; i++) values[i] = 0.0f;
     normals.put(values);
     normals.position(0);    
-    
+  }  
+
+  
+  protected void createNormalBuffer() {
     deleteNormalBuffer();  // Just in case.
     
     gl.glGenBuffers(1, glNormalBufferID, 0);
@@ -1180,9 +1204,8 @@ public void setGroup(int gr, int idx0, int idx1, GLTexture tex) {
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
   }
   
-  
-  protected void createTexCoordBuffer() {
-    
+
+  protected void initTexCoordData() {
     ByteBuffer vbb = ByteBuffer.allocateDirect(numVertices * 2 * SIZEOF_FLOAT);
     vbb.order(ByteOrder.nativeOrder());
     texCoords = vbb.asFloatBuffer();
@@ -1191,7 +1214,9 @@ public void setGroup(int gr, int idx0, int idx1, GLTexture tex) {
     for (int i = 0; i < values.length; i++) values[i] = 0.0f;    
     texCoords.put(values);
     texCoords.position(0);    
-    
+  }  
+  
+  protected void createTexCoordBuffer() {
     deleteTexCoordBuffer(); // Just in case.
     
     gl.glGenBuffers(1, glTexCoordBufferID, 0);
@@ -1231,6 +1256,14 @@ public void setGroup(int gr, int idx0, int idx1, GLTexture tex) {
       glTexCoordBufferID[0] = 0;
     }
   }  
+  
+  
+  protected void recreateResource(PGraphicsAndroid3D renderer) {
+    createVertexBuffer();   
+    createColorBuffer();
+    createNormalBuffer();
+    createTexCoordBuffer();
+  }
   
   
   ///////////////////////////////////////////////////////////  
