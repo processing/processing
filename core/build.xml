@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<project name="Processing Core" default="build">
+	
+	<target name="clean" description="Clean out the build directories">
+		<delete dir="bin" />
+		<delete dir="build" />
+	</target>
+	
+	<target name="compile" description="Compile">
+		<taskdef name="preproc" classname="processing.build.PAppletMethods" classpath="preproc/preproc.jar" />
+		<preproc dir="${basedir}/src/processing/core" />
+		
+		<mkdir dir="bin" />
+		<javac target="1.5" srcdir="src" destdir="bin"/>
+	</target>		
+	
+	<target name="build" depends="compile" description="Build core library">
+		<mkdir dir="build" />
+		<jar basedir="bin" destfile="build/core.jar" />
+	</target>
+	
+</project>
