@@ -3,6 +3,15 @@ X begin the merge of the new A3D, remove old OpenGL code
 _ Android tools on Windows are broken due to naming changes in r4 SDK
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1432
 
+_ escape slashes properly on windows (also place sdk in program files)
+-    writer.println("sdk.dir=" + Android.sdkPath);  // r4 of the sdk
++    writer.println("sdk.dir=" + Android.sdkPath.replace("\\", "\\" +"\\")); 
+
+
+_ remove SurfaceView2D/SurfaceView3D separation, or clean up
+_ what is resetLights() in PGraphics?
+_ remove drawCube() method from PApplet
+_ remove model() method from end of PApplet (make it shape(PShape))
 
 _ implement library support for android
 _   also code folder support

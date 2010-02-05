@@ -1,12 +1,21 @@
 0176 pde (private)
 X hitting ESC inside Color Selector will quit Processing
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1006
+X NullPointerException in JOGLAppletLanucher with Java 6 Update 18 on Windows
+X   switching to more efficient JNLP export
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1452
+X need to set exported applications to only run as 32-bit on osx
+X   otherwise quicktime will break
+
+_ http://java.sun.com/javase/6/webnotes/install/jre/autodownload.html
+_   http://java.sun.com/update/1.6.0/jinstall-6u18-windows-i586.cab
+_   switch to better deployment script for applets (download java kernel)
+_   http://java.sun.com/javase/6/docs/technotes/guides/jweb/deployment_advice.html#deplToolkit
+_   http://java.sun.com/javase/6/webnotes/family-clsid.html
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1353
+
 _ processing 0142 japanese input problem
 _   http://dev.processing.org/bugs/show_bug.cgi?id=854
-
-
-_ need to set exported applications to only run as 32-bit on osx
-_   otherwise quicktime will break
 
 _ PApplet.main() overwritten
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1446
@@ -16,15 +25,6 @@ _   or rather, why can't they be overridden?
 _   should fonts at least be in prefs.txt?
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1444
 
-_ remove SurfaceView2D/SurfaceView3D separation, or clean up
-_ what is resetLights() in PGraphics?
-_ remove drawCube() method from PApplet
-_ remove model() method from end of PApplet (make it shape(PShape))
-
-
-_ add a check to make sure that people aren't running from the dmg
-
-
 _ move build scripts to something better like ant
 _   too much to maintain the multiple versions, too much code
 _   http://dev.processing.org/bugs/show_bug.cgi?id=151
@@ -32,8 +32,6 @@ _   also update build/howto.txt (of course) because it says no ant
 _   this would also mean requiring a java installation for building
 _   so may as well move the jdk stuff outside of the build
 _     http://ant.apache.org/manual/CoreTasks/get.html
-
-The com.apple.eawt.Application now has a setDefaultMenuBar(JMenuBar) method that sets a default menu bar when no other Frames are open. 
 
 _ lack of java.awt.Polygon import breaks the yellowtail example
 _   and java.io.File (other exceptions?)
@@ -101,11 +99,6 @@ were added to the file "/etc/launchd.conf" by the installer. This is needed for 
 
 _ problem changing sketchbook to new location (e.g. from ex to regular) 
 _   new libraries are not picked up
-
-_ switch to better deployment script for applets (download java kernel)
-_   http://java.sun.com/javase/6/docs/technotes/guides/jweb/deployment_advice.html#deplToolkit
-_   http://java.sun.com/javase/6/webnotes/family-clsid.html
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1353
 
 _ the code[] array in Sketch is super hokey... switch to an arraylist
 _   and add compare method to SketchCode so that it can be sorted by name
@@ -811,6 +804,8 @@ _ Parsing error when using char literals
 _   http://dev.processing.org/bugs/show_bug.cgi?id=281
 _ Improve detection and handling of missing semicolons
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1036
+_ non-void functions confuse preprocessor
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1442
 5 _ support for assertions
 5 _   http://dev.processing.org/bugs/show_bug.cgi?id=1188
 
@@ -1394,6 +1389,9 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=1040
 
 DIST / Mac OS X
 
+_ don't require an editor window to be open at all times
+_   The com.apple.eawt.Application now has a setDefaultMenuBar(JMenuBar) method
+_   that sets a default menu bar when no other Frames are open. 
 _ setup() and draw() are not bold on osx (10.4)
 _   likely osx refuses to do monaco bold
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1047
@@ -1415,6 +1413,8 @@ _ try LSMinimumSystemVersion in Info.plist
 5 _   http://dev.processing.org/bugs/show_bug.cgi?id=1046
 5 _ Exiting a sketch with Command-Q or File > Quit doesn't call stop() on OS X
 5 _   http://dev.processing.org/bugs/show_bug.cgi?id=1069
+_ add a check to make sure that people aren't running from the dmg
+_   doesn't actually cause any problems, so don't bother?
 
 
 DIST / Linux
