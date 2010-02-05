@@ -35,7 +35,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   public GL11 gl11;
   public GLU glu;
 
-  ////////////////////////////////////////////////////////////  
+  // ........................................................
   
   /** Camera field of view. */
   public float cameraFOV;
@@ -65,7 +65,7 @@ public class PGraphicsAndroid3D extends PGraphics {
    */
   protected boolean manipulatingCamera;
 
-  //////////////////////////////////////////////////////////////
+  // ........................................................
 
   /**
    * Maximum lights by default is 8, the minimum defined by OpenGL.
@@ -119,26 +119,42 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   boolean lightsAllocated = false;
   
-  //////////////////////////////////////////////////////////////  
+  // ........................................................
   
+  // Geometry:
+
+  // line & triangle fields (note that these overlap)
+  static protected final int VERTEX1 = 0;
+  static protected final int VERTEX2 = 1;
+  static protected final int VERTEX3 = 2;        // (triangles only)
+  static protected final int POINT_FIELD_COUNT = 2;
+  static protected final int LINE_FIELD_COUNT = 2;  
+  static protected final int TRIANGLE_FIELD_COUNT = 3;  
+  
+  // Points
+  static final int DEFAULT_POINTS = 512;
+  protected int pointCount;  
+  protected int[][] points = new int[DEFAULT_POINTS][POINT_FIELD_COUNT];
+  
+  // Lines.
+  static final int DEFAULT_LINES = 512;
+  protected int lineCount;       
+  protected int[][] lines = new int[DEFAULT_LINES][LINE_FIELD_COUNT];
+    
+  // Triangles.
   static final int DEFAULT_TRIANGLES = 256;
+  protected int triangleCount;   // total number of triangles
+  protected int[][] triangles = new int[DEFAULT_TRIANGLES][TRIANGLE_FIELD_COUNT];  
   
+  // Vertex, color, texture coordinate and normal buffers.
+   static final int DEFAULT_BUFFER_SIZE = 512;
   private IntBuffer vertexBuffer;
   private IntBuffer colorBuffer;
   private IntBuffer textureBuffer;
   private IntBuffer normalBuffer;
   
-  private IntBuffer linesVertexBuffer;
-  private IntBuffer linesColorBuffer;  
-
-  // Texturing with vertex arrays works by specifying a range of triangles that are
-  // textured with a given GLTexture image. These ranges are stored in TexturedTriangleRange
-  // objects:
-  protected PImage textureImagePrev;  
-  protected ArrayList<TexturedTriangleRange> texTriangleRanges;
-  TexturedTriangleRange currentTexTriangleRange;  
-  
-  protected boolean buffersAllocated = false; 
+  protected PImage textureImagePrev;    
+  protected boolean geometryAllocated = false; 
   
    /**
    * Set to true if the host system is big endian (PowerPC, MIPS, SPARC),
@@ -169,48 +185,34 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // This is done to keep track of start/stop information for lines in the
   // line array, so that lines can be shown as a single path, rather than just
-  // individual segments. Currently only in use inside PGraphicsOpenGL.
+  // individual segments.
   protected int pathCount;
   protected int[] pathOffset = new int[64];
   protected int[] pathLength = new int[64];
 
+  
   // ........................................................
 
-  // line & triangle fields (note that these overlap)
-//  static protected final int INDEX = 0;          // shape index
-  static protected final int VERTEX1 = 0;
-  static protected final int VERTEX2 = 1;
-  static protected final int VERTEX3 = 2;        // (triangles only)
-  /** used to store the strokeColor int for efficient drawing. */
-  static protected final int STROKE_COLOR = 1;   // (points only)
-  static protected final int TEXTURE_INDEX = 3;  // (triangles only)
-  //static protected final int STROKE_MODE = 2;    // (lines only)
-  //static protected final int STROKE_WEIGHT = 3;  // (lines only)
-
-  static protected final int POINT_FIELD_COUNT = 2;  //4
-  static protected final int LINE_FIELD_COUNT = 2;  //4
-  static protected final int TRIANGLE_FIELD_COUNT = 4;
-
-  // points
-  static final int DEFAULT_POINTS = 512;
-  protected int[][] points = new int[DEFAULT_POINTS][POINT_FIELD_COUNT];
-  protected int pointCount;
-
-  // lines
-  static final int DEFAULT_LINES = 512;
-  public PLine line;  // used for drawing
-  protected int[][] lines = new int[DEFAULT_LINES][LINE_FIELD_COUNT];
-  protected int lineCount;
-
-  protected int triangleCount;   // total number of triangles  
+  // And this is done to keep track of start/stop information for textured 
+  // triangles in the triangle array, so that a range of triangles with the
+  // same texture applied to them are correctly textured during the
+  // rendering stage.
+  protected int faceCount;
+  protected int[] faceOffset = new int[64];
+  protected int[] faceLength = new int[64];
+  protected PImage[] faceTexture = new PImage[64];
   
+  // ........................................................
+
   /// Used to hold color values to be sent to OpenGL
   protected float[] colorFloats;
   
   /// IntBuffer to go with the pixels[] array
   protected IntBuffer pixelBuffer;
 
+  // ........................................................
   
+  // Extensions support.
   protected boolean npotTexSupported;
   protected boolean  mipmapSupported;    
   protected boolean matrixGetSupported;
@@ -219,6 +221,8 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected int maxTextureSize;
   protected float maxPointSize;
 
+  // ........................................................
+  
   // This array contains the recreateResource methods of all the GL objects
   // created in Processing. These methods are used to recreate the open GL
   // data when there is a context change or surface creation in Android.
@@ -259,7 +263,6 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     vertexCheck();
     
-    
     // init perspective projection based on new dimensions
     cameraFOV = 60 * DEG_TO_RAD; // at least for now
     cameraX = width / 2.0f;
@@ -268,11 +271,9 @@ public class PGraphicsAndroid3D extends PGraphics {
     cameraNear = cameraZ / 10.0f;
     cameraFar = cameraZ * 10.0f;
     cameraAspect = (float)width / (float)height;
-
-    
-  
   }
 
+  
   public void setSurfaceHolder(SurfaceHolder holder) {
     this.holder = holder;
   }
@@ -304,26 +305,24 @@ public class PGraphicsAndroid3D extends PGraphics {
       lightsAllocated = true;
     }
     
-    if (!buffersAllocated) {
-      ByteBuffer vbb = ByteBuffer.allocateDirect(DEFAULT_TRIANGLES * 3 * SIZEOF_INT);
+    if (!geometryAllocated) {
+      ByteBuffer vbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 3 * SIZEOF_INT);
       vbb.order(ByteOrder.nativeOrder());
       vertexBuffer = vbb.asIntBuffer();
 
-      ByteBuffer cbb = ByteBuffer.allocateDirect(DEFAULT_TRIANGLES * 4 * SIZEOF_INT);
+      ByteBuffer cbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 4 * SIZEOF_INT);
       cbb.order(ByteOrder.nativeOrder());
       colorBuffer = cbb.asIntBuffer();
 
-      ByteBuffer tbb = ByteBuffer.allocateDirect(DEFAULT_TRIANGLES * 2 * SIZEOF_INT);
+      ByteBuffer tbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 2 * SIZEOF_INT);
       tbb.order(ByteOrder.nativeOrder());
       textureBuffer = tbb.asIntBuffer();
       
-      ByteBuffer nbb = ByteBuffer.allocateDirect(DEFAULT_TRIANGLES * 3 * SIZEOF_INT);
+      ByteBuffer nbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 3 * SIZEOF_INT);
       nbb.order(ByteOrder.nativeOrder());
-      normalBuffer = nbb.asIntBuffer();  
+      normalBuffer = nbb.asIntBuffer();
       
-      
-      texTriangleRanges = new ArrayList<TexturedTriangleRange>();  
-      buffersAllocated = true;
+      geometryAllocated = true;
     }
   }
   
@@ -385,7 +384,6 @@ public class PGraphicsAndroid3D extends PGraphics {
   
     report("top beginDraw()");
 
-    
     vertexBuffer.rewind();
     colorBuffer.rewind();
     textureBuffer.rewind();
@@ -466,15 +464,6 @@ public class PGraphicsAndroid3D extends PGraphics {
 	  gl.glPopMatrix();
   }
   
-  
-  // TODO: put in the right place (but this requires working out combination with PShape first).
-  public void model(GLModel model, float x, float y, float z) {
-	  gl.glPushMatrix();
-	  gl.glTranslatef(x, y, z);
-	  model.render();
-	  gl.glPopMatrix();
-  }
- 
    
   ////////////////////////////////////////////////////////////
 
@@ -548,17 +537,12 @@ public class PGraphicsAndroid3D extends PGraphics {
     } else {
       // reset vertex, line and triangle information
       // every shape is rendered at endShape();
-      vertexCount = 0;
-      
-      // TODO: check point/line rendering:
-      if (line != null) line.reset();  // necessary?
-      
+      vertexCount = 0;      
       lineCount = 0;
       triangleCount = 0;
     }
       
-    textureImagePrev = null;      
-    texTriangleRanges.clear();
+    textureImagePrev = null;
     
     normalMode = NORMAL_MODE_AUTO;    
   }
@@ -569,8 +553,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   //public void textureMode(int mode)
   
   
-  public void texture(PImage image) {
-    //textureImagePrev =textureImage; 
+  public void texture(PImage image) { 
     textureImage = image;
   }  
   
@@ -584,25 +567,6 @@ public class PGraphicsAndroid3D extends PGraphics {
     return (int) (x * 4096.0f);
   }
   
-  
-  protected void vertexCheck() {
-    super.vertexCheck();
-    int vertexAlloc = vertices.length;
-    
-    int lineAlloc = 2 * vertexAlloc;
-
-    if (linesVertexBuffer == null || linesVertexBuffer.capacity() < lineAlloc) {
-        ByteBuffer vbb = ByteBuffer.allocateDirect(lineAlloc * 3);
-        vbb.order(ByteOrder.nativeOrder());
-        linesVertexBuffer = vbb.asIntBuffer();
-
-        ByteBuffer cbb = ByteBuffer.allocateDirect(lineAlloc * 4);
-        cbb.order(ByteOrder.nativeOrder());
-        linesColorBuffer = cbb.asIntBuffer();
-    }    
-    
-  }
-
   
   //public void vertex(float x, float y)
   //public void vertex(float x, float y, float z)
@@ -649,6 +613,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         lineCount = 0;
       }
       pathCount = 0;
+      faceCount = 0;
     }
     
     shape = 0;
@@ -856,14 +821,6 @@ public class PGraphicsAndroid3D extends PGraphics {
       addPolygonTriangles();
     }
     break;
-  }
-      
-    if (currentTexTriangleRange != null) {
-      texTriangleRanges.add(currentTexTriangleRange);
-      currentTexTriangleRange = null;
-    }
-    if (texTriangleRanges.size() == 0) {
-      texTriangleRanges.add(new TexturedTriangleRange(0, triangleCount, null));
     }
   }
 
@@ -943,31 +900,32 @@ public class PGraphicsAndroid3D extends PGraphics {
 //  gl.glDrawElements(gl.GL_TRIANGLES, 36, gl.GL_UNSIGNED_BYTE, mIndexBuffer);
 
   
-  // TODO: do we need this?
   protected void renderPoints(int start, int stop) {
     gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
     gl.glEnableClientState(GL10.GL_COLOR_ARRAY);
 
+    if (vertexBuffer.capacity() ==  stop - start) {
+      expandBuffers();  
+    }    
+    
     vertexBuffer.rewind();
     colorBuffer.rewind();
     
     float sw = vertices[lines[start][VERTEX1]][SW];
     if (sw > 0) {
       gl.glPointSize(sw);  // can only be set outside glBegin/glEnd
-//      gl.glBegin(GL10.GL_POINTS);
+
       for (int i = start; i < stop; i++) {
-//        gl.glColor4f(a[SR], a[SG], a[SB], a[SA]);
         float[] a = vertices[points[i][VERTEX1]];
         colorBuffer.put(toFixed16(a[SR]));
         colorBuffer.put(toFixed16(a[SG]));
         colorBuffer.put(toFixed16(a[SB]));
         colorBuffer.put(toFixed16(a[SA]));
-//        gl.glVertex3f(a[VX], a[VY], a[VZ]);
         vertexBuffer.put(toFixed32(a[VX]));
         vertexBuffer.put(toFixed32(a[VY]));
         vertexBuffer.put(toFixed32(a[VZ]));
       }
-//      gl.glEnd();
+      
       gl.glVertexPointer(3, GL10.GL_FIXED, 0, vertexBuffer);
       gl.glColorPointer(4, GL10.GL_FIXED, 0, colorBuffer);
       gl.glDrawArrays(GL10.GL_POINTS, start, stop - start);
@@ -989,7 +947,6 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   //protected final void addLineBreak()  // PGraphics3D
 
-  // TODO: check line creation and rendering...
   
   /**
    * Begin a new section of stroked geometry.
@@ -1034,64 +991,56 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected void renderLines(int start, int stop) {
     report("render_lines in");
 
-    // Last transformation: inversion of coordinate to make comaptible with Processing's inverted Y axis.
+    // Last transformation: inversion of coordinate to make compatible with Processing's inverted Y axis.
     gl.glPushMatrix();
     gl.glScalef(1, -1, 1);
-    
     
     gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
     gl.glEnableClientState(GL10.GL_COLOR_ARRAY);
 
-    //int i = 0;
     for (int j = 0; j < pathCount; j++) {
       int i = pathOffset[j];
       float sw = vertices[lines[i][VERTEX1]][SW];
       //report("render_lines 1");
       // stroke weight zero will cause a gl error
       if (sw > 0) {
-        // glLineWidth has to occur outside glBegin/glEnd
         gl.glLineWidth(sw);
-//        gl.glBegin(GL10.GL_LINE_STRIP);
-        linesVertexBuffer.rewind();
-        linesColorBuffer.rewind();
+        
+        if (vertexBuffer.capacity() ==  pathLength[j] + 1) {
+          expandBuffers();  
+        }
+        
+        vertexBuffer.rewind();
+        colorBuffer.rewind();
 
         // always draw a first point
         float a[] = vertices[lines[i][VERTEX1]];
-//        gl.glColor4f(a[SR], a[SG], a[SB], a[SA]);
-        linesColorBuffer.put(toFixed32(a[SR]));
-        linesColorBuffer.put(toFixed32(a[SG]));
-        linesColorBuffer.put(toFixed32(a[SB]));
-        linesColorBuffer.put(toFixed32(a[SA]));
-//        gl.glVertex3f(a[VX], a[VY], a[VZ]);
-        linesVertexBuffer.put(toFixed32(a[X]));
-        linesVertexBuffer.put(toFixed32(a[Y]));
-        linesVertexBuffer.put(toFixed32(a[Z]));
+        colorBuffer.put(toFixed32(a[SR]));
+        colorBuffer.put(toFixed32(a[SG]));
+        colorBuffer.put(toFixed32(a[SB]));
+        colorBuffer.put(toFixed32(a[SA]));
+        vertexBuffer.put(toFixed32(a[X]));
+        vertexBuffer.put(toFixed32(a[Y]));
+        vertexBuffer.put(toFixed32(a[Z]));
 
         // on this and subsequent lines, only draw the second point
-        //System.out.println(pathLength[j]);
         for (int k = 0; k < pathLength[j]; k++) {
           float b[] = vertices[lines[i][VERTEX2]];
-//          gl.glColor4f(b[SR], b[SG], b[SB], b[SA]);
-          linesColorBuffer.put(toFixed32(b[SR]));
-          linesColorBuffer.put(toFixed32(b[SG]));
-          linesColorBuffer.put(toFixed32(b[SB]));
-          linesColorBuffer.put(toFixed32(b[SA]));
-          
-          //gl.glEdgeFlag(a[EDGE] == 1);
-          
-//          gl.glVertex3f(b[VX], b[VY], b[VZ]);
-          linesVertexBuffer.put(toFixed32(b[X]));
-          linesVertexBuffer.put(toFixed32(b[Y]));
-          linesVertexBuffer.put(toFixed32(b[Z]));
+          colorBuffer.put(toFixed32(b[SR]));
+          colorBuffer.put(toFixed32(b[SG]));
+          colorBuffer.put(toFixed32(b[SB]));
+          colorBuffer.put(toFixed32(b[SA]));
+          vertexBuffer.put(toFixed32(b[X]));
+          vertexBuffer.put(toFixed32(b[Y]));
+          vertexBuffer.put(toFixed32(b[Z]));
           i++;
         }
-//        gl.glEnd();
         
-        linesVertexBuffer.position(0);
-        linesColorBuffer.position(0);
+        vertexBuffer.position(0);
+        colorBuffer.position(0);
         
-        gl.glVertexPointer(3, GL10.GL_FIXED, 0, linesVertexBuffer);
-        gl.glColorPointer(4, GL10.GL_FIXED, 0, linesColorBuffer);
+        gl.glVertexPointer(3, GL10.GL_FIXED, 0, vertexBuffer);
+        gl.glColorPointer(4, GL10.GL_FIXED, 0, colorBuffer);
         gl.glDrawArrays(GL10.GL_LINE_STRIP, 0, pathLength[j] + 1);        
       }
     }
@@ -1115,105 +1064,41 @@ public class PGraphicsAndroid3D extends PGraphics {
    * Add the triangle.
    */
   protected void addTriangle(int a, int b, int c) {
-    float[] vertexa = vertices[a];
-    float[] vertexb = vertices[b];
-    float[] vertexc = vertices[c];
-    
-    // Need to think about this more:
-    float uscale = 1.0f;
-    float vscale = 1.0f;
-    float cx = 0.0f;
-    float sx = +1.0f;
-    float cy = 0.0f;
-    float sy = +1.0f;    
-    if (textureImage != null) {
-      GLTexture tex;
-      try {
-        tex = (GLTexture)textureImage;
-      } catch (ClassCastException cce) {
-        throw new RuntimeException("A3D only accepts GLTextures for texturing!");  
-      }
-        
-      uscale *= tex.getMaxTextureCoordS();
-      vscale *= tex.getMaxTextureCoordT();
-            
-      if (tex.isFlippedX()) {
-        cx = 1.0f;			
-        sx = -1.0f;
-      }
-
-      if (tex.isFlippedY()) {
-        cy = 1.0f;			
-        sy = -1.0f;
-      }
+    if (triangleCount == triangles.length) {
+      int temp[][] = new int[triangleCount<<1][TRIANGLE_FIELD_COUNT];
+      System.arraycopy(triangles, 0, temp, 0, triangleCount);
+      triangles = temp;    
     }
-  
-    if (3 * vertexBuffer.capacity() == 3 * (triangleCount - 1)) {
-      resizeTriangleBuffers();  
-    }    
-
-     // Vertex A.
-    vertexBuffer.put(toFixed32(vertexa[X]));
-    vertexBuffer.put(toFixed32(vertexa[Y]));
-    vertexBuffer.put(toFixed32(vertexa[Z]));
-    colorBuffer.put(toFixed32(vertexa[R]));
-    colorBuffer.put(toFixed32(vertexa[G]));
-    colorBuffer.put(toFixed32(vertexa[B]));
-    colorBuffer.put(toFixed32(vertexa[A]));
-    normalBuffer.put(toFixed32(vertexa[NX]));
-    normalBuffer.put(toFixed32(vertexa[NY]));
-    normalBuffer.put(toFixed32(vertexa[NZ]));    
-    textureBuffer.put(toFixed32((cx +  sx * vertexa[U]) * uscale));
-    textureBuffer.put(toFixed32((cy +  sy * vertexa[V]) * vscale));
     
-    // Vertex B.    
-    vertexBuffer.put(toFixed32(vertexb[X]));
-    vertexBuffer.put(toFixed32(vertexb[Y]));
-    vertexBuffer.put(toFixed32(vertexb[Z]));
-    colorBuffer.put(toFixed32(vertexb[R]));
-    colorBuffer.put(toFixed32(vertexb[G]));
-    colorBuffer.put(toFixed32(vertexb[B]));
-    colorBuffer.put(toFixed32(vertexb[A]));
-    normalBuffer.put(toFixed32(vertexb[NX]));
-    normalBuffer.put(toFixed32(vertexb[NY]));
-    normalBuffer.put(toFixed32(vertexb[NZ]));    
-    textureBuffer.put(toFixed32((cx +  sx * vertexb[U]) * uscale));
-    textureBuffer.put(toFixed32((cy +  sy * vertexb[V]) * vscale));    
+    triangles[triangleCount][VERTEX1] = a;
+    triangles[triangleCount][VERTEX2] = b;
+    triangles[triangleCount][VERTEX3] = c;    
     
-    // Vertex C.    
-    vertexBuffer.put(toFixed32(vertexc[X]));
-    vertexBuffer.put(toFixed32(vertexc[Y]));
-    vertexBuffer.put(toFixed32(vertexc[Z]));
-    colorBuffer.put(toFixed32(vertexc[R]));
-    colorBuffer.put(toFixed32(vertexc[G]));
-    colorBuffer.put(toFixed32(vertexc[B]));
-    colorBuffer.put(toFixed32(vertexc[A]));
-    normalBuffer.put(toFixed32(vertexc[NX]));
-    normalBuffer.put(toFixed32(vertexc[NY]));
-    normalBuffer.put(toFixed32(vertexc[NZ]));
-    textureBuffer.put(toFixed32((cx +  sx * vertexc[U]) * uscale));
-    textureBuffer.put(toFixed32((cy +  sy * vertexc[V]) * vscale));    
-
     triangleCount++;
     
-    // Updating the texture assigned to this triangle.
-    if (textureImage != textureImagePrev) {
-      // A new texture started to be used, so a new textured triangle range
-      // needs to be created. 
-      
-      if (currentTexTriangleRange != null) {
-    	  // Add current textured triangle range, if is not null, before creating new one.  
-        texTriangleRanges.add(currentTexTriangleRange);
-    	}
-    	
-    	currentTexTriangleRange = new TexturedTriangleRange(triangleCount - 1,triangleCount, textureImage);
-    }
-    else if (textureImage != null) {
-      // Updates the last triangle index of the current range.
-    	currentTexTriangleRange.lastTriangle = triangleCount;    	
-    }
-    
-    textureImagePrev = textureImage;
+    if (textureImage != textureImagePrev || triangleCount == 1) {
+      // A new face starts at the first triangle or when the texture changes.
+      addNewFace();
+    } else {
+      // mark this triangle as being part of the current face.
+      faceLength[faceCount-1]++;
+    } 
+    textureImagePrev = textureImage;  
+  }
+  
+  
+  // New "face" starts. A face is just a range of consecutive triangles
+  // with the same texture applied to them (it could be null).
+  protected void addNewFace() {
+      if (faceCount == faceOffset.length) {
+        faceOffset = PApplet.expand(faceOffset);
+        faceLength = PApplet.expand(faceLength);
+        faceTexture = PApplet.expand(faceTexture);
+      }
+      faceOffset[faceCount] = triangleCount;
+      faceLength[faceCount] = 1;
+      faceTexture[faceCount] = textureImage;
+      faceCount++;    
   }
   
 
@@ -1222,7 +1107,6 @@ public class PGraphicsAndroid3D extends PGraphics {
 
     GLTexture tex = null;
     boolean texturing = false;
-    TexturedTriangleRange texRange;
     
     vertexBuffer.position(0);
     colorBuffer.position(0);
@@ -1237,36 +1121,121 @@ public class PGraphicsAndroid3D extends PGraphics {
     gl.glEnableClientState(GL10.GL_COLOR_ARRAY);
     gl.glEnableClientState(GL10.GL_NORMAL_ARRAY);
     
-    for (int i = 0; i < texTriangleRanges.size(); i++) {
-      texRange = (TexturedTriangleRange)texTriangleRanges.get(i);
+    for (int j = 0; j < faceCount; j++) {
+      int i = faceOffset[j];
       
-      if (texRange.textureImage != null) { 
-          
+      if (faceTexture[j] != null) {
+        
         try {
-          tex = (GLTexture)texRange.textureImage;
+          tex = (GLTexture)faceTexture[j];
         } catch (ClassCastException cce) {
           throw new RuntimeException("A3D only accepts GLTextures for texturing!");  
-        }
+        }        
         
         gl.glEnable(tex.getGLTarget());
-        gl.glBindTexture(tex.getGLTarget(), tex.getGLTextureID());        
-    	  
-        gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+        gl.glBindTexture(tex.getGLTarget(), tex.getGLTextureID());
+        gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);        
         texturing = true;
-      } else texturing = false;
-    	
+      } else {
+        texturing = false;  
+      }
+    
+      if (vertexBuffer.capacity() == 3 * faceLength[j]) {
+        expandBuffers();  
+      }
+      
+      vertexBuffer.rewind();
+      colorBuffer.rewind();
+      normalBuffer.rewind();
+      textureBuffer.rewind();      
+      
+      for (int k = i; k < faceLength[j]; k++) {
+        
+        float a[] = vertices[triangles[k][VERTEX1]];
+        float b[] = vertices[triangles[k][VERTEX2]];
+        float c[] = vertices[triangles[k][VERTEX3]];
+        
+        float uscale = 1.0f;
+        float vscale = 1.0f;
+        float cx = 0.0f;
+        float sx = +1.0f;
+        float cy = 0.0f;
+        float sy = +1.0f;    
+        if (texturing) {
+          uscale *= tex.getMaxTextureCoordS();
+          vscale *= tex.getMaxTextureCoordT();
+            
+          if (tex.isFlippedX()) {
+            cx = 1.0f;      
+            sx = -1.0f;
+          }
+
+          if (tex.isFlippedY()) {
+            cy = 1.0f;      
+            sy = -1.0f;
+          }
+        }
+        
+        // Adding vertex A.
+        vertexBuffer.put(toFixed32(a[X]));
+        vertexBuffer.put(toFixed32(a[Y]));
+        vertexBuffer.put(toFixed32(a[Z]));
+        colorBuffer.put(toFixed32(a[R]));
+        colorBuffer.put(toFixed32(a[G]));
+        colorBuffer.put(toFixed32(a[B]));
+        colorBuffer.put(toFixed32(a[A]));
+        normalBuffer.put(toFixed32(a[NX]));
+        normalBuffer.put(toFixed32(a[NY]));
+        normalBuffer.put(toFixed32(a[NZ]));    
+        textureBuffer.put(toFixed32((cx +  sx * a[U]) * uscale));
+        textureBuffer.put(toFixed32((cy +  sy * a[V]) * vscale));
+    
+        // Adding vertex B.    
+        vertexBuffer.put(toFixed32(b[X]));
+        vertexBuffer.put(toFixed32(b[Y]));
+        vertexBuffer.put(toFixed32(b[Z]));
+        colorBuffer.put(toFixed32(b[R]));
+        colorBuffer.put(toFixed32(b[G]));
+        colorBuffer.put(toFixed32(b[B]));
+        colorBuffer.put(toFixed32(b[A]));
+        normalBuffer.put(toFixed32(b[NX]));
+        normalBuffer.put(toFixed32(b[NY]));
+        normalBuffer.put(toFixed32(b[NZ]));    
+        textureBuffer.put(toFixed32((cx +  sx * b[U]) * uscale));
+        textureBuffer.put(toFixed32((cy +  sy * b[V]) * vscale));    
+    
+        // Adding vertex C.    
+        vertexBuffer.put(toFixed32(c[X]));
+        vertexBuffer.put(toFixed32(c[Y]));
+        vertexBuffer.put(toFixed32(c[Z]));
+        colorBuffer.put(toFixed32(c[R]));
+        colorBuffer.put(toFixed32(c[G]));
+        colorBuffer.put(toFixed32(c[B]));
+        colorBuffer.put(toFixed32(c[A]));
+        normalBuffer.put(toFixed32(c[NX]));
+        normalBuffer.put(toFixed32(c[NY]));
+        normalBuffer.put(toFixed32(c[NZ]));
+        textureBuffer.put(toFixed32((cx +  sx * c[U]) * uscale));
+        textureBuffer.put(toFixed32((cy +  sy * c[V]) * vscale));    
+      }
+      
+      vertexBuffer.position(0);
+      colorBuffer.position(0);
+      normalBuffer.position(0);
+      textureBuffer.position(0);
+
       gl.glVertexPointer(3, GL10.GL_FIXED, 0, vertexBuffer);
       gl.glColorPointer(4, GL10.GL_FIXED, 0, colorBuffer);
       gl.glNormalPointer(GL10.GL_FIXED, 0, normalBuffer);
       if (texturing) gl.glTexCoordPointer(2, GL10.GL_FIXED, 0, textureBuffer);
-      gl.glDrawArrays(GL10.GL_TRIANGLES, 3 * texRange.firstTriangle, 3 * (texRange.lastTriangle - texRange.firstTriangle));
-      
+      gl.glDrawArrays(GL10.GL_TRIANGLES, 0, 3 * faceLength[j]);
+
       if (texturing) {
-    	  gl.glDisable(tex.getGLTarget());;
-          gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);  	
-      }      
+        gl.glDisable(tex.getGLTarget());
+        gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);   
+      }          
     }
-        
+    
     gl.glDisableClientState(GL10.GL_NORMAL_ARRAY);
     gl.glDisableClientState(GL10.GL_COLOR_ARRAY);    
     gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
@@ -1278,20 +1247,6 @@ public class PGraphicsAndroid3D extends PGraphics {
   
 
   //protected void rawTriangles(int start, int stop)  // PGraphics3D
-
-  // This class specifies a range of textured triangles, this is,
-  // a number of contiguous triangles with the same texture.
-  protected class TexturedTriangleRange {
-    int firstTriangle; 
-    int lastTriangle;
-    PImage textureImage;
-    
-    TexturedTriangleRange(int first, int last, PImage img) {
-      firstTriangle = first; 
-      lastTriangle = last;
-      textureImage = img;
-    }
-  }
 	
 
   /**
@@ -1483,53 +1438,25 @@ public class PGraphicsAndroid3D extends PGraphics {
   }  
   
   
-  protected void resizeTriangleBuffers() {
-    int newSize = triangleCount << 1;
-    int oldVertSize = vertexBuffer.capacity();
-    int oldColorSize = colorBuffer.capacity();
-    int oldTexSize = textureBuffer.capacity();
-    int oldNormalSize = normalBuffer.capacity();
+  protected void expandBuffers() {
+    int newSize = vertexBuffer.capacity() / 3 << 1;
     
-    int[] tmpVertData = new int[newSize * 3];
-    int[] tmpColorData = new int[newSize * 4];
-    int[] tmpTexData = new int[newSize * 2];
-    int[] tmpNormalData = new int[newSize * 3];
-    
-    vertexBuffer.rewind();
-    vertexBuffer.get(tmpVertData, 0, vertexBuffer.capacity() * SIZEOF_INT);
-    
-    colorBuffer.rewind();
-    colorBuffer.get(tmpColorData, 0, colorBuffer.capacity() * SIZEOF_INT);
-    
-    textureBuffer.rewind();
-    textureBuffer.get(tmpTexData, 0, textureBuffer.capacity() * SIZEOF_INT);
-    
-    normalBuffer.rewind();
-    normalBuffer.get(tmpNormalData, 0, normalBuffer.capacity() * SIZEOF_INT);
-    
-    ByteBuffer vbb = ByteBuffer.allocateDirect(newSize * 3);
+    ByteBuffer vbb = ByteBuffer.allocateDirect(newSize * 3 * SIZEOF_INT);
     vbb.order(ByteOrder.nativeOrder());
     vertexBuffer = vbb.asIntBuffer();
-    vertexBuffer.put(tmpVertData);
-    vertexBuffer.position(oldVertSize);
-   
+
     ByteBuffer cbb = ByteBuffer.allocateDirect(newSize * 4 * SIZEOF_INT);
     cbb.order(ByteOrder.nativeOrder());
     colorBuffer = cbb.asIntBuffer();
-    colorBuffer.put(tmpColorData);
-    colorBuffer.position(oldColorSize);
+
     
     ByteBuffer tbb = ByteBuffer.allocateDirect(newSize * 2 * SIZEOF_INT);
     tbb.order(ByteOrder.nativeOrder());
     textureBuffer = tbb.asIntBuffer();
-    textureBuffer.put(tmpTexData);
-    textureBuffer.position(oldTexSize);
     
     ByteBuffer nbb = ByteBuffer.allocateDirect(newSize * 3 * SIZEOF_INT);
     nbb.order(ByteOrder.nativeOrder());
     normalBuffer = nbb.asIntBuffer();
-    normalBuffer.put(tmpNormalData);
-    normalBuffer.position(oldNormalSize);
   }
   
   
@@ -1546,8 +1473,20 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   //protected void sort()
 
+  
+  //////////////////////////////////////////////////////////////
+
+  // MODEL, SHAPE
 
 
+  public void model(GLModel model, float x, float y, float z) {
+    gl.glPushMatrix();
+    gl.glTranslatef(x, y, z);
+    model.render();
+    gl.glPopMatrix();
+  }
+  
+  
   //////////////////////////////////////////////////////////////
 
   // POINT, LINE, TRIANGLE, QUAD
