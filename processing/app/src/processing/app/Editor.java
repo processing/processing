@@ -101,7 +101,7 @@ public class Editor extends JFrame implements RunnerListener {
   EditorLineStatus lineStatus;
 
   JEditorPane editorPane;
-  
+
   JEditTextArea textarea;
   EditorListener listener;
 
@@ -125,7 +125,7 @@ public class Editor extends JFrame implements RunnerListener {
   CompoundEdit compoundEdit;
 
   FindReplace find;
-  
+
   Runnable runHandler;
   Runnable presentHandler;
   Runnable stopHandler;
@@ -246,7 +246,7 @@ public class Editor extends JFrame implements RunnerListener {
     // (har har har.. that was wishful thinking)
     listener = new EditorListener(this, textarea);
     pain.add(box);
-    
+
     // get shift down/up events so we can show the alt version of toolbar buttons
     textarea.addKeyListener(toolbar);
 
@@ -261,6 +261,20 @@ public class Editor extends JFrame implements RunnerListener {
 
     // Set the window bounds and the divider location before setting it visible
     setPlacement(location);
+
+
+    // If the window is resized too small this will resize it again to the
+    // minimums. Adapted by Chris Lonnen from comments here:
+    // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4320050
+    // as a fix for http://dev.processing.org/bugs/show_bug.cgi?id=25
+    final int minX = 400; //kind of arbitrary
+    final int minY = 450;
+    addComponentListener(new java.awt.event.ComponentAdapter() {
+        public void componentResized(ComponentEvent event) {
+          setSize((getWidth() < minX) ? minX : getWidth(),
+                  (getHeight() < minY) ? minY : getHeight());
+        }
+      });
 
 //    System.out.println("t3");
 
@@ -278,8 +292,8 @@ public class Editor extends JFrame implements RunnerListener {
     // All set, now show the window
     //setVisible(true);
   }
-  
-  
+
+
   /**
    * Handles files dragged & dropped from the desktop and into the editor
    * window. Dragging files into the editor window is the same as using
@@ -309,7 +323,7 @@ public class Editor extends JFrame implements RunnerListener {
           }
         } else if (transferable.isDataFlavorSupported(uriListFlavor)) {
           // Some platforms (Mac OS X and Linux, when this began) preferred
-          // this method of moving files. 
+          // this method of moving files.
           String data = (String)transferable.getTransferData(uriListFlavor);
           String[] pieces = PApplet.splitTokens(data, "\r\n");
           for (int i = 0; i < pieces.length; i++) {
@@ -344,7 +358,7 @@ public class Editor extends JFrame implements RunnerListener {
     }
   }
 
-  
+
   protected void setPlacement(int[] location) {
     setBounds(location[0], location[1], location[2], location[3]);
     if (location[4] != 0) {
@@ -1165,11 +1179,11 @@ public class Editor extends JFrame implements RunnerListener {
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-  
-  
+
+
   // these will be done in a more generic way soon, more like:
   // setHandler("action name", Runnable);
-  // but for the time being, working out the kinks of how many things to 
+  // but for the time being, working out the kinks of how many things to
   // abstract from the editor in this fashion.
 
 
@@ -1182,8 +1196,8 @@ public class Editor extends JFrame implements RunnerListener {
     this.exportHandler = exportHandler;
     this.exportAppHandler = exportAppHandler;
   }
-  
-  
+
+
   public void resetHandlers() {
     runHandler = new DefaultRunHandler();
     presentHandler = new DefaultPresentHandler();
@@ -1192,7 +1206,7 @@ public class Editor extends JFrame implements RunnerListener {
     exportAppHandler = new DefaultExportAppHandler();
   }
 
-  
+
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
@@ -1635,8 +1649,8 @@ public class Editor extends JFrame implements RunnerListener {
       new Thread(runHandler).start();
     }
   }
-  
-  
+
+
   class DefaultRunHandler implements Runnable {
     public void run() {
       try {
@@ -1651,8 +1665,8 @@ public class Editor extends JFrame implements RunnerListener {
       }
     }
   }
-  
-  
+
+
   class DefaultPresentHandler implements Runnable {
     public void run() {
       try {
@@ -1667,12 +1681,12 @@ public class Editor extends JFrame implements RunnerListener {
       }
     }
   }
-  
-  
+
+
   class DefaultStopHandler implements Runnable {
     public void run() {
       try {
-        
+
       } catch (Exception e) {
         statusError(e);
       }
@@ -1715,9 +1729,9 @@ public class Editor extends JFrame implements RunnerListener {
 
 
   /**
-   * Deactivate the Run button. This is called by Runner to notify that the 
+   * Deactivate the Run button. This is called by Runner to notify that the
    * sketch has stopped running, usually in response to an error (or maybe
-   * the sketch completing and exiting?) Tools should not call this function.  
+   * the sketch completing and exiting?) Tools should not call this function.
    * To initiate a "stop" action, call handleStop() instead.
    */
   public void internalRunnerClosed() {
@@ -2063,8 +2077,8 @@ public class Editor extends JFrame implements RunnerListener {
 
     new Thread(exportHandler).start();
   }
-  
-  
+
+
   class DefaultExportHandler implements Runnable {
     public void run() {
       try {
@@ -2095,8 +2109,8 @@ public class Editor extends JFrame implements RunnerListener {
     // previous was using SwingUtilities.invokeLater()
     new Thread(exportAppHandler).start();
   }
-  
-  
+
+
   class DefaultExportAppHandler implements Runnable {
     public void run() {
       statusNotice("Exporting application...");
