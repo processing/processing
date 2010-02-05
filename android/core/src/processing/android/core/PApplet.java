@@ -4082,6 +4082,17 @@ public class PApplet extends Activity implements PConstants, Runnable {
     return temp;
   }
 
+  
+  static public PImage[] expand(PImage list[]) {
+    return expand(list, list.length << 1);
+  }
+
+  static public PImage[] expand(PImage list[], int newSize) {
+    PImage temp[] = new PImage[newSize];
+    System.arraycopy(list, 0, temp, 0, Math.min(newSize, list.length));
+    return temp;
+  }
+  
 
   static public float[] expand(float list[]) {
     return expand(list, list.length << 1);
