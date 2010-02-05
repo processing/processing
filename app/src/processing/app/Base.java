@@ -432,8 +432,8 @@ public class Base {
 
   protected int[] nextEditorLocation() {
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-    int defaultWidth = Preferences.getInteger("default.window.width");
-    int defaultHeight = Preferences.getInteger("default.window.height");
+    int defaultWidth = Preferences.getInteger("editor.window.width.default");
+    int defaultHeight = Preferences.getInteger("editor.window.height.default");
 
     if (activeEditor == null) {
       // If no current active editor, use default placement

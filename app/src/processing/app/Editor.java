@@ -267,12 +267,12 @@ public class Editor extends JFrame implements RunnerListener {
     // minimums. Adapted by Chris Lonnen from comments here:
     // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4320050
     // as a fix for http://dev.processing.org/bugs/show_bug.cgi?id=25
-    final int minX = 400; //kind of arbitrary
-    final int minY = 450;
+    final int minW = Preferences.getInteger("editor.window.width.min");
+    final int minH = Preferences.getInteger("editor.window.height.min");
     addComponentListener(new java.awt.event.ComponentAdapter() {
         public void componentResized(ComponentEvent event) {
-          setSize((getWidth() < minX) ? minX : getWidth(),
-                  (getHeight() < minY) ? minY : getHeight());
+          setSize((getWidth() < minW) ? minW : getWidth(),
+                  (getHeight() < minH) ? minH : getHeight());
         }
       });
 
@@ -390,10 +390,10 @@ public class Editor extends JFrame implements RunnerListener {
    * This appears to only be required on OS X 10.2, and is not
    * even being called on later versions of OS X or Windows.
    */
-  public Dimension getMinimumSize() {
-    //System.out.println("getting minimum size");
-    return new Dimension(500, 550);
-  }
+//  public Dimension getMinimumSize() {
+//    //System.out.println("getting minimum size");
+//    return new Dimension(500, 550);
+//  }
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
