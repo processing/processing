@@ -1,0 +1,364 @@
+<?xml version="1.0"?>
+<project name="Processing" default="help">
+	
+	<!-- what version are we building here? -->
+	<property name="version" value="1.0.9" />
+	
+	<!-- set's proeprties osx/windows/linux depending on the current system  -->
+	<condition property="osx"><os family="mac" /></condition>
+	<condition property="windows"><os family="windows" /></condition>
+	<condition property="linux"><os family="unix" /></condition>
+	
+	
+	<!-- Libraries required for running processing -->
+	<fileset dir=".." id="runtime.jars">
+		<include name="core/build/core.jar" />
+		<include name="app/build/pde.jar" />
+		<include name="app/lib/antlr.jar" />
+		<include name="app/lib/ecj.jar" />
+		<include name="app/lib/jna.jar" />
+		<include name="app/lib/ant.jar" />
+		<include name="app/lib/ant-launcher.jar" />
+	</fileset>
+	
+	<!-- "§$§$&, ant doesn't have a built-in help target :(  -->
+	<target name="help" description="Show project help">
+		<java classname="org.apache.tools.ant.Main">
+			<arg value="-p" />
+		</java>
+	</target>
+	
+	<!-- - - - - - - - - - - - - - - - - - -->
+	<!-- Subprojects: Core, App, Libraries -->
+	<!-- - - - - - - - - - - - - - - - - - -->
+	
+	<target name="subprojects-clean">
+		<subant buildpath="../core" target="clean"/>
+		<subant buildpath="../app" target="clean"/>
+		<subant buildpath="../dxf" target="clean"/>
+		<subant buildpath="../net" target="clean"/>
+		<subant buildpath="../opengl" target="clean"/>
+		<subant buildpath="../pdf" target="clean"/>
+		<subant buildpath="../serial" target="clean"/>
+		<subant buildpath="../video" target="clean"/>
+	</target>
+	
+	<target name="subprojects-build">
+		<subant buildpath="../core" target="build"/>
+		<subant buildpath="../app" target="build"/>
+		<subant buildpath="../dxf" target="build"/>
+		<subant buildpath="../net" target="build"/>
+		<subant buildpath="../opengl" target="build"/>
+		<subant buildpath="../pdf" target="build"/>
+		<subant buildpath="../serial" target="build"/>
+		<subant buildpath="../video" target="build"/>
+	</target>
+	
+
+	<!-- - - - - - - - - -->
+	<!-- Basic Assembly  -->
+	<!-- - - - - - - - - -->
+	
+	<target name="assemble">
+		<fail unless="target.path" message="Don't call assemble from the commandline! " />
+		
+		<!-- copy shared tools folder -->
+		<copy todir="${target.path}/tools">
+			<fileset dir="shared/tools" />
+		</copy>
+		
+		<!-- copy shared library folder -->
+		<copy todir="${target.path}/libraries">
+			<fileset dir="shared/libraries" />
+		</copy>
+		
+		<!-- copy dxf, pdf, etc. libraries -->
+		<copy todir="${target.path}/libraries/dxf">
+			<fileset dir="../dxf/build" />
+		</copy>
+		<copy todir="${target.path}/libraries/net">
+			<fileset dir="../net/build" />
+		</copy>
+		<copy todir="${target.path}/libraries/opengl">
+			<fileset dir="../opengl/build" />
+		</copy>
+		<copy todir="${target.path}/libraries/pdf">
+			<fileset dir="../pdf/build" />
+		</copy>
+		<copy todir="${target.path}/libraries/serial">
+			<fileset dir="../serial/build" />
+		</copy>
+		<copy todir="${target.path}/libraries/video">
+			<fileset dir="../video/build" />
+		</copy>
+		
+		<!-- Unzip documentation + examples -->
+		<unzip dest="${target.path}" src="shared/examples.zip" overwrite="false"/>
+		<unzip dest="${target.path}" src="shared/reference.zip" overwrite="false"/>
+		
+		<!-- Write the revision file! -->
+		<echo file="${target.path}/lib/version.txt" message="${revision}" />
+	
+
+	</target>
+
+	
+	<!-- - - - - - - - -->
+	<!-- Revision check-->
+	<!-- - - - - - - - -->
+	<target name="check">
+		<!-- figure out the revision number -->
+		<loadfile srcfile="../todo.txt" property="revision">
+			<filterchain>
+				<headfilter lines="1"/>
+				<tokenfilter>
+					<linetokenizer />
+					<replaceregex pattern="[^0-9]*" flags="g" replace=""/>
+				</tokenfilter>
+			</filterchain>
+		</loadfile>
+		
+		<!-- figure out the revision number in base.java -->
+		<loadfile srcfile="../app/src/processing/app/Base.java" property="revision.base">
+			<filterchain>
+				<tokenfilter>
+					<linetokenizer />
+					<containsregex pattern="int REVISION = "/>
+					<replaceregex pattern="[^0-9]*" flags="g" replace=""/>
+				</tokenfilter>
+			</filterchain>
+		</loadfile>
+		
+		<condition property="revision.correct">
+			<!-- using _contains_ because revision will be of the form 0xxx, -->
+			<!-- but revision.base is an integer with no 0 in front -->
+			<contains string="${revision}" substring="${revision.base}"/>
+		</condition>
+		
+		<!-- the revision.base property won't be set if $revision wasn't found... -->
+		<fail unless="revision.correct" message="Fix revision number in Base.java" />
+	</target>
+	
+	
+	<!-- - - - - - - - -->
+	<!-- Macosx        -->
+	<!-- - - - - - - - -->
+	
+	<target name="macosx-clean" depends="subprojects-clean" description="Clean Mac OS X build">
+		<delete dir="macosx/work" />
+		<delete dir="macosx/working_dir" />
+		<delete dir="macosx/working.dmg" />
+	</target>
+	
+	<target name="macosx-checkos" unless="osx">
+		<echo>
+			=======================================================
+			Processing for Mac OS X can only be built on Mac OS X.
+				
+			Bye. 
+			=======================================================
+		</echo>
+		<fail message="wrong platform (${os.name})" />
+	</target>
+	
+	<target name="macosx-build" if="osx" depends="check, macosx-checkos, subprojects-build" description="Build Mac OS X version">
+		<mkdir dir="macosx/work" />
+		
+		<!-- assemble the pde -->
+		<copy todir="macosx/work">
+			<fileset dir="macosx/dist/" includes="Processing.app/**"/>
+		</copy>
+		
+		<chmod file="macosx/work/Processing.app/Contents/MacOS/JavaApplicationStub" perm="755" />
+		
+		<copy todir="macosx/work/Processing.app/Contents/Resources/Java" flatten="true">
+			<fileset refid="runtime.jars"/>
+		</copy>
+		
+		<copy todir="macosx/work/Processing.app/Contents/Resources/Java">
+			<fileset dir="shared" includes="lib/**" />
+			<fileset file="shared/revisions.txt" />
+		</copy>
+
+		<antcall target="assemble">
+			<param name="target.path" value="macosx/work/Processing.app/Contents/Resources/Java" />
+		</antcall>
+	</target>
+	
+	<target name="macosx-run" depends="macosx-build" description="Run Mac OS X version">
+		<exec executable="macosx/work/Processing.app/Contents/MacOS/JavaApplicationStub" spawn="true"/>
+	</target>
+	
+	<target name="macosx-dist" if="osx" depends="macosx-build" description="Create a .dmg of the Mac OS X version">
+		<!-- now build the dmg -->
+		<gunzip src="macosx/template.dmg.gz" dest="macosx/working.dmg" />
+		
+		<mkdir dir="macosx/working_dir" />
+		<exec executable="hdiutil">
+			<arg line="attach macosx/working.dmg -noautoopen -quiet -mountpoint macosx/working_dir" />
+		</exec>
+		
+		<copy todir="macosx/working_dir">
+			<fileset dir="macosx/work" />
+		</copy>
+		
+		<exec executable="hdiutil">
+			<arg line="detach macosx/working_dir -quiet -force" />
+		</exec>
+		
+		<delete file="macosx/processing-${version}.dmg" />
+		<exec executable="hdiutil">
+			<arg line="convert macosx/working.dmg -quiet -format UDZO -imagekey zlib-level=9 -o macosx/processing-${version}.dmg" />
+		</exec>
+		
+		<echo>
+		=======================================================
+		Processing for Mac OS X was built. Grab the image from   
+		
+		macosx/processing-${version}.dmg
+		=======================================================
+		</echo>
+	</target>
+
+	
+	<!-- - - - - - - - -->
+	<!-- Linux         -->
+	<!-- - - - - - - - -->
+	
+	<target name="linux-clean" depends="subprojects-clean" description="Clean linux version">
+		<delete dir="linux/work" />
+	</target>
+	
+	<target name="linux-checkos" unless="linux">
+		<echo>
+		=======================================================
+		Processing for Linux can only be built on on unix systems.
+			
+		Bye. 
+		=======================================================
+		</echo>
+		
+		<fail message="wrong platform (${os.name})" />
+	</target>
+	
+	<target name="linux-build" depends="check, linux-checkos, subprojects-build" description="Build linux version">
+		<mkdir dir="linux/work" />
+		
+		<copy todir="linux/work">
+			<fileset dir="shared" includes="lib/**" />
+			<fileset file="shared/revisions.txt" />
+		</copy>
+		
+		<copy todir="linux/work/lib" flatten="true">
+			<fileset refid="runtime.jars" />
+		</copy>
+		
+		<antcall target="assemble">
+			<param name="target.path" value="linux/work" />
+		</antcall>
+		
+		<untar compression="gzip" dest="linux/work" src="linux/jre.tgz" overwrite="false"/>
+
+		<copy todir="linux/work" file="linux/dist/processing" />
+		<chmod perm="755" file="linux/work/processing" />
+	</target>
+	
+	<target name="linux-run" depends="linux-build" description="Run linux version">
+		<exec executable="linux/work/processing" dir="linux/work" spawn="true"/>
+	</target>
+		
+	<target name="linux-dist" depends="linux-build" description="Build .tar.gz of linux version">
+		<tar compression="gzip" basedir="linux/work" destfile="linux/processing-${version}.tgz" />
+		
+		<echo>
+		=======================================================
+		Processing for Linux was built. Grab the archive from   
+		
+		build/linux/processing-${version}.tgz
+		=======================================================
+		</echo>
+	</target>
+	
+	
+	<!-- - - - - - - - -->
+	<!-- Windows       -->
+	<!-- - - - - - - - -->
+	
+	<target name="windows-clean" depends="subprojects-clean" description="Clean windows version">
+		<delete dir="windows/work" />
+	</target>
+	
+	<target name="windows-checkos" unless="windows">
+		<echo>
+		=======================================================
+		Processing for Windows can only be built on windows.
+			
+		Bye. 
+		=======================================================
+		</echo>
+		
+		<fail message="wrong platform (${os.name})" />
+	</target>
+	
+	<target name="windows-build" depends="check, windows-checkos, subprojects-build" description="Build windows version">
+		<mkdir dir="windows/work" />
+		
+		<!-- assemble the pde -->
+		<mkdir dir="windows/work/lib" />
+		<copy todir="windows/work/lib" flatten="true">
+			<fileset refid="runtime.jars" />
+		</copy>
+		
+		<copy todir="windows/work">
+			<fileset dir="shared" includes="lib/**" />
+			<fileset file="shared/revisions.txt" />
+		</copy>
+		
+		<antcall target="assemble">
+			<param name="target.path" value="windows/work" />
+		</antcall>
+		
+		<unzip dest="windows/work" src="windows/jre.zip" overwrite="false"/>
+		
+		<property name="launch4j.dir" value="windows/launcher/launch4j/" />
+		<taskdef name="launch4j" classname="net.sf.launch4j.ant.Launch4jTask" classpath="${launch4j.dir}/launch4j.jar; ${launch4j.dir}/lib/xstream.jar" />
+		<copy todir="windows/work">
+			<fileset dir="windows/launcher" includes="about.bmp, application.ico, config.xml"/>
+		</copy>
+		<launch4j configFile="windows/work/config.xml" />
+		<delete dir="windows/work" includes="about.bmp, application.ico, config.xml" />
+
+		<!-- apperently there's a cygwin bug that requires html, dll and exe to have the +x flag -->
+		<chmod perm="755">
+			<fileset dir="windows/work" includes="**/*.html, **/*.dll, **/*.exe" />
+		</chmod>
+	</target>
+	
+	<target name="windows-run" depends="windows-build" description="Run windows version">
+		<exec executable="windows/work/processing.exe" dir="windows/work" spawn="true"/>
+	</target>
+	
+	<target name="windows-dist" depends="windows-build" description="Create .zip files of windows version">
+		<zip basedir="windows/work" destfile="windows/processing-${version}.zip" />
+		<zip basedir="windows/work" destfile="windows/processing-expert-${version}.zip" excludes="java/**" />
+		
+		<echo>
+		=======================================================
+		Processing for Windows was built. Grab the archive from   
+		
+		windows/processing-${version}.zip
+		windows/processing-expert-${version}.zip
+		=======================================================
+		</echo>
+	</target>
+	
+	
+	<!-- - - - - - - - -->
+	<!-- Run It!       -->
+	<!-- - - - - - - - -->
+	
+	<target name="clean" description="Perform a spring cleaning" depends="linux-clean, windows-clean, macosx-clean, subprojects-clean">
+	</target>
+	
+	
+</project>
