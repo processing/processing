@@ -20,8 +20,5 @@
 
   <target name="build" depends="compile" description="Build net library">
     <jar basedir="bin" destfile="library/net.jar" />
-    <copy todir="library">
-      <fileset dir="." includes="src/**" />
-    </copy>
   </target>
 </project>
