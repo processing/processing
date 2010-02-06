@@ -1,37 +1,57 @@
 0176 pde (1.0.10)
 X hitting ESC inside Color Selector will quit Processing
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1006
+X need to set exported applications to only run as 32-bit on osx
+X   otherwise quicktime will break
+X lock the minimum size for the main processing editor frame
+X   fix from Chris Lonnen
+X   if it's made too small, stuff from the bottom disappears
+X   http://dev.processing.org/bugs/show_bug.cgi?id=25
+X http://java.sun.com/javase/6/webnotes/install/jre/autodownload.html
+X   http://java.sun.com/update/1.6.0/jinstall-6u18-windows-i586.cab
+X   http://java.sun.com/javase/6/docs/technotes/guides/jweb/deployment_advice.html
+X   http://java.sun.com/javase/6/webnotes/family-clsid.html
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1353
+X switch to better deployment script for applets
+o   download java kernel
+X   not gonna bother with this -- download is not the issue w/ java
+o modify antlr stuff to conditionally recompile in make.sh
+X   compile antlr inside the initial setup of the work dir
+X     done for macosx
+X     fix this for windows and linux
+X PApplet.main() overwritten
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1446
+o need to do a better job of error handling inside main()
+X applets now use the deployjava.js file 
+X   not opengl, but the others do
 X NullPointerException in JOGLAppletLanucher with Java 6 Update 18 on Windows
 X   switching to more efficient JNLP export
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1452
-X need to set exported applications to only run as 32-bit on osx
-X   otherwise quicktime will break
 
-_ http://java.sun.com/javase/6/webnotes/install/jre/autodownload.html
-_   http://java.sun.com/update/1.6.0/jinstall-6u18-windows-i586.cab
-_   switch to better deployment script for applets (download java kernel)
-_   http://java.sun.com/javase/6/docs/technotes/guides/jweb/deployment_advice.html#deplToolkit
-_   http://java.sun.com/javase/6/webnotes/family-clsid.html
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1353
+X move build scripts to something better like ant
+X   too much to maintain the multiple versions, too much code
+X   http://dev.processing.org/bugs/show_bug.cgi?id=151
+_   remove the intermediate build folders
+_   also update build/howto.txt (of course) because it says no ant
+_     this would also mean requiring a java installation for building
+_     so may as well move the jdk stuff outside of the build
+_     http://ant.apache.org/manual/CoreTasks/get.html
+
+cleaning
+X update to jogl 1.1.1
+X   do this with enhanced library/platform support
+X see how platform is determined by jogl / use for lib import
+X apple bug may have been fixed
+X   http://dev.processing.org/bugs/show_bug.cgi?id=786
+
 
 _ processing 0142 japanese input problem
 _   http://dev.processing.org/bugs/show_bug.cgi?id=854
-
-_ PApplet.main() overwritten
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1446
 
 _ why aren't prefs from theme.txt showing up in preferences.txt? hrm
 _   or rather, why can't they be overridden? 
 _   should fonts at least be in prefs.txt?
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1444
-
-_ move build scripts to something better like ant
-_   too much to maintain the multiple versions, too much code
-_   http://dev.processing.org/bugs/show_bug.cgi?id=151
-_   also update build/howto.txt (of course) because it says no ant
-_   this would also mean requiring a java installation for building
-_   so may as well move the jdk stuff outside of the build
-_     http://ant.apache.org/manual/CoreTasks/get.html
 
 _ lack of java.awt.Polygon import breaks the yellowtail example
 _   and java.io.File (other exceptions?)
@@ -84,14 +104,6 @@ _   use FileChannels, see FileInputStream.getChannel(),
 _   and use transferFrom() or transferTo().)
 _   could also use FileUtils in Apache's common io
 _   http://commons.apache.org/io/api-release/index.html
-
-
-_ available in the developer previews
-_   could check for availability of method
-_   and if it's there, don't require people to quit
-The com.apple.eawt.Application now has a setDefaultMenuBar(JFrame) method that sets a default menu bar in your application when no other Frames are open. This feature requires your app to use both the Aqua Look and Feel and apple.laf.useScreenMenuBar=true property to hook up the native menu bar delegates correctly. This long-requested feature should remove the need to create an invisible or offscreen window to simulate the appearance of a true "default" menu bar. 
-
-The com.apple.eio.FileManager now has two new desktop interaction methods, revealInFinder(File) and moveToTrash(File). You can use revealInFinder() to open a Finder window in the parent directory of of a file and select it. You can use moveToTrash() to move a file to the most appropriate Trash directory for the volume that contains that file. 
 
 "setenv DYLD_LIBRARY_PATH /Library/GStreamer/"
 "setenv setenv GST_PLUGIN_PATH /Library/GStreamer/lib/gstreamer-0.10"
@@ -174,9 +186,6 @@ _ items from the 'code' folder not included with applet export
 _ deleting open sketch (with only one window) attempts to quit
 _   (and still deletes, but doesn't close, even if quitting is canceled)
 
-_ apple bug may have been fixed
-_   http://dev.processing.org/bugs/show_bug.cgi?id=786
-
 _ now that we can wrap exceptions, do die() and warn() methods
 _   this way, people can make use of exceptions if they would rather
 _   or shut them off if they don't want to 
@@ -252,8 +261,6 @@ _ add general outline of 1.5 and 2.0 releases to the faq
 _   video is on its way out, no good/simple solution for fixing now
 _   andreas' library will do good things eventually
 
-_ need to do a better job of error handling inside main()
-
 
 [ needs verification ] 
 
@@ -327,9 +334,6 @@ _   on osx, just ignore anything in /Library/Java/Extensions (but not others)?
 _ native lib stuff, use native.txt in lib folder, then:
 _   String osName = System.getProperty("os.name");
 _   String osArch = System.getProperty("os.arch");
-X update to jogl 1.1.1
-X   do this with enhanced library/platform support
-X see how platform is determined by jogl / use for lib import
 _ add control for dependencies (i.e. svg needs xml), needed for export
 _   http://dev.processing.org/bugs/show_bug.cgi?id=518
 _ add "pretty menu name" to the export.txt file
@@ -872,9 +876,6 @@ _ when running with external editor, hide the editor text area
 _   http://dev.processing.org/bugs/show_bug.cgi?id=20
 _ horizontal scroller gets weird sometimes
 _   http://dev.processing.org/bugs/show_bug.cgi?id=23
-_ lock the minimum size for the main processing editor frame
-_   if it's made too small, stuff from the bottom disappears
-_   http://dev.processing.org/bugs/show_bug.cgi?id=25
 _ add mnemonics for menus (alt-f to open 'file')
 _   http://dev.processing.org/bugs/show_bug.cgi?id=26
 _ option to just print all code in project
@@ -1352,10 +1353,6 @@ _   this was some feedback from running on bsd:
 _     /usr/local/jdk1.3.1/bin/java -cp lib:lib/build:lib/pde.jar:lib/kjc.jar:lib/oro.jar:java/lib/ext/comm.jar PdeBase 
 _   need to use the 1.3 vm, and get a fake platform name
 _   otherwise, goes looking for lib/pde_.properties or something
-o modify antlr stuff to conditionally recompile in make.sh
-_   compile antlr inside the initial setup of the work dir
-X     done for macosx
-_     fix this for windows and linux
 _ about box 
 _   bring up information about gpl, lgpl, and ibmpl
 _   jedit syntax is under mit license
@@ -1392,6 +1389,10 @@ DIST / Mac OS X
 _ don't require an editor window to be open at all times
 _   The com.apple.eawt.Application now has a setDefaultMenuBar(JMenuBar) method
 _   that sets a default menu bar when no other Frames are open. 
+_   could check for availability of method
+_   and if it's there, don't require people to quit
+The com.apple.eawt.Application now has a setDefaultMenuBar(JFrame) method that sets a default menu bar in your application when no other Frames are open. This feature requires your app to use both the Aqua Look and Feel and apple.laf.useScreenMenuBar=true property to hook up the native menu bar delegates correctly. This long-requested feature should remove the need to create an invisible or offscreen window to simulate the appearance of a true "default" menu bar. 
+The com.apple.eio.FileManager now has two new desktop interaction methods, revealInFinder(File) and moveToTrash(File). You can use revealInFinder() to open a Finder window in the parent directory of of a file and select it. You can use moveToTrash() to move a file to the most appropriate Trash directory for the volume that contains that file. 
 _ setup() and draw() are not bold on osx (10.4)
 _   likely osx refuses to do monaco bold
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1047
