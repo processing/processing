@@ -306,7 +306,7 @@
     
     <untar compression="gzip" dest="linux/work" src="linux/jre.tgz" overwrite="false"/>
 
-    <copy todir="linux/work" file="linux/dist/processing" />
+    <copy todir="linux/work" file="linux/processing" />
     <chmod perm="755" file="linux/work/processing" />
   </target>
   
