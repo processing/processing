@@ -24,6 +24,7 @@
 package processing.app.debug;
 
 import processing.app.*;
+import processing.app.preproc.PdePreprocessor;
 import processing.core.*;
 
 import java.awt.Point;
@@ -197,45 +198,53 @@ public class Runner implements MessageConsumer {
   protected String[] getSketchParams() {
     ArrayList<String> params = new ArrayList<String>();
 
-    params.add("processing.core.PApplet");
+    // It's dangerous to add your own main() to your code, 
+    // but if you've done it, we'll respect your right to hang yourself.
+    // http://dev.processing.org/bugs/show_bug.cgi?id=1446
+    if (PdePreprocessor.foundMain) {
+      params.add(appletClassName);
+      
+    } else {
+      params.add("processing.core.PApplet");
 
-    // If there was a saved location (this guy has been run more than once)
-    // then the location will be set to the last position of the sketch window.
-    // This will be passed to the PApplet runner using something like
-    // --location=30,20
-    // Otherwise, the editor location will be passed, and the applet will
-    // figure out where to place itself based on the editor location.
-    // --editor-location=150,20
-    if (editor != null) {  // if running processing-cmd, don't do placement
-      Point windowLocation = editor.getSketchLocation();
-      if (windowLocation != null) {
-        params.add(PApplet.ARGS_LOCATION + "=" +
-                   windowLocation.x + "," + windowLocation.y);
-      } else {
-        Point editorLocation = editor.getLocation();
-        params.add(PApplet.ARGS_EDITOR_LOCATION + "=" +
-                   editorLocation.x + "," + editorLocation.y);
+      // If there was a saved location (this guy has been run more than once)
+      // then the location will be set to the last position of the sketch window.
+      // This will be passed to the PApplet runner using something like
+      // --location=30,20
+      // Otherwise, the editor location will be passed, and the applet will
+      // figure out where to place itself based on the editor location.
+      // --editor-location=150,20
+      if (editor != null) {  // if running processing-cmd, don't do placement
+        Point windowLocation = editor.getSketchLocation();
+        if (windowLocation != null) {
+          params.add(PApplet.ARGS_LOCATION + "=" +
+                     windowLocation.x + "," + windowLocation.y);
+        } else {
+          Point editorLocation = editor.getLocation();
+          params.add(PApplet.ARGS_EDITOR_LOCATION + "=" +
+                     editorLocation.x + "," + editorLocation.y);
+        }
+        params.add(PApplet.ARGS_EXTERNAL);
       }
-      params.add(PApplet.ARGS_EXTERNAL);
-    }
 
-    params.add(PApplet.ARGS_DISPLAY + "=" +
-               Preferences.get("run.display"));
-    params.add(PApplet.ARGS_SKETCH_FOLDER + "=" +
-               sketch.getFolder().getAbsolutePath());
+      params.add(PApplet.ARGS_DISPLAY + "=" +
+                 Preferences.get("run.display"));
+      params.add(PApplet.ARGS_SKETCH_FOLDER + "=" +
+                 sketch.getFolder().getAbsolutePath());
 
-    if (presenting) {
-      params.add(PApplet.ARGS_PRESENT);
-      if (Preferences.getBoolean("run.present.exclusive")) {
-        params.add(PApplet.ARGS_EXCLUSIVE);
+      if (presenting) {
+        params.add(PApplet.ARGS_PRESENT);
+        if (Preferences.getBoolean("run.present.exclusive")) {
+          params.add(PApplet.ARGS_EXCLUSIVE);
+        }
+        params.add(PApplet.ARGS_STOP_COLOR + "=" +
+                   Preferences.get("run.present.stop.color"));
+        params.add(PApplet.ARGS_BGCOLOR + "=" +
+                   Preferences.get("run.present.bgcolor"));
       }
-      params.add(PApplet.ARGS_STOP_COLOR + "=" +
-          Preferences.get("run.present.stop.color"));
-      params.add(PApplet.ARGS_BGCOLOR + "=" +
-          Preferences.get("run.present.bgcolor"));
-    }
 
-    params.add(appletClassName);
+      params.add(appletClassName);
+    }
 
 //    String outgoing[] = new String[params.size()];
 //    params.toArray(outgoing);
