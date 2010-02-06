@@ -1,36 +1,49 @@
 <?xml version="1.0"?>
 <project name="Processing PDE" default="build">
-		
-	<classloader taskname="antlr">
-		<classpath path="lib/antlr.jar" />
-	</classloader>
-	
-	<target name="clean" description="Clean the build directories">
-		<delete dir="bin" />
-		<delete dir="build" />
-	</target>
-	
-	<target name="compile" description="Compile sources">
-		<condition property="core-built">
-			<available file="../core/build/core.jar" />
-		</condition>
-		<fail unless="core-built" message="Please build the core library first and make sure it sits in ../core/build/core.jar" />
+  
+  <classloader taskname="antlr">
+    <classpath path="lib/antlr.jar" />
+  </classloader>
+  
+  <target name="clean" description="Clean the build directories">
+    <delete dir="bin" />
+    <delete file="pde.jar" />
+  </target>
+  
+  <target name="compile" description="Compile sources">
+    <condition property="core-built">
+      <available file="../core/core.jar" />
+    </condition>
+    <fail unless="core-built" message="Please build the core library first and make sure it sits in ../core/core.jar" />
 
-		<!-- invoke antlr manually instead of using the ant-task, saves some trouble... -->
-		<java classpath="${basedir}/lib/antlr.jar" classname="antlr.Tool" failonerror="yes" dir="${basedir}" fork="yes">
-			<arg line="-o src/antlr/java src/antlr/java/java.g" />
-		</java>
-		<copy todir="src/processing/app/preproc" file="src/antlr/java/JavaTokenTypes.txt" />
-		<java classpath="${basedir}/lib/antlr.jar" classname="antlr.Tool" failonerror="yes" dir="${basedir}" fork="yes">
-			<arg line="-o src/processing/app/preproc -glib src/antlr/java/java.g src/processing/app/preproc/pde.g" />
-		</java>
-		
-		<mkdir dir="bin" />
-		<javac target="1.5" srcdir="src" destdir="bin" excludes="**/tools/format/**" classpath="../core/build/core.jar; lib/antlr.jar; lib/apple.jar; lib/ecj.jar; lib/jna.jar" />
-	</target>
-	
-	<target name="build" depends="compile" description="Build pde">
-		<mkdir dir="build" />
-		<jar basedir="bin" destfile="build/pde.jar" />
-	</target>
+    <!-- invoke antlr manually instead of using the ant-task, 
+	 saves some trouble... -->
+    <java classpath="${basedir}/lib/antlr.jar" 
+	  classname="antlr.Tool" 
+	  failonerror="yes" 
+	  dir="${basedir}" 
+	  fork="yes">
+      <arg line="-o src/antlr/java src/antlr/java/java.g" />
+    </java>
+    <copy todir="src/processing/app/preproc" 
+	  file="src/antlr/java/JavaTokenTypes.txt" />
+    <java classpath="${basedir}/lib/antlr.jar" 
+	  classname="antlr.Tool" 
+	  failonerror="yes" 
+	  dir="${basedir}" 
+	  fork="yes">
+      <arg line="-o src/processing/app/preproc -glib src/antlr/java/java.g src/processing/app/preproc/pde.g" />
+    </java>
+
+    <mkdir dir="bin" />
+    <javac target="1.5" 
+	   srcdir="src" 
+	   destdir="bin" 
+	   excludes="**/tools/format/**" 
+	   classpath="../core/core.jar; lib/antlr.jar; lib/apple.jar; lib/ecj.jar; lib/jna.jar" />
+  </target>
+  
+  <target name="build" depends="compile" description="Build pde">
+    <jar basedir="bin" destfile="pde.jar" />
+  </target>
 </project>
