@@ -92,24 +92,31 @@
       <fileset dir="shared/libraries" />
     </copy>
     
-    <!-- copy dxf, pdf, etc. libraries -->
+    <!-- copy libraries for dxf, pdf, etc. -->
     <copy todir="${target.path}/libraries/dxf">
-      <fileset dir="../dxf/build" />
+      <fileset dir="../dxf/library" />
+      <fileset dir="../dxf/src" />
     </copy>
     <copy todir="${target.path}/libraries/net">
-      <fileset dir="../net/build" />
+      <fileset dir="../net/library" />
+      <fileset dir="../net/src" />
     </copy>
     <copy todir="${target.path}/libraries/opengl">
-      <fileset dir="../opengl/build" />
+      <fileset dir="../opengl/library" />
+      <fileset dir="../opengl/src" />
     </copy>
     <copy todir="${target.path}/libraries/pdf">
-      <fileset dir="../pdf/build" />
+      <fileset dir="../pdf/library" />
+      <fileset file="../pdf/notes.txt" />
+      <fileset dir="../pdf/src" />
     </copy>
     <copy todir="${target.path}/libraries/serial">
-      <fileset dir="../serial/build" />
+      <fileset dir="../serial/library" />
+      <fileset dir="../serial/src" />
     </copy>
     <copy todir="${target.path}/libraries/video">
-      <fileset dir="../video/build" />
+      <fileset dir="../video/library" />
+      <fileset dir="../video/src" />
     </copy>
     
     <!-- Unzip documentation + examples -->
