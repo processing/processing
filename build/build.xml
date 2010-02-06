@@ -198,7 +198,7 @@
     
     <!-- assemble the pde -->
     <copy todir="macosx/work">
-      <fileset dir="macosx/dist/" includes="Processing.app/**"/>
+      <fileset dir="macosx/" includes="Processing.app/**"/>
     </copy>
     
     <chmod file="macosx/work/Processing.app/Contents/MacOS/JavaApplicationStub" perm="755" />
