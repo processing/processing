@@ -14,6 +14,7 @@
 
 
 import processing.opengl.*;
+import java.awt.Polygon;
 
 Gesture gestureArray[];
 final int nGestures = 36;  // Number of gestures

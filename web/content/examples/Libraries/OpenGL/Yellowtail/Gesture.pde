@@ -14,10 +14,10 @@ class Gesture {
   int nPoints;
   int nPolys;
 
-  float   jumpDx, jumpDy;
+  float jumpDx, jumpDy;
   boolean exists;
   float INIT_TH = 14;
-  float   thickness = INIT_TH;
+  float thickness = INIT_TH;
 
   Gesture(int mw, int mh) {
     w = mw;
