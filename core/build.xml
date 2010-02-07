@@ -13,7 +13,10 @@
     <preproc dir="${basedir}/src/processing/core" />
 
     <mkdir dir="bin" />
-    <javac target="1.5" srcdir="src" destdir="bin"/>
+    <javac target="1.5" 
+	   encoding="UTF-8"
+	   includeAntRuntime="false"
+	   srcdir="src" destdir="bin"/>
   </target>		
 
   <target name="build" depends="compile" description="Build core library">

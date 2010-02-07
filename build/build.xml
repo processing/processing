@@ -332,8 +332,12 @@
   <!-- Windows       -->
   <!-- - - - - - - - -->
   
-  <target name="windows-clean" depends="subprojects-clean" description="Clean windows version">
-    <delete dir="windows/work" />
+  <target name="windows-clean" depends="subprojects-clean"
+	  description="Clean windows version">
+    <delete dir="windows">
+      <include name="work" />
+      <include name="processing-*" />
+    </delete>
   </target>
   
   <target name="windows-checkos" unless="windows">
@@ -420,7 +424,8 @@
   <!-- Run It!       -->
   <!-- - - - - - - - -->
   
-  <target name="clean" description="Perform a spring cleaning" depends="linux-clean, windows-clean, macosx-clean, subprojects-clean">
+  <target name="clean" description="Perform a spring cleaning" 
+	  depends="linux-clean, windows-clean, macosx-clean, subprojects-clean">
   </target>
 
 </project>
