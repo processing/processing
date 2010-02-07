@@ -7,10 +7,10 @@
   </target>
   
   <target name="compile" description="Compile">
-    <taskdef name="preproc" 
-	     classname="processing.build.PAppletMethods" 
-	     classpath="preproc/preproc.jar" />
-    <preproc dir="${basedir}/src/processing/core" />
+    <taskdef name="methods" 
+	     classname="PAppletMethods" 
+	     classpath="methods/methods.jar" />
+    <methods dir="${basedir}/src/processing/core" />
 
     <mkdir dir="bin" />
     <javac target="1.5" 
