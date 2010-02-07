@@ -343,10 +343,7 @@
   
   <target name="windows-clean" depends="subprojects-clean"
 	  description="Clean windows version">
-    <delete dir="windows">
-      <include name="work" />
-      <include name="processing-*" />
-    </delete>
+    <delete dir="windows/work" />
   </target>
   
   <target name="windows-checkos" unless="windows">
