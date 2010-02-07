@@ -27,6 +27,8 @@
     </java>
     <copy todir="src/processing/app/preproc" 
 	  file="src/antlr/java/JavaTokenTypes.txt" />
+
+<!--
     <java classpath="${basedir}/lib/antlr.jar" 
 	  classname="antlr.Tool" 
 	  failonerror="yes" 
@@ -34,12 +36,23 @@
 	  fork="yes">
       <arg line="-o src/processing/app/preproc -glib src/antlr/java/java.g src/processing/app/preproc/pde.g" />
     </java>
+-->
+    <java classpath="${basedir}/lib/antlr.jar" 
+	  classname="antlr.Tool" 
+	  failonerror="yes" 
+	  dir="${basedir}/src/processing/app/preproc" 
+	  fork="yes">
+      <arg line="-glib ../../../antlr/java/java.g pde.g" />
+    </java>
+
 
     <mkdir dir="bin" />
     <javac target="1.5" 
 	   srcdir="src" 
 	   destdir="bin" 
 	   excludes="**/tools/format/**" 
+	   encoding="UTF-8"
+	   includeAntRuntime="false"
 	   classpath="../core/core.jar; lib/antlr.jar; lib/apple.jar; lib/ecj.jar; lib/jna.jar" />
   </target>
   
