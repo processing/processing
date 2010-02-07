@@ -28,6 +28,8 @@
     <copy todir="src/processing/app/preproc" 
 	  file="src/antlr/java/JavaTokenTypes.txt" />
 
+    <!-- This version does not work properly on Windows, 
+	 probably due to differences in how paths are handled. -->
 <!--
     <java classpath="${basedir}/lib/antlr.jar" 
 	  classname="antlr.Tool" 
@@ -47,13 +49,25 @@
 
 
     <mkdir dir="bin" />
+
+    <!-- ant seems to nuke ${java.home} for some reason, pointing at the JRE
+	 subfolder instead of the actual JDK found at JAVA_HOME. 
+	 To avoid this, we grab the actual JAVA_HOME environment variable 
+	 and use that to specify the location of tools.jar. -->
+    <property environment="env" />
+<!--
+    <dirname property="blah" file="${java.home}" />
+    <echo message="here! ${java.home}/lib/tools.jar or there: ${blah}" />
+    <echo message="override ${env.JAVA_HOME}/lib/tools.jar" />
+    <fail />
+-->
     <javac target="1.5" 
 	   srcdir="src" 
 	   destdir="bin" 
 	   excludes="**/tools/format/**" 
 	   encoding="UTF-8"
 	   includeAntRuntime="false"
-	   classpath="../core/core.jar; lib/ant.jar; lib/ant-launcher.jar; lib/antlr.jar; lib/apple.jar; lib/ecj.jar; lib/jna.jar" />
+	   classpath="../core/core.jar; ${env.JAVA_HOME}/lib/tools.jar; lib/ant.jar; lib/ant-launcher.jar; lib/antlr.jar; lib/apple.jar; lib/ecj.jar; lib/jna.jar" />
   </target>
   
   <target name="build" depends="compile" description="Build pde">
