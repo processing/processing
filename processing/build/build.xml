@@ -15,8 +15,8 @@
 
   <!-- Libraries required for running processing -->
   <fileset dir=".." id="runtime.jars">
-    <include name="core/build/core.jar" />
-    <include name="app/build/pde.jar" />
+    <include name="core/core.jar" />
+    <include name="app/pde.jar" />
     <include name="app/lib/antlr.jar" />
     <include name="app/lib/ecj.jar" />
     <include name="app/lib/jna.jar" />
@@ -179,7 +179,7 @@
     <delete dir="macosx/work" />
     <delete dir="macosx/working_dir" />
     <delete dir="macosx/working.dmg" />
-    <delete dir="macosx/processing-*.dmg" />
+    <delete file="macosx/processing-*.dmg" />
   </target>
   
   <target name="macosx-checkos" unless="macosx">
@@ -303,8 +303,6 @@
     <antcall target="assemble">
       <param name="target.path" value="linux/work" />
     </antcall>
-    
-    <untar compression="gzip" dest="linux/work" src="linux/jre.tgz" overwrite="false"/>
 
     <copy todir="linux/work" file="linux/processing" />
     <chmod perm="755" file="linux/work/processing" />
@@ -315,8 +313,19 @@
     <exec executable="linux/work/processing" dir="linux/work" spawn="true"/>
   </target>
   
-  <target name="linux-dist" depends="linux-build" description="Build .tar.gz of linux version">
-    <tar compression="gzip" basedir="linux/work" destfile="linux/processing-${version}.tgz" />
+  <target name="linux-dist" depends="linux-build" 
+	  description="Build .tar.gz of linux version">
+
+    <get src="http://dev.processing.org/build/jre-6u18-linux-i586.tgz" 
+	 dest="linux/jre.tgz" 
+	 usetimestamp="true" />    
+    <untar compression="gzip" 
+	   dest="linux/work" 
+	   src="linux/jre.tgz" 
+	   overwrite="false"/>
+
+    <tar compression="gzip" basedir="linux/work" 
+	 destfile="linux/processing-${version}.tgz" />
     
     <echo>
       =======================================================
@@ -372,8 +381,6 @@
       <param name="target.path" value="windows/work" />
     </antcall>
     
-    <unzip dest="windows/work" src="windows/jre.zip" overwrite="false"/>
-    
     <property name="launch4j.dir" value="windows/launcher/launch4j/" />
     <taskdef name="launch4j" 
 	     classname="net.sf.launch4j.ant.Launch4jTask" 
@@ -401,6 +408,12 @@
 
   <target name="windows-dist" depends="windows-build" 
 	  description="Create .zip files of windows version">
+
+    <get src="http://dev.processing.org/build/jre-6u18-windows-i586.zip" 
+	 dest="windows/jre.zip" 
+	 usetimestamp="true" />
+
+    <unzip dest="windows/work" src="windows/jre.zip" overwrite="false"/>
 
     <zip basedir="windows/work" 
 	 destfile="windows/processing-${version}.zip" />
