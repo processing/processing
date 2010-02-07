@@ -36,7 +36,7 @@ public class PAppletMethods extends Task {
       throw new BuildException("dir parameter must be set!");
     }
 
-    System.out.println("using basedir " + baseDir);
+    //System.out.println("using basedir " + baseDir);
     File graphicsFile = new File(baseDir, "PGraphics.java");
     File appletFile = new File(baseDir, "PApplet.java");
     File imageFile = new File(baseDir, "PImage.java");
@@ -59,17 +59,19 @@ public class PAppletMethods extends Task {
     }
 
     // Looking good, let's do this!
-    ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
-    PrintStream out = new PrintStream(outBytes);
+    //ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
+    //PrintStream out = new PrintStream(outBytes, "UTF-8");
+    StringBuffer out = new StringBuffer();
     StringBuffer content = new StringBuffer();
 
     try{
       BufferedReader applet = createReader(appletFile);
       String line;
       while ((line = applet.readLine()) != null) {
-        out.println(line);
+        out.append(line);
+        out.append('\n');  // to avoid Windows CRs
         content.append(line);
-        content.append('\n');
+        content.append('\n');  // for efficiency
 
         if (line.indexOf("public functions for processing.core") >= 0) {
           break;
@@ -86,34 +88,38 @@ public class PAppletMethods extends Task {
       process(out, graphicsFile);
       process(out, imageFile);
 
-      out.println("}");
+      out.append('}');
+      out.append('\n');
 
-    } catch (IOException e) {
-      e.printStackTrace();
+      //} catch (IOException e) {
+      //e.printStackTrace();
 
-    } catch(Exception ex) {
-      ex.printStackTrace();
+    } catch (Exception e) {
+      //ex.printStackTrace();
+      throw new BuildException(e);
     }
-    out.flush();
+    //out.flush();
 
-    if (content.toString().equals(outBytes.toString())) {
+    String outString = out.toString();
+    if (content.toString().equals(outString)) {
       System.out.println("No changes to PApplet API.");
     } else {
       System.out.println("Updating PApplet with API changes " +
                          "from PImage or PGraphics.");
       try {
-        PrintStream temp = new PrintStream(appletFile);
-        temp.print(outBytes.toString());
+        PrintStream temp = new PrintStream(appletFile, "UTF-8");
+        temp.print(outString);
         temp.flush();
         temp.close();
-      } catch (FileNotFoundException e) {
-        e.printStackTrace();
+      } catch (IOException e) {
+        //e.printStackTrace();
+        throw new BuildException(e);
       }
     }
   }
 
 
-  private void process(PrintStream out, File input) throws IOException {
+  private void process(StringBuffer out, File input) throws IOException {
     BufferedReader in = createReader(input);
     int comments = 0;
     String line = null;
@@ -184,20 +190,22 @@ public class PAppletMethods extends Task {
         line = line.replaceAll(Pattern.quote(";"), " {\n");
 
         //out.println("\n\n" + line);
-        out.println();
-        out.println();
+        out.append('\n');
+        out.append('\n');
         // end has its own newline
         //out.print(commentBuffer.toString());  // TODO disabled for now XXXX
-        out.print(commentBuffer.toString());  // duplicates all comments
+        out.append(commentBuffer.toString());  // duplicates all comments
         commentBuffer.setLength(0);
-        out.println(line);
+        out.append(line);
+        out.append('\n');
 
         decl += line;
         while(line.indexOf(')') == -1) {
           line = in.readLine();
           decl += line;
           line = line.replaceAll("\\;\\s*$", " {\n");
-          out.println(line);
+          out.append(line);
+          out.append('\n');
         }
 
         result = Pattern.compile(".*?\\s(\\S+)\\(.*?").matcher(decl);
@@ -240,10 +248,13 @@ public class PAppletMethods extends Task {
         rline += ");";
 
         if (!gotStatic && returns.equals("")) {
-          out.println(rline);
+          out.append(rline);
+          out.append('\n');
         }
-        out.println(gline);
-        out.println("  }");
+        out.append(gline);
+        out.append('\n');
+        out.append("  }");
+        out.append('\n');
 
       } else {
         commentBuffer.setLength(0);
