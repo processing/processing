@@ -1,4 +1,4 @@
-<project name="preproc" default="task-lib">
+<project name="methods" default="task-lib">
 
   <target name="compile">
     <mkdir dir="bin" />
@@ -11,18 +11,18 @@
   </target>
   
   <target name="task-lib" depends="compile">
-    <jar basedir="bin" destfile="preproc.jar" />
+    <jar basedir="bin" destfile="methods.jar" />
   </target>
   
   <target name="demo">
-    <taskdef name="preproc" 
-	     classname="processing.build.PAppletMethods" 
-	     classpath="preproc.jar" />
+    <taskdef name="methods" 
+	     classname="PAppletMethods" 
+	     classpath="methods.jar" />
     <preproc dir="demo"/>
   </target>
   
   <target name="clean">
     <delete dir="bin" />
-    <delete file="preproc.jar" />
+    <delete file="methods.jar" />
   </target>
 </project>
