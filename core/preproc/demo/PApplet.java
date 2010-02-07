@@ -3,13 +3,12 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-09 Ben Fry and Casey Reas
+  Copyright (c) 2004-10 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
+  License as published by the Free Software Foundation, version 2.1.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -39,6 +38,8 @@ import java.util.zip.*;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
+
+import processing.core.PShape;
 
 
 /**
@@ -158,6 +159,7 @@ import javax.swing.SwingUtilities;
  * itself (we must draw the line somewhere), because of how messy it would
  * get to start talking about multiple screens. It's also not that tough to
  * do by hand w/ some Java code.</P>
+ * @usage Web &amp; Application
  */
 public class PApplet extends Applet
   implements PConstants, Runnable,
@@ -306,23 +308,54 @@ public class PApplet extends Applet
   volatile int resizeHeight;
 
   /**
+   * Array containing the values for all the pixels in the display window. These values are of the color datatype. This array is the size of the display window. For example, if the image is 100x100 pixels, there will be 10000 values and if the window is 200x300 pixels, there will be 60000 values. The <b>index</b> value defines the position of a value within the array. For example, the statment <b>color b = pixels[230]</b> will set the variable <b>b</b> to be equal to the value at that location in the array. <br><br> Before accessing this array, the data must loaded with the <b>loadPixels()</b> function. After the array data has been modified, the <b>updatePixels()</b> function must be run to update the changes. Without <b>loadPixels()</b>, running the code may (or will in future releases) result in a NullPointerException.
    * Pixel buffer from this applet's PGraphics.
    * <P>
    * When used with OpenGL or Java2D, this value will
    * be null until loadPixels() has been called.
+   *
+   * @webref image:pixels
+   * @see processing.core.PApplet#loadPixels()
+   * @see processing.core.PApplet#updatePixels()
+   * @see processing.core.PApplet#get(int, int, int, int)
+   * @see processing.core.PApplet#set(int, int, int)
+   * @see processing.core.PImage
    */
   public int pixels[];
 
-  /** width of this applet's associated PGraphics */
+  /** width of this applet's associated PGraphics
+   * @webref environment
+   */
   public int width;
 
-  /** height of this applet's associated PGraphics */
+  /** height of this applet's associated PGraphics
+   * @webref environment
+   * */
   public int height;
 
-  /** current x position of the mouse */
+  /**
+   * The system variable <b>mouseX</b> always contains the current horizontal coordinate of the mouse.
+   * @webref input:mouse
+   * @see PApplet#mouseY
+   * @see PApplet#mousePressed
+   * @see PApplet#mousePressed()
+   * @see PApplet#mouseReleased()
+   * @see PApplet#mouseMoved()
+   * @see PApplet#mouseDragged()
+   *
+   * */
   public int mouseX;
 
-  /** current y position of the mouse */
+  /**
+   * The system variable <b>mouseY</b> always contains the current vertical coordinate of the mouse.
+   * @webref input:mouse
+   * @see PApplet#mouseX
+   * @see PApplet#mousePressed
+   * @see PApplet#mousePressed()
+   * @see PApplet#mouseReleased()
+   * @see PApplet#mouseMoved()
+   * @see PApplet#mouseDragged()
+   * */
   public int mouseY;
 
   /**
@@ -333,8 +366,20 @@ public class PApplet extends Applet
    * an event comes through. Be sure to use only one or the other type of
    * means for tracking pmouseX and pmouseY within your sketch, otherwise
    * you're gonna run into trouble.
+   * @webref input:mouse
+   * @see PApplet#pmouseY
+   * @see PApplet#mouseX
+   * @see PApplet#mouseY
    */
-  public int pmouseX, pmouseY;
+  public int pmouseX;
+
+  /**
+   * @webref input:mouse
+   * @see PApplet#pmouseX
+   * @see PApplet#mouseX
+   * @see PApplet#mouseY
+   */
+  public int pmouseY;
 
   /**
    * previous mouseX/Y for the draw loop, separated out because this is
@@ -361,36 +406,84 @@ public class PApplet extends Applet
   public boolean firstMouse;
 
   /**
-   * Last mouse button pressed, one of LEFT, CENTER, or RIGHT.
-   * <P>
+   * Processing automatically tracks if the mouse button is pressed and which button is pressed.
+   * The value of the system variable <b>mouseButton</b> is either <b>LEFT</b>, <b>RIGHT</b>, or <b>CENTER</b> depending on which button is pressed.
+   * <h3>Advanced:</h3>
    * If running on Mac OS, a ctrl-click will be interpreted as
    * the righthand mouse button (unlike Java, which reports it as
    * the left mouse).
+   * @webref input:mouse
+   * @see PApplet#mouseX
+   * @see PApplet#mouseY
+   * @see PApplet#mousePressed()
+   * @see PApplet#mouseReleased()
+   * @see PApplet#mouseMoved()
+   * @see PApplet#mouseDragged()
    */
   public int mouseButton;
 
+  /**
+   * Variable storing if a mouse button is pressed. The value of the system variable <b>mousePressed</b> is true if a mouse button is pressed and false if a button is not pressed.
+   * @webref input:mouse
+   * @see PApplet#mouseX
+   * @see PApplet#mouseY
+   * @see PApplet#mouseReleased()
+   * @see PApplet#mouseMoved()
+   * @see PApplet#mouseDragged()
+   */
   public boolean mousePressed;
   public MouseEvent mouseEvent;
 
   /**
+   * The system variable <b>key</b> always contains the value of the most recent key on the keyboard that was used (either pressed or released). <br><br>
+   * For non-ASCII keys, use the <b>keyCode</b> variable.
+   * The keys included in the ASCII specification (BACKSPACE, TAB, ENTER, RETURN, ESC, and DELETE) do not require checking to see if they key is coded, and you should simply use the <b>key</b> variable instead of <b>keyCode</b>
+   * If you're making cross-platform projects, note that the ENTER key is commonly used on PCs and Unix and the RETURN key is used instead on Macintosh.
+   * Check for both ENTER and RETURN to make sure your program will work for all platforms.
+   * =advanced
+   *
    * Last key pressed.
    * <P>
    * If it's a coded key, i.e. UP/DOWN/CTRL/SHIFT/ALT,
    * this will be set to CODED (0xffff or 65535).
+   * @webref input:keyboard
+   * @see PApplet#keyCode
+   * @see PApplet#keyPressed
+   * @see PApplet#keyPressed()
+   * @see PApplet#keyReleased()
    */
   public char key;
 
   /**
+   * The variable <b>keyCode</b> is used to detect special keys such as the UP, DOWN, LEFT, RIGHT arrow keys and ALT, CONTROL, SHIFT.
+   * When checking for these keys, it's first necessary to check and see if the key is coded. This is done with the conditional "if (key == CODED)" as shown in the example.
+   * <br><br>The keys included in the ASCII specification (BACKSPACE, TAB, ENTER, RETURN, ESC, and DELETE) do not require checking to see if they key is coded, and you should simply use the <b>key</b> variable instead of <b>keyCode</b>
+   * If you're making cross-platform projects, note that the ENTER key is commonly used on PCs and Unix and the RETURN key is used instead on Macintosh.
+   * Check for both ENTER and RETURN to make sure your program will work for all platforms.
+   * <br><br>For users familiar with Java, the values for UP and DOWN are simply shorter versions of Java's KeyEvent.VK_UP and KeyEvent.VK_DOWN.
+   * Other keyCode values can be found in the Java <a href="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/event/KeyEvent.html">KeyEvent</a> reference.
+   *
+   * =advanced
    * When "key" is set to CODED, this will contain a Java key code.
    * <P>
    * For the arrow keys, keyCode will be one of UP, DOWN, LEFT and RIGHT.
    * Also available are ALT, CONTROL and SHIFT. A full set of constants
    * can be obtained from java.awt.event.KeyEvent, from the VK_XXXX variables.
+   * @webref input:keyboard
+   * @see PApplet#key
+   * @see PApplet#keyPressed
+   * @see PApplet#keyPressed()
+   * @see PApplet#keyReleased()
    */
   public int keyCode;
 
   /**
-   * true if the mouse is currently pressed.
+   * The boolean system variable <b>keyPressed</b> is <b>true</b> if any key is pressed and <b>false</b> if no keys are pressed.
+   * @webref input:keyboard
+   * @see PApplet#key
+   * @see PApplet#keyCode
+   * @see PApplet#keyPressed()
+   * @see PApplet#keyReleased()
    */
   public boolean keyPressed;
 
@@ -401,6 +494,7 @@ public class PApplet extends Applet
 
   /**
    * Gets set to true/false as the applet gains/loses focus.
+   * @webref environment
    */
   public boolean focused = false;
 
@@ -409,6 +503,7 @@ public class PApplet extends Applet
    * <P>
    * This can be used to test how the applet should behave
    * since online situations are different (no file writing, etc).
+   * @webref environment
    */
   public boolean online = false;
 
@@ -825,7 +920,7 @@ public class PApplet extends Applet
       meth.add(o, method);
 
     } catch (NoSuchMethodException nsme) {
-      die("There is no " + name + "() method in the class " +
+      die("There is no public " + name + "() method in the class " +
           o.getClass().getName());
 
     } catch (Exception e) {
@@ -842,7 +937,7 @@ public class PApplet extends Applet
       meth.add(o, method);
 
     } catch (NoSuchMethodException nsme) {
-      die("There is no " + name + "() method in the class " +
+      die("There is no public " + name + "() method in the class " +
           o.getClass().getName());
 
     } catch (Exception e) {
@@ -936,6 +1031,17 @@ public class PApplet extends Applet
 
 
   /**
+   * Defines the dimension of the display window in units of pixels. The <b>size()</b> function <em>must</em> be the first line in <b>setup()</b>. If <b>size()</b> is not called, the default size of the window is 100x100 pixels. The system variables <b>width</b> and <b>height</b> are set by the parameters passed to the <b>size()</b> function. <br><br>
+   * Do not use variables as the parameters to <b>size()</b> command, because it will cause problems when exporting your sketch. When variables are used, the dimensions of your sketch cannot be determined during export. Instead, employ numeric values in the <b>size()</b> statement, and then use the built-in <b>width</b> and <b>height</b> variables inside your program when you need the dimensions of the display window are needed. <br><br>
+   * The MODE parameters selects which rendering engine to use. For example, if you will be drawing 3D shapes for the web use <b>P3D</b>, if you want to export a program with OpenGL graphics acceleration use <b>OPENGL</b>. A brief description of the four primary renderers follows:<br><br><b>JAVA2D</b> - The default renderer. This renderer supports two dimensional drawing and provides higher image quality in overall, but generally slower than P2D.<br><br><b>P2D</b> (Processing 2D) - Fast 2D renderer, best used with pixel data, but not as accurate as the JAVA2D default. <br><br><b>P3D</b> (Processing 3D) - Fast 3D renderer for the web. Sacrifices rendering quality for quick 3D drawing.<br><br><b>OPENGL</b> - High speed 3D graphics renderer that makes use of OpenGL-compatible graphics hardware is available. Keep in mind that OpenGL is not magic pixie dust that makes any sketch faster (though it's close), so other rendering options may produce better results depending on the nature of your code. Also note that with OpenGL, all graphics are smoothed: the smooth() and noSmooth() commands are ignored. <br><br><b>PDF</b> - The PDF renderer draws 2D graphics directly to an Acrobat PDF file. This produces excellent results when you need vector shapes for high resolution output or printing. You must first use Import Library &rarr; PDF to make use of the library. More information can be found in the PDF library reference.
+   * If you're manipulating pixels (using methods like get() or blend(), or manipulating the pixels[] array), P2D and P3D will usually be faster than the default (JAVA2D) setting, and often the OPENGL setting as well. Similarly, when handling lots of images, or doing video playback, P2D and P3D will tend to be faster.<br><br>
+   * The P2D, P3D, and OPENGL renderers do not support strokeCap() or strokeJoin(), which can lead to ugly results when using strokeWeight(). (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=955">Bug 955</a>) <br><br>
+   * For the most elegant and accurate results when drawing in 2D, particularly when using smooth(), use the JAVA2D renderer setting. It may be slower than the others, but is the most complete, which is why it's the default. Advanced users will want to switch to other renderers as they learn the tradeoffs. <br><br>
+   * Rendering graphics requires tradeoffs between speed, accuracy, and general usefulness of the available features. None of the renderers are perfect, so we provide multiple options so that you can decide what tradeoffs make the most sense for your project. We'd prefer all of them to have perfect visual accuracy, high performance, and support a wide range of features, but that's simply not possible. <br><br>
+   * The maximum width and height is limited by your operating system, and is usually the width and height of your actual screen. On some machines it may simply be the number of pixels on your current screen, meaning that a screen that's 800x600 could support size(1600, 300), since it's the same number of pixels. This varies widely so you'll have to try different rendering modes and sizes until you get what you're looking for. If you need something larger, use <b>createGraphics</b> to create a non-visible drawing surface.
+   * <br><br>Again, the size() method must be the first line of the code (or first item inside setup). Any code that appears before the size() command may run more than once, which can lead to confusing results.
+   *
+   * =advanced
    * Starts up and creates a two-dimensional drawing surface,
    * or resizes the current drawing surface.
    * <P>
@@ -949,12 +1055,19 @@ public class PApplet extends Applet
    * <P>
    * If called once a renderer has already been set, this will
    * use the previous renderer and simply resize it.
+   *
+   * @webref structure
+   * @param iwidth width of the display window in units of pixels
+   * @param iheight height of the display window in units of pixels
    */
   public void size(int iwidth, int iheight) {
     size(iwidth, iheight, JAVA2D, null);
   }
 
-
+  /**
+   *
+   * @param irenderer   Either P2D, P3D, JAVA2D, or OPENGL
+   */
   public void size(int iwidth, int iheight, String irenderer) {
     size(iwidth, iheight, irenderer, null);
   }
@@ -1016,6 +1129,11 @@ public class PApplet extends Applet
 
 
   /**
+   * Creates and returns a new <b>PGraphics</b> object of the types P2D, P3D, and JAVA2D. Use this class if you need to draw into an off-screen graphics buffer. It's not possible to use <b>createGraphics()</b> with OPENGL, because it doesn't allow offscreen use. The DXF and PDF renderers require the filename parameter.
+   * <br><br>It's important to call any drawing commands between beginDraw() and endDraw() statements. This is also true for any commands that affect drawing, such as smooth() or colorMode().
+   * <br><br>Unlike the main drawing surface which is completely opaque, surfaces created with createGraphics() can have transparency. This makes it possible to draw into a graphics and maintain the alpha channel. By using save() to write a PNG or TGA file, the transparency of the graphics object will be honored. Note that transparency levels are binary: pixels are either complete opaque or transparent. For the time being (as of release 0127), this means that text characters will be opaque blocks. This will be fixed in a future release (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=641">Bug 641</a>).
+   *
+   * =advanced
    * Create an offscreen PGraphics object for drawing. This can be used
    * for bitmap or vector images drawing or rendering.
    * <UL>
@@ -1064,6 +1182,14 @@ public class PApplet extends Applet
    * background information can be found in the developer's reference for
    * <A HREF="http://dev.processing.org/reference/core/javadoc/processing/core/PImage.html#save(java.lang.String)">PImage.save()</A>.
    * </UL>
+   *
+   * @webref rendering
+   * @param iwidth width in pixels
+   * @param iheight height in pixels
+   * @param irenderer Either P2D (not yet implemented), P3D, JAVA2D, PDF, DXF
+   *
+   * @see processing.core.PGraphics
+   *
    */
   public PGraphics createGraphics(int iwidth, int iheight,
                                   String irenderer) {
@@ -1076,7 +1202,7 @@ public class PApplet extends Applet
   /**
    * Create an offscreen graphics surface for drawing, in this case
    * for a renderer that writes to a file (such as PDF or DXF).
-   * @param ipath can be an absolute or relative path
+   * @param ipath the name of the file (can be an absolute or relative path)
    */
   public PGraphics createGraphics(int iwidth, int iheight,
                                   String irenderer, String ipath) {
@@ -1220,9 +1346,21 @@ public class PApplet extends Applet
 
 
   /**
+   * Creates a new PImage (the datatype for storing images). This provides a fresh buffer of pixels to play with. Set the size of the buffer with the <b>width</b> and <b>height</b> parameters. The <b>format</b> parameter defines how the pixels are stored. See the PImage reference for more information.
+   * <br><br>Be sure to include all three parameters, specifying only the width and height (but no format) will produce a strange error.
+   * <br><br>Advanced users please note that createImage() should be used instead of the syntax <tt>new PImage()</tt>.
+   * =advanced
    * Preferred method of creating new PImage objects, ensures that a
    * reference to the parent PApplet is included, which makes save() work
    * without needing an absolute path.
+   *
+   * @webref image
+   * @param wide width in pixels
+   * @param high height in pixels
+   * @param format Either RGB, ARGB, ALPHA (grayscale alpha channel)
+   *
+   * @see processing.core.PImage
+   * @see processing.core.PGraphics
    */
   public PImage createImage(int wide, int high, int format) {
     PImage image = new PImage(wide, high, format);
@@ -1679,35 +1817,75 @@ public class PApplet extends Applet
 
 
   /**
-   * Mouse has been pressed, and should be considered "down"
-   * until mouseReleased() is called. If you must, use
+   * The <b>mousePressed()</b> function is called once after every time a mouse button is pressed. The <b>mouseButton</b> variable (see the related reference entry) can be used to determine which button has been pressed.
+   * =advanced
+   *
+   * If you must, use
    * int button = mouseEvent.getButton();
    * to figure out which button was clicked. It will be one of:
    * MouseEvent.BUTTON1, MouseEvent.BUTTON2, MouseEvent.BUTTON3
    * Note, however, that this is completely inconsistent across
    * platforms.
+   * @webref input:mouse
+   * @see PApplet#mouseX
+   * @see PApplet#mouseY
+   * @see PApplet#mousePressed
+   * @see PApplet#mouseReleased()
+   * @see PApplet#mouseMoved()
+   * @see PApplet#mouseDragged()
    */
   public void mousePressed() { }
 
   /**
-   * Mouse button has been released.
+   * The <b>mouseReleased()</b> function is called every time a mouse button is released.
+   * @webref input:mouse
+   * @see PApplet#mouseX
+   * @see PApplet#mouseY
+   * @see PApplet#mousePressed
+   * @see PApplet#mousePressed()
+   * @see PApplet#mouseMoved()
+   * @see PApplet#mouseDragged()
    */
   public void mouseReleased() { }
 
   /**
+   * The <b>mouseClicked()</b> function is called once after a mouse button has been pressed and then released.
+   * =advanced
    * When the mouse is clicked, mousePressed() will be called,
    * then mouseReleased(), then mouseClicked(). Note that
    * mousePressed is already false inside of mouseClicked().
+   * @webref input:mouse
+   * @see PApplet#mouseX
+   * @see PApplet#mouseY
+   * @see PApplet#mouseButton
+   * @see PApplet#mousePressed()
+   * @see PApplet#mouseReleased()
+   * @see PApplet#mouseMoved()
+   * @see PApplet#mouseDragged()
    */
   public void mouseClicked() { }
 
   /**
-   * Mouse button is pressed and the mouse has been dragged.
+   * The <b>mouseDragged()</b> function is called once every time the mouse moves and a mouse button is pressed.
+   * @webref input:mouse
+   * @see PApplet#mouseX
+   * @see PApplet#mouseY
+   * @see PApplet#mousePressed
+   * @see PApplet#mousePressed()
+   * @see PApplet#mouseReleased()
+   * @see PApplet#mouseMoved()
    */
   public void mouseDragged() { }
 
   /**
-   * Mouse button is not pressed but the mouse has changed locations.
+   * The <b>mouseMoved()</b> function is called every time the mouse moves and a mouse button is not pressed.
+   * @webref input:mouse
+   * @see PApplet#mouseX
+   * @see PApplet#mouseY
+   * @see PApplet#mousePressed
+   * @see PApplet#mousePressed()
+   * @see PApplet#mouseReleased()
+   * @see PApplet#mouseDragged()
    */
   public void mouseMoved() { }
 
@@ -1802,6 +1980,15 @@ public class PApplet extends Applet
 
 
   /**
+   *
+   * The <b>keyPressed()</b> function is called once every time a key is pressed. The key that was pressed is stored in the <b>key</b> variable.
+   * <br><br>For non-ASCII keys, use the <b>keyCode</b> variable.
+   * The keys included in the ASCII specification (BACKSPACE, TAB, ENTER, RETURN, ESC, and DELETE) do not require checking to see if they key is coded, and you should simply use the <b>key</b> variable instead of <b>keyCode</b>
+   * If you're making cross-platform projects, note that the ENTER key is commonly used on PCs and Unix and the RETURN key is used instead on Macintosh.
+   * Check for both ENTER and RETURN to make sure your program will work for all platforms.<br><br>Because of how operating systems handle key repeats, holding down a key may cause multiple calls to keyPressed() (and keyReleased() as well).
+   * The rate of repeat is set by the operating system and how each computer is configured.
+   * =advanced
+   *
    * Called each time a single key on the keyboard is pressed.
    * Because of how operating systems handle key repeats, holding
    * down a key will cause multiple calls to keyPressed(), because
@@ -1847,12 +2034,23 @@ public class PApplet extends Applet
    *    Java 1.1 (Microsoft VM) passes the TAB key through normally.
    *    Not tested on other platforms or for 1.3.
    * </PRE>
+   * @see PApplet#key
+   * @see PApplet#keyCode
+   * @see PApplet#keyPressed
+   * @see PApplet#keyReleased()
+   * @webref input:keyboard
    */
   public void keyPressed() { }
 
 
   /**
-   * See keyPressed().
+   * The <b>keyReleased()</b> function is called once every time a key is released. The key that was released will be stored in the <b>key</b> variable. See <b>key</b> and <b>keyReleased</b> for more information.
+   *
+   * @see PApplet#key
+   * @see PApplet#keyCode
+   * @see PApplet#keyPressed
+   * @see PApplet#keyPressed()
+   * @webref input:keyboard
    */
   public void keyReleased() { }
 
@@ -1893,48 +2091,108 @@ public class PApplet extends Applet
 
 
   /**
-   * Get the number of milliseconds since the applet started.
+   * Returns the number of milliseconds (thousandths of a second) since starting an applet. This information is often used for timing animation sequences.
+   *
+   * =advanced
    * <P>
    * This is a function, rather than a variable, because it may
    * change multiple times per frame.
+   *
+   * @webref input:time_date
+   * @see processing.core.PApplet#second()
+   * @see processing.core.PApplet#minute()
+   * @see processing.core.PApplet#hour()
+   * @see processing.core.PApplet#day()
+   * @see processing.core.PApplet#month()
+   * @see processing.core.PApplet#year()
+   *
    */
   public int millis() {
     return (int) (System.currentTimeMillis() - millisOffset);
   }
 
-  /** Seconds position of the current time. */
+  /** Seconds position of the current time.
+   *
+   * @webref input:time_date
+   * @see processing.core.PApplet#millis()
+   * @see processing.core.PApplet#minute()
+   * @see processing.core.PApplet#hour()
+   * @see processing.core.PApplet#day()
+   * @see processing.core.PApplet#month()
+   * @see processing.core.PApplet#year()
+   * */
   static public int second() {
     return Calendar.getInstance().get(Calendar.SECOND);
   }
 
-  /** Minutes position of the current time. */
+  /**
+   * Processing communicates with the clock on your computer. The <b>minute()</b> function returns the current minute as a value from 0 - 59.
+   *
+   * @webref input:time_date
+   * @see processing.core.PApplet#millis()
+   * @see processing.core.PApplet#second()
+   * @see processing.core.PApplet#hour()
+   * @see processing.core.PApplet#day()
+   * @see processing.core.PApplet#month()
+   * @see processing.core.PApplet#year()
+   *
+   * */
   static public int minute() {
     return Calendar.getInstance().get(Calendar.MINUTE);
   }
 
   /**
+   * Processing communicates with the clock on your computer. The <b>hour()</b> function returns the current hour as a value from 0 - 23.
+   * =advanced
    * Hour position of the current time in international format (0-23).
    * <P>
    * To convert this value to American time: <BR>
    * <PRE>int yankeeHour = (hour() % 12);
    * if (yankeeHour == 0) yankeeHour = 12;</PRE>
+   *
+   * @webref input:time_date
+   * @see processing.core.PApplet#millis()
+   * @see processing.core.PApplet#second()
+   * @see processing.core.PApplet#minute()
+   * @see processing.core.PApplet#day()
+   * @see processing.core.PApplet#month()
+   * @see processing.core.PApplet#year()
+   *
    */
   static public int hour() {
     return Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
   }
 
   /**
+   * Processing communicates with the clock on your computer. The <b>day()</b> function returns the current day as a value from 1 - 31.
+   * =advanced
    * Get the current day of the month (1 through 31).
    * <P>
    * If you're looking for the day of the week (M-F or whatever)
    * or day of the year (1..365) then use java's Calendar.get()
+   *
+   * @webref input:time_date
+   * @see processing.core.PApplet#millis()
+   * @see processing.core.PApplet#second()
+   * @see processing.core.PApplet#minute()
+   * @see processing.core.PApplet#hour()
+   * @see processing.core.PApplet#month()
+   * @see processing.core.PApplet#year()
    */
   static public int day() {
     return Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
   }
 
   /**
-   * Get the current month in range 1 through 12.
+   * Processing communicates with the clock on your computer. The <b>month()</b> function returns the current month as a value from 1 - 12.
+   *
+   * @webref input:time_date
+   * @see processing.core.PApplet#millis()
+   * @see processing.core.PApplet#second()
+   * @see processing.core.PApplet#minute()
+   * @see processing.core.PApplet#hour()
+   * @see processing.core.PApplet#day()
+   * @see processing.core.PApplet#year()
    */
   static public int month() {
     // months are number 0..11 so change to colloquial 1..12
@@ -1942,7 +2200,16 @@ public class PApplet extends Applet
   }
 
   /**
-   * Get the current year.
+   * Processing communicates with the clock on your computer.
+   * The <b>year()</b> function returns the current year as an integer (2003, 2004, 2005, etc).
+   *
+   * @webref input:time_date
+   * @see processing.core.PApplet#millis()
+   * @see processing.core.PApplet#second()
+   * @see processing.core.PApplet#minute()
+   * @see processing.core.PApplet#hour()
+   * @see processing.core.PApplet#day()
+   * @see processing.core.PApplet#month()
    */
   static public int year() {
     return Calendar.getInstance().get(Calendar.YEAR);
@@ -1979,12 +2246,20 @@ public class PApplet extends Applet
 
 
   /**
+   * Specifies the number of frames to be displayed every second.
+   * If the processor is not fast enough to maintain the specified rate, it will not be achieved.
+   * For example, the function call <b>frameRate(30)</b> will attempt to refresh 30 times a second.
+   * It is recommended to set the frame rate within <b>setup()</b>. The default rate is 60 frames per second.
+   *  =advanced
    * Set a target frameRate. This will cause delay() to be called
    * after each frame so that the sketch synchronizes to a particular speed.
    * Note that this only sets the maximum frame rate, it cannot be used to
    * make a slow sketch go faster. Sketches have no default frame rate
    * setting, and will attempt to use maximum processor power to achieve
    * maximum speed.
+   * @webref environment
+   * @param newRateTarget number of frames per second
+   * @see PApplet#delay(int)
    */
   public void frameRate(float newRateTarget) {
     frameRateTarget = newRateTarget;
@@ -1996,8 +2271,16 @@ public class PApplet extends Applet
 
 
   /**
-   * Get a param from the web page, or (eventually)
-   * from a properties file.
+   * Reads the value of a param.
+   * Values are always read as a String so if you want them to be an integer or other datatype they must be converted.
+   * The <b>param()</b> function will only work in a web browser.
+   * The function should be called inside <b>setup()</b>,
+   * otherwise the applet may not yet be initialized and connected to its parent web browser.
+   *
+   * @webref input:web
+   * @usage Web
+   *
+   * @param what name of the param to read
    */
   public String param(String what) {
     if (online) {
@@ -2011,9 +2294,16 @@ public class PApplet extends Applet
 
 
   /**
+   * Displays message in the browser's status area. This is the text area in the lower left corner of the browser.
+   * The <b>status()</b> function will only work when the Processing program is running in a web browser.
+   * =advanced
    * Show status in the status bar of a web browser, or in the
    * System.out console. Eventually this might show status in the
    * p5 environment itself, rather than relying on the console.
+   *
+   * @webref input:web
+   * @usage Web
+   * @param what any valid String
    */
   public void status(String what) {
     if (online) {
@@ -2031,6 +2321,8 @@ public class PApplet extends Applet
 
 
   /**
+   * Links to a webpage either in the same window or in a new window. The complete URL must be specified.
+   * =advanced
    * Link to an external page without all the muss.
    * <P>
    * When run with an applet, uses the browser to open the url,
@@ -2040,6 +2332,11 @@ public class PApplet extends Applet
    * <PRE>open(new String[] { "firefox", url });</PRE>
    * or whatever you want as your browser, since Linux doesn't
    * yet have a standard method for launching URLs.
+   *
+   * @webref input:web
+   * @param url complete url as a String in quotes
+   * @param frameTitle name of the window to load the URL as a string in quotes
+   *
    */
   public void link(String url, String frameTitle) {
     if (online) {
@@ -2077,9 +2374,12 @@ public class PApplet extends Applet
         } else if (platform == MACOSX) {
           //com.apple.mrj.MRJFileUtils.openURL(url);
           try {
-            Class<?> mrjFileUtils = Class.forName("com.apple.mrj.MRJFileUtils");
+//            Class<?> mrjFileUtils = Class.forName("com.apple.mrj.MRJFileUtils");
+//            Method openMethod =
+//              mrjFileUtils.getMethod("openURL", new Class[] { String.class });
+            Class<?> eieio = Class.forName("com.apple.eio.FileManager");
             Method openMethod =
-              mrjFileUtils.getMethod("openURL", new Class[] { String.class });
+              eieio.getMethod("openURL", new Class[] { String.class });
             openMethod.invoke(null, new Object[] { url });
           } catch (Exception e) {
             e.printStackTrace();
@@ -2098,7 +2398,19 @@ public class PApplet extends Applet
 
 
   /**
-   * Attempt to open a file using the platform's shell.
+   * Attempts to open an application or file using your platform's launcher. The <b>file</b> parameter is a String specifying the file name and location. The location parameter must be a full path name, or the name of an executable in the system's PATH. In most cases, using a full path is the best option, rather than relying on the system PATH. Be sure to make the file executable before attempting to open it (chmod +x).
+   * <br><br>
+   * The <b>args</b> parameter is a String or String array which is passed to the command line. If you have multiple parameters, e.g. an application and a document, or a command with multiple switches, use the version that takes a String array, and place each individual item in a separate element.
+   * <br><br>
+   * If args is a String (not an array), then it can only be a single file or application with no parameters. It's not the same as executing that String using a shell. For instance, open("jikes -help") will not work properly.
+   * <br><br>
+   * This function behaves differently on each platform. On Windows, the parameters are sent to the Windows shell via "cmd /c". On Mac OS X, the "open" command is used (type "man open" in Terminal.app for documentation). On Linux, it first tries gnome-open, then kde-open, but if neither are available, it sends the command to the shell without any alterations.
+   * <br><br>
+   * For users familiar with Java, this is not quite the same as Runtime.exec(), because the launcher command is prepended. Instead, the <b>exec(String[])</b> function is a shortcut for Runtime.getRuntime.exec(String[]).
+   *
+   * @webref input:files
+   * @param filename name of the file
+   * @usage Application
    */
   static public void open(String filename) {
     open(new String[] { filename });
@@ -2112,6 +2424,8 @@ public class PApplet extends Applet
    * to make it easier to deal with spaces in the individual elements.
    * (This avoids the situation of trying to put single or double quotes
    * around different bits).
+   *
+   * @param list of commands passed to the command line
    */
   static public Process open(String argv[]) {
     String[] params = null;
@@ -2257,7 +2571,7 @@ public class PApplet extends Applet
     } catch (InvocationTargetException e) {
       e.getTargetException().printStackTrace();
     } catch (NoSuchMethodException nsme) {
-      System.err.println("There is no " + name + "() method " +
+      System.err.println("There is no public " + name + "() method " +
                          "in the class " + getClass().getName());
     } catch (Exception e) {
       e.printStackTrace();
@@ -2398,6 +2712,7 @@ public class PApplet extends Applet
 
   /**
    * Set the cursor type
+   * @param cursorType either ARROW, CROSS, HAND, MOVE, TEXT, WAIT
    */
   public void cursor(int cursorType) {
     setCursor(Cursor.getPredefinedCursor(cursorType));
@@ -2416,6 +2731,11 @@ public class PApplet extends Applet
 
 
   /**
+   * Sets the cursor to a predefined symbol, an image, or turns it on if already hidden.
+   * If you are trying to set an image as the cursor, it is recommended to make the size 16x16 or 32x32 pixels.
+   * It is not possible to load an image as the cursor if you are exporting your program for the Web.
+   * The values for parameters <b>x</b> and <b>y</b> must be less than the dimensions of the image.
+   * =advanced
    * Set a custom cursor to an image with a specific hotspot.
    * Only works with JDK 1.2 and later.
    * Currently seems to be broken on Java 1.4 for Mac OS X
@@ -2423,6 +2743,11 @@ public class PApplet extends Applet
    * Based on code contributed by Amit Pitaru, plus additional
    * code to handle Java versions via reflection by Jonathan Feinberg.
    * Reflection removed for release 0128 and later.
+   * @webref environment
+   * @see       PApplet#noCursor()
+   * @param image       any variable of type PImage
+   * @param hotspotX    the horizonal active spot of the cursor
+   * @param hotspotY    the vertical active spot of the cursor
    */
   public void cursor(PImage image, int hotspotX, int hotspotY) {
     // don't set this as cursor type, instead use cursor_type
@@ -2456,8 +2781,13 @@ public class PApplet extends Applet
 
 
   /**
+   * Hides the cursor from view. Will not work when running the program in a web browser.
+   * =advanced
    * Hide the cursor by creating a transparent image
    * and using it as a custom cursor.
+   * @webref environment
+   * @see PApplet#cursor()
+   * @usage Application
    */
   public void noCursor() {
     if (!cursorVisible) return;  // don't hide if already hidden.
@@ -2688,6 +3018,12 @@ public class PApplet extends Applet
     return (a > b) ? a : b;
   }
 
+  /*
+  static public final double max(double a, double b) {
+    return (a > b) ? a : b;
+  }
+  */
+
 
   static public final int max(int a, int b, int c) {
     return (a > b) ? ((a > c) ? a : c) : ((b > c) ? b : c);
@@ -2733,6 +3069,26 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * Find the maximum value in an array.
+   * Throws an ArrayIndexOutOfBoundsException if the array is length 0.
+   * @param list the source array
+   * @return The maximum value
+   */
+  /*
+  static public final double max(double[] list) {
+    if (list.length == 0) {
+      throw new ArrayIndexOutOfBoundsException(ERROR_MIN_MAX);
+    }
+    double max = list[0];
+    for (int i = 1; i < list.length; i++) {
+      if (list[i] > max) max = list[i];
+    }
+    return max;
+  }
+  */
+
+
   static public final int min(int a, int b) {
     return (a < b) ? a : b;
   }
@@ -2740,6 +3096,12 @@ public class PApplet extends Applet
   static public final float min(float a, float b) {
     return (a < b) ? a : b;
   }
+
+  /*
+  static public final double min(double a, double b) {
+    return (a < b) ? a : b;
+  }
+  */
 
 
   static public final int min(int a, int b, int c) {
@@ -2749,6 +3111,12 @@ public class PApplet extends Applet
   static public final float min(float a, float b, float c) {
     return (a < b) ? ((a < c) ? a : c) : ((b < c) ? b : c);
   }
+
+  /*
+  static public final double min(double a, double b, double c) {
+    return (a < b) ? ((a < c) ? a : c) : ((b < c) ? b : c);
+  }
+  */
 
 
   /**
@@ -2767,6 +3135,8 @@ public class PApplet extends Applet
     }
     return min;
   }
+
+
   /**
    * Find the minimum value in an array.
    * Throws an ArrayIndexOutOfBoundsException if the array is length 0.
@@ -2784,6 +3154,25 @@ public class PApplet extends Applet
     return min;
   }
 
+
+  /**
+   * Find the minimum value in an array.
+   * Throws an ArrayIndexOutOfBoundsException if the array is length 0.
+   * @param list the source array
+   * @return The minimum value
+   */
+  /*
+  static public final double min(double[] list) {
+    if (list.length == 0) {
+      throw new ArrayIndexOutOfBoundsException(ERROR_MIN_MAX);
+    }
+    double min = list[0];
+    for (int i = 1; i < list.length; i++) {
+      if (list[i] < min) min = list[i];
+    }
+    return min;
+  }
+  */
 
   static public final int constrain(int amt, int low, int high) {
     return (amt < low) ? low : ((amt > high) ? high : amt);
@@ -2889,11 +3278,13 @@ public class PApplet extends Applet
   }
 
 
+  /*
   static public final double map(double value,
                                  double istart, double istop,
                                  double ostart, double ostop) {
     return ostart + (ostop - ostart) * ((value - istart) / (istop - istart));
   }
+  */
 
 
 
@@ -3169,12 +3560,27 @@ public class PApplet extends Applet
 
 
   /**
+   * Loads an image into a variable of type <b>PImage</b>. Four types of images ( <b>.gif</b>, <b>.jpg</b>, <b>.tga</b>, <b>.png</b>) images may be loaded. To load correctly, images must be located in the data directory of the current sketch. In most cases, load all images in <b>setup()</b> to preload them at the start of the program. Loading images inside <b>draw()</b> will reduce the speed of a program.
+   * <br><br>The <b>filename</b> parameter can also be a URL to a file found online. For security reasons, a Processing sketch found online can only download files from the same server from which it came. Getting around this restriction requires a <a href="http://processing.org/hacks/doku.php?id=hacks:signapplet">signed applet</a>.
+   * <br><br>The <b>extension</b> parameter is used to determine the image type in cases where the image filename does not end with a proper extension. Specify the extension as the second parameter to <b>loadImage()</b>, as shown in the third example on this page.
+   * <br><br>If an image is not loaded successfully, the <b>null</b> value is returned and an error message will be printed to the console. The error message does not halt the program, however the null value may cause a NullPointerException if your code does not check whether the value returned from <b>loadImage()</b> is null.<br><br>Depending on the type of error, a <b>PImage</b> object may still be returned, but the width and height of the image will be set to -1. This happens if bad image data is returned or cannot be decoded properly. Sometimes this happens with image URLs that produce a 403 error or that redirect to a password prompt, because <b>loadImage()</b> will attempt to interpret the HTML as image data.
+   *
+   * =advanced
    * Identical to loadImage, but allows you to specify the type of
    * image by its extension. Especially useful when downloading from
    * CGI scripts.
    * <br/> <br/>
    * Use 'unknown' as the extension to pass off to the default
    * image loader that handles gif, jpg, and png.
+   *
+   * @webref image:loading_displaying
+   * @param filename name of file to load, can be .gif, .jpg, .tga, or a handful of other image types depending on your platform.
+   * @param extension the type of image to load, for example "png", "gif", "jpg"
+   *
+   * @see processing.core.PImage
+   * @see processing.core.PApplet#image(PImage, float, float, float, float)
+   * @see processing.core.PApplet#imageMode(int)
+   * @see processing.core.PApplet#background(float, float, float)
    */
   public PImage loadImage(String filename, String extension) {
     if (extension == null) {
@@ -3255,12 +3661,22 @@ public class PApplet extends Applet
     return null;
   }
 
-
   public PImage requestImage(String filename) {
     return requestImage(filename, null);
   }
 
 
+  /**
+   * This function load images on a separate thread so that your sketch does not freeze while images load during <b>setup()</b>. While the image is loading, its width and height will be 0. If an error occurs while loading the image, its width and height will be set to -1. You'll know when the image has loaded properly because its width and height will be greater than 0. Asynchronous image loading (particularly when downloading from a server) can dramatically improve performance.<br><br>
+   * The <b>extension</b> parameter is used to determine the image type in cases where the image filename does not end with a proper extension. Specify the extension as the second parameter to <b>requestImage()</b>.
+   *
+   * @webref image:loading_displaying
+   * @param filename name of file to load, can be .gif, .jpg, .tga, or a handful of other image types depending on your platform
+   * @param extension the type of image to load, for example "png", "gif", "jpg"
+   *
+   * @see processing.core.PApplet#loadImage(String, String)
+   * @see processing.core.PImage
+   */
   public PImage requestImage(String filename, String extension) {
     PImage vessel = createImage(0, 0, ARGB);
     AsyncImageLoader ail =
@@ -3578,7 +3994,21 @@ public class PApplet extends Applet
 
 
   /**
-   * Load a geometry from a file as a PShape. Currently only supports SVG data.
+   * Loads vector shapes into a variable of type <b>PShape</b>. Currently, only SVG files may be loaded.
+   * To load correctly, the file must be located in the data directory of the current sketch.
+   * In most cases, <b>loadShape()</b> should be used inside <b>setup()</b> because loading shapes inside <b>draw()</b> will reduce the speed of a sketch.
+   * <br><br>
+   * The <b>filename</b> parameter can also be a URL to a file found online.
+   * For security reasons, a Processing sketch found online can only download files from the same server from which it came.
+   * Getting around this restriction requires a <a href="http://processing.org/hacks/doku.php?id=hacks:signapplet">signed applet</a>.
+   * <br><br>
+   * If a shape is not loaded successfully, the <b>null</b> value is returned and an error message will be printed to the console.
+   * The error message does not halt the program, however the null value may cause a NullPointerException if your code does not check whether the value returned from <b>loadShape()</b> is null.
+   *
+   * @webref shape:loading_displaying
+   * @see PShape
+   * @see PApplet#shape(PShape)
+   * @see PApplet#shapeMode(int)
    */
   public PShape loadShape(String filename) {
     if (filename.toLowerCase().endsWith(".svg")) {
@@ -3704,9 +4134,14 @@ public class PApplet extends Applet
 
 
   /**
-   * Open a platform-specific file chooser dialog to select a file for input.
-   * @param prompt Mesage to show the user when prompting for a file.
+   * Opens a platform-specific file chooser dialog to select a file for input. This function returns the full path to the selected file as a <b>String</b>, or <b>null</b> if no selection.
+   *
+   * @webref input:files
+   * @param prompt message you want the user to see in the file chooser
    * @return full path to the selected file, or null if canceled.
+   *
+   * @see processing.core.PApplet#selectOutput(String)
+   * @see processing.core.PApplet#selectFolder(String)
    */
   public String selectInput(String prompt) {
     return selectFileImpl(prompt, FileDialog.LOAD);
@@ -3723,9 +4158,17 @@ public class PApplet extends Applet
 
 
   /**
-   * Open a platform-specific file save dialog to select a file for output.
-   * @param prompt Mesage to show the user when prompting for a file.
+   * Open a platform-specific file save dialog to create of select a file for output.
+   * This function returns the full path to the selected file as a <b>String</b>, or <b>null</b> if no selection.
+   * If you select an existing file, that file will be replaced.
+   * Alternatively, you can navigate to a folder and create a new file to write to.
+   *
+   * @param prompt message you want the user to see in the file chooser
    * @return full path to the file entered, or null if canceled.
+   *
+   * @webref input:files
+   * @see processing.core.PApplet#selectInput(String)
+   * @see processing.core.PApplet#selectFolder(String)
    */
   public String selectOutput(String prompt) {
     return selectFileImpl(prompt, FileDialog.SAVE);
@@ -3756,19 +4199,21 @@ public class PApplet extends Applet
   }
 
 
-  /**
-   * Open a platform-specific folder chooser dialog.
-   * @return full path to the selected folder, or null if no selection.
-   */
   public String selectFolder() {
     return selectFolder("Select a folder...");
   }
 
 
   /**
-   * Open a platform-specific folder chooser dialog.
-   * @param prompt Mesage to show the user when prompting for a file.
+   * Opens a platform-specific file chooser dialog to select a folder for input.
+   * This function returns the full path to the selected folder as a <b>String</b>, or <b>null</b> if no selection.
+   *
+   * @webref input:files
+   * @param prompt message you want the user to see in the file chooser
    * @return full path to the selected folder, or null if no selection.
+   *
+   * @see processing.core.PApplet#selectOutput(String)
+   * @see processing.core.PApplet#selectInput(String)
    */
   public String selectFolder(final String prompt) {
     checkParentFrame();
@@ -3937,6 +4382,18 @@ public class PApplet extends Applet
 
 
   /**
+   * This is a method for advanced programmers to open a Java InputStream. The method is useful if you want to use the facilities provided by PApplet to easily open files from the data folder or from a URL, but want an InputStream object so that you can use other Java methods to take more control of how the stream is read.
+   * <br><br>If the requested item doesn't exist, null is returned.
+   * <br><br>In earlier releases, this method was called <b>openStream()</b>.
+   * <br><br>If not online, this will also check to see if the user is asking for a file whose name isn't properly capitalized. If capitalization is different an error will be printed to the console. This helps prevent issues that appear when a sketch is exported to the web, where case sensitivity matters, as opposed to running from inside the Processing Development Environment on Windows or Mac OS, where case sensitivity is preserved but ignored.
+   * <br><br>The filename passed in can be:<br>
+   * - A URL, for instance openStream("http://processing.org/");<br>
+   * - A file in the sketch's data folder<br>
+   * - The full path to a file to be opened locally (when running as an application)
+   * <br><br>
+   * If the file ends with <b>.gz</b>, the stream will automatically be gzip decompressed. If you don't want the automatic decompression, use the related function <b>createInputRaw()</b>.
+   *
+   * =advanced
    * Simplified method to open a Java InputStream.
    * <P>
    * This method is useful if you want to use the facilities provided
@@ -3966,6 +4423,14 @@ public class PApplet extends Applet
    * <LI>A file in the sketch's data folder
    * <LI>Another file to be opened locally (when running as an application)
    * </UL>
+   *
+   * @webref input:files
+   * @see processing.core.PApplet#createOutput(String)
+   * @see processing.core.PApplet#selectOutput(String)
+   * @see processing.core.PApplet#selectInput(String)
+   *
+   * @param filename the name of the file to use as input
+   *
    */
   public InputStream createInput(String filename) {
     InputStream input = createInputRaw(filename);
@@ -3997,24 +4462,26 @@ public class PApplet extends Applet
 
     // safe to check for this as a url first. this will prevent online
     // access logs from being spammed with GET /sketchfolder/http://blahblah
-    try {
-      URL url = new URL(filename);
-      stream = url.openStream();
-      return stream;
+    if (filename.indexOf(":") != -1) {  // at least smells like URL
+      try {
+        URL url = new URL(filename);
+        stream = url.openStream();
+        return stream;
 
-    } catch (MalformedURLException mfue) {
-      // not a url, that's fine
+      } catch (MalformedURLException mfue) {
+        // not a url, that's fine
 
-    } catch (FileNotFoundException fnfe) {
-      // Java 1.5 likes to throw this when URL not available. (fix for 0119)
-      // http://dev.processing.org/bugs/show_bug.cgi?id=403
+      } catch (FileNotFoundException fnfe) {
+        // Java 1.5 likes to throw this when URL not available. (fix for 0119)
+        // http://dev.processing.org/bugs/show_bug.cgi?id=403
 
-    } catch (IOException e) {
-      // changed for 0117, shouldn't be throwing exception
-      e.printStackTrace();
-      //System.err.println("Error downloading from URL " + filename);
-      return null;
-      //throw new RuntimeException("Error downloading from URL " + filename);
+      } catch (IOException e) {
+        // changed for 0117, shouldn't be throwing exception
+        e.printStackTrace();
+        //System.err.println("Error downloading from URL " + filename);
+        return null;
+        //throw new RuntimeException("Error downloading from URL " + filename);
+      }
     }
 
     // Moved this earlier than the getResourceAsStream() checks, because
@@ -4121,6 +4588,9 @@ public class PApplet extends Applet
 
 
   static public InputStream createInput(File file) {
+    if (file == null) {
+      throw new IllegalArgumentException("File passed to createInput() was null");
+    }
     try {
       InputStream input = new FileInputStream(file);
       if (file.getName().toLowerCase().endsWith(".gz")) {
@@ -4129,18 +4599,25 @@ public class PApplet extends Applet
       return input;
 
     } catch (IOException e) {
-      if (file == null) {
-        throw new RuntimeException("File passed to openStream() was null");
-
-      } else {
-        e.printStackTrace();
-        throw new RuntimeException("Couldn't openStream() for " +
-                                   file.getAbsolutePath());
-      }
+      System.err.println("Could not createInput() for " + file);
+      e.printStackTrace();
+      return null;
     }
   }
 
 
+  /**
+   * Reads the contents of a file or url and places it in a byte array. If a file is specified, it must be located in the sketch's "data" directory/folder.
+   * <br><br>The filename parameter can also be a URL to a file found online. For security reasons, a Processing sketch found online can only download files from the same server from which it came. Getting around this restriction requires a <a href="http://java.sun.com/developer/onlineTraining/Programming/JDCBook/signed.html">signed applet</a>.
+   *
+   * @webref input:files
+   * @param filename name of a file in the data folder or a URL.
+   *
+   * @see processing.core.PApplet#loadStrings(String)
+   * @see processing.core.PApplet#saveStrings(String, String[])
+   * @see processing.core.PApplet#saveBytes(String, byte[])
+   *
+   */
   public byte[] loadBytes(String filename) {
     InputStream is = createInput(filename);
     if (is != null) return loadBytes(is);
@@ -4187,6 +4664,12 @@ public class PApplet extends Applet
 
 
   /**
+   * Reads the contents of a file or url and creates a String array of its individual lines. If a file is specified, it must be located in the sketch's "data" directory/folder.
+   * <br><br>The filename parameter can also be a URL to a file found online. For security reasons, a Processing sketch found online can only download files from the same server from which it came. Getting around this restriction requires a <a href="http://java.sun.com/developer/onlineTraining/Programming/JDCBook/signed.html">signed applet</a>.
+   * <br><br>If the file is not available or an error occurs, <b>null</b> will be returned and an error message will be printed to the console. The error message does not halt the program, however the null value may cause a NullPointerException if your code does not check whether the value returned is null.
+   * <br><br>Starting with Processing release 0134, all files loaded and saved by the Processing API use UTF-8 encoding. In previous releases, the default encoding for your platform was used, which causes problems when files are moved to other platforms.
+   *
+   * =advanced
    * Load data from a file and shove it into a String array.
    * <P>
    * Exceptions are handled internally, when an error, occurs, an
@@ -4197,6 +4680,13 @@ public class PApplet extends Applet
    * of new users (or people who are just trying to get things done
    * in a "scripting" fashion. If you want to handle exceptions,
    * use Java methods for I/O.
+   *
+   * @webref input:files
+   * @param filename name of the file or url to load
+   *
+   * @see processing.core.PApplet#loadBytes(String)
+   * @see processing.core.PApplet#saveStrings(String, String[])
+   * @see processing.core.PApplet#saveBytes(String, byte[])
    */
   public String[] loadStrings(String filename) {
     InputStream is = createInput(filename);
@@ -4356,18 +4846,34 @@ public class PApplet extends Applet
    * Saves bytes to a specific File location specified by the user.
    */
   static public void saveBytes(File file, byte buffer[]) {
+    File tempFile = null;
     try {
+      File parentDir = file.getParentFile();
+      tempFile = File.createTempFile(file.getName(), null, parentDir);
+
+      /*
       String filename = file.getAbsolutePath();
       createPath(filename);
       OutputStream output = new FileOutputStream(file);
       if (file.getName().toLowerCase().endsWith(".gz")) {
         output = new GZIPOutputStream(output);
       }
+      */
+      OutputStream output = createOutput(tempFile);
       saveBytes(output, buffer);
       output.close();
+      output = null;
+
+      if (!tempFile.renameTo(file)) {
+        System.err.println("Could not rename temporary file " +
+                           tempFile.getAbsolutePath());
+      }
 
     } catch (IOException e) {
       System.err.println("error saving bytes to " + file);
+      if (tempFile != null) {
+        tempFile.delete();
+      }
       e.printStackTrace();
     }
   }
@@ -4394,6 +4900,8 @@ public class PApplet extends Applet
 
 
   static public void saveStrings(File file, String strings[]) {
+    saveStrings(createOutput(file), strings);
+    /*
     try {
       String location = file.getAbsolutePath();
       createPath(location);
@@ -4407,18 +4915,17 @@ public class PApplet extends Applet
     } catch (IOException e) {
       e.printStackTrace();
     }
+    */
   }
 
 
   static public void saveStrings(OutputStream output, String strings[]) {
-    try {
-      OutputStreamWriter osw = new OutputStreamWriter(output, "UTF-8");
-      PrintWriter writer = new PrintWriter(osw);
-      for (int i = 0; i < strings.length; i++) {
-        writer.println(strings[i]);
-      }
-      writer.flush();
-    } catch (UnsupportedEncodingException e) { }  // will not happen
+    PrintWriter writer = createWriter(output);
+    for (int i = 0; i < strings.length; i++) {
+      writer.println(strings[i]);
+    }
+    writer.flush();
+    writer.close();
   }
 
 
@@ -6243,6 +6750,8 @@ public class PApplet extends Applet
 
   /**
    * As of 0116 this also takes color(#FF8800, alpha)
+   *
+   * @param gray number specifying value between white and black
    */
   public final int color(int gray, int alpha) {
     if (g == null) {
@@ -6307,7 +6816,18 @@ public class PApplet extends Applet
     return g.color(x, y, z, a);
   }
 
-
+  /**
+   * Creates colors for storing in variables of the <b>color</b> datatype. The parameters are interpreted as RGB or HSB values depending on the current <b>colorMode()</b>. The default mode is RGB values from 0 to 255 and therefore, the function call <b>color(255, 204, 0)</b> will return a bright yellow color. More about how colors are stored can be found in the reference for the <a href="color_datatype.html">color</a> datatype.
+   *
+   * @webref color:creating_reading
+   * @param x red or hue values relative to the current color range
+   * @param y green or saturation values relative to the current color range
+   * @param z blue or brightness values relative to the current color range
+   * @param a alpha relative to current color range
+   *
+   * @see processing.core.PApplet#colorMode(int)
+   * @ref color_datatype
+   */
   public final int color(float x, float y, float z, float a) {
     if (g == null) {
       if (a > 255) a = 255; else if (a < 0) a = 0;
@@ -6632,6 +7152,7 @@ public class PApplet extends Applet
       frame.setBackground(backgroundColor);
       if (exclusive) {
         displayDevice.setFullScreenWindow(frame);
+        frame.setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);
         fullScreenRect = frame.getBounds();
       } else {
         DisplayMode mode = displayDevice.getDisplayMode();
@@ -6856,16 +7377,33 @@ public class PApplet extends Applet
 
 
   /**
+   * Loads the pixel data for the display window into the <b>pixels[]</b> array. This function must always be called before reading from or writing to <b>pixels[]</b>.
+   * <br><br>Certain renderers may or may not seem to require <b>loadPixels()</b> or <b>updatePixels()</b>. However, the rule is that any time you want to manipulate the <b>pixels[]</b> array, you must first call <b>loadPixels()</b>, and after changes have been made, call <b>updatePixels()</b>. Even if the renderer may not seem to use this function in the current Processing release, this will always be subject to change.
+   * =advanced
    * Override the g.pixels[] function to set the pixels[] array
    * that's part of the PApplet object. Allows the use of
    * pixels[] in the code, rather than g.pixels[].
+   *
+   * @webref image:pixels
+   * @see processing.core.PApplet#pixels
+   * @see processing.core.PApplet#updatePixels()
    */
   public void loadPixels() {
     g.loadPixels();
     pixels = g.pixels;
   }
 
-
+  /**
+   * Updates the display window with the data in the <b>pixels[]</b> array. Use in conjunction with <b>loadPixels()</b>. If you're only reading pixels from the array, there's no need to call <b>updatePixels()</b> unless there are changes.
+   * <br><br>Certain renderers may or may not seem to require <b>loadPixels()</b> or <b>updatePixels()</b>. However, the rule is that any time you want to manipulate the <b>pixels[]</b> array, you must first call <b>loadPixels()</b>, and after changes have been made, call <b>updatePixels()</b>. Even if the renderer may not seem to use this function in the current Processing release, this will always be subject to change.
+   * <br><br>Currently, none of the renderers use the additional parameters to <b>updatePixels()</b>, however this may be implemented in the future.
+   *
+   * @webref image:pixels
+   *
+   * @see processing.core.PApplet#loadPixels()
+   * @see processing.core.PApplet#updatePixels()
+   *
+   */
   public void updatePixels() {
     g.updatePixels();
   }
@@ -6878,7 +7416,10 @@ public class PApplet extends Applet
 
   //////////////////////////////////////////////////////////////
 
-  // everything below this line is automatically generated. no touch.
+  // EVERYTHING BELOW THIS LINE IS AUTOMATICALLY GENERATED. NO TOUCH!
+  // This includes all of the comments, which are automatically pulled
+  // from their respective functions in PGraphics or PImage.
+
   // public functions for processing.core
 
 
@@ -6888,42 +7429,114 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * Enable a hint option.
+   * <P>
+   * For the most part, hints are temporary api quirks,
+   * for which a proper api hasn't been properly worked out.
+   * for instance SMOOTH_IMAGES existed because smooth()
+   * wasn't yet implemented, but it will soon go away.
+   * <P>
+   * They also exist for obscure features in the graphics
+   * engine, like enabling/disabling single pixel lines
+   * that ignore the zbuffer, the way they do in alphabot.
+   * <P>
+   * Current hint options:
+   * <UL>
+   * <LI><TT>DISABLE_DEPTH_TEST</TT> -
+   * turns off the z-buffer in the P3D or OPENGL renderers.
+   * </UL>
+   */
   public void hint(int which) {
     if (recorder != null) recorder.hint(which);
     g.hint(which);
   }
 
 
+  /**
+   * Start a new shape of type POLYGON
+   */
   public void beginShape() {
     if (recorder != null) recorder.beginShape();
     g.beginShape();
   }
 
 
+  /**
+   * Start a new shape.
+   * <P>
+   * <B>Differences between beginShape() and line() and point() methods.</B>
+   * <P>
+   * beginShape() is intended to be more flexible at the expense of being
+   * a little more complicated to use. it handles more complicated shapes
+   * that can consist of many connected lines (so you get joins) or lines
+   * mixed with curves.
+   * <P>
+   * The line() and point() command are for the far more common cases
+   * (particularly for our audience) that simply need to draw a line
+   * or a point on the screen.
+   * <P>
+   * From the code side of things, line() may or may not call beginShape()
+   * to do the drawing. In the beta code, they do, but in the alpha code,
+   * they did not. they might be implemented one way or the other depending
+   * on tradeoffs of runtime efficiency vs. implementation efficiency &mdash
+   * meaning the speed that things run at vs. the speed it takes me to write
+   * the code and maintain it. for beta, the latter is most important so
+   * that's how things are implemented.
+   */
   public void beginShape(int kind) {
     if (recorder != null) recorder.beginShape(kind);
     g.beginShape(kind);
   }
 
 
+  /**
+   * Sets whether the upcoming vertex is part of an edge.
+   * Equivalent to glEdgeFlag(), for people familiar with OpenGL.
+   */
   public void edge(boolean edge) {
     if (recorder != null) recorder.edge(edge);
     g.edge(edge);
   }
 
 
+  /**
+   * Sets the current normal vector. Only applies with 3D rendering
+   * and inside a beginShape/endShape block.
+   * <P/>
+   * This is for drawing three dimensional shapes and surfaces,
+   * allowing you to specify a vector perpendicular to the surface
+   * of the shape, which determines how lighting affects it.
+   * <P/>
+   * For the most part, PGraphics3D will attempt to automatically
+   * assign normals to shapes, but since that's imperfect,
+   * this is a better option when you want more control.
+   * <P/>
+   * For people familiar with OpenGL, this function is basically
+   * identical to glNormal3f().
+   */
   public void normal(float nx, float ny, float nz) {
     if (recorder != null) recorder.normal(nx, ny, nz);
     g.normal(nx, ny, nz);
   }
 
 
+  /**
+   * Set texture mode to either to use coordinates based on the IMAGE
+   * (more intuitive for new users) or NORMALIZED (better for advanced chaps)
+   */
   public void textureMode(int mode) {
     if (recorder != null) recorder.textureMode(mode);
     g.textureMode(mode);
   }
 
 
+  /**
+   * Set texture image for current shape.
+   * Needs to be called between @see beginShape and @see endShape
+   *
+   * @param image reference to a PImage object
+   */
   public void texture(PImage image) {
     if (recorder != null) recorder.texture(image);
     g.texture(image);
@@ -6942,6 +7555,11 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * Used by renderer subclasses or PShape to efficiently pass in already
+   * formatted vertex information.
+   * @param v vertex parameters, as a float array of length VERTEX_FIELD_COUNT
+   */
   public void vertex(float[] v) {
     if (recorder != null) recorder.vertex(v);
     g.vertex(v);
@@ -6960,6 +7578,7 @@ public class PApplet extends Applet
   }
 
 
+  /** This feature is in testing, do not use or rely upon its implementation */
   public void breakShape() {
     if (recorder != null) recorder.breakShape();
     g.breakShape();
@@ -7069,6 +7688,15 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * Identical parameters and placement to ellipse,
+   * but draws only an arc of that ellipse.
+   * <p/>
+   * start and stop are always radians because angleMode() was goofy.
+   * ellipseMode() sets the placement.
+   * <p/>
+   * also tries to be smart about start < stop.
+   */
   public void arc(float a, float b, float c, float d,
                   float start, float stop) {
     if (recorder != null) recorder.arc(a, b, c, d, start, stop);
@@ -7094,23 +7722,83 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * Set the detail level for approximating a sphere. The ures and vres params
+   * control the horizontal and vertical resolution.
+   *
+   * Code for sphereDetail() submitted by toxi [031031].
+   * Code for enhanced u/v version from davbol [080801].
+   */
   public void sphereDetail(int ures, int vres) {
     if (recorder != null) recorder.sphereDetail(ures, vres);
     g.sphereDetail(ures, vres);
   }
 
 
+  /**
+   * Draw a sphere with radius r centered at coordinate 0, 0, 0.
+   * <P>
+   * Implementation notes:
+   * <P>
+   * cache all the points of the sphere in a static array
+   * top and bottom are just a bunch of triangles that land
+   * in the center point
+   * <P>
+   * sphere is a series of concentric circles who radii vary
+   * along the shape, based on, er.. cos or something
+   * <PRE>
+   * [toxi 031031] new sphere code. removed all multiplies with
+   * radius, as scale() will take care of that anyway
+   *
+   * [toxi 031223] updated sphere code (removed modulos)
+   * and introduced sphereAt(x,y,z,r)
+   * to avoid additional translate()'s on the user/sketch side
+   *
+   * [davbol 080801] now using separate sphereDetailU/V
+   * </PRE>
+   */
   public void sphere(float r) {
     if (recorder != null) recorder.sphere(r);
     g.sphere(r);
   }
 
 
+  /**
+   * Evalutes quadratic bezier at point t for points a, b, c, d.
+   * t varies between 0 and 1, and a and d are the on curve points,
+   * b and c are the control points. this can be done once with the
+   * x coordinates and a second time with the y coordinates to get
+   * the location of a bezier curve at t.
+   * <P>
+   * For instance, to convert the following example:<PRE>
+   * stroke(255, 102, 0);
+   * line(85, 20, 10, 10);
+   * line(90, 90, 15, 80);
+   * stroke(0, 0, 0);
+   * bezier(85, 20, 10, 10, 90, 90, 15, 80);
+   *
+   * // draw it in gray, using 10 steps instead of the default 20
+   * // this is a slower way to do it, but useful if you need
+   * // to do things with the coordinates at each step
+   * stroke(128);
+   * beginShape(LINE_STRIP);
+   * for (int i = 0; i <= 10; i++) {
+   *   float t = i / 10.0f;
+   *   float x = bezierPoint(85, 10, 90, 15, t);
+   *   float y = bezierPoint(20, 10, 90, 80, t);
+   *   vertex(x, y);
+   * }
+   * endShape();</PRE>
+   */
   public float bezierPoint(float a, float b, float c, float d, float t) {
     return g.bezierPoint(a, b, c, d, t);
   }
 
 
+  /**
+   * Provide the tangent at the given point on the bezier curve.
+   * Fix from davbol for 0136.
+   */
   public float bezierTangent(float a, float b, float c, float d, float t) {
     return g.bezierTangent(a, b, c, d, t);
   }
@@ -7122,6 +7810,29 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * Draw a cubic bezier curve. The first and last points are
+   * the on-curve points. The middle two are the 'control' points,
+   * or 'handles' in an application like Illustrator.
+   * <P>
+   * Identical to typing:
+   * <PRE>beginShape();
+   * vertex(x1, y1);
+   * bezierVertex(x2, y2, x3, y3, x4, y4);
+   * endShape();
+   * </PRE>
+   * In Postscript-speak, this would be:
+   * <PRE>moveto(x1, y1);
+   * curveto(x2, y2, x3, y3, x4, y4);</PRE>
+   * If you were to try and continue that curve like so:
+   * <PRE>curveto(x5, y5, x6, y6, x7, y7);</PRE>
+   * This would be done in processing by adding these statements:
+   * <PRE>bezierVertex(x5, y5, x6, y6, x7, y7)
+   * </PRE>
+   * To draw a quadratic (instead of cubic) curve,
+   * use the control point twice by doubling it:
+   * <PRE>bezier(x1, y1, cx, cy, cx, cy, x2, y2);</PRE>
+   */
   public void bezier(float x1, float y1,
                      float x2, float y2,
                      float x3, float y3,
@@ -7140,11 +7851,20 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * Get a location along a catmull-rom curve segment.
+   *
+   * @param t Value between zero and one for how far along the segment
+   */
   public float curvePoint(float a, float b, float c, float d, float t) {
     return g.curvePoint(a, b, c, d, t);
   }
 
 
+  /**
+   * Calculate the tangent at a t value (0..1) on a Catmull-Rom curve.
+   * Code thanks to Dave Bollinger (Bug #715)
+   */
   public float curveTangent(float a, float b, float c, float d, float t) {
     return g.curveTangent(a, b, c, d, t);
   }
@@ -7162,6 +7882,22 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * Draws a segment of Catmull-Rom curve.
+   * <P>
+   * As of 0070, this function no longer doubles the first and
+   * last points. The curves are a bit more boring, but it's more
+   * mathematically correct, and properly mirrored in curvePoint().
+   * <P>
+   * Identical to typing out:<PRE>
+   * beginShape();
+   * curveVertex(x1, y1);
+   * curveVertex(x2, y2);
+   * curveVertex(x3, y3);
+   * curveVertex(x4, y4);
+   * endShape();
+   * </PRE>
+   */
   public void curve(float x1, float y1,
                     float x2, float y2,
                     float x3, float y3,
@@ -7180,18 +7916,30 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * If true in PImage, use bilinear interpolation for copy()
+   * operations. When inherited by PGraphics, also controls shapes.
+   */
   public void smooth() {
     if (recorder != null) recorder.smooth();
     g.smooth();
   }
 
 
+  /**
+   * Disable smoothing. See smooth().
+   */
   public void noSmooth() {
     if (recorder != null) recorder.noSmooth();
     g.noSmooth();
   }
 
 
+  /**
+   * The mode can only be set to CORNERS, CORNER, and CENTER.
+   * <p/>
+   * Support for CENTER was added in release 0146.
+   */
   public void imageMode(int mode) {
     if (recorder != null) recorder.imageMode(mode);
     g.imageMode(mode);
@@ -7210,6 +7958,11 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * Draw an image(), also specifying u/v coordinates.
+   * In this method, the  u, v coordinates are always based on image space
+   * location, regardless of the current textureMode().
+   */
   public void image(PImage image,
                     float a, float b, float c, float d,
                     int u1, int v1, int u2, int v2) {
@@ -7218,6 +7971,10 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * Set the orientation for the shape() command (like imageMode() or rectMode()).
+   * @param mode Either CORNER, CORNERS, or CENTER.
+   */
   public void shapeMode(int mode) {
     if (recorder != null) recorder.shapeMode(mode);
     g.shapeMode(mode);
@@ -7230,6 +7987,9 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * Convenience method to draw at a particular location.
+   */
   public void shape(PShape shape, float x, float y) {
     if (recorder != null) recorder.shape(shape, x, y);
     g.shape(shape, x, y);
@@ -7242,52 +8002,94 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * Sets the alignment of the text to one of LEFT, CENTER, or RIGHT.
+   * This will also reset the vertical text alignment to BASELINE.
+   */
   public void textAlign(int align) {
     if (recorder != null) recorder.textAlign(align);
     g.textAlign(align);
   }
 
 
+  /**
+   * Sets the horizontal and vertical alignment of the text. The horizontal
+   * alignment can be one of LEFT, CENTER, or RIGHT. The vertical alignment
+   * can be TOP, BOTTOM, CENTER, or the BASELINE (the default).
+   */
   public void textAlign(int alignX, int alignY) {
     if (recorder != null) recorder.textAlign(alignX, alignY);
     g.textAlign(alignX, alignY);
   }
 
 
+  /**
+   * Returns the ascent of the current font at the current size.
+   * This is a method, rather than a variable inside the PGraphics object
+   * because it requires calculation.
+   */
   public float textAscent() {
     return g.textAscent();
   }
 
 
+  /**
+   * Returns the descent of the current font at the current size.
+   * This is a method, rather than a variable inside the PGraphics object
+   * because it requires calculation.
+   */
   public float textDescent() {
     return g.textDescent();
   }
 
 
+  /**
+   * Sets the current font. The font's size will be the "natural"
+   * size of this font (the size that was set when using "Create Font").
+   * The leading will also be reset.
+   */
   public void textFont(PFont which) {
     if (recorder != null) recorder.textFont(which);
     g.textFont(which);
   }
 
 
+  /**
+   * Useful function to set the font and size at the same time.
+   */
   public void textFont(PFont which, float size) {
     if (recorder != null) recorder.textFont(which, size);
     g.textFont(which, size);
   }
 
 
+  /**
+   * Set the text leading to a specific value. If using a custom
+   * value for the text leading, you'll have to call textLeading()
+   * again after any calls to textSize().
+   */
   public void textLeading(float leading) {
     if (recorder != null) recorder.textLeading(leading);
     g.textLeading(leading);
   }
 
 
+  /**
+   * Sets the text rendering/placement to be either SCREEN (direct
+   * to the screen, exact coordinates, only use the font's original size)
+   * or MODEL (the default, where text is manipulated by translate() and
+   * can have a textSize). The text size cannot be set when using
+   * textMode(SCREEN), because it uses the pixels directly from the font.
+   */
   public void textMode(int mode) {
     if (recorder != null) recorder.textMode(mode);
     g.textMode(mode);
   }
 
 
+  /**
+   * Sets the text size, also resets the value for the leading.
+   */
   public void textSize(float size) {
     if (recorder != null) recorder.textSize(size);
     g.textSize(size);
@@ -7299,60 +8101,113 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * Return the width of a line of text. If the text has multiple
+   * lines, this returns the length of the longest line.
+   */
   public float textWidth(String str) {
     return g.textWidth(str);
   }
 
 
+  /**
+   * TODO not sure if this stays...
+   */
+  public float textWidth(char[] chars, int start, int length) {
+    return g.textWidth(chars, start, length);
+  }
+
+
+  /**
+   * Write text where we just left off.
+   */
   public void text(char c) {
     if (recorder != null) recorder.text(c);
     g.text(c);
   }
 
 
+  /**
+   * Draw a single character on screen.
+   * Extremely slow when used with textMode(SCREEN) and Java 2D,
+   * because loadPixels has to be called first and updatePixels last.
+   */
   public void text(char c, float x, float y) {
     if (recorder != null) recorder.text(c, x, y);
     g.text(c, x, y);
   }
 
 
+  /**
+   * Draw a single character on screen (with a z coordinate)
+   */
   public void text(char c, float x, float y, float z) {
     if (recorder != null) recorder.text(c, x, y, z);
     g.text(c, x, y, z);
   }
 
 
+  /**
+   * Write text where we just left off.
+   */
   public void text(String str) {
     if (recorder != null) recorder.text(str);
     g.text(str);
   }
 
 
+  /**
+   * Draw a chunk of text.
+   * Newlines that are \n (Unix newline or linefeed char, ascii 10)
+   * are honored, but \r (carriage return, Windows and Mac OS) are
+   * ignored.
+   */
   public void text(String str, float x, float y) {
     if (recorder != null) recorder.text(str, x, y);
     g.text(str, x, y);
   }
 
 
+  /**
+   * Method to draw text from an array of chars. This method will usually be
+   * more efficient than drawing from a String object, because the String will
+   * not be converted to a char array before drawing.
+   */
   public void text(char[] chars, int start, int stop, float x, float y) {
     if (recorder != null) recorder.text(chars, start, stop, x, y);
     g.text(chars, start, stop, x, y);
   }
 
 
+  /**
+   * Same as above but with a z coordinate.
+   */
   public void text(String str, float x, float y, float z) {
     if (recorder != null) recorder.text(str, x, y, z);
     g.text(str, x, y, z);
   }
 
 
-  public void text(char[] chars, int start, int stop, 
+  public void text(char[] chars, int start, int stop,
                    float x, float y, float z) {
     if (recorder != null) recorder.text(chars, start, stop, x, y, z);
     g.text(chars, start, stop, x, y, z);
   }
 
 
+  /**
+   * Draw text in a box that is constrained to a particular size.
+   * The current rectMode() determines what the coordinates mean
+   * (whether x1/y1/x2/y2 or x/y/w/h).
+   * <P/>
+   * Note that the x,y coords of the start of the box
+   * will align with the *ascent* of the text, not the baseline,
+   * as is the case for the other text() functions.
+   * <P/>
+   * Newlines that are \n (Unix newline or linefeed char, ascii 10)
+   * are honored, and \r (carriage return, Windows and Mac OS) are
+   * ignored.
+   */
   public void text(String str, float x1, float y1, float x2, float y2) {
     if (recorder != null) recorder.text(str, x1, y1, x2, y2);
     g.text(str, x1, y1, x2, y2);
@@ -7377,6 +8232,13 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * This does a basic number formatting, to avoid the
+   * generally ugly appearance of printing floats.
+   * Users who want more control should use their own nf() cmmand,
+   * or if they want the long, ugly version of float,
+   * use String.valueOf() to convert the float to a String first.
+   */
   public void text(float num, float x, float y) {
     if (recorder != null) recorder.text(num, x, y);
     g.text(num, x, y);
@@ -7389,78 +8251,131 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * Push a copy of the current transformation matrix onto the stack.
+   */
   public void pushMatrix() {
     if (recorder != null) recorder.pushMatrix();
     g.pushMatrix();
   }
 
 
+  /**
+   * Replace the current transformation matrix with the top of the stack.
+   */
   public void popMatrix() {
     if (recorder != null) recorder.popMatrix();
     g.popMatrix();
   }
 
 
+  /**
+   * Translate in X and Y.
+   */
   public void translate(float tx, float ty) {
     if (recorder != null) recorder.translate(tx, ty);
     g.translate(tx, ty);
   }
 
 
+  /**
+   * Translate in X, Y, and Z.
+   */
   public void translate(float tx, float ty, float tz) {
     if (recorder != null) recorder.translate(tx, ty, tz);
     g.translate(tx, ty, tz);
   }
 
 
+  /**
+   * Two dimensional rotation.
+   *
+   * Same as rotateZ (this is identical to a 3D rotation along the z-axis)
+   * but included for clarity. It'd be weird for people drawing 2D graphics
+   * to be using rotateZ. And they might kick our a-- for the confusion.
+   *
+   * <A HREF="http://www.xkcd.com/c184.html">Additional background</A>.
+   */
   public void rotate(float angle) {
     if (recorder != null) recorder.rotate(angle);
     g.rotate(angle);
   }
 
 
+  /**
+   * Rotate around the X axis.
+   */
   public void rotateX(float angle) {
     if (recorder != null) recorder.rotateX(angle);
     g.rotateX(angle);
   }
 
 
+  /**
+   * Rotate around the Y axis.
+   */
   public void rotateY(float angle) {
     if (recorder != null) recorder.rotateY(angle);
     g.rotateY(angle);
   }
 
 
+  /**
+   * Rotate around the Z axis.
+   *
+   * The functions rotate() and rotateZ() are identical, it's just that it make
+   * sense to have rotate() and then rotateX() and rotateY() when using 3D;
+   * nor does it make sense to use a function called rotateZ() if you're only
+   * doing things in 2D. so we just decided to have them both be the same.
+   */
   public void rotateZ(float angle) {
     if (recorder != null) recorder.rotateZ(angle);
     g.rotateZ(angle);
   }
 
 
+  /**
+   * Rotate about a vector in space. Same as the glRotatef() function.
+   */
   public void rotate(float angle, float vx, float vy, float vz) {
     if (recorder != null) recorder.rotate(angle, vx, vy, vz);
     g.rotate(angle, vx, vy, vz);
   }
 
 
+  /**
+   * Scale in all dimensions.
+   */
   public void scale(float s) {
     if (recorder != null) recorder.scale(s);
     g.scale(s);
   }
 
 
+  /**
+   * Scale in X and Y. Equivalent to scale(sx, sy, 1).
+   *
+   * Not recommended for use in 3D, because the z-dimension is just
+   * scaled by 1, since there's no way to know what else to scale it by.
+   */
   public void scale(float sx, float sy) {
     if (recorder != null) recorder.scale(sx, sy);
     g.scale(sx, sy);
   }
 
 
+  /**
+   * Scale in X, Y, and Z.
+   */
   public void scale(float x, float y, float z) {
     if (recorder != null) recorder.scale(x, y, z);
     g.scale(x, y, z);
   }
 
 
+  /**
+   * Set the current transformation matrix to identity.
+   */
   public void resetMatrix() {
     if (recorder != null) recorder.resetMatrix();
     g.resetMatrix();
@@ -7479,6 +8394,9 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * Apply a 3x2 affine transformation matrix.
+   */
   public void applyMatrix(float n00, float n01, float n02,
                           float n10, float n11, float n12) {
     if (recorder != null) recorder.applyMatrix(n00, n01, n02, n10, n11, n12);
@@ -7492,6 +8410,9 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * Apply a 4x4 transformation matrix.
+   */
   public void applyMatrix(float n00, float n01, float n02, float n03,
                           float n10, float n11, float n12, float n13,
                           float n20, float n21, float n22, float n23,
@@ -7506,34 +8427,54 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * Copy the current transformation matrix into the specified target.
+   * Pass in null to create a new matrix.
+   */
   public PMatrix2D getMatrix(PMatrix2D target) {
     return g.getMatrix(target);
   }
 
 
+  /**
+   * Copy the current transformation matrix into the specified target.
+   * Pass in null to create a new matrix.
+   */
   public PMatrix3D getMatrix(PMatrix3D target) {
     return g.getMatrix(target);
   }
 
 
+  /**
+   * Set the current transformation matrix to the contents of another.
+   */
   public void setMatrix(PMatrix source) {
     if (recorder != null) recorder.setMatrix(source);
     g.setMatrix(source);
   }
 
 
+  /**
+   * Set the current transformation to the contents of the specified source.
+   */
   public void setMatrix(PMatrix2D source) {
     if (recorder != null) recorder.setMatrix(source);
     g.setMatrix(source);
   }
 
 
+  /**
+   * Set the current transformation to the contents of the specified source.
+   */
   public void setMatrix(PMatrix3D source) {
     if (recorder != null) recorder.setMatrix(source);
     g.setMatrix(source);
   }
 
 
+  /**
+   * Print the current model (or "transformation") matrix.
+   */
   public void printMatrix() {
     if (recorder != null) recorder.printMatrix();
     g.printMatrix();
@@ -7612,41 +8553,91 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * Given an x and y coordinate, returns the x position of where
+   * that point would be placed on screen, once affected by translate(),
+   * scale(), or any other transformations.
+   */
   public float screenX(float x, float y) {
     return g.screenX(x, y);
   }
 
 
+  /**
+   * Given an x and y coordinate, returns the y position of where
+   * that point would be placed on screen, once affected by translate(),
+   * scale(), or any other transformations.
+   */
   public float screenY(float x, float y) {
     return g.screenY(x, y);
   }
 
 
+  /**
+   * Maps a three dimensional point to its placement on-screen.
+   * <P>
+   * Given an (x, y, z) coordinate, returns the x position of where
+   * that point would be placed on screen, once affected by translate(),
+   * scale(), or any other transformations.
+   */
   public float screenX(float x, float y, float z) {
     return g.screenX(x, y, z);
   }
 
 
+  /**
+   * Maps a three dimensional point to its placement on-screen.
+   * <P>
+   * Given an (x, y, z) coordinate, returns the y position of where
+   * that point would be placed on screen, once affected by translate(),
+   * scale(), or any other transformations.
+   */
   public float screenY(float x, float y, float z) {
     return g.screenY(x, y, z);
   }
 
 
+  /**
+   * Maps a three dimensional point to its placement on-screen.
+   * <P>
+   * Given an (x, y, z) coordinate, returns its z value.
+   * This value can be used to determine if an (x, y, z) coordinate
+   * is in front or in back of another (x, y, z) coordinate.
+   * The units are based on how the zbuffer is set up, and don't
+   * relate to anything "real". They're only useful for in
+   * comparison to another value obtained from screenZ(),
+   * or directly out of the zbuffer[].
+   */
   public float screenZ(float x, float y, float z) {
     return g.screenZ(x, y, z);
   }
 
 
+  /**
+   * Returns the model space x value for an x, y, z coordinate.
+   * <P>
+   * This will give you a coordinate after it has been transformed
+   * by translate(), rotate(), and camera(), but not yet transformed
+   * by the projection matrix. For instance, his can be useful for
+   * figuring out how points in 3D space relate to the edge
+   * coordinates of a shape.
+   */
   public float modelX(float x, float y, float z) {
     return g.modelX(x, y, z);
   }
 
 
+  /**
+   * Returns the model space y value for an x, y, z coordinate.
+   */
   public float modelY(float x, float y, float z) {
     return g.modelY(x, y, z);
   }
 
 
+  /**
+   * Returns the model space z value for an x, y, z coordinate.
+   */
   public float modelZ(float x, float y, float z) {
     return g.modelZ(x, y, z);
   }
@@ -7694,6 +8685,10 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * Set the tint to either a grayscale or ARGB value.
+   * See notes attached to the fill() function.
+   */
   public void stroke(int rgb) {
     if (recorder != null) recorder.stroke(rgb);
     g.stroke(rgb);
@@ -7736,6 +8731,9 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * Set the tint to either a grayscale or ARGB value.
+   */
   public void tint(int rgb) {
     if (recorder != null) recorder.tint(rgb);
     g.tint(rgb);
@@ -7778,6 +8776,9 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * Set the fill to either a grayscale value or an ARGB int.
+   */
   public void fill(int rgb) {
     if (recorder != null) recorder.fill(rgb);
     g.fill(rgb);
@@ -7934,42 +8935,90 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * Set the background to a gray or ARGB color.
+   * <p>
+   * For the main drawing surface, the alpha value will be ignored. However,
+   * alpha can be used on PGraphics objects from createGraphics(). This is
+   * the only way to set all the pixels partially transparent, for instance.
+   * <p>
+   * Note that background() should be called before any transformations occur,
+   * because some implementations may require the current transformation matrix
+   * to be identity before drawing.
+   */
   public void background(int rgb) {
     if (recorder != null) recorder.background(rgb);
     g.background(rgb);
   }
 
 
+  /**
+   * See notes about alpha in background(x, y, z, a).
+   */
   public void background(int rgb, float alpha) {
     if (recorder != null) recorder.background(rgb, alpha);
     g.background(rgb, alpha);
   }
 
 
+  /**
+   * Set the background to a grayscale value, based on the
+   * current colorMode.
+   */
   public void background(float gray) {
     if (recorder != null) recorder.background(gray);
     g.background(gray);
   }
 
 
+  /**
+   * See notes about alpha in background(x, y, z, a).
+   */
   public void background(float gray, float alpha) {
     if (recorder != null) recorder.background(gray, alpha);
     g.background(gray, alpha);
   }
 
 
+  /**
+   * Set the background to an r, g, b or h, s, b value,
+   * based on the current colorMode.
+   */
   public void background(float x, float y, float z) {
     if (recorder != null) recorder.background(x, y, z);
     g.background(x, y, z);
   }
 
 
+  /**
+   * Clear the background with a color that includes an alpha value. This can
+   * only be used with objects created by createGraphics(), because the main
+   * drawing surface cannot be set transparent.
+   * <p>
+   * It might be tempting to use this function to partially clear the screen
+   * on each frame, however that's not how this function works. When calling
+   * background(), the pixels will be replaced with pixels that have that level
+   * of transparency. To do a semi-transparent overlay, use fill() with alpha
+   * and draw a rectangle.
+   */
   public void background(float x, float y, float z, float a) {
     if (recorder != null) recorder.background(x, y, z, a);
     g.background(x, y, z, a);
   }
 
 
+  /**
+   * Takes an RGB or ARGB image and sets it as the background.
+   * The width and height of the image must be the same size as the sketch.
+   * Use image.resize(width, height) to make short work of such a task.
+   * <P>
+   * Note that even if the image is set as RGB, the high 8 bits of each pixel
+   * should be set opaque (0xFF000000), because the image data will be copied
+   * directly to the screen, and non-opaque background images may have strange
+   * behavior. Using image.filter(OPAQUE) will handle this easily.
+   * <P>
+   * When using 3D, this will also clear the zbuffer (if it exists).
+   */
   public void background(PImage image) {
     if (recorder != null) recorder.background(image);
     g.background(image);
@@ -7988,6 +9037,15 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * Set the colorMode and the maximum values for (r, g, b)
+   * or (h, s, b).
+   * <P>
+   * Note that this doesn't set the maximum for the alpha value,
+   * which might be confusing if for instance you switched to
+   * <PRE>colorMode(HSB, 360, 100, 100);</PRE>
+   * because the alpha values were still between 0 and 255.
+   */
   public void colorMode(int mode, float maxX, float maxY, float maxZ) {
     if (recorder != null) recorder.colorMode(mode, maxX, maxY, maxZ);
     g.colorMode(mode, maxX, maxY, maxZ);
@@ -8036,74 +9094,190 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * Interpolate between two colors, using the current color mode.
+   */
   public int lerpColor(int c1, int c2, float amt) {
     return g.lerpColor(c1, c2, amt);
   }
 
 
+  /**
+   * Interpolate between two colors. Like lerp(), but for the
+   * individual color components of a color supplied as an int value.
+   */
   static public int lerpColor(int c1, int c2, float amt, int mode) {
     return PGraphics.lerpColor(c1, c2, amt, mode);
   }
 
 
+  /**
+   * Return true if this renderer should be drawn to the screen. Defaults to
+   * returning true, since nearly all renderers are on-screen beasts. But can
+   * be overridden for subclasses like PDF so that a window doesn't open up.
+   * <br/> <br/>
+   * A better name? showFrame, displayable, isVisible, visible, shouldDisplay,
+   * what to call this?
+   */
   public boolean displayable() {
     return g.displayable();
   }
 
 
+  /**
+   * Store data of some kind for a renderer that requires extra metadata of
+   * some kind. Usually this is a renderer-specific representation of the
+   * image data, for instance a BufferedImage with tint() settings applied for
+   * PGraphicsJava2D, or resized image data and OpenGL texture indices for
+   * PGraphicsOpenGL.
+   */
   public void setCache(Object parent, Object storage) {
     if (recorder != null) recorder.setCache(parent, storage);
     g.setCache(parent, storage);
   }
 
 
+  /**
+   * Get cache storage data for the specified renderer. Because each renderer
+   * will cache data in different formats, it's necessary to store cache data
+   * keyed by the renderer object. Otherwise, attempting to draw the same
+   * image to both a PGraphicsJava2D and a PGraphicsOpenGL will cause errors.
+   * @param parent The PGraphics object (or any object, really) associated
+   * @return data stored for the specified parent
+   */
   public Object getCache(Object parent) {
     return g.getCache(parent);
   }
 
 
+  /**
+   * Remove information associated with this renderer from the cache, if any.
+   * @param parent The PGraphics object whose cache data should be removed
+   */
   public void removeCache(Object parent) {
     if (recorder != null) recorder.removeCache(parent);
     g.removeCache(parent);
   }
 
 
+  /**
+   * Returns an ARGB "color" type (a packed 32 bit int with the color.
+   * If the coordinate is outside the image, zero is returned
+   * (black, but completely transparent).
+   * <P>
+   * If the image is in RGB format (i.e. on a PVideo object),
+   * the value will get its high bits set, just to avoid cases where
+   * they haven't been set already.
+   * <P>
+   * If the image is in ALPHA format, this returns a white with its
+   * alpha value set.
+   * <P>
+   * This function is included primarily for beginners. It is quite
+   * slow because it has to check to see if the x, y that was provided
+   * is inside the bounds, and then has to check to see what image
+   * type it is. If you want things to be more efficient, access the
+   * pixels[] array directly.
+   */
   public int get(int x, int y) {
     return g.get(x, y);
   }
 
 
+  /**
+   * Reads the color of any pixel or grabs a group of pixels. If no parameters are specified, the entire image is returned. Get the value of one pixel by specifying an x,y coordinate. Get a section of the display window by specifing an additional <b>width</b> and <b>height</b> parameter. If the pixel requested is outside of the image window, black is returned. The numbers returned are scaled according to the current color ranges, but only RGB values are returned by this function. Even though you may have drawn a shape with <b>colorMode(HSB)</b>, the numbers returned will be in RGB.
+   * <br><br>Getting the color of a single pixel with <b>get(x, y)</b> is easy, but not as fast as grabbing the data directly from <b>pixels[]</b>. The equivalent statement to "get(x, y)" using <b>pixels[]</b> is "pixels[y*width+x]". Processing requires calling <b>loadPixels()</b> to load the display window data into the <b>pixels[]</b> array before getting the values.
+   * <br><br>As of release 0149, this function ignores <b>imageMode()</b>.
+   *
+   * @webref
+   * @brief     Reads the color of any pixel or grabs a rectangle of pixels
+   * @param x x-coordinate of the pixel
+   * @param y y-coordinate of the pixel
+   * @param w width of pixel rectangle to get
+   * @param h height of pixel rectangle to get
+   *
+   * @see processing.core.PImage#set(int, int, int)
+   * @see processing.core.PImage#pixels
+   * @see processing.core.PImage#copy(PImage, int, int, int, int, int, int, int, int)
+   */
   public PImage get(int x, int y, int w, int h) {
     return g.get(x, y, w, h);
   }
 
 
+  /**
+   * Returns a copy of this PImage. Equivalent to get(0, 0, width, height).
+   */
   public PImage get() {
     return g.get();
   }
 
 
+  /**
+   * Changes the color of any pixel or writes an image directly into the image. The <b>x</b> and <b>y</b> parameter specify the pixel or the upper-left corner of the image. The <b>color</b> parameter specifies the color value.<br><br>Setting the color of a single pixel with <b>set(x, y)</b> is easy, but not as fast as putting the data directly into <b>pixels[]</b>. The equivalent statement to "set(x, y, #000000)" using <b>pixels[]</b> is "pixels[y*width+x] = #000000". Processing requires calling <b>loadPixels()</b> to load the display window data into the <b>pixels[]</b> array before getting the values and calling <b>updatePixels()</b> to update the window.
+   * <br><br>As of release 0149, this function ignores <b>imageMode()</b>.
+   *
+   * @webref
+   * @brief     Writes a color to any pixel or writes an image into another
+   * @param x x-coordinate of the pixel or upper-left corner of the image
+   * @param y y-coordinate of the pixel or upper-left corner of the image
+   * @param c any value of the color datatype
+   *
+   * @see processing.core.PImage#get(int, int, int, int)
+   * @see processing.core.PImage#pixels
+   * @see processing.core.PImage#copy(PImage, int, int, int, int, int, int, int, int)
+   */
   public void set(int x, int y, int c) {
     if (recorder != null) recorder.set(x, y, c);
     g.set(x, y, c);
   }
 
 
+  /**
+   * Efficient method of drawing an image's pixels directly to this surface.
+   * No variations are employed, meaning that any scale, tint, or imageMode
+   * settings will be ignored.
+   */
   public void set(int x, int y, PImage src) {
     if (recorder != null) recorder.set(x, y, src);
     g.set(x, y, src);
   }
 
 
-  public void mask(int alpha[]) {
-    if (recorder != null) recorder.mask(alpha);
-    g.mask(alpha);
+  /**
+   * Set alpha channel for an image. Black colors in the source
+   * image will make the destination image completely transparent,
+   * and white will make things fully opaque. Gray values will
+   * be in-between steps.
+   * <P>
+   * Strictly speaking the "blue" value from the source image is
+   * used as the alpha color. For a fully grayscale image, this
+   * is correct, but for a color image it's not 100% accurate.
+   * For a more accurate conversion, first use filter(GRAY)
+   * which will make the image into a "correct" grayscale by
+   * performing a proper luminance-based conversion.
+   *
+   * @param maskArray any array of Integer numbers used as the alpha channel, needs to be same length as the image's pixel array
+   */
+  public void mask(int maskArray[]) {
+    if (recorder != null) recorder.mask(maskArray);
+    g.mask(maskArray);
   }
 
 
-  public void mask(PImage alpha) {
-    if (recorder != null) recorder.mask(alpha);
-    g.mask(alpha);
+  /**
+   * Masks part of an image from displaying by loading another image and using it as an alpha channel.
+   *  This mask image should only contain grayscale data, but only the blue color channel is used.
+   *  The mask image needs to be the same size as the image to which it is applied.
+   *  In addition to using a mask image, an integer array containing the alpha channel data can be specified directly.
+   *  This method is useful for creating dynamically generated alpha masks.
+   *  This array must be of the same length as the target image's pixels array and should contain only grayscale data of values between 0-255.
+   * @webref
+   * @brief     Masks part of the image from displaying
+   * @param maskImg any PImage object used as the alpha channel for "img", needs to be same size as "img"
+   */
+  public void mask(PImage maskImg) {
+    if (recorder != null) recorder.mask(maskImg);
+    g.mask(maskImg);
   }
 
 
@@ -8113,12 +9287,41 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * Filters an image as defined by one of the following modes:<br><br>THRESHOLD - converts the image to black and white pixels depending if they are above or below the threshold defined by the level parameter. The level must be between 0.0 (black) and 1.0(white). If no level is specified, 0.5 is used.<br><br>GRAY - converts any colors in the image to grayscale equivalents<br><br>INVERT - sets each pixel to its inverse value<br><br>POSTERIZE - limits each channel of the image to the number of colors specified as the level parameter<br><br>BLUR - executes a Guassian blur with the level parameter specifying the extent of the blurring. If no level parameter is used, the blur is equivalent to Guassian blur of radius 1.<br><br>OPAQUE - sets the alpha channel to entirely opaque.<br><br>ERODE - reduces the light areas with the amount defined by the level parameter.<br><br>DILATE - increases the light areas with the amount defined by the level parameter
+   * =advanced
+   * Method to apply a variety of basic filters to this image.
+   * <P>
+   * <UL>
+   * <LI>filter(BLUR) provides a basic blur.
+   * <LI>filter(GRAY) converts the image to grayscale based on luminance.
+   * <LI>filter(INVERT) will invert the color components in the image.
+   * <LI>filter(OPAQUE) set all the high bits in the image to opaque
+   * <LI>filter(THRESHOLD) converts the image to black and white.
+   * <LI>filter(DILATE) grow white/light areas
+   * <LI>filter(ERODE) shrink white/light areas
+   * </UL>
+   * Luminance conversion code contributed by
+   * <A HREF="http://www.toxi.co.uk">toxi</A>
+   * <P/>
+   * Gaussian blur code contributed by
+   * <A HREF="http://incubator.quasimondo.com">Mario Klingemann</A>
+   *
+   * @webref
+   * @brief Converts the image to grayscale or black and white
+   * @param kind Either THRESHOLD, GRAY, INVERT, POSTERIZE, BLUR, OPAQUE, ERODE, or DILATE
+   * @param param in the range from 0 to 1
+   */
   public void filter(int kind, float param) {
     if (recorder != null) recorder.filter(kind, param);
     g.filter(kind, param);
   }
 
 
+  /**
+   * Copy things from one area of this image
+   * to another area in the same image.
+   */
   public void copy(int sx, int sy, int sw, int sh,
                    int dx, int dy, int dw, int dh) {
     if (recorder != null) recorder.copy(sx, sy, sw, sh, dx, dy, dw, dh);
@@ -8126,6 +9329,25 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * Copies a region of pixels from one image into another. If the source and destination regions aren't the same size, it will automatically resize source pixels to fit the specified target region. No alpha information is used in the process, however if the source image has an alpha channel set, it will be copied as well.
+   * <br><br>As of release 0149, this function ignores <b>imageMode()</b>.
+   *
+   * @webref
+   * @brief     Copies the entire image
+   * @param sx X coordinate of the source's upper left corner
+   * @param sy Y coordinate of the source's upper left corner
+   * @param sw source image width
+   * @param sh source image height
+   * @param dx X coordinate of the destination's upper left corner
+   * @param dy Y coordinate of the destination's upper left corner
+   * @param dw destination image width
+   * @param dh destination image height
+   * @param src an image variable referring to the source image.
+   *
+   * @see processing.core.PApplet#alpha(int)
+   * @see processing.core.PApplet#blend(PImage, int, int, int, int, int, int, int, int, int)
+   */
   public void copy(PImage src,
                    int sx, int sy, int sw, int sh,
                    int dx, int dy, int dw, int dh) {
@@ -8134,11 +9356,81 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * Blend two colors based on a particular mode.
+   * <UL>
+   * <LI>REPLACE - destination colour equals colour of source pixel: C = A.
+   *     Sometimes called "Normal" or "Copy" in other software.
+   *
+   * <LI>BLEND - linear interpolation of colours:
+   *     <TT>C = A*factor + B</TT>
+   *
+   * <LI>ADD - additive blending with white clip:
+   *     <TT>C = min(A*factor + B, 255)</TT>.
+   *     Clipped to 0..255, Photoshop calls this "Linear Burn",
+   *     and Director calls it "Add Pin".
+   *
+   * <LI>SUBTRACT - substractive blend with black clip:
+   *     <TT>C = max(B - A*factor, 0)</TT>.
+   *     Clipped to 0..255, Photoshop calls this "Linear Dodge",
+   *     and Director calls it "Subtract Pin".
+   *
+   * <LI>DARKEST - only the darkest colour succeeds:
+   *     <TT>C = min(A*factor, B)</TT>.
+   *     Illustrator calls this "Darken".
+   *
+   * <LI>LIGHTEST - only the lightest colour succeeds:
+   *     <TT>C = max(A*factor, B)</TT>.
+   *     Illustrator calls this "Lighten".
+   *
+   * <LI>DIFFERENCE - subtract colors from underlying image.
+   *
+   * <LI>EXCLUSION - similar to DIFFERENCE, but less extreme.
+   *
+   * <LI>MULTIPLY - Multiply the colors, result will always be darker.
+   *
+   * <LI>SCREEN - Opposite multiply, uses inverse values of the colors.
+   *
+   * <LI>OVERLAY - A mix of MULTIPLY and SCREEN. Multiplies dark values,
+   *     and screens light values.
+   *
+   * <LI>HARD_LIGHT - SCREEN when greater than 50% gray, MULTIPLY when lower.
+   *
+   * <LI>SOFT_LIGHT - Mix of DARKEST and LIGHTEST.
+   *     Works like OVERLAY, but not as harsh.
+   *
+   * <LI>DODGE - Lightens light tones and increases contrast, ignores darks.
+   *     Called "Color Dodge" in Illustrator and Photoshop.
+   *
+   * <LI>BURN - Darker areas are applied, increasing contrast, ignores lights.
+   *     Called "Color Burn" in Illustrator and Photoshop.
+   * </UL>
+   * <P>A useful reference for blending modes and their algorithms can be
+   * found in the <A HREF="http://www.w3.org/TR/SVG12/rendering.html">SVG</A>
+   * specification.</P>
+   * <P>It is important to note that Processing uses "fast" code, not
+   * necessarily "correct" code. No biggie, most software does. A nitpicker
+   * can find numerous "off by 1 division" problems in the blend code where
+   * <TT>&gt;&gt;8</TT> or <TT>&gt;&gt;7</TT> is used when strictly speaking
+   * <TT>/255.0</T> or <TT>/127.0</TT> should have been used.</P>
+   * <P>For instance, exclusion (not intended for real-time use) reads
+   * <TT>r1 + r2 - ((2 * r1 * r2) / 255)</TT> because <TT>255 == 1.0</TT>
+   * not <TT>256 == 1.0</TT>. In other words, <TT>(255*255)>>8</TT> is not
+   * the same as <TT>(255*255)/255</TT>. But for real-time use the shifts
+   * are preferrable, and the difference is insignificant for applications
+   * built with Processing.</P>
+   */
   static public int blendColor(int c1, int c2, int mode) {
     return PGraphics.blendColor(c1, c2, mode);
   }
 
 
+  /**
+   * Blends one area of this image to another area.
+   *
+   *
+   * @see processing.core.PImage#blendColor(int,int,int)
+   */
   public void blend(int sx, int sy, int sw, int sh,
                     int dx, int dy, int dw, int dh, int mode) {
     if (recorder != null) recorder.blend(sx, sy, sw, sh, dx, dy, dw, dh, mode);
@@ -8146,6 +9438,42 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * Blends a region of pixels into the image specified by the <b>img</b> parameter. These copies utilize full alpha channel support and a choice of the following modes to blend the colors of source pixels (A) with the ones of pixels in the destination image (B):<br><br>
+   * BLEND - linear interpolation of colours: C = A*factor + B<br><br>
+   * ADD - additive blending with white clip: C = min(A*factor + B, 255)<br><br>
+   * SUBTRACT - subtractive blending with black clip: C = max(B - A*factor, 0)<br><br>
+   * DARKEST - only the darkest colour succeeds: C = min(A*factor, B)<br><br>
+   * LIGHTEST - only the lightest colour succeeds: C = max(A*factor, B)<br><br>
+   * DIFFERENCE - subtract colors from underlying image.<br><br>
+   * EXCLUSION - similar to DIFFERENCE, but less extreme.<br><br>
+   * MULTIPLY - Multiply the colors, result will always be darker.<br><br>
+   * SCREEN - Opposite multiply, uses inverse values of the colors.<br><br>
+   * OVERLAY - A mix of MULTIPLY and SCREEN. Multiplies dark values, and screens light values.<br><br>
+   * HARD_LIGHT - SCREEN when greater than 50% gray, MULTIPLY when lower.<br><br>
+   * SOFT_LIGHT - Mix of DARKEST and LIGHTEST. Works like OVERLAY, but not as harsh.<br><br>
+   * DODGE - Lightens light tones and increases contrast, ignores darks. Called "Color Dodge" in Illustrator and Photoshop.<br><br>
+   * BURN - Darker areas are applied, increasing contrast, ignores lights. Called "Color Burn" in Illustrator and Photoshop.<br><br>
+   * All modes use the alpha information (highest byte) of source image pixels as the blending factor. If the source and destination regions are different sizes, the image will be automatically resized to match the destination size. If the <b>srcImg</b> parameter is not used, the display window is used as the source image.<br><br>
+   * As of release 0149, this function ignores <b>imageMode()</b>.
+   *
+   * @webref
+   * @brief  Copies a pixel or rectangle of pixels using different blending modes
+   * @param src an image variable referring to the source image
+   * @param sx X coordinate of the source's upper left corner
+   * @param sy Y coordinate of the source's upper left corner
+   * @param sw source image width
+   * @param sh source image height
+   * @param dx X coordinate of the destinations's upper left corner
+   * @param dy Y coordinate of the destinations's upper left corner
+   * @param dw destination image width
+   * @param dh destination image height
+   * @param mode Either BLEND, ADD, SUBTRACT, LIGHTEST, DARKEST, DIFFERENCE, EXCLUSION, MULTIPLY, SCREEN, OVERLAY, HARD_LIGHT, SOFT_LIGHT, DODGE, BURN
+   *
+   * @see processing.core.PApplet#alpha(int)
+   * @see processing.core.PApplet#copy(PImage, int, int, int, int, int, int, int, int)
+   * @see processing.core.PImage#blendColor(int,int,int)
+   */
   public void blend(PImage src,
                     int sx, int sy, int sw, int sh,
                     int dx, int dy, int dw, int dh, int mode) {

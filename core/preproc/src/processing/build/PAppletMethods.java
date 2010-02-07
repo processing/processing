@@ -38,23 +38,26 @@ public class PAppletMethods extends Task {
       throw new BuildException("dir parameter must be set!");
     }
 
+    System.out.println("using basedir " + baseDir);
     File graphicsFile = new File(baseDir, "PGraphics.java");
     File appletFile = new File(baseDir, "PApplet.java");
     File imageFile = new File(baseDir, "PImage.java");
 
     if (!graphicsFile.exists() || !graphicsFile.canRead()) {
       throw new BuildException("PGraphics file not readable: " +
-                  graphicsFile.getAbsolutePath());
+                               graphicsFile.getAbsolutePath());
     }
 
-    if (!appletFile.exists() || !appletFile.canRead() || !appletFile.canWrite()) {
+    if (!appletFile.exists() ||
+        !appletFile.canRead() ||
+        !appletFile.canWrite()) {
       throw new BuildException("PApplet file not read/writeable: " +
-                  appletFile.getAbsolutePath());
+                               appletFile.getAbsolutePath());
     }
 
     if (!imageFile.exists() || !imageFile.canRead()) {
       throw new BuildException("PImage file not readable: " +
-                  imageFile.getAbsolutePath());
+                               imageFile.getAbsolutePath());
     }
 
     // Looking good, let's do this!
@@ -67,7 +70,8 @@ public class PAppletMethods extends Task {
       String line;
       while ((line = applet.readLine()) != null) {
         out.println(line);
-        content.append(line + "\n");
+        content.append(line);
+        content.append('\n');
 
         if (line.indexOf("public functions for processing.core") >= 0) {
           break;
@@ -76,7 +80,8 @@ public class PAppletMethods extends Task {
 
       // read the rest of the file and append it to the
       while ((line = applet.readLine()) != null) {
-        content.append(line + "\n");
+        content.append(line);
+        content.append('\n');
       }
 
       applet.close();
@@ -96,7 +101,8 @@ public class PAppletMethods extends Task {
     if (content.toString().equals(outBytes.toString())) {
       System.out.println("No changes to PApplet API.");
     } else {
-      System.out.println("Updating PApplet with API changes from PImage or PGraphics.");
+      System.out.println("Updating PApplet with API changes " +
+                         "from PImage or PGraphics.");
       try {
         PrintStream temp = new PrintStream(appletFile);
         temp.print(outBytes.toString());
@@ -113,22 +119,31 @@ public class PAppletMethods extends Task {
     BufferedReader in = createReader(input);
     int comments = 0;
     String line = null;
-    StringBuffer comment = new StringBuffer();
+    StringBuffer commentBuffer = new StringBuffer();
 
     while ((line = in.readLine()) != null) {
       String decl = "";
 
       // Keep track of comments
-      if (line.matches(Pattern.quote("/*"))) {
+      //if (line.matches(Pattern.quote("/*"))) {
+      if (line.indexOf("/*") != -1) {
         comments++;
       }
 
-      if (line.matches(Pattern.quote("*/"))) {
+      //if (line.matches(Pattern.quote("*/"))) {
+      if (line.indexOf("*/") != -1) {
+        commentBuffer.append(line);
+        commentBuffer.append('\n');
+        //System.out.println("comment is: " + commentBuffer.toString());
         comments--;
+        // otherwise gotSomething will be false, and nuke the comment
+        continue;
       }
 
       // Ignore everything inside comments
       if (comments > 0) {
+        commentBuffer.append(line);
+        commentBuffer.append('\n');
         continue;
       }
 
@@ -139,14 +154,14 @@ public class PAppletMethods extends Task {
 
       if ((result = Pattern.compile("^\\s*public ([\\w\\[\\]]+) [a-zA-z_]+\\(.*$").matcher(line)).matches()) {
         gotSomething = true;
-      }
-      else if ((result = Pattern.compile("^\\s*abstract public ([\\w\\[\\]]+) [a-zA-z_]+\\(.*$").matcher(line)).matches()) {
+
+      } else if ((result = Pattern.compile("^\\s*abstract public ([\\w\\[\\]]+) [a-zA-z_]+\\(.*$").matcher(line)).matches()) {
         gotSomething = true;
-      }
-      else if ((result = Pattern.compile("^\\s*public final ([\\w\\[\\]]+) [a-zA-z_]+\\(.*$").matcher(line)).matches()) {
+
+      } else if ((result = Pattern.compile("^\\s*public final ([\\w\\[\\]]+) [a-zA-z_]+\\(.*$").matcher(line)).matches()) {
         gotSomething = true;
-      }
-      else if ((result = Pattern.compile("^\\s*static public ([\\w\\[\\]]+) [a-zA-z_]+\\(.*$").matcher(line)).matches()) {
+
+      } else if ((result = Pattern.compile("^\\s*static public ([\\w\\[\\]]+) [a-zA-z_]+\\(.*$").matcher(line)).matches()) {
         gotSomething = true;
         gotStatic = true;
       }
@@ -170,7 +185,13 @@ public class PAppletMethods extends Task {
         // replace semicolons with a start def
         line = line.replaceAll(Pattern.quote(";"), " {\n");
 
-        out.println("\n\n" + line);
+        //out.println("\n\n" + line);
+        out.println();
+        out.println();
+        // end has its own newline
+        out.print(commentBuffer.toString());
+        commentBuffer.setLength(0);
+        out.println(line);
 
         decl += line;
         while(line.indexOf(')') == -1) {
@@ -181,7 +202,8 @@ public class PAppletMethods extends Task {
         }
 
         result = Pattern.compile(".*?\\s(\\S+)\\(.*?").matcher(decl);
-        result.matches(); // try to match. DON't remove this or things will stop working!
+        // try to match. don't remove this or things will stop working!
+        result.matches();
         String declName = result.group(1);
         String gline = "";
         String rline = "";
@@ -221,9 +243,11 @@ public class PAppletMethods extends Task {
         if (!gotStatic && returns.equals("")) {
           out.println(rline);
         }
-
         out.println(gline);
         out.println("  }");
+
+      } else {
+        commentBuffer.setLength(0);
       }
     }
 
@@ -231,7 +255,8 @@ public class PAppletMethods extends Task {
   }
 
 
-  private static BufferedReader createReader(File f) throws FileNotFoundException {
-    return new BufferedReader(new InputStreamReader(new FileInputStream(f)));
+  static BufferedReader createReader(File file) throws IOException {
+    FileInputStream fis = new FileInputStream(file);
+    return new BufferedReader(new InputStreamReader(fis, "UTF-8"));
   }
 }
