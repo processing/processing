@@ -189,7 +189,8 @@ public class PAppletMethods extends Task {
         out.println();
         out.println();
         // end has its own newline
-        out.print(commentBuffer.toString());
+        //out.print(commentBuffer.toString());  // TODO disabled for now XXXX
+        out.print(commentBuffer.toString());  // duplicates all comments
         commentBuffer.setLength(0);
         out.println(line);
 
