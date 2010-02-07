@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-08 Ben Fry and Casey Reas
+  Copyright (c) 2004-09 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This library is free software; you can redistribute it and/or
@@ -29,6 +29,13 @@ import java.util.HashMap;
 
 
 /**
+ * Main graphics and rendering context, as well as the base API implementation for processing "core".
+ * Use this class if you need to draw into an off-screen graphics buffer.
+ * A PGraphics object can be constructed with the <b>createGraphics()</b> function.
+ * The <b>beginDraw()</b> and <b>endDraw()</b> methods (see above example) are necessary to set up the buffer and to finalize it.
+ * The fields and methods for this class are extensive;
+ * for a complete list visit the developer's reference: http://dev.processing.org/reference/core/
+ * =advanced
  * Main graphics and rendering context, as well as the base API implementation.
  *
  * <h2>Subclassing and initializing PGraphics objects</h2>
@@ -106,6 +113,14 @@ import java.util.HashMap;
  * to be done once&mdash;it's a matter of keeping the multiple references
  * synchronized (to say nothing of the translation issues), while targeting
  * them for their separate audiences. Ouch.
+ * 
+ * We're working right now on synchronizing the two references, so the website reference
+ * is generated from the javadoc comments. Yay.
+ * 
+ * @webref rendering
+ * @instanceName graphics any object of the type PGraphics
+ * @usage Web &amp; Application
+ * @see processing.core.PApplet#createGraphics(int, int, String)
  */
 public class PGraphics extends PImage implements PConstants {
 
@@ -540,6 +555,7 @@ public class PGraphics extends PImage implements PConstants {
    * the defaults get set properly. In a subclass, use this(w, h)
    * as the first line of a subclass' constructor to properly set
    * the internal fields and defaults.
+   * 
    */
   public PGraphics() {
   }
@@ -627,20 +643,28 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Prepares the PGraphics for drawing.
+   * Sets the default properties for a PGraphics object. It should be called before anything is drawn into the object.
+   * =advanced
    * <p/>
    * When creating your own PGraphics, you should call this before
    * drawing anything.
+   * 
+   * @webref
+   * @brief Sets up the rendering context
    */
   public void beginDraw() {  // ignore
   }
 
 
   /**
-   * This will finalize rendering so that it can be shown on-screen.
+   * Finalizes the rendering of a PGraphics object so that it can be shown on screen.
+   * =advanced
    * <p/>
    * When creating your own PGraphics, you should call this when
    * you're finished drawing.
+   * 
+   * @webref
+   * @brief Finalizes the renderering context
    */
   public void endDraw() {  // ignore
   }
@@ -1577,7 +1601,7 @@ public class PGraphics extends PImage implements PConstants {
     if (Float.isInfinite(start) || Float.isInfinite(stop)) return;
 //    while (stop < start) stop += TWO_PI;
     if (stop < start) return;  // why bother
-    
+
     // make sure that we're starting at a useful point
     while (start < 0) {
       start += TWO_PI;
@@ -2200,7 +2224,7 @@ public class PGraphics extends PImage implements PConstants {
 
   /**
    * Draw an image(), also specifying u/v coordinates.
-   * In this method, the  u, v coordinates are always based on image space 
+   * In this method, the  u, v coordinates are always based on image space
    * location, regardless of the current textureMode().
    */
   public void image(PImage image,
@@ -2605,6 +2629,14 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
+   * TODO not sure if this stays...
+   */
+  public float textWidth(char[] chars, int start, int length) {
+    return textWidthImpl(chars, start, start + length);
+  }
+
+
+  /**
    * Implementation of returning the text width of
    * the chars [start, stop) in the buffer.
    * Unlike the previous version that was inside PFont, this will
@@ -2709,9 +2741,9 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Method to draw text from an array of chars. This method will usually be 
-   * more efficient than drawing from a String object, because the String will 
-   * not be converted to a char array before drawing. 
+   * Method to draw text from an array of chars. This method will usually be
+   * more efficient than drawing from a String object, because the String will
+   * not be converted to a char array before drawing.
    */
   public void text(char[] chars, int start, int stop, float x, float y) {
     // If multiple lines, sum the height of the additional lines
@@ -2768,7 +2800,7 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  public void text(char[] chars, int start, int stop, 
+  public void text(char[] chars, int start, int stop,
                    float x, float y, float z) {
     if (z != 0) translate(0, 0, z);  // slow!
 
@@ -2777,8 +2809,8 @@ public class PGraphics extends PImage implements PConstants {
 
     if (z != 0) translate(0, 0, -z);  // inaccurate!
   }
-  
-  
+
+
   /**
    * Draw text in a box that is constrained to a particular size.
    * The current rectMode() determines what the coordinates mean
