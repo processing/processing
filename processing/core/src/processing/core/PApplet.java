@@ -7416,7 +7416,10 @@ public class PApplet extends Applet
 
   //////////////////////////////////////////////////////////////
 
-  // everything below this line is automatically generated. no touch.
+  // EVERYTHING BELOW THIS LINE IS AUTOMATICALLY GENERATED. DO NOT TOUCH!
+  // This includes the Javadoc comments, which are automatically copied from
+  // the PImage and PGraphics source code files.
+
   // public functions for processing.core
 
 
@@ -7426,24 +7429,6 @@ public class PApplet extends Applet
   }
 
 
-  /**
-   * Set various hints and hacks for the renderer. This is used to handle obscure rendering features that cannot be implemented in a consistent manner across renderers. Many options will often graduate to standard features instead of hints over time.
-   * <br><br>hint(ENABLE_OPENGL_4X_SMOOTH) - Enable 4x anti-aliasing for OpenGL. This can help force anti-aliasing if it has not been enabled by the user. On some graphics cards, this can also be set by the graphics driver's control panel, however not all cards make this available. This hint must be called immediately after the size() command because it resets the renderer, obliterating any settings and anything drawn (and like size(), re-running the code that came before it again).
-   * <br><br>hint(DISABLE_OPENGL_2X_SMOOTH) - In Processing 1.0, Processing always enables 2x smoothing when the OpenGL renderer is used. This hint disables the default 2x smoothing and returns the smoothing behavior found in earlier releases, where smooth() and noSmooth() could be used to enable and disable smoothing, though the quality was inferior.
-   * <br><br>hint(ENABLE_NATIVE_FONTS) - Use the native version fonts when they are installed, rather than the bitmapped version from a .vlw file. This is useful with the JAVA2D renderer setting, as it will improve font rendering speed. This is not enabled by default, because it can be misleading while testing because the type will look great on your machine (because you have the font installed) but lousy on others' machines if the identical font is unavailable. This option can only be set per-sketch, and must be called before any use of textFont().
-   * <br><br>hint(DISABLE_DEPTH_TEST) - Disable the zbuffer, allowing you to draw on top of everything at will. When depth testing is disabled, items will be drawn to the screen sequentially, like a painting. This hint is most often used to draw in 3D, then draw in 2D on top of it (for instance, to draw GUI controls in 2D on top of a 3D interface). Starting in release 0149, this will also clear the depth buffer. Restore the default with hint(ENABLE_DEPTH_TEST), but note that with the depth buffer cleared, any 3D drawing that happens later in draw() will ignore existing shapes on the screen.
-   * <br><br>hint(ENABLE_DEPTH_SORT) - Enable primitive z-sorting of triangles and lines in P3D and OPENGL. This can slow performance considerably, and the algorithm is not yet perfect. Restore the default with hint(DISABLE_DEPTH_SORT).
-   * <br><br>hint(DISABLE_OPENGL_ERROR_REPORT) - Speeds up the OPENGL renderer setting by not checking for errors while running. Undo with hint(ENABLE_OPENGL_ERROR_REPORT).
-   * <br><br><!--hint(ENABLE_ACCURATE_TEXTURES) - Enables better texture accuracy for the P3D renderer. This option will do a better job of dealing with textures in perspective. hint(DISABLE_ACCURATE_TEXTURES) returns to the default. This hint is not likely to last long.
-   * <br/> <br/>-->As of release 0149, unhint() has been removed in favor of adding additional ENABLE/DISABLE constants to reset the default behavior. This prevents the double negatives, and also reinforces which hints can be enabled or disabled.
-   *
-   * @webref rendering
-   * @param which name of the hint to be enabled or disabled
-   *
-   * @see processing.core.PGraphics
-   * @see processing.core.PApplet#createGraphics(int, int, String, String)
-   * @see processing.core.PApplet#size(int, int)
-   */
   public void hint(int which) {
     if (recorder != null) recorder.hint(which);
     g.hint(which);
@@ -7567,17 +7552,7 @@ public class PApplet extends Applet
     g.point(x, y);
   }
 
-  /**
-   * Draws a point, a coordinate in space at the dimension of one pixel. The first parameter is the horizontal value for the point, the second value is the vertical value for the point, and the optional third value is the depth value. Drawing this shape in 3D using the <b>z</b> parameter requires the P3D or OPENGL parameter in combination with size as shown in the above example.
-   * <br><br>Due to what appears to be a bug in Apple's Java implementation, the point() and set() methods are extremely slow in some circumstances when used with the default renderer. Using P2D or P3D will fix the problem. Grouping many calls to point() or set() together can also help. (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=1094">Bug 1094</a>)
-   *
-   * @webref shape:2d_primitives
-   * @param x x-coordinate of the point
-   * @param y y-coordinate of the point
-   * @param z z-coordinate of the point
-   *
-   * @see PApplet#beginShape()
-   */
+
   public void point(float x, float y, float z) {
     if (recorder != null) recorder.point(x, y, z);
     g.point(x, y, z);
@@ -7589,61 +7564,21 @@ public class PApplet extends Applet
     g.line(x1, y1, x2, y2);
   }
 
-  /**
-   * Draws a line (a direct path between two points) to the screen. The version of <b>line()</b> with four parameters draws the line in 2D.  To color a line, use the <b>stroke()</b> function. A line cannot be filled, therefore the <b>fill()</b> method will not affect the color of a line. 2D lines are drawn with a width of one pixel by default, but this can be changed with the <b>strokeWeight()</b> function. The version with six parameters allows the line to be placed anywhere within XYZ space. Drawing this shape in 3D using the <b>z</b> parameter requires the P3D or OPENGL parameter in combination with size as shown in the above example.
-   *
-   * @webref shape:2d_primitives
-   * @param x1 x-coordinate of the first point
-   * @param y1 y-coordinate of the first point
-   * @param z1 z-coordinate of the first point
-   * @param x2 x-coordinate of the second point
-   * @param y2 y-coordinate of the second point
-   * @param z2 z-coordinate of the second point
-   *
-   * @see PApplet#strokeWeight(float)
-   * @see PApplet#strokeJoin(int)
-   * @see PApplet#strokeCap(int)
-   * @see PApplet#beginShape()
-   */
+
   public void line(float x1, float y1, float z1,
                    float x2, float y2, float z2) {
     if (recorder != null) recorder.line(x1, y1, z1, x2, y2, z2);
     g.line(x1, y1, z1, x2, y2, z2);
   }
 
-  /**
-   * A triangle is a plane created by connecting three points. The first two arguments specify the first point, the middle two arguments specify the second point, and the last two arguments specify the third point.
-   *
-   * @webref shape:2d_primitives
-   * @param x1 x-coordinate of the first point
-   * @param y1 y-coordinate of the first point
-   * @param x2 x-coordinate of the second point
-   * @param y2 y-coordinate of the second point
-   * @param x3 x-coordinate of the third point
-   * @param y3 y-coordinate of the third point
-   *
-   * @see PApplet#beginShape()
-   */
+
   public void triangle(float x1, float y1, float x2, float y2,
                        float x3, float y3) {
     if (recorder != null) recorder.triangle(x1, y1, x2, y2, x3, y3);
     g.triangle(x1, y1, x2, y2, x3, y3);
   }
 
-  /**
-   * A quad is a quadrilateral, a four sided polygon. It is similar to a rectangle, but the angles between its edges are not constrained to ninety degrees. The first pair of parameters (x1,y1) sets the first vertex and the subsequent pairs should proceed clockwise or counter-clockwise around the defined shape.
-   *
-   * @webref shape:2d_primitives
-   * @param x1 x-coordinate of the first corner
-   * @param y1 y-coordinate of the first corner
-   * @param x2 x-coordinate of the second corner
-   * @param y2 y-coordinate of the second corner
-   * @param x3 x-coordinate of the third corner
-   * @param y3 y-coordinate of the third corner
-   * @param x4 x-coordinate of the fourth corner
-   * @param y4 y-coordinate of the fourth corner
-   *
-   */
+
   public void quad(float x1, float y1, float x2, float y2,
                    float x3, float y3, float x4, float y4) {
     if (recorder != null) recorder.quad(x1, y1, x2, y2, x3, y3, x4, y4);
@@ -7656,181 +7591,72 @@ public class PApplet extends Applet
     g.rectMode(mode);
   }
 
-  /**
-   * Draws a rectangle to the screen. A rectangle is a four-sided shape with every angle at ninety degrees. The first two parameters set the location, the third sets the width, and the fourth sets the height. The origin is changed with the <b>rectMode()</b> function.
-   *
-   * @webref shape:2d_primitives
-   * @param a x-coordinate of the rectangle
-   * @param b y-coordinate of the rectangle
-   * @param c width of the rectangle
-   * @param d height of the rectangle
-   *
-   * @see PApplet#rectMode(int)
-   * @see PApplet#quad(float, float, float, float, float, float, float, float)
-   */
+
   public void rect(float a, float b, float c, float d) {
     if (recorder != null) recorder.rect(a, b, c, d);
     g.rect(a, b, c, d);
   }
 
-  /**
-   * The origin of the ellipse is modified by the <b>ellipseMode()</b> function. The default configuration is <b>ellipseMode(CENTER)</b>, which specifies the location of the ellipse as the center of the shape. The RADIUS mode is the same, but the width and height parameters to <b>ellipse()</b> specify the radius of the ellipse, rather than the diameter. The CORNER mode draws the shape from the upper-left corner of its bounding box. The CORNERS mode uses the four parameters to <b>ellipse()</b> to set two opposing corners of the ellipse's bounding box. The parameter must be written in "ALL CAPS" because Processing is a case sensitive language.
-   *
-   * @webref shape:attributes
-   *
-   * @param mode        Either CENTER, RADIUS, CORNER, or CORNERS.
-   * @see PApplet#ellipse(float, float, float, float)
-   */
+
   public void ellipseMode(int mode) {
     if (recorder != null) recorder.ellipseMode(mode);
     g.ellipseMode(mode);
   }
 
-  /**
-   * Draws an ellipse (oval) in the display window. An ellipse with an equal <b>width</b> and <b>height</b> is a circle. The first two parameters set the location, the third sets the width, and the fourth sets the height. The origin may be changed with the <b>ellipseMode()</b> function.
-   *
-   * @webref shape:2d_primitives
-   * @param a x-coordinate of the ellipse
-   * @param b y-coordinate of the ellipse
-   * @param c width of the ellipse
-   * @param d height of the ellipse
-   *
-   * @see PApplet#ellipseMode(int)
-   */
+
   public void ellipse(float a, float b, float c, float d) {
     if (recorder != null) recorder.ellipse(a, b, c, d);
     g.ellipse(a, b, c, d);
   }
 
 
-  /**
-   * Draws an arc in the display window.
-   * Arcs are drawn along the outer edge of an ellipse defined by the <b>x</b>, <b>y</b>, <b>width</b> and <b>height</b> parameters.
-   * The origin or the arc's ellipse may be changed with the <b>ellipseMode()</b> function.
-   * The <b>start</b> and <b>stop</b> parameters specify the angles at which to draw the arc.
-   *
-   * @webref shape:2d_primitives
-   * @param a x-coordinate of the arc's ellipse
-   * @param b y-coordinate of the arc's ellipse
-   * @param c width of the arc's ellipse
-   * @param d height of the arc's ellipse
-   * @param start angle to start the arc, specified in radians
-   * @param stop angle to stop the arc, specified in radians
-   *
-   * @see PApplet#ellipseMode(int)
-   * @see PApplet#ellipse(float, float, float, float)
-   */
   public void arc(float a, float b, float c, float d,
                   float start, float stop) {
     if (recorder != null) recorder.arc(a, b, c, d, start, stop);
     g.arc(a, b, c, d, start, stop);
   }
 
-  /**
-   *
-   * @param size dimension of the box in all dimensions, creates a cube
-   */
+
   public void box(float size) {
     if (recorder != null) recorder.box(size);
     g.box(size);
   }
 
-  /**
-   * A box is an extruded rectangle. A box with equal dimension on all sides is a cube.
-   *
-   * @webref shape:3d_primitives
-   * @param w dimension of the box in the x-dimension
-   * @param h dimension of the box in the y-dimension
-   * @param d dimension of the box in the z-dimension
-   *
-   * @see PApplet#sphere(float)
-   */
+
   public void box(float w, float h, float d) {
     if (recorder != null) recorder.box(w, h, d);
     g.box(w, h, d);
   }
 
-  /**
-   *
-   * @param res number of segments (minimum of 3) used per full circle revolution
-   */
+
   public void sphereDetail(int res) {
     if (recorder != null) recorder.sphereDetail(res);
     g.sphereDetail(res);
   }
 
-  /**
-   * Controls the detail used to render a sphere by adjusting the number of vertices of the sphere mesh. The default resolution is 30, which creates a fairly detailed sphere definition with vertices every 360/30 = 12 degrees. If you're going to render a great number of spheres per frame, it is advised to reduce the level of detail using this function. The setting stays active until <b>sphereDetail()</b> is called again with a new parameter and so should <i>not</i> be called prior to every <b>sphere()</b> statement, unless you wish to render spheres with different settings, e.g. using less detail for smaller spheres or ones further away from the camera. To control the detail of the horizontal and vertical resolution independently, use the version of the functions with two parameters.
-   *
-   * @webref shape:3d_primitives
-   * @param ures number of segments used longitudinally per full circle revolution
-   * @param vres number of segments used latitudinally from top to bottom
-   *
-   * @see PApplet#sphere(float)
-   */
+
   public void sphereDetail(int ures, int vres) {
     if (recorder != null) recorder.sphereDetail(ures, vres);
     g.sphereDetail(ures, vres);
   }
 
-  /**
-   * A sphere is a hollow ball made from tessellated triangles.
-   *
-   * @webref shape:3d_primitives
-   * @param r the radius of the sphere
-   */
+
   public void sphere(float r) {
     if (recorder != null) recorder.sphere(r);
     g.sphere(r);
   }
 
-  /**
-   * Evaluates the Bezier at point t for points a, b, c, d. The parameter t varies between 0 and 1, a and d are points on the curve, and b and c are the control points. This can be done once with the x coordinates and a second time with the y coordinates to get the location of a bezier curve at t.
-   *
-   * @webref shape:curves
-   * @param a coordinate of first point on the curve
-   * @param b coordinate of first control point
-   * @param c coordinate of second control point
-   * @param d coordinate of second point on the curve
-   * @param t value between 0 and 1
-   *
-   * @see PApplet#bezier(float, float, float, float, float, float, float, float, float, float, float, float)
-   * @see PApplet#bezierVertex(float, float, float, float, float, float)
-   * @see PApplet#curvePoint(float, float, float, float, float)
-   */
+
   public float bezierPoint(float a, float b, float c, float d, float t) {
     return g.bezierPoint(a, b, c, d, t);
   }
 
-  /**
-   * Calculates the tangent of a point on a Bezier curve. There is a good definition of "tangent" at Wikipedia: <a href="http://en.wikipedia.org/wiki/Tangent" target="new">http://en.wikipedia.org/wiki/Tangent</a>
-   *
-   * @webref shape:curves
-   * @param a coordinate of first point on the curve
-   * @param b coordinate of first control point
-   * @param c coordinate of second control point
-   * @param d coordinate of second point on the curve
-   * @param t value between 0 and 1
-   *
-   * @see PApplet#bezier(float, float, float, float, float, float, float, float, float, float, float, float)
-   * @see PApplet#bezierVertex(float, float, float, float, float, float)
-   * @see PApplet#curvePoint(float, float, float, float, float)
-   */
+
   public float bezierTangent(float a, float b, float c, float d, float t) {
     return g.bezierTangent(a, b, c, d, t);
   }
 
 
-  /**
-   * Sets the resolution at which Beziers display. The default value is 20. This function is only useful when using the P3D or OPENGL renderer as the default (JAVA2D) renderer does not use this information.
-   *
-   * @webref shape:curves
-   * @param detail resolution of the curves
-   *
-   * @see PApplet#curve(float, float, float, float, float, float, float, float, float, float, float, float)
-   * @see PApplet#curveVertex(float, float)
-   * @see PApplet#curveTightness(float)
-   */
   public void bezierDetail(int detail) {
     if (recorder != null) recorder.bezierDetail(detail);
     g.bezierDetail(detail);
@@ -7846,26 +7672,6 @@ public class PApplet extends Applet
   }
 
 
-  /**
-   * Draws a Bezier curve on the screen. These curves are defined by a series of anchor and control points. The first two parameters specify the first anchor point and the last two parameters specify the other anchor point. The middle parameters specify the control points which define the shape of the curve. Bezier curves were developed by French engineer Pierre Bezier. Using the 3D version of requires rendering with P3D or OPENGL (see the Environment reference for more information).
-   *
-   * @webref shape:curves
-   * @param x1 coordinates for the first anchor point
-   * @param y1 coordinates for the first anchor point
-   * @param z1 coordinates for the first anchor point
-   * @param x2 coordinates for the first control point
-   * @param y2 coordinates for the first control point
-   * @param z2 coordinates for the first control point
-   * @param x3 coordinates for the second control point
-   * @param y3 coordinates for the second control point
-   * @param z3 coordinates for the second control point
-   * @param x4 coordinates for the second anchor point
-   * @param y4 coordinates for the second anchor point
-   * @param z4 coordinates for the second anchor point
-   *
-   * @see PApplet#bezierVertex(float, float, float, float, float, float)
-   * @see PApplet#curve(float, float, float, float, float, float, float, float, float, float, float, float)
-   */
   public void bezier(float x1, float y1, float z1,
                      float x2, float y2, float z2,
                      float x3, float y3, float z3,
@@ -7874,71 +7680,23 @@ public class PApplet extends Applet
     g.bezier(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
   }
 
-  /**
-   * Evalutes the curve at point t for points a, b, c, d. The parameter t varies between 0 and 1, a and d are points on the curve, and b and c are the control points. This can be done once with the x coordinates and a second time with the y coordinates to get the location of a curve at t.
-   *
-   * @webref shape:curves
-   * @param a coordinate of first point on the curve
-   * @param b coordinate of second point on the curve
-   * @param c coordinate of third point on the curve
-   * @param d coordinate of fourth point on the curve
-   * @param t value between 0 and 1
-   *
-   * @see PApplet#curve(float, float, float, float, float, float, float, float, float, float, float, float)
-   * @see PApplet#curveVertex(float, float)
-   * @see PApplet#bezierPoint(float, float, float, float, float)
-   */
+
   public float curvePoint(float a, float b, float c, float d, float t) {
     return g.curvePoint(a, b, c, d, t);
   }
 
 
-  /**
-   * Calculates the tangent of a point on a curve. There is a good definition of "tangent" at Wikipedia: <a href="http://en.wikipedia.org/wiki/Tangent" target="new">http://en.wikipedia.org/wiki/Tangent</a>
-   *
-   * @webref shape:curves
-   * @param a coordinate of first point on the curve
-   * @param b coordinate of first control point
-   * @param c coordinate of second control point
-   * @param d coordinate of second point on the curve
-   * @param t value between 0 and 1
-   *
-   * @see PApplet#curve(float, float, float, float, float, float, float, float, float, float, float, float)
-   * @see PApplet#curveVertex(float, float)
-   * @see PApplet#curvePoint(float, float, float, float, float)
-   * @see PApplet#bezierTangent(float, float, float, float, float)
-   */
   public float curveTangent(float a, float b, float c, float d, float t) {
     return g.curveTangent(a, b, c, d, t);
   }
 
 
-  /**
-   * Sets the resolution at which curves display. The default value is 20. This function is only useful when using the P3D or OPENGL renderer as the default (JAVA2D) renderer does not use this information.
-   *
-   * @webref shape:curves
-   * @param detail resolution of the curves
-   *
-   * @see PApplet#curve(float, float, float, float, float, float, float, float, float, float, float, float)
-   * @see PApplet#curveVertex(float, float)
-   * @see PApplet#curveTightness(float)
-   */
   public void curveDetail(int detail) {
     if (recorder != null) recorder.curveDetail(detail);
     g.curveDetail(detail);
   }
 
 
-  /**
-   * Modifies the quality of forms created with <b>curve()</b> and <b>curveVertex()</b>. The parameter <b>squishy</b> determines how the curve fits to the vertex points. The value 0.0 is the default value for <b>squishy</b> (this value defines the curves to be Catmull-Rom splines) and the value 1.0 connects all the points with straight lines. Values within the range -5.0 and 5.0 will deform the curves but will leave them recognizable and as values increase in magnitude, they will continue to deform.
-   *
-   * @webref shape:curves
-   * @param tightness amount of deformation from the original vertices
-   *
-   * @see PApplet#curve(float, float, float, float, float, float, float, float, float, float, float, float)
-   * @see PApplet#curveVertex(float, float)
-   *
-   */
   public void curveTightness(float tightness) {
     if (recorder != null) recorder.curveTightness(tightness);
     g.curveTightness(tightness);
@@ -7953,27 +7711,7 @@ public class PApplet extends Applet
     g.curve(x1, y1, x2, y2, x3, y3, x4, y4);
   }
 
-/**
- * Draws a curved line on the screen. The first and second parameters specify the beginning control point and the last two parameters specify the ending control point. The middle parameters specify the start and stop of the curve. Longer curves can be created by putting a series of <b>curve()</b> functions together or using <b>curveVertex()</b>. An additional function called <b>curveTightness()</b> provides control for the visual quality of the curve. The <b>curve()</b> function is an implementation of Catmull-Rom splines. Using the 3D version of requires rendering with P3D or OPENGL (see the Environment reference for more information).
- *
- * @webref shape:curves
- * @param x1 coordinates for the beginning control point
- * @param y1 coordinates for the beginning control point
- * @param z1 coordinates for the beginning control point
- * @param x2 coordinates for the first point
- * @param y2 coordinates for the first point
- * @param z2 coordinates for the first point
- * @param x3 coordinates for the second point
- * @param y3 coordinates for the second point
- * @param z3 coordinates for the second point
- * @param x4 coordinates for the ending control point
- * @param y4 coordinates for the ending control point
- * @param z4 coordinates for the ending control point
- *
- * @see PApplet#curveVertex(float, float)
- * @see PApplet#curveTightness(float)
- * @see PApplet#bezier(float, float, float, float, float, float, float, float, float, float, float, float)
- */
+
   public void curve(float x1, float y1, float z1,
                     float x2, float y2, float z2,
                     float x3, float y3, float z3,
@@ -7994,18 +7732,7 @@ public class PApplet extends Applet
     g.noSmooth();
   }
 
-  /**
-   * Modifies the location from which images draw. The default mode is <b>imageMode(CORNER)</b>, which specifies the location to be the upper left corner and uses the fourth and fifth parameters of <b>image()</b> to set the image's width and height. The syntax <b>imageMode(CORNERS)</b> uses the second and third parameters of <b>image()</b> to set the location of one corner of the image and uses the fourth and fifth parameters to set the opposite corner. Use <b>imageMode(CENTER)</b> to draw images centered at the given x and y position.
-   * <br><br>The parameter to <b>imageMode()</b> must be written in ALL CAPS because Processing is a case sensitive language.
-   *
-   * @webref image:loading_displaying
-   * @param mode Either CORNER, CORNERS, or CENTER
-   *
-   * @see processing.core.PApplet#loadImage(String, String)
-   * @see processing.core.PImage
-   * @see processing.core.PApplet#image(PImage, float, float, float, float)
-   * @see processing.core.PApplet#background(float, float, float, float)
-   */
+
   public void imageMode(int mode) {
     if (recorder != null) recorder.imageMode(mode);
     g.imageMode(mode);
@@ -8017,29 +7744,12 @@ public class PApplet extends Applet
     g.image(image, x, y);
   }
 
-  /**
-   * Displays images to the screen. The images must be in the sketch's "data" directory to load correctly. Select "Add file..." from the "Sketch" menu to add the image. Processing currently works with GIF, JPEG, and Targa images. The color of an image may be modified with the <b>tint()</b> function and if a GIF has transparency, it will maintain its transparency. The <b>img</b> parameter specifies the image to display and the <b>x</b> and <b>y</b> parameters define the location of the image from its upper-left corner. The image is displayed at its original size unless the <b>width</b> and <b>height</b> parameters specify a different size. The <b>imageMode()</b> function changes the way the parameters work. A call to <b>imageMode(CORNERS)</b> will change the width and height parameters to define the x and y values of the opposite corner of the image.
-   * <br><br>Starting with release 0124, when using the default (JAVA2D) renderer,
-   * smooth() will also improve image quality of resized images.
-   *
-   * @webref image:loading_displaying
-   * @param image the image to display
-   * @param x x-coordinate of the image
-   * @param y y-coordinate of the image
-   * @param c width to display the image
-   * @param d height to display the image
-   *
-   * @see processing.core.PApplet#loadImage(String, String)
-   * @see processing.core.PImage
-   * @see processing.core.PApplet#imageMode(int)
-   * @see processing.core.PApplet#tint(float)
-   * @see processing.core.PApplet#background(float, float, float, float)
-   * @see processing.core.PApplet#alpha(int)
-   */
+
   public void image(PImage image, float x, float y, float c, float d) {
     if (recorder != null) recorder.image(image, x, y, c, d);
     g.image(image, x, y, c, d);
   }
+
 
   public void image(PImage image,
                     float a, float b, float c, float d,
@@ -8048,25 +7758,12 @@ public class PApplet extends Applet
     g.image(image, a, b, c, d, u1, v1, u2, v2);
   }
 
-  /**
-   * Modifies the location from which shapes draw.
-   * The default mode is <b>shapeMode(CORNER)</b>,
-   * which specifies the location to be the upper left corner of the shape and
-   * uses the third and fourth parameters of <b>shape()</b> to specify the width and height.
-   * The syntax <b>shapeMode(CORNERS)</b> uses the first and second parameters of <b>shape()</b>
-   * to set the location of one corner and uses the third and fourth parameters to set the opposite corner.
-   * The syntax <b>shapeMode(CENTER)</b> draws the shape from its center point and uses the third and forth parameters of <b>shape()</b> to specify the width and height.
-   * The parameter must be written in "ALL CAPS" because Processing is a case sensitive language.
-   * @param mode One of CORNER, CORNERS, CENTER
-   *
-   * @webref shape:loading_displaying
-   * @see PApplet#shape(PShape)
-   * @see PApplet#rectMode(int)
-   */
+
   public void shapeMode(int mode) {
     if (recorder != null) recorder.shapeMode(mode);
     g.shapeMode(mode);
   }
+
 
   public void shape(PShape shape) {
     if (recorder != null) recorder.shape(shape);
@@ -8079,26 +7776,7 @@ public class PApplet extends Applet
     g.shape(shape, x, y);
   }
 
-  /**
-   * Displays shapes to the screen. The shapes must be in the sketch's "data" directory to load correctly. Select "Add file..." from the "Sketch" menu to add the shape.
-   * Processing currently works with SVG shapes only.
-   * The <b>sh</b> parameter specifies the shape to display and the <b>x</b> and <b>y</b> parameters define the location of the shape from its upper-left corner.
-   * The shape is displayed at its original size unless the <b>width</b> and <b>height</b> parameters specify a different size.
-   * The <b>shapeMode()</b> function changes the way the parameters work.
-   * A call to <b>shapeMode(CORNERS)</b>, for example, will change the width and height parameters to define the x and y values of the opposite corner of the shape.
-   * <br><br>Note complex shapes may draw awkwardly with P2D, P3D, and OPENGL. Those renderers do not yet support shapes that have holes or complicated breaks.
-   *
-   * @param shape
-   * @param x x-coordinate of the shape
-   * @param y y-coordinate of the shape
-   * @param c width to display the shape
-   * @param d height to display the shape
-   *
-   * @webref shape:loading_displaying
-   * @see PShape
-   * @see PApplet#loadShape(String)
-   * @see PApplet#shapeMode(int)
-   */
+
   public void shape(PShape shape, float x, float y, float c, float d) {
     if (recorder != null) recorder.shape(shape, x, y, c, d);
     g.shape(shape, x, y, c, d);
@@ -8556,22 +8234,12 @@ public class PApplet extends Applet
   }
 
 
-  /**
-   * Disables drawing the stroke (outline). If both <b>noStroke()</b> and <b>noFill()</b> are called, nothing will be drawn to the screen.
-   *
-   * @webref color:setting
-   *
-   * @see PApplet#stroke(float, float, float, float)
-   */
   public void noStroke() {
     if (recorder != null) recorder.noStroke();
     g.noStroke();
   }
 
-  /**
-   *
-   * @param rgb color value in hexadecimal notation (i.e. #FFCC00 or 0xFFFFCC00) or any value of the color datatype
-   */
+
   public void stroke(int rgb) {
     if (recorder != null) recorder.stroke(rgb);
     g.stroke(rgb);
@@ -8583,10 +8251,7 @@ public class PApplet extends Applet
     g.stroke(rgb, alpha);
   }
 
-  /**
-   *
-   * @param gray specifies a value between white and black
-   */
+
   public void stroke(float gray) {
     if (recorder != null) recorder.stroke(gray);
     g.stroke(gray);
@@ -8604,29 +8269,13 @@ public class PApplet extends Applet
     g.stroke(x, y, z);
   }
 
-  /**
-   * Sets the color used to draw lines and borders around shapes. This color is either specified in terms of the RGB or HSB color depending on the current <b>colorMode()</b> (the default color space is RGB, with each value in the range from 0 to 255).
-   * <br><br>When using hexadecimal notation to specify a color, use "#" or "0x" before the values (e.g. #CCFFAA, 0xFFCCFFAA). The # syntax uses six digits to specify a color (the way colors are specified in HTML and CSS). When using the hexadecimal notation starting with "0x", the hexadecimal value must be specified with eight characters; the first two characters define the alpha component and the remainder the red, green, and blue components.
-   * <br><br>The value for the parameter "gray" must be less than or equal to the current maximum value as specified by <b>colorMode()</b>. The default maximum value is 255.
-   *
-   * @webref color:setting
-   * @param alpha opacity of the stroke
-   * @param x red or hue value (depending on the current color mode)
-   * @param y green or saturation value (depending on the current color mode)
-   * @param z blue or brightness value (depending on the current color mode)
-   */
-  public void stroke(float x, float y, float z, float alpha) {
-    if (recorder != null) recorder.stroke(x, y, z, alpha);
-    g.stroke(x, y, z, alpha);
+
+  public void stroke(float x, float y, float z, float a) {
+    if (recorder != null) recorder.stroke(x, y, z, a);
+    g.stroke(x, y, z, a);
   }
 
-  /**
-   * Removes the current fill value for displaying images and reverts to displaying images with their original hues.
-   *
-   * @webref image:loading_displaying
-   * @see processing.core.PApplet#tint(float, float, float, float)
-   * @see processing.core.PApplet#image(PImage, float, float, float, float)
-   */
+
   public void noTint() {
     if (recorder != null) recorder.noTint();
     g.noTint();
@@ -8638,20 +8287,13 @@ public class PApplet extends Applet
     g.tint(rgb);
   }
 
-  /**
-   *
-   * @param rgb color value in hexadecimal notation (i.e. #FFCC00 or 0xFFFFCC00) or any value of the color datatype
-   * @param alpha opacity of the image
-   */
+
   public void tint(int rgb, float alpha) {
     if (recorder != null) recorder.tint(rgb, alpha);
     g.tint(rgb, alpha);
   }
 
-  /**
-   *
-   * @param gray any valid number
-   */
+
   public void tint(float gray) {
     if (recorder != null) recorder.tint(gray);
     g.tint(gray);
@@ -8669,43 +8311,19 @@ public class PApplet extends Applet
     g.tint(x, y, z);
   }
 
-  /**
-   * Sets the fill value for displaying images. Images can be tinted to specified colors or made transparent by setting the alpha.
-   * <br><br>To make an image transparent, but not change it's color, use white as the tint color and specify an alpha value. For instance, tint(255, 128) will make an image 50% transparent (unless <b>colorMode()</b> has been used).
-   * <br><br>When using hexadecimal notation to specify a color, use "#" or "0x" before the values (e.g. #CCFFAA, 0xFFCCFFAA). The # syntax uses six digits to specify a color (the way colors are specified in HTML and CSS). When using the hexadecimal notation starting with "0x", the hexadecimal value must be specified with eight characters; the first two characters define the alpha component and the remainder the red, green, and blue components.
-   * <br><br>The value for the parameter "gray" must be less than or equal to the current maximum value as specified by <b>colorMode()</b>. The default maximum value is 255.
-   * <br><br>The tint() method is also used to control the coloring of textures in 3D.
-   *
-   * @webref image:loading_displaying
-   * @param x red or hue value
-   * @param y green or saturation value
-   * @param z blue or brightness value
-   *
-   * @see processing.core.PApplet#noTint()
-   * @see processing.core.PApplet#image(PImage, float, float, float, float)
-   */
-  public void tint(float x, float y, float z, float alpha) {
-    if (recorder != null) recorder.tint(x, y, z, alpha);
-    g.tint(x, y, z, alpha);
+
+  public void tint(float x, float y, float z, float a) {
+    if (recorder != null) recorder.tint(x, y, z, a);
+    g.tint(x, y, z, a);
   }
 
-  /**
-   * Disables filling geometry. If both <b>noStroke()</b> and <b>noFill()</b> are called, nothing will be drawn to the screen.
-   *
-   * @webref color:setting
-   *
-   * @see PApplet#fill(float, float, float, float)
-   *
-   */
+
   public void noFill() {
     if (recorder != null) recorder.noFill();
     g.noFill();
   }
 
-  /**
-   *
-   * @param rgb color value in hexadecimal notation (i.e. #FFCC00 or 0xFFFFCC00) or any value of the color datatype
-   */
+
   public void fill(int rgb) {
     if (recorder != null) recorder.fill(rgb);
     g.fill(rgb);
@@ -8717,10 +8335,7 @@ public class PApplet extends Applet
     g.fill(rgb, alpha);
   }
 
-  /**
-   *
-   * @param gray number specifying value between white and black
-   */
+
   public void fill(float gray) {
     if (recorder != null) recorder.fill(gray);
     g.fill(gray);
@@ -8738,27 +8353,10 @@ public class PApplet extends Applet
     g.fill(x, y, z);
   }
 
-  /**
-   * Sets the color used to fill shapes. For example, if you run <b>fill(204, 102, 0)</b>, all subsequent shapes will be filled with orange. This color is either specified in terms of the RGB or HSB color depending on the current <b>colorMode()</b> (the default color space is RGB, with each value in the range from 0 to 255).
-   * <br><br>When using hexadecimal notation to specify a color, use "#" or "0x" before the values (e.g. #CCFFAA, 0xFFCCFFAA). The # syntax uses six digits to specify a color (the way colors are specified in HTML and CSS). When using the hexadecimal notation starting with "0x", the hexadecimal value must be specified with eight characters; the first two characters define the alpha component and the remainder the red, green, and blue components.
-   * <br><br>The value for the parameter "gray" must be less than or equal to the current maximum value as specified by <b>colorMode()</b>. The default maximum value is 255.
-   * <br><br>To change the color of an image (or a texture), use tint().
-   *
-   * @webref color:setting
-   * @param x red or hue value
-   * @param y green or saturation value
-   * @param z blue or brightness value
-   * @param alpha opacity of the fill
-   *
-   * @see PApplet#noFill()
-   * @see PApplet#stroke(float)
-   * @see PApplet#tint(float)
-   * @see PApplet#background(float, float, float, float)
-   * @see PApplet#colorMode(int, float, float, float, float)
-   */
-  public void fill(float x, float y, float z, float alpha) {
-    if (recorder != null) recorder.fill(x, y, z, alpha);
-    g.fill(x, y, z, alpha);
+
+  public void fill(float x, float y, float z, float a) {
+    if (recorder != null) recorder.fill(x, y, z, a);
+    g.fill(x, y, z, a);
   }
 
 
@@ -8881,19 +8479,18 @@ public class PApplet extends Applet
     g.lightSpecular(x, y, z);
   }
 
-  /**
-   *
-   * @param rgb color value in hexadecimal notation (i.e. #FFCC00 or 0xFFFFCC00)<br/>or any value of the color datatype
-   */
+
   public void background(int rgb) {
     if (recorder != null) recorder.background(rgb);
     g.background(rgb);
   }
 
+
   public void background(int rgb, float alpha) {
     if (recorder != null) recorder.background(rgb, alpha);
     g.background(rgb, alpha);
   }
+
 
   public void background(float gray) {
     if (recorder != null) recorder.background(gray);
@@ -8901,11 +8498,6 @@ public class PApplet extends Applet
   }
 
 
-  /**
-   *
-   * @param gray specifies a value between white and black
-   * @param alpha opacity of the background
-   */
   public void background(float gray, float alpha) {
     if (recorder != null) recorder.background(gray, alpha);
     g.background(gray, alpha);
@@ -8918,31 +8510,12 @@ public class PApplet extends Applet
   }
 
 
-  /**
-   * The <b>background()</b> function sets the color used for the background of the Processing window. The default background is light gray. In the <b>draw()</b> function, the background color is used to clear the display window at the beginning of each frame.
-   * <br><br>An image can also be used as the background for a sketch, however its width and height must be the same size as the sketch window. To resize an image 'b' to the size of the sketch window, use b.resize(width, height).
-   * <br><br>Images used as background will ignore the current tint() setting.
-   * <br><br>It is not possible to use transparency (alpha) in background colors with the main drawing surface, however they will work properly with <b>createGraphics</b>.
-   *
-   * @webref color:setting
-   * @param x red or hue value (depending on the current color mode)
-   * @param y green or saturation value (depending on the current color mode)
-   * @param z blue or brightness value (depending on the current color mode)
-   *
-   * @see PApplet#stroke(float)
-   * @see PApplet#fill(float)
-   * @see PApplet#tint(float)
-   * @see PApplet#colorMode(int)
-   */
-  public void background(float x, float y, float z, float alpha) {
-    if (recorder != null) recorder.background(x, y, z, alpha);
-    g.background(x, y, z, alpha);
+  public void background(float x, float y, float z, float a) {
+    if (recorder != null) recorder.background(x, y, z, a);
+    g.background(x, y, z, a);
   }
 
-  /**
-   *
-   * @param image any value of type PImage
-   */
+
   public void background(PImage image) {
     if (recorder != null) recorder.background(image);
     g.background(image);
@@ -8954,11 +8527,7 @@ public class PApplet extends Applet
     g.colorMode(mode);
   }
 
-  /**
-   *
-   * @param mode        Either RGB or HSB, corresponding to Red/Green/Blue and Hue/Saturation/Brightness
-   * @param max range for all color elements
-   */
+
   public void colorMode(int mode, float max) {
     if (recorder != null) recorder.colorMode(mode, max);
     g.colorMode(mode, max);
@@ -8970,146 +8539,49 @@ public class PApplet extends Applet
     g.colorMode(mode, maxX, maxY, maxZ);
   }
 
-  /**
-   * Changes the way Processing interprets color data. By default, the parameters for <b>fill()</b>, <b>stroke()</b>, <b>background()</b>, and <b>color()</b> are defined by values between 0 and 255 using the RGB color model. The <b>colorMode()</b> function is used to change the numerical range used for specifying colors and to switch color systems. For example, calling <b>colorMode(RGB, 1.0)</b> will specify that values are specified between 0 and 1. The limits for defining colors are altered by setting the parameters range1, range2, range3, and range 4.
-   *
-   * @webref color:setting
-   * @param maxX        range for the red or hue depending on the current color mode
-   * @param maxY        range for the green or saturation depending on the current color mode
-   * @param maxZ        range for the blue or brightness depending on the current color mode
-   * @param maxA        range for the alpha
-   *
-   * @see PApplet#background(float)
-   * @see PApplet#fill(float)
-   * @see PApplet#stroke(float)
-   */
+
   public void colorMode(int mode,
                         float maxX, float maxY, float maxZ, float maxA) {
     if (recorder != null) recorder.colorMode(mode, maxX, maxY, maxZ, maxA);
     g.colorMode(mode, maxX, maxY, maxZ, maxA);
   }
 
-  /**
-   * Extracts the alpha value from a color.
-   *
-   * @webref color:creating_reading
-   * @param what any value of the color datatype
-   */
+
   public final float alpha(int what) {
     return g.alpha(what);
   }
 
-  /**
-   * Extracts the red value from a color, scaled to match current <b>colorMode()</b>. This value is always returned as a  float so be careful not to assign it to an int value.<br><br>The red() function is easy to use and undestand, but is slower than another technique. To achieve the same results when working in <b>colorMode(RGB, 255)</b>, but with greater speed, use the &gt;&gt; (right shift) operator with a bit mask. For example, the following two lines of code are equivalent:<br><pre>float r1 = red(myColor);<br>float r2 = myColor &gt;&gt; 16 &amp; 0xFF;</pre>
-   *
-   * @webref color:creating_reading
-   * @param what any value of the color datatype
-   *
-   * @see PApplet#green(int)
-   * @see PApplet#blue(int)
-   * @see PApplet#hue(int)
-   * @see PApplet#saturation(int)
-   * @see PApplet#brightness(int)
-   * @ref rightshift
-   */
+
   public final float red(int what) {
     return g.red(what);
   }
 
-  /**
-   * Extracts the green value from a color, scaled to match current <b>colorMode()</b>. This value is always returned as a  float so be careful not to assign it to an int value.<br><br>The <b>green()</b> function is easy to use and undestand, but is slower than another technique. To achieve the same results when working in <b>colorMode(RGB, 255)</b>, but with greater speed, use the &gt;&gt; (right shift) operator with a bit mask. For example, the following two lines of code are equivalent:<br><pre>float r1 = green(myColor);<br>float r2 = myColor &gt;&gt; 8 &amp; 0xFF;</pre>
-   *
-   * @webref color:creating_reading
-   * @param what any value of the color datatype
-   *
-   * @see PApplet#red(int)
-   * @see PApplet#blue(int)
-   * @see PApplet#hue(int)
-   * @see PApplet#saturation(int)
-   * @see PApplet#brightness(int)
-   * @ref rightshift
-   */
+
   public final float green(int what) {
     return g.green(what);
   }
 
-  /**
-   * Extracts the blue value from a color, scaled to match current <b>colorMode()</b>. This value is always returned as a  float so be careful not to assign it to an int value.<br><br>The <b>blue()</b> function is easy to use and undestand, but is slower than another technique. To achieve the same results when working in <b>colorMode(RGB, 255)</b>, but with greater speed, use a bit mask to remove the other color components. For example, the following two lines of code are equivalent:<br><pre>float r1 = blue(myColor);<br>float r2 = myColor &amp; 0xFF;</pre>
-   *
-   * @webref color:creating_reading
-   * @param what any value of the color datatype
-   *
-   * @see PApplet#red(int)
-   * @see PApplet#green(int)
-   * @see PApplet#hue(int)
-   * @see PApplet#saturation(int)
-   * @see PApplet#brightness(int)
-   */
+
   public final float blue(int what) {
     return g.blue(what);
   }
 
-  /**
-   * Extracts the hue value from a color.
-   *
-   * @webref color:creating_reading
-   * @param what any value of the color datatype
-   *
-   * @see PApplet#red(int)
-   * @see PApplet#green(int)
-   * @see PApplet#blue(int)
-   * @see PApplet#saturation(int)
-   * @see PApplet#brightness(int)
-   */
+
   public final float hue(int what) {
     return g.hue(what);
   }
 
-  /**
-   * Extracts the saturation value from a color.
-   *
-   * @webref color:creating_reading
-   * @param what any value of the color datatype
-   *
-   * @see PApplet#red(int)
-   * @see PApplet#green(int)
-   * @see PApplet#blue(int)
-   * @see PApplet#hue(int)
-   * @see PApplet#brightness(int)
-   */
+
   public final float saturation(int what) {
     return g.saturation(what);
   }
 
 
-  /**
-   * Extracts the brightness value from a color.
-   *
-   *
-   * @webref color:creating_reading
-   * @param what any value of the color datatype
-   *
-   * @see PApplet#red(int)
-   * @see PApplet#green(int)
-   * @see PApplet#blue(int)
-   * @see PApplet#hue(int)
-   * @see PApplet#saturation(int)
-   */
   public final float brightness(int what) {
     return g.brightness(what);
   }
 
-  /**
-   * Calculates a color or colors between two color at a specific increment. The <b>amt</b> parameter is the amount to interpolate between the two values where 0.0 equal to the first point, 0.1 is very near the first point, 0.5 is half-way in between, etc.
-   *
-   * @webref color:creating_reading
-   * @param c1 interpolate from this color
-   * @param c2 interpolate to this color
-   * @param amt between 0.0 and 1.0
-   *
-   * @see PApplet#blendColor(int, int, int)
-   * @see PApplet#color(float, float, float, float)
-   */
+
   public int lerpColor(int c1, int c2, float amt) {
     return g.lerpColor(c1, c2, amt);
   }
@@ -9146,21 +8618,7 @@ public class PApplet extends Applet
     return g.get(x, y);
   }
 
-  /**
-   * Reads the color of any pixel or grabs a section of an image. If no parameters are specified, the entire image is returned. Get the value of one pixel by specifying an x,y coordinate. Get a section of the display window by specifying an additional <b>width</b> and <b>height</b> parameter. If the pixel requested is outside of the image window, black is returned. The numbers returned are scaled according to the current color ranges, but only RGB values are returned by this function. For example, even though you may have drawn a shape with <b>colorMode(HSB)</b>, the numbers returned will be in RGB.
-   * <br><br>Getting the color of a single pixel with <b>get(x, y)</b> is easy, but not as fast as grabbing the data directly from <b>pixels[]</b>. The equivalent statement to "get(x, y)" using <b>pixels[]</b> is "pixels[y*width+x]". Processing requires calling <b>loadPixels()</b> to load the display window data into the <b>pixels[]</b> array before getting the values.
-   * <br><br>As of release 0149, this function ignores <b>imageMode()</b>.
-   *
-   * @webref image:pixels
-   * @param x x-coordinate of the pixel
-   * @param y y-coordinate of the pixel
-   * @param w width of pixel rectangle to get
-   * @param h height of pixel rectangle to get
-   *
-   * @see processing.core.PApplet#set(int, int, int)
-   * @see processing.core.PApplet#pixels
-   * @see processing.core.PApplet#imageMode(int)
-   */
+
   public PImage get(int x, int y, int w, int h) {
     return g.get(x, y, w, h);
   }
@@ -9170,41 +8628,28 @@ public class PApplet extends Applet
     return g.get();
   }
 
-  /**
-   * Changes the color of any pixel or writes an image directly into the display window. The <b>x</b> and <b>y</b> parameters specify the pixel to change and the <b>color</b> parameter specifies the color value. The color parameter is affected by the current color mode (the default is RGB values from 0 to 255). When setting an image, the x and y parameters define the coordinates for the upper-left corner of the image.
-   * <br><br>Setting the color of a single pixel with <b>set(x, y)</b> is easy, but not as fast as putting the data directly into <b>pixels[]</b>. The equivalent statement to "set(x, y, #000000)" using <b>pixels[]</b> is "pixels[y*width+x] = #000000". You must call <b>loadPixels()</b> to load the display window data into the <b>pixels[]</b> array before setting the values and calling <b>updatePixels()</b> to update the window with any changes.
-   * <br><br>As of release 1.0, this function ignores <b>imageMode()</b>.
-   * <br><br>Due to what appears to be a bug in Apple's Java implementation, the point() and set() methods are extremely slow in some circumstances when used with the default renderer. Using P2D or P3D will fix the problem. Grouping many calls to point() or set() together can also help. (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=1094">Bug 1094</a>)
-   *
-   * @webref image:pixels
-   * @param x x-coordinate of the pixel
-   * @param y y-coordinate of the pixel
-   * @param c any value of the color datatype
-   */
+
   public void set(int x, int y, int c) {
     if (recorder != null) recorder.set(x, y, c);
     g.set(x, y, c);
   }
 
-  /**
-   *
-   * @param src any valid variable of type PImage
-   */
+
   public void set(int x, int y, PImage src) {
     if (recorder != null) recorder.set(x, y, src);
     g.set(x, y, src);
   }
 
 
-  public void mask(int alpha[]) {
-    if (recorder != null) recorder.mask(alpha);
-    g.mask(alpha);
+  public void mask(int maskArray[]) {
+    if (recorder != null) recorder.mask(maskArray);
+    g.mask(maskArray);
   }
 
 
-  public void mask(PImage alpha) {
-    if (recorder != null) recorder.mask(alpha);
-    g.mask(alpha);
+  public void mask(PImage maskImg) {
+    if (recorder != null) recorder.mask(maskImg);
+    g.mask(maskImg);
   }
 
 
@@ -9213,13 +8658,7 @@ public class PApplet extends Applet
     g.filter(kind);
   }
 
-  /**
-   * Filters the display window as defined by one of the following modes:<br><br>THRESHOLD - converts the image to black and white pixels depending if they are above or below the threshold defined by the level parameter. The level must be between 0.0 (black) and 1.0(white). If no level is specified, 0.5 is used.<br><br>GRAY - converts any colors in the image to grayscale equivalents<br><br>INVERT - sets each pixel to its inverse value<br><br>POSTERIZE - limits each channel of the image to the number of colors specified as the level parameter<br><br>BLUR - executes a Guassian blur with the level parameter specifying the extent of the blurring. If no level parameter is used, the blur is equivalent to Guassian blur of radius 1.<br><br>OPAQUE - sets the alpha channel to entirely opaque.<br><br>ERODE - reduces the light areas with the amount defined by the level parameter.<br><br>DILATE - increases the light areas with the amount defined by the level parameter.
-   *
-   * @webref image:pixels
-   * @param kind Either THRESHOLD, GRAY, INVERT, POSTERIZE, BLUR, OPAQUE, ERODE, or DILATE
-   * @param param defines the quality of the filter
-   */
+
   public void filter(int kind, float param) {
     if (recorder != null) recorder.filter(kind, param);
     g.filter(kind, param);
@@ -9232,24 +8671,7 @@ public class PApplet extends Applet
     g.copy(sx, sy, sw, sh, dx, dy, dw, dh);
   }
 
-  /**
-   * Copies a region of pixels from the display window to another area of the display window and copies a region of pixels from an image used as the <b>srcImg</b> parameter into the display window. If the source and destination regions aren't the same size, it will automatically resize the source pixels to fit the specified target region. No alpha information is used in the process, however if the source image has an alpha channel set, it will be copied as well.
-   * <br><br>As of release 0149, this function ignores <b>imageMode()</b>.
-   *
-   * @webref image:pixels
-   * @param src image variable referring to the source image
-   * @param sx X coordinate of the source's upper left corner
-   * @param sy Y coordinate of the source's upper left corner
-   * @param sw source image width
-   * @param sh source image height
-   * @param dx X coordinate of the destination's upper left corner
-   * @param dy Y coordinate of the destination's upper left corner
-   * @param dw destination image width
-   * @param dh destination image height
-   *
-   * @see processing.core.PApplet#blend(PImage, int, int, int, int, int, int, int, int, int)
-   * @see processing.core.PApplet#get(int, int, int, int)
-   */
+
   public void copy(PImage src,
                    int sx, int sy, int sw, int sh,
                    int dx, int dy, int dw, int dh) {
@@ -9257,20 +8679,11 @@ public class PApplet extends Applet
     g.copy(src, sx, sy, sw, sh, dx, dy, dw, dh);
   }
 
-  /**
-   * Blends two color values together based on the blending mode given as the <b>MODE</b> parameter. The possible modes are described in the reference for the <b>blend()</b> function.
-   *
-   * @webref color:creating_reading
-   * @param c1 the first color to blend
-   * @param c2 the second color to blend
-   * @param mode Either BLEND, ADD, SUBTRACT, DARKEST, LIGHTEST, DIFFERENCE, EXCLUSION, MULTIPLY, SCREEN, OVERLAY, HARD_LIGHT, SOFT_LIGHT, DODGE, or BURN
-   *
-   * @see PApplet#blend(int, int, int, int, int, int, int, int, int)
-   * @see PApplet#color(float)
-   */
+
   static public int blendColor(int c1, int c2, int mode) {
     return PGraphics.blendColor(c1, c2, mode);
   }
+
 
   public void blend(int sx, int sy, int sw, int sh,
                     int dx, int dy, int dw, int dh, int mode) {
@@ -9278,39 +8691,7 @@ public class PApplet extends Applet
     g.blend(sx, sy, sw, sh, dx, dy, dw, dh, mode);
   }
 
-  /**
-   * Blends a region of pixels from one image into another (or in itself again) with full alpha channel support. There is a choice of the following modes to blend the source pixels (A) with the ones of pixels in the destination image (B):<br><br>
-   * BLEND - linear interpolation of colours: C = A*factor + B<br><br>
-   * ADD - additive blending with white clip: C = min(A*factor + B, 255)<br><br>
-   * SUBTRACT - subtractive blending with black clip: C = max(B - A*factor, 0)<br><br>
-   * DARKEST - only the darkest colour succeeds: C = min(A*factor, B)<br><br>
-   * LIGHTEST - only the lightest colour succeeds: C = max(A*factor, B)<br><br>
-   * DIFFERENCE - subtract colors from underlying image.<br><br>
-   * EXCLUSION - similar to DIFFERENCE, but less extreme.<br><br>
-   * MULTIPLY - Multiply the colors, result will always be darker.<br><br>
-   * SCREEN - Opposite multiply, uses inverse values of the colors.<br><br>
-   * OVERLAY - A mix of MULTIPLY and SCREEN. Multiplies dark values, and screens light values.<br><br>
-   * HARD_LIGHT - SCREEN when greater than 50% gray, MULTIPLY when lower.<br><br>
-   * SOFT_LIGHT - Mix of DARKEST and LIGHTEST. Works like OVERLAY, but not as harsh.<br><br>
-   * DODGE - Lightens light tones and increases contrast, ignores darks. Called "Color Dodge" in Illustrator and Photoshop.<br><br>
-   * BURN - Darker areas are applied, increasing contrast, ignores lights. Called "Color Burn" in Illustrator and Photoshop.<br><br>
-   * All modes use the alpha information (highest byte) of source image pixels as the blending factor. If the source and destination regions are different sizes, the image will be automatically resized to match the destination size. If the <b>srcImg</b> parameter is not used, the display window is used as the source image.<br><br>
-   * As of release 0149, this function ignores <b>imageMode()</b>.
-   *
-   * @webref image:pixels
-   * @param src a image variable referring to the source image
-   * @param sx X coordinate of the source's upper left corner
-   * @param sy Y coordinate of the source's upper left corner
-   * @param sw source image width
-   * @param sh source image height
-   * @param dx X coordinate of the destinations's upper left corner
-   * @param dy Y coordinate of the destinations's upper left corner
-   * @param dw destination image width
-   * @param dh destination image height
-   * @param mode Either BLEND, ADD, SUBTRACT, LIGHTEST, DARKEST, DIFFERENCE, EXCLUSION, MULTIPLY, SCREEN, OVERLAY, HARD_LIGHT, SOFT_LIGHT, DODGE, BURN
-   *
-   * @see PApplet#filter(int, float)
-   */
+
   public void blend(PImage src,
                     int sx, int sy, int sw, int sh,
                     int dx, int dy, int dw, int dh, int mode) {

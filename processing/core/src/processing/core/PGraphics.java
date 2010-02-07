@@ -113,10 +113,10 @@ import java.util.HashMap;
  * to be done once&mdash;it's a matter of keeping the multiple references
  * synchronized (to say nothing of the translation issues), while targeting
  * them for their separate audiences. Ouch.
- * 
+ *
  * We're working right now on synchronizing the two references, so the website reference
  * is generated from the javadoc comments. Yay.
- * 
+ *
  * @webref rendering
  * @instanceName graphics any object of the type PGraphics
  * @usage Web &amp; Application
@@ -555,7 +555,7 @@ public class PGraphics extends PImage implements PConstants {
    * the defaults get set properly. In a subclass, use this(w, h)
    * as the first line of a subclass' constructor to properly set
    * the internal fields and defaults.
-   * 
+   *
    */
   public PGraphics() {
   }
@@ -648,7 +648,7 @@ public class PGraphics extends PImage implements PConstants {
    * <p/>
    * When creating your own PGraphics, you should call this before
    * drawing anything.
-   * 
+   *
    * @webref
    * @brief Sets up the rendering context
    */
@@ -662,7 +662,7 @@ public class PGraphics extends PImage implements PConstants {
    * <p/>
    * When creating your own PGraphics, you should call this when
    * you're finished drawing.
-   * 
+   *
    * @webref
    * @brief Finalizes the renderering context
    */
@@ -805,22 +805,22 @@ public class PGraphics extends PImage implements PConstants {
   // HINTS
 
   /**
-   * Enable a hint option.
-   * <P>
-   * For the most part, hints are temporary api quirks,
-   * for which a proper api hasn't been properly worked out.
-   * for instance SMOOTH_IMAGES existed because smooth()
-   * wasn't yet implemented, but it will soon go away.
-   * <P>
-   * They also exist for obscure features in the graphics
-   * engine, like enabling/disabling single pixel lines
-   * that ignore the zbuffer, the way they do in alphabot.
-   * <P>
-   * Current hint options:
-   * <UL>
-   * <LI><TT>DISABLE_DEPTH_TEST</TT> -
-   * turns off the z-buffer in the P3D or OPENGL renderers.
-   * </UL>
+   * Set various hints and hacks for the renderer. This is used to handle obscure rendering features that cannot be implemented in a consistent manner across renderers. Many options will often graduate to standard features instead of hints over time.
+   * <br><br>hint(ENABLE_OPENGL_4X_SMOOTH) - Enable 4x anti-aliasing for OpenGL. This can help force anti-aliasing if it has not been enabled by the user. On some graphics cards, this can also be set by the graphics driver's control panel, however not all cards make this available. This hint must be called immediately after the size() command because it resets the renderer, obliterating any settings and anything drawn (and like size(), re-running the code that came before it again).
+   * <br><br>hint(DISABLE_OPENGL_2X_SMOOTH) - In Processing 1.0, Processing always enables 2x smoothing when the OpenGL renderer is used. This hint disables the default 2x smoothing and returns the smoothing behavior found in earlier releases, where smooth() and noSmooth() could be used to enable and disable smoothing, though the quality was inferior.
+   * <br><br>hint(ENABLE_NATIVE_FONTS) - Use the native version fonts when they are installed, rather than the bitmapped version from a .vlw file. This is useful with the JAVA2D renderer setting, as it will improve font rendering speed. This is not enabled by default, because it can be misleading while testing because the type will look great on your machine (because you have the font installed) but lousy on others' machines if the identical font is unavailable. This option can only be set per-sketch, and must be called before any use of textFont().
+   * <br><br>hint(DISABLE_DEPTH_TEST) - Disable the zbuffer, allowing you to draw on top of everything at will. When depth testing is disabled, items will be drawn to the screen sequentially, like a painting. This hint is most often used to draw in 3D, then draw in 2D on top of it (for instance, to draw GUI controls in 2D on top of a 3D interface). Starting in release 0149, this will also clear the depth buffer. Restore the default with hint(ENABLE_DEPTH_TEST), but note that with the depth buffer cleared, any 3D drawing that happens later in draw() will ignore existing shapes on the screen.
+   * <br><br>hint(ENABLE_DEPTH_SORT) - Enable primitive z-sorting of triangles and lines in P3D and OPENGL. This can slow performance considerably, and the algorithm is not yet perfect. Restore the default with hint(DISABLE_DEPTH_SORT).
+   * <br><br>hint(DISABLE_OPENGL_ERROR_REPORT) - Speeds up the OPENGL renderer setting by not checking for errors while running. Undo with hint(ENABLE_OPENGL_ERROR_REPORT).
+   * <br><br><!--hint(ENABLE_ACCURATE_TEXTURES) - Enables better texture accuracy for the P3D renderer. This option will do a better job of dealing with textures in perspective. hint(DISABLE_ACCURATE_TEXTURES) returns to the default. This hint is not likely to last long.
+   * <br/> <br/>-->As of release 0149, unhint() has been removed in favor of adding additional ENABLE/DISABLE constants to reset the default behavior. This prevents the double negatives, and also reinforces which hints can be enabled or disabled.
+   *
+   * @webref rendering
+   * @param which name of the hint to be enabled or disabled
+   *
+   * @see processing.core.PGraphics
+   * @see processing.core.PApplet#createGraphics(int, int, String, String)
+   * @see processing.core.PApplet#size(int, int)
    */
   public void hint(int which) {
     if (which > 0) {
@@ -1418,6 +1418,26 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  /**
+   * Draws a point, a coordinate in space at the dimension of one pixel.
+   * The first parameter is the horizontal value for the point, the second
+   * value is the vertical value for the point, and the optional third value
+   * is the depth value. Drawing this shape in 3D using the <b>z</b>
+   * parameter requires the P3D or OPENGL parameter in combination with
+   * size as shown in the above example.
+   * <br><br>Due to what appears to be a bug in Apple's Java implementation,
+   * the point() and set() methods are extremely slow in some circumstances
+   * when used with the default renderer. Using P2D or P3D will fix the
+   * problem. Grouping many calls to point() or set() together can also
+   * help. (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=1094">Bug 1094</a>)
+   *
+   * @webref shape:2d_primitives
+   * @param x x-coordinate of the point
+   * @param y y-coordinate of the point
+   * @param z z-coordinate of the point
+   *
+   * @see PGraphics#beginShape()
+   */
   public void point(float x, float y, float z) {
     beginShape(POINTS);
     vertex(x, y, z);
@@ -1433,6 +1453,32 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+
+  /**
+   * Draws a line (a direct path between two points) to the screen.
+   * The version of <b>line()</b> with four parameters draws the line in 2D.
+   * To color a line, use the <b>stroke()</b> function. A line cannot be
+   * filled, therefore the <b>fill()</b> method will not affect the color
+   * of a line. 2D lines are drawn with a width of one pixel by default,
+   * but this can be changed with the <b>strokeWeight()</b> function.
+   * The version with six parameters allows the line to be placed anywhere
+   * within XYZ space. Drawing this shape in 3D using the <b>z</b> parameter
+   * requires the P3D or OPENGL parameter in combination with size as shown
+   * in the above example.
+   *
+   * @webref shape:2d_primitives
+   * @param x1 x-coordinate of the first point
+   * @param y1 y-coordinate of the first point
+   * @param z1 z-coordinate of the first point
+   * @param x2 x-coordinate of the second point
+   * @param y2 y-coordinate of the second point
+   * @param z2 z-coordinate of the second point
+   *
+   * @see PGraphics#strokeWeight(float)
+   * @see PGraphics#strokeJoin(int)
+   * @see PGraphics#strokeCap(int)
+   * @see PGraphics#beginShape()
+   */
   public void line(float x1, float y1, float z1,
                    float x2, float y2, float z2) {
     beginShape(LINES);
@@ -1442,6 +1488,21 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  /**
+   * A triangle is a plane created by connecting three points. The first two
+   * arguments specify the first point, the middle two arguments specify
+   * the second point, and the last two arguments specify the third point.
+   *
+   * @webref shape:2d_primitives
+   * @param x1 x-coordinate of the first point
+   * @param y1 y-coordinate of the first point
+   * @param x2 x-coordinate of the second point
+   * @param y2 y-coordinate of the second point
+   * @param x3 x-coordinate of the third point
+   * @param y3 y-coordinate of the third point
+   *
+   * @see PApplet#beginShape()
+   */
   public void triangle(float x1, float y1, float x2, float y2,
                        float x3, float y3) {
     beginShape(TRIANGLES);
@@ -1452,6 +1513,24 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  /**
+   * A quad is a quadrilateral, a four sided polygon. It is similar to
+   * a rectangle, but the angles between its edges are not constrained
+   * ninety degrees. The first pair of parameters (x1,y1) sets the
+   * first vertex and the subsequent pairs should proceed clockwise or
+   * counter-clockwise around the defined shape.
+   *
+   * @webref shape:2d_primitives
+   * @param x1 x-coordinate of the first corner
+   * @param y1 y-coordinate of the first corner
+   * @param x2 x-coordinate of the second corner
+   * @param y2 y-coordinate of the second corner
+   * @param x3 x-coordinate of the third corner
+   * @param y3 y-coordinate of the third corner
+   * @param x4 x-coordinate of the fourth corner
+   * @param y4 y-coordinate of the fourth corner
+   *
+   */
   public void quad(float x1, float y1, float x2, float y2,
                    float x3, float y3, float x4, float y4) {
     beginShape(QUADS);
@@ -1474,6 +1553,21 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  /**
+   * Draws a rectangle to the screen. A rectangle is a four-sided shape with
+   * every angle at ninety degrees. The first two parameters set the location,
+   * the third sets the width, and the fourth sets the height. The origin is
+   * changed with the <b>rectMode()</b> function.
+   *
+   * @webref shape:2d_primitives
+   * @param a x-coordinate of the rectangle
+   * @param b y-coordinate of the rectangle
+   * @param c width of the rectangle
+   * @param d height of the rectangle
+   *
+   * @see PGraphics#rectMode(int)
+   * @see PGraphics#quad(float, float, float, float, float, float, float, float)
+   */
   public void rect(float a, float b, float c, float d) {
     float hradius, vradius;
     switch (rectMode) {
@@ -1522,11 +1616,42 @@ public class PGraphics extends PImage implements PConstants {
   // ELLIPSE AND ARC
 
 
+  /**
+   * The origin of the ellipse is modified by the <b>ellipseMode()</b>
+   * function. The default configuration is <b>ellipseMode(CENTER)</b>,
+   * which specifies the location of the ellipse as the center of the shape.
+   * The RADIUS mode is the same, but the width and height parameters to
+   * <b>ellipse()</b> specify the radius of the ellipse, rather than the
+   * diameter. The CORNER mode draws the shape from the upper-left corner
+   * of its bounding box. The CORNERS mode uses the four parameters to
+   * <b>ellipse()</b> to set two opposing corners of the ellipse's bounding
+   * box. The parameter must be written in "ALL CAPS" because Processing
+   * syntax is case sensitive.
+   *
+   * @webref shape:attributes
+   *
+   * @param mode        Either CENTER, RADIUS, CORNER, or CORNERS.
+   * @see PApplet#ellipse(float, float, float, float)
+   */
   public void ellipseMode(int mode) {
     ellipseMode = mode;
   }
 
 
+  /**
+   * Draws an ellipse (oval) in the display window. An ellipse with an equal
+   * <b>width</b> and <b>height</b> is a circle. The first two parameters set
+   * the location, the third sets the width, and the fourth sets the height.
+   * The origin may be changed with the <b>ellipseMode()</b> function.
+   *
+   * @webref shape:2d_primitives
+   * @param a x-coordinate of the ellipse
+   * @param b y-coordinate of the ellipse
+   * @param c width of the ellipse
+   * @param d height of the ellipse
+   *
+   * @see PApplet#ellipseMode(int)
+   */
   public void ellipse(float a, float b, float c, float d) {
     float x = a;
     float y = b;
@@ -1567,13 +1692,24 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Identical parameters and placement to ellipse,
-   * but draws only an arc of that ellipse.
-   * <p/>
-   * start and stop are always radians because angleMode() was goofy.
-   * ellipseMode() sets the placement.
-   * <p/>
-   * also tries to be smart about start < stop.
+   * Draws an arc in the display window.
+   * Arcs are drawn along the outer edge of an ellipse defined by the
+   * <b>x</b>, <b>y</b>, <b>width</b> and <b>height</b> parameters.
+   * The origin or the arc's ellipse may be changed with the
+   * <b>ellipseMode()</b> function.
+   * The <b>start</b> and <b>stop</b> parameters specify the angles
+   * at which to draw the arc.
+   *
+   * @webref shape:2d_primitives
+   * @param a x-coordinate of the arc's ellipse
+   * @param b y-coordinate of the arc's ellipse
+   * @param c width of the arc's ellipse
+   * @param d height of the arc's ellipse
+   * @param start angle to start the arc, specified in radians
+   * @param stop angle to stop the arc, specified in radians
+   *
+   * @see PGraphics#ellipseMode(int)
+   * @see PGraphics#ellipse(float, float, float, float)
    */
   public void arc(float a, float b, float c, float d,
                   float start, float stop) {
@@ -1634,17 +1770,32 @@ public class PGraphics extends PImage implements PConstants {
   // BOX
 
 
+  /**
+   * @param size dimension of the box in all dimensions, creates a cube
+   */
   public void box(float size) {
     box(size, size, size);
   }
 
 
-  // TODO not the least bit efficient, it even redraws lines
-  // along the vertices. ugly ugly ugly!
+  /**
+   * A box is an extruded rectangle. A box with equal dimension
+   * on all sides is a cube.
+   *
+   * @webref shape:3d_primitives
+   * @param w dimension of the box in the x-dimension
+   * @param h dimension of the box in the y-dimension
+   * @param d dimension of the box in the z-dimension
+   *
+   * @see PApplet#sphere(float)
+   */
   public void box(float w, float h, float d) {
     float x1 = -w/2f; float x2 = w/2f;
     float y1 = -h/2f; float y2 = h/2f;
     float z1 = -d/2f; float z2 = d/2f;
+
+    // TODO not the least bit efficient, it even redraws lines
+    // along the vertices. ugly ugly ugly!
 
     beginShape(QUADS);
 
@@ -1700,17 +1851,44 @@ public class PGraphics extends PImage implements PConstants {
   // SPHERE
 
 
+  /**
+   * @param res number of segments (minimum 3) used per full circle revolution
+   */
   public void sphereDetail(int res) {
     sphereDetail(res, res);
   }
 
 
   /**
+   * Controls the detail used to render a sphere by adjusting the number of
+   * vertices of the sphere mesh. The default resolution is 30, which creates
+   * a fairly detailed sphere definition with vertices every 360/30 = 12
+   * degrees. If you're going to render a great number of spheres per frame,
+   * it is advised to reduce the level of detail using this function.
+   * The setting stays active until <b>sphereDetail()</b> is called again with
+   * a new parameter and so should <i>not</i> be called prior to every
+   * <b>sphere()</b> statement, unless you wish to render spheres with
+   * different settings, e.g. using less detail for smaller spheres or ones
+   * further away from the camera. To control the detail of the horizontal
+   * and vertical resolution independently, use the version of the functions
+   * with two parameters.
+   *
+   * =advanced
+   * Code for sphereDetail() submitted by toxi [031031].
+   * Code for enhanced u/v version from davbol [080801].
+   *
+   * @webref shape:3d_primitives
+   * @param ures number of segments used horizontally (longitudinally)
+   *        per full circle revolution
+   * @param vres number of segments used vertically (latitudinally)
+   *        from top to bottom
+   *
+   * @see PGraphics#sphere(float)
+   */
+  /**
    * Set the detail level for approximating a sphere. The ures and vres params
    * control the horizontal and vertical resolution.
    *
-   * Code for sphereDetail() submitted by toxi [031031].
-   * Code for enhanced u/v version from davbol [080801].
    */
   public void sphereDetail(int ures, int vres) {
     if (ures < 3) ures = 3; // force a minimum res
@@ -1756,6 +1934,8 @@ public class PGraphics extends PImage implements PConstants {
 
   /**
    * Draw a sphere with radius r centered at coordinate 0, 0, 0.
+   * A sphere is a hollow ball made from tessellated triangles.
+   * =advanced
    * <P>
    * Implementation notes:
    * <P>
@@ -1775,6 +1955,9 @@ public class PGraphics extends PImage implements PConstants {
    *
    * [davbol 080801] now using separate sphereDetailU/V
    * </PRE>
+   *
+   * @webref shape:3d_primitives
+   * @param r the radius of the sphere
    */
   public void sphere(float r) {
     if ((sphereDetailU < 3) || (sphereDetailV < 2)) {
@@ -1849,14 +2032,18 @@ public class PGraphics extends PImage implements PConstants {
 
   // BEZIER
 
+  /**
+   * Evaluates the Bezier at point t for points a, b, c, d. The parameter t varies between 0 and 1, a and d are points on the curve, and b and c are the control points. This can be done once with the x coordinates and a second time with the y coordinates to get the location of a bezier curve at t.
+   */
 
   /**
    * Evalutes quadratic bezier at point t for points a, b, c, d.
-   * t varies between 0 and 1, and a and d are the on curve points,
-   * b and c are the control points. this can be done once with the
-   * x coordinates and a second time with the y coordinates to get
-   * the location of a bezier curve at t.
-   * <P>
+   * The parameter t varies between 0 and 1. The a and d parameters are the
+   * on-curve points, b and c are the control points. To make a two-dimensional
+   * curve, call this function once with the x coordinates and a second time
+   * with the y coordinates to get the location of a bezier curve at t.
+   *
+   * =advanced
    * For instance, to convert the following example:<PRE>
    * stroke(255, 102, 0);
    * line(85, 20, 10, 10);
@@ -1876,6 +2063,17 @@ public class PGraphics extends PImage implements PConstants {
    *   vertex(x, y);
    * }
    * endShape();</PRE>
+   *
+   * @webref shape:curves
+   * @param a coordinate of first point on the curve
+   * @param b coordinate of first control point
+   * @param c coordinate of second control point
+   * @param d coordinate of second point on the curve
+   * @param t value between 0 and 1
+   *
+   * @see PGraphics#bezier(float, float, float, float, float, float, float, float, float, float, float, float)
+   * @see PGraphics#bezierVertex(float, float, float, float, float, float)
+   * @see PGraphics#curvePoint(float, float, float, float, float)
    */
   public float bezierPoint(float a, float b, float c, float d, float t) {
     float t1 = 1.0f - t;
@@ -1884,8 +2082,22 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Provide the tangent at the given point on the bezier curve.
-   * Fix from davbol for 0136.
+   * Calculates the tangent of a point on a Bezier curve. There is a good
+   * definition of "tangent" at Wikipedia: <a href="http://en.wikipedia.org/wiki/Tangent" target="new">http://en.wikipedia.org/wiki/Tangent</a>
+   *
+   * =advanced
+   * Code submitted by Dave Bollinger (davol) for release 0136.
+   *
+   * @webref shape:curves
+   * @param a coordinate of first point on the curve
+   * @param b coordinate of first control point
+   * @param c coordinate of second control point
+   * @param d coordinate of second point on the curve
+   * @param t value between 0 and 1
+   *
+   * @see PGraphics#bezier(float, float, float, float, float, float, float, float, float, float, float, float)
+   * @see PGraphics#bezierVertex(float, float, float, float, float, float)
+   * @see PGraphics#curvePoint(float, float, float, float, float)
    */
   public float bezierTangent(float a, float b, float c, float d, float t) {
     return (3*t*t * (-a+3*b-3*c+d) +
@@ -1908,6 +2120,16 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  /**
+   * Sets the resolution at which Beziers display. The default value is 20. This function is only useful when using the P3D or OPENGL renderer as the default (JAVA2D) renderer does not use this information.
+   *
+   * @webref shape:curves
+   * @param detail resolution of the curves
+   *
+   * @see PApplet#curve(float, float, float, float, float, float, float, float, float, float, float, float)
+   * @see PApplet#curveVertex(float, float)
+   * @see PApplet#curveTightness(float)
+   */
   public void bezierDetail(int detail) {
     bezierDetail = detail;
 
@@ -1927,6 +2149,15 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
+   * Draws a Bezier curve on the screen. These curves are defined by a series
+   * of anchor and control points. The first two parameters specify the first
+   * anchor point and the last two parameters specify the other anchor point.
+   * The middle parameters specify the control points which define the shape
+   * of the curve. Bezier curves were developed by French engineer Pierre
+   * Bezier. Using the 3D version of requires rendering with P3D or OPENGL
+   * (see the Environment reference for more information).
+   *
+   * =advanced
    * Draw a cubic bezier curve. The first and last points are
    * the on-curve points. The middle two are the 'control' points,
    * or 'handles' in an application like Illustrator.
@@ -1948,6 +2179,23 @@ public class PGraphics extends PImage implements PConstants {
    * To draw a quadratic (instead of cubic) curve,
    * use the control point twice by doubling it:
    * <PRE>bezier(x1, y1, cx, cy, cx, cy, x2, y2);</PRE>
+   *
+   * @webref shape:curves
+   * @param x1 coordinates for the first anchor point
+   * @param y1 coordinates for the first anchor point
+   * @param z1 coordinates for the first anchor point
+   * @param x2 coordinates for the first control point
+   * @param y2 coordinates for the first control point
+   * @param z2 coordinates for the first control point
+   * @param x3 coordinates for the second control point
+   * @param y3 coordinates for the second control point
+   * @param z3 coordinates for the second control point
+   * @param x4 coordinates for the second anchor point
+   * @param y4 coordinates for the second anchor point
+   * @param z4 coordinates for the second anchor point
+   *
+   * @see PGraphics#bezierVertex(float, float, float, float, float, float)
+   * @see PGraphics#curve(float, float, float, float, float, float, float, float, float, float, float, float)
    */
   public void bezier(float x1, float y1,
                      float x2, float y2,
@@ -1980,9 +2228,22 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Get a location along a catmull-rom curve segment.
+   * Evalutes the Catmull-Rom curve at point t for points a, b, c, d. The
+   * parameter t varies between 0 and 1, a and d are points on the curve,
+   * and b and c are the control points. This can be done once with the x
+   * coordinates and a second time with the y coordinates to get the
+   * location of a curve at t.
    *
-   * @param t Value between zero and one for how far along the segment
+   * @webref shape:curves
+   * @param a coordinate of first point on the curve
+   * @param b coordinate of second point on the curve
+   * @param c coordinate of third point on the curve
+   * @param d coordinate of fourth point on the curve
+   * @param t value between 0 and 1
+   *
+   * @see PGraphics#curve(float, float, float, float, float, float, float, float, float, float, float, float)
+   * @see PGraphics#curveVertex(float, float)
+   * @see PGraphics#bezierPoint(float, float, float, float, float)
    */
   public float curvePoint(float a, float b, float c, float d, float t) {
     curveInitCheck();
@@ -2000,8 +2261,22 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Calculate the tangent at a t value (0..1) on a Catmull-Rom curve.
+   * Calculates the tangent of a point on a Catmull-Rom curve. There is a good definition of "tangent" at Wikipedia: <a href="http://en.wikipedia.org/wiki/Tangent" target="new">http://en.wikipedia.org/wiki/Tangent</a>.
+   *
+   * =advanced
    * Code thanks to Dave Bollinger (Bug #715)
+   *
+   * @webref shape:curves
+   * @param a coordinate of first point on the curve
+   * @param b coordinate of first control point
+   * @param c coordinate of second control point
+   * @param d coordinate of second point on the curve
+   * @param t value between 0 and 1
+   *
+   * @see PGraphics#curve(float, float, float, float, float, float, float, float, float, float, float, float)
+   * @see PGraphics#curveVertex(float, float)
+   * @see PGraphics#curvePoint(float, float, float, float, float)
+   * @see PGraphics#bezierTangent(float, float, float, float, float)
    */
   public float curveTangent(float a, float b, float c, float d, float t) {
     curveInitCheck();
@@ -2018,12 +2293,41 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  /**
+   * Sets the resolution at which curves display. The default value is 20.
+   * This function is only useful when using the P3D or OPENGL renderer as
+   * the default (JAVA2D) renderer does not use this information.
+   *
+   * @webref shape:curves
+   * @param detail resolution of the curves
+   *
+   * @see PGraphics#curve(float, float, float, float, float, float, float, float, float, float, float, float)
+   * @see PGraphics#curveVertex(float, float)
+   * @see PGraphics#curveTightness(float)
+   */
   public void curveDetail(int detail) {
     curveDetail = detail;
     curveInit();
   }
 
 
+  /**
+   * Modifies the quality of forms created with <b>curve()</b> and
+   *<b>curveVertex()</b>. The parameter <b>squishy</b> determines how the
+   * curve fits to the vertex points. The value 0.0 is the default value for
+   * <b>squishy</b> (this value defines the curves to be Catmull-Rom splines)
+   * and the value 1.0 connects all the points with straight lines.
+   * Values within the range -5.0 and 5.0 will deform the curves but
+   * will leave them recognizable and as values increase in magnitude,
+   * they will continue to deform.
+   *
+   * @webref shape:curves
+   * @param tightness amount of deformation from the original vertices
+   *
+   * @see PGraphics#curve(float, float, float, float, float, float, float, float, float, float, float, float)
+   * @see PGraphics#curveVertex(float, float)
+   *
+   */
   public void curveTightness(float tightness) {
     curveTightness = tightness;
     curveInit();
@@ -2084,10 +2388,20 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Draws a segment of Catmull-Rom curve.
-   * <P>
-   * As of 0070, this function no longer doubles the first and
-   * last points. The curves are a bit more boring, but it's more
+   * Draws a curved line on the screen. The first and second parameters
+   * specify the beginning control point and the last two parameters specify
+   * the ending control point. The middle parameters specify the start and
+   * stop of the curve. Longer curves can be created by putting a series of
+   * <b>curve()</b> functions together or using <b>curveVertex()</b>.
+   * An additional function called <b>curveTightness()</b> provides control
+   * for the visual quality of the curve. The <b>curve()</b> function is an
+   * implementation of Catmull-Rom splines. Using the 3D version of requires
+   * rendering with P3D or OPENGL (see the Environment reference for more
+   * information).
+   *
+   * =advanced
+   * As of revision 0070, this function no longer doubles the first
+   * and last points. The curves are a bit more boring, but it's more
    * mathematically correct, and properly mirrored in curvePoint().
    * <P>
    * Identical to typing out:<PRE>
@@ -2098,6 +2412,24 @@ public class PGraphics extends PImage implements PConstants {
    * curveVertex(x4, y4);
    * endShape();
    * </PRE>
+   *
+   * @webref shape:curves
+   * @param x1 coordinates for the beginning control point
+   * @param y1 coordinates for the beginning control point
+   * @param z1 coordinates for the beginning control point
+   * @param x2 coordinates for the first point
+   * @param y2 coordinates for the first point
+   * @param z2 coordinates for the first point
+   * @param x3 coordinates for the second point
+   * @param y3 coordinates for the second point
+   * @param z3 coordinates for the second point
+   * @param x4 coordinates for the ending control point
+   * @param y4 coordinates for the ending control point
+   * @param z4 coordinates for the ending control point
+   *
+   * @see PGraphics#curveVertex(float, float)
+   * @see PGraphics#curveTightness(float)
+   * @see PGraphics#bezier(float, float, float, float, float, float, float, float, float, float, float, float)
    */
   public void curve(float x1, float y1,
                     float x2, float y2,
@@ -2182,9 +2514,25 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * The mode can only be set to CORNERS, CORNER, and CENTER.
-   * <p/>
-   * Support for CENTER was added in release 0146.
+   * Modifies the location from which images draw. The default mode is
+   * <b>imageMode(CORNER)</b>, which specifies the location to be the
+   * upper-left corner and uses the fourth and fifth parameters of
+   * <b>image()</b> to set the image's width and height. The syntax
+   * <b>imageMode(CORNERS)</b> uses the second and third parameters of
+   * <b>image()</b> to set the location of one corner of the image and
+   * uses the fourth and fifth parameters to set the opposite corner.
+   * Use <b>imageMode(CENTER)</b> to draw images centered at the given
+   * x and y position.
+   * <br><br>The parameter to <b>imageMode()</b> must be written in
+   * ALL CAPS because Processing syntax is case sensitive.
+   *
+   * @webref image:loading_displaying
+   * @param mode Either CORNER, CORNERS, or CENTER
+   *
+   * @see processing.core.PApplet#loadImage(String, String)
+   * @see processing.core.PImage
+   * @see processing.core.PApplet#image(PImage, float, float, float, float)
+   * @see processing.core.PGraphics#background(float, float, float, float)
    */
   public void imageMode(int mode) {
     if ((mode == CORNER) || (mode == CORNERS) || (mode == CENTER)) {
@@ -2217,6 +2565,39 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  /**
+   * Displays images to the screen. The images must be in the sketch's "data"
+   * directory to load correctly. Select "Add file..." from the "Sketch" menu
+   * to add the image. Processing currently works with GIF, JPEG, and Targa
+   * images. The color of an image may be modified with the <b>tint()</b>
+   * function and if a GIF has transparency, it will maintain its transparency.
+   * The <b>img</b> parameter specifies the image to display and the <b>x</b>
+   * and <b>y</b> parameters define the location of the image from its
+   * upper-left corner. The image is displayed at its original size unless
+   * the <b>width</b> and <b>height</b> parameters specify a different size.
+   * The <b>imageMode()</b> function changes the way the parameters work.
+   * A call to <b>imageMode(CORNERS)</b> will change the width and height
+   * parameters to define the x and y values of the opposite corner of the
+   * image.
+   *
+   * =advanced
+   * Starting with release 0124, when using the default (JAVA2D) renderer,
+   * smooth() will also improve image quality of resized images.
+   *
+   * @webref image:loading_displaying
+   * @param image the image to display
+   * @param x x-coordinate of the image
+   * @param y y-coordinate of the image
+   * @param c width to display the image
+   * @param d height to display the image
+   *
+   * @see processing.core.PApplet#loadImage(String, String)
+   * @see processing.core.PImage
+   * @see processing.core.PGraphics#imageMode(int)
+   * @see processing.core.PGraphics#tint(float)
+   * @see processing.core.PGraphics#background(float, float, float, float)
+   * @see processing.core.PGraphics#alpha(int)
+   */
   public void image(PImage image, float x, float y, float c, float d) {
     image(image, x, y, c, d, 0, 0, image.width, image.height);
   }
@@ -2334,8 +2715,24 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Set the orientation for the shape() command (like imageMode() or rectMode()).
-   * @param mode Either CORNER, CORNERS, or CENTER.
+   * Modifies the location from which shapes draw.
+   * The default mode is <b>shapeMode(CORNER)</b>, which specifies the
+   * location to be the upper left corner of the shape and uses the third
+   * and fourth parameters of <b>shape()</b> to specify the width and height.
+   * The syntax <b>shapeMode(CORNERS)</b> uses the first and second parameters
+   * of <b>shape()</b> to set the location of one corner and uses the third
+   * and fourth parameters to set the opposite corner.
+   * The syntax <b>shapeMode(CENTER)</b> draws the shape from its center point
+   * and uses the third and forth parameters of <b>shape()</b> to specify the
+   * width and height.
+   * The parameter must be written in "ALL CAPS" because Processing syntax
+   * is case sensitive.
+   *
+   * @param mode One of CORNER, CORNERS, CENTER
+   *
+   * @webref shape:loading_displaying
+   * @see PGraphics#shape(PShape)
+   * @see PGraphics#rectMode(int)
    */
   public void shapeMode(int mode) {
     this.shapeMode = mode;
@@ -2378,6 +2775,35 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  /**
+   * Displays shapes to the screen. The shapes must be in the sketch's "data"
+   * directory to load correctly. Select "Add file..." from the "Sketch" menu
+   * to add the shape.
+   * Processing currently works with SVG shapes only.
+   * The <b>sh</b> parameter specifies the shape to display and the <b>x</b>
+   * and <b>y</b> parameters define the location of the shape from its
+   * upper-left corner.
+   * The shape is displayed at its original size unless the <b>width</b>
+   * and <b>height</b> parameters specify a different size.
+   * The <b>shapeMode()</b> function changes the way the parameters work.
+   * A call to <b>shapeMode(CORNERS)</b>, for example, will change the width
+   * and height parameters to define the x and y values of the opposite corner
+   * of the shape.
+   * <br><br>
+   * Note complex shapes may draw awkwardly with P2D, P3D, and OPENGL. Those
+   * renderers do not yet support shapes that have holes or complicated breaks.
+   *
+   * @param shape
+   * @param x x-coordinate of the shape
+   * @param y y-coordinate of the shape
+   * @param c width to display the shape
+   * @param d height to display the shape
+   *
+   * @webref shape:loading_displaying
+   * @see PShape
+   * @see PGraphics#loadShape(String)
+   * @see PGraphics#shapeMode(int)
+   */
   public void shape(PShape shape, float x, float y, float c, float d) {
     if (shape.isVisible()) {  // don't do expensive matrix ops if invisible
       pushMatrix();
@@ -3825,6 +4251,14 @@ public class PGraphics extends PImage implements PConstants {
   // STROKE COLOR
 
 
+  /**
+   * Disables drawing the stroke (outline). If both <b>noStroke()</b> and
+   * <b>noFill()</b> are called, no shapes will be drawn to the screen.
+   *
+   * @webref color:setting
+   *
+   * @see PGraphics#stroke(float, float, float, float)
+   */
   public void noStroke() {
     stroke = false;
   }
@@ -3833,33 +4267,25 @@ public class PGraphics extends PImage implements PConstants {
   /**
    * Set the tint to either a grayscale or ARGB value.
    * See notes attached to the fill() function.
+   * @param rgb color value in hexadecimal notation
+   * (i.e. #FFCC00 or 0xFFFFCC00) or any value of the color datatype
    */
   public void stroke(int rgb) {
-//    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {  // see above
-//      stroke((float) rgb);
-//
-//    } else {
-//      colorCalcARGB(rgb, colorModeA);
-//      strokeFromCalc();
-//    }
     colorCalc(rgb);
     strokeFromCalc();
   }
 
 
   public void stroke(int rgb, float alpha) {
-//    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {
-//      stroke((float) rgb, alpha);
-//
-//    } else {
-//      colorCalcARGB(rgb, alpha);
-//      strokeFromCalc();
-//    }
     colorCalc(rgb, alpha);
     strokeFromCalc();
   }
 
 
+  /**
+   *
+   * @param gray specifies a value between white and black
+   */
   public void stroke(float gray) {
     colorCalc(gray);
     strokeFromCalc();
@@ -3878,6 +4304,28 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  /**
+   * Sets the color used to draw lines and borders around shapes. This color
+   * is either specified in terms of the RGB or HSB color depending on the
+   * current <b>colorMode()</b> (the default color space is RGB, with each
+   * value in the range from 0 to 255).
+   * <br><br>When using hexadecimal notation to specify a color, use "#" or
+   * "0x" before the values (e.g. #CCFFAA, 0xFFCCFFAA). The # syntax uses six
+   * digits to specify a color (the way colors are specified in HTML and CSS).
+   * When using the hexadecimal notation starting with "0x", the hexadecimal
+   * value must be specified with eight characters; the first two characters
+   * define the alpha component and the remainder the red, green, and blue
+   * components.
+   * <br><br>The value for the parameter "gray" must be less than or equal
+   * to the current maximum value as specified by <b>colorMode()</b>.
+   * The default maximum value is 255.
+   *
+   * @webref color:setting
+   * @param alpha opacity of the stroke
+   * @param x red or hue value (depending on the current color mode)
+   * @param y green or saturation value (depending on the current color mode)
+   * @param z blue or brightness value (depending on the current color mode)
+   */
   public void stroke(float x, float y, float z, float a) {
     colorCalc(x, y, z, a);
     strokeFromCalc();
@@ -3905,6 +4353,13 @@ public class PGraphics extends PImage implements PConstants {
   // TINT COLOR
 
 
+  /**
+   * Removes the current fill value for displaying images and reverts to displaying images with their original hues.
+   *
+   * @webref image:loading_displaying
+   * @see processing.core.PGraphics#tint(float, float, float, float)
+   * @see processing.core.PGraphics#image(PImage, float, float, float, float)
+   */
   public void noTint() {
     tint = false;
   }
@@ -3914,29 +4369,25 @@ public class PGraphics extends PImage implements PConstants {
    * Set the tint to either a grayscale or ARGB value.
    */
   public void tint(int rgb) {
-//    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {
-//      tint((float) rgb);
-//
-//    } else {
-//      colorCalcARGB(rgb, colorModeA);
-//      tintFromCalc();
-//    }
     colorCalc(rgb);
     tintFromCalc();
   }
 
+
+  /**
+   * @param rgb color value in hexadecimal notation
+   * (i.e. #FFCC00 or 0xFFFFCC00) or any value of the color datatype
+   * @param alpha opacity of the image
+   */
   public void tint(int rgb, float alpha) {
-//    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {
-//      tint((float) rgb, alpha);
-//
-//    } else {
-//      colorCalcARGB(rgb, alpha);
-//      tintFromCalc();
-//    }
     colorCalc(rgb, alpha);
     tintFromCalc();
   }
 
+
+  /**
+   * @param gray any valid number
+   */
   public void tint(float gray) {
     colorCalc(gray);
     tintFromCalc();
@@ -3955,6 +4406,35 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  /**
+   * Sets the fill value for displaying images. Images can be tinted to
+   * specified colors or made transparent by setting the alpha.
+   * <br><br>To make an image transparent, but not change it's color,
+   * use white as the tint color and specify an alpha value. For instance,
+   * tint(255, 128) will make an image 50% transparent (unless
+   * <b>colorMode()</b> has been used).
+   *
+   * <br><br>When using hexadecimal notation to specify a color, use "#" or
+   * "0x" before the values (e.g. #CCFFAA, 0xFFCCFFAA). The # syntax uses six
+   * digits to specify a color (the way colors are specified in HTML and CSS).
+   * When using the hexadecimal notation starting with "0x", the hexadecimal
+   * value must be specified with eight characters; the first two characters
+   * define the alpha component and the remainder the red, green, and blue
+   * components.
+   * <br><br>The value for the parameter "gray" must be less than or equal
+   * to the current maximum value as specified by <b>colorMode()</b>.
+   * The default maximum value is 255.
+   * <br><br>The tint() method is also used to control the coloring of
+   * textures in 3D.
+   *
+   * @webref image:loading_displaying
+   * @param x red or hue value
+   * @param y green or saturation value
+   * @param z blue or brightness value
+   *
+   * @see processing.core.PGraphics#noTint()
+   * @see processing.core.PGraphics#image(PImage, float, float, float, float)
+   */
   public void tint(float x, float y, float z, float a) {
     colorCalc(x, y, z, a);
     tintFromCalc();
@@ -3982,6 +4462,15 @@ public class PGraphics extends PImage implements PConstants {
   // FILL COLOR
 
 
+  /**
+   * Disables filling geometry. If both <b>noStroke()</b> and <b>noFill()</b>
+   * are called, no shapes will be drawn to the screen.
+   *
+   * @webref color:setting
+   *
+   * @see PGraphics#fill(float, float, float, float)
+   *
+   */
   public void noFill() {
     fill = false;
   }
@@ -3989,33 +4478,23 @@ public class PGraphics extends PImage implements PConstants {
 
   /**
    * Set the fill to either a grayscale value or an ARGB int.
+   * @param rgb color value in hexadecimal notation (i.e. #FFCC00 or 0xFFFFCC00) or any value of the color datatype
    */
   public void fill(int rgb) {
-//    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {  // see above
-//      fill((float) rgb);
-//
-//    } else {
-//      colorCalcARGB(rgb, colorModeA);
-//      fillFromCalc();
-//    }
     colorCalc(rgb);
     fillFromCalc();
   }
 
 
   public void fill(int rgb, float alpha) {
-//    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {  // see above
-//      fill((float) rgb, alpha);
-//
-//    } else {
-//      colorCalcARGB(rgb, alpha);
-//      fillFromCalc();
-//    }
     colorCalc(rgb, alpha);
     fillFromCalc();
   }
 
 
+  /**
+   * @param gray number specifying value between white and black
+   */
   public void fill(float gray) {
     colorCalc(gray);
     fillFromCalc();
@@ -4034,6 +4513,24 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  /**
+   * Sets the color used to fill shapes. For example, if you run <b>fill(204, 102, 0)</b>, all subsequent shapes will be filled with orange. This color is either specified in terms of the RGB or HSB color depending on the current <b>colorMode()</b> (the default color space is RGB, with each value in the range from 0 to 255).
+   * <br><br>When using hexadecimal notation to specify a color, use "#" or "0x" before the values (e.g. #CCFFAA, 0xFFCCFFAA). The # syntax uses six digits to specify a color (the way colors are specified in HTML and CSS). When using the hexadecimal notation starting with "0x", the hexadecimal value must be specified with eight characters; the first two characters define the alpha component and the remainder the red, green, and blue components.
+   * <br><br>The value for the parameter "gray" must be less than or equal to the current maximum value as specified by <b>colorMode()</b>. The default maximum value is 255.
+   * <br><br>To change the color of an image (or a texture), use tint().
+   *
+   * @webref color:setting
+   * @param x red or hue value
+   * @param y green or saturation value
+   * @param z blue or brightness value
+   * @param alpha opacity of the fill
+   *
+   * @see PGraphics#noFill()
+   * @see PGraphics#stroke(float)
+   * @see PGraphics#tint(float)
+   * @see PGraphics#background(float, float, float, float)
+   * @see PGraphics#colorMode(int, float, float, float, float)
+   */
   public void fill(float x, float y, float z, float a) {
     colorCalc(x, y, z, a);
     fillFromCalc();
@@ -4220,6 +4717,7 @@ public class PGraphics extends PImage implements PConstants {
 
   // BACKGROUND
 
+
   /**
    * Set the background to a gray or ARGB color.
    * <p>
@@ -4230,6 +4728,8 @@ public class PGraphics extends PImage implements PConstants {
    * Note that background() should be called before any transformations occur,
    * because some implementations may require the current transformation matrix
    * to be identity before drawing.
+   *
+   * @param rgb color value in hexadecimal notation (i.e. #FFCC00 or 0xFFFFCC00)<br/>or any value of the color datatype
    */
   public void background(int rgb) {
 //    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {
@@ -4283,6 +4783,8 @@ public class PGraphics extends PImage implements PConstants {
 
   /**
    * See notes about alpha in background(x, y, z, a).
+   * @param gray specifies a value between white and black
+   * @param alpha opacity of the background
    */
   public void background(float gray, float alpha) {
     if (format == RGB) {
@@ -4308,15 +4810,30 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Clear the background with a color that includes an alpha value. This can
+   * The <b>background()</b> function sets the color used for the background of the Processing window. The default background is light gray. In the <b>draw()</b> function, the background color is used to clear the display window at the beginning of each frame.
+   * <br><br>An image can also be used as the background for a sketch, however its width and height must be the same size as the sketch window. To resize an image 'b' to the size of the sketch window, use b.resize(width, height).
+   * <br><br>Images used as background will ignore the current tint() setting.
+   * <br><br>It is not possible to use transparency (alpha) in background colors with the main drawing surface, however they will work properly with <b>createGraphics</b>.
+   *
+   * =advanced
+   * <p>Clear the background with a color that includes an alpha value. This can
    * only be used with objects created by createGraphics(), because the main
-   * drawing surface cannot be set transparent.
-   * <p>
-   * It might be tempting to use this function to partially clear the screen
+   * drawing surface cannot be set transparent.</p>
+   * <p>It might be tempting to use this function to partially clear the screen
    * on each frame, however that's not how this function works. When calling
    * background(), the pixels will be replaced with pixels that have that level
    * of transparency. To do a semi-transparent overlay, use fill() with alpha
-   * and draw a rectangle.
+   * and draw a rectangle.</p>
+   *
+   * @webref color:setting
+   * @param x red or hue value (depending on the current color mode)
+   * @param y green or saturation value (depending on the current color mode)
+   * @param z blue or brightness value (depending on the current color mode)
+   *
+   * @see PGraphics#stroke(float)
+   * @see PGraphics#fill(float)
+   * @see PGraphics#tint(float)
+   * @see PGraphics#colorMode(int)
    */
   public void background(float x, float y, float z, float a) {
 //    if (format == RGB) {
@@ -4430,6 +4947,10 @@ public class PGraphics extends PImage implements PConstants {
   // COLOR MODE
 
 
+  /**
+   * @param mode Either RGB or HSB, corresponding to Red/Green/Blue and Hue/Saturation/Brightness
+   * @param max range for all color elements
+   */
   public void colorMode(int mode) {
     colorMode(mode, colorModeX, colorModeY, colorModeZ, colorModeA);
   }
@@ -4454,6 +4975,19 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  /**
+   * Changes the way Processing interprets color data. By default, the parameters for <b>fill()</b>, <b>stroke()</b>, <b>background()</b>, and <b>color()</b> are defined by values between 0 and 255 using the RGB color model. The <b>colorMode()</b> function is used to change the numerical range used for specifying colors and to switch color systems. For example, calling <b>colorMode(RGB, 1.0)</b> will specify that values are specified between 0 and 1. The limits for defining colors are altered by setting the parameters range1, range2, range3, and range 4.
+   *
+   * @webref color:setting
+   * @param maxX range for the red or hue depending on the current color mode
+   * @param maxY range for the green or saturation depending on the current color mode
+   * @param maxZ range for the blue or brightness depending on the current color mode
+   * @param maxA range for the alpha
+   *
+   * @see PGraphics#background(float)
+   * @see PGraphics#fill(float)
+   * @see PGraphics#stroke(float)
+   */
   public void colorMode(int mode,
                         float maxX, float maxY, float maxZ, float maxA) {
     colorMode = mode;
@@ -4768,6 +5302,12 @@ public class PGraphics extends PImage implements PConstants {
   // Vee have veys of making the colors talk.
 
 
+  /**
+   * Extracts the alpha value from a color.
+   *
+   * @webref color:creating_reading
+   * @param what any value of the color datatype
+   */
   public final float alpha(int what) {
     float c = (what >> 24) & 0xff;
     if (colorModeA == 255) return c;
@@ -4775,6 +5315,19 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  /**
+   * Extracts the red value from a color, scaled to match current <b>colorMode()</b>. This value is always returned as a  float so be careful not to assign it to an int value.<br><br>The red() function is easy to use and undestand, but is slower than another technique. To achieve the same results when working in <b>colorMode(RGB, 255)</b>, but with greater speed, use the &gt;&gt; (right shift) operator with a bit mask. For example, the following two lines of code are equivalent:<br><pre>float r1 = red(myColor);<br>float r2 = myColor &gt;&gt; 16 &amp; 0xFF;</pre>
+   *
+   * @webref color:creating_reading
+   * @param what any value of the color datatype
+   *
+   * @see PGraphics#green(int)
+   * @see PGraphics#blue(int)
+   * @see PGraphics#hue(int)
+   * @see PGraphics#saturation(int)
+   * @see PGraphics#brightness(int)
+   * @ref rightshift
+   */
   public final float red(int what) {
     float c = (what >> 16) & 0xff;
     if (colorModeDefault) return c;
@@ -4782,6 +5335,19 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  /**
+   * Extracts the green value from a color, scaled to match current <b>colorMode()</b>. This value is always returned as a  float so be careful not to assign it to an int value.<br><br>The <b>green()</b> function is easy to use and undestand, but is slower than another technique. To achieve the same results when working in <b>colorMode(RGB, 255)</b>, but with greater speed, use the &gt;&gt; (right shift) operator with a bit mask. For example, the following two lines of code are equivalent:<br><pre>float r1 = green(myColor);<br>float r2 = myColor &gt;&gt; 8 &amp; 0xFF;</pre>
+   *
+   * @webref color:creating_reading
+   * @param what any value of the color datatype
+   *
+   * @see PGraphics#red(int)
+   * @see PGraphics#blue(int)
+   * @see PGraphics#hue(int)
+   * @see PGraphics#saturation(int)
+   * @see PGraphics#brightness(int)
+   * @ref rightshift
+   */
   public final float green(int what) {
     float c = (what >> 8) & 0xff;
     if (colorModeDefault) return c;
@@ -4789,6 +5355,18 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  /**
+   * Extracts the blue value from a color, scaled to match current <b>colorMode()</b>. This value is always returned as a  float so be careful not to assign it to an int value.<br><br>The <b>blue()</b> function is easy to use and undestand, but is slower than another technique. To achieve the same results when working in <b>colorMode(RGB, 255)</b>, but with greater speed, use a bit mask to remove the other color components. For example, the following two lines of code are equivalent:<br><pre>float r1 = blue(myColor);<br>float r2 = myColor &amp; 0xFF;</pre>
+   *
+   * @webref color:creating_reading
+   * @param what any value of the color datatype
+   *
+   * @see PGraphics#red(int)
+   * @see PGraphics#green(int)
+   * @see PGraphics#hue(int)
+   * @see PGraphics#saturation(int)
+   * @see PGraphics#brightness(int)
+   */
   public final float blue(int what) {
     float c = (what) & 0xff;
     if (colorModeDefault) return c;
@@ -4796,6 +5374,18 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  /**
+   * Extracts the hue value from a color.
+   *
+   * @webref color:creating_reading
+   * @param what any value of the color datatype
+   *
+   * @see PGraphics#red(int)
+   * @see PGraphics#green(int)
+   * @see PGraphics#blue(int)
+   * @see PGraphics#saturation(int)
+   * @see PGraphics#brightness(int)
+   */
   public final float hue(int what) {
     if (what != cacheHsbKey) {
       Color.RGBtoHSB((what >> 16) & 0xff, (what >> 8) & 0xff,
@@ -4806,6 +5396,18 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  /**
+   * Extracts the saturation value from a color.
+   *
+   * @webref color:creating_reading
+   * @param what any value of the color datatype
+   *
+   * @see PGraphics#red(int)
+   * @see PGraphics#green(int)
+   * @see PGraphics#blue(int)
+   * @see PGraphics#hue(int)
+   * @see PGraphics#brightness(int)
+   */
   public final float saturation(int what) {
     if (what != cacheHsbKey) {
       Color.RGBtoHSB((what >> 16) & 0xff, (what >> 8) & 0xff,
@@ -4816,6 +5418,19 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  /**
+   * Extracts the brightness value from a color.
+   *
+   *
+   * @webref color:creating_reading
+   * @param what any value of the color datatype
+   *
+   * @see PGraphics#red(int)
+   * @see PGraphics#green(int)
+   * @see PGraphics#blue(int)
+   * @see PGraphics#hue(int)
+   * @see PGraphics#saturation(int)
+   */
   public final float brightness(int what) {
     if (what != cacheHsbKey) {
       Color.RGBtoHSB((what >> 16) & 0xff, (what >> 8) & 0xff,
@@ -4835,7 +5450,15 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Interpolate between two colors, using the current color mode.
+   * Calculates a color or colors between two color at a specific increment. The <b>amt</b> parameter is the amount to interpolate between the two values where 0.0 equal to the first point, 0.1 is very near the first point, 0.5 is half-way in between, etc.
+   *
+   * @webref color:creating_reading
+   * @param c1 interpolate from this color
+   * @param c2 interpolate to this color
+   * @param amt between 0.0 and 1.0
+   *
+   * @see PGraphics#blendColor(int, int, int)
+   * @see PGraphics#color(float, float, float, float)
    */
   public int lerpColor(int c1, int c2, float amt) {
     return lerpColor(c1, c2, amt, colorMode);
