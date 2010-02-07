@@ -13,7 +13,10 @@
     <fail unless="core-built" message="Please build the core library first and make sure it sits in ../core/core.jar" />
 
     <mkdir dir="bin" />
-    <javac target="1.5" srcdir="src" destdir="bin" 
+    <javac target="1.5" 
+	   srcdir="src" destdir="bin" 
+	   encoding="UTF-8"
+	   includeAntRuntime="false"
 	   classpath="../core/core.jar; QTJava.zip" />
   </target>
   
