@@ -9,13 +9,8 @@
     <delete dir="bin" />
     <delete file="pde.jar" />
   </target>
-  
-  <target name="compile" description="Compile sources">
-    <condition property="core-built">
-      <available file="../core/core.jar" />
-    </condition>
-    <fail unless="core-built" message="Please build the core library first and make sure it sits in ../core/core.jar" />
 
+  <target name="preproc" description="Compile ANTLR grammar">
     <!-- invoke antlr manually instead of using the ant-task, 
 	 saves some trouble... -->
     <java classpath="${basedir}/lib/antlr.jar" 
@@ -46,7 +41,13 @@
 	  fork="yes">
       <arg line="-glib ../../../antlr/java/java.g pde.g" />
     </java>
+  </target>
 
+  <target name="compile" depends="preproc" description="Compile sources">
+    <condition property="core-built">
+      <available file="../core/core.jar" />
+    </condition>
+    <fail unless="core-built" message="Please build the core library first and make sure it sits in ../core/core.jar" />
 
     <mkdir dir="bin" />
 
@@ -70,7 +71,7 @@
 	   classpath="../core/core.jar; ${env.JAVA_HOME}/lib/tools.jar; lib/ant.jar; lib/ant-launcher.jar; lib/antlr.jar; lib/apple.jar; lib/ecj.jar; lib/jna.jar" />
   </target>
   
-  <target name="build" depends="compile" description="Build pde">
+  <target name="build" depends="compile" description="Build PDE">
     <jar basedir="bin" destfile="pde.jar" />
   </target>
 </project>
