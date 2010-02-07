@@ -27,15 +27,30 @@ X   not opengl, but the others do
 X NullPointerException in JOGLAppletLanucher with Java 6 Update 18 on Windows
 X   switching to more efficient JNLP export
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1452
+X lack of java.awt.Polygon import breaks the yellowtail example
+X   and java.io.File (other exceptions?)
+o   just add a simple poly class? or don't use a poly?
+X   add imports for anything that's in the reference (selections from java.io)
+o 'Array' in reference should be 'arrays' lowercase
 
 X move build scripts to something better like ant
 X   too much to maintain the multiple versions, too much code
 X   http://dev.processing.org/bugs/show_bug.cgi?id=151
-_   remove the intermediate build folders
-_   also update build/howto.txt (of course) because it says no ant
-_     this would also mean requiring a java installation for building
-_     so may as well move the jdk stuff outside of the build
-_     http://ant.apache.org/manual/CoreTasks/get.html
+X   remove the intermediate build folders
+_ update build/howto.txt (of course) because it says no ant
+_   this would also mean requiring a java installation for building
+_ move the jdk stuff outside of the build
+_   http://processing.org/download/jre-6u18.zip, .tgz
+_   only get the java files when doing a dist build
+_   http://ant.apache.org/manual/CoreTasks/get.html
+
+_ command line support is currently broken
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1048
+_   some fixes can be found in the bug report
+_   need to deal with setting path to sketchbook/examples
+_   also deal with the script not being in the right folder
+_   problems with imports and prefs file
+_     http://dev.processing.org/bugs/show_bug.cgi?id=1298
 
 cleaning
 X update to jogl 1.1.1
@@ -43,6 +58,11 @@ X   do this with enhanced library/platform support
 X see how platform is determined by jogl / use for lib import
 X apple bug may have been fixed
 X   http://dev.processing.org/bugs/show_bug.cgi?id=786
+X javadoc "advanced" reference by beta
+X   and then finalizing it towards 1.0
+
+_ make sure javadoc builds and uploads, also the zip files
+_   add additional caveats about incompletion
 
 
 _ processing 0142 japanese input problem
@@ -52,11 +72,6 @@ _ why aren't prefs from theme.txt showing up in preferences.txt? hrm
 _   or rather, why can't they be overridden? 
 _   should fonts at least be in prefs.txt?
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1444
-
-_ lack of java.awt.Polygon import breaks the yellowtail example
-_   and java.io.File (other exceptions?)
-_   just add a simple poly class? or don't use a poly?
-import java.util.Hashtable;
 
 svn copy svn://processing.org/trunk/processing svn://processing.org/tags/processing-01XX
 
@@ -198,9 +213,6 @@ _ problem with startup on vista 64
 _   try this with windows 7 64-bit (install on laptop?)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1246
 
-_ make sure javadoc builds and uploads, also the zip files
-_   add additional caveats about incompletion
-
 _ problem with keyboard shortcuts when building from source
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1231
 
@@ -274,13 +286,6 @@ _   need someone to go out and test all scenarios of this
 
 [ known bugs ]
 
-_ command line support is currently broken
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1048
-_   some fixes can be found in the bug report
-_   need to deal with setting path to sketchbook/examples
-_   also deal with the script not being in the right folder
-_   problems with imports and prefs file
-_     http://dev.processing.org/bugs/show_bug.cgi?id=1298
 _ video library threading problems with other libraries
 _   http://dev.processing.org/bugs/show_bug.cgi?id=882
 _   using Capture.list() before size() sometimes works
@@ -1346,8 +1351,6 @@ _ need .psk file icon
 _ need exported application icons
 _ need more comprehensive list of 'known bugs'
 _ need more comprehensive list of 'known suggestions'
-_ javadoc "advanced" reference by beta
-_   and then finalizing it towards 1.0
 _ write notes about running p5 on another platforms 
 _   this was some feedback from running on bsd:
 _     /usr/local/jdk1.3.1/bin/java -cp lib:lib/build:lib/pde.jar:lib/kjc.jar:lib/oro.jar:java/lib/ext/comm.jar PdeBase 
