@@ -205,7 +205,7 @@ preproc.substitute_unicode = true
 preproc.output_parse_tree = false
 
 # Changed after 1.0.9 to a new name, and also includes the specific entries
-preproc.default_imports = java.applet.*,java.awt.Dimension,java.awt.Frame,java.awt.event.MouseEvent,java.awt.event.KeyEvent,java.awt.event.FocusEvent,java.awt.Image,java.io.*,java.net.*,java.text.*,java.util.*,java.util.zip.*,java.util.regex.*
+preproc.imports.list = java.applet.*,java.awt.Dimension,java.awt.Frame,java.awt.event.MouseEvent,java.awt.event.KeyEvent,java.awt.event.FocusEvent,java.awt.Image,java.io.*,java.net.*,java.text.*,java.util.*,java.util.zip.*,java.util.regex.*
 
 # set the browser to be used on linux
 browser.linux = mozilla

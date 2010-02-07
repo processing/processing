@@ -128,12 +128,9 @@ import antlr.collections.*;
  */
 public class PdePreprocessor {
 
-//  String[] defaultImports;
-
   // these ones have the .* at the end, since a class name might be at the end
   // instead of .* which would make trouble other classes using this can lop
   // off the . and anything after it to produce a package name consistently.
-  //public String extraImports[];
   ArrayList<String> programImports;
 
   // imports just from the code folder, treated differently
@@ -516,7 +513,7 @@ public class PdePreprocessor {
   
   public String[] getDefaultImports() {
     // These may change in-between (if the prefs panel adds this option)
-    String prefsLine = Preferences.get("preproc.default_imports");
+    String prefsLine = Preferences.get("preproc.imports.list");
     return PApplet.splitTokens(prefsLine, ", ");
   }
 
