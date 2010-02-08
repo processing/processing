@@ -310,7 +310,7 @@
   
   <target name="linux-run" depends="linux-build" 
 	  description="Run Linux version">
-    <exec executable="linux/work/processing" dir="linux/work" spawn="true"/>
+    <exec executable="./processing" dir="linux/work" spawn="true"/>
   </target>
   
   <target name="linux-dist" depends="linux-build" 
