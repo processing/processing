@@ -1076,9 +1076,10 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     triangleCount++;
     
-    if (textureImage != textureImagePrev || triangleCount == 1) {
+    boolean firstFace = triangleCount == 1;
+    if (textureImage != textureImagePrev || firstFace) {
       // A new face starts at the first triangle or when the texture changes.
-      addNewFace();
+      addNewFace(firstFace);
     } else {
       // mark this triangle as being part of the current face.
       faceLength[faceCount-1]++;
@@ -1089,13 +1090,14 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   // New "face" starts. A face is just a range of consecutive triangles
   // with the same texture applied to them (it could be null).
-  protected void addNewFace() {
+  protected void addNewFace(boolean firstFace) {
       if (faceCount == faceOffset.length) {
         faceOffset = PApplet.expand(faceOffset);
         faceLength = PApplet.expand(faceLength);
         faceTexture = PApplet.expand(faceTexture);
       }
-      faceOffset[faceCount] = triangleCount;
+      faceOffset[faceCount] = firstFace ? 0 : triangleCount;
+      //else faceOffset[faceCount] = ;
       faceLength[faceCount] = 1;
       faceTexture[faceCount] = textureImage;
       faceCount++;    
@@ -1149,11 +1151,10 @@ public class PGraphicsAndroid3D extends PGraphics {
       normalBuffer.rewind();
       textureBuffer.rewind();      
       
-      for (int k = i; k < faceLength[j]; k++) {
-        
-        float a[] = vertices[triangles[k][VERTEX1]];
-        float b[] = vertices[triangles[k][VERTEX2]];
-        float c[] = vertices[triangles[k][VERTEX3]];
+      for (int k = 0; k < faceLength[j]; k++) {
+        float a[] = vertices[triangles[i][VERTEX1]];
+        float b[] = vertices[triangles[i][VERTEX2]];
+        float c[] = vertices[triangles[i][VERTEX3]];
         
         float uscale = 1.0f;
         float vscale = 1.0f;
@@ -1216,7 +1217,9 @@ public class PGraphicsAndroid3D extends PGraphics {
         normalBuffer.put(toFixed32(c[NY]));
         normalBuffer.put(toFixed32(c[NZ]));
         textureBuffer.put(toFixed32((cx +  sx * c[U]) * uscale));
-        textureBuffer.put(toFixed32((cy +  sy * c[V]) * vscale));    
+        textureBuffer.put(toFixed32((cy +  sy * c[V]) * vscale));
+        
+        i++;        
       }
       
       vertexBuffer.position(0);
@@ -1233,7 +1236,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       if (texturing) {
         gl.glDisable(tex.getGLTarget());
         gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);   
-      }          
+      }
     }
     
     gl.glDisableClientState(GL10.GL_NORMAL_ARRAY);
