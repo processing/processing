@@ -83,8 +83,15 @@ public class PFont implements PConstants {
   /** true if smoothing was enabled for this font, used for native impl */
   protected boolean smooth;
 
-  /** next power of 2 over the max image size (usually 64) */
+  /** 
+   * Next power of 2 over the max image size (usually 64). This is what the 
+   * file format expects, unfortunately, which means lots of empty 0s. In 
+   * practice, this isn't a huge deal because when compressed, the extra 
+   * space is almost entirely reclaimed. As of releases following (but not 
+   * including) 1.0.9, the value is only used when reading or writing the file. 
+   */
 //  public int mbox2;
+//  protected int mbox2;
 
   /** floating point width (convenience) */
 //  protected float fwidth;
@@ -152,8 +159,7 @@ public class PFont implements PConstants {
     size = is.readInt();
     // this was formerly mboxY, the one that was used
     // this will make new fonts downward compatible
-    //mbox2 = is.readInt();
-    is.readInt();  // ignore the mbox2 attribute
+    is.readInt();  // ignore the other mbox attribute
 
 //    fwidth = size; //mbox;
 //    fheight = size; //mbox;
@@ -184,6 +190,7 @@ public class PFont implements PConstants {
 
     // read the information about the individual characters
     for (int i = 0; i < charCount; i++) {
+      glyphs[i] = new Glyph();
       Glyph glyph = glyphs[i];
 
       glyph.value = is.readInt();
@@ -222,7 +229,7 @@ public class PFont implements PConstants {
 //      Glyph glyph = glyphs[i];
     for (Glyph glyph : glyphs) {
       //images[i] = new PImage(twidth, theight, ALPHA);
-      PImage image = new PImage(glyph.width, glyph.height, ALPHA);
+      glyph.image = new PImage(glyph.width, glyph.height, ALPHA);
       //int bitmapSize = height[i] * width[i];
       int bitmapSize = glyph.width * glyph.height;
 
@@ -232,11 +239,12 @@ public class PFont implements PConstants {
       // convert the bitmap to an alpha channel
       int w = glyph.width;
       int h = glyph.height;
+      int[] pixels = glyph.image.pixels;
       for (int y = 0; y < h; y++) {
         for (int x = 0; x < w; x++) {
           int valu = temp[y*w + x] & 0xff;
           //image.pixels[y * twidth + x] = valu;
-          image.pixels[y * glyph.width + x] = valu;
+          pixels[y * glyph.width + x] = valu;
           //System.out.print((images[i].pixels[y*64+x] > 128) ? "*" : ".");
         }
         //System.out.println();
@@ -475,6 +483,8 @@ public class PFont implements PConstants {
 
     // no, i'm not interested in getting off the ouch
     lazy = true;
+    // not sure what else to do here
+//    mbox2 = 0; 
 
     // the count gets reset later based on how many of
     // the chars are actually found inside the font.
@@ -574,6 +584,11 @@ public class PFont implements PConstants {
     glyph.setWidth = lazyMetrics.charWidth(c);
     //System.out.println((char)c + " " + setWidth[index]);
 
+//    int mx = PApplet.max(glyph.width, glyph.height);
+//    if (mx > mbox2) {
+//      mbox2 = (int) Math.pow(2, Math.ceil(Math.log(mx) / Math.log(2)));
+//    }
+    
 //    // cache locations of the ascii charset
 //    if (c < 128) ascii[c] = index;
 
@@ -750,7 +765,7 @@ public class PFont implements PConstants {
     // but this is ignored starting now, and the only problem would happen if
     // a font created on > 1.0.9 where used with 1.0.9 and earlier
     int mbox2 = (int) Math.pow(2, Math.ceil(Math.log(size) / Math.log(2)));
-    os.writeInt(mbox2);   // formerly mboxY (was 64, still 64)
+    os.writeInt(mbox2);   // formerly mboxY
     os.writeInt(ascent);  // formerly baseHt (was ignored)
     os.writeInt(descent); // formerly struct padding for c version
 
@@ -777,8 +792,11 @@ public class PFont implements PConstants {
       for (int y = 0; y < glyph.height; y++) {
         for (int x = 0; x < glyph.width; x++) {
           //os.write(pixels[y * mbox2 + x] & 0xff);
-          os.write(pixels[y * mbox2 + x] & 0xff);
+          os.write(pixels[y * glyph.width + x] & 0xff);
         }
+//        for (int x = glyph.width; x < mbox2; x++) {
+//          os.write(0);
+//        }
       }
     }
 
