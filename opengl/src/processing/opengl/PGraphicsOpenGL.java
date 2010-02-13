@@ -1355,7 +1355,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
     if (textMode == SHAPE) {
       if (textFont.findFont() == null) {
-        showWarning("Cannot use " + which.name + " as with textMode(SHAPE) " +
+        showWarning("Cannot use " + which.getName() + " as with textMode(SHAPE) " +
                   "because its native equivalent cannot be found.");
       }
     }
@@ -1489,7 +1489,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
     if (textMode == SHAPE) {
       if (textFont.getFont() == null) {
         PGraphics.showWarning("textMode(SHAPE) is disabled because the font " +
-                            "\"" + textFont.name + "\" is not available.");
+                            "\"" + textFont.getName() + "\" is not available.");
       } else {
         textCharShapeImpl(ch, x, y);
       }

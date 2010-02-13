@@ -219,6 +219,25 @@ public class PApplet extends Applet
       platform = OTHER;
     }
   }
+  
+  /** 
+   * Setting for whether to use the Quartz renderer on OS X. The Quartz 
+   * renderer is on its way out for OS X, but Processing uses it by default 
+   * because it's much faster than the Sun renderer. In some cases, however,
+   * the Quartz renderer is preferred. For instance, fonts are less thick
+   * when using the Sun renderer, so to improve how fonts look, 
+   * change this setting before you call PApplet.main().
+   * <pre>
+   * static public void main(String[] args) {
+   *   PApplet.useQuartz = "false";
+   *   PApplet.main(new String[] { "YourSketch" });
+   * }
+   * </pre>
+   * This setting must be called before any AWT work happens, so that's why
+   * it's such a terrible hack in how it's employed here. Calling setProperty()
+   * inside setup() is a joke, since it's long since the AWT has been invoked. 
+   */
+  static public String useQuartz = "true";
 
   /**
    * Modifier flags for the shortcut key used to trigger menus.
@@ -4039,12 +4058,12 @@ public class PApplet extends Applet
 
 
   public PFont createFont(String name, float size) {
-    return createFont(name, size, true, PFont.DEFAULT_CHARSET);
+    return createFont(name, size, true, null); //PFont.CHARSET);  // > 1.0.9
   }
 
 
   public PFont createFont(String name, float size, boolean smooth) {
-    return createFont(name, size, smooth, PFont.DEFAULT_CHARSET);
+    return createFont(name, size, smooth, null); //PFont.CHARSET);  // > 1.0.9
   }
 
 
@@ -4092,7 +4111,11 @@ public class PApplet extends Applet
       System.err.println("Problem using createFont() with " + name);
       e.printStackTrace();
     }
-    return new PFont(baseFont.deriveFont(size), smooth, charset);
+    if (charset == null) {
+      return new PFont(baseFont.deriveFont(size), smooth);
+    } else {
+      return new PFont(baseFont.deriveFont(size), smooth, charset);
+    }
   }
 
 
@@ -6987,7 +7010,7 @@ public class PApplet extends Applet
     if (platform == MACOSX) {
       // Only run this on OS X otherwise it can cause a permissions error.
       // http://dev.processing.org/bugs/show_bug.cgi?id=976
-      System.setProperty("apple.awt.graphics.UseQuartz", "true");
+      System.setProperty("apple.awt.graphics.UseQuartz", useQuartz);
     }
 
     // This doesn't do anything.
