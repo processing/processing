@@ -629,26 +629,27 @@ public class PFont implements PConstants {
     } else {
       for (int i = 0; i < charCount; i++) {
 //        System.out.println(i + " of " + charCount + " is " + (char)glyphs[i].value);
-        int value = glyphs[i].value; 
-        if (value > glyph.value) {
+        //int value = glyphs[i].value; 
+        //if (glyphs[i].value > glyph.value) {
+        if (glyphs[i].value > c) {
           for (int j = charCount; j > i; --j) {
 //            System.out.println("  moving " + (char)glyphs[j-1].value); // + 
 //                               //" to " + (char)glyphs[j].value);
             glyphs[j] = glyphs[j-1];
-//            if (value < 128) {
-//              ascii[value] = j;
-//            }
+            if (glyphs[j].value < 128) {
+              ascii[glyphs[j].value] = j;
+            }
           }
           //System.out.println("setting " + i + " to " + (char)glyph.value);
           glyphs[i] = glyph;
           // cache locations of the ascii charset
-          //if (c < 128) ascii[c] = i;
-          for (int k = 0; k < charCount+1; k++) {  // charCount not incremented yet 
-            if (glyphs[k].value < 128) {
-//              System.out.println("ascii[" + (char) glyphs[k].value + "] to " + k);
-              ascii[glyphs[k].value] = k;  // re-set the ascii values
-            }
-          }
+          if (c < 128) ascii[c] = i;
+//          for (int k = 0; k < charCount+1; k++) {  // charCount not incremented yet 
+//            if (glyphs[k].value < 128) {
+////              System.out.println("ascii[" + (char) glyphs[k].value + "] to " + k);
+//              ascii[glyphs[k].value] = k;  // re-set the ascii values
+//            }
+//          }
 //          charCount++;
 //          return;
           break;
