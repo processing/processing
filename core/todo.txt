@@ -3,6 +3,8 @@ X opengl sketches run at 30fps in present mode on OS X
 _   still having problems w/ full screen non-FSEM
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1425
 
+_ don't make fonts power of 2
+
 _ consider adding skewX/Y
 _   do them as shearX/Y
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1448
