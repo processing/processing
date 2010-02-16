@@ -227,7 +227,7 @@ public class CreateFont extends JFrame implements Tool {
     Base.registerWindowCloseKeys(root, disposer);
     Base.setIcon(this);
 
-//    setResizable(false);
+    setResizable(false);
     pack();
 
     // do this after pack so it doesn't affect layout
@@ -285,7 +285,7 @@ public class CreateFont extends JFrame implements Tool {
       return;
     }
 
-    String filename = filenameField.getText();
+    String filename = filenameField.getText().trim();
     if (filename.length() == 0) {
       JOptionPane.showMessageDialog(this, "Enter a file name for the font.",
                                     "Lameness", JOptionPane.WARNING_MESSAGE);
@@ -295,23 +295,43 @@ public class CreateFont extends JFrame implements Tool {
       filename += ".vlw";
     }
 
+    // Please implement me properly. The schematic is below, but not debugged.
+    // http://dev.processing.org/bugs/show_bug.cgi?id=1464
+    
+//    final String filename2 = filename;
+//    final int fontsize2 = fontsize;
+//    SwingUtilities.invokeLater(new Runnable() {
+//      public void run() {
     try {
       Font instance = (Font) table.get(list[selection]);
       font = instance.deriveFont(Font.PLAIN, fontsize);
       //PFont f = new PFont(font, smooth, all ? null : PFont.CHARSET);
       PFont f = new PFont(font, smooth, charSelector.getCharacters());
 
+//      PFont f = new PFont(font, smooth, null);
+//      char[] charset = charSelector.getCharacters();
+//      ProgressMonitor progressMonitor = new ProgressMonitor(CreateFont.this,
+//                                            "Creating font", "", 0, charset.length);
+//      progressMonitor.setProgress(0);
+//      for (int i = 0; i < charset.length; i++) {
+//        System.out.println(charset[i]);
+//        f.index(charset[i]);  // load this char
+//        progressMonitor.setProgress(i+1);
+//      }
+
       // make sure the 'data' folder exists
       File folder = editor.getSketch().prepareDataFolder();
       f.save(new FileOutputStream(new File(folder, filename)));
 
     } catch (IOException e) {
-      JOptionPane.showMessageDialog(this,
+      JOptionPane.showMessageDialog(CreateFont.this,
                                     "An error occurred while creating font.",
                                     "No font for you",
                                     JOptionPane.WARNING_MESSAGE);
       e.printStackTrace();
     }
+//      }
+//    });
 
     setVisible(false);
   }
