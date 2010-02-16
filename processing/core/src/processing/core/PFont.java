@@ -315,6 +315,11 @@ public class PFont implements PConstants {
                        smooth ?
                        RenderingHints.VALUE_ANTIALIAS_ON :
                        RenderingHints.VALUE_ANTIALIAS_OFF);
+    // adding this for post-1.0.9
+    g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                       smooth ?
+                       RenderingHints.VALUE_TEXT_ANTIALIAS_ON :
+                       RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
 
     g.setFont(font);
     FontMetrics metrics = g.getFontMetrics();
@@ -514,6 +519,11 @@ public class PFont implements PConstants {
                                   smooth ?
                                   RenderingHints.VALUE_ANTIALIAS_ON :
                                   RenderingHints.VALUE_ANTIALIAS_OFF);
+    // adding this for post-1.0.9
+    lazyGraphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                                  smooth ?
+                                  RenderingHints.VALUE_TEXT_ANTIALIAS_ON :
+                                  RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
 
     lazyGraphics.setFont(font);
     lazyMetrics = lazyGraphics.getFontMetrics();
