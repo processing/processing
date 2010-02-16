@@ -37,7 +37,7 @@ import javax.swing.event.*;
 
 
 /**
- * gui interface to font creation heaven/hell.
+ * GUI tool for font creation heaven/hell.
  */
 public class CreateFont extends JFrame implements Tool {
   Editor editor;
@@ -46,33 +46,22 @@ public class CreateFont extends JFrame implements Tool {
   Dimension windowSize;
 
   JList fontSelector;
-  //JComboBox styleSelector;
   JTextField sizeSelector;
-//  JCheckBox allBox;
   JButton charsetButton;
   JCheckBox smoothBox;
-  JTextArea sample;
+  JComponent sample;
   JButton okButton;
   JTextField filenameField;
 
   HashMap<String,Font> table;
   boolean smooth = true;
-//  boolean all = false;
 
   Font font;
 
   String[] list;
   int selection = -1;
   
-  JFrame charsetFrame;
-
-
-  //static {
-  //System.out.println("yep yep yep");
-  //}
-  //static final String styles[] = {
-  //"Plain", "Bold", "Italic", "Bold Italic"
-  //};
+  CharacterSelector charSelector;
 
 
   public CreateFont() {
@@ -153,25 +142,8 @@ public class CreateFont extends JFrame implements Tool {
     Dimension d1 = new Dimension(13, 13);
     pain.add(new Box.Filler(d1, d1, d1));
 
-    // see http://rinkworks.com/words/pangrams.shtml
-    sample = new JTextArea("The quick brown fox blah blah.") {
-        // Forsaking monastic tradition, twelve jovial friars gave up their
-        // vocation for a questionable existence on the flying trapeze.
-        public void paintComponent(Graphics g) {
-//          System.out.println("smoothing set to " + smooth);
-          Graphics2D g2 = (Graphics2D) g;
-          g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-                              smooth ?
-                              RenderingHints.VALUE_TEXT_ANTIALIAS_ON :
-                              RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
-          // add this one as well (after 1.0.9)
-          g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                              smooth ?
-                              RenderingHints.VALUE_ANTIALIAS_ON :
-                              RenderingHints.VALUE_ANTIALIAS_OFF);
-          super.paintComponent(g2);
-        }
-      };
+    sample = new SampleComponent(this);
+    
     // Seems that in some instances, no default font is set
     // http://dev.processing.org/bugs/show_bug.cgi?id=777
     sample.setFont(new Font("Dialog", Font.PLAIN, 12));
@@ -213,7 +185,7 @@ public class CreateFont extends JFrame implements Tool {
     charsetButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         //showCharacterList();
-        charsetFrame.setVisible(true);
+        charSelector.setVisible(true);
       }
     });
     panel.add(charsetButton);
@@ -270,12 +242,78 @@ public class CreateFont extends JFrame implements Tool {
                 (screen.height - windowSize.height) / 2);
     
     // create this behind the scenes
-    charsetFrame = createCharacterList();
+    charSelector = new CharacterSelector(); 
   }
 
 
   public void run() {
     setVisible(true);
+  }
+
+
+  public void update() {
+    int fontsize = 0;
+    try {
+      fontsize = Integer.parseInt(sizeSelector.getText().trim());
+      //System.out.println("'" + sizeSelector.getText() + "'");
+    } catch (NumberFormatException e2) { }
+
+    // if a deselect occurred, selection will be -1
+    if ((fontsize > 0) && (fontsize < 256) && (selection != -1)) {
+      //font = new Font(list[selection], Font.PLAIN, fontsize);
+      Font instance = (Font) table.get(list[selection]);
+      font = instance.deriveFont(Font.PLAIN, fontsize);
+      //System.out.println("setting font to " + font);
+      sample.setFont(font);
+
+      String filenameSuggestion = list[selection].replace(' ', '_');
+      filenameSuggestion += "-" + fontsize;
+      filenameField.setText(filenameSuggestion);
+    }
+  }
+
+
+  public void build() {
+    int fontsize = 0;
+    try {
+      fontsize = Integer.parseInt(sizeSelector.getText().trim());
+    } catch (NumberFormatException e) { }
+
+    if (fontsize <= 0) {
+      JOptionPane.showMessageDialog(this, "Bad font size, try again.",
+                                    "Badness", JOptionPane.WARNING_MESSAGE);
+      return;
+    }
+
+    String filename = filenameField.getText();
+    if (filename.length() == 0) {
+      JOptionPane.showMessageDialog(this, "Enter a file name for the font.",
+                                    "Lameness", JOptionPane.WARNING_MESSAGE);
+      return;
+    }
+    if (!filename.endsWith(".vlw")) {
+      filename += ".vlw";
+    }
+
+    try {
+      Font instance = (Font) table.get(list[selection]);
+      font = instance.deriveFont(Font.PLAIN, fontsize);
+      //PFont f = new PFont(font, smooth, all ? null : PFont.CHARSET);
+      PFont f = new PFont(font, smooth, charSelector.getCharacters());
+
+      // make sure the 'data' folder exists
+      File folder = editor.getSketch().prepareDataFolder();
+      f.save(new FileOutputStream(new File(folder, filename)));
+
+    } catch (IOException e) {
+      JOptionPane.showMessageDialog(this,
+                                    "An error occurred while creating font.",
+                                    "No font for you",
+                                    JOptionPane.WARNING_MESSAGE);
+      e.printStackTrace();
+    }
+
+    setVisible(false);
   }
 
 
@@ -298,71 +336,104 @@ public class CreateFont extends JFrame implements Tool {
     show();
   }
   */
+}
+
+
+/**
+ * Component that draws the sample text. This is its own subclassed component
+ * because Mac OS X controls seem to reset the RenderingHints for smoothing
+ * so that they cannot be overridden properly for JLabel or JTextArea. 
+ * @author fry
+ */
+class SampleComponent extends JComponent {
+  // see http://rinkworks.com/words/pangrams.shtml
+  String text = 
+    "Forsaking monastic tradition, twelve jovial friars gave up their " +
+    "vocation for a questionable existence on the flying trapeze.";
+  int high = 80;
   
+  CreateFont parent;
   
+  public SampleComponent(CreateFont p) {
+    this.parent = p;
+    
+    // and yet, we still need an inner class to handle the basics. 
+    // or no, maybe i'll refactor this as a separate class!
+    // maybe a few getters and setters? mmm?
+    addMouseListener(new MouseAdapter() {
+      public void mousePressed(MouseEvent e) {
+        String input = 
+          (String) JOptionPane.showInputDialog(parent,
+                                               "Enter new sample text:",
+                                               "Sample Text",
+                                               JOptionPane.PLAIN_MESSAGE,
+                                               null, // icon
+                                               null, // choices
+                                               text);
+        if (input != null) {
+          text = input;
+          parent.repaint();
+        }
+      }
+    });
+  }
+  
+  public void paintComponent(Graphics g) {
+//    System.out.println("smoothing set to " + smooth);
+    Graphics2D g2 = (Graphics2D) g;
+    g2.setColor(Color.WHITE);
+    Dimension dim = getSize();
+    g2.fillRect(0, 0, dim.width, dim.height);
+    g2.setColor(Color.BLACK);
+    
+    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                        parent.smooth ?
+                        RenderingHints.VALUE_TEXT_ANTIALIAS_ON :
+                        RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+    // add this one as well (after 1.0.9)
+    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                        parent.smooth ?
+                        RenderingHints.VALUE_ANTIALIAS_ON :
+                        RenderingHints.VALUE_ANTIALIAS_OFF);
+    //super.paintComponent(g2);
+    Font font = getFont();
+    int ascent = g2.getFontMetrics().getAscent();
+//    System.out.println(f.getName());
+    g2.setFont(font);
+    g2.drawString(text, 5, dim.height - (dim.height - ascent) / 2);
+  }
+  
+  public Dimension getPreferredSize() {
+    return new Dimension(400, high);
+  }
+  
+  public Dimension getMaximumSize() {
+    return new Dimension(10000, high);
+  }
+  
+  public Dimension getMinimumSize() {
+    return new Dimension(100, high);
+  }
+}
+
+
+/**
+ * Frame for selecting which characters will be included with the font.
+ */
+class CharacterSelector extends JFrame {
   JRadioButton defaultCharsButton;
   JRadioButton allCharsButton;
   JRadioButton unicodeCharsButton;
   JScrollPane unicodeBlockScroller;
-  //JFrame charsetFrame;
   JList charsetList;
 
 
-  protected char[] getCharacterSet() {
-    if (defaultCharsButton.isSelected()) {
-      return PFont.CHARSET;
-    }
-    
-    char[] charset = new char[65536];
-    if (allCharsButton.isSelected()) {
-      for (int i = 0; i < 0xFFFF; i++) {
-        charset[i] = (char) i;
-      }
-    } else {
-      DefaultListModel model = (DefaultListModel) charsetList.getModel();
-      int index = 0;
-      for (int i = 0; i < BLOCKS.length; i++) {
-        if (((JCheckBox) model.get(i)).isSelected()) {
-          for (int j = blockStart[i]; j <= blockStop[i]; j++) {
-            charset[index++] = (char) j;
-          }
-        }
-      }
-      charset = PApplet.subset(charset, 0, index);
-    }
-    System.out.println("Creating font with " + charset.length + " characters.");
-    return charset;
-  }
-  
+  public CharacterSelector() {
+    super("Character Selector");
 
-//  protected void showCharacterList() {
-//    if (charsetFrame == null) {
-//      charsetFrame = createCharacterList();
-//    }
-//    charsetFrame.setVisible(true);
-//  }
-  
-  
-  protected JFrame createCharacterList() {
-    //JList list = new CheckBoxJList ();
     charsetList = new CheckBoxList();
     DefaultListModel model = new DefaultListModel();
     charsetList.setModel(model);
-    /*
-//    String[] listItems = {
-//        "Chris", "Joshua", "Daniel", "Michael",
-//        "Don", "Kimi", "Kelly", "Keagan"
-//    };
-    
-//    String[] listItems = CreateFont.codePoints;
-//    Iterator it = Arrays.asList(listItems).iterator();
-//    while (it.hasNext())
-//        defModel.addElement (it.next());
-//    // show list
-    for (String item : codePoints) {
-      defModel.addElement(item);
-    }
-    */
     for (String item : blockNames) {
       model.addElement(new JCheckBox(item));
     }
@@ -372,8 +443,7 @@ public class CreateFont extends JFrame implements Tool {
                       ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
                       ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
     
-    final JFrame frame = new JFrame("Characters");    
-    Container outer = frame.getContentPane();
+    Container outer = getContentPane();
     outer.setLayout(new BorderLayout());
 
     JPanel pain = new JPanel();
@@ -387,17 +457,7 @@ public class CreateFont extends JFrame implements Tool {
       "and Windows Latin scripts. Including all characters may\n" +
       "require large amounts of memory for all of the bitmaps.\n" +
       "For greater control, you can select specific Unicode blocks.";
-//      "<html>" +
-//      "Default characters will include most bitmaps for Mac OS <br/>" +
-//      "and Windows Latin scripts. Including all characters may <br/>" +
-//      "require large amounts of memory for all of the bitmaps. <br/>" +
-//      "Or advanced users can select specific Unicode blocks. <br/>" +
-//      "(Visit <a href=\"http://unicode.org\">Unicode.org</a> for more information.)";
-//    JLabel label = new JLabel(labelText);
-//    label.setBorder(new EmptyBorder(10, 10, 20, 10));
-//    pain.add(label);
     JTextArea textarea = new JTextArea(labelText);
-//    textarea.setBorder(new EmptyBorder(13, 13, 13, 13));
     textarea.setBorder(new EmptyBorder(13, 8, 13, 8));
     textarea.setBackground(null);
     textarea.setEditable(false);
@@ -456,102 +516,61 @@ public class CreateFont extends JFrame implements Tool {
     JButton okButton = new JButton("OK");
     okButton.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          frame.setVisible(false);
+          setVisible(false);
         }
       });
     okButton.setEnabled(true);
     buttons.add(okButton);
     pain.add(buttons);
 
-    JRootPane root = frame.getRootPane();
+    JRootPane root = getRootPane();
     root.setDefaultButton(okButton);
     ActionListener disposer = new ActionListener() {
         public void actionPerformed(ActionEvent actionEvent) {
-          frame.setVisible(false);
+          setVisible(false);
         }
       };
     Base.registerWindowCloseKeys(root, disposer);
-    Base.setIcon(frame);
+    Base.setIcon(this);
     
-    frame.pack();
+    pack();
 
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-    Dimension windowSize = frame.getSize();
+    Dimension windowSize = getSize();
 
-    frame.setLocation((screen.width - windowSize.width) / 2,
-                      (screen.height - windowSize.height) / 2);
-    return frame;
+    setLocation((screen.width - windowSize.width) / 2,
+                (screen.height - windowSize.height) / 2);
   }
-
-
-  public void update() {
-    int fontsize = 0;
-    try {
-      fontsize = Integer.parseInt(sizeSelector.getText().trim());
-      //System.out.println("'" + sizeSelector.getText() + "'");
-    } catch (NumberFormatException e2) { }
-
-    // if a deselect occurred, selection will be -1
-    if ((fontsize > 0) && (fontsize < 256) && (selection != -1)) {
-      //font = new Font(list[selection], Font.PLAIN, fontsize);
-      Font instance = (Font) table.get(list[selection]);
-      font = instance.deriveFont(Font.PLAIN, fontsize);
-      //System.out.println("setting font to " + font);
-      sample.setFont(font);
-
-      String filenameSuggestion = list[selection].replace(' ', '_');
-      filenameSuggestion += "-" + fontsize;
-      filenameField.setText(filenameSuggestion);
-    }
-  }
-
-
-  public void build() {
-    int fontsize = 0;
-    try {
-      fontsize = Integer.parseInt(sizeSelector.getText().trim());
-    } catch (NumberFormatException e) { }
-
-    if (fontsize <= 0) {
-      JOptionPane.showMessageDialog(this, "Bad font size, try again.",
-                                    "Badness", JOptionPane.WARNING_MESSAGE);
-      return;
-    }
-
-    String filename = filenameField.getText();
-    if (filename.length() == 0) {
-      JOptionPane.showMessageDialog(this, "Enter a file name for the font.",
-                                    "Lameness", JOptionPane.WARNING_MESSAGE);
-      return;
-    }
-    if (!filename.endsWith(".vlw")) {
-      filename += ".vlw";
-    }
-
-    try {
-      Font instance = (Font) table.get(list[selection]);
-      font = instance.deriveFont(Font.PLAIN, fontsize);
-      //PFont f = new PFont(font, smooth, all ? null : PFont.CHARSET);
-      PFont f = new PFont(font, smooth, getCharacterSet());
-
-      // make sure the 'data' folder exists
-      File folder = editor.getSketch().prepareDataFolder();
-      f.save(new FileOutputStream(new File(folder, filename)));
-
-    } catch (IOException e) {
-      JOptionPane.showMessageDialog(this,
-                                    "An error occurred while creating font.",
-                                    "No font for you",
-                                    JOptionPane.WARNING_MESSAGE);
-      e.printStackTrace();
-    }
-
-    setVisible(false);
-  }
-
-
-  // http://www.unicode.org/Public/UNIDATA/Blocks.txt
   
+  
+  protected char[] getCharacters() {
+    if (defaultCharsButton.isSelected()) {
+      return PFont.CHARSET;
+    }
+    
+    char[] charset = new char[65536];
+    if (allCharsButton.isSelected()) {
+      for (int i = 0; i < 0xFFFF; i++) {
+        charset[i] = (char) i;
+      }
+    } else {
+      DefaultListModel model = (DefaultListModel) charsetList.getModel();
+      int index = 0;
+      for (int i = 0; i < BLOCKS.length; i++) {
+        if (((JCheckBox) model.get(i)).isSelected()) {
+          for (int j = blockStart[i]; j <= blockStop[i]; j++) {
+            charset[index++] = (char) j;
+          }
+        }
+      }
+      charset = PApplet.subset(charset, 0, index);
+    }
+    //System.out.println("Creating font with " + charset.length + " characters.");
+    return charset;
+  }
+
+
+  // http://www.unicode.org/Public/UNIDATA/Blocks.txt  
   static final String[] BLOCKS = {
     "0000..007F; Basic Latin",
     "0080..00FF; Latin-1 Supplement",
@@ -725,6 +744,12 @@ public class CreateFont extends JFrame implements Tool {
 }
 
 
+// Code for this CheckBoxList class found on the net, though I've lost the 
+// link. If you run across the original version, please let me know so that 
+// the original author can be credited properly. It was from a snippet 
+// collection, but it seems to have been picked up so many places with others
+// placing their copyright on it, that I haven't been able to determine the
+// original author. [fry 20100216]
 class CheckBoxList extends JList {
   protected static Border noFocusBorder = new EmptyBorder(1, 1, 1, 1);
 
