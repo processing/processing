@@ -164,11 +164,11 @@ public class CreateFont extends JFrame implements Tool {
                               smooth ?
                               RenderingHints.VALUE_TEXT_ANTIALIAS_ON :
                               RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
-          // add this one as well
-//          g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-//                              smooth ?
-//                              RenderingHints.VALUE_ANTIALIAS_ON :
-//                              RenderingHints.VALUE_ANTIALIAS_OFF);
+          // add this one as well (after 1.0.9)
+          g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                              smooth ?
+                              RenderingHints.VALUE_ANTIALIAS_ON :
+                              RenderingHints.VALUE_ANTIALIAS_OFF);
           super.paintComponent(g2);
         }
       };
