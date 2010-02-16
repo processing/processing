@@ -69,7 +69,7 @@ public class PdeTextAreaDefaults extends TextAreaDefaults {
     // disabling for 0122, not sure what this does
     //inputHandler.addKeyBinding("C+\\", InputHandler.TOGGLE_RECT);
 
-    // for 0122, these have been changed for better compatability
+    // for 0122, these have been changed for better compatibility
     // HOME and END now mean the beginning/end of the document
     if (Base.isMacOS()) {
       inputHandler.addKeyBinding("HOME", InputHandler.DOCUMENT_HOME);
