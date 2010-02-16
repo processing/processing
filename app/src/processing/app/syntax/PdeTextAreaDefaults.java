@@ -57,6 +57,15 @@ public class PdeTextAreaDefaults extends TextAreaDefaults {
     //inputHandler.addKeyBinding("TAB", InputHandler.INSERT_TAB);
 
     inputHandler.addKeyBinding("INSERT", InputHandler.OVERWRITE);
+    
+    // http://dev.processing.org/bugs/show_bug.cgi?id=162
+    // added for 0176, though the bindings do not appear relevant for osx 
+    if (!Base.isMacOS()) {
+      inputHandler.addKeyBinding("C+INSERT", InputHandler.CLIPBOARD_COPY);
+      inputHandler.addKeyBinding("S+INSERT", InputHandler.CLIPBOARD_PASTE);
+      inputHandler.addKeyBinding("S+DELETE", InputHandler.CLIPBOARD_CUT);
+    }
+
     // disabling for 0122, not sure what this does
     //inputHandler.addKeyBinding("C+\\", InputHandler.TOGGLE_RECT);
 
