@@ -70,6 +70,9 @@ _   need to deal with setting path to sketchbook/examples
 _   also deal with the script not being in the right folder
 _   problems with imports and prefs file
 _     http://dev.processing.org/bugs/show_bug.cgi?id=1298
+_ processing.app.Commander headless still requiring X11
+_   problem is static calls to PApplet
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1426
 
 cleaning
 X update to jogl 1.1.1
