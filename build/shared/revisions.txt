@@ -1,3 +1,30 @@
+PROCESSING 1.x (REV ????) - ?? February 2010
+
+[ fonts ]
+
++ Fixed a problem with the Create Font tool ignoring the 'smooth' setting
+  on some systems.
+
++ Fixed a separate problem with the createFont() method also ignoring the
+  'smooth' setting.
+
++ Starting in this release, the createFont() method will only load characters 
+  as they are used, which should greatly improve the font situation on 
+  non-Roman systems like Japanese. This will use far less memory, and should
+  be all around much more efficient. Formerly, createFont() took several 
+  seconds to run, depending on the speed of your system. 
+  http://dev.processing.org/bugs/show_bug.cgi?id=1111
+
++ With the Create Font tool, you can also specify what Unicode character 
+  blocks you'd like to use, making a much smaller font.
+
++ Fonts are no longer power of 2 by default. This should also make them more
+  memory efficient. With future OpenGL updates, this will work even better.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING 1.0.9 (REV 0171) - 20 October 2009
 
 Happy birthday to Casey!

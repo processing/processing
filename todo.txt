@@ -33,6 +33,23 @@ o   just add a simple poly class? or don't use a poly?
 X   add imports for anything that's in the reference (selections from java.io)
 o 'Array' in reference should be 'arrays' lowercase
 
+fonts
+X loading is very slow on the first time (getting all font names)
+X   create the tool object on startup, then use thread to getAllFonts()
+X   show a progress/status bar while it's happening?
+X   (would be useful to at least tell user that system not locked up)
+X   this was fixed in a much earlier release
+X create font with user-specified charsets
+o remember previous font selection when returning to the window
+X "smooth" option being ignored in the Create Font tool
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1461
+X other font bugs handled
+X   http://dev.processing.org/bugs/show_bug.cgi?id=98
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1111
+o when resizing window, only resize the text display area
+o   just a matter of moving around the panels and BorderLayout
+X   it's a mess, just disable resizing
+
 X move build scripts to something better like ant
 X   too much to maintain the multiple versions, too much code
 X   http://dev.processing.org/bugs/show_bug.cgi?id=151
@@ -43,6 +60,8 @@ _ move the jdk stuff outside of the build
 _   http://processing.org/download/jre-6u18.zip, .tgz
 _   only get the java files when doing a dist build
 _   http://ant.apache.org/manual/CoreTasks/get.html
+
+_ don't allow processing to run on snow leopard with 1.5
 
 _ command line support is currently broken
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1048
@@ -1164,6 +1183,12 @@ _   to pull code from a local folder
 _   update will update classes from shared in the current folder
 
 
+TOOLS / Create Font
+
+E3 _ "create font" is slow, implement a progress indicator
+E3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1464
+
+
 TOOLS / Color Picker
 
 _ pasting into color picker doesn't update the color values
@@ -1213,19 +1238,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=880
 _ break out as its own plugin
 _ Bracket idenfication {} is not aware of comments //
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1450
-
-
-TOOLS / Create Font
-
-_ loading is very slow on the first time (getting all font names)
-_   create the tool object on startup, then use thread to getAllFonts()
-_   show a progress/status bar while it's happening?
-_   (would be useful to at least tell user that system not locked up)
-_ create font with user-specified charsets
-_   may help solve: http://dev.processing.org/bugs/show_bug.cgi?id=98
-_ when resizing window, only resize the text display area
-_   just a matter of moving around the panels and BorderLayout
-_ remember previous font selection when returning to the window
 
 
 ////////////////////////////////////////////////////////////////////
