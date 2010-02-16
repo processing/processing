@@ -24,6 +24,8 @@ import java.util.Enumeration;
 import java.util.Vector;
 import java.awt.im.InputMethodRequests;
 
+import processing.app.syntax.im.InputMethodSupport;
+
 /**
  * jEdit's text area component. It is more suited for editing program
  * source code than JEditorPane, because it drops the unnecessary features
@@ -227,7 +229,7 @@ public class JEditTextArea extends JComponent
    * Blinks the caret.
    */
   public final void blinkCaret() {
-    if (caretBlinks && !((InputMethodSupport)getInputMethodRequests()).getIsComposing())  {
+    if (caretBlinks)  {
       blink = !blink;
       painter.invalidateSelectedLines();
     } else {
