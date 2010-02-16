@@ -2,8 +2,6 @@
 X opengl sketches run at 30fps in present mode on OS X
 _   still having problems w/ full screen non-FSEM
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1425
-X "smooth" option being ignored in the Create Font tool
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1461
 X PFont not working well with lots of characters
 X   only create bitmap chars on the fly when needed (in createFont)
 X Implement better caching mechanism when creating large fonts
