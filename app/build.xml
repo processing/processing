@@ -11,36 +11,20 @@
   </target>
 
   <target name="preproc" description="Compile ANTLR grammar">
-    <!-- invoke antlr manually instead of using the ant-task, 
-	 saves some trouble... -->
-    <java classpath="${basedir}/lib/antlr.jar" 
-	  classname="antlr.Tool" 
-	  failonerror="yes" 
-	  dir="${basedir}" 
-	  fork="yes">
-      <arg line="-o src/antlr/java src/antlr/java/java.g" />
-    </java>
+    <antlr target="${basedir}/src/antlr/java/java.g" 
+	   outputdirectory="${basedir}/src/antlr/java">
+      <classpath path="${basedir}/lib/antlr.jar" />
+    </antlr>
+
+    <!-- antlr wants this file nearby -->
     <copy todir="src/processing/app/preproc" 
 	  file="src/antlr/java/JavaTokenTypes.txt" />
 
-    <!-- This version does not work properly on Windows, 
-	 probably due to differences in how paths are handled. -->
-<!--
-    <java classpath="${basedir}/lib/antlr.jar" 
-	  classname="antlr.Tool" 
-	  failonerror="yes" 
-	  dir="${basedir}" 
-	  fork="yes">
-      <arg line="-o src/processing/app/preproc -glib src/antlr/java/java.g src/processing/app/preproc/pde.g" />
-    </java>
--->
-    <java classpath="${basedir}/lib/antlr.jar" 
-	  classname="antlr.Tool" 
-	  failonerror="yes" 
-	  dir="${basedir}/src/processing/app/preproc" 
-	  fork="yes">
-      <arg line="-glib ../../../antlr/java/java.g pde.g" />
-    </java>
+    <antlr target="${basedir}/src/processing/app/preproc/pde.g" 
+	   outputdirectory="${basedir}/src/processing/app/preproc"
+	   glib="${basedir}/src/antlr/java/java.g">
+      <classpath path="${basedir}/lib/antlr.jar" />
+    </antlr>
   </target>
 
   <target name="compile" depends="preproc" description="Compile sources">
