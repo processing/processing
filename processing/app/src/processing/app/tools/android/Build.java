@@ -482,8 +482,11 @@ public class Build {
   
   void writeLocalProps(File file) {
     PrintWriter writer = PApplet.createWriter(file);
-    //writer.println("sdk-location=" + Android.sdkPath);  // r3 of the sdk
-    writer.println("sdk.dir=" + Android.sdkPath);  // r4 of the sdk
+    if (Base.isWindows()) {
+      writer.println("sdk.dir=" + Android.sdkPath.replace('\\', '/'));
+    } else {
+      writer.println("sdk.dir=" + Android.sdkPath);
+    }
     writer.flush();
     writer.close();
   }
