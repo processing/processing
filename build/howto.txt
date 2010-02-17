@@ -14,9 +14,13 @@ Update 16 February 2010:
   have a JDK installed, and ANT installed as well, you should be able to 
   cd to the build folder and type 'ant' to build, and 'ant run' to run.
 
-+ On Windows and Linux, install ant, set ANT_HOME, and add the bin directory 
++ On Windows and Linux, install ant and add c:\apache-ant-xxx/bin directory 
   to your path. On Mac OS X, you'll have ant as long as the dev tools are
   already installed.
+
+Troubleshooting:
+
++ This means you need to set JAVA_HOME to your JDK (not JRE) installation "Unable to locate tools.jar. Expected to find it in C:\Program Files\Java\jre6\lib\tools.jar"
 
 More to come...
 
