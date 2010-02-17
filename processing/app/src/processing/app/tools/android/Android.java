@@ -39,7 +39,7 @@ import processing.core.PApplet;
 
 public class Android implements Tool {
   static String sdkPath;
-  static String toolName;
+  static String toolName = "android";
 //  static String toolsPath;
 
   private Editor editor;
@@ -114,6 +114,51 @@ public class Android implements Tool {
 
 
   protected boolean checkPath() {
+    Platform platform = Base.getPlatform();
+    
+    // check for ANDROID_SDK environment variable
+    sdkPath = platform.getenv("ANDROID_SDK");
+    if (sdkPath == null) {
+      Base.showWarning("Android Tools Error",
+                       "Before using Android mode, you must first set\n" +
+                       "the ANDROID_SDK environment variable.", null);
+      return false;
+    }
+
+    // check to make sure the ANDROID_SDK variable is legit
+    File toolsFolder = new File(sdkPath, "tools");
+    if (!toolsFolder.exists()) {
+      Base.showWarning("Android Tools Error",
+                       "The ANDROID_SDK environment variable is set incorrectly,\n" +
+                       "or the directory no longer exists. No tools folder was\n" +
+                       "found in " + toolsFolder.getAbsolutePath() + ".", null);
+      return false;
+    }
+
+    // make sure that $ANDROID_SDK/tools has been added to the PATH
+    try {
+      String canonicalTools = toolsFolder.getCanonicalPath(); 
+      String envPath = platform.getenv("PATH");
+      String[] entries = PApplet.split(envPath, File.pathSeparatorChar);
+      for (String entry : entries) {
+        String canonicalEntry = new File(entry).getCanonicalPath();
+        if (canonicalEntry.equals(canonicalTools)) {
+          return true;
+        }
+      }
+      Base.showWarning("Android Tools Error",
+                       "You need to add the tools folder of the Android SDK\n" +
+                       "to your PATH environment variable. The folder is:\n" + 
+                       toolsFolder.getAbsolutePath() + ".", null);
+    } catch (IOException e) {
+      Base.showWarning("Android Tools Error",
+                       "Error while trying to check the PATH for the Android tools.", e);
+    }
+    return false;
+  }
+  
+  
+  protected boolean checkPath_orig() {
     // If android.sdk.path exists as a preference, make sure that the folder
     // exists, otherwise the SDK may have been removed or deleted.
     String oldPath = Preferences.get("android.sdk.path");
@@ -175,32 +220,30 @@ public class Android implements Tool {
     //System.out.println("sdk path is " + sdkPath);
     //  sdkPath = "/opt/android";
 
-    /*
-    // Make sure that the tools are in the PATH
-    String toolsPath = sdkPath + File.separator + "tools";
-    String path = platform.getenv("PATH");
-    System.out.println("path before set is " + path);
-    platform.setenv("PATH", path + File.pathSeparator + toolsPath);
-    System.out.println("path after set is " +
-                       Base.getPlatform().getenv("PATH"));
-
-    try {
-      PApplet.println(Device.list());
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
-    String[] cmd = { "echo", "$PATH" };
-    try {
-      Pavarotti p = new Pavarotti(cmd);
-      int result = p.waitFor();
-      if (result == 0) {
-        PApplet.println(p.getOutputLines());
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    */
+//    // Make sure that the tools are in the PATH
+//    String toolsPath = sdkPath + File.separator + "tools";
+//    String path = platform.getenv("PATH");
+//    System.out.println("path before set is " + path);
+//    platform.setenv("PATH", path + File.pathSeparator + toolsPath);
+//    System.out.println("path after set is " +
+//                       Base.getPlatform().getenv("PATH"));
+//
+//    try {
+//      PApplet.println(Device.list());
+//    } catch (Exception e) {
+//      e.printStackTrace();
+//    }
+//
+//    String[] cmd = { "echo", "$PATH" };
+//    try {
+//      Pavarotti p = new Pavarotti(cmd);
+//      int result = p.waitFor();
+//      if (result == 0) {
+//        PApplet.println(p.getOutputLines());
+//      }
+//    } catch (Exception e) {
+//      e.printStackTrace();
+//    }
 
     return true;
   }
