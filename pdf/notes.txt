@@ -1,8 +1,9 @@
 The majority of the work in this library is done by iText.
 http://www.lowagie.com/iText/
 
-The version bundled in this release is 2.1.4.
-
-The files in the library must be named itext.jar because they're specifically
-included on the classpath as part of the build/platform/make.sh scripts. 
+The version bundled with previous releases was 2.1.4. After Processing 1.0.9,
+the library was downgraded to iText 1.5.4., because later versions seem to
+load slower, and don't seem to offer additional benefits. If the PDF library
+gets worse, please post a bug and we'll go back to the 2.x release we were
+using, or upgrade to the more recent 5.x series.
 
