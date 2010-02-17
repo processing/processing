@@ -3,11 +3,13 @@
 <!-- This isn't yet completely baked. You might call it half. -->
 
 <project default="build" name="Create .zip file for core">
-  <target name="build">
 
-    <property environment="env" />
+  <property environment="env" />
+
+  <target name="build" if="env.ANDROID_SDK">
     <mkdir dir="core/bin" />
     <javac encoding="UTF-8"
+	   includeAntRuntime="false"
 	   bootclasspath="${env.ANDROID_SDK}/platforms/android-1.6/android.jar"
 	   srcdir="core/src" destdir="core/bin"/>
 
@@ -18,9 +20,9 @@
     </zip>
   </target>
 
-  <target name="clean" description="Clean out the build directories">
-    <!-- don't delete this dir yet, because eclipse owns it. see above. -->
-    <!--<delete dir="core/bin" />-->
+  <target name="clean" if="env.ANDROID_SDK"
+	  description="Clean out the build directories">
+    <delete dir="core/bin" />
     <delete file="core.zip" />
   </target>
 </project>
