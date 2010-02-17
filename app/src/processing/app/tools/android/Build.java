@@ -483,6 +483,9 @@ public class Build {
   void writeLocalProps(File file) {
     PrintWriter writer = PApplet.createWriter(file);
     if (Base.isWindows()) {
+      // Windows needs backslashes escaped, or it will also accept forward
+      // slashes in the build file. We're using the forward slashes since this
+      // path gets concatenated with a lot of others that use forwards anyway.
       writer.println("sdk.dir=" + Android.sdkPath.replace('\\', '/'));
     } else {
       writer.println("sdk.dir=" + Android.sdkPath);
