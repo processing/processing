@@ -4,26 +4,20 @@
      build with Eclipse. I'm what's called a stopgap. A temporary hack, 
      if you will. -->
 
-<project default="core" name="Create .zip file for core">
+<project default="build" name="Create .zip file for core">
+  <target name="build">
+    <!-- this makes an assumption that the processing folder is checked out
+	 at the same level as this folder. not a good assumption. -->
+    <zip destfile="core.zip">
+      <fileset dir="core/bin" includes="processing/android/core/*.class" />
+      <fileset dir="core/bin" includes="processing/android/opengl/*.class" />
+      <fileset dir="core/bin" includes="processing/android/xml/*.class" />
+    </zip>
+  </target>
 
-<target name="core">
-
-<!-- this makes an assumption that the processing folder is checked out
-     at the same level as this folder. not a good assumption. -->
-<zip destfile="core.zip">
-<fileset dir="core/bin" includes="processing/android/core/*.class" />
-<fileset dir="core/bin" includes="processing/android/opengl/*.class" />
-<fileset dir="core/bin" includes="processing/android/xml/*.class" />
-</zip>
-
-<!-- copy file to bin folder as well, so that we don't 
-     have to wait for eclipse to move things over. -->
-<!--
-<copy file="core.zip"
-      tofile="../app/src/processing/app/tools/android/processing-core.zip"
-<copy file="core.zip" 
-      tofile="../app/bin/processing/app/tools/android/processing-core.zip" />
--->
-
-</target>
+  <target name="clean" description="Clean out the build directories">
+    <!-- don't delete this dir yet, because eclipse owns it. see above. -->
+    <!--<delete dir="core/bin" />-->
+    <delete file="core.zip" />
+  </target>
 </project>

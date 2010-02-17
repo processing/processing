@@ -60,6 +60,7 @@
     <subant buildpath="../pdf" target="clean"/>
     <subant buildpath="../serial" target="clean"/>
     <subant buildpath="../video" target="clean"/>
+    <subant buildpath="../android" target="clean"/>
   </target>
   
   <target name="subprojects-build">
@@ -71,6 +72,7 @@
     <subant buildpath="../pdf" target="build"/>
     <subant buildpath="../serial" target="build"/>
     <subant buildpath="../video" target="build"/>
+    <subant buildpath="../android" target="build"/>
   </target>
   
 
