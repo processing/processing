@@ -1,13 +1,12 @@
 0176 (private)
 X begin the merge of the new A3D, remove old OpenGL code
+X escape slashes properly on windows (also place sdk in program files)
+X    writer.println("sdk.dir=" + Android.sdkPath);  // r4 of the sdk
+X    writer.println("sdk.dir=" + Android.sdkPath.replace("\\", "\\" +"\\")); 
 _ Android tools on Windows are broken due to naming changes in r4 SDK
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1432
 
 _ deal with path problems
-
-_ escape slashes properly on windows (also place sdk in program files)
--    writer.println("sdk.dir=" + Android.sdkPath);  // r4 of the sdk
-+    writer.println("sdk.dir=" + Android.sdkPath.replace("\\", "\\" +"\\")); 
 
 
 _ remove SurfaceView2D/SurfaceView3D separation, or clean up
