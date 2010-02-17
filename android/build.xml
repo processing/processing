@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- Hi there! This is not a proper build file. The proper method is to
-     build with Eclipse. I'm what's called a stopgap. A temporary hack, 
-     if you will. -->
+<!-- This isn't yet completely baked. You might call it half. -->
 
 <project default="build" name="Create .zip file for core">
   <target name="build">
-    <!-- this makes an assumption that the processing folder is checked out
-	 at the same level as this folder. not a good assumption. -->
+
+    <property environment="env" />
+    <mkdir dir="core/bin" />
+    <javac encoding="UTF-8"
+	   bootclasspath="${env.ANDROID_SDK}/platforms/android-1.6/android.jar"
+	   srcdir="core/src" destdir="core/bin"/>
+
     <zip destfile="core.zip">
       <fileset dir="core/bin" includes="processing/android/core/*.class" />
       <fileset dir="core/bin" includes="processing/android/opengl/*.class" />
