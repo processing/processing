@@ -373,7 +373,7 @@ public class Build {
     public String[] getCoreImports() {
       return new String[] { 
         "processing.android.core.*",
-        "processing.android.opengl.*",  // temporary
+        //"processing.android.opengl.*",  // temporary
         "processing.android.xml.*"
       };
     }
