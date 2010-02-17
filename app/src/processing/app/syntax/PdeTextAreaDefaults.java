@@ -34,23 +34,27 @@ public class PdeTextAreaDefaults extends TextAreaDefaults {
     inputHandler = new DefaultInputHandler();
     //inputHandler.addDefaultKeyBindings();  // 0122
 
-    // use option on mac for things that are ctrl on windows/linux
+    // use option on mac for text edit controls that are ctrl on windows/linux
     String mod = Base.isMacOS() ? "A" : "C";
 
     // right now, ctrl-up/down is select up/down, but mod should be
     // used instead, because the mac expects it to be option(alt)
 
     inputHandler.addKeyBinding("BACK_SPACE", InputHandler.BACKSPACE);
+    // for 0122, shift-backspace is delete, for 0176, it's now a preference, 
+    // to prevent holy warriors from attacking me for it.
+    if (Preferences.getBoolean("editor.keys.shift_backspace_is_delete")) {
+      inputHandler.addKeyBinding("S+BACK_SPACE", InputHandler.DELETE);
+    } else {
+      inputHandler.addKeyBinding("S+BACK_SPACE", InputHandler.BACKSPACE);
+    }
+    
     inputHandler.addKeyBinding("DELETE", InputHandler.DELETE);
-
-    //inputHandler.addKeyBinding("S+BACK_SPACE", InputHandler.BACKSPACE);
-    // for 0122, shift-backspace is delete
-    inputHandler.addKeyBinding("S+BACK_SPACE", InputHandler.DELETE);
     inputHandler.addKeyBinding("S+DELETE", InputHandler.DELETE);
 
     // the following two were changing for 0122 for better mac/pc compatability
-    inputHandler.addKeyBinding(mod+"+BACK_SPACE", InputHandler.BACKSPACE_WORD);
-    inputHandler.addKeyBinding(mod+"+DELETE", InputHandler.DELETE_WORD);
+    inputHandler.addKeyBinding(mod + "+BACK_SPACE", InputHandler.BACKSPACE_WORD);
+    inputHandler.addKeyBinding(mod + "+DELETE", InputHandler.DELETE_WORD);
 
     // handled by listener, don't bother here
     //inputHandler.addKeyBinding("ENTER", InputHandler.INSERT_BREAK);
@@ -60,7 +64,7 @@ public class PdeTextAreaDefaults extends TextAreaDefaults {
     
     // http://dev.processing.org/bugs/show_bug.cgi?id=162
     // added for 0176, though the bindings do not appear relevant for osx 
-    if (!Base.isMacOS()) {
+    if (Preferences.getBoolean("editor.keys.alternative_cut_copy_paste")) {
       inputHandler.addKeyBinding("C+INSERT", InputHandler.CLIPBOARD_COPY);
       inputHandler.addKeyBinding("S+INSERT", InputHandler.CLIPBOARD_PASTE);
       inputHandler.addKeyBinding("S+DELETE", InputHandler.CLIPBOARD_CUT);
@@ -71,7 +75,9 @@ public class PdeTextAreaDefaults extends TextAreaDefaults {
 
     // for 0122, these have been changed for better compatibility
     // HOME and END now mean the beginning/end of the document
-    if (Base.isMacOS()) {
+    // for 0176 changed this to a preference so that the Mac OS X people
+    // can get the "normal" behavior as well if they prefer.
+    if (Preferences.getBoolean("editor.keys.home_and_end_travel_far")) {
       inputHandler.addKeyBinding("HOME", InputHandler.DOCUMENT_HOME);
       inputHandler.addKeyBinding("END", InputHandler.DOCUMENT_END);
       inputHandler.addKeyBinding("S+HOME", InputHandler.SELECT_DOC_HOME);
