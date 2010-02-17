@@ -25,6 +25,8 @@ import java.util.*;
 
 import com.lowagie.text.*;
 import com.lowagie.text.pdf.*;
+//import com.itextpdf.text.*;
+//import com.itextpdf.text.pdf.*;
 
 import processing.core.*;
 
@@ -67,6 +69,7 @@ public class PGraphicsPDF extends PGraphicsJava2D {
 
 
   public void beginDraw() {
+//    long t = System.currentTimeMillis();
     if (document == null) {
       document = new Document(new Rectangle(width, height));
       try {
@@ -106,6 +109,7 @@ public class PGraphicsPDF extends PGraphicsJava2D {
       //System.out.println("done registering directories");
 
       if (PApplet.platform == PApplet.MACOSX) {
+//        long t = System.currentTimeMillis();
         try {
           String homeLibraryFonts =
             System.getProperty("user.home") + "/Library/Fonts";
@@ -117,6 +121,7 @@ public class PGraphicsPDF extends PGraphicsJava2D {
         // add the system font paths
         mapper.insertDirectory("/System/Library/Fonts");
         mapper.insertDirectory("/Library/Fonts");
+//        System.out.println("mapping " + (System.currentTimeMillis() - t));
 
       } else if (PApplet.platform == PApplet.WINDOWS) {
         // how to get the windows fonts directory?
@@ -154,6 +159,7 @@ public class PGraphicsPDF extends PGraphicsJava2D {
       g2 = content.createGraphics(width, height, mapper);
 //      g2 = template.createGraphics(width, height, mapper);
     }
+//    System.out.println("beginDraw " + (System.currentTimeMillis() - t));
     super.beginDraw();
   }
 
