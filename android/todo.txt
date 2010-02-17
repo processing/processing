@@ -6,8 +6,12 @@ X    writer.println("sdk.dir=" + Android.sdkPath.replace("\\", "\\" +"\\"));
 _ Android tools on Windows are broken due to naming changes in r4 SDK
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1432
 
+_ move to eclair (donut devices will have terrible performance anyway)
 _ deal with path problems
 
+_ ANDROID_SDK doesn't seem to be mentioned anywhere anymore
+_   this may mean that p5 might just need to get the location
+_   though it makes things messier for the build scripts
 
 _ remove SurfaceView2D/SurfaceView3D separation, or clean up
 _ what is resetLights() in PGraphics?
