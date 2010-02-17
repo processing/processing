@@ -302,6 +302,8 @@ _   don't bother using a buffering stream, just handle internally. gah!
 _ remove some of the bloat, how can we make things more compact?
 _   i.e. if not using 3D, can leave out PGraphics3, PTriangle, PLine
 _   http://dev.processing.org/bugs/show_bug.cgi?id=127
+E4 _ add shuffle methods for arrays
+E4 _   http://dev.processing.org/bugs/show_bug.cgi?id=1462
 
 
 CORE / PApplet - main()
