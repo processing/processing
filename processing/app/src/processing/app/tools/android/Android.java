@@ -66,7 +66,8 @@ public class Android implements Tool {
   static final String ADB_SOCKET_PORT = "29892";
 
   static final String ANDROID_CORE_URL =
-    "http://dev.processing.org/processing/android/core.zip";
+    "http://dev.processing.org/source/index.cgi/*checkout*" +
+    "/tags/processing-" + Base.VERSION_NAME + "/android/core.zip";
   static final String ANDROID_CORE_FILENAME =
     "processing-android-core-" + Base.VERSION_NAME + ".zip";
 
