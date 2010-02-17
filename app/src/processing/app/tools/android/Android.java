@@ -120,8 +120,8 @@ public class Android implements Tool {
     sdkPath = platform.getenv("ANDROID_SDK");
     if (sdkPath == null) {
       Base.showWarning("Android Tools Error",
-                       "Before using Android mode, you must first set\n" +
-                       "the ANDROID_SDK environment variable.", null);
+                       "Before using Android mode, you must first set the\n" +
+                       "ANDROID_SDK environment variable, and restart Processing.", null);
       return false;
     }
 
@@ -131,7 +131,8 @@ public class Android implements Tool {
       Base.showWarning("Android Tools Error",
                        "The ANDROID_SDK environment variable is set incorrectly,\n" +
                        "or the directory no longer exists. No tools folder was\n" +
-                       "found in " + toolsFolder.getAbsolutePath() + ".", null);
+                       "found in " + toolsFolder.getAbsolutePath() + ".\n" +
+                       "Please fix the location and restart Processing.", null);
       return false;
     }
 
@@ -143,13 +144,20 @@ public class Android implements Tool {
       for (String entry : entries) {
         String canonicalEntry = new File(entry).getCanonicalPath();
         if (canonicalEntry.equals(canonicalTools)) {
+          if (Base.isWindows()) {
+            if (new File(toolsFolder, "android.bat").exists()) {
+              toolName = "android.bat";
+            } else if (new File(toolsFolder, "android.exe").exists()) {
+              toolName = "android.exe";
+            }
+          }
           return true;
         }
       }
       Base.showWarning("Android Tools Error",
                        "You need to add the tools folder of the Android SDK\n" +
-                       "to your PATH environment variable. The folder is:\n" + 
-                       toolsFolder.getAbsolutePath() + ".", null);
+                       "to your PATH environment variable and restart Processing.\n" + 
+                       "The folder is: " + toolsFolder.getAbsolutePath() + ".", null);
     } catch (IOException e) {
       Base.showWarning("Android Tools Error",
                        "Error while trying to check the PATH for the Android tools.", e);
