@@ -32,6 +32,8 @@ X   and java.io.File (other exceptions?)
 o   just add a simple poly class? or don't use a poly?
 X   add imports for anything that's in the reference (selections from java.io)
 o 'Array' in reference should be 'arrays' lowercase
+X processing 0142 japanese input problem
+X   http://dev.processing.org/bugs/show_bug.cgi?id=854
 
 fonts
 X loading is very slow on the first time (getting all font names)
@@ -86,9 +88,6 @@ X   and then finalizing it towards 1.0
 _ make sure javadoc builds and uploads, also the zip files
 _   add additional caveats about incompletion
 
-
-_ processing 0142 japanese input problem
-_   http://dev.processing.org/bugs/show_bug.cgi?id=854
 
 _ why aren't prefs from theme.txt showing up in preferences.txt? hrm
 _   or rather, why can't they be overridden? 

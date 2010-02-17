@@ -1,5 +1,32 @@
 PROCESSING 1.x (REV ????) - ?? February 2010
 
+[ changes ] 
+
++ Downgraded the PDF library to use iText 1.5.4, because later versions seem
+  to load slower, and don't seem to offer additional benefits. If the PDF 
+  library gets worse, please post a bug and we'll go back to the 2.x release
+  we were using, or upgrade to the more recent 5.x series.
+
+[ keys ] 
+
+# enable ctrl-ins, shift-ins, shift-delete for cut/copy/paste
+# on windows and linux, but disable on the mac
+editor.keys.alternative_cut_copy_paste = true
+editor.keys.alternative_cut_copy_paste.macosx = false
+http://dev.processing.org/bugs/show_bug.cgi?id=162
+
+# true if shift-backspace sends the delete character, 
+# false if shift-backspace just means backspace
+editor.keys.shift_backspace_is_delete = false
+http://dev.processing.org/bugs/show_bug.cgi?id=1463
+
+# home and end keys should only travel to the start/end of the current line
+editor.keys.home_and_end_travel_far = false
+# the OS X HI Guidelines say that home/end are relative to the document
+# if you don't like it, change it here
+editor.keys.home_and_end_travel_far.macosx = true
+
+
 [ fonts ]
 
 + Fixed a problem with the Create Font tool ignoring the 'smooth' setting
