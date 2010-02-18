@@ -8,6 +8,36 @@ X Implement better caching mechanism when creating large fonts
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1111
 X fix problem with "create font" still showing anti-aliased text
 X don't make fonts power of 2
+X PGraphics3D: beginDraw does not release old textures
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1423
+X   fix from taifun_browser
+
+
+big ones
+_ ortho() behaving differently in P3D vs OPENGL
+_   http://dev.processing.org/bugs/show_bug.cgi?id=100
+_   shows a blank canvas
+_   (was only happening once b/c was drawing first in perspective)
+_   seems to be mapping to 0, 0 - width/2, height/2
+_   fix 3D > OrthoVsPerspective example once ortho works properly
+_     there's a depth problem in addition to the ortho weirdness
+_ modelx/y/z broken when aiming a camera
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1074
+_ opengl + resize window => window content garbled
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1360
+_ modify PVector to include better methods for chaining operations
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1415
+
+quickies
+_ img.get() weirdness
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1198
+_ add a limit to pushStyle() to catch unmatched sets?
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1368
+_ P2D transformation bug from ira
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1175
+_ resize not working in revision 5707
+_   camera() and perspective() were commented out in setSize()
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1391
 
 _ consider adding skewX/Y
 _   do them as shearX/Y
@@ -16,10 +46,16 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=1448
 _ opengl applet problems
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1364
 
+_ method of threading but queue an event to be run when safe
+_   e.g. queueing items like mouse/keybd, but generic fxns
+
 _ inconsistent anti-aliasing with OpenGL
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1413
 _ modify PVector to include better methods for chaining operations
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1415
+
+_ selectInput() fails when called from within keyPressed()
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1220
 
 _ add java.io.Reader (and Writer?) to imports
 
@@ -46,11 +82,14 @@ _ deal with issue of single pixel seam at the edge of textures
 _   http://dev.processing.org/bugs/show_bug.cgi?id=602
 _   should vertexTexture() divide by width/height or width-1/height-1?
 
+looping/events
 _ key and mouse events delivered out of order
 _   http://dev.processing.org/bugs/show_bug.cgi?id=638
 _ key/mouse events have concurrency problems with noLoop()
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1323
 _   need to say "no drawing inside mouse/key events w/ noLoop"
+_ redraw() doesn't work from within draw()
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1363
 
 _ make the index lookup use numbers up to 256?
 
@@ -75,8 +114,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=1176
 _ what's the difference with ascent on loadFont vs. createFont?
 _ noCursor() doesn't work in present mode
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1177
-_ modelx/y/z broken when aiming a camera
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1074
 _ in P2D, two vertex() line calls with fill() causes duplicate output
 _   works fine in other renderers, has to do with tesselation
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1191
@@ -229,12 +266,6 @@ _ saveFrame() at the end of a draw mode program is problematic
 _   app might exit before the file has finished writing to disk
 _   need to block other activity inside screenGrab until finished
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081706752
-_ what's up with stop() vs exit()?
-_   need to get this straightened for p5 (i.e. bc has this problem)
-_   make sure the main() doesn't exit until the applet has finished
-_   i.e. problem with main calling itself multiple times in Alpheus
-_   if exit() (or stop) is called, then System.exit() gets called,
-_   even though the main() wants to keep going
 
 _ for begin/endRecord, use a piggyback mechanism
 _   that way won't have to pass a PApplet around
@@ -242,24 +273,32 @@ _   this has a big impact on the SVG library
 _   in fact, this maybe should be a library that does it
 _     so that the file size can be much smaller
 
-_ when closing a sketch via the close box, make sure stop() getting called
-X   found a problem for release 0133
-_   test to see if it's working
-
 _ STROKE_WEIGHT field in PGraphics3 is a disaster, because it's an int
 _   use the SW from vertex instead.. why set stroke in triangle vars at all?
 _   currently truncating to an int inside add_line_no_clip
 _   need to clean all this crap up
 
+stop() mess
+_ double stop() called with noLoop()
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1270
 _ stop() not getting called
 _   http://dev.processing.org/bugs/show_bug.cgi?id=183
 _   major problem for libraries
 _   and start() is supposedly called by the applet viewer
 _   http://java.sun.com/j2se/1.4.2/docs/api/java/applet/Applet.html#start()
 _   need to track this stuff down a bit
+_ when closing a sketch via the close box, make sure stop() getting called
+X   found a problem for release 0133
+_   test to see if it's working
+_ what's up with stop() vs exit()?
+_   need to get this straightened for p5 (i.e. bc has this problem)
+_   make sure the main() doesn't exit until the applet has finished
+_   i.e. problem with main calling itself multiple times in Alpheus
+_   if exit() (or stop) is called, then System.exit() gets called,
+_   even though the main() wants to keep going
+_ more chatter with this
+_   http://dev.processing.org/bugs/show_bug.cgi?id=131
 
-_ method of threading but queue an event to be run when safe
-_   e.g. queueing items like mouse/keybd, but generic fxns
 
 
 ////////////////////////////////////////////////////////////////////
@@ -333,7 +372,8 @@ _     or if the sketch window is foremost
 _     maybe a hack where a new menubar is added? 
 _ --display not working on osx
 _   http://dev.processing.org/bugs/show_bug.cgi?id=531
-
+_ "Target VM failed to initialize" when using Present mode on Mac OS X
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1257
 
 CORE / PFont and text()
 
@@ -436,13 +476,6 @@ CORE / PGraphics3D
 _ make thick lines draw perpendicular to the screen with P3D
 _   http://dev.processing.org/bugs/show_bug.cgi?id=956
 _   ewjordan suggests building the quad in screen coords after perspective
-_ ortho() behaving differently in P3D vs OPENGL
-_   http://dev.processing.org/bugs/show_bug.cgi?id=100
-_   shows a blank canvas
-_   (was only happening once b/c was drawing first in perspective)
-_   seems to be mapping to 0, 0 - width/2, height/2
-_   fix 3D > OrthoVsPerspective example once ortho works properly
-_     there's a depth problem in addition to the ortho weirdness
 _ improve hint(ENABLE_DEPTH_SORT) to use proper painter's algo
 _   http://dev.processing.org/bugs/show_bug.cgi?id=176
 _   polygon z-order depth sorting with alpha in opengl

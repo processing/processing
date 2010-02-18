@@ -437,6 +437,7 @@ public class PGraphics3D extends PGraphics {
     shapeFirst = 0;
 
     // reset textures
+    Arrays.fill(textures, null);
     textureIndex = 0;
 
     normal(0, 0, 1);
