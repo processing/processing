@@ -62,8 +62,23 @@ _ move the jdk stuff outside of the build
 _   http://processing.org/download/jre-6u18.zip, .tgz
 _   only get the java files when doing a dist build
 _   http://ant.apache.org/manual/CoreTasks/get.html
+_   mostly done, but need to test and remove the others
+
+cleaning
+X update to jogl 1.1.1
+X   do this with enhanced library/platform support
+X see how platform is determined by jogl / use for lib import
+X apple bug may have been fixed
+X   http://dev.processing.org/bugs/show_bug.cgi?id=786
+X javadoc "advanced" reference by beta
+X   and then finalizing it towards 1.0
+
+svn copy svn://processing.org/trunk/processing svn://processing.org/tags/processing-01XX
 
 _ don't allow processing to run on snow leopard with 1.5
+
+_ do some testing for windows 7 on 64-bit
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1424
 
 _ command line support is currently broken
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1048
@@ -76,25 +91,25 @@ _ processing.app.Commander headless still requiring X11
 _   problem is static calls to PApplet
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1426
 
-cleaning
-X update to jogl 1.1.1
-X   do this with enhanced library/platform support
-X see how platform is determined by jogl / use for lib import
-X apple bug may have been fixed
-X   http://dev.processing.org/bugs/show_bug.cgi?id=786
-X javadoc "advanced" reference by beta
-X   and then finalizing it towards 1.0
+reserved names/class naming
+_ Saving sketch with the same name as a class or primitive breaks sketch
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1165
+_ don't allow people to override methods like paint() 
+_   make them final? just improve the error messages?
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1219
+_ Processing chokes if a sketch defines a class with same name as the sketch
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1199
+
+_ single-line html comments not handled properly on export
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1419
 
 _ make sure javadoc builds and uploads, also the zip files
 _   add additional caveats about incompletion
-
 
 _ why aren't prefs from theme.txt showing up in preferences.txt? hrm
 _   or rather, why can't they be overridden? 
 _   should fonts at least be in prefs.txt?
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1444
-
-svn copy svn://processing.org/trunk/processing svn://processing.org/tags/processing-01XX
 
 _ automatically add version numbers to Info.plist
 _   would help with beta releases, and not having to edit by hand
@@ -838,6 +853,10 @@ _ non-void functions confuse preprocessor
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1442
 5 _ support for assertions
 5 _   http://dev.processing.org/bugs/show_bug.cgi?id=1188
+_ "class fFrame extends Frame {" it works in first run but later doesn't
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1294
+_ Error compiling when 'new' is first word in an 'else' block
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1362
 
 
 PDE / Editor
@@ -937,6 +956,8 @@ _ implement better method of showing curly brace closure
 _   http://dev.processing.org/bugs/show_bug.cgi?id=295
 _ sketches should only write to the console of their editor window
 _   http://dev.processing.org/bugs/show_bug.cgi?id=921
+P5 _ problems with file/print
+P5 _   http://dev.processing.org/bugs/show_bug.cgi?id=1230
 
 
 PDE / Editor Buttons
@@ -1240,7 +1261,8 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=880
 _ break out as its own plugin
 _ Bracket idenfication {} is not aware of comments //
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1450
-
+_ comment is shown as code after auto format
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1194
 
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
@@ -1302,6 +1324,8 @@ _   or audio won't stop even after hitting stop
 _ when an exception comes through during cameraEvent, not printed
 _   need to show an actual stack trace (InvocationTargetEx) 
 _   because otherwise it's impossible to debug this stuff
+_ video library not working on export to web
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1421
 
 
 LIBRARIES / XML
@@ -1314,6 +1338,13 @@ _ need to handle how save() works inside xml lib
 _ need to handle <!ENTITY tags for svg documents
 _ vectors shouldn't be exposed, need to expose attr lists as arrays
 _   or also add a method for getting the vectors?
+_ XML attributes named "xmlns" always return NULL
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1196
+
+LIBRARIES / Net
+
+_ clientEvent() called even w/o data from server
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1345
 
 
 LIBRARIES / Serial
