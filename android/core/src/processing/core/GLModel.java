@@ -15,7 +15,6 @@ import javax.microedition.khronos.opengles.*;
  * By Andres Colubri
  * 
  */
-@SuppressWarnings("unused")
 public class GLModel implements GLConstants, PConstants {
   protected PApplet parent;    
   protected GL11 gl;  
