@@ -491,7 +491,8 @@ public class Android implements Tool {
 
 
   public String getDefaultDevice() {
-    return Device.avdDonut.name;
+//    return Device.avdDonut.name;
+    return Device.avdEclair.name;
   }
 
 
