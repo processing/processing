@@ -1061,7 +1061,7 @@ public class PGraphicsAndroid2D extends PGraphics {
 
   public float textAscent() {
 //    Font font = textFont.getFont();
-    Typeface font = textFont.getFont();
+    Typeface font = textFont.getTypeface();
     if (font == null) {
       return super.textAscent();
     }
@@ -1073,7 +1073,7 @@ public class PGraphicsAndroid2D extends PGraphics {
 
   public float textDescent() {
 //    Font font = textFont.getFont();
-    Typeface font = textFont.getFont();
+    Typeface font = textFont.getTypeface();
     if (font == null) {
       return super.textDescent();
     }
@@ -1085,7 +1085,7 @@ public class PGraphicsAndroid2D extends PGraphics {
 
   public void textFont(PFont which) {
     super.textFont(which);
-    fillPaint.setTypeface(which.getFont());
+    fillPaint.setTypeface(which.getTypeface());
   }
 
 
@@ -1111,7 +1111,7 @@ public class PGraphicsAndroid2D extends PGraphics {
    */
   public void textSize(float size) {
 //    Font font = textFont.getFont();
-    Typeface font = textFont.getFont();
+    Typeface font = textFont.getTypeface();
     if (font != null) {
 //      Font dfont = font.deriveFont(size);
 //      canvas.setFont(dfont);
@@ -1134,7 +1134,7 @@ public class PGraphicsAndroid2D extends PGraphics {
 
   protected float textWidthImpl(char buffer[], int start, int stop) {
 //    Font font = textFont.getFont();
-    Typeface font = textFont.getFont();
+    Typeface font = textFont.getTypeface();
     if (font == null) {
       return super.textWidthImpl(buffer, start, stop);
     }
@@ -1166,7 +1166,7 @@ public class PGraphicsAndroid2D extends PGraphics {
 
   protected void textLineImpl(char buffer[], int start, int stop,
                               float x, float y) {
-    Typeface font = textFont.getFont();
+    Typeface font = textFont.getTypeface();
     if (font == null) {
       super.textLineImpl(buffer, start, stop, x, y);
       return;
