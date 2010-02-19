@@ -11,6 +11,9 @@ X don't make fonts power of 2
 X PGraphics3D: beginDraw does not release old textures
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1423
 X   fix from taifun_browser
+_ removing camera() and perspective() from setSize() trashes resize
+_   probably regression b/c camera/perspective can't be called then
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1391
 
 
 big ones
@@ -519,6 +522,8 @@ _   box(40);
 
 CORE / PImage
 
+_ accuracy problems make alpha channel go to FE with image.copy()
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1420
 _ improve blend() accuracy when using ADD
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1008
 _   includes code for a slow but more accurate mode
