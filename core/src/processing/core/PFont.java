@@ -203,7 +203,7 @@ public class PFont implements PConstants {
       // http://dev.processing.org/bugs/show_bug.cgi?id=494
       Arrays.sort(charset);
 
-      glyphs = new Glyph[glyphCount];
+      glyphs = new Glyph[charset.length];
 
       glyphCount = 0;
       for (char c : charset) {
@@ -348,7 +348,6 @@ public class PFont implements PConstants {
    * @param c character to create an image for.
    */
   protected void addGlyph(char c) {
-    //Glyph glyph = createGlyph(c);
     Glyph glyph = new Glyph(c);
 
     if (glyphCount == glyphs.length) {
@@ -735,11 +734,11 @@ public class PFont implements PConstants {
       for (int y = 0; y < h; y++) {
         for (int x = 0; x < w; x++) {
           pixels[y * width + x] = temp[y*w + x] & 0xff;
-          //System.out.print((images[i].pixels[y*64+x] > 128) ? "*" : ".");
+//          System.out.print((image.pixels[y*64+x] > 128) ? "*" : ".");
         }
-        //System.out.println();
+//        System.out.println();
       }
-      //System.out.println();
+//      System.out.println();
     }
     
     
