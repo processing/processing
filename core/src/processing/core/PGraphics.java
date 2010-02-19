@@ -3530,36 +3530,32 @@ public class PGraphics extends PImage implements PConstants {
 
 
   protected void textCharImpl(char ch, float x, float y) { //, float z) {
-    int index = textFont.index(ch);
-    if (index == -1) return;
+    PFont.Glyph glyph = textFont.getGlyph(ch);
+    if (glyph != null) {
+      if (textMode == MODEL) {
+        float high    = glyph.height     / (float) textFont.size;
+        float bwidth  = glyph.width      / (float) textFont.size;
+        float lextent = glyph.leftExtent / (float) textFont.size;
+        float textent = glyph.topExtent  / (float) textFont.size;
 
-    //PImage glyph = textFont.images[index];
-    //PImage glyph = textFont.glyphs[index].image;
-    PFont.Glyph glyph = textFont.glyphs[index];
+        float x1 = x + lextent * textSize;
+        float y1 = y - textent * textSize;
+        float x2 = x1 + bwidth * textSize;
+        float y2 = y1 + high * textSize;
 
-    if (textMode == MODEL) {
-      float high    = glyph.height     / (float) textFont.size;
-      float bwidth  = glyph.width      / (float) textFont.size;
-      float lextent = glyph.leftExtent / (float) textFont.size;
-      float textent = glyph.topExtent  / (float) textFont.size;
+        textCharModelImpl(glyph.image,
+                          x1, y1, x2, y2,
+                          glyph.width, glyph.height);
 
-      float x1 = x + lextent * textSize;
-      float y1 = y - textent * textSize;
-      float x2 = x1 + bwidth * textSize;
-      float y2 = y1 + high * textSize;
+      } else if (textMode == SCREEN) {
+        int xx = (int) x + glyph.leftExtent;
+        int yy = (int) y - glyph.topExtent;
 
-      textCharModelImpl(glyph.image,
-                        x1, y1, x2, y2,
-                        glyph.width, glyph.height);
+        int w0 = glyph.width;
+        int h0 = glyph.height;
 
-    } else if (textMode == SCREEN) {
-      int xx = (int) x + glyph.leftExtent;
-      int yy = (int) y - glyph.topExtent;
-
-      int w0 = glyph.width;
-      int h0 = glyph.height;
-
-      textCharScreenImpl(glyph.image, xx, yy, w0, h0);
+        textCharScreenImpl(glyph.image, xx, yy, w0, h0);
+      }
     }
   }
 
