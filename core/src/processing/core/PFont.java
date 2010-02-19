@@ -33,7 +33,7 @@ import java.util.Arrays;
 /**
  * Grayscale bitmap font class used by Processing.
  * <P>
- * Awful (and by that, I mean awesome) ascii (non)art for how this works:
+ * Awful (and by that, I mean awesome) ASCII (non-)art for how this works:
  * <PRE>
  *   |
  *   |                   height is the full used height of the image
@@ -54,17 +54,14 @@ import java.util.Arrays;
  */
 public class PFont implements PConstants {
 
-  protected int charCount;
-  protected Glyph[] glyphs;
-//  public PImage images[];
-
-  /**
-   * Native Java version of the font. If possible, this allows the
-   * PGraphics subclass to just use Java's font rendering stuff
-   * in situations where that's faster.
+  /** Number of character glyphs in this font. */
+  protected int glyphCount;
+  
+  /** 
+   * Actual glyph data. The length of this array won't necessarily be the 
+   * same size as glyphCount, in cases where lazy font loading is in use.
    */
-  protected Font font;
-  protected boolean fontSearched;
+  protected Glyph[] glyphs;
 
   /**
    * Name of the font as seen by Java when it was created.
@@ -72,70 +69,64 @@ public class PFont implements PConstants {
    */
   protected String name;
 
-  /**
+  /** 
    * Postscript name of the font that this bitmap was created from.
    */
   protected String psname;
 
-  /** "natural" size of the font (most often 48) */
+  /** 
+   * The original size of the font when it was first created 
+   */
   protected int size;
 
   /** true if smoothing was enabled for this font, used for native impl */
   protected boolean smooth;
 
   /** 
-   * Next power of 2 over the max image size (usually 64). This is what the 
-   * file format expects, unfortunately, which means lots of empty 0s. In 
-   * practice, this isn't a huge deal because when compressed, the extra 
-   * space is almost entirely reclaimed. As of releases following (but not 
-   * including) 1.0.9, the value is only used when reading or writing the file. 
+   * The ascent of the font. If the 'd' character is present in this PFont, 
+   * this value is replaced with its pixel height, because the values returned
+   * by FontMetrics.getAscent() seem to be terrible. 
    */
-//  public int mbox2;
-//  protected int mbox2;
-
-  /** floating point width (convenience) */
-//  protected float fwidth;
-
-  /** floating point width (convenience) */
-//  protected float fheight;
-
-  /** texture width, same as mbox2, but reserved for future use */
-//  public int twidth;
-
-  /** texture height, same as mbox2, but reserved for future use */
-//  public int theight;
-
-//  public int value[];  // char code
-//  public int height[]; // height of the bitmap data
-//  public int width[];  // width of bitmap data
-//  public int setWidth[];  // width displaced by the char
-//  public int topExtent[];  // offset for the top
-//  public int leftExtent[];  // offset for the left
-
   protected int ascent;
+  
+  /** 
+   * The descent of the font. If the 'p' character is present in this PFont, 
+   * this value is replaced with its lowest pixel height, because the values 
+   * returned by FontMetrics.getDescent() are gross. 
+   */
   protected int descent;
 
-  protected int ascii[];  // quick lookup for the ascii chars
+  /**
+   * A more efficient array lookup for straight ASCII characters. For Unicode
+   * characters, a QuickSort-style search is used. 
+   */
+  protected int[] ascii;
 
-  // only load when prompted by an index() call
+  /**
+   * True if this font is set to load dynamically. This is the default when 
+   * createFont() method is called without a character set. Bitmap versions of 
+   * characters are only created when prompted by an index() call.
+   */
   protected boolean lazy;
-  
-  // shared by the text() functions to avoid incessant allocation of memory
-  //protected char textBuffer[] = new char[8 * 1024];
-  //protected char widthBuffer[] = new char[8 * 1024];
-  
+
+  /**
+   * Native Java version of the font. If possible, this allows the
+   * PGraphics subclass to just use Java's font rendering stuff
+   * in situations where that's faster.
+   */
+  protected Font font;
+
+  /** 
+   * True if we've already tried to find the native AWT version of this font.
+   */
+  protected boolean fontSearched;
+
+  /**
+   * Array of the native system fonts. Used to lookup native fonts by their 
+   * PostScript name. This is a workaround for a several year old Apple Java
+   * bug that they can't be bothered to fix. 
+   */
   static protected Font[] fonts;
-
-
-  public class Glyph {
-    PImage image;
-    int value;
-    int height;
-    int width;
-    int setWidth;
-    int topExtent;
-    int leftExtent;
-  }
 
 
   public PFont() { }  // for subclasses
@@ -145,7 +136,7 @@ public class PFont implements PConstants {
     DataInputStream is = new DataInputStream(input);
 
     // number of character images stored in this font
-    charCount = is.readInt();
+    glyphCount = is.readInt();
 
     // bit count is ignored since this is always 8
     //int numBits = is.readInt();
@@ -177,7 +168,7 @@ public class PFont implements PConstants {
     descent = is.readInt();  // formerly ignored struct padding
 
     // allocate enough space for the character info
-    glyphs = new Glyph[charCount];
+    glyphs = new Glyph[glyphCount];
 //    value       = new int[charCount];
 //    height      = new int[charCount];
 //    width       = new int[charCount];
@@ -189,7 +180,7 @@ public class PFont implements PConstants {
     for (int i = 0; i < 128; i++) ascii[i] = -1;
 
     // read the information about the individual characters
-    for (int i = 0; i < charCount; i++) {
+    for (int i = 0; i < glyphCount; i++) {
       glyphs[i] = new Glyph();
       Glyph glyph = glyphs[i];
 
@@ -286,7 +277,7 @@ public class PFont implements PConstants {
 
     // the count gets reset later based on how many of
     // the chars are actually found inside the font.
-    this.charCount = (charset == null) ? 65536 : charset.length;
+    this.glyphCount = (charset == null) ? 65536 : charset.length;
     this.size = font.getSize();
 
 //    fwidth = fheight = size;
@@ -300,7 +291,7 @@ public class PFont implements PConstants {
 //    setWidth    = new int[charCount];
 //    topExtent   = new int[charCount];
 //    leftExtent  = new int[charCount];
-    glyphs = new Glyph[charCount];
+    glyphs = new Glyph[glyphCount];
 
     ascii = new int[128];
     for (int i = 0; i < 128; i++) ascii[i] = -1;
@@ -328,7 +319,7 @@ public class PFont implements PConstants {
 
     int maxWidthHeight = 0;
     int index = 0;
-    for (int i = 0; i < charCount; i++) {
+    for (int i = 0; i < glyphCount; i++) {
       Glyph glyph = new Glyph();
       char c = (charset == null) ? (char)i : charset[i];
 
@@ -422,9 +413,9 @@ public class PFont implements PConstants {
 //      index++;
       glyphs[index++] = glyph;
     }
-    if (charCount != index) {
+    if (glyphCount != index) {
       glyphs = (Glyph[]) PApplet.subset(glyphs, 0, index);
-      charCount = index;
+      glyphCount = index;
     }
 
     // foreign font, so just make ascent the max topExtent
@@ -534,13 +525,7 @@ public class PFont implements PConstants {
   }
   
   
-  protected void createGlyph(char c) {
-//    System.out.println("adding glyph " + c);
-//    int maxWidthHeight = 0;
-//    int index = 0;
-//    for (int i = 0; i < charCount; i++) {
-//      char c = (charset == null) ? (char)i : charset[i];
-//      char c = 0;
+  protected Glyph createGlyph(char c) {
     Glyph glyph = new Glyph();
 
 //    if (font.canDisplay(c)) {  // skip chars not in the font
@@ -630,34 +615,52 @@ public class PFont implements PConstants {
         pixels[pindex] = val;
       }
     }
+
+    // replace the ascent/descent values with something.. err, decent.
+    if (glyph.value == 'd') {
+      if (ascent == 0) ascent = glyph.topExtent;
+    }
+    if (glyph.value == 'p') {
+      if (descent == 0) descent = -glyph.topExtent + glyph.height;
+    }
+    return glyph;
+  }
+  
+  
+  /**
+   * Create a new glyph, and add the character to the current font.
+   * @param c character to create an image for.
+   */
+  protected void addGlyph(char c) {
+    Glyph glyph = createGlyph(c);
 //    if (charCount != index) {
 //      glyphs = (Glyph[]) PApplet.subset(glyphs, 0, index);
 //      charCount = index;
 //    }
 
-    if (charCount == glyphs.length) {
+    if (glyphCount == glyphs.length) {
       glyphs = (Glyph[]) PApplet.expand(glyphs);
     }
-    if (charCount == 0) {
-      glyphs[charCount] = glyph;
+    if (glyphCount == 0) {
+      glyphs[glyphCount] = glyph;
       if (glyph.value < 128) {
         ascii[glyph.value] = 0;
       }
       
-    } else if (glyphs[charCount-1].value < glyph.value) {
+    } else if (glyphs[glyphCount-1].value < glyph.value) {
       //System.out.println("at end " + (char) glyph.value);
-      glyphs[charCount] = glyph;
+      glyphs[glyphCount] = glyph;
       if (glyph.value < 128) {
-        ascii[glyph.value] = charCount;
+        ascii[glyph.value] = glyphCount;
       }
       
     } else {
-      for (int i = 0; i < charCount; i++) {
+      for (int i = 0; i < glyphCount; i++) {
 //        System.out.println(i + " of " + charCount + " is " + (char)glyphs[i].value);
         //int value = glyphs[i].value; 
         //if (glyphs[i].value > glyph.value) {
         if (glyphs[i].value > c) {
-          for (int j = charCount; j > i; --j) {
+          for (int j = glyphCount; j > i; --j) {
 //            System.out.println("  moving " + (char)glyphs[j-1].value); // + 
 //                               //" to " + (char)glyphs[j].value);
             glyphs[j] = glyphs[j-1];
@@ -682,7 +685,7 @@ public class PFont implements PConstants {
         }
       }
     }
-    charCount++;
+    glyphCount++;
 //    for (int i = 0; i < charCount; i++) {
 //      System.out.println("[" + i + "] " + (char)glyphs[i].value);
 //    }
@@ -760,7 +763,7 @@ public class PFont implements PConstants {
   public void save(OutputStream output) throws IOException {
     DataOutputStream os = new DataOutputStream(output);
 
-    os.writeInt(charCount);
+    os.writeInt(glyphCount);
 
     if ((name == null) || (psname == null)) {
       name = "";
@@ -820,11 +823,17 @@ public class PFont implements PConstants {
   }
 
 
+  public Glyph getGlyph(char c) {
+    int index = index(c);
+    return (index == -1) ? null : glyphs[index];
+  }
+
+
   /**
-   * Get index for the char (convert from unicode to bagel charset).
+   * Get index for the character.
    * @return index into arrays or -1 if not found
    */
-  public int index(char c) {
+  protected int index(char c) {
     if (lazy) {
       int index = indexActual(c);
       if (index != -1) {
@@ -832,7 +841,7 @@ public class PFont implements PConstants {
       }
       if (font.canDisplay(c)) {
         // create the glyph
-        createGlyph(c);
+        addGlyph(c);
         // now where did i put that?      
         return indexActual(c);
         
@@ -849,14 +858,14 @@ public class PFont implements PConstants {
     // degenerate case, but the find function will have trouble
     // if there are somehow zero chars in the lookup
     //if (value.length == 0) return -1;
-    if (charCount == 0) return -1;
+    if (glyphCount == 0) return -1;
 
     // quicker lookup for the ascii fellers
     if (c < 128) return ascii[c];
 
     // some other unicode char, hunt it out
     //return index_hunt(c, 0, value.length-1);
-    return indexHunt(c, 0, charCount-1);
+    return indexHunt(c, 0, glyphCount-1);
   }
 
 
@@ -1028,5 +1037,90 @@ public class PFont implements PConstants {
       }
     }
     return new Font(name, Font.PLAIN, 1);
+  }
+  
+  
+  /**
+   * A single character, and its visage.
+   */
+  public class Glyph {
+    PImage image;
+    int value;
+    int height;
+    int width;
+    int setWidth;
+    int topExtent;
+    int leftExtent;
+    
+    
+    protected Glyph() {
+      // used when reading from a stream
+    }
+    
+    
+    protected Glyph(char c) {
+      int mbox3 = size * 3;
+      lazyGraphics.setColor(Color.white);
+      lazyGraphics.fillRect(0, 0, mbox3, mbox3);
+      lazyGraphics.setColor(Color.black);
+      lazyGraphics.drawString(String.valueOf(c), size, size * 2);
+
+      WritableRaster raster = lazyImage.getRaster();
+      raster.getDataElements(0, 0, mbox3, mbox3, lazySamples);
+
+      int minX = 1000, maxX = 0;
+      int minY = 1000, maxY = 0;
+      boolean pixelFound = false;
+
+      for (int y = 0; y < mbox3; y++) {
+        for (int x = 0; x < mbox3; x++) {
+          int sample = lazySamples[y * mbox3 + x] & 0xff;
+          if (sample != 255) {
+            if (x < minX) minX = x;
+            if (y < minY) minY = y;
+            if (x > maxX) maxX = x;
+            if (y > maxY) maxY = y;
+            pixelFound = true;
+          }
+        }
+      }
+
+      if (!pixelFound) {
+        minX = minY = 0;
+        maxX = maxY = 0;
+        // this will create a 1 pixel white (clear) character..
+        // maybe better to set one to -1 so nothing is added?
+      }
+
+      value = c;
+      height = (maxY - minY) + 1;
+      width = (maxX - minX) + 1;
+      setWidth = lazyMetrics.charWidth(c);
+
+      // offset from vertical location of baseline
+      // of where the char was drawn (size*2)
+      topExtent = size*2 - minY;
+
+      // offset from left of where coord was drawn
+      leftExtent = minX - size;
+
+      image = new PImage(width, height, ALPHA);
+      int[] pixels = image.pixels;
+      for (int y = minY; y <= maxY; y++) {
+        for (int x = minX; x <= maxX; x++) {
+          int val = 255 - (lazySamples[y * mbox3 + x] & 0xff);
+          int pindex = (y - minY) * width + (x - minX);
+          pixels[pindex] = val;
+        }
+      }
+
+      // replace the ascent/descent values with something.. err, decent.
+      if (value == 'd') {
+        if (ascent == 0) ascent = topExtent;
+      }
+      if (value == 'p') {
+        if (descent == 0) descent = -topExtent + height;
+      }
+    }
   }
 }
