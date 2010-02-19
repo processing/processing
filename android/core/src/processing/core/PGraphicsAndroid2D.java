@@ -89,6 +89,7 @@ public class PGraphicsAndroid2D extends PGraphics {
     fillPaint.setStyle(Style.FILL);
     strokePaint = new Paint();
     strokePaint.setStyle(Style.STROKE);
+    tintPaint = new Paint(Paint.FILTER_BITMAP_FLAG);
   }
 
 
@@ -862,58 +863,49 @@ public class PGraphicsAndroid2D extends PGraphics {
   protected void imageImpl(PImage who,
                            float x1, float y1, float x2, float y2,
                            int u1, int v1, int u2, int v2) {
-//    canvas.drawBitmap(who.pixels, 0, who.width,
-//                      x1, y1, (x2-x1), (y2-y1),
-//                      who.format == ARGB, tint ? tintPaint : null);
-    rect.set(x1, y1, x2, y2);
-    if (who.bitmap == null || 
-        who.width != who.bitmap.getWidth() || 
-        who.height != who.bitmap.getHeight()) {
-      who.bitmap = Bitmap.createBitmap(who.width, who.height, Config.ARGB_8888);
-      who.modified = true;
-    } 
-    if (who.modified) {
-      who.bitmap.setPixels(who.pixels, 0, who.width, 0, 0, who.width, who.height);
-//      int offset = 
-//      canvas.drawBitmap(who.pixels, offset, who.width, x1, y1, x2-x1, y2-y1, 
-//                        who.format == ARGB || who.format == ALPHA, tint ? tintPaint : null);
-    } 
-//    canvas.drawBitmap(who.bitmap, null, rect, tint ? tintPaint : null);
-    
-    if (imageImplSrcRect == null) {
-      imageImplSrcRect = new Rect(u1, v1, u2-u1, v2-v1);
-      imageImplDstRect = new Rect((int) x1, (int) y1, (int) (x2-x1), (int) (y2-y1));
+//    pushStyle();
+//    rectMode(CORNERS);
+//    noStroke();
+//    rect(x1, y1, x2, y2);
+//    popStyle();
+//    if (true) return;
+
+    if (who.bitmap == null && (who.format == ARGB || who.format == RGB)) {
+      int offset = v1*who.width + u1;
+      System.out.println(tint + " " + PApplet.hex(tintPaint.getColor()));
+      canvas.drawBitmap(who.pixels, offset, who.width,
+                        x1, y1, u2-u1, v2-v1,
+                        who.format == ARGB, tint ? tintPaint : null);
     } else {
-      imageImplSrcRect.set(u1, v1, u2-u1, v2-v1);
-      imageImplDstRect.set((int) x1, (int) y1, (int) (x2-x1), (int) (y2-y1));
+      rect.set(x1, y1, x2, y2);
+      if (who.bitmap == null || 
+          who.width != who.bitmap.getWidth() || 
+          who.height != who.bitmap.getHeight()) {
+//        System.out.println("creating bitmap " + who.format + " " + 
+//                           who.width + "x" + who.height);
+        who.bitmap = Bitmap.createBitmap(who.width, who.height, Config.ARGB_8888);
+//        who.bitmap = 
+//          Bitmap.createBitmap(who.width, who.height, 
+//                              who.format == ALPHA ? Config.ALPHA_8 : Config.ARGB_8888);
+        who.modified = true;
+      }
+      if (who.modified) {
+        who.bitmap.setPixels(who.pixels, 0, who.width, 0, 0, who.width, who.height);
+        who.modified = false;
+      } 
+
+      if (imageImplSrcRect == null) {
+        imageImplSrcRect = new Rect(u1, v1, u2-u1, v2-v1);
+        imageImplDstRect = new Rect((int) x1, (int) y1, (int) (x2-x1), (int) (y2-y1));
+      } else {
+        imageImplSrcRect.set(u1, v1, u2-u1, v2-v1);
+        imageImplDstRect.set((int) x1, (int) y1, (int) (x2-x1), (int) (y2-y1));
+      }
+      //canvas.drawBitmap(who.bitmap, imageImplSrcRect, imageImplDstRect, tint ? tintPaint : null);
+      //System.out.println(PApplet.hex(fillPaint.getColor()));
+      //canvas.drawBitmap(who.bitmap, imageImplSrcRect, imageImplDstRect, fillPaint);
+      canvas.drawBitmap(who.bitmap, imageImplSrcRect, imageImplDstRect, null);
     }
-    canvas.drawBitmap(who.bitmap, imageImplSrcRect, imageImplDstRect, tint ? tintPaint : null);
-
-
-//    if (who.getCache(this) == null) {
-//      who.setCache(this, new ImageCache(who));
-//      who.updatePixels();  // mark the whole thing for update
-//      who.modified = true;
-//    }
-//
-//    ImageCache cash = (ImageCache) who.getCache(this);
-//    // if image previously was tinted, or the color changed
-//    // or the image was tinted, and tint is now disabled
-//    if ((tint && !cash.tinted) ||
-//        (tint && (cash.tintedColor != tintColor)) ||
-//        (!tint && cash.tinted)) {
-//      // for tint change, mark all pixels as needing update
-//      who.updatePixels();
-//    }
-//
-//    if (who.modified) {
-//      cash.update(tint, tintColor);
-//      who.modified = false;
-//    }
-//
-//    canvas.drawImage(((ImageCache) who.getCache(this)).image,
-//                 (int) x1, (int) y1, (int) x2, (int) y2,
-//                 u1, v1, u2, v2, null);
   }
 
 
@@ -1574,8 +1566,8 @@ public class PGraphicsAndroid2D extends PGraphics {
 
   protected void tintFromCalc() {
     super.tintFromCalc();
-//    tintColorObject = new Color(tintColor, true);
-    tintPaint.setColor(tintColor);
+//    tintPaint.setColor(tintColor);
+    tintPaint.setColorFilter(new PorterDuffColorFilter(tintColor, PorterDuff.Mode.SRC_OVER));
   }
 
 
