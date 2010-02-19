@@ -4394,9 +4394,9 @@ public class PGraphicsAndroid3D extends PGraphics {
 //  }
 
 
-  private final float clamp(float a) {
-    return (a < 1) ? a : 1;
-  }
+//  private final float clamp(float a) {
+//    return (a < 1) ? a : 1;
+//  }
 
 
   private final float abs(float a) {
