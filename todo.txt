@@ -34,6 +34,10 @@ X   add imports for anything that's in the reference (selections from java.io)
 o 'Array' in reference should be 'arrays' lowercase
 X processing 0142 japanese input problem
 X   http://dev.processing.org/bugs/show_bug.cgi?id=854
+X update JNA to version 3.2.4 to support Windows 7 64-bit
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1424
+X fix LITERAL_class in PDE code (help from Christian Thiemann) 
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1466
 
 fonts
 X loading is very slow on the first time (getting all font names)
@@ -72,6 +76,9 @@ X apple bug may have been fixed
 X   http://dev.processing.org/bugs/show_bug.cgi?id=786
 X javadoc "advanced" reference by beta
 X   and then finalizing it towards 1.0
+X not saving sketch when exiting (only with windows lan setup)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1193
+
 
 svn copy svn://processing.org/trunk/processing svn://processing.org/tags/processing-01XX
 
@@ -861,8 +868,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=1362
 
 PDE / Editor
 
-3 _ not saving sketch when exiting (only with windows lan setup)
-3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1193
 _ improve update check message "a new release (1.0.1) is available"
 _   be more descriptive, use a second line in latest.txt
 _   maybe just include the full text of the update message there?
