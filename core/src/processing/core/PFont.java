@@ -7,9 +7,8 @@
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
+  modify it under the terms of version 2.01 of the GNU Lesser General
+  Public License as published by the Free Software Foundation.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -129,132 +128,30 @@ public class PFont implements PConstants {
   static protected Font[] fonts;
 
 
+  // objects to handle creation of font characters only as they're needed
+  BufferedImage lazyImage;
+  Graphics2D lazyGraphics;
+  FontMetrics lazyMetrics;
+  int[] lazySamples;  
+
+
   public PFont() { }  // for subclasses
 
 
-  public PFont(InputStream input) throws IOException {
-    DataInputStream is = new DataInputStream(input);
-
-    // number of character images stored in this font
-    glyphCount = is.readInt();
-
-    // bit count is ignored since this is always 8
-    //int numBits = is.readInt();
-    // used to be the bitCount, but now used for version number.
-    // version 8 is any font before 69, so 9 is anything from 83+
-    // 9 was buggy so gonna increment to 10.
-    int version = is.readInt();
-
-    // this was formerly ignored, now it's the actual font size
-    //mbox = is.readInt();
-    size = is.readInt();
-    // this was formerly mboxY, the one that was used
-    // this will make new fonts downward compatible
-    is.readInt();  // ignore the other mbox attribute
-
-//    fwidth = size; //mbox;
-//    fheight = size; //mbox;
-
-    // size for image ("texture") is next power of 2
-    // over the font size. for most vlw fonts, the size is 48
-    // so the next power of 2 is 64.
-    // double-check to make sure that mbox2 is a power of 2
-    // there was a bug in the old font generator that broke this
-//    mbox2 = (int) Math.pow(2, Math.ceil(Math.log(mbox2) / Math.log(2)));
-    // size for the texture is stored in the font
-//    twidth = theight = mbox2; //mbox2;
-
-    ascent  = is.readInt();  // formerly baseHt (zero/ignored)
-    descent = is.readInt();  // formerly ignored struct padding
-
-    // allocate enough space for the character info
-    glyphs = new Glyph[glyphCount];
-//    value       = new int[charCount];
-//    height      = new int[charCount];
-//    width       = new int[charCount];
-//    setWidth    = new int[charCount];
-//    topExtent   = new int[charCount];
-//    leftExtent  = new int[charCount];
-
-    ascii = new int[128];
-    for (int i = 0; i < 128; i++) ascii[i] = -1;
-
-    // read the information about the individual characters
-    for (int i = 0; i < glyphCount; i++) {
-      glyphs[i] = new Glyph();
-      Glyph glyph = glyphs[i];
-
-      glyph.value = is.readInt();
-      glyph.height = is.readInt();
-      glyph.width = is.readInt();
-      glyph.setWidth = is.readInt();
-      glyph.topExtent = is.readInt();
-      glyph.leftExtent = is.readInt();
-
-      // pointer from a struct in the c version, ignored
-      is.readInt();
-
-      // cache locations of the ascii charset
-      if (glyph.value < 128) ascii[glyph.value] = i;
-
-      // the values for getAscent() and getDescent() from FontMetrics
-      // seem to be way too large.. perhaps they're the max?
-      // as such, use a more traditional marker for ascent/descent
-      if (glyph.value == 'd') {
-        if (ascent == 0) ascent = glyph.topExtent;
-      }
-      if (glyph.value == 'p') {
-        if (descent == 0) descent = -glyph.topExtent + glyph.height;
-      }
-    }
-
-    // not a roman font, so throw an error and ask to re-build.
-    // that way can avoid a bunch of error checking hacks in here.
-    if ((ascent == 0) && (descent == 0)) {
-      throw new RuntimeException("Please use \"Create Font\" to " +
-                                 "re-create this font.");
-    }
-
-//    images = new PImage[charCount];
-//    for (int i = 0; i < charCount; i++) {
-//      Glyph glyph = glyphs[i];
-    for (Glyph glyph : glyphs) {
-      //images[i] = new PImage(twidth, theight, ALPHA);
-      glyph.image = new PImage(glyph.width, glyph.height, ALPHA);
-      //int bitmapSize = height[i] * width[i];
-      int bitmapSize = glyph.width * glyph.height;
-
-      byte[] temp = new byte[bitmapSize];
-      is.readFully(temp);
-
-      // convert the bitmap to an alpha channel
-      int w = glyph.width;
-      int h = glyph.height;
-      int[] pixels = glyph.image.pixels;
-      for (int y = 0; y < h; y++) {
-        for (int x = 0; x < w; x++) {
-          int valu = temp[y*w + x] & 0xff;
-          //image.pixels[y * twidth + x] = valu;
-          pixels[y * glyph.width + x] = valu;
-          //System.out.print((images[i].pixels[y*64+x] > 128) ? "*" : ".");
-        }
-        //System.out.println();
-      }
-      //System.out.println();
-    }
-
-    if (version >= 10) {  // includes the font name at the end of the file
-      name = is.readUTF();
-      psname = is.readUTF();
-    }
-    if (version == 11) {
-      smooth = is.readBoolean();
-    }
-  }
-
-
   /**
-   * Create a new image-based font on the fly.
+   * Create a new Processing font from a native font, but don't create all the
+   * characters at once, instead wait until they're used to include them.
+   * @param font
+   * @param smooth
+   */
+  public PFont(Font font, boolean smooth) {
+    this(font, smooth, null);
+  }
+  
+  
+  /**
+   * Create a new image-based font on the fly. If charset is set to null, 
+   * the characters will only be created as bitmaps when they're drawn.
    *
    * @param font the font object to create from
    * @param charset array of all unicode chars that should be included
@@ -267,240 +164,18 @@ public class PFont implements PConstants {
 
     name = font.getName();
     psname = font.getPSName();
-
-    // fix regression from sorting (bug #564)
-    if (charset != null) {
-      // charset needs to be sorted to make index lookup run more quickly
-      // http://dev.processing.org/bugs/show_bug.cgi?id=494
-      Arrays.sort(charset);
-    }
-
-    // the count gets reset later based on how many of
-    // the chars are actually found inside the font.
-    this.glyphCount = (charset == null) ? 65536 : charset.length;
-    this.size = font.getSize();
-
-//    fwidth = fheight = size;
-
-//    PImage[] bitmaps = new PImage[charCount];
-
-    // allocate enough space for the character info
-//    value       = new int[charCount];
-//    height      = new int[charCount];
-//    width       = new int[charCount];
-//    setWidth    = new int[charCount];
-//    topExtent   = new int[charCount];
-//    leftExtent  = new int[charCount];
-    glyphs = new Glyph[glyphCount];
-
-    ascii = new int[128];
-    for (int i = 0; i < 128; i++) ascii[i] = -1;
-
-    int mbox3 = size * 3;
-
-    BufferedImage playground =
-      new BufferedImage(mbox3, mbox3, BufferedImage.TYPE_INT_RGB);
-
-    Graphics2D g = (Graphics2D) playground.getGraphics();
-    g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                       smooth ?
-                       RenderingHints.VALUE_ANTIALIAS_ON :
-                       RenderingHints.VALUE_ANTIALIAS_OFF);
-    // adding this for post-1.0.9
-    g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-                       smooth ?
-                       RenderingHints.VALUE_TEXT_ANTIALIAS_ON :
-                       RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
-
-    g.setFont(font);
-    FontMetrics metrics = g.getFontMetrics();
-
-    int samples[] = new int[mbox3 * mbox3];
-
-    int maxWidthHeight = 0;
-    int index = 0;
-    for (int i = 0; i < glyphCount; i++) {
-      Glyph glyph = new Glyph();
-      char c = (charset == null) ? (char)i : charset[i];
-
-      if (!font.canDisplay(c)) {  // skip chars not in the font
-        continue;
-      }
-
-      g.setColor(Color.white);
-      g.fillRect(0, 0, mbox3, mbox3);
-      g.setColor(Color.black);
-      g.drawString(String.valueOf(c), size, size * 2);
-
-      // grabs copy of the current data.. so no updates (do each time)
-//      Raster raster = playground.getData();
-//      raster.getSamples(0, 0, mbox3, mbox3, 0, samples);
-      // slightly faster version
-      WritableRaster raster = playground.getRaster();
-      raster.getDataElements(0, 0, mbox3, mbox3, samples);
-
-      int minX = 1000, maxX = 0;
-      int minY = 1000, maxY = 0;
-      boolean pixelFound = false;
-
-      for (int y = 0; y < mbox3; y++) {
-        for (int x = 0; x < mbox3; x++) {
-          //int sample = raster.getSample(x, y, 0);  // maybe?
-          int sample = samples[y * mbox3 + x] & 0xff;
-          // or int samples[] = raster.getPixel(x, y, null);
-
-          //if (sample == 0) {  // or just not white? hmm
-          if (sample != 255) {
-            if (x < minX) minX = x;
-            if (y < minY) minY = y;
-            if (x > maxX) maxX = x;
-            if (y > maxY) maxY = y;
-            pixelFound = true;
-          }
-        }
-      }
-
-      if (!pixelFound) {
-        minX = minY = 0;
-        maxX = maxY = 0;
-        // this will create a 1 pixel white (clear) character..
-        // maybe better to set one to -1 so nothing is added?
-      }
-
-//      value[index] = c;
-      glyph.value = c;
-      glyph.height = (maxY - minY) + 1;
-      glyph.width = (maxX - minX) + 1;
-      glyph.setWidth = metrics.charWidth(c);
-      //System.out.println((char)c + " " + setWidth[index]);
-
-      // cache locations of the ascii charset
-      //if (value[i] < 128) ascii[value[i]] = i;
-      if (c < 128) ascii[c] = index;
-
-      // offset from vertical location of baseline
-      // of where the char was drawn (size*2)
-      glyph.topExtent = size*2 - minY;
-
-      // offset from left of where coord was drawn
-      glyph.leftExtent = minX - size;
-
-      // for version 11, using metrics instead
-//      if (c == 'd') {
-//        ascent = glyph.topExtent;
-//      }
-//      if (c == 'p') {
-//        descent = -glyph.topExtent + glyph.height;
-//      }
-      ascent = metrics.getAscent();
-      descent = metrics.getDescent();
-
-      if (glyph.width > maxWidthHeight) maxWidthHeight = glyph.width;
-      if (glyph.height > maxWidthHeight) maxWidthHeight = glyph.height;
-
-      //bitmaps[index] = new PImage(width[index], height[index], ALPHA);
-      glyph.image = new PImage(glyph.width, glyph.height, ALPHA); 
-      int[] pixels = glyph.image.pixels;
-      for (int y = minY; y <= maxY; y++) {
-        for (int x = minX; x <= maxX; x++) {
-          int val = 255 - (samples[y * mbox3 + x] & 0xff);
-          //int pindex = (y - minY) * width[index] + (x - minX);
-          int pindex = (y - minY) * glyph.width + (x - minX);
-          //bitmaps[index].pixels[pindex] = val;
-          pixels[pindex] = val;
-        }
-      }
-//      index++;
-      glyphs[index++] = glyph;
-    }
-    if (glyphCount != index) {
-      glyphs = (Glyph[]) PApplet.subset(glyphs, 0, index);
-      glyphCount = index;
-    }
-
-    // foreign font, so just make ascent the max topExtent
-    if ((ascent == 0) && (descent == 0)) {
-      //for (int i = 0; i < charCount; i++) {
-      for (Glyph glyph : glyphs) {
-        char cc = (char) glyph.value;
-        //char cc = (char) glyphs[i].value;
-        if (Character.isWhitespace(cc) ||
-            (cc == '\u00A0') || (cc == '\u2007') || (cc == '\u202F')) {
-          continue;
-        }
-        if (glyph.topExtent > ascent) {
-          ascent = glyph.topExtent;
-        }
-        int d = -glyph.topExtent + glyph.height;
-        if (d > descent) {
-          descent = d;
-        }
-      }
-    }
-    // size for image/texture is next power of 2 over largest char
-//    mbox2 = (int) Math.pow(2, Math.ceil(Math.log(maxWidthHeight) / Math.log(2)));
-//    twidth = theight = mbox2;
-
-    // shove the smaller PImage data into textures of next-power-of-2 size,
-    // so that this font can be used immediately by p5.
-//    images = new PImage[charCount];
-//    for (int i = 0; i < charCount; i++) {
-//      images[i] = new PImage(mbox2, mbox2, ALPHA);
-//      for (int y = 0; y < height[i]; y++) {
-//        System.arraycopy(bitmaps[i].pixels, y*width[i],
-//                         images[i].pixels, y*mbox2,
-//                         width[i]);
-//      }
-//      bitmaps[i] = null;
-//    }
-  }
-  
-  
-  BufferedImage lazyImage;
-  Graphics2D lazyGraphics;
-  FontMetrics lazyMetrics;
-  int[] lazySamples;
-  
-  /**
-   * Create a new Processing font from a native font, but don't create all the
-   * characters at once, instead wait until they're used to include them.
-   * @param font
-   * @param smooth
-   */
-  public PFont(Font font, boolean smooth) {
-    // save this so that we can use the native version
-    this.font = font;
-    this.smooth = smooth;
-
-    name = font.getName();
-    psname = font.getPSName();
     size = font.getSize();
-//    fwidth = fheight = size;
 
-    // no, i'm not interested in getting off the ouch
+    // no, i'm not interested in getting off the couch
     lazy = true;
     // not sure what else to do here
-//    mbox2 = 0; 
-
-    // the count gets reset later based on how many of
-    // the chars are actually found inside the font.
-//    this.charCount = (charset == null) ? 65536 : charset.length;
-
-//    PImage[] bitmaps = new PImage[charCount];
+    //mbox2 = 0; 
 
     int initialCount = 10;
     glyphs = new Glyph[initialCount];
 
-    // allocate enough space for the character info
-//    value       = new int[initialCount];
-//    height      = new int[initialCount];
-//    width       = new int[initialCount];
-//    setWidth    = new int[initialCount];
-//    topExtent   = new int[initialCount];
-//    leftExtent  = new int[initialCount];
-
     ascii = new int[128];
-    for (int i = 0; i < 128; i++) ascii[i] = -1;
+    Arrays.fill(ascii, -1);
 
     int mbox3 = size * 3;
 
@@ -522,121 +197,159 @@ public class PFont implements PConstants {
 
     ascent = lazyMetrics.getAscent();
     descent = lazyMetrics.getDescent();
-  }
-  
-  
-  protected Glyph createGlyph(char c) {
-    Glyph glyph = new Glyph();
 
-//    if (font.canDisplay(c)) {  // skip chars not in the font
-//      continue;
-//    }
+    if (charset != null) {
+      // charset needs to be sorted to make index lookup run more quickly
+      // http://dev.processing.org/bugs/show_bug.cgi?id=494
+      Arrays.sort(charset);
 
-    int mbox3 = size * 3;
-    lazyGraphics.setColor(Color.white);
-    lazyGraphics.fillRect(0, 0, mbox3, mbox3);
-    lazyGraphics.setColor(Color.black);
-    lazyGraphics.drawString(String.valueOf(c), size, size * 2);
+      glyphs = new Glyph[glyphCount];
 
-      // grabs copy of the current data.. so no updates (do each time)
-//      Raster raster = playground.getData();
-//      raster.getSamples(0, 0, mbox3, mbox3, 0, samples);
-      // slightly faster version
-    WritableRaster raster = lazyImage.getRaster();
-    raster.getDataElements(0, 0, mbox3, mbox3, lazySamples);
-
-    int minX = 1000, maxX = 0;
-    int minY = 1000, maxY = 0;
-    boolean pixelFound = false;
-
-    for (int y = 0; y < mbox3; y++) {
-      for (int x = 0; x < mbox3; x++) {
-        //int sample = raster.getSample(x, y, 0);  // maybe?
-        int sample = lazySamples[y * mbox3 + x] & 0xff;
-        // or int samples[] = raster.getPixel(x, y, null);
-
-        //if (sample == 0) {  // or just not white? hmm
-        if (sample != 255) {
-          if (x < minX) minX = x;
-          if (y < minY) minY = y;
-          if (x > maxX) maxX = x;
-          if (y > maxY) maxY = y;
-          pixelFound = true;
+      glyphCount = 0;
+      for (char c : charset) {
+        if (font.canDisplay(c)) {
+          glyphs[glyphCount++] = new Glyph(c);
         }
       }
-    }
 
-    if (!pixelFound) {
-      minX = minY = 0;
-      maxX = maxY = 0;
-      // this will create a 1 pixel white (clear) character..
-      // maybe better to set one to -1 so nothing is added?
-    }
-
-    glyph.value = c;
-    glyph.height = (maxY - minY) + 1;
-    glyph.width = (maxX - minX) + 1;
-    glyph.setWidth = lazyMetrics.charWidth(c);
-    //System.out.println((char)c + " " + setWidth[index]);
-
-//    int mx = PApplet.max(glyph.width, glyph.height);
-//    if (mx > mbox2) {
-//      mbox2 = (int) Math.pow(2, Math.ceil(Math.log(mx) / Math.log(2)));
-//    }
-    
-//    // cache locations of the ascii charset
-//    if (c < 128) ascii[c] = index;
-
-    // offset from vertical location of baseline
-    // of where the char was drawn (size*2)
-    glyph.topExtent = size*2 - minY;
-
-    // offset from left of where coord was drawn
-    glyph.leftExtent = minX - size;
-
-    /*
-      if (c == 'd') {
-        ascent = glyph.topExtent;
+      // shorten the array if necessary
+      if (glyphCount != charset.length) {
+        glyphs = (Glyph[]) PApplet.subset(glyphs, 0, glyphCount);
       }
-      if (c == 'p') {
-        descent = -glyph.topExtent + glyph.height;
-      }
-     */
 
-//      if (width[index] > maxWidthHeight) maxWidthHeight = width[index];
-//      if (height[index] > maxWidthHeight) maxWidthHeight = height[index];
-
-    glyph.image = new PImage(glyph.width, glyph.height, ALPHA);
-    int[] pixels = glyph.image.pixels;
-    for (int y = minY; y <= maxY; y++) {
-      for (int x = minX; x <= maxX; x++) {
-        int val = 255 - (lazySamples[y * mbox3 + x] & 0xff);
-        int pindex = (y - minY) * glyph.width + (x - minX);
-        pixels[pindex] = val;
-      }
+      // foreign font, so just make ascent the max topExtent
+      // for > 1.0.9, not doing this anymore. 
+      // instead using getAscent() and getDescent() values for these cases.
+//      if ((ascent == 0) && (descent == 0)) {
+//        //for (int i = 0; i < charCount; i++) {
+//        for (Glyph glyph : glyphs) {
+//          char cc = (char) glyph.value;
+//          //char cc = (char) glyphs[i].value;
+//          if (Character.isWhitespace(cc) ||
+//              (cc == '\u00A0') || (cc == '\u2007') || (cc == '\u202F')) {
+//            continue;
+//          }
+//          if (glyph.topExtent > ascent) {
+//            ascent = glyph.topExtent;
+//          }
+//          int d = -glyph.topExtent + glyph.height;
+//          if (d > descent) {
+//            descent = d;
+//          }
+//        }
+//      }
     }
-
-    // replace the ascent/descent values with something.. err, decent.
-    if (glyph.value == 'd') {
-      if (ascent == 0) ascent = glyph.topExtent;
-    }
-    if (glyph.value == 'p') {
-      if (descent == 0) descent = -glyph.topExtent + glyph.height;
-    }
-    return glyph;
   }
-  
-  
+
+
+  public PFont(InputStream input) throws IOException {
+    DataInputStream is = new DataInputStream(input);
+
+    // number of character images stored in this font
+    glyphCount = is.readInt();
+
+    // used to be the bitCount, but now used for version number.
+    // version 8 is any font before 69, so 9 is anything from 83+
+    // 9 was buggy so gonna increment to 10.
+    int version = is.readInt();
+
+    // this was formerly ignored, now it's the actual font size
+    //mbox = is.readInt();
+    size = is.readInt();
+
+    // this was formerly mboxY, the one that was used
+    // this will make new fonts downward compatible
+    is.readInt();  // ignore the other mbox attribute
+
+    ascent  = is.readInt();  // formerly baseHt (zero/ignored)
+    descent = is.readInt();  // formerly ignored struct padding
+
+    // allocate enough space for the character info
+    glyphs = new Glyph[glyphCount];
+
+    ascii = new int[128];
+    Arrays.fill(ascii, -1);
+
+    // read the information about the individual characters
+    for (int i = 0; i < glyphCount; i++) {
+      Glyph glyph = new Glyph(is);
+      // cache locations of the ascii charset
+      if (glyph.value < 128) {
+        ascii[glyph.value] = i;
+      }
+      glyphs[i] = glyph;
+    }
+
+    // not a roman font, so throw an error and ask to re-build.
+    // that way can avoid a bunch of error checking hacks in here.
+    if ((ascent == 0) && (descent == 0)) {
+      throw new RuntimeException("Please use \"Create Font\" to " +
+                                 "re-create this font.");
+    }
+
+    for (Glyph glyph : glyphs) {
+      glyph.readBitmap(is);
+    }
+
+    if (version >= 10) {  // includes the font name at the end of the file
+      name = is.readUTF();
+      psname = is.readUTF();
+    }
+    if (version == 11) {
+      smooth = is.readBoolean();
+    }
+  }
+
+
+  /**
+   * Write this PFont to an OutputStream.
+   * <p>
+   * This is used by the Create Font tool, or whatever anyone else dreams
+   * up for messing with fonts themselves.
+   * <p>
+   * It is assumed that the calling class will handle closing
+   * the stream when finished.
+   */
+  public void save(OutputStream output) throws IOException {
+    DataOutputStream os = new DataOutputStream(output);
+
+    os.writeInt(glyphCount);
+
+    if ((name == null) || (psname == null)) {
+      name = "";
+      psname = "";
+    }
+    
+    os.writeInt(11);      // formerly numBits, now used for version number
+    os.writeInt(size);    // formerly mboxX (was 64, now 48)
+    os.writeInt(0);       // formerly mboxY, now ignored
+    os.writeInt(ascent);  // formerly baseHt (was ignored)
+    os.writeInt(descent); // formerly struct padding for c version
+
+    for (int i = 0; i < glyphCount; i++) {
+      glyphs[i].writeHeader(os);
+    }
+
+    for (int i = 0; i < glyphCount; i++) {
+      glyphs[i].writeBitmap(os);
+    }
+
+    // version 11
+    os.writeUTF(name);
+    os.writeUTF(psname);
+    os.writeBoolean(smooth);
+
+    os.flush();
+  }
+
+
   /**
    * Create a new glyph, and add the character to the current font.
    * @param c character to create an image for.
    */
   protected void addGlyph(char c) {
-    Glyph glyph = createGlyph(c);
-//    if (charCount != index) {
-//      glyphs = (Glyph[]) PApplet.subset(glyphs, 0, index);
-//      charCount = index;
-//    }
+    //Glyph glyph = createGlyph(c);
+    Glyph glyph = new Glyph(c);
 
     if (glyphCount == glyphs.length) {
       glyphs = (Glyph[]) PApplet.expand(glyphs);
@@ -648,7 +361,6 @@ public class PFont implements PConstants {
       }
       
     } else if (glyphs[glyphCount-1].value < glyph.value) {
-      //System.out.println("at end " + (char) glyph.value);
       glyphs[glyphCount] = glyph;
       if (glyph.value < 128) {
         ascii[glyph.value] = glyphCount;
@@ -656,41 +368,21 @@ public class PFont implements PConstants {
       
     } else {
       for (int i = 0; i < glyphCount; i++) {
-//        System.out.println(i + " of " + charCount + " is " + (char)glyphs[i].value);
-        //int value = glyphs[i].value; 
-        //if (glyphs[i].value > glyph.value) {
         if (glyphs[i].value > c) {
           for (int j = glyphCount; j > i; --j) {
-//            System.out.println("  moving " + (char)glyphs[j-1].value); // + 
-//                               //" to " + (char)glyphs[j].value);
             glyphs[j] = glyphs[j-1];
             if (glyphs[j].value < 128) {
               ascii[glyphs[j].value] = j;
             }
           }
-          //System.out.println("setting " + i + " to " + (char)glyph.value);
           glyphs[i] = glyph;
           // cache locations of the ascii charset
           if (c < 128) ascii[c] = i;
-//          for (int k = 0; k < charCount+1; k++) {  // charCount not incremented yet 
-//            if (glyphs[k].value < 128) {
-////              System.out.println("ascii[" + (char) glyphs[k].value + "] to " + k);
-//              ascii[glyphs[k].value] = k;  // re-set the ascii values
-//            }
-//          }
-//          charCount++;
-//          return;
           break;
-//          i = charCount;
         }
       }
     }
     glyphCount++;
-//    for (int i = 0; i < charCount; i++) {
-//      System.out.println("[" + i + "] " + (char)glyphs[i].value);
-//    }
-    //System.out.println("e is " + (char)glyphs[ascii['e']].value + " w=" + (char)glyphs[ascii['w']].value);
-//    System.out.println("e is " + ascii['e'] + " w=" + ascii['w']);
   }
 
 
@@ -751,78 +443,6 @@ public class PFont implements PConstants {
   }
 
 
-  /**
-   * Write this PFont to an OutputStream.
-   * <p>
-   * This is used by the Create Font tool, or whatever anyone else dreams
-   * up for messing with fonts themselves.
-   * <p>
-   * It is assumed that the calling class will handle closing
-   * the stream when finished.
-   */
-  public void save(OutputStream output) throws IOException {
-    DataOutputStream os = new DataOutputStream(output);
-
-    os.writeInt(glyphCount);
-
-    if ((name == null) || (psname == null)) {
-      name = "";
-      psname = "";
-    }
-    // formerly numBits, now used for version number
-    //os.writeInt((name != null) ? 11 : 8);
-    os.writeInt(11);
-
-    os.writeInt(size);    // formerly mboxX (was 64, now 48)
-    // TODO imperfect, should really be doing next power of 2 on all chars,
-    // but this is ignored starting now, and the only problem would happen if
-    // a font created on > 1.0.9 where used with 1.0.9 and earlier
-    int mbox2 = (int) Math.pow(2, Math.ceil(Math.log(size) / Math.log(2)));
-    os.writeInt(mbox2);   // formerly mboxY
-    os.writeInt(ascent);  // formerly baseHt (was ignored)
-    os.writeInt(descent); // formerly struct padding for c version
-
-    //for (int i = 0; i < charCount; i++) {
-    for (Glyph glyph : glyphs) {
-      os.writeInt(glyph.value);
-      os.writeInt(glyph.height);
-      os.writeInt(glyph.width);
-      os.writeInt(glyph.setWidth);
-      os.writeInt(glyph.topExtent);
-      os.writeInt(glyph.leftExtent);
-//      os.writeInt(value[i]);
-//      os.writeInt(height[i]);
-//      os.writeInt(width[i]);
-//      os.writeInt(setWidth[i]);
-//      os.writeInt(topExtent[i]);
-//      os.writeInt(leftExtent[i]);
-      os.writeInt(0); // padding
-    }
-
-    //for (int i = 0; i < charCount; i++) {
-    for (Glyph glyph : glyphs) {
-      int[] pixels  = glyph.image.pixels;
-      for (int y = 0; y < glyph.height; y++) {
-        for (int x = 0; x < glyph.width; x++) {
-          //os.write(pixels[y * mbox2 + x] & 0xff);
-          os.write(pixels[y * glyph.width + x] & 0xff);
-        }
-//        for (int x = glyph.width; x < mbox2; x++) {
-//          os.write(0);
-//        }
-      }
-    }
-
-    //if (name != null) {  // version 11
-    os.writeUTF(name);
-    os.writeUTF(psname);
-    os.writeBoolean(smooth);
-    //}
-
-    os.flush();
-  }
-
-
   public Glyph getGlyph(char c) {
     int index = index(c);
     return (index == -1) ? null : glyphs[index];
@@ -853,7 +473,8 @@ public class PFont implements PConstants {
       return indexActual(c);
     }
   }
-  
+
+
   protected int indexActual(char c) {
     // degenerate case, but the find function will have trouble
     // if there are somehow zero chars in the lookup
@@ -1054,10 +675,81 @@ public class PFont implements PConstants {
     
     
     protected Glyph() {
-      // used when reading from a stream
+      // used when reading from a stream or for subclasses
     }
     
     
+    protected Glyph(DataInputStream is) throws IOException {
+      readHeader(is);
+    }
+    
+    
+    protected void readHeader(DataInputStream is) throws IOException {
+      value = is.readInt();
+      height = is.readInt();
+      width = is.readInt();
+      setWidth = is.readInt();
+      topExtent = is.readInt();
+      leftExtent = is.readInt();
+
+      // pointer from a struct in the c version, ignored
+      is.readInt();
+      
+      // the values for getAscent() and getDescent() from FontMetrics
+      // seem to be way too large.. perhaps they're the max?
+      // as such, use a more traditional marker for ascent/descent
+      if (value == 'd') {
+        if (ascent == 0) ascent = topExtent;
+      }
+      if (value == 'p') {
+        if (descent == 0) descent = -topExtent + height;
+      }
+    }
+
+    
+    protected void writeHeader(DataOutputStream os) throws IOException {
+      os.writeInt(value);
+      os.writeInt(height);
+      os.writeInt(width);
+      os.writeInt(setWidth);
+      os.writeInt(topExtent);
+      os.writeInt(leftExtent);
+      os.writeInt(0); // padding
+    }
+    
+    
+    protected void readBitmap(DataInputStream is) throws IOException {
+      image = new PImage(width, height, ALPHA);
+      int bitmapSize = width * height;
+
+      byte[] temp = new byte[bitmapSize];
+      is.readFully(temp);
+
+      // convert the bitmap to an alpha channel
+      int w = width;
+      int h = height;
+      int[] pixels = image.pixels;
+      for (int y = 0; y < h; y++) {
+        for (int x = 0; x < w; x++) {
+          pixels[y * width + x] = temp[y*w + x] & 0xff;
+          //System.out.print((images[i].pixels[y*64+x] > 128) ? "*" : ".");
+        }
+        //System.out.println();
+      }
+      //System.out.println();
+    }
+    
+    
+    protected void writeBitmap(DataOutputStream os) throws IOException {
+      int[] pixels  = image.pixels;
+      for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+          os.write(pixels[y * width + x] & 0xff);
+        }
+      }
+    }
+
+
     protected Glyph(char c) {
       int mbox3 = size * 3;
       lazyGraphics.setColor(Color.white);
