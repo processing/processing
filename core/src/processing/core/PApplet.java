@@ -219,13 +219,13 @@ public class PApplet extends Applet
       platform = OTHER;
     }
   }
-  
-  /** 
-   * Setting for whether to use the Quartz renderer on OS X. The Quartz 
-   * renderer is on its way out for OS X, but Processing uses it by default 
+
+  /**
+   * Setting for whether to use the Quartz renderer on OS X. The Quartz
+   * renderer is on its way out for OS X, but Processing uses it by default
    * because it's much faster than the Sun renderer. In some cases, however,
    * the Quartz renderer is preferred. For instance, fonts are less thick
-   * when using the Sun renderer, so to improve how fonts look, 
+   * when using the Sun renderer, so to improve how fonts look,
    * change this setting before you call PApplet.main().
    * <pre>
    * static public void main(String[] args) {
@@ -235,7 +235,7 @@ public class PApplet extends Applet
    * </pre>
    * This setting must be called before any AWT work happens, so that's why
    * it's such a terrible hack in how it's employed here. Calling setProperty()
-   * inside setup() is a joke, since it's long since the AWT has been invoked. 
+   * inside setup() is a joke, since it's long since the AWT has been invoked.
    */
   static public String useQuartz = "true";
 
@@ -4082,9 +4082,9 @@ public class PApplet extends Applet
    * it appears that only the menu names are used, no matter what
    * Java version is in use. Naming system unknown/untested for 1.5.
    * <P/>
-   * Use 'null' for the charset if you want to use any of the 65,536
-   * unicode characters that exist in the font. Note that this can
-   * produce an enormous file or may cause an OutOfMemoryError.
+   * Use 'null' for the charset if you want to dynamically create
+   * character bitmaps only as they're needed. (Version 1.0.9 and
+   * earlier would interpret null as all unicode characters.)
    */
   public PFont createFont(String name, float size,
                           boolean smooth, char charset[]) {
