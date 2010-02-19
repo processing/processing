@@ -1,10 +1,14 @@
 0176 (private)
 X begin the merge of the new A3D, remove old OpenGL code
 X escape slashes properly on windows (also place sdk in program files)
-X    writer.println("sdk.dir=" + Android.sdkPath);  // r4 of the sdk
-X    writer.println("sdk.dir=" + Android.sdkPath.replace("\\", "\\" +"\\")); 
+X   writer.println("sdk.dir=" + Android.sdkPath);  // r4 of the sdk
+X   writer.println("sdk.dir=" + Android.sdkPath.replace("\\", "\\" +"\\")); 
+X move processing.android.core back to processing.core
+_   need to document the change somehow
 _ Android tools on Windows are broken due to naming changes in r4 SDK
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1432
+
+_ should alpha PImage stuff use a non-4byte config?
 
 _ move to eclair (donut devices will have terrible performance anyway)
 _ deal with path problems
