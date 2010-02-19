@@ -169,7 +169,7 @@ public class GLFont extends PFont {
    */
   public GLFont(PApplet parent, Typeface font, int size, boolean smooth, char charset[]) {
     // save this so that we can use the native version
-    this.font = font;
+    this.typeface = font;
     this.smooth = smooth;
 
 //    name = font.getName();

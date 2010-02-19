@@ -7,7 +7,7 @@
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This library is free software; you can redistribute it and/or
-  modify it under the terms of version 2.01 of the GNU Lesser General
+  modify it under the terms of version 2 of the GNU Lesser General
   Public License as published by the Free Software Foundation.
 
   This library is distributed in the hope that it will be useful,
@@ -23,10 +23,16 @@
 
 package processing.core;
 
-import java.awt.*;
-import java.awt.image.*;
 import java.io.*;
 import java.util.Arrays;
+import java.util.HashMap;
+
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Typeface;
+import android.graphics.Bitmap.Config;
 
 
 /**
@@ -109,29 +115,30 @@ public class PFont implements PConstants {
   protected boolean lazy;
 
   /**
-   * Native Java version of the font. If possible, this allows the
-   * PGraphics subclass to just use Java's font rendering stuff
+   * Native Android version of the font. If possible, this allows the
+   * PGraphics subclass to just use Android's font rendering stuff
    * in situations where that's faster.
    */
-  protected Font font;
+  protected Typeface typeface;
 
   /** 
-   * True if we've already tried to find the native AWT version of this font.
+   * True if we've already tried to find the native version of this font.
    */
-  protected boolean fontSearched;
+  protected boolean typefaceSearched;
 
   /**
    * Array of the native system fonts. Used to lookup native fonts by their 
    * PostScript name. This is a workaround for a several year old Apple Java
    * bug that they can't be bothered to fix. 
    */
-  static protected Font[] fonts;
+  static protected Typeface[] typefaces;
 
 
   // objects to handle creation of font characters only as they're needed
-  BufferedImage lazyImage;
-  Graphics2D lazyGraphics;
-  FontMetrics lazyMetrics;
+  Bitmap lazyBitmap;
+  Canvas lazyCanvas;
+  Paint lazyPaint;
+//  FontMetrics lazyMetrics;
   int[] lazySamples;  
 
 
@@ -144,8 +151,8 @@ public class PFont implements PConstants {
    * @param font
    * @param smooth
    */
-  public PFont(Font font, boolean smooth) {
-    this(font, smooth, null);
+  public PFont(Typeface font, int size, boolean smooth) {
+    this(font, size, smooth, null);
   }
   
   
@@ -157,14 +164,14 @@ public class PFont implements PConstants {
    * @param charset array of all unicode chars that should be included
    * @param smooth true to enable smoothing/anti-aliasing
    */
-  public PFont(Font font, boolean smooth, char charset[]) {
+  public PFont(Typeface font, int size, boolean smooth, char charset[]) {
     // save this so that we can use the native version
-    this.font = font;
+    this.typeface = font;
     this.smooth = smooth;
 
-    name = font.getName();
-    psname = font.getPSName();
-    size = font.getSize();
+    name = ""; //font.getName();
+    psname = ""; //font.getPSName();
+    this.size = size;  //font.getSize();
 
     // no, i'm not interested in getting off the couch
     lazy = true;
@@ -179,24 +186,31 @@ public class PFont implements PConstants {
 
     int mbox3 = size * 3;
 
-    lazyImage = new BufferedImage(mbox3, mbox3, BufferedImage.TYPE_INT_RGB);
-    lazyGraphics = (Graphics2D) lazyImage.getGraphics();
-    lazyGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                                  smooth ?
-                                  RenderingHints.VALUE_ANTIALIAS_ON :
-                                  RenderingHints.VALUE_ANTIALIAS_OFF);
-    // adding this for post-1.0.9
-    lazyGraphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-                                  smooth ?
-                                  RenderingHints.VALUE_TEXT_ANTIALIAS_ON :
-                                  RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+//    lazyImage = new BufferedImage(mbox3, mbox3, BufferedImage.TYPE_INT_RGB);
+    lazyBitmap = Bitmap.createBitmap(mbox3, mbox3, Config.ARGB_8888);
+//    lazyGraphics = (Graphics2D) lazyImage.getGraphics();
+    lazyCanvas = new Canvas(lazyBitmap);
+    
+//    lazyGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+//                                  smooth ?
+//                                  RenderingHints.VALUE_ANTIALIAS_ON :
+//                                  RenderingHints.VALUE_ANTIALIAS_OFF);
+//    // adding this for post-1.0.9
+//    lazyGraphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+//                                  smooth ?
+//                                  RenderingHints.VALUE_TEXT_ANTIALIAS_ON :
+//                                  RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+    lazyPaint = new Paint();
+    lazyPaint.setAntiAlias(smooth);
 
-    lazyGraphics.setFont(font);
-    lazyMetrics = lazyGraphics.getFontMetrics();
+//    lazyGraphics.setFont(font);
+    lazyPaint.setTypeface(font);
+//    lazyMetrics = lazyGraphics.getFontMetrics();
+    lazyPaint.setTextSize(size);
     lazySamples = new int[mbox3 * mbox3];
 
-    ascent = lazyMetrics.getAscent();
-    descent = lazyMetrics.getDescent();
+//    ascent = lazyMetrics.getAscent();
+//    descent = lazyMetrics.getDescent();
 
     if (charset != null) {
       // charset needs to be sorted to make index lookup run more quickly
@@ -207,36 +221,14 @@ public class PFont implements PConstants {
 
       glyphCount = 0;
       for (char c : charset) {
-        if (font.canDisplay(c)) {
-          glyphs[glyphCount++] = new Glyph(c);
-        }
+//        if (font.canDisplay(c)) {
+        glyphs[glyphCount++] = new Glyph(c);
+//        }
       }
 
       // shorten the array if necessary
-      if (glyphCount != charset.length) {
-        glyphs = (Glyph[]) PApplet.subset(glyphs, 0, glyphCount);
-      }
-
-      // foreign font, so just make ascent the max topExtent
-      // for > 1.0.9, not doing this anymore. 
-      // instead using getAscent() and getDescent() values for these cases.
-//      if ((ascent == 0) && (descent == 0)) {
-//        //for (int i = 0; i < charCount; i++) {
-//        for (Glyph glyph : glyphs) {
-//          char cc = (char) glyph.value;
-//          //char cc = (char) glyphs[i].value;
-//          if (Character.isWhitespace(cc) ||
-//              (cc == '\u00A0') || (cc == '\u2007') || (cc == '\u202F')) {
-//            continue;
-//          }
-//          if (glyph.topExtent > ascent) {
-//            ascent = glyph.topExtent;
-//          }
-//          int d = -glyph.topExtent + glyph.height;
-//          if (d > descent) {
-//            descent = d;
-//          }
-//        }
+//      if (glyphCount != charset.length) {
+//        glyphs = (Glyph[]) PApplet.subset(glyphs, 0, glyphCount);
 //      }
     }
   }
@@ -398,19 +390,16 @@ public class PFont implements PConstants {
   /**
    * Set the native complement of this font.
    */
-  public void setFont(Font font) {
-    this.font = font;
+  public void setTypeface(Typeface typeface) {
+    this.typeface = typeface;
   }
   
   
   /**
-   * Return the native java.awt.Font associated with this PFont (if any).
+   * Return the native Typeface object associated with this PFont (if any).
    */
-  public Font getFont() {
-//    if (font == null && !fontSearched) {
-//      font = findFont();
-//    }
-    return font;
+  public Typeface getTypeface() {
+    return typeface;
   }
 
 
@@ -418,27 +407,9 @@ public class PFont implements PConstants {
    * Attempt to find the native version of this font.
    * (Public so that it can be used by OpenGL or other renderers.)
    */
-  public Font findFont() {
-    if (font == null) {
-      if (!fontSearched) {
-        // this font may or may not be installed
-        font = new Font(name, Font.PLAIN, size);
-        // if the ps name matches, then we're in fine shape
-        if (!font.getPSName().equals(psname)) {
-          // on osx java 1.4 (not 1.3.. ugh), you can specify the ps name
-          // of the font, so try that in case this .vlw font was created on pc
-          // and the name is different, but the ps name is found on the
-          // java 1.4 mac that's currently running this sketch.
-          font = new Font(psname, Font.PLAIN, size);
-        }
-        // check again, and if still bad, screw em
-        if (!font.getPSName().equals(psname)) {
-          font = null;
-        }
-        fontSearched = true;
-      }
-    }
-    return font;
+  static public Typeface findTypeface(String name) {
+    loadTypefaces();
+    return typefaceMap.get(name);
   }
 
 
@@ -458,15 +429,15 @@ public class PFont implements PConstants {
       if (index != -1) {
         return index;
       }
-      if (font.canDisplay(c)) {
+//      if (font.canDisplay(c)) {
         // create the glyph
         addGlyph(c);
         // now where did i put that?      
         return indexActual(c);
-        
-      } else {
-        return -1;
-      }
+
+//      } else {
+//        return -1;
+//      }
 
     } else {
       return indexActual(c);
@@ -609,54 +580,53 @@ public class PFont implements PConstants {
   };
 
 
+  static HashMap<String, Typeface> typefaceMap;
+  static String[] fontList;
+  
+  
   /**
-   * Get a list of the fonts installed on the system that can be used
-   * by Java. Not all fonts can be used in Java, in fact it's mostly
-   * only TrueType fonts. OpenType fonts with CFF data such as Adobe's
-   * OpenType fonts seem to have trouble (even though they're sort of
-   * TrueType fonts as well, or may have a .ttf extension). Regular
-   * PostScript fonts seem to work OK, however.
-   * <P>
-   * Not recommended for use in applets, but this is implemented
-   * in PFont because the Java methods to access this information
-   * have changed between 1.1 and 1.4, and the 1.4 method is
-   * typical of the sort of undergraduate-level over-abstraction
-   * that the seems to have made its way into the Java API after 1.1.
+   * Get a list of the built-in fonts.
    */
   static public String[] list() {
-    loadFonts();
-    String list[] = new String[fonts.length];
-    for (int i = 0; i < list.length; i++) {
-      list[i] = fonts[i].getName();
-    }
-    return list;
+    loadTypefaces();
+    return fontList;
   }
   
 
-  static public void loadFonts() {
-    if (fonts == null) {
-      GraphicsEnvironment ge =
-        GraphicsEnvironment.getLocalGraphicsEnvironment();
-      fonts = ge.getAllFonts();
-    }
-  }
+  static public void loadTypefaces() {
+    if (typefaceMap == null) {
+      typefaceMap = new HashMap<String, Typeface>();
+      
+      typefaceMap.put("Serif", 
+                  Typeface.create(Typeface.SERIF, Typeface.NORMAL));
+      typefaceMap.put("Serif-Bold", 
+                  Typeface.create(Typeface.SERIF, Typeface.BOLD));
+      typefaceMap.put("Serif-Italic", 
+                  Typeface.create(Typeface.SERIF, Typeface.ITALIC));
+      typefaceMap.put("Serif-BoldItalic", 
+                  Typeface.create(Typeface.SERIF, Typeface.BOLD_ITALIC));
 
+      typefaceMap.put("SansSerif", 
+                  Typeface.create(Typeface.SANS_SERIF, Typeface.NORMAL));
+      typefaceMap.put("SansSerif-Bold", 
+                  Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD));
+      typefaceMap.put("SansSerif-Italic", 
+                  Typeface.create(Typeface.SANS_SERIF, Typeface.ITALIC));
+      typefaceMap.put("SansSerif-BoldItalic", 
+                  Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD_ITALIC));
 
-  /** 
-   * Starting with Java 1.5, Apple broke the ability to specify most fonts.
-   * This has been filed as bug #4769141 at bugreporter.apple.com. More info at
-   * <a href="http://dev.processing.org/bugs/show_bug.cgi?id=407">Bug 407</a>.
-  */
-  static public Font findFont(String name) {
-    loadFonts();
-    if (PApplet.platform == PConstants.MACOSX) {
-      for (int i = 0; i < fonts.length; i++) {
-        if (name.equals(fonts[i].getName())) {
-          return fonts[i];
-        }
-      }
+      typefaceMap.put("Monospaced", 
+                  Typeface.create(Typeface.MONOSPACE, Typeface.NORMAL));
+      typefaceMap.put("Monospaced-Bold", 
+                  Typeface.create(Typeface.MONOSPACE, Typeface.BOLD));
+      typefaceMap.put("Monospaced-Italic", 
+                  Typeface.create(Typeface.MONOSPACE, Typeface.ITALIC));
+      typefaceMap.put("Monospaced-BoldItalic", 
+                  Typeface.create(Typeface.MONOSPACE, Typeface.BOLD_ITALIC));
+
+      fontList = new String[typefaceMap.size()];
+      typefaceMap.keySet().toArray(fontList);
     }
-    return new Font(name, Font.PLAIN, 1);
   }
   
   
@@ -754,13 +724,17 @@ public class PFont implements PConstants {
 
     protected Glyph(char c) {
       int mbox3 = size * 3;
-      lazyGraphics.setColor(Color.white);
-      lazyGraphics.fillRect(0, 0, mbox3, mbox3);
-      lazyGraphics.setColor(Color.black);
-      lazyGraphics.drawString(String.valueOf(c), size, size * 2);
-
-      WritableRaster raster = lazyImage.getRaster();
-      raster.getDataElements(0, 0, mbox3, mbox3, lazySamples);
+//      lazyGraphics.setColor(Color.white);
+//      lazyGraphics.fillRect(0, 0, mbox3, mbox3);
+      lazyCanvas.drawColor(Color.WHITE);  // fill canvas with white
+//      lazyGraphics.setColor(Color.black);
+      lazyPaint.setColor(Color.BLACK);
+//      lazyGraphics.drawString(String.valueOf(c), size, size * 2);
+      lazyCanvas.drawText(String.valueOf(c), size, size * 2, lazyPaint);
+      
+//      WritableRaster raster = lazyImage.getRaster();
+//      raster.getDataElements(0, 0, mbox3, mbox3, lazySamples);
+      lazyBitmap.getPixels(lazySamples, 0, mbox3, 0, 0, mbox3, mbox3);
 
       int minX = 1000, maxX = 0;
       int minY = 1000, maxY = 0;
@@ -789,7 +763,8 @@ public class PFont implements PConstants {
       value = c;
       height = (maxY - minY) + 1;
       width = (maxX - minX) + 1;
-      setWidth = lazyMetrics.charWidth(c);
+//      setWidth = lazyMetrics.charWidth(c);
+      setWidth = (int) lazyPaint.measureText(String.valueOf(c));
 
       // offset from vertical location of baseline
       // of where the char was drawn (size*2)
