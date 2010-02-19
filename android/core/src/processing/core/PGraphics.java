@@ -2420,11 +2420,9 @@ public class PGraphics extends PImage implements PConstants {
   public void textFont(PFont which) {
     if (which != null) {
       textFont = which;
-      if (hints[ENABLE_NATIVE_FONTS]) {
-        //if (which.font == null) {
-        which.findFont();
-        //}
-      }
+//      if (hints[ENABLE_NATIVE_FONTS]) {
+//        which.findTypeface(name);
+//      }
       /*
       textFontNative = which.font;
 
@@ -3039,36 +3037,33 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  protected void textCharImpl(char ch, float x, float y) { //, float z) {
-    int index = textFont.index(ch);
-    if (index == -1) return;
+  protected void textCharImpl(char ch, float x, float y) {
+    PFont.Glyph glyph = textFont.getGlyph(ch);
+    if (glyph != null) {
+      if (textMode == MODEL) {
+        float high    = glyph.height     / (float) textFont.size;
+        float bwidth  = glyph.width      / (float) textFont.size;
+        float lextent = glyph.leftExtent / (float) textFont.size;
+        float textent = glyph.topExtent  / (float) textFont.size;
 
-    PImage glyph = textFont.images[index];
+        float x1 = x + lextent * textSize;
+        float y1 = y - textent * textSize;
+        float x2 = x1 + bwidth * textSize;
+        float y2 = y1 + high * textSize;
 
-    if (textMode == MODEL) {
-      float high    = (float) textFont.height[index]     / textFont.fheight;
-      float bwidth  = (float) textFont.width[index]      / textFont.fwidth;
-      float lextent = (float) textFont.leftExtent[index] / textFont.fwidth;
-      float textent = (float) textFont.topExtent[index]  / textFont.fheight;
+        textCharModelImpl(glyph.image,
+                          x1, y1, x2, y2,
+                          glyph.width, glyph.height);
 
-      float x1 = x + lextent * textSize;
-      float y1 = y - textent * textSize;
-      float x2 = x1 + bwidth * textSize;
-      float y2 = y1 + high * textSize;
+      } else if (textMode == SCREEN) {
+        int xx = (int) x + glyph.leftExtent;
+        int yy = (int) y - glyph.topExtent;
 
-      textCharModelImpl(glyph,
-                        x1, y1, x2, y2,
-                        //x1, y1, z, x2, y2, z,
-                        textFont.width[index], textFont.height[index]);
+        int w0 = glyph.width;
+        int h0 = glyph.height;
 
-    } else if (textMode == SCREEN) {
-      int xx = (int) x + textFont.leftExtent[index];;
-      int yy = (int) y - textFont.topExtent[index];
-
-      int w0 = textFont.width[index];
-      int h0 = textFont.height[index];
-
-      textCharScreenImpl(glyph, xx, yy, w0, h0);
+        textCharScreenImpl(glyph.image, xx, yy, w0, h0);
+      }
     }
   }
 
@@ -3141,7 +3136,7 @@ public class PGraphics extends PImage implements PConstants {
     // TODO this can be optimized a bit
     for (int row = y0; row < y0 + h0; row++) {
       for (int col = x0; col < x0 + w0; col++) {
-        int a1 = (fa * pixels1[row * textFont.twidth + col]) >> 8;
+        int a1 = (fa * pixels1[row * glyph.width + col]) >> 8;
         int a2 = a1 ^ 0xff;
         //int p1 = pixels1[row * glyph.width + col];
         int p2 = pixels[(yy + row-y0)*width + (xx+col-x0)];

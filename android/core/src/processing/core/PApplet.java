@@ -2966,12 +2966,12 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 
   public PFont createFont(String name, float size) {
-    return createFont(name, size, true, PFont.DEFAULT_CHARSET);
+    return createFont(name, size, true, null);
   }
 
 
   public PFont createFont(String name, float size, boolean smooth) {
-    return createFont(name, size, smooth, PFont.DEFAULT_CHARSET);
+    return createFont(name, size, smooth, null);
   }
 
 
@@ -2980,12 +2980,11 @@ public class PApplet extends Activity implements PConstants, Runnable {
    * installed on the system, or from a .ttf or .otf that's inside
    * the data folder of this sketch.
    * <P/>
-   * Use 'null' for the charset if you want to use any of the 65,536
-   * unicode characters that exist in the font. Note that this can
-   * produce an enormous file or may cause an OutOfMemoryError.
+   * Use 'null' for the charset if you want to dynamically create
+   * character bitmaps only as they're needed.
    */
   public PFont createFont(String name, float size,
-                          boolean smooth, char charset[]) {
+                          boolean smooth, char[] charset) {
     String lowerName = name.toLowerCase();
     Typeface baseFont = null;
 
@@ -2994,7 +2993,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
       baseFont = Typeface.createFromAsset(assets, "data/" + name);
 
     } else {
-      baseFont = PFont.findFont(name);
+      baseFont = PFont.findTypeface(name);
     }
     return new PFont(baseFont, round(size), smooth, charset);
   }
@@ -3004,46 +3003,46 @@ public class PApplet extends Activity implements PConstants, Runnable {
   // GL-methods
 
   
-  public GLFont loadGLFont(String filename) {
-    try {
-      InputStream input = createInput(filename);
-      return new GLFont(this, input);
+//  public GLFont loadGLFont(String filename) {
+//    try {
+//      InputStream input = createInput(filename);
+//      return new GLFont(this, input);
+//
+//    } catch (Exception e) {
+//      die("Could not load font " + filename + ". " +
+//          "Make sure that the font has been copied " +
+//          "to the data folder of your sketch.", e);
+//    }
+//    return null;
+//  }
+//
+//  
+//  public GLFont createGLFont(String name, float size) {
+//    return createGLFont(name, size, true, GLFont.DEFAULT_CHARSET);
+//  }
+//
+//
+//  public GLFont createGLFont(String name, float size, boolean smooth) {
+//    return createGLFont(name, size, smooth, GLFont.DEFAULT_CHARSET);
+//  }
+//
+//  
+//  public GLFont createGLFont(String name, float size,
+//                          boolean smooth, char charset[]) {
+//    String lowerName = name.toLowerCase();
+//    Typeface baseFont = null;
+//
+//    if (lowerName.endsWith(".otf") || lowerName.endsWith(".ttf")) {
+//      AssetManager assets = getBaseContext().getAssets();
+//      baseFont = Typeface.createFromAsset(assets, "data/" + name);
+//
+//    } else {
+//      baseFont = PFont.findTypeface(name);
+//    }
+//    return new GLFont(this, baseFont, round(size), smooth, charset);
+//  }
 
-    } catch (Exception e) {
-      die("Could not load font " + filename + ". " +
-          "Make sure that the font has been copied " +
-          "to the data folder of your sketch.", e);
-    }
-    return null;
-  }
 
-  
-  public GLFont createGLFont(String name, float size) {
-    return createGLFont(name, size, true, GLFont.DEFAULT_CHARSET);
-  }
-
-
-  public GLFont createGLFont(String name, float size, boolean smooth) {
-    return createGLFont(name, size, smooth, GLFont.DEFAULT_CHARSET);
-  }
-
-  
-  public GLFont createGLFont(String name, float size,
-                          boolean smooth, char charset[]) {
-    String lowerName = name.toLowerCase();
-    Typeface baseFont = null;
-
-    if (lowerName.endsWith(".otf") || lowerName.endsWith(".ttf")) {
-      AssetManager assets = getBaseContext().getAssets();
-      baseFont = Typeface.createFromAsset(assets, "data/" + name);
-
-    } else {
-      baseFont = PFont.findFont(name);
-    }
-    return new GLFont(this, baseFont, round(size), smooth, charset);
-  }
-  
-  
   public GLTexture loadGLTexture(String filename) {
     return new GLTexture(this, filename);
   }
