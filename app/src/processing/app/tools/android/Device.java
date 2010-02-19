@@ -46,10 +46,10 @@ public class Device {
    * a device like a T-Mobile G1 or myTouch 3G. Uses Android 1.6 (Donut) APIs,
    * and the screen is 480x320 pixels, or HVGA (Half VGA).
    */
-  static Device avdDonut =
-    // Using the generic AVD causes a prompt to show up on the console,
-    // so using the Google version instead which doesn't ask for a profile.
-    new Device("Processing-Donut", "Google Inc.:Google APIs:4", 480, 320);
+//  static Device avdDonut =
+//    // Using the generic AVD causes a prompt to show up on the console,
+//    // so using the Google version instead which doesn't ask for a profile.
+//    new Device("Processing-Donut", "Google Inc.:Google APIs:4", 480, 320);
 
   /**
    * Default virtual device used by Processing, designed to be similar to
@@ -84,13 +84,13 @@ public class Device {
 
   static boolean checkDefaults() {
     try {
-      if (!avdDonut.exists()) {
-        if (!avdDonut.create()) {
-          Base.showWarning("Android Error",
-                           "An error occurred while running “android create avd”\n" +
-                           "to set up the default Android emulator.", null);
-        }
-      }
+//      if (!avdDonut.exists()) {
+//        if (!avdDonut.create()) {
+//          Base.showWarning("Android Error",
+//                           "An error occurred while running “android create avd”\n" +
+//                           "to set up the default Android emulator.", null);
+//        }
+//      }
       if (!avdEclair.exists()) {
         if (!avdEclair.create()) {
           Base.showWarning("Android Error", AVD_CREATE_ERROR, null);
