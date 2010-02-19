@@ -855,7 +855,9 @@ public class PGraphicsAndroid2D extends PGraphics {
 
 
   Rect imageImplSrcRect;
-  Rect imageImplDstRect;
+  RectF imageImplDstRect;
+  
+  android.widget.ImageView imv;
   
   /**
    * Handle renderer-specific image drawing.
@@ -895,16 +897,17 @@ public class PGraphicsAndroid2D extends PGraphics {
       } 
 
       if (imageImplSrcRect == null) {
-        imageImplSrcRect = new Rect(u1, v1, u2-u1, v2-v1);
-        imageImplDstRect = new Rect((int) x1, (int) y1, (int) (x2-x1), (int) (y2-y1));
+        imageImplSrcRect = new Rect(u1, v1, u2, v2);
+        imageImplDstRect = new RectF(x1, y1, x2, y2);
       } else {
-        imageImplSrcRect.set(u1, v1, u2-u1, v2-v1);
-        imageImplDstRect.set((int) x1, (int) y1, (int) (x2-x1), (int) (y2-y1));
+        imageImplSrcRect.set(u1, v1, u2, v2);
+        imageImplDstRect.set(x1, y1, x2, y2);
       }
       //canvas.drawBitmap(who.bitmap, imageImplSrcRect, imageImplDstRect, tint ? tintPaint : null);
       //System.out.println(PApplet.hex(fillPaint.getColor()));
       //canvas.drawBitmap(who.bitmap, imageImplSrcRect, imageImplDstRect, fillPaint);
-      canvas.drawBitmap(who.bitmap, imageImplSrcRect, imageImplDstRect, null);
+//      System.out.println("drawing lower, tint = " + tint);
+      canvas.drawBitmap(who.bitmap, imageImplSrcRect, imageImplDstRect, tint ? tintPaint : null);
     }
   }
 
@@ -1567,7 +1570,9 @@ public class PGraphicsAndroid2D extends PGraphics {
   protected void tintFromCalc() {
     super.tintFromCalc();
 //    tintPaint.setColor(tintColor);
-    tintPaint.setColorFilter(new PorterDuffColorFilter(tintColor, PorterDuff.Mode.SRC_OVER));
+//    tintPaint.setColorFilter(new PorterDuffColorFilter(tintColor, PorterDuff.Mode.SRC_OVER));
+//    tintPaint.setColorFilter(new PorterDuffColorFilter(tintColor, PorterDuff.Mode.SRC_ATOP));
+    tintPaint.setColorFilter(new PorterDuffColorFilter(tintColor, PorterDuff.Mode.MULTIPLY));
   }
 
 
