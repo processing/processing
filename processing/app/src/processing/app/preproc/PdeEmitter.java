@@ -657,6 +657,7 @@ public class PdeEmitter implements PdeTokenTypes
     case LITERAL_threadsafe:
     //case LITERAL_synchronized:  // 0137 to fix bug #136
     case LITERAL_volatile:
+    case LITERAL_class:  // 0176 to fix bug #1466
     case FINAL:
     case ABSTRACT:
     case LITERAL_package:
@@ -709,6 +710,10 @@ public class PdeEmitter implements PdeTokenTypes
       print(child2);    // the "then" clause is an SLIST
       if (child3 != null) {
         out.print("else");
+        // Tracked this bug to here:
+        // http://dev.processing.org/bugs/show_bug.cgi?id=1362
+        // This prints an SLIST, and the first item is {
+        // but that's not being printed when the print() call is made
         dumpHiddenBefore(getBestPrintableNode(child3, true));
         print(child3);  // optional "else" clause: an SLIST
       }
@@ -898,6 +903,7 @@ public class PdeEmitter implements PdeTokenTypes
 
 
     default:
+      System.out.println("Invalid type:" + ast.getType());
       debug.println("Invalid type:" + ast.getType());
       break;
 
@@ -906,7 +912,6 @@ public class PdeEmitter implements PdeTokenTypes
    ever produces an AST with one of these types:
    case COMMA:
    case LITERAL_implements:
-   case LITERAL_class:
    case LITERAL_extends:
    case EOF:
    case NULL_TREE_LOOKAHEAD:
