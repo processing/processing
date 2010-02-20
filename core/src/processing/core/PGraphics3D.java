@@ -52,9 +52,13 @@ public class PGraphics3D extends PGraphics {
   /** Inverse modelview matrix, used for lighting. */
   public PMatrix3D modelviewInv;
 
-  /**
-   * The camera matrix, the modelview will be set to this on beginDraw.
+  /** 
+   * Marks when changes to the size have occurred, so that the camera 
+   * will be reset in beginDraw().
    */
+  protected boolean sizeChanged;
+  
+  /** The camera matrix, the modelview will be set to this on beginDraw. */
   public PMatrix3D camera;
 
   /** Inverse camera matrix */
@@ -306,6 +310,9 @@ public class PGraphics3D extends PGraphics {
    * the pixel buffer for the new size.
    *
    * Note that this will nuke any cameraMode() settings.
+   * 
+   * No drawing can happen in this function, and no talking to the graphics
+   * context. That is, no glXxxx() calls, or other things that change state.
    */
   public void setSize(int iwidth, int iheight) {  // ignore
     width = iwidth;
@@ -357,13 +364,8 @@ public class PGraphics3D extends PGraphics {
     camera = new PMatrix3D();
     cameraInv = new PMatrix3D();
 
-    // set up the default camera
-//    camera();
-
-    // defaults to perspective, if the user has setup up their
-    // own projection, they'll need to fix it after resize anyway.
-    // this helps the people who haven't set up their own projection.
-//    perspective();
+    // set this flag so that beginDraw() will do an update to the camera.
+    sizeChanged = true;
   }
 
 
@@ -409,6 +411,19 @@ public class PGraphics3D extends PGraphics {
     // beginDraw/endDraw).
     if (!settingsInited) defaultSettings();
 
+    if (sizeChanged) {
+      // set up the default camera
+      camera();
+
+      // defaults to perspective, if the user has setup up their
+      // own projection, they'll need to fix it after resize anyway.
+      // this helps the people who haven't set up their own projection.
+      perspective();
+      
+      // clear the flag
+      sizeChanged = false;
+    }
+    
     resetMatrix(); // reset model matrix
 
     // reset vertices
