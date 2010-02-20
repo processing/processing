@@ -39,10 +39,18 @@
 	 subfolder instead of the actual JDK found at JAVA_HOME. 
 	 To avoid this, we grab the actual JAVA_HOME environment variable 
 	 and use that to specify the location of tools.jar. -->
-    <property environment="env" />
 
-    <fail if="linux" unless="${env.JAVA_HOME}" 
-	  message="The JAVA_HOME variable must be set to the location of a full JDK. For instance, on Ubuntu Linux, this is /usr/lib/jvm/java-6-sun." />
+    <!-- if someone is better with ant please help clean this up -->
+    <property environment="env" />
+    <property name="java_home" value="${env.JAVA_HOME}" />
+
+    <condition property="linux"><os family="unix" /></condition>
+    <fail if="linux" unless="java_home" 
+	  message="The JAVA_HOME variable must be set to the location of a full JDK. For instance, on Ubuntu Linux, this might be /usr/lib/jvm/java-6-sun." />
+
+    <condition property="windows"><os family="windows" /></condition>
+    <fail if="windows" unless="java_home" 
+	  message="The JAVA_HOME variable must be set to the location of a full JDK. For instance, on Windows, this might be c:\jdk1.6.0_18." />
 
 <!--
     <dirname property="blah" file="${java.home}" />
