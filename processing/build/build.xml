@@ -327,6 +327,7 @@
 	   overwrite="false"/>
 
     <tar compression="gzip" basedir="linux/work" 
+	 prefix="processing-${version}"
 	 destfile="linux/processing-${version}.tgz" />
     
     <echo>
@@ -415,10 +416,12 @@
     <unzip dest="windows/work" src="windows/jre.zip" overwrite="false"/>
 
     <zip basedir="windows/work" 
+	 prefix="processing-${version}"
 	 destfile="windows/processing-${version}.zip" />
 
     <zip basedir="windows/work" 
-	 destfile="windows/processing-expert-${version}.zip" 
+	 prefix="processing-${version}"
+	 destfile="windows/processing-${version}-expert.zip" 
 	 excludes="java/**" />
     
     <echo>
@@ -426,7 +429,7 @@
       Processing for Windows was built. Grab the archive from   
       
       windows/processing-${version}.zip
-      windows/processing-expert-${version}.zip
+      windows/processing-${version}-expert.zip
       =======================================================
     </echo>
   </target>
