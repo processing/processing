@@ -1,4 +1,17 @@
-[ changes between processing.android.core and processing.core ]
+[ understanding changes in the android version of processing.core ]
+[     a guide for the excited, hopeful, weary, and confused.      ]
+
++ The package for the core library remains processing.core on Android. 
+  Early releases used processing.android.core in an attempt to avoid 
+  confusion between the two platforms. Unfortunately, this requires all
+  libraries--even those that make only basic use of PApplet features--
+  to maintain separate sets of code for each. Because this would needlessly
+  affect nearly all libraries, we've decided to just use the same package
+  naming. This makes us cringe a little, but the alternative is perpetual
+  annoyance at maintaining separate code bases for libraries for which
+  only the package imports differ. In practice, there is little chance for
+  processing.core packages for both platforms to ever collide with one
+  another, since they require completely separate classpaths to build.
 
 + For compatability, mouseX and mouseY work similar to the original API, 
   and always contain the most recent mouse position. In addition, the
@@ -6,7 +19,7 @@
   used to track relative motion (the native way Android handles input).
   Unlike mouseX/mouseY, those variables are also float values.
 
-+ The mouseButton variable is not available, for obvious reasions.
++ The mouseButton variable is not available, for perhaps obvious reasons.
 
 + The keyEvent and mouseEvent variables are not available. If you want to 
   work with event objects, you'll need to override the key and motion handlers:
@@ -47,9 +60,13 @@
 + The all-lowercase version of arraycopy() (deprecated from the desktop version)
   has been removed.
 
-+ The deprecated openStream() method has been removed. Use createInput().
++ The (long since) deprecated openStream() method has been removed. Use
+  createInput().
 
-+ PImage.image is PImage.bitmap.
++ PImage.image is PImage.bitmap, to reflect that a different object type 
+  is there, in spite of its identical purpose.
+
++ PFont.font is PFont.typeface, similar as above.
 
 + Cannot use .gz files in the data or assets folder, because Android wants
   to compress the files itself.
