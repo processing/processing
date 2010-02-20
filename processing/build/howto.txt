@@ -24,6 +24,9 @@ Troubleshooting:
   it in C:\Program Files\Java\jre6\lib\tools.jar" means you need to set 
   JAVA_HOME to your JDK (not JRE) installation.
 
++ Build errors regarding a lot of missing classes for processing.app.debug
+  mean that JAVA_HOME is
+
 More to come...
 
 
