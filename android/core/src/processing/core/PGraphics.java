@@ -3080,23 +3080,29 @@ public class PGraphics extends PImage implements PConstants {
     float savedTintA = tintA;
     boolean savedTintAlpha = tintAlpha;
 
-    tint = true;
-    tintColor = fillColor;
-    tintR = fillR;
-    tintG = fillG;
-    tintB = fillB;
-    tintA = fillA;
-    tintAlpha = fillAlpha;
+//    tint = true;
+//    tintColor = fillColor;
+//    tintR = fillR;
+//    tintG = fillG;
+//    tintB = fillB;
+//    tintA = fillA;
+//    tintAlpha = fillAlpha;
+    tint(fillColor);
 
     imageImpl(glyph, x1, y1, x2, y2, 0, 0, u2, v2);
 
-    tint = savedTint;
-    tintColor = savedTintColor;
-    tintR = savedTintR;
-    tintG = savedTintG;
-    tintB = savedTintB;
-    tintA = savedTintA;
-    tintAlpha = savedTintAlpha;
+//    tint = savedTint;
+//    tintColor = savedTintColor;
+//    tintR = savedTintR;
+//    tintG = savedTintG;
+//    tintB = savedTintB;
+//    tintA = savedTintA;
+//    tintAlpha = savedTintAlpha;
+    if (savedTint) {
+      tint(tintColor);
+    } else {
+      noTint();
+    }
   }
 
 
