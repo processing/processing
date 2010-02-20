@@ -64,8 +64,6 @@ X move build scripts to something better like ant
 X   too much to maintain the multiple versions, too much code
 X   http://dev.processing.org/bugs/show_bug.cgi?id=151
 X   remove the intermediate build folders
-_ update build/howto.txt (of course) because it says no ant
-_   this would also mean requiring a java installation for building
 _ move the jdk stuff outside of the build
 _   http://processing.org/download/jre-6u18.zip, .tgz
 _   only get the java files when doing a dist build
@@ -83,7 +81,11 @@ X   and then finalizing it towards 1.0
 X not saving sketch when exiting (only with windows lan setup)
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1193
 
+
 svn copy svn://processing.org/trunk/processing svn://processing.org/tags/processing-01XX
+
+_ update build/howto.txt (of course) because it says no ant
+_   this would also mean requiring a java installation for building
 
 _ right-click on opengl.jar and select native lib location from the third prefs
 _   might be possible to do easier opengl setup for eclipse
