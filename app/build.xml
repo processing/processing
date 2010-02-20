@@ -40,6 +40,10 @@
 	 To avoid this, we grab the actual JAVA_HOME environment variable 
 	 and use that to specify the location of tools.jar. -->
     <property environment="env" />
+
+    <fail if="linux" unless="${env.JAVA_HOME}" 
+	  message="The JAVA_HOME variable must be set to the location of a full JDK. For instance, on Ubuntu Linux, this is /usr/lib/jvm/java-6-sun." />
+
 <!--
     <dirname property="blah" file="${java.home}" />
     <echo message="here! ${java.home}/lib/tools.jar or there: ${blah}" />
