@@ -4,12 +4,24 @@ X escape slashes properly on windows (also place sdk in program files)
 X   writer.println("sdk.dir=" + Android.sdkPath);  // r4 of the sdk
 X   writer.println("sdk.dir=" + Android.sdkPath.replace("\\", "\\" +"\\")); 
 X move processing.android.core back to processing.core
-_   need to document the change somehow
+X   need to document the rationale
+X Android tools on Windows are broken due to naming changes in r4 SDK
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1432
 X images with tint() starting to work
-_ Android tools on Windows are broken due to naming changes in r4 SDK
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1432
+X   tint() causes crash
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1435
+X loadFont() now working, createFont() not tested yet
+X implement library support for android
+X   also code folder support
 
-_ noLoop() is broken (draw is never called)
+_ need to have single signature that can be reapplied
+_   with different machines, users are required to remove signature
+_ library support also needs android manifest changes
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1439
+
+_ how does size work? 
+_   if size() method is used, things are scaled based on that
+_   if no size() method, then the full screen/full resolution is used
 
 _ should alpha PImage stuff use a non-4byte config?
 
@@ -25,22 +37,17 @@ _ what is resetLights() in PGraphics?
 _ remove drawCube() method from PApplet
 _ remove model() method from end of PApplet (make it shape(PShape))
 
-_ implement library support for android
-_   also code folder support
-_ library support also needs android manifest changes
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1439
-
 _ make apps properly handle screen resize
 _ make change from src folder to assets folder for export
 _ what to do with other classes that rely on PApplet? (e.g. vida)
 
 from romain
-_ tint() causes crash
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1435
 _ colorMode() error 
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1436
 _ createGraphics() broken
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1437
+
+_ test createFont()
 
 _ gz files not allowed, need to remove the code from createInput() et al
 _   or maybe not, since could still come from a site or a File?
@@ -57,6 +64,7 @@ _ check on multiple pointers (peter's msg)
 _ add clear and close to all stream methods?
 _ is there a way to get a width/height default to use for surfaceChanged?
 
+
 P1 this is embarrassing, need to fix ASAP
 P2 need to fix before beta release
 P3 would like to fix before final release
@@ -66,8 +74,8 @@ P5 nice to have
 android bugs, sorted by priority
 http://dev.processing.org/bugs/buglist.cgi?bug_status=&field0-0-0=product&type0-0-0=substring&value0-0-0=android&field0-0-1=component&type0-0-1=substring&value0-0-1=android&field0-0-2=short_desc&type0-0-2=substring&value0-0-2=android&field0-0-3=status_whiteboard&type0-0-3=substring&value0-0-3=android&query_format=advanced&order=bugs.priority,bugs.bug_status%2Cbugs.bug_id&query_based_on=
 
-for each release, need to do an svn update on dev.processing.org
-
+P1 _ noLoop() is broken (draw is never called)
+P1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1467
 P1 _ app not pausing or closing when switching to another activity
 P1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1404
 P1 _ get stdout and stderr from the emulator/device
