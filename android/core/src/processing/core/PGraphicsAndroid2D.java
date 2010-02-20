@@ -872,14 +872,26 @@ public class PGraphicsAndroid2D extends PGraphics {
 //    popStyle();
 //    if (true) return;
 
-    if (who.bitmap == null && (who.format == ARGB || who.format == RGB)) {
+    if (who.bitmap == null && who.format == ALPHA) {
+      // create an alpha bitmap for this feller
+      who.bitmap = Bitmap.createBitmap(who.width, who.height, Config.ARGB_8888);
+      int[] px = new int[who.pixels.length];
+      for (int i = 0; i < px.length; i++) {
+        px[i] = who.pixels[i] << 24 | 0xFFFFFF;
+      }
+      who.bitmap.setPixels(px, 0, who.width, 0, 0, who.width, who.height);
+      who.modified = false;
+    }
+
+    //if (who.bitmap == null && (who.format == ARGB || who.format == RGB)) {
+    if (who.bitmap == null) {  // format is ARGB or RGB
       int offset = v1*who.width + u1;
-      System.out.println(tint + " " + PApplet.hex(tintPaint.getColor()));
+//      System.out.println(tint + " " + PApplet.hex(tintPaint.getColor()));
       canvas.drawBitmap(who.pixels, offset, who.width,
                         x1, y1, u2-u1, v2-v1,
                         who.format == ARGB, tint ? tintPaint : null);
     } else {
-      rect.set(x1, y1, x2, y2);
+//      rect.set(x1, y1, x2, y2);
       if (who.bitmap == null || 
           who.width != who.bitmap.getWidth() || 
           who.height != who.bitmap.getHeight()) {
@@ -906,7 +918,7 @@ public class PGraphicsAndroid2D extends PGraphics {
       //canvas.drawBitmap(who.bitmap, imageImplSrcRect, imageImplDstRect, tint ? tintPaint : null);
       //System.out.println(PApplet.hex(fillPaint.getColor()));
       //canvas.drawBitmap(who.bitmap, imageImplSrcRect, imageImplDstRect, fillPaint);
-//      System.out.println("drawing lower, tint = " + tint);
+//      System.out.println("drawing lower, tint = " + tint + " " + PApplet.hex(tintPaint.getColor()));
       canvas.drawBitmap(who.bitmap, imageImplSrcRect, imageImplDstRect, tint ? tintPaint : null);
     }
   }
@@ -1569,9 +1581,6 @@ public class PGraphicsAndroid2D extends PGraphics {
 
   protected void tintFromCalc() {
     super.tintFromCalc();
-//    tintPaint.setColor(tintColor);
-//    tintPaint.setColorFilter(new PorterDuffColorFilter(tintColor, PorterDuff.Mode.SRC_OVER));
-//    tintPaint.setColorFilter(new PorterDuffColorFilter(tintColor, PorterDuff.Mode.SRC_ATOP));
     tintPaint.setColorFilter(new PorterDuffColorFilter(tintColor, PorterDuff.Mode.MULTIPLY));
   }
 
