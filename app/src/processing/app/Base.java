@@ -1920,6 +1920,36 @@ public class Base {
     input = null;
     return buffer;
   }
+  
+  
+  
+  /**
+   * Read from a file with a bunch of attribute/value pairs
+   * that are separated by = and ignore comments with #.
+   */
+  static public HashMap<String,String> readSettings(File inputFile) {
+    HashMap<String,String> outgoing = new HashMap<String,String>();
+    if (!inputFile.exists()) return outgoing;  // return empty hash
+
+    String lines[] = PApplet.loadStrings(inputFile);
+    for (int i = 0; i < lines.length; i++) {
+      int hash = lines[i].indexOf('#');
+      String line = (hash == -1) ?
+        lines[i].trim() : lines[i].substring(0, hash).trim();
+      if (line.length() == 0) continue;
+
+      int equals = line.indexOf('=');
+      if (equals == -1) {
+        System.err.println("ignoring illegal line in " + inputFile);
+        System.err.println("  " + line);
+        continue;
+      }
+      String attr = line.substring(0, equals).trim();
+      String valu = line.substring(equals + 1).trim();
+      outgoing.put(attr, valu);
+    }
+    return outgoing;
+  }
 
 
   static public void copyFile(File sourceFile,

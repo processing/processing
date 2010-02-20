@@ -38,6 +38,10 @@ X update JNA to version 3.2.4 to support Windows 7 64-bit
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1424
 X fix LITERAL_class in PDE code (help from Christian Thiemann) 
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1466
+X replace applet.html and applet-opengl.html
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1057
+X   update applet.html to point at java 6u10 with the new auto-update stuff
+o   also update applet on the home page to do the same
 
 fonts
 X loading is very slow on the first time (getting all font names)
@@ -79,9 +83,10 @@ X   and then finalizing it towards 1.0
 X not saving sketch when exiting (only with windows lan setup)
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1193
 
-
 svn copy svn://processing.org/trunk/processing svn://processing.org/tags/processing-01XX
 
+_ right-click on opengl.jar and select native lib location from the third prefs
+_   might be possible to do easier opengl setup for eclipse
 _ don't allow processing to run on snow leopard with 1.5
 
 _ do some testing for windows 7 on 64-bit
@@ -1008,10 +1013,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=59
 
 PDE / Export
 
-1 _ replace applet.html and applet-opengl.html
-1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1057
-1 _   update applet.html to point at java 6u10 with the new auto-update stuff
-1 _   also update applet on the home page to do the same
 4 _ failed export still copies random files
 4 _   Failed compile on Export or Export to Application 
 4 _   still creates folder and leaves mess behind

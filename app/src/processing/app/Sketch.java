@@ -1403,7 +1403,7 @@ public class Sketch {
       File libFolder = (File) Base.importToLibraryTable.get(entry);
 
       if (libFolder != null) {
-        importedLibraries.add(libFolder);
+        getImportedLibraries().add(libFolder);
         classPath += Compiler.contentsToClassPath(libFolder);
         libraryPath += File.pathSeparator + libFolder.getAbsolutePath();
       }
@@ -1444,7 +1444,12 @@ public class Sketch {
     return primaryClassName;
   }
   
+  
+  public ArrayList<File> getImportedLibraries() {
+    return importedLibraries;
+  }
 
+  
   /**
    * Map an error from a set of processed .java files back to its location
    * in the actual sketch.
@@ -1779,14 +1784,11 @@ public class Sketch {
     // if a file called 'export.txt' is in there, it contains
     // a list of the files that should be exported.
     // otherwise, all files are exported.
-    for (File libraryFolder : importedLibraries) {
-//    Enumeration en = importedLibraries.elements();
-//    while (en.hasMoreElements()) {
+    for (File libraryFolder : getImportedLibraries()) {
       // in the list is a File object that points the
       // library sketch's "library" folder
-//      File libraryFolder = (File)en.nextElement();
       File exportSettings = new File(libraryFolder, "export.txt");
-      HashMap<String,String> exportTable = readSettings(exportSettings);
+      HashMap<String,String> exportTable = Base.readSettings(exportSettings);
       String appletList = (String) exportTable.get("applet");
       String exportList[] = null;
       if (appletList != null) {
@@ -2422,12 +2424,12 @@ public class Sketch {
     // if a file called 'export.txt' is in there, it contains
     // a list of the files that should be exported.
     // otherwise, all files are exported.
-    for (File libraryFolder : importedLibraries) {
+    for (File libraryFolder : getImportedLibraries()) {
       //System.out.println(libraryFolder + " " + libraryFolder.getAbsolutePath());
       // in the list is a File object that points the
       // library sketch's "library" folder
       File exportSettings = new File(libraryFolder, "export.txt");
-      HashMap<String,String> exportTable = readSettings(exportSettings);
+      HashMap<String,String> exportTable = Base.readSettings(exportSettings);
       String commaList = null;
       String exportList[] = null;
 
@@ -2657,35 +2659,6 @@ public class Sketch {
       "Main-Class: " + name + "\n";  // TODO not package friendly
     zos.write(contents.getBytes());
     zos.closeEntry();
-  }
-
-
-  /**
-   * Read from a file with a bunch of attribute/value pairs
-   * that are separated by = and ignore comments with #.
-   */
-  protected HashMap<String,String> readSettings(File inputFile) {
-    HashMap<String,String> outgoing = new HashMap<String,String>();
-    if (!inputFile.exists()) return outgoing;  // return empty hash
-
-    String lines[] = PApplet.loadStrings(inputFile);
-    for (int i = 0; i < lines.length; i++) {
-      int hash = lines[i].indexOf('#');
-      String line = (hash == -1) ?
-        lines[i].trim() : lines[i].substring(0, hash).trim();
-      if (line.length() == 0) continue;
-
-      int equals = line.indexOf('=');
-      if (equals == -1) {
-        System.err.println("ignoring illegal line in " + inputFile);
-        System.err.println("  " + line);
-        continue;
-      }
-      String attr = line.substring(0, equals).trim();
-      String valu = line.substring(equals + 1).trim();
-      outgoing.put(attr, valu);
-    }
-    return outgoing;
   }
 
 

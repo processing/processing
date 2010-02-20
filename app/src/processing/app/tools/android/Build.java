@@ -3,6 +3,7 @@ package processing.app.tools.android;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 
 import org.apache.tools.ant.*;
 
@@ -22,6 +23,8 @@ public class Build {
   String className;
   File androidFolder;
   File buildFile;
+  
+  String sdkVersion = "5";
   
 
   public Build(Editor editor) {
@@ -126,16 +129,6 @@ public class Build {
     //File srcFile = new File(actualSrc, className + ".java");
     String buildPath = javaFolder.getAbsolutePath();
 
-    // Copy the data folder, if one exists 
-    File sketchDataFolder = sketch.getDataFolder();
-    if (sketchDataFolder.exists()) {
-      try {
-        Base.copyDir(sketchDataFolder, srcFolder);
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-    }
-    
 //    String prefsLine = Preferences.get("preproc.imports");
 //    System.out.println("imports are " + prefsLine);
 //    Preferences.set("preproc.imports", "");
@@ -155,23 +148,31 @@ public class Build {
         writeDefaultProps(new File(androidFolder, "default.properties"));
         writeLocalProps(new File(androidFolder, "local.properties"));
         writeRes(new File(androidFolder, "res"), className);
-        writeLibs(new File(androidFolder, "libs"));
-        //Base.openFolder(androidFolder);
+        
+        File libsFolder = new File(androidFolder, "libs"); 
+        libsFolder.mkdirs();
+        File assetsFolder = new File(androidFolder, "assets");
+        assetsFolder.mkdirs();
+        
+        InputStream input = PApplet.createInput(Android.getCoreZipFile()); 
+        PApplet.saveStream(new File(libsFolder, "processing-core.jar"), input);
 
-        // looking for BUILD SUCCESSFUL or BUILD FAILED
-//        Process p = Runtime.getRuntime().exec(new String[] { 
-//          "ant", "-f", buildFile.getAbsolutePath()
-//        });
-//        BufferedReader stdout = PApplet.createReader(p.getInputStream());
-//        String line = null;         
+        try {
+          // Copy any imported libraries or code folder contents to the project
+          writeLibraries(libsFolder, assetsFolder);
+        
+          // Copy the data folder, if one exists, to the 'assets' folder of the project 
+          File sketchDataFolder = sketch.getDataFolder();
+          if (sketchDataFolder.exists()) {
+            Base.copyDir(sketchDataFolder, assetsFolder);
+          }
+        } catch (IOException e) {
+          e.printStackTrace();
+          throw new RunnerException(e.getMessage());
+        }
       }
-//    } catch (IOException ioe) {
-//      ioe.printStackTrace();
     } catch (RunnerException e) {
-      //e.printStackTrace();
       editor.statusError(e);
-      // set this back, even if there's an error
-//      Preferences.set("preproc.imports", prefsLine);
       return false;
     }
     return true;
@@ -397,7 +398,7 @@ public class Build {
     writer.println("          android:versionCode=\"1\" ");
     writer.println("          android:versionName=\"1.0\">");
     
-    writer.println("  <uses-sdk android:minSdkVersion=" + q("4") + " />");
+    writer.println("  <uses-sdk android:minSdkVersion=" + sdkVersion + " />");
     
     writer.println("  <application android:label=" + q("@string/app_name") +
                    "               android:debuggable=" + q("true") + ">");
@@ -474,7 +475,7 @@ public class Build {
   
   void writeDefaultProps(File file) {
     PrintWriter writer = PApplet.createWriter(file);
-    writer.println("target=Google Inc.:Google APIs:4");
+    writer.println("target=Google Inc.:Google APIs:" + sdkVersion);
     writer.flush();
     writer.close();
   }
@@ -539,13 +540,73 @@ public class Build {
   }
   
   
-  void writeLibs(File libsFolder) {
-    libsFolder.mkdirs();
-    //InputStream input = getClass().getResourceAsStream("processing-core.zip");
-    InputStream input = PApplet.createInput(Android.getCoreZipFile()); 
-    PApplet.saveStream(new File(libsFolder, "processing-core.jar"), input);
+  void writeLibraries(File libsFolder, File assetsFolder) throws IOException {
+    // Copy any libraries to the 'libs' folder
+    Sketch sketch = editor.getSketch();
+    for (File libraryFolder : sketch.getImportedLibraries()) {
+      // in the list is a File object that points the
+      // library sketch's "library" folder
+      File exportSettings = new File(libraryFolder, "export.txt");
+      HashMap<String,String> exportTable = Base.readSettings(exportSettings);
+      String androidList = (String) exportTable.get("android");
+      String exportList[] = null;
+      if (androidList != null) {
+        exportList = PApplet.splitTokens(androidList, ", ");
+      } else {
+        exportList = libraryFolder.list();
+      }
+      for (int i = 0; i < exportList.length; i++) {
+        if (exportList[i].equals(".") ||
+            exportList[i].equals("..")) continue;
+
+        exportList[i] = PApplet.trim(exportList[i]);
+        if (exportList[i].equals("")) continue;
+
+        File exportFile = new File(libraryFolder, exportList[i]);
+        if (!exportFile.exists()) {
+          System.err.println("File " + exportList[i] + " does not exist");
+
+        } else if (exportFile.isDirectory()) {
+          System.err.println("Ignoring sub-folder \"" + exportList[i] + "\"");
+
+        } else if (exportFile.getName().toLowerCase().endsWith(".zip")) {
+          // As of r4 of the Android SDK, it looks like .zip files 
+          // are ignored in the libs folder, so rename to .jar
+          String exportFilename = exportFile.getName();
+          exportFilename = 
+            exportFilename.substring(0, exportFilename.length() - 4) + ".jar";
+          Base.copyFile(exportFile, new File(libsFolder, exportFilename));
+
+        } else if (exportFile.getName().toLowerCase().endsWith(".jar")) {
+          String exportFilename = exportFile.getName();
+          Base.copyFile(exportFile, new File(libsFolder, exportFilename));
+
+        } else {  // just copy the file over to assets
+          Base.copyFile(exportFile, new File(assetsFolder, exportFile.getName()));
+        }
+      }
+    }
+    
+    // Copy files from the 'code' directory into the 'libs' folder
+    File codeFolder = sketch.getCodeFolder();
+    if (codeFolder != null && codeFolder.exists()) {
+      File[] codeFiles = codeFolder.listFiles();
+      for (File item : codeFiles) {
+        if (!item.isDirectory()) {
+          String name = item.getName();
+          if (name.toLowerCase().endsWith(".jar")) {
+            File targetFile = new File(libsFolder, name);
+            Base.copyFile(item, targetFile);
+          } else if (name.toLowerCase().endsWith(".zip")) {
+            name = name.substring(0, name.length() - 4) + ".jar";
+            File targetFile = new File(libsFolder, name);
+            Base.copyFile(item, targetFile);
+          }
+        }
+      }
+    }
   }
- 
+   
   
   /**
    * Place quotes around a string to avoid dreadful syntax mess of escaping

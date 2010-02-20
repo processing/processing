@@ -1,4 +1,25 @@
-PROCESSING 1.x (REV ????) - ?? February 2010
+PROCESSING REV 0176 - 20 February 2010
+
+Android changes are at the top, changes for the rest of Processing are listed
+below that (a tipoff being that there's no PDF library on Android...)
+
+[ android ]
+
++ Known issue: Sketches that use noLoop() are currently broken. 
+  http://dev.processing.org/bugs/show_bug.cgi?id=1467
+
++ Classes have moved to the processing.core package instead of 
+  processing.android.core.
+
++ Slashes in the SDK path are now escaped properly on Windows.
+
++ Fix problems preventing Android Mode from running on Windows
+  http://dev.processing.org/bugs/show_bug.cgi?id=1432
+
++ The tint() method now works.
+  http://dev.processing.org/bugs/show_bug.cgi?id=1435
+
++ loadFont() and text() now work properly. createFont() has not been tested.
 
 [ changes ] 
 
@@ -25,7 +46,6 @@ editor.keys.home_and_end_travel_far = false
 # the OS X HI Guidelines say that home/end are relative to the document
 # if you don't like it, change it here
 editor.keys.home_and_end_travel_far.macosx = true
-
 
 [ fonts ]
 
