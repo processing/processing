@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry excluding="processing/core/PGraphics2D.java|processing/core/PGraphicsJava2D.java|processing/opengl/GLSurfaceView.java|processing/opengl/GLSurfaceViewActivity.java|processing/opengl/GLRenderer.java|processing/android/core/PSmoothTriangle.java|processing/core/GLFont.java" kind="src" path="src"/>
-	<classpathentry kind="lib" path="/opt/android/platforms/android-1.6/android.jar" sourcepath="/Users/fry/coconut/processing.droid/sources-1.6.zip"/>
+	<classpathentry kind="lib" path="/opt/android/platforms/android-2.0/android.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
