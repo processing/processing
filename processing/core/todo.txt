@@ -11,9 +11,9 @@ X don't make fonts power of 2
 X PGraphics3D: beginDraw does not release old textures
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1423
 X   fix from taifun_browser
-_ removing camera() and perspective() from setSize() trashes resize
-_   probably regression b/c camera/perspective can't be called then
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1391
+X removing camera() and perspective() from setSize() trashes resize
+X   probably regression b/c camera/perspective can't be called then
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1391
 
 
 big ones
