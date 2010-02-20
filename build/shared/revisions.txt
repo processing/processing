@@ -54,6 +54,13 @@ below that (a tipoff being that there's no PDF library on Android...)
 + Changed how imports are handled in sketches. This may break some sketches
   that use java.xxx packages that aren't covered in the Processing reference.
 
++ With great help from Hansi, moved the build scripts over to Ant.
+  http://dev.processing.org/bugs/show_bug.cgi?id=151
+  Also moved the special JRE for Linux and Windows out of SVN. It'll only be
+  downloaded when 'ant dist' is run. This makes the build and maintenance 
+  more of a mess for me, but will save me from people whining about the 
+  large files.
+
 + Javadoc is slowly improving. More on that later.
 
 [ bug fixes ] 
