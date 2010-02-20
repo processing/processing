@@ -326,10 +326,14 @@
 	   src="linux/jre.tgz" 
 	   overwrite="false"/>
 
+<!--
     <tar compression="gzip" basedir="linux/work" 
-	 prefix="processing-${version}"
 	 destfile="linux/processing-${version}.tgz" />
-    
+-->
+    <tar compression="gzip" destfile="linux/processing-${version}.tgz">
+      <tarfileset dir="linux/work" prefix="processing-${version}" />
+    </tar>
+
     <echo>
       =======================================================
       Processing for Linux was built. Grab the archive from   
