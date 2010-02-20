@@ -40,8 +40,8 @@ import processing.core.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
-  static final int REVISION = 176;
-  public static String VERSION_NAME = "0176";
+  static final int REVISION = 177;
+  public static String VERSION_NAME = "0177";
 
   static HashMap<Integer, String> platformNames = new HashMap<Integer, String>();
   static {
@@ -1920,9 +1920,9 @@ public class Base {
     input = null;
     return buffer;
   }
-  
-  
-  
+
+
+
   /**
    * Read from a file with a bunch of attribute/value pairs
    * that are separated by = and ignore comments with #.

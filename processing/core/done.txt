@@ -1,3 +1,21 @@
+0176 core (private)
+X opengl sketches run at 30fps in present mode on OS X
+o   still having problems w/ full screen non-FSEM
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1425
+X PFont not working well with lots of characters
+X   only create bitmap chars on the fly when needed (in createFont)
+X Implement better caching mechanism when creating large fonts
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1111
+X fix problem with "create font" still showing anti-aliased text
+X don't make fonts power of 2
+X PGraphics3D: beginDraw does not release old textures
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1423
+X   fix from taifun_browser
+X removing camera() and perspective() from setSize() trashes resize
+X   probably regression b/c camera/perspective can't be called then
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1391
+
+
 0175 core (private) 
 X changed createInputRaw() to only bother checking URLs if : present
 
