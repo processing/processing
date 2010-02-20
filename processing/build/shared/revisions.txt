@@ -13,6 +13,8 @@ below that (a tipoff being that there's no PDF library on Android...)
 + Known issue: Sketches that use noLoop() are currently broken. 
   http://dev.processing.org/bugs/show_bug.cgi?id=1467
 
++ Added support for libraries and the code folder.
+
 + Classes have moved to the processing.core package instead of 
   processing.android.core.
 
