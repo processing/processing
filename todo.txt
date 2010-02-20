@@ -42,6 +42,15 @@ X replace applet.html and applet-opengl.html
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1057
 X   update applet.html to point at java 6u10 with the new auto-update stuff
 o   also update applet on the home page to do the same
+X move build scripts to something better like ant
+X   too much to maintain the multiple versions, too much code
+X   http://dev.processing.org/bugs/show_bug.cgi?id=151
+X   remove the intermediate build folders
+X move the jdk stuff outside of the build
+X   http://processing.org/download/jre-6u18.zip, .tgz
+X   only get the java files when doing a dist build
+X   http://ant.apache.org/manual/CoreTasks/get.html
+X   mostly done, but need to test and remove the others
 
 fonts
 X loading is very slow on the first time (getting all font names)
@@ -59,16 +68,6 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=1111
 o when resizing window, only resize the text display area
 o   just a matter of moving around the panels and BorderLayout
 X   it's a mess, just disable resizing
-
-X move build scripts to something better like ant
-X   too much to maintain the multiple versions, too much code
-X   http://dev.processing.org/bugs/show_bug.cgi?id=151
-X   remove the intermediate build folders
-_ move the jdk stuff outside of the build
-_   http://processing.org/download/jre-6u18.zip, .tgz
-_   only get the java files when doing a dist build
-_   http://ant.apache.org/manual/CoreTasks/get.html
-_   mostly done, but need to test and remove the others
 
 cleaning
 X update to jogl 1.1.1
