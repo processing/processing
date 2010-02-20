@@ -419,14 +419,26 @@
 
     <unzip dest="windows/work" src="windows/jre.zip" overwrite="false"/>
 
+    <!--
     <zip basedir="windows/work" 
 	 prefix="processing-${version}"
 	 destfile="windows/processing-${version}.zip" />
-
     <zip basedir="windows/work" 
 	 prefix="processing-${version}"
 	 destfile="windows/processing-${version}-expert.zip" 
 	 excludes="java/**" />
+    -->
+
+    <zip destfile="windows/processing-${version}.zip">
+      <zipfileset dir="windows/work" 
+		  prefix="processing-${version}" />
+    </zip>
+
+    <zip destfile="windows/processing-${version}-expert.zip">
+      <zipfileset dir="windows/work" 
+		  prefix="processing-${version}" 
+		  excludes="java/**" />
+    </zip>
     
     <echo>
       =======================================================
