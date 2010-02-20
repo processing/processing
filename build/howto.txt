@@ -20,7 +20,9 @@ Update 16 February 2010:
 
 Troubleshooting:
 
-+ "Unable to locate tools.jar. Expected to find it in C:\Program Files\Java\jre6\lib\tools.jar" This means you need to set JAVA_HOME to your JDK (not JRE) installation.
++ An error message that reads "Unable to locate tools.jar. Expected to find 
+  it in C:\Program Files\Java\jre6\lib\tools.jar" means you need to set 
+  JAVA_HOME to your JDK (not JRE) installation.
 
 More to come...
 
