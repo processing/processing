@@ -1,3 +1,86 @@
+0176 pde (private)
+X hitting ESC inside Color Selector will quit Processing
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1006
+X need to set exported applications to only run as 32-bit on osx
+X   otherwise quicktime will break
+X lock the minimum size for the main processing editor frame
+X   fix from Chris Lonnen
+X   if it's made too small, stuff from the bottom disappears
+X   http://dev.processing.org/bugs/show_bug.cgi?id=25
+X http://java.sun.com/javase/6/webnotes/install/jre/autodownload.html
+X   http://java.sun.com/update/1.6.0/jinstall-6u18-windows-i586.cab
+X   http://java.sun.com/javase/6/docs/technotes/guides/jweb/deployment_advice.html
+X   http://java.sun.com/javase/6/webnotes/family-clsid.html
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1353
+X switch to better deployment script for applets
+o   download java kernel
+X   not gonna bother with this -- download is not the issue w/ java
+o modify antlr stuff to conditionally recompile in make.sh
+X   compile antlr inside the initial setup of the work dir
+X     done for macosx
+X     fix this for windows and linux
+X PApplet.main() overwritten
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1446
+o need to do a better job of error handling inside main()
+X applets now use the deployjava.js file 
+X   not opengl, but the others do
+X NullPointerException in JOGLAppletLanucher with Java 6 Update 18 on Windows
+X   switching to more efficient JNLP export
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1452
+X lack of java.awt.Polygon import breaks the yellowtail example
+X   and java.io.File (other exceptions?)
+o   just add a simple poly class? or don't use a poly?
+X   add imports for anything that's in the reference (selections from java.io)
+o 'Array' in reference should be 'arrays' lowercase
+X processing 0142 japanese input problem
+X   http://dev.processing.org/bugs/show_bug.cgi?id=854
+X update JNA to version 3.2.4 to support Windows 7 64-bit
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1424
+X fix LITERAL_class in PDE code (help from Christian Thiemann) 
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1466
+X replace applet.html and applet-opengl.html
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1057
+X   update applet.html to point at java 6u10 with the new auto-update stuff
+o   also update applet on the home page to do the same
+X move build scripts to something better like ant
+X   too much to maintain the multiple versions, too much code
+X   http://dev.processing.org/bugs/show_bug.cgi?id=151
+X   remove the intermediate build folders
+X move the jdk stuff outside of the build
+X   http://processing.org/download/jre-6u18.zip, .tgz
+X   only get the java files when doing a dist build
+X   http://ant.apache.org/manual/CoreTasks/get.html
+X   mostly done, but need to test and remove the others
+
+fonts
+X loading is very slow on the first time (getting all font names)
+X   create the tool object on startup, then use thread to getAllFonts()
+X   show a progress/status bar while it's happening?
+X   (would be useful to at least tell user that system not locked up)
+X   this was fixed in a much earlier release
+X create font with user-specified charsets
+o remember previous font selection when returning to the window
+X "smooth" option being ignored in the Create Font tool
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1461
+X other font bugs handled
+X   http://dev.processing.org/bugs/show_bug.cgi?id=98
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1111
+o when resizing window, only resize the text display area
+o   just a matter of moving around the panels and BorderLayout
+X   it's a mess, just disable resizing
+
+cleaning
+X update to jogl 1.1.1
+X   do this with enhanced library/platform support
+X see how platform is determined by jogl / use for lib import
+X apple bug may have been fixed
+X   http://dev.processing.org/bugs/show_bug.cgi?id=786
+X javadoc "advanced" reference by beta
+X   and then finalizing it towards 1.0
+X not saving sketch when exiting (only with windows lan setup)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1193
+
+
 0175 pde (private)
 X changes to editor toolbar
 X   make shift-new and shift-open on the toolbar open a new window
