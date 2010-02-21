@@ -398,7 +398,7 @@ public class Build {
     writer.println("          android:versionCode=\"1\" ");
     writer.println("          android:versionName=\"1.0\">");
     
-    writer.println("  <uses-sdk android:minSdkVersion=" + sdkVersion + " />");
+    writer.println("  <uses-sdk android:minSdkVersion=" + q(sdkVersion) + " />");
     
     writer.println("  <application android:label=" + q("@string/app_name") +
                    "               android:debuggable=" + q("true") + ">");
