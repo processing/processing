@@ -1,7 +1,4 @@
-0177 (private)
-X fix error with typo in the build file:
-X   Open quote is expected for attribute "{1}" associated with an
-X   element type "android:minSdkVersion".
+0178 (private)
 
 
 _ need to have single signature that can be reapplied

@@ -1,3 +1,9 @@
+0177 (private)
+X fix error with typo in the build file:
+X   Open quote is expected for attribute "{1}" associated with an
+X   element type "android:minSdkVersion".
+
+
 0176 (private)
 X begin the merge of the new A3D, remove old OpenGL code
 X escape slashes properly on windows (also place sdk in program files)
