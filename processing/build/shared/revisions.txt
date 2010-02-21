@@ -1,3 +1,12 @@
+PROCESSING REV 0177 - 21 February 2010
+
+Fix for the Android tools complaining "Open quote is expected for 
+attribute "{1}" associated with an element type android:minSdkVersion."
+
+Just posting a new revision because it's easier than writing instructions
+for swapping the pde.jar file.
+
+
 PROCESSING REV 0176 - 20 February 2010
 
 Android changes are at the top, changes for the rest of Processing are listed
