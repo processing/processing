@@ -64,7 +64,7 @@ public class Device {
     "An error occurred while running “android create avd”\n" +
     "to set up the default Android emulator. Make sure that the\n" +
     "Android SDK is installed properly, and that the Android\n" +
-    "and Google APIs are installed for levels 4 and 5.";
+    "and Google APIs are installed for level 5.";
 
   static final String ADB_DEVICES_ERROR =
     "Received unfamiliar output from “adb devices”.\n" +
