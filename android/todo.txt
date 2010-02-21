@@ -1,5 +1,18 @@
 0178 (private)
 
+_ Errors show up that .java files are duplicates with the Android tools.
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1472
+
+_ don't require JDK installation and PATH setting
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1470
+_ remove ANDROID_SDK env variable requirement
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1471
+_   ANDROID_SDK doesn't seem to be mentioned anywhere anymore
+_   this may mean that p5 might just need to get the location
+_   though it makes things messier for the build scripts
+_ ANDROID_SDK not getting set on OS X
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1469
+_   http://stackoverflow.com/questions/603785/environment-variables-in-mac-os-x
 
 _ need to have single signature that can be reapplied
 _   with different machines, users are required to remove signature
@@ -14,10 +27,6 @@ _ should alpha PImage stuff use a non-4byte config?
 
 _ move to eclair (donut devices will have terrible performance anyway)
 _ deal with path problems
-
-_ ANDROID_SDK doesn't seem to be mentioned anywhere anymore
-_   this may mean that p5 might just need to get the location
-_   though it makes things messier for the build scripts
 
 _ remove SurfaceView2D/SurfaceView3D separation, or clean up
 _ what is resetLights() in PGraphics?
