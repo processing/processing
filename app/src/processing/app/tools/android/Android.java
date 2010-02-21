@@ -24,6 +24,8 @@ package processing.app.tools.android;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
 //import java.util.ArrayList;
@@ -114,6 +116,7 @@ public class Android implements Tool {
   }
 
 
+  private static final Pattern quotedPathElement = Pattern.compile("^\"([^\"]*)\"$");
   protected boolean checkPath() {
     Platform platform = Base.getPlatform();
     
@@ -143,7 +146,19 @@ public class Android implements Tool {
       String envPath = platform.getenv("PATH");
       String[] entries = PApplet.split(envPath, File.pathSeparatorChar);
       for (String entry : entries) {
-        String canonicalEntry = new File(entry).getCanonicalPath();
+        entry = entry.trim();
+        if (entry.length() == 0)
+          continue;
+        final Matcher m = quotedPathElement.matcher(entry);
+        if (m.matches())
+          entry = m.group(1); // unquote
+        final String canonicalEntry;
+        try {
+          canonicalEntry = new File(entry).getCanonicalPath();
+        } catch (IOException unexpected) {
+          System.err.println(unexpected);
+          continue;
+        }
         if (canonicalEntry.equals(canonicalTools)) {
           if (Base.isWindows()) {
             if (new File(toolsFolder, "android.bat").exists()) {
@@ -990,7 +1005,6 @@ public class Android implements Tool {
     public void run() {
     }
   }
-
 
   /**
    * Create a release build of the sketch and install its apk files on the
