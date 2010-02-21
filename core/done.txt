@@ -1,3 +1,7 @@
+0177 core (private)
+X no changes
+
+
 0176 core (private)
 X opengl sketches run at 30fps in present mode on OS X
 o   still having problems w/ full screen non-FSEM

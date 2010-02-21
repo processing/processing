@@ -1,7 +1,13 @@
-0177 pde
+0178 pde
 
 
 svn copy svn://processing.org/trunk/processing svn://processing.org/tags/processing-01XX
+
+from user Batuff
+> sudo apt-get install xvfb
+> Xvfb :2 -screen 0 1024x768x24 &
+> export DISPLAY=localhost:2.0
+> ./<myExportedProcessingApplication>
 
 _ update build/howto.txt (of course) because it says no ant
 _   this would also mean requiring a java installation for building
