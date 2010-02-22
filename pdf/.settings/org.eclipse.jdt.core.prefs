@@ -1,4 +1,4 @@
-#Mon Feb 22 11:13:12 EST 2010
+#Mon Feb 22 14:47:49 EST 2010
 eclipse.preferences.version=1
 org.eclipse.jdt.core.compiler.codegen.inlineJsrBytecode=enabled
 org.eclipse.jdt.core.compiler.codegen.targetPlatform=1.1
@@ -14,7 +14,7 @@ org.eclipse.jdt.core.formatter.align_type_members_on_columns=false
 org.eclipse.jdt.core.formatter.alignment_for_arguments_in_allocation_expression=18
 org.eclipse.jdt.core.formatter.alignment_for_arguments_in_enum_constant=16
 org.eclipse.jdt.core.formatter.alignment_for_arguments_in_explicit_constructor_call=18
-org.eclipse.jdt.core.formatter.alignment_for_arguments_in_method_invocation=18
+org.eclipse.jdt.core.formatter.alignment_for_arguments_in_method_invocation=20
 org.eclipse.jdt.core.formatter.alignment_for_arguments_in_qualified_allocation_expression=16
 org.eclipse.jdt.core.formatter.alignment_for_assignment=0
 org.eclipse.jdt.core.formatter.alignment_for_binary_expression=16
@@ -33,14 +33,14 @@ org.eclipse.jdt.core.formatter.alignment_for_throws_clause_in_constructor_declar
 org.eclipse.jdt.core.formatter.alignment_for_throws_clause_in_method_declaration=16
 org.eclipse.jdt.core.formatter.blank_lines_after_imports=1
 org.eclipse.jdt.core.formatter.blank_lines_after_package=1
-org.eclipse.jdt.core.formatter.blank_lines_before_field=1
+org.eclipse.jdt.core.formatter.blank_lines_before_field=0
 org.eclipse.jdt.core.formatter.blank_lines_before_first_class_body_declaration=0
 org.eclipse.jdt.core.formatter.blank_lines_before_imports=1
 org.eclipse.jdt.core.formatter.blank_lines_before_member_type=1
 org.eclipse.jdt.core.formatter.blank_lines_before_method=1
 org.eclipse.jdt.core.formatter.blank_lines_before_new_chunk=1
 org.eclipse.jdt.core.formatter.blank_lines_before_package=0
-org.eclipse.jdt.core.formatter.blank_lines_between_import_groups=1
+org.eclipse.jdt.core.formatter.blank_lines_between_import_groups=0
 org.eclipse.jdt.core.formatter.blank_lines_between_type_declarations=1
 org.eclipse.jdt.core.formatter.brace_position_for_annotation_type_declaration=end_of_line
 org.eclipse.jdt.core.formatter.brace_position_for_anonymous_type_declaration=end_of_line

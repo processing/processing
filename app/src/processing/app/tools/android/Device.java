@@ -22,7 +22,6 @@
 package processing.app.tools.android;
 
 import java.io.IOException;
-
 import processing.app.Base;
 import processing.core.PApplet;
 
@@ -93,22 +92,10 @@ public class Device {
   }
 
   protected boolean exists() throws IOException {
-    final String[] cmd = { Android.toolName, "list", "avds" };
-    // Process p = Runtime.getRuntime().exec(cmd);
-    // StringRedirectThread error = new
-    // StringRedirectThread(p.getErrorStream());
-    // StringRedirectThread output = new
-    // StringRedirectThread(p.getInputStream());
-    final Pavarotti p = new Pavarotti(cmd);
-
+    final ProcessHelper p = new ProcessHelper(Android.toolName, "list", "avds");
     try {
-      final int result = p.waitFor();
-      // System.out.println("res is " + result);
-      if (result == 0) {
-        // String[] lines = output.getLines();
-        final String[] lines = p.getOutputLines();
-        // PApplet.println(lines);
-        for (final String line : lines) {
+      if (p.execute() == 0) {
+        for (final String line : p.getStdout().split("\n")) {
           final String[] m = PApplet.match(line, "\\s+Name:\\s+(\\S+)");
           // PApplet.println(m);
           if (m != null) {
@@ -118,49 +105,27 @@ public class Device {
           }
         }
       } else {
-        p.printLines();
+        p.dump();
       }
     } catch (final InterruptedException ie) {
     }
-
     return false;
   }
 
   protected boolean create() throws IOException {
-    // not using "-s", width + "x" + height, because that can be specified
-    // on startup, which will be easier to do for Processing apps anyway.
-    final String[] cmd = {
-      Android.toolName, "create", "avd", "-n", name, "-t", target, "-c", "64M" };
-    final Pavarotti p = new Pavarotti(cmd);
-    // Process p = Runtime.getRuntime().exec(cmd);
-    // StringRedirectThread error = new
-    // StringRedirectThread(p.getErrorStream());
-    // StringRedirectThread output = new
-    // StringRedirectThread(p.getInputStream());
+    final ProcessHelper p = new ProcessHelper(Android.toolName, "create",
+                                              "avd", "-n", name, "-t", target,
+                                              "-c", "64M");
 
     try {
-      final int result = p.waitFor();
-      if (result == 0) {
-        // mumble the result into the console
-        // PApplet.println(output.getLines());
-        // for (String s : output.getLines()) {
-        for (final String s : p.getOutputLines()) {
-          System.out.println(s);
-        }
+      if (p.execute(true, false) == 0) {
         return true;
-
-      } else {
-        System.out.println("Attempted: '" + PApplet.join(cmd, " ") + "'");
-        // Include the stdout stuff since lots of these tools die with an
-        // error, but use stdout to print their sadness instead of stderr
-        // for (String s : output.getLines()) {
-        for (final String s : p.getOutputLines()) {
-          System.out.println(s);
-        }
-        for (final String s : p.getErrorLines()) {
-          System.err.println(s);
-        }
       }
+      System.out.println("Attempted: '"
+          + PApplet.join(new String[] {
+            Android.toolName, "create", "avd", "-n", name, "-t", target, "-c",
+            "64M" }, " ") + "'");
+      p.dump();
     } catch (final InterruptedException ie) {
     }
 
@@ -227,74 +192,68 @@ public class Device {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
   static protected String[] list() throws IOException {
-    final String[] cmd = { "adb", "devices" };
-    final Pavarotti p = new Pavarotti(cmd);
-    // Process p = Runtime.getRuntime().exec(cmd);
-    // StringRedirectThread error = new
-    // StringRedirectThread(p.getErrorStream());
-    // StringRedirectThread output = new
-    // StringRedirectThread(p.getInputStream());
-
+    final ProcessHelper p = new ProcessHelper("adb", "devices");
     try {
-      final int result = p.waitFor();
-      if (result == 0) {
-        String[] lines = p.getOutputLines();
-        // First line starts "List of devices", last line is blank.
+      final int result = p.execute(false);
+      if (result != 0) {
+        System.err.println(p.getStderr());
+        return null;
+      }
+      final String[] lines = p.getStdout().split("\n");
+      // First line starts "List of devices"
 
-        // when an emulator is started with a debug port, then it shows up
-        // in the list of devices.
+      // when an emulator is started with a debug port, then it shows up
+      // in the list of devices.
 
-        // List of devices attached
-        // HT91MLC00031 device
-        // emulator-5554 offline
+      // List of devices attached
+      // HT91MLC00031 device
+      // emulator-5554 offline
 
-        // List of devices attached
-        // HT91MLC00031 device
-        // emulator-5554 device
+      // List of devices attached
+      // HT91MLC00031 device
+      // emulator-5554 device
 
-        // for (String s : lines) {
-        // System.out.println("Device.list(): '" + s + ".");
-        // }
+      // for (String s : lines) {
+      // System.out.println("Device.list(): '" + s + ".");
+      // }
 
-        if (lines == null || lines.length == 0) {
-          // result was 0, so we're ok, but this is odd.
-          System.out.println("No devices found.");
-          return new String[] {};
-        }
+      if (lines.length == 0) {
+        // result was 0, so we're ok, but this is odd.
+        System.out.println("No devices found.");
+        return new String[] {};
+      }
 
-        if (lines[0].startsWith("* daemon not running. starting it now *")) {
-          // just pretend he didn't say that.
-          lines = PApplet.subset(lines, 1);
-        }
+      int startIndex = 0;
 
-        if (lines[0].startsWith("* daemon started successfully *")) {
-          // ignore that too
-          lines = PApplet.subset(lines, 1);
-        }
+      if (lines[startIndex]
+          .startsWith("* daemon not running. starting it now *")) {
+        // just pretend he didn't say that.
+        startIndex++;
+      }
 
-        // might read "List of devices attached"
-        if (!lines[0].startsWith("List of devices")
-            || lines[lines.length - 1].trim().length() != 0) {
-          Base.showWarning("Android Error", ADB_DEVICES_ERROR, null);
-        }
-        String[] devices = new String[lines.length - 2];
-        int deviceIndex = 0;
-        for (int i = 1; i < lines.length - 1; i++) {
-          final int tab = lines[i].indexOf('\t');
-          if (tab != -1) {
-            devices[deviceIndex++] = lines[i].substring(0, tab);
-          } else if (lines[i].trim().length() != 0) {
-            System.out.println("Unknown “adb devices” response: " + lines[i]);
-          }
-        }
-        devices = PApplet.subset(devices, 0, deviceIndex);
-        return devices;
+      if (lines[startIndex].startsWith("* daemon started successfully *")) {
+        // ignore that too
+        startIndex++;
+      }
 
-      } else {
-        for (final String s : p.getErrorLines()) {
-          System.err.println(s);
+      // might read "List of devices attached"
+      if (!lines[startIndex].startsWith("List of devices")) {
+        Base.showWarning("Android Error", ADB_DEVICES_ERROR, null);
+      }
+      startIndex++;
+      String[] devices = new String[lines.length - startIndex];
+      int deviceIndex = 0;
+      for (int i = startIndex; i < lines.length - 1; i++) {
+        final String line = lines[i];
+        final int tab = line.indexOf('\t');
+        if (tab != -1) {
+          devices[deviceIndex++] = line.substring(0, tab);
+        } else if (line.trim().length() != 0) {
+          System.out.println("Unknown “adb devices” response: " + line);
         }
       }
+      devices = PApplet.subset(devices, 0, deviceIndex);
+      return devices;
     } catch (final InterruptedException ie) {
       // ignored, just other thread fun
     }
