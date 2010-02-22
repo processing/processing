@@ -26,9 +26,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import javax.swing.JOptionPane;
-
 import processing.app.Base;
 import processing.app.Editor;
 import processing.app.Platform;
@@ -110,8 +108,7 @@ public class Android implements Tool {
     checkCore();
 
     editor.setHandlers(new RunHandler(), new PresentHandler(),
-                       new StopHandler(), new ExportHandler(),
-                       new ExportAppHandler());
+      new StopHandler(), new ExportHandler(), new ExportAppHandler());
     build = new Build(editor);
     editor.statusNotice("Done loading Android tools.");
   }
@@ -126,26 +123,21 @@ public class Android implements Tool {
     sdkPath = platform.getenv("ANDROID_SDK");
     if (sdkPath == null) {
       Base
-          .showWarning(
-                       "Android Tools Error",
-                       "Before using Android mode, you must first set the\n"
-                           + "ANDROID_SDK environment variable, and restart Processing.",
-                       null);
+          .showWarning("Android Tools Error",
+            "Before using Android mode, you must first set the\n"
+                + "ANDROID_SDK environment variable, and restart Processing.",
+            null);
       return false;
     }
 
     // check to make sure the ANDROID_SDK variable is legit
     final File toolsFolder = new File(sdkPath, "tools");
     if (!toolsFolder.exists()) {
-      Base
-          .showWarning(
-                       "Android Tools Error",
-                       "The ANDROID_SDK environment variable is set incorrectly,\n"
-                           + "or the directory no longer exists. No tools folder was\n"
-                           + "found in " + toolsFolder.getAbsolutePath()
-                           + ".\n"
-                           + "Please fix the location and restart Processing.",
-                       null);
+      Base.showWarning("Android Tools Error",
+        "The ANDROID_SDK environment variable is set incorrectly,\n"
+            + "or the directory no longer exists. No tools folder was\n"
+            + "found in " + toolsFolder.getAbsolutePath() + ".\n"
+            + "Please fix the location and restart Processing.", null);
       return false;
     }
 
@@ -181,19 +173,13 @@ public class Android implements Tool {
           return true;
         }
       }
-      Base
-          .showWarning(
-                       "Android Tools Error",
-                       "You need to add the tools folder of the Android SDK\n"
-                           + "to your PATH environment variable and restart Processing.\n"
-                           + "The folder is: " + toolsFolder.getAbsolutePath()
-                           + ".", null);
+      Base.showWarning("Android Tools Error",
+        "You need to add the tools folder of the Android SDK\n"
+            + "to your PATH environment variable and restart Processing.\n"
+            + "The folder is: " + toolsFolder.getAbsolutePath() + ".", null);
     } catch (final IOException e) {
-      Base
-          .showWarning(
-                       "Android Tools Error",
-                       "Error while trying to check the PATH for the Android tools.",
-                       e);
+      Base.showWarning("Android Tools Error",
+        "Error while trying to check the PATH for the Android tools.", e);
     }
     return false;
   }
@@ -224,11 +210,10 @@ public class Android implements Tool {
 
       if (sdkPath == null) {
         final int result = Base.showYesNoQuestion(editor, "Android SDK",
-                                                  ANDROID_SDK_PRIMARY,
-                                                  ANDROID_SDK_SECONDARY);
+          ANDROID_SDK_PRIMARY, ANDROID_SDK_SECONDARY);
         if (result == JOptionPane.YES_OPTION) {
           final File folder = Base.selectFolder(SELECT_ANDROID_SDK_FOLDER,
-                                                null, editor);
+            null, editor);
           if (folder != null) {
             sdkPath = findAndroidTool(folder.getAbsolutePath());
             if (sdkPath != null) {
@@ -276,7 +261,7 @@ public class Android implements Tool {
     //
     // String[] cmd = { "echo", "$PATH" };
     // try {
-    // Pavarotti p = new Pavarotti(cmd);
+    // ProcessHelper p = new ProcessHelper(cmd);
     // int result = p.waitFor();
     // if (result == 0) {
     // PApplet.println(p.getOutputLines());
@@ -325,8 +310,8 @@ public class Android implements Tool {
     // will probably fail, however it happily returns "device" in other cases
     // when the debug bridge is clearly unhappy.
     /*
-     * try { System.out.print("adb get state: "); Pavarotti p = new
-     * Pavarotti(new String[] { "adb", "get-state" }); p.waitFor();
+     * try { System.out.print("adb get state: "); ProcessHelper p = new
+     * ProcessHelper(new String[] { "adb", "get-state" }); p.waitFor();
      * p.printLines(); } catch (Exception e) { e.printStackTrace(); }
      */
     return true;
@@ -365,7 +350,7 @@ public class Android implements Tool {
         PApplet.saveStream(target, url.openStream());
       } catch (final Exception e) {
         Base.showWarning("Download Error",
-                         "Could not download Android core.zip", e);
+          "Could not download Android core.zip", e);
         return false;
       }
     }
@@ -388,31 +373,22 @@ public class Android implements Tool {
    */
   static protected boolean resetServer(final Editor editor) {
     try {
-      final Pavarotti killer = new Pavarotti(new String[] {
-        "adb", "kill-server" });
+      final ProcessHelper killer = new ProcessHelper("adb", "kill-server");
       // don't really care about this result...
-      killer.waitFor();
-      killer.printLines();
-
+      killer.execute(true, false);
       Thread.sleep(1000); // just take a quick break so that the server can die
 
       // ...we only care about whether it was able to start successfully.
-      final Pavarotti starter = new Pavarotti(new String[] {
-        "adb", "start-server" });
-      final int result = starter.waitFor();
-      starter.printLines();
-      if (result == 0) {
+      final ProcessHelper starter = new ProcessHelper("adb", "start-server");
+      if (starter.execute(true, false) == 0) {
         return true;
       }
-      killer.printLines(); // okay maybe now we care about these
-      starter.printLines(); // something to confuse the user a bit
+      System.err.println(killer.getStderr()); // okay maybe now we care about these
+      System.err.println(starter.getStderr()); // something to confuse the user a bit
       editor.statusError("Could not start Android debug server.");
-
     } catch (final IOException e) {
       editor.statusError(e);
-
     } catch (final InterruptedException e) {
-      e.printStackTrace();
     }
     return false;
   }
@@ -442,7 +418,6 @@ public class Android implements Tool {
         // emulatorProcess.destroy();
         emulatorProcess.exitValue();
         emulatorProcess = null;
-
       } catch (final IllegalThreadStateException itse) {
         // not done yet, let's continue
       }
@@ -559,7 +534,7 @@ public class Android implements Tool {
     // //adb get-state
     // try {
     // System.out.print("(installAndRun) adb get state: ");
-    // Pavarotti p = new Pavarotti(new String[] { "adb", "get-state" });
+    // ProcessHelper p = new ProcessHelper(new String[] { "adb", "get-state" });
     // p.waitFor();
     // p.printLines();
     // } catch (Exception e) {
@@ -628,38 +603,12 @@ public class Android implements Tool {
         // while launching, will say 'error: device offline'
         // when not running, will say 'error: device not found'
 
-        final String[] cmd = new String[] { "adb", "-s", device, "jdwp" // come
-        // and
-        // play!
-        };
-        final Pavarotti p = new Pavarotti(cmd);
-        // Process p = Runtime.getRuntime().exec(cmd);
-
-        // System.out.println();
         // System.out.print("Checking for JDWP connection: ");
-        // System.out.println(PApplet.join(cmd, " "));
-
-        // StringRedirectThread error = new
-        // StringRedirectThread(p.getErrorStream());
-        // StringRedirectThread output = new
-        // StringRedirectThread(p.getInputStream());
-
-        final int result = p.waitFor();
-        if (result == 0) {
+        final ProcessHelper p = new ProcessHelper("adb", "-s", device, "jdwp");
+        if (p.execute() == 0) {
           return true;
-          // error.finish();
-          // output.finish();
         }
-
-        p.printLines();
-        /*
-         * // for (String err : error.getLines()) { for (String err :
-         * p.getErrorLines()) { if (err.length() != 0) {
-         * System.err.println("err: " + err); } } // for (String out :
-         * output.getLines()) { for (String out : p.getOutputLines()) { if
-         * (out.length() != 0) { System.out.println("out: " + out); } }
-         */
-
+        p.dump();
         try {
           Thread.sleep(1000);
         } catch (final InterruptedException ie) {
@@ -672,7 +621,7 @@ public class Android implements Tool {
   }
 
   protected String getJdwpPort(final String device) {
-    final long timeout = System.currentTimeMillis() + 30 * 1000; // 15 sec
+    final long timeout = System.currentTimeMillis() + 30 * 1000;
 
     try {
       while (System.currentTimeMillis() < timeout) {
@@ -683,33 +632,9 @@ public class Android implements Tool {
         // while launching, will say 'error: device offline'
         // when not running, will say 'error: device not found'
 
-        final String[] cmd = new String[] { "adb", "-s", device, "jdwp" // come
-        // and
-        // play!
-        };
-        final Pavarotti p = new Pavarotti(cmd);
-        final int result = p.waitFor();
-
-        // for (String err : p.getErrorLines()) {
-        // if (err.length() != 0) {
-        // System.err.println("err: " + err);
-        // }
-        // }
-        // for (String out : p.getOutputLines()) {
-        // if (out.length() != 0) {
-        // System.out.println("out: " + out);
-        // }
-        // }
-
-        if (result == 0) {
-          final String[] lines = p.getOutputLines();
-          // PApplet.println(lines);
-          // String last = lines[lines.length - 1];
-          // if (last.trim().length() == 0) {
-          // last = lines[lines.length - 2];
-          // }
-          // //System.out.println("last is " + last);
-          // return last.trim();
+        final ProcessHelper p = new ProcessHelper("adb", "-s", device, "jdwp");
+        if (p.execute() == 0) {
+          final String[] lines = p.getStdout().split("\n");
           for (int i = lines.length - 1; i >= 0; --i) {
             final String s = lines[i].trim();
             if (s.length() != 0) {
@@ -717,15 +642,9 @@ public class Android implements Tool {
             }
           }
           return null;
-
-        } else {
-          for (final String err : p.getErrorLines()) {
-            if (err.length() != 0) {
-              System.err.println("err: " + err);
-            }
-          }
         }
 
+        p.dump();
         try {
           Thread.sleep(1000);
         } catch (final InterruptedException ie) {
@@ -747,61 +666,42 @@ public class Android implements Tool {
       // Device.sendMenuButton(device); // wake up
       // Device.sendHomeButton(device); // kill any running app
 
-      final String[] cmd = new String[] { "adb", "-s", device,
-      // "wait-for-device",
-      "install", "-r", // safe to always use -r switch
-        build.getPathForAPK("debug") };
-      final Process p = Runtime.getRuntime().exec(cmd);
+      final ProcessHelper p = new ProcessHelper("adb", "-s", device, // "wait-for-device",
+                                                "install", "-r", // safe to always use -r switch
+                                                build.getPathForAPK("debug"));
 
       System.out.println();
       System.out.print("Install command: ");
-      System.out.println(PApplet.join(cmd, " "));
+      System.out.println(p.getCommand());
 
-      final StringRedirectThread error = new StringRedirectThread(p
-          .getErrorStream());
-      final StringRedirectThread output = new StringRedirectThread(p
-          .getInputStream());
-
-      final int result = p.waitFor();
+      final int result = p.execute();
       if (result != 0) {
-        for (final String err : error.getLines()) {
-          System.err.println(err);
-        }
+        p.dump();
         // editor.statusNotice("“adb install” returned " + result + ".");
         // System.out.println("Could not install the sketch.");
         editor.statusError("Could not install the sketch.");
-        System.out.println("“adb install” returned " + result + ".");
+        System.err.println("“adb install” returned " + result + ".");
         return false;
 
-      } else {
-        String errorMsg = null;
-        for (final String out : output.getLines()) {
-          if (out.startsWith("Failure")) {
-            // String[] stuff = PApplet.match(out, "\\[(.*)\\]");
-            // if (stuff != null) {
-            // errorMsg = stuff[1];
-            // } else {
-            errorMsg = out.substring(8);
-            // }
-            System.err.println(out);
-          } else {
-            System.out.println(out);
-          }
-        }
-        if (errorMsg == null) {
-          editor.statusNotice("Done installing.");
-          return true;
-
+      }
+      String errorMsg = null;
+      for (final String out : p.getStdout().split("\n")) {
+        if (out.startsWith("Failure")) {
+          errorMsg = out.substring(8);
+          System.err.println(out);
         } else {
-          editor.statusError("Error while installing " + errorMsg);
+          System.out.println(out);
         }
       }
+      if (errorMsg == null) {
+        editor.statusNotice("Done installing.");
+        return true;
+      }
+      editor.statusError("Error while installing " + errorMsg);
     } catch (final IOException e) {
       editor.statusError(e);
-
     } catch (final InterruptedException e) {
     }
-
     return false;
   }
 
@@ -815,22 +715,21 @@ public class Android implements Tool {
       final String lastPort = getJdwpPort(device);
 
       // "am start -a android.intent.action.MAIN -n com.android.browser/.BrowserActivity"
-      final Process p = Runtime.getRuntime()
-          .exec(
-                new String[] {
-                  "adb",
-                  "-s",
-                  device,
-                  // "-d", // this is for a single USB device
-                  "shell",
-                  "am",
-                  "start", // kick things off
-                  // -D causes a hang with
-                  // "waiting for the debugger to attach"
-                  // "-D", // debug
-                  "-e", "debug", "true", "-a", "android.intent.action.MAIN",
-                  "-c", "android.intent.category.LAUNCHER", "-n",
-                  build.getPackageName() + "/." + build.getClassName() });
+      final Process p = Runtime.getRuntime().exec(
+        new String[] {
+          "adb",
+          "-s",
+          device,
+          // "-d", // this is for a single USB device
+          "shell",
+          "am",
+          "start", // kick things off
+          // -D causes a hang with
+          // "waiting for the debugger to attach"
+          // "-D", // debug
+          "-e", "debug", "true", "-a", "android.intent.action.MAIN", "-c",
+          "android.intent.category.LAUNCHER", "-n",
+          build.getPackageName() + "/." + build.getClassName() });
       final int result = p.waitFor();
       if (result != 0) {
         editor.statusError("Could not start the sketch.");
@@ -884,25 +783,15 @@ public class Android implements Tool {
       // while launching, will say 'error: device offline'
       // when not running, will say 'error: device not found'
 
-      // adb -s emulator-5566 -d forward tcp:29882 jdwp:736
-      // jdb -connect com.sun.jdi.SocketAttach:hostname=localhost,port=29882
-      final String[] cmd = new String[] {
-        "adb", "-s", device, "forward", "tcp:" + ADB_SOCKET_PORT,
-        "jdwp:" + port };
       // PApplet.println(cmd);
-      final Pavarotti fwd = new Pavarotti(cmd);
-      // StringRedirectThread error = new
-      // StringRedirectThread(p.getErrorStream());
-      // StringRedirectThread output = new
-      // StringRedirectThread(p.getInputStream());
+      final ProcessHelper fwd = new ProcessHelper("adb", "-s", device,
+                                                  "forward", "tcp:"
+                                                      + ADB_SOCKET_PORT,
+                                                  "jdwp:" + port);
 
       // System.out.println("waiting for forward");
-      fwd.printCommand();
-      final int result = fwd.waitFor();
-      fwd.printLines();
-      // System.out.println("done with forward");
-
-      if (result != 0) {
+      System.out.println(fwd.getCommand());
+      if (fwd.execute(true) != 0) {
         editor.statusError("Could not connect for debugging.");
         return false;
       }
