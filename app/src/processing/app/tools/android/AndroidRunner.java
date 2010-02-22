@@ -23,38 +23,46 @@
 
 package processing.app.tools.android;
 
-import processing.app.*;
-import processing.app.debug.*;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Map;
 
-import java.io.*;
-import java.util.*;
+import processing.app.Sketch;
+import processing.app.StreamRedirectThread;
+import processing.app.debug.EventThread;
+import processing.app.debug.MessageSiphon;
+import processing.app.debug.Runner;
+import processing.app.debug.RunnerListener;
 
-import com.sun.jdi.*;
-import com.sun.jdi.connect.*;
+import com.sun.jdi.Field;
+import com.sun.jdi.ObjectReference;
+import com.sun.jdi.ReferenceType;
+import com.sun.jdi.Value;
+import com.sun.jdi.VirtualMachine;
+import com.sun.jdi.connect.AttachingConnector;
+import com.sun.jdi.connect.Connector;
+import com.sun.jdi.connect.IllegalConnectorArgumentsException;
 import com.sun.jdi.event.ExceptionEvent;
-
 
 public class AndroidRunner extends Runner {
 
-  public AndroidRunner(RunnerListener listener, Sketch sketch) {
-    super(listener, sketch);    
+  public AndroidRunner(final RunnerListener listener, final Sketch sketch) {
+    super(listener, sketch);
   }
 
-
-  public boolean launch(String port) {
+  public boolean launch(final String port) {
     vm = launchVirtualMachine(port);
-//    System.out.println("vm launched");
+    //    System.out.println("vm launched");
     if (vm != null) {
-//      System.out.println("starting trace");
+      //      System.out.println("starting trace");
       generateTrace(null);
-//      System.out.println("done starting trace");
+      //      System.out.println("done starting trace");
       return true;
     }
-//    System.out.println("no trace for you");
+    //    System.out.println("no trace for you");
     return false;
   }
-  
-  
+
   /*
   public void launch(Sketch sketch, String appletClassName, 
                      boolean presenting) {
@@ -81,11 +89,11 @@ public class AndroidRunner extends Runner {
     vm = launchVirtualMachine(machineParamList, sketchParamList);
     if (vm != null) {
       generateTrace(null);
-//      try {
-//        generateTrace(new PrintWriter("/Users/fry/Desktop/output.txt"));
-//      } catch (Exception e) {
-//        e.printStackTrace();
-//      }
+  //      try {
+  //        generateTrace(new PrintWriter("/Users/fry/Desktop/output.txt"));
+  //      } catch (Exception e) {
+  //        e.printStackTrace();
+  //      }
     }
   }
 
@@ -111,7 +119,7 @@ public class AndroidRunner extends Runner {
       }
     }
 
-//    params.add("-Djava.ext.dirs=nuffing");
+  //    params.add("-Djava.ext.dirs=nuffing");
 
     if (Preferences.getBoolean("run.options.memory")) {
       params.add("-Xms" + Preferences.get("run.options.memory.initial") + "m");
@@ -120,8 +128,8 @@ public class AndroidRunner extends Runner {
 
     if (Base.isMacOS()) {
       params.add("-Xdock:name=" + appletClassName);
-//      params.add("-Dcom.apple.mrj.application.apple.menu.about.name=" +
-//                 sketch.getMainClassName());
+  //      params.add("-Dcom.apple.mrj.application.apple.menu.about.name=" +
+  //                 sketch.getMainClassName());
     }
     // sketch.libraryPath might be ""
     // librariesClassPath will always have sep char prepended
@@ -132,9 +140,9 @@ public class AndroidRunner extends Runner {
 
     params.add("-cp");
     params.add(sketch.getClassPath());
-//    params.add(sketch.getClassPath() +
-//        File.pathSeparator +
-//        Base.librariesClassPath);
+  //    params.add(sketch.getClassPath() +
+  //        File.pathSeparator +
+  //        Base.librariesClassPath);
 
     //PApplet.println(PApplet.split(sketch.classPath, ':'));
 
@@ -142,20 +150,20 @@ public class AndroidRunner extends Runner {
     params.toArray(outgoing);
 
     //PApplet.println(outgoing);
-//    PApplet.println(PApplet.split(outgoing[0], ":"));
-//    PApplet.println();
-//    PApplet.println("class path");
-//    PApplet.println(PApplet.split(outgoing[2], ":"));
+  //    PApplet.println(PApplet.split(outgoing[0], ":"));
+  //    PApplet.println();
+  //    PApplet.println("class path");
+  //    PApplet.println(PApplet.split(outgoing[2], ":"));
 
     return outgoing;
     //return (String[]) params.toArray();
 
-//  System.out.println("sketch class path");
-//  PApplet.println(PApplet.split(sketch.classPath, ';'));
-//  System.out.println();
-//  System.out.println("libraries class path");
-//  PApplet.println(PApplet.split(Base.librariesClassPath, ';'));
-//  System.out.println();
+  //  System.out.println("sketch class path");
+  //  PApplet.println(PApplet.split(sketch.classPath, ';'));
+  //  System.out.println();
+  //  System.out.println("libraries class path");
+  //  PApplet.println(PApplet.split(Base.librariesClassPath, ';'));
+  //  System.out.println();
   }
 
 
@@ -202,57 +210,56 @@ public class AndroidRunner extends Runner {
 
     params.add(appletClassName);
 
-//    String outgoing[] = new String[params.size()];
-//    params.toArray(outgoing);
-//    return outgoing;
+  //    String outgoing[] = new String[params.size()];
+  //    params.toArray(outgoing);
+  //    return outgoing;
     return (String[]) params.toArray(new String[0]);
   }
   */
 
-
   // http://java.sun.com/j2se/1.5.0/docs/guide/jpda/conninv.html
-  protected VirtualMachine launchVirtualMachine(String localPort) {
+  protected VirtualMachine launchVirtualMachine(final String localPort) {
     // hostname, port, and timeout (ms) are the only items needed here
-    AttachingConnector connector = 
-      (AttachingConnector) findConnector("com.sun.jdi.SocketAttach");
+    final AttachingConnector connector = (AttachingConnector) findConnector("com.sun.jdi.SocketAttach");
     //PApplet.println(connector);  // gets the defaults
 
-    Map arguments = connector.defaultArguments();
+    final Map arguments = connector.defaultArguments();
 
-//    Connector.Argument portArg =
-//      (Connector.Argument)arguments.get("port");
-//    portArg.setValue(port);
+    //    Connector.Argument portArg =
+    //      (Connector.Argument)arguments.get("port");
+    //    portArg.setValue(port);
     ((Connector.Argument) arguments.get("port")).setValue(localPort);
-    
+
     ((Connector.Argument) arguments.get("hostname")).setValue("127.0.0.1");
-//    ((Connector.Argument) arguments.get("hostname")).setValue("localhost");
-//    ((Connector.Argument) arguments.get("timeout")).setValue("5000");
+    //    ((Connector.Argument) arguments.get("hostname")).setValue("localhost");
+    //    ((Connector.Argument) arguments.get("timeout")).setValue("5000");
 
     try {
-//      PApplet.println(connector);
-//      PApplet.println(arguments);
+      //      PApplet.println(connector);
+      //      PApplet.println(arguments);
 
-//      PApplet.println("attaching now...");
+      //      PApplet.println("attaching now...");
       //return connector.attach(arguments);
       System.out.println("Attaching to the debugger. If this command hangs, ");
-      System.out.println("you may need to use Tools \u2192 " + Reset.MENU_TITLE + ".");
-      VirtualMachine machine = connector.attach(arguments);
-      System.out.println("Debugger successfully attached, nevermind that last bit.");
-//      PApplet.println("attached");
+      System.out.println("you may need to use Tools \u2192 " + Reset.MENU_TITLE
+          + ".");
+      final VirtualMachine machine = connector.attach(arguments);
+      System.out
+          .println("Debugger successfully attached, nevermind that last bit.");
+      //      PApplet.println("attached");
       return machine;
-      
-    } catch (IOException ioe) {
+
+    } catch (final IOException ioe) {
       //throw new Error("Unable to launch target VM: " + exc);
       ioe.printStackTrace();
       editor.statusError(ioe);
 
-    } catch (IllegalConnectorArgumentsException icae) {
+    } catch (final IllegalConnectorArgumentsException icae) {
       //throw new Error("Internal error: " + exc);
       editor.statusError(icae);
     }
     return null;
   }
-
 
   /**
    * Generate the trace.
@@ -260,7 +267,8 @@ public class AndroidRunner extends Runner {
    * start threads to forward remote error and output streams,
    * resume the remote VM, wait for the final event, and shutdown.
    */
-  protected void generateTrace(PrintWriter writer) {
+  @Override
+  protected void generateTrace(final PrintWriter writer) {
     vm.setDebugTraceMode(debugTraceMode);
 
     EventThread eventThread = null;
@@ -272,15 +280,14 @@ public class AndroidRunner extends Runner {
 
     //redirectOutput();
 
-    Process process = vm.process();
+    final Process process = vm.process();
 
     if (process != null) {
-      MessageSiphon ms = new MessageSiphon(process.getErrorStream(), this);
+      final MessageSiphon ms = new MessageSiphon(process.getErrorStream(), this);
       errThread = ms.getThread();
 
-      outThread = new StreamRedirectThread("output reader",
-                                           process.getInputStream(),
-                                           System.out);
+      outThread = new StreamRedirectThread("output reader", process
+          .getInputStream(), System.out);
 
       errThread.start();
       outThread.start();
@@ -293,9 +300,11 @@ public class AndroidRunner extends Runner {
 
     // Shutdown begins when event thread terminates
     try {
-      if (eventThread != null) eventThread.join();
-//      errThread.join(); // Make sure output is forwarded
-//      outThread.join(); // before we exit
+      if (eventThread != null) {
+        eventThread.join();
+        //      errThread.join(); // Make sure output is forwarded
+        //      outThread.join(); // before we exit
+      }
 
       // At this point, disable the run button.
       // This happens when the sketch is exited by hitting ESC,
@@ -305,13 +314,14 @@ public class AndroidRunner extends Runner {
         editor.internalRunnerClosed();
       }
 
-    } catch (InterruptedException exc) {
+    } catch (final InterruptedException exc) {
       // we don't interrupt
     }
     //System.out.println("and leaving");
-    if (writer != null) writer.close();
+    if (writer != null) {
+      writer.close();
+    }
   }
-
 
   /**
    * Find a com.sun.jdi.CommandLineLaunch connector
@@ -322,17 +332,17 @@ public class AndroidRunner extends Runner {
 
     // Get the default connector.
     // Not useful here since they all need different args.
-//      System.out.println(Bootstrap.virtualMachineManager().defaultConnector());
-//      return Bootstrap.virtualMachineManager().defaultConnector();
+  //      System.out.println(Bootstrap.virtualMachineManager().defaultConnector());
+  //      return Bootstrap.virtualMachineManager().defaultConnector();
 
     List connectors = Bootstrap.virtualMachineManager().allConnectors();
 
     // code to list available connectors
-//    Iterator iter2 = connectors.iterator();
-//    while (iter2.hasNext()) {
-//      Connector connector = (Connector)iter2.next();
-//      System.out.println("connector name is " + connector.name());
-//    }
+  //    Iterator iter2 = connectors.iterator();
+  //    while (iter2.hasNext()) {
+  //      Connector connector = (Connector)iter2.next();
+  //      System.out.println("connector name is " + connector.name());
+  //    }
 
     Iterator iter = connectors.iterator();
     while (iter.hasNext()) {
@@ -345,19 +355,19 @@ public class AndroidRunner extends Runner {
   }
   */
 
-
-  public void exception(ExceptionEvent event) {
-//    System.out.println(event);
-    ObjectReference or = event.exception();
-    ReferenceType rt = or.referenceType();
-    String exceptionName = rt.name();
+  @Override
+  public void exception(final ExceptionEvent event) {
+    //    System.out.println(event);
+    final ObjectReference or = event.exception();
+    final ReferenceType rt = or.referenceType();
+    final String exceptionName = rt.name();
     //Field messageField = Throwable.class.getField("detailMessage");
-    Field messageField = rt.fieldByName("detailMessage");
-//    System.out.println("field " + messageField);
-    Value messageValue = or.getValue(messageField);
-//    System.out.println("mess val " + messageValue);
+    final Field messageField = rt.fieldByName("detailMessage");
+    //    System.out.println("field " + messageField);
+    final Value messageValue = or.getValue(messageField);
+    //    System.out.println("mess val " + messageValue);
 
-    int last = exceptionName.lastIndexOf('.');
+    final int last = exceptionName.lastIndexOf('.');
     String message = exceptionName.substring(last + 1);
     if (messageValue != null) {
       String messageStr = messageValue.toString();
@@ -366,9 +376,9 @@ public class AndroidRunner extends Runner {
       }
       message += ": " + messageStr;
     }
-//    System.out.println("mess type " + messageValue.type());
+    //    System.out.println("mess type " + messageValue.type());
     //StringReference messageReference = (StringReference) messageValue.type();
-//    System.out.println(or.referenceType().fields());
+    //    System.out.println(or.referenceType().fields());
 
     reportException(message, event.thread());
 
@@ -376,7 +386,6 @@ public class AndroidRunner extends Runner {
       editor.internalRunnerClosed();
     }
   }
-
 
   // This may be called more than one time per error in the VM,
   // presumably because exceptions might be wrapped inside others,
@@ -387,13 +396,13 @@ public class AndroidRunner extends Runner {
       Sketch sketch = editor.getSketch();
       
       // a bit for debugging
-//      for (StackFrame frame : thread.frames()) {
-//        System.out.println("frame: " + frame);
-//      }
+  //      for (StackFrame frame : thread.frames()) {
+  //        System.out.println("frame: " + frame);
+  //      }
 
       List<StackFrame> frames = thread.frames();
       for (StackFrame frame : frames) {
-//        System.out.println("frame: " + frame);
+  //        System.out.println("frame: " + frame);
         Location location = frame.location();
         String filename = null;
         filename = location.sourceName();
@@ -423,7 +432,6 @@ public class AndroidRunner extends Runner {
   }
   */
 
-
   /*
   public void close() {
     // TODO make sure stop() has already been called to exit the sketch
@@ -442,7 +450,6 @@ public class AndroidRunner extends Runner {
     }
   }
   */
-
 
   // made synchronized for rev 87
   // attempted to remove synchronized for 0136 to fix bug #775 (no luck tho)
@@ -482,20 +489,20 @@ public class AndroidRunner extends Runner {
     // it seems that this is never actually printed out.
     // this is PApplet sending a message saying "i'm about to spew
     // a stack trace because an error occurred during PApplet.run()"
-//    if (s.indexOf(PApplet.LEECH_WAKEUP) == 0) {
-//      // newMessage being set to 'true' means that the next time
-//      // message() is called, expect the first line of the actual
-//      // error message & stack trace to be sent from the applet.
-//      newMessage = true;
-//      return;  // this line ignored
-//    }
+  //    if (s.indexOf(PApplet.LEECH_WAKEUP) == 0) {
+  //      // newMessage being set to 'true' means that the next time
+  //      // message() is called, expect the first line of the actual
+  //      // error message & stack trace to be sent from the applet.
+  //      newMessage = true;
+  //      return;  // this line ignored
+  //    }
 
     // these are used for debugging, in case there are concerns
     // that some errors aren't coming through properly
-//    if (s.length() > 2) {
-//      System.err.println(newMessage);
-//      System.err.println("message " + s.length() + ":" + s);
-//    }
+  //    if (s.length() > 2) {
+  //      System.err.println(newMessage);
+  //      System.err.println("message " + s.length() + ":" + s);
+  //    }
     // always shove out the mesage, since it might not fall under
     // the same setup as we're expecting
     System.err.print(s);
