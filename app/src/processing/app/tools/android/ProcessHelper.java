@@ -47,19 +47,41 @@ class ProcessHelper {
     return PApplet.join(cmd, " ");
   }
 
+  /**
+   * Blocking execution.
+   * @return exit value of process
+   * @throws InterruptedException
+   * @throws IOException
+   */
   public int execute() throws InterruptedException, IOException {
     return execute(false);
   }
 
+  /**
+   * Blocking execution.
+   * @param tee Send process's stdout/stderr to stdout/stderr in addition to capturing them
+   * @return exit value of process
+   * @throws InterruptedException
+   * @throws IOException
+   */
   public int execute(final boolean tee) throws InterruptedException,
       IOException {
     return execute(tee, tee);
   }
 
+  /**
+   * Blocking execution.
+   * @param teeOut Send process's stdout to stdout in addition to capturing it
+   * @param teeErr Send process's stderr to stderr in addition to capturing it
+   * @return exit value of process
+   * @throws InterruptedException
+   * @throws IOException
+   */
   public int execute(final boolean teeOut, final boolean teeErr)
       throws InterruptedException, IOException {
     final long startTime = System.currentTimeMillis();
 
+    System.err.println("Executing " + PApplet.join(cmd, ' '));
     final Process process = Runtime.getRuntime().exec(cmd);
     // The latch is decremented by the StringRedirectingThread when it exhausts its stream
     final CountDownLatch latch = new CountDownLatch(2);
@@ -67,12 +89,10 @@ class ProcessHelper {
                              teeOut ? System.out : null).start();
     new StringRedirectThread(process.getErrorStream(), stderr, latch,
                              teeErr ? System.err : null).start();
-
-    final int result = process.waitFor();
     latch.await();
     System.err.println((System.currentTimeMillis() - startTime) + "ms: "
         + PApplet.join(cmd, " "));
-    return result;
+    return process.waitFor();
   }
 
   public String getStderr() {
@@ -100,7 +120,7 @@ class ProcessHelper {
       this.in = new BufferedReader(new InputStreamReader(in));
       this.out = new PrintWriter(out, true);
       this.latch = latch;
-      this.tee = tee == null ? null : new PrintWriter(tee);
+      this.tee = tee == null ? null : new PrintWriter(tee, true);
     }
 
     @Override
