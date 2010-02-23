@@ -10,7 +10,7 @@
     <mkdir dir="core/bin" />
     <javac encoding="UTF-8"
 	   includeAntRuntime="false"
-	   bootclasspath="${env.ANDROID_SDK}/platforms/android-1.6/android.jar"
+	   bootclasspath="${env.ANDROID_SDK}/platforms/android-2.0/android.jar"
 	   srcdir="core/src" destdir="core/bin"/>
 
     <zip destfile="core.zip">
