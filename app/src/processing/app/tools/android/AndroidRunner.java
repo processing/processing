@@ -26,14 +26,10 @@ package processing.app.tools.android;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Map;
-
 import processing.app.Sketch;
-import processing.app.StreamRedirectThread;
 import processing.app.debug.EventThread;
-import processing.app.debug.MessageSiphon;
 import processing.app.debug.Runner;
 import processing.app.debug.RunnerListener;
-
 import com.sun.jdi.Field;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ReferenceType;
@@ -229,7 +225,6 @@ public class AndroidRunner extends Runner {
     //      (Connector.Argument)arguments.get("port");
     //    portArg.setValue(port);
     ((Connector.Argument) arguments.get("port")).setValue(localPort);
-
     ((Connector.Argument) arguments.get("hostname")).setValue("127.0.0.1");
     //    ((Connector.Argument) arguments.get("hostname")).setValue("localhost");
     //    ((Connector.Argument) arguments.get("timeout")).setValue("5000");
@@ -237,14 +232,13 @@ public class AndroidRunner extends Runner {
     try {
       //      PApplet.println(connector);
       //      PApplet.println(arguments);
-
       //      PApplet.println("attaching now...");
       //return connector.attach(arguments);
-      System.out.println("Attaching to the debugger. If this command hangs, ");
-      System.out.println("you may need to use Tools \u2192 " + Reset.MENU_TITLE
+      System.err.println("Attaching to the debugger. If this command hangs, ");
+      System.err.println("you may need to use Tools \u2192 " + Reset.MENU_TITLE
           + ".");
       final VirtualMachine machine = connector.attach(arguments);
-      System.out
+      System.err
           .println("Debugger successfully attached, nevermind that last bit.");
       //      PApplet.println("attached");
       return machine;
@@ -271,41 +265,34 @@ public class AndroidRunner extends Runner {
   protected void generateTrace(final PrintWriter writer) {
     vm.setDebugTraceMode(debugTraceMode);
 
-    EventThread eventThread = null;
-    //if (writer != null) {
-    eventThread = new EventThread(this, vm, excludes, writer);
+    final EventThread eventThread = new EventThread(this, vm, excludes, writer);
     eventThread.setEventRequests(watchFields);
     eventThread.start();
-    //}
-
-    //redirectOutput();
-
-    final Process process = vm.process();
-
-    if (process != null) {
-      final MessageSiphon ms = new MessageSiphon(process.getErrorStream(), this);
-      errThread = ms.getThread();
-
-      outThread = new StreamRedirectThread("output reader", process
-          .getInputStream(), System.out);
-
-      errThread.start();
-      outThread.start();
-    } else {
-      System.out.println("process is null, so no streams...");
-    }
 
     vm.resume();
-    System.out.println("done with resume");
+    System.err.println("done with resume");
+
+    final Thread logcatter = new Thread(new Runnable() {
+      public void run() {
+        try {
+          new SketchLogCatter().start();
+          System.err.println("logcatter exited normally");
+        } catch (final InterruptedException e) {
+          System.err.println("logcat interrupted");
+        } catch (final Exception e) {
+          throw new RuntimeException(e);
+        }
+      }
+    }, "logcatter");
+    logcatter.start();
 
     // Shutdown begins when event thread terminates
     try {
       if (eventThread != null) {
         eventThread.join();
-        //      errThread.join(); // Make sure output is forwarded
-        //      outThread.join(); // before we exit
       }
-
+      System.err.println("interrupting logcatter");
+      logcatter.interrupt();
       // At this point, disable the run button.
       // This happens when the sketch is exited by hitting ESC,
       // or the user manually closes the sketch window.
