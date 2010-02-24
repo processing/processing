@@ -1,6 +1,6 @@
-#Tue Feb 23 15:10:08 EST 2010
+#Wed Feb 24 16:06:19 EST 2010
 eclipse.preferences.version=1
-editor_save_participant_org.eclipse.jdt.ui.postsavelistener.cleanup=true
+editor_save_participant_org.eclipse.jdt.ui.postsavelistener.cleanup=false
 formatter_profile=_processing
 formatter_settings_version=11
 sp_cleanup.add_default_serial_version_id=true
