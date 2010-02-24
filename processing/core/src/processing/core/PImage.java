@@ -1177,7 +1177,7 @@ public class PImage implements PConstants, Cloneable {
           if (idxRight>=maxRowIdx)
             idxRight=currIdx;
           if (idxUp<0)
-            idxUp=0;
+            idxUp=currIdx;
           if (idxDown>=maxIdx)
             idxDown=currIdx;
 
@@ -1234,7 +1234,7 @@ public class PImage implements PConstants, Cloneable {
           if (idxRight>=maxRowIdx)
             idxRight=currIdx;
           if (idxUp<0)
-            idxUp=0;
+            idxUp=currIdx;
           if (idxDown>=maxIdx)
             idxDown=currIdx;
 
