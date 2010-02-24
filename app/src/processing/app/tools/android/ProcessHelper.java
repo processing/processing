@@ -23,7 +23,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -33,6 +33,8 @@ import processing.core.PApplet;
 /**
  * Class to handle calling Runtime.exec() and stuffing output and error streams
  * into String lists that can be dealt with more easily.
+ *
+ * @author Jonathan Feinberg <jdf@pobox.com>
  */
 class ProcessHelper {
   private final String[] cmd;
@@ -85,10 +87,18 @@ class ProcessHelper {
     final Process process = Runtime.getRuntime().exec(cmd);
     // The latch is decremented by the StringRedirectingThread when it exhausts its stream
     final CountDownLatch latch = new CountDownLatch(2);
-    new StringRedirectThread(process.getInputStream(), stdout, latch,
-                             teeOut ? System.out : null).start();
-    new StringRedirectThread(process.getErrorStream(), stderr, latch,
-                             teeErr ? System.err : null).start();
+    if (teeOut) {
+      new StringRedirectThread(process.getInputStream(), latch, stdout,
+                               new OutputStreamWriter(System.out)).start();
+    } else {
+      new StringRedirectThread(process.getInputStream(), latch, stdout).start();
+    }
+    if (teeErr) {
+      new StringRedirectThread(process.getErrorStream(), latch, stderr,
+                               new OutputStreamWriter(System.err)).start();
+    } else {
+      new StringRedirectThread(process.getErrorStream(), latch, stderr).start();
+    }
     latch.await();
     System.err.println((System.currentTimeMillis() - startTime) + "ms: "
         + PApplet.join(cmd, " "));
@@ -109,35 +119,35 @@ class ProcessHelper {
   }
 
   static class StringRedirectThread extends Thread {
-    private final BufferedReader in;
-    private final PrintWriter out;
+    private final BufferedReader reader;
+    private final PrintWriter[] outs;
     private final CountDownLatch latch;
-    private final PrintWriter tee;
 
-    public StringRedirectThread(final InputStream in, final Writer out,
+    public StringRedirectThread(final InputStream in,
                                 final CountDownLatch latch,
-                                final OutputStream tee) {
-      this.in = new BufferedReader(new InputStreamReader(in));
-      this.out = new PrintWriter(out, true);
+                                final Writer... targetWriters) {
+      this.reader = new BufferedReader(new InputStreamReader(in));
       this.latch = latch;
-      this.tee = tee == null ? null : new PrintWriter(tee, true);
+      this.outs = new PrintWriter[targetWriters.length];
+      for (int i = 0; i < outs.length; i++) {
+        outs[i] = new PrintWriter(targetWriters[i], true);
+      }
     }
 
     @Override
     public void run() {
       try {
         String line;
-        while ((line = in.readLine()) != null) {
+        while ((line = reader.readLine()) != null) {
           if (line.trim().length() == 0) {
             continue;
           }
-          out.println(line);
-          if (tee != null) {
-            tee.println(line);
+          for (final PrintWriter out : outs) {
+            out.println(line);
           }
         }
       } catch (final IOException e) {
-        e.printStackTrace();
+        e.printStackTrace(System.err);
       } finally {
         latch.countDown();
       }
