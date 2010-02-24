@@ -73,7 +73,7 @@ class SketchLogCatter {
             continue;
           }
           final PrintWriter w = m.group(1).equals("W") ? stderr : stdout;
-          w.println("<" + m.group(3) + ">");
+          w.println(m.group(3));
         }
       } catch (final IOException e) {
         e.printStackTrace(System.err);
