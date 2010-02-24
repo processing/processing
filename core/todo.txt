@@ -26,6 +26,8 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=1175
 _ resize not working in revision 5707
 _   camera() and perspective() were commented out in setSize()
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1391
+_ chopping out triangles in OpenGL (though it's only 2D drawing)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1359
 
 _ consider adding skewX/Y
 _   do them as shearX/Y
