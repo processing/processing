@@ -144,6 +144,9 @@ public class Commander implements RunnerListener {
         File pdeFile = new File(sketchy, sketchy.getName() + ".pde");
         pdePath = pdeFile.getAbsolutePath();
 
+      } else if (arg.startsWith(preferencesArg)) {
+        preferencesPath = arg.substring(preferencesArg.length());
+
       } else if (arg.startsWith(outputArg)) {
         outputPath = arg.substring(outputArg.length());
 
