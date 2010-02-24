@@ -48,8 +48,6 @@ public class EditorConsole extends JScrollPane {
   MutableAttributeSet stdStyle;
   MutableAttributeSet errStyle;
 
-  boolean cerror;
-
   int maxLineCount;
 
   static File errFile;
@@ -222,18 +220,9 @@ public class EditorConsole extends JScrollPane {
 
 
   public void write(byte b[], int offset, int length, boolean err) {
-    if (err != cerror) {
-      // advance the line because switching between err/out streams
-      // potentially, could check whether we're already on a new line
-      message("", cerror, true);
-    }
-
     // we could do some cross platform CR/LF mangling here before outputting
-
     // add text to output document
     message(new String(b, offset, length), err, false);
-    // set last error state
-    cerror = err;
   }
 
 
@@ -292,10 +281,10 @@ public class EditorConsole extends JScrollPane {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
   
   
-  class EditorConsoleStream extends OutputStream {
+  private static class EditorConsoleStream extends OutputStream {
     //static EditorConsole current;
-    boolean err; // whether stderr or stdout
-    byte single[] = new byte[1];
+    final boolean err; // whether stderr or stdout
+    final byte single[] = new byte[1];
 
     public EditorConsoleStream(boolean err) {
       this.err = err;
