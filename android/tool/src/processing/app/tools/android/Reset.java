@@ -22,7 +22,6 @@
 package processing.app.tools.android;
 
 import javax.swing.JOptionPane;
-
 import processing.app.Editor;
 import processing.app.tools.Tool;
 
