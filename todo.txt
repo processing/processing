@@ -1,5 +1,22 @@
 0178 pde
 
+_ Cannot find PDF library
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1473
+
+_ change command line to just be part of regular distros
+_   there's so much platform code in there, it's not worth the extra work
+_   also include update check for logging
+_ command line support is currently broken
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1048
+_   some fixes can be found in the bug report
+_   need to deal with setting path to sketchbook/examples
+_   also deal with the script not being in the right folder
+_   problems with imports and prefs file
+_     http://dev.processing.org/bugs/show_bug.cgi?id=1298
+_ processing.app.Commander headless still requiring X11
+_   problem is static calls to PApplet
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1426
+
 
 svn copy svn://processing.org/trunk/processing svn://processing.org/tags/processing-01XX
 
@@ -18,17 +35,6 @@ _ don't allow processing to run on snow leopard with 1.5
 
 _ do some testing for windows 7 on 64-bit
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1424
-
-_ command line support is currently broken
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1048
-_   some fixes can be found in the bug report
-_   need to deal with setting path to sketchbook/examples
-_   also deal with the script not being in the right folder
-_   problems with imports and prefs file
-_     http://dev.processing.org/bugs/show_bug.cgi?id=1298
-_ processing.app.Commander headless still requiring X11
-_   problem is static calls to PApplet
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1426
 
 reserved names/class naming
 _ Saving sketch with the same name as a class or primitive breaks sketch
