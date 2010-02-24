@@ -1,4 +1,7 @@
 0178 core (private)
+X filter(DILATE/ERODE)
+X   dilate(boolean) has bug in clamping of top kernel coordinate
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1477
 
 
 big ones
