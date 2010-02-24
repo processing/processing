@@ -500,6 +500,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
   public void onDestroy() {
     System.out.println("PApplet.onDestroy() called");
     super.onDestroy();
+    finish();
   }
 
 
