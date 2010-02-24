@@ -3,5 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/processing-app"/>
+	<classpathentry kind="var" path="ANDROID_LIB"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/processing-core"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
