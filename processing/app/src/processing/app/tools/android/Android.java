@@ -600,7 +600,6 @@ public class Android implements Tool {
         // prints a list of connections that can be made to the device
         // the final port will be the entry of the most recently started
         // application
-        // while launching, will say 'error: device offline'
         // when not running, will say 'error: device not found'
 
         // System.out.print("Checking for JDWP connection: ");
@@ -608,7 +607,10 @@ public class Android implements Tool {
         if (p.execute() == 0) {
           return true;
         }
-        p.dump();
+        // while launching, will say 'error: device offline'
+        if (!p.getStderr().contains("device offline")) {
+          p.dump();
+        }
         try {
           Thread.sleep(1000);
         } catch (final InterruptedException ie) {
@@ -643,7 +645,6 @@ public class Android implements Tool {
           }
           return null;
         }
-
         p.dump();
         try {
           Thread.sleep(1000);
@@ -715,32 +716,31 @@ public class Android implements Tool {
       final String lastPort = getJdwpPort(device);
 
       // "am start -a android.intent.action.MAIN -n com.android.browser/.BrowserActivity"
-      final Process p = Runtime.getRuntime().exec(
-        new String[] {
-          "adb",
-          "-s",
-          device,
-          // "-d", // this is for a single USB device
-          "shell",
-          "am",
-          "start", // kick things off
-          // -D causes a hang with
-          // "waiting for the debugger to attach"
-          // "-D", // debug
-          "-e", "debug", "true", "-a", "android.intent.action.MAIN", "-c",
-          "android.intent.category.LAUNCHER", "-n",
-          build.getPackageName() + "/." + build.getClassName() });
-      final int result = p.waitFor();
+      final int result = new ProcessHelper(
+                                           "adb",
+                                           "-s",
+                                           device,
+                                           // "-d", // this is for a single USB device
+                                           "shell",
+                                           "am",
+                                           "start", // kick things off
+                                           // -D causes a hang with
+                                           // "waiting for the debugger to attach"
+                                           // "-D", // debug
+                                           "-e", "debug", "true", "-a",
+                                           "android.intent.action.MAIN", "-c",
+                                           "android.intent.category.LAUNCHER",
+                                           "-n", build.getPackageName() + "/."
+                                               + build.getClassName())
+          .execute(true);
       if (result != 0) {
         editor.statusError("Could not start the sketch.");
         System.err.println("“adb shell” for “am start” returned " + result
             + ".");
-
       } else {
         final boolean emu = device.startsWith("emulator");
         editor.statusNotice("Sketch started on the "
             + (emu ? "emulator" : "phone") + ".");
-
         return lastPort;
       }
     } catch (final IOException e) {
@@ -790,13 +790,13 @@ public class Android implements Tool {
                                                   "jdwp:" + port);
 
       // System.out.println("waiting for forward");
-      System.out.println(fwd.getCommand());
+      System.err.println(fwd.getCommand());
       if (fwd.execute(true) != 0) {
         editor.statusError("Could not connect for debugging.");
         return false;
       }
 
-      System.out.println("creating runner");
+      System.err.println("creating runner");
       // System.out.println("editor from Android is " + editor);
       final AndroidRunner ar = new AndroidRunner(editor, editor.getSketch());
       // System.out.println("launching vm");
@@ -805,7 +805,6 @@ public class Android implements Tool {
 
     } catch (final IOException e) {
       editor.statusError(e);
-
     } catch (final InterruptedException e) {
     }
 

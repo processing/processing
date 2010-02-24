@@ -94,7 +94,7 @@ public class Device {
   protected boolean exists() throws IOException {
     final ProcessHelper p = new ProcessHelper(Android.toolName, "list", "avds");
     try {
-      if (p.execute() == 0) {
+      if (p.execute(true) == 0) {
         for (final String line : p.getStdout().split("\n")) {
           final String[] m = PApplet.match(line, "\\s+Name:\\s+(\\S+)");
           // PApplet.println(m);
@@ -121,10 +121,7 @@ public class Device {
       if (p.execute(true, false) == 0) {
         return true;
       }
-      System.out.println("Attempted: '"
-          + PApplet.join(new String[] {
-            Android.toolName, "create", "avd", "-n", name, "-t", target, "-c",
-            "64M" }, " ") + "'");
+      System.out.println("Attempted: '" + p.getCommand() + "'");
       p.dump();
     } catch (final InterruptedException ie) {
     }
