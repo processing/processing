@@ -160,7 +160,8 @@ public class Build {
         final File libsFolder = mkdirs(androidFolder, "libs");
         final File assetsFolder = mkdirs(androidFolder, "assets");
 
-        final InputStream input = PApplet.createInput(Android.getCoreZipFile());
+        final InputStream input = PApplet.createInput(AndroidTool
+            .getCoreZipFile());
         PApplet.saveStream(new File(libsFolder, "processing-core.jar"), input);
 
         try {
@@ -493,9 +494,9 @@ public class Build {
       // Windows needs backslashes escaped, or it will also accept forward
       // slashes in the build file. We're using the forward slashes since this
       // path gets concatenated with a lot of others that use forwards anyway.
-      writer.println("sdk.dir=" + Android.sdkPath.replace('\\', '/'));
+      writer.println("sdk.dir=" + AndroidTool.sdkPath.replace('\\', '/'));
     } else {
-      writer.println("sdk.dir=" + Android.sdkPath);
+      writer.println("sdk.dir=" + AndroidTool.sdkPath);
     }
     writer.flush();
     writer.close();

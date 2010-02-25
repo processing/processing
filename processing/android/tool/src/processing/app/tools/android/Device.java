@@ -71,13 +71,6 @@ public class Device {
 
   static boolean checkDefaults() {
     try {
-      // if (!avdDonut.exists()) {
-      // if (!avdDonut.create()) {
-      // Base.showWarning("Android Error",
-      // "An error occurred while running “android create avd”\n" +
-      // "to set up the default Android emulator.", null);
-      // }
-      // }
       if (!avdEclair.exists()) {
         if (!avdEclair.create()) {
           Base.showWarning("Android Error", AVD_CREATE_ERROR, null);
@@ -92,7 +85,8 @@ public class Device {
   }
 
   protected boolean exists() throws IOException {
-    final ProcessHelper p = new ProcessHelper(Android.toolName, "list", "avds");
+    final ProcessHelper p = new ProcessHelper(AndroidTool.toolName, "list",
+                                              "avds");
     try {
       if (p.execute(true) == 0) {
         for (final String line : p.getStdout().split("\n")) {
@@ -113,7 +107,7 @@ public class Device {
   }
 
   protected boolean create() throws IOException {
-    final ProcessHelper p = new ProcessHelper(Android.toolName, "create",
+    final ProcessHelper p = new ProcessHelper(AndroidTool.toolName, "create",
                                               "avd", "-n", name, "-t", target,
                                               "-c", "64M");
 
@@ -240,7 +234,7 @@ public class Device {
       startIndex++;
       String[] devices = new String[lines.length - startIndex];
       int deviceIndex = 0;
-      for (int i = startIndex; i < lines.length - 1; i++) {
+      for (int i = startIndex; i < lines.length; i++) {
         final String line = lines[i];
         final int tab = line.indexOf('\t');
         if (tab != -1) {
