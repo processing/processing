@@ -48,8 +48,9 @@ public class Device {
    * WVGA854 (854x480), the same aspect ratio (with rounding), as 1920x1080, or
    * 16:9.
    */
-  static Device avdEclair = new Device("Processing-Eclair",
-                                       "Google Inc.:Google APIs:5", 854, 480);
+  public static final Device ECLAIR = new Device("Processing-Eclair",
+                                                 "Google Inc.:Google APIs:5",
+                                                 854, 480);
 
   static final String AVD_CREATE_ERROR = "An error occurred while running “android create avd”\n"
       + "to set up the default Android emulator. Make sure that the\n"
@@ -71,8 +72,8 @@ public class Device {
 
   static boolean checkDefaults() {
     try {
-      if (!avdEclair.exists()) {
-        if (!avdEclair.create()) {
+      if (!ECLAIR.exists()) {
+        if (!ECLAIR.create()) {
           Base.showWarning("Android Error", AVD_CREATE_ERROR, null);
         }
       }
