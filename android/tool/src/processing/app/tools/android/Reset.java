@@ -39,11 +39,11 @@ public class Reset implements Tool {
   }
 
   public void run() {
-    if (Android.sdkPath == null) {
+    if (AndroidTool.sdkPath == null) {
       JOptionPane.showMessageDialog(editor, "Before using the reset command, "
           + "you must first enable Android Mode.");
     } else {
-      Android.resetServer(editor);
+      AndroidTool.resetServer(editor);
     }
   }
 }
