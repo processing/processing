@@ -133,19 +133,6 @@ public class AndroidRunner extends Runner {
   @Override
   protected void generateTrace(final PrintWriter writer) {
 
-    final Thread logcatter = new Thread(new Runnable() {
-      public void run() {
-        try {
-          new SketchLogCatter().start();
-        } catch (final InterruptedException e) {
-          System.err.println("logcat interrupted");
-        } catch (final Exception e) {
-          throw new RuntimeException(e);
-        }
-      }
-    }, "logcatter");
-    logcatter.start();
-
     // At this point, disable the run button.
     // This happens when the sketch is exited by hitting ESC,
     // or the user manually closes the sketch window.

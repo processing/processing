@@ -716,7 +716,6 @@ public class AndroidTool implements Tool {
         final boolean emu = device.startsWith("emulator");
         editor.statusNotice("Sketch started on the "
             + (emu ? "emulator" : "phone") + ".");
-        new AndroidRunner(editor, editor.getSketch()).launch(ADB_SOCKET_PORT);
       } else {
         editor.statusError("Could not start the sketch.");
         System.err.println(result);
