@@ -67,7 +67,8 @@ class SketchLogCatter {
     public void run() {
       try {
         String line;
-        while ((line = in.readLine()) != null) {
+        while (!Thread.currentThread().isInterrupted()
+            && ((line = in.readLine()) != null)) {
           final Matcher m = interestingLine.matcher(line);
           if (!m.matches()) {
             continue;

@@ -23,22 +23,10 @@
 
 package processing.app.tools.android;
 
-import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Map;
 import processing.app.Sketch;
-import processing.app.debug.EventThread;
 import processing.app.debug.Runner;
 import processing.app.debug.RunnerListener;
-import com.sun.jdi.Field;
-import com.sun.jdi.ObjectReference;
-import com.sun.jdi.ReferenceType;
-import com.sun.jdi.Value;
-import com.sun.jdi.VirtualMachine;
-import com.sun.jdi.connect.AttachingConnector;
-import com.sun.jdi.connect.Connector;
-import com.sun.jdi.connect.IllegalConnectorArgumentsException;
-import com.sun.jdi.event.ExceptionEvent;
 
 public class AndroidRunner extends Runner {
 
@@ -47,16 +35,8 @@ public class AndroidRunner extends Runner {
   }
 
   public boolean launch(final String port) {
-    vm = launchVirtualMachine(port);
-    //    System.out.println("vm launched");
-    if (vm != null) {
-      //      System.out.println("starting trace");
-      generateTrace(null);
-      //      System.out.println("done starting trace");
-      return true;
-    }
-    //    System.out.println("no trace for you");
-    return false;
+    generateTrace(null);
+    return true;
   }
 
   /*
@@ -91,75 +71,6 @@ public class AndroidRunner extends Runner {
   //        e.printStackTrace();
   //      }
     }
-  }
-
-
-  protected String[] getMachineParams() {
-    ArrayList params = new ArrayList();
-
-    //params.add("-Xint"); // interpreted mode
-    //params.add("-Xprof");  // profiler
-    //params.add("-Xaprof");  // allocation profiler
-    //params.add("-Xrunhprof:cpu=samples");  // old-style profiler
-
-    // TODO change this to use run.args = true, run.args.0, run.args.1, etc.
-    // so that spaces can be included in the arg names
-    String options = Preferences.get("run.options");
-    if (options.length() > 0) {
-      String pieces[] = PApplet.split(options, ' ');
-      for (int i = 0; i < pieces.length; i++) {
-        String p = pieces[i].trim();
-        if (p.length() > 0) {
-          params.add(p);
-        }
-      }
-    }
-
-  //    params.add("-Djava.ext.dirs=nuffing");
-
-    if (Preferences.getBoolean("run.options.memory")) {
-      params.add("-Xms" + Preferences.get("run.options.memory.initial") + "m");
-      params.add("-Xmx" + Preferences.get("run.options.memory.maximum") + "m");
-    }
-
-    if (Base.isMacOS()) {
-      params.add("-Xdock:name=" + appletClassName);
-  //      params.add("-Dcom.apple.mrj.application.apple.menu.about.name=" +
-  //                 sketch.getMainClassName());
-    }
-    // sketch.libraryPath might be ""
-    // librariesClassPath will always have sep char prepended
-    params.add("-Djava.library.path=" +
-               sketch.getLibraryPath() +
-               File.pathSeparator +
-               System.getProperty("java.library.path"));
-
-    params.add("-cp");
-    params.add(sketch.getClassPath());
-  //    params.add(sketch.getClassPath() +
-  //        File.pathSeparator +
-  //        Base.librariesClassPath);
-
-    //PApplet.println(PApplet.split(sketch.classPath, ':'));
-
-    String outgoing[] = new String[params.size()];
-    params.toArray(outgoing);
-
-    //PApplet.println(outgoing);
-  //    PApplet.println(PApplet.split(outgoing[0], ":"));
-  //    PApplet.println();
-  //    PApplet.println("class path");
-  //    PApplet.println(PApplet.split(outgoing[2], ":"));
-
-    return outgoing;
-    //return (String[]) params.toArray();
-
-  //  System.out.println("sketch class path");
-  //  PApplet.println(PApplet.split(sketch.classPath, ';'));
-  //  System.out.println();
-  //  System.out.println("libraries class path");
-  //  PApplet.println(PApplet.split(Base.librariesClassPath, ';'));
-  //  System.out.println();
   }
 
 
@@ -213,49 +124,6 @@ public class AndroidRunner extends Runner {
   }
   */
 
-  // http://java.sun.com/j2se/1.5.0/docs/guide/jpda/conninv.html
-  protected VirtualMachine launchVirtualMachine(final String localPort) {
-    // hostname, port, and timeout (ms) are the only items needed here
-    final AttachingConnector connector = (AttachingConnector) findConnector("com.sun.jdi.SocketAttach");
-    //PApplet.println(connector);  // gets the defaults
-
-    final Map<String, Connector.Argument> arguments = connector
-        .defaultArguments();
-
-    //    Connector.Argument portArg =
-    //      (Connector.Argument)arguments.get("port");
-    //    portArg.setValue(port);
-    arguments.get("port").setValue(localPort);
-    arguments.get("hostname").setValue("127.0.0.1");
-    //    ((Connector.Argument) arguments.get("hostname")).setValue("localhost");
-    //    ((Connector.Argument) arguments.get("timeout")).setValue("5000");
-
-    try {
-      //      PApplet.println(connector);
-      //      PApplet.println(arguments);
-      //      PApplet.println("attaching now...");
-      //return connector.attach(arguments);
-      System.err.println("Attaching to the debugger. If this command hangs, ");
-      System.err.println("you may need to use Tools \u2192 " + Reset.MENU_TITLE
-          + ".");
-      final VirtualMachine machine = connector.attach(arguments);
-      System.err
-          .println("Debugger successfully attached, nevermind that last bit.");
-      //      PApplet.println("attached");
-      return machine;
-
-    } catch (final IOException ioe) {
-      //throw new Error("Unable to launch target VM: " + exc);
-      ioe.printStackTrace();
-      editor.statusError(ioe);
-
-    } catch (final IllegalConnectorArgumentsException icae) {
-      //throw new Error("Internal error: " + exc);
-      editor.statusError(icae);
-    }
-    return null;
-  }
-
   /**
    * Generate the trace.
    * Enable events, start thread to display events,
@@ -264,14 +132,6 @@ public class AndroidRunner extends Runner {
    */
   @Override
   protected void generateTrace(final PrintWriter writer) {
-    vm.setDebugTraceMode(debugTraceMode);
-
-    final EventThread eventThread = new EventThread(this, vm, excludes, writer);
-    eventThread.setEventRequests(watchFields);
-    eventThread.start();
-
-    vm.resume();
-    System.err.println("done with resume");
 
     final Thread logcatter = new Thread(new Runnable() {
       public void run() {
@@ -287,132 +147,18 @@ public class AndroidRunner extends Runner {
     }, "logcatter");
     logcatter.start();
 
-    // Shutdown begins when event thread terminates
-    try {
-      if (eventThread != null)
-        eventThread.join();
-      logcatter.interrupt();
-      // At this point, disable the run button.
-      // This happens when the sketch is exited by hitting ESC,
-      // or the user manually closes the sketch window.
-      // TODO this should be handled better, should it not?
-      if (editor != null)
-        editor.internalRunnerClosed();
-
-    } catch (final InterruptedException exc) {
-      // we don't interrupt
-    }
-    //System.out.println("and leaving");
-    if (writer != null)
-      writer.close();
-  }
-
-  /**
-   * Find a com.sun.jdi.CommandLineLaunch connector
-   */
-  /*
-  LaunchingConnector findLaunchingConnector(String connectorName) {
-    //VirtualMachineManager mgr = Bootstrap.virtualMachineManager();
-
-    // Get the default connector.
-    // Not useful here since they all need different args.
-  //      System.out.println(Bootstrap.virtualMachineManager().defaultConnector());
-  //      return Bootstrap.virtualMachineManager().defaultConnector();
-
-    List connectors = Bootstrap.virtualMachineManager().allConnectors();
-
-    // code to list available connectors
-  //    Iterator iter2 = connectors.iterator();
-  //    while (iter2.hasNext()) {
-  //      Connector connector = (Connector)iter2.next();
-  //      System.out.println("connector name is " + connector.name());
-  //    }
-
-    Iterator iter = connectors.iterator();
-    while (iter.hasNext()) {
-      Connector connector = (Connector)iter.next();
-      if (connector.name().equals(connectorName)) {
-        return (LaunchingConnector)connector;
-      }
-    }
-    throw new Error("No launching connector");
-  }
-  */
-
-  @Override
-  public void exception(final ExceptionEvent event) {
-    //    System.out.println(event);
-    final ObjectReference or = event.exception();
-    final ReferenceType rt = or.referenceType();
-    final String exceptionName = rt.name();
-    //Field messageField = Throwable.class.getField("detailMessage");
-    final Field messageField = rt.fieldByName("detailMessage");
-    //    System.out.println("field " + messageField);
-    final Value messageValue = or.getValue(messageField);
-    //    System.out.println("mess val " + messageValue);
-
-    final int last = exceptionName.lastIndexOf('.');
-    String message = exceptionName.substring(last + 1);
-    if (messageValue != null) {
-      String messageStr = messageValue.toString();
-      if (messageStr.startsWith("\""))
-        messageStr = messageStr.substring(1, messageStr.length() - 1);
-      message += ": " + messageStr;
-    }
-    //    System.out.println("mess type " + messageValue.type());
-    //StringReference messageReference = (StringReference) messageValue.type();
-    //    System.out.println(or.referenceType().fields());
-
-    reportException(message, event.thread());
-
-    if (editor != null)
+    // At this point, disable the run button.
+    // This happens when the sketch is exited by hitting ESC,
+    // or the user manually closes the sketch window.
+    // TODO this should be handled better, should it not?
+    if (editor != null) {
       editor.internalRunnerClosed();
-  }
+    }
 
-  // This may be called more than one time per error in the VM,
-  // presumably because exceptions might be wrapped inside others,
-  // and this will fire for both.
-  /*
-  protected void reportException(String message, ThreadReference thread) {
-    try {
-      Sketch sketch = editor.getSketch();
-      
-      // a bit for debugging
-  //      for (StackFrame frame : thread.frames()) {
-  //        System.out.println("frame: " + frame);
-  //      }
-
-      List<StackFrame> frames = thread.frames();
-      for (StackFrame frame : frames) {
-  //        System.out.println("frame: " + frame);
-        Location location = frame.location();
-        String filename = null;
-        filename = location.sourceName();
-        int lineNumber = location.lineNumber() - 1;
-        RunnerException rex = 
-          sketch.placeException(message, filename, lineNumber);
-        if (rex != null) {
-          listener.statusError(rex);
-          return;
-        }
-      }
-      // Give up, nothing found inside the pile of stack frames
-      listener.statusError(message);
-
-    } catch (AbsentInformationException e) {
-      // Any of the thread.blah() methods can throw an AbsentInformationEx
-      // if that bit of data is missing. If so, just write out the error
-      // message to the console.
-      //e.printStackTrace();  // not useful
-      exception = new RunnerException(message);
-      exception.hideStackTrace();
-      listener.statusError(exception);
-
-    } catch (IncompatibleThreadStateException e) {
-      e.printStackTrace();
+    if (writer != null) {
+      writer.close();
     }
   }
-  */
 
   /*
   public void close() {
