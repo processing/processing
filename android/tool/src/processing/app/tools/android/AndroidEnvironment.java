@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
  * 
  * AndroidDevice n1 = env.getHardware();</pre>
  * 
- * @author Jonathan Feinberg &lt;jdf@us.ibm.com&gt;
+ * @author Jonathan Feinberg &lt;jdf@pobox.com&gt;
  *
  */
 public class AndroidEnvironment implements AndroidEnvironmentProperties {
