@@ -19,7 +19,6 @@ public class ProcessResult implements Iterable<String> {
     this.time = time;
   }
 
-  @Override
   public Iterator<String> iterator() {
     return Arrays.asList(output.split("\r?\n")).iterator();
   }

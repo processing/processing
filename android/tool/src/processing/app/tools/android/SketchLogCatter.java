@@ -48,7 +48,6 @@ class SketchLogCatter implements LineProcessor {
     process.waitFor();
   }
 
-  @Override
   public void processLine(final String line) {
     final Matcher m = interestingLine.matcher(line);
     if (m.matches()) {
