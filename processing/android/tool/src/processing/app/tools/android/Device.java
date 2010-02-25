@@ -205,8 +205,6 @@ public class Device {
       // }
 
       if (lines.length == 0) {
-        // result was 0, so we're ok, but this is odd.
-        System.out.println("No devices found.");
         return new String[] {};
       }
 
