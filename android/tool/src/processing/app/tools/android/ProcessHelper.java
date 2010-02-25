@@ -91,9 +91,13 @@ class ProcessHelper {
       errpump.addTarget(System.err);
     }
     errpump.start();
-
-    return new ProcessResult(getCommand(), process.waitFor(), outWriter
-        .toString(), errWriter.toString(), System.currentTimeMillis()
-        - startTime);
+    try {
+      return new ProcessResult(getCommand(), process.waitFor(), outWriter
+          .toString(), errWriter.toString(), System.currentTimeMillis()
+          - startTime);
+    } catch (final InterruptedException e) {
+      System.err.println("Interrupted: " + getCommand());
+      throw e;
+    }
   }
 }

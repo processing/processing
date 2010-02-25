@@ -96,6 +96,5 @@ class StreamPump implements Runnable {
     public void processLine(final String line) {
       writer.println(line);
     }
-
   }
 }
