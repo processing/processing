@@ -9,18 +9,15 @@ public class Harness implements AndroidEnvironmentProperties,
     final AndroidEnvironment env = new AndroidEnvironment();
     env.addPropertyChangeListener(PCD);
     env.addPropertyChangeListener(new PropertyChangeListener() {
-      @Override
       public void propertyChange(final PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(DEVICE_ADDED)) {
           final AndroidDevice device = (AndroidDevice) evt.getNewValue();
           device.addOutputListener("processing.android.test.testconsole",
             new ProcessOutputListener() {
-              @Override
               public void handleStdout(final String line) {
                 System.out.println("testconsole: " + line);
               }
 
-              @Override
               public void handleStderr(final String line) {
                 System.err.println("testconsole: " + line);
               }
@@ -28,12 +25,10 @@ public class Harness implements AndroidEnvironmentProperties,
 
           device.addOutputListener("processing.android.test.testmouse",
             new ProcessOutputListener() {
-              @Override
               public void handleStdout(final String line) {
                 System.out.println("testmouse: " + line);
               }
 
-              @Override
               public void handleStderr(final String line) {
                 System.err.println("testmouse: " + line);
               }

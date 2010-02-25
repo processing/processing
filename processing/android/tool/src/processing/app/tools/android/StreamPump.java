@@ -29,7 +29,6 @@ import java.util.concurrent.ThreadFactory;
 class StreamPump implements Runnable {
   private static final ExecutorService threads = Executors
       .newCachedThreadPool(new ThreadFactory() {
-        @Override
         public Thread newThread(final Runnable r) {
           final Thread t = new Thread(r);
           t.setDaemon(true);
@@ -64,7 +63,6 @@ class StreamPump implements Runnable {
     threads.execute(this);
   }
 
-  @Override
   public void run() {
     try {
       String line;
@@ -92,7 +90,6 @@ class StreamPump implements Runnable {
       this.writer = new PrintWriter(writer, true);
     }
 
-    @Override
     public void processLine(final String line) {
       writer.println(line);
     }

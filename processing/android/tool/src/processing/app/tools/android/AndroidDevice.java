@@ -32,7 +32,6 @@ public class AndroidDevice implements AndroidDeviceProperties {
   //  adb shell am start -n com.android.launcher2/.Launcher
 
   private class LogLineProcessor implements LineProcessor {
-    @Override
     public void processLine(final String line) {
       final LogEntry entry = new LogEntry(line);
 
