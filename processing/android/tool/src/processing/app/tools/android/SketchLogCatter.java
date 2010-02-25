@@ -19,12 +19,8 @@
  */
 package processing.app.tools.android;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.util.concurrent.CountDownLatch;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,54 +29,31 @@ import java.util.regex.Pattern;
  * @author Jonathan Feinberg <jdf@us.ibm.com>
  *
  */
-class SketchLogCatter {
+class SketchLogCatter implements LineProcessor {
+  private final PrintWriter stdout, stderr;
+  private final Pattern interestingLine;
+
+  public SketchLogCatter() {
+    stdout = new PrintWriter(System.out, true);
+    stderr = new PrintWriter(System.err, true);
+    interestingLine = Pattern
+        .compile("^([IW])/System\\.(?:err|out)\\(\\s*(\\d+)\\):\\s*(.+)$");
+  }
 
   public void start() throws InterruptedException, IOException {
     final Process process = Runtime.getRuntime().exec(
       new String[] { "adb", "logcat" });
-    final CountDownLatch latch = new CountDownLatch(2);
-    new LogcatThread(process, latch).start();
-    new ProcessHelper.StringRedirectThread(process.getErrorStream(), latch,
-                                           new OutputStreamWriter(System.err))
-        .start();
-    latch.await();
+    new StreamPump(process.getInputStream()).addTarget(this).start();
+    new StreamPump(process.getErrorStream()).addTarget(System.err).start();
     process.waitFor();
   }
 
-  private static class LogcatThread extends Thread {
-    private final BufferedReader in;
-    private final CountDownLatch latch;
-    private final PrintWriter stdout, stderr;
-    private final Pattern interestingLine;
-
-    public LogcatThread(final Process process, final CountDownLatch latch) {
-      this.in = new BufferedReader(new InputStreamReader(process
-          .getInputStream()));
-      stdout = new PrintWriter(System.out, true);
-      stderr = new PrintWriter(System.err, true);
-      this.latch = latch;
-      interestingLine = Pattern
-          .compile("^([IW])/System\\.(?:err|out)\\(\\s*(\\d+)\\):\\s*(.+)$");
-    }
-
-    @Override
-    public void run() {
-      try {
-        String line;
-        while (!Thread.currentThread().isInterrupted()
-            && ((line = in.readLine()) != null)) {
-          final Matcher m = interestingLine.matcher(line);
-          if (!m.matches()) {
-            continue;
-          }
-          final PrintWriter w = m.group(1).equals("W") ? stderr : stdout;
-          w.println(m.group(3));
-        }
-      } catch (final IOException e) {
-        e.printStackTrace(System.err);
-      } finally {
-        latch.countDown();
-      }
+  @Override
+  public void processLine(final String line) {
+    final Matcher m = interestingLine.matcher(line);
+    if (m.matches()) {
+      final PrintWriter w = m.group(1).equals("W") ? stderr : stdout;
+      w.println(m.group(3));
     }
   }
 }
