@@ -41,6 +41,14 @@ import processing.core.PApplet;
 // http://dl.google.com/android/repository/tools_r03-macosx.zip
 
 public class AndroidTool implements Tool {
+  private static final ProcessHelper KILL_SERVER_COMMAND = new ProcessHelper(
+                                                                             "adb",
+                                                                             "kill-server");
+
+  private static final ProcessHelper START_SERVER_CMD = new ProcessHelper(
+                                                                          "adb",
+                                                                          "start-server");
+
   static String sdkPath;
 
   static String toolName = "android";
@@ -373,18 +381,16 @@ public class AndroidTool implements Tool {
    */
   static protected boolean resetServer(final Editor editor) {
     try {
-      final ProcessHelper killer = new ProcessHelper("adb", "kill-server");
-      // don't really care about this result...
-      killer.execute(true, false);
+      final ProcessResult killResult = KILL_SERVER_COMMAND.execute();
       Thread.sleep(1000); // just take a quick break so that the server can die
 
       // ...we only care about whether it was able to start successfully.
-      final ProcessHelper starter = new ProcessHelper("adb", "start-server");
-      if (starter.execute(true, false) == 0) {
+      final ProcessResult startResult = START_SERVER_CMD.execute();
+      if (startResult.succeeded()) {
         return true;
       }
-      System.err.println(killer.getStderr()); // okay maybe now we care about these
-      System.err.println(starter.getStderr()); // something to confuse the user a bit
+      System.err.println(killResult.getStderr()); // okay maybe now we care about these
+      System.err.println(startResult.getStderr()); // something to confuse the user a bit
       editor.statusError("Could not start Android debug server.");
     } catch (final IOException e) {
       editor.statusError(e);
@@ -587,13 +593,13 @@ public class AndroidTool implements Tool {
     if (prevPort == null) {
       return;
     }
-
-    success = debugSketch(device, prevPort);
+    new AndroidRunner(editor, editor.getSketch()).launch(ADB_SOCKET_PORT);
+    //success = debugSketch(device, prevPort);
   }
 
   protected boolean waitUntilReady(final String device) {
-    final long timeout = System.currentTimeMillis() + 30 * 1000; // 15 sec
-
+    System.err.println("Waiting until " + device + " is ready.");
+    final long timeout = System.currentTimeMillis() + 30 * 1000;
     try {
       while (System.currentTimeMillis() < timeout) {
         // adb -s emulator-5566 jdwp
@@ -604,58 +610,60 @@ public class AndroidTool implements Tool {
 
         // System.out.print("Checking for JDWP connection: ");
         final ProcessHelper p = new ProcessHelper("adb", "-s", device, "jdwp");
-        if (p.execute() == 0) {
+        final ProcessResult jdwpResult = p.execute();
+        if (jdwpResult.succeeded()) {
+          System.err.println(device + " is seemingly ready.");
           return true;
         }
         // while launching, will say 'error: device offline'
-        if (!p.getStderr().contains("device offline")) {
-          p.dump();
+        if (!jdwpResult.getStderr().contains("device offline")) {
+          System.err.println(jdwpResult);
         }
-        try {
-          Thread.sleep(1000);
-        } catch (final InterruptedException ie) {
-        }
+        Thread.sleep(1000);
       }
+    } catch (final InterruptedException e) {
+      System.err.println("waitUntilReady interrupted");
     } catch (final Exception e) {
       e.printStackTrace();
     }
+    System.err.println("Timed out waiting for " + device + ".");
     return false;
   }
 
-  protected String getJdwpPort(final String device) {
-    final long timeout = System.currentTimeMillis() + 30 * 1000;
-
-    try {
-      while (System.currentTimeMillis() < timeout) {
-        // adb -s emulator-5566 jdwp
-        // prints a list of connections that can be made to the device
-        // the final port will be the entry of the most recently started
-        // application
-        // while launching, will say 'error: device offline'
-        // when not running, will say 'error: device not found'
-
-        final ProcessHelper p = new ProcessHelper("adb", "-s", device, "jdwp");
-        if (p.execute() == 0) {
-          final String[] lines = p.getStdout().split("\n");
-          for (int i = lines.length - 1; i >= 0; --i) {
-            final String s = lines[i].trim();
-            if (s.length() != 0) {
-              return s;
-            }
-          }
-          return null;
-        }
-        p.dump();
-        try {
-          Thread.sleep(1000);
-        } catch (final InterruptedException ie) {
-        }
-      }
-    } catch (final Exception e) {
-      e.printStackTrace();
-    }
-    return null;
-  }
+  //  protected String getJdwpPort(final String device) {
+  //    final long timeout = System.currentTimeMillis() + 30 * 1000;
+  //
+  //    try {
+  //      while (System.currentTimeMillis() < timeout) {
+  //        // adb -s emulator-5566 jdwp
+  //        // prints a list of connections that can be made to the device
+  //        // the final port will be the entry of the most recently started
+  //        // application
+  //        // while launching, will say 'error: device offline'
+  //        // when not running, will say 'error: device not found'
+  //
+  //        final ProcessHelper p = new ProcessHelper("adb", "-s", device, "jdwp");
+  //        if (p.execute() == 0) {
+  //          final String[] lines = p.getStdout().split("\n");
+  //          for (int i = lines.length - 1; i >= 0; --i) {
+  //            final String s = lines[i].trim();
+  //            if (s.length() != 0) {
+  //              return s;
+  //            }
+  //          }
+  //          return null;
+  //        }
+  //        p.dump();
+  //        try {
+  //          Thread.sleep(1000);
+  //        } catch (final InterruptedException ie) {
+  //        }
+  //      }
+  //    } catch (final Exception e) {
+  //      e.printStackTrace();
+  //    }
+  //    return null;
+  //  }
 
   boolean installSketch(final String device) {
     // install the new package into the emulator
@@ -664,29 +672,19 @@ public class AndroidTool implements Tool {
     editor.statusNotice("Sending sketch to the " + (emu ? "emulator" : "phone")
         + ".");
     try {
-      // Device.sendMenuButton(device); // wake up
-      // Device.sendHomeButton(device); // kill any running app
-
       final ProcessHelper p = new ProcessHelper("adb", "-s", device, // "wait-for-device",
                                                 "install", "-r", // safe to always use -r switch
                                                 build.getPathForAPK("debug"));
 
-      System.out.println();
-      System.out.print("Install command: ");
-      System.out.println(p.getCommand());
-
-      final int result = p.execute();
-      if (result != 0) {
-        p.dump();
-        // editor.statusNotice("“adb install” returned " + result + ".");
-        // System.out.println("Could not install the sketch.");
+      final ProcessResult installResult = p.execute();
+      if (!installResult.succeeded()) {
         editor.statusError("Could not install the sketch.");
-        System.err.println("“adb install” returned " + result + ".");
+        System.err.println(installResult);
         return false;
 
       }
       String errorMsg = null;
-      for (final String out : p.getStdout().split("\n")) {
+      for (final String out : installResult) {
         if (out.startsWith("Failure")) {
           errorMsg = out.substring(8);
           System.err.println(out);
@@ -702,6 +700,7 @@ public class AndroidTool implements Tool {
     } catch (final IOException e) {
       editor.statusError(e);
     } catch (final InterruptedException e) {
+      System.err.println("installSketch interrupted");
     }
     return false;
   }
@@ -710,39 +709,40 @@ public class AndroidTool implements Tool {
   // http://asantoso.wordpress.com/2009/09/26/using-jdb-with-adb-to-debugging-of-android-app-on-a-real-device/
   String startSketch(final String device) {
     try {
-      // Device.sendMenuButton(device); // wake up
-      // Device.sendHomeButton(device); // kill any running app
-
-      final String lastPort = getJdwpPort(device);
+      //      final String lastPort = getJdwpPort(device);
 
       // "am start -a android.intent.action.MAIN -n com.android.browser/.BrowserActivity"
-      final int result = new ProcessHelper(
-                                           "adb",
-                                           "-s",
-                                           device,
-                                           // "-d", // this is for a single USB device
-                                           "shell",
-                                           "am",
-                                           "start", // kick things off
-                                           // -D causes a hang with
-                                           // "waiting for the debugger to attach"
-                                           // "-D", // debug
-                                           "-e", "debug", "true", "-a",
-                                           "android.intent.action.MAIN", "-c",
-                                           "android.intent.category.LAUNCHER",
-                                           "-n", build.getPackageName() + "/."
-                                               + build.getClassName())
-          .execute(true);
-      if (result != 0) {
-        editor.statusError("Could not start the sketch.");
-        System.err.println("“adb shell” for “am start” returned " + result
-            + ".");
-      } else {
+      final ProcessResult result = new ProcessHelper(
+                                                     "adb",
+                                                     "-s",
+                                                     device,
+                                                     // "-d", // this is for a single USB device
+                                                     "shell",
+                                                     "am",
+                                                     "start", // kick things off
+                                                     // -D causes a hang with
+                                                     // "waiting for the debugger to attach"
+                                                     // "-D", // debug
+                                                     "-e",
+                                                     "debug",
+                                                     "true",
+                                                     "-a",
+                                                     "android.intent.action.MAIN",
+                                                     "-c",
+                                                     "android.intent.category.LAUNCHER",
+                                                     "-n", build
+                                                         .getPackageName()
+                                                         + "/."
+                                                         + build.getClassName())
+          .execute();
+      if (result.succeeded()) {
         final boolean emu = device.startsWith("emulator");
         editor.statusNotice("Sketch started on the "
             + (emu ? "emulator" : "phone") + ".");
-        return lastPort;
+        return "";//lastPort;
       }
+      editor.statusError("Could not start the sketch.");
+      System.err.println(result);
     } catch (final IOException e) {
       editor.statusError(e);
     } catch (final InterruptedException e) {
@@ -751,65 +751,65 @@ public class AndroidTool implements Tool {
     return null;
   }
 
-  boolean debugSketch(final String device, final String prevPort) {
-    try {
-      String port = null;
-      final long timeout = System.currentTimeMillis() + 15 * 1000;
-      // while (port == null || port.equals(prevPort)) {
-      while (System.currentTimeMillis() < timeout) {
-        if (port != null) {
-          System.out.println("Waiting a half second "
-              + "for the application to launch...");
-          try {
-            Thread.sleep(500);
-          } catch (final InterruptedException ie) {
-          }
-        }
-        port = getJdwpPort(device);
-        if (!port.equals(prevPort)) {
-          // System.out.println("I'm digging port " + port +
-          // " instead of " + prevPort + ".");
-          break;
-        }
-      }
-      System.out.println("Found application on port " + port + ".");
-
-      // Originally based on helpful notes by Agus Santoso (http://j.mp/7zV69M)
-
-      // adb -s emulator-5566 jdwp
-      // prints a list of connections that can be made to the device
-      // the final port will be the entry of the most recently started
-      // application
-      // while launching, will say 'error: device offline'
-      // when not running, will say 'error: device not found'
-
-      // PApplet.println(cmd);
-      final ProcessHelper fwd = new ProcessHelper("adb", "-s", device,
-                                                  "forward", "tcp:"
-                                                      + ADB_SOCKET_PORT,
-                                                  "jdwp:" + port);
-
-      // System.out.println("waiting for forward");
-      System.err.println(fwd.getCommand());
-      if (fwd.execute(true) != 0) {
-        editor.statusError("Could not connect for debugging.");
-        return false;
-      }
-
-      System.err.println("creating runner");
-      // System.out.println("editor from Android is " + editor);
-      final AndroidRunner ar = new AndroidRunner(editor, editor.getSketch());
-      // System.out.println("launching vm");
-      return ar.launch(ADB_SOCKET_PORT);
-      // System.out.println("vm launched");
-
-    } catch (final IOException e) {
-      editor.statusError(e);
-    } catch (final InterruptedException e) {
-    }
-
-    return false;
-  }
+  //  boolean debugSketch(final String device, final String prevPort) {
+  //    try {
+  //      String port = null;
+  //      final long timeout = System.currentTimeMillis() + 15 * 1000;
+  //      // while (port == null || port.equals(prevPort)) {
+  //      while (System.currentTimeMillis() < timeout) {
+  //        if (port != null) {
+  //          System.out.println("Waiting a half second "
+  //              + "for the application to launch...");
+  //          try {
+  //            Thread.sleep(500);
+  //          } catch (final InterruptedException ie) {
+  //          }
+  //        }
+  //        port = getJdwpPort(device);
+  //        if (!port.equals(prevPort)) {
+  //          // System.out.println("I'm digging port " + port +
+  //          // " instead of " + prevPort + ".");
+  //          break;
+  //        }
+  //      }
+  //      System.out.println("Found application on port " + port + ".");
+  //
+  //      // Originally based on helpful notes by Agus Santoso (http://j.mp/7zV69M)
+  //
+  //      // adb -s emulator-5566 jdwp
+  //      // prints a list of connections that can be made to the device
+  //      // the final port will be the entry of the most recently started
+  //      // application
+  //      // while launching, will say 'error: device offline'
+  //      // when not running, will say 'error: device not found'
+  //
+  //      // PApplet.println(cmd);
+  //      final ProcessHelper fwd = new ProcessHelper("adb", "-s", device,
+  //                                                  "forward", "tcp:"
+  //                                                      + ADB_SOCKET_PORT,
+  //                                                  "jdwp:" + port);
+  //
+  //      // System.out.println("waiting for forward");
+  //      System.err.println(fwd.getCommand());
+  //      if (fwd.execute(true) != 0) {
+  //        editor.statusError("Could not connect for debugging.");
+  //        return false;
+  //      }
+  //
+  //      System.err.println("creating runner");
+  //      // System.out.println("editor from Android is " + editor);
+  //      final AndroidRunner ar = new AndroidRunner(editor, editor.getSketch());
+  //      // System.out.println("launching vm");
+  //      return ar.launch(ADB_SOCKET_PORT);
+  //      // System.out.println("vm launched");
+  //
+  //    } catch (final IOException e) {
+  //      editor.statusError(e);
+  //    } catch (final InterruptedException e) {
+  //    }
+  //
+  //    return false;
+  //  }
 
   /**
    * Build the sketch and run it inside an emulator with the debugger.
@@ -849,8 +849,8 @@ public class AndroidTool implements Tool {
       if (prevPort == null) {
         return;
       }
-
-      success = debugSketch(device, prevPort);
+      new AndroidRunner(editor, editor.getSketch()).launch(ADB_SOCKET_PORT);
+      //success = debugSketch(device, prevPort);
     }
   }
 
@@ -896,7 +896,7 @@ public class AndroidTool implements Tool {
           return;
         }
 
-        success = debugSketch(device, prevPort);
+        //success = debugSketch(device, prevPort);
       }
     }
   }

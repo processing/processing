@@ -93,29 +93,26 @@ public class Build {
           + dateFormat.format(mod));
       final boolean result = androidFolder.renameTo(dest);
       if (!result) {
-        final int exitValue;
-        final ProcessHelper mv;
         try {
           System.err
               .println("createProject renameTo() failed, resorting to mv/move instead.");
-          mv = new ProcessHelper("mv", androidFolder.getAbsolutePath(), dest
-              .getAbsolutePath());
-          exitValue = mv.execute();
+          final ProcessResult mvResult = new ProcessHelper("mv", androidFolder
+              .getAbsolutePath(), dest.getAbsolutePath()).execute();
+          if (!mvResult.succeeded()) {
+            System.err.println(mvResult);
+            Base.showWarning("Failed to rename",
+              "Could not rename the old “android” build folder.\n"
+                  + "Please delete, close, or rename the folder\n"
+                  + androidFolder.getAbsolutePath() + "\n" + "and try again.",
+              null);
+            Base.openFolder(sketch.getFolder());
+            return false;
+          }
         } catch (final IOException e) {
           editor.statusError(e);
           return false;
         } catch (final InterruptedException e) {
           e.printStackTrace();
-          return false;
-        }
-        if (exitValue != 0) {
-          mv.dump();
-          Base.showWarning("Failed to rename",
-            "Could not rename the old “android” build folder.\n"
-                + "Please delete, close, or rename the folder\n"
-                + androidFolder.getAbsolutePath() + "\n" + "and try again.",
-            null);
-          Base.openFolder(sketch.getFolder());
           return false;
         }
       }

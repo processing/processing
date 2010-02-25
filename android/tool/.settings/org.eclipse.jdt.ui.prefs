@@ -1,4 +1,4 @@
-#Wed Feb 24 13:27:18 EST 2010
+#Wed Feb 24 20:35:01 EST 2010
 eclipse.preferences.version=1
 editor_save_participant_org.eclipse.jdt.ui.postsavelistener.cleanup=true
 formatter_profile=_processing
@@ -42,7 +42,7 @@ sp_cleanup.remove_unnecessary_nls_tags=false
 sp_cleanup.remove_unused_imports=true
 sp_cleanup.remove_unused_local_variables=false
 sp_cleanup.remove_unused_private_fields=true
-sp_cleanup.remove_unused_private_members=true
+sp_cleanup.remove_unused_private_members=false
 sp_cleanup.remove_unused_private_methods=true
 sp_cleanup.remove_unused_private_types=true
 sp_cleanup.sort_members=false
