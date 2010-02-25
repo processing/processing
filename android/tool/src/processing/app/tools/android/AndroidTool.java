@@ -333,7 +333,7 @@ public class AndroidTool implements Tool {
       debugFile = new File("../../../../../../../android/core.zip");
     }
     if (debugFile.exists()) {
-      System.out.println("Using version of core.zip from local SVN checkout.");
+      System.err.println("Using version of core.zip from local SVN checkout.");
       return debugFile;
       // } else {
       // //System.out.println("no core.zip at " + debugFile.getAbsolutePath());
@@ -492,7 +492,7 @@ public class AndroidTool implements Tool {
 
   public String getDefaultDevice() {
     // return Device.avdDonut.name;
-    return Device.avdEclair.name;
+    return Device.ECLAIR.name;
   }
 
   /** Find connected devices */
@@ -502,12 +502,8 @@ public class AndroidTool implements Tool {
       devices = Device.list();
     } catch (final IOException e) {
       editor.statusError(e);
-      // e.printStackTrace();
       return null;
     }
-    // ArrayList<String> available = new ArrayList<String>();
-    // for (String s : devices) {
-    // }
     // just go with the first non-emulator device
     for (final String name : devices) {
       if (!name.startsWith("emulator-")) {
@@ -535,7 +531,6 @@ public class AndroidTool implements Tool {
   // though would need to query the emulator to see if it can do that
 
   public void installAndRun(final String target, final String device) {
-    boolean success;
 
     // //adb get-state
     // try {
@@ -552,8 +547,7 @@ public class AndroidTool implements Tool {
     // resetServer();
 
     final Build build = getBuilder();
-    success = build.createProject();
-    if (!success) {
+    if (!build.createProject()) {
       return;
     }
 
@@ -572,29 +566,20 @@ public class AndroidTool implements Tool {
     // success = build.execAntCompile();
     // PApplet.println("umm yeah compile");
     // now run the ant debug or release version
-    success = build.antBuild("debug");
     // System.out.println("ant build complete " + success);
-    if (!success) {
+    if (!build.antBuild("debug")) {
       return;
     }
 
-    success = waitUntilReady(device);
-    if (!success) {
+    if (!waitUntilReady(device)) {
       return;
     }
 
-    success = installSketch(device);
-    if (!success) {
+    if (!installSketch(device)) {
       return;
     }
 
-    // Returns the last JDWP port that in use before launching
-    final String prevPort = startSketch(device);
-    if (prevPort == null) {
-      return;
-    }
-    new AndroidRunner(editor, editor.getSketch()).launch(ADB_SOCKET_PORT);
-    //success = debugSketch(device, prevPort);
+    startSketch(device);
   }
 
   protected boolean waitUntilReady(final String device) {
@@ -707,48 +692,39 @@ public class AndroidTool implements Tool {
 
   // better version that actually runs through JDI:
   // http://asantoso.wordpress.com/2009/09/26/using-jdb-with-adb-to-debugging-of-android-app-on-a-real-device/
-  String startSketch(final String device) {
+  private void startSketch(final String device) {
+    final String id = build.getPackageName() + "/." + build.getClassName();
+    final ProcessHelper startSketch = new ProcessHelper(
+                                                        "adb",
+                                                        "-s",
+                                                        device,
+                                                        "shell",
+                                                        "am",
+                                                        "start", // kick things off
+                                                        "-e",
+                                                        "debug",
+                                                        "true",
+                                                        "-a",
+                                                        "android.intent.action.MAIN",
+                                                        "-c",
+                                                        "android.intent.category.LAUNCHER",
+                                                        "-n", id);
     try {
-      //      final String lastPort = getJdwpPort(device);
-
       // "am start -a android.intent.action.MAIN -n com.android.browser/.BrowserActivity"
-      final ProcessResult result = new ProcessHelper(
-                                                     "adb",
-                                                     "-s",
-                                                     device,
-                                                     // "-d", // this is for a single USB device
-                                                     "shell",
-                                                     "am",
-                                                     "start", // kick things off
-                                                     // -D causes a hang with
-                                                     // "waiting for the debugger to attach"
-                                                     // "-D", // debug
-                                                     "-e",
-                                                     "debug",
-                                                     "true",
-                                                     "-a",
-                                                     "android.intent.action.MAIN",
-                                                     "-c",
-                                                     "android.intent.category.LAUNCHER",
-                                                     "-n", build
-                                                         .getPackageName()
-                                                         + "/."
-                                                         + build.getClassName())
-          .execute();
+      final ProcessResult result = startSketch.execute();
       if (result.succeeded()) {
         final boolean emu = device.startsWith("emulator");
         editor.statusNotice("Sketch started on the "
             + (emu ? "emulator" : "phone") + ".");
-        return "";//lastPort;
+        new AndroidRunner(editor, editor.getSketch()).launch(ADB_SOCKET_PORT);
+      } else {
+        editor.statusError("Could not start the sketch.");
+        System.err.println(result);
       }
-      editor.statusError("Could not start the sketch.");
-      System.err.println(result);
     } catch (final IOException e) {
       editor.statusError(e);
     } catch (final InterruptedException e) {
-      e.printStackTrace();
     }
-    return null;
   }
 
   //  boolean debugSketch(final String device, final String prevPort) {
@@ -819,38 +795,25 @@ public class AndroidTool implements Tool {
       // installAndRun("debug", findEmulator());
       checkServer();
       final String device = findEmulator();
-      boolean success;
 
       final Build build = getBuilder();
-      success = build.createProject();
-      if (!success) {
+      if (!build.createProject()) {
         return;
       }
 
-      // now run the ant debug or release version
-      success = build.antBuild("debug");
-      // System.out.println("ant build complete " + success);
-      if (!success) {
+      if (!build.antBuild("debug")) {
         return;
       }
 
-      success = waitUntilReady(device);
-      if (!success) {
+      if (!waitUntilReady(device)) {
         return;
       }
 
-      success = installSketch(device);
-      if (!success) {
+      if (!installSketch(device)) {
         return;
       }
 
-      // Returns the last JDWP port that in use before launching
-      final String prevPort = startSketch(device);
-      if (prevPort == null) {
-        return;
-      }
-      new AndroidRunner(editor, editor.getSketch()).launch(ADB_SOCKET_PORT);
-      //success = debugSketch(device, prevPort);
+      startSketch(device);
     }
   }
 
@@ -890,13 +853,7 @@ public class AndroidTool implements Tool {
           return;
         }
 
-        // Returns the last JDWP port that in use before launching
-        final String prevPort = startSketch(device);
-        if (prevPort == null) {
-          return;
-        }
-
-        //success = debugSketch(device, prevPort);
+        startSketch(device);
       }
     }
   }

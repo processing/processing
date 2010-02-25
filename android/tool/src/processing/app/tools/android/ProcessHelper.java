@@ -19,20 +19,13 @@
  */
 package processing.app.tools.android;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.io.Writer;
-import java.util.concurrent.CountDownLatch;
 import processing.core.PApplet;
 
 /**
  * Class to handle calling Runtime.exec() and stuffing output and error streams
- * into String lists that can be dealt with more easily.
+ * into Strings that can be dealt with more easily.
  *
  * @author Jonathan Feinberg <jdf@pobox.com>
  */
@@ -79,66 +72,28 @@ class ProcessHelper {
    */
   public ProcessResult execute(final boolean teeOut, final boolean teeErr)
       throws InterruptedException, IOException {
-    final StringWriter stdout = new StringWriter();
-    final StringWriter stderr = new StringWriter();
+    final StringWriter outWriter = new StringWriter();
+    final StringWriter errWriter = new StringWriter();
     final long startTime = System.currentTimeMillis();
 
-    //    System.err.println("Executing " + PApplet.join(cmd, ' '));
     final Process process = Runtime.getRuntime().exec(cmd);
-    // The latch is decremented by the StringRedirectingThread when it exhausts its stream
-    final CountDownLatch latch = new CountDownLatch(2);
+
+    final StreamPump outpump = new StreamPump(process.getInputStream())
+        .addTarget(outWriter);
     if (teeOut) {
-      new StringRedirectThread(process.getInputStream(), latch, stdout,
-                               new OutputStreamWriter(System.out)).start();
-    } else {
-      new StringRedirectThread(process.getInputStream(), latch, stdout).start();
+      outpump.addTarget(System.out);
     }
+    outpump.start();
+
+    final StreamPump errpump = new StreamPump(process.getErrorStream())
+        .addTarget(errWriter);
     if (teeErr) {
-      new StringRedirectThread(process.getErrorStream(), latch, stderr,
-                               new OutputStreamWriter(System.err)).start();
-    } else {
-      new StringRedirectThread(process.getErrorStream(), latch, stderr).start();
+      errpump.addTarget(System.err);
     }
-    latch.await();
-    //    System.err.println((System.currentTimeMillis() - startTime) + "ms: "
-    //        + PApplet.join(cmd, " "));
-    return new ProcessResult(PApplet.join(cmd, ' '), process.waitFor(), stdout
-        .toString(), stderr.toString(), System.currentTimeMillis() - startTime);
-  }
+    errpump.start();
 
-  static class StringRedirectThread extends Thread {
-    private final BufferedReader reader;
-    private final PrintWriter[] outs;
-    private final CountDownLatch latch;
-
-    public StringRedirectThread(final InputStream in,
-                                final CountDownLatch latch,
-                                final Writer... targetWriters) {
-      this.reader = new BufferedReader(new InputStreamReader(in));
-      this.latch = latch;
-      this.outs = new PrintWriter[targetWriters.length];
-      for (int i = 0; i < outs.length; i++) {
-        outs[i] = new PrintWriter(targetWriters[i], true);
-      }
-    }
-
-    @Override
-    public void run() {
-      try {
-        String line;
-        while ((line = reader.readLine()) != null) {
-          if (line.trim().length() == 0) {
-            continue;
-          }
-          for (final PrintWriter out : outs) {
-            out.println(line);
-          }
-        }
-      } catch (final IOException e) {
-        e.printStackTrace(System.err);
-      } finally {
-        latch.countDown();
-      }
-    }
+    return new ProcessResult(getCommand(), process.waitFor(), outWriter
+        .toString(), errWriter.toString(), System.currentTimeMillis()
+        - startTime);
   }
 }

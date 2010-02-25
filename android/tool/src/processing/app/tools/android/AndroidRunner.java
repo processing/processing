@@ -137,7 +137,6 @@ public class AndroidRunner extends Runner {
       public void run() {
         try {
           new SketchLogCatter().start();
-          System.err.println("logcatter exited normally");
         } catch (final InterruptedException e) {
           System.err.println("logcat interrupted");
         } catch (final Exception e) {
