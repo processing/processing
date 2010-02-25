@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 
 /**
  * 
- * @author Jonathan Feinberg <jdf@us.ibm.com>
+ * @author Jonathan Feinberg &lt;jdf@pobox.com&gt;
  *
  */
 class SketchLogCatter implements LineProcessor {

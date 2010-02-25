@@ -23,7 +23,7 @@ import java.util.concurrent.ThreadFactory;
  * text, and not for arbitrary binary cruft.</b> It's handy for reading
  * the output of processes that emit textual data, for example.
  * 
- * @author Jonathan Feinberg &lt;jdf@us.ibm.com&gt;
+ * @author Jonathan Feinberg &lt;jdf@pobox.com&gt;
  *
  */
 class StreamPump implements Runnable {

@@ -21,7 +21,6 @@ package processing.app.tools.android;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import processing.core.PApplet;
 
 /**
  * Class to handle calling Runtime.exec() and stuffing output and error streams
@@ -37,7 +36,14 @@ class ProcessHelper {
   }
 
   public String getCommand() {
-    return PApplet.join(cmd, " ");
+    final StringBuffer buffer = new StringBuffer();
+    for (int i = 0; i < cmd.length; i++) {
+      if (i != 0) {
+        buffer.append(" ");
+      }
+      buffer.append(cmd[i]);
+    }
+    return buffer.toString();
   }
 
   /**
@@ -76,6 +82,8 @@ class ProcessHelper {
     final StringWriter errWriter = new StringWriter();
     final long startTime = System.currentTimeMillis();
 
+    final String prettyCommand = getCommand();
+    //    System.err.println("ProcessHelper: begin " + prettyCommand);
     final Process process = Runtime.getRuntime().exec(cmd);
 
     final StreamPump outpump = new StreamPump(process.getInputStream())
@@ -92,11 +100,13 @@ class ProcessHelper {
     }
     errpump.start();
     try {
-      return new ProcessResult(getCommand(), process.waitFor(), outWriter
-          .toString(), errWriter.toString(), System.currentTimeMillis()
-          - startTime);
+      final int result = process.waitFor();
+      final long time = System.currentTimeMillis() - startTime;
+      //      System.err.println("ProcessHelper: " + time + "ms: " + prettyCommand);
+      return new ProcessResult(prettyCommand, result, outWriter.toString(),
+                               errWriter.toString(), time);
     } catch (final InterruptedException e) {
-      System.err.println("Interrupted: " + getCommand());
+      System.err.println("Interrupted: " + prettyCommand);
       throw e;
     }
   }
