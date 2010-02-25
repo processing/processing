@@ -40,7 +40,7 @@ import processing.core.PApplet;
 // http://dl.google.com/android/android-sdk_r3-mac.zip
 // http://dl.google.com/android/repository/tools_r03-macosx.zip
 
-public class Android implements Tool {
+public class AndroidTool implements Tool {
   static String sdkPath;
 
   static String toolName = "android";
