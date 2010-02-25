@@ -38,10 +38,8 @@ import processing.core.PApplet;
  */
 class ProcessHelper {
   private final String[] cmd;
-  private final StringWriter stdout = new StringWriter();
-  private final StringWriter stderr = new StringWriter();
 
-  public ProcessHelper(final String... cmd) throws IOException {
+  public ProcessHelper(final String... cmd) {
     this.cmd = cmd;
   }
 
@@ -55,7 +53,7 @@ class ProcessHelper {
    * @throws InterruptedException
    * @throws IOException
    */
-  public int execute() throws InterruptedException, IOException {
+  public ProcessResult execute() throws InterruptedException, IOException {
     return execute(false);
   }
 
@@ -66,7 +64,7 @@ class ProcessHelper {
    * @throws InterruptedException
    * @throws IOException
    */
-  public int execute(final boolean tee) throws InterruptedException,
+  public ProcessResult execute(final boolean tee) throws InterruptedException,
       IOException {
     return execute(tee, tee);
   }
@@ -79,11 +77,13 @@ class ProcessHelper {
    * @throws InterruptedException
    * @throws IOException
    */
-  public int execute(final boolean teeOut, final boolean teeErr)
+  public ProcessResult execute(final boolean teeOut, final boolean teeErr)
       throws InterruptedException, IOException {
+    final StringWriter stdout = new StringWriter();
+    final StringWriter stderr = new StringWriter();
     final long startTime = System.currentTimeMillis();
 
-    System.err.println("Executing " + PApplet.join(cmd, ' '));
+    //    System.err.println("Executing " + PApplet.join(cmd, ' '));
     final Process process = Runtime.getRuntime().exec(cmd);
     // The latch is decremented by the StringRedirectingThread when it exhausts its stream
     final CountDownLatch latch = new CountDownLatch(2);
@@ -100,22 +100,10 @@ class ProcessHelper {
       new StringRedirectThread(process.getErrorStream(), latch, stderr).start();
     }
     latch.await();
-    System.err.println((System.currentTimeMillis() - startTime) + "ms: "
-        + PApplet.join(cmd, " "));
-    return process.waitFor();
-  }
-
-  public String getStderr() {
-    return stderr.toString();
-  }
-
-  public String getStdout() {
-    return stdout.toString();
-  }
-
-  public void dump() {
-    System.out.println(getStdout());
-    System.err.println(getStderr());
+    //    System.err.println((System.currentTimeMillis() - startTime) + "ms: "
+    //        + PApplet.join(cmd, " "));
+    return new ProcessResult(PApplet.join(cmd, ' '), process.waitFor(), stdout
+        .toString(), stderr.toString(), System.currentTimeMillis() - startTime);
   }
 
   static class StringRedirectThread extends Thread {

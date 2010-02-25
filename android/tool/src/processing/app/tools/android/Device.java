@@ -27,21 +27,21 @@ import processing.core.PApplet;
 
 public class Device {
 
+  private static final ProcessHelper LIST_DEVICES_CMD = new ProcessHelper(
+                                                                          "adb",
+                                                                          "devices");
+
+  private static final ProcessHelper LIST_AVDS_CMD = new ProcessHelper(
+                                                                       AndroidTool.toolName,
+                                                                       "list",
+                                                                       "avds");
+
   /** Name of this device. */
-  String name;
+  final String name;
 
   /** "android-4" or "Google Inc.:Google APIs:4" */
-  String target;
+  final String target;
 
-  /**
-   * Default virtual device used by Processing, intended to be similar to a
-   * device like a T-Mobile G1 or myTouch 3G. Uses Android 1.6 (Donut) APIs, and
-   * the screen is 480x320 pixels, or HVGA (Half VGA).
-   */
-  // static Device avdDonut =
-  // // Using the generic AVD causes a prompt to show up on the console,
-  // // so using the Google version instead which doesn't ask for a profile.
-  // new Device("Processing-Donut", "Google Inc.:Google APIs:4", 480, 320);
   /**
    * Default virtual device used by Processing, designed to be similar to a
    * device like the Moto Droid. Uses Android 2.0 APIs, and the screen is set to
@@ -85,13 +85,11 @@ public class Device {
   }
 
   protected boolean exists() throws IOException {
-    final ProcessHelper p = new ProcessHelper(AndroidTool.toolName, "list",
-                                              "avds");
     try {
-      if (p.execute(true) == 0) {
-        for (final String line : p.getStdout().split("\n")) {
+      final ProcessResult listResult = LIST_AVDS_CMD.execute();
+      if (listResult.succeeded()) {
+        for (final String line : listResult) {
           final String[] m = PApplet.match(line, "\\s+Name:\\s+(\\S+)");
-          // PApplet.println(m);
           if (m != null) {
             if (m[1].equals(name)) {
               return true;
@@ -99,7 +97,7 @@ public class Device {
           }
         }
       } else {
-        p.dump();
+        System.err.println(listResult);
       }
     } catch (final InterruptedException ie) {
     }
@@ -110,16 +108,14 @@ public class Device {
     final ProcessHelper p = new ProcessHelper(AndroidTool.toolName, "create",
                                               "avd", "-n", name, "-t", target,
                                               "-c", "64M");
-
     try {
-      if (p.execute(true, false) == 0) {
+      final ProcessResult createAvdResult = p.execute();
+      if (createAvdResult.succeeded()) {
         return true;
       }
-      System.out.println("Attempted: '" + p.getCommand() + "'");
-      p.dump();
+      System.err.println(createAvdResult);
     } catch (final InterruptedException ie) {
     }
-
     return false;
   }
 
@@ -183,14 +179,13 @@ public class Device {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
   static protected String[] list() throws IOException {
-    final ProcessHelper p = new ProcessHelper("adb", "devices");
     try {
-      final int result = p.execute(false);
-      if (result != 0) {
-        System.err.println(p.getStderr());
+      final ProcessResult result = LIST_DEVICES_CMD.execute();
+      if (!result.succeeded()) {
+        System.err.println(result);
         return null;
       }
-      final String[] lines = p.getStdout().split("\n");
+      final String[] lines = result.getStdout().split("\r?\n");
       // First line starts "List of devices"
 
       // when an emulator is started with a debug port, then it shows up
