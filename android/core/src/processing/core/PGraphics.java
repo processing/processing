@@ -370,7 +370,7 @@ public class PGraphics extends PImage implements PConstants {
    * it will be the offscreen drawing buffer.
    */
   //public Image image;
-  public Bitmap image;
+  public Bitmap bitmap;
 
   // ........................................................
 
