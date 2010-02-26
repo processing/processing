@@ -26,6 +26,7 @@ public class Build {
   static String basePackage = "processing.android.test";
 
   private final Editor editor;
+  private final AndroidSDK sdk;
 
   String className;
 
@@ -35,8 +36,9 @@ public class Build {
 
   String sdkVersion = "5";
 
-  public Build(final Editor editor) {
+  public Build(final Editor editor, final AndroidSDK sdk) {
     this.editor = editor;
+    this.sdk = sdk;
   }
 
   protected int[] getSketchSize() {
@@ -372,9 +374,7 @@ public class Build {
 
     @Override
     public String[] getCoreImports() {
-      return new String[] { "processing.android.core.*",
-      // "processing.android.opengl.*", // temporary
-      "processing.android.xml.*" };
+      return new String[] { "processing.core.*", "processing.xml.*" };
     }
 
     @Override
@@ -487,13 +487,14 @@ public class Build {
 
   void writeLocalProps(final File file) {
     final PrintWriter writer = PApplet.createWriter(file);
+    final String sdkPath = sdk.getSdk().getAbsolutePath();
     if (Base.isWindows()) {
       // Windows needs backslashes escaped, or it will also accept forward
       // slashes in the build file. We're using the forward slashes since this
       // path gets concatenated with a lot of others that use forwards anyway.
-      writer.println("sdk.dir=" + AndroidTool.sdkPath.replace('\\', '/'));
+      writer.println("sdk.dir=" + sdkPath.replace('\\', '/'));
     } else {
-      writer.println("sdk.dir=" + AndroidTool.sdkPath);
+      writer.println("sdk.dir=" + sdkPath);
     }
     writer.flush();
     writer.close();

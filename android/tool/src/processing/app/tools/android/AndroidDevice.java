@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import processing.app.debug.RunnerListener;
 import processing.app.tools.android.LogEntry.Severity;
 
 public class AndroidDevice implements AndroidDeviceProperties {
@@ -29,7 +30,73 @@ public class AndroidDevice implements AndroidDeviceProperties {
     this.processes = new AndroidProcesses(this);
   }
 
-  //  adb shell am start -n com.android.launcher2/.Launcher
+  public void bringLauncherToFront() {
+    try {
+      new ProcessHelper(generateAdbCommand("shell", "am", "start", "-n",
+        "com.android.launcher2/.Launcher")).execute();
+    } catch (final Exception e) {
+      e.printStackTrace(System.err);
+    }
+  }
+
+  // adb -s emulator-5556 install helloWorld.apk
+
+  // : adb -s HT91MLC00031 install bin/Brightness-debug.apk
+  // 532 KB/s (190588 bytes in 0.349s)
+  // pkg: /data/local/tmp/Brightness-debug.apk
+  // Failure [INSTALL_FAILED_ALREADY_EXISTS]
+
+  // : adb -s HT91MLC00031 install -r bin/Brightness-debug.apk
+  // 1151 KB/s (190588 bytes in 0.161s)
+  // pkg: /data/local/tmp/Brightness-debug.apk
+  // Success
+
+  // safe to just always include the -r (reinstall) flag
+  public boolean installApp(final String apkPath, final RunnerListener status) {
+    try {
+      final ProcessHelper p = new ProcessHelper(generateAdbCommand("install",
+        "-r", // safe to always use -r switch
+        apkPath));
+
+      final ProcessResult installResult = p.execute();
+      if (!installResult.succeeded()) {
+        status.statusError("Could not install the sketch.");
+        System.err.println(installResult);
+        return false;
+      }
+      String errorMsg = null;
+      for (final String line : installResult) {
+        if (line.startsWith("Failure")) {
+          errorMsg = line.substring(8);
+          System.err.println(line);
+        }
+      }
+      if (errorMsg == null) {
+        status.statusNotice("Done installing.");
+        return true;
+      }
+      status.statusError("Error while installing " + errorMsg);
+    } catch (final IOException e) {
+      status.statusError(e);
+    } catch (final InterruptedException e) {
+    }
+    return false;
+  }
+
+  // better version that actually runs through JDI:
+  // http://asantoso.wordpress.com/2009/09/26/using-jdb-with-adb-to-debugging-of-android-app-on-a-real-device/
+  public boolean launchApp(final String id) throws IOException,
+      InterruptedException {
+    final ProcessHelper startSketch = new ProcessHelper(generateAdbCommand(
+      "shell", "am", "start", "-e", "debug", "true", "-a",
+      "android.intent.action.MAIN", "-c", "android.intent.category.LAUNCHER",
+      "-n", id));
+    return startSketch.execute().succeeded();
+  }
+
+  public boolean isEmulator() {
+    return id.startsWith("emulator");
+  }
 
   private class LogLineProcessor implements LineProcessor {
     public void processLine(final String line) {
@@ -116,7 +183,6 @@ public class AndroidDevice implements AndroidDeviceProperties {
   protected List<ProcessOutputListener> getListeners(final String pid) {
     final AndroidProcess process = processes.byPid(pid);
     if (process == null) {
-      System.err.println("I don't recognize process id " + pid + "!");
       return null;
     }
     return outputListeners.get(process.name);

@@ -21,7 +21,6 @@
 
 package processing.app.tools.android;
 
-import javax.swing.JOptionPane;
 import processing.app.Editor;
 import processing.app.tools.Tool;
 
@@ -39,11 +38,6 @@ public class Reset implements Tool {
   }
 
   public void run() {
-    if (AndroidTool.sdkPath == null) {
-      JOptionPane.showMessageDialog(editor, "Before using the reset command, "
-          + "you must first enable Android Mode.");
-    } else {
-      AndroidTool.resetServer(editor);
-    }
+    AndroidEnvironment.killAdbServer();
   }
 }
