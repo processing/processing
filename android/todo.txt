@@ -8,10 +8,13 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=1404
 
 P4 _ excessive rotation of application causes memory to run out
 P4 _   this probably means that some memory isn't being freed that should be
+P4 _   new window and surfaceview objects are being created in onCreate
+P4 _     so they should probably be taken down in onDestroy.. but how?
 P4 _   http://dev.processing.org/bugs/show_bug.cgi?id=1480
-_ creating new windows each time through, that's yer memory problem
 
 _ if !looping, is it necessary to call redraw() in onResume()?
+
+_ prevent rotation of applications? (or require a certain orientation)
 
 
 cleaning
