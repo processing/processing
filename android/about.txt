@@ -1,0 +1,78 @@
+[ understanding changes in the android version of processing.core ]
+[     a guide for the excited, hopeful, weary, and confused.      ]
+
++ The package for the core library remains processing.core on Android. 
+  Early releases used processing.android.core in an attempt to avoid 
+  confusion between the two platforms. Unfortunately, this requires all
+  libraries--even those that make only basic use of PApplet features--
+  to maintain separate sets of code for each. Because this would needlessly
+  affect nearly all libraries, we've decided to just use the same package
+  naming. This makes us cringe a little, but the alternative is perpetual
+  annoyance at maintaining separate code bases for libraries for which
+  only the package imports differ. In practice, there is little chance for
+  processing.core packages for both platforms to ever collide with one
+  another, since they require completely separate classpaths to build.
+
++ For compatability, mouseX and mouseY work similar to the original API, 
+  and always contain the most recent mouse position. In addition, the
+  motionX, motionY, pmotionX, pmotionY, and motionPressure events can be
+  used to track relative motion (the native way Android handles input).
+  Unlike mouseX/mouseY, those variables are also float values.
+
++ The mouseButton variable is not available, for perhaps obvious reasons.
+
++ The keyEvent and mouseEvent variables are not available. If you want to 
+  work with event objects, you'll need to override the key and motion handlers:
+
+  public boolean onTouchEvent(MotionEvent event) {
+    // your code here
+
+    // if you want the variables for motionX/motionY, mouseX/mouseY etc.
+    // to work properly, you'll need to call super.onTouchEvent().
+    return super.onTouchEvent(event);
+  }
+
+  The key methods work in a similar fashion:
+
+  public boolean onKeyDown(int code, KeyEvent event) {
+    return super.onKeyDown(code, event);
+  }
+    
+  public boolean onKeyUp(int code, KeyEvent event) {
+    return super.onKeyDown(code, event);
+  }
+
+  These three functions behave a bit differently than their counterparts in
+  java.awt, so make sure you know what you're doing before messing with them.
+
+  The reason that the variables are not kept around is because the KeyEvent
+  and MotionEvent objects are reused, which means they can't be reused without
+  an expensive clone operation. And because it's so rare that they're used
+  in Processing code, it's better to simply remove them and let advanced users
+  who would otherwise rely on the events to handle the overrides themselves.
+
++ Registering methods (registerPost(), registerDraw(), etc) is not supported.
+  Too much overhead for too little benefit.
+
++ All cursor-related methods have been removed. (They don't make sense in 
+  a touch-controlled interface.)
+
++ The all-lowercase version of arraycopy() (deprecated from the desktop version)
+  has been removed.
+
++ The (long since) deprecated openStream() method has been removed. Use
+  createInput().
+
++ PImage.image is PImage.bitmap, to reflect that a different object type 
+  is there, in spite of its identical purpose.
+
++ PFont.font is PFont.typeface, similar as above.
+
++ Cannot use .gz files in the data or assets folder, because Android wants
+  to compress the files itself.
+
++ Use screenWidth and screenHeight instead of screen.width and screen.height.
+
++ To use the virtual keyboard, hold down the MENU key on the device. This 
+  is an Android default, but some users might not be familiar with it.
+
