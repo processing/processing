@@ -129,7 +129,7 @@ public class PGraphicsAndroid2D extends PGraphics {
 
 
   public void dispose() {
-    // called when paused.
+    bitmap.recycle();
   }
 
 

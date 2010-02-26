@@ -5,16 +5,8 @@ X fix the freakout that happens with onPause()
 o   solution is to call stop() to kill the thread, but that's not a pause
 X app not pausing or closing when switching to another activity
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1404
-
-P4 _ excessive rotation of application causes memory to run out
-P4 _   this probably means that some memory isn't being freed that should be
-P4 _   new window and surfaceview objects are being created in onCreate
-P4 _     so they should probably be taken down in onDestroy.. but how?
-P4 _   http://dev.processing.org/bugs/show_bug.cgi?id=1480
-
-_ if !looping, is it necessary to call redraw() in onResume()?
-
-_ prevent rotation of applications? (or require a certain orientation)
+o if !looping, is it necessary to call redraw() in onResume()?
+X   doesn't appear to be, since it gets completely rebuilt
 
 
 cleaning
@@ -37,8 +29,6 @@ _ ANDROID_SDK not getting set on OS X
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1469
 _   http://stackoverflow.com/questions/603785/environment-variables-in-mac-os-x
 
-_ need to have single signature that can be reapplied
-_   with different machines, users are required to remove signature
 _ library support also needs android manifest changes
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1439
 
@@ -64,7 +54,8 @@ _ test createFont()
 
 _ gz files not allowed, need to remove the code from createInput() et al
 _   or maybe not, since could still come from a site or a File?
-_   just can't come from the assets file.. okok
+_   just can't come from the assets file..
+_ throw an error if a file in the 'data' dir ends with .gz
 
 _ add method to set the icon (and package name?)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1429
@@ -144,3 +135,31 @@ P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1406
 P3 _ implement certificates (self-signed) for distribution
 P3 _   http://developer.android.com/guide/publishing/app-signing.html
 P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1430
+P3 _ if different machines, debug.keystore changes, requiring manual removal
+P3 _   or find a way to do it automatically with processing
+P3 _     can't keep it with the sketch, don't want to give away private key
+P3 _   with different machines, users are required to remove signature
+P3 _   add a method to remove an application if the debug key is different
+P3 _     perhaps the first time an application is installed, remove it?
+P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1481
+P4 _ excessive rotation of application causes memory to run out
+P4 _   this probably means that some memory isn't being freed that should be
+P4 _   new window and surfaceview objects are being created in onCreate
+P4 _     so they should probably be taken down in onDestroy.. but how?
+P4 _   http://dev.processing.org/bugs/show_bug.cgi?id=1480
+
+
+POSSIBLE FEATURE EDITIONS
+
+_ prevent rotation of applications? (or require a certain orientation)
+_   add to activity tag in the manifest:
+android:configChanges="keyboardHidden|orientation"
+android:screenOrientation="landscape"
+_   or programmatically specify:
+setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+_ show/hide the virtual keyboard
+InputMethodManager imm = 
+  (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+imm.showSoftInput(surfaceView, 0);
