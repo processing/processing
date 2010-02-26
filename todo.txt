@@ -1,4 +1,10 @@
 0178 pde
+X write implementation for get/set methods inside PImage (w/o pixels[])
+
+
+_ make sure that get() and set() (for pixels and subsets) work w/ loaded images
+_ make sure that get() and set() (for pixels and subsets) work w/ P2D
+_ make sure that get() and set() (for pixels and subsets) work w/ P3D
 
 _ Cannot find PDF library
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1473

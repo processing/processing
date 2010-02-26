@@ -415,7 +415,13 @@ public class PImage implements PConstants, Cloneable {
   public int get(int x, int y) {
     if ((x < 0) || (y < 0) || (x >= width) || (y >= height)) return 0;
 
-    switch (format) {
+    if (pixels == null) {
+      return bitmap.getPixel(x, y);
+
+    } else {
+      // If the pixels array exists, it's fairly safe to assume that it's 
+      // the most up to date, and that it's faster for access.
+      switch (format) {
       case RGB:
         return pixels[y*width + x] | 0xff000000;
 
@@ -424,6 +430,7 @@ public class PImage implements PConstants, Cloneable {
 
       case ALPHA:
         return (pixels[y*width + x] << 24) | 0xffffff;
+      }
     }
     return 0;
   }
@@ -434,18 +441,6 @@ public class PImage implements PConstants, Cloneable {
    * As of release 0149, no longer honors imageMode() for the coordinates.
    */
   public PImage get(int x, int y, int w, int h) {
-    /*
-    if (imageMode == CORNERS) {  // if CORNER, do nothing
-      //x2 += x1; y2 += y1;
-      // w/h are x2/y2 in this case, bring em down to size
-      w = (w - x);
-      h = (h - y);
-    } else if (imageMode == CENTER) {
-      x -= w/2;
-      y -= h/2;
-    }
-    */
-
     if (x < 0) {
       w += x; // clip off the left edge
       x = 0;
@@ -472,12 +467,17 @@ public class PImage implements PConstants, Cloneable {
     PImage newbie = new PImage(w, h, format);
     newbie.parent = parent;
 
-    int index = y*width + x;
-    int index2 = 0;
-    for (int row = y; row < y+h; row++) {
-      System.arraycopy(pixels, index, newbie.pixels, index2, w);
-      index += width;
-      index2 += w;
+    if (pixels == null) {
+      bitmap.getPixels(newbie.pixels, 0, w, x, y, w, h);
+      
+    } else {
+      int index = y*width + x;
+      int index2 = 0;
+      for (int row = y; row < y+h; row++) {
+        System.arraycopy(pixels, index, newbie.pixels, index2, w);
+        index += width;
+        index2 += w;
+      }
     }
     return newbie;
   }
@@ -499,9 +499,14 @@ public class PImage implements PConstants, Cloneable {
    * Set a single pixel to the specified color.
    */
   public void set(int x, int y, int c) {
-    if ((x < 0) || (y < 0) || (x >= width) || (y >= height)) return;
-    pixels[y*width + x] = c;
-    updatePixelsImpl(x, y, x+1, y+1);  // slow?
+    if (pixels == null) {
+      bitmap.setPixel(x, y, c);
+
+    } else {
+      if ((x < 0) || (y < 0) || (x >= width) || (y >= height)) return;
+      pixels[y*width + x] = c;
+      updatePixelsImpl(x, y, x+1, y+1);  // slow?
+    }
   }
 
 
