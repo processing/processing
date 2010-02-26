@@ -71,3 +71,4 @@
 + Cannot use .gz files in the data or assets folder, because Android wants
   to compress the files itself.
 
++ Use screenWidth and screenHeight instead of screen.width and screen.height.
