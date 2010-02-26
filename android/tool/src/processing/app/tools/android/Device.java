@@ -31,94 +31,12 @@ public class Device {
                                                                           "adb",
                                                                           "devices");
 
-  private static final ProcessHelper LIST_AVDS_CMD = new ProcessHelper(
-                                                                       AndroidTool.toolName,
-                                                                       "list",
-                                                                       "avds");
-
-  /** Name of this device. */
-  final String name;
-
-  /** "android-4" or "Google Inc.:Google APIs:4" */
-  final String target;
-
-  /**
-   * Default virtual device used by Processing, designed to be similar to a
-   * device like the Moto Droid. Uses Android 2.0 APIs, and the screen is set to
-   * WVGA854 (854x480), the same aspect ratio (with rounding), as 1920x1080, or
-   * 16:9.
-   */
-  public static final Device ECLAIR = new Device("Processing-Eclair",
-                                                 "Google Inc.:Google APIs:5",
-                                                 854, 480);
-
-  static final String AVD_CREATE_ERROR = "An error occurred while running “android create avd”\n"
-      + "to set up the default Android emulator. Make sure that the\n"
-      + "Android SDK is installed properly, and that the Android\n"
-      + "and Google APIs are installed for level 5.";
-
   static final String ADB_DEVICES_ERROR = "Received unfamiliar output from “adb devices”.\n"
       + "The device list may have errors.";
 
   static final int DEFAULT_WIDTH = 320;
 
   static final int DEFAULT_HEIGHT = 480;
-
-  Device(final String name, final String target, final int width,
-         final int height) {
-    this.name = name;
-    this.target = target;
-  }
-
-  static boolean checkDefaults() {
-    try {
-      if (!ECLAIR.exists()) {
-        if (!ECLAIR.create()) {
-          Base.showWarning("Android Error", AVD_CREATE_ERROR, null);
-        }
-      }
-      return true;
-
-    } catch (final Exception e) {
-      Base.showWarning("Android Error", AVD_CREATE_ERROR, e);
-    }
-    return false;
-  }
-
-  protected boolean exists() throws IOException {
-    try {
-      final ProcessResult listResult = LIST_AVDS_CMD.execute();
-      if (listResult.succeeded()) {
-        for (final String line : listResult) {
-          final String[] m = PApplet.match(line, "\\s+Name:\\s+(\\S+)");
-          if (m != null) {
-            if (m[1].equals(name)) {
-              return true;
-            }
-          }
-        }
-      } else {
-        System.err.println(listResult);
-      }
-    } catch (final InterruptedException ie) {
-    }
-    return false;
-  }
-
-  protected boolean create() throws IOException {
-    final ProcessHelper p = new ProcessHelper(AndroidTool.toolName, "create",
-                                              "avd", "-n", name, "-t", target,
-                                              "-c", "64M");
-    try {
-      final ProcessResult createAvdResult = p.execute();
-      if (createAvdResult.succeeded()) {
-        return true;
-      }
-      System.err.println(createAvdResult);
-    } catch (final InterruptedException ie) {
-    }
-    return false;
-  }
 
   static void sendMenuButton(final String device) throws IOException {
     // adb -s emulator-5566 shell getevent
