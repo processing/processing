@@ -116,6 +116,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
    */
 //  static public class RendererChangeException extends RuntimeException { }
 
+  protected boolean surfaceReady;
+
   /** 
    * Set true when the surface dimensions have changed, so that the PGraphics
    * object can be resized on the next trip through handleDraw().
@@ -126,7 +128,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
    * true if no size() command has been executed. This is used to wait until
    * a size has been set before placing in the window and showing it.
    */
-  public boolean defaultSize;
+//  public boolean defaultSize;
 
 //  volatile boolean resizeRequest;
 //  volatile int resizeWidth;
@@ -881,6 +883,23 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
   public void size(int iwidth, int iheight, String irenderer) {
     //size(iwidth, iheight, irenderer, null);
+    renderer(irenderer);
+  }
+  
+  
+  // not finished yet--will swap the renderer at a bad time
+  public void renderer(String name) {
+    if (name.equals(A2D)) {
+      if (!(surfaceView instanceof SketchSurfaceView2D)) {
+        surfaceView = new SketchSurfaceView2D(this);
+        getWindow().setContentView(surfaceView);  // set full screen
+      }
+    } else if (name.equals(A3D)) {
+      if (!(surfaceView instanceof SketchSurfaceView3D)) {
+        surfaceView = new SketchSurfaceView3D(this);
+        getWindow().setContentView(surfaceView);  // set full screen
+      }
+    }
   }
 
 
@@ -1227,19 +1246,27 @@ public class PApplet extends Activity implements PConstants, Runnable {
         g.setSize(width, height);
       }
       surfaceChanged = false;
+      surfaceReady = true;
 //      println("surfaceChanged true, resized to " + width + "x" + height);
     }
 
+//    if (surfaceView.isShown()) {
+//      println("surface view not visible, getting out");
+//      return;
+//    } else {
+//      println("surface set to go.");
+//    }
+    
     // don't start drawing (e.g. don't call setup) until there's a legitimate 
     // width and height that have been set by surfaceChanged().
-    boolean validSize = width != 0 && height != 0;
+//    boolean validSize = width != 0 && height != 0;
 //    println("valid size = " + validSize + " (" + width + "x" + height + ")");
-    if (g != null && validSize && !paused && (looping || redraw)) {
-      if (!g.canDraw()) {
-        // Don't draw if the renderer is not yet ready.
-        // (e.g. OpenGL has to wait for a peer to be on screen)
-        return;
-      }
+    if (g != null && surfaceReady && !paused && (looping || redraw)) {
+//      if (!g.canDraw()) {
+//        // Don't draw if the renderer is not yet ready.
+//        // (e.g. OpenGL has to wait for a peer to be on screen)
+//        return;
+//      }
 
       g.beginDraw();
 
@@ -1255,7 +1282,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 //          // Give up, instead set the new renderer and re-attempt setup()
 //          return;
 //        }
-        this.defaultSize = false;
+//        this.defaultSize = false;
 
       } else {  // frameCount > 0, meaning an actual draw()
         // update the current frameRate
