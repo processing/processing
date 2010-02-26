@@ -120,15 +120,6 @@ public class PImage implements PConstants, Cloneable {
    */
   public PImage(int width, int height) {
     init(width, height, RGB);
-
-    // toxi: is it maybe better to init the image with max alpha enabled?
-    //for(int i=0; i<pixels.length; i++) pixels[i]=0xffffffff;
-    // fry: i'm opting for the full transparent image, which is how
-    // photoshop works, and our audience oughta be familiar with.
-    // also, i want to avoid having to set all those pixels since
-    // in java it's super slow, and most using this fxn will be
-    // setting all the pixels anyway.
-    // toxi: agreed and same reasons why i left it out ;)
   }
 
 
@@ -174,35 +165,9 @@ public class PImage implements PConstants, Cloneable {
 
 
   /**
-   * Construct a new PImage from a java.awt.Image. This constructor assumes
-   * that you've done the work of making sure a MediaTracker has been used
-   * to fully download the data and that the img is valid.
+   * Construct a new PImage from an Android bitmap. The pixels[] array is not
+   * initialized, nor is data copied to it, until loadPixels() is called.
    */
-  /*
-  public PImage(java.awt.Image img) {
-    if (img instanceof BufferedImage) {
-      BufferedImage bi = (BufferedImage) img;
-      width = bi.getWidth();
-      height = bi.getHeight();
-      pixels = new int[width * height];
-      WritableRaster raster = bi.getRaster();
-      raster.getDataElements(0, 0, width, height, pixels);
-
-    } else {  // go the old school java 1.0 route
-      width = img.getWidth(null);
-      height = img.getHeight(null);
-      pixels = new int[width * height];
-      PixelGrabber pg =
-        new PixelGrabber(img, 0, 0, width, height, pixels, 0, width);
-      try {
-        pg.grabPixels();
-      } catch (InterruptedException e) { }
-    }
-
-    format = RGB;
-//    cache = null;
-  }
-  */
   public PImage(Bitmap image) {
     this.bitmap = image;
     this.width = image.getWidth();
@@ -224,7 +189,7 @@ public class PImage implements PConstants, Cloneable {
 //    wr.setDataElements(0, 0, width, height, pixels);
 //    return image;
 //  }
-  public Bitmap getImage() {
+  public Bitmap getBitmap() {
     return bitmap;
   }
 
