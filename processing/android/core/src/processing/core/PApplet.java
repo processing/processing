@@ -8,8 +8,7 @@
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
+  License as published by the Free Software Foundation, version 2.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -39,6 +38,7 @@ import java.util.zip.*;
 
 import android.app.Activity;
 import android.opengl.GLSurfaceView;
+import android.util.DisplayMetrics;
 import android.view.SurfaceView;
 import android.view.WindowManager;
 import android.os.Bundle;
@@ -72,14 +72,14 @@ public class PApplet extends Activity implements PConstants, Runnable {
    */
 //  public Dimension screen =
 //    Toolkit.getDefaultToolkit().getScreenSize();
-//  int screenWidth, screenHeight;
+  public int screenWidth, screenHeight;
 
   /**
    * Command line options passed in from main().
    * <P>
    * This does not include the arguments passed in to PApplet itself.
    */
-  public String args[];
+//  public String[] args;
 
   /** Path to where sketch can read/write files (read-only) */
   public String sketchPath; //folder;
@@ -110,15 +110,21 @@ public class PApplet extends Activity implements PConstants, Runnable {
    */
 //  static public class RendererChangeException extends RuntimeException { }
 
+  /** 
+   * Set true when the surface dimensions have changed, so that the PGraphics
+   * object can be resized on the next trip through handleDraw().
+   */
+  protected boolean surfaceChanged;
+
   /**
    * true if no size() command has been executed. This is used to wait until
    * a size has been set before placing in the window and showing it.
    */
   public boolean defaultSize;
 
-  volatile boolean resizeRequest;
-  volatile int resizeWidth;
-  volatile int resizeHeight;
+//  volatile boolean resizeRequest;
+//  volatile int resizeWidth;
+//  volatile int resizeHeight;
 
   /**
    * Pixel buffer from this applet's PGraphics.
@@ -356,7 +362,6 @@ public class PApplet extends Activity implements PConstants, Runnable {
   /** true if this sketch is being run by the PDE */
   boolean external = false;
 
-
   static final String ERROR_MIN_MAX =
     "Cannot use min() or max() on an empty array.";
 
@@ -382,6 +387,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
+//    println("PApplet.onCreate()");
     Window window = getWindow();
     
     // Take up as much area as possible
@@ -398,17 +404,21 @@ public class PApplet extends Activity implements PConstants, Runnable {
 //    println("window width = " + attrs.width);
 //    println("window height = " + attrs.height);
     
+    DisplayMetrics dm = new DisplayMetrics();
+    getWindowManager().getDefaultDisplay().getMetrics(dm);
+    screenWidth = dm.widthPixels;
+    screenHeight = dm.heightPixels;
+
     if (sketchRenderer().equals(A2D)) {
       surfaceView = new SketchSurfaceView2D(this);
     } else if (sketchRenderer().equals(A3D)) { 
       surfaceView = new SketchSurfaceView3D(this);
     }
-    
+
     window.setContentView(surfaceView);  // attempt to fix full-screen
 
-    
     // code below here formerly from init()
-    
+
     millisOffset = System.currentTimeMillis();
 
     finished = false; // just for clarity
@@ -457,18 +467,21 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 
   protected void onResume() {
+    super.onResume();
+
     // TODO need to bring back app state here!
 //    surfaceView.onResume();
     System.out.println("PApplet.onResume() called");
     paused = false;
-    start();  // kick the thread back on
+    //start();  // kick the thread back on
     resume();
-    super.onResume();
 //    surfaceView.onResume();
   }
 
 
   protected void onPause() {
+    super.onPause();
+
     // TODO need to save all application state here!
 //    System.out.println("PApplet.onPause() called");
     paused = true;
@@ -476,7 +489,6 @@ public class PApplet extends Activity implements PConstants, Runnable {
 //  synchronized (this) {
 //  paused = true;
 //}
-    super.onPause();
 //    surfaceView.onPause();
   }
 
@@ -498,9 +510,10 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 
   public void onDestroy() {
+    stop();
     System.out.println("PApplet.onDestroy() called");
     super.onDestroy();
-    finish();
+    //finish();
   }
 
 
@@ -519,45 +532,6 @@ public class PApplet extends Activity implements PConstants, Runnable {
     return surfaceHolder;
   }
 
-//  public class SketchSurfaceView {
-//
-//          SketchSurfaceView(Context context) {
-//          if (sketchRenderer().equals(A2D)) {
-//                  surfaceA2D = new SketchSurfaceView2D(context);
-//                  surfaceA3D = null;
-//          }
-//          else if (sketchRenderer().equals(A3D)) {
-//                  surfaceA2D = null;
-//                  surfaceA3D = new SketchSurfaceView3D(context);
-//          }
-//              else {
-//                  // Should throw exception here, since the renderer in unknown.
-//              }
-//          }
-//
-//          void requestDraw() {
-//                  if (surfaceA2D != null) handleDraw();
-//                  else surfaceA3D.requestRender();
-//          }
-//
-//          void onPause() {
-//                  if (surfaceA2D != null) surfaceA2D.onPause();
-//                  else surfaceA3D.onPause();
-//          }
-//
-//          void onResume() {
-//                  if (surfaceA2D != null) surfaceA2D.onResume();
-//                  else surfaceA3D.onResume();
-//          }
-//
-//          SurfaceView getSurface() {
-//                  if (surfaceA2D != null) return surfaceA2D;
-//                  else return surfaceA3D;
-//          }
-//
-//          SketchSurfaceView2D surfaceA2D;
-//          SketchSurfaceView3D surfaceA3D;
-//  }
 
   public class SketchSurfaceView3D extends GLSurfaceView {
 
@@ -611,12 +585,11 @@ public class PApplet extends Activity implements PConstants, Runnable {
     public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
       super.surfaceChanged(holder, format, w, h);
 
-      //System.out.println("surfaceChanged() " + w + " " + h);
-
-      width = w;
-      height = h;
-      
-      g.setSize(w, h);
+//      System.out.println("SketchSurfaceView3D.surfaceChanged() " + w + " " + h);
+      surfaceChanged = true;
+//      width = w;
+//      height = h;
+//      g.setSize(w, h);
 
       // No need to call g.setSize(width, height) b/c super.surfaceChanged() 
       // will trigger onSurfaceChanged in the renderer, which calls setSize().
@@ -668,14 +641,14 @@ public class PApplet extends Activity implements PConstants, Runnable {
     public SketchSurfaceView2D(Context context) {
       super(context);
       
-      println("surface holder");
+//      println("surface holder");
       // Install a SurfaceHolder.Callback so we get notified when the
       // underlying surface is created and destroyed
       surfaceHolder = getHolder();
       surfaceHolder.addCallback(this);
       surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_GPU);
       
-      println("creating graphics");
+//      println("creating graphics");
       PGraphics newGraphics = new PGraphicsAndroid2D();
       // Set arbitrary size; will be set properly when surfaceChanged() called
       newGraphics.setSize(100, 100);
@@ -686,12 +659,12 @@ public class PApplet extends Activity implements PConstants, Runnable {
       // may attempt before setSize(), setParent() etc)
       g = newGraphics;
       
-      println("setting focusable, requesting focus");
+//      println("setting focusable, requesting focus");
       setFocusable(true);
       setFocusableInTouchMode(true);
       requestFocus();
       
-      println("done making surface view");
+//      println("done making surface view");
     }
 
     
@@ -708,12 +681,13 @@ public class PApplet extends Activity implements PConstants, Runnable {
     
     // part of SurfaceHolder.Callback
     public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
-      System.out.println("surfaceChanged() " + w + " " + h);
+      System.out.println("SketchSurfaceView2D.surfaceChanged() " + w + " " + h);
+      surfaceChanged = true;
 
-      width = w;
-      height = h;
-      
-      g.setSize(w, h);
+//      width = w;
+//      height = h;
+//      
+//      g.setSize(w, h);
     }
 
 
@@ -1267,7 +1241,19 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 
   public void handleDraw() {
-    if (g != null && !paused && (looping || redraw)) {
+    if (surfaceChanged) {
+      width = surfaceView.getWidth();
+      height = surfaceView.getHeight();
+      g.setSize(width, height);
+      surfaceChanged = false;
+//      println("surfaceChanged true, resized to " + width + "x" + height);
+    }
+
+    // don't start drawing (e.g. don't call setup) until there's a legitimate 
+    // width and height that have been set by surfaceChanged().
+    boolean validSize = width != 0 && height != 0;
+//    println("valid size = " + validSize + " (" + width + "x" + height + ")");
+    if (g != null && validSize && !paused && (looping || redraw)) {
       if (!g.canDraw()) {
         // Don't draw if the renderer is not yet ready.
         // (e.g. OpenGL has to wait for a peer to be on screen)

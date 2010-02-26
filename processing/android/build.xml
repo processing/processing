@@ -14,9 +14,8 @@
 	   srcdir="core/src" destdir="core/bin"/>
 
     <zip destfile="core.zip">
-      <fileset dir="core/bin" includes="processing/android/core/*.class" />
-      <fileset dir="core/bin" includes="processing/android/opengl/*.class" />
-      <fileset dir="core/bin" includes="processing/android/xml/*.class" />
+      <fileset dir="core/bin" includes="processing/core/*.class" />
+      <fileset dir="core/bin" includes="processing/xml/*.class" />
     </zip>
   </target>
 
