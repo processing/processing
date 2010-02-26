@@ -94,4 +94,10 @@ class StreamPump implements Runnable {
       writer.println(line);
     }
   }
+
+  public static final LineProcessor DEVNULL = new LineProcessor() {
+    public void processLine(final String line) {
+      // noop
+    }
+  };
 }

@@ -1,16 +1,16 @@
 package processing.app.tools.android;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 
 /**
  * <p>An AndroidEnvironment is an object that periodically polls for the existence
@@ -28,47 +28,92 @@ import java.util.concurrent.TimeUnit;
  *
  */
 public class AndroidEnvironment implements AndroidEnvironmentProperties {
+  private static final AndroidEnvironment INSTANCE = new AndroidEnvironment();
+
+  public static AndroidEnvironment getInstance() {
+    return INSTANCE;
+  }
+
   private final Map<String, AndroidDevice> devices = new ConcurrentHashMap<String, AndroidDevice>();
-  private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-  private final Timer refreshTimer = new Timer("AndroidEnvironment refresher");
+  private final ExecutorService deviceLaunchThread = Executors
+      .newSingleThreadExecutor();
 
-  public AndroidEnvironment() {
-  }
-
-  /**
-   * Cause this model of the Android environment to begin discovering
-   * devices. If you wish to be informed about device discovery, make
-   * sure you register yourself as a listener before calling this
-   * method.
-   * 
-   * This method starts up a thread that must be nuked via the 
-   * shutdown() method in order for your app to exit cleanly.
-   */
-  public void initialize() {
-    for (final String deviceId : listDevices()) {
-      addDevice(new AndroidDevice(this, deviceId));
+  public static void killAdbServer() {
+    System.err.println("Killing server");
+    try {
+      new ProcessHelper("adb", "kill-server").execute();
+      System.err.println("Dead");
+    } catch (final Exception e) {
+      e.printStackTrace(System.err);
     }
-    refreshTimer.schedule(new TimerTask() {
-      @Override
-      public void run() {
-        refresh();
+  }
+
+  private AndroidEnvironment() {
+    System.err.println("Startup AndroidEnvironment");
+    try {
+      new ProcessHelper("adb", "start-server").execute();
+    } catch (final Exception e) {
+      e.printStackTrace(System.err);
+    }
+    Runtime.getRuntime().addShutdownHook(
+      new Thread("AndroidEnvironment Shutdown") {
+        @Override
+        public void run() {
+          shutdown();
+        }
+      });
+  }
+
+  protected void shutdown() {
+    System.err.println("Shutting down AndroidEnvironment");
+    for (final AndroidDevice device : new ArrayList<AndroidDevice>(devices
+        .values())) {
+      device.shutdown();
+    }
+  }
+
+  public Future<AndroidDevice> getEmulator() {
+    final Callable<AndroidDevice> androidFinder = new Callable<AndroidDevice>() {
+      public AndroidDevice call() throws Exception {
+        return blockingGetEmulator();
       }
-    }, TimeUnit.SECONDS.toMillis(2), TimeUnit.SECONDS.toMillis(2));
+    };
+    final FutureTask<AndroidDevice> task = new FutureTask<AndroidDevice>(
+                                                                         androidFinder);
+    deviceLaunchThread.execute(task);
+    return task;
   }
 
-  /**
-   * Turn off the environment's device-discovery polling.
-   */
-  public void shutdown() {
-    refreshTimer.cancel();
+  private final AndroidDevice blockingGetEmulator() {
+    AndroidDevice emu = find(true);
+    if (emu != null) {
+      return emu;
+    }
+    try {
+      EmulatorController.launch();
+    } catch (final IOException e) {
+      e.printStackTrace(System.err);
+      return null;
+    }
+    while (!Thread.currentThread().isInterrupted()) {
+      try {
+        Thread.sleep(2000);
+      } catch (final InterruptedException e) {
+        return null;
+      }
+      emu = find(true);
+      if (emu != null) {
+        return emu;
+      }
+    }
+    return null;
   }
 
-  /**
-   * @return the first Android emulator known to be running, or null if there are none.
-   */
-  public AndroidDevice getEmulator() {
+  private AndroidDevice find(final boolean wantEmulator) {
+    refresh();
     for (final AndroidDevice device : devices.values()) {
-      if (device.getId().contains("emulator")) {
+      final boolean isEmulator = device.getId().contains("emulator");
+      if ((isEmulator && wantEmulator) || (!isEmulator && !wantEmulator)) {
         return device;
       }
     }
@@ -78,10 +123,32 @@ public class AndroidEnvironment implements AndroidEnvironmentProperties {
   /**
    * @return the first Android hardware device known to be running, or null if there are none.
    */
-  public AndroidDevice getHardware() {
-    for (final AndroidDevice device : devices.values()) {
-      if (!device.getId().contains("emulator")) {
-        return device;
+  public Future<AndroidDevice> getHardware() {
+    final Callable<AndroidDevice> androidFinder = new Callable<AndroidDevice>() {
+      public AndroidDevice call() throws Exception {
+        return blockingGetHardware();
+      }
+    };
+    final FutureTask<AndroidDevice> task = new FutureTask<AndroidDevice>(
+                                                                         androidFinder);
+    deviceLaunchThread.execute(task);
+    return task;
+  }
+
+  private final AndroidDevice blockingGetHardware() {
+    AndroidDevice emu = find(false);
+    if (emu != null) {
+      return emu;
+    }
+    while (!Thread.currentThread().isInterrupted()) {
+      try {
+        Thread.sleep(2000);
+      } catch (final InterruptedException e) {
+        return null;
+      }
+      emu = find(false);
+      if (emu != null) {
+        return emu;
       }
     }
     return null;
@@ -112,7 +179,6 @@ public class AndroidEnvironment implements AndroidEnvironmentProperties {
       System.err.println("Cannot initialize " + device + ": " + e);
       devices.remove(device.getId());
     }
-    firePropertyChange(DEVICE_ADDED, null, device);
   }
 
   void deviceRemoved(final AndroidDevice device) {
@@ -120,20 +186,6 @@ public class AndroidEnvironment implements AndroidEnvironmentProperties {
       throw new IllegalStateException("I didn't know about device "
           + device.getId() + "!");
     }
-    firePropertyChange(DEVICE_REMOVED, device, null);
-  }
-
-  public void addPropertyChangeListener(final PropertyChangeListener listener) {
-    pcs.addPropertyChangeListener(listener);
-  }
-
-  public void firePropertyChange(final String propertyName,
-                                 final Object oldValue, final Object newValue) {
-    pcs.firePropertyChange(propertyName, oldValue, newValue);
-  }
-
-  public void removePropertyChangeListener(final PropertyChangeListener listener) {
-    pcs.removePropertyChangeListener(listener);
   }
 
   static final String ADB_DEVICES_ERROR = "Received unfamiliar output from “adb devices”.\n"
@@ -172,7 +224,9 @@ public class AndroidEnvironment implements AndroidEnvironmentProperties {
     }
 
     // might read "List of devices attached"
-    if (!result.getStdout().startsWith("List of devices")) {
+    final String stdout = result.getStdout();
+    if (!(stdout.startsWith("List of devices") || stdout.trim().length() == 0)) {
+      System.err.println(result);
       System.err.println(ADB_DEVICES_ERROR);
       return Collections.emptyList();
     }
