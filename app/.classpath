@@ -18,7 +18,6 @@
 	<classpathentry kind="lib" path="lib/ecj.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/ant.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/ant-launcher.jar"/>
-	<classpathentry kind="lib" path="/android-tool/bin"/>
 	<classpathentry kind="lib" path="lib/apple.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

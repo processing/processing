@@ -244,7 +244,10 @@ public class Commander implements RunnerListener {
     }
   }
 
-
+  public void statusNotice(String message) {
+    System.err.println(message);    
+  }
+  
   public void statusError(String message) {
     System.err.println(message);
   }
