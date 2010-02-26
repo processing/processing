@@ -81,7 +81,12 @@ public class PApplet extends Activity implements PConstants, Runnable {
    */
 //  public String[] args;
 
-  /** Path to where sketch can read/write files (read-only) */
+  /** 
+   * Path to where sketch can read/write files (read-only).
+   * Android: This is the writable area for the Activity, which is correct  
+   * for purposes of how sketchPath is used in practice from a sketch, 
+   * even though it's technically different than the desktop version.  
+   */
   public String sketchPath; //folder;
 
   /** When debugging headaches */
@@ -295,6 +300,11 @@ public class PApplet extends Activity implements PConstants, Runnable {
    * For Android, true if the activity has been paused.
    */
   protected boolean paused;
+  
+  /**
+   * The Window object for Android.  
+   */
+//  protected Window window;
 
   /**
    * true if exit() has been called so that things shut down
@@ -388,6 +398,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
     super.onCreate(savedInstanceState);
 
 //    println("PApplet.onCreate()");
+
     Window window = getWindow();
     
     // Take up as much area as possible
@@ -408,6 +419,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
     getWindowManager().getDefaultDisplay().getMetrics(dm);
     screenWidth = dm.widthPixels;
     screenHeight = dm.heightPixels;
+    //println("screen size is " + screenWidth + "x" + screenHeight);
 
     if (sketchRenderer().equals(A2D)) {
       surfaceView = new SketchSurfaceView2D(this);
@@ -427,41 +439,10 @@ public class PApplet extends Activity implements PConstants, Runnable {
     looping = true;
     redraw = true;  // draw this guy once
     firstMotion = true;
-    
-    // TODO is there a better way to set the sketch path?
-//    try {
-//      if (sketchPath == null) {
-//        sketchPath = System.getProperty("user.dir");
-//      }
-//    } catch (Exception e) { }  // may be a security problem
+
     Context context = getApplicationContext();
     sketchPath = context.getFilesDir().getAbsolutePath();
-
-    /*
-    Dimension size = getSize();
-    if ((size.width != 0) && (size.height != 0)) {
-      // When this PApplet is embedded inside a Java application with other
-      // Component objects, its size() may already be set externally (perhaps
-      // by a LayoutManager). In this case, honor that size as the default.
-      // Size of the component is set, just create a renderer.
-      g = makeGraphics(size.width, size.height, sketchRenderer(), null, true);
-      // This doesn't call setSize() or setPreferredSize() because the fact
-      // that a size was already set means that someone is already doing it.
-
-    } else {
-      // Set the default size, until the user specifies otherwise
-      this.defaultSize = true;
-      int w = sketchWidth();
-      int h = sketchHeight();
-      g = makeGraphics(w, h, sketchRenderer(), null, true);
-      // Fire component resize event
-      setSize(w, h);
-      setPreferredSize(new Dimension(w, h));
-    }
-    width = g.width;
-    height = g.height;
-    */
-
+    
     start();
   }
 
@@ -549,8 +530,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
       // this.onResume() and thus require a valid renderer) are triggered 
       // before surfaceChanged() is ever called.
       PGraphics newGraphics = new PGraphicsAndroid3D();
-      // Set arbitrary size; will be set properly when surfaceChanged() called
-      newGraphics.setSize(100, 100);
+      // Set semi-arbitrary size; will be set properly when surfaceChanged() called
+      newGraphics.setSize(screenWidth, screenHeight);
       newGraphics.setParent(PApplet.this);
       newGraphics.setPrimary(true);
       g = newGraphics;
@@ -650,8 +631,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
       
 //      println("creating graphics");
       PGraphics newGraphics = new PGraphicsAndroid2D();
-      // Set arbitrary size; will be set properly when surfaceChanged() called
-      newGraphics.setSize(100, 100);
+      // Set semi-arbitrary size; will be set properly when surfaceChanged() called
+      newGraphics.setSize(screenWidth, screenHeight);
 //      newGraphics.setSize(getWidth(), getHeight());
       newGraphics.setParent(PApplet.this);
       newGraphics.setPrimary(true);

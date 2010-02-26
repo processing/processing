@@ -121,8 +121,8 @@ public class PGraphicsAndroid2D extends PGraphics {
 
 
   protected void allocate() {
-    image = Bitmap.createBitmap(width, height, Config.ARGB_8888);
-    canvas = new Canvas(image);
+    bitmap = Bitmap.createBitmap(width, height, Config.ARGB_8888);
+    canvas = new Canvas(bitmap);
 //    image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 //    canvas = (Graphics2D) image.getGraphics();
   }
@@ -185,7 +185,7 @@ public class PGraphicsAndroid2D extends PGraphics {
       try {
         screen = parent.getSurfaceHolder().lockCanvas(null);
         if (screen != null) {
-          screen.drawBitmap(image, new Matrix(), null);
+          screen.drawBitmap(bitmap, new Matrix(), null);
         }
       } finally {
         if (screen != null) {
@@ -1782,7 +1782,7 @@ public class PGraphicsAndroid2D extends PGraphics {
     }
 //    WritableRaster raster = ((BufferedImage) image).getRaster();
 //    raster.getDataElements(0, 0, width, height, pixels);
-    image.getPixels(pixels, 0, width, 0, 0, width, height);
+    bitmap.getPixels(pixels, 0, width, 0, 0, width, height);
   }
 
 
@@ -1795,7 +1795,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   public void updatePixels() {
 //    WritableRaster raster = ((BufferedImage) image).getRaster();
 //    raster.setDataElements(0, 0, width, height, pixels);
-    image.setPixels(pixels, 0, width, 0, 0, width, height);
+    bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
   }
 
 
@@ -1834,7 +1834,7 @@ public class PGraphicsAndroid2D extends PGraphics {
 //    WritableRaster raster = ((BufferedImage) image).getRaster();
 //    raster.getDataElements(x, y, getset);
 //    return getset[0];
-    return image.getPixel(x, y);
+    return bitmap.getPixel(x, y);
   }
 
 
@@ -1847,7 +1847,7 @@ public class PGraphicsAndroid2D extends PGraphics {
 
 //    WritableRaster raster = ((BufferedImage) image).getRaster();
 //    raster.getDataElements(x, y, w, h, output.pixels);
-    Bitmap bitsy = Bitmap.createBitmap(image, x, y, w, h);
+    Bitmap bitsy = Bitmap.createBitmap(bitmap, x, y, w, h);
     bitsy.getPixels(output.pixels, 0, w, 0, 0, w, h);
 
     return output;
@@ -1864,7 +1864,7 @@ public class PGraphicsAndroid2D extends PGraphics {
 //    getset[0] = argb;
 //    WritableRaster raster = ((BufferedImage) image).getRaster();
 //    raster.setDataElements(x, y, getset);
-    image.setPixel(x, y, argb);
+    bitmap.setPixel(x, y, argb);
   }
 
 
@@ -1963,7 +1963,7 @@ public class PGraphicsAndroid2D extends PGraphics {
 //    canvas.drawBitmap(bitsy,
     rect.set(sx, sy, sx+sw, sy+sh);
     Rect src = new Rect(dx, dy, dx+dw, dy+dh);
-    canvas.drawBitmap(image, src, rect, null);
+    canvas.drawBitmap(bitmap, src, rect, null);
 
 //    if ((sw != dw) || (sh != dh)) {
 //      // use slow version if changing size
