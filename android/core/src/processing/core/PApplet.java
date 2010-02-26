@@ -25,6 +25,7 @@ package processing.core;
 
 import android.content.*;
 import android.content.res.AssetManager;
+import android.content.res.Configuration;
 import android.graphics.*;
 
 import java.io.*;
@@ -300,7 +301,10 @@ public class PApplet extends Activity implements PConstants, Runnable {
    * For Android, true if the activity has been paused.
    */
   protected boolean paused;
-  
+
+  protected SurfaceView surfaceView;
+  protected SurfaceHolder surfaceHolder;
+
   /**
    * The Window object for Android.  
    */
@@ -381,22 +385,10 @@ public class PApplet extends Activity implements PConstants, Runnable {
   //////////////////////////////////////////////////////////////
 
 
-//  static final private int BACK_ID = Menu.FIRST;
-//  static final private int CLEAR_ID = Menu.FIRST + 1;
-//  private EditText mEditor;
-
-
-//  public BagelDroid() {
-//  }
-
-//  SurfaceView surfaceView;
-
-
   /** Called with the activity is first created. */
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-
 //    println("PApplet.onCreate()");
 
     Window window = getWindow();
@@ -409,12 +401,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
     // This does the actual full screen work
     window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                     WindowManager.LayoutParams.FLAG_FULLSCREEN);
-    
-    // window size is -1 at this point, so no sense in using attrs
-//    final WindowManager.LayoutParams attrs = window.getAttributes();
-//    println("window width = " + attrs.width);
-//    println("window height = " + attrs.height);
-    
+
     DisplayMetrics dm = new DisplayMetrics();
     getWindowManager().getDefaultDisplay().getMetrics(dm);
     screenWidth = dm.widthPixels;
@@ -427,7 +414,10 @@ public class PApplet extends Activity implements PConstants, Runnable {
       surfaceView = new SketchSurfaceView3D(this);
     }
 
-    window.setContentView(surfaceView);  // attempt to fix full-screen
+    width = screenWidth;
+    height = screenHeight;
+
+    window.setContentView(surfaceView);  // set full screen
 
     // code below here formerly from init()
 
@@ -447,6 +437,12 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  public void onConfigurationChanged(Configuration newConfig) {
+    System.out.println("configuration changed: " + newConfig);
+    super.onConfigurationChanged(newConfig);
+  }
+  
+  
   protected void onResume() {
     super.onResume();
 
@@ -504,10 +500,6 @@ public class PApplet extends Activity implements PConstants, Runnable {
   // ANDROID SURFACE VIEW
 
   
-  SurfaceView surfaceView;
-  SurfaceHolder surfaceHolder;
-
-
   public SurfaceHolder getSurfaceHolder() {
     //return surfaceView.getHolder();
     return surfaceHolder;
@@ -740,21 +732,25 @@ public class PApplet extends Activity implements PConstants, Runnable {
   //////////////////////////////////////////////////////////////
 
 
-  /*
   public int sketchWidth() {
-    return DEFAULT_WIDTH;
+    return screenWidth;
   }
 
 
   public int sketchHeight() {
-    return DEFAULT_HEIGHT;
+    return screenHeight;
   }
-  */
 
 
   public String sketchRenderer() {
     return A2D;
   }
+  
+
+//  public int sketchOrientation() {
+//    return ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
+//    //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+//  }
 
 
   /**
@@ -1223,9 +1219,13 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
   public void handleDraw() {
     if (surfaceChanged) {
-      width = surfaceView.getWidth();
-      height = surfaceView.getHeight();
-      g.setSize(width, height);
+      int newWidth = surfaceView.getWidth();
+      int newHeight = surfaceView.getHeight();
+      if (newWidth != width || newHeight != height) {
+        width = newWidth; 
+        height = newHeight;
+        g.setSize(width, height);
+      }
       surfaceChanged = false;
 //      println("surfaceChanged true, resized to " + width + "x" + height);
     }
@@ -2742,6 +2742,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
       System.err.println("Could not find the image " + filename + ".");
       return null;
     }
+    long t = System.currentTimeMillis();
     Bitmap bitmap = null;
     try {
       bitmap = BitmapFactory.decodeStream(stream);
@@ -2751,6 +2752,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
         stream = null;
       } catch (IOException e) { }
     }
+    int much = (int) (System.currentTimeMillis() - t);
+    println("loadImage(" + filename + ") was " + nfc(much));
     PImage image = new PImage(bitmap);
     image.parent = this;
     return image;

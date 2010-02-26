@@ -72,3 +72,7 @@
   to compress the files itself.
 
 + Use screenWidth and screenHeight instead of screen.width and screen.height.
+
++ To use the virtual keyboard, hold down the MENU key on the device. This 
+  is an Android default, but some users might not be familiar with it.
+
