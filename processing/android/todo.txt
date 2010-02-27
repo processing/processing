@@ -7,7 +7,19 @@ X app not pausing or closing when switching to another activity
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1404
 o if !looping, is it necessary to call redraw() in onResume()?
 X   doesn't appear to be, since it gets completely rebuilt
+X bezier curves were broken in A2D
+X   extra point is drawn connecting the shape to the corner
+X fix other minor bugs in shape drawing
+X mask() now implemented in A2D
+X updatePixels() now work properly for A2D
+X set() should now be working
+i using set() on an image that doesn't have a bitmap, or has pixels loaded
+X requestImage() now working
 
+
+_ BackgroundImage example 
+_   background(PImage) will fail because the image isn't the right size
+_   should we introduce the resize() function there?
 
 cleaning
 X move to eclair (donut devices will have terrible performance anyway)
@@ -149,7 +161,13 @@ P4 _     so they should probably be taken down in onDestroy.. but how?
 P4 _   http://dev.processing.org/bugs/show_bug.cgi?id=1480
 
 
-POSSIBLE FEATURE EDITIONS
+OPTIMIZE
+
+_ don't re-calculate stroke() or fill() when it's the same value
+_ should path.reset() or path.rewind() be used for a path to be reused?
+
+
+ENHANCEMENTS
 
 _ prevent rotation of applications? (or require a certain orientation)
 _   add to activity tag in the manifest:
