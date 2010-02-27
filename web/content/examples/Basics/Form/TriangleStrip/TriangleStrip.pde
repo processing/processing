@@ -15,8 +15,8 @@ smooth();
 
 int x = width/2;
 int y = height/2;
-int outerRad = 80;
-int innerRad = 50;
+float outerRad = min(width, height) * 0.4;
+float innerRad = outerRad * 0.6;
 float px = 0, py = 0, angle = 0;
 float pts = 36;
 float rot = 360.0/pts;
