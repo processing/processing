@@ -1,10 +1,9 @@
 package processing.app.tools.android;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import processing.app.debug.RunnerListener;
 import processing.app.tools.android.LogEntry.Severity;
@@ -12,8 +11,7 @@ import processing.app.tools.android.LogEntry.Severity;
 public class AndroidDevice implements AndroidDeviceProperties {
   private final AndroidEnvironment env;
   private final String id;
-  private final Map<String, List<ProcessOutputListener>> outputListeners = new ConcurrentHashMap<String, List<ProcessOutputListener>>();
-  private final Map<Integer, String> pidToProcessName = new ConcurrentHashMap<Integer, String>();
+  private final Set<Integer> activeProcesses = new HashSet<Integer>();
 
   // mutable state
   private Process logcat;
@@ -78,12 +76,12 @@ public class AndroidDevice implements AndroidDeviceProperties {
 
   // better version that actually runs through JDI:
   // http://asantoso.wordpress.com/2009/09/26/using-jdb-with-adb-to-debugging-of-android-app-on-a-real-device/
-  public boolean launchApp(final String id) throws IOException,
-      InterruptedException {
+  public boolean launchApp(final String packageName, final String className)
+      throws IOException, InterruptedException {
     final ProcessHelper startSketch = new ProcessHelper(generateAdbCommand(
       "shell", "am", "start", "-e", "debug", "true", "-a",
       "android.intent.action.MAIN", "-c", "android.intent.category.LAUNCHER",
-      "-n", id));
+      "-n", packageName + "/." + className));
     return startSketch.execute().succeeded();
   }
 
@@ -91,28 +89,38 @@ public class AndroidDevice implements AndroidDeviceProperties {
     return id.startsWith("emulator");
   }
 
+  // I/Process ( 9213): Sending signal. PID: 9213 SIG: 9
+  private static final Pattern SIG = Pattern
+      .compile("PID:\\s+(\\d+)\\s+SIG:\\s+(\\d+)");
+
   private class LogLineProcessor implements LineProcessor {
     public void processLine(final String line) {
       final LogEntry entry = new LogEntry(line);
-
       final String src = entry.source;
       final String msg = entry.message;
       final Severity sev = entry.severity;
-      if (src.equals("ActivityManager") && msg.startsWith("Start proc")) {
-      } else {
-        if ((src.equals("AndroidRuntime") && sev == Severity.Error)
-            || src.equals("System.out") || src.equals("System.err")) {
-          final List<ProcessOutputListener> listeners = getListeners(entry.sourcePid);
-          if (listeners != null) {
-            for (final ProcessOutputListener listener : listeners) {
-              if (sev == Severity.Warning || sev == Severity.Error
-                  || sev == Severity.Fatal) {
-                listener.handleStderr(msg);
-              } else {
-                listener.handleStdout(msg);
-              }
-            }
+      if (msg.startsWith("PROCESSING")) {
+        if (msg.contains("onStart")) {
+          startProc(src, entry.sourcePid);
+        } else if (msg.contains("onStop")) {
+          endProc(entry.sourcePid);
+        }
+      } else if (src.equals("Process")) {
+        final Matcher m = SIG.matcher(msg);
+        if (m.find()) {
+          final int pid = Integer.parseInt(m.group(1));
+          final int signal = Integer.parseInt(m.group(2));
+          if (signal == 9) {
+            endProc(pid);
           }
+        }
+      } else if (activeProcesses.contains(entry.sourcePid)
+          && ((src.equals("AndroidRuntime") && sev == Severity.Error)
+              || src.equals("System.out") || src.equals("System.err"))) {
+        if (sev.useErrorStream) {
+          System.err.println(msg);
+        } else {
+          System.out.println(msg);
         }
       }
       //System.err.println(entry.source + "/" + entry.message);
@@ -128,7 +136,6 @@ public class AndroidDevice implements AndroidDeviceProperties {
   }
 
   public void shutdown() {
-    outputListeners.clear();
     if (logcat != null) {
       logcat.destroy();
     }
@@ -143,40 +150,14 @@ public class AndroidDevice implements AndroidDeviceProperties {
     return env;
   }
 
-  public void addOutputListener(final String processName,
-                                final ProcessOutputListener listener) {
-    if (!outputListeners.containsKey(processName)) {
-      outputListeners.put(processName, new ArrayList<ProcessOutputListener>());
-    }
-    outputListeners.get(processName).add(listener);
+  private void startProc(final String name, final int pid) {
+    System.err.println("Process " + name + " started at pid " + pid);
+    activeProcesses.add(pid);
   }
 
-  public void removeOutputListener(final String processName,
-                                   final ProcessOutputListener listener) {
-    final List<ProcessOutputListener> listeners = outputListeners
-        .get(processName);
-    if (listeners != null) {
-      listeners.remove(listener);
-    }
-  }
-
-  private static final Pattern START_PROC = Pattern
-      .compile("^Start proc (\\S+) for \\S+ [^:]+: pid=(\\d+).+$");
-
-  protected List<ProcessOutputListener> getListeners(final String pid) {
-    final String processName = pidToProcessName.get(pid);
-    if (processName == null) {
-      return null;
-    }
-    return outputListeners.get(processName);
-  }
-
-  private void startProc(final String name, final String pid) {
-    pidToProcessName.put(Integer.valueOf(pid), name);
-  }
-
-  private void endProc(final String pid) {
-    pidToProcessName.remove(Integer.valueOf(pid));
+  private void endProc(final int pid) {
+    System.err.println("Process " + pid + " stopped.");
+    activeProcesses.remove(pid);
   }
 
   String[] generateAdbCommand(final String... cmd) {

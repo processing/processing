@@ -5,7 +5,14 @@ import java.util.regex.Pattern;
 
 public class LogEntry {
   public static enum Severity {
-    Verbose, Debug, Info, Warning, Error, Fatal;
+    Verbose(false), Debug(false), Info(false), Warning(true), Error(true), Fatal(
+        true);
+    public final boolean useErrorStream;
+
+    private Severity(final boolean useErrorStream) {
+      this.useErrorStream = useErrorStream;
+    }
+
     static Severity fromChar(final char c) {
       if (c == 'V') {
         return Verbose;
@@ -28,11 +35,11 @@ public class LogEntry {
 
   public final Severity severity;
   public final String source;
-  public final String sourcePid;
+  public final int sourcePid;
   public final String message;
 
   private static final Pattern PARSER = Pattern
-      .compile("^([VDIWEF])/([^\\(]+)\\(\\s*(\\d+)\\):\\s*(.+)$");
+      .compile("^([VDIWEF])/([^\\(\\s]+)\\s*\\(\\s*(\\d+)\\): (.+)$");
 
   public LogEntry(final String line) {
     final Matcher m = PARSER.matcher(line);
@@ -41,7 +48,7 @@ public class LogEntry {
     }
     this.severity = Severity.fromChar(m.group(1).charAt(0));
     this.source = m.group(2);
-    this.sourcePid = m.group(3);
+    this.sourcePid = Integer.parseInt(m.group(3));
     this.message = m.group(4);
   }
 
