@@ -12,7 +12,7 @@ PGraphics pg;
 
 void setup() {
   size(200, 200);
-  pg = createGraphics(80, 80, P3D);
+  pg = createGraphics(80, 80, P2D);
 }
 
 void draw() {
