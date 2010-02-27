@@ -21,6 +21,19 @@
 
 + The mouseButton variable is not available, for perhaps obvious reasons.
 
++ beginRecord, endRecord, beginRaw, endRaw are not available on Android.
+
++ Watch out for rollovers. While commonly used in mouse-based interfaces, 
+  they don't make any sense for touch interfaces. Lots of sketches (most
+  of them, really) will need to be rewritten for use on Android to make 
+  better use of the affordances given by the hardware.
+
++ Performance reminds me a lot of Java performance on desktop machines when
+  we first started the project in 2001. Most Processing sketches will benefit
+  significantly from the JIT that's rumored to arrive by Summer 2010. There 
+  are some things that we can speed up, but short of writing everything in 
+  native code, we'll be praying for enhancements to the Android platform. 
+
 + The keyEvent and mouseEvent variables are not available. If you want to 
   work with event objects, you'll need to override the key and motion handlers:
 
