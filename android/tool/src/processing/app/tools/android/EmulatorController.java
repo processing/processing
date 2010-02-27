@@ -31,5 +31,16 @@ class EmulatorController {
     // make sure that the streams are drained properly
     new StreamPump(p.getInputStream()).addTarget(System.out).start();
     new StreamPump(p.getErrorStream()).addTarget(System.err).start();
+    new Thread(new Runnable() {
+      public void run() {
+        try {
+          System.err.println("Starting to wait for emulator process.");
+          final int result = p.waitFor();
+          System.err.println("Emulator process exited with " + result);
+        } catch (final InterruptedException e) {
+          System.err.println("Emulator interrupted.");
+        }
+      }
+    });
   }
 }
