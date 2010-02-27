@@ -711,6 +711,7 @@ public class PImage implements PConstants, Cloneable {
    * @param maskImg any PImage object used as the alpha channel for "img", needs to be same size as "img"
    */
   public void mask(PImage maskImg) {
+    maskImg.loadPixels();
     mask(maskImg.pixels);
   }
 
