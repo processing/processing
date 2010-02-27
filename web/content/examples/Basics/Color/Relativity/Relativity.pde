@@ -20,8 +20,8 @@ void setup() {
 }
 
 void draw() {
-  drawBand(a, b, c, d, e, 0, 4);
-  drawBand(c, a, d, b, e, height/2, 4);
+  drawBand(a, b, c, d, e, 0, width/50);
+  drawBand(c, a, d, b, e, height/2, width/50);
 }
 
 void drawBand(color v, color w, color x, color y, color z, int ypos, int barWidth) {
