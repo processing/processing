@@ -3,6 +3,7 @@ X noLoop() is broken (draw is never called)
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1467
 X fix the freakout that happens with onPause()
 o   solution is to call stop() to kill the thread, but that's not a pause
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1483
 X app not pausing or closing when switching to another activity
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1404
 o if !looping, is it necessary to call redraw() in onResume()?
@@ -13,19 +14,36 @@ X fix other minor bugs in shape drawing
 X mask() now implemented in A2D
 X updatePixels() now work properly for A2D
 X set() should now be working
-i using set() on an image that doesn't have a bitmap, or has pixels loaded
+X using set() on an image that doesn't have a bitmap, or has pixels loaded
 X requestImage() now working
+X drastically improve the performance of the time functions
+X point wasn't detecting different stroke weights
+X point wasn't working with strokeWeight > 1
+X fix rotate() bug (was using degrees instead of radians)
+X arc() now working properly
+X createGraphics() works, at least with A2D (or aliases P2D and JAVA2D)
 
+_ make size() work to place the component at the center of the screen
+_ make size() work to change the renderer
+_ if sketchRenderer() et al are used in android, need to add to desktop
 
-_ BackgroundImage example 
-_   background(PImage) will fail because the image isn't the right size
-_   should we introduce the resize() function there?
+_ PShape examples are totally broken
+_ createGraphics() only works with A2D
+_   createGraphics() doesn't work w/ arbitrary renderers
 
 cleaning
 X move to eclair (donut devices will have terrible performance anyway)
 X make change from src folder to assets folder for export
 X what to do with other classes that rely on PApplet? (e.g. vida)
 
+android menu
+_ reset adb
+_ something to bring up the full console window
+_ signing tool
+_ selection of which avd (emulator), or plugged-in devices (if multiple)
+
+_ make sure that user can't hit 'Run' several times
+_   currently things just keep restarting the build
 
 _ Errors show up that .java files are duplicates with the Android tools.
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1472
