@@ -9,17 +9,16 @@
 PImage img;
 PImage maskImg;
 
-void setup() 
-{
-  size(200,200);
+void setup() {
+  size(200, 200);
   img = loadImage("test.jpg");
   maskImg = loadImage("mask.jpg");
   img.mask(maskImg);
+  imageMode(CENTER);
 }
 
-void draw() 
-{
-  background((mouseX+mouseY)/1.5);
-  image(img, 50, 50);
-  image(img, mouseX-50, mouseY-50);
+void draw() {
+  background(map(mouseX+mouseY, 0, width+height, 0, 255));
+  image(img, width/2, height/2);
+  image(img, mouseX, mouseY);
 }
