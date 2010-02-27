@@ -10,29 +10,6 @@ public class Harness implements AndroidEnvironmentProperties,
     final AndroidDevice device = AndroidEnvironment.getInstance().getHardware()
         .get();
     System.err.println("Got it.");
-
-    device.addOutputListener("processing.android.test.testconsole",
-      new ProcessOutputListener() {
-        public void handleStdout(final String line) {
-          System.out.println("testconsole: " + line);
-        }
-
-        public void handleStderr(final String line) {
-          System.err.println("testconsole: " + line);
-        }
-      });
-
-    device.addOutputListener("processing.android.test.testmouse",
-      new ProcessOutputListener() {
-        public void handleStdout(final String line) {
-          System.out.println("testmouse: " + line);
-        }
-
-        public void handleStderr(final String line) {
-          System.err.println("testmouse: " + line);
-        }
-      });
-
     final JFrame f = new JFrame("Harness");
     f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     f.add(new JLabel("Close me to quit"));
