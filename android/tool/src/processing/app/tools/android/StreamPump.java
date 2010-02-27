@@ -79,14 +79,14 @@ class StreamPump implements Runnable {
     }
   }
 
-  static public class WriterLineProcessor implements LineProcessor {
+  private class WriterLineProcessor implements LineProcessor {
     private final PrintWriter writer;
 
-    public WriterLineProcessor(final OutputStream out) {
+    WriterLineProcessor(final OutputStream out) {
       this.writer = new PrintWriter(out, true);
     }
 
-    public WriterLineProcessor(final Writer writer) {
+    WriterLineProcessor(final Writer writer) {
       this.writer = new PrintWriter(writer, true);
     }
 
