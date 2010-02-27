@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-08 Ben Fry and Casey Reas
+  Copyright (c) 2004-10 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This library is free software; you can redistribute it and/or
@@ -605,6 +605,7 @@ public class PImage implements PConstants, Cloneable {
    * Set alpha channel for an image using another image as the source.
    */
   public void mask(PImage alpha) {
+    alpha.loadPixels();
     mask(alpha.pixels);
   }
 
