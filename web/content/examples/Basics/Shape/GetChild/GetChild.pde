@@ -33,7 +33,7 @@ void draw() {
   fill(0, 51, 102);
   noStroke();
   // Draw a single state
-  shape(michigan, -600, -180); // Boo Wolverines!
+  shape(michigan, -600, -180); // Go Blue!
   
   // Disable the colors found in the SVG file
   ohio.disableStyle();
@@ -41,5 +41,5 @@ void draw() {
   fill(153, 0, 0);
   noStroke();
   // Draw a single state
-  shape(ohio, -600, -180);  // Go Buckeyes!
+  shape(ohio, -600, -180);  // Boo Buckeyes!
 }
