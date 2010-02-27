@@ -8,25 +8,22 @@
  */
  
 int barWidth = 5;
-int[] saturation;
+int lastBar = -1;
 
-void setup() 
-{
+
+void setup() {
   size(200, 200);
-  colorMode(HSB, 360, height, height); 
-  saturation = new int[width/barWidth];
+  colorMode(HSB, width, height, 100); 
+  noStroke();
 }
 
-void draw() 
-{
-  int j = 0;
-  for (int i=0; i<=(width-barWidth); i+=barWidth) {  
-    noStroke();
-    if ((mouseX > i) && (mouseX < i+barWidth)) {
-      saturation[j] = mouseY;
-    }
-    fill(i, saturation[j], height/1.5);
-    rect(i, 0, barWidth, height);  
-    j++;
+
+void draw() {
+  int whichBar = mouseX / barWidth;
+  if (whichBar != lastBar) {
+    int barX = whichBar * barWidth;
+    fill(barX, mouseY, 66);
+    rect(barX, 0, barWidth, height);
+    lastBar = whichBar;
   }
 }
