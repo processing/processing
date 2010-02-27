@@ -2,7 +2,7 @@ package processing.app.tools.android;
 
 import java.io.File;
 
-public class AndroidSDK {
+class AndroidSDK {
   private final File sdk;
   private final File tools;
   private final File androidTool;

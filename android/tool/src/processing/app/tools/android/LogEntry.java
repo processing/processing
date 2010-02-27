@@ -3,7 +3,7 @@ package processing.app.tools.android;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class LogEntry {
+class LogEntry {
   public static enum Severity {
     Verbose(false), Debug(false), Info(false), Warning(true), Error(true), Fatal(
         true);
@@ -13,7 +13,7 @@ public class LogEntry {
       this.useErrorStream = useErrorStream;
     }
 
-    static Severity fromChar(final char c) {
+    private static Severity fromChar(final char c) {
       if (c == 'V') {
         return Verbose;
       } else if (c == 'D') {
