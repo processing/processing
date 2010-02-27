@@ -2921,6 +2921,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
         vessel.height = actual.height;
         vessel.format = actual.format;
         vessel.pixels = actual.pixels;
+        // an android, pixels[] will probably be null, we want this one
+        vessel.bitmap = actual.bitmap;
       }
       requestImageCount--;
     }

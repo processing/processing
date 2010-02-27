@@ -2155,6 +2155,9 @@ public class PGraphics extends PImage implements PConstants {
     // Starting in release 0144, image errors are simply ignored.
     // loadImageAsync() sets width and height to -1 when loading fails.
     if (image.width == -1 || image.height == -1) return;
+    
+    // If not loaded yet, don't try to draw
+    if (image.width == 0 || image.height == 0) return;
 
     if (imageMode == CORNER || imageMode == CORNERS) {
       imageImpl(image,
