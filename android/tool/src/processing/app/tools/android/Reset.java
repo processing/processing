@@ -27,14 +27,11 @@ import processing.app.tools.Tool;
 public class Reset implements Tool {
   static final String MENU_TITLE = "Reset Android";
 
-  Editor editor;
-
   public String getMenuTitle() {
     return MENU_TITLE;
   }
 
   public void init(final Editor editor) {
-    this.editor = editor;
   }
 
   public void run() {
