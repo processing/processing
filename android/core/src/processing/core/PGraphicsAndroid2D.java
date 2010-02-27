@@ -54,7 +54,16 @@ public class PGraphicsAndroid2D extends PGraphics {
 //  Ellipse2D.Float ellipse = new Ellipse2D.Float();
 //  Rectangle2D.Float rect = new Rectangle2D.Float();
 //  Arc2D.Float arc = new Arc2D.Float();
+  /** 
+   * The temporary path object that does most of the drawing work. If there are
+   * any points in the path (meaning that moveto has been called), then 
+   * vertexCount will be 1 (or more). In the POLYGON case, vertexCount is only
+   * set to 1 after the first point is drawn (to indicate a moveto) and not
+   * incremented after, since the variable isn't used for POLYGON paths.
+   */
   Path path;
+
+  /** Temporary rectangle object. */
   RectF rect;
 
 //  protected Color tintColorObject;
@@ -251,7 +260,8 @@ public class PGraphicsAndroid2D extends PGraphics {
     // this way, just check to see if gpath is null, and if it isn't
     // then just use it to continue the shape.
     //path = null;
-    path.reset();
+//    path.reset();
+//    pathReset = true;
   }
 
 
@@ -270,111 +280,118 @@ public class PGraphicsAndroid2D extends PGraphics {
 
 
   public void vertex(float x, float y) {
-    curveVertexCount = 0;
-    //float vertex[];
-
-    if (vertexCount == vertices.length) {
-      float temp[][] = new float[vertexCount<<1][VERTEX_FIELD_COUNT];
-      System.arraycopy(vertices, 0, temp, 0, vertexCount);
-      vertices = temp;
-      //message(CHATTER, "allocating more vertices " + vertices.length);
-    }
-    // not everyone needs this, but just easier to store rather
-    // than adding another moving part to the code...
-    vertices[vertexCount][X] = x;
-    vertices[vertexCount][Y] = y;
-    vertexCount++;
-
-    switch (shape) {
-
-    case POINTS:
-      point(x, y);
-      break;
-
-    case LINES:
-      if ((vertexCount % 2) == 0) {
-        line(vertices[vertexCount-2][X],
-             vertices[vertexCount-2][Y], x, y);
-      }
-      break;
-
-    case TRIANGLES:
-      if ((vertexCount % 3) == 0) {
-        triangle(vertices[vertexCount - 3][X],
-                 vertices[vertexCount - 3][Y],
-                 vertices[vertexCount - 2][X],
-                 vertices[vertexCount - 2][Y],
-                 x, y);
-      }
-      break;
-
-    case TRIANGLE_STRIP:
-      if (vertexCount >= 3) {
-        triangle(vertices[vertexCount - 2][X],
-                 vertices[vertexCount - 2][Y],
-                 vertices[vertexCount - 1][X],
-                 vertices[vertexCount - 1][Y],
-                 vertices[vertexCount - 3][X],
-                 vertices[vertexCount - 3][Y]);
-      }
-      break;
-
-    case TRIANGLE_FAN:
-      if (vertexCount == 3) {
-        triangle(vertices[0][X], vertices[0][Y],
-                 vertices[1][X], vertices[1][Y],
-                 x, y);
-      } else if (vertexCount > 3) {
-        path = new Path();
-        // when vertexCount > 3, draw an un-closed triangle
-        // for indices 0 (center), previous, current
-        path.moveTo(vertices[0][X],
-                     vertices[0][Y]);
-        path.lineTo(vertices[vertexCount - 2][X],
-                    vertices[vertexCount - 2][Y]);
-        path.lineTo(x, y);
-        drawPath();
-      }
-      break;
-
-    case QUADS:
-      if ((vertexCount % 4) == 0) {
-        quad(vertices[vertexCount - 4][X],
-             vertices[vertexCount - 4][Y],
-             vertices[vertexCount - 3][X],
-             vertices[vertexCount - 3][Y],
-             vertices[vertexCount - 2][X],
-             vertices[vertexCount - 2][Y],
-             x, y);
-      }
-      break;
-
-    case QUAD_STRIP:
-      // 0---2---4
-      // |   |   |
-      // 1---3---5
-      if ((vertexCount >= 4) && ((vertexCount % 2) == 0)) {
-        quad(vertices[vertexCount - 4][X],
-             vertices[vertexCount - 4][Y],
-             vertices[vertexCount - 2][X],
-             vertices[vertexCount - 2][Y],
-             x, y,
-             vertices[vertexCount - 3][X],
-             vertices[vertexCount - 3][Y]);
-      }
-      break;
-
-    case POLYGON:
-      if (path == null) {
-        path = new Path();
+    // POLYGON and POINTS are broken out for efficiency
+    if (shape == POLYGON) {
+//      if (path == null) {
+//        path = new Path();
+//        path.moveTo(x, y);
+      //if (pathReset) {
+      if (vertexCount == 0) {
         path.moveTo(x, y);
+        vertexCount = 1;
+//        pathReset = false;
       } else if (breakShape) {
         path.moveTo(x, y);
         breakShape = false;
       } else {
         path.lineTo(x, y);
       }
-      break;
+
+    } else if (shape == POINTS) {
+      point(x, y);
+      
+    } else {
+      curveVertexCount = 0;
+
+      if (vertexCount == vertices.length) {
+        float temp[][] = new float[vertexCount<<1][VERTEX_FIELD_COUNT];
+        System.arraycopy(vertices, 0, temp, 0, vertexCount);
+        vertices = temp;
+      }
+      // not everyone needs this, but just easier to store rather
+      // than adding another moving part to the code...
+      vertices[vertexCount][X] = x;
+      vertices[vertexCount][Y] = y;
+      vertexCount++;
+
+      switch (shape) {
+
+      case LINES:
+        if ((vertexCount % 2) == 0) {
+          line(vertices[vertexCount-2][X],
+               vertices[vertexCount-2][Y], x, y);
+          vertexCount = 0;
+        }
+        break;
+
+      case TRIANGLES:
+        if ((vertexCount % 3) == 0) {
+          triangle(vertices[vertexCount - 3][X],
+                   vertices[vertexCount - 3][Y],
+                   vertices[vertexCount - 2][X],
+                   vertices[vertexCount - 2][Y],
+                   x, y);
+          vertexCount = 0;
+        }
+        break;
+
+      case TRIANGLE_STRIP:
+        if (vertexCount >= 3) {
+          triangle(vertices[vertexCount - 2][X],
+                   vertices[vertexCount - 2][Y],
+                   x, //vertices[vertexCount - 1][X],
+                   y, //vertices[vertexCount - 1][Y],
+                   vertices[vertexCount - 3][X],
+                   vertices[vertexCount - 3][Y]);
+        }
+        break;
+
+      case TRIANGLE_FAN:
+        if (vertexCount == 3) {
+          triangle(vertices[0][X], vertices[0][Y],
+                   vertices[1][X], vertices[1][Y],
+                   x, y);
+        } else if (vertexCount > 3) {
+          path.reset();
+          // when vertexCount > 3, draw an un-closed triangle
+          // for indices 0 (center), previous, current
+          path.moveTo(vertices[0][X], 
+                      vertices[0][Y]);
+          path.lineTo(vertices[vertexCount - 2][X],
+                      vertices[vertexCount - 2][Y]);
+          path.lineTo(x, y);
+          drawPath();
+        }
+        break;
+
+      case QUADS:
+        if ((vertexCount % 4) == 0) {
+          quad(vertices[vertexCount - 4][X],
+               vertices[vertexCount - 4][Y],
+               vertices[vertexCount - 3][X],
+               vertices[vertexCount - 3][Y],
+               vertices[vertexCount - 2][X],
+               vertices[vertexCount - 2][Y],
+               x, y);
+          vertexCount = 0;
+        }
+        break;
+
+      case QUAD_STRIP:
+        // 0---2---4
+        // |   |   |
+        // 1---3---5
+        if ((vertexCount >= 4) && ((vertexCount % 2) == 0)) {
+          quad(vertices[vertexCount - 4][X],
+               vertices[vertexCount - 4][Y],
+               vertices[vertexCount - 2][X],
+               vertices[vertexCount - 2][Y],
+               x, y,
+               vertices[vertexCount - 3][X],
+               vertices[vertexCount - 3][Y]);
+        }
+        break;
+      }
     }
   }
 
@@ -400,7 +417,8 @@ public class PGraphicsAndroid2D extends PGraphics {
 
 
   public void endShape(int mode) {
-    if (path != null) {  // make sure something has been drawn
+    //if (path != null) {  // make sure something has been drawn
+    if (!path.isEmpty()) {
       if (shape == POLYGON) {
         if (mode == CLOSE) {
           path.close();
@@ -421,6 +439,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   public void bezierVertex(float x1, float y1,
                            float x2, float y2,
                            float x3, float y3) {
+    // will check to make sure that vertexCount > 0
     bezierVertexCheck();
     path.cubicTo(x1, y1, x2, y2, x3, y3);
   }
@@ -472,14 +491,16 @@ public class PGraphicsAndroid2D extends PGraphics {
 
     // since the paths are continuous,
     // only the first point needs the actual moveto
-    if (path == null) {
-      path = new Path();
+    if (vertexCount == 0) {
+//    if (path == null) {
+//      path = new Path();
       path.moveTo(curveDrawX[0], curveDrawY[0]);
+      vertexCount = 1;
     }
 
     path.cubicTo(curveDrawX[1], curveDrawY[1],
-                  curveDrawX[2], curveDrawY[2],
-                  curveDrawX[3], curveDrawY[3]);
+                 curveDrawX[2], curveDrawY[2],
+                 curveDrawX[3], curveDrawY[3]);
   }
 
 
