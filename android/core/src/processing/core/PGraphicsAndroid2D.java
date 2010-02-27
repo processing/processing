@@ -437,16 +437,8 @@ public class PGraphicsAndroid2D extends PGraphics {
           set(PApplet.round(screenX(x, y)), PApplet.round(screenY(x, y)), strokeColor);
         }
       } else {
-//      screenPoint[0] = vertices[0][X] - sw;
-//      screenPoint[1] = vertices[0][Y] - sw;
-//      m.mapPoints(screenPoint);
-//      float x0 = screenPoint[0];
-//      float y0 = screenPoint[1];
-//      screenPoint[0] = vertices[0][X] + sw;
-//      screenPoint[1] = vertices[0][Y] + sw;
-//      float dx = ((screenPoint[0] - x0)
         float sw = strokeWeight / 2;
-        // temporarily use the stroke paint as a fill
+        // temporarily use the stroke Paint as a fill
         strokePaint.setStyle(Style.FILL);
         for (int i = 0; i < vertexCount; i++) {
           float x = vertices[i][X]; 
@@ -563,17 +555,22 @@ public class PGraphicsAndroid2D extends PGraphics {
 
 
   public void point(float x, float y) {
-    if (strokeWeight > 1) {
-      //line(x, y, x + EPSILON, y + EPSILON);
-      float sw = strokeWeight / 2;
-      rect.set(x - sw, y - sw, x + sw, y + sw);
-      strokePaint.setStyle(Style.FILL);
-      canvas.drawOval(rect, strokePaint);
-      strokePaint.setStyle(Style.STROKE);
-    } else {
-      // TODO this isn't accurate, really we need to 
-      set(PApplet.round(screenX(x, y)), PApplet.round(screenY(x, y)), strokeColor);
-    }
+    // this is a slow function to call on its own anyway. 
+    // most people will use set(). 
+    beginShape(POINTS);
+    vertex(x, y);
+    endShape();
+//    if (strokeWeight > 1) {
+//      //line(x, y, x + EPSILON, y + EPSILON);
+//      float sw = strokeWeight / 2;
+//      rect.set(x - sw, y - sw, x + sw, y + sw);
+//      strokePaint.setStyle(Style.FILL);
+//      canvas.drawOval(rect, strokePaint);
+//      strokePaint.setStyle(Style.STROKE);
+//    } else {
+//      // TODO this isn't accurate, really we need to 
+//      set(PApplet.round(screenX(x, y)), PApplet.round(screenY(x, y)), strokeColor);
+//    }
   }
 
 
