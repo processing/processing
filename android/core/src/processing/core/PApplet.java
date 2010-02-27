@@ -44,7 +44,6 @@ import android.util.Log;
 import android.view.SurfaceView;
 import android.view.WindowManager;
 import android.os.Bundle;
-import android.os.Process;
 import android.view.*;
 
 
@@ -1897,12 +1896,12 @@ public class PApplet extends Activity implements PConstants, Runnable {
    * (This avoids the situation of trying to put single or double quotes
    * around different bits).
    */
-  static public java.lang.Process open(String argv[]) {
+  static public Process open(String argv[]) {
     return exec(argv);
   }
 
 
-  static public java.lang.Process exec(String[] argv) {
+  static public Process exec(String[] argv) {
     try {
       return Runtime.getRuntime().exec(argv);
     } catch (Exception e) {
