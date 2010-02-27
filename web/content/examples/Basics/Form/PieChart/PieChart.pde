@@ -11,7 +11,7 @@ background(100);
 smooth();
 noStroke();
 
-int diameter = 150;
+float diameter = min(width, height) * 0.75;
 int[] angs = {30, 10, 45, 35, 60, 38, 75, 67};
 float lastAng = 0;
 
