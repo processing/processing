@@ -682,8 +682,11 @@ public class PGraphics extends PImage implements PConstants {
     colorMode(RGB, 255);
     fill(255);
     stroke(0);
-    // other stroke attributes are set in the initializers
-    // inside the class (see above, strokeWeight = 1 et al)
+    
+    // added for 0178 for subclasses that need them
+    strokeWeight(DEFAULT_STROKE_WEIGHT);
+    strokeJoin(DEFAULT_STROKE_JOIN);
+    strokeCap(DEFAULT_STROKE_CAP);
 
     // init shape stuff
     shape = 0;
