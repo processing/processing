@@ -672,12 +672,12 @@ public class PGraphicsAndroid2D extends PGraphics {
     // but that won't work, so -90 to 0?
 
     if (stop - start >= TWO_PI) {
-      start = 0;
-      stop = 360;
+      ellipseImpl(x, y, w, h);
 
     } else {
-      start = -start * RAD_TO_DEG;
-      stop = -stop * RAD_TO_DEG;
+      // Android agrees with us, so don't set start/stop negative like Java 2D
+      start = start * RAD_TO_DEG;
+      stop = stop * RAD_TO_DEG;
 
       // ok to do this because already checked for NaN
       while (start < 0) {
@@ -689,22 +689,15 @@ public class PGraphicsAndroid2D extends PGraphics {
         start = stop;
         stop = temp;
       }
-    }
-    float sweep = stop - start;
 
-    // stroke as Arc2D.OPEN, fill as Arc2D.PIE
-    rect.set(x, y, x+w, y+h);
-    if (fill) {
-      //System.out.println("filla");
-//      arc.setArc(x, y, w, h, start, span, Arc2D.PIE);
-//      fillShape(arc);
-      canvas.drawArc(rect, start, sweep, true, fillPaint);
-    }
-    if (stroke) {
-      //System.out.println("strokey");
-//      arc.setArc(x, y, w, h, start, span, Arc2D.OPEN);
-//      strokeShape(arc);
-      canvas.drawArc(rect, start, sweep, true, strokePaint);
+      float sweep = stop - start;
+      rect.set(x, y, x+w, y+h);
+      if (fill) {
+        canvas.drawArc(rect, start, sweep, true, fillPaint);
+      }
+      if (stroke) {
+        canvas.drawArc(rect, start, sweep, false, strokePaint);
+      }
     }
   }
 
