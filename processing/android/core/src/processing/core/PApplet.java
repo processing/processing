@@ -2770,7 +2770,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
       System.err.println("Could not find the image " + filename + ".");
       return null;
     }
-    long t = System.currentTimeMillis();
+//    long t = System.currentTimeMillis();
     Bitmap bitmap = null;
     try {
       bitmap = BitmapFactory.decodeStream(stream);
@@ -2780,8 +2780,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
         stream = null;
       } catch (IOException e) { }
     }
-    int much = (int) (System.currentTimeMillis() - t);
-    println("loadImage(" + filename + ") was " + nfc(much));
+//    int much = (int) (System.currentTimeMillis() - t);
+//    println("loadImage(" + filename + ") was " + nfc(much));
     PImage image = new PImage(bitmap);
     image.parent = this;
     return image;
