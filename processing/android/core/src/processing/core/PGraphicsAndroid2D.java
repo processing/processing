@@ -913,8 +913,7 @@ public class PGraphicsAndroid2D extends PGraphics {
                         who.format == ARGB, tint ? tintPaint : null);
     } else {
 //      rect.set(x1, y1, x2, y2);
-      if (who.bitmap == null || 
-          who.width != who.bitmap.getWidth() || 
+      if (who.width != who.bitmap.getWidth() || 
           who.height != who.bitmap.getHeight()) {
 //        System.out.println("creating bitmap " + who.format + " " + 
 //                           who.width + "x" + who.height);
@@ -925,6 +924,10 @@ public class PGraphicsAndroid2D extends PGraphics {
         who.modified = true;
       }
       if (who.modified) {
+        //System.out.println("mutable, recycled = " + who.bitmap.isMutable() + ", " + who.bitmap.isRecycled());
+        if (!who.bitmap.isMutable()) {
+          who.bitmap = Bitmap.createBitmap(who.width, who.height, Config.ARGB_8888);
+        }
         who.bitmap.setPixels(who.pixels, 0, who.width, 0, 0, who.width, who.height);
         who.modified = false;
       } 
