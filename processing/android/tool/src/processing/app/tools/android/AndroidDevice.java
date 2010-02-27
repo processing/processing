@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 import processing.app.debug.RunnerListener;
 import processing.app.tools.android.LogEntry.Severity;
 
-public class AndroidDevice implements AndroidDeviceProperties {
+class AndroidDevice implements AndroidDeviceProperties {
   private final AndroidEnvironment env;
   private final String id;
   private final Set<Integer> activeProcesses = new HashSet<Integer>();
@@ -160,7 +160,7 @@ public class AndroidDevice implements AndroidDeviceProperties {
     activeProcesses.remove(pid);
   }
 
-  String[] generateAdbCommand(final String... cmd) {
+  private String[] generateAdbCommand(final String... cmd) {
     final String[] adbCmd = new String[3 + cmd.length];
     adbCmd[0] = "adb";
     adbCmd[1] = "-s";
