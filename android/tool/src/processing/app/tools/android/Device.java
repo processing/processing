@@ -25,13 +25,13 @@ import java.io.IOException;
 import processing.app.Base;
 import processing.core.PApplet;
 
-public class Device {
+class Device {
 
   private static final ProcessHelper LIST_DEVICES_CMD = new ProcessHelper(
                                                                           "adb",
                                                                           "devices");
 
-  static final String ADB_DEVICES_ERROR = "Received unfamiliar output from “adb devices”.\n"
+  private static final String ADB_DEVICES_ERROR = "Received unfamiliar output from “adb devices”.\n"
       + "The device list may have errors.";
 
   static final int DEFAULT_WIDTH = 320;
@@ -68,7 +68,8 @@ public class Device {
     // /dev/input/event0: 0001 0066 00000000
   }
 
-  static void sendKey(final String device, final int key) throws IOException {
+  private static void sendKey(final String device, final int key)
+      throws IOException {
     final String inputDevice = device.startsWith("emulator") ? "/dev/input/event0"
         : "/dev/input/event3";
     final String[] cmd = new String[] {
