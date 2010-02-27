@@ -287,9 +287,10 @@ public class AndroidTool implements Tool {
   // though would need to query the emulator to see if it can do that
 
   private void startSketch(final AndroidDevice device) {
-    final String id = build.getPackageName() + "/." + build.getClassName();
+    final String packageName = build.getPackageName();
+    final String className = build.getClassName();
     try {
-      if (device.launchApp(id)) {
+      if (device.launchApp(packageName, className)) {
         editor.statusNotice("Sketch started on the "
             + (device.isEmulator() ? "emulator" : "phone") + ".");
         return;
