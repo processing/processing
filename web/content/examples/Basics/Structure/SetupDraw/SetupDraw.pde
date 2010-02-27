@@ -7,9 +7,8 @@
 
 // The statements in the setup() function 
 // execute once when the program begins
-void setup() 
-{
-  size(200, 200);  // Size should be the first statement
+void setup() {
+  size(200, 200);  // Size must be the first statement
   stroke(255);     // Set line drawing color to white
   frameRate(30);
 }
@@ -20,11 +19,12 @@ float y = 100;
 // program is stopped. Each statement is executed in 
 // sequence and after the last line is read, the first 
 // line is executed again.
-void draw() 
-{ 
+void draw() { 
   background(0);   // Set the background to black
   y = y - 1; 
-  if (y < 0) { y = height; } 
+  if (y < 0) { 
+    y = height; 
+  } 
   line(0, y, width, y);  
 } 
 
