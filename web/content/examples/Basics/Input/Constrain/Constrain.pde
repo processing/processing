@@ -3,38 +3,39 @@
  * 
  * Move the mouse across the screen to move the circle. 
  * The program constrains the circle to its box. 
+ * 
+ * Updated 27 February 2010 to handle changes in size().
  */
  
 float mx;
 float my;
 float easing = 0.05;
-float esize = 25.0;
-int box = 30;
+int radius = 24;
+int edge = 56;
+int inner = edge + radius;
 
-void setup() 
-{
+void setup() {
   size(200, 200);
   noStroke(); 
   smooth();
-  ellipseMode(RADIUS);  
+  ellipseMode(RADIUS);
+  rectMode(CORNERS);
 }
 
-void draw() 
-{ 
+void draw() { 
   background(51);
   
-  if(abs(mouseX - mx) > 0.1) {
+  if (abs(mouseX - mx) > 0.1) {
     mx = mx + (mouseX - mx) * easing;
   }
-  if(abs(mouseY - my) > 0.1) {
+  if (abs(mouseY - my) > 0.1) {
     my = my + (mouseY- my) * easing;
   }
   
-  float distance = esize * 2;
-  mx = constrain(mx, box+distance, width-box-distance);
-  my = constrain(my, box+distance, height-box-distance);
+  mx = constrain(mx, inner, width - inner);
+  my = constrain(my, inner, height - inner);
   fill(76);
-  rect(box+esize, box+esize, box*3, box*3);
+  rect(edge, edge, width-edge, height-edge);
   fill(255);  
-  ellipse(mx, my, esize, esize);
+  ellipse(mx, my, radius, radius);
 }
