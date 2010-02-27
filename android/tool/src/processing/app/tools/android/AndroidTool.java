@@ -105,7 +105,7 @@ public class AndroidTool implements Tool {
       .compile("^\"([^\"]*)\"$");
 
   // make sure that $ANDROID_SDK/tools has been added to the PATH
-  protected boolean checkPath() {
+  private boolean checkPath() {
     final String canonicalTools;
     try {
       canonicalTools = sdk.getTools().getCanonicalPath();
@@ -254,7 +254,7 @@ public class AndroidTool implements Tool {
     return new File(Base.getSketchbookFolder(), ANDROID_CORE_FILENAME);
   }
 
-  protected boolean checkCore() {
+  private boolean checkCore() {
     // File target = new File(Base.getSketchbookFolder(),
     // ANDROID_CORE_FILENAME);
     final File target = getCoreZipFile();

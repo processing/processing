@@ -24,8 +24,7 @@ class EmulatorController {
 
     // launch emulator because it's not running yet
     final String[] cmd = new String[] {
-      "emulator", "-avd", AVD.ECLAIR.name, "-port", portString, "-netfast",
-      "-no-boot-anim" };
+      "emulator", "-avd", AVD.ECLAIR.name, "-port", portString, "-no-boot-anim" };
     System.err.println("Launching emulator");
     final Process p = Runtime.getRuntime().exec(cmd);
     // "emulator: ERROR: the user data image is used by another emulator. aborting"

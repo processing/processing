@@ -20,7 +20,7 @@ import processing.app.debug.RunnerException;
 import processing.app.preproc.PdePreprocessor;
 import processing.core.PApplet;
 
-public class Build {
+class Build {
   static SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMdd.HHmm");
 
   static String basePackage = "processing.android.test";
@@ -388,8 +388,8 @@ public class Build {
     }
   }
 
-  void writeAndroidManifest(final File file, final String sketchName,
-                            final String className) {
+  private void writeAndroidManifest(final File file, final String sketchName,
+                                    final String className) {
     final PrintWriter writer = PApplet.createWriter(file);
     writer.println("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
     writer
@@ -418,14 +418,14 @@ public class Build {
     writer.close();
   }
 
-  void writeBuildProps(final File file) {
+  private void writeBuildProps(final File file) {
     final PrintWriter writer = PApplet.createWriter(file);
     writer.println("application-package=" + getPackageName());
     writer.flush();
     writer.close();
   }
 
-  void writeBuildXML(final File file, final String projectName) {
+  private void writeBuildXML(final File file, final String projectName) {
     final PrintWriter writer = PApplet.createWriter(file);
     writer.println("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
 
@@ -478,14 +478,14 @@ public class Build {
     writer.close();
   }
 
-  void writeDefaultProps(final File file) {
+  private void writeDefaultProps(final File file) {
     final PrintWriter writer = PApplet.createWriter(file);
     writer.println("target=Google Inc.:Google APIs:" + sdkVersion);
     writer.flush();
     writer.close();
   }
 
-  void writeLocalProps(final File file) {
+  private void writeLocalProps(final File file) {
     final PrintWriter writer = PApplet.createWriter(file);
     final String sdkPath = sdk.getSdk().getAbsolutePath();
     if (Base.isWindows()) {
@@ -500,7 +500,7 @@ public class Build {
     writer.close();
   }
 
-  void writeRes(final File resFolder, final String className)
+  private void writeRes(final File resFolder, final String className)
       throws RunnerException {
     final File layoutFolder = mkdirs(resFolder, "layout");
     final File layoutFile = new File(layoutFolder, "main.xml");
@@ -519,7 +519,7 @@ public class Build {
     return result;
   }
 
-  void writeResLayoutMain(final File file) {
+  private void writeResLayoutMain(final File file) {
     final PrintWriter writer = PApplet.createWriter(file);
     writer.println("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
     writer
@@ -551,7 +551,7 @@ public class Build {
     writer.close();
   }
 
-  void writeLibraries(final File libsFolder, final File assetsFolder)
+  private void writeLibraries(final File libsFolder, final File assetsFolder)
       throws IOException {
     // Copy any libraries to the 'libs' folder
     final Sketch sketch = editor.getSketch();
@@ -627,7 +627,7 @@ public class Build {
    * Place quotes around a string to avoid dreadful syntax mess of escaping
    * quotes near quoted strings. Mmmm!
    */
-  static final String q(final String what) {
+  private static final String q(final String what) {
     return "\"" + what + "\"";
   }
 }
