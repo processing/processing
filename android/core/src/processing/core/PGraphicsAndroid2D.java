@@ -30,7 +30,7 @@ import android.graphics.Paint.Style;
 
 /**
  * Subclass for PGraphics that implements the graphics API using 
- * the Android 2D graphics model. Similar tradeoffss to JAVA2D mode  
+ * the Android 2D graphics model. Similar tradeoffs to JAVA2D mode  
  * with the original (desktop) version of Processing. 
  */
 public class PGraphicsAndroid2D extends PGraphics {
@@ -883,7 +883,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   /**
    * Handle renderer-specific image drawing.
    */
-  protected void imageImpl(PImage who,
+  protected void imageImpl(PImage src,
                            float x1, float y1, float x2, float y2,
                            int u1, int v1, int u2, int v2) {
 //    pushStyle();
@@ -893,43 +893,44 @@ public class PGraphicsAndroid2D extends PGraphics {
 //    popStyle();
 //    if (true) return;
 
-    if (who.bitmap == null && who.format == ALPHA) {
+    if (src.bitmap == null && src.format == ALPHA) {
       // create an alpha bitmap for this feller
-      who.bitmap = Bitmap.createBitmap(who.width, who.height, Config.ARGB_8888);
-      int[] px = new int[who.pixels.length];
+      src.bitmap = Bitmap.createBitmap(src.width, src.height, Config.ARGB_8888);
+      int[] px = new int[src.pixels.length];
       for (int i = 0; i < px.length; i++) {
-        px[i] = who.pixels[i] << 24 | 0xFFFFFF;
+        px[i] = src.pixels[i] << 24 | 0xFFFFFF;
       }
-      who.bitmap.setPixels(px, 0, who.width, 0, 0, who.width, who.height);
-      who.modified = false;
+      src.bitmap.setPixels(px, 0, src.width, 0, 0, src.width, src.height);
+      src.modified = false;
     }
 
     //if (who.bitmap == null && (who.format == ARGB || who.format == RGB)) {
-    if (who.bitmap == null) {  // format is ARGB or RGB
-      int offset = v1*who.width + u1;
+    if (src.bitmap == null) {  // format is ARGB or RGB
+      int offset = v1*src.width + u1;
 //      System.out.println(tint + " " + PApplet.hex(tintPaint.getColor()));
-      canvas.drawBitmap(who.pixels, offset, who.width,
+//      System.out.println(src.pixels + " " + src.width + " " + src.height);
+      canvas.drawBitmap(src.pixels, offset, src.width,
                         x1, y1, u2-u1, v2-v1,
-                        who.format == ARGB, tint ? tintPaint : null);
+                        src.format == ARGB, tint ? tintPaint : null);
     } else {
 //      rect.set(x1, y1, x2, y2);
-      if (who.width != who.bitmap.getWidth() || 
-          who.height != who.bitmap.getHeight()) {
+      if (src.width != src.bitmap.getWidth() || 
+          src.height != src.bitmap.getHeight()) {
 //        System.out.println("creating bitmap " + who.format + " " + 
 //                           who.width + "x" + who.height);
-        who.bitmap = Bitmap.createBitmap(who.width, who.height, Config.ARGB_8888);
+        src.bitmap = Bitmap.createBitmap(src.width, src.height, Config.ARGB_8888);
 //        who.bitmap = 
 //          Bitmap.createBitmap(who.width, who.height, 
 //                              who.format == ALPHA ? Config.ALPHA_8 : Config.ARGB_8888);
-        who.modified = true;
+        src.modified = true;
       }
-      if (who.modified) {
+      if (src.modified) {
         //System.out.println("mutable, recycled = " + who.bitmap.isMutable() + ", " + who.bitmap.isRecycled());
-        if (!who.bitmap.isMutable()) {
-          who.bitmap = Bitmap.createBitmap(who.width, who.height, Config.ARGB_8888);
+        if (!src.bitmap.isMutable()) {
+          src.bitmap = Bitmap.createBitmap(src.width, src.height, Config.ARGB_8888);
         }
-        who.bitmap.setPixels(who.pixels, 0, who.width, 0, 0, who.width, who.height);
-        who.modified = false;
+        src.bitmap.setPixels(src.pixels, 0, src.width, 0, 0, src.width, src.height);
+        src.modified = false;
       } 
 
       if (imageImplSrcRect == null) {
@@ -943,7 +944,7 @@ public class PGraphicsAndroid2D extends PGraphics {
       //System.out.println(PApplet.hex(fillPaint.getColor()));
       //canvas.drawBitmap(who.bitmap, imageImplSrcRect, imageImplDstRect, fillPaint);
 //      System.out.println("drawing lower, tint = " + tint + " " + PApplet.hex(tintPaint.getColor()));
-      canvas.drawBitmap(who.bitmap, imageImplSrcRect, imageImplDstRect, tint ? tintPaint : null);
+      canvas.drawBitmap(src.bitmap, imageImplSrcRect, imageImplDstRect, tint ? tintPaint : null);
     }
   }
 
@@ -1746,13 +1747,17 @@ public class PGraphicsAndroid2D extends PGraphics {
 
 
   public PImage getImpl(int x, int y, int w, int h) {
-    PImage output = new PImage(w, h);
+    PImage output = new PImage();
+    output.width = w;
+    output.height = h;
     output.parent = parent;
 
 //    WritableRaster raster = ((BufferedImage) image).getRaster();
 //    raster.getDataElements(x, y, w, h, output.pixels);
     Bitmap bitsy = Bitmap.createBitmap(bitmap, x, y, w, h);
-    bitsy.getPixels(output.pixels, 0, w, 0, 0, w, h);
+    // guessing it's more efficient to use Bitmap instead of pixels[]
+    //bitsy.getPixels(output.pixels, 0, w, 0, 0, w, h);
+    output.bitmap = bitsy;
 
     return output;
   }
@@ -1773,6 +1778,36 @@ public class PGraphicsAndroid2D extends PGraphics {
 
 
   public void set(int x, int y, PImage src) {
+    if (src.format == ALPHA) {
+      // set() doesn't really make sense for an ALPHA image, since it 
+      // directly replaces pixels and does no blending.
+      throw new RuntimeException("set() not available for ALPHA images");
+    }
+
+    if (src.bitmap == null) {
+      // hopefully this will do the work to figure out what's on/offscreen
+      // in spite of the offset and stride that's been provided
+      canvas.drawBitmap(src.pixels, 0, src.width,
+                        x, y, src.width, src.height, false, null);
+      // hasAlpha is set to false since we don't want blending. 
+      // however that may be incorrect if it winds up copying only the RGB
+      // (without the A) portion of the pixels.
+
+    } else {  // src.bitmap != null
+      if (src.width != src.bitmap.getWidth() || 
+          src.height != src.bitmap.getHeight()) {
+        src.bitmap = Bitmap.createBitmap(src.width, src.height, Config.ARGB_8888);
+        src.modified = true;
+      }
+      if (src.modified) {
+        if (!src.bitmap.isMutable()) {
+          src.bitmap = Bitmap.createBitmap(src.width, src.height, Config.ARGB_8888);
+        }
+        src.bitmap.setPixels(src.pixels, 0, src.width, 0, 0, src.width, src.height);
+        src.modified = false;
+      }
+    }
+
     // set() happens in screen coordinates, so need to clear the ctm 
     canvas.save(Canvas.MATRIX_SAVE_FLAG);
     canvas.setMatrix(null);  // set to identity

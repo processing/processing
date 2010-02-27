@@ -29,6 +29,8 @@ import java.io.*;
 import java.util.HashMap;
 
 import android.graphics.Bitmap;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.Bitmap.Config;
 
@@ -516,6 +518,12 @@ public class PImage implements PConstants, Cloneable {
    * settings will be ignored.
    */
   public void set(int x, int y, PImage src) {
+    if (src.format == ALPHA) {
+      // set() doesn't really make sense for an ALPHA image, since it 
+      // directly replaces pixels and does no blending.
+      throw new RuntimeException("set() not available for ALPHA images");
+    }
+
     int sx = 0;
     int sy = 0;
     int sw = src.width;
@@ -542,7 +550,7 @@ public class PImage implements PConstants, Cloneable {
       sh = height - y;
     }
 
-    // this could be nonexistant
+    // this could be nonexistent
     if ((sw <= 0) || (sh <= 0)) return;
 
     setImpl(x, y, sx, sy, sw, sh, src);
@@ -555,15 +563,34 @@ public class PImage implements PConstants, Cloneable {
    */
   protected void setImpl(int dx, int dy, int sx, int sy, int sw, int sh,
                          PImage src) {
-    int srcOffset = sy * src.width + sx;
-    int dstOffset = dy * width + dx;
-
-    for (int y = sy; y < sy + sh; y++) {
-      System.arraycopy(src.pixels, srcOffset, pixels, dstOffset, sw);
-      srcOffset += src.width;
-      dstOffset += width;
+    if (src.pixels == null) {
+      src.loadPixels();
     }
-    updatePixelsImpl(sx, sy, sx+sw, sy+sh);
+
+    // if this.pixels[] is null, copying directly into this.bitmap
+    if (pixels == null) {
+      // if this.pixels[] is null, this.bitmap cannot be null 
+      // make sure the bitmap is writable
+      if (!bitmap.isMutable()) {
+        // create a mutable version of this bitmap
+        bitmap = bitmap.copy(Config.ARGB_8888, true);
+      }
+
+      // copy from src.pixels to this.bitmap
+      int offset = sy * src.width + sx;
+      bitmap.setPixels(src.pixels, offset, src.width, dx, dy, sw, sh);
+      
+    } else {  // pixels != null
+      // copy into this.pixels[] and mark as modified
+      int srcOffset = sy * src.width + sx;
+      int dstOffset = dy * width + dx;
+      for (int y = sy; y < sy + sh; y++) {
+        System.arraycopy(src.pixels, srcOffset, pixels, dstOffset, sw);
+        srcOffset += src.width;
+        dstOffset += width;
+      }
+      updatePixelsImpl(dx, dy, sw, sh);
+    }
   }
 
 
@@ -605,8 +632,15 @@ public class PImage implements PConstants, Cloneable {
    * Set alpha channel for an image using another image as the source.
    */
   public void mask(PImage alpha) {
-    alpha.loadPixels();
-    mask(alpha.pixels);
+    if (alpha.pixels == null) {
+      // if pixels haven't been loaded by the user, then only load them 
+      // temporarily to save memory when finished. 
+      alpha.loadPixels();
+      mask(alpha.pixels);
+      alpha.pixels = null;
+    } else {
+      mask(alpha.pixels);
+    }
   }
 
 
