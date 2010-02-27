@@ -41,6 +41,6 @@ class EmulatorController {
           System.err.println("Emulator interrupted.");
         }
       }
-    });
+    }).start();
   }
 }
