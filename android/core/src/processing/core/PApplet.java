@@ -1012,10 +1012,16 @@ public class PApplet extends Activity implements PConstants, Runnable {
    * <A HREF="http://dev.processing.org/reference/core/javadoc/processing/core/PImage.html#save(java.lang.String)">PImage.save()</A>.
    * </UL>
    */
-  public PGraphics createGraphics(int iwidth, int iheight,
-                                  String irenderer) {
-    PGraphics pg = makeGraphics(iwidth, iheight, irenderer, null, false);
-    //pg.parent = this;  // make save() work
+  public PGraphics createGraphics(int iwidth, int iheight, String irenderer) {
+    PGraphics pg = null;
+    if (irenderer.equals(A2D)) {
+      pg = new PGraphicsAndroid2D();
+    } else if (irenderer.equals(A3D)) {
+      pg = new PGraphicsAndroid3D();
+    }
+    pg.setParent(this);
+    pg.setPrimary(false);
+    pg.setSize(iwidth, iheight);
     return pg;
   }
 
@@ -1025,15 +1031,15 @@ public class PApplet extends Activity implements PConstants, Runnable {
    * for a renderer that writes to a file (such as PDF or DXF).
    * @param ipath can be an absolute or relative path
    */
-  public PGraphics createGraphics(int iwidth, int iheight,
-                                  String irenderer, String ipath) {
-    if (ipath != null) {
-      ipath = savePath(ipath);
-    }
-    PGraphics pg = makeGraphics(iwidth, iheight, irenderer, ipath, false);
-    pg.parent = this;  // make save() work
-    return pg;
-  }
+//  public PGraphics createGraphics(int iwidth, int iheight,
+//                                  String irenderer, String ipath) {
+//    if (ipath != null) {
+//      ipath = savePath(ipath);
+//    }
+//    PGraphics pg = makeGraphics(iwidth, iheight, irenderer, ipath, false);
+//    pg.parent = this;  // make save() work
+//    return pg;
+//  }
 
 
   /**
@@ -1043,36 +1049,36 @@ public class PApplet extends Activity implements PConstants, Runnable {
    * @oaram applet the parent applet object, this should only be non-null
    *               in cases where this is the main drawing surface object.
    */
-  protected PGraphics makeGraphics(int iwidth, int iheight,
-                                   String irenderer, String ipath,
-                                   boolean iprimary) {
-    try {
-      Class<?> rendererClass =
-        Thread.currentThread().getContextClassLoader().loadClass(irenderer);
-
-      Constructor<?> constructor = rendererClass.getConstructor(new Class[] { });
-      PGraphics pg = (PGraphics) constructor.newInstance();
-
-      pg.setParent(this);
-      pg.setPrimary(iprimary);
-      if (ipath != null) pg.setPath(ipath);
-      pg.setSize(iwidth, iheight);
-
-      // everything worked, return it
-      return pg;
-
-    } catch (InvocationTargetException ite) {
-      ite.getTargetException().printStackTrace();
-      Throwable target = ite.getTargetException();
-      throw new RuntimeException(target.getMessage());
-
-    } catch (ClassNotFoundException cnfe) {
-      throw new RuntimeException("You need to use \"Import Library\" " +
-                                 "to add " + irenderer + " to your sketch.");
-    } catch (Exception e) {
-      throw new RuntimeException(e.getMessage());
-    }
-  }
+//  protected PGraphics makeGraphics(int iwidth, int iheight,
+//                                   String irenderer, String ipath,
+//                                   boolean iprimary) {
+//    try {
+//      Class<?> rendererClass =
+//        Thread.currentThread().getContextClassLoader().loadClass(irenderer);
+//
+//      Constructor<?> constructor = rendererClass.getConstructor(new Class[] { });
+//      PGraphics pg = (PGraphics) constructor.newInstance();
+//
+//      pg.setParent(this);
+//      pg.setPrimary(iprimary);
+//      if (ipath != null) pg.setPath(ipath);
+//      pg.setSize(iwidth, iheight);
+//
+//      // everything worked, return it
+//      return pg;
+//
+//    } catch (InvocationTargetException ite) {
+//      ite.getTargetException().printStackTrace();
+//      Throwable target = ite.getTargetException();
+//      throw new RuntimeException(target.getMessage());
+//
+//    } catch (ClassNotFoundException cnfe) {
+//      throw new RuntimeException("You need to use \"Import Library\" " +
+//                                 "to add " + irenderer + " to your sketch.");
+//    } catch (Exception e) {
+//      throw new RuntimeException(e.getMessage());
+//    }
+//  }
 
 
   /**
@@ -6179,25 +6185,25 @@ public class PApplet extends Activity implements PConstants, Runnable {
    * Begin recording to a new renderer of the specified type, using the width
    * and height of the main drawing surface.
    */
-  public PGraphics beginRecord(String renderer, String filename) {
-    filename = insertFrame(filename);
-    PGraphics rec = createGraphics(width, height, renderer, filename);
-    beginRecord(rec);
-    return rec;
-  }
+//  public PGraphics beginRecord(String renderer, String filename) {
+//    filename = insertFrame(filename);
+//    PGraphics rec = createGraphics(width, height, renderer, filename);
+//    beginRecord(rec);
+//    return rec;
+//  }
 
 
   /**
    * Begin recording (echoing) commands to the specified PGraphics object.
    */
-  public void beginRecord(PGraphics recorder) {
-        PGraphics.showMethodWarning("beginRecord");
-  }
+//  public void beginRecord(PGraphics recorder) {
+//    PGraphics.showMethodWarning("beginRecord");
+//  }
 
 
-  public void endRecord() {
-    PGraphics.showMethodWarning("endRecord");
-  }
+//  public void endRecord() {
+//    PGraphics.showMethodWarning("endRecord");
+//  }
 
 
   /**
@@ -6207,12 +6213,12 @@ public class PApplet extends Activity implements PConstants, Runnable {
    * If hashmarks (###) are found in the filename, they'll be replaced
    * by the current frame number (frameCount).
    */
-  public PGraphics beginRaw(String renderer, String filename) {
-    filename = insertFrame(filename);
-    PGraphics rec = createGraphics(width, height, renderer, filename);
-    g.beginRaw(rec);
-    return rec;
-  }
+//  public PGraphics beginRaw(String renderer, String filename) {
+//    filename = insertFrame(filename);
+//    PGraphics rec = createGraphics(width, height, renderer, filename);
+//    g.beginRaw(rec);
+//    return rec;
+//  }
 
 
   /**
@@ -6222,9 +6228,9 @@ public class PApplet extends Activity implements PConstants, Runnable {
    * generated by preproc.pl) for clarity and so that it doesn't echo the
    * command should beginRecord() be in use.
    */
-  public void beginRaw(PGraphics rawGraphics) {
-    g.beginRaw(rawGraphics);
-  }
+//  public void beginRaw(PGraphics rawGraphics) {
+//    g.beginRaw(rawGraphics);
+//  }
 
 
   /**
@@ -6234,9 +6240,9 @@ public class PApplet extends Activity implements PConstants, Runnable {
    * generated by preproc.pl) for clarity and so that it doesn't echo the
    * command should beginRecord() be in use.
    */
-  public void endRaw() {
-    g.endRaw();
-  }
+//  public void endRaw() {
+//    g.endRaw();
+//  }
 
 
   //////////////////////////////////////////////////////////////
