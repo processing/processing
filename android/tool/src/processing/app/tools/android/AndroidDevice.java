@@ -1,14 +1,10 @@
 package processing.app.tools.android;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 import processing.app.debug.RunnerListener;
 import processing.app.tools.android.LogEntry.Severity;
@@ -16,10 +12,8 @@ import processing.app.tools.android.LogEntry.Severity;
 public class AndroidDevice implements AndroidDeviceProperties {
   private final AndroidEnvironment env;
   private final String id;
-  private final AndroidProcesses processes;
-  private final Map<String, List<ProcessOutputListener>> outputListeners = new HashMap<String, List<ProcessOutputListener>>();
-
-  private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+  private final Map<String, List<ProcessOutputListener>> outputListeners = new ConcurrentHashMap<String, List<ProcessOutputListener>>();
+  private final Map<Integer, String> pidToProcessName = new ConcurrentHashMap<Integer, String>();
 
   // mutable state
   private Process logcat;
@@ -27,7 +21,6 @@ public class AndroidDevice implements AndroidDeviceProperties {
   public AndroidDevice(final AndroidEnvironment env, final String id) {
     this.env = env;
     this.id = id;
-    this.processes = new AndroidProcesses(this);
   }
 
   public void bringLauncherToFront() {
@@ -106,7 +99,6 @@ public class AndroidDevice implements AndroidDeviceProperties {
       final String msg = entry.message;
       final Severity sev = entry.severity;
       if (src.equals("ActivityManager") && msg.startsWith("Start proc")) {
-        handleStartProcEntry(entry);
       } else {
         if ((src.equals("AndroidRuntime") && sev == Severity.Error)
             || src.equals("System.out") || src.equals("System.err")) {
@@ -128,7 +120,6 @@ public class AndroidDevice implements AndroidDeviceProperties {
   }
 
   public void initialize() throws IOException, InterruptedException {
-    processes.refresh();
     new ProcessHelper(generateAdbCommand("logcat", "-c")).execute();
     logcat = Runtime.getRuntime().exec(generateAdbCommand("logcat"));
     new StreamPump(logcat.getInputStream()).addTarget(new LogLineProcessor())
@@ -137,10 +128,6 @@ public class AndroidDevice implements AndroidDeviceProperties {
   }
 
   public void shutdown() {
-    for (final PropertyChangeListener pcl : Arrays.asList(pcs
-        .getPropertyChangeListeners())) {
-      pcs.removePropertyChangeListener(pcl);
-    }
     outputListeners.clear();
     if (logcat != null) {
       logcat.destroy();
@@ -154,10 +141,6 @@ public class AndroidDevice implements AndroidDeviceProperties {
 
   public AndroidEnvironment getEnv() {
     return env;
-  }
-
-  public List<AndroidProcess> ps() {
-    return processes.getProcesses();
   }
 
   public void addOutputListener(final String processName,
@@ -181,38 +164,19 @@ public class AndroidDevice implements AndroidDeviceProperties {
       .compile("^Start proc (\\S+) for \\S+ [^:]+: pid=(\\d+).+$");
 
   protected List<ProcessOutputListener> getListeners(final String pid) {
-    final AndroidProcess process = processes.byPid(pid);
-    if (process == null) {
+    final String processName = pidToProcessName.get(pid);
+    if (processName == null) {
       return null;
     }
-    return outputListeners.get(process.name);
-  }
-
-  private void handleStartProcEntry(final LogEntry entry) {
-    final Matcher m = START_PROC.matcher(entry.message);
-    if (m.matches()) {
-      startProc(m.group(1), m.group(2));
-    } else {
-      System.err.println("I don't recognize this start proc message:\n"
-          + entry.message);
-    }
+    return outputListeners.get(processName);
   }
 
   private void startProc(final String name, final String pid) {
-    final AndroidProcess proc = new AndroidProcess(pid, name);
-    processes.refresh();
-    firePropertyChange(APP_STARTED, null, proc);
+    pidToProcessName.put(Integer.valueOf(pid), name);
   }
 
   private void endProc(final String pid) {
-    final AndroidProcess proc = processes.byPid(pid);
-    if (proc == null) {
-      System.err.println("Process " + pid
-          + " ended, but I hadn't known about it.");
-    } else {
-      processes.refresh();
-      firePropertyChange(APP_ENDED, proc, null);
-    }
+    pidToProcessName.remove(Integer.valueOf(pid));
   }
 
   String[] generateAdbCommand(final String... cmd) {
@@ -227,19 +191,6 @@ public class AndroidDevice implements AndroidDeviceProperties {
   @Override
   public String toString() {
     return "[AndroidDevice " + getId() + "]";
-  }
-
-  public void addPropertyChangeListener(final PropertyChangeListener listener) {
-    pcs.addPropertyChangeListener(listener);
-  }
-
-  private void firePropertyChange(final String propertyName,
-                                  final Object oldValue, final Object newValue) {
-    pcs.firePropertyChange(propertyName, oldValue, newValue);
-  }
-
-  public void removePropertyChangeListener(final PropertyChangeListener listener) {
-    pcs.removePropertyChangeListener(listener);
   }
 
 }
