@@ -3077,11 +3077,11 @@ public class PGraphics extends PImage implements PConstants {
                                    int u2, int v2) {
     boolean savedTint = tint;
     int savedTintColor = tintColor;
-    float savedTintR = tintR;
-    float savedTintG = tintG;
-    float savedTintB = tintB;
-    float savedTintA = tintA;
-    boolean savedTintAlpha = tintAlpha;
+//    float savedTintR = tintR;
+//    float savedTintG = tintG;
+//    float savedTintB = tintB;
+//    float savedTintA = tintA;
+//    boolean savedTintAlpha = tintAlpha;
 
 //    tint = true;
 //    tintColor = fillColor;
@@ -3102,7 +3102,7 @@ public class PGraphics extends PImage implements PConstants {
 //    tintA = savedTintA;
 //    tintAlpha = savedTintAlpha;
     if (savedTint) {
-      tint(tintColor);
+      tint(savedTintColor);
     } else {
       noTint();
     }

@@ -877,8 +877,7 @@ public class PGraphicsAndroid2D extends PGraphics {
 
   Rect imageImplSrcRect;
   RectF imageImplDstRect;
-  
-  android.widget.ImageView imv;
+  //android.widget.ImageView imv;
   
   /**
    * Handle renderer-specific image drawing.
