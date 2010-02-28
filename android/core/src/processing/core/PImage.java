@@ -2646,7 +2646,8 @@ public class PImage implements PConstants, Cloneable {
     loadPixels();
 
     try {
-      OutputStream output = parent.createOutput(path);
+      OutputStream output = 
+        new BufferedOutputStream(parent.createOutput(path), 16 * 1024);
 
       String lower = path.toLowerCase();
       String extension = lower.substring(lower.lastIndexOf('.') + 1);
