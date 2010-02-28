@@ -378,6 +378,7 @@ public class PImage implements PConstants, Cloneable {
       this.width = wide;
       this.height = high;
       this.pixels = temp.pixels;
+      this.bitmap = null;
     }
     // Mark the pixels array as altered
     updatePixels();
