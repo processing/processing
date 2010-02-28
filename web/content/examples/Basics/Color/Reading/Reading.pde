@@ -5,38 +5,42 @@
  * The many colors of the image are created through modulating the 
  * red, green, and blue values. This is an exageration of an LCD display. 
  */
- 
+
 size(200, 200);
 noStroke();
 background(0);
 
 // Load an image from the data directory
-PImage c;
-c = loadImage("cait.jpg");
+PImage img = loadImage("cait.jpg");
+img.loadPixels();
 
-int xoff = 0;
-int yoff = 0;
-int p = 2;
-int pix = p*3;
+// figure out how big to make each block based on 
+// the sketch area and the size of the input image
+int eachW = width / img.width;
+int eachH = height / img.height;
+int each = min(eachW, eachH);
+// vertical stripes will be a third as wide
+int stripeW = each / 3;
+// make sure the block size is a multiple of 3
+each = 3 * stripeW;
 
+int left = (width - (img.width * each)) / 2;
+int top = (height - (img.height * each)) / 2;
 
-for(int i = 0; i < c.width*c.height; i += 1) 
-{  
-  int here = c.pixels[i];
+for (int y = 0; y < img.height; y++) {
+  int y1 = top + y*each;
   
-  fill(red(here), 0, 0);
-  rect(xoff, yoff, p, pix);
-  
-  fill(0, green(here), 0);
-  rect(xoff+p, yoff, p, pix);
-  
-  fill(0, 0, blue(here));
-  rect(xoff+p*2, yoff, p, pix);
-  
-  xoff+=pix;
-  if(xoff >= width-pix) {
-    xoff = 0;
-    yoff += pix;
+  for (int x = 0; x < img.width; x++) {
+    int pixel = img.get(x, y);
+    int x1 = left + x*each;
+    
+    fill(red(pixel), 0, 0);
+    rect(x1 + stripeW*0, y1, stripeW, each);
+    
+    fill(0, green(pixel), 0);
+    rect(x1 + stripeW*1, y1, stripeW, each);
+
+    fill(0, 0, blue(pixel));
+    rect(x1 + stripeW*2, y1, stripeW, each);
   }
 }
-
