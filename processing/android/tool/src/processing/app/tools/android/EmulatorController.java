@@ -29,6 +29,12 @@ class EmulatorController {
     final Process p = Runtime.getRuntime().exec(cmd);
     // "emulator: ERROR: the user data image is used by another emulator. aborting"
     // make sure that the streams are drained properly
+    Runtime.getRuntime().addShutdownHook(new Thread() {
+      @Override
+      public void run() {
+        p.destroy();
+      }
+    });
     new StreamPump(p.getInputStream()).addTarget(System.out).start();
     new StreamPump(p.getErrorStream()).addTarget(System.err).start();
     new Thread(new Runnable() {
@@ -41,6 +47,6 @@ class EmulatorController {
           System.err.println("Emulator interrupted.");
         }
       }
-    }).start();
+    }, "Emulator Babysitter").start();
   }
 }
