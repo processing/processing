@@ -23,6 +23,9 @@ X fix rotate() bug (was using degrees instead of radians)
 X arc() now working properly
 X createGraphics() works, at least with A2D (or aliases P2D and JAVA2D)
 
+_ Examples > Topics > Effects > Wormhole - needs work, something with resize()
+_   resize() needs to use the android resize stuff, rather than expensive copy()
+
 _ make size() work to place the component at the center of the screen
 _ make size() work to change the renderer
 _ if sketchRenderer() et al are used in android, need to add to desktop
@@ -41,9 +44,26 @@ _ reset adb
 _ something to bring up the full console window
 _ signing tool
 _ selection of which avd (emulator), or plugged-in devices (if multiple)
+_ run the 'android' application (since users won't be able to find
 
 _ make sure that user can't hit 'Run' several times
 _   currently things just keep restarting the build
+_ "Sketch started on emulator" in spite of the emulator only halfway booted
+_ errors in ActivityManager aren't coming through
+_ if AVD is deleted while processing still running, things flake out
+_   also no error messages, just 'giving up on launching emulator
+_ stack overflow produced no error inside the PDE
+_ when out of memory, need an error message to show up in the PDE
+_ Examples > Topics > Drawing > Animator produces:
+_   Uncaught handler: thread Animation Thread exiting due to uncaught exception
+_   java.lang.OutOfMemoryError: bitmap size exceeds VM budget
+_     at android.graphics.Bitmap.nativeCreate(Native Method)
+_ if hitting 'run' in p5, need to kill any sketch that's currently running
+
+_ errors that cause a crash when setting sketchPath
+_   seems to be a filesystem that got too full
+_   no real signs of what went wrong, but deleting the avd fixed it
+_   if it reappears again, trap that condition, and tell the user the fix
 
 _ Errors show up that .java files are duplicates with the Android tools.
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1472
@@ -172,11 +192,21 @@ P3 _   with different machines, users are required to remove signature
 P3 _   add a method to remove an application if the debug key is different
 P3 _     perhaps the first time an application is installed, remove it?
 P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1481
+
+P4 _ when returning to the application after link(), screen stays blank
+P4 _   http://dev.processing.org/bugs/show_bug.cgi?id=1484
 P4 _ excessive rotation of application causes memory to run out
 P4 _   this probably means that some memory isn't being freed that should be
 P4 _   new window and surfaceview objects are being created in onCreate
 P4 _     so they should probably be taken down in onDestroy.. but how?
 P4 _   http://dev.processing.org/bugs/show_bug.cgi?id=1480
+P4 _ "The application ... has stopped unexpectedly." when quitting a slow app
+P4 _   http://dev.processing.org/bugs/show_bug.cgi?id=1485
+P4 _ values for pmouseX/Y aren't great
+P4 _   Examples > Topics > Drawing > Continuous Lines shows gaps
+P4 _   http://dev.processing.org/bugs/show_bug.cgi?id=1486
+
+P5 _ Examples > Topics > Effects > Lens uses a ton of memory
 
 
 OPTIMIZE
@@ -199,3 +229,14 @@ _ show/hide the virtual keyboard
 InputMethodManager imm = 
   (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 imm.showSoftInput(surfaceView, 0);
+
+_ list contents of data folder (assets folder)
+      try {
+        PApplet.println(assets.list(""));
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+
+_ excessive memory use indicator
+_   D/dalvikvm( 1205): GC freed 814 objects / 523352 bytes in 58ms
+_   could help show when lots of memory are being used
