@@ -3506,10 +3506,36 @@ public class PApplet extends Activity implements PConstants, Runnable {
       }
     } catch (IOException e) {
       // ignore this and move on
-      e.printStackTrace();
+      //e.printStackTrace();
     }
     
-    // Attempt to load from a file directly from storage.
+    // Maybe this is an absolute path, didja ever think of that?
+    File absFile = new File(filename);
+    if (absFile.exists()) {
+      try {
+        stream = new FileInputStream(absFile);
+        if (stream != null) {
+          return stream;
+        }
+      } catch (FileNotFoundException fnfe) {
+        //fnfe.printStackTrace();
+      }
+    }
+    
+    // Maybe this is a file that was written by the sketch on another occasion. 
+    File sketchFile = new File(sketchPath(filename));
+    if (sketchFile.exists()) {
+      try {
+        stream = new FileInputStream(sketchFile);
+        if (stream != null) {
+          return stream;
+        }
+      } catch (FileNotFoundException fnfe) {
+        //fnfe.printStackTrace();
+      }
+    }
+    
+    // Attempt to load the file more directly. Doesn't like paths.
     Context context = getApplicationContext();
     try {
       // MODE_PRIVATE is default, should we use something else?
@@ -3519,7 +3545,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
       }
     } catch (FileNotFoundException e) {
       // ignore this and move on
-      e.printStackTrace();
+      //e.printStackTrace();
     }
 
     return null;
@@ -3671,15 +3697,26 @@ public class PApplet extends Activity implements PConstants, Runnable {
    */
   public OutputStream createOutput(String filename) {
     try {
-      //return createOutput(saveFile(filename));
-      Context context = getApplicationContext();
-      // MODE_PRIVATE is default, should we use that instead?
-      return context.openFileOutput(filename, MODE_WORLD_READABLE);
+      // in spite of appearing to be the 'correct' option, this doesn't allow
+      // for paths, so no subfolders, none of that savePath() goodness.  
+//      Context context = getApplicationContext();
+//      // MODE_PRIVATE is default, should we use that instead?
+//      return context.openFileOutput(filename, MODE_WORLD_READABLE);
 
-    } catch (Exception e) {
+      File file = new File(filename);
+      if (!file.isAbsolute()) {
+        file = new File(sketchPath(filename));
+      }
+      FileOutputStream fos = new FileOutputStream(file);
+      if (file.getName().toLowerCase().endsWith(".gz")) {
+        return new GZIPOutputStream(fos);
+      }
+      return fos;
+
+    } catch (IOException e) {
       e.printStackTrace();
-      return null;
     }
+    return null;
   }
 
 
