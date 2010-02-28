@@ -13,15 +13,15 @@ float ymin = -2;
 float wh = 4;
 
 void setup() {
-  size(200, 200);
+  size(200, 200, P2D);
   noLoop();
   background(255);
+  // Make sure we can write to the pixels[] array. 
+  // Only need to do this once since we don't do any other drawing.
+  loadPixels();
 }
 
 void draw() {
-
-  loadPixels();
-  
   // Maximum number of iterations for each point on the complex plane
   int maxiterations = 200;
 
@@ -36,10 +36,10 @@ void draw() {
 
   // Start y
   float y = ymin;
-  for(int j = 0; j < height; j++) {
+  for (int j = 0; j < height; j++) {
     // Start x
     float x = xmin;
-    for(int i = 0;  i < width; i++) {
+    for (int i = 0;  i < width; i++) {
       
       // Now we test, as we iterate z = z^2 + cm does z tend towards infinity?
       float a = x;
