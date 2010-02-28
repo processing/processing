@@ -14,15 +14,14 @@ String words[] = {
   "waiting to be read..."
 };
 
-void setup()
-{
+void setup() {
   size(640, 360, P3D);
   
   // Array of line objects
   lns = new Line[8];
 
   // Load the font from the sketch's data directory
-  textFont(loadFont("Univers66.vlw.gz"), 1.0);
+  textFont(loadFont("Univers-66.vlw"), 1.0);
 
   // White type
   fill(255);
@@ -36,8 +35,7 @@ void setup()
   }
 }
 
-void draw()
-{
+void draw() {
   background(0);
   
   translate(-200, -50, -450);
