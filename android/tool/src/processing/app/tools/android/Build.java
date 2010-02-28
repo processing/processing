@@ -15,6 +15,7 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
 import processing.app.Base;
 import processing.app.Editor;
+import processing.app.Preferences;
 import processing.app.Sketch;
 import processing.app.debug.RunnerException;
 import processing.app.preproc.PdePreprocessor;
@@ -363,7 +364,6 @@ class Build {
   }
 
   class Preproc extends PdePreprocessor {
-
     @Override
     public int writeImports(final PrintStream out) {
       out.println("package " + getPackageName() + ";");
@@ -379,12 +379,28 @@ class Build {
 
     @Override
     public String[] getDefaultImports() {
-      return new String[] {
-      // Currently, no additional imports for Android APIs,
-      // though we should probably add MotionEvent and others soon.
+      final String prefsLine = Preferences.get("android.preproc.imports.list");
+      if (prefsLine != null) {
+        return PApplet.splitTokens(prefsLine, ", ");
+      }
+
       // In the future, this may include standard classes for phone or
-      // accelerometer access within the Android APIs.
+      // accelerometer access within the Android APIs. This is currently living
+      // in code rather than preferences.txt because Android mode needs to 
+      // maintain its independence from the rest of processing.app.
+      final String[] androidImports = new String[] {
+        "android.view.MotionEvent", "android.view.KeyEvent",
+        "android.graphics.Bitmap", //"java.awt.Image",
+        "java.io.*", // for BufferedReader, InputStream, etc
+        //"java.net.*", "java.text.*", // leaving otu for now
+        "java.util.*" // for ArrayList and friends
+      //"java.util.zip.*", "java.util.regex.*" // not necessary w/ newer i/o
       };
+
+      Preferences.set("android.preproc.imports.list", PApplet.join(
+        androidImports, ","));
+
+      return androidImports;
     }
   }
 
