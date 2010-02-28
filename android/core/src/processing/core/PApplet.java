@@ -3012,8 +3012,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
     if (lowerName.endsWith(".otf") || lowerName.endsWith(".ttf")) {
       AssetManager assets = getBaseContext().getAssets();
-      baseFont = Typeface.createFromAsset(assets, "data/" + name);
-
+      baseFont = Typeface.createFromAsset(assets, name);
     } else {
       baseFont = PFont.findTypeface(name);
     }
