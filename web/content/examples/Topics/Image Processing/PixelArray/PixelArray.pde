@@ -5,59 +5,44 @@
  * press and hold any key to see the current pixel being read. 
  * This program sequentially reads the color of every pixel of an image
  * and displays this color to fill the window.  
+ * 
+ * Updated 28 February 2010.
  */
  
-PImage a;
-int[] aPixels;
+PImage img;
 int direction = 1;
-boolean onetime = true;
 float signal;
 
-void setup() 
-{
+void setup() {
   size(200, 200);
-  aPixels = new int[width*height];
   noFill();
   stroke(255);
   frameRate(30);
-  a = loadImage("ystone08.jpg");
-  for(int i=0; i<width*height; i++) {
-    aPixels[i] = a.pixels[i];
-  }
+  img = loadImage("ystone08.jpg");
 }
 
-void draw() 
-{
-  if (signal > width*height-1 || signal < 0) { 
+void draw() {
+  if (signal > img.width*img.height-1 || signal < 0) { 
     direction = direction * -1; 
   }
 
-  if(mousePressed) {
-    if(mouseY > height-1) { mouseY = height-1; }
-    if(mouseY < 0) { mouseY = 0; }
-    signal = mouseY*width+mouseX;
+  if (mousePressed) {
+    int mx = constrain(mouseX, 0, img.width-1);
+    int my = constrain(mouseY, 0, img.height-1);
+    signal = my*img.width + mx;
   } else {
-    signal += (0.33*direction);  
+    signal += 0.33*direction;
   }
-  
-  if(keyPressed) {
-    loadPixels();
-    for (int i=0; i<width*height; i++) { 
-      pixels[i] = aPixels[i];  
-    }
-    updatePixels();
-    rect(signal%width-5, int(signal/width)-5, 10, 10);
-    point(signal%width, int(signal/width));
+
+  int sx = int(signal) % img.width;
+  int sy = int(signal) / img.width;
+
+  if (keyPressed) {
+    set(0, 0, img);  // fast way to draw an image
+    point(sx, sy);
+    rect(sx - 5, sy - 5, 10, 10);
   } else {
-    loadPixels();
-    for (int i=0; i<width*height; i++) { 
-      pixels[i] = aPixels[int(signal)];
-    }
-    updatePixels();
+    color c = img.get(sx, sy);
+    background(c);
   }
 }
-
-
-
-
-
