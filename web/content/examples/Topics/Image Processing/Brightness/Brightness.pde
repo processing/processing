@@ -12,10 +12,13 @@ void setup() {
   size(200, 200);
   frameRate(30);
   img = loadImage("wires.jpg");
+  img.loadPixels();
+  // Only need to load the pixels[] array once, because we're only
+  // manipulating pixels[] inside draw(), not drawing shapes.
+  loadPixels();
 }
 
 void draw() {
-  loadPixels();
   for (int x = 0; x < img.width; x++) {
     for (int y = 0; y < img.height; y++ ) {
       // Calculate the 1D location from a 2D grid
@@ -39,7 +42,7 @@ void draw() {
       // Make a new color and set pixel in the window
       //color c = color(r,g,b);
       color c = color(r);
-      pixels[loc] = c;
+      pixels[y*width + x] = c;
     }
   }
   updatePixels();

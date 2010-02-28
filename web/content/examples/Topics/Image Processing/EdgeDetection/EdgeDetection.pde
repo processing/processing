@@ -22,7 +22,7 @@ for (int y = 1; y < img.height-1; y++) { // Skip top and bottom edges
     for (int ky = -1; ky <= 1; ky++) {
       for (int kx = -1; kx <= 1; kx++) {
         // Calculate the adjacent pixel for this kernel point
-        int pos = (y + ky)*width + (x + kx);
+        int pos = (y + ky)*img.width + (x + kx);
         // Image is grayscale, red/green/blue are identical
         float val = red(img.pixels[pos]);
         // Multiply adjacent pixels based on the kernel values
