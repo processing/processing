@@ -364,6 +364,7 @@ public class PImage implements PConstants, Cloneable {
       width = 0;  // Gimme a break, don't waste my time
       height = 0;
       pixels = new int[0];
+      bitmap = null;
 
     } else {
       if (wide == 0) {  // Use height to determine relative size
