@@ -27,7 +27,7 @@ import java.util.concurrent.FutureTask;
  * @author Jonathan Feinberg &lt;jdf@pobox.com&gt;
  *
  */
-public class AndroidEnvironment implements AndroidEnvironmentProperties {
+class AndroidEnvironment implements AndroidEnvironmentProperties {
   private static final AndroidEnvironment INSTANCE = new AndroidEnvironment();
 
   public static AndroidEnvironment getInstance() {
@@ -39,17 +39,18 @@ public class AndroidEnvironment implements AndroidEnvironmentProperties {
       .newSingleThreadExecutor();
 
   public static void killAdbServer() {
-    System.err.println("Killing server");
+    System.err.println("Attempting to shut down existing adb server...");
     try {
       new ProcessHelper("adb", "kill-server").execute();
-      System.err.println("Dead");
+      System.err.println("...it's dead, or at least not at all well.");
     } catch (final Exception e) {
       e.printStackTrace(System.err);
     }
   }
 
   private AndroidEnvironment() {
-    System.err.println("Startup AndroidEnvironment");
+    System.err.println("Starting up AndroidEnvironment");
+    killAdbServer();
     try {
       new ProcessHelper("adb", "start-server").execute();
     } catch (final Exception e) {
@@ -64,12 +65,13 @@ public class AndroidEnvironment implements AndroidEnvironmentProperties {
       });
   }
 
-  protected void shutdown() {
+  private void shutdown() {
     System.err.println("Shutting down AndroidEnvironment");
     for (final AndroidDevice device : new ArrayList<AndroidDevice>(devices
         .values())) {
       device.shutdown();
     }
+    killAdbServer();
   }
 
   public Future<AndroidDevice> getEmulator() {
@@ -188,7 +190,7 @@ public class AndroidEnvironment implements AndroidEnvironmentProperties {
     }
   }
 
-  static final String ADB_DEVICES_ERROR = "Received unfamiliar output from “adb devices”.\n"
+  private static final String ADB_DEVICES_ERROR = "Received unfamiliar output from “adb devices”.\n"
       + "The device list may have errors.";
 
   /**
