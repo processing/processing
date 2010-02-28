@@ -1,6 +1,8 @@
 0178 pde
 X write implementation for get/set methods inside PImage (w/o pixels[])
 
+_ error that sketch is read-only can't be canceled
+_   hitting cancel (or ESC?) still brings up the save dialog
 
 _ make sure that get() and set() (for pixels and subsets) work w/ loaded images
 _ make sure that get() and set() (for pixels and subsets) work w/ P2D

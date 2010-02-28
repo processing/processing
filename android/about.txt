@@ -21,7 +21,9 @@
 
 + The mouseButton variable is not available, for perhaps obvious reasons.
 
-+ beginRecord, endRecord, beginRaw, endRaw are not available on Android.
++ beginRecord, endRecord, beginRaw, endRaw are not available. There are no
+  plans to include them, because it doesn't make sense to use them to export
+  geometry on a handheld or portable device.
 
 + Watch out for rollovers. While commonly used in mouse-based interfaces, 
   they don't make any sense for touch interfaces. Lots of sketches (most
@@ -64,6 +66,10 @@
   in Processing code, it's better to simply remove them and let advanced users
   who would otherwise rely on the events to handle the overrides themselves.
 
++ Android seems to have a very shallow stack depth, perhaps ~32 calls. 
+  As a result, you might get StackOverflowError in code that worked fine
+  with the Java version of Processing.
+
 + Registering methods (registerPost(), registerDraw(), etc) is not supported.
   Too much overhead for too little benefit.
 
@@ -89,3 +95,8 @@
 + To use the virtual keyboard, hold down the MENU key on the device. This 
   is an Android default, but some users might not be familiar with it.
 
++ Using createFont() (instead of loadFont) can help improve text quality, 
+  particularly with 2D rendering. Use PFont.list() to get a list of available
+  fonts on the system, and select one of those, or include a .ttf or .otf 
+  file in the data directory of your sketch. If you use createFont() on a
+  typeface that is not installed, rendering quality will be poor.
