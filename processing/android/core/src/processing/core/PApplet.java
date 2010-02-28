@@ -1600,6 +1600,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
     }
 
     keyCode = event.getKeyCode();
+//    println(key + " " + keyCode);
 
     int action = event.getAction();
     if (action == KeyEvent.ACTION_DOWN) {
@@ -1611,11 +1612,12 @@ public class PApplet extends Activity implements PConstants, Runnable {
     }
 
     // if someone else wants to intercept the key, they should
-    // set key to zero (or something besides the ESC).
-//    if (event.getID() == KeyEvent.KEY_PRESSED) {
-//      if (key == KeyEvent.VK_ESCAPE) {
-//        exit();
-//      }
+    // set key to zero (or something besides the "ESC").
+    if (action == KeyEvent.ACTION_DOWN) {
+      if (key == KeyEvent.KEYCODE_BACK) {
+        exit();
+      }
+    }
       // When running tethered to the Processing application, respond to
       // Ctrl-W (or Cmd-W) events by closing the sketch. Disable this behavior
       // when running independently, because this sketch may be one component
