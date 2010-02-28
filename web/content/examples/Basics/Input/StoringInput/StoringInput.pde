@@ -6,35 +6,33 @@
  * into an array and played back every frame. Between each
  * frame, the newest value are added to the end of each array
  * and the oldest value is deleted. 
+ * 
+ * Updated 27 February 2010.
  */
  
 int num = 60;
 float mx[] = new float[num];
 float my[] = new float[num];
 
-void setup() 
-{
+void setup() {
   size(200, 200);
   smooth();
   noStroke();
   fill(255, 153); 
 }
 
-void draw() 
-{
+void draw() {
   background(51); 
   
-  // Reads throught the entire array
-  // and shifts the values to the left
-  for(int i=1; i<num; i++) {
-    mx[i-1] = mx[i];
-    my[i-1] = my[i];
-  } 
-  // Add the new values to the end of the array
-  mx[num-1] = mouseX;
-  my[num-1] = mouseY;
+  // Cycle through the array, using a different entry on each frame. 
+  // Using modulo (%) like this is faster than moving all the values over.
+  int which = frameCount % num;
+  mx[which] = mouseX;
+  my[which] = mouseY;
   
-  for(int i=0; i<num; i++) {
-    ellipse(mx[i], my[i], i/2, i/2);
+  for (int i = 0; i < num; i++) {
+    // which+1 is the smallest (the oldest in the array)
+    int index = (which+1 + i) % num;
+    ellipse(mx[index], my[index], i/2, i/2);
   }
 }
