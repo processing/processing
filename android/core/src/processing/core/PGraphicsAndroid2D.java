@@ -1826,13 +1826,12 @@ public class PGraphicsAndroid2D extends PGraphics {
         src.bitmap.setPixels(src.pixels, 0, src.width, 0, 0, src.width, src.height);
         src.modified = false;
       }
+      // set() happens in screen coordinates, so need to clear the ctm 
+      canvas.save(Canvas.MATRIX_SAVE_FLAG);
+      canvas.setMatrix(null);  // set to identity
+      canvas.drawBitmap(src.bitmap, x, y, null);
+      canvas.restore();
     }
-
-    // set() happens in screen coordinates, so need to clear the ctm 
-    canvas.save(Canvas.MATRIX_SAVE_FLAG);
-    canvas.setMatrix(null);  // set to identity
-    canvas.drawBitmap(src.bitmap, x, y, null);
-    canvas.restore();
   }
 
   
