@@ -23,11 +23,12 @@ int[][] angleTable;
 int[][] shadeTable;
 int w, h;
 
-void setup(){
+void setup() {
   size(640, 360);
   
   // Load texture 512 x 512
-  textureImg=loadImage("red_smoke.jpg");
+  textureImg = loadImage("red_smoke.jpg");
+  textureImg.loadPixels();
 
   // Create buffer screen
   tunnelEffect = createGraphics(320, 200, P2D);
