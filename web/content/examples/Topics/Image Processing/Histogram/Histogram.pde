@@ -5,42 +5,38 @@
  * A histogram is the frequency distribution 
  * of the gray levels with the number of pure black values
  * displayed on the left and number of pure white values on the right. 
+ * 
+ * Updated 28 February, 2010.
+ * Note that this sketch will behave differently on Android, 
+ * since most images will no longer be full 24-bit color.
  */
  
 size(200, 200);
-colorMode(RGB, width);
-
-int[] hist = new int[width];
 
 // Load an image from the data directory
 // Load a different image by modifying the comments
-PImage a;
-a = loadImage("cdi01_g.jpg");
-image(a, 0, 0);
+PImage img = loadImage("cdi01_g.jpg");
+image(img, 0, 0);
+int[] hist = new int[256];
 
 // Calculate the histogram
-for (int i=0; i<width; i++) {
-  for (int j=0; j<height; j++) {
-    hist[int(red(get(i, j)))]++; 
+for (int i = 0; i < img.width; i++) {
+  for (int j = 0; j < img.height; j++) {
+    int bright = int(brightness(get(i, j)));
+    hist[bright]++; 
   }
-} 
+}
 
 // Find the largest value in the histogram
-float maxval = 0;
-for (int i=0; i<width; i++) {
-  if(hist[i] > maxval) {
-    maxval = hist[i];
-  }  
-}
+int histMax = max(hist);
 
-// Normalize the histogram to values between 0 and "height"
-for (int i=0; i<width; i++) {
-  hist[i] = int(hist[i]/maxval * height);
-}
-
+stroke(255);
 // Draw half of the histogram (skip every second value)
-stroke(width);
-for (int i=0; i<width; i+=2) {
-  line(i, height, i, height-hist[i]);
+for (int i = 0; i < img.width; i += 2) {
+  // Map i (from 0..img.width-1) to a location in the histogram (0..255)
+  int which = int(map(i, 0, img.width, 0, 255));
+  // Convert the histogram value to a location between 
+  // the bottom and the top of the picture
+  int y = int(map(hist[which], 0, histMax, img.height, 0));
+  line(i, img.height, i, y);
 }
-
