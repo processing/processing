@@ -38,6 +38,7 @@ import java.util.regex.*;
 import java.util.zip.*;
 
 import android.app.Activity;
+import android.net.Uri;
 import android.opengl.GLSurfaceView;
 import android.text.format.Time;
 import android.util.DisplayMetrics;
@@ -1900,6 +1901,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
    * yet have a standard method for launching URLs.
    */
   public void link(String url, String frameTitle) {
+    Intent viewIntent = new Intent("android.intent.action.VIEW", Uri.parse(url));
+    startActivity(viewIntent);
   }
 
 
@@ -3018,6 +3021,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
     }
     return new PFont(baseFont, round(size), smooth, charset);
   }
+
+
   
   //////////////////////////////////////////////////////////////
   
@@ -6268,6 +6273,25 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  private void tellPDE(final String message) {
+    Log.i(getComponentName().getPackageName(), "PROCESSING " + message);
+  }
+
+
+  @Override
+  protected void onStart() {
+    tellPDE("onStart");
+    super.onStart();
+  }
+
+
+  @Override
+  protected void onStop() {
+    tellPDE("onStop");
+    super.onStop();
+  }
+
+  
   //////////////////////////////////////////////////////////////
 
   // everything below this line is automatically generated. no touch.
@@ -7360,21 +7384,5 @@ public class PApplet extends Activity implements PConstants, Runnable {
                     int sx, int sy, int sw, int sh,
                     int dx, int dy, int dw, int dh, int mode) {
     g.blend(src, sx, sy, sw, sh, dx, dy, dw, dh, mode);
-  }
-
-  private void tellPDE(final String message)
-  {
-    Log.i(getComponentName().getPackageName(), "PROCESSING " + message);
-  }
-  @Override
-  protected void onStart() {
-    tellPDE("onStart");
-    super.onStart();
-  }
-  
-  @Override
-  protected void onStop() {
-    tellPDE("onStop");
-    super.onStop();
   }
 }
