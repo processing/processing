@@ -23,6 +23,9 @@ X fix rotate() bug (was using degrees instead of radians)
 X arc() now working properly
 X createGraphics() works, at least with A2D (or aliases P2D and JAVA2D)
 
+
+_ get core.zip out of svn (once tool is separate, modes stuff working etc)
+
 _ Examples > Topics > Effects > Wormhole - needs work, something with resize()
 _   resize() needs to use the android resize stuff, rather than expensive copy()
 
