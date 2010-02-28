@@ -919,12 +919,6 @@ public class PGraphicsAndroid2D extends PGraphics {
   protected void imageImpl(PImage src,
                            float x1, float y1, float x2, float y2,
                            int u1, int v1, int u2, int v2) {
-//    pushStyle();
-//    rectMode(CORNERS);
-//    noStroke();
-//    rect(x1, y1, x2, y2);
-//    popStyle();
-//    if (true) return;
 
     if (src.bitmap == null && src.format == ALPHA) {
       // create an alpha bitmap for this feller
@@ -937,48 +931,41 @@ public class PGraphicsAndroid2D extends PGraphics {
       src.modified = false;
     }
 
-    //if (who.bitmap == null && (who.format == ARGB || who.format == RGB)) {
-    if (src.bitmap == null) {  // format is ARGB or RGB
-      int offset = v1*src.width + u1;
-//      System.out.println(tint + " " + PApplet.hex(tintPaint.getColor()));
-//      System.out.println(src.pixels + " " + src.width + " " + src.height);
-      canvas.drawBitmap(src.pixels, offset, src.width,
-                        x1, y1, u2-u1, v2-v1,
-                        src.format == ARGB, tint ? tintPaint : null);
-    } else {
-//      rect.set(x1, y1, x2, y2);
-      if (src.width != src.bitmap.getWidth() || 
-          src.height != src.bitmap.getHeight()) {
-//        System.out.println("creating bitmap " + who.format + " " + 
-//                           who.width + "x" + who.height);
-        src.bitmap = Bitmap.createBitmap(src.width, src.height, Config.ARGB_8888);
-//        who.bitmap = 
-//          Bitmap.createBitmap(who.width, who.height, 
-//                              who.format == ALPHA ? Config.ALPHA_8 : Config.ARGB_8888);
-        src.modified = true;
-      }
-      if (src.modified) {
-        //System.out.println("mutable, recycled = " + who.bitmap.isMutable() + ", " + who.bitmap.isRecycled());
-        if (!src.bitmap.isMutable()) {
-          src.bitmap = Bitmap.createBitmap(src.width, src.height, Config.ARGB_8888);
-        }
-        src.bitmap.setPixels(src.pixels, 0, src.width, 0, 0, src.width, src.height);
-        src.modified = false;
-      } 
-
-      if (imageImplSrcRect == null) {
-        imageImplSrcRect = new Rect(u1, v1, u2, v2);
-        imageImplDstRect = new RectF(x1, y1, x2, y2);
-      } else {
-        imageImplSrcRect.set(u1, v1, u2, v2);
-        imageImplDstRect.set(x1, y1, x2, y2);
-      }
-      //canvas.drawBitmap(who.bitmap, imageImplSrcRect, imageImplDstRect, tint ? tintPaint : null);
-      //System.out.println(PApplet.hex(fillPaint.getColor()));
-      //canvas.drawBitmap(who.bitmap, imageImplSrcRect, imageImplDstRect, fillPaint);
-//      System.out.println("drawing lower, tint = " + tint + " " + PApplet.hex(tintPaint.getColor()));
-      canvas.drawBitmap(src.bitmap, imageImplSrcRect, imageImplDstRect, tint ? tintPaint : null);
+    // this version's not usable because it doesn't allow you to set output w/h
+//    if (src.bitmap == null) {  // format is ARGB or RGB
+//      int offset = v1*src.width + u1;
+//      canvas.drawBitmap(src.pixels, offset, src.width,
+//                        x1, y1, u2-u1, v2-v1,
+//                        src.format == ARGB, tint ? tintPaint : null);
+//    } else {
+    
+    if (src.bitmap == null ||
+        src.width != src.bitmap.getWidth() || 
+        src.height != src.bitmap.getHeight()) {
+      src.bitmap = Bitmap.createBitmap(src.width, src.height, Config.ARGB_8888);
+      src.modified = true;
     }
+    if (src.modified) {
+      //System.out.println("mutable, recycled = " + who.bitmap.isMutable() + ", " + who.bitmap.isRecycled());
+      if (!src.bitmap.isMutable()) {
+        src.bitmap = Bitmap.createBitmap(src.width, src.height, Config.ARGB_8888);
+      }
+      src.bitmap.setPixels(src.pixels, 0, src.width, 0, 0, src.width, src.height);
+      src.modified = false;
+    } 
+
+    if (imageImplSrcRect == null) {
+      imageImplSrcRect = new Rect(u1, v1, u2, v2);
+      imageImplDstRect = new RectF(x1, y1, x2, y2);
+    } else {
+      imageImplSrcRect.set(u1, v1, u2, v2);
+      imageImplDstRect.set(x1, y1, x2, y2);
+    }
+    //canvas.drawBitmap(who.bitmap, imageImplSrcRect, imageImplDstRect, tint ? tintPaint : null);
+    //System.out.println(PApplet.hex(fillPaint.getColor()));
+    //canvas.drawBitmap(who.bitmap, imageImplSrcRect, imageImplDstRect, fillPaint);
+    //      System.out.println("drawing lower, tint = " + tint + " " + PApplet.hex(tintPaint.getColor()));
+    canvas.drawBitmap(src.bitmap, imageImplSrcRect, imageImplDstRect, tint ? tintPaint : null);
   }
 
 
