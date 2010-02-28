@@ -44,6 +44,7 @@ class AndroidDevice implements AndroidDeviceProperties {
 
   // safe to just always include the -r (reinstall) flag
   public boolean installApp(final String apkPath, final RunnerListener status) {
+    bringLauncherToFront();
     try {
       final ProcessHelper p = new ProcessHelper(generateAdbCommand("install",
         "-r", // safe to always use -r switch
