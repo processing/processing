@@ -8,31 +8,29 @@
  * method to convert your values. For example: scale(radians(90))
  * is identical to the statement scale(PI/2). 
  */
- 
-void setup()
-{
-  size(200,200);
+
+float angle;
+float jitter;
+
+void setup() {
+  size(200, 200);
+  smooth();
   noStroke();
   fill(255);
+  rectMode(CENTER);
   frameRate(30);
 }
 
-float angle;
-float cosine;
-float jitter;
-
-void draw()
-{
+void draw() {
   background(102);
-  
-  if(second()%2 == 0){
-    jitter = (random(-0.1, 0.1));
+
+  // during even-numbered seconds (0, 2, 4, 6...)
+  if (second() % 2 == 0) {  
+    jitter = random(-0.1, 0.1);
   }
   angle = angle + jitter;
-  cosine = cos(angle);
-  
+  float c = cos(angle);
   translate(width/2, height/2);
-  rotate(cosine);
-  rectMode(CENTER);
+  rotate(c);
   rect(0, 0, 115, 115);   
 }
