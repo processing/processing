@@ -27,7 +27,7 @@ import java.util.concurrent.FutureTask;
  * @author Jonathan Feinberg &lt;jdf@pobox.com&gt;
  *
  */
-class AndroidEnvironment implements AndroidEnvironmentProperties {
+class AndroidEnvironment {
   private static final AndroidEnvironment INSTANCE = new AndroidEnvironment();
 
   public static AndroidEnvironment getInstance() {
@@ -39,11 +39,14 @@ class AndroidEnvironment implements AndroidEnvironmentProperties {
       .newSingleThreadExecutor();
 
   public static void killAdbServer() {
-    System.err.println("Attempting to shut down existing adb server...");
+    System.err.print("Shutting down any existing adb server...");
+    System.err.flush();
     try {
       new ProcessHelper("adb", "kill-server").execute();
-      System.err.println("...it's dead, or at least not at all well.");
+      System.err.println("OK.");
     } catch (final Exception e) {
+      System.err.println("failed.");
+      System.err.println();
       e.printStackTrace(System.err);
     }
   }
@@ -51,9 +54,14 @@ class AndroidEnvironment implements AndroidEnvironmentProperties {
   private AndroidEnvironment() {
     System.err.println("Starting up AndroidEnvironment");
     killAdbServer();
+    System.err.print("Starting up fresh adb server...");
+    System.err.flush();
     try {
       new ProcessHelper("adb", "start-server").execute();
+      System.err.println("OK.");
     } catch (final Exception e) {
+      System.err.println("failed.");
+      System.err.println();
       e.printStackTrace(System.err);
     }
     Runtime.getRuntime().addShutdownHook(
