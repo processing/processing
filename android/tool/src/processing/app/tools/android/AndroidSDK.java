@@ -1,13 +1,19 @@
 package processing.app.tools.android;
 
 import java.io.File;
+import java.io.IOException;
+import javax.swing.JOptionPane;
+import processing.app.Base;
+import processing.app.Editor;
+import processing.app.Platform;
+import processing.app.Preferences;
 
 class AndroidSDK {
   private final File sdk;
   private final File tools;
   private final File androidTool;
 
-  public AndroidSDK(final String sdkPath) throws BadSDKException {
+  public AndroidSDK(final String sdkPath) throws BadSDKException, IOException {
     sdk = new File(sdkPath);
     if (!sdk.exists()) {
       throw new BadSDKException(sdk + " does not exist");
@@ -19,6 +25,11 @@ class AndroidSDK {
     }
 
     androidTool = findAndroidTool(tools);
+
+    final Platform p = Base.getPlatform();
+    p.setenv("ANDROID_SDK", sdk.getCanonicalPath());
+    p.setenv("PATH", tools.getCanonicalPath() + File.pathSeparator
+        + p.getenv("PATH"));
   }
 
   public File getAndroidTool() {
@@ -50,4 +61,94 @@ class AndroidSDK {
     }
     throw new BadSDKException("Cannot find the android tool in " + tools);
   }
+
+  /**
+   * Check for the ANDROID_SDK environment variable. If the variable is set, and refers
+   * to a legitimate android SDK, then use that, and save the preference.
+   * 
+   * Check for a previously set android.sdk.path preference. If the pref is set, and refers
+   * to a legitimate android SDK, then use that.
+   * 
+   * Prompt the user to select an android SDK. If the user selects a legitimate
+   * android SDK, then use that, and save the preference.
+   * 
+   * @return an AndroidSDK
+   * @throws BadSDKException
+   * @throws IOException 
+   */
+  public static AndroidSDK find(final Editor editor) throws BadSDKException,
+      IOException {
+    final Platform platform = Base.getPlatform();
+
+    // The environment variable is king. The preferences.txt entry is a page.
+    final String sdkEnvPath = platform.getenv("ANDROID_SDK");
+    if (sdkEnvPath != null) {
+      try {
+        final AndroidSDK androidSDK = new AndroidSDK(sdkEnvPath);
+        // Set this value in preferences.txt, in case ANDROID_SDK
+        // gets knocked out later. For instance, by that pesky Eclipse,
+        // which nukes all env variables when launching from the IDE.
+        Preferences.set("android.sdk.path", sdkEnvPath);
+        return androidSDK;
+      } catch (final BadSDKException drop) {
+      }
+    }
+
+    // If android.sdk.path exists as a preference, make sure that the folder
+    // is not bogus, otherwise the SDK may have been removed or deleted.
+    final String sdkPrefsPath = Preferences.get("android.sdk.path");
+    if (sdkPrefsPath != null) {
+      try {
+        final AndroidSDK androidSDK = new AndroidSDK(sdkPrefsPath);
+        // Set this value in preferences.txt, in case ANDROID_SDK
+        // gets knocked out later. For instance, by that pesky Eclipse,
+        // which nukes all env variables when launching from the IDE.
+        Preferences.set("android.sdk.path", sdkPrefsPath);
+        return androidSDK;
+      } catch (final BadSDKException wellThatsThat) {
+        Preferences.unset("android.sdk.path");
+      }
+    }
+
+    final int result = Base.showYesNoQuestion(editor, "Android SDK",
+      ANDROID_SDK_PRIMARY, ANDROID_SDK_SECONDARY);
+    if (result == JOptionPane.CANCEL_OPTION) {
+      throw new BadSDKException("User cancelled attempt to find SDK.");
+    }
+    if (result == JOptionPane.NO_OPTION) {
+      // user admitted they don't have the SDK installed, and need help.
+      Base.openURL(ANDROID_SDK_URL);
+      throw new BadSDKException("No SDK installed.");
+    }
+    while (true) {
+      final File folder = Base.selectFolder(SELECT_ANDROID_SDK_FOLDER, null,
+        editor);
+      if (folder == null) {
+        throw new BadSDKException("User cancelled attempt to find SDK.");
+      }
+
+      final String selectedPath = folder.getAbsolutePath();
+      try {
+        final AndroidSDK androidSDK = new AndroidSDK(selectedPath);
+        Preferences.set("android.sdk.path", selectedPath);
+        return androidSDK;
+      } catch (final BadSDKException nope) {
+        JOptionPane.showMessageDialog(editor, NOT_ANDROID_SDK);
+      }
+    }
+  }
+
+  private static final String ANDROID_SDK_PRIMARY = "Is the Android SDK installed?";
+
+  private static final String ANDROID_SDK_SECONDARY = "The Android SDK does not appear to be installed, <br>"
+      + "because the ANDROID_SDK variable is not set. <br>"
+      + "If it is installed, click “Yes” to select the <br>"
+      + "location of the SDK, or “No” to visit the SDK<br>"
+      + "download site at http://developer.android.com/sdk.";
+
+  private static final String SELECT_ANDROID_SDK_FOLDER = "Choose the location of the Android SDK";
+
+  private static final String NOT_ANDROID_SDK = "The selected folder does not appear to contain an Android SDK.";
+
+  private static final String ANDROID_SDK_URL = "http://developer.android.com/sdk/";
 }
