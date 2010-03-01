@@ -57,7 +57,8 @@ public class PImage implements PConstants, Cloneable {
    */
   public PApplet parent;
 
-  public Bitmap bitmap;
+  protected Bitmap bitmap;
+  protected GLTexture texture;
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -187,6 +188,16 @@ public class PImage implements PConstants, Cloneable {
 //  }
   public Bitmap getBitmap() {
     return bitmap;
+  }
+  
+  
+  public void setTexture(GLTexture texture) {
+    this.texture = texture;
+  }
+  
+  
+  public GLTexture getTexture() {
+    return texture;
   }
 
 
