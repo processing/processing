@@ -149,6 +149,25 @@ public class AndroidTool implements Tool {
     }
   }
 
+  private AndroidDevice waitForDevice(final Future<AndroidDevice> deviceFuture) {
+    for (int i = 0; i < 4; i++) {
+      try {
+        return deviceFuture.get(30, TimeUnit.SECONDS);
+      } catch (final InterruptedException e) {
+        editor.statusError("Interrupted.");
+        return null;
+      } catch (final ExecutionException e) {
+        editor.statusError(e);
+        return null;
+      } catch (final TimeoutException e) {
+        System.err.println("Gee, it's taking a while. Let's wait some more.");
+      }
+    }
+    editor
+        .statusError("No, on second thought, I'm giving up on waiting for that device to show up.");
+    return null;
+  }
+
   private void runSketchOnDevice(final Future<AndroidDevice> deviceFuture) {
     final Build build = getBuilder();
     if (!build.createProject()) {
@@ -159,17 +178,8 @@ public class AndroidTool implements Tool {
       return;
     }
 
-    final AndroidDevice device;
-    try {
-      device = deviceFuture.get(30, TimeUnit.SECONDS);
-    } catch (final InterruptedException e) {
-      editor.statusError("Interrupted.");
-      return;
-    } catch (final ExecutionException e) {
-      editor.statusError(e);
-      return;
-    } catch (final TimeoutException e) {
-      editor.statusError("Giving up on launching the emulator.");
+    final AndroidDevice device = waitForDevice(deviceFuture);
+    if (device == null) {
       return;
     }
 
