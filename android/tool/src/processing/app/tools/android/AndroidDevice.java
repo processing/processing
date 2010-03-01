@@ -152,12 +152,12 @@ class AndroidDevice implements AndroidDeviceProperties {
   }
 
   private void startProc(final String name, final int pid) {
-    System.err.println("Process " + name + " started at pid " + pid);
+    //    System.err.println("Process " + name + " started at pid " + pid);
     activeProcesses.add(pid);
   }
 
   private void endProc(final int pid) {
-    System.err.println("Process " + pid + " stopped.");
+    //    System.err.println("Process " + pid + " stopped.");
     activeProcesses.remove(pid);
   }
 
