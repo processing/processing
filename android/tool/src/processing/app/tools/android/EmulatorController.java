@@ -42,9 +42,10 @@ class EmulatorController {
         try {
           System.err.println("Starting to wait for emulator process.");
           final int result = p.waitFor();
-          System.err.println("Emulator process exited with " + result);
+          System.err.println("Emulator process exited "
+              + ((result == 0) ? "normally" : " with status " + result) + ".");
         } catch (final InterruptedException e) {
-          System.err.println("Emulator interrupted.");
+          System.err.println("Emulator was interrupted.");
         }
       }
     }, "Emulator Babysitter").start();
