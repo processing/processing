@@ -22,6 +22,8 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=1415
 quickies
 _ img.get() weirdness
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1198
+_ copy and blend scale when unnecessary
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1482
 _ add a limit to pushStyle() to catch unmatched sets?
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1368
 _ P2D transformation bug from ira
