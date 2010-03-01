@@ -21,6 +21,19 @@
 
 + The mouseButton variable is not available, for perhaps obvious reasons.
 
++ The 'back' key works similar to ESC in the desktop version of Processing.
+  (Pressing ESC in the emulator actually emulates hitting the 'back' key.)
+  By default, this will exit your application. If you want to do something
+  smarter, override keyPressed() and set 'key' to 0 so that the key
+  doesn't get picked up by the base class: 
+
+  void keyPressed() {
+    // doing other things here, and then:
+    if (key == KeyEvent.KEYCODE_BACK) {
+      key = 0;  // don't quit by default
+    }
+  }
+
 + beginRecord, endRecord, beginRaw, endRaw are not available. There are no
   plans to include them, because it doesn't make sense to use them to export
   geometry on a handheld or portable device.
@@ -100,3 +113,10 @@
   fonts on the system, and select one of those, or include a .ttf or .otf 
   file in the data directory of your sketch. If you use createFont() on a
   typeface that is not installed, rendering quality will be poor.
+
++ Accuracy of colors is more limited on Android. Most screens will not be 
+  full 24-bit color, which especially shows up with gradients, highly detailed
+  color sketches, or when using a lot of transparency. With gradients, you
+  might see banding of colors, or when using transparency, you might see 
+  halos or visual artifacts left behind. These are just mathematical artifacts
+  due to how colors are handled, due to limitations of the screen.
