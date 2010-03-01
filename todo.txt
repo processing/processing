@@ -1,6 +1,10 @@
 0178 pde
 X write implementation for get/set methods inside PImage (w/o pixels[])
 
+_ simple prefs implementation to set key/value pairs in a table
+_ the .macosx, .linux, etc prefs should be stripped
+_   only use them on first load, and merge into preferences.txt
+
 _ error that sketch is read-only can't be canceled
 _   hitting cancel (or ESC?) still brings up the save dialog
 
