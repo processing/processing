@@ -3293,12 +3293,13 @@ public class PGraphicsAndroid3D extends PGraphics {
     lightPosition[lightCount][0] = x;
     lightPosition[lightCount][1] = y;
     lightPosition[lightCount][2] = z;
-    lightPosition[lightCount][3] = 0.0f;
+    lightPosition[lightCount][3] = 1.0f;
     
     glLightEnable(lightCount);
     glLightAmbient(lightCount);
     glLightPosition(lightCount);
     glLightFalloff(lightCount);
+    glLightNoSpot(lightCount);
     
     lightCount++;
   }
@@ -3335,7 +3336,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     glLightDirection(lightCount);
     glLightDiffuse(lightCount);
     glLightSpecular(lightCount);
-    glLightFalloff(lightCount);      
+    glLightFalloff(lightCount);
+    glLightNoSpot(lightCount);      
     
     lightCount++;
   }
@@ -3363,14 +3365,15 @@ public class PGraphicsAndroid3D extends PGraphics {
     lightPosition[lightCount][0] = x;
     lightPosition[lightCount][1] = y;
     lightPosition[lightCount][2] = z;
-    lightPosition[lightCount][3] = 0.0f;
+    lightPosition[lightCount][3] = 1.0f;
     
     glLightEnable(lightCount);
     glLightNoAmbient(lightCount);
     glLightPosition(lightCount);
     glLightDiffuse(lightCount);
     glLightSpecular(lightCount);
-    glLightFalloff(lightCount);      
+    glLightFalloff(lightCount);     
+    glLightNoSpot(lightCount);          
     
     lightCount++;
   }
@@ -3400,7 +3403,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     lightPosition[lightCount][0] = x;
     lightPosition[lightCount][1] = y;
     lightPosition[lightCount][2] = z;
-    lightPosition[lightCount][3] = 0.0f;
+    lightPosition[lightCount][3] = 1.0f;
     
     float invn = 1.0f / PApplet.dist(0, 0, 0, nx, ny, nz);
     lightNormal[lightCount][0] = invn * nx;
@@ -3408,7 +3411,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     lightNormal[lightCount][2] = invn * nz;
     lightNormal[lightCount][3] = 0.0f;  
     
-    lightSpotAngle[lightCount] = angle;
+    lightSpotAngle[lightCount] = PApplet.degrees(angle);
     lightSpotAngleCos[lightCount] = Math.max(0, (float) Math.cos(angle));
     lightSpotConcentration[lightCount] = concentration;
 
@@ -3460,6 +3463,10 @@ public class PGraphicsAndroid3D extends PGraphics {
                  GL10.GL_AMBIENT, zeroLight, 0);
   }
 
+  private void glLightNoSpot(int num) {
+    gl.glLightf(GL10.GL_LIGHT0 + num, GL10.GL_SPOT_CUTOFF, 180);
+    gl.glLightf(GL10.GL_LIGHT0 + num, GL10.GL_SPOT_EXPONENT, 0);      
+  }  
   
   private void glLightDiffuse(int num) {
     gl.glLightfv(GL10.GL_LIGHT0 + num,
