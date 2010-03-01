@@ -22,17 +22,13 @@
 package processing.app.tools.android;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import processing.app.Base;
 import processing.app.Editor;
-import processing.app.Platform;
 import processing.app.Sketch;
 import processing.app.tools.Tool;
 import processing.core.PApplet;
@@ -63,28 +59,10 @@ public class AndroidTool implements Tool {
   public void run() {
     editor.statusNotice("Loading Android tools.");
 
-    final Platform platform = Base.getPlatform();
-
-    // check for ANDROID_SDK environment variable
-    final String sdkPath = platform.getenv("ANDROID_SDK");
-    if (sdkPath == null) {
-      Base
-          .showWarning("Android Tools Error",
-            "Before using Android mode, you must first set the\n"
-                + "ANDROID_SDK environment variable, and restart Processing.",
-            null);
-      editor.statusNotice("Android mode canceled.");
-      return;
-    }
     try {
-      sdk = new AndroidSDK(sdkPath);
-    } catch (final BadSDKException e) {
+      sdk = AndroidSDK.find(editor);
+    } catch (final Exception e) {
       Base.showWarning("Android Tools Error", e.getMessage(), null);
-      editor.statusNotice("Android mode canceled.");
-      return;
-    }
-
-    if (!checkPath()) {
       editor.statusNotice("Android mode canceled.");
       return;
     }
@@ -101,136 +79,6 @@ public class AndroidTool implements Tool {
     editor.statusNotice("Done loading Android tools.");
   }
 
-  private static final Pattern quotedPathElement = Pattern
-      .compile("^\"([^\"]*)\"$");
-
-  // make sure that $ANDROID_SDK/tools has been added to the PATH
-  private boolean checkPath() {
-    final String canonicalTools;
-    try {
-      canonicalTools = sdk.getTools().getCanonicalPath();
-    } catch (final IOException unexpected) {
-      Base.showWarning("Android Tools Error", "Unexpected internal error.",
-        unexpected);
-      return false;
-    }
-
-    final String envPath = Base.getPlatform().getenv("PATH");
-    for (String entry : PApplet.split(envPath, File.pathSeparatorChar)) {
-      entry = entry.trim();
-      if (entry.length() == 0) {
-        continue;
-      }
-      final Matcher m = quotedPathElement.matcher(entry);
-      if (m.matches()) {
-        entry = m.group(1); // unquote
-      }
-      try {
-        if (canonicalTools.equals(new File(entry).getCanonicalPath())) {
-          return true;
-        }
-      } catch (final IOException unexpected) {
-        System.err.println(unexpected);
-      }
-    }
-
-    Base.showWarning("Android Tools Error",
-      "You need to add the tools folder of the Android SDK\n"
-          + "to your PATH environment variable and restart Processing.\n"
-          + "The folder is: " + sdk.getTools().getAbsolutePath() + ".", null);
-    return false;
-  }
-
-  /*
-  protected boolean checkPath_orig() {
-    // If android.sdk.path exists as a preference, make sure that the folder
-    // exists, otherwise the SDK may have been removed or deleted.
-    final String oldPath = Preferences.get("android.sdk.path");
-    if (oldPath != null) {
-      final File oldFolder = new File(oldPath);
-      if (!oldFolder.exists()) {
-        // Clear the preference so that it's updated below
-        Preferences.unset("android.sdk.path");
-      }
-    }
-
-    // The environment variable is king. The preferences.txt entry is a page.
-    final Platform platform = Base.getPlatform();
-    sdkPath = findAndroidTool(platform.getenv("ANDROID_SDK"));
-    if (sdkPath != null) {
-      // Set this value in preferences.txt, in case ANDROID_SDK
-      // gets knocked out later. For instance, by that pesky Eclipse,
-      // which nukes all env variables when launching from the IDE.
-      Preferences.set("android.sdk.path", sdkPath);
-    } else {
-      // See if the path was set earlier
-      sdkPath = findAndroidTool(Preferences.get("android.sdk.path"));
-
-      if (sdkPath == null) {
-        final int result = Base.showYesNoQuestion(editor, "Android SDK",
-          ANDROID_SDK_PRIMARY, ANDROID_SDK_SECONDARY);
-        if (result == JOptionPane.YES_OPTION) {
-          final File folder = Base.selectFolder(SELECT_ANDROID_SDK_FOLDER,
-            null, editor);
-          if (folder != null) {
-            sdkPath = findAndroidTool(folder.getAbsolutePath());
-            if (sdkPath != null) {
-              Preferences.set("android.sdk.path", sdkPath);
-            } else {
-              // tools/android not found in the selected folder
-              System.err
-                  .println("Could not find the android executable inside "
-                      + folder.getAbsolutePath() + "/tools/");
-              JOptionPane.showMessageDialog(editor, NOT_ANDROID_SDK);
-              return false;
-            }
-          }
-        } else if (result == JOptionPane.NO_OPTION) {
-          // user admitted they don't have the SDK installed, and need help.
-          Base.openURL(ANDROID_SDK_URL);
-        }
-      }
-    }
-    if (sdkPath == null) {
-      return false;
-    }
-    // if (envPath == null) {
-    platform.setenv("ANDROID_SDK", sdkPath);
-    // }
-
-    // platform.setenv("ANDROID_SDK", "/opt/android");
-    // sdkPath = platform.getenv("ANDROID_SDK");
-    // System.out.println("sdk path is " + sdkPath);
-    // sdkPath = "/opt/android";
-
-    // // Make sure that the tools are in the PATH
-    // String toolsPath = sdkPath + File.separator + "tools";
-    // String path = platform.getenv("PATH");
-    // System.out.println("path before set is " + path);
-    // platform.setenv("PATH", path + File.pathSeparator + toolsPath);
-    // System.out.println("path after set is " +
-    // Base.getPlatform().getenv("PATH"));
-    //
-    // try {
-    // PApplet.println(Device.list());
-    // } catch (Exception e) {
-    // e.printStackTrace();
-    // }
-    //
-    // String[] cmd = { "echo", "$PATH" };
-    // try {
-    // ProcessHelper p = new ProcessHelper(cmd);
-    // int result = p.waitFor();
-    // if (result == 0) {
-    // PApplet.println(p.getOutputLines());
-    // }
-    // } catch (Exception e) {
-    // e.printStackTrace();
-    // }
-
-    return true;
-  }
-  */
   static protected File getCoreZipFile() {
     // for debugging only, check to see if this is an svn checkout
     File debugFile = new File("../../../android/core.zip");
@@ -372,23 +220,5 @@ public class AndroidTool implements Tool {
     public void run() {
     }
   }
-
-  /*
-  private static final String ANDROID_SDK_PRIMARY = "Is the Android SDK installed?";
-
-  private static final String ANDROID_SDK_SECONDARY = "The Android SDK does not appear to be installed, <br>"
-      + "because the ANDROID_SDK variable is not set. <br>"
-      + "If it is installed, click “Yes” to select the <br>"
-      + "location of the SDK, or “No” to visit the SDK<br>"
-      + "download site at http://developer.android.com/sdk.";
-
-  private static final String SELECT_ANDROID_SDK_FOLDER = "Choose the location of the Android SDK";
-
-  private static final String NOT_ANDROID_SDK = "The selected folder does not appear to contain an Android SDK.";
-
-  private static final String ANDROID_SDK_URL = "http://developer.android.com/sdk/";
-
-  private static final String ADB_SOCKET_PORT = "29892";
-  */
 
 }
