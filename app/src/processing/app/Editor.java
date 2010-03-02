@@ -1686,7 +1686,10 @@ public class Editor extends JFrame implements RunnerListener {
   class DefaultStopHandler implements Runnable {
     public void run() {
       try {
-
+        if (runtime != null) {
+          runtime.close();  // kills the window
+          runtime = null; // will this help?
+        }
       } catch (Exception e) {
         statusError(e);
       }
@@ -1746,11 +1749,9 @@ public class Editor extends JFrame implements RunnerListener {
   public void internalCloseRunner() {
     running = false;
 
+    if (stopHandler != null)
     try {
-      if (runtime != null) {
-        runtime.close();  // kills the window
-        runtime = null; // will this help?
-      }
+      stopHandler.run();
     } catch (Exception e) { }
 
     sketch.cleanup();
