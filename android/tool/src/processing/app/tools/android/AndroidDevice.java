@@ -23,8 +23,9 @@ class AndroidDevice implements AndroidDeviceProperties {
 
   public void bringLauncherToFront() {
     try {
-      new ProcessHelper(generateAdbCommand("shell", "am", "start", "-n",
-        "com.android.launcher2/.Launcher")).execute();
+      new ProcessHelper(generateAdbCommand("shell", "am", "start", "-a",
+        "android.intent.action.MAIN", "-c", "android.intent.category.HOME"))
+          .execute();
     } catch (final Exception e) {
       e.printStackTrace(System.err);
     }
