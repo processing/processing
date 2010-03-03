@@ -32,7 +32,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.swing.ProgressMonitor;
 import processing.app.Base;
 import processing.app.Editor;
 import processing.app.Sketch;
@@ -158,7 +157,7 @@ public class AndroidTool implements Tool, DeviceListener {
   }
 
   private AndroidDevice waitForDevice(final Future<AndroidDevice> deviceFuture,
-                                      final ProgressMonitor monitor)
+                                      final IndeterminateProgressMonitor monitor)
       throws Cancelled {
     for (int i = 0; i < 120; i++) {
       if (monitor.isCanceled()) {
@@ -184,13 +183,11 @@ public class AndroidTool implements Tool, DeviceListener {
 
   private void runSketchOnDevice(final Future<AndroidDevice> deviceFuture)
       throws Cancelled {
-    final ProgressMonitor monitor = new ProgressMonitor(
-                                                        editor,
-                                                        "Building and launching...",
-                                                        "Creating project...",
-                                                        0, 5);
+    final IndeterminateProgressMonitor monitor = new IndeterminateProgressMonitor(
+                                                                          editor,
+                                                                          "Building and launching...",
+                                                                          "Creating project...");
     try {
-      monitor.setMillisToDecideToPopup(100);
       final Build build = getBuilder();
       if (!build.createProject()) {
         return;
@@ -200,7 +197,6 @@ public class AndroidTool implements Tool, DeviceListener {
         throw new Cancelled();
       }
       monitor.setNote("Building...");
-      monitor.setProgress(1);
       if (!build.antBuild("debug")) {
         return;
       }
@@ -209,7 +205,6 @@ public class AndroidTool implements Tool, DeviceListener {
         throw new Cancelled();
       }
       monitor.setNote("Waiting for device to become available...");
-      monitor.setProgress(2);
       final AndroidDevice device = waitForDevice(deviceFuture, monitor);
       if (device == null) {
         return;
@@ -221,7 +216,6 @@ public class AndroidTool implements Tool, DeviceListener {
         throw new Cancelled();
       }
       monitor.setNote("Installing sketch on " + device.getId());
-      monitor.setProgress(3);
       if (!device.installApp(build.getPathForAPK("debug"), editor)) {
         return;
       }
@@ -230,7 +224,6 @@ public class AndroidTool implements Tool, DeviceListener {
         throw new Cancelled();
       }
       monitor.setNote("Starting sketch on " + device.getId());
-      monitor.setProgress(4);
       startSketch(device);
 
       lastRunDevice = device;
@@ -282,6 +275,10 @@ public class AndroidTool implements Tool, DeviceListener {
       }
 
     }
+  }
+
+  public void sketchStopped() {
+    editor.internalRunnerClosed();
   }
 
   /**
