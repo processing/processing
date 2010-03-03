@@ -27,6 +27,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import javax.swing.ProgressMonitor;
 import processing.app.Base;
 import processing.app.Editor;
 import processing.app.Sketch;
@@ -139,7 +140,7 @@ public class AndroidTool implements Tool {
     final String className = build.getClassName();
     try {
       if (device.launchApp(packageName, className)) {
-        editor.statusNotice("Sketch started on the "
+        editor.statusNotice("Sketch launched on the "
             + (device.isEmulator() ? "emulator" : "phone") + ".");
         return;
       }
@@ -149,18 +150,22 @@ public class AndroidTool implements Tool {
     }
   }
 
-  private AndroidDevice waitForDevice(final Future<AndroidDevice> deviceFuture) {
-    for (int i = 0; i < 4; i++) {
+  private AndroidDevice waitForDevice(final Future<AndroidDevice> deviceFuture,
+                                      final ProgressMonitor monitor)
+      throws Cancelled {
+    for (int i = 0; i < 120; i++) {
+      if (monitor.isCanceled()) {
+        throw new Cancelled();
+      }
       try {
-        return deviceFuture.get(30, TimeUnit.SECONDS);
+        return deviceFuture.get(1, TimeUnit.SECONDS);
       } catch (final InterruptedException e) {
         editor.statusError("Interrupted.");
         return null;
       } catch (final ExecutionException e) {
         editor.statusError(e);
         return null;
-      } catch (final TimeoutException e) {
-        System.err.println("Gee, it's taking a while. Let's wait some more.");
+      } catch (final TimeoutException expected) {
       }
     }
     editor
@@ -168,26 +173,61 @@ public class AndroidTool implements Tool {
     return null;
   }
 
-  private void runSketchOnDevice(final Future<AndroidDevice> deviceFuture) {
-    final Build build = getBuilder();
-    if (!build.createProject()) {
-      return;
-    }
+  private volatile AndroidDevice lastRunDevice = null;
 
-    if (!build.antBuild("debug")) {
-      return;
-    }
+  private void runSketchOnDevice(final Future<AndroidDevice> deviceFuture)
+      throws Cancelled {
+    final ProgressMonitor monitor = new ProgressMonitor(
+                                                        editor,
+                                                        "Building and launching...",
+                                                        "Creating project...",
+                                                        0, 5);
+    try {
+      monitor.setMillisToDecideToPopup(100);
+      final Build build = getBuilder();
+      if (!build.createProject()) {
+        return;
+      }
 
-    final AndroidDevice device = waitForDevice(deviceFuture);
-    if (device == null) {
-      return;
-    }
+      if (monitor.isCanceled()) {
+        throw new Cancelled();
+      }
+      monitor.setNote("Building...");
+      monitor.setProgress(1);
+      if (!build.antBuild("debug")) {
+        return;
+      }
 
-    if (!device.installApp(build.getPathForAPK("debug"), editor)) {
-      return;
-    }
+      if (monitor.isCanceled()) {
+        throw new Cancelled();
+      }
+      monitor.setNote("Waiting for device to become available...");
+      monitor.setProgress(2);
+      final AndroidDevice device = waitForDevice(deviceFuture, monitor);
+      if (device == null) {
+        return;
+      }
 
-    startSketch(device);
+      if (monitor.isCanceled()) {
+        throw new Cancelled();
+      }
+      monitor.setNote("Installing sketch on " + device.getId());
+      monitor.setProgress(3);
+      if (!device.installApp(build.getPathForAPK("debug"), editor)) {
+        return;
+      }
+
+      if (monitor.isCanceled()) {
+        throw new Cancelled();
+      }
+      monitor.setNote("Starting sketch on " + device.getId());
+      monitor.setProgress(4);
+      startSketch(device);
+
+      lastRunDevice = device;
+    } finally {
+      monitor.close();
+    }
   }
 
   /**
@@ -196,7 +236,11 @@ public class AndroidTool implements Tool {
   class RunHandler implements Runnable {
     public void run() {
       AVD.ensureEclairAVD(sdk);
-      runSketchOnDevice(AndroidEnvironment.getInstance().getEmulator());
+      try {
+        runSketchOnDevice(AndroidEnvironment.getInstance().getEmulator());
+      } catch (final Cancelled ok) {
+        editor.statusNotice("Cancelled.");
+      }
     }
   }
 
@@ -205,12 +249,19 @@ public class AndroidTool implements Tool {
    */
   class PresentHandler implements Runnable {
     public void run() {
-      runSketchOnDevice(AndroidEnvironment.getInstance().getHardware());
+      try {
+        runSketchOnDevice(AndroidEnvironment.getInstance().getHardware());
+      } catch (final Cancelled ok) {
+        editor.statusNotice("Cancelled.");
+      }
     }
   }
 
-  private static class StopHandler implements Runnable {
+  private class StopHandler implements Runnable {
     public void run() {
+      if (lastRunDevice != null) {
+        lastRunDevice.bringLauncherToFront();
+      }
     }
   }
 
@@ -231,4 +282,7 @@ public class AndroidTool implements Tool {
     }
   }
 
+  @SuppressWarnings("serial")
+  private static class Cancelled extends Exception {
+  }
 }
