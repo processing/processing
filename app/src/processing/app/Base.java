@@ -1754,7 +1754,7 @@ public class Base {
 //        throw new IllegalStateException();
 //      }
 
-  static public int showYesNoQuestion(Editor editor, String title,
+  static public int showYesNoQuestion(Frame editor, String title,
                                             String primary, String secondary) {
     if (!Base.isMacOS()) {
       return JOptionPane.showConfirmDialog(editor,
