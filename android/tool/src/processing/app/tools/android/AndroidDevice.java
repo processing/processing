@@ -109,9 +109,13 @@ class AndroidDevice implements AndroidDeviceProperties {
         if (m.find()) {
           final int pid = Integer.parseInt(m.group(1));
           final int signal = Integer.parseInt(m.group(2));
-          if (signal == 9) {
+          /*
+           * A crashed sketch first gets a signal 3, which causes the
+           * "you've crashed" dialog to appear on the device. After
+           * the user dismisses the dialog, a sig 9 is sent.
+           */
+          if (signal == 3) {
             endProc(pid);
-          } else if (signal == 3) {
             reportStackTrace(entry);
           }
         }
@@ -184,6 +188,9 @@ class AndroidDevice implements AndroidDeviceProperties {
   private void endProc(final int pid) {
     //    System.err.println("Process " + pid + " stopped.");
     activeProcesses.remove(pid);
+    for (final DeviceListener listener : listeners) {
+      listener.sketchStopped();
+    }
   }
 
   public void addListener(final DeviceListener listener) {
