@@ -1643,11 +1643,7 @@ public class Editor extends JFrame implements RunnerListener {
 
     // Cannot use invokeLater() here, otherwise it gets
     // placed on the event thread and causes a hang--bad idea all around.
-    if (present) {
-      new Thread(presentHandler).start();
-    } else {
-      new Thread(runHandler).start();
-    }
+    new Thread(present ? presentHandler : runHandler).start();
   }
 
 
