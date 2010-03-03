@@ -122,32 +122,34 @@ P5 _   http://dev.processing.org/bugs/show_bug.cgi?id=1492
 
 TOOLS 
 
-*---jdf accepts--
-| P1 _ get stdout and stderr from the emulator/device
-| P1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1381
-| P1 _   how to do this via jdb?
-| P1 _   or is this jdi/jdwp?
-| P1 _     connect to emulator with the proper io sockets
-| P1 _       don't rely on getinput/getoutput from process (via logcat)
-| P1 _     also connect to the external device when running code there
-| P1 _ errors that happen inside events (e.g. keys) not highlighting lines
-| P1 _   useful stack trace information not coming through.. why?
-| P1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1384
-*---------------
+JDF maybedone
+ P1 _ get stdout and stderr from the emulator/device
+ P1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1381
+
+
+JDF maybedone
+ P1 _ errors that happen inside events (e.g. keys) not highlighting lines
+ P1 _   useful stack trace information not coming through.. why?
+ P1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1384
 
 _ Errors show up that .java files are duplicates with the Android tools.
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1472
 
 _ don't require JDK installation and PATH setting
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1470
+
+JDF maybedone
 _ remove ANDROID_SDK env variable requirement
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1471
 _   ANDROID_SDK doesn't seem to be mentioned anywhere anymore
 _   this may mean that p5 might just need to get the location
 _   though it makes things messier for the build scripts
+
+JDF maybedone
 _ ANDROID_SDK not getting set on OS X
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1469
 _   http://stackoverflow.com/questions/603785/environment-variables-in-mac-os-x
+
 
 _ library support also needs android manifest changes
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1439
@@ -155,19 +157,35 @@ _ add method to set the icon (and package name?)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1429
 _   http://developer.android.com/guide/publishing/preparing.html
 
+JDF maybedone
 _ timeout isn't long enough for emulator to boot and startup
 _   always times out on a 3 GHz OS X machine
+
+
+JDF maybedone
 _ "Sketch started on emulator" in spite of the emulator only halfway booted
+
 _ errors in ActivityManager aren't coming through
 _ if AVD is deleted while processing still running, things flake out
 _   also no error messages, just 'giving up on launching emulator
+
+
+JDF maybedone
 _ stack overflow produced no error inside the PDE
+
+
+JDF maybedone
 _ when out of memory, need an error message to show up in the PDE
 _ Examples > Topics > Drawing > Animator produces:
 _   Uncaught handler: thread Animation Thread exiting due to uncaught exception
 _   java.lang.OutOfMemoryError: bitmap size exceeds VM budget
 _     at android.graphics.Bitmap.nativeCreate(Native Method)
+
+
 _ if hitting 'run' in p5, need to kill any sketch that's currently running
+
+
+JDF maybedone
 _ other exceptions coming through System.err
 W/System.err(  242): java.lang.IllegalArgumentException: File /data/data/processing.android.test.savemanyimages/files/circles-0001.tif contains a path separator
 W/System.err(  242): 	at android.app.ApplicationContext.makeFilename(ApplicationContext.java:1444)
@@ -185,10 +203,15 @@ _ run the 'android' application (since finding its location is painful)
 P2 _ need to prevent hitting 'run' twice (threaded, so would work)
 P2 _   currently things just keep restarting the build, bad state
 P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1387
+
+JDF maybedone
 P2 _ move the android tools into its own source package in SVN
 P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1388
+
+JDF maybedone
 P2 _ 'stop' is now a no-op for the android tools
 P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1386
+
 P2 _ implement method for selecting the AVD
 P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1390
 P2 _ android mode is currently per-editor (and clunky)
@@ -216,6 +239,7 @@ P3 _   add a method to remove an application if the debug key is different
 P3 _     perhaps the first time an application is installed, remove it?
 P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1481
 
+JDF maybedone
 P5 _ remove the need for a "Reset Android" menu option
 P5 _   http://dev.processing.org/bugs/show_bug.cgi?id=1392
 
