@@ -6,6 +6,8 @@ import java.util.regex.Pattern;
 import processing.app.Base;
 
 public class AVD {
+  static final int DEFAULT_WIDTH = 320;
+  static final int DEFAULT_HEIGHT = 480;
 
   /** Name of this avd. */
   public final String name;
