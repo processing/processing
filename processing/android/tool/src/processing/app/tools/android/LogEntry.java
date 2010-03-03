@@ -35,7 +35,7 @@ class LogEntry {
 
   public final Severity severity;
   public final String source;
-  public final int sourcePid;
+  public final int pid;
   public final String message;
 
   private static final Pattern PARSER = Pattern
@@ -48,12 +48,12 @@ class LogEntry {
     }
     this.severity = Severity.fromChar(m.group(1).charAt(0));
     this.source = m.group(2);
-    this.sourcePid = Integer.parseInt(m.group(3));
+    this.pid = Integer.parseInt(m.group(3));
     this.message = m.group(4);
   }
 
   @Override
   public String toString() {
-    return severity + "/" + source + "(" + sourcePid + "): " + message;
+    return severity + "/" + source + "(" + pid + "): " + message;
   }
 }
