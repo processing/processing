@@ -273,7 +273,7 @@ public class AndroidTool implements Tool, DeviceListener {
         final Matcher lm = LOCATION.matcher(line);
         if (lm.find()) {
           final String filename = lm.group(1);
-          final int lineNumber = Integer.parseInt(lm.group(2));
+          final int lineNumber = Integer.parseInt(lm.group(2)) - 1;
           final RunnerException rex = editor.getSketch().placeException(
             message, filename, lineNumber);
           editor.statusError(rex == null ? new RunnerException(message, false)
