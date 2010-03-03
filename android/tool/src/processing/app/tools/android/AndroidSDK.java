@@ -1,10 +1,10 @@
 package processing.app.tools.android;
 
+import java.awt.Frame;
 import java.io.File;
 import java.io.IOException;
 import javax.swing.JOptionPane;
 import processing.app.Base;
-import processing.app.Editor;
 import processing.app.Platform;
 import processing.app.Preferences;
 
@@ -76,7 +76,7 @@ class AndroidSDK {
    * @throws BadSDKException
    * @throws IOException 
    */
-  public static AndroidSDK find(final Editor editor) throws BadSDKException,
+  public static AndroidSDK find(final Frame window) throws BadSDKException,
       IOException {
     final Platform platform = Base.getPlatform();
 
@@ -110,7 +110,7 @@ class AndroidSDK {
       }
     }
 
-    final int result = Base.showYesNoQuestion(editor, "Android SDK",
+    final int result = Base.showYesNoQuestion(window, "Android SDK",
       ANDROID_SDK_PRIMARY, ANDROID_SDK_SECONDARY);
     if (result == JOptionPane.CANCEL_OPTION) {
       throw new BadSDKException("User cancelled attempt to find SDK.");
@@ -122,7 +122,7 @@ class AndroidSDK {
     }
     while (true) {
       final File folder = Base.selectFolder(SELECT_ANDROID_SDK_FOLDER, null,
-        editor);
+        window);
       if (folder == null) {
         throw new BadSDKException("User cancelled attempt to find SDK.");
       }
@@ -133,7 +133,7 @@ class AndroidSDK {
         Preferences.set("android.sdk.path", selectedPath);
         return androidSDK;
       } catch (final BadSDKException nope) {
-        JOptionPane.showMessageDialog(editor, NOT_ANDROID_SDK);
+        JOptionPane.showMessageDialog(window, NOT_ANDROID_SDK);
       }
     }
   }
