@@ -494,7 +494,17 @@ public class Runner implements MessageConsumer {
 //    System.out.println(or.referenceType().fields());
 //    if (name.startsWith("java.lang.")) {
 //      name = name.substring(10);
-    if (exceptionName.equals("java.lang.OutOfMemoryError")) {
+    if (!handleCommonErrors(exceptionName, message, listener)) {
+        reportException(message, event.thread());
+    }
+    if (editor != null) {
+      editor.internalRunnerClosed();
+    }
+  }
+
+  public static boolean handleCommonErrors(final String exceptionClass, final String message, final RunnerListener listener)
+  {
+    if (exceptionClass.equals("java.lang.OutOfMemoryError")) {
       listener.statusError("OutOfMemoryError: You may need to increase the memory setting in Preferences.");
       System.err.println("An OutOfMemoryError means that your code is either using up too much memory");
       System.err.println("because of a bug (e.g. creating an array that's too large, or unintentionally");
@@ -502,33 +512,29 @@ public class Runner implements MessageConsumer {
       System.err.println("If your sketch uses a lot of memory (for instance if it loads a lot of data files)");
       System.err.println("you can increase the memory available to your sketch using the Preferences window.");
 
-    } else if (exceptionName.equals("java.lang.StackOverflowError")) {
+    } else if (exceptionClass.equals("java.lang.StackOverflowError")) {
       listener.statusError("StackOverflowError: This sketch is attempting too much recursion.");
       System.err.println("A StackOverflowError means that you have a bug that's causing a function");
       System.err.println("to be called recursively (it's calling itself and going in circles),");
       System.err.println("or you're intentionally calling a recursive function too much,");
       System.err.println("and your code should be rewritten in a more efficient manner.");
 
-    } else if (exceptionName.equals("java.lang.UnsupportedClassVersionError")) {
+    } else if (exceptionClass.equals("java.lang.UnsupportedClassVersionError")) {
       listener.statusError("UnsupportedClassVersionError: A library is using code compiled with an unsupported version of Java.");
       System.err.println("This version of Processing only supports libraries and JAR files compiled for Java 1.5.");
       System.err.println("A library used by this sketch was compiled for Java 1.6 or later, ");
       System.err.println("and needs to be recompiled to be compatible with Java 1.5.");
-
-    } else if (exceptionName.equals("java.lang.NoSuchMethodError") || exceptionName.equals("java.lang.NoSuchFieldError")) {
-      listener.statusError(exceptionName.substring(10) + ": You're probably using a library that's incompatible with this version of Processing.");
-
-    } else if (message.equals("ClassNotFoundException: quicktime.std.StdQTException")) {
-      listener.statusError("Could not find QuickTime, please reinstall QuickTime 7 or later.");
-
+    } else if (exceptionClass.equals("java.lang.NoSuchMethodError") || exceptionClass.equals("java.lang.NoSuchFieldError")) {
+      listener.statusError(exceptionClass.substring(10) + ": You're probably using a library that's incompatible with this version of Processing.");
+    } else if (message
+        .equals("ClassNotFoundException: quicktime.std.StdQTException")) {
+      listener
+          .statusError("Could not find QuickTime, please reinstall QuickTime 7 or later.");
     } else {
-      reportException(message, event.thread());
+      return false;
     }
-    if (editor != null) {
-      editor.internalRunnerClosed();
-    }
+    return true;
   }
-
 
   // TODO: This may be called more than one time per error in the VM,
   // presumably because exceptions might be wrapped inside others,
