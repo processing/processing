@@ -1,7 +1,10 @@
 package processing.app.tools.android;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -12,6 +15,8 @@ class AndroidDevice implements AndroidDeviceProperties {
   private final AndroidEnvironment env;
   private final String id;
   private final Set<Integer> activeProcesses = new HashSet<Integer>();
+  private final Set<DeviceListener> listeners = Collections
+      .synchronizedSet(new HashSet<DeviceListener>());
 
   // mutable state
   private Process logcat;
@@ -88,38 +93,63 @@ class AndroidDevice implements AndroidDeviceProperties {
   private static final Pattern SIG = Pattern
       .compile("PID:\\s+(\\d+)\\s+SIG:\\s+(\\d+)");
 
+  private final List<String> stackTrace = new ArrayList<String>();
+
   private class LogLineProcessor implements LineProcessor {
     public void processLine(final String line) {
       final LogEntry entry = new LogEntry(line);
-      final String src = entry.source;
-      final String msg = entry.message;
-      final Severity sev = entry.severity;
-      if (msg.startsWith("PROCESSING")) {
-        if (msg.contains("onStart")) {
-          startProc(src, entry.sourcePid);
-        } else if (msg.contains("onStop")) {
-          endProc(entry.sourcePid);
+      if (entry.message.startsWith("PROCESSING")) {
+        if (entry.message.contains("onStart")) {
+          startProc(entry.source, entry.pid);
+        } else if (entry.message.contains("onStop")) {
+          endProc(entry.pid);
         }
-      } else if (src.equals("Process")) {
-        final Matcher m = SIG.matcher(msg);
+      } else if (entry.source.equals("Process")) {
+        final Matcher m = SIG.matcher(entry.message);
         if (m.find()) {
           final int pid = Integer.parseInt(m.group(1));
           final int signal = Integer.parseInt(m.group(2));
           if (signal == 9) {
             endProc(pid);
+          } else if (signal == 3) {
+            reportStackTrace(entry);
           }
         }
-      } else if (activeProcesses.contains(entry.sourcePid)
-          && ((src.equals("AndroidRuntime") && sev == Severity.Error)
-              || src.equals("System.out") || src.equals("System.err"))) {
-        if (sev.useErrorStream) {
-          System.err.println(msg);
-        } else {
-          System.out.println(msg);
-        }
+      } else if (activeProcesses.contains(entry.pid)) {
+        handleConsole(entry);
       }
-      //System.err.println(entry.source + "/" + entry.message);
     }
+  }
+
+  private void handleConsole(final LogEntry entry) {
+    final boolean isStackTrace = entry.source.equals("AndroidRuntime")
+        && entry.severity == Severity.Error;
+    if (isStackTrace) {
+      if (!entry.message.startsWith("Uncaught handler")) {
+        stackTrace.add(entry.message);
+        System.err.println(entry.message);
+      }
+    } else if (entry.source.equals("System.out")
+        || entry.source.equals("System.err")) {
+      if (entry.severity.useErrorStream) {
+        System.err.println(entry.message);
+      } else {
+        System.out.println(entry.message);
+      }
+    }
+  }
+
+  private void reportStackTrace(final LogEntry entry) {
+    if (stackTrace.isEmpty()) {
+      System.err.println("That's weird. Proc " + entry.pid
+          + " got signal 3, but there's no stack trace.");
+    }
+    final List<String> stackCopy = Collections
+        .unmodifiableList(new ArrayList<String>(stackTrace));
+    for (final DeviceListener listener : listeners) {
+      listener.stacktrace(stackCopy);
+    }
+    stackTrace.clear();
   }
 
   void initialize() throws IOException, InterruptedException {
@@ -135,6 +165,7 @@ class AndroidDevice implements AndroidDeviceProperties {
       logcat.destroy();
     }
     env.deviceRemoved(this);
+    listeners.clear();
   }
 
   public String getId() {
@@ -153,6 +184,14 @@ class AndroidDevice implements AndroidDeviceProperties {
   private void endProc(final int pid) {
     //    System.err.println("Process " + pid + " stopped.");
     activeProcesses.remove(pid);
+  }
+
+  public void addListener(final DeviceListener listener) {
+    listeners.add(listener);
+  }
+
+  public void removeListener(final DeviceListener listener) {
+    listeners.remove(listener);
   }
 
   private ProcessResult adb(final String... cmd) throws InterruptedException,

@@ -21,16 +21,23 @@
 
 package processing.app.tools.android;
 
+import java.awt.Frame;
 import java.io.File;
 import java.net.URL;
+import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.ProgressMonitor;
 import processing.app.Base;
 import processing.app.Editor;
 import processing.app.Sketch;
+import processing.app.debug.Runner;
+import processing.app.debug.RunnerException;
 import processing.app.tools.Tool;
 import processing.core.PApplet;
 
@@ -38,7 +45,7 @@ import processing.core.PApplet;
 // http://dl.google.com/android/android-sdk_r3-mac.zip
 // http://dl.google.com/android/repository/tools_r03-macosx.zip
 
-public class AndroidTool implements Tool {
+public class AndroidTool implements Tool, DeviceListener {
   private AndroidSDK sdk;
   private Editor editor;
   private Build build;
@@ -61,7 +68,7 @@ public class AndroidTool implements Tool {
     editor.statusNotice("Loading Android tools.");
 
     try {
-      sdk = AndroidSDK.find(editor);
+      sdk = AndroidSDK.find((editor instanceof Frame) ? (Frame) editor : null);
     } catch (final Exception e) {
       Base.showWarning("Android Tools Error", e.getMessage(), null);
       editor.statusNotice("Android mode canceled.");
@@ -208,6 +215,8 @@ public class AndroidTool implements Tool {
         return;
       }
 
+      device.addListener(this);
+
       if (monitor.isCanceled()) {
         throw new Cancelled();
       }
@@ -227,6 +236,51 @@ public class AndroidTool implements Tool {
       lastRunDevice = device;
     } finally {
       monitor.close();
+    }
+  }
+
+  private static final Pattern LOCATION = Pattern
+      .compile("\\(([^:]+):(\\d+)\\)");
+  private static final Pattern EXCEPTION_PARSER = Pattern.compile(
+    "^([a-z]+(?:\\.[a-z]+)+)(?:: (.+))?$", Pattern.CASE_INSENSITIVE);
+
+  /**
+   * Currently figures out the first relevant stack trace line
+   * by looking for the telltale presence of "processing.android"
+   * in the package. If the packaging for droid sketches changes,
+   * this method will have to change too.
+   */
+  public void stacktrace(final List<String> trace) {
+    final Iterator<String> frames = trace.iterator();
+    final String exceptionLine = frames.next();
+
+    final Matcher m = EXCEPTION_PARSER.matcher(exceptionLine);
+    if (!m.matches()) {
+      System.err.println("Can't parse this exception line:");
+      System.err.println(exceptionLine);
+      editor.statusError("Unknown exception");
+      return;
+    }
+    final String exceptionClass = m.group(1);
+    final String message = m.group(2);
+    if (Runner.handleCommonErrors(exceptionClass, message, editor)) {
+      return;
+    }
+
+    while (frames.hasNext()) {
+      final String line = frames.next();
+      if (line.contains("processing.android")) {
+        final Matcher lm = LOCATION.matcher(line);
+        if (lm.find()) {
+          final String filename = lm.group(1);
+          final int lineNumber = Integer.parseInt(lm.group(2));
+          final RunnerException rex = editor.getSketch().placeException(
+            message, filename, lineNumber);
+          editor.statusError(rex == null ? new RunnerException(message, false)
+              : rex);
+        }
+      }
+
     }
   }
 
