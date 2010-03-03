@@ -43,8 +43,8 @@ class Build {
   }
 
   protected int[] getSketchSize() {
-    int wide = Device.DEFAULT_WIDTH;
-    int high = Device.DEFAULT_HEIGHT;
+    int wide = AVD.DEFAULT_WIDTH;
+    int high = AVD.DEFAULT_HEIGHT;
     // String renderer = "";
 
     // This matches against any uses of the size() function, whether numbers
