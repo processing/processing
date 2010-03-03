@@ -23,9 +23,8 @@ class AndroidDevice implements AndroidDeviceProperties {
 
   public void bringLauncherToFront() {
     try {
-      new ProcessHelper(generateAdbCommand("shell", "am", "start", "-a",
-        "android.intent.action.MAIN", "-c", "android.intent.category.HOME"))
-          .execute();
+      adb("shell", "am", "start", "-a", "android.intent.action.MAIN", "-c",
+        "android.intent.category.HOME");
     } catch (final Exception e) {
       e.printStackTrace(System.err);
     }
@@ -47,11 +46,7 @@ class AndroidDevice implements AndroidDeviceProperties {
   public boolean installApp(final String apkPath, final RunnerListener status) {
     bringLauncherToFront();
     try {
-      final ProcessHelper p = new ProcessHelper(generateAdbCommand("install",
-        "-r", // safe to always use -r switch
-        apkPath));
-
-      final ProcessResult installResult = p.execute();
+      final ProcessResult installResult = adb("install", "-r", apkPath);
       if (!installResult.succeeded()) {
         status.statusError("Could not install the sketch.");
         System.err.println(installResult);
@@ -76,15 +71,13 @@ class AndroidDevice implements AndroidDeviceProperties {
     return false;
   }
 
-  // better version that actually runs through JDI:
+  // different version that actually runs through JDI:
   // http://asantoso.wordpress.com/2009/09/26/using-jdb-with-adb-to-debugging-of-android-app-on-a-real-device/
   public boolean launchApp(final String packageName, final String className)
       throws IOException, InterruptedException {
-    final ProcessHelper startSketch = new ProcessHelper(generateAdbCommand(
-      "shell", "am", "start", "-e", "debug", "true", "-a",
+    return adb("shell", "am", "start", "-e", "debug", "true", "-a",
       "android.intent.action.MAIN", "-c", "android.intent.category.LAUNCHER",
-      "-n", packageName + "/." + className));
-    return startSketch.execute().succeeded();
+      "-n", packageName + "/." + className).succeeded();
   }
 
   public boolean isEmulator() {
@@ -129,15 +122,15 @@ class AndroidDevice implements AndroidDeviceProperties {
     }
   }
 
-  public void initialize() throws IOException, InterruptedException {
-    new ProcessHelper(generateAdbCommand("logcat", "-c")).execute();
+  void initialize() throws IOException, InterruptedException {
+    adb("logcat", "-c");
     logcat = Runtime.getRuntime().exec(generateAdbCommand("logcat"));
     new StreamPump(logcat.getInputStream()).addTarget(new LogLineProcessor())
         .start();
     new StreamPump(logcat.getErrorStream()).addTarget(System.err).start();
   }
 
-  public void shutdown() {
+  void shutdown() {
     if (logcat != null) {
       logcat.destroy();
     }
@@ -160,6 +153,12 @@ class AndroidDevice implements AndroidDeviceProperties {
   private void endProc(final int pid) {
     //    System.err.println("Process " + pid + " stopped.");
     activeProcesses.remove(pid);
+  }
+
+  private ProcessResult adb(final String... cmd) throws InterruptedException,
+      IOException {
+    final String[] adbCmd = generateAdbCommand(cmd);
+    return new ProcessHelper(adbCmd).execute();
   }
 
   private String[] generateAdbCommand(final String... cmd) {
