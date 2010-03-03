@@ -94,7 +94,6 @@ public class EditorToolbar extends JComponent implements MouseInputListener, Key
   
   boolean shiftPressed;
 
-
   public EditorToolbar(Editor editor, JMenu menu) {
     this.editor = editor;
     this.menu = menu;
@@ -119,7 +118,6 @@ public class EditorToolbar extends JComponent implements MouseInputListener, Key
     addMouseListener(this);
     addMouseMotionListener(this);
   }
-  
 
   protected void loadButtons() {
     Image allButtons = Base.getThemeImage("buttons.gif", this);
@@ -137,7 +135,7 @@ public class EditorToolbar extends JComponent implements MouseInputListener, Key
     }
   }
   
-
+  @Override
   public void paintComponent(Graphics screen) {
     // this data is shared by all EditorToolbar instances
     if (buttonImages == null) {
@@ -185,6 +183,9 @@ public class EditorToolbar extends JComponent implements MouseInputListener, Key
 
     /*
     // if i ever find the guy who wrote the java2d api, i will hurt him.
+     * 
+     * whereas I love the Java2D API. --jdf. lol.
+     * 
     Graphics2D g2 = (Graphics2D) g;
     FontRenderContext frc = g2.getFontRenderContext();
     float statusW = (float) statusFont.getStringBounds(status, frc).getWidth();
@@ -198,10 +199,18 @@ public class EditorToolbar extends JComponent implements MouseInputListener, Key
     }
 
     screen.drawImage(offscreen, 0, 0, null);
+    
+    if (!isEnabled()) {
+      screen.setColor(new Color(0,0,0,100));
+      screen.fillRect(0, 0, getWidth(), getHeight());
+    }
   }
 
 
   public void mouseMoved(MouseEvent e) {
+    if (!isEnabled())
+      return;
+    
     // mouse events before paint();
     if (state == null) return;
 
@@ -285,6 +294,11 @@ public class EditorToolbar extends JComponent implements MouseInputListener, Key
 
 
   public void mousePressed(MouseEvent e) {
+    
+    // jdf
+    if (!isEnabled())
+      return;
+    
     final int x = e.getX();
     final int y = e.getY();
 
