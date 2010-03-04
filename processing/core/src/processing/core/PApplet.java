@@ -269,8 +269,21 @@ public class PApplet extends Applet
    * Note that this won't update if you change the resolution
    * of your screen once the the applet is running.
    * <p>
-   * This variable is not static, because future releases need to be better
-   * at handling multiple displays.
+   * This variable is not static because in the desktop version of Processing,
+   * not all instances of PApplet will necessarily be started on a screen of 
+   * the same size. 
+   */
+  static public int screenW;
+  static public int screenH;
+  static {
+    Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
+    screenW = size.width;
+    screenH = size.height;
+  }
+
+  /** 
+   * Use screenW and screenH instead.
+   * @deprecated
    */
   public Dimension screen =
     Toolkit.getDefaultToolkit().getScreenSize();
