@@ -184,9 +184,9 @@ public class AndroidTool implements Tool, DeviceListener {
   private void runSketchOnDevice(final Future<AndroidDevice> deviceFuture)
       throws Cancelled {
     final IndeterminateProgressMonitor monitor = new IndeterminateProgressMonitor(
-                                                                          editor,
-                                                                          "Building and launching...",
-                                                                          "Creating project...");
+                                                                                  editor,
+                                                                                  "Building and launching...",
+                                                                                  "Creating project...");
     try {
       final Build build = getBuilder();
       if (!build.createProject()) {
@@ -235,7 +235,7 @@ public class AndroidTool implements Tool, DeviceListener {
   private static final Pattern LOCATION = Pattern
       .compile("\\(([^:]+):(\\d+)\\)");
   private static final Pattern EXCEPTION_PARSER = Pattern.compile(
-    "^([a-z]+(?:\\.[a-z]+)+)(?:: (.+))?$", Pattern.CASE_INSENSITIVE);
+    "^\\s*([a-z]+(?:\\.[a-z]+)+)(?:: .+)?$", Pattern.CASE_INSENSITIVE);
 
   /**
    * Currently figures out the first relevant stack trace line
@@ -255,8 +255,7 @@ public class AndroidTool implements Tool, DeviceListener {
       return;
     }
     final String exceptionClass = m.group(1);
-    final String message = m.group(2);
-    if (Runner.handleCommonErrors(exceptionClass, message, editor)) {
+    if (Runner.handleCommonErrors(exceptionClass, exceptionLine, editor)) {
       return;
     }
 
@@ -268,9 +267,10 @@ public class AndroidTool implements Tool, DeviceListener {
           final String filename = lm.group(1);
           final int lineNumber = Integer.parseInt(lm.group(2)) - 1;
           final RunnerException rex = editor.getSketch().placeException(
-            message, filename, lineNumber);
-          editor.statusError(rex == null ? new RunnerException(message, false)
-              : rex);
+            exceptionLine, filename, lineNumber);
+          editor.statusError(rex == null ? new RunnerException(exceptionLine,
+                                                               false) : rex);
+          return;
         }
       }
 
