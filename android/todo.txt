@@ -20,6 +20,7 @@ X drastically improve the performance of the time functions
 X point wasn't detecting different stroke weights
 X point wasn't working with strokeWeight > 1
 X fix rotate() bug (was using degrees instead of radians)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1497
 X arc() now working properly
 X createGraphics() works, at least with A2D (or aliases P2D and JAVA2D)
 X "The application ... has stopped unexpectedly." when quitting a slow app

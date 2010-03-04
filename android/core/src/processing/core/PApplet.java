@@ -74,9 +74,9 @@ public class PApplet extends Activity implements PConstants, Runnable {
    * This variable is not static, because future releases need to be better
    * at handling multiple displays.
    */
+  static public int screenW, screenH;
 //  public Dimension screen =
 //    Toolkit.getDefaultToolkit().getScreenSize();
-  public int screenWidth, screenHeight;
 
   /**
    * Command line options passed in from main().
@@ -409,8 +409,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
     DisplayMetrics dm = new DisplayMetrics();
     getWindowManager().getDefaultDisplay().getMetrics(dm);
-    screenWidth = dm.widthPixels;
-    screenHeight = dm.heightPixels;
+    screenW = dm.widthPixels;
+    screenH = dm.heightPixels;
     //println("screen size is " + screenWidth + "x" + screenHeight);
 
     if (sketchRenderer().equals(A2D)) {
@@ -419,8 +419,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
       surfaceView = new SketchSurfaceView3D(this);
     }
 
-    width = screenWidth;
-    height = screenHeight;
+    width = screenW;
+    height = screenH;
 
     window.setContentView(surfaceView);  // set full screen
 
@@ -528,7 +528,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
       // before surfaceChanged() is ever called.
       PGraphics newGraphics = new PGraphicsAndroid3D();
       // Set semi-arbitrary size; will be set properly when surfaceChanged() called
-      newGraphics.setSize(screenWidth, screenHeight);
+      newGraphics.setSize(screenW, screenH);
       newGraphics.setParent(PApplet.this);
       newGraphics.setPrimary(true);
       g = newGraphics;
@@ -629,7 +629,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 //      println("creating graphics");
       PGraphics newGraphics = new PGraphicsAndroid2D();
       // Set semi-arbitrary size; will be set properly when surfaceChanged() called
-      newGraphics.setSize(screenWidth, screenHeight);
+      newGraphics.setSize(screenW, screenH);
 //      newGraphics.setSize(getWidth(), getHeight());
       newGraphics.setParent(PApplet.this);
       newGraphics.setPrimary(true);
@@ -738,12 +738,12 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 
   public int sketchWidth() {
-    return screenWidth;
+    return screenW;
   }
 
 
   public int sketchHeight() {
-    return screenHeight;
+    return screenH;
   }
 
 
