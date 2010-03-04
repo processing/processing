@@ -211,8 +211,6 @@ class Build {
   }
 
   /**
-   * @param buildFile
-   *          location of the build.xml for the sketch
    * @param target
    *          "debug" or "release"
    */
@@ -220,6 +218,7 @@ class Build {
     final Project p = new Project();
     p.setUserProperty("ant.file", buildFile.getAbsolutePath()
         .replace('\\', '/'));
+
     // deals with a problem where javac error messages weren't coming through
     p.setUserProperty("build.compiler", "extJavac");
     // p.setUserProperty("build.compiler.emacs", "true"); // does nothing
