@@ -3,6 +3,7 @@ X filter(DILATE/ERODE)
 X   dilate(boolean) has bug in clamping of top kernel coordinate
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1477
 X deprecated 'screen', adding screenW and screenH
+X write implementation for get/set methods inside PImage (w/o pixels[])
 
 
 big ones
