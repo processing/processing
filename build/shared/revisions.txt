@@ -1,3 +1,84 @@
+PROCESSING REV 0178 - 4 March 2010
+
+Tons of Android work in this release. A2D has been tested and runs correctly
+for all of the examples in "Basics" and "Topics". A3D is not quite finished
+yet, and the size() command is still causing crashes. 
+
+This release also contains lots of work on Android Mode for the PDE, which
+is being worked on by Jonathan Feinberg.
+
+[ core ] 
+
++ Fix for filter(DILATE/ERODE) from Dave Bollinger
+  http://dev.processing.org/bugs/show_bug.cgi?id=1477
+
++ Deprecated 'screen', adding screenW and screenH. See discussion here:
+  http://dev.processing.org/bugs/show_bug.cgi?id=1499
+
++ Added implementation for get/set methods inside PImage (w/o pixels[])
+
+[ fixes to android core ] 
+
++ Fix noLoop() and static-mode sketches.
+  http://dev.processing.org/bugs/show_bug.cgi?id=1467
+
++ Fix the freakout that happens with onPause()
+  http://dev.processing.org/bugs/show_bug.cgi?id=1483
+
++ App not pausing or closing when switching to another activity
+  http://dev.processing.org/bugs/show_bug.cgi?id=1404
+
++ Bezier curves were broken in A2D (extra point is drawn connecting the 
+  shape to the corner).
+
++ Fixed other minor bugs in shape drawing.
+
++ mask() now implemented in A2D
+
++ updatePixels() now work properly for A2D
+
++ set() should now be working
+
++ Using set() on an image that doesn't have a bitmap, or has pixels loaded.
+
++ requestImage() now working
+
++ Drastically improve the performance of the time functions (minute() et al)
+
++ Point wasn't detecting different stroke weights. 
+
++ Point wasn't working with strokeWeight > 1.
+
++ Fix rotate() bug (was using degrees instead of radians)
+  http://dev.processing.org/bugs/show_bug.cgi?id=1497
+
++ arc() now working properly
+
++ createGraphics() works, at least with A2D (or aliases P2D and JAVA2D)
+
++ Fixed "The application ... has stopped unexpectedly." when quitting slow app
+  http://dev.processing.org/bugs/show_bug.cgi?id=1485
+
++ test createFont()
+
++ createGraphics() broken
+  http://dev.processing.org/bugs/show_bug.cgi?id=1437
+
++ Remove legacy PGraphics3D class from processing.core.android
+  http://dev.processing.org/bugs/show_bug.cgi?id=1402
+
+[ android mode ] 
+
++ Exception handling is much improved.
+
++ Get stdout and stderr from the emulator/device (println() now works).
+  http://dev.processing.org/bugs/show_bug.cgi?id=1381
+
++ Removed the ANDROID_SDK env variable requirement.
+  http://dev.processing.org/bugs/show_bug.cgi?id=1471
+  http://dev.processing.org/bugs/show_bug.cgi?id=1469
+
+
 PROCESSING REV 0177 - 21 February 2010
 
 Fix for the Android tools complaining "Open quote is expected for 
