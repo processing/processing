@@ -57,24 +57,17 @@ public class PApplet extends Activity implements PConstants, Runnable {
 //  public Frame frame;
 
   /**
-   * The screen size when the applet was started.
-   * <P>
-   * Access this via screen.width and screen.height. To make an applet
-   * run at full screen, use size(screen.width, screen.height).
-   * <P>
-   * If you have multiple displays, this will be the size of the main
-   * display. Running full screen across multiple displays isn't
-   * particularly supported, and requires more monkeying with the values.
-   * This probably can't/won't be fixed until/unless I get a dual head
-   * system.
-   * <P>
+   * The screen size when the sketch was started. This is initialized inside
+   * onCreate(). 
+   * <p>
    * Note that this won't update if you change the resolution
    * of your screen once the the applet is running.
    * <p>
-   * This variable is not static, because future releases need to be better
-   * at handling multiple displays.
+   * This variable is not static because in the desktop version of Processing,
+   * not all instances of PApplet will necessarily be started on a screen of 
+   * the same size. 
    */
-  static public int screenW, screenH;
+  public int screenW, screenH;
 //  public Dimension screen =
 //    Toolkit.getDefaultToolkit().getScreenSize();
 
