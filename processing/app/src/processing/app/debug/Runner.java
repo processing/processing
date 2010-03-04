@@ -526,8 +526,8 @@ public class Runner implements MessageConsumer {
       System.err.println("and needs to be recompiled to be compatible with Java 1.5.");
     } else if (exceptionClass.equals("java.lang.NoSuchMethodError") || exceptionClass.equals("java.lang.NoSuchFieldError")) {
       listener.statusError(exceptionClass.substring(10) + ": You're probably using a library that's incompatible with this version of Processing.");
-    } else if (message
-        .equals("ClassNotFoundException: quicktime.std.StdQTException")) {
+    } else if (message!=null && 
+        message.equals("ClassNotFoundException: quicktime.std.StdQTException")) {
       listener
           .statusError("Could not find QuickTime, please reinstall QuickTime 7 or later.");
     } else {
