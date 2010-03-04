@@ -34,7 +34,7 @@ import android.graphics.Paint.Style;
  */
 public class PGraphicsAndroid2D extends PGraphics {
 
-  Canvas canvas;  // like g2 for PGraphicsJava2D
+  public Canvas canvas;  // like g2 for PGraphicsJava2D
 
   /// break the shape at the next vertex (next vertex() call is a moveto())
   boolean breakShape;
@@ -286,6 +286,7 @@ public class PGraphicsAndroid2D extends PGraphics {
 //        path.moveTo(x, y);
       //if (pathReset) {
       if (vertexCount == 0) {
+        path.reset();
         path.moveTo(x, y);
         vertexCount = 1;
 //        pathReset = false;
