@@ -39,6 +39,22 @@ X what to do with other classes that rely on PApplet? (e.g. vida)
 X remove drawCube() method from PApplet
 X add methods to request rendering
 o   need to deal with fps problems with this model
+o gz files not allowed, need to remove the code from createInput() et al
+X   or maybe not, since could still come from a site or a File?
+X   just can't come from the assets file..
+
+jdf
+X get stdout and stderr from the emulator/device
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1381
+X remove ANDROID_SDK env variable requirement
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1471
+X   ANDROID_SDK doesn't seem to be mentioned anywhere anymore
+X   this may mean that p5 might just need to get the location
+X ANDROID_SDK not getting set on OS X
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1469
+X   http://stackoverflow.com/questions/603785/environment-variables-in-mac-os-x
+X timeout isn't long enough for emulator to boot and startup
+X   always times out on a 3 GHz OS X machine
 
 
 _ make size() work to place the component at the center of the screen
@@ -53,13 +69,6 @@ _ if sketchRenderer() et al are used in android, need to add to desktop
 _ remove SurfaceView2D/SurfaceView3D separation, or clean up
 _ what is resetLights() in PGraphics?
 _ remove model() method from end of PApplet (make it shape(PShape))
-
-_ throw an error if a file in the 'data' dir ends with .gz
-_ gz files not allowed, need to remove the code from createInput() et al
-_   or maybe not, since could still come from a site or a File?
-_   just can't come from the assets file..
-_ need to make data folder copy more efficient than just copying everything
-_   right now, first copies to src inside Build.java (which then copies to bin)
 
 
 P1 this is embarrassing, need to fix ASAP
@@ -122,70 +131,39 @@ P5 _   http://dev.processing.org/bugs/show_bug.cgi?id=1492
 
 TOOLS 
 
-JDF maybedone
- P1 _ get stdout and stderr from the emulator/device
- P1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1381
-
-
-JDF maybedone
- P1 _ errors that happen inside events (e.g. keys) not highlighting lines
- P1 _   useful stack trace information not coming through.. why?
- P1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1384
-
-_ Errors show up that .java files are duplicates with the Android tools.
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1472
+P1 _ errors that happen inside events (e.g. keys) not highlighting lines
+P1 _   useful stack trace information not coming through.. why?
+P1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1384
 
 _ don't require JDK installation and PATH setting
+_   if using processing with java download, should be able to use its tools.jar
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1470
 
-JDF maybedone
-_ remove ANDROID_SDK env variable requirement
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1471
-_   ANDROID_SDK doesn't seem to be mentioned anywhere anymore
-_   this may mean that p5 might just need to get the location
-_   though it makes things messier for the build scripts
+_ only send error text to System.err (i.e. "Launching emulator" is not an error)
+_   send these debug log messages to System.out
 
-JDF maybedone
-_ ANDROID_SDK not getting set on OS X
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1469
-_   http://stackoverflow.com/questions/603785/environment-variables-in-mac-os-x
-
-
-_ library support also needs android manifest changes
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1439
-_ add method to set the icon (and package name?)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1429
-_   http://developer.android.com/guide/publishing/preparing.html
-
-JDF maybedone
-_ timeout isn't long enough for emulator to boot and startup
-_   always times out on a 3 GHz OS X machine
-
-
-JDF maybedone
 _ "Sketch started on emulator" in spite of the emulator only halfway booted
+_   sent email about this one
 
 _ errors in ActivityManager aren't coming through
 _ if AVD is deleted while processing still running, things flake out
-_   also no error messages, just 'giving up on launching emulator
+_   also no error messages, just 'giving up on launching emulator'
 
-
-JDF maybedone
-_ stack overflow produced no error inside the PDE
-
-
-JDF maybedone
 _ when out of memory, need an error message to show up in the PDE
-_ Examples > Topics > Drawing > Animator produces:
+_   show "OutOfMemoryError: bitmap size exceeds VM budget" in status area
+_   Examples > Topics > Drawing > Animator produces:
 _   Uncaught handler: thread Animation Thread exiting due to uncaught exception
 _   java.lang.OutOfMemoryError: bitmap size exceeds VM budget
 _     at android.graphics.Bitmap.nativeCreate(Native Method)
-
+_ stack overflow produced no error inside the PDE
+_   probably same as memory error above
 
 _ if hitting 'run' in p5, need to kill any sketch that's currently running
 
+_ throw an error if a file in the 'data' dir ends with .gz
+_ need to make data folder copy more efficient than just copying everything
+_   right now, first copies to src inside Build.java (which then copies to bin)
 
-JDF maybedone
 _ other exceptions coming through System.err
 W/System.err(  242): java.lang.IllegalArgumentException: File /data/data/processing.android.test.savemanyimages/files/circles-0001.tif contains a path separator
 W/System.err(  242): 	at android.app.ApplicationContext.makeFilename(ApplicationContext.java:1444)
@@ -193,7 +171,7 @@ W/System.err(  242): 	at android.app.ApplicationContext.openFileOutput(Applicati
 W/System.err(  242): 	at android.content.ContextWrapper.openFileOutput(ContextWrapper.java:158)
 W/System.err(  242): 	at processing.core.PApplet.createOutput(PApplet.java:3677)
 
-android menu
+android menu (need to discuss) 
 _ reset adb
 _ something to bring up the full console window
 _ signing tool
@@ -204,12 +182,12 @@ P2 _ need to prevent hitting 'run' twice (threaded, so would work)
 P2 _   currently things just keep restarting the build, bad state
 P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1387
 
-JDF maybedone
 P2 _ move the android tools into its own source package in SVN
+P2 _   started, but needs proper Tool or Mode packaging
 P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1388
 
-JDF maybedone
 P2 _ 'stop' is now a no-op for the android tools
+P2 _   partially fixed but hangs after pressing stop
 P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1386
 
 P2 _ implement method for selecting the AVD
@@ -219,9 +197,8 @@ P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1379
 P2 _ save state re: whether sketches are android or java mode (or others?)
 P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1380
 
-P3 _ don't require android tools to be installed already
-P3 _   or implement automatic download/install of android tools
-P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1383
+P3 _ when running a sketch, need to unlock the device
+P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1500
 P3 _ remove various debug messages on the console
 P3 _   right now, there are too many places where errors occur
 P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1385
@@ -238,10 +215,25 @@ P3 _   with different machines, users are required to remove signature
 P3 _   add a method to remove an application if the debug key is different
 P3 _     perhaps the first time an application is installed, remove it?
 P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1481
+P3 _ library support also needs android manifest changes
+P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1439
+P3 _ Errors show up that .java files are duplicates with the Android tools.
+P3 _   example sketch added to bug report
+P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1472
 
-JDF maybedone
+P4 _ don't require android tools to be installed already
+P4 _   or implement automatic download/install of android tools
+P4 _   http://dev.processing.org/bugs/show_bug.cgi?id=1383
+P4 _ add method to set the icon (and package name?)
+P4 _   http://dev.processing.org/bugs/show_bug.cgi?id=1429
+P4 _   http://developer.android.com/guide/publishing/preparing.html
+
 P5 _ remove the need for a "Reset Android" menu option
+P5 _   might need to just put this in the menu for times when things go weird
 P5 _   http://dev.processing.org/bugs/show_bug.cgi?id=1392
+
+_ figure out how to set ANDROID_SDK for the build scripts
+_   right now, just setting the env value is required 
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
