@@ -27,9 +27,24 @@ class AndroidSDK {
     androidTool = findAndroidTool(tools);
 
     final Platform p = Base.getPlatform();
+
+    String path = p.getenv("PATH");
+
     p.setenv("ANDROID_SDK", sdk.getCanonicalPath());
-    p.setenv("PATH", tools.getCanonicalPath() + File.pathSeparator
-        + p.getenv("PATH"));
+    path = tools.getCanonicalPath() + File.pathSeparator + path;
+
+    final String javaHomeProp = System.getProperty("java.home");
+    if (javaHomeProp == null) {
+      throw new RuntimeException(
+                                 "I don't know how to deal with a null java.home proprty, to be quite frank.");
+    }
+    final File javaHome = new File(javaHomeProp).getCanonicalFile();
+    p.setenv("JAVA_HOME", javaHome.getCanonicalPath());
+
+    path = new File(javaHome, "bin").getCanonicalPath() + File.pathSeparator
+        + path;
+
+    p.setenv("PATH", path);
   }
 
   public File getAndroidTool() {
