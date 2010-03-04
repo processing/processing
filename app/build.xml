@@ -65,6 +65,12 @@
 	   encoding="UTF-8"
 	   includeAntRuntime="false"
 	   classpath="../core/core.jar; ${env.JAVA_HOME}/lib/tools.jar; lib/ant.jar; lib/ant-launcher.jar; lib/antlr.jar; lib/apple.jar; lib/ecj.jar; lib/jna.jar" />
+    <javac target="1.5" 
+	   srcdir="../android/tool/src" 
+	   destdir="bin" 
+	   encoding="UTF-8"
+	   includeAntRuntime="false"
+	   classpath="../core/core.jar; ${env.JAVA_HOME}/lib/tools.jar; lib/ant.jar; lib/ant-launcher.jar; lib/antlr.jar; lib/apple.jar; lib/ecj.jar; lib/jna.jar" />
   </target>
   
   <target name="build" depends="compile" description="Build PDE">
