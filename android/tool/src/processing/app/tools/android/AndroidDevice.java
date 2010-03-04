@@ -105,40 +105,47 @@ class AndroidDevice implements AndroidDeviceProperties {
           endProc(entry.pid);
         }
       } else if (entry.source.equals("Process")) {
-        final Matcher m = SIG.matcher(entry.message);
-        if (m.find()) {
-          final int pid = Integer.parseInt(m.group(1));
-          final int signal = Integer.parseInt(m.group(2));
+        handleCrash(entry);
+      } else if (activeProcesses.contains(entry.pid)) {
+        handleConsole(entry);
+      }
+    }
+
+    private void handleCrash(final LogEntry entry) {
+      final Matcher m = SIG.matcher(entry.message);
+      if (m.find()) {
+        final int pid = Integer.parseInt(m.group(1));
+        final int signal = Integer.parseInt(m.group(2));
+        if (activeProcesses.contains(pid)) { // only report crashes of *our* sketches, por favor
           /*
            * A crashed sketch first gets a signal 3, which causes the
            * "you've crashed" dialog to appear on the device. After
            * the user dismisses the dialog, a sig 9 is sent.
+           * TODO: is it possible to forcibly dismiss the crash dialog?
            */
           if (signal == 3) {
             endProc(pid);
             reportStackTrace(entry);
           }
         }
-      } else if (activeProcesses.contains(entry.pid)) {
-        handleConsole(entry);
       }
     }
-  }
 
-  private void handleConsole(final LogEntry entry) {
-    final boolean isStackTrace = entry.source.equals("AndroidRuntime")
-        && entry.severity == Severity.Error;
-    if (isStackTrace) {
-      if (!entry.message.startsWith("Uncaught handler")) {
-        stackTrace.add(entry.message);
-        System.err.println(entry.message);
-      }
-    } else if (entry.source.equals("System.out")
-        || entry.source.equals("System.err")) {
-      if (entry.severity.useErrorStream) {
-        System.err.println(entry.message);
-      } else {
-        System.out.println(entry.message);
+    private void handleConsole(final LogEntry entry) {
+      final boolean isStackTrace = entry.source.equals("AndroidRuntime")
+          && entry.severity == Severity.Error;
+      if (isStackTrace) {
+        if (!entry.message.startsWith("Uncaught handler")) {
+          stackTrace.add(entry.message);
+          System.err.println(entry.message);
+        }
+      } else if (entry.source.equals("System.out")
+          || entry.source.equals("System.err")) {
+        if (entry.severity.useErrorStream) {
+          System.err.println(entry.message);
+        } else {
+          System.out.println(entry.message);
+        }
       }
     }
   }
