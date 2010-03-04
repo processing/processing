@@ -11,13 +11,20 @@
     <javac encoding="UTF-8"
 	   includeAntRuntime="false"
 	   bootclasspath="${env.ANDROID_SDK}/platforms/android-2.0/android.jar"
-	   srcdir="core/src" destdir="core/bin"/>
+	   srcdir="core/src" destdir="core/bin" />
 
     <delete file="core.zip" />
     <zip destfile="core.zip">
       <fileset dir="core/bin" includes="processing/core/*.class" />
       <fileset dir="core/bin" includes="processing/xml/*.class" />
     </zip>
+
+<!--
+    <mkdir dir="tool/bin" />
+    <javac encoding="UTF-8"
+	   includeAntRuntime="false"
+	   srcdir="tool/src" destdir="tool/bin" />
+    -->
   </target>
 
   <target name="clean" if="env.ANDROID_SDK"
