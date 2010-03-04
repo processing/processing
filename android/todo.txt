@@ -294,3 +294,16 @@ _ list contents of data folder (assets folder)
 _ excessive memory use indicator
 _   D/dalvikvm( 1205): GC freed 814 objects / 523352 bytes in 58ms
 _   could help show when lots of memory are being used
+
+try {
+    File root = Environment.getExternalStorageDirectory();
+    if (root.canWrite()){
+        File gpxfile = new File(root, "gpxfile.gpx");
+        FileWriter gpxwriter = new FileWriter(gpxfile);
+        BufferedWriter out = new BufferedWriter(gpxwriter);
+        out.write("Hello world");
+        out.close();
+    }
+} catch (IOException e) {
+    Log.e(TAG, "Could not write file " + e.getMessage());
+}
