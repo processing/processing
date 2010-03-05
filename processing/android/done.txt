@@ -1,0 +1,41 @@
+0177 (private)
+X fix error with typo in the build file:
+X   Open quote is expected for attribute "{1}" associated with an
+X   element type "android:minSdkVersion".
+
+
+0176 (private)
+X begin the merge of the new A3D, remove old OpenGL code
+X escape slashes properly on windows (also place sdk in program files)
+X   writer.println("sdk.dir=" + Android.sdkPath);  // r4 of the sdk
+X   writer.println("sdk.dir=" + Android.sdkPath.replace("\\", "\\" +"\\")); 
+X move processing.android.core back to processing.core
+X   need to document the rationale
+X Android tools on Windows are broken due to naming changes in r4 SDK
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1432
+X images with tint() starting to work
+X   tint() causes crash
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1435
+X loadFont() now working, createFont() not tested yet
+X implement library support for android
+X   also code folder support
+
+
+0175 (private)
+X fix problem with windows claiming "does not appear to contain an Android SDK"
+X loadImage() and other loadXxxx() functions not yet working
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1414
+X   can the data folder have subfolders? - yes
+
+
+0174 (private)
+X not handling key characters correctly (space bar, tab, others)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1405
+X why aren't mouse drag events coming through?
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1382
+X "taskdef class com.android.ant.SetupTask cannot be found" on Linux
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1407
+X update to r4 of android sdk
+X   this release will not run on r3 or earlier
+X download core.zip from local files
+
