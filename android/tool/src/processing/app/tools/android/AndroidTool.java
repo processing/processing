@@ -161,6 +161,7 @@ public class AndroidTool implements Tool, DeviceListener {
       throws Cancelled {
     for (int i = 0; i < 120; i++) {
       if (monitor.isCanceled()) {
+        deviceFuture.cancel(true);
         throw new Cancelled();
       }
       try {
@@ -279,6 +280,7 @@ public class AndroidTool implements Tool, DeviceListener {
 
   public void sketchStopped() {
     editor.internalRunnerClosed();
+    editor.statusEmpty();
   }
 
   /**
@@ -290,6 +292,7 @@ public class AndroidTool implements Tool, DeviceListener {
       try {
         runSketchOnDevice(AndroidEnvironment.getInstance().getEmulator());
       } catch (final Cancelled ok) {
+        sketchStopped();
         editor.statusNotice("Cancelled.");
       }
     }
@@ -303,6 +306,7 @@ public class AndroidTool implements Tool, DeviceListener {
       try {
         runSketchOnDevice(AndroidEnvironment.getInstance().getHardware());
       } catch (final Cancelled ok) {
+        sketchStopped();
         editor.statusNotice("Cancelled.");
       }
     }
@@ -336,4 +340,5 @@ public class AndroidTool implements Tool, DeviceListener {
   @SuppressWarnings("serial")
   private static class Cancelled extends Exception {
   }
+
 }
