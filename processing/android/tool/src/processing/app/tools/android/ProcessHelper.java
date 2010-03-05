@@ -53,31 +53,6 @@ class ProcessHelper {
    * @throws IOException
    */
   public ProcessResult execute() throws InterruptedException, IOException {
-    return execute(false);
-  }
-
-  /**
-   * Blocking execution.
-   * @param tee Send process's stdout/stderr to stdout/stderr in addition to capturing them
-   * @return exit value of process
-   * @throws InterruptedException
-   * @throws IOException
-   */
-  public ProcessResult execute(final boolean tee) throws InterruptedException,
-      IOException {
-    return execute(tee, tee);
-  }
-
-  /**
-   * Blocking execution.
-   * @param teeOut Send process's stdout to stdout in addition to capturing it
-   * @param teeErr Send process's stderr to stderr in addition to capturing it
-   * @return exit value of process
-   * @throws InterruptedException
-   * @throws IOException
-   */
-  public ProcessResult execute(final boolean teeOut, final boolean teeErr)
-      throws InterruptedException, IOException {
     final StringWriter outWriter = new StringWriter();
     final StringWriter errWriter = new StringWriter();
     final long startTime = System.currentTimeMillis();
@@ -85,29 +60,22 @@ class ProcessHelper {
     final String prettyCommand = getCommand();
     //    System.err.println("ProcessHelper: begin " + prettyCommand);
     final Process process = Runtime.getRuntime().exec(cmd);
-
-    final StreamPump outpump = new StreamPump(process.getInputStream())
-        .addTarget(outWriter);
-    if (teeOut) {
-      outpump.addTarget(System.out);
-    }
-    outpump.start();
-
-    final StreamPump errpump = new StreamPump(process.getErrorStream())
-        .addTarget(errWriter);
-    if (teeErr) {
-      errpump.addTarget(System.err);
-    }
-    errpump.start();
     try {
-      final int result = process.waitFor();
-      final long time = System.currentTimeMillis() - startTime;
-      //      System.err.println("ProcessHelper: " + time + "ms: " + prettyCommand);
-      return new ProcessResult(prettyCommand, result, outWriter.toString(),
-                               errWriter.toString(), time);
-    } catch (final InterruptedException e) {
-      System.err.println("Interrupted: " + prettyCommand);
-      throw e;
+      new StreamPump(process.getInputStream()).addTarget(outWriter).start();
+      new StreamPump(process.getErrorStream()).addTarget(errWriter).start();
+      try {
+        final int result = process.waitFor();
+        final long time = System.currentTimeMillis() - startTime;
+        //      System.err.println("ProcessHelper: " + time + "ms: " + prettyCommand);
+        return new ProcessResult(prettyCommand, result, outWriter.toString(),
+                                 errWriter.toString(), time);
+      } catch (final InterruptedException e) {
+        System.err.println("Interrupted: " + prettyCommand);
+        process.destroy();
+        throw e;
+      }
+    } finally {
+      process.destroy();
     }
   }
 }
