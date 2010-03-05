@@ -132,6 +132,17 @@ if (is_dir($path.'learning/transform2d/imgs')) {
 	copydirr($source.'transform2d/imgs', $path.'learning/transform2d/imgs', null, 0757, true); 
 }
 
+$page = new Page("Curves", "Tutorials");
+$page->content(file_get_contents($source."curves/index.html"));
+writeFile('learning/curves/index.html', $page->out());
+if (!is_dir($path.'learning/curves/imgs')) { 
+	mkdir($path.'learning/curves/imgs', '0757'); 
+}
+if (is_dir($path.'learning/curves/imgs')) { 
+	copydirr($source.'curves/imgs', $path.'learning/curves/imgs', null, 0757, true); 
+}
+
+
 $benchmark_end = microtime_float();
 $execution_time = round($benchmark_end - $benchmark_start, 4);
 
