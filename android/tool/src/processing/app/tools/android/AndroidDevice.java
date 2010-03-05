@@ -166,14 +166,18 @@ class AndroidDevice implements AndroidDeviceProperties {
   void initialize() throws IOException, InterruptedException {
     adb("logcat", "-c");
     logcat = Runtime.getRuntime().exec(generateAdbCommand("logcat"));
+    ProcessRegistry.watch(logcat);
     new StreamPump(logcat.getInputStream()).addTarget(new LogLineProcessor())
         .start();
     new StreamPump(logcat.getErrorStream()).addTarget(System.err).start();
+    System.err.println("Receiving log entries from " + id);
   }
 
   void shutdown() {
+    System.err.println(id + " is shutting down.");
     if (logcat != null) {
       logcat.destroy();
+      ProcessRegistry.unwatch(logcat);
     }
     env.deviceRemoved(this);
     listeners.clear();
