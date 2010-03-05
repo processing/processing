@@ -121,10 +121,12 @@ class AndroidEnvironment {
 
   private AndroidDevice find(final boolean wantEmulator) {
     refresh();
-    for (final AndroidDevice device : devices.values()) {
-      final boolean isEmulator = device.getId().contains("emulator");
-      if ((isEmulator && wantEmulator) || (!isEmulator && !wantEmulator)) {
-        return device;
+    synchronized (devices) {
+      for (final AndroidDevice device : devices.values()) {
+        final boolean isEmulator = device.getId().contains("emulator");
+        if ((isEmulator && wantEmulator) || (!isEmulator && !wantEmulator)) {
+          return device;
+        }
       }
     }
     return null;
@@ -146,9 +148,9 @@ class AndroidEnvironment {
   }
 
   private final AndroidDevice blockingGetHardware() {
-    AndroidDevice emu = find(false);
-    if (emu != null) {
-      return emu;
+    AndroidDevice hardware = find(false);
+    if (hardware != null) {
+      return hardware;
     }
     while (!Thread.currentThread().isInterrupted()) {
       try {
@@ -156,9 +158,9 @@ class AndroidEnvironment {
       } catch (final InterruptedException e) {
         return null;
       }
-      emu = find(false);
-      if (emu != null) {
-        return emu;
+      hardware = find(false);
+      if (hardware != null) {
+        return hardware;
       }
     }
     return null;
@@ -171,23 +173,25 @@ class AndroidEnvironment {
         addDevice(new AndroidDevice(this, deviceId));
       }
     }
-    for (final String deviceId : new ArrayList<String>(devices.keySet())) {
-      if (!activeDevices.contains(deviceId)) {
-        devices.get(deviceId).shutdown();
+    synchronized (devices) {
+      for (final String deviceId : new ArrayList<String>(devices.keySet())) {
+        if (!activeDevices.contains(deviceId)) {
+          System.err.println("HEY THIS SHOULDN'T HAPPEN");
+          devices.get(deviceId).shutdown();
+        }
       }
     }
   }
 
   private void addDevice(final AndroidDevice device) {
-    if (devices.put(device.getId(), device) != null) {
-      throw new IllegalStateException("Adding " + device
-          + ", which already exists!");
-    }
     try {
       device.initialize();
+      if (devices.put(device.getId(), device) != null) {
+        throw new IllegalStateException("Adding " + device
+            + ", which already exists!");
+      }
     } catch (final Exception e) {
-      System.err.println("Cannot initialize " + device + ": " + e);
-      devices.remove(device.getId());
+      System.err.println("While initializing " + device.getId() + ": " + e);
     }
   }
 
