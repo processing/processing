@@ -4,29 +4,52 @@ import java.io.IOException;
 import processing.app.Preferences;
 
 class EmulatorController {
-  static void launch() throws IOException {
+  public static enum State {
+    Idle, Launched, Running
+  }
+
+  public static EmulatorController getInstance() {
+    return INSTANCE;
+  }
+
+  private static final EmulatorController INSTANCE = new EmulatorController();
+
+  private volatile State state = State.Idle;
+
+  public State getState() {
+    return state;
+  }
+
+  private void setState(final State state) {
+    this.state = state;
+    System.err.println("Emulator state: " + state);
+  }
+
+  synchronized public void launch() throws IOException {
+    if (state != State.Idle) {
+      throw new IllegalStateException(
+                                      "You can't launch an emulator whose state is "
+                                          + state);
+    }
+
     String portString = Preferences.get("android.emulator.port");
     if (portString == null) {
       portString = "5566";
       Preferences.set("android.emulator.port", portString);
     }
 
-    // # starts and uses port 5554 for communication (ut not logs)
-    // emulator -avd gee1 -port 5554
-    // # only informative messages and up (emulator -help-logcat for more info)
-    // emulator -avd gee1 -logcat '*:i'
-    // # faster boot
-    // emulator -avd gee1 -logcat '*:i' -no-boot-anim
-    // # only get System.out and System.err
-    // emulator -avd gee1 -logcat 'System.*:i' -no-boot-anim
-    // # though lots of messages aren't through System.*, so that's not great
-    // # need to instead use the adb interface
-
-    // launch emulator because it's not running yet
-    final String[] cmd = new String[] {
-      "emulator", "-avd", AVD.ECLAIR.name, "-port", portString, "-no-boot-anim" };
     System.err.println("Launching emulator");
-    final Process p = Runtime.getRuntime().exec(cmd);
+
+    // See http://developer.android.com/guide/developing/tools/emulator.html
+    final Process p = Runtime.getRuntime().exec(
+      new String[] {
+        "emulator", "-avd", AVD.ECLAIR.name, "-port", portString,
+        "-no-boot-anim" });
+
+    // if we've gotten this far, then we've at least succeeded in finding and
+    // beginning execution of the emulator, so we are now officially "Launching"
+    setState(State.Launched);
+
     ProcessRegistry.watch(p);
     // "emulator: ERROR: the user data image is used by another emulator. aborting"
     // make sure that the streams are drained properly
@@ -35,14 +58,31 @@ class EmulatorController {
     new Thread(new Runnable() {
       public void run() {
         try {
-          final int result = p.waitFor();
-          System.err.println("Emulator process exited "
-              + ((result == 0) ? "normally" : " with status " + result) + ".");
-        } catch (final InterruptedException e) {
-          System.err.println("Emulator was interrupted.");
+          if (AndroidEnvironment.getInstance().getEmulator().get() != null) {
+            setState(State.Running);
+          }
+        } catch (final Exception e) {
+          System.err.println("While waiting for emulator to launch " + e);
+        }
+      }
+    }).start();
+    new Thread(new Runnable() {
+      public void run() {
+        try {
+          try {
+            final int result = p.waitFor();
+            System.err
+                .println("Emulator process exited "
+                    + ((result == 0) ? "normally" : " with status " + result)
+                    + ".");
+          } catch (final InterruptedException e) {
+            System.err.println("Emulator was interrupted.");
+          } finally {
+            p.destroy();
+            ProcessRegistry.unwatch(p);
+          }
         } finally {
-          p.destroy();
-          ProcessRegistry.unwatch(p);
+          setState(State.Idle);
         }
       }
     }, "Emulator Babysitter").start();
