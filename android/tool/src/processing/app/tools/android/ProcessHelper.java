@@ -60,22 +60,23 @@ class ProcessHelper {
     final String prettyCommand = getCommand();
     //    System.err.println("ProcessHelper: begin " + prettyCommand);
     final Process process = Runtime.getRuntime().exec(cmd);
+    ProcessRegistry.watch(process);
     try {
       new StreamPump(process.getInputStream()).addTarget(outWriter).start();
       new StreamPump(process.getErrorStream()).addTarget(errWriter).start();
       try {
         final int result = process.waitFor();
         final long time = System.currentTimeMillis() - startTime;
-        //      System.err.println("ProcessHelper: " + time + "ms: " + prettyCommand);
+        //        System.err.println("ProcessHelper: " + time + "ms: " + prettyCommand);
         return new ProcessResult(prettyCommand, result, outWriter.toString(),
                                  errWriter.toString(), time);
       } catch (final InterruptedException e) {
         System.err.println("Interrupted: " + prettyCommand);
-        process.destroy();
         throw e;
       }
     } finally {
       process.destroy();
+      ProcessRegistry.unwatch(process);
     }
   }
 }
