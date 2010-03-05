@@ -273,13 +273,7 @@ public class PApplet extends Applet
    * not all instances of PApplet will necessarily be started on a screen of 
    * the same size. 
    */
-  static public int screenW;
-  static public int screenH;
-  static {
-    Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
-    screenW = size.width;
-    screenH = size.height;
-  }
+  public int screenWidth, screenHeight;
 
   /** 
    * Use screenW and screenH instead.
@@ -669,6 +663,10 @@ public class PApplet extends Applet
 
   public void init() {
 //    println("Calling init()");
+
+    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+    screenWidth = screen.width;
+    screenHeight = screen.height;
 
     // send tab keys through to the PApplet
     setFocusTraversalKeysEnabled(false);

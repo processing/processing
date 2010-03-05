@@ -1,4 +1,5 @@
 0179 core
+X screenWidth/Height instead of screenW/H
 
 
 big ones

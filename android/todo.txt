@@ -1,4 +1,10 @@
 0179
+X screenWidth/Height instead of screenW/H
+
+previous
+X don't require JDK installation and PATH setting
+X   if using processing with java download, should be able to use its tools.jar
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1470
 
 
 _ make size() work to place the component at the center of the screen
@@ -78,10 +84,6 @@ TOOLS
 P1 _ errors that happen inside events (e.g. keys) not highlighting lines
 P1 _   useful stack trace information not coming through.. why?
 P1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1384
-
-_ don't require JDK installation and PATH setting
-_   if using processing with java download, should be able to use its tools.jar
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1470
 
 _ only send error text to System.err (i.e. "Launching emulator" is not an error)
 _   send these debug log messages to System.out
