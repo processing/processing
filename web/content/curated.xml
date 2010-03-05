@@ -3,7 +3,7 @@
 <curated>
 
 <software name="Mycelium" by="Ryan Alexander" scroll="yes" resize="yes" width="1024" height="700">
-        <image>images/mycelium.jpg</image>
+        <image>images/mycelium.png</image>
           <description>
              A simulation of fungal hyphae growth using images as food. 
           </description>
