@@ -2,6 +2,15 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <curated>
 
+<software name="Mycelium" by="Ryan Alexander" scroll="yes" resize="yes" width="1024" height="700">
+        <image>images/mycelium.jpg</image>
+          <description>
+             A simulation of fungal hyphae growth using images as food. 
+          </description>
+          <location>http://onecm.com/projects/mycelium/</location>
+          <link href="http://onecm.com/">onecm</link>
+</software>
+
 <software name="The Jelly Face Experiments" by="NYX (Liina Nilsson)" scroll="yes" resize="yes" width="1024" height="700">
         <image>images/nyx.jpg</image>
           <description>
