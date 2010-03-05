@@ -27,25 +27,22 @@ class EmulatorController {
       "emulator", "-avd", AVD.ECLAIR.name, "-port", portString, "-no-boot-anim" };
     System.err.println("Launching emulator");
     final Process p = Runtime.getRuntime().exec(cmd);
+    ProcessRegistry.watch(p);
     // "emulator: ERROR: the user data image is used by another emulator. aborting"
     // make sure that the streams are drained properly
-    Runtime.getRuntime().addShutdownHook(new Thread() {
-      @Override
-      public void run() {
-        p.destroy();
-      }
-    });
     new StreamPump(p.getInputStream()).addTarget(System.out).start();
     new StreamPump(p.getErrorStream()).addTarget(System.err).start();
     new Thread(new Runnable() {
       public void run() {
         try {
-          System.err.println("Starting to wait for emulator process.");
           final int result = p.waitFor();
           System.err.println("Emulator process exited "
               + ((result == 0) ? "normally" : " with status " + result) + ".");
         } catch (final InterruptedException e) {
           System.err.println("Emulator was interrupted.");
+        } finally {
+          p.destroy();
+          ProcessRegistry.unwatch(p);
         }
       }
     }, "Emulator Babysitter").start();
