@@ -1,3 +1,63 @@
+0178 (private)
+X noLoop() is broken (draw is never called)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1467
+X fix the freakout that happens with onPause()
+o   solution is to call stop() to kill the thread, but that's not a pause
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1483
+X app not pausing or closing when switching to another activity
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1404
+o if !looping, is it necessary to call redraw() in onResume()?
+X   doesn't appear to be, since it gets completely rebuilt
+X bezier curves were broken in A2D
+X   extra point is drawn connecting the shape to the corner
+X fix other minor bugs in shape drawing
+X mask() now implemented in A2D
+X updatePixels() now work properly for A2D
+X set() should now be working
+X using set() on an image that doesn't have a bitmap, or has pixels loaded
+X requestImage() now working
+X drastically improve the performance of the time functions
+X point wasn't detecting different stroke weights
+X point wasn't working with strokeWeight > 1
+X fix rotate() bug (was using degrees instead of radians)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1497
+X arc() now working properly
+X createGraphics() works, at least with A2D (or aliases P2D and JAVA2D)
+X "The application ... has stopped unexpectedly." when quitting a slow app
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1485
+X Examples > Topics > Effects > Wormhole - needs work, something with resize()
+X test createFont()
+X createGraphics() broken
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1437
+X remove legacy PGraphics3D class from processing.core.android
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1402
+X is there a way to get a width/height default to use for surfaceChanged?
+
+cleaning
+X move to eclair (donut devices will have terrible performance anyway)
+X make change from src folder to assets folder for export
+X what to do with other classes that rely on PApplet? (e.g. vida)
+X remove drawCube() method from PApplet
+X add methods to request rendering
+o   need to deal with fps problems with this model
+o gz files not allowed, need to remove the code from createInput() et al
+X   or maybe not, since could still come from a site or a File?
+X   just can't come from the assets file..
+
+jdf
+X get stdout and stderr from the emulator/device
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1381
+X remove ANDROID_SDK env variable requirement
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1471
+X   ANDROID_SDK doesn't seem to be mentioned anywhere anymore
+X   this may mean that p5 might just need to get the location
+X ANDROID_SDK not getting set on OS X
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1469
+X   http://stackoverflow.com/questions/603785/environment-variables-in-mac-os-x
+X timeout isn't long enough for emulator to boot and startup
+X   always times out on a 3 GHz OS X machine
+
+
 0177 (private)
 X fix error with typo in the build file:
 X   Open quote is expected for attribute "{1}" associated with an
