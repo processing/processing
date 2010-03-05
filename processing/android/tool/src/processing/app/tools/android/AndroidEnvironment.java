@@ -11,6 +11,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
+import processing.app.tools.android.EmulatorController.State;
 
 /**
  * <p>An AndroidEnvironment is an object that periodically polls for the existence
@@ -99,11 +100,21 @@ class AndroidEnvironment {
     if (emu != null) {
       return emu;
     }
-    try {
-      EmulatorController.launch();
-    } catch (final IOException e) {
-      e.printStackTrace(System.err);
-      return null;
+
+    final EmulatorController emuController = EmulatorController.getInstance();
+    final State currentState = emuController.getState();
+    if (currentState == State.Idle) {
+      try {
+        emuController.launch();
+      } catch (final IOException e) {
+        e.printStackTrace(System.err);
+        return null;
+      }
+    } else if (currentState == State.Launched) {
+      System.err.println("Emulator has already been launched. I shall wait.");
+    } else if (currentState == State.Running) {
+      System.err
+          .println("That's weird. The emulator process seems to be running, but I don't know about it.");
     }
     while (!Thread.currentThread().isInterrupted()) {
       try {
