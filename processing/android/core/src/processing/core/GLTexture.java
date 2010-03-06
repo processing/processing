@@ -38,8 +38,10 @@ import java.nio.*;
  *  
  */
 @SuppressWarnings("unused")
-public class GLTexture extends PImage implements PConstants, GLConstants { 
-
+public class GLTexture implements PConstants, GLConstants { 
+  public int width, height;
+    
+  protected PApplet parent;
   protected PGraphicsAndroid3D a3d;  
   protected GL10 gl;
 
@@ -50,7 +52,7 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
   protected int glMagFilter;
 
   protected int glWidth;
-  protected int glHeight;    
+  protected int glHeight;
   
   protected boolean usingMipmaps; 
   protected float maxTexCoordS;
@@ -60,7 +62,6 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
   protected boolean flippedY;
 
   protected int recreateResourceIdx;
-  protected String filenameSaved;
   
   ////////////////////////////////////////////////////////////
   
@@ -87,14 +88,14 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
    * @param height int 
    * @param params Parameters 			
    */	 
-  public GLTexture(PApplet parent, int width, int height, Parameters params) {
-    super(width, height, params.format);  
+  public GLTexture(PApplet parent, int width, int height, Parameters params) { 
     this.parent = parent;
+    this.width = width;
+    this.height = height;
        
     a3d = (PGraphicsAndroid3D)parent.g;
     gl = a3d.gl;
     
-    filenameSaved = "";
     setParameters(params);
     createTexture(width, height);
     
@@ -124,13 +125,11 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
    * @param params Parameters
    */	
   public GLTexture(PApplet parent, String filename, Parameters params)  {
-    super(1, 1, params.format);  
     this.parent = parent;
 	   
     a3d = (PGraphicsAndroid3D)parent.g;
     gl = a3d.gl;	
 
-    filenameSaved = filename;
     PImage img = parent.loadImage(filename);
     setParameters(params);
     set(img);
@@ -176,7 +175,8 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
    * @param params GLTextureParameters 
    */
   public void init(int width, int height, Parameters params)  {
-    super.init(width, height, params.format);
+    this.width = width;
+    this.height = height;    
     setParameters(params);
     createTexture(width, height);
   } 
@@ -188,8 +188,7 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
     
     // The following resize methods assumes the texture is already
     // stored in the pixels array.
-    super.resize(wide, high);
-    update();    
+    //update(); 
   }
 
   
@@ -209,7 +208,8 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
   
   public void set(PImage img) {
     if (img.width != width || img.height != height) {
-      super.init(img.width, img.height, format);
+      width = img.width;
+      height = img.height;      
       createTexture(width, height);      
     }
     
@@ -226,7 +226,8 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
     h = PApplet.constrain(h, 0, img.height - y);
     
     if ((w != width) || (h != height)) {
-      super.init(w, h, img.format);
+      width = w;
+      width = h;      
       createTexture(w, h); 
     }
     
@@ -338,11 +339,13 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
   /**
    * Copy pixels to texture. Involves main memory to video memory transfer (slow).
    */     
+  /*
   public void update() {
     if (this.pixels != null) {
-      set(this.pixels, this.format);  
+      set(this.pixels, this.format);
     }
   }
+  */
     
     
   ////////////////////////////////////////////////////////////     
@@ -746,17 +749,6 @@ public class GLTexture extends PImage implements PConstants, GLConstants {
 
   protected void recreateResource(PGraphicsAndroid3D renderer) {
     createTexture(width, height);
-    
-    if (filenameSaved.equals("")) {
-      // The texture was not set with an image, hopefully the data
-      // will be still stored in the pixels array...
-      update();  
-    } else {
-      // The texture was initially set from a file image, loading the
-      // image again:
-      PImage img = parent.loadImage(filenameSaved);
-      set(img);
-    }
   }
 
     
