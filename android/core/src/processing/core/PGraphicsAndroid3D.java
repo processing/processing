@@ -176,7 +176,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   private IntBuffer normalBuffer;
   
   protected PImage textureImagePrev;    
-  protected boolean geometryAllocated = false; 
+  protected boolean buffersAllocated = false; 
   
    /**
    * Set to true if the host system is big endian (PowerPC, MIPS, SPARC),
@@ -327,7 +327,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       lightsAllocated = true;
     }
     
-    if (!geometryAllocated) {
+    if (!buffersAllocated) {
       ByteBuffer vbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 3 * SIZEOF_INT);
       vbb.order(ByteOrder.nativeOrder());
       vertexBuffer = vbb.asIntBuffer();
@@ -344,7 +344,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       nbb.order(ByteOrder.nativeOrder());
       normalBuffer = nbb.asIntBuffer();
       
-      geometryAllocated = true;
+      buffersAllocated = true;
     }
   }
   
@@ -851,10 +851,7 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // BEZIER CURVE VERTICES
 
-  // All picked up from either PGraphics or PGraphics3D, however
-  // a faster version that made use of OpenGL's evaluator methods
-  // would be a nice improvement.
-
+  // TODO it seem there are no evaluators in OpenGL ES
 
   //protected void bezierVertexCheck();
   //public void bezierVertex(float x2, float y2,
@@ -870,7 +867,7 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // CATMULL-ROM CURVE VERTICES
 
-  // Like bezier, these could be implemented using an OpenGL evaluator.
+  // TODO it seem there are no evaluators in OpenGL ES
 
 
   //protected void curveVertexCheck();
@@ -1646,8 +1643,8 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // BOX
 
-  // TODO P3D overrides box to turn on triangle culling, but that's a waste
-  // for OpenGL10. Also could just use the cube method from GL or GLUT.
+  // TODO GL and GLUT in GL ES doesn't offer functions to create
+  // cubes.
 
 
   //public void box(float size)
@@ -1661,8 +1658,8 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // SPHERE
 
-  // TODO P3D overrides sphere to turn on triangle culling, but that's a waste
-  // for OpenGL10. Also could just use the cube method from GL or GLUT.
+  // TODO GL and GLUT in GL ES doesn't offer functions to create
+  // spheres.
 
 
   //public void sphereDetail(int res)
