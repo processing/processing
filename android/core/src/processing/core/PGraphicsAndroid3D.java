@@ -462,7 +462,35 @@ public class PGraphicsAndroid3D extends PGraphics {
     //gl.GlLightModeli(GL10.GL_LIGHT_MODEL_COLOR_CONTROL, GL10.GL_SEPARATE_SPECULAR_COLOR);
 
     shapeFirst = 0;
-    
+
+    // To avoid flickering when the user is not using background in draw():
+    boolean fill0 = fill;
+    float fillR0 = fillR;
+    float fillG0 = fillG;
+    float fillB0 = fillB;
+    float fillA0 = fillA;
+    int fillRi0 = fillRi;
+    int fillGi0 = fillGi;
+    int fillBi0 = fillBi;
+    int fillAi0 = fillAi;
+    int fillColor0 = fillColor;
+    boolean fillAlpha0 = fillAlpha;
+    fill(0, 0);
+    rect(0, 0, width, height);
+    fill = fill0;
+    fillR = fillR0;
+    fillG = fillG0;
+    fillB = fillB0;
+    fillA = fillA0;
+    fillRi = fillRi0;
+    fillGi = fillGi0;
+    fillBi = fillBi0;
+    fillAi = fillAi0;
+    fillColor = fillColor0;
+    fillAlpha = fillAlpha0;
+    gl.glClearColor(0, 0, 0, 0);
+    gl.glClear(GL10.GL_DEPTH_BUFFER_BIT);
+        
     report("bot beginDraw()");
   }
 
