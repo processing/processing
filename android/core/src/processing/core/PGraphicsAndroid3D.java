@@ -1177,17 +1177,15 @@ public class PGraphicsAndroid3D extends PGraphics {
       int i = faceOffset[j];
       
       if (faceTexture[j] != null) {
-        
-        try {
-          tex = (GLTexture)faceTexture[j];
-        } catch (ClassCastException cce) {
-          throw new RuntimeException("A3D only accepts GLTextures for texturing!");  
-        }        
-        
-        gl.glEnable(tex.getGLTarget());
-        gl.glBindTexture(tex.getGLTarget(), tex.getGLTextureID());
-        gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);        
-        texturing = true;
+        tex = faceTexture[j].getTexture();
+        if (tex != null) {
+          gl.glEnable(tex.getGLTarget());
+          gl.glBindTexture(tex.getGLTarget(), tex.getGLTextureID());
+          gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);        
+          texturing = true;
+        } else {
+          texturing = false;
+        }
       } else {
         texturing = false;  
       }
