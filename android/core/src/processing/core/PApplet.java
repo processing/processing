@@ -1083,6 +1083,11 @@ public class PApplet extends Activity implements PConstants, Runnable {
   public PImage createImage(int wide, int high, int format) {
     PImage image = new PImage(wide, high, format);
     image.parent = this;  // make save() work
+    if (g instanceof PGraphicsAndroid3D) {
+      // TODO: Check why textures doesn't work in formats other than ARGB... 
+      image.format = ARGB;
+      image.initTexture();
+    }
     return image;
   }
 
@@ -2803,6 +2808,11 @@ public class PApplet extends Activity implements PConstants, Runnable {
 //    println("loadImage(" + filename + ") was " + nfc(much));
     PImage image = new PImage(bitmap);
     image.parent = this;
+    if (g instanceof PGraphicsAndroid3D) {
+      // TODO: Check why textures doesn't work in formats other than ARGB...
+      image.format = ARGB;
+      image.initTexture();
+    }
     return image;
   }
 
@@ -3064,9 +3074,9 @@ public class PApplet extends Activity implements PConstants, Runnable {
 //  }
 
 
-  public GLTexture loadGLTexture(String filename) {
-    return new GLTexture(this, filename);
-  }
+//  public GLTexture loadGLTexture(String filename) {
+//    return new GLTexture(this, filename);
+//  }
 
   
   public GLModel loadGLModel(String filename) {
