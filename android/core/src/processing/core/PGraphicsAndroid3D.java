@@ -386,9 +386,12 @@ public class PGraphicsAndroid3D extends PGraphics {
 
 
   public void requestDraw() {
-	  ((GLSurfaceView) parent.surfaceView).requestRender();
-  }
-
+    // This if condition is needed to avoid flickering when looping is disabled.
+    if (parent.looping) {
+	    ((GLSurfaceView) parent.surfaceView).requestRender();
+    }
+  }  
+  
   
   /**
    * OpenGL cannot draw until a proper native peer is available, so this
