@@ -1324,7 +1324,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
       g.endDraw();
 
       frameRateLastNanos = now;
-      frameCount++;
+      frameCount++;      
     }
   }
 
