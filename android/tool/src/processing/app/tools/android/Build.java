@@ -2,12 +2,12 @@ package processing.app.tools.android;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DefaultLogger;
@@ -83,50 +83,11 @@ class Build {
   public boolean createProject() {
     final Sketch sketch = editor.getSketch();
 
-    // Create the 'android' build folder, and move any existing version out.
     try {
       androidFolder = createAndroidBuildFolder(sketch);
     } catch (final IOException e) {
       editor.statusError(e);
       return false;
-    }
-    if (androidFolder.exists()) {
-      final Date mod = new Date(androidFolder.lastModified());
-      final File dest = new File(sketch.getFolder(), "android."
-          + dateFormat.format(mod));
-      final boolean result = androidFolder.renameTo(dest);
-      if (!result) {
-        try {
-          System.err
-              .println("createProject renameTo() failed, resorting to mv/move instead.");
-          final ProcessResult mvResult = new ProcessHelper("mv", androidFolder
-              .getAbsolutePath(), dest.getAbsolutePath()).execute();
-          if (!mvResult.succeeded()) {
-            System.err.println(mvResult);
-            Base.showWarning("Failed to rename",
-              "Could not rename the old “android” build folder.\n"
-                  + "Please delete, close, or rename the folder\n"
-                  + androidFolder.getAbsolutePath() + "\n" + "and try again.",
-              null);
-            Base.openFolder(sketch.getFolder());
-            return false;
-          }
-        } catch (final IOException e) {
-          editor.statusError(e);
-          return false;
-        } catch (final InterruptedException e) {
-          e.printStackTrace();
-          return false;
-        }
-      }
-    } else {
-      final boolean result = androidFolder.mkdirs();
-      if (!result) {
-        Base.showWarning("Folders, folders, folders",
-          "Could not create the necessary folders to build.\n"
-              + "Perhaps you have some file permissions to sort out?", null);
-        return false;
-      }
     }
 
     // Create the 'src' folder with the preprocessed code.
@@ -198,16 +159,12 @@ class Build {
    * @throws IOException
    */
   private File createAndroidBuildFolder(final Sketch sketch) throws IOException {
-    final File sketchFolder = sketch.getFolder();
-    if (sketchFolder.getAbsolutePath().indexOf(' ') > -1) {
-      final File tmp = File.createTempFile("android", ".pde");
-      if (!(tmp.delete() && tmp.mkdir())) {
-        throw new IOException("Cannot create temp dir " + tmp
-            + " to build android sketch");
-      }
-      return tmp;
+    final File tmp = File.createTempFile("android", ".pde");
+    if (!(tmp.delete() && tmp.mkdir())) {
+      throw new IOException("Cannot create temp dir " + tmp
+          + " to build android sketch");
     }
-    return new File(sketchFolder, "android");
+    return tmp;
   }
 
   /**
@@ -584,12 +541,9 @@ class Build {
         exportList = libraryFolder.list();
       }
       for (int i = 0; i < exportList.length; i++) {
-        if (exportList[i].equals(".") || exportList[i].equals("..")) {
-          continue;
-        }
-
         exportList[i] = PApplet.trim(exportList[i]);
-        if (exportList[i].equals("")) {
+        if (exportList[i].equals("") || exportList[i].equals(".")
+            || exportList[i].equals("..")) {
           continue;
         }
 
@@ -598,22 +552,18 @@ class Build {
           System.err.println("File " + exportList[i] + " does not exist");
         } else if (exportFile.isDirectory()) {
           System.err.println("Ignoring sub-folder \"" + exportList[i] + "\"");
-        } else if (exportFile.getName().toLowerCase().endsWith(".zip")) {
-          // As of r4 of the Android SDK, it looks like .zip files
-          // are ignored in the libs folder, so rename to .jar
-          String exportFilename = exportFile.getName();
-          exportFilename = exportFilename.substring(0,
-            exportFilename.length() - 4)
-              + ".jar";
-          Base.copyFile(exportFile, new File(libsFolder, exportFilename));
-
-        } else if (exportFile.getName().toLowerCase().endsWith(".jar")) {
-          final String exportFilename = exportFile.getName();
-          Base.copyFile(exportFile, new File(libsFolder, exportFilename));
-
         } else {
-          Base.copyFile(exportFile,
-            new File(assetsFolder, exportFile.getName()));
+          final String name = exportFile.getName();
+          final String lcname = name.toLowerCase();
+          if (lcname.endsWith(".zip") || lcname.endsWith(".jar")) {
+            // As of r4 of the Android SDK, it looks like .zip files
+            // are ignored in the libs folder, so rename to .jar
+            final String jarName = name.substring(0, name.length() - 4)
+                + ".jar";
+            Base.copyFile(exportFile, new File(libsFolder, jarName));
+          } else {
+            Base.copyFile(exportFile, new File(assetsFolder, name));
+          }
         }
       }
     }
@@ -621,17 +571,14 @@ class Build {
     // Copy files from the 'code' directory into the 'libs' folder
     final File codeFolder = sketch.getCodeFolder();
     if (codeFolder != null && codeFolder.exists()) {
-      final File[] codeFiles = codeFolder.listFiles();
-      for (final File item : codeFiles) {
+      for (final File item : codeFolder.listFiles()) {
         if (!item.isDirectory()) {
-          String name = item.getName();
-          if (name.toLowerCase().endsWith(".jar")) {
-            final File targetFile = new File(libsFolder, name);
-            Base.copyFile(item, targetFile);
-          } else if (name.toLowerCase().endsWith(".zip")) {
-            name = name.substring(0, name.length() - 4) + ".jar";
-            final File targetFile = new File(libsFolder, name);
-            Base.copyFile(item, targetFile);
+          final String name = item.getName();
+          final String lcname = name.toLowerCase();
+          if (lcname.endsWith(".jar") || lcname.endsWith(".zip")) {
+            final String jarName = name.substring(0, name.length() - 4)
+                + ".jar";
+            Base.copyFile(item, new File(libsFolder, jarName));
           }
         }
       }
@@ -644,5 +591,23 @@ class Build {
    */
   private static final String q(final String what) {
     return "\"" + what + "\"";
+  }
+
+  public void cleanup() {
+    rm(androidFolder);
+  }
+
+  private void rm(final File f) {
+    if (f.isDirectory()) {
+      final File[] kids = f.listFiles(new FilenameFilter() {
+        public boolean accept(final File dir, final String name) {
+          return !(name.equals(".") || name.equals(".."));
+        }
+      });
+      for (final File k : kids) {
+        rm(k);
+      }
+    }
+    f.delete();
   }
 }
