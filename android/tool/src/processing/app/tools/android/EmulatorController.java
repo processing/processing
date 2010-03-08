@@ -1,11 +1,12 @@
 package processing.app.tools.android;
 
 import java.io.IOException;
+import java.util.concurrent.CountDownLatch;
 import processing.app.Preferences;
 
 class EmulatorController {
   public static enum State {
-    Idle, Launched, Running
+    NOT_RUNNING, WAITING_FOR_BOOT, RUNNING
   }
 
   public static EmulatorController getInstance() {
@@ -14,7 +15,7 @@ class EmulatorController {
 
   private static final EmulatorController INSTANCE = new EmulatorController();
 
-  private volatile State state = State.Idle;
+  private volatile State state = State.NOT_RUNNING;
 
   public State getState() {
     return state;
@@ -25,8 +26,12 @@ class EmulatorController {
     System.err.println("Emulator state: " + state);
   }
 
+  /**
+   * Blocks until emulator is running, or some catastrophe happens.
+   * @throws IOException
+   */
   synchronized public void launch() throws IOException {
-    if (state != State.Idle) {
+    if (state != State.NOT_RUNNING) {
       throw new IllegalStateException(
                                       "You can't launch an emulator whose state is "
                                           + state);
@@ -38,34 +43,45 @@ class EmulatorController {
       Preferences.set("android.emulator.port", portString);
     }
 
-    System.err.println("Launching emulator");
+    System.err.println("EmulatorController: Launching emulator");
 
     // See http://developer.android.com/guide/developing/tools/emulator.html
     final Process p = Runtime.getRuntime().exec(
       new String[] {
         "emulator", "-avd", AVD.ECLAIR.name, "-port", portString,
         "-no-boot-anim" });
+    ProcessRegistry.watch(p);
 
     // if we've gotten this far, then we've at least succeeded in finding and
-    // beginning execution of the emulator, so we are now officially "Launching"
-    setState(State.Launched);
+    // beginning execution of the emulator, so we are now officially "Launched"
+    setState(State.WAITING_FOR_BOOT);
 
-    ProcessRegistry.watch(p);
-    // "emulator: ERROR: the user data image is used by another emulator. aborting"
-    // make sure that the streams are drained properly
     new StreamPump(p.getInputStream()).addTarget(System.out).start();
     new StreamPump(p.getErrorStream()).addTarget(System.err).start();
+    final CountDownLatch latch = new CountDownLatch(1);
     new Thread(new Runnable() {
       public void run() {
         try {
-          if (AndroidEnvironment.getInstance().getEmulator().get() != null) {
-            setState(State.Running);
+          System.err.println("EmulatorController: Waiting for boot.");
+          while (state == State.WAITING_FOR_BOOT) {
+            Thread.sleep(2000);
+            for (final String device : AndroidEnvironment.listDevices()) {
+              if (device.contains("emulator")) {
+                System.err.println("EmulatorController: Emulator booted.");
+                setState(State.RUNNING);
+                return;
+              }
+            }
           }
+          System.err.println("EmulatorController: Emulator never booted.");
         } catch (final Exception e) {
           System.err.println("While waiting for emulator to launch " + e);
+          p.destroy();
+        } finally {
+          latch.countDown();
         }
       }
-    }).start();
+    }, "EmulatorController: Wait for emulator to boot").start();
     new Thread(new Runnable() {
       public void run() {
         try {
@@ -82,9 +98,14 @@ class EmulatorController {
             ProcessRegistry.unwatch(p);
           }
         } finally {
-          setState(State.Idle);
+          setState(State.NOT_RUNNING);
         }
       }
-    }, "Emulator Babysitter").start();
+    }, "EmulatorController: Process manager").start();
+    try {
+      latch.await();
+    } catch (final InterruptedException drop) {
+      System.err.println("Interrupted while waiting for emulator to launch.");
+    }
   }
 }

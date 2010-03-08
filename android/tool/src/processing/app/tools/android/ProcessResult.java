@@ -23,6 +23,14 @@ public class ProcessResult implements Iterable<String> {
     return Arrays.asList(output.split("\r?\n")).iterator();
   }
 
+  public String getCmd() {
+    return cmd;
+  }
+
+  public int getResult() {
+    return result;
+  }
+
   public boolean succeeded() {
     return result == 0;
   }
@@ -35,6 +43,10 @@ public class ProcessResult implements Iterable<String> {
     return output;
   }
 
+  public long getTime() {
+    return time;
+  }
+
   @Override
   public String toString() {
     final StringBuilder sb = new StringBuilder(cmd).append("\n");
@@ -44,4 +56,5 @@ public class ProcessResult implements Iterable<String> {
     sb.append("    stderr:\n").append(error);
     return sb.toString();
   }
+
 }
