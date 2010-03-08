@@ -49,6 +49,9 @@ class AndroidDevice implements AndroidDeviceProperties {
 
   // safe to just always include the -r (reinstall) flag
   public boolean installApp(final String apkPath, final RunnerListener status) {
+    if (!isAlive()) {
+      return false;
+    }
     bringLauncherToFront();
     try {
       final ProcessResult installResult = adb("install", "-r", apkPath);
@@ -80,6 +83,9 @@ class AndroidDevice implements AndroidDeviceProperties {
   // http://asantoso.wordpress.com/2009/09/26/using-jdb-with-adb-to-debugging-of-android-app-on-a-real-device/
   public boolean launchApp(final String packageName, final String className)
       throws IOException, InterruptedException {
+    if (!isAlive()) {
+      return false;
+    }
     return adb("shell", "am", "start", "-e", "debug", "true", "-a",
       "android.intent.action.MAIN", "-c", "android.intent.category.LAUNCHER",
       "-n", packageName + "/." + className).succeeded();
@@ -173,14 +179,19 @@ class AndroidDevice implements AndroidDeviceProperties {
     System.err.println("Receiving log entries from " + id);
   }
 
-  void shutdown() {
+  synchronized void shutdown() {
     System.err.println(id + " is shutting down.");
     if (logcat != null) {
       logcat.destroy();
+      logcat = null;
       ProcessRegistry.unwatch(logcat);
     }
     env.deviceRemoved(this);
     listeners.clear();
+  }
+
+  synchronized boolean isAlive() {
+    return logcat != null;
   }
 
   public String getId() {
@@ -215,7 +226,7 @@ class AndroidDevice implements AndroidDeviceProperties {
   private ProcessResult adb(final String... cmd) throws InterruptedException,
       IOException {
     final String[] adbCmd = generateAdbCommand(cmd);
-    return new ProcessHelper(adbCmd).execute();
+    return AndroidSDK.runADB(adbCmd);
   }
 
   private String[] generateAdbCommand(final String... cmd) {

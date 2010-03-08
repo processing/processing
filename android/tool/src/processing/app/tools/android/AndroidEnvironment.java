@@ -43,7 +43,7 @@ class AndroidEnvironment {
     System.err.print("Shutting down any existing adb server...");
     System.err.flush();
     try {
-      new ProcessHelper("adb", "kill-server").execute();
+      AndroidSDK.runADB("kill-server");
       System.err.println("OK.");
     } catch (final Exception e) {
       System.err.println("failed.");
@@ -55,16 +55,6 @@ class AndroidEnvironment {
   private AndroidEnvironment() {
     System.err.println("Starting up AndroidEnvironment");
     killAdbServer();
-    System.err.print("Starting up fresh adb server...");
-    System.err.flush();
-    try {
-      new ProcessHelper("adb", "start-server").execute();
-      System.err.println("OK.");
-    } catch (final Exception e) {
-      System.err.println("failed.");
-      System.err.println();
-      e.printStackTrace(System.err);
-    }
     Runtime.getRuntime().addShutdownHook(
       new Thread("AndroidEnvironment Shutdown") {
         @Override
@@ -103,28 +93,38 @@ class AndroidEnvironment {
 
     final EmulatorController emuController = EmulatorController.getInstance();
     final State currentState = emuController.getState();
-    if (currentState == State.Idle) {
+    if (currentState == State.NOT_RUNNING) {
       try {
-        emuController.launch();
+        emuController.launch(); // this blocks until emulator boots
       } catch (final IOException e) {
         e.printStackTrace(System.err);
         return null;
       }
-    } else if (currentState == State.Launched) {
-      System.err.println("Emulator has already been launched. I shall wait.");
-    } else if (currentState == State.Running) {
+    } else if (currentState == State.WAITING_FOR_BOOT) {
+      System.err.println("Emulator has already been launched. I'll wait.");
+    } else if (currentState == State.RUNNING) {
       System.err
           .println("That's weird. The emulator process seems to be running, but I don't know about it.");
     }
     while (!Thread.currentThread().isInterrupted()) {
-      try {
-        Thread.sleep(2000);
-      } catch (final InterruptedException e) {
+      System.err.println("AndroidEnvironment: looking for emulator in loop.");
+      System.err.println("AndroidEnvironment: emulatorcontroller state is "
+          + emuController.getState());
+      if (emuController.getState() == State.NOT_RUNNING) {
+        System.err.println("Ouch. Emulator got killed, I think.");
         return null;
       }
       emu = find(true);
       if (emu != null) {
+        System.err.println("AndroidEnvironment: returning " + emu.getId()
+            + " from loop.");
         return emu;
+      }
+      try {
+        Thread.sleep(2000);
+      } catch (final InterruptedException e) {
+        System.err.println("AndroidEnvironment: interrupted in loop.");
+        return null;
       }
     }
     return null;
@@ -233,10 +233,10 @@ class AndroidEnvironment {
    * @return list of device identifiers
    * @throws IOException
    */
-  private static List<String> listDevices() {
+  public static List<String> listDevices() {
     ProcessResult result;
     try {
-      result = new ProcessHelper("adb", "devices").execute();
+      result = AndroidSDK.runADB("devices");
     } catch (final InterruptedException e) {
       return Collections.emptyList();
     } catch (final IOException e) {
@@ -261,7 +261,10 @@ class AndroidEnvironment {
       if (!line.contains("\t")) {
         continue;
       }
-      devices.add(line.split("\t")[0]);
+      final String[] fields = line.split("\t");
+      if (fields[1].equals("device")) {
+        devices.add(fields[0]);
+      }
     }
     return devices;
   }
