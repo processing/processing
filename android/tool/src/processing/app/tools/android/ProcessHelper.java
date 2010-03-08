@@ -35,7 +35,8 @@ class ProcessHelper {
     this.cmd = cmd;
   }
 
-  public String getCommand() {
+  @Override
+  public String toString() {
     final StringBuffer buffer = new StringBuffer();
     for (int i = 0; i < cmd.length; i++) {
       if (i != 0) {
@@ -57,9 +58,9 @@ class ProcessHelper {
     final StringWriter errWriter = new StringWriter();
     final long startTime = System.currentTimeMillis();
 
-    final String prettyCommand = getCommand();
+    final String prettyCommand = toString();
     System.err.println("ProcessHelper: >>>>> " + Thread.currentThread().getId()
-        + " " + cmd[0]);
+        + " " + prettyCommand);
     final Process process = Runtime.getRuntime().exec(cmd);
     ProcessRegistry.watch(process);
     try {
