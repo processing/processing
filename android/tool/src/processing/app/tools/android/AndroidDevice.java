@@ -176,17 +176,40 @@ class AndroidDevice implements AndroidDeviceProperties {
     new StreamPump(logcat.getInputStream()).addTarget(new LogLineProcessor())
         .start();
     new StreamPump(logcat.getErrorStream()).addTarget(System.err).start();
-    System.err.println("Receiving log entries from " + id);
+    new Thread(new Runnable() {
+      public void run() {
+        try {
+          logcat.waitFor();
+          //          final int result = logcat.waitFor();
+          //          System.err.println("AndroidDevice: " + getId() + " logcat exited "
+          //              + (result == 0 ? "normally" : "with status " + result));
+        } catch (final InterruptedException e) {
+          System.err
+              .println("AndroidDevice: logcat process monitor interrupted");
+        } finally {
+          shutdown();
+        }
+      }
+    }, "AndroidDevice: logcat process monitor").start();
+    //    System.err.println("Receiving log entries from " + id);
   }
 
   synchronized void shutdown() {
-    System.err.println(id + " is shutting down.");
+    if (!isAlive()) {
+      return;
+    }
+    //    System.err.println(id + " is shutting down.");
     if (logcat != null) {
       logcat.destroy();
       logcat = null;
       ProcessRegistry.unwatch(logcat);
     }
     env.deviceRemoved(this);
+    if (activeProcesses.size() > 0) {
+      for (final DeviceListener listener : listeners) {
+        listener.sketchStopped();
+      }
+    }
     listeners.clear();
   }
 
