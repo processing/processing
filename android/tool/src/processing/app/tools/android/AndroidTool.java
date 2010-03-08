@@ -191,48 +191,51 @@ public class AndroidTool implements Tool, DeviceListener {
       if (!build.createProject()) {
         return;
       }
+      try {
+        if (monitor.isCanceled()) {
+          throw new Cancelled();
+        }
+        monitor.setNote("Building...");
+        if (!build.antBuild("debug")) {
+          return;
+        }
 
-      if (monitor.isCanceled()) {
-        throw new Cancelled();
-      }
-      monitor.setNote("Building...");
-      if (!build.antBuild("debug")) {
-        return;
-      }
+        if (monitor.isCanceled()) {
+          throw new Cancelled();
+        }
+        monitor.setNote("Waiting for device to become available...");
+        final AndroidDevice device = waitForDevice(deviceFuture, monitor);
+        if (device == null || !device.isAlive()) {
+          editor.statusError("Device killed or disconnected.");
+          return;
+        }
 
-      if (monitor.isCanceled()) {
-        throw new Cancelled();
-      }
-      monitor.setNote("Waiting for device to become available...");
-      final AndroidDevice device = waitForDevice(deviceFuture, monitor);
-      if (device == null || !device.isAlive()) {
-        editor.statusError("Device killed or disconnected.");
-        return;
-      }
+        device.addListener(this);
 
-      device.addListener(this);
+        if (monitor.isCanceled()) {
+          throw new Cancelled();
+        }
+        monitor.setNote("Installing sketch on " + device.getId());
+        if (!device.installApp(build.getPathForAPK("debug"), editor)) {
+          editor.statusError("Device killed or disconnected.");
+          return;
+        }
 
-      if (monitor.isCanceled()) {
-        throw new Cancelled();
-      }
-      monitor.setNote("Installing sketch on " + device.getId());
-      if (!device.installApp(build.getPathForAPK("debug"), editor)) {
-        editor.statusError("Device killed or disconnected.");
-        return;
-      }
+        if (monitor.isCanceled()) {
+          throw new Cancelled();
+        }
+        monitor.setNote("Starting sketch on " + device.getId());
+        if (startSketch(device)) {
+          editor.statusNotice("Sketch launched on the "
+              + (device.isEmulator() ? "emulator" : "phone") + ".");
+        } else {
+          editor.statusError("Could not start the sketch.");
+        }
 
-      if (monitor.isCanceled()) {
-        throw new Cancelled();
+        lastRunDevice = device;
+      } finally {
+        build.cleanup();
       }
-      monitor.setNote("Starting sketch on " + device.getId());
-      if (startSketch(device)) {
-        editor.statusNotice("Sketch launched on the "
-            + (device.isEmulator() ? "emulator" : "phone") + ".");
-      } else {
-        editor.statusError("Could not start the sketch.");
-      }
-
-      lastRunDevice = device;
     } finally {
       monitor.close();
     }
