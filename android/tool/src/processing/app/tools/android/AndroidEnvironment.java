@@ -14,17 +14,9 @@ import java.util.concurrent.FutureTask;
 import processing.app.tools.android.EmulatorController.State;
 
 /**
- * <p>An AndroidEnvironment is an object that periodically polls for the existence
- * of running Android devices, both emulated and hardware. You can register to
- * be notified when devices are added to or removed from the environment. You
- * can also ask for an emulator or a hardware device specifically.
- * 
- * <pre> AndroidEnvironment env = new AndroidEnvironment();
- * env.addPropertyChangeListener(...);
- * env.initialize();
- * 
- * AndroidDevice n1 = env.getHardware();</pre>
- * 
+ * <pre> AndroidEnvironment env = AndroidEnvironment.getInstance();
+ * AndroidDevice n1 = env.getHardware();
+ * AndroidDevice emu = env.getEmulator();</pre>
  * @author Jonathan Feinberg &lt;jdf@pobox.com&gt;
  *
  */
@@ -40,11 +32,11 @@ class AndroidEnvironment {
       .newSingleThreadExecutor();
 
   public static void killAdbServer() {
-    System.err.print("Shutting down any existing adb server...");
+    //    System.err.print("Shutting down any existing adb server...");
     System.err.flush();
     try {
       AndroidSDK.runADB("kill-server");
-      System.err.println("OK.");
+      //      System.err.println("OK.");
     } catch (final Exception e) {
       System.err.println("failed.");
       System.err.println();
@@ -53,7 +45,7 @@ class AndroidEnvironment {
   }
 
   private AndroidEnvironment() {
-    System.err.println("Starting up AndroidEnvironment");
+    //    System.err.println("Starting up AndroidEnvironment");
     killAdbServer();
     Runtime.getRuntime().addShutdownHook(
       new Thread("AndroidEnvironment Shutdown") {
@@ -65,7 +57,7 @@ class AndroidEnvironment {
   }
 
   private void shutdown() {
-    System.err.println("Shutting down AndroidEnvironment");
+    //    System.err.println("Shutting down AndroidEnvironment");
     for (final AndroidDevice device : new ArrayList<AndroidDevice>(devices
         .values())) {
       device.shutdown();
@@ -107,17 +99,17 @@ class AndroidEnvironment {
           .println("That's weird. The emulator process seems to be running, but I don't know about it.");
     }
     while (!Thread.currentThread().isInterrupted()) {
-      System.err.println("AndroidEnvironment: looking for emulator in loop.");
-      System.err.println("AndroidEnvironment: emulatorcontroller state is "
-          + emuController.getState());
+      //      System.err.println("AndroidEnvironment: looking for emulator in loop.");
+      //      System.err.println("AndroidEnvironment: emulatorcontroller state is "
+      //          + emuController.getState());
       if (emuController.getState() == State.NOT_RUNNING) {
         System.err.println("Ouch. Emulator got killed, I think.");
         return null;
       }
       emu = find(true);
       if (emu != null) {
-        System.err.println("AndroidEnvironment: returning " + emu.getId()
-            + " from loop.");
+        //        System.err.println("AndroidEnvironment: returning " + emu.getId()
+        //            + " from loop.");
         return emu;
       }
       try {
@@ -184,17 +176,10 @@ class AndroidEnvironment {
         addDevice(new AndroidDevice(this, deviceId));
       }
     }
-    synchronized (devices) {
-      for (final String deviceId : new ArrayList<String>(devices.keySet())) {
-        if (!activeDevices.contains(deviceId)) {
-          System.err.println("HEY THIS SHOULDN'T HAPPEN");
-          devices.get(deviceId).shutdown();
-        }
-      }
-    }
   }
 
   private void addDevice(final AndroidDevice device) {
+    //    System.err.println("AndroidEnvironment: adding " + device.getId());
     try {
       device.initialize();
       if (devices.put(device.getId(), device) != null) {
@@ -207,6 +192,7 @@ class AndroidEnvironment {
   }
 
   void deviceRemoved(final AndroidDevice device) {
+    //    System.err.println("AndroidEnvironment: removing " + device.getId());
     if (devices.remove(device.getId()) == null) {
       throw new IllegalStateException("I didn't know about device "
           + device.getId() + "!");

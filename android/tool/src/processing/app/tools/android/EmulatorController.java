@@ -23,7 +23,7 @@ class EmulatorController {
 
   private void setState(final State state) {
     this.state = state;
-    System.err.println("Emulator state: " + state);
+    //    System.err.println("Emulator state: " + state);
   }
 
   /**
@@ -43,7 +43,7 @@ class EmulatorController {
       Preferences.set("android.emulator.port", portString);
     }
 
-    System.err.println("EmulatorController: Launching emulator");
+    //    System.err.println("EmulatorController: Launching emulator");
 
     // See http://developer.android.com/guide/developing/tools/emulator.html
     final Process p = Runtime.getRuntime().exec(
@@ -62,12 +62,12 @@ class EmulatorController {
     new Thread(new Runnable() {
       public void run() {
         try {
-          System.err.println("EmulatorController: Waiting for boot.");
+          //          System.err.println("EmulatorController: Waiting for boot.");
           while (state == State.WAITING_FOR_BOOT) {
             Thread.sleep(2000);
             for (final String device : AndroidEnvironment.listDevices()) {
               if (device.contains("emulator")) {
-                System.err.println("EmulatorController: Emulator booted.");
+                //                System.err.println("EmulatorController: Emulator booted.");
                 setState(State.RUNNING);
                 return;
               }
@@ -75,7 +75,7 @@ class EmulatorController {
           }
           System.err.println("EmulatorController: Emulator never booted.");
         } catch (final Exception e) {
-          System.err.println("While waiting for emulator to launch " + e);
+          System.err.println("While waiting for emulator to boot " + e);
           p.destroy();
         } finally {
           latch.countDown();
@@ -86,11 +86,12 @@ class EmulatorController {
       public void run() {
         try {
           try {
-            final int result = p.waitFor();
-            System.err
-                .println("Emulator process exited "
-                    + ((result == 0) ? "normally" : " with status " + result)
-                    + ".");
+            p.waitFor();
+            //            final int result = p.waitFor();
+            //            System.err
+            //                .println("Emulator process exited "
+            //                    + ((result == 0) ? "normally" : " with status " + result)
+            //                    + ".");
           } catch (final InterruptedException e) {
             System.err.println("Emulator was interrupted.");
           } finally {

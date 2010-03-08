@@ -99,5 +99,6 @@ class StreamPump implements Runnable {
     public void processLine(final String line) {
       // noop
     }
+
   };
 }
