@@ -58,7 +58,8 @@ class ProcessHelper {
     final long startTime = System.currentTimeMillis();
 
     final String prettyCommand = getCommand();
-    //    System.err.println("ProcessHelper: begin " + prettyCommand);
+    System.err.println("ProcessHelper: >>>>> " + Thread.currentThread().getId()
+        + " " + cmd[0]);
     final Process process = Runtime.getRuntime().exec(cmd);
     ProcessRegistry.watch(process);
     try {
@@ -67,7 +68,9 @@ class ProcessHelper {
       try {
         final int result = process.waitFor();
         final long time = System.currentTimeMillis() - startTime;
-        //        System.err.println("ProcessHelper: " + time + "ms: " + prettyCommand);
+        System.err.println("ProcessHelper: <<<<< "
+            + Thread.currentThread().getId() + " " + cmd[0] + " (" + time
+            + "ms)");
         return new ProcessResult(prettyCommand, result, outWriter.toString(),
                                  errWriter.toString(), time);
       } catch (final InterruptedException e) {
