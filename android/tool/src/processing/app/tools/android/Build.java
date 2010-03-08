@@ -225,8 +225,8 @@ class Build {
 
     final DefaultLogger consoleLogger = new DefaultLogger();
     consoleLogger.setErrorPrintStream(System.err);
-    consoleLogger.setOutputPrintStream(System.out);
-    consoleLogger.setMessageOutputLevel(Project.MSG_WARN);
+    //    consoleLogger.setOutputPrintStream(System.out);
+    consoleLogger.setMessageOutputLevel(Project.MSG_ERR);
     p.addBuildListener(consoleLogger);
 
     final DefaultLogger errorLogger = new DefaultLogger();
