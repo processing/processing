@@ -15,7 +15,7 @@ public class ProcessRegistry {
         synchronized (REGISTRY) {
           for (final Process p : REGISTRY) {
             try {
-              System.err.println("Cleaning up rogue process " + p);
+              //              System.err.println("Cleaning up rogue process " + p);
               p.destroy();
             } catch (final Exception drop) {
             }
