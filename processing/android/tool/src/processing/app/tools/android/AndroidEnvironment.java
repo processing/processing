@@ -84,19 +84,13 @@ class AndroidEnvironment {
     }
 
     final EmulatorController emuController = EmulatorController.getInstance();
-    final State currentState = emuController.getState();
-    if (currentState == State.NOT_RUNNING) {
+    if (emuController.getState() == State.NOT_RUNNING) {
       try {
         emuController.launch(); // this blocks until emulator boots
       } catch (final IOException e) {
         e.printStackTrace(System.err);
         return null;
       }
-    } else if (currentState == State.WAITING_FOR_BOOT) {
-      System.err.println("Emulator has already been launched. I'll wait.");
-    } else if (currentState == State.RUNNING) {
-      System.err
-          .println("That's weird. The emulator process seems to be running, but I don't know about it.");
     }
     while (!Thread.currentThread().isInterrupted()) {
       //      System.err.println("AndroidEnvironment: looking for emulator in loop.");
