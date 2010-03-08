@@ -153,6 +153,37 @@ class AndroidSDK {
     }
   }
 
+  private static final String ADB_DAEMON_MSG_1 = "daemon not running";
+  private static final String ADB_DAEMON_MSG_2 = "daemon started successfully";
+
+  public static ProcessResult runADB(final String... cmd)
+      throws InterruptedException, IOException {
+    final String[] adbCmd;
+    if (cmd[0] != "adb") {
+      adbCmd = new String[cmd.length + 1];
+      adbCmd[0] = "adb";
+      System.arraycopy(cmd, 0, adbCmd, 1, cmd.length);
+    } else {
+      adbCmd = cmd;
+    }
+    final ProcessResult adbResult = new ProcessHelper(adbCmd).execute();
+    /*
+     * Ignore messages about starting up an adb daemon
+     */
+    final String out = adbResult.getStdout();
+    if (out.contains(ADB_DAEMON_MSG_1) && out.contains(ADB_DAEMON_MSG_2)) {
+      final StringBuilder sb = new StringBuilder();
+      for (final String line : out.split("\n")) {
+        if (!(out.contains(ADB_DAEMON_MSG_1) || out.contains(ADB_DAEMON_MSG_2))) {
+          sb.append(line).append("\n");
+        }
+      }
+      return new ProcessResult(adbResult.getCmd(), adbResult.getResult(), sb
+          .toString(), adbResult.getStderr(), adbResult.getTime());
+    }
+    return adbResult;
+  }
+
   private static final String ANDROID_SDK_PRIMARY = "Is the Android SDK installed?";
 
   private static final String ANDROID_SDK_SECONDARY = "The Android SDK does not appear to be installed, <br>"

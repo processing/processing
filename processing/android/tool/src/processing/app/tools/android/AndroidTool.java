@@ -141,19 +141,17 @@ public class AndroidTool implements Tool, DeviceListener {
   // if user asks for 480x320, 320x480, 854x480 etc, then launch like that
   // though would need to query the emulator to see if it can do that
 
-  private void startSketch(final AndroidDevice device) {
+  private boolean startSketch(final AndroidDevice device) {
     final String packageName = build.getPackageName();
     final String className = build.getClassName();
     try {
       if (device.launchApp(packageName, className)) {
-        editor.statusNotice("Sketch launched on the "
-            + (device.isEmulator() ? "emulator" : "phone") + ".");
-        return;
+        return true;
       }
     } catch (final Exception e) {
       e.printStackTrace(System.err);
-      editor.statusError("Could not start the sketch.");
     }
+    return false;
   }
 
   private AndroidDevice waitForDevice(final Future<AndroidDevice> deviceFuture,
@@ -207,7 +205,8 @@ public class AndroidTool implements Tool, DeviceListener {
       }
       monitor.setNote("Waiting for device to become available...");
       final AndroidDevice device = waitForDevice(deviceFuture, monitor);
-      if (device == null) {
+      if (device == null || !device.isAlive()) {
+        editor.statusError("Device killed or disconnected.");
         return;
       }
 
@@ -218,6 +217,7 @@ public class AndroidTool implements Tool, DeviceListener {
       }
       monitor.setNote("Installing sketch on " + device.getId());
       if (!device.installApp(build.getPathForAPK("debug"), editor)) {
+        editor.statusError("Device killed or disconnected.");
         return;
       }
 
@@ -225,7 +225,12 @@ public class AndroidTool implements Tool, DeviceListener {
         throw new Cancelled();
       }
       monitor.setNote("Starting sketch on " + device.getId());
-      startSketch(device);
+      if (startSketch(device)) {
+        editor.statusNotice("Sketch launched on the "
+            + (device.isEmulator() ? "emulator" : "phone") + ".");
+      } else {
+        editor.statusError("Could not start the sketch.");
+      }
 
       lastRunDevice = device;
     } finally {
