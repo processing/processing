@@ -1,6 +1,7 @@
 package processing.app.tools.android;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.HeadlessException;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -16,7 +17,7 @@ class IndeterminateProgressMonitor {
   private Object[] cancelOption = null;
 
   IndeterminateProgressMonitor(final Component parentComponent,
-                           final Object message, final String note) {
+                               final Object message, final String note) {
 
     cancelOption = new Object[] { UIManager
         .getString("OptionPane.cancelButtonText") };
@@ -34,6 +35,8 @@ class IndeterminateProgressMonitor {
       super(messageList, JOptionPane.INFORMATION_MESSAGE,
             JOptionPane.DEFAULT_OPTION, null,
             IndeterminateProgressMonitor.this.cancelOption, null);
+      setPreferredSize(new Dimension(getPreferredSize().width + 80,
+                                     getPreferredSize().height));
     }
 
     @Override
