@@ -81,35 +81,47 @@ P5 _   http://dev.processing.org/bugs/show_bug.cgi?id=1492
 
 TOOLS 
 
+// jdf maybedone
 P1 _ errors that happen inside events (e.g. keys) not highlighting lines
 P1 _   useful stack trace information not coming through.. why?
 P1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1384
 
+// jdf maybedone
 _ only send error text to System.err (i.e. "Launching emulator" is not an error)
 _   send these debug log messages to System.out
 
+// jdf maybedone
 _ "Sketch started on emulator" in spite of the emulator only halfway booted
 _   sent email about this one
 
+// jdf don't understand
 _ errors in ActivityManager aren't coming through
+
 _ if AVD is deleted while processing still running, things flake out
 _   also no error messages, just 'giving up on launching emulator'
 
+// jdf maybedone
 _ when out of memory, need an error message to show up in the PDE
 _   show "OutOfMemoryError: bitmap size exceeds VM budget" in status area
 _   Examples > Topics > Drawing > Animator produces:
 _   Uncaught handler: thread Animation Thread exiting due to uncaught exception
 _   java.lang.OutOfMemoryError: bitmap size exceeds VM budget
 _     at android.graphics.Bitmap.nativeCreate(Native Method)
+
+// jdf maybedone
 _ stack overflow produced no error inside the PDE
 _   probably same as memory error above
 
+// jdf maybedone
 _ if hitting 'run' in p5, need to kill any sketch that's currently running
 
+// jdf why?
 _ throw an error if a file in the 'data' dir ends with .gz
+
 _ need to make data folder copy more efficient than just copying everything
 _   right now, first copies to src inside Build.java (which then copies to bin)
 
+// jdf maybedone
 _ other exceptions coming through System.err
 W/System.err(  242): java.lang.IllegalArgumentException: File /data/data/processing.android.test.savemanyimages/files/circles-0001.tif contains a path separator
 W/System.err(  242): 	at android.app.ApplicationContext.makeFilename(ApplicationContext.java:1444)
@@ -133,7 +145,7 @@ P2 _   started, but needs proper Tool or Mode packaging
 P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1388
 
 P2 _ 'stop' is now a no-op for the android tools
-P2 _   partially fixed but hangs after pressing stop
+P2 _   partially fixed but hangs after pressing stop (only on Mac--jdf)
 P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1386
 
 P2 _ implement method for selecting the AVD
@@ -143,8 +155,10 @@ P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1379
 P2 _ save state re: whether sketches are android or java mode (or others?)
 P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1380
 
+// jdf says cannot be done
 P3 _ when running a sketch, need to unlock the device
 P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1500
+
 P3 _ remove various debug messages on the console
 P3 _   right now, there are too many places where errors occur
 P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1385
@@ -174,10 +188,12 @@ P4 _ add method to set the icon (and package name?)
 P4 _   http://dev.processing.org/bugs/show_bug.cgi?id=1429
 P4 _   http://developer.android.com/guide/publishing/preparing.html
 
+// jdf maybedone
 P5 _ remove the need for a "Reset Android" menu option
 P5 _   might need to just put this in the menu for times when things go weird
 P5 _   http://dev.processing.org/bugs/show_bug.cgi?id=1392
 
+// jdf maybedone
 _ figure out how to set ANDROID_SDK for the build scripts
 _   right now, just setting the env value is required 
 
