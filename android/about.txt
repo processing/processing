@@ -103,8 +103,8 @@
 + Cannot use .gz files in the data or assets folder, because Android wants
   to compress the files itself.
 
-+ Use screenW and screenH instead of screen.width and screen.height. Both
-  variables have been added to the desktop version of processing.core, 
++ Use screenWidth and screenHeight instead of screen.width and screen.height. 
+  Both variables have been added to the desktop version of processing.core, 
   where the 'screen' variable has been deprecated.
 
 + To use the virtual keyboard, hold down the MENU key on the device. This 
