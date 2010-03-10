@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-09 Ben Fry and Casey Reas
+  Copyright (c) 2004-10 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -92,6 +92,9 @@ public class Sketch {
    * DLLs or JNILIBs.
    */
   private String libraryPath;
+  /**
+   * List of library folders. 
+   */
   private ArrayList<File> importedLibraries;
 
   /**
@@ -1403,7 +1406,7 @@ public class Sketch {
       File libFolder = (File) Base.importToLibraryTable.get(entry);
 
       if (libFolder != null) {
-        getImportedLibraries().add(libFolder);
+        importedLibraries.add(libFolder);
         classPath += Compiler.contentsToClassPath(libFolder);
         libraryPath += File.pathSeparator + libFolder.getAbsolutePath();
       }
@@ -1784,7 +1787,7 @@ public class Sketch {
     // if a file called 'export.txt' is in there, it contains
     // a list of the files that should be exported.
     // otherwise, all files are exported.
-    for (File libraryFolder : getImportedLibraries()) {
+    for (File libraryFolder : importedLibraries) {
       // in the list is a File object that points the
       // library sketch's "library" folder
       File exportSettings = new File(libraryFolder, "export.txt");
@@ -2424,7 +2427,7 @@ public class Sketch {
     // if a file called 'export.txt' is in there, it contains
     // a list of the files that should be exported.
     // otherwise, all files are exported.
-    for (File libraryFolder : getImportedLibraries()) {
+    for (File libraryFolder : importedLibraries) {
       //System.out.println(libraryFolder + " " + libraryFolder.getAbsolutePath());
       // in the list is a File object that points the
       // library sketch's "library" folder
