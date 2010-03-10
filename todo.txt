@@ -3,23 +3,23 @@ X another fix for CDATA section in applet.html for exported applets
 X updated about.jpg
 X Cannot find PDF library
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1473
+X new examples.zip
 
-_ new examples.zip (write build.xml file for it)
-_ finish build instructions for 1.1
 _ bring back old-style textAscent() 
-_ pdf library - warn about the black boxes
-_   or figure out how to get alpha text to work
+_   needs to just quickly run characters H and q or whatever
+_ pdf library
+_   throw an error with the black boxes
+_   throw an error if loading fonts from a file, and not using mode(SHAPE)
+_ finish build instructions for 1.1
 
-_ simple prefs implementation to set key/value pairs in a table
+_ simple prefs implementation to set key/value pairs using a JTable
 _ the .macosx, .linux, etc prefs should be stripped
 _   only use them on first load, and merge into preferences.txt
 
+_ write build.xml file to automatically update the examples
+
 _ error that sketch is read-only can't be canceled
 _   hitting cancel (or ESC?) still brings up the save dialog
-
-_ make sure that get() and set() (for pixels and subsets) work w/ loaded images
-_ make sure that get() and set() (for pixels and subsets) work w/ P2D
-_ make sure that get() and set() (for pixels and subsets) work w/ P3D
 
 _ change command line to just be part of regular distros
 _   there's so much platform code in there, it's not worth the extra work
