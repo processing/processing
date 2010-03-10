@@ -31,7 +31,9 @@ _   camera() and perspective() were commented out in setSize()
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1391
 _ chopping out triangles in OpenGL (though it's only 2D drawing)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1359
-
+_ make sure that get() and set() (for pixels and subsets) work w/ loaded images
+_ make sure that get() and set() (for pixels and subsets) work w/ P2D
+_ make sure that get() and set() (for pixels and subsets) work w/ P3D
 _ consider adding skewX/Y
 _   do them as shearX/Y
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1448
