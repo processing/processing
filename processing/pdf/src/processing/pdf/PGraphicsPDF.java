@@ -1,7 +1,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2005-09 Ben Fry and Casey Reas
+  Copyright (c) 2005-10 Ben Fry and Casey Reas
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -25,12 +25,31 @@ import java.util.*;
 
 import com.lowagie.text.*;
 import com.lowagie.text.pdf.*;
+
+// Tried iText 5, but it was too slow 
 //import com.itextpdf.text.*;
 //import com.itextpdf.text.pdf.*;
 
 import processing.core.*;
 
 
+/**
+ * Thin wrapper for the iText PDF library, that handles writing PDF files.
+ * The majority of the work in this library is done by 
+ * <a href="http://www.lowagie.com/iText/">iText</a>.
+ * <br /> <br />
+ * The version bundled with previous releases was 2.1.4. After Processing 1.0.9,
+ * the library was downgraded to iText 1.5.4., because later versions seem to
+ * load slower, and don't seem to offer additional benefits. If the PDF library
+ * gets worse, please post a bug and we'll go back to the 2.x release we were
+ * using, or upgrade to the more recent 5.x series.
+ * <br /> <br />
+ * The issue is that later versions were very slow to handle lots of fonts with
+ * the DefaultFontMapper. 2.x was a little slower, but 5.x took up to 10 times 
+ * the time to load, meaning a lag of several seconds when starting sketches on
+ * a machine that had a good handful of fonts installed. (Like, say, anyone
+ * in our target audience. Or me.)
+ */
 public class PGraphicsPDF extends PGraphicsJava2D {
   protected File file;
   protected Document document;
@@ -69,7 +88,8 @@ public class PGraphicsPDF extends PGraphicsJava2D {
 
 
   public void beginDraw() {
-//    long t = System.currentTimeMillis();
+    long t0 = System.currentTimeMillis();
+
     if (document == null) {
       document = new Document(new Rectangle(width, height));
       try {
@@ -101,6 +121,8 @@ public class PGraphicsPDF extends PGraphicsJava2D {
       // how should the insertDirectory stuff be used properly?
       //g2 = content.createGraphics(width, height);
 //      g2 = content.createGraphicsShapes(width, height);
+
+      long t = System.currentTimeMillis();
 
       mapper = new DefaultFontMapper();
       //System.out.println("registering directories");
@@ -156,10 +178,11 @@ public class PGraphicsPDF extends PGraphicsJava2D {
           }
         }
       }
+      System.out.println("beginDraw fonts " + (System.currentTimeMillis() - t));
       g2 = content.createGraphics(width, height, mapper);
 //      g2 = template.createGraphics(width, height, mapper);
     }
-//    System.out.println("beginDraw " + (System.currentTimeMillis() - t));
+    System.out.println("beginDraw " + (System.currentTimeMillis() - t0));
     super.beginDraw();
   }
 
