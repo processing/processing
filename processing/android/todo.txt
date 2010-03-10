@@ -1,5 +1,8 @@
 0179
 X screenWidth/Height instead of screenW/H
+X errors that happen inside events (e.g. keys) not highlighting lines
+X   useful stack trace information not coming through.. why?
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1384
 
 previous
 X don't require JDK installation and PATH setting
@@ -80,11 +83,6 @@ P5 _   http://dev.processing.org/bugs/show_bug.cgi?id=1492
 
 
 TOOLS 
-
-// jdf maybedone
-P1 _ errors that happen inside events (e.g. keys) not highlighting lines
-P1 _   useful stack trace information not coming through.. why?
-P1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1384
 
 // jdf maybedone
 _ only send error text to System.err (i.e. "Launching emulator" is not an error)

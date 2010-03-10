@@ -1,5 +1,13 @@
 0179 pde
+X another fix for CDATA section in applet.html for exported applets
+X updated about.jpg
 
+_ new examples.zip (write build.xml file for it)
+_ finish build instructions for 1.1
+_ pdf library is broken
+_ bring back old-style textAscent() 
+_ pdf library - warn about the black boxes
+_   or figure out how to get alpha text to work
 
 _ simple prefs implementation to set key/value pairs in a table
 _ the .macosx, .linux, etc prefs should be stripped
