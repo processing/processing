@@ -41,7 +41,10 @@ import processing.core.*;
  */
 public class Base {
   static final int REVISION = 179;
-  public static String VERSION_NAME = "0179";
+  /** This might be replaced by main() if there's a lib/version.txt file. */
+  static public String VERSION_NAME = "0179";
+  /** Set true if this a proper release rather than a numbered revision. */
+  static public boolean RELEASE = false;
 
   static HashMap<Integer, String> platformNames = new HashMap<Integer, String>();
   static {
@@ -103,7 +106,11 @@ public class Base {
     try {
       File versionFile = getContentFile("lib/version.txt");
       if (versionFile.exists()) {
-        VERSION_NAME = PApplet.loadStrings(versionFile)[0];
+        String version = PApplet.loadStrings(versionFile)[0];
+        if (!version.equals(VERSION_NAME)) {
+          VERSION_NAME = version;
+          RELEASE = true;
+        }
       }
     } catch (Exception e) {
       e.printStackTrace();
