@@ -7,14 +7,12 @@ X new examples.zip
 o Fixes for invoking Processing from arbitrary locations
 X   already fixed with earlier code
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1214
-X bring back old-style textAscent() 
-X   needs to just quickly run characters d and p
-X   only takes a couple ms, so no problem
+X hide android tools if it's an actual release version
 
-_ pdf library
-_   throw an error with the black boxes
-_   throw an error if loading fonts from a file, and not using mode(SHAPE)
 _ finish build instructions for 1.1
+_ update build/howto.txt (of course) because it says no ant
+_   this would also mean requiring a java installation for building
+
 
 _ simple prefs implementation to set key/value pairs using a JTable
 _ the .macosx, .linux, etc prefs should be stripped
@@ -48,9 +46,6 @@ from user Batuff
 > Xvfb :2 -screen 0 1024x768x24 &
 > export DISPLAY=localhost:2.0
 > ./<myExportedProcessingApplication>
-
-_ update build/howto.txt (of course) because it says no ant
-_   this would also mean requiring a java installation for building
 
 _ right-click on opengl.jar and select native lib location from the third prefs
 _   might be possible to do easier opengl setup for eclipse
