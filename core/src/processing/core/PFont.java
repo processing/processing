@@ -27,6 +27,7 @@ import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
 import java.util.Arrays;
+import java.util.HashMap;
 
 
 /**
@@ -115,6 +116,9 @@ public class PFont implements PConstants {
    */
   protected Font font;
 
+  /** True if this font was loaded from a stream, rather than from the OS. */
+  protected boolean stream;
+  
   /** 
    * True if we've already tried to find the native AWT version of this font.
    */
@@ -126,6 +130,7 @@ public class PFont implements PConstants {
    * bug that they can't be bothered to fix. 
    */
   static protected Font[] fonts;
+  static protected HashMap<String,Font> fontDifferent;
 
 
   // objects to handle creation of font characters only as they're needed
@@ -265,7 +270,17 @@ public class PFont implements PConstants {
       }
     }
   }
+  
 
+  /**
+   * Adds an additional parameter that indicates the font came from a file, 
+   * not a built-in OS font. 
+   */
+  public PFont(Font font, boolean smooth, char charset[], boolean stream) {
+    this(font, smooth, charset);
+    this.stream = stream;
+  }
+  
 
   public PFont(InputStream input) throws IOException {
     DataInputStream is = new DataInputStream(input);
@@ -436,6 +451,11 @@ public class PFont implements PConstants {
 //      font = findFont();
 //    }
     return font;
+  }
+  
+  
+  public boolean isStream() {
+    return stream;
   }
 
 
@@ -663,23 +683,35 @@ public class PFont implements PConstants {
       GraphicsEnvironment ge =
         GraphicsEnvironment.getLocalGraphicsEnvironment();
       fonts = ge.getAllFonts();
+      if (PApplet.platform == PConstants.MACOSX) {
+        fontDifferent = new HashMap();
+        for (Font font : fonts) {
+          // getName() returns the PostScript name on OS X 10.6 w/ Java 6.
+          fontDifferent.put(font.getName(), font);
+          //fontDifferent.put(font.getPSName(), font);
+        }
+      }
     }
   }
 
 
-  /** 
+  /**
    * Starting with Java 1.5, Apple broke the ability to specify most fonts.
-   * This has been filed as bug #4769141 at bugreporter.apple.com. More info at
+   * This bug was filed years ago as #4769141 at bugreporter.apple.com. More:
    * <a href="http://dev.processing.org/bugs/show_bug.cgi?id=407">Bug 407</a>.
-  */
+   */
   static public Font findFont(String name) {
     loadFonts();
     if (PApplet.platform == PConstants.MACOSX) {
-      for (int i = 0; i < fonts.length; i++) {
-        if (name.equals(fonts[i].getName())) {
-          return fonts[i];
-        }
+      Font maybe = fontDifferent.get(name);
+      if (maybe != null) {
+        return maybe;
       }
+//      for (int i = 0; i < fonts.length; i++) {
+//        if (name.equals(fonts[i].getName())) {
+//          return fonts[i];
+//        }
+//      }
     }
     return new Font(name, Font.PLAIN, 1);
   }
