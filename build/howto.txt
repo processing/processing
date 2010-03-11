@@ -7,16 +7,19 @@ http://processing.org/discourse/yabb_beta/YaBB.cgi?board=os_core_pde
 
 ////////////////////////////////////////////////////////////////////
 
-Update 16 February 2010:
+Update February/March 2010:
 
 + I'm in the midst of moving the build system over to ant, but haven't
   yet had time to update this document. For the most part, as long as you
-  have a JDK installed, and ANT installed as well, you should be able to 
+  have a JDK installed, and Ant installed as well, you should be able to 
   cd to the build folder and type 'ant' to build, and 'ant run' to run.
 
 + On Windows and Linux, install ant and add c:\apache-ant-xxx/bin directory 
   to your path. On Mac OS X, you'll have ant as long as the dev tools are
   already installed.
+
++ On Windows and Linux, you'll need to set a JAVA_HOME environment variable
+  that points to the root of a full JDK (not JRE). 
 
 Troubleshooting:
 
@@ -25,7 +28,7 @@ Troubleshooting:
   JAVA_HOME to your JDK (not JRE) installation.
 
 + Build errors regarding a lot of missing classes for processing.app.debug
-  mean that JAVA_HOME is
+  mean that JAVA_HOME is not set properly.
 
 More to come...
 
@@ -161,32 +164,3 @@ Unfortunately there isn't a way to know if new folders have
 since been added. but if you're getting "class not found" errors
 while building, then that's a good indicator that something is
 missing from a subfolder.
-
-
-////////////////////////////////////////////////////////////////////
-
-//// The Frequently Asked Question
-
-- What about Eclipse? What about Ant? Command line sucks.
-
-The command line stuff isn't as scary as it might initially
-seem. Hopefully it's just a matter of following the instructions above
-(and being patient). If not, let us know (via the discourse board)
-where you have trouble so we can fix things.
-
-We're slowly moving development over to Eclipse, which will probably
-include Ant because of cross-platform dependencies. As of release 0140,
-major changes are being implemented to simplify the build process, 
-which should mean that we're pretty close. The environment and all
-the libraries build properly with Eclipse, however we won't be 
-documenting it until the dust has settled.
-
-Some progress has been made by John Houck to get the scripts working
-under ANT, progress can be tracked here:
-http://dev.processing.org/bugs/show_bug.cgi?id=151
-
-
-////////////////////////////////////////////////////////////////////
-
-
-Ben Fry - Updated 10 June 2008
