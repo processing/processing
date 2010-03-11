@@ -39,17 +39,13 @@ import processing.core.*;
  * The majority of the work in this library is done by 
  * <a href="http://www.lowagie.com/iText/">iText</a>.
  * <br /> <br />
- * The version bundled with previous releases was 2.1.4. After Processing 1.0.9,
- * the library was downgraded to iText 1.5.4., because later versions seem to
- * load slower, and don't seem to offer additional benefits. If the PDF library
- * gets worse, please post a bug and we'll go back to the 2.x release we were
- * using, or upgrade to the more recent 5.x series.
+ * This is currently using iText 2.1.7.
  * <br /> <br />
- * The issue is that later versions were very slow to handle lots of fonts with
- * the DefaultFontMapper. 2.x was a little slower, but 5.x took up to 10 times 
- * the time to load, meaning a lag of several seconds when starting sketches on
- * a machine that had a good handful of fonts installed. (Like, say, anyone
- * in our target audience. Or me.)
+ * The issue is that versions from the 5.x series were slow to handle lots of 
+ * fonts with the DefaultFontMapper. 2.x seemed a little slower than 1.x, 
+ * but 5.x took up to 10 times the time to load, meaning a lag of several 
+ * seconds when starting sketches on a machine that had a good handful of 
+ * fonts installed. (Like, say, anyone in our target audience. Or me.)
  */
 public class PGraphicsPDF extends PGraphicsJava2D {
   /** File being written, if it's a file. */
@@ -102,7 +98,7 @@ public class PGraphicsPDF extends PGraphicsJava2D {
 
 
   public void beginDraw() {
-    long t0 = System.currentTimeMillis();
+//    long t0 = System.currentTimeMillis();
 
     if (document == null) {
       document = new Document(new Rectangle(width, height));
@@ -129,14 +125,14 @@ public class PGraphicsPDF extends PGraphicsJava2D {
       g2 = content.createGraphics(width, height, getMapper());
 //      g2 = template.createGraphics(width, height, mapper);
     }
-    System.out.println("beginDraw " + (System.currentTimeMillis() - t0));
+//    System.out.println("beginDraw " + (System.currentTimeMillis() - t0));
     super.beginDraw();
   }
   
   
   static protected DefaultFontMapper getMapper() {
     if (mapper == null) {
-      long t = System.currentTimeMillis();
+//      long t = System.currentTimeMillis();
       mapper = new DefaultFontMapper();
 
       if (PApplet.platform == PApplet.MACOSX) {
@@ -185,7 +181,7 @@ public class PGraphicsPDF extends PGraphicsJava2D {
           }
         }
       }
-      System.out.println("mapping " + (System.currentTimeMillis() - t));
+//      System.out.println("mapping " + (System.currentTimeMillis() - t));
     }
     return mapper;
   }
@@ -372,7 +368,7 @@ public class PGraphicsPDF extends PGraphicsJava2D {
     // Make sure that this is a font that the PDF library can deal with.
     if (!checkFont(which.getName())) {
       System.err.println("Use PGraphicsPDF.listFonts() to get a list of available fonts.");
-      throw new RuntimeException("The font " + which.getName() + " cannot be used with PDF Export.");
+      throw new RuntimeException("The font “" + which.getName() + "” cannot be used with PDF Export.");
     }
   }
   
@@ -556,9 +552,10 @@ public class PGraphicsPDF extends PGraphicsJava2D {
    * List the fonts known to the PDF renderer. This is like PFont.list(),
    * however not all those fonts are available by default.
    */
+  @SuppressWarnings("unchecked")
   static public String[] listFonts() {
     if (fontList == null) {
-      HashMap map = getMapper().getAliases();
+      HashMap<?,?> map = getMapper().getAliases();
 //      Set entries = map.entrySet();
 //      fontList = new String[entries.size()];
       fontList = new String[map.size()];
