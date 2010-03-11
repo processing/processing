@@ -195,8 +195,11 @@ public class PFont implements PConstants {
     lazyMetrics = lazyGraphics.getFontMetrics();
     lazySamples = new int[mbox3 * mbox3];
 
-    ascent = lazyMetrics.getAscent();
-    descent = lazyMetrics.getDescent();
+    // These values are terrible/unusable. Verified again for Processing 1.1.
+    // They vary widely per-platform and per-font, so instead we'll use the 
+    // calculate-by-hand method of measuring pixels in characters.
+    //ascent = lazyMetrics.getAscent();
+    //descent = lazyMetrics.getDescent();
 
     if (charset != null) {
       // charset needs to be sorted to make index lookup run more quickly
@@ -238,6 +241,28 @@ public class PFont implements PConstants {
 //          }
 //        }
 //      }
+    }
+
+    // If not already created, just create these two characters to calculate 
+    // the ascent and descent values for the font. This was tested to only 
+    // require 5-10 ms on a 2.4 GHz MacBook Pro.
+    // In versions 1.0.9 and earlier, fonts that could not display d or p
+    // used the max up/down values as calculated by looking through the font.
+    // That's no longer valid with the auto-generating fonts, so we'll just
+    // use getAscent() and getDescent() in such (minor) cases.
+    if (ascent == 0) {
+      if (font.canDisplay('d')) {
+        new Glyph('d');
+      } else {
+        ascent = lazyMetrics.getAscent();
+      }
+    }
+    if (descent == 0) {
+      if (font.canDisplay('p')) {
+        new Glyph('p');
+      } else {
+        descent = lazyMetrics.getDescent();
+      }
     }
   }
 

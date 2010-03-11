@@ -4,9 +4,13 @@ X updated about.jpg
 X Cannot find PDF library
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1473
 X new examples.zip
+o Fixes for invoking Processing from arbitrary locations
+X   already fixed with earlier code
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1214
+X bring back old-style textAscent() 
+X   needs to just quickly run characters d and p
+X   only takes a couple ms, so no problem
 
-_ bring back old-style textAscent() 
-_   needs to just quickly run characters H and q or whatever
 _ pdf library
 _   throw an error with the black boxes
 _   throw an error if loading fonts from a file, and not using mode(SHAPE)
