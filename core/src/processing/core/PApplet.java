@@ -4083,8 +4083,8 @@ public class PApplet extends Applet
    * installed on the system, or from a .ttf or .otf that's inside
    * the data folder of this sketch.
    * <P/>
-   * Only works with Java 1.3 or later. Many .otf fonts don't seem
-   * to be supported by Java, perhaps because they're CFF based?
+   * Many .otf fonts don't seem to be supported by Java, perhaps because 
+   * they're CFF based?
    * <P/>
    * Font names are inconsistent across platforms and Java versions.
    * On Mac OS X, Java 1.3 uses the font menu name of the font,
@@ -4103,8 +4103,9 @@ public class PApplet extends Applet
     Font baseFont = null;
 
     try {
+      InputStream stream = null;
       if (lowerName.endsWith(".otf") || lowerName.endsWith(".ttf")) {
-        InputStream stream = createInput(name);
+        stream = createInput(name);
         if (stream == null) {
           System.err.println("The font \"" + name + "\" " +
                              "is missing or inaccessible, make sure " +
@@ -4115,17 +4116,15 @@ public class PApplet extends Applet
         baseFont = Font.createFont(Font.TRUETYPE_FONT, createInput(name));
 
       } else {
-        //baseFont = new Font(name, Font.PLAIN, 1);
         baseFont = PFont.findFont(name);
       }
+      return new PFont(baseFont.deriveFont(size), smooth, charset, 
+                       stream != null);
+
     } catch (Exception e) {
-      System.err.println("Problem using createFont() with " + name);
+      System.err.println("Problem createFont(" + name + ")");
       e.printStackTrace();
-    }
-    if (charset == null) {
-      return new PFont(baseFont.deriveFont(size), smooth);
-    } else {
-      return new PFont(baseFont.deriveFont(size), smooth, charset);
+      return null;
     }
   }
 
