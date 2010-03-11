@@ -1,5 +1,8 @@
 0179 core
 X screenWidth/Height instead of screenW/H
+X open up the pdf library more (philho)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1343
+X cache font information for the PDF library to improve setup time
 
 
 big ones
@@ -38,6 +41,8 @@ _ consider adding skewX/Y
 _   do them as shearX/Y
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1448
 
+_ add setOutput() method across other renderers?
+
 _ opengl applet problems
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1364
 
@@ -57,8 +62,6 @@ _ add java.io.Reader (and Writer?) to imports
 _ consider bringing back text/image using cache/names
 _   fonts might not be as bad
 
-_ open up the pdf library more (philho)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1343
 _ changing vertex alpha in P3D in a QUAD_STRIP is ignored
 _   with smoothing, it works fine, but with PTriangle, it's not
 _ smooth() not working with applets an createGraphics(JAVA2D)
