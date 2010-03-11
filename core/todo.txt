@@ -3,7 +3,25 @@ X screenWidth/Height instead of screenW/H
 X open up the pdf library more (philho)
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1343
 X cache font information for the PDF library to improve setup time
+X when using createFont("xxxx.ttf"), should use textMode(SHAPE) with PDF
+X   because ttf files will not be installed on the system when opening pdf
+X   added error messages for users
+X bring back old-style textAscent() 
+X   needs to just quickly run characters d and p
+X   only takes a couple ms, so no problem
+X pdf library
+X   throw an error with the black boxes
+X   throw an error if loading fonts from a file, and not using mode(SHAPE)
 
+earlier
+X if no draw() method, and renderer is not displayable, then exit
+X   static mode PDFs shouldn't just hang
+
+
+_ implement default font
+_   this can be done to replace the exception handler in PGraphics
+_   however it needs to be a legit font, so that it works w/ pdf
+_   or maybe pdf just has its own default?
 
 big ones
 _ ortho() behaving differently in P3D vs OPENGL
@@ -128,8 +146,6 @@ _   what other methods should work with doubles? all math functions?
 _   seems like internal (mostly static) things, but not graphics api
 _ look into replacing nanoxml
 _   http://www.exampledepot.com/egs/javax.xml.parsers/pkg.html
-_ if no draw() method, and renderer is not displayable, then exit
-_   static mode PDFs shouldn't just hang
 
 
 [ known problems ]
@@ -208,9 +224,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=866
 _ text(char c) with char 0 and undefined should print nothing
 _   perhaps also DEL or other nonprintables?
 _   book example 25-03
-_ when using createFont("xxxx.ttf"), should use textMode(SHAPE) with PDF
-_   because ttf files will not be installed on the system when opening pdf
-_   maybe just add this to the reference so that people know
 _ text position is quantized in JAVA2D
 _   http://dev.processing.org/bugs/show_bug.cgi?id=806
 _ accessors inside PFont need a lot of work
@@ -257,7 +270,6 @@ _   also needs fix for last edge and the seam
 
 
 threading and exiting
-_ pdf sketches exiting before writing has finished
 _ writing image file (missing a flush() call?) on exit() fails
 _   lots of zero length files
 _ saveFrame() at the end of a draw mode program is problematic
@@ -660,6 +672,10 @@ LIBRARIES / PGraphicsPDF
 
 _ pdf not rendering unicode with beginRecord()
 _   http://dev.processing.org/bugs/show_bug.cgi?id=727
+_ pdf sketches exiting before writing has finished
+_   people have to call exit() (so that dispose() is called in particular)
+_ when using noLoop() and the PDF renderer, sketch should exit gracefully
+_   because isDisplayable() returns false, there's no coming back from noLoop
 
 
 
