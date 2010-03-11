@@ -820,10 +820,12 @@ public class Editor extends JFrame implements RunnerListener {
 
     // These are temporary entries while Android mode is being worked out.
     // The mode will not be in the tools menu, and won't involve a cmd-key
-    item = createToolMenuItem("processing.app.tools.android.AndroidTool");
-    item.setAccelerator(KeyStroke.getKeyStroke('D', modifiers));
-    menu.add(item);
-    menu.add(createToolMenuItem("processing.app.tools.android.Reset"));
+    if (!Base.RELEASE) {
+      item = createToolMenuItem("processing.app.tools.android.AndroidTool");
+      item.setAccelerator(KeyStroke.getKeyStroke('D', modifiers));
+      menu.add(item);
+      menu.add(createToolMenuItem("processing.app.tools.android.Reset"));
+    }
 
     return menu;
   }
