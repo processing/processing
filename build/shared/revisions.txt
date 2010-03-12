@@ -1,3 +1,137 @@
+PROCESSING 1.1 (REV 0179) - 11 March 2010
+
+This is the first general-purpose release since 1.0.9. The text below merges 
+all of the changes from all the interim revisions, with the exception of the
+changes for the upcoming Android tools, which are not enabled in this release.
+
+Lots of bug fixes over 1.0.9, and several changes that improve how fonts are
+handled. 
+
+[ font changes ]
+
++ It's no longer necessary to use textFont() before text() and other 
+  text-handling functions. The default "SansSerif" font is used, which 
+  varies by platform. 
+
++ Also in this release, the createFont() method will only load characters 
+  as they are used, which should greatly improve the font situation on 
+  non-Roman systems like Japanese. This will use far less memory, and should
+  be all around much more efficient. Formerly, createFont() took several 
+  seconds to run, depending on the speed of your system. 
+  http://dev.processing.org/bugs/show_bug.cgi?id=1111
+
++ Fixed a problem with the Create Font tool ignoring the 'smooth' setting
+  on some systems.
+
++ Fixed a separate problem with the createFont() method also ignoring the
+  'smooth' setting.
+
++ With the Create Font tool, you can also specify what Unicode character 
+  blocks you'd like to use, making a much smaller font.
+
++ Fonts are no longer power of 2 by default. This should also make them more
+  memory efficient. With future OpenGL updates, this will work even better.
+
+[ other changes ] 
+
++ Lots of edits to the HTML that's used for exported applets. If JavaScript
+  is enabled, Sun's new loading functions are used, which offer the best
+  compatibility across browsers. If not, the old loading method is used.
+  http://dev.processing.org/bugs/show_bug.cgi?id=1057
+
++ Changed the OpenGL HTML template to load differently, which should fix a
+  NullPointerException in JOGLAppletLanucher with Java 6 Update 18 on Windows,
+  and should also be more efficient altogether, because the JOGL libraries can 
+  be downloaded just once from Sun, rather than for each sketch that uses them.
+  http://dev.processing.org/bugs/show_bug.cgi?id=1452
+
++ Code from Takachin that handles full input method support in the editor for
+  Japanese and other scripts that are more complicated than Roman text.
+  http://dev.processing.org/bugs/show_bug.cgi?id=854
+  Thanks Takachin! 
+
++ Now using iText 2.1.7.
+
++ Changed how imports are handled in sketches. This may break some sketches
+  that use java.xxx packages that aren't covered in the Processing reference.
+
++ With great help from Hansi, moved the build scripts over to Ant.
+  http://dev.processing.org/bugs/show_bug.cgi?id=151
+  Also moved the special JRE for Linux and Windows out of SVN. It'll only be
+  downloaded when 'ant dist' is run. 
+
++ Javadoc is slowly improving. More on that later.
+
++ Deprecated 'screen', and added screenWidth and screenHeight. Discussion here:
+  http://dev.processing.org/bugs/show_bug.cgi?id=1499
+
+[ bug fixes ] 
+
++ Fix for filter(DILATE/ERODE) from Dave Bollinger
+  http://dev.processing.org/bugs/show_bug.cgi?id=1477
+
++ Added implementation for get/set methods inside PImage (w/o pixels[])
+
++ Updated JNA to version 3.2.4 to support Windows 7 64-bit
+  http://dev.processing.org/bugs/show_bug.cgi?id=1424
+  Thanks to Maik for tracking down the problem and solution!
+
++ Fix from taifun_browser to handle texture memory leak with OpenGL and P3D.
+  http://dev.processing.org/bugs/show_bug.cgi?id=1423
+
++ Hitting ESC inside Color Selector would quit Processing
+  http://dev.processing.org/bugs/show_bug.cgi?id=1006
+
++ To fix video, and some other libraries on Snow Leopard, exported applications
+  are now explicitly set to run 32-bit on OS X.
+
++ Fix LITERAL_class so that blah.class syntax can be used in PDE code. 
+  Found and fixed by Christian Thiemann. Thank you!
+  http://dev.processing.org/bugs/show_bug.cgi?id=1466
+
++ Fix from Chris Lonnen to lock the minimum size for the main processing editor
+  frame. (When too small, the console would disappear, etc.) Thanks Chris!
+  http://dev.processing.org/bugs/show_bug.cgi?id=25
+
++ If you overwrite PApplet.main(), you're responsible for what happens.
+  http://dev.processing.org/bugs/show_bug.cgi?id=1446
+
++ Re-enabled hack for temporary clipping. Clipping still needs to be
+  implemented properly, however. Please help!
+  http://dev.processing.org/bugs/show_bug.cgi?id=1393
+
++ SVG paths that use 'e' (exponent) not handled properly
+  http://dev.processing.org/bugs/show_bug.cgi?id=1408
+
++ Change build scripts to use UTF-8 for encoding with javac
+  http://dev.processing.org/bugs/show_bug.cgi?id=1394
+
++ Fix ant.jar/ant-launcher.jar error in the windows/linux build scripts
+  http://dev.processing.org/bugs/show_bug.cgi?id=1403
+
++ Fixed a problem where imports inside comments were being included.
+
+[ keys ] 
+
++ Added ctrl-ins, shift-ins, shift-delete for cut/copy/paste on Windows and 
+  Linux, but disabled by default on Mac OS X. You can change the setting by
+  altering "editor.keys.alternative_cut_copy_paste" in preferences.txt.
+  http://dev.processing.org/bugs/show_bug.cgi?id=162
+
++ Added a preference to change shift-backspace to just mean backspace, 
+  rather than delete. Set this entry in preferences.txt:
+  editor.keys.shift_backspace_is_delete = true
+  http://dev.processing.org/bugs/show_bug.cgi?id=1463
+
++ Added an option for home and end keys traveling to the start/end of the 
+  current line rather than the beginning/ending of a sketch. The latter is
+  the HIG default for Mac OS X, but drives some people nuts. Change with:
+  editor.keys.home_and_end_travel_far = false
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING REV 0178 - 4 March 2010
 
 Tons of Android work in this release. A2D has been tested and runs correctly
