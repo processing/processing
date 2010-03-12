@@ -1819,12 +1819,21 @@ public class PGraphicsAndroid3D extends PGraphics {
   //public void shapeMode(int mode)
 
 
-  //public void shape(PShape shape)
+  public void shape(GLModel shape) {
+      shape.draw(this);
+  }
 
 
-  //public void shape(PShape shape, float x, float y)
+  public void shape(GLModel shape, float x, float y) {
+  }
 
-
+  public void shape(GLModel shape, float x, float y, float z) {
+    pushMatrix();
+    translate(x, y, z);
+    shape.draw(this);
+    popMatrix();
+  }
+  
   //public void shape(PShape shape, float x, float y, float c, float d)
 
 
