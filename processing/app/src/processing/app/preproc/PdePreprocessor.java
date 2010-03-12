@@ -197,7 +197,7 @@ public class PdePreprocessor {
     }
 
     //String importRegexp = "(?:^|\\s|;)(import\\s+)(\\S+)(\\s*;)";
-    String importRegexp = "(?:^|;)\\s*(import\\s+)(\\S+)(\\s*;)";
+    String importRegexp = "(?:^|;)\\s*(import\\s+)((?:static\\s+)?\\S+)(\\s*;)";
     programImports = new ArrayList<String>();
 
     do {
@@ -379,12 +379,12 @@ public class PdePreprocessor {
     emitter.setOut(stream);
     emitter.print(rootNode);
 
-    //    debugAST(rootNode, false);
-    //    final ByteArrayOutputStream buf = new ByteArrayOutputStream();
-    //    final PrintStream bufout = new PrintStream(buf);
-    //    emitter.setOut(bufout);
-    //    emitter.print(rootNode);
-    //    System.err.println(new String(buf.toByteArray()));
+    debugAST(rootNode, false);
+    final ByteArrayOutputStream buf = new ByteArrayOutputStream();
+    final PrintStream bufout = new PrintStream(buf);
+    emitter.setOut(bufout);
+    emitter.print(rootNode);
+    System.err.println(new String(buf.toByteArray()));
 
     writeFooter(stream, name);
     stream.close();
