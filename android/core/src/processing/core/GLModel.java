@@ -37,7 +37,7 @@ import javax.microedition.khronos.opengles.*;
  * By Andres Colubri
  * 
  */
-public class GLModel implements GLConstants, PConstants {
+public class GLModel extends PShape implements GLConstants, PConstants {
   protected PApplet parent;    
   protected GL11 gl;  
   protected PGraphicsAndroid3D a3d;
@@ -79,6 +79,8 @@ public class GLModel implements GLConstants, PConstants {
   protected int grIdx1;
 
   protected int recreateResourceIdx;
+  
+  public float depth;
   
   // TODO: this should be calculated depending on the platform.
   protected static final int SIZEOF_FLOAT = 4;
@@ -1289,9 +1291,33 @@ public void setGroup(int gr, int idx0, int idx1, GLTexture tex) {
   
   ///////////////////////////////////////////////////////////  
 
-  // Rendering methods
-  
+  // Methods inherited from PShape.
 
+  public float getWidth() {
+    return width;
+  }
+
+  public float getHeight() {
+    return height;
+  }  
+  
+  public float getDepth() {
+    return depth;
+  }
+  
+  
+  public boolean isVisible() {
+    return true;
+  }  
+
+   public void draw(PGraphics g) {
+     render();
+   }
+  
+  ///////////////////////////////////////////////////////////  
+
+  // Rendering methods   
+   
    public void render() {
      render(0, groups.size() - 1);
    }
