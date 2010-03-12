@@ -324,6 +324,7 @@ public class PdePreprocessor {
     filter.copy(PdeRecognizer.RBRACK);
     filter.copy(PdeRecognizer.LBRACK);
     filter.copy(PdeRecognizer.COLON);
+    filter.copy(PdeRecognizer.TRIPLE_DOT);
     
     // Because the meanings of < and > are overloaded to support
     // type arguments and type parameters, we have to treat them
