@@ -284,6 +284,12 @@ public class PdeEmitter implements PdeTokenTypes
       print(ast.getFirstChild());
       break;
 
+    case STATIC_IMPORT:
+      out.print("import static");
+      dumpHiddenAfter(ast);
+      print(ast.getFirstChild());
+      break;
+
     case CLASS_DEF:
     case INTERFACE_DEF:
       print(getChild(ast, MODIFIERS));
