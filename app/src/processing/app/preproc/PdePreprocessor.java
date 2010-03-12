@@ -30,13 +30,10 @@ package processing.app.preproc;
 import processing.app.*;
 import processing.core.*;
 import processing.app.antlr.*;
-
 import java.io.*;
 import java.util.*;
-
 import antlr.*;
 import antlr.collections.*;
-
 
 /**
  * Class that orchestrates preprocessing p5 syntax into straight Java.
@@ -138,9 +135,9 @@ public class PdePreprocessor {
   // than the others, since the imports are auto-generated.
   ArrayList<String> codeFolderImports;
 
-  static public final int STATIC = 0;  // formerly BEGINNER
-  static public final int ACTIVE = 1;  // formerly INTERMEDIATE
-  static public final int JAVA   = 2;  // formerly ADVANCED
+  static public final int STATIC = 0; // formerly BEGINNER
+  static public final int ACTIVE = 1; // formerly INTERMEDIATE
+  static public final int JAVA = 2; // formerly ADVANCED
 
   // static to make it easier for the antlr preproc to get at it
   static public int programType;
@@ -164,20 +161,19 @@ public class PdePreprocessor {
 
   public static String advClassName = "";
 
-
   /**
    * Setup a new preprocessor.
    */
-  public PdePreprocessor() { 
+  public PdePreprocessor() {
     int tabSize = Preferences.getInteger("editor.tabs.size");
     char[] indentChars = new char[tabSize];
     Arrays.fill(indentChars, ' ');
     indent = new String(indentChars);
   }
 
-
-  public int writePrefix(String program, String buildPath,
-                         String sketchName, String codeFolderPackages[]) throws FileNotFoundException {
+  public int writePrefix(String program, String buildPath, String sketchName,
+                         String codeFolderPackages[])
+      throws FileNotFoundException {
     this.buildPath = buildPath;
     this.name = sketchName;
 
@@ -209,12 +205,13 @@ public class PdePreprocessor {
       // so that commented-out import statements are ignored.
       String[] pieces = PApplet.match(scrubbed, importRegexp);
       // Stop the loop if we've removed all the importy lines
-      if (pieces == null) break;
+      if (pieces == null)
+        break;
 
       String piece = pieces[1] + pieces[2] + pieces[3];
-      int len = piece.length();  // how much to trim out
+      int len = piece.length(); // how much to trim out
 
-      programImports.add(pieces[2]);  // the package name
+      programImports.add(pieces[2]); // the package name
 
       // find index of this import in the program
       int idx = scrubbed.indexOf(piece);
@@ -244,22 +241,21 @@ public class PdePreprocessor {
     // added by calling writeDeclarations()
     return importsLength + 2;
   }
-  
 
-//  /**
-//   * Returns the name of the .java file that was created from the .pde files.  
-//   */
-//  String getJavaFileName() {
-//    return name + ".java";
-//  }
-  
-  
+  //  /**
+  //   * Returns the name of the .java file that was created from the .pde files.  
+  //   */
+  //  String getJavaFileName() {
+  //    return name + ".java";
+  //  }
+
   static String substituteUnicode(String program) {
     // check for non-ascii chars (these will be/must be in unicode format)
     char p[] = program.toCharArray();
     int unicodeCount = 0;
     for (int i = 0; i < p.length; i++) {
-      if (p[i] > 127) unicodeCount++;
+      if (p[i] > 127)
+        unicodeCount++;
     }
     // if non-ascii chars are in there, convert to unicode escapes
     if (unicodeCount != 0) {
@@ -267,12 +263,12 @@ public class PdePreprocessor {
       // with six digit uXXXX sequence (xxxx is in hex)
       // (except for nbsp chars which will be a replaced with a space)
       int index = 0;
-      char p2[] = new char[p.length + unicodeCount*5];
+      char p2[] = new char[p.length + unicodeCount * 5];
       for (int i = 0; i < p.length; i++) {
         if (p[i] < 128) {
           p2[index++] = p[i];
 
-        } else if (p[i] == 160) {  // unicode for non-breaking space
+        } else if (p[i] == 160) { // unicode for non-breaking space
           p2[index++] = ' ';
 
         } else {
@@ -282,7 +278,8 @@ public class PdePreprocessor {
           char str[] = Integer.toHexString(c).toCharArray();
           // add leading zeros, so that the length is 4
           //for (int i = 0; i < 4 - str.length; i++) p2[index++] = '0';
-          for (int m = 0; m < 4 - str.length; m++) p2[index++] = '0';
+          for (int m = 0; m < 4 - str.length; m++)
+            p2[index++] = '0';
           System.arraycopy(str, 0, p2, index, str.length);
           index += str.length;
         }
@@ -291,7 +288,6 @@ public class PdePreprocessor {
     }
     return program;
   }
-
 
   /**
    * preprocesses a pde file and writes out a java file
@@ -305,7 +301,7 @@ public class PdePreprocessor {
     // through so that the line numbers when the compiler reports errors
     // match those that will be highlighted in the PDE IDE
     //
-    PdeLexer lexer  = new PdeLexer(programReader);
+    PdeLexer lexer = new PdeLexer(programReader);
     lexer.setTokenObjectClass("antlr.CommonHiddenStreamToken");
 
     // create the filter for hidden tokens and specify which tokens to
@@ -325,7 +321,7 @@ public class PdePreprocessor {
     filter.copy(PdeRecognizer.LBRACK);
     filter.copy(PdeRecognizer.COLON);
     filter.copy(PdeRecognizer.TRIPLE_DOT);
-    
+
     // Because the meanings of < and > are overloaded to support
     // type arguments and type parameters, we have to treat them
     // as copyable to hidden text (or else the following syntax,
@@ -347,7 +343,7 @@ public class PdePreprocessor {
     // start parsing at the compilationUnit non-terminal
     //
     parser.pdeProgram();
-    
+
     // set up the AST for traversal by PdeEmitter
     //
     ASTFactory factory = new ASTFactory();
@@ -371,7 +367,8 @@ public class PdePreprocessor {
     // if 'null' was passed in for the name, but this isn't
     // a 'java' mode class, then there's a problem, so punt.
     //
-    if (name == null) return null;
+    if (name == null)
+      return null;
 
     // output the code
     //
@@ -381,14 +378,14 @@ public class PdePreprocessor {
 
     emitter.setOut(stream);
     emitter.print(rootNode);
-    
-//    emitter.debugAST(rootNode);
-//    final ByteArrayOutputStream buf = new ByteArrayOutputStream();
-//    final PrintStream bufout = new PrintStream(buf);
-//    emitter.setOut(bufout);
-//    emitter.print(rootNode);
-//    System.err.println(new String(buf.toByteArray()));
-    
+
+    //    debugAST(rootNode, false);
+    //    final ByteArrayOutputStream buf = new ByteArrayOutputStream();
+    //    final PrintStream bufout = new PrintStream(buf);
+    //    emitter.setOut(bufout);
+    //    emitter.print(rootNode);
+    //    System.err.println(new String(buf.toByteArray()));
+
     writeFooter(stream, name);
     stream.close();
 
@@ -402,24 +399,22 @@ public class PdePreprocessor {
     return name;
   }
 
-
   protected void writeParseTree(String filename, AST ast) {
     try {
-    PrintStream stream = new PrintStream(new FileOutputStream(filename));
-    stream.println("<?xml version=\"1.0\"?>");
-    stream.println("<document>");
-    OutputStreamWriter writer = new OutputStreamWriter(stream);
-    if (ast != null) {
-      ((CommonAST) ast).xmlSerialize(writer);
-    }
-    writer.flush();
-    stream.println("</document>");
-    writer.close();
+      PrintStream stream = new PrintStream(new FileOutputStream(filename));
+      stream.println("<?xml version=\"1.0\"?>");
+      stream.println("<document>");
+      OutputStreamWriter writer = new OutputStreamWriter(stream);
+      if (ast != null) {
+        ((CommonAST) ast).xmlSerialize(writer);
+      }
+      writer.flush();
+      stream.println("</document>");
+      writer.close();
     } catch (IOException e) {
 
     }
   }
-
 
   protected int writeImports(PrintStream out) {
     int count = writeImportList(out, getCoreImports());
@@ -429,11 +424,9 @@ public class PdePreprocessor {
     return count;
   }
 
-
   protected int writeImportList(PrintStream out, ArrayList<String> imports) {
     return writeImportList(out, (String[]) imports.toArray(new String[0]));
   }
-  
 
   protected int writeImportList(PrintStream out, String[] imports) {
     int count = 0;
@@ -447,7 +440,6 @@ public class PdePreprocessor {
     }
     return count;
   }
-
 
   /**
    * Write any required header material (eg imports, class decl stuff)
@@ -473,7 +465,6 @@ public class PdePreprocessor {
     }
   }
 
-
   /**
    * Write any necessary closing text.
    *
@@ -490,19 +481,19 @@ public class PdePreprocessor {
       if (!PdePreprocessor.foundMain) {
         out.println(indent + "static public void main(String args[]) {");
         out.print(indent + indent + "PApplet.main(new String[] { ");
-        
+
         if (Preferences.getBoolean("export.application.fullscreen")) {
           out.print("\"" + PApplet.ARGS_PRESENT + "\", ");
-          
+
           String farbe = Preferences.get("run.present.bgcolor");
           out.print("\"" + PApplet.ARGS_BGCOLOR + "=" + farbe + "\", ");
-          
+
           if (Preferences.getBoolean("export.application.stop")) {
             farbe = Preferences.get("run.present.stop.color");
             out.print("\"" + PApplet.ARGS_STOP_COLOR + "=" + farbe + "\", ");
           } else {
             out.print("\"" + PApplet.ARGS_HIDE_STOP + "\", ");
-          }          
+          }
         } else {
           String farbe = Preferences.get("run.window.bgcolor");
           out.print("\"" + PApplet.ARGS_BGCOLOR + "=" + farbe + "\", ");
@@ -516,26 +507,19 @@ public class PdePreprocessor {
     }
   }
 
-
   public ArrayList<String> getExtraImports() {
     return programImports;
   }
 
-
   public String[] getCoreImports() {
-    return new String[] { 
-      "processing.core.*",
-      "processing.xml.*"
-    };
+    return new String[] { "processing.core.*", "processing.xml.*" };
   }
 
-  
   public String[] getDefaultImports() {
     // These may change in-between (if the prefs panel adds this option)
     String prefsLine = Preferences.get("preproc.imports.list");
     return PApplet.splitTokens(prefsLine, ", ");
   }
-
 
   /**
    * Find the first CLASS_DEF node in the tree, and return the name of the
@@ -551,4 +535,66 @@ public class PdePreprocessor {
 
     return t;
   }
+
+  public void debugAST(final AST ast, final boolean includeHidden) {
+    System.err.println("------------------");
+    debugAST(ast, includeHidden, 0);
+  }
+
+  private void debugAST(final AST ast, final boolean includeHidden,
+                        final int indent) {
+    for (int i = 0; i < indent; i++)
+      System.err.print("    ");
+    if (includeHidden) {
+      System.err.print(debugHiddenBefore(ast));
+    }
+    if (ast.getType() > 0 && !ast.getText().equals(TokenUtil.nameOf(ast))) {
+      System.err.print(TokenUtil.nameOf(ast) + "/");
+    }
+    System.err.print(ast.getText().replace("\n", "\\n"));
+    if (includeHidden) {
+      System.err.print(debugHiddenAfter(ast));
+    }
+    System.err.println();
+    for (AST kid = ast.getFirstChild(); kid != null; kid = kid.getNextSibling())
+      debugAST(kid, includeHidden, indent + 1);
+  }
+
+  private String debugHiddenAfter(AST ast) {
+    if (!(ast instanceof antlr.CommonASTWithHiddenTokens))
+      return "";
+    return debugHiddenTokens(((antlr.CommonASTWithHiddenTokens) ast)
+        .getHiddenAfter());
+  }
+
+  private String debugHiddenBefore(AST ast) {
+    if (!(ast instanceof antlr.CommonASTWithHiddenTokens))
+      return "";
+    antlr.CommonHiddenStreamToken child = null, parent = ((antlr.CommonASTWithHiddenTokens) ast)
+        .getHiddenBefore();
+
+    if (parent == null) {
+      return "";
+    }
+
+    do {
+      child = parent;
+      parent = child.getHiddenBefore();
+    } while (parent != null);
+
+    return debugHiddenTokens(child);
+  }
+
+  private String debugHiddenTokens(antlr.CommonHiddenStreamToken t) {
+    final StringBuilder sb = new StringBuilder();
+    for (; t != null; t = PdePreprocessor.filter.getHiddenAfter(t)) {
+      if (sb.length() == 0)
+        sb.append("[");
+      sb.append(t.getText().replace("\n", "\\n"));
+    }
+    if (sb.length() > 0)
+      sb.append("]");
+    return sb.toString();
+  }
+
 }

@@ -38,44 +38,7 @@ public class PdeEmitter implements PdeTokenTypes
   private PrintStream debug = System.err;
   //private static int ALL = -1;
   private java.util.Stack stack = new java.util.Stack();
-  private static String[] tokenNames;
   private final static int ROOT_ID = 0;
-  static {
-    setupTokenNames();
-  }
-
-  /*
-  private static Hashtable publicMethods;
-  private static final String publicMethodList[] = {
-    "setup", "draw", //"loop",
-    "mousePressed", "mouseReleased", "mouseClicked",
-    "mouseEntered", "mouseExited",
-    "mouseMoved", "mouseDragged",
-    "keyPressed", "keyReleased", "keyTyped"
-  };
-
-  static {
-    publicMethods = new Hashtable();
-    for (int i = 0; i < publicMethodList.length; i++) {
-      publicMethods.put(publicMethodList[i], new Object());
-    }
-  }
-  */
-
-  // Map each AST token type to a String
-  private static void setupTokenNames() {
-    tokenNames = new String[200];
-    for (int i=0; i<tokenNames.length; i++) {
-      tokenNames[i] = "ERROR:" + i;
-    }
-    for (final Field f: PdeTokenTypes.class.getDeclaredFields()) {
-      try {
-        tokenNames[f.getInt(null)] = f.getName();
-      } catch (Exception unexpected) {
-        throw new RuntimeException(unexpected);
-      }
-    }
-  }
 
   /**
    * Specify a PrintStream to print to. System.out is the default.
@@ -242,7 +205,7 @@ public class PdeEmitter implements PdeTokenTypes
   }
 
   
-  // Because the meanings of < and > are overloaded to support
+  // Because the meanings of <, >, >>, and >>> are overloaded to support
   // type arguments and type parameters, we have to treat them
   // as copyable to hidden text (or else the following syntax,
   // such as (); and what not gets lost under certain circumstances
@@ -250,7 +213,7 @@ public class PdeEmitter implements PdeTokenTypes
   // Since they are copied to the hidden stream, you don't want
   // to print them explicitly; they come out in the dumpHiddenXXX methods.
   // -- jdf
- private static final BitSet OTHER_COPIED_TOKENS = new BitSet(200){{
+ private static final BitSet OTHER_COPIED_TOKENS = new BitSet(){{
     set(LT);
     set(GT);
     set(SR);
@@ -901,58 +864,5 @@ public class PdeEmitter implements PdeTokenTypes
     stack.pop();
   }
   
-  public void debugAST(AST ast) {
-    System.err.println("------------------");
-    debugAST(ast, 0);
-  }
-
-  private void debugAST(AST ast, int indent) {
-    for (int i = 0; i < indent; i++)
-      System.err.print("    ");
-    System.err.print(debugHiddenBefore(ast));
-    if (ast.getType()>0 && !ast.getText().equals(tokenNames[ast.getType()])) {
-      System.err.print(tokenNames[ast.getType()] + "/");
-    }
-    System.err.print(ast.getText().replace("\n", "\\n"));
-    System.err.print(debugHiddenAfter(ast));
-    System.err.println();
-    for (ast = ast.getFirstChild(); ast != null; ast = ast.getNextSibling())
-      debugAST(ast, indent + 1);
-  }
-
-  private String debugHiddenAfter(AST ast) {
-    if (!(ast instanceof antlr.CommonASTWithHiddenTokens))
-      return "";
-    return debugHiddenTokens(((antlr.CommonASTWithHiddenTokens) ast).getHiddenAfter());
-  }
-
-  private String debugHiddenBefore(AST ast) {
-    if (!(ast instanceof antlr.CommonASTWithHiddenTokens))
-      return "";
-    antlr.CommonHiddenStreamToken child = null, parent = ((antlr.CommonASTWithHiddenTokens) ast)
-        .getHiddenBefore();
-
-    if (parent == null) {
-      return "";
-    }
-
-    do {
-      child = parent;
-      parent = child.getHiddenBefore();
-    } while (parent != null);
-
-    return debugHiddenTokens(child);
-  }
-
-  private String debugHiddenTokens(antlr.CommonHiddenStreamToken t) {
-    final StringBuilder sb = new StringBuilder();
-    for (; t != null; t = PdePreprocessor.filter.getHiddenAfter(t)) {
-      if (sb.length()==0)
-        sb.append("[");
-      sb.append(t.getText().replace("\n", "\\n"));
-    }
-    if (sb.length()>0)sb.append("]");
-    return sb.toString();
-  }
 
 }
