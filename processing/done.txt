@@ -1,3 +1,15 @@
+0179 pde (1.1)
+X another fix for CDATA section in applet.html for exported applets
+X updated about.jpg
+X Cannot find PDF library
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1473
+X new examples.zip
+o Fixes for invoking Processing from arbitrary locations
+X   already fixed with earlier code
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1214
+X hide android tools if it's an actual release version
+
+
 0178 pde
 X no changes, only android work from jdf
 
