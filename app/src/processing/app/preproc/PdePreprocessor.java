@@ -183,7 +183,7 @@ public class PdePreprocessor {
     // if the program ends with no CR or LF an OutOfMemoryError will happen.
     // not gonna track down the bug now, so here's a hack for it:
     // http://dev.processing.org/bugs/show_bug.cgi?id=5
-    program += "\n";
+    //program += "\n";  // fixed by jdf? Can't reproduce.
 
     // if the program ends with an unterminated multi-line comment,
     // an OutOfMemoryError or NullPointerException will happen.
