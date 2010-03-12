@@ -40,13 +40,14 @@ import processing.core.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
-  static final int REVISION = 179;
+  static final int REVISION = 180;
   /** This might be replaced by main() if there's a lib/version.txt file. */
-  static public String VERSION_NAME = "0179";
+  static public String VERSION_NAME = "0180";
   /** Set true if this a proper release rather than a numbered revision. */
   static public boolean RELEASE = false;
 
-  static HashMap<Integer, String> platformNames = new HashMap<Integer, String>();
+  static HashMap<Integer, String> platformNames =
+    new HashMap<Integer, String>();
   static {
     platformNames.put(PConstants.WINDOWS, "windows");
     platformNames.put(PConstants.MACOSX, "macosx");

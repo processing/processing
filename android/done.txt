@@ -1,3 +1,15 @@
+0179
+X screenWidth/Height instead of screenW/H
+X errors that happen inside events (e.g. keys) not highlighting lines
+X   useful stack trace information not coming through.. why?
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1384
+
+previous
+X don't require JDK installation and PATH setting
+X   if using processing with java download, should be able to use its tools.jar
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1470
+
+
 0178 (private)
 X noLoop() is broken (draw is never called)
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1467
