@@ -408,6 +408,11 @@ public class PGraphicsPDF extends PGraphicsJava2D {
     } else if (textFont.isStream() && textMode != SHAPE) {
       throw new RuntimeException("Use textMode(SHAPE) with when loading " +
                                  ".ttf and .otf files with createFont().");
+    } else if (!checkFont(textFont.getName())) {
+      System.err.println("Use PGraphicsPDF.listFonts() to get a list of " +
+      		               "fonts that can be used with PDF.");
+      throw new RuntimeException("The font “" + textFont.getName() + "” " + 
+                                 "cannot be used with PDF Export.");
     }
     super.textLineImpl(buffer, start, stop, x, y);
   }
@@ -545,6 +550,7 @@ public class PGraphicsPDF extends PGraphicsJava2D {
    * @return true if it's ok
    */
   protected boolean checkFont(String name) {
+    System.out.println("alias for " + name + " = " + mapper.getAliases().get(name));
     return mapper.getAliases().get(name) != null;
   }
   

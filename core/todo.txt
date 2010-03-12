@@ -12,16 +12,19 @@ X   only takes a couple ms, so no problem
 X pdf library
 X   throw an error with the black boxes
 X   throw an error if loading fonts from a file, and not using mode(SHAPE)
+X implement default font
+X   this can be done to replace the exception handler in PGraphics
+o   however it needs to be a legit font, so that it works w/ pdf
+o   or maybe pdf just has its own default?
+X create characters on the fly when createFont() is used
+o memory leak problem with fonts in JAVA2D
+X   can't get this to crash anymore
+o   http://dev.processing.org/bugs/show_bug.cgi?id=1252
 
 earlier
 X if no draw() method, and renderer is not displayable, then exit
 X   static mode PDFs shouldn't just hang
 
-
-_ implement default font
-_   this can be done to replace the exception handler in PGraphics
-_   however it needs to be a legit font, so that it works w/ pdf
-_   or maybe pdf just has its own default?
 
 big ones
 _ ortho() behaving differently in P3D vs OPENGL
@@ -77,9 +80,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=1220
 
 _ add java.io.Reader (and Writer?) to imports
 
-_ consider bringing back text/image using cache/names
-_   fonts might not be as bad
-
 _ changing vertex alpha in P3D in a QUAD_STRIP is ignored
 _   with smoothing, it works fine, but with PTriangle, it's not
 _ smooth() not working with applets an createGraphics(JAVA2D)
@@ -115,8 +115,6 @@ _   public float textWidth(char[] chars, int start, int length)
 _ textAlign(JUSTIFY) (with implementation)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1309
 
-_ create characters on the fly when createFont() is used
-
 _ Semitransparent rect drawn over image not rendered correctly
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1280
 
@@ -150,8 +148,6 @@ _   http://www.exampledepot.com/egs/javax.xml.parsers/pkg.html
 
 [ known problems ]
 
-_ memory leak problem with fonts in JAVA2D
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1252
 _ OPENGL sketches flicker w/ Vista when background() not used inside draw()
 _   http://dev.processing.org/bugs/show_bug.cgi?id=930
 _   Disabling Aero scheme sometimes prevents the problem
@@ -783,3 +779,4 @@ _ exactly how should pixel filling work with single pixel strokes?
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1025
 _ Writing XML files (clean up the API)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=964
+_ consider bringing back text/image using cache/names
