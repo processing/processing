@@ -29,6 +29,7 @@ package processing.app.preproc;
 
 import processing.app.*;
 import processing.core.*;
+import processing.app.antlr.*;
 
 import java.io.*;
 import java.util.*;
@@ -161,7 +162,7 @@ public class PdePreprocessor {
    */
   public static TokenStreamCopyingHiddenTokenFilter filter;
 
-  static String advClassName = "";
+  public static String advClassName = "";
 
 
   /**
@@ -323,6 +324,16 @@ public class PdePreprocessor {
     filter.copy(PdeRecognizer.RBRACK);
     filter.copy(PdeRecognizer.LBRACK);
     filter.copy(PdeRecognizer.COLON);
+    
+    // Because the meanings of < and > are overloaded to support
+    // type arguments and type parameters, we have to treat them
+    // as copyable to hidden text (or else the following syntax,
+    // such as (); and what not gets lost under certain circumstances
+    // -- jdf
+    filter.copy(PdeRecognizer.LT);
+    filter.copy(PdeRecognizer.GT);
+    filter.copy(PdeRecognizer.SR);
+    filter.copy(PdeRecognizer.BSR);
 
     // create a parser and set what sort of AST should be generated
     //
@@ -335,7 +346,7 @@ public class PdePreprocessor {
     // start parsing at the compilationUnit non-terminal
     //
     parser.pdeProgram();
-
+    
     // set up the AST for traversal by PdeEmitter
     //
     ASTFactory factory = new ASTFactory();
@@ -369,7 +380,14 @@ public class PdePreprocessor {
 
     emitter.setOut(stream);
     emitter.print(rootNode);
-
+    
+//    emitter.debugAST(rootNode);
+//    final ByteArrayOutputStream buf = new ByteArrayOutputStream();
+//    final PrintStream bufout = new PrintStream(buf);
+//    emitter.setOut(bufout);
+//    emitter.print(rootNode);
+//    System.err.println(new String(buf.toByteArray()));
+    
     writeFooter(stream, name);
     stream.close();
 

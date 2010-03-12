@@ -4,7 +4,7 @@ package processing.app.preproc;
 
 import processing.app.*;
 import processing.app.debug.RunnerException;
-
+import processing.app.antlr.*;
 
 /* Based on original code copyright (c) 2003 Andy Tripp <atripp@comcast.net>.
  * shipped under GPL with permission.
@@ -15,6 +15,10 @@ import antlr.collections.*;
 //import antlr.collections.impl.*;
 import java.io.*;
 //import java.util.*;
+import java.lang.reflect.Field;
+import java.util.BitSet;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * PDEEmitter: A class that can take an ANTLR Java AST and produce
@@ -23,6 +27,8 @@ import java.io.*;
  * other than System.out, and then call print(), passing the
  * AST. Typically, the AST node that you pass would be the root of a
  * tree - the ROOT_ID node that represents a Java file.
+ * 
+ * Modified March 2010 to support Java 5 type arguments and for loops
  */
 
 @SuppressWarnings("unused")
@@ -62,97 +68,13 @@ public class PdeEmitter implements PdeTokenTypes
     for (int i=0; i<tokenNames.length; i++) {
       tokenNames[i] = "ERROR:" + i;
     }
-
-    tokenNames[POST_INC]="++";
-    tokenNames[POST_DEC]="--";
-    tokenNames[UNARY_MINUS]="-";
-    tokenNames[UNARY_PLUS]="+";
-    tokenNames[STAR]="*";
-    tokenNames[ASSIGN]="=";
-    tokenNames[PLUS_ASSIGN]="+=";
-    tokenNames[MINUS_ASSIGN]="-=";
-    tokenNames[STAR_ASSIGN]="*=";
-    tokenNames[DIV_ASSIGN]="/=";
-    tokenNames[MOD_ASSIGN]="%=";
-    tokenNames[SR_ASSIGN]=">>=";
-    tokenNames[BSR_ASSIGN]=">>>=";
-    tokenNames[SL_ASSIGN]="<<=";
-    tokenNames[BAND_ASSIGN]="&=";
-    tokenNames[BXOR_ASSIGN]="^=";
-    tokenNames[BOR_ASSIGN]="|=";
-    tokenNames[QUESTION]="?";
-    tokenNames[LOR]="||";
-    tokenNames[LAND]="&&";
-    tokenNames[BOR]="|";
-    tokenNames[BXOR]="^";
-    tokenNames[BAND]="&";
-    tokenNames[NOT_EQUAL]="!=";
-    tokenNames[EQUAL]="==";
-    tokenNames[LT]="<";
-    tokenNames[GT]=">";
-    tokenNames[LE]="<=";
-    tokenNames[GE]=">=";
-    tokenNames[SL]="<<";
-    tokenNames[SR]=">>";
-    tokenNames[BSR]=">>>";
-    tokenNames[PLUS]="+";
-    tokenNames[MINUS]="-";
-    tokenNames[DIV]="/";
-    tokenNames[MOD]="%";
-    tokenNames[INC]="++";
-    tokenNames[DEC]="--";
-    tokenNames[BNOT]="~";
-    tokenNames[LNOT]="!";
-    tokenNames[FINAL]="final";
-    tokenNames[ABSTRACT]="abstract";
-    tokenNames[LITERAL_package]="package";
-    tokenNames[LITERAL_import]="import";
-    tokenNames[LITERAL_void]="void";
-    tokenNames[LITERAL_boolean]="boolean";
-    tokenNames[LITERAL_byte]="byte";
-    tokenNames[LITERAL_char]="char";
-    tokenNames[LITERAL_short]="short";
-    tokenNames[LITERAL_int]="int";
-    tokenNames[LITERAL_float]="float";
-    tokenNames[LITERAL_long]="long";
-    tokenNames[LITERAL_double]="double";
-    tokenNames[LITERAL_private]="private";
-    tokenNames[LITERAL_public]="public";
-    tokenNames[LITERAL_protected]="protected";
-    tokenNames[LITERAL_static]="static";
-    tokenNames[LITERAL_transient]="transient";
-    tokenNames[LITERAL_native]="native";
-    tokenNames[LITERAL_threadsafe]="threadsafe";
-    tokenNames[LITERAL_synchronized]="synchronized";
-    tokenNames[LITERAL_volatile]="volatile";
-    tokenNames[LITERAL_class]="class";
-    tokenNames[LITERAL_extends]="extends";
-    tokenNames[LITERAL_interface]="interface";
-    tokenNames[LITERAL_implements]="implements";
-    tokenNames[LITERAL_throws]="throws";
-    tokenNames[LITERAL_if]="if";
-    tokenNames[LITERAL_else]="else";
-    tokenNames[LITERAL_for]="for";
-    tokenNames[LITERAL_while]="while";
-    tokenNames[LITERAL_do]="do";
-    tokenNames[LITERAL_break]="break";
-    tokenNames[LITERAL_continue]="continue";
-    tokenNames[LITERAL_return]="return";
-    tokenNames[LITERAL_switch]="switch";
-    tokenNames[LITERAL_throw]="throw";
-    tokenNames[LITERAL_case]="case";
-    tokenNames[LITERAL_default]="default";
-    tokenNames[LITERAL_try]="try";
-    tokenNames[LITERAL_finally]="finally";
-    tokenNames[LITERAL_catch]="catch";
-    tokenNames[LITERAL_instanceof]="instanceof";
-    tokenNames[LITERAL_this]="this";
-    tokenNames[LITERAL_super]="super";
-    tokenNames[LITERAL_true]="true";
-    tokenNames[LITERAL_false]="false";
-    tokenNames[LITERAL_null]="null";
-    tokenNames[LITERAL_new]="new";
-    tokenNames[LITERAL_color]="int";    // PDE specific alias
+    for (final Field f: PdeTokenTypes.class.getDeclaredFields()) {
+      try {
+        tokenNames[f.getInt(null)] = f.getName();
+      } catch (Exception unexpected) {
+        throw new RuntimeException(unexpected);
+      }
+    }
   }
 
   /**
@@ -161,12 +83,6 @@ public class PdeEmitter implements PdeTokenTypes
    */
   public void setOut(PrintStream out) {
     this.out = out;
-  }
-  private String name(AST ast) {
-    return tokenNames[ast.getType()];
-  }
-  private String name(int type) {
-    return tokenNames[type];
   }
 
   /**
@@ -325,12 +241,28 @@ public class PdeEmitter implements PdeTokenTypes
     return ast;
   }
 
+  
+  // Because the meanings of < and > are overloaded to support
+  // type arguments and type parameters, we have to treat them
+  // as copyable to hidden text (or else the following syntax,
+  // such as (); and what not gets lost under certain circumstances
+  //
+  // Since they are copied to the hidden stream, you don't want
+  // to print them explicitly; they come out in the dumpHiddenXXX methods.
+  // -- jdf
+ private static final BitSet OTHER_COPIED_TOKENS = new BitSet(200){{
+    set(LT);
+    set(GT);
+    set(SR);
+    set(BSR);
+  }};
   /**
    * Prints a binary operator
    */
   private void printBinaryOperator(AST ast) throws RunnerException {
     print(ast.getFirstChild());
-    out.print(name(ast));
+    if (!OTHER_COPIED_TOKENS.get(ast.getType()))
+      out.print(ast.getText());
     dumpHiddenAfter(ast);
     print(ast.getFirstChild().getNextSibling());
   }
@@ -399,6 +331,7 @@ public class PdeEmitter implements PdeTokenTypes
       }
       dumpHiddenBefore(getChild(ast, IDENT));
       print(getChild(ast, IDENT));
+      print(getChild(ast, TYPE_PARAMETERS));
       print(getChild(ast, EXTENDS_CLAUSE));
       print(getChild(ast, IMPLEMENTS_CLAUSE));
       print(getChild(ast, OBJBLOCK));
@@ -564,7 +497,7 @@ public class PdeEmitter implements PdeTokenTypes
 
 
     case LITERAL_for:
-      out.print(name(ast));
+      out.print(ast.getText());
       dumpHiddenAfter(ast);
       printChildren(ast);
       break;
@@ -572,7 +505,7 @@ public class PdeEmitter implements PdeTokenTypes
     case POST_INC:
     case POST_DEC:
       print(child1);
-      out.print(name(ast));
+      out.print(ast.getText());
       dumpHiddenAfter(ast);
       break;
 
@@ -583,7 +516,7 @@ public class PdeEmitter implements PdeTokenTypes
     case DEC:
     case UNARY_MINUS:
     case UNARY_PLUS:
-      out.print(name(ast));
+      out.print(ast.getText());
       dumpHiddenAfter(ast);
       print(child1);
       break;
@@ -643,7 +576,7 @@ public class PdeEmitter implements PdeTokenTypes
       break;
 
     case LITERAL_synchronized:  // 0137 to fix bug #136
-      out.print(name(ast));
+      out.print(ast.getText());
       dumpHiddenAfter(ast);
       printChildren(ast);
       break;
@@ -678,7 +611,7 @@ public class PdeEmitter implements PdeTokenTypes
     case LITERAL_super:
     case LITERAL_continue:
     case LITERAL_break:
-      out.print(name(ast));
+      out.print(ast.getText());
       dumpHiddenAfter(ast);
       break;
 
@@ -901,12 +834,35 @@ public class PdeEmitter implements PdeTokenTypes
       dumpHiddenAfter(ast);
       break;
 
+    case TYPE_ARGUMENTS:
+    case TYPE_PARAMETERS:
+      printChildren(ast);
+      break;
+      
+    case TYPE_ARGUMENT:
+    case TYPE_PARAMETER:
+      print(ast.getFirstChild());
+      break;
+      
+    case WILDCARD_TYPE:
+      out.print("? ");
+      print(ast.getFirstChild());
+      break;
+      
+    case TYPE_LOWER_BOUNDS:
+      out.print("super ");
+      print(ast.getFirstChild());
+      break;
+      
+    case TYPE_UPPER_BOUNDS:
+      out.print("extends ");
+      print(ast.getFirstChild());
+      break;
 
     default:
       System.out.println("Invalid type:" + ast.getType());
       debug.println("Invalid type:" + ast.getType());
       break;
-
 
 /* The following are tokens, but I don't think JavaRecognizer
    ever produces an AST with one of these types:
@@ -938,4 +894,59 @@ public class PdeEmitter implements PdeTokenTypes
 
     stack.pop();
   }
+  
+  public void debugAST(AST ast) {
+    System.err.println("------------------");
+    debugAST(ast, 0);
+  }
+
+  private void debugAST(AST ast, int indent) {
+    for (int i = 0; i < indent; i++)
+      System.err.print("    ");
+    System.err.print(debugHiddenBefore(ast));
+    if (ast.getType()>0 && !ast.getText().equals(tokenNames[ast.getType()])) {
+      System.err.print(tokenNames[ast.getType()] + "/");
+    }
+    System.err.print(ast.getText().replace("\n", "\\n"));
+    System.err.print(debugHiddenAfter(ast));
+    System.err.println();
+    for (ast = ast.getFirstChild(); ast != null; ast = ast.getNextSibling())
+      debugAST(ast, indent + 1);
+  }
+
+  private String debugHiddenAfter(AST ast) {
+    if (!(ast instanceof antlr.CommonASTWithHiddenTokens))
+      return "";
+    return debugHiddenTokens(((antlr.CommonASTWithHiddenTokens) ast).getHiddenAfter());
+  }
+
+  private String debugHiddenBefore(AST ast) {
+    if (!(ast instanceof antlr.CommonASTWithHiddenTokens))
+      return "";
+    antlr.CommonHiddenStreamToken child = null, parent = ((antlr.CommonASTWithHiddenTokens) ast)
+        .getHiddenBefore();
+
+    if (parent == null) {
+      return "";
+    }
+
+    do {
+      child = parent;
+      parent = child.getHiddenBefore();
+    } while (parent != null);
+
+    return debugHiddenTokens(child);
+  }
+
+  private String debugHiddenTokens(antlr.CommonHiddenStreamToken t) {
+    final StringBuilder sb = new StringBuilder();
+    for (; t != null; t = PdePreprocessor.filter.getHiddenAfter(t)) {
+      if (sb.length()==0)
+        sb.append("[");
+      sb.append(t.getText().replace("\n", "\\n"));
+    }
+    if (sb.length()>0)sb.append("]");
+    return sb.toString();
+  }
+
 }
