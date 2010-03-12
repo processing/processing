@@ -367,6 +367,7 @@ public class PdeEmitter implements PdeTokenTypes
       //case METHOD_DEF:
     case PARAMETERS:
     case PARAMETER_DEF:
+    case VARIABLE_PARAMETER_DEF:
     case VARIABLE_DEF:
     case TYPE:
     case SLIST:
@@ -499,7 +500,12 @@ public class PdeEmitter implements PdeTokenTypes
     case LITERAL_for:
       out.print(ast.getText());
       dumpHiddenAfter(ast);
-      printChildren(ast);
+      if (child1.getType() == FOR_EACH_CLAUSE) {
+        printChildren(child1);
+        print(child2);
+      } else {
+        printChildren(ast);
+      }
       break;
 
     case POST_INC:
