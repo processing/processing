@@ -684,7 +684,7 @@ public class PFont implements PConstants {
         GraphicsEnvironment.getLocalGraphicsEnvironment();
       fonts = ge.getAllFonts();
       if (PApplet.platform == PConstants.MACOSX) {
-        fontDifferent = new HashMap();
+        fontDifferent = new HashMap<String,Font>();
         for (Font font : fonts) {
           // getName() returns the PostScript name on OS X 10.6 w/ Java 6.
           fontDifferent.put(font.getName(), font);
