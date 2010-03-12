@@ -1,18 +1,9 @@
-0179 pde
-X another fix for CDATA section in applet.html for exported applets
-X updated about.jpg
-X Cannot find PDF library
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1473
-X new examples.zip
-o Fixes for invoking Processing from arbitrary locations
-X   already fixed with earlier code
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1214
-X hide android tools if it's an actual release version
+0180 pde
+
 
 _ finish build instructions for 1.1
 _ update build/howto.txt (of course) because it says no ant
 _   this would also mean requiring a java installation for building
-
 
 _ simple prefs implementation to set key/value pairs using a JTable
 _ the .macosx, .linux, etc prefs should be stripped

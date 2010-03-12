@@ -1,3 +1,31 @@
+0179 core (1.1)
+X screenWidth/Height instead of screenW/H
+X open up the pdf library more (philho)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1343
+X cache font information for the PDF library to improve setup time
+X when using createFont("xxxx.ttf"), should use textMode(SHAPE) with PDF
+X   because ttf files will not be installed on the system when opening pdf
+X   added error messages for users
+X bring back old-style textAscent() 
+X   needs to just quickly run characters d and p
+X   only takes a couple ms, so no problem
+X pdf library
+X   throw an error with the black boxes
+X   throw an error if loading fonts from a file, and not using mode(SHAPE)
+X implement default font
+X   this can be done to replace the exception handler in PGraphics
+o   however it needs to be a legit font, so that it works w/ pdf
+o   or maybe pdf just has its own default?
+X create characters on the fly when createFont() is used
+o memory leak problem with fonts in JAVA2D
+X   can't get this to crash anymore
+o   http://dev.processing.org/bugs/show_bug.cgi?id=1252
+
+earlier
+X if no draw() method, and renderer is not displayable, then exit
+X   static mode PDFs shouldn't just hang
+
+
 0178 core (private)
 X filter(DILATE/ERODE)
 X   dilate(boolean) has bug in clamping of top kernel coordinate
