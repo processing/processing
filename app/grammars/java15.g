@@ -1,17 +1,14 @@
-header
-{
-package de.hunsicker.jalopy.language.antlr;
-
-import de.hunsicker.jalopy.language.antlr.JavaNode;
-import de.hunsicker.jalopy.language.JavaNodeHelper;
+header {
+package processing.app.antlr;
 }
 
+/** Java 1.5 Recognizer
 /** Java 1.5 Recognizer
  *
  * Run 'java Main [-showtree] directory-full-of-java-files'
  *
  * [The -showtree option pops up a Swing frame that shows
- *  the JavaNode constructed from the parser.]
+ *  the AST constructed from the parser.]
  *
  * Run 'java Main <directory full of java files>'
  *
@@ -172,10 +169,16 @@ import de.hunsicker.jalopy.language.JavaNodeHelper;
  *      constructor invocation, e.g. new Outer().<String>super()
  *    o Fixed bug in array declarations identified by Geoff Roy
  *
+ * Version 1.22.5 (January 03, 2005)
+ *    Small change to tree structure
+ *    o Flattened classOrInterfaceType tree so IDENT no longer has children. TYPE_ARGUMENTS are now
+ *      always siblings of IDENT rather than children. Fully.qualified.names trees now
+ *      look a little less clean when TYPE_ARGUMENTS are present though.
+ *
  * This grammar is in the PUBLIC DOMAIN
  */
 
-class InternalJavaParser extends Parser;
+class JavaRecognizer extends Parser;
 options {
 	k = 2;							// two token lookahead
 	exportVocab=Java;				// Call its vocabulary "Java"
@@ -183,14 +186,8 @@ options {
 	codeGenBitsetTestThreshold = 3;
 	defaultErrorHandler = false;	// Don't generate parser error handlers
 	buildAST = true;
-//        classHeaderSuffix = "Parser";
-        importVocab = Common;
-        ASTLabelType = JavaNode;
-//        useTokenPrefix = true;
-	// This class is abstract
-	classHeaderPrefix = "public abstract";
-
 }
+
 tokens {
 	BLOCK; MODIFIERS; OBJBLOCK; SLIST; CTOR_DEF; METHOD_DEF; VARIABLE_DEF;
 	INSTANCE_INIT; STATIC_INIT; TYPE; CLASS_DEF; INTERFACE_DEF;
@@ -204,9 +201,6 @@ tokens {
 	ANNOTATION; ANNOTATION_MEMBER_VALUE_PAIR; ANNOTATION_FIELD_DEF; ANNOTATION_ARRAY_INIT;
 	TYPE_ARGUMENTS; TYPE_ARGUMENT; TYPE_PARAMETERS; TYPE_PARAMETER; WILDCARD_TYPE;
 	TYPE_UPPER_BOUNDS; TYPE_LOWER_BOUNDS;
-
-	ROOT;CASESLIST;SEPARATOR_COMMENT;BOF;SYNBLOCK;SPECIAL_COMMENT;
-
 }
 
 {
@@ -217,21 +211,11 @@ tokens {
 	 * either GT, SR or BSR tokens.
 	 */
 	private int ltCounter = 0;
-
-	protected abstract void attachStuff(JavaNode[] nodes)  throws TokenStreamIOException;
-
 }
 
 // Compilation Unit: In Java, this is a single file. This is the start
-// rule for this parser compilationUnit
-parse
-        {
-			JavaNode root = (JavaNode) getASTFactory().create();
-            root.setType(JavaTokenTypes.ROOT);
-            root.setText(getFilename());
-            currentAST.root = root;
-        }
-
+// rule for this parser
+compilationUnit
 	:	// A compilation unit starts with an optional package definition
 		(	(annotations "package")=> packageDefinition
 		|	/* nothing */
@@ -244,14 +228,14 @@ parse
 		// definitions
 		( typeDefinition )*
 
-		EOF
+		EOF!
 	;
 
 
 // Package statement: optional annotations followed by "package" then the package identifier.
 packageDefinition
 	options {defaultErrorHandler = true;} // let ANTLR handle errors
-	:	annotations p:"package"^ {#p.setType(PACKAGE_DEF);} identifier SEMI
+	:	annotations p:"package"^ {#p.setType(PACKAGE_DEF);} identifier SEMI!
 	;
 
 
@@ -259,7 +243,7 @@ packageDefinition
 importDefinition
 	options {defaultErrorHandler = true;}
 	{ boolean isStatic = false; }
-	:	i:"import"^ {#i.setType(IMPORT);} ( "static"! {#i.setType(STATIC_IMPORT);} )? identifierStar SEMI
+	:	i:"import"^ {#i.setType(IMPORT);} ( "static"! {#i.setType(STATIC_IMPORT);} )? identifierStar SEMI!
 	;
 
 // A type definition is either a class, interface, enum or annotation with possible additional semis.
@@ -267,11 +251,11 @@ typeDefinition
 	options {defaultErrorHandler = true;}
 	:	m:modifiers!
 		typeDefinitionInternal[#m]
-	|	SEMI
+	|	SEMI!
 	;
 
 // Protected type definitions production for reuse in other productions
-protected typeDefinitionInternal[JavaNode mods]
+protected typeDefinitionInternal[AST mods]
 	:	classDefinition[#mods]		// inner class
 	|	interfaceDefinition[#mods]	// inner interface
 	|	enumDefinition[#mods]		// inner enum
@@ -310,7 +294,7 @@ classTypeSpec[boolean addImagNode]
 
 // A non-built in type name, with possible type parameters
 classOrInterfaceType[boolean addImagNode]
-	:	IDENT^ (typeArguments)?
+	:	IDENT (typeArguments)?
 		(options{greedy=true;}: // match as many as possible
 			DOT^
 			IDENT (typeArguments)?
@@ -351,7 +335,7 @@ typeArguments
 		typeArgument
 		(options{greedy=true;}: // match as many as possible
 			{inputState.guessing !=0 || ltCounter == currentLtLevel + 1}?
-			COMMA typeArgument
+			COMMA! typeArgument
 		)*
 
 		(	// turn warning off since Antlr generates the right code,
@@ -489,8 +473,8 @@ modifier
 	;
 
 annotation!
-	:	a:AT i:identifier ( lp:LPAREN ( args:annotationArguments )? rp:RPAREN )?
-		{#annotation = #(#[ANNOTATION,"ANNOTATION"],a, i, lp, args, rp);}
+	:	AT! i:identifier ( LPAREN! ( args:annotationArguments )? RPAREN! )?
+		{#annotation = #(#[ANNOTATION,"ANNOTATION"], i, args);}
 	;
 
 annotations
@@ -503,7 +487,7 @@ annotationArguments
 	;
 
 anntotationMemberValuePairs
-	:	annotationMemberValuePair ( COMMA annotationMemberValuePair )*
+	:	annotationMemberValuePair ( COMMA! annotationMemberValuePair )*
 	;
 
 annotationMemberValuePair!
@@ -529,11 +513,11 @@ annotationMemberArrayInitializer
 						warnWhenFollowAmbig = false;
 					}
 				:
-					COMMA annotationMemberArrayValueInitializer
+					COMMA! annotationMemberArrayValueInitializer
 				)*
-				(COMMA)?
+				(COMMA!)?
 			)?
-		RCURLY
+		RCURLY!
 	;
 
 // The two things that can initialize an annotation array element are a conditional expression
@@ -549,8 +533,8 @@ superClassClause!
 	;
 
 // Definition of a Java class
-classDefinition![JavaNode modifiers]
-	:	c:"class" IDENT
+classDefinition![AST modifiers]
+	:	"class" IDENT
 		// it _might_ have type paramaters
 		(tp:typeParameters)?
 		// it _might_ have a superclass...
@@ -560,14 +544,12 @@ classDefinition![JavaNode modifiers]
 		// now parse the body of the class
 		cb:classBlock
 		{#classDefinition = #(#[CLASS_DEF,"CLASS_DEF"],
-								modifiers,IDENT,tp,sc,ic,cb);
-		attachStuff(new JavaNode[] {#classDefinition, modifiers, #c});
-		}
+								modifiers,IDENT,tp,sc,ic,cb);}
 	;
 
 // Definition of a Java Interface
-interfaceDefinition![JavaNode modifiers]
-	:	i:"interface" IDENT
+interfaceDefinition![AST modifiers]
+	:	"interface" IDENT
 		// it _might_ have type paramaters
 		(tp:typeParameters)?
 		// it might extend some other interfaces
@@ -575,39 +557,33 @@ interfaceDefinition![JavaNode modifiers]
 		// now parse the body of the interface (looks like a class...)
 		ib:interfaceBlock
 		{#interfaceDefinition = #(#[INTERFACE_DEF,"INTERFACE_DEF"],
-									modifiers,IDENT,tp,ie,ib);
-		attachStuff(new JavaNode[] {#interfaceDefinition, modifiers, #i});
-									}
+									modifiers,IDENT,tp,ie,ib);}
 	;
 
-enumDefinition![JavaNode modifiers]
-	:	e:"enum" IDENT
+enumDefinition![AST modifiers]
+	:	"enum" IDENT
 		// it might implement some interfaces...
 		ic:implementsClause
 		// now parse the body of the enum
 		eb:enumBlock
 		{#enumDefinition = #(#[ENUM_DEF,"ENUM_DEF"],
-								modifiers,IDENT,ic,eb);
-		attachStuff(new JavaNode[] {#enumDefinition, modifiers, #e});
-								}
+								modifiers,IDENT,ic,eb);}
 	;
 
-annotationDefinition![JavaNode modifiers]
-	:	a:AT "interface" IDENT
+annotationDefinition![AST modifiers]
+	:	AT "interface" IDENT
 		// now parse the body of the annotation
 		ab:annotationBlock
 		{#annotationDefinition = #(#[ANNOTATION_DEF,"ANNOTATION_DEF"],
-									modifiers,IDENT,ab);
-		attachStuff(new JavaNode[] {#annotationDefinition, modifiers, #a});
-									}
+									modifiers,IDENT,ab);}
 	;
 
 typeParameters
 {int currentLtLevel = 0;}
 	:
 		{currentLtLevel = ltCounter;}
-		LT {ltCounter++;}
-		typeParameter (COMMA typeParameter)*
+		LT! {ltCounter++;}
+		typeParameter (COMMA! typeParameter)*
 		(typeArgumentsOrParametersEnd)?
 
 		// make sure we have gobbled up enough '>' characters
@@ -627,47 +603,43 @@ typeParameter
 typeParameterBounds
 	:
 		"extends"! classOrInterfaceType[false]
-		(BAND classOrInterfaceType[false])*
+		(BAND! classOrInterfaceType[false])*
 		{#typeParameterBounds = #(#[TYPE_UPPER_BOUNDS,"TYPE_UPPER_BOUNDS"], #typeParameterBounds);}
 	;
 
 // This is the body of a class. You can have classFields and extra semicolons.
 classBlock
-	:	lc:LCURLY^
-			( classField | SEMI )*
-		RCURLY
-        { #lc.setType(OBJBLOCK);}
-		//{#classBlock = #([OBJBLOCK, "OBJBLOCK"], #classBlock);}
+	:	LCURLY!
+			( classField | SEMI! )*
+		RCURLY!
+		{#classBlock = #([OBJBLOCK, "OBJBLOCK"], #classBlock);}
 	;
 
 // This is the body of an interface. You can have interfaceField and extra semicolons.
 interfaceBlock
-	:	lc:LCURLY^
-			( interfaceField | SEMI )*
-		RCURLY
-          { #lc.setType(OBJBLOCK);}
-		//{#interfaceBlock = #([OBJBLOCK, "OBJBLOCK"], #interfaceBlock);}
+	:	LCURLY!
+			( interfaceField | SEMI! )*
+		RCURLY!
+		{#interfaceBlock = #([OBJBLOCK, "OBJBLOCK"], #interfaceBlock);}
 	;
 	
 // This is the body of an annotation. You can have annotation fields and extra semicolons,
 // That's about it (until you see what an annoation field is...)
 annotationBlock
-	:	lc:LCURLY^
-		( annotationField | SEMI )*
-		RCURLY
-          { #lc.setType(OBJBLOCK);}
-//		{#annotationBlock = #([OBJBLOCK, "OBJBLOCK"], #annotationBlock);}
+	:	LCURLY!
+		( annotationField | SEMI! )*
+		RCURLY!
+		{#annotationBlock = #([OBJBLOCK, "OBJBLOCK"], #annotationBlock);}
 	;
 
 // This is the body of an enum. You can have zero or more enum constants
 // followed by any number of fields like a regular class
 enumBlock
-	:	lc:LCURLY^
+	:	LCURLY!
 			( enumConstant ( options{greedy=true;}: COMMA! enumConstant )* ( COMMA! )? )?
 			( SEMI! ( classField | SEMI! )* )?
-		RCURLY
-          { #lc.setType(OBJBLOCK);}
-//		{#enumBlock = #([OBJBLOCK, "OBJBLOCK"], #enumBlock);}
+		RCURLY!
+		{#enumBlock = #([OBJBLOCK, "OBJBLOCK"], #enumBlock);}
 	;
 
 // An annotation field
@@ -678,12 +650,11 @@ annotationField!
 		|	t:typeSpec[false]		// annotation field
 			(	i:IDENT				// the name of the field
 
-				LPAREN RPAREN
+				LPAREN! RPAREN!
 
 				rt:declaratorBrackets[#t]
 
-				( "default" amvi:annotationMemberValueInitializer ) ?
-//				{ if (#d!=null) #d = #(d,#(amvi)); } 
+				( "default" amvi:annotationMemberValueInitializer )?
 
 				SEMI
 
@@ -691,14 +662,10 @@ annotationField!
 					#(#[ANNOTATION_FIELD_DEF,"ANNOTATION_FIELD_DEF"],
 						 mods,
 						 #(#[TYPE,"TYPE"],rt),
-						 i,LPAREN,RPAREN,amvi,SEMI
-						 );
-		attachStuff(new JavaNode[] {#annotationField, #mods, #t});
-						 }
-			|	v:variableDefinitions[#mods,#t] // typeVariableDefinitions
-        {
-        #annotationField = #v;
-        }
+						 i,amvi
+						 );}
+			|	v:variableDefinitions[#mods,#t] SEMI	// variable
+				{#annotationField = #v;}
 			)
 		)
 	;
@@ -708,19 +675,19 @@ annotationField!
 enumConstant!
 	:	an:annotations
 		i:IDENT
-		(	lp:LPAREN
+		(	LPAREN!
 			a:argList
-			rp:RPAREN
+			RPAREN!
 		)?
 		( b:enumConstantBlock )?
-		{#enumConstant = #([ENUM_CONSTANT_DEF, "ENUM_CONSTANT_DEF"], an, i, lp,a,rp, b);}
+		{#enumConstant = #([ENUM_CONSTANT_DEF, "ENUM_CONSTANT_DEF"], an, i, a, b);}
 	;
 
 //The class-like body of an enum constant
 enumConstantBlock
-	:	LCURLY
-		( enumConstantField | SEMI )*
-		RCURLY
+	:	LCURLY!
+		( enumConstantField | SEMI! )*
+		RCURLY!
 		{#enumConstantBlock = #([OBJBLOCK, "OBJBLOCK"], #enumConstantBlock);}
 	;
 
@@ -738,7 +705,7 @@ enumConstantField!
 			(	IDENT									// the name of the method
 
 				// parse the formal parameter declarations.
-				LPAREN param:parameterDeclarationList RPAREN
+				LPAREN! param:parameterDeclarationList RPAREN!
 
 				rt:declaratorBrackets[#t]
 
@@ -746,7 +713,7 @@ enumConstantField!
 				// declared to throw
 				(tc:throwsClause)?
 
-				( s2:compoundStatement | semim:SEMI )
+				( s2:compoundStatement | SEMI )
 				{#enumConstantField = #(#[METHOD_DEF,"METHOD_DEF"],
 							 mods,
 							 tp,
@@ -754,21 +721,15 @@ enumConstantField!
 							 IDENT,
 							 param,
 							 tc,
-							 s2,
-							 semim);
-		attachStuff(new JavaNode[] {#enumConstantField, #mods, #t});
-							 }
-			|	v:variableDefinitions[#mods,#t] // typeVariableDefinitions
-				{#enumConstantField = #v;
-        }
+							 s2);}
+			|	v:variableDefinitions[#mods,#t] SEMI
+				{#enumConstantField = #v;}
 			)
 		)
 
 	// "{ ... }" instance initializer
 	|	s4:compoundStatement
-		{#enumConstantField = #(#[INSTANCE_INIT,"INSTANCE_INIT"], s4);
-		attachStuff(new JavaNode[] {#enumConstantField, #s4});
-		}
+		{#enumConstantField = #(#[INSTANCE_INIT,"INSTANCE_INIT"], s4);}
 	;
 
 // An interface can extend several other interfaces...
@@ -800,9 +761,7 @@ classField!
 		|	(tp:typeParameters)?
 			(
 				h:ctorHead s:constructorBody // constructor
-				{#classField = #(#[CTOR_DEF,"CTOR_DEF"], mods, tp, h, s);
-		attachStuff(new JavaNode[] {#classField, #mods, #h});
-				}
+				{#classField = #(#[CTOR_DEF,"CTOR_DEF"], mods, tp, h, s);}
 
 				|	// A generic method/ctor has the typeParameters before the return type.
 					// This is not allowed for variable definitions, but this production
@@ -811,7 +770,7 @@ classField!
 					(	IDENT				// the name of the method
 
 						// parse the formal parameter declarations.
-						LPAREN param:parameterDeclarationList RPAREN
+						LPAREN! param:parameterDeclarationList RPAREN!
 
 						rt:declaratorBrackets[#t]
 
@@ -819,58 +778,28 @@ classField!
 						// declared to throw
 						(tc:throwsClause)?
 
-						( s2:compoundStatement | semim:SEMI )
+						( s2:compoundStatement | SEMI )
 						{#classField = #(#[METHOD_DEF,"METHOD_DEF"],
 									 mods,
 									 tp,
 									 #(#[TYPE,"TYPE"],rt),
 									 IDENT,
-									 LPAREN,
 									 param,
-									 RPAREN,
 									 tc,
-									 s2,
-									 semim);
-		attachStuff(new JavaNode[] {#classField, #mods, #t});
-									 }
-					|	v:variableDefinitions[#mods,#t] semi:SEMI!// typeVariableDefinitions
-						{
-									#classField = #v;									
-									
-                                    #classField.addChild(#semi);
-
-                                    AST next = #classField.getNextSibling();
-                                    // HACK for multiple variable declaration in one statement
-                                    //      e.g float  x, y, z;
-                                    // the semicolon will only be added to the first statement so
-                                    // we have to add it manually to all others
-                                    if (next != null)
-                                    {
-                                        AST ssemi = JavaNodeHelper.getFirstChild(#classField, JavaTokenTypes.SEMI);
-
-                                        for (AST var = next; var != null; var = var.getNextSibling())
-                                        {
-                                            var.addChild(astFactory.create(ssemi));
-                                        }
-                                    }
-									
-
-						}
+									 s2);}
+					|	v:variableDefinitions[#mods,#t] SEMI
+						{#classField = #v;}
 					)
 			)
 		)
 
 	// "static { ... }" class initializer
 	|	"static" s3:compoundStatement
-		{#classField = #(#[STATIC_INIT,"STATIC_INIT"], s3);
-		attachStuff(new JavaNode[] {#classField, #s3});
-		}
+		{#classField = #(#[STATIC_INIT,"STATIC_INIT"], s3);}
 
 	// "{ ... }" instance initializer
 	|	s4:compoundStatement
-		{#classField = #(#[INSTANCE_INIT,"INSTANCE_INIT"], s4);
-		attachStuff(new JavaNode[] {#classField, #s4});
-		}
+		{#classField = #(#[INSTANCE_INIT,"INSTANCE_INIT"], s4);}
 	;
 
 // Now the various things that can be defined inside a interface
@@ -889,7 +818,7 @@ interfaceField!
 			(	IDENT				// the name of the method
 
 				// parse the formal parameter declarations.
-				LPAREN param:parameterDeclarationList RPAREN
+				LPAREN! param:parameterDeclarationList RPAREN!
 
 				rt:declaratorBrackets[#t]
 
@@ -904,36 +833,10 @@ interfaceField!
 							 tp,
 							 #(#[TYPE,"TYPE"],rt),
 							 IDENT,
-							 LPAREN,
 							 param,
-							 RPAREN,
-							 tc,
-							 SEMI);
-		attachStuff(new JavaNode[] {#interfaceField, #mods, #t});
-							 }
-			|	v:variableDefinitions[#mods,#t] semi:SEMI!
-				{
-					#interfaceField = #v;
-					
-					#interfaceField.addChild(#semi);
-
-					AST next = #interfaceField.getNextSibling();
-					// HACK for multiple variable declaration in one statement
-					//      e.g float  x, y, z;
-					// the semicolon will only be added to the first statement so
-					// we have to add it manually to all others
-					if (next != null)
-					{
-						AST ssemi = JavaNodeHelper.getFirstChild(#interfaceField, JavaTokenTypes.SEMI);
-
-						for (AST var = next; var != null; var = var.getNextSibling())
-						{
-							var.addChild(astFactory.create(ssemi));
-						}
-					}
-					
-
-				}
+							 tc);}
+			|	v:variableDefinitions[#mods,#t] SEMI
+				{#interfaceField = #v;}
 			)
 		)
 	;
@@ -942,51 +845,38 @@ constructorBody
 	:	lc:LCURLY^ {#lc.setType(SLIST);}
 			( options { greedy=true; } : explicitConstructorInvocation)?
 			(statement)*
-		RCURLY
+		RCURLY!
 	;
 
 /** Catch obvious constructor calls, but not the expr.super(...) calls */
 explicitConstructorInvocation
 	:	(typeArguments)?
-		(	"this" lp1:LPAREN^ argList RPAREN SEMI
+		(	"this"! lp1:LPAREN^ argList RPAREN! SEMI!
 			{#lp1.setType(CTOR_CALL);}
-		|	"super" lp2:LPAREN^ argList RPAREN SEMI
+		|	"super"! lp2:LPAREN^ argList RPAREN! SEMI!
 			{#lp2.setType(SUPER_CTOR_CALL);}
 		)
 	;
 
-/** Catch variable definitions but add the semicolon ???*/
-typeVariableDefinitions[JavaNode mods, JavaNode t]
-  : v:variableDefinitions[mods,t] 
-   (semi:SEMI
-   {
-    #v.addChild(#semi);
-   }
-   )
-   ;
-
-variableDefinitions[JavaNode mods, JavaNode t]
-	:	variableDeclarator[(JavaNode)getASTFactory().dupTree(mods),
-                                                           (JavaNode)getASTFactory().dupTree(t)]
+variableDefinitions[AST mods, AST t]
+	:	variableDeclarator[getASTFactory().dupTree(mods),
+							getASTFactory().dupList(t)] //dupList as this also copies siblings (like TYPE_ARGUMENTS)
 		(	COMMA!
-			variableDeclarator[(JavaNode)getASTFactory().dupTree(mods),
-                                                           (JavaNode)getASTFactory().dupTree(t)]
+			variableDeclarator[getASTFactory().dupTree(mods),
+							getASTFactory().dupList(t)] //dupList as this also copies siblings (like TYPE_ARGUMENTS)
 		)*
-    
 	;
 
 /** Declaration of a variable. This can be a class/instance variable,
  *  or a local variable in a method
  *  It can also include possible initialization.
  */
-variableDeclarator![JavaNode mods, JavaNode t]
+variableDeclarator![AST mods, AST t]
 	:	id:IDENT d:declaratorBrackets[t] v:varInitializer
-		{#variableDeclarator = #(#[VARIABLE_DEF,"VARIABLE_DEF"], mods, #(#[TYPE,"TYPE"],d), id, v);
-		attachStuff(new JavaNode[] {#variableDeclarator,mods, t});
-		}
+		{#variableDeclarator = #(#[VARIABLE_DEF,"VARIABLE_DEF"], mods, #(#[TYPE,"TYPE"],d), id, v);}
 	;
 
-declaratorBrackets[JavaNode typ]
+declaratorBrackets[AST typ]
 	:	{#declaratorBrackets=typ;}
 		(lb:LBRACK^ {#lb.setType(ARRAY_DECLARATOR);} RBRACK!)*
 	;
@@ -1008,11 +898,11 @@ arrayInitializer
 						warnWhenFollowAmbig = false;
 					}
 				:
-					COMMA initializer
+					COMMA! initializer
 				)*
-				(COMMA)?
+				(COMMA!)?
 			)?
-		RCURLY
+		RCURLY!
 	;
 
 
@@ -1030,7 +920,7 @@ ctorHead
 	:	IDENT // the name of the method
 
 		// parse the formal parameter declarations.
-		LPAREN parameterDeclarationList RPAREN
+		LPAREN! parameterDeclarationList RPAREN!
 
 		// get the list of exceptions that this method is declared to throw
 		(throwsClause)?
@@ -1038,7 +928,7 @@ ctorHead
 
 // This is a list of exception classes that the method is declared to throw
 throwsClause
-	:	"throws"^ identifier ( COMMA identifier )*
+	:	"throws"^ identifier ( COMMA! identifier )*
 	;
 
 // A list of formal parameters
@@ -1048,8 +938,8 @@ parameterDeclarationList
 	// The semantic check in ( .... )* block is flagged as superfluous, and seems superfluous but
 	// is the only way I could make this work. If my understanding is correct this is a known bug
 	:	(	( parameterDeclaration )=> parameterDeclaration
-			( options {warnWhenFollowAmbig=false;} : ( COMMA parameterDeclaration ) => COMMA parameterDeclaration )*
-			( COMMA variableLengthParameterDeclaration )?
+			( options {warnWhenFollowAmbig=false;} : ( COMMA! parameterDeclaration ) => COMMA! parameterDeclaration )*
+			( COMMA! variableLengthParameterDeclaration )?
 		|
 			variableLengthParameterDeclaration
 		)?
@@ -1066,7 +956,7 @@ parameterDeclaration!
 	;
 
 variableLengthParameterDeclaration!
-	:	pm:parameterModifier t:typeSpec[false] TRIPLE_DOT id:IDENT
+	:	pm:parameterModifier t:typeSpec[false] TRIPLE_DOT! id:IDENT
 		pd:declaratorBrackets[#t]
 		{#variableLengthParameterDeclaration = #(#[VARIABLE_PARAMETER_DEF,"VARIABLE_PARAMETER_DEF"],
 												pm, #([TYPE,"TYPE"],pd), id);}
@@ -1092,7 +982,7 @@ compoundStatement
 	:	lc:LCURLY^ {#lc.setType(SLIST);}
 			// include the (possibly-empty) list of statements
 			(statement)*
-		RCURLY
+		RCURLY!
 	;
 
 
@@ -1104,35 +994,12 @@ statement
 	// statements. Must backtrack to be sure. Could use a semantic
 	// predicate to test symbol table to see what the type was coming
 	// up, but that's pretty hard without a symbol table ;)
-	// (declaration)=> declaration SEMI
-	|	(declaration)=> decl:declaration semi1:SEMI!
-                {
-                    // add semicolon to the AST
-                    #decl.addChild(#semi1);
-
-                    AST next = currentAST.root.getNextSibling();
-
-                    // HACK for multiple variable declaration in one statement
-                    //      e.g float x, y, z;
-                    // the semicolon will only be added to the first statement so
-                    // we have to add it manually to all others
-                    if (next != null)
-                    {
-                        AST semi = JavaNodeHelper.getFirstChild(currentAST.root, JavaTokenTypes.SEMI);
-
-                        for (AST var = next; var != null; var = var.getNextSibling())
-                        {
-                            var.addChild(astFactory.create(semi));
-                        }
-                    }
-                }
+	|	(declaration)=> declaration SEMI!
 
 	// An expression statement. This could be a method call,
 	// assignment statement, or any other expression evaluated for
 	// side-effects.
-	|	e:expression semi2:SEMI!
-                {#e.addChild(#semi2);
-				}
+	|	expression SEMI!
 
 	//TODO: what abour interfaces, enums and annotations
 	// class definition
@@ -1142,7 +1009,7 @@ statement
 	|	IDENT c:COLON^ {#c.setType(LABELED_STAT);} statement
 
 	// If-else statement
-	|	"if"^ LPAREN expression RPAREN statement
+	|	"if"^ LPAREN! expression RPAREN! statement
 		(
 			// CONFLICT: the old "dangling-else" problem...
 			// ANTLR generates proper code matching
@@ -1151,63 +1018,62 @@ statement
 				warnWhenFollowAmbig = false;
 			}
 		:
-			"else" statement
+			"else"! statement
 		)?
 
 	// For statement
 	|	forStatement
 
 	// While statement
-	|	"while"^ LPAREN expression RPAREN statement
+	|	"while"^ LPAREN! expression RPAREN! statement
 
 	// do-while statement
-	|	"do"^ statement "while" LPAREN expression RPAREN SEMI
+	|	"do"^ statement "while"! LPAREN! expression RPAREN! SEMI!
 
 	// get out of a loop (or switch)
-	|	"break"^ (IDENT)? SEMI
+	|	"break"^ (IDENT)? SEMI!
 
 	// do next iteration of a loop
-	|	"continue"^ (IDENT)? SEMI
+	|	"continue"^ (IDENT)? SEMI!
 
 	// Return an expression
-	|	"return"^ (expression)? SEMI
+	|	"return"^ (expression)? SEMI!
 
 	// switch/case statement
-	|	"switch"^ LPAREN expression RPAREN LCURLY
+	|	"switch"^ LPAREN! expression RPAREN! LCURLY!
 			( casesGroup )*
-		RCURLY
+		RCURLY!
 
 	// exception try-catch block
 	|	tryBlock
 
 	// throw an exception
-	|	"throw"^ expression SEMI
+	|	"throw"^ expression SEMI!
 
 	// synchronize a statement
-	|	synBlock:"synchronized"^ LPAREN expression RPAREN compoundStatement
-	     { #synBlock.setType(SYNBLOCK);}
+	|	"synchronized"^ LPAREN! expression RPAREN! compoundStatement
 
 	// asserts (uncomment if you want 1.4 compatibility)
-	|	"assert"^ expression ( COLON! expression )? SEMI
+	|	"assert"^ expression ( COLON! expression )? SEMI!
 
-	// empty statement possibly ?????
+	// empty statement
 	|	s:SEMI {#s.setType(EMPTY_STAT);}
 	;
 
 forStatement
 	:	f:"for"^
-		LPAREN
+		LPAREN!
 			(	(forInit SEMI)=>traditionalForClause
 			|	forEachClause
 			)
-		RPAREN
+		RPAREN!
 		statement					 // statement to loop over
 	;
 
 traditionalForClause
 	:
-		forInit SEMI	// initializer
-		forCond SEMI	// condition test
+		forInit SEMI!	// initializer
+		forCond SEMI!	// condition test
 		forIter			// updater
 	;
 
@@ -1233,12 +1099,12 @@ casesGroup
 	;
 
 aCase
-	:	("case"^ expression | "default") COLON
+	:	("case"^ expression | "default") COLON!
 	;
 
 caseSList
 	:	(statement)*
-		{#caseSList = #(#[CASESLIST,"CASESLIST"],#caseSList);}
+		{#caseSList = #(#[SLIST,"SLIST"],#caseSList);}
 	;
 
 // The initializer for a for loop
@@ -1274,7 +1140,7 @@ finallyClause
 
 // an exception handler
 handler
-	:	"catch"^ LPAREN parameterDeclaration RPAREN compoundStatement
+	:	"catch"^ LPAREN! parameterDeclaration RPAREN! compoundStatement
 	;
 
 
@@ -1321,7 +1187,7 @@ expression
 
 // This is a list of expressions.
 expressionList
-	:	expression (COMMA expression)*
+	:	expression (COMMA! expression)*
 		{#expressionList = #(#[ELIST,"ELIST"], expressionList);}
 	;
 
@@ -1350,7 +1216,7 @@ assignmentExpression
 // conditional test (level 12)
 conditionalExpression
 	:	logicalOrExpression
-		( QUESTION^ assignmentExpression COLON conditionalExpression )?
+		( QUESTION^ assignmentExpression COLON! conditionalExpression )?
 	;
 
 
@@ -1477,22 +1343,22 @@ postfixExpression
 				(	IDENT
 					(	lp:LPAREN^ {#lp.setType(METHOD_CALL);}
 						argList
-						RPAREN
+						RPAREN!
 					)?
 				|	"super"
 					(	// (new Outer()).super() (create enclosing instance)
-						lp3:LPAREN^ argList RPAREN
+						lp3:LPAREN^ argList RPAREN!
 						{#lp3.setType(SUPER_CTOR_CALL);}
 					|	DOT^ (typeArguments)? IDENT
 						(	lps:LPAREN^ {#lps.setType(METHOD_CALL);}
 							argList
-							RPAREN
+							RPAREN!
 						)?
 					)
 				)
 		|	DOT^ "this"
 		|	DOT^ newExpression
-		|	lb:LBRACK^ {#lb.setType(INDEX_OP);} expression RBRACK
+		|	lb:LBRACK^ {#lb.setType(INDEX_OP);} expression RBRACK!
 		)*
 
 		(	// possibly add on a post-increment or post-decrement.
@@ -1512,7 +1378,7 @@ primaryExpression
 	|	newExpression
 	|	"this"
 	|	"super"
-	|	LPAREN assignmentExpression RPAREN
+	|	LPAREN! assignmentExpression RPAREN!
 		// look for int.class and int[].class
 	|	builtInType
 		( lbt:LBRACK^ {#lbt.setType(ARRAY_DECLARATOR);} RBRACK! )*
@@ -1542,10 +1408,8 @@ identPrimary
 			// The problem is that this loop here conflicts with
 			// DOT typeArguments "super" in postfixExpression (k=2)
 			// A proper solution would require a lot of refactoring...
-// Original way.			
-//		:	(DOT (typeArguments)? IDENT) =>
-//				DOT^ (ta2:typeArguments!)? IDENT
-		:	(DOT^ (typeArguments)? IDENT) 
+		:	(DOT (typeArguments)? IDENT) =>
+				DOT^ (ta2:typeArguments!)? IDENT
 		|	{false}?	// FIXME: this is very ugly but it seems to work...
 						// this will also produce an ANTLR warning!
 				// Unfortunately a syntactic predicate can only select one of
@@ -1565,10 +1429,9 @@ identPrimary
 		:	(	lp:LPAREN^ {#lp.setType(METHOD_CALL);}
 				// if the input is valid, only the last IDENT may
 				// have preceding typeArguments... rather hacky, this is...
-// Not required because see above				
-//				{if (#ta2 != null) astFactory.addASTChild(currentAST, #ta2);}
-//				{if (#ta2 == null) astFactory.addASTChild(currentAST, #ta1);}
-				argList RPAREN
+				{if (#ta2 != null) astFactory.addASTChild(currentAST, #ta2);}
+				{if (#ta2 == null) astFactory.addASTChild(currentAST, #ta1);}
+				argList RPAREN!
 			)
 		|	( options {greedy=true;} :
 				lbc:LBRACK^ {#lbc.setType(ARRAY_DECLARATOR);} RBRACK!
@@ -1627,7 +1490,7 @@ identPrimary
  */
 newExpression
 	:	"new"^ (typeArguments)? type
-		(	LPAREN argList RPAREN (classBlock)?
+		(	LPAREN! argList RPAREN! (classBlock)?
 
 			//java 1.1
 			// Note: This will allow bad constructs like
@@ -1678,7 +1541,7 @@ constant
 //----------------------------------------------------------------------------
 // The Java scanner
 //----------------------------------------------------------------------------
-class InternalJavaLexer extends Lexer;
+class JavaLexer extends Lexer;
 
 options {
 	exportVocab=Java;		// call the vocabulary "Java"
@@ -1689,8 +1552,6 @@ options {
 	// I need to make ANTLR generate smaller bitsets; see
 	// bottom of JavaLexer.java
 	codeGenBitsetTestThreshold=20;
-	// This class is abstract
-	classHeaderPrefix = "public abstract";
 }
 
 {
@@ -1707,9 +1568,6 @@ options {
 	public void enableEnum(boolean shouldEnable) { enumEnabled = shouldEnable; }
 	/** Query the "enum" keyword state */
 	public boolean isEnumEnabled() { return enumEnabled; }
-
-	protected abstract Token makeJavaDoc(Token node, String text)  throws TokenStreamIOException;
-
 }
 
 // OPERATORS
@@ -1773,37 +1631,15 @@ WS	:	(	' '
 			)
 			{ newline(); }
 		)+
-		{ // _ttype = Token.SKIP; 
-    }
+		{ _ttype = Token.SKIP; }
 	;
 
-protected SEPARATOR_COMMENT
-: "//~" (~('\n'|'\r') {if (LA(1) == EOF_CHAR) break;} )*
-        ( '\n'! | '\r'!('\n'!)? )?
-        {newline();}
-;
-
 // Single-line comments
-protected SL_COMMENT
-: "//" (~('\n'|'\r') {if (LA(1) == EOF_CHAR) break;} )*
-        ( '\n'! | '\r'!('\n'!)? )?
-        {newline();
-
-        }
-;
-COMMENT
-:
-    (
-        options {
-            // ANTLR does it right by consuming input as soon as possible
-            generateAmbigWarnings=false;
-			// TODO spec:SPECIAL_COMMENT {$setToken(spec);} |
-        }:
-
-        sep:SEPARATOR_COMMENT {$setToken(sep); } |
-        sl:SL_COMMENT {$setToken(sl); }
-    )
-;
+SL_COMMENT
+	:	"//"
+		(~('\n'|'\r'))* ('\n'|'\r'('\n')?)
+		{$setType(Token.SKIP); newline();}
+	;
 
 // multiple-line comments
 ML_COMMENT
@@ -1826,12 +1662,7 @@ ML_COMMENT
 		|	~('*'|'\n'|'\r')
 		)*
 		"*/"
-		{
-    // $setType(Token.SKIP);
-    Token n = makeJavaDoc(makeToken(_ttype), $getText);
-    $setToken(n);
-    $setType(n.getType());
-    }
+		{$setType(Token.SKIP);}
 	;
 
 
@@ -1999,4 +1830,3 @@ protected
 FLOAT_SUFFIX
 	:	'f'|'F'|'d'|'D'
 	;
-
