@@ -2970,11 +2970,27 @@ public class PApplet extends Activity implements PConstants, Runnable {
   public PShape loadShape(String filename) {
     if (filename.toLowerCase().endsWith(".svg")) {
       return new PShapeSVG(this, filename);
+    } else if (filename.toLowerCase().endsWith(".obj")) {
+      if (g instanceof PGraphicsAndroid3D) {
+        // TODO: implement obj loading for GLModels       
+      } else {
+        throw new RuntimeException("OBJ files can be loaded only when using the A3D renderer.");
+      }
     }
     return null;
   }
 
-
+  
+  public PShape createShape(int nvert) {
+    if (g instanceof PGraphicsAndroid3D) {
+      // TODO: how to handle custom parameters?
+      GLModel.Parameters params = GLModel.newParameters(TRIANGLES, GLConstants.STATIC);
+      GLModel model = new GLModel(this, nvert, params);
+      return model;
+    } else  {
+       throw new RuntimeException("3D PShapes can only be created when using the A3D renderer.");
+    }
+  }
 
   //////////////////////////////////////////////////////////////
 
