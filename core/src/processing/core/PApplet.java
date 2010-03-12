@@ -4068,13 +4068,25 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * Used by PGraphics to remove the requirement for loading a font!
+   */
+  protected PFont createDefaultFont(float size) {
+//    Font f = new Font("SansSerif", Font.PLAIN, 12);
+//    println("n: " + f.getName());
+//    println("fn: " + f.getFontName());
+//    println("ps: " + f.getPSName());
+    return createFont("SansSerif", size, true, null);
+  }
+  
+  
   public PFont createFont(String name, float size) {
-    return createFont(name, size, true, null); //PFont.CHARSET);  // > 1.0.9
+    return createFont(name, size, true, null);
   }
 
 
   public PFont createFont(String name, float size, boolean smooth) {
-    return createFont(name, size, smooth, null); //PFont.CHARSET);  // > 1.0.9
+    return createFont(name, size, smooth, null);
   }
 
 
