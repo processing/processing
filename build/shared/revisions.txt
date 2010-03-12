@@ -5,7 +5,9 @@ all of the changes from all the interim revisions, with the exception of the
 changes for the upcoming Android tools, which are not enabled in this release.
 
 Lots of bug fixes over 1.0.9, and several changes that improve how fonts are
-handled. 
+handled. Because of the large number of changes (and that some functionality
+actually changes, if that's actually a word), this is release 1.1 instead
+of release 1.0.10. Which is nice, because release 1.0.10 sounds baffling.
 
 [ font changes ]
 

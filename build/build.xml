@@ -119,7 +119,7 @@
     <unzip dest="${target.path}" src="shared/reference.zip" overwrite="false"/>
     
     <!-- Write the revision file! -->
-    <echo file="${target.path}/lib/version.txt" message="${revision}" />
+    <echo file="${target.path}/lib/version.txt" message="${version}" />
   </target>
 
   
@@ -193,9 +193,14 @@
     
     <!-- assemble the pde -->
     <copy todir="macosx/work">
-      <fileset dir="macosx/" includes="Processing.app/**"/>
+      <fileset dir="macosx/" includes="template.app/**"/>
     </copy>
     
+<!--    <rename src="macosx/work/template.app" 
+	    dest="macosx/work/Processing.app" />-->
+    <move file="macosx/work/template.app" 
+	  tofile="macosx/work/Processing.app" />
+
     <chmod file="macosx/work/Processing.app/Contents/MacOS/JavaApplicationStub" perm="755" />
     
     <copy todir="macosx/work/Processing.app/Contents/Resources/Java" flatten="true">
