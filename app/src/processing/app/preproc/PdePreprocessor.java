@@ -135,13 +135,18 @@ public class PdePreprocessor {
   // than the others, since the imports are auto-generated.
   ArrayList<String> codeFolderImports;
 
-  static public final int STATIC = 0; // formerly BEGINNER
-  static public final int ACTIVE = 1; // formerly INTERMEDIATE
-  static public final int JAVA = 2; // formerly ADVANCED
+  public static enum ProgramType {
+    STATIC, ACTIVE, JAVA
+  }
 
   // static to make it easier for the antlr preproc to get at it
-  static public int programType;
+  static private ProgramType programType;
   static public boolean foundMain;
+
+  static public void setProgramType(final ProgramType programType) {
+    //    System.err.println("Setting program type to " + programType);
+    PdePreprocessor.programType = programType;
+  }
 
   String indent;
 
@@ -360,7 +365,7 @@ public class PdePreprocessor {
 
     // if this is an advanced program, the classname is already defined.
     //
-    if (programType == JAVA) {
+    if (programType == ProgramType.JAVA) {
       name = getFirstClassName(parserAST);
     }
 
@@ -379,12 +384,12 @@ public class PdePreprocessor {
     emitter.setOut(stream);
     emitter.print(rootNode);
 
-    debugAST(rootNode, false);
-    final ByteArrayOutputStream buf = new ByteArrayOutputStream();
-    final PrintStream bufout = new PrintStream(buf);
-    emitter.setOut(bufout);
-    emitter.print(rootNode);
-    System.err.println(new String(buf.toByteArray()));
+    //    debugAST(rootNode, false);
+    //    final ByteArrayOutputStream buf = new ByteArrayOutputStream();
+    //    final PrintStream bufout = new PrintStream(buf);
+    //    emitter.setOut(bufout);
+    //    emitter.print(rootNode);
+    //    System.err.println(new String(buf.toByteArray()));
 
     writeFooter(stream, name);
     stream.close();
@@ -449,17 +454,17 @@ public class PdePreprocessor {
    * @param name                Name of the class being created.
    */
   protected void writeDeclaration(PrintStream out, String className) {
-    if (programType == JAVA) {
+    if (programType == ProgramType.JAVA) {
       // Print two blank lines so that the offset doesn't change
       out.println();
       out.println();
 
-    } else if (programType == ACTIVE) {
+    } else if (programType == ProgramType.ACTIVE) {
       // Print an extra blank line so the offset is identical to the others
       out.println("public class " + className + " extends PApplet {");
       out.println();
 
-    } else if (programType == STATIC) {
+    } else if (programType == ProgramType.STATIC) {
       out.println("public class " + className + " extends PApplet {");
       out.println(indent + "public void setup() {");
     }
@@ -471,13 +476,14 @@ public class PdePreprocessor {
    * @param out PrintStream to write it to.
    */
   protected void writeFooter(PrintStream out, String className) {
-    if (programType == STATIC) {
+    if (programType == ProgramType.STATIC) {
       // close off draw() definition
       out.println(indent + "noLoop();");
       out.println("} ");
     }
 
-    if ((programType == STATIC) || (programType == ACTIVE)) {
+    if ((programType == ProgramType.STATIC)
+        || (programType == ProgramType.ACTIVE)) {
       if (!PdePreprocessor.foundMain) {
         out.println(indent + "static public void main(String args[]) {");
         out.print(indent + indent + "PApplet.main(new String[] { ");
