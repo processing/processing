@@ -11,6 +11,7 @@
 
 	<target name="clean" description="Clean the build directories">
 
+		<!-- THIS SECTION SHOULD BE REMOVED AFTER A MONTH OR TWO -->
 		<!-- jdf sez: clean up after old layout of generated resources -->
 		<delete failonerror="false">
 			<fileset dir="${basedir}/src/antlr/java">
@@ -32,6 +33,7 @@
 				<include name="*.smap" />
 			</fileset>
 		</delete>
+		<!-- END SECTION TO CLEAN UP AFTER OLD PROJECT LAYOUT -->
 
 		<delete dir="bin" />
 		<delete file="pde.jar" />
