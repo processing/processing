@@ -27,22 +27,12 @@ pdeProgram
         // only java mode programs will have their own public classes or
         // imports (and they must have at least one)
     :   ( "public" "class" | "import" ) => javaProgram
-        { PdePreprocessor.programType = PdePreprocessor.JAVA; }
+        { PdePreprocessor.setProgramType(PdePreprocessor.ProgramType.JAVA); }
+	|	((statement)*) => staticProgram
+        { PdePreprocessor.setProgramType(PdePreprocessor.ProgramType.STATIC); }
+    |   activeProgram
+        { PdePreprocessor.setProgramType(PdePreprocessor.ProgramType.ACTIVE); }
 
-        // the syntactic predicate here looks for any minimal (thus
-        // the non-greedy qualifier) number of fields, followed by
-        // the tokens that represent the definition of loop() or
-        // some other member function.  java mode programs may have such
-        // definitions, but they won't reach this point, having already been
-        // selected in the previous alternative.  static mode programs 
-        // don't have member functions.
-        //
-    |   ( ( options {greedy=false;}: possiblyEmptyField)* "void" IDENT LPAREN ) 
-        => activeProgram
-        { PdePreprocessor.programType = PdePreprocessor.ACTIVE; }
-
-    |   staticProgram
-        { PdePreprocessor.programType = PdePreprocessor.STATIC; }
     ;
 
 // advanced mode is really just a normal java file
