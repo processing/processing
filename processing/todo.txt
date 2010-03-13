@@ -1,5 +1,22 @@
 0180 pde
 
+preprocessor
+_ Update ANTLR grammar to support 1.5 syntax
+_   http://dev.processing.org/bugs/show_bug.cgi?id=598
+X non-void functions confuse preprocessor
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1442
+X casting problems in the parser
+X   straighten out int() -> toInt() conversions
+X   float u = float(x)/width; works.
+X   float u = (float(x)/width); doesn't work: "unexpected token: float".
+X   float u = (x/float(width)); works! 
+X   http://dev.processing.org/bugs/show_bug.cgi?id=4
+X   return (int(5.5)) causes an error
+X preprocessor error if last line of code is a comment with no CR after it,
+X   an OutOfMemoryError wants to happen, 
+X   but right now there's a hack to add a CR in PdePreprocessor
+X   http://dev.processing.org/bugs/show_bug.cgi?id=5
+
 
 _ finish build instructions for 1.1
 _ update build/howto.txt (of course) because it says no ant
@@ -736,20 +753,11 @@ _ with additional .pde files, don't allow static mode in front tab
 _ don't allow "for (blah; blah; blah) ;"
 _   or if (blah blah blah) ;
 _   it's never useful. students can use { } if they want an empty block
-_ Update ANTLR grammar to support 1.5 syntax
-_   http://dev.processing.org/bugs/show_bug.cgi?id=598
-_ preproc cant handle labels to break/continue nested loops
+_ preproc can't handle labels to break/continue nested loops
 _   http://dev.processing.org/bugs/show_bug.cgi?id=631
 _ toInt() needs to go away in time for the book.. fix parser bugs
 _ using a processing keyword as a variable name gives unhelpful error message
 _   http://dev.processing.org/bugs/show_bug.cgi?id=213
-_ casting problems in the parser
-_   straighten out int() -> toInt() conversions
-_   float u = float(x)/width; works.
-_   float u = (float(x)/width); doesn't work: "unexpected token: float".
-_   float u = (x/float(width)); works! 
-_   http://dev.processing.org/bugs/show_bug.cgi?id=4
-_   return (int(5.5)) causes an error
 _ random, single slash in the code doesn't throw an error
 _   (just gets removed by the preprocessor)
 _   http://processing.org/bugs/show_bug.cgi?id=6
@@ -795,16 +803,10 @@ _   and OutOfMemoryError and weird lockup
 _   http://dev.processing.org/bugs/show_bug.cgi?id=16
 _ also OutOfMemoryError if a quote is not terminated
 _   http://dev.processing.org/bugs/show_bug.cgi?id=763
-_ preprocessor error if last line of code is a comment with no CR after it,
-_   an OutOfMemoryError wants to happen, 
-_   but right now there's a hack to add a CR in PdePreprocessor
-_   http://dev.processing.org/bugs/show_bug.cgi?id=5
 _ Parsing error when using char literals
 _   http://dev.processing.org/bugs/show_bug.cgi?id=281
 _ Improve detection and handling of missing semicolons
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1036
-_ non-void functions confuse preprocessor
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1442
 5 _ support for assertions
 5 _   http://dev.processing.org/bugs/show_bug.cgi?id=1188
 _ "class fFrame extends Frame {" it works in first run but later doesn't
