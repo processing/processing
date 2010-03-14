@@ -1328,32 +1328,38 @@ public void setGroup(int gr, int idx0, int idx1, GLTexture tex) {
 	 }
   
   
-  public void render(int gr0, int gr1) {
+  public void render(int gr0, int gr1) {    
 	  int texTarget = GL11.GL_TEXTURE_2D;
 	  GLTexture tex;
 	  float pointSize;
 	  
 	  // Setting line width and point size from stroke value.
+	  
 		gl.glLineWidth(a3d.strokeWeight);
 		pointSize = PApplet.min(a3d.strokeWeight, a3d.maxPointSize);
     gl.glPointSize(pointSize);
 	    
+    
     gl.glEnableClientState(GL11.GL_NORMAL_ARRAY);
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glNormalBufferID[0]);
     gl.glNormalPointer(GL11.GL_FLOAT, 0, 0);
-
+    
+/*    
     gl.glEnableClientState(GL11.GL_COLOR_ARRAY);
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glColorBufferID[0]);
     gl.glColorPointer(4, GL11.GL_FLOAT, 0, 0);
-     
+        
     gl.glEnableClientState(GL11.GL_VERTEX_ARRAY);            
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glVertexBufferID[0]);
     gl.glVertexPointer(3, GL11.GL_FLOAT, 0, 0);
-      
+*/
+    
+
+    /*
     VertexGroup group;
     for (int i = gr0; i <= gr1; i++) {
       group = (VertexGroup)groups.get(i);
-
+      
       tex = group.texture; 
       if (tex != null)  {
          
@@ -1395,7 +1401,7 @@ public void setGroup(int gr, int idx0, int idx1, GLTexture tex) {
           gl.glTexCoordPointer(2, GL11.GL_FLOAT, 0, 0);
         }
       }
-       
+      
       // Last transformation: inversion of coordinate to make compatible with Processing's inverted Y axis.
       gl.glPushMatrix();
       gl.glScalef(1, -1, 1);     
@@ -1411,10 +1417,16 @@ public void setGroup(int gr, int idx0, int idx1, GLTexture tex) {
         gl.glDisable(texTarget);
       }       
     }
-
-    gl.glDisableClientState(GL11.GL_VERTEX_ARRAY);    
+   */
+    
+	  /*
+	  gl.glDisableClientState(GL11.GL_VERTEX_ARRAY);
 	  gl.glDisableClientState(GL11.GL_COLOR_ARRAY);
+	  */
     gl.glDisableClientState(GL11.GL_NORMAL_ARRAY);
+    
+    
+    System.out.println("After render model (nada)");
 	}	
   
 	
