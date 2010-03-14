@@ -7297,17 +7297,23 @@ public class PApplet extends Applet
           locationX = editorLocation[0] + 66;
           locationY = editorLocation[1] + 66;
 
-          if ((locationX + windowW > applet.screen.width - 33) ||
-              (locationY + windowH > applet.screen.height - 33)) {
+          if ((locationX + windowW > applet.screenWidth - 33) ||
+              (locationY + windowH > applet.screenHeight - 33)) {
             // otherwise center on screen
-            locationX = (applet.screen.width - windowW) / 2;
-            locationY = (applet.screen.height - windowH) / 2;
+            locationX = (applet.screenWidth - windowW) / 2;
+            locationY = (applet.screenHeight - windowH) / 2;
           }
           frame.setLocation(locationX, locationY);
         }
       } else {  // just center on screen
-        frame.setLocation((applet.screen.width - applet.width) / 2,
-                          (applet.screen.height - applet.height) / 2);
+        frame.setLocation((applet.screenWidth - applet.width) / 2,
+                          (applet.screenHeight - applet.height) / 2);
+      }
+      Point frameLoc = frame.getLocation();
+      if (frameLoc.y < 0) {
+        // Windows actually allows you to place frames where they can't be 
+        // closed. Awesome. http://dev.processing.org/bugs/show_bug.cgi?id=1508
+        frame.setLocation(frameLoc.x, 20);
       }
 
       if (backgroundColor == Color.black) {  //BLACK) {
