@@ -6,6 +6,8 @@ import java.util.regex.Pattern;
 import processing.app.Base;
 
 public class AVD {
+  // Tempting to switch to WVGA854 (854x480), the same aspect ratio 
+  // (with rounding), as 1920x1080, or 16:9.
   static final int DEFAULT_WIDTH = 320;
   static final int DEFAULT_HEIGHT = 480;
 
@@ -16,13 +18,11 @@ public class AVD {
   public final String target;
 
   /**
-   * Default virtual device used by Processing, designed to be similar to a
-   * device like the Moto Droid. Uses Android 2.0 APIs, and the screen is set to
-   * WVGA854 (854x480), the same aspect ratio (with rounding), as 1920x1080, or
-   * 16:9.
+   * Default virtual device used by Processing that uses  
+   * the Android 2.0.1 API set.
    */
   public static final AVD ECLAIR = new AVD("Processing-Eclair",
-                                           "Google Inc.:Google APIs:5");
+                                           "Google Inc.:Google APIs:6");
 
   public static boolean ensureEclairAVD(final AndroidSDK sdk) {
     try {
