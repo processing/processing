@@ -496,16 +496,24 @@ public class PShapeSVG extends PShape {
 
     float cx = 0;
     float cy = 0;
-
     int i = 0;
+    char implicitCommand = '\0';
+
     while (i < pathDataKeys.length) {
       char c = pathDataKeys[i].charAt(0);
+      if(((c >= '0' && c <= '9') || (c == '-')) && implicitCommand != '\0') {
+        c = implicitCommand;
+        i--;
+      } else {
+        implicitCommand = c;
+      }
       switch (c) {
 
       case 'M':  // M - move to (absolute)
         cx = PApplet.parseFloat(pathDataKeys[i + 1]);
         cy = PApplet.parseFloat(pathDataKeys[i + 2]);
         parsePathMoveto(cx, cy);
+        implicitCommand = 'L';
         i += 3;
         break;
 
@@ -513,6 +521,7 @@ public class PShapeSVG extends PShape {
         cx = cx + PApplet.parseFloat(pathDataKeys[i + 1]);
         cy = cy + PApplet.parseFloat(pathDataKeys[i + 2]);
         parsePathMoveto(cx, cy);
+        implicitCommand = 'l';
         i += 3;
         break;
 
