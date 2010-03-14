@@ -3011,6 +3011,14 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  /**
+   * Used by PGraphics to remove the requirement for loading a font!
+   */
+  protected PFont createDefaultFont(float size) {
+    return createFont("SansSerif", size, true, null);
+  }
+
+  
   public PFont createFont(String name, float size) {
     return createFont(name, size, true, null);
   }

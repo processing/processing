@@ -61,9 +61,9 @@ public class PFont implements PConstants {
 
   /** Number of character glyphs in this font. */
   protected int glyphCount;
-  
-  /** 
-   * Actual glyph data. The length of this array won't necessarily be the 
+
+  /**
+   * Actual glyph data. The length of this array won't necessarily be the
    * same size as glyphCount, in cases where lazy font loading is in use.
    */
   protected Glyph[] glyphs;
@@ -74,42 +74,42 @@ public class PFont implements PConstants {
    */
   protected String name;
 
-  /** 
+  /**
    * Postscript name of the font that this bitmap was created from.
    */
   protected String psname;
 
-  /** 
-   * The original size of the font when it was first created 
+  /**
+   * The original size of the font when it was first created
    */
   protected int size;
 
   /** true if smoothing was enabled for this font, used for native impl */
   protected boolean smooth;
 
-  /** 
-   * The ascent of the font. If the 'd' character is present in this PFont, 
+  /**
+   * The ascent of the font. If the 'd' character is present in this PFont,
    * this value is replaced with its pixel height, because the values returned
-   * by FontMetrics.getAscent() seem to be terrible. 
+   * by FontMetrics.getAscent() seem to be terrible.
    */
   protected int ascent;
-  
-  /** 
-   * The descent of the font. If the 'p' character is present in this PFont, 
-   * this value is replaced with its lowest pixel height, because the values 
-   * returned by FontMetrics.getDescent() are gross. 
+
+  /**
+   * The descent of the font. If the 'p' character is present in this PFont,
+   * this value is replaced with its lowest pixel height, because the values
+   * returned by FontMetrics.getDescent() are gross.
    */
   protected int descent;
 
   /**
    * A more efficient array lookup for straight ASCII characters. For Unicode
-   * characters, a QuickSort-style search is used. 
+   * characters, a QuickSort-style search is used.
    */
   protected int[] ascii;
 
   /**
-   * True if this font is set to load dynamically. This is the default when 
-   * createFont() method is called without a character set. Bitmap versions of 
+   * True if this font is set to load dynamically. This is the default when
+   * createFont() method is called without a character set. Bitmap versions of
    * characters are only created when prompted by an index() call.
    */
   protected boolean lazy;
@@ -121,15 +121,15 @@ public class PFont implements PConstants {
    */
   protected Typeface typeface;
 
-  /** 
+  /**
    * True if we've already tried to find the native version of this font.
    */
   protected boolean typefaceSearched;
 
   /**
-   * Array of the native system fonts. Used to lookup native fonts by their 
+   * Array of the native system fonts. Used to lookup native fonts by their
    * PostScript name. This is a workaround for a several year old Apple Java
-   * bug that they can't be bothered to fix. 
+   * bug that they can't be bothered to fix.
    */
   static protected Typeface[] typefaces;
 
@@ -139,7 +139,7 @@ public class PFont implements PConstants {
   Canvas lazyCanvas;
   Paint lazyPaint;
 //  FontMetrics lazyMetrics;
-  int[] lazySamples;  
+  int[] lazySamples;
 
 
   public PFont() { }  // for subclasses
@@ -154,10 +154,10 @@ public class PFont implements PConstants {
   public PFont(Typeface font, int size, boolean smooth) {
     this(font, size, smooth, null);
   }
-  
-  
+
+
   /**
-   * Create a new image-based font on the fly. If charset is set to null, 
+   * Create a new image-based font on the fly. If charset is set to null,
    * the characters will only be created as bitmaps when they're drawn.
    *
    * @param font the font object to create from
@@ -176,7 +176,7 @@ public class PFont implements PConstants {
     // no, i'm not interested in getting off the couch
     lazy = true;
     // not sure what else to do here
-    //mbox2 = 0; 
+    //mbox2 = 0;
 
     int initialCount = 10;
     glyphs = new Glyph[initialCount];
@@ -190,7 +190,7 @@ public class PFont implements PConstants {
     lazyBitmap = Bitmap.createBitmap(mbox3, mbox3, Config.ARGB_8888);
 //    lazyGraphics = (Graphics2D) lazyImage.getGraphics();
     lazyCanvas = new Canvas(lazyBitmap);
-    
+
 //    lazyGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 //                                  smooth ?
 //                                  RenderingHints.VALUE_ANTIALIAS_ON :
@@ -230,6 +230,26 @@ public class PFont implements PConstants {
 //      if (glyphCount != charset.length) {
 //        glyphs = (Glyph[]) PApplet.subset(glyphs, 0, glyphCount);
 //      }
+    }
+
+    // If not already created, just create these two characters to calculate
+    // the ascent and descent values for the font. This was tested to only
+    // require 5-10 ms on a 2.4 GHz MacBook Pro.
+    // In versions 1.0.9 and earlier, fonts that could not display d or p
+    // used the max up/down values as calculated by looking through the font.
+    // That's no longer valid with the auto-generating fonts, so we'll just
+    // use getAscent() and getDescent() in such (minor) cases.
+    if (ascent == 0) {
+      new Glyph('d');
+      if (ascent == 0) {  // character not valid
+        ascent = PApplet.round(lazyPaint.ascent());
+      }
+    }
+    if (descent == 0) {
+      new Glyph('p');
+      if (descent == 0) {
+        descent = PApplet.round(lazyPaint.descent());
+      }
     }
   }
 
@@ -311,7 +331,7 @@ public class PFont implements PConstants {
       name = "";
       psname = "";
     }
-    
+
     os.writeInt(11);      // formerly numBits, now used for version number
     os.writeInt(size);    // formerly mboxX (was 64, now 48)
     os.writeInt(0);       // formerly mboxY, now ignored
@@ -350,13 +370,13 @@ public class PFont implements PConstants {
       if (glyph.value < 128) {
         ascii[glyph.value] = 0;
       }
-      
+
     } else if (glyphs[glyphCount-1].value < glyph.value) {
       glyphs[glyphCount] = glyph;
       if (glyph.value < 128) {
         ascii[glyph.value] = glyphCount;
       }
-      
+
     } else {
       for (int i = 0; i < glyphCount; i++) {
         if (glyphs[i].value > c) {
@@ -386,15 +406,15 @@ public class PFont implements PConstants {
     return psname;
   }
 
-  
+
   /**
    * Set the native complement of this font.
    */
   public void setTypeface(Typeface typeface) {
     this.typeface = typeface;
   }
-  
-  
+
+
   /**
    * Return the native Typeface object associated with this PFont (if any).
    */
@@ -432,7 +452,7 @@ public class PFont implements PConstants {
 //      if (font.canDisplay(c)) {
         // create the glyph
         addGlyph(c);
-        // now where did i put that?      
+        // now where did i put that?
         return indexActual(c);
 
 //      } else {
@@ -582,8 +602,8 @@ public class PFont implements PConstants {
 
   static HashMap<String, Typeface> typefaceMap;
   static String[] fontList;
-  
-  
+
+
   /**
    * Get a list of the built-in fonts.
    */
@@ -591,48 +611,48 @@ public class PFont implements PConstants {
     loadTypefaces();
     return fontList;
   }
-  
+
 
   static public void loadTypefaces() {
     if (typefaceMap == null) {
       typefaceMap = new HashMap<String, Typeface>();
-      
-      typefaceMap.put("Serif", 
+
+      typefaceMap.put("Serif",
                   Typeface.create(Typeface.SERIF, Typeface.NORMAL));
-      typefaceMap.put("Serif-Bold", 
+      typefaceMap.put("Serif-Bold",
                   Typeface.create(Typeface.SERIF, Typeface.BOLD));
-      typefaceMap.put("Serif-Italic", 
+      typefaceMap.put("Serif-Italic",
                   Typeface.create(Typeface.SERIF, Typeface.ITALIC));
-      typefaceMap.put("Serif-BoldItalic", 
+      typefaceMap.put("Serif-BoldItalic",
                   Typeface.create(Typeface.SERIF, Typeface.BOLD_ITALIC));
 
-      typefaceMap.put("SansSerif", 
+      typefaceMap.put("SansSerif",
                   Typeface.create(Typeface.SANS_SERIF, Typeface.NORMAL));
-      typefaceMap.put("SansSerif-Bold", 
+      typefaceMap.put("SansSerif-Bold",
                   Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD));
-      typefaceMap.put("SansSerif-Italic", 
+      typefaceMap.put("SansSerif-Italic",
                   Typeface.create(Typeface.SANS_SERIF, Typeface.ITALIC));
-      typefaceMap.put("SansSerif-BoldItalic", 
+      typefaceMap.put("SansSerif-BoldItalic",
                   Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD_ITALIC));
 
-      typefaceMap.put("Monospaced", 
+      typefaceMap.put("Monospaced",
                   Typeface.create(Typeface.MONOSPACE, Typeface.NORMAL));
-      typefaceMap.put("Monospaced-Bold", 
+      typefaceMap.put("Monospaced-Bold",
                   Typeface.create(Typeface.MONOSPACE, Typeface.BOLD));
-      typefaceMap.put("Monospaced-Italic", 
+      typefaceMap.put("Monospaced-Italic",
                   Typeface.create(Typeface.MONOSPACE, Typeface.ITALIC));
-      typefaceMap.put("Monospaced-BoldItalic", 
+      typefaceMap.put("Monospaced-BoldItalic",
                   Typeface.create(Typeface.MONOSPACE, Typeface.BOLD_ITALIC));
 
       fontList = new String[typefaceMap.size()];
       typefaceMap.keySet().toArray(fontList);
     }
   }
-  
-  
+
+
   //////////////////////////////////////////////////////////////
 
-  
+
   /**
    * A single character, and its visage.
    */
@@ -644,18 +664,18 @@ public class PFont implements PConstants {
     int setWidth;
     int topExtent;
     int leftExtent;
-    
-    
+
+
     protected Glyph() {
       // used when reading from a stream or for subclasses
     }
-    
-    
+
+
     protected Glyph(DataInputStream is) throws IOException {
       readHeader(is);
     }
-    
-    
+
+
     protected void readHeader(DataInputStream is) throws IOException {
       value = is.readInt();
       height = is.readInt();
@@ -666,7 +686,7 @@ public class PFont implements PConstants {
 
       // pointer from a struct in the c version, ignored
       is.readInt();
-      
+
       // the values for getAscent() and getDescent() from FontMetrics
       // seem to be way too large.. perhaps they're the max?
       // as such, use a more traditional marker for ascent/descent
@@ -678,7 +698,7 @@ public class PFont implements PConstants {
       }
     }
 
-    
+
     protected void writeHeader(DataOutputStream os) throws IOException {
       os.writeInt(value);
       os.writeInt(height);
@@ -688,8 +708,8 @@ public class PFont implements PConstants {
       os.writeInt(leftExtent);
       os.writeInt(0); // padding
     }
-    
-    
+
+
     protected void readBitmap(DataInputStream is) throws IOException {
       image = new PImage(width, height, ALPHA);
       int bitmapSize = width * height;
@@ -710,8 +730,8 @@ public class PFont implements PConstants {
       }
 //      System.out.println();
     }
-    
-    
+
+
     protected void writeBitmap(DataOutputStream os) throws IOException {
       int[] pixels  = image.pixels;
       for (int y = 0; y < height; y++) {
@@ -731,7 +751,7 @@ public class PFont implements PConstants {
       lazyPaint.setColor(Color.BLACK);
 //      lazyGraphics.drawString(String.valueOf(c), size, size * 2);
       lazyCanvas.drawText(String.valueOf(c), size, size * 2, lazyPaint);
-      
+
 //      WritableRaster raster = lazyImage.getRaster();
 //      raster.getDataElements(0, 0, mbox3, mbox3, lazySamples);
       lazyBitmap.getPixels(lazySamples, 0, mbox3, 0, 0, mbox3, mbox3);

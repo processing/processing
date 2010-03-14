@@ -1,4 +1,6 @@
 0180 core
+X add implicit path commands to svg loader, thanks to Ben S
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1503
 
 
 big ones
