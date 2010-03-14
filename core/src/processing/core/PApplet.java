@@ -7313,7 +7313,7 @@ public class PApplet extends Applet
       if (frameLoc.y < 0) {
         // Windows actually allows you to place frames where they can't be 
         // closed. Awesome. http://dev.processing.org/bugs/show_bug.cgi?id=1508
-        frame.setLocation(frameLoc.x, 20);
+        frame.setLocation(frameLoc.x, 30);
       }
 
       if (backgroundColor == Color.black) {  //BLACK) {
