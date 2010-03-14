@@ -954,7 +954,9 @@ public class PGraphicsAndroid3D extends PGraphics {
     gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
     gl.glEnableClientState(GL10.GL_COLOR_ARRAY);
 
-    if (vertexBuffer.capacity() ==  stop - start) {
+    // Division by three needed because each int element in the buffer is used to
+    // store three coordinates.
+    if (vertexBuffer.capacity() / 3 < 3 * (stop - start)) {
       expandBuffers();  
     }    
     
@@ -1056,7 +1058,9 @@ public class PGraphicsAndroid3D extends PGraphics {
       if (sw > 0) {
         gl.glLineWidth(sw);
         
-        if (vertexBuffer.capacity() ==  pathLength[j] + 1) {
+        // Division by three needed because each int element in the buffer is used to
+        // store three coordinates.        
+        if (vertexBuffer.capacity() / 3 <=  3 * (pathLength[j] + 1)) {
           expandBuffers();  
         }
         
@@ -1189,9 +1193,13 @@ public class PGraphicsAndroid3D extends PGraphics {
       } else {
         texturing = false;  
       }
-    
-      if (vertexBuffer.capacity() == 3 * faceLength[j]) {
-        expandBuffers();  
+
+      System.out.println("Sizes = " + vertexBuffer.capacity() / 3 + " " + 3 * faceLength[j]);
+      
+      // Division by three needed because each int element in the buffer is used to
+      // store three coordinates.      
+      if (vertexBuffer.capacity() / 3 < 3 * faceLength[j]) {
+        expandBuffers();
       }
       
       vertexBuffer.rewind();
@@ -1499,7 +1507,6 @@ public class PGraphicsAndroid3D extends PGraphics {
     ByteBuffer cbb = ByteBuffer.allocateDirect(newSize * 4 * SIZEOF_INT);
     cbb.order(ByteOrder.nativeOrder());
     colorBuffer = cbb.asIntBuffer();
-
     
     ByteBuffer tbb = ByteBuffer.allocateDirect(newSize * 2 * SIZEOF_INT);
     tbb.order(ByteOrder.nativeOrder());
