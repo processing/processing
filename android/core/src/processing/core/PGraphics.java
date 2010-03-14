@@ -682,7 +682,7 @@ public class PGraphics extends PImage implements PConstants {
     colorMode(RGB, 255);
     fill(255);
     stroke(0);
-    
+
     // added for 0178 for subclasses that need them
     strokeWeight(DEFAULT_STROKE_WEIGHT);
     strokeJoin(DEFAULT_STROKE_JOIN);
@@ -2157,7 +2157,7 @@ public class PGraphics extends PImage implements PConstants {
     // Starting in release 0144, image errors are simply ignored.
     // loadImageAsync() sets width and height to -1 when loading fails.
     if (image.width == -1 || image.height == -1) return;
-    
+
     // If not loaded yet, don't try to draw
     if (image.width == 0 || image.height == 0) return;
 
@@ -2398,7 +2398,7 @@ public class PGraphics extends PImage implements PConstants {
    */
   public float textAscent() {
     if (textFont == null) {
-      showTextFontException("textAscent");
+      defaultFontOrDeath("textAscent");
     }
     return textFont.ascent() * ((textMode == SCREEN) ? textFont.size : textSize);
   }
@@ -2411,7 +2411,7 @@ public class PGraphics extends PImage implements PConstants {
    */
   public float textDescent() {
     if (textFont == null) {
-      showTextFontException("textDescent");
+      defaultFontOrDeath("textDescent");
     }
     return textFont.descent() * ((textMode == SCREEN) ? textFont.size : textSize);
   }
@@ -2529,17 +2529,12 @@ public class PGraphics extends PImage implements PConstants {
    * Sets the text size, also resets the value for the leading.
    */
   public void textSize(float size) {
-    if (textFont != null) {
-//      if ((textMode == SCREEN) && (size != textFont.size)) {
-//        throw new RuntimeException("textSize() is ignored with " +
-//                                   "textMode(SCREEN)");
-//      }
-      textSize = size;
-      textLeading = (textAscent() + textDescent()) * 1.275f;
-
-    } else {
-      showTextFontException("textSize");
+    if (textFont == null) {
+      defaultFontOrDeath("textSize", size);
     }
+
+    textSize = size;
+    textLeading = (textAscent() + textDescent()) * 1.275f;
   }
 
 
@@ -2558,7 +2553,7 @@ public class PGraphics extends PImage implements PConstants {
    */
   public float textWidth(String str) {
     if (textFont == null) {
-      showTextFontException("textWidth");
+      defaultFontOrDeath("textWidth");
     }
 
     int length = str.length();
@@ -2619,7 +2614,7 @@ public class PGraphics extends PImage implements PConstants {
    */
   public void text(char c, float x, float y) {
     if (textFont == null) {
-      showTextFontException("text");
+      defaultFontOrDeath("text");
     }
 
     if (textMode == SCREEN) loadPixels();
@@ -2675,7 +2670,7 @@ public class PGraphics extends PImage implements PConstants {
    */
   public void text(String str, float x, float y) {
     if (textFont == null) {
-      showTextFontException("text");
+      defaultFontOrDeath("text");
     }
 
     if (textMode == SCREEN) loadPixels();
@@ -2760,7 +2755,7 @@ public class PGraphics extends PImage implements PConstants {
    */
   public void text(String str, float x1, float y1, float x2, float y2) {
     if (textFont == null) {
-      showTextFontException("text");
+      defaultFontOrDeath("text");
     }
 
     if (textMode == SCREEN) loadPixels();
@@ -4985,11 +4980,24 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Throw an exeption that halts the program because textFont() has not been
-   * used prior to the specified method.
+   * Same as below, but defaults to a 12 point font, just as MacWrite intended.
    */
-  static protected void showTextFontException(String method) {
-    throw new RuntimeException("Use textFont() before " + method + "()");
+  protected void defaultFontOrDeath(String method) {
+    defaultFontOrDeath(method, 12);
+  }
+  
+
+  /**
+   * First try to create a default font, but if that's not possible, throw  
+   * an exception that halts the program because textFont() has not been used 
+   * prior to the specified method.
+   */
+  protected void defaultFontOrDeath(String method, float size) {
+    if (parent != null) {
+      textFont = parent.createDefaultFont(size);
+    } else {
+      throw new RuntimeException("Use textFont() before " + method + "()");
+    }
   }
 
 

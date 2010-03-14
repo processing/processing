@@ -1001,25 +1001,27 @@ public class PGraphicsAndroid2D extends PGraphics {
 
 
   public float textAscent() {
+    if (textFont == null) {
+      defaultFontOrDeath("textAscent");
+    }
 //    Font font = textFont.getFont();
     Typeface font = textFont.getTypeface();
     if (font == null) {
       return super.textAscent();
     }
-//    FontMetrics metrics = parent.getFontMetrics(font);
-//    return metrics.getAscent();
     return fillPaint.ascent();
   }
 
 
   public float textDescent() {
+    if (textFont == null) {
+      defaultFontOrDeath("textDescent");
+    }
 //    Font font = textFont.getFont();
     Typeface font = textFont.getTypeface();
     if (font == null) {
       return super.textDescent();
     }
-//    FontMetrics metrics = parent.getFontMetrics(font);
-//    return metrics.getDescent();
     return fillPaint.descent();
   }
 
@@ -1051,19 +1053,20 @@ public class PGraphicsAndroid2D extends PGraphics {
    * will get recorded properly.
    */
   public void textSize(float size) {
-//    Font font = textFont.getFont();
+    if (textFont == null) {
+      defaultFontOrDeath("textSize", size);
+    }
+
     Typeface font = textFont.getTypeface();
     if (font != null) {
-//      Font dfont = font.deriveFont(size);
-//      canvas.setFont(dfont);
-//      textFont.setFont(dfont);
       fillPaint.setTextSize(size);
     }
 
     // take care of setting the textSize and textLeading vars
     // this has to happen second, because it calls textAscent()
     // (which requires the native font metrics to be set)
-    super.textSize(size);
+    textSize = size;
+    textLeading = (textAscent() + textDescent()) * 1.275f;
   }
 
 
