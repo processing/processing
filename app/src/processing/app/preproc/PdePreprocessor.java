@@ -125,10 +125,9 @@ import antlr.collections.*;
  * <P/>
  */
 public class PdePreprocessor {
-  
+
   // used for calling the ASTFactory to get the root node
   private static final int ROOT_ID = 0;
-
 
   // these ones have the .* at the end, since a class name might be at the end
   // instead of .* which would make trouble other classes using this can lop
@@ -149,28 +148,31 @@ public class PdePreprocessor {
   // starts as sketch name, ends as main class name
   private String name;
 
-
   private TokenStreamCopyingHiddenTokenFilter filter;
 
   private boolean foundMain;
+
   public void setFoundMain(boolean foundMain) {
     this.foundMain = foundMain;
   }
+
   public boolean getFoundMain() {
     return foundMain;
   }
-  
+
   private String advClassName = "";
+
   public void setAdvClassName(final String advClassName) {
     this.advClassName = advClassName;
   }
-  
+
   private ProgramType programType;
+
   public void setProgramType(final ProgramType programType) {
     //    System.err.println("Setting program type to " + programType);
     this.programType = programType;
   }
-  
+
   public PdePreprocessor() {
     char[] indentChars = new char[Preferences.getInteger("editor.tabs.size")];
     Arrays.fill(indentChars, ' ');
@@ -180,11 +182,11 @@ public class PdePreprocessor {
   CommonHiddenStreamToken getHiddenAfter(final CommonHiddenStreamToken t) {
     return filter.getHiddenAfter(t);
   }
-  
+
   CommonHiddenStreamToken getInitialHiddenToken() {
     return filter.getInitialHiddenToken();
   }
-  
+
   public int writePrefix(String program, String buildPath, String sketchName,
                          String codeFolderPackages[])
       throws FileNotFoundException {
@@ -386,20 +388,21 @@ public class PdePreprocessor {
     if (name == null)
       return null;
 
-    // output the code
-    PdeEmitter emitter = new PdeEmitter(this, stream);
     writeDeclaration(stream, name);
-    emitter.print(rootNode);
-
-    //    debugAST(rootNode, true);
-    //    final ByteArrayOutputStream buf = new ByteArrayOutputStream();
-    //    final PrintStream bufout = new PrintStream(buf);
-    //    emitter.setOut(bufout);
-    //    emitter.print(rootNode);
-    //    System.err.println(new String(buf.toByteArray()));
-
+    new PdeEmitter(this, stream).print(rootNode);
     writeFooter(stream, name);
     stream.close();
+
+
+    if (false) {
+      final ByteArrayOutputStream buf = new ByteArrayOutputStream();
+      final PrintStream bufout = new PrintStream(buf);
+      writeDeclaration(bufout, name);
+      new PdeEmitter(this, bufout).print(rootNode);
+      writeFooter(bufout, name);
+      debugAST(rootNode, true);
+      System.err.println(new String(buf.toByteArray()));
+    }
 
     // if desired, serialize the parse tree to an XML file.  can
     // be viewed usefully with Mozilla or IE
