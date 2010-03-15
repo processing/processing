@@ -47,6 +47,12 @@ J   and OutOfMemoryError and weird lockup
 J   http://dev.processing.org/bugs/show_bug.cgi?id=16
 J also OutOfMemoryError if a quote is not terminated
 J   http://dev.processing.org/bugs/show_bug.cgi?id=763
+J Error compiling when 'new' is first word in an 'else' block
+J   http://dev.processing.org/bugs/show_bug.cgi?id=1362
+J Parsing error when using char literals
+J   http://dev.processing.org/bugs/show_bug.cgi?id=281
+_ Improve detection and handling of missing semicolons
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1036
 
 
 _ finish build instructions for 1.1
@@ -767,14 +773,8 @@ PDE / Compiler & Preprocessor
 high (bugs)
 _ syntax highlighting error with // and /*
 _   http://dev.processing.org/bugs/show_bug.cgi?id=609
-_ Parsing error when using char literals
-_   http://dev.processing.org/bugs/show_bug.cgi?id=281
-_ Improve detection and handling of missing semicolons
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1036
 _ support for assertions
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1188
-_ Error compiling when 'new' is first word in an 'else' block
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1362
 
 medium (bugs/features)
 _ with additional .pde files, don't allow static mode in front tab
