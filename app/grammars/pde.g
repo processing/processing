@@ -46,10 +46,10 @@ pdeProgram
         // imports (and they must have at least one)
     :   ( "public" "class" | "import" ) => javaProgram
         { pp.setProgramType(PdePreprocessor.ProgramType.JAVA); }
-	|	((statement)*) => staticProgram
-        { pp.setProgramType(PdePreprocessor.ProgramType.STATIC); }
-    |   activeProgram
+    |   (activeProgram) => activeProgram
         { pp.setProgramType(PdePreprocessor.ProgramType.ACTIVE); }
+	|	staticProgram
+        { pp.setProgramType(PdePreprocessor.ProgramType.STATIC); }
 
     ;
 
@@ -59,11 +59,11 @@ javaProgram
     ;
 
 activeProgram
-    :  (possiblyEmptyField)+
+    :  (possiblyEmptyField)+ EOF!
     ;
 
 staticProgram
-    :  (statement)*
+    :  (statement)* EOF!
     ; 
 
 // copy of the java.g rule with WEBCOLOR_LITERAL added
