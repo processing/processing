@@ -384,7 +384,7 @@ public class PdePreprocessor {
     emitter.setOut(stream);
     emitter.print(rootNode);
 
-    //    debugAST(rootNode, false);
+    //    debugAST(rootNode, true);
     //    final ByteArrayOutputStream buf = new ByteArrayOutputStream();
     //    final PrintStream bufout = new PrintStream(buf);
     //    emitter.setOut(bufout);
