@@ -24,7 +24,6 @@
 package processing.app.debug;
 
 import processing.app.*;
-import processing.app.preproc.PdePreprocessor;
 import processing.core.*;
 
 import java.awt.Point;
@@ -201,9 +200,8 @@ public class Runner implements MessageConsumer {
     // It's dangerous to add your own main() to your code, 
     // but if you've done it, we'll respect your right to hang yourself.
     // http://dev.processing.org/bugs/show_bug.cgi?id=1446
-    if (PdePreprocessor.foundMain) {
+    if (sketch.getFoundMain()) {
       params.add(appletClassName);
-      
     } else {
       params.add("processing.core.PApplet");
 
