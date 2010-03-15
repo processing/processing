@@ -371,27 +371,6 @@ public class PdeEmitter implements PdeTokenTypes
         PdePreprocessor.foundMain = true;
       }
 
-      /*
-      // 1. figure out if this is setup, draw, or loop
-      String methodName = methodNameChild.getText();
-      if (publicMethods.get(methodName) != null) {
-        // make sure this feller is public
-        boolean foundPublic = false;
-        AST child = modifiersChild.getFirstChild();
-        while (child != null) {
-          if (child.getText().equals("public")) {
-            foundPublic = true;
-            child = null;
-          } else {
-            //out.print("." + child.getText() + ".");
-            child = child.getNextSibling();
-          }
-        }
-        if (!foundPublic) {
-          out.print("public ");
-        }
-      */
-
       // if this method doesn't have a specifier, make it public
       // (useful for setup/keyPressed/etc)
       boolean foundSpecifier = false;
@@ -525,6 +504,7 @@ public class PdeEmitter implements PdeTokenTypes
       printChildren(ast);
       break;
 
+    case LABELED_STAT:
     case CASE_GROUP:
       printChildren(ast);
       break;
@@ -584,14 +564,21 @@ public class PdeEmitter implements PdeTokenTypes
     case SEMI:
     case LITERAL_this:
     case LITERAL_super:
-    case LITERAL_continue:
-    case LITERAL_break:
       out.print(ast.getText());
       dumpHiddenAfter(ast);
       break;
 
     case EMPTY_STAT:
     case EMPTY_FIELD:
+      break;
+      
+    case LITERAL_continue:
+    case LITERAL_break:
+      out.print(ast.getText());
+      dumpHiddenAfter(ast);
+      if (child1 != null)  {// maybe label
+        print(child1);
+      }
       break;
 
       // yuck:  Distinguish between "import x.y.*" and "x = 1 * 3"
