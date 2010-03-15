@@ -2,23 +2,16 @@
 
 package processing.app.preproc;
 
-import processing.app.*;
+import java.io.PrintStream;
+import java.util.BitSet;
+import processing.app.Preferences;
+import processing.app.antlr.PdeTokenTypes;
 import processing.app.debug.RunnerException;
-import processing.app.antlr.*;
+import antlr.collections.AST;
 
 /* Based on original code copyright (c) 2003 Andy Tripp <atripp@comcast.net>.
  * shipped under GPL with permission.
  */
-
-//import antlr.*;
-import antlr.collections.*;
-//import antlr.collections.impl.*;
-import java.io.*;
-//import java.util.*;
-import java.lang.reflect.Field;
-import java.util.BitSet;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * PDEEmitter: A class that can take an ANTLR Java AST and produce
@@ -32,19 +25,18 @@ import java.util.Set;
  */
 
 @SuppressWarnings("unused")
-public class PdeEmitter implements PdeTokenTypes
-{
+public class PdeEmitter implements PdeTokenTypes {
   private PrintStream out = System.out;
-  private PrintStream debug = System.err;
+  private final PrintStream debug = System.err;
   //private static int ALL = -1;
-  private java.util.Stack stack = new java.util.Stack();
+  private final java.util.Stack stack = new java.util.Stack();
   private final static int ROOT_ID = 0;
 
   /**
    * Specify a PrintStream to print to. System.out is the default.
    * @param out the PrintStream to print to
    */
-  public void setOut(PrintStream out) {
+  public void setOut(final PrintStream out) {
     this.out = out;
   }
 
@@ -53,7 +45,7 @@ public class PdeEmitter implements PdeTokenTypes
    * @returns a child AST of the given type. If it can't find a child of the
    *          given type, return null.
    */
-  private AST getChild(AST ast, int childType) {
+  private AST getChild(final AST ast, final int childType) {
     AST child = ast.getFirstChild();
     while (child != null) {
       if (child.getType() == childType) {
@@ -69,8 +61,8 @@ public class PdeEmitter implements PdeTokenTypes
    * Dump the list of hidden tokens linked to after the AST node passed in.
    * Most hidden tokens are dumped from this function.
    */
-  private void dumpHiddenAfter(AST ast) {
-    dumpHiddenTokens(((antlr.CommonASTWithHiddenTokens)ast).getHiddenAfter());
+  private void dumpHiddenAfter(final AST ast) {
+    dumpHiddenTokens(((antlr.CommonASTWithHiddenTokens) ast).getHiddenAfter());
   }
 
   /**
@@ -81,11 +73,11 @@ public class PdeEmitter implements PdeTokenTypes
    * manually constructed in such a way that the usual tokens don't have the
    * necessary hiddenAfter links.
    */
-  private void dumpHiddenBefore(AST ast) {
+  private void dumpHiddenBefore(final AST ast) {
 
-    antlr.CommonHiddenStreamToken
-      child = null,
-      parent = ((antlr.CommonASTWithHiddenTokens)ast).getHiddenBefore();
+    antlr.CommonHiddenStreamToken 
+		child = null, 
+		parent = ((antlr.CommonASTWithHiddenTokens) ast).getHiddenBefore();
 
     // if there aren't any hidden tokens here, quietly return
     //
@@ -107,7 +99,7 @@ public class PdeEmitter implements PdeTokenTypes
    * Dump the list of hidden tokens linked to from the token passed in.
    */
   private void dumpHiddenTokens(antlr.CommonHiddenStreamToken t) {
-    for ( ; t != null ; t=PdePreprocessor.filter.getHiddenAfter(t) ) {
+    for (; t != null; t = PdePreprocessor.filter.getHiddenAfter(t)) {
       out.print(t.getText());
     }
   }
@@ -117,7 +109,7 @@ public class PdeEmitter implements PdeTokenTypes
    * @param ast The AST to print
    * @returns true iff anything was printed
    */
-  private boolean printChildren(AST ast) throws RunnerException {
+  private boolean printChildren(final AST ast) throws RunnerException {
     boolean ret = false;
     AST child = ast.getFirstChild();
     while (child != null) {
@@ -132,7 +124,7 @@ public class PdeEmitter implements PdeTokenTypes
    * Tells whether an AST has any children or not.
    * @return true iff the AST has at least one child
    */
-  private boolean hasChildren(AST ast) {
+  private boolean hasChildren(final AST ast) {
     return (ast.getFirstChild() != null);
   }
 
@@ -146,7 +138,7 @@ public class PdeEmitter implements PdeTokenTypes
    *
    * @return the first printable leaf node in an AST
    */
-  private AST getBestPrintableNode(AST ast, boolean includeThisNode) {
+  private AST getBestPrintableNode(final AST ast, final boolean includeThisNode) {
     AST child;
 
     if (includeThisNode) {
@@ -159,13 +151,14 @@ public class PdeEmitter implements PdeTokenTypes
 
       switch (child.getType()) {
 
-        // the following node types are printing nodes that print before
-        // any children, but then also recurse over children.  So they
-        // may have hiddenBefore chains that need to be printed first.  Many
-        // statements and all unary expression types qualify.  Return these
-        // nodes directly
+      // the following node types are printing nodes that print before
+      // any children, but then also recurse over children.  So they
+      // may have hiddenBefore chains that need to be printed first.  Many
+      // statements and all unary expression types qualify.  Return these
+      // nodes directly
       case CLASS_DEF:
       case LITERAL_if:
+      case LITERAL_new:
       case LITERAL_for:
       case LITERAL_while:
       case LITERAL_do:
@@ -190,7 +183,7 @@ public class PdeEmitter implements PdeTokenTypes
         // leaves in the tree but not have any children.  If this is
         // such a node, move on to the next sibling.
       case MODIFIERS:
-        if (child.getFirstChild() == null ) {
+        if (child.getFirstChild() == null) {
           return getBestPrintableNode(child.getNextSibling(), false);
         }
         // new jikes doesn't like fallthrough, so just duplicated here:
@@ -204,7 +197,6 @@ public class PdeEmitter implements PdeTokenTypes
     return ast;
   }
 
-  
   // Because the meanings of <, >, >>, and >>> are overloaded to support
   // type arguments and type parameters, we have to treat them
   // as copyable to hidden text (or else the following syntax,
@@ -213,22 +205,47 @@ public class PdeEmitter implements PdeTokenTypes
   // Since they are copied to the hidden stream, you don't want
   // to print them explicitly; they come out in the dumpHiddenXXX methods.
   // -- jdf
- private static final BitSet OTHER_COPIED_TOKENS = new BitSet(){{
-    set(LT);
-    set(GT);
-    set(SR);
-    set(BSR);
-  }};
+  private static final BitSet OTHER_COPIED_TOKENS = new BitSet() {
+    {
+      set(LT);
+      set(GT);
+      set(SR);
+      set(BSR);
+    }
+  };
+
   /**
    * Prints a binary operator
    */
-  private void printBinaryOperator(AST ast) throws RunnerException {
+  private void printBinaryOperator(final AST ast) throws RunnerException {
     print(ast.getFirstChild());
-    if (!OTHER_COPIED_TOKENS.get(ast.getType()))
+    if (!OTHER_COPIED_TOKENS.get(ast.getType())) {
       out.print(ast.getText());
+    }
     dumpHiddenAfter(ast);
     print(ast.getFirstChild().getNextSibling());
   }
+  
+  private void printIfThenElse(final AST literalIf) throws RunnerException {
+    out.print(literalIf.getText());
+    dumpHiddenAfter(literalIf);
+
+    final AST condition = literalIf.getFirstChild();
+    print(condition); // the "if" condition: an EXPR
+
+    // the "then" clause is either an SLIST or an EXPR
+    final AST thenPath = condition.getNextSibling();
+    print(thenPath);
+
+    // optional "else" clause: an SLIST or an EXPR
+    final AST elsePath = thenPath.getNextSibling();
+    if (elsePath != null) {
+      out.print("else");
+      dumpHiddenBefore(getBestPrintableNode(elsePath, true));
+      print(elsePath);
+    }
+  }
+
 
   /**
    * Print the given AST. Call this function to print your PDE code.
@@ -236,7 +253,7 @@ public class PdeEmitter implements PdeTokenTypes
    * It works by making recursive calls to print children.
    * So the code below is one big "switch" statement on the passed AST type.
    */
-  public void print (AST ast) throws RunnerException {
+  public void print(final AST ast) throws RunnerException {
     if (ast == null) {
       return;
     }
@@ -247,7 +264,7 @@ public class PdeEmitter implements PdeTokenTypes
     }
     stack.push(ast);
 
-    AST child1 = ast.getFirstChild();
+    final AST child1 = ast.getFirstChild();
     AST child2 = null;
     AST child3 = null;
     if (child1 != null) {
@@ -257,27 +274,27 @@ public class PdeEmitter implements PdeTokenTypes
       }
     }
 
-    switch(ast.getType()) {
-      // The top of the tree looks like this:
-      //  ROOT_ID  "Whatever.java"
-      //   package
-      //   imports
-      //   class definition
+    switch (ast.getType()) {
+    // The top of the tree looks like this:
+    //  ROOT_ID  "Whatever.java"
+    //   package
+    //   imports
+    //   class definition
     case ROOT_ID:
       dumpHiddenTokens(PdePreprocessor.filter.getInitialHiddenToken());
       printChildren(ast);
       break;
 
-      // supporting a "package" statement in a PDE program has
-      // a bunch of issues with it that need to dealt in the compilation
-      // code too, so this isn't actually tested.
+    // supporting a "package" statement in a PDE program has
+    // a bunch of issues with it that need to dealt in the compilation
+    // code too, so this isn't actually tested.
     case PACKAGE_DEF:
       out.print("package");
       dumpHiddenAfter(ast);
       print(ast.getFirstChild());
       break;
 
-      // IMPORT has exactly one child
+    // IMPORT has exactly one child
     case IMPORT:
       out.print("import");
       dumpHiddenAfter(ast);
@@ -322,7 +339,7 @@ public class PdeEmitter implements PdeTokenTypes
       }
       break;
 
-      // DOT always has exactly two children.
+    // DOT always has exactly two children.
     case DOT:
       print(child1);
       out.print(".");
@@ -359,14 +376,14 @@ public class PdeEmitter implements PdeTokenTypes
     case METHOD_DEF:
       // kids seem to be: MODIFIERS TYPE setup PARAMETERS
       //AST parent = (AST) stack.peek();
-      AST modifiersChild = ast.getFirstChild();
-      AST typeChild = modifiersChild.getNextSibling();
-      AST methodNameChild = typeChild.getNextSibling();
-      AST parametersChild = methodNameChild.getNextSibling();
+      final AST modifiersChild = ast.getFirstChild();
+      final AST typeChild = modifiersChild.getNextSibling();
+      final AST methodNameChild = typeChild.getNextSibling();
+      final AST parametersChild = methodNameChild.getNextSibling();
 
       // to output, use print(child) on each of the four
 
-      String methodName = methodNameChild.getText();
+      final String methodName = methodNameChild.getText();
       if (methodName.equals("main")) {
         PdePreprocessor.foundMain = true;
       }
@@ -376,10 +393,9 @@ public class PdeEmitter implements PdeTokenTypes
       boolean foundSpecifier = false;
       AST child = modifiersChild.getFirstChild();
       while (child != null) {
-        String childText = child.getText();
-        if (childText.equals("public") ||
-            childText.equals("protected") ||
-            childText.equals("private")) {
+        final String childText = child.getText();
+        if (childText.equals("public") || childText.equals("protected")
+            || childText.equals("private")) {
           foundSpecifier = true;
           child = null;
         } else {
@@ -390,27 +406,26 @@ public class PdeEmitter implements PdeTokenTypes
       if (!foundSpecifier) {
         out.print("public ");
       }
-      printChildren(ast);  // everything is fine
+      printChildren(ast); // everything is fine
       break;
 
-      // if we have two children, it's of the form "a=0"
-      // if just one child, it's of the form "=0" (where the
-      // lhs is above this AST).
+    // if we have two children, it's of the form "a=0"
+    // if just one child, it's of the form "=0" (where the
+    // lhs is above this AST).
     case ASSIGN:
       if (child2 != null) {
         print(child1);
         out.print("=");
         dumpHiddenAfter(ast);
         print(child2);
-      }
-      else {
+      } else {
         out.print("=");
         dumpHiddenAfter(ast);
         print(child1);
       }
       break;
 
-      // binary operators:
+    // binary operators:
     case PLUS:
     case MINUS:
     case DIV:
@@ -444,7 +459,6 @@ public class PdeEmitter implements PdeTokenTypes
       printBinaryOperator(ast);
       break;
 
-
     case LITERAL_for:
       out.print(ast.getText());
       dumpHiddenAfter(ast);
@@ -463,7 +477,7 @@ public class PdeEmitter implements PdeTokenTypes
       dumpHiddenAfter(ast);
       break;
 
-      // unary operators:
+    // unary operators:
     case BNOT:
     case LNOT:
     case INC:
@@ -530,7 +544,7 @@ public class PdeEmitter implements PdeTokenTypes
       dumpHiddenAfter(ast);
       break;
 
-    case LITERAL_synchronized:  // 0137 to fix bug #136
+    case LITERAL_synchronized: // 0137 to fix bug #136
       out.print(ast.getText());
       dumpHiddenAfter(ast);
       printChildren(ast);
@@ -543,9 +557,9 @@ public class PdeEmitter implements PdeTokenTypes
     case LITERAL_transient:
     case LITERAL_native:
     case LITERAL_threadsafe:
-    //case LITERAL_synchronized:  // 0137 to fix bug #136
+      //case LITERAL_synchronized:  // 0137 to fix bug #136
     case LITERAL_volatile:
-    case LITERAL_class:  // 0176 to fix bug #1466
+    case LITERAL_class: // 0176 to fix bug #1466
     case FINAL:
     case ABSTRACT:
     case LITERAL_package:
@@ -571,22 +585,21 @@ public class PdeEmitter implements PdeTokenTypes
     case EMPTY_STAT:
     case EMPTY_FIELD:
       break;
-      
+
     case LITERAL_continue:
     case LITERAL_break:
       out.print(ast.getText());
       dumpHiddenAfter(ast);
-      if (child1 != null)  {// maybe label
+      if (child1 != null) {// maybe label
         print(child1);
       }
       break;
 
-      // yuck:  Distinguish between "import x.y.*" and "x = 1 * 3"
+    // yuck:  Distinguish between "import x.y.*" and "x = 1 * 3"
     case STAR:
-      if (hasChildren(ast)) {   // the binary mult. operator
+      if (hasChildren(ast)) { // the binary mult. operator
         printBinaryOperator(ast);
-      }
-      else {    // the special "*" in import:
+      } else { // the special "*" in import:
         out.print("*");
         dumpHiddenAfter(ast);
       }
@@ -599,19 +612,7 @@ public class PdeEmitter implements PdeTokenTypes
       break;
 
     case LITERAL_if:
-      out.print("if");
-      dumpHiddenAfter(ast);
-      print(child1);    // the "if" condition: an EXPR
-      print(child2);    // the "then" clause is an SLIST
-      if (child3 != null) {
-        out.print("else");
-        // Tracked this bug to here:
-        // http://dev.processing.org/bugs/show_bug.cgi?id=1362
-        // This prints an SLIST, and the first item is {
-        // but that's not being printed when the print() call is made
-        dumpHiddenBefore(getBestPrintableNode(child3, true));
-        print(child3);  // optional "else" clause: an SLIST
-      }
+      printIfThenElse(ast);
       break;
 
     case LITERAL_while:
@@ -623,10 +624,10 @@ public class PdeEmitter implements PdeTokenTypes
     case LITERAL_do:
       out.print("do");
       dumpHiddenAfter(ast);
-      print(child1);            // an SLIST
+      print(child1); // an SLIST
       out.print("while");
       dumpHiddenBefore(getBestPrintableNode(child2, false));
-      print(child2);            // an EXPR
+      print(child2); // an EXPR
       break;
 
     case LITERAL_try:
@@ -641,7 +642,7 @@ public class PdeEmitter implements PdeTokenTypes
       printChildren(ast);
       break;
 
-      // the first child is the "try" and the second is the SLIST
+    // the first child is the "try" and the second is the SLIST
     case LITERAL_finally:
       out.print("finally");
       dumpHiddenAfter(ast);
@@ -654,7 +655,7 @@ public class PdeEmitter implements PdeTokenTypes
       print(child1);
       break;
 
-      // the dreaded trinary operator
+    // the dreaded trinary operator
     case QUESTION:
       print(child1);
       out.print("?");
@@ -663,9 +664,9 @@ public class PdeEmitter implements PdeTokenTypes
       print(child3);
       break;
 
-      // pde specific or modified tokens start here
+    // pde specific or modified tokens start here
 
-      // Image -> BImage, Font -> BFont as appropriate
+    // Image -> BImage, Font -> BFont as appropriate
     case IDENT:
       /*
       if (ast.getText().equals("Image") &&
@@ -681,7 +682,7 @@ public class PdeEmitter implements PdeTokenTypes
       dumpHiddenAfter(ast);
       break;
 
-      // the color datatype is just an alias for int
+    // the color datatype is just an alias for int
     case LITERAL_color:
       out.print("int");
       dumpHiddenAfter(ast);
@@ -689,20 +690,20 @@ public class PdeEmitter implements PdeTokenTypes
 
     case WEBCOLOR_LITERAL:
       if (ast.getText().length() != 6) {
-        System.err.println("Internal error: incorrect length of webcolor " +
-                           "literal should have been detected sooner.");
+        System.err.println("Internal error: incorrect length of webcolor "
+            + "literal should have been detected sooner.");
         break;
       }
       out.print("0xff" + ast.getText());
       dumpHiddenAfter(ast);
       break;
 
-      // allow for stuff like int(43.2).
+    // allow for stuff like int(43.2).
     case CONSTRUCTOR_CAST:
 
-      AST nonTerminalTypeNode = child1;
-      AST terminalTypeNode = child1.getFirstChild();
-      AST exprToCast = child2;
+      final AST nonTerminalTypeNode = child1;
+      final AST terminalTypeNode = child1.getFirstChild();
+      final AST exprToCast = child2;
 
       /*
         // if this is a string type, add .valueOf()
@@ -774,20 +775,17 @@ public class PdeEmitter implements PdeTokenTypes
       //dumpHiddenAfter(terminalTypeNode);
       //print(exprToCast);
       //}
-
       //out.print("(");
-      String pooType = terminalTypeNode.getText();
-      out.print("PApplet.parse" +
-                Character.toUpperCase(pooType.charAt(0)) +
-                pooType.substring(1));
-      dumpHiddenAfter(terminalTypeNode);  // the left paren
+      final String pooType = terminalTypeNode.getText();
+      out.print("PApplet.parse" + Character.toUpperCase(pooType.charAt(0))
+          + pooType.substring(1));
+      dumpHiddenAfter(terminalTypeNode); // the left paren
       print(exprToCast);
       //out.print("x)");
 
       break;
 
-
-      // making floating point literals default to floats, not doubles
+    // making floating point literals default to floats, not doubles
     case NUM_DOUBLE:
       out.print(ast.getText());
       if (Preferences.getBoolean("preproc.substitute_floats")) { //, true) ) {
@@ -800,62 +798,34 @@ public class PdeEmitter implements PdeTokenTypes
     case TYPE_PARAMETERS:
       printChildren(ast);
       break;
-      
+
     case TYPE_ARGUMENT:
     case TYPE_PARAMETER:
       print(ast.getFirstChild());
       break;
-      
+
     case WILDCARD_TYPE:
       out.print("? ");
       print(ast.getFirstChild());
       break;
-      
+
     case TYPE_LOWER_BOUNDS:
       out.print("super ");
       print(ast.getFirstChild());
       break;
-      
+
     case TYPE_UPPER_BOUNDS:
       out.print("extends ");
       print(ast.getFirstChild());
       break;
 
     default:
-      System.out.println("Invalid type:" + ast.getType());
-      debug.println("Invalid type:" + ast.getType());
+      debug.println("Unrecognized type:" + ast.getType() + " ("
+          + TokenUtil.nameOf(ast) + ")");
       break;
-
-/* The following are tokens, but I don't think JavaRecognizer
-   ever produces an AST with one of these types:
-   case COMMA:
-   case LITERAL_implements:
-   case LITERAL_extends:
-   case EOF:
-   case NULL_TREE_LOOKAHEAD:
-   case BLOCK:
-   case LABELED_STAT:   // refuse to implement on moral grounds :)
-   case LITERAL_import:
-   case LBRACK:
-   case RBRACK:
-   case LCURLY:
-   case RCURLY:
-   case LPAREN:
-   case RPAREN:
-   case LITERAL_else:   // else is a child of "if" AST
-   case COLON:          // part of the trinary operator
-   case WS:             // whitespace
-   case ESC:
-   case HEX_DIGIT:
-   case VOCAB:
-
-   case EXPONENT:       // exponents and float suffixes are left in the NUM_FLOAT
-   case FLOAT_SUFFIX
-*/
     }
 
     stack.pop();
   }
-  
 
 }
