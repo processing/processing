@@ -4,9 +4,11 @@ package processing.app.preproc;
 
 import java.io.PrintStream;
 import java.util.BitSet;
+import java.util.Stack;
 import processing.app.Preferences;
 import processing.app.antlr.PdeTokenTypes;
 import processing.app.debug.RunnerException;
+import antlr.CommonHiddenStreamToken;
 import antlr.collections.AST;
 
 /* Based on original code copyright (c) 2003 Andy Tripp <atripp@comcast.net>.
@@ -26,17 +28,16 @@ import antlr.collections.AST;
 
 @SuppressWarnings("unused")
 public class PdeEmitter implements PdeTokenTypes {
-  private PrintStream out = System.out;
+  private final PdePreprocessor pdePreprocessor;
+  private final PrintStream out;
   private final PrintStream debug = System.err;
-  //private static int ALL = -1;
-  private final java.util.Stack stack = new java.util.Stack();
+
+  private final Stack stack = new Stack();
   private final static int ROOT_ID = 0;
 
-  /**
-   * Specify a PrintStream to print to. System.out is the default.
-   * @param out the PrintStream to print to
-   */
-  public void setOut(final PrintStream out) {
+  
+  public PdeEmitter(final PdePreprocessor pdePreprocessor, final PrintStream out) {
+    this.pdePreprocessor = pdePreprocessor;
     this.out = out;
   }
 
@@ -98,8 +99,8 @@ public class PdeEmitter implements PdeTokenTypes {
   /**
    * Dump the list of hidden tokens linked to from the token passed in.
    */
-  private void dumpHiddenTokens(antlr.CommonHiddenStreamToken t) {
-    for (; t != null; t = PdePreprocessor.filter.getHiddenAfter(t)) {
+  private void dumpHiddenTokens(CommonHiddenStreamToken t) {
+    for (; t != null; t = pdePreprocessor.getHiddenAfter(t)) {
       out.print(t.getText());
     }
   }
@@ -281,7 +282,7 @@ public class PdeEmitter implements PdeTokenTypes {
     //   imports
     //   class definition
     case ROOT_ID:
-      dumpHiddenTokens(PdePreprocessor.filter.getInitialHiddenToken());
+      dumpHiddenTokens(pdePreprocessor.getInitialHiddenToken());
       printChildren(ast);
       break;
 
@@ -385,7 +386,7 @@ public class PdeEmitter implements PdeTokenTypes {
 
       final String methodName = methodNameChild.getText();
       if (methodName.equals("main")) {
-        PdePreprocessor.foundMain = true;
+        pdePreprocessor.setFoundMain(true);
       }
 
       // if this method doesn't have a specifier, make it public

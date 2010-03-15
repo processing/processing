@@ -47,6 +47,7 @@ public class Sketch {
   static private File tempBuildFolder;
 
   private Editor editor;
+  private boolean foundMain = false;
 
   /** main pde file for this sketch. */
   private File primaryFile;
@@ -1444,9 +1445,13 @@ public class Sketch {
         sc.addPreprocOffset(headerOffset);
       }
     }
+    foundMain = preprocessor.getFoundMain();
     return primaryClassName;
   }
   
+  public boolean getFoundMain() {
+    return foundMain;
+  }
   
   public ArrayList<File> getImportedLibraries() {
     return importedLibraries;
