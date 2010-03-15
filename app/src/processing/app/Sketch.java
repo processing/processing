@@ -1269,7 +1269,7 @@ public class Sketch {
     try {
       // if (i != 0) preproc will fail if a pde file is not
       // java mode, since that's required
-      String className = preprocessor.write();
+      final String className = preprocessor.write();
 
       if (className == null) {
         throw new RunnerException("Could not find main class");
