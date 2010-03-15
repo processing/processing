@@ -30,6 +30,7 @@ package processing.app.preproc;
 import processing.app.*;
 import processing.core.*;
 import processing.app.antlr.*;
+import processing.app.debug.RunnerException;
 import java.io.*;
 import java.util.*;
 import antlr.*;
@@ -187,18 +188,80 @@ public class PdePreprocessor {
     return filter.getInitialHiddenToken();
   }
 
+  private static int countNewlines(final String s) {
+    int count = 0;
+    for (int pos = s.indexOf('\n', 0); pos >= 0; pos = s.indexOf('\n', pos + 1))
+      count++;
+    return count;
+  }
+
+  private static void checkForUnterminatedMultilineComment(final String program)
+      throws RunnerException {
+    final int length = program.length();
+    for (int i = 0; i < length; i++) {
+      // for any double slash comments, ignore until the end of the line
+      if ((program.charAt(i) == '/') && (i < length - 1)
+          && (program.charAt(i + 1) == '/')) {
+        i += 2;
+        while ((i < length) && (program.charAt(i) != '\n')) {
+          i++;
+        }
+        // check to see if this is the start of a new multiline comment.
+        // if it is, then make sure it's actually terminated somewhere.
+      } else if ((program.charAt(i) == '/') && (i < length - 1)
+          && (program.charAt(i + 1) == '*')) {
+        final int startOfComment = i;
+        i += 2;
+        boolean terminated = false;
+        while (i < length - 1) {
+          if ((program.charAt(i) == '*') && (program.charAt(i + 1) == '/')) {
+            i += 2;
+            terminated = true;
+            break;
+          } else {
+            i++;
+          }
+        }
+        if (!terminated) {
+          throw new RunnerException("Unclosed /* comment */", 0,
+                                    countNewlines(program.substring(0,
+                                      startOfComment)));
+        }
+      } else if (program.charAt(i) == '"') {
+        final int stringStart = i;
+        boolean terminated = false;
+        for (i++; i < length; i++) {
+          final char c = program.charAt(i);
+          if (c == '"') {
+            terminated = true;
+            break;
+          } else if (c == '\\') {
+            if (i == length - 1) {
+              break;
+            }
+            i++;
+          } else if (c == '\n') {
+            break;
+          }
+        }
+        if (!terminated) {
+          throw new RunnerException("Unterminated string constant", 0,
+                                    countNewlines(program.substring(0,
+                                      stringStart)));
+        }
+      }
+    }
+  }
+
   public int writePrefix(String program, String buildPath, String sketchName,
                          String codeFolderPackages[])
-      throws FileNotFoundException {
+      throws FileNotFoundException, RunnerException {
     this.name = sketchName;
 
     // need to reset whether or not this has a main()
     foundMain = false;
 
-    // if the program ends with no CR or LF an OutOfMemoryError will happen.
-    // not gonna track down the bug now, so here's a hack for it:
-    // http://dev.processing.org/bugs/show_bug.cgi?id=5
-    //program += "\n";  // fixed by jdf? Can't reproduce.
+    checkForUnterminatedMultilineComment(program);
 
     // This has to happen BEFORE the scrub, or else the character count is off,
     // and you get a missing character in the prologue. If you're "lucky",
@@ -208,20 +271,13 @@ public class PdePreprocessor {
       program = substituteUnicode(program);
     }
 
-    // if the program ends with an unterminated multi-line comment,
-    // an OutOfMemoryError or NullPointerException will happen.
-    // again, not gonna bother tracking this down, but here's a hack.
-    // http://dev.processing.org/bugs/show_bug.cgi?id=16
-    String scrubbed = Sketch.scrubComments(program);
-    // If there are errors, an exception is thrown and this fxn exits.
-
     final String importRegexp = "(?:^|;)\\s*(import\\s+)((?:static\\s+)?\\S+)(\\s*;)";
     programImports = new ArrayList<String>();
 
     do {
       // Use scrubbed version of code for the imports, 
       // so that commented-out import statements are ignored.
-      String[] pieces = PApplet.match(scrubbed, importRegexp);
+      String[] pieces = PApplet.match(program, importRegexp);
       // Stop the loop if we've removed all the importy lines
       if (pieces == null)
         break;
@@ -232,12 +288,12 @@ public class PdePreprocessor {
       programImports.add(pieces[2]); // the package name
 
       // find index of this import in the program
-      int idx = scrubbed.indexOf(piece);
+      int idx = program.indexOf(piece);
 
       // Remove the comment from the main program
       program = program.substring(0, idx) + program.substring(idx + len);
       // Remove from the scrubbed version as well, to keep offsets identical. 
-      scrubbed = scrubbed.substring(0, idx) + scrubbed.substring(idx + len);
+      //scrubbed = scrubbed.substring(0, idx) + scrubbed.substring(idx + len);
 
     } while (true);
 
@@ -392,7 +448,6 @@ public class PdePreprocessor {
     new PdeEmitter(this, stream).print(rootNode);
     writeFooter(stream, name);
     stream.close();
-
 
     if (false) {
       final ByteArrayOutputStream buf = new ByteArrayOutputStream();
