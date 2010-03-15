@@ -1245,7 +1245,7 @@ public class Sketch {
         bigCount += sc.getLineCount();
       }
     }
-
+    
     // Note that the headerOffset isn't applied until compile and run, because
     // it only applies to the code after it's been written to the .java file.
     int headerOffset = 0;
@@ -1267,25 +1267,13 @@ public class Sketch {
     String primaryClassName = null;
 
     try {
-      // if (i != 0) preproc will fail if a pde file is not
-      // java mode, since that's required
       final String className = preprocessor.write();
-
       if (className == null) {
         throw new RunnerException("Could not find main class");
-        // this situation might be perfectly fine,
-        // (i.e. if the file is empty)
-        //System.out.println("No class found in " + code[i].name);
-        //System.out.println("(any code in that file will be ignored)");
-        //System.out.println();
-
-//      } else {
-//        code[0].setPreprocName(className + ".java");
       }
 
       // store this for the compiler and the runtime
       primaryClassName = className;
-
     } catch (antlr.RecognitionException re) {
       // re also returns a column that we're not bothering with for now
 
