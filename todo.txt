@@ -18,6 +18,7 @@ X   but right now there's a hack to add a CR in PdePreprocessor
 X   http://dev.processing.org/bugs/show_bug.cgi?id=5
 _ preproc can't handle labels to break/continue nested loops
 _   http://dev.processing.org/bugs/show_bug.cgi?id=631
+X toInt() needs to go away in time for the book.. fix parser bugs
 
 
 _ finish build instructions for 1.1
@@ -64,14 +65,6 @@ _ don't allow processing to run on snow leopard with 1.5
 _ do some testing for windows 7 on 64-bit
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1424
 
-reserved names/class naming
-_ Saving sketch with the same name as a class or primitive breaks sketch
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1165
-_ don't allow people to override methods like paint() 
-_   make them final? just improve the error messages?
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1219
-_ Processing chokes if a sketch defines a class with same name as the sketch
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1199
 
 _ single-line html comments not handled properly on export
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1419
@@ -743,45 +736,14 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=61
 
 PDE / Compiler & Preprocessor
 
+high (bugs)
 _ add local variables to PdeRecognizer
 _   remove static methods in PdePreprocessor, instead pull things from recog
-_ need better error messages in general
-_   some means to link out to further documentation (e.g. AIOOBE, NPE)
-_ add support for multiple errors from the compiler
-_   actual error may be 4th of 5
-_   maybe a dropdown list thing, with the first just shown?
-_   http://dev.processing.org/bugs/show_bug.cgi?id=58
-_ with additional .pde files, don't allow static mode in front tab
-_ don't allow "for (blah; blah; blah) ;"
-_   or if (blah blah blah) ;
-_   it's never useful. students can use { } if they want an empty block
-_ toInt() needs to go away in time for the book.. fix parser bugs
-_ using a processing keyword as a variable name gives unhelpful error message
-_   http://dev.processing.org/bugs/show_bug.cgi?id=213
 _ random, single slash in the code doesn't throw an error
 _   (just gets removed by the preprocessor)
 _   http://processing.org/bugs/show_bug.cgi?id=6
-_ allow doubles in preproc
-_   (for casting, etc) particularly for Math.cos() et al
-_   http://processing.org/bugs/show_bug.cgi?id=7
-_ don't allow goofy case versions of reserved words
-_   keypressed should maybe throw an error
-_   http://dev.processing.org/bugs/show_bug.cgi?id=9
 _ missing brackets, unmatched brackets
 _   http://dev.processing.org/bugs/show_bug.cgi?id=13
-_ "unexpected token void" -> "You're mixing dynamic and static mode"
-_   http://dev.processing.org/bugs/show_bug.cgi?id=14
-_ expecting RPAREN messages are ugly
-_   http://dev.processing.org/bugs/show_bug.cgi?id=15
-_ not enough args for triangle (or args in general) 
-_   throws out bizarre message 
-_   http://dev.processing.org/bugs/show_bug.cgi?id=17
-_ if 'void' left out before loop or setup, cryptic message about
-_   'constructor loop must be named Temporary_23498_2343'
-_   add a better handler for this specific thing?
-_   http://dev.processing.org/bugs/show_bug.cgi?id=18
-_ using a keyword as a variable name gives unhelpful error message
-_   http://dev.processing.org/bugs/show_bug.cgi?id=212
 _ unspecified return type creates compile error
 _   or maybe not? followup said maybe not
 _   http://dev.processing.org/bugs/show_bug.cgi?id=379
@@ -795,9 +757,6 @@ _ "missing a /* from the end of a comment" message
 _   enter a bug for this, it's bound to be found
 _   "multipart/*" produces the error
 _   even though things are inside a quoted txt block
-_ copy running code from /tmp/buildXXxxx on crash of p5
-_   should probably make a way to save/recover code
-_   make the buildXxxx folders relate to time/date?
 _ NullPointerException on unterminated comment at end of code
 _   and OutOfMemoryError and weird lockup
 _   http://dev.processing.org/bugs/show_bug.cgi?id=16
@@ -807,12 +766,61 @@ _ Parsing error when using char literals
 _   http://dev.processing.org/bugs/show_bug.cgi?id=281
 _ Improve detection and handling of missing semicolons
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1036
-5 _ support for assertions
-5 _   http://dev.processing.org/bugs/show_bug.cgi?id=1188
-_ "class fFrame extends Frame {" it works in first run but later doesn't
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1294
+_ support for assertions
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1188
 _ Error compiling when 'new' is first word in an 'else' block
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1362
+
+medium (bugs/features)
+_ with additional .pde files, don't allow static mode in front tab
+_   e.g. no setup()/draw() block
+_ allow doubles in preproc
+_   (for casting, etc) particularly for Math.cos() et al
+_   http://processing.org/bugs/show_bug.cgi?id=7
+_ don't allow "for (blah; blah; blah) ;"
+_   or if (blah blah blah) ;
+_   it's never useful. students can use { } if they want an empty block
+
+low (features)
+_ add support for multiple errors from the compiler
+_   actual error may be 4th of 5
+_   maybe a dropdown list thing, with the first just shown?
+_   http://dev.processing.org/bugs/show_bug.cgi?id=58
+_ copy running code from /tmp/buildXXxxx on crash of p5
+_   should probably make a way to save/recover code
+_   make the buildXxxx folders relate to time/date?
+
+low (common errors around reserved names/class naming)
+_ Saving sketch with the same name as a class or primitive breaks sketch
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1165
+_ don't allow people to override methods like paint() 
+_   make them final? just improve the error messages?
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1219
+_ Processing chokes if a sketch defines a class with same name as the sketch
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1199
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1294
+_ using a processing keyword as a variable name gives unhelpful error message
+_   http://dev.processing.org/bugs/show_bug.cgi?id=213
+_ don't allow goofy case versions of reserved words
+_   keypressed should maybe throw an error
+_   http://dev.processing.org/bugs/show_bug.cgi?id=9
+_ using a keyword as a variable name gives unhelpful error message
+_   http://dev.processing.org/bugs/show_bug.cgi?id=212
+
+low (better error messages)
+_ not enough args for triangle (or args in general) 
+_   throws out bizarre message 
+_   http://dev.processing.org/bugs/show_bug.cgi?id=17
+_ "unexpected token void" -> "You're mixing dynamic and static mode"
+_   http://dev.processing.org/bugs/show_bug.cgi?id=14
+_ need better error messages in general
+_   some means to link out to further documentation (e.g. AIOOBE, NPE)
+_ expecting RPAREN messages are ugly
+_   http://dev.processing.org/bugs/show_bug.cgi?id=15
+_ if 'void' left out before loop or setup, cryptic message about
+_   'constructor loop must be named Temporary_23498_2343'
+_   add a better handler for this specific thing?
+_   http://dev.processing.org/bugs/show_bug.cgi?id=18
 
 
 PDE / Editor
