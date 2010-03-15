@@ -16,6 +16,8 @@ X preprocessor error if last line of code is a comment with no CR after it,
 X   an OutOfMemoryError wants to happen, 
 X   but right now there's a hack to add a CR in PdePreprocessor
 X   http://dev.processing.org/bugs/show_bug.cgi?id=5
+_ preproc can't handle labels to break/continue nested loops
+_   http://dev.processing.org/bugs/show_bug.cgi?id=631
 
 
 _ finish build instructions for 1.1
@@ -753,8 +755,6 @@ _ with additional .pde files, don't allow static mode in front tab
 _ don't allow "for (blah; blah; blah) ;"
 _   or if (blah blah blah) ;
 _   it's never useful. students can use { } if they want an empty block
-_ preproc can't handle labels to break/continue nested loops
-_   http://dev.processing.org/bugs/show_bug.cgi?id=631
 _ toInt() needs to go away in time for the book.. fix parser bugs
 _ using a processing keyword as a variable name gives unhelpful error message
 _   http://dev.processing.org/bugs/show_bug.cgi?id=213
