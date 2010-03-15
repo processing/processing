@@ -32,6 +32,21 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=379
 X   (already marked invalid -- jdf)
 J Blah.class will confuse the preproc
 J   http://dev.processing.org/bugs/show_bug.cgi?id=481
+J non-matching curly brackets sometimes don't cause an error
+J   http://dev.processing.org/bugs/show_bug.cgi?id=507
+J   (duplicate of #6)
+J NullPointerException on unterminated comment at end of code
+J   and OutOfMemoryError and weird lockup
+J   http://dev.processing.org/bugs/show_bug.cgi?id=16
+J "missing a /* from the end of a comment" message
+J   http://dev.processing.org/bugs/show_bug.cgi?id=1512
+J   "multipart/*" produces the error
+J   even though things are inside a quoted txt block
+J NullPointerException on unterminated comment at end of code
+J   and OutOfMemoryError and weird lockup
+J   http://dev.processing.org/bugs/show_bug.cgi?id=16
+J also OutOfMemoryError if a quote is not terminated
+J   http://dev.processing.org/bugs/show_bug.cgi?id=763
 
 
 _ finish build instructions for 1.1
@@ -752,15 +767,6 @@ PDE / Compiler & Preprocessor
 high (bugs)
 _ syntax highlighting error with // and /*
 _   http://dev.processing.org/bugs/show_bug.cgi?id=609
-_ "missing a /* from the end of a comment" message
-_   enter a bug for this, it's bound to be found
-_   "multipart/*" produces the error
-_   even though things are inside a quoted txt block
-_ NullPointerException on unterminated comment at end of code
-_   and OutOfMemoryError and weird lockup
-_   http://dev.processing.org/bugs/show_bug.cgi?id=16
-_ also OutOfMemoryError if a quote is not terminated
-_   http://dev.processing.org/bugs/show_bug.cgi?id=763
 _ Parsing error when using char literals
 _   http://dev.processing.org/bugs/show_bug.cgi?id=281
 _ Improve detection and handling of missing semicolons
