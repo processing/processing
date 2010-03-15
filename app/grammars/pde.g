@@ -23,15 +23,33 @@ tokens {
     CONSTRUCTOR_CAST; EMPTY_FIELD;
 }
 
+{
+	// this clause copied from java15.g! ANTLR does not copy this
+	// section from the super grammar.
+	/**
+	 * Counts the number of LT seen in the typeArguments production.
+	 * It is used in semantic predicates to ensure we have seen
+	 * enough closing '>' characters; which actually may have been
+	 * either GT, SR or BSR tokens.
+	 */
+	private int ltCounter = 0;
+
+	private PdePreprocessor pp;
+	public PdeRecognizer(final PdePreprocessor pp, final TokenStream ts) {
+	    this(ts);
+		this.pp = pp;
+	}
+}
+
 pdeProgram
         // only java mode programs will have their own public classes or
         // imports (and they must have at least one)
     :   ( "public" "class" | "import" ) => javaProgram
-        { PdePreprocessor.setProgramType(PdePreprocessor.ProgramType.JAVA); }
+        { pp.setProgramType(PdePreprocessor.ProgramType.JAVA); }
 	|	((statement)*) => staticProgram
-        { PdePreprocessor.setProgramType(PdePreprocessor.ProgramType.STATIC); }
+        { pp.setProgramType(PdePreprocessor.ProgramType.STATIC); }
     |   activeProgram
-        { PdePreprocessor.setProgramType(PdePreprocessor.ProgramType.ACTIVE); }
+        { pp.setProgramType(PdePreprocessor.ProgramType.ACTIVE); }
 
     ;
 
@@ -226,7 +244,7 @@ classDefinition![AST modifiers]
         cb:classBlock
         {#classDefinition = #(#[CLASS_DEF,"CLASS_DEF"],
                               modifiers,i,tp,sc,ic,cb);
-         PdePreprocessor.advClassName = i.getText();}
+         pp.setAdvClassName(i.getText());}
     ;
 
 possiblyEmptyField

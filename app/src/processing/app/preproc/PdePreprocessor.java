@@ -125,6 +125,10 @@ import antlr.collections.*;
  * <P/>
  */
 public class PdePreprocessor {
+  
+  // used for calling the ASTFactory to get the root node
+  private static final int ROOT_ID = 0;
+
 
   // these ones have the .* at the end, since a class name might be at the end
   // instead of .* which would make trouble other classes using this can lop
@@ -139,47 +143,51 @@ public class PdePreprocessor {
     STATIC, ACTIVE, JAVA
   }
 
-  // static to make it easier for the antlr preproc to get at it
-  static private ProgramType programType;
-  static public boolean foundMain;
-
-  static public void setProgramType(final ProgramType programType) {
-    //    System.err.println("Setting program type to " + programType);
-    PdePreprocessor.programType = programType;
-  }
-
-  String indent;
-
-  PrintStream stream;
-  Reader programReader;
-  String buildPath;
+  private String indent;
+  private PrintStream stream;
+  private Reader programReader;
   // starts as sketch name, ends as main class name
-  String name;
+  private String name;
 
-  // used for calling the ASTFactory to get the root node
-  private static final int ROOT_ID = 0;
 
-  /**
-   * Used by PdeEmitter.dumpHiddenTokens()
-   */
-  public static TokenStreamCopyingHiddenTokenFilter filter;
+  private TokenStreamCopyingHiddenTokenFilter filter;
 
-  public static String advClassName = "";
-
-  /**
-   * Setup a new preprocessor.
-   */
+  private boolean foundMain;
+  public void setFoundMain(boolean foundMain) {
+    this.foundMain = foundMain;
+  }
+  public boolean getFoundMain() {
+    return foundMain;
+  }
+  
+  private String advClassName = "";
+  public void setAdvClassName(final String advClassName) {
+    this.advClassName = advClassName;
+  }
+  
+  private ProgramType programType;
+  public void setProgramType(final ProgramType programType) {
+    //    System.err.println("Setting program type to " + programType);
+    this.programType = programType;
+  }
+  
   public PdePreprocessor() {
-    int tabSize = Preferences.getInteger("editor.tabs.size");
-    char[] indentChars = new char[tabSize];
+    char[] indentChars = new char[Preferences.getInteger("editor.tabs.size")];
     Arrays.fill(indentChars, ' ');
     indent = new String(indentChars);
   }
 
+  CommonHiddenStreamToken getHiddenAfter(final CommonHiddenStreamToken t) {
+    return filter.getHiddenAfter(t);
+  }
+  
+  CommonHiddenStreamToken getInitialHiddenToken() {
+    return filter.getInitialHiddenToken();
+  }
+  
   public int writePrefix(String program, String buildPath, String sketchName,
                          String codeFolderPackages[])
       throws FileNotFoundException {
-    this.buildPath = buildPath;
     this.name = sketchName;
 
     // need to reset whether or not this has a main()
@@ -339,7 +347,7 @@ public class PdePreprocessor {
 
     // create a parser and set what sort of AST should be generated
     //
-    PdeRecognizer parser = new PdeRecognizer(filter);
+    PdeRecognizer parser = new PdeRecognizer(this, filter);
 
     // use our extended AST class
     //
@@ -376,12 +384,8 @@ public class PdePreprocessor {
       return null;
 
     // output the code
-    //
-    PdeEmitter emitter = new PdeEmitter();
-    //writeHeader(stream, extraImports, name);
+    PdeEmitter emitter = new PdeEmitter(this, stream);
     writeDeclaration(stream, name);
-
-    emitter.setOut(stream);
     emitter.print(rootNode);
 
     //    debugAST(rootNode, true);
@@ -484,7 +488,7 @@ public class PdePreprocessor {
 
     if ((programType == ProgramType.STATIC)
         || (programType == ProgramType.ACTIVE)) {
-      if (!PdePreprocessor.foundMain) {
+      if (!foundMain) {
         out.println(indent + "static public void main(String args[]) {");
         out.print(indent + indent + "PApplet.main(new String[] { ");
 
@@ -593,7 +597,7 @@ public class PdePreprocessor {
 
   private String debugHiddenTokens(antlr.CommonHiddenStreamToken t) {
     final StringBuilder sb = new StringBuilder();
-    for (; t != null; t = PdePreprocessor.filter.getHiddenAfter(t)) {
+    for (; t != null; t = filter.getHiddenAfter(t)) {
       if (sb.length() == 0)
         sb.append("[");
       sb.append(t.getText().replace("\n", "\\n"));
