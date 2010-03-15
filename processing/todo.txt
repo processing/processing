@@ -1,8 +1,8 @@
 0180 pde
 
 preprocessor
-_ Update ANTLR grammar to support 1.5 syntax
-_   http://dev.processing.org/bugs/show_bug.cgi?id=598
+J Update ANTLR grammar to support 1.5 syntax
+J   http://dev.processing.org/bugs/show_bug.cgi?id=598
 X non-void functions confuse preprocessor
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1442
 X casting problems in the parser
@@ -16,9 +16,11 @@ X preprocessor error if last line of code is a comment with no CR after it,
 X   an OutOfMemoryError wants to happen, 
 X   but right now there's a hack to add a CR in PdePreprocessor
 X   http://dev.processing.org/bugs/show_bug.cgi?id=5
-_ preproc can't handle labels to break/continue nested loops
-_   http://dev.processing.org/bugs/show_bug.cgi?id=631
+J preproc can't handle labels to break/continue nested loops
+J   http://dev.processing.org/bugs/show_bug.cgi?id=631
 X toInt() needs to go away in time for the book.. fix parser bugs
+J add local variables to PdeRecognizer
+J   remove static methods in PdePreprocessor, instead pull things from recog
 
 
 _ finish build instructions for 1.1
@@ -737,8 +739,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=61
 PDE / Compiler & Preprocessor
 
 high (bugs)
-_ add local variables to PdeRecognizer
-_   remove static methods in PdePreprocessor, instead pull things from recog
 _ random, single slash in the code doesn't throw an error
 _   (just gets removed by the preprocessor)
 _   http://processing.org/bugs/show_bug.cgi?id=6
