@@ -1249,7 +1249,6 @@ public class Sketch {
     // Note that the headerOffset isn't applied until compile and run, because
     // it only applies to the code after it's been written to the .java file.
     int headerOffset = 0;
-    //PdePreprocessor preprocessor = new PdePreprocessor();
     try {
       headerOffset = preprocessor.writePrefix(bigCode.toString(),
                                               buildPath,
@@ -1333,7 +1332,7 @@ public class Sketch {
       if (msg.indexOf("unexpected token:") != -1) {
         System.err.println(msg);
         throw new RunnerException("Syntax error, " +
-                                  "maybe an extra }, an extra math symbol, or an unclosed comment?",
+                                  "maybe a missing ;, an extra }, an extra math symbol, or an unclosed comment?",
                                   errorFile, errorLine, re.getColumn());
       }
 
