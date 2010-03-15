@@ -21,6 +21,9 @@ J   http://dev.processing.org/bugs/show_bug.cgi?id=631
 X toInt() needs to go away in time for the book.. fix parser bugs
 J add local variables to PdeRecognizer
 J   remove static methods in PdePreprocessor, instead pull things from recog
+J random, single slash in the code doesn't throw an error
+J   (just gets removed by the preprocessor)
+J   http://processing.org/bugs/show_bug.cgi?id=6
 
 
 _ finish build instructions for 1.1
@@ -739,9 +742,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=61
 PDE / Compiler & Preprocessor
 
 high (bugs)
-_ random, single slash in the code doesn't throw an error
-_   (just gets removed by the preprocessor)
-_   http://processing.org/bugs/show_bug.cgi?id=6
 _ missing brackets, unmatched brackets
 _   http://dev.processing.org/bugs/show_bug.cgi?id=13
 _ unspecified return type creates compile error
