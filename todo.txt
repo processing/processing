@@ -24,6 +24,14 @@ J   remove static methods in PdePreprocessor, instead pull things from recog
 J random, single slash in the code doesn't throw an error
 J   (just gets removed by the preprocessor)
 J   http://processing.org/bugs/show_bug.cgi?id=6
+J missing brackets, unmatched brackets
+J   http://dev.processing.org/bugs/show_bug.cgi?id=13
+X unspecified return type creates compile error
+X   or maybe not? followup said maybe not
+X   http://dev.processing.org/bugs/show_bug.cgi?id=379
+X   (already marked invalid -- jdf)
+J Blah.class will confuse the preproc
+J   http://dev.processing.org/bugs/show_bug.cgi?id=481
 
 
 _ finish build instructions for 1.1
@@ -742,15 +750,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=61
 PDE / Compiler & Preprocessor
 
 high (bugs)
-_ missing brackets, unmatched brackets
-_   http://dev.processing.org/bugs/show_bug.cgi?id=13
-_ unspecified return type creates compile error
-_   or maybe not? followup said maybe not
-_   http://dev.processing.org/bugs/show_bug.cgi?id=379
-_ Blah.class will confuse the preproc
-_   http://dev.processing.org/bugs/show_bug.cgi?id=481
-_ non-matching curly brackets sometimes don't cause an error
-_   http://dev.processing.org/bugs/show_bug.cgi?id=507
 _ syntax highlighting error with // and /*
 _   http://dev.processing.org/bugs/show_bug.cgi?id=609
 _ "missing a /* from the end of a comment" message
