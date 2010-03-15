@@ -3,33 +3,31 @@
 preprocessor
 J Update ANTLR grammar to support 1.5 syntax
 J   http://dev.processing.org/bugs/show_bug.cgi?id=598
-X non-void functions confuse preprocessor
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1442
-X casting problems in the parser
-X   straighten out int() -> toInt() conversions
-X   float u = float(x)/width; works.
-X   float u = (float(x)/width); doesn't work: "unexpected token: float".
-X   float u = (x/float(width)); works! 
-X   http://dev.processing.org/bugs/show_bug.cgi?id=4
-X   return (int(5.5)) causes an error
-X preprocessor error if last line of code is a comment with no CR after it,
-X   an OutOfMemoryError wants to happen, 
-X   but right now there's a hack to add a CR in PdePreprocessor
-X   http://dev.processing.org/bugs/show_bug.cgi?id=5
+J non-void functions confuse preprocessor
+J   http://dev.processing.org/bugs/show_bug.cgi?id=1442
+J casting problems in the parser
+J   straighten out int() -> toInt() conversions
+J   float u = float(x)/width; works.
+J   float u = (float(x)/width); doesn't work: "unexpected token: float".
+J   float u = (x/float(width)); works! 
+J   http://dev.processing.org/bugs/show_bug.cgi?id=4
+J   return (int(5.5)) causes an error
+J preprocessor error if last line of code is a comment with no CR after it,
+J   an OutOfMemoryError wants to happen, 
+J   but right now there's a hack to add a CR in PdePreprocessor
+J   http://dev.processing.org/bugs/show_bug.cgi?id=5
 J preproc can't handle labels to break/continue nested loops
 J   http://dev.processing.org/bugs/show_bug.cgi?id=631
-X toInt() needs to go away in time for the book.. fix parser bugs
+J toInt() needs to go away in time for the book.. fix parser bugs
 J add local variables to PdeRecognizer
 J   remove static methods in PdePreprocessor, instead pull things from recog
 J random, single slash in the code doesn't throw an error
 J   (just gets removed by the preprocessor)
 J   http://processing.org/bugs/show_bug.cgi?id=6
-J missing brackets, unmatched brackets
-J   http://dev.processing.org/bugs/show_bug.cgi?id=13
-X unspecified return type creates compile error
-X   or maybe not? followup said maybe not
-X   http://dev.processing.org/bugs/show_bug.cgi?id=379
-X   (already marked invalid -- jdf)
+J unspecified return type creates compile error
+J   or maybe not? followup said maybe not
+J   http://dev.processing.org/bugs/show_bug.cgi?id=379
+J   (already marked invalid -- jdf)
 J Blah.class will confuse the preproc
 J   http://dev.processing.org/bugs/show_bug.cgi?id=481
 J non-matching curly brackets sometimes don't cause an error
@@ -51,8 +49,12 @@ J Error compiling when 'new' is first word in an 'else' block
 J   http://dev.processing.org/bugs/show_bug.cgi?id=1362
 J Parsing error when using char literals
 J   http://dev.processing.org/bugs/show_bug.cgi?id=281
+
+need examples
 _ Improve detection and handling of missing semicolons
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1036
+_ missing brackets, unmatched brackets
+_   http://dev.processing.org/bugs/show_bug.cgi?id=13
 
 
 _ finish build instructions for 1.1

@@ -1,3 +1,18 @@
+PROCESSING REV 0180 - 15 March 2010
+
+This is a interim release with a reworked preprocessor that adds Java 5 
+syntax. We're releasing this interim version because we need help testing 
+it since it has an impact on any sketch created in the Processing environment.
+Basically, we mighta goofed something up big, and we wanna catch it before
+we throw it to the wolves. 
+
+The release also fixes a number of preprocessor bugs. Those changes will
+be documented a bit later. 
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING 1.1 (REV 0179) - 11 March 2010
 
 This is the first general-purpose release since 1.0.9. The text below merges 
