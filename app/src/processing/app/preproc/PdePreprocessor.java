@@ -198,6 +198,14 @@ public class PdePreprocessor {
     // http://dev.processing.org/bugs/show_bug.cgi?id=5
     //program += "\n";  // fixed by jdf? Can't reproduce.
 
+    // This has to happen BEFORE the scrub, or else the character count is off,
+    // and you get a missing character in the prologue. If you're "lucky",
+    // that missing character is the terminating slash of a multiline comment.
+    // This is behind http://dev.processing.org/bugs/show_bug.cgi?id=1511
+    if (Preferences.getBoolean("preproc.substitute_unicode")) {
+      program = substituteUnicode(program);
+    }
+
     // if the program ends with an unterminated multi-line comment,
     // an OutOfMemoryError or NullPointerException will happen.
     // again, not gonna bother tracking this down, but here's a hack.
@@ -205,12 +213,7 @@ public class PdePreprocessor {
     String scrubbed = Sketch.scrubComments(program);
     // If there are errors, an exception is thrown and this fxn exits.
 
-    if (Preferences.getBoolean("preproc.substitute_unicode")) {
-      program = substituteUnicode(program);
-    }
-
-    //String importRegexp = "(?:^|\\s|;)(import\\s+)(\\S+)(\\s*;)";
-    String importRegexp = "(?:^|;)\\s*(import\\s+)((?:static\\s+)?\\S+)(\\s*;)";
+    final String importRegexp = "(?:^|;)\\s*(import\\s+)((?:static\\s+)?\\S+)(\\s*;)";
     programImports = new ArrayList<String>();
 
     do {
