@@ -123,6 +123,7 @@ loop:           for(int i = offset; i < mlength; i++)
                                                         lastOffset = lastKeyword = mlength;
                                                         break loop;
                                                 }
+                                                i++; // jdf- fix http://dev.processing.org/bugs/show_bug.cgi?id=609
                                         }
                                         break;
                                 default:
