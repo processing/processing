@@ -350,9 +350,9 @@ while (false!==($item=readdir($handle)))
              $messages[]='Directory created: '.$to;
              //copydirr($from,$to,$recursive,$chmod,$verbose);
            }
-           else
+           else {
            
-           //$errors[]='cannot create directory '.$to;
+           $errors[]='Directory already exists '.$to;
            }
            copydirr($from,$to,$recursive,$chmod,$verbose);
       }
