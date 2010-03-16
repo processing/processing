@@ -24,7 +24,8 @@ import antlr.collections.AST;
  * AST. Typically, the AST node that you pass would be the root of a
  * tree - the ROOT_ID node that represents a Java file.
  * 
- * Modified March 2010 to support Java 5 type arguments and for loops
+ * Modified March 2010 to support Java 5 type arguments and for loops by
+ * @author Jonathan Feinberg &lt;jdf@pobox.com&gt;
  */
 
 @SuppressWarnings("unused")
