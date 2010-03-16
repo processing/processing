@@ -343,6 +343,8 @@ while (false!==($item=readdir($handle)))
            else
                $errors[]='cannot copy file from '.$from.' to '.$to;
            }
+           
+
        if (is_dir($from)  && $recursive)
        {
            if (!is_dir($to)) { 
@@ -350,8 +352,7 @@ while (false!==($item=readdir($handle)))
              $messages[]='Directory created: '.$to;
              //copydirr($from,$to,$recursive,$chmod,$verbose);
            }
-           else {
-           
+           else 
            $errors[]='Directory already exists '.$to;
            }
            copydirr($from,$to,$recursive,$chmod,$verbose);
