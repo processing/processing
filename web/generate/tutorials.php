@@ -159,7 +159,7 @@ if (!is_dir($path.'learning/curves/code')) {
 	mkdir($path.'learning/curves/code', '0757'); 
 }
 if (is_dir($path.'learning/curves/code')) { 
-	copydirr($source.'curves/code/*', $path.'learning/curves/code/*', null, 0757, true); 
+	copydirr($source.'curves/code', $path.'learning/curves/code', true, 0757, true); 
 }
 
 
