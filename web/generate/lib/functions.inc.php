@@ -354,6 +354,7 @@ while (false!==($item=readdir($handle)))
            if (!is_dir($to)) { 
              mkdir($to, $chmod); 
              $messages[]='Directory created: '.$to;
+             copydirr($from,$to,$chmod,$verbose);
            }
 /*
            if (@mkdir($to))
@@ -362,7 +363,7 @@ while (false!==($item=readdir($handle)))
            }
 */
            else
-               $errors[]='cannot create directory '.$to;
+               //$errors[]='cannot create directory '.$to;
            copydirr($from,$to,$chmod,$verbose);
            }
        }
