@@ -1,7 +1,4 @@
-0180 android
-X change sdk to use revision 6 (2.0.1) as the version
-_   change instructions on site 
-X add support for a default font
+0181 android
 
 
 _ make size() work to place the component at the center of the screen
