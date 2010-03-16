@@ -9,6 +9,7 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.List;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
@@ -107,8 +108,7 @@ class Build {
 
       // grab code from current editing window
       sketch.prepare();
-      className = sketch.preprocess(buildPath, new Preproc(buildPath, sketch
-          .getName()));
+      className = sketch.preprocess(buildPath, new Preproc(sketch.getName()));
       if (className != null) {
         final File androidXML = new File(androidFolder, "AndroidManifest.xml");
         writeAndroidManifest(androidXML, sketch.getName(), className);
@@ -325,17 +325,18 @@ class Build {
 
   class Preproc extends PdePreprocessor {
 
-    public Preproc(final String buildPath, final String sketchName)
-        throws IOException {
-      super(buildPath, sketchName);
+    public Preproc(final String sketchName) throws IOException {
+      super(sketchName);
     }
 
     @Override
-    public int writeImports(final PrintStream out) {
+    protected int writeImports(final PrintStream out,
+                               final List<String> programImports,
+                               final List<String> codeFolderImports) {
       out.println("package " + getPackageName() + ";");
       out.println();
       // add two lines for the package above
-      return 2 + super.writeImports(out);
+      return 2 + super.writeImports(out, programImports, codeFolderImports);
     }
 
     @Override
