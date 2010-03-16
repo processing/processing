@@ -4,6 +4,11 @@ import java.lang.reflect.Field;
 import antlr.collections.AST;
 import processing.app.antlr.PdeTokenTypes;
 
+/**
+ * 
+ * @author Jonathan Feinberg &lt;jdf@pobox.com&gt;
+ *
+ */
 public class TokenUtil {
   private static final String[] tokenNames= new String[200];
   static {
