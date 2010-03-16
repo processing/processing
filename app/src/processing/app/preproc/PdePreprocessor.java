@@ -27,14 +27,28 @@
 
 package processing.app.preproc;
 
-import processing.app.*;
-import processing.core.*;
-import processing.app.antlr.*;
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintStream;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import processing.app.Preferences;
+import processing.app.antlr.PdeLexer;
+import processing.app.antlr.PdeRecognizer;
+import processing.app.antlr.PdeTokenTypes;
 import processing.app.debug.RunnerException;
-import java.io.*;
-import java.util.*;
-import antlr.*;
-import antlr.collections.*;
+import processing.core.PApplet;
+import antlr.ASTFactory;
+import antlr.CommonAST;
+import antlr.CommonASTWithHiddenTokens;
+import antlr.CommonHiddenStreamToken;
+import antlr.TokenStreamCopyingHiddenTokenFilter;
+import antlr.collections.AST;
 
 /**
  * Class that orchestrates preprocessing p5 syntax into straight Java.
@@ -130,25 +144,12 @@ public class PdePreprocessor implements PdeTokenTypes {
   // used for calling the ASTFactory to get the root node
   private static final int ROOT_ID = 0;
 
-  private final PrintStream stream;
   private final String indent;
-
-  // these ones have the .* at the end, since a class name might be at the end
-  // instead of .* which would make trouble other classes using this can lop
-  // off the . and anything after it to produce a package name consistently.
-  ArrayList<String> programImports;
-
-  // imports just from the code folder, treated differently
-  // than the others, since the imports are auto-generated.
-  ArrayList<String> codeFolderImports;
+  private final String name;
 
   public static enum ProgramType {
     STATIC, ACTIVE, JAVA
   }
-
-  private Reader programReader;
-  // starts as sketch name, ends as main class name
-  private String name;
 
   private TokenStreamCopyingHiddenTokenFilter filter;
 
@@ -175,11 +176,8 @@ public class PdePreprocessor implements PdeTokenTypes {
     this.programType = programType;
   }
 
-  public PdePreprocessor(final String buildPath, final String sketchName)
-      throws IOException {
+  public PdePreprocessor(final String sketchName) throws IOException {
     this.name = sketchName;
-    final File streamFile = new File(buildPath, sketchName + ".java");
-    stream = new PrintStream(new FileOutputStream(streamFile));
 
     final char[] indentChars = new char[Preferences
         .getInteger("editor.tabs.size")];
@@ -260,8 +258,18 @@ public class PdePreprocessor implements PdeTokenTypes {
     }
   }
 
-  public int writePrefix(String program, final String codeFolderPackages[])
-      throws FileNotFoundException, RunnerException {
+  public PreprocessResult write(final PrintStream stream, String program,
+                                final String codeFolderPackages[])
+      throws FileNotFoundException, RunnerException, Exception {
+
+    // these ones have the .* at the end, since a class name might be at the end
+    // instead of .* which would make trouble other classes using this can lop
+    // off the . and anything after it to produce a package name consistently.
+    final ArrayList<String> programImports = new ArrayList<String>();
+
+    // imports just from the code folder, treated differently
+    // than the others, since the imports are auto-generated.
+    final ArrayList<String> codeFolderImports = new ArrayList<String>();
 
     // need to reset whether or not this has a main()
     foundMain = false;
@@ -273,11 +281,8 @@ public class PdePreprocessor implements PdeTokenTypes {
     }
 
     final String importRegexp = "(?:^|;)\\s*(import\\s+)((?:static\\s+)?\\S+)(\\s*;)";
-    programImports = new ArrayList<String>();
 
     do {
-      // Use scrubbed version of code for the imports, 
-      // so that commented-out import statements are ignored.
       String[] pieces = PApplet.match(program, importRegexp);
       // Stop the loop if we've removed all the importy lines
       if (pieces == null)
@@ -291,32 +296,20 @@ public class PdePreprocessor implements PdeTokenTypes {
       // find index of this import in the program
       int idx = program.indexOf(piece);
 
-      // Remove the comment from the main program
+      // Remove the import from the main program
       program = program.substring(0, idx) + program.substring(idx + len);
     } while (true);
 
-    codeFolderImports = new ArrayList<String>();
     if (codeFolderPackages != null) {
       for (String item : codeFolderPackages) {
         codeFolderImports.add(item + ".*");
       }
     }
-    // do this after the program gets re-combobulated
-    this.programReader = new StringReader(program);
 
-    int importsLength = writeImports(stream);
-
-    // return the length of the imports plus the extra lines 
-    // added by calling writeDeclarations()
-    return importsLength + 2;
+    final int headerOffset = writeImports(stream, programImports,
+      codeFolderImports);
+    return new PreprocessResult(headerOffset + 2, write(program, stream), programImports);
   }
-
-  //  /**
-  //   * Returns the name of the .java file that was created from the .pde files.  
-  //   */
-  //  String getJavaFileName() {
-  //    return name + ".java";
-  //  }
 
   static String substituteUnicode(String program) {
     // check for non-ascii chars (these will be/must be in unicode format)
@@ -326,49 +319,47 @@ public class PdePreprocessor implements PdeTokenTypes {
       if (p[i] > 127)
         unicodeCount++;
     }
+    if (unicodeCount == 0)
+      return program;
     // if non-ascii chars are in there, convert to unicode escapes
-    if (unicodeCount != 0) {
-      // add unicodeCount * 5.. replacing each unicode char
-      // with six digit uXXXX sequence (xxxx is in hex)
-      // (except for nbsp chars which will be a replaced with a space)
-      int index = 0;
-      char p2[] = new char[p.length + unicodeCount * 5];
-      for (int i = 0; i < p.length; i++) {
-        if (p[i] < 128) {
-          p2[index++] = p[i];
-
-        } else if (p[i] == 160) { // unicode for non-breaking space
-          p2[index++] = ' ';
-
-        } else {
-          int c = p[i];
-          p2[index++] = '\\';
-          p2[index++] = 'u';
-          char str[] = Integer.toHexString(c).toCharArray();
-          // add leading zeros, so that the length is 4
-          //for (int i = 0; i < 4 - str.length; i++) p2[index++] = '0';
-          for (int m = 0; m < 4 - str.length; m++)
-            p2[index++] = '0';
-          System.arraycopy(str, 0, p2, index, str.length);
-          index += str.length;
-        }
+    // add unicodeCount * 5.. replacing each unicode char
+    // with six digit uXXXX sequence (xxxx is in hex)
+    // (except for nbsp chars which will be a replaced with a space)
+    int index = 0;
+    char p2[] = new char[p.length + unicodeCount * 5];
+    for (int i = 0; i < p.length; i++) {
+      if (p[i] < 128) {
+        p2[index++] = p[i];
+      } else if (p[i] == 160) { // unicode for non-breaking space
+        p2[index++] = ' ';
+      } else {
+        int c = p[i];
+        p2[index++] = '\\';
+        p2[index++] = 'u';
+        char str[] = Integer.toHexString(c).toCharArray();
+        // add leading zeros, so that the length is 4
+        //for (int i = 0; i < 4 - str.length; i++) p2[index++] = '0';
+        for (int m = 0; m < 4 - str.length; m++)
+          p2[index++] = '0';
+        System.arraycopy(str, 0, p2, index, str.length);
+        index += str.length;
       }
-      program = new String(p2, 0, index);
     }
-    return program;
+    return new String(p2, 0, index);
   }
 
   /**
    * preprocesses a pde file and writes out a java file
    * @return the class name of the exported Java
    */
-  public String write() throws java.lang.Exception {
+  private String write(final String program, final PrintStream stream)
+      throws java.lang.Exception {
     // create a lexer with the stream reader, and tell it to handle
     // hidden tokens (eg whitespace, comments) since we want to pass these
     // through so that the line numbers when the compiler reports errors
     // match those that will be highlighted in the PDE IDE
     //
-    PdeLexer lexer = new PdeLexer(programReader);
+    PdeLexer lexer = new PdeLexer(new StringReader(program));
     lexer.setTokenObjectClass("antlr.CommonHiddenStreamToken");
 
     // create the filter for hidden tokens and specify which tokens to
@@ -427,33 +418,34 @@ public class PdePreprocessor implements PdeTokenTypes {
     // (made to use the static version because of jikes 1.22 warning)
     CommonAST.setVerboseStringConversion(true, parser.getTokenNames());
 
-    // if this is an advanced program, the classname is already defined.
-    //
+    final String className;
     if (programType == ProgramType.JAVA) {
-      name = getFirstClassName(parserAST);
+      // if this is an advanced program, the classname is already defined.
+      className = getFirstClassName(parserAST);
+    } else {
+      className = this.name;
     }
 
     // if 'null' was passed in for the name, but this isn't
     // a 'java' mode class, then there's a problem, so punt.
     //
-    if (name == null)
+    if (className == null)
       return null;
 
     // debug
     if (false) {
       final ByteArrayOutputStream buf = new ByteArrayOutputStream();
       final PrintStream bufout = new PrintStream(buf);
-      writeDeclaration(bufout, name);
+      writeDeclaration(bufout, className);
       new PdeEmitter(this, bufout).print(rootNode);
-      writeFooter(bufout, name);
+      writeFooter(bufout, className);
       debugAST(rootNode, true);
       System.err.println(new String(buf.toByteArray()));
     }
 
-    writeDeclaration(stream, name);
+    writeDeclaration(stream, className);
     new PdeEmitter(this, stream).print(rootNode);
-    writeFooter(stream, name);
-    stream.close();
+    writeFooter(stream, className);
 
     // if desired, serialize the parse tree to an XML file.  can
     // be viewed usefully with Mozilla or IE
@@ -461,14 +453,7 @@ public class PdePreprocessor implements PdeTokenTypes {
       writeParseTree("parseTree.xml", parserAST);
     }
 
-    return name;
-  }
-
-  private static class BogusPublicToken extends CommonHiddenStreamToken {
-    public BogusPublicToken() {
-      super(LITERAL_public, "public");
-      setHiddenAfter(new CommonHiddenStreamToken(WS, " "));
-    }
+    return className;
   }
 
   /**
@@ -491,8 +476,13 @@ public class PdePreprocessor implements PdeTokenTypes {
       if (mods.getNextSibling().getType() == TYPE_PARAMETERS) {
         return;
       }
-      final AST publicNode = new CommonASTWithHiddenTokens(
-                                                           new BogusPublicToken());
+      final CommonHiddenStreamToken publicToken = new CommonHiddenStreamToken(
+          LITERAL_public, "public") {
+        {
+          setHiddenAfter(new CommonHiddenStreamToken(WS, " "));
+        }
+      };
+      final AST publicNode = new CommonASTWithHiddenTokens(publicToken);
       publicNode.setNextSibling(oldFirstMod);
       mods.setFirstChild(publicNode);
     } else {
@@ -519,7 +509,16 @@ public class PdePreprocessor implements PdeTokenTypes {
     }
   }
 
-  protected int writeImports(PrintStream out) {
+  /**
+   * 
+   * @param out
+   * @param programImports
+   * @param codeFolderImports
+   * @return the header offset
+   */
+  protected int writeImports(final PrintStream out,
+                             final List<String> programImports,
+                             final List<String> codeFolderImports) {
     int count = writeImportList(out, getCoreImports());
     count += writeImportList(out, programImports);
     count += writeImportList(out, codeFolderImports);
@@ -527,7 +526,7 @@ public class PdePreprocessor implements PdeTokenTypes {
     return count;
   }
 
-  protected int writeImportList(PrintStream out, ArrayList<String> imports) {
+  protected int writeImportList(PrintStream out, List<String> imports) {
     return writeImportList(out, (String[]) imports.toArray(new String[0]));
   }
 
@@ -549,7 +548,7 @@ public class PdePreprocessor implements PdeTokenTypes {
    *
    * @param out                 PrintStream to write it to.
    * @param exporting           Is this being exported from PDE?
-   * @param name                Name of the class being created.
+   * @param className           Name of the class being created.
    */
   protected void writeDeclaration(PrintStream out, String className) {
     if (programType == ProgramType.JAVA) {
@@ -609,10 +608,6 @@ public class PdePreprocessor implements PdeTokenTypes {
       // close off the class definition
       out.println("}");
     }
-  }
-
-  public ArrayList<String> getExtraImports() {
-    return programImports;
   }
 
   public String[] getCoreImports() {
