@@ -1202,7 +1202,11 @@ public class Sketch {
    * @return null if compilation failed, main class name if not
    */
   public String preprocess(String buildPath) throws RunnerException {
-    return preprocess(buildPath, new PdePreprocessor());
+    try {
+      return preprocess(buildPath, new PdePreprocessor(buildPath, name));
+    } catch (IOException e) {
+      throw new RunnerException("Error while preprocessing", true);
+    }
   }
 
 
@@ -1250,10 +1254,7 @@ public class Sketch {
     // it only applies to the code after it's been written to the .java file.
     int headerOffset = 0;
     try {
-      headerOffset = preprocessor.writePrefix(bigCode.toString(),
-                                              buildPath,
-                                              name,
-                                              codeFolderPackages);
+      headerOffset = preprocessor.writePrefix(bigCode.toString(), codeFolderPackages);
     } catch (FileNotFoundException fnfe) {
       fnfe.printStackTrace();
       String msg = "Build folder disappeared or could not be written";

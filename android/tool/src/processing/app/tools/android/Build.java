@@ -107,7 +107,8 @@ class Build {
 
       // grab code from current editing window
       sketch.prepare();
-      className = sketch.preprocess(buildPath, new Preproc());
+      className = sketch.preprocess(buildPath, new Preproc(buildPath, sketch
+          .getName()));
       if (className != null) {
         final File androidXML = new File(androidFolder, "AndroidManifest.xml");
         writeAndroidManifest(androidXML, sketch.getName(), className);
@@ -141,6 +142,9 @@ class Build {
         }
       }
     } catch (final RunnerException e) {
+      editor.statusError(e);
+      return false;
+    } catch (final IOException e) {
       editor.statusError(e);
       return false;
     }
@@ -320,6 +324,12 @@ class Build {
   }
 
   class Preproc extends PdePreprocessor {
+
+    public Preproc(final String buildPath, final String sketchName)
+        throws IOException {
+      super(buildPath, sketchName);
+    }
+
     @Override
     public int writeImports(final PrintStream out) {
       out.println("package " + getPackageName() + ";");
