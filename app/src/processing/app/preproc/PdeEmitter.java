@@ -546,6 +546,7 @@ public class PdeEmitter implements PdeTokenTypes {
       break;
 
     case LITERAL_synchronized: // 0137 to fix bug #136
+    case LITERAL_assert:
       out.print(ast.getText());
       dumpHiddenAfter(ast);
       printChildren(ast);
