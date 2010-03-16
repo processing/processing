@@ -49,6 +49,8 @@ J Error compiling when 'new' is first word in an 'else' block
 J   http://dev.processing.org/bugs/show_bug.cgi?id=1362
 J Parsing error when using char literals
 J   http://dev.processing.org/bugs/show_bug.cgi?id=281
+J support for assertions
+J   http://dev.processing.org/bugs/show_bug.cgi?id=1188
 
 need examples
 _ Improve detection and handling of missing semicolons
@@ -775,8 +777,6 @@ PDE / Compiler & Preprocessor
 high (bugs)
 _ syntax highlighting error with // and /*
 _   http://dev.processing.org/bugs/show_bug.cgi?id=609
-_ support for assertions
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1188
 
 medium (bugs/features)
 _ with additional .pde files, don't allow static mode in front tab
