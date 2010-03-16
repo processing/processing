@@ -355,6 +355,8 @@ while (false!==($item=readdir($handle)))
            else 
            $errors[]='Directory already exists '.$to;
            }
+           $messages[]='chmod: '.$chmod;
+
            copydirr($from,$to,$recursive,$chmod,$verbose);
       }
 closedir($handle);
