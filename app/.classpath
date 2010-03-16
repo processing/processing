@@ -2,6 +2,7 @@
 <classpath>
 	<classpathentry excluding="processing/app/tools/format/" kind="src" path="src"/>
 	<classpathentry kind="src" path="generated"/>
+	<classpathentry kind="src" path="test/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/processing-core"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/processing-dxf"/>
@@ -14,11 +15,12 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/processing-pdf"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/processing-serial"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/processing-video"/>
-	<classpathentry kind="lib" path="lib/antlr.jar"/>
+	<classpathentry kind="lib" path="lib/antlr.jar" sourcepath="lib/antlr-src.zip"/>
 	<classpathentry kind="lib" path="lib/jna.jar"/>
 	<classpathentry kind="lib" path="lib/ecj.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/ant.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/ant-launcher.jar"/>
 	<classpathentry kind="lib" path="lib/apple.jar"/>
+	<classpathentry kind="lib" path="test/lib/junit-4.8.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
