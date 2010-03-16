@@ -1,4 +1,10 @@
-0179
+0180 android (pre-release)
+X change sdk to use revision 6 (2.0.1) as the version
+X   change instructions on site 
+X add support for a default font
+
+
+0179 (1.1, but no android tools)
 X screenWidth/Height instead of screenW/H
 X errors that happen inside events (e.g. keys) not highlighting lines
 X   useful stack trace information not coming through.. why?
