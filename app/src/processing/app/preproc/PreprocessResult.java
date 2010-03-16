@@ -5,6 +5,11 @@ import java.util.Collections;
 import java.util.List;
 import processing.app.debug.RunnerException;
 
+/**
+ * 
+ * @author Jonathan Feinberg &lt;jdf@pobox.com&gt;
+ *
+ */
 public class PreprocessResult {
   public final int headerOffset;
   public final String className;
