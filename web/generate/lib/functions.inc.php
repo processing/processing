@@ -351,11 +351,16 @@ while (false!==($item=readdir($handle)))
            }
        if (is_dir($from)  && $recursive)
            {
+           if (!is_dir($to)) { 
+             mkdir($to, $chmod); 
+             $messages[]='Directory created: '.$to;
+           }
+/*
            if (@mkdir($to))
-               {
-               chmod($to,$chmod);
-               $messages[]='Directory created: '.$to;
-               }
+           {
+            chmod($to,$chmod);
+           }
+*/
            else
                $errors[]='cannot create directory '.$to;
            copydirr($from,$to,$chmod,$verbose);
