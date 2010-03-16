@@ -477,12 +477,7 @@ public class PdeEmitter implements PdeTokenTypes {
     case LITERAL_new:
       out.print("new");
       dumpHiddenAfter(ast);
-      print(child1);
-      print(child2);
-      // "new String[] {...}": the stuff in {} is child3
-      if (child3 != null) {
-        print(child3);
-      }
+      printChildren(ast);
       break;
 
     case LITERAL_return:
