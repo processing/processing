@@ -461,7 +461,6 @@ public class PdePreprocessor {
 
     // if desired, serialize the parse tree to an XML file.  can
     // be viewed usefully with Mozilla or IE
-
     if (Preferences.getBoolean("preproc.output_parse_tree")) {
       writeParseTree("parseTree.xml", parserAST);
     }
