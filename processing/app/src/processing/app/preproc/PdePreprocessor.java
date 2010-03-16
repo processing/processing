@@ -138,6 +138,9 @@ import antlr.collections.AST;
  * itself.  The ANTLR manual goes into a fair amount of detail about the
  * what each type of file is for.
  * <P/>
+ * 
+ * Hacked to death in 2010 by
+ * @author Jonathan Feinberg &lt;jdf@pobox.com&gt;
  */
 public class PdePreprocessor implements PdeTokenTypes {
 
@@ -308,7 +311,8 @@ public class PdePreprocessor implements PdeTokenTypes {
 
     final int headerOffset = writeImports(stream, programImports,
       codeFolderImports);
-    return new PreprocessResult(headerOffset + 2, write(program, stream), programImports);
+    return new PreprocessResult(headerOffset + 2, write(program, stream),
+                                programImports);
   }
 
   static String substituteUnicode(String program) {
