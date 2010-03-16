@@ -300,9 +300,6 @@ Author: Anton Makarenko
    webmaster at eufimb dot edu dot ua
 */
 function copydirr($fromDir,$toDir,$recursive=true,$chmod=0777,$verbose=false)
-
-
-
 /*
    copies everything from directory $fromDir to directory $toDir
    and sets up files mode $chmod
@@ -311,9 +308,6 @@ function copydirr($fromDir,$toDir,$recursive=true,$chmod=0777,$verbose=false)
 //* Check for some errors
 $errors=array();
 $messages=array();
-
-$messages[] = 'Debugging recursive: ' . $recursive;
-
 if (!is_writable($toDir))
    $errors[]='target '.$toDir.' is not writable';
 if (!is_dir($toDir))
@@ -350,23 +344,18 @@ while (false!==($item=readdir($handle)))
                $errors[]='cannot copy file from '.$from.' to '.$to;
            }
        if (is_dir($from)  && $recursive)
-           {
+       {
            if (!is_dir($to)) { 
              mkdir($to, $chmod); 
              $messages[]='Directory created: '.$to;
-             copydirr($from,$to,$chmod,$verbose);
+             //copydirr($from,$to,$recursive,$chmod,$verbose);
            }
-/*
-           if (@mkdir($to))
-           {
-            chmod($to,$chmod);
-           }
-*/
-           else
-               //$errors[]='cannot create directory '.$to;
-           copydirr($from,$to,$chmod,$verbose);
-           }
-       }
+           //else
+           //{
+           //$errors[]='cannot create directory '.$to;
+           copydirr($from,$to,$recursive,$chmod,$verbose);
+           //}
+      }
 closedir($handle);
 //*/
 //* Output
