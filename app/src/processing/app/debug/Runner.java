@@ -171,6 +171,8 @@ public class Runner implements MessageConsumer {
 //        File.pathSeparator +
 //        Base.librariesClassPath);
 
+    // enable assertions - http://dev.processing.org/bugs/show_bug.cgi?id=1188
+    params.add("-ea");
     //PApplet.println(PApplet.split(sketch.classPath, ':'));
 
     String outgoing[] = new String[params.size()];
