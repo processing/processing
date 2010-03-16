@@ -8,6 +8,7 @@ import java.util.Stack;
 import processing.app.Preferences;
 import processing.app.antlr.PdeTokenTypes;
 import processing.app.debug.RunnerException;
+import antlr.CommonASTWithHiddenTokens;
 import antlr.CommonHiddenStreamToken;
 import antlr.collections.AST;
 
@@ -62,7 +63,7 @@ public class PdeEmitter implements PdeTokenTypes {
    * Most hidden tokens are dumped from this function.
    */
   private void dumpHiddenAfter(final AST ast) {
-    dumpHiddenTokens(((antlr.CommonASTWithHiddenTokens) ast).getHiddenAfter());
+    dumpHiddenTokens(((CommonASTWithHiddenTokens) ast).getHiddenAfter());
   }
 
   /**
@@ -75,7 +76,7 @@ public class PdeEmitter implements PdeTokenTypes {
    */
   private void dumpHiddenBefore(final AST ast) {
 
-    antlr.CommonHiddenStreamToken child = null, parent = ((antlr.CommonASTWithHiddenTokens) ast)
+    antlr.CommonHiddenStreamToken child = null, parent = ((CommonASTWithHiddenTokens) ast)
         .getHiddenBefore();
 
     // if there aren't any hidden tokens here, quietly return
@@ -228,7 +229,7 @@ public class PdeEmitter implements PdeTokenTypes {
   private void printMethodDef(final AST ast) throws RunnerException {
     final AST modifiers = ast.getFirstChild();
     final AST typeParameters, type;
-    if (modifiers.getFirstChild().getType() == TYPE_PARAMETERS) {
+    if (modifiers.getNextSibling().getType() == TYPE_PARAMETERS) {
       typeParameters = modifiers.getNextSibling();
       type = typeParameters.getNextSibling();
     } else {
@@ -239,26 +240,7 @@ public class PdeEmitter implements PdeTokenTypes {
     if (methodName.getText().equals("main")) {
       pdePreprocessor.setFoundMain(true);
     }
-
-    // if this method doesn't have a specifier, make it public
-    // (useful for setup/keyPressed/etc)
-    boolean foundSpecifier = false;
-    AST child = modifiers.getFirstChild();
-    while (child != null) {
-      final String childText = child.getText();
-      if (childText.equals("public") || childText.equals("protected")
-          || childText.equals("private")) {
-        foundSpecifier = true;
-        child = null;
-      } else {
-        //out.print("." + child.getText() + ".");
-        child = child.getNextSibling();
-      }
-    }
-    if (!foundSpecifier) {
-      out.print("public ");
-    }
-    printChildren(ast); // everything is fine
+    printChildren(ast); 
   }
 
   private void printIfThenElse(final AST literalIf) throws RunnerException {
