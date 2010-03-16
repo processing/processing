@@ -225,6 +225,42 @@ public class PdeEmitter implements PdeTokenTypes {
     print(ast.getFirstChild().getNextSibling());
   }
 
+  private void printMethodDef(final AST ast) throws RunnerException {
+    final AST modifiers = ast.getFirstChild();
+    final AST typeParameters, type;
+    if (modifiers.getFirstChild().getType() == TYPE_PARAMETERS) {
+      typeParameters = modifiers.getNextSibling();
+      type = typeParameters.getNextSibling();
+    } else {
+      typeParameters = null;
+      type = modifiers.getNextSibling();
+    }
+    final AST methodName = type.getNextSibling();
+    if (methodName.getText().equals("main")) {
+      pdePreprocessor.setFoundMain(true);
+    }
+
+    // if this method doesn't have a specifier, make it public
+    // (useful for setup/keyPressed/etc)
+    boolean foundSpecifier = false;
+    AST child = modifiers.getFirstChild();
+    while (child != null) {
+      final String childText = child.getText();
+      if (childText.equals("public") || childText.equals("protected")
+          || childText.equals("private")) {
+        foundSpecifier = true;
+        child = null;
+      } else {
+        //out.print("." + child.getText() + ".");
+        child = child.getNextSibling();
+      }
+    }
+    if (!foundSpecifier) {
+      out.print("public ");
+    }
+    printChildren(ast); // everything is fine
+  }
+
   private void printIfThenElse(final AST literalIf) throws RunnerException {
     out.print(literalIf.getText());
     dumpHiddenAfter(literalIf);
@@ -372,39 +408,7 @@ public class PdeEmitter implements PdeTokenTypes {
       break;
 
     case METHOD_DEF:
-      // kids seem to be: MODIFIERS TYPE setup PARAMETERS
-      //AST parent = (AST) stack.peek();
-      final AST modifiersChild = ast.getFirstChild();
-      final AST typeChild = modifiersChild.getNextSibling();
-      final AST methodNameChild = typeChild.getNextSibling();
-      final AST parametersChild = methodNameChild.getNextSibling();
-
-      // to output, use print(child) on each of the four
-
-      final String methodName = methodNameChild.getText();
-      if (methodName.equals("main")) {
-        pdePreprocessor.setFoundMain(true);
-      }
-
-      // if this method doesn't have a specifier, make it public
-      // (useful for setup/keyPressed/etc)
-      boolean foundSpecifier = false;
-      AST child = modifiersChild.getFirstChild();
-      while (child != null) {
-        final String childText = child.getText();
-        if (childText.equals("public") || childText.equals("protected")
-            || childText.equals("private")) {
-          foundSpecifier = true;
-          child = null;
-        } else {
-          //out.print("." + child.getText() + ".");
-          child = child.getNextSibling();
-        }
-      }
-      if (!foundSpecifier) {
-        out.print("public ");
-      }
-      printChildren(ast); // everything is fine
+      printMethodDef(ast);
       break;
 
     // if we have two children, it's of the form "a=0"
@@ -802,22 +806,20 @@ public class PdeEmitter implements PdeTokenTypes {
 
     case TYPE_ARGUMENT:
     case TYPE_PARAMETER:
-      print(ast.getFirstChild());
+      printChildren(ast);
       break;
 
     case WILDCARD_TYPE:
-      out.print("? ");
+      out.print(ast.getText());
+      dumpHiddenAfter(ast);
       print(ast.getFirstChild());
       break;
 
     case TYPE_LOWER_BOUNDS:
-      out.print("super ");
-      print(ast.getFirstChild());
-      break;
-
     case TYPE_UPPER_BOUNDS:
-      out.print("extends ");
-      print(ast.getFirstChild());
+      out.print(ast.getType() == TYPE_LOWER_BOUNDS ? "super" : "extends");
+      dumpHiddenBefore(getBestPrintableNode(ast, false));
+      printChildren(ast);
       break;
 
     default:
