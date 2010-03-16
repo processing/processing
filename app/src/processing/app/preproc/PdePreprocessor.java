@@ -125,10 +125,13 @@ import antlr.collections.*;
  * what each type of file is for.
  * <P/>
  */
-public class PdePreprocessor {
+public class PdePreprocessor implements PdeTokenTypes {
 
   // used for calling the ASTFactory to get the root node
   private static final int ROOT_ID = 0;
+
+  private final PrintStream stream;
+  private final String indent;
 
   // these ones have the .* at the end, since a class name might be at the end
   // instead of .* which would make trouble other classes using this can lop
@@ -143,8 +146,6 @@ public class PdePreprocessor {
     STATIC, ACTIVE, JAVA
   }
 
-  private String indent;
-  private PrintStream stream;
   private Reader programReader;
   // starts as sketch name, ends as main class name
   private String name;
@@ -174,8 +175,14 @@ public class PdePreprocessor {
     this.programType = programType;
   }
 
-  public PdePreprocessor() {
-    char[] indentChars = new char[Preferences.getInteger("editor.tabs.size")];
+  public PdePreprocessor(final String buildPath, final String sketchName)
+      throws IOException {
+    this.name = sketchName;
+    final File streamFile = new File(buildPath, sketchName + ".java");
+    stream = new PrintStream(new FileOutputStream(streamFile));
+
+    final char[] indentChars = new char[Preferences
+        .getInteger("editor.tabs.size")];
     Arrays.fill(indentChars, ' ');
     indent = new String(indentChars);
   }
@@ -253,20 +260,14 @@ public class PdePreprocessor {
     }
   }
 
-  public int writePrefix(String program, String buildPath, String sketchName,
-                         String codeFolderPackages[])
+  public int writePrefix(String program, final String codeFolderPackages[])
       throws FileNotFoundException, RunnerException {
-    this.name = sketchName;
 
     // need to reset whether or not this has a main()
     foundMain = false;
 
     checkForUnterminatedMultilineComment(program);
 
-    // This has to happen BEFORE the scrub, or else the character count is off,
-    // and you get a missing character in the prologue. If you're "lucky",
-    // that missing character is the terminating slash of a multiline comment.
-    // This is behind http://dev.processing.org/bugs/show_bug.cgi?id=1511
     if (Preferences.getBoolean("preproc.substitute_unicode")) {
       program = substituteUnicode(program);
     }
@@ -292,9 +293,6 @@ public class PdePreprocessor {
 
       // Remove the comment from the main program
       program = program.substring(0, idx) + program.substring(idx + len);
-      // Remove from the scrubbed version as well, to keep offsets identical. 
-      //scrubbed = scrubbed.substring(0, idx) + scrubbed.substring(idx + len);
-
     } while (true);
 
     codeFolderImports = new ArrayList<String>();
@@ -306,9 +304,6 @@ public class PdePreprocessor {
     // do this after the program gets re-combobulated
     this.programReader = new StringReader(program);
 
-    //File streamFile = new File(buildPath, getJavaFileName());
-    File streamFile = new File(buildPath, sketchName + ".java");
-    stream = new PrintStream(new FileOutputStream(streamFile));
     int importsLength = writeImports(stream);
 
     // return the length of the imports plus the extra lines 
@@ -367,8 +362,6 @@ public class PdePreprocessor {
    * preprocesses a pde file and writes out a java file
    * @return the class name of the exported Java
    */
-  //public String write(String program, String buildPath, String name,
-  //                  String extraImports[]) throws java.lang.Exception {
   public String write() throws java.lang.Exception {
     // create a lexer with the stream reader, and tell it to handle
     // hidden tokens (eg whitespace, comments) since we want to pass these
@@ -425,6 +418,8 @@ public class PdePreprocessor {
     AST rootNode = factory.create(ROOT_ID, "AST ROOT");
     rootNode.setFirstChild(parserAST);
 
+    makeSimpleMethodsPublic(rootNode);
+
     // unclear if this actually works, but it's worth a shot
     //
     //((CommonAST)parserAST).setVerboseStringConversion(
@@ -444,11 +439,7 @@ public class PdePreprocessor {
     if (name == null)
       return null;
 
-    writeDeclaration(stream, name);
-    new PdeEmitter(this, stream).print(rootNode);
-    writeFooter(stream, name);
-    stream.close();
-
+    // debug
     if (false) {
       final ByteArrayOutputStream buf = new ByteArrayOutputStream();
       final PrintStream bufout = new PrintStream(buf);
@@ -459,6 +450,11 @@ public class PdePreprocessor {
       System.err.println(new String(buf.toByteArray()));
     }
 
+    writeDeclaration(stream, name);
+    new PdeEmitter(this, stream).print(rootNode);
+    writeFooter(stream, name);
+    stream.close();
+
     // if desired, serialize the parse tree to an XML file.  can
     // be viewed usefully with Mozilla or IE
     if (Preferences.getBoolean("preproc.output_parse_tree")) {
@@ -466,6 +462,44 @@ public class PdePreprocessor {
     }
 
     return name;
+  }
+
+  private static class BogusPublicToken extends CommonHiddenStreamToken {
+    public BogusPublicToken() {
+      super(LITERAL_public, "public");
+      setHiddenAfter(new CommonHiddenStreamToken(WS, " "));
+    }
+  }
+
+  /**
+   * Walk the tree looking for METHOD_DEFs. Any simple METHOD_DEF (one
+   * without TYPE_PARAMETERS) lacking an
+   * access specifier is given public access.
+   * @param node
+   */
+  private void makeSimpleMethodsPublic(final AST node) {
+    if (node.getType() == METHOD_DEF) {
+      final AST mods = node.getFirstChild();
+      final AST oldFirstMod = mods.getFirstChild();
+      for (AST mod = oldFirstMod; mod != null; mod = mod.getNextSibling()) {
+        final int t = mod.getType();
+        if (t == LITERAL_private || t == LITERAL_protected
+            || t == LITERAL_public) {
+          return;
+        }
+      }
+      if (mods.getNextSibling().getType() == TYPE_PARAMETERS) {
+        return;
+      }
+      final AST publicNode = new CommonASTWithHiddenTokens(
+                                                           new BogusPublicToken());
+      publicNode.setNextSibling(oldFirstMod);
+      mods.setFirstChild(publicNode);
+    } else {
+      for (AST kid = node.getFirstChild(); kid != null; kid = kid
+          .getNextSibling())
+        makeSimpleMethodsPublic(kid);
+    }
   }
 
   protected void writeParseTree(String filename, AST ast) {
