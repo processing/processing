@@ -1,5 +1,8 @@
 0181 pde
 
+J allow doubles in preproc
+J   (for casting, etc) particularly for Math.cos() et al
+J   http://processing.org/bugs/show_bug.cgi?id=7
 
 need examples
 _ Improve detection and handling of missing semicolons
@@ -729,9 +732,6 @@ Nobody home!
 medium (bugs/features)
 _ with additional .pde files, don't allow static mode in front tab
 _   e.g. no setup()/draw() block
-_ allow doubles in preproc
-_   (for casting, etc) particularly for Math.cos() et al
-_   http://processing.org/bugs/show_bug.cgi?id=7
 _ don't allow "for (blah; blah; blah) ;"
 _   or if (blah blah blah) ;
 _   it's never useful. students can use { } if they want an empty block
