@@ -51,6 +51,8 @@ J Parsing error when using char literals
 J   http://dev.processing.org/bugs/show_bug.cgi?id=281
 J support for assertions
 J   http://dev.processing.org/bugs/show_bug.cgi?id=1188
+J syntax highlighting error with // and /*
+J   http://dev.processing.org/bugs/show_bug.cgi?id=609
 
 need examples
 _ Improve detection and handling of missing semicolons
@@ -775,8 +777,7 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=61
 PDE / Compiler & Preprocessor
 
 high (bugs)
-_ syntax highlighting error with // and /*
-_   http://dev.processing.org/bugs/show_bug.cgi?id=609
+Nobody home!
 
 medium (bugs/features)
 _ with additional .pde files, don't allow static mode in front tab
