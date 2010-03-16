@@ -346,16 +346,16 @@ while (false!==($item=readdir($handle)))
            
 
        if (is_dir($from)  && $recursive)
-           {
+       {
            if (@mkdir($to))
                {
                chmod($to,$chmod);
                $messages[]='Directory created: '.$to;
                }
-           else
-               $errors[]='cannot create directory '.$to;
+           else 
+             $errors[]='Directory already exists '.$to;
+             
            copydirr($from,$to,$recursive,$chmod,$verbose);
-           }
        }
 }
 closedir($handle);
