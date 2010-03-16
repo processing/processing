@@ -1,3 +1,60 @@
+0180 pde (pre-release)
+
+preprocessor
+J Update ANTLR grammar to support 1.5 syntax
+J   http://dev.processing.org/bugs/show_bug.cgi?id=598
+J non-void functions confuse preprocessor
+J   http://dev.processing.org/bugs/show_bug.cgi?id=1442
+J casting problems in the parser
+J   straighten out int() -> toInt() conversions
+J   float u = float(x)/width; works.
+J   float u = (float(x)/width); doesn't work: "unexpected token: float".
+J   float u = (x/float(width)); works! 
+J   http://dev.processing.org/bugs/show_bug.cgi?id=4
+J   return (int(5.5)) causes an error
+J preprocessor error if last line of code is a comment with no CR after it,
+J   an OutOfMemoryError wants to happen, 
+J   but right now there's a hack to add a CR in PdePreprocessor
+J   http://dev.processing.org/bugs/show_bug.cgi?id=5
+J preproc can't handle labels to break/continue nested loops
+J   http://dev.processing.org/bugs/show_bug.cgi?id=631
+J toInt() needs to go away in time for the book.. fix parser bugs
+J add local variables to PdeRecognizer
+J   remove static methods in PdePreprocessor, instead pull things from recog
+J random, single slash in the code doesn't throw an error
+J   (just gets removed by the preprocessor)
+J   http://processing.org/bugs/show_bug.cgi?id=6
+J unspecified return type creates compile error
+J   or maybe not? followup said maybe not
+J   http://dev.processing.org/bugs/show_bug.cgi?id=379
+J   (already marked invalid -- jdf)
+J Blah.class will confuse the preproc
+J   http://dev.processing.org/bugs/show_bug.cgi?id=481
+J non-matching curly brackets sometimes don't cause an error
+J   http://dev.processing.org/bugs/show_bug.cgi?id=507
+J   (duplicate of #6)
+J NullPointerException on unterminated comment at end of code
+J   and OutOfMemoryError and weird lockup
+J   http://dev.processing.org/bugs/show_bug.cgi?id=16
+J "missing a /* from the end of a comment" message
+J   http://dev.processing.org/bugs/show_bug.cgi?id=1512
+J   "multipart/*" produces the error
+J   even though things are inside a quoted txt block
+J NullPointerException on unterminated comment at end of code
+J   and OutOfMemoryError and weird lockup
+J   http://dev.processing.org/bugs/show_bug.cgi?id=16
+J also OutOfMemoryError if a quote is not terminated
+J   http://dev.processing.org/bugs/show_bug.cgi?id=763
+J Error compiling when 'new' is first word in an 'else' block
+J   http://dev.processing.org/bugs/show_bug.cgi?id=1362
+J Parsing error when using char literals
+J   http://dev.processing.org/bugs/show_bug.cgi?id=281
+J support for assertions
+J   http://dev.processing.org/bugs/show_bug.cgi?id=1188
+J syntax highlighting error with // and /*
+J   http://dev.processing.org/bugs/show_bug.cgi?id=609
+
+
 0179 pde (1.1)
 X another fix for CDATA section in applet.html for exported applets
 X updated about.jpg

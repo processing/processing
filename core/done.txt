@@ -1,3 +1,10 @@
+0180 core (pre-release)
+X add implicit path commands to svg loader, thanks to Ben S
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1503
+X don't allow sketch windows to open with the title bar off screen
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1508
+
+
 0179 core (1.1)
 X screenWidth/Height instead of screenW/H
 X open up the pdf library more (philho)
