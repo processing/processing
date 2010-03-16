@@ -77,6 +77,29 @@ constant
     |   webcolor_literal
     ; 
 
+// fix bug http://dev.processing.org/bugs/show_bug.cgi?id=1519
+// by removing a syntactic predicate whose sole purpose is to
+// emit a useless error with no line numbers.
+// This is from Java15.g, with a few lines removed.
+typeArguments
+{int currentLtLevel = 0;}
+	:
+		{currentLtLevel = ltCounter;}
+		LT! {ltCounter++;}
+		typeArgument
+		(options{greedy=true;}: // match as many as possible
+			{inputState.guessing !=0 || ltCounter == currentLtLevel + 1}?
+			COMMA! typeArgument
+		)*
+
+		(	// turn warning off since Antlr generates the right code,
+			options{generateAmbigWarnings=false;}:
+			typeArgumentsOrParametersEnd
+		)?
+
+		{#typeArguments = #(#[TYPE_ARGUMENTS, "TYPE_ARGUMENTS"], #typeArguments);}
+	;
+
 // of the form #cc008f in PDE
 webcolor_literal
     :   w:WEBCOLOR_LITERAL 
@@ -312,5 +335,4 @@ ML_COMMENT
 WEBCOLOR_LITERAL
     : '#'! (HEX_DIGIT)+
     ;
-
 
