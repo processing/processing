@@ -1203,7 +1203,7 @@ public class Sketch {
    */
   public String preprocess(String buildPath) throws RunnerException {
     try {
-      return preprocess(buildPath, new PdePreprocessor(buildPath, name));
+      return preprocess(buildPath, new PdePreprocessor(name));
     } catch (IOException e) {
       throw new RunnerException("Error while preprocessing", true);
     }
@@ -1250,30 +1250,20 @@ public class Sketch {
       }
     }
     
-    // Note that the headerOffset isn't applied until compile and run, because
-    // it only applies to the code after it's been written to the .java file.
-    int headerOffset = 0;
+    final PreprocessResult result;
     try {
-      headerOffset = preprocessor.writePrefix(bigCode.toString(), codeFolderPackages);
+      final File java = new File(buildPath, name + ".java");
+      final PrintStream stream = new PrintStream(new FileOutputStream(java));
+      try {
+        result = preprocessor.write(stream, bigCode.toString(),
+          codeFolderPackages);
+      } finally {
+        stream.close();
+      }
     } catch (FileNotFoundException fnfe) {
       fnfe.printStackTrace();
       String msg = "Build folder disappeared or could not be written";
       throw new RunnerException(msg);
-    }
-
-    // 2. run preproc on that code using the sugg class name
-    //    to create a single .java file and write to buildpath
-
-    String primaryClassName = null;
-
-    try {
-      final String className = preprocessor.write();
-      if (className == null) {
-        throw new RunnerException("Could not find main class");
-      }
-
-      // store this for the compiler and the runtime
-      primaryClassName = className;
     } catch (antlr.RecognitionException re) {
       // re also returns a column that we're not bothering with for now
 
@@ -1394,7 +1384,7 @@ public class Sketch {
     // grab the imports from the code just preproc'd
 
     importedLibraries = new ArrayList<File>();
-    for (String item : preprocessor.getExtraImports()) {
+    for (String item : result.extraImports) {
       // remove things up to the last dot
       int dot = item.lastIndexOf('.');
       // http://dev.processing.org/bugs/show_bug.cgi?id=1145
@@ -1433,15 +1423,14 @@ public class Sketch {
           throw new RunnerException("Problem moving " + filename +
                                     " to the build folder");
         }
-//        sc.setPreprocName(filename);
 
       } else if (sc.isExtension("pde")) {
         // The compiler and runner will need this to have a proper offset
-        sc.addPreprocOffset(headerOffset);
+        sc.addPreprocOffset(result.headerOffset);
       }
     }
     foundMain = preprocessor.getFoundMain();
-    return primaryClassName;
+    return result.className;
   }
   
   public boolean getFoundMain() {
