@@ -35,7 +35,6 @@ public class PdeEmitter implements PdeTokenTypes {
   private final Stack stack = new Stack();
   private final static int ROOT_ID = 0;
 
-  
   public PdeEmitter(final PdePreprocessor pdePreprocessor, final PrintStream out) {
     this.pdePreprocessor = pdePreprocessor;
     this.out = out;
@@ -76,9 +75,8 @@ public class PdeEmitter implements PdeTokenTypes {
    */
   private void dumpHiddenBefore(final AST ast) {
 
-    antlr.CommonHiddenStreamToken 
-		child = null, 
-		parent = ((antlr.CommonASTWithHiddenTokens) ast).getHiddenBefore();
+    antlr.CommonHiddenStreamToken child = null, parent = ((antlr.CommonASTWithHiddenTokens) ast)
+        .getHiddenBefore();
 
     // if there aren't any hidden tokens here, quietly return
     //
@@ -226,7 +224,7 @@ public class PdeEmitter implements PdeTokenTypes {
     dumpHiddenAfter(ast);
     print(ast.getFirstChild().getNextSibling());
   }
-  
+
   private void printIfThenElse(final AST literalIf) throws RunnerException {
     out.print(literalIf.getText());
     dumpHiddenAfter(literalIf);
@@ -246,7 +244,6 @@ public class PdeEmitter implements PdeTokenTypes {
       print(elsePath);
     }
   }
-
 
   /**
    * Print the given AST. Call this function to print your PDE code.
@@ -789,8 +786,10 @@ public class PdeEmitter implements PdeTokenTypes {
 
     // making floating point literals default to floats, not doubles
     case NUM_DOUBLE:
-      out.print(ast.getText());
-      if (Preferences.getBoolean("preproc.substitute_floats")) { //, true) ) {
+      final String literalDouble = ast.getText().toLowerCase();
+      out.print(literalDouble);
+      if (Preferences.getBoolean("preproc.substitute_floats")
+          && literalDouble.indexOf('d') == -1) { // permit literal doubles
         out.print("f");
       }
       dumpHiddenAfter(ast);
