@@ -99,6 +99,7 @@
 				encoding="UTF-8" 
 				includeAntRuntime="false" 
 				classpath="../core/core.jar; ${env.JAVA_HOME}/lib/tools.jar; lib/ant.jar; lib/ant-launcher.jar; lib/antlr.jar; lib/apple.jar; lib/ecj.jar; lib/jna.jar"
+				debug="on"
 				>
 			<src path="src" />
 			<src path="generated" />
