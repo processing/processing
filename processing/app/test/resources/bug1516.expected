@@ -1,0 +1,50 @@
+import processing.core.*; 
+import processing.xml.*; 
+
+import java.util.ArrayList; 
+import java.util.List; 
+import java.util.Collections; 
+import java.util.Comparator; 
+
+import java.applet.*; 
+import java.awt.Dimension; 
+import java.awt.Frame; 
+import java.awt.event.MouseEvent; 
+import java.awt.event.KeyEvent; 
+import java.awt.event.FocusEvent; 
+import java.awt.Image; 
+import java.io.*; 
+import java.net.*; 
+import java.text.*; 
+import java.util.*; 
+import java.util.zip.*; 
+import java.util.regex.*; 
+
+public class bug1516 extends PApplet {
+
+
+
+
+
+
+public void setup()
+{
+List<String> list = new ArrayList<String>();
+list.add("foo");
+list.add("bar");
+list.add("baz");
+
+Comparator<String> comparator = new Comparator<String>()
+{
+public int compare(final String value0, final String value1)
+{
+return value0.compareTo(value1);
+}
+};
+
+Collections.sort(list, comparator);
+} 
+    static public void main(String args[]) {
+        PApplet.main(new String[] { "--bgcolor=null", "bug1516" });
+    }
+}
