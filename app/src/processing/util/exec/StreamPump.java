@@ -1,7 +1,4 @@
-/**
- * 
- */
-package processing.app.tools.android;
+package processing.util.exec;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,7 +23,7 @@ import java.util.concurrent.ThreadFactory;
  * @author Jonathan Feinberg &lt;jdf@pobox.com&gt;
  *
  */
-class StreamPump implements Runnable {
+public class StreamPump implements Runnable {
   private static final ExecutorService threads = Executors
       .newCachedThreadPool(new ThreadFactory() {
         public Thread newThread(final Runnable r) {
