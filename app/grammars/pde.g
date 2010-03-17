@@ -24,6 +24,16 @@ tokens {
 }
 
 {
+	// this clause copied from java15.g! ANTLR does not copy this
+	// section from the super grammar.
+	/**
+	 * Counts the number of LT seen in the typeArguments production.
+	 * It is used in semantic predicates to ensure we have seen
+	 * enough closing '>' characters; which actually may have been
+	 * either GT, SR or BSR tokens.
+	 */
+	private int ltCounter = 0;
+
 	private PdePreprocessor pp;
 	public PdeRecognizer(final PdePreprocessor pp, final TokenStream ts) {
 	    this(ts);
@@ -83,38 +93,66 @@ constant
     ; 
 
 // fix bug http://dev.processing.org/bugs/show_bug.cgi?id=1519
-// by removing a syntactic predicate whose sole purpose is to
+// by altering a syntactic predicate whose sole purpose is to
 // emit a useless error with no line numbers.
-// This is from Java15.g, with a few lines removed.
+// These are from Java15.g, with a few lines edited to make nice errors.
+
+// Type arguments to a class or interface type
 typeArguments
+{int currentLtLevel = 0;}
 	:
-		LT! 
+		{currentLtLevel = ltCounter;}
+		LT! {ltCounter++;}
 		typeArgument
 		(options{greedy=true;}: // match as many as possible
+			{if (! (inputState.guessing !=0 || ltCounter == currentLtLevel + 1)) {
+				throw new RecognitionException("Maybe too many > characters?",
+	    	                                     getFilename(), LT(1).getLine(), LT(1).getColumn());
+			}}
 			COMMA! typeArgument
 		)*
 
 		(	// turn warning off since Antlr generates the right code,
+			// plus we have our semantic predicate below
 			options{generateAmbigWarnings=false;}:
 			typeArgumentsOrParametersEnd
 		)?
 
+		// make sure we have gobbled up enough '>' characters
+		// if we are at the "top level" of nested typeArgument productions
+		{if (! ((currentLtLevel != 0) || ltCounter == currentLtLevel)) {
+			throw new RecognitionException("Maybe too many > characters?",
+    	                                     getFilename(), LT(1).getLine(), LT(1).getColumn());
+		}}
+
 		{#typeArguments = #(#[TYPE_ARGUMENTS, "TYPE_ARGUMENTS"], #typeArguments);}
 	;
 
-// more of the same
 typeParameters
+{int currentLtLevel = 0;}
 	:
-		LT! 
+		{currentLtLevel = ltCounter;}
+		LT! {ltCounter++;}
 		typeParameter (COMMA! typeParameter)*
 		(typeArgumentsOrParametersEnd)?
+
+		// make sure we have gobbled up enough '>' characters
+		// if we are at the "top level" of nested typeArgument productions
+		{if (! ((currentLtLevel != 0) || ltCounter == currentLtLevel)) {
+			throw new RecognitionException("Maybe too many > characters?",
+    	                                     getFilename(), LT(1).getLine(), LT(1).getColumn());
+		}}
+
 		{#typeParameters = #(#[TYPE_PARAMETERS, "TYPE_PARAMETERS"], #typeParameters);}
 	;
+	
 
+// this gobbles up *some* amount of '>' characters, and counts how many
+// it gobbled.
 protected typeArgumentsOrParametersEnd
-	:	GT!
-	|	SR!
-	|	BSR!
+	:	GT! {ltCounter-=1;}
+	|	SR! {ltCounter-=2;}
+	|	BSR! {ltCounter-=3;}
 	;
 
 // of the form #cc008f in PDE
