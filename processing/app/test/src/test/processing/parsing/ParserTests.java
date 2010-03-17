@@ -3,13 +3,10 @@ package test.processing.parsing;
 import static org.junit.Assert.fail;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import processing.app.Base;
 import processing.app.Preferences;
 import processing.app.debug.RunnerException;
 import processing.app.preproc.PdePreprocessor;
@@ -18,12 +15,11 @@ import antlr.ANTLRException;
 public class ParserTests {
 
   private static final String RESOURCES = "test/resources/";
-  
-  private static File res(final String resourceName)
-  {
-    return new File(RESOURCES,resourceName);
+
+  private static File res(final String resourceName) {
+    return new File(RESOURCES, resourceName);
   }
-  
+
   @BeforeClass
   static public void initPrefs() throws Exception {
     Preferences.load(new FileInputStream(res("preferences.txt")));
@@ -60,7 +56,10 @@ public class ParserTests {
     try {
       preprocess(resource);
     } catch (Exception e) {
-      fail(e.getMessage());
+      if (!e.equals(e.getCause()))
+        fail(e.getCause().getMessage());
+      else
+        fail(e.getMessage());
     }
   }
 
@@ -72,5 +71,10 @@ public class ParserTests {
   @Test
   public void bug5b() {
     expectGood("bug5.b.pde");
+  }
+
+  @Test
+  public void bug1511() {
+    expectGood("bug1511.pde");
   }
 }
