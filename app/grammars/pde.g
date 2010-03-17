@@ -24,16 +24,6 @@ tokens {
 }
 
 {
-	// this clause copied from java15.g! ANTLR does not copy this
-	// section from the super grammar.
-	/**
-	 * Counts the number of LT seen in the typeArguments production.
-	 * It is used in semantic predicates to ensure we have seen
-	 * enough closing '>' characters; which actually may have been
-	 * either GT, SR or BSR tokens.
-	 */
-	private int ltCounter = 0;
-
 	private PdePreprocessor pp;
 	public PdeRecognizer(final PdePreprocessor pp, final TokenStream ts) {
 	    this(ts);
@@ -41,16 +31,31 @@ tokens {
 	}
 }
 
+/*
+    So the trick here is to pick the most likely "mode". It's important
+    because picking the right mode will give you useful syntax error
+    messages, but the wrong mode will give you lots of "unexpected token:
+    void" where "void" occurs 50 yeards before the actual error.
+    
+    I've changed the long-standing heuristic, which only goes down
+    the activeProgram path on the presence of a "void ident(", and
+    instead chosen to treat activeProgram as the default. I'm tired,
+    and I might change my mind tomorrow. I did that because I was sad
+    when "int poop() { return 0; }" was considered a defective
+    static program. Then again, it's useless. But it's a valid
+    active program. Tired.
+    
+    jdf
+*/
 pdeProgram
         // only java mode programs will have their own public classes or
         // imports (and they must have at least one)
     :   ( "public" "class" | "import" ) => javaProgram
         { pp.setProgramType(PdePreprocessor.ProgramType.JAVA); }
-    |   (activeProgram) => activeProgram
-        { pp.setProgramType(PdePreprocessor.ProgramType.ACTIVE); }
-	|	staticProgram
+	|	( statement | EOF ) => staticProgram
         { pp.setProgramType(PdePreprocessor.ProgramType.STATIC); }
-
+    |  	activeProgram
+        { pp.setProgramType(PdePreprocessor.ProgramType.ACTIVE); }
     ;
 
 // advanced mode is really just a normal java file
@@ -82,13 +87,10 @@ constant
 // emit a useless error with no line numbers.
 // This is from Java15.g, with a few lines removed.
 typeArguments
-{int currentLtLevel = 0;}
 	:
-		{currentLtLevel = ltCounter;}
-		LT! {ltCounter++;}
+		LT! 
 		typeArgument
 		(options{greedy=true;}: // match as many as possible
-			{inputState.guessing !=0 || ltCounter == currentLtLevel + 1}?
 			COMMA! typeArgument
 		)*
 
@@ -98,6 +100,21 @@ typeArguments
 		)?
 
 		{#typeArguments = #(#[TYPE_ARGUMENTS, "TYPE_ARGUMENTS"], #typeArguments);}
+	;
+
+// more of the same
+typeParameters
+	:
+		LT! 
+		typeParameter (COMMA! typeParameter)*
+		(typeArgumentsOrParametersEnd)?
+		{#typeParameters = #(#[TYPE_PARAMETERS, "TYPE_PARAMETERS"], #typeParameters);}
+	;
+
+protected typeArgumentsOrParametersEnd
+	:	GT!
+	|	SR!
+	|	BSR!
 	;
 
 // of the form #cc008f in PDE
