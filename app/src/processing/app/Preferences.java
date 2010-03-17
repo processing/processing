@@ -134,7 +134,7 @@ public class Preferences {
   static File preferencesFile;
 
 
-  static protected void init(String commandLinePrefs) {
+  static public void init(String commandLinePrefs) {
 
     // start by loading the defaults, in case something
     // important was deleted from the user prefs

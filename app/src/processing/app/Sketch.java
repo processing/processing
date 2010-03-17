@@ -1202,11 +1202,7 @@ public class Sketch {
    * @return null if compilation failed, main class name if not
    */
   public String preprocess(String buildPath) throws RunnerException {
-    try {
-      return preprocess(buildPath, new PdePreprocessor(name));
-    } catch (IOException e) {
-      throw new RunnerException("Error while preprocessing", true);
-    }
+    return preprocess(buildPath, new PdePreprocessor(name));
   }
 
 
@@ -1253,7 +1249,7 @@ public class Sketch {
     final PreprocessResult result;
     try {
       final File java = new File(buildPath, name + ".java");
-      final PrintStream stream = new PrintStream(new FileOutputStream(java));
+      final PrintWriter stream = new PrintWriter(new FileWriter(java));
       try {
         result = preprocessor.write(stream, bigCode.toString(),
           codeFolderPackages);

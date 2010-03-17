@@ -3,6 +3,7 @@
 package processing.app.preproc;
 
 import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.util.BitSet;
 import java.util.Stack;
 import processing.app.Preferences;
@@ -31,13 +32,13 @@ import antlr.collections.AST;
 @SuppressWarnings("unused")
 public class PdeEmitter implements PdeTokenTypes {
   private final PdePreprocessor pdePreprocessor;
-  private final PrintStream out;
+  private final PrintWriter out;
   private final PrintStream debug = System.err;
 
   private final Stack stack = new Stack();
   private final static int ROOT_ID = 0;
 
-  public PdeEmitter(final PdePreprocessor pdePreprocessor, final PrintStream out) {
+  public PdeEmitter(final PdePreprocessor pdePreprocessor, final PrintWriter out) {
     this.pdePreprocessor = pdePreprocessor;
     this.out = out;
   }

@@ -199,7 +199,7 @@ public class Base {
   }
 
 
-  static protected void initPlatform() {
+  static public void initPlatform() {
     try {
       Class<?> platformClass = Class.forName("processing.app.Platform");
       if (Base.isMacOS()) {
