@@ -1,20 +1,33 @@
 package test.processing.parsing;
 
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import processing.app.Base;
 import processing.app.Preferences;
 import processing.app.debug.RunnerException;
 import processing.app.preproc.PdePreprocessor;
+import processing.util.exec.ProcessResult;
 import antlr.ANTLRException;
 
 public class ParserTests {
 
   private static final String RESOURCES = "test/resources/";
+  private static final UTCompiler COMPILER;
+  static {
+    try {
+      Base.initPlatform();
+      COMPILER = new UTCompiler(new File("bin"), new File("../core/bin"));
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
 
   private static File res(final String resourceName) {
     return new File(RESOURCES, resourceName);
@@ -44,17 +57,37 @@ public class ParserTests {
     }
   }
 
-  static String preprocess(final String resource) throws RunnerException,
-      ANTLRException {
-    final String program = read(res(resource));
+  static String preprocess(final String name, final File resource)
+      throws RunnerException, ANTLRException {
+    final String program = read(resource);
     final StringWriter out = new StringWriter();
-    new PdePreprocessor(resource, 4).write(out, program);
+    new PdePreprocessor(name, 4).write(out, program);
     return out.toString();
   }
 
-  static void expectGood(final String resource) {
+  static void expectGood(final String id) {
+
     try {
-      preprocess(resource);
+      final String program = preprocess(id, res(id + ".pde"));
+
+      final ProcessResult compilerResult = COMPILER.compile(id, program);
+      if (!compilerResult.succeeded()) {
+        System.err.println(compilerResult.getStderr());
+        fail("Compilation failed with status " + compilerResult.getResult());
+      }
+
+      final File expectedFile = res(id + ".expected");
+      if (expectedFile.exists()) {
+        final String expected = read(expectedFile);
+        assertEquals(expected, program);
+      } else {
+        System.err.println("WARN: " + id
+            + " does not have an expected output file. Generating.");
+        final FileWriter sug = new FileWriter(res(id + ".expected"));
+        sug.write(program);
+        sug.close();
+      }
+
     } catch (Exception e) {
       if (!e.equals(e.getCause()))
         fail(e.getCause().getMessage());
@@ -65,26 +98,36 @@ public class ParserTests {
 
   @Test
   public void bug5a() {
-    expectGood("bug5.a.pde");
+    expectGood("bug5a");
   }
 
   @Test
   public void bug5b() {
-    expectGood("bug5.b.pde");
+    expectGood("bug5b");
   }
 
   @Test
   public void bug1511() {
-    expectGood("bug1511.pde");
+    expectGood("bug1511");
   }
-  
+
   @Test
   public void bug1514a() {
-    expectGood("bug1514.a.pde");
+    expectGood("bug1514a");
   }
 
   @Test
   public void bug1514b() {
-    expectGood("bug1514.b.pde");
+    expectGood("bug1514b");
+  }
+
+  @Test
+  public void bug1518a() {
+    expectGood("bug1518a");
+  }
+
+  @Test
+  public void bug1518b() {
+    expectGood("bug1518b");
   }
 }
