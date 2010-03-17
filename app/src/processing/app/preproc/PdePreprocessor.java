@@ -289,7 +289,7 @@ public class PdePreprocessor implements PdeTokenTypes {
     // bug #5
     if (!program.endsWith("\n"))
       program += "\n";
-    
+
     checkForUnterminatedMultilineComment(program);
 
     if (Preferences.getBoolean("preproc.substitute_unicode")) {
