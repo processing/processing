@@ -77,4 +77,14 @@ public class ParserTests {
   public void bug1511() {
     expectGood("bug1511.pde");
   }
+  
+  @Test
+  public void bug1514a() {
+    expectGood("bug1514.a.pde");
+  }
+
+  @Test
+  public void bug1514b() {
+    expectGood("bug1514.b.pde");
+  }
 }
