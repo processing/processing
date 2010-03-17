@@ -12,6 +12,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 import processing.app.tools.android.EmulatorController.State;
+import processing.util.exec.ProcessResult;
 
 /**
  * <pre> AndroidEnvironment env = AndroidEnvironment.getInstance();

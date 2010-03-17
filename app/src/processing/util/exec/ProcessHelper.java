@@ -17,7 +17,7 @@
  along with this program; if not, write to the Free Software Foundation,
  Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package processing.app.tools.android;
+package processing.util.exec;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -28,7 +28,7 @@ import java.io.StringWriter;
  *
  * @author Jonathan Feinberg <jdf@pobox.com>
  */
-class ProcessHelper {
+public class ProcessHelper {
   private final String[] cmd;
 
   public ProcessHelper(final String... cmd) {
