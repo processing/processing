@@ -31,31 +31,26 @@ tokens {
 	}
 }
 
-/*
-    So the trick here is to pick the most likely "mode". It's important
-    because picking the right mode will give you useful syntax error
-    messages, but the wrong mode will give you lots of "unexpected token:
-    void" where "void" occurs 50 yeards before the actual error.
-    
-    I've changed the long-standing heuristic, which only goes down
-    the activeProgram path on the presence of a "void ident(", and
-    instead chosen to treat activeProgram as the default. I'm tired,
-    and I might change my mind tomorrow. I did that because I was sad
-    when "int poop() { return 0; }" was considered a defective
-    static program. Then again, it's useless. But it's a valid
-    active program. Tired.
-    
-    jdf
-*/
 pdeProgram
         // only java mode programs will have their own public classes or
         // imports (and they must have at least one)
     :   ( "public" "class" | "import" ) => javaProgram
         { pp.setProgramType(PdePreprocessor.ProgramType.JAVA); }
-	|	( statement | EOF ) => staticProgram
-        { pp.setProgramType(PdePreprocessor.ProgramType.STATIC); }
-    |  	activeProgram
+
+        // the syntactic predicate here looks for any minimal (thus
+        // the non-greedy qualifier) number of fields, followed by
+        // the tokens that represent the definition of loop() or
+        // some other member function.  java mode programs may have such
+        // definitions, but they won't reach this point, having already been
+        // selected in the previous alternative.  static mode programs 
+        // don't have member functions.
+        //
+    |   ( ( options {greedy=false;}: possiblyEmptyField)* "void" IDENT LPAREN ) 
+        => activeProgram
         { pp.setProgramType(PdePreprocessor.ProgramType.ACTIVE); }
+
+    |   staticProgram
+        { pp.setProgramType(PdePreprocessor.ProgramType.STATIC); }
     ;
 
 // advanced mode is really just a normal java file
@@ -64,11 +59,16 @@ javaProgram
     ;
 
 activeProgram
-    :  (possiblyEmptyField)+ EOF!
+    :  (
+    	(IDENT LPAREN) => IDENT LPAREN
+    	    { throw new RecognitionException("It looks like you're mixing \"active\" and \"static\" modes.",
+    	                                     getFilename(), LT(1).getLine(), LT(1).getColumn()); }
+    	| possiblyEmptyField
+    	)+ EOF!
     ;
 
 staticProgram
-    :  (statement)* EOF!
+    :  ( statement)* EOF!
     ; 
 
 // copy of the java.g rule with WEBCOLOR_LITERAL added
