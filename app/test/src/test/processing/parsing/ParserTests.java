@@ -15,6 +15,7 @@ import processing.app.debug.RunnerException;
 import processing.app.preproc.PdePreprocessor;
 import processing.util.exec.ProcessResult;
 import antlr.ANTLRException;
+import antlr.RecognitionException;
 
 public class ParserTests {
 
@@ -65,8 +66,25 @@ public class ParserTests {
     return out.toString();
   }
 
-  static void expectGood(final String id) {
+  static void expectRecognitionException(final String id,
+                                         final String expectedMessage,
+                                         final int expectedLine) {
+    try {
+      preprocess(id, res(id + ".pde"));
+      fail("Expected to fail with \"" + expectedMessage + "\" on line "
+          + expectedLine);
+    } catch (RecognitionException e) {
+      assertEquals(expectedMessage, e.getMessage());
+      assertEquals(expectedLine, e.getLine());
+    } catch (Exception e) {
+      if (!e.equals(e.getCause()) && e.getCause() != null)
+        fail(e.getCause().getMessage());
+      else
+        fail(e.getMessage());
+    }
+  }
 
+  static void expectGood(final String id) {
     try {
       final String program = preprocess(id, res(id + ".pde"));
 
@@ -89,7 +107,7 @@ public class ParserTests {
       }
 
     } catch (Exception e) {
-      if (!e.equals(e.getCause()))
+      if (!e.equals(e.getCause()) && e.getCause() != null)
         fail(e.getCause().getMessage());
       else
         fail(e.getMessage());
@@ -122,6 +140,16 @@ public class ParserTests {
   }
 
   @Test
+  public void bug1516() {
+    expectGood("bug1516");
+  }
+
+  @Test
+  public void bug1517() {
+    expectGood("bug1517");
+  }
+
+  @Test
   public void bug1518a() {
     expectGood("bug1518a");
   }
@@ -130,4 +158,10 @@ public class ParserTests {
   public void bug1518b() {
     expectGood("bug1518b");
   }
+
+  @Test
+  public void bug1519() {
+    expectRecognitionException("bug1519", "Maybe too many > characters?", 7);
+  }
+
 }
