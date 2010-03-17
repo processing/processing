@@ -1,0 +1,24 @@
+# unit test prefs
+
+preproc.save_build_files=false
+
+# preprocessor: pde.g
+preproc.color_datatype = true
+preproc.web_colors = true
+preproc.enhanced_casting = true
+
+# preprocessor: PdeEmitter.java
+preproc.substitute_floats = true
+#preproc.substitute_image = false
+#preproc.substitute_font = false
+
+# auto-convert non-ascii chars to unicode escape sequences
+preproc.substitute_unicode = true
+
+# PdePreproc.java
+# writes out the parse tree as parseTree.xml, which can be usefully
+# viewed in (at least) Mozilla or IE.  useful when debugging the preprocessor.
+preproc.output_parse_tree = false
+
+# Changed after 1.0.9 to a new name, and also includes the specific entries
+preproc.imports.list = java.applet.*,java.awt.Dimension,java.awt.Frame,java.awt.event.MouseEvent,java.awt.event.KeyEvent,java.awt.event.FocusEvent,java.awt.Image,java.io.*,java.net.*,java.text.*,java.util.*,java.util.zip.*,java.util.regex.*

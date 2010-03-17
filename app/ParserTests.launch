@@ -16,5 +16,4 @@
 <stringAttribute key="org.eclipse.jdt.junit.TEST_KIND" value="org.eclipse.jdt.junit.loader.junit4"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="test.processing.parsing.ParserTests"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="processing-app"/>
-<stringAttribute key="org.eclipse.jdt.launching.WORKING_DIRECTORY" value="C:\Documents and Settings\Administrator\Desktop\processing\svn\processing\build\windows\work"/>
 </launchConfiguration>

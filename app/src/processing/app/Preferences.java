@@ -592,7 +592,7 @@ public class Preferences {
   // .................................................................
 
 
-  static protected void load(InputStream input) throws IOException {
+  static public void load(InputStream input) throws IOException {
     String[] lines = PApplet.loadStrings(input);  // Reads as UTF-8
     for (String line : lines) {
       if ((line.length() == 0) ||
