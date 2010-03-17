@@ -162,7 +162,21 @@ if (is_dir($path.'learning/curves/code')) {
 	copydirr($source.'curves/code', $path.'learning/curves/code', true, 0757, true); 
 }
 
-
+$page = new Page("Anatomy", "Tutorials");
+$page->content(file_get_contents($source."anatomy/index.html"));
+writeFile('learning/anatomy/index.html', $page->out());
+if (!is_dir($path.'learning/anatomy/imgs')) { 
+	mkdir($path.'learning/anatomy/imgs', '0757'); 
+}
+if (is_dir($path.'learning/anatomy/imgs')) { 
+	copydirr($source.'anatomy/imgs', $path.'learning/anatomy/imgs', null, 0757, true); 
+}
+if (!is_dir($path.'learning/anatomy/code')) { 
+	mkdir($path.'learning/anatomy/code', '0757'); 
+}
+if (is_dir($path.'learning/anatomy/code')) { 
+	copydirr($source.'anatomy/code', $path.'learning/anatomy/code', true, 0757, true); 
+}
 
 
 $benchmark_end = microtime_float();
