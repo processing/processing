@@ -49,7 +49,9 @@ import antlr.ASTFactory;
 import antlr.CommonAST;
 import antlr.CommonASTWithHiddenTokens;
 import antlr.CommonHiddenStreamToken;
+import antlr.RecognitionException;
 import antlr.TokenStreamCopyingHiddenTokenFilter;
+import antlr.TokenStreamException;
 import antlr.collections.AST;
 
 /**
@@ -266,13 +268,13 @@ public class PdePreprocessor implements PdeTokenTypes {
   }
 
   public PreprocessResult write(final Writer out, String program)
-      throws RunnerException, ANTLRException {
+      throws RunnerException, RecognitionException, TokenStreamException {
     return write(out, program, null);
   }
 
   public PreprocessResult write(final Writer out, String program,
                                 final String codeFolderPackages[])
-      throws RunnerException, ANTLRException {
+      throws RunnerException, RecognitionException, TokenStreamException {
 
     // these ones have the .* at the end, since a class name might be at the end
     // instead of .* which would make trouble other classes using this can lop
@@ -371,7 +373,7 @@ public class PdePreprocessor implements PdeTokenTypes {
    * @return the class name of the exported Java
    */
   private String write(final String program, final PrintWriter stream)
-      throws RunnerException, ANTLRException {
+      throws RunnerException, RecognitionException, TokenStreamException {
     // create a lexer with the stream reader, and tell it to handle
     // hidden tokens (eg whitespace, comments) since we want to pass these
     // through so that the line numbers when the compiler reports errors
