@@ -1320,13 +1320,6 @@ public class Sketch {
                                   errorFile, errorLine, re.getColumn());
       }
 
-      if (msg.indexOf("unexpected token:") != -1) {
-        System.err.println(msg);
-        throw new RunnerException("Syntax error, " +
-                                  "maybe a missing ;, an extra }, an extra math symbol, or an unclosed comment?",
-                                  errorFile, errorLine, re.getColumn());
-      }
-
       if (msg.indexOf("preproc.web_colors") != -1) {
         throw new RunnerException("A web color (such as #ffcc00) " +
                                   "must be six digits.",
