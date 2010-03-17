@@ -10,6 +10,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import processing.app.debug.RunnerListener;
 import processing.app.tools.android.LogEntry.Severity;
+import processing.util.exec.LineProcessor;
+import processing.util.exec.ProcessRegistry;
+import processing.util.exec.ProcessResult;
+import processing.util.exec.StreamPump;
 
 class AndroidDevice implements AndroidDeviceProperties {
   private final AndroidEnvironment env;
