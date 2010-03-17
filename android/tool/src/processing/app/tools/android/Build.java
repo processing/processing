@@ -330,7 +330,7 @@ class Build {
     }
 
     @Override
-    protected int writeImports(final PrintStream out,
+    protected int writeImports(final PrintWriter out,
                                final List<String> programImports,
                                final List<String> codeFolderImports) {
       out.println("package " + getPackageName() + ";");
