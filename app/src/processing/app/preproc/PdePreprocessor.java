@@ -44,7 +44,6 @@ import processing.app.antlr.PdeRecognizer;
 import processing.app.antlr.PdeTokenTypes;
 import processing.app.debug.RunnerException;
 import processing.core.PApplet;
-import antlr.ANTLRException;
 import antlr.ASTFactory;
 import antlr.CommonAST;
 import antlr.CommonASTWithHiddenTokens;
