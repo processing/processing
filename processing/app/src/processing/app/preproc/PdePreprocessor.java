@@ -27,13 +27,14 @@
 
 package processing.app.preproc;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -43,6 +44,7 @@ import processing.app.antlr.PdeRecognizer;
 import processing.app.antlr.PdeTokenTypes;
 import processing.app.debug.RunnerException;
 import processing.core.PApplet;
+import antlr.ANTLRException;
 import antlr.ASTFactory;
 import antlr.CommonAST;
 import antlr.CommonASTWithHiddenTokens;
@@ -179,11 +181,13 @@ public class PdePreprocessor implements PdeTokenTypes {
     this.programType = programType;
   }
 
-  public PdePreprocessor(final String sketchName) throws IOException {
-    this.name = sketchName;
+  public PdePreprocessor(final String sketchName) {
+    this(sketchName, Preferences.getInteger("editor.tabs.size"));
+  }
 
-    final char[] indentChars = new char[Preferences
-        .getInteger("editor.tabs.size")];
+  public PdePreprocessor(final String sketchName, final int tabSize) {
+    this.name = sketchName;
+    final char[] indentChars = new char[tabSize];
     Arrays.fill(indentChars, ' ');
     indent = new String(indentChars);
   }
@@ -261,9 +265,14 @@ public class PdePreprocessor implements PdeTokenTypes {
     }
   }
 
-  public PreprocessResult write(final PrintStream stream, String program,
+  public PreprocessResult write(final Writer out, String program)
+      throws RunnerException, ANTLRException {
+    return write(out, program, null);
+  }
+
+  public PreprocessResult write(final Writer out, String program,
                                 final String codeFolderPackages[])
-      throws FileNotFoundException, RunnerException, Exception {
+      throws RunnerException, ANTLRException {
 
     // these ones have the .* at the end, since a class name might be at the end
     // instead of .* which would make trouble other classes using this can lop
@@ -277,6 +286,10 @@ public class PdePreprocessor implements PdeTokenTypes {
     // need to reset whether or not this has a main()
     foundMain = false;
 
+    // bug #5
+    if (!program.endsWith("\n"))
+      program += "\n";
+    
     checkForUnterminatedMultilineComment(program);
 
     if (Preferences.getBoolean("preproc.substitute_unicode")) {
@@ -309,6 +322,7 @@ public class PdePreprocessor implements PdeTokenTypes {
       }
     }
 
+    final PrintWriter stream = new PrintWriter(out);
     final int headerOffset = writeImports(stream, programImports,
       codeFolderImports);
     return new PreprocessResult(headerOffset + 2, write(program, stream),
@@ -356,8 +370,8 @@ public class PdePreprocessor implements PdeTokenTypes {
    * preprocesses a pde file and writes out a java file
    * @return the class name of the exported Java
    */
-  private String write(final String program, final PrintStream stream)
-      throws java.lang.Exception {
+  private String write(final String program, final PrintWriter stream)
+      throws RunnerException, ANTLRException {
     // create a lexer with the stream reader, and tell it to handle
     // hidden tokens (eg whitespace, comments) since we want to pass these
     // through so that the line numbers when the compiler reports errors
@@ -438,13 +452,13 @@ public class PdePreprocessor implements PdeTokenTypes {
 
     // debug
     if (false) {
-      final ByteArrayOutputStream buf = new ByteArrayOutputStream();
-      final PrintStream bufout = new PrintStream(buf);
+      final StringWriter buf = new StringWriter();
+      final PrintWriter bufout = new PrintWriter(buf);
       writeDeclaration(bufout, className);
       new PdeEmitter(this, bufout).print(rootNode);
       writeFooter(bufout, className);
       debugAST(rootNode, true);
-      System.err.println(new String(buf.toByteArray()));
+      System.err.println(buf.toString());
     }
 
     writeDeclaration(stream, className);
@@ -520,7 +534,7 @@ public class PdePreprocessor implements PdeTokenTypes {
    * @param codeFolderImports
    * @return the header offset
    */
-  protected int writeImports(final PrintStream out,
+  protected int writeImports(final PrintWriter out,
                              final List<String> programImports,
                              final List<String> codeFolderImports) {
     int count = writeImportList(out, getCoreImports());
@@ -530,11 +544,11 @@ public class PdePreprocessor implements PdeTokenTypes {
     return count;
   }
 
-  protected int writeImportList(PrintStream out, List<String> imports) {
+  protected int writeImportList(PrintWriter out, List<String> imports) {
     return writeImportList(out, (String[]) imports.toArray(new String[0]));
   }
 
-  protected int writeImportList(PrintStream out, String[] imports) {
+  protected int writeImportList(PrintWriter out, String[] imports) {
     int count = 0;
     if (imports != null && imports.length != 0) {
       for (String item : imports) {
@@ -554,7 +568,7 @@ public class PdePreprocessor implements PdeTokenTypes {
    * @param exporting           Is this being exported from PDE?
    * @param className           Name of the class being created.
    */
-  protected void writeDeclaration(PrintStream out, String className) {
+  protected void writeDeclaration(PrintWriter out, String className) {
     if (programType == ProgramType.JAVA) {
       // Print two blank lines so that the offset doesn't change
       out.println();
@@ -576,7 +590,7 @@ public class PdePreprocessor implements PdeTokenTypes {
    *
    * @param out PrintStream to write it to.
    */
-  protected void writeFooter(PrintStream out, String className) {
+  protected void writeFooter(PrintWriter out, String className) {
     if (programType == ProgramType.STATIC) {
       // close off draw() definition
       out.println(indent + "noLoop();");
