@@ -153,7 +153,7 @@ public class PdePreprocessor implements PdeTokenTypes {
   private final String indent;
   private final String name;
 
-  public static enum ProgramType {
+  public static enum Mode {
     STATIC, ACTIVE, JAVA
   }
 
@@ -175,11 +175,11 @@ public class PdePreprocessor implements PdeTokenTypes {
     this.advClassName = advClassName;
   }
 
-  private ProgramType programType;
+  private Mode mode;
 
-  public void setProgramType(final ProgramType programType) {
+  public void setMode(final Mode mode) {
     //    System.err.println("Setting program type to " + programType);
-    this.programType = programType;
+    this.mode = mode;
   }
 
   public PdePreprocessor(final String sketchName) {
@@ -326,7 +326,7 @@ public class PdePreprocessor implements PdeTokenTypes {
     final PrintWriter stream = new PrintWriter(out);
     final int headerOffset = writeImports(stream, programImports,
       codeFolderImports);
-    return new PreprocessResult(headerOffset + 2, write(program, stream),
+    return new PreprocessResult(mode, headerOffset + 2, write(program, stream),
                                 programImports);
   }
 
@@ -438,7 +438,7 @@ public class PdePreprocessor implements PdeTokenTypes {
     CommonAST.setVerboseStringConversion(true, parser.getTokenNames());
 
     final String className;
-    if (programType == ProgramType.JAVA) {
+    if (mode == Mode.JAVA) {
       // if this is an advanced program, the classname is already defined.
       className = getFirstClassName(parserAST);
     } else {
@@ -570,17 +570,17 @@ public class PdePreprocessor implements PdeTokenTypes {
    * @param className           Name of the class being created.
    */
   protected void writeDeclaration(PrintWriter out, String className) {
-    if (programType == ProgramType.JAVA) {
+    if (mode == Mode.JAVA) {
       // Print two blank lines so that the offset doesn't change
       out.println();
       out.println();
 
-    } else if (programType == ProgramType.ACTIVE) {
+    } else if (mode == Mode.ACTIVE) {
       // Print an extra blank line so the offset is identical to the others
       out.println("public class " + className + " extends PApplet {");
       out.println();
 
-    } else if (programType == ProgramType.STATIC) {
+    } else if (mode == Mode.STATIC) {
       out.println("public class " + className + " extends PApplet {");
       out.println(indent + "public void setup() {");
     }
@@ -592,14 +592,14 @@ public class PdePreprocessor implements PdeTokenTypes {
    * @param out PrintStream to write it to.
    */
   protected void writeFooter(PrintWriter out, String className) {
-    if (programType == ProgramType.STATIC) {
+    if (mode == Mode.STATIC) {
       // close off draw() definition
       out.println(indent + "noLoop();");
       out.println("} ");
     }
 
-    if ((programType == ProgramType.STATIC)
-        || (programType == ProgramType.ACTIVE)) {
+    if ((mode == Mode.STATIC)
+        || (mode == Mode.ACTIVE)) {
       if (!foundMain) {
         out.println(indent + "static public void main(String args[]) {");
         out.print(indent + indent + "PApplet.main(new String[] { ");
