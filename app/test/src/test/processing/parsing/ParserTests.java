@@ -148,6 +148,11 @@ public class ParserTests {
   }
 
   @Test
+  public void bug6() {
+    expectRecognitionException("bug6", "expecting EOF, found '/'", 1);
+  }
+
+  @Test
   public void bug16() {
     expectRunnerException("bug16", "Unclosed /* comment */", 2);
   }
@@ -171,6 +176,16 @@ public class ParserTests {
   @Test
   public void bug481() {
     expectGood("bug481");
+  }
+
+  @Test
+  public void bug507() {
+    expectRecognitionException("bug507", "expecting EOF, found 'else'", 5);
+  }
+
+  @Test
+  public void bug631() {
+    expectGood("bug631");
   }
 
   @Test
