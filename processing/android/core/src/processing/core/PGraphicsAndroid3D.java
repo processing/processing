@@ -187,7 +187,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   // TODO: this should be obtained on runtime.
   // Size of an int (in bytes).
-  static protected int SIZEOF_INT = 4;
+  static protected int SIZEOF_INT = Integer.SIZE / 8;
   
   // ........................................................
 
@@ -490,7 +490,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     fillAlpha = fillAlpha0;
     gl.glClearColor(0, 0, 0, 0);
     gl.glClear(GL10.GL_DEPTH_BUFFER_BIT);
-        
+    
     report("bot beginDraw()");
   }
 
@@ -504,7 +504,6 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
  */
   }
-
   
   public GL10 beginGL() {
 	  gl.glPushMatrix();
@@ -960,13 +959,13 @@ public class PGraphicsAndroid3D extends PGraphics {
       expandBuffers();  
     }    
     
-    vertexBuffer.rewind();
-    colorBuffer.rewind();
-    
     float sw = vertices[lines[start][VERTEX1]][SW];
     if (sw > 0) {
       gl.glPointSize(sw);  // can only be set outside glBegin/glEnd
 
+      vertexBuffer.position(0);
+      colorBuffer.position(0);    
+      
       for (int i = start; i < stop; i++) {
         float[] a = vertices[points[i][VERTEX1]];
         colorBuffer.put(toFixed16(a[SR]));
@@ -977,6 +976,9 @@ public class PGraphicsAndroid3D extends PGraphics {
         vertexBuffer.put(toFixed32(a[VY]));
         vertexBuffer.put(toFixed32(a[VZ]));
       }
+    
+      vertexBuffer.position(0);
+      colorBuffer.position(0);    
       
       gl.glVertexPointer(3, GL10.GL_FIXED, 0, vertexBuffer);
       gl.glColorPointer(4, GL10.GL_FIXED, 0, colorBuffer);
@@ -1063,10 +1065,10 @@ public class PGraphicsAndroid3D extends PGraphics {
         if (vertexBuffer.capacity() / 3 <=  3 * (pathLength[j] + 1)) {
           expandBuffers();  
         }
-        
-        vertexBuffer.rewind();
-        colorBuffer.rewind();
 
+        vertexBuffer.position(0);
+        colorBuffer.position(0);
+        
         // always draw a first point
         float a[] = vertices[lines[i][VERTEX1]];
         colorBuffer.put(toFixed32(a[SR]));
@@ -1092,7 +1094,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         
         vertexBuffer.position(0);
         colorBuffer.position(0);
-        
+                
         gl.glVertexPointer(3, GL10.GL_FIXED, 0, vertexBuffer);
         gl.glColorPointer(4, GL10.GL_FIXED, 0, colorBuffer);
         gl.glDrawArrays(GL10.GL_LINE_STRIP, 0, pathLength[j] + 1);        
@@ -1164,11 +1166,6 @@ public class PGraphicsAndroid3D extends PGraphics {
     GLTexture tex = null;
     boolean texturing = false;
     
-    vertexBuffer.position(0);
-    colorBuffer.position(0);
-    normalBuffer.position(0);
-    textureBuffer.position(0);
-
     // Last transformation: inversion of coordinate to make compatible with Processing's inverted Y axis.
     gl.glPushMatrix();
     gl.glScalef(1, -1, 1);
@@ -1193,8 +1190,6 @@ public class PGraphicsAndroid3D extends PGraphics {
       } else {
         texturing = false;  
       }
-
-      System.out.println("Sizes = " + vertexBuffer.capacity() / 3 + " " + 3 * faceLength[j]);
       
       // Division by three needed because each int element in the buffer is used to
       // store three coordinates.      
@@ -1202,10 +1197,10 @@ public class PGraphicsAndroid3D extends PGraphics {
         expandBuffers();
       }
       
-      vertexBuffer.rewind();
-      colorBuffer.rewind();
-      normalBuffer.rewind();
-      textureBuffer.rewind();      
+      vertexBuffer.position(0);
+      colorBuffer.position(0);
+      normalBuffer.position(0);
+      textureBuffer.position(0);    
       
       for (int k = 0; k < faceLength[j]; k++) {
         float a[] = vertices[triangles[i][VERTEX1]];
@@ -1281,7 +1276,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       vertexBuffer.position(0);
       colorBuffer.position(0);
       normalBuffer.position(0);
-      textureBuffer.position(0);
+      textureBuffer.position(0); 
 
       gl.glVertexPointer(3, GL10.GL_FIXED, 0, vertexBuffer);
       gl.glColorPointer(4, GL10.GL_FIXED, 0, colorBuffer);
@@ -4499,7 +4494,6 @@ public class PGraphicsAndroid3D extends PGraphics {
     
   }
 }
-
 
 class BufferUtil {
   static IntBuffer newIntBuffer(int big) {
