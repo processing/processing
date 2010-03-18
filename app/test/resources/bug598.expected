@@ -1,0 +1,55 @@
+import processing.core.*; 
+import processing.xml.*; 
+
+import static java.lang.Math.tanh; 
+import java.util.concurrent.Callable; 
+
+import java.applet.*; 
+import java.awt.Dimension; 
+import java.awt.Frame; 
+import java.awt.event.MouseEvent; 
+import java.awt.event.KeyEvent; 
+import java.awt.event.FocusEvent; 
+import java.awt.Image; 
+import java.io.*; 
+import java.net.*; 
+import java.text.*; 
+import java.util.*; 
+import java.util.zip.*; 
+import java.util.regex.*; 
+
+public class bug598 extends PApplet {
+
+// java 5 torture test
+
+
+
+
+private static Comparator<String> rotarapmoc = new Comparator<String>() {
+  public int compare(final String o1, final String o2)
+  {
+    return o1.charAt(o1.length() - 1) - o2.charAt(o2.length() - 1);
+  }
+};
+
+final <T> void printClass(T t) {
+   println(t.getClass()); 
+}
+public final List<String> sortem(final String... strings) {
+   Arrays.sort(strings,  rotarapmoc);
+   return Arrays.asList(strings);
+}
+
+final Map<String, Collection<Integer>>
+charlesDeGaulle = new HashMap<String, Collection<Integer>>();
+
+public void setup() {
+  charlesDeGaulle.put("banana", new HashSet<Integer>());
+  charlesDeGaulle.get("banana").add(0);
+  System.out.println(sortem("aztec", "maya", "spanish", "portuguese"));
+  printClass(12.d);
+}
+    static public void main(String args[]) {
+        PApplet.main(new String[] { "--bgcolor=null", "bug598" });
+    }
+}

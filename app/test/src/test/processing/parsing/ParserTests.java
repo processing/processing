@@ -115,7 +115,6 @@ public class ParserTests {
             + expectedLine);
       }
       final String e = compilerResult.getStderr().split("\n")[0];
-      System.err.println(e);
       final Matcher m = Pattern.compile(":(\\d+):\\s+(.+)$").matcher(e);
       m.find();
       assertEquals(expectedMessage, m.group(2));
@@ -134,6 +133,8 @@ public class ParserTests {
 
       final ProcessResult compilerResult = COMPILER.compile(id, program);
       if (!compilerResult.succeeded()) {
+        System.err.println(program);
+        System.err.println("----------------------------");
         System.err.println(compilerResult.getStderr());
         fail("Compilation failed with status " + compilerResult.getResult());
       }
@@ -210,6 +211,11 @@ public class ParserTests {
   }
 
   @Test
+  public void bug598() {
+    expectGood("bug598");
+  }
+
+  @Test
   public void bug631() {
     expectGood("bug631");
   }
@@ -222,6 +228,26 @@ public class ParserTests {
   @Test
   public void bug820() {
     expectCompilerException("bug820", "x1 is already defined in setup()", 21);
+  }
+
+  @Test
+  public void bug1064() {
+    expectGood("bug1064");
+  }
+
+  @Test
+  public void bug1145() {
+    expectCompilerException("bug1145", "'.' expected", 4);
+  }
+
+  @Test
+  public void bug1362() {
+    expectGood("bug1362");
+  }
+
+  @Test
+  public void bug1442() {
+    expectGood("bug1442");
   }
 
   @Test
