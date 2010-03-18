@@ -62,7 +62,10 @@ pdeProgram
         // selected in the previous alternative.  static mode programs 
         // don't have member functions.
         //
-    |   ( ( options {greedy=false;}: possiblyEmptyField)* builtInType IDENT LPAREN ) 
+        // The typeSpec match causes ANTLR to emit a warning about potentially
+        // exiting the nongreedy match incorrectly, but I haven't found a case
+        // of that in practice. Please report such a case!
+    |   ( (options{greedy=false;}: possiblyEmptyField)* typeSpec[false] IDENT LPAREN ) 
         => activeProgram
         { pp.setProgramType(PdePreprocessor.ProgramType.ACTIVE); }
 
