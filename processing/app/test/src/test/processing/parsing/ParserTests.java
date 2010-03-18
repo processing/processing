@@ -78,9 +78,27 @@ public class ParserTests {
       assertEquals(expectedLine, e.getLine());
     } catch (Exception e) {
       if (!e.equals(e.getCause()) && e.getCause() != null)
-        fail(e.getCause().getMessage());
+        fail(e.getCause().toString());
       else
-        fail(e.getMessage());
+        fail(e.toString());
+    }
+  }
+
+  static void expectRunnerException(final String id,
+                                    final String expectedMessage,
+                                    final int expectedLine) {
+    try {
+      preprocess(id, res(id + ".pde"));
+      fail("Expected to fail with \"" + expectedMessage + "\" on line "
+          + expectedLine);
+    } catch (RunnerException e) {
+      assertEquals(expectedMessage, e.getMessage());
+      assertEquals(expectedLine, e.getCodeLine());
+    } catch (Exception e) {
+      if (!e.equals(e.getCause()) && e.getCause() != null)
+        fail(e.getCause().toString());
+      else
+        fail(e.toString());
     }
   }
 
@@ -108,10 +126,15 @@ public class ParserTests {
 
     } catch (Exception e) {
       if (!e.equals(e.getCause()) && e.getCause() != null)
-        fail(e.getCause().getMessage());
+        fail(e.getCause().toString());
       else
-        fail(e.getMessage());
+        fail(e.toString());
     }
+  }
+
+  @Test
+  public void bug4() {
+    expectGood("bug4");
   }
 
   @Test
@@ -122,6 +145,22 @@ public class ParserTests {
   @Test
   public void bug5b() {
     expectGood("bug5b");
+  }
+
+  @Test
+  public void bug16() {
+    expectRunnerException("bug16", "Unclosed /* comment */", 2);
+  }
+
+  @Test
+  public void bug136() {
+    expectGood("bug136");
+  }
+
+  @Test
+  public void bug196() {
+    expectRecognitionException("bug196",
+      "Web colors must be exactly 6 hex digits. This looks like 5.", 4);
   }
 
   @Test
