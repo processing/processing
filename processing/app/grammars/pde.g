@@ -158,8 +158,12 @@ protected typeArgumentsOrParametersEnd
 // of the form #cc008f in PDE
 webcolor_literal
     :   w:WEBCOLOR_LITERAL 
-    { processing.app.Preferences.getBoolean("preproc.web_colors") && 
-      w.getText().length() == 6 }?  // must be exactly 6 hex digits
+    { if (! (processing.app.Preferences.getBoolean("preproc.web_colors") 
+    		 && 
+        	 w.getText().length() == 6)) {
+		throw new RecognitionException("Web colors must be exactly 6 hex digits. This looks like " + w.getText().length() + ".",
+	                                     getFilename(), LT(1).getLine(), LT(1).getColumn());
+     }}  // must be exactly 6 hex digits
     ;
 
 // copy of the java.g builtInType rule
