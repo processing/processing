@@ -7,6 +7,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import processing.app.Base;
@@ -102,6 +104,30 @@ public class ParserTests {
     }
   }
 
+  static void expectCompilerException(final String id,
+                                      final String expectedMessage,
+                                      final int expectedLine) {
+    try {
+      final String program = preprocess(id, res(id + ".pde"));
+      final ProcessResult compilerResult = COMPILER.compile(id, program);
+      if (compilerResult.succeeded()) {
+        fail("Expected to fail with \"" + expectedMessage + "\" on line "
+            + expectedLine);
+      }
+      final String e = compilerResult.getStderr().split("\n")[0];
+      System.err.println(e);
+      final Matcher m = Pattern.compile(":(\\d+):\\s+(.+)$").matcher(e);
+      m.find();
+      assertEquals(expectedMessage, m.group(2));
+      assertEquals(String.valueOf(expectedLine), m.group(1));
+    } catch (Exception e) {
+      if (!e.equals(e.getCause()) && e.getCause() != null)
+        fail(e.getCause().toString());
+      else
+        fail(e.toString());
+    }
+  }
+
   static void expectGood(final String id) {
     try {
       final String program = preprocess(id, res(id + ".pde"));
@@ -186,6 +212,16 @@ public class ParserTests {
   @Test
   public void bug631() {
     expectGood("bug631");
+  }
+
+  @Test
+  public void bug763() {
+    expectRunnerException("bug763", "Unterminated string constant", 6);
+  }
+
+  @Test
+  public void bug820() {
+    expectCompilerException("bug820", "x1 is already defined in setup()", 21);
   }
 
   @Test
