@@ -14,8 +14,10 @@ public class PreprocessResult {
   public final int headerOffset;
   public final String className;
   public final List<String> extraImports;
+  public final PdePreprocessor.Mode programType;
 
-  public PreprocessResult(int headerOffset, String className,
+  public PreprocessResult(PdePreprocessor.Mode programType,
+                          int headerOffset, String className,
                           final List<String> extraImports)
       throws RunnerException {
     if (className == null)
@@ -24,6 +26,7 @@ public class PreprocessResult {
     this.className = className;
     this.extraImports = Collections
         .unmodifiableList(new ArrayList<String>(extraImports));
+    this.programType = programType;
   }
 
 }
