@@ -26,6 +26,7 @@ import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 
 import javax.microedition.khronos.opengles.*;
@@ -47,24 +48,20 @@ public class GLModel extends PShape implements GLConstants, PConstants {
   protected int glUsage;
   protected boolean pointSprites;
   
-  protected int[] glVertexBufferID;
-  protected int[] glColorBufferID;
-  protected int[] glTexCoordBufferID;
-  protected int[] glNormalBufferID;
+  protected int[] glVertexBufferID = {0};
+  protected int[] glColorBufferID = {0};
+  protected int[] glTexCoordBufferID = {0};
+  protected int[] glNormalBufferID = {0};
 
-  protected FloatBuffer vertices;
-  protected FloatBuffer colors;
-  protected FloatBuffer normals;
-  protected FloatBuffer texCoords;  
-
-  // TODO: maybe, instead of allocating memory for this arrays, we could just use
-  // updateVertexArray = vertices.array(),
-  // updateColorArray = colors.array(),
-  // etc.
-  protected float[] updateVertexArray;
-  protected float[] updateColorArray;
-  protected float[] updateNormalArray;
-  protected float[] updateTexCoordArray;
+  protected FloatBuffer vertexBuffer;
+  protected FloatBuffer colorBuffer;
+  protected FloatBuffer normalBuffer;
+  protected FloatBuffer texCoordBuffer;
+  
+  protected float[] vertexArray;
+  protected float[] colorArray;
+  protected float[] normalArray;
+  protected float[] texCoordArray;
   
   protected int updateElement;
   protected int firstUpdateIdx;
@@ -81,11 +78,10 @@ public class GLModel extends PShape implements GLConstants, PConstants {
   protected int recreateResourceIdx;
   
   public float depth;
+
+  protected static final int SIZEOF_FLOAT = Float.SIZE / 8;
   
-  // TODO: this should be calculated depending on the platform.
-  protected static final int SIZEOF_FLOAT = 4;
   
-    
   ////////////////////////////////////////////////////////////
 
   // Constructors.
@@ -117,11 +113,7 @@ public class GLModel extends PShape implements GLConstants, PConstants {
     
     setParameters(params);
     createModel(numVert);    
-        
-    updateVertexArray = null;
-    updateColorArray = null;
-    updateNormalArray = null;
-    updateTexCoordArray = null;    
+    initGroups();      
     updateElement = -1;
 
     try {
@@ -184,13 +176,11 @@ public class GLModel extends PShape implements GLConstants, PConstants {
     if (updateElement == VERTICES) {
       gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glVertexBufferID[0]);      
       
-      if (updateVertexArray == null) {
-        updateVertexArray = new float[vertices.capacity()];
-      }      
       int offset = first * 3;
       int size = (last - first + 1) * 3;
-      vertices.get(updateVertexArray, offset, size);
-      vertices.rewind();
+      vertexBuffer.limit(vertexBuffer.capacity());      
+      vertexBuffer.rewind();
+      vertexBuffer.get(vertexArray, offset, size);
       
       // For group creation inside update vertices block.
       creatingGroup = false;
@@ -198,34 +188,27 @@ public class GLModel extends PShape implements GLConstants, PConstants {
     } else if (updateElement == COLORS) {
       gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glColorBufferID[0]);
             
-      if (updateColorArray == null) {
-        updateColorArray = new float[colors.capacity()];
-      }
       int offset = first * 4;
       int size = (last - first + 1) * 4;
-      colors.get(updateColorArray, offset, size);
-      colors.rewind();
+      colorBuffer.limit(colorBuffer.capacity());
+      colorBuffer.rewind();
+      colorBuffer.get(colorArray, offset, size);
     } else if (updateElement == NORMALS) {
       gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glNormalBufferID[0]);
             
-      if (updateNormalArray == null) {
-        updateNormalArray = new float[normals.capacity()];    
-      }
       int offset = first * 3;
       int size = (last - first + 1) * 3;
-      normals.get(updateNormalArray, offset, size);
-      normals.rewind();  
-        
+      normalBuffer.limit(normalBuffer.capacity());      
+      normalBuffer.rewind();      
+      normalBuffer.get(normalArray, offset, size);
     } else if (updateElement == TEXTURES) {      
       gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glTexCoordBufferID[0]);
           
-      if (updateTexCoordArray == null) {
-        updateTexCoordArray = new float[texCoords.capacity()];
-      }
       int offset = first * 2;
-      int size = (last - first + 1) * 2;      
-      texCoords.get(updateTexCoordArray, offset, size);
-      texCoords.rewind();          
+      int size = (last - first + 1) * 2;
+      texCoordBuffer.limit(texCoordBuffer.capacity());      
+      texCoordBuffer.rewind();
+      texCoordBuffer.get(texCoordArray, offset, size);
     } else if (updateElement == GROUPS) {
       deleteGroups();
     } else {
@@ -244,62 +227,50 @@ public class GLModel extends PShape implements GLConstants, PConstants {
       return;  
     }
     
-    if (updateElement == VERTICES) {
-      if (updateVertexArray == null) {
-        throw new RuntimeException("GLModel: vertex array is null");    
-      }
-      
+    if (updateElement == VERTICES) {      
       int offset = firstUpdateIdx * 3;
       int size = (lastUpdateIdx - firstUpdateIdx + 1) * 3;
       
-      vertices.put(updateVertexArray, offset, size);
-      vertices.position(0);
+      vertexBuffer.position(0);
+      vertexBuffer.put(vertexArray, offset, size);
+      vertexBuffer.flip();
     
-      gl.glBufferSubData(GL11.GL_ARRAY_BUFFER, offset * SIZEOF_FLOAT, size * SIZEOF_FLOAT, vertices);
+      gl.glBufferSubData(GL11.GL_ARRAY_BUFFER, offset * SIZEOF_FLOAT, size * SIZEOF_FLOAT, vertexBuffer);
       gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
       
       if (creatingGroup) {
         // The last group being created is added.
         addGroup(grIdx0, grIdx1, null);
       }
-    } else if (updateElement == COLORS) {
-      if (updateColorArray == null) {
-        throw new RuntimeException("GLModel: color array is null");    
-      }
-      
+    } else if (updateElement == COLORS) {      
       int offset = firstUpdateIdx * 4;
       int size = (lastUpdateIdx - firstUpdateIdx + 1) * 4;
             
-      colors.put(updateColorArray, size, offset);
-      colors.position(0);
+      colorBuffer.position(0);      
+      colorBuffer.put(colorArray, size, offset);
+      colorBuffer.flip();
     
-      gl.glBufferSubData(GL11.GL_ARRAY_BUFFER, size * SIZEOF_FLOAT, offset * SIZEOF_FLOAT, colors);
+      gl.glBufferSubData(GL11.GL_ARRAY_BUFFER, size * SIZEOF_FLOAT, offset * SIZEOF_FLOAT, colorBuffer);
       gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
     } else if (updateElement == NORMALS) {
-      if (updateNormalArray == null) {
-        throw new RuntimeException("GLModel: normal array is null");    
-      }
-      
       int offset = firstUpdateIdx * 3;
       int size = (lastUpdateIdx - firstUpdateIdx + 1) * 3;
       
-      normals.put(updateNormalArray, offset, size);
-      normals.position(0);
+      normalBuffer.position(0);      
+      normalBuffer.put(normalArray, offset, size);
+      normalBuffer.flip();
     
-      gl.glBufferSubData(GL11.GL_ARRAY_BUFFER, offset * SIZEOF_FLOAT, size * SIZEOF_FLOAT, normals);
+      gl.glBufferSubData(GL11.GL_ARRAY_BUFFER, offset * SIZEOF_FLOAT, size * SIZEOF_FLOAT, normalBuffer);
       gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
     } else if (updateElement == TEXTURES) {
-      if (updateTexCoordArray == null) {
-        throw new RuntimeException("GLModel: texture coordinates array is null");    
-      }      
-      
       int offset = firstUpdateIdx * 2;
       int size = (lastUpdateIdx - firstUpdateIdx + 1) * 2;
       
-      texCoords.put(updateTexCoordArray, offset, size);
-      texCoords.position(0);
+      texCoordBuffer.position(0);      
+      texCoordBuffer.put(texCoordArray, offset, size);
+      texCoordBuffer.flip();
       
-      gl.glBufferSubData(GL11.GL_ARRAY_BUFFER, offset * SIZEOF_FLOAT, size * SIZEOF_FLOAT, texCoords);
+      gl.glBufferSubData(GL11.GL_ARRAY_BUFFER, offset * SIZEOF_FLOAT, size * SIZEOF_FLOAT, texCoordBuffer);
       gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);      
     } else if (updateElement == GROUPS) {
       // TODO: check consistency of newly created groups (make sure that there are not overlapping groups)      
@@ -319,9 +290,9 @@ public class GLModel extends PShape implements GLConstants, PConstants {
       throw new RuntimeException("GLModel: update mode is not set to VERTICES");
     }
 
-    float x = updateVertexArray[3 * idx + 0];
-    float y = updateVertexArray[3 * idx + 1];
-    float z = updateVertexArray[3 * idx + 2];
+    float x = vertexArray[3 * idx + 0];
+    float y = vertexArray[3 * idx + 1];
+    float z = vertexArray[3 * idx + 2];
     
     PVector res = new PVector(x, y, z);
     return res;
@@ -341,7 +312,7 @@ public class GLModel extends PShape implements GLConstants, PConstants {
 
   
   protected float[] getVertexArrayImpl(float[] data, int firstUpd, int length, int firstData) {
-    PApplet.arrayCopy(updateVertexArray, firstUpd * 3, data, firstData * 3,  length * 3);
+    PApplet.arrayCopy(vertexArray, firstUpd * 3, data, firstData * 3,  length * 3);
     return  data;
   }
     
@@ -380,9 +351,9 @@ public class GLModel extends PShape implements GLConstants, PConstants {
       grIdx1 = idx;  
     }
     
-    updateVertexArray[3 * idx + 0] = x;
-    updateVertexArray[3 * idx + 1] = y;
-    updateVertexArray[3 * idx + 2] = z;
+    vertexArray[3 * idx + 0] = x;
+    vertexArray[3 * idx + 1] = y;
+    vertexArray[3 * idx + 2] = z;
   }
 
   
@@ -399,7 +370,7 @@ public class GLModel extends PShape implements GLConstants, PConstants {
       grIdx1 = numVertices - 1;
     }
     
-    PApplet.arrayCopy(data, updateVertexArray);
+    PApplet.arrayCopy(data, vertexArray);
   }
   
   
@@ -419,9 +390,9 @@ public class GLModel extends PShape implements GLConstants, PConstants {
     PVector vec;
     for (int i = 0; i < numVertices; i++) {
       vec = (PVector)data.get(i);
-      updateVertexArray[3 * i + 0] = vec.x;
-      updateVertexArray[3 * i + 1] = vec.y;
-      updateVertexArray[3 * i + 2] = vec.z;
+      vertexArray[3 * i + 0] = vec.x;
+      vertexArray[3 * i + 1] = vec.y;
+      vertexArray[3 * i + 2] = vec.z;
     }
   }
   
@@ -463,7 +434,7 @@ public class GLModel extends PShape implements GLConstants, PConstants {
     }
     
     float[] res = new float[4];
-    PApplet.arrayCopy(updateColorArray, idx * 4, res, 0, 4);
+    PApplet.arrayCopy(colorArray, idx * 4, res, 0, 4);
     
     return res;
   }
@@ -482,7 +453,7 @@ public class GLModel extends PShape implements GLConstants, PConstants {
 
 
   protected float[] getColorArrayImpl(float[] data, int firstUpd, int length, int firstData) {
-    PApplet.arrayCopy(updateColorArray, firstUpd * 4, data, firstData * 4,  length * 4);
+    PApplet.arrayCopy(colorArray, firstUpd * 4, data, firstData * 4,  length * 4);
     return  data;
   }
     
@@ -524,10 +495,10 @@ public class GLModel extends PShape implements GLConstants, PConstants {
     if (idx < firstUpdateIdx) firstUpdateIdx = idx;
     if (lastUpdateIdx < idx) lastUpdateIdx = idx;
     
-    updateColorArray[4 * idx + 0] = r;
-    updateColorArray[4 * idx + 1] = g;
-    updateColorArray[4 * idx + 2] = b;
-    updateColorArray[4 * idx + 3] = a;    
+    colorArray[4 * idx + 0] = r;
+    colorArray[4 * idx + 1] = g;
+    colorArray[4 * idx + 2] = b;
+    colorArray[4 * idx + 3] = a;    
   }
 
   
@@ -538,7 +509,7 @@ public class GLModel extends PShape implements GLConstants, PConstants {
     
     firstUpdateIdx = 0;
     firstUpdateIdx = numVertices - 1;   
-    PApplet.arrayCopy(data, updateColorArray);
+    PApplet.arrayCopy(data, colorArray);
   }
   
   
@@ -553,10 +524,10 @@ public class GLModel extends PShape implements GLConstants, PConstants {
     float[] rgba;
     for (int i = 0; i < numVertices; i++) {
       rgba = (float[])data.get(i);
-      updateColorArray[4 * i + 0] = rgba[0];
-      updateColorArray[4 * i + 1] = rgba[1];
-      updateColorArray[4 * i + 2] = rgba[2];
-      updateColorArray[4 * i + 3] = rgba[3];      
+      colorArray[4 * i + 0] = rgba[0];
+      colorArray[4 * i + 1] = rgba[1];
+      colorArray[4 * i + 2] = rgba[2];
+      colorArray[4 * i + 3] = rgba[3];      
     }
   }
   
@@ -571,9 +542,9 @@ public class GLModel extends PShape implements GLConstants, PConstants {
       throw new RuntimeException("GLModel: update mode is not set to NORMALS");
     }
 
-    float x = updateNormalArray[3 * idx + 0];
-    float y = updateNormalArray[3 * idx + 1];
-    float z = updateNormalArray[3 * idx + 2];
+    float x = normalArray[3 * idx + 0];
+    float y = normalArray[3 * idx + 1];
+    float z = normalArray[3 * idx + 2];
     
     PVector res = new PVector(x, y, z);
     return res;
@@ -593,7 +564,7 @@ public class GLModel extends PShape implements GLConstants, PConstants {
 
 
   protected float[] getNormalArrayImpl(float[] data, int firstUpd, int length, int firstData) {
-    PApplet.arrayCopy(updateNormalArray, firstUpd * 3, data, firstData * 3, length * 3);
+    PApplet.arrayCopy(normalArray, firstUpd * 3, data, firstData * 3, length * 3);
     return  data;
   }
   
@@ -625,9 +596,9 @@ public class GLModel extends PShape implements GLConstants, PConstants {
     if (idx < firstUpdateIdx) firstUpdateIdx = idx;
     if (lastUpdateIdx < idx) lastUpdateIdx = idx;
     
-    updateNormalArray[3 * idx + 0] = x;
-    updateNormalArray[3 * idx + 1] = y;
-    updateNormalArray[3 * idx + 2] = z;
+    normalArray[3 * idx + 0] = x;
+    normalArray[3 * idx + 1] = y;
+    normalArray[3 * idx + 2] = z;
   }
 
   
@@ -638,7 +609,7 @@ public class GLModel extends PShape implements GLConstants, PConstants {
     
     firstUpdateIdx = 0;
     firstUpdateIdx = numVertices - 1;    
-    PApplet.arrayCopy(data, updateNormalArray);
+    PApplet.arrayCopy(data, normalArray);
   }
   
   
@@ -653,9 +624,9 @@ public class GLModel extends PShape implements GLConstants, PConstants {
     PVector vec;
     for (int i = 0; i < numVertices; i++) {
       vec = (PVector)data.get(i);
-      updateNormalArray[3 * i + 0] = vec.x;
-      updateNormalArray[3 * i + 1] = vec.y;
-      updateNormalArray[3 * i + 2] = vec.z;
+      normalArray[3 * i + 0] = vec.x;
+      normalArray[3 * i + 1] = vec.y;
+      normalArray[3 * i + 2] = vec.z;
     }
   }
 
@@ -670,8 +641,8 @@ public class GLModel extends PShape implements GLConstants, PConstants {
       throw new RuntimeException("GLModel: update mode is not set to TEXTURES");
     }
 
-    float u = updateTexCoordArray[2 * idx + 0];
-    float v = updateTexCoordArray[2 * idx + 1];
+    float u = texCoordArray[2 * idx + 0];
+    float v = texCoordArray[2 * idx + 1];
     
     if (a3d.imageMode == IMAGE) {
       if (vertGroup[idx] != null && vertGroup[idx].texture == null) {
@@ -693,7 +664,7 @@ public class GLModel extends PShape implements GLConstants, PConstants {
     float[] res = new float[numVertices * 2];
     getTexCoordArrayImpl(res, 0, numVertices, 0);
     
-    PApplet.arrayCopy(updateTexCoordArray, res);
+    PApplet.arrayCopy(texCoordArray, res);
     
     if (a3d.imageMode == IMAGE) {
       float u, v;
@@ -718,7 +689,7 @@ public class GLModel extends PShape implements GLConstants, PConstants {
 
 
   protected float[] getTexCoordArrayImpl(float[] data, int firstUpd, int length, int firstData) {
-    PApplet.arrayCopy(updateTexCoordArray, firstUpd * 2, data, firstData * 2,  length * 2);
+    PApplet.arrayCopy(texCoordArray, firstUpd * 2, data, firstData * 2,  length * 2);
     return  data;   
   }
 
@@ -757,8 +728,8 @@ public class GLModel extends PShape implements GLConstants, PConstants {
       v /= vertGroup[idx].texture.height; 
     }
     
-    updateTexCoordArray[2 * idx + 0] = u;
-    updateTexCoordArray[2 * idx + 1] = v;
+    texCoordArray[2 * idx + 0] = u;
+    texCoordArray[2 * idx + 1] = v;
   }
 
   
@@ -790,11 +761,11 @@ public class GLModel extends PShape implements GLConstants, PConstants {
         u /= vertGroup[i].texture.width;
         v /= vertGroup[i].texture.height;
 
-        updateTexCoordArray[2 * i + 0] = u;
-        updateTexCoordArray[2 * i + 1] = v;
+        texCoordArray[2 * i + 0] = u;
+        texCoordArray[2 * i + 1] = v;
       }  
     } else {
-      PApplet.arrayCopy(data, updateTexCoordArray);
+      PApplet.arrayCopy(data, texCoordArray);
     }
   }
   
@@ -822,11 +793,11 @@ public class GLModel extends PShape implements GLConstants, PConstants {
         if (vertGroup[i] != null && vertGroup[i].texture == null) {
           throw new RuntimeException("GLModel: when setting texture coordinates in IMAGE mode, the textures need to be assigned first");
         }      
-        updateTexCoordArray[2 * i + 0] = vec.x / vertGroup[i].texture.width;
-        updateTexCoordArray[2 * i + 1] = vec.y / vertGroup[i].texture.height;
+        texCoordArray[2 * i + 0] = vec.x / vertGroup[i].texture.width;
+        texCoordArray[2 * i + 1] = vec.y / vertGroup[i].texture.height;
       } else {
-        updateTexCoordArray[2 * i + 0] = vec.x;
-        updateTexCoordArray[2 * i + 1] = vec.y;
+        texCoordArray[2 * i + 0] = vec.x;
+        texCoordArray[2 * i + 1] = vec.y;
       }
     }
   }
@@ -939,10 +910,10 @@ public void setGroup(int gr, int idx0, int idx1, GLTexture tex) {
     firstUpdateIdx = group.first;
     lastUpdateIdx = group.last;    
     for (int i = group.first; i <= group.last; i++) {
-      updateColorArray[4 * i + 0] = r;
-      updateColorArray[4 * i + 1] = g;
-      updateColorArray[4 * i + 2] = b;
-      updateColorArray[4 * i + 3] = a;      
+      colorArray[4 * i + 0] = r;
+      colorArray[4 * i + 1] = g;
+      colorArray[4 * i + 2] = b;
+      colorArray[4 * i + 3] = a;      
     }
     endUpdate();
   }
@@ -959,9 +930,9 @@ public void setGroup(int gr, int idx0, int idx1, GLTexture tex) {
     firstUpdateIdx = group.first;
     lastUpdateIdx = group.last;    
     for (int i = group.first; i <= group.last; i++) {
-      updateNormalArray[3 * i + 0] = x;
-      updateNormalArray[3 * i + 1] = y;
-      updateNormalArray[3 * i + 2] = z;
+      normalArray[3 * i + 0] = x;
+      normalArray[3 * i + 1] = y;
+      normalArray[3 * i + 2] = z;
     }
     endUpdate();
   }  
@@ -1002,7 +973,7 @@ public void setGroup(int gr, int idx0, int idx1, GLTexture tex) {
    * the data already stored in it by copying to the beginning of the 
    * new buffers. 
    * 
-   * No tested yet.
+   * TODO: Test!.
    *  
    */
   public void resize(int numVert) {
@@ -1032,11 +1003,7 @@ public void setGroup(int gr, int idx0, int idx1, GLTexture tex) {
     int numVert0 = numVertices;
     
     // Recreating the model with the new number of vertices.
-    createModel(numVert);    
-    updateVertexArray = null;
-    updateColorArray = null;
-    updateNormalArray = null;
-    updateTexCoordArray = null;    
+    createModel(numVert);
     updateElement = -1;
 
     // Setting the old data.
@@ -1137,8 +1104,7 @@ public void setGroup(int gr, int idx0, int idx1, GLTexture tex) {
   
   void createModel(int numVert) {
     numVertices = numVert;
-    initBufferIDs();
- 
+
     initVertexData();
     createVertexBuffer();   
     initColorData();
@@ -1147,30 +1113,18 @@ public void setGroup(int gr, int idx0, int idx1, GLTexture tex) {
     createNormalBuffer();
     initTexCoordData();
     createTexCoordBuffer();
-
+    
     initGroups();    
   }
   
-  
-  void initBufferIDs() {
-    glVertexBufferID = new int[1];
-    glColorBufferID = new int[1];
-    glNormalBufferID = new int[1];
-    glTexCoordBufferID = new int[1];
-    glVertexBufferID[0] = glColorBufferID[0] = glNormalBufferID[0] = glTexCoordBufferID[0] = 0;
-  }
-  
-  protected void initVertexData() {
-    // Creating the float buffer to hold vertices as a direct byte buffer. Each vertex has 3 coordinates
-    // and each coordinate takes SIZEOF_FLOAT bytes (one float).
+  protected void initVertexData() {    
     ByteBuffer vbb = ByteBuffer.allocateDirect(numVertices * 3 * SIZEOF_FLOAT);
     vbb.order(ByteOrder.nativeOrder());
-    vertices = vbb.asFloatBuffer();    
+    vertexBuffer = vbb.asFloatBuffer();    
     
-    float[] values = new float[vertices.capacity()];
-    for (int i = 0; i < values.length; i++) values[i] = 0.0f;
-    vertices.put(values);
-    vertices.position(0);    
+    vertexArray = new float[numVertices * 3];
+    vertexBuffer.put(vertexArray);
+    vertexBuffer.flip();    
   }
   
   
@@ -1179,20 +1133,20 @@ public void setGroup(int gr, int idx0, int idx1, GLTexture tex) {
     
     gl.glGenBuffers(1, glVertexBufferID, 0);
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glVertexBufferID[0]);
-    gl.glBufferData(GL11.GL_ARRAY_BUFFER, vertices.capacity() * SIZEOF_FLOAT, vertices, glUsage);
-    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);        
+    final int bufferSize = vertexBuffer.capacity() * SIZEOF_FLOAT;
+    gl.glBufferData(GL11.GL_ARRAY_BUFFER, bufferSize, vertexBuffer, glUsage);
+    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
   }
   
 
   protected void initColorData() {
     ByteBuffer vbb = ByteBuffer.allocateDirect(numVertices * 4 * SIZEOF_FLOAT);
     vbb.order(ByteOrder.nativeOrder());                
-    colors = vbb.asFloatBuffer();          
+    colorBuffer = vbb.asFloatBuffer();          
 
-    float[] values = new float[colors.capacity()];
-    for (int i = 0; i < values.length; i++) values[i] = 1.0f;
-    colors.put(values);
-    colors.position(0);
+    colorArray = new float[numVertices * 4];
+    colorBuffer.put(colorArray);
+    colorBuffer.flip();    
   }  
   
   
@@ -1201,7 +1155,8 @@ public void setGroup(int gr, int idx0, int idx1, GLTexture tex) {
     
     gl.glGenBuffers(1, glColorBufferID, 0);
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glColorBufferID[0]);
-    gl.glBufferData(GL11.GL_ARRAY_BUFFER, colors.capacity() * SIZEOF_FLOAT, colors, glUsage);
+    final int bufferSize = colorBuffer.capacity() * SIZEOF_FLOAT;    
+    gl.glBufferData(GL11.GL_ARRAY_BUFFER, bufferSize, colorBuffer, glUsage);
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
   }
   
@@ -1209,12 +1164,11 @@ public void setGroup(int gr, int idx0, int idx1, GLTexture tex) {
   protected void initNormalData() {
     ByteBuffer vbb = ByteBuffer.allocateDirect(numVertices * 3 * SIZEOF_FLOAT);
     vbb.order(ByteOrder.nativeOrder());
-    normals = vbb.asFloatBuffer();        
-
-    float[] values = new float[normals.capacity()];
-    for (int i = 0; i < values.length; i++) values[i] = 0.0f;
-    normals.put(values);
-    normals.position(0);    
+    normalBuffer = vbb.asFloatBuffer();    
+    
+    normalArray = new float[numVertices * 3];
+    normalBuffer.put(normalArray);
+    normalBuffer.flip();
   }  
 
   
@@ -1223,7 +1177,8 @@ public void setGroup(int gr, int idx0, int idx1, GLTexture tex) {
     
     gl.glGenBuffers(1, glNormalBufferID, 0);
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glNormalBufferID[0]);
-    gl.glBufferData(GL11.GL_ARRAY_BUFFER, normals.capacity() * SIZEOF_FLOAT, normals, glUsage);
+    final int bufferSize = normalBuffer.capacity() * SIZEOF_FLOAT;    
+    gl.glBufferData(GL11.GL_ARRAY_BUFFER, bufferSize, normalBuffer, glUsage);
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
   }
   
@@ -1231,12 +1186,11 @@ public void setGroup(int gr, int idx0, int idx1, GLTexture tex) {
   protected void initTexCoordData() {
     ByteBuffer vbb = ByteBuffer.allocateDirect(numVertices * 2 * SIZEOF_FLOAT);
     vbb.order(ByteOrder.nativeOrder());
-    texCoords = vbb.asFloatBuffer();
-
-    float[] values = new float[numVertices * 2];
-    for (int i = 0; i < values.length; i++) values[i] = 0.0f;    
-    texCoords.put(values);
-    texCoords.position(0);    
+    texCoordBuffer = vbb.asFloatBuffer();    
+    
+    texCoordArray = new float[numVertices * 2];
+    texCoordBuffer.put(texCoordArray);
+    texCoordBuffer.flip();   
   }  
   
   protected void createTexCoordBuffer() {
@@ -1244,7 +1198,8 @@ public void setGroup(int gr, int idx0, int idx1, GLTexture tex) {
     
     gl.glGenBuffers(1, glTexCoordBufferID, 0);
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glTexCoordBufferID[0]);
-    gl.glBufferData(GL11.GL_ARRAY_BUFFER, texCoords.capacity() * SIZEOF_FLOAT, texCoords, glUsage);
+    final int bufferSize = texCoordBuffer.capacity() * SIZEOF_FLOAT;
+    gl.glBufferData(GL11.GL_ARRAY_BUFFER, bufferSize, texCoordBuffer, glUsage);
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);    
   }
   
@@ -1328,23 +1283,20 @@ public void setGroup(int gr, int idx0, int idx1, GLTexture tex) {
 	 }
   
   
-  public void render(int gr0, int gr1) {    
+  public void render(int gr0, int gr1) {
 	  int texTarget = GL11.GL_TEXTURE_2D;
 	  GLTexture tex;
 	  float pointSize;
 	  
 	  // Setting line width and point size from stroke value.
-	  
 		gl.glLineWidth(a3d.strokeWeight);
 		pointSize = PApplet.min(a3d.strokeWeight, a3d.maxPointSize);
     gl.glPointSize(pointSize);
 	    
-    
     gl.glEnableClientState(GL11.GL_NORMAL_ARRAY);
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glNormalBufferID[0]);
-    gl.glNormalPointer(GL11.GL_FLOAT, 0, 0);
+    gl.glNormalPointer(GL11.GL_FLOAT, 0, 0);    
     
-/*    
     gl.glEnableClientState(GL11.GL_COLOR_ARRAY);
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glColorBufferID[0]);
     gl.glColorPointer(4, GL11.GL_FLOAT, 0, 0);
@@ -1352,10 +1304,7 @@ public void setGroup(int gr, int idx0, int idx1, GLTexture tex) {
     gl.glEnableClientState(GL11.GL_VERTEX_ARRAY);            
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glVertexBufferID[0]);
     gl.glVertexPointer(3, GL11.GL_FLOAT, 0, 0);
-*/
-    
 
-    /*
     VertexGroup group;
     for (int i = gr0; i <= gr1; i++) {
       group = (VertexGroup)groups.get(i);
@@ -1417,16 +1366,11 @@ public void setGroup(int gr, int idx0, int idx1, GLTexture tex) {
         gl.glDisable(texTarget);
       }       
     }
-   */
     
-	  /*
-	  gl.glDisableClientState(GL11.GL_VERTEX_ARRAY);
+    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
+    gl.glDisableClientState(GL11.GL_VERTEX_ARRAY);
 	  gl.glDisableClientState(GL11.GL_COLOR_ARRAY);
-	  */
     gl.glDisableClientState(GL11.GL_NORMAL_ARRAY);
-    
-    
-    System.out.println("After render model (nada)");
 	}	
   
 	
@@ -1490,5 +1434,5 @@ public void setGroup(int gr, int idx0, int idx1, GLTexture tex) {
 	  int first;
 	  int last;	  
     GLTexture texture;      
-	}
+	}  
 }
