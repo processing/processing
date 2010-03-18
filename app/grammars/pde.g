@@ -18,6 +18,7 @@ options {
     // in the editor.
     defaultErrorHandler = false; //true;
     
+    // permit mode-detection heuristics, below
     k=3;
 }
 
@@ -52,7 +53,7 @@ pdeProgram
         // only java mode programs will have their own public classes or
         // imports (and they must have at least one)
     :   ( "public" "class" | "import" ) => javaProgram
-        { pp.setProgramType(PdePreprocessor.ProgramType.JAVA); }
+        { pp.setMode(PdePreprocessor.Mode.JAVA); }
 
         // the syntactic predicate here looks for any minimal (thus
         // the non-greedy qualifier) number of fields, followed by
@@ -67,10 +68,22 @@ pdeProgram
         // of that in practice. Please report such a case!
     |   ( (options{greedy=false;}: possiblyEmptyField)* typeSpec[false] IDENT LPAREN ) 
         => activeProgram
-        { pp.setProgramType(PdePreprocessor.ProgramType.ACTIVE); }
+        { pp.setMode(PdePreprocessor.Mode.ACTIVE); }
 
+		// Some programs can be equally well interpreted as STATIC or ACTIVE;
+		// this forces the parser to prefer the STATIC interpretation.
+    |   (staticProgram) => staticProgram
+        { pp.setMode(PdePreprocessor.Mode.STATIC); }
+        
+		// Some correct ACTIVE programs (using lots of modifiers and/or
+		// type arguments) are not caught by the heuristic predicate above,
+		// so we at least catch those here so that the STATIC catch-all, below,
+		// won't choke on it.
+    |   (activeProgram) => activeProgram
+        { pp.setMode(PdePreprocessor.Mode.ACTIVE); }
+        
     |   staticProgram
-        { pp.setProgramType(PdePreprocessor.ProgramType.STATIC); }
+        { pp.setMode(PdePreprocessor.Mode.STATIC); }
     ;
 
 // advanced mode is really just a normal java file
