@@ -164,6 +164,16 @@ public class ParserTests {
   }
 
   @Test
+  public void bug281() {
+    expectGood("bug281");
+  }
+
+  @Test
+  public void bug481() {
+    expectGood("bug481");
+  }
+
+  @Test
   public void bug1511() {
     expectGood("bug1511");
   }
