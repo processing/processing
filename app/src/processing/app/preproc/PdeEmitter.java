@@ -29,13 +29,13 @@ import antlr.collections.AST;
  * @author Jonathan Feinberg &lt;jdf@pobox.com&gt;
  */
 
-@SuppressWarnings("unused")
+@SuppressWarnings("serial")
 public class PdeEmitter implements PdeTokenTypes {
   private final PdePreprocessor pdePreprocessor;
   private final PrintWriter out;
   private final PrintStream debug = System.err;
 
-  private final Stack stack = new Stack();
+  private final Stack<AST> stack = new Stack<AST>();
   private final static int ROOT_ID = 0;
 
   public PdeEmitter(final PdePreprocessor pdePreprocessor, final PrintWriter out) {
@@ -276,10 +276,6 @@ public class PdeEmitter implements PdeTokenTypes {
       return;
     }
 
-    AST parent = null;
-    if (!stack.isEmpty()) {
-      parent = (AST) stack.peek();
-    }
     stack.push(ast);
 
     final AST child1 = ast.getFirstChild();
@@ -682,89 +678,13 @@ public class PdeEmitter implements PdeTokenTypes {
 
     // allow for stuff like int(43.2).
     case CONSTRUCTOR_CAST:
-
-      final AST nonTerminalTypeNode = child1;
       final AST terminalTypeNode = child1.getFirstChild();
       final AST exprToCast = child2;
-
-      /*
-        // if this is a string type, add .valueOf()
-      if (nonTerminalTypeNode.getType() == PdeRecognizer.TYPE &&
-          terminalTypeNode.getText().equals("String")) {
-
-        out.print(terminalTypeNode.getText() + ".valueOf");
-        dumpHiddenAfter(terminalTypeNode);
-        print(exprToCast);
-
-        // if the expresion to be cast is a string literal, try and parse it.
-        //
-        // ideally, we'd be able to do this for all expressions with a
-        // string type, not just string literals.  however, the parser
-        // doesn't currently track expression type, and for full
-        // functionality, we'd need to do semantic analysis to handle
-        // imports so that we could know the return types of method calls.
-        //
-      } else if (exprToCast.getFirstChild().getType() == STRING_LITERAL ) {
-
-        switch (terminalTypeNode.getType()) {
-
-        case PdeRecognizer.LITERAL_byte:
-          out.print("Byte.parseByte");
-          dumpHiddenAfter(terminalTypeNode);
-          print(exprToCast);
-          break;
-
-        case PdeRecognizer.LITERAL_double:
-          out.print("(new Double");
-          dumpHiddenAfter(terminalTypeNode);
-          out.print(exprToCast.getFirstChild().getText() + ").doubleValue()");
-          dumpHiddenAfter(exprToCast.getFirstChild());
-          break;
-
-        case PdeRecognizer.LITERAL_float:
-          out.print("(new Float");
-          dumpHiddenAfter(terminalTypeNode);
-          out.print(exprToCast.getFirstChild().getText() + ").floatValue()");
-          dumpHiddenAfter(exprToCast.getFirstChild());
-          break;
-
-        case PdeRecognizer.LITERAL_int:
-        case PdeRecognizer.LITERAL_color:
-          out.print("Integer.parseInt");
-          dumpHiddenAfter(terminalTypeNode);
-          print(exprToCast);
-          break;
-
-        case PdeRecognizer.LITERAL_long:
-          out.print("Long.parseLong");
-          break;
-
-        case PdeRecognizer.LITERAL_short:
-          out.print("Short.parseShort");
-          break;
-
-        default:
-          throw new RunnerException(Compiler.SUPER_BADNESS);
-        }
-
-        // for builtin types, use regular casting syntax
-      } else {
-      */
-
-      // result of below is (int)(4.0
-      //out.print("(");
-      //out.print(terminalTypeNode.getText() + ")"); // typename
-      //dumpHiddenAfter(terminalTypeNode);
-      //print(exprToCast);
-      //}
-      //out.print("(");
       final String pooType = terminalTypeNode.getText();
       out.print("PApplet.parse" + Character.toUpperCase(pooType.charAt(0))
           + pooType.substring(1));
       dumpHiddenAfter(terminalTypeNode); // the left paren
       print(exprToCast);
-      //out.print("x)");
-
       break;
 
     // making floating point literals default to floats, not doubles
