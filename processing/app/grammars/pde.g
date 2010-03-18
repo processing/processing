@@ -17,6 +17,8 @@ options {
     // debugging messages, however, doing so disables highlighting errors
     // in the editor.
     defaultErrorHandler = false; //true;
+    
+    k=3;
 }
 
 tokens {
@@ -39,6 +41,11 @@ tokens {
 	    this(ts);
 		this.pp = pp;
 	}
+	
+	private void mixed() throws RecognitionException, TokenStreamException {
+		throw new RecognitionException("It looks like you're mixing \"active\" and \"static\" modes.",
+	    	                                     getFilename(), LT(1).getLine(), LT(1).getColumn());
+	}
 }
 
 pdeProgram
@@ -55,7 +62,7 @@ pdeProgram
         // selected in the previous alternative.  static mode programs 
         // don't have member functions.
         //
-    |   ( ( options {greedy=false;}: possiblyEmptyField)* "void" IDENT LPAREN ) 
+    |   ( ( options {greedy=false;}: possiblyEmptyField)* builtInType IDENT LPAREN ) 
         => activeProgram
         { pp.setProgramType(PdePreprocessor.ProgramType.ACTIVE); }
 
@@ -70,15 +77,17 @@ javaProgram
 
 activeProgram
     :  (
-    	(IDENT LPAREN) => IDENT LPAREN
-    	    { throw new RecognitionException("It looks like you're mixing \"active\" and \"static\" modes.",
-    	                                     getFilename(), LT(1).getLine(), LT(1).getColumn()); }
-    	| possiblyEmptyField
-    	)+ EOF!
+    		(IDENT LPAREN) => IDENT LPAREN { mixed(); }
+    	|	possiblyEmptyField
+       )+ EOF!
     ;
 
 staticProgram
-    :  ( statement)* EOF!
+    :  (
+    		(builtInType IDENT LPAREN) =>  builtInType IDENT LPAREN { mixed(); }
+		| 	(modifiers) => modifiers builtInType IDENT LPAREN { mixed(); }    	
+ 		| 	statement
+ 	   )* EOF!
     ; 
 
 // copy of the java.g rule with WEBCOLOR_LITERAL added
