@@ -1,0 +1,119 @@
+0180 android (pre-release)
+X change sdk to use revision 6 (2.0.1) as the version
+X   change instructions on site 
+X add support for a default font
+
+
+0179 (1.1, but no android tools)
+X screenWidth/Height instead of screenW/H
+X errors that happen inside events (e.g. keys) not highlighting lines
+X   useful stack trace information not coming through.. why?
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1384
+
+previous
+X don't require JDK installation and PATH setting
+X   if using processing with java download, should be able to use its tools.jar
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1470
+
+
+0178 (private)
+X noLoop() is broken (draw is never called)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1467
+X fix the freakout that happens with onPause()
+o   solution is to call stop() to kill the thread, but that's not a pause
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1483
+X app not pausing or closing when switching to another activity
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1404
+o if !looping, is it necessary to call redraw() in onResume()?
+X   doesn't appear to be, since it gets completely rebuilt
+X bezier curves were broken in A2D
+X   extra point is drawn connecting the shape to the corner
+X fix other minor bugs in shape drawing
+X mask() now implemented in A2D
+X updatePixels() now work properly for A2D
+X set() should now be working
+X using set() on an image that doesn't have a bitmap, or has pixels loaded
+X requestImage() now working
+X drastically improve the performance of the time functions
+X point wasn't detecting different stroke weights
+X point wasn't working with strokeWeight > 1
+X fix rotate() bug (was using degrees instead of radians)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1497
+X arc() now working properly
+X createGraphics() works, at least with A2D (or aliases P2D and JAVA2D)
+X "The application ... has stopped unexpectedly." when quitting a slow app
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1485
+X Examples > Topics > Effects > Wormhole - needs work, something with resize()
+X test createFont()
+X createGraphics() broken
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1437
+X remove legacy PGraphics3D class from processing.core.android
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1402
+X is there a way to get a width/height default to use for surfaceChanged?
+
+cleaning
+X move to eclair (donut devices will have terrible performance anyway)
+X make change from src folder to assets folder for export
+X what to do with other classes that rely on PApplet? (e.g. vida)
+X remove drawCube() method from PApplet
+X add methods to request rendering
+o   need to deal with fps problems with this model
+o gz files not allowed, need to remove the code from createInput() et al
+X   or maybe not, since could still come from a site or a File?
+X   just can't come from the assets file..
+
+jdf
+X get stdout and stderr from the emulator/device
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1381
+X remove ANDROID_SDK env variable requirement
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1471
+X   ANDROID_SDK doesn't seem to be mentioned anywhere anymore
+X   this may mean that p5 might just need to get the location
+X ANDROID_SDK not getting set on OS X
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1469
+X   http://stackoverflow.com/questions/603785/environment-variables-in-mac-os-x
+X timeout isn't long enough for emulator to boot and startup
+X   always times out on a 3 GHz OS X machine
+
+
+0177 (private)
+X fix error with typo in the build file:
+X   Open quote is expected for attribute "{1}" associated with an
+X   element type "android:minSdkVersion".
+
+
+0176 (private)
+X begin the merge of the new A3D, remove old OpenGL code
+X escape slashes properly on windows (also place sdk in program files)
+X   writer.println("sdk.dir=" + Android.sdkPath);  // r4 of the sdk
+X   writer.println("sdk.dir=" + Android.sdkPath.replace("\\", "\\" +"\\")); 
+X move processing.android.core back to processing.core
+X   need to document the rationale
+X Android tools on Windows are broken due to naming changes in r4 SDK
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1432
+X images with tint() starting to work
+X   tint() causes crash
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1435
+X loadFont() now working, createFont() not tested yet
+X implement library support for android
+X   also code folder support
+
+
+0175 (private)
+X fix problem with windows claiming "does not appear to contain an Android SDK"
+X loadImage() and other loadXxxx() functions not yet working
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1414
+X   can the data folder have subfolders? - yes
+
+
+0174 (private)
+X not handling key characters correctly (space bar, tab, others)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1405
+X why aren't mouse drag events coming through?
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1382
+X "taskdef class com.android.ant.SetupTask cannot be found" on Linux
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1407
+X update to r4 of android sdk
+X   this release will not run on r3 or earlier
+X download core.zip from local files
+
