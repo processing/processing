@@ -1,6 +1,5 @@
 0181 core
 
-
 big ones
 _ ortho() behaving differently in P3D vs OPENGL
 _   http://dev.processing.org/bugs/show_bug.cgi?id=100
@@ -17,6 +16,8 @@ _ modify PVector to include better methods for chaining operations
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1415
 
 quickies
+_ PFont.size not available.. other font accessors? 
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1510
 _ img.get() weirdness
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1198
 _ copy and blend scale when unnecessary
