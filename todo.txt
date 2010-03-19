@@ -1,18 +1,4 @@
-0181 pde
-
-J unterminated string not caught by debugger
-J   http://dev.processing.org/bugs/show_bug.cgi?id=425
-J allow doubles in preproc
-J   (for casting, etc) particularly for Math.cos() et al
-J   http://processing.org/bugs/show_bug.cgi?id=7
-J Comments with non-ascii characters before import -> java.lang.OutOfMemoryError
-J   http://dev.processing.org/bugs/show_bug.cgi?id=1511
-J more preprocessor issues with new syntax
-J   http://dev.processing.org/bugs/show_bug.cgi?id=1515
-J   http://dev.processing.org/bugs/show_bug.cgi?id=1516
-J   http://dev.processing.org/bugs/show_bug.cgi?id=1517
-J   http://dev.processing.org/bugs/show_bug.cgi?id=1518
-J   http://dev.processing.org/bugs/show_bug.cgi?id=1519
+0182 pde
 
 
 need examples
