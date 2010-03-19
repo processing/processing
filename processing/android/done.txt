@@ -1,3 +1,7 @@
+0181 android (pre-release)
+X some changes to A3D
+
+
 0180 android (pre-release)
 X change sdk to use revision 6 (2.0.1) as the version
 X   change instructions on site 
