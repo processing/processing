@@ -1,5 +1,6 @@
 0182 core
 X fix problem with textMode(SHAPE) when using createFont()
+X remove debug message from PDF
 
 
 big ones
