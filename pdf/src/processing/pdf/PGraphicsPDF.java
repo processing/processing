@@ -384,9 +384,11 @@ public class PGraphicsPDF extends PGraphicsJava2D {
   public void textMode(int mode) {
     if (textMode != mode) {
       if (mode == SHAPE) {
+        textMode = SHAPE;
         g2.dispose();
         g2 = content.createGraphicsShapes(width, height);
       } else if (mode == MODEL) {
+        textMode = MODEL;
         g2.dispose();
         g2 = content.createGraphics(width, height, mapper);
 //        g2 = template.createGraphics(width, height, mapper);

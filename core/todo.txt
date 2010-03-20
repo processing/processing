@@ -1,4 +1,5 @@
 0182 core
+X fix problem with textMode(SHAPE) when using createFont()
 
 
 big ones
