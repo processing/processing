@@ -552,7 +552,7 @@ public class PGraphicsPDF extends PGraphicsJava2D {
    * @return true if it's ok
    */
   protected boolean checkFont(String name) {
-    System.out.println("alias for " + name + " = " + mapper.getAliases().get(name));
+    //System.out.println("alias for " + name + " = " + mapper.getAliases().get(name));
     return mapper.getAliases().get(name) != null;
   }
   
