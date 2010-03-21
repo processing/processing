@@ -28,11 +28,14 @@ import java.nio.ByteOrder;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 
-import android.opengl.GLSurfaceView;
+
 import android.opengl.GLU;
+import android.view.SurfaceHolder;
+
+import android.opengl.GLSurfaceView;
 import android.opengl.GLSurfaceView.EGLConfigChooser;
 import android.opengl.GLSurfaceView.Renderer;
-import android.view.SurfaceHolder;
+
 
 import javax.microedition.khronos.opengles.*;
 import javax.microedition.khronos.egl.EGLConfig;
@@ -172,7 +175,7 @@ public class PGraphicsAndroid3D extends PGraphics {
    static final int DEFAULT_BUFFER_SIZE = 512;
   private IntBuffer vertexBuffer;
   private IntBuffer colorBuffer;
-  private IntBuffer textureBuffer;
+  private IntBuffer texCoordBuffer;
   private IntBuffer normalBuffer;
   
   protected PImage textureImagePrev;    
@@ -250,6 +253,15 @@ public class PGraphicsAndroid3D extends PGraphics {
   // data when there is a context change or surface creation in Android.
   protected ArrayList<GLResource> recreateResourceMethods;
   
+
+  int[] screenTexID = { 0 };
+  int screenNVertices;
+  boolean screenTexAllocated = false;
+  IntBuffer screenVertBuffer;
+  IntBuffer screenTexCoordBuffer;
+  PImage screenTex;
+  
+  
   
   //////////////////////////////////////////////////////////////
   
@@ -259,6 +271,9 @@ public class PGraphicsAndroid3D extends PGraphics {
     recreateResourceMethods = new ArrayList<GLResource>(); 
   }
     
+  protected void finalize() {
+    deleteScreenTexture();
+  }  
   
   //public void setParent(PApplet parent)
   
@@ -269,7 +284,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   //public void setPath(String path)
   
   
-  public EGLConfigChooser getConfigChooser() {
+  public GLSurfaceView.EGLConfigChooser getConfigChooser() {
     return configChooser;
   }
   
@@ -282,6 +297,8 @@ public class PGraphicsAndroid3D extends PGraphics {
 	  
     allocate();
     reapplySettings();
+
+    deleteScreenTexture();
     
     vertexCheck();
     
@@ -338,13 +355,27 @@ public class PGraphicsAndroid3D extends PGraphics {
 
       ByteBuffer tbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 2 * SIZEOF_INT);
       tbb.order(ByteOrder.nativeOrder());
-      textureBuffer = tbb.asIntBuffer();
+      texCoordBuffer = tbb.asIntBuffer();
       
       ByteBuffer nbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 3 * SIZEOF_INT);
       nbb.order(ByteOrder.nativeOrder());
       normalBuffer = nbb.asIntBuffer();
       
       buffersAllocated = true;
+    }
+        
+    if (!screenTexAllocated) {
+      screenNVertices = 6;
+      
+      ByteBuffer vbb = ByteBuffer.allocateDirect(screenNVertices * 3 * SIZEOF_INT);
+      vbb.order(ByteOrder.nativeOrder());
+      screenVertBuffer = vbb.asIntBuffer();
+
+      ByteBuffer tbb = ByteBuffer.allocateDirect(screenNVertices * 2 * SIZEOF_INT);
+      tbb.order(ByteOrder.nativeOrder());
+      screenTexCoordBuffer = tbb.asIntBuffer();
+            
+      screenTexAllocated = true;            
     }
   }
   
@@ -379,6 +410,84 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
   }
   
+  //////////////////////////////////////////////////////////////
+  
+  
+  protected void deleteScreenTexture() {
+    if (screenTexID[0] != 0) {
+      gl.glDeleteTextures(1, screenTexID, 0);  
+      screenTexID[0] = 0;
+    }    
+  }
+  
+  
+  protected void createScreenTexture() {
+      // Screen texture hasn't been initialized yet.
+      int[] pix = new int[width * height];
+      for (int i = 0; i < width * height; i++) pix[i] = 0xFF000000;
+    
+     gl.glGenTextures(1, screenTexID, 0);
+     gl.glBindTexture(GL10.GL_TEXTURE_2D, screenTexID[0]);
+     gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_LINEAR);
+     gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_LINEAR);
+     gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S, GL10.GL_CLAMP_TO_EDGE);
+     gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T, GL10.GL_CLAMP_TO_EDGE);        
+     gl.glTexImage2D(GL10.GL_TEXTURE_2D, 0,  GL10.GL_RGBA,  width,  height, 0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, IntBuffer.wrap(pix));
+     gl.glBindTexture(GL10.GL_TEXTURE_2D, 0);
+                    
+     int fw = toFixed32(width);
+     int fh = toFixed32(height);
+     int one = toFixed32(1.0f);
+     int[] quadCoords = {  0, fh, 0, 
+                                              0,  0, 0, 
+                                            fw,  0, 0,
+                                              0, fh, 0, 
+                                            fw,  0, 0,
+                                            fw, fh, 0 };                    
+     int[] quadTexCoords = {    0,  one, 
+                                                      0,      0, 
+                                                  one,     0,
+                                                      0,  one, 
+                                                  one,     0,
+                                                  one, one };       
+                    
+      screenVertBuffer.position(0);
+      screenTexCoordBuffer.position(0);
+                    
+      screenVertBuffer.put(quadCoords);
+      screenTexCoordBuffer.put(quadTexCoords);
+      
+      screenTex = parent.createImage(width, height, ARGB);
+      screenTex.getTexture().set(pix);
+  }
+  
+  protected void drawScreenTexture() {
+    screenVertBuffer.position(0);
+    screenTexCoordBuffer.position(0);
+    gl.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+    gl.glEnable(GL10.GL_TEXTURE_2D);
+    gl.glBindTexture(GL10.GL_TEXTURE_2D, screenTexID[0]);
+    gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
+    gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);                    
+    gl.glVertexPointer(3, GL10.GL_FIXED, 0, screenVertBuffer);
+    gl.glTexCoordPointer(2, GL10.GL_FIXED, 0, screenTexCoordBuffer);
+    gl.glDrawArrays(GL10.GL_TRIANGLES, 0, 3 * 2); // 3 vertices per triangle.         
+    gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+    gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);    
+  }
+
+  
+  protected void copyFrameToScreenTexture() {
+    gl.glFinish(); // Make sure that the execution off all the openGL commands is finished.
+    //gl.glBindTexture(GL10.GL_TEXTURE_2D, screenTexID[0]);
+    //gl.glCopyTexImage2D(GL10.GL_TEXTURE_2D, 0, GL10.GL_RGBA, 0,0, width, height, 0);
+    // gl.glBindTexture(GL10.GL_TEXTURE_2D, screenTexID[0]);
+    
+    gl.glBindTexture(GL10.GL_TEXTURE_2D, screenTex.getTexture().getGLTextureID());
+    gl.glCopyTexImage2D(GL10.GL_TEXTURE_2D, 0, GL10.GL_RGB, 0,0, width, height, 0);
+     gl.glBindTexture(GL10.GL_TEXTURE_2D, 0);    
+    
+  }
   
   //////////////////////////////////////////////////////////////
 
@@ -411,7 +520,7 @@ public class PGraphicsAndroid3D extends PGraphics {
 
     vertexBuffer.rewind();
     colorBuffer.rewind();
-    textureBuffer.rewind();
+    texCoordBuffer.rewind();
     normalBuffer.rewind();
 
     textureImage = null;
@@ -463,6 +572,7 @@ public class PGraphicsAndroid3D extends PGraphics {
 
     shapeFirst = 0;
 
+    /*
     // To avoid flickering when the user is not using background in draw():
     boolean fill0 = fill;
     float fillR0 = fillR;
@@ -488,8 +598,43 @@ public class PGraphicsAndroid3D extends PGraphics {
     fillAi = fillAi0;
     fillColor = fillColor0;
     fillAlpha = fillAlpha0;
+    
     gl.glClearColor(0, 0, 0, 0);
     gl.glClear(GL10.GL_DEPTH_BUFFER_BIT);
+    */
+    
+    if (screenTexID[0] == 0) {
+      createScreenTexture();
+    }
+    //drawScreenTexture();
+    
+    
+    //gl.glEnable(GL10.GL_TEXTURE_2D);
+    //
+    //tint(255);
+    
+    
+    tint(255);
+    //fill(255, 0, 0, 255);
+    beginShape(QUADS);
+      texture(screenTex);
+      vertex(0, 0, 0, screenTex.height);
+      vertex(width, 0, screenTex.width, screenTex.height);
+      vertex(width, height, screenTex.width, 0);
+      vertex(0, height, 0, 0);
+    
+      /*
+      vertex(0, 0);
+      vertex(width/2, 0);
+      vertex(width/2, height/2);
+      vertex(0, height/2, 0);
+      */
+    endShape();
+    
+    
+    
+    //gl.glClearColor(0, 0, 0, 0);
+    //gl.glClear(GL10.GL_DEPTH_BUFFER_BIT);    
     
     report("bot beginDraw()");
   }
@@ -497,6 +642,10 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   public void endDraw() {
     
+    copyFrameToScreenTexture();
+    
+    gl.glFlush();
+        
     report("top endDraw()");
 /*    
     if (hints[ENABLE_DEPTH_SORT]) {
@@ -593,7 +742,8 @@ public class PGraphicsAndroid3D extends PGraphics {
       lineCount = 0;
       triangleCount = 0;
     }
-      
+    
+    textureImage = null;
     textureImagePrev = null;
     
     normalMode = NORMAL_MODE_AUTO;    
@@ -1200,7 +1350,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       vertexBuffer.position(0);
       colorBuffer.position(0);
       normalBuffer.position(0);
-      textureBuffer.position(0);    
+      texCoordBuffer.position(0);    
       
       for (int k = 0; k < faceLength[j]; k++) {
         float a[] = vertices[triangles[i][VERTEX1]];
@@ -1239,8 +1389,8 @@ public class PGraphicsAndroid3D extends PGraphics {
         normalBuffer.put(toFixed32(a[NX]));
         normalBuffer.put(toFixed32(a[NY]));
         normalBuffer.put(toFixed32(a[NZ]));    
-        textureBuffer.put(toFixed32((cx +  sx * a[U]) * uscale));
-        textureBuffer.put(toFixed32((cy +  sy * a[V]) * vscale));
+        texCoordBuffer.put(toFixed32((cx +  sx * a[U]) * uscale));
+        texCoordBuffer.put(toFixed32((cy +  sy * a[V]) * vscale));
     
         // Adding vertex B.    
         vertexBuffer.put(toFixed32(b[X]));
@@ -1253,8 +1403,8 @@ public class PGraphicsAndroid3D extends PGraphics {
         normalBuffer.put(toFixed32(b[NX]));
         normalBuffer.put(toFixed32(b[NY]));
         normalBuffer.put(toFixed32(b[NZ]));    
-        textureBuffer.put(toFixed32((cx +  sx * b[U]) * uscale));
-        textureBuffer.put(toFixed32((cy +  sy * b[V]) * vscale));    
+        texCoordBuffer.put(toFixed32((cx +  sx * b[U]) * uscale));
+        texCoordBuffer.put(toFixed32((cy +  sy * b[V]) * vscale));    
     
         // Adding vertex C.    
         vertexBuffer.put(toFixed32(c[X]));
@@ -1267,8 +1417,8 @@ public class PGraphicsAndroid3D extends PGraphics {
         normalBuffer.put(toFixed32(c[NX]));
         normalBuffer.put(toFixed32(c[NY]));
         normalBuffer.put(toFixed32(c[NZ]));
-        textureBuffer.put(toFixed32((cx +  sx * c[U]) * uscale));
-        textureBuffer.put(toFixed32((cy +  sy * c[V]) * vscale));
+        texCoordBuffer.put(toFixed32((cx +  sx * c[U]) * uscale));
+        texCoordBuffer.put(toFixed32((cy +  sy * c[V]) * vscale));
         
         i++;        
       }
@@ -1276,15 +1426,16 @@ public class PGraphicsAndroid3D extends PGraphics {
       vertexBuffer.position(0);
       colorBuffer.position(0);
       normalBuffer.position(0);
-      textureBuffer.position(0); 
+      texCoordBuffer.position(0); 
 
       gl.glVertexPointer(3, GL10.GL_FIXED, 0, vertexBuffer);
       gl.glColorPointer(4, GL10.GL_FIXED, 0, colorBuffer);
       gl.glNormalPointer(GL10.GL_FIXED, 0, normalBuffer);
-      if (texturing) gl.glTexCoordPointer(2, GL10.GL_FIXED, 0, textureBuffer);
+      if (texturing) gl.glTexCoordPointer(2, GL10.GL_FIXED, 0, texCoordBuffer);
       gl.glDrawArrays(GL10.GL_TRIANGLES, 0, 3 * faceLength[j]);
 
       if (texturing) {
+        gl.glBindTexture(tex.getGLTarget(), 0);
         gl.glDisable(tex.getGLTarget());
         gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);   
       }
@@ -1505,7 +1656,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     ByteBuffer tbb = ByteBuffer.allocateDirect(newSize * 2 * SIZEOF_INT);
     tbb.order(ByteOrder.nativeOrder());
-    textureBuffer = tbb.asIntBuffer();
+    texCoordBuffer = tbb.asIntBuffer();
     
     ByteBuffer nbb = ByteBuffer.allocateDirect(newSize * 3 * SIZEOF_INT);
     nbb.order(ByteOrder.nativeOrder());
@@ -4360,6 +4511,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       }
       
       parent.handleDraw();
+      
       gl = null;        
     }
 
