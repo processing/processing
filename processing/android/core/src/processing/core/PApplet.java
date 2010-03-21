@@ -39,11 +39,11 @@ import java.util.zip.*;
 
 import android.app.Activity;
 import android.net.Uri;
-import android.opengl.GLSurfaceView;
 import android.text.format.Time;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.SurfaceView;
+import android.opengl.GLSurfaceView;
 import android.view.WindowManager;
 import android.os.Bundle;
 import android.view.*;
@@ -529,6 +529,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
       // The renderer can be set only once.
       setRenderer(((PGraphicsAndroid3D)g).getRenderer());
       setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+      //setEGLConfigChooser(((PGraphicsAndroid3D)g).getConfigChooser());
+      
       
       setFocusable(true);
       setFocusableInTouchMode(true);
