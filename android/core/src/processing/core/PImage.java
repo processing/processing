@@ -196,6 +196,18 @@ public class PImage implements PConstants, Cloneable {
     updateTexture();
   }
   
+
+  public void initTexture(int filter) {
+    texture = new GLTexture(parent, width, height, new GLTexture.Parameters(format, filter));
+    updateTexture();
+  }
+
+
+  public void initTexture(GLTexture.Parameters params) {
+    texture = new GLTexture(parent, width, height, params);
+    updateTexture();
+  }
+  
   
   public void updateTexture() {
     loadPixels();
