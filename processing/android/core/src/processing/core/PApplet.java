@@ -1093,7 +1093,31 @@ public class PApplet extends Activity implements PConstants, Runnable {
     return image;
   }
 
+  
+  public PImage createImage(int wide, int high, int format, int filter) {
+    PImage image = new PImage(wide, high, format);
+    image.parent = this;  // make save() work
+    if (g instanceof PGraphicsAndroid3D) {
+      // TODO: Check why textures doesn't work in formats other than ARGB... 
+      image.format = ARGB;
+      image.initTexture(filter);
+    }
+    return image;
+  }
 
+
+  public PImage createImage(int wide, int high, GLTexture.Parameters params) {
+    PImage image = new PImage(wide, high, params.format);
+    image.parent = this;  // make save() work
+    if (g instanceof PGraphicsAndroid3D) {
+      // TODO: Check why textures doesn't work in formats other than ARGB... 
+      image.format = params.format;
+      image.initTexture(params);
+    }
+    return image;
+  }
+    
+  
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
@@ -1372,6 +1396,20 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  synchronized public void clear() {
+    if (g instanceof PGraphicsAndroid3D) {
+      ((PGraphicsAndroid3D)g).clear();
+    }
+  }
+  
+  
+  synchronized public void noClear() {
+    if (g instanceof PGraphicsAndroid3D) {
+      ((PGraphicsAndroid3D)g).noClear();
+    }
+  }
+  
+  
   //////////////////////////////////////////////////////////////
 
 
