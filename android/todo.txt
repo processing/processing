@@ -1,5 +1,8 @@
 0182 android
 
+_ for libraries that don't work with android, don't let them export
+_   e.g. people adding the opengl library when it's not needed
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1524
 
 _ make size() work to place the component at the center of the screen
 _ make size() work to change the renderer
