@@ -3089,7 +3089,25 @@ public class PGraphics3D extends PGraphics {
     forwardTransform.scale(x, y, z);
     reverseTransform.invScale(x, y, z);
   }
+  
+  
+  public void skewX(float angle) {
+    float t = (float) Math.tan(angle);
+    applyMatrix(1, t, 0, 0,
+                0, 1, 0, 0,
+                0, 0, 1, 0,
+                0, 0, 0, 1);
+  }
 
+
+  public void skewY(float angle) {
+    float t = (float) Math.tan(angle);
+    applyMatrix(1, 0, 0, 0,
+                t, 1, 0, 0,
+                0, 0, 1, 0,
+                0, 0, 0, 1);
+  }  
+  
 
 
   //////////////////////////////////////////////////////////////

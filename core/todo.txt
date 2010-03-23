@@ -1,6 +1,9 @@
 0182 core
 X fix problem with textMode(SHAPE) when using createFont()
 X remove debug message from PDF
+X consider adding skewX/Y
+o   do them as shearX/Y
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1448
 
 
 big ones
@@ -37,9 +40,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=1359
 _ make sure that get() and set() (for pixels and subsets) work w/ loaded images
 _ make sure that get() and set() (for pixels and subsets) work w/ P2D
 _ make sure that get() and set() (for pixels and subsets) work w/ P3D
-_ consider adding skewX/Y
-_   do them as shearX/Y
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1448
 
 _ add setOutput() method across other renderers?
 
