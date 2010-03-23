@@ -2,6 +2,16 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <curated>
 
+<software name="Silica-Esc" by="Vladimir Todorovic" scroll="yes" resize="yes" width="1024" height="700">
+        <image>images/silica.png</image>
+          <description>
+             Generative movie that portrays a possible computing platform for the future. The story takes place in Singapore, where a decision about the new device is about to be made.
+          </description>
+          <location>http://vimeo.com/10154340</location>
+          <link href="http://tadar.net/ ">tadar.net</link>
+          <link href="http://www.flickr.com/photos/tadar/">tadar Flickr</link>
+</software>
+
 <software name="Mycelium" by="Ryan Alexander" scroll="yes" resize="yes" width="1024" height="700">
         <image>images/mycelium.png</image>
           <description>
