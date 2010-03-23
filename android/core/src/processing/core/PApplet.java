@@ -6884,6 +6884,16 @@ public class PApplet extends Activity implements PConstants, Runnable {
   public void scale(float x, float y, float z) {
     g.scale(x, y, z);
   }
+  
+  
+  public void skewX(float angle) {
+    g.skewX(angle);
+  }
+
+
+  public void skewY(float angle) {
+    g.skewY(angle);
+  }
 
 
   public void resetMatrix() {

@@ -191,12 +191,12 @@ public class PMatrix2D implements PMatrix {
 
 
   public void skewX(float angle) {
-    apply(1, 0, 1,  angle, 0, 0);
+    apply(1, 0, 1,  tan(angle), 0, 0);
   }
 
 
   public void skewY(float angle) {
-    apply(1, 0, 1,  0, angle, 0);
+    apply(1, 0, 1,  0, tan(angle), 0);
   }
 
 
@@ -446,5 +446,9 @@ public class PMatrix2D implements PMatrix {
 
   private final float cos(float angle) {
     return (float)Math.cos(angle);
+  }
+
+  private final float tan(float angle) {
+    return (float)Math.tan(angle);
   }
 }

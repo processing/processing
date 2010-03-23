@@ -3277,6 +3277,22 @@ public class PGraphics extends PImage implements PConstants {
   public void scale(float x, float y, float z) {
     showMissingWarning("scale");
   }
+  
+  
+  /**
+   * Skew along X axis
+   */
+  public void skewX(float angle) {
+    showMissingWarning("skewX");
+  }
+
+
+  /**
+   * Skew along Y axis
+   */
+  public void skewY(float angle) {
+    showMissingWarning("skewY");
+  }
 
 
   //////////////////////////////////////////////////////////////

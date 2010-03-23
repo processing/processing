@@ -8846,6 +8846,24 @@ public class PApplet extends Applet
 
 
   /**
+   * Skew along X axis
+   */
+  public void skewX(float angle) {
+    if (recorder != null) recorder.skewX(angle);
+    g.skewX(angle);
+  }
+
+
+  /**
+   * Skew along Y axis
+   */
+  public void skewY(float angle) {
+    if (recorder != null) recorder.skewY(angle);
+    g.skewY(angle);
+  }
+
+
+  /**
    * Set the current transformation matrix to identity.
    */
   public void resetMatrix() {

@@ -1247,6 +1247,16 @@ public class PGraphicsAndroid2D extends PGraphics {
   public void scale(float sx, float sy, float sz) {
     showDepthWarningXYZ("scale");
   }
+  
+  
+  public void skewX(float angle) {
+    canvas.skew((float) Math.tan(angle), 0);
+  }
+
+
+  public void skewY(float angle) {
+    canvas.skew(0, (float) Math.tan(angle));
+  }
 
 
 

@@ -497,6 +497,8 @@ rotateY	KEYWORD2	PShape_rotateY_
 rotateZ	KEYWORD2	PShape_rotateZ_
 scale	KEYWORD2	PShape_scale_
 setVisible	KEYWORD2	PShape_setVisible_
+skewX	KEYWORD2	PShape_skewX_
+skewY	KEYWORD2	PShape_skewY_
 translate	KEYWORD2	PShape_translate_
 public	KEYWORD1	public
 pushMatrix	KEYWORD2	pushMatrix_
@@ -542,6 +544,8 @@ saveFrame	KEYWORD2	saveFrame_
 saveStream	KEYWORD2	saveStream_
 saveStrings	KEYWORD2	saveStrings_
 scale	KEYWORD2	scale_
+skewX	KEYWORD2	skewX_
+skewY	KEYWORD2	skewY_
 screen	LITERAL2	screen
 screenX	KEYWORD2	screenX_
 screenY	KEYWORD2	screenY_
