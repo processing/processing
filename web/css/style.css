@@ -245,7 +245,6 @@ li {margin-bottom: 1em; }
 #Cover h3 { margin: 40px 0 0 0; }
 .exhibition-small { padding: 0; margin: 0; }
 .exhibition-small h3 { margin-top: 0px !important; }
-p.exhibition-small { margin-top: 20px; margin-bottom: 10px; }
 
 dl { margin: 0; }
 dt { font-style: italic; }
@@ -263,7 +262,7 @@ td img { margin: 0; display: block; }
 
 /**************************************************************** Exhibition ***/
 
-#Exhibition .colone { width: 224px; float: left; margin-right: 35px; }
+#Exhibition .colone { width: 675px; float: left; margin-right: 35px; }
 #Exhibition .coltwo { width: 165px; float: left; margin-right: 25px; }
 #Exhibition .colthree { width: 224px; float: left; margin-right: 20px; }
 #Exhibition h2 { margin: 0 0 20px 0; font-size: 1em; }
