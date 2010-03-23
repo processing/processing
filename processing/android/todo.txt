@@ -1,4 +1,7 @@
 0182 android
+X added skewX/Y implementation
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1448
+
 
 _ for libraries that don't work with android, don't let them export
 _   e.g. people adding the opengl library when it's not needed

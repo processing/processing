@@ -190,12 +190,12 @@ public class PMatrix2D implements PMatrix {
 
 
   public void skewX(float angle) {
-    apply(1, 0, 1,  angle, 0, 0);
+    apply(1, 0, 1,  tan(angle), 0, 0);
   }
 
 
   public void skewY(float angle) {
-    apply(1, 0, 1,  0, angle, 0);
+    apply(1, 0, 1,  0, tan(angle), 0);
   }
 
 
@@ -423,7 +423,8 @@ public class PMatrix2D implements PMatrix {
 
   // TODO make this more efficient, or move into PMatrix2D
   protected boolean isWarped() {
-    return ((m00 != 1) || (m01 != 0) && 
+    // was &&, but changed so skewX and skewY will work
+    return ((m00 != 1) || (m01 != 0) || 
             (m10 != 0) || (m11 != 1));
   }
 
@@ -445,5 +446,9 @@ public class PMatrix2D implements PMatrix {
 
   private final float cos(float angle) {
     return (float)Math.cos(angle);
+  }
+  
+  private final float tan(float angle) {
+    return (float)Math.tan(angle);
   }
 }
