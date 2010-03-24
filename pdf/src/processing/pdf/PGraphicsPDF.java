@@ -359,17 +359,17 @@ public class PGraphicsPDF extends PGraphicsJava2D {
 
   public void textFont(PFont which) {
     super.textFont(which);
-    
+    checkFont();
     // Make sure a native version of the font is available. 
-    if (textFont.getFont() == null) {
-      throw new RuntimeException("Use createFont() instead of loadFont() " + 
-                                 "when drawing text using the PDF library.");
-    }
+//    if (textFont.getFont() == null) {
+//      throw new RuntimeException("Use createFont() instead of loadFont() " + 
+//                                 "when drawing text using the PDF library.");
+//    }
     // Make sure that this is a font that the PDF library can deal with.
-    if (!checkFont(which.getName())) {
-      System.err.println("Use PGraphicsPDF.listFonts() to get a list of available fonts.");
-      throw new RuntimeException("The font “" + which.getName() + "” cannot be used with PDF Export.");
-    }
+//    if ((textMode != SHAPE) && !checkFont(which.getName())) {
+//      System.err.println("Use PGraphicsPDF.listFonts() to get a list of available fonts.");
+//      throw new RuntimeException("The font “" + which.getName() + "” cannot be used with PDF Export.");
+//    }
   }
   
   
@@ -403,19 +403,7 @@ public class PGraphicsPDF extends PGraphicsJava2D {
   
   protected void textLineImpl(char buffer[], int start, int stop,
                               float x, float y) {
-    Font font = textFont.getFont();
-    if (font == null) {
-      throw new RuntimeException("Use createFont() instead of loadFont() " + 
-                                 "when drawing text using the PDF library.");
-    } else if (textFont.isStream() && textMode != SHAPE) {
-      throw new RuntimeException("Use textMode(SHAPE) with when loading " +
-                                 ".ttf and .otf files with createFont().");
-    } else if (!checkFont(textFont.getName())) {
-      System.err.println("Use PGraphicsPDF.listFonts() to get a list of " +
-      		               "fonts that can be used with PDF.");
-      throw new RuntimeException("The font “" + textFont.getName() + "” " + 
-                                 "cannot be used with PDF Export.");
-    }
+    checkFont();
     super.textLineImpl(buffer, start, stop, x, y);
   }
 
@@ -551,11 +539,26 @@ public class PGraphicsPDF extends PGraphicsJava2D {
    * @param name name of the font
    * @return true if it's ok
    */
-  protected boolean checkFont(String name) {
-    //System.out.println("alias for " + name + " = " + mapper.getAliases().get(name));
-    return mapper.getAliases().get(name) != null;
+  protected void checkFont() {
+    Font awtFont = textFont.getFont();
+    if (awtFont == null) {  // always need a native font or reference to it
+      throw new RuntimeException("Use createFont() instead of loadFont() " + 
+                                 "when drawing text using the PDF library.");
+    } else if (textMode != SHAPE) {
+      if (textFont.isStream()) { 
+        throw new RuntimeException("Use textMode(SHAPE) with when loading " +
+                                   ".ttf and .otf files with createFont().");
+      } else if (mapper.getAliases().get(textFont.getName()) == null) {
+        //System.out.println("alias for " + name + " = " + mapper.getAliases().get(name));
+        System.err.println("Use PGraphicsPDF.listFonts() to get a list of " +
+                           "fonts that can be used with PDF.");
+        throw new RuntimeException("The font “" + textFont.getName() + "” " + 
+                                   "cannot be used with PDF Export.");
+      }
+    }
   }
-  
+
+
   /**
    * List the fonts known to the PDF renderer. This is like PFont.list(),
    * however not all those fonts are available by default.

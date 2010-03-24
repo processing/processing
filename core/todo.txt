@@ -1,5 +1,6 @@
 0182 core
 X fix problem with textMode(SHAPE) when using createFont()
+X fix other problems with font use in PDF
 X remove debug message from PDF
 X consider adding skewX/Y
 o   do them as shearX/Y
