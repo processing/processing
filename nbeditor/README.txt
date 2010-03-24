@@ -1,0 +1,1 @@
+Experimental project to explore the user of NetBeans 5.5 editor componentry fro PDE.
