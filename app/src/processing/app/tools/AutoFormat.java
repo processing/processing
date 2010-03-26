@@ -44,12 +44,12 @@ import java.io.*;
 public class AutoFormat implements Tool {
   Editor editor;
 
-  static final int BLOCK_MAXLEN = 1024;
+  static final int BLOCK_MAXLEN = 64000;
 
   StringBuffer strOut;
   int indentValue;
   String indentChar;
-  int EOF;
+  boolean EOF;
   CharArrayReader reader;
   int readCount, indexBlock, lineLength, lineNumber;
   char chars[];
@@ -62,14 +62,15 @@ public class AutoFormat implements Tool {
   int s_if_flg[];
   int if_lev, if_flg, level;
   int ind[];
-  int e_flg, paren;
+  boolean e_flg;
+  int paren;
   static int p_flg[];
   char l_char, p_char;
   int a_flg, q_flg, ct;
   int s_tabs[][];
   String w_if_, w_else, w_for, w_ds, w_case, w_cpp_comment, w_jdoc;
   int jdoc, j;
-  char string[];
+  char buf[];
   char cc;
   int s_flg;
   int peek;
@@ -90,24 +91,24 @@ public class AutoFormat implements Tool {
     return "Auto Format";
   }
 
-  public void comment() throws IOException {
+  private void comment() throws IOException {
     int save_s_flg;
     save_s_flg = s_flg;
 
     int done = 0;
-    c = string[j++] = getchr(); // extra char
+    c = buf[j++] = getchr(); // extra char
     while (done == 0) {
-      c = string[j++] = getchr();
-      while ((c != '/') && (j < string.length)) {
+      c = buf[j++] = getchr();
+      while ((c != '/') && (j < buf.length)) {
         if(c == '\n' || c == '\r') {
           lineNumber++;
           putcoms();
           s_flg = 1;
         }
-        c = string[j++] = getchr();
+        c = buf[j++] = getchr();
       }
       //String tmpstr = new String(string);
-      if (j>1 && string[j-2] == '*') {
+      if (j>1 && buf[j-2] == '*') {
         done = 1;
         jdoc = 0;
       }
@@ -120,22 +121,22 @@ public class AutoFormat implements Tool {
   }
 
 
-  public char get_string() throws IOException {
+  private char get_string() throws IOException {
     char ch;
     ch = '*';
     while (true) {
       switch (ch) {
       default:
-        ch = string[j++] = getchr();
+        ch = buf[j++] = getchr();
         if (ch == '\\') {
-          string[j++] = getchr();
+          buf[j++] = getchr();
           break;
         }
         if (ch == '\'' || ch == '"') {
-          cc = string[j++] = getchr();
-          while (cc != ch) {
-            if (cc == '\\') string[j++] = getchr();
-            cc = string[j++] = getchr();
+          cc = buf[j++] = getchr();
+          while (!EOF && cc != ch) {
+            if (cc == '\\') buf[j++] = getchr();
+            cc = buf[j++] = getchr();
           }
           break;
         }
@@ -151,23 +152,21 @@ public class AutoFormat implements Tool {
   }
 
 
-  public void indent_puts() {
-    string[j] = '\0';
+  private void indent_puts() {
+    buf[j] = '\0';
     if (j > 0) {
       if (s_flg != 0) {
-        if((tabs > 0) && (string[0] != '{') && (a_flg == 1)) {
+        if((tabs > 0) && (buf[0] != '{') && (a_flg == 1)) {
           tabs++;
         }
         p_tabs();
         s_flg = 0;
-        if ((tabs > 0) && (string[0] != '{') && (a_flg == 1)) {
+        if ((tabs > 0) && (buf[0] != '{') && (a_flg == 1)) {
           tabs--;
         }
         a_flg = 0;
       }
-      String j_string = new String(string);
-      strOut.append(j_string.substring(0,j));
-      for (int i=0; i<j; i++) string[i] = '\0';
+      strOut.append(buf,0,j);
       j = 0;
 
     } else {
@@ -180,20 +179,15 @@ public class AutoFormat implements Tool {
 
 
   //public void fprintf(int outfil, String out_string) {
-  public void fprintf(String out_string) {
+  private void fprintf(String out_string) {
     //int out_len = out_string.length();
     //String j_string = new String(string);
     strOut.append(out_string);
   }
 
 
-  public int grabLines() {
-    return lineNumber;
-  }
-
-
   /* special edition of put string for comment processing */
-  public void putcoms()
+  private void putcoms()
   {
     int i = 0;
     int sav_s_flg = s_flg;
@@ -204,12 +198,12 @@ public class AutoFormat implements Tool {
         p_tabs();
         s_flg = 0;
       }
-      string[j] = '\0';
+      buf[j] = '\0';
       i = 0;
-      while (string[i] == ' ') i++;
+      while (buf[i] == ' ') i++;
       if (lookup_com(w_jdoc) == 1) jdoc = 1;
-      String strBuffer = new String(string,0,j);
-      if (string[i] == '/' && string[i+1]=='*')
+      String strBuffer = new String(buf,0,j);
+      if (buf[i] == '/' && buf[i+1]=='*')
       {
         if ((last_char != ';') && (sav_s_flg==1) )
         {
@@ -224,7 +218,7 @@ public class AutoFormat implements Tool {
       }
       else
       {
-        if (string[i]=='*' || jdoc == 0)
+        if (buf[i]=='*' || jdoc == 0)
           //fprintf (outfil, " "+strBuffer.substring(i,j));
           fprintf (" "+strBuffer.substring(i,j));
         else
@@ -232,17 +226,17 @@ public class AutoFormat implements Tool {
           fprintf (" * "+strBuffer.substring(i,j));
       }
       j = 0;
-      string[0] = '\0';
+      buf[0] = '\0';
     }
   }
 
 
-  public void cpp_comment() throws IOException
+  private void cpp_comment() throws IOException
   {
     c = getchr();
-    while(c != '\n' && c != '\r' && j<133)
+    while(c != '\n' && c != '\r' && j<buf.length)
     {
-      string[j++] = c;
+      buf[j++] = c;
       c = getchr();
     }
     lineNumber++;
@@ -252,7 +246,7 @@ public class AutoFormat implements Tool {
 
 
   /* expand indentValue into tabs and spaces */
-  public void p_tabs()
+  private void p_tabs()
   {
     int i,k;
 
@@ -267,7 +261,7 @@ public class AutoFormat implements Tool {
   }
 
 
-  public char getchr() throws IOException
+  private char getchr() throws IOException
   {
     if((peek < 0) && (last_char != ' ') && (last_char != '\t'))
     {
@@ -284,8 +278,6 @@ public class AutoFormat implements Tool {
       indexBlock++;
       if (indexBlock >= lineLength)
       {
-        for (int ib=0; ib<readCount; ib++) chars[ib] = '\0';
-
         lineLength = readCount = 0;
         reader.mark(1);
         if (reader.read() != -1)
@@ -301,7 +293,7 @@ public class AutoFormat implements Tool {
         }
         else
         {
-          EOF = 1;
+          EOF = true;
           peekc  = '\0';
         }
       }
@@ -320,7 +312,7 @@ public class AutoFormat implements Tool {
   }
 
   /* else processing */
-  public void gotelse()
+  private void gotelse()
   {
     tabs = s_tabs[c_level][if_lev];
     p_flg[level] = sp_flg[c_level][if_lev];
@@ -329,7 +321,7 @@ public class AutoFormat implements Tool {
   }
 
   /* read to new_line */
-  public int getnl() throws IOException
+  private int getnl() throws IOException
   {
     int save_s_flg;
     save_s_flg = tabs;
@@ -337,7 +329,7 @@ public class AutoFormat implements Tool {
     //while ((peekc == '\t' || peekc == ' ') &&
     //     (j < string.length)) {
     while (peekc == '\t' || peekc == ' ') {
-      string[j++] = peekc;
+      buf[j++] = peekc;
       peek = -1;
       peekc = '`';
       peekc = getchr();
@@ -352,16 +344,16 @@ public class AutoFormat implements Tool {
       peekc = getchr();
       if (peekc == '*')
       {
-        string[j++] = '/';
-        string[j++] = '*';
+        buf[j++] = '/';
+        buf[j++] = '*';
         peek = -1;
         peekc = '`';
         comment();
       }
       else if (peekc == '/')
       {
-        string[j++] = '/';
-        string[j++] = '/';
+        buf[j++] = '/';
+        buf[j++] = '/';
         peek = -1;
         peekc = '`';
         cpp_comment();
@@ -369,7 +361,7 @@ public class AutoFormat implements Tool {
       }
       else
       {
-        string[j++] = '/';
+        buf[j++] = '/';
         peek = 1;
       }
     }
@@ -389,38 +381,36 @@ public class AutoFormat implements Tool {
     return 0;
   }
 
-  public int lookup (String keyword)
+  private boolean lookup (String keyword)
   {
     char r;
     int  l,kk; //,k,i;
-    String j_string = new String(string);
-
-    if (j<1) return (0);
+    if (j<1) return false;
     kk=0;
-    while(string[kk] == ' ')kk++;
+    while(buf[kk] == ' ')kk++;
     l=0;
-    l = j_string.indexOf(keyword);
+    l = new String(buf).indexOf(keyword);
     if (l<0 || l!=kk)
     {
-      return 0;
+      return false;
     }
-    r = string[kk+keyword.length()];
-    if(r >= 'a' && r <= 'z') return(0);
-    if(r >= 'A' && r <= 'Z') return(0);
-    if(r >= '0' && r <= '9') return(0);
-    if(r == '_' || r == '&') return(0);
-    return (1);
+    r = buf[kk+keyword.length()];
+    if(r >= 'a' && r <= 'z') return false;
+    if(r >= 'A' && r <= 'Z') return false;
+    if(r >= '0' && r <= '9') return false;
+    if(r == '_' || r == '&') return false;
+    return true;
   }
 
-  public int lookup_com (String keyword)
+  private int lookup_com (String keyword)
   {
     //char r;
     int  l,kk; //,k,i;
-    String j_string = new String(string);
+    String j_string = new String(buf);
 
     if (j<1) return (0);
     kk=0;
-    while(string[kk] == ' ')kk++;
+    while(buf[kk] == ' ')kk++;
     l=0;
     l = j_string.indexOf(keyword);
     if (l<0 || l!=kk)
@@ -441,7 +431,8 @@ public class AutoFormat implements Tool {
     indentChar = new String(" ");
 
     lineNumber = 0;
-    c_level = if_lev = level = e_flg = paren = 0;
+    e_flg = false;
+    c_level = if_lev = level = paren = 0;
     a_flg = q_flg = j = tabs = 0;
     if_flg = peek = -1;
     peekc = '`';
@@ -457,7 +448,7 @@ public class AutoFormat implements Tool {
     p_flg    = new int[10];
     s_tabs   = new int[20][10];
 
-    w_else = new String ("else");
+    w_else = "else";
     w_if_ = new String ("if");
     w_for = new String ("for");
     w_ds  = new String ("default");
@@ -467,19 +458,13 @@ public class AutoFormat implements Tool {
     line_feed = new String ("\n");
 
     // read as long as there is something to read
-    EOF = 0;  // = 1 set in getchr when EOF
+    EOF = false;  // = 1 set in getchr when EOF
 
     chars = new char[BLOCK_MAXLEN];
-    string = new char[BLOCK_MAXLEN];
+    buf = new char[BLOCK_MAXLEN];
     try {  // the whole process
       // open for input
       reader = new CharArrayReader(originalText.toCharArray());
-
-      // add buffering to that InputStream
-//      bin = new BufferedInputStream(in);
-
-      for (int ib = 0; ib < BLOCK_MAXLEN; ib++) chars[ib] = '\0';
-
       lineLength = readCount = 0;
       // read up a block - remember how many bytes read
       readCount = reader.read(chars);
@@ -489,13 +474,13 @@ public class AutoFormat implements Tool {
       lineNumber  = 1;
       indexBlock = -1;
       j = 0;
-      while (EOF == 0)
+      while (!EOF)
       {
         c = getchr();
         switch(c)
         {
         default:
-          string[j++] = c;
+          buf[j++] = c;
           if(c != ',')
           {
             l_char = c;
@@ -504,33 +489,33 @@ public class AutoFormat implements Tool {
 
         case ' ':
         case '\t':
-          if(lookup(w_else) == 1)
+          if(lookup(w_else))
           {
             gotelse();
-            if(s_flg == 0 || j > 0)string[j++] = c;
+            if(s_flg == 0 || j > 0)buf[j++] = c;
             indent_puts();
             s_flg = 0;
             break;
           }
-          if(s_flg == 0 || j > 0)string[j++] = c;
+          if(s_flg == 0 || j > 0)buf[j++] = c;
           break;
 
         case '\r':  // <CR> for MS Windows 95
         case '\n':
           lineNumber++;
-          if (EOF==1)
+          if (EOF)
           {
             break;
           }
           //String j_string = new String(string);
 
           e_flg = lookup(w_else);
-          if(e_flg == 1) gotelse();
+          if(e_flg) gotelse();
           if (lookup_com(w_cpp_comment) == 1)
           {
-            if (string[j] == '\n')
+            if (buf[j] == '\n')
             {
-              string[j] = '\0';
+              buf[j] = '\0';
               j--;
             }
           }
@@ -539,7 +524,7 @@ public class AutoFormat implements Tool {
           //fprintf(outfil, line_feed);
           fprintf(line_feed);
           s_flg = 1;
-          if(e_flg == 1)
+          if(e_flg)
           {
             p_flg[level]++;
             tabs++;
@@ -552,7 +537,7 @@ public class AutoFormat implements Tool {
           break;
 
         case '{':
-          if(lookup(w_else) == 1)gotelse();
+          if(lookup(w_else))gotelse();
           if (s_if_lev.length == c_level) {
             s_if_lev = PApplet.expand(s_if_lev);
             s_if_flg = PApplet.expand(s_if_flg);
@@ -566,7 +551,7 @@ public class AutoFormat implements Tool {
             p_flg[level]--;
             tabs--;
           }
-          string[j++] = c;
+          buf[j++] = c;
           indent_puts();
           getnl() ;
           indent_puts();
@@ -586,9 +571,10 @@ public class AutoFormat implements Tool {
           c_level--;
           if (c_level < 0)
           {
-            EOF = 1;
+            c_level = 0;
+            //EOF = true;
             //System.out.println("eof b");
-            string[j++] = c;
+            buf[j++] = c;
             indent_puts();
             break;
           }
@@ -634,16 +620,16 @@ public class AutoFormat implements Tool {
 
         case '"':
         case '\'':
-          string[j++] = c;
+          buf[j++] = c;
           cc = getchr();
-          while(cc != c)
+          while(!EOF && cc != c)
           {
             // max. length of line should be 256
-            string[j++] = cc;
+            buf[j++] = cc;
 
             if(cc == '\\')
             {
-              cc = string[j++] = getchr();
+              cc = buf[j++] = getchr();
             }
             if(cc == '\n')
             {
@@ -654,7 +640,7 @@ public class AutoFormat implements Tool {
             cc = getchr();
 
           }
-          string[j++] = cc;
+          buf[j++] = cc;
           if(getnl() == 1)
           {
             l_char = cc;
@@ -664,7 +650,7 @@ public class AutoFormat implements Tool {
           break;
 
         case ';':
-          string[j++] = c;
+          buf[j++] = c;
           indent_puts();
           if(p_flg[level] > 0 && ind[level] == 0)
           {
@@ -686,17 +672,17 @@ public class AutoFormat implements Tool {
           break;
 
         case '\\':
-          string[j++] = c;
-          string[j++] = getchr();
+          buf[j++] = c;
+          buf[j++] = getchr();
           break;
 
         case '?':
           q_flg = 1;
-          string[j++] = c;
+          buf[j++] = c;
           break;
 
         case ':':
-          string[j++] = c;
+          buf[j++] = c;
           peekc = getchr();
           if(peekc == ':')
           {
@@ -718,7 +704,7 @@ public class AutoFormat implements Tool {
             q_flg = 0;
             break;
           }
-          if(lookup(w_ds) == 0 && lookup(w_case) == 0)
+          if(!lookup(w_ds) && !lookup(w_case))
           {
             s_flg = 0;
             indent_puts();
@@ -747,12 +733,12 @@ public class AutoFormat implements Tool {
           break;
 
         case '/':
-          string[j++] = c;
+          buf[j++] = c;
           peekc = getchr();
 
           if(peekc == '/')
           {
-            string[j++] = peekc;
+            buf[j++] = peekc;
             peekc = '`';
             peek = -1;
             cpp_comment();
@@ -770,38 +756,24 @@ public class AutoFormat implements Tool {
           }
           else
           {
-            if (j > 0) string[j--] = '\0';
+            if (j > 0) buf[j--] = '\0';
             if (j > 0) indent_puts();
-            string[j++] = '/';
-            string[j++] = '*';
+            buf[j++] = '/';
+            buf[j++] = '*';
             peek = -1;
             peekc = '`';
             comment();
             break;
           }
 
-        case '#':
-          string[j++] = c;
-          cc = getchr();
-          while(cc != '\n')
-          {
-            string[j++] = cc;
-            cc = getchr();
-          }
-          string[j++] = cc;
-          s_flg = 0;
-          indent_puts();
-          s_flg = 1;
-          break;
-
         case ')':
           paren--;
           if (paren < 0)
           {
-            EOF = 1;
+            paren = 0;//EOF = true;
             //System.out.println("eof c");
           }
-          string[j++] = c;
+          buf[j++] = c;
           indent_puts();
           if(getnl() == 1)
           {
@@ -821,9 +793,9 @@ public class AutoFormat implements Tool {
           break;
 
         case '(':
-          string[j++] = c;
+          buf[j++] = c;
           paren++;
-          if ((lookup(w_for) == 1))
+          if ((lookup(w_for)))
           {
             c = get_string();
             while(c != ';') c = get_string();
@@ -846,7 +818,7 @@ public class AutoFormat implements Tool {
             paren--;
             if (paren < 0)
             {
-              EOF = 1;
+              paren=0;//EOF = true;
               //System.out.println("eof d");
             }
             indent_puts();
@@ -861,7 +833,7 @@ public class AutoFormat implements Tool {
             break;
           }
 
-          if(lookup(w_if_) == 1)
+          if(lookup(w_if_))
           {
             indent_puts();
             s_tabs[c_level][if_lev] = tabs;
