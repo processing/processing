@@ -22,14 +22,12 @@
 
 package processing.core;
 
-import java.lang.reflect.Method;
+import javax.microedition.khronos.opengles.*;
+import java.nio.FloatBuffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 import java.util.ArrayList;
-
-import javax.microedition.khronos.opengles.*;
+import java.lang.reflect.Method;
 
 /**
  * This class holds a 3D model composed of vertices, normals, colors (per vertex) and 
@@ -94,6 +92,19 @@ public class GLModel extends PShape implements GLConstants, PConstants {
   
   // TODO: implement loading from obj and mdl files.
   public GLModel(PApplet parent, String filename) { // Ignore
+    this.parent = parent;
+    a3d = (PGraphicsAndroid3D)parent.g;
+    
+    // Checking we have what we need:
+    gl = a3d.gl11;
+    if (gl == null) {
+      throw new RuntimeException("GLModel: OpenGL ES 1.1 required");
+    }
+    if (!a3d.vboSupported) {
+       throw new RuntimeException("GLModel: Vertex Buffer Objects are not available");
+    }
+  
+    String lines[] =  parent.loadStrings(filename);
     
   }  
   
@@ -938,6 +949,37 @@ public void setGroup(int gr, int idx0, int idx1, GLTexture tex) {
   }  
   
   
+  public void setGroupDrawMode(int gr, int mode) {
+    VertexGroup group = (VertexGroup)groups.get(gr);    
+    if (mode == POINTS) group.glMode = GL11.GL_POINTS;
+    else if (mode == POINT_SPRITES)  throw new RuntimeException("GLModel: point sprites can only be set for entire model");
+    else if (mode == LINES) group.glMode = GL11.GL_LINES;
+    else if (mode == LINE_STRIP) group.glMode = GL11.GL_LINE_STRIP;
+    else if (mode == LINE_LOOP) group.glMode = GL11.GL_LINE_LOOP;
+    else if (mode == TRIANGLES) group.glMode = GL11.GL_TRIANGLES; 
+    else if (mode == TRIANGLE_FAN) group.glMode = GL11.GL_TRIANGLE_FAN;
+    else if (mode == TRIANGLE_STRIP) group.glMode = GL11.GL_TRIANGLE_STRIP;
+    else {
+      throw new RuntimeException("GLModel: Unknown draw mode");
+    }
+  }
+  
+  
+  public void useModelDrawMode() {
+    VertexGroup group;
+    for (int i = 0; i < groups.size(); i++) {
+      group = (VertexGroup)groups.get(i);
+      group.glMode = 0;
+    }
+  }
+  
+  
+  public void setGroupStrokeWeight(int gr, float sw) {
+    VertexGroup group = (VertexGroup)groups.get(gr);
+    group.sw = sw;
+  }
+  
+  
   protected void initGroups() {
     groups = new ArrayList<VertexGroup>();
     vertGroup = new VertexGroup[numVertices];
@@ -1117,6 +1159,7 @@ public void setGroup(int gr, int idx0, int idx1, GLTexture tex) {
     initGroups();    
   }
   
+  
   protected void initVertexData() {    
     ByteBuffer vbb = ByteBuffer.allocateDirect(numVertices * 3 * SIZEOF_FLOAT);
     vbb.order(ByteOrder.nativeOrder());
@@ -1192,6 +1235,7 @@ public void setGroup(int gr, int idx0, int idx1, GLTexture tex) {
     texCoordBuffer.put(texCoordArray);
     texCoordBuffer.flip();   
   }  
+  
   
   protected void createTexCoordBuffer() {
     deleteTexCoordBuffer(); // Just in case.
@@ -1289,7 +1333,6 @@ public void setGroup(int gr, int idx0, int idx1, GLTexture tex) {
 	  float pointSize;
 	  
 	  // Setting line width and point size from stroke value.
-		gl.glLineWidth(a3d.strokeWeight);
 		pointSize = PApplet.min(a3d.strokeWeight, a3d.maxPointSize);
     gl.glPointSize(pointSize);
 	    
@@ -1353,8 +1396,23 @@ public void setGroup(int gr, int idx0, int idx1, GLTexture tex) {
       
       // Last transformation: inversion of coordinate to make compatible with Processing's inverted Y axis.
       gl.glPushMatrix();
-      gl.glScalef(1, -1, 1);     
-      gl.glDrawArrays(glMode, group.first, group.last - group.first + 1);
+      gl.glScalef(1, -1, 1);
+      
+      // Setting the stroke wight (line width's in OpenGL terminology) using either the group's weight 
+      // or the renderer's weight. 
+      if (0 < group.sw) {
+        gl.glLineWidth(group.sw);
+      } else {
+        gl.glLineWidth(a3d.strokeWeight);
+      }
+      
+      if (0 < group.glMode && !pointSprites) {
+        // Using the group's vertex mode.
+        gl.glDrawArrays(group.glMode, group.first, group.last - group.first + 1);
+      } else {
+        // Using the overall's vertex mode assigned to the entire model.
+        gl.glDrawArrays(glMode, group.first, group.last - group.first + 1);  
+      }
       gl.glPopMatrix();
       
       if (tex != null)  {
@@ -1421,18 +1479,24 @@ public void setGroup(int gr, int idx0, int idx1, GLTexture tex) {
 	protected class VertexGroup {
     VertexGroup(int n0, int n1) {
       first = n0;
-      last = n1; 
+      last = n1;
+      glMode = 0;
+      sw = 0;
       texture = null;
     }
 
     VertexGroup(int n0, int n1, GLTexture tex) {
       first = n0;
       last = n1; 
+      glMode = 0;
+      sw = 0;
       texture = tex;
     }
     
 	  int first;
-	  int last;	  
+	  int last;
+	  int glMode;
+	  float sw;
     GLTexture texture;      
 	}  
 }
