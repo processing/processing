@@ -1162,8 +1162,6 @@ _ japanese characters in comments cause trouble with auto-format
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1153505384
 _ arrays are reformatted on each autoformat
 _   http://dev.processing.org/bugs/show_bug.cgi?id=259
-_ crash on particular string
-_   http://dev.processing.org/bugs/show_bug.cgi?id=363
 _ autoformat screws up with color arrays
 _   http://dev.processing.org/bugs/show_bug.cgi?id=760
 _ too many right parens error when there are not
