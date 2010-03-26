@@ -1,5 +1,20 @@
 0182 pde
 
+autoformat fixes
+o install astyle formatter
+o   build on each platform, then "lipo -create astyle.* -output astyle"
+J removes code with extra parens or braces
+J   (an extra } brace deleting everything after it)
+J   http://dev.processing.org/bugs/show_bug.cgi?id=109
+J progressively eats code w/ certain brace settings
+J   http://dev.processing.org/bugs/show_bug.cgi?id=235
+J Auto Format hangs when a non-terminated ' is included
+J   http://dev.processing.org/bugs/show_bug.cgi?id=236
+J hex colors don't get formatted
+J   http://dev.processing.org/bugs/show_bug.cgi?id=303
+J another code example that crashes
+J   http://dev.processing.org/bugs/show_bug.cgi?id=363
+
 
 need examples
 _ Improve detection and handling of missing semicolons
@@ -1141,24 +1156,12 @@ TOOLS / Auto Format
 _ autoformat fails when there's no newline
 _ Auto Format says "too many right parentheses" when last line is a comment
 _   http://dev.processing.org/bugs/show_bug.cgi?id=754
-_ install astyle formatter
-_   build on each platform, then "lipo -create astyle.* -output astyle"
 _ do a better job of maintaining cursor during beautify 
 _ only auto format a particular section of code
 _   set the 'tabs' var based on how many spaces on previous line
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1087227217
-_ removes code with extra parens or braces
-_   (an extra } brace deleting everything after it)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=109
-_ progressively eats code w/ certain brace settings
-_   http://dev.processing.org/bugs/show_bug.cgi?id=235
-_ Auto Format hangs when a non-terminated ' is included
-_   http://dev.processing.org/bugs/show_bug.cgi?id=236
-_ hex colors don't get formatted
-_   http://dev.processing.org/bugs/show_bug.cgi?id=303
-_ another code example that crashes
-_   http://dev.processing.org/bugs/show_bug.cgi?id=363
 _ japanese characters in comments cause trouble with auto-format
+_   (this may have been fixed in recent releases, not checked)
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1153505384
 _ arrays are reformatted on each autoformat
 _   http://dev.processing.org/bugs/show_bug.cgi?id=259
@@ -1173,6 +1176,8 @@ _ Bracket idenfication {} is not aware of comments //
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1450
 _ comment is shown as code after auto format
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1194
+
+
 
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
