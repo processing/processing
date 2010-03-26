@@ -3012,7 +3012,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
       return new PShapeSVG(this, filename);
     } else if (filename.toLowerCase().endsWith(".obj")) {
       if (g instanceof PGraphicsAndroid3D) {
-        // TODO: implement obj loading for GLModels       
+        // TODO: implement obj loading for GLModels
+        return new GLModel(this, filename);
       } else {
         throw new RuntimeException("OBJ files can be loaded only when using the A3D renderer.");
       }
@@ -6423,7 +6424,25 @@ public class PApplet extends Activity implements PConstants, Runnable {
     g.beginShape(kind);
   }
 
+  
+  public void beginShapeRecorder() {
+    if (g instanceof PGraphicsAndroid3D) {
+      ((PGraphicsAndroid3D) g).beginShapeRecorder();
+    } else  {
+       throw new RuntimeException("The shape recorder can only be used with the A3D renderer.");
+    }
+  }
+  
+  
+  public void beginShapeRecorder(int kind) {
+    if (g instanceof PGraphicsAndroid3D) {
+      ((PGraphicsAndroid3D) g).beginShapeRecorder(kind);
+    } else  {
+       throw new RuntimeException("The shape recorder can only be used with the A3D renderer.");
+    }    
+  }
 
+  
   public void edge(boolean edge) {
     g.edge(edge);
   }
@@ -6483,7 +6502,25 @@ public class PApplet extends Activity implements PConstants, Runnable {
     g.endShape(mode);
   }
 
-
+  
+  public GLModel endShapeRecorder() {
+    if (g instanceof PGraphicsAndroid3D) {
+      return ((PGraphicsAndroid3D) g).endShapeRecorder();
+    } else  {
+       throw new RuntimeException("The shape recorder can only be used with the A3D renderer.");
+    }
+  }  
+  
+  
+  public GLModel endShapeRecorder(int mode) {
+    if (g instanceof PGraphicsAndroid3D) {
+      return ((PGraphicsAndroid3D) g).endShapeRecorder(mode);
+    } else  {
+       throw new RuntimeException("The shape recorder can only be used with the A3D renderer.");
+    }
+  }  
+  
+  
   public void bezierVertex(float x2, float y2,
                            float x3, float y3,
                            float x4, float y4) {
