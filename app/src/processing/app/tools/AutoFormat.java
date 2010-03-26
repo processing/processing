@@ -44,7 +44,8 @@ import processing.core.PApplet;
 public class AutoFormat implements Tool {
   Editor editor;
 
-  static final int BLOCK_MAXLEN = 64000;
+  private final char[] chars = new char[64000];
+  private final char[] buf = new char[64000];
 
   StringBuffer strOut;
   int indentValue;
@@ -52,7 +53,6 @@ public class AutoFormat implements Tool {
   boolean EOF;
   CharArrayReader reader;
   int readCount, indexBlock, lineLength, lineNumber;
-  char chars[];
   String strBlock;
   int s_level[];
   int c_level;
@@ -68,9 +68,7 @@ public class AutoFormat implements Tool {
   char l_char, p_char;
   int a_flg, q_flg, ct;
   int s_tabs[][];
-  String w_if_, w_else, w_for, w_ds, w_case, w_cpp_comment, w_jdoc;
   int jdoc, j;
-  char buf[];
   char cc;
   int s_flg;
   int peek;
@@ -196,7 +194,7 @@ public class AutoFormat implements Tool {
       while (buf[i] == ' ') {
         i++;
       }
-      if (lookup_com(w_jdoc) == 1) {
+      if (lookup_com("/**") == 1) {
         jdoc = 1;
       }
       final String strBuffer = new String(buf, 0, j);
@@ -305,8 +303,6 @@ public class AutoFormat implements Tool {
     int save_s_flg;
     save_s_flg = tabs;
     peekc = getchr();
-    //while ((peekc == '\t' || peekc == ' ') &&
-    //     (j < string.length)) {
     while (peekc == '\t' || peekc == ' ') {
       buf[j++] = peekc;
       peek = -1;
@@ -429,20 +425,11 @@ public class AutoFormat implements Tool {
     p_flg = new int[10];
     s_tabs = new int[20][10];
 
-    w_else = "else";
-    w_if_ = new String("if");
-    w_for = new String("for");
-    w_ds = new String("default");
-    w_case = new String("case");
-    w_cpp_comment = new String("//");
-    w_jdoc = new String("/**");
     line_feed = new String("\n");
 
     // read as long as there is something to read
     EOF = false; // = 1 set in getchr when EOF
 
-    chars = new char[BLOCK_MAXLEN];
-    buf = new char[BLOCK_MAXLEN];
     try { // the whole process
       // open for input
       reader = new CharArrayReader(originalText.toCharArray());
@@ -467,7 +454,7 @@ public class AutoFormat implements Tool {
 
         case ' ':
         case '\t':
-          if (lookup(w_else)) {
+          if (lookup("else")) {
             gotelse();
             if (s_flg == 0 || j > 0) {
               buf[j++] = c;
@@ -489,11 +476,11 @@ public class AutoFormat implements Tool {
           }
           //String j_string = new String(string);
 
-          e_flg = lookup(w_else);
+          e_flg = lookup("else");
           if (e_flg) {
             gotelse();
           }
-          if (lookup_com(w_cpp_comment) == 1) {
+          if (lookup_com("//") == 1) {
             if (buf[j] == '\n') {
               buf[j] = '\0';
               j--;
@@ -513,7 +500,7 @@ public class AutoFormat implements Tool {
           break;
 
         case '{':
-          if (lookup(w_else)) {
+          if (lookup("else")) {
             gotelse();
           }
           if (s_if_lev.length == c_level) {
@@ -671,7 +658,7 @@ public class AutoFormat implements Tool {
             q_flg = 0;
             break;
           }
-          if (!lookup(w_ds) && !lookup(w_case)) {
+          if (!lookup("default") && !lookup("case")) {
             s_flg = 0;
             indent_puts();
           } else {
@@ -750,7 +737,7 @@ public class AutoFormat implements Tool {
         case '(':
           buf[j++] = c;
           paren++;
-          if ((lookup(w_for))) {
+          if ((lookup("for"))) {
             c = get_string();
             while (c != ';') {
               c = get_string();
@@ -787,7 +774,7 @@ public class AutoFormat implements Tool {
             break;
           }
 
-          if (lookup(w_if_)) {
+          if (lookup("if")) {
             indent_puts();
             s_tabs[c_level][if_lev] = tabs;
             sp_flg[c_level][if_lev] = p_flg[level];
