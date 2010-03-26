@@ -262,6 +262,10 @@ public class PGraphicsAndroid3D extends PGraphics {
   // This variable controls clearing the buffers.
   boolean clear = true;
   
+  // ........................................................  
+  
+  
+  GLModel recorderModel; 
   
   //////////////////////////////////////////////////////////////
   
@@ -620,6 +624,17 @@ public class PGraphicsAndroid3D extends PGraphics {
 
 
   //public void beginShape()
+
+  
+  public void beginShapeRecorder() {
+    beginShapeRecorder(POLYGON);
+  }
+    
+  
+  public void beginShapeRecorder(int kind) {
+    
+  }
+  
   
   public void beginShape(int kind) {
     shape = kind;
@@ -699,14 +714,14 @@ public class PGraphicsAndroid3D extends PGraphics {
     // if true, the shapes will be rendered on endDraw
     if (!hints[ENABLE_DEPTH_SORT]) {
       if (fill) {
-        renderTriangles(0, triangleCount);
+        renderTriangles(0, faceCount);
         if (raw != null) {
           //rawTriangles(0, triangleCount);
         }
         triangleCount = 0;
       }
       if (stroke) {
-        renderLines(0, lineCount);
+        renderLines(0, pathCount);
         if (raw != null) {
           //rawLines(0, lineCount);
         }
@@ -924,7 +939,18 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
   }
 
+  
+  public GLModel endShapeRecorder() {
+    return endShapeRecorder(OPEN);
+  }
 
+  
+  public GLModel endShapeRecorder(int mode) {
+    
+    return null;
+  }  
+  
+  
   //////////////////////////////////////////////////////////////
 
   // BEZIER CURVE VERTICES
@@ -1100,7 +1126,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
     gl.glEnableClientState(GL10.GL_COLOR_ARRAY);
 
-    for (int j = 0; j < pathCount; j++) {
+    for (int j = start; j < stop; j++) {
       int i = pathOffset[j];
       float sw = vertices[lines[i][VERTEX1]][SW];
       //report("render_lines 1");
@@ -1222,7 +1248,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     gl.glEnableClientState(GL10.GL_COLOR_ARRAY);
     gl.glEnableClientState(GL10.GL_NORMAL_ARRAY);
     
-    for (int j = 0; j < faceCount; j++) {
+    for (int j = start; j < stop; j++) {
       int i = faceOffset[j];
       
       if (faceTexture[j] != null) {
