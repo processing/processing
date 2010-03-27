@@ -42,8 +42,6 @@ import processing.core.PApplet;
  * [Ben Fry, August 2009]
  */
 public class AutoFormat implements Tool {
-  private static final String INDENT_STRING = " ";
-
   Editor editor;
 
   private char[] chars;
@@ -53,7 +51,7 @@ public class AutoFormat implements Tool {
 
   int indentValue;
   boolean EOF;
-  boolean a_flg, e_flg, if_flg, s_flg, q_flg;
+  boolean a_flg, e_flg, if_flg, s_flag, q_flg;
   boolean s_if_flg[];
   int pos, lineNumber;
   int s_level[];
@@ -71,7 +69,6 @@ public class AutoFormat implements Tool {
   boolean jdoc_flag;
   char cc;
   int tabs;
-  char currentChar;
   char c;
 
   public void init(final Editor editor) {
@@ -83,7 +80,7 @@ public class AutoFormat implements Tool {
   }
 
   private void comment() throws IOException {
-    final boolean save_s_flg = s_flg;
+    final boolean save_s_flg = s_flag;
 
     currentLine.append(c = next()); // extra char
     while (true) {
@@ -91,8 +88,8 @@ public class AutoFormat implements Tool {
       while ((c != '/')) {
         if (c == '\n') {
           lineNumber++;
-          putcoms();
-          s_flg = true;
+          writeIndentedComment();
+          s_flag = true;
         }
         currentLine.append(c = next());
       }
@@ -103,8 +100,8 @@ public class AutoFormat implements Tool {
       }
     }
 
-    putcoms();
-    s_flg = save_s_flg;
+    writeIndentedComment();
+    s_flag = save_s_flg;
     jdoc_flag = false;
     return;
   }
@@ -128,7 +125,7 @@ public class AutoFormat implements Tool {
         continue;
       }
       if (ch == '\n') {
-        indent_puts();
+        writeIndentedLine();
         a_flg = true;
         continue;
       }
@@ -136,35 +133,36 @@ public class AutoFormat implements Tool {
     }
   }
 
-  private void indent_puts() {
-    if (currentLine.length() > 0) {
-      if (s_flg) {
-        final boolean shouldIndent = (tabs > 0)
-            && (currentLine.charAt(0) != '{') && a_flg;
-        if (shouldIndent) {
-          tabs++;
-        }
-        p_tabs();
-        s_flg = false;
-        if (shouldIndent) {
-          tabs--;
-        }
-        a_flg = false;
+  private void writeIndentedLine() {
+    if (currentLine.length() == 0) {
+      if (s_flag) {
+        s_flag = a_flg = false;
       }
-      result.append(currentLine);
-      currentLine.setLength(0);
-    } else if (s_flg) {
-      s_flg = a_flg = false;
+      return;
     }
+    if (s_flag) {
+      final boolean shouldIndent = (tabs > 0) && (currentLine.charAt(0) != '{')
+          && a_flg;
+      if (shouldIndent) {
+        tabs++;
+      }
+      printIndentation();
+      s_flag = false;
+      if (shouldIndent) {
+        tabs--;
+      }
+      a_flg = false;
+    }
+    result.append(currentLine);
+    currentLine.setLength(0);
   }
 
-  /* special edition of put string for comment processing */
-  private void putcoms() {
-    final boolean sav_s_flg = s_flg;
+  private void writeIndentedComment() {
+    final boolean saved_s_flag = s_flag;
     if (currentLine.length() > 0) {
-      if (s_flg) {
-        p_tabs();
-        s_flg = false;
+      if (s_flag) {
+        printIndentation();
+        s_flag = false;
       }
       int i = 0;
       while (currentLine.charAt(i) == ' ') {
@@ -174,14 +172,14 @@ public class AutoFormat implements Tool {
         jdoc_flag = true;
       }
       if (currentLine.charAt(i) == '/' && currentLine.charAt(i + 1) == '*') {
-        if ((currentChar != ';') && sav_s_flg) {
+        if (saved_s_flag && prev() != ';') {
           result.append(currentLine.substring(i));
         } else {
           result.append(currentLine);
         }
       } else {
         if (currentLine.charAt(i) == '*' || !jdoc_flag) {
-          result.append((INDENT_STRING + currentLine.substring(i)));
+          result.append((" " + currentLine.substring(i)));
         } else {
           result.append((" * " + currentLine.substring(i)));
         }
@@ -190,30 +188,27 @@ public class AutoFormat implements Tool {
     }
   }
 
-  private void cpp_comment() throws IOException {
+  private void handleSingleLineComment() throws IOException {
     c = next();
     while (c != '\n') {
       currentLine.append(c);
       c = next();
     }
     lineNumber++;
-    indent_puts();
-    s_flg = true;
+    writeIndentedLine();
+    s_flag = true;
   }
 
-  /* expand indentValue into tabs and spaces */
-  private void p_tabs() {
-    int i, k;
-
+  private void printIndentation() {
     if (tabs < 0) {
       tabs = 0;
     }
     if (tabs == 0) {
       return;
     }
-    i = tabs * indentValue; // calc number of spaces
-    for (k = 0; k < i; k++) {
-      result.append(INDENT_STRING);
+    final int spaces = tabs * indentValue;
+    for (int k = 0; k < spaces; k++) {
+      result.append(" ");
     }
   }
 
@@ -235,17 +230,18 @@ public class AutoFormat implements Tool {
       return 0;
     }
     pos++;
+    final char c;
     if (pos < chars.length) {
-      currentChar = chars[pos];
-      if (!Character.isWhitespace(currentChar))
-        lastNonWhitespace = currentChar;
+      c = chars[pos];
+      if (!Character.isWhitespace(c))
+        lastNonWhitespace = c;
     } else {
-      currentChar = 0;
+      c = 0;
     }
     if (pos == chars.length - 1) {
       EOF = true;
     }
-    return currentChar;
+    return c;
   }
 
   /* else processing */
@@ -273,7 +269,7 @@ public class AutoFormat implements Tool {
         comment();
       } else if (c == '/') {
         currentLine.append(next());
-        cpp_comment();
+        handleSingleLineComment();
         return true;
       }
     }
@@ -309,7 +305,7 @@ public class AutoFormat implements Tool {
 
     lineNumber = 0;
     q_flg = e_flg = a_flg = if_flg = false;
-    s_flg = true;
+    s_flag = true;
     c_level = if_lev = level = paren = 0;
     tabs = 0;
     jdoc_flag = false;
@@ -334,23 +330,26 @@ public class AutoFormat implements Tool {
         switch (c) {
         default:
           currentLine.append(c);
-          if (c != ',') {
-            l_char = c;
-          }
+          l_char = c;
+          break;
+
+        case ',':
+          trimRight(currentLine);
+          currentLine.append(c);
           break;
 
         case ' ':
         case '\t':
           if (lookup("else")) {
             gotelse();
-            if ((!s_flg) || currentLine.length() > 0) {
+            if ((!s_flag) || currentLine.length() > 0) {
               currentLine.append(c);
             }
-            indent_puts();
-            s_flg = false;
+            writeIndentedLine();
+            s_flag = false;
             break;
           }
-          if ((!s_flg) || currentLine.length() > 0) {
+          if ((!s_flag) || currentLine.length() > 0) {
             currentLine.append(c);
           }
           break;
@@ -371,9 +370,9 @@ public class AutoFormat implements Tool {
             }
           }
 
-          indent_puts();
+          writeIndentedLine();
           result.append("\n");
-          s_flg = true;
+          s_flag = true;
           if (e_flg) {
             p_flg[level]++;
             tabs++;
@@ -395,18 +394,23 @@ public class AutoFormat implements Tool {
           if_lev = 0;
           if_flg = false;
           c_level++;
-          if (s_flg && p_flg[level] != 0) {
+          if (s_flag && p_flg[level] != 0) {
             p_flg[level]--;
             tabs--;
           }
+          trimRight(currentLine);
+          if (currentLine.length() > 0
+              || (result.length() > 0 && !Character.isWhitespace(result
+                  .charAt(result.length() - 1))))
+            currentLine.append(" ");
           currentLine.append(c);
-          indent_puts();
+          writeIndentedLine();
           getnl();
-          indent_puts();
+          writeIndentedLine();
           //fprintf(outfil,"\n");
           result.append("\n");
           tabs++;
-          s_flg = true;
+          s_flag = true;
           if (p_flg[level] > 0) {
             ind[level] = 1;
             level++;
@@ -419,7 +423,7 @@ public class AutoFormat implements Tool {
           if (c_level < 0) {
             c_level = 0;
             currentLine.append(c);
-            indent_puts();
+            writeIndentedLine();
             break;
           }
           if_lev = s_if_lev[c_level] - 1;
@@ -427,17 +431,21 @@ public class AutoFormat implements Tool {
             if_lev = 0;
           }
           if_flg = s_if_flg[c_level];
-          indent_puts();
+          trimRight(currentLine);
+          writeIndentedLine();
           tabs--;
-          p_tabs();
+
+          trimRight(result);
+          result.append("\n");
+          printIndentation();
           result.append(c);
           if (peek() == ';') {
             result.append(next());
           }
           getnl();
-          indent_puts();
+          writeIndentedLine();
           result.append("\n");
-          s_flg = true;
+          s_flag = true;
           if (c_level < s_level[level]) {
             if (level > 0) {
               level--;
@@ -461,8 +469,8 @@ public class AutoFormat implements Tool {
             }
             if (cc == '\n') {
               lineNumber++;
-              indent_puts();
-              s_flg = true;
+              writeIndentedLine();
+              s_flag = true;
             }
             cc = next();
           }
@@ -476,15 +484,15 @@ public class AutoFormat implements Tool {
 
         case ';':
           currentLine.append(c);
-          indent_puts();
+          writeIndentedLine();
           if (p_flg[level] > 0 && ind[level] == 0) {
             tabs -= p_flg[level];
             p_flg[level] = 0;
           }
           getnl();
-          indent_puts();
+          writeIndentedLine();
           result.append("\n");
-          s_flg = true;
+          s_flag = true;
           if (if_lev > 0) {
             if (if_flg) {
               if_lev--;
@@ -508,7 +516,7 @@ public class AutoFormat implements Tool {
         case ':':
           currentLine.append(c);
           if (peek() == ':') {
-            indent_puts();
+            writeIndentedLine();
             result.append(next());
             break;
           }
@@ -518,31 +526,31 @@ public class AutoFormat implements Tool {
             break;
           }
           if (!lookup("default") && !lookup("case")) {
-            s_flg = false;
-            indent_puts();
+            s_flag = false;
+            writeIndentedLine();
           } else {
             tabs--;
-            indent_puts();
+            writeIndentedLine();
             tabs++;
           }
           if (peek() == ';') {
             result.append(next());
           }
           getnl();
-          indent_puts();
+          writeIndentedLine();
           result.append("\n");
-          s_flg = true;
+          s_flag = true;
           break;
 
         case '/':
           final char la = peek();
           if (la == '/') {
             currentLine.append(c).append(next());
-            cpp_comment();
+            handleSingleLineComment();
             result.append("\n");
           } else if (la == '*') {
             if (currentLine.length() > 0) {
-              indent_puts();
+              writeIndentedLine();
             }
             currentLine.append(c).append(next());
             comment();
@@ -557,7 +565,7 @@ public class AutoFormat implements Tool {
             paren = 0;
           }
           currentLine.append(c);
-          indent_puts();
+          writeIndentedLine();
           if (getnl()) {
             chars[pos--] = '\n';
             if (paren != 0) {
@@ -599,7 +607,7 @@ public class AutoFormat implements Tool {
               paren = 0;//EOF = true;
               //System.out.println("eof d");
             }
-            indent_puts();
+            writeIndentedLine();
             if (getnl()) {
               chars[pos--] = '\n';
               p_flg[level]++;
@@ -610,7 +618,7 @@ public class AutoFormat implements Tool {
           }
 
           if (lookup("if")) {
-            indent_puts();
+            writeIndentedLine();
             s_tabs[c_level][if_lev] = tabs;
             sp_flg[c_level][if_lev] = p_flg[level];
             s_ind[c_level][if_lev] = ind[level];
@@ -654,5 +662,48 @@ public class AutoFormat implements Tool {
     } catch (final Exception e) {
       editor.statusError(e);
     }
+  }
+
+  private void skipWhitespace() {
+    while (Character.isWhitespace(peek()))
+      next();
+  }
+
+  private void readUntil(final String string) {
+    int matched = 0;
+    while (matched < string.length()) {
+      final char c = next();
+      if (c == string.charAt(matched))
+        matched++;
+      else if (c == string.charAt(0))
+        matched = 1;
+      else
+        matched = 0;
+    }
+  }
+
+  private boolean lookahead(final String s) {
+    int p = pos + 1;
+    while (p < chars.length && Character.isWhitespace(chars[p]))
+      p++;
+    if (p == chars.length)
+      return false;
+    for (int i = 0; i < s.length(); i++, p++) {
+      if (p == chars.length)
+        return false;
+      if (s.charAt(i) != chars[p])
+        return false;
+    }
+    if (p == chars.length)
+      return false;
+    if (Character.isLetter(chars[p]))
+      return false;
+    return true;
+  }
+
+  private void trimRight(final StringBuilder sb) {
+    while (sb.length() >= 1
+        && Character.isWhitespace(sb.charAt(sb.length() - 1)))
+      sb.setLength(sb.length() - 1);
   }
 }
