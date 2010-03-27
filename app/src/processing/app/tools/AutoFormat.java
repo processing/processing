@@ -24,8 +24,8 @@
 
 package processing.app.tools;
 
-import java.io.CharArrayReader;
 import java.io.IOException;
+import java.util.regex.Pattern;
 import processing.app.Editor;
 import processing.app.Preferences;
 import processing.core.PApplet;
@@ -42,42 +42,37 @@ import processing.core.PApplet;
  * [Ben Fry, August 2009]
  */
 public class AutoFormat implements Tool {
+  private static final String INDENT_STRING = " ";
+
   Editor editor;
 
-  private final char[] chars = new char[64000];
-  private final char[] buf = new char[64000];
+  private char[] chars;
+  private final StringBuilder currentLine = new StringBuilder();
 
-  StringBuffer strOut;
+  final StringBuilder result = new StringBuilder();
+
   int indentValue;
-  String indentChar;
   boolean EOF;
-  CharArrayReader reader;
-  int readCount, indexBlock, lineLength, lineNumber;
-  String strBlock;
+  boolean a_flg, e_flg, if_flg, s_flg, q_flg;
+  boolean s_if_flg[];
+  int pos, lineNumber;
   int s_level[];
   int c_level;
   int sp_flg[][];
   int s_ind[][];
   int s_if_lev[];
-  int s_if_flg[];
-  int if_lev, if_flg, level;
+  int if_lev, level;
   int ind[];
-  boolean e_flg;
   int paren;
-  static int p_flg[];
-  char l_char, p_char;
-  int a_flg, q_flg, ct;
+  int p_flg[];
+  char l_char;
+  int ct;
   int s_tabs[][];
-  int jdoc, j;
+  boolean jdoc_flag;
   char cc;
-  int s_flg;
-  int peek;
-  char peekc;
   int tabs;
-  char last_char;
+  char currentChar;
   char c;
-
-  String line_feed;
 
   public void init(final Editor editor) {
     this.editor = editor;
@@ -88,147 +83,122 @@ public class AutoFormat implements Tool {
   }
 
   private void comment() throws IOException {
-    int save_s_flg;
-    save_s_flg = s_flg;
+    final boolean save_s_flg = s_flg;
 
-    int done = 0;
-    c = buf[j++] = getchr(); // extra char
-    while (done == 0) {
-      c = buf[j++] = getchr();
-      while ((c != '/') && (j < buf.length)) {
-        if (c == '\n' || c == '\r') {
+    currentLine.append(c = next()); // extra char
+    while (true) {
+      currentLine.append(c = next());
+      while ((c != '/')) {
+        if (c == '\n') {
           lineNumber++;
           putcoms();
-          s_flg = 1;
+          s_flg = true;
         }
-        c = buf[j++] = getchr();
+        currentLine.append(c = next());
       }
-      //String tmpstr = new String(string);
-      if (j > 1 && buf[j - 2] == '*') {
-        done = 1;
-        jdoc = 0;
+      if (currentLine.length() >= 2
+          && currentLine.charAt(currentLine.length() - 2) == '*') {
+        jdoc_flag = false;
+        break;
       }
     }
 
     putcoms();
     s_flg = save_s_flg;
-    jdoc = 0;
+    jdoc_flag = false;
     return;
   }
 
   private char get_string() throws IOException {
     char ch;
-    ch = '*';
     while (true) {
-      switch (ch) {
-      default:
-        ch = buf[j++] = getchr();
-        if (ch == '\\') {
-          buf[j++] = getchr();
-          break;
-        }
-        if (ch == '\'' || ch == '"') {
-          cc = buf[j++] = getchr();
-          while (!EOF && cc != ch) {
-            if (cc == '\\') {
-              buf[j++] = getchr();
-            }
-            cc = buf[j++] = getchr();
-          }
-          break;
-        }
-        if (ch == '\n' || ch == '\r') {
-          indent_puts();
-          a_flg = 1;
-          break;
-        } else {
-          return (ch);
-        }
+      currentLine.append(ch = next());
+      if (ch == '\\') {
+        currentLine.append(next());
+        continue;
       }
+      if (ch == '\'' || ch == '"') {
+        currentLine.append(cc = next());
+        while (!EOF && cc != ch) {
+          if (cc == '\\') {
+            currentLine.append(next());
+          }
+          currentLine.append(cc = next());
+        }
+        continue;
+      }
+      if (ch == '\n') {
+        indent_puts();
+        a_flg = true;
+        continue;
+      }
+      return ch;
     }
   }
 
   private void indent_puts() {
-    buf[j] = '\0';
-    if (j > 0) {
-      if (s_flg != 0) {
-        if ((tabs > 0) && (buf[0] != '{') && (a_flg == 1)) {
+    if (currentLine.length() > 0) {
+      if (s_flg) {
+        final boolean shouldIndent = (tabs > 0)
+            && (currentLine.charAt(0) != '{') && a_flg;
+        if (shouldIndent) {
           tabs++;
         }
         p_tabs();
-        s_flg = 0;
-        if ((tabs > 0) && (buf[0] != '{') && (a_flg == 1)) {
+        s_flg = false;
+        if (shouldIndent) {
           tabs--;
         }
-        a_flg = 0;
+        a_flg = false;
       }
-      strOut.append(buf, 0, j);
-      j = 0;
-
-    } else {
-      if (s_flg != 0) {
-        s_flg = 0;
-        a_flg = 0;
-      }
+      result.append(currentLine);
+      currentLine.setLength(0);
+    } else if (s_flg) {
+      s_flg = a_flg = false;
     }
-  }
-
-  //public void fprintf(int outfil, String out_string) {
-  private void fprintf(final String out_string) {
-    //int out_len = out_string.length();
-    //String j_string = new String(string);
-    strOut.append(out_string);
   }
 
   /* special edition of put string for comment processing */
   private void putcoms() {
-    int i = 0;
-    final int sav_s_flg = s_flg;
-    if (j > 0) {
-      if (s_flg != 0) {
+    final boolean sav_s_flg = s_flg;
+    if (currentLine.length() > 0) {
+      if (s_flg) {
         p_tabs();
-        s_flg = 0;
+        s_flg = false;
       }
-      buf[j] = '\0';
-      i = 0;
-      while (buf[i] == ' ') {
+      int i = 0;
+      while (currentLine.charAt(i) == ' ') {
         i++;
       }
-      if (lookup_com("/**") == 1) {
-        jdoc = 1;
+      if (lookup_com("/**")) {
+        jdoc_flag = true;
       }
-      final String strBuffer = new String(buf, 0, j);
-      if (buf[i] == '/' && buf[i + 1] == '*') {
-        if ((last_char != ';') && (sav_s_flg == 1)) {
-          //fprintf(outfil, strBuffer.substring(i,j));
-          fprintf(strBuffer.substring(i, j));
+      if (currentLine.charAt(i) == '/' && currentLine.charAt(i + 1) == '*') {
+        if ((currentChar != ';') && sav_s_flg) {
+          result.append(currentLine.substring(i));
         } else {
-          //fprintf(outfil, strBuffer);
-          fprintf(strBuffer);
+          result.append(currentLine);
         }
       } else {
-        if (buf[i] == '*' || jdoc == 0) {
-          //fprintf (outfil, " "+strBuffer.substring(i,j));
-          fprintf(" " + strBuffer.substring(i, j));
+        if (currentLine.charAt(i) == '*' || !jdoc_flag) {
+          result.append((INDENT_STRING + currentLine.substring(i)));
         } else {
-          //fprintf (outfil, " * "+strBuffer.substring(i,j));
-          fprintf(" * " + strBuffer.substring(i, j));
+          result.append((" * " + currentLine.substring(i)));
         }
       }
-      j = 0;
-      buf[0] = '\0';
+      currentLine.setLength(0);
     }
   }
 
   private void cpp_comment() throws IOException {
-    c = getchr();
-    while (c != '\n' && c != '\r' && j < buf.length) {
-      buf[j++] = c;
-      c = getchr();
+    c = next();
+    while (c != '\n') {
+      currentLine.append(c);
+      c = next();
     }
     lineNumber++;
     indent_puts();
-    s_flg = 1;
+    s_flg = true;
   }
 
   /* expand indentValue into tabs and spaces */
@@ -242,52 +212,40 @@ public class AutoFormat implements Tool {
       return;
     }
     i = tabs * indentValue; // calc number of spaces
-    //j = i/8;        /* calc number of tab chars */
-
     for (k = 0; k < i; k++) {
-      strOut.append(indentChar);
+      result.append(INDENT_STRING);
     }
   }
 
-  private char getchr() throws IOException {
-    if ((peek < 0) && (last_char != ' ') && (last_char != '\t')) {
-      if ((last_char != '\n') && (last_char != '\r')) {
-        p_char = last_char;
-      }
+  private char peek() {
+    if (pos + 1 >= chars.length) {
+      return 0;
     }
-    if (peek > 0) /* char was read previously */
-    {
-      last_char = peekc;
-      peek = -1;
-    } else /* read next char in string */
-    {
-      indexBlock++;
-      if (indexBlock >= lineLength) {
-        lineLength = readCount = 0;
-        reader.mark(1);
-        if (reader.read() != -1) {
-          reader.reset(); // back to the mark
-          readCount = reader.read(chars);
-          lineLength = readCount;
-          strBlock = new String(chars);
-          indexBlock = 0;
-          last_char = strBlock.charAt(indexBlock);
-          peek = -1;
-          peekc = '`';
-        } else {
-          EOF = true;
-          peekc = '\0';
-        }
-      } else {
-        last_char = strBlock.charAt(indexBlock);
-      }
-    }
-    peek = -1;
-    if (last_char == '\r') {
-      last_char = getchr();
-    }
+    return chars[pos + 1];
+  }
 
-    return last_char;
+  private char lastNonWhitespace = 0;
+
+  private int prev() {
+    return lastNonWhitespace;
+  }
+
+  private char next() {
+    if (EOF) {
+      return 0;
+    }
+    pos++;
+    if (pos < chars.length) {
+      currentChar = chars[pos];
+      if (!Character.isWhitespace(currentChar))
+        lastNonWhitespace = currentChar;
+    } else {
+      currentChar = 0;
+    }
+    if (pos == chars.length - 1) {
+      EOF = true;
+    }
+    return currentChar;
   }
 
   /* else processing */
@@ -295,158 +253,87 @@ public class AutoFormat implements Tool {
     tabs = s_tabs[c_level][if_lev];
     p_flg[level] = sp_flg[c_level][if_lev];
     ind[level] = s_ind[c_level][if_lev];
-    if_flg = 1;
+    if_flg = true;
   }
 
   /* read to new_line */
-  private int getnl() throws IOException {
-    int save_s_flg;
-    save_s_flg = tabs;
-    peekc = getchr();
-    while (peekc == '\t' || peekc == ' ') {
-      buf[j++] = peekc;
-      peek = -1;
-      peekc = '`';
-      peekc = getchr();
-      peek = 1;
+  private boolean getnl() throws IOException {
+    final int savedTabs = tabs;
+    char c = peek();
+    while (!EOF && (c == '\t' || c == ' ')) {
+      currentLine.append(next());
+      c = peek();
     }
-    peek = 1;
 
-    if (peekc == '/') {
-      peek = -1;
-      peekc = '`';
-      peekc = getchr();
-      if (peekc == '*') {
-        buf[j++] = '/';
-        buf[j++] = '*';
-        peek = -1;
-        peekc = '`';
+    if (c == '/') {
+      currentLine.append(next());
+      c = peek();
+      if (c == '*') {
+        currentLine.append(next());
         comment();
-      } else if (peekc == '/') {
-        buf[j++] = '/';
-        buf[j++] = '/';
-        peek = -1;
-        peekc = '`';
+      } else if (c == '/') {
+        currentLine.append(next());
         cpp_comment();
-        return (1);
-      } else {
-        buf[j++] = '/';
-        peek = 1;
+        return true;
       }
     }
-    peekc = getchr();
-    if (peekc == '\n') {
+
+    c = peek();
+    if (c == '\n') {
+      // eat it
+      next();
       lineNumber++;
-      peek = -1;
-      peekc = '`';
-      tabs = save_s_flg;
-      return (1);
-    } else {
-      peek = 1;
+      tabs = savedTabs;
+      return true;
     }
-    return 0;
+    return false;
   }
 
   private boolean lookup(final String keyword) {
-    char r;
-    int l, kk; //,k,i;
-    if (j < 1) {
-      return false;
-    }
-    kk = 0;
-    while (buf[kk] == ' ') {
-      kk++;
-    }
-    l = 0;
-    l = new String(buf).indexOf(keyword);
-    if (l < 0 || l != kk) {
-      return false;
-    }
-    r = buf[kk + keyword.length()];
-    if (r >= 'a' && r <= 'z') {
-      return false;
-    }
-    if (r >= 'A' && r <= 'Z') {
-      return false;
-    }
-    if (r >= '0' && r <= '9') {
-      return false;
-    }
-    if (r == '_' || r == '&') {
-      return false;
-    }
-    return true;
+    return Pattern.matches("^\\s*" + keyword + "(?![a-zA-Z0-9_&]).*$",
+      currentLine);
   }
 
-  private int lookup_com(final String keyword) {
-    //char r;
-    int l, kk; //,k,i;
-    final String j_string = new String(buf);
-
-    if (j < 1) {
-      return (0);
-    }
-    kk = 0;
-    while (buf[kk] == ' ') {
-      kk++;
-    }
-    l = 0;
-    l = j_string.indexOf(keyword);
-    if (l < 0 || l != kk) {
-      return 0;
-    }
-    return (1);
+  private boolean lookup_com(final String keyword) {
+    final String regex = "^\\s*" + keyword.replaceAll("\\*", "\\\\*") + ".*$";
+    return Pattern.matches(regex, currentLine);
   }
 
   public void run() {
-    StringBuffer onechar;
-
     // Adding an additional newline as a hack around other errors
-    final String originalText = editor.getText() + "\n";
-    strOut = new StringBuffer();
+    final String normalizedText = editor.getText().replaceAll("\r", "");
+    final String cleanText = normalizedText
+        + (normalizedText.endsWith("\n") ? "" : "\n");
+    result.setLength(0);
     indentValue = Preferences.getInteger("editor.tabs.size");
-    indentChar = new String(" ");
 
     lineNumber = 0;
-    e_flg = false;
+    q_flg = e_flg = a_flg = if_flg = false;
+    s_flg = true;
     c_level = if_lev = level = paren = 0;
-    a_flg = q_flg = j = tabs = 0;
-    if_flg = peek = -1;
-    peekc = '`';
-    s_flg = 1;
-    jdoc = 0;
+    tabs = 0;
+    jdoc_flag = false;
 
     s_level = new int[10];
     sp_flg = new int[20][10];
     s_ind = new int[20][10];
     s_if_lev = new int[10];
-    s_if_flg = new int[10];
+    s_if_flg = new boolean[10];
     ind = new int[10];
     p_flg = new int[10];
     s_tabs = new int[20][10];
+    pos = -1;
+    chars = cleanText.toCharArray();
+    lineNumber = 1;
 
-    line_feed = new String("\n");
+    EOF = false; // set in getchr when EOF
 
-    // read as long as there is something to read
-    EOF = false; // = 1 set in getchr when EOF
-
-    try { // the whole process
-      // open for input
-      reader = new CharArrayReader(originalText.toCharArray());
-      lineLength = readCount = 0;
-      // read up a block - remember how many bytes read
-      readCount = reader.read(chars);
-      strBlock = new String(chars);
-
-      lineLength = readCount;
-      lineNumber = 1;
-      indexBlock = -1;
-      j = 0;
+    try {
       while (!EOF) {
-        c = getchr();
+        c = next();
         switch (c) {
         default:
-          buf[j++] = c;
+          currentLine.append(c);
           if (c != ',') {
             l_char = c;
           }
@@ -456,46 +343,42 @@ public class AutoFormat implements Tool {
         case '\t':
           if (lookup("else")) {
             gotelse();
-            if (s_flg == 0 || j > 0) {
-              buf[j++] = c;
+            if ((!s_flg) || currentLine.length() > 0) {
+              currentLine.append(c);
             }
             indent_puts();
-            s_flg = 0;
+            s_flg = false;
             break;
           }
-          if (s_flg == 0 || j > 0) {
-            buf[j++] = c;
+          if ((!s_flg) || currentLine.length() > 0) {
+            currentLine.append(c);
           }
           break;
 
-        case '\r': // <CR> for MS Windows 95
         case '\n':
           lineNumber++;
           if (EOF) {
             break;
           }
-          //String j_string = new String(string);
-
           e_flg = lookup("else");
           if (e_flg) {
             gotelse();
           }
-          if (lookup_com("//") == 1) {
-            if (buf[j] == '\n') {
-              buf[j] = '\0';
-              j--;
+          if (lookup_com("//")) {
+            final char lastChar = currentLine.charAt(currentLine.length() - 1);
+            if (lastChar == '\n') {
+              currentLine.setLength(currentLine.length() - 1);
             }
           }
 
           indent_puts();
-          //fprintf(outfil, line_feed);
-          fprintf(line_feed);
-          s_flg = 1;
+          result.append("\n");
+          s_flg = true;
           if (e_flg) {
             p_flg[level]++;
             tabs++;
-          } else if (p_char == l_char) {
-            a_flg = 1;
+          } else if (prev() == l_char) {
+            a_flg = true;
           }
           break;
 
@@ -509,20 +392,21 @@ public class AutoFormat implements Tool {
           }
           s_if_lev[c_level] = if_lev;
           s_if_flg[c_level] = if_flg;
-          if_lev = if_flg = 0;
+          if_lev = 0;
+          if_flg = false;
           c_level++;
-          if (s_flg == 1 && p_flg[level] != 0) {
+          if (s_flg && p_flg[level] != 0) {
             p_flg[level]--;
             tabs--;
           }
-          buf[j++] = c;
+          currentLine.append(c);
           indent_puts();
           getnl();
           indent_puts();
           //fprintf(outfil,"\n");
-          fprintf("\n");
+          result.append("\n");
           tabs++;
-          s_flg = 1;
+          s_flg = true;
           if (p_flg[level] > 0) {
             ind[level] = 1;
             level++;
@@ -534,40 +418,26 @@ public class AutoFormat implements Tool {
           c_level--;
           if (c_level < 0) {
             c_level = 0;
-            //EOF = true;
-            //System.out.println("eof b");
-            buf[j++] = c;
+            currentLine.append(c);
             indent_puts();
             break;
           }
-          if ((if_lev = s_if_lev[c_level] - 1) < 0) {
+          if_lev = s_if_lev[c_level] - 1;
+          if (if_lev < 0) {
             if_lev = 0;
           }
           if_flg = s_if_flg[c_level];
           indent_puts();
           tabs--;
           p_tabs();
-          peekc = getchr();
-          if (peekc == ';') {
-            onechar = new StringBuffer();
-            onechar.append(c); // the }
-            onechar.append(';');
-            //fprintf(outfil, onechar.toString());
-            fprintf(onechar.toString());
-            peek = -1;
-            peekc = '`';
-          } else {
-            onechar = new StringBuffer();
-            onechar.append(c);
-            //fprintf(outfil, onechar.toString());
-            fprintf(onechar.toString());
-            peek = 1;
+          result.append(c);
+          if (peek() == ';') {
+            result.append(next());
           }
           getnl();
           indent_puts();
-          //fprintf(outfil,"\n");
-          fprintf("\n");
-          s_flg = 1;
+          result.append("\n");
+          s_flg = true;
           if (c_level < s_level[level]) {
             if (level > 0) {
               level--;
@@ -582,33 +452,30 @@ public class AutoFormat implements Tool {
 
         case '"':
         case '\'':
-          buf[j++] = c;
-          cc = getchr();
+          currentLine.append(c);
+          cc = next();
           while (!EOF && cc != c) {
-            // max. length of line should be 256
-            buf[j++] = cc;
-
+            currentLine.append(cc);
             if (cc == '\\') {
-              cc = buf[j++] = getchr();
+              currentLine.append(cc = next());
             }
             if (cc == '\n') {
               lineNumber++;
               indent_puts();
-              s_flg = 1;
+              s_flg = true;
             }
-            cc = getchr();
-
+            cc = next();
           }
-          buf[j++] = cc;
-          if (getnl() == 1) {
+          currentLine.append(cc);
+          if (getnl()) {
             l_char = cc;
-            peek = 1;
-            peekc = '\n';
+            // push a newline into the stream
+            chars[pos--] = '\n';
           }
           break;
 
         case ';':
-          buf[j++] = c;
+          currentLine.append(c);
           indent_puts();
           if (p_flg[level] > 0 && ind[level] == 0) {
             tabs -= p_flg[level];
@@ -616,13 +483,12 @@ public class AutoFormat implements Tool {
           }
           getnl();
           indent_puts();
-          //fprintf(outfil,"\n");
-          fprintf("\n");
-          s_flg = 1;
+          result.append("\n");
+          s_flg = true;
           if (if_lev > 0) {
-            if (if_flg == 1) {
+            if (if_flg) {
               if_lev--;
-              if_flg = 0;
+              if_flg = false;
             } else {
               if_lev = 0;
             }
@@ -630,102 +496,72 @@ public class AutoFormat implements Tool {
           break;
 
         case '\\':
-          buf[j++] = c;
-          buf[j++] = getchr();
+          currentLine.append(c);
+          currentLine.append(next());
           break;
 
         case '?':
-          q_flg = 1;
-          buf[j++] = c;
+          q_flg = true;
+          currentLine.append(c);
           break;
 
         case ':':
-          buf[j++] = c;
-          peekc = getchr();
-          if (peekc == ':') {
+          currentLine.append(c);
+          if (peek() == ':') {
             indent_puts();
-            //fprintf (outfil,":");
-            fprintf(":");
-            peek = -1;
-            peekc = '`';
+            result.append(next());
             break;
-          } else {
-            //int double_colon = 0;
-            peek = 1;
           }
 
-          if (q_flg == 1) {
-            q_flg = 0;
+          if (q_flg) {
+            q_flg = false;
             break;
           }
           if (!lookup("default") && !lookup("case")) {
-            s_flg = 0;
+            s_flg = false;
             indent_puts();
           } else {
             tabs--;
             indent_puts();
             tabs++;
           }
-          peekc = getchr();
-          if (peekc == ';') {
-            fprintf(";");
-            peek = -1;
-            peekc = '`';
-          } else {
-            peek = 1;
+          if (peek() == ';') {
+            result.append(next());
           }
           getnl();
           indent_puts();
-          fprintf("\n");
-          s_flg = 1;
+          result.append("\n");
+          s_flg = true;
           break;
 
         case '/':
-          buf[j++] = c;
-          peekc = getchr();
-
-          if (peekc == '/') {
-            buf[j++] = peekc;
-            peekc = '`';
-            peek = -1;
+          final char la = peek();
+          if (la == '/') {
+            currentLine.append(c).append(next());
             cpp_comment();
-            //fprintf(outfil,"\n");
-            fprintf("\n");
-            break;
-          } else {
-            peek = 1;
-          }
-
-          if (peekc != '*') {
-            break;
-          } else {
-            if (j > 0) {
-              buf[j--] = '\0';
-            }
-            if (j > 0) {
+            result.append("\n");
+          } else if (la == '*') {
+            if (currentLine.length() > 0) {
               indent_puts();
             }
-            buf[j++] = '/';
-            buf[j++] = '*';
-            peek = -1;
-            peekc = '`';
+            currentLine.append(c).append(next());
             comment();
-            break;
+          } else {
+            currentLine.append(c);
           }
+          break;
 
         case ')':
           paren--;
           if (paren < 0) {
-            paren = 0;//EOF = true;
-            //System.out.println("eof c");
+            paren = 0;
           }
-          buf[j++] = c;
+          currentLine.append(c);
           indent_puts();
-          if (getnl() == 1) {
-            peekc = '\n';
-            peek = 1;
+          if (getnl()) {
+            chars[pos--] = '\n';
             if (paren != 0) {
-              a_flg = 1;
+              a_flg = true;
             } else if (tabs > 0) {
               p_flg[level]++;
               tabs++;
@@ -735,7 +571,7 @@ public class AutoFormat implements Tool {
           break;
 
         case '(':
-          buf[j++] = c;
+          currentLine.append(c);
           paren++;
           if ((lookup("for"))) {
             c = get_string();
@@ -764,9 +600,8 @@ public class AutoFormat implements Tool {
               //System.out.println("eof d");
             }
             indent_puts();
-            if (getnl() == 1) {
-              peekc = '\n';
-              peek = 1;
+            if (getnl()) {
+              chars[pos--] = '\n';
               p_flg[level]++;
               tabs++;
               ind[level] = 0;
@@ -780,47 +615,21 @@ public class AutoFormat implements Tool {
             sp_flg[c_level][if_lev] = p_flg[level];
             s_ind[c_level][if_lev] = ind[level];
             if_lev++;
-            if_flg = 1;
+            if_flg = true;
           }
         } // end switch
-
-        //System.out.println("string len is " + string.length);
-        //if (EOF == 1) System.out.println(string);
-        //String j_string = new String(string);
-
       } // end while not EOF
-
-      /*
-      int bad;
-      while ((bad = bin.read()) != -1) {
-        System.out.print((char) bad);
-      }
-      */
-      /*
-      char bad;
-      //while ((bad = getchr()) != 0) {
-      while (true) {
-        getchr();
-        if (peek != -1) {
-          System.out.print(last_char);
-        } else {
-          break;
-        }
-      }
-      */
 
       // save current (rough) selection point
       int selectionEnd = editor.getSelectionStop();
 
       // make sure the caret would be past the end of the text
-      if (strOut.length() < selectionEnd - 1) {
-        selectionEnd = strOut.length() - 1;
+      if (result.length() < selectionEnd - 1) {
+        selectionEnd = result.length() - 1;
       }
 
-      reader.close(); // close buff
-
-      final String formattedText = strOut.toString();
-      if (formattedText.equals(originalText)) {
+      final String formattedText = result.toString();
+      if (formattedText.equals(cleanText)) {
         editor.statusNotice("No changes necessary for Auto Format.");
 
       } else if (paren != 0) {
