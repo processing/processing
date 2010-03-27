@@ -18,6 +18,8 @@ J another code example that crashes
 J   http://dev.processing.org/bugs/show_bug.cgi?id=363
 J arrays are reformatted on each autoformat
 J   http://dev.processing.org/bugs/show_bug.cgi?id=259
+J Auto Format says "too many right parentheses" when last line is a comment
+J   http://dev.processing.org/bugs/show_bug.cgi?id=754
 
 
 need examples
@@ -1165,8 +1167,6 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;acti
 
 bugs
 _ autoformat fails when there's no newline
-_ Auto Format says "too many right parentheses" when last line is a comment
-_   http://dev.processing.org/bugs/show_bug.cgi?id=754
 _ japanese characters in comments cause trouble with auto-format
 _   (this may have been fixed in recent releases, not checked)
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1153505384
