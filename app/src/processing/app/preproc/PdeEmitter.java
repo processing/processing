@@ -223,8 +223,8 @@ public class PdeEmitter implements PdeTokenTypes {
     print(ast.getFirstChild());
     if (!OTHER_COPIED_TOKENS.get(ast.getType())) {
       out.print(ast.getText());
+      dumpHiddenAfter(ast);
     }
-    dumpHiddenAfter(ast);
     print(ast.getFirstChild().getNextSibling());
   }
 
@@ -414,8 +414,6 @@ public class PdeEmitter implements PdeTokenTypes {
     case MOD:
     case NOT_EQUAL:
     case EQUAL:
-    case LT:
-    case GT:
     case LE:
     case GE:
     case LOR:
@@ -438,6 +436,9 @@ public class PdeEmitter implements PdeTokenTypes {
     case BAND_ASSIGN:
     case BXOR_ASSIGN:
     case BOR_ASSIGN:
+
+    case LT:
+    case GT:
       printBinaryOperator(ast);
       break;
 
