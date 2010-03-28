@@ -25,6 +25,8 @@
 package processing.app.tools;
 
 import java.io.IOException;
+import java.util.EmptyStackException;
+import java.util.Stack;
 import java.util.regex.Pattern;
 import processing.app.Editor;
 import processing.app.Preferences;
@@ -45,7 +47,7 @@ public class AutoFormat implements Tool {
   Editor editor;
 
   private char[] chars;
-  private final StringBuilder currentLine = new StringBuilder();
+  private final StringBuilder buf = new StringBuilder();
 
   final StringBuilder result = new StringBuilder();
 
@@ -71,6 +73,8 @@ public class AutoFormat implements Tool {
   int tabs;
   char c;
 
+  private final Stack<Boolean> castFlags = new Stack<Boolean>();
+
   public void init(final Editor editor) {
     this.editor = editor;
   }
@@ -82,19 +86,18 @@ public class AutoFormat implements Tool {
   private void comment() throws IOException {
     final boolean save_s_flg = s_flag;
 
-    currentLine.append(c = next()); // extra char
+    buf.append(c = next()); // extra char
     while (true) {
-      currentLine.append(c = next());
+      buf.append(c = next());
       while ((c != '/')) {
         if (c == '\n') {
           lineNumber++;
           writeIndentedComment();
           s_flag = true;
         }
-        currentLine.append(c = next());
+        buf.append(c = next());
       }
-      if (currentLine.length() >= 2
-          && currentLine.charAt(currentLine.length() - 2) == '*') {
+      if (buf.length() >= 2 && buf.charAt(buf.length() - 2) == '*') {
         jdoc_flag = false;
         break;
       }
@@ -109,18 +112,18 @@ public class AutoFormat implements Tool {
   private char get_string() throws IOException {
     char ch;
     while (true) {
-      currentLine.append(ch = next());
+      buf.append(ch = next());
       if (ch == '\\') {
-        currentLine.append(next());
+        buf.append(next());
         continue;
       }
       if (ch == '\'' || ch == '"') {
-        currentLine.append(cc = next());
+        buf.append(cc = next());
         while (!EOF && cc != ch) {
           if (cc == '\\') {
-            currentLine.append(next());
+            buf.append(next());
           }
-          currentLine.append(cc = next());
+          buf.append(cc = next());
         }
         continue;
       }
@@ -134,14 +137,14 @@ public class AutoFormat implements Tool {
   }
 
   private void writeIndentedLine() {
-    if (currentLine.length() == 0) {
+    if (buf.length() == 0) {
       if (s_flag) {
         s_flag = a_flg = false;
       }
       return;
     }
     if (s_flag) {
-      final boolean shouldIndent = (tabs > 0) && (currentLine.charAt(0) != '{')
+      final boolean shouldIndent = (tabs > 0) && (buf.charAt(0) != '{')
           && a_flg;
       if (shouldIndent) {
         tabs++;
@@ -153,45 +156,45 @@ public class AutoFormat implements Tool {
       }
       a_flg = false;
     }
-    result.append(currentLine);
-    currentLine.setLength(0);
+    result.append(buf);
+    buf.setLength(0);
   }
 
   private void writeIndentedComment() {
     final boolean saved_s_flag = s_flag;
-    if (currentLine.length() > 0) {
+    if (buf.length() > 0) {
       if (s_flag) {
         printIndentation();
         s_flag = false;
       }
       int i = 0;
-      while (currentLine.charAt(i) == ' ') {
+      while (buf.charAt(i) == ' ') {
         i++;
       }
       if (lookup_com("/**")) {
         jdoc_flag = true;
       }
-      if (currentLine.charAt(i) == '/' && currentLine.charAt(i + 1) == '*') {
+      if (buf.charAt(i) == '/' && buf.charAt(i + 1) == '*') {
         if (saved_s_flag && prev() != ';') {
-          result.append(currentLine.substring(i));
+          result.append(buf.substring(i));
         } else {
-          result.append(currentLine);
+          result.append(buf);
         }
       } else {
-        if (currentLine.charAt(i) == '*' || !jdoc_flag) {
-          result.append((" " + currentLine.substring(i)));
+        if (buf.charAt(i) == '*' || !jdoc_flag) {
+          result.append((" " + buf.substring(i)));
         } else {
-          result.append((" * " + currentLine.substring(i)));
+          result.append((" * " + buf.substring(i)));
         }
       }
-      currentLine.setLength(0);
+      buf.setLength(0);
     }
   }
 
   private void handleSingleLineComment() throws IOException {
     c = next();
     while (c != '\n') {
-      currentLine.append(c);
+      buf.append(c);
       c = next();
     }
     lineNumber++;
@@ -257,18 +260,18 @@ public class AutoFormat implements Tool {
     final int savedTabs = tabs;
     char c = peek();
     while (!EOF && (c == '\t' || c == ' ')) {
-      currentLine.append(next());
+      buf.append(next());
       c = peek();
     }
 
     if (c == '/') {
-      currentLine.append(next());
+      buf.append(next());
       c = peek();
       if (c == '*') {
-        currentLine.append(next());
+        buf.append(next());
         comment();
       } else if (c == '/') {
-        currentLine.append(next());
+        buf.append(next());
         handleSingleLineComment();
         return true;
       }
@@ -286,13 +289,12 @@ public class AutoFormat implements Tool {
   }
 
   private boolean lookup(final String keyword) {
-    return Pattern.matches("^\\s*" + keyword + "(?![a-zA-Z0-9_&]).*$",
-      currentLine);
+    return Pattern.matches("^\\s*" + keyword + "(?![a-zA-Z0-9_&]).*$", buf);
   }
 
   private boolean lookup_com(final String keyword) {
     final String regex = "^\\s*" + keyword.replaceAll("\\*", "\\\\*") + ".*$";
-    return Pattern.matches(regex, currentLine);
+    return Pattern.matches(regex, buf);
   }
 
   public void run() {
@@ -329,28 +331,28 @@ public class AutoFormat implements Tool {
         c = next();
         switch (c) {
         default:
-          currentLine.append(c);
+          buf.append(c);
           l_char = c;
           break;
 
         case ',':
-          trimRight(currentLine);
-          currentLine.append(c);
+          trimRight(buf);
+          buf.append(c);
           break;
 
         case ' ':
         case '\t':
           if (lookup("else")) {
             gotelse();
-            if ((!s_flag) || currentLine.length() > 0) {
-              currentLine.append(c);
+            if ((!s_flag) || buf.length() > 0) {
+              buf.append(c);
             }
             writeIndentedLine();
             s_flag = false;
             break;
           }
-          if ((!s_flag) || currentLine.length() > 0) {
-            currentLine.append(c);
+          if ((!s_flag) || buf.length() > 0) {
+            buf.append(c);
           }
           break;
 
@@ -364,9 +366,9 @@ public class AutoFormat implements Tool {
             gotelse();
           }
           if (lookup_com("//")) {
-            final char lastChar = currentLine.charAt(currentLine.length() - 1);
+            final char lastChar = buf.charAt(buf.length() - 1);
             if (lastChar == '\n') {
-              currentLine.setLength(currentLine.length() - 1);
+              buf.setLength(buf.length() - 1);
             }
           }
 
@@ -398,12 +400,12 @@ public class AutoFormat implements Tool {
             p_flg[level]--;
             tabs--;
           }
-          trimRight(currentLine);
-          if (currentLine.length() > 0
+          trimRight(buf);
+          if (buf.length() > 0
               || (result.length() > 0 && !Character.isWhitespace(result
                   .charAt(result.length() - 1))))
-            currentLine.append(" ");
-          currentLine.append(c);
+            buf.append(" ");
+          buf.append(c);
           writeIndentedLine();
           getnl();
           writeIndentedLine();
@@ -422,7 +424,7 @@ public class AutoFormat implements Tool {
           c_level--;
           if (c_level < 0) {
             c_level = 0;
-            currentLine.append(c);
+            buf.append(c);
             writeIndentedLine();
             break;
           }
@@ -431,7 +433,7 @@ public class AutoFormat implements Tool {
             if_lev = 0;
           }
           if_flg = s_if_flg[c_level];
-          trimRight(currentLine);
+          trimRight(buf);
           writeIndentedLine();
           tabs--;
 
@@ -460,12 +462,12 @@ public class AutoFormat implements Tool {
 
         case '"':
         case '\'':
-          currentLine.append(c);
+          buf.append(c);
           cc = next();
           while (!EOF && cc != c) {
-            currentLine.append(cc);
+            buf.append(cc);
             if (cc == '\\') {
-              currentLine.append(cc = next());
+              buf.append(cc = next());
             }
             if (cc == '\n') {
               lineNumber++;
@@ -474,7 +476,7 @@ public class AutoFormat implements Tool {
             }
             cc = next();
           }
-          currentLine.append(cc);
+          buf.append(cc);
           if (getnl()) {
             l_char = cc;
             // push a newline into the stream
@@ -483,7 +485,7 @@ public class AutoFormat implements Tool {
           break;
 
         case ';':
-          currentLine.append(c);
+          buf.append(c);
           writeIndentedLine();
           if (p_flg[level] > 0 && ind[level] == 0) {
             tabs -= p_flg[level];
@@ -504,17 +506,17 @@ public class AutoFormat implements Tool {
           break;
 
         case '\\':
-          currentLine.append(c);
-          currentLine.append(next());
+          buf.append(c);
+          buf.append(next());
           break;
 
         case '?':
           q_flg = true;
-          currentLine.append(c);
+          buf.append(c);
           break;
 
         case ':':
-          currentLine.append(c);
+          buf.append(c);
           if (peek() == ':') {
             writeIndentedLine();
             result.append(next());
@@ -545,32 +547,35 @@ public class AutoFormat implements Tool {
         case '/':
           final char la = peek();
           if (la == '/') {
-            currentLine.append(c).append(next());
+            buf.append(c).append(next());
             handleSingleLineComment();
             result.append("\n");
           } else if (la == '*') {
-            if (currentLine.length() > 0) {
+            if (buf.length() > 0) {
               writeIndentedLine();
             }
-            currentLine.append(c).append(next());
+            buf.append(c).append(next());
             comment();
           } else {
-            currentLine.append(c);
+            buf.append(c);
           }
           break;
 
         case ')':
+          
+          final boolean isCast = castFlags.isEmpty() ? false : castFlags.pop();
+          
           paren--;
           if (paren < 0) {
             paren = 0;
           }
-          currentLine.append(c);
+          buf.append(c);
           writeIndentedLine();
           if (getnl()) {
             chars[pos--] = '\n';
             if (paren != 0) {
               a_flg = true;
-            } else if (tabs > 0) {
+            } else if (tabs > 0 && !isCast) {
               p_flg[level]++;
               tabs++;
               ind[level] = 0;
@@ -579,8 +584,11 @@ public class AutoFormat implements Tool {
           break;
 
         case '(':
-          currentLine.append(c);
+          castFlags.push(Pattern.matches("^.*?(?:int|color|float)\\s*$",buf));
+          
+          buf.append(c);
           paren++;
+
           if ((lookup("for"))) {
             c = get_string();
             while (c != ';') {
