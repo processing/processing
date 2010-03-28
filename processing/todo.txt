@@ -25,6 +25,8 @@ J   (this may have been fixed in recent releases, not checked)
 J   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1153505384
 J "too many right parens" error when there are not
 J   http://dev.processing.org/bugs/show_bug.cgi?id=867
+J code without a new line at end crashes
+J   http://dev.processing.org/bugs/show_bug.cgi?id=880
 
 
 need examples
@@ -1175,11 +1177,8 @@ _   set the 'tabs' var based on how many spaces on previous line
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1087227217
 
 bugs
-_ autoformat fails when there's no newline
 _ autoformat screws up with color arrays
 _   http://dev.processing.org/bugs/show_bug.cgi?id=760
-_ code without a new line at end crashes
-_   http://dev.processing.org/bugs/show_bug.cgi?id=880
 
 
 
