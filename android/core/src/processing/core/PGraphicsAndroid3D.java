@@ -42,6 +42,8 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLDisplay;
 
+import processing.core.GLModel.VertexGroup;
+
 
 // drawPixels is missing...calls to glDrawPixels are commented out
 //   setRasterPos() is also commented out
@@ -264,8 +266,12 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   // ........................................................  
   
-  
-  GLModel recorderModel; 
+  boolean recordingModel;
+  ArrayList<PVector> recordedVertices;
+  ArrayList<float[]> recordedColors;
+  ArrayList<PVector> recordedNormals;
+  ArrayList<PVector> recordedTexCoords;  
+  ArrayList<VertexGroup> recordedGroups;
   
   //////////////////////////////////////////////////////////////
   
@@ -632,7 +638,13 @@ public class PGraphicsAndroid3D extends PGraphics {
     
   
   public void beginShapeRecorder(int kind) {
-    
+    recordingModel = true;
+    beginShape(kind);
+    recordedVertices = new ArrayList<PVector>(vertexBuffer.capacity() / 3);
+    recordedColors = new ArrayList<float[]>(colorBuffer.capacity() / 4);
+    recordedNormals = new ArrayList<PVector>(normalBuffer.capacity() / 4);
+    recordedTexCoords = new ArrayList<PVector>(texCoordBuffer.capacity() / 2);
+    recordedGroups = new ArrayList<VertexGroup>();
   }
   
   
@@ -946,8 +958,27 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   
   public GLModel endShapeRecorder(int mode) {
+    recordingModel = false;
+    GLModel model = new GLModel(parent, recordedVertices.size());
     
-    return null;
+    model.beginUpdate(GLConstants.VERTICES);
+    model.setVertex(recordedVertices);
+    model.endUpdate();
+    
+    model.beginUpdate(GLConstants.COLORS);
+    model.setColor(recordedColors);
+    model.endUpdate();
+    
+    model.beginUpdate(GLConstants.NORMALS);
+    model.setNormal(recordedNormals);
+    model.endUpdate();
+    
+    model.beginUpdate(GLConstants.TEXTURES);
+    model.setTexCoord(recordedTexCoords);
+    model.endUpdate();
+    
+    model.setGroups(recordedGroups);
+    return model;
   }  
   
   
@@ -1118,6 +1149,8 @@ public class PGraphicsAndroid3D extends PGraphics {
    */
   protected void renderLines(int start, int stop) {
     report("render_lines in");
+    
+    float sw0 = 0;
 
     // Last transformation: inversion of coordinate to make compatible with Processing's inverted Y axis.
     gl.glPushMatrix();
@@ -1133,6 +1166,19 @@ public class PGraphicsAndroid3D extends PGraphics {
       // stroke weight zero will cause a gl error
       if (sw > 0) {
         gl.glLineWidth(sw);
+        if (sw0 != sw && recordingModel) {
+          // add new group
+          
+          // Esto esta mal, porque si el grupo incluye varias lineas consecutivas (con el mismo weight) entonces
+          // el valor n1 debe corresponer al siguiente cambio de weight (o al ultimo vertice).
+          int n0 = recordedVertices.size();
+          int n1 = n0 + pathLength[j] - 1;
+          VertexGroup group = GLModel.newVertexGroup(n0, n1, LINES, sw, null);
+          
+          if (recordingModel) {
+            recordedGroups.add(group);
+          }   
+        }
         
         // Division by three needed because each int element in the buffer is used to
         // store three coordinates.        
@@ -1152,6 +1198,13 @@ public class PGraphicsAndroid3D extends PGraphics {
         vertexBuffer.put(toFixed32(a[X]));
         vertexBuffer.put(toFixed32(a[Y]));
         vertexBuffer.put(toFixed32(a[Z]));
+        
+        if (recordingModel) {
+          recordedVertices.add(new PVector(a[X], a[Y], a[Z]));
+          recordedColors.add(new float[]{a[SR], a[SG], a[SB], a[SA]});
+          recordedNormals.add(new PVector(0, 0, 0));
+          recordedTexCoords.add(new PVector(0, 0, 0));          
+        }
 
         // on this and subsequent lines, only draw the second point
         for (int k = 0; k < pathLength[j]; k++) {
@@ -1163,6 +1216,14 @@ public class PGraphicsAndroid3D extends PGraphics {
           vertexBuffer.put(toFixed32(b[X]));
           vertexBuffer.put(toFixed32(b[Y]));
           vertexBuffer.put(toFixed32(b[Z]));
+
+          if (recordingModel) {
+            recordedVertices.add(new PVector(b[X], b[Y], b[Z]));
+            recordedColors.add(new float[]{b[SR], b[SG], b[SB], b[SA]});
+            recordedNormals.add(new PVector(0, 0, 0));
+            recordedTexCoords.add(new PVector(0, 0, 0));          
+          }
+                    
           i++;
         }
         
@@ -1173,6 +1234,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         gl.glColorPointer(4, GL10.GL_FIXED, 0, colorBuffer);
         gl.glDrawArrays(GL10.GL_LINE_STRIP, 0, pathLength[j] + 1);        
       }
+      sw0 = sw;
     }
     
     gl.glPopMatrix();
@@ -1265,6 +1327,14 @@ public class PGraphicsAndroid3D extends PGraphics {
         texturing = false;  
       }
       
+      int n0 = recordedVertices.size();
+      int n1 = n0 + 3 * faceLength[j] - 1;
+      VertexGroup group = GLModel.newVertexGroup(n0, n1, TRIANGLES, 0, tex);
+      
+      if (recordingModel) {
+        recordedGroups.add(group);
+      }   
+      
       // Division by three needed because each int element in the buffer is used to
       // store three coordinates.      
       if (vertexBuffer.capacity() / 3 < 3 * faceLength[j]) {
@@ -1316,6 +1386,13 @@ public class PGraphicsAndroid3D extends PGraphics {
         texCoordBuffer.put(toFixed32((cx +  sx * a[U]) * uscale));
         texCoordBuffer.put(toFixed32((cy +  sy * a[V]) * vscale));
     
+        if (recordingModel) {
+          recordedVertices.add(new PVector(a[X], a[Y], a[Z]));
+          recordedColors.add(new float[]{a[R], a[G], a[B], a[A]});
+          recordedNormals.add(new PVector(a[NX], a[NY], a[NZ]));
+          recordedTexCoords.add(new PVector((cx +  sx * a[U]) * uscale, (cy +  sy * a[V]) * vscale, 0.0f));
+        }        
+        
         // Adding vertex B.    
         vertexBuffer.put(toFixed32(b[X]));
         vertexBuffer.put(toFixed32(b[Y]));
@@ -1330,6 +1407,13 @@ public class PGraphicsAndroid3D extends PGraphics {
         texCoordBuffer.put(toFixed32((cx +  sx * b[U]) * uscale));
         texCoordBuffer.put(toFixed32((cy +  sy * b[V]) * vscale));    
     
+        if (recordingModel) {
+          recordedVertices.add(new PVector(b[X], b[Y], b[Z]));
+          recordedColors.add(new float[]{b[R], b[G], b[B], b[A]});
+          recordedNormals.add(new PVector(b[NX], b[NY], b[NZ]));
+          recordedTexCoords.add(new PVector((cx +  sx * b[U]) * uscale, (cy +  sy * b[V]) * vscale, 0.0f));
+        }           
+        
         // Adding vertex C.    
         vertexBuffer.put(toFixed32(c[X]));
         vertexBuffer.put(toFixed32(c[Y]));
@@ -1343,6 +1427,13 @@ public class PGraphicsAndroid3D extends PGraphics {
         normalBuffer.put(toFixed32(c[NZ]));
         texCoordBuffer.put(toFixed32((cx +  sx * c[U]) * uscale));
         texCoordBuffer.put(toFixed32((cy +  sy * c[V]) * vscale));
+        
+        if (recordingModel) {
+          recordedVertices.add(new PVector(c[X], c[Y], c[Z]));
+          recordedColors.add(new float[]{c[R], c[G], c[B], c[A]});
+          recordedNormals.add(new PVector(c[NX], c[NY], c[NZ]));
+          recordedTexCoords.add(new PVector((cx +  sx * c[U]) * uscale, (cy +  sy * c[V]) * vscale, 0.0f));
+        }        
         
         i++;        
       }
