@@ -904,10 +904,10 @@ _ sketches should only write to the console of their editor window
 _   http://dev.processing.org/bugs/show_bug.cgi?id=921
 P5 _ problems with file/print
 P5 _   http://dev.processing.org/bugs/show_bug.cgi?id=1230
-_ Bracket idenfication {} is not aware of comments //
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1450
-_ comment is shown as code after auto format
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1194
+P3 _ Bracket idenfication {} is not aware of comments //
+P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1450
+P4 _ comments not always colored correctly
+P4 _   http://dev.processing.org/bugs/show_bug.cgi?id=1194
 
 
 PDE / Editor Buttons
