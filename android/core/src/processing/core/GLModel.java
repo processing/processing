@@ -857,7 +857,7 @@ public class GLModel extends PShape implements GLConstants, PConstants {
   }  
   
   
-public void setGroup(int gr, int idx0, int idx1, GLTexture tex) {
+  public void setGroup(int gr, int idx0, int idx1, GLTexture tex) {
     if (updateElement != GROUPS) {
       throw new RuntimeException("GLModel: update mode is not set to GROUPS");
     }
@@ -872,6 +872,10 @@ public void setGroup(int gr, int idx0, int idx1, GLTexture tex) {
     addGroup(idx0, idx1, tex);
   }  
   
+  
+  public void setGroups(ArrayList<VertexGroup> list) {
+    groups = new ArrayList<VertexGroup>(list);
+  }
   
   public int getNumGroups() {
     return groups.size();
@@ -1476,7 +1480,29 @@ public void setGroup(int gr, int idx0, int idx1, GLTexture tex) {
     }
   }  
   
-	protected class VertexGroup {
+  // Vertex groups
+  
+  static public VertexGroup newVertexGroup(int n0, int n1) {
+    return new VertexGroup(n0, n1);  
+  }
+  
+
+  static public VertexGroup newVertexGroup(int n0, int n1, GLTexture tex) {
+    return new VertexGroup(n0, n1, tex);  
+  }    
+
+  
+  static public VertexGroup newVertexGroup(int n0, int n1, int mode, GLTexture tex) {
+    return new VertexGroup(n0, n1, mode, tex);  
+  }        
+        
+
+  static public VertexGroup newVertexGroup(int n0, int n1, int mode, float weight, GLTexture tex) {
+    return new VertexGroup(n0, n1, mode, weight, tex);  
+  }        
+  
+  
+	static protected class VertexGroup {
     VertexGroup(int n0, int n1) {
       first = n0;
       last = n1;
@@ -1492,6 +1518,29 @@ public void setGroup(int gr, int idx0, int idx1, GLTexture tex) {
       sw = 0;
       texture = tex;
     }
+
+    VertexGroup(int n0, int n1, int mode, GLTexture tex) {
+      this(n0, n1, mode, 0, tex);
+    }    
+    
+    VertexGroup(int n0, int n1, int mode, float weight, GLTexture tex) {
+      first = n0;
+      last = n1; 
+      if (mode == POINTS) glMode = GL11.GL_POINTS;
+      else if (mode == POINT_SPRITES)  throw new RuntimeException("GLModel: point sprites can only be set for entire model");
+      else if (mode == LINES) glMode = GL11.GL_LINES;
+      else if (mode == LINE_STRIP) glMode = GL11.GL_LINE_STRIP;
+      else if (mode == LINE_LOOP) glMode = GL11.GL_LINE_LOOP;
+      else if (mode == TRIANGLES) glMode = GL11.GL_TRIANGLES; 
+      else if (mode == TRIANGLE_FAN) glMode = GL11.GL_TRIANGLE_FAN;
+      else if (mode == TRIANGLE_STRIP) glMode = GL11.GL_TRIANGLE_STRIP;
+      else {
+        throw new RuntimeException("GLModel: Unknown draw mode");
+      }      
+      glMode = 0;
+      sw = weight;
+      texture = tex;
+    }    
     
 	  int first;
 	  int last;
