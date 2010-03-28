@@ -23,7 +23,8 @@ J   http://dev.processing.org/bugs/show_bug.cgi?id=754
 J japanese characters in comments cause trouble with auto-format
 J   (this may have been fixed in recent releases, not checked)
 J   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1153505384
-    FIXED - jdf
+J "too many right parens" error when there are not
+J   http://dev.processing.org/bugs/show_bug.cgi?id=867
 
 
 need examples
@@ -1177,8 +1178,6 @@ bugs
 _ autoformat fails when there's no newline
 _ autoformat screws up with color arrays
 _   http://dev.processing.org/bugs/show_bug.cgi?id=760
-_ "too many right parens" error when there are not
-_   http://dev.processing.org/bugs/show_bug.cgi?id=867
 _ code without a new line at end crashes
 _   http://dev.processing.org/bugs/show_bug.cgi?id=880
 
