@@ -1167,17 +1167,23 @@ public class PGraphicsAndroid3D extends PGraphics {
       if (sw > 0) {
         gl.glLineWidth(sw);
         if (sw0 != sw && recordingModel) {
-          // add new group
+          // Add new vertex group.
           
-          // Esto esta mal, porque si el grupo incluye varias lineas consecutivas (con el mismo weight) entonces
-          // el valor n1 debe corresponer al siguiente cambio de weight (o al ultimo vertice).
           int n0 = recordedVertices.size();
           int n1 = n0 + pathLength[j] - 1;
+          // Identifying where this group should end (when stroke length changes).
+          for (int k = j + 1; k < stop; k++) {
+            int i1 = pathOffset[k];
+            float sw1 = vertices[lines[i1][VERTEX1]][SW];
+            if (sw0 != sw1) {
+              break;
+            }
+            n1 = n0 + pathLength[k] - 1;
+          }
+          
           VertexGroup group = GLModel.newVertexGroup(n0, n1, LINES, sw, null);
           
-          if (recordingModel) {
-            recordedGroups.add(group);
-          }   
+          recordedGroups.add(group);   
         }
         
         // Division by three needed because each int element in the buffer is used to
@@ -1327,11 +1333,10 @@ public class PGraphicsAndroid3D extends PGraphics {
         texturing = false;  
       }
       
-      int n0 = recordedVertices.size();
-      int n1 = n0 + 3 * faceLength[j] - 1;
-      VertexGroup group = GLModel.newVertexGroup(n0, n1, TRIANGLES, 0, tex);
-      
       if (recordingModel) {
+        int n0 = recordedVertices.size();
+        int n1 = n0 + 3 * faceLength[j] - 1;
+        VertexGroup group = GLModel.newVertexGroup(n0, n1, TRIANGLES, 0, tex);
         recordedGroups.add(group);
       }   
       
