@@ -51,7 +51,7 @@ public class ParserTests {
         int len;
         while ((len = in.read(buf)) != -1)
           sb.append(buf, 0, len);
-        return sb.toString();
+        return sb.toString().replace("\r", "");
       } finally {
         in.close();
       }
@@ -65,7 +65,7 @@ public class ParserTests {
     final String program = read(resource);
     final StringWriter out = new StringWriter();
     new PdePreprocessor(name, 4).write(out, program);
-    return out.toString();
+    return out.toString().replace("\r", "");
   }
 
   static void expectRecognitionException(final String id,
@@ -147,7 +147,7 @@ public class ParserTests {
         System.err.println("WARN: " + id
             + " does not have an expected output file. Generating.");
         final FileWriter sug = new FileWriter(res(id + ".expected"));
-        sug.write(program);
+        sug.write(program.replace("\r", ""));
         sug.close();
       }
 
@@ -300,4 +300,8 @@ public class ParserTests {
     expectRecognitionException("bug1519", "Maybe too many > characters?", 7);
   }
 
+  @Test
+  public void bug1525() {
+    expectGood("bug1525");
+  }
 }
