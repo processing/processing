@@ -1170,6 +1170,7 @@ _ autoformat fails when there's no newline
 _ japanese characters in comments cause trouble with auto-format
 _   (this may have been fixed in recent releases, not checked)
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1153505384
+    FIXED - jdf
 _ autoformat screws up with color arrays
 _   http://dev.processing.org/bugs/show_bug.cgi?id=760
 _ "too many right parens" error when there are not
