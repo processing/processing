@@ -1565,8 +1565,8 @@ public class PImage implements PConstants, Cloneable {
                            int mode) {
     if (srcX1 < 0) srcX1 = 0;
     if (srcY1 < 0) srcY1 = 0;
-    if (srcX2 >= img.width) srcX2 = img.width - 1;
-    if (srcY2 >= img.height) srcY2 = img.height - 1;
+    if (srcX2 > img.width) srcX2 = img.width;
+    if (srcY2 > img.height) srcY2 = img.height;
 
     int srcW = srcX2 - srcX1;
     int srcH = srcY2 - srcY1;
