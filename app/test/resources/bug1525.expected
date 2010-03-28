@@ -15,18 +15,14 @@ import java.util.*;
 import java.util.zip.*; 
 import java.util.regex.*; 
 
-public class bug631 extends PApplet {
+public class bug1525 extends PApplet {
     public void setup() {
-firstLoop:
-	for (int i = 0; i < 10; i++) {
-		for (int j = 0; j < 10; j++) {
-			if ((i+j) % 5 != 0) continue firstLoop;
-			System.out.println(i + " " + j);
-		}
-	} 
+if (frameCount > (frameRate - 1)) {
+	println("My head asplode!");
+}
     noLoop();
 } 
     static public void main(String args[]) {
-        PApplet.main(new String[] { "--bgcolor=null", "bug631" });
+        PApplet.main(new String[] { "--bgcolor=null", "bug1525" });
     }
 }
