@@ -27,6 +27,8 @@ J "too many right parens" error when there are not
 J   http://dev.processing.org/bugs/show_bug.cgi?id=867
 J code without a new line at end crashes
 J   http://dev.processing.org/bugs/show_bug.cgi?id=880
+J autoformat screws up with color arrays
+J   http://dev.processing.org/bugs/show_bug.cgi?id=760
 
 
 need examples
@@ -1172,14 +1174,10 @@ TOOLS / Auto Format
 
 enhancements
 _ do a better job of maintaining cursor during beautify 
+_   jdf says: a specification would help here!
 _ only auto format a particular section of code
 _   set the 'tabs' var based on how many spaces on previous line
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1087227217
-
-bugs
-_ autoformat screws up with color arrays
-_   http://dev.processing.org/bugs/show_bug.cgi?id=760
-
 
 
 ////////////////////////////////////////////////////////////////////
