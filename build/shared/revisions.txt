@@ -1,3 +1,20 @@
+PROCESSING REV 0182 - 29 March 2010 
+
+Bug fix pre-release. This updates three areas:
+
++ All known bugs with auto-format have been fixed (!)
+
++ A handful of bug fixes for the Java 5 syntax changes.
+
++ Fixes for using text with PDF Export.
+
+A more thorough revisions update will be written for the next full
+release version (1.2? 1.5? 2.0?) that includes all these changes.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING REV 0181 - 19 March 2010
 
 Another update for the preprocessor changes (see below).
