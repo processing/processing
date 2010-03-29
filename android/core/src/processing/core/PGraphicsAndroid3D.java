@@ -639,12 +639,12 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   public void beginShapeRecorder(int kind) {
     recordingModel = true;
-    beginShape(kind);
     recordedVertices = new ArrayList<PVector>(vertexBuffer.capacity() / 3);
     recordedColors = new ArrayList<float[]>(colorBuffer.capacity() / 4);
     recordedNormals = new ArrayList<PVector>(normalBuffer.capacity() / 4);
     recordedTexCoords = new ArrayList<PVector>(texCoordBuffer.capacity() / 2);
     recordedGroups = new ArrayList<VertexGroup>();
+    beginShape(kind);
   }
   
   
@@ -958,6 +958,8 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   
   public GLModel endShapeRecorder(int mode) {
+    endShape(mode);
+    
     recordingModel = false;
     GLModel model = new GLModel(parent, recordedVertices.size());
     
@@ -1181,7 +1183,7 @@ public class PGraphicsAndroid3D extends PGraphics {
             n1 = n0 + pathLength[k] - 1;
           }
           
-          VertexGroup group = GLModel.newVertexGroup(n0, n1, LINES, sw, null);
+          VertexGroup group = GLModel.newVertexGroup(n0, n1, LINE_STRIP, sw, null);
           
           recordedGroups.add(group);   
         }
@@ -1197,48 +1199,52 @@ public class PGraphicsAndroid3D extends PGraphics {
         
         // always draw a first point
         float a[] = vertices[lines[i][VERTEX1]];
-        colorBuffer.put(toFixed32(a[SR]));
-        colorBuffer.put(toFixed32(a[SG]));
-        colorBuffer.put(toFixed32(a[SB]));
-        colorBuffer.put(toFixed32(a[SA]));
-        vertexBuffer.put(toFixed32(a[X]));
-        vertexBuffer.put(toFixed32(a[Y]));
-        vertexBuffer.put(toFixed32(a[Z]));
-        
         if (recordingModel) {
           recordedVertices.add(new PVector(a[X], a[Y], a[Z]));
           recordedColors.add(new float[]{a[SR], a[SG], a[SB], a[SA]});
           recordedNormals.add(new PVector(0, 0, 0));
           recordedTexCoords.add(new PVector(0, 0, 0));          
+        } else {
+          colorBuffer.put(toFixed32(a[SR]));
+          colorBuffer.put(toFixed32(a[SG]));
+          colorBuffer.put(toFixed32(a[SB]));
+          colorBuffer.put(toFixed32(a[SA]));
+          vertexBuffer.put(toFixed32(a[X]));
+          vertexBuffer.put(toFixed32(a[Y]));
+          vertexBuffer.put(toFixed32(a[Z]));          
         }
 
         // on this and subsequent lines, only draw the second point
         for (int k = 0; k < pathLength[j]; k++) {
           float b[] = vertices[lines[i][VERTEX2]];
-          colorBuffer.put(toFixed32(b[SR]));
-          colorBuffer.put(toFixed32(b[SG]));
-          colorBuffer.put(toFixed32(b[SB]));
-          colorBuffer.put(toFixed32(b[SA]));
-          vertexBuffer.put(toFixed32(b[X]));
-          vertexBuffer.put(toFixed32(b[Y]));
-          vertexBuffer.put(toFixed32(b[Z]));
 
           if (recordingModel) {
             recordedVertices.add(new PVector(b[X], b[Y], b[Z]));
             recordedColors.add(new float[]{b[SR], b[SG], b[SB], b[SA]});
             recordedNormals.add(new PVector(0, 0, 0));
             recordedTexCoords.add(new PVector(0, 0, 0));          
+          } else {
+            colorBuffer.put(toFixed32(b[SR]));
+            colorBuffer.put(toFixed32(b[SG]));
+            colorBuffer.put(toFixed32(b[SB]));
+            colorBuffer.put(toFixed32(b[SA]));
+            vertexBuffer.put(toFixed32(b[X]));
+            vertexBuffer.put(toFixed32(b[Y]));
+            vertexBuffer.put(toFixed32(b[Z]));            
           }
                     
           i++;
         }
         
-        vertexBuffer.position(0);
-        colorBuffer.position(0);
+        if (!recordingModel) {
+          vertexBuffer.position(0);
+          colorBuffer.position(0);
                 
-        gl.glVertexPointer(3, GL10.GL_FIXED, 0, vertexBuffer);
-        gl.glColorPointer(4, GL10.GL_FIXED, 0, colorBuffer);
-        gl.glDrawArrays(GL10.GL_LINE_STRIP, 0, pathLength[j] + 1);        
+          gl.glVertexPointer(3, GL10.GL_FIXED, 0, vertexBuffer);
+          gl.glColorPointer(4, GL10.GL_FIXED, 0, colorBuffer);
+          gl.glDrawArrays(GL10.GL_LINE_STRIP, 0, pathLength[j] + 1);
+        }
+        
       }
       sw0 = sw;
     }
@@ -1377,82 +1383,84 @@ public class PGraphicsAndroid3D extends PGraphics {
           }
         }
         
-        // Adding vertex A.
-        vertexBuffer.put(toFixed32(a[X]));
-        vertexBuffer.put(toFixed32(a[Y]));
-        vertexBuffer.put(toFixed32(a[Z]));
-        colorBuffer.put(toFixed32(a[R]));
-        colorBuffer.put(toFixed32(a[G]));
-        colorBuffer.put(toFixed32(a[B]));
-        colorBuffer.put(toFixed32(a[A]));
-        normalBuffer.put(toFixed32(a[NX]));
-        normalBuffer.put(toFixed32(a[NY]));
-        normalBuffer.put(toFixed32(a[NZ]));    
-        texCoordBuffer.put(toFixed32((cx +  sx * a[U]) * uscale));
-        texCoordBuffer.put(toFixed32((cy +  sy * a[V]) * vscale));
-    
+        // Adding vertex A.    
         if (recordingModel) {
           recordedVertices.add(new PVector(a[X], a[Y], a[Z]));
           recordedColors.add(new float[]{a[R], a[G], a[B], a[A]});
           recordedNormals.add(new PVector(a[NX], a[NY], a[NZ]));
           recordedTexCoords.add(new PVector((cx +  sx * a[U]) * uscale, (cy +  sy * a[V]) * vscale, 0.0f));
-        }        
+        } else {
+          vertexBuffer.put(toFixed32(a[X]));
+          vertexBuffer.put(toFixed32(a[Y]));
+          vertexBuffer.put(toFixed32(a[Z]));
+          colorBuffer.put(toFixed32(a[R]));
+          colorBuffer.put(toFixed32(a[G]));
+          colorBuffer.put(toFixed32(a[B]));
+          colorBuffer.put(toFixed32(a[A]));
+          normalBuffer.put(toFixed32(a[NX]));
+          normalBuffer.put(toFixed32(a[NY]));
+          normalBuffer.put(toFixed32(a[NZ]));    
+          texCoordBuffer.put(toFixed32((cx +  sx * a[U]) * uscale));
+          texCoordBuffer.put(toFixed32((cy +  sy * a[V]) * vscale));          
+        }
         
         // Adding vertex B.    
-        vertexBuffer.put(toFixed32(b[X]));
-        vertexBuffer.put(toFixed32(b[Y]));
-        vertexBuffer.put(toFixed32(b[Z]));
-        colorBuffer.put(toFixed32(b[R]));
-        colorBuffer.put(toFixed32(b[G]));
-        colorBuffer.put(toFixed32(b[B]));
-        colorBuffer.put(toFixed32(b[A]));
-        normalBuffer.put(toFixed32(b[NX]));
-        normalBuffer.put(toFixed32(b[NY]));
-        normalBuffer.put(toFixed32(b[NZ]));    
-        texCoordBuffer.put(toFixed32((cx +  sx * b[U]) * uscale));
-        texCoordBuffer.put(toFixed32((cy +  sy * b[V]) * vscale));    
-    
         if (recordingModel) {
           recordedVertices.add(new PVector(b[X], b[Y], b[Z]));
           recordedColors.add(new float[]{b[R], b[G], b[B], b[A]});
           recordedNormals.add(new PVector(b[NX], b[NY], b[NZ]));
           recordedTexCoords.add(new PVector((cx +  sx * b[U]) * uscale, (cy +  sy * b[V]) * vscale, 0.0f));
-        }           
+        } else {
+          vertexBuffer.put(toFixed32(b[X]));
+          vertexBuffer.put(toFixed32(b[Y]));
+          vertexBuffer.put(toFixed32(b[Z]));
+          colorBuffer.put(toFixed32(b[R]));
+          colorBuffer.put(toFixed32(b[G]));
+          colorBuffer.put(toFixed32(b[B]));
+          colorBuffer.put(toFixed32(b[A]));
+          normalBuffer.put(toFixed32(b[NX]));
+          normalBuffer.put(toFixed32(b[NY]));
+          normalBuffer.put(toFixed32(b[NZ]));    
+          texCoordBuffer.put(toFixed32((cx +  sx * b[U]) * uscale));
+          texCoordBuffer.put(toFixed32((cy +  sy * b[V]) * vscale));              
+        }
         
         // Adding vertex C.    
-        vertexBuffer.put(toFixed32(c[X]));
-        vertexBuffer.put(toFixed32(c[Y]));
-        vertexBuffer.put(toFixed32(c[Z]));
-        colorBuffer.put(toFixed32(c[R]));
-        colorBuffer.put(toFixed32(c[G]));
-        colorBuffer.put(toFixed32(c[B]));
-        colorBuffer.put(toFixed32(c[A]));
-        normalBuffer.put(toFixed32(c[NX]));
-        normalBuffer.put(toFixed32(c[NY]));
-        normalBuffer.put(toFixed32(c[NZ]));
-        texCoordBuffer.put(toFixed32((cx +  sx * c[U]) * uscale));
-        texCoordBuffer.put(toFixed32((cy +  sy * c[V]) * vscale));
-        
         if (recordingModel) {
           recordedVertices.add(new PVector(c[X], c[Y], c[Z]));
           recordedColors.add(new float[]{c[R], c[G], c[B], c[A]});
           recordedNormals.add(new PVector(c[NX], c[NY], c[NZ]));
           recordedTexCoords.add(new PVector((cx +  sx * c[U]) * uscale, (cy +  sy * c[V]) * vscale, 0.0f));
-        }        
+        } else {
+          vertexBuffer.put(toFixed32(c[X]));
+          vertexBuffer.put(toFixed32(c[Y]));
+          vertexBuffer.put(toFixed32(c[Z]));
+          colorBuffer.put(toFixed32(c[R]));
+          colorBuffer.put(toFixed32(c[G]));
+          colorBuffer.put(toFixed32(c[B]));
+          colorBuffer.put(toFixed32(c[A]));
+          normalBuffer.put(toFixed32(c[NX]));
+          normalBuffer.put(toFixed32(c[NY]));
+          normalBuffer.put(toFixed32(c[NZ]));
+          texCoordBuffer.put(toFixed32((cx +  sx * c[U]) * uscale));
+          texCoordBuffer.put(toFixed32((cy +  sy * c[V]) * vscale));          
+        }
         
         i++;        
       }
       
-      vertexBuffer.position(0);
-      colorBuffer.position(0);
-      normalBuffer.position(0);
-      texCoordBuffer.position(0); 
+      if (!recordingModel) {
+        vertexBuffer.position(0);
+        colorBuffer.position(0);
+        normalBuffer.position(0);
+        texCoordBuffer.position(0); 
 
-      gl.glVertexPointer(3, GL10.GL_FIXED, 0, vertexBuffer);
-      gl.glColorPointer(4, GL10.GL_FIXED, 0, colorBuffer);
-      gl.glNormalPointer(GL10.GL_FIXED, 0, normalBuffer);
-      if (texturing) gl.glTexCoordPointer(2, GL10.GL_FIXED, 0, texCoordBuffer);
-      gl.glDrawArrays(GL10.GL_TRIANGLES, 0, 3 * faceLength[j]);
+        gl.glVertexPointer(3, GL10.GL_FIXED, 0, vertexBuffer);
+        gl.glColorPointer(4, GL10.GL_FIXED, 0, colorBuffer);
+        gl.glNormalPointer(GL10.GL_FIXED, 0, normalBuffer);
+        if (texturing) gl.glTexCoordPointer(2, GL10.GL_FIXED, 0, texCoordBuffer);
+        gl.glDrawArrays(GL10.GL_TRIANGLES, 0, 3 * faceLength[j]);
+      }
 
       if (texturing) {
         gl.glBindTexture(tex.getGLTarget(), 0);
