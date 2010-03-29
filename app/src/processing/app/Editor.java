@@ -47,7 +47,7 @@ import javax.swing.undo.*;
  */
 public class Editor extends JFrame implements RunnerListener {
 
-  Base base;
+  final Base base;
 
   // otherwise, if the window is resized with the message label
   // set to blank, it's preferredSize() will be fukered
@@ -71,14 +71,14 @@ public class Editor extends JFrame implements RunnerListener {
    */
   boolean untitled;
 
-  PageFormat pageFormat;
-  PrinterJob printerJob;
+  private PageFormat pageFormat;
+  private PrinterJob printerJob;
 
   // file and sketch menus for re-inserting items
-  JMenu fileMenu;
-  JMenu sketchMenu;
+  private JMenu fileMenu;
+  private JMenu sketchMenu;
 
-  EditorToolbar toolbar;
+  private final EditorToolbar toolbar;
   // these menus are shared so that they needn't be rebuilt for all windows
   // each time a sketch is created, renamed, or moved.
   static JMenu toolbarMenu;
@@ -90,47 +90,40 @@ public class Editor extends JFrame implements RunnerListener {
   EditorStatus status;
   EditorConsole console;
 
-  JSplitPane splitPane;
-  JPanel consolePanel;
-
-  JLabel lineNumberComponent;
+  private final JSplitPane splitPane;
+  private final JPanel consolePanel;
 
   // currently opened program
-  Sketch sketch;
+  private Sketch sketch;
 
-  EditorLineStatus lineStatus;
+  private final EditorLineStatus lineStatus;
 
-  JEditorPane editorPane;
-
-  JEditTextArea textarea;
-  EditorListener listener;
+  private final JEditTextArea textarea;
+  private final EditorListener listener;
 
   // runtime information and window placement
-  Point sketchWindowLocation;
-  Runner runtime;
+  private Point sketchWindowLocation;
+  private Runner runtime;
 
-  JMenuItem exportAppItem;
-  JMenuItem saveMenuItem;
-  JMenuItem saveAsMenuItem;
-
-  boolean running;
-  //boolean presenting;
+  private JMenuItem exportAppItem;
+  private JMenuItem saveMenuItem;
+  private JMenuItem saveAsMenuItem;
 
   // undo fellers
-  JMenuItem undoItem, redoItem;
+  private JMenuItem undoItem, redoItem;
   protected UndoAction undoAction;
   protected RedoAction redoAction;
-  UndoManager undo;
+  private UndoManager undo;
   // used internally, and only briefly
-  CompoundEdit compoundEdit;
+  private CompoundEdit compoundEdit;
 
-  FindReplace find;
+  private FindReplace find;
 
-  Runnable runHandler;
-  Runnable presentHandler;
-  Runnable stopHandler;
-  Runnable exportHandler;
-  Runnable exportAppHandler;
+  private Runnable runHandler;
+  private Runnable presentHandler;
+  private Runnable stopHandler;
+  private Runnable exportHandler;
+  private Runnable exportAppHandler;
 
 
   public Editor(Base ibase, String path, int[] location) {
@@ -808,7 +801,7 @@ public class Editor extends JFrame implements RunnerListener {
   protected JMenu addInternalTools(JMenu menu) {
     JMenuItem item;
 
-    item = createToolMenuItem("processing.app.tools.AutoFormat");
+    item = createToolMenuItem("processing.app.tools.AutoFormatTool");
     int modifiers = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
     item.setAccelerator(KeyStroke.getKeyStroke('T', modifiers));
     menu.add(item);
@@ -1631,7 +1624,6 @@ public class Editor extends JFrame implements RunnerListener {
    */
   public void handleRun(boolean present) {
     internalCloseRunner();
-    running = true;
     toolbar.activate(EditorToolbar.RUN);
     statusEmpty();
 
@@ -1736,7 +1728,6 @@ public class Editor extends JFrame implements RunnerListener {
    * To initiate a "stop" action, call handleStop() instead.
    */
   public void internalRunnerClosed() {
-    running = false;
     toolbar.deactivate(EditorToolbar.RUN);
   }
 
@@ -1745,8 +1736,6 @@ public class Editor extends JFrame implements RunnerListener {
    * Handle internal shutdown of the runner.
    */
   public void internalCloseRunner() {
-    running = false;
-
     if (stopHandler != null)
     try {
       stopHandler.run();
