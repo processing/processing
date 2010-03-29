@@ -5,7 +5,64 @@ X remove debug message from PDF
 X add skewX/skewY
 o   do them as shearX/Y?
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1448
+X PImage.copy() not including the bottom and rightmost pixels of srcImage
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1174
 
+
+stop() mess
+_ notes
+_   exit() should do the actual exit
+_   if inside draw, let it finish the loop
+_   if not looping, need to do it immediately
+_   does stop() unwind the thread, or does the thread unwind call stop?
+_   browser will call start() and stop() methods
+_ need to figure out start/stop signals coming from the browser
+_   is it dispose/destroy? 
+_ double stop() called with noLoop()
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1270
+_ stop() not getting called
+_   http://dev.processing.org/bugs/show_bug.cgi?id=183
+_   major problem for libraries
+_   and start() is supposedly called by the applet viewer
+_   http://java.sun.com/j2se/1.4.2/docs/api/java/applet/Applet.html#start()
+_   need to track this stuff down a bit
+_ when closing a sketch via the close box, make sure stop() getting called
+X   found a problem for release 0133
+_   test to see if it's working
+_ what's up with stop() vs exit()?
+_   need to get this straightened for p5 (i.e. bc has this problem)
+_   make sure the main() doesn't exit until the applet has finished
+_   i.e. problem with main calling itself multiple times in Alpheus
+_   if exit() (or stop) is called, then System.exit() gets called,
+_   even though the main() wants to keep going
+_ more chatter with this
+_   http://dev.processing.org/bugs/show_bug.cgi?id=131
+_ opengl applet problems
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1364
+
+The only platform on which I can ever recall this happening was Netscape 4.5, where they would stop() and start() the applet in response to users scrolling.  I don't think ANY current browser every actually start()s an applet after stop().
+Sadly, Safari does on Snow Leopard - it calls stop() when switching tabs and start() when you switch back.
+
+import javax.swing.*;
+public class StopCalled2 extends JApplet {
+    public StopCalled2() {
+        System.err.println("Created.");
+    }
+    public void stop() {
+        System.err.println("Stop called.");
+    }
+    public void start() {
+        System.err.println("Start called.");
+    }
+}
+
+and switching tabs produces: 
+Oct  6 15:49:08 Shiny [0x0-0x12d12d].com.apple.Safari[3059]: Created.
+Oct  6 15:49:08 Shiny [0x0-0x12d12d].com.apple.Safari[3059]: Start called.
+Oct  6 15:49:11 Shiny [0x0-0x12d12d].com.apple.Safari[3059]: Stop called.
+Oct  6 15:49:14 Shiny [0x0-0x12d12d].com.apple.Safari[3059]: Start called.
+Oct  6 15:49:16 Shiny [0x0-0x12d12d].com.apple.Safari[3059]: Stop called.
+Oct  6 15:49:18 Shiny [0x0-0x12d12d].com.apple.Safari[3059]: Start called.
 
 big ones
 _ ortho() behaving differently in P3D vs OPENGL
@@ -43,9 +100,6 @@ _ make sure that get() and set() (for pixels and subsets) work w/ P2D
 _ make sure that get() and set() (for pixels and subsets) work w/ P3D
 
 _ add setOutput() method across other renderers?
-
-_ opengl applet problems
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1364
 
 _ method of threading but queue an event to be run when safe
 _   e.g. queueing items like mouse/keybd, but generic fxns
@@ -263,27 +317,6 @@ _ STROKE_WEIGHT field in PGraphics3 is a disaster, because it's an int
 _   use the SW from vertex instead.. why set stroke in triangle vars at all?
 _   currently truncating to an int inside add_line_no_clip
 _   need to clean all this crap up
-
-stop() mess
-_ double stop() called with noLoop()
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1270
-_ stop() not getting called
-_   http://dev.processing.org/bugs/show_bug.cgi?id=183
-_   major problem for libraries
-_   and start() is supposedly called by the applet viewer
-_   http://java.sun.com/j2se/1.4.2/docs/api/java/applet/Applet.html#start()
-_   need to track this stuff down a bit
-_ when closing a sketch via the close box, make sure stop() getting called
-X   found a problem for release 0133
-_   test to see if it's working
-_ what's up with stop() vs exit()?
-_   need to get this straightened for p5 (i.e. bc has this problem)
-_   make sure the main() doesn't exit until the applet has finished
-_   i.e. problem with main calling itself multiple times in Alpheus
-_   if exit() (or stop) is called, then System.exit() gets called,
-_   even though the main() wants to keep going
-_ more chatter with this
-_   http://dev.processing.org/bugs/show_bug.cgi?id=131
 
 
 
