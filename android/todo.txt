@@ -1,6 +1,4 @@
-0182 android
-X added skewX/Y implementation
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1448
+0183 android
 
 
 _ for libraries that don't work with android, don't let them export

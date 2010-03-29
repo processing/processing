@@ -80,7 +80,7 @@
   <!-- Basic Assembly  -->
   <!-- - - - - - - - - -->
   
-  <target name="assemble">
+  <target name="assemble" depends="version-clear, version-write">
     <fail unless="target.path" 
 	  message="Do not call assemble from the command line." />
     
@@ -118,9 +118,24 @@
     <unzip dest="${target.path}" src="shared/examples.zip" overwrite="false"/>
     <unzip dest="${target.path}" src="shared/reference.zip" overwrite="false"/>
     
-    <!-- Write the revision file! -->
-    <echo file="${target.path}/lib/version.txt" message="${version}" />
+    <!-- Write the revision file -->
+    <!-- is there a good way to do this? -->
+    <!--
+    <echo file="${target.path}/lib/version.txt" 
+	  message="${version}" 
+	  if="${version}" />
+    <delete file="${target.path}/lib/version.txt"
+	    unless="${version}" />
+    -->
   </target>
+
+  <target name="version-clear">
+    <delete file="${target.path}/lib/version.txt" />
+  </target> 
+
+  <target name="version-write" if="version">
+    <echo file="${target.path}/lib/version.txt" message="${version}"/>
+  </target> 
 
   
   <!-- - - - - - - - - -->
