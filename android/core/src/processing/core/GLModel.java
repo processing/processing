@@ -258,10 +258,10 @@ public class GLModel extends PShape implements GLConstants, PConstants {
       int size = (lastUpdateIdx - firstUpdateIdx + 1) * 4;
             
       colorBuffer.position(0);      
-      colorBuffer.put(colorArray, size, offset);
+      colorBuffer.put(colorArray, offset, size);
       colorBuffer.flip();
     
-      gl.glBufferSubData(GL11.GL_ARRAY_BUFFER, size * SIZEOF_FLOAT, offset * SIZEOF_FLOAT, colorBuffer);
+      gl.glBufferSubData(GL11.GL_ARRAY_BUFFER, offset * SIZEOF_FLOAT, size * SIZEOF_FLOAT, colorBuffer);
       gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
     } else if (updateElement == NORMALS) {
       int offset = firstUpdateIdx * 3;
@@ -1415,7 +1415,7 @@ public class GLModel extends PShape implements GLConstants, PConstants {
         gl.glDrawArrays(group.glMode, group.first, group.last - group.first + 1);
       } else {
         // Using the overall's vertex mode assigned to the entire model.
-        gl.glDrawArrays(glMode, group.first, group.last - group.first + 1);  
+        gl.glDrawArrays(glMode, group.first, group.last - group.first + 1);
       }
       gl.glPopMatrix();
       
@@ -1537,7 +1537,6 @@ public class GLModel extends PShape implements GLConstants, PConstants {
       else {
         throw new RuntimeException("GLModel: Unknown draw mode");
       }      
-      glMode = 0;
       sw = weight;
       texture = tex;
     }    
