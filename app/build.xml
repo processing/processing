@@ -1,119 +1,119 @@
 <?xml version="1.0"?>
 <project name="Processing PDE" default="build">
 
-	<property name="generated" value="${basedir}/generated/processing/app/antlr" />
-	<property name="grammars" value="${basedir}/grammars" />
-	<property name="antlrjar" value="${basedir}/lib/antlr.jar" />
+  <property name="generated" value="${basedir}/generated/processing/app/antlr" />
+  <property name="grammars" value="${basedir}/grammars" />
+  <property name="antlrjar" value="${basedir}/lib/antlr.jar" />
 
-	<classloader taskname="antlr">
-		<classpath path="lib/antlr.jar" />
-	</classloader>
+  <classloader taskname="antlr">
+    <classpath path="lib/antlr.jar" />
+  </classloader>
 
-	<target name="clean" description="Clean the build directories">
+  <target name="clean" description="Clean the build directories">
 
-		<!-- THIS SECTION SHOULD BE REMOVED AFTER A MONTH OR TWO -->
-		<!-- jdf sez: clean up after old layout of generated resources -->
-		<delete failonerror="false">
-			<fileset dir="${basedir}/src/antlr/java">
-				<include name="*.java" />
-				<include name="*.tokens" />
-				<include name="*.txt" />
-				<include name="*.g" />
-				<include name="*.smap" />
-			</fileset>
-		</delete>
-		<delete failonerror="false">
-			<!-- jdf sez: don't name anything FooRecognizer or FooLexer in this package -->
-			<fileset dir="${basedir}/src/processing/app/preproc">
-				<include name="*Recognizer.java" />
-				<include name="*Lexer.java" />
-				<include name="*.tokens" />
-				<include name="*.txt" />
-				<include name="*.g" />
-				<include name="*.smap" />
-			</fileset>
-		</delete>
-		<!-- END SECTION TO CLEAN UP AFTER OLD PROJECT LAYOUT -->
+    <!-- THIS SECTION SHOULD BE REMOVED AFTER A MONTH OR TWO -->
+    <!-- jdf sez: clean up after old layout of generated resources -->
+    <delete failonerror="false">
+      <fileset dir="${basedir}/src/antlr/java">
+	<include name="*.java" />
+	<include name="*.tokens" />
+	<include name="*.txt" />
+	<include name="*.g" />
+	<include name="*.smap" />
+      </fileset>
+    </delete>
+    <delete failonerror="false">
+      <!-- jdf sez: don't name anything FooRecognizer or FooLexer in this package -->
+      <fileset dir="${basedir}/src/processing/app/preproc">
+	<include name="*Recognizer.java" />
+	<include name="*Lexer.java" />
+	<include name="*.tokens" />
+	<include name="*.txt" />
+	<include name="*.g" />
+	<include name="*.smap" />
+      </fileset>
+    </delete>
+    <!-- END SECTION TO CLEAN UP AFTER OLD PROJECT LAYOUT -->
 
-		<delete dir="bin" />
-		<delete file="pde.jar" />
-		<delete>
-			<fileset dir="${generated}">
-				<include name="*.java" />
-				<include name="*.tokens" />
-				<include name="*.txt" />
-				<include name="*.g" />
-				<include name="*.smap" />
-			</fileset>
-		</delete>
-	</target>
+    <delete dir="bin" />
+    <delete file="pde.jar" />
+    <delete>
+      <fileset dir="${generated}">
+	<include name="*.java" />
+	<include name="*.tokens" />
+	<include name="*.txt" />
+	<include name="*.g" />
+	<include name="*.smap" />
+      </fileset>
+    </delete>
+  </target>
 
-	<target name="preproc" depends="clean" description="Compile ANTLR grammar">
-		<antlr target="${grammars}/java15.g" outputdirectory="${generated}">
-			<classpath path="${antlrjar}" />
-		</antlr>
-		<antlr target="${grammars}/pde.g" outputdirectory="${generated}" glib="${grammars}/java15.g">
-			<classpath path="${antlrjar}" />
-		</antlr>
-	</target>
+  <target name="preproc" depends="clean" description="Compile ANTLR grammar">
+    <antlr target="${grammars}/java15.g" outputdirectory="${generated}">
+      <classpath path="${antlrjar}" />
+    </antlr>
+    <antlr target="${grammars}/pde.g" outputdirectory="${generated}" glib="${grammars}/java15.g">
+      <classpath path="${antlrjar}" />
+    </antlr>
+  </target>
 
-	<target name="compile" depends="preproc" description="Compile sources">
-		<condition property="core-built">
-			<available file="../core/core.jar" />
-		</condition>
-		<fail unless="core-built" 
-			message="Please build the core library first and make sure it sits in ../core/core.jar" />
+  <target name="compile" depends="preproc" description="Compile sources">
+    <condition property="core-built">
+      <available file="../core/core.jar" />
+    </condition>
+    <fail unless="core-built" 
+	  message="Please build the core library first and make sure it sits in ../core/core.jar" />
 
-		<mkdir dir="bin" />
+    <mkdir dir="bin" />
 
-		<!-- ant seems to nuke ${java.home} for some reason, pointing at the JRE
+    <!-- ant seems to nuke ${java.home} for some reason, pointing at the JRE
 	 subfolder instead of the actual JDK found at JAVA_HOME. 
 	 To avoid this, we grab the actual JAVA_HOME environment variable 
 	 and use that to specify the location of tools.jar. -->
+    <!-- if someone is better with ant please help clean this up -->
 
-		<!-- if someone is better with ant please help clean this up -->
-		<property environment="env" />
-		<property name="java_home" value="${env.JAVA_HOME}" />
+    <property environment="env" />
+    <property name="java_home" value="${env.JAVA_HOME}" />
 
-		<condition property="linux">
-			<os family="unix" />
-		</condition>
-		<fail if="linux" unless="java_home" 
-			message="The JAVA_HOME variable must be set to the location of a full JDK. For instance, on Ubuntu Linux, this might be /usr/lib/jvm/java-6-sun." />
+    <condition property="linux">
+      <os family="unix" />
+    </condition>
+    <fail if="linux" unless="java_home" 
+	  message="The JAVA_HOME variable must be set to the location of a full JDK. For instance, on Ubuntu Linux, this might be /usr/lib/jvm/java-6-sun." />
 
-		<condition property="windows">
-			<os family="windows" />
-		</condition>
-		<fail if="windows" unless="java_home" 
-			message="The JAVA_HOME variable must be set to the location of a full JDK. For instance, on Windows, this might be c:\jdk1.6.0_18." />
+    <condition property="windows">
+      <os family="windows" />
+    </condition>
+    <fail if="windows" unless="java_home" 
+	  message="The JAVA_HOME variable must be set to the location of a full JDK. For instance, on Windows, this might be c:\jdk1.6.0_18." />
 
-		<!--
-    <dirname property="blah" file="${java.home}" />
-    <echo message="here! ${java.home}/lib/tools.jar or there: ${blah}" />
-    <echo message="override ${env.JAVA_HOME}/lib/tools.jar" />
-    <fail />
--->
-		<javac target="1.5" 
-				destdir="bin" 
-				excludes="**/tools/format/**" 
-				encoding="UTF-8" 
-				includeAntRuntime="false" 
-				classpath="../core/core.jar; ${env.JAVA_HOME}/lib/tools.jar; lib/ant.jar; lib/ant-launcher.jar; lib/antlr.jar; lib/apple.jar; lib/ecj.jar; lib/jna.jar"
-				debug="on"
-				>
-			<src path="src" />
-			<src path="generated" />
-		</javac>
-		<javac target="1.5" 
-			srcdir="../android/tool/src" 
-			destdir="bin" 
-			encoding="UTF-8" 
-			includeAntRuntime="false" 
-			classpath="../core/core.jar; ${env.JAVA_HOME}/lib/tools.jar; lib/ant.jar; lib/ant-launcher.jar; lib/antlr.jar; lib/apple.jar; lib/ecj.jar; lib/jna.jar" 
-		/>
-	</target>
+    <!--
+	<dirname property="blah" file="${java.home}" />
+	<echo message="here! ${java.home}/lib/tools.jar or there: ${blah}" />
+	<echo message="override ${env.JAVA_HOME}/lib/tools.jar" />
+	<fail />
+	-->
+    <javac target="1.5" 
+	   destdir="bin" 
+	   excludes="**/tools/format/**" 
+	   encoding="UTF-8" 
+	   includeAntRuntime="false" 
+	   classpath="../core/core.jar; ${env.JAVA_HOME}/lib/tools.jar; lib/ant.jar; lib/ant-launcher.jar; lib/antlr.jar; lib/apple.jar; lib/ecj.jar; lib/jna.jar"
+	   debug="on"
+	   >
+      <src path="src" />
+      <src path="generated" />
+    </javac>
+    <javac target="1.5" 
+	   srcdir="../android/tool/src" 
+	   destdir="bin" 
+	   encoding="UTF-8" 
+	   includeAntRuntime="false" 
+	   classpath="../core/core.jar; ${env.JAVA_HOME}/lib/tools.jar; lib/ant.jar; lib/ant-launcher.jar; lib/antlr.jar; lib/apple.jar; lib/ecj.jar; lib/jna.jar" 
+	   />
+  </target>
 
-	<target name="build" depends="compile" description="Build PDE">
-		<jar basedir="bin" destfile="pde.jar" />
-	</target>
+  <target name="build" depends="compile" description="Build PDE">
+    <jar basedir="bin" destfile="pde.jar" />
+  </target>
 </project>
