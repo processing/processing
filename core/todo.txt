@@ -1,12 +1,4 @@
-0182 core
-X fix problem with textMode(SHAPE) when using createFont()
-X fix other problems with font use in PDF
-X remove debug message from PDF
-X add skewX/skewY
-o   do them as shearX/Y?
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1448
-X PImage.copy() not including the bottom and rightmost pixels of srcImage
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1174
+0183 core
 
 
 stop() mess

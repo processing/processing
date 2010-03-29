@@ -1,37 +1,4 @@
-0182 pde
-
-preprocessor fixes
-J Compile errors for greater than/less than with parentheses
-J   http://dev.processing.org/bugs/show_bug.cgi?id=1525
-
-autoformat fixes
-o install astyle formatter
-o   build on each platform, then "lipo -create astyle.* -output astyle"
-o break out as its own plugin
-J removes code with extra parens or braces
-J   (an extra } brace deleting everything after it)
-J   http://dev.processing.org/bugs/show_bug.cgi?id=109
-J progressively eats code w/ certain brace settings
-J   http://dev.processing.org/bugs/show_bug.cgi?id=235
-J Auto Format hangs when a non-terminated ' is included
-J   http://dev.processing.org/bugs/show_bug.cgi?id=236
-J hex colors don't get formatted
-J   http://dev.processing.org/bugs/show_bug.cgi?id=303
-J another code example that crashes
-J   http://dev.processing.org/bugs/show_bug.cgi?id=363
-J arrays are reformatted on each autoformat
-J   http://dev.processing.org/bugs/show_bug.cgi?id=259
-J Auto Format says "too many right parentheses" when last line is a comment
-J   http://dev.processing.org/bugs/show_bug.cgi?id=754
-J japanese characters in comments cause trouble with auto-format
-J   (this may have been fixed in recent releases, not checked)
-J   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1153505384
-J "too many right parens" error when there are not
-J   http://dev.processing.org/bugs/show_bug.cgi?id=867
-J code without a new line at end crashes
-J   http://dev.processing.org/bugs/show_bug.cgi?id=880
-J autoformat screws up with color arrays
-J   http://dev.processing.org/bugs/show_bug.cgi?id=760
+0183 pde
 
 
 need examples
