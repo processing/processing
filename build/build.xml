@@ -242,16 +242,21 @@
 	 This prevents "hdiutil: couldn't eject "disk3" - Resource busy"
 	 errors when ejecting the disk in the next step.
          You may need to set this value higher for your system. -->
-    <sleep seconds="3" />
-    
+<!--    <sleep seconds="5" />-->
+
+    <!-- while building 0182, had a lot of trouble with the disk eject -->
+    <input message="Manually eject the Processing volume and hit return." />
+
+    <!-- used -quiet -force in the dist.sh version -->
+<!--    
     <exec executable="hdiutil">
-      <!--<arg line="detach macosx/working_dir -quiet -force" />-->
       <arg line="detach macosx/working_dir" />
     </exec>
-  
+-->
+
     <delete file="macosx/processing-*.dmg" />
     <exec executable="hdiutil">
-      <arg line="convert macosx/working.dmg -quiet -format UDZO -imagekey zlib-level=9 -o macosx/processing-${version}.dmg" />
+      <arg line="convert macosx/working.dmg -format UDZO -imagekey zlib-level=9 -o macosx/processing-${version}.dmg" />
     </exec>
 
     <!-- Clean up the interim files. -->
