@@ -314,7 +314,7 @@ public class AutoFormat {
     chars = cleanText.toCharArray();
     lineNumber = 1;
 
-    EOF = false; // set in getchr when EOF
+    EOF = false; // set in next() when EOF
 
     while (!EOF) {
       c = next();

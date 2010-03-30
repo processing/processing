@@ -1,5 +1,7 @@
 # unit test prefs
 
+editor.tabs.size=2
+
 preproc.save_build_files=false
 
 # preprocessor: pde.g
