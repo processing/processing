@@ -1,71 +1,25 @@
 package test.processing.parsing;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import processing.app.Base;
-import processing.app.Preferences;
 import processing.app.debug.RunnerException;
-import processing.app.preproc.PdePreprocessor;
 import processing.util.exec.ProcessResult;
-import antlr.ANTLRException;
 import antlr.RecognitionException;
+import static test.processing.parsing.ProcessingTestUtil.res;
+import static test.processing.parsing.ProcessingTestUtil.COMPILER;
+import static test.processing.parsing.ProcessingTestUtil.preprocess;
 
 public class ParserTests {
-
-  private static final String RESOURCES = "test/resources/";
-  private static final UTCompiler COMPILER;
-  static {
-    try {
-      Base.initPlatform();
-      COMPILER = new UTCompiler(new File("bin"), new File("../core/bin"));
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-  }
-
-  private static File res(final String resourceName) {
-    return new File(RESOURCES, resourceName);
-  }
-
+  
   @BeforeClass
-  static public void initPrefs() throws Exception {
-    Preferences.load(new FileInputStream(res("preferences.txt")));
-  }
-
-  static String read(final File f) {
-    try {
-      final FileInputStream fin = new FileInputStream(f);
-      final InputStreamReader in = new InputStreamReader(fin, "UTF-8");
-      try {
-        final StringBuilder sb = new StringBuilder();
-        final char[] buf = new char[1 << 12];
-        int len;
-        while ((len = in.read(buf)) != -1)
-          sb.append(buf, 0, len);
-        return sb.toString().replace("\r", "");
-      } finally {
-        in.close();
-      }
-    } catch (Exception e) {
-      throw new RuntimeException("Unexpected", e);
-    }
-  }
-
-  static String preprocess(final String name, final File resource)
-      throws RunnerException, ANTLRException {
-    final String program = read(resource);
-    final StringWriter out = new StringWriter();
-    new PdePreprocessor(name, 4).write(out, program);
-    return out.toString().replace("\r", "");
+  public static void init() {
+    ProcessingTestUtil.init();
   }
 
   static void expectRecognitionException(final String id,
@@ -108,7 +62,8 @@ public class ParserTests {
                                       final String expectedMessage,
                                       final int expectedLine) {
     try {
-      final String program = preprocess(id, res(id + ".pde"));
+      final String program = ProcessingTestUtil
+          .preprocess(id, res(id + ".pde"));
       final ProcessResult compilerResult = COMPILER.compile(id, program);
       if (compilerResult.succeeded()) {
         fail("Expected to fail with \"" + expectedMessage + "\" on line "
@@ -129,8 +84,8 @@ public class ParserTests {
 
   static void expectGood(final String id) {
     try {
-      final String program = preprocess(id, res(id + ".pde"));
-
+      final String program = ProcessingTestUtil
+          .preprocess(id, res(id + ".pde"));
       final ProcessResult compilerResult = COMPILER.compile(id, program);
       if (!compilerResult.succeeded()) {
         System.err.println(program);
@@ -141,13 +96,13 @@ public class ParserTests {
 
       final File expectedFile = res(id + ".expected");
       if (expectedFile.exists()) {
-        final String expected = read(expectedFile);
+        final String expected = ProcessingTestUtil.read(expectedFile);
         assertEquals(expected, program);
       } else {
         System.err.println("WARN: " + id
             + " does not have an expected output file. Generating.");
         final FileWriter sug = new FileWriter(res(id + ".expected"));
-        sug.write(program.replace("\r", ""));
+        sug.write(ProcessingTestUtil.normalize(program));
         sug.close();
       }
 
