@@ -1,9 +1,23 @@
 0183 android
+X mention in the notes
+o   emulator doesn't always start the sketch the first time
+X   emulator stays open because it's too slow to restart it
+X add notes to about.txt, and add link to it
 
+
+_ exceptions on first run of the emulator (osx only?)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1527
+
+_ next time the avd is updated
+_   remove old AVDs because their APIs might be out of date
+_   probably need to name AVDs based on their API spec
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1526
 
 _ for libraries that don't work with android, don't let them export
 _   e.g. people adding the opengl library when it's not needed
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1524
+
+_ test controlp5 with android
 
 _ make size() work to place the component at the center of the screen
 _ make size() work to change the renderer

@@ -15,10 +15,10 @@ import java.util.concurrent.ThreadFactory;
 
 /**
  * <p>A StreamPump reads lines of text from its given InputStream 
- * and informs its LineProcessors
- * until the InputStream is exhausted. <b>It is useful only for pumping lines of
- * text, and not for arbitrary binary cruft.</b> It's handy for reading
- * the output of processes that emit textual data, for example.
+ * and informs its LineProcessors until the InputStream is exhausted. 
+ * <b>It is useful only for pumping lines of text, and not for arbitrary 
+ * binary cruft.</b> It's handy for reading the output of processes that 
+ * emit textual data, for example.
  * 
  * @author Jonathan Feinberg &lt;jdf@pobox.com&gt;
  *

@@ -36,7 +36,7 @@ class Build {
 
   File buildFile;
 
-  String sdkVersion = "5";
+  static final String sdkVersion = "6";
 
   public Build(final Editor editor, final AndroidSDK sdk) {
     this.editor = editor;
@@ -155,9 +155,9 @@ class Build {
    * The Android dex util pukes on paths containing spaces, which will happen
    * most of the time on Windows, since Processing sketches wind up in
    * "My Documents". Therefore, build android in a temp file.
-   * 
-   * TODO: better would be to retrieve the 8.3 name for the sketch folder! 
-   * 
+   *
+   * TODO: better would be to retrieve the 8.3 name for the sketch folder!
+   *
    * @param sketch
    * @return A folder in which to build the android sketch
    * @throws IOException
@@ -280,7 +280,7 @@ class Build {
         Sketch sketch = editor.getSketch();
         String sketchPath = sketch.getFolder().getAbsolutePath();
         // emacs syntax, needs conversion to java syntax
-        //String regexp = "^\\s-*\\[[^]]*\\]\\s-*\\(.+\\):\\([0-9]+\\):";  
+        //String regexp = "^\\s-*\\[[^]]*\\]\\s-*\\(.+\\):\\([0-9]+\\):";
         String regexp = "^(.+):([0-9]+):(.+)$";  // this works fine
         String[] pieces = PApplet.match(errorLines[2], regexp);
         if (pieces != null) {
@@ -293,7 +293,7 @@ class Build {
         //if (errorLines[0].startsWith(sketchPath)) {
         //  String[] pieces = PApplet.split(errorLines[0], ':');
         //}
-      //        RunnerException rex = 
+      //        RunnerException rex =
       //          sketch.placeException(e.getMessage(), filename, line);
       //        if (rex != null) {
       //          editor.statusError(rex);
@@ -353,7 +353,7 @@ class Build {
 
       // In the future, this may include standard classes for phone or
       // accelerometer access within the Android APIs. This is currently living
-      // in code rather than preferences.txt because Android mode needs to 
+      // in code rather than preferences.txt because Android mode needs to
       // maintain its independence from the rest of processing.app.
       final String[] androidImports = new String[] {
         "android.view.MotionEvent", "android.view.KeyEvent",
