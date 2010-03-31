@@ -1,6 +1,7 @@
 0183 pde
+X additional updates to autoformat, jdf adding tests
 
-
+fixed in earlier releases
 X export application including video capture broken in snowleopard
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1440
 X   fixed in an earlier release
