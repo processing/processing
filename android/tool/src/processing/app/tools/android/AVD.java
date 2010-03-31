@@ -8,7 +8,7 @@ import processing.util.exec.ProcessHelper;
 import processing.util.exec.ProcessResult;
 
 public class AVD {
-  // Tempting to switch to WVGA854 (854x480), the same aspect ratio 
+  // Tempting to switch to WVGA854 (854x480), the same aspect ratio
   // (with rounding), as 1920x1080, or 16:9.
   static final int DEFAULT_WIDTH = 320;
   static final int DEFAULT_HEIGHT = 480;
@@ -16,15 +16,16 @@ public class AVD {
   /** Name of this avd. */
   public final String name;
 
-  /** "android-4" or "Google Inc.:Google APIs:4" */
+  /** "android-6" or "Google Inc.:Google APIs:6" */
   public final String target;
 
   /**
-   * Default virtual device used by Processing that uses  
+   * Default virtual device used by Processing that uses
    * the Android 2.0.1 API set.
    */
-  public static final AVD ECLAIR = new AVD("Processing-Eclair",
-                                           "Google Inc.:Google APIs:6");
+  public static final AVD ECLAIR = new AVD("Processing-Android-2.0.1",
+                                           "Google Inc.:Google APIs:" +
+                                           Build.sdkVersion);
 
   public static boolean ensureEclairAVD(final AndroidSDK sdk) {
     try {
