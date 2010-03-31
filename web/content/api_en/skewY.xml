@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>skewY()</name>
+
+<category>Transform</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>skewY_.gif</image>
+<code>
+size(100, 100, P2D);
+translate(width/4, height/4);
+skewY(PI/4.0);
+rect(0, 0, 30, 30);
+</code>
+</example>
+
+<description>
+Skews a shape around the y-axis the amount specified by the <b>angle</b> parameter. Angles should be specified in radians (values from 0 to PI*2) or converted to radians with the <b>radians()</b> function. Objects are always skewed around their relative position to the origin and positive numbers skew objects in a clockwise direction. Transformations apply to everything that happens after and subsequent calls to the function accumulates the effect. For example, calling <b>skewY(PI/2)</b> and then <b>skewY(PI/2)</b> is the same as <b>skewY(PI)</b>. If <b>skewY()</b> is called within the <b>draw()</b>, the transformation is reset when the loop begins again. This function works in P2D or JAVA2D mode as shown in the example above.
+<br/> <br/>
+Technically, <b>skewY()</b> multiplies the current transformation matrix by a rotation matrix. This function can be further controlled by the <b>pushMatrix()</b> and <b>popMatrix()</b> functions.
+</description>
+
+<syntax>
+skewY(<c>angle</c>); 
+</syntax>
+
+<parameter>
+<label>angle</label>
+<description>float: angle of skew specified in radians</description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+skewX() 
+translate() 
+scale() 
+pushMatrix() 
+popMatrix() 
+radians()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>
