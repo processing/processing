@@ -1,8 +1,4 @@
-0183 android
-X mention in the notes
-o   emulator doesn't always start the sketch the first time
-X   emulator stays open because it's too slow to restart it
-X add notes to about.txt, and add link to it
+0184 android
 
 
 _ exceptions on first run of the emulator (osx only?)
