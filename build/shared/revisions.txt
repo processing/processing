@@ -1,3 +1,12 @@
+PROCESSING REV 0183 - 31 March 2010
+
+Bug fixes for Android, should remove the API v5 requirement and make
+things work fine with API v6, the new minimum.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING REV 0182 - 29 March 2010 
 
 Bug fix pre-release. This updates three areas:
