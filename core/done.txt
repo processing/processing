@@ -1,3 +1,7 @@
+0183 core (pre-release)
+X no changes to core in 0183
+
+
 0182 core (pre-release)
 X fix problem with textMode(SHAPE) when using createFont()
 X fix other problems with font use in PDF
