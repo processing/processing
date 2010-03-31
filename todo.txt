@@ -1,6 +1,11 @@
 0183 pde
 
 
+X export application including video capture broken in snowleopard
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1440
+X   fixed in an earlier release
+
+
 need examples
 _ Improve detection and handling of missing semicolons
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1036
