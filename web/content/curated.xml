@@ -2,13 +2,23 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <curated>
 
+<software name="In the Air" by="Victor Viña & Nerea Calvillo" scroll="yes" resize="yes" width="1024" height="700">
+        <image>images/intheair.jpg</image>
+          <description>
+             Visualization project to reavel the invisible agents of Madrid's air (gases, particles, pollen, etc.), to see how they relate to the city.
+          </description>
+          <location>http://www.intheair.es</location>
+          <link href="http://www.dosislas.org/">Victor Viña</link>
+          <link href="http://www.cmasarquitectos.net/">Nerea Calvillo</link>
+</software>
+
 <software name="Silica-Esc" by="Vladimir Todorovic" scroll="yes" resize="yes" width="1024" height="700">
         <image>images/silica.jpg</image>
           <description>
              Generative movie that portrays a possible computing platform for the future. The story takes place in Singapore, where a decision about the new device is about to be made.
           </description>
           <location>http://vimeo.com/10154340</location>
-          <link href="http://tadar.net/ ">tadar.net</link>
+          <link href="http://tadar.net/">tadar.net</link>
           <link href="http://www.flickr.com/photos/tadar/">tadar Flickr</link>
 </software>
 
