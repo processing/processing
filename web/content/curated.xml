@@ -2,7 +2,7 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <curated>
 
-<software name="In the Air" by="Victor Viña & Nerea Calvillo" scroll="yes" resize="yes" width="1024" height="700">
+<software name="In the Air" by="Victor Viña, Nerea Calvillo" scroll="yes" resize="yes" width="1024" height="700">
         <image>images/intheair.jpg</image>
           <description>
              Visualization project to reavel the invisible agents of Madrid's air (gases, particles, pollen, etc.), to see how they relate to the city.
