@@ -94,7 +94,7 @@ public class Sketch {
    */
   private String libraryPath;
   /**
-   * List of library folders. 
+   * List of library folders.
    */
   private ArrayList<File> importedLibraries;
 
@@ -1148,8 +1148,8 @@ public class Sketch {
 
 
   /**
-   * When running from the editor, take care of preparations before running 
-   * the build. 
+   * When running from the editor, take care of preparations before running
+   * the build.
    */
   public void prepare() {
     // make sure the user didn't hide the sketch folder
@@ -1180,12 +1180,12 @@ public class Sketch {
     // can happen so many different ways.. and this will be
     // better connected to the dataFolder stuff below.
     cleanup();
-  
+
 //    // handle preprocessing the main file's code
 //    return build(tempBuildFolder.getAbsolutePath());
   }
-  
-  
+
+
   /**
    * Build all the code for this sketch.
    *
@@ -1245,7 +1245,7 @@ public class Sketch {
         bigCount += sc.getLineCount();
       }
     }
-    
+
     final PreprocessResult result;
     try {
       final File java = new File(buildPath, name + ".java");
@@ -1421,16 +1421,16 @@ public class Sketch {
     foundMain = preprocessor.getFoundMain();
     return result.className;
   }
-  
+
   public boolean getFoundMain() {
     return foundMain;
   }
-  
+
   public ArrayList<File> getImportedLibraries() {
     return importedLibraries;
   }
 
-  
+
   /**
    * Map an error from a set of processed .java files back to its location
    * in the actual sketch.
@@ -1440,7 +1440,7 @@ public class Sketch {
    * @return A RunnerException to be sent to the editor, or null if it wasn't
    *         possible to place the exception to the sketch code.
    */
-//  public RunnerException placeExceptionAlt(String message, 
+//  public RunnerException placeExceptionAlt(String message,
 //                                        String filename, int line) {
 //    String appletJavaFile = appletClassName + ".java";
 //    SketchCode errorCode = null;
@@ -1472,14 +1472,14 @@ public class Sketch {
 //      line--;
 //
 //      // getMessage() will be what's shown in the editor
-//      RunnerException exception = 
+//      RunnerException exception =
 //        new RunnerException(message, codeIndex, line, -1);
 //      exception.hideStackTrace();
 //      return exception;
 //    }
 //    return null;
 //  }
-  
+
 
   /**
    * Map an error from a set of processed .java files back to its location
@@ -1490,8 +1490,8 @@ public class Sketch {
    * @return A RunnerException to be sent to the editor, or null if it wasn't
    *         possible to place the exception to the sketch code.
    */
-  public RunnerException placeException(String message, 
-                                        String dotJavaFilename, 
+  public RunnerException placeException(String message,
+                                        String dotJavaFilename,
                                         int dotJavaLine) {
     int codeIndex = 0; //-1;
     int codeLine = -1;
@@ -1533,7 +1533,7 @@ public class Sketch {
       }
     }
     // could not find a proper line number, so deal with this differently.
-    // but if it was in fact the .java file we're looking for, though, 
+    // but if it was in fact the .java file we're looking for, though,
     // send the error message through.
     // this is necessary because 'import' statements will be at a line
     // that has a lower number than the preproc offset, for instance.
@@ -1570,7 +1570,7 @@ public class Sketch {
     // compile the program. errors will happen as a RunnerException
     // that will bubble up to whomever called build().
     Compiler compiler = new Compiler();
-    if (compiler.compile(this, buildPath, primaryClassName, 
+    if (compiler.compile(this, buildPath, primaryClassName,
                          System.getProperty("sun.boot.class.path"))) {
       return primaryClassName;
     }
@@ -1761,11 +1761,19 @@ public class Sketch {
       }
     }
 
+    File openglLibraryFolder = 
+      new File(Base.getLibrariesPath(), "opengl/library");
+    String openglLibraryPath = openglLibraryFolder.getAbsolutePath();
+    boolean openglApplet = false;
+
     // add contents of 'library' folders to the jar file
     // if a file called 'export.txt' is in there, it contains
     // a list of the files that should be exported.
     // otherwise, all files are exported.
     for (File libraryFolder : importedLibraries) {
+      if (libraryFolder.getAbsolutePath().equals(openglLibraryPath)) {
+        openglApplet = true;
+      }
       // in the list is a File object that points the
       // library sketch's "library" folder
       File exportSettings = new File(libraryFolder, "export.txt");
@@ -1796,12 +1804,12 @@ public class Sketch {
           if (separateJar) {
             String exportFilename = exportFile.getName();
             Base.copyFile(exportFile, new File(appletFolder, exportFilename));
-            if (renderer.equals("OPENGL") &&
-                exportFilename.indexOf("natives") != -1) {
+//            if (renderer.equals("OPENGL") &&
+//                exportFilename.indexOf("natives") != -1) {
               // don't add these to the archives list
-            } else {
-              archives.append("," + exportFilename);
-            }
+//            } else {
+            archives.append("," + exportFilename);
+//            }
           } else {
             String path = exportFile.getAbsolutePath();
             packClassPathIntoZipFile(path, zos, zipFileContents);
@@ -1896,8 +1904,16 @@ public class Sketch {
     if (customHtml.exists()) {
       is = new FileInputStream(customHtml);
     }
+    for (File libraryFolder : importedLibraries) {
+      System.out.println(libraryFolder + " " + libraryFolder.getAbsolutePath());
+    }
+    // If the renderer is set to the built-in OpenGL library, 
+    // then it's definitely an OpenGL applet.
+    if (renderer.equals("OPENGL")) {
+      openglApplet = true;
+    }
     if (is == null) {
-      if (renderer.equals("OPENGL")) {
+      if (openglApplet) {
         is = Base.getLibStream("export/applet-opengl.html");
       } else {
         is = Base.getLibStream("export/applet.html");

@@ -1,4 +1,10 @@
 0184 pde
+X other libraries that use opengl weren't using the jnlp launcher
+X   fix OpenGL detection in sketches so that proper version of 
+X     export template is used
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1530
+
+_ create default tools folder (just like libraries)
 
 
 need examples
