@@ -16,7 +16,7 @@ import static test.processing.parsing.ProcessingTestUtil.COMPILER;
 import static test.processing.parsing.ProcessingTestUtil.preprocess;
 
 public class ParserTests {
-  
+
   @BeforeClass
   public static void init() {
     ProcessingTestUtil.init();
@@ -258,5 +258,10 @@ public class ParserTests {
   @Test
   public void bug1525() {
     expectGood("bug1525");
+  }
+
+  @Test
+  public void bug1534() {
+    expectGood("bug1534");
   }
 }

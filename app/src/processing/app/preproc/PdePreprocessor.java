@@ -262,7 +262,26 @@ public class PdePreprocessor implements PdeTokenTypes {
                                     countNewlines(program.substring(0,
                                       stringStart)));
         }
+      } else if (program.charAt(i) == '\'') {
+        i++;
+        if (i >= length) {
+          throw new RunnerException("Unterminated character constant", 0,
+                                    countNewlines(program.substring(0, i)));
+        }
+        if (program.charAt(i) == '\\') {
+          i++;
+        }
+        i++;
+        if (i >= length) {
+          throw new RunnerException("Unterminated character constant", 0,
+                                    countNewlines(program.substring(0, i)));
+        }
+        if (program.charAt(i) != '\'') {
+          throw new RunnerException("Badly formed character constant", 0,
+                                    countNewlines(program.substring(0, i)));
+        }
       }
+
     }
   }
 
@@ -598,8 +617,7 @@ public class PdePreprocessor implements PdeTokenTypes {
       out.println("} ");
     }
 
-    if ((mode == Mode.STATIC)
-        || (mode == Mode.ACTIVE)) {
+    if ((mode == Mode.STATIC) || (mode == Mode.ACTIVE)) {
       if (!foundMain) {
         out.println(indent + "static public void main(String args[]) {");
         out.print(indent + indent + "PApplet.main(new String[] { ");
