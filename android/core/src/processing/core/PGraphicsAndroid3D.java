@@ -413,7 +413,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       
     // The screen texture must have NEAREST filtering, otherwise it degrades after consecutive
     // renderings.
-    screenTex = parent.createImage(width, height, ARGB, GLConstants.NEAREST);
+    screenTex = parent.createImage(width, height, ARGB, NEAREST);
     screenTex.getTexture().set(pix);
   }
   
@@ -973,19 +973,19 @@ public class PGraphicsAndroid3D extends PGraphics {
     if (0 < recordedVertices.size()) {
       GLModel model = new GLModel(parent, recordedVertices.size());
     
-      model.beginUpdate(GLConstants.VERTICES);
+      model.beginUpdate(VERTICES);
       model.setVertex(recordedVertices);
       model.endUpdate();
     
-      model.beginUpdate(GLConstants.COLORS);
+      model.beginUpdate(COLORS);
       model.setColor(recordedColors);
       model.endUpdate();
     
-      model.beginUpdate(GLConstants.NORMALS);
+      model.beginUpdate(NORMALS);
       model.setNormal(recordedNormals);
       model.endUpdate();
     
-      model.beginUpdate(GLConstants.TEXTURES);
+      model.beginUpdate(TEXTURES);
       model.setTexCoord(recordedTexCoords);
       model.endUpdate();
     
@@ -995,6 +995,57 @@ public class PGraphicsAndroid3D extends PGraphics {
     return null;
   }
   
+  
+  //////////////////////////////////////////////////////////////
+
+  // PSHAPE RENDERING IN 3D
+  
+  
+  public void shape(PShape shape, float x, float y, float z) {    
+    if (shape.isVisible()) {  // don't do expensive matrix ops if invisible
+      pushMatrix();
+
+      if (shapeMode == CENTER) {
+        translate(x - shape.getWidth()/2, y - shape.getHeight()/2, z - shape.getDepth()/2);
+
+      } else if ((shapeMode == CORNER) || (shapeMode == CORNERS)) {
+        translate(x, y, z);
+      }
+      shape.draw(this);
+
+      popMatrix();
+    }
+  }  
+  
+  
+  public void shape(PShape shape, float x, float y, float z, float c, float d, float e) {
+    if (shape.isVisible()) {  // don't do expensive matrix ops if invisible
+      pushMatrix();
+
+      if (shapeMode == CENTER) {
+        // x, y and z are center, c, d and e refer to a diameter
+        translate(x - c/2f, y - d/2f, z - e/2f);
+        scale(c / shape.getWidth(), d / shape.getHeight(), e / shape.getDepth());
+
+      } else if (shapeMode == CORNER) {
+        translate(x, y, z);
+        scale(c / shape.getWidth(), d / shape.getHeight(), e / shape.getDepth());
+
+      } else if (shapeMode == CORNERS) {
+        // c, d, e are x2/y2/z2, make them into width/height/depth
+        c -= x;
+        d -= y;
+        e -= z;        
+        // then same as above
+        translate(x, y, z);
+        scale(c / shape.getWidth(), d / shape.getHeight(), e / shape.getDepth());
+      }
+      shape.draw(this);
+
+      popMatrix();
+    }
+  }
+    
   
   //////////////////////////////////////////////////////////////
 
@@ -4699,5 +4750,20 @@ class BufferUtil {
     IntBuffer buffer = IntBuffer.allocate(big);
     buffer.rewind();
     return buffer;
+  }  
+  
+  /**
+   * Return true if this renderer supports 2D drawing. Defaults to true.
+   */
+  public boolean is2D() {
+    return true;
+  }
+
+
+  /**
+   * Return true if this renderer supports 2D drawing. Defaults to false.
+   */
+  public boolean is3D() {
+    return true;
   }  
 }

@@ -82,6 +82,7 @@ public class PShape implements PConstants {
   //protected float height;
   public float width;
   public float height;
+  public float depth;
 
   // set to false if the object is hidden in the layers palette
   protected boolean visible = true;
@@ -244,6 +245,23 @@ public class PShape implements PConstants {
   }
 
 
+  /**
+   * Get the depth of the shape area (not necessarily the shape boundary). Only makes sense for 3D PShape subclasses,
+   * such as PShape3D. 
+   */
+  public float getDepth() {
+    //checkBounds();
+    return depth;
+  } 
+  
+  
+  /**
+   * Return true if this shape is 3D. Defaults to false.
+   */  
+  public boolean is3D() {
+    return false;
+  }
+  
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 

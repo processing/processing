@@ -2335,7 +2335,12 @@ public class PGraphics extends PImage implements PConstants {
       popMatrix();
     }
   }
+  
 
+  public void shape(PShape shape, float x, float y, float z) {
+    showMissingWarning("shape");    
+  }  
+  
 
   public void shape(PShape shape, float x, float y, float c, float d) {
     if (shape.isVisible()) {  // don't do expensive matrix ops if invisible
@@ -2364,7 +2369,11 @@ public class PGraphics extends PImage implements PConstants {
     }
   }
 
-
+  
+  public void shape(PShape shape, float x, float y, float z, float c, float d, float e) {
+    showMissingWarning("shape");    
+  }  
+  
 
   //////////////////////////////////////////////////////////////
 
@@ -5045,13 +5054,10 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Return true if this renderer supports 2D drawing. Defaults to true.
+   * Return true if this renderer supports 2D drawing. Defaults to false.
    */
   public boolean is3D() {
     return false;
   }
-
-  public void model(GLModel model, float x, float y, float z) {
-            showMethodWarning("model");
-  }
+  
 }
