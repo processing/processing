@@ -38,7 +38,7 @@ import java.nio.*;
  *  
  */
 @SuppressWarnings("unused")
-public class GLTexture implements PConstants, GLConstants { 
+public class GLTexture implements PConstants { 
   public int width, height;
     
   protected PApplet parent;
