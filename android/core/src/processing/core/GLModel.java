@@ -76,7 +76,10 @@ public class GLModel extends PShape implements GLConstants, PConstants {
   protected int recreateResourceIdx;
   
   public float depth;
-
+  protected float xmin, xmax;
+  protected float ymin, ymax;
+  protected float zmin, zmax;
+  
   protected static final int SIZEOF_FLOAT = Float.SIZE / 8;
   
   
@@ -126,6 +129,10 @@ public class GLModel extends PShape implements GLConstants, PConstants {
     createModel(numVert);    
     initGroups();      
     updateElement = -1;
+    
+    width = height = depth = 0;
+    xmin = ymin = zmin = 10000;
+    xmax = ymax = zmax = -10000;
 
     try {
       Method meth = this.getClass().getMethod("recreateResource", new Class[] { PGraphicsAndroid3D.class });
@@ -362,9 +369,10 @@ public class GLModel extends PShape implements GLConstants, PConstants {
       grIdx1 = idx;  
     }
     
+    updateBounds(x, y, z);
     vertexArray[3 * idx + 0] = x;
     vertexArray[3 * idx + 1] = y;
-    vertexArray[3 * idx + 2] = z;
+    vertexArray[3 * idx + 2] = z;    
   }
 
   
@@ -379,6 +387,10 @@ public class GLModel extends PShape implements GLConstants, PConstants {
     if (creatingGroup) {
       grIdx0 = 0;
       grIdx1 = numVertices - 1;
+    }
+    
+    for (int i = 0; i < numVertices; i++) {
+      updateBounds(data[3 * i + 0], data[3 * i + 1], data[3 * i + 2]);      
     }
     
     PApplet.arrayCopy(data, vertexArray);
@@ -404,9 +416,25 @@ public class GLModel extends PShape implements GLConstants, PConstants {
       vertexArray[3 * i + 0] = vec.x;
       vertexArray[3 * i + 1] = vec.y;
       vertexArray[3 * i + 2] = vec.z;
+      updateBounds(vec.x, vec.y, vec.z);
     }
   }
   
+  
+  protected void updateBounds(float x, float y, float z) {
+    xmin = PApplet.min(xmin, x);
+    xmax = PApplet.max(xmax, x);
+    
+    ymin = PApplet.min(ymin, y);
+    ymax = PApplet.max(ymax, y);
+
+    zmin = PApplet.min(zmin, z);
+    zmax = PApplet.max(zmax, z);
+
+    width = xmax - xmin;
+    height = ymax - ymin;
+    depth = zmax - zmin;
+  }
 
   ////////////////////////////////////////////////////////////
   
@@ -1296,42 +1324,31 @@ public class GLModel extends PShape implements GLConstants, PConstants {
 
   // Methods inherited from PShape.
 
-  public float getWidth() {
-    return width;
-  }
-
-  public float getHeight() {
-    return height;
-  }  
-  
   public float getDepth() {
     return depth;
   }
   
   
   public boolean isVisible() {
-    return true;
+    return visible;
   }  
 
-   public void draw(PGraphics g) {
-     render();
-   }
   
   ///////////////////////////////////////////////////////////  
 
-  // Rendering methods   
+  // Drawing methods   
    
-   public void render() {
-     render(0, groups.size() - 1);
+   public void draw(PGraphics g) {
+     draw(g, 0, groups.size() - 1);
    }
    
   
-	 public void render(int gr) {
-	   render(gr, gr);
+	 public void draw(PGraphics g, int gr) {
+	   draw(g, gr, gr);
 	 }
   
   
-  public void render(int gr0, int gr1) {
+  public void draw(PGraphics g, int gr0, int gr1) {
 	  int texTarget = GL11.GL_TEXTURE_2D;
 	  GLTexture tex;
 	  float pointSize;
