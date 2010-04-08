@@ -3012,7 +3012,6 @@ public class PApplet extends Activity implements PConstants, Runnable {
       return new PShapeSVG(this, filename);
     } else if (filename.toLowerCase().endsWith(".obj")) {
       if (g instanceof PGraphicsAndroid3D) {
-        // TODO: implement obj loading for GLModels
         return new GLModel(this, filename);
       } else {
         throw new RuntimeException("OBJ files can be loaded only when using the A3D renderer.");
@@ -3022,11 +3021,28 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
   
-  public PShape createShape(int nvert) {
+  public PShape createShape(int nvert, int kind) {
+    return this.createShape(nvert, kind, GLConstants.STATIC);
+  }
+  
+  
+  public PShape createShape(int nvert, int kind, int mode) {
     if (g instanceof PGraphicsAndroid3D) {
-      // TODO: how to handle custom parameters?
-      GLModel.Parameters params = GLModel.newParameters(TRIANGLES, GLConstants.STATIC);
+      GLModel.Parameters params = GLModel.newParameters(kind, GLConstants.STATIC);
       GLModel model = new GLModel(this, nvert, params);
+      return model;
+    } else  {
+       throw new RuntimeException("3D PShapes can only be created when using the A3D renderer.");
+    }
+  }
+
+  
+  public PShape createShape(PShape shape) {
+    if (g instanceof PGraphicsAndroid3D) {
+      PGraphicsAndroid3D a3d = (PGraphicsAndroid3D)g;
+      a3d.beginShapeRecorderImpl(); 
+      shape(shape, 0, 0, 1, 1);
+      GLModel model = a3d.endShapeRecorderImpl();
       return model;
     } else  {
        throw new RuntimeException("3D PShapes can only be created when using the A3D renderer.");
