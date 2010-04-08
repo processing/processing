@@ -1321,7 +1321,128 @@ public class PShape3D extends PShape implements PConstants {
   
   ///////////////////////////////////////////////////////////  
 
-  // Methods inherited from PShape.
+  // Reimplementing methods inherited from PShape.
+  
+  
+  public void translate(float tx, float ty) {
+    translate(tx, ty, 0);
+  }
+
+
+  public void translate(float tx, float ty, float tz) {
+    float[] tmpVertexArray = new float[numVertices * 3];
+    
+    // Getting vertex data.
+    beginUpdate(VERTICES);
+    getVertexArrayImpl(tmpVertexArray, 0, numVertices, 0);
+    endUpdate();
+    
+    // Translating.
+    for (int i = 0; i < numVertices; i++) {
+      tmpVertexArray[3 * i + 0] += tx;
+      tmpVertexArray[3 * i + 1] += -ty;
+      tmpVertexArray[3 * i + 2] += tz;  
+    }
+    
+    // Pushing back to GPU.
+    beginUpdateImpl(VERTICES, 0, numVertices - 1);
+    setVertex(tmpVertexArray);
+    endUpdate();    
+  }  
+  
+  
+  public void rotateX(float angle) {
+    rotate(angle, 1, 0, 0);
+  }
+
+
+  public void rotateY(float angle) {
+    rotate(angle, 0, 1, 0);
+  }
+
+
+  public void rotateZ(float angle) {
+    rotate(angle, 0, 0, 1);
+  }
+
+
+  public void rotate(float angle) {
+    rotate(angle, 0, 0, 1);
+  }
+
+
+  public void rotate(float angle, float v0, float v1, float v2) {
+    // TODO should make sure this vector is normalized, and test that this method works ok.
+    
+    float[] tmpVertexArray = new float[numVertices * 3];
+    
+    // Getting vertex data.
+    beginUpdate(VERTICES);
+    getVertexArrayImpl(tmpVertexArray, 0, numVertices, 0);
+    endUpdate();
+    
+    // Rotating (around xmin, ymin, zmin)
+    float c = PApplet.cos(angle);
+    float s = PApplet.sin(angle);
+    float t = 1.0f - c;
+    float[] m = new float[9];
+    m[0] = (t*v0*v0) + c;          // 0, 0
+    m[1] = (t*v0*v1) - (s*v2);   // 0, 1
+    m[2] = (t*v0*v2) + (s*v1); // 0, 2 
+    m[3] = (t*v0*v1) + (s*v2); // 1, 0
+    m[4] = (t*v1*v1) + c;          // 1, 1
+    m[5] =  (t*v1*v2) - (s*v0);  // 1, 2
+    m[6] = (t*v0*v2) - (s*v1);   // 2, 0
+    m[7] = (t*v1*v2) + (s*v0); // 2, 1 
+    m[8] = (t*v2*v2) + c;          // 2, 2
+    float x, y, z;
+    for (int i = 0; i < numVertices; i++) {
+      x = tmpVertexArray[3 * i + 0] - xmin; 
+      y = tmpVertexArray[3 * i + 1] - ymin;
+      z = tmpVertexArray[3 * i + 2] - zmin;      
+      
+      tmpVertexArray[3 * i + 0] = m[0] * x + m[1] * y + m[2] * z + xmin; 
+      tmpVertexArray[3 * i + 1] = m[3] * x + m[4] * y + m[5] * z + ymin;
+      tmpVertexArray[3 * i + 2] = m[6] * x + m[7] * y + m[8] * z + zmin;
+    }        
+    
+    // Pushing back to GPU.
+    beginUpdateImpl(VERTICES, 0, numVertices - 1);
+    setVertex(tmpVertexArray);
+    endUpdate();        
+  }
+
+  
+  public void scale(float s) {
+    scale(s, s, s);
+  }
+
+
+  public void scale(float sx, float sy) {
+    scale(sx, sy, 1);
+  }
+
+
+  public void scale(float x, float y, float z) {
+    float[] tmpVertexArray = new float[numVertices * 3];
+    
+    // Getting vertex data.
+    beginUpdate(VERTICES);
+    getVertexArrayImpl(tmpVertexArray, 0, numVertices, 0);
+    endUpdate();
+    
+    // Scaling.
+    for (int i = 0; i < numVertices; i++) {
+      tmpVertexArray[3 * i + 0] *= x;
+      tmpVertexArray[3 * i + 1] *= y;
+      tmpVertexArray[3 * i + 2] *= z;  
+    }    
+    
+    // Pushing back to GPU.
+    beginUpdateImpl(VERTICES, 0, numVertices - 1);
+    setVertex(tmpVertexArray);
+    endUpdate();         
+  }
   
   
   public boolean is3D() {
