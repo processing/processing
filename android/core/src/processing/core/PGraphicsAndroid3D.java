@@ -190,7 +190,6 @@ public class PGraphicsAndroid3D extends PGraphics {
   static public boolean BIG_ENDIAN =
     ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN;
   
-  // TODO: this should be obtained on runtime.
   // Size of an int (in bytes).
   static protected int SIZEOF_INT = Integer.SIZE / 8;
   
