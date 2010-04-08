@@ -721,14 +721,11 @@ public class PShape implements PConstants {
 
 
   public void rotate(float angle) {
-    checkMatrix(2);  // at least 2...
-    matrix.rotate(angle);
+    rotate(angle, 0, 0, 1);
   }
 
 
   public void rotate(float angle, float v0, float v1, float v2) {
-    checkMatrix(3);
-    matrix.rotate(angle, v0, v1, v2);
   }
 
 
