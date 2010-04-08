@@ -58,7 +58,7 @@ public class PImage implements PConstants, Cloneable {
   public PApplet parent;
 
   protected Bitmap bitmap;
-  protected GLTexture texture;
+  protected PTexture texture;
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -192,19 +192,19 @@ public class PImage implements PConstants, Cloneable {
   
   
   public void initTexture() {
-    texture = new GLTexture(parent, width, height, new GLTexture.Parameters(format));
+    texture = new PTexture(parent, width, height, new PTexture.Parameters(format));
     updateTexture();
   }
   
 
   public void initTexture(int filter) {
-    texture = new GLTexture(parent, width, height, new GLTexture.Parameters(format, filter));
+    texture = new PTexture(parent, width, height, new PTexture.Parameters(format, filter));
     updateTexture();
   }
 
 
-  public void initTexture(GLTexture.Parameters params) {
-    texture = new GLTexture(parent, width, height, params);
+  public void initTexture(PTexture.Parameters params) {
+    texture = new PTexture(parent, width, height, params);
     updateTexture();
   }
   
@@ -215,12 +215,12 @@ public class PImage implements PConstants, Cloneable {
   }
   
   
-  public void setTexture(GLTexture texture) {
+  public void setTexture(PTexture texture) {
     this.texture = texture;
   }
   
   
-  public GLTexture getTexture() {
+  public PTexture getTexture() {
     return texture;
   }
 

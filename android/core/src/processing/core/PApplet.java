@@ -1106,7 +1106,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
-  public PImage createImage(int wide, int high, GLTexture.Parameters params) {
+  public PImage createImage(int wide, int high, PTexture.Parameters params) {
     PImage image = new PImage(wide, high, params.format);
     image.parent = this;  // make save() work
     if (g instanceof PGraphicsAndroid3D) {

@@ -64,7 +64,7 @@ public class PShape3D extends PShape implements PConstants {
   protected int updateElement;
   protected int firstUpdateIdx;
   protected int lastUpdateIdx;
-  protected GLTexture updateTexture;
+  protected PTexture updateTexture;
   
   protected ArrayList<VertexGroup> groups;
   protected VertexGroup[] vertGroup;
@@ -157,7 +157,7 @@ public class PShape3D extends PShape implements PConstants {
   // Textures
   
   
-  public void setTexture(GLTexture tex) {
+  public void setTexture(PTexture tex) {
     if (updateElement == -1) { 
       for (int i = 0; i < groups.size(); i++) setGroupTexture(i, tex);
     } else if (updateElement == TEXTURES) {
@@ -166,7 +166,7 @@ public class PShape3D extends PShape implements PConstants {
   }
 
   
-  public GLTexture getTexture() {
+  public PTexture getTexture() {
     return getGroupTexture(0);
   }
   
@@ -884,7 +884,7 @@ public class PShape3D extends PShape implements PConstants {
   }  
   
   
-  public void setGroup(int gr, int idx0, int idx1, GLTexture tex) {
+  public void setGroup(int gr, int idx0, int idx1, PTexture tex) {
     if (updateElement != GROUPS) {
       throw new RuntimeException("PShape3D: update mode is not set to GROUPS");
     }
@@ -919,13 +919,13 @@ public class PShape3D extends PShape implements PConstants {
   }
 
   
-  public void setGroupTexture(int gr, GLTexture tex) {
+  public void setGroupTexture(int gr, PTexture tex) {
     VertexGroup group = (VertexGroup)groups.get(gr);
     group.texture = tex;
   }
 
   
-  public GLTexture getGroupTexture(int gr) {
+  public PTexture getGroupTexture(int gr) {
     VertexGroup group = (VertexGroup)groups.get(gr);
     return group.texture;
   }
@@ -1018,7 +1018,7 @@ public class PShape3D extends PShape implements PConstants {
   }
   
   
-  protected void addGroup(int idx0, int idx1, GLTexture tex) {
+  protected void addGroup(int idx0, int idx1, PTexture tex) {
     if (0 <= idx0 && idx0 <=  idx1) {
       VertexGroup group = new VertexGroup(idx0, idx1, tex);
       groups.add(group);
@@ -1466,7 +1466,7 @@ public class PShape3D extends PShape implements PConstants {
   
   public void draw(PGraphics g, int gr0, int gr1) {
 	  int texTarget = GL11.GL_TEXTURE_2D;
-	  GLTexture tex;
+	  PTexture tex;
 	  float pointSize;
 	  
 	  // Setting line width and point size from stroke value.
@@ -1620,17 +1620,17 @@ public class PShape3D extends PShape implements PConstants {
   }
   
 
-  static public VertexGroup newVertexGroup(int n0, int n1, GLTexture tex) {
+  static public VertexGroup newVertexGroup(int n0, int n1, PTexture tex) {
     return new VertexGroup(n0, n1, tex);  
   }    
 
   
-  static public VertexGroup newVertexGroup(int n0, int n1, int mode, GLTexture tex) {
+  static public VertexGroup newVertexGroup(int n0, int n1, int mode, PTexture tex) {
     return new VertexGroup(n0, n1, mode, tex);  
   }        
         
 
-  static public VertexGroup newVertexGroup(int n0, int n1, int mode, float weight, GLTexture tex) {
+  static public VertexGroup newVertexGroup(int n0, int n1, int mode, float weight, PTexture tex) {
     return new VertexGroup(n0, n1, mode, weight, tex);  
   }        
   
@@ -1644,7 +1644,7 @@ public class PShape3D extends PShape implements PConstants {
       texture = null;
     }
 
-    VertexGroup(int n0, int n1, GLTexture tex) {
+    VertexGroup(int n0, int n1, PTexture tex) {
       first = n0;
       last = n1; 
       glMode = 0;
@@ -1652,11 +1652,11 @@ public class PShape3D extends PShape implements PConstants {
       texture = tex;
     }
 
-    VertexGroup(int n0, int n1, int mode, GLTexture tex) {
+    VertexGroup(int n0, int n1, int mode, PTexture tex) {
       this(n0, n1, mode, 0, tex);
     }    
     
-    VertexGroup(int n0, int n1, int mode, float weight, GLTexture tex) {
+    VertexGroup(int n0, int n1, int mode, float weight, PTexture tex) {
       first = n0;
       last = n1; 
       if (mode == POINTS) glMode = GL11.GL_POINTS;
@@ -1678,6 +1678,6 @@ public class PShape3D extends PShape implements PConstants {
 	  int last;
 	  int glMode;
 	  float sw;
-    GLTexture texture;      
+    PTexture texture;      
 	}  
 }
