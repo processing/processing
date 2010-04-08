@@ -3021,14 +3021,14 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
   
-  public PShape createShape(int nvert, int kind) {
-    return this.createShape(nvert, kind, GLConstants.STATIC);
+  public GLModel createShape(int nvert, int kind) {
+    return this.createShape(nvert, kind, STATIC);
   }
   
   
-  public PShape createShape(int nvert, int kind, int mode) {
+  public GLModel createShape(int nvert, int kind, int mode) {
     if (g instanceof PGraphicsAndroid3D) {
-      GLModel.Parameters params = GLModel.newParameters(kind, GLConstants.STATIC);
+      GLModel.Parameters params = GLModel.newParameters(kind, STATIC);
       GLModel model = new GLModel(this, nvert, params);
       return model;
     } else  {
@@ -3037,7 +3037,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
   
-  public PShape createShape(PShape shape) {
+  public GLModel createShape(PShape shape) {
     if (g instanceof PGraphicsAndroid3D) {
       PGraphicsAndroid3D a3d = (PGraphicsAndroid3D)g;
       a3d.beginShapeRecorderImpl(); 
@@ -3106,67 +3106,6 @@ public class PApplet extends Activity implements PConstants, Runnable {
       baseFont = PFont.findTypeface(name);
     }
     return new PFont(baseFont, round(size), smooth, charset);
-  }
-
-
-  
-  //////////////////////////////////////////////////////////////
-  
-  // GL-methods
-
-  
-//  public GLFont loadGLFont(String filename) {
-//    try {
-//      InputStream input = createInput(filename);
-//      return new GLFont(this, input);
-//
-//    } catch (Exception e) {
-//      die("Could not load font " + filename + ". " +
-//          "Make sure that the font has been copied " +
-//          "to the data folder of your sketch.", e);
-//    }
-//    return null;
-//  }
-//
-//  
-//  public GLFont createGLFont(String name, float size) {
-//    return createGLFont(name, size, true, GLFont.DEFAULT_CHARSET);
-//  }
-//
-//
-//  public GLFont createGLFont(String name, float size, boolean smooth) {
-//    return createGLFont(name, size, smooth, GLFont.DEFAULT_CHARSET);
-//  }
-//
-//  
-//  public GLFont createGLFont(String name, float size,
-//                          boolean smooth, char charset[]) {
-//    String lowerName = name.toLowerCase();
-//    Typeface baseFont = null;
-//
-//    if (lowerName.endsWith(".otf") || lowerName.endsWith(".ttf")) {
-//      AssetManager assets = getBaseContext().getAssets();
-//      baseFont = Typeface.createFromAsset(assets, "data/" + name);
-//
-//    } else {
-//      baseFont = PFont.findTypeface(name);
-//    }
-//    return new GLFont(this, baseFont, round(size), smooth, charset);
-//  }
-
-
-//  public GLTexture loadGLTexture(String filename) {
-//    return new GLTexture(this, filename);
-//  }
-
-  
-  public GLModel loadGLModel(String filename) {
-    return new GLModel(this, filename);
-  }
-  
-  
-  public void model(GLModel model, float x, float y, float z) {
-      g.model(model, x, y, z);
   }
   
   
@@ -6759,11 +6698,21 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  public void shape(PShape shape, float x, float y, float z) {
+    g.shape(shape, x, y, z);
+  }  
+  
+  
   public void shape(PShape shape, float x, float y, float c, float d) {
     g.shape(shape, x, y, c, d);
   }
 
 
+  public void shape(PShape shape, float x, float y, float z, float c, float d, float e) {
+    g.shape(shape, x, y, z, c, d, e);
+  }
+  
+  
   public void textAlign(int align) {
     g.textAlign(align);
   }
