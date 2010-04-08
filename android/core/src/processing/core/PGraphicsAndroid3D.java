@@ -630,21 +630,26 @@ public class PGraphicsAndroid3D extends PGraphics {
 
 
   //public void beginShape()
-
   
+
   public void beginShapeRecorder() {
     beginShapeRecorder(POLYGON);
   }
     
   
   public void beginShapeRecorder(int kind) {
+    beginShapeRecorderImpl();
+    beginShape(kind);
+  }
+  
+  
+  protected void beginShapeRecorderImpl() {
     recordingModel = true;
     recordedVertices = new ArrayList<PVector>(vertexBuffer.capacity() / 3);
     recordedColors = new ArrayList<float[]>(colorBuffer.capacity() / 4);
     recordedNormals = new ArrayList<PVector>(normalBuffer.capacity() / 4);
     recordedTexCoords = new ArrayList<PVector>(texCoordBuffer.capacity() / 2);
-    recordedGroups = new ArrayList<VertexGroup>();
-    beginShape(kind);
+    recordedGroups = new ArrayList<VertexGroup>();    
   }
   
   
@@ -959,29 +964,36 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   public GLModel endShapeRecorder(int mode) {
     endShape(mode);
-    
-    recordingModel = false;
-    GLModel model = new GLModel(parent, recordedVertices.size());
-    
-    model.beginUpdate(GLConstants.VERTICES);
-    model.setVertex(recordedVertices);
-    model.endUpdate();
-    
-    model.beginUpdate(GLConstants.COLORS);
-    model.setColor(recordedColors);
-    model.endUpdate();
-    
-    model.beginUpdate(GLConstants.NORMALS);
-    model.setNormal(recordedNormals);
-    model.endUpdate();
-    
-    model.beginUpdate(GLConstants.TEXTURES);
-    model.setTexCoord(recordedTexCoords);
-    model.endUpdate();
-    
-    model.setGroups(recordedGroups);
-    return model;
+    return endShapeRecorderImpl();
   }  
+  
+  
+  protected GLModel endShapeRecorderImpl() {
+    recordingModel = false;
+    if (0 < recordedVertices.size()) {
+      GLModel model = new GLModel(parent, recordedVertices.size());
+    
+      model.beginUpdate(GLConstants.VERTICES);
+      model.setVertex(recordedVertices);
+      model.endUpdate();
+    
+      model.beginUpdate(GLConstants.COLORS);
+      model.setColor(recordedColors);
+      model.endUpdate();
+    
+      model.beginUpdate(GLConstants.NORMALS);
+      model.setNormal(recordedNormals);
+      model.endUpdate();
+    
+      model.beginUpdate(GLConstants.TEXTURES);
+      model.setTexCoord(recordedTexCoords);
+      model.endUpdate();
+    
+      model.setGroups(recordedGroups);
+      return model;      
+    }
+    return null;
+  }
   
   
   //////////////////////////////////////////////////////////////
@@ -1704,19 +1716,6 @@ public class PGraphicsAndroid3D extends PGraphics {
 
 
   //protected void sort()
-
-  
-  //////////////////////////////////////////////////////////////
-
-  // MODEL, SHAPE
-
-
-  public void model(GLModel model, float x, float y, float z) {
-    gl.glPushMatrix();
-    gl.glTranslatef(x, y, z);
-    model.render();
-    gl.glPopMatrix();
-  }
   
   
   //////////////////////////////////////////////////////////////
