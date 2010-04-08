@@ -3012,7 +3012,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
       return new PShapeSVG(this, filename);
     } else if (filename.toLowerCase().endsWith(".obj")) {
       if (g instanceof PGraphicsAndroid3D) {
-        return new GLModel(this, filename);
+        return new PShape3D(this, filename);
       } else {
         throw new RuntimeException("OBJ files can be loaded only when using the A3D renderer.");
       }
@@ -3021,15 +3021,15 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
   
-  public GLModel createShape(int nvert, int kind) {
+  public PShape3D createShape(int nvert, int kind) {
     return this.createShape(nvert, kind, STATIC);
   }
   
   
-  public GLModel createShape(int nvert, int kind, int mode) {
+  public PShape3D createShape(int nvert, int kind, int mode) {
     if (g instanceof PGraphicsAndroid3D) {
-      GLModel.Parameters params = GLModel.newParameters(kind, STATIC);
-      GLModel model = new GLModel(this, nvert, params);
+      PShape3D.Parameters params = PShape3D.newParameters(kind, STATIC);
+      PShape3D model = new PShape3D(this, nvert, params);
       return model;
     } else  {
        throw new RuntimeException("3D PShapes can only be created when using the A3D renderer.");
@@ -3037,12 +3037,12 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
   
-  public GLModel createShape(PShape shape) {
+  public PShape3D createShape(PShape shape) {
     if (g instanceof PGraphicsAndroid3D) {
       PGraphicsAndroid3D a3d = (PGraphicsAndroid3D)g;
       a3d.beginShapeRecorderImpl(); 
       shape(shape, 0, 0, 1, 1);
-      GLModel model = a3d.endShapeRecorderImpl();
+      PShape3D model = a3d.endShapeRecorderImpl();
       return model;
     } else  {
        throw new RuntimeException("3D PShapes can only be created when using the A3D renderer.");
@@ -6458,7 +6458,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
   
-  public GLModel endShapeRecorder() {
+  public PShape3D endShapeRecorder() {
     if (g instanceof PGraphicsAndroid3D) {
       return ((PGraphicsAndroid3D) g).endShapeRecorder();
     } else  {
@@ -6467,7 +6467,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }  
   
   
-  public GLModel endShapeRecorder(int mode) {
+  public PShape3D endShapeRecorder(int mode) {
     if (g instanceof PGraphicsAndroid3D) {
       return ((PGraphicsAndroid3D) g).endShapeRecorder(mode);
     } else  {
