@@ -17,9 +17,6 @@ options {
     // debugging messages, however, doing so disables highlighting errors
     // in the editor.
     defaultErrorHandler = false; //true;
-    
-    // permit mode-detection heuristics, below
-    k=3;
 }
 
 tokens {
@@ -50,35 +47,12 @@ tokens {
 }
 
 pdeProgram
-        // only java mode programs will have their own public classes or
-        // imports (and they must have at least one)
-    :   ( "public" "class" | "import" ) => javaProgram
-        { pp.setMode(PdePreprocessor.Mode.JAVA); }
-
-        // the syntactic predicate here looks for any minimal (thus
-        // the non-greedy qualifier) number of fields, followed by
-        // the tokens that represent the definition of loop() or
-        // some other member function.  java mode programs may have such
-        // definitions, but they won't reach this point, having already been
-        // selected in the previous alternative.  static mode programs 
-        // don't have member functions.
-        //
-        // The typeSpec match causes ANTLR to emit a warning about potentially
-        // exiting the nongreedy match incorrectly, but I haven't found a case
-        // of that in practice. Please report such a case!
-    |   ( (options{greedy=false;}: possiblyEmptyField)* typeSpec[false] IDENT LPAREN ) 
-        => activeProgram
-        { pp.setMode(PdePreprocessor.Mode.ACTIVE); }
-
+    :  
 		// Some programs can be equally well interpreted as STATIC or ACTIVE;
 		// this forces the parser to prefer the STATIC interpretation.
-    |   (staticProgram) => staticProgram
+        (staticProgram) => staticProgram
         { pp.setMode(PdePreprocessor.Mode.STATIC); }
         
-		// Some correct ACTIVE programs (using lots of modifiers and/or
-		// type arguments) are not caught by the heuristic predicate above,
-		// so we at least catch those here so that the STATIC catch-all, below,
-		// won't choke on it.
     |   (activeProgram) => activeProgram
         { pp.setMode(PdePreprocessor.Mode.ACTIVE); }
         

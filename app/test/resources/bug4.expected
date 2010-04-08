@@ -16,11 +16,9 @@ import java.util.zip.*;
 import java.util.regex.*; 
 
 public class bug4 extends PApplet {
-    public void setup() {
+
 int x = 12;
 float u = (PApplet.parseFloat(x)/width); 
-    noLoop();
-} 
     static public void main(String args[]) {
         PApplet.main(new String[] { "--bgcolor=null", "bug4" });
     }

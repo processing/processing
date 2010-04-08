@@ -38,6 +38,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 import processing.app.Preferences;
 import processing.app.antlr.PdeLexer;
 import processing.app.antlr.PdeRecognizer;
@@ -386,6 +387,14 @@ public class PdePreprocessor implements PdeTokenTypes {
     return new String(p2, 0, index);
   }
 
+  private static final Pattern PUBLIC_CLASS = Pattern.compile(
+    "(^|;)\\s*public\\s+class", Pattern.MULTILINE);
+
+  private static final Pattern FUNCTION_DECL = Pattern
+      .compile(
+        "(^|;)\\s*((public|private|protected|final|static)\\s+)*(void|int|float|double|String|char|byte)(\\s*\\[\\s*\\])?\\s+[a-zA-Z0-9]+\\s*\\(",
+        Pattern.MULTILINE);
+
   /**
    * preprocesses a pde file and writes out a java file
    * @return the class name of the exported Java
@@ -436,10 +445,16 @@ public class PdePreprocessor implements PdeTokenTypes {
     //
     parser.setASTNodeClass("antlr.ExtendedCommonASTWithHiddenTokens");
 
-    // start parsing at the compilationUnit non-terminal
-    //
-    parser.pdeProgram();
-
+    if (PUBLIC_CLASS.matcher(program).find()) {
+      setMode(Mode.JAVA);
+      parser.javaProgram();
+    } else if (FUNCTION_DECL.matcher(program).find()) {
+      setMode(Mode.ACTIVE);
+      parser.activeProgram();
+    } else {
+      parser.pdeProgram();
+    }
+    
     // set up the AST for traversal by PdeEmitter
     //
     ASTFactory factory = new ASTFactory();

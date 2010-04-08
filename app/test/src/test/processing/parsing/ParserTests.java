@@ -182,7 +182,7 @@ public class ParserTests {
 
   @Test
   public void bug820() {
-    expectCompilerException("bug820", "x1 is already defined in setup()", 21);
+    expectCompilerException("bug820", "x1 is already defined in bug820", 21);
   }
 
   @Test
@@ -258,6 +258,11 @@ public class ParserTests {
   @Test
   public void bug1525() {
     expectGood("bug1525");
+  }
+
+  @Test
+  public void bug1532() {
+    expectRecognitionException("bug1532", "unexpected token: break", 50);
   }
 
   @Test

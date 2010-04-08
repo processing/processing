@@ -16,10 +16,8 @@ import java.util.zip.*;
 import java.util.regex.*; 
 
 public class bug1534 extends PApplet {
-    public void setup() {
+
 char c = '\"';
-    noLoop();
-} 
     static public void main(String args[]) {
         PApplet.main(new String[] { "--bgcolor=null", "bug1534" });
     }
