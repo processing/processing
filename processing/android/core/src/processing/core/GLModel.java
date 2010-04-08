@@ -36,7 +36,7 @@ import java.lang.reflect.Method;
  * By Andres Colubri
  * 
  */
-public class GLModel extends PShape implements GLConstants, PConstants {
+public class GLModel extends PShape implements PConstants {
   protected PApplet parent;    
   protected GL11 gl;  
   protected PGraphicsAndroid3D a3d;
@@ -75,7 +75,6 @@ public class GLModel extends PShape implements GLConstants, PConstants {
 
   protected int recreateResourceIdx;
   
-  public float depth;
   protected float xmin, xmax;
   protected float ymin, ymax;
   protected float zmin, zmax;
@@ -1323,16 +1322,12 @@ public class GLModel extends PShape implements GLConstants, PConstants {
   ///////////////////////////////////////////////////////////  
 
   // Methods inherited from PShape.
-
-  public float getDepth() {
-    return depth;
+  
+  
+  public boolean is3D() {
+    return true;
   }
   
-  
-  public boolean isVisible() {
-    return visible;
-  }  
-
   
   ///////////////////////////////////////////////////////////  
 
