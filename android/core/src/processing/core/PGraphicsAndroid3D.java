@@ -42,7 +42,7 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLDisplay;
 
-import processing.core.GLModel.VertexGroup;
+import processing.core.PShape3D.VertexGroup;
 
 
 // drawPixels is missing...calls to glDrawPixels are commented out
@@ -376,7 +376,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   
   public void recreateResources() {
-    // Recreate the openGL resources of the registered GL objects (GLTexture, GLModel)
+    // Recreate the openGL resources of the registered GL objects (GLTexture, PShape3D)
     for (int i = 0; i < recreateResourceMethods.size(); i++) {
       GLResource resource = (GLResource)recreateResourceMethods.get(i);
       try {
@@ -957,21 +957,21 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
 
   
-  public GLModel endShapeRecorder() {
+  public PShape3D endShapeRecorder() {
     return endShapeRecorder(OPEN);
   }
 
   
-  public GLModel endShapeRecorder(int mode) {
+  public PShape3D endShapeRecorder(int mode) {
     endShape(mode);
     return endShapeRecorderImpl();
   }  
   
   
-  protected GLModel endShapeRecorderImpl() {
+  protected PShape3D endShapeRecorderImpl() {
     recordingModel = false;
     if (0 < recordedVertices.size()) {
-      GLModel model = new GLModel(parent, recordedVertices.size());
+      PShape3D model = new PShape3D(parent, recordedVertices.size());
     
       model.beginUpdate(VERTICES);
       model.setVertex(recordedVertices);
@@ -1246,7 +1246,7 @@ public class PGraphicsAndroid3D extends PGraphics {
             n1 = n0 + pathLength[k] - 1;
           }
           
-          VertexGroup group = GLModel.newVertexGroup(n0, n1, LINE_STRIP, sw, null);
+          VertexGroup group = PShape3D.newVertexGroup(n0, n1, LINE_STRIP, sw, null);
           
           recordedGroups.add(group);   
         }
@@ -1405,7 +1405,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       if (recordingModel) {
         int n0 = recordedVertices.size();
         int n1 = n0 + 3 * faceLength[j] - 1;
-        VertexGroup group = GLModel.newVertexGroup(n0, n1, TRIANGLES, 0, tex);
+        VertexGroup group = PShape3D.newVertexGroup(n0, n1, TRIANGLES, 0, tex);
         recordedGroups.add(group);
       }   
       
@@ -2050,15 +2050,15 @@ public class PGraphicsAndroid3D extends PGraphics {
   //public void shapeMode(int mode)
 
 
-  public void shape(GLModel shape) {
+  public void shape(PShape3D shape) {
       shape.draw(this);
   }
 
 
-  public void shape(GLModel shape, float x, float y) {
+  public void shape(PShape3D shape, float x, float y) {
   }
 
-  public void shape(GLModel shape, float x, float y, float z) {
+  public void shape(PShape3D shape, float x, float y, float z) {
     pushMatrix();
     translate(x, y, z);
     shape.draw(this);

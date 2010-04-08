@@ -36,7 +36,7 @@ import java.lang.reflect.Method;
  * By Andres Colubri
  * 
  */
-public class GLModel extends PShape implements PConstants {
+public class PShape3D extends PShape implements PConstants {
   protected PApplet parent;    
   protected GL11 gl;  
   protected PGraphicsAndroid3D a3d;
@@ -87,23 +87,23 @@ public class GLModel extends PShape implements PConstants {
   // Constructors.
 
   
-  public GLModel(PApplet parent, int numVert) {
+  public PShape3D(PApplet parent, int numVert) {
     this(parent, numVert, new Parameters()); 
   }  
 
   
   // TODO: implement loading from obj and mdl files.
-  public GLModel(PApplet parent, String filename) { // Ignore
+  public PShape3D(PApplet parent, String filename) { // Ignore
     this.parent = parent;
     a3d = (PGraphicsAndroid3D)parent.g;
     
     // Checking we have what we need:
     gl = a3d.gl11;
     if (gl == null) {
-      throw new RuntimeException("GLModel: OpenGL ES 1.1 required");
+      throw new RuntimeException("PShape3D: OpenGL ES 1.1 required");
     }
     if (!a3d.vboSupported) {
-       throw new RuntimeException("GLModel: Vertex Buffer Objects are not available");
+       throw new RuntimeException("PShape3D: Vertex Buffer Objects are not available");
     }
   
     String lines[] =  parent.loadStrings(filename);
@@ -111,17 +111,17 @@ public class GLModel extends PShape implements PConstants {
   }  
   
   
-  public GLModel(PApplet parent, int numVert, Parameters params) {
+  public PShape3D(PApplet parent, int numVert, Parameters params) {
     this.parent = parent;
     a3d = (PGraphicsAndroid3D)parent.g;
     
     // Checking we have what we need:
     gl = a3d.gl11;
     if (gl == null) {
-      throw new RuntimeException("GLModel: OpenGL ES 1.1 required");
+      throw new RuntimeException("PShape3D: OpenGL ES 1.1 required");
     }
     if (!a3d.vboSupported) {
-       throw new RuntimeException("GLModel: Vertex Buffer Objects are not available");
+       throw new RuntimeException("PShape3D: Vertex Buffer Objects are not available");
     }
     
     setParameters(params);
@@ -183,7 +183,7 @@ public class GLModel extends PShape implements PConstants {
   
   protected void beginUpdateImpl(int element, int first, int last) {
     if (updateElement != -1) {
-      throw new RuntimeException("GLModel: only one element can be updated at the time");
+      throw new RuntimeException("PShape3D: only one element can be updated at the time");
     }
     
     updateElement = element;
@@ -229,14 +229,14 @@ public class GLModel extends PShape implements PConstants {
     } else if (updateElement == GROUPS) {
       deleteGroups();
     } else {
-      throw new RuntimeException("GLModel: unknown element to update");  
+      throw new RuntimeException("PShape3D: unknown element to update");  
     }    
   }
   
   
   public void endUpdate() {
     if (updateElement == -1) {
-      throw new RuntimeException("GLModel: call beginUpdate() first");
+      throw new RuntimeException("PShape3D: call beginUpdate() first");
     }
     
     if (lastUpdateIdx < firstUpdateIdx) {
@@ -304,7 +304,7 @@ public class GLModel extends PShape implements PConstants {
   
   public PVector getVertex(int idx) {
     if (updateElement != VERTICES) {
-      throw new RuntimeException("GLModel: update mode is not set to VERTICES");
+      throw new RuntimeException("PShape3D: update mode is not set to VERTICES");
     }
 
     float x = vertexArray[3 * idx + 0];
@@ -318,7 +318,7 @@ public class GLModel extends PShape implements PConstants {
 
   public float[] getVertexArray() {
     if (updateElement != VERTICES) {
-      throw new RuntimeException("GLModel: update mode is not set to VERTICES");
+      throw new RuntimeException("PShape3D: update mode is not set to VERTICES");
     }
     
     float[] res = new float[numVertices * 3];
@@ -336,7 +336,7 @@ public class GLModel extends PShape implements PConstants {
 
   public ArrayList<PVector> getVertexArrayList() {
     if (updateElement != VERTICES) {
-      throw new RuntimeException("GLModel: update mode is not set to VERTICES");
+      throw new RuntimeException("PShape3D: update mode is not set to VERTICES");
     }
 
     ArrayList<PVector> res;
@@ -355,7 +355,7 @@ public class GLModel extends PShape implements PConstants {
   
   public void setVertex(int idx, float x, float y, float z) {
     if (updateElement != VERTICES) {
-      throw new RuntimeException("GLModel: update mode is not set to VERTICES");
+      throw new RuntimeException("PShape3D: update mode is not set to VERTICES");
     }
 
     if (idx < firstUpdateIdx) firstUpdateIdx = idx;
@@ -377,7 +377,7 @@ public class GLModel extends PShape implements PConstants {
   
   public void setVertex(float[] data) {
     if (updateElement != VERTICES) {
-      throw new RuntimeException("GLModel: updadate mode is not set to VERTICES");
+      throw new RuntimeException("PShape3D: updadate mode is not set to VERTICES");
     }
     
     firstUpdateIdx = 0;
@@ -398,7 +398,7 @@ public class GLModel extends PShape implements PConstants {
   
   public void setVertex(ArrayList<PVector> data) {
     if (updateElement != VERTICES) {
-      throw new RuntimeException("GLModel: updadate mode is not set to VERTICES");
+      throw new RuntimeException("PShape3D: updadate mode is not set to VERTICES");
     }
 
     firstUpdateIdx = 0;
@@ -468,7 +468,7 @@ public class GLModel extends PShape implements PConstants {
   
   public float[] getColor(int idx) {
     if (updateElement != COLORS) {
-      throw new RuntimeException("GLModel: update mode is not set to COLORS");
+      throw new RuntimeException("PShape3D: update mode is not set to COLORS");
     }
     
     float[] res = new float[4];
@@ -480,7 +480,7 @@ public class GLModel extends PShape implements PConstants {
   
   public float[] getColorArray() {
     if (updateElement != COLORS) {
-      throw new RuntimeException("GLModel: update mode is not set to COLORS");
+      throw new RuntimeException("PShape3D: update mode is not set to COLORS");
     }
     
     float[] res = new float[numVertices];
@@ -498,7 +498,7 @@ public class GLModel extends PShape implements PConstants {
   
   public ArrayList<float[]> getColorArrayList() {
     if (updateElement != COLORS) {
-      throw new RuntimeException("GLModel: update mode is not set to COLORS");
+      throw new RuntimeException("PShape3D: update mode is not set to COLORS");
     }
 
     ArrayList<float[]> res;
@@ -527,7 +527,7 @@ public class GLModel extends PShape implements PConstants {
   
   public void setColor(int idx, float r, float g, float b, float a) {
     if (updateElement != COLORS) {
-      throw new RuntimeException("GLModel: update mode is not set to COLORS");
+      throw new RuntimeException("PShape3D: update mode is not set to COLORS");
     }
 
     if (idx < firstUpdateIdx) firstUpdateIdx = idx;
@@ -542,7 +542,7 @@ public class GLModel extends PShape implements PConstants {
   
   public void setColor(float[] data) {
     if (updateElement != COLORS) {
-      throw new RuntimeException("GLModel: update mode is not set to COLORS");
+      throw new RuntimeException("PShape3D: update mode is not set to COLORS");
     }
     
     firstUpdateIdx = 0;
@@ -553,7 +553,7 @@ public class GLModel extends PShape implements PConstants {
   
   public void setColor(ArrayList<float[]> data) {
     if (updateElement != COLORS) {
-      throw new RuntimeException("GLModel: update mode is not set to COLORS");
+      throw new RuntimeException("PShape3D: update mode is not set to COLORS");
     }
 
     firstUpdateIdx = 0;
@@ -577,7 +577,7 @@ public class GLModel extends PShape implements PConstants {
   
   public PVector getNormal(int idx) {
     if (updateElement != NORMALS) {
-      throw new RuntimeException("GLModel: update mode is not set to NORMALS");
+      throw new RuntimeException("PShape3D: update mode is not set to NORMALS");
     }
 
     float x = normalArray[3 * idx + 0];
@@ -591,7 +591,7 @@ public class GLModel extends PShape implements PConstants {
 
   public float[] getNormalArray() {
     if (updateElement != NORMALS) {
-      throw new RuntimeException("GLModel: update mode is not set to NORMALS");
+      throw new RuntimeException("PShape3D: update mode is not set to NORMALS");
     }
     
     float[] res = new float[numVertices * 3];
@@ -609,7 +609,7 @@ public class GLModel extends PShape implements PConstants {
   
   public ArrayList<PVector> getNormalArrayList() {
     if (updateElement != NORMALS) {
-      throw new RuntimeException("GLModel: update mode is not set to NORMALS");
+      throw new RuntimeException("PShape3D: update mode is not set to NORMALS");
     }
 
     ArrayList<PVector> res;
@@ -628,7 +628,7 @@ public class GLModel extends PShape implements PConstants {
   
   public void setNormal(int idx, float x, float y, float z) {
     if (updateElement != NORMALS) {
-      throw new RuntimeException("GLModel: update mode is not set to NORMALS");
+      throw new RuntimeException("PShape3D: update mode is not set to NORMALS");
     }
 
     if (idx < firstUpdateIdx) firstUpdateIdx = idx;
@@ -642,7 +642,7 @@ public class GLModel extends PShape implements PConstants {
   
   public void setNormal(float[] data) {
     if (updateElement != NORMALS) {
-      throw new RuntimeException("GLModel: update mode is not set to NORMALS");
+      throw new RuntimeException("PShape3D: update mode is not set to NORMALS");
     }
     
     firstUpdateIdx = 0;
@@ -653,7 +653,7 @@ public class GLModel extends PShape implements PConstants {
   
   public void setNormal(ArrayList<PVector> data) {
     if (updateElement != NORMALS) {
-      throw new RuntimeException("GLModel: update mode is not set to NORMALS");
+      throw new RuntimeException("PShape3D: update mode is not set to NORMALS");
     }
 
     firstUpdateIdx = 0;
@@ -676,7 +676,7 @@ public class GLModel extends PShape implements PConstants {
   
   public PVector getTexCoord(int idx) {
     if (updateElement != TEXTURES) {
-      throw new RuntimeException("GLModel: update mode is not set to TEXTURES");
+      throw new RuntimeException("PShape3D: update mode is not set to TEXTURES");
     }
 
     float u = texCoordArray[2 * idx + 0];
@@ -684,7 +684,7 @@ public class GLModel extends PShape implements PConstants {
     
     if (a3d.imageMode == IMAGE) {
       if (vertGroup[idx] != null && vertGroup[idx].texture == null) {
-        throw new RuntimeException("GLModel: when setting texture coordinates in IMAGE mode, the textures need to be assigned first");
+        throw new RuntimeException("PShape3D: when setting texture coordinates in IMAGE mode, the textures need to be assigned first");
       }      
       u *= vertGroup[idx].texture.width;
       v *= vertGroup[idx].texture.height;
@@ -696,7 +696,7 @@ public class GLModel extends PShape implements PConstants {
   
   public float[] getTexCoordArray() {
     if (updateElement != TEXTURES) {
-      throw new RuntimeException("GLModel: update mode is not set to TEXTURES");
+      throw new RuntimeException("PShape3D: update mode is not set to TEXTURES");
     }
     
     float[] res = new float[numVertices * 2];
@@ -708,7 +708,7 @@ public class GLModel extends PShape implements PConstants {
       float u, v;
       for (int i = 0; i < numVertices; i++) {
         if (vertGroup[i] != null && vertGroup[i].texture == null) {
-          throw new RuntimeException("GLModel: when setting texture coordinates in IMAGE mode, the textures need to be assigned first");
+          throw new RuntimeException("PShape3D: when setting texture coordinates in IMAGE mode, the textures need to be assigned first");
         }        
         
         u = res[2 * i + 0];
@@ -734,7 +734,7 @@ public class GLModel extends PShape implements PConstants {
   
   public ArrayList<PVector> getTexCoordArrayList() {
     if (updateElement != TEXTURES) {
-      throw new RuntimeException("GLModel: update mode is not set to TEXTURES");
+      throw new RuntimeException("PShape3D: update mode is not set to TEXTURES");
     }
 
     ArrayList<PVector> res;
@@ -748,7 +748,7 @@ public class GLModel extends PShape implements PConstants {
   
   public void setTexCoord(int idx, float u, float v) {
     if (updateElement != TEXTURES) {
-      throw new RuntimeException("GLModel: update mode is not set to TEXTURES");
+      throw new RuntimeException("PShape3D: update mode is not set to TEXTURES");
     }
 
     if (idx < firstUpdateIdx) firstUpdateIdx = idx;
@@ -760,7 +760,7 @@ public class GLModel extends PShape implements PConstants {
 
     if (a3d.imageMode == IMAGE) {
       if (vertGroup[idx] != null && vertGroup[idx].texture == null) {
-        throw new RuntimeException("GLModel: when setting texture coordinates in IMAGE mode, the textures need to be assigned first");
+        throw new RuntimeException("PShape3D: when setting texture coordinates in IMAGE mode, the textures need to be assigned first");
       }
       u /= vertGroup[idx].texture.width;
       v /= vertGroup[idx].texture.height; 
@@ -773,7 +773,7 @@ public class GLModel extends PShape implements PConstants {
   
   public void setTexCoord(float[] data) {
     if (updateElement != TEXTURES) {
-      throw new RuntimeException("GLModel: update mode is not set to TEXTURES");
+      throw new RuntimeException("PShape3D: update mode is not set to TEXTURES");
     }
     
     firstUpdateIdx = 0;
@@ -790,7 +790,7 @@ public class GLModel extends PShape implements PConstants {
       float u, v;
       for (int i = 0; i < numVertices; i++) {
         if (vertGroup[i] != null && vertGroup[i].texture == null) {
-          throw new RuntimeException("GLModel: when setting texture coordinates in IMAGE mode, the textures need to be assigned first");
+          throw new RuntimeException("PShape3D: when setting texture coordinates in IMAGE mode, the textures need to be assigned first");
         }      
         
         u = data[2 * i + 0];
@@ -810,7 +810,7 @@ public class GLModel extends PShape implements PConstants {
   
   public void setTexCoord(ArrayList<PVector> data) {
     if (updateElement != TEXTURES) {
-      throw new RuntimeException("GLModel: update mode is not set to TEXTURES");
+      throw new RuntimeException("PShape3D: update mode is not set to TEXTURES");
     }
 
     firstUpdateIdx = 0;
@@ -829,7 +829,7 @@ public class GLModel extends PShape implements PConstants {
       
       if (a3d.imageMode == IMAGE) {
         if (vertGroup[i] != null && vertGroup[i].texture == null) {
-          throw new RuntimeException("GLModel: when setting texture coordinates in IMAGE mode, the textures need to be assigned first");
+          throw new RuntimeException("PShape3D: when setting texture coordinates in IMAGE mode, the textures need to be assigned first");
         }      
         texCoordArray[2 * i + 0] = vec.x / vertGroup[i].texture.width;
         texCoordArray[2 * i + 1] = vec.y / vertGroup[i].texture.height;
@@ -848,7 +848,7 @@ public class GLModel extends PShape implements PConstants {
   
   public void setGroup(int gr) {
     if (updateElement != VERTICES) {
-      throw new RuntimeException("GLModel: setGroup() with group number as only argument must be used while updating vertices");
+      throw new RuntimeException("PShape3D: setGroup() with group number as only argument must be used while updating vertices");
     }
     
     if (firstSetGroup) {
@@ -870,11 +870,11 @@ public class GLModel extends PShape implements PConstants {
   
   public void setGroup(int gr, int idx0, int idx1) {
     if (updateElement != GROUPS) {
-      throw new RuntimeException("GLModel: update mode is not set to GROUPS");
+      throw new RuntimeException("PShape3D: update mode is not set to GROUPS");
     }
 
     if (groups.size() != gr) {
-      throw new RuntimeException("GLModel: wrong group index");
+      throw new RuntimeException("PShape3D: wrong group index");
     }
 
     if (idx0 < firstUpdateIdx) firstUpdateIdx = idx0;
@@ -886,11 +886,11 @@ public class GLModel extends PShape implements PConstants {
   
   public void setGroup(int gr, int idx0, int idx1, GLTexture tex) {
     if (updateElement != GROUPS) {
-      throw new RuntimeException("GLModel: update mode is not set to GROUPS");
+      throw new RuntimeException("PShape3D: update mode is not set to GROUPS");
     }
 
     if (groups.size() != gr) {
-      throw new RuntimeException("GLModel: wrong group index");
+      throw new RuntimeException("PShape3D: wrong group index");
     }
         
     if (idx0 < firstUpdateIdx) firstUpdateIdx = idx0;
@@ -983,7 +983,7 @@ public class GLModel extends PShape implements PConstants {
   public void setGroupDrawMode(int gr, int mode) {
     VertexGroup group = (VertexGroup)groups.get(gr);    
     if (mode == POINTS) group.glMode = GL11.GL_POINTS;
-    else if (mode == POINT_SPRITES)  throw new RuntimeException("GLModel: point sprites can only be set for entire model");
+    else if (mode == POINT_SPRITES)  throw new RuntimeException("PShape3D: point sprites can only be set for entire model");
     else if (mode == LINES) group.glMode = GL11.GL_LINES;
     else if (mode == LINE_STRIP) group.glMode = GL11.GL_LINE_STRIP;
     else if (mode == LINE_LOOP) group.glMode = GL11.GL_LINE_LOOP;
@@ -991,7 +991,7 @@ public class GLModel extends PShape implements PConstants {
     else if (mode == TRIANGLE_FAN) group.glMode = GL11.GL_TRIANGLE_FAN;
     else if (mode == TRIANGLE_STRIP) group.glMode = GL11.GL_TRIANGLE_STRIP;
     else {
-      throw new RuntimeException("GLModel: Unknown draw mode");
+      throw new RuntimeException("PShape3D: Unknown draw mode");
     }
   }
   
@@ -1119,7 +1119,7 @@ public class GLModel extends PShape implements PConstants {
     else if (mode == TRIANGLE_FAN) glMode = GL11.GL_TRIANGLE_FAN;
     else if (mode == TRIANGLE_STRIP) glMode = GL11.GL_TRIANGLE_STRIP;
     else {
-      throw new RuntimeException("GLModel: Unknown draw mode");
+      throw new RuntimeException("PShape3D: Unknown draw mode");
     }
   }
   
@@ -1159,13 +1159,13 @@ public class GLModel extends PShape implements PConstants {
     else if (params.drawMode == TRIANGLE_FAN) glMode = GL11.GL_TRIANGLE_FAN;
     else if (params.drawMode == TRIANGLE_STRIP) glMode = GL11.GL_TRIANGLE_STRIP;
     else {
-      throw new RuntimeException("GLModel: Unknown draw mode");
+      throw new RuntimeException("PShape3D: Unknown draw mode");
     }
     
     if (params.updateMode == STATIC) glUsage = GL11.GL_STATIC_DRAW;
     else if (params.updateMode == DYNAMIC) glUsage = GL11.GL_DYNAMIC_DRAW;
     else {
-      throw new RuntimeException("GLModel: Unknown update mode");
+      throw new RuntimeException("PShape3D: Unknown update mode");
     }
   }
   
@@ -1539,7 +1539,7 @@ public class GLModel extends PShape implements PConstants {
       first = n0;
       last = n1; 
       if (mode == POINTS) glMode = GL11.GL_POINTS;
-      else if (mode == POINT_SPRITES)  throw new RuntimeException("GLModel: point sprites can only be set for entire model");
+      else if (mode == POINT_SPRITES)  throw new RuntimeException("PShape3D: point sprites can only be set for entire model");
       else if (mode == LINES) glMode = GL11.GL_LINES;
       else if (mode == LINE_STRIP) glMode = GL11.GL_LINE_STRIP;
       else if (mode == LINE_LOOP) glMode = GL11.GL_LINE_LOOP;
@@ -1547,7 +1547,7 @@ public class GLModel extends PShape implements PConstants {
       else if (mode == TRIANGLE_FAN) glMode = GL11.GL_TRIANGLE_FAN;
       else if (mode == TRIANGLE_STRIP) glMode = GL11.GL_TRIANGLE_STRIP;
       else {
-        throw new RuntimeException("GLModel: Unknown draw mode");
+        throw new RuntimeException("PShape3D: Unknown draw mode");
       }      
       sw = weight;
       texture = tex;
