@@ -64,6 +64,9 @@ public interface GLConstants {
   public static final int DYNAMIC = 1;    
     
   
+  /**
+   * Used in GLModels..
+   */    
   public static final int VERTICES = 0;
   public static final int NORMALS = 1;
   public static final int COLORS = 2;

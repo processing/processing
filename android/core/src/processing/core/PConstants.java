@@ -290,9 +290,9 @@ public interface PConstants {
   static final int SPHERE          = 40;
   static final int BOX             = 41;
   
-   static public final int LINE_STRIP    = 50;   
-   static public final int LINE_LOOP     = 51;   
-   static public final int POINT_SPRITES = 52;  
+  static public final int LINE_STRIP    = 50;   
+  static public final int LINE_LOOP     = 51;   
+  static public final int POINT_SPRITES = 52;  
 
 
   // shape closing modes
