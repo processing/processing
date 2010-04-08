@@ -375,7 +375,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   
   public void recreateResources() {
-    // Recreate the openGL resources of the registered GL objects (GLTexture, PShape3D)
+    // Recreate the openGL resources of the registered GL objects (PTexture, PShape3D)
     for (int i = 0; i < recreateResourceMethods.size(); i++) {
       GLResource resource = (GLResource)recreateResourceMethods.get(i);
       try {
@@ -1373,7 +1373,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected void renderTriangles(int start, int stop) {
     report("render_triangles in");
 
-    GLTexture tex = null;
+    PTexture tex = null;
     boolean texturing = false;
     
     // Last transformation: inversion of coordinate to make compatible with Processing's inverted Y axis.

@@ -38,7 +38,7 @@ import java.nio.*;
  *  
  */
 @SuppressWarnings("unused")
-public class GLTexture implements PConstants { 
+public class PTexture implements PConstants { 
   public int width, height;
     
   protected PApplet parent;
@@ -69,26 +69,26 @@ public class GLTexture implements PConstants {
 
   
   /**
-   * Creates an instance of GLTexture with size width x height. The texture is
+   * Creates an instance of PTexture with size width x height. The texture is
    * initialized (empty) to that size.
    * @param parent PApplet
    * @param width  int
    * @param height  int
    */	 
-  public GLTexture(PApplet parent, int width, int height) {
+  public PTexture(PApplet parent, int width, int height) {
     this(parent, width, height, new Parameters());
   }
     
   
   /**
-   * Creates an instance of GLTexture with size width x height and with the specified parameters.
+   * Creates an instance of PTexture with size width x height and with the specified parameters.
    *  The texture is initialized (empty) to that size.
    * @param parent PApplet
    * @param width int 
    * @param height int 
    * @param params Parameters 			
    */	 
-  public GLTexture(PApplet parent, int width, int height, Parameters params) { 
+  public PTexture(PApplet parent, int width, int height, Parameters params) { 
     this.parent = parent;
     this.width = width;
     this.height = height;
@@ -109,22 +109,22 @@ public class GLTexture implements PConstants {
 	
 
   /**
-   * Creates an instance of GLTexture using image file filename as source.
+   * Creates an instance of PTexture using image file filename as source.
    * @param parent PApplet
    * @param filename String
    */	
-  public GLTexture(PApplet parent, String filename)  {
+  public PTexture(PApplet parent, String filename)  {
     this(parent, filename,  new Parameters());
   }
 
   
   /**
-   * Creates an instance of GLTexture using image file filename as source and the specified texture parameters.
+   * Creates an instance of PTexture using image file filename as source and the specified texture parameters.
    * @param parent PApplet
    * @param filename String
    * @param params Parameters
    */	
-  public GLTexture(PApplet parent, String filename, Parameters params)  {
+  public PTexture(PApplet parent, String filename, Parameters params)  {
     this.parent = parent;
 	   
     a3d = (PGraphicsAndroid3D)parent.g;
@@ -243,7 +243,7 @@ public class GLTexture implements PConstants {
   }
   
   
-  public void set(GLTexture tex) { // Ignore
+  public void set(PTexture tex) { // Ignore
     // TODO:
     // It doesn't work yet because efficient texture copy requires either FBO or pbuffers
     // Read this thread for more info:
@@ -270,7 +270,7 @@ public class GLTexture implements PConstants {
   public void set(int[] intArray, int arrayFormat) {
     
     if (intArray.length != width * height) {
-      throw new RuntimeException("GLTexture: wrong length of pixels array");
+      throw new RuntimeException("PTexture: wrong length of pixels array");
     }
     
     if (glTextureID[0] == 0) {
@@ -893,21 +893,21 @@ public class GLTexture implements PConstants {
      * Creates an instance of GLTextureParameters, setting all the parameters to default values.
      */
     public Parameters() {
-      target = GLTexture.NORMAL_TEXTURE;
-      format = GLTexture.ARGB;
-      minFilter = GLTexture.LINEAR;
-      magFilter = GLTexture.LINEAR;   
+      target = PTexture.NORMAL_TEXTURE;
+      format = PTexture.ARGB;
+      minFilter = PTexture.LINEAR;
+      magFilter = PTexture.LINEAR;   
     }
       
     public Parameters(int format) {
-      target = GLTexture.NORMAL_TEXTURE;
+      target = PTexture.NORMAL_TEXTURE;
       this.format = format;
-      minFilter = GLTexture.LINEAR;
-      magFilter = GLTexture.LINEAR;   
+      minFilter = PTexture.LINEAR;
+      magFilter = PTexture.LINEAR;   
     }
 
     public Parameters(int format, int filter) {
-      target = GLTexture.NORMAL_TEXTURE;
+      target = PTexture.NORMAL_TEXTURE;
       this.format = format;
       minFilter = filter;
       magFilter = filter;   
