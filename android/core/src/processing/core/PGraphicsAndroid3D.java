@@ -963,35 +963,36 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   public PShape3D endShapeRecorder(int mode) {
     endShape(mode);
-    return endShapeRecorderImpl();
-  }  
+    PShape3D shape = null;
+    if (0 < recordedVertices.size()) {
+      shape = new PShape3D(parent, recordedVertices.size());
+    }
+    endShapeRecorderImpl(shape);
+    return shape;
+  }
   
   
-  protected PShape3D endShapeRecorderImpl() {
+  protected void endShapeRecorderImpl(PShape3D shape) {
     recordingModel = false;
     if (0 < recordedVertices.size()) {
-      PShape3D model = new PShape3D(parent, recordedVertices.size());
+      shape.beginUpdate(VERTICES);
+      shape.setVertex(recordedVertices);
+      shape.endUpdate();
     
-      model.beginUpdate(VERTICES);
-      model.setVertex(recordedVertices);
-      model.endUpdate();
+      shape.beginUpdate(COLORS);
+      shape.setColor(recordedColors);
+      shape.endUpdate();
+   
+      shape.beginUpdate(NORMALS);
+      shape.setNormal(recordedNormals);
+      shape.endUpdate();
     
-      model.beginUpdate(COLORS);
-      model.setColor(recordedColors);
-      model.endUpdate();
-    
-      model.beginUpdate(NORMALS);
-      model.setNormal(recordedNormals);
-      model.endUpdate();
-    
-      model.beginUpdate(TEXTURES);
-      model.setTexCoord(recordedTexCoords);
-      model.endUpdate();
-    
-      model.setGroups(recordedGroups);
-      return model;      
+      shape.beginUpdate(TEXTURES);
+      shape.setTexCoord(recordedTexCoords);
+      shape.endUpdate();
+   
+      shape.setGroups(recordedGroups);
     }
-    return null;
   }
   
   

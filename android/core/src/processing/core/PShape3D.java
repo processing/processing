@@ -27,12 +27,15 @@ import java.nio.FloatBuffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
+import java.io.BufferedReader;
 import java.lang.reflect.Method;
 
 /**
  * This class holds a 3D model composed of vertices, normals, colors (per vertex) and 
  * texture coordinates (also per vertex). All this data is stored in Vertex Buffer Objects
  * (VBO) in GPU memory for very fast access. 
+ * OBJ loading implemented using code from Saito's OBJLoader library (http://code.google.com/p/saitoobjloader/)
+ * and OBJReader from Ahmet Kizilay (http://www.openprocessing.org/visuals/?visualID=191). 
  * By Andres Colubri
  * 
  */
@@ -92,8 +95,7 @@ public class PShape3D extends PShape implements PConstants {
   }  
 
   
-  // TODO: implement loading from obj and mdl files.
-  public PShape3D(PApplet parent, String filename) { // Ignore
+  public PShape3D(PApplet parent, String filename) {
     this.parent = parent;
     a3d = (PGraphicsAndroid3D)parent.g;
     
@@ -106,8 +108,17 @@ public class PShape3D extends PShape implements PConstants {
        throw new RuntimeException("PShape3D: Vertex Buffer Objects are not available");
     }
   
-    String lines[] =  parent.loadStrings(filename);
-    
+    ArrayList<OBJFace> faces = new ArrayList<OBJFace>();
+    ArrayList<OBJMaterial> materials = new ArrayList<OBJMaterial>();
+    ArrayList<PVector> vertices = new ArrayList<PVector>(); 
+    ArrayList<PVector> normals = new ArrayList<PVector>(); 
+    ArrayList<PVector> textures = new ArrayList<PVector>();
+    BufferedReader reader = getBufferedReader(filename);
+    if (reader == null) {
+      throw new RuntimeException("PShape3D: Cannot read source file");
+    }
+    parseOBJ(reader, vertices, normals, textures, faces, materials);
+    recordOBJ(vertices, normals, textures, faces, materials);
   }  
   
   
@@ -1635,7 +1646,7 @@ public class PShape3D extends PShape implements PConstants {
   }        
   
   
-	static protected class VertexGroup {
+	static public class VertexGroup {
     VertexGroup(int n0, int n1) {
       first = n0;
       last = n1;
@@ -1679,5 +1690,107 @@ public class PShape3D extends PShape implements PConstants {
 	  int glMode;
 	  float sw;
     PTexture texture;      
-	}  
+	}
+	
+  ///////////////////////////////////////////////////////////////////////////   
+  
+  // OBJ loading
+	
+  protected BufferedReader getBufferedReader(String filename) {
+    BufferedReader retval = parent.createReader(filename);
+    if (retval != null) {
+      return retval;
+    } else {
+      PApplet.println("Could not find this file " + filename);
+      return null;
+    }
+  }
+	
+  
+  protected void parseOBJ(BufferedReader reader, ArrayList<PVector> vertices, ArrayList<PVector> normals, ArrayList<PVector> textures, ArrayList<OBJFace> faces, ArrayList<OBJMaterial> materials) {
+    
+  }
+  
+  
+  protected void recordOBJ(ArrayList<PVector> vertices, ArrayList<PVector> normals, ArrayList<PVector> textures, ArrayList<OBJFace> faces, ArrayList<OBJMaterial> materials) {
+    int mtlIdxCur = -1;
+    a3d.beginShapeRecorderImpl();    
+    for (int i = 0; i < faces.size(); i++) {
+      OBJFace face = (OBJFace) faces.get(i);
+      OBJMaterial mtl = null;
+      
+      // Getting current material.
+      if (mtlIdxCur != face.matIdx) {
+        mtlIdxCur = PApplet.max(0, face.matIdx); // To make sure that at least we get the default material.
+        
+        mtl = (OBJMaterial) materials.get(mtlIdxCur);
+
+         // Setting colors.
+        a3d.specular(mtl.ks.x * 255.0f, mtl.ks.y * 255.0f, mtl.ks.z * 255.0f);
+        a3d.ambient(mtl.ka.x * 255.0f, mtl.ka.y * 255.0f, mtl.ka.z * 255.0f);
+        a3d.fill(mtl.kd.x * 255.0f, mtl.kd.y * 255.0f, mtl.kd.z * 255.0f, mtl.d * 255.0f);
+        a3d.shininess(mtl.ns);
+      }
+
+      // Recording current face.
+      a3d.beginShape();
+      for (int j = 0; j < face.vertIdx.size(); j++){
+        int vertIdx = face.vertIdx.get(j).intValue() - 1;
+        int normIdx = face.normIdx.get(j).intValue() - 1;
+        PVector vert = (PVector) vertices.get(vertIdx);
+        PVector norms = (PVector) normals.get(normIdx);
+        
+        if (mtl != null && mtl.kdMap != null) {
+          // This face is textured.
+          int texIdx = face.texIdx.get(j).intValue() - 1;
+          PVector tex = (PVector) textures.get(texIdx);
+          
+          a3d.texture(mtl.kdMap);
+          a3d.normal(norms.x, norms.y, norms.z);
+          a3d.vertex(vert.x, vert.y, vert.z, tex.x, tex.y);
+        } else {
+          // This face is not textured.
+          a3d.normal(norms.x, norms.y, norms.z);
+          a3d.vertex(vert.x, vert.y, vert.z);          
+        }
+      } 
+      a3d.endShape(CLOSE);
+    }
+    a3d.endShapeRecorderImpl(this);
+  }
+	
+  
+  protected class OBJFace {
+    ArrayList<Integer> vertIdx;
+    ArrayList<Integer> texIdx;
+    ArrayList<Integer> normIdx;
+    int matIdx;
+    
+    OBJFace() {
+      vertIdx = new ArrayList<Integer>();
+      texIdx = new ArrayList<Integer>();
+      normIdx = new ArrayList<Integer>();
+      matIdx = -1;
+    }
+  }
+
+  protected class OBJMaterial {
+    String name;
+    PVector ka;
+    PVector kd;
+    PVector ks;
+    float d;
+    float ns;
+    PImage kdMap;
+    
+    OBJMaterial() {
+      name = "default";
+      ka = new PVector(0.5f, 0.5f, 0.5f);
+      kd = new PVector(0.5f, 0.5f, 0.5f);
+      ks = new PVector(0.5f, 0.5f, 0.5f);
+      d = 1.0f;
+      ns = 0.0f;
+      kdMap = null;
+    }
+  }
 }
