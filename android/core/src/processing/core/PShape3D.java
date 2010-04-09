@@ -1714,8 +1714,8 @@ public class PShape3D extends PShape implements PConstants {
   
   
   protected void parseOBJ(BufferedReader reader, ArrayList<PVector> vertices, ArrayList<PVector> normals, ArrayList<PVector> textures, ArrayList<OBJFace> faces, ArrayList<OBJMaterial> materials) {
-    Hashtable<String, Integer> mtlHash  = new Hashtable<String, Integer>();
-    
+    Hashtable<String, Integer> materialsHash  = new Hashtable<String, Integer>();
+    int mtlIdxCur = -1;
     try {
       // Parse the line.
       
@@ -1760,17 +1760,76 @@ public class PShape3D extends PShape implements PConstants {
             // Object name is ignored, for now.
           } else if (elements[0].equals("mtllib")) {
             if (elements[1] != null) {
-              parseMTL(getBufferedReader(elements[1]), materials, mtlHash); 
+              parseMTL(getBufferedReader(elements[1]), materials, materialsHash); 
             }
           } else if (elements[0].equals("g")) {
             // Grouping is ignored, for now. Groups are automaticallty generated during recording by the triangulator.
           } else if (elements[0].equals("usemtl")) {
-            
+            // Getting material index for the material set for use.
+            if (elements[1] != null) {
+              String mtlname = elements[1];
+              if (materialsHash.containsKey(mtlname)) {
+                Integer tmpInt = materialsHash.get(mtlname);
+                mtlIdxCur = tmpInt.intValue();
+              } else {
+                mtlIdxCur = -1;                
+              }
+            }
           } else if (elements[0].equals("f")) {
-            // face setting
+            // Face setting
+           OBJFace face = new OBJFace();
+           face.matIdx = mtlIdxCur; 
+            
+            for (int i = 1; i < elements.length; i++) {
+              String seg = elements[i];
+
+              if (seg.indexOf("/") > 0) {
+                String[] forder = seg.split("/");
+
+                if (forder.length > 2) {
+                  if (forder[0].length() > 0) {
+                    face.vertIdx.add(Integer.valueOf(forder[0]));
+                  }
+
+                  if (forder[1].length() > 0) {
+                    face.texIdx.add(Integer.valueOf(forder[1]));
+                  }
+
+                  if (forder[2].length() > 0) {
+                    face.normIdx.add(Integer.valueOf(forder[2]));
+                    // f.normals.add(getVertex(Integer.valueOf(forder[2])));
+                  }
+                } else if (forder.length > 1) {
+                  if (forder[0].length() > 0) {
+                    face.vertIdx.add(Integer.valueOf(forder[0]));
+                  }
+
+                  if (forder[1].length() > 0) {
+                    face.texIdx.add(Integer.valueOf(forder[1]));
+                  }
+                } else if (forder.length > 0) {
+                  if (forder[0].length() > 0) {
+                    face.vertIdx.add(Integer.valueOf(forder[0]));
+                  }
+                }
+              } else {
+                if (seg.length() > 0) {
+                  face.vertIdx.add(Integer.valueOf(seg));
+                }
+              }
+            }
+           
+            faces.add(face);
+            
           }
         }
       }
+
+      if (materials.size() == 0) {
+        // No materials definition so far. Adding one default material.
+        OBJMaterial defMtl = new OBJMaterial(); 
+        materials.add(defMtl);
+      }      
       
     } catch (Exception e) {
       e.printStackTrace();
@@ -1778,14 +1837,53 @@ public class PShape3D extends PShape implements PConstants {
   }
 
   
-  protected void parseMTL(BufferedReader reader, ArrayList<OBJMaterial> materials, Hashtable<String, Integer> mtlHash) {
+  protected void parseMTL(BufferedReader reader, ArrayList<OBJMaterial> materials, Hashtable<String, Integer> materialsHash) {
     try {
       String line;
-
-      //Material currentMtl = null;
-
+      OBJMaterial currentMtl = null;
       while ((line = reader.readLine()) != null) {
-        
+        // Parse the line
+        line = line.trim();
+
+        String elements[] = line.split("\\s+");
+
+        if (elements.length > 0) {
+          // Extract the material data.
+
+          if (elements[0].equals("newmtl")) {
+            // Starting new material.
+            String mtlname = elements[1];
+            currentMtl = new OBJMaterial(mtlname);
+            materialsHash.put(mtlname, new Integer(materials.size()));
+            materials.add(currentMtl);
+          } else if (elements[0].equals("map_Kd") && elements.length > 1) {
+            // Loading texture map.
+            String texname = elements[1];
+            currentMtl.kdMap = parent.loadImage(texname);
+          } else if (elements[0].equals("Ka") && elements.length > 3) {
+            // The ambient color of the material
+            currentMtl.ka.x = Float.valueOf(elements[1]).floatValue();
+            currentMtl.ka.y = Float.valueOf(elements[2]).floatValue();
+            currentMtl.ka.z = Float.valueOf(elements[3]).floatValue();
+          } else if (elements[0].equals("Kd") && elements.length > 3) {
+            // The diffuse color of the material
+            currentMtl.kd.x = Float.valueOf(elements[1]).floatValue();
+            currentMtl.kd.y = Float.valueOf(elements[2]).floatValue();
+            currentMtl.kd.z = Float.valueOf(elements[3]).floatValue();
+          } else if (elements[0].equals("Ks") && elements.length > 3) {
+            // The specular color weighted by the specular coefficient
+            currentMtl.ks.x = Float.valueOf(elements[1]).floatValue();
+            currentMtl.ks.y = Float.valueOf(elements[2]).floatValue();
+            currentMtl.ks.z = Float.valueOf(elements[3]).floatValue();
+          } else if ((elements[0].equals("d") || elements[0].equals("Tr")) && elements.length > 1) {
+            // Reading the alpha transparency.
+            currentMtl.d = Float.valueOf(elements[1]).floatValue();
+          } else if (elements[0].equals("ns") && elements.length > 1) {
+            // The specular component of the Phong shading model
+            currentMtl.ns = Float.valueOf(elements[1]).floatValue();
+          } 
+          
+        }
       }
     } catch (Exception e) {
       e.printStackTrace();
@@ -1816,22 +1914,43 @@ public class PShape3D extends PShape implements PConstants {
       // Recording current face.
       a3d.beginShape();
       for (int j = 0; j < face.vertIdx.size(); j++){
-        int vertIdx = face.vertIdx.get(j).intValue() - 1;
-        int normIdx = face.normIdx.get(j).intValue() - 1;
-        PVector vert = (PVector) vertices.get(vertIdx);
-        PVector norms = (PVector) normals.get(normIdx);
+        int vertIdx, normIdx;
+        PVector vert, norms;
+
+        vert = norms = null;
+        
+        vertIdx = face.vertIdx.get(j).intValue() - 1;
+        vert = (PVector) vertices.get(vertIdx);
+        
+        if (j < face.normIdx.size()) {
+          normIdx = face.normIdx.get(j).intValue() - 1;
+          norms = (PVector) normals.get(normIdx);
+        }
         
         if (mtl != null && mtl.kdMap != null) {
           // This face is textured.
-          int texIdx = face.texIdx.get(j).intValue() - 1;
-          PVector tex = (PVector) textures.get(texIdx);
+          int texIdx;
+          PVector tex = null; 
+          
+          if (j < face.texIdx.size()) {
+            texIdx = face.texIdx.get(j).intValue() - 1;
+            tex = (PVector) textures.get(texIdx);
+          }
           
           a3d.texture(mtl.kdMap);
-          a3d.normal(norms.x, norms.y, norms.z);
-          a3d.vertex(vert.x, vert.y, vert.z, tex.x, tex.y);
+          if (norms != null) {
+            a3d.normal(norms.x, norms.y, norms.z);
+          }
+          if (tex != null) {
+            a3d.vertex(vert.x, vert.y, vert.z, tex.x, tex.y);  
+          } else {
+            a3d.vertex(vert.x, vert.y, vert.z);
+          }
         } else {
           // This face is not textured.
-          a3d.normal(norms.x, norms.y, norms.z);
+          if (norms != null) {
+            a3d.normal(norms.x, norms.y, norms.z);
+          }
           a3d.vertex(vert.x, vert.y, vert.z);          
         }
       } 
@@ -1865,13 +1984,17 @@ public class PShape3D extends PShape implements PConstants {
     PImage kdMap;
     
     OBJMaterial() {
-      name = "default";
+      this("default");
+    }
+    
+    OBJMaterial(String name) {
+      this.name = name;
       ka = new PVector(0.5f, 0.5f, 0.5f);
       kd = new PVector(0.5f, 0.5f, 0.5f);
       ks = new PVector(0.5f, 0.5f, 0.5f);
       d = 1.0f;
       ns = 0.0f;
       kdMap = null;
-    }
+    }    
   }
 }
