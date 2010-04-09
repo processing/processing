@@ -3042,8 +3042,9 @@ public class PApplet extends Activity implements PConstants, Runnable {
       PGraphicsAndroid3D a3d = (PGraphicsAndroid3D)g;
       a3d.beginShapeRecorderImpl(); 
       shape(shape, 0, 0, 1, 1);
-      PShape3D model = a3d.endShapeRecorderImpl();
-      return model;
+      PShape3D shape3d = null;
+       a3d.endShapeRecorderImpl(shape3d);
+      return shape3d;
     } else  {
        throw new RuntimeException("3D PShapes can only be created when using the A3D renderer.");
     }
