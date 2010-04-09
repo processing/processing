@@ -27,6 +27,7 @@ import java.nio.FloatBuffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.io.BufferedReader;
 import java.lang.reflect.Method;
 
@@ -107,12 +108,12 @@ public class PShape3D extends PShape implements PConstants {
     if (!a3d.vboSupported) {
        throw new RuntimeException("PShape3D: Vertex Buffer Objects are not available");
     }
-  
-    ArrayList<OBJFace> faces = new ArrayList<OBJFace>();
-    ArrayList<OBJMaterial> materials = new ArrayList<OBJMaterial>();
+
     ArrayList<PVector> vertices = new ArrayList<PVector>(); 
     ArrayList<PVector> normals = new ArrayList<PVector>(); 
-    ArrayList<PVector> textures = new ArrayList<PVector>();
+    ArrayList<PVector> textures = new ArrayList<PVector>();    
+    ArrayList<OBJFace> faces = new ArrayList<OBJFace>();
+    ArrayList<OBJMaterial> materials = new ArrayList<OBJMaterial>();
     BufferedReader reader = getBufferedReader(filename);
     if (reader == null) {
       throw new RuntimeException("PShape3D: Cannot read source file");
@@ -1488,6 +1489,7 @@ public class PShape3D extends PShape implements PConstants {
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glNormalBufferID[0]);
     gl.glNormalPointer(GL11.GL_FLOAT, 0, 0);    
     
+    // TODO: properly handle emissive and specular colors...
     gl.glEnableClientState(GL11.GL_COLOR_ARRAY);
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glColorBufferID[0]);
     gl.glColorPointer(4, GL11.GL_FLOAT, 0, 0);
@@ -1696,6 +1698,7 @@ public class PShape3D extends PShape implements PConstants {
   
   // OBJ loading
 	
+	
   protected BufferedReader getBufferedReader(String filename) {
     BufferedReader retval = parent.createReader(filename);
     if (retval != null) {
@@ -1705,10 +1708,85 @@ public class PShape3D extends PShape implements PConstants {
       return null;
     }
   }
-	
+  
   
   protected void parseOBJ(BufferedReader reader, ArrayList<PVector> vertices, ArrayList<PVector> normals, ArrayList<PVector> textures, ArrayList<OBJFace> faces, ArrayList<OBJMaterial> materials) {
+    Hashtable<String, Integer> mtlHash  = new Hashtable<String, Integer>();
     
+    try {
+      // Parse the line.
+      
+      String line;
+      while ((line = reader.readLine()) != null) {
+        
+        // The below patch/hack comes from Carlos Tomas Marti and is a
+        // fix for single backslashes in Rhino obj files
+        
+        // BEGINNING OF RHINO OBJ FILES HACK
+        // Statements can be broken in multiple lines using '\' at the
+        // end of a line.
+        // In regular expressions, the backslash is also an escape
+        // character.
+        // The regular expression \\ matches a single backslash. This
+        // regular expression as a Java string, becomes "\\\\".
+        // That's right: 4 backslashes to match a single one.
+        while (line.contains("\\")) {
+          line = line.split("\\\\")[0];
+          final String s = reader.readLine();
+          if (s != null)
+            line += s;
+        }
+        // END OF RHINO OBJ FILES HACK
+        
+        String[] elements = line.split("\\s+");        
+        // if not a blank line, process the line.
+        if (elements.length > 0) {
+          if (elements[0].equals("v")) {
+            // vertex
+            PVector tmpv = new PVector(Float.valueOf(elements[1]).floatValue(), Float.valueOf(elements[2]).floatValue(), Float.valueOf(elements[3]).floatValue());
+            vertices.add(tmpv);
+          } else if (elements[0].equals("vn")) {
+            // normal
+            PVector tmpn = new PVector(Float.valueOf(elements[1]).floatValue(), Float.valueOf(elements[2]).floatValue(), Float.valueOf(elements[3]).floatValue());
+            normals.add(tmpn);
+          } else if (elements[0].equals("vt")) {
+            // uv
+            PVector tmpv = new PVector(Float.valueOf(elements[1]).floatValue(), Float.valueOf(elements[2]).floatValue());
+            textures.add(tmpv);
+          } else if (elements[0].equals("o")) {
+            // Object name is ignored, for now.
+          } else if (elements[0].equals("mtllib")) {
+            if (elements[1] != null) {
+              parseMTL(getBufferedReader(elements[1]), materials, mtlHash); 
+            }
+          } else if (elements[0].equals("g")) {
+            // Grouping is ignored, for now. Groups are automaticallty generated during recording by the triangulator.
+          } else if (elements[0].equals("usemtl")) {
+            
+          } else if (elements[0].equals("f")) {
+            // face setting
+          }
+        }
+      }
+      
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  
+  protected void parseMTL(BufferedReader reader, ArrayList<OBJMaterial> materials, Hashtable<String, Integer> mtlHash) {
+    try {
+      String line;
+
+      //Material currentMtl = null;
+
+      while ((line = reader.readLine()) != null) {
+        
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }    
   }
   
   
@@ -1759,7 +1837,7 @@ public class PShape3D extends PShape implements PConstants {
     a3d.endShapeRecorderImpl(this);
   }
 	
-  
+
   protected class OBJFace {
     ArrayList<Integer> vertIdx;
     ArrayList<Integer> texIdx;
