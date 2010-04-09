@@ -68,7 +68,7 @@ public class PShape3D extends PShape implements PConstants {
   protected int updateElement;
   protected int firstUpdateIdx;
   protected int lastUpdateIdx;
-  protected PTexture updateTexture;
+  protected PImage updateTexture;
   
   protected ArrayList<VertexGroup> groups;
   protected VertexGroup[] vertGroup;
@@ -169,7 +169,7 @@ public class PShape3D extends PShape implements PConstants {
   // Textures
   
   
-  public void setTexture(PTexture tex) {
+  public void setTexture(PImage tex) {
     if (updateElement == -1) { 
       for (int i = 0; i < groups.size(); i++) setGroupTexture(i, tex);
     } else if (updateElement == TEXTURES) {
@@ -178,7 +178,7 @@ public class PShape3D extends PShape implements PConstants {
   }
 
   
-  public PTexture getTexture() {
+  public PImage getTexture() {
     return getGroupTexture(0);
   }
   
@@ -896,7 +896,7 @@ public class PShape3D extends PShape implements PConstants {
   }  
   
   
-  public void setGroup(int gr, int idx0, int idx1, PTexture tex) {
+  public void setGroup(int gr, int idx0, int idx1, PImage tex) {
     if (updateElement != GROUPS) {
       throw new RuntimeException("PShape3D: update mode is not set to GROUPS");
     }
@@ -931,13 +931,13 @@ public class PShape3D extends PShape implements PConstants {
   }
 
   
-  public void setGroupTexture(int gr, PTexture tex) {
+  public void setGroupTexture(int gr, PImage tex) {
     VertexGroup group = (VertexGroup)groups.get(gr);
     group.texture = tex;
   }
 
   
-  public PTexture getGroupTexture(int gr) {
+  public PImage getGroupTexture(int gr) {
     VertexGroup group = (VertexGroup)groups.get(gr);
     return group.texture;
   }
@@ -1030,7 +1030,7 @@ public class PShape3D extends PShape implements PConstants {
   }
   
   
-  protected void addGroup(int idx0, int idx1, PTexture tex) {
+  protected void addGroup(int idx0, int idx1, PImage tex) {
     if (0 <= idx0 && idx0 <=  idx1) {
       VertexGroup group = new VertexGroup(idx0, idx1, tex);
       groups.add(group);
@@ -1478,6 +1478,7 @@ public class PShape3D extends PShape implements PConstants {
   
   public void draw(PGraphics g, int gr0, int gr1) {
 	  int texTarget = GL11.GL_TEXTURE_2D;
+	  PImage img;
 	  PTexture tex;
 	  float pointSize;
 	  
@@ -1502,15 +1503,17 @@ public class PShape3D extends PShape implements PConstants {
     for (int i = gr0; i <= gr1; i++) {
       group = (VertexGroup)groups.get(i);
       
-      tex = group.texture; 
-      if (tex != null)  {
+      img = group.texture;
+      tex = null;
+      if (img != null && img.getTexture() != null)  {
+        tex = img.getTexture();
          
-        texTarget = group.texture.getGLTarget();
+        texTarget = tex.getGLTarget();
         gl.glEnable(texTarget);
         // Binding texture units.
          
         gl.glActiveTexture(GL11.GL_TEXTURE0);
-        gl.glBindTexture(GL11.GL_TEXTURE_2D, group.texture.getGLTextureID()); 
+        gl.glBindTexture(GL11.GL_TEXTURE_2D, tex.getGLTextureID()); 
          
         if (pointSprites) {
           // Texturing with point sprites.
@@ -1548,7 +1551,7 @@ public class PShape3D extends PShape implements PConstants {
       gl.glPushMatrix();
       gl.glScalef(1, -1, 1);
       
-      // Setting the stroke wight (line width's in OpenGL terminology) using either the group's weight 
+      // Setting the stroke weight (line width's in OpenGL terminology) using either the group's weight 
       // or the renderer's weight. 
       if (0 < group.sw) {
         gl.glLineWidth(group.sw);
@@ -1602,27 +1605,27 @@ public class PShape3D extends PShape implements PConstants {
   
   
   static public class Parameters {
+    public int drawMode;    
     public int updateMode;  
-    public int drawMode;
     
     public Parameters() {
-      updateMode = STATIC;    
       drawMode= POINTS;
+      updateMode = STATIC;    
     }
 
     public Parameters(int drawMode) {
+      this.drawMode= drawMode;      
       updateMode = STATIC;    
-      this.drawMode= drawMode;
     }
 
     public Parameters(int drawMode, int updateMode) {
-      this.updateMode = updateMode;    
       this.drawMode= drawMode;
+      this.updateMode = updateMode;      
     }
     
     public Parameters(Parameters src) {
-      updateMode = src.updateMode;    
-      drawMode= src.drawMode;
+      drawMode= src.drawMode;      
+      updateMode = src.updateMode;
     }
   }  
   
@@ -1633,17 +1636,17 @@ public class PShape3D extends PShape implements PConstants {
   }
   
 
-  static public VertexGroup newVertexGroup(int n0, int n1, PTexture tex) {
+  static public VertexGroup newVertexGroup(int n0, int n1, PImage tex) {
     return new VertexGroup(n0, n1, tex);  
   }    
 
   
-  static public VertexGroup newVertexGroup(int n0, int n1, int mode, PTexture tex) {
+  static public VertexGroup newVertexGroup(int n0, int n1, int mode, PImage tex) {
     return new VertexGroup(n0, n1, mode, tex);  
   }        
         
 
-  static public VertexGroup newVertexGroup(int n0, int n1, int mode, float weight, PTexture tex) {
+  static public VertexGroup newVertexGroup(int n0, int n1, int mode, float weight, PImage tex) {
     return new VertexGroup(n0, n1, mode, weight, tex);  
   }        
   
@@ -1657,7 +1660,7 @@ public class PShape3D extends PShape implements PConstants {
       texture = null;
     }
 
-    VertexGroup(int n0, int n1, PTexture tex) {
+    VertexGroup(int n0, int n1, PImage tex) {
       first = n0;
       last = n1; 
       glMode = 0;
@@ -1665,11 +1668,11 @@ public class PShape3D extends PShape implements PConstants {
       texture = tex;
     }
 
-    VertexGroup(int n0, int n1, int mode, PTexture tex) {
+    VertexGroup(int n0, int n1, int mode, PImage tex) {
       this(n0, n1, mode, 0, tex);
     }    
     
-    VertexGroup(int n0, int n1, int mode, float weight, PTexture tex) {
+    VertexGroup(int n0, int n1, int mode, float weight, PImage tex) {
       first = n0;
       last = n1; 
       if (mode == POINTS) glMode = GL11.GL_POINTS;
@@ -1691,7 +1694,7 @@ public class PShape3D extends PShape implements PConstants {
 	  int last;
 	  int glMode;
 	  float sw;
-    PTexture texture;      
+    PImage texture;      
 	}
 	
   ///////////////////////////////////////////////////////////////////////////   
