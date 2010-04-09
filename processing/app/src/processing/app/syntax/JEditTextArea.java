@@ -129,6 +129,8 @@ public class JEditTextArea extends JComponent
         }
       });
   }
+  
+  private Brackets bracketHelper = new Brackets();
 
   /**
   * Inline Input Method Support for Japanese.
@@ -1714,8 +1716,8 @@ public class JEditTextArea extends JComponent
 
     try
       {
-        int offset = TextUtilities.findMatchingBracket(
-                                                       document,newCaretPosition - 1);
+        int offset = bracketHelper.findMatchingBracket(document.getText(0,
+          document.getLength()), newCaretPosition - 1);
         if(offset != -1)
           {
             bracketLine = getLineOfOffset(offset);
@@ -1733,6 +1735,8 @@ public class JEditTextArea extends JComponent
 
   protected void documentChanged(DocumentEvent evt)
   {
+    bracketHelper.invalidate();
+    
     DocumentEvent.ElementChange ch =
       evt.getChange(document.getDefaultRootElement());
 
@@ -2112,7 +2116,7 @@ public class JEditTextArea extends JComponent
         return;
 
       try {
-        int bracket = TextUtilities.findMatchingBracket(document,
+        int bracket = bracketHelper.findMatchingBracket(document.getText(0, document.getLength()),
                                                         Math.max(0,dot - 1));
         if (bracket != -1) {
           int mark = getMarkPosition();
