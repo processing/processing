@@ -640,7 +640,16 @@ public class PGraphicsAndroid3D extends PGraphics {
     beginShapeRecorderImpl();
     beginShape(kind);
   }
+
   
+  public void beginShapesRecorder() {
+    if (recordingModel) {
+      System.err.println("Already recording shapes. Recording cannot be nested");
+    } else {
+      beginShapeRecorderImpl();
+    }
+  }
+
   
   protected void beginShapeRecorderImpl() {
     recordingModel = true;
@@ -971,10 +980,25 @@ public class PGraphicsAndroid3D extends PGraphics {
     return shape;
   }
   
+
+  public PShape3D endShapesRecorder() {
+    if (recordingModel) {    
+      PShape3D shape = null;
+      if (0 < recordedVertices.size()) {
+        shape = new PShape3D(parent, recordedVertices.size());
+      }
+      endShapeRecorderImpl(shape);
+      return shape;
+    } else {
+      System.err.println("Start recording with beginShapesRecorder().");      
+      return null;
+    }
+  }
+  
   
   protected void endShapeRecorderImpl(PShape3D shape) {
     recordingModel = false;
-    if (0 < recordedVertices.size()) {
+    if (0 < recordedVertices.size() && shape != null) {
       shape.beginUpdate(VERTICES);
       shape.setVertex(recordedVertices);
       shape.endUpdate();
@@ -992,6 +1016,13 @@ public class PGraphicsAndroid3D extends PGraphics {
       shape.endUpdate();
    
       shape.setGroups(recordedGroups);
+      
+      // Freeing memory.
+      recordedVertices.clear();
+      recordedColors.clear();
+      recordedNormals.clear();
+      recordedTexCoords.clear();
+      recordedGroups.clear();
     }
   }
   
@@ -1405,7 +1436,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       if (recordingModel) {
         int n0 = recordedVertices.size();
         int n1 = n0 + 3 * faceLength[j] - 1;
-        VertexGroup group = PShape3D.newVertexGroup(n0, n1, TRIANGLES, 0, tex);
+        VertexGroup group = PShape3D.newVertexGroup(n0, n1, TRIANGLES, 0, faceTexture[j]);
         recordedGroups.add(group);
       }   
       
