@@ -3005,7 +3005,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 
   /**
-   * Load a geometry from a file as a PShape. Currently only supports SVG data.
+   * Load a geometry from a file as a PShape (either an SVG or OBJ file).
    */
   public PShape loadShape(String filename) {
     if (filename.toLowerCase().endsWith(".svg")) {
@@ -3020,15 +3020,21 @@ public class PApplet extends Activity implements PConstants, Runnable {
     return null;
   }
 
-  
+
+  /**
+   * Creates an empty, static 3D shape, with space for nvert vertices.
+   */  
   public PShape3D createShape(int nvert, int kind) {
     return this.createShape(nvert, kind, STATIC);
   }
   
-  
+
+  /**
+   * Creates an empty 3D shape, with space for nvert vertices.
+   */    
   public PShape3D createShape(int nvert, int kind, int mode) {
     if (g instanceof PGraphicsAndroid3D) {
-      PShape3D.Parameters params = PShape3D.newParameters(kind, STATIC);
+      PShape3D.Parameters params = PShape3D.newParameters(kind, mode);
       PShape3D model = new PShape3D(this, nvert, params);
       return model;
     } else  {
@@ -3037,6 +3043,9 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
   
+  /**
+   * Tesselates a PShape into a PShape3D.
+   */      
   public PShape3D createShape(PShape shape) {
     if (g instanceof PGraphicsAndroid3D) {
       PGraphicsAndroid3D a3d = (PGraphicsAndroid3D)g;
