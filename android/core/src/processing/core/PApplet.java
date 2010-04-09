@@ -3044,21 +3044,30 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
   
   /**
-   * Tesselates a PShape into a PShape3D.
+   * Tesselates a PShape into a static PShape3D (it cannot be modified during the drawing loop).
    */      
   public PShape3D createShape(PShape shape) {
+    return createShape(shape, STATIC);
+  }
+
+
+  /**
+   * Tesselates a PShape into a PShape3D with the desired drawing mode (STATID or DYNAMIC)..
+   */        
+  public PShape3D createShape(PShape shape, int mode) {
     if (g instanceof PGraphicsAndroid3D) {
       PGraphicsAndroid3D a3d = (PGraphicsAndroid3D)g;
       a3d.beginShapeRecorderImpl(); 
       shape(shape, 0, 0, 1, 1);
-      PShape3D shape3d = null;
-       a3d.endShapeRecorderImpl(shape3d);
+      PShape3D.Parameters params = PShape3D.newParameters(TRIANGLES, mode);
+      PShape3D shape3d = new PShape3D(this, a3d.recordedVertices.size(), params);
+      a3d.endShapeRecorderImpl(shape3d);
       return shape3d;
     } else  {
        throw new RuntimeException("3D PShapes can only be created when using the A3D renderer.");
     }
-  }
-
+  }  
+  
   //////////////////////////////////////////////////////////////
 
   // FONT I/O
@@ -6389,6 +6398,15 @@ public class PApplet extends Activity implements PConstants, Runnable {
     g.beginShape(kind);
   }
 
+
+  public void beginShapesRecorder() {
+    if (g instanceof PGraphicsAndroid3D) {
+      ((PGraphicsAndroid3D) g).beginShapesRecorder();
+    } else  {
+       throw new RuntimeException("The shapes recorder can only be used with the A3D renderer.");
+    }
+  }  
+
   
   public void beginShapeRecorder() {
     if (g instanceof PGraphicsAndroid3D) {
@@ -6467,6 +6485,15 @@ public class PApplet extends Activity implements PConstants, Runnable {
     g.endShape(mode);
   }
 
+  
+  public PShape3D endShapesRecorder() {
+    if (g instanceof PGraphicsAndroid3D) {
+      return ((PGraphicsAndroid3D) g).endShapesRecorder();
+    } else  {
+       throw new RuntimeException("The shapes recorder can only be used with the A3D renderer.");
+    }
+  } 
+  
   
   public PShape3D endShapeRecorder() {
     if (g instanceof PGraphicsAndroid3D) {
