@@ -35,7 +35,9 @@ import java.nio.*;
 /**
  * This class adds an opengl texture to a PImage object.
  * By Andres Colubri
- *  
+ *  TODO: Finish integration with PImage
+ *  TODO: Revise updating mechanism (what happens when the pixels change in the PImage, etc).
+ *  TODO: Find alternative for FOBs
  */
 @SuppressWarnings("unused")
 public class PTexture implements PConstants { 

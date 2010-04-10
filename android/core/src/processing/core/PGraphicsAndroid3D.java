@@ -53,7 +53,10 @@ import processing.core.PShape3D.VertexGroup;
 /*
  * Android 3D renderer implemented with pure OpenGL ES 1.0/1.1
  * By Andres Colubri
- * 
+ *
+ * TODO: Comment A3D, PShape3D and PTexture, 
+ * TODO: Check lighting and materials, specially in PShape3D..
+ * TODO: Revise triangulator (issues are particularly apparent when tesselating SVG shapes).
  */
 public class PGraphicsAndroid3D extends PGraphics {
   public SurfaceHolder holder;
@@ -3563,6 +3566,7 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   /**
    * Switches off all lights, but keeps lighting enabled..
+   * TODO: discuss if this method is needed.
    */    
   public void resetLights() { 
     for (int i = 0; i < lightCount; i++) glLightDisable(i);
