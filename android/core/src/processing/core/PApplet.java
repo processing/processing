@@ -3006,13 +3006,21 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
   /**
    * Load a geometry from a file as a PShape (either an SVG or OBJ file).
-   */
+   */  
   public PShape loadShape(String filename) {
+    return loadShape(filename, STATIC);
+  }
+  
+  
+  /**
+   * Load a geometry from a file as a PShape (either an SVG or OBJ file).
+   */
+  public PShape loadShape(String filename, int mode) {
     if (filename.toLowerCase().endsWith(".svg")) {
       return new PShapeSVG(this, filename);
     } else if (filename.toLowerCase().endsWith(".obj")) {
       if (g instanceof PGraphicsAndroid3D) {
-        return new PShape3D(this, filename);
+        return new PShape3D(this, filename, mode);
       } else {
         throw new RuntimeException("OBJ files can be loaded only when using the A3D renderer.");
       }
@@ -7299,9 +7307,10 @@ public class PApplet extends Activity implements PConstants, Runnable {
     g.noLights();
   }
 
+  
   public void resetLights() {
-            g.resetLights();
-          }
+    g.resetLights();
+  }
 
 
   public void ambientLight(float red, float green, float blue) {

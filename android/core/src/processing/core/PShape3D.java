@@ -96,7 +96,8 @@ public class PShape3D extends PShape implements PConstants {
   }  
 
   
-  public PShape3D(PApplet parent, String filename) {
+  // TODO: Properly debug OBJ loading.  Particuarly when loading textured materials.
+  public PShape3D(PApplet parent, String filename, int mode) {
     this.parent = parent;
     a3d = (PGraphicsAndroid3D)parent.g;
     
@@ -118,8 +119,20 @@ public class PShape3D extends PShape implements PConstants {
     if (reader == null) {
       throw new RuntimeException("PShape3D: Cannot read source file");
     }
+    
+    // Setting parameters.
+    Parameters params = PShape3D.newParameters(TRIANGLES, mode); 
+    setParameters(params);
+    
     parseOBJ(reader, vertices, normals, textures, faces, materials);
     recordOBJ(vertices, normals, textures, faces, materials);
+    
+    try {
+      Method meth = this.getClass().getMethod("recreateResource", new Class[] { PGraphicsAndroid3D.class });
+      recreateResourceIdx =  a3d.addRecreateResourceMethod(this, meth);
+    } catch (Exception e) {
+      recreateResourceIdx = -1;
+    }    
   }  
   
   
@@ -1716,9 +1729,11 @@ public class PShape3D extends PShape implements PConstants {
   protected void parseOBJ(BufferedReader reader, ArrayList<PVector> vertices, ArrayList<PVector> normals, ArrayList<PVector> textures, ArrayList<OBJFace> faces, ArrayList<OBJMaterial> materials) {
     Hashtable<String, Integer> materialsHash  = new Hashtable<String, Integer>();
     int mtlIdxCur = -1;
+    boolean readv, readvn, readvt;
     try {
       // Parse the line.
       
+      readv = readvn = readvt = false;
       String line;
       while ((line = reader.readLine()) != null) {
         
@@ -1748,14 +1763,17 @@ public class PShape3D extends PShape implements PConstants {
             // vertex
             PVector tmpv = new PVector(Float.valueOf(elements[1]).floatValue(), Float.valueOf(elements[2]).floatValue(), Float.valueOf(elements[3]).floatValue());
             vertices.add(tmpv);
+            readv = true;
           } else if (elements[0].equals("vn")) {
             // normal
             PVector tmpn = new PVector(Float.valueOf(elements[1]).floatValue(), Float.valueOf(elements[2]).floatValue(), Float.valueOf(elements[3]).floatValue());
             normals.add(tmpn);
+            readvn = true;
           } else if (elements[0].equals("vt")) {
             // uv
             PVector tmpv = new PVector(Float.valueOf(elements[1]).floatValue(), Float.valueOf(elements[2]).floatValue());
             textures.add(tmpv);
+            readvt = true;
           } else if (elements[0].equals("o")) {
             // Object name is ignored, for now.
           } else if (elements[0].equals("mtllib")) {
@@ -1763,9 +1781,9 @@ public class PShape3D extends PShape implements PConstants {
               parseMTL(getBufferedReader(elements[1]), materials, materialsHash); 
             }
           } else if (elements[0].equals("g")) {
-            // Grouping is ignored, for now. Groups are automaticallty generated during recording by the triangulator.
+            // Grouping is ignored, for now. Groups are automatically generated during recording by the triangulator.
           } else if (elements[0].equals("usemtl")) {
-            // Getting material index for the material set for use.
+            // Getting index of current active material (will be applied on all subsequent faces)..
             if (elements[1] != null) {
               String mtlname = elements[1];
               if (materialsHash.containsKey(mtlname)) {
@@ -1787,33 +1805,42 @@ public class PShape3D extends PShape implements PConstants {
                 String[] forder = seg.split("/");
 
                 if (forder.length > 2) {
-                  if (forder[0].length() > 0) {
+                  // Getting vertex and texture and normal indexes.
+                  if (forder[0].length() > 0 && readv) {
                     face.vertIdx.add(Integer.valueOf(forder[0]));
                   }
 
-                  if (forder[1].length() > 0) {
+                  if (forder[1].length() > 0 && readvt) {
                     face.texIdx.add(Integer.valueOf(forder[1]));
                   }
 
-                  if (forder[2].length() > 0) {
+                  if (forder[2].length() > 0 && readvn) {
                     face.normIdx.add(Integer.valueOf(forder[2]));
-                    // f.normals.add(getVertex(Integer.valueOf(forder[2])));
                   }
                 } else if (forder.length > 1) {
-                  if (forder[0].length() > 0) {
+                  // Getting vertex and texture/normal indexes.
+                  if (forder[0].length() > 0 && readv) {
                     face.vertIdx.add(Integer.valueOf(forder[0]));
                   }
-
+ 
                   if (forder[1].length() > 0) {
-                    face.texIdx.add(Integer.valueOf(forder[1]));
+                    if (readvt) {
+                      face.texIdx.add(Integer.valueOf(forder[1]));  
+                    } else  if (readvn) {
+                      face.normIdx.add(Integer.valueOf(forder[1]));
+                    }
+                    
                   }
+                  
                 } else if (forder.length > 0) {
-                  if (forder[0].length() > 0) {
+                  // Getting vertex index only.
+                  if (forder[0].length() > 0 && readv) {
                     face.vertIdx.add(Integer.valueOf(forder[0]));
                   }
                 }
               } else {
-                if (seg.length() > 0) {
+                // Getting vertex index only.
+                if (seg.length() > 0 && readv) {
                   face.vertIdx.add(Integer.valueOf(seg));
                 }
               }
@@ -1878,7 +1905,7 @@ public class PShape3D extends PShape implements PConstants {
           } else if ((elements[0].equals("d") || elements[0].equals("Tr")) && elements.length > 1) {
             // Reading the alpha transparency.
             currentMtl.d = Float.valueOf(elements[1]).floatValue();
-          } else if (elements[0].equals("ns") && elements.length > 1) {
+          } else if (elements[0].equals("Ns") && elements.length > 1) {
             // The specular component of the Phong shading model
             currentMtl.ns = Float.valueOf(elements[1]).floatValue();
           } 
@@ -1893,10 +1920,10 @@ public class PShape3D extends PShape implements PConstants {
   
   protected void recordOBJ(ArrayList<PVector> vertices, ArrayList<PVector> normals, ArrayList<PVector> textures, ArrayList<OBJFace> faces, ArrayList<OBJMaterial> materials) {
     int mtlIdxCur = -1;
+    OBJMaterial mtl = null;
     a3d.beginShapeRecorderImpl();    
     for (int i = 0; i < faces.size(); i++) {
       OBJFace face = (OBJFace) faces.get(i);
-      OBJMaterial mtl = null;
       
       // Getting current material.
       if (mtlIdxCur != face.matIdx) {
@@ -1912,6 +1939,8 @@ public class PShape3D extends PShape implements PConstants {
       }
 
       // Recording current face.
+      // TODO: when it is known the obj model only uses triangles or quads as faces,
+      // then use these shape types in beginShape(). This will improve triangulation.
       a3d.beginShape();
       for (int j = 0; j < face.vertIdx.size(); j++){
         int vertIdx, normIdx;
@@ -1924,7 +1953,9 @@ public class PShape3D extends PShape implements PConstants {
         
         if (j < face.normIdx.size()) {
           normIdx = face.normIdx.get(j).intValue() - 1;
-          norms = (PVector) normals.get(normIdx);
+          if (-1 < normIdx) {
+            norms = (PVector) normals.get(normIdx);  
+          }
         }
         
         if (mtl != null && mtl.kdMap != null) {
@@ -1934,7 +1965,9 @@ public class PShape3D extends PShape implements PConstants {
           
           if (j < face.texIdx.size()) {
             texIdx = face.texIdx.get(j).intValue() - 1;
-            tex = (PVector) textures.get(texIdx);
+            if (-1 < texIdx) {
+              tex = (PVector) textures.get(texIdx);  
+            }
           }
           
           a3d.texture(mtl.kdMap);
@@ -1956,6 +1989,16 @@ public class PShape3D extends PShape implements PConstants {
       } 
       a3d.endShape(CLOSE);
     }
+    
+    // Allocate space for the geometry that the triangulator has generated from the OBJ model.
+    createModel(a3d.recordedVertices.size());    
+    initGroups();      
+    updateElement = -1;
+    
+    width = height = depth = 0;
+    xmin = ymin = zmin = 10000;
+    xmax = ymax = zmax = -10000;
+    
     a3d.endShapeRecorderImpl(this);
   }
 	
