@@ -16,19 +16,12 @@ public class Brackets {
   }
 
   public int findMatchingBracket(final String text, final int pos) {
-    if (offsets == null)
-      parse(text);
-    // find this bracket
-    int p;
-    for (p = 0; p < offsets.size(); p++)
-      if (offsets.get(p) == pos)
-        break;
-    if (p == offsets.size()) {
+    if (pos < 0 || pos > text.length())
       return -1;
-    }
-    final int direction;
-    final char alpha = text.charAt(offsets.get(p));
+    
+    final char alpha = text.charAt(pos);
     final char beta;
+    final int direction;
     switch (alpha) {
     case '(':
       beta = ')';
@@ -55,9 +48,21 @@ public class Brackets {
       direction = -1;
       break;
     default:
-      System.err.println("Unexpected char " + alpha + " at position " + p);
       return -1;
     }
+
+    if (offsets == null)
+      parse(text);
+    
+    // find this bracket
+    int p;
+    for (p = 0; p < offsets.size(); p++)
+      if (offsets.get(p) == pos)
+        break;
+    if (p == offsets.size()) {
+      return -1;
+    }
+
     int depth = 1;
     for (p += direction; p >= 0 && p < offsets.size(); p += direction) {
       final int offset = offsets.get(p);
