@@ -125,6 +125,8 @@ public class Editor extends JFrame implements RunnerListener {
   private Runnable exportHandler;
   private Runnable exportAppHandler;
 
+  private final Stack<Integer> caretUndoStack = new Stack<Integer>();
+  private final Stack<Integer> caretRedoStack = new Stack<Integer>();
 
   public Editor(Base ibase, String path, int[] location) {
     super("Processing");
@@ -1110,6 +1112,13 @@ public class Editor extends JFrame implements RunnerListener {
 
     public void actionPerformed(ActionEvent e) {
       try {
+        final Integer caret = caretUndoStack.pop();
+        caretRedoStack.push(caret);
+        textarea.setCaretPosition(caret);
+        textarea.scrollToCaret();
+      } catch (Exception ignore) {
+      }
+      try {
         undo.undo();
       } catch (CannotUndoException ex) {
         //System.out.println("Unable to undo: " + ex);
@@ -1153,6 +1162,12 @@ public class Editor extends JFrame implements RunnerListener {
       } catch (CannotRedoException ex) {
         //System.out.println("Unable to redo: " + ex);
         //ex.printStackTrace();
+      }
+      try {
+        final Integer caret = caretRedoStack.pop();
+        caretUndoStack.push(caret);
+        textarea.setCaretPosition(caret);
+      } catch (Exception ignore) {
       }
       updateRedoState();
       undoAction.updateUndoState();
@@ -1433,8 +1448,9 @@ public class Editor extends JFrame implements RunnerListener {
           public void undoableEditHappened(UndoableEditEvent e) {
             if (compoundEdit != null) {
               compoundEdit.addEdit(e.getEdit());
-
             } else if (undo != null) {
+              caretUndoStack.push(textarea.getCaretPosition());
+              caretRedoStack.clear();
               undo.addEdit(e.getEdit());
               undoAction.updateUndoState();
               redoAction.updateRedoState();
