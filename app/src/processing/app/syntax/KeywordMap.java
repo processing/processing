@@ -121,7 +121,7 @@ public class KeywordMap
         }
 
         // private members
-        class Keyword
+        private static class Keyword
         {
                 public Keyword(char[] keyword, byte id, Keyword next)
                 {
@@ -130,9 +130,9 @@ public class KeywordMap
                         this.next = next;
                 }
 
-                public char[] keyword;
-                public byte id;
-                public Keyword next;
+                public final char[] keyword;
+                public final byte id;
+                public final Keyword next;
         }
 
         private Keyword[] map;
