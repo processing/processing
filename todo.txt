@@ -3,21 +3,45 @@ X other libraries that use opengl weren't using the jnlp launcher
 X   fix OpenGL detection in sketches so that proper version of 
 X     export template is used
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1530
+J unterminated string constant with '\"'
+J   http://dev.processing.org/bugs/show_bug.cgi?id=1534
+J "expecting LPAREN, found '='" with syntax errors
+J   http://dev.processing.org/bugs/show_bug.cgi?id=1532
+J Bracket idenfication {} is not aware of comments //
+J   http://dev.processing.org/bugs/show_bug.cgi?id=1450
+J "unexpected token void" -> "You're mixing dynamic and static mode"
+J   http://dev.processing.org/bugs/show_bug.cgi?id=14
+J inconsistent bracket highlighting with comments
+J   http://dev.processing.org/bugs/show_bug.cgi?id=43
+X single-line html comments not handled properly on export
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1419
+
+can't reproduce
+o shortcuts not working after rename? (osx and windows confirmed)
+o   http://dev.processing.org/bugs/show_bug.cgi?id=505
+o undo has become sluggish
+o   http://processing.org/bugs/show_bug.cgi?id=36
 
 _ create default tools folder (just like libraries)
 
-
-need examples
-_ Improve detection and handling of missing semicolons
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1036
-_ missing brackets, unmatched brackets
-_   http://dev.processing.org/bugs/show_bug.cgi?id=13
-
 _ problem with associating .pde files on windows 7
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1513
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1536
+_ do some testing for windows 7 on 64-bit
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1424
+_ problem with startup on vista 64
+_   try this with windows 7 64-bit (install on laptop?)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1246
 
-_ finish build instructions for 1.1
-_ update build/howto.txt (of course) because it says no ant
+_ add explanation to the reference about using beginRecord() with fonts
+_   pdf.textMode(SHAPE)
+_   also set the font *after* the record has started
+_   maybe should instead make textMode(SHAPE) the norm? 
+_   and people can change it to textMode(MODEL) if they want?
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1535
+
+_ finish new build instructions
+_   update build/howto.txt (of course) because it says no ant
 _   this would also mean requiring a java installation for building
 
 _ simple prefs implementation to set key/value pairs using a JTable
@@ -56,13 +80,6 @@ from user Batuff
 _ right-click on opengl.jar and select native lib location from the third prefs
 _   might be possible to do easier opengl setup for eclipse
 _ don't allow processing to run on snow leopard with 1.5
-
-_ do some testing for windows 7 on 64-bit
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1424
-
-
-_ single-line html comments not handled properly on export
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1419
 
 _ make sure javadoc builds and uploads, also the zip files
 _   add additional caveats about incompletion
@@ -182,10 +199,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=1281
 
 _ add code for setting the l&f from the prefs file for linux
 
-_ problem with startup on vista 64
-_   try this with windows 7 64-bit (install on laptop?)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1246
-
 _ problem with keyboard shortcuts when building from source
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1231
 
@@ -206,8 +219,6 @@ _   also need to add license info for all the projects in there
 _ catch antlr conflicts, and put up an error message
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1225
 
-3 _ shortcuts not working after rename? (osx and windows confirmed)
-3 _   http://dev.processing.org/bugs/show_bug.cgi?id=505
 3 _ cmd-shift-n not creating new tab (related to 505?)
 3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1081
 
@@ -708,7 +719,14 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=61
 PDE / Compiler & Preprocessor
 
 high (bugs)
-Nobody home!
+_ many syntax errors now report "you're mixing active and static modes"
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1539
+_ antlr grammar should not need to re-build unless changed
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1541
+
+need examples
+_ Improve detection and handling of missing semicolons
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1036
 
 medium (bugs/features)
 _ with additional .pde files, don't allow static mode in front tab
@@ -716,6 +734,9 @@ _   e.g. no setup()/draw() block
 _ don't allow "for (blah; blah; blah) ;"
 _   or if (blah blah blah) ;
 _   it's never useful. students can use { } if they want an empty block
+_ missing brackets, unmatched brackets
+_   examples added to the bug report
+_   http://dev.processing.org/bugs/show_bug.cgi?id=13
 
 low (features)
 _ add support for multiple errors from the compiler
@@ -747,8 +768,6 @@ low (better error messages)
 _ not enough args for triangle (or args in general) 
 _   throws out bizarre message 
 _   http://dev.processing.org/bugs/show_bug.cgi?id=17
-_ "unexpected token void" -> "You're mixing dynamic and static mode"
-_   http://dev.processing.org/bugs/show_bug.cgi?id=14
 _ need better error messages in general
 _   some means to link out to further documentation (e.g. AIOOBE, NPE)
 _ expecting RPAREN messages are ugly
@@ -835,8 +854,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=33
 _ Ctrl-Z will undo, but not scroll to where the undo happens. 
 _   so user thinks nothing is happening and overundo. 
 _   http://dev.processing.org/bugs/show_bug.cgi?id=35
-_ undo has become sluggish
-_   http://processing.org/bugs/show_bug.cgi?id=36
 _ fonts smaller than 10 cause problems in the editor
 _   generally causes trouble on osx
 _   on windows and linux, changing the size throws things off
@@ -856,8 +873,6 @@ _ sketches should only write to the console of their editor window
 _   http://dev.processing.org/bugs/show_bug.cgi?id=921
 P5 _ problems with file/print
 P5 _   http://dev.processing.org/bugs/show_bug.cgi?id=1230
-P3 _ Bracket idenfication {} is not aware of comments //
-P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1450
 P4 _ comments not always colored correctly
 P4 _   http://dev.processing.org/bugs/show_bug.cgi?id=1194
 
