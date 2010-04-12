@@ -48,7 +48,8 @@
     </delete>
   </target>
 
-  <target name="preproc" depends="clean" description="Compile ANTLR grammar">
+<!--<target name="preproc" depends="clean" description="Compile ANTLR grammar">-->
+  <target name="preproc" description="Compile ANTLR grammar">
     <antlr target="${grammars}/java15.g" outputdirectory="${generated}">
       <classpath path="${antlrjar}" />
     </antlr>

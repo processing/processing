@@ -15,6 +15,8 @@ J inconsistent bracket highlighting with comments
 J   http://dev.processing.org/bugs/show_bug.cgi?id=43
 X single-line html comments not handled properly on export
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1419
+X antlr grammar should not need to re-build unless changed
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1541
 
 can't reproduce
 o shortcuts not working after rename? (osx and windows confirmed)
@@ -721,8 +723,6 @@ PDE / Compiler & Preprocessor
 high (bugs)
 _ many syntax errors now report "you're mixing active and static modes"
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1539
-_ antlr grammar should not need to re-build unless changed
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1541
 
 need examples
 _ Improve detection and handling of missing semicolons
