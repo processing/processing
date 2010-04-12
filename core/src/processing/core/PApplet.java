@@ -5913,6 +5913,33 @@ public class PApplet extends Applet
   }
 
 
+  static protected HashMap<String, Pattern> matchPatterns;
+  
+  static Pattern matchPattern(String regexp) {
+    Pattern p = null;
+    if (matchPatterns == null) {
+      matchPatterns = new HashMap<String, Pattern>();
+    } else {
+      p = matchPatterns.get(regexp);
+    }
+    if (p == null) {
+      if (matchPatterns.size() == 10) {
+        // Just clear out the match patterns here if more than 10 are being 
+        // used. It's not terribly efficient, but changes that you have >10  
+        // different match patterns are very slim, unless you're doing 
+        // something really tricky (like custom match() methods), in which 
+        // case match() won't be efficient anyway. (And you should just be 
+        // using your own Java code.) The alternative is using a queue here,  
+        // but that's a silly amount of work for negligible benefit.
+        matchPatterns.clear();
+      }
+      p = Pattern.compile(regexp, Pattern.MULTILINE | Pattern.DOTALL);
+      matchPatterns.put(regexp, p);
+    }
+    return p;
+  }
+  
+  
   /**
    * Match a string with a regular expression, and returns the match as an
    * array. The first index is the matching expression, and array elements
@@ -5924,7 +5951,7 @@ public class PApplet extends Applet
    * pick up newline characters.
    */
   static public String[] match(String what, String regexp) {
-    Pattern p = Pattern.compile(regexp, Pattern.MULTILINE | Pattern.DOTALL);
+    Pattern p = matchPattern(regexp);
     Matcher m = p.matcher(what);
     if (m.find()) {
       int count = m.groupCount() + 1;
@@ -5943,7 +5970,7 @@ public class PApplet extends Applet
    * the specified String, rather than just the first.
    */
   static public String[][] matchAll(String what, String regexp) {
-    Pattern p = Pattern.compile(regexp, Pattern.MULTILINE | Pattern.DOTALL);
+    Pattern p = matchPattern(regexp);
     Matcher m = p.matcher(what);
     ArrayList<String[]> results = new ArrayList<String[]>();
     int count = m.groupCount() + 1;
