@@ -305,7 +305,7 @@ public abstract class TokenMarker
         /**
          * Inner class for storing information about tokenized lines.
          */
-        public class LineInfo
+        private static class LineInfo
         {
                 /**
                  * Creates a new LineInfo object with token = Token.NULL
