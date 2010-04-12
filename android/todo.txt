@@ -1,5 +1,10 @@
 0184 android
+o when running a sketch, need to unlock the device
+o   http://dev.processing.org/bugs/show_bug.cgi?id=1500
+X add Pattern caching to match() to speed things up
 
+_ path problems finding javac.exe on vista
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1528
 
 _ exceptions on first run of the emulator (osx only?)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1527
@@ -157,10 +162,6 @@ P2 _ android mode is currently per-editor (and clunky)
 P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1379
 P2 _ save state re: whether sketches are android or java mode (or others?)
 P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1380
-
-// jdf says cannot be done
-P3 _ when running a sketch, need to unlock the device
-P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1500
 
 P3 _ remove various debug messages on the console
 P3 _   right now, there are too many places where errors occur

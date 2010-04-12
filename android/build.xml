@@ -13,11 +13,16 @@
 	   bootclasspath="${env.ANDROID_SDK}/platforms/android-2.0.1/android.jar"
 	   srcdir="core/src" destdir="core/bin" />
 
+<!--
     <delete file="core.zip" />
     <zip destfile="core.zip">
       <fileset dir="core/bin" includes="processing/core/*.class" />
       <fileset dir="core/bin" includes="processing/xml/*.class" />
     </zip>
+-->
+
+    <delete file="core.zip" />
+    <jar basedir="core/bin" destfile="core.zip" />
 
 <!--
     <mkdir dir="tool/bin" />
