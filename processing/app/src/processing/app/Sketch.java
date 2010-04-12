@@ -1658,36 +1658,21 @@ public class Sketch {
     }  // else no size() command found
 
     // Grab the Javadoc-style description from the main code.
-    // Originally tried to grab this with a regexp matcher, but it wouldn't
-    // span over multiple lines for the match. This could prolly be forced,
-    // but since that's the case better just to parse by hand.
-    StringBuffer dbuffer = new StringBuffer();
-    String lines[] = PApplet.split(code[0].getProgram(), '\n');
-    for (int i = 0; i < lines.length; i++) {
-      if (lines[i].trim().startsWith("/**")) {  // this is our comment
-        // some smartass put the whole thing on the same line
-        //if (lines[j].indexOf("*/") != -1) break;
-
-        for (int j = i+1; j < lines.length; j++) {
-          if (lines[j].trim().endsWith("*/")) {
-            // remove the */ from the end, and any extra *s
-            // in case there's also content on this line
-            // nah, don't bother.. make them use the three lines
-            break;
-          }
-
-          int offset = 0;
-          while ((offset < lines[j].length()) &&
-                 ((lines[j].charAt(offset) == '*') ||
-                  (lines[j].charAt(offset) == ' '))) {
-            offset++;
-          }
-          // insert the return into the html to help w/ line breaks
-          dbuffer.append(lines[j].substring(offset) + "\n");
-        }
+    String description = "";
+    String[] javadoc = PApplet.match(code[0].getProgram(), "/\\*{2,}(.*)\\*+/");
+    if (javadoc != null) {
+      StringBuffer dbuffer = new StringBuffer();
+      String[] pieces = PApplet.split(javadoc[1], '\n');
+      for (String line : pieces) {
+        // if this line starts with * characters, remove em
+        String[] m = PApplet.match(line, "^\\s*\\*+(.*)");
+        dbuffer.append(m != null ? m[1] : line);
+        // insert the new line into the html to help w/ line breaks
+        dbuffer.append('\n');
       }
+      description = dbuffer.toString();
+      PApplet.println(description);
     }
-    String description = dbuffer.toString();
 
     // Add links to all the code
     StringBuffer sources = new StringBuffer();
