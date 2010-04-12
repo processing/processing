@@ -21,7 +21,7 @@
     </zip>
 -->
 
-    <delete file="core.zip" />
+<!--    <delete file="core.zip" />-->
     <jar basedir="core/bin" destfile="core.zip" />
 
 <!--
