@@ -5,6 +5,7 @@ import java.util.concurrent.CountDownLatch;
 import processing.app.Preferences;
 import processing.app.exec.ProcessRegistry;
 import processing.app.exec.StreamPump;
+import processing.core.PApplet;
 
 class EmulatorController {
   public static enum State {
@@ -48,18 +49,20 @@ class EmulatorController {
     //    System.err.println("EmulatorController: Launching emulator");
 
     // See http://developer.android.com/guide/developing/tools/emulator.html
-    final Process p = Runtime.getRuntime().exec(
-      new String[] {
-        "emulator", "-avd", AVD.ECLAIR.name, "-port", portString,
-        "-no-boot-anim" });
+    final String[] cmd = new String[] {
+      "emulator", "-avd", AVD.ECLAIR.name, "-port", portString, "-no-boot-anim" };
+    final Process p = Runtime.getRuntime().exec(cmd);
     ProcessRegistry.watch(p);
 
     // if we've gotten this far, then we've at least succeeded in finding and
     // beginning execution of the emulator, so we are now officially "Launched"
     setState(State.WAITING_FOR_BOOT);
 
-    new StreamPump(p.getInputStream()).addTarget(System.out).start();
-    new StreamPump(p.getErrorStream()).addTarget(System.err).start();
+    final String title = PApplet.join(cmd, ' ');
+    new StreamPump(p.getInputStream(), "out: " + title).addTarget(System.out)
+        .start();
+    new StreamPump(p.getErrorStream(), "err: " + title).addTarget(System.err)
+        .start();
     final CountDownLatch latch = new CountDownLatch(1);
     new Thread(new Runnable() {
       public void run() {

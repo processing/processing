@@ -36,9 +36,11 @@ public class StreamPump implements Runnable {
 
   private final BufferedReader reader;
   private final List<LineProcessor> outs = new CopyOnWriteArrayList<LineProcessor>();
+  private final String name;
 
-  public StreamPump(final InputStream in) {
+  public StreamPump(final InputStream in, final String name) {
     this.reader = new BufferedReader(new InputStreamReader(in));
+    this.name = name;
   }
 
   public StreamPump addTarget(final OutputStream out) {
@@ -72,7 +74,9 @@ public class StreamPump implements Runnable {
         }
       }
     } catch (final IOException e) {
-      e.printStackTrace(System.err);
+//      System.err.println("StreamPump: " + name);
+//      e.printStackTrace(System.err);
+      throw new RuntimeException("Inside " + this + " for " + name, e);
     }
   }
 

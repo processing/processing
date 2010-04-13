@@ -21,6 +21,7 @@ package processing.app.exec;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import processing.core.PApplet;
 
 /**
  * Class to handle calling Runtime.exec() and stuffing output and error streams
@@ -40,7 +41,7 @@ public class ProcessHelper {
     final StringBuffer buffer = new StringBuffer();
     for (int i = 0; i < cmd.length; i++) {
       if (i != 0) {
-        buffer.append(" ");
+        buffer.append(' ');
       }
       buffer.append(cmd[i]);
     }
@@ -64,8 +65,9 @@ public class ProcessHelper {
     final Process process = Runtime.getRuntime().exec(cmd);
     ProcessRegistry.watch(process);
     try {
-      new StreamPump(process.getInputStream()).addTarget(outWriter).start();
-      new StreamPump(process.getErrorStream()).addTarget(errWriter).start();
+      String title = PApplet.join(cmd, ' '); 
+      new StreamPump(process.getInputStream(), "out: " + title).addTarget(outWriter).start();
+      new StreamPump(process.getErrorStream(), "err: " + title).addTarget(errWriter).start();
       try {
         final int result = process.waitFor();
         final long time = System.currentTimeMillis() - startTime;
