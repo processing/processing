@@ -81,7 +81,18 @@ public class AndroidTool implements Tool, DeviceListener {
     editor.statusNotice("Done loading Android tools.");
   }
 
-  static protected File getCoreZipFile() {
+  
+  static private File coreZipLocation;
+  
+  static protected File getCoreZipLocation() {
+    if (coreZipLocation == null) {
+      coreZipLocation = checkCoreZipLocation();
+    }
+    return coreZipLocation;
+  }
+
+  
+  static protected File checkCoreZipLocation() {
     // for debugging only, check to see if this is an svn checkout
     File debugFile = new File("../../../android/core.zip");
     if (!debugFile.exists() && Base.isMacOS()) {
@@ -97,8 +108,9 @@ public class AndroidTool implements Tool, DeviceListener {
     return new File(Base.getSketchbookFolder(), ANDROID_CORE_FILENAME);
   }
 
+  
   private boolean checkCore() {
-    final File target = getCoreZipFile();
+    final File target = getCoreZipLocation();
     if (!target.exists()) {
       try {
         final URL url = new URL(ANDROID_CORE_URL);
@@ -167,8 +179,8 @@ public class AndroidTool implements Tool, DeviceListener {
   
   private volatile AndroidDevice lastRunDevice = null;
 
-  private void runSketchOnDevice(final Future<AndroidDevice> deviceFuture)
-      throws Cancelled {
+  private void runSketchOnDevice(final Future<AndroidDevice> deviceFuture, 
+                                 final String flavor) throws Cancelled {
     final IndeterminateProgressMonitor monitor = 
       new IndeterminateProgressMonitor(editor,
                                        "Building and launching...",
@@ -183,7 +195,7 @@ public class AndroidTool implements Tool, DeviceListener {
           throw new Cancelled();
         }
         monitor.setNote("Building...");
-        if (!build.antBuild("debug")) {
+        if (!build.antBuild(flavor)) {
           return;
         }
 
@@ -203,7 +215,7 @@ public class AndroidTool implements Tool, DeviceListener {
           throw new Cancelled();
         }
         monitor.setNote("Installing sketch on " + device.getId());
-        if (!device.installApp(build.getPathForAPK("debug"), editor)) {
+        if (!device.installApp(build.getPathForAPK(flavor), editor)) {
           editor.statusError("Device killed or disconnected.");
           return;
         }
@@ -247,7 +259,6 @@ public class AndroidTool implements Tool, DeviceListener {
         if (!build.antBuild("release")) {
           return;
         }
-        System.out.println("build like.");
 
         if (monitor.isCanceled()) {
           throw new Cancelled();
@@ -255,19 +266,14 @@ public class AndroidTool implements Tool, DeviceListener {
         
         // If things built successfully, copy the contents to the export folder
         File exportFolder = build.createExportFolder();
-//        Base.openFolder(tempFolder);
-//        System.out.println("folder will be " + exportFolder);
         if (exportFolder != null) {
           Base.copyDir(tempFolder, exportFolder);
           editor.statusNotice("Done with export.");
           Base.openFolder(exportFolder);
         } else {
-          System.err.println("bad copy");
           editor.statusError("Could not copy files to export folder.");
         }
-        
       } catch (IOException e) {
-        System.err.println("bad copy ioe");
         editor.statusError(e);
         
       } finally {
@@ -278,15 +284,15 @@ public class AndroidTool implements Tool, DeviceListener {
     }
   }
   
-  
+
+  /*
   private void buildReleaseForDevice(final Future<AndroidDevice> deviceFuture) throws Cancelled {
     final IndeterminateProgressMonitor monitor = 
       new IndeterminateProgressMonitor(editor,
                                        "Building and running...",
                                        "Creating project...");
     try {
-      File tempFolder = build.createProject(); 
-      if (tempFolder == null) {
+      if (build.createProject() == null) {
         return;
       }
       try {
@@ -315,7 +321,7 @@ public class AndroidTool implements Tool, DeviceListener {
           throw new Cancelled();
         }
         monitor.setNote("Installing sketch on " + device.getId());
-        if (!device.installApp(build.getPathForAPK("debug"), editor)) {
+        if (!device.installApp(build.getPathForAPK("release"), editor)) {
           editor.statusError("Device killed or disconnected.");
           return;
         }
@@ -325,13 +331,13 @@ public class AndroidTool implements Tool, DeviceListener {
         }
         monitor.setNote("Starting sketch on " + device.getId());
         if (startSketch(device)) {
-          editor.statusNotice("Sketch launched on the "
+          editor.statusNotice("Release version of sketch launched on the "
               + (device.isEmulator() ? "emulator" : "phone") + ".");
         } else {
           editor.statusError("Could not start the sketch.");
         }
-
         lastRunDevice = device;
+        
       } finally {
         build.cleanup();
       }
@@ -339,6 +345,7 @@ public class AndroidTool implements Tool, DeviceListener {
       monitor.close();
     }
   }
+  */
 
 
   private static final Pattern LOCATION = 
@@ -399,7 +406,7 @@ public class AndroidTool implements Tool, DeviceListener {
     public void run() {
       AVD.ensureEclairAVD(sdk);
       try {
-        runSketchOnDevice(AndroidEnvironment.getInstance().getEmulator());
+        runSketchOnDevice(AndroidEnvironment.getInstance().getEmulator(), "debug");
       } catch (final Cancelled ok) {
         sketchStopped();
         editor.statusNotice("Cancelled.");
@@ -413,7 +420,7 @@ public class AndroidTool implements Tool, DeviceListener {
   class PresentHandler implements Runnable {
     public void run() {
       try {
-        runSketchOnDevice(AndroidEnvironment.getInstance().getHardware());
+        runSketchOnDevice(AndroidEnvironment.getInstance().getHardware(), "debug");
       } catch (final Cancelled ok) {
         sketchStopped();
         editor.statusNotice("Cancelled.");
@@ -450,7 +457,8 @@ public class AndroidTool implements Tool, DeviceListener {
   private class ExportAppHandler implements Runnable {
     public void run() {
       try {
-        buildReleaseForDevice(AndroidEnvironment.getInstance().getHardware());
+//        buildReleaseForDevice(AndroidEnvironment.getInstance().getHardware());
+        runSketchOnDevice(AndroidEnvironment.getInstance().getHardware(), "release");
       } catch (final Cancelled ok) {
         editor.statusNotice("Cancelled.");
       }
