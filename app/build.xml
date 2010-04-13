@@ -78,7 +78,12 @@
 	       property="java_tools_found" />
 
     <condition property="linux">
-      <os family="unix" />
+      <and>
+	<os family="unix" />
+	<not>
+	  <os family="mac" />
+	</not>
+      </and>
     </condition>
     <fail if="linux" unless="java_tools_found" 
 	  message="The JAVA_HOME variable must be set to the location of a full JDK. For instance, on Ubuntu Linux, this might be /usr/lib/jvm/java-6-sun." />
