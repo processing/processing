@@ -82,6 +82,8 @@
     <fail if="linux" unless="java_home" 
 	  message="The JAVA_HOME variable must be set to the location of a full JDK. For instance, on Ubuntu Linux, this might be /usr/lib/jvm/java-6-sun." />
 
+    <echo message="here! ${java.home} and ${linux}" />
+
     <condition property="windows">
       <os family="windows" />
     </condition>
