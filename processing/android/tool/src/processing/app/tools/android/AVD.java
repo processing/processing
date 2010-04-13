@@ -83,6 +83,6 @@ public class AVD {
   private static final String AVD_CREATE_ERROR = "An error occurred while running “android create avd”\n"
       + "to set up the default Android emulator. Make sure that the\n"
       + "Android SDK is installed properly, and that the Android\n"
-      + "and Google APIs are installed for level 5.";
+      + "and Google APIs are installed for level " + Build.sdkVersion + ".";
 
 }
