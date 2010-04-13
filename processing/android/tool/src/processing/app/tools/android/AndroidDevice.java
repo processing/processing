@@ -9,11 +9,11 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import processing.app.debug.RunnerListener;
+import processing.app.exec.LineProcessor;
+import processing.app.exec.ProcessRegistry;
+import processing.app.exec.ProcessResult;
+import processing.app.exec.StreamPump;
 import processing.app.tools.android.LogEntry.Severity;
-import processing.util.exec.LineProcessor;
-import processing.util.exec.ProcessRegistry;
-import processing.util.exec.ProcessResult;
-import processing.util.exec.StreamPump;
 
 class AndroidDevice implements AndroidDeviceProperties {
   private final AndroidEnvironment env;

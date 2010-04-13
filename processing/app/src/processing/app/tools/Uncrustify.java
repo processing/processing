@@ -5,8 +5,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import processing.app.Base;
 import processing.app.Editor;
-import processing.util.exec.ProcessHelper;
-import processing.util.exec.ProcessResult;
+import processing.app.exec.ProcessHelper;
+import processing.app.exec.ProcessResult;
 
 public class Uncrustify implements Tool {
 

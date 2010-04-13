@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import processing.app.Base;
-import processing.util.exec.ProcessHelper;
-import processing.util.exec.ProcessResult;
+import processing.app.exec.ProcessHelper;
+import processing.app.exec.ProcessResult;
 
 public class AVD {
   // Tempting to switch to WVGA854 (854x480), the same aspect ratio

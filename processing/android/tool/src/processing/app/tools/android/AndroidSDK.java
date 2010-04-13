@@ -7,8 +7,8 @@ import javax.swing.JOptionPane;
 import processing.app.Base;
 import processing.app.Platform;
 import processing.app.Preferences;
-import processing.util.exec.ProcessHelper;
-import processing.util.exec.ProcessResult;
+import processing.app.exec.ProcessHelper;
+import processing.app.exec.ProcessResult;
 
 class AndroidSDK {
   private final File sdk;
