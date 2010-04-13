@@ -14,6 +14,7 @@ import processing.app.exec.ProcessRegistry;
 import processing.app.exec.ProcessResult;
 import processing.app.exec.StreamPump;
 import processing.app.tools.android.LogEntry.Severity;
+import processing.core.PApplet;
 
 class AndroidDevice implements AndroidDeviceProperties {
   private final AndroidEnvironment env;
@@ -175,11 +176,14 @@ class AndroidDevice implements AndroidDeviceProperties {
 
   void initialize() throws IOException, InterruptedException {
     adb("logcat", "-c");
-    logcat = Runtime.getRuntime().exec(generateAdbCommand("logcat"));
+    final String[] cmd = generateAdbCommand("logcat");
+    final String title = PApplet.join(cmd, ' ');
+    logcat = Runtime.getRuntime().exec(cmd);
     ProcessRegistry.watch(logcat);
-    new StreamPump(logcat.getInputStream()).addTarget(new LogLineProcessor())
-        .start();
-    new StreamPump(logcat.getErrorStream()).addTarget(System.err).start();
+    new StreamPump(logcat.getInputStream(), "log: " + title).addTarget(
+      new LogLineProcessor()).start();
+    new StreamPump(logcat.getErrorStream(), "err: " + title).addTarget(
+      System.err).start();
     new Thread(new Runnable() {
       public void run() {
         try {
@@ -257,12 +261,13 @@ class AndroidDevice implements AndroidDeviceProperties {
   }
 
   private String[] generateAdbCommand(final String... cmd) {
-    final String[] adbCmd = new String[3 + cmd.length];
-    adbCmd[0] = "adb";
-    adbCmd[1] = "-s";
-    adbCmd[2] = getId();
-    System.arraycopy(cmd, 0, adbCmd, 3, cmd.length);
-    return adbCmd;
+    //    final String[] adbCmd = new String[3 + cmd.length];
+    //    adbCmd[0] = "adb";
+    //    adbCmd[1] = "-s";
+    //    adbCmd[2] = getId();
+    //    System.arraycopy(cmd, 0, adbCmd, 3, cmd.length);
+    //    return adbCmd;
+    return PApplet.concat(new String[] { "adb", "-s", getId() }, cmd);
   }
 
   @Override

@@ -9,6 +9,7 @@ import processing.app.Platform;
 import processing.app.Preferences;
 import processing.app.exec.ProcessHelper;
 import processing.app.exec.ProcessResult;
+import processing.core.PApplet;
 
 class AndroidSDK {
   private final File sdk;
@@ -161,10 +162,11 @@ class AndroidSDK {
   public static ProcessResult runADB(final String... cmd)
       throws InterruptedException, IOException {
     final String[] adbCmd;
-    if (cmd[0] != "adb") {
-      adbCmd = new String[cmd.length + 1];
-      adbCmd[0] = "adb";
-      System.arraycopy(cmd, 0, adbCmd, 1, cmd.length);
+    if (!cmd[0].equals("adb")) {
+      adbCmd = PApplet.splice(cmd, "adb", 0);
+      //      adbCmd = new String[cmd.length + 1];
+      //      adbCmd[0] = "adb";
+      //      System.arraycopy(cmd, 0, adbCmd, 1, cmd.length);
     } else {
       adbCmd = cmd;
     }
