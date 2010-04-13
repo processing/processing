@@ -57,6 +57,7 @@ import processing.core.PShape3D.VertexGroup;
  * TODO: Comment A3D, PShape3D and PTexture, 
  * TODO: Check lighting and materials, specially in PShape3D..
  * TODO: Revise triangulator (issues are particularly apparent when tesselating SVG shapes).
+ * TODO: Optimize Vertex Array rendering on real N1 hardware.
  */
 public class PGraphicsAndroid3D extends PGraphics {
   public SurfaceHolder holder;
@@ -633,7 +634,7 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   //public void beginShape()
   
-
+  
   public void beginShapeRecorder() {
     beginShapeRecorder(POLYGON);
   }
@@ -4685,7 +4686,7 @@ public class PGraphicsAndroid3D extends PGraphics {
        if (-1 < extensions.indexOf("GL_OES_matrix_get"))  {
          matrixGetSupported = true;
        }
-       if (-1 < extensions.indexOf("GL_ANDROID_vertex_buffer_object"))  {
+       if (-1 < extensions.indexOf("GL_ARB_vertex_buffer_object"))  {
          vboSupported = true;   
        }
        if (-1 < extensions.indexOf("GL_OES_framebuffer_object"))  {
