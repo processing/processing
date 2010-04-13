@@ -43,6 +43,7 @@ class Build {
     this.sdk = sdk;
   }
 
+  // TODO this needs to be a generic function inside Sketch or elsewhere
   protected int[] getSketchSize() {
     int wide = AVD.DEFAULT_WIDTH;
     int high = AVD.DEFAULT_HEIGHT;
