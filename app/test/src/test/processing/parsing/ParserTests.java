@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import processing.app.debug.RunnerException;
-import processing.util.exec.ProcessResult;
+import processing.app.exec.ProcessResult;
 import antlr.RecognitionException;
 import static test.processing.parsing.ProcessingTestUtil.res;
 import static test.processing.parsing.ProcessingTestUtil.COMPILER;
