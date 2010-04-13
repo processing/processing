@@ -2019,6 +2019,10 @@ public class Base {
    */
   static public void copyDir(File sourceDir,
                              File targetDir) throws IOException {
+    if (sourceDir.equals(targetDir)) {
+      final String urDum = "source and target directories are identical";
+      throw new IllegalArgumentException(urDum);
+    }
     targetDir.mkdirs();
     String files[] = sourceDir.list();
     for (int i = 0; i < files.length; i++) {
