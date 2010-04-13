@@ -37,7 +37,8 @@ import java.nio.*;
  * By Andres Colubri
  *  TODO: Finish integration with PImage
  *  TODO: Revise updating mechanism (what happens when the pixels change in the PImage, etc).
- *  TODO: Find alternative for FOBs
+ *  TODO: Find alternative for FOBs or how to expose FBO functionality in N1 and other EGL2 phones.
+ *  TODO: 
  */
 @SuppressWarnings("unused")
 public class PTexture implements PConstants { 
@@ -733,8 +734,13 @@ public class PTexture implements PConstants {
      flippedX = false;
      flippedY = false;  
         
-     maxTexCoordS = 1.0f;
-     maxTexCoordT = 1.0f; 
+ 
+     // If non-power-of-two textures are not supported, and the specified width or height
+     // is non-power-of-two, then glWidth (glHeight) will be greater than w (h) because it
+     // is chosen to be the next power of two, and this quotient will give the appropriate
+     // maximum texture coordinate value given this situation.
+     maxTexCoordS = (float)w / glWidth;
+     maxTexCoordT = (float)h / glHeight; 
   }
 
     

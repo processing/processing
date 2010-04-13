@@ -1939,9 +1939,16 @@ public class PShape3D extends PShape implements PConstants {
       }
 
       // Recording current face.
-      // TODO: when it is known the obj model only uses triangles or quads as faces,
-      // then use these shape types in beginShape(). This will improve triangulation.
-      a3d.beginShape();
+      
+      if (face.vertIdx.size() == 3) {
+        a3d.beginShape(TRIANGLES); // Face is a triangle, so using appropriate shape kind.
+      } else if (face.vertIdx.size() == 4) {
+        a3d.beginShape(QUADS);        // Face is a quad, so using appropriate shape kind.
+      } else {
+        a3d.beginShape();  
+      }      
+            
+      //a3d.beginShape(); 
       for (int j = 0; j < face.vertIdx.size(); j++){
         int vertIdx, normIdx;
         PVector vert, norms;
