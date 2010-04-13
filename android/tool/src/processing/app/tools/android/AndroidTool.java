@@ -49,11 +49,12 @@ public class AndroidTool implements Tool, DeviceListener {
   private Editor editor;
   private Build build;
 
-  private static final String ANDROID_CORE_URL = "http://dev.processing.org/source/index.cgi/*checkout*"
-      + "/tags/processing-" + Base.VERSION_NAME + "/android/core.zip";
+  private static final String ANDROID_CORE_URL = 
+    "http://dev.processing.org/source/index.cgi/*checkout*" + 
+    "/tags/processing-" + Base.VERSION_NAME + "/android/core.zip";
 
-  private static final String ANDROID_CORE_FILENAME = "processing-android-core-"
-      + Base.VERSION_NAME + ".zip";
+  private static final String ANDROID_CORE_FILENAME = 
+    "processing-android-core-" + Base.VERSION_NAME + ".zip";
 
   public String getMenuTitle() {
     return "Android Mode";
@@ -94,15 +95,8 @@ public class AndroidTool implements Tool, DeviceListener {
       debugFile = new File("../../../../../../../android/core.zip");
     }
     if (debugFile.exists()) {
-      System.err.println("Using version of core.zip from local SVN checkout.");
+      System.out.println("Using version of core.zip from local SVN checkout.");
       return debugFile;
-      // } else {
-      // //System.out.println("no core.zip at " + debugFile.getAbsolutePath());
-      // try {
-      // System.out.println("no core.zip at " + debugFile.getCanonicalPath());
-      // } catch (IOException e) {
-      // e.printStackTrace();
-      // }
     }
 
     // otherwise do the usual
@@ -110,8 +104,6 @@ public class AndroidTool implements Tool, DeviceListener {
   }
 
   private boolean checkCore() {
-    // File target = new File(Base.getSketchbookFolder(),
-    // ANDROID_CORE_FILENAME);
     final File target = getCoreZipFile();
     if (!target.exists()) {
       try {
@@ -182,10 +174,10 @@ public class AndroidTool implements Tool, DeviceListener {
 
   private void runSketchOnDevice(final Future<AndroidDevice> deviceFuture)
       throws Cancelled {
-    final IndeterminateProgressMonitor monitor = new IndeterminateProgressMonitor(
-                                                                                  editor,
-                                                                                  "Building and launching...",
-                                                                                  "Creating project...");
+    final IndeterminateProgressMonitor monitor = 
+      new IndeterminateProgressMonitor(editor,
+                                       "Building and launching...",
+                                       "Creating project...");
     try {
       final Build build = getBuilder();
       if (!build.createProject()) {
@@ -241,10 +233,11 @@ public class AndroidTool implements Tool, DeviceListener {
     }
   }
 
-  private static final Pattern LOCATION = Pattern
-      .compile("\\(([^:]+):(\\d+)\\)");
-  private static final Pattern EXCEPTION_PARSER = Pattern.compile(
-    "^\\s*([a-z]+(?:\\.[a-z]+)+)(?:: .+)?$", Pattern.CASE_INSENSITIVE);
+  private static final Pattern LOCATION = 
+    Pattern.compile("\\(([^:]+):(\\d+)\\)");
+  private static final Pattern EXCEPTION_PARSER = 
+    Pattern.compile("^\\s*([a-z]+(?:\\.[a-z]+)+)(?:: .+)?$", 
+                    Pattern.CASE_INSENSITIVE);
 
   /**
    * Currently figures out the first relevant stack trace line
