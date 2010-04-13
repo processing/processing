@@ -319,11 +319,11 @@ public abstract class TokenMarker
                  * Creates a new LineInfo object with the specified
                  * parameters.
                  */
-                public LineInfo(byte token, Object obj)
-                {
-                        this.token = token;
-                        this.obj = obj;
-                }
+//                public LineInfo(byte token, Object obj)
+//                {
+//                        this.token = token;
+//                        this.obj = obj;
+//                }
 
                 /**
                  * The id of the last token of the line.
@@ -336,6 +336,6 @@ public abstract class TokenMarker
                  * is an object and that needs to exist on a per-line
                  * basis.
                  */
-                public Object obj;
+//                public Object obj;
         }
 }
