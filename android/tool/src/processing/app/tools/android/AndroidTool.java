@@ -22,22 +22,16 @@
 package processing.app.tools.android;
 
 import java.awt.Frame;
-import java.io.File;
+import java.io.*;
 import java.net.URL;
-import java.util.Iterator;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import processing.app.Base;
-import processing.app.Editor;
-import processing.app.Sketch;
-import processing.app.debug.Runner;
-import processing.app.debug.RunnerException;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.regex.*;
+
+import processing.app.*;
+import processing.app.debug.*;
 import processing.app.tools.Tool;
+
 import processing.core.PApplet;
 
 // http://dl.google.com/android/repository/repository.xml
@@ -118,17 +112,17 @@ public class AndroidTool implements Tool, DeviceListener {
     return true;
   }
 
-  public Editor getEditor() {
-    return editor;
-  }
+//  public Editor getEditor() {
+//    return editor;
+//  }
 
-  public Sketch getSketch() {
-    return editor.getSketch();
-  }
+//  public Sketch getSketch() {
+//    return editor.getSketch();
+//  }
 
-  public Build getBuilder() {
-    return build;
-  }
+//  public Build getBuilder() {
+//    return build;
+//  }
 
   // if user asks for 480x320, 320x480, 854x480 etc, then launch like that
   // though would need to query the emulator to see if it can do that
@@ -165,11 +159,12 @@ public class AndroidTool implements Tool, DeviceListener {
       } catch (final TimeoutException expected) {
       }
     }
-    editor
-        .statusError("No, on second thought, I'm giving up on waiting for that device to show up.");
+    editor.statusError("No, on second thought, I'm giving up " +
+                       "on waiting for that device to show up.");
     return null;
   }
 
+  
   private volatile AndroidDevice lastRunDevice = null;
 
   private void runSketchOnDevice(final Future<AndroidDevice> deviceFuture)
@@ -179,8 +174,8 @@ public class AndroidTool implements Tool, DeviceListener {
                                        "Building and launching...",
                                        "Creating project...");
     try {
-      final Build build = getBuilder();
-      if (!build.createProject()) {
+//      final Build build = getBuilder();
+      if (build.createProject() != null) {
         return;
       }
       try {
@@ -232,6 +227,119 @@ public class AndroidTool implements Tool, DeviceListener {
       monitor.close();
     }
   }
+  
+  
+  private void buildReleaseForExport() throws Cancelled {
+    final IndeterminateProgressMonitor monitor = 
+      new IndeterminateProgressMonitor(editor,
+                                       "Building and exporting...",
+                                       "Creating project...");
+    try {
+      File tempFolder = build.createProject(); 
+      if (tempFolder == null) {
+        return;
+      }
+      try {
+        if (monitor.isCanceled()) {
+          throw new Cancelled();
+        }
+        monitor.setNote("Building release version...");
+        if (!build.antBuild("release")) {
+          return;
+        }
+        System.out.println("build like.");
+
+        if (monitor.isCanceled()) {
+          throw new Cancelled();
+        }
+        
+        // If things built successfully, copy the contents to the export folder
+        File exportFolder = build.createExportFolder();
+//        Base.openFolder(tempFolder);
+//        System.out.println("folder will be " + exportFolder);
+        if (exportFolder != null) {
+          Base.copyDir(tempFolder, exportFolder);
+          editor.statusNotice("Done with export.");
+          Base.openFolder(exportFolder);
+        } else {
+          System.err.println("bad copy");
+          editor.statusError("Could not copy files to export folder.");
+        }
+        
+      } catch (IOException e) {
+        System.err.println("bad copy ioe");
+        editor.statusError(e);
+        
+      } finally {
+        build.cleanup();
+      }
+    } finally {
+      monitor.close();
+    }
+  }
+  
+  
+  private void buildReleaseForDevice(final Future<AndroidDevice> deviceFuture) throws Cancelled {
+    final IndeterminateProgressMonitor monitor = 
+      new IndeterminateProgressMonitor(editor,
+                                       "Building and running...",
+                                       "Creating project...");
+    try {
+      File tempFolder = build.createProject(); 
+      if (tempFolder == null) {
+        return;
+      }
+      try {
+        if (monitor.isCanceled()) {
+          throw new Cancelled();
+        }
+        monitor.setNote("Building...");
+        if (!build.antBuild("release")) {
+          return;
+        }
+
+        if (monitor.isCanceled()) {
+          throw new Cancelled();
+        }
+        
+        monitor.setNote("Waiting for device to become available...");
+        final AndroidDevice device = waitForDevice(deviceFuture, monitor);
+        if (device == null || !device.isAlive()) {
+          editor.statusError("Device killed or disconnected.");
+          return;
+        }
+
+        device.addListener(this);
+
+        if (monitor.isCanceled()) {
+          throw new Cancelled();
+        }
+        monitor.setNote("Installing sketch on " + device.getId());
+        if (!device.installApp(build.getPathForAPK("debug"), editor)) {
+          editor.statusError("Device killed or disconnected.");
+          return;
+        }
+
+        if (monitor.isCanceled()) {
+          throw new Cancelled();
+        }
+        monitor.setNote("Starting sketch on " + device.getId());
+        if (startSketch(device)) {
+          editor.statusNotice("Sketch launched on the "
+              + (device.isEmulator() ? "emulator" : "phone") + ".");
+        } else {
+          editor.statusError("Could not start the sketch.");
+        }
+
+        lastRunDevice = device;
+      } finally {
+        build.cleanup();
+      }
+    } finally {
+      monitor.close();
+    }
+  }
+
 
   private static final Pattern LOCATION = 
     Pattern.compile("\\(([^:]+):(\\d+)\\)");
@@ -323,9 +431,15 @@ public class AndroidTool implements Tool, DeviceListener {
 
   /**
    * Create a release build of the sketch and have its apk files ready.
+   * If users want a debug build, they can do that from the command line.
    */
-  private static class ExportHandler implements Runnable {
+  private class ExportHandler implements Runnable {
     public void run() {
+      try {
+        buildReleaseForExport();
+      } catch (final Cancelled ok) {
+        editor.statusNotice("Cancelled.");
+      }
     }
   }
 
@@ -333,8 +447,13 @@ public class AndroidTool implements Tool, DeviceListener {
    * Create a release build of the sketch and install its apk files on the
    * attached device.
    */
-  private static class ExportAppHandler implements Runnable {
+  private class ExportAppHandler implements Runnable {
     public void run() {
+      try {
+        buildReleaseForDevice(AndroidEnvironment.getInstance().getHardware());
+      } catch (final Cancelled ok) {
+        editor.statusNotice("Cancelled.");
+      }
     }
   }
 
