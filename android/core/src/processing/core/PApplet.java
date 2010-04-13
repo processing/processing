@@ -3792,8 +3792,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
    * This is basically saveBytes(blah, loadBytes()), but done
    * more efficiently (and with less confusing syntax).
    */
-  public void saveStream(String targetFilename, String sourceLocation) {
-    saveStream(saveFile(targetFilename), sourceLocation);
+  public boolean saveStream(String targetFilename, String sourceLocation) {
+    return saveStream(saveFile(targetFilename), sourceLocation);
   }
 
 
@@ -3803,12 +3803,12 @@ public class PApplet extends Activity implements PConstants, Runnable {
    * Note that unlike other api methods, this will not automatically
    * compress or uncompress gzip files.
    */
-  public void saveStream(File targetFile, String sourceLocation) {
-    saveStream(targetFile, createInputRaw(sourceLocation));
+  public boolean saveStream(File targetFile, String sourceLocation) {
+    return saveStream(targetFile, createInputRaw(sourceLocation));
   }
 
 
-  static public void saveStream(File targetFile, InputStream sourceStream) {
+  static public boolean saveStream(File targetFile, InputStream sourceStream) {
     File tempFile = null;
     try {
       File parentDir = targetFile.getParentFile();
@@ -3831,12 +3831,16 @@ public class PApplet extends Activity implements PConstants, Runnable {
       if (!tempFile.renameTo(targetFile)) {
         System.err.println("Could not rename temporary file " +
                            tempFile.getAbsolutePath());
+        return false;
       }
+      return true;
+
     } catch (IOException e) {
       if (tempFile != null) {
         tempFile.delete();
       }
       e.printStackTrace();
+      return false;
     }
   }
 
