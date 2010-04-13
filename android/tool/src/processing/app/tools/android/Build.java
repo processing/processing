@@ -1,26 +1,17 @@
 package processing.app.tools.android;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.List;
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.DefaultLogger;
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.ProjectHelper;
-import processing.app.Base;
-import processing.app.Editor;
-import processing.app.Preferences;
-import processing.app.Sketch;
+import java.util.*;
+
+import org.apache.tools.ant.*;
+
+import processing.app.*;
+import processing.app.exec.*;
 import processing.app.debug.RunnerException;
 import processing.app.preproc.PdePreprocessor;
 import processing.core.PApplet;
+
 
 class Build {
   static SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMdd.HHmm");
@@ -32,7 +23,7 @@ class Build {
 
   String className;
 
-  File androidFolder;
+  File tempBuildFolder;
 
   File buildFile;
 
@@ -44,6 +35,7 @@ class Build {
   }
 
   // TODO this needs to be a generic function inside Sketch or elsewhere
+  /*
   protected int[] getSketchSize() {
     int wide = AVD.DEFAULT_WIDTH;
     int high = AVD.DEFAULT_HEIGHT;
@@ -81,19 +73,21 @@ class Build {
     }
     return new int[] { wide, high };
   }
+  */
 
-  public boolean createProject() {
+  
+  public File createProject() {
     final Sketch sketch = editor.getSketch();
 
     try {
-      androidFolder = createAndroidBuildFolder(sketch);
+      tempBuildFolder = createTempBuildFolder(sketch);
     } catch (final IOException e) {
       editor.statusError(e);
-      return false;
+      return null;
     }
 
     // Create the 'src' folder with the preprocessed code.
-    final File srcFolder = new File(androidFolder, "src");
+    final File srcFolder = new File(tempBuildFolder, "src");
 
     try {
       final File javaFolder = mkdirs(srcFolder, getPackageName().replace('.',
@@ -111,17 +105,17 @@ class Build {
       sketch.prepare();
       className = sketch.preprocess(buildPath, new Preproc(sketch.getName()));
       if (className != null) {
-        final File androidXML = new File(androidFolder, "AndroidManifest.xml");
+        final File androidXML = new File(tempBuildFolder, "AndroidManifest.xml");
         writeAndroidManifest(androidXML, sketch.getName(), className);
-        writeBuildProps(new File(androidFolder, "build.properties"));
-        buildFile = new File(androidFolder, "build.xml");
+        writeBuildProps(new File(tempBuildFolder, "build.properties"));
+        buildFile = new File(tempBuildFolder, "build.xml");
         writeBuildXML(buildFile, sketch.getName());
-        writeDefaultProps(new File(androidFolder, "default.properties"));
-        writeLocalProps(new File(androidFolder, "local.properties"));
-        writeRes(new File(androidFolder, "res"), className);
+        writeDefaultProps(new File(tempBuildFolder, "default.properties"));
+        writeLocalProps(new File(tempBuildFolder, "local.properties"));
+        writeRes(new File(tempBuildFolder, "res"), className);
 
-        final File libsFolder = mkdirs(androidFolder, "libs");
-        final File assetsFolder = mkdirs(androidFolder, "assets");
+        final File libsFolder = mkdirs(tempBuildFolder, "libs");
+        final File assetsFolder = mkdirs(tempBuildFolder, "assets");
 
         final InputStream input = PApplet.createInput(AndroidTool
             .getCoreZipFile());
@@ -144,18 +138,19 @@ class Build {
       }
     } catch (final RunnerException e) {
       editor.statusError(e);
-      return false;
+      return null;
     } catch (final IOException e) {
       editor.statusError(e);
-      return false;
+      return null;
     }
-    return true;
+    return tempBuildFolder;
   }
 
   /**
    * The Android dex util pukes on paths containing spaces, which will happen
    * most of the time on Windows, since Processing sketches wind up in
    * "My Documents". Therefore, build android in a temp file.
+   * http://code.google.com/p/android/issues/detail?id=4567
    *
    * TODO: better would be to retrieve the 8.3 name for the sketch folder!
    *
@@ -163,7 +158,7 @@ class Build {
    * @return A folder in which to build the android sketch
    * @throws IOException
    */
-  private File createAndroidBuildFolder(final Sketch sketch) throws IOException {
+  private File createTempBuildFolder(final Sketch sketch) throws IOException {
     final File tmp = File.createTempFile("android", ".pde");
     if (!(tmp.delete() && tmp.mkdir())) {
       throw new IOException("Cannot create temp dir " + tmp
@@ -171,15 +166,64 @@ class Build {
     }
     return tmp;
   }
+  
+  
+  protected File createExportFolder() throws IOException {
+    Sketch sketch = editor.getSketch();
+    // Create the 'android' build folder, and move any existing version out. 
+    File androidFolder = new File(sketch.getFolder(), "android");
+    if (androidFolder.exists()) {
+      Date mod = new Date(androidFolder.lastModified());
+      File dest = new File(sketch.getFolder(), "android." + dateFormat.format(mod));
+      boolean result = androidFolder.renameTo(dest);
+      if (!result) {
+        ProcessHelper mv;
+        ProcessResult pr;
+        try {
+          System.err.println("createProject renameTo() failed, resorting to mv/move instead.");
+          mv = new ProcessHelper("mv", androidFolder.getAbsolutePath(), dest.getAbsolutePath());
+          pr = mv.execute();
+
+        } catch (IOException e) {
+          editor.statusError(e);
+          return null;
+
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+          return null;
+        }
+        if (!pr.succeeded()) {
+          System.err.println(pr.getStderr());
+          Base.showWarning("Failed to rename", 
+                           "Could not rename the old “android” build folder.\n" + 
+                           "Please delete, close, or rename the folder\n" + 
+                           androidFolder.getAbsolutePath() + "\n" +  
+                           "and try again." , null);
+          Base.openFolder(sketch.getFolder());
+          return null;
+        }
+      }
+    } else {
+      boolean result = androidFolder.mkdirs();
+      if (!result) {
+        Base.showWarning("Folders, folders, folders", 
+                         "Could not create the necessary folders to build.\n" +
+                         "Perhaps you have some file permissions to sort out?", null);
+        return null;
+      }
+    }
+    return androidFolder;
+  }
+
+  
 
   /**
-   * @param target
-   *          "debug" or "release"
+   * @param target "debug" or "release"
    */
   boolean antBuild(final String target) {
     final Project p = new Project();
-    p.setUserProperty("ant.file", buildFile.getAbsolutePath()
-        .replace('\\', '/'));
+    String path = buildFile.getAbsolutePath().replace('\\', '/');
+    p.setUserProperty("ant.file", path);
 
     // deals with a problem where javac error messages weren't coming through
     p.setUserProperty("build.compiler", "extJavac");
@@ -319,7 +363,7 @@ class Build {
 
   String getPathForAPK(final String target) {
     final Sketch sketch = editor.getSketch();
-    final File apkFile = new File(androidFolder, "bin/" + sketch.getName()
+    final File apkFile = new File(tempBuildFolder, "bin/" + sketch.getName()
         + "-" + target + ".apk");
     return apkFile.getAbsolutePath();
   }
@@ -365,8 +409,8 @@ class Build {
       //"java.util.zip.*", "java.util.regex.*" // not necessary w/ newer i/o
       };
 
-      Preferences.set("android.preproc.imports.list", PApplet.join(
-        androidImports, ","));
+      Preferences.set("android.preproc.imports.list", 
+                      PApplet.join(androidImports, ","));
 
       return androidImports;
     }
@@ -606,7 +650,7 @@ class Build {
   }
 
   public void cleanup() {
-    rm(androidFolder);
+    rm(tempBuildFolder);
   }
 
   private void rm(final File f) {
