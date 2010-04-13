@@ -58,6 +58,7 @@ class EmulatorController {
     // beginning execution of the emulator, so we are now officially "Launched"
     setState(State.WAITING_FOR_BOOT);
 
+    // TODO need to suppress this warning on OS X
     // 2010-04-13 15:26:56.380 emulator[91699:903] Warning once: This 
     // application, or a library it uses, is using NSQuickDrawView, which has 
     // been deprecated. Apps should cease use of QuickDraw and move to Quartz.
