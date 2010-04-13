@@ -3,6 +3,8 @@ X other libraries that use opengl weren't using the jnlp launcher
 X   fix OpenGL detection in sketches so that proper version of 
 X     export template is used
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1530
+
+jdf stuff
 J unterminated string constant with '\"'
 J   http://dev.processing.org/bugs/show_bug.cgi?id=1534
 J "expecting LPAREN, found '='" with syntax errors

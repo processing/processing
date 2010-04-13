@@ -118,7 +118,7 @@ class Build {
         final File assetsFolder = mkdirs(tempBuildFolder, "assets");
 
         final InputStream input = PApplet.createInput(AndroidTool
-            .getCoreZipFile());
+            .getCoreZipLocation());
         PApplet.saveStream(new File(libsFolder, "processing-core.jar"), input);
 
         try {

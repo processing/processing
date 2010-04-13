@@ -2,6 +2,7 @@
 o when running a sketch, need to unlock the device
 o   http://dev.processing.org/bugs/show_bug.cgi?id=1500
 X add Pattern caching to match() to speed things up
+X make saveStream() return a boolean to indicate success
 
 "Unable to resolve target 'Google...'" when APIs aren't installed
 
