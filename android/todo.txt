@@ -3,6 +3,8 @@ o when running a sketch, need to unlock the device
 o   http://dev.processing.org/bugs/show_bug.cgi?id=1500
 X add Pattern caching to match() to speed things up
 
+"Unable to resolve target 'Google...'" when APIs aren't installed
+
 _ path problems finding javac.exe on vista
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1528
 

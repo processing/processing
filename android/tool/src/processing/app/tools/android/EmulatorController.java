@@ -3,8 +3,8 @@ package processing.app.tools.android;
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 import processing.app.Preferences;
-import processing.util.exec.ProcessRegistry;
-import processing.util.exec.StreamPump;
+import processing.app.exec.ProcessRegistry;
+import processing.app.exec.StreamPump;
 
 class EmulatorController {
   public static enum State {
