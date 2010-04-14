@@ -183,9 +183,15 @@ public class PGraphicsAndroid3D extends PGraphics {
   private IntBuffer colorBuffer;
   private IntBuffer texCoordBuffer;
   private IntBuffer normalBuffer;
+
+   // Arrays used to put vertex data into the buffers.
+  private int[] vertexArray;
+  private int[] colorArray;
+  private int[] texCoordArray;      
+  private int[] normalArray;  
   
   protected PImage textureImagePrev;    
-  protected boolean buffersAllocated = false; 
+  protected boolean buffersAllocated = false;
   
    /**
    * Set to true if the host system is big endian (PowerPC, MIPS, SPARC),
@@ -369,6 +375,11 @@ public class PGraphicsAndroid3D extends PGraphics {
       nbb.order(ByteOrder.nativeOrder());
       normalBuffer = nbb.asIntBuffer();
       
+      vertexArray = new int[DEFAULT_BUFFER_SIZE * 3];
+      colorArray = new int[DEFAULT_BUFFER_SIZE * 4];
+      texCoordArray = new int[DEFAULT_BUFFER_SIZE * 2];      
+      normalArray = new int[DEFAULT_BUFFER_SIZE * 3];
+            
       buffersAllocated = true;
     }        
   }
@@ -421,7 +432,8 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
   
   
-  protected void drawScreenTexture() {  
+  protected void drawScreenTexture() {
+    // TODO: try using glDrawTexiOES
     //tint(255);
     beginShape(QUADS);
     texture(screenTex);
@@ -436,6 +448,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected void copyFrameToScreenTexture() {
     gl.glFinish(); // Make sure that the execution off all the openGL commands is finished.
     gl.glBindTexture(GL10.GL_TEXTURE_2D, screenTex.getTexture().getGLTextureID());
+    //TODO: try using glCopyTexSubImage2D
     gl.glCopyTexImage2D(GL10.GL_TEXTURE_2D, 0, GL10.GL_RGB, 0,0, width, height, 0);
     gl.glBindTexture(GL10.GL_TEXTURE_2D, 0);
   }
@@ -463,6 +476,8 @@ public class PGraphicsAndroid3D extends PGraphics {
 //  }
   
   public void beginDraw() {
+    VERTEXCOUNT = 0;
+    
     if (!settingsInited) defaultSettings();
 
     resetMatrix(); // reset model matrix.
@@ -1169,19 +1184,24 @@ public class PGraphicsAndroid3D extends PGraphics {
       gl.glPointSize(sw);  // can only be set outside glBegin/glEnd
 
       vertexBuffer.position(0);
-      colorBuffer.position(0);    
+      colorBuffer.position(0);
       
+      int n = 0;
       for (int i = start; i < stop; i++) {
         float[] a = vertices[points[i][VERTEX1]];
-        colorBuffer.put(toFixed16(a[SR]));
-        colorBuffer.put(toFixed16(a[SG]));
-        colorBuffer.put(toFixed16(a[SB]));
-        colorBuffer.put(toFixed16(a[SA]));
-        vertexBuffer.put(toFixed32(a[VX]));
-        vertexBuffer.put(toFixed32(a[VY]));
-        vertexBuffer.put(toFixed32(a[VZ]));
+        vertexArray[3 * n + 0] = toFixed32(a[VX]);
+        vertexArray[3 * n + 1] = toFixed32(a[VY]);
+        vertexArray[3 * n + 2] = toFixed32(a[VZ]);
+        colorArray[4 * n + 0] = toFixed32(a[SR]);
+        colorArray[4 * n + 1] = toFixed32(a[SG]);
+        colorArray[4 * n + 2] = toFixed32(a[SB]);
+        colorArray[4 * n + 3] = toFixed32(a[SA]);
+        n++;
       }
-    
+
+      vertexBuffer.put(vertexArray);
+      colorBuffer.put(colorArray);
+       
       vertexBuffer.position(0);
       colorBuffer.position(0);    
       
@@ -1295,6 +1315,8 @@ public class PGraphicsAndroid3D extends PGraphics {
         vertexBuffer.position(0);
         colorBuffer.position(0);
         
+        int n = 0;
+          
         // always draw a first point
         float a[] = vertices[lines[i][VERTEX1]];
         if (recordingModel) {
@@ -1303,13 +1325,14 @@ public class PGraphicsAndroid3D extends PGraphics {
           recordedNormals.add(new PVector(0, 0, 0));
           recordedTexCoords.add(new PVector(0, 0, 0));          
         } else {
-          colorBuffer.put(toFixed32(a[SR]));
-          colorBuffer.put(toFixed32(a[SG]));
-          colorBuffer.put(toFixed32(a[SB]));
-          colorBuffer.put(toFixed32(a[SA]));
-          vertexBuffer.put(toFixed32(a[X]));
-          vertexBuffer.put(toFixed32(a[Y]));
-          vertexBuffer.put(toFixed32(a[Z]));          
+          vertexArray[3 * n + 0] = toFixed32(a[X]);
+          vertexArray[3 * n + 1] = toFixed32(a[Y]);
+          vertexArray[3 * n + 2] = toFixed32(a[Z]);
+          colorArray[4 * n + 0] = toFixed32(a[SR]);
+          colorArray[4 * n + 1] = toFixed32(a[SG]);
+          colorArray[4 * n + 2] = toFixed32(a[SB]);
+          colorArray[4 * n + 3] = toFixed32(a[SA]);
+          n++;          
         }
 
         // on this and subsequent lines, only draw the second point
@@ -1322,19 +1345,23 @@ public class PGraphicsAndroid3D extends PGraphics {
             recordedNormals.add(new PVector(0, 0, 0));
             recordedTexCoords.add(new PVector(0, 0, 0));          
           } else {
-            colorBuffer.put(toFixed32(b[SR]));
-            colorBuffer.put(toFixed32(b[SG]));
-            colorBuffer.put(toFixed32(b[SB]));
-            colorBuffer.put(toFixed32(b[SA]));
-            vertexBuffer.put(toFixed32(b[X]));
-            vertexBuffer.put(toFixed32(b[Y]));
-            vertexBuffer.put(toFixed32(b[Z]));            
+            vertexArray[3 * n + 0] = toFixed32(b[X]);
+            vertexArray[3 * n + 1] = toFixed32(b[Y]);
+            vertexArray[3 * n + 2] = toFixed32(b[Z]);
+            colorArray[4 * n + 0] = toFixed32(b[SR]);
+            colorArray[4 * n + 1] = toFixed32(b[SG]);
+            colorArray[4 * n + 2] = toFixed32(b[SB]);
+            colorArray[4 * n + 3] = toFixed32(b[SA]);
+            n++;
           }
                     
           i++;
         }
         
         if (!recordingModel) {
+          vertexBuffer.put(vertexArray);
+          colorBuffer.put(colorArray);
+                    
           vertexBuffer.position(0);
           colorBuffer.position(0);
                 
@@ -1448,13 +1475,14 @@ public class PGraphicsAndroid3D extends PGraphics {
       // store three coordinates.      
       if (vertexBuffer.capacity() / 3 < 3 * faceLength[j]) {
         expandBuffers();
-      }
+      }      
       
       vertexBuffer.position(0);
       colorBuffer.position(0);
       normalBuffer.position(0);
       texCoordBuffer.position(0);    
       
+      int n = 0;
       for (int k = 0; k < faceLength[j]; k++) {
         float a[] = vertices[triangles[i][VERTEX1]];
         float b[] = vertices[triangles[i][VERTEX2]];
@@ -1481,6 +1509,7 @@ public class PGraphicsAndroid3D extends PGraphics {
           }
         }
         
+        
         // Adding vertex A.    
         if (recordingModel) {
           recordedVertices.add(new PVector(a[X], a[Y], a[Z]));
@@ -1488,18 +1517,21 @@ public class PGraphicsAndroid3D extends PGraphics {
           recordedNormals.add(new PVector(a[NX], a[NY], a[NZ]));
           recordedTexCoords.add(new PVector((cx +  sx * a[U]) * uscale, (cy +  sy * a[V]) * vscale, 0.0f));
         } else {
-          vertexBuffer.put(toFixed32(a[X]));
-          vertexBuffer.put(toFixed32(a[Y]));
-          vertexBuffer.put(toFixed32(a[Z]));
-          colorBuffer.put(toFixed32(a[R]));
-          colorBuffer.put(toFixed32(a[G]));
-          colorBuffer.put(toFixed32(a[B]));
-          colorBuffer.put(toFixed32(a[A]));
-          normalBuffer.put(toFixed32(a[NX]));
-          normalBuffer.put(toFixed32(a[NY]));
-          normalBuffer.put(toFixed32(a[NZ]));    
-          texCoordBuffer.put(toFixed32((cx +  sx * a[U]) * uscale));
-          texCoordBuffer.put(toFixed32((cy +  sy * a[V]) * vscale));          
+          vertexArray[3 * n + 0] = toFixed32(a[X]);
+          vertexArray[3 * n + 1] = toFixed32(a[Y]);
+          vertexArray[3 * n + 2] = toFixed32(a[Z]);
+          colorArray[4 * n + 0] = toFixed32(a[R]);
+          colorArray[4 * n + 1] = toFixed32(a[G]);
+          colorArray[4 * n + 2] = toFixed32(a[B]);
+          colorArray[4 * n + 3] = toFixed32(a[A]);
+          normalArray[3 * n + 0] = toFixed32(a[NX]);
+          normalArray[3 * n + 1] = toFixed32(a[NY]);
+          normalArray[3 * n + 2] = toFixed32(a[NZ]);
+          texCoordArray[2 * n + 0] = toFixed32((cx +  sx * a[U]) * uscale);
+          texCoordArray[2 * n + 1] = toFixed32((cy +  sy * a[V]) * vscale);
+          n++;
+          
+          VERTEXCOUNT++; 
         }
         
         // Adding vertex B.    
@@ -1509,18 +1541,22 @@ public class PGraphicsAndroid3D extends PGraphics {
           recordedNormals.add(new PVector(b[NX], b[NY], b[NZ]));
           recordedTexCoords.add(new PVector((cx +  sx * b[U]) * uscale, (cy +  sy * b[V]) * vscale, 0.0f));
         } else {
-          vertexBuffer.put(toFixed32(b[X]));
-          vertexBuffer.put(toFixed32(b[Y]));
-          vertexBuffer.put(toFixed32(b[Z]));
-          colorBuffer.put(toFixed32(b[R]));
-          colorBuffer.put(toFixed32(b[G]));
-          colorBuffer.put(toFixed32(b[B]));
-          colorBuffer.put(toFixed32(b[A]));
-          normalBuffer.put(toFixed32(b[NX]));
-          normalBuffer.put(toFixed32(b[NY]));
-          normalBuffer.put(toFixed32(b[NZ]));    
-          texCoordBuffer.put(toFixed32((cx +  sx * b[U]) * uscale));
-          texCoordBuffer.put(toFixed32((cy +  sy * b[V]) * vscale));              
+          vertexArray[3 * n + 0] = toFixed32(b[X]);
+          vertexArray[3 * n + 1] = toFixed32(b[Y]);
+          vertexArray[3 * n + 2] = toFixed32(b[Z]);
+          colorArray[4 * n + 0] = toFixed32(b[R]);
+          colorArray[4 * n + 1] = toFixed32(b[G]);
+          colorArray[4 * n + 2] = toFixed32(b[B]);
+          colorArray[4 * n + 3] = toFixed32(b[A]);
+          normalArray[3 * n + 0] = toFixed32(b[NX]);
+          normalArray[3 * n + 1] = toFixed32(b[NY]);
+          normalArray[3 * n + 2] = toFixed32(b[NZ]);
+          texCoordArray[2 * n + 0] = toFixed32((cx +  sx * b[U]) * uscale);
+          texCoordArray[2 * n + 1] = toFixed32((cy +  sy * b[V]) * vscale);
+          n++;
+
+
+          VERTEXCOUNT++;
         }
         
         // Adding vertex C.    
@@ -1530,24 +1566,31 @@ public class PGraphicsAndroid3D extends PGraphics {
           recordedNormals.add(new PVector(c[NX], c[NY], c[NZ]));
           recordedTexCoords.add(new PVector((cx +  sx * c[U]) * uscale, (cy +  sy * c[V]) * vscale, 0.0f));
         } else {
-          vertexBuffer.put(toFixed32(c[X]));
-          vertexBuffer.put(toFixed32(c[Y]));
-          vertexBuffer.put(toFixed32(c[Z]));
-          colorBuffer.put(toFixed32(c[R]));
-          colorBuffer.put(toFixed32(c[G]));
-          colorBuffer.put(toFixed32(c[B]));
-          colorBuffer.put(toFixed32(c[A]));
-          normalBuffer.put(toFixed32(c[NX]));
-          normalBuffer.put(toFixed32(c[NY]));
-          normalBuffer.put(toFixed32(c[NZ]));
-          texCoordBuffer.put(toFixed32((cx +  sx * c[U]) * uscale));
-          texCoordBuffer.put(toFixed32((cy +  sy * c[V]) * vscale));          
+          vertexArray[3 * n + 0] = toFixed32(c[X]);
+          vertexArray[3 * n + 1] = toFixed32(c[Y]);
+          vertexArray[3 * n + 2] = toFixed32(c[Z]);
+          colorArray[4 * n + 0] = toFixed32(c[R]);
+          colorArray[4 * n + 1] = toFixed32(c[G]);
+          colorArray[4 * n + 2] = toFixed32(c[B]);
+          colorArray[4 * n + 3] = toFixed32(c[A]);
+          normalArray[3 * n + 0] = toFixed32(c[NX]);
+          normalArray[3 * n + 1] = toFixed32(c[NY]);
+          normalArray[3 * n + 2] = toFixed32(c[NZ]);
+          texCoordArray[2 * n + 0] = toFixed32((cx +  sx * c[U]) * uscale);
+          texCoordArray[2 * n + 1] = toFixed32((cy +  sy * c[V]) * vscale);
+          n++;
+          VERTEXCOUNT++;
         }
         
         i++;        
       }
       
       if (!recordingModel) {
+        vertexBuffer.put(vertexArray);
+        colorBuffer.put(colorArray);
+        normalBuffer.put(normalArray);
+        texCoordBuffer.put(texCoordArray);    
+        
         vertexBuffer.position(0);
         colorBuffer.position(0);
         normalBuffer.position(0);
@@ -1559,6 +1602,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         if (texturing) gl.glTexCoordPointer(2, GL10.GL_FIXED, 0, texCoordBuffer);
         gl.glDrawArrays(GL10.GL_TRIANGLES, 0, 3 * faceLength[j]);
       }
+      
 
       if (texturing) {
         gl.glBindTexture(tex.getGLTarget(), 0);
@@ -1787,6 +1831,11 @@ public class PGraphicsAndroid3D extends PGraphics {
     ByteBuffer nbb = ByteBuffer.allocateDirect(newSize * 3 * SIZEOF_INT);
     nbb.order(ByteOrder.nativeOrder());
     normalBuffer = nbb.asIntBuffer();
+    
+    vertexArray = new int[newSize * 3];
+    colorArray = new int[newSize * 4];
+    texCoordArray = new int[newSize * 2];      
+    normalArray = new int[newSize * 3];
   }
   
   
