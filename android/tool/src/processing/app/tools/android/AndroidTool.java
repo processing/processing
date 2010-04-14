@@ -154,11 +154,11 @@ public class AndroidTool implements Tool, DeviceListener {
 
   private AndroidDevice waitForDevice(final Future<AndroidDevice> deviceFuture,
                                       final IndeterminateProgressMonitor monitor)
-      throws Cancelled {
+      throws MonitorCanceled {
     for (int i = 0; i < 120; i++) {
       if (monitor.isCanceled()) {
         deviceFuture.cancel(true);
-        throw new Cancelled();
+        throw new MonitorCanceled();
       }
       try {
         return deviceFuture.get(1, TimeUnit.SECONDS);
@@ -179,28 +179,30 @@ public class AndroidTool implements Tool, DeviceListener {
   
   private volatile AndroidDevice lastRunDevice = null;
 
+  /**
+   * @param target "debug" or "release"
+   */
   private void runSketchOnDevice(final Future<AndroidDevice> deviceFuture, 
-                                 final String flavor) throws Cancelled {
+                                 final String target) throws MonitorCanceled {
     final IndeterminateProgressMonitor monitor = 
       new IndeterminateProgressMonitor(editor,
                                        "Building and launching...",
                                        "Creating project...");
     try {
-//      final Build build = getBuilder();
-      if (build.createProject() != null) {
+      if (build.createProject() == null) {
         return;
       }
       try {
         if (monitor.isCanceled()) {
-          throw new Cancelled();
+          throw new MonitorCanceled();
         }
         monitor.setNote("Building...");
-        if (!build.antBuild(flavor)) {
+        if (!build.antBuild(target)) {
           return;
         }
 
         if (monitor.isCanceled()) {
-          throw new Cancelled();
+          throw new MonitorCanceled();
         }
         monitor.setNote("Waiting for device to become available...");
         final AndroidDevice device = waitForDevice(deviceFuture, monitor);
@@ -212,16 +214,16 @@ public class AndroidTool implements Tool, DeviceListener {
         device.addListener(this);
 
         if (monitor.isCanceled()) {
-          throw new Cancelled();
+          throw new MonitorCanceled();
         }
         monitor.setNote("Installing sketch on " + device.getId());
-        if (!device.installApp(build.getPathForAPK(flavor), editor)) {
+        if (!device.installApp(build.getPathForAPK(target), editor)) {
           editor.statusError("Device killed or disconnected.");
           return;
         }
 
         if (monitor.isCanceled()) {
-          throw new Cancelled();
+          throw new MonitorCanceled();
         }
         monitor.setNote("Starting sketch on " + device.getId());
         if (startSketch(device)) {
@@ -241,7 +243,7 @@ public class AndroidTool implements Tool, DeviceListener {
   }
   
   
-  private void buildReleaseForExport() throws Cancelled {
+  private void buildReleaseForExport() throws MonitorCanceled {
     final IndeterminateProgressMonitor monitor = 
       new IndeterminateProgressMonitor(editor,
                                        "Building and exporting...",
@@ -253,7 +255,7 @@ public class AndroidTool implements Tool, DeviceListener {
       }
       try {
         if (monitor.isCanceled()) {
-          throw new Cancelled();
+          throw new MonitorCanceled();
         }
         monitor.setNote("Building release version...");
         if (!build.antBuild("release")) {
@@ -261,7 +263,7 @@ public class AndroidTool implements Tool, DeviceListener {
         }
 
         if (monitor.isCanceled()) {
-          throw new Cancelled();
+          throw new MonitorCanceled();
         }
         
         // If things built successfully, copy the contents to the export folder
@@ -395,7 +397,7 @@ public class AndroidTool implements Tool, DeviceListener {
   }
 
   public void sketchStopped() {
-    editor.internalRunnerClosed();
+    editor.deactivateRun();
     editor.statusEmpty();
   }
 
@@ -407,9 +409,9 @@ public class AndroidTool implements Tool, DeviceListener {
       AVD.ensureEclairAVD(sdk);
       try {
         runSketchOnDevice(AndroidEnvironment.getInstance().getEmulator(), "debug");
-      } catch (final Cancelled ok) {
+      } catch (final MonitorCanceled ok) {
         sketchStopped();
-        editor.statusNotice("Cancelled.");
+        editor.statusNotice("Canceled.");
       }
     }
   }
@@ -421,9 +423,9 @@ public class AndroidTool implements Tool, DeviceListener {
     public void run() {
       try {
         runSketchOnDevice(AndroidEnvironment.getInstance().getHardware(), "debug");
-      } catch (final Cancelled ok) {
+      } catch (final MonitorCanceled ok) {
         sketchStopped();
-        editor.statusNotice("Cancelled.");
+        editor.statusNotice("Canceled.");
       }
     }
   }
@@ -444,8 +446,10 @@ public class AndroidTool implements Tool, DeviceListener {
     public void run() {
       try {
         buildReleaseForExport();
-      } catch (final Cancelled ok) {
-        editor.statusNotice("Cancelled.");
+      } catch (final MonitorCanceled ok) {
+        editor.statusNotice("Canceled.");
+      } finally {
+        editor.deactivateExport();
       }
     }
   }
@@ -456,17 +460,23 @@ public class AndroidTool implements Tool, DeviceListener {
    */
   private class ExportAppHandler implements Runnable {
     public void run() {
-      try {
-//        buildReleaseForDevice(AndroidEnvironment.getInstance().getHardware());
-        runSketchOnDevice(AndroidEnvironment.getInstance().getHardware(), "release");
-      } catch (final Cancelled ok) {
-        editor.statusNotice("Cancelled.");
-      }
+      // Need to implement an entire signing setup first
+      // http://dev.processing.org/bugs/show_bug.cgi?id=1430
+      editor.statusError("Export application not yet implemented.");
+      editor.deactivateExport();
+
+//      try {
+//        runSketchOnDevice(AndroidEnvironment.getInstance().getHardware(), "release");
+//      } catch (final MonitorCanceled ok) {
+//        editor.statusNotice("Canceled.");
+//      } finally {
+//        editor.deactivateExport();
+//      }
     }
   }
 
   @SuppressWarnings("serial")
-  private static class Cancelled extends Exception {
+  private static class MonitorCanceled extends Exception {
   }
 
 }
