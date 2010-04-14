@@ -1,3 +1,17 @@
+PROCESSING REV 0184 - 14 April 2010
+
+Pre-release version with more bug fixes. Proper release notes will 
+accompany an actual release. If you're curious in the meantime, look
+at todo.txt and done.txt from the source tree.
+
++ The 'Export' option now works in Android, so that you can get at 
+  the debug APK that's created.
+
++ Problems finding javac.exe on Windows should now be fixed. 
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING REV 0183 - 31 March 2010
 
 Bug fixes for Android, should remove the API v5 requirement and make

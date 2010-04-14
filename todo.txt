@@ -3,6 +3,12 @@ X other libraries that use opengl weren't using the jnlp launcher
 X   fix OpenGL detection in sketches so that proper version of 
 X     export template is used
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1530
+X single-line html comments not handled properly on export
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1419
+X antlr grammar should not need to re-build unless changed
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1541
+X many syntax errors now report "you're mixing active and static modes"
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1539
 
 jdf stuff
 J unterminated string constant with '\"'
@@ -11,20 +17,17 @@ J "expecting LPAREN, found '='" with syntax errors
 J   http://dev.processing.org/bugs/show_bug.cgi?id=1532
 J Bracket idenfication {} is not aware of comments //
 J   http://dev.processing.org/bugs/show_bug.cgi?id=1450
-J "unexpected token void" -> "You're mixing dynamic and static mode"
-J   http://dev.processing.org/bugs/show_bug.cgi?id=14
 J inconsistent bracket highlighting with comments
 J   http://dev.processing.org/bugs/show_bug.cgi?id=43
-X single-line html comments not handled properly on export
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1419
-X antlr grammar should not need to re-build unless changed
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1541
+J "unexpected token void" -> "You're mixing dynamic and static mode"
+J   http://dev.processing.org/bugs/show_bug.cgi?id=14
 
 can't reproduce
 o shortcuts not working after rename? (osx and windows confirmed)
 o   http://dev.processing.org/bugs/show_bug.cgi?id=505
 o undo has become sluggish
 o   http://processing.org/bugs/show_bug.cgi?id=36
+
 
 _ create default tools folder (just like libraries)
 
@@ -721,10 +724,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=61
 
 
 PDE / Compiler & Preprocessor
-
-high (bugs)
-_ many syntax errors now report "you're mixing active and static modes"
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1539
 
 need examples
 _ Improve detection and handling of missing semicolons
