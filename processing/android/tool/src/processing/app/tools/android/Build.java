@@ -220,7 +220,7 @@ class Build {
   /**
    * @param target "debug" or "release"
    */
-  boolean antBuild(final String target) {
+  protected boolean antBuild(final String target) {
     final Project p = new Project();
     String path = buildFile.getAbsolutePath().replace('\\', '/');
     p.setUserProperty("ant.file", path);
@@ -270,8 +270,7 @@ class Build {
       // PApplet.println(errorLines);
 
       final String outPile = new String(outb.toByteArray());
-      final String[] outLines = outPile.split(System
-          .getProperty("line.separator"));
+      final String[] outLines = outPile.split(System.getProperty("line.separator"));
       // PApplet.println(outLines);
 
       for (final String line : outLines) {
@@ -302,72 +301,31 @@ class Build {
           }
         }
       }
-
-      // String errorOutput = new String(errb.toByteArray());
-      // String[] errorLines =
-      // errorOutput.split(System.getProperty("line.separator"));
-      // PApplet.println(errorLines);
-
-      /*
-      //      System.out.println("ex was " + e.getException());
-      //      System.out.println("cause was " + e.getCause());
-
-      //      // Try to place the error within the code.
-      //      Location location = e.getLocation();
-      //      //System.out.println("location is " + location);
-      //      if (location != null) {
-      //        String filename = location.getFileName();
-      //        int line = location.getLineNumber();
-      //        System.out.println("file/line: " + filename + ", " + line);
-      String errorOutput = new String(baos.toByteArray());
-      String[] errorLines = errorOutput.split(System.getProperty("line.separator"));
-      if (errorLines.length > 0) {
-        Sketch sketch = editor.getSketch();
-        String sketchPath = sketch.getFolder().getAbsolutePath();
-        // emacs syntax, needs conversion to java syntax
-        //String regexp = "^\\s-*\\[[^]]*\\]\\s-*\\(.+\\):\\([0-9]+\\):";
-        String regexp = "^(.+):([0-9]+):(.+)$";  // this works fine
-        String[] pieces = PApplet.match(errorLines[2], regexp);
-        if (pieces != null) {
-          PApplet.println(pieces);
-        } else {
-          PApplet.println("nuthin");
-          PApplet.println(errorLines);
-        }
-        //String[] pieces = PApplet.match(errorLines[0], "(.*\.java):(\\d+):(.*)$");
-        //if (errorLines[0].startsWith(sketchPath)) {
-        //  String[] pieces = PApplet.split(errorLines[0], ':');
-        //}
-      //        RunnerException rex =
-      //          sketch.placeException(e.getMessage(), filename, line);
-      //        if (rex != null) {
-      //          editor.statusError(rex);
-      //        } else {
-      //          editor.statusError(e);
-      //        }
-      //      } else {
-      }
-       */
       editor.statusError(e);
     }
     return false;
   }
 
-  String getPackageName() {
+  
+  protected String getPackageName() {
     return basePackage + "." + editor.getSketch().getName().toLowerCase();
   }
 
-  String getClassName() {
+  
+  protected String getClassName() {
     return className;
   }
 
+  
   String getPathForAPK(final String target) {
     final Sketch sketch = editor.getSketch();
-    final File apkFile = new File(tempBuildFolder, "bin/" + sketch.getName()
-        + "-" + target + ".apk");
+    String suffix = target.equals("release") ? "unsigned" : "debug";
+    String apkName = "bin/" + sketch.getName() + "-" + suffix + ".apk";
+    final File apkFile = new File(tempBuildFolder, apkName);
     return apkFile.getAbsolutePath();
   }
 
+  
   class Preproc extends PdePreprocessor {
 
     public Preproc(final String sketchName) throws IOException {
@@ -416,28 +374,25 @@ class Build {
     }
   }
 
+  
   private void writeAndroidManifest(final File file, final String sketchName,
                                     final String className) {
     final PrintWriter writer = PApplet.createWriter(file);
     writer.println("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
-    writer
-        .println("<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\" ");
+    writer.println("<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\" ");
     writer.println("          package=\"" + getPackageName() + "\" ");
     writer.println("          android:versionCode=\"1\" ");
     writer.println("          android:versionName=\"1.0\">");
 
-    writer
-        .println("  <uses-sdk android:minSdkVersion=" + q(sdkVersion) + " />");
+    writer.println("  <uses-sdk android:minSdkVersion=" + q(sdkVersion) + " />");
 
-    writer.println("  <application android:label=" + q("@string/app_name")
-        + "               android:debuggable=" + q("true") + ">");
+    writer.println("  <application android:label=" + q("@string/app_name"));
+    writer.println("               android:debuggable=" + q("true") + ">");
     writer.println("    <activity android:name=" + q("." + className));
     writer.println("              android:label=\"@string/app_name\">");
     writer.println("      <intent-filter>");
-    writer
-        .println("        <action android:name=\"android.intent.action.MAIN\" />");
-    writer
-        .println("        <category android:name=\"android.intent.category.LAUNCHER\" />");
+    writer.println("        <action android:name=\"android.intent.action.MAIN\" />");
+    writer.println("        <category android:name=\"android.intent.category.LAUNCHER\" />");
     writer.println("      </intent-filter>");
     writer.println("    </activity>");
     writer.println("  </application>");
@@ -446,6 +401,7 @@ class Build {
     writer.close();
   }
 
+  
   private void writeBuildProps(final File file) {
     final PrintWriter writer = PApplet.createWriter(file);
     writer.println("application-package=" + getPackageName());
@@ -453,6 +409,7 @@ class Build {
     writer.close();
   }
 
+  
   private void writeBuildXML(final File file, final String projectName) {
     final PrintWriter writer = PApplet.createWriter(file);
     writer.println("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
@@ -468,16 +425,11 @@ class Build {
     // writer.println("    <pathelement path=\"${sdk-location}/tools/lib/androidprefs.jar\" />");
     // writer.println("    <pathelement path=\"${sdk-location}/tools/lib/apkbuilder.jar\" />");
     // writer.println("    <pathelement path=\"${sdk-location}/tools/lib/jarutils.jar\" />");
-    writer
-        .println("    <pathelement path=\"${sdk.dir}/tools/lib/anttasks.jar\" />");
-    writer
-        .println("    <pathelement path=\"${sdk.dir}/tools/lib/sdklib.jar\" />");
-    writer
-        .println("    <pathelement path=\"${sdk.dir}/tools/lib/androidprefs.jar\" />");
-    writer
-        .println("    <pathelement path=\"${sdk.dir}/tools/lib/apkbuilder.jar\" />");
-    writer
-        .println("    <pathelement path=\"${sdk.dir}/tools/lib/jarutils.jar\" />");
+    writer.println("    <pathelement path=\"${sdk.dir}/tools/lib/anttasks.jar\" />");
+    writer.println("    <pathelement path=\"${sdk.dir}/tools/lib/sdklib.jar\" />");
+    writer.println("    <pathelement path=\"${sdk.dir}/tools/lib/androidprefs.jar\" />");
+    writer.println("    <pathelement path=\"${sdk.dir}/tools/lib/apkbuilder.jar\" />");
+    writer.println("    <pathelement path=\"${sdk.dir}/tools/lib/jarutils.jar\" />");
     writer.println("  </path>");
 
     writer.println("  <taskdef name=\"setup\"");
@@ -506,6 +458,7 @@ class Build {
     writer.close();
   }
 
+  
   private void writeDefaultProps(final File file) {
     final PrintWriter writer = PApplet.createWriter(file);
     writer.println("target=Google Inc.:Google APIs:" + sdkVersion);
@@ -513,6 +466,7 @@ class Build {
     writer.close();
   }
 
+  
   private void writeLocalProps(final File file) {
     final PrintWriter writer = PApplet.createWriter(file);
     final String sdkPath = sdk.getSdk().getAbsolutePath();
@@ -528,6 +482,7 @@ class Build {
     writer.close();
   }
 
+  
   private void writeRes(final File resFolder, final String className)
       throws RunnerException {
     final File layoutFolder = mkdirs(resFolder, "layout");
@@ -538,6 +493,7 @@ class Build {
     writeResValuesStrings(stringsFile, className);
   }
 
+  
   private File mkdirs(final File parent, final String name)
       throws RunnerException {
     final File result = new File(parent, name);
@@ -547,26 +503,20 @@ class Build {
     return result;
   }
 
+  
   private void writeResLayoutMain(final File file) {
     final PrintWriter writer = PApplet.createWriter(file);
     writer.println("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
-    writer
-        .println("<LinearLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"");
-    // this was in the bageldroid version
-    // android:id="@+id/fullscreen_layout"
+    writer.println("<LinearLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"");
     writer.println("              android:orientation=\"vertical\"");
     writer.println("              android:layout_width=\"fill_parent\"");
     writer.println("              android:layout_height=\"fill_parent\">");
-    // <TextView
-    // android:layout_width="fill_parent"
-    // android:layout_height="wrap_content"
-    // android:text="Hello World, test_activity"
-    // />
     writer.println("</LinearLayout>");
     writer.flush();
     writer.close();
   }
 
+  
   /** This recommended to be a string resource so that it can be localized. */
   private static void writeResValuesStrings(final File file,
                                             final String className) {
@@ -579,6 +529,7 @@ class Build {
     writer.close();
   }
 
+  
   private void writeLibraries(final File libsFolder, final File assetsFolder)
       throws IOException {
     // Copy any libraries to the 'libs' folder
@@ -614,8 +565,8 @@ class Build {
           if (lcname.endsWith(".zip") || lcname.endsWith(".jar")) {
             // As of r4 of the Android SDK, it looks like .zip files
             // are ignored in the libs folder, so rename to .jar
-            final String jarName = name.substring(0, name.length() - 4)
-                + ".jar";
+            final String jarName = 
+              name.substring(0, name.length() - 4) + ".jar";
             Base.copyFile(exportFile, new File(libsFolder, jarName));
           } else {
             Base.copyFile(exportFile, new File(assetsFolder, name));
@@ -641,6 +592,7 @@ class Build {
     }
   }
 
+  
   /**
    * Place quotes around a string to avoid dreadful syntax mess of escaping
    * quotes near quoted strings. Mmmm!
@@ -649,21 +601,24 @@ class Build {
     return "\"" + what + "\"";
   }
 
+  
   public void cleanup() {
-    rm(tempBuildFolder);
+    // don't want to be responsible for this
+    //rm(tempBuildFolder);
+    tempBuildFolder.deleteOnExit();
   }
 
-  private void rm(final File f) {
-    if (f.isDirectory()) {
-      final File[] kids = f.listFiles(new FilenameFilter() {
-        public boolean accept(final File dir, final String name) {
-          return !(name.equals(".") || name.equals(".."));
-        }
-      });
-      for (final File k : kids) {
-        rm(k);
-      }
-    }
-    f.delete();
-  }
+//  private void rm(final File f) {
+//    if (f.isDirectory()) {
+//      final File[] kids = f.listFiles(new FilenameFilter() {
+//        public boolean accept(final File dir, final String name) {
+//          return !(name.equals(".") || name.equals(".."));
+//        }
+//      });
+//      for (final File k : kids) {
+//        rm(k);
+//      }
+//    }
+//    f.delete();
+//  }
 }
