@@ -40,9 +40,9 @@ import processing.core.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
-  static final int REVISION = 184;
+  static final int REVISION = 185;
   /** This might be replaced by main() if there's a lib/version.txt file. */
-  static public String VERSION_NAME = "0184";
+  static public String VERSION_NAME = "0185";
   /** Set true if this a proper release rather than a numbered revision. */
   static public boolean RELEASE = false;
 

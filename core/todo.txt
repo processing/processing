@@ -1,8 +1,4 @@
-0184 core
-X copy and blend scale when unnecessary
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1482
-X add Pattern caching to match() to speed things up
-X make saveStream() return a boolean to indicate success
+0185 core 
 
 
 _ change skewX/Y to shearX/Y
