@@ -7,13 +7,12 @@ X implement 'export' to create a local android folder
 X 'stop' is now a no-op for the android tools
 X   partially fixed but hangs after pressing stop
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1386
+X path problems finding javac.exe on vista
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1528
 
 earlier
 J figure out how to set ANDROID_SDK for the build scripts
 J   right now, just setting the env value is required 
-
-_ path problems finding javac.exe on vista
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1528
 
 
 _ "Unable to resolve target 'Google...'" when APIs aren't installed
