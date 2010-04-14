@@ -707,17 +707,39 @@ public class PShape3D extends PShape implements PConstants {
     float u = texCoordArray[2 * idx + 0];
     float v = texCoordArray[2 * idx + 1];
     
-    if (a3d.imageMode == IMAGE) {
-      if (vertGroup[idx] != null && vertGroup[idx].texture == null) {
-        throw new RuntimeException("PShape3D: when setting texture coordinates in IMAGE mode, the textures need to be assigned first");
-      }      
-      u *= vertGroup[idx].texture.width;
-      v *= vertGroup[idx].texture.height;
+    if (vertGroup[idx] != null && vertGroup[idx].texture != null) { 
+      PTexture tex = vertGroup[idx].texture.getTexture();
+      
+      float uscale = 1.0f;
+      float vscale = 1.0f;
+      float cx = 0.0f;
+      float sx = +1.0f;
+      float cy = 0.0f;
+      float sy = +1.0f;    
+      if (tex.isFlippedX()) {
+        cx = 1.0f;      
+        sx = -1.0f;
+      }
+      if (tex.isFlippedY()) {
+        cy = 1.0f;      
+        sy = -1.0f;
+      }        
+      uscale *= tex.getMaxTextureCoordS();
+      vscale *= tex.getMaxTextureCoordT();        
+      
+      // Inverting the texture coordinate transformation.
+      u = (u / uscale - cx) / sx;
+      v = (v / vscale - cy) / sy;
+      if (a3d.imageMode == IMAGE) {
+        u *= vertGroup[idx].texture.width;
+        v *= vertGroup[idx].texture.height;
+      }
     }
     
     PVector res = new PVector(u, v, 0);
     return res;
   }
+  
   
   public float[] getTexCoordArray() {
     if (updateElement != TEXTURES) {
@@ -729,22 +751,66 @@ public class PShape3D extends PShape implements PConstants {
     
     PApplet.arrayCopy(texCoordArray, res);
     
-    if (a3d.imageMode == IMAGE) {
-      float u, v;
-      for (int i = 0; i < numVertices; i++) {
-        if (vertGroup[i] != null && vertGroup[i].texture == null) {
-          throw new RuntimeException("PShape3D: when setting texture coordinates in IMAGE mode, the textures need to be assigned first");
+    // The inversion of texture coordinates require looping through all the vertices,
+    // which is not needed if there are no texures assigned to the shape.
+    boolean textured = false;
+    for (int i = 0; i < vertGroup.length; i++) {
+      if (vertGroup[i].texture != null) {
+        textured = true;
+        break;
+      }
+    }
+    if (!textured) {
+      // No texturing, no further processing is required.
+      return res;
+    }
+    
+    PImage img = null;
+    float uscale = 1.0f;
+    float vscale = 1.0f;
+    float cx = 0.0f;
+    float sx = +1.0f;
+    float cy = 0.0f;
+    float sy = +1.0f;
+    int w = 1;
+    int h = 1;
+    float u, v;
+    for (int i = 0; i < numVertices; i++) {
+      if (vertGroup[i] != null && vertGroup[i].texture != img) {
+        PTexture tex = vertGroup[i].texture.getTexture();
+      
+        uscale = 1.0f;
+        vscale = 1.0f;
+        cx = 0.0f;
+        sx = +1.0f;
+        cy = 0.0f;
+        sy = +1.0f;    
+        if (tex.isFlippedX()) {
+          cx = 1.0f;      
+          sx = -1.0f;
+        }
+        if (tex.isFlippedY()) {
+          cy = 1.0f;      
+          sy = -1.0f;
         }        
+        uscale *= tex.getMaxTextureCoordS();
+        vscale *= tex.getMaxTextureCoordT();
         
-        u = res[2 * i + 0];
-        v = res[2 * i + 1];        
-        
-        u *= vertGroup[i].texture.width;
-        v *= vertGroup[i].texture.height;
-
-        res[2 * i + 0] = u;
-        res[2 * i + 1] = v;
-      }  
+        w = vertGroup[i].texture.width;
+        h = vertGroup[i].texture.height;
+        img = vertGroup[i].texture;
+      }
+    
+      // Inverting the texture coordinate transformation.
+      u = (res[2 * i + 0] / uscale - cx) / sx;
+      v = (res[2 * i + 1] / vscale - cy) / sy;
+      if (a3d.imageMode == IMAGE) {
+        u *= w;
+        v *= h;
+      }      
+      
+      res[2 * i + 0] = u;
+      res[2 * i + 1] = v;      
     }
     
     return res;
@@ -783,12 +849,43 @@ public class PShape3D extends PShape implements PConstants {
       vertGroup[idx].texture = updateTexture;
     }
 
-    if (a3d.imageMode == IMAGE) {
-      if (vertGroup[idx] != null && vertGroup[idx].texture == null) {
-        throw new RuntimeException("PShape3D: when setting texture coordinates in IMAGE mode, the textures need to be assigned first");
+    if (vertGroup[idx] != null && vertGroup[idx].texture != null) {
+      // Inverting the texture coordinate transformation. 
+      PTexture tex = vertGroup[idx].texture.getTexture();
+      
+      float uscale = 1.0f;
+      float vscale = 1.0f;
+      float cx = 0.0f;
+      float sx = +1.0f;
+      float cy = 0.0f;
+      float sy = +1.0f;
+      int w = vertGroup[idx].texture.width;
+      int h = vertGroup[idx].texture.height;      
+      if (tex.isFlippedX()) {
+        cx = 1.0f;      
+        sx = -1.0f;
       }
-      u /= vertGroup[idx].texture.width;
-      v /= vertGroup[idx].texture.height; 
+      if (tex.isFlippedY()) {
+        cy = 1.0f;      
+        sy = -1.0f;
+      }        
+      uscale *= tex.getMaxTextureCoordS();
+      vscale *= tex.getMaxTextureCoordT();    
+      
+      // Texture coordinate transformation.
+      u = (cx +  sx * u) * uscale;
+      v = (cy +  sy * v) * vscale;
+      
+      if (a3d.imageMode == IMAGE) {
+        u /= w;
+        v /= h;
+      }
+      
+      if (u < 0) v = 0;
+      else if (u > 1) u = 1;
+
+      if (v < 0) v = 0;
+      else if (v > 1) v = 1;    
     }
     
     texCoordArray[2 * idx + 0] = u;
@@ -811,24 +908,72 @@ public class PShape3D extends PShape implements PConstants {
         }
     }
     
-    if (a3d.imageMode == IMAGE) {
-      float u, v;
-      for (int i = 0; i < numVertices; i++) {
-        if (vertGroup[i] != null && vertGroup[i].texture == null) {
-          throw new RuntimeException("PShape3D: when setting texture coordinates in IMAGE mode, the textures need to be assigned first");
-        }      
-        
-        u = data[2 * i + 0];
-        v = data[2 * i + 1];        
-        
-        u /= vertGroup[i].texture.width;
-        v /= vertGroup[i].texture.height;
-
-        texCoordArray[2 * i + 0] = u;
-        texCoordArray[2 * i + 1] = v;
-      }  
-    } else {
+    // The transformation of texture coordinates require looping through all the vertices,
+    // which is not needed if there are no texures assigned to the shape.
+    boolean textured = false;
+    for (int i = 0; i < vertGroup.length; i++) {
+      if (vertGroup[i].texture != null) {
+        textured = true;
+        break;
+      }
+    }
+    if (!textured) {
+      // No texturing, no further processing is required.
       PApplet.arrayCopy(data, texCoordArray);
+    }
+
+    PImage img = null;
+    float uscale = 1.0f;
+    float vscale = 1.0f;
+    float cx = 0.0f;
+    float sx = +1.0f;
+    float cy = 0.0f;
+    float sy = +1.0f;
+    int w = 1;
+    int h = 1;       
+    float u, v;    
+    for (int i = 0; i < numVertices; i++) {
+      if (vertGroup[i] != null && vertGroup[i].texture != img) {
+        PTexture tex = vertGroup[i].texture.getTexture();
+      
+        uscale = 1.0f;
+        vscale = 1.0f;
+        cx = 0.0f;
+        sx = +1.0f;
+        cy = 0.0f;
+        sy = +1.0f;
+        w = vertGroup[i].texture.width;
+        h = vertGroup[i].texture.height;       
+        if (tex.isFlippedX()) {
+          cx = 1.0f;      
+          sx = -1.0f;
+        }
+        if (tex.isFlippedY()) {
+          cy = 1.0f;      
+          sy = -1.0f;
+        }        
+        uscale *= tex.getMaxTextureCoordS();
+        vscale *= tex.getMaxTextureCoordT();
+        
+        img = vertGroup[i].texture;
+      }
+      
+      // Texture coordinate transformation.
+      u = (cx +  sx * data[2 * i + 0]) * uscale;
+      v = (cy +  sy * data[2 * i + 1]) * vscale;
+      if (a3d.imageMode == IMAGE) {
+        u /= w;
+        v /= h;
+      }
+      
+      if (u < 0) v = 0;
+      else if (u > 1) u = 1;
+
+      if (v < 0) v = 0;
+      else if (v > 1) v = 1;        
+      
+      texCoordArray[2 * i + 0] = u;
+      texCoordArray[2 * i + 1] = v;      
     }
   }
   
@@ -848,16 +993,71 @@ public class PShape3D extends PShape implements PConstants {
         }
     }    
     
+    // The transformation of texture coordinates require looping through all the vertices,
+    // which is not needed if there are no texures assigned to the shape.
+    boolean textured = false;
+    for (int i = 0; i < vertGroup.length; i++) {
+      if (vertGroup[i].texture != null) {
+        textured = true;
+        break;
+      }
+    }
+
+    PImage img = null;
+    float uscale = 1.0f;
+    float vscale = 1.0f;
+    float cx = 0.0f;
+    float sx = +1.0f;
+    float cy = 0.0f;
+    float sy = +1.0f;
+    int w = 1;
+    int h = 1;       
+    float u, v;
     PVector vec;
     for (int i = 0; i < numVertices; i++) {
-      vec = (PVector)data.get(i);
+      if (vertGroup[i] != null && vertGroup[i].texture != img) {
+        PTexture tex = vertGroup[i].texture.getTexture();
       
-      if (a3d.imageMode == IMAGE) {
-        if (vertGroup[i] != null && vertGroup[i].texture == null) {
-          throw new RuntimeException("PShape3D: when setting texture coordinates in IMAGE mode, the textures need to be assigned first");
-        }      
-        texCoordArray[2 * i + 0] = vec.x / vertGroup[i].texture.width;
-        texCoordArray[2 * i + 1] = vec.y / vertGroup[i].texture.height;
+        uscale = 1.0f;
+        vscale = 1.0f;
+        cx = 0.0f;
+        sx = +1.0f;
+        cy = 0.0f;
+        sy = +1.0f;
+        w = vertGroup[i].texture.width;
+        h = vertGroup[i].texture.height;       
+        if (tex.isFlippedX()) {
+          cx = 1.0f;      
+          sx = -1.0f;
+        }
+        if (tex.isFlippedY()) {
+          cy = 1.0f;      
+          sy = -1.0f;
+        }        
+        uscale *= tex.getMaxTextureCoordS();
+        vscale *= tex.getMaxTextureCoordT();
+        
+        img = vertGroup[i].texture;
+      }    
+    
+      vec = (PVector)data.get(i);
+      if (textured) {
+        // Texture coordinate transformation.
+        u = (cx +  sx * vec.x) * uscale;
+        v = (cy +  sy * vec.y) * vscale;
+        if (a3d.imageMode == IMAGE) {
+          u /= w;
+          v /= h;
+        }
+      
+        if (u < 0) v = 0;
+        else if (u > 1) u = 1;
+
+        if (v < 0) v = 0;
+        else if (v > 1) v = 1;
+        
+        texCoordArray[2 * i + 0] = u;
+        texCoordArray[2 * i + 1] = v;        
       } else {
         texCoordArray[2 * i + 0] = vec.x;
         texCoordArray[2 * i + 1] = vec.y;
