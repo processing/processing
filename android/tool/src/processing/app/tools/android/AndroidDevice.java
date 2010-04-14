@@ -16,12 +16,13 @@ import processing.app.exec.StreamPump;
 import processing.app.tools.android.LogEntry.Severity;
 import processing.core.PApplet;
 
+
 class AndroidDevice implements AndroidDeviceProperties {
   private final AndroidEnvironment env;
   private final String id;
   private final Set<Integer> activeProcesses = new HashSet<Integer>();
-  private final Set<DeviceListener> listeners = Collections
-      .synchronizedSet(new HashSet<DeviceListener>());
+  private final Set<DeviceListener> listeners = 
+    Collections.synchronizedSet(new HashSet<DeviceListener>());
 
   // mutable state
   private Process logcat;
