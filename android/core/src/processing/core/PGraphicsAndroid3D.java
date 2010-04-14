@@ -449,7 +449,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     gl.glFinish(); // Make sure that the execution off all the openGL commands is finished.
     gl.glBindTexture(GL10.GL_TEXTURE_2D, screenTex.getTexture().getGLTextureID());
     //TODO: try using glCopyTexSubImage2D
-    gl.glCopyTexImage2D(GL10.GL_TEXTURE_2D, 0, GL10.GL_RGB, 0,0, width, height, 0);
+    //gl.glCopyTexSubImage2D(GL10.GL_TEXTURE_2D, 0, 0, 0, 0, 0, width, height);
+    gl.glCopyTexImage2D(GL10.GL_TEXTURE_2D, 0, GL10.GL_RGBA, 0,0, width, height, 0);
     gl.glBindTexture(GL10.GL_TEXTURE_2D, 0);
   }
   
