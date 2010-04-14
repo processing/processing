@@ -1,3 +1,10 @@
+0184 core (pre)
+X copy and blend scale when unnecessary
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1482
+X add Pattern caching to match() to speed things up
+X make saveStream() return a boolean to indicate success
+
+
 0183 core (pre-release)
 X no changes to core in 0183
 
