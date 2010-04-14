@@ -110,6 +110,8 @@ import android.graphics.Color;
  */
 public class PGraphics extends PImage implements PConstants {
 
+  public int VERTEXCOUNT = 0;
+  
   // ........................................................
 
   // width and height are already inherited from PImage
