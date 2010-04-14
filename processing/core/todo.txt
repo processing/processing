@@ -4,8 +4,9 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=1482
 X add Pattern caching to match() to speed things up
 X make saveStream() return a boolean to indicate success
 
-_ change skewX/Y to shearX/Y
 
+_ change skewX/Y to shearX/Y
+_ make determination on shape(x,y,z,w,h,d) or no
 
 stop() mess
 _ notes
