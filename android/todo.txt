@@ -3,14 +3,21 @@ o when running a sketch, need to unlock the device
 o   http://dev.processing.org/bugs/show_bug.cgi?id=1500
 X add Pattern caching to match() to speed things up
 X make saveStream() return a boolean to indicate success
+X implement 'export' to create a local android folder
+X 'stop' is now a no-op for the android tools
+X   partially fixed but hangs after pressing stop
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1386
 
-"Unable to resolve target 'Google...'" when APIs aren't installed
+earlier
+J figure out how to set ANDROID_SDK for the build scripts
+J   right now, just setting the env value is required 
 
 _ path problems finding javac.exe on vista
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1528
 
-_ exceptions on first run of the emulator (osx only?)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1527
+
+_ "Unable to resolve target 'Google...'" when APIs aren't installed
+_   add an error message that explains what to do
 
 _ next time the avd is updated
 _   remove old AVDs because their APIs might be out of date
@@ -20,6 +27,9 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=1526
 _ for libraries that don't work with android, don't let them export
 _   e.g. people adding the opengl library when it's not needed
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1524
+
+_ error messages in runner that are handled special (OOME) need different
+_   handling for android vs others.. argh
 
 _ test controlp5 with android
 
@@ -126,7 +136,6 @@ _   probably same as memory error above
 // jdf maybedone
 _ if hitting 'run' in p5, need to kill any sketch that's currently running
 
-// jdf why?
 _ throw an error if a file in the 'data' dir ends with .gz
 
 _ need to make data folder copy more efficient than just copying everything
@@ -147,17 +156,19 @@ _ signing tool
 _ selection of which avd (emulator), or plugged-in devices (if multiple)
 _ run the 'android' application (since finding its location is painful)
 
+P1 _ exceptions with StreamPump and adb devices on osx and linux
+P1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1545
+P1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1527
+P1 _ implement certificates (self-signed) for distribution
+P1 _   http://developer.android.com/guide/publishing/app-signing.html
+P1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1430
+
 P2 _ need to prevent hitting 'run' twice (threaded, so would work)
 P2 _   currently things just keep restarting the build, bad state
 P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1387
-
 P2 _ move the android tools into its own source package in SVN
 P2 _   started, but needs proper Tool or Mode packaging
 P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1388
-
-P2 _ 'stop' is now a no-op for the android tools
-P2 _   partially fixed but hangs after pressing stop (only on Mac--jdf)
-P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1386
 
 P2 _ implement method for selecting the AVD
 P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1390
@@ -172,9 +183,6 @@ P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1385
 P3 _ for now, only runs on the first device (findDevice()) found
 P3 _   --> implement selector to choose the default device for debugging
 P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1389
-P3 _ implement certificates (self-signed) for distribution
-P3 _   http://developer.android.com/guide/publishing/app-signing.html
-P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1430
 P3 _ if different machines, debug.keystore changes, requiring manual removal
 P3 _   or find a way to do it automatically with processing
 P3 _     can't keep it with the sketch, don't want to give away private key
@@ -195,14 +203,9 @@ P4 _ add method to set the icon (and package name?)
 P4 _   http://dev.processing.org/bugs/show_bug.cgi?id=1429
 P4 _   http://developer.android.com/guide/publishing/preparing.html
 
-// jdf maybedone
 P5 _ remove the need for a "Reset Android" menu option
 P5 _   might need to just put this in the menu for times when things go weird
 P5 _   http://dev.processing.org/bugs/show_bug.cgi?id=1392
-
-// jdf maybedone
-_ figure out how to set ANDROID_SDK for the build scripts
-_   right now, just setting the env value is required 
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
