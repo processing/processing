@@ -1743,8 +1743,13 @@ public class Editor extends JFrame implements RunnerListener {
    * the sketch completing and exiting?) Tools should not call this function.
    * To initiate a "stop" action, call handleStop() instead.
    */
-  public void internalRunnerClosed() {
+  public void deactivateRun() {
     toolbar.deactivate(EditorToolbar.RUN);
+  }
+  
+  
+  public void deactivateExport() {
+    toolbar.deactivate(EditorToolbar.EXPORT);
   }
 
 

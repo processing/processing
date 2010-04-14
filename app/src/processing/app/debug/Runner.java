@@ -437,7 +437,7 @@ public class Runner implements MessageConsumer {
       // or the user manually closes the sketch window.
       // TODO this should be handled better, should it not?
       if (editor != null) {
-        editor.internalRunnerClosed();
+        editor.deactivateRun();
       }
     } catch (InterruptedException exc) {
       // we don't interrupt
@@ -498,19 +498,30 @@ public class Runner implements MessageConsumer {
         reportException(message, event.thread());
     }
     if (editor != null) {
-      editor.internalRunnerClosed();
+      editor.deactivateRun();
     }
   }
 
-  public static boolean handleCommonErrors(final String exceptionClass, final String message, final RunnerListener listener)
-  {
+
+  public static boolean handleCommonErrors(final String exceptionClass, 
+                                           final String message, 
+                                           final RunnerListener listener) {
     if (exceptionClass.equals("java.lang.OutOfMemoryError")) {
-      listener.statusError("OutOfMemoryError: You may need to increase the memory setting in Preferences.");
-      System.err.println("An OutOfMemoryError means that your code is either using up too much memory");
-      System.err.println("because of a bug (e.g. creating an array that's too large, or unintentionally");
-      System.err.println("loading thousands of images), or that your sketch may need more memory to run.");
-      System.err.println("If your sketch uses a lot of memory (for instance if it loads a lot of data files)");
-      System.err.println("you can increase the memory available to your sketch using the Preferences window.");
+      if (message.contains("exceeds VM budget")) {
+        // TODO this is a kludge for Android, since there's no memory preference
+        listener.statusError("OutOfMemoryError: This code attempts to use more memory than available.");
+        System.err.println("An OutOfMemoryError means that your code is either using up too much memory");
+        System.err.println("because of a bug (e.g. creating an array that's too large, or unintentionally");
+        System.err.println("loading thousands of images), or simply that it's trying to use more memory");
+        System.err.println("than what is supported by the current device.");
+      } else {
+        listener.statusError("OutOfMemoryError: You may need to increase the memory setting in Preferences.");
+        System.err.println("An OutOfMemoryError means that your code is either using up too much memory");
+        System.err.println("because of a bug (e.g. creating an array that's too large, or unintentionally");
+        System.err.println("loading thousands of images), or that your sketch may need more memory to run.");
+        System.err.println("If your sketch uses a lot of memory (for instance if it loads a lot of data files)");
+        System.err.println("you can increase the memory available to your sketch using the Preferences window.");
+      }
 
     } else if (exceptionClass.equals("java.lang.StackOverflowError")) {
       listener.statusError("StackOverflowError: This sketch is attempting too much recursion.");
@@ -524,17 +535,21 @@ public class Runner implements MessageConsumer {
       System.err.println("This version of Processing only supports libraries and JAR files compiled for Java 1.5.");
       System.err.println("A library used by this sketch was compiled for Java 1.6 or later, ");
       System.err.println("and needs to be recompiled to be compatible with Java 1.5.");
-    } else if (exceptionClass.equals("java.lang.NoSuchMethodError") || exceptionClass.equals("java.lang.NoSuchFieldError")) {
-      listener.statusError(exceptionClass.substring(10) + ": You're probably using a library that's incompatible with this version of Processing.");
-    } else if (message!=null && 
-        message.equals("ClassNotFoundException: quicktime.std.StdQTException")) {
-      listener
-          .statusError("Could not find QuickTime, please reinstall QuickTime 7 or later.");
+      
+    } else if (exceptionClass.equals("java.lang.NoSuchMethodError") || 
+               exceptionClass.equals("java.lang.NoSuchFieldError")) {
+      listener.statusError(exceptionClass.substring(10) + ": " +
+                           "You may be using a library that's incompatible " +
+                           "with this version of Processing.");
+    } else if (message != null && 
+               message.equals("ClassNotFoundException: quicktime.std.StdQTException")) {
+      listener.statusError("Could not find QuickTime, please reinstall QuickTime 7 or later.");
     } else {
       return false;
     }
     return true;
   }
+
 
   // TODO: This may be called more than one time per error in the VM,
   // presumably because exceptions might be wrapped inside others,
