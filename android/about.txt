@@ -63,6 +63,8 @@ A guide for the excited, hopeful, weary, and confused.
   in Processing code, it's better to simply remove them and let advanced users
   who would otherwise rely on the events to handle the overrides themselves.
 
++ Constants for ALT, CONTROL, and SHIFT are not present. SHIFT may come back, 
+  but the other two don't exist on Android.
 
 [ emulator, screen, orientation ] 
 
@@ -86,6 +88,8 @@ A guide for the excited, hopeful, weary, and confused.
 
 
 [ developing on android ]
+
++ We're only supporting Android 2.0.1 and later. 
 
 + Performance reminds me a lot of Java performance on desktop machines when
   we first started the project in 2001. Most Processing sketches will benefit
@@ -151,3 +155,7 @@ A guide for the excited, hopeful, weary, and confused.
   is there, in spite of its identical purpose.
 
 + PFont.font is PFont.typeface, similar as above.
+
++ The 'online' variable is not available. It's for applets to determine 
+  whether they're running online or not, which doesn't make sense on
+  Android, where there's no such thing as an applet.
