@@ -237,7 +237,8 @@ public class PApplet extends Applet
    * it's such a terrible hack in how it's employed here. Calling setProperty()
    * inside setup() is a joke, since it's long since the AWT has been invoked.
    */
-  static public String useQuartz = "true";
+  static public boolean useQuartz = true;
+  //static public String useQuartz = "true";
 
   /**
    * Modifier flags for the shortcut key used to trigger menus.
@@ -7063,7 +7064,8 @@ public class PApplet extends Applet
     if (platform == MACOSX) {
       // Only run this on OS X otherwise it can cause a permissions error.
       // http://dev.processing.org/bugs/show_bug.cgi?id=976
-      System.setProperty("apple.awt.graphics.UseQuartz", useQuartz);
+      System.setProperty("apple.awt.graphics.UseQuartz", 
+                         String.valueOf(useQuartz));
     }
 
     // This doesn't do anything.
