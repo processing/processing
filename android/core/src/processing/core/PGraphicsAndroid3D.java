@@ -286,6 +286,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   public PGraphicsAndroid3D() {
 	  renderer = new A3DRenderer();
+	  configChooser = new A3DConfigChooser(); 
     glu = new GLU();  // or maybe not until used?
     recreateResourceMethods = new ArrayList<GLResource>(); 
   }
@@ -450,7 +451,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     gl.glBindTexture(GL10.GL_TEXTURE_2D, screenTex.getTexture().getGLTextureID());
     //TODO: try using glCopyTexSubImage2D
     //gl.glCopyTexSubImage2D(GL10.GL_TEXTURE_2D, 0, 0, 0, 0, 0, width, height);
-    gl.glCopyTexImage2D(GL10.GL_TEXTURE_2D, 0, GL10.GL_RGBA, 0,0, width, height, 0);
+    gl.glCopyTexImage2D(GL10.GL_TEXTURE_2D, 0, GL10.GL_RGB, 0,0, 256, 256, 0);
     gl.glBindTexture(GL10.GL_TEXTURE_2D, 0);
   }
   
@@ -478,6 +479,9 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   public void beginDraw() {
     VERTEXCOUNT = 0;
+    TRIANGLECOUNT = 0;
+    FACECOUNT = 0;
+    
     
     if (!settingsInited) defaultSettings();
 
@@ -518,7 +522,6 @@ public class PGraphicsAndroid3D extends PGraphics {
     // this helps the people who haven't set up their own projection.
     perspective();
 
-    
     lightCount = 0;
     lightFalloff(1, 0, 0);
     lightSpecular(0, 0, 0);    
@@ -526,8 +529,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     // coloured stuff
     gl.glEnable(GL10.GL_COLOR_MATERIAL);
     // TODO maybe not available in OpenGL ES?
-//    gl.glColorMaterial(GL10.GL_FRONT_AND_BACK, GL10.GL_AMBIENT_AND_DIFFUSE);
-//    gl.glColorMaterial(GL10.GL_FRONT_AND_BACK, GL10.GL_SPECULAR);
+    // gl.glColorMaterial(GL10.GL_FRONT_AND_BACK, GL10.GL_AMBIENT_AND_DIFFUSE);
+    // gl.glColorMaterial(GL10.GL_FRONT_AND_BACK, GL10.GL_SPECULAR);
     
     // these tend to make life easier
     // (but sometimes at the expense of a little speed)
@@ -1036,6 +1039,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       shape.endUpdate();
    
       shape.setGroups(recordedGroups);
+      shape.optimizeGroups();
       
       // Freeing memory.
       recordedVertices.clear();
@@ -1405,7 +1409,6 @@ public class PGraphicsAndroid3D extends PGraphics {
     triangles[triangleCount][VERTEX3] = c;    
     
     triangleCount++;
-    
     boolean firstFace = triangleCount == 1;
     if (textureImage != textureImagePrev || firstFace) {
       // A new face starts at the first triangle or when the texture changes.
@@ -1413,7 +1416,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     } else {
       // mark this triangle as being part of the current face.
       faceLength[faceCount-1]++;
-    } 
+    }
+     
     textureImagePrev = textureImage;  
   }
   
@@ -1427,7 +1431,6 @@ public class PGraphicsAndroid3D extends PGraphics {
         faceTexture = PApplet.expand(faceTexture);
       }
       faceOffset[faceCount] = firstFace ? 0 : triangleCount;
-      //else faceOffset[faceCount] = ;
       faceLength[faceCount] = 1;
       faceTexture[faceCount] = textureImage;
       faceCount++;    
@@ -1436,7 +1439,7 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   protected void renderTriangles(int start, int stop) {
     report("render_triangles in");
-
+    
     PTexture tex = null;
     boolean texturing = false;
     
@@ -1450,6 +1453,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     for (int j = start; j < stop; j++) {
       int i = faceOffset[j];
+      FACECOUNT++;
       
       if (faceTexture[j] != null) {
         tex = faceTexture[j].getTexture();
@@ -1485,6 +1489,8 @@ public class PGraphicsAndroid3D extends PGraphics {
       
       int n = 0;
       for (int k = 0; k < faceLength[j]; k++) {
+        TRIANGLECOUNT++;
+        
         float a[] = vertices[triangles[i][VERTEX1]];
         float b[] = vertices[triangles[i][VERTEX2]];
         float c[] = vertices[triangles[i][VERTEX3]];
@@ -1529,7 +1535,7 @@ public class PGraphicsAndroid3D extends PGraphics {
           normalArray[3 * n + 1] = toFixed32(a[NY]);
           normalArray[3 * n + 2] = toFixed32(a[NZ]);
           texCoordArray[2 * n + 0] = toFixed32((cx +  sx * a[U]) * uscale);
-          texCoordArray[2 * n + 1] = toFixed32((cy +  sy * a[V]) * vscale);
+          texCoordArray[2 * n + 1] = toFixed32((cy +  sy * a[V]) * vscale);          
           n++;
           
           VERTEXCOUNT++; 
@@ -1556,7 +1562,6 @@ public class PGraphicsAndroid3D extends PGraphics {
           texCoordArray[2 * n + 1] = toFixed32((cy +  sy * b[V]) * vscale);
           n++;
 
-
           VERTEXCOUNT++;
         }
         
@@ -1580,6 +1585,7 @@ public class PGraphicsAndroid3D extends PGraphics {
           texCoordArray[2 * n + 0] = toFixed32((cx +  sx * c[U]) * uscale);
           texCoordArray[2 * n + 1] = toFixed32((cy +  sy * c[V]) * vscale);
           n++;
+          
           VERTEXCOUNT++;
         }
         
@@ -1590,7 +1596,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         vertexBuffer.put(vertexArray);
         colorBuffer.put(colorArray);
         normalBuffer.put(normalArray);
-        texCoordBuffer.put(texCoordArray);    
+        if (texturing) texCoordBuffer.put(texCoordArray);    
         
         vertexBuffer.position(0);
         colorBuffer.position(0);
@@ -1604,7 +1610,6 @@ public class PGraphicsAndroid3D extends PGraphics {
         gl.glDrawArrays(GL10.GL_TRIANGLES, 0, 3 * faceLength[j]);
       }
       
-
       if (texturing) {
         gl.glBindTexture(tex.getGLTarget(), 0);
         gl.glDisable(tex.getGLTarget());
@@ -4721,6 +4726,12 @@ public class PGraphicsAndroid3D extends PGraphics {
         gl11 = null;
       }          
       
+      String vendor = gl.glGetString(GL10.GL_VENDOR);
+      String renderer = gl.glGetString(GL10.GL_RENDERER);
+      String version = gl.glGetString(GL10.GL_VERSION);
+      
+      System.out.println(vendor + " " + renderer + " " + version);
+      
       npotTexSupported = false;
       mipmapSupported = false;    
       matrixGetSupported = false;
@@ -4762,23 +4773,73 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   // Config chooser  
   
-  AndroidConfigChooser configChooser;
+  A3DConfigChooser configChooser;
   
-  public class AndroidConfigChooser implements EGLConfigChooser {
+  public class A3DConfigChooser implements EGLConfigChooser {
     
     public EGLConfig chooseConfig(EGL10 egl, EGLDisplay display) {
       
       // Specify a configuration for our opengl session
       // and grab the first configuration that matches is
-      int[] configSpec = {
+      int[] configSpecs  = {
+        //EGL10.EGL_RED_SIZE, 8,
+        //EGL10.EGL_GREEN_SIZE, 8,
+        //EGL10.EGL_BLUE_SIZE, 8,
+        //EGL10.EGL_ALPHA_SIZE, 0,
         EGL10.EGL_DEPTH_SIZE, 16,
-        EGL10.EGL_NONE
-      };      
+        //EGL10.EGL_STENCIL_SIZE, 0,
+        EGL10.EGL_NONE};      
       
-      EGLConfig[] configs = new EGLConfig[1];
-      int[] num_config = new int[1];      
-      egl.eglChooseConfig(display, configSpec, configs, 1, num_config);
-      return configs[0];
+
+        int[] num_config = new int[1];
+        egl.eglChooseConfig(display, configSpecs, null, 0, num_config);
+      
+        int numConfigs = num_config[0];        
+      
+        if (numConfigs <= 0) {
+            throw new IllegalArgumentException("No EGL configs match configSpec");
+        }
+
+        EGLConfig[] configs = new EGLConfig[numConfigs];
+        
+        egl.eglChooseConfig(display, configSpecs, configs, numConfigs, num_config);        
+        // best choice : select first config
+        String configStr = "A3D - selected EGL config : " + printConfig(egl, display, configs[0]);
+        System.out.println(configStr);
+        
+        return configs[0];
+    }
+    
+    private  String printConfig(EGL10 egl, EGLDisplay display, EGLConfig config) {
+      int r = findConfigAttrib(egl, display, config, EGL10.EGL_RED_SIZE, 0);
+      int g = findConfigAttrib(egl, display, config, EGL10.EGL_GREEN_SIZE, 0);
+      int b = findConfigAttrib(egl, display, config, EGL10.EGL_BLUE_SIZE, 0);
+      int a = findConfigAttrib(egl, display, config, EGL10.EGL_ALPHA_SIZE, 0);
+      int d = findConfigAttrib(egl, display, config, EGL10.EGL_DEPTH_SIZE, 0);
+      int s = findConfigAttrib(egl, display, config, EGL10.EGL_STENCIL_SIZE, 0);
+
+             /*
+              * 
+              * EGL_CONFIG_CAVEAT value 
+              
+         #define EGL_NONE          0x3038 
+         #define EGL_SLOW_CONFIG           0x3050 
+         #define EGL_NON_CONFORMANT_CONFIG      0x3051  
+*/
+         
+      return String.format("EGLConfig rgba=%d%d%d%d depth=%d stencil=%d", r,g,b,a,d,s)
+                    + " native=" + findConfigAttrib(egl, display, config, EGL10.EGL_NATIVE_RENDERABLE, 0)
+                    + " buffer=" + findConfigAttrib(egl, display, config, EGL10.EGL_BUFFER_SIZE, 0)
+                    + String.format(" caveat=0x%04x" , findConfigAttrib(egl, display, config, EGL10.EGL_CONFIG_CAVEAT, 0));         
+    }
+    
+    
+    private int findConfigAttrib(EGL10 egl, EGLDisplay display, EGLConfig config, int attribute, int defaultValue) {      
+      int[] mValue = new int[1];
+      if (egl.eglGetConfigAttrib(display, config, attribute, mValue)) {
+        return mValue[0];
+      }
+      return defaultValue;
     }
   }
   

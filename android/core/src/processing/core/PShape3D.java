@@ -1236,6 +1236,12 @@ public class PShape3D extends PShape implements PConstants {
   }
   
   
+  protected void optimizeGroups() {
+    // TODO: Try to reduce the number of different groups (according to the textures, line width, etc..)
+    // Use in model recording, every  
+    initGroups();    
+  }
+  
   protected void initGroups() {
     groups = new ArrayList<VertexGroup>();
     vertGroup = new VertexGroup[numVertices];
@@ -1694,6 +1700,10 @@ public class PShape3D extends PShape implements PConstants {
 	  PImage img;
 	  PTexture tex;
 	  float pointSize;
+	  
+    g.VERTEXCOUNT = vertexBuffer.capacity() / 3;
+    g.FACECOUNT = groups.size();
+    g.TRIANGLECOUNT = g.VERTEXCOUNT / 3; 
 	  
 	  // Setting line width and point size from stroke value.
 		pointSize = PApplet.min(a3d.strokeWeight, a3d.maxPointSize);
