@@ -173,11 +173,6 @@ public class PFont implements PConstants {
     psname = ""; //font.getPSName();
     this.size = size;  //font.getSize();
 
-    // no, i'm not interested in getting off the couch
-    lazy = true;
-    // not sure what else to do here
-    //mbox2 = 0;
-
     int initialCount = 10;
     glyphs = new Glyph[initialCount];
 
@@ -212,7 +207,10 @@ public class PFont implements PConstants {
 //    ascent = lazyMetrics.getAscent();
 //    descent = lazyMetrics.getDescent();
 
-    if (charset != null) {
+    if (charset == null) {
+      lazy = true;
+      
+    } else {
       // charset needs to be sorted to make index lookup run more quickly
       // http://dev.processing.org/bugs/show_bug.cgi?id=494
       Arrays.sort(charset);
@@ -221,9 +219,11 @@ public class PFont implements PConstants {
 
       glyphCount = 0;
       for (char c : charset) {
-//        if (font.canDisplay(c)) {
-        glyphs[glyphCount++] = new Glyph(c);
-//        }
+        Glyph glyf = new Glyph(c);
+        if (glyf.value < 128) {
+          ascii[glyf.value] = glyphCount;
+        }
+        glyphs[glyphCount++] = glyf;
       }
 
       // shorten the array if necessary

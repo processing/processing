@@ -1,5 +1,10 @@
 0185 android
+X fix two bugs with fonts created with specific charsets
 
+
+_ possibility of doing a compile (not run) using straight javac?
+_   this would be a faster way to check for errors
+_   w/o needing to use the incredibly slow android tools
 
 _ "Unable to resolve target 'Google...'" when APIs aren't installed
 _   add an error message that explains what to do
@@ -154,7 +159,6 @@ P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1387
 P2 _ move the android tools into its own source package in SVN
 P2 _   started, but needs proper Tool or Mode packaging
 P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1388
-
 P2 _ implement method for selecting the AVD
 P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1390
 P2 _ android mode is currently per-editor (and clunky)
@@ -162,6 +166,8 @@ P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1379
 P2 _ save state re: whether sketches are android or java mode (or others?)
 P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1380
 
+P3 _ compiler errors not appearing properly on windows
+P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1546
 P3 _ remove various debug messages on the console
 P3 _   right now, there are too many places where errors occur
 P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1385
