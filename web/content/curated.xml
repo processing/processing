@@ -2,6 +2,16 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <curated>
 
+
+<software name="John Henry von Neumann" by="Chandler B. McWilliams" scroll="yes" resize="yes" width="1024" height="700">
+        <image>images/johnhenry.jpg</image>
+          <description>
+             Performance that recasts the archetypal conflict between human and machine labor as a competition to complete an algorithmic drawing in an eight-hour workday.
+          </description>
+          <location>http://brysonian.com/john-henry-von-neumann</location>
+          <link href="http://brysonian.com/">brysonian.com</link>
+</software>
+
 <software name="In the Air" by="Victor Viña, Nerea Calvillo" scroll="yes" resize="yes" width="1024" height="700">
         <image>images/intheair.jpg</image>
           <description>
