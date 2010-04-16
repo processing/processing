@@ -527,10 +527,9 @@ public class PApplet extends Activity implements PConstants, Runnable {
       g = newGraphics;
 
       // The renderer can be set only once.
+      setEGLConfigChooser(((PGraphicsAndroid3D)g).getConfigChooser());
       setRenderer(((PGraphicsAndroid3D)g).getRenderer());
       setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
-      //setEGLConfigChooser(((PGraphicsAndroid3D)g).getConfigChooser());
-      
       
       setFocusable(true);
       setFocusableInTouchMode(true);
