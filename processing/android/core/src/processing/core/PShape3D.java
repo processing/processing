@@ -1237,9 +1237,32 @@ public class PShape3D extends PShape implements PConstants {
   
   
   protected void optimizeGroups() {
-    // TODO: Try to reduce the number of different groups (according to the textures, line width, etc..)
-    // Use in model recording, every  
-    initGroups();    
+    if (groups.size() == 0) {
+      initGroups();
+    } else {
+      VertexGroup gr0, gr1;
+      
+      // Expanding identical, contiguous groups.
+      gr0 = (VertexGroup)groups.get(0);
+      for (int i = 1; i < groups.size(); i++) {
+        gr1 = (VertexGroup)groups.get(i);
+        if (gr0.equalTo(gr1)) {
+          gr0.last = gr1.last;          // Extending gr0.
+          gr1.first = gr1.last = -1; // Marking for deletion.
+        } else {
+          gr0 = gr1;  
+        }
+      }
+      
+      // Deleting superflous groups.
+      for (int i = groups.size() -1; i >= 0; i--) {
+        gr1 = (VertexGroup)groups.get(i);
+        if (gr1.last == -1) {
+          groups.remove(i);
+        }
+      }
+      
+    }
   }
   
   protected void initGroups() {
@@ -1912,6 +1935,10 @@ public class PShape3D extends PShape implements PConstants {
       sw = weight;
       texture = tex;
     }    
+    
+    boolean equalTo(VertexGroup gr) {
+      return glMode == gr.glMode && sw == gr.sw && texture == gr.texture; 
+    }
     
 	  int first;
 	  int last;
