@@ -110,9 +110,11 @@ import android.graphics.Color;
  */
 public class PGraphics extends PImage implements PConstants {
 
-  public int VERTEXCOUNT = 0; // Just for debugging purposes, I'll remove soon. Andres
+  // These three are only for debugging/benchmarking purposes. I will remove soon (Andres):
+  public int VERTEXCOUNT = 0;
   public int TRIANGLECOUNT = 0;
   public int FACECOUNT = 0;
+  
   
   // ........................................................
 
