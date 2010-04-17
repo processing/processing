@@ -380,7 +380,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       colorArray = new int[DEFAULT_BUFFER_SIZE * 4];
       texCoordArray = new int[DEFAULT_BUFFER_SIZE * 2];      
       normalArray = new int[DEFAULT_BUFFER_SIZE * 3];
-            
+      
       buffersAllocated = true;
     }        
   }
@@ -492,8 +492,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     vertexBuffer.rewind();
     colorBuffer.rewind();
     texCoordBuffer.rewind();
-    normalBuffer.rewind();
-
+    normalBuffer.rewind();    
+    
     textureImage = null;
     textureImagePrev = null;
         
@@ -1535,7 +1535,7 @@ public class PGraphicsAndroid3D extends PGraphics {
           normalArray[3 * n + 1] = toFixed32(a[NY]);
           normalArray[3 * n + 2] = toFixed32(a[NZ]);
           texCoordArray[2 * n + 0] = toFixed32((cx +  sx * a[U]) * uscale);
-          texCoordArray[2 * n + 1] = toFixed32((cy +  sy * a[V]) * vscale);          
+          texCoordArray[2 * n + 1] = toFixed32((cy +  sy * a[V]) * vscale);
           n++;
           
           VERTEXCOUNT++; 
@@ -1583,7 +1583,7 @@ public class PGraphicsAndroid3D extends PGraphics {
           normalArray[3 * n + 1] = toFixed32(c[NY]);
           normalArray[3 * n + 2] = toFixed32(c[NZ]);
           texCoordArray[2 * n + 0] = toFixed32((cx +  sx * c[U]) * uscale);
-          texCoordArray[2 * n + 1] = toFixed32((cy +  sy * c[V]) * vscale);
+          texCoordArray[2 * n + 1] = toFixed32((cy +  sy * c[V]) * vscale);          
           n++;
           
           VERTEXCOUNT++;
