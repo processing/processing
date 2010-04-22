@@ -64,6 +64,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   public GL10 gl;
   public GL11 gl11;
+  public GL11ExtensionPack gl11x;
   public GLU glu;
 
   // ........................................................
@@ -281,6 +282,12 @@ public class PGraphicsAndroid3D extends PGraphics {
   ArrayList<PVector> recordedNormals;
   ArrayList<PVector> recordedTexCoords;  
   ArrayList<VertexGroup> recordedGroups;
+  
+  // ........................................................
+  
+  public String OPENGL_VENDOR;
+  public String OPENGL_RENDERER;
+  public String OPENGL_VERSION;
   
   //////////////////////////////////////////////////////////////
   
@@ -4716,9 +4723,17 @@ public class PGraphicsAndroid3D extends PGraphics {
         gl11 = null;
       }
       
+      try {
+        gl11x = (GL11ExtensionPack)gl;
+      } catch (ClassCastException cce) {
+        gl11x = null;
+      }      
+      
       parent.handleDraw();
       
-      gl = null;        
+      gl = null;
+      gl11 = null;
+      gl11x = null;      
     }
 
     public void onSurfaceChanged(GL10 igl, int iwidth, int iheight) {
@@ -4730,8 +4745,16 @@ public class PGraphicsAndroid3D extends PGraphics {
         gl11 = null;
       }      
       
+      try {
+        gl11x = (GL11ExtensionPack)gl;
+      } catch (ClassCastException cce) {
+        gl11x = null;
+      }          
+      
       setSize(iwidth, iheight);
-      gl = null;    	
+      gl = null;    
+      gl11 = null;
+      gl11x = null;
     }
 
     public void onSurfaceCreated(GL10 igl, EGLConfig config) {
@@ -4741,13 +4764,17 @@ public class PGraphicsAndroid3D extends PGraphics {
         gl11 = (GL11)gl;
       } catch (ClassCastException cce) {
         gl11 = null;
-      }          
+      }
       
-      String vendor = gl.glGetString(GL10.GL_VENDOR);
-      String renderer = gl.glGetString(GL10.GL_RENDERER);
-      String version = gl.glGetString(GL10.GL_VERSION);
+      try {
+        gl11x = (GL11ExtensionPack)gl;
+      } catch (ClassCastException cce) {
+        gl11x = null;
+      }         
       
-      System.out.println(vendor + " " + renderer + " " + version);
+      OPENGL_VENDOR = gl.glGetString(GL10.GL_VENDOR);
+      OPENGL_RENDERER = gl.glGetString(GL10.GL_RENDERER);
+      OPENGL_VERSION = gl.glGetString(GL10.GL_VERSION);
       
       npotTexSupported = false;
       mipmapSupported = false;    
@@ -4783,6 +4810,8 @@ public class PGraphicsAndroid3D extends PGraphics {
       
       recreateResources();
       gl = null;
+      gl11 = null;
+      gl11x = null;      
     }    
   }
   
