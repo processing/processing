@@ -4774,7 +4774,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       
       OPENGL_VENDOR = gl.glGetString(GL10.GL_VENDOR);
       OPENGL_RENDERER = gl.glGetString(GL10.GL_RENDERER);
-      OPENGL_VERSION = gl.glGetString(GL10.GL_VERSION);
+      OPENGL_VERSION = gl.glGetString(GL10.GL_VERSION);      
       
       npotTexSupported = false;
       mipmapSupported = false;    
@@ -4791,7 +4791,10 @@ public class PGraphicsAndroid3D extends PGraphics {
        if (-1 < extensions.indexOf("GL_OES_matrix_get"))  {
          matrixGetSupported = true;
        }
-       if (-1 < extensions.indexOf("GL_ARB_vertex_buffer_object"))  {
+       if (-1 < extensions.indexOf("GL_ARB_vertex_buffer_object") ||
+            -1 < OPENGL_RENDERER.indexOf("PowerVR SGX 530"))  { // I added this because Motoroi 
+                                                                                                                    // doesn't show VBO extension 
+                                                                                                                    // but the related functions work ok.
          vboSupported = true;   
        }
        if (-1 < extensions.indexOf("GL_OES_framebuffer_object"))  {
