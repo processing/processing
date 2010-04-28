@@ -1,4 +1,6 @@
 0185 pde
+X add option to launch a sketch directly w/ linux
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1549
 
 
 _ create default tools folder (just like libraries)

@@ -75,6 +75,8 @@ JDKDIR=`readlink -f "$APPDIR/java"`
 make_jdkcp "$JDKDIR"
 log SUCCESS
 
+SKETCH=`readlink -f $1`
+
 # Local JDK found?
 if [ $SUCCESS -ne 1 ]; then
   # No, try using the preferred system JRE/JDK (if any)
@@ -97,4 +99,4 @@ log PATH
 
 # Start Processing in the same directory as this script
 cd "$APPDIR"
-java processing.app.Base &
+java processing.app.Base "$SKETCH" &
