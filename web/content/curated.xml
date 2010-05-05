@@ -2,6 +2,14 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <curated>
 
+<software name="Just Landed" by="Jer Thorp" scroll="yes" resize="yes" width="1024" height="700">
+        <image>images/justlanded.jpg</image>
+          <description>
+              Combines Processing, Twitter, and MetaCarta to map the phrase "Just landed in..." onto the globe and renders as video.
+          </description>
+          <location>http://blog.blprnt.com/blog/blprnt/just-landed-processing-twitter-metacarta-hidden-data</location>
+          <link href="http://blog.blprnt.com/">blprnt.com</link>
+</software>
 
 <software name="John Henry von Neumann" by="Chandler B. McWilliams" scroll="yes" resize="yes" width="1024" height="700">
         <image>images/johnhenry.jpg</image>
