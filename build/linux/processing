@@ -99,4 +99,8 @@ log PATH
 
 # Start Processing in the same directory as this script
 cd "$APPDIR"
-java processing.app.Base "$SKETCH" &
+if [ "$1" ]; then
+ java processing.app.Base "$SKETCH" &
+else
+ java processing.app.Base &
+fi
