@@ -512,6 +512,17 @@ public class PApplet extends Activity implements PConstants, Runnable {
       // are these two needed?
       surfaceHolder.addCallback(this);
       //surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_GPU);
+      
+      
+      /* By default, GLSurfaceView() creates a RGB_565 opaque surface.
+       * If we want a translucent one, we should change the surface's
+       * format here, using PixelFormat.TRANSLUCENT for GL Surfaces
+       * is interpreted as any 32-bit surface with alpha by SurfaceFlinger.
+       */
+      if (PGraphicsAndroid3D.TRANSLUCENT) {
+        this.getHolder().setFormat(PixelFormat.TRANSLUCENT);
+      }
+              
 
 //      System.out.println("Creating PGraphicsAndroid3D " + width + " " + height);
 
@@ -526,6 +537,9 @@ public class PApplet extends Activity implements PConstants, Runnable {
       newGraphics.setPrimary(true);
       g = newGraphics;
 
+      // Set context factory. This make possible to have 2.x contexts.
+      setEGLContextFactory(((PGraphicsAndroid3D)g).getContextFactory());
+      
       // The renderer can be set only once.
       setEGLConfigChooser(((PGraphicsAndroid3D)g).getConfigChooser());
       setRenderer(((PGraphicsAndroid3D)g).getRenderer());
@@ -535,6 +549,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
       setFocusableInTouchMode(true);
       requestFocus();
     }
+    
+ 
 
     
     // part of SurfaceHolder.Callback
@@ -826,6 +842,214 @@ public class PApplet extends Activity implements PConstants, Runnable {
 //    super.addNotify();
 //    println("addNotify()");
 //  }
+
+
+  //////////////////////////////////////////////////////////////
+
+  protected RegisteredMethods sizeMethods;
+  protected RegisteredMethods preMethods, drawMethods, postMethods;
+  protected RegisteredMethods mouseEventMethods, keyEventMethods;
+  protected RegisteredMethods disposeMethods;
+  
+  public class RegisteredMethods {
+    int count;
+    Object objects[];
+    Method methods[];
+
+
+    // convenience version for no args
+    public void handle() {
+      handle(new Object[] { });
+    }
+
+    public void handle(Object oargs[]) {
+      for (int i = 0; i < count; i++) {
+        try {
+          //System.out.println(objects[i] + " " + args);
+          methods[i].invoke(objects[i], oargs);
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
+    }
+
+    public void add(Object object, Method method) {
+      if (objects == null) {
+        objects = new Object[5];
+        methods = new Method[5];
+      }
+      if (count == objects.length) {
+        objects = (Object[]) PApplet.expand(objects);
+        methods = (Method[]) PApplet.expand(methods);
+//        Object otemp[] = new Object[count << 1];
+//        System.arraycopy(objects, 0, otemp, 0, count);
+//        objects = otemp;
+//        Method mtemp[] = new Method[count << 1];
+//        System.arraycopy(methods, 0, mtemp, 0, count);
+//        methods = mtemp;
+      }
+      objects[count] = object;
+      methods[count] = method;
+      count++;
+    }
+
+
+    /**
+     * Removes first object/method pair matched (and only the first,
+     * must be called multiple times if object is registered multiple times).
+     * Does not shrink array afterwards, silently returns if method not found.
+     */
+    public void remove(Object object, Method method) {
+      int index = findIndex(object, method);
+      if (index != -1) {
+        // shift remaining methods by one to preserve ordering
+        count--;
+        for (int i = index; i < count; i++) {
+          objects[i] = objects[i+1];
+          methods[i] = methods[i+1];
+        }
+        // clean things out for the gc's sake
+        objects[count] = null;
+        methods[count] = null;
+      }
+    }
+
+    protected int findIndex(Object object, Method method) {
+      for (int i = 0; i < count; i++) {
+        if (objects[i] == object && methods[i].equals(method)) {
+          //objects[i].equals() might be overridden, so use == for safety
+          // since here we do care about actual object identity
+          //methods[i]==method is never true even for same method, so must use
+          // equals(), this should be safe because of object identity
+          return i;
+        }
+      }
+      return -1;
+    }
+  }
+
+
+  public void registerSize(Object o) {
+    Class<?> methodArgs[] = new Class[] { Integer.TYPE, Integer.TYPE };
+    registerWithArgs(sizeMethods, "size", o, methodArgs);
+  }
+
+  public void registerPre(Object o) {
+    registerNoArgs(preMethods, "pre", o);
+  }
+
+  public void registerDraw(Object o) {
+    registerNoArgs(drawMethods, "draw", o);
+  }
+
+  public void registerPost(Object o) {
+    registerNoArgs(postMethods, "post", o);
+  }
+
+  public void registerMouseEvent(Object o) {
+//    Class<?> methodArgs[] = new Class[] { MouseEvent.class };
+ //   registerWithArgs(mouseEventMethods, "mouseEvent", o, methodArgs);
+  }
+
+
+  public void registerKeyEvent(Object o) {
+    Class<?> methodArgs[] = new Class[] { KeyEvent.class };
+    registerWithArgs(keyEventMethods, "keyEvent", o, methodArgs);
+  }
+
+  public void registerDispose(Object o) {
+    //registerNoArgs(disposeMethods, "dispose", o);
+  }
+
+
+  protected void registerNoArgs(RegisteredMethods meth,
+                                String name, Object o) {
+    Class<?> c = o.getClass();
+    try {
+      Method method = c.getMethod(name, new Class[] {});
+      meth.add(o, method);
+
+    } catch (NoSuchMethodException nsme) {
+      die("There is no public " + name + "() method in the class " +
+          o.getClass().getName());
+
+    } catch (Exception e) {
+      die("Could not register " + name + " + () for " + o, e);
+    }
+  }
+
+
+  protected void registerWithArgs(RegisteredMethods meth,
+                                  String name, Object o, Class<?> cargs[]) {
+    Class<?> c = o.getClass();
+    try {
+      Method method = c.getMethod(name, cargs);
+      meth.add(o, method);
+
+    } catch (NoSuchMethodException nsme) {
+      die("There is no public " + name + "() method in the class " +
+          o.getClass().getName());
+
+    } catch (Exception e) {
+      die("Could not register " + name + " + () for " + o, e);
+    }
+  }
+
+
+  public void unregisterSize(Object o) {
+    Class<?> methodArgs[] = new Class[] { Integer.TYPE, Integer.TYPE };
+    unregisterWithArgs(sizeMethods, "size", o, methodArgs);
+  }
+
+  public void unregisterPre(Object o) {
+    unregisterNoArgs(preMethods, "pre", o);
+  }
+
+  public void unregisterDraw(Object o) {
+    unregisterNoArgs(drawMethods, "draw", o);
+  }
+
+  public void unregisterPost(Object o) {
+    unregisterNoArgs(postMethods, "post", o);
+  }
+
+  public void unregisterMouseEvent(Object o) {
+ //   Class<?> methodArgs[] = new Class[] { MouseEvent.class };
+ //   unregisterWithArgs(mouseEventMethods, "mouseEvent", o, methodArgs);
+  }
+
+  public void unregisterKeyEvent(Object o) {
+    Class<?> methodArgs[] = new Class[] { KeyEvent.class };
+    unregisterWithArgs(keyEventMethods, "keyEvent", o, methodArgs);
+  }
+
+  public void unregisterDispose(Object o) {
+    unregisterNoArgs(disposeMethods, "dispose", o);
+  }
+
+
+  protected void unregisterNoArgs(RegisteredMethods meth,
+                                  String name, Object o) {
+    Class<?> c = o.getClass();
+    try {
+      Method method = c.getMethod(name, new Class[] {});
+      meth.remove(o, method);
+    } catch (Exception e) {
+      die("Could not unregister " + name + "() for " + o, e);
+    }
+  }
+
+
+  protected void unregisterWithArgs(RegisteredMethods meth,
+                                    String name, Object o, Class<?> cargs[]) {
+    Class<?> c = o.getClass();
+    try {
+      Method method = c.getMethod(name, cargs);
+      meth.remove(o, method);
+    } catch (Exception e) {
+      die("Could not unregister " + name + "() for " + o, e);
+    }
+  }
 
 
   //////////////////////////////////////////////////////////////
