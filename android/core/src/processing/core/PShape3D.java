@@ -83,6 +83,8 @@ public class PShape3D extends PShape implements PConstants {
   protected float ymin, ymax;
   protected float zmin, zmax;
   
+  protected float ptDistAtt[] = { 1.0f, 0.0f, 0.01f, 1.0f };
+  
   protected static final int SIZEOF_FLOAT = Float.SIZE / 8;
   
   
@@ -327,6 +329,10 @@ public class PShape3D extends PShape implements PConstants {
   // SET/GET VERTICES
   
   
+  public int getNumVertices() {
+    return numVertices;
+  }
+  
   public PVector getVertex(int idx) {
     if (updateElement != VERTICES) {
       throw new RuntimeException("PShape3D: update mode is not set to VERTICES");
@@ -399,6 +405,11 @@ public class PShape3D extends PShape implements PConstants {
     vertexArray[3 * idx + 2] = z;    
   }
 
+  
+  public void setVertex(int idx, PVector p) {
+    setVertex(idx, p.x, p.y, p.z);  
+  }  
+  
   
   public void setVertex(float[] data) {
     if (updateElement != VERTICES) {
@@ -1429,7 +1440,7 @@ public class PShape3D extends PShape implements PConstants {
   // Data allocation, deletion.
 
   
-  void createModel(int numVert) {
+  protected void createModel(int numVert) {
     numVertices = numVert;
 
     initVertexData();
@@ -1766,10 +1777,7 @@ public class PShape3D extends PShape implements PConstants {
               
           // This is how will our point sprite's size will be modified by 
           // distance from the viewer             
-          float quadratic[] = {1.0f, 0.0f, 0.01f, 1};
-          ByteBuffer temp = ByteBuffer.allocateDirect(16);
-          temp.order(ByteOrder.nativeOrder());              
-          gl.glPointParameterfv(GL11.GL_POINT_DISTANCE_ATTENUATION, (FloatBuffer)temp.asFloatBuffer().put(quadratic).flip());
+          gl.glPointParameterfv(GL11.GL_POINT_DISTANCE_ATTENUATION, ptDistAtt, 0);
            
           // The alpha of a point is calculated to allow the fading of points 
           // instead of shrinking them past a defined threshold size. The threshold 
@@ -2184,8 +2192,7 @@ public class PShape3D extends PShape implements PConstants {
       } else {
         a3d.beginShape();  
       }      
-            
-      //a3d.beginShape(); 
+      
       for (int j = 0; j < face.vertIdx.size(); j++){
         int vertIdx, normIdx;
         PVector vert, norms;
