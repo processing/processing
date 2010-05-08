@@ -537,7 +537,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
     // use <= since that's what processing.core does
     gl.glDepthFunc(GL10.GL_LEQUAL);
-
+    
     // because y is flipped
     gl.glFrontFace(GL10.GL_CW);    
     

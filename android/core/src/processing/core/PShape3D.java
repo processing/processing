@@ -85,6 +85,8 @@ public class PShape3D extends PShape implements PConstants {
   
   protected float ptDistAtt[] = { 1.0f, 0.0f, 0.01f, 1.0f };
   
+  protected boolean depthMaskEnabled = true;
+  
   protected static final int SIZEOF_FLOAT = Float.SIZE / 8;
   
   
@@ -1369,6 +1371,14 @@ public class PShape3D extends PShape implements PConstants {
   
   // Parameters   
   
+  public void noDepthMask() {
+    depthMaskEnabled = false;  
+  }
+  
+  public void depthMask() {
+    depthMaskEnabled = true;    
+  }
+
   
   public void setDrawMode(int mode) {
     pointSprites = false;
@@ -1742,7 +1752,14 @@ public class PShape3D extends PShape implements PConstants {
 	  // Setting line width and point size from stroke value.
 		pointSize = PApplet.min(a3d.strokeWeight, a3d.maxPointSize);
     gl.glPointSize(pointSize);
-	    
+  
+    if (!depthMaskEnabled) {
+      // Disabling writing to depth mask. This is useful to avoid artifacts when rendering particle systems.
+      // Proper rendering of a particle system with particles that have transparency involves depth-sorting,
+      // but it is expensive. In most cases, doing this is good enough.      
+      gl.glDepthMask(false);
+    }
+    
     gl.glEnableClientState(GL11.GL_NORMAL_ARRAY);
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glNormalBufferID[0]);
     gl.glNormalPointer(GL11.GL_FLOAT, 0, 0);    
@@ -1774,7 +1791,7 @@ public class PShape3D extends PShape implements PConstants {
          
         if (pointSprites) {
           // Texturing with point sprites.
-              
+                        
           // This is how will our point sprite's size will be modified by 
           // distance from the viewer             
           gl.glPointParameterfv(GL11.GL_POINT_DISTANCE_ATTENUATION, ptDistAtt, 0);
@@ -1830,6 +1847,10 @@ public class PShape3D extends PShape implements PConstants {
         }
         gl.glDisable(texTarget);
       }       
+    }
+
+    if (!depthMaskEnabled) {
+      gl.glDepthMask(true);
     }
     
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
