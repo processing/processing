@@ -56,9 +56,8 @@ import processing.core.PShape3D.VertexGroup;
  * By Andres Colubri
  *
  * TODO: Comment A3D, PShape3D and PTexture, 
- * TODO: Check lighting and materials, specially in PShape3D..
+ * TODO: Check lighting and materials.
  * TODO: Revise triangulator (issues are particularly apparent when tesselating SVG shapes).
- * TODO: Optimize Vertex Array rendering on real N1 hardware.
  */
 public class PGraphicsAndroid3D extends PGraphics {
   public SurfaceHolder holder;
@@ -456,7 +455,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   
   protected void drawScreenTexture() {
-    // TODO: try using glDrawTexiOES
+    // TODO: try using glDrawTexiOES maybe?
     tint(255);
     fill(255);
     int w = 256;
@@ -3652,7 +3651,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   
 
   /**
-   * Switches off all lights, but keeps lighting enabled..
+   * Switches off all lights, but keeps lighting enabled.
    * TODO: discuss if this method is needed.
    */    
   public void resetLights() { 

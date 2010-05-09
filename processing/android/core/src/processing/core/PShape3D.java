@@ -100,7 +100,6 @@ public class PShape3D extends PShape implements PConstants {
   }  
 
   
-  // TODO: Properly debug OBJ loading.  Particuarly when loading textured materials.
   public PShape3D(PApplet parent, String filename, int mode) {
     this.parent = parent;
     a3d = (PGraphicsAndroid3D)parent.g;
@@ -1313,7 +1312,7 @@ public class PShape3D extends PShape implements PConstants {
    * the data already stored in it by copying to the beginning of the 
    * new buffers. 
    * 
-   * TODO: Test!.
+   * TODO: Test!
    *  
    */
   public void resize(int numVert) {
@@ -2187,6 +2186,15 @@ public class PShape3D extends PShape implements PConstants {
   protected void recordOBJ(ArrayList<PVector> vertices, ArrayList<PVector> normals, ArrayList<PVector> textures, ArrayList<OBJFace> faces, ArrayList<OBJMaterial> materials) {
     int mtlIdxCur = -1;
     OBJMaterial mtl = null;
+    
+    // Using normal mode for texture coordinates (i.e.: normalized between 0 and 1).
+    int tMode0 = a3d.textureMode;
+    a3d.textureMode = NORMAL;
+    
+    // Using RGB mode for coloring.
+    int cMode0 = a3d.colorMode; 
+    a3d.colorMode = RGB;
+    
     a3d.beginShapeRecorderImpl();    
     for (int i = 0; i < faces.size(); i++) {
       OBJFace face = (OBJFace) faces.get(i);
@@ -2202,6 +2210,11 @@ public class PShape3D extends PShape implements PConstants {
         a3d.ambient(mtl.ka.x * 255.0f, mtl.ka.y * 255.0f, mtl.ka.z * 255.0f);
         a3d.fill(mtl.kd.x * 255.0f, mtl.kd.y * 255.0f, mtl.kd.z * 255.0f, mtl.d * 255.0f);
         a3d.shininess(mtl.ns);
+        
+        if (mtl.kdMap != null) {
+          // If current material is textured, then tinting the texture using the diffuse color.
+          a3d.tint(mtl.kd.x * 255.0f, mtl.kd.y * 255.0f, mtl.kd.z * 255.0f, mtl.d * 255.0f);
+        }
       }
 
       // Recording current face.
@@ -2272,6 +2285,9 @@ public class PShape3D extends PShape implements PConstants {
     xmax = ymax = zmax = -10000;
     
     a3d.endShapeRecorderImpl(this);
+    
+    a3d.textureMode = tMode0;
+    a3d.colorMode = cMode0;
   }
 	
 
