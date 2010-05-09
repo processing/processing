@@ -37,8 +37,7 @@ import java.nio.*;
  * By Andres Colubri
  *  TODO: Finish integration with PImage
  *  TODO: Revise updating mechanism (what happens when the pixels change in the PImage, etc).
- *  TODO: Find alternative for FOBs or how to expose FBO functionality in N1 and other EGL2 phones.
- *  TODO: 
+ *  TODO: Find alternative for FOBs or how to expose FBO functionality in N1 and other EGL2 phones. 
  */
 @SuppressWarnings("unused")
 public class PTexture implements PConstants { 
