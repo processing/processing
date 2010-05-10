@@ -2195,6 +2195,53 @@ public class PShape3D extends PShape implements PConstants {
     int cMode0 = a3d.colorMode; 
     a3d.colorMode = RGB;
     
+    // Saving current colors.
+    float specularR0, specularG0, specularB0; 
+    specularR0 = a3d.specularR;
+    specularG0 = a3d.specularG;
+    specularB0 = a3d.specularB;
+    
+    float ambientR0, ambientG0, ambientB0; 
+    ambientR0 = a3d.ambientR;
+    ambientG0 = a3d.ambientG;
+    ambientB0 = a3d.ambientB;    
+    
+    boolean fill0;
+    float fillR0, fillG0, fillB0, fillA0;
+    int fillRi0, fillGi0, fillBi0, fillAi0;
+    int fillColor0;
+    boolean fillAlpha0;
+    fill0 = a3d.fill;
+    fillR0 = a3d.fillR;
+    fillG0 = a3d.fillG;
+    fillB0 = a3d.fillB;
+    fillA0 = a3d.fillA;
+    fillRi0 = a3d.fillRi;
+    fillGi0 = a3d.fillGi;
+    fillBi0 = a3d.fillBi;
+    fillAi0 = a3d.fillAi;
+    fillColor0 = a3d.fillColor;
+    fillAlpha0 = a3d.fillAlpha;
+    
+    boolean tint0;
+    float tintR0, tintG0, tintB0, tintA0;
+    int tintRi0, tintGi0, tintBi0, tintAi0;
+    int tintColor0;
+    boolean tintAlpha0;
+    tint0 = a3d.tint;
+    tintR0 = a3d.tintR;
+    tintG0 = a3d.tintG;
+    tintB0 = a3d.tintB;
+    tintA0 = a3d.tintA;
+    tintRi0 = a3d.tintRi;
+    tintGi0 = a3d.tintGi;
+    tintBi0 = a3d.tintBi;
+    tintAi0 = a3d.tintAi;
+    tintColor0 = a3d.tintColor;
+    tintAlpha0 = a3d.tintAlpha;    
+    
+    float shininess0 = a3d.shininess;
+    
     a3d.beginShapeRecorderImpl();    
     for (int i = 0; i < faces.size(); i++) {
       OBJFace face = (OBJFace) faces.get(i);
@@ -2208,10 +2255,12 @@ public class PShape3D extends PShape implements PConstants {
          // Setting colors.
         a3d.specular(mtl.ks.x * 255.0f, mtl.ks.y * 255.0f, mtl.ks.z * 255.0f);
         a3d.ambient(mtl.ka.x * 255.0f, mtl.ka.y * 255.0f, mtl.ka.z * 255.0f);
-        a3d.fill(mtl.kd.x * 255.0f, mtl.kd.y * 255.0f, mtl.kd.z * 255.0f, mtl.d * 255.0f);
+        if (a3d.fill) {
+          a3d.fill(mtl.kd.x * 255.0f, mtl.kd.y * 255.0f, mtl.kd.z * 255.0f, mtl.d * 255.0f);  
+        }        
         a3d.shininess(mtl.ns);
         
-        if (mtl.kdMap != null) {
+        if (a3d.tint && mtl.kdMap != null) {
           // If current material is textured, then tinting the texture using the diffuse color.
           a3d.tint(mtl.kd.x * 255.0f, mtl.kd.y * 255.0f, mtl.kd.z * 255.0f, mtl.d * 255.0f);
         }
@@ -2286,8 +2335,54 @@ public class PShape3D extends PShape implements PConstants {
     
     a3d.endShapeRecorderImpl(this);
     
+    // Restore texture and color modes.
     a3d.textureMode = tMode0;
     a3d.colorMode = cMode0;
+    
+    // Restore colors
+    a3d.calcR = specularR0;
+    a3d.calcG = specularG0;
+    a3d.calcB = specularB0;
+    a3d.specularFromCalc();
+    
+    a3d.calcR = ambientR0;
+    a3d.calcG = ambientG0;
+    a3d.calcB = ambientB0;    
+    a3d.ambientFromCalc();
+    
+    if (!fill0) {
+      a3d.noFill();
+    } else {
+      a3d.calcR = fillR0;
+      a3d.calcG = fillG0;
+      a3d.calcB = fillB0;
+      a3d.calcA = fillA0;
+      a3d.calcRi = fillRi0;
+      a3d.calcGi = fillGi0;
+      a3d.calcBi = fillBi0;
+      a3d.calcAi = fillAi0;
+      a3d.calcColor = fillColor0;
+      a3d.calcAlpha = fillAlpha0;
+      a3d.fillFromCalc();
+    }
+
+    if (!tint0) {
+      a3d.noTint();
+    } else {
+      a3d.calcR = tintR0;
+      a3d.calcG = tintG0;
+      a3d.calcB = tintB0;
+      a3d.calcA = tintA0;
+      a3d.calcRi = tintRi0;
+      a3d.calcGi = tintGi0;
+      a3d.calcBi = tintBi0;
+      a3d.calcAi = tintAi0;
+      a3d.calcColor = tintColor0;
+      a3d.calcAlpha = tintAlpha0;
+      a3d.tintFromCalc();
+    }    
+    
+    a3d.shininess(shininess0);
   }
 	
 
