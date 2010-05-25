@@ -27,6 +27,8 @@ import java.io.*;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import javax.microedition.khronos.opengles.GL10;
+
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -652,12 +654,72 @@ public class PFont implements PConstants {
 
   //////////////////////////////////////////////////////////////
 
+  // OPENGL stuff
+  
+  public void initialize(GL10 gl) {
+    /*
+        mState = STATE_INITIALIZED;
+        int[] textures = new int[1];
+        gl.glGenTextures(1, textures, 0);
+        mTextureID = textures[0];
+        gl.glBindTexture(GL10.GL_TEXTURE_2D, mTextureID);
+
+        // Use Nearest for performance.
+        gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER,
+                GL10.GL_NEAREST);
+        gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER,
+                GL10.GL_NEAREST);
+
+        gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S,
+                GL10.GL_CLAMP_TO_EDGE);
+        gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T,
+                GL10.GL_CLAMP_TO_EDGE);
+
+        gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE,
+                GL10.GL_REPLACE);
+        
+        // We do the initialization of the bitmap and canvas so we can call beginAdding/endAdding
+        // multiple times without deleting previously added labels.
+        mU = 0;
+        mV = 0;
+        mLineHeight = 0;
+        Bitmap.Config config = mFullColor ?
+                Bitmap.Config.ARGB_4444 : Bitmap.Config.ALPHA_8;
+        mBitmap = Bitmap.createBitmap(mStrikeWidth, mStrikeHeight, config);
+        mCanvas = new Canvas(mBitmap);
+        mBitmap.eraseColor(0);
+        */                
+  }
+  
+    public void shutdown(GL10 gl) {
+/*      
+        // Reclaim storage used by bitmap and canvas.
+        mBitmap.recycle();
+        mBitmap = null;
+        mCanvas = null;
+      
+      
+        if ( gl != null) {
+            if (mState > STATE_NEW) {
+                int[] textures = new int[1];
+                textures[0] = mTextureID;
+                gl.glDeleteTextures(1, textures, 0);
+                mState = STATE_NEW;
+            }
+        }
+        */
+    }
+  
+  
+  /////////////////////////////////////////////////////////////
 
   /**
    * A single character, and its visage.
    */
   public class Glyph {
     PImage image;
+    Texture texture;    
+    
     int value;
     int height;
     int width;
@@ -811,5 +873,25 @@ public class PFont implements PConstants {
         if (descent == 0) descent = -topExtent + height;
       }
     }
+    
+    public class Texture {
+        public Texture(float width, float height, float baseLine,
+                int cropU, int cropV, int cropW, int cropH) {
+            this.width = width;
+            this.height = height;
+            this.baseline = baseLine;
+            int[] crop = new int[4];
+            crop[0] = cropU;
+            crop[1] = cropV;
+            crop[2] = cropW;
+            crop[3] = cropH;
+            mCrop = crop;
+        }
+
+        public float width;
+        public float height;
+        public float baseline;
+        public int[] mCrop;
+    }    
   }
 }
