@@ -84,7 +84,9 @@ public class PShape3D extends PShape implements PConstants {
   protected float zmin, zmax;
   
   protected float ptDistAtt[] = { 1.0f, 0.0f, 0.01f, 1.0f };
-  
+
+  // TODO: consider implementing simple depth sorting for particle systems, 
+  // and a more intuive way to implement the api for enabling/disabling depth masking.
   protected boolean depthMaskEnabled = true;
   
   protected static final int SIZEOF_FLOAT = Float.SIZE / 8;
