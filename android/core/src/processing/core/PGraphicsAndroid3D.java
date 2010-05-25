@@ -4786,7 +4786,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       
       OPENGL_VENDOR = gl.glGetString(GL10.GL_VENDOR);
       OPENGL_RENDERER = gl.glGetString(GL10.GL_RENDERER);
-      OPENGL_VERSION = gl.glGetString(GL10.GL_VERSION);      
+      OPENGL_VERSION = gl.glGetString(GL10.GL_VERSION); 
       
       npotTexSupported = false;
       mipmapSupported = false;    
@@ -4794,19 +4794,18 @@ public class PGraphicsAndroid3D extends PGraphics {
       vboSupported = false; 
       fboSupported = false;
       String extensions = gl.glGetString(GL10.GL_EXTENSIONS);
-      if (-1 < extensions.indexOf("GL_ARB_texture_non_power_of_two"))  {
+      if (-1 < extensions.indexOf("texture_non_power_of_two"))  {
         npotTexSupported = true;  
        } 
-       if (-1 < extensions.indexOf("GL_ANDROID_generate_mipmap"))  {
+       if (-1 < extensions.indexOf("generate_mipmap"))  {
          mipmapSupported = true;
        }  
-       if (-1 < extensions.indexOf("GL_OES_matrix_get"))  {
+       if (-1 < extensions.indexOf("matrix_get"))  {
          matrixGetSupported = true;
        }
-       if (-1 < extensions.indexOf("GL_ARB_vertex_buffer_object") ||
-            -1 < OPENGL_RENDERER.indexOf("PowerVR SGX 530"))  { // I added this because Motoroi 
-                                                                                                                    // doesn't show VBO extension 
-                                                                                                                    // but the related functions work ok.
+       if (-1 < extensions.indexOf("vertex_buffer_object") ||
+           -1 < OPENGL_VERSION.indexOf("1.1") ||  // Just in case vertex_buffer_object doesn't appear in the list of extensions,
+           -1 < OPENGL_VERSION.indexOf("2."))  {  // if the opengl version is greater than 1.1, VBOs should be supported.
          vboSupported = true;   
        }
        if (-1 < extensions.indexOf("GL_OES_framebuffer_object"))  {
