@@ -43,6 +43,7 @@ import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLContext;
 import javax.microedition.khronos.egl.EGLDisplay;
 
+import processing.core.PFont.Glyph;
 import processing.core.PShape3D.VertexGroup;
 
 
@@ -2240,7 +2241,41 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // None of the variations of text() are overridden from PGraphics.
 
-
+  protected void beginText() {
+    //textFont is the current texture (containing, among other things, the texture id)
+    
+    /*
+        checkState(STATE_INITIALIZED, STATE_DRAWING);
+        gl.glBindTexture(GL10.GL_TEXTURE_2D, mTextureID);
+        gl.glShadeModel(GL10.GL_FLAT);
+        gl.glEnable(GL10.GL_BLEND);
+        gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+        gl.glColor4x(0x10000, 0x10000, 0x10000, 0x10000);
+        gl.glMatrixMode(GL10.GL_PROJECTION);
+        gl.glPushMatrix();
+        gl.glLoadIdentity();
+        gl.glOrthof(0.0f, viewWidth, 0.0f, viewHeight, 0.0f, 1.0f);
+        gl.glMatrixMode(GL10.GL_MODELVIEW);
+        gl.glPushMatrix();
+        gl.glLoadIdentity();
+        // Magic offsets to promote consistent rasterization.
+        gl.glTranslatef(0.375f, 0.375f, 0.0f); 
+    */
+    
+  }
+  
+  protected void endText() {
+    
+/*
+        checkState(STATE_DRAWING, STATE_INITIALIZED);
+        gl.glDisable(GL10.GL_BLEND);
+        gl.glMatrixMode(GL10.GL_PROJECTION);
+        gl.glPopMatrix();
+        gl.glMatrixMode(GL10.GL_MODELVIEW);
+        gl.glPopMatrix();    
+ */
+    
+  }  
 
   //////////////////////////////////////////////////////////////
 
@@ -2251,109 +2286,144 @@ public class PGraphicsAndroid3D extends PGraphics {
   //                                 float x, float y)
 
 
-  //protected void textLineImpl(char buffer[], int start, int stop,
-  //                            float x, float y)
+  protected void textCharImpl(char ch, float x, float y) {
+    PFont.Glyph glyph = textFont.getGlyph(ch);
+    if (glyph != null) {
+      if (textMode == MODEL) {
+        float high    = glyph.height     / (float) textFont.size;
+        float bwidth  = glyph.width      / (float) textFont.size;
+        float lextent = glyph.leftExtent / (float) textFont.size;
+        float textent = glyph.topExtent  / (float) textFont.size;
+
+        float x1 = x + lextent * textSize;
+        float y1 = y - textent * textSize;
+        float x2 = x1 + bwidth * textSize;
+        float y2 = y1 + high * textSize;
+
+        textCharModelImpl(glyph.texture,
+                          x1, y1, x2, y2,
+                          glyph.width, glyph.height);
+
+      } else if (textMode == SCREEN) {
+        int xx = (int) x + glyph.leftExtent;
+        int yy = (int) y - glyph.topExtent;
+
+        int w0 = glyph.width;
+        int h0 = glyph.height;
+
+        textCharScreenImpl(glyph.texture, xx, yy, w0, h0);
+      }
+    }
+  }
 
 
-  //protected void textCharImpl(char ch, float x, float y)
+  protected void textCharModelImpl(Glyph.Texture texture,
+                                   float x1, float y1, //float z1,
+                                   float x2, float y2, //float z2,
+                                   int u2, int v2) {
+    
+    /*
+        checkState(STATE_DRAWING, STATE_DRAWING);
+        gl.glPushMatrix();
+        float snappedX = (float) Math.floor(x);
+        float snappedY = (float) Math.floor(y);
+        gl.glTranslatef(snappedX, snappedY, 0.0f);
+        Label label = mLabels.get(labelID);
+        gl.glEnable(GL10.GL_TEXTURE_2D);
+        ((GL11)gl).glTexParameteriv(GL10.GL_TEXTURE_2D,
+                GL11Ext.GL_TEXTURE_CROP_RECT_OES, label.mCrop, 0);
+        ((GL11Ext)gl).glDrawTexiOES((int) snappedX, (int) snappedY, 0,
+                (int) label.width, (int) label.height);
+        gl.glPopMatrix();    
+    */
+        
+    /*
+    boolean savedTint = tint;
+    int savedTintColor = tintColor;
 
+    tint(fillColor);
+    
+    imageImpl(glyph, x1, y1, x2, y2, 0, 0, u2, v2);
+    
+    if (savedTint) {
+      tint(savedTintColor);
+    } else {
+      noTint();
+    }
+    */
+    
+    
+  }  
+  
+  
+  protected void textCharScreenImpl(Glyph.Texture texture,
+                                    int xx, int yy,
+                                    int w0, int h0) {
+    
+        /*
+        checkState(STATE_DRAWING, STATE_DRAWING);
+        gl.glPushMatrix();
+        float snappedX = (float) Math.floor(x);
+        float snappedY = (float) Math.floor(y);
+        gl.glTranslatef(snappedX, snappedY, 0.0f);
+        Label label = mLabels.get(labelID);
+        gl.glEnable(GL10.GL_TEXTURE_2D);
+        ((GL11)gl).glTexParameteriv(GL10.GL_TEXTURE_2D,
+                GL11Ext.GL_TEXTURE_CROP_RECT_OES, label.mCrop, 0);
+        ((GL11Ext)gl).glDrawTexiOES((int) snappedX, (int) snappedY, 0,
+                (int) label.width, (int) label.height);
+        gl.glPopMatrix();    
+    */
 
-//  public class TessCallback extends GLUtessellatorCallbackAdapter {
-//    public void begin(int type) {
-//      switch (type) {
-//      case GL10.GL_TRIANGLE_FAN: beginShape(TRIANGLE_FAN); break;
-//      case GL10.GL_TRIANGLE_STRIP: beginShape(TRIANGLE_STRIP); break;
-//      case GL10.GL_TRIANGLES: beginShape(TRIANGLES); break;
-//      }
-//    }
-//
-//    public void end() {
-//      //gl.glEnd();
-//      endShape();
-//    }
-//
-//    public void edge(boolean e) {
-//      PGraphicsOpenGL.this.edge(e);
-//    }
-//
-//    public void vertex(Object data) {
-//      if (data instanceof double[]) {
-//        double[] d = (double[]) data;
-//        if (d.length != 3) {
-//          throw new RuntimeException("TessCallback vertex() data " +
-//                                     "isn't length 3");
-//        }
-//        //System.out.println("tess callback vertex " +
-//        //                 d[0] + " " + d[1] + " " + d[2]);
-//        //vertexRedirect((float) d[0], (float) d[1], (float) d[2]);
-//        PGraphicsOpenGL.this.vertex((float) d[0], (float) d[1], (float) d[2]);
-//        /*
-//        if (d.length == 6) {
-//          double[] d2 = {d[0], d[1], d[2]};
-//          gl.glVertex3dv(d2);
-//          d2 = new double[]{d[3], d[4], d[5]};
-//          gl.glColor3dv(d2);
-//        } else if (d.length == 3) {
-//          gl.glVertex3dv(d);
-//        }
-//        */
-//      } else {
-//        throw new RuntimeException("TessCallback vertex() data not understood");
-//      }
-//    }
-//
-//    public void error(int errnum) {
-//      String estring = glu.gluErrorString(errnum);
-//      PGraphics.showWarning("Tessellation Error: " + estring);
-//    }
-//
-//    /**
-//     * Implementation of the GLU_TESS_COMBINE callback.
-//     * @param coords is the 3-vector of the new vertex
-//     * @param data is the vertex data to be combined, up to four elements.
-//     * This is useful when mixing colors together or any other
-//     * user data that was passed in to gluTessVertex.
-//     * @param weight is an array of weights, one for each element of "data"
-//     * that should be linearly combined for new values.
-//     * @param outData is the set of new values of "data" after being
-//     * put back together based on the weights. it's passed back as a
-//     * single element Object[] array because that's the closest
-//     * that Java gets to a pointer.
-//     */
-//    public void combine(double[] coords, Object[] data,
-//                        float[] weight, Object[] outData) {
-//      //System.out.println("coords.length = " + coords.length);
-//      //System.out.println("data.length = " + data.length);
-//      //System.out.println("weight.length = " + weight.length);
-//      //for (int i = 0; i < data.length; i++) {
-//      //System.out.println(i + " " + data[i].getClass().getName() + " " + weight[i]);
-//      //}
-//
-//      double[] vertex = new double[coords.length];
-//      vertex[0] = coords[0];
-//      vertex[1] = coords[1];
-//      vertex[2] = coords[2];
-//      //System.out.println("combine " +
-//      //                 vertex[0] + " " + vertex[1] + " " + vertex[2]);
-//
-//      // this is just 3, so nothing interesting to bother combining
-//      //System.out.println("data length " + ((double[]) data[0]).length);
-//
-//      // not gonna bother doing any combining,
-//      // since no user data is being passed in.
-//      /*
-//      for (int i = 3; i < 6; i++) {
-//        vertex[i] =
-//          weight[0] * ((double[]) data[0])[i] +
-//          weight[1] * ((double[]) data[1])[i] +
-//          weight[2] * ((double[]) data[2])[i] +
-//          weight[3] * ((double[]) data[3])[i];
-//      }
-//      */
-//      outData[0] = vertex;
-//    }
-//  }
+    
+    /*
+    int x0 = 0;
+    int y0 = 0;
 
+    if ((xx >= width) || (yy >= height) ||
+        (xx + w0 < 0) || (yy + h0 < 0)) return;
+
+    if (xx < 0) {
+      x0 -= xx;
+      w0 += xx;
+      xx = 0;
+    }
+    if (yy < 0) {
+      y0 -= yy;
+      h0 += yy;
+      yy = 0;
+    }
+    if (xx + w0 > width) {
+      w0 -= ((xx + w0) - width);
+    }
+    if (yy + h0 > height) {
+      h0 -= ((yy + h0) - height);
+    }
+
+    int fr = fillRi;
+    int fg = fillGi;
+    int fb = fillBi;
+    int fa = fillAi;
+
+    int pixels1[] = glyph.pixels; //images[glyph].pixels;
+
+    // TODO this can be optimized a bit
+    for (int row = y0; row < y0 + h0; row++) {
+      for (int col = x0; col < x0 + w0; col++) {
+        int a1 = (fa * pixels1[row * glyph.width + col]) >> 8;
+        int a2 = a1 ^ 0xff;
+        //int p1 = pixels1[row * glyph.width + col];
+        int p2 = pixels[(yy + row-y0)*width + (xx+col-x0)];
+
+        pixels[(yy + row-y0)*width + xx+col-x0] =
+          (0xff000000 |
+           (((a1 * fr + a2 * ((p2 >> 16) & 0xff)) & 0xff00) << 8) |
+           (( a1 * fg + a2 * ((p2 >>  8) & 0xff)) & 0xff00) |
+           (( a1 * fb + a2 * ( p2        & 0xff)) >> 8));
+      }
+    }
+    */
+  }  
 
   //////////////////////////////////////////////////////////////
 

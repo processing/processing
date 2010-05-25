@@ -2632,7 +2632,7 @@ public class PGraphics extends PImage implements PConstants {
       defaultFontOrDeath("text");
     }
 
-    if (textMode == SCREEN) loadPixels();
+    beginText();
 
     if (textAlignY == CENTER) {
       y += textAscent() / 2;
@@ -2647,7 +2647,7 @@ public class PGraphics extends PImage implements PConstants {
     textBuffer[0] = c;
     textLineAlignImpl(textBuffer, 0, 1, x, y);
 
-    if (textMode == SCREEN) updatePixels();
+    endText();
   }
 
 
@@ -2688,7 +2688,7 @@ public class PGraphics extends PImage implements PConstants {
       defaultFontOrDeath("text");
     }
 
-    if (textMode == SCREEN) loadPixels();
+    beginText();
 
     int length = str.length();
     if (length > textBuffer.length) {
@@ -2733,7 +2733,7 @@ public class PGraphics extends PImage implements PConstants {
     if (start < length) {
       textLineAlignImpl(textBuffer, start, index, x, y);
     }
-    if (textMode == SCREEN) updatePixels();
+    endText();
   }
 
 
@@ -2773,7 +2773,7 @@ public class PGraphics extends PImage implements PConstants {
       defaultFontOrDeath("text");
     }
 
-    if (textMode == SCREEN) loadPixels();
+    beginText();
 
     float hradius, vradius;
     switch (rectMode) {
@@ -2882,7 +2882,7 @@ public class PGraphics extends PImage implements PConstants {
       }
     }
 
-    if (textMode == SCREEN) updatePixels();
+    endText();
   }
 
 
@@ -3008,7 +3008,15 @@ public class PGraphics extends PImage implements PConstants {
     text(PApplet.nfs(num, 0, 3), x, y, z);
   }
 
+  // Preparations to draw text. Subclasses will likely override this method.
+  protected void beginText() {
+    if (textMode == SCREEN) loadPixels();    
+  }
 
+  // Wrapping-up after drawing text. Subclasses will likely override this method.  
+  protected void endText() {
+    if (textMode == SCREEN) updatePixels();    
+  }  
 
   //////////////////////////////////////////////////////////////
 
