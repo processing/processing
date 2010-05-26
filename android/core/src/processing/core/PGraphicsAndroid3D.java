@@ -2239,14 +2239,12 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // TEXT
 
-  // None of the variations of text() are overridden from PGraphics.
-
   protected void beginText() {
     //textFont is the current texture (containing, among other things, the texture id)
     
     /*
         checkState(STATE_INITIALIZED, STATE_DRAWING);
-        gl.glBindTexture(GL10.GL_TEXTURE_2D, mTextureID);
+        gl.glBindTexture(GL10.GL_TEXTURE_2D, currentD);
         gl.glShadeModel(GL10.GL_FLAT);
         gl.glEnable(GL10.GL_BLEND);
         gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
@@ -2261,11 +2259,10 @@ public class PGraphicsAndroid3D extends PGraphics {
         // Magic offsets to promote consistent rasterization.
         gl.glTranslatef(0.375f, 0.375f, 0.0f); 
     */
-    
+        
   }
   
-  protected void endText() {
-    
+  protected void endText() {    
 /*
         checkState(STATE_DRAWING, STATE_INITIALIZED);
         gl.glDisable(GL10.GL_BLEND);
@@ -2286,8 +2283,32 @@ public class PGraphicsAndroid3D extends PGraphics {
   //                                 float x, float y)
 
 
+/**
+   * Implementation of actual drawing for a line of text.
+   */
+  protected void textLineImpl(char buffer[], int start, int stop,
+                              float x, float y) {
+    
+    if (textFont.mTextureID == -1) {
+      textFont.initialize(gl);
+      // add the current fonts to texture.
+      textFont.addToTexture(gl);
+    }
+    
+    super.textLineImpl(buffer, start, stop, x, y);
+  }  
+  
   protected void textCharImpl(char ch, float x, float y) {
     PFont.Glyph glyph = textFont.getGlyph(ch);
+    
+    if (glyph.texture == null) {
+      // Adding new glyph to texture.
+      textFont.beginAddToTexture(gl); // we need this becuause new glyps can be added during text rendering...
+                                                               // but it is ok with the texture binded. probably yes.
+      glyph.addToTexture(gl);
+      textFont.endAddToTexture(gl);
+    }
+    
     if (glyph != null) {
       if (textMode == MODEL) {
         float high    = glyph.height     / (float) textFont.size;
@@ -2317,12 +2338,19 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
 
 
-  protected void textCharModelImpl(Glyph.Texture texture,
+  protected void textCharModelImpl(Glyph.TextureInfo tex,
                                    float x1, float y1, //float z1,
                                    float x2, float y2, //float z2,
                                    int u2, int v2) {
     
     /*
+
+        if (tex.glid != textFont.currentID) {
+          // Reattaching texture.
+          textFont.currentID = tex.glid;  
+          gl.glBindTexture(GL10.GL_TEXTURE_2D, tex.glid);
+        }        
+        
         checkState(STATE_DRAWING, STATE_DRAWING);
         gl.glPushMatrix();
         float snappedX = (float) Math.floor(x);
@@ -2356,11 +2384,18 @@ public class PGraphicsAndroid3D extends PGraphics {
   }  
   
   
-  protected void textCharScreenImpl(Glyph.Texture texture,
+  protected void textCharScreenImpl(Glyph.TextureInfo tex,
                                     int xx, int yy,
                                     int w0, int h0) {
     
         /*
+
+        if (tex.glid != textFont.currentID) {
+          // Reattaching texture.
+          textFont.currentID = tex.glid;  
+          gl.glBindTexture(GL10.GL_TEXTURE_2D, tex.glid);
+        }        
+        
         checkState(STATE_DRAWING, STATE_DRAWING);
         gl.glPushMatrix();
         float snappedX = (float) Math.floor(x);
