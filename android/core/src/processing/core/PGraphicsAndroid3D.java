@@ -2239,41 +2239,8 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // TEXT
 
-  protected void beginText() {
-    //textFont is the current texture (containing, among other things, the texture id)
-    
-    /*
-        checkState(STATE_INITIALIZED, STATE_DRAWING);
-        gl.glBindTexture(GL10.GL_TEXTURE_2D, currentD);
-        gl.glShadeModel(GL10.GL_FLAT);
-        gl.glEnable(GL10.GL_BLEND);
-        gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-        gl.glColor4x(0x10000, 0x10000, 0x10000, 0x10000);
-        gl.glMatrixMode(GL10.GL_PROJECTION);
-        gl.glPushMatrix();
-        gl.glLoadIdentity();
-        gl.glOrthof(0.0f, viewWidth, 0.0f, viewHeight, 0.0f, 1.0f);
-        gl.glMatrixMode(GL10.GL_MODELVIEW);
-        gl.glPushMatrix();
-        gl.glLoadIdentity();
-        // Magic offsets to promote consistent rasterization.
-        gl.glTranslatef(0.375f, 0.375f, 0.0f); 
-    */
-        
-  }
+  // Nothing to do here.
   
-  protected void endText() {    
-/*
-        checkState(STATE_DRAWING, STATE_INITIALIZED);
-        gl.glDisable(GL10.GL_BLEND);
-        gl.glMatrixMode(GL10.GL_PROJECTION);
-        gl.glPopMatrix();
-        gl.glMatrixMode(GL10.GL_MODELVIEW);
-        gl.glPopMatrix();    
- */
-    
-  }  
-
   //////////////////////////////////////////////////////////////
 
   // TEXT IMPL
@@ -2295,7 +2262,38 @@ public class PGraphicsAndroid3D extends PGraphics {
       textFont.addToTexture(gl);
     }
     
+    /*
+       // Init opengl state for text rendering...
+        checkState(STATE_INITIALIZED, STATE_DRAWING);
+        gl.glBindTexture(GL10.GL_TEXTURE_2D, currentD);
+        gl.glShadeModel(GL10.GL_FLAT);
+        gl.glEnable(GL10.GL_BLEND);
+        gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+        gl.glColor4x(0x10000, 0x10000, 0x10000, 0x10000);
+        gl.glMatrixMode(GL10.GL_PROJECTION);
+        gl.glPushMatrix();
+        gl.glLoadIdentity();
+        gl.glOrthof(0.0f, viewWidth, 0.0f, viewHeight, 0.0f, 1.0f);
+        gl.glMatrixMode(GL10.GL_MODELVIEW);
+        gl.glPushMatrix();
+        gl.glLoadIdentity();
+        // Magic offsets to promote consistent rasterization.
+        gl.glTranslatef(0.375f, 0.375f, 0.0f); 
+    */
+        
     super.textLineImpl(buffer, start, stop, x, y);
+    
+
+/*
+     // Restore opengl state after text rendering...
+        checkState(STATE_DRAWING, STATE_INITIALIZED);
+        gl.glDisable(GL10.GL_BLEND);
+        gl.glMatrixMode(GL10.GL_PROJECTION);
+        gl.glPopMatrix();
+        gl.glMatrixMode(GL10.GL_MODELVIEW);
+        gl.glPopMatrix();    
+ */    
+    
   }  
   
   protected void textCharImpl(char ch, float x, float y) {
