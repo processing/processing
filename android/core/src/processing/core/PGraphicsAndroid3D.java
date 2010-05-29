@@ -303,6 +303,9 @@ public class PGraphicsAndroid3D extends PGraphics {
   public String OPENGL_VERSION;
   
   //////////////////////////////////////////////////////////////
+
+  protected int textFontTexID;
+  
   
   public PGraphicsAndroid3D() {
 	  renderer = new A3DRenderer();
@@ -2257,15 +2260,15 @@ public class PGraphicsAndroid3D extends PGraphics {
                               float x, float y) {
     
     if (textFont.mTextureID == -1) {
-      textFont.initialize(gl);
+      textFont.initialize(gl, maxTextureSize, maxTextureSize);
       // add the current fonts to texture.
       textFont.addToTexture(gl);
     }
     
-    /*
+    
        // Init opengl state for text rendering...
-        checkState(STATE_INITIALIZED, STATE_DRAWING);
-        gl.glBindTexture(GL10.GL_TEXTURE_2D, currentD);
+        textFontTexID = textFont.currentID;
+        gl.glBindTexture(GL10.GL_TEXTURE_2D, textFontTexID);
         gl.glShadeModel(GL10.GL_FLAT);
         gl.glEnable(GL10.GL_BLEND);
         gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
@@ -2273,26 +2276,23 @@ public class PGraphicsAndroid3D extends PGraphics {
         gl.glMatrixMode(GL10.GL_PROJECTION);
         gl.glPushMatrix();
         gl.glLoadIdentity();
-        gl.glOrthof(0.0f, viewWidth, 0.0f, viewHeight, 0.0f, 1.0f);
+        gl.glOrthof(0.0f, width, 0.0f, height, 0.0f, 1.0f);
         gl.glMatrixMode(GL10.GL_MODELVIEW);
         gl.glPushMatrix();
         gl.glLoadIdentity();
         // Magic offsets to promote consistent rasterization.
         gl.glTranslatef(0.375f, 0.375f, 0.0f); 
-    */
         
     super.textLineImpl(buffer, start, stop, x, y);
     
 
-/*
+
      // Restore opengl state after text rendering...
-        checkState(STATE_DRAWING, STATE_INITIALIZED);
-        gl.glDisable(GL10.GL_BLEND);
+        //gl.glDisable(GL10.GL_BLEND);
         gl.glMatrixMode(GL10.GL_PROJECTION);
         gl.glPopMatrix();
         gl.glMatrixMode(GL10.GL_MODELVIEW);
         gl.glPopMatrix();    
- */    
     
   }  
   
@@ -2340,28 +2340,21 @@ public class PGraphicsAndroid3D extends PGraphics {
                                    float x1, float y1, //float z1,
                                    float x2, float y2, //float z2,
                                    int u2, int v2) {
-    
-    /*
-
-        if (tex.glid != textFont.currentID) {
-          // Reattaching texture.
-          textFont.currentID = tex.glid;  
-          gl.glBindTexture(GL10.GL_TEXTURE_2D, tex.glid);
-        }        
+   
+    if (textFontTexID != textFont.currentID) {
+      textFontTexID = textFont.currentID;
+      gl.glBindTexture(GL10.GL_TEXTURE_2D, textFontTexID);
+    }        
         
-        checkState(STATE_DRAWING, STATE_DRAWING);
-        gl.glPushMatrix();
-        float snappedX = (float) Math.floor(x);
-        float snappedY = (float) Math.floor(y);
-        gl.glTranslatef(snappedX, snappedY, 0.0f);
-        Label label = mLabels.get(labelID);
-        gl.glEnable(GL10.GL_TEXTURE_2D);
-        ((GL11)gl).glTexParameteriv(GL10.GL_TEXTURE_2D,
-                GL11Ext.GL_TEXTURE_CROP_RECT_OES, label.mCrop, 0);
-        ((GL11Ext)gl).glDrawTexiOES((int) snappedX, (int) snappedY, 0,
-                (int) label.width, (int) label.height);
-        gl.glPopMatrix();    
-    */
+    gl.glPushMatrix();
+    float snappedX = (float) Math.floor(x1);
+    float snappedY = (float) Math.floor(y1);
+    gl.glTranslatef(snappedX, snappedY, 0.0f);
+        
+    gl.glEnable(GL10.GL_TEXTURE_2D);
+    ((GL11)gl).glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, tex.crop, 0);
+    ((GL11Ext)gl).glDrawTexiOES((int) snappedX, (int) snappedY, 0, (int) tex.width, (int) tex.height);
+    gl.glPopMatrix();    
         
     /*
     boolean savedTint = tint;
@@ -2386,28 +2379,21 @@ public class PGraphicsAndroid3D extends PGraphics {
                                     int xx, int yy,
                                     int w0, int h0) {
     
-        /*
-
-        if (tex.glid != textFont.currentID) {
-          // Reattaching texture.
-          textFont.currentID = tex.glid;  
-          gl.glBindTexture(GL10.GL_TEXTURE_2D, tex.glid);
-        }        
+    if (textFontTexID != textFont.currentID) {
+      textFontTexID = textFont.currentID;
+      gl.glBindTexture(GL10.GL_TEXTURE_2D, textFontTexID);
+    }        
         
-        checkState(STATE_DRAWING, STATE_DRAWING);
-        gl.glPushMatrix();
-        float snappedX = (float) Math.floor(x);
-        float snappedY = (float) Math.floor(y);
-        gl.glTranslatef(snappedX, snappedY, 0.0f);
-        Label label = mLabels.get(labelID);
-        gl.glEnable(GL10.GL_TEXTURE_2D);
-        ((GL11)gl).glTexParameteriv(GL10.GL_TEXTURE_2D,
-                GL11Ext.GL_TEXTURE_CROP_RECT_OES, label.mCrop, 0);
-        ((GL11Ext)gl).glDrawTexiOES((int) snappedX, (int) snappedY, 0,
-                (int) label.width, (int) label.height);
-        gl.glPopMatrix();    
-    */
-
+    gl.glPushMatrix();
+    float snappedX = (float) Math.floor(xx);
+    float snappedY = (float) Math.floor(yy);
+    gl.glTranslatef(snappedX, snappedY, 0.0f);
+        
+    gl.glEnable(GL10.GL_TEXTURE_2D);
+    ((GL11)gl).glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, tex.crop, 0);
+    ((GL11Ext)gl).glDrawTexiOES((int) snappedX, (int) snappedY, 0, (int) tex.width, (int) tex.height);
+    gl.glPopMatrix();    
+    
     
     /*
     int x0 = 0;
