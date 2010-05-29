@@ -26,16 +26,14 @@ package processing.core;
 import java.io.*;
 import java.util.Arrays;
 import java.util.HashMap;
-
-import javax.microedition.khronos.opengles.GL10;
-
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.graphics.Bitmap.Config;
-
+import android.opengl.GLUtils;
+import javax.microedition.khronos.opengles.GL10;
 
 /**
  * Grayscale bitmap font class used by Processing.
@@ -145,20 +143,18 @@ public class PFont implements PConstants {
 
   
    // OpenGL-based texturing
-  protected int mStrikeWidth;
-  protected int mStrikeHeight;
-  protected boolean mFullColor;
-  protected Bitmap mBitmap;
-  protected Canvas mCanvas;
-  protected Paint mClearPaint;
+  protected int texWidth;
+  protected int texHeight;
+  protected int offsetU;
+  protected int offsetV;
+  protected int texU;
+  protected int texV;
+  protected int texLineHeight;  
   protected int mTextureID = -1;
   protected int currentID = -1;
-  protected float mTexelWidth;  // Convert texel to U
-  protected float mTexelHeight; // Convert texel to V
-  protected int mU;
-  protected int mV;
-  protected int mLineHeight;
-    
+//  protected Bitmap mBitmap;
+//  protected Canvas mCanvas;
+//protected Paint mClearPaint;
     
   
   
@@ -674,18 +670,20 @@ public class PFont implements PConstants {
 
   // OPENGL stuff
   
-  public void initialize(GL10 gl) {
+  public void initialize(GL10 gl, int w, int h) {
+    texWidth = w;
+    texHeight = h;
+    
+    addTexture(gl);
+    texU = 0;
+    texV = 0;
+    texLineHeight = 0;
+
+    
+    
     /*
-        mState = STATE_INITIALIZED;
-        
-        addTexture(gl);
-        
-        
         // We do the initialization of the bitmap and canvas so we can call beginAdding/endAdding
         // multiple times without deleting previously added labels.
-        mU = 0;
-        mV = 0;
-        mLineHeight = 0;
         Bitmap.Config config = mFullColor ?
                 Bitmap.Config.ARGB_4444 : Bitmap.Config.ALPHA_8;
         mBitmap = Bitmap.createBitmap(mStrikeWidth, mStrikeHeight, config);
@@ -695,7 +693,6 @@ public class PFont implements PConstants {
   }
   
   public void addTexture(GL10 gl) {
-    /*
         int[] textures = new int[1];
         gl.glGenTextures(1, textures, 0);
         mTextureID = textures[0];
@@ -715,13 +712,13 @@ public class PFont implements PConstants {
         gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE,
                 GL10.GL_REPLACE);
                 
-        currentID should contain the recently created texture!!
-    */
+       currentID = mTextureID;
   }
-  
+
+/*  
   // Who calls this one... ? The finalize method of the class?
   public void shutdown(GL10 gl) {
-/*      
+      
         // Reclaim storage used by bitmap and canvas.
         mBitmap.recycle();
         mBitmap = null;
@@ -736,29 +733,28 @@ public class PFont implements PConstants {
                 mState = STATE_NEW;
             }
         }
-        */
     }
+        */    
   
-  // Add the current glyphs to texure.
+  // Add all the current glyphs to texure.
   public void addToTexture(GL10 gl) {
-    beginAddToTexture(gl);
-    
-    // loop over curren glyphs.
+    // loop over current glyphs.
     for (int i = 0; i < glyphCount; i++) {
+      beginAddToTexture(gl);
       glyphs[i].addToTexture(gl);
+      endAddToTexture(gl);
     }
-    
-    endAddToTexture(gl);
   }
   
   public void beginAddToTexture(GL10 gl) {
-    // maybe nothing here...
+    // Nothing to do here...
   }
   
   public void endAddToTexture(GL10 gl) {
     // Copy bitmap to (current) texture):
-    //gl.glBindTexture(GL10.GL_TEXTURE_2D, mTextureID); // or currentID?
-    //GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, mBitmap, 0);    
+    gl.glBindTexture(GL10.GL_TEXTURE_2D, currentID);
+    //GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, mBitmap, 0);
+    GLUtils.texSubImage2D(GL10.GL_TEXTURE_2D, 0, offsetU, offsetV, lazyBitmap);
   }  
   
   /////////////////////////////////////////////////////////////
@@ -768,7 +764,7 @@ public class PFont implements PConstants {
    */
   public class Glyph {
     PImage image;
-    TextureInfo texture;    
+    TextureInfo texture;
     
     int value;
     int height;
@@ -776,6 +772,7 @@ public class PFont implements PConstants {
     int setWidth;
     int topExtent;
     int leftExtent;
+    boolean fromStream = false;
 
 
     protected Glyph() {
@@ -840,6 +837,7 @@ public class PFont implements PConstants {
         }
 //        System.out.println();
       }
+      fromStream = true;
 //      System.out.println();
     }
 
@@ -924,93 +922,67 @@ public class PFont implements PConstants {
       }
     }
     
-    // Adds the glyph to the opengl texture.
+    // Adds this glyph to the opengl texture in PFont..
     protected void addToTexture(GL10 gl) {
-     /*
-        boolean drawBackground = background != null;
-        boolean drawText = (text != null) && (textPaint != null);
-
-        Rect padding = new Rect();
-        if (drawBackground) {
-            background.getPadding(padding);
-            minWidth = Math.max(minWidth, background.getMinimumWidth());
-            minHeight = Math.max(minHeight, background.getMinimumHeight());
-        }
+        String text = String.valueOf((char)value);
 
         int ascent = 0;
         int descent = 0;
         int measuredTextWidth = 0;
-        if (drawText) {
+        if (!fromStream) {
             // Paint.ascent is negative, so negate it.
-            ascent = (int) Math.ceil(-textPaint.ascent());
-            descent = (int) Math.ceil(textPaint.descent());
-            measuredTextWidth = (int) Math.ceil(textPaint.measureText(text));
+            ascent = (int) Math.ceil(-lazyPaint.ascent());
+            descent = (int) Math.ceil(lazyPaint.descent());
+            measuredTextWidth = (int) Math.ceil(lazyPaint.measureText(text));
         }
+        
         int textHeight = ascent + descent;
-        int textWidth = Math.min(mStrikeWidth,measuredTextWidth);
+        int textWidth = Math.min(texWidth,measuredTextWidth);
 
-        int padHeight = padding.top + padding.bottom;
-        int padWidth = padding.left + padding.right;
-        int height = Math.max(minHeight, textHeight + padHeight);
-        int width = Math.max(minWidth, textWidth + padWidth);
-        int effectiveTextHeight = height - padHeight;
-        int effectiveTextWidth = width - padWidth;
+        int u = texU;
+        int v = texV;
+        int lineHeight = texLineHeight;
 
-        int centerOffsetHeight = (effectiveTextHeight - textHeight) / 2;
-        int centerOffsetWidth = (effectiveTextWidth - textWidth) / 2;
-
-        // Make changes to the local variables, only commit them
-        // to the member variables after we've decided not to throw
-        // any exceptions.
-
-        int u = mU;
-        int v = mV;
-        int lineHeight = mLineHeight;
-
-        if (width > mStrikeWidth) {
-            width = mStrikeWidth;
+        if (textWidth > texWidth) {
+            textWidth = texWidth;
         }
 
         // Is there room for this string on the current line?
-        if (u + width > mStrikeWidth) {
+        if (u + textWidth > texWidth) {
             // No room, go to the next line:
             u = 0;
             v += lineHeight;
             lineHeight = 0;
         }
-        lineHeight = Math.max(lineHeight, height);
-        if (v + lineHeight > mStrikeHeight) {
-           // throw new IllegalArgumentException("Out of texture space.");
-            
+        lineHeight = Math.max(lineHeight, textHeight);
+        if (v + lineHeight > texHeight) {    
             // Create new texture...
             addTexture(gl);
             
+            // Reseting texture coordinates and line 
+            u = texU = offsetU = 0;
+            v = texV = offsetV = 0;
+            lineHeight = texLineHeight = 0;
         }
 
-        int u2 = u + width;
         int vBase = v + ascent;
-        int v2 = v + height;
 
-        if (drawBackground) {
-            background.setBounds(u, v, u + width, v + height);
-            background.draw(mCanvas);
+        if (fromStream) {
+            // Draw from pixels, this is used when the font was loaded from stream and not  created from a system font.
+           lazyCanvas.drawBitmap(image.pixels, 0, 0, 0, 0, width, height, true, lazyPaint);
+        } else {
+            //mCanvas.drawText(text, u, vBase, lazyPaint);        
+          lazyCanvas.drawText(text, 0, 0, lazyPaint);
         }
 
-        if (drawText) {
-            mCanvas.drawText(text,
-                    u + padding.left + centerOffsetWidth,
-                    vBase + padding.top + centerOffsetHeight,
-                    textPaint);
-        }
-
-        // We know there's enough space, so update the member variables
-        mU = u + width;
-        mV = v;
-        mLineHeight = lineHeight;
-        texture = new TextureInfo(currentID, grid, width, height, ascent,
-                u, v + height, width, -height));
+        offsetU = u;
+        offsetV = vBase;
           
-      */
+        texU = u + textWidth;
+        texV = v;
+        texLineHeight = lineHeight;
+        texture = new TextureInfo(currentID, textWidth, textHeight, ascent,
+                u, v + textHeight, textWidth, -textHeight);
     }
     
     public class TextureInfo {
@@ -1020,19 +992,18 @@ public class PFont implements PConstants {
             this.width = width;
             this.height = height;
             this.baseline = baseLine;
-            int[] crop = new int[4];
+            crop = new int[4];
             crop[0] = cropU;
             crop[1] = cropV;
             crop[2] = cropW;
-            crop[3] = cropH;
-            mCrop = crop;            
+            crop[3] = cropH;            
         }
 
         public int glid;
         public float width;
         public float height;
         public float baseline;
-        public int[] mCrop;
+        public int[] crop;
     }    
   }
 }
