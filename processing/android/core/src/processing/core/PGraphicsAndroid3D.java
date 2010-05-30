@@ -2269,19 +2269,25 @@ public class PGraphicsAndroid3D extends PGraphics {
        // Init opengl state for text rendering...
         textFontTexID = textFont.currentID;
         gl.glBindTexture(GL10.GL_TEXTURE_2D, textFontTexID);
-        gl.glShadeModel(GL10.GL_FLAT);
-        gl.glEnable(GL10.GL_BLEND);
-        gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-        gl.glColor4x(0x10000, 0x10000, 0x10000, 0x10000);
+        gl.glEnable(GL10.GL_TEXTURE_2D);
+        gl.glShadeModel(GL10.GL_FLAT);  // Should be restored to default shade model after text rendering.
+        
+        //gl.glEnable(GL10.GL_BLEND);
+        //gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+        //gl.glColor4x(0x10000, 0x10000, 0x10000, 0x10000);
+        
         gl.glMatrixMode(GL10.GL_PROJECTION);
         gl.glPushMatrix();
         gl.glLoadIdentity();
         gl.glOrthof(0.0f, width, 0.0f, height, 0.0f, 1.0f);
+        
         gl.glMatrixMode(GL10.GL_MODELVIEW);
         gl.glPushMatrix();
         gl.glLoadIdentity();
+        //gl.glScalef(1, 1, 1);
+        
         // Magic offsets to promote consistent rasterization.
-        gl.glTranslatef(0.375f, 0.375f, 0.0f); 
+        //gl.glTranslatef(0.375f, -0.375f, 0.0f); 
         
     super.textLineImpl(buffer, start, stop, x, y);
     
@@ -2346,15 +2352,16 @@ public class PGraphicsAndroid3D extends PGraphics {
       gl.glBindTexture(GL10.GL_TEXTURE_2D, textFontTexID);
     }        
         
-    gl.glPushMatrix();
-    float snappedX = (float) Math.floor(x1);
-    float snappedY = (float) Math.floor(y1);
-    gl.glTranslatef(snappedX, snappedY, 0.0f);
+    //gl.glPushMatrix();
+    //float snappedX = (float) Math.floor(x1);
+    //float snappedY = (float) Math.floor(y1);
+    //gl.glTranslatef(snappedX, snappedY, 0.0f);
         
-    gl.glEnable(GL10.GL_TEXTURE_2D);
+    
     ((GL11)gl).glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, tex.crop, 0);
-    ((GL11Ext)gl).glDrawTexiOES((int) snappedX, (int) snappedY, 0, (int) tex.width, (int) tex.height);
-    gl.glPopMatrix();    
+    //((GL11Ext)gl).glDrawTexiOES((int) snappedX, height - (int) snappedY, 0, (int) tex.width, (int) tex.height);
+    ((GL11Ext)gl).glDrawTexiOES((int)x1, height - (int)y1, 0, (int)(x2 - x1), (int)(y2 - y1));
+    //gl.glPopMatrix();    
         
     /*
     boolean savedTint = tint;
@@ -2384,6 +2391,22 @@ public class PGraphicsAndroid3D extends PGraphics {
       gl.glBindTexture(GL10.GL_TEXTURE_2D, textFontTexID);
     }        
         
+    //gl.glPushMatrix();
+    //float snappedX = (float) Math.floor(x1);
+    //float snappedY = (float) Math.floor(y1);
+    //gl.glTranslatef(snappedX, snappedY, 0.0f);
+        
+    
+    ((GL11)gl).glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, tex.crop, 0);
+    //((GL11Ext)gl).glDrawTexiOES((int) snappedX, height - (int) snappedY, 0, (int) tex.width, (int) tex.height);
+    ((GL11Ext)gl).glDrawTexiOES((int)xx, (int)yy, 0, (int)w0, (int)h0);    
+   
+    /*
+    if (textFontTexID != textFont.currentID) {
+      textFontTexID = textFont.currentID;
+      gl.glBindTexture(GL10.GL_TEXTURE_2D, textFontTexID);
+    }        
+        
     gl.glPushMatrix();
     float snappedX = (float) Math.floor(xx);
     float snappedY = (float) Math.floor(yy);
@@ -2391,9 +2414,9 @@ public class PGraphicsAndroid3D extends PGraphics {
         
     gl.glEnable(GL10.GL_TEXTURE_2D);
     ((GL11)gl).glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, tex.crop, 0);
-    ((GL11Ext)gl).glDrawTexiOES((int) snappedX, (int) snappedY, 0, (int) tex.width, (int) tex.height);
+    ((GL11Ext)gl).glDrawTexiOES((int) snappedX, height - (int) snappedY, 0, (int) tex.width, (int) tex.height);
     gl.glPopMatrix();    
-    
+    */
     
     /*
     int x0 = 0;
