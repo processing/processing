@@ -2259,17 +2259,17 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected void textLineImpl(char buffer[], int start, int stop,
                               float x, float y) {
     
-    if (textFont.mTextureID == -1) {
+    if (textFont.texIDList == null) {
       textFont.initialize(gl, maxTextureSize, maxTextureSize);
-      // add the current fonts to texture.
-      textFont.addToTexture(gl);
+      // Add all the current glyphs to the texture.
+      textFont.addAllGlyphsToTexture(gl);
     }
     
     
        // Init opengl state for text rendering...
-        textFontTexID = textFont.currentID;
-        gl.glBindTexture(GL10.GL_TEXTURE_2D, textFontTexID);
+        textFontTexID = textFont.currentTexID;
         gl.glEnable(GL10.GL_TEXTURE_2D);
+        gl.glBindTexture(GL10.GL_TEXTURE_2D, textFontTexID);
         //gl.glShadeModel(GL10.GL_FLAT);  // Should be restored to default shade model after text rendering.
         
         //gl.glEnable(GL10.GL_BLEND);
@@ -2306,11 +2306,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     PFont.Glyph glyph = textFont.getGlyph(ch);
     
     if (glyph.texture == null) {
-      // Adding new glyph to texture.
-      textFont.beginAddToTexture(gl); // we need this becuause new glyps can be added during text rendering...
-                                                               // but it is ok with the texture binded. probably yes.
+      // Adding new glyph to the font texture.
       glyph.addToTexture(gl);
-      textFont.endAddToTexture(gl);
     }
     
     if (glyph != null) {
@@ -2350,6 +2347,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     if (textFontTexID != tex.glid) {
       textFontTexID = tex.glid;
       gl.glBindTexture(GL10.GL_TEXTURE_2D, textFontTexID);
+      textFont.currentTexID = textFontTexID;
     }        
         
     //gl.glPushMatrix();
@@ -2389,6 +2387,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     if (textFontTexID != tex.glid) {
       textFontTexID = tex.glid;
       gl.glBindTexture(GL10.GL_TEXTURE_2D, textFontTexID);
+      textFont.currentTexID = textFontTexID;
     }        
         
     //gl.glPushMatrix();
