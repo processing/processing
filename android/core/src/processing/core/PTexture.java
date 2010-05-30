@@ -728,6 +728,8 @@ public class PTexture implements PConstants {
      gl.glTexParameterf(glTarget, GL10.GL_TEXTURE_WRAP_S, GL10.GL_CLAMP_TO_EDGE);
      gl.glTexParameterf(glTarget, GL10.GL_TEXTURE_WRAP_T, GL10.GL_CLAMP_TO_EDGE);        
      gl.glTexImage2D(glTarget, 0, glInternalFormat,  glWidth,  glHeight, 0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, null);
+     
+     // TODO: check what is the correct way of unbind textures, the following or glDisable(glTarget);
      gl.glBindTexture(glTarget, 0);
         
      flippedX = false;

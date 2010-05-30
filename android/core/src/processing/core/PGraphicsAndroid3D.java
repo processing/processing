@@ -2272,9 +2272,19 @@ public class PGraphicsAndroid3D extends PGraphics {
         gl.glBindTexture(GL10.GL_TEXTURE_2D, textFontTexID);
         //gl.glShadeModel(GL10.GL_FLAT);  // Should be restored to default shade model after text rendering.
         
-        //gl.glEnable(GL10.GL_BLEND);
-        //gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-        //gl.glColor4x(0x10000, 0x10000, 0x10000, 0x10000);
+        /*
+        gl.glEnable(GL10.GL_BLEND);
+        gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+        
+        */
+//        
+   
+       // TODO: Check this is the right way to set the fill color for the text.
+      // gl.glColor4f(colorFloats[0], colorFloats[1], colorFloats[2], colorFloats[3]);     
+        
+//        gl.glColor4x(0x10000, 0x10000, 0x10000, 0x10000);
+
+                
         
         gl.glMatrixMode(GL10.GL_PROJECTION);
         gl.glPushMatrix();
@@ -2354,13 +2364,23 @@ public class PGraphicsAndroid3D extends PGraphics {
     //float snappedX = (float) Math.floor(x1);
     //float snappedY = (float) Math.floor(y1);
     //gl.glTranslatef(snappedX, snappedY, 0.0f);
-        
+
+    boolean savedTint = tint;
+    int savedTintColor = tintColor;    
+    tint(fillColor);
+    
     
     ((GL11)gl).glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, tex.crop, 0);
     //((GL11Ext)gl).glDrawTexiOES((int) snappedX, height - (int) snappedY, 0, (int) tex.width, (int) tex.height);
     ((GL11Ext)gl).glDrawTexiOES((int)x1, height - (int)y1, 0, (int)(x2 - x1), (int)(y2 - y1));
     //gl.glPopMatrix();    
-        
+
+    if (savedTint) {
+      tint(savedTintColor);
+    } else {
+      noTint();
+    }    
+    
     /*
     boolean savedTint = tint;
     int savedTintColor = tintColor;
@@ -2395,11 +2415,21 @@ public class PGraphicsAndroid3D extends PGraphics {
     //float snappedY = (float) Math.floor(y1);
     //gl.glTranslatef(snappedX, snappedY, 0.0f);
         
+    boolean savedTint = tint;
+    int savedTintColor = tintColor;    
+    tint(fillColor);
+
     
     ((GL11)gl).glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, tex.crop, 0);
     //((GL11Ext)gl).glDrawTexiOES((int) snappedX, height - (int) snappedY, 0, (int) tex.width, (int) tex.height);
     ((GL11Ext)gl).glDrawTexiOES((int)xx, (int)yy, 0, (int)w0, (int)h0);    
-   
+
+    if (savedTint) {
+      tint(savedTintColor);
+    } else {
+      noTint();
+    }        
+    
     /*
     if (textFontTexID != textFont.currentID) {
       textFontTexID = textFont.currentID;

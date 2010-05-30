@@ -686,6 +686,7 @@ public class PFont implements PConstants {
   
   public void addTexture(GL10 gl) {
     int[] textures = new int[1];
+    gl.glEnable(GL10.GL_TEXTURE_2D);
     gl.glGenTextures(1, textures, 0);
     gl.glBindTexture(GL10.GL_TEXTURE_2D, textures[0]);    
 
@@ -698,6 +699,9 @@ public class PFont implements PConstants {
 
     gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_REPLACE);
                     
+    gl.glTexImage2D(GL10.GL_TEXTURE_2D, 0, GL10.GL_RGBA,  texWidth, texHeight, 0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, null);
+    gl.glBindTexture(GL10.GL_TEXTURE_2D, 0);
+    
     if (texIDList == null) {
       texIDList = new int[1];
       texIDList[0] = textures[0]; 
@@ -893,14 +897,12 @@ public class PFont implements PConstants {
         for (int y = 0; y < height; y++) {
           for (int x = 0; x < width; x++) {
             rgba[t++] = 0xFFFFFF00 | image.pixels[p++];
-            //rgba[t++] = 255 << 24 | 255 << 16 | 0 << 8 | 0;
           }
         }
       } else {
         for (int y = 0; y < height; y++) {
           for (int x = 0; x < width; x++) {
             rgba[t++] = (image.pixels[p++] << 24) | 0x00FFFFFF;
-            //rgba[t++] = 255 << 24 | 0 << 16 | 0 << 8 | 0;
           }
         }
       }
@@ -933,72 +935,8 @@ public class PFont implements PConstants {
       
       gl.glTexSubImage2D(GL10.GL_TEXTURE_2D, 0, offsetX, offsetY, width, height, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, IntBuffer.wrap(rgba));
       
-      texture = new TextureInfo(currentTexID, offsetX, offsetY, width, height);
+      texture = new TextureInfo(currentTexID, offsetX, offsetY + height, width, -height);
       offsetX  += width;
-      
-      
-      /*
-        String text = String.valueOf((char)value);
-
-        int ascent = 0;
-        int descent = 0;
-        int measuredTextWidth = 0;
-        if (!fromStream) {
-            // Paint.ascent is negative, so negate it.
-            ascent = (int) Math.ceil(-lazyPaint.ascent());
-            descent = (int) Math.ceil(lazyPaint.descent());
-            measuredTextWidth = (int) Math.ceil(lazyPaint.measureText(text));
-        }
-        
-        int textHeight = ascent + descent;
-        int textWidth = Math.min(texWidth,measuredTextWidth);
-
-        int u = texU;
-        int v = texV;
-        int lineHeight = texLineHeight;
-
-        if (textWidth > texWidth) {
-            textWidth = texWidth;
-        }
-
-        // Is there room for this string on the current line?
-        if (u + textWidth > texWidth) {
-            // No room, go to the next line:
-            u = 0;
-            v += lineHeight;
-            lineHeight = 0;
-        }
-        lineHeight = Math.max(lineHeight, textHeight);
-        if (v + lineHeight > texHeight) {    
-            // Create new texture...
-            addTexture(gl);
-            
-            // Reseting texture coordinates and line 
-            u = texU = offsetU = 0;
-            v = texV = offsetV = 0;
-            lineHeight = texLineHeight = 0;
-        }
-
-        int vBase = v + ascent;
-
-        if (fromStream) {
-            // Draw from pixels, this is used when the font was loaded from stream and not  created from a system font.
-           lazyCanvas.drawBitmap(image.pixels, 0, 0, 0, 0, width, height, true, lazyPaint);
-        } else {
-            mCanvas.drawText(text, u, vBase, lazyPaint);
-          //lazyCanvas.drawText(text, 0, 0, lazyPaint);
-        }
-
-        offsetU = u;
-        offsetV = vBase;
-          
-        texU = u + textWidth;
-        texV = v;
-        texLineHeight = lineHeight;
-        
-        texture = new TextureInfo(currentID, textWidth, textHeight, ascent,
-                u, v + textHeight, textWidth, -textHeight);
-                */
     }
     
     public class TextureInfo {
