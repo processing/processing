@@ -2270,7 +2270,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         textFontTexID = textFont.currentID;
         gl.glBindTexture(GL10.GL_TEXTURE_2D, textFontTexID);
         gl.glEnable(GL10.GL_TEXTURE_2D);
-        gl.glShadeModel(GL10.GL_FLAT);  // Should be restored to default shade model after text rendering.
+        //gl.glShadeModel(GL10.GL_FLAT);  // Should be restored to default shade model after text rendering.
         
         //gl.glEnable(GL10.GL_BLEND);
         //gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
@@ -2347,8 +2347,8 @@ public class PGraphicsAndroid3D extends PGraphics {
                                    float x2, float y2, //float z2,
                                    int u2, int v2) {
    
-    if (textFontTexID != textFont.currentID) {
-      textFontTexID = textFont.currentID;
+    if (textFontTexID != tex.glid) {
+      textFontTexID = tex.glid;
       gl.glBindTexture(GL10.GL_TEXTURE_2D, textFontTexID);
     }        
         
@@ -2386,8 +2386,8 @@ public class PGraphicsAndroid3D extends PGraphics {
                                     int xx, int yy,
                                     int w0, int h0) {
     
-    if (textFontTexID != textFont.currentID) {
-      textFontTexID = textFont.currentID;
+    if (textFontTexID != tex.glid) {
+      textFontTexID = tex.glid;
       gl.glBindTexture(GL10.GL_TEXTURE_2D, textFontTexID);
     }        
         
