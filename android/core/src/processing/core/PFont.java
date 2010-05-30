@@ -961,15 +961,15 @@ public class PFont implements PConstants {
       if (PGraphicsAndroid3D.BIG_ENDIAN)  {
         for (int y = 0; y < height; y++) {
           for (int x = 0; x < width; x++) {
-            //rgba[t++] = 0xFFFFFF00 | image.pixels[p++];
-            rgba[t++] = 255 << 24 | 255 << 16 | 0 << 8 | 0;
+            rgba[t++] = 0xFFFFFF00 | image.pixels[p++];
+            //rgba[t++] = 255 << 24 | 255 << 16 | 0 << 8 | 0;
           }
         }
       } else {
         for (int y = 0; y < height; y++) {
           for (int x = 0; x < width; x++) {
-            //rgba[t++] = (image.pixels[p++] << 24) | 0x00FFFFFF;
-            rgba[t++] = 255 << 24 | 0 << 16 | 0 << 8 | 0;
+            rgba[t++] = (image.pixels[p++] << 24) | 0x00FFFFFF;
+            //rgba[t++] = 255 << 24 | 0 << 16 | 0 << 8 | 0;
           }
         }
       }
