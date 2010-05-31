@@ -684,7 +684,7 @@ public class PFont implements PConstants {
     lineHeight = 0;
   }
   
-  public void addTexture(GL10 gl) {
+  public int addTexture(GL10 gl) {
     int[] textures = new int[1];
     gl.glEnable(GL10.GL_TEXTURE_2D);
     gl.glGenTextures(1, textures, 0);
@@ -701,6 +701,7 @@ public class PFont implements PConstants {
                     
     gl.glTexImage2D(GL10.GL_TEXTURE_2D, 0, GL10.GL_RGBA,  texWidth, texHeight, 0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, null);
     gl.glBindTexture(GL10.GL_TEXTURE_2D, 0);
+    currentTexID = -1; // No texture is bound.
     
     if (texIDList == null) {
       texIDList = new int[1];
@@ -711,7 +712,8 @@ public class PFont implements PConstants {
       PApplet.arrayCopy(tmp, texIDList, tmp.length);
       texIDList[tmp.length] = textures[0];
     }
-    currentTexID = textures[0];
+    
+    return textures[0];
   }
   
   // Add all the current glyphs to opengl texture.
@@ -917,13 +919,12 @@ public class PFont implements PConstants {
       lineHeight = Math.max(lineHeight, height);
       if (offsetY + lineHeight > texHeight) {    
         // We run out of space in the current texture, we add a new texture:
-        addTexture(gl);
+        lastTexID = addTexture(gl);
             
         // Reseting texture coordinates and line.
         offsetX = 0;
         offsetY = 0;
-        lineHeight = 0;
-        lastTexID = currentTexID; 
+        lineHeight = 0; 
       }
       
       if (lastTexID == -1) { 
