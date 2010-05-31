@@ -2278,8 +2278,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     gl.glPushMatrix();
     gl.glLoadIdentity();
     
-    // Setting the current fill color as the environment color to multiply the texture color of the font.
-    gl.glTexEnvfv(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_COLOR, colorFloats, 0);
+    // Setting the current fill color as the font color.
+    gl.glColor4f(colorFloats[0], colorFloats[1], colorFloats[2], colorFloats[3]);
          
     super.textLineImpl(buffer, start, stop, x, y);
 
@@ -2310,8 +2310,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         float x2 = x1 + bwidth * textSize;
         float y2 = y1 + high * textSize;
 
-        textCharModelImpl(glyph.texture,
-                          x1, y1, x2, y2);
+        textCharModelImpl(glyph.texture, x1, y1, x2, y2);
 
       } else if (textMode == SCREEN) {
         int xx = (int) x + glyph.leftExtent;
