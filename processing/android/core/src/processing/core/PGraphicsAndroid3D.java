@@ -65,7 +65,8 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   public GL10 gl;
   public GL11 gl11;
-  public GL11ExtensionPack gl11x;
+  public GL11Ext gl11x;
+  public GL11ExtensionPack gl11xp;
   public GLU glu;
   
   // Set to 1 or 2 depending on whether to use EGL 1.x or 2.x
@@ -303,8 +304,6 @@ public class PGraphicsAndroid3D extends PGraphics {
   public String OPENGL_VERSION;
   
   //////////////////////////////////////////////////////////////
-
-  protected int textFontTexID;
   
   
   public PGraphicsAndroid3D() {
@@ -2264,52 +2263,28 @@ public class PGraphicsAndroid3D extends PGraphics {
       // Add all the current glyphs to the texture.
       textFont.addAllGlyphsToTexture(gl);
     }
-    
-    
-       // Init opengl state for text rendering...
-        textFontTexID = textFont.currentTexID;
-        gl.glEnable(GL10.GL_TEXTURE_2D);
-        gl.glBindTexture(GL10.GL_TEXTURE_2D, textFontTexID);
-        //gl.glShadeModel(GL10.GL_FLAT);  // Should be restored to default shade model after text rendering.
         
-        /*
-        gl.glEnable(GL10.GL_BLEND);
-        gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+    // Init opengl state for text rendering...
+    gl.glEnable(GL10.GL_TEXTURE_2D);
+    textFont.currentTexID = textFont.texIDList[0];
+    gl.glBindTexture(GL10.GL_TEXTURE_2D, textFont.currentTexID);
         
-        */
-//        
-   
-       // TODO: Check this is the right way to set the fill color for the text.
-      // gl.glColor4f(colorFloats[0], colorFloats[1], colorFloats[2], colorFloats[3]);     
+    gl.glMatrixMode(GL10.GL_PROJECTION);
+    gl.glPushMatrix();
+    gl.glLoadIdentity();
+    gl.glOrthof(0.0f, width, 0.0f, height, 0.0f, 1.0f);
         
-//        gl.glColor4x(0x10000, 0x10000, 0x10000, 0x10000);
-
-                
-        
-        gl.glMatrixMode(GL10.GL_PROJECTION);
-        gl.glPushMatrix();
-        gl.glLoadIdentity();
-        gl.glOrthof(0.0f, width, 0.0f, height, 0.0f, 1.0f);
-        
-        gl.glMatrixMode(GL10.GL_MODELVIEW);
-        gl.glPushMatrix();
-        gl.glLoadIdentity();
-        //gl.glScalef(1, 1, 1);
-        
-        // Magic offsets to promote consistent rasterization.
-        //gl.glTranslatef(0.375f, -0.375f, 0.0f); 
-        
+    gl.glMatrixMode(GL10.GL_MODELVIEW);
+    gl.glPushMatrix();
+    gl.glLoadIdentity();
+         
     super.textLineImpl(buffer, start, stop, x, y);
-    
 
-
-     // Restore opengl state after text rendering...
-        //gl.glDisable(GL10.GL_BLEND);
-        gl.glMatrixMode(GL10.GL_PROJECTION);
-        gl.glPopMatrix();
-        gl.glMatrixMode(GL10.GL_MODELVIEW);
-        gl.glPopMatrix();    
-    
+    // Restore opengl state after text rendering...
+    gl.glMatrixMode(GL10.GL_PROJECTION);
+    gl.glPopMatrix();
+    gl.glMatrixMode(GL10.GL_MODELVIEW);
+    gl.glPopMatrix();    
   }  
   
   protected void textCharImpl(char ch, float x, float y) {
@@ -2333,8 +2308,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         float y2 = y1 + high * textSize;
 
         textCharModelImpl(glyph.texture,
-                          x1, y1, x2, y2,
-                          glyph.width, glyph.height);
+                          x1, y1, x2, y2);
 
       } else if (textMode == SCREEN) {
         int xx = (int) x + glyph.leftExtent;
@@ -2348,152 +2322,52 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
   }
 
-
   protected void textCharModelImpl(Glyph.TextureInfo tex,
-                                   float x1, float y1, //float z1,
-                                   float x2, float y2, //float z2,
-                                   int u2, int v2) {
-   
-    if (textFontTexID != tex.glid) {
-      textFontTexID = tex.glid;
-      gl.glBindTexture(GL10.GL_TEXTURE_2D, textFontTexID);
-      textFont.currentTexID = textFontTexID;
+                                   float x1, float y1,
+                                   float x2, float y2) {
+    if (textFont.currentTexID != tex.glid) {
+      gl.glBindTexture(GL10.GL_TEXTURE_2D, tex.glid);
+      textFont.currentTexID = tex.glid;      
     }        
         
-    //gl.glPushMatrix();
-    //float snappedX = (float) Math.floor(x1);
-    //float snappedY = (float) Math.floor(y1);
-    //gl.glTranslatef(snappedX, snappedY, 0.0f);
-
     boolean savedTint = tint;
     int savedTintColor = tintColor;    
     tint(fillColor);
-    
-    
-    ((GL11)gl).glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, tex.crop, 0);
-    //((GL11Ext)gl).glDrawTexiOES((int) snappedX, height - (int) snappedY, 0, (int) tex.width, (int) tex.height);
-    ((GL11Ext)gl).glDrawTexiOES((int)x1, height - (int)y1, 0, (int)(x2 - x1), (int)(y2 - y1));
-    //gl.glPopMatrix();    
+       
+       // TODO: Check this is the right way to set the fill color for the text.
+      //gl.glColor4f(colorFloats[0], colorFloats[1], colorFloats[2], colorFloats[3]);
+    //gl.glColor4x(0x00000, 0x00000, 0x00000, 0x10000);
+        
+    gl11.glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, tex.crop, 0);
+    gl11x.glDrawTexiOES((int)x1, height - (int)(y2), 0, (int)(x2 - x1), (int)(y2 - y1));
 
     if (savedTint) {
       tint(savedTintColor);
     } else {
       noTint();
     }    
-    
-    /*
-    boolean savedTint = tint;
-    int savedTintColor = tintColor;
-
-    tint(fillColor);
-    
-    imageImpl(glyph, x1, y1, x2, y2, 0, 0, u2, v2);
-    
-    if (savedTint) {
-      tint(savedTintColor);
-    } else {
-      noTint();
-    }
-    */
-    
-    
   }  
-  
   
   protected void textCharScreenImpl(Glyph.TextureInfo tex,
                                     int xx, int yy,
                                     int w0, int h0) {
-    
-    if (textFontTexID != tex.glid) {
-      textFontTexID = tex.glid;
-      gl.glBindTexture(GL10.GL_TEXTURE_2D, textFontTexID);
-      textFont.currentTexID = textFontTexID;
+    if (textFont.currentTexID != tex.glid) {
+      gl.glBindTexture(GL10.GL_TEXTURE_2D, tex.glid);
+      textFont.currentTexID = tex.glid;      
     }        
-        
-    //gl.glPushMatrix();
-    //float snappedX = (float) Math.floor(x1);
-    //float snappedY = (float) Math.floor(y1);
-    //gl.glTranslatef(snappedX, snappedY, 0.0f);
         
     boolean savedTint = tint;
     int savedTintColor = tintColor;    
     tint(fillColor);
-
-    
-    ((GL11)gl).glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, tex.crop, 0);
-    //((GL11Ext)gl).glDrawTexiOES((int) snappedX, height - (int) snappedY, 0, (int) tex.width, (int) tex.height);
-    ((GL11Ext)gl).glDrawTexiOES((int)xx, (int)yy, 0, (int)w0, (int)h0);    
+        
+    gl11.glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, tex.crop, 0);
+    gl11x.glDrawTexiOES(xx, height - yy, 0, w0, h0);
 
     if (savedTint) {
       tint(savedTintColor);
     } else {
       noTint();
-    }        
-    
-    /*
-    if (textFontTexID != textFont.currentID) {
-      textFontTexID = textFont.currentID;
-      gl.glBindTexture(GL10.GL_TEXTURE_2D, textFontTexID);
-    }        
-        
-    gl.glPushMatrix();
-    float snappedX = (float) Math.floor(xx);
-    float snappedY = (float) Math.floor(yy);
-    gl.glTranslatef(snappedX, snappedY, 0.0f);
-        
-    gl.glEnable(GL10.GL_TEXTURE_2D);
-    ((GL11)gl).glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, tex.crop, 0);
-    ((GL11Ext)gl).glDrawTexiOES((int) snappedX, height - (int) snappedY, 0, (int) tex.width, (int) tex.height);
-    gl.glPopMatrix();    
-    */
-    
-    /*
-    int x0 = 0;
-    int y0 = 0;
-
-    if ((xx >= width) || (yy >= height) ||
-        (xx + w0 < 0) || (yy + h0 < 0)) return;
-
-    if (xx < 0) {
-      x0 -= xx;
-      w0 += xx;
-      xx = 0;
-    }
-    if (yy < 0) {
-      y0 -= yy;
-      h0 += yy;
-      yy = 0;
-    }
-    if (xx + w0 > width) {
-      w0 -= ((xx + w0) - width);
-    }
-    if (yy + h0 > height) {
-      h0 -= ((yy + h0) - height);
-    }
-
-    int fr = fillRi;
-    int fg = fillGi;
-    int fb = fillBi;
-    int fa = fillAi;
-
-    int pixels1[] = glyph.pixels; //images[glyph].pixels;
-
-    // TODO this can be optimized a bit
-    for (int row = y0; row < y0 + h0; row++) {
-      for (int col = x0; col < x0 + w0; col++) {
-        int a1 = (fa * pixels1[row * glyph.width + col]) >> 8;
-        int a2 = a1 ^ 0xff;
-        //int p1 = pixels1[row * glyph.width + col];
-        int p2 = pixels[(yy + row-y0)*width + (xx+col-x0)];
-
-        pixels[(yy + row-y0)*width + xx+col-x0] =
-          (0xff000000 |
-           (((a1 * fr + a2 * ((p2 >> 16) & 0xff)) & 0xff00) << 8) |
-           (( a1 * fg + a2 * ((p2 >>  8) & 0xff)) & 0xff00) |
-           (( a1 * fb + a2 * ( p2        & 0xff)) >> 8));
-      }
-    }
-    */
+    }    
   }  
 
   //////////////////////////////////////////////////////////////
@@ -4869,18 +4743,25 @@ public class PGraphicsAndroid3D extends PGraphics {
       } catch (ClassCastException cce) {
         gl11 = null;
       }
-      
+
       try {
-        gl11x = (GL11ExtensionPack)gl;
+        gl11x = (GL11Ext)gl;
       } catch (ClassCastException cce) {
         gl11x = null;
+      }      
+            
+      try {
+        gl11xp = (GL11ExtensionPack)gl;
+      } catch (ClassCastException cce) {
+        gl11xp = null;
       }      
       
       parent.handleDraw();
       
       gl = null;
       gl11 = null;
-      gl11x = null;      
+      gl11x = null;
+      gl11xp = null;      
     }
 
     public void onSurfaceChanged(GL10 igl, int iwidth, int iheight) {
@@ -4892,22 +4773,29 @@ public class PGraphicsAndroid3D extends PGraphics {
       } catch (ClassCastException cce) {
         gl11 = null;
       }      
-      
+
       try {
-        gl11x = (GL11ExtensionPack)gl;
+        gl11x = (GL11Ext)gl;
+      } catch (ClassCastException cce) {
+        gl11x = null;
+      }      
+            
+      try {
+        gl11xp = (GL11ExtensionPack)gl;
         
           // Not implemented in Android 2.1
           //int[] fbo = {0};
-          //gl11x.glGenFramebuffersOES(1, fbo, 0);
+          //gl11xp.glGenFramebuffersOES(1, fbo, 0);
         
       } catch (ClassCastException cce) {
-        gl11x = null;
+        gl11xp = null;
       }          
       
       setSize(iwidth, iheight);
       gl = null;    
       gl11 = null;
       gl11x = null;
+      gl11xp = null;
     }
 
     public void onSurfaceCreated(GL10 igl, EGLConfig config) {
@@ -4920,9 +4808,15 @@ public class PGraphicsAndroid3D extends PGraphics {
       }
       
       try {
-        gl11x = (GL11ExtensionPack)gl;
+        gl11x = (GL11Ext)gl;
       } catch (ClassCastException cce) {
         gl11x = null;
+      }      
+            
+      try {
+        gl11xp = (GL11ExtensionPack)gl;
+      } catch (ClassCastException cce) {
+        gl11xp = null;
       }         
       
       OPENGL_VENDOR = gl.glGetString(GL10.GL_VENDOR);
@@ -4966,7 +4860,8 @@ public class PGraphicsAndroid3D extends PGraphics {
       recreateResources();
       gl = null;
       gl11 = null;
-      gl11x = null;      
+      gl11x = null;
+      gl11xp = null;      
     }    
   }
   
