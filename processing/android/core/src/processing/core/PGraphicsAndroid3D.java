@@ -2277,6 +2277,9 @@ public class PGraphicsAndroid3D extends PGraphics {
     gl.glMatrixMode(GL10.GL_MODELVIEW);
     gl.glPushMatrix();
     gl.glLoadIdentity();
+    
+    // Setting the current fill color as the environment color to multiply the texture color of the font.
+    gl.glTexEnvfv(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_COLOR, colorFloats, 0);
          
     super.textLineImpl(buffer, start, stop, x, y);
 
@@ -2329,23 +2332,9 @@ public class PGraphicsAndroid3D extends PGraphics {
       gl.glBindTexture(GL10.GL_TEXTURE_2D, tex.glid);
       textFont.currentTexID = tex.glid;      
     }        
-        
-    boolean savedTint = tint;
-    int savedTintColor = tintColor;    
-    tint(fillColor);
        
-       // TODO: Check this is the right way to set the fill color for the text.
-      //gl.glColor4f(colorFloats[0], colorFloats[1], colorFloats[2], colorFloats[3]);
-    //gl.glColor4x(0x00000, 0x00000, 0x00000, 0x10000);
-        
     gl11.glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, tex.crop, 0);
-    gl11x.glDrawTexiOES((int)x1, height - (int)(y2), 0, (int)(x2 - x1), (int)(y2 - y1));
-
-    if (savedTint) {
-      tint(savedTintColor);
-    } else {
-      noTint();
-    }    
+    gl11x.glDrawTexfOES(x1, height - y2, 0, x2 - x1, y2 - y1);
   }  
   
   protected void textCharScreenImpl(Glyph.TextureInfo tex,
@@ -2356,18 +2345,8 @@ public class PGraphicsAndroid3D extends PGraphics {
       textFont.currentTexID = tex.glid;      
     }        
         
-    boolean savedTint = tint;
-    int savedTintColor = tintColor;    
-    tint(fillColor);
-        
     gl11.glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, tex.crop, 0);
     gl11x.glDrawTexiOES(xx, height - yy, 0, w0, h0);
-
-    if (savedTint) {
-      tint(savedTintColor);
-    } else {
-      noTint();
-    }    
   }  
 
   //////////////////////////////////////////////////////////////
