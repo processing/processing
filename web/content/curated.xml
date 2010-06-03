@@ -2,6 +2,16 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <curated>
 
+<software name="Fine Collection of Curious Sound Objects" by="Georg Reil, Kathy Scheuring" scroll="yes" resize="yes" width="1024" height="700">
+        <image>images/finecollection.jpg</image>
+          <description>
+              Storytelling combined with physical computing. Six mundane objects incorporate sensors that trigger feedback to the user as part of a fictional history of the object.
+          </description>
+          <location>http://vimeo.com/10173262</location>
+          <link href="http://www.geschoir.de/">geschoir.de</link>
+          <link href="http://www.theplacetofindme.de/">theplacetofindme.de</link>
+</software>
+
 <software name="Just Landed" by="Jer Thorp" scroll="yes" resize="yes" width="1024" height="700">
         <image>images/justlanded.jpg</image>
           <description>
