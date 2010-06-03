@@ -219,9 +219,11 @@ public class PImage implements PConstants, Cloneable {
    * that you've done the work of making sure a MediaTracker has been used
    * to fully download the data and that the img is valid.
    *
-   * @param img assumes a MediaTracker has been used to fully download the data and the img is valid
+   * @param img assumes a MediaTracker has been used to fully download
+   * the data and the img is valid
    */
   public PImage(java.awt.Image img) {
+    format = RGB;
     if (img instanceof BufferedImage) {
       BufferedImage bi = (BufferedImage) img;
       width = bi.getWidth();
@@ -229,9 +231,11 @@ public class PImage implements PConstants, Cloneable {
       pixels = new int[width * height];
       WritableRaster raster = bi.getRaster();
       raster.getDataElements(0, 0, width, height, pixels);
+      if  (bi.getType() == BufferedImage.TYPE_INT_ARGB) {
+        format = ARGB;
+      }
 
     } else {  // go the old school java 1.0 route
-//        System.out.println(img.getClass().getName());
       width = img.getWidth(null);
       height = img.getHeight(null);
       pixels = new int[width * height];
@@ -241,9 +245,6 @@ public class PImage implements PConstants, Cloneable {
         pg.grabPixels();
       } catch (InterruptedException e) { }
     }
-
-    format = RGB;
-//    cache = null;
   }
 
 
