@@ -135,7 +135,7 @@ public class PGraphicsPDF extends PGraphicsJava2D {
 //      long t = System.currentTimeMillis();
       mapper = new DefaultFontMapper();
 
-      if (PApplet.platform == PApplet.MACOSX) {
+      if (PApplet.platform == PConstants.MACOSX) {
         try {
           String homeLibraryFonts =
             System.getProperty("user.home") + "/Library/Fonts";
@@ -148,7 +148,7 @@ public class PGraphicsPDF extends PGraphicsJava2D {
         mapper.insertDirectory("/System/Library/Fonts");
         mapper.insertDirectory("/Library/Fonts");
 
-      } else if (PApplet.platform == PApplet.WINDOWS) {
+      } else if (PApplet.platform == PConstants.WINDOWS) {
         // how to get the windows fonts directory?
         // could be c:\winnt\fonts or c:\windows\fonts or not even c:
         // maybe do a Runtime.exec() on echo %WINDIR% ?
@@ -180,6 +180,13 @@ public class PGraphicsPDF extends PGraphicsJava2D {
             break;
           }
         }
+        
+      } else if (PApplet.platform == PConstants.WINDOWS) {
+        File folder = new File("/usr/share/fonts/");
+        if (folder.exists()) {
+          mapper.insertDirectory("/usr/share/fonts");
+          traverseDir(mapper, folder);
+        }
       }
 //      System.out.println("mapping " + (System.currentTimeMillis() - t));
     }
@@ -187,6 +194,22 @@ public class PGraphicsPDF extends PGraphicsJava2D {
   }
 
 
+  /**
+   * Recursive walk to get all subdirectories for font fun.  
+   * Patch submitted by Matthias Breuer.
+   * (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=1566">Bug 1566</a>)
+   */
+  static protected void traverseDir(DefaultFontMapper mapper, File folder) {
+    File[] files = folder.listFiles();
+    for (int i = 0; i < files.length; i++) {
+      if (files[i].isDirectory()) {
+        mapper.insertDirectory(files[i].getPath());
+        traverseDir(mapper, new File(files[i].getPath()));
+      }
+    }
+  }
+  
+  
   public void endDraw() {
     // This needs to be overridden so that the endDraw() from PGraphicsJava2D
     // is not inherited (it calls loadPixels).
