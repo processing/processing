@@ -979,7 +979,7 @@ public class PGraphics3D extends PGraphics {
   protected void addPoint(int a) {
     if (pointCount == points.length) {
       int[][] temp = new int[pointCount << 1][LINE_FIELD_COUNT];
-      System.arraycopy(points, 0, temp, 0, lineCount);
+      System.arraycopy(points, 0, temp, 0, pointCount);
       points = temp;
     }
     points[pointCount][VERTEX1] = a;
