@@ -127,6 +127,10 @@ public class PGraphicsPDF extends PGraphicsJava2D {
     }
 //    System.out.println("beginDraw " + (System.currentTimeMillis() - t0));
     super.beginDraw();
+    
+    // Also need to push the matrix since the matrix doesn't reset on each run
+    // http://dev.processing.org/bugs/show_bug.cgi?id=1227
+    pushMatrix();
   }
   
   
@@ -211,6 +215,10 @@ public class PGraphicsPDF extends PGraphicsJava2D {
   
   
   public void endDraw() {
+    // Also need to pop the matrix since the matrix doesn't reset on each run
+    // http://dev.processing.org/bugs/show_bug.cgi?id=1227
+    popMatrix();
+    
     // This needs to be overridden so that the endDraw() from PGraphicsJava2D
     // is not inherited (it calls loadPixels).
     // http://dev.processing.org/bugs/show_bug.cgi?id=1169
@@ -272,6 +280,7 @@ public class PGraphicsPDF extends PGraphicsJava2D {
    */
   public void nextPage() {
     PStyle savedStyle = getStyle();
+    endDraw();
     g2.dispose();
 
     try {
@@ -285,9 +294,8 @@ public class PGraphicsPDF extends PGraphicsJava2D {
     } else if (textMode == MODEL) {
       g2 = content.createGraphics(width, height, mapper);
     }
+    beginDraw();
     style(savedStyle);
-
-    // should there be a beginDraw/endDraw in here?
   }
 
 
