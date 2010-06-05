@@ -1,3 +1,17 @@
+PROCESSING REV 0185 - XX June 2010
+
++ Option to change the default naming of sketches via preferences.txt. First, 
+  you can change the prefix, which defaults to:
+  editor.untitled.prefix=sketch_
+  And the suffix is handled using dates. The current default (since 1.0) is:
+  editor.untitled.suffix=MMMdd
+  Or if you want to switch back to the old (six digit) style, you could use:
+  editor.untitled.suffix=yyMMdd
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING REV 0184 - 14 April 2010
 
 Pre-release version with more bug fixes. Proper release notes will 
