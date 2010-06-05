@@ -1,6 +1,22 @@
 0185 android
 X fix two bugs with fonts created with specific charsets
+X fix for adobe illustrator-mangled svg id names with hex characters
 
+_ need to side-port changes from PShape/SVG over to Android
+
+_ image() problems (includes sketch)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1565
+
+_ move to Android 2.1 as the minimum requirement? 
+_   since 2.0.1 seems to be used on only a 0.46% of devices?
+_   http://developer.android.com/resources/dashboard/platform-versions.html
+
+_ add registered methods again
+_   need to figure out generic event queueing first
+_   may need a different subset of methods, and introduce new ones
+_     that will be usable on both android and desktop
+_ add line for export in libraries to say whether they're compatible
+_   even just 'android=' will be ok
 
 _ possibility of doing a compile (not run) using straight javac?
 _   this would be a faster way to check for errors

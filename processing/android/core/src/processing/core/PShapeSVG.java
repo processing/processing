@@ -257,6 +257,15 @@ public class PShapeSVG extends PShape {
 
     element = properties;
     name = properties.getStringAttribute("id");
+    // @#$(* adobe illustrator
+    if (name != null) {
+      while (true) {
+        String[] m = PApplet.match(name, "_x(.*)_");
+        if (m == null) break;
+        char repair = (char) PApplet.unhex(m[1]);
+        name = name.replace(m[0], "" + repair);
+      }
+    }
 
     String displayStr = properties.getStringAttribute("display", "inline");
     visible = !displayStr.equals("none");
@@ -354,6 +363,9 @@ public class PShapeSVG extends PShape {
 
     } else if (name.equals("mask")) {
       PGraphics.showWarning("Masks are not supported.");
+
+    } else if (name.equals("sodipodi:namedview")) {
+      // these are always in Inkscape files, the warnings get tedious  
 
     } else {
       PGraphics.showWarning("Ignoring  <" + name + "> tag.");
