@@ -41,9 +41,13 @@
 	<script type="text/javascript">
 	  /* <![CDATA[ */
 
-	  var attributes = { code:'@@sketch@@.class',
-                             archive: '@@archive@@',
-                             width:@@width@@, height:@@height@@ } ;
+	  var attributes = { 
+            code: '@@sketch@@.class',
+            archive: '@@archive@@',
+            width: @@width@@, 
+            height: @@height@@,
+            image: 'loading.gif'
+          };
           var parameters = { };
           var version = '1.5';
           deployJava.runApplet(attributes, parameters, version);
@@ -76,7 +80,7 @@
 		 http://java.sun.com/javase/6/webnotes/family-clsid.html
 		 http://java.sun.com/javase/6/webnotes/install/jre/autodownload.html -->
 	    <object classid="clsid:8AD9C840-044E-11D1-B3E9-00805F499D93"
-		    codebase="http://java.sun.com/update/1.6.0/jinstall-6u18-windows-i586.cab"
+		    codebase="http://java.sun.com/update/1.6.0/jinstall-6u20-windows-i586.cab"
 		    width="@@width@@" height="@@height@@"
 		    standby="Loading Processing software..."  >
 	      
