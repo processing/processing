@@ -849,7 +849,12 @@ public class PApplet extends Applet
           //System.out.println(objects[i] + " " + args);
           methods[i].invoke(objects[i], oargs);
         } catch (Exception e) {
-          e.printStackTrace();
+          if (e instanceof InvocationTargetException) {
+            InvocationTargetException ite = (InvocationTargetException) e;
+            ite.getTargetException().printStackTrace();
+          } else {
+            e.printStackTrace();
+          }
         }
       }
     }
@@ -2969,14 +2974,12 @@ public class PApplet extends Applet
           }
           break;
 
-          /*
         case 'D':  // double
           double dd[] = (double[]) what;
           for (int i = 0; i < dd.length; i++) {
             System.out.println("[" + i + "] " + dd[i]);
           }
           break;
-          */
 
         default:
           System.out.println(what);
