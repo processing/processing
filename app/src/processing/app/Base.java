@@ -25,6 +25,7 @@ package processing.app;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import javax.swing.*;
@@ -506,15 +507,24 @@ public class Base {
     File sketchbookDir = getSketchbookFolder();
     File newbieParentDir = untitledFolder;
 
+    String prefix = Preferences.get("editor.untitled.prefix");
+    
     // Use a generic name like sketch_031008a, the date plus a char
     int index = 0;
-    //SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd");
-    //SimpleDateFormat formatter = new SimpleDateFormat("MMMdd");
-    //String purty = formatter.format(new Date()).toLowerCase();
-    Calendar cal = Calendar.getInstance();
-    int day = cal.get(Calendar.DAY_OF_MONTH);  // 1..31
-    int month = cal.get(Calendar.MONTH);  // 0..11
-    String purty = months[month] + PApplet.nf(day, 2);
+    String format = Preferences.get("editor.untitled.suffix");
+    String suffix = null;
+    if (format == null) {
+      Calendar cal = Calendar.getInstance();
+      int day = cal.get(Calendar.DAY_OF_MONTH);  // 1..31
+      int month = cal.get(Calendar.MONTH);  // 0..11
+      suffix = months[month] + PApplet.nf(day, 2);      
+    } else {
+      //SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd");
+      //SimpleDateFormat formatter = new SimpleDateFormat("MMMdd");
+      //String purty = formatter.format(new Date()).toLowerCase();
+      SimpleDateFormat formatter = new SimpleDateFormat(format);
+      suffix = formatter.format(new Date());
+    }
     do {
       if (index == 26) {
         // In 0159, avoid running past z by sending people outdoors.
@@ -529,7 +539,7 @@ public class Base {
         }
         return null;
       }
-      newbieName = "sketch_" + purty + ((char) ('a' + index));
+      newbieName = prefix + suffix + ((char) ('a' + index));
       newbieDir = new File(newbieParentDir, newbieName);
       index++;
       // Make sure it's not in the temp folder *and* it's not in the sketchbook
