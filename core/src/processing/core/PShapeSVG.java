@@ -241,6 +241,15 @@ public class PShapeSVG extends PShape {
 
     element = properties;
     name = properties.getStringAttribute("id");
+    // @#$(* adobe illustrator mangles names of objects when re-saving
+    if (name != null) {
+      while (true) {
+        String[] m = PApplet.match(name, "_x(.*)_");
+        if (m == null) break;
+        char repair = (char) PApplet.unhex(m[1]);
+        name = name.replace(m[0], "" + repair);
+      }
+    }
 
     String displayStr = properties.getStringAttribute("display", "inline");
     visible = !displayStr.equals("none");
@@ -329,8 +338,9 @@ public class PShapeSVG extends PShape {
     } else if (name.equals("linearGradient")) {
       return new LinearGradient(this, elem);
 
-    } else if (name.equals("text")) {
-      PGraphics.showWarning("Text in SVG files is not currently supported, " +
+    } else if (name.equals("text") || name.equals("font")) {
+      PGraphics.showWarning("Text and fonts in SVG files " +
+      		                  "are not currently supported, " +
                             "convert text to outlines instead.");
 
     } else if (name.equals("filter")) {
@@ -339,6 +349,15 @@ public class PShapeSVG extends PShape {
     } else if (name.equals("mask")) {
       PGraphics.showWarning("Masks are not supported.");
 
+    } else if (name.equals("pattern")) {
+      PGraphics.showWarning("Patterns are not supported.");
+
+    } else if (name.equals("stop")) {
+      // stop tag is handled by gradient parser, so don't warn about it
+      
+    } else if (name.equals("sodipodi:namedview")) {
+      // these are always in Inkscape files, the warnings get tedious  
+      
     } else {
       PGraphics.showWarning("Ignoring  <" + name + "> tag.");
     }
@@ -347,7 +366,7 @@ public class PShapeSVG extends PShape {
 
 
   protected void parseLine() {
-    kind = LINE;
+    primitive = LINE;
     family = PRIMITIVE;
     params = new float[] {
       element.getFloatAttribute("x1"),
@@ -367,7 +386,7 @@ public class PShapeSVG extends PShape {
    * @param circle true if this is a circle and not an ellipse
    */
   protected void parseEllipse(boolean circle) {
-    kind = ELLIPSE;
+    primitive = ELLIPSE;
     family = PRIMITIVE;
     params = new float[4];
 
@@ -390,7 +409,7 @@ public class PShapeSVG extends PShape {
 
 
   protected void parseRect() {
-    kind = RECT;
+    primitive = RECT;
     family = PRIMITIVE;
     params = new float[] {
       element.getFloatAttribute("x"),
@@ -425,7 +444,7 @@ public class PShapeSVG extends PShape {
 
   protected void parsePath() {
     family = PATH;
-    kind = 0;
+    primitive = 0;
 
     String pathData = element.getStringAttribute("d");
     if (pathData == null) return;

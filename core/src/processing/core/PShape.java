@@ -85,7 +85,7 @@ public class PShape implements PConstants {
   protected int family;
 
   /** ELLIPSE, LINE, QUAD; TRIANGLE_FAN, QUAD_STRIP; etc. */
-  protected int kind;
+  protected int primitive;
 
   protected PMatrix matrix;
 
@@ -140,7 +140,7 @@ public class PShape implements PConstants {
   static public final int BEZIER_VERTEX = 1;
   static public final int CURVE_VERTEX = 2;
   static public final int BREAK = 3;
-  /** Array of VERTEX, BEZIER_VERTEX, and CURVE_VERTEXT calls. */
+  /** Array of VERTEX, BEZIER_VERTEX, and CURVE_VERTEX calls. */
   protected int vertexCodeCount;
   protected int[] vertexCodes;
   /** True if this is a closed path. */
@@ -427,10 +427,10 @@ public class PShape implements PConstants {
 
 
   protected void drawPrimitive(PGraphics g) {
-    if (kind == POINT) {
+    if (primitive == POINT) {
       g.point(params[0], params[1]);
 
-    } else if (kind == LINE) {
+    } else if (primitive == LINE) {
       if (params.length == 4) {  // 2D
         g.line(params[0], params[1],
                params[2], params[3]);
@@ -439,18 +439,18 @@ public class PShape implements PConstants {
                params[3], params[4], params[5]);
       }
 
-    } else if (kind == TRIANGLE) {
+    } else if (primitive == TRIANGLE) {
       g.triangle(params[0], params[1],
                  params[2], params[3],
                  params[4], params[5]);
 
-    } else if (kind == QUAD) {
+    } else if (primitive == QUAD) {
       g.quad(params[0], params[1],
              params[2], params[3],
              params[4], params[5],
              params[6], params[7]);
 
-    } else if (kind == RECT) {
+    } else if (primitive == RECT) {
       if (image != null) {
         g.imageMode(CORNER);
         g.image(image, params[0], params[1], params[2], params[3]);
@@ -459,29 +459,29 @@ public class PShape implements PConstants {
         g.rect(params[0], params[1], params[2], params[3]);
       }
 
-    } else if (kind == ELLIPSE) {
+    } else if (primitive == ELLIPSE) {
       g.ellipseMode(CORNER);
       g.ellipse(params[0], params[1], params[2], params[3]);
 
-    } else if (kind == ARC) {
+    } else if (primitive == ARC) {
       g.ellipseMode(CORNER);
       g.arc(params[0], params[1], params[2], params[3], params[4], params[5]);
 
-    } else if (kind == BOX) {
+    } else if (primitive == BOX) {
       if (params.length == 1) {
         g.box(params[0]);
       } else {
         g.box(params[0], params[1], params[2]);
       }
 
-    } else if (kind == SPHERE) {
+    } else if (primitive == SPHERE) {
       g.sphere(params[0]);
     }
   }
 
 
   protected void drawGeometry(PGraphics g) {
-    g.beginShape(kind);
+    g.beginShape(primitive);
     if (style) {
       for (int i = 0; i < vertexCount; i++) {
         g.vertex(vertices[i]);
@@ -722,6 +722,95 @@ public class PShape implements PConstants {
 //  }
 
 
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+  
+  /** The shape type, one of GROUP, PRIMITIVE, PATH, or GEOMETRY. */
+  public int getFamily() {
+    return family;
+  }
+
+
+  public int getPrimitive() {
+    return primitive;
+  }
+  
+  
+  public int getVertexCount() {
+    return vertexCount;
+  }
+  
+  
+  public float[] getVertex(int index) {
+    if (index < 0 || index >= vertexCount) {
+      String msg = "No vertex " + index + " for this shape, " +
+        "only vertices 0 through " + (vertexCount-1) + ".";
+      throw new IllegalArgumentException(msg);
+    }
+    return vertices[index];
+  }
+  
+  
+  public float getVertexX(int index) {
+    return vertices[index][X];
+  }
+
+  
+  public float getVertexY(int index) {
+    return vertices[index][Y];
+  }
+
+  
+  public float getVertexZ(int index) {
+    return vertices[index][Z];
+  }
+
+
+  public int[] getVertexCodes() {
+    if (vertexCodes.length != vertexCodeCount) {
+      vertexCodes = PApplet.subset(vertexCodes, 0, vertexCodeCount);
+    }
+    return vertexCodes;
+  }
+
+
+  public int getVertexCodeCount() {
+    return vertexCodeCount;
+  }
+  
+
+  /** 
+   * One of VERTEX, BEZIER_VERTEX, CURVE_VERTEX, or BREAK.
+   */
+  public int getVertexCode(int index) {
+    return vertexCodes[index];
+  }
+  
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  // http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
+  public boolean contains(float x, float y) {
+    if (family == PATH) {
+      boolean c = false;
+      for (int i = 0, j = vertexCount-1; i < vertexCount; j = i++) {
+        if (((vertices[i][Y] > y) != (vertices[j][Y] > y)) &&
+            (x < 
+                (vertices[j][X]-vertices[i][X]) * 
+                (y-vertices[i][Y]) / 
+                (vertices[j][1]-vertices[i][Y]) + 
+                vertices[i][X])) {
+          c = !c;
+        }
+      }
+      return c;
+    } else {
+      throw new IllegalArgumentException("The contains() method is only implemented for paths.");
+    }
+  }
+
+  
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
