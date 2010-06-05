@@ -1,5 +1,54 @@
 0185 core 
+X fix two bugs with fonts created with specific charsets
+X fix from jdf for PImage(java.awt.Image img) and ARGB images
+X large number of beginShape(POINTS) not rendering correctly on first frame
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1572
+X pass actual exceptions from InvocationTargetException in registered methods
 
+shape/svg work
+X fix for adobe illustrator-mangled svg id names with hex characters
+X change PShape.kind to PShape.primitive
+X add simple inside() method for straight vertex (PATH) data
+X add PShape.getFamily()
+X add PShape.getPrimitive()
+X public float[] getVertex(int index)
+X public float getVertexX(int index)
+X public float getVertexY(int index)
+X public float getVertexZ(int index)
+X public int[] getVertexCodes()
+X public int getVertexCodeCount()
+X public int getVertexCode(int index)
+X lots of fixes from PhiLho to better handle transparency changes, many types
+X   of inkscape files, drawings that use units, and other tweaks
+
+_ need to wrap mouse/key events for p5
+_   need a version that works with both android and desktop
+_   also need to interleave events properly (as per report)
+
+all assigned bugs:
+http://dev.processing.org/bugs/buglist.cgi?bug_status=ASSIGNED&order=bugs.bug_status%2Cbugs.bug_id
+all assigned as csv:
+http://dev.processing.org/bugs/buglist.cgi?bug_status=ASSIGNED&order=bugs.bug_status%2Cbugs.bug_id&ctype=csv
+
+_ path for selectXxxxx() functions
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1475
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1504
+
+_ new PGraphics(... OutputStream) 
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1502
+_ PDF library matrix is not reset between frames
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1227
+_ transparency issue (might just be a bug in their code?)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1280
+
+_ only top left 100 x 100 pixels are displayed in presentation mode (Linux 1.1+)
+_   also was just crashing in main() for me, check on this later
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1560
+
+_ svg issue with implicit path command
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1561
+
+_ need to make sure the createFont() reference is up to date for charset
 
 _ change skewX/Y to shearX/Y
 _ make determination on shape(x,y,z,w,h,d) or no
@@ -472,6 +521,8 @@ _ make sure line() commands don't try to have a fill
 
 CORE / PGraphicsJava2D
 
+_ PGraphicsJava2D.resize() not working the same as PGraphics2D.resize()
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1107
 _ some optimizations from zach
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=os_core_pde;action=display;num=1121670787
 _ textMode(SCREEN) needs to be faster
@@ -552,6 +603,8 @@ _   if just rotate/translate, then can use SCREEN_SPACE for fonts
 _ updatePixels() is slow to create a BufferedImage
 _   therefore the incomplete rendering
 _   could this be an issue fixed by a MediaTracker?
+_ should smoothing not be turned on by default? handle this where?
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1195
 
 
 CORE / PShape
