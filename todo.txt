@@ -1,7 +1,40 @@
 0185 pde
 X add option to launch a sketch directly w/ linux
+X   thanks to Larry Kyrala
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1549
+X fix for PDF library to support createFont() on Linux
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1566
+X   thanks to Matthias Breuer 
+X add option to change the formatting for untitled sketch naming
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1091
+X Can't input full-width space when Japanese IME is on.
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1531
+X   fix from takachin
+X PDF library matrix is not reset between frames
+X   also added begin/endDraw between frames
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1227
+X add loading.gif to the js version of the applet loader
 
+closing this bug, because we'll be replacing the current video library with another sometime later this summer. as such, i won't be doing any more bug fixes on the current video library. in the meantime, we recommend using gsvideo, opencv, or one of the other video libraries that are available.
+
+_ add option to disable re-opening previous projects
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1501
+
+_ add processing.js export tool from florian
+_   http://github.com/fjenett/processingjstool/zipball/v0.0.6
+
+_ Signature issue on contributed libraries affects unrelated opengl sketches
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1570
+
+_ Java update on OS X causing lots of problems
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1564
+_ Assertion failure in -[CocoaAppWindow _changeJustMain]
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1569
+
+_ Unsatisfied Link Error running OPENGL on 64-bit ubuntu
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1557
+
+_ show warning message on linux if sun java is not in use
 
 _ create default tools folder (just like libraries)
 
@@ -200,12 +233,6 @@ _   also need to add license info for all the projects in there
 _ catch antlr conflicts, and put up an error message
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1225
 
-3 _ cmd-shift-n not creating new tab (related to 505?)
-3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1081
-
-_ sketch marked as modified too aggressively
-_   http://dev.processing.org/bugs/show_bug.cgi?id=328
-
 _ fix regex documentation
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1202
 
@@ -320,6 +347,8 @@ _     /System/Library/Java/Extensions or /Library/Java/Extensions
 _     the /System one contains qtjava
 _     the /Library one is empty (by default), maybe skip it?
 _     http://dev.processing.org/bugs/show_bug.cgi?id=1259
+_   another problem with opengl libraries
+_     http://dev.processing.org/bugs/show_bug.cgi?id=1570
 _ when a conflicting library is found, need to report it
 _   altho prolly only when it's actually different (md5hash it?)
 _   this seems to be causing a lot of trouble with recent releases
@@ -369,6 +398,8 @@ _ library/download.url and library/home.url
 _ if there's a reference subfolder, add that to the help menu
 o   and enable it for "find in reference"
 X   nice idea but too error-prone
+_ can't run opengl in 64-bit
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1557
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -755,6 +786,10 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=18
 
 PDE / Editor
 
+3 _ cmd-shift-n not creating new tab (related to 505?)
+3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1081
+_ sketch marked as modified too aggressively
+_   http://dev.processing.org/bugs/show_bug.cgi?id=328
 _ improve update check message "a new release (1.0.1) is available"
 _   be more descriptive, use a second line in latest.txt
 _   maybe just include the full text of the update message there?
@@ -996,7 +1031,9 @@ _   need to make sure hitting stop button and closing window explicitly call
 _   set finished to true, then join() the animation thread
 _ stop() not working very well 
 _   as a result, dispose() methods aren't being called on libraries
-_   http://dev.processing.org/bugs/show_bug.cgi?id=77
+_   http://dev.processing.org/bugs/show_bug.cgi?id=131
+_   http://dev.processing.org/bugs/show_bug.cgi?id=77 (dupe)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=183 (dupe)
 _ quitting from present mode doesn't kill run button
 _   http://dev.processing.org/bugs/show_bug.cgi?id=80
 X when running externally, set window frame title to the sketch name
@@ -1196,8 +1233,12 @@ _ need to handle how save() works inside xml lib
 _ need to handle <!ENTITY tags for svg documents
 _ vectors shouldn't be exposed, need to expose attr lists as arrays
 _   or also add a method for getting the vectors?
-_ XML attributes named "xmlns" always return NULL
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1196
+2 _ XML attributes named "xmlns" always return NULL
+2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1196
+_ save xml elements back out again
+_   http://dev.processing.org/bugs/show_bug.cgi?id=963
+_   or make the call that it's read-only, and remove the saving code
+
 
 LIBRARIES / Net
 
@@ -1288,6 +1329,12 @@ _   seems to be font related, deleting prefs will fix it
 _   http://dev.processing.org/bugs/show_bug.cgi?id=688
 _ Processing IDE icon ALT + Tab low res in Windows XP
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1040
+4 _ "Could not find the main class: processing.app.Base. Program will exit."
+4 _   http://dev.processing.org/bugs/show_bug.cgi?id=1126
+5 _ process still visible in Sysinternals Process Explorer after quit
+5 _  http://dev.processing.org/bugs/show_bug.cgi?id=1567
+_ .pde file type not getting associated properly
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1513
 
 
 DIST / Mac OS X
