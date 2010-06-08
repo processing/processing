@@ -12,7 +12,9 @@ processing.xml Class Hierarchy
 <SCRIPT type="text/javascript">
 function windowTitle()
 {
-    parent.document.title="processing.xml Class Hierarchy";
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="processing.xml Class Hierarchy";
+    }
 }
 </SCRIPT>
 <NOSCRIPT>
@@ -21,6 +23,7 @@ function windowTitle()
 </HEAD>
 
 <BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
 
 
 <!-- ========= START OF TOP NAVBAR ======= -->
