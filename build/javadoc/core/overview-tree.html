@@ -12,7 +12,9 @@ Class Hierarchy
 <SCRIPT type="text/javascript">
 function windowTitle()
 {
-    parent.document.title="Class Hierarchy";
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="Class Hierarchy";
+    }
 }
 </SCRIPT>
 <NOSCRIPT>
@@ -21,6 +23,7 @@ function windowTitle()
 </HEAD>
 
 <BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
 
 
 <!-- ========= START OF TOP NAVBAR ======= -->
@@ -97,7 +100,7 @@ Class Hierarchy
 </UL>
 </UL>
 <LI TYPE="circle">processing.core.<A HREF="processing/core/PApplet.RegisteredMethods.html" title="class in processing.core"><B>PApplet.RegisteredMethods</B></A><LI TYPE="circle">processing.core.<A HREF="processing/core/PFont.html" title="class in processing.core"><B>PFont</B></A> (implements processing.core.<A HREF="processing/core/PConstants.html" title="interface in processing.core">PConstants</A>)
-<LI TYPE="circle">processing.core.<A HREF="processing/core/PImage.html" title="class in processing.core"><B>PImage</B></A> (implements java.lang.Cloneable, processing.core.<A HREF="processing/core/PConstants.html" title="interface in processing.core">PConstants</A>)
+<LI TYPE="circle">processing.core.<A HREF="processing/core/PFont.Glyph.html" title="class in processing.core"><B>PFont.Glyph</B></A><LI TYPE="circle">processing.core.<A HREF="processing/core/PImage.html" title="class in processing.core"><B>PImage</B></A> (implements java.lang.Cloneable, processing.core.<A HREF="processing/core/PConstants.html" title="interface in processing.core">PConstants</A>)
 <UL>
 <LI TYPE="circle">processing.core.<A HREF="processing/core/PGraphics.html" title="class in processing.core"><B>PGraphics</B></A> (implements processing.core.<A HREF="processing/core/PConstants.html" title="interface in processing.core">PConstants</A>)
 <UL>
