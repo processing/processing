@@ -6,14 +6,15 @@
 PVector
 </TITLE>
 
-<META NAME="keywords" CONTENT="processing.core.PVector class">
 
 <LINK REL ="stylesheet" TYPE="text/css" HREF="../../stylesheet.css" TITLE="Style">
 
 <SCRIPT type="text/javascript">
 function windowTitle()
 {
-    parent.document.title="PVector";
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="PVector";
+    }
 }
 </SCRIPT>
 <NOSCRIPT>
@@ -22,6 +23,7 @@ function windowTitle()
 </HEAD>
 
 <BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
 
 
 <!-- ========= START OF TOP NAVBAR ======= -->
@@ -359,6 +361,15 @@ A class to describe a two or three dimensional vector.
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Calculate the dot product with another vector</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;float</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PVector.html#dot(processing.core.PVector, processing.core.PVector)">dot</A></B>(<A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A>&nbsp;v1,
+    <A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A>&nbsp;v2)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -1069,6 +1080,18 @@ dot</H3>
 public float <B>dot</B>(float&nbsp;x,
                  float&nbsp;y,
                  float&nbsp;z)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="dot(processing.core.PVector, processing.core.PVector)"><!-- --></A><H3>
+dot</H3>
+<PRE>
+public static float <B>dot</B>(<A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A>&nbsp;v1,
+                        <A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A>&nbsp;v2)</PRE>
 <DL>
 <DD><DL>
 </DL>
