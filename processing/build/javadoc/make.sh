@@ -31,3 +31,5 @@ javadoc -public -notimestamp -d everything \
 
 cp stylesheet.css core/
 cp stylesheet.css everything/
+cp index.html core/
+cp index.html everything/
