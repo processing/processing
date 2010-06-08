@@ -6,14 +6,15 @@
 PConstants
 </TITLE>
 
-<META NAME="keywords" CONTENT="processing.core.PConstants interface">
 
 <LINK REL ="stylesheet" TYPE="text/css" HREF="../../stylesheet.css" TITLE="Style">
 
 <SCRIPT type="text/javascript">
 function windowTitle()
 {
-    parent.document.title="PConstants";
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="PConstants";
+    }
 }
 </SCRIPT>
 <NOSCRIPT>
@@ -22,6 +23,7 @@ function windowTitle()
 </HEAD>
 
 <BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
 
 
 <!-- ========= START OF TOP NAVBAR ======= -->
@@ -768,7 +770,7 @@ Numbers shared throughout processing.core.
 <TD><CODE><B><A HREF="../../processing/core/PConstants.html#HALF_PI">HALF_PI</A></B></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HALF_PI is a mathematical constant with the value 1.57079632679489661923.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -1084,7 +1086,7 @@ Numbers shared throughout processing.core.
 <TD><CODE><B><A HREF="../../processing/core/PConstants.html#PI">PI</A></B></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PI is a mathematical constant with the value 3.14159265358979323846.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -1172,7 +1174,7 @@ Numbers shared throughout processing.core.
 <TD><CODE><B><A HREF="../../processing/core/PConstants.html#QUARTER_PI">QUARTER_PI</A></B></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;QUARTER_PI is a mathematical constant with the value 0.7853982.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -1485,7 +1487,7 @@ Numbers shared throughout processing.core.
 <TD><CODE><B><A HREF="../../processing/core/PConstants.html#TWO_PI">TWO_PI</A></B></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TWO_PI is a mathematical constant with the value 6.28318530717958647693.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -2228,8 +2230,15 @@ PI</H3>
 <PRE>
 static final float <B>PI</B></PRE>
 <DL>
+<DD>PI is a mathematical constant with the value 3.14159265358979323846.
+ It is the ratio of the circumference of a circle to its diameter.
+ It is useful in combination with the trigonometric functions <b>sin()</b> and <b>cos()</b>.
+<P>
 <DL>
-<DT><B>See Also:</B><DD><A HREF="../../constant-values.html#processing.core.PConstants.PI">Constant Field Values</A></DL>
+<DT><B>See Also:</B><DD><A HREF="../../processing/core/PConstants.html#HALF_PI"><CODE>HALF_PI</CODE></A>, 
+<A HREF="../../processing/core/PConstants.html#TWO_PI"><CODE>TWO_PI</CODE></A>, 
+<A HREF="../../processing/core/PConstants.html#QUARTER_PI"><CODE>QUARTER_PI</CODE></A>, 
+<A HREF="../../constant-values.html#processing.core.PConstants.PI">Constant Field Values</A></DL>
 </DL>
 <HR>
 
@@ -2238,8 +2247,15 @@ HALF_PI</H3>
 <PRE>
 static final float <B>HALF_PI</B></PRE>
 <DL>
+<DD>HALF_PI is a mathematical constant with the value 1.57079632679489661923.
+ It is half the ratio of the circumference of a circle to its diameter.
+ It is useful in combination with the trigonometric functions <b>sin()</b> and <b>cos()</b>.
+<P>
 <DL>
-<DT><B>See Also:</B><DD><A HREF="../../constant-values.html#processing.core.PConstants.HALF_PI">Constant Field Values</A></DL>
+<DT><B>See Also:</B><DD><A HREF="../../processing/core/PConstants.html#PI"><CODE>PI</CODE></A>, 
+<A HREF="../../processing/core/PConstants.html#TWO_PI"><CODE>TWO_PI</CODE></A>, 
+<A HREF="../../processing/core/PConstants.html#QUARTER_PI"><CODE>QUARTER_PI</CODE></A>, 
+<A HREF="../../constant-values.html#processing.core.PConstants.HALF_PI">Constant Field Values</A></DL>
 </DL>
 <HR>
 
@@ -2258,8 +2274,15 @@ QUARTER_PI</H3>
 <PRE>
 static final float <B>QUARTER_PI</B></PRE>
 <DL>
+<DD>QUARTER_PI is a mathematical constant with the value 0.7853982.
+ It is one quarter the ratio of the circumference of a circle to its diameter.
+ It is useful in combination with the trigonometric functions <b>sin()</b> and <b>cos()</b>.
+<P>
 <DL>
-<DT><B>See Also:</B><DD><A HREF="../../constant-values.html#processing.core.PConstants.QUARTER_PI">Constant Field Values</A></DL>
+<DT><B>See Also:</B><DD><A HREF="../../processing/core/PConstants.html#PI"><CODE>PI</CODE></A>, 
+<A HREF="../../processing/core/PConstants.html#TWO_PI"><CODE>TWO_PI</CODE></A>, 
+<A HREF="../../processing/core/PConstants.html#HALF_PI"><CODE>HALF_PI</CODE></A>, 
+<A HREF="../../constant-values.html#processing.core.PConstants.QUARTER_PI">Constant Field Values</A></DL>
 </DL>
 <HR>
 
@@ -2268,8 +2291,15 @@ TWO_PI</H3>
 <PRE>
 static final float <B>TWO_PI</B></PRE>
 <DL>
+<DD>TWO_PI is a mathematical constant with the value 6.28318530717958647693.
+ It is twice the ratio of the circumference of a circle to its diameter.
+ It is useful in combination with the trigonometric functions <b>sin()</b> and <b>cos()</b>.
+<P>
 <DL>
-<DT><B>See Also:</B><DD><A HREF="../../constant-values.html#processing.core.PConstants.TWO_PI">Constant Field Values</A></DL>
+<DT><B>See Also:</B><DD><A HREF="../../processing/core/PConstants.html#PI"><CODE>PI</CODE></A>, 
+<A HREF="../../processing/core/PConstants.html#HALF_PI"><CODE>HALF_PI</CODE></A>, 
+<A HREF="../../processing/core/PConstants.html#QUARTER_PI"><CODE>QUARTER_PI</CODE></A>, 
+<A HREF="../../constant-values.html#processing.core.PConstants.TWO_PI">Constant Field Values</A></DL>
 </DL>
 <HR>
 
