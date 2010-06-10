@@ -38,6 +38,7 @@ import android.opengl.GLSurfaceView.Renderer;
 
 
 import javax.microedition.khronos.opengles.*;
+import javax.microedition.khronos.egl.EGL11;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLContext;
@@ -4874,6 +4875,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       EGL10.EGL_GREEN_SIZE, 4,
       EGL10.EGL_BLUE_SIZE, 4,
       EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT,
+      //EGL10.EGL_RENDER_BUFFER, EGL10.EGL_SINGLE_BUFFER,
       EGL10.EGL_NONE
     };
     
@@ -4896,7 +4898,7 @@ public class PGraphicsAndroid3D extends PGraphics {
        */
       int[] num_config = new int[1];
       egl.eglChooseConfig(display, configAttribsGL2, null, 0, num_config);
-
+      
       int numConfigs = num_config[0];
 
       if (numConfigs <= 0) {
@@ -4907,7 +4909,12 @@ public class PGraphicsAndroid3D extends PGraphics {
        */
       EGLConfig[] configs = new EGLConfig[numConfigs];
       egl.eglChooseConfig(display, configAttribsGL2, configs, numConfigs, num_config);
-
+      
+     for(EGLConfig config : configs) {      
+      String configStr = "A3D - selected EGL config : " + printConfig(egl, display, config);
+      System.out.println(configStr);
+     }
+      
       /*
             if (DEBUG) {
                  printConfigs(egl, display, configs);
@@ -4987,11 +4994,16 @@ public class PGraphicsAndroid3D extends PGraphics {
       int a = findConfigAttrib(egl, display, config, EGL10.EGL_ALPHA_SIZE, 0);
       int d = findConfigAttrib(egl, display, config, EGL10.EGL_DEPTH_SIZE, 0);
       int s = findConfigAttrib(egl, display, config, EGL10.EGL_STENCIL_SIZE, 0);
-         
+      int type = findConfigAttrib(egl, display, config, EGL10.EGL_RENDERABLE_TYPE, 0);
+      int nat = findConfigAttrib(egl, display, config, EGL10.EGL_NATIVE_RENDERABLE, 0);
+      int bufSize = findConfigAttrib(egl, display, config, EGL10.EGL_BUFFER_SIZE, 0);
+      int bufSurf = findConfigAttrib(egl, display, config, EGL10.EGL_RENDER_BUFFER, 0);
+      
       return String.format("EGLConfig rgba=%d%d%d%d depth=%d stencil=%d", r,g,b,a,d,s) 
-                    + " type=" + findConfigAttrib(egl, display, config, EGL10.EGL_RENDERABLE_TYPE, 0)
-                    + " native=" + findConfigAttrib(egl, display, config, EGL10.EGL_NATIVE_RENDERABLE, 0)
-                    + " buffer=" + findConfigAttrib(egl, display, config, EGL10.EGL_BUFFER_SIZE, 0)
+                    + " type=" + type
+                    + " native=" + nat
+                    + " buffer size=" + bufSize
+                    + " buffer surface=" + bufSurf
                     + String.format(" caveat=0x%04x" , findConfigAttrib(egl, display, config, EGL10.EGL_CONFIG_CAVEAT, 0));         
     }
     
