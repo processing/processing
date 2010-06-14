@@ -281,7 +281,10 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // Used to save a copy of the last drawn frame in order to repaint on the
   // backbuffer when using noClear mode.
-  protected PImage screenTex = null;
+  protected int[] screenTexID = {0};
+  protected int screenTexWidth;
+  protected int screenTexHeight;
+  public int[] screenTexCrop = {0, 0, 0, 0};
 
   // This variable controls clearing the buffers.
   boolean clear = true;
@@ -400,6 +403,9 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
 
   public void dispose() {
+    if (screenTexID[0] == 0) {
+      gl.glDeleteTextures(1, screenTexID, 0);  
+    }    
   }
 
   public void recreateResources() {
@@ -432,51 +438,84 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // SCREEN TEXTURE
 
-  protected void createScreenTexture() {
-    // Screen texture hasn't been initialized yet or the screen changed size.
-    // int w = width;
-    // int h = height;
-    int w = 512;
-    int h = 1024;
+  protected void createScreenTexture() {    
+    if (screenTexID[0] == 0) {
+      gl.glDeleteTextures(1, screenTexID, 0);  
+    }
+    
+    if (npotTexSupported) {
+      screenTexWidth = width;
+      screenTexHeight =height;
+    } else {
+      screenTexWidth = nextPowerOfTwo(width);
+      screenTexHeight = nextPowerOfTwo(height);
+    }
+        
+    gl.glEnable(GL10.GL_TEXTURE_2D);
+    gl.glGenTextures(1, screenTexID, 0);
+    gl.glBindTexture(GL10.GL_TEXTURE_2D, screenTexID[0]);    
 
-    int[] pix = new int[w * h];
-    for (int i = 0; i < w * h; i++)
-      pix[i] = 0xFF000000;
+    gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_NEAREST);
+    gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_NEAREST);
 
-    // The screen texture must have NEAREST filtering, otherwise it degrades
-    // after consecutive
-    // renderings.
-    screenTex = parent.createImage(w, h, ARGB, NEAREST);
-    screenTex.getTexture().set(pix);
+    gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S, GL10.GL_CLAMP_TO_EDGE);
+    gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T, GL10.GL_CLAMP_TO_EDGE);
+    
+    // This is the right texture environment mode to ignore the fill color when drawing the texture:
+    // http://www.khronos.org/opengles/documentation/opengles1_0/html/glTexEnv.html
+    gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_REPLACE);
+                    
+    gl.glTexImage2D(GL10.GL_TEXTURE_2D, 0, GL10.GL_RGBA,  screenTexWidth, screenTexHeight, 0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, null);
+    gl.glDisable(GL10.GL_TEXTURE_2D);
+    
+    screenTexCrop[0] = 0;
+    screenTexCrop[1] = screenTexHeight;
+    screenTexCrop[2] = screenTexWidth;
+    screenTexCrop[3] = -screenTexHeight;      
   }
 
   protected void drawScreenTexture() {
-    // TODO: try using glDrawTexiOES maybe?
-    tint(255);
-    fill(255);
-    int w = 512;
-    int h = 1024;
+    // Setting OpenGL configuration for screen texture rendering...
+    gl.glEnable(GL10.GL_TEXTURE_2D);
+    gl.glBindTexture(GL10.GL_TEXTURE_2D, screenTexID[0]);
+    
+    // Orthographic projection:
+    gl.glMatrixMode(GL10.GL_PROJECTION);
+    gl.glPushMatrix();
+    gl.glLoadIdentity();
+    gl.glOrthof(0.0f, width, 0.0f, height, 0.0f, 1.0f);
 
-    beginShape(QUADS);
-    texture(screenTex);
-    vertex(0, height - h, 0, h);
-    vertex(w, height - h, w, h);
-    vertex(w, height, w, 0);
-    vertex(0, height, 0, 0);
-    endShape();
+    gl.glMatrixMode(GL10.GL_MODELVIEW);
+    gl.glPushMatrix();
+    gl.glLoadIdentity();
+    
+    // Depth mask is disabled so the depth values are not modified when
+    // rendering the texture quad. In this way the texture doesn't occlude
+    // any geometry latter drawn by the user.
+    gl.glDepthMask(false);
+    
+    gl.glBindTexture(GL10.GL_TEXTURE_2D, screenTexID[0]);    
+    gl11.glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES,
+       screenTexCrop, 0);
+    gl11x.glDrawTexiOES(0, height - screenTexHeight, 0, screenTexWidth, screenTexHeight);
+    
+    // Restore opengl state after texture rendering...
+    gl.glMatrixMode(GL10.GL_PROJECTION);
+    gl.glPopMatrix();
+    gl.glMatrixMode(GL10.GL_MODELVIEW);
+    gl.glPopMatrix();
+    gl.glDisable(GL10.GL_TEXTURE_2D);   
+    gl.glDepthMask(true);
   }
 
   protected void copyFrameToScreenTexture() {
-    int w = 512;
-    int h = 1024;
-
     gl.glFinish(); // Make sure that the execution off all the openGL commands
-                   // is finished.
-    gl.glBindTexture(GL10.GL_TEXTURE_2D, screenTex.getTexture().getGLTextureID());
-    // TODO: try using glCopyTexSubImage2D
-    // gl.glCopyTexSubImage2D(GL10.GL_TEXTURE_2D, 0, 0, 0, 0, 0, w, h);
-    gl.glCopyTexImage2D(GL10.GL_TEXTURE_2D, 0, GL10.GL_RGB, 0, 0, w, h, 0);
-    gl.glBindTexture(GL10.GL_TEXTURE_2D, 0);
+                           // is finished.    
+
+    gl.glEnable(GL10.GL_TEXTURE_2D);
+    gl.glBindTexture(GL10.GL_TEXTURE_2D, screenTexID[0]);
+    gl.glCopyTexImage2D(GL10.GL_TEXTURE_2D, 0, GL10.GL_RGB, 0, 0, screenTexWidth, screenTexHeight, 0);
+    gl.glDisable(GL10.GL_TEXTURE_2D);   
   }
 
   // ////////////////////////////////////////////////////////////
@@ -569,26 +608,24 @@ public class PGraphicsAndroid3D extends PGraphics {
       gl.glClearColor(0, 0, 0, 0);
       gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
     } else {
-      
-      // if (screenTex == null || screenTex.width != width || screenTex.height
-      // != height ) {
-      if (screenTex == null) {
+      if (screenTexID[0] == 0) {
         createScreenTexture();
       }
       gl.glClearColor(0, 0, 0, 0);
       gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
       drawScreenTexture();
-      
     }
 
     report("bot beginDraw()");
   }
 
   public void endDraw() {
-    if (!clear && screenTex != null) {
+    
+    if (!clear && screenTexID[0] != 0) {
       copyFrameToScreenTexture();
     }
+    
     gl.glFlush();
 
     report("top endDraw()");
@@ -4560,8 +4597,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     private static int[] configAttribsGL2 = { EGL10.EGL_RED_SIZE, 4,
         EGL10.EGL_GREEN_SIZE, 4, EGL10.EGL_BLUE_SIZE, 4,
         EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT,
-        // EGL10.EGL_RENDER_BUFFER, EGL10.EGL_SINGLE_BUFFER,
-        //EGL10.EGL_SURFACE_TYPE, 1031,
+        //EGL10.EGL_RENDER_BUFFER, EGL10.EGL_SINGLE_BUFFER,
+        //EGL10.EGL_RENDER_BUFFER, EGL10.EGL_BACK_BUFFER,
         EGL10.EGL_NONE };
 
     public A3DConfigChooser(int r, int g, int b, int a, int depth, int stencil) {
@@ -4680,26 +4717,14 @@ public class PGraphicsAndroid3D extends PGraphics {
       int type = findConfigAttrib(egl, display, config, EGL10.EGL_RENDERABLE_TYPE, 0);
       int nat = findConfigAttrib(egl, display, config, EGL10.EGL_NATIVE_RENDERABLE, 0);
       int bufSize = findConfigAttrib(egl, display, config, EGL10.EGL_BUFFER_SIZE, 0);
-      // int bufSurf = findConfigAttrib(egl, display, config, EGL10.EGL_RENDER_BUFFER, 0);
-      //int bufSurf = findConfigAttrib(egl, display, config, EGL10.EGL_SURFACE_TYPE, 0);
-      int bufSurf = findConfigAttrib(egl, display, config, EGL10.EGL_SINGLE_BUFFER, 0);
-      
+      int bufSurf = findConfigAttrib(egl, display, config, EGL10.EGL_RENDER_BUFFER, 0);
 
-      //int t = EGL10.EGL_RENDER_BUFFER;
-      
-
-      // 1031
-      // 7
-
-      return String.format(" rgba=%d%d%d%d depth=%d stencil=%d", r, g, b, a, d,
-          s)
-          + " buffer surface=" + bufSurf;
-      /*
-       * return String.format("EGLConfig rgba=%d%d%d%d depth=%d stencil=%d",
-       * r,g,b,a,d,s) + " type=" + type + " native=" + nat + " buffer size=" +
-       * bufSize + " buffer surface=" + bufSurf + String.format(" caveat=0x%04x"
-       * , findConfigAttrib(egl, display, config, EGL10.EGL_CONFIG_CAVEAT, 0));
-       */
+      return String.format("EGLConfig rgba=%d%d%d%d depth=%d stencil=%d", r,g,b,a,d,s) 
+        + " type=" + type 
+        + " native=" + nat 
+        + " buffer size=" + bufSize 
+        + " buffer surface=" + bufSurf + 
+        String.format(" caveat=0x%04x", findConfigAttrib(egl, display, config, EGL10.EGL_CONFIG_CAVEAT, 0));
     }
 
     private int findConfigAttrib(EGL10 egl, EGLDisplay display,
@@ -4747,7 +4772,16 @@ public class PGraphicsAndroid3D extends PGraphics {
   // ////////////////////////////////////////////////////////////
 
   // INTERNAL MATH
-
+    
+  // bit shifting this might be more efficient
+  private final int nextPowerOfTwo(int val) {
+    int ret = 1;
+    while (ret < val) {
+      ret <<= 1;
+    }
+    return ret;
+  }      
+  
   private final float sqrt(float a) {
     return (float) Math.sqrt(a);
   }
