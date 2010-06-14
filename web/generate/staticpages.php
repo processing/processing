@@ -24,15 +24,6 @@ putenv('HOME=' . CONTENTDIR);
 $source = CONTENTDIR."static/";
 #$path = BASEDIR;
 
-$page = new Page("FAQ", "FAQ");
-$page->content(file_get_contents($source."faq.html"));
-writeFile('faq.html', $page->out());
-#copydirr($source.'/images', $path.'/images');
-
-$page = new Page("Contribute", "Contribute");
-$page->content(file_get_contents($source."contribute.html"));
-writeFile('contribute/index.html', $page->out());
-
 $page = new Page("Books", "Books");
 $page->content(file_get_contents($source."books.html"));
 writeFile('learning/books/index.html', $page->out());
@@ -40,27 +31,6 @@ writeFile('learning/books/index.html', $page->out());
 $page = new Page("Copyright", "Copyright");
 $page->content(file_get_contents($source."copyright.html"));
 writeFile('copyright.html', $page->out());
-
-$page = new Page("People", "People");
-$page->content(file_get_contents($source."people.html"));
-writeFile('people.html', $page->out());
-
-// make the features interviews
-$page = new Page("Features", "Features");
-$page->content(file_get_contents($source."features.html"));
-writeFile('exhibition/features/index.html', $page->out());
-
-$page = new Page("Igoe Interview", "Features");
-$page->content(file_get_contents($source."igoe.html"));
-writeFile('exhibition/features/igoe/index.html', $page->out());
-
-$page = new Page("Hodgin Interview", "Features");
-$page->content(file_get_contents($source."hodgin.html"));
-writeFile('exhibition/features/hodgin/index.html', $page->out());
-
-$page = new Page("Koblin Interview", "Features");
-$page->content(file_get_contents($source."koblin.html"));
-writeFile('exhibition/features/koblin/index.html', $page->out());
 
 // Copy over the images for the shop index
 if (!is_dir($path.'shop')) { 
