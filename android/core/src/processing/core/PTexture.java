@@ -477,7 +477,6 @@ public class PTexture implements PConstants {
  
   // Utilities 
   
-  
   // bit shifting this might be more efficient
   private int nextPowerOfTwo(int val) {
     int ret = 1;
