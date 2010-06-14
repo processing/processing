@@ -2,11 +2,11 @@
 
 require_once('../config.php');
 DEFINE('COVER', true);
-require_once('updates.php');
-if (!defined('SUBMIT')) {
-    require_once('happenings.php');
-    require_once('courses.php');
-}
+//require_once('updates.php');
+//if (!defined('SUBMIT')) {
+//    require_once('happenings.php');
+//    require_once('courses.php');
+//}
 require_once('exhibition.php');
 
 
@@ -14,9 +14,9 @@ $benchmark_start = microtime_float();
 
 $page = new Page('', 'Cover');
 $page->subtemplate('template.cover.html');
-$page->set('updates', get_updates(24));
-$page->set('happenings', get_happenings(5));
-$page->set('courses', get_courses_short(5));
+//$page->set('updates', get_updates(24));
+//$page->set('happenings', get_happenings(5));
+//$page->set('courses', get_courses_short(5));
 $page->set('exhibition', get_curated_short(2));
 writeFile("index.php", $page->out());
     
