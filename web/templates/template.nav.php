@@ -4,13 +4,13 @@ $pages = array(
 
     'Cover'         => array('/', 0),
 
-    'Exhibition'    => array('/exhibition/', 1), // exhibition/  ?
+    'Exhibition'    => array('/exhibition/', 1), 
     
-    'Learning'      => array('/learning/', 1),  // learning  ?
-    	'Tutorials'    => array('/learning/', 2),  // learning  ?
-    	'Basics'	=> array('/learning/basics/', 2),  // examples/  ?
-		'Topics'	=> array('/learning/topics/', 2),  // examples/topics/  ?
-		'3D'	=> array('/learning/3d/', 2),  // examples/3d  ?
+    'Learning'      => array('/learning/', 1), 
+    	'Tutorials'    => array('/learning/', 2),  
+    	'Basics'	=> array('/learning/basics/', 2),  
+		'Topics'	=> array('/learning/topics/', 2), 
+		'3D'	=> array('/learning/3d/', 2),  
 		'Library'	=> array('/learning/libraries/', 2),  
     	'Books'	     => array('/learning/books/', 2),
     	'Compare'    	=> array('/learning/compare/', 2),
@@ -61,13 +61,12 @@ function navigation($section = '')
     
     $html .= "\t\t\t\t\t" . l('Cover', $section == 'Cover') . " \\\n";
     #$html .= "\t\t\t\t\t" . l('Exhibition', in_array($section, $exhib)) . " \\\n";
+    $html .= "\t\t\t\t\t" . l('Exhibition', $section == 'Exhibition') . " \\\n";
     $html .= "\t\t\t\t\t" . l('Reference', in_array($section, $ref)) . " \\\n";
     $html .= "\t\t\t\t\t" . l('Learning', in_array($section, $learn)) . " \\\n";
-#    $html .= "\t\t\t\t\t" . l('Hacks', $section == 'Hacks') . " \\\n";
     $html .= "\t\t\t\t\t" . l('Download', $section == 'Download') . " \\\n";
     $html .= "\t\t\t\t\t" . l('Discourse', $section == 'Discourse') . " \\\n";
     $html .= "\t\t\t\t\t" . l('Contribute', $section == 'Contribute') . " \\\n";
-#    $html .= "\t\t\t\t\t" . l('About', $section == 'About') . "\n";
     $html .= "\t\t\t\t\t" . l('About', in_array($section, $abo)) . " \n";
        
     $html .= "\t\t\t\t\t" . "<a href=\"/faq.html\"" . ($section == 'FAQ' ? ' class="active faq"' : 'class="faq"') . ">FAQ</a>\n";
