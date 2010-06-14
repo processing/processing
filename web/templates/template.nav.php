@@ -93,7 +93,7 @@ function navigation($section = '')
 		$html .= "\t\t\t\t\t" . l('Topics', $section == 'Topics') . ", \n";
 		$html .= "\t\t\t\t\t" . l('3D', $section == '3D') . ",  \n";
 		$html .= "\t\t\t\t\t" . l('Library', $section == 'Library') . " \\\n";
-		$html .= "\t\t\t\t\t" . l('Books', $section == 'Books') . " \\\n";
+		$html .= "\t\t\t\t\t" . l('Books', $section == 'Books') . " \n";
         $html .= "\t\t\t\t</div>\n";
     }
 
