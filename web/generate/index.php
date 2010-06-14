@@ -110,7 +110,7 @@ li { margin-bottom: 1em; }
 	<a href="#" onclick="remote_link('libraries.php', 'lang=en'); return false;">Libraries</a> \ 
 	<a href="#" onclick="remote_link('tools.php', 'lang=en'); return false;">Tools</a> \ 
 	<a href="#" onclick="remote_link('environment.php'); return false;">Environment</a> \ 
-	<a href="#" onclick="remote_link('staticpages.php'); return false;">Static Pages (Copyright, Contribute, People)</a>
+	<a href="#" onclick="remote_link('staticpages.php'); return false;">Static Pages (Copyright, Books, Shop)</a>
 	</p>
 
 <p>&nbsp;</p>
@@ -122,7 +122,7 @@ li { margin-bottom: 1em; }
 		<a href="#" onclick="remote_link('libraries_local.php'); return false;">Libraries</a> \ 
 		<a href="#" onclick="remote_link('tools_local.php'); return false;">Tools</a> \ 
 		<a href="#" onclick="remote_link('environment_local.php'); return false;">Environment</a> \ 
-		<a href="#" onclick="remote_link('staticpages_local.php'); return false;">Static Pages (Copyright, People)</a>
+		<a href="#" onclick="remote_link('staticpages_local.php'); return false;">Static Pages</a>
 </p>
 
 <p>&nbsp;</p>
