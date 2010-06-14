@@ -46,7 +46,7 @@ li { margin-bottom: 1em; }
 <div id="body">
 <p>&nbsp;</p>
      <p><b>Generate reference files</b></p>
-     <p><form action="#" method="post" onsubmit="new Ajax.Updater('status', 'svn_update.php',                      
+     <!--<p><form action="#" method="post" onsubmit="new Ajax.Updater('status', 'svn_update.php',                      
                     { asynchronous: true, parameters: Form.serialize(this), onLoading: showloading }); return false;">
                         <select name="lang">
      <?
@@ -57,7 +57,7 @@ li { margin-bottom: 1em; }
                         </select> 
                         <input type="submit" value="Update XML files from SVN" />
                 </form>
-        </p>
+        </p>-->
     <p>
 			<form action="#" method="post" onsubmit="new Ajax.Updater('status', 'reference.php', 
 			    { asynchronous: true, parameters: Form.serialize(this), onLoading: showloading }); return false;">
@@ -96,13 +96,7 @@ li { margin-bottom: 1em; }
 				<input type="submit" value="Generate reference indices" />
 			</form>
     </p>
-				<p>&nbsp;</p>  
 <p><a href="#" onclick="remote_link('reference_media.php'); return false;">Copy reference media to public directory</a></p>
-
-<p>&nbsp;</p>
-<strong>Generate non-English static pages (Libraries, Environment, Comparison, Troubleshooting )</strong><br />
-<i>Coming soon...</i>
-<p>&nbsp;</p>
 
 <strong>Generate English site files</strong>
 <p>	
@@ -114,11 +108,7 @@ li { margin-bottom: 1em; }
 	<a href="#" onclick="remote_link('libraries.php', 'lang=en'); return false;">Libraries</a> \ 
 	<a href="#" onclick="remote_link('tools.php', 'lang=en'); return false;">Tools</a> \ 
 	<a href="#" onclick="remote_link('environment.php'); return false;">Environment and Troubleshooting</a> \ 
-	<a href="#" onclick="remote_link('compare.php'); return false;">Compare</a> \ 
-    <a href="#" onclick="remote_link('courses.php'); return false;">Courses</a> \ 
-  	<a href="#" onclick="remote_link('happenings.php'); return false;">Happenings</a> \ 
-    <a href="#" onclick="remote_link('updates.php'); return false;">Updates</a> \ 
-	<a href="#" onclick="remote_link('staticpages.php'); return false;">Static Pages (FAQ, Copyright, Contribute, People)</a>
+	<a href="#" onclick="remote_link('staticpages.php'); return false;">Static Pages (Copyright, Contribute, People)</a>
 	</p>
 
 <p>&nbsp;</p>
