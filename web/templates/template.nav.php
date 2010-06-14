@@ -5,9 +5,6 @@ $pages = array(
     'Cover'         => array('/', 0),
 
     'Exhibition'    => array('/exhibition/', 1), // exhibition/  ?
-    	'Collection'    => array('/exhibition/', 2), // exhibition/  ?
-    	'Network Links'    => array('/exhibition/network/', 2),  // network/  ?
-    	'Features'    => array('/exhibition/features/', 2),  //features/  ?
     
     'Learning'      => array('/learning/', 1),  // learning  ?
     	'Tutorials'    => array('/learning/', 2),  // learning  ?
@@ -31,8 +28,6 @@ $pages = array(
     
     'Discourse'     => array('/discourse/', 1),
     
-    #'Hacks'    => array('/hacks/', 1),
-    
     'Contribute'    => array('/contribute/', 1),
     
     'About'    => array('/about/', 1),
@@ -52,10 +47,10 @@ function navigation($section = '')
     $tr = $translation->navigation;
 
 	$abo = array('About', 'Overview', 'People', 'Patrons');
-    #$ref = array('Reference', 'Tools', 'Language', 'Environment', 'Libraries', 'Compare', 'Troubleshooting');
+    ##$ref = array('Reference', 'Tools', 'Language', 'Environment', 'Libraries', 'Compare', 'Troubleshooting');
     $ref = array('Reference', 'Language', 'A-Z', 'Libraries', 'Tools', 'Environment', 'Changes', 'Troubleshooting');
     $learn = array('Learning', 'Tutorials', 'Basics', 'Topics', '3D', 'Library', 'Books', 'Compare');
-    $exhib = array('Exhibition', 'Collection', 'Network Links', 'Features');    
+    #$exhib = array('Exhibition', 'Collection', 'Network Links', 'Features');    
 
     $html = "\t\t\t".'<div id="navigation">'."\n";
 
@@ -65,7 +60,7 @@ function navigation($section = '')
     $html .= "\t\t\t\t".'<div class="navBar" id="'.$id.'">'."\n";
     
     $html .= "\t\t\t\t\t" . l('Cover', $section == 'Cover') . " \\\n";
-    $html .= "\t\t\t\t\t" . l('Exhibition', in_array($section, $exhib)) . " \\\n";
+    #$html .= "\t\t\t\t\t" . l('Exhibition', in_array($section, $exhib)) . " \\\n";
     $html .= "\t\t\t\t\t" . l('Reference', in_array($section, $ref)) . " \\\n";
     $html .= "\t\t\t\t\t" . l('Learning', in_array($section, $learn)) . " \\\n";
 #    $html .= "\t\t\t\t\t" . l('Hacks', $section == 'Hacks') . " \\\n";
@@ -87,14 +82,14 @@ function navigation($section = '')
 	 	 $html .= "\t\t\t\t\t" . l('Patrons', $section == 'Patrons') . " \n";
 	 	 $html .= "\t\t\t\t</div>\n";    
    
-     } else if (in_array($section, $exhib)) {
-         $html .= "\t\t\t\t" . '<div class="navBar exhib" id="subNav">' . "\n";
+     #} else if (in_array($section, $exhib)) {
+     #    $html .= "\t\t\t\t" . '<div class="navBar exhib" id="subNav">' . "\n";
 	
-         #$html .= "\t\t\t\t\t" . l('Index', $section == 'Index') . " \\\n";
-         $html .= "\t\t\t\t\t" . l('Collection', $section == 'Collection') . " \\\n";
-	 	 $html .= "\t\t\t\t\t" . l('Network Links', $section == 'Network Links') . " \\\n";
-	 	 $html .= "\t\t\t\t\t" . l('Features', $section == 'Features') . " \n";
-	 	 $html .= "\t\t\t\t</div>\n";    
+     #    #$html .= "\t\t\t\t\t" . l('Index', $section == 'Index') . " \\\n";
+     #    $html .= "\t\t\t\t\t" . l('Collection', $section == 'Collection') . " \\\n";
+	 # 	 $html .= "\t\t\t\t\t" . l('Network Links', $section == 'Network Links') . " \\\n";
+	 # 	 $html .= "\t\t\t\t\t" . l('Features', $section == 'Features') . " \n";
+	 #	 $html .= "\t\t\t\t</div>\n";    
    
      } else if (in_array($section, $ref)) {
         $html .= "\t\t\t\t" . '<div class="navBar" id="subNav">' . "\n";
