@@ -23,10 +23,8 @@ $pages = array(
         
     'Download'      => array('/download/', 1),
     
-    'Discourse'     => array('/discourse/', 1),
-    
-    #'Contribute'    => array('/contribute/', 1),
-    
+    'Shop'     => array('/shop/', 1),
+        
     'About'    => array('/about/', 1),
     	'Overview'        => array('/about/', 2),
     	'People'        => array('/about/people/', 2),
@@ -59,8 +57,7 @@ function navigation($section = '')
     $html .= "\t\t\t\t\t" . l('Reference', in_array($section, $ref)) . " \\\n";
     $html .= "\t\t\t\t\t" . l('Learning', in_array($section, $learn)) . " \\\n";
     $html .= "\t\t\t\t\t" . l('Download', $section == 'Download') . " \\\n";
-    $html .= "\t\t\t\t\t" . l('Discourse', $section == 'Discourse') . " \\\n";
-    #$html .= "\t\t\t\t\t" . l('Contribute', $section == 'Contribute') . " \\\n";
+    $html .= "\t\t\t\t\t" . l('Shop', $section == 'Shop') . " \\\n";
     $html .= "\t\t\t\t\t" . l('About', in_array($section, $abo)) . " \n";
        
     $html .= "\t\t\t\t\t" . "<a href=\"http://wiki.processing.org/w/FAQ\"" . ($section == 'FAQ' ? ' class="active faq"' : 'class="faq"') . ">FAQ</a>\n";
