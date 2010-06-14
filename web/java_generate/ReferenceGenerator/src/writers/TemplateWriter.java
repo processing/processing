@@ -127,7 +127,7 @@ public class TemplateWriter extends BaseWriter {
 				
 				if(value.equals(""))
 				{	//remove html around things that are absent (like images)
-					while(line.contains(requireStart))
+					while(line.contains(requireStart) && line.contains(requireEnd))
 					{	
 						String sub = line.substring(line.indexOf(requireStart), line.indexOf(requireEnd) + requireEnd.length());
 						line = line.replace(sub, "");

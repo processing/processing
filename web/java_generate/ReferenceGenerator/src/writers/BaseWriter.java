@@ -316,8 +316,11 @@ public class BaseWriter {
 	protected static String timeStamp() {
 		Calendar now = Calendar.getInstance();
 		Locale us = new Locale("en");
+		
+		
 
-		return now.getDisplayName(Calendar.MONTH, Calendar.LONG, us)
+		return "myTime"; 
+		        /**now.getDisplayName(Calendar.MONTH, Calendar.LONG, us)
 				+ " "
 				+ now.get(Calendar.DAY_OF_MONTH)
 				+ ", "
@@ -327,13 +330,13 @@ public class BaseWriter {
 				+ ":"
 				+ FileUtils.nf(now.get(Calendar.MINUTE), 2)
 				+ ":"
-				+ FileUtils.nf(now.get(Calendar.SECOND), 2)
+				+ FileUtils.nf(now.get(Calendar.SECOND), 2)				
 				+ now.getDisplayName(Calendar.AM_PM, Calendar.SHORT, us)
 						.toLowerCase()
 				+ " "
 				+ TimeZone.getDefault().getDisplayName(
 						TimeZone.getDefault().inDaylightTime(now.getTime()),
-						TimeZone.SHORT, us);
+						TimeZone.SHORT, us);*/
 	}
 	
 	/*
