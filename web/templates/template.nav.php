@@ -54,7 +54,7 @@ function navigation($section = '')
 
     $html = "\t\t\t".'<div id="navigation">'."\n";
 
-    $id = (in_array($section, $ref) || in_array($section, $learn) || in_array($section, $exhib) || 
+    $id = (in_array($section, $ref) || in_array($section, $learn) || 
     	   in_array($section, $abo)) ? 'mainnav' : 'mainnav_noSub';   
     	    
     $html .= "\t\t\t\t".'<div class="navBar" id="'.$id.'">'."\n";
