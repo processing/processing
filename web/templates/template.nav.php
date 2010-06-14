@@ -13,7 +13,6 @@ $pages = array(
 		'3D'	=> array('/learning/3d/', 2),  
 		'Library'	=> array('/learning/libraries/', 2),  
     	'Books'	     => array('/learning/books/', 2),
-    	'Compare'    	=> array('/learning/compare/', 2),
     		
     'Reference'     => array('/reference/', 1),
     	'Language'      => array('/reference/', 2),
@@ -21,8 +20,6 @@ $pages = array(
     	'Libraries'     	=> array('/reference/libraries/', 2),
     	'Tools'   	=> array('/reference/tools/', 2),
     	'Environment'   	=> array('/reference/environment/', 2), 
-		'Changes'	=> array('/reference/changes/', 2),
-    	'Troubleshooting'	=> array('/reference/troubleshooting/', 2),
         
     'Download'      => array('/download/', 1),
     
@@ -47,10 +44,8 @@ function navigation($section = '')
     $tr = $translation->navigation;
 
 	$abo = array('About', 'Overview', 'People', 'Patrons');
-    ##$ref = array('Reference', 'Tools', 'Language', 'Environment', 'Libraries', 'Compare', 'Troubleshooting');
-    $ref = array('Reference', 'Language', 'A-Z', 'Libraries', 'Tools', 'Environment', 'Changes', 'Troubleshooting');
-    $learn = array('Learning', 'Tutorials', 'Basics', 'Topics', '3D', 'Library', 'Books', 'Compare');
-    #$exhib = array('Exhibition', 'Collection', 'Network Links', 'Features');    
+    $ref = array('Reference', 'Language', 'A-Z', 'Libraries', 'Tools', 'Environment');
+    $learn = array('Learning', 'Tutorials', 'Basics', 'Topics', '3D', 'Library', 'Books');
 
     $html = "\t\t\t".'<div id="navigation">'."\n";
 
@@ -60,7 +55,6 @@ function navigation($section = '')
     $html .= "\t\t\t\t".'<div class="navBar" id="'.$id.'">'."\n";
     
     $html .= "\t\t\t\t\t" . l('Cover', $section == 'Cover') . " \\\n";
-    #$html .= "\t\t\t\t\t" . l('Exhibition', in_array($section, $exhib)) . " \\\n";
     $html .= "\t\t\t\t\t" . l('Exhibition', $section == 'Exhibition') . " \\\n";
     $html .= "\t\t\t\t\t" . l('Reference', in_array($section, $ref)) . " \\\n";
     $html .= "\t\t\t\t\t" . l('Learning', in_array($section, $learn)) . " \\\n";
@@ -69,7 +63,7 @@ function navigation($section = '')
     $html .= "\t\t\t\t\t" . l('Contribute', $section == 'Contribute') . " \\\n";
     $html .= "\t\t\t\t\t" . l('About', in_array($section, $abo)) . " \n";
        
-    $html .= "\t\t\t\t\t" . "<a href=\"/faq.html\"" . ($section == 'FAQ' ? ' class="active faq"' : 'class="faq"') . ">FAQ</a>\n";
+    $html .= "\t\t\t\t\t" . "<a href=\"/http://wiki.processing.org/w/FAQ\"" . ($section == 'FAQ' ? ' class="active faq"' : 'class="faq"') . ">&gt;FAQ</a>\n";
        
     $html .= "\t\t\t\t</div>\n";
     
@@ -79,30 +73,17 @@ function navigation($section = '')
          $html .= "\t\t\t\t\t" . l('Overview', $section == 'Overview') . " \\\n";
          $html .= "\t\t\t\t\t" . l('People', $section == 'People') . " \\\n";
 	 	 $html .= "\t\t\t\t\t" . l('Patrons', $section == 'Patrons') . " \n";
-	 	 $html .= "\t\t\t\t</div>\n";    
-   
-     #} else if (in_array($section, $exhib)) {
-     #    $html .= "\t\t\t\t" . '<div class="navBar exhib" id="subNav">' . "\n";
-	
-     #    #$html .= "\t\t\t\t\t" . l('Index', $section == 'Index') . " \\\n";
-     #    $html .= "\t\t\t\t\t" . l('Collection', $section == 'Collection') . " \\\n";
-	 # 	 $html .= "\t\t\t\t\t" . l('Network Links', $section == 'Network Links') . " \\\n";
-	 # 	 $html .= "\t\t\t\t\t" . l('Features', $section == 'Features') . " \n";
-	 #	 $html .= "\t\t\t\t</div>\n";    
+	 	 $html .= "\t\t\t\t</div>\n";      
    
      } else if (in_array($section, $ref)) {
         $html .= "\t\t\t\t" . '<div class="navBar" id="subNav">' . "\n";
     
         if ($lang == 'en') {
-
           $html .= "\t\t\t\t\t" . l('Language', $section == 'Language') . " (";
           $html .= l('A-Z', $section == 'A-Z') . ") \\\n";
           $html .= "\t\t\t\t\t" . l('Libraries', $section == 'Libraries') . " \\\n";
           $html .= "\t\t\t\t\t" . l('Tools', $section == 'Tools') . " \\\n";
-          $html .= "\t\t\t\t\t" . l('Environment', $section == 'Environment') . " \\\n";
-	  	  $html .= "\t\t\t\t\t" . l('Changes', $section == 'Changes') . " \\\n";
-          $html .= "\t\t\t\t\t" . l('Troubleshooting', $section == 'Troubleshooting') . "\n";
-        
+          $html .= "\t\t\t\t\t" . l('Environment', $section == 'Environment') . " \n";
 	    }
     
         $html .= "\t\t\t\t</div>\n";
@@ -116,8 +97,6 @@ function navigation($section = '')
 		$html .= "\t\t\t\t\t" . l('3D', $section == '3D') . ",  \n";
 		$html .= "\t\t\t\t\t" . l('Library', $section == 'Library') . " \\\n";
 		$html .= "\t\t\t\t\t" . l('Books', $section == 'Books') . " \\\n";
-		$html .= "\t\t\t\t\t" . l('Compare', $section == 'Compare') . " \n";
-		//$html .= "\t\t\t\t\t" . l('Hacks', $section == 'Hacks') . " \n";
         $html .= "\t\t\t\t</div>\n";
     }
 
@@ -139,9 +118,7 @@ function short_nav($section)
     $html .= "\t\t\t\t\t<a href=\"/reference/index.html\"" . ($section == 'Language' ? ' class="active"' : '') . ">Language</a> \\ \n";
     $html .= "\t\t\t\t\t<a href=\"/reference/libraries/index.html\"" . ($section == 'Libraries' ? ' class="active"' : '') . ">Libraries</a> \\ \n";
     $html .= "\t\t\t\t\t<a href=\"/reference/tools/index.html\"" . ($section == 'Tools' ? ' class="active"' : '') . ">Tools</a> \\ \n";
-    $html .= "\t\t\t\t\t<a href=\"/reference/environment/index.html\"" . ($section == 'Environment' ? ' class="active"' : '') . ">Environment</a> \\ \n";
-    $html .= "\t\t\t\t\t<a href=\"/reference/compare/index.html\"" . ($section == 'Compare' ? 'class="active"' : '') . ">Compare</a> \\ \n";
-    $html .= "\t\t\t\t\t<a href=\"/reference/troubleshooting/index.html\"" . ($section == 'Troubleshooting' ? 'class="active"' : '') . ">Troubleshooting</a>\n";
+    $html .= "\t\t\t\t\t<a href=\"/reference/environment/index.html\"" . ($section == 'Environment' ? ' class="active"' : '') . ">Environment</a>\n";
 	   
     $html .= "\t\t\t\t</div>\n";
     $html .= "\t\t\t</div>\n";
@@ -154,17 +131,11 @@ function local_nav($section, $rel_path='')
     $html  = "\t\t\t".'<div id="navigation">'."\n";
     $html .= "\t\t\t\t".'<div class="navBar" id="mainnav_noSub">'."\n";
 
-    //$html .= "\t\t\t\t\t" . l('Language', $section == 'Language') . " (";
-
     $html .= "\t\t\t\t\t<a href=\"{$rel_path}index.html\"" . ($section == 'Language' ? ' class="active"' : '') . ">Language</a> (";
-    //$html .= l('A-Z', $section == 'A-Z') . ") \\ \n";
     $html .= "<a href=\"{$rel_path}alpha.html\"" . ($section == 'A-Z' ? ' class="active"' : '') . ">A-Z</a>) \\ \n";
     $html .= "\t\t\t\t\t<a href=\"{$rel_path}libraries/index.html\"" . ($section == 'Libraries' ? ' class="active"' : '') . ">Libraries</a> \\ \n";
     $html .= "\t\t\t\t\t<a href=\"{$rel_path}tools/index.html\"" . ($section == 'Tools' ? ' class="active"' : '') . ">Tools</a> \\ \n";
-    $html .= "\t\t\t\t\t<a href=\"{$rel_path}environment/index.html\"" . ($section == 'Environment' ? ' class="active"' : '') . ">Environment</a> \\ \n";
-    $html .= "\t\t\t\t\t<a href=\"{$rel_path}compare/index.html\"" . ($section == 'Compare' ? 'class="active"' : '') . ">Compare</a> \\ \n";
-    $html .= "\t\t\t\t\t<a href=\"{$rel_path}troubleshooting/index.html\"" . ($section == 'Troubleshooting' ? 'class="active"' : '') . ">Troubleshooting</a>\n";
-    #$html .= "\t\t\t\t\t<a href=\"{$rel_path}faq.html\"" . ($section == 'FAQ' ? ' class="active faq"' : 'class="faq"') . ">FAQ</a>\n";
+    $html .= "\t\t\t\t\t<a href=\"{$rel_path}environment/index.html\"" . ($section == 'Environment' ? ' class="active"' : '') . ">Environment</a>\n";
     
     $html .= "\t\t\t\t</div>\n";
     $html .= "\t\t\t</div>\n";
