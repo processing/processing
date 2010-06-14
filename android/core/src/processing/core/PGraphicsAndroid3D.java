@@ -436,8 +436,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     // Screen texture hasn't been initialized yet or the screen changed size.
     // int w = width;
     // int h = height;
-    int w = 256;
-    int h = 512;
+    int w = 512;
+    int h = 1024;
 
     int[] pix = new int[w * h];
     for (int i = 0; i < w * h; i++)
@@ -454,8 +454,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     // TODO: try using glDrawTexiOES maybe?
     tint(255);
     fill(255);
-    int w = 256;
-    int h = 512;
+    int w = 512;
+    int h = 1024;
 
     beginShape(QUADS);
     texture(screenTex);
@@ -467,13 +467,12 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
 
   protected void copyFrameToScreenTexture() {
-    int w = 256;
-    int h = 512;
+    int w = 512;
+    int h = 1024;
 
     gl.glFinish(); // Make sure that the execution off all the openGL commands
                    // is finished.
-    gl.glBindTexture(GL10.GL_TEXTURE_2D, screenTex.getTexture()
-        .getGLTextureID());
+    gl.glBindTexture(GL10.GL_TEXTURE_2D, screenTex.getTexture().getGLTextureID());
     // TODO: try using glCopyTexSubImage2D
     // gl.glCopyTexSubImage2D(GL10.GL_TEXTURE_2D, 0, 0, 0, 0, 0, w, h);
     gl.glCopyTexImage2D(GL10.GL_TEXTURE_2D, 0, GL10.GL_RGB, 0, 0, w, h, 0);
@@ -570,7 +569,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       gl.glClearColor(0, 0, 0, 0);
       gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
     } else {
-      /*
+      
       // if (screenTex == null || screenTex.width != width || screenTex.height
       // != height ) {
       if (screenTex == null) {
@@ -580,16 +579,16 @@ public class PGraphicsAndroid3D extends PGraphics {
       gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
       drawScreenTexture();
-      */
+      
     }
 
     report("bot beginDraw()");
   }
 
   public void endDraw() {
-    //if (!clear && screenTex != null) {
-    //  copyFrameToScreenTexture();
-    //}
+    if (!clear && screenTex != null) {
+      copyFrameToScreenTexture();
+    }
     gl.glFlush();
 
     report("top endDraw()");
@@ -2156,17 +2155,17 @@ public class PGraphicsAndroid3D extends PGraphics {
     gl.glLoadIdentity();
 
     // Setting the current fill color as the font color.
-    gl
-        .glColor4f(colorFloats[0], colorFloats[1], colorFloats[2],
-            colorFloats[3]);
+    gl.glColor4f(colorFloats[0], colorFloats[1], colorFloats[2], colorFloats[3]);
 
     super.textLineImpl(buffer, start, stop, x, y);
-
+    
     // Restore opengl state after text rendering...
     gl.glMatrixMode(GL10.GL_PROJECTION);
     gl.glPopMatrix();
     gl.glMatrixMode(GL10.GL_MODELVIEW);
     gl.glPopMatrix();
+    
+    gl.glDisable(GL10.GL_TEXTURE_2D);    
   }
 
   protected void textCharImpl(char ch, float x, float y) {
