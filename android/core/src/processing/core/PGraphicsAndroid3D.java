@@ -465,29 +465,28 @@ public class PGraphicsAndroid3D extends PGraphics {
     // http://www.khronos.org/opengles/documentation/opengles1_0/html/glTexEnv.html
     gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_REPLACE);
                     
-    gl.glTexImage2D(GL10.GL_TEXTURE_2D, 0, GL10.GL_RGBA,  screenTexWidth, screenTexHeight, 0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, null);
+    
+    int[] buf = new int [screenTexWidth * screenTexHeight];
+    for (int i = 0; i < buf.length; i++) buf[i] = 0x000000FF;
+    gl.glTexImage2D(GL10.GL_TEXTURE_2D, 0, GL10.GL_RGBA,  screenTexWidth, screenTexHeight, 0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, IntBuffer.wrap(buf));
     gl.glDisable(GL10.GL_TEXTURE_2D);
     
     screenTexCrop[0] = 0;
-    screenTexCrop[1] = screenTexHeight;
+    screenTexCrop[1] = 0;//screenTexHeight;
     screenTexCrop[2] = screenTexWidth;
-    screenTexCrop[3] = -screenTexHeight;      
+    screenTexCrop[3] = screenTexHeight;      
   }
 
   protected void drawScreenTexture() {
-    // Setting OpenGL configuration for screen texture rendering...
     gl.glEnable(GL10.GL_TEXTURE_2D);
     gl.glBindTexture(GL10.GL_TEXTURE_2D, screenTexID[0]);
-    
-    // Orthographic projection:
-    gl.glMatrixMode(GL10.GL_PROJECTION);
-    gl.glPushMatrix();
-    gl.glLoadIdentity();
-    gl.glOrthof(0.0f, width, 0.0f, height, 0.0f, 1.0f);
 
-    gl.glMatrixMode(GL10.GL_MODELVIEW);
-    gl.glPushMatrix();
-    gl.glLoadIdentity();
+    // There is no need to setup orthographic projection or any related matrix set/restore
+    // operations here because glDrawTexiOES operates on window coordinates:
+    // "glDrawTexiOES takes window coordinates and bypasses the transform pipeline 
+    // (except for mapping Z to the depth range), so there is no need for any 
+    // matrix setup/restore code."
+    // (from https://www.khronos.org/message_boards/viewtopic.php?f=4&t=948&p=2553).    
     
     // Depth mask is disabled so the depth values are not modified when
     // rendering the texture quad. In this way the texture doesn't occlude
@@ -495,15 +494,9 @@ public class PGraphicsAndroid3D extends PGraphics {
     gl.glDepthMask(false);
     
     gl.glBindTexture(GL10.GL_TEXTURE_2D, screenTexID[0]);    
-    gl11.glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES,
-       screenTexCrop, 0);
-    gl11x.glDrawTexiOES(0, height - screenTexHeight, 0, screenTexWidth, screenTexHeight);
+    gl11.glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, screenTexCrop, 0);
+    gl11x.glDrawTexiOES(0, 0, 0, screenTexWidth, screenTexHeight);
     
-    // Restore opengl state after texture rendering...
-    gl.glMatrixMode(GL10.GL_PROJECTION);
-    gl.glPopMatrix();
-    gl.glMatrixMode(GL10.GL_MODELVIEW);
-    gl.glPopMatrix();
     gl.glDisable(GL10.GL_TEXTURE_2D);   
     gl.glDepthMask(true);
   }
@@ -514,8 +507,8 @@ public class PGraphicsAndroid3D extends PGraphics {
 
     gl.glEnable(GL10.GL_TEXTURE_2D);
     gl.glBindTexture(GL10.GL_TEXTURE_2D, screenTexID[0]);
-    gl.glCopyTexImage2D(GL10.GL_TEXTURE_2D, 0, GL10.GL_RGB, 0, 0, screenTexWidth, screenTexHeight, 0);
-    gl.glDisable(GL10.GL_TEXTURE_2D);   
+    gl.glCopyTexImage2D(GL10.GL_TEXTURE_2D, 0, GL10.GL_RGB, 0, 0, screenTexWidth, screenTexHeight, 0); 
+    gl.glDisable(GL10.GL_TEXTURE_2D);
   }
 
   // ////////////////////////////////////////////////////////////
@@ -2173,15 +2166,6 @@ public class PGraphicsAndroid3D extends PGraphics {
     // Init opengl state for text rendering...
     gl.glEnable(GL10.GL_TEXTURE_2D);
     
-    gl.glMatrixMode(GL10.GL_PROJECTION);
-    gl.glPushMatrix();
-    gl.glLoadIdentity();
-    gl.glOrthof(0.0f, width, 0.0f, height, 0.0f, 1.0f);
-
-    gl.glMatrixMode(GL10.GL_MODELVIEW);
-    gl.glPushMatrix();
-    gl.glLoadIdentity();
-    
     if (textFont.texIDList == null) {
       textFont.initTexture(gl, maxTextureSize, maxTextureSize);
       // Add all the current glyphs to the texture.
@@ -2196,11 +2180,6 @@ public class PGraphicsAndroid3D extends PGraphics {
 
     super.textLineImpl(buffer, start, stop, x, y);
     
-    // Restore opengl state after text rendering...
-    gl.glMatrixMode(GL10.GL_PROJECTION);
-    gl.glPopMatrix();
-    gl.glMatrixMode(GL10.GL_MODELVIEW);
-    gl.glPopMatrix();
     gl.glDisable(GL10.GL_TEXTURE_2D);    
   }
 
