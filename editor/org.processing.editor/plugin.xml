@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="org.processing.editor.ProcessingEditor"
+            contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
+            default="true"
+            extensions="pde"
+            icon="icons/processing.gif"
+            id="org.processing.editor.ProcessingEditor"
+            name="Processing Sketch Editor">
+      </editor>
+   </extension>
+   <extension
+         id="ProcessingDocumentSetupParticipant"
+         name="Processing Document Setup Participant"
+         point="org.eclipse.core.filebuffers.documentSetup">
+      <participant
+            class="org.processing.editor.ProcessingDocumentSetupParticipant"
+            extensions="pde">
+      </participant>
+   </extension>
+   <extension
+         point="org.eclipse.core.filebuffers.annotationModelCreation">
+      <factory
+      		extensions="*"
+            class="org.eclipse.ui.texteditor.ResourceMarkerAnnotationModelFactory">
+      </factory>
+   </extension>
+
+</plugin>
