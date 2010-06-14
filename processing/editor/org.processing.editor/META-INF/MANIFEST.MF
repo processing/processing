@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: org.processing.editor
+Bundle-SymbolicName: org.processing.editor;singleton:=true
+Bundle-Version: 0.0.0
+Bundle-Activator: org.processing.editor.ProcessingEditorPlugin
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.ui,
+ org.eclipse.jface.text,
+ org.eclipse.ui.editors
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: org.eclipse.ui.views.contentoutline
