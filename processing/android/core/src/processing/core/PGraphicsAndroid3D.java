@@ -2133,18 +2133,9 @@ public class PGraphicsAndroid3D extends PGraphics {
    */
   protected void textLineImpl(char buffer[], int start, int stop, float x,
       float y) {
-
-    if (textFont.texIDList == null) {
-      textFont.initialize(gl, maxTextureSize, maxTextureSize);
-      // Add all the current glyphs to the texture.
-      textFont.addAllGlyphsToTexture(gl);
-    }
-
     // Init opengl state for text rendering...
     gl.glEnable(GL10.GL_TEXTURE_2D);
-    textFont.currentTexID = textFont.texIDList[0];
-    gl.glBindTexture(GL10.GL_TEXTURE_2D, textFont.currentTexID);
-
+    
     gl.glMatrixMode(GL10.GL_PROJECTION);
     gl.glPushMatrix();
     gl.glLoadIdentity();
@@ -2153,6 +2144,15 @@ public class PGraphicsAndroid3D extends PGraphics {
     gl.glMatrixMode(GL10.GL_MODELVIEW);
     gl.glPushMatrix();
     gl.glLoadIdentity();
+    
+    if (textFont.texIDList == null) {
+      textFont.initTexture(gl, maxTextureSize, maxTextureSize);
+      // Add all the current glyphs to the texture.
+      textFont.addAllGlyphsToTexture(gl);
+    }
+
+    textFont.currentTexID = textFont.texIDList[0];
+    gl.glBindTexture(GL10.GL_TEXTURE_2D, textFont.currentTexID);
 
     // Setting the current fill color as the font color.
     gl.glColor4f(colorFloats[0], colorFloats[1], colorFloats[2], colorFloats[3]);
@@ -2164,7 +2164,6 @@ public class PGraphicsAndroid3D extends PGraphics {
     gl.glPopMatrix();
     gl.glMatrixMode(GL10.GL_MODELVIEW);
     gl.glPopMatrix();
-    
     gl.glDisable(GL10.GL_TEXTURE_2D);    
   }
 

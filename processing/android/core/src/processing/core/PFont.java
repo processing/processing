@@ -672,7 +672,7 @@ public class PFont implements PConstants {
 
   // OPENGL stuff
   
-  public void initialize(GL10 gl, int w, int h) {
+  public void initTexture(GL10 gl, int w, int h) {
     gl10 = gl;
     texWidth = w;
     texHeight = h;
@@ -686,11 +686,11 @@ public class PFont implements PConstants {
   
   public int addTexture(GL10 gl) {
     int[] textures = new int[1];
-    gl.glEnable(GL10.GL_TEXTURE_2D);
+
+    // We assume GL10.GL_TEXTURE_2D is enabled at this point.
     gl.glGenTextures(1, textures, 0);
     gl.glBindTexture(GL10.GL_TEXTURE_2D, textures[0]);    
 
-    // Use Nearest for performance.
     gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_NEAREST);
     gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_NEAREST);
 
@@ -932,7 +932,8 @@ public class PFont implements PConstants {
       if (lastTexID == -1) { 
         lastTexID = texIDList[0];
       }
-      gl.glEnable(GL10.GL_TEXTURE_2D);
+      
+      // We assume GL10.GL_TEXTURE_2D is enabled at this point.
       gl.glBindTexture(GL10.GL_TEXTURE_2D, lastTexID);
       currentTexID = lastTexID;
       
