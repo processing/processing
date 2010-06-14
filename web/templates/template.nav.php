@@ -63,7 +63,7 @@ function navigation($section = '')
     $html .= "\t\t\t\t\t" . l('Contribute', $section == 'Contribute') . " \\\n";
     $html .= "\t\t\t\t\t" . l('About', in_array($section, $abo)) . " \n";
        
-    $html .= "\t\t\t\t\t" . "&gt; <a href=\"http://wiki.processing.org/w/FAQ\"" . ($section == 'FAQ' ? ' class="active faq"' : 'class="faq"') . ">FAQ</a>\n";
+    $html .= "\t\t\t\t\t" . "<a href=\"http://wiki.processing.org/w/FAQ\"" . ($section == 'FAQ' ? ' class="active faq"' : 'class="faq"') . ">FAQ</a>\n";
        
     $html .= "\t\t\t\t</div>\n";
     
