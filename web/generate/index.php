@@ -98,6 +98,8 @@ li { margin-bottom: 1em; }
     </p>
 <p><a href="#" onclick="remote_link('reference_media.php'); return false;">Copy reference media to public directory</a></p>
 
+<p>&nbsp;</p>
+
 <strong>Generate English site files</strong>
 <p>	
     <a href="#" onclick="remote_link('cover.php');return false;">Cover</a> \ 
@@ -107,7 +109,7 @@ li { margin-bottom: 1em; }
 	<a href="#" onclick="remote_link('tutorials.php'); return false;">Tutorials</a> \ 
 	<a href="#" onclick="remote_link('libraries.php', 'lang=en'); return false;">Libraries</a> \ 
 	<a href="#" onclick="remote_link('tools.php', 'lang=en'); return false;">Tools</a> \ 
-	<a href="#" onclick="remote_link('environment.php'); return false;">Environment and Troubleshooting</a> \ 
+	<a href="#" onclick="remote_link('environment.php'); return false;">Environment</a> \ 
 	<a href="#" onclick="remote_link('staticpages.php'); return false;">Static Pages (Copyright, Contribute, People)</a>
 	</p>
 
@@ -119,9 +121,8 @@ li { margin-bottom: 1em; }
 <p>		<a href="#" onclick="remote_link('reference_local.php'); return false;">Reference</a> \ 
 		<a href="#" onclick="remote_link('libraries_local.php'); return false;">Libraries</a> \ 
 		<a href="#" onclick="remote_link('tools_local.php'); return false;">Tools</a> \ 
-		<a href="#" onclick="remote_link('environment_local.php'); return false;">Environment and Troubleshooting</a> \ 
-		<a href="#" onclick="remote_link('compare_local.php'); return false;">Compare</a> \ <br />
-		<a href="#" onclick="remote_link('staticpages_local.php'); return false;">Static Pages (FAQ, Copyright, People)</a>
+		<a href="#" onclick="remote_link('environment_local.php'); return false;">Environment</a> \ 
+		<a href="#" onclick="remote_link('staticpages_local.php'); return false;">Static Pages (Copyright, People)</a>
 </p>
 
 <p>&nbsp;</p>
