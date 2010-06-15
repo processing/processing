@@ -93,7 +93,6 @@ class ReferencePage
         $xhtml->set('title', $title);
         $xhtml->set('bodyid', 'Langauge-'.$lang);
         
-        #$xhtml->set('navigation', ($lang == 'en') ? navigation('Language') : navigation_tr('Language'));
         $xhtml->set('navigation', ($lang == 'en') ? navigation('Language') : navigation('Language'));
 
         $piece = new xhtml_piece(TEMPLATEDIR.'template.reference.item.html');
