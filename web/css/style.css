@@ -77,7 +77,8 @@ a:link:visited {
 }
 
 #header form input.text {
-	width: 100px;
+	width: 130px;
+	margin-right: 2px;
 }
 
 #header form p { margin: 0; }
