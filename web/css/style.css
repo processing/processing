@@ -57,7 +57,7 @@ a:link:visited {
 /* ================ HEADER ================== */
 #header {
 	width: 750px;
-	height: 50px;
+	height: 80px;
 	overflow: hidden;
 	background-color: #000000;
 	position:relative;
