@@ -1,0 +1,322 @@
+Processing Book Errata
+
+This is a list compiled for MIT Press to make corrections to future
+printings of Processing: A Programming Handbook for Visual Designers 
+and Artists by Casey Reas and Ben Fry. We put tremendous energy into 
+producing an error-free book, but we didn't succeed. We're trying to 
+remove more with each printing of the book. If you find errors, please 
+let us know. (There are instructions at the bottom of this file.)
+
+
+// // // // // // // // // // // // // // // // // // // // // //
+
+
+Compiled 17 October 2007
+
+
+- p. 6 - Dumb quote
+The word "others's" in the last line on the page: 
+- the apostrophe should be a smart quote.
+- should the last "s" be removed (notice the word "students'" above)?
+
+
+- p. 7 - Mispelling
+In the last paragraph, should be "five years since the origin of", not "the origin on"
+
+
+- p. 53 - Error in comment for 5-03.
+The first line of the comment for 5-03 should start, "The test expressions"
+
+
+- p. 100 - CMYK vs. Gray
+The left diagram should be only printed using a screen of K, not all colors.
+
+
+- p. 112 - Incorrect word
+Toward the bottom, "The x and y parameters set the position of the
+upper-left corner.", not the "lower-left corner"
+
+
+- p. 170 - Line wrapping and italic
+In the footnote, wrap "For" to the next line. The last word of the last
+sentence (the fi ligature) should be italic.
+
+
+- p. 207 - Code Error
+In 23-05, the 13th line should be:
+float iy = height - mouseY; // Inverse Y
+
+
+- p. 223 - Extra space
+In the forth line, it looks like there's an extra space here: ", and"
+
+
+- p. 224 - Incorrect comment
+The comment for code 25-01 should read, "// Draw a line while any key is
+pressed"
+
+
+- p. 231 - Typo
+'and the white circle follows the mouse' should be 'and the black circle
+follows the mouse'
+
+
+- p. 397 - Diagrams missing type, rasterized type
+Both diagrams on the page rendered incorrectly. The top one is missing the
+type for the Apple Class. The type in the bottom diagram is rastered, not
+vector as it should be.
+
+
+- p. 451 - draw() not all bold
+In code 41-16, the draw() should be entirely bold, the "d" is currently not.
+
+
+- p. 528 - Type cut off in top figure
+The type in the top figure is truncated, the crop box need to be pulled
+down. The "y" in y-axis is missing the descender.
+
+
+- p. 536 - Code to Mono
+In Example 7, the specular() function name should be in the mono font.
+
+
+- p. 656 - Figures
+The figures didn't seem to output correctly. Look at the center of the
+servo, the type in the chip, and the dc motor.
+
+
+// // // // // // // // // // // // // // // // // // // // // //
+
+
+Compiled 8 November 2007
+
+
+- p. 707
+Lieberman, Zachary listed as "512-512" when should be "511-512"
+
+
+- p. 710
+Tarbell, Jared listed as "155-156" when should be "154-159"
+
+
+- p. 81 - Description of map()
+"Similar to the norm function, the low1 and low2 ..." Should be:
+"Similar to the norm function, the low1 and high1 ...." 
+
+
+// // // // // // // // // // // // // // // // // // // // // //
+
+
+Compiled 26 March 2008
+
+
+- p. 118
+angles in math are positive counterclockwise and negative clockwise. The
+sine of an angle of PI/2 is +1, of 3*PI/2 is -1. In the book (see picture)
+the sine of PI/2 is -1 (wrong!) and of 3*PI/2 is +1 (wrong!). These
+mistakes are made in all trigonometrical views dealing with sine and
+cosine. Please check all trigonometric functions in the book.
+The calulations of sine and cosine in processing are correct, the mistakes
+are only in the book.
+
+
+- p. 105
+"I noticed on Page 105 under syntax introduced: that string.startsWidth and
+string.endsWidth should be updated to be String.startsWith and
+String.endsWith.
+
+- http://dev.processing.org/bugs/show_bug.cgi?id=741
+
+
+// // // // // // // // // // // // // // // // // // // // // //
+
+
+Compiled 2 April 2008
+
+
+- p. 105
+Under syntax introduced: string.startsWidth and string.endsWidth should be 
+updated to be String.startsWith and String.endsWith
+
+
+- p. 118
+The diagram needs to be replaced with the attached diagram. "14-Math-3-SineGrid-update.ai"
+The diagram is flipped over the y-axis.
+
+
+- p. 309
+
+Example 33-17
+
+String[] trees = { "ash", "oak" };
+append(trees, "maple"); // INCORRECT! Does not change the array
+println(trees); // Prints [0] "ash",  [1] "oak"
+println();
+trees = append(trees, "maple"); // Add "maple" to the end
+println(trees); // Prints [0] "ash",  [1] "oak", [2] "maple"
+println();
+// Add "beech" to the end of the trees array, and creates a new
+// array to store the change
+String[] moretrees = append(trees, "beech");
+// Prints [0] "ash", [1] "oak", [2] "maple", [3] "beech"
+println(moretrees);
+
+
+Example 33-18
+
+String[] trees = { "lychee", "coconut", "fig"};
+trees = shorten(trees); // Remove the last element from the array
+println(trees); // Prints [0] "lychee", [1] "coconut"
+println();
+trees = shorten(trees); // Remove the last element from the array
+println(trees); // Prints [0] "lychee"
+
+
+- p. 310
+
+Example 33-20
+
+String[] north = { "OH", "IN", "MI" };
+String[] south = { "GA", "FL", "NC" };
+arraycopy(north, south); // Copy from north array to south array
+println(south); // Prints [0] "OH", [1] "IN", [3] "MI"
+println();
+String[] east = { "MA", "NY", "RI" };
+String[] west = new String[east.length]; // Create a new array
+arraycopy(east, west); // Copy from east array to west array
+println(west); // Prints [0] "MA", [1] "NY", [2] "RI"
+
+
+// // // // // // // // // // // // // // // // // // // // // //
+
+
+Compiled 28 August 2008
+
+
+x p. 81
+On the fifth line from the bottom of p. 81, the word "number's" needs an 
+apostrophe to replace the foot mark before the 's'.
+
+
+x p. 203
+In code 22-10, the 13th line should read:
+  drawCircle(63, 85, n); 
+
+
+- p. 309
+
+Example 33-17 and 33-18 were not typeset correctly when they were fixed in
+the last round of corrections. Please follow the exact line breaks below:
+
+Example 33-17:
+
+String[] trees = { "ash", "oak" };
+append(trees, "maple"); // INCORRECT! Does not change the array
+println(trees); // Prints [0] "ash",  [1] "oak"
+println();
+trees = append(trees, "maple"); // Add "maple" to the end
+println(trees); // Prints [0] "ash",  [1] "oak", [2] "maple"
+println();
+// Add "beech" to the end of the trees array, and creates a new
+// array to store the change
+String[] moretrees = append(trees, "beech");
+// Prints [0] "ash", [1] "oak", [2] "maple", [3] "beech"
+println(moretrees);
+
+
+Example 33-18:
+
+String[] trees = { "lychee", "coconut", "fig"};
+trees = shorten(trees); // Remove the last element from the array
+println(trees); // Prints [0] "lychee", [1] "coconut"
+println();
+trees = shorten(trees); // Remove the last element from the array
+println(trees); // Prints [0] "lychee"
+
+
+x p. 322
+Code 35-03 uses the set() syntax, which has not yet been introduced.
+Instead, use image(img, x, y) in place of the set() function on lines 5, 6:
+replace "set(18, 0, slice)" with "image(slice, 18, 0);"
+replace "set(50, 0, slice)" with "image(slice, 50, 0);"
+
+
+- p. 397
+Gray type in the Apple class box is too light.
+
+
+x p. 536
+In Example 7, there's a needless line break after "relation" in Example 7. 
+This needs to be carefully fixed. It moves up the text one line, so please 
+be careful that the figure on page 537 still relates to the text line above. 
+Make sure the top line of text from page 538 doesn't wrap onto 537.
+
+
+// // // // // // // // // // // // // // // // // // // // // //
+
+
+Compiled 22 April 2010
+
+x p. 459
+Code 48-10 has an error on line 15 (this is the 7th line on page 459.) 
+The line should read:
+  if (pressed == true) {
+  	
+Because "pressed" is the name of the boolean field in the super-class
+on page 439 that this class extension refers to. 
+
+x p. 459
+Code 48-09 has an error on line 16. The line should read:
+  icon.update();
+
+Because the update() method in the super-class
+on page 439 takes no parameters. 
+
+
+x p. 460
+Code 48-10 has an error on line 11. The line should read:
+  if (pressed == true) {
+  	
+Because "pressed" is the name of the boolean field in the super-class
+on page 439 that this class extension refers to. 
+
+Back cover:
+In Casey's bio line, "an associate professor" should be "a professor"
+and "Design | Media Arts" should be "Design Media Arts"
+
+
+ 
+// // // // // // // // // // // // // // // // // // // // // //
+
+// // // // // // // // // // // // // // // // // // // // // //
+
+
+If you find a bug (error) in Processing: A Programming Handbook for Visual 
+Designers and Artists by Casey Reas and Ben Fry, please let us know so we 
+can fix it! We worked extremely hard to get rid of them, but we know 
+they are there.
+ 
+Please report all bugs to the Issues database:
+http://code.google.com/p/processing/issues/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
