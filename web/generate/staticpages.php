@@ -28,7 +28,7 @@ $page = new Page("Books", "Books");
 $page->content(file_get_contents($source."books.html"));
 writeFile('learning/books/index.html', $page->out());
 // copy over the errata file for Processing: A Programming Handbook...
-copy($source."processing-errata.txt", "learning/books/");
+copy($source.'processing-errata.txt', $path.'learning/books/');
 
 $page = new Page("Copyright", "Copyright");
 $page->content(file_get_contents($source."copyright.html"));
