@@ -70,14 +70,14 @@ a:link:visited {
 
 #header form {
 	position: absolute;
-	top: 5px;
+	top: 20px;
 	right: 5px;
-	width: 200px;
+	width: 220px;
 	color: #ccc;
 }
 
 #header form input.text {
-	width: 150px;
+	width: 100px;
 }
 
 #header form p { margin: 0; }
