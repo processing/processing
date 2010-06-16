@@ -20,6 +20,9 @@ $page->content(file_get_contents($index));
 //make_necessary_directories(BASEDIR.$tools_dir.'/images/include.php');
 writeFile('distribution/tools/index.html', $page->out());
 
+if (!is_dir(DISTDIR.'tools/images')) { 
+	mkdir(DISTDIR.'tools/images', '0757'); 
+}
 copydirr(CONTENTDIR."api_$lang/TOOL_images", DISTDIR.'tools/images');
 
 // copy over the files for the contributed libraries
