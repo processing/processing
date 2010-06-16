@@ -15,11 +15,11 @@ $translation = new Translation($lang);
 $files = getRefFiles($lang);
 
 // make changes file
-$lib_dir = DISTDIR;
-$index = CONTENTDIR."api_$lang/changes.html";
-$page = new LocalPage('Language (API)', 'Changes', 'Changes', './');
-$page->content(file_get_contents($index));
-writeFile('distribution/changes.html', $page->out());
+//$lib_dir = DISTDIR;
+//$index = CONTENTDIR."api_$lang/changes.html";
+//$page = new LocalPage('Language (API)', 'Changes', 'Changes', './');
+//$page->content(file_get_contents($index));
+//writeFile('distribution/changes.html', $page->out());
 
 
 /*******************************************************
