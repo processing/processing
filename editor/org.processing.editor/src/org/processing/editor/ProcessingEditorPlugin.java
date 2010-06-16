@@ -10,12 +10,18 @@
  *******************************************************************************/
 package org.processing.editor;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.net.URL;
+
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.processing.editor.javadoc.JavaDocScanner;
 import org.processing.editor.language.ProcessingCodeScanner;
 import org.processing.editor.util.ProcessingColorProvider;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -127,4 +133,25 @@ public class ProcessingEditorPlugin extends AbstractUIPlugin {
 			fDocScanner= new JavaDocScanner(fColorProvider);
 		return fDocScanner;
 	}
+	
+	 /**
+	  * Returns a buffered input stream for a file in the plug-in directory.
+	  * 
+	  * @param filename the file to be loaded
+	  * @return BufferedInputStream to read the file with
+	  */
+ 	public BufferedInputStream getFileInputStream(String filename) {
+		   Bundle bundle = getDefault().getBundle();
+		   URL fileLocation;
+		   try {
+		       fileLocation = FileLocator.toFileURL(bundle.getEntry(filename));
+		       BufferedInputStream file = new BufferedInputStream(fileLocation.openStream());
+			   return file;
+		   } catch (IOException e) {
+		       e.printStackTrace();
+		   }
+		   return null; // this should be more explicit than a null pointer from a caught exception, right? [lonnen] June 15, 2010
+ 	}
+
+
 }

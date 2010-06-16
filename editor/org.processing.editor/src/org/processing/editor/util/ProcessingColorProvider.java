@@ -27,15 +27,19 @@ public class ProcessingColorProvider {
 	public static final RGB KEYWORD1= new RGB(204, 102, 0);
 	public static final RGB KEYWORD2= new RGB(204, 102, 0);
 	public static final RGB KEYWORD3= new RGB(204, 102, 0);
-	public static final RGB LITERAL1= new RGB(0, 102, 153);
+	public static final RGB LITERAL1= new RGB(0, 102, 153); // currently unused used [lonnen] june 16, 2010
 	public static final RGB LITERAL2= new RGB(0, 102, 153);
 	public static final RGB LABEL= new RGB(0, 0, 128); // use listed as '?' in p5 doc
 	public static final RGB OPERATOR= new RGB(0, 0, 0);
-	public static final RGB INVALID= new RGB(126, 126, 126);
-	// for the moment we'll leave these
-	public static final RGB STRING= new RGB(0, 0, 128);  
+	public static final RGB INVALID= new RGB(126, 126, 126); // never used [lonnen] june 16, 2010
+	public static final RGB STRING= new RGB(0, 102, 153);   
 	public static final RGB DEFAULT= new RGB(0, 0, 0);
-	// used to color JavaDoc by org.processing.editor.javadoc.JavaDocScanner, do we still want this?
+	
+	// used to color JavaDoc by org.processing.editor.javadoc.JavaDocScanner
+	// currently ignored, as JavaDoc is treated like normal multiline comments
+	// left available to avoid compiler errors from the JavaDocScanner.java class
+	// which is never instantiated but wants access to them anyway because the
+	// compiler doesn't realize these things. [lonnen] june 16, 2010
 	public static final RGB JAVADOC_KEYWORD= new RGB(126, 126, 126);
 	public static final RGB JAVADOC_TAG= new RGB(126, 126, 126);
 	public static final RGB JAVADOC_LINK= new RGB(126, 126, 126);

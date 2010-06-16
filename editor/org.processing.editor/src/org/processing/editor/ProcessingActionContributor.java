@@ -58,6 +58,9 @@ public class ProcessingActionContributor extends TextEditorActionContributor {
 		}
 	}
 	
+	/*
+	 * 
+	 */
 	private void doSetActiveEditor(IEditorPart part) {
 		super.setActiveEditor(part);
 
