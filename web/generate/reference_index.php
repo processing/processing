@@ -8,18 +8,6 @@ $benchmark_start = microtime_float();
 // arguments
 $lang = isSet($_POST['lang']) ? $_POST['lang'] : 'en';
 
-
-// make changes file
-$lib_dir = 'reference/';
-$index = CONTENTDIR."api_$lang/changes.html";
-$page = new Page('Changes', 'Changes', 'Language');
-$page->content(file_get_contents($index));
-//make_necessary_directories(BASEDIR.$lib_dir.'/images/include.php');
-writeFile($lib_dir.'/changes/index.html', $page->out());
-//copydirr($source.'/images', $path.'/images');
-
-
-
 // get translation file
 $translation = new Translation($lang);
 
@@ -66,16 +54,6 @@ $alphaCompleteTitle = tr('alphabetical') . ' ' . tr('complete') . ' ' . $title;
 
 /*** category_index() and alpha_index() are found in lib/functions.inc.php ***/
 
-// abridged reference
-#$page = new Page($title, 'Language');
-#$page->subtemplate('template.ref.index.html');
-#$page->content(category_index($abridged));
-#$page->set('reference_nav', reference_nav());
-#$page->set('language_nav', language_nav($lang));
-#$page->set_array($translation->meta);
-#$page->language($lang);
-#writeFile($path.'index.html', $page->out());
-
 // complete reference
 $page = new Page($completeTitle, 'Language');
 $page->subtemplate('template.ref.index.ext.html');
@@ -90,16 +68,6 @@ writeFile($path.'index.html', $page->out());
 // sort alphabetically
 #ksort($abridged_alpha);
 ksort($complete_alpha);
-
-// abridged alphaphabetical
-#$page = new Page($alphaTitle, 'Language');
-#$page->subtemplate('template.ref.index.html');
-#$page->content(alpha_index($abridged_alpha));
-#$page->set('reference_nav', reference_nav());
-#$page->set('language_nav', language_nav($lang));
-#$page->set_array($translation->meta);
-#$page->language($lang);
-#writeFile($path.'index_alpha.html', $page->out());
 
 // complete alphabetical
 $page = new Page($alphaCompleteTitle, 'A-Z');
