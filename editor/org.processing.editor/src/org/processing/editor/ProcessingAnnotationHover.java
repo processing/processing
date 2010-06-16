@@ -39,4 +39,5 @@ public class ProcessingAnnotationHover implements IAnnotationHover {
 
 		return null;
 	}
+	
 }
