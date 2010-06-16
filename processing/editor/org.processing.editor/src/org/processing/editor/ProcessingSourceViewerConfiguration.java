@@ -42,22 +42,21 @@ import org.processing.editor.util.ProcessingColorProvider;
  */
 public class ProcessingSourceViewerConfiguration extends SourceViewerConfiguration {
 	
-	
-		/**
-		 * Single token scanner.
-		 */
-		static class SingleTokenScanner extends BufferedRuleBasedScanner {
-			public SingleTokenScanner(TextAttribute attribute) {
-				setDefaultReturnToken(new Token(attribute));
-			}
+	/**
+	 * Single token scanner.
+	 */
+	static class SingleTokenScanner extends BufferedRuleBasedScanner {
+		public SingleTokenScanner(TextAttribute attribute) {
+			setDefaultReturnToken(new Token(attribute));
 		}
-		
+	}	
 
 	/**
 	 * Default constructor.
 	 */
 	public ProcessingSourceViewerConfiguration() {
 	}
+	
 	/* (non-Javadoc)
 	 * Method declared on SourceViewerConfiguration
 	 */
