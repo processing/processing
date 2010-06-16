@@ -30,7 +30,7 @@ $pages = array(
     	'People'        => array('/about/people/', 2),
     	'Patrons'        => array('/about/patrons/', 2),
     
-    'FAQ'           => array('/faq.html', 1),
+    'FAQ'           => array('http://wiki.processing.org/w/FAQ', 1),
     
     );
 

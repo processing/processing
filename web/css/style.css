@@ -238,6 +238,14 @@ li {margin-bottom: 1em; }
 }
 #Cover .leftcol { width: 250px; }
 
+#Cover ul {
+	list-style: none;
+	margin-left: 0;
+	padding-left: 1em;
+	text-indent: -1em;
+}
+
+
 #Cover .content {
         margin-left    : 55px;
         margin-right   : 0px;
