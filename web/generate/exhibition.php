@@ -164,7 +164,7 @@ function curated_nav($num, $current)
     //}
     for ($i = $num; $i > 0; $i--) {
     	if ($i == $num) {
-    	  if ($i == $current+1) {
+    	  if (($num-$i+1) == $current) {
     	    $links[] = sprintf("Page: %d", $i);
     	  } else {
     	    $links[] = sprintf("Page: <a href=\"./\">%d</a>", $i);
