@@ -120,18 +120,19 @@ a:link:visited {
 	margin-bottom: 0px;
 }
 
+.faq { position: absolute; right: 50px; color: #cccccc }
+
 #subNav.learning { margin-left: 225px; }
 .active { color: #cccccc !important; }
 .activeSub { color: #000000 !important; }
-.faq { position: absolute; right: 10px; color: #cccccc }
 
 #subNav.exhib { margin-left: 90px; }
 .active { color: #cccccc !important; }
-.faq { position: absolute; right: 10px; color: #cccccc }
+//.faq { position: absolute; right: 10px; color: #cccccc }
 
 #subNav.abo { margin-left: 390px; }
 .active { color: #cccccc !important; }
-.faq { position: absolute; right: 10px; color: #cccccc }
+//.faq { position: absolute; right: 10px; color: #cccccc }
 
 /* ================ CONTENT ================== */
 
