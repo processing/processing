@@ -130,7 +130,7 @@ if (!defined('COVER')) {
     
     // create and write the other pages
     for ($i = 0; $i <= $cnum_pages; $i++) {
-        $page = new Page('Exhibition Archives', 'Collection');
+        $page = new Page('Exhibition Archives', 'Exhibition');
         $page->subtemplate('template.curated.archive.html');
         $page->set('curated_nav', curated_nav($cnum_pages, $i+1));
         $page->set('exhibition', get_curated_three($curated, CURATED_PER_PAGE*$i, CURATED_PER_PAGE));
