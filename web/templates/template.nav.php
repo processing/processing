@@ -60,9 +60,9 @@ function navigation($section = '')
     $html .= "\t\t\t\t\t" . l('Shop', $section == 'Shop') . " \\\n";
     $html .= "\t\t\t\t\t" . l('About', in_array($section, $abo)) . " \n";
        
-    $html .= "\t\t\t\t\t" . "&raquo; <a href=\"http://wiki.processing.org/w/FAQ\"" . 'class="faq"' . ">FAQ</a>\n";
-    $html .= "\t\t\t\t\t" . "&raquo; <a href=\"http://wiki.processing.org/w/FAQ\"" . 'class="wiki"' . ">WIKI</a>\n";
-
+    $html .= "\t\t\t\t\t" . "<a href=\"http://wiki.processing.org/w/FAQ\"" . 'class="faq"' . ">&raquo; Code</a>\n";
+    $html .= "\t\t\t\t\t" . "<a href=\"http://wiki.processing.org/w/FAQ\"" . 'class="wiki"' . ">&raquo; Wiki</a>\n";
+	$html .= "\t\t\t\t\t" . "<a href=\"http://wiki.processing.org/w/FAQ\"" . 'class="forum"' . ">&raquo; Forum</a>\n";
        
     $html .= "\t\t\t\t</div>\n";
     
