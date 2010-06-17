@@ -569,6 +569,13 @@ h2 { margin-bottom: 0; margin-top: 0;}
 	margin-top: 30px;
 }
 
+#Libraries .full-alt {
+	width: 650px;
+	float: left;
+	margin-right: 0px;
+	margin-top: 0px;
+}
+
 #Libraries .librarytitle {
 	width: 680px;
 	float: left;
