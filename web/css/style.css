@@ -539,6 +539,7 @@ h2 { margin-bottom: 0; margin-top: 0;}
 	width: 300px;
 	float: left;
 	margin-right: 40px;
+	background: #cccccc;
 }
 
 #Libraries .twocol {
@@ -549,6 +550,7 @@ h2 { margin-bottom: 0; margin-top: 0;}
 #Libraries .twocol-alt {
 	width: 330px;
 	float: left; 
+	background: #cccccc;
 }
 
 
