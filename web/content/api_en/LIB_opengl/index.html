@@ -30,24 +30,24 @@ For more information, please visit the <a href="http://www.opengl.org/" target="
 	
 	<pre>import processing.opengl.*;
 
-		float a; 
+float a; 
 		
-		void setup() {
-		  size(800, 600, OPENGL);
-		  fill(0, 153);
-		  noStroke();
-		}
+void setup() {
+  size(800, 600, OPENGL);
+  fill(0, 153);
+  noStroke();
+}
 		
-		void draw() {
-		  background(255);
-		  translate(width/2, height/2);
-		  rotateX(a);
-		  rotateY(a*2);
-		  rect(-200, -200, 400, 400);
-		  rotateX(PI/2);
-		  rect(-200, -200, 400, 400);
-		  a += 0.01;
-		}</pre>
+void draw() {
+  background(255);
+  translate(width/2, height/2);
+  rotateX(a);
+  rotateY(a*2);
+  rect(-200, -200, 400, 400);
+  rotateX(PI/2);
+  rect(-200, -200, 400, 400);
+  a += 0.01;
+}</pre>
 
 </div>
 
@@ -174,37 +174,36 @@ For more information, please visit the <a href="http://www.opengl.org/" target="
 	  (though still no lighting or other parameters). Many features still 
 	  will not work, but it opens up lots of control for geometry. All the
 	  above caveats about "don't cry when it breaks" apply. </p>
-	  <pre>
-	
-	import javax.media.opengl.*;
-	import processing.opengl.*;
-	
-	float a; 
-	
-	void setup() {
-	  size(800, 600, OPENGL);
-	}
-	
-	void draw() {
-	  background(255);
 	  
-	  PGraphicsOpenGL pgl = (PGraphicsOpenGL) g;  // g may change
-	  GL gl = pgl.beginGL();  // always use the GL object returned by beginGL
+	  <pre>import javax.media.opengl.*;
+import processing.opengl.*;
+	
+float a; 
+	
+void setup() {
+  size(800, 600, OPENGL);
+}
+	
+void draw() {
+  background(255);
+  
+  PGraphicsOpenGL pgl = (PGraphicsOpenGL) g;  // g may change
+  GL gl = pgl.beginGL();  // always use the GL object returned by beginGL
+  
+  // Do some things with gl.xxx functions here.
+  // For example, the program above is translated into:
+  gl.glColor4f(0.7, 0.7, 0.7, 0.8);
+  gl.glTranslatef(width/2, height/2, 0);
+  gl.glRotatef(a, 1, 0, 0);
+  gl.glRotatef(a*2, 0, 1, 0);
+  gl.glRectf(-200, -200, 200, 200);
+  gl.glRotatef(90, 1, 0, 0);
+  gl.glRectf(-200, -200, 200, 200);
+  
+  pgl.endGL();
 	  
-	  // Do some things with gl.xxx functions here.
-	  // For example, the program above is translated into:
-	  gl.glColor4f(0.7, 0.7, 0.7, 0.8);
-	  gl.glTranslatef(width/2, height/2, 0);
-	  gl.glRotatef(a, 1, 0, 0);
-	  gl.glRotatef(a*2, 0, 1, 0);
-	  gl.glRectf(-200, -200, 200, 200);
-	  gl.glRotatef(90, 1, 0, 0);
-	  gl.glRectf(-200, -200, 200, 200);
-	  
-	  pgl.endGL();
-	  
-	  a += 0.5;
-	}
+  a += 0.5;
+}
 	</pre>
 	Always do the assignment/cast from g to pgl inside draw(), because 'g' may change from time to time. In addition, use the GL object returned by beginGL() for the same reason, that the GL context itself may have changed. In practice, I've not really seen this happen, but this is strongly encouraged to prevent things from crashing in a bad way (think blue screen/kernel panic kinds of bad ways).
 	  </p> 
