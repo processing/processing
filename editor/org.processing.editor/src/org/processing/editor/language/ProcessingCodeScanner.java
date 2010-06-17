@@ -157,7 +157,8 @@ public class ProcessingCodeScanner extends RuleBasedScanner {
 			wordRule.addWord(fgLabels[i], label);		
 		for (int i= 0; i < fgOperators.length; i++)
 			wordRule.addWord(fgOperators[i], operator);
-		
+		for (int i= 0; i < fgInvalids.length; i++)
+			wordRule.addWord(fgInvalids[i], invalid);
 		// Set these as the colorizing rules for the document
 		rules.add(wordRule);
 
