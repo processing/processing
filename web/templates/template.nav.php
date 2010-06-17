@@ -11,13 +11,13 @@ $pages = array(
     	'Basics'	=> array('/learning/basics/', 2),  
 		'Topics'	=> array('/learning/topics/', 2), 
 		'3D'	=> array('/learning/3d/', 2),  
-		'Libraries'	=> array('/learning/libraries/', 2),  
+		'Library'	=> array('/learning/library/', 2),  
     	'Books'	     => array('/learning/books/', 2),
     		
     'Reference'     => array('/reference/', 1),
     	'Language'      => array('/reference/', 2),
     	'A-Z'	=> array('/reference/alpha.html', 2),
-    	'Library'     	=> array('/reference/library/', 2),
+    	'Libraries'     	=> array('/reference/libraries/', 2),
     	'Tools'   	=> array('/reference/tools/', 2),
     	'Environment'   	=> array('/reference/environment/', 2), 
         
