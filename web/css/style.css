@@ -114,6 +114,12 @@ a:link:visited {
 	margin-bottom: 30px;
 }
 
+#subNav.libraries { margin-left: 157px;   /* 264  Is this for the reference??? */
+	background: #5a5a5a url(../img/nav_bottomarrow.gif) no-repeat; 
+	padding-left: 33px;
+	margin-bottom: 0px;
+}
+
 #subNav.learning { margin-left: 225px; }
 .active { color: #cccccc !important; }
 .activeSub { color: #000000 !important; }
@@ -583,7 +589,7 @@ h2 { margin-bottom: 0; margin-top: 0;}
         position: relative;
 }
 
-.lib-nav { display: block; 
+#Libraries .lib-nav { display: block; 
 	margin-bottom: 10px; 
 	margin-left: -30px; 
 	padding: 7px 0 3px 30px; 
