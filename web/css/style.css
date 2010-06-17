@@ -121,8 +121,8 @@ a:link:visited {
 }
 
 .faq { position: absolute; right: 30px; color: #cccccc }
-.wiki { position: absolute; right: 65px; color: #cccccc }
-.forum { position: absolute; right: 110px; color: #cccccc }
+.wiki { position: absolute; right: 80px; color: #cccccc }
+.forum { position: absolute; right: 150px; color: #cccccc }
 
 
 #subNav.learning { margin-left: 225px; }
