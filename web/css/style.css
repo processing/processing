@@ -535,7 +535,18 @@ h2 { margin-bottom: 0; margin-top: 0;}
 	margin-right: 40px;
 }
 
+#Libraries .colone-alt {
+	width: 300px;
+	float: left;
+	margin-right: 40px;
+}
+
 #Libraries .twocol {
+	width: 330px;
+	float: left; 
+}
+
+#Libraries .twocol-alt {
 	width: 330px;
 	float: left; 
 }
@@ -561,8 +572,6 @@ h2 { margin-bottom: 0; margin-top: 0;}
         position: relative;
 }
 
-
-
 .lib-nav { display: block; 
 	margin-bottom: 10px; 
 	margin-left: -30px; 
@@ -574,7 +583,7 @@ h2 { margin-bottom: 0; margin-top: 0;}
 
 #Libraries h2 { margin-top: 2em; }
 //#Libraries h3 { clear: both; margin-bottom: 0; }
-#Libraries h3 { margin-top: 2em; }
+#Libraries h3 {  }
 #Libraries h5 { font-size: 1em; margin: 0; font-weight: bold; }
 #Libraries h5 a { font-weight: bold; }
 #Libraries h4 { font-size: 1em; margin-bottom: .5em; }
