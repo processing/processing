@@ -187,7 +187,7 @@ foreach ($categories as $cat => $array) {
 	}
 }
 
-$page = new Page('Library', 'Library');
+$page = new Page('Libraries', 'Libraries');
 $page->subtemplate('template.examples-libraries.html');
 
 $html = "<div class=\"ref-col\">\n";

@@ -11,7 +11,7 @@ $pages = array(
     	'Basics'	=> array('/learning/basics/', 2),  
 		'Topics'	=> array('/learning/topics/', 2), 
 		'3D'	=> array('/learning/3d/', 2),  
-		'Library'	=> array('/learning/libraries/', 2),  
+		'Libraries'	=> array('/learning/libraries/', 2),  
     	'Books'	     => array('/learning/books/', 2),
     		
     'Reference'     => array('/reference/', 1),
@@ -43,7 +43,7 @@ function navigation($section = '')
 
 	$abo = array('About', 'Overview', 'People', 'Patrons');
     $ref = array('Reference', 'Language', 'A-Z', 'Libraries', 'Tools', 'Environment');
-    $learn = array('Learning', 'Tutorials', 'Basics', 'Topics', '3D', 'Library', 'Books');
+    $learn = array('Learning', 'Tutorials', 'Basics', 'Topics', '3D', 'Libraries', 'Books');
 
     $html = "\t\t\t".'<div id="navigation">'."\n";
 
@@ -92,7 +92,7 @@ function navigation($section = '')
 		$html .= "\t\t\t\t\t" . l('Basics', $section == 'Basics') . ", \n";
 		$html .= "\t\t\t\t\t" . l('Topics', $section == 'Topics') . ", \n";
 		$html .= "\t\t\t\t\t" . l('3D', $section == '3D') . ",  \n";
-		$html .= "\t\t\t\t\t" . l('Library', $section == 'Library') . " \\\n";
+		$html .= "\t\t\t\t\t" . l('Libraries', $section == 'Libraries') . " \\\n";
 		$html .= "\t\t\t\t\t" . l('Books', $section == 'Books') . " \n";
         $html .= "\t\t\t\t</div>\n";
     }
