@@ -594,7 +594,7 @@ h2 { margin-bottom: 0; margin-top: 0;}
 
 #Libraries h2 { margin-top: 2em; }
 //#Libraries h3 { clear: both; margin-bottom: 0; }
-#Libraries h3 {  }
+#Libraries h3 { margin-top: 0; margin-bottom: 0;}
 #Libraries h5 { font-size: 1em; margin: 0; font-weight: bold; }
 #Libraries h5 a { font-weight: bold; }
 #Libraries h4 { font-size: 1em; margin-bottom: .5em; }
