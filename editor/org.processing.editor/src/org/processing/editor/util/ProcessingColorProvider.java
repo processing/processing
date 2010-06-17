@@ -27,7 +27,7 @@ public class ProcessingColorProvider {
 	public static final RGB KEYWORD1= new RGB(204, 102, 0);
 	public static final RGB KEYWORD2= new RGB(204, 102, 0);
 	public static final RGB KEYWORD3= new RGB(204, 102, 0);
-	public static final RGB LITERAL1= new RGB(0, 102, 153); // currently unused used [lonnen] june 16, 2010
+	public static final RGB LITERAL1= new RGB(0, 102, 153); // currently unused [lonnen] june 16, 2010
 	public static final RGB LITERAL2= new RGB(0, 102, 153);
 	public static final RGB LABEL= new RGB(0, 0, 128); // use listed as '?' in p5 doc
 	public static final RGB OPERATOR= new RGB(0, 0, 0);
