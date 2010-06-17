@@ -120,8 +120,8 @@ a:link:visited {
 	margin-bottom: 0px;
 }
 
-.faq { position: absolute; right: 50px; color: #cccccc }
-.wiki { position: relative; right: 50px; color: #cccccc }
+.faq { position: absolute; right: 20px; color: #cccccc }
+.wiki { position: absolute; right: 60px; color: #cccccc }
 
 #subNav.learning { margin-left: 225px; }
 .active { color: #cccccc !important; }
