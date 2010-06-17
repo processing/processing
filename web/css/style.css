@@ -535,7 +535,18 @@ h2 { margin-bottom: 0; margin-top: 0;}
 	margin-right: 40px;
 }
 
+#Libraries .colone-alt {
+	width: 300px;
+	float: left;
+	margin-right: 40px;
+}
+
 #Libraries .twocol {
+	width: 330px;
+	float: left; 
+}
+
+#Libraries .twocol-alt {
 	width: 330px;
 	float: left; 
 }
@@ -551,11 +562,11 @@ h2 { margin-bottom: 0; margin-top: 0;}
 }
 
 #Libraries .librarytitle {
-	width: 650px;
+	width: 680px;
 	float: left;
 	margin-right: 0px;
 	margin-top: 0px;
-	margin-bottom: 0px;
+	margin-bottom: 2px;
 }
 
 #Libraries .content {
