@@ -28,7 +28,8 @@ For more information, please visit the <a href="http://www.opengl.org/" target="
 		cards. Some cards support OpenGL better than others.
 	</p>
 	
-	<pre>import processing.opengl.*;
+	<pre>
+import processing.opengl.*;
 
 float a; 
 		
@@ -156,7 +157,9 @@ void draw() {
 	  to insulate you from.
 	  </p>
 	<p>To get access to the GL object, use the following:
-	<pre>GL gl = ((PGraphicsOpenGL)g).gl;</pre>
+	<pre>
+GL gl = ((PGraphicsOpenGL)g).gl;</pre>
+
 	  <p>This will give you <a href="https://jogl.dev.java.net/">JOGL's</a> GL 
 	    object that talks directly to OpenGL and will let you make OpenGL 
 	    calls directly. </p>
@@ -175,7 +178,8 @@ void draw() {
 	  will not work, but it opens up lots of control for geometry. All the
 	  above caveats about "don't cry when it breaks" apply. </p>
 	  
-	  <pre>import javax.media.opengl.*;
+	  <pre>
+import javax.media.opengl.*;
 import processing.opengl.*;
 	
 float a; 

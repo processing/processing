@@ -259,15 +259,15 @@ pdf.endDraw();</pre>
 <p>
 <strong>Additional notes for the PDF renderer:</strong>
 
-<UL>
+<ul>
 
-<LI>If you want 3D data, use the DXF recording library instead.
+<li>If you want 3D data, use the DXF recording library instead.
 
-<LI>Images don't look great, mostly because of the difference of
+<li>Images don't look great, mostly because of the difference of
 expectations in how a PDF should look (scalable and high res) versus
 what happens when image data is written to it at 72 dpi. 
 
-<LI>Starting in release 0120, text is no longer treated as shape data by 
+<li>Starting in release 0120, text is no longer treated as shape data by 
 default, meaning that the font will need to be installed to view the
 PDF that's created. The upside is that the PDF will render better 
 (particularly in light of the Mac OS X bug noted here). To force text
@@ -275,21 +275,21 @@ to be treated as shape data, use textMode(SHAPE), immediately after size().
 See the developer reference for textMode() inside 
 <A HREF="http://dev.processing.org/reference/everything/javadoc/processing/pdf/PGraphicsPDF.html">PGraphicsPDF</A> for more specifics.
 
-<LI>Another option for type, is to use createFont() with a TrueType font 
+<li>Another option for type, is to use createFont() with a TrueType font 
 (some OpenType fonts also work). Any font that shows up in PFont.list() 
 should work, or if not, adding a .ttf file to the data directory and
 calling createFont("fontname.ttf") will also work. 
 
-<LI>If loadFont() is used instead of createFont(), the text may show up
+<li>If loadFont() is used instead of createFont(), the text may show up
 bitmapped and ugly. In some cases, hint(ENABLE_NATIVE_FONTS) 
 may improve the situation if the font is installed on the machine.
 
-<LI>On Mac OS X, the seems to be a bug in Apple's Java implementation 
+<li>On Mac OS X, the seems to be a bug in Apple's Java implementation 
 that confuses cubic vs. quadric splines. This makes text look jagged, 
 even though it's not bitmapped.
 (<A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=404">Bug 404</A>)
 
-<LI>If the results with beginRaw() from P3D or OPENGL to PDF look bizarre, 
+<li>If the results with beginRaw() from P3D or OPENGL to PDF look bizarre, 
 it's probably because the polygons are not sorted. 
 To attempt sorting of 3D shapes before they're written to a file, 
 use hint(ENABLE_DEPTH_SORT). This method is still 
@@ -297,16 +297,17 @@ not particularly good, but will help in some situations.
 See <a href="http://dev.processing.org/bugs/show_bug.cgi?id=176">Bug 
 176</a> for status of the implementation.</p>
 
-<LI>Starting a new page is a matter of calling nextPage() like so:
-<PRE>  
+<li>Starting a new page is a matter of calling nextPage() like so:
+<pre>  
 PGraphicsPDF pdf = (PGraphicsPDF) g;
 pdf.nextPage();
-</PRE>
+</pre>
 (This example is also shown above)
 
-<LI> Again, exit() is really important when using PDF with size(). 
+<li> Again, exit() is really important when using PDF with size(). 
 
 </UL>
+
 </p>
 
 </div>
