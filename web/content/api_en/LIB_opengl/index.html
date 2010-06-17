@@ -5,27 +5,17 @@
 <div class="librarytitle"><h3>OpenGL</h3></div>
 
 <div class="full-alt">
-    <p>OpenGL (Open Graphics Library) is a cross-platform graphics interface for 
-3D and 2D graphics. This library allows Processing programs to utilize the 
-speed of an OpenGL accelerated graphics card. This expands the potential 
-for drawing more to the screen and creating larger windows. 
-Processing interfaces with OpenGL through JOGL, an initiative from the 
-Game Technology Group at Sun. You need to have an OpenGL accelerated graphics 
-card installed on your computer to fully utilize this library. 
-For more information, please visit the <a href="http://www.opengl.org/" target="_new">OpenGL</a> and <a href="https://jogl.dev.java.net/" target="_new">JOGL</a> websites.
+    <p>
+      OpenGL (Open Graphics Library) is a cross-platform graphics interface for 3D and 2D graphics. This library allows Processing programs to utilize the speed of an OpenGL accelerated graphics card. This expands the potential for drawing more to the screen and creating larger windows. Processing interfaces with OpenGL through JOGL, an initiative from the Game Technology Group at Sun. You need to have an OpenGL accelerated graphics card installed on your computer to fully utilize this library. For more information, please visit the <a href="http://www.opengl.org/" target="_new">OpenGL</a> and <a href="https://jogl.dev.java.net/" target="_new">JOGL</a> websites.
 	</p>
 	<p>
-		There are no additional methods or fields for this library. 
-		It uses the Processing language, but renders geometry differently. 
-		Processing is not an IDE for using the JOGL API. 
-		We're using OpenGL graphics for one implementation of the Processing Core API.
+	  There are no additional methods or fields for this library. It uses the Processing language, but renders geometry differently. Processing is not an IDE for using the JOGL API. We're using OpenGL graphics for one implementation of the Processing Core API.
 	</p> 
 	<p>
-		Programs must import the library using the line 
-		<em>import processing.opengl.*</em> and the OpenGL renderer must be 
-		specified as the third parameter to the size() function. 
-		Software using this library may appear different on varying graphics 
-		cards. Some cards support OpenGL better than others.
+	  Programs must import the library using the line <em>import processing.opengl.*</em> and the OpenGL renderer must be specified as the third parameter to the size() function. Software using this library may appear different on varying graphics cards. Some cards support OpenGL better than others.
+	</p>
+	<p>
+	  Here's a simple example to get you started:
 	</p>
 	
 	<pre>
@@ -50,101 +40,15 @@ void draw() {
   a += 0.01;
 }</pre>
 
-</div>
 
-<div class="full">
-	<h6>OpenGL Issues</h6>
-	<p><UL>
-	<LI><EM>Try updating your drivers</EM></A>. 
-	If you're getting a blank screen with sketch that uses OpenGL, 
-	or the sketch is hanging or starting very slowly, you likely need to
-	update your drivers. Release 0110 and later use a newer version of
-	<A HREF="http://jogl.dev.java.net">JOGL</A>, which requires a software
-	update for some video cards. On Windows, updated drivers are available
-	from your machine's vendor, Windows Update, or the manufacturer of
-	your graphics card. On Mac OS X, use Software Update to make sure your
-	system is up to date. For instance, OS X 10.4.2 has problems with 
-	0110+ that are fixed in later releases of 10.4.x.
-	
-	<LI>We don't recommend running other OpenGL programs while running
-	  Processing in OpenGL mode. GL tends takes charge of things so
-	  results will be unexpected (windows from the other app showing
-	  through to the Processing window, etc.)
-	
-	<LI>OpenGL is really memory hungry because of how textures work. In
-	OpenGL mode, your images as the next power of two larger in either
-	direction. This means an image that's 40x190 pixels will be stored as
-	a 64x256 pixel x 4 bytes per pixel array (along with the original
-	image storage being width x height x 4). This is probably something we
-	can optimize in the future, however no attempt will be made until the
-	surrounding code is debugged. (<A
-	HREF="http://dev.processing.org/bugs/show_bug.cgi?id=150">Bug 150</A>)
-	
-	<LI><STRIKE>OpenGL sketches cannot be exported to run in a browser. The export
-	probably won't give an error, but they won't run properly. It's not
-	clear whether this is something that we can fix for the future.</STRIKE>
-	OpenGL sketches run on the web starting with release 0113.
-	(<A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=166">Bug 166</A>)
-	
-	<!--<LI>OpenGL requires Java 1.4 or later. -->
-	
-	<LI>If you're getting a blank screen or strange graphics on Windows, 
-	try messing with your graphics card settings (or even with a different
-	graphics card). There are lots of options that can cause trouble (if
-	you run into such a situation, please post to the board on how you got
-	it fixed).
-	
-	<LI>If you're getting this error on Windows: 
-	
-	<tt>"net.java.games.jogl.GLException: Unable to enumerate pixel formats 
-	  of window using wglGetPixelFormatAttribivARB: 0"</tt>
-	and your machine has built in "Intel" graphics (this is the case for 
-	  many Dell machines, for instance) you may just need an updated version 
-	  of your driver, which can be found 
-	<a href="http://downloadfinder.intel.com/scripts-df/Detail_Desc.asp?sType=prev&agr=N&ProductID=865&DwnldID=7919">here</a>. 
-	Of course, read the page closely and make sure that you in fact have
-	this graphics chipset on your machine before installing. Thanks to
-	Daniel Shiffman for finding this fix.
-	
-	<LI><STRIKE>On Mac OS X, I don't think there's much we can do about the
-	  following error: <tt>Error: view not ready, cannot lock focus at 
-	  "/Users/kbr/JavaNet/jogl/src/native/jogl/
-	   MacOSXWindowSystemInterface.m:createContext:51"</tt>
-	  that shows up sometimes on Run. Just hit Run again and things oughta
-	  work. This may be our bug, but who knows.</STRIKE> "Cannot lock
-	  focus" bug on OS X is fixed for Processing release 93, thanks to
-	  toxi for tracking it down as fixed with a new JOGL release.
-	
-	<LI>On Windows, if you're getting a lot of OpenGL crashing, blue
-	screens, or other mess, your driver might be bad (really!) 
-	For instance, if you're using a Dell, use the driver they provide 
-	(<a href="http://support.dell.com">support.dell.com</a>) instead of what
-	might be a more recent driver obtained directly from nvidia.com.
-	
-	<LI>When exporting a sketch that uses OpenGL, we only provide the necessary
-	binaries to make the sketch work with Windows (i586), 
-	Mac OS X (PPC and Universal), and Linux (i586). There are versions of 
-	JOGL that will run on other platforms, such as variants of SunOS or 
-	Linux on other platforms (such as amd64). Adding the "JOGL natives" for 
-	these platforms along with the default native .jar files that are included
-	with your sketch will enable support for those platforms. 
-	More recent releases of JOGL include the JOGL natives files with the
-	web start installation. Download that to get the JAR files for many 
-	platforms. 
-	The other native binaries can be found on the JOGL web site. Do not use the 
-	nightly downloads (they are not "signed", so they won't run in a browser),
-	and make sure that the version matches what's being used with Processing.
-	As of release 0131, this is JOGL 1.1.0.
-	
-	<LI>The integrated graphics chipsets that Apple has been using on their "low end" machines (such Intel GMA 950) really stink for OpenGL. Some don't support anti-aliasing at all. These cards are found in the Mac Mini (the Intel version only, the PPC versions had nice graphics), some iMacs, and the MacBook (but no the MacBook Pro). The same chipsets are used in many budget PCs, to which the same disclaimer applies.
-	
-	</ul>
-	</p>
+<href="http://wiki.processing.org/w/OpenGL_Problems">Problems with Processing and OpenGL are documented on the Processing Wiki.</a>
+
 </div>
 
 <div class="full">
 	<h6>Using the OpenGL Renderer - <EM>advanced users only!</EM> </h6>
-	<p><em>Generally, this should be only considered a last-ditch way to get at a particular 
+	<p>
+	  <em>Generally, this should be only considered a last-ditch way to get at a particular 
 	  GL-specific feature.</em> It makes your code completely incompatible 
 	  with everything else (such as future versions of Processing, or other 
 	  3D renderers) and will 
@@ -179,6 +83,7 @@ GL gl = ((PGraphicsOpenGL)g).gl;</pre>
 	  above caveats about "don't cry when it breaks" apply. </p>
 	  
 	  <pre>
+	  
 import javax.media.opengl.*;
 import processing.opengl.*;
 	
