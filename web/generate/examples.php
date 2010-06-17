@@ -4,13 +4,12 @@ require('../config.php');
 require('lib/Example.class.php');
 $benchmark_start = microtime_float();
 
-
 // update the files on the server via SVN
 
 // look for the .subversion folder somewhere else
 // otherwise will go looking for /home/root/.subversion or some other user
-$source = CONTENTDIR."examples";
-$path = BASEDIR;
+//$source = CONTENTDIR."examples";
+//$path = BASEDIR;
 $where = CONTENTDIR . 'examples';
 $there = CONTENTDIR;
 putenv('HOME=' . CONTENTDIR);
@@ -24,28 +23,8 @@ putenv('HOME=' . CONTENTDIR);
 `cd $there && /usr/local/bin/svn update examples_topics.xml`;
 `cd $where && /usr/local/bin/svn update`;
 
-// Removed this page 11 March 2009 - CR
-// Make the intro page
-$source = CONTENTDIR."static/";
-#$page = new Page("Learning", "Learning");
-#$page->content(file_get_contents($source."learning.html"));
-#writeFile('learning/index.html', $page->out());
 
-// Make the Books page
-$page = new Page("Books", "Books");
-$page->content(file_get_contents($source."books.html"));
-writeFile('learning/books/index.html', $page->out());
-
-// Make the Getting Started
-//$page = new Page("Getting Started", "Getting Started");
-//$page->content(file_get_contents($source."gettingstarted.html"));
-//writeFile('learning/gettingstarted/index.html', $page->out());
-
-// Disabled by REAS 10 Sept 2008
-// Make the hacks page
-//$page = new Page("Hacks", "Hacks");
-//$page->content(file_get_contents($source."hacks.html"));
-//writeFile('learning/hacks/index.html', $page->out());
+//$source = CONTENTDIR."static/";
 
 
 # --------------------------------- Basics
