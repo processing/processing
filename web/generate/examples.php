@@ -165,12 +165,12 @@ writeFile('learning/'.strtolower($subdir).'/index.html', $page->out());
 
 
 
-# --------------------------------- LIBRARIES
+# --------------------------------- LIBRARY
 
 
 $categories = get_examples_list('examples_libraries.xml');
 $break_after = array('Serial', 'Video (MovieMaker)');
-$subdir = 'Libraries';
+$subdir = 'Library';
 $dir = CONTENTDIR.'examples/'.$subdir.'/';
 
 $count = 0;
@@ -187,7 +187,7 @@ foreach ($categories as $cat => $array) {
 	}
 }
 
-$page = new Page('Libraries', 'Libraries');
+$page = new Page('Library', 'Library');
 $page->subtemplate('template.examples-libraries.html');
 
 $html = "<div class=\"ref-col\">\n";
