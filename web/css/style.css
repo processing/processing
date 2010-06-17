@@ -528,6 +528,64 @@ h2 { margin-bottom: 0; margin-top: 0;}
 
 
 /************************************************************** Library Indices ***/
+
+#Libraries .colone {
+	width: 300px;
+	float: left;
+	margin-right: 40px;
+}
+
+#Libraries .twocol {
+	width: 330px;
+	float: left; 
+}
+
+#Libraries .full {
+	width: 650px;
+	float: left;
+	margin-right: 0px;
+	margin-top: 30px;
+}
+
+#Libraries .content {
+        margin-left    : 55px;
+        margin-right   : 0px;
+        position: relative;
+}
+
+#Libraries .content {
+        margin-left    : 55px;
+        margin-right   : 0px;
+        position: relative;
+}
+
+
+//#Libraries h5 { margin-bottom: 0; font-size: 1em; }
+
+#Libraries .twocol p { margin-top: 0; }
+
+.lib-nav { display: block; 
+	margin-bottom: 10px; 
+	margin-left: -30px; 
+	padding: 7px 0 3px 30px; 
+	background: url(/img/back_off.gif) no-repeat 
+}
+
+#Libraries pre { margin-left: 30px; margin-bottom: 30px; }
+
+#Libraries h2 { margin-top: 2em; }
+#Libraries h5 { font-size: 1em; margin: 0; font-weight: bold; }
+#Libraries h5 a { font-weight: bold; }
+#Libraries h3 { clear: both; margin-bottom: 0; }
+#Libraries h4 { font-size: 1em; margin-bottom: .5em; }
+#Libraries h4 a {float:left; margin-left:-30px; martin-top:-5px; }
+
+#Libraries .threecol { float: left; width: 210px; margin-right: 20px; }
+#Libraries .threecol p { margin-top: 0; margin-bottom: 2em; }
+
+
+/*
+
 #Library-index .colone {
 	width: 300px;
 	float: left;
@@ -577,9 +635,10 @@ h2 { margin-bottom: 0; margin-top: 0;}
 #Libraries h4 { font-size: 1em; margin-bottom: .5em; }
 #Libraries h4 a {float:left; margin-left:-30px; martin-top:-5px; }
 
-
 #Libraries .threecol { float: left; width: 210px; margin-right: 20px; }
 #Libraries .threecol p { margin-top: 0; margin-bottom: 2em; }
+
+*/
 
 /************************************************************** environment ***/
 #Environment h1 { margin-top: 2em; }
