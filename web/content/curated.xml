@@ -2,6 +2,16 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <curated>
 
+<software name="Computing Kaizen" by="GSAPP Hasegawa/Collins Studio" scroll="yes" resize="yes" width="1024" height="700">
+        <image>images/computing-kaizen.jpg</image>
+          <description>
+              Toy software produced by an advanced graduate studio at the Columbia University GSAPP. Centered around the design of a technology incubator in the Akihabara district of Tokyo, this studio explored evolutionary structures that anticipate change and internalize complex relationships.
+          </description>
+          <location>http://proxyarch.com/kaizen</location>
+          <link href="http://www.proxyarch.com">Proxy</link>
+          <link href="http://www.arch.columbia.edu/">GSAPP</link>
+</software>
+
 <software name="Fine Collection of Curious Sound Objects" by="Georg Reil, Kathy Scheuring" scroll="yes" resize="yes" width="1024" height="700">
         <image>images/finecollection.jpg</image>
           <description>
