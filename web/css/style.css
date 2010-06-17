@@ -272,7 +272,8 @@ td img { margin: 0; display: block; }
 
 /**************************************************************** Exhibition ***/
 
-#Exhibition .colone { width: 224px; float: left; margin-right: 35px; }
+//#Exhibition .colone { width: 224px; float: left; margin-right: 35px; }
+#Exhibition .colone { width: 675px; float: left; margin-right: 35px; }
 #Exhibition .coltwo { width: 165px; float: left; margin-right: 25px; }
 #Exhibition .colthree { width: 224px; float: left; margin-right: 20px; }
 #Exhibition h2 { margin: 0 0 20px 0; font-size: 1em; }
@@ -286,6 +287,7 @@ td img { margin: 0; display: block; }
         position: relative;
 }
 
+/**
 #Collection .colone { width: 675px; float: left; margin-right: 35px; }
 #Collection .coltwo { width: 165px; float: left; margin-right: 25px; }
 #Collection .colthree { width: 224px; float: left; margin-right: 20px; }
@@ -299,6 +301,7 @@ td img { margin: 0; display: block; }
         margin-right   : 0px;
         position: relative;
 }
+*/
 
 #Tutorials .colone { width: 224px; float: left; margin-right: 35px; }
 #Tutorials .coltwo { width: 165px; float: left; margin-right: 25px; }
