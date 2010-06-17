@@ -52,9 +52,30 @@ public class ProcessingCompletionProcessor implements IContentAssistProcessor {
 		}
 	}
 
-	protected final static String[] fgProposals=
-		{ "abstract", "boolean", "break", "byte", "case", "catch", "char", "class", "continue", "default", "do", "double", "else", "extends", "false", "final", "finally", "float", "for", "if", "implements", "import", "instanceof", "int", "interface", "long", "native", "new", "null", "package", "private", "protected", "public", "return", "short", "static", "super", "switch", "synchronized", "this", "throw", "throws", "transient", "true", "try", "void", "volatile", "while" }; //$NON-NLS-48$ //$NON-NLS-47$ //$NON-NLS-46$ //$NON-NLS-45$ //$NON-NLS-44$ //$NON-NLS-43$ //$NON-NLS-42$ //$NON-NLS-41$ //$NON-NLS-40$ //$NON-NLS-39$ //$NON-NLS-38$ //$NON-NLS-37$ //$NON-NLS-36$ //$NON-NLS-35$ //$NON-NLS-34$ //$NON-NLS-33$ //$NON-NLS-32$ //$NON-NLS-31$ //$NON-NLS-30$ //$NON-NLS-29$ //$NON-NLS-28$ //$NON-NLS-27$ //$NON-NLS-26$ //$NON-NLS-25$ //$NON-NLS-24$ //$NON-NLS-23$ //$NON-NLS-22$ //$NON-NLS-21$ //$NON-NLS-20$ //$NON-NLS-19$ //$NON-NLS-18$ //$NON-NLS-17$ //$NON-NLS-16$ //$NON-NLS-15$ //$NON-NLS-14$ //$NON-NLS-13$ //$NON-NLS-12$ //$NON-NLS-11$ //$NON-NLS-10$ //$NON-NLS-9$ //$NON-NLS-8$ //$NON-NLS-7$ //$NON-NLS-6$ //$NON-NLS-5$ //$NON-NLS-4$ //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
-
+	/*
+	 * The list of proposals that populates the content assistance dialog box.
+	 * 
+	 * Dialog assistance is not context sensitive right now, so it will always provide the same suggestions
+	 * anytime is provides suggestions. I find it more annoying than useful, so until it is done right I'm
+	 * turning off the pop up box by leaving this empty.
+	 * 
+	 * Auto-completion by hotkey will still work, but it will pick the closest keyword or variable that is
+	 * already present in the sketch. This is actually useful, so I'm leaving that intact for now.
+	 * 
+	 * [lonnen] June 17, 2010
+	 * 
+	 * @see http://help.eclipse.org/help33/index.jsp?topic=/org.eclipse.platform.doc.isv/guide/jface.htm
+	 */
+	protected final static String[] fgProposals= //ProcessingCodeScanner.getKeywords(); // naive solution?
+  		//generated automatically for Java. Not useful, ignoring them for now.
+//		  { "abstract", "boolean", "break", "byte", "case", "catch", "char", "class", "continue", 
+//		    "default", "do", "double", "else", "extends", "false", "final", "finally", "float", "for", 
+//		    "if", "implements", "import", "instanceof", "int", "interface", "long", "native", "new", 
+//		    "null", "package", "private", "protected", "public", "return", "short", "static", "super", 
+//		    "switch", "synchronized", "this", "throw", "throws", "transient", "true", "try", "void", 
+//		    "volatile", "while" }; 		
+		  {}; // turns off the content assist dialog box
+		
 	protected IContextInformationValidator fValidator= new Validator();
 
 	/* (non-Javadoc)
