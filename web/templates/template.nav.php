@@ -61,6 +61,8 @@ function navigation($section = '')
     $html .= "\t\t\t\t\t" . l('About', in_array($section, $abo)) . " \n";
        
     $html .= "\t\t\t\t\t" . "<a href=\"http://wiki.processing.org/w/FAQ\"" . 'class="faq"' . ">&raquo; FAQ</a>\n";
+    $html .= "\t\t\t\t\t" . "<a href=\"http://wiki.processing.org/w/FAQ\"" . 'class="wiki"' . ">&raquo; WIKI</a>\n";
+
        
     $html .= "\t\t\t\t</div>\n";
     

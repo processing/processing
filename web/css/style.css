@@ -121,6 +121,7 @@ a:link:visited {
 }
 
 .faq { position: absolute; right: 50px; color: #cccccc }
+.wiki { position: relative; right: 50px; color: #cccccc }
 
 #subNav.learning { margin-left: 225px; }
 .active { color: #cccccc !important; }
