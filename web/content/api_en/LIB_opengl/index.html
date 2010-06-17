@@ -6,7 +6,7 @@
 
 <div class="full-alt">
 	<p>
-	  [Note: Problems with Processing and OpenGL are documented on the <a href="http://wiki.processing.org/w/OpenGL_Problems">Processing Wiki.</a>]
+	  <em>Problems with Processing and OpenGL are documented on the <a href="http://wiki.processing.org/w/OpenGL_Problems">Processing Wiki</a>.</em>
 	</p>
 	
     <p>
@@ -41,14 +41,16 @@ void draw() {
   rotateX(PI/2);
   rect(-200, -200, 400, 400);
   a += 0.01;
-}</pre></p>
+}
+</pre>
+</p>
 
 
 
 </div>
 
 <div class="full">
-	<h6>Using the OpenGL Renderer - <EM>advanced users only!</EM> </h6>
+	<h6>Using the OpenGL Renderer - <em>advanced users only!</em></h6>
 	<p>
 	  <em>Generally, this should be only considered a last-ditch way to get at a particular 
 	  GL-specific feature.</em> It makes your code completely incompatible 
@@ -61,29 +63,35 @@ void draw() {
 	  good Java IDE and get JOGL installed, Processing is probably 
 	  not the way to do it because that's the kind of confusing mess we're trying
 	  to insulate you from.
-	  </p>
-	<p>To get access to the GL object, use the following:
-	<pre>
-GL gl = ((PGraphicsOpenGL)g).gl;</pre>
-
-	  <p>This will give you <a href="https://jogl.dev.java.net/">JOGL's</a> GL 
-	    object that talks directly to OpenGL and will let you make OpenGL 
-	    calls directly. </p>
-	<p>   Again, <em>this is not supported</em>, in the sense that if you 
-	    get weird problems with a GL-based sketch that uses this method, you're on 
-	    your own. </p>
-	<p>  Because most of the work in drawing is handled by Processing, most OpenGL 
-	  calls will not work, because most things won't be set 
-	  up properly. Therefore, using the GL object may only be useful for 
-	  tweaking obscure OpenGL parameters.</p>
+	</p>
 	
-	  <p>Another option for talking directly to OpenGL in release 0116 and later is 
-	  to use the beginGL() and endGL() methods. These were added against my better 
-	  judgement, and handle setting up the camera matrices
-	  (though still no lighting or other parameters). Many features still 
-	  will not work, but it opens up lots of control for geometry. All the
-	  above caveats about "don't cry when it breaks" apply. </p>
+	<p>
+		To get access to the GL object, use the following:
+	<pre>
+
+GL gl = ((PGraphicsOpenGL)g).gl;
+</pre>
+	</p>
+	
+	<p>
+		This will give you <a href="https://jogl.dev.java.net/">JOGL's</a> GL 
+	    object that talks directly to OpenGL and will let you make OpenGL 
+	    calls directly. 
+	</p>
+	<p>   
+		Again, <em>this is not supported</em>, in the sense that if you 
+	    get weird problems with a GL-based sketch that uses this method, you're on 
+	    your own. 
+	</p>
+	<p>  
+		Because most of the work in drawing is handled by Processing, most OpenGL calls will not work, because most things won't be set up properly. Therefore, using the GL object may only be useful for tweaking obscure OpenGL parameters.
+	</p>
+	
+	<p>
+	  	Another option for talking directly to OpenGL in release 0116 and later is to use the beginGL() and endGL() methods. These were added against my better judgement, and handle setting up the camera matrices (though still no lighting or other parameters). Many features still will not work, but it opens up lots of control for geometry. All the above caveats about "don't cry when it breaks" apply. 
+	</p>
 	  
+	<p>
 	  <pre>
 	  
 import javax.media.opengl.*;
@@ -116,6 +124,6 @@ void draw() {
   a += 0.5;
 }
 	</pre>
-	Always do the assignment/cast from g to pgl inside draw(), because 'g' may change from time to time. In addition, use the GL object returned by beginGL() for the same reason, that the GL context itself may have changed. In practice, I've not really seen this happen, but this is strongly encouraged to prevent things from crashing in a bad way (think blue screen/kernel panic kinds of bad ways).
+		Always do the assignment/cast from g to pgl inside draw(), because 'g' may change from time to time. In addition, use the GL object returned by beginGL() for the same reason, that the GL context itself may have changed. In practice, I've not really seen this happen, but this is strongly encouraged to prevent things from crashing in a bad way (think blue screen/kernel panic kinds of bad ways).
 	  </p> 
 </div>
