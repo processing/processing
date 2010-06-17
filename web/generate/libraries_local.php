@@ -43,7 +43,7 @@ foreach ($libraries as $lib) {
 
     // template and copy index
     $index = CONTENTDIR.$source.'/index.html';
-    $page = new LocalPage(ucfirst($lib) . ' \\ Libraries', 'Libraries', 'Library-index', '../../');
+    $page = new LocalPage(ucfirst($lib) . ' \\ Libraries', 'Libraries', 'Libraries', '../../');
     $page->content(file_get_contents($index));
     writeFile('distribution/'.$destination.'/index.html', $page->out());
  
