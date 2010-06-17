@@ -167,4 +167,17 @@ public class ProcessingCodeScanner extends RuleBasedScanner {
 		setRules(result);
 	}
 	
+	/**
+	 * Concatenates the keyword arrays into one array and returns it.
+	 * 
+	 * @return A string array of all the keywords
+	 */
+	public final static String[] getKeywords(){
+		String[] result = new String[fgKeywords1.length + fgKeywords2.length + fgKeywords3.length];
+		System.arraycopy(fgKeywords1, 0, result, 0, fgKeywords1.length);
+		System.arraycopy(fgKeywords2, 0, result, fgKeywords1.length, fgKeywords2.length);
+		System.arraycopy(fgKeywords3, 0, result, fgKeywords1.length+fgKeywords2.length, fgKeywords3.length);
+		return result;
+	}
+	
 }
