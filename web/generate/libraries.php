@@ -50,7 +50,8 @@ foreach ($libraries as $lib) {
     if($lib == 'pdf' || $lib == 'dxf') {
 	  $page = new Page(strtoupper($lib) . ' \\ Libraries', 'Libraries', 'Library-index');
 	} else {
-	  $page = new Page(ucfirst($lib) . ' \\ Libraries', 'Library-index');
+	  //$page = new Page(ucfirst($lib) . ' \\ Libraries', 'Library-index');
+	  $page = new Page(ucfirst($lib) . ' \\ Libraries', 'Libraries');
 	}
 	$page->language($lang);
     $page->content(file_get_contents($index));
