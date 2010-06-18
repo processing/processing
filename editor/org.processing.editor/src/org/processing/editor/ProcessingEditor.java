@@ -45,7 +45,7 @@ import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.TextEditorAction;
 import org.eclipse.ui.texteditor.TextOperationAction;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
-//import org.eclipse.ui.texteditor.SourceViewerDecorationSupport; // error checking annotations
+//import org.eclipse.ui.texteditor.SourceViewerDecorationSupport; // error checking annotations?
 
 /**
  * Sets up a Processing specific text editor.
@@ -54,7 +54,10 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
  */
 public class ProcessingEditor extends TextEditor {
 	
-	
+	/**
+	 * Essentially a factory class that creates code folding regions around
+	 * the currently selected text.
+	 */
 	private class DefineFoldingRegionAction extends TextEditorAction {
 
 		public DefineFoldingRegionAction(ResourceBundle bundle, String prefix, ITextEditor editor) {
@@ -65,7 +68,10 @@ public class ProcessingEditor extends TextEditor {
 			return (IAnnotationModel) editor.getAdapter(ProjectionAnnotationModel.class);
 		}
 		
-		/*
+		/**
+		 * Defines a code folding region around a selected region of text
+		 * and puts an annotation in the left gutter that toggles hiding the text.
+		 * 
 		 * @see org.eclipse.jface.action.Action#run()
 		 */
 		public void run() {
@@ -181,54 +187,60 @@ public class ProcessingEditor extends TextEditor {
 			fOutlinePage.setInput(input);
 	}
 	
-	/*
-	 * @see org.eclipse.ui.texteditor.ExtendedTextEditor#editorContextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
+	/**
+	 * {@inheritDoc}
 	 */
 	protected void editorContextMenuAboutToShow(IMenuManager menu) {
 		super.editorContextMenuAboutToShow(menu);
-		addAction(menu, "ContentAssistProposal"); //$NON-NLS-1$
-		addAction(menu, "ContentAssistTip"); //$NON-NLS-1$
+		//These menu items are linked to non-functional things. Disabling [lonnen] june 18, 2010
+		//addAction(menu, "ContentAssistProposal"); //$NON-NLS-1$
+		//addAction(menu, "ContentAssistTip"); //$NON-NLS-1$
 		addAction(menu, "DefineFoldingRegion");  //$NON-NLS-1$
 	}
 	
-	/** The <code>ProcessingEditor</code> implementation of this 
-	 * <code>AbstractTextEditor</code> method performs gets
-	 * the java content outline page if request is for a an 
-	 * outline page.
+//TODO Write a useful outline
+//  The outline wasn't doing anything useful. Until it does, leave this commented
+//  out to keep the outline from showing up at all.
+//
+//	/** The <code>ProcessingEditor</code> implementation of this 
+//	 * <code>AbstractTextEditor</code> method gets the outline page
+//	 * when it is requested.
+//	 * 
+//	 * @param required the required type
+//	 * @return an adapter for the required type or <code>null</code>
+//	 */ 
+//	public Object getAdapter(Class required) {
+//		
+//		if (IContentOutlinePage.class.equals(required)) {
+//			if (fOutlinePage == null) {
+//				fOutlinePage= new ProcessingContentOutlinePage(getDocumentProvider(), this);
+//				if (getEditorInput() != null)
+//					fOutlinePage.setInput(getEditorInput());
+//			}
+//			return fOutlinePage;
+//		}
+//		
+//		if (fProjectionSupport != null) {
+//			Object adapter= fProjectionSupport.getAdapter(getSourceViewer(), required);
+//			if (adapter != null)
+//				return adapter;
+//		}
+//		
+//		return super.getAdapter(required);
+//	}
+		
+	/**
+	 * Initializes this editor and provides a <code>SourceViewerConfiguration</code>
 	 * 
-	 * @param required the required type
-	 * @return an adapter for the required type or <code>null</code>
-	 */ 
-	public Object getAdapter(Class required) {
-		
-		if (IContentOutlinePage.class.equals(required)) {
-			if (fOutlinePage == null) {
-				fOutlinePage= new ProcessingContentOutlinePage(getDocumentProvider(), this);
-				if (getEditorInput() != null)
-					fOutlinePage.setInput(getEditorInput());
-			}
-			return fOutlinePage;
-		}
-		
-		if (fProjectionSupport != null) {
-			Object adapter= fProjectionSupport.getAdapter(getSourceViewer(), required);
-			if (adapter != null)
-				return adapter;
-		}
-		
-		return super.getAdapter(required);
-	}
-		
-	/* (non-Javadoc)
-	 * Method declared on AbstractTextEditor
+	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration
 	 */
 	protected void initializeEditor() {
 		super.initializeEditor();
 		setSourceViewerConfiguration(new ProcessingSourceViewerConfiguration());
 	}
 	
-	/*
-	 * @see org.eclipse.ui.texteditor.ExtendedTextEditor#createSourceViewer(org.eclipse.swt.widgets.Composite, org.eclipse.jface.text.source.IVerticalRuler, int)
+	/**
+	 * {@inheritDoc}
 	 */
 	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
 		
@@ -244,7 +256,9 @@ public class ProcessingEditor extends TextEditor {
 		return viewer;
 	}
 	
-	/*
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see org.eclipse.ui.texteditor.ExtendedTextEditor#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createPartControl(Composite parent) {
@@ -257,7 +271,9 @@ public class ProcessingEditor extends TextEditor {
 		viewer.doOperation(ProjectionViewer.TOGGLE);
 	}
 	
-	/*
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#adjustHighlightRange(int, int)
 	 */
 	protected void adjustHighlightRange(int offset, int length) {
