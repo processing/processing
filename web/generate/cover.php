@@ -17,7 +17,7 @@ $page->subtemplate('template.cover.html');
 //$page->set('updates', get_updates(24));
 //$page->set('happenings', get_happenings(5));
 //$page->set('courses', get_courses_short(5));
-$page->set('exhibition', get_curated_short(2));
+//$page->set('exhibition', get_curated_short(2));
 writeFile("index.php", $page->out());
     
 $benchmark_end = microtime_float();
