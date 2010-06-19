@@ -32,7 +32,7 @@ import org.osgi.framework.BundleContext;
  */
 public class ProcessingEditorPlugin extends AbstractUIPlugin {
 	
-	public static final String PLUGIN_ID = "org.processing.ProcessingEditor";
+	public static final String ID = "org.processing.ProcessingEditor";
 	public static final String PROCESSING_PARTITIONING= "__processing_partitioning";
 	
 	// The shared instance
