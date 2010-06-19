@@ -27,6 +27,8 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
+import java.util.EmptyStackException;
+import java.util.Stack;
 
 import android.opengl.GLU;
 import android.view.SurfaceHolder;
@@ -304,6 +306,11 @@ public class PGraphicsAndroid3D extends PGraphics {
   public String OPENGL_RENDERER;
   public String OPENGL_VERSION;
 
+  // .......................................................
+  
+  protected Stack<PFramebuffer> fboStack;
+  protected PFramebuffer currentFramebuffer;
+  
   // ////////////////////////////////////////////////////////////
 
   public PGraphicsAndroid3D() {
@@ -503,14 +510,38 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   protected void copyFrameToScreenTexture() {
     gl.glFinish(); // Make sure that the execution off all the openGL commands
-                           // is finished.    
-
+                           // is finished.
+    
     gl.glEnable(GL10.GL_TEXTURE_2D);
     gl.glBindTexture(GL10.GL_TEXTURE_2D, screenTexID[0]);
     gl.glCopyTexImage2D(GL10.GL_TEXTURE_2D, 0, GL10.GL_RGB, 0, 0, screenTexWidth, screenTexHeight, 0); 
     gl.glDisable(GL10.GL_TEXTURE_2D);
   }
 
+  // ////////////////////////////////////////////////////////////
+
+  // FRAMEBUFFERS
+  
+  
+  public void pushFramebuffer() {
+    fboStack.push(currentFramebuffer);
+  }
+
+  public void setFramebuffer(PFramebuffer fbo) {
+    currentFramebuffer = fbo;
+    currentFramebuffer.bind();
+  }
+
+  public void popFramebuffer() {
+    try {
+      currentFramebuffer = fboStack.pop();
+      currentFramebuffer.bind();
+    } catch (EmptyStackException e) {
+      System.out.println("Empty framebuffer stack");
+    }
+  }
+
+  
   // ////////////////////////////////////////////////////////////
 
   // FRAME
@@ -607,6 +638,17 @@ public class PGraphicsAndroid3D extends PGraphics {
       gl.glClearColor(0, 0, 0, 0);
       gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
+
+      /*
+      if (framebuffer == null) {
+        createFrambuffer();
+      }
+      gl.glClearColor(0, 0, 0, 0);
+      gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+      framebuffer.bind();
+
+      */
+      
       drawScreenTexture();
     }
 
@@ -614,6 +656,12 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
 
   public void endDraw() {
+    
+    /*
+     framebuffer.unbind();
+     
+     drawFramebufferTexture();
+    */
     
     if (!clear && screenTexID[0] != 0) {
       copyFrameToScreenTexture();
@@ -4429,7 +4477,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       } catch (ClassCastException cce) {
         gl11xp = null;
       }
-
+      
       parent.handleDraw();
 
       gl = null;
@@ -4458,13 +4506,14 @@ public class PGraphicsAndroid3D extends PGraphics {
         gl11xp = (GL11ExtensionPack) gl;
 
         // Not implemented in Android 2.1
-        // int[] fbo = {0};
-        // gl11xp.glGenFramebuffersOES(1, fbo, 0);
+         int[] fbo = {0};
+         gl11xp.glGenFramebuffersOES(1, fbo, 0);
+         System.out.println("FBO id: " + fbo[0]);
 
       } catch (ClassCastException cce) {
         gl11xp = null;
       }
-
+      
       setSize(iwidth, iheight);
       gl = null;
       gl11 = null;
@@ -4748,6 +4797,15 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
   }
 
+  // TODO: finish gl error handling.  
+  static void checkGLError(GL gl) {
+      int error = ((GL10) gl).glGetError();
+      if (error != GL10.GL_NO_ERROR) {
+          throw new RuntimeException("GLError 0x" + Integer.toHexString(error));
+      }
+  }
+  
+  
   // ////////////////////////////////////////////////////////////
 
   // INTERNAL MATH
