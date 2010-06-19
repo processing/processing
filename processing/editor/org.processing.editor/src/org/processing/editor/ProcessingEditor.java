@@ -44,7 +44,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.TextEditorAction;
 import org.eclipse.ui.texteditor.TextOperationAction;
-import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
+//import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 //import org.eclipse.ui.texteditor.SourceViewerDecorationSupport; // error checking annotations?
 
 /**
