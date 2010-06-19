@@ -33,7 +33,7 @@ import org.osgi.framework.BundleContext;
 public class ProcessingEditorPlugin extends AbstractUIPlugin {
 	
 	public static final String PLUGIN_ID = "org.processing.ProcessingEditor";
-	public static final String PROCESSING_PARTITIONING= "__processing_partitioning";   //$NON-NLS-1$
+	public static final String PROCESSING_PARTITIONING= "__processing_partitioning";
 	
 	// The shared instance
 	private static ProcessingEditorPlugin fgInstance;
@@ -143,18 +143,18 @@ public class ProcessingEditorPlugin extends AbstractUIPlugin {
 	  * @param filename the file to be loaded
 	  * @return BufferedInputStream to read the file with
 	  */
- 	public BufferedInputStream getFileInputStream(String filename) {
-		   Bundle bundle = getDefault().getBundle();
-		   URL fileLocation;
-		   try {
-		       fileLocation = FileLocator.toFileURL(bundle.getEntry(filename));
-		       BufferedInputStream file = new BufferedInputStream(fileLocation.openStream());
-			   return file;
-		   } catch (IOException e) {
-		       e.printStackTrace();
-		   }
-		   return null; // this should be more explicit than a null pointer from a caught exception, right? [lonnen] June 15, 2010
- 	}
+	 public BufferedInputStream getFileInputStream(String filename) {
+		 //TODO consider replacing this with find (IPath path) and openStream (IPath file)
+		 Bundle bundle = getDefault().getBundle(); // the plugin's root directory, regardless of install directory
+		 try {
+			 URL fileLocation = FileLocator.toFileURL(bundle.getEntry(filename));
+			 BufferedInputStream file = new BufferedInputStream(fileLocation.openStream());
+			 return file;
+		 } catch (IOException e) {
+			 e.printStackTrace();
+		 }
+		 return null; // this should be more explicit than a null pointer from a caught exception, right? [lonnen] June 15, 2010
+	 }
 
 
 }
