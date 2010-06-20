@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-09 Ben Fry and Casey Reas
+  Copyright (c) 2004-10 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -974,7 +974,7 @@ public class Editor extends JFrame implements RunnerListener {
       });
     menu.add(item);
 
-    item = newJMenuItemShift("Copy for Discourse", 'C');
+    item = newJMenuItemShift("Copy as HTML", 'C');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
 //          SwingUtilities.invokeLater(new Runnable() {

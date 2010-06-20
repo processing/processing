@@ -4,7 +4,7 @@
   Part of the Processing project - http://processing.org
 
   Copyright (c) 2005-06 Ignacio Manuel Gonzalez Moreta.
-  Copyright (c) 2006-08 Ben Fry and Casey Reas
+  Copyright (c) 2006-10 Ben Fry and Casey Reas
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -32,36 +32,29 @@ import processing.app.syntax.*;
 import processing.core.PApplet;
 
 /**
- * Format for Discourse Tool
+ * Format for Discourse Tool. 
+ * This code may later be moved to its own 'Tool' plug-in.
  * <p/>
  * Original code by <A HREF="http://usuarios.iponet.es/imoreta">owd</A>.
  * Revised and updated for revision 0108 by Ben Fry (10 March 2006).
- * This code may later be moved to its own 'Tool' plugin, but is included
- * with release 0108+ while features for the "Tools" menu are in testing.
  * <p/>
  * Updated for 0122 to simply copy the code directly to the clipboard,
  * rather than opening a new window.
  * <p/>
  * Updated for 0144 to only format the selected lines.
- * <p/>
- * Notes from the original source:
- * Discourse.java This is a dirty-mix source.
- * NOTE that: No macs and no keyboard. Unreliable source.
- * Only format processing code using fontMetrics.
- * It works under my windows XP + PentiumIV + Processing 0091.
+ * <p/> 
+ * Updated for 0185 to incorporate the HTML changes from the Arduino project, 
+ * and set the formatter to always use HTML (disabling, but not removing the 
+ * YaBB version of the code) and also fixing it for the Tools API.
  */
 public class DiscourseFormat {
 
   Editor editor;
   // JTextArea of the actual Editor
   JEditTextArea textarea;
+  boolean html = true;
 
 
-  /**
-   * Creates a new window with the formated (YaBB tags) sketchcode
-   * from the actual Processing Tab ready to send to the processing discourse
-   * web (copy & paste)
-   */
   public DiscourseFormat(Editor editor) {
     this.editor = editor;
     this.textarea = editor.getTextArea();
@@ -73,7 +66,7 @@ public class DiscourseFormat {
    */
   public void show() {
     // [code] tag cancels other tags, using [quote]
-    StringBuffer cf = new StringBuffer("[quote]\n");
+    StringBuffer cf = new StringBuffer(html ? "<pre>\n" : "[quote]\n");
 
     int selStart = textarea.getSelectionStart();
     int selStop = textarea.getSelectionStop();
@@ -97,7 +90,7 @@ public class DiscourseFormat {
       appendFormattedLine(cf, i);
     }
 
-    cf.append("\n[/quote]");
+    cf.append(html ? "\n</pre>" : "\n[/quote]");
 
     StringSelection formatted = new StringSelection(cf.toString());
     Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -107,8 +100,8 @@ public class DiscourseFormat {
         }
       });
 
-    editor.statusNotice("Code formatted for processing.org/discourse " +
-                   "has been copied to the clipboard.");
+    editor.statusNotice("Code formatted as HTML " +
+                        "has been copied to the clipboard.");
   }
 
 
@@ -178,12 +171,12 @@ public class DiscourseFormat {
 //          fm = painter.getFontMetrics();
         } else {
           // Place open tags []
-          cf.append("[color=#");
+          cf.append(html ? "<span style=\"color: #" : "[color=#");
           cf.append(PApplet.hex(styles[id].getColor().getRGB() & 0xFFFFFF, 6));
-          cf.append("]");
+          cf.append(html ? ";\">" : "]");
 
           if (styles[id].isBold())
-            cf.append("[b]");
+            cf.append(html ? "<b>" : "[b]");
 
 //          fm = styles[id].getFontMetrics(defaultFont);
         }
@@ -193,7 +186,7 @@ public class DiscourseFormat {
           char c = segmentArray[segmentOffset + offset + j];
           if (offset == 0 && c == ' ') {
             // Works on Safari but not Camino 1.6.3 or Firefox 2.x on OS X.
-            cf.append('\u00A0');  // &nbsp;
+            cf.append(html ? "&nbsp;" : '\u00A0');  // &nbsp;
 //            if ((j % 2) == 1) {
 //              cf.append("[b]\u00A0[/b]");
 //            } else {
@@ -204,9 +197,9 @@ public class DiscourseFormat {
           }
           // Place close tags [/]
           if (j == (length - 1) && id != Token.NULL && styles[id].isBold())
-            cf.append("[/b]");
+            cf.append(html ? "</b>" : "[/b]");
           if (j == (length - 1) && id != Token.NULL)
-            cf.append("[/color]");
+            cf.append(html ? "</span>" : "[/color]");
 //          int charWidth;
 //          if (c == '\t') {
 //            charWidth = (int) painter
