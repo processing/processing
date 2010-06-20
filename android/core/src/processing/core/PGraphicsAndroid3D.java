@@ -294,9 +294,11 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected Stack<PFramebuffer> fbStack;
   protected PFramebuffer screenFramebuffer;
   protected PFramebuffer drawFramebuffer;
-  protected PImage drawImage;
-  protected PTexture drawTexture;
+  protected PImage[] drawImages;
+  protected PTexture[] drawTextures;
+  protected int drawIndex;
   protected PFramebuffer currentFramebuffer;
+  protected int[] drawTexCrop;
 
   // ........................................................
 
@@ -485,8 +487,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     screenTexCrop[0] = 0;
     screenTexCrop[1] = 0;
-    screenTexCrop[2] = screenTexWidth;
-    screenTexCrop[3] = screenTexHeight;      
+    screenTexCrop[2] = width; //screenTexWidth;
+    screenTexCrop[3] = height; //screenTexHeight;      
   }
 
   protected void drawScreenTexture() {
@@ -504,12 +506,15 @@ public class PGraphicsAndroid3D extends PGraphics {
     // rendering the texture quad. In this way the texture doesn't occlude
     // any geometry latter drawn by the user.
     gl.glDepthMask(false);
+    gl.glDisable(GL10.GL_BLEND);
     
     gl11.glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, screenTexCrop, 0);
-    gl11x.glDrawTexiOES(0, 0, 0, screenTexWidth, screenTexHeight);
+    //gl11x.glDrawTexiOES(0, 0, 0, screenTexWidth, screenTexHeight);
+    gl11x.glDrawTexiOES(0, 0, 0, width, height);
     
     gl.glDisable(GL10.GL_TEXTURE_2D);   
     gl.glDepthMask(true);
+    gl.glEnable(GL10.GL_BLEND);
   }
 
   protected void copyFrameToScreenTexture() {
@@ -544,22 +549,29 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
   }
   
-  public void renderDrawTexture() {
-    int[] crop = new int[4];
-    crop[0] = 0;
-    crop[1] = 0;
-    crop[2] = width;
-    crop[3] = height;      
+  public void renderDrawTexture(int idx) {
+    PTexture tex = drawTextures[idx];
 
     gl.glEnable(GL10.GL_TEXTURE_2D);
-    gl.glBindTexture(GL10.GL_TEXTURE_2D, drawTexture.getGLTextureID());
-    //gl.glDepthMask(false);
-        
-    gl11.glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, crop, 0);
+    gl.glBindTexture(GL10.GL_TEXTURE_2D, tex.getGLTextureID());
+    gl.glDepthMask(false);
+    gl.glDisable(GL10.GL_BLEND);
+    
+    gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_REPLACE);
+    gl11.glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, drawTexCrop, 0);
     gl11x.glDrawTexiOES(0, 0, 0, width, height);
     
     gl.glDisable(GL10.GL_TEXTURE_2D);   
-    //gl.glDepthMask(true);    
+    gl.glDepthMask(true);
+    gl.glEnable(GL10.GL_BLEND);
+  }
+  
+  public void swapDrawIndex() {
+    drawIndex = (drawIndex + 1) % 2; 
+  }
+  
+  public PImage getBackground() {
+    return drawImages[(drawIndex + 1) % 2];
   }
   
   // ////////////////////////////////////////////////////////////
@@ -648,39 +660,54 @@ public class PGraphicsAndroid3D extends PGraphics {
 
     shapeFirst = 0;
 
-    if (fboSupported) {
-      if (fbStack == null) {
-        fbStack = new Stack<PFramebuffer>();
+    if (fbStack == null) {
+      fbStack = new Stack<PFramebuffer>();
 
-        screenFramebuffer = new PFramebuffer(parent, width, height, true);
-        setFramebuffer(screenFramebuffer);
-        
-        drawImage = parent.createImage(width, height, ARGB);
-        drawTexture = drawImage.getTexture();
-        
-        drawFramebuffer = new PFramebuffer(parent, drawTexture.getGLWidth(), drawTexture.getGLHeight(), false);
-        drawFramebuffer.addColorBuffer(drawTexture);
-        drawFramebuffer.addDepthBuffer(DEPTH_BITS);
-        if (0 < STENCIL_BITS) {
-          drawFramebuffer.addStencilBuffer(STENCIL_BITS); 
-        }
-        drawFramebuffer.validFbo();
-  
-      }
-      
-      pushFramebuffer();
-      setFramebuffer(drawFramebuffer);
-      
-      //gl.glClearColor(0, 0, 0, 0);
-      //gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-
-        
-    } else {
+      screenFramebuffer = new PFramebuffer(parent, width, height, true);
+      setFramebuffer(screenFramebuffer);
+    }
     
-      if (clear) {
+    if (clear) {
+      gl.glClearColor(0, 0, 0, 0);
+      gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+    } else {
+      if (fboSupported) {
+        if (drawFramebuffer == null) {
+          drawTexCrop = new int[4];
+          drawTexCrop[0] = 0;
+          drawTexCrop[1] = 0;
+          drawTexCrop[2] = width;
+          drawTexCrop[3] = height;      
+        
+          drawImages = new PImage[2];
+          drawImages[0] = parent.createImage(width, height, ARGB, NEAREST);
+          drawImages[1] = parent.createImage(width, height, ARGB, NEAREST);
+        
+          drawTextures = new PTexture[2];
+          drawTextures[0] = drawImages[0].getTexture();
+          drawTextures[1] = drawImages[1].getTexture();
+        
+          drawIndex = 0;
+        
+          drawFramebuffer = new PFramebuffer(parent, drawTextures[0].getGLWidth(), drawTextures[0].getGLHeight(), false);
+        
+          drawFramebuffer.addDepthBuffer(DEPTH_BITS);
+          if (0 < STENCIL_BITS) {
+            drawFramebuffer.addStencilBuffer(STENCIL_BITS); 
+          }
+        }
+      
+        pushFramebuffer();
+        setFramebuffer(drawFramebuffer);
+        drawFramebuffer.addColorBuffer(drawTextures[drawIndex]);
+        drawFramebuffer.validFbo();
+
         gl.glClearColor(0, 0, 0, 0);
-        gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-      } else {
+        gl.glClear(GL10.GL_DEPTH_BUFFER_BIT);
+            
+        // Render previous draw texture as background.      
+        renderDrawTexture((drawIndex + 1) % 2);
+      } else {    
         if (screenTexID[0] == 0) {
           createScreenTexture();
         }
@@ -690,22 +717,27 @@ public class PGraphicsAndroid3D extends PGraphics {
       }
     }
     
-
     report("bot beginDraw()");
   }
 
   public void endDraw() {
-    if (fboSupported) {
-      popFramebuffer();
+    if (!clear) {
+      if (fboSupported) {
+        if (drawFramebuffer != null) {
+          popFramebuffer();
 
-      gl.glClearColor(0, 0, 0, 0);
-      gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+          gl.glClearColor(0, 0, 0, 0);
+          gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
       
-      renderDrawTexture();
-    } else {
-      if (!clear && screenTexID[0] != 0) {
-        copyFrameToScreenTexture();
-      }      
+          // Render current draw texture to screen.
+          renderDrawTexture(drawIndex);
+          swapDrawIndex();
+        }
+      } else {
+        if (screenTexID[0] != 0) {
+          copyFrameToScreenTexture();
+        }
+      }  
     }
     
     gl.glFlush();
