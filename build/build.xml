@@ -336,7 +336,7 @@
   <target name="linux-dist" depends="linux-build" 
 	  description="Build .tar.gz of linux version">
 
-    <get src="http://dev.processing.org/build/jre-tools-6u19-linux-i586.tgz" 
+    <get src="http://processing.googlecode.com/files/jre-tools-6u20-linux-i586.tgz" 
 	 dest="linux/jre.tgz" 
 	 usetimestamp="true" />    
     <untar compression="gzip" 
@@ -431,7 +431,7 @@
   <target name="windows-dist" depends="windows-build" 
 	  description="Create .zip files of windows version">
 
-    <get src="http://dev.processing.org/build/jre-tools-6u19-windows-i586.zip" 
+    <get src="http://processing.googlecode.com/files/jre-tools-6u19-windows-i586.zip" 
 	 dest="windows/jre.zip" 
 	 usetimestamp="true" />
 
