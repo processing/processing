@@ -1,12 +1,81 @@
 PROCESSING REV 0185 - XX June 2010
 
-+ Option to change the default naming of sketches via preferences.txt. First, 
-  you can change the prefix, which defaults to:
+Primarily a bug fix release. The biggest change are a couple tweaks for 
+problems caused by Apple's Update 2 for Java on OS X, so this should make
+Processing usable on Macs again. 
+
+[ bug fixes ] 
+
++ Fix for Apple bug that caused an assertion failure when requestFocus() 
+  was called in some situations. This was causing the PDE to become unusable
+  for opening sketches, and focus highlighting was no longer happening.
+  http://code.google.com/p/processing/issues/detail?id=258
+  http://dev.processing.org/bugs/show_bug.cgi?id=1564
+  http://dev.processing.org/bugs/show_bug.cgi?id=1569
+
++ Fixed two bugs with fonts created with specific charsets.
+
++ Fix from jdf for PImage(java.awt.Image img) and ARGB images
+  public PImage(java.awt.Image) was setting the format to RGB (even if ARGB)
+
++ Large number of beginShape(POINTS) not rendering correctly on first frame
+  http://dev.processing.org/bugs/show_bug.cgi?id=1572
+
++ Fix for PDF library and createFont() on Linux, thanks to Matthias Breuer.
+  http://dev.processing.org/bugs/show_bug.cgi?id=1566
+
++ Fix from takachin for  problem with full-width space with Japanese IME.
+  http://dev.processing.org/bugs/show_bug.cgi?id=1531
+
++ Reset matrix for the PDF library in-between frames
+  also added begin/endDraw between frames
+  http://dev.processing.org/bugs/show_bug.cgi?id=1227
+
+[ additions ] 
+
++ Add the changes for "Copy as HTML" to replace the "Copy for Discourse"
+  function, now that we've shut down the old YaBB discourse board.
+  http://code.google.com/p/processing/issues/detail?id=271
+
++ Option to disable re-opening sketches when you start Processing. 
+  The default will stay the same, but if you don't like the feature, 
+  alter your preferences.txt file to change:
+  last.sketch.restore=true
+  to the following:
+  last.sketch.restore=false
+  The issue was originally filed here:
+  http://dev.processing.org/bugs/show_bug.cgi?id=1501
+  http://code.google.com/p/processing/issues/detail?id=245
+  However the main problem with this is that due to other errors, the wrong
+  sketches are being opened, sketches are sometimes forgotten, or windows
+  are opened concurrently on top of one another, creating a bad situation:
+  http://code.google.com/p/processing/issues/detail?id=177
+  http://code.google.com/p/processing/issues/detail?id=179
+  Those bugs are not yet fixed, but will be addressed in future releases.
+
++ Option to change the default naming of sketches via preferences.txt. 
+  First, you can change the prefix, which defaults to:
   editor.untitled.prefix=sketch_
   And the suffix is handled using dates. The current default (since 1.0) is:
   editor.untitled.suffix=MMMdd
   Or if you want to switch back to the old (six digit) style, you could use:
   editor.untitled.suffix=yyMMdd
+  http://dev.processing.org/bugs/show_bug.cgi?id=1091
+
++ Updated bundled JRE/tools to 6u20 for Windows and Linux
+
++ Several SVG fixes and additions, including some tweaks from PhiLho. These
+  changes will be documented in a future release once the API changes are
+  complete.
+
++ Added option to launch a sketch directly w/ linux. Thanks to Larry Kyrala.
+  http://dev.processing.org/bugs/show_bug.cgi?id=1549
+
++ Pass actual exceptions from InvocationTargetException in registered 
+  methods, which improves how exceptions are reported with libraries.
+
++ Added loading.gif to the js version of the applet loader. Not sure 
+  if this is actually working or not, but it's there.
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
