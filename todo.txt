@@ -22,11 +22,11 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=1564
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1569
 X   http://code.google.com/p/processing/issues/detail?id=258
 o   check into focus issues--probably using old focus api
+X add option to disable re-opening previous projects
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1501
+X   http://code.google.com/p/processing/issues/detail?id=245
 
 closing this bug, because we'll be replacing the current video library with another sometime later this summer. as such, i won't be doing any more bug fixes on the current video library. in the meantime, we recommend using gsvideo, opencv, or one of the other video libraries that are available.
-
-_ add option to disable re-opening previous projects
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1501
 
 _ add processing.js export tool from florian
 _   http://github.com/fjenett/processingjstool/zipball/v0.0.6
@@ -106,20 +106,21 @@ _   or rather, why can't they be overridden?
 _   should fonts at least be in prefs.txt?
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1444
 
+_ add warning message when not using a version of sun java w/ p5 on linux
+_ console output has wrong character encoding
+_   this may be fixed now, but writing lots of NULs to the output
+_   message(new String(b, offset, length), err, false);
+_   http://code.google.com/p/processing/issues/detail?id=197
+
+
 _ automatically add version numbers to Info.plist
 _   would help with beta releases, and not having to edit by hand
-
-_ add warning message when not using a version of sun java w/ p5 on linux
 
 _ for tools, maybe don't run on event thread? (makes the gui hang)
 _   but instead, things that affect gui need to be called w/ invokeLater?
 
 _ write quicktime uncompressed (w/o qtjava)
 _   http://blog.hslu.ch/rawcoder/2008/06/21/writing-quicktime-movies-in-pure-java/
-
-_ console output has wrong character encoding
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1367
-_   message(new String(b, offset, length), err, false);
 
 _ improve the speed of file copying
 _   use FileChannels, see FileInputStream.getChannel(), 
@@ -160,6 +161,7 @@ _ with the same sketch open, a handleOpen() might open a second on top of it
 _ NPE when double-clicking PDE on Mac OS X
 _   is thread sync the problem? rebuild menus being called 2x?
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1251
+_   http://code.google.com/p/processing/issues/detail?id=177
 _ multiple entries in file menu
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1260
 _ blank sketch opened even if another opened by double-click
