@@ -92,7 +92,7 @@ public class PFramebuffer  {
     addColorBuffers(new PTexture[] { tex }, 1);
   }
 
-  void addDrawBuffers(PTexture[] textures) {
+  void addColorBuffers(PTexture[] textures) {
     addColorBuffers(textures, textures.length);
   }
 
@@ -197,7 +197,7 @@ public class PFramebuffer  {
     width = w;
     height = h;
         
-    if (!onscreen) {
+    if (onscreen) {
       // On-screen buffer has no associated FBO.
       glFboID = 0;
     } else {  
