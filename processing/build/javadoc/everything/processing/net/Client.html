@@ -6,14 +6,15 @@
 Client
 </TITLE>
 
-<META NAME="keywords" CONTENT="processing.net.Client class">
 
 <LINK REL ="stylesheet" TYPE="text/css" HREF="../../stylesheet.css" TITLE="Style">
 
 <SCRIPT type="text/javascript">
 function windowTitle()
 {
-    parent.document.title="Client";
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="Client";
+    }
 }
 </SCRIPT>
 <NOSCRIPT>
@@ -22,6 +23,7 @@ function windowTitle()
 </HEAD>
 
 <BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
 
 
 <!-- ========= START OF TOP NAVBAR ======= -->
@@ -97,6 +99,13 @@ java.lang.Object
 <DL>
 <DT><PRE>public class <B>Client</B><DT>extends java.lang.Object<DT>implements java.lang.Runnable</DL>
 </PRE>
+
+<P>
+A client connects to a server and sends data back and forth.
+ If anything goes wrong with the connection,
+ for example the host is not there or is listening on a different port,
+ an exception is thrown.
+<P>
 
 <P>
 <HR>
@@ -176,8 +185,7 @@ java.lang.Object
 <TD><CODE><B><A HREF="../../processing/net/Client.html#available()">available</A></B>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the number of bytes that have been read from serial
- and are waiting to be dealt with by the user.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the number of bytes available.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -185,7 +193,7 @@ java.lang.Object
 <TD><CODE><B><A HREF="../../processing/net/Client.html#clear()">clear</A></B>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ignore all the bytes read so far and empty the buffer.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Empty the buffer, removes all the data stored there.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -201,7 +209,7 @@ java.lang.Object
 <TD><CODE><B><A HREF="../../processing/net/Client.html#ip()">ip</A></B>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the ip address of this feller as a String.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the IP address of the computer to which the Client is attached.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -209,8 +217,7 @@ java.lang.Object
 <TD><CODE><B><A HREF="../../processing/net/Client.html#read()">read</A></B>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a number between 0 and 255 for the next byte that's
- waiting in the buffer.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a number between 0 and 255 for the next byte that's waiting in the buffer.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -218,12 +225,12 @@ java.lang.Object
 <TD><CODE><B><A HREF="../../processing/net/Client.html#readBytes()">readBytes</A></B>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return a byte array of anything that's in the serial buffer.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reads a group of bytes from the buffer.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/net/Client.html#readBytes(byte[])">readBytes</A></B>(byte[]&nbsp;outgoing)</CODE>
+<TD><CODE><B><A HREF="../../processing/net/Client.html#readBytes(byte[])">readBytes</A></B>(byte[]&nbsp;bytebuffer)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Grab whatever is in the serial buffer, and stuff it into a
@@ -235,14 +242,13 @@ java.lang.Object
 <TD><CODE><B><A HREF="../../processing/net/Client.html#readBytesUntil(int)">readBytesUntil</A></B>(int&nbsp;interesting)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reads from the serial port into a buffer of bytes up to and
- including a particular character.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reads from the port into a buffer of bytes up to and including a particular character.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;int</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/net/Client.html#readBytesUntil(int, byte[])">readBytesUntil</A></B>(int&nbsp;interesting,
-               byte[]&nbsp;outgoing)</CODE>
+               byte[]&nbsp;byteBuffer)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reads from the serial port into a buffer of bytes until a
@@ -262,8 +268,7 @@ java.lang.Object
 <TD><CODE><B><A HREF="../../processing/net/Client.html#readString()">readString</A></B>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return whatever has been read from the serial port so far
- as a String.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the all the data from the buffer as a String.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -271,7 +276,7 @@ java.lang.Object
 <TD><CODE><B><A HREF="../../processing/net/Client.html#readStringUntil(int)">readStringUntil</A></B>(int&nbsp;interesting)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Combination of readBytesUntil and readString.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Combination of <b>readBytesUntil()</b> and <b>readString()</b>.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -287,13 +292,12 @@ java.lang.Object
 <TD><CODE><B><A HREF="../../processing/net/Client.html#stop()">stop</A></B>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Disconnect from the server and calls disconnectEvent(Client c)
- in the host PApplet.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Disconnects from the server.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/net/Client.html#write(byte[])">write</A></B>(byte[]&nbsp;bytes)</CODE>
+<TD><CODE><B><A HREF="../../processing/net/Client.html#write(byte[])">write</A></B>(byte[]&nbsp;data)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -301,15 +305,15 @@ java.lang.Object
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/net/Client.html#write(int)">write</A></B>(int&nbsp;what)</CODE>
+<TD><CODE><B><A HREF="../../processing/net/Client.html#write(int)">write</A></B>(int&nbsp;data)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This will handle ints, bytes and chars transparently.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Writes data to a server specified when constructing the client.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/net/Client.html#write(java.lang.String)">write</A></B>(java.lang.String&nbsp;what)</CODE>
+<TD><CODE><B><A HREF="../../processing/net/Client.html#write(java.lang.String)">write</A></B>(java.lang.String&nbsp;data)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Write a String to the output.</TD>
@@ -373,6 +377,8 @@ public <B>Client</B>(<A HREF="../../processing/core/PApplet.html" title="class i
               java.lang.String&nbsp;host,
               int&nbsp;port)</PRE>
 <DL>
+<DL>
+<DT><B>Parameters:</B><DD><CODE>parent</CODE> - typically use "this"<DD><CODE>host</CODE> - address of the server<DD><CODE>port</CODE> - port to read/write from on the server</DL>
 </DL>
 <HR>
 
@@ -384,7 +390,7 @@ public <B>Client</B>(<A HREF="../../processing/core/PApplet.html" title="class i
        throws java.io.IOException</PRE>
 <DL>
 <DL>
-
+<DT><B>Parameters:</B><DD><CODE>socket</CODE> - any object of type Socket
 <DT><B>Throws:</B>
 <DD><CODE>java.io.IOException</CODE></DL>
 </DL>
@@ -404,7 +410,9 @@ stop</H3>
 <PRE>
 public void <B>stop</B>()</PRE>
 <DL>
-<DD>Disconnect from the server and calls disconnectEvent(Client c)
+<DD>Disconnects from the server. Use to shut the connection when you're finished with the Client.
+ =advanced
+ Disconnect from the server and calls disconnectEvent(Client c)
  in the host PApplet.
  <P/>
  Use this to shut the connection if you're finished with it
@@ -476,7 +484,7 @@ ip</H3>
 <PRE>
 public java.lang.String <B>ip</B>()</PRE>
 <DL>
-<DD>Returns the ip address of this feller as a String.
+<DD>Returns the IP address of the computer to which the Client is attached.
 <P>
 <DD><DL>
 </DL>
@@ -492,8 +500,7 @@ available</H3>
 <PRE>
 public int <B>available</B>()</PRE>
 <DL>
-<DD>Returns the number of bytes that have been read from serial
- and are waiting to be dealt with by the user.
+<DD>Returns the number of bytes available. When any client has bytes available from the server, it returns the number of bytes.
 <P>
 <DD><DL>
 </DL>
@@ -509,7 +516,7 @@ clear</H3>
 <PRE>
 public void <B>clear</B>()</PRE>
 <DL>
-<DD>Ignore all the bytes read so far and empty the buffer.
+<DD>Empty the buffer, removes all the data stored there.
 <P>
 <DD><DL>
 </DL>
@@ -525,10 +532,8 @@ read</H3>
 <PRE>
 public int <B>read</B>()</PRE>
 <DL>
-<DD>Returns a number between 0 and 255 for the next byte that's
- waiting in the buffer.
- Returns -1 if there was no byte (although the user should
- first check available() to see if things are ready to avoid this)
+<DD>Returns a number between 0 and 255 for the next byte that's waiting in the buffer.
+ Returns -1 if there is no byte, although this should be avoided by first cheacking <b>available()</b> to see if any data is available.
 <P>
 <DD><DL>
 </DL>
@@ -561,7 +566,14 @@ readBytes</H3>
 <PRE>
 public byte[] <B>readBytes</B>()</PRE>
 <DL>
-<DD>Return a byte array of anything that's in the serial buffer.
+<DD>Reads a group of bytes from the buffer.
+ The version with no parameters returns a byte array of all data in the buffer.
+ This is not efficient, but is easy to use.
+ The version with the <b>byteBuffer</b> parameter is more memory and time efficient.
+ It grabs the data in the buffer and puts it into the byte array passed in and returns an int value for the number of bytes read.
+ If more bytes are available than can fit into the <b>byteBuffer</b>, only those that fit are read.
+ =advanced
+ Return a byte array of anything that's in the serial buffer.
  Not particularly memory/speed efficient, because it creates
  a byte array on each read, but it's easier to use than
  readBytes(byte b[]) (see below).
@@ -578,7 +590,7 @@ public byte[] <B>readBytes</B>()</PRE>
 <A NAME="readBytes(byte[])"><!-- --></A><H3>
 readBytes</H3>
 <PRE>
-public int <B>readBytes</B>(byte[]&nbsp;outgoing)</PRE>
+public int <B>readBytes</B>(byte[]&nbsp;bytebuffer)</PRE>
 <DL>
 <DD>Grab whatever is in the serial buffer, and stuff it into a
  byte buffer passed in by the user. This is more memory/time
@@ -592,7 +604,7 @@ public int <B>readBytes</B>(byte[]&nbsp;outgoing)</PRE>
 </DL>
 </DD>
 <DD><DL>
-</DL>
+<DT><B>Parameters:</B><DD><CODE>bytebuffer</CODE> - passed in byte array to be altered</DL>
 </DD>
 </DL>
 <HR>
@@ -602,15 +614,18 @@ readBytesUntil</H3>
 <PRE>
 public byte[] <B>readBytesUntil</B>(int&nbsp;interesting)</PRE>
 <DL>
-<DD>Reads from the serial port into a buffer of bytes up to and
- including a particular character. If the character isn't in
- the serial buffer, then 'null' is returned.
+<DD>Reads from the port into a buffer of bytes up to and including a particular character.
+ If the character isn't in the buffer, 'null' is returned.
+ The version with no <b>byteBuffer</b> parameter returns a byte array of all data up to and including the <b>interesting</b> byte.
+ This is not efficient, but is easy to use. The version with the <b>byteBuffer</b> parameter is more memory and time efficient.
+ It grabs the data in the buffer and puts it into the byte array passed in and returns an int value for the number of bytes read.
+ If the byte buffer is not large enough, -1 is returned and an error is printed to the message area. If nothing is in the buffer, 0 is returned.
 <P>
 <DD><DL>
 </DL>
 </DD>
 <DD><DL>
-</DL>
+<DT><B>Parameters:</B><DD><CODE>interesting</CODE> - character designated to mark the end of the data</DL>
 </DD>
 </DL>
 <HR>
@@ -619,7 +634,7 @@ public byte[] <B>readBytesUntil</B>(int&nbsp;interesting)</PRE>
 readBytesUntil</H3>
 <PRE>
 public int <B>readBytesUntil</B>(int&nbsp;interesting,
-                          byte[]&nbsp;outgoing)</PRE>
+                          byte[]&nbsp;byteBuffer)</PRE>
 <DL>
 <DD>Reads from the serial port into a buffer of bytes until a
  particular character. If the character isn't in the serial
@@ -634,7 +649,7 @@ public int <B>readBytesUntil</B>(int&nbsp;interesting,
 </DL>
 </DD>
 <DD><DL>
-</DL>
+<DT><B>Parameters:</B><DD><CODE>byteBuffer</CODE> - passed in byte array to be altered</DL>
 </DD>
 </DL>
 <HR>
@@ -644,11 +659,10 @@ readString</H3>
 <PRE>
 public java.lang.String <B>readString</B>()</PRE>
 <DL>
-<DD>Return whatever has been read from the serial port so far
- as a String. It assumes that the incoming characters are ASCII.
-
- If you want to move Unicode data, you can first convert the
- String to a byte stream in the representation of your choice
+<DD>Returns the all the data from the buffer as a String.
+ This method assumes the incoming characters are ASCII.
+ If you want to transfer Unicode data,
+ first convert the String to a byte stream in the representation of your choice
  (i.e. UTF8 or two-byte Unicode data), and send it as a byte array.
 <P>
 <DD><DL>
@@ -665,9 +679,8 @@ readStringUntil</H3>
 <PRE>
 public java.lang.String <B>readStringUntil</B>(int&nbsp;interesting)</PRE>
 <DL>
-<DD>Combination of readBytesUntil and readString. See caveats in
- each function. Returns null if it still hasn't found what
- you're looking for.
+<DD>Combination of <b>readBytesUntil()</b> and <b>readString()</b>. Returns <b>null</b> if it doesn't find what you're looking for.
+ =advanced
  <p/>
  If you want to move Unicode data, you can first convert the
  String to a byte stream in the representation of your choice
@@ -677,7 +690,7 @@ public java.lang.String <B>readStringUntil</B>(int&nbsp;interesting)</PRE>
 </DL>
 </DD>
 <DD><DL>
-</DL>
+<DT><B>Parameters:</B><DD><CODE>interesting</CODE> - character designated to mark the end of the data</DL>
 </DD>
 </DL>
 <HR>
@@ -685,15 +698,15 @@ public java.lang.String <B>readStringUntil</B>(int&nbsp;interesting)</PRE>
 <A NAME="write(int)"><!-- --></A><H3>
 write</H3>
 <PRE>
-public void <B>write</B>(int&nbsp;what)</PRE>
+public void <B>write</B>(int&nbsp;data)</PRE>
 <DL>
-<DD>This will handle ints, bytes and chars transparently.
+<DD>Writes data to a server specified when constructing the client.
 <P>
 <DD><DL>
 </DL>
 </DD>
 <DD><DL>
-</DL>
+<DT><B>Parameters:</B><DD><CODE>data</CODE> - data to write</DL>
 </DD>
 </DL>
 <HR>
@@ -701,7 +714,7 @@ public void <B>write</B>(int&nbsp;what)</PRE>
 <A NAME="write(byte[])"><!-- --></A><H3>
 write</H3>
 <PRE>
-public void <B>write</B>(byte[]&nbsp;bytes)</PRE>
+public void <B>write</B>(byte[]&nbsp;data)</PRE>
 <DL>
 <DD><DL>
 </DL>
@@ -715,7 +728,7 @@ public void <B>write</B>(byte[]&nbsp;bytes)</PRE>
 <A NAME="write(java.lang.String)"><!-- --></A><H3>
 write</H3>
 <PRE>
-public void <B>write</B>(java.lang.String&nbsp;what)</PRE>
+public void <B>write</B>(java.lang.String&nbsp;data)</PRE>
 <DL>
 <DD>Write a String to the output. Note that this doesn't account
  for Unicode (two bytes per char), nor will it send UTF8

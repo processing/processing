@@ -6,14 +6,15 @@
 Registry.REGISTRY_ROOT_KEY
 </TITLE>
 
-<META NAME="keywords" CONTENT="processing.app.windows.Registry.REGISTRY_ROOT_KEY class">
 
 <LINK REL ="stylesheet" TYPE="text/css" HREF="../../../stylesheet.css" TITLE="Style">
 
 <SCRIPT type="text/javascript">
 function windowTitle()
 {
-    parent.document.title="Registry.REGISTRY_ROOT_KEY";
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="Registry.REGISTRY_ROOT_KEY";
+    }
 }
 </SCRIPT>
 <NOSCRIPT>
@@ -22,6 +23,7 @@ function windowTitle()
 </HEAD>
 
 <BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
 
 
 <!-- ========= START OF TOP NAVBAR ======= -->
@@ -163,7 +165,7 @@ java.lang.Object
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns an array containing the constants of this enum type, in
-the order they're declared.</TD>
+the order they are declared.</TD>
 </TR>
 </TABLE>
 &nbsp;<A NAME="methods_inherited_from_class_java.lang.Enum"><!-- --></A>
@@ -249,20 +251,20 @@ public static final <A HREF="../../../processing/app/windows/Registry.REGISTRY_R
 <A NAME="values()"><!-- --></A><H3>
 values</H3>
 <PRE>
-public static final <A HREF="../../../processing/app/windows/Registry.REGISTRY_ROOT_KEY.html" title="enum in processing.app.windows">Registry.REGISTRY_ROOT_KEY</A>[] <B>values</B>()</PRE>
+public static <A HREF="../../../processing/app/windows/Registry.REGISTRY_ROOT_KEY.html" title="enum in processing.app.windows">Registry.REGISTRY_ROOT_KEY</A>[] <B>values</B>()</PRE>
 <DL>
 <DD>Returns an array containing the constants of this enum type, in
-the order they're declared.  This method may be used to iterate
+the order they are declared.  This method may be used to iterate
 over the constants as follows:
 <pre>
-for(Registry.REGISTRY_ROOT_KEY c : Registry.REGISTRY_ROOT_KEY.values())
-        System.out.println(c);
+for (Registry.REGISTRY_ROOT_KEY c : Registry.REGISTRY_ROOT_KEY.values())
+&nbsp;   System.out.println(c);
 </pre>
 <P>
 <DD><DL>
 
 <DT><B>Returns:</B><DD>an array containing the constants of this enum type, in
-the order they're declared</DL>
+the order they are declared</DL>
 </DD>
 </DL>
 <HR>
@@ -282,7 +284,8 @@ not permitted.)
 <DT><B>Returns:</B><DD>the enum constant with the specified name
 <DT><B>Throws:</B>
 <DD><CODE>java.lang.IllegalArgumentException</CODE> - if this enum type has no constant
-with the specified name</DL>
+with the specified name
+<DD><CODE>java.lang.NullPointerException</CODE> - if the argument is null</DL>
 </DD>
 </DL>
 <!-- ========= END OF CLASS DATA ========= -->

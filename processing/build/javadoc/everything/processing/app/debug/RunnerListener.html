@@ -6,14 +6,15 @@
 RunnerListener
 </TITLE>
 
-<META NAME="keywords" CONTENT="processing.app.debug.RunnerListener interface">
 
 <LINK REL ="stylesheet" TYPE="text/css" HREF="../../../stylesheet.css" TITLE="Style">
 
 <SCRIPT type="text/javascript">
 function windowTitle()
 {
-    parent.document.title="RunnerListener";
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="RunnerListener";
+    }
 }
 </SCRIPT>
 <NOSCRIPT>
@@ -22,6 +23,7 @@ function windowTitle()
 </HEAD>
 
 <BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
 
 
 <!-- ========= START OF TOP NAVBAR ======= -->
@@ -51,7 +53,7 @@ function windowTitle()
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
 &nbsp;<A HREF="../../../processing/app/debug/RunnerException.html" title="class in processing.app.debug"><B>PREV CLASS</B></A>&nbsp;
-&nbsp;<A HREF="../../../processing/app/debug/StreamRedirectThread.html" title="class in processing.app.debug"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../../../processing/app/debug/SystemOutSiphon.html" title="class in processing.app.debug"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../../index.html?processing/app/debug/RunnerListener.html" target="_top"><B>FRAMES</B></A>  &nbsp;
 &nbsp;<A HREF="RunnerListener.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
@@ -123,6 +125,14 @@ Interface RunnerListener</H2>
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../processing/app/debug/RunnerListener.html#statusNotice(java.lang.String)">statusNotice</A></B>(java.lang.String&nbsp;message)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
 </TABLE>
 &nbsp;
 <P>
@@ -152,6 +162,17 @@ void <B>statusError</B>(java.lang.String&nbsp;message)</PRE>
 statusError</H3>
 <PRE>
 void <B>statusError</B>(java.lang.Exception&nbsp;exception)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="statusNotice(java.lang.String)"><!-- --></A><H3>
+statusNotice</H3>
+<PRE>
+void <B>statusNotice</B>(java.lang.String&nbsp;message)</PRE>
 <DL>
 <DD><DL>
 </DL>
@@ -188,7 +209,7 @@ void <B>statusError</B>(java.lang.Exception&nbsp;exception)</PRE>
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
 &nbsp;<A HREF="../../../processing/app/debug/RunnerException.html" title="class in processing.app.debug"><B>PREV CLASS</B></A>&nbsp;
-&nbsp;<A HREF="../../../processing/app/debug/StreamRedirectThread.html" title="class in processing.app.debug"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../../../processing/app/debug/SystemOutSiphon.html" title="class in processing.app.debug"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../../index.html?processing/app/debug/RunnerListener.html" target="_top"><B>FRAMES</B></A>  &nbsp;
 &nbsp;<A HREF="RunnerListener.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;

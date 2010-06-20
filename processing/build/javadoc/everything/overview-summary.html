@@ -6,14 +6,15 @@
 Overview
 </TITLE>
 
-<META NAME="keywords" CONTENT="Overview">
 
 <LINK REL ="stylesheet" TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
 
 <SCRIPT type="text/javascript">
 function windowTitle()
 {
-    parent.document.title="Overview";
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="Overview";
+    }
 }
 </SCRIPT>
 <NOSCRIPT>
@@ -22,6 +23,7 @@ function windowTitle()
 </HEAD>
 
 <BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
 
 
 <!-- ========= START OF TOP NAVBAR ======= -->
@@ -85,11 +87,11 @@ function windowTitle()
 <TD>&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="20%"><B><A HREF="antlr/java/package-summary.html">antlr.java</A></B></TD>
+<TD WIDTH="20%"><B><A HREF="processing/app/package-summary.html">processing.app</A></B></TD>
 <TD>&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="20%"><B><A HREF="processing/app/package-summary.html">processing.app</A></B></TD>
+<TD WIDTH="20%"><B><A HREF="processing/app/antlr/package-summary.html">processing.app.antlr</A></B></TD>
 <TD>&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">

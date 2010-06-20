@@ -6,14 +6,15 @@
 PGraphicsJava2D
 </TITLE>
 
-<META NAME="keywords" CONTENT="processing.core.PGraphicsJava2D class">
 
 <LINK REL ="stylesheet" TYPE="text/css" HREF="../../stylesheet.css" TITLE="Style">
 
 <SCRIPT type="text/javascript">
 function windowTitle()
 {
-    parent.document.title="PGraphicsJava2D";
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="PGraphicsJava2D";
+    }
 }
 </SCRIPT>
 <NOSCRIPT>
@@ -22,6 +23,7 @@ function windowTitle()
 </HEAD>
 
 <BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
 
 
 <!-- ========= START OF TOP NAVBAR ======= -->
@@ -279,7 +281,7 @@ Subclass for PGraphics that implements the graphics API using Java2D.
 <TD><CODE><B><A HREF="../../processing/core/PGraphicsJava2D.html#beginDraw()">beginDraw</A></B>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Prepares the PGraphics for drawing.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the default properties for a PGraphics object.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -342,7 +344,7 @@ Subclass for PGraphics that implements the graphics API using Java2D.
     float&nbsp;d)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A box is an extruded rectangle.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -400,7 +402,7 @@ Subclass for PGraphics that implements the graphics API using Java2D.
 <TD><CODE><B><A HREF="../../processing/core/PGraphicsJava2D.html#endDraw()">endDraw</A></B>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This will finalize rendering so that it can be shown on-screen.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Finalizes the rendering of a PGraphics object so that it can be shown on screen.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -488,7 +490,7 @@ Subclass for PGraphics that implements the graphics API using Java2D.
 <TD><CODE><B><A HREF="../../processing/core/PGraphicsJava2D.html#loadPixels()">loadPixels</A></B>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Call this when you want to mess with the pixels[] array.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Loads the pixel data for the image into its <b>pixels[]</b> array.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -504,7 +506,7 @@ Subclass for PGraphics that implements the graphics API using Java2D.
 <TD><CODE><B><A HREF="../../processing/core/PGraphicsJava2D.html#mask(processing.core.PImage)">mask</A></B>(<A HREF="../../processing/core/PImage.html" title="class in processing.core">PImage</A>&nbsp;alpha)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set alpha channel for an image using another image as the source.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Masks part of an image from displaying by loading another image and using it as an alpha channel.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -560,7 +562,7 @@ Subclass for PGraphics that implements the graphics API using Java2D.
      float&nbsp;y4)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A quad is a quadrilateral, a four sided polygon.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -577,7 +579,7 @@ Subclass for PGraphics that implements the graphics API using Java2D.
        int&nbsp;high)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Resize this image to a new width and height.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Resize the image to a new width and height.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -709,7 +711,7 @@ Subclass for PGraphics that implements the graphics API using Java2D.
     int&nbsp;argb)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set a single pixel to the specified color.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Changes the color of any pixel or writes an image directly into the display window.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -831,7 +833,7 @@ Subclass for PGraphics that implements the graphics API using Java2D.
          float&nbsp;y3)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A triangle is a plane created by connecting three points.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -901,7 +903,7 @@ Subclass for PGraphics that implements the graphics API using Java2D.
 <TH ALIGN="left"><B>Methods inherited from class processing.core.<A HREF="../../processing/core/PGraphics.html" title="class in processing.core">PGraphics</A></B></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><A HREF="../../processing/core/PGraphics.html#alpha(int)">alpha</A>, <A HREF="../../processing/core/PGraphics.html#ambient(float)">ambient</A>, <A HREF="../../processing/core/PGraphics.html#ambient(float, float, float)">ambient</A>, <A HREF="../../processing/core/PGraphics.html#ambient(int)">ambient</A>, <A HREF="../../processing/core/PGraphics.html#ambientLight(float, float, float)">ambientLight</A>, <A HREF="../../processing/core/PGraphics.html#ambientLight(float, float, float, float, float, float)">ambientLight</A>, <A HREF="../../processing/core/PGraphics.html#applyMatrix(processing.core.PMatrix)">applyMatrix</A>, <A HREF="../../processing/core/PGraphics.html#applyMatrix(processing.core.PMatrix2D)">applyMatrix</A>, <A HREF="../../processing/core/PGraphics.html#applyMatrix(processing.core.PMatrix3D)">applyMatrix</A>, <A HREF="../../processing/core/PGraphics.html#arc(float, float, float, float, float, float)">arc</A>, <A HREF="../../processing/core/PGraphics.html#background(float)">background</A>, <A HREF="../../processing/core/PGraphics.html#background(float, float)">background</A>, <A HREF="../../processing/core/PGraphics.html#background(float, float, float)">background</A>, <A HREF="../../processing/core/PGraphics.html#background(float, float, float, float)">background</A>, <A HREF="../../processing/core/PGraphics.html#background(int)">background</A>, <A HREF="../../processing/core/PGraphics.html#background(int, float)">background</A>, <A HREF="../../processing/core/PGraphics.html#background(processing.core.PImage)">background</A>, <A HREF="../../processing/core/PGraphics.html#beginCamera()">beginCamera</A>, <A HREF="../../processing/core/PGraphics.html#beginShape()">beginShape</A>, <A HREF="../../processing/core/PGraphics.html#bezier(float, float, float, float, float, float, float, float)">bezier</A>, <A HREF="../../processing/core/PGraphics.html#bezier(float, float, float, float, float, float, float, float, float, float, float, float)">bezier</A>, <A HREF="../../processing/core/PGraphics.html#bezierPoint(float, float, float, float, float)">bezierPoint</A>, <A HREF="../../processing/core/PGraphics.html#bezierTangent(float, float, float, float, float)">bezierTangent</A>, <A HREF="../../processing/core/PGraphics.html#blue(int)">blue</A>, <A HREF="../../processing/core/PGraphics.html#box(float)">box</A>, <A HREF="../../processing/core/PGraphics.html#brightness(int)">brightness</A>, <A HREF="../../processing/core/PGraphics.html#camera()">camera</A>, <A HREF="../../processing/core/PGraphics.html#camera(float, float, float, float, float, float, float, float, float)">camera</A>, <A HREF="../../processing/core/PGraphics.html#color(float)">color</A>, <A HREF="../../processing/core/PGraphics.html#color(float, float)">color</A>, <A HREF="../../processing/core/PGraphics.html#color(float, float, float)">color</A>, <A HREF="../../processing/core/PGraphics.html#color(float, float, float, float)">color</A>, <A HREF="../../processing/core/PGraphics.html#color(int)">color</A>, <A HREF="../../processing/core/PGraphics.html#color(int, float)">color</A>, <A HREF="../../processing/core/PGraphics.html#color(int, int)">color</A>, <A HREF="../../processing/core/PGraphics.html#color(int, int, int)">color</A>, <A HREF="../../processing/core/PGraphics.html#color(int, int, int, int)">color</A>, <A HREF="../../processing/core/PGraphics.html#colorMode(int)">colorMode</A>, <A HREF="../../processing/core/PGraphics.html#colorMode(int, float)">colorMode</A>, <A HREF="../../processing/core/PGraphics.html#colorMode(int, float, float, float)">colorMode</A>, <A HREF="../../processing/core/PGraphics.html#colorMode(int, float, float, float, float)">colorMode</A>, <A HREF="../../processing/core/PGraphics.html#curve(float, float, float, float, float, float, float, float)">curve</A>, <A HREF="../../processing/core/PGraphics.html#curve(float, float, float, float, float, float, float, float, float, float, float, float)">curve</A>, <A HREF="../../processing/core/PGraphics.html#curvePoint(float, float, float, float, float)">curvePoint</A>, <A HREF="../../processing/core/PGraphics.html#curveTangent(float, float, float, float, float)">curveTangent</A>, <A HREF="../../processing/core/PGraphics.html#curveTightness(float)">curveTightness</A>, <A HREF="../../processing/core/PGraphics.html#curveVertex(float, float)">curveVertex</A>, <A HREF="../../processing/core/PGraphics.html#directionalLight(float, float, float, float, float, float)">directionalLight</A>, <A HREF="../../processing/core/PGraphics.html#displayable()">displayable</A>, <A HREF="../../processing/core/PGraphics.html#dispose()">dispose</A>, <A HREF="../../processing/core/PGraphics.html#edge(boolean)">edge</A>, <A HREF="../../processing/core/PGraphics.html#ellipse(float, float, float, float)">ellipse</A>, <A HREF="../../processing/core/PGraphics.html#ellipseMode(int)">ellipseMode</A>, <A HREF="../../processing/core/PGraphics.html#emissive(float)">emissive</A>, <A HREF="../../processing/core/PGraphics.html#emissive(float, float, float)">emissive</A>, <A HREF="../../processing/core/PGraphics.html#emissive(int)">emissive</A>, <A HREF="../../processing/core/PGraphics.html#endCamera()">endCamera</A>, <A HREF="../../processing/core/PGraphics.html#endShape()">endShape</A>, <A HREF="../../processing/core/PGraphics.html#fill(float)">fill</A>, <A HREF="../../processing/core/PGraphics.html#fill(float, float)">fill</A>, <A HREF="../../processing/core/PGraphics.html#fill(float, float, float)">fill</A>, <A HREF="../../processing/core/PGraphics.html#fill(float, float, float, float)">fill</A>, <A HREF="../../processing/core/PGraphics.html#fill(int)">fill</A>, <A HREF="../../processing/core/PGraphics.html#fill(int, float)">fill</A>, <A HREF="../../processing/core/PGraphics.html#flush()">flush</A>, <A HREF="../../processing/core/PGraphics.html#frustum(float, float, float, float, float, float)">frustum</A>, <A HREF="../../processing/core/PGraphics.html#getStyle()">getStyle</A>, <A HREF="../../processing/core/PGraphics.html#getStyle(processing.core.PStyle)">getStyle</A>, <A HREF="../../processing/core/PGraphics.html#green(int)">green</A>, <A HREF="../../processing/core/PGraphics.html#hint(int)">hint</A>, <A HREF="../../processing/core/PGraphics.html#hue(int)">hue</A>, <A HREF="../../processing/core/PGraphics.html#image(processing.core.PImage, float, float)">image</A>, <A HREF="../../processing/core/PGraphics.html#image(processing.core.PImage, float, float, float, float)">image</A>, <A HREF="../../processing/core/PGraphics.html#image(processing.core.PImage, float, float, float, float, int, int, int, int)">image</A>, <A HREF="../../processing/core/PGraphics.html#imageMode(int)">imageMode</A>, <A HREF="../../processing/core/PGraphics.html#is2D()">is2D</A>, <A HREF="../../processing/core/PGraphics.html#is3D()">is3D</A>, <A HREF="../../processing/core/PGraphics.html#lerpColor(int, int, float)">lerpColor</A>, <A HREF="../../processing/core/PGraphics.html#lerpColor(int, int, float, int)">lerpColor</A>, <A HREF="../../processing/core/PGraphics.html#lightFalloff(float, float, float)">lightFalloff</A>, <A HREF="../../processing/core/PGraphics.html#lights()">lights</A>, <A HREF="../../processing/core/PGraphics.html#lightSpecular(float, float, float)">lightSpecular</A>, <A HREF="../../processing/core/PGraphics.html#line(float, float, float, float, float, float)">line</A>, <A HREF="../../processing/core/PGraphics.html#modelX(float, float, float)">modelX</A>, <A HREF="../../processing/core/PGraphics.html#modelY(float, float, float)">modelY</A>, <A HREF="../../processing/core/PGraphics.html#modelZ(float, float, float)">modelZ</A>, <A HREF="../../processing/core/PGraphics.html#noFill()">noFill</A>, <A HREF="../../processing/core/PGraphics.html#noLights()">noLights</A>, <A HREF="../../processing/core/PGraphics.html#normal(float, float, float)">normal</A>, <A HREF="../../processing/core/PGraphics.html#noStroke()">noStroke</A>, <A HREF="../../processing/core/PGraphics.html#noTint()">noTint</A>, <A HREF="../../processing/core/PGraphics.html#ortho()">ortho</A>, <A HREF="../../processing/core/PGraphics.html#ortho(float, float, float, float, float, float)">ortho</A>, <A HREF="../../processing/core/PGraphics.html#perspective()">perspective</A>, <A HREF="../../processing/core/PGraphics.html#perspective(float, float, float, float)">perspective</A>, <A HREF="../../processing/core/PGraphics.html#point(float, float, float)">point</A>, <A HREF="../../processing/core/PGraphics.html#pointLight(float, float, float, float, float, float)">pointLight</A>, <A HREF="../../processing/core/PGraphics.html#popStyle()">popStyle</A>, <A HREF="../../processing/core/PGraphics.html#printCamera()">printCamera</A>, <A HREF="../../processing/core/PGraphics.html#printProjection()">printProjection</A>, <A HREF="../../processing/core/PGraphics.html#pushStyle()">pushStyle</A>, <A HREF="../../processing/core/PGraphics.html#rect(float, float, float, float)">rect</A>, <A HREF="../../processing/core/PGraphics.html#rectMode(int)">rectMode</A>, <A HREF="../../processing/core/PGraphics.html#red(int)">red</A>, <A HREF="../../processing/core/PGraphics.html#saturation(int)">saturation</A>, <A HREF="../../processing/core/PGraphics.html#setMatrix(processing.core.PMatrix)">setMatrix</A>, <A HREF="../../processing/core/PGraphics.html#setParent(processing.core.PApplet)">setParent</A>, <A HREF="../../processing/core/PGraphics.html#setPath(java.lang.String)">setPath</A>, <A HREF="../../processing/core/PGraphics.html#setPrimary(boolean)">setPrimary</A>, <A HREF="../../processing/core/PGraphics.html#shape(processing.core.PShape)">shape</A>, <A HREF="../../processing/core/PGraphics.html#shape(processing.core.PShape, float, float)">shape</A>, <A HREF="../../processing/core/PGraphics.html#shape(processing.core.PShape, float, float, float, float)">shape</A>, <A HREF="../../processing/core/PGraphics.html#shapeMode(int)">shapeMode</A>, <A HREF="../../processing/core/PGraphics.html#shininess(float)">shininess</A>, <A HREF="../../processing/core/PGraphics.html#showException(java.lang.String)">showException</A>, <A HREF="../../processing/core/PGraphics.html#showWarning(java.lang.String)">showWarning</A>, <A HREF="../../processing/core/PGraphics.html#specular(float)">specular</A>, <A HREF="../../processing/core/PGraphics.html#specular(float, float, float)">specular</A>, <A HREF="../../processing/core/PGraphics.html#specular(int)">specular</A>, <A HREF="../../processing/core/PGraphics.html#sphereDetail(int)">sphereDetail</A>, <A HREF="../../processing/core/PGraphics.html#sphereDetail(int, int)">sphereDetail</A>, <A HREF="../../processing/core/PGraphics.html#spotLight(float, float, float, float, float, float, float, float, float, float, float)">spotLight</A>, <A HREF="../../processing/core/PGraphics.html#stroke(float)">stroke</A>, <A HREF="../../processing/core/PGraphics.html#stroke(float, float)">stroke</A>, <A HREF="../../processing/core/PGraphics.html#stroke(float, float, float)">stroke</A>, <A HREF="../../processing/core/PGraphics.html#stroke(float, float, float, float)">stroke</A>, <A HREF="../../processing/core/PGraphics.html#stroke(int)">stroke</A>, <A HREF="../../processing/core/PGraphics.html#stroke(int, float)">stroke</A>, <A HREF="../../processing/core/PGraphics.html#style(processing.core.PStyle)">style</A>, <A HREF="../../processing/core/PGraphics.html#text(char)">text</A>, <A HREF="../../processing/core/PGraphics.html#text(char[], int, int, float, float)">text</A>, <A HREF="../../processing/core/PGraphics.html#text(char[], int, int, float, float, float)">text</A>, <A HREF="../../processing/core/PGraphics.html#text(char, float, float)">text</A>, <A HREF="../../processing/core/PGraphics.html#text(char, float, float, float)">text</A>, <A HREF="../../processing/core/PGraphics.html#text(float, float, float)">text</A>, <A HREF="../../processing/core/PGraphics.html#text(float, float, float, float)">text</A>, <A HREF="../../processing/core/PGraphics.html#text(int, float, float)">text</A>, <A HREF="../../processing/core/PGraphics.html#text(int, float, float, float)">text</A>, <A HREF="../../processing/core/PGraphics.html#text(java.lang.String)">text</A>, <A HREF="../../processing/core/PGraphics.html#text(java.lang.String, float, float)">text</A>, <A HREF="../../processing/core/PGraphics.html#text(java.lang.String, float, float, float)">text</A>, <A HREF="../../processing/core/PGraphics.html#text(java.lang.String, float, float, float, float)">text</A>, <A HREF="../../processing/core/PGraphics.html#text(java.lang.String, float, float, float, float, float)">text</A>, <A HREF="../../processing/core/PGraphics.html#textAlign(int)">textAlign</A>, <A HREF="../../processing/core/PGraphics.html#textAlign(int, int)">textAlign</A>, <A HREF="../../processing/core/PGraphics.html#textFont(processing.core.PFont)">textFont</A>, <A HREF="../../processing/core/PGraphics.html#textFont(processing.core.PFont, float)">textFont</A>, <A HREF="../../processing/core/PGraphics.html#textLeading(float)">textLeading</A>, <A HREF="../../processing/core/PGraphics.html#textMode(int)">textMode</A>, <A HREF="../../processing/core/PGraphics.html#textureMode(int)">textureMode</A>, <A HREF="../../processing/core/PGraphics.html#textWidth(char)">textWidth</A>, <A HREF="../../processing/core/PGraphics.html#textWidth(java.lang.String)">textWidth</A>, <A HREF="../../processing/core/PGraphics.html#tint(float)">tint</A>, <A HREF="../../processing/core/PGraphics.html#tint(float, float)">tint</A>, <A HREF="../../processing/core/PGraphics.html#tint(float, float, float)">tint</A>, <A HREF="../../processing/core/PGraphics.html#tint(float, float, float, float)">tint</A>, <A HREF="../../processing/core/PGraphics.html#tint(int)">tint</A>, <A HREF="../../processing/core/PGraphics.html#tint(int, float)">tint</A>, <A HREF="../../processing/core/PGraphics.html#translate(float, float, float)">translate</A>, <A HREF="../../processing/core/PGraphics.html#vertex(float[])">vertex</A></CODE></TD>
+<TD><CODE><A HREF="../../processing/core/PGraphics.html#alpha(int)">alpha</A>, <A HREF="../../processing/core/PGraphics.html#ambient(float)">ambient</A>, <A HREF="../../processing/core/PGraphics.html#ambient(float, float, float)">ambient</A>, <A HREF="../../processing/core/PGraphics.html#ambient(int)">ambient</A>, <A HREF="../../processing/core/PGraphics.html#ambientLight(float, float, float)">ambientLight</A>, <A HREF="../../processing/core/PGraphics.html#ambientLight(float, float, float, float, float, float)">ambientLight</A>, <A HREF="../../processing/core/PGraphics.html#applyMatrix(processing.core.PMatrix)">applyMatrix</A>, <A HREF="../../processing/core/PGraphics.html#applyMatrix(processing.core.PMatrix2D)">applyMatrix</A>, <A HREF="../../processing/core/PGraphics.html#applyMatrix(processing.core.PMatrix3D)">applyMatrix</A>, <A HREF="../../processing/core/PGraphics.html#arc(float, float, float, float, float, float)">arc</A>, <A HREF="../../processing/core/PGraphics.html#background(float)">background</A>, <A HREF="../../processing/core/PGraphics.html#background(float, float)">background</A>, <A HREF="../../processing/core/PGraphics.html#background(float, float, float)">background</A>, <A HREF="../../processing/core/PGraphics.html#background(float, float, float, float)">background</A>, <A HREF="../../processing/core/PGraphics.html#background(int)">background</A>, <A HREF="../../processing/core/PGraphics.html#background(int, float)">background</A>, <A HREF="../../processing/core/PGraphics.html#background(processing.core.PImage)">background</A>, <A HREF="../../processing/core/PGraphics.html#beginCamera()">beginCamera</A>, <A HREF="../../processing/core/PGraphics.html#beginShape()">beginShape</A>, <A HREF="../../processing/core/PGraphics.html#bezier(float, float, float, float, float, float, float, float)">bezier</A>, <A HREF="../../processing/core/PGraphics.html#bezier(float, float, float, float, float, float, float, float, float, float, float, float)">bezier</A>, <A HREF="../../processing/core/PGraphics.html#bezierPoint(float, float, float, float, float)">bezierPoint</A>, <A HREF="../../processing/core/PGraphics.html#bezierTangent(float, float, float, float, float)">bezierTangent</A>, <A HREF="../../processing/core/PGraphics.html#blue(int)">blue</A>, <A HREF="../../processing/core/PGraphics.html#box(float)">box</A>, <A HREF="../../processing/core/PGraphics.html#brightness(int)">brightness</A>, <A HREF="../../processing/core/PGraphics.html#camera()">camera</A>, <A HREF="../../processing/core/PGraphics.html#camera(float, float, float, float, float, float, float, float, float)">camera</A>, <A HREF="../../processing/core/PGraphics.html#color(float)">color</A>, <A HREF="../../processing/core/PGraphics.html#color(float, float)">color</A>, <A HREF="../../processing/core/PGraphics.html#color(float, float, float)">color</A>, <A HREF="../../processing/core/PGraphics.html#color(float, float, float, float)">color</A>, <A HREF="../../processing/core/PGraphics.html#color(int)">color</A>, <A HREF="../../processing/core/PGraphics.html#color(int, float)">color</A>, <A HREF="../../processing/core/PGraphics.html#color(int, int)">color</A>, <A HREF="../../processing/core/PGraphics.html#color(int, int, int)">color</A>, <A HREF="../../processing/core/PGraphics.html#color(int, int, int, int)">color</A>, <A HREF="../../processing/core/PGraphics.html#colorMode(int)">colorMode</A>, <A HREF="../../processing/core/PGraphics.html#colorMode(int, float)">colorMode</A>, <A HREF="../../processing/core/PGraphics.html#colorMode(int, float, float, float)">colorMode</A>, <A HREF="../../processing/core/PGraphics.html#colorMode(int, float, float, float, float)">colorMode</A>, <A HREF="../../processing/core/PGraphics.html#curve(float, float, float, float, float, float, float, float)">curve</A>, <A HREF="../../processing/core/PGraphics.html#curve(float, float, float, float, float, float, float, float, float, float, float, float)">curve</A>, <A HREF="../../processing/core/PGraphics.html#curvePoint(float, float, float, float, float)">curvePoint</A>, <A HREF="../../processing/core/PGraphics.html#curveTangent(float, float, float, float, float)">curveTangent</A>, <A HREF="../../processing/core/PGraphics.html#curveTightness(float)">curveTightness</A>, <A HREF="../../processing/core/PGraphics.html#curveVertex(float, float)">curveVertex</A>, <A HREF="../../processing/core/PGraphics.html#directionalLight(float, float, float, float, float, float)">directionalLight</A>, <A HREF="../../processing/core/PGraphics.html#displayable()">displayable</A>, <A HREF="../../processing/core/PGraphics.html#dispose()">dispose</A>, <A HREF="../../processing/core/PGraphics.html#edge(boolean)">edge</A>, <A HREF="../../processing/core/PGraphics.html#ellipse(float, float, float, float)">ellipse</A>, <A HREF="../../processing/core/PGraphics.html#ellipseMode(int)">ellipseMode</A>, <A HREF="../../processing/core/PGraphics.html#emissive(float)">emissive</A>, <A HREF="../../processing/core/PGraphics.html#emissive(float, float, float)">emissive</A>, <A HREF="../../processing/core/PGraphics.html#emissive(int)">emissive</A>, <A HREF="../../processing/core/PGraphics.html#endCamera()">endCamera</A>, <A HREF="../../processing/core/PGraphics.html#endShape()">endShape</A>, <A HREF="../../processing/core/PGraphics.html#fill(float)">fill</A>, <A HREF="../../processing/core/PGraphics.html#fill(float, float)">fill</A>, <A HREF="../../processing/core/PGraphics.html#fill(float, float, float)">fill</A>, <A HREF="../../processing/core/PGraphics.html#fill(float, float, float, float)">fill</A>, <A HREF="../../processing/core/PGraphics.html#fill(int)">fill</A>, <A HREF="../../processing/core/PGraphics.html#fill(int, float)">fill</A>, <A HREF="../../processing/core/PGraphics.html#flush()">flush</A>, <A HREF="../../processing/core/PGraphics.html#frustum(float, float, float, float, float, float)">frustum</A>, <A HREF="../../processing/core/PGraphics.html#getStyle()">getStyle</A>, <A HREF="../../processing/core/PGraphics.html#getStyle(processing.core.PStyle)">getStyle</A>, <A HREF="../../processing/core/PGraphics.html#green(int)">green</A>, <A HREF="../../processing/core/PGraphics.html#hint(int)">hint</A>, <A HREF="../../processing/core/PGraphics.html#hue(int)">hue</A>, <A HREF="../../processing/core/PGraphics.html#image(processing.core.PImage, float, float)">image</A>, <A HREF="../../processing/core/PGraphics.html#image(processing.core.PImage, float, float, float, float)">image</A>, <A HREF="../../processing/core/PGraphics.html#image(processing.core.PImage, float, float, float, float, int, int, int, int)">image</A>, <A HREF="../../processing/core/PGraphics.html#imageMode(int)">imageMode</A>, <A HREF="../../processing/core/PGraphics.html#is2D()">is2D</A>, <A HREF="../../processing/core/PGraphics.html#is3D()">is3D</A>, <A HREF="../../processing/core/PGraphics.html#lerpColor(int, int, float)">lerpColor</A>, <A HREF="../../processing/core/PGraphics.html#lerpColor(int, int, float, int)">lerpColor</A>, <A HREF="../../processing/core/PGraphics.html#lightFalloff(float, float, float)">lightFalloff</A>, <A HREF="../../processing/core/PGraphics.html#lights()">lights</A>, <A HREF="../../processing/core/PGraphics.html#lightSpecular(float, float, float)">lightSpecular</A>, <A HREF="../../processing/core/PGraphics.html#line(float, float, float, float, float, float)">line</A>, <A HREF="../../processing/core/PGraphics.html#modelX(float, float, float)">modelX</A>, <A HREF="../../processing/core/PGraphics.html#modelY(float, float, float)">modelY</A>, <A HREF="../../processing/core/PGraphics.html#modelZ(float, float, float)">modelZ</A>, <A HREF="../../processing/core/PGraphics.html#noFill()">noFill</A>, <A HREF="../../processing/core/PGraphics.html#noLights()">noLights</A>, <A HREF="../../processing/core/PGraphics.html#normal(float, float, float)">normal</A>, <A HREF="../../processing/core/PGraphics.html#noStroke()">noStroke</A>, <A HREF="../../processing/core/PGraphics.html#noTint()">noTint</A>, <A HREF="../../processing/core/PGraphics.html#ortho()">ortho</A>, <A HREF="../../processing/core/PGraphics.html#ortho(float, float, float, float, float, float)">ortho</A>, <A HREF="../../processing/core/PGraphics.html#perspective()">perspective</A>, <A HREF="../../processing/core/PGraphics.html#perspective(float, float, float, float)">perspective</A>, <A HREF="../../processing/core/PGraphics.html#point(float, float, float)">point</A>, <A HREF="../../processing/core/PGraphics.html#pointLight(float, float, float, float, float, float)">pointLight</A>, <A HREF="../../processing/core/PGraphics.html#popStyle()">popStyle</A>, <A HREF="../../processing/core/PGraphics.html#printCamera()">printCamera</A>, <A HREF="../../processing/core/PGraphics.html#printProjection()">printProjection</A>, <A HREF="../../processing/core/PGraphics.html#pushStyle()">pushStyle</A>, <A HREF="../../processing/core/PGraphics.html#rect(float, float, float, float)">rect</A>, <A HREF="../../processing/core/PGraphics.html#rectMode(int)">rectMode</A>, <A HREF="../../processing/core/PGraphics.html#red(int)">red</A>, <A HREF="../../processing/core/PGraphics.html#saturation(int)">saturation</A>, <A HREF="../../processing/core/PGraphics.html#setMatrix(processing.core.PMatrix)">setMatrix</A>, <A HREF="../../processing/core/PGraphics.html#setParent(processing.core.PApplet)">setParent</A>, <A HREF="../../processing/core/PGraphics.html#setPath(java.lang.String)">setPath</A>, <A HREF="../../processing/core/PGraphics.html#setPrimary(boolean)">setPrimary</A>, <A HREF="../../processing/core/PGraphics.html#shape(processing.core.PShape)">shape</A>, <A HREF="../../processing/core/PGraphics.html#shape(processing.core.PShape, float, float)">shape</A>, <A HREF="../../processing/core/PGraphics.html#shape(processing.core.PShape, float, float, float, float)">shape</A>, <A HREF="../../processing/core/PGraphics.html#shapeMode(int)">shapeMode</A>, <A HREF="../../processing/core/PGraphics.html#shininess(float)">shininess</A>, <A HREF="../../processing/core/PGraphics.html#showException(java.lang.String)">showException</A>, <A HREF="../../processing/core/PGraphics.html#showWarning(java.lang.String)">showWarning</A>, <A HREF="../../processing/core/PGraphics.html#skewX(float)">skewX</A>, <A HREF="../../processing/core/PGraphics.html#skewY(float)">skewY</A>, <A HREF="../../processing/core/PGraphics.html#specular(float)">specular</A>, <A HREF="../../processing/core/PGraphics.html#specular(float, float, float)">specular</A>, <A HREF="../../processing/core/PGraphics.html#specular(int)">specular</A>, <A HREF="../../processing/core/PGraphics.html#sphereDetail(int)">sphereDetail</A>, <A HREF="../../processing/core/PGraphics.html#sphereDetail(int, int)">sphereDetail</A>, <A HREF="../../processing/core/PGraphics.html#spotLight(float, float, float, float, float, float, float, float, float, float, float)">spotLight</A>, <A HREF="../../processing/core/PGraphics.html#stroke(float)">stroke</A>, <A HREF="../../processing/core/PGraphics.html#stroke(float, float)">stroke</A>, <A HREF="../../processing/core/PGraphics.html#stroke(float, float, float)">stroke</A>, <A HREF="../../processing/core/PGraphics.html#stroke(float, float, float, float)">stroke</A>, <A HREF="../../processing/core/PGraphics.html#stroke(int)">stroke</A>, <A HREF="../../processing/core/PGraphics.html#stroke(int, float)">stroke</A>, <A HREF="../../processing/core/PGraphics.html#style(processing.core.PStyle)">style</A>, <A HREF="../../processing/core/PGraphics.html#text(char)">text</A>, <A HREF="../../processing/core/PGraphics.html#text(char[], int, int, float, float)">text</A>, <A HREF="../../processing/core/PGraphics.html#text(char[], int, int, float, float, float)">text</A>, <A HREF="../../processing/core/PGraphics.html#text(char, float, float)">text</A>, <A HREF="../../processing/core/PGraphics.html#text(char, float, float, float)">text</A>, <A HREF="../../processing/core/PGraphics.html#text(float, float, float)">text</A>, <A HREF="../../processing/core/PGraphics.html#text(float, float, float, float)">text</A>, <A HREF="../../processing/core/PGraphics.html#text(int, float, float)">text</A>, <A HREF="../../processing/core/PGraphics.html#text(int, float, float, float)">text</A>, <A HREF="../../processing/core/PGraphics.html#text(java.lang.String)">text</A>, <A HREF="../../processing/core/PGraphics.html#text(java.lang.String, float, float)">text</A>, <A HREF="../../processing/core/PGraphics.html#text(java.lang.String, float, float, float)">text</A>, <A HREF="../../processing/core/PGraphics.html#text(java.lang.String, float, float, float, float)">text</A>, <A HREF="../../processing/core/PGraphics.html#text(java.lang.String, float, float, float, float, float)">text</A>, <A HREF="../../processing/core/PGraphics.html#textAlign(int)">textAlign</A>, <A HREF="../../processing/core/PGraphics.html#textAlign(int, int)">textAlign</A>, <A HREF="../../processing/core/PGraphics.html#textFont(processing.core.PFont)">textFont</A>, <A HREF="../../processing/core/PGraphics.html#textFont(processing.core.PFont, float)">textFont</A>, <A HREF="../../processing/core/PGraphics.html#textLeading(float)">textLeading</A>, <A HREF="../../processing/core/PGraphics.html#textMode(int)">textMode</A>, <A HREF="../../processing/core/PGraphics.html#textureMode(int)">textureMode</A>, <A HREF="../../processing/core/PGraphics.html#textWidth(char)">textWidth</A>, <A HREF="../../processing/core/PGraphics.html#textWidth(char[], int, int)">textWidth</A>, <A HREF="../../processing/core/PGraphics.html#textWidth(java.lang.String)">textWidth</A>, <A HREF="../../processing/core/PGraphics.html#tint(float)">tint</A>, <A HREF="../../processing/core/PGraphics.html#tint(float, float)">tint</A>, <A HREF="../../processing/core/PGraphics.html#tint(float, float, float)">tint</A>, <A HREF="../../processing/core/PGraphics.html#tint(float, float, float, float)">tint</A>, <A HREF="../../processing/core/PGraphics.html#tint(int)">tint</A>, <A HREF="../../processing/core/PGraphics.html#tint(int, float)">tint</A>, <A HREF="../../processing/core/PGraphics.html#translate(float, float, float)">translate</A>, <A HREF="../../processing/core/PGraphics.html#vertex(float[])">vertex</A></CODE></TD>
 </TR>
 </TABLE>
 &nbsp;<A NAME="methods_inherited_from_class_processing.core.PImage"><!-- --></A>
@@ -1055,7 +1057,8 @@ beginDraw</H3>
 public void <B>beginDraw</B>()</PRE>
 <DL>
 <DD><B>Description copied from class: <CODE><A HREF="../../processing/core/PGraphics.html#beginDraw()">PGraphics</A></CODE></B></DD>
-<DD>Prepares the PGraphics for drawing.
+<DD>Sets the default properties for a PGraphics object. It should be called before anything is drawn into the object.
+ =advanced
  <p/>
  When creating your own PGraphics, you should call this before
  drawing anything.
@@ -1075,7 +1078,8 @@ endDraw</H3>
 public void <B>endDraw</B>()</PRE>
 <DL>
 <DD><B>Description copied from class: <CODE><A HREF="../../processing/core/PGraphics.html#endDraw()">PGraphics</A></CODE></B></DD>
-<DD>This will finalize rendering so that it can be shown on-screen.
+<DD>Finalizes the rendering of a PGraphics object so that it can be shown on screen.
+ =advanced
  <p/>
  When creating your own PGraphics, you should call this when
  you're finished drawing.
@@ -1339,11 +1343,16 @@ public void <B>triangle</B>(float&nbsp;x1,
                      float&nbsp;x3,
                      float&nbsp;y3)</PRE>
 <DL>
+<DD><B>Description copied from class: <CODE><A HREF="../../processing/core/PGraphics.html#triangle(float, float, float, float, float, float)">PGraphics</A></CODE></B></DD>
+<DD>A triangle is a plane created by connecting three points. The first two
+ arguments specify the first point, the middle two arguments specify
+ the second point, and the last two arguments specify the third point.
+<P>
 <DD><DL>
 <DT><B>Overrides:</B><DD><CODE><A HREF="../../processing/core/PGraphics.html#triangle(float, float, float, float, float, float)">triangle</A></CODE> in class <CODE><A HREF="../../processing/core/PGraphics.html" title="class in processing.core">PGraphics</A></CODE></DL>
 </DD>
 <DD><DL>
-</DL>
+<DT><B>Parameters:</B><DD><CODE>x1</CODE> - x-coordinate of the first point<DD><CODE>y1</CODE> - y-coordinate of the first point<DD><CODE>x2</CODE> - x-coordinate of the second point<DD><CODE>y2</CODE> - y-coordinate of the second point<DD><CODE>x3</CODE> - x-coordinate of the third point<DD><CODE>y3</CODE> - y-coordinate of the third point<DT><B>See Also:</B><DD><A HREF="../../processing/core/PApplet.html#beginShape()"><CODE>PApplet.beginShape()</CODE></A></DL>
 </DD>
 </DL>
 <HR>
@@ -1360,11 +1369,18 @@ public void <B>quad</B>(float&nbsp;x1,
                  float&nbsp;x4,
                  float&nbsp;y4)</PRE>
 <DL>
+<DD><B>Description copied from class: <CODE><A HREF="../../processing/core/PGraphics.html#quad(float, float, float, float, float, float, float, float)">PGraphics</A></CODE></B></DD>
+<DD>A quad is a quadrilateral, a four sided polygon. It is similar to
+ a rectangle, but the angles between its edges are not constrained
+ ninety degrees. The first pair of parameters (x1,y1) sets the
+ first vertex and the subsequent pairs should proceed clockwise or
+ counter-clockwise around the defined shape.
+<P>
 <DD><DL>
 <DT><B>Overrides:</B><DD><CODE><A HREF="../../processing/core/PGraphics.html#quad(float, float, float, float, float, float, float, float)">quad</A></CODE> in class <CODE><A HREF="../../processing/core/PGraphics.html" title="class in processing.core">PGraphics</A></CODE></DL>
 </DD>
 <DD><DL>
-</DL>
+<DT><B>Parameters:</B><DD><CODE>x1</CODE> - x-coordinate of the first corner<DD><CODE>y1</CODE> - y-coordinate of the first corner<DD><CODE>x2</CODE> - x-coordinate of the second corner<DD><CODE>y2</CODE> - y-coordinate of the second corner<DD><CODE>x3</CODE> - x-coordinate of the third corner<DD><CODE>y3</CODE> - y-coordinate of the third corner<DD><CODE>x4</CODE> - x-coordinate of the fourth corner<DD><CODE>y4</CODE> - y-coordinate of the fourth corner</DL>
 </DD>
 </DL>
 <HR>
@@ -1376,11 +1392,15 @@ public void <B>box</B>(float&nbsp;w,
                 float&nbsp;h,
                 float&nbsp;d)</PRE>
 <DL>
+<DD><B>Description copied from class: <CODE><A HREF="../../processing/core/PGraphics.html#box(float, float, float)">PGraphics</A></CODE></B></DD>
+<DD>A box is an extruded rectangle. A box with equal dimension
+ on all sides is a cube.
+<P>
 <DD><DL>
 <DT><B>Overrides:</B><DD><CODE><A HREF="../../processing/core/PGraphics.html#box(float, float, float)">box</A></CODE> in class <CODE><A HREF="../../processing/core/PGraphics.html" title="class in processing.core">PGraphics</A></CODE></DL>
 </DD>
 <DD><DL>
-</DL>
+<DT><B>Parameters:</B><DD><CODE>w</CODE> - dimension of the box in the x-dimension<DD><CODE>h</CODE> - dimension of the box in the y-dimension<DD><CODE>d</CODE> - dimension of the box in the z-dimension<DT><B>See Also:</B><DD><A HREF="../../processing/core/PApplet.html#sphere(float)"><CODE>PApplet.sphere(float)</CODE></A></DL>
 </DD>
 </DL>
 <HR>
@@ -1392,6 +1412,8 @@ public void <B>sphere</B>(float&nbsp;r)</PRE>
 <DL>
 <DD><B>Description copied from class: <CODE><A HREF="../../processing/core/PGraphics.html#sphere(float)">PGraphics</A></CODE></B></DD>
 <DD>Draw a sphere with radius r centered at coordinate 0, 0, 0.
+ A sphere is a hollow ball made from tessellated triangles.
+ =advanced
  <P>
  Implementation notes:
  <P>
@@ -1416,7 +1438,7 @@ public void <B>sphere</B>(float&nbsp;r)</PRE>
 <DT><B>Overrides:</B><DD><CODE><A HREF="../../processing/core/PGraphics.html#sphere(float)">sphere</A></CODE> in class <CODE><A HREF="../../processing/core/PGraphics.html" title="class in processing.core">PGraphics</A></CODE></DL>
 </DD>
 <DD><DL>
-</DL>
+<DT><B>Parameters:</B><DD><CODE>r</CODE> - the radius of the sphere</DL>
 </DD>
 </DL>
 <HR>
@@ -1432,7 +1454,9 @@ public void <B>bezierDetail</B>(int&nbsp;detail)</PRE>
 <DT><B>Overrides:</B><DD><CODE><A HREF="../../processing/core/PGraphics.html#bezierDetail(int)">bezierDetail</A></CODE> in class <CODE><A HREF="../../processing/core/PGraphics.html" title="class in processing.core">PGraphics</A></CODE></DL>
 </DD>
 <DD><DL>
-</DL>
+<DT><B>Parameters:</B><DD><CODE>detail</CODE> - resolution of the curves<DT><B>See Also:</B><DD><A HREF="../../processing/core/PApplet.html#curve(float, float, float, float, float, float, float, float, float, float, float, float)"><CODE>PApplet.curve(float, float, float, float, float, float, float, float, float, float, float, float)</CODE></A>, 
+<A HREF="../../processing/core/PApplet.html#curveVertex(float, float)"><CODE>PApplet.curveVertex(float, float)</CODE></A>, 
+<A HREF="../../processing/core/PApplet.html#curveTightness(float)"><CODE>PApplet.curveTightness(float)</CODE></A></DL>
 </DD>
 </DL>
 <HR>
@@ -1448,7 +1472,9 @@ public void <B>curveDetail</B>(int&nbsp;detail)</PRE>
 <DT><B>Overrides:</B><DD><CODE><A HREF="../../processing/core/PGraphics.html#curveDetail(int)">curveDetail</A></CODE> in class <CODE><A HREF="../../processing/core/PGraphics.html" title="class in processing.core">PGraphics</A></CODE></DL>
 </DD>
 <DD><DL>
-</DL>
+<DT><B>Parameters:</B><DD><CODE>detail</CODE> - resolution of the curves<DT><B>See Also:</B><DD><A HREF="../../processing/core/PGraphics.html#curve(float, float, float, float, float, float, float, float, float, float, float, float)"><CODE>PGraphics.curve(float, float, float, float, float, float, float, float, float, float, float, float)</CODE></A>, 
+<A HREF="../../processing/core/PGraphics.html#curveVertex(float, float)"><CODE>PGraphics.curveVertex(float, float)</CODE></A>, 
+<A HREF="../../processing/core/PGraphics.html#curveTightness(float)"><CODE>PGraphics.curveTightness(float)</CODE></A></DL>
 </DD>
 </DL>
 <HR>
@@ -2137,7 +2163,10 @@ loadPixels</H3>
 public void <B>loadPixels</B>()</PRE>
 <DL>
 <DD><B>Description copied from class: <CODE><A HREF="../../processing/core/PImage.html#loadPixels()">PImage</A></CODE></B></DD>
-<DD>Call this when you want to mess with the pixels[] array.
+<DD>Loads the pixel data for the image into its <b>pixels[]</b> array. This function must always be called before reading from or writing to <b>pixels[]</b>.
+ <br><br>Certain renderers may or may not seem to require <b>loadPixels()</b> or <b>updatePixels()</b>. However, the rule is that any time you want to manipulate the <b>pixels[]</b> array, you must first call <b>loadPixels()</b>, and after changes have been made, call <b>updatePixels()</b>. Even if the renderer may not seem to use this function in the current Processing release, this will always be subject to change.
+ =advanced
+ Call this when you want to mess with the pixels[] array.
  <p/>
  For subclasses where the pixels[] buffer isn't set by default,
  this should copy all data into the pixels[] array
@@ -2199,14 +2228,13 @@ public void <B>resize</B>(int&nbsp;wide,
                    int&nbsp;high)</PRE>
 <DL>
 <DD><B>Description copied from class: <CODE><A HREF="../../processing/core/PImage.html#resize(int, int)">PImage</A></CODE></B></DD>
-<DD>Resize this image to a new width and height.
- Use 0 for wide or high to make that dimension scale proportionally.
+<DD>Resize the image to a new width and height. To make the image scale proportionally, use 0 as the value for the <b>wide</b> or <b>high</b> parameter.
 <P>
 <DD><DL>
 <DT><B>Overrides:</B><DD><CODE><A HREF="../../processing/core/PImage.html#resize(int, int)">resize</A></CODE> in class <CODE><A HREF="../../processing/core/PImage.html" title="class in processing.core">PImage</A></CODE></DL>
 </DD>
 <DD><DL>
-</DL>
+<DT><B>Parameters:</B><DD><CODE>wide</CODE> - the resized image width<DD><CODE>high</CODE> - the resized image height<DT><B>See Also:</B><DD><A HREF="../../processing/core/PImage.html#get(int, int, int, int)"><CODE>PImage.get(int, int, int, int)</CODE></A></DL>
 </DD>
 </DL>
 <HR>
@@ -2292,13 +2320,18 @@ public void <B>set</B>(int&nbsp;x,
                 int&nbsp;argb)</PRE>
 <DL>
 <DD><B>Description copied from class: <CODE><A HREF="../../processing/core/PImage.html#set(int, int, int)">PImage</A></CODE></B></DD>
-<DD>Set a single pixel to the specified color.
+<DD>Changes the color of any pixel or writes an image directly into the display window. The <b>x</b> and <b>y</b> parameters specify the pixel to change and the <b>color</b> parameter specifies the color value. The color parameter is affected by the current color mode (the default is RGB values from 0 to 255). When setting an image, the x and y parameters define the coordinates for the upper-left corner of the image.
+ <br><br>Setting the color of a single pixel with <b>set(x, y)</b> is easy, but not as fast as putting the data directly into <b>pixels[]</b>. The equivalent statement to "set(x, y, #000000)" using <b>pixels[]</b> is "pixels[y*width+x] = #000000". You must call <b>loadPixels()</b> to load the display window data into the <b>pixels[]</b> array before setting the values and calling <b>updatePixels()</b> to update the window with any changes.
+ <br><br>As of release 1.0, this function ignores <b>imageMode()</b>.
+ <br><br>Due to what appears to be a bug in Apple's Java implementation, the point() and set() methods are extremely slow in some circumstances when used with the default renderer. Using P2D or P3D will fix the problem. Grouping many calls to point() or set() together can also help. (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=1094">Bug 1094</a>)
+ =advanced
+ <br><br>As of release 0149, this function ignores <b>imageMode()</b>.
 <P>
 <DD><DL>
 <DT><B>Overrides:</B><DD><CODE><A HREF="../../processing/core/PImage.html#set(int, int, int)">set</A></CODE> in class <CODE><A HREF="../../processing/core/PImage.html" title="class in processing.core">PImage</A></CODE></DL>
 </DD>
 <DD><DL>
-</DL>
+<DT><B>Parameters:</B><DD><CODE>x</CODE> - x-coordinate of the pixel<DD><CODE>y</CODE> - y-coordinate of the pixel<DD><CODE>argb</CODE> - any value of the color datatype</DL>
 </DD>
 </DL>
 <HR>
@@ -2318,14 +2351,14 @@ public void <B>mask</B>(int[]&nbsp;alpha)</PRE>
  used as the alpha color. For a fully grayscale image, this
  is correct, but for a color image it's not 100% accurate.
  For a more accurate conversion, first use filter(GRAY)
- which will make the image into a "correct" grayscake by
+ which will make the image into a "correct" grayscale by
  performing a proper luminance-based conversion.
 <P>
 <DD><DL>
 <DT><B>Overrides:</B><DD><CODE><A HREF="../../processing/core/PImage.html#mask(int[])">mask</A></CODE> in class <CODE><A HREF="../../processing/core/PImage.html" title="class in processing.core">PImage</A></CODE></DL>
 </DD>
 <DD><DL>
-</DL>
+<DT><B>Parameters:</B><DD><CODE>alpha</CODE> - any array of Integer numbers used as the alpha channel, needs to be same length as the image's pixel array</DL>
 </DD>
 </DL>
 <HR>
@@ -2336,13 +2369,18 @@ mask</H3>
 public void <B>mask</B>(<A HREF="../../processing/core/PImage.html" title="class in processing.core">PImage</A>&nbsp;alpha)</PRE>
 <DL>
 <DD><B>Description copied from class: <CODE><A HREF="../../processing/core/PImage.html#mask(processing.core.PImage)">PImage</A></CODE></B></DD>
-<DD>Set alpha channel for an image using another image as the source.
+<DD>Masks part of an image from displaying by loading another image and using it as an alpha channel.
+  This mask image should only contain grayscale data, but only the blue color channel is used.
+  The mask image needs to be the same size as the image to which it is applied.
+  In addition to using a mask image, an integer array containing the alpha channel data can be specified directly.
+  This method is useful for creating dynamically generated alpha masks.
+  This array must be of the same length as the target image's pixels array and should contain only grayscale data of values between 0-255.
 <P>
 <DD><DL>
 <DT><B>Overrides:</B><DD><CODE><A HREF="../../processing/core/PImage.html#mask(processing.core.PImage)">mask</A></CODE> in class <CODE><A HREF="../../processing/core/PImage.html" title="class in processing.core">PImage</A></CODE></DL>
 </DD>
 <DD><DL>
-</DL>
+<DT><B>Parameters:</B><DD><CODE>alpha</CODE> - any PImage object used as the alpha channel for "img", needs to be same size as "img"</DL>
 </DD>
 </DL>
 <HR>

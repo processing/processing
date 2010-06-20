@@ -6,14 +6,15 @@
 InputHandler
 </TITLE>
 
-<META NAME="keywords" CONTENT="processing.app.syntax.InputHandler class">
 
 <LINK REL ="stylesheet" TYPE="text/css" HREF="../../../stylesheet.css" TITLE="Style">
 
 <SCRIPT type="text/javascript">
 function windowTitle()
 {
-    parent.document.title="InputHandler";
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="InputHandler";
+    }
 }
 </SCRIPT>
 <NOSCRIPT>
@@ -22,6 +23,7 @@ function windowTitle()
 </HEAD>
 
 <BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
 
 
 <!-- ========= START OF TOP NAVBAR ======= -->
@@ -135,6 +137,30 @@ An input handler converts the user's key strokes into concrete actions.
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;class</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../processing/app/syntax/InputHandler.backspace_word.html" title="class in processing.app.syntax">InputHandler.backspace_word</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../processing/app/syntax/InputHandler.clipboard_copy.html" title="class in processing.app.syntax">InputHandler.clipboard_copy</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../processing/app/syntax/InputHandler.clipboard_cut.html" title="class in processing.app.syntax">InputHandler.clipboard_cut</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../processing/app/syntax/InputHandler.clipboard_paste.html" title="class in processing.app.syntax">InputHandler.clipboard_paste</A></B></CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -353,6 +379,30 @@ An input handler converts the user's key strokes into concrete actions.
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;java.awt.event.ActionListener</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../processing/app/syntax/InputHandler.html#BACKSPACE_WORD">BACKSPACE_WORD</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.awt.event.ActionListener</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../processing/app/syntax/InputHandler.html#CLIPBOARD_COPY">CLIPBOARD_COPY</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.awt.event.ActionListener</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../processing/app/syntax/InputHandler.html#CLIPBOARD_CUT">CLIPBOARD_CUT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.awt.event.ActionListener</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../processing/app/syntax/InputHandler.html#CLIPBOARD_PASTE">CLIPBOARD_PASTE</A></B></CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -1164,6 +1214,36 @@ public static final java.awt.event.ActionListener <B>REPEAT</B></PRE>
 TOGGLE_RECT</H3>
 <PRE>
 public static final java.awt.event.ActionListener <B>TOGGLE_RECT</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="CLIPBOARD_CUT"><!-- --></A><H3>
+CLIPBOARD_CUT</H3>
+<PRE>
+public static final java.awt.event.ActionListener <B>CLIPBOARD_CUT</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="CLIPBOARD_COPY"><!-- --></A><H3>
+CLIPBOARD_COPY</H3>
+<PRE>
+public static final java.awt.event.ActionListener <B>CLIPBOARD_COPY</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="CLIPBOARD_PASTE"><!-- --></A><H3>
+CLIPBOARD_PASTE</H3>
+<PRE>
+public static final java.awt.event.ActionListener <B>CLIPBOARD_PASTE</B></PRE>
 <DL>
 <DL>
 </DL>

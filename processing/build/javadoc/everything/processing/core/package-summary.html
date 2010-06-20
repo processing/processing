@@ -6,14 +6,15 @@
 processing.core
 </TITLE>
 
-<META NAME="keywords" CONTENT="processing.core package">
 
 <LINK REL ="stylesheet" TYPE="text/css" HREF="../../stylesheet.css" TITLE="Style">
 
 <SCRIPT type="text/javascript">
 function windowTitle()
 {
-    parent.document.title="processing.core";
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="processing.core";
+    }
 }
 </SCRIPT>
 <NOSCRIPT>
@@ -22,6 +23,7 @@ function windowTitle()
 </HEAD>
 
 <BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
 
 
 <!-- ========= START OF TOP NAVBAR ======= -->
@@ -111,7 +113,7 @@ Package processing.core
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="../../processing/core/PGraphics.html" title="class in processing.core">PGraphics</A></B></TD>
-<TD>Main graphics and rendering context, as well as the base API implementation.</TD>
+<TD>Main graphics and rendering context, as well as the base API implementation for processing "core".</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="../../processing/core/PGraphics2D.html" title="class in processing.core">PGraphics2D</A></B></TD>
@@ -128,7 +130,7 @@ Package processing.core
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="../../processing/core/PImage.html" title="class in processing.core">PImage</A></B></TD>
-<TD>Storage class for pixel data.</TD>
+<TD>Datatype for storing images.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="../../processing/core/PLine.html" title="class in processing.core">PLine</A></B></TD>
@@ -148,8 +150,7 @@ Package processing.core
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="../../processing/core/PShape.html" title="class in processing.core">PShape</A></B></TD>
-<TD>In-progress class to handle shape data, currently to be considered of
- alpha or beta quality.</TD>
+<TD>Datatype for storing shapes.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="../../processing/core/PShapeSVG.html" title="class in processing.core">PShapeSVG</A></B></TD>

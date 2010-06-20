@@ -6,14 +6,15 @@
 Advapi32
 </TITLE>
 
-<META NAME="keywords" CONTENT="processing.app.windows.Advapi32 interface">
 
 <LINK REL ="stylesheet" TYPE="text/css" HREF="../../../stylesheet.css" TITLE="Style">
 
 <SCRIPT type="text/javascript">
 function windowTitle()
 {
-    parent.document.title="Advapi32";
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="Advapi32";
+    }
 }
 </SCRIPT>
 <NOSCRIPT>
@@ -22,6 +23,7 @@ function windowTitle()
 </HEAD>
 
 <BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
 
 
 <!-- ========= START OF TOP NAVBAR ======= -->
@@ -205,7 +207,7 @@ Interface Advapi32</H2>
 <TH ALIGN="left"><B>Fields inherited from interface com.sun.jna.Library</B></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE>OPTION_FUNCTION_MAPPER, OPTION_INVOCATION_MAPPER, OPTION_STRUCTURE_ALIGNMENT, OPTION_TYPE_MAPPER</CODE></TD>
+<TD><CODE>OPTION_ALLOW_OBJECTS, OPTION_CALLING_CONVENTION, OPTION_FUNCTION_MAPPER, OPTION_INVOCATION_MAPPER, OPTION_STRUCTURE_ALIGNMENT, OPTION_TYPE_MAPPER</CODE></TD>
 </TR>
 </TABLE>
 &nbsp;
