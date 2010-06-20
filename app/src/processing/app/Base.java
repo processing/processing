@@ -278,8 +278,11 @@ public class Base {
    * application is first launched.
    */
   protected boolean restoreSketches() {
-    // figure out window placement
+    if (!Preferences.getBoolean("last.sketch.restore")) {
+      return false;
+    }
 
+    // figure out window placement
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     boolean windowPositionValid = true;
 
