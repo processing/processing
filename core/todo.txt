@@ -8,6 +8,9 @@ o svg issue with implicit path command
 o   http://dev.processing.org/bugs/show_bug.cgi?id=1561
 o   http://code.google.com/p/processing/issues/detail?id=257
 X   appears to be faulty code
+X remove call to requestFocus() that broke the ColorSelector (and Editor)
+X   and was also breaking some applets
+X   http://code.google.com/p/processing/issues/detail?id=258
 
 shape/svg work
 X fix for adobe illustrator-mangled svg id names with hex characters
