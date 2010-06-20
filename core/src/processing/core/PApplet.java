@@ -40,6 +40,7 @@ import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
 
 import processing.core.PShape;
+import processing.xml.XMLElement;
 
 
 /**
@@ -4047,6 +4048,15 @@ public class PApplet extends Applet
   public PShape loadShape(String filename) {
     if (filename.toLowerCase().endsWith(".svg")) {
       return new PShapeSVG(this, filename);
+
+    } else if (filename.toLowerCase().endsWith(".svgz")) {
+      try {
+        InputStream input = new GZIPInputStream(createInput(filename));
+        XMLElement xml = new XMLElement(createReader(input));
+        return new PShapeSVG(xml);
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
     }
     return null;
   }
