@@ -3,13 +3,12 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-08 Ben Fry and Casey Reas
+  Copyright (c) 2004-10 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
-  the Free Software Foundation; either version 2 of the License, or
-  (at your option) any later version.
+  the Free Software Foundation, version 2.
 
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -30,18 +29,6 @@ import javax.swing.*;
 
 /**
  * Find & Replace window for the Processing editor.
- * <p/>
- * One major annoyance in this is that the window is re-created each time
- * that "Find" is called. This is because Mac OS X has a strange focus
- * issue with windows that are re-shown with setVisible() or show().
- * requestFocusInWindow() properly sets the focus to the find field,
- * however, just a short moment later, the focus is set to null. Even
- * trying to catch this scenario and request it again doesn't seem to work.
- * Most likely this is some annoyance buried deep in one of Apple's docs,
- * or in the doc for the focus stuff (I tend to think the former because
- * Windows doesn't seem to be quite so beligerent). Filed as
- * <A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=244"> Bug 244</A>
- * should anyone have clues about how to fix.
  */
 public class FindReplace extends JFrame implements ActionListener {
 
@@ -89,10 +76,7 @@ public class FindReplace extends JFrame implements ActionListener {
 
     if (findString != null) findField.setText(findString);
     if (replaceString != null) replaceField.setText(replaceString);
-    //System.out.println("setting find str to " + findString);
-    //findField.requestFocusInWindow();
 
-    //pain.setDefault
     /*
     findField.addFocusListener(new FocusListener() {
         public void focusGained(FocusEvent e) {
@@ -116,7 +100,6 @@ public class FindReplace extends JFrame implements ActionListener {
     replaceLabel.setBounds(BIG, BIG + d2.height + SMALL + yoff,
                            d1.width, d1.height);
 
-    //ignoreCase = true;
     ignoreCaseBox = new JCheckBox("Ignore Case");
     ignoreCaseBox.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
