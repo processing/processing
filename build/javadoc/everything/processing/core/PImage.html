@@ -6,14 +6,15 @@
 PImage
 </TITLE>
 
-<META NAME="keywords" CONTENT="processing.core.PImage class">
 
 <LINK REL ="stylesheet" TYPE="text/css" HREF="../../stylesheet.css" TITLE="Style">
 
 <SCRIPT type="text/javascript">
 function windowTitle()
 {
-    parent.document.title="PImage";
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="PImage";
+    }
 }
 </SCRIPT>
 <NOSCRIPT>
@@ -22,6 +23,7 @@ function windowTitle()
 </HEAD>
 
 <BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
 
 
 <!-- ========= START OF TOP NAVBAR ======= -->
@@ -102,7 +104,16 @@ java.lang.Object
 </PRE>
 
 <P>
-Storage class for pixel data. This is the base class for most image and
+Datatype for storing images. Processing can display <b>.gif</b>, <b>.jpg</b>, <b>.tga</b>, and <b>.png</b> images. Images may be displayed in 2D and 3D space.
+ Before an image is used, it must be loaded with the <b>loadImage()</b> function.
+ The <b>PImage</b> object contains fields for the <b>width</b> and <b>height</b> of the image,
+ as well as an array called <b>pixels[]</b> which contains the values for every pixel in the image.
+ A group of methods, described below, allow easy access to the image's pixels and alpha channel and simplify the process of compositing.
+ <br><br>Before using the <b>pixels[]</b> array, be sure to use the <b>loadPixels()</b> method on the image to make sure that the pixel data is properly loaded.
+ <br><br>To create a new image, use the <b>createImage()</b> function (do not use <b>new PImage()</b>).
+ =advanced
+
+ Storage class for pixel data. This is the base class for most image and
  pixel information, such as PGraphics and the video library classes.
  <P>
  Code for copying, resizing, scaling, and blending contributed
@@ -111,6 +122,10 @@ Storage class for pixel data. This is the base class for most image and
 <P>
 
 <P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../processing/core/PApplet.html#loadImage(java.lang.String)"><CODE>PApplet.loadImage(String)</CODE></A>, 
+<A HREF="../../processing/core/PGraphics.html#imageMode(int)"><CODE>PGraphics.imageMode(int)</CODE></A>, 
+<CODE>Component.createImage(int, int)</CODE></DL>
 <HR>
 
 <P>
@@ -136,7 +151,7 @@ Storage class for pixel data. This is the base class for most image and
 <TD><CODE><B><A HREF="../../processing/core/PImage.html#height">height</A></B></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The height of the image in units of pixels.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -152,7 +167,7 @@ Storage class for pixel data. This is the base class for most image and
 <TD><CODE><B><A HREF="../../processing/core/PImage.html#pixels">pixels</A></B></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Array containing the values for all the pixels in the image.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -160,7 +175,7 @@ Storage class for pixel data. This is the base class for most image and
 <TD><CODE><B><A HREF="../../processing/core/PImage.html#width">width</A></B></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The width of the image in units of pixels.</TD>
 </TR>
 </TABLE>
 &nbsp;<A NAME="fields_inherited_from_class_processing.core.PConstants"><!-- --></A>
@@ -249,7 +264,7 @@ Storage class for pixel data. This is the base class for most image and
       int&nbsp;mode)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copies area of one image into another PImage object.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Blends a region of pixels into the image specified by the <b>img</b> parameter.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -299,7 +314,7 @@ Storage class for pixel data. This is the base class for most image and
      int&nbsp;dh)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copies area of one image into another PImage object.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copies a region of pixels from one image into another.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -307,7 +322,7 @@ Storage class for pixel data. This is the base class for most image and
 <TD><CODE><B><A HREF="../../processing/core/PImage.html#filter(int)">filter</A></B>(int&nbsp;kind)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Method to apply a variety of basic filters to this image.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -316,7 +331,7 @@ Storage class for pixel data. This is the base class for most image and
        float&nbsp;param)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Method to apply a variety of basic filters to this image.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Filters an image as defined by one of the following modes:<br><br>THRESHOLD - converts the image to black and white pixels depending if they are above or below the threshold defined by the level parameter.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -344,7 +359,7 @@ Storage class for pixel data. This is the base class for most image and
     int&nbsp;h)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Grab a subsection of a PImage, and copy it into a fresh PImage.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reads the color of any pixel or grabs a group of pixels.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -387,12 +402,12 @@ Storage class for pixel data. This is the base class for most image and
 <TD><CODE><B><A HREF="../../processing/core/PImage.html#loadPixels()">loadPixels</A></B>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Call this when you want to mess with the pixels[] array.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Loads the pixel data for the image into its <b>pixels[]</b> array.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PImage.html#mask(int[])">mask</A></B>(int[]&nbsp;alpha)</CODE>
+<TD><CODE><B><A HREF="../../processing/core/PImage.html#mask(int[])">mask</A></B>(int[]&nbsp;maskArray)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set alpha channel for an image.</TD>
@@ -400,10 +415,10 @@ Storage class for pixel data. This is the base class for most image and
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PImage.html#mask(processing.core.PImage)">mask</A></B>(<A HREF="../../processing/core/PImage.html" title="class in processing.core">PImage</A>&nbsp;alpha)</CODE>
+<TD><CODE><B><A HREF="../../processing/core/PImage.html#mask(processing.core.PImage)">mask</A></B>(<A HREF="../../processing/core/PImage.html" title="class in processing.core">PImage</A>&nbsp;maskImg)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set alpha channel for an image using another image as the source.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Masks part of an image from displaying by loading another image and using it as an alpha channel.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -420,15 +435,15 @@ Storage class for pixel data. This is the base class for most image and
        int&nbsp;high)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Resize this image to a new width and height.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Resize the image to a new width and height.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PImage.html#save(java.lang.String)">save</A></B>(java.lang.String&nbsp;path)</CODE>
+<TD><CODE><B><A HREF="../../processing/core/PImage.html#save(java.lang.String)">save</A></B>(java.lang.String&nbsp;filename)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Save this image to disk.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Saves the image into a file.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -438,7 +453,7 @@ Storage class for pixel data. This is the base class for most image and
     int&nbsp;c)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set a single pixel to the specified color.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Changes the color of any pixel or writes an image directly into the display window.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -482,7 +497,7 @@ Storage class for pixel data. This is the base class for most image and
 <TD><CODE><B><A HREF="../../processing/core/PImage.html#updatePixels()">updatePixels</A></B>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Call this when finished messing with the pixels[] array.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -493,7 +508,7 @@ Storage class for pixel data. This is the base class for most image and
              int&nbsp;h)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Mark the pixels in this region as needing an update.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Updates the image with the data in its <b>pixels[]</b> array.</TD>
 </TR>
 </TABLE>
 &nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
@@ -537,6 +552,15 @@ pixels</H3>
 <PRE>
 public int[] <B>pixels</B></PRE>
 <DL>
+<DD>Array containing the values for all the pixels in the image. These values are of the color datatype.
+ This array is the size of the image, meaning if the image is 100x100 pixels, there will be 10000 values
+ and if the window is 200x300 pixels, there will be 60000 values.
+ The <b>index</b> value defines the position of a value within the array.
+ For example, the statement <b>color b = img.pixels[230]</b> will set the variable <b>b</b> equal to the value at that location in the array.
+ Before accessing this array, the data must loaded with the <b>loadPixels()</b> method.
+ After the array data has been modified, the <b>updatePixels()</b> method must be run to update the changes.
+ Without <b>loadPixels()</b>, running the code may (or will in future releases) result in a NullPointerException.
+<P>
 <DL>
 </DL>
 </DL>
@@ -547,6 +571,8 @@ width</H3>
 <PRE>
 public int <B>width</B></PRE>
 <DL>
+<DD>The width of the image in units of pixels.
+<P>
 <DL>
 </DL>
 </DL>
@@ -557,6 +583,8 @@ height</H3>
 <PRE>
 public int <B>height</B></PRE>
 <DL>
+<DD>The height of the image in units of pixels.
+<P>
 <DL>
 </DL>
 </DL>
@@ -615,6 +643,8 @@ public <B>PImage</B>(int&nbsp;width,
               int&nbsp;height,
               int&nbsp;format)</PRE>
 <DL>
+<DL>
+<DT><B>Parameters:</B><DD><CODE>width</CODE> - image width<DD><CODE>height</CODE> - image height<DD><CODE>format</CODE> - Either RGB, ARGB, ALPHA (grayscale alpha channel)</DL>
 </DL>
 <HR>
 
@@ -627,6 +657,9 @@ public <B>PImage</B>(java.awt.Image&nbsp;img)</PRE>
  that you've done the work of making sure a MediaTracker has been used
  to fully download the data and that the img is valid.
 <P>
+<DL>
+<DT><B>Parameters:</B><DD><CODE>img</CODE> - assumes a MediaTracker has been used to fully download
+ the data and the img is valid</DL>
 </DL>
 
 <!-- ============ METHOD DETAIL ========== -->
@@ -781,7 +814,10 @@ loadPixels</H3>
 <PRE>
 public void <B>loadPixels</B>()</PRE>
 <DL>
-<DD>Call this when you want to mess with the pixels[] array.
+<DD>Loads the pixel data for the image into its <b>pixels[]</b> array. This function must always be called before reading from or writing to <b>pixels[]</b>.
+ <br><br>Certain renderers may or may not seem to require <b>loadPixels()</b> or <b>updatePixels()</b>. However, the rule is that any time you want to manipulate the <b>pixels[]</b> array, you must first call <b>loadPixels()</b>, and after changes have been made, call <b>updatePixels()</b>. Even if the renderer may not seem to use this function in the current Processing release, this will always be subject to change.
+ =advanced
+ Call this when you want to mess with the pixels[] array.
  <p/>
  For subclasses where the pixels[] buffer isn't set by default,
  this should copy all data into the pixels[] array
@@ -800,10 +836,6 @@ updatePixels</H3>
 <PRE>
 public void <B>updatePixels</B>()</PRE>
 <DL>
-<DD>Call this when finished messing with the pixels[] array.
- <p/>
- Mark all pixels as needing update.
-<P>
 <DD><DL>
 </DL>
 </DD>
@@ -821,8 +853,11 @@ public void <B>updatePixels</B>(int&nbsp;x,
                          int&nbsp;w,
                          int&nbsp;h)</PRE>
 <DL>
-<DD>Mark the pixels in this region as needing an update.
- <P>
+<DD>Updates the image with the data in its <b>pixels[]</b> array. Use in conjunction with <b>loadPixels()</b>. If you're only reading pixels from the array, there's no need to call <b>updatePixels()</b>.
+ <br><br>Certain renderers may or may not seem to require <b>loadPixels()</b> or <b>updatePixels()</b>. However, the rule is that any time you want to manipulate the <b>pixels[]</b> array, you must first call <b>loadPixels()</b>, and after changes have been made, call <b>updatePixels()</b>. Even if the renderer may not seem to use this function in the current Processing release, this will always be subject to change.
+ <br><br>Currently, none of the renderers use the additional parameters to <b>updatePixels()</b>, however this may be implemented in the future.
+ =advanced
+ Mark the pixels in this region as needing an update.
  This is not currently used by any of the renderers, however the api
  is structured this way in the hope of being able to use this to
  speed things up in the future.
@@ -831,7 +866,7 @@ public void <B>updatePixels</B>(int&nbsp;x,
 </DL>
 </DD>
 <DD><DL>
-</DL>
+<DT><B>Parameters:</B><DD><CODE>x</CODE> - <DD><CODE>y</CODE> - <DD><CODE>w</CODE> - <DD><CODE>h</CODE> - </DL>
 </DD>
 </DL>
 <HR>
@@ -866,14 +901,13 @@ resize</H3>
 public void <B>resize</B>(int&nbsp;wide,
                    int&nbsp;high)</PRE>
 <DL>
-<DD>Resize this image to a new width and height.
- Use 0 for wide or high to make that dimension scale proportionally.
+<DD>Resize the image to a new width and height. To make the image scale proportionally, use 0 as the value for the <b>wide</b> or <b>high</b> parameter.
 <P>
 <DD><DL>
 </DL>
 </DD>
 <DD><DL>
-</DL>
+<DT><B>Parameters:</B><DD><CODE>wide</CODE> - the resized image width<DD><CODE>high</CODE> - the resized image height<DT><B>See Also:</B><DD><A HREF="../../processing/core/PImage.html#get(int, int, int, int)"><CODE>get(int, int, int, int)</CODE></A></DL>
 </DD>
 </DL>
 <HR>
@@ -918,14 +952,17 @@ public <A HREF="../../processing/core/PImage.html" title="class in processing.co
                   int&nbsp;w,
                   int&nbsp;h)</PRE>
 <DL>
-<DD>Grab a subsection of a PImage, and copy it into a fresh PImage.
- As of release 0149, no longer honors imageMode() for the coordinates.
+<DD>Reads the color of any pixel or grabs a group of pixels. If no parameters are specified, the entire image is returned. Get the value of one pixel by specifying an x,y coordinate. Get a section of the display window by specifing an additional <b>width</b> and <b>height</b> parameter. If the pixel requested is outside of the image window, black is returned. The numbers returned are scaled according to the current color ranges, but only RGB values are returned by this function. Even though you may have drawn a shape with <b>colorMode(HSB)</b>, the numbers returned will be in RGB.
+ <br><br>Getting the color of a single pixel with <b>get(x, y)</b> is easy, but not as fast as grabbing the data directly from <b>pixels[]</b>. The equivalent statement to "get(x, y)" using <b>pixels[]</b> is "pixels[y*width+x]". Processing requires calling <b>loadPixels()</b> to load the display window data into the <b>pixels[]</b> array before getting the values.
+ <br><br>As of release 0149, this function ignores <b>imageMode()</b>.
 <P>
 <DD><DL>
 </DL>
 </DD>
 <DD><DL>
-</DL>
+<DT><B>Parameters:</B><DD><CODE>x</CODE> - x-coordinate of the pixel<DD><CODE>y</CODE> - y-coordinate of the pixel<DD><CODE>w</CODE> - width of pixel rectangle to get<DD><CODE>h</CODE> - height of pixel rectangle to get<DT><B>See Also:</B><DD><A HREF="../../processing/core/PImage.html#set(int, int, int)"><CODE>set(int, int, int)</CODE></A>, 
+<A HREF="../../processing/core/PImage.html#pixels"><CODE>pixels</CODE></A>, 
+<A HREF="../../processing/core/PImage.html#copy(processing.core.PImage, int, int, int, int, int, int, int, int)"><CODE>copy(PImage, int, int, int, int, int, int, int, int)</CODE></A></DL>
 </DD>
 </DL>
 <HR>
@@ -953,13 +990,18 @@ public void <B>set</B>(int&nbsp;x,
                 int&nbsp;y,
                 int&nbsp;c)</PRE>
 <DL>
-<DD>Set a single pixel to the specified color.
+<DD>Changes the color of any pixel or writes an image directly into the display window. The <b>x</b> and <b>y</b> parameters specify the pixel to change and the <b>color</b> parameter specifies the color value. The color parameter is affected by the current color mode (the default is RGB values from 0 to 255). When setting an image, the x and y parameters define the coordinates for the upper-left corner of the image.
+ <br><br>Setting the color of a single pixel with <b>set(x, y)</b> is easy, but not as fast as putting the data directly into <b>pixels[]</b>. The equivalent statement to "set(x, y, #000000)" using <b>pixels[]</b> is "pixels[y*width+x] = #000000". You must call <b>loadPixels()</b> to load the display window data into the <b>pixels[]</b> array before setting the values and calling <b>updatePixels()</b> to update the window with any changes.
+ <br><br>As of release 1.0, this function ignores <b>imageMode()</b>.
+ <br><br>Due to what appears to be a bug in Apple's Java implementation, the point() and set() methods are extremely slow in some circumstances when used with the default renderer. Using P2D or P3D will fix the problem. Grouping many calls to point() or set() together can also help. (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=1094">Bug 1094</a>)
+ =advanced
+ <br><br>As of release 0149, this function ignores <b>imageMode()</b>.
 <P>
 <DD><DL>
 </DL>
 </DD>
 <DD><DL>
-</DL>
+<DT><B>Parameters:</B><DD><CODE>x</CODE> - x-coordinate of the pixel<DD><CODE>y</CODE> - y-coordinate of the pixel<DD><CODE>c</CODE> - any value of the color datatype</DL>
 </DD>
 </DL>
 <HR>
@@ -987,7 +1029,7 @@ public void <B>set</B>(int&nbsp;x,
 <A NAME="mask(int[])"><!-- --></A><H3>
 mask</H3>
 <PRE>
-public void <B>mask</B>(int[]&nbsp;alpha)</PRE>
+public void <B>mask</B>(int[]&nbsp;maskArray)</PRE>
 <DL>
 <DD>Set alpha channel for an image. Black colors in the source
  image will make the destination image completely transparent,
@@ -998,14 +1040,14 @@ public void <B>mask</B>(int[]&nbsp;alpha)</PRE>
  used as the alpha color. For a fully grayscale image, this
  is correct, but for a color image it's not 100% accurate.
  For a more accurate conversion, first use filter(GRAY)
- which will make the image into a "correct" grayscake by
+ which will make the image into a "correct" grayscale by
  performing a proper luminance-based conversion.
 <P>
 <DD><DL>
 </DL>
 </DD>
 <DD><DL>
-</DL>
+<DT><B>Parameters:</B><DD><CODE>maskArray</CODE> - any array of Integer numbers used as the alpha channel, needs to be same length as the image's pixel array</DL>
 </DD>
 </DL>
 <HR>
@@ -1013,15 +1055,20 @@ public void <B>mask</B>(int[]&nbsp;alpha)</PRE>
 <A NAME="mask(processing.core.PImage)"><!-- --></A><H3>
 mask</H3>
 <PRE>
-public void <B>mask</B>(<A HREF="../../processing/core/PImage.html" title="class in processing.core">PImage</A>&nbsp;alpha)</PRE>
+public void <B>mask</B>(<A HREF="../../processing/core/PImage.html" title="class in processing.core">PImage</A>&nbsp;maskImg)</PRE>
 <DL>
-<DD>Set alpha channel for an image using another image as the source.
+<DD>Masks part of an image from displaying by loading another image and using it as an alpha channel.
+  This mask image should only contain grayscale data, but only the blue color channel is used.
+  The mask image needs to be the same size as the image to which it is applied.
+  In addition to using a mask image, an integer array containing the alpha channel data can be specified directly.
+  This method is useful for creating dynamically generated alpha masks.
+  This array must be of the same length as the target image's pixels array and should contain only grayscale data of values between 0-255.
 <P>
 <DD><DL>
 </DL>
 </DD>
 <DD><DL>
-</DL>
+<DT><B>Parameters:</B><DD><CODE>maskImg</CODE> - any PImage object used as the alpha channel for "img", needs to be same size as "img"</DL>
 </DD>
 </DL>
 <HR>
@@ -1031,7 +1078,24 @@ filter</H3>
 <PRE>
 public void <B>filter</B>(int&nbsp;kind)</PRE>
 <DL>
-<DD>Method to apply a variety of basic filters to this image.
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="filter(int, float)"><!-- --></A><H3>
+filter</H3>
+<PRE>
+public void <B>filter</B>(int&nbsp;kind,
+                   float&nbsp;param)</PRE>
+<DL>
+<DD>Filters an image as defined by one of the following modes:<br><br>THRESHOLD - converts the image to black and white pixels depending if they are above or below the threshold defined by the level parameter. The level must be between 0.0 (black) and 1.0(white). If no level is specified, 0.5 is used.<br><br>GRAY - converts any colors in the image to grayscale equivalents<br><br>INVERT - sets each pixel to its inverse value<br><br>POSTERIZE - limits each channel of the image to the number of colors specified as the level parameter<br><br>BLUR - executes a Guassian blur with the level parameter specifying the extent of the blurring. If no level parameter is used, the blur is equivalent to Guassian blur of radius 1.<br><br>OPAQUE - sets the alpha channel to entirely opaque.<br><br>ERODE - reduces the light areas with the amount defined by the level parameter.<br><br>DILATE - increases the light areas with the amount defined by the level parameter
+ =advanced
+ Method to apply a variety of basic filters to this image.
  <P>
  <UL>
  <LI>filter(BLUR) provides a basic blur.
@@ -1052,37 +1116,7 @@ public void <B>filter</B>(int&nbsp;kind)</PRE>
 </DL>
 </DD>
 <DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="filter(int, float)"><!-- --></A><H3>
-filter</H3>
-<PRE>
-public void <B>filter</B>(int&nbsp;kind,
-                   float&nbsp;param)</PRE>
-<DL>
-<DD>Method to apply a variety of basic filters to this image.
- These filters all take a parameter.
- <P>
- <UL>
- <LI>filter(BLUR, int radius) performs a gaussian blur of the
- specified radius.
- <LI>filter(POSTERIZE, int levels) will posterize the image to
- between 2 and 255 levels.
- <LI>filter(THRESHOLD, float center) allows you to set the
- center point for the threshold. It takes a value from 0 to 1.0.
- </UL>
- Gaussian blur code contributed by
- <A HREF="http://incubator.quasimondo.com">Mario Klingemann</A>
- and later updated by toxi for better speed.
-<P>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-</DL>
+<DT><B>Parameters:</B><DD><CODE>kind</CODE> - Either THRESHOLD, GRAY, INVERT, POSTERIZE, BLUR, OPAQUE, ERODE, or DILATE<DD><CODE>param</CODE> - in the range from 0 to 1</DL>
 </DD>
 </DL>
 <HR>
@@ -1124,13 +1158,15 @@ public void <B>copy</B>(<A HREF="../../processing/core/PImage.html" title="class
                  int&nbsp;dw,
                  int&nbsp;dh)</PRE>
 <DL>
-<DD>Copies area of one image into another PImage object.
+<DD>Copies a region of pixels from one image into another. If the source and destination regions aren't the same size, it will automatically resize source pixels to fit the specified target region. No alpha information is used in the process, however if the source image has an alpha channel set, it will be copied as well.
+ <br><br>As of release 0149, this function ignores <b>imageMode()</b>.
 <P>
 <DD><DL>
 </DL>
 </DD>
 <DD><DL>
-</DL>
+<DT><B>Parameters:</B><DD><CODE>sx</CODE> - X coordinate of the source's upper left corner<DD><CODE>sy</CODE> - Y coordinate of the source's upper left corner<DD><CODE>sw</CODE> - source image width<DD><CODE>sh</CODE> - source image height<DD><CODE>dx</CODE> - X coordinate of the destination's upper left corner<DD><CODE>dy</CODE> - Y coordinate of the destination's upper left corner<DD><CODE>dw</CODE> - destination image width<DD><CODE>dh</CODE> - destination image height<DD><CODE>src</CODE> - an image variable referring to the source image.<DT><B>See Also:</B><DD><A HREF="../../processing/core/PGraphics.html#alpha(int)"><CODE>PGraphics.alpha(int)</CODE></A>, 
+<A HREF="../../processing/core/PImage.html#blend(processing.core.PImage, int, int, int, int, int, int, int, int, int)"><CODE>blend(PImage, int, int, int, int, int, int, int, int, int)</CODE></A></DL>
 </DD>
 </DL>
 <HR>
@@ -1252,13 +1288,31 @@ public void <B>blend</B>(<A HREF="../../processing/core/PImage.html" title="clas
                   int&nbsp;dh,
                   int&nbsp;mode)</PRE>
 <DL>
-<DD>Copies area of one image into another PImage object.
+<DD>Blends a region of pixels into the image specified by the <b>img</b> parameter. These copies utilize full alpha channel support and a choice of the following modes to blend the colors of source pixels (A) with the ones of pixels in the destination image (B):<br><br>
+ BLEND - linear interpolation of colours: C = A*factor + B<br><br>
+ ADD - additive blending with white clip: C = min(A*factor + B, 255)<br><br>
+ SUBTRACT - subtractive blending with black clip: C = max(B - A*factor, 0)<br><br>
+ DARKEST - only the darkest colour succeeds: C = min(A*factor, B)<br><br>
+ LIGHTEST - only the lightest colour succeeds: C = max(A*factor, B)<br><br>
+ DIFFERENCE - subtract colors from underlying image.<br><br>
+ EXCLUSION - similar to DIFFERENCE, but less extreme.<br><br>
+ MULTIPLY - Multiply the colors, result will always be darker.<br><br>
+ SCREEN - Opposite multiply, uses inverse values of the colors.<br><br>
+ OVERLAY - A mix of MULTIPLY and SCREEN. Multiplies dark values, and screens light values.<br><br>
+ HARD_LIGHT - SCREEN when greater than 50% gray, MULTIPLY when lower.<br><br>
+ SOFT_LIGHT - Mix of DARKEST and LIGHTEST. Works like OVERLAY, but not as harsh.<br><br>
+ DODGE - Lightens light tones and increases contrast, ignores darks. Called "Color Dodge" in Illustrator and Photoshop.<br><br>
+ BURN - Darker areas are applied, increasing contrast, ignores lights. Called "Color Burn" in Illustrator and Photoshop.<br><br>
+ All modes use the alpha information (highest byte) of source image pixels as the blending factor. If the source and destination regions are different sizes, the image will be automatically resized to match the destination size. If the <b>srcImg</b> parameter is not used, the display window is used as the source image.<br><br>
+ As of release 0149, this function ignores <b>imageMode()</b>.
 <P>
 <DD><DL>
 </DL>
 </DD>
 <DD><DL>
-<DT><B>See Also:</B><DD><A HREF="../../processing/core/PImage.html#blendColor(int, int, int)"><CODE>blendColor(int,int,int)</CODE></A></DL>
+<DT><B>Parameters:</B><DD><CODE>src</CODE> - an image variable referring to the source image<DD><CODE>sx</CODE> - X coordinate of the source's upper left corner<DD><CODE>sy</CODE> - Y coordinate of the source's upper left corner<DD><CODE>sw</CODE> - source image width<DD><CODE>sh</CODE> - source image height<DD><CODE>dx</CODE> - X coordinate of the destinations's upper left corner<DD><CODE>dy</CODE> - Y coordinate of the destinations's upper left corner<DD><CODE>dw</CODE> - destination image width<DD><CODE>dh</CODE> - destination image height<DD><CODE>mode</CODE> - Either BLEND, ADD, SUBTRACT, LIGHTEST, DARKEST, DIFFERENCE, EXCLUSION, MULTIPLY, SCREEN, OVERLAY, HARD_LIGHT, SOFT_LIGHT, DODGE, BURN<DT><B>See Also:</B><DD><A HREF="../../processing/core/PGraphics.html#alpha(int)"><CODE>PGraphics.alpha(int)</CODE></A>, 
+<A HREF="../../processing/core/PImage.html#copy(processing.core.PImage, int, int, int, int, int, int, int, int)"><CODE>copy(PImage, int, int, int, int, int, int, int, int)</CODE></A>, 
+<A HREF="../../processing/core/PImage.html#blendColor(int, int, int)"><CODE>blendColor(int,int,int)</CODE></A></DL>
 </DD>
 </DL>
 <HR>
@@ -1266,9 +1320,19 @@ public void <B>blend</B>(<A HREF="../../processing/core/PImage.html" title="clas
 <A NAME="save(java.lang.String)"><!-- --></A><H3>
 save</H3>
 <PRE>
-public void <B>save</B>(java.lang.String&nbsp;path)</PRE>
+public void <B>save</B>(java.lang.String&nbsp;filename)</PRE>
 <DL>
-<DD>Save this image to disk.
+<DD>Saves the image into a file. Images are saved in TIFF, TARGA, JPEG, and PNG format depending on the extension within the <b>filename</b> parameter.
+ For example, "image.tif" will have a TIFF image and "image.png" will save a PNG image.
+ If no extension is included in the filename, the image will save in TIFF format and <b>.tif</b> will be added to the name.
+ These files are saved to the sketch's folder, which may be opened by selecting "Show sketch folder" from the "Sketch" menu.
+ It is not possible to use <b>save()</b> while running the program in a web browser.<br><br>
+ To save an image created within the code, rather than through loading, it's necessary to make the image with the <b>createImage()</b>
+ function so it is aware of the location of the program and can therefore save the file to the right place.
+ See the <b>createImage()</b> reference for more information.
+
+ =advanced
+ Save this image to disk.
  <p>
  As of revision 0100, this function requires an absolute path,
  in order to avoid confusion. To save inside the sketch folder,
@@ -1296,7 +1360,7 @@ public void <B>save</B>(java.lang.String&nbsp;path)</PRE>
 </DL>
 </DD>
 <DD><DL>
-</DL>
+<DT><B>Parameters:</B><DD><CODE>filename</CODE> - a sequence of letters and numbers</DL>
 </DD>
 </DL>
 <!-- ========= END OF CLASS DATA ========= -->

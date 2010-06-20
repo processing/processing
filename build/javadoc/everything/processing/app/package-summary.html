@@ -6,14 +6,15 @@
 processing.app
 </TITLE>
 
-<META NAME="keywords" CONTENT="processing.app package">
 
 <LINK REL ="stylesheet" TYPE="text/css" HREF="../../stylesheet.css" TITLE="Style">
 
 <SCRIPT type="text/javascript">
 function windowTitle()
 {
-    parent.document.title="processing.app";
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="processing.app";
+    }
 }
 </SCRIPT>
 <NOSCRIPT>
@@ -22,6 +23,7 @@ function windowTitle()
 </HEAD>
 
 <BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
 
 
 <!-- ========= START OF TOP NAVBAR ======= -->
@@ -50,8 +52,8 @@ function windowTitle()
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../../antlr/java/package-summary.html"><B>PREV PACKAGE</B></A>&nbsp;
-&nbsp;<A HREF="../../processing/app/debug/package-summary.html"><B>NEXT PACKAGE</B></A></FONT></TD>
+&nbsp;<A HREF="../../antlr/package-summary.html"><B>PREV PACKAGE</B></A>&nbsp;
+&nbsp;<A HREF="../../processing/app/antlr/package-summary.html"><B>NEXT PACKAGE</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../index.html?processing/app/package-summary.html" target="_top"><B>FRAMES</B></A>  &nbsp;
 &nbsp;<A HREF="package-summary.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
@@ -77,6 +79,20 @@ function windowTitle()
 <H2>
 Package processing.app
 </H2>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Interface Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../processing/app/Platform.CLibrary.html" title="interface in processing.app">Platform.CLibrary</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+
+<P>
 
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
 <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
@@ -124,6 +140,10 @@ Package processing.app
 <TD>Find & Replace window for the Processing editor.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../processing/app/LibraryFolder.html" title="class in processing.app">LibraryFolder</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="../../processing/app/Platform.html" title="class in processing.app">Platform</A></B></TD>
 <TD>Used by Base for platform-specific tweaking, for instance finding the
  sketchbook location using the Windows registry, or OS X event handling.</TD>
@@ -145,6 +165,11 @@ Package processing.app
 <TD>Represents a single tab of a sketch.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../processing/app/StreamRedirectThread.html" title="class in processing.app">StreamRedirectThread</A></B></TD>
+<TD>StreamRedirectThread is a thread which copies it's input to
+ it's output and terminates when it completes.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="../../processing/app/Theme.html" title="class in processing.app">Theme</A></B></TD>
 <TD>Storage class for theme settings.</TD>
 </TR>
@@ -154,7 +179,9 @@ Package processing.app
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="../../processing/app/WebServer.html" title="class in processing.app">WebServer</A></B></TD>
-<TD>An example of a very simple, multi-threaded HTTP server.</TD>
+<TD>This code is placed here in anticipation of running the reference from an
+ internal web server that reads the docs from a zip file, instead of using
+ thousands of .html files on the disk, which is really inefficient.</TD>
 </TR>
 </TABLE>
 &nbsp;
@@ -191,8 +218,8 @@ Package processing.app
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../../antlr/java/package-summary.html"><B>PREV PACKAGE</B></A>&nbsp;
-&nbsp;<A HREF="../../processing/app/debug/package-summary.html"><B>NEXT PACKAGE</B></A></FONT></TD>
+&nbsp;<A HREF="../../antlr/package-summary.html"><B>PREV PACKAGE</B></A>&nbsp;
+&nbsp;<A HREF="../../processing/app/antlr/package-summary.html"><B>NEXT PACKAGE</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../index.html?processing/app/package-summary.html" target="_top"><B>FRAMES</B></A>  &nbsp;
 &nbsp;<A HREF="package-summary.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;

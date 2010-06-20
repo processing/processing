@@ -6,14 +6,15 @@
 Compiler
 </TITLE>
 
-<META NAME="keywords" CONTENT="processing.app.debug.Compiler class">
 
 <LINK REL ="stylesheet" TYPE="text/css" HREF="../../../stylesheet.css" TITLE="Style">
 
 <SCRIPT type="text/javascript">
 function windowTitle()
 {
-    parent.document.title="Compiler";
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="Compiler";
+    }
 }
 </SCRIPT>
 <NOSCRIPT>
@@ -22,6 +23,7 @@ function windowTitle()
 </HEAD>
 
 <BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
 
 
 <!-- ========= START OF TOP NAVBAR ======= -->
@@ -127,9 +129,10 @@ java.lang.Object
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../processing/app/debug/Compiler.html#compile(processing.app.Sketch, java.lang.String, java.lang.String)">compile</A></B>(<A HREF="../../../processing/app/Sketch.html" title="class in processing.app">Sketch</A>&nbsp;sketch,
+<TD><CODE><B><A HREF="../../../processing/app/debug/Compiler.html#compile(processing.app.Sketch, java.lang.String, java.lang.String, java.lang.String)">compile</A></B>(<A HREF="../../../processing/app/Sketch.html" title="class in processing.app">Sketch</A>&nbsp;sketch,
         java.lang.String&nbsp;buildPath,
-        java.lang.String&nbsp;primaryClassName)</CODE>
+        java.lang.String&nbsp;primaryClassName,
+        java.lang.String&nbsp;bootClassPath)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Compile with ECJ.</TD>
@@ -193,15 +196,16 @@ public <B>Compiler</B>()</PRE>
 </TR>
 </TABLE>
 
-<A NAME="compile(processing.app.Sketch, java.lang.String, java.lang.String)"><!-- --></A><H3>
+<A NAME="compile(processing.app.Sketch, java.lang.String, java.lang.String, java.lang.String)"><!-- --></A><H3>
 compile</H3>
 <PRE>
 public boolean <B>compile</B>(<A HREF="../../../processing/app/Sketch.html" title="class in processing.app">Sketch</A>&nbsp;sketch,
                        java.lang.String&nbsp;buildPath,
-                       java.lang.String&nbsp;primaryClassName)
+                       java.lang.String&nbsp;primaryClassName,
+                       java.lang.String&nbsp;bootClassPath)
                 throws <A HREF="../../../processing/app/debug/RunnerException.html" title="class in processing.app.debug">RunnerException</A></PRE>
 <DL>
-<DD>Compile with ECJ.
+<DD>Compile with ECJ. See http://j.mp/8paifz for documentation.
 <P>
 <DD><DL>
 <DT><B>Parameters:</B><DD><CODE>sketch</CODE> - Sketch object to be compiled.<DD><CODE>buildPath</CODE> - Where the temporary files live and will be built from.

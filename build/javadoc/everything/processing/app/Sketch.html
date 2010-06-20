@@ -6,14 +6,15 @@
 Sketch
 </TITLE>
 
-<META NAME="keywords" CONTENT="processing.app.Sketch class">
 
 <LINK REL ="stylesheet" TYPE="text/css" HREF="../../stylesheet.css" TITLE="Style">
 
 <SCRIPT type="text/javascript">
 function windowTitle()
 {
-    parent.document.title="Sketch";
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="Sketch";
+    }
 }
 </SCRIPT>
 <NOSCRIPT>
@@ -22,6 +23,7 @@ function windowTitle()
 </HEAD>
 
 <BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
 
 
 <!-- ========= START OF TOP NAVBAR ======= -->
@@ -137,6 +139,14 @@ Stores information about files in the current sketch
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Add a file to the sketch.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Sketch.html#build()">build</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Run the build inside the temporary build folder.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -275,6 +285,22 @@ Stores information about files in the current sketch
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the sketch folder.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Sketch.html#getFoundMain()">getFoundMain</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.util.ArrayList&lt;java.io.File&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Sketch.html#getImportedLibraries()">getImportedLibraries</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -424,6 +450,26 @@ Stores information about files in the current sketch
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../processing/app/debug/RunnerException.html" title="class in processing.app.debug">RunnerException</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Sketch.html#placeException(java.lang.String, java.lang.String, int)">placeException</A></B>(java.lang.String&nbsp;message,
+               java.lang.String&nbsp;dotJavaFilename,
+               int&nbsp;dotJavaLine)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Map an error from a set of processed .java files back to its location
+ in the actual sketch.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Sketch.html#prepare()">prepare</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When running from the editor, take care of preparations before running
+ the build.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;java.io.File</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/app/Sketch.html#prepareCodeFolder()">prepareCodeFolder</A></B>()</CODE>
 
@@ -445,6 +491,15 @@ Stores information about files in the current sketch
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Build all the code for this sketch.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Sketch.html#preprocess(java.lang.String, processing.app.preproc.PdePreprocessor)">preprocess</A></B>(java.lang.String&nbsp;buildPath,
+           <A HREF="../../processing/app/preproc/PdePreprocessor.html" title="class in processing.app.preproc">PdePreprocessor</A>&nbsp;preprocessor)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -726,6 +781,20 @@ public void <B>setCurrentCode</B>(int&nbsp;which)</PRE>
 </DL>
 <HR>
 
+<A NAME="prepare()"><!-- --></A><H3>
+prepare</H3>
+<PRE>
+public void <B>prepare</B>()</PRE>
+<DL>
+<DD>When running from the editor, take care of preparations before running
+ the build.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
 <A NAME="preprocess(java.lang.String)"><!-- --></A><H3>
 preprocess</H3>
 <PRE>
@@ -745,6 +814,78 @@ public java.lang.String <B>preprocess</B>(java.lang.String&nbsp;buildPath)
 <P>
 <DD><DL>
 <DT><B>Parameters:</B><DD><CODE>buildPath</CODE> - Location to copy all the .java files
+<DT><B>Returns:</B><DD>null if compilation failed, main class name if not
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="../../processing/app/debug/RunnerException.html" title="class in processing.app.debug">RunnerException</A></CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="preprocess(java.lang.String, processing.app.preproc.PdePreprocessor)"><!-- --></A><H3>
+preprocess</H3>
+<PRE>
+public java.lang.String <B>preprocess</B>(java.lang.String&nbsp;buildPath,
+                                   <A HREF="../../processing/app/preproc/PdePreprocessor.html" title="class in processing.app.preproc">PdePreprocessor</A>&nbsp;preprocessor)
+                            throws <A HREF="../../processing/app/debug/RunnerException.html" title="class in processing.app.debug">RunnerException</A></PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="../../processing/app/debug/RunnerException.html" title="class in processing.app.debug">RunnerException</A></CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFoundMain()"><!-- --></A><H3>
+getFoundMain</H3>
+<PRE>
+public boolean <B>getFoundMain</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getImportedLibraries()"><!-- --></A><H3>
+getImportedLibraries</H3>
+<PRE>
+public java.util.ArrayList&lt;java.io.File&gt; <B>getImportedLibraries</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="placeException(java.lang.String, java.lang.String, int)"><!-- --></A><H3>
+placeException</H3>
+<PRE>
+public <A HREF="../../processing/app/debug/RunnerException.html" title="class in processing.app.debug">RunnerException</A> <B>placeException</B>(java.lang.String&nbsp;message,
+                                      java.lang.String&nbsp;dotJavaFilename,
+                                      int&nbsp;dotJavaLine)</PRE>
+<DL>
+<DD>Map an error from a set of processed .java files back to its location
+ in the actual sketch.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>message</CODE> - The error message.<DD><CODE>filename</CODE> - The .java file where the exception was found.<DD><CODE>line</CODE> - Line number of the .java file for the exception (0-indexed!)
+<DT><B>Returns:</B><DD>A RunnerException to be sent to the editor, or null if it wasn't
+         possible to place the exception to the sketch code.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="build()"><!-- --></A><H3>
+build</H3>
+<PRE>
+public java.lang.String <B>build</B>()
+                       throws <A HREF="../../processing/app/debug/RunnerException.html" title="class in processing.app.debug">RunnerException</A></PRE>
+<DL>
+<DD>Run the build inside the temporary build folder.
+<P>
+<DD><DL>
+
 <DT><B>Returns:</B><DD>null if compilation failed, main class name if not
 <DT><B>Throws:</B>
 <DD><CODE><A HREF="../../processing/app/debug/RunnerException.html" title="class in processing.app.debug">RunnerException</A></CODE></DL>

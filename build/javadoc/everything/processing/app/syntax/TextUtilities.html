@@ -6,14 +6,15 @@
 TextUtilities
 </TITLE>
 
-<META NAME="keywords" CONTENT="processing.app.syntax.TextUtilities class">
 
 <LINK REL ="stylesheet" TYPE="text/css" HREF="../../../stylesheet.css" TITLE="Style">
 
 <SCRIPT type="text/javascript">
 function windowTitle()
 {
-    parent.document.title="TextUtilities";
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="TextUtilities";
+    }
 }
 </SCRIPT>
 <NOSCRIPT>
@@ -22,6 +23,7 @@ function windowTitle()
 </HEAD>
 
 <BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
 
 
 <!-- ========= START OF TOP NAVBAR ======= -->
@@ -131,17 +133,6 @@ Class with several utility functions used by the text area component.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../processing/app/syntax/TextUtilities.html#findMatchingBracket(javax.swing.text.Document, int)">findMatchingBracket</A></B>(javax.swing.text.Document&nbsp;doc,
-                    int&nbsp;offset)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the offset of the bracket matching the one at the
- specified offset of the document, or -1 if the bracket is
- unmatched (or if the character is not a bracket).</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;int</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../processing/app/syntax/TextUtilities.html#findWordEnd(java.lang.String, int, java.lang.String)">findWordEnd</A></B>(java.lang.String&nbsp;line,
             int&nbsp;pos,
             java.lang.String&nbsp;noWordSep)</CODE>
@@ -198,26 +189,6 @@ public <B>TextUtilities</B>()</PRE>
 <B>Method Detail</B></FONT></TH>
 </TR>
 </TABLE>
-
-<A NAME="findMatchingBracket(javax.swing.text.Document, int)"><!-- --></A><H3>
-findMatchingBracket</H3>
-<PRE>
-public static int <B>findMatchingBracket</B>(javax.swing.text.Document&nbsp;doc,
-                                      int&nbsp;offset)
-                               throws javax.swing.text.BadLocationException</PRE>
-<DL>
-<DD>Returns the offset of the bracket matching the one at the
- specified offset of the document, or -1 if the bracket is
- unmatched (or if the character is not a bracket).
-<P>
-<DD><DL>
-<DT><B>Parameters:</B><DD><CODE>doc</CODE> - The document<DD><CODE>offset</CODE> - The offset
-<DT><B>Throws:</B>
-<DD><CODE>javax.swing.text.BadLocationException</CODE> - If an out-of-bounds access
- was attempted on the document text</DL>
-</DD>
-</DL>
-<HR>
 
 <A NAME="findWordStart(java.lang.String, int, java.lang.String)"><!-- --></A><H3>
 findWordStart</H3>

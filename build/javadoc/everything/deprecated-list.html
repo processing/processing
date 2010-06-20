@@ -12,7 +12,9 @@ Deprecated List
 <SCRIPT type="text/javascript">
 function windowTitle()
 {
-    parent.document.title="Deprecated List";
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="Deprecated List";
+    }
 }
 </SCRIPT>
 <NOSCRIPT>
@@ -21,6 +23,7 @@ function windowTitle()
 </HEAD>
 
 <BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
 
 
 <!-- ========= START OF TOP NAVBAR ======= -->
@@ -103,6 +106,11 @@ function windowTitle()
 <TD><A HREF="processing/core/PConstants.html#NORMALIZED">processing.core.PConstants.NORMALIZED</A>
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>use NORMAL instead</I>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><A HREF="processing/core/PApplet.html#screen">processing.core.PApplet.screen</A>
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I></I>&nbsp;&nbsp;</TD>
 </TR>
 </TABLE>
 &nbsp;
