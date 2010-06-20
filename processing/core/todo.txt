@@ -4,6 +4,10 @@ X fix from jdf for PImage(java.awt.Image img) and ARGB images
 X large number of beginShape(POINTS) not rendering correctly on first frame
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1572
 X pass actual exceptions from InvocationTargetException in registered methods
+o svg issue with implicit path command
+o   http://dev.processing.org/bugs/show_bug.cgi?id=1561
+o   http://code.google.com/p/processing/issues/detail?id=257
+X   appears to be faulty code
 
 shape/svg work
 X fix for adobe illustrator-mangled svg id names with hex characters
@@ -20,15 +24,11 @@ X public int getVertexCodeCount()
 X public int getVertexCode(int index)
 X lots of fixes from PhiLho to better handle transparency changes, many types
 X   of inkscape files, drawings that use units, and other tweaks
+X implement support for svgz files
 
 _ need to wrap mouse/key events for p5
 _   need a version that works with both android and desktop
 _   also need to interleave events properly (as per report)
-
-all assigned bugs:
-http://dev.processing.org/bugs/buglist.cgi?bug_status=ASSIGNED&order=bugs.bug_status%2Cbugs.bug_id
-all assigned as csv:
-http://dev.processing.org/bugs/buglist.cgi?bug_status=ASSIGNED&order=bugs.bug_status%2Cbugs.bug_id&ctype=csv
 
 _ path for selectXxxxx() functions
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1475
@@ -44,9 +44,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=1280
 _ only top left 100 x 100 pixels are displayed in presentation mode (Linux 1.1+)
 _   also was just crashing in main() for me, check on this later
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1560
-
-_ svg issue with implicit path command
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1561
 
 _ need to make sure the createFont() reference is up to date for charset
 
