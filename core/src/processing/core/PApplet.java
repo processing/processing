@@ -1507,8 +1507,9 @@ public class PApplet extends Applet
         // screen and the component is valid. The OpenGL renderer will
         // request focus for its canvas inside beginDraw().
         // http://java.sun.com/j2se/1.4.2/docs/api/java/awt/doc-files/FocusSpec.html
-        //println("requesting focus");
-        requestFocus();
+        // Disabling for 0185, because it causes an assertion failure on OS X
+        // http://code.google.com/p/processing/issues/detail?id=258
+//        requestFocus();
       }
 
       // wait for update & paint to happen before drawing next frame
@@ -7393,8 +7394,10 @@ public class PApplet extends Applet
       }
     }
 
-    applet.requestFocus(); // ask for keydowns
-    //System.out.println("exiting main()");
+    // Disabling for 0185, because it causes an assertion failure on OS X
+    // http://code.google.com/p/processing/issues/detail?id=258
+    // (Although this doesn't seem to be the one that was causing problems.)
+    //applet.requestFocus(); // ask for keydowns
   }
 
 
