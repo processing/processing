@@ -24,6 +24,7 @@
 package processing.core;
 
 import java.io.*;
+import java.lang.reflect.Method;
 import java.nio.IntBuffer;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -143,6 +144,7 @@ public class PFont implements PConstants {
   /**
    * Required for OpenGL-based font rendering.
    */
+  protected PGraphicsAndroid3D a3d;
   protected GL10 gl10;
   protected int texWidth;
   protected int texHeight;
@@ -152,6 +154,7 @@ public class PFont implements PConstants {
   protected int[] texIDList = null;
   protected int currentTexID = -1;
   protected int lastTexID = -1;
+  protected int recreateResourceIdx;
   
   public PFont() { }  // for subclasses
 
@@ -325,6 +328,7 @@ public class PFont implements PConstants {
 
   protected void finalize() {
     if (gl10 != null && texIDList != null) {
+      a3d.removeRecreateResourceMethod(recreateResourceIdx);
       gl10.glDeleteTextures(texIDList.length, texIDList, 0);
       texIDList = null;
     }
@@ -682,6 +686,13 @@ public class PFont implements PConstants {
     offsetX = 0;
     offsetY = 0;
     lineHeight = 0;
+    
+    try {
+      Method meth = this.getClass().getMethod("recreateResource", new Class[] { PGraphicsAndroid3D.class });
+      recreateResourceIdx =  a3d.addRecreateResourceMethod(this, meth);
+    } catch (Exception e) {
+      recreateResourceIdx = -1;
+    }    
   }
   
   public int addTexture(GL10 gl) {
@@ -726,6 +737,9 @@ public class PFont implements PConstants {
     }
   }
     
+  protected void recreateResource(PGraphicsAndroid3D renderer) {
+  }
+  
   /////////////////////////////////////////////////////////////
 
   /**

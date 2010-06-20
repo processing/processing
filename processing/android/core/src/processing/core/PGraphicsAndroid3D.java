@@ -55,7 +55,7 @@ import processing.core.PShape3D.VertexGroup;
  * Android 3D renderer implemented with pure OpenGL ES 1.0/1.1
  * By Andres Colubri
  *
- * TODO: Comment A3D, PShape3D and PTexture, 
+ * TODO: Comment A3D, PShape3D, PTexture, PFramebuffer, 
  * TODO: Check lighting and materials.
  * TODO: Revise triangulator (issues are particularly apparent when tesselating SVG shapes).
  */
@@ -277,6 +277,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   // This array contains the recreateResource methods of all the GL objects
   // created in Processing. These methods are used to recreate the open GL
   // data when there is a context change or surface creation in Android.
+  // TODO: Check the resource recreation method.
   protected ArrayList<GLResource> recreateResourceMethods;
 
   // ........................................................
@@ -308,7 +309,7 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // .......................................................
   
-  protected Stack<PFramebuffer> fboStack;
+  protected Stack<PFramebuffer> fbStack;
   protected PFramebuffer currentFramebuffer;
   
   // ////////////////////////////////////////////////////////////
@@ -524,7 +525,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   
   public void pushFramebuffer() {
-    fboStack.push(currentFramebuffer);
+    fbStack.push(currentFramebuffer);
   }
 
   public void setFramebuffer(PFramebuffer fbo) {
@@ -534,10 +535,10 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   public void popFramebuffer() {
     try {
-      currentFramebuffer = fboStack.pop();
+      currentFramebuffer = fbStack.pop();
       currentFramebuffer.bind();
     } catch (EmptyStackException e) {
-      System.out.println("Empty framebuffer stack");
+      PGraphics.showWarning("A3D: Empty framebuffer stack");
     }
   }
 
@@ -3853,12 +3854,12 @@ public class PGraphicsAndroid3D extends PGraphics {
   public void report(String where) {
     if (!hints[DISABLE_OPENGL_ERROR_REPORT]) {
       int err = gl.glGetError();
-      if (err != 0) {
+      if (err != GL10.GL_NO_ERROR) {
         String errString = GLU.gluErrorString(err);
         String msg = "OpenGL error " + err + " at " + where + ": " + errString;
         PGraphics.showWarning(msg);
       }
-    }
+    }  
   }
 
   // ////////////////////////////////////////////////////////////
@@ -4796,15 +4797,6 @@ public class PGraphicsAndroid3D extends PGraphics {
       egl.eglDestroyContext(display, context);
     }
   }
-
-  // TODO: finish gl error handling.  
-  static void checkGLError(GL gl) {
-      int error = ((GL10) gl).glGetError();
-      if (error != GL10.GL_NO_ERROR) {
-          throw new RuntimeException("GLError 0x" + Integer.toHexString(error));
-      }
-  }
-  
   
   // ////////////////////////////////////////////////////////////
 
