@@ -6,14 +6,15 @@
 Serial
 </TITLE>
 
-<META NAME="keywords" CONTENT="processing.serial.Serial class">
 
 <LINK REL ="stylesheet" TYPE="text/css" HREF="../../stylesheet.css" TITLE="Style">
 
 <SCRIPT type="text/javascript">
 function windowTitle()
 {
-    parent.document.title="Serial";
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="Serial";
+    }
 }
 </SCRIPT>
 <NOSCRIPT>
@@ -22,6 +23,7 @@ function windowTitle()
 </HEAD>
 
 <BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
 
 
 <!-- ========= START OF TOP NAVBAR ======= -->
@@ -97,6 +99,10 @@ java.lang.Object
 <DL>
 <DT><PRE>public class <B>Serial</B><DT>extends java.lang.Object<DT>implements gnu.io.SerialPortEventListener</DL>
 </PRE>
+
+<P>
+Class for sending and receiving data using the serial communication protocol.
+<P>
 
 <P>
 <HR>

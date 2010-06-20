@@ -6,14 +6,15 @@
 XMLElement
 </TITLE>
 
-<META NAME="keywords" CONTENT="processing.xml.XMLElement class">
 
 <LINK REL ="stylesheet" TYPE="text/css" HREF="../../stylesheet.css" TITLE="Style">
 
 <SCRIPT type="text/javascript">
 function windowTitle()
 {
-    parent.document.title="XMLElement";
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="XMLElement";
+    }
 }
 </SCRIPT>
 <NOSCRIPT>
@@ -22,6 +23,7 @@ function windowTitle()
 </HEAD>
 
 <BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
 
 
 <!-- ========= START OF TOP NAVBAR ======= -->
@@ -99,7 +101,11 @@ java.lang.Object
 </PRE>
 
 <P>
-XMLElement is an XML element. This is the base class used for the 
+XMLElement is a representation of an XML object. The object is able to parse XML code. The methods described here are the most basic. More are documented in the Developer's Reference.
+ <br><br>
+ The encoding parameter inside XML files is ignored, only UTF-8 (or plain ASCII) are parsed properly.
+ =advanced
+ XMLElement is an XML element. This is the base class used for the 
  Processing XML library, representing a single node of an XML tree.
  
  This code is based on a modified version of NanoXML by Marc De Scheemaecker.
@@ -328,7 +334,7 @@ XMLElement is an XML element. This is the base class used for the
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;<A HREF="../../processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#getChild(int)">getChild</A></B>(int&nbsp;which)</CODE>
+<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#getChild(int)">getChild</A></B>(int&nbsp;index)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Quick accessor for an element at a particular index.</TD>
@@ -336,10 +342,10 @@ XMLElement is an XML element. This is the base class used for the
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;<A HREF="../../processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#getChild(java.lang.String)">getChild</A></B>(java.lang.String&nbsp;name)</CODE>
+<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#getChild(java.lang.String)">getChild</A></B>(java.lang.String&nbsp;path)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get a child by its name or path.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the child XMLElement as specified by the <b>index</b> parameter.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -355,7 +361,7 @@ XMLElement is an XML element. This is the base class used for the
 <TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#getChildCount()">getChildCount</A></B>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the number of children.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the number of children for the element.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -368,10 +374,10 @@ XMLElement is an XML element. This is the base class used for the
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;<A HREF="../../processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>[]</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#getChildren(java.lang.String)">getChildren</A></B>(java.lang.String&nbsp;name)</CODE>
+<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#getChildren(java.lang.String)">getChildren</A></B>(java.lang.String&nbsp;path)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get any children that match this name or path.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns all of the children as an XMLElement array.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -379,7 +385,7 @@ XMLElement is an XML element. This is the base class used for the
 <TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#getContent()">getContent</A></B>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return the #PCDATA content of the element.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the content of an element.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -423,7 +429,7 @@ XMLElement is an XML element. This is the base class used for the
                   float&nbsp;defaultValue)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the value of an attribute.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a float attribute of the element.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -441,7 +447,7 @@ XMLElement is an XML element. This is the base class used for the
 <TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#getIntAttribute(java.lang.String)">getIntAttribute</A></B>(java.lang.String&nbsp;name)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns an integer attribute of the element.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -450,7 +456,7 @@ XMLElement is an XML element. This is the base class used for the
                 int&nbsp;defaultValue)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the value of an attribute.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns an integer attribute of the element.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -517,7 +523,7 @@ XMLElement is an XML element. This is the base class used for the
                    java.lang.String&nbsp;defaultValue)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a String attribute of the element.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -667,6 +673,14 @@ XMLElement is an XML element. This is the base class used for the
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#toString()">toString</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#toString(boolean)">toString</A></B>(boolean&nbsp;pretty)</CODE>
 
 <BR>
@@ -679,7 +693,7 @@ XMLElement is an XML element. This is the base class used for the
 <TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE>getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+<TD><CODE>getClass, hashCode, notify, notifyAll, wait, wait, wait</CODE></TD>
 </TR>
 </TABLE>
 &nbsp;
@@ -752,7 +766,7 @@ public <B>XMLElement</B>(<A HREF="../../processing/core/PApplet.html" title="cla
  use the constructor that takes a Reader or InputStream.
 <P>
 <DL>
-<DT><B>Parameters:</B><DD><CODE>filename</CODE> - <DD><CODE>parent</CODE> - </DL>
+<DT><B>Parameters:</B><DD><CODE>filename</CODE> - name of the XML file to load<DD><CODE>parent</CODE> - typically use "this"</DL>
 </DL>
 <HR>
 
@@ -1058,14 +1072,15 @@ getChildCount</H3>
 <PRE>
 public int <B>getChildCount</B>()</PRE>
 <DL>
-<DD>Returns the number of children.
+<DD>Returns the number of children for the element.
 <P>
 <DD><DL>
 </DL>
 </DD>
 <DD><DL>
 
-<DT><B>Returns:</B><DD>the count.</DL>
+<DT><B>Returns:</B><DD>the count.<DT><B>See Also:</B><DD><A HREF="../../processing/xml/XMLElement.html#getChild(int)"><CODE>getChild(int)</CODE></A>, 
+<A HREF="../../processing/xml/XMLElement.html#getChildren(java.lang.String)"><CODE>getChildren(String)</CODE></A></DL>
 </DD>
 </DL>
 <HR>
@@ -1106,7 +1121,7 @@ public <A HREF="../../processing/xml/XMLElement.html" title="class in processing
 <A NAME="getChild(int)"><!-- --></A><H3>
 getChild</H3>
 <PRE>
-public <A HREF="../../processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A> <B>getChild</B>(int&nbsp;which)</PRE>
+public <A HREF="../../processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A> <B>getChild</B>(int&nbsp;index)</PRE>
 <DL>
 <DD>Quick accessor for an element at a particular index.
 <P>
@@ -1114,7 +1129,7 @@ public <A HREF="../../processing/xml/XMLElement.html" title="class in processing
 </DL>
 </DD>
 <DD><DL>
-</DL>
+<DT><B>Parameters:</B><DD><CODE>index</CODE> - the element</DL>
 </DD>
 </DL>
 <HR>
@@ -1122,16 +1137,18 @@ public <A HREF="../../processing/xml/XMLElement.html" title="class in processing
 <A NAME="getChild(java.lang.String)"><!-- --></A><H3>
 getChild</H3>
 <PRE>
-public <A HREF="../../processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A> <B>getChild</B>(java.lang.String&nbsp;name)</PRE>
+public <A HREF="../../processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A> <B>getChild</B>(java.lang.String&nbsp;path)</PRE>
 <DL>
-<DD>Get a child by its name or path.
+<DD>Returns the child XMLElement as specified by the <b>index</b> parameter. The value of the <b>index</b> parameter must be less than the total number of children to avoid going out of the array storing the child elements.
+ When the <b>path</b> parameter is specified, then it will return all children that match that path. The path is a series of elements and sub-elements, separated by slashes.
 <P>
 <DD><DL>
 </DL>
 </DD>
 <DD><DL>
-<DT><B>Parameters:</B><DD><CODE>name</CODE> - element name or path/to/element
-<DT><B>Returns:</B><DD>the element</DL>
+<DT><B>Parameters:</B><DD><CODE>path</CODE> - path to a particular element
+<DT><B>Returns:</B><DD>the element<DT><B>See Also:</B><DD><A HREF="../../processing/xml/XMLElement.html#getChildCount()"><CODE>getChildCount()</CODE></A>, 
+<A HREF="../../processing/xml/XMLElement.html#getChildren(java.lang.String)"><CODE>getChildren(String)</CODE></A></DL>
 </DD>
 </DL>
 <HR>
@@ -1159,17 +1176,19 @@ public <A HREF="../../processing/xml/XMLElement.html" title="class in processing
 <A NAME="getChildren(java.lang.String)"><!-- --></A><H3>
 getChildren</H3>
 <PRE>
-public <A HREF="../../processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>[] <B>getChildren</B>(java.lang.String&nbsp;name)</PRE>
+public <A HREF="../../processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>[] <B>getChildren</B>(java.lang.String&nbsp;path)</PRE>
 <DL>
-<DD>Get any children that match this name or path. Similar to getChild(),
- but will grab multiple matches rather than only the first.
+<DD>Returns all of the children as an XMLElement array.
+ When the <b>path</b> parameter is specified, then it will return all children that match that path.
+ The path is a series of elements and sub-elements, separated by slashes.
 <P>
 <DD><DL>
 </DL>
 </DD>
 <DD><DL>
-<DT><B>Parameters:</B><DD><CODE>name</CODE> - element name or path/to/element
-<DT><B>Returns:</B><DD>array of child elements that match</DL>
+<DT><B>Parameters:</B><DD><CODE>path</CODE> - element name or path/to/element
+<DT><B>Returns:</B><DD>array of child elements that match<DT><B>See Also:</B><DD><A HREF="../../processing/xml/XMLElement.html#getChildCount()"><CODE>getChildCount()</CODE></A>, 
+<A HREF="../../processing/xml/XMLElement.html#getChild(int)"><CODE>getChild(int)</CODE></A></DL>
 </DD>
 </DL>
 <HR>
@@ -1264,11 +1283,15 @@ getStringAttribute</H3>
 public java.lang.String <B>getStringAttribute</B>(java.lang.String&nbsp;name,
                                            java.lang.String&nbsp;defaultValue)</PRE>
 <DL>
+<DD>Returns a String attribute of the element.
+ If the <b>default</b> parameter is used and the attribute doesn't exist, the <b>default</b> value is returned.
+ When using the version of the method without the <b>default</b> parameter, if the attribute doesn't exist, the value 0 is returned.
+<P>
 <DD><DL>
 </DL>
 </DD>
 <DD><DL>
-</DL>
+<DT><B>Parameters:</B><DD><CODE>name</CODE> - the name of the attribute<DD><CODE>default</CODE> - Value value returned if the attribute is not found</DL>
 </DD>
 </DL>
 <HR>
@@ -1294,6 +1317,8 @@ getIntAttribute</H3>
 <PRE>
 public int <B>getIntAttribute</B>(java.lang.String&nbsp;name)</PRE>
 <DL>
+<DD>Returns an integer attribute of the element.
+<P>
 <DD><DL>
 </DL>
 </DD>
@@ -1309,13 +1334,15 @@ getIntAttribute</H3>
 public int <B>getIntAttribute</B>(java.lang.String&nbsp;name,
                            int&nbsp;defaultValue)</PRE>
 <DL>
-<DD>Returns the value of an attribute.
+<DD>Returns an integer attribute of the element.
+ If the <b>default</b> parameter is used and the attribute doesn't exist, the <b>default</b> value is returned.
+ When using the version of the method without the <b>default</b> parameter, if the attribute doesn't exist, the value 0 is returned.
 <P>
 <DD><DL>
 </DL>
 </DD>
 <DD><DL>
-<DT><B>Parameters:</B><DD><CODE>name</CODE> - the non-null full name of the attribute.<DD><CODE>defaultValue</CODE> - the default value of the attribute.
+<DT><B>Parameters:</B><DD><CODE>name</CODE> - the name of the attribute<DD><CODE>defaultValue</CODE> - value returned if the attribute is not found
 <DT><B>Returns:</B><DD>the value, or defaultValue if the attribute does not exist.</DL>
 </DD>
 </DL>
@@ -1360,13 +1387,15 @@ getFloatAttribute</H3>
 public float <B>getFloatAttribute</B>(java.lang.String&nbsp;name,
                                float&nbsp;defaultValue)</PRE>
 <DL>
-<DD>Returns the value of an attribute.
+<DD>Returns a float attribute of the element.
+ If the <b>default</b> parameter is used and the attribute doesn't exist, the <b>default</b> value is returned.
+ When using the version of the method without the <b>default</b> parameter, if the attribute doesn't exist, the value 0 is returned.
 <P>
 <DD><DL>
 </DL>
 </DD>
 <DD><DL>
-<DT><B>Parameters:</B><DD><CODE>name</CODE> - the non-null full name of the attribute.<DD><CODE>defaultValue</CODE> - the default value of the attribute.
+<DT><B>Parameters:</B><DD><CODE>name</CODE> - the name of the attribute<DD><CODE>defaultValue</CODE> - value returned if the attribute is not found
 <DT><B>Returns:</B><DD>the value, or defaultValue if the attribute does not exist.</DL>
 </DD>
 </DL>
@@ -1688,7 +1717,9 @@ getContent</H3>
 <PRE>
 public java.lang.String <B>getContent</B>()</PRE>
 <DL>
-<DD>Return the #PCDATA content of the element. If the element has a
+<DD>Returns the content of an element. If there is no such content, <b>null</b> is returned.
+ =advanced
+ Return the #PCDATA content of the element. If the element has a
  combination of #PCDATA content and child elements, the #PCDATA
  sections can be retrieved as unnamed child objects. In this case,
  this method returns null.
@@ -1748,6 +1779,20 @@ public boolean <B>equalsXMLElement</B>(<A HREF="../../processing/xml/XMLElement.
 </DD>
 <DD><DL>
 <DT><B>Parameters:</B><DD><CODE>rawElement</CODE> - the element to compare to</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toString()"><!-- --></A><H3>
+toString</H3>
+<PRE>
+public java.lang.String <B>toString</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE>toString</CODE> in class <CODE>java.lang.Object</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
 </DD>
 </DL>
 <HR>

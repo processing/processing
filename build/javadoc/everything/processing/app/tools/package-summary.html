@@ -6,14 +6,15 @@
 processing.app.tools
 </TITLE>
 
-<META NAME="keywords" CONTENT="processing.app.tools package">
 
 <LINK REL ="stylesheet" TYPE="text/css" HREF="../../../stylesheet.css" TITLE="Style">
 
 <SCRIPT type="text/javascript">
 function windowTitle()
 {
-    parent.document.title="processing.app.tools";
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="processing.app.tools";
+    }
 }
 </SCRIPT>
 <NOSCRIPT>
@@ -22,6 +23,7 @@ function windowTitle()
 </HEAD>
 
 <BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
 
 
 <!-- ========= START OF TOP NAVBAR ======= -->
@@ -102,8 +104,8 @@ Package processing.app.tools
 <TD>&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="../../../processing/app/tools/AutoFormat.html" title="class in processing.app.tools">AutoFormat</A></B></TD>
-<TD>Alternate handler for dealing with auto format.</TD>
+<TD WIDTH="15%"><B><A HREF="../../../processing/app/tools/AutoFormatTool.html" title="class in processing.app.tools">AutoFormatTool</A></B></TD>
+<TD>&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="../../../processing/app/tools/ColorSelector.html" title="class in processing.app.tools">ColorSelector</A></B></TD>
@@ -111,16 +113,18 @@ Package processing.app.tools
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="../../../processing/app/tools/CreateFont.html" title="class in processing.app.tools">CreateFont</A></B></TD>
-<TD>gui interface to font creation heaven/hell.</TD>
+<TD>GUI tool for font creation heaven/hell.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="../../../processing/app/tools/DiscourseFormat.html" title="class in processing.app.tools">DiscourseFormat</A></B></TD>
-<TD>Format for Discourse Tool
- <p/>
- Original code by <A HREF="http://usuarios.iponet.es/imoreta">owd</A>.</TD>
+<TD>Format for Discourse Tool.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="../../../processing/app/tools/FixEncoding.html" title="class in processing.app.tools">FixEncoding</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../processing/app/tools/Uncrustify.html" title="class in processing.app.tools">Uncrustify</A></B></TD>
 <TD>&nbsp;</TD>
 </TR>
 </TABLE>

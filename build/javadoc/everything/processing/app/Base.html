@@ -6,14 +6,15 @@
 Base
 </TITLE>
 
-<META NAME="keywords" CONTENT="processing.app.Base class">
 
 <LINK REL ="stylesheet" TYPE="text/css" HREF="../../stylesheet.css" TITLE="Style">
 
 <SCRIPT type="text/javascript">
 function windowTitle()
 {
-    parent.document.title="Base";
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="Base";
+    }
 }
 </SCRIPT>
 <NOSCRIPT>
@@ -22,6 +23,7 @@ function windowTitle()
 </HEAD>
 
 <BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
 
 
 <!-- ========= START OF TOP NAVBAR ======= -->
@@ -121,6 +123,22 @@ The base class for the main processing application.
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Base.html#RELEASE">RELEASE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set true if this a proper release rather than a numbered revision.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Base.html#VERSION_NAME">VERSION_NAME</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This might be replaced by main() if there's a lib/version.txt file.</TD>
 </TR>
 </TABLE>
 &nbsp;
@@ -243,6 +261,14 @@ The base class for the main processing application.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../processing/app/Platform.html" title="class in processing.app">Platform</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Base.html#getPlatform()">getPlatform</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get list of platform constants.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;int</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/app/Base.html#getPlatformIndex(java.lang.String)">getPlatformIndex</A></B>(java.lang.String&nbsp;what)</CODE>
 
@@ -255,7 +281,7 @@ The base class for the main processing application.
 <TD><CODE><B><A HREF="../../processing/app/Base.html#getPlatformName()">getPlatformName</A></B>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get list of platform constants.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -397,6 +423,14 @@ The base class for the main processing application.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Base.html#initPlatform()">initPlatform</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;boolean</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/app/Base.html#isLinux()">isLinux</A></B>()</CODE>
 
@@ -482,6 +516,15 @@ The base class for the main processing application.
  however that's not a static method (because it requires
  an AppletContext when used as an applet), so it's mildly
  trickier than just removing this method.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.util.HashMap&lt;java.lang.String,java.lang.String&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Base.html#readSettings(java.io.File)">readSettings</A></B>(java.io.File&nbsp;inputFile)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Read from a file with a bunch of attribute/value pairs
+ that are separated by = and ignore comments with #.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -623,6 +666,28 @@ The base class for the main processing application.
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Non-fatal error message with optional stack trace side dish.</TD>
 </TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Base.html#showYesNoCancelQuestion(processing.app.Editor, java.lang.String, java.lang.String, java.lang.String)">showYesNoCancelQuestion</A></B>(<A HREF="../../processing/app/Editor.html" title="class in processing.app">Editor</A>&nbsp;editor,
+                        java.lang.String&nbsp;title,
+                        java.lang.String&nbsp;primary,
+                        java.lang.String&nbsp;secondary)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Base.html#showYesNoQuestion(java.awt.Frame, java.lang.String, java.lang.String, java.lang.String)">showYesNoQuestion</A></B>(java.awt.Frame&nbsp;editor,
+                  java.lang.String&nbsp;title,
+                  java.lang.String&nbsp;primary,
+                  java.lang.String&nbsp;secondary)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
 </TABLE>
 &nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
@@ -645,6 +710,30 @@ The base class for the main processing application.
 <B>Field Detail</B></FONT></TH>
 </TR>
 </TABLE>
+
+<A NAME="VERSION_NAME"><!-- --></A><H3>
+VERSION_NAME</H3>
+<PRE>
+public static java.lang.String <B>VERSION_NAME</B></PRE>
+<DL>
+<DD>This might be replaced by main() if there's a lib/version.txt file.
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="RELEASE"><!-- --></A><H3>
+RELEASE</H3>
+<PRE>
+public static boolean <B>RELEASE</B></PRE>
+<DL>
+<DD>Set true if this a proper release rather than a numbered revision.
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
 
 <A NAME="librariesClassPath"><!-- --></A><H3>
 librariesClassPath</H3>
@@ -686,6 +775,17 @@ public <B>Base</B>(java.lang.String[]&nbsp;args)</PRE>
 main</H3>
 <PRE>
 public static void <B>main</B>(java.lang.String[]&nbsp;args)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="initPlatform()"><!-- --></A><H3>
+initPlatform</H3>
+<PRE>
+public static void <B>initPlatform</B>()</PRE>
 <DL>
 <DD><DL>
 </DL>
@@ -836,13 +936,24 @@ public void <B>handlePrefs</B>()</PRE>
 </DL>
 <HR>
 
+<A NAME="getPlatform()"><!-- --></A><H3>
+getPlatform</H3>
+<PRE>
+public static <A HREF="../../processing/app/Platform.html" title="class in processing.app">Platform</A> <B>getPlatform</B>()</PRE>
+<DL>
+<DD>Get list of platform constants.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
 <A NAME="getPlatformName()"><!-- --></A><H3>
 getPlatformName</H3>
 <PRE>
 public static java.lang.String <B>getPlatformName</B>()</PRE>
 <DL>
-<DD>Get list of platform constants.
-<P>
 <DD><DL>
 </DL>
 </DD>
@@ -1216,6 +1327,34 @@ public static void <B>showError</B>(java.lang.String&nbsp;title,
 </DL>
 <HR>
 
+<A NAME="showYesNoCancelQuestion(processing.app.Editor, java.lang.String, java.lang.String, java.lang.String)"><!-- --></A><H3>
+showYesNoCancelQuestion</H3>
+<PRE>
+public static int <B>showYesNoCancelQuestion</B>(<A HREF="../../processing/app/Editor.html" title="class in processing.app">Editor</A>&nbsp;editor,
+                                          java.lang.String&nbsp;title,
+                                          java.lang.String&nbsp;primary,
+                                          java.lang.String&nbsp;secondary)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="showYesNoQuestion(java.awt.Frame, java.lang.String, java.lang.String, java.lang.String)"><!-- --></A><H3>
+showYesNoQuestion</H3>
+<PRE>
+public static int <B>showYesNoQuestion</B>(java.awt.Frame&nbsp;editor,
+                                    java.lang.String&nbsp;title,
+                                    java.lang.String&nbsp;primary,
+                                    java.lang.String&nbsp;secondary)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
 <A NAME="getContentFile(java.lang.String)"><!-- --></A><H3>
 getContentFile</H3>
 <PRE>
@@ -1299,6 +1438,20 @@ public static byte[] <B>loadBytesRaw</B>(java.io.File&nbsp;file)
 
 <DT><B>Throws:</B>
 <DD><CODE>java.io.IOException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="readSettings(java.io.File)"><!-- --></A><H3>
+readSettings</H3>
+<PRE>
+public static java.util.HashMap&lt;java.lang.String,java.lang.String&gt; <B>readSettings</B>(java.io.File&nbsp;inputFile)</PRE>
+<DL>
+<DD>Read from a file with a bunch of attribute/value pairs
+ that are separated by = and ignore comments with #.
+<P>
+<DD><DL>
+</DL>
 </DD>
 </DL>
 <HR>

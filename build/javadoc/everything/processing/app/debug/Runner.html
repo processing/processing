@@ -6,14 +6,15 @@
 Runner
 </TITLE>
 
-<META NAME="keywords" CONTENT="processing.app.debug.Runner class">
 
 <LINK REL ="stylesheet" TYPE="text/css" HREF="../../../stylesheet.css" TITLE="Style">
 
 <SCRIPT type="text/javascript">
 function windowTitle()
 {
-    parent.document.title="Runner";
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="Runner";
+    }
 }
 </SCRIPT>
 <NOSCRIPT>
@@ -22,6 +23,7 @@ function windowTitle()
 </HEAD>
 
 <BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
 
 
 <!-- ========= START OF TOP NAVBAR ======= -->
@@ -50,7 +52,7 @@ function windowTitle()
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../../../processing/app/debug/MessageConsumer.html" title="interface in processing.app.debug"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../processing/app/debug/MessageSiphon.html" title="class in processing.app.debug"><B>PREV CLASS</B></A>&nbsp;
 &nbsp;<A HREF="../../../processing/app/debug/RunnerException.html" title="class in processing.app.debug"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../../index.html?processing/app/debug/Runner.html" target="_top"><B>FRAMES</B></A>  &nbsp;
@@ -122,10 +124,8 @@ Runs a compiled sketch. As of release 0136, all sketches are run externally
 <B>Constructor Summary</B></FONT></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../processing/app/debug/Runner.html#Runner(processing.app.Sketch, java.lang.String, boolean, processing.app.debug.RunnerListener)">Runner</A></B>(<A HREF="../../../processing/app/Sketch.html" title="class in processing.app">Sketch</A>&nbsp;sketch,
-       java.lang.String&nbsp;appletClassName,
-       boolean&nbsp;presenting,
-       <A HREF="../../../processing/app/debug/RunnerListener.html" title="interface in processing.app.debug">RunnerListener</A>&nbsp;listener)</CODE>
+<TD><CODE><B><A HREF="../../../processing/app/debug/Runner.html#Runner(processing.app.debug.RunnerListener, processing.app.Sketch)">Runner</A></B>(<A HREF="../../../processing/app/debug/RunnerListener.html" title="interface in processing.app.debug">RunnerListener</A>&nbsp;listener,
+       <A HREF="../../../processing/app/Sketch.html" title="class in processing.app">Sketch</A>&nbsp;sketch)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -158,8 +158,19 @@ Runs a compiled sketch. As of release 0136, all sketches are run externally
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../processing/app/debug/Runner.html#handleCommonErrors(java.lang.String, java.lang.String, processing.app.debug.RunnerListener)">handleCommonErrors</A></B>(java.lang.String&nbsp;exceptionClass,
+                   java.lang.String&nbsp;message,
+                   <A HREF="../../../processing/app/debug/RunnerListener.html" title="interface in processing.app.debug">RunnerListener</A>&nbsp;listener)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../processing/app/debug/Runner.html#launch()">launch</A></B>()</CODE>
+<TD><CODE><B><A HREF="../../../processing/app/debug/Runner.html#launch(java.lang.String, boolean)">launch</A></B>(java.lang.String&nbsp;appletClassName,
+       boolean&nbsp;presenting)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -195,13 +206,11 @@ Runs a compiled sketch. As of release 0136, all sketches are run externally
 </TR>
 </TABLE>
 
-<A NAME="Runner(processing.app.Sketch, java.lang.String, boolean, processing.app.debug.RunnerListener)"><!-- --></A><H3>
+<A NAME="Runner(processing.app.debug.RunnerListener, processing.app.Sketch)"><!-- --></A><H3>
 Runner</H3>
 <PRE>
-public <B>Runner</B>(<A HREF="../../../processing/app/Sketch.html" title="class in processing.app">Sketch</A>&nbsp;sketch,
-              java.lang.String&nbsp;appletClassName,
-              boolean&nbsp;presenting,
-              <A HREF="../../../processing/app/debug/RunnerListener.html" title="interface in processing.app.debug">RunnerListener</A>&nbsp;listener)</PRE>
+public <B>Runner</B>(<A HREF="../../../processing/app/debug/RunnerListener.html" title="interface in processing.app.debug">RunnerListener</A>&nbsp;listener,
+              <A HREF="../../../processing/app/Sketch.html" title="class in processing.app">Sketch</A>&nbsp;sketch)</PRE>
 <DL>
 </DL>
 
@@ -215,10 +224,11 @@ public <B>Runner</B>(<A HREF="../../../processing/app/Sketch.html" title="class 
 </TR>
 </TABLE>
 
-<A NAME="launch()"><!-- --></A><H3>
+<A NAME="launch(java.lang.String, boolean)"><!-- --></A><H3>
 launch</H3>
 <PRE>
-public void <B>launch</B>()</PRE>
+public void <B>launch</B>(java.lang.String&nbsp;appletClassName,
+                   boolean&nbsp;presenting)</PRE>
 <DL>
 <DD><DL>
 </DL>
@@ -233,6 +243,22 @@ public void <B>launch</B>()</PRE>
 exception</H3>
 <PRE>
 public void <B>exception</B>(com.sun.jdi.event.ExceptionEvent&nbsp;event)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="handleCommonErrors(java.lang.String, java.lang.String, processing.app.debug.RunnerListener)"><!-- --></A><H3>
+handleCommonErrors</H3>
+<PRE>
+public static boolean <B>handleCommonErrors</B>(java.lang.String&nbsp;exceptionClass,
+                                         java.lang.String&nbsp;message,
+                                         <A HREF="../../../processing/app/debug/RunnerListener.html" title="interface in processing.app.debug">RunnerListener</A>&nbsp;listener)</PRE>
 <DL>
 <DD><DL>
 </DL>
@@ -299,7 +325,7 @@ public void <B>message</B>(java.lang.String&nbsp;s)</PRE>
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../../../processing/app/debug/MessageConsumer.html" title="interface in processing.app.debug"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../processing/app/debug/MessageSiphon.html" title="class in processing.app.debug"><B>PREV CLASS</B></A>&nbsp;
 &nbsp;<A HREF="../../../processing/app/debug/RunnerException.html" title="class in processing.app.debug"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../../index.html?processing/app/debug/Runner.html" target="_top"><B>FRAMES</B></A>  &nbsp;

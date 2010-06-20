@@ -12,7 +12,9 @@ processing.app.syntax Class Hierarchy
 <SCRIPT type="text/javascript">
 function windowTitle()
 {
-    parent.document.title="processing.app.syntax Class Hierarchy";
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="processing.app.syntax Class Hierarchy";
+    }
 }
 </SCRIPT>
 <NOSCRIPT>
@@ -21,6 +23,7 @@ function windowTitle()
 </HEAD>
 
 <BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
 
 
 <!-- ========= START OF TOP NAVBAR ======= -->
@@ -91,7 +94,7 @@ Class Hierarchy
 <LI TYPE="circle">javax.swing.text.PlainDocument<UL>
 <LI TYPE="circle">processing.app.syntax.<A HREF="../../../processing/app/syntax/SyntaxDocument.html" title="class in processing.app.syntax"><B>SyntaxDocument</B></A></UL>
 </UL>
-<LI TYPE="circle">java.awt.Component (implements java.awt.image.ImageObserver, java.awt.MenuContainer, java.io.Serializable)
+<LI TYPE="circle">processing.app.syntax.<A HREF="../../../processing/app/syntax/Brackets.html" title="class in processing.app.syntax"><B>Brackets</B></A><LI TYPE="circle">java.awt.Component (implements java.awt.image.ImageObserver, java.awt.MenuContainer, java.io.Serializable)
 <UL>
 <LI TYPE="circle">java.awt.Container<UL>
 <LI TYPE="circle">javax.swing.JComponent (implements java.io.Serializable)
@@ -102,6 +105,9 @@ Class Hierarchy
 </UL>
 <LI TYPE="circle">processing.app.syntax.<A HREF="../../../processing/app/syntax/InputHandler.backspace.html" title="class in processing.app.syntax"><B>InputHandler.backspace</B></A> (implements java.awt.event.ActionListener)
 <LI TYPE="circle">processing.app.syntax.<A HREF="../../../processing/app/syntax/InputHandler.backspace_word.html" title="class in processing.app.syntax"><B>InputHandler.backspace_word</B></A> (implements java.awt.event.ActionListener)
+<LI TYPE="circle">processing.app.syntax.<A HREF="../../../processing/app/syntax/InputHandler.clipboard_copy.html" title="class in processing.app.syntax"><B>InputHandler.clipboard_copy</B></A> (implements java.awt.event.ActionListener)
+<LI TYPE="circle">processing.app.syntax.<A HREF="../../../processing/app/syntax/InputHandler.clipboard_cut.html" title="class in processing.app.syntax"><B>InputHandler.clipboard_cut</B></A> (implements java.awt.event.ActionListener)
+<LI TYPE="circle">processing.app.syntax.<A HREF="../../../processing/app/syntax/InputHandler.clipboard_paste.html" title="class in processing.app.syntax"><B>InputHandler.clipboard_paste</B></A> (implements java.awt.event.ActionListener)
 <LI TYPE="circle">processing.app.syntax.<A HREF="../../../processing/app/syntax/InputHandler.delete.html" title="class in processing.app.syntax"><B>InputHandler.delete</B></A> (implements java.awt.event.ActionListener)
 <LI TYPE="circle">processing.app.syntax.<A HREF="../../../processing/app/syntax/InputHandler.delete_word.html" title="class in processing.app.syntax"><B>InputHandler.delete_word</B></A> (implements java.awt.event.ActionListener)
 <LI TYPE="circle">processing.app.syntax.<A HREF="../../../processing/app/syntax/InputHandler.document_end.html" title="class in processing.app.syntax"><B>InputHandler.document_end</B></A> (implements java.awt.event.ActionListener)
@@ -133,7 +139,7 @@ Class Hierarchy
 <LI TYPE="circle">processing.app.syntax.<A HREF="../../../processing/app/syntax/CTokenMarker.html" title="class in processing.app.syntax"><B>CTokenMarker</B></A><UL>
 <LI TYPE="circle">processing.app.syntax.<A HREF="../../../processing/app/syntax/PdeKeywords.html" title="class in processing.app.syntax"><B>PdeKeywords</B></A></UL>
 </UL>
-<LI TYPE="circle">processing.app.syntax.<A HREF="../../../processing/app/syntax/TokenMarker.LineInfo.html" title="class in processing.app.syntax"><B>TokenMarker.LineInfo</B></A></UL>
+</UL>
 </UL>
 <H2>
 Interface Hierarchy

@@ -6,14 +6,15 @@
 Registry
 </TITLE>
 
-<META NAME="keywords" CONTENT="processing.app.windows.Registry class">
 
 <LINK REL ="stylesheet" TYPE="text/css" HREF="../../../stylesheet.css" TITLE="Style">
 
 <SCRIPT type="text/javascript">
 function windowTitle()
 {
-    parent.document.title="Registry";
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="Registry";
+    }
 }
 </SCRIPT>
 <NOSCRIPT>
@@ -22,6 +23,7 @@ function windowTitle()
 </HEAD>
 
 <BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
 
 
 <!-- ========= START OF TOP NAVBAR ======= -->
@@ -50,7 +52,7 @@ function windowTitle()
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../../../processing/app/windows/Platform.html" title="class in processing.app.windows"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../processing/app/windows/Platform.WinLibC.html" title="interface in processing.app.windows"><B>PREV CLASS</B></A>&nbsp;
 &nbsp;<A HREF="../../../processing/app/windows/Registry.REGISTRY_ROOT_KEY.html" title="enum in processing.app.windows"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../../index.html?processing/app/windows/Registry.html" target="_top"><B>FRAMES</B></A>  &nbsp;
@@ -506,7 +508,7 @@ public static java.util.TreeMap&lt;java.lang.String,java.lang.Object&gt; <B>getV
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../../../processing/app/windows/Platform.html" title="class in processing.app.windows"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../processing/app/windows/Platform.WinLibC.html" title="interface in processing.app.windows"><B>PREV CLASS</B></A>&nbsp;
 &nbsp;<A HREF="../../../processing/app/windows/Registry.REGISTRY_ROOT_KEY.html" title="enum in processing.app.windows"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../../index.html?processing/app/windows/Registry.html" target="_top"><B>FRAMES</B></A>  &nbsp;

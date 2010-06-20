@@ -6,14 +6,15 @@
 PShapeSVG
 </TITLE>
 
-<META NAME="keywords" CONTENT="processing.core.PShapeSVG class">
 
 <LINK REL ="stylesheet" TYPE="text/css" HREF="../../stylesheet.css" TITLE="Style">
 
 <SCRIPT type="text/javascript">
 function windowTitle()
 {
-    parent.document.title="PShapeSVG";
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="PShapeSVG";
+    }
 }
 </SCRIPT>
 <NOSCRIPT>
@@ -22,6 +23,7 @@ function windowTitle()
 </HEAD>
 
 <BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
 
 
 <!-- ========= START OF TOP NAVBAR ======= -->
@@ -296,7 +298,7 @@ SVG stands for Scalable Vector Graphics, a portable graphics format. It is
 <TH ALIGN="left"><B>Methods inherited from class processing.core.<A HREF="../../processing/core/PShape.html" title="class in processing.core">PShape</A></B></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><A HREF="../../processing/core/PShape.html#addChild(processing.core.PShape)">addChild</A>, <A HREF="../../processing/core/PShape.html#apply(processing.core.PMatrix3D)">apply</A>, <A HREF="../../processing/core/PShape.html#applyMatrix(float, float, float, float, float, float)">applyMatrix</A>, <A HREF="../../processing/core/PShape.html#applyMatrix(float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float)">applyMatrix</A>, <A HREF="../../processing/core/PShape.html#applyMatrix(processing.core.PMatrix)">applyMatrix</A>, <A HREF="../../processing/core/PShape.html#applyMatrix(processing.core.PMatrix2D)">applyMatrix</A>, <A HREF="../../processing/core/PShape.html#disableStyle()">disableStyle</A>, <A HREF="../../processing/core/PShape.html#draw(processing.core.PGraphics)">draw</A>, <A HREF="../../processing/core/PShape.html#drawImpl(processing.core.PGraphics)">drawImpl</A>, <A HREF="../../processing/core/PShape.html#enableStyle()">enableStyle</A>, <A HREF="../../processing/core/PShape.html#findChild(java.lang.String)">findChild</A>, <A HREF="../../processing/core/PShape.html#getChild(int)">getChild</A>, <A HREF="../../processing/core/PShape.html#getChildCount()">getChildCount</A>, <A HREF="../../processing/core/PShape.html#getHeight()">getHeight</A>, <A HREF="../../processing/core/PShape.html#getName()">getName</A>, <A HREF="../../processing/core/PShape.html#getWidth()">getWidth</A>, <A HREF="../../processing/core/PShape.html#isVisible()">isVisible</A>, <A HREF="../../processing/core/PShape.html#post(processing.core.PGraphics)">post</A>, <A HREF="../../processing/core/PShape.html#resetMatrix()">resetMatrix</A>, <A HREF="../../processing/core/PShape.html#rotate(float)">rotate</A>, <A HREF="../../processing/core/PShape.html#rotate(float, float, float, float)">rotate</A>, <A HREF="../../processing/core/PShape.html#rotateX(float)">rotateX</A>, <A HREF="../../processing/core/PShape.html#rotateY(float)">rotateY</A>, <A HREF="../../processing/core/PShape.html#rotateZ(float)">rotateZ</A>, <A HREF="../../processing/core/PShape.html#scale(float)">scale</A>, <A HREF="../../processing/core/PShape.html#scale(float, float)">scale</A>, <A HREF="../../processing/core/PShape.html#scale(float, float, float)">scale</A>, <A HREF="../../processing/core/PShape.html#setName(java.lang.String)">setName</A>, <A HREF="../../processing/core/PShape.html#setVisible(boolean)">setVisible</A>, <A HREF="../../processing/core/PShape.html#translate(float, float)">translate</A>, <A HREF="../../processing/core/PShape.html#translate(float, float, float)">translate</A></CODE></TD>
+<TD><CODE><A HREF="../../processing/core/PShape.html#addChild(processing.core.PShape)">addChild</A>, <A HREF="../../processing/core/PShape.html#apply(processing.core.PMatrix3D)">apply</A>, <A HREF="../../processing/core/PShape.html#applyMatrix(float, float, float, float, float, float)">applyMatrix</A>, <A HREF="../../processing/core/PShape.html#applyMatrix(float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float)">applyMatrix</A>, <A HREF="../../processing/core/PShape.html#applyMatrix(processing.core.PMatrix)">applyMatrix</A>, <A HREF="../../processing/core/PShape.html#applyMatrix(processing.core.PMatrix2D)">applyMatrix</A>, <A HREF="../../processing/core/PShape.html#contains(float, float)">contains</A>, <A HREF="../../processing/core/PShape.html#disableStyle()">disableStyle</A>, <A HREF="../../processing/core/PShape.html#draw(processing.core.PGraphics)">draw</A>, <A HREF="../../processing/core/PShape.html#drawImpl(processing.core.PGraphics)">drawImpl</A>, <A HREF="../../processing/core/PShape.html#enableStyle()">enableStyle</A>, <A HREF="../../processing/core/PShape.html#findChild(java.lang.String)">findChild</A>, <A HREF="../../processing/core/PShape.html#getChild(int)">getChild</A>, <A HREF="../../processing/core/PShape.html#getChildCount()">getChildCount</A>, <A HREF="../../processing/core/PShape.html#getFamily()">getFamily</A>, <A HREF="../../processing/core/PShape.html#getHeight()">getHeight</A>, <A HREF="../../processing/core/PShape.html#getName()">getName</A>, <A HREF="../../processing/core/PShape.html#getPrimitive()">getPrimitive</A>, <A HREF="../../processing/core/PShape.html#getVertex(int)">getVertex</A>, <A HREF="../../processing/core/PShape.html#getVertexCode(int)">getVertexCode</A>, <A HREF="../../processing/core/PShape.html#getVertexCodeCount()">getVertexCodeCount</A>, <A HREF="../../processing/core/PShape.html#getVertexCodes()">getVertexCodes</A>, <A HREF="../../processing/core/PShape.html#getVertexCount()">getVertexCount</A>, <A HREF="../../processing/core/PShape.html#getVertexX(int)">getVertexX</A>, <A HREF="../../processing/core/PShape.html#getVertexY(int)">getVertexY</A>, <A HREF="../../processing/core/PShape.html#getVertexZ(int)">getVertexZ</A>, <A HREF="../../processing/core/PShape.html#getWidth()">getWidth</A>, <A HREF="../../processing/core/PShape.html#isVisible()">isVisible</A>, <A HREF="../../processing/core/PShape.html#post(processing.core.PGraphics)">post</A>, <A HREF="../../processing/core/PShape.html#resetMatrix()">resetMatrix</A>, <A HREF="../../processing/core/PShape.html#rotate(float)">rotate</A>, <A HREF="../../processing/core/PShape.html#rotate(float, float, float, float)">rotate</A>, <A HREF="../../processing/core/PShape.html#rotateX(float)">rotateX</A>, <A HREF="../../processing/core/PShape.html#rotateY(float)">rotateY</A>, <A HREF="../../processing/core/PShape.html#rotateZ(float)">rotateZ</A>, <A HREF="../../processing/core/PShape.html#scale(float)">scale</A>, <A HREF="../../processing/core/PShape.html#scale(float, float)">scale</A>, <A HREF="../../processing/core/PShape.html#scale(float, float, float)">scale</A>, <A HREF="../../processing/core/PShape.html#setName(java.lang.String)">setName</A>, <A HREF="../../processing/core/PShape.html#setVisible(boolean)">setVisible</A>, <A HREF="../../processing/core/PShape.html#translate(float, float)">translate</A>, <A HREF="../../processing/core/PShape.html#translate(float, float, float)">translate</A></CODE></TD>
 </TR>
 </TABLE>
 &nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
@@ -372,14 +374,14 @@ public <A HREF="../../processing/core/PShape.html" title="class in processing.co
  beneath them can be used here.
  <PRE>
  // This code grabs "Layer 3" and the shapes beneath it.
- SVG layer3 = svg.getChild("Layer 3");
+ PShape layer3 = svg.getChild("Layer 3");
  </PRE>
 <P>
 <DD><DL>
 <DT><B>Overrides:</B><DD><CODE><A HREF="../../processing/core/PShape.html#getChild(java.lang.String)">getChild</A></CODE> in class <CODE><A HREF="../../processing/core/PShape.html" title="class in processing.core">PShape</A></CODE></DL>
 </DD>
 <DD><DL>
-</DL>
+<DT><B>Parameters:</B><DD><CODE>name</CODE> - the name of the shape to get</DL>
 </DD>
 </DL>
 <HR>

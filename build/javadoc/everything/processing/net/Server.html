@@ -6,14 +6,15 @@
 Server
 </TITLE>
 
-<META NAME="keywords" CONTENT="processing.net.Server class">
 
 <LINK REL ="stylesheet" TYPE="text/css" HREF="../../stylesheet.css" TITLE="Style">
 
 <SCRIPT type="text/javascript">
 function windowTitle()
 {
-    parent.document.title="Server";
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="Server";
+    }
 }
 </SCRIPT>
 <NOSCRIPT>
@@ -22,6 +23,7 @@ function windowTitle()
 </HEAD>
 
 <BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
 
 
 <!-- ========= START OF TOP NAVBAR ======= -->
@@ -99,6 +101,13 @@ java.lang.Object
 </PRE>
 
 <P>
+A server sends and receives data to and from its associated clients (other programs connected to it).
+ When a server is started, it begins listening for connections on the port specified by the <b>port</b> parameter.
+ Computers have many ports for transferring data and some are commonly used so be sure to not select one of these.
+ For example, web servers usually use port 80 and POP mail uses port 110.
+<P>
+
+<P>
 <HR>
 
 <P>
@@ -159,7 +168,7 @@ java.lang.Object
 <TD><CODE><B><A HREF="../../processing/net/Server.html#available()">available</A></B>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the next client in line that has something to say.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the next client in line with a new message</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -191,12 +200,16 @@ java.lang.Object
 <TD><CODE><B><A HREF="../../processing/net/Server.html#stop()">stop</A></B>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Disconnect all clients and stop the server.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Disconnects all clients and stops the server
+ =advanced
+ <p/>
+ Use this to shut down the server if you finish using it while your applet 
+ is still running.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/net/Server.html#write(byte[])">write</A></B>(byte[]&nbsp;what)</CODE>
+<TD><CODE><B><A HREF="../../processing/net/Server.html#write(byte[])">write</A></B>(byte[]&nbsp;data)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Write a byte array to all the connected clients.</TD>
@@ -204,7 +217,7 @@ java.lang.Object
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/net/Server.html#write(int)">write</A></B>(int&nbsp;what)</CODE>
+<TD><CODE><B><A HREF="../../processing/net/Server.html#write(int)">write</A></B>(int&nbsp;data)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Write a value to all the connected clients.</TD>
@@ -212,7 +225,7 @@ java.lang.Object
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/net/Server.html#write(java.lang.String)">write</A></B>(java.lang.String&nbsp;what)</CODE>
+<TD><CODE><B><A HREF="../../processing/net/Server.html#write(java.lang.String)">write</A></B>(java.lang.String&nbsp;data)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Write a String to all the connected clients.</TD>
@@ -279,6 +292,8 @@ Server</H3>
 public <B>Server</B>(<A HREF="../../processing/core/PApplet.html" title="class in processing.core">PApplet</A>&nbsp;parent,
               int&nbsp;port)</PRE>
 <DL>
+<DL>
+<DT><B>Parameters:</B><DD><CODE>parent</CODE> - typically use "this"<DD><CODE>port</CODE> - port used to transfer data</DL>
 </DL>
 
 <!-- ============ METHOD DETAIL ========== -->
@@ -302,7 +317,7 @@ public void <B>disconnect</B>(<A HREF="../../processing/net/Client.html" title="
 </DL>
 </DD>
 <DD><DL>
-</DL>
+<DT><B>Parameters:</B><DD><CODE>client</CODE> - the client to disconnect</DL>
 </DD>
 </DL>
 <HR>
@@ -312,7 +327,7 @@ available</H3>
 <PRE>
 public <A HREF="../../processing/net/Client.html" title="class in processing.net">Client</A> <B>available</B>()</PRE>
 <DL>
-<DD>Returns the next client in line that has something to say.
+<DD>Returns the next client in line with a new message
 <P>
 <DD><DL>
 </DL>
@@ -328,7 +343,8 @@ stop</H3>
 <PRE>
 public void <B>stop</B>()</PRE>
 <DL>
-<DD>Disconnect all clients and stop the server.
+<DD>Disconnects all clients and stops the server
+ =advanced
  <p/>
  Use this to shut down the server if you finish using it while your applet 
  is still running. Otherwise, it will be automatically be shut down by the 
@@ -376,7 +392,7 @@ public void <B>run</B>()</PRE>
 <A NAME="write(int)"><!-- --></A><H3>
 write</H3>
 <PRE>
-public void <B>write</B>(int&nbsp;what)</PRE>
+public void <B>write</B>(int&nbsp;data)</PRE>
 <DL>
 <DD>Write a value to all the connected clients.
  See Client.write() for operational details.
@@ -385,7 +401,7 @@ public void <B>write</B>(int&nbsp;what)</PRE>
 </DL>
 </DD>
 <DD><DL>
-</DL>
+<DT><B>Parameters:</B><DD><CODE>data</CODE> - data to write</DL>
 </DD>
 </DL>
 <HR>
@@ -393,7 +409,7 @@ public void <B>write</B>(int&nbsp;what)</PRE>
 <A NAME="write(byte[])"><!-- --></A><H3>
 write</H3>
 <PRE>
-public void <B>write</B>(byte[]&nbsp;what)</PRE>
+public void <B>write</B>(byte[]&nbsp;data)</PRE>
 <DL>
 <DD>Write a byte array to all the connected clients.
  See Client.write() for operational details.
@@ -410,7 +426,7 @@ public void <B>write</B>(byte[]&nbsp;what)</PRE>
 <A NAME="write(java.lang.String)"><!-- --></A><H3>
 write</H3>
 <PRE>
-public void <B>write</B>(java.lang.String&nbsp;what)</PRE>
+public void <B>write</B>(java.lang.String&nbsp;data)</PRE>
 <DL>
 <DD>Write a String to all the connected clients.
  See Client.write() for operational details.

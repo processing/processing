@@ -12,7 +12,9 @@ processing.app.preproc Class Hierarchy
 <SCRIPT type="text/javascript">
 function windowTitle()
 {
-    parent.document.title="processing.app.preproc Class Hierarchy";
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="processing.app.preproc Class Hierarchy";
+    }
 }
 </SCRIPT>
 <NOSCRIPT>
@@ -21,6 +23,7 @@ function windowTitle()
 </HEAD>
 
 <BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
 
 
 <!-- ========= START OF TOP NAVBAR ======= -->
@@ -86,23 +89,20 @@ Class Hierarchy
 </H2>
 <UL>
 <LI TYPE="circle">java.lang.Object<UL>
-<LI TYPE="circle">antlr.CharScanner (implements antlr.TokenStream)
-<UL>
-<LI TYPE="circle">processing.app.preproc.<A HREF="../../../processing/app/preproc/PdeLexer.html" title="class in processing.app.preproc"><B>PdeLexer</B></A> (implements processing.app.preproc.<A HREF="../../../processing/app/preproc/PdeTokenTypes.html" title="interface in processing.app.preproc">PdeTokenTypes</A>, antlr.TokenStream)
-</UL>
-<LI TYPE="circle">antlr.Parser<UL>
-<LI TYPE="circle">antlr.LLkParser<UL>
-<LI TYPE="circle">processing.app.preproc.<A HREF="../../../processing/app/preproc/PdeRecognizer.html" title="class in processing.app.preproc"><B>PdeRecognizer</B></A> (implements processing.app.preproc.<A HREF="../../../processing/app/preproc/PdePartialTokenTypes.html" title="interface in processing.app.preproc">PdePartialTokenTypes</A>)
-</UL>
-</UL>
-<LI TYPE="circle">processing.app.preproc.<A HREF="../../../processing/app/preproc/PdeEmitter.html" title="class in processing.app.preproc"><B>PdeEmitter</B></A> (implements processing.app.preproc.<A HREF="../../../processing/app/preproc/PdeTokenTypes.html" title="interface in processing.app.preproc">PdeTokenTypes</A>)
-<LI TYPE="circle">processing.app.preproc.<A HREF="../../../processing/app/preproc/PdePreprocessor.html" title="class in processing.app.preproc"><B>PdePreprocessor</B></A></UL>
+<LI TYPE="circle">processing.app.preproc.<A HREF="../../../processing/app/preproc/PdeEmitter.html" title="class in processing.app.preproc"><B>PdeEmitter</B></A> (implements processing.app.antlr.<A HREF="../../../processing/app/antlr/PdeTokenTypes.html" title="interface in processing.app.antlr">PdeTokenTypes</A>)
+<LI TYPE="circle">processing.app.preproc.<A HREF="../../../processing/app/preproc/PdePreprocessor.html" title="class in processing.app.preproc"><B>PdePreprocessor</B></A> (implements processing.app.antlr.<A HREF="../../../processing/app/antlr/PdeTokenTypes.html" title="interface in processing.app.antlr">PdeTokenTypes</A>)
+<LI TYPE="circle">processing.app.preproc.<A HREF="../../../processing/app/preproc/PreprocessResult.html" title="class in processing.app.preproc"><B>PreprocessResult</B></A><LI TYPE="circle">processing.app.preproc.<A HREF="../../../processing/app/preproc/TokenUtil.html" title="class in processing.app.preproc"><B>TokenUtil</B></A></UL>
 </UL>
 <H2>
-Interface Hierarchy
+Enum Hierarchy
 </H2>
 <UL>
-<LI TYPE="circle">processing.app.preproc.<A HREF="../../../processing/app/preproc/PdePartialTokenTypes.html" title="interface in processing.app.preproc"><B>PdePartialTokenTypes</B></A><LI TYPE="circle">processing.app.preproc.<A HREF="../../../processing/app/preproc/PdeTokenTypes.html" title="interface in processing.app.preproc"><B>PdeTokenTypes</B></A></UL>
+<LI TYPE="circle">java.lang.Object<UL>
+<LI TYPE="circle">java.lang.Enum&lt;E&gt; (implements java.lang.Comparable&lt;T&gt;, java.io.Serializable)
+<UL>
+<LI TYPE="circle">processing.app.preproc.<A HREF="../../../processing/app/preproc/PdePreprocessor.Mode.html" title="enum in processing.app.preproc"><B>PdePreprocessor.Mode</B></A></UL>
+</UL>
+</UL>
 <HR>
 
 

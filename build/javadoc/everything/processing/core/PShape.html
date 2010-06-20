@@ -6,14 +6,15 @@
 PShape
 </TITLE>
 
-<META NAME="keywords" CONTENT="processing.core.PShape class">
 
 <LINK REL ="stylesheet" TYPE="text/css" HREF="../../stylesheet.css" TITLE="Style">
 
 <SCRIPT type="text/javascript">
 function windowTitle()
 {
-    parent.document.title="PShape";
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="PShape";
+    }
 }
 </SCRIPT>
 <NOSCRIPT>
@@ -22,6 +23,7 @@ function windowTitle()
 </HEAD>
 
 <BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
 
 
 <!-- ========= START OF TOP NAVBAR ======= -->
@@ -102,7 +104,14 @@ java.lang.Object
 </PRE>
 
 <P>
-In-progress class to handle shape data, currently to be considered of
+Datatype for storing shapes. Processing can currently load and display SVG (Scalable Vector Graphics) shapes.
+ Before a shape is used, it must be loaded with the <b>loadShape()</b> function. The <b>shape()</b> function is used to draw the shape to the display window.
+ The <b>PShape</b> object contain a group of methods, linked below, that can operate on the shape data. 
+ <br><br>The <b>loadShape()</b> method supports SVG files created with Inkscape and Adobe Illustrator.
+ It is not a full SVG implementation, but offers some straightforward support for handling vector data.
+ =advanced
+ 
+ In-progress class to handle shape data, currently to be considered of
  alpha or beta quality. Major structural work may be performed on this class
  after the release of Processing 1.0. Such changes may include:
 
@@ -129,6 +138,10 @@ In-progress class to handle shape data, currently to be considered of
 <P>
 
 <P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../processing/core/PApplet.html#shape(processing.core.PShape)"><CODE>PApplet.shape(PShape)</CODE></A>, 
+<A HREF="../../processing/core/PApplet.html#loadShape(java.lang.String)"><CODE>PApplet.loadShape(String)</CODE></A>, 
+<A HREF="../../processing/core/PApplet.html#shapeMode(int)"><CODE>PApplet.shapeMode(int)</CODE></A></DL>
 <HR>
 
 <P>
@@ -186,7 +199,7 @@ In-progress class to handle shape data, currently to be considered of
 <TD><CODE><B><A HREF="../../processing/core/PShape.html#height">height</A></B></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The width of the PShape document.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -218,7 +231,7 @@ In-progress class to handle shape data, currently to be considered of
 <TD><CODE><B><A HREF="../../processing/core/PShape.html#width">width</A></B></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The width of the PShape document.</TD>
 </TR>
 </TABLE>
 &nbsp;<A NAME="fields_inherited_from_class_processing.core.PConstants"><!-- --></A>
@@ -331,12 +344,20 @@ In-progress class to handle shape data, currently to be considered of
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PShape.html#contains(float, float)">contains</A></B>(float&nbsp;x,
+         float&nbsp;y)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/core/PShape.html#disableStyle()">disableStyle</A></B>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Overrides this shape's style information and uses PGraphics styles and
- colors.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Disables the shape's style data and uses Processing's current styles.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -362,7 +383,7 @@ In-progress class to handle shape data, currently to be considered of
 <TD><CODE><B><A HREF="../../processing/core/PShape.html#enableStyle()">enableStyle</A></B>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Re-enables style information (fill and stroke) set in the shape.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Enables the shape's style data and ignores Processing's current styles.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -387,7 +408,7 @@ In-progress class to handle shape data, currently to be considered of
 <TD><CODE><B><A HREF="../../processing/core/PShape.html#getChild(java.lang.String)">getChild</A></B>(java.lang.String&nbsp;target)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Extracts a child shape from a parent shape.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -396,6 +417,14 @@ In-progress class to handle shape data, currently to be considered of
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PShape.html#getFamily()">getFamily</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The shape type, one of GROUP, PRIMITIVE, PATH, or GEOMETRY.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -415,6 +444,78 @@ In-progress class to handle shape data, currently to be considered of
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PShape.html#getPrimitive()">getPrimitive</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;float[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PShape.html#getVertex(int)">getVertex</A></B>(int&nbsp;index)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PShape.html#getVertexCode(int)">getVertexCode</A></B>(int&nbsp;index)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;One of VERTEX, BEZIER_VERTEX, CURVE_VERTEX, or BREAK.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PShape.html#getVertexCodeCount()">getVertexCodeCount</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PShape.html#getVertexCodes()">getVertexCodes</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PShape.html#getVertexCount()">getVertexCount</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;float</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PShape.html#getVertexX(int)">getVertexX</A></B>(int&nbsp;index)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;float</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PShape.html#getVertexY(int)">getVertexY</A></B>(int&nbsp;index)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;float</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PShape.html#getVertexZ(int)">getVertexZ</A></B>(int&nbsp;index)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;float</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/core/PShape.html#getWidth()">getWidth</A></B>()</CODE>
 
@@ -427,7 +528,7 @@ In-progress class to handle shape data, currently to be considered of
 <TD><CODE><B><A HREF="../../processing/core/PShape.html#isVisible()">isVisible</A></B>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a boolean value "true" if the image is set to be visible, "false" if not.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -451,7 +552,7 @@ In-progress class to handle shape data, currently to be considered of
 <TD><CODE><B><A HREF="../../processing/core/PShape.html#rotate(float)">rotate</A></B>(float&nbsp;angle)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Rotates a shape the amount specified by the <b>angle</b> parameter.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -470,7 +571,7 @@ In-progress class to handle shape data, currently to be considered of
 <TD><CODE><B><A HREF="../../processing/core/PShape.html#rotateX(float)">rotateX</A></B>(float&nbsp;angle)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Rotates a shape around the x-axis the amount specified by the <b>angle</b> parameter.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -478,7 +579,7 @@ In-progress class to handle shape data, currently to be considered of
 <TD><CODE><B><A HREF="../../processing/core/PShape.html#rotateY(float)">rotateY</A></B>(float&nbsp;angle)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Rotates a shape around the y-axis the amount specified by the <b>angle</b> parameter.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -486,7 +587,7 @@ In-progress class to handle shape data, currently to be considered of
 <TD><CODE><B><A HREF="../../processing/core/PShape.html#rotateZ(float)">rotateZ</A></B>(float&nbsp;angle)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Rotates a shape around the z-axis the amount specified by the <b>angle</b> parameter.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -499,8 +600,8 @@ In-progress class to handle shape data, currently to be considered of
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PShape.html#scale(float, float)">scale</A></B>(float&nbsp;sx,
-      float&nbsp;sy)</CODE>
+<TD><CODE><B><A HREF="../../processing/core/PShape.html#scale(float, float)">scale</A></B>(float&nbsp;x,
+      float&nbsp;y)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -513,7 +614,7 @@ In-progress class to handle shape data, currently to be considered of
       float&nbsp;z)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Increases or decreases the size of a shape by expanding and contracting vertices.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -529,7 +630,7 @@ In-progress class to handle shape data, currently to be considered of
 <TD><CODE><B><A HREF="../../processing/core/PShape.html#setVisible(boolean)">setVisible</A></B>(boolean&nbsp;visible)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the shape to be visible or invisible.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -548,7 +649,7 @@ In-progress class to handle shape data, currently to be considered of
           float&nbsp;tz)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Specifies an amount to displace the shape.</TD>
 </TR>
 </TABLE>
 &nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
@@ -626,6 +727,8 @@ width</H3>
 <PRE>
 public float <B>width</B></PRE>
 <DL>
+<DD>The width of the PShape document.
+<P>
 <DL>
 </DL>
 </DL>
@@ -636,6 +739,8 @@ height</H3>
 <PRE>
 public float <B>height</B></PRE>
 <DL>
+<DD>The width of the PShape document.
+<P>
 <DL>
 </DL>
 </DL>
@@ -748,6 +853,10 @@ isVisible</H3>
 <PRE>
 public boolean <B>isVisible</B>()</PRE>
 <DL>
+<DD>Returns a boolean value "true" if the image is set to be visible, "false" if not. This is modified with the <b>setVisible()</b> parameter.
+ <br><br>The visibility of a shape is usually controlled by whatever program created the SVG file.
+ For instance, this parameter is controlled by showing or hiding the shape in the layers palette in Adobe Illustrator.
+<P>
 <DD><DL>
 </DL>
 </DD>
@@ -762,11 +871,15 @@ setVisible</H3>
 <PRE>
 public void <B>setVisible</B>(boolean&nbsp;visible)</PRE>
 <DL>
+<DD>Sets the shape to be visible or invisible. This is determined by the value of the <b>visible</b> parameter.
+ <br><br>The visibility of a shape is usually controlled by whatever program created the SVG file.
+ For instance, this parameter is controlled by showing or hiding the shape in the layers palette in Adobe Illustrator.
+<P>
 <DD><DL>
 </DL>
 </DD>
 <DD><DL>
-</DL>
+<DT><B>Parameters:</B><DD><CODE>visible</CODE> - "false" makes the shape invisible and "true" makes it visible</DL>
 </DD>
 </DL>
 <HR>
@@ -776,7 +889,9 @@ disableStyle</H3>
 <PRE>
 public void <B>disableStyle</B>()</PRE>
 <DL>
-<DD>Overrides this shape's style information and uses PGraphics styles and
+<DD>Disables the shape's style data and uses Processing's current styles. Styles include attributes such as colors, stroke weight, and stroke joints.
+  =advanced
+ Overrides this shape's style information and uses PGraphics styles and
  colors. Identical to ignoreStyles(true). Also disables styles for all
  child shapes.
 <P>
@@ -794,7 +909,7 @@ enableStyle</H3>
 <PRE>
 public void <B>enableStyle</B>()</PRE>
 <DL>
-<DD>Re-enables style information (fill and stroke) set in the shape.
+<DD>Enables the shape's style data and ignores Processing's current styles. Styles include attributes such as colors, stroke weight, and stroke joints.
 <P>
 <DD><DL>
 </DL>
@@ -908,7 +1023,7 @@ public <A HREF="../../processing/core/PShape.html" title="class in processing.co
 </DL>
 </DD>
 <DD><DL>
-</DL>
+<DT><B>Parameters:</B><DD><CODE>index</CODE> - the layer position of the shape to get</DL>
 </DD>
 </DL>
 <HR>
@@ -918,11 +1033,14 @@ getChild</H3>
 <PRE>
 public <A HREF="../../processing/core/PShape.html" title="class in processing.core">PShape</A> <B>getChild</B>(java.lang.String&nbsp;target)</PRE>
 <DL>
+<DD>Extracts a child shape from a parent shape. Specify the name of the shape with the <b>target</b> parameter.
+ The shape is returned as a <b>PShape</b> object, or <b>null</b> is returned if there is an error.
+<P>
 <DD><DL>
 </DL>
 </DD>
 <DD><DL>
-</DL>
+<DT><B>Parameters:</B><DD><CODE>target</CODE> - the name of the shape to get</DL>
 </DD>
 </DL>
 <HR>
@@ -958,6 +1076,165 @@ public void <B>addChild</B>(<A HREF="../../processing/core/PShape.html" title="c
 </DL>
 <HR>
 
+<A NAME="getFamily()"><!-- --></A><H3>
+getFamily</H3>
+<PRE>
+public int <B>getFamily</B>()</PRE>
+<DL>
+<DD>The shape type, one of GROUP, PRIMITIVE, PATH, or GEOMETRY.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getPrimitive()"><!-- --></A><H3>
+getPrimitive</H3>
+<PRE>
+public int <B>getPrimitive</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getVertexCount()"><!-- --></A><H3>
+getVertexCount</H3>
+<PRE>
+public int <B>getVertexCount</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getVertex(int)"><!-- --></A><H3>
+getVertex</H3>
+<PRE>
+public float[] <B>getVertex</B>(int&nbsp;index)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getVertexX(int)"><!-- --></A><H3>
+getVertexX</H3>
+<PRE>
+public float <B>getVertexX</B>(int&nbsp;index)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getVertexY(int)"><!-- --></A><H3>
+getVertexY</H3>
+<PRE>
+public float <B>getVertexY</B>(int&nbsp;index)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getVertexZ(int)"><!-- --></A><H3>
+getVertexZ</H3>
+<PRE>
+public float <B>getVertexZ</B>(int&nbsp;index)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getVertexCodes()"><!-- --></A><H3>
+getVertexCodes</H3>
+<PRE>
+public int[] <B>getVertexCodes</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getVertexCodeCount()"><!-- --></A><H3>
+getVertexCodeCount</H3>
+<PRE>
+public int <B>getVertexCodeCount</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getVertexCode(int)"><!-- --></A><H3>
+getVertexCode</H3>
+<PRE>
+public int <B>getVertexCode</B>(int&nbsp;index)</PRE>
+<DL>
+<DD>One of VERTEX, BEZIER_VERTEX, CURVE_VERTEX, or BREAK.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="contains(float, float)"><!-- --></A><H3>
+contains</H3>
+<PRE>
+public boolean <B>contains</B>(float&nbsp;x,
+                        float&nbsp;y)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
 <A NAME="translate(float, float)"><!-- --></A><H3>
 translate</H3>
 <PRE>
@@ -980,11 +1257,14 @@ public void <B>translate</B>(float&nbsp;tx,
                       float&nbsp;ty,
                       float&nbsp;tz)</PRE>
 <DL>
+<DD>Specifies an amount to displace the shape. The <b>x</b> parameter specifies left/right translation, the <b>y</b> parameter specifies up/down translation, and the <b>z</b> parameter specifies translations toward/away from the screen. Subsequent calls to the method accumulates the effect. For example, calling <b>translate(50, 0)</b> and then <b>translate(20, 0)</b> is the same as <b>translate(70, 0)</b>. This transformation is applied directly to the shape, it's not refreshed each time <b>draw()</b> is run. 
+ <br><br>Using this method with the <b>z</b> parameter requires using the P3D or OPENGL parameter in combination with size.
+<P>
 <DD><DL>
 </DL>
 </DD>
 <DD><DL>
-</DL>
+<DT><B>Parameters:</B><DD><CODE>tx</CODE> - left/right translation<DD><CODE>ty</CODE> - up/down translation<DD><CODE>tz</CODE> - forward/back translation</DL>
 </DD>
 </DL>
 <HR>
@@ -994,11 +1274,17 @@ rotateX</H3>
 <PRE>
 public void <B>rotateX</B>(float&nbsp;angle)</PRE>
 <DL>
+<DD>Rotates a shape around the x-axis the amount specified by the <b>angle</b> parameter. Angles should be specified in radians (values from 0 to TWO_PI) or converted to radians with the <b>radians()</b> method.
+ <br><br>Shapes are always rotated around the upper-left corner of their bounding box. Positive numbers rotate objects in a clockwise direction.
+ Subsequent calls to the method accumulates the effect. For example, calling <b>rotateX(HALF_PI)</b> and then <b>rotateX(HALF_PI)</b> is the same as <b>rotateX(PI)</b>.
+ This transformation is applied directly to the shape, it's not refreshed each time <b>draw()</b> is run.  
+ <br><br>This method requires a 3D renderer. You need to pass P3D or OPENGL as a third parameter into the <b>size()</b> method as shown in the example above.
+<P>
 <DD><DL>
 </DL>
 </DD>
 <DD><DL>
-</DL>
+<DT><B>Parameters:</B><DD><CODE>angle</CODE> - angle of rotation specified in radians</DL>
 </DD>
 </DL>
 <HR>
@@ -1008,11 +1294,17 @@ rotateY</H3>
 <PRE>
 public void <B>rotateY</B>(float&nbsp;angle)</PRE>
 <DL>
+<DD>Rotates a shape around the y-axis the amount specified by the <b>angle</b> parameter. Angles should be specified in radians (values from 0 to TWO_PI) or converted to radians with the <b>radians()</b> method.
+ <br><br>Shapes are always rotated around the upper-left corner of their bounding box. Positive numbers rotate objects in a clockwise direction.
+ Subsequent calls to the method accumulates the effect. For example, calling <b>rotateY(HALF_PI)</b> and then <b>rotateY(HALF_PI)</b> is the same as <b>rotateY(PI)</b>.
+ This transformation is applied directly to the shape, it's not refreshed each time <b>draw()</b> is run. 
+ <br><br>This method requires a 3D renderer. You need to pass P3D or OPENGL as a third parameter into the <b>size()</b> method as shown in the example above.
+<P>
 <DD><DL>
 </DL>
 </DD>
 <DD><DL>
-</DL>
+<DT><B>Parameters:</B><DD><CODE>angle</CODE> - angle of rotation specified in radians</DL>
 </DD>
 </DL>
 <HR>
@@ -1022,11 +1314,17 @@ rotateZ</H3>
 <PRE>
 public void <B>rotateZ</B>(float&nbsp;angle)</PRE>
 <DL>
+<DD>Rotates a shape around the z-axis the amount specified by the <b>angle</b> parameter. Angles should be specified in radians (values from 0 to TWO_PI) or converted to radians with the <b>radians()</b> method.
+ <br><br>Shapes are always rotated around the upper-left corner of their bounding box. Positive numbers rotate objects in a clockwise direction.
+ Subsequent calls to the method accumulates the effect. For example, calling <b>rotateZ(HALF_PI)</b> and then <b>rotateZ(HALF_PI)</b> is the same as <b>rotateZ(PI)</b>.
+ This transformation is applied directly to the shape, it's not refreshed each time <b>draw()</b> is run. 
+ <br><br>This method requires a 3D renderer. You need to pass P3D or OPENGL as a third parameter into the <b>size()</b> method as shown in the example above.
+<P>
 <DD><DL>
 </DL>
 </DD>
 <DD><DL>
-</DL>
+<DT><B>Parameters:</B><DD><CODE>angle</CODE> - angle of rotation specified in radians</DL>
 </DD>
 </DL>
 <HR>
@@ -1036,11 +1334,17 @@ rotate</H3>
 <PRE>
 public void <B>rotate</B>(float&nbsp;angle)</PRE>
 <DL>
+<DD>Rotates a shape the amount specified by the <b>angle</b> parameter. Angles should be specified in radians (values from 0 to TWO_PI) or converted to radians with the <b>radians()</b> method.
+ <br><br>Shapes are always rotated around the upper-left corner of their bounding box. Positive numbers rotate objects in a clockwise direction.
+ Transformations apply to everything that happens after and subsequent calls to the method accumulates the effect.
+ For example, calling <b>rotate(HALF_PI)</b> and then <b>rotate(HALF_PI)</b> is the same as <b>rotate(PI)</b>.
+ This transformation is applied directly to the shape, it's not refreshed each time <b>draw()</b> is run.
+<P>
 <DD><DL>
 </DL>
 </DD>
 <DD><DL>
-</DL>
+<DT><B>Parameters:</B><DD><CODE>angle</CODE> - angle of rotation specified in radians</DL>
 </DD>
 </DL>
 <HR>
@@ -1071,7 +1375,7 @@ public void <B>scale</B>(float&nbsp;s)</PRE>
 </DL>
 </DD>
 <DD><DL>
-</DL>
+<DT><B>Parameters:</B><DD><CODE>s</CODE> - percentage to scale the object</DL>
 </DD>
 </DL>
 <HR>
@@ -1079,8 +1383,8 @@ public void <B>scale</B>(float&nbsp;s)</PRE>
 <A NAME="scale(float, float)"><!-- --></A><H3>
 scale</H3>
 <PRE>
-public void <B>scale</B>(float&nbsp;sx,
-                  float&nbsp;sy)</PRE>
+public void <B>scale</B>(float&nbsp;x,
+                  float&nbsp;y)</PRE>
 <DL>
 <DD><DL>
 </DL>
@@ -1098,11 +1402,17 @@ public void <B>scale</B>(float&nbsp;x,
                   float&nbsp;y,
                   float&nbsp;z)</PRE>
 <DL>
+<DD>Increases or decreases the size of a shape by expanding and contracting vertices. Shapes always scale from the relative origin of their bounding box.
+ Scale values are specified as decimal percentages. For example, the method call <b>scale(2.0)</b> increases the dimension of a shape by 200%.
+ Subsequent calls to the method multiply the effect. For example, calling <b>scale(2.0)</b> and then <b>scale(1.5)</b> is the same as <b>scale(3.0)</b>.
+ This transformation is applied directly to the shape, it's not refreshed each time <b>draw()</b> is run. 
+ <br><br>Using this fuction with the <b>z</b> parameter requires passing P3D or OPENGL into the size() parameter.
+<P>
 <DD><DL>
 </DL>
 </DD>
 <DD><DL>
-</DL>
+<DT><B>Parameters:</B><DD><CODE>x</CODE> - percentage to scale the object in the x-axis<DD><CODE>y</CODE> - percentage to scale the object in the y-axis<DD><CODE>z</CODE> - percentage to scale the object in the z-axis</DL>
 </DD>
 </DL>
 <HR>

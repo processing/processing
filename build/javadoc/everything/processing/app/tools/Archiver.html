@@ -6,14 +6,15 @@
 Archiver
 </TITLE>
 
-<META NAME="keywords" CONTENT="processing.app.tools.Archiver class">
 
 <LINK REL ="stylesheet" TYPE="text/css" HREF="../../../stylesheet.css" TITLE="Style">
 
 <SCRIPT type="text/javascript">
 function windowTitle()
 {
-    parent.document.title="Archiver";
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="Archiver";
+    }
 }
 </SCRIPT>
 <NOSCRIPT>
@@ -22,6 +23,7 @@ function windowTitle()
 </HEAD>
 
 <BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
 
 
 <!-- ========= START OF TOP NAVBAR ======= -->
@@ -51,7 +53,7 @@ function windowTitle()
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
 &nbsp;PREV CLASS&nbsp;
-&nbsp;<A HREF="../../../processing/app/tools/AutoFormat.html" title="class in processing.app.tools"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../../../processing/app/tools/AutoFormatTool.html" title="class in processing.app.tools"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../../index.html?processing/app/tools/Archiver.html" target="_top"><B>FRAMES</B></A>  &nbsp;
 &nbsp;<A HREF="Archiver.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
@@ -291,7 +293,7 @@ public void <B>buildZip</B>(java.io.File&nbsp;dir,
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
 &nbsp;PREV CLASS&nbsp;
-&nbsp;<A HREF="../../../processing/app/tools/AutoFormat.html" title="class in processing.app.tools"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../../../processing/app/tools/AutoFormatTool.html" title="class in processing.app.tools"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../../index.html?processing/app/tools/Archiver.html" target="_top"><B>FRAMES</B></A>  &nbsp;
 &nbsp;<A HREF="Archiver.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;

@@ -12,7 +12,9 @@ processing.app.debug Class Hierarchy
 <SCRIPT type="text/javascript">
 function windowTitle()
 {
-    parent.document.title="processing.app.debug Class Hierarchy";
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="processing.app.debug Class Hierarchy";
+    }
 }
 </SCRIPT>
 <NOSCRIPT>
@@ -21,6 +23,7 @@ function windowTitle()
 </HEAD>
 
 <BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
 
 
 <!-- ========= START OF TOP NAVBAR ======= -->
@@ -49,7 +52,7 @@ function windowTitle()
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../../../processing/app/package-tree.html"><B>PREV</B></A>&nbsp;
+&nbsp;<A HREF="../../../processing/app/antlr/package-tree.html"><B>PREV</B></A>&nbsp;
 &nbsp;<A HREF="../../../processing/app/linux/package-tree.html"><B>NEXT</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../../index.html?processing/app/debug/package-tree.html" target="_top"><B>FRAMES</B></A>  &nbsp;
@@ -86,10 +89,12 @@ Class Hierarchy
 </H2>
 <UL>
 <LI TYPE="circle">java.lang.Object<UL>
-<LI TYPE="circle">processing.app.debug.<A HREF="../../../processing/app/debug/Compiler.html" title="class in processing.app.debug"><B>Compiler</B></A><LI TYPE="circle">processing.app.debug.<A HREF="../../../processing/app/debug/Runner.html" title="class in processing.app.debug"><B>Runner</B></A> (implements processing.app.debug.<A HREF="../../../processing/app/debug/MessageConsumer.html" title="interface in processing.app.debug">MessageConsumer</A>)
+<LI TYPE="circle">processing.app.debug.<A HREF="../../../processing/app/debug/Compiler.html" title="class in processing.app.debug"><B>Compiler</B></A><LI TYPE="circle">processing.app.debug.<A HREF="../../../processing/app/debug/MessageSiphon.html" title="class in processing.app.debug"><B>MessageSiphon</B></A> (implements java.lang.Runnable)
+<LI TYPE="circle">processing.app.debug.<A HREF="../../../processing/app/debug/Runner.html" title="class in processing.app.debug"><B>Runner</B></A> (implements processing.app.debug.<A HREF="../../../processing/app/debug/MessageConsumer.html" title="interface in processing.app.debug">MessageConsumer</A>)
+<LI TYPE="circle">processing.app.debug.<A HREF="../../../processing/app/debug/SystemOutSiphon.html" title="class in processing.app.debug"><B>SystemOutSiphon</B></A> (implements java.lang.Runnable)
 <LI TYPE="circle">java.lang.Thread (implements java.lang.Runnable)
 <UL>
-<LI TYPE="circle">processing.app.debug.<A HREF="../../../processing/app/debug/EventThread.html" title="class in processing.app.debug"><B>EventThread</B></A><LI TYPE="circle">processing.app.debug.<A HREF="../../../processing/app/debug/StreamRedirectThread.html" title="class in processing.app.debug"><B>StreamRedirectThread</B></A></UL>
+<LI TYPE="circle">processing.app.debug.<A HREF="../../../processing/app/debug/EventThread.html" title="class in processing.app.debug"><B>EventThread</B></A></UL>
 <LI TYPE="circle">java.lang.Throwable (implements java.io.Serializable)
 <UL>
 <LI TYPE="circle">java.lang.Exception<UL>
@@ -131,7 +136,7 @@ Interface Hierarchy
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../../../processing/app/package-tree.html"><B>PREV</B></A>&nbsp;
+&nbsp;<A HREF="../../../processing/app/antlr/package-tree.html"><B>PREV</B></A>&nbsp;
 &nbsp;<A HREF="../../../processing/app/linux/package-tree.html"><B>NEXT</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../../index.html?processing/app/debug/package-tree.html" target="_top"><B>FRAMES</B></A>  &nbsp;
