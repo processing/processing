@@ -151,7 +151,7 @@ public class Editor extends JFrame implements RunnerListener {
     // When bringing a window to front, let the Base know
     addWindowListener(new WindowAdapter() {
         public void windowActivated(WindowEvent e) {
-//          System.err.println("activate");  // not coming through
+//          EditorConsole.systemOut.println("editor window activated");
           base.handleActivated(Editor.this);
           // re-add the sub-menus that are shared by all windows
           fileMenu.insert(sketchbookMenu, 2);
@@ -162,15 +162,12 @@ public class Editor extends JFrame implements RunnerListener {
         // added for 1.0.5
         // http://dev.processing.org/bugs/show_bug.cgi?id=1260
         public void windowDeactivated(WindowEvent e) {
-//          System.err.println("deactivate");  // not coming through
+//          EditorConsole.systemErr.println("editor window deactivated");
           fileMenu.remove(sketchbookMenu);
           fileMenu.remove(examplesMenu);
           sketchMenu.remove(importMenu);
         }
       });
-
-    //PdeKeywords keywords = new PdeKeywords();
-    //sketchbook = new Sketchbook(this);
 
     buildMenuBar();
 
@@ -247,16 +244,11 @@ public class Editor extends JFrame implements RunnerListener {
 
     pain.setTransferHandler(new FileDropHandler());
 
-//    System.out.println("t1");
-
     // Finish preparing Editor (formerly found in Base)
     pack();
 
-//    System.out.println("t2");
-
     // Set the window bounds and the divider location before setting it visible
     setPlacement(location);
-
 
     // If the window is resized too small this will resize it again to the
     // minimums. Adapted by Chris Lonnen from comments here:
@@ -271,21 +263,12 @@ public class Editor extends JFrame implements RunnerListener {
         }
       });
 
-//    System.out.println("t3");
-
     // Bring back the general options for the editor
     applyPreferences();
-
-//    System.out.println("t4");
 
     // Open the document that was passed in
     boolean loaded = handleOpenInternal(path);
     if (!loaded) sketch = null;
-
-//    System.out.println("t5");
-
-    // All set, now show the window
-    //setVisible(true);
   }
 
 
@@ -1039,7 +1022,6 @@ public class Editor extends JFrame implements RunnerListener {
           }
           //new FindReplace(Editor.this).show();
           find.setVisible(true);
-          //find.setVisible(true);
         }
       });
     menu.add(item);
