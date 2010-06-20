@@ -69,6 +69,48 @@ public class EditorConsole extends JScrollPane {
 
   static EditorConsole currentConsole;
   
+  // For 0185, moved the first init to this static { } block, so that we never
+  // have a situation that causes systemOut/Err to not be set properly.
+  static {
+    systemOut = System.out;
+    systemErr = System.err;
+
+    // Create a temporary folder which will have a randomized name. Has to 
+    // be randomized otherwise another instance of Processing (or one of its 
+    // sister IDEs) might collide with the file causing permissions problems. 
+    // The files and folders are not deleted on exit because they may be 
+    // needed for debugging or bug reporting.
+    tempFolder = Base.createTempFolder("console");
+    try {
+      String outFileName = Preferences.get("console.output.file");
+      if (outFileName != null) {
+        outFile = new File(tempFolder, outFileName);
+        stdoutFile = new FileOutputStream(outFile);
+      }
+
+      String errFileName = Preferences.get("console.error.file");
+      if (errFileName != null) {
+        errFile = new File(tempFolder, errFileName);
+        stderrFile = new FileOutputStream(errFile);
+      }
+    } catch (IOException e) {
+      Base.showWarning("Console Error",
+        "A problem occurred while trying to open the\n" +
+        "files used to store the console output.", e);
+    }
+    consoleOut = new PrintStream(new EditorConsoleStream(false));
+    consoleErr = new PrintStream(new EditorConsoleStream(true));
+    
+    if (Preferences.getBoolean("console")) {
+      try {
+        System.setOut(consoleOut);
+        System.setErr(consoleErr);
+      } catch (Exception e) {
+        e.printStackTrace(systemErr);
+      }
+    }
+  }
+  
 
   public EditorConsole(Editor editor) {
     this.editor = editor;
@@ -119,46 +161,6 @@ public class EditorConsole extends JScrollPane {
     int sizeFudge = 6; //10; // unclear why this is necessary, but it is
     setPreferredSize(new Dimension(1024, (height * lines) + sizeFudge));
     setMinimumSize(new Dimension(1024, (height * 4) + sizeFudge));
-
-    if (systemOut == null) {
-      systemOut = System.out;
-      systemErr = System.err;
-
-      // Create a temporary folder which will have a randomized name. Has to 
-      // be randomized otherwise another instance of Processing (or one of its 
-      // sister IDEs) might collide with the file causing permissions problems. 
-      // The files and folders are not deleted on exit because they may be 
-      // needed for debugging or bug reporting.
-      tempFolder = Base.createTempFolder("console");
-      try {
-        String outFileName = Preferences.get("console.output.file");
-        if (outFileName != null) {
-          outFile = new File(tempFolder, outFileName);
-          stdoutFile = new FileOutputStream(outFile);
-        }
-
-        String errFileName = Preferences.get("console.error.file");
-        if (errFileName != null) {
-          errFile = new File(tempFolder, errFileName);
-          stderrFile = new FileOutputStream(errFile);
-        }
-      } catch (IOException e) {
-        Base.showWarning("Console Error",
-                         "A problem occurred while trying to open the\n" +
-                         "files used to store the console output.", e);
-      }
-      consoleOut = new PrintStream(new EditorConsoleStream(false));
-      consoleErr = new PrintStream(new EditorConsoleStream(true));
-    
-      if (Preferences.getBoolean("console")) {
-        try {
-          System.setOut(consoleOut);
-          System.setErr(consoleErr);
-        } catch (Exception e) {
-          e.printStackTrace(systemOut);
-        }
-      }
-    }
 
     // to fix ugliness.. normally macosx java 1.3 puts an
     // ugly white border around this object, so turn it off.
