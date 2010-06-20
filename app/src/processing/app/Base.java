@@ -93,18 +93,21 @@ public class Base {
   // Location for untitled items
   static File untitledFolder;
 
-  // p5 icon for the window
-//  static Image icon;
-
-//  int editorCount;
-//  Editor[] editors;
   java.util.List<Editor> editors =
     Collections.synchronizedList(new ArrayList<Editor>());
-//  ArrayList editors = Collections.synchronizedList(new ArrayList<Editor>());
   Editor activeEditor;
 
 
-  static public void main(String args[]) {
+  static public void main(final String[] args) {
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+          createAndShowGUI(args);
+        }
+    });
+  }
+
+
+  static private void createAndShowGUI(String[] args) {
     try {
       File versionFile = getContentFile("lib/version.txt");
       if (versionFile.exists()) {
@@ -118,42 +121,7 @@ public class Base {
       e.printStackTrace();
     }
 
-//    if (System.getProperty("mrj.version") != null) {
-//      //String jv = System.getProperty("java.version");
-//      String ov = System.getProperty("os.version");
-//      if (ov.startsWith("10.5")) {
-//        System.setProperty("apple.laf.useScreenMenuBar", "true");
-//      }
-//    }
-
-    /*
-    commandLine = false;
-    if (args.length >= 2) {
-      if (args[0].startsWith("--")) {
-        commandLine = true;
-      }
-    }
-
-    if (PApplet.javaVersion < 1.5f) {
-      //System.err.println("no way man");
-      Base.showError("Need to install Java 1.5",
-                     "This version of Processing requires    \n" +
-                     "Java 1.5 or later to run properly.\n" +
-                     "Please visit java.com to upgrade.", null);
-    }
-    */
-
     initPlatform();
-
-//    // Set the look and feel before opening the window
-//    try {
-//      platform.setLookAndFeel();
-//    } catch (Exception e) {
-//      System.err.println("Non-fatal error while setting the Look & Feel.");
-//      System.err.println("The error message follows, however Processing should run fine.");
-//      System.err.println(e.getMessage());
-//      //e.printStackTrace();
-//    }
 
     // Use native popups so they don't look so crappy on osx
     JPopupMenu.setDefaultLightWeightPopupEnabled(false);
@@ -719,27 +687,11 @@ public class Base {
       return null;  // Just walk away quietly
     }
 
-//    if (editors == null) {
-//      editors = new Editor[5];
-//    }
-//    if (editorCount == editors.length) {
-//      editors = (Editor[]) PApplet.expand(editors);
-//    }
-//    editors[editorCount++] = editor;
     editors.add(editor);
-
-//    if (markedForClose != null) {
-//      Point p = markedForClose.getLocation();
-//      handleClose(markedForClose, false);
-//      // open the new window in
-//      editor.setLocation(p);
-//    }
 
     // now that we're ready, show the window
     // (don't do earlier, cuz we might move it based on a window being closed)
     editor.setVisible(true);
-
-//    System.err.println("exiting handleOpen");
 
     return editor;
   }
@@ -879,7 +831,7 @@ public class Base {
   protected void rebuildSketchbookMenus() {
     //System.out.println("async enter");
     //new Exception().printStackTrace();
-    SwingUtilities.invokeLater(new Runnable() {
+    EventQueue.invokeLater(new Runnable() {
       public void run() {
         //System.out.println("starting rebuild");
         rebuildSketchbookMenu(Editor.sketchbookMenu);
