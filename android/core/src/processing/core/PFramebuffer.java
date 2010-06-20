@@ -64,12 +64,12 @@ public class PFramebuffer  {
     this.parent = parent;
     a3d = (PGraphicsAndroid3D)parent.g;
     
-    // Checking we have what we need:
+    // Checking we have what we need:    
     gl = a3d.gl11xp;
     if (gl == null) {
       throw new RuntimeException("PFramebuffer: OpenGL ES 1.1 Extension Pack required");
-    }
-    if (!a3d.fboSupported) {
+    }    
+    if (!a3d.fboSupported && !onscreen) {
        throw new RuntimeException("PFramebuffer: Frame Buffer Objects are not available");
     }
     
@@ -190,7 +190,9 @@ public class PFramebuffer  {
   }
   
   public void bind() {
-    gl.glBindFramebufferOES(GL11ExtensionPack.GL_FRAMEBUFFER_OES, glFboID);
+    if (a3d.fboSupported) {
+      gl.glBindFramebufferOES(GL11ExtensionPack.GL_FRAMEBUFFER_OES, glFboID);  
+    }
   }
     
   protected void initFramebuffer(int w, int h, boolean onscreen) {
