@@ -1,6 +1,7 @@
 0185 core 
 X fix two bugs with fonts created with specific charsets
 X fix from jdf for PImage(java.awt.Image img) and ARGB images
+X   public PImage(java.awt.Image) sets format to RGB (but could be ARGB)
 X large number of beginShape(POINTS) not rendering correctly on first frame
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1572
 X pass actual exceptions from InvocationTargetException in registered methods
@@ -28,6 +29,9 @@ X public int getVertexCode(int index)
 X lots of fixes from PhiLho to better handle transparency changes, many types
 X   of inkscape files, drawings that use units, and other tweaks
 X implement support for svgz files
+
+
+_ cover the svg changes in a future release
 
 _ need to wrap mouse/key events for p5
 _   need a version that works with both android and desktop
@@ -210,7 +214,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=1191
 _ extra triangles being seen in P2D
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1192
 _ noloop ref even says that redraw will be called on resize, make sure it is
-_ public PImage(java.awt.Image) sets format to RGB (but could be ARGB)
 
 
 [ features ] 

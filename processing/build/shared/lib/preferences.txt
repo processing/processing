@@ -56,6 +56,9 @@
 # By default, no sketches currently open
 last.sketch.count=0
 
+# true if you want sketches to re-open when you next run processing
+last.sketch.restore=true
+
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
