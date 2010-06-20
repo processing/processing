@@ -66,7 +66,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   public GL11 gl11;
   public GL11Ext gl11x;
   public GL11ExtensionPack gl11xp;
-  public GLU glu;
+  //public GLU glu;
 
   // Set to 1 or 2 depending on whether to use EGL 1.x or 2.x
   static protected int EGL_CONTEXT = 1;
@@ -282,6 +282,24 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // ........................................................
 
+  boolean recordingModel;
+  ArrayList<PVector> recordedVertices;
+  ArrayList<float[]> recordedColors;
+  ArrayList<PVector> recordedNormals;
+  ArrayList<PVector> recordedTexCoords;
+  ArrayList<VertexGroup> recordedGroups;
+
+  // .......................................................
+  
+  protected Stack<PFramebuffer> fbStack;
+  protected PFramebuffer screenFramebuffer;
+  protected PFramebuffer drawFramebuffer;
+  protected PImage drawImage;
+  protected PTexture drawTexture;
+  protected PFramebuffer currentFramebuffer;
+
+  // ........................................................
+
   // Used to save a copy of the last drawn frame in order to repaint on the
   // backbuffer when using noClear mode.
   protected int[] screenTexID = {0};
@@ -291,26 +309,13 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // This variable controls clearing the buffers.
   boolean clear = true;
-
-  // ........................................................
-
-  boolean recordingModel;
-  ArrayList<PVector> recordedVertices;
-  ArrayList<float[]> recordedColors;
-  ArrayList<PVector> recordedNormals;
-  ArrayList<PVector> recordedTexCoords;
-  ArrayList<VertexGroup> recordedGroups;
-
+  
   // ........................................................
 
   public String OPENGL_VENDOR;
   public String OPENGL_RENDERER;
   public String OPENGL_VERSION;
 
-  // .......................................................
-  
-  protected Stack<PFramebuffer> fbStack;
-  protected PFramebuffer currentFramebuffer;
   
   // ////////////////////////////////////////////////////////////
 
@@ -319,7 +324,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     configChooser = new A3DConfigChooser(RED_BITS, GREEN_BITS, BLUE_BITS,
         ALPHA_BITS, DEPTH_BITS, STENCIL_BITS);
     contextFactory = new A3DContextFactory();
-    glu = new GLU(); // or maybe not until used?
+    //glu = new GLU(); // or maybe not until used?
     recreateResourceMethods = new ArrayList<GLResource>();
   }
 
@@ -472,15 +477,14 @@ public class PGraphicsAndroid3D extends PGraphics {
     // This is the right texture environment mode to ignore the fill color when drawing the texture:
     // http://www.khronos.org/opengles/documentation/opengles1_0/html/glTexEnv.html
     gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_REPLACE);
-                    
-    
+        
     int[] buf = new int [screenTexWidth * screenTexHeight];
-    for (int i = 0; i < buf.length; i++) buf[i] = 0x000000FF;
+    for (int i = 0; i < buf.length; i++) buf[i] = 0xFF000000;
     gl.glTexImage2D(GL10.GL_TEXTURE_2D, 0, GL10.GL_RGBA,  screenTexWidth, screenTexHeight, 0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, IntBuffer.wrap(buf));
     gl.glDisable(GL10.GL_TEXTURE_2D);
     
     screenTexCrop[0] = 0;
-    screenTexCrop[1] = 0;//screenTexHeight;
+    screenTexCrop[1] = 0;
     screenTexCrop[2] = screenTexWidth;
     screenTexCrop[3] = screenTexHeight;      
   }
@@ -501,7 +505,6 @@ public class PGraphicsAndroid3D extends PGraphics {
     // any geometry latter drawn by the user.
     gl.glDepthMask(false);
     
-    gl.glBindTexture(GL10.GL_TEXTURE_2D, screenTexID[0]);    
     gl11.glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, screenTexCrop, 0);
     gl11x.glDrawTexiOES(0, 0, 0, screenTexWidth, screenTexHeight);
     
@@ -523,7 +526,6 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // FRAMEBUFFERS
   
-  
   public void pushFramebuffer() {
     fbStack.push(currentFramebuffer);
   }
@@ -541,7 +543,24 @@ public class PGraphicsAndroid3D extends PGraphics {
       PGraphics.showWarning("A3D: Empty framebuffer stack");
     }
   }
+  
+  public void renderDrawTexture() {
+    int[] crop = new int[4];
+    crop[0] = 0;
+    crop[1] = 0;
+    crop[2] = width;
+    crop[3] = height;      
 
+    gl.glEnable(GL10.GL_TEXTURE_2D);
+    gl.glBindTexture(GL10.GL_TEXTURE_2D, drawTexture.getGLTextureID());
+    //gl.glDepthMask(false);
+        
+    gl11.glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, crop, 0);
+    gl11x.glDrawTexiOES(0, 0, 0, width, height);
+    
+    gl.glDisable(GL10.GL_TEXTURE_2D);   
+    //gl.glDepthMask(true);    
+  }
   
   // ////////////////////////////////////////////////////////////
 
@@ -629,43 +648,64 @@ public class PGraphicsAndroid3D extends PGraphics {
 
     shapeFirst = 0;
 
-    if (clear) {
-      gl.glClearColor(0, 0, 0, 0);
-      gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-    } else {
-      if (screenTexID[0] == 0) {
-        createScreenTexture();
+    if (fboSupported) {
+      if (fbStack == null) {
+        fbStack = new Stack<PFramebuffer>();
+
+        screenFramebuffer = new PFramebuffer(parent, width, height, true);
+        setFramebuffer(screenFramebuffer);
+        
+        drawImage = parent.createImage(width, height, ARGB);
+        drawTexture = drawImage.getTexture();
+        
+        drawFramebuffer = new PFramebuffer(parent, drawTexture.getGLWidth(), drawTexture.getGLHeight(), false);
+        drawFramebuffer.addColorBuffer(drawTexture);
+        drawFramebuffer.addDepthBuffer(DEPTH_BITS);
+        if (0 < STENCIL_BITS) {
+          drawFramebuffer.addStencilBuffer(STENCIL_BITS); 
+        }
+        drawFramebuffer.validFbo();
+  
       }
-      gl.glClearColor(0, 0, 0, 0);
-      gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-
-
-      /*
-      if (framebuffer == null) {
-        createFrambuffer();
-      }
-      gl.glClearColor(0, 0, 0, 0);
-      gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-      framebuffer.bind();
-
-      */
       
-      drawScreenTexture();
+      pushFramebuffer();
+      setFramebuffer(drawFramebuffer);
+      
+      //gl.glClearColor(0, 0, 0, 0);
+      //gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+
+        
+    } else {
+    
+      if (clear) {
+        gl.glClearColor(0, 0, 0, 0);
+        gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+      } else {
+        if (screenTexID[0] == 0) {
+          createScreenTexture();
+        }
+        gl.glClearColor(0, 0, 0, 0);
+        gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);      
+        drawScreenTexture();
+      }
     }
+    
 
     report("bot beginDraw()");
   }
 
   public void endDraw() {
-    
-    /*
-     framebuffer.unbind();
-     
-     drawFramebufferTexture();
-    */
-    
-    if (!clear && screenTexID[0] != 0) {
-      copyFrameToScreenTexture();
+    if (fboSupported) {
+      popFramebuffer();
+
+      gl.glClearColor(0, 0, 0, 0);
+      gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+      
+      renderDrawTexture();
+    } else {
+      if (!clear && screenTexID[0] != 0) {
+        copyFrameToScreenTexture();
+      }      
     }
     
     gl.glFlush();
@@ -4505,12 +4545,6 @@ public class PGraphicsAndroid3D extends PGraphics {
 
       try {
         gl11xp = (GL11ExtensionPack) gl;
-
-        // Not implemented in Android 2.1
-         int[] fbo = {0};
-         gl11xp.glGenFramebuffersOES(1, fbo, 0);
-         System.out.println("FBO id: " + fbo[0]);
-
       } catch (ClassCastException cce) {
         gl11xp = null;
       }
