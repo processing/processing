@@ -14,6 +14,14 @@ X PDF library matrix is not reset between frames
 X   also added begin/endDraw between frames
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1227
 X add loading.gif to the js version of the applet loader
+X updating JRE to 6u20, and use new Google URL
+X copy the html tool from the arduino guys
+X   http://code.google.com/p/processing/issues/detail?id=271
+X Java update on OS X causing lots of problems
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1564
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1569
+X   http://code.google.com/p/processing/issues/detail?id=258
+o   check into focus issues--probably using old focus api
 
 closing this bug, because we'll be replacing the current video library with another sometime later this summer. as such, i won't be doing any more bug fixes on the current video library. in the meantime, we recommend using gsvideo, opencv, or one of the other video libraries that are available.
 
@@ -25,11 +33,6 @@ _   http://github.com/fjenett/processingjstool/zipball/v0.0.6
 
 _ Signature issue on contributed libraries affects unrelated opengl sketches
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1570
-
-_ Java update on OS X causing lots of problems
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1564
-_ Assertion failure in -[CocoaAppWindow _changeJustMain]
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1569
 
 _ Unsatisfied Link Error running OPENGL on 64-bit ubuntu
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1557
