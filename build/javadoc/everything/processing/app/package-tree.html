@@ -12,7 +12,9 @@ processing.app Class Hierarchy
 <SCRIPT type="text/javascript">
 function windowTitle()
 {
-    parent.document.title="processing.app Class Hierarchy";
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="processing.app Class Hierarchy";
+    }
 }
 </SCRIPT>
 <NOSCRIPT>
@@ -21,6 +23,7 @@ function windowTitle()
 </HEAD>
 
 <BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
 
 
 <!-- ========= START OF TOP NAVBAR ======= -->
@@ -49,8 +52,8 @@ function windowTitle()
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../../antlr/java/package-tree.html"><B>PREV</B></A>&nbsp;
-&nbsp;<A HREF="../../processing/app/debug/package-tree.html"><B>NEXT</B></A></FONT></TD>
+&nbsp;<A HREF="../../antlr/package-tree.html"><B>PREV</B></A>&nbsp;
+&nbsp;<A HREF="../../processing/app/antlr/package-tree.html"><B>NEXT</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../index.html?processing/app/package-tree.html" target="_top"><B>FRAMES</B></A>  &nbsp;
 &nbsp;<A HREF="package-tree.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
@@ -92,7 +95,7 @@ Class Hierarchy
 <LI TYPE="circle">java.awt.Container<UL>
 <LI TYPE="circle">javax.swing.JComponent (implements java.io.Serializable)
 <UL>
-<LI TYPE="circle">processing.app.<A HREF="../../processing/app/EditorHeader.html" title="class in processing.app"><B>EditorHeader</B></A><LI TYPE="circle">processing.app.<A HREF="../../processing/app/EditorLineStatus.html" title="class in processing.app"><B>EditorLineStatus</B></A><LI TYPE="circle">processing.app.<A HREF="../../processing/app/EditorToolbar.html" title="class in processing.app"><B>EditorToolbar</B></A> (implements javax.swing.event.MouseInputListener)
+<LI TYPE="circle">processing.app.<A HREF="../../processing/app/EditorHeader.html" title="class in processing.app"><B>EditorHeader</B></A><LI TYPE="circle">processing.app.<A HREF="../../processing/app/EditorLineStatus.html" title="class in processing.app"><B>EditorLineStatus</B></A><LI TYPE="circle">processing.app.<A HREF="../../processing/app/EditorToolbar.html" title="class in processing.app"><B>EditorToolbar</B></A> (implements java.awt.event.KeyListener, javax.swing.event.MouseInputListener)
 <LI TYPE="circle">javax.swing.JPanel (implements javax.accessibility.Accessible)
 <UL>
 <LI TYPE="circle">processing.app.<A HREF="../../processing/app/EditorStatus.html" title="class in processing.app"><B>EditorStatus</B></A></UL>
@@ -113,8 +116,19 @@ Class Hierarchy
 </UL>
 </UL>
 </UL>
-<LI TYPE="circle">processing.app.<A HREF="../../processing/app/EditorListener.html" title="class in processing.app"><B>EditorListener</B></A><LI TYPE="circle">processing.app.<A HREF="../../processing/app/Platform.html" title="class in processing.app"><B>Platform</B></A><LI TYPE="circle">processing.app.<A HREF="../../processing/app/Preferences.html" title="class in processing.app"><B>Preferences</B></A><LI TYPE="circle">processing.app.<A HREF="../../processing/app/PresentMode.html" title="class in processing.app"><B>PresentMode</B></A><LI TYPE="circle">processing.app.<A HREF="../../processing/app/Sketch.html" title="class in processing.app"><B>Sketch</B></A><LI TYPE="circle">processing.app.<A HREF="../../processing/app/SketchCode.html" title="class in processing.app"><B>SketchCode</B></A><LI TYPE="circle">processing.app.<A HREF="../../processing/app/Theme.html" title="class in processing.app"><B>Theme</B></A><LI TYPE="circle">processing.app.<A HREF="../../processing/app/UpdateCheck.html" title="class in processing.app"><B>UpdateCheck</B></A> (implements java.lang.Runnable)
+<LI TYPE="circle">processing.app.<A HREF="../../processing/app/EditorListener.html" title="class in processing.app"><B>EditorListener</B></A><LI TYPE="circle">processing.app.<A HREF="../../processing/app/LibraryFolder.html" title="class in processing.app"><B>LibraryFolder</B></A> (implements java.lang.Comparable&lt;T&gt;)
+<LI TYPE="circle">processing.app.<A HREF="../../processing/app/Platform.html" title="class in processing.app"><B>Platform</B></A><LI TYPE="circle">processing.app.<A HREF="../../processing/app/Preferences.html" title="class in processing.app"><B>Preferences</B></A><LI TYPE="circle">processing.app.<A HREF="../../processing/app/PresentMode.html" title="class in processing.app"><B>PresentMode</B></A><LI TYPE="circle">processing.app.<A HREF="../../processing/app/Sketch.html" title="class in processing.app"><B>Sketch</B></A><LI TYPE="circle">processing.app.<A HREF="../../processing/app/SketchCode.html" title="class in processing.app"><B>SketchCode</B></A><LI TYPE="circle">processing.app.<A HREF="../../processing/app/Theme.html" title="class in processing.app"><B>Theme</B></A><LI TYPE="circle">java.lang.Thread (implements java.lang.Runnable)
+<UL>
+<LI TYPE="circle">processing.app.<A HREF="../../processing/app/StreamRedirectThread.html" title="class in processing.app"><B>StreamRedirectThread</B></A></UL>
+<LI TYPE="circle">processing.app.<A HREF="../../processing/app/UpdateCheck.html" title="class in processing.app"><B>UpdateCheck</B></A> (implements java.lang.Runnable)
 <LI TYPE="circle">processing.app.<A HREF="../../processing/app/WebServer.html" title="class in processing.app"><B>WebServer</B></A></UL>
+</UL>
+<H2>
+Interface Hierarchy
+</H2>
+<UL>
+<LI TYPE="circle">com.sun.jna.Library<UL>
+<LI TYPE="circle">processing.app.<A HREF="../../processing/app/Platform.CLibrary.html" title="interface in processing.app"><B>Platform.CLibrary</B></A></UL>
 </UL>
 <HR>
 
@@ -145,8 +159,8 @@ Class Hierarchy
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../../antlr/java/package-tree.html"><B>PREV</B></A>&nbsp;
-&nbsp;<A HREF="../../processing/app/debug/package-tree.html"><B>NEXT</B></A></FONT></TD>
+&nbsp;<A HREF="../../antlr/package-tree.html"><B>PREV</B></A>&nbsp;
+&nbsp;<A HREF="../../processing/app/antlr/package-tree.html"><B>NEXT</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../index.html?processing/app/package-tree.html" target="_top"><B>FRAMES</B></A>  &nbsp;
 &nbsp;<A HREF="package-tree.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;

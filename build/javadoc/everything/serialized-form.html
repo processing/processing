@@ -12,7 +12,9 @@ Serialized Form
 <SCRIPT type="text/javascript">
 function windowTitle()
 {
-    parent.document.title="Serialized Form";
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="Serialized Form";
+    }
 }
 </SCRIPT>
 <NOSCRIPT>
@@ -21,6 +23,7 @@ function windowTitle()
 </HEAD>
 
 <BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
 
 
 <!-- ========= START OF TOP NAVBAR ======= -->
@@ -833,15 +836,6 @@ javax.swing.JPanel <B>consolePanel</B></PRE>
 </DL>
 <HR>
 <H3>
-lineNumberComponent</H3>
-<PRE>
-javax.swing.JLabel <B>lineNumberComponent</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-<H3>
 sketch</H3>
 <PRE>
 <A HREF="processing/app/Sketch.html" title="class in processing.app">Sketch</A> <B>sketch</B></PRE>
@@ -923,24 +917,6 @@ javax.swing.JMenuItem <B>saveAsMenuItem</B></PRE>
 </DL>
 <HR>
 <H3>
-running</H3>
-<PRE>
-boolean <B>running</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-<H3>
-presenting</H3>
-<PRE>
-boolean <B>presenting</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-<H3>
 undoItem</H3>
 <PRE>
 javax.swing.JMenuItem <B>undoItem</B></PRE>
@@ -998,6 +974,69 @@ javax.swing.undo.CompoundEdit <B>compoundEdit</B></PRE>
 find</H3>
 <PRE>
 <A HREF="processing/app/FindReplace.html" title="class in processing.app">FindReplace</A> <B>find</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+<H3>
+runHandler</H3>
+<PRE>
+java.lang.Runnable <B>runHandler</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+<H3>
+presentHandler</H3>
+<PRE>
+java.lang.Runnable <B>presentHandler</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+<H3>
+stopHandler</H3>
+<PRE>
+java.lang.Runnable <B>stopHandler</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+<H3>
+exportHandler</H3>
+<PRE>
+java.lang.Runnable <B>exportHandler</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+<H3>
+exportAppHandler</H3>
+<PRE>
+java.lang.Runnable <B>exportAppHandler</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+<H3>
+caretUndoStack</H3>
+<PRE>
+java.util.Stack&lt;E&gt; <B>caretUndoStack</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+<H3>
+caretRedoStack</H3>
+<PRE>
+java.util.Stack&lt;E&gt; <B>caretRedoStack</B></PRE>
 <DL>
 <DL>
 </DL>
@@ -1061,15 +1100,6 @@ javax.swing.text.MutableAttributeSet <B>stdStyle</B></PRE>
 errStyle</H3>
 <PRE>
 javax.swing.text.MutableAttributeSet <B>errStyle</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-<H3>
-cerror</H3>
-<PRE>
-boolean <B>cerror</B></PRE>
 <DL>
 <DL>
 </DL>
@@ -1652,15 +1682,6 @@ int <B>y2</B></PRE>
 </DL>
 <HR>
 <H3>
-status</H3>
-<PRE>
-java.lang.String <B>status</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-<H3>
 statusFont</H3>
 <PRE>
 java.awt.Font <B>statusFont</B></PRE>
@@ -1673,6 +1694,15 @@ java.awt.Font <B>statusFont</B></PRE>
 statusColor</H3>
 <PRE>
 java.awt.Color <B>statusColor</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+<H3>
+shiftPressed</H3>
+<PRE>
+boolean <B>shiftPressed</B></PRE>
 <DL>
 <DL>
 </DL>
@@ -1883,6 +1913,26 @@ boolean <B>showStackTrace</B></PRE>
 </TR>
 </TABLE>
 
+<H3>
+bracketHelper</H3>
+<PRE>
+<A HREF="processing/app/syntax/Brackets.html" title="class in processing.app.syntax">Brackets</A> <B>bracketHelper</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+<H3>
+inputMethodSupport</H3>
+<PRE>
+InputMethodSupport <B>inputMethodSupport</B></PRE>
+<DL>
+<DD>Inline Input Method Support for Japanese.
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
 <H3>
 editorListener</H3>
 <PRE>
@@ -2225,6 +2275,28 @@ boolean <B>printing</B></PRE>
 </DL>
 <HR>
 <H3>
+antialias</H3>
+<PRE>
+boolean <B>antialias</B></PRE>
+<DL>
+<DD>Current setting for editor.antialias preference
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+<H3>
+compositionTextPainter</H3>
+<PRE>
+CompositionTextPainter <B>compositionTextPainter</B></PRE>
+<DL>
+<DD>A specific painter composed by the InputMethod.
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+<H3>
 currentLineIndex</H3>
 <PRE>
 int <B>currentLineIndex</B></PRE>
@@ -2514,9 +2586,9 @@ javax.swing.JTextField <B>sizeSelector</B></PRE>
 </DL>
 <HR>
 <H3>
-allBox</H3>
+charsetButton</H3>
 <PRE>
-javax.swing.JCheckBox <B>allBox</B></PRE>
+javax.swing.JButton <B>charsetButton</B></PRE>
 <DL>
 <DL>
 </DL>
@@ -2534,7 +2606,7 @@ javax.swing.JCheckBox <B>smoothBox</B></PRE>
 <H3>
 sample</H3>
 <PRE>
-javax.swing.JTextArea <B>sample</B></PRE>
+javax.swing.JComponent <B>sample</B></PRE>
 <DL>
 <DL>
 </DL>
@@ -2561,7 +2633,7 @@ javax.swing.JTextField <B>filenameField</B></PRE>
 <H3>
 table</H3>
 <PRE>
-java.util.Hashtable&lt;K,V&gt; <B>table</B></PRE>
+java.util.HashMap&lt;K,V&gt; <B>table</B></PRE>
 <DL>
 <DL>
 </DL>
@@ -2571,15 +2643,6 @@ java.util.Hashtable&lt;K,V&gt; <B>table</B></PRE>
 smooth</H3>
 <PRE>
 boolean <B>smooth</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-<H3>
-all</H3>
-<PRE>
-boolean <B>all</B></PRE>
 <DL>
 <DL>
 </DL>
@@ -2607,6 +2670,15 @@ java.lang.String[] <B>list</B></PRE>
 selection</H3>
 <PRE>
 int <B>selection</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+<H3>
+charSelector</H3>
+<PRE>
+processing.app.tools.CharacterSelector <B>charSelector</B></PRE>
 <DL>
 <DL>
 </DL>
@@ -2661,9 +2733,9 @@ java.awt.Frame <B>frame</B></PRE>
 </DL>
 <HR>
 <H3>
-screen</H3>
+screenWidth</H3>
 <PRE>
-java.awt.Dimension <B>screen</B></PRE>
+int <B>screenWidth</B></PRE>
 <DL>
 <DD>The screen size when the applet was started.
  <P>
@@ -2679,8 +2751,47 @@ java.awt.Dimension <B>screen</B></PRE>
  Note that this won't update if you change the resolution
  of your screen once the the applet is running.
  <p>
- This variable is not static, because future releases need to be better
- at handling multiple displays.
+ This variable is not static because in the desktop version of Processing,
+ not all instances of PApplet will necessarily be started on a screen of 
+ the same size.
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+<H3>
+screenHeight</H3>
+<PRE>
+int <B>screenHeight</B></PRE>
+<DL>
+<DD>The screen size when the applet was started.
+ <P>
+ Access this via screen.width and screen.height. To make an applet
+ run at full screen, use size(screen.width, screen.height).
+ <P>
+ If you have multiple displays, this will be the size of the main
+ display. Running full screen across multiple displays isn't
+ particularly supported, and requires more monkeying with the values.
+ This probably can't/won't be fixed until/unless I get a dual head
+ system.
+ <P>
+ Note that this won't update if you change the resolution
+ of your screen once the the applet is running.
+ <p>
+ This variable is not static because in the desktop version of Processing,
+ not all instances of PApplet will necessarily be started on a screen of 
+ the same size.
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+<H3>
+screen</H3>
+<PRE>
+java.awt.Dimension <B>screen</B></PRE>
+<DL>
+<DD><B>Deprecated.</B>&nbsp;<I></I><DD>Use screenW and screenH instead.
 <P>
 <DL>
 </DL>
@@ -2765,13 +2876,18 @@ pixels</H3>
 <PRE>
 int[] <B>pixels</B></PRE>
 <DL>
-<DD>Pixel buffer from this applet's PGraphics.
+<DD>Array containing the values for all the pixels in the display window. These values are of the color datatype. This array is the size of the display window. For example, if the image is 100x100 pixels, there will be 10000 values and if the window is 200x300 pixels, there will be 60000 values. The <b>index</b> value defines the position of a value within the array. For example, the statment <b>color b = pixels[230]</b> will set the variable <b>b</b> to be equal to the value at that location in the array. <br><br> Before accessing this array, the data must loaded with the <b>loadPixels()</b> function. After the array data has been modified, the <b>updatePixels()</b> function must be run to update the changes. Without <b>loadPixels()</b>, running the code may (or will in future releases) result in a NullPointerException.
+ Pixel buffer from this applet's PGraphics.
  <P>
  When used with OpenGL or Java2D, this value will
  be null until loadPixels() has been called.
 <P>
 <DL>
-</DL>
+<DT><B>See Also:</B><DD><A HREF="processing/core/PApplet.html#loadPixels()"><CODE>PApplet.loadPixels()</CODE></A>, 
+<A HREF="processing/core/PApplet.html#updatePixels()"><CODE>PApplet.updatePixels()</CODE></A>, 
+<A HREF="processing/core/PApplet.html#get(int, int, int, int)"><CODE>PApplet.get(int, int, int, int)</CODE></A>, 
+<A HREF="processing/core/PApplet.html#set(int, int, int)"><CODE>PApplet.set(int, int, int)</CODE></A>, 
+<A HREF="processing/core/PImage.html" title="class in processing.core"><CODE>PImage</CODE></A></DL>
 </DL>
 <HR>
 <H3>
@@ -2801,10 +2917,15 @@ mouseX</H3>
 <PRE>
 int <B>mouseX</B></PRE>
 <DL>
-<DD>current x position of the mouse
+<DD>The system variable <b>mouseX</b> always contains the current horizontal coordinate of the mouse.
 <P>
 <DL>
-</DL>
+<DT><B>See Also:</B><DD><A HREF="processing/core/PApplet.html#mouseY"><CODE>PApplet.mouseY</CODE></A>, 
+<A HREF="processing/core/PApplet.html#mousePressed"><CODE>PApplet.mousePressed</CODE></A>, 
+<A HREF="processing/core/PApplet.html#mousePressed()"><CODE>PApplet.mousePressed()</CODE></A>, 
+<A HREF="processing/core/PApplet.html#mouseReleased()"><CODE>PApplet.mouseReleased()</CODE></A>, 
+<A HREF="processing/core/PApplet.html#mouseMoved()"><CODE>PApplet.mouseMoved()</CODE></A>, 
+<A HREF="processing/core/PApplet.html#mouseDragged()"><CODE>PApplet.mouseDragged()</CODE></A></DL>
 </DL>
 <HR>
 <H3>
@@ -2812,10 +2933,15 @@ mouseY</H3>
 <PRE>
 int <B>mouseY</B></PRE>
 <DL>
-<DD>current y position of the mouse
+<DD>The system variable <b>mouseY</b> always contains the current vertical coordinate of the mouse.
 <P>
 <DL>
-</DL>
+<DT><B>See Also:</B><DD><A HREF="processing/core/PApplet.html#mouseX"><CODE>PApplet.mouseX</CODE></A>, 
+<A HREF="processing/core/PApplet.html#mousePressed"><CODE>PApplet.mousePressed</CODE></A>, 
+<A HREF="processing/core/PApplet.html#mousePressed()"><CODE>PApplet.mousePressed()</CODE></A>, 
+<A HREF="processing/core/PApplet.html#mouseReleased()"><CODE>PApplet.mouseReleased()</CODE></A>, 
+<A HREF="processing/core/PApplet.html#mouseMoved()"><CODE>PApplet.mouseMoved()</CODE></A>, 
+<A HREF="processing/core/PApplet.html#mouseDragged()"><CODE>PApplet.mouseDragged()</CODE></A></DL>
 </DL>
 <HR>
 <H3>
@@ -2832,7 +2958,9 @@ int <B>pmouseX</B></PRE>
  you're gonna run into trouble.
 <P>
 <DL>
-</DL>
+<DT><B>See Also:</B><DD><A HREF="processing/core/PApplet.html#pmouseY"><CODE>PApplet.pmouseY</CODE></A>, 
+<A HREF="processing/core/PApplet.html#mouseX"><CODE>PApplet.mouseX</CODE></A>, 
+<A HREF="processing/core/PApplet.html#mouseY"><CODE>PApplet.mouseY</CODE></A></DL>
 </DL>
 <HR>
 <H3>
@@ -2840,16 +2968,10 @@ pmouseY</H3>
 <PRE>
 int <B>pmouseY</B></PRE>
 <DL>
-<DD>Previous x/y position of the mouse. This will be a different value
- when inside a mouse handler (like the mouseMoved() method) versus
- when inside draw(). Inside draw(), pmouseX is updated once each
- frame, but inside mousePressed() and friends, it's updated each time
- an event comes through. Be sure to use only one or the other type of
- means for tracking pmouseX and pmouseY within your sketch, otherwise
- you're gonna run into trouble.
-<P>
 <DL>
-</DL>
+<DT><B>See Also:</B><DD><A HREF="processing/core/PApplet.html#pmouseX"><CODE>PApplet.pmouseX</CODE></A>, 
+<A HREF="processing/core/PApplet.html#mouseX"><CODE>PApplet.mouseX</CODE></A>, 
+<A HREF="processing/core/PApplet.html#mouseY"><CODE>PApplet.mouseY</CODE></A></DL>
 </DL>
 <HR>
 <H3>
@@ -2926,14 +3048,20 @@ mouseButton</H3>
 <PRE>
 int <B>mouseButton</B></PRE>
 <DL>
-<DD>Last mouse button pressed, one of LEFT, CENTER, or RIGHT.
- <P>
+<DD>Processing automatically tracks if the mouse button is pressed and which button is pressed.
+ The value of the system variable <b>mouseButton</b> is either <b>LEFT</b>, <b>RIGHT</b>, or <b>CENTER</b> depending on which button is pressed.
+ <h3>Advanced:</h3>
  If running on Mac OS, a ctrl-click will be interpreted as
  the righthand mouse button (unlike Java, which reports it as
  the left mouse).
 <P>
 <DL>
-</DL>
+<DT><B>See Also:</B><DD><A HREF="processing/core/PApplet.html#mouseX"><CODE>PApplet.mouseX</CODE></A>, 
+<A HREF="processing/core/PApplet.html#mouseY"><CODE>PApplet.mouseY</CODE></A>, 
+<A HREF="processing/core/PApplet.html#mousePressed()"><CODE>PApplet.mousePressed()</CODE></A>, 
+<A HREF="processing/core/PApplet.html#mouseReleased()"><CODE>PApplet.mouseReleased()</CODE></A>, 
+<A HREF="processing/core/PApplet.html#mouseMoved()"><CODE>PApplet.mouseMoved()</CODE></A>, 
+<A HREF="processing/core/PApplet.html#mouseDragged()"><CODE>PApplet.mouseDragged()</CODE></A></DL>
 </DL>
 <HR>
 <H3>
@@ -2941,8 +3069,14 @@ mousePressed</H3>
 <PRE>
 boolean <B>mousePressed</B></PRE>
 <DL>
+<DD>Variable storing if a mouse button is pressed. The value of the system variable <b>mousePressed</b> is true if a mouse button is pressed and false if a button is not pressed.
+<P>
 <DL>
-</DL>
+<DT><B>See Also:</B><DD><A HREF="processing/core/PApplet.html#mouseX"><CODE>PApplet.mouseX</CODE></A>, 
+<A HREF="processing/core/PApplet.html#mouseY"><CODE>PApplet.mouseY</CODE></A>, 
+<A HREF="processing/core/PApplet.html#mouseReleased()"><CODE>PApplet.mouseReleased()</CODE></A>, 
+<A HREF="processing/core/PApplet.html#mouseMoved()"><CODE>PApplet.mouseMoved()</CODE></A>, 
+<A HREF="processing/core/PApplet.html#mouseDragged()"><CODE>PApplet.mouseDragged()</CODE></A></DL>
 </DL>
 <HR>
 <H3>
@@ -2959,13 +3093,23 @@ key</H3>
 <PRE>
 char <B>key</B></PRE>
 <DL>
-<DD>Last key pressed.
+<DD>The system variable <b>key</b> always contains the value of the most recent key on the keyboard that was used (either pressed or released). <br><br>
+ For non-ASCII keys, use the <b>keyCode</b> variable.
+ The keys included in the ASCII specification (BACKSPACE, TAB, ENTER, RETURN, ESC, and DELETE) do not require checking to see if they key is coded, and you should simply use the <b>key</b> variable instead of <b>keyCode</b>
+ If you're making cross-platform projects, note that the ENTER key is commonly used on PCs and Unix and the RETURN key is used instead on Macintosh.
+ Check for both ENTER and RETURN to make sure your program will work for all platforms.
+ =advanced
+
+ Last key pressed.
  <P>
  If it's a coded key, i.e. UP/DOWN/CTRL/SHIFT/ALT,
  this will be set to CODED (0xffff or 65535).
 <P>
 <DL>
-</DL>
+<DT><B>See Also:</B><DD><A HREF="processing/core/PApplet.html#keyCode"><CODE>PApplet.keyCode</CODE></A>, 
+<A HREF="processing/core/PApplet.html#keyPressed"><CODE>PApplet.keyPressed</CODE></A>, 
+<A HREF="processing/core/PApplet.html#keyPressed()"><CODE>PApplet.keyPressed()</CODE></A>, 
+<A HREF="processing/core/PApplet.html#keyReleased()"><CODE>PApplet.keyReleased()</CODE></A></DL>
 </DL>
 <HR>
 <H3>
@@ -2973,14 +3117,26 @@ keyCode</H3>
 <PRE>
 int <B>keyCode</B></PRE>
 <DL>
-<DD>When "key" is set to CODED, this will contain a Java key code.
+<DD>The variable <b>keyCode</b> is used to detect special keys such as the UP, DOWN, LEFT, RIGHT arrow keys and ALT, CONTROL, SHIFT.
+ When checking for these keys, it's first necessary to check and see if the key is coded. This is done with the conditional "if (key == CODED)" as shown in the example.
+ <br><br>The keys included in the ASCII specification (BACKSPACE, TAB, ENTER, RETURN, ESC, and DELETE) do not require checking to see if they key is coded, and you should simply use the <b>key</b> variable instead of <b>keyCode</b>
+ If you're making cross-platform projects, note that the ENTER key is commonly used on PCs and Unix and the RETURN key is used instead on Macintosh.
+ Check for both ENTER and RETURN to make sure your program will work for all platforms.
+ <br><br>For users familiar with Java, the values for UP and DOWN are simply shorter versions of Java's KeyEvent.VK_UP and KeyEvent.VK_DOWN.
+ Other keyCode values can be found in the Java <a href="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/event/KeyEvent.html">KeyEvent</a> reference.
+
+ =advanced
+ When "key" is set to CODED, this will contain a Java key code.
  <P>
  For the arrow keys, keyCode will be one of UP, DOWN, LEFT and RIGHT.
  Also available are ALT, CONTROL and SHIFT. A full set of constants
  can be obtained from java.awt.event.KeyEvent, from the VK_XXXX variables.
 <P>
 <DL>
-</DL>
+<DT><B>See Also:</B><DD><A HREF="processing/core/PApplet.html#key"><CODE>PApplet.key</CODE></A>, 
+<A HREF="processing/core/PApplet.html#keyPressed"><CODE>PApplet.keyPressed</CODE></A>, 
+<A HREF="processing/core/PApplet.html#keyPressed()"><CODE>PApplet.keyPressed()</CODE></A>, 
+<A HREF="processing/core/PApplet.html#keyReleased()"><CODE>PApplet.keyReleased()</CODE></A></DL>
 </DL>
 <HR>
 <H3>
@@ -2988,10 +3144,13 @@ keyPressed</H3>
 <PRE>
 boolean <B>keyPressed</B></PRE>
 <DL>
-<DD>true if the mouse is currently pressed.
+<DD>The boolean system variable <b>keyPressed</b> is <b>true</b> if any key is pressed and <b>false</b> if no keys are pressed.
 <P>
 <DL>
-</DL>
+<DT><B>See Also:</B><DD><A HREF="processing/core/PApplet.html#key"><CODE>PApplet.key</CODE></A>, 
+<A HREF="processing/core/PApplet.html#keyCode"><CODE>PApplet.keyCode</CODE></A>, 
+<A HREF="processing/core/PApplet.html#keyPressed()"><CODE>PApplet.keyPressed()</CODE></A>, 
+<A HREF="processing/core/PApplet.html#keyReleased()"><CODE>PApplet.keyReleased()</CODE></A></DL>
 </DL>
 <HR>
 <H3>

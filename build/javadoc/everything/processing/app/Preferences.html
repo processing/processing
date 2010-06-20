@@ -6,14 +6,15 @@
 Preferences
 </TITLE>
 
-<META NAME="keywords" CONTENT="processing.app.Preferences class">
 
 <LINK REL ="stylesheet" TYPE="text/css" HREF="../../stylesheet.css" TITLE="Style">
 
 <SCRIPT type="text/javascript">
 function windowTitle()
 {
-    parent.document.title="Preferences";
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="Preferences";
+    }
 }
 </SCRIPT>
 <NOSCRIPT>
@@ -22,6 +23,7 @@ function windowTitle()
 </HEAD>
 
 <BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
 
 
 <!-- ========= START OF TOP NAVBAR ======= -->
@@ -50,7 +52,7 @@ function windowTitle()
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../../processing/app/Platform.html" title="class in processing.app"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../processing/app/Platform.CLibrary.html" title="interface in processing.app"><B>PREV CLASS</B></A>&nbsp;
 &nbsp;<A HREF="../../processing/app/PresentMode.html" title="class in processing.app"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../index.html?processing/app/Preferences.html" target="_top"><B>FRAMES</B></A>  &nbsp;
@@ -244,6 +246,22 @@ Storage class for user preferences and environment settings.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Preferences.html#init(java.lang.String)">init</A></B>(java.lang.String&nbsp;commandLinePrefs)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Preferences.html#load(java.io.InputStream)">load</A></B>(java.io.InputStream&nbsp;input)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/app/Preferences.html#set(java.lang.String, java.lang.String)">set</A></B>(java.lang.String&nbsp;attribute,
     java.lang.String&nbsp;value)</CODE>
 
@@ -273,6 +291,14 @@ Storage class for user preferences and environment settings.
 <CODE>static&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/app/Preferences.html#setInteger(java.lang.String, int)">setInteger</A></B>(java.lang.String&nbsp;key,
            int&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Preferences.html#unset(java.lang.String)">unset</A></B>(java.lang.String&nbsp;attribute)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -355,6 +381,17 @@ public <B>Preferences</B>()</PRE>
 </TR>
 </TABLE>
 
+<A NAME="init(java.lang.String)"><!-- --></A><H3>
+init</H3>
+<PRE>
+public static void <B>init</B>(java.lang.String&nbsp;commandLinePrefs)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
 <A NAME="getPreferredSize()"><!-- --></A><H3>
 getPreferredSize</H3>
 <PRE>
@@ -362,6 +399,20 @@ public java.awt.Dimension <B>getPreferredSize</B>()</PRE>
 <DL>
 <DD><DL>
 </DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="load(java.io.InputStream)"><!-- --></A><H3>
+load</H3>
+<PRE>
+public static void <B>load</B>(java.io.InputStream&nbsp;input)
+                 throws java.io.IOException</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE></DL>
 </DD>
 </DL>
 <HR>
@@ -393,6 +444,17 @@ set</H3>
 <PRE>
 public static void <B>set</B>(java.lang.String&nbsp;attribute,
                        java.lang.String&nbsp;value)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="unset(java.lang.String)"><!-- --></A><H3>
+unset</H3>
+<PRE>
+public static void <B>unset</B>(java.lang.String&nbsp;attribute)</PRE>
 <DL>
 <DD><DL>
 </DL>
@@ -519,7 +581,7 @@ public static <A HREF="../../processing/app/syntax/SyntaxStyle.html" title="clas
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../../processing/app/Platform.html" title="class in processing.app"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../processing/app/Platform.CLibrary.html" title="interface in processing.app"><B>PREV CLASS</B></A>&nbsp;
 &nbsp;<A HREF="../../processing/app/PresentMode.html" title="class in processing.app"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../index.html?processing/app/Preferences.html" target="_top"><B>FRAMES</B></A>  &nbsp;

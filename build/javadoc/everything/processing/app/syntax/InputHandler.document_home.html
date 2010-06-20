@@ -6,14 +6,15 @@
 InputHandler.document_home
 </TITLE>
 
-<META NAME="keywords" CONTENT="processing.app.syntax.InputHandler.document_home class">
 
 <LINK REL ="stylesheet" TYPE="text/css" HREF="../../../stylesheet.css" TITLE="Style">
 
 <SCRIPT type="text/javascript">
 function windowTitle()
 {
-    parent.document.title="InputHandler.document_home";
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="InputHandler.document_home";
+    }
 }
 </SCRIPT>
 <NOSCRIPT>
@@ -22,6 +23,7 @@ function windowTitle()
 </HEAD>
 
 <BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
 
 
 <!-- ========= START OF TOP NAVBAR ======= -->

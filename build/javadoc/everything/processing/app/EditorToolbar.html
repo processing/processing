@@ -6,14 +6,15 @@
 EditorToolbar
 </TITLE>
 
-<META NAME="keywords" CONTENT="processing.app.EditorToolbar class">
 
 <LINK REL ="stylesheet" TYPE="text/css" HREF="../../stylesheet.css" TITLE="Style">
 
 <SCRIPT type="text/javascript">
 function windowTitle()
 {
-    parent.document.title="EditorToolbar";
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="EditorToolbar";
+    }
 }
 </SCRIPT>
 <NOSCRIPT>
@@ -22,6 +23,7 @@ function windowTitle()
 </HEAD>
 
 <BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
 
 
 <!-- ========= START OF TOP NAVBAR ======= -->
@@ -94,11 +96,11 @@ java.lang.Object
               <IMG SRC="../../resources/inherit.gif" ALT="extended by "><B>processing.app.EditorToolbar</B>
 </PRE>
 <DL>
-<DT><B>All Implemented Interfaces:</B> <DD>java.awt.event.MouseListener, java.awt.event.MouseMotionListener, java.awt.image.ImageObserver, java.awt.MenuContainer, java.io.Serializable, java.util.EventListener, javax.swing.event.MouseInputListener</DD>
+<DT><B>All Implemented Interfaces:</B> <DD>java.awt.event.KeyListener, java.awt.event.MouseListener, java.awt.event.MouseMotionListener, java.awt.image.ImageObserver, java.awt.MenuContainer, java.io.Serializable, java.util.EventListener, javax.swing.event.MouseInputListener</DD>
 </DL>
 <HR>
 <DL>
-<DT><PRE>public class <B>EditorToolbar</B><DT>extends javax.swing.JComponent<DT>implements javax.swing.event.MouseInputListener</DL>
+<DT><PRE>public class <B>EditorToolbar</B><DT>extends javax.swing.JComponent<DT>implements javax.swing.event.MouseInputListener, java.awt.event.KeyListener</DL>
 </PRE>
 
 <P>
@@ -127,6 +129,16 @@ run/stop/etc buttons for the ide
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD><CODE>javax.swing.JComponent.AccessibleJComponent</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<A NAME="nested_classes_inherited_from_class_java.awt.Component"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Nested classes/interfaces inherited from class java.awt.Component</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>java.awt.Component.BaselineResizeBehavior</CODE></TD>
 </TR>
 </TABLE>
 &nbsp;
@@ -235,8 +247,7 @@ run/stop/etc buttons for the ide
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/app/EditorToolbar.html#handleMouse(int, int)">handleMouse</A></B>(int&nbsp;x,
-            int&nbsp;y)</CODE>
+<TD><CODE><B><A HREF="../../processing/app/EditorToolbar.html#handleMouse(java.awt.event.MouseEvent)">handleMouse</A></B>(java.awt.event.MouseEvent&nbsp;e)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -244,15 +255,23 @@ run/stop/etc buttons for the ide
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/app/EditorToolbar.html#message(java.lang.String)">message</A></B>(java.lang.String&nbsp;msg)</CODE>
+<TD><CODE><B><A HREF="../../processing/app/EditorToolbar.html#keyPressed(java.awt.event.KeyEvent)">keyPressed</A></B>(java.awt.event.KeyEvent&nbsp;e)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Clear all the state of all buttons.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/app/EditorToolbar.html#messageClear(java.lang.String)">messageClear</A></B>(java.lang.String&nbsp;msg)</CODE>
+<TD><CODE><B><A HREF="../../processing/app/EditorToolbar.html#keyReleased(java.awt.event.KeyEvent)">keyReleased</A></B>(java.awt.event.KeyEvent&nbsp;e)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/EditorToolbar.html#keyTyped(java.awt.event.KeyEvent)">keyTyped</A></B>(java.awt.event.KeyEvent&nbsp;e)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -328,7 +347,7 @@ run/stop/etc buttons for the ide
 <TH ALIGN="left"><B>Methods inherited from class javax.swing.JComponent</B></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE>addAncestorListener, addNotify, addVetoableChangeListener, computeVisibleRect, contains, createToolTip, disable, enable, firePropertyChange, firePropertyChange, firePropertyChange, getAccessibleContext, getActionForKeyStroke, getActionMap, getAlignmentX, getAlignmentY, getAncestorListeners, getAutoscrolls, getBorder, getBounds, getClientProperty, getComponentPopupMenu, getConditionForKeyStroke, getDebugGraphicsOptions, getDefaultLocale, getFontMetrics, getGraphics, getHeight, getInheritsPopupMenu, getInputMap, getInputMap, getInputVerifier, getInsets, getInsets, getListeners, getLocation, getNextFocusableComponent, getPopupLocation, getRegisteredKeyStrokes, getRootPane, getSize, getToolTipLocation, getToolTipText, getToolTipText, getTopLevelAncestor, getTransferHandler, getUIClassID, getVerifyInputWhenFocusTarget, getVetoableChangeListeners, getVisibleRect, getWidth, getX, getY, grabFocus, isDoubleBuffered, isLightweightComponent, isManagingFocus, isOpaque, isOptimizedDrawingEnabled, isPaintingTile, isRequestFocusEnabled, isValidateRoot, paint, paintImmediately, paintImmediately, print, printAll, putClientProperty, registerKeyboardAction, registerKeyboardAction, removeAncestorListener, removeNotify, removeVetoableChangeListener, repaint, repaint, requestDefaultFocus, requestFocus, requestFocus, requestFocusInWindow, resetKeyboardActions, reshape, revalidate, scrollRectToVisible, setActionMap, setAlignmentX, setAlignmentY, setAutoscrolls, setBackground, setBorder, setComponentPopupMenu, setDebugGraphicsOptions, setDefaultLocale, setDoubleBuffered, setEnabled, setFocusTraversalKeys, setFont, setForeground, setInheritsPopupMenu, setInputMap, setInputVerifier, setMaximumSize, setMinimumSize, setNextFocusableComponent, setOpaque, setPreferredSize, setRequestFocusEnabled, setToolTipText, setTransferHandler, setVerifyInputWhenFocusTarget, setVisible, unregisterKeyboardAction, update, updateUI</CODE></TD>
+<TD><CODE>addAncestorListener, addNotify, addVetoableChangeListener, computeVisibleRect, contains, createToolTip, disable, enable, firePropertyChange, firePropertyChange, firePropertyChange, getAccessibleContext, getActionForKeyStroke, getActionMap, getAlignmentX, getAlignmentY, getAncestorListeners, getAutoscrolls, getBaseline, getBaselineResizeBehavior, getBorder, getBounds, getClientProperty, getComponentPopupMenu, getConditionForKeyStroke, getDebugGraphicsOptions, getDefaultLocale, getFontMetrics, getGraphics, getHeight, getInheritsPopupMenu, getInputMap, getInputMap, getInputVerifier, getInsets, getInsets, getListeners, getLocation, getNextFocusableComponent, getPopupLocation, getRegisteredKeyStrokes, getRootPane, getSize, getToolTipLocation, getToolTipText, getToolTipText, getTopLevelAncestor, getTransferHandler, getUIClassID, getVerifyInputWhenFocusTarget, getVetoableChangeListeners, getVisibleRect, getWidth, getX, getY, grabFocus, isDoubleBuffered, isLightweightComponent, isManagingFocus, isOpaque, isOptimizedDrawingEnabled, isPaintingForPrint, isPaintingTile, isRequestFocusEnabled, isValidateRoot, paint, paintImmediately, paintImmediately, print, printAll, putClientProperty, registerKeyboardAction, registerKeyboardAction, removeAncestorListener, removeNotify, removeVetoableChangeListener, repaint, repaint, requestDefaultFocus, requestFocus, requestFocus, requestFocusInWindow, resetKeyboardActions, reshape, revalidate, scrollRectToVisible, setActionMap, setAlignmentX, setAlignmentY, setAutoscrolls, setBackground, setBorder, setComponentPopupMenu, setDebugGraphicsOptions, setDefaultLocale, setDoubleBuffered, setEnabled, setFocusTraversalKeys, setFont, setForeground, setInheritsPopupMenu, setInputMap, setInputVerifier, setMaximumSize, setMinimumSize, setNextFocusableComponent, setOpaque, setPreferredSize, setRequestFocusEnabled, setToolTipText, setTransferHandler, setVerifyInputWhenFocusTarget, setVisible, unregisterKeyboardAction, update, updateUI</CODE></TD>
 </TR>
 </TABLE>
 &nbsp;<A NAME="methods_inherited_from_class_java.awt.Container"><!-- --></A>
@@ -431,11 +450,10 @@ public void <B>mouseDragged</B>(java.awt.event.MouseEvent&nbsp;e)</PRE>
 </DL>
 <HR>
 
-<A NAME="handleMouse(int, int)"><!-- --></A><H3>
+<A NAME="handleMouse(java.awt.event.MouseEvent)"><!-- --></A><H3>
 handleMouse</H3>
 <PRE>
-public void <B>handleMouse</B>(int&nbsp;x,
-                        int&nbsp;y)</PRE>
+public void <B>handleMouse</B>(java.awt.event.MouseEvent&nbsp;e)</PRE>
 <DL>
 <DD><DL>
 </DL>
@@ -548,36 +566,6 @@ public void <B>deactivate</B>(int&nbsp;what)</PRE>
 </DL>
 <HR>
 
-<A NAME="message(java.lang.String)"><!-- --></A><H3>
-message</H3>
-<PRE>
-public void <B>message</B>(java.lang.String&nbsp;msg)</PRE>
-<DL>
-<DD>Clear all the state of all buttons.
-<P>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="messageClear(java.lang.String)"><!-- --></A><H3>
-messageClear</H3>
-<PRE>
-public void <B>messageClear</B>(java.lang.String&nbsp;msg)</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
-
 <A NAME="getPreferredSize()"><!-- --></A><H3>
 getPreferredSize</H3>
 <PRE>
@@ -613,6 +601,48 @@ public java.awt.Dimension <B>getMaximumSize</B>()</PRE>
 <DL>
 <DD><DL>
 <DT><B>Overrides:</B><DD><CODE>getMaximumSize</CODE> in class <CODE>javax.swing.JComponent</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="keyPressed(java.awt.event.KeyEvent)"><!-- --></A><H3>
+keyPressed</H3>
+<PRE>
+public void <B>keyPressed</B>(java.awt.event.KeyEvent&nbsp;e)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>keyPressed</CODE> in interface <CODE>java.awt.event.KeyListener</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="keyReleased(java.awt.event.KeyEvent)"><!-- --></A><H3>
+keyReleased</H3>
+<PRE>
+public void <B>keyReleased</B>(java.awt.event.KeyEvent&nbsp;e)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>keyReleased</CODE> in interface <CODE>java.awt.event.KeyListener</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="keyTyped(java.awt.event.KeyEvent)"><!-- --></A><H3>
+keyTyped</H3>
+<PRE>
+public void <B>keyTyped</B>(java.awt.event.KeyEvent&nbsp;e)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>keyTyped</CODE> in interface <CODE>java.awt.event.KeyListener</CODE></DL>
 </DD>
 <DD><DL>
 </DL>

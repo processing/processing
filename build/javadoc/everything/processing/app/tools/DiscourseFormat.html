@@ -6,14 +6,15 @@
 DiscourseFormat
 </TITLE>
 
-<META NAME="keywords" CONTENT="processing.app.tools.DiscourseFormat class">
 
 <LINK REL ="stylesheet" TYPE="text/css" HREF="../../../stylesheet.css" TITLE="Style">
 
 <SCRIPT type="text/javascript">
 function windowTitle()
 {
-    parent.document.title="DiscourseFormat";
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="DiscourseFormat";
+    }
 }
 </SCRIPT>
 <NOSCRIPT>
@@ -22,6 +23,7 @@ function windowTitle()
 </HEAD>
 
 <BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
 
 
 <!-- ========= START OF TOP NAVBAR ======= -->
@@ -96,23 +98,20 @@ java.lang.Object
 </PRE>
 
 <P>
-Format for Discourse Tool
+Format for Discourse Tool. 
+ This code may later be moved to its own 'Tool' plug-in.
  <p/>
  Original code by <A HREF="http://usuarios.iponet.es/imoreta">owd</A>.
  Revised and updated for revision 0108 by Ben Fry (10 March 2006).
- This code may later be moved to its own 'Tool' plugin, but is included
- with release 0108+ while features for the "Tools" menu are in testing.
  <p/>
  Updated for 0122 to simply copy the code directly to the clipboard,
  rather than opening a new window.
  <p/>
  Updated for 0144 to only format the selected lines.
- <p/>
- Notes from the original source:
- Discourse.java This is a dirty-mix source.
- NOTE that: No macs and no keyboard. Unreliable source.
- Only format processing code using fontMetrics.
- It works under my windows XP + PentiumIV + Processing 0091.
+ <p/> 
+ Updated for 0185 to incorporate the HTML changes from the Arduino project, 
+ and set the formatter to always use HTML (disabling, but not removing the 
+ YaBB version of the code) and also fixing it for the Tools API.
 <P>
 
 <P>
@@ -132,9 +131,7 @@ Format for Discourse Tool
 <TD><CODE><B><A HREF="../../../processing/app/tools/DiscourseFormat.html#DiscourseFormat(processing.app.Editor)">DiscourseFormat</A></B>(<A HREF="../../../processing/app/Editor.html" title="class in processing.app">Editor</A>&nbsp;editor)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a new window with the formated (YaBB tags) sketchcode
- from the actual Processing Tab ready to send to the processing discourse
- web (copy & paste)</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 </TABLE>
 &nbsp;
@@ -191,10 +188,6 @@ DiscourseFormat</H3>
 <PRE>
 public <B>DiscourseFormat</B>(<A HREF="../../../processing/app/Editor.html" title="class in processing.app">Editor</A>&nbsp;editor)</PRE>
 <DL>
-<DD>Creates a new window with the formated (YaBB tags) sketchcode
- from the actual Processing Tab ready to send to the processing discourse
- web (copy & paste)
-<P>
 </DL>
 
 <!-- ============ METHOD DETAIL ========== -->

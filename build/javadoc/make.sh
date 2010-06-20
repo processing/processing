@@ -13,7 +13,7 @@ javadoc -public -notimestamp -d everything \
     ../../core/src/processing/core/*.java \
     ../../core/src/processing/xml/*.java \
     ../../app/src/antlr/*.java \
-    ../../app/src/antlr/java/*.java \
+    ../../app/generated/processing/app/antlr/*.java \
     ../../app/src/processing/app/*.java \
     ../../app/src/processing/app/debug/*.java \
     ../../app/src/processing/app/linux/*.java \
