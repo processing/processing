@@ -119,17 +119,16 @@ public class ProcessingEditor extends TextEditor {
 	 */
 	protected void createActions() {
 		super.createActions();
-		// accessing the ResourceBundle was causing an ExceptionInInitializerError, not sure what I changed to fix it [lonnen] June 10 2010
 		IAction a= new TextOperationAction(ProcessingEditorMessages.getResourceBundle(), "ContentAssistProposal.", this, ISourceViewer.CONTENTASSIST_PROPOSALS); //$NON-NLS-1$
 		a.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
-		setAction("ContentAssistProposal", a); //$NON-NLS-1$
+		setAction("ContentAssistProposal", a);
 		
 		a= new TextOperationAction(ProcessingEditorMessages.getResourceBundle(), "ContentAssistTip.", this, ISourceViewer.CONTENTASSIST_CONTEXT_INFORMATION);  //$NON-NLS-1$
 		a.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_CONTEXT_INFORMATION);
-		setAction("ContentAssistTip", a); //$NON-NLS-1$
+		setAction("ContentAssistTip", a);
 		
-		a= new DefineFoldingRegionAction(ProcessingEditorMessages.getResourceBundle(), "DefineFoldingRegion.", this); //$NON-NLS-1$
-		setAction("DefineFoldingRegion", a); //$NON-NLS-1$
+		//a= new DefineFoldingRegionAction(ProcessingEditorMessages.getResourceBundle(), "DefineFoldingRegion.", this);
+		//setAction("DefineFoldingRegion", a); 
 	}
 	
 	/** The <code>ProcessingEditor</code> implementation of this 
