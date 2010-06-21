@@ -587,17 +587,16 @@ public class PGraphicsAndroid3D extends PGraphics {
     gl.glPushMatrix();  
   }
   
-  protected void restoreGLState() {
-    // Restoring blending.
-    if (blend) {
-      blend(blendMode);
-    } else { 
-      noBlend();
-    }
-    
+  protected void restoreGLState() {    
     // Restoring viewport.
     gl.glViewport(0, 0, width, height);
 
+    // Restoring matrices.
+    gl.glMatrixMode(GL10.GL_PROJECTION);
+    gl.glPopMatrix();
+    gl.glMatrixMode(GL10.GL_MODELVIEW);
+    gl.glPopMatrix();    
+    
     // Restoring hints.
     if (hints[DISABLE_DEPTH_TEST]) {
       gl.glDisable(GL10.GL_DEPTH_TEST);
@@ -606,19 +605,39 @@ public class PGraphicsAndroid3D extends PGraphics {
       gl.glEnable(GL10.GL_DEPTH_TEST);
     }
     
+    // Restoring blending.
+    if (blend) {
+      blend(blendMode);
+    } else { 
+      noBlend();
+    }    
+    
     // Restoring fill
     if (fill) {
       fillFromCalc();  
     }    
     
     // Restoring material properties.
+    calcR = ambientR;
+    calcG = ambientG;
+    calcB = ambientB;    
     ambientFromCalc();
+
+    calcR = specularR;
+    calcG = specularG;
+    calcB = specularB;
     specularFromCalc();
+    
     shininess(shininess);
+    
+    calcR = emissiveR;
+    calcG = emissiveG;
+    calcB = emissiveB;    
     emissiveFromCalc();
     
     // Restoring lights.
     if (lights) {
+      lights();
       for (int i = 0; i < lightCount; i++) {
         glLightEnable(i);
         if (lightType[i] == AMBIENT) {
@@ -653,13 +672,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       }
     } else {
       noLights();
-    }
-    
-    // Restoring matrices.
-    gl.glMatrixMode(GL10.GL_PROJECTION);
-    gl.glPopMatrix();
-    gl.glMatrixMode(GL10.GL_MODELVIEW);
-    gl.glPopMatrix();    
+    }    
   }
   
   void createDrawFramebuffer() {
