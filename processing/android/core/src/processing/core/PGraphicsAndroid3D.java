@@ -3693,17 +3693,6 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
 
   /**
-   * Switches off all lights, but keeps lighting enabled. TODO: discuss if this
-   * method is needed.
-   */
-  public void resetLights() {
-    for (int i = 0; i < lightCount; i++) {
-      glLightDisable(i);
-    }
-    lightCount = 0;
-  }
-
-  /**
    * Disables lighting.
    */
   public void noLights() {

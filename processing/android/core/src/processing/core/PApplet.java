@@ -7572,11 +7572,6 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
-  public void resetLights() {
-    g.resetLights();
-  }
-
-
   public void ambientLight(float red, float green, float blue) {
     g.ambientLight(red, green, blue);
   }
