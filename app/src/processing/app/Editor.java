@@ -870,7 +870,7 @@ public class Editor extends JFrame implements RunnerListener {
     item = new JMenuItem("Troubleshooting");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          Base.showTroubleshooting();
+          Base.openURL("http://wiki.processing.org/w/Troubleshooting");
         }
       });
     menu.add(item);
@@ -896,7 +896,7 @@ public class Editor extends JFrame implements RunnerListener {
     item = new JMenuItem("Frequently Asked Questions");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          Base.openURL("http://processing.org/faq.html");
+          Base.openURL("http://wiki.processing.org/w/FAQ");
         }
       });
     menu.add(item);
