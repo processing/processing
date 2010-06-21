@@ -1,3 +1,6 @@
+// Example 08-01 from "Getting Started with Processing" 
+// by Reas & Fry. O'Reilly / Make 2010
+
 void setup() {
   println("Ready to roll!");
   rollDice(20);

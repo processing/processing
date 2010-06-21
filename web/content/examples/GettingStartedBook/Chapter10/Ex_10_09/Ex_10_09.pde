@@ -1,3 +1,6 @@
+// Example 10-09 from "Getting Started with Processing" 
+// by Reas & Fry. O'Reilly / Make 2010
+
 int num = 60;
 int x[] = new int[num];
 int y[] = new int[num];

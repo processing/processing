@@ -1,3 +1,6 @@
+// Example 07-21 from "Getting Started with Processing" 
+// by Reas & Fry. O'Reilly / Make 2010
+
 float angle = 0.0;
 
 void setup() {

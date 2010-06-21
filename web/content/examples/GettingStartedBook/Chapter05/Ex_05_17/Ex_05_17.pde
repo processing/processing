@@ -1,3 +1,6 @@
+// Example 05-17 from "Getting Started with Processing" 
+// by Reas & Fry. O'Reilly / Make 2010
+
 int x = 80;
 int y = 30;
 int w = 80;

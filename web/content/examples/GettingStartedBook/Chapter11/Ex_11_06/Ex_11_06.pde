@@ -1,3 +1,6 @@
+// Example 11-06 from "Getting Started with Processing" 
+// by Reas & Fry. O'Reilly / Make 2010
+
 // Note: This is code for an Arduino board, not Processing
 
 int sensorPin = 0;  // Select input pin

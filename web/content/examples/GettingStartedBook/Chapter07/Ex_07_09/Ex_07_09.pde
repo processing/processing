@@ -1,3 +1,6 @@
+// Example 07-09 from "Getting Started with Processing" 
+// by Reas & Fry. O'Reilly / Make 2010
+
 float speed = 2.5;
 int diameter = 20;
 float x;

@@ -1,3 +1,6 @@
+// Example 05-09 from "Getting Started with Processing" 
+// by Reas & Fry. O'Reilly / Make 2010
+
 float x;
 float y;
 float px;

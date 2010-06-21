@@ -1,3 +1,6 @@
+// Example 11-08 from "Getting Started with Processing" 
+// by Reas & Fry. O'Reilly / Make 2010
+
 import processing.serial.*;
 
 Serial port;  // Create object from Serial class

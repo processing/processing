@@ -1,3 +1,6 @@
+// Example 10-07 from "Getting Started with Processing" 
+// by Reas & Fry. O'Reilly / Make 2010
+
 float[] x = {-20, 20};
 
 void setup() {

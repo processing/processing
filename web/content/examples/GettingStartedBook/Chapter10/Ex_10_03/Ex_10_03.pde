@@ -1,3 +1,6 @@
+// Example 10-03 from "Getting Started with Processing" 
+// by Reas & Fry. O'Reilly / Make 2010
+
 float[] x = new float[3000];
 
 void setup() {

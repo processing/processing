@@ -1,3 +1,6 @@
+// Example 07-06 from "Getting Started with Processing" 
+// by Reas & Fry. O'Reilly / Make 2010
+
 int startX = 20;     // Initial x-coordinate
 int stopX = 160;     // Final x-coordinate
 int startY = 30;     // Initial y-coordinate

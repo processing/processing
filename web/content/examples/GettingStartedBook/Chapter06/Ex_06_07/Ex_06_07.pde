@@ -1,3 +1,6 @@
+// Example 06-07 from "Getting Started with Processing" 
+// by Reas & Fry. O'Reilly / Make 2010
+
 PFont font;
 
 void setup() {

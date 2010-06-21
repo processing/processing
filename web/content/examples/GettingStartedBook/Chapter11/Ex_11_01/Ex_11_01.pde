@@ -1,3 +1,6 @@
+// Example 11-01 from "Getting Started with Processing" 
+// by Reas & Fry. O'Reilly / Make 2010
+
 import processing.opengl.*;
 
 void setup() {

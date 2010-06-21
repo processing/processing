@@ -1,3 +1,6 @@
+// Robot 7: Objects from "Getting Started with Processing" 
+// by Reas & Fry. O'Reilly / Make 2010
+
 Robot bot1;
 Robot bot2;
 

@@ -1,3 +1,6 @@
+// Example 04-04 from "Getting Started with Processing" 
+// by Reas & Fry. O'Reilly / Make 2010
+
 size(480, 120);
 int x = 25;
 int h = 20;

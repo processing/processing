@@ -1,3 +1,6 @@
+// Example 10-08 from "Getting Started with Processing" 
+// by Reas & Fry. O'Reilly / Make 2010
+
 float[] gray;
 
 void setup() {

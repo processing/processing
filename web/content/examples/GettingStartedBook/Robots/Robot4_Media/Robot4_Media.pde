@@ -1,3 +1,6 @@
+// Robot 4: Media from "Getting Started with Processing" 
+// by Reas & Fry. O'Reilly / Make 2010
+
 
 PShape bot1;
 PShape bot2;

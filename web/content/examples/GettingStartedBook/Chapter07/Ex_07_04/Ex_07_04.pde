@@ -1,3 +1,6 @@
+// Example 07-04 from "Getting Started with Processing" 
+// by Reas & Fry. O'Reilly / Make 2010
+
 int radius = 40;
 float x = -radius;
 float speed = 0.5;

@@ -1,3 +1,6 @@
+// Robot 5: Motion from "Getting Started with Processing" 
+// by Reas & Fry. O'Reilly / Make 2010
+
 float x = 180;           // X-coordinate
 float y = 400;           // Y-coordinate
 float bodyHeight = 153;  // Body Height

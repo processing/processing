@@ -1,3 +1,6 @@
+// Example 05-21 from "Getting Started with Processing" 
+// by Reas & Fry. O'Reilly / Make 2010
+
 int x = 215;
 
 void setup() {

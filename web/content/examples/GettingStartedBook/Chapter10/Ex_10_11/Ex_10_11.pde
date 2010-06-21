@@ -1,3 +1,6 @@
+// Example 10-11 from "Getting Started with Processing" 
+// by Reas & Fry. O'Reilly / Make 2010
+
 int numFrames = 12; // The number of frames
 PImage[] images = new PImage[numFrames]; // Make the array
 int currentFrame = 1;

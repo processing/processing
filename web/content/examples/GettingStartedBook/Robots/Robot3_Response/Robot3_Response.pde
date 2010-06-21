@@ -1,3 +1,6 @@
+// Robot 3: Response from "Getting Started with Processing" 
+// by Reas & Fry. O'Reilly / Make 2010
+
 float x = 60;          // X-coordinate
 float y = 440;         // Y-coordinate
 int radius = 45;       // Head Radius

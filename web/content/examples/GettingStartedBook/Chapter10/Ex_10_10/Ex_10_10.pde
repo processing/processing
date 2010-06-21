@@ -1,3 +1,6 @@
+// Example 10-10 from "Getting Started with Processing" 
+// by Reas & Fry. O'Reilly / Make 2010
+
 JitterBug[] bugs = new JitterBug[33];
 
 void setup() {

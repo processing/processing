@@ -1,3 +1,5 @@
+// Robot 2: Variables from "Getting Started with Processing" 
+// by Reas & Fry. O'Reilly / Make 2010
 
 int x = 60;            // X-coordinate
 int y = 420;           // Y-coordinate

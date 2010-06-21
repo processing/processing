@@ -1,3 +1,6 @@
+// Example 05-16 from "Getting Started with Processing" 
+// by Reas & Fry. O'Reilly / Make 2010
+
 int x = 120;
 int y = 60;
 int radius = 12;

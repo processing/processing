@@ -1,3 +1,6 @@
+// Robot 6: Functions from "Getting Started with Processing" 
+// by Reas & Fry. O'Reilly / Make 2010
+
 
 void setup() {
   size(720, 480);

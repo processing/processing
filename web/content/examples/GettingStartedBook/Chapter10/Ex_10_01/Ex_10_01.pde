@@ -1,3 +1,6 @@
+// Example 10-01 from "Getting Started with Processing" 
+// by Reas & Fry. O'Reilly / Make 2010
+
 float x1 = -20;
 float x2 = 20;
 
