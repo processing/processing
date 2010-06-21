@@ -88,10 +88,11 @@ class Build {
 
     // Create the 'src' folder with the preprocessed code.
     final File srcFolder = new File(tempBuildFolder, "src");
+//    Base.openFolder(tempBuildFolder);
 
     try {
-      final File javaFolder = mkdirs(srcFolder, getPackageName().replace('.',
-        '/'));
+      final File javaFolder = 
+        mkdirs(srcFolder, getPackageName().replace('.', '/'));
       // File srcFile = new File(actualSrc, className + ".java");
       final String buildPath = javaFolder.getAbsolutePath();
 
@@ -385,6 +386,9 @@ class Build {
     writer.println("          android:versionName=\"1.0\">");
 
     writer.println("  <uses-sdk android:minSdkVersion=" + q(sdkVersion) + " />");
+    
+    writer.println("  <uses-permission android:name=\"android.permission.INTERNET\" />");
+    writer.println("  <uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\" />");
 
     writer.println("  <application android:label=" + q("@string/app_name"));
     writer.println("               android:debuggable=" + q("true") + ">");
