@@ -1,3 +1,31 @@
+0185 pde (pre)
+X add option to launch a sketch directly w/ linux
+X   thanks to Larry Kyrala
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1549
+X fix for PDF library to support createFont() on Linux
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1566
+X   thanks to Matthias Breuer 
+X add option to change the formatting for untitled sketch naming
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1091
+X Can't input full-width space when Japanese IME is on.
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1531
+X   fix from takachin
+X PDF library matrix is not reset between frames
+X   also added begin/endDraw between frames
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1227
+X add loading.gif to the js version of the applet loader
+X updating JRE to 6u20, and use new Google URL
+X copy the html tool from the arduino guys
+X   http://code.google.com/p/processing/issues/detail?id=271
+X Java update on OS X causing lots of problems
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1564
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1569
+X   http://code.google.com/p/processing/issues/detail?id=258
+o   check into focus issues--probably using old focus api
+X add option to disable re-opening previous projects
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1501
+X   http://code.google.com/p/processing/issues/detail?id=245
+
 0184 pde (pre)
 X other libraries that use opengl weren't using the jnlp launcher
 X   fix OpenGL detection in sketches so that proper version of 
