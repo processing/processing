@@ -43,11 +43,11 @@ public class AndroidTool implements Tool, DeviceListener {
   private Editor editor;
   private Build build;
 
-  private static final String ANDROID_CORE_URL = 
-    "http://dev.processing.org/source/index.cgi/*checkout*" + 
+  private static final String ANDROID_CORE_URL =
+    "http://processing.googlecode.com/svn" +
     "/tags/processing-" + Base.VERSION_NAME + "/android/core.zip";
 
-  private static final String ANDROID_CORE_FILENAME = 
+  private static final String ANDROID_CORE_FILENAME =
     "processing-android-core-" + Base.VERSION_NAME + ".zip";
 
   public String getMenuTitle() {
@@ -81,9 +81,9 @@ public class AndroidTool implements Tool, DeviceListener {
     editor.statusNotice("Done loading Android tools.");
   }
 
-  
+
   static private File coreZipLocation;
-  
+
   static protected File getCoreZipLocation() {
     if (coreZipLocation == null) {
       coreZipLocation = checkCoreZipLocation();
@@ -91,7 +91,7 @@ public class AndroidTool implements Tool, DeviceListener {
     return coreZipLocation;
   }
 
-  
+
   static protected File checkCoreZipLocation() {
     // for debugging only, check to see if this is an svn checkout
     File debugFile = new File("../../../android/core.zip");
@@ -108,7 +108,7 @@ public class AndroidTool implements Tool, DeviceListener {
     return new File(Base.getSketchbookFolder(), ANDROID_CORE_FILENAME);
   }
 
-  
+
   private boolean checkCore() {
     final File target = getCoreZipLocation();
     if (!target.exists()) {
@@ -176,15 +176,15 @@ public class AndroidTool implements Tool, DeviceListener {
     return null;
   }
 
-  
+
   private volatile AndroidDevice lastRunDevice = null;
 
   /**
    * @param target "debug" or "release"
    */
-  private void runSketchOnDevice(final Future<AndroidDevice> deviceFuture, 
+  private void runSketchOnDevice(final Future<AndroidDevice> deviceFuture,
                                  final String target) throws MonitorCanceled {
-    final IndeterminateProgressMonitor monitor = 
+    final IndeterminateProgressMonitor monitor =
       new IndeterminateProgressMonitor(editor,
                                        "Building and launching...",
                                        "Creating project...");
@@ -241,15 +241,15 @@ public class AndroidTool implements Tool, DeviceListener {
       monitor.close();
     }
   }
-  
-  
+
+
   private void buildReleaseForExport() throws MonitorCanceled {
-    final IndeterminateProgressMonitor monitor = 
+    final IndeterminateProgressMonitor monitor =
       new IndeterminateProgressMonitor(editor,
                                        "Building and exporting...",
                                        "Creating project...");
     try {
-      File tempFolder = build.createProject(); 
+      File tempFolder = build.createProject();
       if (tempFolder == null) {
         return;
       }
@@ -265,7 +265,7 @@ public class AndroidTool implements Tool, DeviceListener {
         if (monitor.isCanceled()) {
           throw new MonitorCanceled();
         }
-        
+
         // If things built successfully, copy the contents to the export folder
         File exportFolder = build.createExportFolder();
         if (exportFolder != null) {
@@ -277,7 +277,7 @@ public class AndroidTool implements Tool, DeviceListener {
         }
       } catch (IOException e) {
         editor.statusError(e);
-        
+
       } finally {
         build.cleanup();
       }
@@ -285,11 +285,11 @@ public class AndroidTool implements Tool, DeviceListener {
       monitor.close();
     }
   }
-  
+
 
   /*
   private void buildReleaseForDevice(final Future<AndroidDevice> deviceFuture) throws Cancelled {
-    final IndeterminateProgressMonitor monitor = 
+    final IndeterminateProgressMonitor monitor =
       new IndeterminateProgressMonitor(editor,
                                        "Building and running...",
                                        "Creating project...");
@@ -309,7 +309,7 @@ public class AndroidTool implements Tool, DeviceListener {
         if (monitor.isCanceled()) {
           throw new Cancelled();
         }
-        
+
         monitor.setNote("Waiting for device to become available...");
         final AndroidDevice device = waitForDevice(deviceFuture, monitor);
         if (device == null || !device.isAlive()) {
@@ -339,7 +339,7 @@ public class AndroidTool implements Tool, DeviceListener {
           editor.statusError("Could not start the sketch.");
         }
         lastRunDevice = device;
-        
+
       } finally {
         build.cleanup();
       }
@@ -350,10 +350,10 @@ public class AndroidTool implements Tool, DeviceListener {
   */
 
 
-  private static final Pattern LOCATION = 
+  private static final Pattern LOCATION =
     Pattern.compile("\\(([^:]+):(\\d+)\\)");
-  private static final Pattern EXCEPTION_PARSER = 
-    Pattern.compile("^\\s*([a-z]+(?:\\.[a-z]+)+)(?:: .+)?$", 
+  private static final Pattern EXCEPTION_PARSER =
+    Pattern.compile("^\\s*([a-z]+(?:\\.[a-z]+)+)(?:: .+)?$",
                     Pattern.CASE_INSENSITIVE);
 
   /**

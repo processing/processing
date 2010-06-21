@@ -1,6 +1,12 @@
 0185 android
 X fix two bugs with fonts created with specific charsets
 X fix for adobe illustrator-mangled svg id names with hex characters
+X add redirect and fix problem with core.zip location after server move
+X   http://code.google.com/p/processing/issues/detail?id=269
+X added android.permission.INTERNET 
+X   and android.permission.WRITE_EXTERNAL_STORAGE
+
+_ text leading is broken, text("blah\nblah") doesn't work properly
 
 _ need to side-port changes from PShape/SVG over to Android
 
@@ -51,7 +57,6 @@ _ if sketchRenderer() et al are used in android, need to add to desktop
 _ remove SurfaceView2D/SurfaceView3D separation, or clean up
 _ what is resetLights() in PGraphics?
 _ remove model() method from end of PApplet (make it shape(PShape))
-
 
 P1 this is embarrassing, need to fix ASAP
 P2 need to fix before beta release
@@ -168,6 +173,8 @@ P1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1527
 P1 _ implement certificates (self-signed) for distribution
 P1 _   http://developer.android.com/guide/publishing/app-signing.html
 P1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1430
+P1 _   http://code.google.com/p/processing/issues/detail?id=222
+P1 _ properly handle setting whatever permissions are necessary
 
 P2 _ need to prevent hitting 'run' twice (threaded, so would work)
 P2 _   currently things just keep restarting the build, bad state
@@ -200,8 +207,10 @@ P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1481
 P3 _ library support also needs android manifest changes
 P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1439
 P3 _ Errors show up that .java files are duplicates with the Android tools.
+P3 _   problem is with the packages and where the preproc is putting the file
 P3 _   example sketch added to bug report
 P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1472
+P3 _   http://code.google.com/p/processing/issues/detail?id=232
 
 P4 _ don't require android tools to be installed already
 P4 _   or implement automatic download/install of android tools

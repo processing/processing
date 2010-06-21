@@ -166,6 +166,7 @@ _ multiple entries in file menu
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1260
 _ blank sketch opened even if another opened by double-click
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1261
+_   http://code.google.com/p/processing/issues/detail?id=179
 _ also can have case of opening two of same sketch at once
 _   if sketch was open, then restart by dragging the .pde to p5.app
 

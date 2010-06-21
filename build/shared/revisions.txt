@@ -1,4 +1,4 @@
-PROCESSING REV 0185 - XX June 2010
+PROCESSING REV 0185 - 20 June 2010
 
 Primarily a bug fix release. The biggest change are a couple tweaks for 
 problems caused by Apple's Update 2 for Java on OS X, so this should make
@@ -76,6 +76,19 @@ Processing usable on Macs again.
 
 + Added loading.gif to the js version of the applet loader. Not sure 
   if this is actually working or not, but it's there.
+
+[ android ] 
+
++ Added permissions for INTERNET and WRITE_EXTERNAL_STORAGE to the default
+  AndroidManifest.xml file. This will be addressed in greater detail here:
+  http://code.google.com/p/processing/issues/detail?id=275
+  And with the implementation of code signing here:
+  http://code.google.com/p/processing/issues/detail?id=222
+
++ Lots of work happening underneath with regards to Android, more updates
+  soon as things start evening out a bit.
+
++ Defaulting to a WVGA screen for the default Processing AVD. 
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
