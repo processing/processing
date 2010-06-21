@@ -431,7 +431,7 @@
   <target name="windows-dist" depends="windows-build" 
 	  description="Create .zip files of windows version">
 
-    <get src="http://processing.googlecode.com/files/jre-tools-6u19-windows-i586.zip" 
+    <get src="http://processing.googlecode.com/files/jre-tools-6u20-windows-i586.zip" 
 	 dest="windows/jre.zip" 
 	 usetimestamp="true" />
 
