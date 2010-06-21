@@ -24,7 +24,7 @@ Processing usable on Macs again.
 + Fix for PDF library and createFont() on Linux, thanks to Matthias Breuer.
   http://dev.processing.org/bugs/show_bug.cgi?id=1566
 
-+ Fix from takachin for  problem with full-width space with Japanese IME.
++ Fix from takachin for a problem with full-width space with Japanese IME.
   http://dev.processing.org/bugs/show_bug.cgi?id=1531
 
 + Reset matrix for the PDF library in-between frames
