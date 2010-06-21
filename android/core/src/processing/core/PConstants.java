@@ -367,12 +367,12 @@ public interface PConstants {
 
 
   // text alignment modes
-  // are inherited from LEFT, CENTER, RIGHT
+  // are inherited from LEFT, CENTER, RIGHT  
 
   // PTexture
   
   /** This constant identifies the texture target GL_TEXTURE_2D, that is, textures with normalized coordinates */
-  public static final int NORMAL_TEXTURE = 0;
+  public static final int TEXTURE2D = 0;
   
   /** This constant identifies the nearest texture filter  */
   public static final int NEAREST = 0;

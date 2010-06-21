@@ -38,7 +38,6 @@ import android.opengl.GLSurfaceView.EGLConfigChooser;
 import android.opengl.GLSurfaceView.Renderer;
 
 import javax.microedition.khronos.opengles.*;
-import javax.microedition.khronos.egl.EGL11;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLContext;
@@ -117,6 +116,7 @@ public class PGraphicsAndroid3D extends PGraphics {
    */
   public static final int MAX_LIGHTS = 8;
 
+  public boolean lights;
   public int lightCount = 0;
 
   /** Light types */
@@ -291,13 +291,14 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // .......................................................
   
-  protected Stack<PFramebuffer> fbStack;
-  protected PFramebuffer screenFramebuffer;
+  static protected Stack<PFramebuffer> fbStack;
+  static protected PFramebuffer screenFramebuffer;
+  static protected PFramebuffer currentFramebuffer;
+  
   protected PFramebuffer drawFramebuffer;
   protected PImage[] drawImages;
   protected PTexture[] drawTextures;
   protected int drawIndex;
-  protected PFramebuffer currentFramebuffer;
   protected int[] drawTexCrop;
 
   // ........................................................
@@ -313,7 +314,12 @@ public class PGraphicsAndroid3D extends PGraphics {
   boolean clear = true;
   
   // ........................................................
+  
+  boolean blend;
+  int blendMode;  
 
+  // ........................................................
+    
   public String OPENGL_VENDOR;
   public String OPENGL_RENDERER;
   public String OPENGL_VERSION;
@@ -552,16 +558,16 @@ public class PGraphicsAndroid3D extends PGraphics {
   public void renderDrawTexture(int idx) {
     PTexture tex = drawTextures[idx];
 
-    gl.glEnable(GL10.GL_TEXTURE_2D);
-    gl.glBindTexture(GL10.GL_TEXTURE_2D, tex.getGLTextureID());
+    gl.glEnable(tex.getGLTarget());
+    gl.glBindTexture(tex.getGLTarget(), tex.getGLTextureID());
     gl.glDepthMask(false);
     gl.glDisable(GL10.GL_BLEND);
     
     gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_REPLACE);
-    gl11.glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, drawTexCrop, 0);
+    gl11.glTexParameteriv(tex.getGLTarget(), GL11Ext.GL_TEXTURE_CROP_RECT_OES, drawTexCrop, 0);
     gl11x.glDrawTexiOES(0, 0, 0, width, height);
     
-    gl.glDisable(GL10.GL_TEXTURE_2D);   
+    gl.glDisable(tex.getGLTarget());   
     gl.glDepthMask(true);
     gl.glEnable(GL10.GL_BLEND);
   }
@@ -570,8 +576,90 @@ public class PGraphicsAndroid3D extends PGraphics {
     drawIndex = (drawIndex + 1) % 2; 
   }
   
-  public PImage getBackground() {
+  public PImage getLastFrame() {
     return drawImages[(drawIndex + 1) % 2];
+  }
+  
+  protected void saveGLState() {
+    gl.glMatrixMode(GL10.GL_PROJECTION);
+    gl.glPushMatrix();
+    gl.glMatrixMode(GL10.GL_MODELVIEW);
+    gl.glPushMatrix();  
+  }
+  
+  protected void restoreGLState() {
+    // Restoring blending.
+    if (blend) {
+      blend(blendMode);
+    } else { 
+      noBlend();
+    }
+    
+    // Restoring viewport.
+    gl.glViewport(0, 0, width, height);
+
+    // Restoring hints.
+    if (hints[DISABLE_DEPTH_TEST]) {
+      gl.glDisable(GL10.GL_DEPTH_TEST);
+      gl.glClear(GL10.GL_DEPTH_BUFFER_BIT);
+    } else {
+      gl.glEnable(GL10.GL_DEPTH_TEST);
+    }
+    
+    // Restoring fill
+    if (fill) {
+      fillFromCalc();  
+    }    
+    
+    // Restoring material properties.
+    ambientFromCalc();
+    specularFromCalc();
+    shininess(shininess);
+    emissiveFromCalc();
+    
+    // Restoring lights.
+    if (lights) {
+      for (int i = 0; i < lightCount; i++) {
+        glLightEnable(i);
+        if (lightType[i] == AMBIENT) {
+          glLightAmbient(i);
+          glLightPosition(i);
+          glLightFalloff(i);
+          glLightNoSpot(i);
+        } else if (lightType[i] == DIRECTIONAL) {
+          glLightNoAmbient(i);
+          glLightDirection(i);
+          glLightDiffuse(i);
+          glLightSpecular(i);
+          glLightFalloff(i);
+          glLightNoSpot(i);
+        } else if (lightType[i] == POINT) {
+          glLightNoAmbient(i);
+          glLightPosition(i);
+          glLightDiffuse(i);
+          glLightSpecular(i);
+          glLightFalloff(i);
+          glLightNoSpot(i);
+        } else if (lightType[i] == SPOT) {
+          glLightNoAmbient(i);
+          glLightPosition(i);
+          glLightDirection(i);
+          glLightDiffuse(i);
+          glLightSpecular(i);
+          glLightFalloff(i);
+          glLightSpotAngle(i);
+          glLightSpotConcentration(i);
+        }
+      }
+    } else {
+      noLights();
+    }
+    
+    // Restoring matrices.
+    gl.glMatrixMode(GL10.GL_PROJECTION);
+    gl.glPopMatrix();
+    gl.glMatrixMode(GL10.GL_MODELVIEW);
+    gl.glPopMatrix();    
   }
   
   // ////////////////////////////////////////////////////////////
@@ -599,6 +687,18 @@ public class PGraphicsAndroid3D extends PGraphics {
     TRIANGLECOUNT = 0;
     FACECOUNT = 0;
 
+    if (!primarySurface) {
+      PGraphicsAndroid3D a3d = (PGraphicsAndroid3D)parent.g;
+      a3d.saveGLState();
+      
+      // Disabling all lights, so the offscreen renderer can set completely
+      // new light configuration (otherwise some light config from the 
+      // primary renderer might stay).
+      for (int i = 0; i < a3d.lightCount; i++) {
+        a3d.glLightDisable(i);
+      }      
+    }
+    
     if (!settingsInited)
       defaultSettings();
 
@@ -614,9 +714,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     textureImage = null;
     textureImagePrev = null;
 
-    // these are necessary for alpha (i.e. fonts) to work
-    gl.glEnable(GL10.GL_BLEND);
-    gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+    // Blend is needed for alpha (i.e. fonts) to work.
+    blend(BLEND);
 
     // this is necessary for 3D drawing
     if (hints[DISABLE_DEPTH_TEST]) {
@@ -667,6 +766,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       setFramebuffer(screenFramebuffer);
     }
     
+    // TODO: rework logic depending on whether this renderer is primarySurface, etc.
     if (clear) {
       gl.glClearColor(0, 0, 0, 0);
       gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
@@ -700,7 +800,6 @@ public class PGraphicsAndroid3D extends PGraphics {
         pushFramebuffer();
         setFramebuffer(drawFramebuffer);
         drawFramebuffer.addColorBuffer(drawTextures[drawIndex]);
-        drawFramebuffer.validFbo();
 
         gl.glClearColor(0, 0, 0, 0);
         gl.glClear(GL10.GL_DEPTH_BUFFER_BIT);
@@ -742,6 +841,10 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     gl.glFlush();
 
+    if (!primarySurface) {
+      ((PGraphicsAndroid3D)parent.g).restoreGLState();
+    }
+    
     report("top endDraw()");
     /*
      * if (hints[ENABLE_DEPTH_SORT]) { flush(); }
@@ -2282,10 +2385,14 @@ public class PGraphicsAndroid3D extends PGraphics {
   /**
    * Implementation of actual drawing for a line of text.
    */
-  protected void textLineImpl(char buffer[], int start, int stop, float x,
-      float y) {
+  protected void textLineImpl(char buffer[], int start, int stop, float x, float y) {
     // Init opengl state for text rendering...
     gl.glEnable(GL10.GL_TEXTURE_2D);
+    
+    if (!blend || blendMode != BLEND) {
+      gl.glEnable(GL10.GL_BLEND);
+      gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+    }
     
     if (textFont.texIDList == null) {
       textFont.initTexture(gl, maxTextureSize, maxTextureSize);
@@ -2300,6 +2407,13 @@ public class PGraphicsAndroid3D extends PGraphics {
     gl.glColor4f(colorFloats[0], colorFloats[1], colorFloats[2], colorFloats[3]);
 
     super.textLineImpl(buffer, start, stop, x, y);
+
+    // Restoring current blend mode.
+    if (blend) {
+      blend(blendMode);
+    } else {
+      noBlend();
+    }
     
     gl.glDisable(GL10.GL_TEXTURE_2D);    
   }
@@ -3562,6 +3676,7 @@ public class PGraphicsAndroid3D extends PGraphics {
    * </PRE>
    */
   public void lights() {
+    lights = true;
     gl.glEnable(GL10.GL_LIGHTING);
 
     // need to make sure colorMode is RGB 255 here
@@ -3572,8 +3687,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     lightSpecular(0, 0, 0);
 
     ambientLight(colorModeX * 0.5f, colorModeY * 0.5f, colorModeZ * 0.5f);
-    directionalLight(colorModeX * 0.5f, colorModeY * 0.5f, colorModeZ * 0.5f,
-        0, 0, -1);
+    directionalLight(colorModeX * 0.5f, colorModeY * 0.5f, colorModeZ * 0.5f, 0, 0, -1);
 
     colorMode = colorModeSaved;
   }
@@ -3583,8 +3697,9 @@ public class PGraphicsAndroid3D extends PGraphics {
    * method is needed.
    */
   public void resetLights() {
-    for (int i = 0; i < lightCount; i++)
+    for (int i = 0; i < lightCount; i++) {
       glLightDisable(i);
+    }
     lightCount = 0;
   }
 
@@ -3592,6 +3707,7 @@ public class PGraphicsAndroid3D extends PGraphics {
    * Disables lighting.
    */
   public void noLights() {
+    lights = false;
     gl.glDisable(GL10.GL_LIGHTING);
     lightCount = 0;
   }
@@ -4482,15 +4598,18 @@ public class PGraphicsAndroid3D extends PGraphics {
   /**
    * Allows to set custom blend modes for the entire scene, using openGL.
    */
-  public void setBlend(int mode) {
+  public void blend(int mode) {
+    blend = true;
+    blendMode = mode;
+    gl.glEnable(GL10.GL_BLEND);
     if (mode == BLEND)
-      gl.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+      gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
     else if (mode == ADD)
-      gl.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+      gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE);
     else if (mode == MULTIPLY)
-      gl.glBlendFunc(GL11.GL_DST_COLOR, GL11.GL_SRC_COLOR);
+      gl.glBlendFunc(GL10.GL_DST_COLOR, GL10.GL_SRC_COLOR);
     else if (mode == SUBTRACT)
-      gl.glBlendFunc(GL11.GL_ONE_MINUS_DST_COLOR, GL11.GL_ZERO);
+      gl.glBlendFunc(GL10.GL_ONE_MINUS_DST_COLOR, GL10.GL_ZERO);
     // TODO: implement all these other blending modes:
     // else if (blendMode == LIGHTEST)
     // else if (blendMode == DIFFERENCE)
@@ -4503,13 +4622,11 @@ public class PGraphicsAndroid3D extends PGraphics {
     // else if (blendMode == BURN)
   }
 
-  /**
-   * Sets Processing's default blending mode.
-   */
-  public void defaultBlend() {
-    gl.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+  public void noBlend() {
+    blend = false;
+    gl.glDisable(GL10.GL_BLEND);
   }
-
+  
   // ////////////////////////////////////////////////////////////
 
   // SAVE
