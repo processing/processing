@@ -698,7 +698,7 @@ public class PFont implements PConstants {
   public int addTexture(GL10 gl) {
     int[] textures = new int[1];
 
-    // We assume GL10.GL_TEXTURE_2D is enabled at this point.
+    // We assume GL10.GL_TEXTURE_2D is enabled at this point (shoud be called by PGraphicsAndroid3D.textLineImpl()).
     gl.glGenTextures(1, textures, 0);
     gl.glBindTexture(GL10.GL_TEXTURE_2D, textures[0]);    
 
@@ -714,7 +714,7 @@ public class PFont implements PConstants {
                     
     gl.glTexImage2D(GL10.GL_TEXTURE_2D, 0, GL10.GL_RGBA,  texWidth, texHeight, 0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, null);
     gl.glBindTexture(GL10.GL_TEXTURE_2D, 0);
-    currentTexID = -1; // No texture is bound.
+    currentTexID = -1; // No texture is currently bound.
     
     if (texIDList == null) {
       texIDList = new int[1];
