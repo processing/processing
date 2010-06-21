@@ -10,8 +10,11 @@ import processing.app.exec.ProcessResult;
 public class AVD {
   // Tempting to switch to WVGA854 (854x480), the same aspect ratio
   // (with rounding), as 1920x1080, or 16:9.
-  static final int DEFAULT_WIDTH = 320;
-  static final int DEFAULT_HEIGHT = 480;
+//  static final int DEFAULT_WIDTH = 320;
+//  static final int DEFAULT_HEIGHT = 480;
+//  static final int DEFAULT_WIDTH = 480;
+//  static final int DEFAULT_HEIGHT = 800;
+  static final String DEFAULT_SKIN = "WVGA800";
 
   /** Name of this avd. */
   public final String name;
@@ -66,9 +69,15 @@ public class AVD {
   }
 
   protected boolean create(final AndroidSDK sdk) throws IOException {
-    final ProcessHelper p = new ProcessHelper(sdk.getAndroidTool()
-        .getAbsolutePath(), "create", "avd", "-n", name, "-t", target, "-c",
-                                              "64M");
+    final String[] params = {
+      sdk.getAndroidTool().getAbsolutePath(),
+      "create", "avd", 
+      "-n", name, "-t", target, 
+      "-c", "64M",
+      "-s", DEFAULT_SKIN
+//      "-s", DEFAULT_WIDTH + "x" + DEFAULT_HEIGHT
+    };
+    final ProcessHelper p = new ProcessHelper(params); 
     try {
       final ProcessResult createAvdResult = p.execute();
       if (createAvdResult.succeeded()) {
