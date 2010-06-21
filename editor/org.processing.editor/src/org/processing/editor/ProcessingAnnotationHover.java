@@ -25,8 +25,9 @@ import org.eclipse.jface.text.source.ISourceViewer;
  
 public class ProcessingAnnotationHover implements IAnnotationHover {
 
-	/* (non-Javadoc)
-	 * Method declared on IAnnotationHover
+	/**
+	 * Provides info for a given mouse hover position to the tooltip.
+	 * Currently this means retrieving the text under the mouse.
 	 */
 	public String getHoverInfo(ISourceViewer sourceViewer, int lineNumber) {
 		IDocument document= sourceViewer.getDocument();

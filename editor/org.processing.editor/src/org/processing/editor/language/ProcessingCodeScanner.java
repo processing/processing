@@ -23,6 +23,7 @@ import java.util.Set;
 import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.rules.*;
 import org.processing.editor.ProcessingEditorPlugin;
+import org.processing.editor.ProcessingLog;
 import org.processing.editor.util.*;
 
 /**
@@ -95,12 +96,12 @@ public class ProcessingCodeScanner extends RuleBasedScanner {
 		        }
 			}				
 		}
-		catch (Exception e){	
-			e.printStackTrace();
+		catch (Exception e){
+			ProcessingLog.logError("ProcessingCodeScanner init block encountered a problem while reading the keywords file.", e);
 		}
 
 		try{
-		fgKeywords1= KeywordMap.containsKey("KEYWORD1") ? (String[]) KeywordMap.get("KEYWORD1").toArray(new String[KeywordMap.get("KEYWORD1").size()]) : new String[] {"test"};
+		fgKeywords1= KeywordMap.containsKey("KEYWORD1") ? (String[]) KeywordMap.get("KEYWORD1").toArray(new String[KeywordMap.get("KEYWORD1").size()]) : new String[] {};
 		fgKeywords2= KeywordMap.containsKey("KEYWORD2") ? (String[]) KeywordMap.get("KEYWORD2").toArray(new String[KeywordMap.get("KEYWORD2").size()]) : new String[] {};
 		fgKeywords3= KeywordMap.containsKey("KEYWORD3") ? (String[]) KeywordMap.get("KEYWORD3").toArray(new String[KeywordMap.get("KEYWORD3").size()]) : new String[] {}; 
 		fgLiterals1= KeywordMap.containsKey("LITERAL1") ? (String[]) KeywordMap.get("LITERAL1").toArray(new String[KeywordMap.get("LITERAL1").size()]) : new String[] {};
@@ -110,7 +111,7 @@ public class ProcessingCodeScanner extends RuleBasedScanner {
 		fgInvalids = KeywordMap.containsKey("INVALIDS") ? (String[]) KeywordMap.get("INVALIDS").toArray(new String[KeywordMap.get("INVALIDS").size()]) : new String[] {}; // unused?
 		}
 		catch (Exception e){
-			e.printStackTrace();
+			ProcessingLog.logError("ProcessingCodeScanner init block encountered a problem while initializing the string arrays.", e);
 		}
 	}
 	

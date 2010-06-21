@@ -17,7 +17,7 @@ import org.eclipse.ui.editors.text.TextEditorActionContributor;
 import org.eclipse.ui.texteditor.*;
 
 /**
- * Contributes interesting Java actions to the desktop's Edit menu and the toolbar.
+ * Contributes content assistance actions to the desktop's Edit menu and the toolbar.
  */
 public class ProcessingActionContributor extends TextEditorActionContributor {
 
@@ -30,15 +30,16 @@ public class ProcessingActionContributor extends TextEditorActionContributor {
 	 */
 	public ProcessingActionContributor() {
 		super();
-		fContentAssistProposal= new RetargetTextEditorAction(ProcessingEditorMessages.getResourceBundle(), "ContentAssistProposal."); //$NON-NLS-1$
+		fContentAssistProposal= new RetargetTextEditorAction(ProcessingEditorMessages.getResourceBundle(), "ContentAssistProposal.");
 		fContentAssistProposal.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS); 
-		fContentAssistTip= new RetargetTextEditorAction(ProcessingEditorMessages.getResourceBundle(), "ContentAssistTip."); //$NON-NLS-1$
+		fContentAssistTip= new RetargetTextEditorAction(ProcessingEditorMessages.getResourceBundle(), "ContentAssistTip.");
 		fContentAssistTip.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_CONTEXT_INFORMATION);
 		fTogglePresentation= new PresentationAction();
 	}
 	
-	/*
-	 * @see IEditorActionBarContributor#init(IActionBars)
+	/**
+	 * Initializes the edit menu actions invoking content assistance and the assitance tooltip
+	 * These are functional items, but of (extremely?) limited usefulness.
 	 */
 	public void init(IActionBars bars) {
 		super.init(bars);
@@ -58,8 +59,8 @@ public class ProcessingActionContributor extends TextEditorActionContributor {
 		}
 	}
 	
-	/*
-	 * 
+	/**
+	 * Adds content assistance and tooltip actions to the Processing Editor
 	 */
 	private void doSetActiveEditor(IEditorPart part) {
 		super.setActiveEditor(part);
@@ -75,16 +76,16 @@ public class ProcessingActionContributor extends TextEditorActionContributor {
 		fTogglePresentation.update();
 	}
 	
-	/*
-	 * @see IEditorActionBarContributor#setActiveEditor(IEditorPart)
+	/**
+	 * @see doSetActiveEditor
 	 */
 	public void setActiveEditor(IEditorPart part) {
 		super.setActiveEditor(part);
 		doSetActiveEditor(part);
 	}
 	
-	/*
-	 * @see IEditorActionBarContributor#dispose()
+	/**
+	 * Shut it down
 	 */
 	public void dispose() {
 		doSetActiveEditor(null);
