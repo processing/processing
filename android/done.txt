@@ -1,3 +1,12 @@
+0185 android (pre)
+X fix two bugs with fonts created with specific charsets
+X fix for adobe illustrator-mangled svg id names with hex characters
+X add redirect and fix problem with core.zip location after server move
+X   http://code.google.com/p/processing/issues/detail?id=269
+X added android.permission.INTERNET 
+X   and android.permission.WRITE_EXTERNAL_STORAGE
+
+
 0184 android (pre)
 o when running a sketch, need to unlock the device
 o   http://dev.processing.org/bugs/show_bug.cgi?id=1500

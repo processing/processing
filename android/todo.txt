@@ -1,10 +1,5 @@
-0185 android
-X fix two bugs with fonts created with specific charsets
-X fix for adobe illustrator-mangled svg id names with hex characters
-X add redirect and fix problem with core.zip location after server move
-X   http://code.google.com/p/processing/issues/detail?id=269
-X added android.permission.INTERNET 
-X   and android.permission.WRITE_EXTERNAL_STORAGE
+0186 android
+
 
 _ text leading is broken, text("blah\nblah") doesn't work properly
 

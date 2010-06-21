@@ -1,30 +1,13 @@
-0185 pde
-X add option to launch a sketch directly w/ linux
-X   thanks to Larry Kyrala
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1549
-X fix for PDF library to support createFont() on Linux
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1566
-X   thanks to Matthias Breuer 
-X add option to change the formatting for untitled sketch naming
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1091
-X Can't input full-width space when Japanese IME is on.
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1531
-X   fix from takachin
-X PDF library matrix is not reset between frames
-X   also added begin/endDraw between frames
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1227
-X add loading.gif to the js version of the applet loader
-X updating JRE to 6u20, and use new Google URL
-X copy the html tool from the arduino guys
-X   http://code.google.com/p/processing/issues/detail?id=271
-X Java update on OS X causing lots of problems
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1564
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1569
-X   http://code.google.com/p/processing/issues/detail?id=258
-o   check into focus issues--probably using old focus api
-X add option to disable re-opening previous projects
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1501
-X   http://code.google.com/p/processing/issues/detail?id=245
+0186 pde
+
+
+_ don't require an editor window to be open at all times
+_   The com.apple.eawt.Application now has a setDefaultMenuBar(JMenuBar) method
+_   that sets a default menu bar when no other Frames are open. 
+_   could check for availability of method
+_   and if it's there, don't require people to quit
+The com.apple.eawt.Application now has a setDefaultMenuBar(JFrame) method that sets a default menu bar in your application when no other Frames are open. This feature requires your app to use both the Aqua Look and Feel and apple.laf.useScreenMenuBar=true property to hook up the native menu bar delegates correctly. This long-requested feature should remove the need to create an invisible or offscreen window to simulate the appearance of a true "default" menu bar. 
+
 
 closing this bug, because we'll be replacing the current video library with another sometime later this summer. as such, i won't be doing any more bug fixes on the current video library. in the meantime, we recommend using gsvideo, opencv, or one of the other video libraries that are available.
 
@@ -83,6 +66,8 @@ _     http://dev.processing.org/bugs/show_bug.cgi?id=1298
 _ processing.app.Commander headless still requiring X11
 _   problem is static calls to PApplet
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1426
+
+svn copy https://processing.googlecode.com/svn/trunk/ https://processing.googlecode.com/svn/tags/processing-01XX
 
 svn copy svn://processing.org/trunk/processing svn://processing.org/tags/processing-01XX
 svn copy svn+ssh://dev.processing.org/var/svn/trunk/processing svn+ssh://dev.processing.org/var/svn/tags/processing-0178
@@ -1345,12 +1330,7 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=1513
 
 DIST / Mac OS X
 
-_ don't require an editor window to be open at all times
-_   The com.apple.eawt.Application now has a setDefaultMenuBar(JMenuBar) method
-_   that sets a default menu bar when no other Frames are open. 
-_   could check for availability of method
-_   and if it's there, don't require people to quit
-The com.apple.eawt.Application now has a setDefaultMenuBar(JFrame) method that sets a default menu bar in your application when no other Frames are open. This feature requires your app to use both the Aqua Look and Feel and apple.laf.useScreenMenuBar=true property to hook up the native menu bar delegates correctly. This long-requested feature should remove the need to create an invisible or offscreen window to simulate the appearance of a true "default" menu bar. 
+_ instead of "show sketch folder" method, use:
 The com.apple.eio.FileManager now has two new desktop interaction methods, revealInFinder(File) and moveToTrash(File). You can use revealInFinder() to open a Finder window in the parent directory of of a file and select it. You can use moveToTrash() to move a file to the most appropriate Trash directory for the volume that contains that file. 
 _ setup() and draw() are not bold on osx (10.4)
 _   likely osx refuses to do monaco bold
