@@ -662,6 +662,31 @@ public class PGraphicsAndroid3D extends PGraphics {
     gl.glPopMatrix();    
   }
   
+  void createDrawFramebuffer() {
+    drawTexCrop = new int[4];
+    drawTexCrop[0] = 0;
+    drawTexCrop[1] = 0;
+    drawTexCrop[2] = width;
+    drawTexCrop[3] = height;      
+
+    drawImages = new PImage[2];
+    drawImages[0] = parent.createImage(width, height, ARGB, NEAREST);
+    drawImages[1] = parent.createImage(width, height, ARGB, NEAREST);
+
+    drawTextures = new PTexture[2];
+    drawTextures[0] = drawImages[0].getTexture();
+    drawTextures[1] = drawImages[1].getTexture();
+
+    drawIndex = 0;
+
+    drawFramebuffer = new PFramebuffer(parent, drawTextures[0].getGLWidth(), drawTextures[0].getGLHeight(), false);
+
+    drawFramebuffer.addDepthBuffer(DEPTH_BITS);
+    if (0 < STENCIL_BITS) {
+      drawFramebuffer.addStencilBuffer(STENCIL_BITS); 
+    }    
+  }
+  
   // ////////////////////////////////////////////////////////////
 
   // FRAME
@@ -696,7 +721,27 @@ public class PGraphicsAndroid3D extends PGraphics {
       // primary renderer might stay).
       for (int i = 0; i < a3d.lightCount; i++) {
         a3d.glLightDisable(i);
-      }      
+      }
+      
+      // Getting gl objects from primary surface:
+      gl = a3d.gl;
+      gl11 = a3d.gl11;
+      gl11x = a3d.gl11x;
+      gl11xp = a3d.gl11xp;
+      
+      
+      OPENGL_VENDOR = a3d.OPENGL_VENDOR;
+      OPENGL_RENDERER = a3d.OPENGL_RENDERER;
+      OPENGL_VERSION = a3d.OPENGL_VERSION;
+
+      npotTexSupported = a3d.npotTexSupported;
+      mipmapSupported = a3d.mipmapSupported;
+      matrixGetSupported = a3d.matrixGetSupported;
+      vboSupported = a3d.vboSupported;
+      fboSupported = a3d.fboSupported;      
+      
+      maxTextureSize = a3d.maxTextureSize;
+      maxPointSize = a3d.maxPointSize;
     }
     
     if (!settingsInited)
@@ -766,47 +811,37 @@ public class PGraphicsAndroid3D extends PGraphics {
       setFramebuffer(screenFramebuffer);
     }
     
-    // TODO: rework logic depending on whether this renderer is primarySurface, etc.
-    if (clear) {
+    if (clear && primarySurface) {
+      // The simplest situation: background is completely cleared and this surface
+      // is the primary rendering surface (onscreen).
       gl.glClearColor(0, 0, 0, 0);
       gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
     } else {
+      // If we are here it means that either this surface is the primary rendering
+      // surface and we are in noClear mode (the last frame has to be preserved
+      // for incremental renering) or we are in a offscreen surface.
       if (fboSupported) {
         if (drawFramebuffer == null) {
-          drawTexCrop = new int[4];
-          drawTexCrop[0] = 0;
-          drawTexCrop[1] = 0;
-          drawTexCrop[2] = width;
-          drawTexCrop[3] = height;      
-        
-          drawImages = new PImage[2];
-          drawImages[0] = parent.createImage(width, height, ARGB, NEAREST);
-          drawImages[1] = parent.createImage(width, height, ARGB, NEAREST);
-        
-          drawTextures = new PTexture[2];
-          drawTextures[0] = drawImages[0].getTexture();
-          drawTextures[1] = drawImages[1].getTexture();
-        
-          drawIndex = 0;
-        
-          drawFramebuffer = new PFramebuffer(parent, drawTextures[0].getGLWidth(), drawTextures[0].getGLHeight(), false);
-        
-          drawFramebuffer.addDepthBuffer(DEPTH_BITS);
-          if (0 < STENCIL_BITS) {
-            drawFramebuffer.addStencilBuffer(STENCIL_BITS); 
-          }
+          createDrawFramebuffer();
         }
-      
+        
         pushFramebuffer();
         setFramebuffer(drawFramebuffer);
         drawFramebuffer.addColorBuffer(drawTextures[drawIndex]);
-
+        
         gl.glClearColor(0, 0, 0, 0);
-        gl.glClear(GL10.GL_DEPTH_BUFFER_BIT);
+        if (clear) {
+          gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);          
+        } else {
+          gl.glClear(GL10.GL_DEPTH_BUFFER_BIT);          
+        }
             
         // Render previous draw texture as background.      
         renderDrawTexture((drawIndex + 1) % 2);
-      } else {    
+      } else {
+        // We cannot ever end up here if the surface is not primary,
+        // because a non-primary A3D surface is possible only
+        // when FBOs are supported.
         if (screenTexID[0] == 0) {
           createScreenTexture();
         }
@@ -814,22 +849,27 @@ public class PGraphicsAndroid3D extends PGraphics {
         gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);      
         drawScreenTexture();
       }
+      
     }
     
     report("bot beginDraw()");
   }
 
   public void endDraw() {
-    if (!clear) {
+    if (!clear || !primarySurface) {
       if (fboSupported) {
         if (drawFramebuffer != null) {
           popFramebuffer();
 
-          gl.glClearColor(0, 0, 0, 0);
-          gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+          if (primarySurface) {
+            // Only the primary surface in clear mode will write the contents of the
+            // ofscreen framebuffer to the screen.
+            gl.glClearColor(0, 0, 0, 0);
+            gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
       
-          // Render current draw texture to screen.
-          renderDrawTexture(drawIndex);
+            // Render current draw texture to screen.
+            renderDrawTexture(drawIndex);
+          }
           swapDrawIndex();
         }
       } else {
