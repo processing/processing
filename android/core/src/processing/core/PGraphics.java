@@ -4142,10 +4142,6 @@ public class PGraphics extends PImage implements PConstants {
     showMethodWarning("lights");
   }
 
-  public void resetLights() {
-            showMethodWarning("resetLights");
-          }
-
   public void noLights() {
     showMethodWarning("noLights");
   }
