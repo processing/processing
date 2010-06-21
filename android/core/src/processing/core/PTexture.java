@@ -281,6 +281,7 @@ public class PTexture implements PConstants {
     
     int[] convArray = convertToRGBA(intArray, arrayFormat);    
     
+    gl.glEnable(glTarget);
     gl.glBindTexture(glTarget, glTextureID[0]);
                 
     if (usingMipmaps) {
@@ -293,7 +294,7 @@ public class PTexture implements PConstants {
     }
     gl.glTexSubImage2D(glTarget, 0, 0, 0, glWidth, glHeight, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, IntBuffer.wrap(convArray));
 
-    gl.glBindTexture(glTarget, 0);
+    gl.glDisable(glTarget);
   }  
 
   
@@ -719,7 +720,8 @@ public class PTexture implements PConstants {
                                      (glMinFilter == GL10.GL_LINEAR_MIPMAP_NEAREST) ||
                                      (glMinFilter == GL10.GL_NEAREST_MIPMAP_LINEAR) ||
                                      (glMinFilter == GL10.GL_LINEAR_MIPMAP_LINEAR));
-        
+     
+     gl.glEnable(glTarget);
      gl.glGenTextures(1, glTextureID, 0);
      gl.glBindTexture(glTarget, glTextureID[0]);
      gl.glTexParameterf(glTarget, GL10.GL_TEXTURE_MIN_FILTER, glMinFilter);
@@ -727,13 +729,10 @@ public class PTexture implements PConstants {
      gl.glTexParameterf(glTarget, GL10.GL_TEXTURE_WRAP_S, GL10.GL_CLAMP_TO_EDGE);
      gl.glTexParameterf(glTarget, GL10.GL_TEXTURE_WRAP_T, GL10.GL_CLAMP_TO_EDGE);        
      gl.glTexImage2D(glTarget, 0, glInternalFormat,  glWidth,  glHeight, 0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, null);
-     
-     // TODO: check what is the correct way of unbind textures, the following or glDisable(glTarget);
-     gl.glBindTexture(glTarget, 0);
+     gl.glDisable(glTarget);
         
      flippedX = false;
-     flippedY = false;  
-        
+     flippedY = false;
  
      // If non-power-of-two textures are not supported, and the specified width or height
      // is non-power-of-two, then glWidth (glHeight) will be greater than w (h) because it
@@ -769,7 +768,7 @@ public class PTexture implements PConstants {
     Parameters res = new Parameters();
     
     if ( glTarget == GL10.GL_TEXTURE_2D )  {
-        res.target = NORMAL_TEXTURE;
+        res.target = TEXTURE2D;
     }
     
     if (glInternalFormat == GL10.GL_RGB)  {
@@ -810,7 +809,7 @@ public class PTexture implements PConstants {
    * @param params GLTextureParameters
    */		
   protected void setParameters(Parameters params) {    
-	  if (params.target == NORMAL_TEXTURE)  {
+	  if (params.target == TEXTURE2D)  {
         glTarget = GL10.GL_TEXTURE_2D;
     } else {
       throw new RuntimeException("GTexture: Unknown texture target");	    
@@ -901,21 +900,21 @@ public class PTexture implements PConstants {
      * Creates an instance of GLTextureParameters, setting all the parameters to default values.
      */
     public Parameters() {
-      target = PTexture.NORMAL_TEXTURE;
+      target = PTexture.TEXTURE2D;
       format = PTexture.ARGB;
       minFilter = PTexture.LINEAR;
       magFilter = PTexture.LINEAR;   
     }
       
     public Parameters(int format) {
-      target = PTexture.NORMAL_TEXTURE;
+      target = PTexture.TEXTURE2D;
       this.format = format;
       minFilter = PTexture.LINEAR;
       magFilter = PTexture.LINEAR;   
     }
 
     public Parameters(int format, int filter) {
-      target = PTexture.NORMAL_TEXTURE;
+      target = PTexture.TEXTURE2D;
       this.format = format;
       minFilter = filter;
       magFilter = filter;   
