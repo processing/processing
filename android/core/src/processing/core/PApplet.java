@@ -23,6 +23,8 @@
 
 package processing.core;
 
+import processing.xml.XMLElement;
+
 import android.content.*;
 import android.content.res.AssetManager;
 import android.content.res.Configuration;
@@ -58,14 +60,14 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
   /**
    * The screen size when the sketch was started. This is initialized inside
-   * onCreate(). 
+   * onCreate().
    * <p>
    * Note that this won't update if you change the resolution
    * of your screen once the the applet is running.
    * <p>
    * This variable is not static because in the desktop version of Processing,
-   * not all instances of PApplet will necessarily be started on a screen of 
-   * the same size. 
+   * not all instances of PApplet will necessarily be started on a screen of
+   * the same size.
    */
   public int screenWidth, screenHeight;
 //  public Dimension screen =
@@ -78,11 +80,11 @@ public class PApplet extends Activity implements PConstants, Runnable {
    */
 //  public String[] args;
 
-  /** 
+  /**
    * Path to where sketch can read/write files (read-only).
-   * Android: This is the writable area for the Activity, which is correct  
-   * for purposes of how sketchPath is used in practice from a sketch, 
-   * even though it's technically different than the desktop version.  
+   * Android: This is the writable area for the Activity, which is correct
+   * for purposes of how sketchPath is used in practice from a sketch,
+   * even though it's technically different than the desktop version.
    */
   public String sketchPath; //folder;
 
@@ -114,7 +116,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
   protected boolean surfaceReady;
 
-  /** 
+  /**
    * Set true when the surface dimensions have changed, so that the PGraphics
    * object can be resized on the next trip through handleDraw().
    */
@@ -304,7 +306,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
   protected SurfaceHolder surfaceHolder;
 
   /**
-   * The Window object for Android.  
+   * The Window object for Android.
    */
 //  protected Window window;
 
@@ -390,7 +392,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 //    println("PApplet.onCreate()");
 
     Window window = getWindow();
-    
+
     // Take up as much area as possible
     requestWindowFeature(Window.FEATURE_NO_TITLE);
     window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
@@ -408,7 +410,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
     if (sketchRenderer().equals(A2D)) {
       surfaceView = new SketchSurfaceView2D(this);
-    } else if (sketchRenderer().equals(A3D)) { 
+    } else if (sketchRenderer().equals(A3D)) {
       surfaceView = new SketchSurfaceView3D(this);
     }
 
@@ -430,7 +432,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
     Context context = getApplicationContext();
     sketchPath = context.getFilesDir().getAbsolutePath();
-    
+
     start();
   }
 
@@ -439,8 +441,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
     System.out.println("configuration changed: " + newConfig);
     super.onConfigurationChanged(newConfig);
   }
-  
-  
+
+
   protected void onResume() {
     super.onResume();
 
@@ -492,12 +494,12 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
-  
+
   //////////////////////////////////////////////////////////////
 
   // ANDROID SURFACE VIEW
 
-  
+
   public SurfaceHolder getSurfaceHolder() {
     //return surfaceView.getHolder();
     return surfaceHolder;
@@ -512,8 +514,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
       // are these two needed?
       surfaceHolder.addCallback(this);
       //surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_GPU);
-      
-      
+
+
       /* By default, GLSurfaceView() creates a RGB_565 opaque surface.
        * If we want a translucent one, we should change the surface's
        * format here, using PixelFormat.TRANSLUCENT for GL Surfaces
@@ -522,13 +524,13 @@ public class PApplet extends Activity implements PConstants, Runnable {
       if (PGraphicsAndroid3D.TRANSLUCENT) {
         this.getHolder().setFormat(PixelFormat.TRANSLUCENT);
       }
-              
+
 
 //      System.out.println("Creating PGraphicsAndroid3D " + width + " " + height);
 
-      // The PGraphics object needs to be created here so the renderer is not 
-      // null. This is required because PApplet.onResume events (which call 
-      // this.onResume() and thus require a valid renderer) are triggered 
+      // The PGraphics object needs to be created here so the renderer is not
+      // null. This is required because PApplet.onResume events (which call
+      // this.onResume() and thus require a valid renderer) are triggered
       // before surfaceChanged() is ever called.
       PGraphics newGraphics = new PGraphicsAndroid3D();
       // Set semi-arbitrary size; will be set properly when surfaceChanged() called
@@ -539,27 +541,27 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
       // Set context factory. This make possible to have 2.x contexts.
       setEGLContextFactory(((PGraphicsAndroid3D)g).getContextFactory());
-      
+
       // The renderer can be set only once.
       setEGLConfigChooser(((PGraphicsAndroid3D)g).getConfigChooser());
       setRenderer(((PGraphicsAndroid3D)g).getRenderer());
       setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
-      
+
       setFocusable(true);
       setFocusableInTouchMode(true);
       requestFocus();
     }
-    
- 
 
-    
+
+
+
     // part of SurfaceHolder.Callback
     public void surfaceCreated(SurfaceHolder holder) {
       super.surfaceCreated(holder);
       System.out.println("surfaceCreated()");
     }
 
-    
+
     // part of SurfaceHolder.Callback
     public void surfaceDestroyed(SurfaceHolder holder) {
       super.surfaceDestroyed(holder);
@@ -579,7 +581,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 //      height = h;
 //      g.setSize(w, h);
 
-      // No need to call g.setSize(width, height) b/c super.surfaceChanged() 
+      // No need to call g.setSize(width, height) b/c super.surfaceChanged()
       // will trigger onSurfaceChanged in the renderer, which calls setSize().
       // -- apparently not true? (100110)
     }
@@ -623,19 +625,19 @@ public class PApplet extends Activity implements PConstants, Runnable {
     }
   }
 
-  
+
   public class SketchSurfaceView2D extends SurfaceView implements SurfaceHolder.Callback {
 
     public SketchSurfaceView2D(Context context) {
       super(context);
-      
+
 //      println("surface holder");
       // Install a SurfaceHolder.Callback so we get notified when the
       // underlying surface is created and destroyed
       surfaceHolder = getHolder();
       surfaceHolder.addCallback(this);
       surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_GPU);
-      
+
 //      println("creating graphics");
       PGraphics newGraphics = new PGraphicsAndroid2D();
       // Set semi-arbitrary size; will be set properly when surfaceChanged() called
@@ -646,27 +648,27 @@ public class PApplet extends Activity implements PConstants, Runnable {
       // Set the value for 'g' once everything is ready (otherwise rendering
       // may attempt before setSize(), setParent() etc)
       g = newGraphics;
-      
+
 //      println("setting focusable, requesting focus");
       setFocusable(true);
       setFocusableInTouchMode(true);
       requestFocus();
-      
+
 //      println("done making surface view");
     }
 
-    
+
     // part of SurfaceHolder.Callback
     public void surfaceCreated(SurfaceHolder holder) {
     }
 
-    
+
     // part of SurfaceHolder.Callback
     public void surfaceDestroyed(SurfaceHolder holder) {
       g.dispose();
     }
 
-    
+
     // part of SurfaceHolder.Callback
     public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
       System.out.println("SketchSurfaceView2D.surfaceChanged() " + w + " " + h);
@@ -674,7 +676,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 //      width = w;
 //      height = h;
-//      
+//
 //      g.setSize(w, h);
     }
 
@@ -740,7 +742,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
     }
   }
 
-  
+
 
   //////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////
@@ -760,7 +762,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
   public String sketchRenderer() {
     return A2D;
   }
-  
+
 
 //  public int sketchOrientation() {
 //    return ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
@@ -850,7 +852,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
   protected RegisteredMethods preMethods, drawMethods, postMethods;
   protected RegisteredMethods mouseEventMethods, keyEventMethods;
   protected RegisteredMethods disposeMethods;
-  
+
   public class RegisteredMethods {
     int count;
     Object objects[];
@@ -1106,8 +1108,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
     //size(iwidth, iheight, irenderer, null);
     renderer(irenderer);
   }
-  
-  
+
+
   // not finished yet--will swap the renderer at a bad time
   public void renderer(String name) {
     if (name.equals(A2D)) {
@@ -1309,19 +1311,19 @@ public class PApplet extends Activity implements PConstants, Runnable {
     PImage image = new PImage(wide, high, format);
     image.parent = this;  // make save() work
     if (g instanceof PGraphicsAndroid3D) {
-      // TODO: Check why textures doesn't work in formats other than ARGB... 
+      // TODO: Check why textures doesn't work in formats other than ARGB...
       image.format = ARGB;
       image.initTexture();
     }
     return image;
   }
 
-  
+
   public PImage createImage(int wide, int high, int format, int filter) {
     PImage image = new PImage(wide, high, format);
     image.parent = this;  // make save() work
     if (g instanceof PGraphicsAndroid3D) {
-      // TODO: Check why textures doesn't work in formats other than ARGB... 
+      // TODO: Check why textures doesn't work in formats other than ARGB...
       image.format = ARGB;
       image.initTexture(filter);
     }
@@ -1333,14 +1335,14 @@ public class PApplet extends Activity implements PConstants, Runnable {
     PImage image = new PImage(wide, high, params.format);
     image.parent = this;  // make save() work
     if (g instanceof PGraphicsAndroid3D) {
-      // TODO: Check why textures doesn't work in formats other than ARGB... 
+      // TODO: Check why textures doesn't work in formats other than ARGB...
       image.format = params.format;
       image.initTexture(params);
     }
     return image;
   }
-    
-  
+
+
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
@@ -1497,7 +1499,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
       int newWidth = surfaceView.getWidth();
       int newHeight = surfaceView.getHeight();
       if (newWidth != width || newHeight != height) {
-        width = newWidth; 
+        width = newWidth;
         height = newHeight;
         g.setSize(width, height);
       }
@@ -1512,8 +1514,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
 //    } else {
 //      println("surface set to go.");
 //    }
-    
-    // don't start drawing (e.g. don't call setup) until there's a legitimate 
+
+    // don't start drawing (e.g. don't call setup) until there's a legitimate
     // width and height that have been set by surfaceChanged().
 //    boolean validSize = width != 0 && height != 0;
 //    println("valid size = " + validSize + " (" + width + "x" + height + ")");
@@ -1578,7 +1580,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
       g.endDraw();
 
       frameRateLastNanos = now;
-      frameCount++;      
+      frameCount++;
     }
   }
 
@@ -1624,15 +1626,15 @@ public class PApplet extends Activity implements PConstants, Runnable {
       ((PGraphicsAndroid3D)g).clear();
     }
   }
-  
-  
+
+
   synchronized public void noClear() {
     if (g instanceof PGraphicsAndroid3D) {
       ((PGraphicsAndroid3D)g).noClear();
     }
   }
-  
-  
+
+
   //////////////////////////////////////////////////////////////
 
 
@@ -2001,7 +2003,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 
   static protected Time time = new Time();
-  
+
   /**
    * Get the number of milliseconds since the applet started.
    * <P>
@@ -3229,18 +3231,26 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
   /**
    * Load a geometry from a file as a PShape (either an SVG or OBJ file).
-   */  
+   */
   public PShape loadShape(String filename) {
     return loadShape(filename, STATIC);
   }
-  
-  
+
+
   /**
    * Load a geometry from a file as a PShape (either an SVG or OBJ file).
    */
   public PShape loadShape(String filename, int mode) {
     if (filename.toLowerCase().endsWith(".svg")) {
       return new PShapeSVG(this, filename);
+    } else if (filename.toLowerCase().endsWith(".svgz")) {
+      try {
+        InputStream input = new GZIPInputStream(createInput(filename));
+        XMLElement xml = new XMLElement(createReader(input));
+        return new PShapeSVG(xml);
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
     } else if (filename.toLowerCase().endsWith(".obj")) {
       if (g instanceof PGraphicsAndroid3D) {
         return new PShape3D(this, filename, mode);
@@ -3254,15 +3264,15 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
   /**
    * Creates an empty, static 3D shape, with space for nvert vertices.
-   */  
+   */
   public PShape3D createShape(int nvert, int kind) {
     return this.createShape(nvert, kind, STATIC);
   }
-  
+
 
   /**
    * Creates an empty 3D shape, with space for nvert vertices.
-   */    
+   */
   public PShape3D createShape(int nvert, int kind, int mode) {
     if (g instanceof PGraphicsAndroid3D) {
       PShape3D.Parameters params = PShape3D.newParameters(kind, mode);
@@ -3273,10 +3283,10 @@ public class PApplet extends Activity implements PConstants, Runnable {
     }
   }
 
-  
+
   /**
    * Tesselates a PShape into a static PShape3D (it cannot be modified during the drawing loop).
-   */      
+   */
   public PShape3D createShape(PShape shape) {
     return createShape(shape, STATIC);
   }
@@ -3284,11 +3294,11 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
   /**
    * Tesselates a PShape into a PShape3D with the desired drawing mode (STATID or DYNAMIC)..
-   */        
+   */
   public PShape3D createShape(PShape shape, int mode) {
     if (g instanceof PGraphicsAndroid3D) {
       PGraphicsAndroid3D a3d = (PGraphicsAndroid3D)g;
-      a3d.beginShapeRecorderImpl(); 
+      a3d.beginShapeRecorderImpl();
       shape(shape, 0, 0, 1, 1);
       PShape3D.Parameters params = PShape3D.newParameters(TRIANGLES, mode);
       PShape3D shape3d = new PShape3D(this, a3d.recordedVertices.size(), params);
@@ -3297,8 +3307,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
     } else  {
        throw new RuntimeException("3D PShapes can only be created when using the A3D renderer.");
     }
-  }  
-  
+  }
+
   //////////////////////////////////////////////////////////////
 
   // FONT I/O
@@ -3325,7 +3335,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
     return createFont("SansSerif", size, true, null);
   }
 
-  
+
   public PFont createFont(String name, float size) {
     return createFont(name, size, true, null);
   }
@@ -3357,8 +3367,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
     }
     return new PFont(baseFont, round(size), smooth, charset);
   }
-  
-  
+
+
   //////////////////////////////////////////////////////////////
 
   // FILE/FOLDER SELECTION
@@ -3783,7 +3793,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
       // ignore this and move on
       //e.printStackTrace();
     }
-    
+
     // Maybe this is an absolute path, didja ever think of that?
     File absFile = new File(filename);
     if (absFile.exists()) {
@@ -3796,8 +3806,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
         //fnfe.printStackTrace();
       }
     }
-    
-    // Maybe this is a file that was written by the sketch on another occasion. 
+
+    // Maybe this is a file that was written by the sketch on another occasion.
     File sketchFile = new File(sketchPath(filename));
     if (sketchFile.exists()) {
       try {
@@ -3809,7 +3819,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
         //fnfe.printStackTrace();
       }
     }
-    
+
     // Attempt to load the file more directly. Doesn't like paths.
     Context context = getApplicationContext();
     try {
@@ -3973,7 +3983,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
   public OutputStream createOutput(String filename) {
     try {
       // in spite of appearing to be the 'correct' option, this doesn't allow
-      // for paths, so no subfolders, none of that savePath() goodness.  
+      // for paths, so no subfolders, none of that savePath() goodness.
 //      Context context = getApplicationContext();
 //      // MODE_PRIVATE is default, should we use that instead?
 //      return context.openFileOutput(filename, MODE_WORLD_READABLE);
@@ -4174,7 +4184,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 //                                 "or security restrictions prevented " +
 //                                 "it from determining its path.");
     }
-    
+
     // isAbsolute() could throw an access exception, but so will writing
     // to the local disk using the sketch path, so this is safe here.
     // for 0120, added a try/catch anyways.
@@ -4423,7 +4433,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
     return temp;
   }
 
-  
+
   static public PImage[] expand(PImage list[]) {
     return expand(list, list.length << 1);
   }
@@ -4433,7 +4443,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
     System.arraycopy(list, 0, temp, 0, Math.min(newSize, list.length));
     return temp;
   }
-  
+
 
   static public float[] expand(float list[]) {
     return expand(list, list.length << 1);
@@ -5074,7 +5084,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 
   static protected HashMap<String, Pattern> matchPatterns;
-  
+
   static Pattern matchPattern(String regexp) {
     Pattern p = null;
     if (matchPatterns == null) {
@@ -5084,12 +5094,12 @@ public class PApplet extends Activity implements PConstants, Runnable {
     }
     if (p == null) {
       if (matchPatterns.size() == 10) {
-        // Just clear out the match patterns here if more than 10 are being 
-        // used. It's not terribly efficient, but changes that you have >10  
-        // different match patterns are very slim, unless you're doing 
-        // something really tricky (like custom match() methods), in which 
-        // case match() won't be efficient anyway. (And you should just be 
-        // using your own Java code.) The alternative is using a queue here,  
+        // Just clear out the match patterns here if more than 10 are being
+        // used. It's not terribly efficient, but changes that you have >10
+        // different match patterns are very slim, unless you're doing
+        // something really tricky (like custom match() methods), in which
+        // case match() won't be efficient anyway. (And you should just be
+        // using your own Java code.) The alternative is using a queue here,
         // but that's a silly amount of work for negligible benefit.
         matchPatterns.clear();
       }
@@ -5098,8 +5108,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
     }
     return p;
   }
-  
-  
+
+
   /**
    * Match a string with a regular expression, and returns the match as an
    * array. The first index is the matching expression, and array elements
@@ -6634,7 +6644,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
     super.onStop();
   }
 
-  
+
   //////////////////////////////////////////////////////////////
 
   // everything below this line is automatically generated. no touch.
@@ -6667,9 +6677,9 @@ public class PApplet extends Activity implements PConstants, Runnable {
     } else  {
        throw new RuntimeException("The shapes recorder can only be used with the A3D renderer.");
     }
-  }  
+  }
 
-  
+
   public void beginShapeRecorder() {
     if (g instanceof PGraphicsAndroid3D) {
       ((PGraphicsAndroid3D) g).beginShapeRecorder();
@@ -6677,17 +6687,17 @@ public class PApplet extends Activity implements PConstants, Runnable {
        throw new RuntimeException("The shape recorder can only be used with the A3D renderer.");
     }
   }
-  
-  
+
+
   public void beginShapeRecorder(int kind) {
     if (g instanceof PGraphicsAndroid3D) {
       ((PGraphicsAndroid3D) g).beginShapeRecorder(kind);
     } else  {
        throw new RuntimeException("The shape recorder can only be used with the A3D renderer.");
-    }    
+    }
   }
 
-  
+
   public void edge(boolean edge) {
     g.edge(edge);
   }
@@ -6747,34 +6757,34 @@ public class PApplet extends Activity implements PConstants, Runnable {
     g.endShape(mode);
   }
 
-  
+
   public PShape3D endShapesRecorder() {
     if (g instanceof PGraphicsAndroid3D) {
       return ((PGraphicsAndroid3D) g).endShapesRecorder();
     } else  {
        throw new RuntimeException("The shapes recorder can only be used with the A3D renderer.");
     }
-  } 
-  
-  
+  }
+
+
   public PShape3D endShapeRecorder() {
     if (g instanceof PGraphicsAndroid3D) {
       return ((PGraphicsAndroid3D) g).endShapeRecorder();
     } else  {
        throw new RuntimeException("The shape recorder can only be used with the A3D renderer.");
     }
-  }  
-  
-  
+  }
+
+
   public PShape3D endShapeRecorder(int mode) {
     if (g instanceof PGraphicsAndroid3D) {
       return ((PGraphicsAndroid3D) g).endShapeRecorder(mode);
     } else  {
        throw new RuntimeException("The shape recorder can only be used with the A3D renderer.");
     }
-  }  
-  
-  
+  }
+
+
   public void bezierVertex(float x2, float y2,
                            float x3, float y3,
                            float x4, float y4) {
@@ -6999,9 +7009,9 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
   public void shape(PShape shape, float x, float y, float z) {
     g.shape(shape, x, y, z);
-  }  
-  
-  
+  }
+
+
   public void shape(PShape shape, float x, float y, float c, float d) {
     g.shape(shape, x, y, c, d);
   }
@@ -7010,8 +7020,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
   public void shape(PShape shape, float x, float y, float z, float c, float d, float e) {
     g.shape(shape, x, y, z, c, d, e);
   }
-  
-  
+
+
   public void textAlign(int align) {
     g.textAlign(align);
   }
@@ -7185,8 +7195,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
   public void scale(float x, float y, float z) {
     g.scale(x, y, z);
   }
-  
-  
+
+
   public void skewX(float angle) {
     g.skewX(angle);
   }
@@ -7561,7 +7571,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
     g.noLights();
   }
 
-  
+
   public void resetLights() {
     g.resetLights();
   }
