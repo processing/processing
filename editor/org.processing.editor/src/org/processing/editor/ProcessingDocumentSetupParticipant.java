@@ -17,12 +17,13 @@ import org.eclipse.jface.text.rules.FastPartitioner;
 public class ProcessingDocumentSetupParticipant implements IDocumentSetupParticipant {
 	
 	/**
+	 * The constructor doesn't do much.
 	 */
 	public ProcessingDocumentSetupParticipant() {
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IDocumentSetupParticipant#setup(org.eclipse.jface.text.IDocument)
+	/**
+	 * {@inheritDoc}
 	 */
 	public void setup(IDocument document) {
 		if (document instanceof IDocumentExtension3) {

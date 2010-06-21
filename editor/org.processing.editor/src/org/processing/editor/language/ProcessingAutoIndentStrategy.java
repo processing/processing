@@ -25,13 +25,13 @@ public class ProcessingAutoIndentStrategy extends DefaultIndentLineAutoEditStrat
 	public ProcessingAutoIndentStrategy() {
 	}
 	
-	/* (non-Javadoc)
-	 * Method declared on IAutoIndentStrategy
+	/**
+	 * {@inheritDoc}
 	 */
 	public void customizeDocumentCommand(IDocument d, DocumentCommand c) {
 		if (c.length == 0 && c.text != null && endsWithDelimiter(d, c.text))
 			smartIndentAfterNewLine(d, c);
-		else if ("}".equals(c.text)) { //$NON-NLS-1$
+		else if ("}".equals(c.text)) {
 			smartInsertAfterBracket(d, c);
 		}
 	}

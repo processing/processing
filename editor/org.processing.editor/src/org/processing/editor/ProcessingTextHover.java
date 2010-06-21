@@ -19,8 +19,8 @@ import org.eclipse.swt.graphics.Point;
  */
 public class ProcessingTextHover implements ITextHover {
 
-	/* (non-Javadoc)
-	 * Method declared on ITextHover
+	/**
+	 * {@inheritDoc}
 	 */
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
 		if (hoverRegion != null) {
@@ -34,8 +34,8 @@ public class ProcessingTextHover implements ITextHover {
 		return ProcessingEditorMessages.getString("ProcessingTextHover.emptySelection"); //$NON-NLS-1$
 	}
 	
-	/* (non-Javadoc)
-	 * Method declared on ITextHover
+	/**
+	 * {@inheritDoc}
 	 */
 	public IRegion getHoverRegion(ITextViewer textViewer, int offset) {
 		Point selection= textViewer.getSelectedRange();
