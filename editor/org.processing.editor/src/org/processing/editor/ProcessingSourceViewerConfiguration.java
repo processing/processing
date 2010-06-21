@@ -57,14 +57,21 @@ public class ProcessingSourceViewerConfiguration extends SourceViewerConfigurati
 	public ProcessingSourceViewerConfiguration() {
 	}
 	
-	/* (non-Javadoc)
-	 * Method declared on SourceViewerConfiguration
+	/**
+	 * Starts up the mouse hover tooltips
 	 */
 	public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer) {
 		return new ProcessingAnnotationHover();
 	}
 		
-	/*
+	/**
+	 * Returns the auto-indent strategy used when manipulating text in the editor. To maintain backwards
+	 * compatibility with the Eclipse RCP, this always returns an array containing the auto indent strategy.
+	 * 
+	 * @param sourceViewer the source veiwer to be configured
+	 * @param contentType the content type for which the strategies are applicable
+	 * @return an auto indent strategy, or null
+	 * @see org.processing.editor.language.ProcessingAutoIndentStrategy
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getAutoEditStrategies(org.eclipse.jface.text.source.ISourceViewer, java.lang.String)
 	 */
 	public IAutoEditStrategy[] getAutoEditStrategies(ISourceViewer sourceViewer, String contentType) {
@@ -72,15 +79,22 @@ public class ProcessingSourceViewerConfiguration extends SourceViewerConfigurati
 		return new IAutoEditStrategy[] { strategy };
 	}
 	
-	/*
+	/**
+	 * Returns the Processing partitioning, because this editor only acts on .pde files
+	 * 
+	 * @param sourceViewer the source viewer to be configured
+	 * @return a Processing partitioning
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getConfiguredDocumentPartitioning(org.eclipse.jface.text.source.ISourceViewer)
 	 */
 	public String getConfiguredDocumentPartitioning(ISourceViewer sourceViewer) {
 		return ProcessingEditorPlugin.PROCESSING_PARTITIONING;
 	}
 	
-	/* (non-Javadoc)
-	 * Method declared on SourceViewerConfiguration
+	/**
+	 * Returns the partitioning types to the source viewer so it can distinguish between comments and everything else.
+	 * 
+	 * @param sourceViewer the source viewer to be configured
+	 * @return a string array of the content types
 	 */
 	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
 		//Removing JavaDoc support from sketches, but leave in code
@@ -88,9 +102,12 @@ public class ProcessingSourceViewerConfiguration extends SourceViewerConfigurati
 		return new String[] { IDocument.DEFAULT_CONTENT_TYPE, ProcessingPartitionScanner.JAVA_MULTILINE_COMMENT };
 	}
 	
-	/* (non-Javadoc)
-	 * Method declared on SourceViewerConfiguration
-	 */
+	/**
+	* Returns content assistance 
+	* 
+	* @param the source viewer the be configured
+	* @return a content assistant of dubious utility
+	*/
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
 
 		ContentAssistant assistant= new ContentAssistant();
@@ -100,7 +117,7 @@ public class ProcessingSourceViewerConfiguration extends SourceViewerConfigurati
 		//assistant.setContentAssistProcessor(new JavaDocCompletionProcessor(), ProcessingPartitionScanner.JAVA_DOC);
 
 		assistant.enableAutoActivation(true);
-		assistant.setAutoActivationDelay(500);
+		assistant.setAutoActivationDelay(500); // delay before content assist pops up
 		assistant.setProposalPopupOrientation(IContentAssistant.PROPOSAL_OVERLAY);
 		assistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
 		assistant.setContextInformationPopupBackground(ProcessingEditorPlugin.getDefault().getProcessingColorProvider().getColor(new RGB(150, 150, 0)));
@@ -108,29 +125,30 @@ public class ProcessingSourceViewerConfiguration extends SourceViewerConfigurati
 		return assistant;
 	}
 	
-	/* (non-Javadoc)
-	 * Method declared on SourceViewerConfiguration
+	/**
+	 * Returns the default prefix to be used by the line-prefix operation in the editor.
+	 * This is used for auto-commenting and uncommenting.
 	 */
 	public String getDefaultPrefix(ISourceViewer sourceViewer, String contentType) {
 		return (IDocument.DEFAULT_CONTENT_TYPE.equals(contentType) ? "//" : null); //$NON-NLS-1$
 	}
 	
-	/* (non-Javadoc)
-	 * Method declared on SourceViewerConfiguration
+	/**
+	 * {@inheritDoc}
 	 */
 	public ITextDoubleClickStrategy getDoubleClickStrategy(ISourceViewer sourceViewer, String contentType) {
 		return new ProcessingDoubleClickSelector();
 	}
 	
-	/* (non-Javadoc)
-	 * Method declared on SourceViewerConfiguration
+	/**
+	 * {@inheritDoc}
 	 */
 	public String[] getIndentPrefixes(ISourceViewer sourceViewer, String contentType) {
-		return new String[] { "\t", "    " }; //$NON-NLS-1$ //$NON-NLS-2$
+		return new String[] { "\t", "    " };
 	}
 	
-	/* (non-Javadoc)
-	 * Method declared on SourceViewerConfiguration
+	/**
+	 * {@inheritDoc}
 	 */
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
 		
@@ -155,15 +173,15 @@ public class ProcessingSourceViewerConfiguration extends SourceViewerConfigurati
 		return reconciler;
 	}
 	
-	/* (non-Javadoc)
-	 * Method declared on SourceViewerConfiguration
+	/**
+	 * {@inheritDoc}
 	 */
 	public int getTabWidth(ISourceViewer sourceViewer) {
 		return 4;
 	}
 	
-	/* (non-Javadoc)
-	 * Method declared on SourceViewerConfiguration
+	/**
+	 * {@inheritDoc}
 	 */
 	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
 		return new ProcessingTextHover();

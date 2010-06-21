@@ -81,8 +81,8 @@ public class ProcessingContentOutlinePage extends ContentOutlinePage {
 			}
 		}
 
-		/*
-		 * @see IContentProvider#inputChanged(Viewer, Object, Object)
+		/**
+		 * {@inheritDoc}
 		 */
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			if (oldInput != null) {
@@ -109,7 +109,9 @@ public class ProcessingContentOutlinePage extends ContentOutlinePage {
 			}
 		}
 
-		/*
+		/**
+		 * Shut it down.
+		 * 
 		 * @see IContentProvider#dispose
 		 */
 		public void dispose() {
@@ -119,29 +121,29 @@ public class ProcessingContentOutlinePage extends ContentOutlinePage {
 			}
 		}
 
-		/*
-		 * @see IContentProvider#isDeleted(Object)
+		/**
+		 * {@inheritDoc}
 		 */
 		public boolean isDeleted(Object element) {
 			return false;
 		}
 
-		/*
-		 * @see IStructuredContentProvider#getElements(Object)
+		/**
+		 * {@inheritDoc}
 		 */
 		public Object[] getElements(Object element) {
 			return fContent.toArray();
 		}
 
-		/*
-		 * @see ITreeContentProvider#hasChildren(Object)
+		/**
+ 		 * {@inheritDoc}
 		 */
 		public boolean hasChildren(Object element) {
 			return element == fInput;
 		}
 
-		/*
-		 * @see ITreeContentProvider#getParent(Object)
+		/**
+		 * {@inheritDoc}
 		 */
 		public Object getParent(Object element) {
 			if (element instanceof Segment)
@@ -149,8 +151,8 @@ public class ProcessingContentOutlinePage extends ContentOutlinePage {
 			return null;
 		}
 
-		/*
-		 * @see ITreeContentProvider#getChildren(Object)
+		/**
+		 * {@inheritDoc}
 		 */
 		public Object[] getChildren(Object element) {
 			if (element == fInput)
@@ -175,8 +177,8 @@ public class ProcessingContentOutlinePage extends ContentOutlinePage {
 		fTextEditor= editor;
 	}
 	
-	/* (non-Javadoc)
-	 * Method declared on ContentOutlinePage
+	/**
+	 * {@inheritDoc}
 	 */
 	public void createControl(Composite parent) {
 
@@ -191,8 +193,8 @@ public class ProcessingContentOutlinePage extends ContentOutlinePage {
 			viewer.setInput(fInput);
 	}
 	
-	/* (non-Javadoc)
-	 * Method declared on ContentOutlinePage
+	/**
+	 * {@inheritDoc}
 	 */
 	public void selectionChanged(SelectionChangedEvent event) {
 
