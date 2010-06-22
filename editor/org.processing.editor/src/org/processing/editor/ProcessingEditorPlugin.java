@@ -144,7 +144,7 @@ public class ProcessingEditorPlugin extends AbstractUIPlugin {
 	  * @return BufferedInputStream to read the file with
 	  */
 	 public BufferedInputStream getFileInputStream(String filename) {
-		 //TODO consider replacing this with find (IPath path) and openStream (IPath file)
+		 //TODO consider replacing this whole function with find (IPath path) and openStream (IPath file)
 		 Bundle bundle = getDefault().getBundle(); // the plugin's root directory, regardless of install directory
 		 try {
 			 URL fileLocation = FileLocator.toFileURL(bundle.getEntry(filename));
