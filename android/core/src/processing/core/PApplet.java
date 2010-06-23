@@ -1621,20 +1621,6 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
-  synchronized public void clear() {
-    if (g instanceof PGraphicsAndroid3D) {
-      ((PGraphicsAndroid3D)g).clear();
-    }
-  }
-
-
-  synchronized public void noClear() {
-    if (g instanceof PGraphicsAndroid3D) {
-      ((PGraphicsAndroid3D)g).noClear();
-    }
-  }
-
-
   //////////////////////////////////////////////////////////////
 
 
@@ -7808,4 +7794,28 @@ public class PApplet extends Activity implements PConstants, Runnable {
                     int dx, int dy, int dw, int dh, int mode) {
     g.blend(src, sx, sy, sw, sh, dx, dy, dw, dh, mode);
   }
+  
+  //////////////////////////////////////////////////////////////
+  
+  // A3D-only functions
+  
+  // TODO: Discuss proper integration into PApplet API. 
+  synchronized public void clear() {
+    if (g instanceof PGraphicsAndroid3D) {
+      ((PGraphicsAndroid3D)g).clear();
+    } else  {
+       throw new RuntimeException("This method is only available in PGraphicsAndroid3D renderer.");
+    }    
+  }
+
+
+  synchronized public void noClear() {
+    if (g instanceof PGraphicsAndroid3D) {
+      ((PGraphicsAndroid3D)g).noClear();
+    } else  {
+       throw new RuntimeException("This method is only available in PGraphicsAndroid3D renderer.");
+    }    
+  }
+  
+  
 }
