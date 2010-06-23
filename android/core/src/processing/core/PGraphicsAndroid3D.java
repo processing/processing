@@ -318,6 +318,10 @@ public class PGraphicsAndroid3D extends PGraphics {
   boolean blend;
   int blendMode;  
 
+  // ........................................................  
+  
+  boolean depthMask;
+  
   // ........................................................
     
   public String OPENGL_VENDOR;
@@ -493,8 +497,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     screenTexCrop[0] = 0;
     screenTexCrop[1] = 0;
-    screenTexCrop[2] = width; //screenTexWidth;
-    screenTexCrop[3] = height; //screenTexHeight;      
+    screenTexCrop[2] = width;
+    screenTexCrop[3] = height;      
   }
 
   protected void drawScreenTexture() {
@@ -511,16 +515,19 @@ public class PGraphicsAndroid3D extends PGraphics {
     // Depth mask is disabled so the depth values are not modified when
     // rendering the texture quad. In this way the texture doesn't occlude
     // any geometry latter drawn by the user.
-    gl.glDepthMask(false);
+    gl.glDepthMask(false);    
     gl.glDisable(GL10.GL_BLEND);
     
     gl11.glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, screenTexCrop, 0);
-    //gl11x.glDrawTexiOES(0, 0, 0, screenTexWidth, screenTexHeight);
     gl11x.glDrawTexiOES(0, 0, 0, width, height);
     
     gl.glDisable(GL10.GL_TEXTURE_2D);   
     gl.glDepthMask(true);
-    gl.glEnable(GL10.GL_BLEND);
+    if (blend) {
+      blend(blendMode);
+    } else {
+      noBlend();
+    }
   }
 
   protected void copyFrameToScreenTexture() {
@@ -569,7 +576,11 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     gl.glDisable(tex.getGLTarget());   
     gl.glDepthMask(true);
-    gl.glEnable(GL10.GL_BLEND);
+    if (blend) {
+      blend(blendMode);
+    } else {
+      noBlend();
+    }
   }
   
   public void swapDrawIndex() {
@@ -689,6 +700,12 @@ public class PGraphicsAndroid3D extends PGraphics {
     drawTextures = new PTexture[2];
     drawTextures[0] = drawImages[0].getTexture();
     drawTextures[1] = drawImages[1].getTexture();
+    
+    // Drawing textures are marked as flipped along Y to ensure they are properly
+    // rendered by Processing, which has inverted Y axis with respect to
+    // OpenGL.
+    drawTextures[0].setFlippedY(true);
+    drawTextures[1].setFlippedY(true);
 
     drawIndex = 0;
 
@@ -757,10 +774,11 @@ public class PGraphicsAndroid3D extends PGraphics {
       maxPointSize = a3d.maxPointSize;
     }
     
-    if (!settingsInited)
+    if (!settingsInited) {
       defaultSettings();
+    }
 
-    resetMatrix(); // reset model matrix.
+    //resetMatrix(); // reset model matrix.
 
     report("top beginDraw()");
 
@@ -891,10 +909,10 @@ public class PGraphicsAndroid3D extends PGraphics {
         }
       }  
     }
-    
-    gl.glFlush();
 
-    if (!primarySurface) {
+    if (primarySurface) {
+      gl.glFlush();
+    } else { 
       ((PGraphicsAndroid3D)parent.g).restoreGLState();
     }
     
@@ -936,7 +954,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     super.defaultSettings();
 
     manipulatingCamera = false;
-    perspective();
+    //perspective();
 
     // easiest for beginners
     textureMode(IMAGE);
