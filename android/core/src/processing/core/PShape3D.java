@@ -27,6 +27,7 @@ import java.nio.FloatBuffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Hashtable;
 import java.io.BufferedReader;
 import java.lang.reflect.Method;
@@ -1599,6 +1600,10 @@ public class PShape3D extends PShape implements PConstants {
     colorBuffer = vbb.asFloatBuffer();          
 
     colorArray = new float[numVertices * 4];
+    // Set the initial color of all vertices to white, so they are initially visible
+    // even if the user doesn't set any vertex color.
+    Arrays.fill(colorArray, 1.0f);
+    
     colorBuffer.put(colorArray);
     colorBuffer.flip();    
   }  
