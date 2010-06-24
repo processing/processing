@@ -1899,7 +1899,7 @@ public class PShape3D extends PShape implements PConstants {
         // Binding texture units.
          
         gl.glActiveTexture(GL11.GL_TEXTURE0);
-        gl.glBindTexture(GL11.GL_TEXTURE_2D, tex.getGLTextureID()); 
+        gl.glBindTexture(texTarget, tex.getGLTextureID());
          
         if (pointSprites) {
           // Texturing with point sprites.
