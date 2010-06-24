@@ -707,11 +707,7 @@ public class PFont implements PConstants {
 
     gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S, GL10.GL_CLAMP_TO_EDGE);
     gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T, GL10.GL_CLAMP_TO_EDGE);
-    
-    // This is the right texture environment mode to use the current fill color to tint the fonts:
-    // http://www.khronos.org/opengles/documentation/opengles1_0/html/glTexEnv.html
-    gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_MODULATE);
-                    
+                        
     gl.glTexImage2D(GL10.GL_TEXTURE_2D, 0, GL10.GL_RGBA,  texWidth, texHeight, 0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, null);
     gl.glBindTexture(GL10.GL_TEXTURE_2D, 0);
     currentTexID = -1; // No texture is currently bound.
