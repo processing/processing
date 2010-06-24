@@ -263,17 +263,6 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // ........................................................
 
-  // Extensions support.
-  protected boolean npotTexSupported;
-  protected boolean mipmapSupported;
-  protected boolean matrixGetSupported;
-  protected boolean vboSupported;
-  protected boolean fboSupported;
-  protected int maxTextureSize;
-  protected float maxPointSize;
-
-  // ........................................................
-
   // This array contains the recreateResource methods of all the GL objects
   // created in Processing. These methods are used to recreate the open GL
   // data when there is a context change or surface creation in Android.
@@ -321,13 +310,24 @@ public class PGraphicsAndroid3D extends PGraphics {
   // ........................................................  
   
   boolean depthMask;
+
+  // ........................................................
+
+  // Extensions support.
+  static protected boolean npotTexSupported;
+  static protected boolean mipmapSupported;
+  static protected boolean matrixGetSupported;
+  static protected boolean vboSupported;
+  static protected boolean fboSupported;
+  static protected int maxTextureSize;
+  static protected float maxPointSize;  
   
   // ........................................................
-    
-  public String OPENGL_VENDOR;
-  public String OPENGL_RENDERER;
-  public String OPENGL_VERSION;
-
+  
+  // OpenGL strings
+  static public String OPENGL_VENDOR;
+  static public String OPENGL_RENDERER;
+  static public String OPENGL_VERSION;  
   
   // ////////////////////////////////////////////////////////////
 
@@ -693,12 +693,20 @@ public class PGraphicsAndroid3D extends PGraphics {
     drawTexCrop[2] = width;
     drawTexCrop[3] = height;      
 
-    // Linear filtering is needed to keep decent image quality when rendering 
-    // texture at a size different from its original resolution. This is expected
-    // to happen for offscreen rendering.
     drawImages = new PImage[2];
-    drawImages[0] = parent.createImage(width, height, ARGB, LINEAR);
-    drawImages[1] = parent.createImage(width, height, ARGB, LINEAR);    
+    if (primarySurface) {
+      // Nearest filtering is used for the primary surface, otherwise some 
+      // artifacts appear (diagonal line when blending, for instance). This
+      // might deserve further examination.
+      drawImages[0] = parent.createImage(width, height, ARGB, NEAREST);
+      drawImages[1] = parent.createImage(width, height, ARGB, NEAREST);          
+    } else {
+      // Linear filtering is needed to keep decent image quality when rendering 
+      // texture at a size different from its original resolution. This is expected
+      // to happen for offscreen rendering.
+      drawImages[0] = parent.createImage(width, height, ARGB, LINEAR);
+      drawImages[1] = parent.createImage(width, height, ARGB, LINEAR);                
+    }
     
     drawTextures = new PTexture[2];
     drawTextures[0] = drawImages[0].getTexture();
@@ -745,10 +753,16 @@ public class PGraphicsAndroid3D extends PGraphics {
     TRIANGLECOUNT = 0;
     FACECOUNT = 0;
 
-    if (!primarySurface) {
+    if (!primarySurface) {      
       PGraphicsAndroid3D a3d = (PGraphicsAndroid3D)parent.g;
       a3d.saveGLState();
       
+      // Getting gl objects from primary surface:
+      gl = a3d.gl;
+      gl11 = a3d.gl11;
+      gl11x = a3d.gl11x;
+      gl11xp = a3d.gl11xp;
+            
       // Disabling all lights, so the offscreen renderer can set completely
       // new light configuration (otherwise some light config from the 
       // primary renderer might stay).
@@ -756,25 +770,12 @@ public class PGraphicsAndroid3D extends PGraphics {
         a3d.glLightDisable(i);
       }
       
-      // Getting gl objects from primary surface:
-      gl = a3d.gl;
-      gl11 = a3d.gl11;
-      gl11x = a3d.gl11x;
-      gl11xp = a3d.gl11xp;
-      
-      
-      OPENGL_VENDOR = a3d.OPENGL_VENDOR;
-      OPENGL_RENDERER = a3d.OPENGL_RENDERER;
-      OPENGL_VERSION = a3d.OPENGL_VERSION;
-
-      npotTexSupported = a3d.npotTexSupported;
-      mipmapSupported = a3d.mipmapSupported;
-      matrixGetSupported = a3d.matrixGetSupported;
-      vboSupported = a3d.vboSupported;
-      fboSupported = a3d.fboSupported;      
-      
-      maxTextureSize = a3d.maxTextureSize;
-      maxPointSize = a3d.maxPointSize;
+      if (a3d.lights) {
+        // The offscreen renderer starts with lights off by default. 
+        // If the primary surface had lights on, the OpenGL state is
+        // changed accordingly.
+        noLights();  
+      }       
     }
     
     if (!settingsInited) {
@@ -862,7 +863,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         pushFramebuffer();
         setFramebuffer(drawFramebuffer);
         drawFramebuffer.addColorBuffer(drawTextures[drawIndex]);
-        
+                
         gl.glClearColor(0, 0, 0, 0);
         if (clear) {
           gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);          
@@ -894,7 +895,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       if (fboSupported) {
         if (drawFramebuffer != null) {
           popFramebuffer();
-
+          
           if (primarySurface) {
             // Only the primary surface in clear mode will write the contents of the
             // ofscreen framebuffer to the screen.
@@ -904,6 +905,7 @@ public class PGraphicsAndroid3D extends PGraphics {
             // Render current draw texture to screen.
             renderDrawTexture(drawIndex);
           }
+           
           swapDrawIndex();
         }
       } else {

@@ -113,7 +113,7 @@ public class PShape3D extends PShape implements PConstants {
     if (gl == null) {
       throw new RuntimeException("PShape3D: OpenGL ES 1.1 required");
     }
-    if (!a3d.vboSupported) {
+    if (!PGraphicsAndroid3D.vboSupported) {
        throw new RuntimeException("PShape3D: Vertex Buffer Objects are not available");
     }
 
@@ -152,7 +152,7 @@ public class PShape3D extends PShape implements PConstants {
     if (gl == null) {
       throw new RuntimeException("PShape3D: OpenGL ES 1.1 required");
     }
-    if (!a3d.vboSupported) {
+    if (!PGraphicsAndroid3D.vboSupported) {
        throw new RuntimeException("PShape3D: Vertex Buffer Objects are not available");
     }
     
@@ -1855,7 +1855,14 @@ public class PShape3D extends PShape implements PConstants {
     g.TRIANGLECOUNT = g.VERTEXCOUNT / 3; 
 	  
 	  // Setting line width and point size from stroke value.
-		pointSize = PApplet.min(a3d.strokeWeight, a3d.maxPointSize);
+    // TODO: Here the stroke weight from the g renderer is used. Normally, no issue here, but
+    // in the case the shape is being rendered from an offscreen A3D surface, then this might
+    // lead to the possibilty of a stroke weight different from that of the main renderer.
+    // For strokeWeight it seems to make sense that the value of the offscreen renderer and not
+    // of the main renderer is used. But what about other properties such as textureMode or
+    // colorMode. Right now they are read from a3d, which refers to the main renderer.
+    // So what should be the normal behavior.
+		pointSize = PApplet.min(g.strokeWeight, PGraphicsAndroid3D.maxPointSize);
     gl.glPointSize(pointSize);
   
     if (!depthMaskEnabled) {
@@ -1907,7 +1914,7 @@ public class PShape3D extends PShape implements PConstants {
           // the minimum and maximum point sizes.
           gl.glPointParameterf(GL11.GL_POINT_FADE_THRESHOLD_SIZE, 0.6f * pointSize);
           gl.glPointParameterf(GL11.GL_POINT_SIZE_MIN, 1.0f);
-          gl.glPointParameterf(GL11.GL_POINT_SIZE_MAX, a3d.maxPointSize);
+          gl.glPointParameterf(GL11.GL_POINT_SIZE_MAX, PGraphicsAndroid3D.maxPointSize);
 
           // Specify point sprite texture coordinate replacement mode for each 
           // texture unit
@@ -1932,7 +1939,7 @@ public class PShape3D extends PShape implements PConstants {
       if (0 < group.sw) {
         gl.glLineWidth(group.sw);
       } else {
-        gl.glLineWidth(a3d.strokeWeight);
+        gl.glLineWidth(g.strokeWeight);
       }
       
       if (0 < group.glMode && !pointSprites) {
