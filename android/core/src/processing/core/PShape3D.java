@@ -84,9 +84,11 @@ public class PShape3D extends PShape implements PConstants {
   protected float zmin, zmax;
   
   protected float ptDistAtt[] = { 1.0f, 0.0f, 0.01f, 1.0f };
+  
+  protected boolean texCoordSet = false;
 
   // TODO: consider implementing simple depth sorting for particle systems, 
-  // and a more intuive way to implement the api for enabling/disabling depth masking.
+  // and a more intutive way to implement the api for enabling/disabling depth masking.
   protected boolean depthMaskEnabled = true;
   
   protected static final int SIZEOF_FLOAT = Float.SIZE / 8;
@@ -318,7 +320,8 @@ public class PShape3D extends PShape implements PConstants {
       texCoordBuffer.flip();
       
       gl.glBufferSubData(GL11.GL_ARRAY_BUFFER, offset * SIZEOF_FLOAT, size * SIZEOF_FLOAT, texCoordBuffer);
-      gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);      
+      gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
+      texCoordSet = true;
     } else if (updateElement == GROUPS) {
       // TODO: check consistency of newly created groups (make sure that there are not overlapping groups)      
     }
@@ -766,7 +769,7 @@ public class PShape3D extends PShape implements PConstants {
     PApplet.arrayCopy(texCoordArray, res);
     
     // The inversion of texture coordinates require looping through all the vertices,
-    // which is not needed if there are no texures assigned to the shape.
+    // which is not needed if there are no textures assigned to the shape.
     boolean textured = false;
     for (int i = 0; i < vertGroup.length; i++) {
       if (vertGroup[i].texture != null) {
@@ -1160,7 +1163,108 @@ public class PShape3D extends PShape implements PConstants {
   
   public void setGroupTexture(int gr, PImage tex) {
     VertexGroup group = (VertexGroup)groups.get(gr);
-    group.texture = tex;
+    
+    if (tex == null || tex.getTexture() == null) {
+      throw new RuntimeException("PShape3D: trying to set null texture.");
+    }
+    
+    if  (updateElement == -1 && texCoordSet) {
+      // Ok, setting a new texture for group, when texture coordinates have
+      // already been set. What is the problem? the new texture might have different
+      // width, height, flippingX/Y values, so the texture coordinates need
+      // to be updated accordingly...
+      // Also, we must be sure of not being inside an update block, this is
+      // why the updateElement == -1 condition.
+      
+      PTexture tex0;
+      if (group.texture == null) {
+        tex0 = null;
+      } else {
+        tex0 = group.texture.getTexture();  
+      }
+      PTexture tex1 = tex.getTexture(); 
+
+      boolean diff = tex0 == null ||
+                                  tex.width != group.texture.width ||
+                                  tex.height != group.texture.height ||
+                                  tex1.flippedX != tex0.flippedX ||
+                                  tex1.flippedY != tex0.flippedY ||
+                                  tex1.maxTexCoordS != tex0.maxTexCoordS ||
+                                  tex1.maxTexCoordT != tex0.maxTexCoordT;
+                                  
+      if (diff) {
+        float uscale = 1.0f;
+        float vscale = 1.0f;
+        float cx = 0.0f;
+        float sx = +1.0f;
+        float cy = 0.0f;
+        float sy = +1.0f;        
+        float u, v;
+        
+        beginUpdateImpl(TEXTURES, group.first, group.last);
+        firstUpdateIdx = group.first;
+        lastUpdateIdx = group.last;    
+        for (int i = group.first; i <= group.last; i++) {
+          u = texCoordArray[2 * i + 0];
+          v = texCoordArray[2 * i + 1];
+          
+          if (tex0 != null) {
+            // First, inverting coordinate transformation corresponding to
+            // previous texture (if any).      
+            if (tex0.isFlippedX()) {
+              cx = 1.0f;      
+              sx = -1.0f;
+            }
+            if (tex0.isFlippedY()) {
+              cy = 1.0f;      
+              sy = -1.0f;
+            }        
+            uscale *= tex0.getMaxTextureCoordS();
+            vscale *= tex0.getMaxTextureCoordT();        
+      
+            u = (u / uscale - cx) / sx;
+            v = (v / vscale - cy) / sy;
+            if (a3d.imageMode == IMAGE) {
+              u *= group.texture.width;
+              v *= group.texture.height;
+            }             
+          }
+                      
+          // Texture coordinate transformation with the new texture.
+          if (tex1.isFlippedX()) {
+            cx = 1.0f;      
+            sx = -1.0f;
+          }
+          if (tex1.isFlippedY()) {
+            cy = 1.0f;      
+            sy = -1.0f;
+          }        
+          uscale *= tex1.getMaxTextureCoordS();
+          vscale *= tex1.getMaxTextureCoordT();
+
+          u = (cx +  sx * u) * uscale;
+          v = (cy +  sy * v) * vscale;
+          if (a3d.imageMode == IMAGE) {
+            u /= tex.width;
+            v /= tex.height;
+          }
+      
+          if (u < 0) v = 0;
+          else if (u > 1) u = 1;
+
+          if (v < 0) v = 0;
+          else if (v > 1) v = 1;
+        
+          texCoordArray[2 * i + 0] = u;
+          texCoordArray[2 * i + 1] = v;        
+        }
+        endUpdate();
+      }
+      group.texture = tex;
+      
+    } else {
+      group.texture = tex;  
+    }
   }
 
   
