@@ -285,7 +285,7 @@ public class PTexture implements PConstants {
     gl.glBindTexture(glTarget, glTextureID[0]);
                 
     if (usingMipmaps) {
-      if (a3d.gl11 != null && a3d.mipmapSupported) {
+      if (a3d.gl11 != null && PGraphicsAndroid3D.mipmapSupported) {
         gl.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_GENERATE_MIPMAP, GL11.GL_TRUE);
       } else {
         // TODO: alternative mipmap generation. See the following link for more info:
@@ -701,7 +701,7 @@ public class PTexture implements PConstants {
   protected void createTexture(int w, int h) {
     deleteTexture();
       
-    if (a3d.npotTexSupported) {
+    if (PGraphicsAndroid3D.npotTexSupported) {
       glWidth = w;
       glHeight =h;
     } else {
@@ -709,10 +709,10 @@ public class PTexture implements PConstants {
       glHeight = nextPowerOfTwo(h);
     }
     
-    if ((glWidth > a3d.maxTextureSize) || (glHeight > a3d.maxTextureSize)) {
+    if ((glWidth > PGraphicsAndroid3D.maxTextureSize) || (glHeight > PGraphicsAndroid3D.maxTextureSize)) {
       glWidth = glHeight = 0;
       throw new RuntimeException("Image width and height cannot be" +
-                                 " larger than " + a3d.maxTextureSize +
+                                 " larger than " + PGraphicsAndroid3D.maxTextureSize +
                                  " with this graphics card.");
     }    
     
