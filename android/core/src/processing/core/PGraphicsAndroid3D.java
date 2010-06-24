@@ -485,10 +485,6 @@ public class PGraphicsAndroid3D extends PGraphics {
 
     gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S, GL10.GL_CLAMP_TO_EDGE);
     gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T, GL10.GL_CLAMP_TO_EDGE);
-    
-    // This is the right texture environment mode to ignore the fill color when drawing the texture:
-    // http://www.khronos.org/opengles/documentation/opengles1_0/html/glTexEnv.html
-    gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_REPLACE);
         
     int[] buf = new int [screenTexWidth * screenTexHeight];
     for (int i = 0; i < buf.length; i++) buf[i] = 0xFF000000;
@@ -517,9 +513,13 @@ public class PGraphicsAndroid3D extends PGraphics {
     // any geometry latter drawn by the user.
     gl.glDepthMask(false);    
     gl.glDisable(GL10.GL_BLEND);
+
+    gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_REPLACE);
     
     gl11.glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, screenTexCrop, 0);
     gl11x.glDrawTexiOES(0, 0, 0, width, height);
+    
+    gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_MODULATE);
     
     gl.glDisable(GL10.GL_TEXTURE_2D);   
     gl.glDepthMask(true);
@@ -570,9 +570,16 @@ public class PGraphicsAndroid3D extends PGraphics {
     gl.glDepthMask(false);
     gl.glDisable(GL10.GL_BLEND);
     
+    // This is the right texture environment mode to ignore the fill color when drawing the texture:
+    // http://www.khronos.org/opengles/documentation/opengles1_0/html/glTexEnv.html    
     gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_REPLACE);
+    
     gl11.glTexParameteriv(tex.getGLTarget(), GL11Ext.GL_TEXTURE_CROP_RECT_OES, drawTexCrop, 0);
     gl11x.glDrawTexiOES(0, 0, 0, width, height);
+    
+    // Returning to the default texture environment mode, GL_MODULATE. This allows tinting a texture
+    // with the current fill color.
+    gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_MODULATE);
     
     gl.glDisable(tex.getGLTarget());   
     gl.glDepthMask(true);
@@ -863,16 +870,16 @@ public class PGraphicsAndroid3D extends PGraphics {
         pushFramebuffer();
         setFramebuffer(drawFramebuffer);
         drawFramebuffer.addColorBuffer(drawTextures[drawIndex]);
-                
+        
         gl.glClearColor(0, 0, 0, 0);
         if (clear) {
           gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);          
         } else {
-          gl.glClear(GL10.GL_DEPTH_BUFFER_BIT);          
+          gl.glClear(GL10.GL_DEPTH_BUFFER_BIT);
+          // Render previous draw texture as background.      
+          renderDrawTexture((drawIndex + 1) % 2);
         }
-            
-        // Render previous draw texture as background.      
-        renderDrawTexture((drawIndex + 1) % 2);
+
       } else {
         // We cannot ever end up here if the surface is not primary,
         // because a non-primary A3D surface is possible only
@@ -884,7 +891,6 @@ public class PGraphicsAndroid3D extends PGraphics {
         gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);      
         drawScreenTexture();
       }
-      
     }
     
     report("bot beginDraw()");
