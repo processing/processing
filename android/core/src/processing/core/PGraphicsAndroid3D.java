@@ -693,10 +693,13 @@ public class PGraphicsAndroid3D extends PGraphics {
     drawTexCrop[2] = width;
     drawTexCrop[3] = height;      
 
+    // Linear filtering is needed to keep decent image quality when rendering 
+    // texture at a size different from its original resolution. This is expected
+    // to happen for offscreen rendering.
     drawImages = new PImage[2];
-    drawImages[0] = parent.createImage(width, height, ARGB, NEAREST);
-    drawImages[1] = parent.createImage(width, height, ARGB, NEAREST);
-
+    drawImages[0] = parent.createImage(width, height, ARGB, LINEAR);
+    drawImages[1] = parent.createImage(width, height, ARGB, LINEAR);    
+    
     drawTextures = new PTexture[2];
     drawTextures[0] = drawImages[0].getTexture();
     drawTextures[1] = drawImages[1].getTexture();
@@ -850,7 +853,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     } else {
       // If we are here it means that either this surface is the primary rendering
       // surface and we are in noClear mode (the last frame has to be preserved
-      // for incremental renering) or we are in a offscreen surface.
+      // for incremental rendering) or we are in a offscreen surface.
       if (fboSupported) {
         if (drawFramebuffer == null) {
           createDrawFramebuffer();
