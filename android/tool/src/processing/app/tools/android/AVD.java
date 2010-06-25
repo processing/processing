@@ -19,14 +19,14 @@ public class AVD {
   /** Name of this avd. */
   public final String name;
 
-  /** "android-6" or "Google Inc.:Google APIs:6" */
+  /** "android-7" or "Google Inc.:Google APIs:7" */
   public final String target;
 
   /**
    * Default virtual device used by Processing that uses
-   * the Android 2.0.1 API set.
+   * the Android 2.1 API set.
    */
-  public static final AVD ECLAIR = new AVD("Processing-Android-2.0.1",
+  public static final AVD ECLAIR = new AVD("Processing-Android-2.1",
                                            "Google Inc.:Google APIs:" +
                                            Build.sdkVersion);
 
