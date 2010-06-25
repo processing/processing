@@ -1,6 +1,5 @@
-0186 pde
-X update the URLs opened by the software
-X   http://code.google.com/p/processing/issues/detail?id=278
+0187 pde
+
 
 'public class' inside first tab (or 'final int a = 10') throws off mode detect
 

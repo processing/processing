@@ -1,3 +1,11 @@
+0186 core
+X more Linux PDF fixes from Matthias Breuer
+
+fixed in 0185
+X PDF library matrix is not reset between frames
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1227
+
+
 0185 core (pre)
 X fix two bugs with fonts created with specific charsets
 X fix from jdf for PImage(java.awt.Image img) and ARGB images

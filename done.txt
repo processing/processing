@@ -1,3 +1,8 @@
+0186 pde (pre)
+X update the URLs opened by the software
+X   http://code.google.com/p/processing/issues/detail?id=278
+
+
 0185 pde (pre)
 X add option to launch a sketch directly w/ linux
 X   thanks to Larry Kyrala
