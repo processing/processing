@@ -27,7 +27,7 @@ class Build {
 
   File buildFile;
 
-  static final String sdkVersion = "6";
+  static final String sdkVersion = "7";
 
   public Build(final Editor editor, final AndroidSDK sdk) {
     this.editor = editor;
