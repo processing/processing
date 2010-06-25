@@ -13,37 +13,20 @@ package org.processing.editor.language;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-/**
- * Handles localization stuff using the ProcessingEditorMessages.preferences 
- * file. This is never instantiated, and all of its variables and methods are 
- * static.
- * 
- * @author lonnen
- */
 public class ProcessingEditorMessages {
 
-	/** location of the resource bundle */
 	private static final String RESOURCE_BUNDLE= "org.processing.editor.ProcessingEditorMessages";//$NON-NLS-1$
 
-	/**  the resource bundle object itself*/
-	static ResourceBundle fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
+	private static ResourceBundle fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
 
 	private ProcessingEditorMessages() {
 	}
 
-	/**
-	 * Gets a string for the given key from this resource bundle or one of its parents.
-	 * Calling this method is equivalent to calling <code> (String) getObject(key) </code> 
-	 * 
-	 * @param key the key for the desired string
-	 * @return the string for the given key
-	 */
 	public static String getString(String key) {
 		try {
 			return fgResourceBundle.getString(key);
 		} catch (MissingResourceException e) {
-			return "!" + key + "!";
+			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
 		}
 	}
-	
 }
