@@ -62,18 +62,14 @@ public class ProcessingPartitionScanner extends RuleBasedPartitionScanner {
 			addWord("/**/", fSuccessToken); //$NON-NLS-1$
 		}
 		
-		/**
-		 * {@inheritDoc}
-		 * 
+		/*
 		 * @see org.eclipse.jface.text.rules.IPredicateRule#evaluate(ICharacterScanner, boolean)
 		 */
 		public IToken evaluate(ICharacterScanner scanner, boolean resume) {
 			return super.evaluate(scanner);
 		}
 
-		/**
-		 * {@inheritDoc}
-		 * 
+		/*
 		 * @see org.eclipse.jface.text.rules.IPredicateRule#getSuccessToken()
 		 */
 		public IToken getSuccessToken() {

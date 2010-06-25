@@ -44,8 +44,8 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.TextEditorAction;
 import org.eclipse.ui.texteditor.TextOperationAction;
-//import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
-//import org.eclipse.ui.texteditor.SourceViewerDecorationSupport; // error checking annotations?
+import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
+//import org.eclipse.ui.texteditor.SourceViewerDecorationSupport; // error checking annotations
 
 /**
  * Sets up a Processing specific text editor.
@@ -54,10 +54,6 @@ import org.eclipse.ui.texteditor.TextOperationAction;
  */
 public class ProcessingEditor extends TextEditor {
 	
-	/**
-	 * Essentially a factory class that creates code folding regions around
-	 * the currently selected text.
-	 */
 	private class DefineFoldingRegionAction extends TextEditorAction {
 
 		public DefineFoldingRegionAction(ResourceBundle bundle, String prefix, ITextEditor editor) {
@@ -68,10 +64,7 @@ public class ProcessingEditor extends TextEditor {
 			return (IAnnotationModel) editor.getAdapter(ProjectionAnnotationModel.class);
 		}
 		
-		/**
-		 * Defines a code folding region around a selected region of text
-		 * and puts an annotation in the left gutter that toggles hiding the text.
-		 * 
+		/*
 		 * @see org.eclipse.jface.action.Action#run()
 		 */
 		public void run() {
@@ -119,16 +112,17 @@ public class ProcessingEditor extends TextEditor {
 	 */
 	protected void createActions() {
 		super.createActions();
+		// accessing the ResourceBundle was causing an ExceptionInInitializerError, not sure what I changed to fix it [lonnen] June 10 2010
 		IAction a= new TextOperationAction(ProcessingEditorMessages.getResourceBundle(), "ContentAssistProposal.", this, ISourceViewer.CONTENTASSIST_PROPOSALS); //$NON-NLS-1$
 		a.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
-		setAction("ContentAssistProposal", a);
+		setAction("ContentAssistProposal", a); //$NON-NLS-1$
 		
 		a= new TextOperationAction(ProcessingEditorMessages.getResourceBundle(), "ContentAssistTip.", this, ISourceViewer.CONTENTASSIST_CONTEXT_INFORMATION);  //$NON-NLS-1$
 		a.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_CONTEXT_INFORMATION);
-		setAction("ContentAssistTip", a);
+		setAction("ContentAssistTip", a); //$NON-NLS-1$
 		
-		//a= new DefineFoldingRegionAction(ProcessingEditorMessages.getResourceBundle(), "DefineFoldingRegion.", this);
-		//setAction("DefineFoldingRegion", a); 
+		a= new DefineFoldingRegionAction(ProcessingEditorMessages.getResourceBundle(), "DefineFoldingRegion.", this); //$NON-NLS-1$
+		setAction("DefineFoldingRegion", a); //$NON-NLS-1$
 	}
 	
 	/** The <code>ProcessingEditor</code> implementation of this 

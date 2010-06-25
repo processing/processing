@@ -18,10 +18,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
 /**
- * Manages the colors for the Processing Code Scanner
- * 
- * The expected keyword classes are maintained here with
- * values that describe how they will be colored in the text.
+ * Manager for colors used in the Java editor
  */
 public class ProcessingColorProvider {
 
