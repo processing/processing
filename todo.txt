@@ -1,5 +1,14 @@
 0186 pde
+X update the URLs opened by the software
+X   http://code.google.com/p/processing/issues/detail?id=278
 
+'public class' inside first tab (or 'final int a = 10') throws off mode detect
+
+_ Ctrl-Z will undo, but not scroll to where the undo happens. 
+_   is this now somehow fixed? (or only on os x?)
+_   so user thinks nothing is happening and overundo. 
+_   http://dev.processing.org/bugs/show_bug.cgi?id=35
+_   http://code.google.com/p/processing/issues/detail?id=15
 
 _ don't require an editor window to be open at all times
 _   The com.apple.eawt.Application now has a setDefaultMenuBar(JMenuBar) method
@@ -67,7 +76,7 @@ _ processing.app.Commander headless still requiring X11
 _   problem is static calls to PApplet
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1426
 
-svn copy https://processing.googlecode.com/svn/trunk/ https://processing.googlecode.com/svn/tags/processing-01XX
+svn copy https://processing.googlecode.com/svn/trunk/processing https://processing.googlecode.com/svn/tags/processing-01XX
 
 svn copy svn://processing.org/trunk/processing svn://processing.org/tags/processing-01XX
 svn copy svn+ssh://dev.processing.org/var/svn/trunk/processing svn+ssh://dev.processing.org/var/svn/tags/processing-0178
@@ -852,9 +861,6 @@ _   the whole thing is selected, but not directly editable
 _   http://dev.processing.org/bugs/show_bug.cgi?id=31
 _ dim edit menus as appropriate during selection/no selection/etc
 _   http://dev.processing.org/bugs/show_bug.cgi?id=33
-_ Ctrl-Z will undo, but not scroll to where the undo happens. 
-_   so user thinks nothing is happening and overundo. 
-_   http://dev.processing.org/bugs/show_bug.cgi?id=35
 _ fonts smaller than 10 cause problems in the editor
 _   generally causes trouble on osx
 _   on windows and linux, changing the size throws things off
