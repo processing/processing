@@ -1,9 +1,0 @@
-version=pmwiki-2.1.beta1 ordered=1 urlencoded=1
-agent=Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8) Gecko/20051111 Firefox/1.5
-author=floozy
-host=62.203.17.156
-name=PmWiki.WikiSandbox
-rev=5
-targets=
-text=(:redirect Main.WikiSandbox:)%0a
-time=1132340099

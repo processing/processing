@@ -1,3 +1,0 @@
-#redirect /index.html http://test.processing.org/index.php
-#redirect /learning/courses/index.html http://test.processing.org/courses.html
-#redirect /processing_beta.css http://test.processing.org/css/processing_beta.css
