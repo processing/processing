@@ -191,7 +191,9 @@ public class PShapeSVG extends PShape {
 
 
   public PShapeSVG(PShapeSVG parent, XMLElement properties) {
-    //super(GROUP);
+    // Need to set this so that findChild() works. 
+    // Otherwise 'parent' is null until addChild() is called later.
+    this.parent = parent;
 
     if (parent == null) {
       // set values to their defaults according to the SVG spec
@@ -244,7 +246,7 @@ public class PShapeSVG extends PShape {
     // @#$(* adobe illustrator mangles names of objects when re-saving
     if (name != null) {
       while (true) {
-        String[] m = PApplet.match(name, "_x(.*)_");
+        String[] m = PApplet.match(name, "_x([A-Za-z0-9]{2})_");
         if (m == null) break;
         char repair = (char) PApplet.unhex(m[1]);
         name = name.replace(m[0], "" + repair);
@@ -272,6 +274,9 @@ public class PShapeSVG extends PShape {
     for (XMLElement elem : elements) {
       PShape kid = parseChild(elem);
       if (kid != null) {
+//        if (kid.name != null) {
+//          System.out.println("adding child " + kid.name);
+//        }
         addChild(kid);
       }
     }
@@ -1012,7 +1017,7 @@ public class PShapeSVG extends PShape {
       color = opacityMask | parseRGB(colorText);
     } else if (colorText.startsWith("url(#")) {
       name = colorText.substring(5, colorText.length() - 1);
-      //PApplet.println("looking for " + fillName);
+//      PApplet.println("looking for " + name);
       Object object = findChild(name);
       //PApplet.println("found " + fillObject);
       if (object instanceof Gradient) {
@@ -1021,7 +1026,7 @@ public class PShapeSVG extends PShape {
         //PApplet.println("got filla " + fillObject);
       } else {
 //        visible = false;
-        System.err.println("url " + name + " refers to unexpected data");
+        System.err.println("url " + name + " refers to unexpected data: " + object);
       }
     }
     if (isFill) {
