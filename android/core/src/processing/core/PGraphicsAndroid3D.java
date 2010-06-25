@@ -4607,6 +4607,31 @@ public class PGraphicsAndroid3D extends PGraphics {
     // gl.glPopAttrib();
   }
 
+  // Utility function to render texture.
+  protected void drawTexture(PTexture tex, int x1, int y1, int w1, int h1, int x2, int y2, int w2, int h2) {
+    gl.glEnable(tex.getGLTarget());
+    gl.glBindTexture(tex.getGLTarget(), tex.getGLTextureID());
+    gl.glDepthMask(false);    
+    gl.glDisable(GL10.GL_BLEND);
+
+    gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_REPLACE);
+    
+    int[] crop = {x1, y1, w1, h1};
+    gl11.glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, crop, 0);
+    gl11x.glDrawTexiOES(0, x2, y2, w2, h2);
+    
+    gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_MODULATE);
+    
+    gl.glDisable(tex.getGLTarget());
+    
+    gl.glDepthMask(true);
+    if (blend) {
+      blend(blendMode);
+    } else {
+      noBlend();
+    }    
+  }
+  
   // ////////////////////////////////////////////////////////////
 
   // MASK
