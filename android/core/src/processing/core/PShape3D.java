@@ -87,6 +87,7 @@ public class PShape3D extends PShape implements PConstants {
   protected float ptDistAtt[] = { 1.0f, 0.0f, 0.01f, 1.0f };
   
   protected boolean texCoordSet = false;
+  protected boolean vertexColor = true;
 
   // TODO: consider implementing simple depth sorting for particle systems, 
   // and a more intutive way to implement the api for enabling/disabling depth masking.
@@ -610,6 +611,11 @@ public class PShape3D extends PShape implements PConstants {
       colorArray[4 * i + 2] = rgba[2];
       colorArray[4 * i + 3] = rgba[3];      
     }
+  }
+  
+  
+  public void vertexColor(boolean v) {
+    vertexColor = v;
   }
   
 
@@ -1880,12 +1886,14 @@ public class PShape3D extends PShape implements PConstants {
     gl.glEnableClientState(GL11.GL_NORMAL_ARRAY);
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glNormalBufferID[0]);
     gl.glNormalPointer(GL11.GL_FLOAT, 0, 0);    
+
+    if (vertexColor) {
+      // TODO: properly handle emissive and specular colors (really?)... 
+      gl.glEnableClientState(GL11.GL_COLOR_ARRAY);
+      gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glColorBufferID[0]);
+      gl.glColorPointer(4, GL11.GL_FLOAT, 0, 0);
+    }        
     
-    // TODO: properly handle emissive and specular colors...
-    gl.glEnableClientState(GL11.GL_COLOR_ARRAY);
-    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glColorBufferID[0]);
-    gl.glColorPointer(4, GL11.GL_FLOAT, 0, 0);
-        
     gl.glEnableClientState(GL11.GL_VERTEX_ARRAY);            
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glVertexBufferID[0]);
     gl.glVertexPointer(3, GL11.GL_FLOAT, 0, 0);
@@ -1933,6 +1941,18 @@ public class PShape3D extends PShape implements PConstants {
           gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glTexCoordBufferID[0]);
           gl.glTexCoordPointer(2, GL11.GL_FLOAT, 0, 0);
         }
+      }
+      
+      if (!vertexColor) {
+        if (tex == null) {
+          gl.glColor4f(g.fillR, g.fillG, g.fillB, g.fillA);
+        }else {
+          if (g.tint) {
+            gl.glColor4f(g.tintR, g.tintG, g.tintB, g.tintA);  
+          } else {
+            gl.glColor4f(1, 1, 1, 1);  
+          }
+        }              
       }
       
       // Last transformation: inversion of coordinate to make compatible with Processing's inverted Y axis.
