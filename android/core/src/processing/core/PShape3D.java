@@ -341,7 +341,8 @@ public class PShape3D extends PShape implements PConstants {
     return numVertices;
   }
   
-  public PVector getVertex(int idx) {
+//  public PVector getVertex(int idx) {
+  public float[] getVertex(int idx) {
     if (updateElement != VERTICES) {
       throw new RuntimeException("PShape3D: update mode is not set to VERTICES");
     }
@@ -350,10 +351,11 @@ public class PShape3D extends PShape implements PConstants {
     float y = vertexArray[3 * idx + 1];
     float z = vertexArray[3 * idx + 2];
     
-    PVector res = new PVector(x, y, z);
-    return res;
+//    PVector res = new PVector(x, y, z);
+//    return res;
+    return new float[] { x, y, z };
   }
-  
+
 
   public float[] getVertexArray() {
     if (updateElement != VERTICES) {
@@ -371,7 +373,7 @@ public class PShape3D extends PShape implements PConstants {
     PApplet.arrayCopy(vertexArray, firstUpd * 3, data, firstData * 3,  length * 3);
     return  data;
   }
-    
+
 
   public ArrayList<PVector> getVertexArrayList() {
     if (updateElement != VERTICES) {
@@ -381,7 +383,10 @@ public class PShape3D extends PShape implements PConstants {
     ArrayList<PVector> res;
     res = new ArrayList<PVector>();
     
-    for (int i = 0; i < numVertices; i++) res.add(getVertex(i));
+    for (int i = 0; i < numVertices; i++) {
+      float[] v = getVertex(i);
+      res.add(new PVector(v[0], v[1], v[2]));
+    }
     
     return res;
   }  

@@ -207,7 +207,9 @@ public class PShapeSVG extends PShape {
 
 
   public PShapeSVG(PShapeSVG parent, XMLElement properties) {
-    //super(GROUP);
+    // Need to set this so that findChild() works. 
+    // Otherwise 'parent' is null until addChild() is called later.
+    this.parent = parent;
 
     if (parent == null) {
       // set values to their defaults according to the SVG spec
@@ -257,10 +259,10 @@ public class PShapeSVG extends PShape {
 
     element = properties;
     name = properties.getStringAttribute("id");
-    // @#$(* adobe illustrator
+    // @#$(* adobe illustrator mangles names of objects when re-saving
     if (name != null) {
       while (true) {
-        String[] m = PApplet.match(name, "_x(.*)_");
+        String[] m = PApplet.match(name, "_x([A-Za-z0-9]{2})_");
         if (m == null) break;
         char repair = (char) PApplet.unhex(m[1]);
         name = name.replace(m[0], "" + repair);
@@ -354,8 +356,9 @@ public class PShapeSVG extends PShape {
     } else if (name.equals("linearGradient")) {
       return new LinearGradient(this, elem);
 
-    } else if (name.equals("text")) {
-      PGraphics.showWarning("Text in SVG files is not currently supported, " +
+    } else if (name.equals("text") || name.equals("font")) {
+      PGraphics.showWarning("Text and fonts in SVG files " +
+      		                  "are not currently supported, " +
                             "convert text to outlines instead.");
 
     } else if (name.equals("filter")) {
@@ -364,9 +367,15 @@ public class PShapeSVG extends PShape {
     } else if (name.equals("mask")) {
       PGraphics.showWarning("Masks are not supported.");
 
+    } else if (name.equals("pattern")) {
+      PGraphics.showWarning("Patterns are not supported.");
+
+    } else if (name.equals("stop")) {
+      // stop tag is handled by gradient parser, so don't warn about it
+      
     } else if (name.equals("sodipodi:namedview")) {
       // these are always in Inkscape files, the warnings get tedious  
-
+      
     } else {
       PGraphics.showWarning("Ignoring  <" + name + "> tag.");
     }
@@ -375,18 +384,14 @@ public class PShapeSVG extends PShape {
 
 
   protected void parseLine() {
-    kind = LINE;
+    primitive = LINE;
     family = PRIMITIVE;
     params = new float[] {
-      element.getFloatAttribute("x1"),
-      element.getFloatAttribute("y1"),
-      element.getFloatAttribute("x2"),
-      element.getFloatAttribute("y2"),
+      getFloatWithUnit(element, "x1"),
+      getFloatWithUnit(element, "y1"),
+      getFloatWithUnit(element, "x2"),
+      getFloatWithUnit(element, "y2")
     };
-    //    x = params[0];
-    //    y = params[1];
-    //    width = params[2];
-    //    height = params[3];
   }
 
 
@@ -395,19 +400,19 @@ public class PShapeSVG extends PShape {
    * @param circle true if this is a circle and not an ellipse
    */
   protected void parseEllipse(boolean circle) {
-    kind = ELLIPSE;
+    primitive = ELLIPSE;
     family = PRIMITIVE;
     params = new float[4];
 
-    params[0] = element.getFloatAttribute("cx");
-    params[1] = element.getFloatAttribute("cy");
+    params[0] = getFloatWithUnit(element, "cx");
+    params[1] = getFloatWithUnit(element, "cy");
 
     float rx, ry;
     if (circle) {
-      rx = ry = element.getFloatAttribute("r");
+      rx = ry = getFloatWithUnit(element, "r");
     } else {
-      rx = element.getFloatAttribute("rx");
-      ry = element.getFloatAttribute("ry");
+      rx = getFloatWithUnit(element, "rx");
+      ry = getFloatWithUnit(element, "ry");
     }
     params[0] -= rx;
     params[1] -= ry;
@@ -418,13 +423,13 @@ public class PShapeSVG extends PShape {
 
 
   protected void parseRect() {
-    kind = RECT;
+    primitive = RECT;
     family = PRIMITIVE;
     params = new float[] {
-      element.getFloatAttribute("x"),
-      element.getFloatAttribute("y"),
-      element.getFloatAttribute("width"),
-      element.getFloatAttribute("height"),
+      getFloatWithUnit(element, "x"),
+      getFloatWithUnit(element, "y"),
+      getFloatWithUnit(element, "width"),
+      getFloatWithUnit(element, "height")
     };
   }
 
@@ -453,7 +458,7 @@ public class PShapeSVG extends PShape {
 
   protected void parsePath() {
     family = PATH;
-    kind = 0;
+    primitive = 0;
 
     String pathData = element.getStringAttribute("d");
     if (pathData == null) return;
@@ -485,7 +490,7 @@ public class PShapeSVG extends PShape {
         separate = false;
       }
       if (c == '-' && !lastSeparate) {
-        // allow for 'e' notation in numbers, e.g. 2.10e-9
+        // allow for 'e' notation in numbers, e.g. 2.10e-9 
         // http://dev.processing.org/bugs/show_bug.cgi?id=1408
         if (i == 0 || pathDataChars[i-1] != 'e') {
           pathBuffer.append("|");
@@ -509,6 +514,7 @@ public class PShapeSVG extends PShape {
     float cx = 0;
     float cy = 0;
     int i = 0;
+
     char implicitCommand = '\0';
 
     while (i < pathDataKeys.length) {
@@ -651,7 +657,7 @@ public class PShapeSVG extends PShape {
         float ctrlY = PApplet.parseFloat(pathDataKeys[i + 2]);
         float endX = PApplet.parseFloat(pathDataKeys[i + 3]);
         float endY = PApplet.parseFloat(pathDataKeys[i + 4]);
-        parsePathCurveto(ctrlX, ctrlY, ctrlX, ctrlY, endX, endY);
+        parsePathQuadto(cx, cy, ctrlX, ctrlY, endX, endY);
         cx = endX;
         cy = endY;
         i += 5;
@@ -664,7 +670,7 @@ public class PShapeSVG extends PShape {
         float ctrlY = cy + PApplet.parseFloat(pathDataKeys[i + 2]);
         float endX = cx + PApplet.parseFloat(pathDataKeys[i + 3]);
         float endY = cy + PApplet.parseFloat(pathDataKeys[i + 4]);
-        parsePathCurveto(ctrlX, ctrlY, ctrlX, ctrlY, endX, endY);
+        parsePathQuadto(cx, cy, ctrlX, ctrlY, endX, endY);
         cx = endX;
         cy = endY;
         i += 5;
@@ -686,7 +692,7 @@ public class PShapeSVG extends PShape {
         float ctrlY = py + (py - ppy);
         float endX = PApplet.parseFloat(pathDataKeys[i + 1]);
         float endY = PApplet.parseFloat(pathDataKeys[i + 2]);
-        parsePathCurveto(ctrlX, ctrlY, ctrlX, ctrlY, endX, endY);
+        parsePathQuadto(cx, cy, ctrlX, ctrlY, endX, endY);
         cx = endX;
         cy = endY;
         i += 3;
@@ -703,7 +709,7 @@ public class PShapeSVG extends PShape {
         float ctrlY = py + (py - ppy);
         float endX = cx + PApplet.parseFloat(pathDataKeys[i + 1]);
         float endY = cy + PApplet.parseFloat(pathDataKeys[i + 2]);
-        parsePathCurveto(ctrlX, ctrlY, ctrlX, ctrlY, endX, endY);
+        parsePathQuadto(cx, cy, ctrlX, ctrlY, endX, endY);
         cx = endX;
         cy = endY;
         i += 3;
@@ -788,6 +794,16 @@ public class PShapeSVG extends PShape {
     parsePathVertex(x3, y3);
   }
 
+  private void parsePathQuadto(float x1, float y1, 
+                               float cx, float cy,
+                               float x2, float y2) {
+    parsePathCode(BEZIER_VERTEX);
+    // x1/y1 already covered by last moveto, lineto, or curveto
+    parsePathVertex(x1 + ((cx-x1)*2/3.0f), y1 + ((cy-y1)*2/3.0f));
+    parsePathVertex(x2 + ((cx-x2)*2/3.0f), y2 + ((cy-y2)*2/3.0f));
+    parsePathVertex(x2, y2);
+  }
+
 
   /**
    * Parse the specified SVG matrix into a PMatrix2D. Note that PMatrix2D
@@ -854,7 +870,12 @@ public class PShapeSVG extends PShape {
 
     if (properties.hasAttribute("stroke")) {
       String strokeText = properties.getStringAttribute("stroke");
-      setStroke(strokeText);
+      setColor(strokeText, false);
+    }
+    
+    if (properties.hasAttribute("stroke-opacity")) {
+      String strokeOpacityText = properties.getStringAttribute("stroke-opacity");
+      setStrokeOpacity(strokeOpacityText);
     }
 
     if (properties.hasAttribute("stroke-width")) {
@@ -873,15 +894,18 @@ public class PShapeSVG extends PShape {
       setStrokeCap(linecap);
     }
 
-
     // fill defaults to black (though stroke defaults to "none")
     // http://www.w3.org/TR/SVG/painting.html#FillProperties
     if (properties.hasAttribute("fill")) {
       String fillText = properties.getStringAttribute("fill");
-      setFill(fillText);
-
+      setColor(fillText, true);
     }
 
+    if (properties.hasAttribute("fill-opacity")) {
+      String fillOpacityText = properties.getStringAttribute("fill-opacity");
+      setFillOpacity(fillOpacityText);
+    }    
+    
     if (properties.hasAttribute("style")) {
       String styleText = properties.getStringAttribute("style");
       String[] styleTokens = PApplet.splitTokens(styleText, ";");
@@ -894,13 +918,13 @@ public class PShapeSVG extends PShape {
         tokens[0] = PApplet.trim(tokens[0]);
 
         if (tokens[0].equals("fill")) {
-          setFill(tokens[1]);
+          setColor(tokens[1], true);
 
         } else if(tokens[0].equals("fill-opacity")) {
           setFillOpacity(tokens[1]);
 
         } else if(tokens[0].equals("stroke")) {
-          setStroke(tokens[1]);
+          setColor(tokens[1], false);
 
         } else if(tokens[0].equals("stroke-width")) {
           setStrokeWeight(tokens[1]);
@@ -924,43 +948,24 @@ public class PShapeSVG extends PShape {
     }
   }
 
+  
   void setOpacity(String opacityText) {
     opacity = PApplet.parseFloat(opacityText);
     strokeColor = ((int) (opacity * 255)) << 24 | strokeColor & 0xFFFFFF;
     fillColor = ((int) (opacity * 255)) << 24 | fillColor & 0xFFFFFF;
   }
 
+  
   void setStrokeWeight(String lineweight) {
-    strokeWeight = PApplet.parseFloat(lineweight);
+    strokeWeight = parseUnitSize(lineweight);
   }
 
+  
   void setStrokeOpacity(String opacityText) {
     strokeOpacity = PApplet.parseFloat(opacityText);
     strokeColor = ((int) (strokeOpacity * 255)) << 24 | strokeColor & 0xFFFFFF;
   }
 
-  void setStroke(String strokeText) {
-    int opacityMask = strokeColor & 0xFF000000;
-    if (strokeText.equals("none")) {
-      stroke = false;
-    } else if (strokeText.startsWith("#")) {
-      stroke = true;
-      strokeColor = opacityMask |
-        (Integer.parseInt(strokeText.substring(1), 16)) & 0xFFFFFF;
-    } else if (strokeText.startsWith("rgb")) {
-      stroke = true;
-      strokeColor = opacityMask | parseRGB(strokeText);
-    } else if (strokeText.startsWith("url(#")) {
-      strokeName = strokeText.substring(5, strokeText.length() - 1);
-      Object strokeObject = findChild(strokeName);
-      if (strokeObject instanceof Gradient) {
-        strokeGradient = (Gradient) strokeObject;
-        strokeGradientPaint = calcGradientPaint(strokeGradient); //, opacity);
-      } else {
-        System.err.println("url " + strokeName + " refers to unexpected data");
-      }
-    }
-  }
 
   void setStrokeJoin(String linejoin) {
     if (linejoin.equals("inherit")) {
@@ -977,6 +982,7 @@ public class PShapeSVG extends PShape {
     }
   }
 
+  
   void setStrokeCap(String linecap) {
     if (linecap.equals("inherit")) {
       // do nothing, will inherit automatically
@@ -991,41 +997,67 @@ public class PShapeSVG extends PShape {
       strokeCap = PConstants.PROJECT;
     }
   }
+  
 
   void setFillOpacity(String opacityText) {
     fillOpacity = PApplet.parseFloat(opacityText);
     fillColor = ((int) (fillOpacity * 255)) << 24 | fillColor & 0xFFFFFF;
   }
+  
 
-  void setFill(String fillText) {
+  void setColor(String colorText, boolean isFill) {
     int opacityMask = fillColor & 0xFF000000;
-    if (fillText.equals("none")) {
-      fill = false;
-    } else if (fillText.startsWith("#")) {
-      fill = true;
-      fillColor = opacityMask |
-        (Integer.parseInt(fillText.substring(1), 16)) & 0xFFFFFF;
+    boolean visible = true;
+    int color = 0;
+    String name = "";
+    Gradient gradient = null;
+    Shader paint = null;
+    if (colorText.equals("none")) {
+      visible = false;
+    } else if (colorText.equals("black")) {
+      color = opacityMask;
+    } else if (colorText.equals("white")) {
+      color = opacityMask | 0xFFFFFF;
+    } else if (colorText.startsWith("#")) {
+      if (colorText.length() == 4) {
+        // Short form: #ABC, transform to long form #AABBCC
+        colorText = colorText.replaceAll("^#(.)(.)(.)$", "#$1$1$2$2$3$3");
+      }
+      color = opacityMask |
+          (Integer.parseInt(colorText.substring(1), 16)) & 0xFFFFFF;
       //System.out.println("hex for fill is " + PApplet.hex(fillColor));
-    } else if (fillText.startsWith("rgb")) {
-      fill = true;
-      fillColor = opacityMask | parseRGB(fillText);
-    } else if (fillText.startsWith("url(#")) {
-      fillName = fillText.substring(5, fillText.length() - 1);
-      //PApplet.println("looking for " + fillName);
-      Object fillObject = findChild(fillName);
+    } else if (colorText.startsWith("rgb")) {
+      color = opacityMask | parseRGB(colorText);
+    } else if (colorText.startsWith("url(#")) {
+      name = colorText.substring(5, colorText.length() - 1);
+//      PApplet.println("looking for " + name);
+      Object object = findChild(name);
       //PApplet.println("found " + fillObject);
-      if (fillObject instanceof Gradient) {
-        fill = true;
-        fillGradient = (Gradient) fillObject;
-        fillGradientPaint = calcGradientPaint(fillGradient); //, opacity);
+      if (object instanceof Gradient) {
+        gradient = (Gradient) object;
+        paint = calcGradientPaint(gradient); //, opacity);
         //PApplet.println("got filla " + fillObject);
       } else {
-        System.err.println("url " + fillName + " refers to unexpected data");
+//        visible = false;
+        System.err.println("url " + name + " refers to unexpected data: " + object);
       }
+    }
+    if (isFill) {
+      fill = visible;
+      fillColor = color;
+      fillName = name;
+      fillGradient = gradient;
+      fillGradientPaint = paint;
+    } else {
+      stroke = visible;
+      strokeColor = color;
+      strokeName = name;
+      strokeGradient = gradient;
+      strokeGradientPaint = paint;
     }
   }
 
-
+  
   static protected int parseRGB(String what) {
     int leftParen = what.indexOf('(') + 1;
     int rightParen = what.indexOf(')');
@@ -1043,6 +1075,19 @@ public class PShapeSVG extends PShape {
       table.put(parts[0], parts[1]);
     }
     return table;
+  }
+
+
+  /**
+   * Used in place of element.getFloatAttribute(a) because we can 
+   * have a unit suffix (length or coordinate).
+   * @param element what to parse
+   * @param attribute name of the attribute to get
+   * @return unit-parsed version of the data
+   */
+  static protected float getFloatWithUnit(XMLElement element, String attribute) {
+    String val = element.getStringAttribute(attribute);
+    return (val == null) ? 0 : parseUnitSize(val);
   }
 
 
@@ -1079,85 +1124,6 @@ public class PShapeSVG extends PShape {
   }
 
 
-    // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-
-
-    // these are a set of hacks so that gradients can be hacked into Java 2D.
-
-    /*
-    protected Paint getGradient(String name, float cx, float cy, float r) {
-        BaseObject obj = (BaseObject) findChild(name);
-
-        if (obj != null) {
-            if (obj.fillGradient != null) {
-                return obj.calcGradientPaint(obj.fillGradient, cx, cy, r);
-            }
-        }
-        throw new RuntimeException("No gradient found for shape " + name);
-    }
-
-
-    protected Paint getGradient(String name, float x1, float y1, float x2, float y2) {
-        BaseObject obj = (BaseObject) findChild(name);
-
-        if (obj != null) {
-            if (obj.fillGradient != null) {
-                return obj.calcGradientPaint(obj.fillGradient, x1, y1, x2, y2);
-            }
-        }
-        throw new RuntimeException("No gradient found for shape " + name);
-    }
-
-
-    protected void strokeGradient(PGraphics g, String name, float x, float y, float r) {
-        Paint paint = getGradient(name, x, y, r);
-
-        if (g instanceof PGraphicsJava2D) {
-            PGraphicsJava2D p2d = (PGraphicsJava2D) g;
-
-            p2d.strokeGradient = true;
-            p2d.strokeGradientObject = paint;
-        }
-    }
-
-
-    protected void strokeGradient(PGraphics g, String name, float x1, float y1, float x2, float y2) {
-        Paint paint = getGradient(name, x1, y1, x2, y2);
-
-        if (g instanceof PGraphicsJava2D) {
-            PGraphicsJava2D p2d = (PGraphicsJava2D) g;
-
-            p2d.strokeGradient = true;
-            p2d.strokeGradientObject = paint;
-        }
-    }
-
-
-    protected void fillGradient(PGraphics g, String name, float x, float y, float r) {
-        Paint paint = getGradient(name, x, y, r);
-
-        if (g instanceof PGraphicsJava2D) {
-            PGraphicsJava2D p2d = (PGraphicsJava2D) g;
-
-            p2d.fillGradient = true;
-            p2d.fillGradientObject = paint;
-        }
-    }
-
-
-    protected void fillGradient(PGraphics g, String name, float x1, float y1, float x2, float y2) {
-        Paint paint = getGradient(name, x1, y1, x2, y2);
-
-        if (g instanceof PGraphicsJava2D) {
-            PGraphicsJava2D p2d = (PGraphicsJava2D) g;
-
-            p2d.fillGradient = true;
-            p2d.fillGradientObject = paint;
-        }
-    }
-    */
-
-
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
@@ -1180,7 +1146,13 @@ public class PShapeSVG extends PShape {
         XMLElement elem = elements[i];
         String name = elem.getName();
         if (name.equals("stop")) {
-          offset[count] = elem.getFloatAttribute("offset");
+          String offsetAttr = elem.getStringAttribute("offset");
+          float div = 1.0f;
+          if (offsetAttr.endsWith("%")) {
+            div = 100.0f;
+            offsetAttr = offsetAttr.substring(0, offsetAttr.length() - 1);
+          }
+          offset[count] = PApplet.parseFloat(offsetAttr) / div;
           String style = elem.getStringAttribute("style");
           HashMap<String, String> styles = parseStyleAttributes(style);
 
@@ -1206,10 +1178,10 @@ public class PShapeSVG extends PShape {
     public LinearGradient(PShapeSVG parent, XMLElement properties) {
       super(parent, properties);
 
-      this.x1 = properties.getFloatAttribute("x1");
-      this.y1 = properties.getFloatAttribute("y1");
-      this.x2 = properties.getFloatAttribute("x2");
-      this.y2 = properties.getFloatAttribute("y2");
+      this.x1 = getFloatWithUnit(properties, "x1");
+      this.y1 = getFloatWithUnit(properties, "y1");
+      this.x2 = getFloatWithUnit(properties, "x2");
+      this.y2 = getFloatWithUnit(properties, "y2");
 
       String transformStr =
         properties.getStringAttribute("gradientTransform");
@@ -1250,9 +1222,9 @@ public class PShapeSVG extends PShape {
     public RadialGradient(PShapeSVG parent, XMLElement properties) {
       super(parent, properties);
 
-      this.cx = properties.getFloatAttribute("cx");
-      this.cy = properties.getFloatAttribute("cy");
-      this.r = properties.getFloatAttribute("r");
+      this.cx = getFloatWithUnit(properties, "cx");
+      this.cy = getFloatWithUnit(properties, "cy");
+      this.r  = getFloatWithUnit(properties, "r");
 
       String transformStr =
         properties.getStringAttribute("gradientTransform");
@@ -1589,7 +1561,7 @@ public class PShapeSVG extends PShape {
    * beneath them can be used here.
    * <PRE>
    * // This code grabs "Layer 3" and the shapes beneath it.
-   * SVG layer3 = svg.getChild("Layer 3");
+   * PShape layer3 = svg.getChild("Layer 3");
    * </PRE>
    */
   public PShape getChild(String name) {
