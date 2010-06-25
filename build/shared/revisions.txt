@@ -1,3 +1,24 @@
+PROCESSING REV 0186 - 26 June 2010
+
+Minor updates following up on 0185.
+
+[ mixed bag ] 
+
++ Android SDK requirement is now API 7 (Android 2.1), because Google has
+  deprecated API 6 (2.0.1). 
+
++ More Linux PDF fixes from Matthias Breuer. Thanks!
+
++ PDF library matrix not reset between frames. (Fixed in 0185.)
+  http://dev.processing.org/bugs/show_bug.cgi?id=1227
+
++ Updated the URLs opened by the software to reflect the new site layout.
+  http://code.google.com/p/processing/issues/detail?id=278
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING REV 0185 - 20 June 2010
 
 Primarily a bug fix release. The biggest change are a couple tweaks for 
