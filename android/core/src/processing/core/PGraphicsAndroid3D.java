@@ -1607,7 +1607,9 @@ public class PGraphicsAndroid3D extends PGraphics {
           // Add new vertex group.
 
           int n0 = recordedVertices.size();
-          int n1 = n0 + pathLength[j] - 1;
+          // The final index is n0 + pathLength[j] and not n0 + pathLength[j] -1 
+          // because of the first point added before the loop (see below).
+          int n1 = n0 + pathLength[j];
           // Identifying where this group should end (when stroke length
           // changes).
           for (int k = j + 1; k < stop; k++) {
@@ -1616,7 +1618,7 @@ public class PGraphicsAndroid3D extends PGraphics {
             if (sw0 != sw1) {
               break;
             }
-            n1 = n0 + pathLength[k] - 1;
+            n1 = n0 + pathLength[k];
           }
 
           VertexGroup group = PShape3D.newVertexGroup(n0, n1, LINE_STRIP, sw,
