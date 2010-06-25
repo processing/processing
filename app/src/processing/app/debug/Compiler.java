@@ -656,8 +656,8 @@ public class Compiler {
 
   void handleCrustyCode(RunnerException rex) {
     rex.setMessage("This code needs to be updated, " +
-                   "please read the \u201Cchanges\u201D reference.");
-    Base.showReference("changes.html");
+                   "please read the Changes page on the Wiki.");
+    Base.showChanges();
   }
 
 

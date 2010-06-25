@@ -1579,15 +1579,30 @@ public class Base {
   }
 
 
+  static public void showChanges() {
+    openURL("http://wiki.processing.org/w/Changes");
+  }
+
+
+  static public void showFAQ() {
+    openURL("http://wiki.processing.org/w/FAQ");
+  }
+
+
+  static public void showGettingStarted() {
+    openURL("http://processing.org/learning/gettingstarted/");
+  }
+
+
   static public void showPlatforms() {
-    showReference("environment" + File.separator + "platforms.html");
+    openURL("http://wiki.processing.org/w/Supported_Platforms");
   }
 
 
   static public void showTroubleshooting() {
-    showReference("troubleshooting" + File.separator + "index.html");
+    openURL("http://wiki.processing.org/w/Troubleshooting");
   }
-
+    
 
   // .................................................................
 
