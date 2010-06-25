@@ -1,9 +1,5 @@
-0186 core
-X more Linux PDF fixes from Matthias Breuer
+0187 core
 
-fixed in 0185
-X PDF library matrix is not reset between frames
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1227
 
 _ change skewX/Y to shearX/Y
 
