@@ -1,4 +1,6 @@
 0186 android
+X move to sdk 7 because 6 has been deprecated
+X merged svg changes with those in desktop core
 
 
 _ text leading is broken, text("blah\nblah") doesn't work properly
