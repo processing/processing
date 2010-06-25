@@ -170,6 +170,8 @@ class AndroidSDK {
     } else {
       adbCmd = cmd;
     }
+    PApplet.println(adbCmd);
+    try {
     final ProcessResult adbResult = new ProcessHelper(adbCmd).execute();
     /*
      * Ignore messages about starting up an adb daemon
@@ -186,6 +188,10 @@ class AndroidSDK {
           .toString(), adbResult.getStderr(), adbResult.getTime());
     }
     return adbResult;
+    } catch (IOException ioe) {
+      ioe.printStackTrace();
+      throw ioe;
+    }
   }
 
   private static final String ANDROID_SDK_PRIMARY = "Is the Android SDK installed?";
