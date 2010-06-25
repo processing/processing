@@ -27,7 +27,7 @@ import java.util.*;
 import com.lowagie.text.*;
 import com.lowagie.text.pdf.*;
 
-// Tried iText 5, but it was too slow 
+// Tried iText 5, but it was too slow
 //import com.itextpdf.text.*;
 //import com.itextpdf.text.pdf.*;
 
@@ -36,15 +36,15 @@ import processing.core.*;
 
 /**
  * Thin wrapper for the iText PDF library, that handles writing PDF files.
- * The majority of the work in this library is done by 
+ * The majority of the work in this library is done by
  * <a href="http://www.lowagie.com/iText/">iText</a>.
  * <br /> <br />
  * This is currently using iText 2.1.7.
  * <br /> <br />
- * The issue is that versions from the 5.x series were slow to handle lots of 
- * fonts with the DefaultFontMapper. 2.x seemed a little slower than 1.x, 
- * but 5.x took up to 10 times the time to load, meaning a lag of several 
- * seconds when starting sketches on a machine that had a good handful of 
+ * The issue is that versions from the 5.x series were slow to handle lots of
+ * fonts with the DefaultFontMapper. 2.x seemed a little slower than 1.x,
+ * but 5.x took up to 10 times the time to load, meaning a lag of several
+ * seconds when starting sketches on a machine that had a good handful of
  * fonts installed. (Like, say, anyone in our target audience. Or me.)
  */
 public class PGraphicsPDF extends PGraphicsJava2D {
@@ -52,7 +52,7 @@ public class PGraphicsPDF extends PGraphicsJava2D {
   protected File file;
   /** OutputStream being written to, if using an OutputStream. */
   protected OutputStream output;
-  
+
   protected Document document;
   protected PdfWriter writer;
   protected PdfContentByte content;
@@ -61,7 +61,7 @@ public class PGraphicsPDF extends PGraphicsJava2D {
   static protected DefaultFontMapper mapper;
   static protected String fontList[];
 
-  
+
   public PGraphicsPDF() { }
 
 
@@ -76,16 +76,16 @@ public class PGraphicsPDF extends PGraphicsJava2D {
                                  "for the location of the output file.");
     }
   }
-  
-  
+
+
   /**
    * Set the library to write to an output stream instead of a file.
    */
   public void setOutput(OutputStream output) {
     this.output = output;
   }
-  
-  
+
+
   /**
    * all the init stuff happens in here, in case someone calls size()
    * along the way and wants to hork things up.
@@ -127,13 +127,13 @@ public class PGraphicsPDF extends PGraphicsJava2D {
     }
 //    System.out.println("beginDraw " + (System.currentTimeMillis() - t0));
     super.beginDraw();
-    
+
     // Also need to push the matrix since the matrix doesn't reset on each run
     // http://dev.processing.org/bugs/show_bug.cgi?id=1227
     pushMatrix();
   }
-  
-  
+
+
   static protected DefaultFontMapper getMapper() {
     if (mapper == null) {
 //      long t = System.currentTimeMillis();
@@ -184,41 +184,48 @@ public class PGraphicsPDF extends PGraphicsJava2D {
             break;
           }
         }
-        
-      } else if (PApplet.platform == PConstants.WINDOWS) {
-        File folder = new File("/usr/share/fonts/");
-        if (folder.exists()) {
-          mapper.insertDirectory("/usr/share/fonts");
-          traverseDir(mapper, folder);
-        }
+
+      } else if (PApplet.platform == PConstants.LINUX) {
+        checkDir("/usr/share/fonts/", mapper);
+        checkDir("/usr/local/share/fonts/", mapper);
+        checkDir(System.getProperty("user.home") + "/.fonts", mapper);
       }
 //      System.out.println("mapping " + (System.currentTimeMillis() - t));
     }
     return mapper;
   }
+  
+  
+  static protected void checkDir(String path, DefaultFontMapper mapper) {
+    File folder = new File(path);
+    if (folder.exists()) {
+      mapper.insertDirectory(path);
+      traverseDir(folder, mapper);
+    }
+  }
 
 
   /**
-   * Recursive walk to get all subdirectories for font fun.  
+   * Recursive walk to get all subdirectories for font fun.
    * Patch submitted by Matthias Breuer.
    * (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=1566">Bug 1566</a>)
    */
-  static protected void traverseDir(DefaultFontMapper mapper, File folder) {
+  static protected void traverseDir(File folder, DefaultFontMapper mapper) {
     File[] files = folder.listFiles();
     for (int i = 0; i < files.length; i++) {
       if (files[i].isDirectory()) {
         mapper.insertDirectory(files[i].getPath());
-        traverseDir(mapper, new File(files[i].getPath()));
+        traverseDir(new File(files[i].getPath()), mapper);
       }
     }
   }
-  
-  
+
+
   public void endDraw() {
     // Also need to pop the matrix since the matrix doesn't reset on each run
     // http://dev.processing.org/bugs/show_bug.cgi?id=1227
     popMatrix();
-    
+
     // This needs to be overridden so that the endDraw() from PGraphicsJava2D
     // is not inherited (it calls loadPixels).
     // http://dev.processing.org/bugs/show_bug.cgi?id=1169
@@ -391,9 +398,9 @@ public class PGraphicsPDF extends PGraphicsJava2D {
   public void textFont(PFont which) {
     super.textFont(which);
     checkFont();
-    // Make sure a native version of the font is available. 
+    // Make sure a native version of the font is available.
 //    if (textFont.getFont() == null) {
-//      throw new RuntimeException("Use createFont() instead of loadFont() " + 
+//      throw new RuntimeException("Use createFont() instead of loadFont() " +
 //                                 "when drawing text using the PDF library.");
 //    }
     // Make sure that this is a font that the PDF library can deal with.
@@ -402,8 +409,8 @@ public class PGraphicsPDF extends PGraphicsJava2D {
 //      throw new RuntimeException("The font “" + which.getName() + "” cannot be used with PDF Export.");
 //    }
   }
-  
-  
+
+
   /**
    * Change the textMode() to either SHAPE or MODEL.
    * <br/>
@@ -431,17 +438,17 @@ public class PGraphicsPDF extends PGraphicsJava2D {
     }
   }
 
-  
+
   protected void textLineImpl(char buffer[], int start, int stop,
                               float x, float y) {
     checkFont();
     super.textLineImpl(buffer, start, stop, x, y);
   }
 
-    
+
   //////////////////////////////////////////////////////////////
 
-    
+
   public void loadPixels() {
     nope("loadPixels");
   }
@@ -573,17 +580,17 @@ public class PGraphicsPDF extends PGraphicsJava2D {
   protected void checkFont() {
     Font awtFont = textFont.getFont();
     if (awtFont == null) {  // always need a native font or reference to it
-      throw new RuntimeException("Use createFont() instead of loadFont() " + 
+      throw new RuntimeException("Use createFont() instead of loadFont() " +
                                  "when drawing text using the PDF library.");
     } else if (textMode != SHAPE) {
-      if (textFont.isStream()) { 
+      if (textFont.isStream()) {
         throw new RuntimeException("Use textMode(SHAPE) with when loading " +
                                    ".ttf and .otf files with createFont().");
       } else if (mapper.getAliases().get(textFont.getName()) == null) {
         //System.out.println("alias for " + name + " = " + mapper.getAliases().get(name));
         System.err.println("Use PGraphicsPDF.listFonts() to get a list of " +
                            "fonts that can be used with PDF.");
-        throw new RuntimeException("The font “" + textFont.getName() + "” " + 
+        throw new RuntimeException("The font “" + textFont.getName() + "” " +
                                    "cannot be used with PDF Export.");
       }
     }
@@ -613,7 +620,7 @@ public class PGraphicsPDF extends PGraphicsJava2D {
 //        fontList[count++] = (String) entry.getKey();
 //      }
       fontList = PApplet.sort(fontList);
-    } 
+    }
     return fontList;
   }
 
