@@ -68,7 +68,7 @@ public class PShape implements PConstants {
   protected int family;
 
   /** ELLIPSE, LINE, QUAD; TRIANGLE_FAN, QUAD_STRIP; etc. */
-  protected int kind;
+  protected int primitive;
 
   protected PMatrix matrix;
 
@@ -80,7 +80,17 @@ public class PShape implements PConstants {
   //protected float y;
   //protected float width;
   //protected float height;
+  /**
+   * The width of the PShape document.
+   * @webref
+   * @brief  	Shape document width
+   */
   public float width;
+  /**
+   * The width of the PShape document.
+   * @webref
+   * @brief  	Shape document height
+   */
   public float height;
   public float depth;
 
@@ -114,7 +124,7 @@ public class PShape implements PConstants {
   static public final int BEZIER_VERTEX = 1;
   static public final int CURVE_VERTEX = 2;
   static public final int BREAK = 3;
-  /** Array of VERTEX, BEZIER_VERTEX, and CURVE_VERTEXT calls. */
+  /** Array of VERTEX, BEZIER_VERTEX, and CURVE_VERTEX calls. */
   protected int vertexCodeCount;
   protected int[] vertexCodes;
   /** True if this is a closed path. */
@@ -178,21 +188,39 @@ public class PShape implements PConstants {
     return name;
   }
 
-
+  /**
+   * Returns a boolean value "true" if the image is set to be visible, "false" if not. This is modified with the <b>setVisible()</b> parameter.
+   * <br><br>The visibility of a shape is usually controlled by whatever program created the SVG file.
+   * For instance, this parameter is controlled by showing or hiding the shape in the layers palette in Adobe Illustrator.
+   * 
+   * @webref
+   * @brief Returns a boolean value "true" if the image is set to be visible, "false" if not
+   */
   public boolean isVisible() {
     return visible;
   }
 
-
+  /**
+   * Sets the shape to be visible or invisible. This is determined by the value of the <b>visible</b> parameter.
+   * <br><br>The visibility of a shape is usually controlled by whatever program created the SVG file.
+   * For instance, this parameter is controlled by showing or hiding the shape in the layers palette in Adobe Illustrator.
+   * @param visible "false" makes the shape invisible and "true" makes it visible
+   * @webref
+   * @brief Sets the shape to be visible or invisible
+   */
   public void setVisible(boolean visible) {
     this.visible = visible;
   }
 
 
   /**
+   * Disables the shape's style data and uses Processing's current styles. Styles include attributes such as colors, stroke weight, and stroke joints.
+   *  =advanced
    * Overrides this shape's style information and uses PGraphics styles and
    * colors. Identical to ignoreStyles(true). Also disables styles for all
    * child shapes.
+   * @webref
+   * @brief  	Disables the shape's style data and uses Processing styles
    */
   public void disableStyle() {
     style = false;
@@ -204,7 +232,9 @@ public class PShape implements PConstants {
 
 
   /**
-   * Re-enables style information (fill and stroke) set in the shape.
+   * Enables the shape's style data and ignores Processing's current styles. Styles include attributes such as colors, stroke weight, and stroke joints.
+   * @webref
+   * @brief Enables the shape's style data and ignores the Processing styles
    */
   public void enableStyle() {
     style = true;
@@ -398,10 +428,10 @@ public class PShape implements PConstants {
 
 
   protected void drawPrimitive(PGraphics g) {
-    if (kind == POINT) {
+    if (primitive == POINT) {
       g.point(params[0], params[1]);
 
-    } else if (kind == LINE) {
+    } else if (primitive == LINE) {
       if (params.length == 4) {  // 2D
         g.line(params[0], params[1],
                params[2], params[3]);
@@ -410,18 +440,18 @@ public class PShape implements PConstants {
                params[3], params[4], params[5]);
       }
 
-    } else if (kind == TRIANGLE) {
+    } else if (primitive == TRIANGLE) {
       g.triangle(params[0], params[1],
                  params[2], params[3],
                  params[4], params[5]);
 
-    } else if (kind == QUAD) {
+    } else if (primitive == QUAD) {
       g.quad(params[0], params[1],
              params[2], params[3],
              params[4], params[5],
              params[6], params[7]);
 
-    } else if (kind == RECT) {
+    } else if (primitive == RECT) {
       if (image != null) {
         g.imageMode(CORNER);
         g.image(image, params[0], params[1], params[2], params[3]);
@@ -430,29 +460,29 @@ public class PShape implements PConstants {
         g.rect(params[0], params[1], params[2], params[3]);
       }
 
-    } else if (kind == ELLIPSE) {
+    } else if (primitive == ELLIPSE) {
       g.ellipseMode(CORNER);
       g.ellipse(params[0], params[1], params[2], params[3]);
 
-    } else if (kind == ARC) {
+    } else if (primitive == ARC) {
       g.ellipseMode(CORNER);
       g.arc(params[0], params[1], params[2], params[3], params[4], params[5]);
 
-    } else if (kind == BOX) {
+    } else if (primitive == BOX) {
       if (params.length == 1) {
         g.box(params[0]);
       } else {
         g.box(params[0], params[1], params[2]);
       }
 
-    } else if (kind == SPHERE) {
+    } else if (primitive == SPHERE) {
       g.sphere(params[0]);
     }
   }
 
 
   protected void drawGeometry(PGraphics g) {
-    g.beginShape(kind);
+    g.beginShape(primitive);
     if (style) {
       for (int i = 0; i < vertexCount; i++) {
         g.vertex(vertices[i]);
@@ -608,12 +638,21 @@ public class PShape implements PConstants {
     return childCount;
   }
 
-
+  /**
+   * 
+   * @param index the layer position of the shape to get
+   */
   public PShape getChild(int index) {
     return children[index];
   }
 
-
+  /**
+   * Extracts a child shape from a parent shape. Specify the name of the shape with the <b>target</b> parameter.
+   * The shape is returned as a <b>PShape</b> object, or <b>null</b> is returned if there is an error.
+   * @param target the name of the shape to get
+   * @webref
+   * @brief Returns a child element of a shape as a PShape object
+   */
   public PShape getChild(String target) {
     if (name != null && name.equals(target)) {
       return this;
@@ -632,7 +671,7 @@ public class PShape implements PConstants {
 
   /**
    * Same as getChild(name), except that it first walks all the way up the
-   * hierarchy to the farthest parent, so that children can be found anywhere.
+   * hierarchy to the eldest grandparent, so that children can be found anywhere.
    */
   public PShape findChild(String target) {
     if (parent == null) {
@@ -686,64 +725,233 @@ public class PShape implements PConstants {
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
+  
+  /** The shape type, one of GROUP, PRIMITIVE, PATH, or GEOMETRY. */
+  public int getFamily() {
+    return family;
+  }
+
+
+  public int getPrimitive() {
+    return primitive;
+  }
+  
+
+  public float[] getParams() {
+    return getParams(null);
+  }
+
+
+  public float[] getParams(float[] target) {
+    if (target == null || target.length != params.length) {
+      target = new float[params.length];
+    }
+    PApplet.arrayCopy(params, target);
+    return target;
+  }
+
+
+  public float getParam(int index) {
+    return params[index];
+  }
+  
+  
+  public int getVertexCount() {
+    return vertexCount;
+  }
+  
+  
+  public float[] getVertex(int index) {
+    if (index < 0 || index >= vertexCount) {
+      String msg = "No vertex " + index + " for this shape, " +
+        "only vertices 0 through " + (vertexCount-1) + ".";
+      throw new IllegalArgumentException(msg);
+    }
+    return vertices[index];
+  }
+  
+  
+  public float getVertexX(int index) {
+    return vertices[index][X];
+  }
+
+  
+  public float getVertexY(int index) {
+    return vertices[index][Y];
+  }
+
+  
+  public float getVertexZ(int index) {
+    return vertices[index][Z];
+  }
+
+
+  public int[] getVertexCodes() {
+    if (vertexCodes.length != vertexCodeCount) {
+      vertexCodes = PApplet.subset(vertexCodes, 0, vertexCodeCount);
+    }
+    return vertexCodes;
+  }
+
+
+  public int getVertexCodeCount() {
+    return vertexCodeCount;
+  }
+  
+
+  /** 
+   * One of VERTEX, BEZIER_VERTEX, CURVE_VERTEX, or BREAK.
+   */
+  public int getVertexCode(int index) {
+    return vertexCodes[index];
+  }
+  
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  // http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
+  public boolean contains(float x, float y) {
+    if (family == PATH) {
+      boolean c = false;
+      for (int i = 0, j = vertexCount-1; i < vertexCount; j = i++) {
+        if (((vertices[i][Y] > y) != (vertices[j][Y] > y)) &&
+            (x < 
+                (vertices[j][X]-vertices[i][X]) * 
+                (y-vertices[i][Y]) / 
+                (vertices[j][1]-vertices[i][Y]) + 
+                vertices[i][X])) {
+          c = !c;
+        }
+      }
+      return c;
+    } else {
+      throw new IllegalArgumentException("The contains() method is only implemented for paths.");
+    }
+  }
+
+  
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
 
   // translate, rotate, scale, apply (no push/pop)
   //   these each call matrix.translate, etc
   // if matrix is null when one is called,
   //   it is created and set to identity
 
-
   public void translate(float tx, float ty) {
     checkMatrix(2);
     matrix.translate(tx, ty);
   }
 
-
+  /**
+   * Specifies an amount to displace the shape. The <b>x</b> parameter specifies left/right translation, the <b>y</b> parameter specifies up/down translation, and the <b>z</b> parameter specifies translations toward/away from the screen. Subsequent calls to the method accumulates the effect. For example, calling <b>translate(50, 0)</b> and then <b>translate(20, 0)</b> is the same as <b>translate(70, 0)</b>. This transformation is applied directly to the shape, it's not refreshed each time <b>draw()</b> is run. 
+   * <br><br>Using this method with the <b>z</b> parameter requires using the P3D or OPENGL parameter in combination with size.
+   * @webref
+   * @param tx left/right translation
+   * @param ty up/down translation
+   * @param tz forward/back translation
+   * @brief Displaces the shape
+   */
   public void translate(float tx, float ty, float tz) {
     checkMatrix(3);
     matrix.translate(tx, ty, 0);
   }
-
-
+  
+  /**
+   * Rotates a shape around the x-axis the amount specified by the <b>angle</b> parameter. Angles should be specified in radians (values from 0 to TWO_PI) or converted to radians with the <b>radians()</b> method.
+   * <br><br>Shapes are always rotated around the upper-left corner of their bounding box. Positive numbers rotate objects in a clockwise direction.
+   * Subsequent calls to the method accumulates the effect. For example, calling <b>rotateX(HALF_PI)</b> and then <b>rotateX(HALF_PI)</b> is the same as <b>rotateX(PI)</b>.
+   * This transformation is applied directly to the shape, it's not refreshed each time <b>draw()</b> is run.  
+   * <br><br>This method requires a 3D renderer. You need to pass P3D or OPENGL as a third parameter into the <b>size()</b> method as shown in the example above.
+   * @param angle angle of rotation specified in radians
+   * @webref
+   * @brief Rotates the shape around the x-axis
+   */
   public void rotateX(float angle) {
     rotate(angle, 1, 0, 0);
   }
 
-
+  /**
+   * Rotates a shape around the y-axis the amount specified by the <b>angle</b> parameter. Angles should be specified in radians (values from 0 to TWO_PI) or converted to radians with the <b>radians()</b> method.
+   * <br><br>Shapes are always rotated around the upper-left corner of their bounding box. Positive numbers rotate objects in a clockwise direction.
+   * Subsequent calls to the method accumulates the effect. For example, calling <b>rotateY(HALF_PI)</b> and then <b>rotateY(HALF_PI)</b> is the same as <b>rotateY(PI)</b>.
+   * This transformation is applied directly to the shape, it's not refreshed each time <b>draw()</b> is run. 
+   * <br><br>This method requires a 3D renderer. You need to pass P3D or OPENGL as a third parameter into the <b>size()</b> method as shown in the example above.
+   * @param angle angle of rotation specified in radians
+   * @webref
+   * @brief Rotates the shape around the y-axis
+   */
   public void rotateY(float angle) {
     rotate(angle, 0, 1, 0);
   }
 
 
+  /**
+   * Rotates a shape around the z-axis the amount specified by the <b>angle</b> parameter. Angles should be specified in radians (values from 0 to TWO_PI) or converted to radians with the <b>radians()</b> method.
+   * <br><br>Shapes are always rotated around the upper-left corner of their bounding box. Positive numbers rotate objects in a clockwise direction.
+   * Subsequent calls to the method accumulates the effect. For example, calling <b>rotateZ(HALF_PI)</b> and then <b>rotateZ(HALF_PI)</b> is the same as <b>rotateZ(PI)</b>.
+   * This transformation is applied directly to the shape, it's not refreshed each time <b>draw()</b> is run. 
+   * <br><br>This method requires a 3D renderer. You need to pass P3D or OPENGL as a third parameter into the <b>size()</b> method as shown in the example above.
+   * @param angle angle of rotation specified in radians
+   * @webref
+   * @brief Rotates the shape around the z-axis
+   */
   public void rotateZ(float angle) {
     rotate(angle, 0, 0, 1);
   }
-
-
+  
+  /**
+   * Rotates a shape the amount specified by the <b>angle</b> parameter. Angles should be specified in radians (values from 0 to TWO_PI) or converted to radians with the <b>radians()</b> method.
+   * <br><br>Shapes are always rotated around the upper-left corner of their bounding box. Positive numbers rotate objects in a clockwise direction.
+   * Transformations apply to everything that happens after and subsequent calls to the method accumulates the effect.
+   * For example, calling <b>rotate(HALF_PI)</b> and then <b>rotate(HALF_PI)</b> is the same as <b>rotate(PI)</b>.
+   * This transformation is applied directly to the shape, it's not refreshed each time <b>draw()</b> is run.
+   * @param angle angle of rotation specified in radians 
+   * @webref
+   * @brief Rotates the shape
+   */
   public void rotate(float angle) {
-    rotate(angle, 0, 0, 1);
+    checkMatrix(2);  // at least 2...
+    matrix.rotate(angle);
   }
 
 
   public void rotate(float angle, float v0, float v1, float v2) {
+    checkMatrix(3);
+    matrix.rotate(angle, v0, v1, v2);
   }
 
 
   //
-
-
+  
+  /**
+   * @param s percentage to scale the object
+   */
   public void scale(float s) {
     checkMatrix(2);  // at least 2...
     matrix.scale(s);
   }
 
 
-  public void scale(float sx, float sy) {
+  public void scale(float x, float y) {
     checkMatrix(2);
-    matrix.scale(sx, sy);
+    matrix.scale(x, y);
   }
 
 
+  /**
+   * Increases or decreases the size of a shape by expanding and contracting vertices. Shapes always scale from the relative origin of their bounding box.
+   * Scale values are specified as decimal percentages. For example, the method call <b>scale(2.0)</b> increases the dimension of a shape by 200%.
+   * Subsequent calls to the method multiply the effect. For example, calling <b>scale(2.0)</b> and then <b>scale(1.5)</b> is the same as <b>scale(3.0)</b>.
+   * This transformation is applied directly to the shape, it's not refreshed each time <b>draw()</b> is run. 
+   * <br><br>Using this fuction with the <b>z</b> parameter requires passing P3D or OPENGL into the size() parameter.
+   * @param x percentage to scale the object in the x-axis
+   * @param y percentage to scale the object in the y-axis
+   * @param z percentage to scale the object in the z-axis
+   * @webref
+   * @brief Increases and decreases the size of a shape
+   */
   public void scale(float x, float y, float z) {
     checkMatrix(3);
     matrix.scale(x, y, z);
