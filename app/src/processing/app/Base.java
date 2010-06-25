@@ -41,9 +41,9 @@ import processing.core.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
-  static final int REVISION = 186;
+  static final int REVISION = 187;
   /** This might be replaced by main() if there's a lib/version.txt file. */
-  static public String VERSION_NAME = "0186";
+  static public String VERSION_NAME = "0187";
   /** Set true if this a proper release rather than a numbered revision. */
   static public boolean RELEASE = false;
 
@@ -479,7 +479,7 @@ public class Base {
     File newbieParentDir = untitledFolder;
 
     String prefix = Preferences.get("editor.untitled.prefix");
-    
+
     // Use a generic name like sketch_031008a, the date plus a char
     int index = 0;
     String format = Preferences.get("editor.untitled.suffix");
@@ -488,7 +488,7 @@ public class Base {
       Calendar cal = Calendar.getInstance();
       int day = cal.get(Calendar.DAY_OF_MONTH);  // 1..31
       int month = cal.get(Calendar.MONTH);  // 0..11
-      suffix = months[month] + PApplet.nf(day, 2);      
+      suffix = months[month] + PApplet.nf(day, 2);
     } else {
       //SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd");
       //SimpleDateFormat formatter = new SimpleDateFormat("MMMdd");
@@ -1602,7 +1602,7 @@ public class Base {
   static public void showTroubleshooting() {
     openURL("http://wiki.processing.org/w/Troubleshooting");
   }
-    
+
 
   // .................................................................
 

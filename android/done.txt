@@ -1,3 +1,8 @@
+0186 android (pre)
+X move to sdk 7 because 6 has been deprecated
+X merged svg changes with those in desktop core
+
+
 0185 android (pre)
 X fix two bugs with fonts created with specific charsets
 X fix for adobe illustrator-mangled svg id names with hex characters
