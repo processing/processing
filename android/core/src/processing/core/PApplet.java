@@ -7801,20 +7801,24 @@ public class PApplet extends Activity implements PConstants, Runnable {
   
   // TODO: Discuss proper integration into PApplet API. 
   public void clear() {
-    if (g instanceof PGraphicsAndroid3D) {
-      ((PGraphicsAndroid3D)g).clear();
-    } else  {
-       throw new RuntimeException("This method is only available in PGraphicsAndroid3D renderer.");
-    }    
+    g.clear();
   }
 
 
   public void noClear() {
-    if (g instanceof PGraphicsAndroid3D) {
-      ((PGraphicsAndroid3D)g).noClear();
-    } else  {
-       throw new RuntimeException("This method is only available in PGraphicsAndroid3D renderer.");
-    }    
+    g.noClear();
+  }
+
+  public PImage getLastFrame() {    
+    return g.getLastFrame();
+  }
+
+  public void blend(int mode) {
+    g.blend(mode);
   }
   
+  public void noBlend() {  
+    g.noBlend();
+  }
 }
+
