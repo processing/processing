@@ -75,7 +75,7 @@ public class ProcessingLog {
 	 * @return status object
 	 */
 	public static IStatus createStatus(int severity, int code, String message, Throwable exception){
-		return new Status(severity, ProcessingEditorPlugin.ID, code, message, exception);
+		return new Status(severity, ProcessingEditorPlugin.PLUGIN_ID, code, message, exception);
 	}
 	
 	/**

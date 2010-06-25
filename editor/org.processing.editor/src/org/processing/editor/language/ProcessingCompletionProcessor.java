@@ -30,29 +30,29 @@ public class ProcessingCompletionProcessor implements IContentAssistProcessor {
 
 		protected int fInstallOffset;
 
-		/**
-		 * {@inheritDoc}
+		/*
+		 * @see IContextInformationValidator#isContextInformationValid(int)
 		 */
 		public boolean isContextInformationValid(int offset) {
 			return Math.abs(fInstallOffset - offset) < 5;
 		}
 
-		/**
-		 * {@inheritDoc}
+		/*
+		 * @see IContextInformationValidator#install(IContextInformation, ITextViewer, int)
 		 */
 		public void install(IContextInformation info, ITextViewer viewer, int offset) {
 			fInstallOffset= offset;
 		}
 		
-		/**
-		 * {@inheritDoc}
+		/*
+		 * @see org.eclipse.jface.text.contentassist.IContextInformationPresenter#updatePresentation(int, TextPresentation)
 		 */
 		public boolean updatePresentation(int documentPosition, TextPresentation presentation) {
 			return false;
 		}
 	}
 
-	/**
+	/*
 	 * The list of proposals that populates the content assistance dialog box.
 	 * 
 	 * Dialog assistance is not context sensitive right now, so it will always provide the same suggestions
@@ -90,8 +90,8 @@ public class ProcessingCompletionProcessor implements IContentAssistProcessor {
 		return result;
 	}
 	
-	/**
-	 * {@inheritDoc}
+	/* (non-Javadoc)
+	 * Method declared on IContentAssistProcessor
 	 */
 	public IContextInformation[] computeContextInformation(ITextViewer viewer, int documentOffset) {
 		IContextInformation[] result= new IContextInformation[5];
@@ -102,29 +102,29 @@ public class ProcessingCompletionProcessor implements IContentAssistProcessor {
 		return result;
 	}
 	
-	/**
-	 * {@inheritDoc}
+	/* (non-Javadoc)
+	 * Method declared on IContentAssistProcessor
 	 */
 	public char[] getCompletionProposalAutoActivationCharacters() {
 		return new char[] { '.', '(' };
 	}
 	
-	/**
-	 * {@inheritDoc}
+	/* (non-Javadoc)
+	 * Method declared on IContentAssistProcessor
 	 */
 	public char[] getContextInformationAutoActivationCharacters() {
 		return new char[] { '#' };
 	}
 	
-	/**
-	 * {@inheritDoc}
+	/* (non-Javadoc)
+	 * Method declared on IContentAssistProcessor
 	 */
 	public IContextInformationValidator getContextInformationValidator() {
 		return fValidator;
 	}
 	
-	/**
-	 * {@inheritDoc}
+	/* (non-Javadoc)
+	 * Method declared on IContentAssistProcessor
 	 */
 	public String getErrorMessage() {
 		return null;

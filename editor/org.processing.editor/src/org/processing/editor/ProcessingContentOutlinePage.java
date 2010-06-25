@@ -81,8 +81,8 @@ public class ProcessingContentOutlinePage extends ContentOutlinePage {
 			}
 		}
 
-		/**
-		 * {@inheritDoc}
+		/*
+		 * @see IContentProvider#inputChanged(Viewer, Object, Object)
 		 */
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			if (oldInput != null) {
@@ -109,9 +109,7 @@ public class ProcessingContentOutlinePage extends ContentOutlinePage {
 			}
 		}
 
-		/**
-		 * Shut it down.
-		 * 
+		/*
 		 * @see IContentProvider#dispose
 		 */
 		public void dispose() {
@@ -121,29 +119,29 @@ public class ProcessingContentOutlinePage extends ContentOutlinePage {
 			}
 		}
 
-		/**
-		 * {@inheritDoc}
+		/*
+		 * @see IContentProvider#isDeleted(Object)
 		 */
 		public boolean isDeleted(Object element) {
 			return false;
 		}
 
-		/**
-		 * {@inheritDoc}
+		/*
+		 * @see IStructuredContentProvider#getElements(Object)
 		 */
 		public Object[] getElements(Object element) {
 			return fContent.toArray();
 		}
 
-		/**
- 		 * {@inheritDoc}
+		/*
+		 * @see ITreeContentProvider#hasChildren(Object)
 		 */
 		public boolean hasChildren(Object element) {
 			return element == fInput;
 		}
 
-		/**
-		 * {@inheritDoc}
+		/*
+		 * @see ITreeContentProvider#getParent(Object)
 		 */
 		public Object getParent(Object element) {
 			if (element instanceof Segment)
@@ -151,8 +149,8 @@ public class ProcessingContentOutlinePage extends ContentOutlinePage {
 			return null;
 		}
 
-		/**
-		 * {@inheritDoc}
+		/*
+		 * @see ITreeContentProvider#getChildren(Object)
 		 */
 		public Object[] getChildren(Object element) {
 			if (element == fInput)
@@ -177,8 +175,8 @@ public class ProcessingContentOutlinePage extends ContentOutlinePage {
 		fTextEditor= editor;
 	}
 	
-	/**
-	 * {@inheritDoc}
+	/* (non-Javadoc)
+	 * Method declared on ContentOutlinePage
 	 */
 	public void createControl(Composite parent) {
 
@@ -193,8 +191,8 @@ public class ProcessingContentOutlinePage extends ContentOutlinePage {
 			viewer.setInput(fInput);
 	}
 	
-	/**
-	 * {@inheritDoc}
+	/* (non-Javadoc)
+	 * Method declared on ContentOutlinePage
 	 */
 	public void selectionChanged(SelectionChangedEvent event) {
 

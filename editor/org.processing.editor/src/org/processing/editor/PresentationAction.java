@@ -25,17 +25,12 @@ public class PresentationAction extends TextEditorAction {
 	 * Constructs and updates the action.
 	 */
 	public PresentationAction() {
-		super(ProcessingEditorMessages.getResourceBundle(), "TogglePresentation.", null);
+		super(ProcessingEditorMessages.getResourceBundle(), "TogglePresentation.", null); //$NON-NLS-1$
 		update();
 	}
 	
-	/**
-	 * Toggles between showing the highlight range only and showing the whole
-	 * document. This isn't currently enabled in the Processing editor, and
-	 * was generated as stub code. I'm not sure how useful it is. I will do
-	 * something better with this later.
-	 * 
-	 * [lonnen] june 21 2010
+	/* (non-Javadoc)
+	 * Method declared on IAction
 	 */
 	public void run() {
 
@@ -47,8 +42,8 @@ public class PresentationAction extends TextEditorAction {
 		editor.showHighlightRangeOnly(!show);
 	}
 	
-	/**
-	 * Changes the PresentationAction in light of changes to the editor.
+	/* (non-Javadoc)
+	 * Method declared on TextEditorAction
 	 */
 	public void update() {
 		setChecked(getTextEditor() != null && getTextEditor().showsHighlightRangeOnly());

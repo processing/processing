@@ -29,18 +29,15 @@ public class ProcessingDoubleClickSelector implements ITextDoubleClickStrategy {
 
 	protected static char[] fgBrackets= { '{', '}', '(', ')', '[', ']', '"', '"' };
 
-	/**
-	 * Create a DoubleClickSelector.
+	/* 
+	 * Create a JavaDoubleClickSelector.
 	 */
 	 public ProcessingDoubleClickSelector() {
 		super();
 	}
 	
-	/**
-	 * Takes action to highlight a range when the user double clicks in the editor
-	 * if the double click happened near an opening/closing token.
-	 * 
-	 * @param text the Processing editor that was double clicked
+	/* (non-Javadoc)
+	 * Method declared on ITextDoubleClickStrategy
 	 */
 	public void doubleClicked(ITextViewer text) {
 
