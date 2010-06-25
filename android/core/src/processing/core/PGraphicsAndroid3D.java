@@ -269,6 +269,9 @@ public class PGraphicsAndroid3D extends PGraphics {
   // TODO: Check the resource recreation method.
   protected ArrayList<GLResource> recreateResourceMethods;
 
+  // This is only used by non primary surfaces.
+  int recreateResourceIdx;
+  
   // ........................................................
 
   boolean recordingModel;
@@ -339,7 +342,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     //glu = new GLU(); // or maybe not until used?
     recreateResourceMethods = new ArrayList<GLResource>();
   }
-
+  
   // public void setParent(PApplet parent)
 
   // public void setPrimary(boolean primary)
@@ -427,15 +430,26 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
   }
 
-  public void dispose() {
+  public void dispose() {  
+  }
+  
+  // TODO: finalize or dispose to clean up opengl resources?
+  protected void finalize() {
+    if (!primarySurface) {
+      PGraphicsAndroid3D a3d = (PGraphicsAndroid3D)parent.g;
+      if (a3d != null) {
+        a3d.removeRecreateResourceMethod(recreateResourceIdx);
+      }
+    }
+
     if (screenTexID[0] == 0) {
       gl.glDeleteTextures(1, screenTexID, 0);  
-    }    
+    }
   }
 
   public void recreateResources() {
     // Recreate the openGL resources of the registered GL objects (PTexture,
-    // PShape3D)
+    // PShape3D, PFramebuffer, PFont)
     for (int i = 0; i < recreateResourceMethods.size(); i++) {
       GLResource resource = (GLResource) recreateResourceMethods.get(i);
       try {
@@ -459,12 +473,16 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
   }
 
+  protected void recreateResource(PGraphicsAndroid3D renderer) {
+    
+  }  
+  
   // ////////////////////////////////////////////////////////////
 
   // SCREEN TEXTURE
 
   protected void createScreenTexture() {    
-    if (screenTexID[0] == 0) {
+    if (screenTexID[0] != 0) {
       gl.glDeleteTextures(1, screenTexID, 0);  
     }
     
@@ -782,7 +800,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         // If the primary surface had lights on, the OpenGL state is
         // changed accordingly.
         noLights();  
-      }       
+      }
     }
     
     if (!settingsInited) {
@@ -969,6 +987,16 @@ public class PGraphicsAndroid3D extends PGraphics {
 
     // easiest for beginners
     textureMode(IMAGE);
+    
+    if (!primarySurface) {
+      PGraphicsAndroid3D a3d = (PGraphicsAndroid3D)parent.g;
+      try {
+        Method meth = this.getClass().getMethod("recreateResource", new Class[] { PGraphicsAndroid3D.class });
+        recreateResourceIdx =  a3d.addRecreateResourceMethod(this, meth);
+      } catch (Exception e) {
+        recreateResourceIdx = -1;
+      }      
+    }
   }
 
   // reapplySettings

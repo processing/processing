@@ -5076,6 +5076,26 @@ public class PGraphics extends PImage implements PConstants {
       showMissingWarning("noClear");
     }    
   }
+
+  public PImage getLastFrame() {
+    if (!(this instanceof PGraphicsAndroid3D)) {
+      showMissingWarning("getLastFrame");
+    }
+    return null;
+  }
   
+
+  public void blend(int mode) {
+    if (!(this instanceof PGraphicsAndroid3D)) {
+      showMissingWarning("blend");
+    }
+  }
+  
+  
+  public void noBlend() {
+    if (!(this instanceof PGraphicsAndroid3D)) {
+      showMissingWarning("noBlend");
+    }
+  }  
   
 }
