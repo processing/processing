@@ -670,7 +670,7 @@ public class PShape implements PConstants {
 
   /**
    * Same as getChild(name), except that it first walks all the way up the
-   * hierarchy to the farthest parent, so that children can be found anywhere.
+   * hierarchy to the eldest grandparent, so that children can be found anywhere.
    */
   public PShape findChild(String target) {
     if (parent == null) {
@@ -733,6 +733,25 @@ public class PShape implements PConstants {
 
   public int getPrimitive() {
     return primitive;
+  }
+  
+
+  public float[] getParams() {
+    return getParams(null);
+  }
+
+
+  public float[] getParams(float[] target) {
+    if (target == null || target.length != params.length) {
+      target = new float[params.length];
+    }
+    PApplet.arrayCopy(params, target);
+    return target;
+  }
+
+
+  public float getParam(int index) {
+    return params[index];
   }
   
   

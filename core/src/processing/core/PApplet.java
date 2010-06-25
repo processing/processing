@@ -7869,6 +7869,12 @@ public class PApplet extends Applet
   }
 
 
+  public void rect(float a, float b, float c, float d, float hr, float vr) {
+    if (recorder != null) recorder.rect(a, b, c, d, hr, vr);
+    g.rect(a, b, c, d, hr, vr);
+  }
+
+
   /**
    * The origin of the ellipse is modified by the <b>ellipseMode()</b>
    * function. The default configuration is <b>ellipseMode(CENTER)</b>,
