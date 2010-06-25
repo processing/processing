@@ -286,7 +286,8 @@ public class PTexture implements PConstants {
       createTexture(width, height);
     }   
     
-    int[] convArray = convertToRGBA(intArray, arrayFormat);    
+    int[] convArray = new int[glWidth * glHeight];
+    convertToRGBA(intArray, convArray, arrayFormat);    
     
     gl.glEnable(glTarget);
     gl.glBindTexture(glTarget, glTextureID);
@@ -317,107 +318,27 @@ public class PTexture implements PConstants {
     if ((pixels == null) || (pixels.length != width * height)) {
       pixels = new int[width * height];
     }
-    IntBuffer pixelBuffer = BufferUtil.newIntBuffer(pixels.length);
     
+    int size = glWidth * glHeight;
+    int[] tmp = new int[size];
+    IntBuffer pixelBuffer = BufferUtil.newIntBuffer(size);
+    
+    // Attaching the texture to the color buffer of a FBO, binding the FBO and reading the pixels
+    // from the current draw buffer (which is the color buffer of the FBO).
     PFramebuffer fbo = new PFramebuffer(parent, glWidth, glHeight);
     fbo.addColorBuffer(this);
     
     a3d.pushFramebuffer();
     a3d.setFramebuffer(fbo);
-
-    
-    gl.glReadPixels(0, 0, width, height, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, pixelBuffer);
-    
+    gl.glReadPixels(0, 0, glWidth, glHeight, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, pixelBuffer);
     a3d.popFramebuffer();
-    
 
-
-    pixelBuffer.get(pixels);
+    pixelBuffer.get(tmp);
     pixelBuffer.rewind();
-
-    // flip vertically (opengl stores images upside down),
-    // and swap RGBA components to ARGB (big endian)
-    int index = 0;
-    int yindex = (height - 1) * width;
-    for (int y = 0; y < height / 2; y++) {
-      if (PGraphicsAndroid3D.BIG_ENDIAN) {
-        for (int x = 0; x < width; x++) {
-          int temp = pixels[index];
-          // ignores alpha component, just sets it opaque
-          pixels[index] = 0xff000000 | ((pixels[yindex] >> 8) & 0x00ffffff);
-          pixels[yindex] = 0xff000000 | ((temp >> 8) & 0x00ffffff);
-
-          index++;
-          yindex++;
-        }
-      } else { // LITTLE_ENDIAN, convert ABGR to ARGB
-        for (int x = 0; x < width; x++) {
-          int temp = pixels[index];
-
-          // identical to endPixels because only two
-          // components are being swapped
-          pixels[index] = 0xff000000 | ((pixels[yindex] << 16) & 0xff0000)
-              | (pixels[yindex] & 0xff00) | ((pixels[yindex] >> 16) & 0xff);
-
-          pixels[yindex] = 0xff000000 | ((temp << 16) & 0xff0000)
-              | (temp & 0xff00) | ((temp >> 16) & 0xff);
-
-          index++;
-          yindex++;
-        }
-      }
-      yindex -= width * 2;
-    }
-
-    // When height is an odd number, the middle line needs to be
-    // endian swapped, but not y-swapped.
-    // http://dev.processing.org/bugs/show_bug.cgi?id=944
-    if ((height % 2) == 1) {
-      index = (height / 2) * width;
-      if (PGraphicsAndroid3D.BIG_ENDIAN) {
-        for (int x = 0; x < width; x++) {
-          // ignores alpha component, just sets it opaque
-          pixels[index] = 0xff000000 | ((pixels[index] >> 8) & 0x00ffffff);
-        }
-      } else {
-        for (int x = 0; x < width; x++) {
-          pixels[index] = 0xff000000 | ((pixels[index] << 16) & 0xff0000)
-              | (pixels[index] & 0xff00) | ((pixels[index] >> 16) & 0xff);
-        }
-      }
-    }
-
-    
-    
-    // TODO:
-    // It doesn't work yet, because there is no GetTexImage.
-    // But:if the texture is in a renderable format (RGB or RGBA, not L, A, or LA) then you can bind it to an FBO and use glReadPixels.
-    // From: http://www.idevgames.com/forum/showthread.php?t=17044
-    // Unfortunately, FBO support seems to be available only on iPhone through an custom extension (glBindFramebufferOES, etc).
-    // Read also note on opengl page on android site:
-    // http://developer.android.com/guide/topics/graphics/opengl.html
-    // Specifically:
-    // "Finally, note that though Android does include some basic support for OpenGL ES 1.1, the support is not complete, 
-    // and should not be relied upon at this time."
-    // :-(  
-    
-    /*
-    int size = glWidth * glHeight;
-    IntBuffer buffer = BufferUtil.newIntBuffer(size);
-    
-    gl.glBindTexture(glTarget, glTextureID[0]);
-    //gl.glGetTexImage(glTarget, 0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, buffer);
-    gl.glBindTexture(glTarget, 0);
-    
-    int[] tmp = new int[size];
-    buffer.get(tmp);
-    int[] pixelsARGB = convertToARGB(tmp);
-    PApplet.arrayCopy(pixelsARGB, pixels);
+        
+    convertToARGB(tmp, pixels);
     if (flippedX) flipArrayOnX(pixels, 1);
-    if (flippedY) flipArrayOnY(pixels, 1);
-    
-    super.updatePixels();
-    */
+    if (flippedY) flipArrayOnY(pixels, 1);    
   }
   
     
@@ -614,12 +535,12 @@ public class PTexture implements PConstants {
    * The size of the incoming array is assumed to be width*height, and the size of the
    * returned array is glWidth * glHeight.
    * @param intArray int[]
+   * @param tIntArray int[]
    * @param arrayFormat int	 
    */
-  protected int[] convertToRGBA(int[] intArray, int arrayFormat)  {
+  protected void convertToRGBA(int[] intArray, int[] tIntArray, int arrayFormat)  {
     int t = 0; 
     int p = 0;
-    int[] tIntArray = new int[glWidth * glHeight];        
     if (PGraphicsAndroid3D.BIG_ENDIAN)  {
       switch (arrayFormat) {
       case ALPHA:
@@ -706,21 +627,18 @@ public class PTexture implements PConstants {
           
       }
     }
-        
-    return tIntArray;    
   }
      
   
   /**
    * Reorders a pixel array in RGBA format into ARGB. The input array must be
    * of size glWidth * glHeight, while the resulting array will be of size width * height.
+   * @param intArray int[]
    * @param intArray int[]	 
    */    
-  protected int[] convertToARGB(int[] intArray) {
+  protected void convertToARGB(int[] intArray, int[] tIntArray) {
     int t = 0; 
     int p = 0;
-    int[] tIntArray = new int[width * height];
-    
     if (PGraphicsAndroid3D.BIG_ENDIAN) {
       
             for (int y = 0; y < height; y++)  {
@@ -753,8 +671,6 @@ public class PTexture implements PConstants {
       }
 
     }
-        
-    return tIntArray;    
   }
     
   
