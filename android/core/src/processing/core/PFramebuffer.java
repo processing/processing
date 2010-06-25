@@ -69,7 +69,7 @@ public class PFramebuffer  {
     if (gl == null) {
       throw new RuntimeException("PFramebuffer: OpenGL ES 1.1 Extension Pack required");
     }    
-    if (!a3d.fboSupported && !onscreen) {
+    if (!PGraphicsAndroid3D.fboSupported && !onscreen) {
        throw new RuntimeException("PFramebuffer: Frame Buffer Objects are not available");
     }
     
@@ -190,7 +190,7 @@ public class PFramebuffer  {
   }
   
   public void bind() {
-    if (a3d.fboSupported) {
+    if (PGraphicsAndroid3D.fboSupported) {
       gl.glBindFramebufferOES(GL11ExtensionPack.GL_FRAMEBUFFER_OES, glFboID);  
     }
   }
