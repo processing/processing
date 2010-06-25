@@ -1,5 +1,13 @@
 0186 core
+X more Linux PDF fixes from Matthias Breuer
 
+fixed in 0185
+X PDF library matrix is not reset between frames
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1227
+
+_ change skewX/Y to shearX/Y
+
+_ possibly add rounded rect method
 
 _ cover the svg changes in a future release
 
@@ -13,10 +21,9 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=1504
 
 _ new PGraphics(... OutputStream) 
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1502
-_ PDF library matrix is not reset between frames
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1227
 _ transparency issue (might just be a bug in their code?)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1280
+_   http://code.google.com/p/processing/issues/detail?id=182
 
 _ only top left 100 x 100 pixels are displayed in presentation mode (Linux 1.1+)
 _   also was just crashing in main() for me, check on this later
@@ -24,7 +31,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=1560
 
 _ need to make sure the createFont() reference is up to date for charset
 
-_ change skewX/Y to shearX/Y
 _ make determination on shape(x,y,z,w,h,d) or no
 
 stop() mess
