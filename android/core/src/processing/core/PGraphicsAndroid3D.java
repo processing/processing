@@ -2602,17 +2602,17 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
 
   public void rotateX(float angle) {
-    gl.glRotatef(angle, 1, 0, 0);
+    gl.glRotatef(PApplet.degrees(angle), 1, 0, 0);
     modelviewUpdated = false;
   }
 
   public void rotateY(float angle) {
-    gl.glRotatef(angle, 0, 1, 0);
+    gl.glRotatef(PApplet.degrees(angle), 0, 1, 0);
     modelviewUpdated = false;
   }
 
   public void rotateZ(float angle) {
-    gl.glRotatef(angle, 0, 0, 1);
+    gl.glRotatef(PApplet.degrees(angle), 0, 0, 1);
     modelviewUpdated = false;
   }
 
@@ -2621,7 +2621,7 @@ public class PGraphicsAndroid3D extends PGraphics {
    * takes radians (instead of degrees).
    */
   public void rotate(float angle, float v0, float v1, float v2) {
-    gl.glRotatef(angle, v0, v1, v2);
+    gl.glRotatef(PApplet.degrees(angle), v0, v1, v2);
     modelviewUpdated = false;
   }
 
