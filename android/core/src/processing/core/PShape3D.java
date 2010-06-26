@@ -424,6 +424,11 @@ public class PShape3D extends PShape implements PConstants {
   }  
   
   
+  public void setVertex(int idx, float[] p) {
+    setVertex(idx, p[0], p[1], p[2]);  
+  }  
+  
+  
   public void setVertex(float[] data) {
     if (updateElement != VERTICES) {
       throw new RuntimeException("PShape3D: updadate mode is not set to VERTICES");
