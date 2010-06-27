@@ -3,12 +3,11 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2007 Ben Fry and Casey Reas
+  Copyright (c) 2007-2010 Ben Fry and Casey Reas
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
-  the Free Software Foundation; either version 2 of the License, or
-  (at your option) any later version.
+  the Free Software Foundation, version 2.
 
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -22,13 +21,16 @@
 
 package processing.app.macosx;
 
+import java.lang.reflect.Method;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 import processing.app.Base;
 
 import com.apple.eawt.*;
 
 
 /**
- * Deal with issues related to thinking different. This handles the basic
+ * Deal with issues related to thinking differently. This handles the basic
  * Mac OS X menu commands (and apple events) for open, about, prefs, etc.
  *  
  * Based on OSXAdapter.java from Apple DTS.
@@ -51,7 +53,7 @@ public class ThinkDifferent implements ApplicationListener {
   static protected void init(Base base) {    
     if (application == null) {
       //application = new com.apple.eawt.Application();
-      application = com.apple.eawt.Application.getApplication();
+      application = Application.getApplication();
     }
     if (adapter == null) {
       adapter = new ThinkDifferent(base);
@@ -59,6 +61,28 @@ public class ThinkDifferent implements ApplicationListener {
     application.addApplicationListener(adapter);
     application.setEnabledAboutMenu(true);
     application.setEnabledPreferencesMenu(true);
+
+    // Set the menubar to be used when nothing else is open. http://j.mp/dkZmka
+    // http://developer.apple.com/mac/library/documentation/Java/Reference/
+    //   JavaSE6_AppleExtensionsRef/api/com/apple/eawt/Application.html
+    // Only available since Java for Mac OS X 10.6 Update 1, and 
+    // Java for Mac OS X 10.5 Update 6, so need to load this dynamically
+    try {
+      // com.apple.eawt.Application.setDefaultMenuBar(JMenuBar)      
+      Class<?> appClass = Application.class;
+      Method method = 
+        appClass.getMethod("setDefaultMenuBar", new Class[] { JMenuBar.class });
+      if (method != null) {
+        JMenuBar defaultMenuBar = new JMenuBar();
+        JMenu fileMenu = base.buildFileMenu(null);
+        defaultMenuBar.add(fileMenu);
+        method.invoke(application, new Object[] { defaultMenuBar });
+        // This is kind of a gross way to do this, but the alternatives? Hrm.
+        Base.defaultFileMenu = fileMenu;
+      }
+    } catch (Exception e) {
+      e.printStackTrace();  // oh well nevermind
+    }
   }
   
   

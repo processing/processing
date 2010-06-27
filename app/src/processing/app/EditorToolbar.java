@@ -3,13 +3,12 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-09 Ben Fry and Casey Reas
+  Copyright (c) 2004-10 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
-  the Free Software Foundation; either version 2 of the License, or
-  (at your option) any later version.
+  the Free Software Foundation, version 2.
 
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -93,6 +92,15 @@ public class EditorToolbar extends JComponent implements MouseInputListener, Key
   Color statusColor;
   
   boolean shiftPressed;
+  
+//  Color modeButtonColor;
+//  Font modeTextFont;
+//  Color modeTextColor;
+//  String modeTitle = "JAVA"; //"Java";
+//  String modeTitle = "ANDROID"; //"Java";
+//  int modeX1, modeY1;
+//  int modeX2, modeY2;
+
 
   public EditorToolbar(Editor editor, JMenu menu) {
     this.editor = editor;
@@ -115,9 +123,14 @@ public class EditorToolbar extends JComponent implements MouseInputListener, Key
     statusFont = Theme.getFont("buttons.status.font");
     statusColor = Theme.getColor("buttons.status.color");
 
+//    modeButtonColor = Theme.getColor("mode.button.bgcolor");
+//    modeTextFont = Theme.getFont("mode.button.font");
+//    modeTextColor = Theme.getColor("mode.button.color");
+
     addMouseListener(this);
     addMouseMotionListener(this);
   }
+
 
   protected void loadButtons() {
     Image allButtons = Base.getThemeImage("buttons.gif", this);
@@ -134,7 +147,8 @@ public class EditorToolbar extends JComponent implements MouseInputListener, Key
       }
     }
   }
-  
+
+
   @Override
   public void paintComponent(Graphics screen) {
     // this data is shared by all EditorToolbar instances
@@ -181,22 +195,39 @@ public class EditorToolbar extends JComponent implements MouseInputListener, Key
     g.setColor(statusColor);
     g.setFont(statusFont);
 
-    /*
-    // if i ever find the guy who wrote the java2d api, i will hurt him.
-     * 
-     * whereas I love the Java2D API. --jdf. lol.
-     * 
-    Graphics2D g2 = (Graphics2D) g;
-    FontRenderContext frc = g2.getFontRenderContext();
-    float statusW = (float) statusFont.getStringBounds(status, frc).getWidth();
-    float statusX = (getSize().width - statusW) / 2;
-    g2.drawString(status, statusX, statusY);
-    */
+    // If I ever find the guy who wrote the Java2D API, I will hurt him.
+//    Graphics2D g2 = (Graphics2D) g;
+//    FontRenderContext frc = g2.getFontRenderContext();
+//    float statusW = (float) statusFont.getStringBounds(status, frc).getWidth();
+//    float statusX = (getSize().width - statusW) / 2;
+//    g2.drawString(status, statusX, statusY);
+
     if (currentRollover != -1) {
       int statusY = (BUTTON_HEIGHT + g.getFontMetrics().getAscent()) / 2;
       String status = shiftPressed ? titleShift[currentRollover] : title[currentRollover];
       g.drawString(status, buttonCount * BUTTON_WIDTH + 3 * BUTTON_GAP, statusY);
     }
+    
+////    Color modeButtonColor;
+////    Font modeTextFont;
+////    Color modeTextColor;
+//    g.setFont(modeTextFont);
+//    FontMetrics metrics = g.getFontMetrics();
+//    int modeH = metrics.getAscent();
+//    int modeW = metrics.stringWidth(modeTitle);
+//    final int modeGapH = 6;
+//    final int modeGapV = 3;
+//    modeX2 = getWidth() - 16;
+//    modeX1 = modeX2 - (modeGapH + modeW + modeGapH);
+//    modeY1 = (getHeight() - modeH)/2 - modeGapV;
+//    modeY2 = modeY1 + modeH + modeGapV*2;
+////    g.setColor(modeButtonColor);
+////    g.fillRect(modeX1, modeY1, modeX2 - modeX1, modeY2 - modeY1);
+////    g.setColor(modeTextColor);
+////    g.drawString(modeTitle, modeX1 + modeGapH, modeY2 - modeGapV);
+//    g.setColor(modeButtonColor);
+//    g.drawRect(modeX1, modeY1, modeX2 - modeX1, modeY2 - modeY1);
+//    g.drawString(modeTitle, modeX1 + modeGapH, modeY2 - modeGapV);
 
     screen.drawImage(offscreen, 0, 0, null);
     
