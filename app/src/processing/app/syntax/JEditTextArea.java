@@ -286,31 +286,12 @@ public class JEditTextArea extends JComponent
       int charWidth = painter.getFontMetrics().charWidth('w');
       int width = maxLineLength * charWidth;
       int painterWidth = painter.getWidth();
-      //System.out.println("max line len " + maxLineLength);
-      //System.out.println("width " + width);
-      //System.out.println("text area width " + painter.getWidth());
-
-      // this was the default, but it's enormous
-      //horizontal.setValues(-horizontalOffset,width,0,width * 5);
-
-      // something more reasonable, though this is a bad solution
-      //horizontal.setValues(-horizontalOffset,width,0,width * 2);
-
-      // in general.. time to start looking at that other syntax pkg
-      // since most code should fit the window horizontally, just use
-      // the default settings for the width, this is a nicer solution
-      // until a better update mechanism can be implemented [fry]
-
-      //horizontal.setValues(0, width, 0, width);
-                           //0, width - horizontalOffset);
-      // works, from pre-75 versions of p5
-      //horizontal.setValues(-horizontalOffset, width, 0, width);
-
-      // gets weird when writing to the end of lines
-      //horizontal.setValues(value, painterWidth, 0, width);
-
-      // seems to work, implemented for 0075
-      horizontal.setValues(-horizontalOffset, painterWidth, 0, width);
+      
+      // Update to how horizontal scrolling is handled
+      // http://code.google.com/p/processing/issues/detail?id=280
+      //setValues(int newValue, int newExtent, int newMin, int newMax)
+      horizontal.setValues(-horizontalOffset, painterWidth, 
+                           -horizontalOffset, width + horizontalOffset);
 
       //horizontal.setUnitIncrement(painter.getFontMetrics().charWidth('w'));
       horizontal.setUnitIncrement(charWidth);
@@ -371,13 +352,14 @@ public class JEditTextArea extends JComponent
    * implement horizontal scrolling.
    * @param horizontalOffset offset The new horizontal offset
    */
-  public void setHorizontalOffset(int horizontalOffset)
-  {
-    if(horizontalOffset == this.horizontalOffset)
+  public void setHorizontalOffset(int horizontalOffset) {
+    if (horizontalOffset == this.horizontalOffset) {
       return;
+    }
     this.horizontalOffset = horizontalOffset;
-    if(horizontalOffset != horizontal.getValue())
+    if (horizontalOffset != horizontal.getValue()) {
       updateScrollBars();
+    }
     painter.repaint();
   }
 
