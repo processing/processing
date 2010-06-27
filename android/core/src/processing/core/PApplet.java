@@ -48,7 +48,10 @@ import android.view.SurfaceView;
 import android.opengl.GLSurfaceView;
 import android.view.WindowManager;
 import android.os.Bundle;
+import android.os.Handler;
+//import android.os.Looper;
 import android.view.*;
+import android.widget.RelativeLayout;
 
 
 public class PApplet extends Activity implements PConstants, Runnable {
@@ -112,7 +115,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
    * when the renderer is changed. This is the only way for us to handle
    * invoking the new renderer while also in the midst of rendering.
    */
-//  static public class RendererChangeException extends RuntimeException { }
+  static public class RendererChangeException extends RuntimeException { }
 
   protected boolean surfaceReady;
 
@@ -207,6 +210,9 @@ public class PApplet extends Activity implements PConstants, Runnable {
   public boolean mousePressed;
 
 //  public MotionEvent motionEvent;
+
+  /** Post events to the main thread that created the Activity */
+  Handler handler;
 
 
   /**
@@ -385,11 +391,16 @@ public class PApplet extends Activity implements PConstants, Runnable {
   //////////////////////////////////////////////////////////////
 
 
+//  ViewGroup viewGroup;
+  RelativeLayout layout;
+  
   /** Called with the activity is first created. */
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 //    println("PApplet.onCreate()");
+
+    println("onCreate() happening here: " + Thread.currentThread().getName());
 
     Window window = getWindow();
 
@@ -406,7 +417,20 @@ public class PApplet extends Activity implements PConstants, Runnable {
     getWindowManager().getDefaultDisplay().getMetrics(dm);
     screenWidth = dm.widthPixels;
     screenHeight = dm.heightPixels;
+    println("density is " + dm.density);
+    println("densityDpi is " + dm.densityDpi);
+    println(dm);
+
     //println("screen size is " + screenWidth + "x" + screenHeight);
+
+//    LinearLayout layout = new LinearLayout(this);
+//    layout.setOrientation(LinearLayout.VERTICAL | LinearLayout.HORIZONTAL);
+//    viewGroup = new ViewGroup();
+//    surfaceView.setLayoutParams();
+//    viewGroup.setLayoutParams(LayoutParams.)
+//    RelativeLayout layout = new RelativeLayout(this);
+    layout = new RelativeLayout(this);
+    layout.setGravity(RelativeLayout.CENTER_IN_PARENT);
 
     if (sketchRenderer().equals(A2D)) {
       surfaceView = new SketchSurfaceView2D(this);
@@ -414,10 +438,13 @@ public class PApplet extends Activity implements PConstants, Runnable {
       surfaceView = new SketchSurfaceView3D(this);
     }
 
+    layout.addView(surfaceView);
+
     width = screenWidth;
     height = screenHeight;
 
-    window.setContentView(surfaceView);  // set full screen
+//    window.setContentView(surfaceView);  // set full screen
+    window.setContentView(layout);
 
     // code below here formerly from init()
 
@@ -433,6 +460,12 @@ public class PApplet extends Activity implements PConstants, Runnable {
     Context context = getApplicationContext();
     sketchPath = context.getFilesDir().getAbsolutePath();
 
+//    Looper.prepare();
+    handler = new Handler();
+    println("calling loop()");
+//    Looper.loop();
+    println("done with loop() call, will continue...");
+    
     start();
   }
 
@@ -506,7 +539,14 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
-  public class SketchSurfaceView3D extends GLSurfaceView {
+  public interface SketchSurfaceView {
+    public PGraphics getGraphics();
+  }
+  
+  
+  public class SketchSurfaceView3D extends GLSurfaceView implements SketchSurfaceView {
+    PGraphicsAndroid3D g3;
+
 
     public SketchSurfaceView3D(Context context) {
       super(context);
@@ -525,34 +565,36 @@ public class PApplet extends Activity implements PConstants, Runnable {
         this.getHolder().setFormat(PixelFormat.TRANSLUCENT);
       }
 
-
 //      System.out.println("Creating PGraphicsAndroid3D " + width + " " + height);
 
       // The PGraphics object needs to be created here so the renderer is not
       // null. This is required because PApplet.onResume events (which call
       // this.onResume() and thus require a valid renderer) are triggered
       // before surfaceChanged() is ever called.
-      PGraphics newGraphics = new PGraphicsAndroid3D();
+      g3 = new PGraphicsAndroid3D();
       // Set semi-arbitrary size; will be set properly when surfaceChanged() called
-      newGraphics.setSize(screenWidth, screenHeight);
-      newGraphics.setParent(PApplet.this);
-      newGraphics.setPrimary(true);
-      g = newGraphics;
+      g3.setSize(screenWidth, screenHeight);
+      g3.setParent(PApplet.this);
+      g3.setPrimary(true);
+//      g = newGraphics;
 
       // Set context factory. This make possible to have 2.x contexts.
-      setEGLContextFactory(((PGraphicsAndroid3D)g).getContextFactory());
+      setEGLContextFactory(g3.getContextFactory());
 
       // The renderer can be set only once.
-      setEGLConfigChooser(((PGraphicsAndroid3D)g).getConfigChooser());
-      setRenderer(((PGraphicsAndroid3D)g).getRenderer());
+      setEGLConfigChooser(g3.getConfigChooser());
+      setRenderer(g3.getRenderer());
       setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 
       setFocusable(true);
       setFocusableInTouchMode(true);
       requestFocus();
     }
-
-
+    
+    
+    public PGraphics getGraphics() {
+      return g3;
+    }
 
 
     // part of SurfaceHolder.Callback
@@ -592,41 +634,49 @@ public class PApplet extends Activity implements PConstants, Runnable {
      */
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
-      super.onWindowFocusChanged(hasFocus);
-      focused = hasFocus;
-      if (focused) {
-//        println("got focus");
-        focusGained();
-      } else {
-//        println("lost focus");
-        focusLost();
-      }
+      surfaceWindowFocusChanged(hasFocus);
+//      super.onWindowFocusChanged(hasFocus);
+//      focused = hasFocus;
+//      if (focused) {
+////        println("got focus");
+//        focusGained();
+//      } else {
+////        println("lost focus");
+//        focusLost();
+//      }
     }
 
+    
+    @Override
     public boolean onTouchEvent(MotionEvent event) {
-      checkMotionEvent(event);
-      return true;
+      return surfaceTouchEvent(event);
     }
 
-    public boolean onKeyDown(int code, KeyEvent event) {
-      checkKeyEvent(event);
-      return super.onKeyDown(code, event);
-    }
-
-    public boolean onKeyUp(int code, KeyEvent event) {
-      checkKeyEvent(event);
-      return super.onKeyDown(code, event);
-    }
 
     @Override
-    protected void onDetachedFromWindow() {
-      super.onDetachedFromWindow();
-      stop();
+    public boolean onKeyDown(int code, KeyEvent event) {
+      return surfaceKeyDown(code, event);
     }
+
+
+    @Override
+    public boolean onKeyUp(int code, KeyEvent event) {
+      return surfaceKeyUp(code, event);
+    }
+
+    
+    // don't think i want to call stop() from here, since it might be swapping renderers
+//    @Override
+//    protected void onDetachedFromWindow() {
+//      super.onDetachedFromWindow();
+//      stop();
+//    }
   }
 
 
   public class SketchSurfaceView2D extends SurfaceView implements SurfaceHolder.Callback {
+    PGraphicsAndroid2D g2;
+
 
     public SketchSurfaceView2D(Context context) {
       super(context);
@@ -639,22 +689,26 @@ public class PApplet extends Activity implements PConstants, Runnable {
       surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_GPU);
 
 //      println("creating graphics");
-      PGraphics newGraphics = new PGraphicsAndroid2D();
+      g2 = new PGraphicsAndroid2D();
       // Set semi-arbitrary size; will be set properly when surfaceChanged() called
-      newGraphics.setSize(screenWidth, screenHeight);
+      g2.setSize(screenWidth, screenHeight);
 //      newGraphics.setSize(getWidth(), getHeight());
-      newGraphics.setParent(PApplet.this);
-      newGraphics.setPrimary(true);
+      g2.setParent(PApplet.this);
+      g2.setPrimary(true);
       // Set the value for 'g' once everything is ready (otherwise rendering
       // may attempt before setSize(), setParent() etc)
-      g = newGraphics;
+//      g = newGraphics;
 
 //      println("setting focusable, requesting focus");
       setFocusable(true);
       setFocusableInTouchMode(true);
       requestFocus();
-
 //      println("done making surface view");
+    }
+    
+    
+    public PGraphics getGraphics() {
+      return g2;
     }
 
 
@@ -665,7 +719,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
     // part of SurfaceHolder.Callback
     public void surfaceDestroyed(SurfaceHolder holder) {
-      g.dispose();
+      g2.dispose();
     }
 
 
@@ -682,66 +736,82 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 
     /**
-     * Inform the view that the activity is paused.
-     */
-//    public void onPause() {
-//    }
-
-
-    /**
-     * Inform the view that the activity is resumed.
-     */
-//    public void onResume() {
-//    }
-
-
-    /**
      * Inform the view that the window focus has changed.
      */
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
-      super.onWindowFocusChanged(hasFocus);
-      focused = hasFocus;
-      if (focused) {
-        focusGained();
-      } else {
-        focusLost();
-      }
-    }
-
-
-    /**
-     * If you override this function without calling super.onTouchEvent(),
-     * then motionX, motionY, motionPressed, and motionEvent will not be set.
-     */
-    public boolean onTouchEvent(MotionEvent event) {
-      checkMotionEvent(event);
-      //return super.onTouchEvent(event);
-      return true;
-    }
-
-
-    public boolean onKeyDown(int code, KeyEvent event) {
-//      System.out.println("got onKeyDown for " + code + " " + event);
-      checkKeyEvent(event);
-      return super.onKeyDown(code, event);
-    }
-
-
-    public boolean onKeyUp(int code, KeyEvent event) {
-//      System.out.println("got onKeyUp for " + code + " " + event);
-      checkKeyEvent(event);
-      return super.onKeyDown(code, event);
+      surfaceWindowFocusChanged(hasFocus);
     }
 
 
     @Override
-    protected void onDetachedFromWindow() {
-      super.onDetachedFromWindow();
-      stop();
+    public boolean onTouchEvent(MotionEvent event) {
+      return surfaceTouchEvent(event);
+    }
+
+
+    @Override
+    public boolean onKeyDown(int code, KeyEvent event) {
+      return surfaceKeyDown(code, event);
+    }
+
+
+    @Override
+    public boolean onKeyUp(int code, KeyEvent event) {
+      return surfaceKeyUp(code, event);
+    }
+
+
+    // don't think i want to call stop() from here, since it might be swapping renderers
+//    @Override
+//    protected void onDetachedFromWindow() {
+//      super.onDetachedFromWindow();
+//      stop();
+//    }
+  }
+
+  
+  // versions of these inside PApplet
+
+
+  /** 
+   * Called by the sketch surface view, thought it could conceivably be called
+   * by Android as well.
+   */
+  public void surfaceWindowFocusChanged(boolean hasFocus) {
+    super.onWindowFocusChanged(hasFocus);
+    focused = hasFocus;
+    if (focused) {
+      focusGained();
+    } else {
+      focusLost();
     }
   }
 
+
+  /**
+   * If you override this function without calling super.onTouchEvent(),
+   * then motionX, motionY, motionPressed, and motionEvent will not be set.
+   */
+  public boolean surfaceTouchEvent(MotionEvent event) {
+    checkMotionEvent(event);
+    //return super.onTouchEvent(event);
+    return true;
+  }
+  
+  
+  public boolean surfaceKeyDown(int code, KeyEvent event) {
+    //  System.out.println("got onKeyDown for " + code + " " + event);
+    checkKeyEvent(event);
+    return super.onKeyDown(code, event);
+  }
+
+
+  public boolean surfaceKeyUp(int code, KeyEvent event) {
+    //  System.out.println("got onKeyUp for " + code + " " + event);
+    checkKeyEvent(event);
+    return super.onKeyUp(code, event);
+  }
 
 
   //////////////////////////////////////////////////////////////
@@ -1071,46 +1141,43 @@ public class PApplet extends Activity implements PConstants, Runnable {
   //////////////////////////////////////////////////////////////
 
 
-  /*
   protected void resizeRenderer(int iwidth, int iheight) {
 //    println("resizeRenderer request for " + iwidth + " " + iheight);
     if (width != iwidth || height != iheight) {
-//      println("  former size was " + width + " " + height);
+      int left = (screenWidth - iwidth) / 2;
+      int right = screenWidth - (left + iwidth);
+      int top = (screenHeight - iheight) / 2;
+      int bottom = screenHeight - (top + iheight);
+      surfaceView.setPadding(left, top, right, bottom);
+
       g.setSize(iwidth, iheight);
       width = iwidth;
       height = iheight;
     }
   }
-  */
 
 
   /**
-   * Starts up and creates a two-dimensional drawing surface,
-   * or resizes the current drawing surface.
+   * Starts up and creates a two-dimensional drawing surface, or resizes the 
+   * current drawing surface.
    * <P>
    * This should be the first thing called inside of setup().
    * <P>
-   * If using Java 1.3 or later, this will default to using
-   * PGraphics2, the Java2D-based renderer. If using Java 1.1,
-   * or if PGraphics2 is not available, then PGraphics will be used.
-   * To set your own renderer, use the other version of the size()
-   * method that takes a renderer as its last parameter.
-   * <P>
-   * If called once a renderer has already been set, this will
-   * use the previous renderer and simply resize it.
+   * If called once a renderer has already been set, this will use the 
+   * previous renderer and simply resize it.
    */
   public void size(int iwidth, int iheight) {
-    //size(iwidth, iheight, A2D, null);
+    size(iwidth, iheight, A2D, null);
   }
 
 
   public void size(int iwidth, int iheight, String irenderer) {
-    //size(iwidth, iheight, irenderer, null);
-    renderer(irenderer);
+    size(iwidth, iheight, irenderer, null);
   }
 
 
   // not finished yet--will swap the renderer at a bad time
+  /*
   public void renderer(String name) {
     if (name.equals(A2D)) {
       if (!(surfaceView instanceof SketchSurfaceView2D)) {
@@ -1124,6 +1191,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
       }
     }
   }
+  */
 
 
   /**
@@ -1139,48 +1207,75 @@ public class PApplet extends Activity implements PConstants, Runnable {
    * To change the size of a PApplet externally, use setSize(), which will
    * update the component size, and queue a resize of the renderer as well.
    */
-  /*
   public void size(final int iwidth, final int iheight,
-                   String irenderer, String ipath) {
+                   final String irenderer, final String ipath) {
+//    Looper.prepare();
     // Run this from the EDT, just cuz it's AWT stuff (or maybe later Swing)
-    new Handler().post(new Runnable() {
+//    new Handler().post(new Runnable() {
+    handler.post(new Runnable() {
       public void run() {
-        // Set the preferred size so that the layout managers can handle it
-        setPreferredSize(new Dimension(iwidth, iheight));
-        setSize(iwidth, iheight);
-      }
-    });
+        println("Handler is on thread " + Thread.currentThread().getName());
+//        // Set the preferred size so that the layout managers can handle it
+////        setPreferredSize(new Dimension(iwidth, iheight));
+////        setSize(iwidth, iheight);
+//        g.setSize(iwidth, iheight);
+//      }
+//    });
 
     // ensure that this is an absolute path
-    if (ipath != null) ipath = savePath(ipath);
+//    if (ipath != null) ipath = savePath(ipath);
+        // no path renderers supported yet
 
+    println("I'm the ole thread " + Thread.currentThread().getName());
     String currentRenderer = g.getClass().getName();
     if (currentRenderer.equals(irenderer)) {
+      println("resizing renderer inside size(....)");
       // Avoid infinite loop of throwing exception to reset renderer
       resizeRenderer(iwidth, iheight);
       //redraw();  // will only be called insize draw()
 
     } else {  // renderer is being changed
+      println("changing renderer inside size(....)");
+      
       // otherwise ok to fall through and create renderer below
       // the renderer is changing, so need to create a new object
-      g = makeGraphics(iwidth, iheight, irenderer, ipath, true);
-      width = iwidth;
-      height = iheight;
+//      g = makeGraphics(iwidth, iheight, irenderer, ipath, true);
+//      width = iwidth;
+//      height = iheight;
+//      if ()
+      
+      if (irenderer.equals(A2D)) {
+        surfaceView = new SketchSurfaceView2D(PApplet.this);
+      } else if (irenderer.equals(A3D)) {
+        surfaceView = new SketchSurfaceView3D(PApplet.this);
+      }
+      g = ((SketchSurfaceView) surfaceView).getGraphics();
+
+      width = screenWidth;
+      height = screenHeight;
+
+      println("getting window");
+      Window window = getWindow();
+      window.setContentView(surfaceView);  // set full screen
 
       // fire resize event to make sure the applet is the proper size
 //      setSize(iwidth, iheight);
       // this is the function that will run if the user does their own
       // size() command inside setup, so set defaultSize to false.
-      defaultSize = false;
+//      defaultSize = false;
 
       // throw an exception so that setup() is called again
       // but with a properly sized render
       // this is for opengl, which needs a valid, properly sized
       // display before calling anything inside setup().
-      throw new RendererChangeException();
+//      throw new RendererChangeException();
+      println("interrupting animation thread");
+      thread.interrupt();
     }
+      }
+    });
+
   }
-  */
 
 
   /**
@@ -1270,36 +1365,36 @@ public class PApplet extends Activity implements PConstants, Runnable {
    * @oaram applet the parent applet object, this should only be non-null
    *               in cases where this is the main drawing surface object.
    */
-//  protected PGraphics makeGraphics(int iwidth, int iheight,
-//                                   String irenderer, String ipath,
-//                                   boolean iprimary) {
-//    try {
-//      Class<?> rendererClass =
-//        Thread.currentThread().getContextClassLoader().loadClass(irenderer);
-//
-//      Constructor<?> constructor = rendererClass.getConstructor(new Class[] { });
-//      PGraphics pg = (PGraphics) constructor.newInstance();
-//
-//      pg.setParent(this);
-//      pg.setPrimary(iprimary);
-//      if (ipath != null) pg.setPath(ipath);
-//      pg.setSize(iwidth, iheight);
-//
-//      // everything worked, return it
-//      return pg;
-//
-//    } catch (InvocationTargetException ite) {
-//      ite.getTargetException().printStackTrace();
-//      Throwable target = ite.getTargetException();
-//      throw new RuntimeException(target.getMessage());
-//
-//    } catch (ClassNotFoundException cnfe) {
-//      throw new RuntimeException("You need to use \"Import Library\" " +
-//                                 "to add " + irenderer + " to your sketch.");
-//    } catch (Exception e) {
-//      throw new RuntimeException(e.getMessage());
-//    }
-//  }
+  protected PGraphics makeGraphics(int iwidth, int iheight,
+                                   String irenderer, String ipath,
+                                   boolean iprimary) {
+    try {
+      Class<?> rendererClass =
+        Thread.currentThread().getContextClassLoader().loadClass(irenderer);
+
+      Constructor<?> constructor = rendererClass.getConstructor(new Class[] { });
+      PGraphics pg = (PGraphics) constructor.newInstance();
+
+      pg.setParent(this);
+      pg.setPrimary(iprimary);
+      if (ipath != null) pg.setPath(ipath);
+      pg.setSize(iwidth, iheight);
+
+      // everything worked, return it
+      return pg;
+
+    } catch (InvocationTargetException ite) {
+      ite.getTargetException().printStackTrace();
+      Throwable target = ite.getTargetException();
+      throw new RuntimeException(target.getMessage());
+
+    } catch (ClassNotFoundException cnfe) {
+      throw new RuntimeException("You need to use \"Import Library\" " +
+                                 "to add " + irenderer + " to your sketch.");
+    } catch (Exception e) {
+      throw new RuntimeException(e.getMessage());
+    }
+  }
 
 
   /**
@@ -1531,15 +1626,15 @@ public class PApplet extends Activity implements PConstants, Runnable {
       long now = System.nanoTime();
 
       if (frameCount == 0) {
-//        try {
+        try {
           //println("Calling setup()");
-        setup();
+          setup();
           //println("Done with setup()");
 
-//        } catch (RendererChangeException e) {
-//          // Give up, instead set the new renderer and re-attempt setup()
-//          return;
-//        }
+        } catch (RendererChangeException e) {
+          // Give up, instead set the new renderer and re-attempt setup()
+          return;
+        }
 //        this.defaultSize = false;
 
       } else {  // frameCount > 0, meaning an actual draw()
