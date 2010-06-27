@@ -16,6 +16,26 @@ class AndroidSDK {
   private final File tools;
   private final File androidTool;
 
+  private static final String ANDROID_SDK_PRIMARY = 
+    "Is the Android SDK installed?";
+
+  private static final String ANDROID_SDK_SECONDARY = 
+    "The Android SDK does not appear to be installed, <br>" + 
+    "because the ANDROID_SDK variable is not set. <br>" + 
+    "If it is installed, click “Yes” to select the <br>" + 
+    "location of the SDK, or “No” to visit the SDK<br>" + 
+    "download site at http://developer.android.com/sdk.";
+
+  private static final String SELECT_ANDROID_SDK_FOLDER = 
+    "Choose the location of the Android SDK";
+
+  private static final String NOT_ANDROID_SDK = 
+    "The selected folder does not appear to contain an Android SDK.";
+
+  private static final String ANDROID_SDK_URL = 
+    "http://developer.android.com/sdk/";
+
+
   public AndroidSDK(final String sdkPath) throws BadSDKException, IOException {
     sdk = new File(sdkPath);
     if (!sdk.exists()) {
@@ -38,29 +58,37 @@ class AndroidSDK {
 
     final String javaHomeProp = System.getProperty("java.home");
     if (javaHomeProp == null) {
-      throw new RuntimeException(
-                                 "I don't know how to deal with a null java.home proprty, to be quite frank.");
+      throw new RuntimeException("I don't know how to deal with " +
+      		"a null java.home proprty, to be quite frank.");
     }
     final File javaHome = new File(javaHomeProp).getCanonicalFile();
     p.setenv("JAVA_HOME", javaHome.getCanonicalPath());
 
-    path = new File(javaHome, "bin").getCanonicalPath() + File.pathSeparator
-        + path;
+    path = new File(javaHome, "bin").getCanonicalPath() + File.pathSeparator + path;
 
     p.setenv("PATH", path);
   }
 
+  
   public File getAndroidTool() {
     return androidTool;
   }
 
-  public File getSdk() {
+
+  public String getAndroidToolPath() {
+    return androidTool.getAbsolutePath();
+  }
+
+  
+  public File getSdkFolder() {
     return sdk;
   }
 
-  public File getTools() {
+  
+  public File getToolsFolder() {
     return tools;
   }
+
 
   /**
    * Checks a path to see if there's a tools/android file inside, a rough check
@@ -80,22 +108,23 @@ class AndroidSDK {
     throw new BadSDKException("Cannot find the android tool in " + tools);
   }
 
+
   /**
-   * Check for the ANDROID_SDK environment variable. If the variable is set, and refers
-   * to a legitimate android SDK, then use that, and save the preference.
+   * Check for the ANDROID_SDK environment variable. If the variable is set, 
+   * and refers to a legitimate Android SDK, then use that and save the pref.
    * 
-   * Check for a previously set android.sdk.path preference. If the pref is set, and refers
-   * to a legitimate android SDK, then use that.
+   * Check for a previously set android.sdk.path preference. If the pref 
+   * is set, and refers to a legitimate Android SDK, then use that.
    * 
-   * Prompt the user to select an android SDK. If the user selects a legitimate
-   * android SDK, then use that, and save the preference.
+   * Prompt the user to select an Android SDK. If the user selects a 
+   * legitimate Android SDK, then use that, and save the preference.
    * 
    * @return an AndroidSDK
    * @throws BadSDKException
    * @throws IOException 
    */
-  public static AndroidSDK find(final Frame window) throws BadSDKException,
-      IOException {
+  public static AndroidSDK find(final Frame window) 
+  throws BadSDKException, IOException {
     final Platform platform = Base.getPlatform();
 
     // The environment variable is king. The preferences.txt entry is a page.
@@ -156,55 +185,41 @@ class AndroidSDK {
     }
   }
 
+
   private static final String ADB_DAEMON_MSG_1 = "daemon not running";
   private static final String ADB_DAEMON_MSG_2 = "daemon started successfully";
 
   public static ProcessResult runADB(final String... cmd)
-      throws InterruptedException, IOException {
+  throws InterruptedException, IOException {
     final String[] adbCmd;
     if (!cmd[0].equals("adb")) {
       adbCmd = PApplet.splice(cmd, "adb", 0);
-      //      adbCmd = new String[cmd.length + 1];
-      //      adbCmd[0] = "adb";
-      //      System.arraycopy(cmd, 0, adbCmd, 1, cmd.length);
     } else {
       adbCmd = cmd;
     }
-    PApplet.println(adbCmd);
-    try {
-    final ProcessResult adbResult = new ProcessHelper(adbCmd).execute();
-    /*
-     * Ignore messages about starting up an adb daemon
-     */
-    final String out = adbResult.getStdout();
+//    PApplet.println(adbCmd);
+//    try {
+    ProcessResult adbResult = new ProcessHelper(adbCmd).execute();
+    // Ignore messages about starting up an adb daemon
+    String out = adbResult.getStdout();
     if (out.contains(ADB_DAEMON_MSG_1) && out.contains(ADB_DAEMON_MSG_2)) {
-      final StringBuilder sb = new StringBuilder();
-      for (final String line : out.split("\n")) {
-        if (!(out.contains(ADB_DAEMON_MSG_1) || out.contains(ADB_DAEMON_MSG_2))) {
+      StringBuilder sb = new StringBuilder();
+      for (String line : out.split("\n")) {
+        if (!out.contains(ADB_DAEMON_MSG_1) &&
+            !out.contains(ADB_DAEMON_MSG_2)) {
           sb.append(line).append("\n");
         }
       }
-      return new ProcessResult(adbResult.getCmd(), adbResult.getResult(), sb
-          .toString(), adbResult.getStderr(), adbResult.getTime());
+      return new ProcessResult(adbResult.getCmd(), 
+                               adbResult.getResult(), 
+                               sb.toString(), 
+                               adbResult.getStderr(), 
+                               adbResult.getTime());
     }
     return adbResult;
-    } catch (IOException ioe) {
-      ioe.printStackTrace();
-      throw ioe;
-    }
+//    } catch (IOException ioe) {
+//      ioe.printStackTrace();
+//      throw ioe;
+//    }
   }
-
-  private static final String ANDROID_SDK_PRIMARY = "Is the Android SDK installed?";
-
-  private static final String ANDROID_SDK_SECONDARY = "The Android SDK does not appear to be installed, <br>"
-      + "because the ANDROID_SDK variable is not set. <br>"
-      + "If it is installed, click “Yes” to select the <br>"
-      + "location of the SDK, or “No” to visit the SDK<br>"
-      + "download site at http://developer.android.com/sdk.";
-
-  private static final String SELECT_ANDROID_SDK_FOLDER = "Choose the location of the Android SDK";
-
-  private static final String NOT_ANDROID_SDK = "The selected folder does not appear to contain an Android SDK.";
-
-  private static final String ANDROID_SDK_URL = "http://developer.android.com/sdk/";
 }

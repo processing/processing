@@ -1,17 +1,19 @@
 0187 android
 
 
-_ text leading is broken, text("blah\nblah") doesn't work properly
+done with 0186
+X move to Android 2.1 as the minimum requirement? 
+X   since 2.0.1 seems to be used on only a 0.46% of devices?
+X   http://developer.android.com/resources/dashboard/platform-versions.html
+X need to side-port changes from PShape/SVG over to Android
 
-_ need to side-port changes from PShape/SVG over to Android
+
+_ text leading is broken, text("blah\nblah") doesn't work properly
 
 _ image() problems (includes sketch)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1565
 
-_ move to Android 2.1 as the minimum requirement? 
-_   since 2.0.1 seems to be used on only a 0.46% of devices?
-_   http://developer.android.com/resources/dashboard/platform-versions.html
-
+_ look into touch event code, see if there's a good way to integrate
 _ add registered methods again
 _   need to figure out generic event queueing first
 _   may need a different subset of methods, and introduce new ones
@@ -30,6 +32,7 @@ _ next time the avd is updated
 _   remove old AVDs because their APIs might be out of date
 _   probably need to name AVDs based on their API spec
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1526
+_   http://code.google.com/p/processing/issues/detail?id=249
 
 _ for libraries that don't work with android, don't let them export
 _   e.g. people adding the opengl library when it's not needed
