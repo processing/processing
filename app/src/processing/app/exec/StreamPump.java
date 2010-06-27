@@ -12,6 +12,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
+import processing.app.EditorConsole;
+
 
 /**
  * <p>A StreamPump reads lines of text from its given InputStream 
@@ -24,8 +26,8 @@ import java.util.concurrent.ThreadFactory;
  *
  */
 public class StreamPump implements Runnable {
-  private static final ExecutorService threads = Executors
-      .newCachedThreadPool(new ThreadFactory() {
+  private static final ExecutorService threads = 
+    Executors.newCachedThreadPool(new ThreadFactory() {
         public Thread newThread(final Runnable r) {
           final Thread t = new Thread(r);
           t.setDaemon(true);
@@ -59,6 +61,8 @@ public class StreamPump implements Runnable {
   }
 
   public void start() {
+//    System.out.println("starting new StreamPump");
+//    new Exception().printStackTrace(EditorConsole.systemOut);
     threads.execute(this);
   }
 

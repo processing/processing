@@ -10,8 +10,8 @@ public class ProcessResult implements Iterable<String> {
   private final String error;
   private final int result;
 
-  public ProcessResult(final String cmd, final int result, final String output,
-                       final String error, final long time) {
+  public ProcessResult(String cmd, int result, String output,
+                       String error, long time) {
     this.cmd = cmd;
     this.output = output;
     this.error = error;
@@ -52,8 +52,8 @@ public class ProcessResult implements Iterable<String> {
     final StringBuilder sb = new StringBuilder(cmd).append("\n");
     sb.append("    status: ").append(result).append("\n");
     sb.append("    ").append(time).append("ms").append("\n");
-    sb.append("    stdout:\n").append(output).append("\n");
-    sb.append("    stderr:\n").append(error);
+    sb.append("    stdout:\n").append(output.trim()).append("\n");
+    sb.append("    stderr:\n").append(error.trim());
     return sb.toString();
   }
 
