@@ -27,6 +27,11 @@ buttons.bgcolor = #4a545e
 buttons.status.font = SansSerif,plain,12
 buttons.status.color = #ffffff
 
+# GUI - MODE
+mode.button.bgcolor = #9ca6b0
+mode.button.font = SansSerif,plain,9
+mode.button.color = #4a545e
+
 # GUI - LINESTATUS
 linestatus.color = #ffffff
 linestatus.bgcolor = #29333d
