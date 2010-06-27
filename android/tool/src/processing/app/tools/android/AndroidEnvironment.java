@@ -11,6 +11,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
+
+import processing.app.EditorConsole;
 import processing.app.exec.ProcessResult;
 import processing.app.tools.android.EmulatorController.State;
 
@@ -22,15 +24,21 @@ import processing.app.tools.android.EmulatorController.State;
  *
  */
 class AndroidEnvironment {
+  private static final String ADB_DEVICES_ERROR = 
+    "Received unfamiliar output from “adb devices”.\n" +
+    "The device list may have errors.";
+
   private static final AndroidEnvironment INSTANCE = new AndroidEnvironment();
 
   public static AndroidEnvironment getInstance() {
     return INSTANCE;
   }
 
-  private final Map<String, AndroidDevice> devices = new ConcurrentHashMap<String, AndroidDevice>();
-  private final ExecutorService deviceLaunchThread = Executors
-      .newSingleThreadExecutor();
+  private final Map<String, AndroidDevice> devices = 
+    new ConcurrentHashMap<String, AndroidDevice>();
+  private final ExecutorService deviceLaunchThread = 
+    Executors.newSingleThreadExecutor();
+
 
   public static void killAdbServer() {
     //    System.err.print("Shutting down any existing adb server...");
@@ -45,6 +53,7 @@ class AndroidEnvironment {
     }
   }
 
+  
   private AndroidEnvironment() {
     //    System.err.println("Starting up AndroidEnvironment");
     killAdbServer();
@@ -57,6 +66,7 @@ class AndroidEnvironment {
       });
   }
 
+  
   private void shutdown() {
     //    System.err.println("Shutting down AndroidEnvironment");
     for (final AndroidDevice device : new ArrayList<AndroidDevice>(devices
@@ -66,6 +76,7 @@ class AndroidEnvironment {
     killAdbServer();
   }
 
+  
   public Future<AndroidDevice> getEmulator() {
     final Callable<AndroidDevice> androidFinder = new Callable<AndroidDevice>() {
       public AndroidDevice call() throws Exception {
@@ -77,6 +88,7 @@ class AndroidEnvironment {
     deviceLaunchThread.execute(task);
     return task;
   }
+
 
   private final AndroidDevice blockingGetEmulator() {
     AndroidDevice emu = find(true);
@@ -117,6 +129,7 @@ class AndroidEnvironment {
     return null;
   }
 
+
   private AndroidDevice find(final boolean wantEmulator) {
     refresh();
     synchronized (devices) {
@@ -129,6 +142,7 @@ class AndroidEnvironment {
     }
     return null;
   }
+
 
   /**
    * @return the first Android hardware device known to be running, or null if there are none.
@@ -144,6 +158,7 @@ class AndroidEnvironment {
     deviceLaunchThread.execute(task);
     return task;
   }
+
 
   private final AndroidDevice blockingGetHardware() {
     AndroidDevice hardware = find(false);
@@ -164,6 +179,7 @@ class AndroidEnvironment {
     return null;
   }
 
+
   private void refresh() {
     final List<String> activeDevices = listDevices();
     for (final String deviceId : activeDevices) {
@@ -173,6 +189,7 @@ class AndroidEnvironment {
     }
   }
 
+  
   private void addDevice(final AndroidDevice device) {
     //    System.err.println("AndroidEnvironment: adding " + device.getId());
     try {
@@ -186,6 +203,7 @@ class AndroidEnvironment {
     }
   }
 
+
   void deviceRemoved(final AndroidDevice device) {
     //    System.err.println("AndroidEnvironment: removing " + device.getId());
     if (devices.remove(device.getId()) == null) {
@@ -194,9 +212,7 @@ class AndroidEnvironment {
     }
   }
 
-  private static final String ADB_DEVICES_ERROR = "Received unfamiliar output from “adb devices”.\n"
-      + "The device list may have errors.";
-
+  
   /**
    *    <p>First line starts "List of devices"
 
@@ -217,26 +233,37 @@ class AndroidEnvironment {
   public static List<String> listDevices() {
     ProcessResult result;
     try {
+      System.out.println("listing devices 00");
       result = AndroidSDK.runADB("devices");
-    } catch (final InterruptedException e) {
+      System.out.println("listing devices 05");
+    } catch (InterruptedException e) {
       return Collections.emptyList();
-    } catch (final IOException e) {
-      System.err.println(e);
+    } catch (IOException e) {
+      e.printStackTrace();
+//      System.err.println(e);
+//      System.err.println("checking devices");
+//      e.printStackTrace(EditorConsole.systemErr);
       return Collections.emptyList();
     }
+    System.out.println("listing devices 10");
     if (!result.succeeded()) {
-      System.err.println(result);
+      if (result.getStderr().contains("protocol fault (no status)")) {
+        System.err.println("bleh: " + result);  // THIS IS WORKING
+      } else {
+        System.err.println("nope: " + result);
+      }
       return Collections.emptyList();
     }
+    System.out.println("listing devices 20");
 
     // might read "List of devices attached"
     final String stdout = result.getStdout();
     if (!(stdout.startsWith("List of devices") || stdout.trim().length() == 0)) {
-      System.err.println(result);
       System.err.println(ADB_DEVICES_ERROR);
       return Collections.emptyList();
     }
 
+    System.out.println("listing devices 30");
     final List<String> devices = new ArrayList<String>();
     for (final String line : result) {
       if (!line.contains("\t")) {

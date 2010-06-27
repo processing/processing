@@ -25,8 +25,9 @@ class EmulatorController {
   }
 
   private void setState(final State state) {
+    System.out.println("Emulator state: " + state);
+    new Exception().printStackTrace(System.out);
     this.state = state;
-    //    System.err.println("Emulator state: " + state);
   }
 
   /**
@@ -35,9 +36,8 @@ class EmulatorController {
    */
   synchronized public void launch() throws IOException {
     if (state != State.NOT_RUNNING) {
-      throw new IllegalStateException(
-                                      "You can't launch an emulator whose state is "
-                                          + state);
+      String illegal = "You can't launch an emulator whose state is " + state;
+      throw new IllegalStateException(illegal);
     }
 
     String portString = Preferences.get("android.emulator.port");
@@ -46,11 +46,14 @@ class EmulatorController {
       Preferences.set("android.emulator.port", portString);
     }
 
-    //    System.err.println("EmulatorController: Launching emulator");
-
     // See http://developer.android.com/guide/developing/tools/emulator.html
     final String[] cmd = new String[] {
-      "emulator", "-avd", AVD.ECLAIR.name, "-port", portString, "-no-boot-anim" };
+      "emulator", 
+      "-avd", AVD.defaultAVD.name, 
+      "-port", portString, 
+      "-no-boot-anim" 
+    };
+    //System.err.println("EmulatorController: Launching emulator");
     final Process p = Runtime.getRuntime().exec(cmd);
     ProcessRegistry.watch(p);
 
@@ -73,7 +76,9 @@ class EmulatorController {
         try {
           //          System.err.println("EmulatorController: Waiting for boot.");
           while (state == State.WAITING_FOR_BOOT) {
+            System.out.println("sleeping for 2 seconds " + new java.util.Date().toString());
             Thread.sleep(2000);
+            System.out.println("done sleeping");
             for (final String device : AndroidEnvironment.listDevices()) {
               if (device.contains("emulator")) {
                 //                System.err.println("EmulatorController: Emulator booted.");
@@ -82,7 +87,7 @@ class EmulatorController {
               }
             }
           }
-          System.err.println("EmulatorController: Emulator never booted.");
+          System.err.println("EmulatorController: Emulator never booted. " + state);
         } catch (final Exception e) {
           System.err.println("While waiting for emulator to boot " + e);
           p.destroy();

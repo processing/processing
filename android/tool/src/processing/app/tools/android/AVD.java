@@ -17,22 +17,26 @@ public class AVD {
   static final String DEFAULT_SKIN = "WVGA800";
 
   /** Name of this avd. */
-  public final String name;
+  protected String name;
 
   /** "android-7" or "Google Inc.:Google APIs:7" */
-  public final String target;
+  protected String target;
 
   /**
-   * Default virtual device used by Processing that uses
-   * the Android 2.1 API set.
+   * Default virtual device used by Processing.
    */
-  public static final AVD ECLAIR = new AVD("Processing-Android-2.1",
-                                           "Google Inc.:Google APIs:" +
-                                           Build.sdkVersion);
+  public static final AVD defaultAVD = 
+    new AVD("Processing-Android-" + Build.sdkVersion,
+            "Google Inc.:Google APIs:" + Build.sdkVersion);
 
   public static boolean ensureEclairAVD(final AndroidSDK sdk) {
     try {
-      if ((ECLAIR.exists(sdk) || ECLAIR.create(sdk))) {
+      if (defaultAVD.exists(sdk)) {
+        System.out.println("the avd exists");
+        return true;
+      }
+      if (defaultAVD.create(sdk)) {
+        System.out.println("the avd was created");
         return true;
       }
       Base.showWarning("Android Error", AVD_CREATE_ERROR, null);
@@ -42,25 +46,28 @@ public class AVD {
     return false;
   }
 
+
   public AVD(final String name, final String target) {
     this.name = name;
     this.target = target;
   }
 
+
   private static final Pattern AVD_ROW = Pattern.compile("\\s+Name:\\s+(\\S+)");
 
   protected boolean exists(final AndroidSDK sdk) throws IOException {
     try {
-      final ProcessResult listResult = new ProcessHelper(sdk.getAndroidTool()
-          .getAbsolutePath(), "list", "avds").execute();
+      ProcessResult listResult = 
+        new ProcessHelper(sdk.getAndroidToolPath(), "list", "avds").execute();
       if (listResult.succeeded()) {
-        for (final String line : listResult) {
+        for (String line : listResult) {
           final Matcher m = AVD_ROW.matcher(line);
           if (m.matches() && m.group(1).equals(name)) {
             return true;
           }
         }
       } else {
+        System.err.println("Unhappy inside exists()");
         System.err.println(listResult);
       }
     } catch (final InterruptedException ie) {
@@ -68,9 +75,10 @@ public class AVD {
     return false;
   }
 
+
   protected boolean create(final AndroidSDK sdk) throws IOException {
     final String[] params = {
-      sdk.getAndroidTool().getAbsolutePath(),
+      sdk.getAndroidToolPath(),
       "create", "avd", 
       "-n", name, "-t", target, 
       "-c", "64M",

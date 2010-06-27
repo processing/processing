@@ -473,7 +473,7 @@ class Build {
   
   private void writeLocalProps(final File file) {
     final PrintWriter writer = PApplet.createWriter(file);
-    final String sdkPath = sdk.getSdk().getAbsolutePath();
+    final String sdkPath = sdk.getSdkFolder().getAbsolutePath();
     if (Base.isWindows()) {
       // Windows needs backslashes escaped, or it will also accept forward
       // slashes in the build file. We're using the forward slashes since this
