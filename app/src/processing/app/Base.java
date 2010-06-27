@@ -96,6 +96,8 @@ public class Base {
   java.util.List<Editor> editors =
     Collections.synchronizedList(new ArrayList<Editor>());
   Editor activeEditor;
+  // a lone file menu to be used when all sketch windows are closed
+  static public JMenu defaultFileMenu;
 
 
   static public void main(final String[] args) {
@@ -201,13 +203,15 @@ public class Base {
 
 
   public Base(String[] args) {
-    platform.init(this);
-
     // Get paths for the libraries and examples in the Processing folder
     //String workingDirectory = System.getProperty("user.dir");
     examplesFolder = getContentFile("examples");
     librariesFolder = getContentFile("libraries");
     toolsFolder = getContentFile("tools");
+
+    // Put this after loading the examples, so that building the default file
+    // menu works on Mac OS X (since  it needs examplesFolder to be set).
+    platform.init(this);
 
     // Get the sketchbook path, and make sure it's set properly
     String sketchbookPath = Preferences.get("sketchbook.path");
@@ -393,6 +397,214 @@ public class Base {
     }
   }
   */
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  /** Command on Mac OS X, Ctrl on Windows and Linux */
+  static final int SHORTCUT_KEY_MASK =
+    Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+  /** Command-W on Mac OS X, Ctrl-W on Windows and Linux */
+  static final KeyStroke WINDOW_CLOSE_KEYSTROKE =
+    KeyStroke.getKeyStroke('W', SHORTCUT_KEY_MASK);
+  /** Command-Option on Mac OS X, Ctrl-Alt on Windows and Linux */
+  static final int SHORTCUT_ALT_KEY_MASK = ActionEvent.ALT_MASK |
+    Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+
+
+  /**
+   * A software engineer, somewhere, needs to have his abstraction
+   * taken away. In some countries they jail or beat people for crafting
+   * the sort of API that would require a five line helper function
+   * just to set the shortcut key for a menu item.
+   */
+  static public JMenuItem newJMenuItem(String title, int what) {
+    JMenuItem menuItem = new JMenuItem(title);
+    int modifiers = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+    menuItem.setAccelerator(KeyStroke.getKeyStroke(what, modifiers));
+    return menuItem;
+  }
+
+
+  /**
+   * Like newJMenuItem() but adds shift as a modifier for the shortcut.
+   */
+  static public JMenuItem newJMenuItemShift(String title, int what) {
+    JMenuItem menuItem = new JMenuItem(title);
+    int modifiers = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+    modifiers |= ActionEvent.SHIFT_MASK;
+    menuItem.setAccelerator(KeyStroke.getKeyStroke(what, modifiers));
+    return menuItem;
+  }
+
+
+  /**
+   * Same as newJMenuItem(), but adds the ALT (on Linux and Windows)
+   * or OPTION (on Mac OS X) key as a modifier.
+   */
+  static public JMenuItem newJMenuItemAlt(String title, int what) {
+    JMenuItem menuItem = new JMenuItem(title);
+    //int modifiers = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+    //menuItem.setAccelerator(KeyStroke.getKeyStroke(what, modifiers));
+    menuItem.setAccelerator(KeyStroke.getKeyStroke(what, SHORTCUT_ALT_KEY_MASK));
+    return menuItem;
+  }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  static JMenu sketchbookMenu;
+  static JMenu examplesMenu;
+  static JMenu importMenu;
+
+
+  public JMenu buildFileMenu(final Editor editor) {
+    JMenuItem item;
+    JMenu fileMenu = new JMenu("File");
+
+    item = newJMenuItem("New", 'N');
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          handleNew();
+        }
+      });
+    fileMenu.add(item);
+
+    item = newJMenuItem("Open...", 'O');
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          handleOpenPrompt();
+        }
+      });
+    fileMenu.add(item);
+
+    if (sketchbookMenu == null) {
+      sketchbookMenu = new JMenu("Sketchbook");
+      rebuildSketchbookMenu(sketchbookMenu);
+    }
+    fileMenu.add(sketchbookMenu);
+
+    if (examplesMenu == null) {
+      examplesMenu = new JMenu("Examples");
+      rebuildExamplesMenu(examplesMenu);
+    }
+    fileMenu.add(examplesMenu);
+
+    item = newJMenuItem("Close", 'W');
+    if (editor != null) {
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          handleClose(editor);
+        }
+      });
+    } else {
+      item.setEnabled(false);
+    }
+    fileMenu.add(item);
+
+    item = newJMenuItem("Save", 'S');
+    if (editor != null) {
+      item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          editor.handleSave(false);
+        }
+      });
+      editor.setSaveItem(item);
+    } else {
+      item.setEnabled(false);
+    }
+    fileMenu.add(item);
+
+    item = newJMenuItemShift("Save As...", 'S');
+    if (editor != null) {
+      item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          editor.handleSaveAs();
+        }
+      });
+      editor.setSaveAsItem(item);
+    } else {
+      item.setEnabled(false);
+    }
+    fileMenu.add(item);
+
+    item = newJMenuItem("Export", 'E');
+    if (editor != null) {
+      item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          editor.handleExport();
+        }
+      });
+    } else {
+      item.setEnabled(false);
+    }
+    fileMenu.add(item);
+
+    item = newJMenuItemShift("Export Application", 'E');
+    if (editor != null) {
+      item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          editor.handleExportApplication();
+        }
+      });
+    } else {
+      item.setEnabled(false);
+    }
+    fileMenu.add(item);
+
+    fileMenu.addSeparator();
+
+    item = newJMenuItemShift("Page Setup", 'P');
+    if (editor != null) {
+      item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          editor.handlePageSetup();
+        }
+      });
+    } else {
+      item.setEnabled(false);
+    }
+    fileMenu.add(item);
+
+    item = newJMenuItem("Print", 'P');
+    if (editor != null) {
+      item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          editor.handlePrint();
+        }
+      });
+    } else {
+      item.setEnabled(false);
+    }
+    fileMenu.add(item);
+
+    // Mac OS X already has its own preferences and quit menu. 
+    // That's right! Think different, b*tches!
+    if (!Base.isMacOS()) {
+      fileMenu.addSeparator();
+
+      item = newJMenuItem("Preferences", ',');
+      item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          handlePrefs();
+        }
+      });
+      fileMenu.add(item);
+
+      fileMenu.addSeparator();
+
+      item = newJMenuItem("Quit", 'Q');
+      item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          handleQuit();
+        }
+      });
+      fileMenu.add(item);
+    }
+    return fileMenu;
+  }
 
 
   // .................................................................
@@ -721,27 +933,29 @@ public class Base {
 //      if (Preferences.getBoolean("sketchbook.closing_last_window_quits") ||
 //          (editor.untitled && !editor.getSketch().isModified())) {
       if (Base.isMacOS()) {
-        Object[] options = { "OK", "Cancel" };
-        String prompt =
-          "<html> " +
-          "<head> <style type=\"text/css\">"+
-          "b { font: 13pt \"Lucida Grande\" }"+
-          "p { font: 11pt \"Lucida Grande\"; margin-top: 8px }"+
-          "</style> </head>" +
-          "<b>Are you sure you want to Quit?</b>" +
-          "<p>Closing the last open sketch will quit Processing.";
+        if (defaultFileMenu == null) {
+          Object[] options = { "OK", "Cancel" };
+          String prompt =
+            "<html> " +
+            "<head> <style type=\"text/css\">"+
+            "b { font: 13pt \"Lucida Grande\" }"+
+            "p { font: 11pt \"Lucida Grande\"; margin-top: 8px }"+
+            "</style> </head>" +
+            "<b>Are you sure you want to Quit?</b>" +
+            "<p>Closing the last open sketch will quit Processing.";
 
-        int result = JOptionPane.showOptionDialog(editor,
-                                                  prompt,
-                                                  "Quit",
-                                                  JOptionPane.YES_NO_OPTION,
-                                                  JOptionPane.QUESTION_MESSAGE,
-                                                  null,
-                                                  options,
-                                                  options[0]);
-        if (result == JOptionPane.NO_OPTION ||
-            result == JOptionPane.CLOSED_OPTION) {
-          return false;
+          int result = JOptionPane.showOptionDialog(editor,
+            prompt,
+            "Quit",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.QUESTION_MESSAGE,
+            null,
+            options,
+            options[0]);
+          if (result == JOptionPane.NO_OPTION ||
+              result == JOptionPane.CLOSED_OPTION) {
+            return false;
+          }
         }
       }
 
@@ -752,8 +966,17 @@ public class Base {
       // Save out the current prefs state
       Preferences.save();
 
-      // Since this wasn't an actual Quit event, call System.exit()
-      System.exit(0);
+      if (defaultFileMenu == null) {
+        // Since this wasn't an actual Quit event, call System.exit()
+        System.exit(0);
+
+      } else {
+        editor.setVisible(false);
+        editor.dispose();
+        defaultFileMenu.insert(Base.sketchbookMenu, 2);
+        defaultFileMenu.insert(Base.examplesMenu, 3);
+        activeEditor = null;
+      }
 
     } else {
       // More than one editor window open,
@@ -837,7 +1060,7 @@ public class Base {
     EventQueue.invokeLater(new Runnable() {
       public void run() {
         //System.out.println("starting rebuild");
-        rebuildSketchbookMenu(Editor.sketchbookMenu);
+        rebuildSketchbookMenu(sketchbookMenu);
         rebuildToolbarMenu(Editor.toolbarMenu);
         //System.out.println("done with rebuild");
       }
@@ -852,7 +1075,7 @@ public class Base {
 
     //System.out.println("rebuilding toolbar menu");
     // Add the single "Open" item
-    item = Editor.newJMenuItem("Open...", 'O');
+    item = newJMenuItem("Open...", 'O');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           handleOpenPrompt();
@@ -863,8 +1086,8 @@ public class Base {
 
     // Add a list of all sketches and subfolders
     try {
-      //boolean sketches = addSketches(menu, getSketchbookFolder(), true);
-      boolean sketches = addSketches(menu, getSketchbookFolder());
+      boolean sketches = addSketches(menu, getSketchbookFolder(), true);
+      //boolean sketches = addSketches(menu, getSketchbookFolder());
       if (sketches) menu.addSeparator();
     } catch (IOException e) {
       e.printStackTrace();
@@ -873,8 +1096,8 @@ public class Base {
     //System.out.println("rebuilding examples menu");
     // Add each of the subfolders of examples directly to the menu
     try {
-      //addSketches(menu, examplesFolder, true);
-      addSketches(menu, examplesFolder);
+      addSketches(menu, examplesFolder, true);
+      //addSketches(menu, examplesFolder);
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -886,15 +1109,15 @@ public class Base {
     //new Exception().printStackTrace();
     try {
       menu.removeAll();
-      //addSketches(menu, getSketchbookFolder(), false);
-      addSketches(menu, getSketchbookFolder());
+      addSketches(menu, getSketchbookFolder(), false);
+      //addSketches(menu, getSketchbookFolder());
     } catch (IOException e) {
       e.printStackTrace();
     }
   }
 
 
-  public void rebuildImportMenu(JMenu importMenu) {
+  public void rebuildImportMenu() {  //JMenu importMenu) {
     //System.out.println("rebuilding import menu");
     importMenu.removeAll();
 
@@ -928,8 +1151,8 @@ public class Base {
     //System.out.println("rebuilding examples menu");
     try {
       menu.removeAll();
-      //addSketches(menu, examplesFolder, false);
-      addSketches(menu, examplesFolder);
+      addSketches(menu, examplesFolder, false);
+      //addSketches(menu, examplesFolder);
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -942,7 +1165,8 @@ public class Base {
    * should replace the sketch in the current window, or false when the
    * sketch should open in a new window.
    */
-  protected boolean addSketches(JMenu menu, File folder) throws IOException {
+  protected boolean addSketches(JMenu menu, File folder, 
+                                final boolean replaceExisting) throws IOException {
     // skip .DS_Store files, etc (this shouldn't actually be necessary)
     if (!folder.isDirectory()) return false;
 
@@ -959,8 +1183,11 @@ public class Base {
         public void actionPerformed(ActionEvent e) {
           String path = e.getActionCommand();
           if (new File(path).exists()) {
-//            if (openReplaces) {
-            if ((e.getModifiers() & ActionEvent.SHIFT_MASK) == 0) {
+            boolean replace = replaceExisting;
+            if ((e.getModifiers() & ActionEvent.SHIFT_MASK) != 0) {
+              replace = !replace;
+            }
+            if (replace) {
               handleOpenReplace(path);
             } else {
               handleOpen(path);
@@ -1016,7 +1243,7 @@ public class Base {
         // needs to be separate var
         // otherwise would set ifound to false
         //boolean found = addSketches(submenu, subfolder, openReplaces); //, false);
-        boolean found = addSketches(submenu, subfolder); //, false);
+        boolean found = addSketches(submenu, subfolder, false);
         if (found) {
           menu.add(submenu);
           ifound = true;
