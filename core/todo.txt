@@ -1,4 +1,6 @@
 0187 core
+X add requestFocusInWindow() call to replace requestFocus()
+X   http://code.google.com/p/processing/issues/detail?id=279
 
 
 _ change skewX/Y to shearX/Y
