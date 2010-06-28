@@ -6,10 +6,14 @@ import java.util.*;
 
 import org.apache.tools.ant.*;
 
+import antlr.RecognitionException;
+import antlr.TokenStreamException;
+
 import processing.app.*;
 import processing.app.exec.*;
 import processing.app.debug.RunnerException;
 import processing.app.preproc.PdePreprocessor;
+import processing.app.preproc.PreprocessResult;
 import processing.core.PApplet;
 
 
@@ -22,58 +26,63 @@ class Build {
   private final AndroidSDK sdk;
 
   String className;
-
   File tempBuildFolder;
-
   File buildFile;
 
   static final String sdkVersion = "7";
+
+  String sketchSize;
+  String sketchWidth = "screenWidth"; 
+  String sketchHeight = "screenHeight";
+  String sketchRenderer = "A2D";
+  
 
   public Build(final Editor editor, final AndroidSDK sdk) {
     this.editor = editor;
     this.sdk = sdk;
   }
 
-  // TODO this needs to be a generic function inside Sketch or elsewhere
-  /*
-  protected int[] getSketchSize() {
-    int wide = AVD.DEFAULT_WIDTH;
-    int high = AVD.DEFAULT_HEIGHT;
-    // String renderer = "";
 
+  // TODO this needs to be a generic function inside Sketch or elsewhere
+  protected boolean calcSketchSize() {
     // This matches against any uses of the size() function, whether numbers
     // or variables or whatever. This way, no warning is shown if size() isn't
     // actually used in the applet, which is the case especially for anyone
     // who is cutting/pasting from the reference.
-    final String sizeRegex = "(?:^|\\s|;)size\\s*\\(\\s*(\\S+)\\s*,\\s*(\\d+),?\\s*([^\\)]*)\\s*\\)";
+    final String sizeRegex =
+      "(?:^|\\s|;)size\\s*\\(\\s*(\\S+)\\s*,\\s*(\\d+),?\\s*([^\\)]*)\\s*\\)\\s*\\;";
+//      "(?:^|\\s|;)size\\s*\\(\\s*(\\S+)\\s*,\\s*(\\d+),?\\s*([^\\)]*)\\s*\\)";
+    // This is identical to the version in Sketch.java, but adds the semicolon
 
-    final Sketch sketch = editor.getSketch();
-    final String scrubbed = Sketch
-        .scrubComments(sketch.getCode(0).getProgram());
-    final String[] matches = PApplet.match(scrubbed, sizeRegex);
+    Sketch sketch = editor.getSketch();
+    String scrubbed = Sketch.scrubComments(sketch.getCode(0).getProgram());
+    String[] matches = PApplet.match(scrubbed, sizeRegex);
 
     if (matches != null) {
       try {
-        wide = Integer.parseInt(matches[1]);
-        high = Integer.parseInt(matches[2]);
-
-        // Adding back the trim() for 0136 to handle Bug #769
-        // if (matches.length == 4) renderer = matches[3].trim();
-
+        // these are ignored, just checking for the exception
+        Integer.parseInt(matches[1]);
+        Integer.parseInt(matches[2]);
       } catch (final NumberFormatException e) {
         // found a reference to size, but it didn't
         // seem to contain numbers
-        final String message = "The size of this applet could not automatically be\n"
-            + "determined from your code.\n"
-            + "Use only numeric values (not variables) for the size()\n"
-            + "command. See the size() reference for an explanation.";
-
+        final String message = 
+          "The size of this applet could not automatically be\n" +
+          "determined from your code.\n" +
+          "Use only numeric values (not variables) for the size()\n" +
+          "command. See the size() reference for an explanation.";
         Base.showWarning("Could not find sketch size", message, null);
+        return false;
+      }
+      sketchSize = matches[0];
+      sketchWidth = matches[1];
+      sketchHeight = matches[2];
+      if (matches[3].trim().length() != 0) {
+        sketchRenderer = matches[3];
       }
     }
-    return new int[] { wide, high };
+    return true;
   }
-  */
 
   
   public File createProject() {
@@ -104,6 +113,10 @@ class Build {
 
       // grab code from current editing window
       sketch.prepare();
+      if (!calcSketchSize()) {
+        editor.statusError("Could not parse the size() command.");
+        return null; 
+      }
       className = sketch.preprocess(buildPath, new Preproc(sketch.getName()));
       if (className != null) {
         final File androidXML = new File(tempBuildFolder, "AndroidManifest.xml");
@@ -118,8 +131,8 @@ class Build {
         final File libsFolder = mkdirs(tempBuildFolder, "libs");
         final File assetsFolder = mkdirs(tempBuildFolder, "assets");
 
-        final InputStream input = PApplet.createInput(AndroidTool
-            .getCoreZipLocation());
+        final InputStream input = 
+          PApplet.createInput(AndroidTool.getCoreZipLocation());
         PApplet.saveStream(new File(libsFolder, "processing-core.jar"), input);
 
         try {
@@ -333,6 +346,16 @@ class Build {
       super(sketchName);
     }
 
+    public PreprocessResult write(Writer out, String program, String codeFolderPackages[])
+    throws RunnerException, RecognitionException, TokenStreamException {
+      if (sketchSize != null) {
+        int start = program.indexOf(sketchSize);
+        program = program.substring(0, start) + 
+          program.substring(start + sketchSize.length());
+      }
+      return super.write(out, program, codeFolderPackages);
+    }
+    
     @Override
     protected int writeImports(final PrintWriter out,
                                final List<String> programImports,
@@ -342,10 +365,31 @@ class Build {
       // add two lines for the package above
       return 2 + super.writeImports(out, programImports, codeFolderImports);
     }
+    
+    protected void writeFooter(PrintWriter out, String className) {
+      if (mode == Mode.STATIC) {
+        // close off draw() definition
+        out.println("noLoop();");
+        out.println(indent + "}");
+      }
+
+      if ((mode == Mode.STATIC) || (mode == Mode.ACTIVE)) {
+        out.println();
+        out.println(indent + "public int sketchWidth() { return " + sketchWidth + "; }");
+        out.println(indent + "public int sketchHeight() { return " + sketchHeight + "; }");
+        out.println(indent + "public String sketchRenderer() { return " + sketchRenderer + "; }");
+
+        // close off the class definition
+        out.println("}");
+      }
+    }
 
     @Override
     public String[] getCoreImports() {
-      return new String[] { "processing.core.*", "processing.xml.*" };
+      return new String[] { 
+        "processing.core.*", 
+        "processing.xml.*" 
+      };
     }
 
     @Override

@@ -151,7 +151,7 @@ public class PdePreprocessor implements PdeTokenTypes {
   // used for calling the ASTFactory to get the root node
   private static final int ROOT_ID = 0;
 
-  private final String indent;
+  protected final String indent;
   private final String name;
 
   public static enum Mode {
@@ -176,7 +176,7 @@ public class PdePreprocessor implements PdeTokenTypes {
     this.advClassName = advClassName;
   }
 
-  private Mode mode;
+  protected Mode mode;
 
   public void setMode(final Mode mode) {
     //    System.err.println("Setting program type to " + programType);
@@ -291,8 +291,8 @@ public class PdePreprocessor implements PdeTokenTypes {
     return write(out, program, null);
   }
 
-  public PreprocessResult write(final Writer out, String program,
-                                final String codeFolderPackages[])
+  public PreprocessResult write(Writer out, String program,
+                                String codeFolderPackages[])
       throws RunnerException, RecognitionException, TokenStreamException {
 
     // these ones have the .* at the end, since a class name might be at the end

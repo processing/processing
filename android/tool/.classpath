@@ -5,5 +5,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/processing-app"/>
 	<classpathentry kind="var" path="ANDROID_LIB"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/processing-core"/>
+	<classpathentry kind="lib" path="/processing-app/lib/antlr.jar" sourcepath="/processing-app/lib/antlr-src.zip"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
