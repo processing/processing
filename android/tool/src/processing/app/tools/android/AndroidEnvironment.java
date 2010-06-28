@@ -12,7 +12,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 
-import processing.app.EditorConsole;
+//import processing.app.EditorConsole;
 import processing.app.exec.ProcessResult;
 import processing.app.tools.android.EmulatorController.State;
 
@@ -41,7 +41,7 @@ class AndroidEnvironment {
 
 
   public static void killAdbServer() {
-    //    System.err.print("Shutting down any existing adb server...");
+    System.err.println("Shutting down any existing adb server...");
     System.err.flush();
     try {
       AndroidSDK.runADB("kill-server");
@@ -55,8 +55,8 @@ class AndroidEnvironment {
 
   
   private AndroidEnvironment() {
-    //    System.err.println("Starting up AndroidEnvironment");
-    killAdbServer();
+    System.out.println("Starting up AndroidEnvironment");
+//    killAdbServer();
     Runtime.getRuntime().addShutdownHook(
       new Thread("AndroidEnvironment Shutdown") {
         @Override
@@ -66,11 +66,10 @@ class AndroidEnvironment {
       });
   }
 
-  
+
   private void shutdown() {
-    //    System.err.println("Shutting down AndroidEnvironment");
-    for (final AndroidDevice device : new ArrayList<AndroidDevice>(devices
-        .values())) {
+    System.out.println("Shutting down AndroidEnvironment");
+    for (AndroidDevice device : new ArrayList<AndroidDevice>(devices.values())) {
       device.shutdown();
     }
     killAdbServer();
@@ -83,8 +82,8 @@ class AndroidEnvironment {
         return blockingGetEmulator();
       }
     };
-    final FutureTask<AndroidDevice> task = new FutureTask<AndroidDevice>(
-                                                                         androidFinder);
+    final FutureTask<AndroidDevice> task = 
+      new FutureTask<AndroidDevice>(androidFinder);
     deviceLaunchThread.execute(task);
     return task;
   }
@@ -233,9 +232,9 @@ class AndroidEnvironment {
   public static List<String> listDevices() {
     ProcessResult result;
     try {
-      System.out.println("listing devices 00");
+//      System.out.println("listing devices 00");
       result = AndroidSDK.runADB("devices");
-      System.out.println("listing devices 05");
+//      System.out.println("listing devices 05");
     } catch (InterruptedException e) {
       return Collections.emptyList();
     } catch (IOException e) {
@@ -245,7 +244,7 @@ class AndroidEnvironment {
 //      e.printStackTrace(EditorConsole.systemErr);
       return Collections.emptyList();
     }
-    System.out.println("listing devices 10");
+//    System.out.println("listing devices 10");
     if (!result.succeeded()) {
       if (result.getStderr().contains("protocol fault (no status)")) {
         System.err.println("bleh: " + result);  // THIS IS WORKING
@@ -254,7 +253,7 @@ class AndroidEnvironment {
       }
       return Collections.emptyList();
     }
-    System.out.println("listing devices 20");
+//    System.out.println("listing devices 20");
 
     // might read "List of devices attached"
     final String stdout = result.getStdout();
@@ -263,7 +262,7 @@ class AndroidEnvironment {
       return Collections.emptyList();
     }
 
-    System.out.println("listing devices 30");
+//    System.out.println("listing devices 30");
     final List<String> devices = new ArrayList<String>();
     for (final String line : result) {
       if (!line.contains("\t")) {
