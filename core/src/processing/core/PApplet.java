@@ -272,12 +272,12 @@ public class PApplet extends Applet
    * of your screen once the the applet is running.
    * <p>
    * This variable is not static because in the desktop version of Processing,
-   * not all instances of PApplet will necessarily be started on a screen of 
-   * the same size. 
+   * not all instances of PApplet will necessarily be started on a screen of
+   * the same size.
    */
   public int screenWidth, screenHeight;
 
-  /** 
+  /**
    * Use screenW and screenH instead.
    * @deprecated
    */
@@ -1509,7 +1509,11 @@ public class PApplet extends Applet
         // http://java.sun.com/j2se/1.4.2/docs/api/java/awt/doc-files/FocusSpec.html
         // Disabling for 0185, because it causes an assertion failure on OS X
         // http://code.google.com/p/processing/issues/detail?id=258
-//        requestFocus();
+        //        requestFocus();
+
+        // Changing to this version for 0187
+        // http://code.google.com/p/processing/issues/detail?id=279
+        requestFocusInWindow();
       }
 
       // wait for update & paint to happen before drawing next frame
@@ -4093,8 +4097,8 @@ public class PApplet extends Applet
 //    println("ps: " + f.getPSName());
     return createFont("SansSerif", size, true, null);
   }
-  
-  
+
+
   public PFont createFont(String name, float size) {
     return createFont(name, size, true, null);
   }
@@ -4110,7 +4114,7 @@ public class PApplet extends Applet
    * installed on the system, or from a .ttf or .otf that's inside
    * the data folder of this sketch.
    * <P/>
-   * Many .otf fonts don't seem to be supported by Java, perhaps because 
+   * Many .otf fonts don't seem to be supported by Java, perhaps because
    * they're CFF based?
    * <P/>
    * Font names are inconsistent across platforms and Java versions.
@@ -4145,7 +4149,7 @@ public class PApplet extends Applet
       } else {
         baseFont = PFont.findFont(name);
       }
-      return new PFont(baseFont.deriveFont(size), smooth, charset, 
+      return new PFont(baseFont.deriveFont(size), smooth, charset,
                        stream != null);
 
     } catch (Exception e) {
@@ -4883,7 +4887,7 @@ public class PApplet extends Applet
         return false;
       }
       return true;
-      
+
     } catch (IOException e) {
       if (tempFile != null) {
         tempFile.delete();
@@ -5933,7 +5937,7 @@ public class PApplet extends Applet
 
 
   static protected HashMap<String, Pattern> matchPatterns;
-  
+
   static Pattern matchPattern(String regexp) {
     Pattern p = null;
     if (matchPatterns == null) {
@@ -5943,12 +5947,12 @@ public class PApplet extends Applet
     }
     if (p == null) {
       if (matchPatterns.size() == 10) {
-        // Just clear out the match patterns here if more than 10 are being 
-        // used. It's not terribly efficient, but changes that you have >10  
-        // different match patterns are very slim, unless you're doing 
-        // something really tricky (like custom match() methods), in which 
-        // case match() won't be efficient anyway. (And you should just be 
-        // using your own Java code.) The alternative is using a queue here,  
+        // Just clear out the match patterns here if more than 10 are being
+        // used. It's not terribly efficient, but changes that you have >10
+        // different match patterns are very slim, unless you're doing
+        // something really tricky (like custom match() methods), in which
+        // case match() won't be efficient anyway. (And you should just be
+        // using your own Java code.) The alternative is using a queue here,
         // but that's a silly amount of work for negligible benefit.
         matchPatterns.clear();
       }
@@ -5957,8 +5961,8 @@ public class PApplet extends Applet
     }
     return p;
   }
-  
-  
+
+
   /**
    * Match a string with a regular expression, and returns the match as an
    * array. The first index is the matching expression, and array elements
@@ -7078,7 +7082,7 @@ public class PApplet extends Applet
     if (platform == MACOSX) {
       // Only run this on OS X otherwise it can cause a permissions error.
       // http://dev.processing.org/bugs/show_bug.cgi?id=976
-      System.setProperty("apple.awt.graphics.UseQuartz", 
+      System.setProperty("apple.awt.graphics.UseQuartz",
                          String.valueOf(useQuartz));
     }
 
@@ -7358,7 +7362,7 @@ public class PApplet extends Applet
       }
       Point frameLoc = frame.getLocation();
       if (frameLoc.y < 0) {
-        // Windows actually allows you to place frames where they can't be 
+        // Windows actually allows you to place frames where they can't be
         // closed. Awesome. http://dev.processing.org/bugs/show_bug.cgi?id=1508
         frame.setLocation(frameLoc.x, 30);
       }
