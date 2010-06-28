@@ -1,5 +1,5 @@
 0187 android
-
+X don't kill adb server each time that run is hit
 
 done with 0186
 X move to Android 2.1 as the minimum requirement? 
