@@ -723,6 +723,10 @@ public class Base {
         return null;
       }
       newbieName = prefix + suffix + ((char) ('a' + index));
+      // Also sanitize the name since it might do strange things on 
+      // non-English systems that don't use this sort of date format.
+      // http://code.google.com/p/processing/issues/detail?id=283
+      newbieName = Sketch.sanitizeName(newbieName);
       newbieDir = new File(newbieParentDir, newbieName);
       index++;
       // Make sure it's not in the temp folder *and* it's not in the sketchbook

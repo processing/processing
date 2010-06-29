@@ -2,6 +2,9 @@
 X add requestFocusInWindow() call to replace requestFocus()
 X   http://code.google.com/p/processing/issues/detail?id=279
 
+_ possible addition for 'implementation' variable
+_   http://code.google.com/p/processing/issues/detail?id=281
+
 
 _ change skewX/Y to shearX/Y
 
