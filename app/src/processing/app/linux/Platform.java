@@ -26,6 +26,7 @@ import java.io.File;
 
 import javax.swing.UIManager;
 
+import processing.app.Base;
 import processing.app.Preferences;
 
 
@@ -34,7 +35,23 @@ import processing.app.Preferences;
  * sketchbook location using the Windows registry, or OS X event handling.
  */
 public class Platform extends processing.app.Platform {
+  
+  public void init(Base base) {
+    super.init(base);
+    
+    String javaVendor = System.getProperty("java.vendor");
+    String javaVM = System.getProperty("java.vm.name");
+    if (javaVendor == null || !javaVendor.contains("Sun") || 
+        javaVM == null || !javaVM.contains("Java")) {
+      Base.showWarning("Not fond of this Java VM", 
+        "Processing requires Java 6 from Sun (i.e. the sun-java-jdk\n" +
+        "package on Ubuntu). Other versions such as OpenJDK, IcedTea,\n" +
+        "and GCJ are not (yet) recommended. For more, read the wiki:\n" +
+        "http://wiki.processing.org/w/Supported_Platforms#Linux", null);
+    }
+  }
 
+  
   // TODO Need to be smarter here since KDE people ain't gonna like that GTK.
   //      It may even throw a weird exception at 'em for their trouble.
   public void setLookAndFeel() throws Exception {
@@ -51,7 +68,7 @@ public class Platform extends processing.app.Platform {
     UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
   }
 
-
+  
   public void openURL(String url) throws Exception {
     if (openFolderAvailable()) {
       String launcher = Preferences.get("launcher");
