@@ -390,9 +390,6 @@ public class PApplet extends Activity implements PConstants, Runnable {
   //////////////////////////////////////////////////////////////
 
 
-  RelativeLayout overallLayout;
-  LinearLayout layout;
-  
   /** Called with the activity is first created. */
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -429,15 +426,17 @@ public class PApplet extends Activity implements PConstants, Runnable {
 //    viewGroup.setLayoutParams(LayoutParams.)
 //    RelativeLayout layout = new RelativeLayout(this);
 //    RelativeLayout overallLayout = new RelativeLayout(this);
-    overallLayout = new RelativeLayout(this);
 //    RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.FILL_PARENT);
 //lp.addRule(RelativeLayout.RIGHT_OF, tv1.getId());    
 //    layout.setGravity(RelativeLayout.CENTER_IN_PARENT);
 
+    int sw = sketchWidth();
+    int sh = sketchHeight();
+    
     if (sketchRenderer().equals(A2D)) {
-      surfaceView = new SketchSurfaceView2D(this, sketchWidth(), sketchHeight());
+      surfaceView = new SketchSurfaceView2D(this, sw, sh);
     } else if (sketchRenderer().equals(A3D)) {
-      surfaceView = new SketchSurfaceView3D(this, sketchWidth(), sketchHeight());
+      surfaceView = new SketchSurfaceView3D(this, sw, sh);
     }
     g = ((SketchSurfaceView) surfaceView).getGraphics();
 //    surfaceView.setLayoutParams(new LayoutParams(sketchWidth(), sketchHeight()));
@@ -449,11 +448,6 @@ public class PApplet extends Activity implements PConstants, Runnable {
 //    AttributeSet as = new AttributeSet();
 //    RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(layout, as);
     
-    RelativeLayout.LayoutParams lp = 
-      new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
-                                      RelativeLayout.LayoutParams.WRAP_CONTENT);
-    lp.addRule(RelativeLayout.CENTER_IN_PARENT);
-
 //    lp.addRule(android.R.styleable.ViewGroup_Layout_layout_height, 
 //    layout.add
     //lp.addRule(, arg1)
@@ -461,9 +455,27 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 //      new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, 
 //        RelativeLayout.LayoutParams.FILL_PARENT);
-    layout = new LinearLayout(this);
-    layout.addView(surfaceView, sketchWidth(), sketchHeight());
-    overallLayout.addView(layout, lp);
+    
+    if (sw == screenWidth && sh == screenHeight) {
+      // If using the full screen, don't embed inside other layouts
+      window.setContentView(surfaceView);
+      
+    } else {
+      // If not using full screen, setup awkward view-inside-a-view so that 
+      // the sketch can be centered on screen. (If anyone has a more efficient
+      // way to do this, please file an issue on Google Code, otherwise you 
+      // can keep your "talentless hack" comments to yourself. Ahem.) 
+      RelativeLayout overallLayout = new RelativeLayout(this);
+      RelativeLayout.LayoutParams lp = 
+        new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
+          RelativeLayout.LayoutParams.WRAP_CONTENT);
+      lp.addRule(RelativeLayout.CENTER_IN_PARENT);
+
+      LinearLayout layout = new LinearLayout(this);
+      layout.addView(surfaceView, sketchWidth(), sketchHeight());
+      overallLayout.addView(layout, lp);
+      window.setContentView(overallLayout);
+    }
     
 //    layout.addView(surfaceView, lp);
 //    surfaceView.setLayoutParams(new LayoutParams(sketchWidth(), sketchHeight()));
@@ -484,7 +496,6 @@ public class PApplet extends Activity implements PConstants, Runnable {
     // android:layout_width
 
 //    window.setContentView(surfaceView);  // set full screen
-    window.setContentView(overallLayout);
 
     // code below here formerly from init()
 
@@ -1194,22 +1205,22 @@ public class PApplet extends Activity implements PConstants, Runnable {
   //////////////////////////////////////////////////////////////
 
 
-  protected void resizeRenderer(int iwidth, int iheight) {
-//    println("resizeRenderer request for " + iwidth + " " + iheight);
-    if (width != iwidth || height != iheight) {
-//      int left = (screenWidth - iwidth) / 2;
-//      int right = screenWidth - (left + iwidth);
-//      int top = (screenHeight - iheight) / 2;
-//      int bottom = screenHeight - (top + iheight);
-//      surfaceView.setPadding(left, top, right, bottom);
-
-      g.setSize(iwidth, iheight);
-      width = iwidth;
-      height = iheight;
-      overallLayout.invalidate();
-      layout.invalidate();
-    }
-  }
+//  protected void resizeRenderer(int iwidth, int iheight) {
+////    println("resizeRenderer request for " + iwidth + " " + iheight);
+//    if (width != iwidth || height != iheight) {
+////      int left = (screenWidth - iwidth) / 2;
+////      int right = screenWidth - (left + iwidth);
+////      int top = (screenHeight - iheight) / 2;
+////      int bottom = screenHeight - (top + iheight);
+////      surfaceView.setPadding(left, top, right, bottom);
+//
+//      g.setSize(iwidth, iheight);
+//      width = iwidth;
+//      height = iheight;
+//      overallLayout.invalidate();
+//      layout.invalidate();
+//    }
+//  }
 
 
   /**
@@ -1264,6 +1275,10 @@ public class PApplet extends Activity implements PConstants, Runnable {
    */
   public void size(final int iwidth, final int iheight,
                    final String irenderer, final String ipath) {
+    System.out.println("This size() method is ignored on Android.");
+    System.out.println("See http://wiki.processing.org/w/Android for more information.");
+
+    /*
 //    Looper.prepare();
     // Run this from the EDT, just cuz it's AWT stuff (or maybe later Swing)
 //    new Handler().post(new Runnable() {
@@ -1335,7 +1350,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
     }
       }
     });
-
+*/
   }
 
 
@@ -1426,6 +1441,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
    * @oaram applet the parent applet object, this should only be non-null
    *               in cases where this is the main drawing surface object.
    */
+  /*
   protected PGraphics makeGraphics(int iwidth, int iheight,
                                    String irenderer, String ipath,
                                    boolean iprimary) {
@@ -1456,6 +1472,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
       throw new RuntimeException(e.getMessage());
     }
   }
+  */
 
 
   /**
