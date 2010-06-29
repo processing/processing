@@ -8,7 +8,8 @@ X Prevent horizontal scroll offset from disappearing
 X   http://code.google.com/p/processing/issues/detail?id=280
 o horizontal scroller gets weird sometimes
 o   http://dev.processing.org/bugs/show_bug.cgi?id=23
-
+X Fix NullPointerException when making a new sketch on non-English systems
+X   http://code.google.com/p/processing/issues/detail?id=283
 
 'public class' inside first tab (or 'final int a = 10') throws off mode detect
 
