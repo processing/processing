@@ -175,8 +175,11 @@ run.display = 1
 editor.untitled.prefix=sketch_
 # old (pre-1.0) style for default sketch name
 #editor.untitled.suffix=yyMMdd
-# new style for sketch naming
-editor.untitled.suffix=MMMdd
+# new (1.0) style for sketch naming. if you change this, be sure that 
+# this will work with your language settings. for instance, MMMdd won't work
+# on Korean-language systems because it will insert non-ascii characters.
+# http://code.google.com/p/processing/issues/detail?id=283
+#editor.untitled.suffix=MMMdd
 
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
