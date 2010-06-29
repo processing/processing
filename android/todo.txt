@@ -1,5 +1,14 @@
 0187 android
 X don't kill adb server each time that run is hit
+X move about.txt to the wiki
+_ add notes to the wiki about the size() method
+_ make sure sketchRenderer()/sketchWidth()/sketchHeight() are working on desktop
+_   see about getting them documented in the reference
+
+_ major issue with sketches not quitting out of the run loop in background
+_   pause needs to actually kill the thread
+_   returning from pause needs to reset the clock
+_   this is currently draining batteries
 
 done with 0186
 X move to Android 2.1 as the minimum requirement? 
