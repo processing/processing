@@ -47,6 +47,7 @@ public class Platform extends processing.app.Platform {
     "\\processing.exe \"%1\"";
   static final String DOC = "Processing.Document";
 
+
   public void init(Base base) {
     super.init(base);
 
