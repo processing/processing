@@ -12,7 +12,11 @@ package org.processing.editor.javadoc;
 
 
 import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.contentassist.*;
+import org.eclipse.jface.text.contentassist.CompletionProposal;
+import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
+import org.eclipse.jface.text.contentassist.IContextInformation;
+import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 
 /**
  * Example Java doc completion processor. Should work for Processing unmodified. Do we even use Javadoc?

@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.processing.editor;
 
-import org.eclipse.swt.graphics.RGB;
-
 import org.eclipse.jface.text.DefaultIndentLineAutoEditStrategy;
 import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
@@ -28,10 +26,7 @@ import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
-
-//TODO implement completion properly for Processing 
-//Removing JavaDoc support from sketches, but leave in code
-//import org.processing.editor.javadoc.JavaDocCompletionProcessor;
+import org.eclipse.swt.graphics.RGB;
 import org.processing.editor.language.ProcessingAutoIndentStrategy;
 import org.processing.editor.language.ProcessingCompletionProcessor;
 import org.processing.editor.language.ProcessingDoubleClickSelector;

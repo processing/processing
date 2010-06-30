@@ -3,5 +3,12 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="libs/ant-launcher.jar"/>
+	<classpathentry kind="lib" path="libs/antlr.jar"/>
+	<classpathentry kind="lib" path="libs/ant.jar"/>
+	<classpathentry kind="lib" path="libs/core.jar"/>
+	<classpathentry kind="lib" path="libs/ecj.jar"/>
+	<classpathentry kind="lib" path="libs/jna.jar"/>
+	<classpathentry kind="lib" path="libs/pde.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

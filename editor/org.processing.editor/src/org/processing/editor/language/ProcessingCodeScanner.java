@@ -21,9 +21,18 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.jface.text.TextAttribute;
-import org.eclipse.jface.text.rules.*;
+import org.eclipse.jface.text.rules.EndOfLineRule;
+import org.eclipse.jface.text.rules.IRule;
+import org.eclipse.jface.text.rules.IToken;
+import org.eclipse.jface.text.rules.RuleBasedScanner;
+import org.eclipse.jface.text.rules.SingleLineRule;
+import org.eclipse.jface.text.rules.Token;
+import org.eclipse.jface.text.rules.WhitespaceRule;
+import org.eclipse.jface.text.rules.WordRule;
 import org.processing.editor.ProcessingEditorPlugin;
-import org.processing.editor.util.*;
+import org.processing.editor.util.ProcessingColorProvider;
+import org.processing.editor.util.ProcessingWhitespaceDetector;
+import org.processing.editor.util.ProcessingWordDetector;
 
 /**
  * A Processing code scanner.

@@ -14,7 +14,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.text.TextAttribute;
-import org.eclipse.jface.text.rules.*;
+import org.eclipse.jface.text.rules.IRule;
+import org.eclipse.jface.text.rules.IToken;
+import org.eclipse.jface.text.rules.IWordDetector;
+import org.eclipse.jface.text.rules.RuleBasedScanner;
+import org.eclipse.jface.text.rules.SingleLineRule;
+import org.eclipse.jface.text.rules.Token;
+import org.eclipse.jface.text.rules.WhitespaceRule;
+import org.eclipse.jface.text.rules.WordRule;
 import org.processing.editor.util.ProcessingColorProvider;
 import org.processing.editor.util.ProcessingWhitespaceDetector;
 

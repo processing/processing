@@ -16,13 +16,12 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
-import org.processing.editor.javadoc.JavaDocScanner;
-import org.processing.editor.language.ProcessingCodeScanner;
-import org.processing.editor.util.ProcessingColorProvider;
-
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.processing.editor.javadoc.JavaDocScanner;
+import org.processing.editor.language.ProcessingCodeScanner;
+import org.processing.editor.util.ProcessingColorProvider;
 
 /**
  * Processing editor plug-in class.
