@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-
    <extension
          point="org.eclipse.ui.editors">
       <editor
             class="org.processing.editor.ProcessingEditor"
-            contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
             default="true"
             extensions="pde"
             icon="icons/processing.gif"
@@ -30,5 +28,21 @@
             class="org.eclipse.ui.texteditor.ResourceMarkerAnnotationModelFactory">
       </factory>
    </extension>
-
+   <extension
+         id="Processing.EditorSpecificActions"
+         name="Processing Buttons"
+         point="org.eclipse.ui.editorActions">
+      <editorContribution
+            id="org.processing.actions.ToolbarButtons"
+            targetID="org.processing.editor.ProcessingEditor">
+         <action
+               class="org.processing.actions.RunButton"
+               icon="icons/processing.gif"
+               id="org.processing.actions.Run"
+               label="Run Sketch"
+               toolbarPath="Normal/additions"
+               tooltip="Run Sketch">
+         </action>
+      </editorContribution>
+   </extension>
 </plugin>
