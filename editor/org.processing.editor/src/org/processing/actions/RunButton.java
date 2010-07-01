@@ -1,5 +1,7 @@
 package org.processing.actions;
 
+import java.io.StringWriter;
+
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.ISelection;
@@ -10,7 +12,8 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.processing.editor.ProcessingLog;
 
-import processing.app.preproc.*; // get the preprocessor stuff
+import processing.app.preproc.PdePreprocessor; // get the preprocessor stuff
+import processing.app.preproc.PreprocessResult;
 
 /**
  * Right now this just does some hello world test stuff.
@@ -26,9 +29,19 @@ public class RunButton implements IEditorActionDelegate {
 	/** Main logic for the button */
 	public void run(IAction action) {
 		ProcessingLog.logInfo("Someone hit the toolbar button!");
-		// get the program as a string
-		//System.out.println(editorContents);// SUCCESS!!
-		// dump to the preprocessor
+		// Get the program as a string
+			// editorContents contains the program as a string
+		// Generate a Preferences object, or enough of one to fake it.
+		// Fire up that preprocessor
+		try{ // we expect exceptions until the Preferences object is generated
+			StringWriter feedback = new StringWriter();
+			PdePreprocessor preproc = new PdePreprocessor("test", 4); // PdePreprocessor("sketch name", tabWidth), hard coded for now
+			@SuppressWarnings("unused")
+			PreprocessResult result = preproc.write(feedback, editorContents);
+			ProcessingLog.logInfo(feedback.toString());
+		} catch (Exception e){
+			ProcessingLog.logError("Expected problem with the preprocessor.", e);
+		}
 		// do something with the results
 	}
 
