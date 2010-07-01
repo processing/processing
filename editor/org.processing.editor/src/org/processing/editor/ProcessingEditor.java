@@ -181,7 +181,7 @@ public class ProcessingEditor extends TextEditor {
 		//addAction(menu, "ContentAssistProposal"); //$NON-NLS-1$
 		//addAction(menu, "ContentAssistTip"); //$NON-NLS-1$
 		addAction(menu, "DefineFoldingRegion");  //$NON-NLS-1$
-	}
+	} 
 	
 //TODO Write a useful outline
 //  The outline wasn't doing anything useful. Until it does, leave this commented

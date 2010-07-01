@@ -123,7 +123,7 @@ public class ProcessingEditorPlugin extends AbstractUIPlugin {
 	}
 	
 	/**
-	 * Returns the singleton Processingdoc scanner.
+	 * Returns the singleton Processingdoc scanner. 
 	 * 
 	 * @return the singleton Processingdoc scanner
 	 */
