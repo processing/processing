@@ -108,6 +108,7 @@ public class PGraphicsAndroid3D extends PGraphics {
    * support nested begin/end cameras.
    */
   protected boolean manipulatingCamera;
+  protected boolean scalingDuringCamManip;
 
   // ........................................................
 
@@ -983,6 +984,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     super.defaultSettings();
 
     manipulatingCamera = false;
+    scalingDuringCamManip = false;
     //perspective();
 
     // easiest for beginners
@@ -2672,12 +2674,10 @@ public class PGraphicsAndroid3D extends PGraphics {
    */
   public void scale(float x, float y, float z) {
     if (manipulatingCamera) {
-      throw new RuntimeException(
-          "scale() cannot be called again between beginCamera()/endCamera()");
-    } else {
-      gl.glScalef(x, y, z);
-      modelviewUpdated = false;
+      scalingDuringCamManip = true;
     }
+    gl.glScalef(x, y, z);
+    modelviewUpdated = false;
   }
 
   public void skewX(float angle) {
@@ -2879,6 +2879,7 @@ public class PGraphicsAndroid3D extends PGraphics {
           + "before endCamera()");
     } else {
       manipulatingCamera = true;
+      scalingDuringCamManip = false;
     }
   }
 
@@ -2898,18 +2899,13 @@ public class PGraphicsAndroid3D extends PGraphics {
 
     getModelviewMatrix();
 
-    // At this point no scaling transformations are allowed during
-    // beginCamera()/endCamera() which
-    // makes sense if we thing of the camera as emulating a physical camera.
-    // However, for later
-    // implementation scaling could be allowed, and in this case an auxiliar
-    // variable should be needed
-    // in order to detect if scaling was applied between beginCamera() and
-    // endCamera(). Using this variable
-    // the calculation of the inverse of the modelview matrix can be switched
-    // between this (very fast) and a
-    // more general one (slower).
-    calculateModelviewInvNoScaling();
+    if (scalingDuringCamManip) {
+      // General inversion Rotation+Translation+Scaling
+      calculateModelviewInverse();
+    } else {
+      // Inverse calculation for Rotation+Translation matrix only.
+      calculateModelviewInvNoScaling();
+    }
 
     // Copying modelview matrix after camera transformations to the camera
     // matrices.
@@ -2918,6 +2914,7 @@ public class PGraphicsAndroid3D extends PGraphics {
 
     // all done
     manipulatingCamera = false;
+    scalingDuringCamManip = false;
   }
 
   protected void getProjectionMatrix() {
