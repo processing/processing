@@ -2946,13 +2946,67 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
 
   // Calculates the inverse of the modelview matrix.
+  // From Matrix4<Real> Matrix4<Real>::Inverse in 
+  // http://www.geometrictools.com/LibMathematics/Algebra/Wm5Matrix4.inl
   protected void calculateModelviewInverse() {
-    // TODO: Please finish!
+    float[] m = modelview;
+    float[] inv = modelviewInv; 
+    
+    float a0 = m[0] * m[5] - m[1] * m[4];
+    float a1 = m[0] * m[6] - m[2] * m[4];
+    float a2 = m[0] * m[7] - m[3] * m[4];
+    float a3 = m[1] * m[6] - m[2] * m[5];
+    float a4 = m[1] * m[7] - m[3] * m[5];
+    float a5 = m[2] * m[7] - m[3] * m[6];
+    float b0 = m[8] * m[13] - m[ 9] * m[12];
+    float b1 = m[8] * m[14] - m[10] * m[12];
+    float b2 = m[8] * m[15] - m[11] * m[12];
+    float b3 = m[9] * m[14] - m[10] * m[13];
+    float b4 = m[9] * m[15] - m[11] * m[13];
+    float b5 = m[10] * m[15] - m[11] * m[14];
+
+    float det = a0 * b5 - a1 * b4 + a2 * b3 + a3 * b2 - a4 * b1 + a5 * b0;
+    
+    if (PApplet.abs(det) > 0)  {
+        inv[0] = + m[5] * b5 - m[6] * b4 + m[7] * b3;
+        inv[4] = - m[4] * b5 + m[6] * b2 - m[7] * b1;
+        inv[8] = + m[4] * b4 - m[5] * b2 + m[7] * b0;
+        inv[12] = - m[4] * b3 + m[5] * b1 - m[6] * b0;
+        inv[1] = - m[1] * b5 + m[2] * b4 - m[3] * b3;
+        inv[5] = + m[0] * b5 - m[2] * b2 + m[3] * b1;
+        inv[ 9] = - m[0] * b4 + m[1] * b2 - m[3] * b0;
+        inv[13] = + m[0] * b3 - m[1] * b1 + m[2] * b0;
+        inv[2] = + m[13] * a5 - m[14] * a4 + m[15] * a3;
+        inv[6] = - m[12] * a5 + m[14] * a2 - m[15] * a1;
+        inv[10] = + m[12] * a4 - m[13] * a2 + m[15] * a0;
+        inv[14] = - m[12] * a3 + m[13] * a1 - m[14] * a0;
+        inv[3] = - m[9] * a5 + m[10] * a4 - m[11] * a3;
+        inv[7] = + m[8] * a5 - m[10] * a2 + m[11] * a1;
+        inv[11] = - m[8] * a4 + m[ 9] * a2 - m[11] * a0;
+        inv[15] = + m[8] * a3 - m[ 9] * a1 + m[10] * a0;
+
+        float invDet = 1.0f/det;
+        inv[0] *= invDet;
+        inv[1] *= invDet;
+        inv[2] *= invDet;
+        inv[3] *= invDet;
+        inv[4] *= invDet;
+        inv[5] *= invDet;
+        inv[6] *= invDet;
+        inv[7] *= invDet;
+        inv[8] *= invDet;
+        inv[9] *= invDet;
+        inv[10] *= invDet;
+        inv[11] *= invDet;
+        inv[12] *= invDet;
+        inv[13] *= invDet;
+        inv[14] *= invDet;
+        inv[15] *= invDet;
+    }
   }
 
   // Calculates the inverse of the modelview matrix, assuming that no scaling
-  // transformation was applied,
-  // only translations and rotations.
+  // transformation was applied, only translations and rotations.
   // Here is the derivation of the formula:
   // http://www-graphics.stanford.edu/courses/cs248-98-fall/Final/q4.html
   protected void calculateModelviewInvNoScaling() {
