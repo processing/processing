@@ -901,6 +901,10 @@ public class PGraphicsAndroid3D extends PGraphics {
         }
 
       } else {
+        if (gl11 == null || gl11x == null) {
+          throw new RuntimeException("PGraphicsAndroid3D: noClear mode requires OpenGL ES 1.1");
+        }
+          
         // We cannot ever end up here if the surface is not primary,
         // because a non-primary A3D surface is possible only
         // when FBOs are supported.
@@ -2500,6 +2504,10 @@ public class PGraphicsAndroid3D extends PGraphics {
    * Implementation of actual drawing for a line of text.
    */
   protected void textLineImpl(char buffer[], int start, int stop, float x, float y) {
+    if (gl11 == null || gl11x == null) {
+      throw new RuntimeException("PGraphicsAndroid3D: Text rendering requires OpenGL ES 1.1");
+    }
+    
     // Init opengl state for text rendering...
     gl.glEnable(GL10.GL_TEXTURE_2D);
     
@@ -2596,6 +2604,7 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   public void pushMatrix() {
     gl.glPushMatrix();
+    
     
     // HERE: Update modelview matrix stack.
   }
