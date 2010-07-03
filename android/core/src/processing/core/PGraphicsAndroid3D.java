@@ -61,11 +61,13 @@ import processing.core.PShape3D.VertexGroup;
 public class PGraphicsAndroid3D extends PGraphics {
   public SurfaceHolder holder;
 
+  A3DRenderer renderer;
+  A3DConfigChooser configChooser;
+  
   public GL10 gl;
   public GL11 gl11;
   public GL11Ext gl11x;
   public GL11ExtensionPack gl11xp;
-  //public GLU glu;
 
   // Set to 1 or 2 depending on whether to use EGL 1.x or 2.x
   static protected int EGL_CONTEXT = 1;
@@ -295,7 +297,8 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // .......................................................
   
-  protected boolean usingModelviewStack;
+  protected boolean usingModelviewStack;    
+  A3DMatrixStack modelviewStack;
   
   // ........................................................
 
@@ -316,6 +319,7 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // ........................................................  
   
+  // TODO: implement API for enabing/disabling of depth masking.
   boolean depthMask;
 
   // ........................................................
@@ -343,7 +347,6 @@ public class PGraphicsAndroid3D extends PGraphics {
     configChooser = new A3DConfigChooser(RED_BITS, GREEN_BITS, BLUE_BITS,
         ALPHA_BITS, DEPTH_BITS, STENCIL_BITS);
     contextFactory = new A3DContextFactory();
-    //glu = new GLU(); // or maybe not until used?
     recreateResourceMethods = new ArrayList<GLResource>();
   }
   
@@ -2673,10 +2676,9 @@ public class PGraphicsAndroid3D extends PGraphics {
    * takes radians (instead of degrees).
    */
   public void rotate(float angle, float v0, float v1, float v2) {
-    float a = PApplet.degrees(angle);
-    gl.glRotatef(a, v0, v1, v2);
+    gl.glRotatef(PApplet.degrees(angle), v0, v1, v2);
     if (usingModelviewStack) {
-      modelviewStack.rotate(a, v0, v1, v2);
+      modelviewStack.rotate(angle, v0, v1, v2);
     }    
     modelviewUpdated = false;
   }
@@ -4758,8 +4760,6 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // RENDERER
 
-  A3DRenderer renderer;
-
   public Renderer getRenderer() {
     return renderer;
   }
@@ -4903,8 +4903,6 @@ public class PGraphicsAndroid3D extends PGraphics {
   // ////////////////////////////////////////////////////////////
 
   // Config chooser
-
-  A3DConfigChooser configChooser;
 
   public GLSurfaceView.EGLConfigChooser getConfigChooser() {
     return configChooser;
@@ -5107,44 +5105,115 @@ public class PGraphicsAndroid3D extends PGraphics {
   // ////////////////////////////////////////////////////////////
 
   // Matrix stack
-  
-  A3DMatrixStack modelviewStack;
-  
-  protected class A3DMatrixStack {
+
+  // This class encapsulates a static matrix stack that can be used
+  // to mirror the changes in OpenGL matrices.
+  static protected class A3DMatrixStack {
+    static protected Stack<float[]> matrixStack;
+    static protected float[] current;
+    
     public A3DMatrixStack() {
-      
+      matrixStack = new Stack<float[]>();
+      current = new float[16];    
+      set(1, 0, 0, 0,
+             0, 1, 0, 0,
+             0, 0, 1, 0,
+             0, 0, 0, 1);
     }
     
     public void push() {
-      
+      float[] mat = new float[16];
+      PApplet.arrayCopy(current, mat);
+      matrixStack.push(mat);
     }
     
     public void pop() {
-      
+      try {
+        float[] mat = matrixStack.pop();
+        PApplet.arrayCopy(mat, current);
+      } catch (EmptyStackException e) {
+        PGraphics.showWarning("A3D: Empty modelview stack");
+      }
     }
 
-    public void mult(float[] m) {
-      
+    public void mult(float[] mat) {
+      mult(mat[0], mat[4], mat[8], mat[12],
+               mat[1], mat[5], mat[9], mat[13],
+               mat[2], mat[6], mat[10], mat[14],
+               mat[3], mat[7], mat[11], mat[15]);
     }
     
-    public void get(float[] m) {
-      
+    public void mult(float n0, float n4, float n8, float n12,
+                                     float n1, float n5, float n9, float n13,
+                                     float n2, float n6, float n10, float n14,
+                                     float n3, float n7, float n11, float n15) {
+      float r0 = current[0]*n0 + current[4]*n1 + current[8]*n2 + current[12]*n3;
+      float r4 = current[0]*n4 + current[4]*n5 + current[8]*n6 + current[12]*n7;
+      float r8 = current[0]*n8 + current[4]*n9 + current[8]*n10 + current[12]*n11;
+      float r12 = current[0]*n12 + current[4]*n13 + current[8]*n14 + current[12]*n15;
+
+      float r1 = current[1]*n0 + current[5]*n1 + current[9]*n2 + current[13]*n3;
+      float r5 = current[1]*n4 + current[5]*n5 + current[9]*n6 + current[13]*n7;
+      float r9 = current[1]*n8 + current[5]*n8 + current[9]*n10 + current[13]*n11;
+      float r13 = current[1]*n12 + current[5]*n13 + current[9]*n14 + current[13]*n15;
+
+      float r2 = current[2]*n0 + current[6]*n1 + current[10]*n2 + current[14]*n3;
+      float r6 = current[2]*n4 + current[6]*n5 + current[10]*n6 + current[14]*n7;
+      float r10 = current[2]*n8 + current[6]*n9 + current[10]*n10 + current[14]*n11;
+      float r14 = current[2]*n12 + current[6]*n13 + current[10]*n14 + current[14]*n15;
+
+      float r3 = current[3]*n0 + current[7]*n1 + current[11]*n2 + current[15]*n3;
+      float r7 = current[3]*n4 + current[7]*n5 + current[11]*n6 + current[15]*n7;
+      float r11 = current[3]*n8 + current[7]*n9 + current[11]*n10 + current[15]*n11;
+      float r15 = current[3]*n12 + current[7]*n13 + current[11]*n14 + current[15]*n15;
+
+      current[0] = r0; current[4] = r4; current[8] = r8; current[12] = r12;
+      current[1] = r1; current[5] = r5; current[9] = r9; current[13] = r13;
+      current[2] = r2; current[6] = r6; current[10] = r10; current[14] = r14;
+      current[3] = r3; current[7] = r7; current[11] = r11; current[15] = r15;      
+    }
+    
+    public void get(float[] mat) {
+      PApplet.arrayCopy(current, mat);  
     }
 
-    public void set(float[] m) {
-      
+    public void set(float[] mat) {
+      PApplet.arrayCopy(mat, current);
+    }
+    
+    public void set(float n0, float n4, float n8, float n12,
+                                     float n1, float n5, float n9, float n13,
+                                     float n2, float n6, float n10, float n14,
+                                     float n3, float n7, float n11, float n15) {
+      current[0] = n0; current[4] = n4; current[8] = n8; current[12] = n12;
+      current[1] = n1; current[5] = n5; current[9] = n9; current[13] = n13;
+      current[2] = n2; current[6] = n6; current[10] = n10; current[14] = n14;
+      current[3] = n3; current[7] = n7; current[11] = n11; current[15] = n15;      
     }
     
     public void translate(float tx, float ty, float tz) {
-      
+      current[12] += tx*current[0] + ty*current[4] + tz*current[8];
+      current[13] += tx*current[1] + ty*current[5] + tz*current[9];
+      current[14] += tx*current[2] + ty*current[6] + tz*current[10];
+      current[15] += tx*current[3] + ty*current[7] + tz*current[11];      
     }
 
-    public void rotate(float a, float rx, float ry, float rz) {
+    public void rotate(float angle, float rx, float ry, float rz) {
+      float c = PApplet.cos(angle);
+      float s = PApplet.sin(angle);
+      float t = 1.0f - c;
       
+      mult((t*rx*rx) + c, (t*rx*ry) - (s*rz), (t*rx*rz) + (s*ry), 0,
+               (t*rx*ry) + (s*rz), (t*ry*ry) + c, (t*ry*rz) - (s*rx), 0,
+               (t*rx*rz) - (s*ry), (t*ry*rz) + (s*rx), (t*rz*rz) + c, 0,
+               0, 0, 0, 1);
     }
     
     public void scale(float sx, float sy, float sz) {
-      
+      current[0] *= sx;  current[4] *= sy;  current[8] *= sz;
+      current[1] *= sx;  current[5] *= sy;  current[9] *= sz;
+      current[2] *= sx;  current[6] *= sy;  current[10] *= sz;
+      current[3] *= sx;  current[7] *= sy;  current[11] *= sz;      
     }
   }
   
