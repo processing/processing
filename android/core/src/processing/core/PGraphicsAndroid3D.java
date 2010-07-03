@@ -99,7 +99,6 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected float[] cameraInv;
 
   protected boolean modelviewUpdated;
-  protected boolean projectionUpdated;
 
   protected boolean matricesAllocated = false;
 
@@ -835,14 +834,16 @@ public class PGraphicsAndroid3D extends PGraphics {
     // because y is flipped
     gl.glFrontFace(GL10.GL_CW);
 
+    // setup opengl viewport.
     gl.glViewport(0, 0, width, height);
-    // set up the default camera
-    camera();
-
+    
     // defaults to perspective, if the user has setup up their
     // own projection, they'll need to fix it after resize anyway.
     // this helps the people who haven't set up their own projection.
     perspective();
+
+    // set up the default camera and initis modelview matrix.
+    camera();
 
     lightCount = 0;
     lightFalloff(1, 0, 0);
@@ -985,7 +986,6 @@ public class PGraphicsAndroid3D extends PGraphics {
 
     manipulatingCamera = false;
     scalingDuringCamManip = false;
-    //perspective();
 
     // easiest for beginners
     textureMode(IMAGE);
@@ -2596,11 +2596,15 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   public void pushMatrix() {
     gl.glPushMatrix();
+    
+    // HERE: Update modelview matrix stack.
   }
 
   public void popMatrix() {
     gl.glPopMatrix();
     modelviewUpdated = false;
+    
+    // HERE: Update modelview matrix stack.
   }
 
   // ////////////////////////////////////////////////////////////
@@ -2619,6 +2623,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     // along Y is applied.
     gl.glTranslatef(tx, -ty, tz);
     modelviewUpdated = false;
+    
+    // HERE: Update modelview matrix stack.
   }
 
   /**
@@ -2632,18 +2638,15 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
 
   public void rotateX(float angle) {
-    gl.glRotatef(PApplet.degrees(angle), 1, 0, 0);
-    modelviewUpdated = false;
+    rotate(angle, 1, 0, 0);
   }
 
   public void rotateY(float angle) {
-    gl.glRotatef(PApplet.degrees(angle), 0, 1, 0);
-    modelviewUpdated = false;
+    rotate(angle, 0, 1, 0);
   }
 
   public void rotateZ(float angle) {
-    gl.glRotatef(PApplet.degrees(angle), 0, 0, 1);
-    modelviewUpdated = false;
+    rotate(angle, 0, 0, 1);
   }
 
   /**
@@ -2653,6 +2656,8 @@ public class PGraphicsAndroid3D extends PGraphics {
   public void rotate(float angle, float v0, float v1, float v2) {
     gl.glRotatef(PApplet.degrees(angle), v0, v1, v2);
     modelviewUpdated = false;
+    
+    // HERE: Update modelview matrix stack.
   }
 
   /**
@@ -2678,6 +2683,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
     gl.glScalef(x, y, z);
     modelviewUpdated = false;
+    
+     // HERE: Update modelview matrix stack.
   }
 
   public void skewX(float angle) {
@@ -2747,6 +2754,8 @@ public class PGraphicsAndroid3D extends PGraphics {
 
     gl.glMultMatrixf(mat, 0);
 
+    // HERE: Update modelview matrix stack.
+    
     getModelviewMatrix();
     calculateModelviewInverse();
   }
@@ -2917,11 +2926,12 @@ public class PGraphicsAndroid3D extends PGraphics {
     scalingDuringCamManip = false;
   }
 
-  protected void getProjectionMatrix() {
+  protected void getModelviewMatrix() {
     if (gl11 != null && matrixGetSupported) {
-      gl11.glGetFloatv(GL11.GL_PROJECTION_MATRIX, projection, 0);
-      projectionUpdated = true;
+      gl11.glGetFloatv(GL11.GL_MODELVIEW_MATRIX, modelview, 0);
+      modelviewUpdated = true;
     } else {
+      
       // TODO: Mechanism to get modelview matrix when no the funtion GetFloatv
       // is available.
       // Idea: when ony GL10 is available, then PMatrix3D versions of modelview
@@ -2929,16 +2939,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       // matrices are needed, and should be updated during the call to the
       // transformation methods
       // (rotate, translate, scale, etc).
-    }
-  }
-
-  protected void getModelviewMatrix() {
-    if (gl11 != null && matrixGetSupported) {
-      gl11.glGetFloatv(GL11.GL_MODELVIEW_MATRIX, modelview, 0);
-      modelviewUpdated = true;
-    } else {
-      // TODO: Mechanism to get modelview matrix when no the funtion GetFloatv
-      // is available.
+      
     }
   }
 
@@ -2982,7 +2983,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         inv[11] = - m[8] * a4 + m[ 9] * a2 - m[11] * a0;
         inv[15] = + m[8] * a3 - m[ 9] * a1 + m[10] * a0;
 
-        float invDet = 1.0f/det;
+        float invDet = 1.0f / det;
         inv[0] *= invDet;
         inv[1] *= invDet;
         inv[2] *= invDet;
@@ -3268,9 +3269,13 @@ public class PGraphicsAndroid3D extends PGraphics {
     projection[14] = tz;
     projection[15] = 1.0f;
 
+    gl.glMatrixMode(GL10.GL_PROJECTION);
     gl.glLoadMatrixf(projection, 0);
-    projectionUpdated = true; // CPU and GPU copies of projection matrix match
-                              // each other.
+    
+    // The matrix mode is always MODELVIEW, because the user will be doing
+    // geometrical transformations all the time, projection transformations 
+    // only a few times.
+    gl.glMatrixMode(GL10.GL_MODELVIEW);
   }
 
   /**
@@ -3340,12 +3345,10 @@ public class PGraphicsAndroid3D extends PGraphics {
 
     gl.glMatrixMode(GL10.GL_PROJECTION);
     gl.glLoadMatrixf(projection, 0);
-    projectionUpdated = true; // CPU and GPU copies of projection matrix match
-                              // each other (are in synch).
 
     // The matrix mode is always MODELVIEW, because the user will be doing
-    // geometrical transformations,
-    // al the time, projection transformations only a few times.
+    // geometrical transformations all the time, projection transformations 
+    // only a few times.
     gl.glMatrixMode(GL10.GL_MODELVIEW);
   }
 
@@ -3374,30 +3377,17 @@ public class PGraphicsAndroid3D extends PGraphics {
     y = -1 * y; // To take into account Processsing's inverted Y axis with
                 // respect to OpenGL.
 
-    if (!modelviewUpdated)
-      getModelviewMatrix();
-    if (!projectionUpdated)
-      getProjectionMatrix();
+    if (!modelviewUpdated) {
+      getModelviewMatrix();      
+    }
+      
+    float ax = modelview[0] * x + modelview[4] * y + modelview[8] * z + modelview[12];
+    float ay = modelview[1] * x + modelview[5] * y + modelview[9] * z  + modelview[13];
+    float az = modelview[2] * x + modelview[6] * y + modelview[10] * z + modelview[14];
+    float aw = modelview[3] * x + modelview[7] * y + modelview[11] * z + modelview[15];
 
-    float ax = modelview[toArrayIndex(0, 0)] * x
-        + modelview[toArrayIndex(0, 1)] * y + modelview[toArrayIndex(0, 2)] * z
-        + modelview[toArrayIndex(0, 3)];
-    float ay = modelview[toArrayIndex(1, 0)] * x
-        + modelview[toArrayIndex(1, 1)] * y + modelview[toArrayIndex(1, 2)] * z
-        + modelview[toArrayIndex(1, 3)];
-    float az = modelview[toArrayIndex(2, 0)] * x
-        + modelview[toArrayIndex(2, 1)] * y + modelview[toArrayIndex(2, 2)] * z
-        + modelview[toArrayIndex(2, 3)];
-    float aw = modelview[toArrayIndex(3, 0)] * x
-        + modelview[toArrayIndex(3, 1)] * y + modelview[toArrayIndex(3, 2)] * z
-        + modelview[toArrayIndex(3, 3)];
-
-    float ox = projection[toArrayIndex(0, 0)] * ax
-        + projection[toArrayIndex(0, 1)] * ay + projection[toArrayIndex(0, 2)]
-        * az + projection[toArrayIndex(0, 3)] * aw;
-    float ow = projection[toArrayIndex(3, 0)] * ax
-        + projection[toArrayIndex(3, 1)] * ay + projection[toArrayIndex(3, 2)]
-        * az + projection[toArrayIndex(3, 3)] * aw;
+    float ox = projection[0] * ax + projection[4] * ay + projection[8] * az + projection[12] * aw;
+    float ow = projection[3] * ax + projection[7] * ay + projection[11] * az + projection[15] * aw;
 
     if (ow != 0)
       ox /= ow;
@@ -3408,30 +3398,17 @@ public class PGraphicsAndroid3D extends PGraphics {
     y = -1 * y; // To take into account Processsing's inverted Y axis with
                 // respect to OpenGL.
 
-    if (!modelviewUpdated)
+    if (!modelviewUpdated) {
       getModelviewMatrix();
-    if (!projectionUpdated)
-      getProjectionMatrix();
+    }
 
-    float ax = modelview[toArrayIndex(0, 0)] * x
-        + modelview[toArrayIndex(0, 1)] * y + modelview[toArrayIndex(0, 2)] * z
-        + modelview[toArrayIndex(0, 3)];
-    float ay = modelview[toArrayIndex(1, 0)] * x
-        + modelview[toArrayIndex(1, 1)] * y + modelview[toArrayIndex(1, 2)] * z
-        + modelview[toArrayIndex(1, 3)];
-    float az = modelview[toArrayIndex(2, 0)] * x
-        + modelview[toArrayIndex(2, 1)] * y + modelview[toArrayIndex(2, 2)] * z
-        + modelview[toArrayIndex(2, 3)];
-    float aw = modelview[toArrayIndex(3, 0)] * x
-        + modelview[toArrayIndex(3, 1)] * y + modelview[toArrayIndex(3, 2)] * z
-        + modelview[toArrayIndex(3, 3)];
+    float ax = modelview[0] * x + modelview[4] * y + modelview[8] * z + modelview[12];
+    float ay = modelview[1] * x + modelview[5] * y + modelview[9] * z  + modelview[13];
+    float az = modelview[2] * x + modelview[6] * y + modelview[10] * z + modelview[14];
+    float aw = modelview[3] * x + modelview[7] * y + modelview[11] * z + modelview[15];
 
-    float oy = projection[toArrayIndex(1, 0)] * ax
-        + projection[toArrayIndex(1, 1)] * ay + projection[toArrayIndex(1, 2)]
-        * az + projection[toArrayIndex(1, 3)] * aw;
-    float ow = projection[toArrayIndex(3, 0)] * ax
-        + projection[toArrayIndex(3, 1)] * ay + projection[toArrayIndex(3, 2)]
-        * az + projection[toArrayIndex(3, 3)] * aw;
+    float oy = projection[1] * ax + projection[5] * ay + projection[9] * az + projection[13] * aw;
+    float ow = projection[3] * ax + projection[7] * ay + projection[11] * az + projection[15] * aw;
 
     if (ow != 0)
       oy /= ow;
@@ -3439,33 +3416,20 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
 
   public float screenZ(float x, float y, float z) {
-    if (!modelviewUpdated)
-      getModelviewMatrix();
-    if (!projectionUpdated)
-      getProjectionMatrix();
-
     y = -1 * y; // To take into account Processsing's inverted Y axis with
                 // respect to OpenGL.
+    
+    if (!modelviewUpdated) {
+      getModelviewMatrix();      
+    }
 
-    float ax = modelview[toArrayIndex(0, 0)] * x
-        + modelview[toArrayIndex(0, 1)] * y + modelview[toArrayIndex(0, 2)] * z
-        + modelview[toArrayIndex(0, 3)];
-    float ay = modelview[toArrayIndex(1, 0)] * x
-        + modelview[toArrayIndex(1, 1)] * y + modelview[toArrayIndex(1, 2)] * z
-        + modelview[toArrayIndex(1, 3)];
-    float az = modelview[toArrayIndex(2, 0)] * x
-        + modelview[toArrayIndex(2, 1)] * y + modelview[toArrayIndex(2, 2)] * z
-        + modelview[toArrayIndex(2, 3)];
-    float aw = modelview[toArrayIndex(3, 0)] * x
-        + modelview[toArrayIndex(3, 1)] * y + modelview[toArrayIndex(3, 2)] * z
-        + modelview[toArrayIndex(3, 3)];
+    float ax = modelview[0] * x + modelview[4] * y + modelview[8] * z + modelview[12];
+    float ay = modelview[1] * x + modelview[5] * y + modelview[9] * z  + modelview[13];
+    float az = modelview[2] * x + modelview[6] * y + modelview[10] * z + modelview[14];
+    float aw = modelview[3] * x + modelview[7] * y + modelview[11] * z + modelview[15];
 
-    float oz = projection[toArrayIndex(2, 0)] * ax
-        + projection[toArrayIndex(2, 1)] * ay + projection[toArrayIndex(2, 2)]
-        * az + projection[toArrayIndex(2, 3)] * aw;
-    float ow = projection[toArrayIndex(3, 0)] * ax
-        + projection[toArrayIndex(3, 1)] * ay + projection[toArrayIndex(3, 2)]
-        * az + projection[toArrayIndex(3, 3)] * aw;
+    float oz = projection[2] * ax + projection[6] * ay + projection[10] * az + projection[14] * aw;
+    float ow = projection[3] * ax + projection[7] * ay + projection[11] * az + projection[15] * aw;
 
     if (ow != 0)
       oz /= ow;
@@ -3473,99 +3437,60 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
 
   public float modelX(float x, float y, float z) {
-    if (!modelviewUpdated)
-      getModelviewMatrix();
-
     y = -1 * y; // To take into account Processsing's inverted Y axis with
                 // respect to OpenGL.
+    
+    if (!modelviewUpdated) {
+      getModelviewMatrix();
+    }
 
-    float ax = modelview[toArrayIndex(0, 0)] * x
-        + modelview[toArrayIndex(0, 1)] * y + modelview[toArrayIndex(0, 2)] * z
-        + modelview[toArrayIndex(0, 3)];
-    float ay = modelview[toArrayIndex(1, 0)] * x
-        + modelview[toArrayIndex(1, 1)] * y + modelview[toArrayIndex(1, 2)] * z
-        + modelview[toArrayIndex(1, 3)];
-    float az = modelview[toArrayIndex(2, 0)] * x
-        + modelview[toArrayIndex(2, 1)] * y + modelview[toArrayIndex(2, 2)] * z
-        + modelview[toArrayIndex(2, 3)];
-    float aw = modelview[toArrayIndex(3, 0)] * x
-        + modelview[toArrayIndex(3, 1)] * y + modelview[toArrayIndex(3, 2)] * z
-        + modelview[toArrayIndex(3, 3)];
+    float ax = modelview[0] * x + modelview[4] * y + modelview[8] * z + modelview[12];
+    float ay = modelview[1] * x + modelview[5] * y + modelview[9] * z  + modelview[13];
+    float az = modelview[2] * x + modelview[6] * y + modelview[10] * z + modelview[14];
+    float aw = modelview[3] * x + modelview[7] * y + modelview[11] * z + modelview[15];
 
-    float ox = cameraInv[toArrayIndex(0, 0)] * ax
-        + cameraInv[toArrayIndex(0, 1)] * ay + cameraInv[toArrayIndex(0, 2)]
-        * az + cameraInv[toArrayIndex(0, 3)] * aw;
-    float ow = cameraInv[toArrayIndex(3, 0)] * ax
-        + cameraInv[toArrayIndex(3, 1)] * ay + cameraInv[toArrayIndex(3, 2)]
-        * az + cameraInv[toArrayIndex(3, 3)] * aw;
+    float ox = cameraInv[0] * ax + cameraInv[4] * ay + cameraInv[8] * az + cameraInv[12] * aw;
+    float ow = cameraInv[3] * ax + cameraInv[7] * ay + cameraInv[11] * az + cameraInv[15] * aw;
 
     return (ow != 0) ? ox / ow : ox;
   }
 
   public float modelY(float x, float y, float z) {
-
-    if (!modelviewUpdated)
-      getModelviewMatrix();
-
     y = -1 * y; // To take into account Processsing's inverted Y axis with
                 // respect to OpenGL.
 
-    float ax = modelview[toArrayIndex(0, 0)] * x
-        + modelview[toArrayIndex(0, 1)] * y + modelview[toArrayIndex(0, 2)] * z
-        + modelview[toArrayIndex(0, 3)];
-    float ay = modelview[toArrayIndex(1, 0)] * x
-        + modelview[toArrayIndex(1, 1)] * y + modelview[toArrayIndex(1, 2)] * z
-        + modelview[toArrayIndex(1, 3)];
-    float az = modelview[toArrayIndex(2, 0)] * x
-        + modelview[toArrayIndex(2, 1)] * y + modelview[toArrayIndex(2, 2)] * z
-        + modelview[toArrayIndex(2, 3)];
-    float aw = modelview[toArrayIndex(3, 0)] * x
-        + modelview[toArrayIndex(3, 1)] * y + modelview[toArrayIndex(3, 2)] * z
-        + modelview[toArrayIndex(3, 3)];
+    if (!modelviewUpdated) {
+      getModelviewMatrix();
+    }
 
-    float oy = cameraInv[toArrayIndex(1, 0)] * ax
-        + cameraInv[toArrayIndex(1, 1)] * ay + cameraInv[toArrayIndex(1, 2)]
-        * az + cameraInv[toArrayIndex(1, 3)] * aw;
-    float ow = cameraInv[toArrayIndex(3, 0)] * ax
-        + cameraInv[toArrayIndex(3, 1)] * ay + cameraInv[toArrayIndex(3, 2)]
-        * az + cameraInv[toArrayIndex(3, 3)] * aw;
+    float ax = modelview[0] * x + modelview[4] * y + modelview[8] * z + modelview[12];
+    float ay = modelview[1] * x + modelview[5] * y + modelview[9] * z  + modelview[13];
+    float az = modelview[2] * x + modelview[6] * y + modelview[10] * z + modelview[14];
+    float aw = modelview[3] * x + modelview[7] * y + modelview[11] * z + modelview[15];
+
+    float oy = cameraInv[1] * ax + cameraInv[5] * ay + cameraInv[9] * az + cameraInv[13] * aw;
+    float ow = cameraInv[3] * ax + cameraInv[7] * ay + cameraInv[11] * az + cameraInv[15] * aw;
 
     return (ow != 0) ? oy / ow : oy;
   }
 
   public float modelZ(float x, float y, float z) {
-
-    if (!modelviewUpdated)
-      getModelviewMatrix();
-
     y = -1 * y; // To take into account Processsing's inverted Y axis with
                 // respect to OpenGL.
 
-    float ax = modelview[toArrayIndex(0, 0)] * x
-        + modelview[toArrayIndex(0, 1)] * y + modelview[toArrayIndex(0, 2)] * z
-        + modelview[toArrayIndex(0, 3)];
-    float ay = modelview[toArrayIndex(1, 0)] * x
-        + modelview[toArrayIndex(1, 1)] * y + modelview[toArrayIndex(1, 2)] * z
-        + modelview[toArrayIndex(1, 3)];
-    float az = modelview[toArrayIndex(2, 0)] * x
-        + modelview[toArrayIndex(2, 1)] * y + modelview[toArrayIndex(2, 2)] * z
-        + modelview[toArrayIndex(2, 3)];
-    float aw = modelview[toArrayIndex(3, 0)] * x
-        + modelview[toArrayIndex(3, 1)] * y + modelview[toArrayIndex(3, 2)] * z
-        + modelview[toArrayIndex(3, 3)];
+    if (!modelviewUpdated) {
+      getModelviewMatrix();
+    }
 
-    float oz = cameraInv[toArrayIndex(2, 0)] * ax
-        + cameraInv[toArrayIndex(2, 1)] * ay + cameraInv[toArrayIndex(2, 2)]
-        * az + cameraInv[toArrayIndex(2, 3)] * aw;
-    float ow = cameraInv[toArrayIndex(3, 0)] * ax
-        + cameraInv[toArrayIndex(3, 1)] * ay + cameraInv[toArrayIndex(3, 2)]
-        * az + cameraInv[toArrayIndex(3, 3)] * aw;
+    float ax = modelview[0] * x + modelview[4] * y + modelview[8] * z + modelview[12];
+    float ay = modelview[1] * x + modelview[5] * y + modelview[9] * z  + modelview[13];
+    float az = modelview[2] * x + modelview[6] * y + modelview[10] * z + modelview[14];
+    float aw = modelview[3] * x + modelview[7] * y + modelview[11] * z + modelview[15];
+
+    float oz = cameraInv[2] * ax + cameraInv[6] * ay + cameraInv[10] * az + cameraInv[14] * aw;
+    float ow = cameraInv[3] * ax + cameraInv[7] * ay + cameraInv[11] * az + cameraInv[15] * aw;
 
     return (ow != 0) ? oz / ow : oz;
-  }
-
-  private int toArrayIndex(int i, int j) {
-    return 4 * j + i;
   }
 
   // STYLES
