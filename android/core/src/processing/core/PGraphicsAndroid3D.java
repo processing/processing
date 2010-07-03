@@ -293,6 +293,10 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected int drawIndex;
   protected int[] drawTexCrop;
 
+  // .......................................................
+  
+  protected boolean usingModelviewStack;
+  
   // ........................................................
 
   // Used to save a copy of the last drawn frame in order to repaint on the
@@ -990,7 +994,11 @@ public class PGraphicsAndroid3D extends PGraphics {
 
     manipulatingCamera = false;
     scalingDuringCamManip = false;
-
+    
+    if (usingModelviewStack) {
+      modelviewStack = new  A3DMatrixStack();
+    }
+    
     // easiest for beginners
     textureMode(IMAGE);
     
@@ -2603,17 +2611,18 @@ public class PGraphicsAndroid3D extends PGraphics {
   // MATRIX STACK
 
   public void pushMatrix() {
-    gl.glPushMatrix();
-    
-    
-    // HERE: Update modelview matrix stack.
+    gl.glPushMatrix();    
+    if (usingModelviewStack) {
+      modelviewStack.push();
+    }
   }
 
   public void popMatrix() {
     gl.glPopMatrix();
+    if (usingModelviewStack) {
+      modelviewStack.pop();
+    }
     modelviewUpdated = false;
-    
-    // HERE: Update modelview matrix stack.
   }
 
   // ////////////////////////////////////////////////////////////
@@ -2631,9 +2640,10 @@ public class PGraphicsAndroid3D extends PGraphics {
     // drawing the geometric primitives (vertex arrays), where a -1 scaling
     // along Y is applied.
     gl.glTranslatef(tx, -ty, tz);
+    if (usingModelviewStack) {
+      modelviewStack.translate(tx, -ty, tz);
+    }
     modelviewUpdated = false;
-    
-    // HERE: Update modelview matrix stack.
   }
 
   /**
@@ -2663,10 +2673,12 @@ public class PGraphicsAndroid3D extends PGraphics {
    * takes radians (instead of degrees).
    */
   public void rotate(float angle, float v0, float v1, float v2) {
-    gl.glRotatef(PApplet.degrees(angle), v0, v1, v2);
+    float a = PApplet.degrees(angle);
+    gl.glRotatef(a, v0, v1, v2);
+    if (usingModelviewStack) {
+      modelviewStack.rotate(a, v0, v1, v2);
+    }    
     modelviewUpdated = false;
-    
-    // HERE: Update modelview matrix stack.
   }
 
   /**
@@ -2691,9 +2703,10 @@ public class PGraphicsAndroid3D extends PGraphics {
       scalingDuringCamManip = true;
     }
     gl.glScalef(x, y, z);
+    if (usingModelviewStack) {
+      modelviewStack.scale(x, y, z);
+    }    
     modelviewUpdated = false;
-    
-     // HERE: Update modelview matrix stack.
   }
 
   public void skewX(float angle) {
@@ -2763,7 +2776,9 @@ public class PGraphicsAndroid3D extends PGraphics {
 
     gl.glMultMatrixf(mat, 0);
 
-    // HERE: Update modelview matrix stack.
+    if (usingModelviewStack) {
+      modelviewStack.mult(mat);
+    }    
     
     getModelviewMatrix();
     calculateModelviewInverse();
@@ -2936,20 +2951,12 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
 
   protected void getModelviewMatrix() {
-    if (gl11 != null && matrixGetSupported) {
-      gl11.glGetFloatv(GL11.GL_MODELVIEW_MATRIX, modelview, 0);
-      modelviewUpdated = true;
+    if (usingModelviewStack) {
+      modelviewStack.get(modelview);      
     } else {
-      
-      // TODO: Mechanism to get modelview matrix when no the funtion GetFloatv
-      // is available.
-      // Idea: when ony GL10 is available, then PMatrix3D versions of modelview
-      // and projection
-      // matrices are needed, and should be updated during the call to the
-      // transformation methods
-      // (rotate, translate, scale, etc).
-      
+      gl11.glGetFloatv(GL11.GL_MODELVIEW_MATRIX, modelview, 0);
     }
+    modelviewUpdated = true;
   }
 
   // Calculates the inverse of the modelview matrix.
@@ -3214,6 +3221,9 @@ public class PGraphicsAndroid3D extends PGraphics {
 
     gl.glMatrixMode(GL10.GL_MODELVIEW);
     gl.glLoadMatrixf(modelview, 0);
+    if (usingModelviewStack) {
+      modelviewStack.set(modelview);
+    }
     modelviewUpdated = true; // CPU and GPU copies of modelview matrix match
                              // each other.
 
@@ -4870,6 +4880,8 @@ public class PGraphicsAndroid3D extends PGraphics {
         fboSupported = true;
       }
 
+      usingModelviewStack = gl11 == null || !matrixGetSupported;
+      
       int maxTexSize[] = new int[1];
       gl.glGetIntegerv(GL10.GL_MAX_TEXTURE_SIZE, maxTexSize, 0);
       maxTextureSize = maxTexSize[0];
@@ -5091,6 +5103,51 @@ public class PGraphicsAndroid3D extends PGraphics {
       egl.eglDestroyContext(display, context);
     }
   }
+
+  // ////////////////////////////////////////////////////////////
+
+  // Matrix stack
+  
+  A3DMatrixStack modelviewStack;
+  
+  protected class A3DMatrixStack {
+    public A3DMatrixStack() {
+      
+    }
+    
+    public void push() {
+      
+    }
+    
+    public void pop() {
+      
+    }
+
+    public void mult(float[] m) {
+      
+    }
+    
+    public void get(float[] m) {
+      
+    }
+
+    public void set(float[] m) {
+      
+    }
+    
+    public void translate(float tx, float ty, float tz) {
+      
+    }
+
+    public void rotate(float a, float rx, float ry, float rz) {
+      
+    }
+    
+    public void scale(float sx, float sy, float sz) {
+      
+    }
+  }
+  
   
   // ////////////////////////////////////////////////////////////
 
