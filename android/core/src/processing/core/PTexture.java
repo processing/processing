@@ -258,7 +258,7 @@ public class PTexture implements PConstants {
   public void set(PTexture tex) {
     PFramebuffer fbo = new PFramebuffer(parent, glWidth, glHeight);
     // This is the color (destination) buffer of the FBO. 
-    fbo.addColorBuffer(this);
+    fbo.setColorBuffer(this);
     
     // FBO copy:
     a3d.pushFramebuffer();
@@ -326,7 +326,7 @@ public class PTexture implements PConstants {
     // Attaching the texture to the color buffer of a FBO, binding the FBO and reading the pixels
     // from the current draw buffer (which is the color buffer of the FBO).
     PFramebuffer fbo = new PFramebuffer(parent, glWidth, glHeight);
-    fbo.addColorBuffer(this);
+    fbo.setColorBuffer(this);
     
     a3d.pushFramebuffer();
     a3d.setFramebuffer(fbo);

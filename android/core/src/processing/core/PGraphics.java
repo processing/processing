@@ -5064,18 +5064,6 @@ public class PGraphics extends PImage implements PConstants {
   // A3D-only functions
   
   // TODO: Discuss proper integration into PGraphics API. 
-  public void clear() {
-    if (!(this instanceof PGraphicsAndroid3D)) {
-      showMissingWarning("clear");
-    }    
-  }
-
-  
-  public void noClear() {
-    if (!(this instanceof PGraphicsAndroid3D)) {
-      showMissingWarning("noClear");
-    }    
-  }
 
   public PImage getLastFrame() {
     if (!(this instanceof PGraphicsAndroid3D)) {
