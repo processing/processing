@@ -297,8 +297,8 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // .......................................................
   
-  protected boolean usingModelviewStack;    
-  A3DMatrixStack modelviewStack;
+  static protected boolean usingModelviewStack;    
+  static A3DMatrixStack modelviewStack;
   
   // ........................................................
 
@@ -309,8 +309,9 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected int screenTexHeight;
   public int[] screenTexCrop = {0, 0, 0, 0};
 
-  // This variable controls clearing the buffers.
-  boolean clear = true;
+  // This variable controls clearing of the color buffer.
+  boolean clearColorBuffer;
+  boolean clearColorBuffer0;
   
   // ........................................................
   
@@ -434,7 +435,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       normalArray = new int[DEFAULT_BUFFER_SIZE * 3];
 
       buffersAllocated = true;
-    }
+    }   
   }
 
   public void dispose() {  
@@ -872,68 +873,113 @@ public class PGraphicsAndroid3D extends PGraphics {
     // GL10.GL_SEPARATE_SPECULAR_COLOR);
 
     shapeFirst = 0;
-
-    if (fbStack == null) {
-      fbStack = new Stack<PFramebuffer>();
-
-      screenFramebuffer = new PFramebuffer(parent, width, height, true);
-      setFramebuffer(screenFramebuffer);
-    }
     
-    if (clear && primarySurface) {
-      // The simplest situation: background is completely cleared and this surface
-      // is the primary rendering surface (onscreen).
-      gl.glClearColor(0, 0, 0, 0);
-      gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-    } else {
-      // If we are here it means that either this surface is the primary rendering
-      // surface and we are in noClear mode (the last frame has to be preserved
-      // for incremental rendering) or we are in a offscreen surface.
-      if (fboSupported) {
-        if (drawFramebuffer == null) {
-          createDrawFramebuffer();
-        }
-        
-        pushFramebuffer();
-        setFramebuffer(drawFramebuffer);
-        drawFramebuffer.addColorBuffer(drawTextures[drawIndex]);
-        
-        gl.glClearColor(0, 0, 0, 0);
-        if (clear) {
-          gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);          
+    if (primarySurface) {
+      // This instance of PGraphicsAndroid3D is the primary (onscreen) drawing surface.
+      
+      if (parent.frameCount == 0) {
+        // Creating framebuffer object or draw texture for the primary surface, depending on the
+        // availability of FBOs.
+        if (fboSupported) {
+          if (drawFramebuffer == null) {
+            createDrawFramebuffer();
+          }
         } else {
-          gl.glClear(GL10.GL_DEPTH_BUFFER_BIT);
-          // Render previous draw texture as background.      
-          renderDrawTexture((drawIndex + 1) % 2);
+          if (gl11 == null || gl11x == null) {
+            throw new RuntimeException("PGraphicsAndroid3D:  no clear mode with no FBOs requires OpenGL ES 1.1");
+          }
+          if (screenTexID[0] == 0) {
+            createScreenTexture();
+          }
         }
-
-      } else {
-        if (gl11 == null || gl11x == null) {
-          throw new RuntimeException("PGraphicsAndroid3D: noClear mode requires OpenGL ES 1.1");
-        }
-          
-        // We cannot ever end up here if the surface is not primary,
-        // because a non-primary A3D surface is possible only
-        // when FBOs are supported.
-        if (screenTexID[0] == 0) {
-          createScreenTexture();
-        }
+      }
+      
+      if (clearColorBuffer) {
+        // Simplest scenario: clear mode means we clear both the color and depth buffers.
+        // No need for saving front color buffer, etc.
         gl.glClearColor(0, 0, 0, 0);
-        gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);      
-        drawScreenTexture();
+        gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);        
+      } else {
+        // We need to save the color buffer after finishing with the rendering of the this frame,
+        // to use is as the background for the next frame (incremental rendering). 
+       
+        if (fboSupported) {
+          if (drawFramebuffer != null) {
+            // Setting the framebuffer corresponding to this surface.
+            pushFramebuffer();
+            setFramebuffer(drawFramebuffer);
+            // Setting the current front color buffer.
+            drawFramebuffer.setColorBuffer(drawTextures[drawIndex]);
+            
+            // Drawing contents of back color buffer as background.
+            gl.glClearColor(0, 0, 0, 0);
+            if (parent.frameCount == 0) {
+              // No need to draw back color buffer because we are in the first frame ever.
+              gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);  
+            } else {
+              gl.glClear(GL10.GL_DEPTH_BUFFER_BIT);
+              // Render previous draw texture as background.      
+              renderDrawTexture((drawIndex + 1) % 2);        
+            }
+          }
+        } else {
+          if (screenTexID[0] != 0) { 
+            gl.glClearColor(0, 0, 0, 0);
+            gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+            if (0 < parent.frameCount) {
+              drawScreenTexture();
+            }
+          }
+        }
+      }
+    } else {
+      if (!fboSupported) {
+        throw new RuntimeException("PGraphicsAndroid3D: offscreen rendering requires FBO extension.");
+      } 
+      
+      if (drawFramebuffer == null) {
+        createDrawFramebuffer();
+      }
+
+      // Setting the framebuffer corresponding to this surface.
+      pushFramebuffer();
+      setFramebuffer(drawFramebuffer);
+      // Setting the current front color buffer.
+      drawFramebuffer.setColorBuffer(drawTextures[drawIndex]);
+      
+      // Drawing contents of back color buffer as background.
+      gl.glClearColor(0, 0, 0, 0);
+      if (clearColorBuffer || parent.frameCount == 0) {
+        // No need to draw back color buffer.
+        gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);  
+      } else {
+        gl.glClear(GL10.GL_DEPTH_BUFFER_BIT);
+        // Render previous draw texture as background.      
+        renderDrawTexture((drawIndex + 1) % 2);        
       }
     }
+    // This copy of the clear color buffer variable is needed to take into account
+    // the situation when clearColorBuffer = true with FBOs enabled at beginDraw()
+    // and clearColorBuffer = false at endDraw(). In such situation, an offscreen
+    // buffer might be bound, but should popped to the screen buffer for correct
+    // continuation of onscreen rendering.
+    clearColorBuffer0 = clearColorBuffer;
     
     report("bot beginDraw()");
   }
 
   public void endDraw() {
-    if (!clear || !primarySurface) {
-      if (fboSupported) {
-        if (drawFramebuffer != null) {
-          popFramebuffer();
-          
-          if (primarySurface) {
+    if (primarySurface) {
+      if (!clearColorBuffer0) {
+        // We are in the primary surface, and no clear mode, this means that the current
+        // contents of the front buffer needs to be used in the next frame as the background
+        // for incremental rendering. Depending on whether or not FBOs are supported,
+        // one of the two following paths is selected.
+        if (fboSupported) {
+          if (drawFramebuffer != null) {
+            // Restoring screen buffer.
+            popFramebuffer();
+            
             // Only the primary surface in clear mode will write the contents of the
             // ofscreen framebuffer to the screen.
             gl.glClearColor(0, 0, 0, 0);
@@ -941,18 +987,30 @@ public class PGraphicsAndroid3D extends PGraphics {
       
             // Render current draw texture to screen.
             renderDrawTexture(drawIndex);
+        
+            swapDrawIndex();
           }
-           
-          swapDrawIndex();
+        } else {
+          if (screenTexID[0] != 0) {
+            copyFrameToScreenTexture();
+          }
         }
-      } else {
-        if (screenTexID[0] != 0) {
-          copyFrameToScreenTexture();
-        }
-      }  
+      }
+    } else {
+      if (drawFramebuffer != null) {
+        // Restoring previous framebuffer and swapping color buffers of this
+        // offscreen surface (so in the next frame the current front buffer is
+        // back and viceversa.
+        popFramebuffer();
+        swapDrawIndex();  
+      }
     }
 
     if (primarySurface) {
+      // glFlush should be called only once, since it is an expensive
+      // operation. Thus, only the main renderer (the primary surface)
+      // should called at the end of draw, not any of the offscreen 
+      // renderers..
       gl.glFlush();
     } else { 
       ((PGraphicsAndroid3D)parent.g).restoreGLState();
@@ -974,18 +1032,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     gl.glPopMatrix();
   }
 
-  // //////////////////////////////////////////////////////////
-
-  // CLEAR/NO CLEAR
-
-  public void clear() {
-    clear = true;
-  }
-
-  public void noClear() {
-    clear = false;
-  }
-
+  
   // //////////////////////////////////////////////////////////
 
   // SETTINGS
@@ -998,9 +1045,18 @@ public class PGraphicsAndroid3D extends PGraphics {
     manipulatingCamera = false;
     scalingDuringCamManip = false;
     
-    if (usingModelviewStack) {
+    clearColorBuffer = false;
+        
+    if (fbStack == null) {
+      fbStack = new Stack<PFramebuffer>();
+
+      screenFramebuffer = new PFramebuffer(parent, width, height, true);
+      setFramebuffer(screenFramebuffer);
+    }    
+    
+    if (usingModelviewStack && modelviewStack == null) {
       modelviewStack = new  A3DMatrixStack();
-    }
+    }     
     
     // easiest for beginners
     textureMode(IMAGE);
@@ -4062,11 +4118,20 @@ public class PGraphicsAndroid3D extends PGraphics {
     gl.glClearColor(backgroundR, backgroundG, backgroundB, 1);
     gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
     set(0, 0, image);
+    if (0 < parent.frameCount) {
+      // Only one call to background during the drawing loop is needed to set the clear mode to true.    
+      clearColorBuffer = true;
+    }
+    
   }
 
   protected void backgroundImpl() {
     gl.glClearColor(backgroundR, backgroundG, backgroundB, 1);
     gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+    if (0 < parent.frameCount) {
+      // Only one call to background during the drawing loop is needed to set the clear mode to true.    
+      clearColorBuffer = true;
+    }
   }
 
   // ////////////////////////////////////////////////////////////
@@ -5108,9 +5173,9 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // This class encapsulates a static matrix stack that can be used
   // to mirror the changes in OpenGL matrices.
-  static protected class A3DMatrixStack {
-    static protected Stack<float[]> matrixStack;
-    static protected float[] current;
+  protected class A3DMatrixStack {
+    protected Stack<float[]> matrixStack;
+    protected float[] current;
     
     public A3DMatrixStack() {
       matrixStack = new Stack<float[]>();

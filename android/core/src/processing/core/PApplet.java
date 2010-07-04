@@ -7975,15 +7975,6 @@ public class PApplet extends Activity implements PConstants, Runnable {
   // A3D-only functions
   
   // TODO: Discuss proper integration into PApplet API. 
-  public void clear() {
-    g.clear();
-  }
-
-
-  public void noClear() {
-    g.noClear();
-  }
-
   public PImage getLastFrame() {    
     return g.getLastFrame();
   }
