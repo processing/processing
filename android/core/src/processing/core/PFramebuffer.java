@@ -88,15 +88,15 @@ public class PFramebuffer  {
     deleteFramebuffer();
   }
 
-  void addColorBuffer(PTexture tex) {
-    addColorBuffers(new PTexture[] { tex }, 1);
+  void setColorBuffer(PTexture tex) {
+    setColorBuffers(new PTexture[] { tex }, 1);
   }
 
-  void addColorBuffers(PTexture[] textures) {
-    addColorBuffers(textures, textures.length);
+  void setColorBuffers(PTexture[] textures) {
+    setColorBuffers(textures, textures.length);
   }
 
-  void addColorBuffers(PTexture[] textures, int n) {
+  void setColorBuffers(PTexture[] textures, int n) {
     a3d.pushFramebuffer();
     a3d.setFramebuffer(this);
 
