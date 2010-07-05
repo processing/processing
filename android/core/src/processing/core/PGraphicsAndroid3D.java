@@ -289,11 +289,11 @@ public class PGraphicsAndroid3D extends PGraphics {
   static protected PFramebuffer screenFramebuffer;
   static protected PFramebuffer currentFramebuffer;
   
-  protected PFramebuffer drawFramebuffer;
-  protected PImage[] drawImages;
-  protected PTexture[] drawTextures;
-  protected int drawIndex;
-  protected int[] drawTexCrop;
+  protected PFramebuffer offscreenFramebuffer;
+  protected PImage[] offscreenImages;
+  protected PTexture[] offscreenTextures;
+  protected int offscreenIndex;
+  protected int[] offscreenTexCrop;
 
   // .......................................................
   
@@ -587,9 +587,56 @@ public class PGraphicsAndroid3D extends PGraphics {
       PGraphics.showWarning("A3D: Empty framebuffer stack");
     }
   }
+
+  // ////////////////////////////////////////////////////////////  
+
+  // OFFSCREEN RENDERING
   
-  public void renderDrawTexture(int idx) {
-    PTexture tex = drawTextures[idx];
+  void createOffscreenFramebuffer() {
+    offscreenTexCrop = new int[4];
+    offscreenTexCrop[0] = 0;
+    offscreenTexCrop[1] = 0;
+    offscreenTexCrop[2] = width;
+    offscreenTexCrop[3] = height;      
+
+    offscreenImages = new PImage[2];
+    if (primarySurface) {
+      // Nearest filtering is used for the primary surface, otherwise some 
+      // artifacts appear (diagonal line when blending, for instance). This
+      // might deserve further examination.
+      offscreenImages[0] = parent.createImage(width, height, ARGB, NEAREST);
+      offscreenImages[1] = parent.createImage(width, height, ARGB, NEAREST);          
+    } else {
+      // Linear filtering is needed to keep decent image quality when rendering 
+      // texture at a size different from its original resolution. This is expected
+      // to happen for offscreen rendering.
+      offscreenImages[0] = parent.createImage(width, height, ARGB, LINEAR);
+      offscreenImages[1] = parent.createImage(width, height, ARGB, LINEAR);                
+    }
+    
+    offscreenTextures = new PTexture[2];
+    offscreenTextures[0] = offscreenImages[0].getTexture();
+    offscreenTextures[1] = offscreenImages[1].getTexture();
+    
+    // Drawing textures are marked as flipped along Y to ensure they are properly
+    // rendered by Processing, which has inverted Y axis with respect to
+    // OpenGL.
+    offscreenTextures[0].setFlippedY(true);
+    offscreenTextures[1].setFlippedY(true);
+
+    offscreenIndex = 0;
+
+    offscreenFramebuffer = new PFramebuffer(parent, offscreenTextures[0].getGLWidth(), offscreenTextures[0].getGLHeight(), false);
+
+    offscreenFramebuffer.addDepthBuffer(DEPTH_BITS);
+    if (0 < STENCIL_BITS) {
+      offscreenFramebuffer.addStencilBuffer(STENCIL_BITS); 
+    }    
+  }
+  
+  
+  protected void drawOffscreenTexture(int idx) {
+    PTexture tex = offscreenTextures[idx];
 
     gl.glEnable(tex.getGLTarget());
     gl.glBindTexture(tex.getGLTarget(), tex.getGLTextureID());
@@ -600,7 +647,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     // http://www.khronos.org/opengles/documentation/opengles1_0/html/glTexEnv.html    
     gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_REPLACE);
     
-    gl11.glTexParameteriv(tex.getGLTarget(), GL11Ext.GL_TEXTURE_CROP_RECT_OES, drawTexCrop, 0);
+    gl11.glTexParameteriv(tex.getGLTarget(), GL11Ext.GL_TEXTURE_CROP_RECT_OES, offscreenTexCrop, 0);
     gl11x.glDrawTexiOES(0, 0, 0, width, height);
     
     // Returning to the default texture environment mode, GL_MODULATE. This allows tinting a texture
@@ -616,14 +663,23 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
   }
   
-  public void swapDrawIndex() {
-    drawIndex = (drawIndex + 1) % 2; 
+  
+  public void swapOffscreenIndex() {
+    offscreenIndex = (offscreenIndex + 1) % 2; 
   }
+    
+  
+  
   
   public PImage getLastFrame() {
-    return drawImages[(drawIndex + 1) % 2];
+    return offscreenImages[(offscreenIndex + 1) % 2];
   }
   
+  
+  // ////////////////////////////////////////////////////////////
+
+  // FRAME
+
   protected void saveGLState() {
     gl.glMatrixMode(GL10.GL_PROJECTION);
     gl.glPushMatrix();
@@ -717,54 +773,9 @@ public class PGraphicsAndroid3D extends PGraphics {
     } else {
       noLights();
     }    
-  }
+  }  
   
-  void createDrawFramebuffer() {
-    drawTexCrop = new int[4];
-    drawTexCrop[0] = 0;
-    drawTexCrop[1] = 0;
-    drawTexCrop[2] = width;
-    drawTexCrop[3] = height;      
-
-    drawImages = new PImage[2];
-    if (primarySurface) {
-      // Nearest filtering is used for the primary surface, otherwise some 
-      // artifacts appear (diagonal line when blending, for instance). This
-      // might deserve further examination.
-      drawImages[0] = parent.createImage(width, height, ARGB, NEAREST);
-      drawImages[1] = parent.createImage(width, height, ARGB, NEAREST);          
-    } else {
-      // Linear filtering is needed to keep decent image quality when rendering 
-      // texture at a size different from its original resolution. This is expected
-      // to happen for offscreen rendering.
-      drawImages[0] = parent.createImage(width, height, ARGB, LINEAR);
-      drawImages[1] = parent.createImage(width, height, ARGB, LINEAR);                
-    }
-    
-    drawTextures = new PTexture[2];
-    drawTextures[0] = drawImages[0].getTexture();
-    drawTextures[1] = drawImages[1].getTexture();
-    
-    // Drawing textures are marked as flipped along Y to ensure they are properly
-    // rendered by Processing, which has inverted Y axis with respect to
-    // OpenGL.
-    drawTextures[0].setFlippedY(true);
-    drawTextures[1].setFlippedY(true);
-
-    drawIndex = 0;
-
-    drawFramebuffer = new PFramebuffer(parent, drawTextures[0].getGLWidth(), drawTextures[0].getGLHeight(), false);
-
-    drawFramebuffer.addDepthBuffer(DEPTH_BITS);
-    if (0 < STENCIL_BITS) {
-      drawFramebuffer.addStencilBuffer(STENCIL_BITS); 
-    }    
-  }
   
-  // ////////////////////////////////////////////////////////////
-
-  // FRAME
-
   public void requestDraw() {
     // This if condition is needed to avoid flickering when looping is disabled.
     if (parent.looping) {
@@ -881,8 +892,8 @@ public class PGraphicsAndroid3D extends PGraphics {
         // Creating framebuffer object or draw texture for the primary surface, depending on the
         // availability of FBOs.
         if (fboSupported) {
-          if (drawFramebuffer == null) {
-            createDrawFramebuffer();
+          if (offscreenFramebuffer == null) {
+            createOffscreenFramebuffer();
           }
         } else {
           if (gl11 == null || gl11x == null) {
@@ -904,12 +915,12 @@ public class PGraphicsAndroid3D extends PGraphics {
         // to use is as the background for the next frame (incremental rendering). 
        
         if (fboSupported) {
-          if (drawFramebuffer != null) {
+          if (offscreenFramebuffer != null) {
             // Setting the framebuffer corresponding to this surface.
             pushFramebuffer();
-            setFramebuffer(drawFramebuffer);
+            setFramebuffer(offscreenFramebuffer);
             // Setting the current front color buffer.
-            drawFramebuffer.setColorBuffer(drawTextures[drawIndex]);
+            offscreenFramebuffer.setColorBuffer(offscreenTextures[offscreenIndex]);
             
             // Drawing contents of back color buffer as background.
             gl.glClearColor(0, 0, 0, 0);
@@ -919,7 +930,7 @@ public class PGraphicsAndroid3D extends PGraphics {
             } else {
               gl.glClear(GL10.GL_DEPTH_BUFFER_BIT);
               // Render previous draw texture as background.      
-              renderDrawTexture((drawIndex + 1) % 2);        
+              drawOffscreenTexture((offscreenIndex + 1) % 2);        
             }
           }
         } else {
@@ -937,15 +948,15 @@ public class PGraphicsAndroid3D extends PGraphics {
         throw new RuntimeException("PGraphicsAndroid3D: offscreen rendering requires FBO extension.");
       } 
       
-      if (drawFramebuffer == null) {
-        createDrawFramebuffer();
+      if (offscreenFramebuffer == null) {
+        createOffscreenFramebuffer();
       }
 
       // Setting the framebuffer corresponding to this surface.
       pushFramebuffer();
-      setFramebuffer(drawFramebuffer);
+      setFramebuffer(offscreenFramebuffer);
       // Setting the current front color buffer.
-      drawFramebuffer.setColorBuffer(drawTextures[drawIndex]);
+      offscreenFramebuffer.setColorBuffer(offscreenTextures[offscreenIndex]);
       
       // Drawing contents of back color buffer as background.
       gl.glClearColor(0, 0, 0, 0);
@@ -955,7 +966,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       } else {
         gl.glClear(GL10.GL_DEPTH_BUFFER_BIT);
         // Render previous draw texture as background.      
-        renderDrawTexture((drawIndex + 1) % 2);        
+        drawOffscreenTexture((offscreenIndex + 1) % 2);        
       }
     }
     // This copy of the clear color buffer variable is needed to take into account
@@ -976,7 +987,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         // for incremental rendering. Depending on whether or not FBOs are supported,
         // one of the two following paths is selected.
         if (fboSupported) {
-          if (drawFramebuffer != null) {
+          if (offscreenFramebuffer != null) {
             // Restoring screen buffer.
             popFramebuffer();
             
@@ -986,9 +997,9 @@ public class PGraphicsAndroid3D extends PGraphics {
             gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
       
             // Render current draw texture to screen.
-            renderDrawTexture(drawIndex);
+            drawOffscreenTexture(offscreenIndex);
         
-            swapDrawIndex();
+            swapOffscreenIndex();
           }
         } else {
           if (screenTexID[0] != 0) {
@@ -997,12 +1008,12 @@ public class PGraphicsAndroid3D extends PGraphics {
         }
       }
     } else {
-      if (drawFramebuffer != null) {
+      if (offscreenFramebuffer != null) {
         // Restoring previous framebuffer and swapping color buffers of this
         // offscreen surface (so in the next frame the current front buffer is
         // back and viceversa.
         popFramebuffer();
-        swapDrawIndex();  
+        swapOffscreenIndex();  
       }
     }
 
@@ -4941,10 +4952,10 @@ public class PGraphicsAndroid3D extends PGraphics {
                                                // be supported.
         vboSupported = true;
       }
-      if (-1 < extensions.indexOf("GL_OES_framebuffer_object")) {
+      if (-1 < extensions.indexOf("framebuffer_object")) {
         fboSupported = true;
       }
-
+      
       usingModelviewStack = gl11 == null || !matrixGetSupported;
       
       int maxTexSize[] = new int[1];
