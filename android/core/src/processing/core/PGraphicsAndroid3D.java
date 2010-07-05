@@ -4946,7 +4946,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       if (-1 < extensions.indexOf("framebuffer_object")) {
         fboSupported = true;
       }
-      fboSupported = false;
+
       usingModelviewStack = gl11 == null || !matrixGetSupported;
       
       int maxTexSize[] = new int[1];
