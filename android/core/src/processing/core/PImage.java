@@ -193,29 +193,29 @@ public class PImage implements PConstants, Cloneable {
   
   public void initTexture() {
     texture = new PTexture(parent, width, height, new PTexture.Parameters(format));
-    pixelToTexture();
+    pixelsToTexture();
   }
   
 
   public void initTexture(int filter) {
     texture = new PTexture(parent, width, height, new PTexture.Parameters(format, filter));
-    pixelToTexture();
+    pixelsToTexture();
   }
 
 
   public void initTexture(PTexture.Parameters params) {
     texture = new PTexture(parent, width, height, params);
-    pixelToTexture();
+    pixelsToTexture();
   }
   
   
-  public void pixelToTexture() {
+  public void pixelsToTexture() {
     loadPixels();
     texture.set(this);
   }
   
   
-  public void textureToPixel() {
+  public void textureToPixels() {
     loadPixels();
     texture.get(pixels);
   }  
