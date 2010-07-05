@@ -303,11 +303,8 @@ public class PGraphicsAndroid3D extends PGraphics {
   // ........................................................
 
   // Used to save a copy of the last drawn frame in order to repaint on the
-  // backbuffer when using noClear mode.
-  protected int[] screenTexID = {0};
-  protected int screenTexWidth;
-  protected int screenTexHeight;
-  public int[] screenTexCrop = {0, 0, 0, 0};
+  // backbuffer when using no clear mode.
+  public int[] screenTexCrop;
 
   // This variable controls clearing of the color buffer.
   boolean clearColorBuffer;
@@ -353,8 +350,14 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   // public void setParent(PApplet parent)
 
-  // public void setPrimary(boolean primary)
+  public void setPrimary(boolean primary) {
+    super.setPrimary(primary);
 
+    // argh, a semi-transparent opengl surface? Yes!
+    if (primarySurface && TRANSLUCENT) {
+      format = ARGB;
+    }
+  }
   // public void setPath(String path)
 
   public void setSize(int iwidth, int iheight) {
@@ -449,10 +452,6 @@ public class PGraphicsAndroid3D extends PGraphics {
         a3d.removeRecreateResourceMethod(recreateResourceIdx);
       }
     }
-
-    if (screenTexID[0] == 0) {
-      gl.glDeleteTextures(1, screenTexID, 0);  
-    }
   }
 
   public void recreateResources() {
@@ -489,34 +488,14 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // SCREEN TEXTURE
 
-  protected void createScreenTexture() {    
-    if (screenTexID[0] != 0) {
-      gl.glDeleteTextures(1, screenTexID, 0);  
-    }
+  protected void createScreenTexture() {
+    loadTexture();
     
-    if (npotTexSupported) {
-      screenTexWidth = width;
-      screenTexHeight =height;
-    } else {
-      screenTexWidth = nextPowerOfTwo(width);
-      screenTexHeight = nextPowerOfTwo(height);
-    }
-        
-    gl.glEnable(GL10.GL_TEXTURE_2D);
-    gl.glGenTextures(1, screenTexID, 0);
-    gl.glBindTexture(GL10.GL_TEXTURE_2D, screenTexID[0]);    
-
-    gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_NEAREST);
-    gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_NEAREST);
-
-    gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S, GL10.GL_CLAMP_TO_EDGE);
-    gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T, GL10.GL_CLAMP_TO_EDGE);
-        
-    int[] buf = new int [screenTexWidth * screenTexHeight];
+    int[] buf = new int [width * height];
     for (int i = 0; i < buf.length; i++) buf[i] = 0xFF000000;
-    gl.glTexImage2D(GL10.GL_TEXTURE_2D, 0, GL10.GL_RGBA,  screenTexWidth, screenTexHeight, 0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, IntBuffer.wrap(buf));
-    gl.glDisable(GL10.GL_TEXTURE_2D);
+    texture.set(buf);
     
+    screenTexCrop = new int[4];
     screenTexCrop[0] = 0;
     screenTexCrop[1] = 0;
     screenTexCrop[2] = width;
@@ -524,8 +503,10 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
 
   protected void drawScreenTexture() {
-    gl.glEnable(GL10.GL_TEXTURE_2D);
-    gl.glBindTexture(GL10.GL_TEXTURE_2D, screenTexID[0]);
+    gl.glEnable(texture.getGLTarget());
+    gl.glBindTexture(texture.getGLTarget(), texture.getGLTextureID());
+    gl.glDepthMask(false);
+    gl.glDisable(GL10.GL_BLEND);
 
     // There is no need to setup orthographic projection or any related matrix set/restore
     // operations here because glDrawTexiOES operates on window coordinates:
@@ -533,21 +514,19 @@ public class PGraphicsAndroid3D extends PGraphics {
     // (except for mapping Z to the depth range), so there is no need for any 
     // matrix setup/restore code."
     // (from https://www.khronos.org/message_boards/viewtopic.php?f=4&t=948&p=2553).    
-    
-    // Depth mask is disabled so the depth values are not modified when
-    // rendering the texture quad. In this way the texture doesn't occlude
-    // any geometry latter drawn by the user.
-    gl.glDepthMask(false);    
-    gl.glDisable(GL10.GL_BLEND);
-
+        
+    // This is the right texture environment mode to ignore the fill color when drawing the texture:
+    // http://www.khronos.org/opengles/documentation/opengles1_0/html/glTexEnv.html    
     gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_REPLACE);
     
-    gl11.glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, screenTexCrop, 0);
+    gl11.glTexParameteriv(texture.getGLTarget(), GL11Ext.GL_TEXTURE_CROP_RECT_OES, screenTexCrop, 0);
     gl11x.glDrawTexiOES(0, 0, 0, width, height);
     
+    // Returning to the default texture environment mode, GL_MODULATE. This allows tinting a texture
+    // with the current fill color.
     gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_MODULATE);
     
-    gl.glDisable(GL10.GL_TEXTURE_2D);   
+    gl.glDisable(texture.getGLTarget());   
     gl.glDepthMask(true);
     if (blend) {
       blend(blendMode);
@@ -560,10 +539,11 @@ public class PGraphicsAndroid3D extends PGraphics {
     gl.glFinish(); // Make sure that the execution off all the openGL commands
                            // is finished.
     
-    gl.glEnable(GL10.GL_TEXTURE_2D);
-    gl.glBindTexture(GL10.GL_TEXTURE_2D, screenTexID[0]);
-    gl.glCopyTexImage2D(GL10.GL_TEXTURE_2D, 0, GL10.GL_RGB, 0, 0, screenTexWidth, screenTexHeight, 0); 
-    gl.glDisable(GL10.GL_TEXTURE_2D);
+    gl.glEnable(texture.getGLTarget());
+    gl.glBindTexture(texture.getGLTarget(), texture.getGLTextureID()); 
+    gl.glCopyTexImage2D(texture.getGLTarget(), 0, GL10.GL_RGB, 0, 0, width, height, 0);
+    
+    gl.glDisable(texture.getGLTarget());
   }
 
   // ////////////////////////////////////////////////////////////
@@ -664,15 +644,8 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
   
   
-  public void swapOffscreenIndex() {
+  protected void swapOffscreenIndex() {
     offscreenIndex = (offscreenIndex + 1) % 2; 
-  }
-    
-  
-  
-  
-  public PImage getLastFrame() {
-    return offscreenImages[(offscreenIndex + 1) % 2];
   }
   
   
@@ -899,7 +872,7 @@ public class PGraphicsAndroid3D extends PGraphics {
           if (gl11 == null || gl11x == null) {
             throw new RuntimeException("PGraphicsAndroid3D:  no clear mode with no FBOs requires OpenGL ES 1.1");
           }
-          if (screenTexID[0] == 0) {
+          if (texture == null) {
             createScreenTexture();
           }
         }
@@ -934,7 +907,7 @@ public class PGraphicsAndroid3D extends PGraphics {
             }
           }
         } else {
-          if (screenTexID[0] != 0) { 
+          if (texture != null) { 
             gl.glClearColor(0, 0, 0, 0);
             gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
             if (0 < parent.frameCount) {
@@ -1002,7 +975,7 @@ public class PGraphicsAndroid3D extends PGraphics {
             swapOffscreenIndex();
           }
         } else {
-          if (screenTexID[0] != 0) {
+          if (texture != null) {
             copyFrameToScreenTexture();
           }
         }
@@ -4535,7 +4508,25 @@ public class PGraphicsAndroid3D extends PGraphics {
     // gl.glDrawPixels(width, height,
     // GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, pixelBuffer);
   }
+  
+  
+  public PImage getLastFrame() {
+    return offscreenImages[(offscreenIndex + 1) % 2];
+  }
 
+  // ////////////////////////////////////////////////////////////
+
+  // LOAD/UPDATE TEXTURE
+
+  public void loadTexture() {
+    if (texture == null) {
+      initTexture(NEAREST);
+      texture.setFlippedY(true);
+    }
+  }
+  
+  
+  
   // ////////////////////////////////////////////////////////////
 
   // RESIZE
@@ -4955,7 +4946,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       if (-1 < extensions.indexOf("framebuffer_object")) {
         fboSupported = true;
       }
-      
+      fboSupported = false;
       usingModelviewStack = gl11 == null || !matrixGetSupported;
       
       int maxTexSize[] = new int[1];
