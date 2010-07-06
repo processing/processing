@@ -40,7 +40,7 @@ public class RunButton implements IEditorActionDelegate {
 		
 		// Fire up that preprocessor
 		try{
-			PdePreprocessor preproc = new PdePreprocessor("test", 4); // PdePreprocessor("sketch name", tabWidth), hard coded for now
+			PdePreprocessor preproc = new PdePreprocessor("test"); // PdePreprocessor("sketch name", tabWidth), hard coded for now
 			
 			StringWriter feedback = new StringWriter();
 			PreprocessResult result = preproc.write(feedback, editorContents);
@@ -49,9 +49,7 @@ public class RunButton implements IEditorActionDelegate {
 			String msg = re.getMessage();
 			
 			// skipped some stuff to find where the error appeared.
-			// at some point it should be adapted, but I'm waiting
-			// until this is transferred over to a builder and we
-			// can handle all of the backtracking at once
+			// at some point it should be put in here.
 			// lonnen july 5 2010
 			
 			// changed these helpers to change what is logged
@@ -141,6 +139,10 @@ public class RunButton implements IEditorActionDelegate {
 	 */
 	private void spoof_preferences(){
 		Preferences.set("editor.tabs.size", "4");
+		Preferences.set("preproc.substitute_floats","true");
+		Preferences.set("preproc.web_colors", "true");
+		Preferences.set("preproc.color_datatype", "true");
+		Preferences.set("preproc.enhanced_casting", "true");
 		Preferences.set("preproc.substitute.unicode", "true");
 		Preferences.set("preproc.output_parse.tree", "false");
 		Preferences.set("export.application.fullscreen", "false");
@@ -150,78 +152,5 @@ public class RunButton implements IEditorActionDelegate {
 		Preferences.set("run.window.bgcolor", "#ECE9D8");
 		Preferences.set("preproc.imports.list", "java.applet.*,java.awt.Dimension,java.awt.Frame,java.awt.event.MouseEvent,java.awt.event.KeyEvent,java.awt.event.FocusEvent,java.awt.Image,java.io.*,java.net.*,java.text.*,java.util.*,java.util.zip.*,java.util.regex.*");
 	}
-
-//	/**
-//	 * Emulates the functionality of the static Preferences class in the Processing app.
-//	 * The preprocessor relies on it, but the Preferences classes it expects in the app
-//	 * is incompatible with the way eclipse loads things and handles file streams.
-//	 * @author lonnen
-//	 *
-//	 */
-//	private static class Preferences{
-//
-//		static Hashtable table = init(); // the data model, will load the first time it is accessed
-//		
-//		/**
-//		 * Called the first time the hashtable of preferences is accessed. Because
-//		 * we don't need the full preferences file of the app so we explicit load
-//		 * what we need. In the future it may be useful to switch all of this to be
-//		 * dynamicly loaded and interface with the eclipse Preferences API.  
-//		 * 
-//		 * @return Hashtable with the preferences we need to run the preprocessor
-//		 */
-//		static public Hashtable init() {
-//
-//			table = new Hashtable();
-//			
-//			// 9 settings for the preprocessor
-//			Preferences.set("editor.tabs.size", "4");
-//			Preferences.set("preproc.substitute.unicode", "true");
-//			Preferences.set("preproc.output_parse.tree", "false");
-//			Preferences.set("export.application.fullscreen", "false");
-//			Preferences.set("run.present.bgcolor", "#666666");
-//			Preferences.set("export.application.stop", "true");
-//			Preferences.set("run.present.stop.color", "#cccccc");
-//			Preferences.set("run.window.bgcolor", "#ECE9D8");
-//			Preferences.set("preproc.imports.list", "java.applet.*,java.awt.Dimension,java.awt.Frame,java.awt.event.MouseEvent,java.awt.event.KeyEvent,java.awt.event.FocusEvent,java.awt.Image,java.io.*,java.net.*,java.text.*,java.util.*,java.util.zip.*,java.util.regex.*");
-//		   
-//			return table;
-//		  }
-//		
-//		// methods for getting settings
-//		
-//		/**
-//		 * Simple accessor method for the table of preferences.
-//		 * There is no error protection, so expect issues if this
-//		 * asks for a preference that doesn't exist.
-//		 * 
-//		 * @param attribute the preference you're looking for
-//		 * @return the value of the preference as a string
-//		 */
-//		static public String get(String attribute) {
-//		    return (String) table.get(attribute);
-//		  }
-//
-//		/**
-//		 * accessor method for the preferences table
-//		 * 
-//		 * @param attribute
-//		 * @return the preference cast as a boolean
-//		 */
-//		static public boolean getBoolean(String attribute) {
-//		    String value = get(attribute);
-//		    return (new Boolean(value)).booleanValue();
-//		  }
-//		
-//		/**
-//		 * accessor method for the preferences table
-//		 * 
-//		 * @param attribute
-//		 * @return the preference as an integer
-//		 */
-//		static public int getInteger(String attribute) {
-//		    return Integer.parseInt(get(attribute));
-//		  }
-//	}
 	
 }
