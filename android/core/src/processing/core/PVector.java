@@ -428,6 +428,10 @@ public class PVector {
     return this.x*x + this.y*y + this.z*z;
   }
 
+  
+  static public float dot(PVector v1, PVector v2) {
+      return v1.x*v2.x + v1.y*v2.y + v1.z*v2.z;
+  }  
 
   /**
    * Return a vector composed of the cross product between this and another.
