@@ -93,13 +93,23 @@ public class PGraphicsAndroid3D extends PGraphics {
   public float cameraAspect;
 
   /** Modelview and projection matrices **/
-  protected float[] modelview;
-  protected float[] modelviewInv;
-  protected float[] projection;
+  
+  // Array version for use with OpenGL
+  protected float[] glmodelview;
+  protected float[] glmodelviewInv;
+  protected float[] glprojection;
 
-  protected float[] camera;
-  protected float[] cameraInv;
+  protected float[] pcamera;
+  protected float[] pcameraInv;
+  
+  // PMatrix3D version for use in Processing.
+  public PMatrix3D modelview;
+  public PMatrix3D modelviewInv;
+  public PMatrix3D projection;
 
+  public PMatrix3D camera;
+  public PMatrix3D cameraInv;
+  
   protected boolean modelviewUpdated;
 
   protected boolean matricesAllocated = false;
@@ -387,11 +397,18 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   protected void allocate() {
     if (!matricesAllocated) {
-      projection = new float[16];
-      modelview = new float[16];
-      modelviewInv = new float[16];
-      camera = new float[16];
-      cameraInv = new float[16];
+      glprojection = new float[16];
+      glmodelview = new float[16];
+      glmodelviewInv = new float[16];
+      pcamera = new float[16];
+      pcameraInv = new float[16];
+      
+      projection = new PMatrix3D();
+      modelview = new PMatrix3D();
+      modelviewInv = new PMatrix3D();
+      camera = new PMatrix3D();
+      cameraInv = new PMatrix3D();
+
       matricesAllocated = true;
     }
 
@@ -1015,7 +1032,6 @@ public class PGraphicsAndroid3D extends PGraphics {
   public void endGL() {
     gl.glPopMatrix();
   }
-
   
   // //////////////////////////////////////////////////////////
 
@@ -2826,13 +2842,103 @@ public class PGraphicsAndroid3D extends PGraphics {
     calculateModelviewInverse();
   }
 
+  public void updateModelview() {
+    updateModelview(true);
+  }
+  
+  public void updateModelview(boolean calcInv) {
+    copyPMatrixToGLArray(modelview, glmodelview);
+    if (calcInv) {
+        calculateModelviewInverse();
+    } else {
+      copyPMatrixToGLArray(modelviewInv, glmodelviewInv);
+    }
+    gl.glLoadMatrixf(glmodelview, 0);
+    if (usingModelviewStack) {
+      modelviewStack.set(glmodelview);
+    }
+    modelviewUpdated = true;
+  }
+
+  public void updateProjection() {
+    copyPMatrixToGLArray(projection, glprojection);
+    gl.glMatrixMode(GL10.GL_PROJECTION);
+    gl.glLoadMatrixf(glprojection, 0);
+    gl.glMatrixMode(GL10.GL_MODELVIEW);
+  }
+
+  public void updateCamera() {
+    if (!manipulatingCamera) {
+      throw new RuntimeException("Cannot call updateCamera() "
+          + "without first calling beginCamera()");
+    }    
+    copyPMatrixToGLArray(camera, glmodelview);
+    gl.glLoadMatrixf(glmodelview, 0);
+    if (usingModelviewStack) {
+      modelviewStack.set(glmodelview);
+    }
+    scalingDuringCamManip = true; // Assuming general transformation.
+  }
+  
+  // This method is needed to copy a PMatrix3D into a  opengl array.
+  // The PMatrix3D.get(float[]) is not useful, because PMatrix3D assumes
+  // row-major ordering of the elements of the float array, and opengl
+  // uses column-major ordering.
+  private void copyPMatrixToGLArray(PMatrix3D src, float[] dest) {
+    dest[0] = src.m00;
+    dest[1] = src.m10;
+    dest[2] = src.m20;
+    dest[3] = src.m30;
+
+    dest[4] = src.m01;
+    dest[5] = src.m11;
+    dest[6] = src.m21;
+    dest[7] = src.m31;
+    
+    dest[8] = src.m02;
+    dest[9] = src.m12;
+    dest[10] = src.m22;
+    dest[11] = src.m32;
+
+    dest[12] = src.m03;
+    dest[13] = src.m13;
+    dest[14] = src.m23;
+    dest[15] = src.m33;
+  }
+
+  // This method is needed to copy an opengl array into a  PMatrix3D.
+  // The PMatrix3D.set(float[]) is not useful, because PMatrix3D assumes
+  // row-major ordering of the elements of the float array, and opengl
+  // uses column-major ordering.  
+  private void copyGLArrayToPMatrix(float[] src, PMatrix3D dest) {
+    dest.m00 = src[0];
+    dest.m10 = src[1];
+    dest.m20 = src[2];
+    dest.m30 = src[3];
+
+    dest.m01 = src[4];
+    dest.m11 = src[5];
+    dest.m21 = src[6];
+    dest.m31 = src[7];
+    
+    dest.m02 = src[8];
+    dest.m12 = src[9];
+    dest.m22 = src[10];
+    dest.m32 = src[11];
+
+    dest.m03 = src[12];
+    dest.m13 = src[13];
+    dest.m23 = src[14];
+    dest.m33 = src[15];
+  }
+    
   // ////////////////////////////////////////////////////////////
 
   // MATRIX GET/SET/PRINT
 
   public PMatrix getMatrix() {
     PMatrix res = new PMatrix3D();
-    res.set(modelview);
+    res.set(glmodelview);
     return res;
   }
 
@@ -2842,7 +2948,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     if (target == null) {
       target = new PMatrix3D();
     }
-    target.set(modelview);
+    target.set(glmodelview);
     return target;
   }
 
@@ -2868,7 +2974,7 @@ public class PGraphicsAndroid3D extends PGraphics {
    */
   public void printMatrix() {
     PMatrix3D tmp = new PMatrix3D();
-    tmp.set(modelview);
+    tmp.set(glmodelview);
     tmp.print();
   }
 
@@ -2984,8 +3090,10 @@ public class PGraphicsAndroid3D extends PGraphics {
 
     // Copying modelview matrix after camera transformations to the camera
     // matrices.
-    PApplet.arrayCopy(modelview, camera);
-    PApplet.arrayCopy(modelviewInv, cameraInv);
+    PApplet.arrayCopy(glmodelview, pcamera);
+    PApplet.arrayCopy(glmodelviewInv, pcameraInv);
+    copyGLArrayToPMatrix(pcamera, camera);
+    copyGLArrayToPMatrix(pcameraInv, cameraInv);
 
     // all done
     manipulatingCamera = false;
@@ -2994,10 +3102,11 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   protected void getModelviewMatrix() {
     if (usingModelviewStack) {
-      modelviewStack.get(modelview);      
+      modelviewStack.get(glmodelview);
     } else {
-      gl11.glGetFloatv(GL11.GL_MODELVIEW_MATRIX, modelview, 0);
+      gl11.glGetFloatv(GL11.GL_MODELVIEW_MATRIX, glmodelview, 0);
     }
+    copyGLArrayToPMatrix(glmodelview, modelview);
     modelviewUpdated = true;
   }
 
@@ -3005,8 +3114,8 @@ public class PGraphicsAndroid3D extends PGraphics {
   // From Matrix4<Real> Matrix4<Real>::Inverse in 
   // http://www.geometrictools.com/LibMathematics/Algebra/Wm5Matrix4.inl
   protected void calculateModelviewInverse() {
-    float[] m = modelview;
-    float[] inv = modelviewInv; 
+    float[] m = glmodelview;
+    float[] inv = glmodelviewInv; 
     
     float a0 = m[0] * m[5] - m[1] * m[4];
     float a1 = m[0] * m[6] - m[2] * m[4];
@@ -3058,6 +3167,8 @@ public class PGraphicsAndroid3D extends PGraphics {
         inv[13] *= invDet;
         inv[14] *= invDet;
         inv[15] *= invDet;
+        
+        modelviewInv.set(inv);
     }
   }
 
@@ -3066,41 +3177,46 @@ public class PGraphicsAndroid3D extends PGraphics {
   // Here is the derivation of the formula:
   // http://www-graphics.stanford.edu/courses/cs248-98-fall/Final/q4.html
   protected void calculateModelviewInvNoScaling() {
-    float ux = modelview[0];
-    float uy = modelview[1];
-    float uz = modelview[2];
+    float[] m = glmodelview;
+    float[] inv = glmodelviewInv; 
+    
+    float ux = m[0];
+    float uy = m[1];
+    float uz = m[2];
 
-    float vx = modelview[4];
-    float vy = modelview[5];
-    float vz = modelview[6];
+    float vx = m[4];
+    float vy = m[5];
+    float vz = m[6];
 
-    float wx = modelview[8];
-    float wy = modelview[9];
-    float wz = modelview[10];
+    float wx = m[8];
+    float wy = m[9];
+    float wz = m[10];
 
-    float tx = modelview[12];
-    float ty = modelview[13];
-    float tz = modelview[14];
+    float tx = m[12];
+    float ty = m[13];
+    float tz = m[14];
 
-    modelviewInv[0] = ux;
-    modelviewInv[1] = vx;
-    modelviewInv[2] = wx;
-    modelviewInv[3] = 0.0f;
+    inv[0] = ux;
+    inv[1] = vx;
+    inv[2] = wx;
+    inv[3] = 0.0f;
 
-    modelviewInv[4] = uy;
-    modelviewInv[5] = vy;
-    modelviewInv[6] = wy;
-    modelviewInv[7] = 0.0f;
+    inv[4] = uy;
+    inv[5] = vy;
+    inv[6] = wy;
+    inv[7] = 0.0f;
 
-    modelviewInv[8] = uz;
-    modelviewInv[9] = vz;
-    modelviewInv[10] = wz;
-    modelviewInv[11] = 0;
+    inv[8] = uz;
+    inv[9] = vz;
+    inv[10] = wz;
+    inv[11] = 0;
 
-    modelviewInv[12] = -(ux * tx + uy * ty + uz * tz);
-    modelviewInv[13] = -(vx * tx + vy * ty + vz * tz);
-    modelviewInv[14] = -(wx * tx + wy * ty + wz * tz);
-    modelviewInv[15] = 1.0f;
+    inv[12] = -(ux * tx + uy * ty + uz * tz);
+    inv[13] = -(vx * tx + vy * ty + vz * tz);
+    inv[14] = -(wx * tx + wy * ty + wz * tz);
+    inv[15] = 1.0f;
+    
+    modelviewInv.set(inv);
   }
 
   /**
@@ -3241,37 +3357,39 @@ public class PGraphicsAndroid3D extends PGraphics {
       y2 /= mag;
     }
 
-    modelview[0] = x0;
-    modelview[1] = y0;
-    modelview[2] = z0;
-    modelview[3] = 0.0f;
+    glmodelview[0] = x0;
+    glmodelview[1] = y0;
+    glmodelview[2] = z0;
+    glmodelview[3] = 0.0f;
 
-    modelview[4] = x1;
-    modelview[5] = y1;
-    modelview[6] = z1;
-    modelview[7] = 0.0f;
+    glmodelview[4] = x1;
+    glmodelview[5] = y1;
+    glmodelview[6] = z1;
+    glmodelview[7] = 0.0f;
 
-    modelview[8] = x2;
-    modelview[9] = y2;
-    modelview[10] = z2;
-    modelview[11] = 0;
+    glmodelview[8] = x2;
+    glmodelview[9] = y2;
+    glmodelview[10] = z2;
+    glmodelview[11] = 0;
 
-    modelview[12] = -cameraX;
-    modelview[13] = cameraY;
-    modelview[14] = -cameraZ;
-    modelview[15] = 1.0f;
+    glmodelview[12] = -cameraX;
+    glmodelview[13] = cameraY;
+    glmodelview[14] = -cameraZ;
+    glmodelview[15] = 1.0f;
 
     gl.glMatrixMode(GL10.GL_MODELVIEW);
-    gl.glLoadMatrixf(modelview, 0);
+    gl.glLoadMatrixf(glmodelview, 0);
     if (usingModelviewStack) {
-      modelviewStack.set(modelview);
+      modelviewStack.set(glmodelview);
     }
-    modelviewUpdated = true; // CPU and GPU copies of modelview matrix match
-                             // each other.
+    copyGLArrayToPMatrix(glmodelview, modelview);
+    modelviewUpdated = true;
 
     calculateModelviewInvNoScaling();
-    PApplet.arrayCopy(modelview, camera);
-    PApplet.arrayCopy(modelviewInv, cameraInv);
+    PApplet.arrayCopy(glmodelview, pcamera);
+    PApplet.arrayCopy(glmodelviewInv, pcameraInv);
+    copyGLArrayToPMatrix(pcamera, camera);
+    copyGLArrayToPMatrix(pcameraInv, cameraInv);
   }
 
   /**
@@ -3279,7 +3397,7 @@ public class PGraphicsAndroid3D extends PGraphics {
    */
   public void printCamera() {
     PMatrix3D tmp = new PMatrix3D();
-    tmp.set(camera);
+    tmp.set(pcamera);
     tmp.print();
   }
 
@@ -3310,28 +3428,29 @@ public class PGraphicsAndroid3D extends PGraphics {
     float ty = -(top + bottom) / (top - bottom);
     float tz = -(far + near) / (far - near);
 
-    projection[0] = x;
-    projection[1] = 0.0f;
-    projection[2] = 0.0f;
-    projection[3] = 0.0f;
+    glprojection[0] = x;
+    glprojection[1] = 0.0f;
+    glprojection[2] = 0.0f;
+    glprojection[3] = 0.0f;
 
-    projection[4] = 0.0f;
-    projection[5] = y;
-    projection[6] = 0.0f;
-    projection[7] = 0.0f;
+    glprojection[4] = 0.0f;
+    glprojection[5] = y;
+    glprojection[6] = 0.0f;
+    glprojection[7] = 0.0f;
 
-    projection[8] = 0;
-    projection[9] = 0;
-    projection[10] = z;
-    projection[11] = 0.0f;
+    glprojection[8] = 0;
+    glprojection[9] = 0;
+    glprojection[10] = z;
+    glprojection[11] = 0.0f;
 
-    projection[12] = tx;
-    projection[13] = ty;
-    projection[14] = tz;
-    projection[15] = 1.0f;
+    glprojection[12] = tx;
+    glprojection[13] = ty;
+    glprojection[14] = tz;
+    glprojection[15] = 1.0f;
 
     gl.glMatrixMode(GL10.GL_PROJECTION);
-    gl.glLoadMatrixf(projection, 0);
+    gl.glLoadMatrixf(glprojection, 0);
+    copyGLArrayToPMatrix(glprojection, projection);
     
     // The matrix mode is always MODELVIEW, because the user will be doing
     // geometrical transformations all the time, projection transformations 
@@ -3387,25 +3506,26 @@ public class PGraphicsAndroid3D extends PGraphics {
     temp2 = right - left;
     temp3 = top - bottom;
     temp4 = zfar - znear;
-    projection[0] = temp / temp2;
-    projection[1] = 0.0f;
-    projection[2] = 0.0f;
-    projection[3] = 0.0f;
-    projection[4] = 0.0f;
-    projection[5] = temp / temp3;
-    projection[6] = 0.0f;
-    projection[7] = 0.0f;
-    projection[8] = (right + left) / temp2;
-    projection[9] = (top + bottom) / temp3;
-    projection[10] = (-zfar - znear) / temp4;
-    projection[11] = -1.0f;
-    projection[12] = 0.0f;
-    projection[13] = 0.0f;
-    projection[14] = (-temp * zfar) / temp4;
-    projection[15] = 0.0f;
+    glprojection[0] = temp / temp2;
+    glprojection[1] = 0.0f;
+    glprojection[2] = 0.0f;
+    glprojection[3] = 0.0f;
+    glprojection[4] = 0.0f;
+    glprojection[5] = temp / temp3;
+    glprojection[6] = 0.0f;
+    glprojection[7] = 0.0f;
+    glprojection[8] = (right + left) / temp2;
+    glprojection[9] = (top + bottom) / temp3;
+    glprojection[10] = (-zfar - znear) / temp4;
+    glprojection[11] = -1.0f;
+    glprojection[12] = 0.0f;
+    glprojection[13] = 0.0f;
+    glprojection[14] = (-temp * zfar) / temp4;
+    glprojection[15] = 0.0f;
 
     gl.glMatrixMode(GL10.GL_PROJECTION);
-    gl.glLoadMatrixf(projection, 0);
+    gl.glLoadMatrixf(glprojection, 0);
+    copyGLArrayToPMatrix(glprojection, projection);
 
     // The matrix mode is always MODELVIEW, because the user will be doing
     // geometrical transformations all the time, projection transformations 
@@ -3418,7 +3538,7 @@ public class PGraphicsAndroid3D extends PGraphics {
    */
   public void printProjection() {
     PMatrix3D tmp = new PMatrix3D();
-    tmp.set(projection);
+    tmp.set(glprojection);
     tmp.print();
   }
 
@@ -3442,13 +3562,13 @@ public class PGraphicsAndroid3D extends PGraphics {
       getModelviewMatrix();      
     }
       
-    float ax = modelview[0] * x + modelview[4] * y + modelview[8] * z + modelview[12];
-    float ay = modelview[1] * x + modelview[5] * y + modelview[9] * z  + modelview[13];
-    float az = modelview[2] * x + modelview[6] * y + modelview[10] * z + modelview[14];
-    float aw = modelview[3] * x + modelview[7] * y + modelview[11] * z + modelview[15];
+    float ax = glmodelview[0] * x + glmodelview[4] * y + glmodelview[8] * z + glmodelview[12];
+    float ay = glmodelview[1] * x + glmodelview[5] * y + glmodelview[9] * z  + glmodelview[13];
+    float az = glmodelview[2] * x + glmodelview[6] * y + glmodelview[10] * z + glmodelview[14];
+    float aw = glmodelview[3] * x + glmodelview[7] * y + glmodelview[11] * z + glmodelview[15];
 
-    float ox = projection[0] * ax + projection[4] * ay + projection[8] * az + projection[12] * aw;
-    float ow = projection[3] * ax + projection[7] * ay + projection[11] * az + projection[15] * aw;
+    float ox = glprojection[0] * ax + glprojection[4] * ay + glprojection[8] * az + glprojection[12] * aw;
+    float ow = glprojection[3] * ax + glprojection[7] * ay + glprojection[11] * az + glprojection[15] * aw;
 
     if (ow != 0)
       ox /= ow;
@@ -3463,13 +3583,13 @@ public class PGraphicsAndroid3D extends PGraphics {
       getModelviewMatrix();
     }
 
-    float ax = modelview[0] * x + modelview[4] * y + modelview[8] * z + modelview[12];
-    float ay = modelview[1] * x + modelview[5] * y + modelview[9] * z  + modelview[13];
-    float az = modelview[2] * x + modelview[6] * y + modelview[10] * z + modelview[14];
-    float aw = modelview[3] * x + modelview[7] * y + modelview[11] * z + modelview[15];
+    float ax = glmodelview[0] * x + glmodelview[4] * y + glmodelview[8] * z + glmodelview[12];
+    float ay = glmodelview[1] * x + glmodelview[5] * y + glmodelview[9] * z  + glmodelview[13];
+    float az = glmodelview[2] * x + glmodelview[6] * y + glmodelview[10] * z + glmodelview[14];
+    float aw = glmodelview[3] * x + glmodelview[7] * y + glmodelview[11] * z + glmodelview[15];
 
-    float oy = projection[1] * ax + projection[5] * ay + projection[9] * az + projection[13] * aw;
-    float ow = projection[3] * ax + projection[7] * ay + projection[11] * az + projection[15] * aw;
+    float oy = glprojection[1] * ax + glprojection[5] * ay + glprojection[9] * az + glprojection[13] * aw;
+    float ow = glprojection[3] * ax + glprojection[7] * ay + glprojection[11] * az + glprojection[15] * aw;
 
     if (ow != 0)
       oy /= ow;
@@ -3484,13 +3604,13 @@ public class PGraphicsAndroid3D extends PGraphics {
       getModelviewMatrix();      
     }
 
-    float ax = modelview[0] * x + modelview[4] * y + modelview[8] * z + modelview[12];
-    float ay = modelview[1] * x + modelview[5] * y + modelview[9] * z  + modelview[13];
-    float az = modelview[2] * x + modelview[6] * y + modelview[10] * z + modelview[14];
-    float aw = modelview[3] * x + modelview[7] * y + modelview[11] * z + modelview[15];
+    float ax = glmodelview[0] * x + glmodelview[4] * y + glmodelview[8] * z + glmodelview[12];
+    float ay = glmodelview[1] * x + glmodelview[5] * y + glmodelview[9] * z  + glmodelview[13];
+    float az = glmodelview[2] * x + glmodelview[6] * y + glmodelview[10] * z + glmodelview[14];
+    float aw = glmodelview[3] * x + glmodelview[7] * y + glmodelview[11] * z + glmodelview[15];
 
-    float oz = projection[2] * ax + projection[6] * ay + projection[10] * az + projection[14] * aw;
-    float ow = projection[3] * ax + projection[7] * ay + projection[11] * az + projection[15] * aw;
+    float oz = glprojection[2] * ax + glprojection[6] * ay + glprojection[10] * az + glprojection[14] * aw;
+    float ow = glprojection[3] * ax + glprojection[7] * ay + glprojection[11] * az + glprojection[15] * aw;
 
     if (ow != 0)
       oz /= ow;
@@ -3505,13 +3625,13 @@ public class PGraphicsAndroid3D extends PGraphics {
       getModelviewMatrix();
     }
 
-    float ax = modelview[0] * x + modelview[4] * y + modelview[8] * z + modelview[12];
-    float ay = modelview[1] * x + modelview[5] * y + modelview[9] * z  + modelview[13];
-    float az = modelview[2] * x + modelview[6] * y + modelview[10] * z + modelview[14];
-    float aw = modelview[3] * x + modelview[7] * y + modelview[11] * z + modelview[15];
+    float ax = glmodelview[0] * x + glmodelview[4] * y + glmodelview[8] * z + glmodelview[12];
+    float ay = glmodelview[1] * x + glmodelview[5] * y + glmodelview[9] * z  + glmodelview[13];
+    float az = glmodelview[2] * x + glmodelview[6] * y + glmodelview[10] * z + glmodelview[14];
+    float aw = glmodelview[3] * x + glmodelview[7] * y + glmodelview[11] * z + glmodelview[15];
 
-    float ox = cameraInv[0] * ax + cameraInv[4] * ay + cameraInv[8] * az + cameraInv[12] * aw;
-    float ow = cameraInv[3] * ax + cameraInv[7] * ay + cameraInv[11] * az + cameraInv[15] * aw;
+    float ox = pcameraInv[0] * ax + pcameraInv[4] * ay + pcameraInv[8] * az + pcameraInv[12] * aw;
+    float ow = pcameraInv[3] * ax + pcameraInv[7] * ay + pcameraInv[11] * az + pcameraInv[15] * aw;
 
     return (ow != 0) ? ox / ow : ox;
   }
@@ -3524,13 +3644,13 @@ public class PGraphicsAndroid3D extends PGraphics {
       getModelviewMatrix();
     }
 
-    float ax = modelview[0] * x + modelview[4] * y + modelview[8] * z + modelview[12];
-    float ay = modelview[1] * x + modelview[5] * y + modelview[9] * z  + modelview[13];
-    float az = modelview[2] * x + modelview[6] * y + modelview[10] * z + modelview[14];
-    float aw = modelview[3] * x + modelview[7] * y + modelview[11] * z + modelview[15];
+    float ax = glmodelview[0] * x + glmodelview[4] * y + glmodelview[8] * z + glmodelview[12];
+    float ay = glmodelview[1] * x + glmodelview[5] * y + glmodelview[9] * z  + glmodelview[13];
+    float az = glmodelview[2] * x + glmodelview[6] * y + glmodelview[10] * z + glmodelview[14];
+    float aw = glmodelview[3] * x + glmodelview[7] * y + glmodelview[11] * z + glmodelview[15];
 
-    float oy = cameraInv[1] * ax + cameraInv[5] * ay + cameraInv[9] * az + cameraInv[13] * aw;
-    float ow = cameraInv[3] * ax + cameraInv[7] * ay + cameraInv[11] * az + cameraInv[15] * aw;
+    float oy = pcameraInv[1] * ax + pcameraInv[5] * ay + pcameraInv[9] * az + pcameraInv[13] * aw;
+    float ow = pcameraInv[3] * ax + pcameraInv[7] * ay + pcameraInv[11] * az + pcameraInv[15] * aw;
 
     return (ow != 0) ? oy / ow : oy;
   }
@@ -3543,13 +3663,13 @@ public class PGraphicsAndroid3D extends PGraphics {
       getModelviewMatrix();
     }
 
-    float ax = modelview[0] * x + modelview[4] * y + modelview[8] * z + modelview[12];
-    float ay = modelview[1] * x + modelview[5] * y + modelview[9] * z  + modelview[13];
-    float az = modelview[2] * x + modelview[6] * y + modelview[10] * z + modelview[14];
-    float aw = modelview[3] * x + modelview[7] * y + modelview[11] * z + modelview[15];
+    float ax = glmodelview[0] * x + glmodelview[4] * y + glmodelview[8] * z + glmodelview[12];
+    float ay = glmodelview[1] * x + glmodelview[5] * y + glmodelview[9] * z  + glmodelview[13];
+    float az = glmodelview[2] * x + glmodelview[6] * y + glmodelview[10] * z + glmodelview[14];
+    float aw = glmodelview[3] * x + glmodelview[7] * y + glmodelview[11] * z + glmodelview[15];
 
-    float oz = cameraInv[2] * ax + cameraInv[6] * ay + cameraInv[10] * az + cameraInv[14] * aw;
-    float ow = cameraInv[3] * ax + cameraInv[7] * ay + cameraInv[11] * az + cameraInv[15] * aw;
+    float oz = pcameraInv[2] * ax + pcameraInv[6] * ay + pcameraInv[10] * az + pcameraInv[14] * aw;
+    float ow = pcameraInv[3] * ax + pcameraInv[7] * ay + pcameraInv[11] * az + pcameraInv[15] * aw;
 
     return (ow != 0) ? oz / ow : oz;
   }
@@ -5288,15 +5408,6 @@ public class PGraphicsAndroid3D extends PGraphics {
   // ////////////////////////////////////////////////////////////
 
   // INTERNAL MATH
-    
-  // bit shifting this might be more efficient
-  private final int nextPowerOfTwo(int val) {
-    int ret = 1;
-    while (ret < val) {
-      ret <<= 1;
-    }
-    return ret;
-  }      
   
   private final float sqrt(float a) {
     return (float) Math.sqrt(a);
