@@ -45,4 +45,18 @@
          </action>
       </editorContribution>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="org.processing.preferences.ProcessingPreferencesPage"
+            id="org.processing.preferences.ProcessingPreferencesPage"
+            name="Processing">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.processing.preferences.PreferenceInitializer">
+      </initializer>
+   </extension>
 </plugin>
