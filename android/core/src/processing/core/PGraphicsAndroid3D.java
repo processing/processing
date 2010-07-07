@@ -2878,6 +2878,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       modelviewStack.set(glmodelview);
     }
     scalingDuringCamManip = true; // Assuming general transformation.
+    modelviewUpdated = true;
   }
   
   // This method is needed to copy a PMatrix3D into a  opengl array.
@@ -2938,7 +2939,7 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   public PMatrix getMatrix() {
     PMatrix res = new PMatrix3D();
-    res.set(glmodelview);
+    copyGLArrayToPMatrix(glmodelview, (PMatrix3D)res);
     return res;
   }
 
@@ -2948,7 +2949,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     if (target == null) {
       target = new PMatrix3D();
     }
-    target.set(glmodelview);
+    copyGLArrayToPMatrix(glmodelview, target);
     return target;
   }
 
@@ -2974,7 +2975,7 @@ public class PGraphicsAndroid3D extends PGraphics {
    */
   public void printMatrix() {
     PMatrix3D tmp = new PMatrix3D();
-    tmp.set(glmodelview);
+    copyGLArrayToPMatrix(glmodelview, tmp);
     tmp.print();
   }
 
@@ -3168,7 +3169,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         inv[14] *= invDet;
         inv[15] *= invDet;
         
-        modelviewInv.set(inv);
+        copyGLArrayToPMatrix(inv, modelviewInv);
     }
   }
 
@@ -3216,7 +3217,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     inv[14] = -(wx * tx + wy * ty + wz * tz);
     inv[15] = 1.0f;
     
-    modelviewInv.set(inv);
+    copyGLArrayToPMatrix(inv, modelviewInv);
   }
 
   /**
@@ -3397,7 +3398,7 @@ public class PGraphicsAndroid3D extends PGraphics {
    */
   public void printCamera() {
     PMatrix3D tmp = new PMatrix3D();
-    tmp.set(pcamera);
+    copyGLArrayToPMatrix(pcamera, tmp);
     tmp.print();
   }
 
@@ -3538,7 +3539,7 @@ public class PGraphicsAndroid3D extends PGraphics {
    */
   public void printProjection() {
     PMatrix3D tmp = new PMatrix3D();
-    tmp.set(glprojection);
+    copyGLArrayToPMatrix(glprojection, tmp);
     tmp.print();
   }
 
