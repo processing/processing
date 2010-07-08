@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   <extension
-         point="org.eclipse.ui.editors">
+   <extension point="org.eclipse.ui.editors">
       <editor
             class="org.processing.editor.ProcessingEditor"
             default="true"
@@ -12,26 +11,23 @@
             name="Processing Sketch Editor">
       </editor>
    </extension>
-   <extension
+   <extension point="org.eclipse.core.filebuffers.documentSetup"
          id="ProcessingDocumentSetupParticipant"
-         name="Processing Document Setup Participant"
-         point="org.eclipse.core.filebuffers.documentSetup">
+         name="Processing Document Setup Participant">
       <participant
             class="org.processing.editor.ProcessingDocumentSetupParticipant"
             extensions="pde">
       </participant>
    </extension>
-   <extension
-         point="org.eclipse.core.filebuffers.annotationModelCreation">
+   <extension point="org.eclipse.core.filebuffers.annotationModelCreation">
       <factory
       		extensions="*"
             class="org.eclipse.ui.texteditor.ResourceMarkerAnnotationModelFactory">
       </factory>
    </extension>
-   <extension
+   <extension point="org.eclipse.ui.editorActions"
          id="Processing.EditorSpecificActions"
-         name="Processing Buttons"
-         point="org.eclipse.ui.editorActions">
+         name="Processing Buttons">
       <editorContribution
             id="org.processing.actions.ToolbarButtons"
             targetID="org.processing.editor.ProcessingEditor">
@@ -45,18 +41,33 @@
          </action>
       </editorContribution>
    </extension>
-   <extension
-         point="org.eclipse.ui.preferencePages">
+   <extension point="org.eclipse.ui.preferencePages">
       <page
             class="org.processing.preferences.ProcessingPreferencesPage"
             id="org.processing.preferences.ProcessingPreferencesPage"
             name="Processing">
       </page>
    </extension>
-   <extension
-         point="org.eclipse.core.runtime.preferences">
-      <initializer
-            class="org.processing.preferences.PreferenceInitializer">
+   <extension point="org.eclipse.core.runtime.preferences">
+      <initializer class="org.processing.preferences.PreferenceInitializer">
       </initializer>
+   </extension>
+   <extension
+         id="auditmarker"
+         name="Processing Audit Marker"
+         point="org.eclipse.core.resources.markers">
+         <super type="org.eclipse.core.resources.problemmarker"/>
+         <super type="org.eclipse.core.resources.textmarker"/>
+         <persistent value="true"/>
+   </extension>
+   <extension
+         id=""
+         point="org.eclipse.core.resources.builders">
+      <builder
+            hasNature="true">
+         <run
+               class="org.processing.builder.ProcessingSketchAuditor">
+         </run>
+      </builder>
    </extension>
 </plugin>

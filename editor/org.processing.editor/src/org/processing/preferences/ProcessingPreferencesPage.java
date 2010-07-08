@@ -19,6 +19,12 @@ import org.processing.editor.ProcessingEditorPlugin;
  * but things could be setup such that these are read
  * from a file, and we could use a customized version of
  * a standard Processing preferences file to store this.
+ * 
+ * Added some validation and warning messages as examples.
+ * If we really want to implement ones of any complexity
+ * there should be an addition of propertyChange() and checkState()
+ * methods. 
+ * See: http://sites.google.com/site/eclipseplugindevelopment/9-preference-pages
  */
 
 public class ProcessingPreferencesPage
@@ -38,8 +44,17 @@ public class ProcessingPreferencesPage
 	 * restore itself.
 	 */
 	public void createFieldEditors() {
-		addField(new DirectoryFieldEditor(PreferenceConstants.PROCESSING_SKETCH, 
-				"Sketchbook Directory:", getFieldEditorParent()));
+		// Sketchbook Directory Item setup
+		DirectoryFieldEditor nextField = new DirectoryFieldEditor(PreferenceConstants.PROCESSING_SKETCHBOOK, "Sketchbook Directory:", getFieldEditorParent());
+		nextField.setEmptyStringAllowed(false);
+		nextField.setErrorMessage("The Sketchbook Directory shouldn't be empty!");
+		addField(nextField);
+		// Library Path item setup
+		nextField = new DirectoryFieldEditor(PreferenceConstants.PROCESSING_LIBRARIES, "Processing Library Path:", getFieldEditorParent());
+		nextField.setEmptyStringAllowed(false);
+		nextField.setErrorMessage("A library path is required to use libraries!");
+		addField(nextField);
+		// Checkbox example setup!
 		addField(
 			new BooleanFieldEditor(
 				PreferenceConstants.PROCESSING_AUTO_INDENT,
@@ -51,5 +66,5 @@ public class ProcessingPreferencesPage
 	 * Initializes the preference page. Nothing to do here, but it has to be subclassed.	  
 	 */
 	public void init(IWorkbench workbench) {}
-	
+		
 }
