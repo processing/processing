@@ -60,9 +60,8 @@ import processing.core.PShape3D.VertexGroup;
  */
 public class PGraphicsAndroid3D extends PGraphics {
   public SurfaceHolder holder;
-
-  A3DRenderer renderer;
-  A3DConfigChooser configChooser;
+  protected A3DRenderer renderer;
+  protected A3DConfigChooser configChooser;
   
   public GL10 gl;
   public GL11 gl11;
@@ -325,11 +324,6 @@ public class PGraphicsAndroid3D extends PGraphics {
   boolean blend;
   int blendMode;  
 
-  // ........................................................  
-  
-  // TODO: implement API for enabing/disabling of depth masking.
-  boolean depthMask;
-
   // ........................................................
 
   // Extensions support.
@@ -543,8 +537,14 @@ public class PGraphicsAndroid3D extends PGraphics {
     // with the current fill color.
     gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_MODULATE);
     
-    gl.glDisable(texture.getGLTarget());   
-    gl.glDepthMask(true);
+    gl.glDisable(texture.getGLTarget());
+    
+    if (hints[DISABLE_DEPTH_MASK]) {
+      gl.glDepthMask(false);  
+    } else {
+      gl.glDepthMask(true);
+    }
+    
     if (blend) {
       blend(blendMode);
     } else {
@@ -651,8 +651,14 @@ public class PGraphicsAndroid3D extends PGraphics {
     // with the current fill color.
     gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_MODULATE);
     
-    gl.glDisable(tex.getGLTarget());   
-    gl.glDepthMask(true);
+    gl.glDisable(tex.getGLTarget());
+    
+    if (hints[DISABLE_DEPTH_MASK]) {
+      gl.glDepthMask(false);  
+    } else {
+      gl.glDepthMask(true);
+    }
+    
     if (blend) {
       blend(blendMode);
     } else {
@@ -693,6 +699,11 @@ public class PGraphicsAndroid3D extends PGraphics {
       gl.glClear(GL10.GL_DEPTH_BUFFER_BIT);
     } else {
       gl.glEnable(GL10.GL_DEPTH_TEST);
+    }
+    if (hints[DISABLE_DEPTH_MASK]) {
+      gl.glDepthMask(false);  
+    } else {
+      gl.glDepthMask(true);
     }
     
     // Restoring blending.
@@ -840,6 +851,12 @@ public class PGraphicsAndroid3D extends PGraphics {
     // use <= since that's what processing.core does
     gl.glDepthFunc(GL10.GL_LEQUAL);
 
+    if (hints[DISABLE_DEPTH_MASK]) {
+      gl.glDepthMask(false);  
+    } else {
+      gl.glDepthMask(true);
+    }
+    
     // because y is flipped
     gl.glFrontFace(GL10.GL_CW);
 
@@ -1088,6 +1105,12 @@ public class PGraphicsAndroid3D extends PGraphics {
     } else if (which == ENABLE_DEPTH_TEST) {
       gl.glEnable(GL10.GL_DEPTH_TEST);
 
+    } else if (which == DISABLE_DEPTH_MASK) {
+      gl.glDepthMask(false);
+
+    } else if (which == ENABLE_DEPTH_MASK) {
+      gl.glDepthMask(true);      
+      
     } else if (which == DISABLE_OPENGL_2X_SMOOTH) {
       // TODO throw an error?
 
@@ -4809,7 +4832,12 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     gl.glDisable(tex.getGLTarget());
     
-    gl.glDepthMask(true);
+    if (hints[DISABLE_DEPTH_MASK]) {
+      gl.glDepthMask(false);  
+    } else {
+      gl.glDepthMask(true);
+    }
+
     if (blend) {
       blend(blendMode);
     } else {
