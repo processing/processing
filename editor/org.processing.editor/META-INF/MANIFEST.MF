@@ -7,7 +7,8 @@ Bundle-Activator: org.processing.editor.ProcessingEditorPlugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui,
  org.eclipse.jface.text,
- org.eclipse.ui.editors
+ org.eclipse.ui.editors,
+ org.eclipse.core.resources
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.eclipse.ui.views.contentoutline
 Bundle-ActivationPolicy: lazy

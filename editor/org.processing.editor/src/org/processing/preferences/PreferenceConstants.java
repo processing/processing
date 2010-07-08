@@ -6,7 +6,8 @@ package org.processing.preferences;
 public class PreferenceConstants {
 
 	// Editor Preferences
-	public static final String PROCESSING_SKETCH = "sketch_path"; // path preference
+	public static final String PROCESSING_SKETCHBOOK = "sketch_path"; // path preference
+	public static final String PROCESSING_LIBRARIES = "library_path"; // path preference
 	public static final String PROCESSING_AUTO_INDENT = "eclipse.editor.auto.indent";
 	
 //	// PROCESSING_PREFERENCES prefix indicates membership in the processing.app preferences class
