@@ -491,6 +491,9 @@ public interface PConstants {
   static final int ENABLE_ACCURATE_TEXTURES    =  7;
   static final int DISABLE_ACCURATE_TEXTURES   = -7;
 
+  static final int DISABLE_DEPTH_MASK          =  8;
+  static final int ENABLE_DEPTH_MASK           = -8;
+  
   static final int HINT_COUNT                  = 10;
 
 

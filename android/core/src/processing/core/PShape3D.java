@@ -89,10 +89,6 @@ public class PShape3D extends PShape implements PConstants {
   protected boolean texCoordSet = false;
   protected boolean vertexColor = true;
 
-  // TODO: consider implementing simple depth sorting for particle systems, 
-  // and a more intutive way to implement the api for enabling/disabling depth masking.
-  protected boolean depthMaskEnabled = true;
-  
   protected static final int SIZEOF_FLOAT = Float.SIZE / 8;
   
   
@@ -1491,16 +1487,8 @@ public class PShape3D extends PShape implements PConstants {
   
   ////////////////////////////////////////////////////////////  
   
-  // Parameters   
+  // Parameters  
   
-  public void noDepthMask() {
-    depthMaskEnabled = false;  
-  }
-  
-  public void depthMask() {
-    depthMaskEnabled = true;    
-  }
-
   
   public void setDrawMode(int mode) {
     pointSprites = false;
@@ -1886,13 +1874,6 @@ public class PShape3D extends PShape implements PConstants {
 		pointSize = PApplet.min(g.strokeWeight, PGraphicsAndroid3D.maxPointSize);
     gl.glPointSize(pointSize);
   
-    if (!depthMaskEnabled) {
-      // Disabling writing to depth mask. This is useful to avoid artifacts when rendering particle systems.
-      // Proper rendering of a particle system with particles that have transparency involves depth-sorting,
-      // but it is expensive. In most cases, doing this is good enough.      
-      gl.glDepthMask(false);
-    }
-    
     gl.glEnableClientState(GL11.GL_NORMAL_ARRAY);
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glNormalBufferID[0]);
     gl.glNormalPointer(GL11.GL_FLOAT, 0, 0);    
@@ -1996,10 +1977,6 @@ public class PShape3D extends PShape implements PConstants {
       }       
     }
 
-    if (!depthMaskEnabled) {
-      gl.glDepthMask(true);
-    }
-    
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
     gl.glDisableClientState(GL11.GL_VERTEX_ARRAY);
 	  gl.glDisableClientState(GL11.GL_COLOR_ARRAY);
