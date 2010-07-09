@@ -40,7 +40,7 @@ int STDCALL
 WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
 {
   // command line that was passed to this application
-  char *incoming_cmd_line = (char *)malloc(strlen(lpCmd + 1) * sizeof(char));
+  char *incoming_cmd_line = (char *)malloc((strlen(lpCmd) + 1) * sizeof(char));
   strcpy(incoming_cmd_line, lpCmd);
 
   // get the full path to the application that was launched,
