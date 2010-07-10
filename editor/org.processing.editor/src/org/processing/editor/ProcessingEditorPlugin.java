@@ -46,32 +46,28 @@ public class ProcessingEditorPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Creates a new plug-in instance.
-	 * 
 	 */
 	public ProcessingEditorPlugin() {
-//		[lonnen]
-//		Java editor example has "fgInstance= this;" 
-//		while the editor template uses the start method to handle
-//		that and leaves this empty. Since I've been chasing down
-//		this null pointer error for going on 12 hours, I'm going
-//		to try it the template's way and see if it works.
-//		 
-//		That did the trick! On to debugging other problems. [lonnen] June 10 2010
+		//any init code should go in start()
 	}
 	
-	/* added from the editor template, not present in the java editor code
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
+	/**
+	 * Called when the plugin is loaded.
+	 * 
+	 * All initialization stuff goes here. Make sure to de-initialize it in stop()
+	 * Also, try to keep these methods lean. If it takes too long the platform will
+	 * cancel loading the plug-in. 
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		fgInstance = this;
-		//System.out.println("fgInstance initialized!");
 	}
 	
-	/* added from the editor template, not present in the java editor code
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
+	/**
+	 * Called when the plugin is unloaded.
+	 * 
+	 * Make sure to remove anything here that was initialized to prevent memory
+	 * leaks. Keep this lean, or the platform will cancel the operation.
 	 */
 	public void stop(BundleContext context) throws Exception {
 		fgInstance = null;
