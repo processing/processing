@@ -1,9 +1,7 @@
 package org.processing.actions;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+
 import java.io.StringWriter;
-import java.util.Hashtable;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.IDocument;
@@ -106,6 +104,9 @@ public class RunButton implements IEditorActionDelegate {
 		} catch (Exception e){
 			ProcessingLog.logError(e);
 		}
+		
+		
+		
 //		 do something with the results
 	}
 

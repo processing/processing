@@ -92,7 +92,7 @@ public class ProcessingEditor extends TextEditor {
 	private ProjectionSupport fProjectionSupport;
 
 	/**
-	 * Default constructor.
+	 * Default 
 	 */
 	public ProcessingEditor() {
 		super();
