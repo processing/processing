@@ -41,9 +41,9 @@ import processing.core.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
-  static final int REVISION = 187;
+  static final int REVISION = 188;
   /** This might be replaced by main() if there's a lib/version.txt file. */
-  static public String VERSION_NAME = "0187";
+  static public String VERSION_NAME = "0188";
   /** Set true if this a proper release rather than a numbered revision. */
   static public boolean RELEASE = false;
 
@@ -580,7 +580,7 @@ public class Base {
     }
     fileMenu.add(item);
 
-    // Mac OS X already has its own preferences and quit menu. 
+    // Mac OS X already has its own preferences and quit menu.
     // That's right! Think different, b*tches!
     if (!Base.isMacOS()) {
       fileMenu.addSeparator();
@@ -723,7 +723,7 @@ public class Base {
         return null;
       }
       newbieName = prefix + suffix + ((char) ('a' + index));
-      // Also sanitize the name since it might do strange things on 
+      // Also sanitize the name since it might do strange things on
       // non-English systems that don't use this sort of date format.
       // http://code.google.com/p/processing/issues/detail?id=283
       newbieName = Sketch.sanitizeName(newbieName);
@@ -1169,7 +1169,7 @@ public class Base {
    * should replace the sketch in the current window, or false when the
    * sketch should open in a new window.
    */
-  protected boolean addSketches(JMenu menu, File folder, 
+  protected boolean addSketches(JMenu menu, File folder,
                                 final boolean replaceExisting) throws IOException {
     // skip .DS_Store files, etc (this shouldn't actually be necessary)
     if (!folder.isDirectory()) return false;

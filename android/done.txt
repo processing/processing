@@ -1,3 +1,14 @@
+0187 android (pre)
+X don't kill adb server each time that run is hit
+X move about.txt to the wiki
+
+done in 0186
+X move to Android 2.1 as the minimum requirement? 
+X   since 2.0.1 seems to be used on only a 0.46% of devices?
+X   http://developer.android.com/resources/dashboard/platform-versions.html
+X need to side-port changes from PShape/SVG over to Android
+
+
 0186 android (pre)
 X move to sdk 7 because 6 has been deprecated
 X merged svg changes with those in desktop core
