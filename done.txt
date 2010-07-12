@@ -1,3 +1,26 @@
+0187 pde (pre)
+X don't require an editor window to be open at all times
+X   The com.apple.eawt.Application now has a setDefaultMenuBar(JMenuBar) method
+X   that sets a default menu bar when no other Frames are open. 
+X   could check for availability of method
+X   and if it's there, don't require people to quit
+X Prevent horizontal scroll offset from disappearing
+X   http://code.google.com/p/processing/issues/detail?id=280
+o horizontal scroller gets weird sometimes
+o   http://dev.processing.org/bugs/show_bug.cgi?id=23
+X Fix NullPointerException when making a new sketch on non-English systems
+X   http://code.google.com/p/processing/issues/detail?id=283
+X show warning message on linux if sun java is not in use
+X   there isn't a perfect way to detect whether sun java is in use, 
+X   so please report false positives (or negatives, for that matter)
+X bad strlen() problem in windows launcher.cpp
+X   http://code.google.com/p/processing/issues/detail?id=303
+X "Unexpected token" error when creating classes with pre-releases after 1.1
+X   http://code.google.com/p/processing/issues/detail?id=292
+X   'public class' inside first tab crashing
+X   'final int a = 10' throws off mode detect
+
+
 0186 pde (pre)
 X update the URLs opened by the software
 X   http://code.google.com/p/processing/issues/detail?id=278
