@@ -446,8 +446,12 @@ public class PdePreprocessor implements PdeTokenTypes {
     parser.setASTNodeClass("antlr.ExtendedCommonASTWithHiddenTokens");
 
     if (PUBLIC_CLASS.matcher(program).find()) {
-      setMode(Mode.JAVA);
-      parser.javaProgram();
+      try {
+        parser.javaProgram();
+        setMode(Mode.JAVA);
+      } catch (Exception e) {
+        parser.pdeProgram();
+      }
     } else if (FUNCTION_DECL.matcher(program).find()) {
       setMode(Mode.ACTIVE);
       parser.activeProgram();
