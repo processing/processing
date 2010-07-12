@@ -1,6 +1,10 @@
 0187 android
 X don't kill adb server each time that run is hit
 X move about.txt to the wiki
+
+_ fix mouseX/Y mapping when using smaller screen sizes
+_ allow screenWidth/Height as parameters to size()
+_   right now would cause NumberFormatException
 _ add notes to the wiki about the size() method
 _ make sure sketchRenderer()/sketchWidth()/sketchHeight() are working on desktop
 _   see about getting them documented in the reference
@@ -250,8 +254,8 @@ OPTIMIZE / ENHANCEMENTS
 _ don't re-calculate stroke() or fill() when it's the same value
 _ should path.reset() or path.rewind() be used for a path to be reused?
 
-E2 _ implement size() and createGraphics() for arbitrary renderers
-E2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1489
+EM _ implement size() and createGraphics() for arbitrary renderers
+EM _   http://code.google.com/p/processing/issues/detail?id=241
 
 _ errors that cause a crash when setting sketchPath
 _   seems to be a filesystem that got too full

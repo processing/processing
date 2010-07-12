@@ -1,3 +1,50 @@
+PROCESSING REV 0187 - 12 July 2010
+
+More bug fixes, and one new treat for OS X users. 
+Hopefully we're about set to call this one 1.2. Please test!
+
+[ additions ] 
+
++ On Mac OS X, you're no longer required to have a sketch window open at 
+  all times. This will make the application feel more Mac-like--a little
+  more elegant and trendy and smug with superiority.
+
++ Added a warning to the Linux version to tell users that they should be 
+  using the official version of Java from Sun if they're not.
+  http://wiki.processing.org/w/Supported_Platforms#Linux
+  There isn't a perfect way to detect whether Sun Java is in use, 
+  so please let us know how it works or if you have a better idea. 
+
+[ fixes ] 
+
++ "Unexpected token" error when creating classes with recent pre-releases.
+  http://code.google.com/p/processing/issues/detail?id=292
+
++ Prevent horizontal scroll offset from disappearing. 
+  Thanks to Christian Thiemann for the fix. 
+  http://code.google.com/p/processing/issues/detail?id=280
+  http://code.google.com/p/processing/issues/detail?id=10
+
++ Fix NullPointerException when making a new sketch on non-English systems.
+  http://code.google.com/p/processing/issues/detail?id=283
+
++ Fixed a problem when using command-line arguments with exported sketches
+  on Windows. Thanks to davbol for the fix.
+  http://code.google.com/p/processing/issues/detail?id=303
+
++ Added requestFocusInWindow() call to replace Apple's broken requestFocus(),
+  which should return the previous behavior of sketches getting focus 
+  immediately when loaded in a web browser.
+  http://code.google.com/p/processing/issues/detail?id=279
+
++ Add getDocumentBase() version of createInput() for Internet Explorer. 
+  Without this, sketches will crash when trying to find files on a web server
+  that are not in the exported .jar file. This fix is only for IE. Yay IE!
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING REV 0186 - 26 June 2010
 
 Minor updates following up on 0185.
