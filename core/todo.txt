@@ -1,10 +1,30 @@
 0187 core
 X add requestFocusInWindow() call to replace requestFocus()
 X   http://code.google.com/p/processing/issues/detail?id=279
+X add getDocumentBase() version to createInput() for internet explorer
+
+
+LIBRARIES / XML
+
+_ add getBoolean() methods?
+_   http://code.google.com/p/processing/issues/detail?id=304
+_ handle charset decoding in xml element parser?
+_   same with the other methods like loadStrings()
+_   could also be a way to handle gzip too?
+_   tho charset + gzip would be a problem
+_ need to handle how save() works inside xml lib
+_ need to handle <!ENTITY tags for svg documents
+_ vectors shouldn't be exposed, need to expose attr lists as arrays
+_   or also add a method for getting the vectors?
+2 _ XML attributes named "xmlns" always return NULL
+2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1196
+_ save xml elements back out again
+_   http://dev.processing.org/bugs/show_bug.cgi?id=963
+_   or make the call that it's read-only, and remove the saving code
+
 
 _ possible addition for 'implementation' variable
 _   http://code.google.com/p/processing/issues/detail?id=281
-
 
 _ change skewX/Y to shearX/Y
 
@@ -565,8 +585,10 @@ CORE / PImage
 _ accuracy problems make alpha channel go to FE with image.copy()
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1420
 _ improve blend() accuracy when using ADD
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1008
+_   http://code.google.com/p/processing/issues/detail?id=133
 _   includes code for a slow but more accurate mode
+_ blend() bugs with identically-sized images
+_   http://code.google.com/p/processing/issues/detail?id=285
 _ for a PGraphics2D, should its image cache object be the memoryimagesource?
 _ loading lots of images is a problem, describe how to unload
 _   is it possible? necessary to call delay(5) or something?

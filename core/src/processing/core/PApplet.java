@@ -4622,6 +4622,34 @@ public class PApplet extends Applet
       }
     }
 
+    // Finally, something special for the Internet Explorer users. Turns out
+    // that we can't get files that are part of the same folder using the 
+    // methods above when using IE, so we have to resort to the old skool
+    // getDocumentBase() from teh applet dayz. 1996, my brotha.
+    try {
+      URL base = getDocumentBase();
+      if (base != null) {
+        URL url = new URL(base, filename);
+        URLConnection conn = url.openConnection();
+        return conn.getInputStream();
+//      if (conn instanceof HttpURLConnection) {
+//      HttpURLConnection httpConnection = (HttpURLConnection) conn;
+//      // test for 401 result (HTTP only)
+//      int responseCode = httpConnection.getResponseCode();
+//    }        
+      }
+    } catch (Exception e) { }  // IO or NPE or...
+
+    // Now try it with a 'data' subfolder. getting kinda desperate for data...
+    try {
+      URL base = getDocumentBase();
+      if (base != null) {
+        URL url = new URL(base, "data/" + filename);
+        URLConnection conn = url.openConnection();
+        return conn.getInputStream();
+      }
+    } catch (Exception e) { }
+
     try {
       // attempt to load from a local file, used when running as
       // an application, or as a signed applet
@@ -4647,6 +4675,7 @@ public class PApplet extends Applet
       //die(e.getMessage(), e);
       e.printStackTrace();
     }
+    
     return null;
   }
 
