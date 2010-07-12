@@ -13,16 +13,25 @@ X   http://code.google.com/p/processing/issues/detail?id=283
 X show warning message on linux if sun java is not in use
 X   there isn't a perfect way to detect whether sun java is in use, 
 X   so please report false positives (or negatives, for that matter)
+X bad strlen() problem in windows launcher.cpp
+X   http://code.google.com/p/processing/issues/detail?id=303
+X "Unexpected token" error when creating classes with pre-releases after 1.1
+X   http://code.google.com/p/processing/issues/detail?id=292
+X   'public class' inside first tab crashing
+X   'final int a = 10' throws off mode detect
 
-'public class' inside first tab (or 'final int a = 10') throws off mode detect
+
+_ launch4j problem
+_   no crash when double-clicking a sketch and loading it
+_   http://code.google.com/p/processing/issues/detail?id=231
+
+_ add note about oth
 
 _ Ctrl-Z will undo, but not scroll to where the undo happens. 
 _   is this now somehow fixed? (or only on os x?)
 _   so user thinks nothing is happening and overundo. 
 _   http://dev.processing.org/bugs/show_bug.cgi?id=35
 _   http://code.google.com/p/processing/issues/detail?id=15
-
-
 
 closing this bug, because we'll be replacing the current video library with another sometime later this summer. as such, i won't be doing any more bug fixes on the current video library. in the meantime, we recommend using gsvideo, opencv, or one of the other video libraries that are available.
 
@@ -1220,23 +1229,6 @@ _   need to show an actual stack trace (InvocationTargetEx)
 _   because otherwise it's impossible to debug this stuff
 _ video library not working on export to web
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1421
-
-
-LIBRARIES / XML
-
-_ handle charset decoding in xml element parser?
-_   same with the other methods like loadStrings()
-_   could also be a way to handle gzip too?
-_   tho charset + gzip would be a problem
-_ need to handle how save() works inside xml lib
-_ need to handle <!ENTITY tags for svg documents
-_ vectors shouldn't be exposed, need to expose attr lists as arrays
-_   or also add a method for getting the vectors?
-2 _ XML attributes named "xmlns" always return NULL
-2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1196
-_ save xml elements back out again
-_   http://dev.processing.org/bugs/show_bug.cgi?id=963
-_   or make the call that it's read-only, and remove the saving code
 
 
 LIBRARIES / Net
