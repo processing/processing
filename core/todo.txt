@@ -1,7 +1,4 @@
-0187 core
-X add requestFocusInWindow() call to replace requestFocus()
-X   http://code.google.com/p/processing/issues/detail?id=279
-X add getDocumentBase() version to createInput() for internet explorer
+0188 core
 
 
 LIBRARIES / XML

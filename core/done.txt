@@ -1,3 +1,9 @@
+0187 core (pre)
+X add requestFocusInWindow() call to replace requestFocus()
+X   http://code.google.com/p/processing/issues/detail?id=279
+X add getDocumentBase() version to createInput() for internet explorer
+
+
 0186 core
 X more Linux PDF fixes from Matthias Breuer
 
