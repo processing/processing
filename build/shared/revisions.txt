@@ -1,7 +1,8 @@
 PROCESSING REV 0187 - 12 July 2010
 
-More bug fixes, and one new treat for OS X users. 
-Hopefully we're about set to call this one 1.2. Please test!
+More bug fixes, and one new treat for OS X users. Hopefully we're about 
+set to call this one 1.2. Please test and report any issues you find:
+http://code.google.com/p/processing/issues/list
 
 [ additions ] 
 
