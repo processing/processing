@@ -1,3 +1,12 @@
+PROCESSING 1.2 (REV 0188) - 13 July 2010
+
+Changes too numerous to mention, see the notes below for all the 
+revisions that followed the 1.1 release in March.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING REV 0187 - 12 July 2010
 
 More bug fixes, and one new treat for OS X users. Hopefully we're about 
