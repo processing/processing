@@ -6,7 +6,7 @@ _ launch4j problem
 _   no crash when double-clicking a sketch and loading it
 _   http://code.google.com/p/processing/issues/detail?id=231
 
-_ add note about oth
+_ fix line endings in revisions.txt for windows
 
 _ Ctrl-Z will undo, but not scroll to where the undo happens. 
 _   is this now somehow fixed? (or only on os x?)

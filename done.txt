@@ -1,3 +1,8 @@
+0188 pde (1.2)
+X no changes, just the version number
+X update the about screens (about.jpg and about.bmp)
+
+
 0187 pde (pre)
 X don't require an editor window to be open at all times
 X   The com.apple.eawt.Application now has a setDefaultMenuBar(JMenuBar) method
