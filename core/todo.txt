@@ -1,4 +1,5 @@
-0188 core
+0188 core (1.2)
+X no changes, just the version number
 
 
 LIBRARIES / XML

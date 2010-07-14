@@ -1,4 +1,5 @@
-0188 android
+0188 android (1.2)
+X no changes (and android features hidden)
 
 
 _ fix mouseX/Y mapping when using smaller screen sizes
