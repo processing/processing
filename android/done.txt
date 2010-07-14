@@ -1,3 +1,7 @@
+0188 android (1.2)
+X no changes (and android features hidden)
+
+
 0187 android (pre)
 X don't kill adb server each time that run is hit
 X move about.txt to the wiki
