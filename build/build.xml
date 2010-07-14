@@ -115,8 +115,18 @@
     </copy>
     
     <!-- Unzip documentation + examples -->
-    <unzip dest="${target.path}" src="shared/examples.zip" overwrite="false"/>
-    <unzip dest="${target.path}" src="shared/reference.zip" overwrite="false"/>
+    <unzip dest="${target.path}" src="shared/examples.zip" overwrite="false">
+      <patternset>
+	<exclude name="__MACOSX/**" />
+	<exclude name="**/._*" />
+      </patternset>
+    </unzip>
+    <unzip dest="${target.path}" src="shared/reference.zip" overwrite="false">
+      <patternset>
+	<exclude name="__MACOSX/**" />
+	<exclude name="**/._*" />
+      </patternset>
+    </unzip>
     
     <!-- Write the revision file -->
     <!-- is there a good way to do this? -->
