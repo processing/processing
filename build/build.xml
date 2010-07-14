@@ -226,7 +226,7 @@
     <move file="macosx/work/template.app" 
 	  tofile="macosx/work/Processing.app" />
 
-    <chmod file="macosx/work/Processing.app/Contents/MacOS/JavaApplicationStub" perm="755" />
+    <chmod file="macosx/work/Processing.app/Contents/MacOS/JavaApplicationStub" perm="ugo+x" />
     
     <copy todir="macosx/work/Processing.app/Contents/Resources/Java" flatten="true">
       <fileset refid="runtime.jars"/>
@@ -261,7 +261,7 @@
     </copy>
 
     <!-- The ant copy command does not preserve permissions. -->
-    <chmod file="macosx/working_dir/Processing.app/Contents/MacOS/JavaApplicationStub" perm="+x" />
+    <chmod file="macosx/working_dir/Processing.app/Contents/MacOS/JavaApplicationStub" perm="ugo+x" />
 
     <!-- Pause briefly for the OS to catch up with the DMG changes. 
 	 This prevents "hdiutil: couldn't eject "disk3" - Resource busy"
@@ -335,7 +335,7 @@
     </antcall>
 
     <copy todir="linux/work" file="linux/processing" />
-    <chmod perm="755" file="linux/work/processing" />
+    <chmod perm="ugo+x" file="linux/work/processing" />
   </target>
   
   <target name="linux-run" depends="linux-build" 
@@ -427,7 +427,7 @@
 	    includes="about.bmp, application.ico, config.xml" />
 
     <!-- cygwin requires html, dll, and exe to have the +x flag -->
-    <chmod perm="755">
+    <chmod perm="ugo+x">
       <fileset dir="windows/work" includes="**/*.html, **/*.dll, **/*.exe" />
     </chmod>
   </target>
