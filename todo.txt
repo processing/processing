@@ -1,6 +1,6 @@
 0189 pde 
-_ error with variable declarations
-_   http://code.google.com/p/processing/issues/detail?id=315
+X error with variable declarations
+X   http://code.google.com/p/processing/issues/detail?id=315
 
 
 _ launch4j problem
