@@ -10,8 +10,8 @@ options {
     importVocab = Java;
     exportVocab = PdePartial;
 
-    codeGenMakeSwitchThreshold=10; // this is set high for debugging
-    codeGenBitsetTestThreshold=10; // this is set high for debugging
+    //codeGenMakeSwitchThreshold=10; // this is set high for debugging
+    //codeGenBitsetTestThreshold=10; // this is set high for debugging
 
     // developers may to want to set this to true for better
     // debugging messages, however, doing so disables highlighting errors
@@ -74,9 +74,7 @@ activeProgram
 
 staticProgram
     :  (
-    		(builtInType IDENT LPAREN) =>  builtInType IDENT LPAREN { mixed(); }
-		| 	(modifiers) => modifiers builtInType IDENT LPAREN { mixed(); }    	
- 		| 	statement
+    		statement
  	   )* EOF!
     ; 
 
