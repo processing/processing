@@ -1,3 +1,12 @@
+PROCESSING 1.2.1 (REV 0189) - 14 July 2010
+
+Fix for a problem with some static-mode programs. See below for
+the other changes since 1.1.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING 1.2 (REV 0188) - 13 July 2010
 
 Changes too numerous to mention, see the notes below for all the 
