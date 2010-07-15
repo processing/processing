@@ -1,6 +1,7 @@
 package org.processing.actions;
 
 
+import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import org.eclipse.jface.action.IAction;
@@ -104,10 +105,22 @@ public class RunButton implements IEditorActionDelegate {
 		} catch (Exception e){
 			ProcessingLog.logError(e);
 		}
+		//to the java batch compiler!
+		org.eclipse.jdt.core.compiler.CompilationProgress progress = null;
 		
+//		String baseCommand[] = new String[]{
+//				"-Xemacs",
+//			    //"-noExit",  // not necessary for ecj
+//			    "-source", "1.5",
+//			    "-target", "1.5",
+//			    "-classpath", sketch.getClassPath(),
+//			    "-nowarn", // we're not currently interested in warnings (works in ecj)
+//			    "-d", buildPath // output the classes in the buildPath					
+//		};
 		
+		org.eclipse.jdt.core.compiler.batch.BatchCompiler.compile("-verbose", new PrintWriter(System.out), new PrintWriter(System.err), progress);
+		// do something with it
 		
-//		 do something with the results
 	}
 
 	/** 

@@ -45,7 +45,7 @@ import org.eclipse.ui.texteditor.TextOperationAction;
  * @see org.eclipse.ui.editors.text.TextEditor
  */
 public class ProcessingEditor extends TextEditor {
-	
+		
 	private class DefineFoldingRegionAction extends TextEditorAction {
 
 		public DefineFoldingRegionAction(ResourceBundle bundle, String prefix, ITextEditor editor) {
