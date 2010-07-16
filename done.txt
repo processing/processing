@@ -1,3 +1,8 @@
+0189 pde (1.2.1)
+X error with variable declarations
+X   http://code.google.com/p/processing/issues/detail?id=315
+
+
 0188 pde (1.2)
 X no changes, just the version number
 X update the about screens (about.jpg and about.bmp)
