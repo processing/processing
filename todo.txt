@@ -1,7 +1,8 @@
-0189 pde 
-X error with variable declarations
-X   http://code.google.com/p/processing/issues/detail?id=315
+0190
 
+
+_ disappearing horizontal scroll bar
+_   http://code.google.com/p/processing/issues/detail?id=316
 
 _ launch4j problem
 _   no crash when double-clicking a sketch and loading it
