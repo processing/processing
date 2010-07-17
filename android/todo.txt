@@ -1,12 +1,43 @@
 0190 android
 
-
-_ fix mouseX/Y mapping when using smaller screen sizes
 _ allow screenWidth/Height as parameters to size()
 _   right now would cause NumberFormatException
-_ add notes to the wiki about the size() method
+X add notes to the wiki about the size() method
 _ make sure sketchRenderer()/sketchWidth()/sketchHeight() are working on desktop
 _   see about getting them documented in the reference
+_ size() command is currently ignored in Android
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1397
+_ Implement P3D, OpenGL, A3D for Android
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1396
+
+_ post processing-android-core-0190.zip to the download page
+_   get some help w/ the dist script to make the right file
+
+_ fix mouseX/Y mapping when using smaller screen sizes
+
+_ copy the changes over from the xml library
+
+_ when starting the emulator, the adb server gets reset
+_   then it causes this exception, which kills the thread waiting for input
+_   so another reset is necessary
+Exception in thread "StreamPump 49" java.lang.RuntimeException: Inside processing.app.exec.StreamPump@1ebe8ec for out: adb devices
+	at processing.app.exec.StreamPump.run(StreamPump.java:82)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:637)
+Caused by: java.io.IOException: Stream closed
+	at java.io.BufferedInputStream.getBufIfOpen(BufferedInputStream.java:145)
+	at java.io.BufferedInputStream.read1(BufferedInputStream.java:255)
+	at java.io.BufferedInputStream.read(BufferedInputStream.java:317)
+	at sun.nio.cs.StreamDecoder.readBytes(StreamDecoder.java:264)
+	at sun.nio.cs.StreamDecoder.implRead(StreamDecoder.java:306)
+	at sun.nio.cs.StreamDecoder.read(StreamDecoder.java:158)
+	at java.io.InputStreamReader.read(InputStreamReader.java:167)
+	at java.io.BufferedReader.fill(BufferedReader.java:136)
+	at java.io.BufferedReader.readLine(BufferedReader.java:299)
+	at java.io.BufferedReader.readLine(BufferedReader.java:362)
+	at processing.app.exec.StreamPump.run(StreamPump.java:71)
+	... 3 more
 
 _ major issue with sketches not quitting out of the run loop in background
 _   pause needs to actually kill the thread
@@ -75,17 +106,14 @@ http://dev.processing.org/bugs/buglist.cgi?bug_status=&field0-0-0=product&type0-
 
 CORE (PApplet, P2D et al)
 
-P2 _ separate "PApplet" into separate View and Activity classes
-P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1398
 P2 _ too many temporary objects (particularly w/ color) created with A2D
 P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1399
-P2 _ size() command is currently ignored in Android
-P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1397
-P2 _ Implement P3D, OpenGL, A3D for Android
-P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1396
 
-P3 _ remove unnecessary processing.xml.* code from android-core
-P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1400
+P3 _ implement createGraphics() for A2D/P3D/OPENGL
+P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1488
+P3 _ remove processing.opengl.* classes and finish PGraphicsAndroid3D
+P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1401
+
 P3 _ mouseClicked() is currently missing
 P3 _   implement tap methods to handle mouseClicked() 
 P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1406
@@ -110,11 +138,8 @@ P5 _   instead, create a new resized bitmap, and get rid of pixels[]
 P5 _   http://dev.processing.org/bugs/show_bug.cgi?id=1487
 P5 _ should alpha PImage stuff use a non-4byte config?
 P5 _   http://dev.processing.org/bugs/show_bug.cgi?id=1490
-P5 _ colorMode() error 
-P5 _   http://dev.processing.org/bugs/show_bug.cgi?id=1436
-P5 _ add clear and close to all stream methods?
-P5 _   http://dev.processing.org/bugs/show_bug.cgi?id=1492
-
+DL _ colorMode() error 
+DL _   http://code.google.com/p/processing/issues/detail?id=223
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
@@ -230,12 +255,17 @@ P5 _   http://dev.processing.org/bugs/show_bug.cgi?id=1392
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-OPENGL/A3D/P3D
+SAVED FOR LATER
 
-P3 _ implement createGraphics() for A2D/P3D/OPENGL
-P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1488
-P3 _ remove processing.opengl.* classes and finish PGraphicsAndroid3D
-P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1401
+DL _ add clear and close to all stream methods?
+DL _   http://code.google.com/p/processing/issues/detail?id=244
+
+EH _ separate "PApplet" into separate View and Activity classes
+EH _   http://code.google.com/p/processing/issues/detail?id=212
+EM _ remove unnecessary processing.xml.* code from android-core
+EM _   http://code.google.com/p/processing/issues/detail?id=214
+EM _ implement size() and createGraphics() for arbitrary renderers
+EM _   http://code.google.com/p/processing/issues/detail?id=241
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -245,9 +275,6 @@ OPTIMIZE / ENHANCEMENTS
 
 _ don't re-calculate stroke() or fill() when it's the same value
 _ should path.reset() or path.rewind() be used for a path to be reused?
-
-EM _ implement size() and createGraphics() for arbitrary renderers
-EM _   http://code.google.com/p/processing/issues/detail?id=241
 
 _ errors that cause a crash when setting sketchPath
 _   seems to be a filesystem that got too full

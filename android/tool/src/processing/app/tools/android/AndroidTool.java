@@ -43,12 +43,14 @@ public class AndroidTool implements Tool, DeviceListener {
   private Editor editor;
   private Build build;
 
-  private static final String ANDROID_CORE_URL =
-    "http://processing.googlecode.com/svn" +
-    "/tags/processing-" + Base.VERSION_NAME + "/android/core.zip";
-
   private static final String ANDROID_CORE_FILENAME =
     "processing-android-core-" + Base.VERSION_NAME + ".zip";
+
+  private static final String ANDROID_CORE_URL =
+    "http://processing.googlecode.com/files/" + ANDROID_CORE_FILENAME;
+//  private static final String ANDROID_CORE_URL =
+//    "http://processing.googlecode.com/svn" +
+//    "/tags/processing-" + Base.VERSION_NAME + "/android/core.zip";
 
   public String getMenuTitle() {
     return "Android Mode";
