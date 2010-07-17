@@ -152,8 +152,8 @@ class AndroidEnvironment {
         return blockingGetHardware();
       }
     };
-    final FutureTask<AndroidDevice> task = new FutureTask<AndroidDevice>(
-                                                                         androidFinder);
+    final FutureTask<AndroidDevice> task = 
+      new FutureTask<AndroidDevice>(androidFinder);
     deviceLaunchThread.execute(task);
     return task;
   }
@@ -238,6 +238,7 @@ class AndroidEnvironment {
     } catch (InterruptedException e) {
       return Collections.emptyList();
     } catch (IOException e) {
+      System.err.println("AndroidEnvironment.listDevices() did this to me");
       e.printStackTrace();
 //      System.err.println(e);
 //      System.err.println("checking devices");
