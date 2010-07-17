@@ -18,9 +18,32 @@ o   remove old AVDs because their APIs might be out of date
 o   probably need to name AVDs based on their API spec
 o   http://dev.processing.org/bugs/show_bug.cgi?id=1526
 o   http://code.google.com/p/processing/issues/detail?id=249
+X text ascent/descent problem, text("blah\nblah") doesn't work properly
+X   reverting to using the PGraphics version rather than P2D
+X   because Paint.ascent() is returning negative values
 
+P1 _ exceptions with StreamPump and adb devices on osx and linux
+P1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1545
+P1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1527
+P1 _ implement certificates (self-signed) for distribution
+P1 _   http://developer.android.com/guide/publishing/app-signing.html
+P1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1430
+P1 _   http://code.google.com/p/processing/issues/detail?id=222
+P1 _ properly handle setting whatever permissions are necessary
 
-_ text leading is broken, text("blah\nblah") doesn't work properly
+P3 _ Errors show up that .java files are duplicates with the Android tools.
+P3 _   problem is with the packages and where the preproc is putting the file
+P3 _   example sketch added to bug report
+P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1472
+P3 _   http://code.google.com/p/processing/issues/detail?id=232
+
+_ additional manifest gui necessary:
+_   icons are apparently important
+_   setting the default package
+_   some sort of warning re: messing with AndroidManifest.xml
+
+_ also for the wiki:
+_   add information about permissions, since loadStrings() will break
 
 _ don't let the keystore message show up in red
 _   Using keystore: /Users/fry/.android/debug.keystore
@@ -198,15 +221,6 @@ _ signing tool
 _ selection of which avd (emulator), or plugged-in devices (if multiple)
 _ run the 'android' application (since finding its location is painful)
 
-P1 _ exceptions with StreamPump and adb devices on osx and linux
-P1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1545
-P1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1527
-P1 _ implement certificates (self-signed) for distribution
-P1 _   http://developer.android.com/guide/publishing/app-signing.html
-P1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1430
-P1 _   http://code.google.com/p/processing/issues/detail?id=222
-P1 _ properly handle setting whatever permissions are necessary
-
 P2 _ need to prevent hitting 'run' twice (threaded, so would work)
 P2 _   currently things just keep restarting the build, bad state
 P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1387
@@ -237,11 +251,6 @@ P3 _     perhaps the first time an application is installed, remove it?
 P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1481
 P3 _ library support also needs android manifest changes
 P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1439
-P3 _ Errors show up that .java files are duplicates with the Android tools.
-P3 _   problem is with the packages and where the preproc is putting the file
-P3 _   example sketch added to bug report
-P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1472
-P3 _   http://code.google.com/p/processing/issues/detail?id=232
 
 P4 _ don't require android tools to be installed already
 P4 _   or implement automatic download/install of android tools

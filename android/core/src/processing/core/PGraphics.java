@@ -2467,6 +2467,7 @@ public class PGraphics extends PImage implements PConstants {
       }
       */
       textSize(which.size);
+      PApplet.println("size should be " + which.size);
 
     } else {
       throw new RuntimeException(ERROR_TEXTFONT_NULL_PFONT);
@@ -2549,7 +2550,10 @@ public class PGraphics extends PImage implements PConstants {
     }
 
     textSize = size;
+//    PApplet.println("textSize textAscent -> " + textAscent());
+//    PApplet.println("textSize textDescent -> " + textDescent());
     textLeading = (textAscent() + textDescent()) * 1.275f;
+//    PApplet.println("textSize textLeading = " + textLeading);
   }
 
 

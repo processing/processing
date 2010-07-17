@@ -1000,30 +1000,30 @@ public class PGraphicsAndroid2D extends PGraphics {
   //public void textAlign(int alignX, int alignY)
 
 
-  public float textAscent() {
-    if (textFont == null) {
-      defaultFontOrDeath("textAscent");
-    }
-//    Font font = textFont.getFont();
-    Typeface font = textFont.getTypeface();
-    if (font == null) {
-      return super.textAscent();
-    }
-    return fillPaint.ascent();
-  }
+//  public float textAscent() {
+//    if (textFont == null) {
+//      defaultFontOrDeath("textAscent");
+//    }
+////    Font font = textFont.getFont();
+//    Typeface font = textFont.getTypeface();
+//    if (font == null) {
+//      return super.textAscent();
+//    }
+//    return fillPaint.ascent();
+//  }
 
 
-  public float textDescent() {
-    if (textFont == null) {
-      defaultFontOrDeath("textDescent");
-    }
-//    Font font = textFont.getFont();
-    Typeface font = textFont.getTypeface();
-    if (font == null) {
-      return super.textDescent();
-    }
-    return fillPaint.descent();
-  }
+//  public float textDescent() {
+//    if (textFont == null) {
+//      defaultFontOrDeath("textDescent");
+//    }
+////    Font font = textFont.getFont();
+//    Typeface font = textFont.getTypeface();
+//    if (font == null) {
+//      return super.textDescent();
+//    }
+//    return fillPaint.descent();
+//  }
 
 
   public void textFont(PFont which) {
@@ -1066,7 +1066,10 @@ public class PGraphicsAndroid2D extends PGraphics {
     // this has to happen second, because it calls textAscent()
     // (which requires the native font metrics to be set)
     textSize = size;
+//    PApplet.println("P2D textSize textAscent -> " + textAscent());
+//    PApplet.println("P2D textSize textDescent -> " + textDescent());
     textLeading = (textAscent() + textDescent()) * 1.275f;
+//    PApplet.println("P2D textSize textLeading = " + textLeading);
   }
 
 
