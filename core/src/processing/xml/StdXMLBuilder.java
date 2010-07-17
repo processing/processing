@@ -232,7 +232,7 @@ public class StdXMLBuilder
       XMLElement elt = (XMLElement) this.stack.pop();
 
       if (elt.getChildCount() == 1) {
-         XMLElement child = elt.getChildAtIndex(0);
+         XMLElement child = elt.getChild(0);
 
          if (child.getLocalName() == null) {
             elt.setContent(child.getContent());
