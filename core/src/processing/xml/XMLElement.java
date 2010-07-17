@@ -1446,7 +1446,7 @@ public class XMLElement implements Serializable {
   
   public boolean save(String filename) {
     if (sketch == null) {
-      sketch = findSketch();  
+      sketch = findSketch();
     }
     if (sketch == null) {
       System.err.println("save() can only be used on elements loaded by a sketch");
