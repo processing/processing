@@ -181,7 +181,7 @@ public class PShapeSVG extends PShape {
 
     // not proper parsing of the viewBox, but will cover us for cases where
     // the width and height of the object is not specified
-    String viewBoxStr = svg.getStringAttribute("viewBox");
+    String viewBoxStr = svg.getString("viewBox");
     if (viewBoxStr != null) {
       int[] viewBox = PApplet.parseInt(PApplet.splitTokens(viewBoxStr));
       width = viewBox[2];
@@ -191,8 +191,8 @@ public class PShapeSVG extends PShape {
     // TODO if viewbox is not same as width/height, then use it to scale
     // the original objects. for now, viewbox only used when width/height
     // are empty values (which by the spec means w/h of "100%"
-    String unitWidth = svg.getStringAttribute("width");
-    String unitHeight = svg.getStringAttribute("height");
+    String unitWidth = svg.getString("width");
+    String unitHeight = svg.getString("height");
     if (unitWidth != null) {
       width = parseUnitSize(unitWidth);
       height = parseUnitSize(unitHeight);
@@ -266,7 +266,7 @@ public class PShapeSVG extends PShape {
     }
 
     element = properties;
-    name = properties.getStringAttribute("id");
+    name = properties.getString("id");
     // @#$(* adobe illustrator mangles names of objects when re-saving
     if (name != null) {
       while (true) {
@@ -277,10 +277,10 @@ public class PShapeSVG extends PShape {
       }
     }
 
-    String displayStr = properties.getStringAttribute("display", "inline");
+    String displayStr = properties.getString("display", "inline");
     visible = !displayStr.equals("none");
 
-    String transformStr = properties.getStringAttribute("transform");
+    String transformStr = properties.getString("transform");
     if (transformStr != null) {
       matrix = parseMatrix(transformStr);
     }
@@ -453,7 +453,7 @@ public class PShapeSVG extends PShape {
     family = PATH;
     this.close = close;
 
-    String pointsAttr = element.getStringAttribute("points");
+    String pointsAttr = element.getString("points");
     if (pointsAttr != null) {
       String[] pointsBuffer = PApplet.splitTokens(pointsAttr);
       vertexCount = pointsBuffer.length;
@@ -471,7 +471,7 @@ public class PShapeSVG extends PShape {
     family = PATH;
     primitive = 0;
 
-    String pathData = element.getStringAttribute("d");
+    String pathData = element.getString("d");
     if (pathData == null) return;
     char[] pathDataChars = pathData.toCharArray();
 
@@ -875,50 +875,50 @@ public class PShapeSVG extends PShape {
 
   protected void parseColors(XMLElement properties) {
     if (properties.hasAttribute("opacity")) {
-      String opacityText = properties.getStringAttribute("opacity");
+      String opacityText = properties.getString("opacity");
       setOpacity(opacityText);
     }
 
     if (properties.hasAttribute("stroke")) {
-      String strokeText = properties.getStringAttribute("stroke");
+      String strokeText = properties.getString("stroke");
       setColor(strokeText, false);
     }
     
     if (properties.hasAttribute("stroke-opacity")) {
-      String strokeOpacityText = properties.getStringAttribute("stroke-opacity");
+      String strokeOpacityText = properties.getString("stroke-opacity");
       setStrokeOpacity(strokeOpacityText);
     }
 
     if (properties.hasAttribute("stroke-width")) {
       // if NaN (i.e. if it's 'inherit') then default back to the inherit setting
-      String lineweight = properties.getStringAttribute("stroke-width");
+      String lineweight = properties.getString("stroke-width");
       setStrokeWeight(lineweight);
     }
 
     if (properties.hasAttribute("stroke-linejoin")) {
-      String linejoin = properties.getStringAttribute("stroke-linejoin");
+      String linejoin = properties.getString("stroke-linejoin");
       setStrokeJoin(linejoin);
     }
 
     if (properties.hasAttribute("stroke-linecap")) {
-      String linecap = properties.getStringAttribute("stroke-linecap");
+      String linecap = properties.getString("stroke-linecap");
       setStrokeCap(linecap);
     }
 
     // fill defaults to black (though stroke defaults to "none")
     // http://www.w3.org/TR/SVG/painting.html#FillProperties
     if (properties.hasAttribute("fill")) {
-      String fillText = properties.getStringAttribute("fill");
+      String fillText = properties.getString("fill");
       setColor(fillText, true);
     }
 
     if (properties.hasAttribute("fill-opacity")) {
-      String fillOpacityText = properties.getStringAttribute("fill-opacity");
+      String fillOpacityText = properties.getString("fill-opacity");
       setFillOpacity(fillOpacityText);
     }    
     
     if (properties.hasAttribute("style")) {
-      String styleText = properties.getStringAttribute("style");
+      String styleText = properties.getString("style");
       String[] styleTokens = PApplet.splitTokens(styleText, ";");
 
       //PApplet.println(styleTokens);
@@ -1097,7 +1097,7 @@ public class PShapeSVG extends PShape {
    * @return unit-parsed version of the data
    */
   static protected float getFloatWithUnit(XMLElement element, String attribute) {
-    String val = element.getStringAttribute(attribute);
+    String val = element.getString(attribute);
     return (val == null) ? 0 : parseUnitSize(val);
   }
 
@@ -1157,14 +1157,14 @@ public class PShapeSVG extends PShape {
         XMLElement elem = elements[i];
         String name = elem.getName();
         if (name.equals("stop")) {
-          String offsetAttr = elem.getStringAttribute("offset");
+          String offsetAttr = elem.getString("offset");
           float div = 1.0f;
           if (offsetAttr.endsWith("%")) {
             div = 100.0f;
             offsetAttr = offsetAttr.substring(0, offsetAttr.length() - 1);
           }
           offset[count] = PApplet.parseFloat(offsetAttr) / div;
-          String style = elem.getStringAttribute("style");
+          String style = elem.getString("style");
           HashMap<String, String> styles = parseStyleAttributes(style);
 
           String colorStr = styles.get("stop-color");
@@ -1195,7 +1195,7 @@ public class PShapeSVG extends PShape {
       this.y2 = getFloatWithUnit(properties, "y2");
 
       String transformStr =
-        properties.getStringAttribute("gradientTransform");
+        properties.getString("gradientTransform");
 
       if (transformStr != null) {
         float t[] = parseMatrix(transformStr).get(null);
@@ -1224,7 +1224,7 @@ public class PShapeSVG extends PShape {
       this.r  = getFloatWithUnit(properties, "r");
 
       String transformStr =
-        properties.getStringAttribute("gradientTransform");
+        properties.getString("gradientTransform");
 
       if (transformStr != null) {
         float t[] = parseMatrix(transformStr).get(null);
