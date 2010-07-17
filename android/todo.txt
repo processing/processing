@@ -1,10 +1,11 @@
 0190 android
 
-_ allow screenWidth/Height as parameters to size()
-_   right now would cause NumberFormatException
+X allow screenWidth/Height as parameters to size()
+X   right now would cause NumberFormatException
 X add notes to the wiki about the size() method
-_ make sure sketchRenderer()/sketchWidth()/sketchHeight() are working on desktop
-_   see about getting them documented in the reference
+X make sure sketchRenderer()/sketchWidth()/sketchHeight() are working on desktop
+o   see about getting them documented in the reference
+_   do a writeup of the size() method in the wiki
 _ size() command is currently ignored in Android
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1397
 _ Implement P3D, OpenGL, A3D for Android
