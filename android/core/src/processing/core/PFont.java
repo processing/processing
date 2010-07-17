@@ -265,6 +265,7 @@ public class PFont implements PConstants {
         descent = PApplet.round(lazyPaint.descent());
       }
     }
+    PApplet.println("ascent/descent = " + ascent + " " + descent);
   }
 
 
