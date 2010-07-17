@@ -1669,7 +1669,7 @@ public class PGraphics extends PImage implements PConstants {
   
   protected void rectImpl(float x1, float y1, float x2, float y2, float hr, float vr) {
     beginShape();
-    vertex(x1+hr, y1);
+//    vertex(x1+hr, y1);
     vertex(x2-hr, y1);
     quadraticVertex(x2, y1, x2, y1+vr);
     vertex(x2, y2-vr);
@@ -1678,7 +1678,8 @@ public class PGraphics extends PImage implements PConstants {
     quadraticVertex(x1, y2, x1, y2-vr);
     vertex(x1, y1+vr);
     quadraticVertex(x1, y1, x1+hr, y1);
-    endShape();
+//    endShape();
+    endShape(CLOSE);
   }
   
   
@@ -1723,16 +1724,33 @@ public class PGraphics extends PImage implements PConstants {
   protected void rectImpl(float x1, float y1, float x2, float y2, 
                           float tl, float tr, float bl, float br) {
     beginShape();
-    vertex(x1+tl, y1);
-    vertex(x2-tr, y1);
-    quadraticVertex(x2, y1, x2, y1+tr);
-    vertex(x2, y2-br);
-    quadraticVertex(x2, y2, x2-br, y2);
-    vertex(x1+bl, y2);
-    quadraticVertex(x1, y2, x1, y2-bl);
-    vertex(x1, y1+tl);
-    quadraticVertex(x1, y1, x1+tl, y1);
-    endShape();
+//    vertex(x1+tl, y1);
+    if (tr != 0) {
+      vertex(x2-tr, y1);
+      quadraticVertex(x2, y1, x2, y1+tr);
+    } else {
+      vertex(x2, y1);
+    }
+    if (br != 0) {
+      vertex(x2, y2-br);
+      quadraticVertex(x2, y2, x2-br, y2);
+    } else {
+      vertex(x2, y2);
+    }
+    if (bl != 0) {
+      vertex(x1+bl, y2);
+      quadraticVertex(x1, y2, x1, y2-bl);
+    } else {
+      vertex(x1, y2);
+    }
+    if (tl != 0) {
+      vertex(x1, y1+tl);
+      quadraticVertex(x1, y1, x1+tl, y1);
+    } else {
+      vertex(x1, y1);
+    }
+//    endShape();
+    endShape(CLOSE);
   }
 
 
