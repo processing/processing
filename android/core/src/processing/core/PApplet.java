@@ -1820,9 +1820,9 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 
   class PMotionEvent {
-          int action;
-          float motionX, motionY;
-          float motionPressure;
+    int action;
+    float motionX, motionY;
+    float motionPressure;
     int mouseX, mouseY;
   }
 
@@ -1842,9 +1842,10 @@ public class PApplet extends Activity implements PConstants, Runnable {
       // allocate more PMotionEvent objects if we're out
       if (motionEventCount + event.getHistorySize() >= motionEventQueue.length) {
         PMotionEvent[] temp = new PMotionEvent[motionEventCount << 1];
+//        System.out.println("allocating " + temp.length + " entries for motion events");
         System.arraycopy(motionEventQueue, 0, temp, 0, motionEventCount);
         motionEventQueue = temp;
-        for (int i = motionEventCount; i < motionEventCount << 1; i++) {
+        for (int i = motionEventCount; i < motionEventQueue.length; i++) {
           motionEventQueue[i] = new PMotionEvent();
         }
       }
@@ -1856,13 +1857,13 @@ public class PApplet extends Activity implements PConstants, Runnable {
       pme.motionX = event.getX();
       pme.motionY = event.getY();
       pme.motionPressure = event.getPressure();  // should this be constrained?
-      pme.mouseX = (int) event.getRawX();
-      pme.mouseY = (int) event.getRawY();
+      pme.mouseX = (int) pme.motionX;  //event.getRawX();
+      pme.mouseY = (int) pme.motionY;  //event.getRawY();
 
       // historical events happen before the 'current' values
       if (pme.action == MotionEvent.ACTION_MOVE && historyCount > 0) {
-        float rawOffsetX = pme.mouseX - pme.motionX;
-        float rawOffsetY = pme.mouseY - pme.motionY;
+//        float rawOffsetX = pme.mouseX - pme.motionX;
+//        float rawOffsetY = pme.mouseY - pme.motionY;
 
         for (int i = 0; i < historyCount; i++) {
           PMotionEvent hist = motionEventQueue[motionEventCount++];
@@ -1870,8 +1871,10 @@ public class PApplet extends Activity implements PConstants, Runnable {
           hist.motionX = event.getHistoricalX(i);
           hist.motionY = event.getHistoricalY(i);
           hist.motionPressure = event.getHistoricalPressure(i);
-          hist.mouseX = (int) (hist.motionX + rawOffsetX);
-          hist.mouseY = (int) (hist.motionY + rawOffsetY);
+//          hist.mouseX = (int) (hist.motionX + rawOffsetX);
+//          hist.mouseY = (int) (hist.motionY + rawOffsetY);
+          hist.mouseX = (int) hist.motionX;
+          hist.mouseY = (int) hist.motionY;
         }
       }
 
