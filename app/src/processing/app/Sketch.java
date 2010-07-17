@@ -46,6 +46,16 @@ import javax.swing.border.TitledBorder;
 public class Sketch {
   static private File tempBuildFolder;
 
+  /**
+   * Regular expression for parsing the size() method. This should match 
+   * against any uses of the size() function, whether numbers or variables 
+   * or whatever. This way, no warning is shown if size() isn't actually used 
+   * in the sketch, which is the case especially for anyone who is cutting
+   * and pasting from the reference.
+   */
+  public static final String SIZE_REGEX = 
+    "(?:^|\\s|;)size\\s*\\(\\s*(\\S+)\\s*,\\s*([^\\s,\\)]+),?\\s*([^\\)]*)\\s*\\)\\s*\\;";
+  
   private Editor editor;
   private boolean foundMain = false;
 
@@ -1582,7 +1592,7 @@ public class Sketch {
     return exportApplet(new File(folder, "applet").getAbsolutePath());
   }
 
-
+  
   /**
    * Handle export to applet.
    */
@@ -1625,15 +1635,8 @@ public class Sketch {
     int high = PApplet.DEFAULT_HEIGHT;
     String renderer = "";
 
-    // This matches against any uses of the size() function, whether numbers
-    // or variables or whatever. This way, no warning is shown if size() isn't
-    // actually used in the applet, which is the case especially for anyone
-    // who is cutting/pasting from the reference.
-    String sizeRegex =
-      "(?:^|\\s|;)size\\s*\\(\\s*(\\S+)\\s*,\\s*(\\d+),?\\s*([^\\)]*)\\s*\\)";
-
     String scrubbed = scrubComments(code[0].getProgram());
-    String[] matches = PApplet.match(scrubbed, sizeRegex);
+    String[] matches = PApplet.match(scrubbed, SIZE_REGEX);
 
     if (matches != null) {
       try {
@@ -1642,6 +1645,7 @@ public class Sketch {
 
         // Adding back the trim() for 0136 to handle Bug #769
         if (matches.length == 4) renderer = matches[3].trim();
+        // Actually, matches.length should always be 4...
 
       } catch (NumberFormatException e) {
         // found a reference to size, but it didn't
