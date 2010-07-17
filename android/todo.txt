@@ -1,20 +1,32 @@
 0190 android
-
 X allow screenWidth/Height as parameters to size()
 X   right now would cause NumberFormatException
 X add notes to the wiki about the size() method
 X make sure sketchRenderer()/sketchWidth()/sketchHeight() are working on desktop
 o   see about getting them documented in the reference
 _   do a writeup of the size() method in the wiki
-_ size() command is currently ignored in Android
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1397
-_ Implement P3D, OpenGL, A3D for Android
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1396
+X size() command is currently ignored in Android
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1397
+X   http://code.google.com/p/processing/issues/detail?id=211
+X Implement P3D, OpenGL, A3D for Android
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1396
+X fix mouseX/Y mapping when using smaller screen sizes
+o image() problems (includes sketch)
+o   http://dev.processing.org/bugs/show_bug.cgi?id=1565
+o next time the avd is updated
+o   remove old AVDs because their APIs might be out of date
+o   probably need to name AVDs based on their API spec
+o   http://dev.processing.org/bugs/show_bug.cgi?id=1526
+o   http://code.google.com/p/processing/issues/detail?id=249
+
+
+_ text leading is broken, text("blah\nblah") doesn't work properly
+
+_ don't let the keystore message show up in red
+_   Using keystore: /Users/fry/.android/debug.keystore
 
 _ post processing-android-core-0190.zip to the download page
 _   get some help w/ the dist script to make the right file
-
-_ fix mouseX/Y mapping when using smaller screen sizes
 
 _ copy the changes over from the xml library
 
@@ -45,11 +57,6 @@ _   pause needs to actually kill the thread
 _   returning from pause needs to reset the clock
 _   this is currently draining batteries
 
-_ text leading is broken, text("blah\nblah") doesn't work properly
-
-_ image() problems (includes sketch)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1565
-
 _ look into touch event code, see if there's a good way to integrate
 _ add registered methods again
 _   need to figure out generic event queueing first
@@ -64,12 +71,6 @@ _   w/o needing to use the incredibly slow android tools
 
 _ "Unable to resolve target 'Google...'" when APIs aren't installed
 _   add an error message that explains what to do
-
-_ next time the avd is updated
-_   remove old AVDs because their APIs might be out of date
-_   probably need to name AVDs based on their API spec
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1526
-_   http://code.google.com/p/processing/issues/detail?id=249
 
 _ for libraries that don't work with android, don't let them export
 _   e.g. people adding the opengl library when it's not needed
@@ -141,6 +142,7 @@ P5 _ should alpha PImage stuff use a non-4byte config?
 P5 _   http://dev.processing.org/bugs/show_bug.cgi?id=1490
 DL _ colorMode() error 
 DL _   http://code.google.com/p/processing/issues/detail?id=223
+
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
