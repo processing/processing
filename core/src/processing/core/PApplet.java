@@ -664,8 +664,7 @@ public class PApplet extends Applet
 
 
   public void init() {
-//    println("Calling init()");
-
+    // using a local version here since the class variable is deprecated
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     screenWidth = screen.width;
     screenHeight = screen.height;
@@ -710,16 +709,16 @@ public class PApplet extends Applet
       // Component objects, its size() may already be set externally (perhaps
       // by a LayoutManager). In this case, honor that size as the default.
       // Size of the component is set, just create a renderer.
-      g = makeGraphics(size.width, size.height, getSketchRenderer(), null, true);
+      g = makeGraphics(size.width, size.height, sketchRenderer(), null, true);
       // This doesn't call setSize() or setPreferredSize() because the fact
       // that a size was already set means that someone is already doing it.
 
     } else {
       // Set the default size, until the user specifies otherwise
       this.defaultSize = true;
-      int w = getSketchWidth();
-      int h = getSketchHeight();
-      g = makeGraphics(w, h, getSketchRenderer(), null, true);
+      int w = sketchWidth();
+      int h = sketchHeight();
+      g = makeGraphics(w, h, sketchRenderer(), null, true);
       // Fire component resize event
       setSize(w, h);
       setPreferredSize(new Dimension(w, h));
@@ -735,17 +734,17 @@ public class PApplet extends Applet
   }
 
 
-  public int getSketchWidth() {
+  public int sketchWidth() {
     return DEFAULT_WIDTH;
   }
 
 
-  public int getSketchHeight() {
+  public int sketchHeight() {
     return DEFAULT_HEIGHT;
   }
 
 
-  public String getSketchRenderer() {
+  public String sketchRenderer() {
     return JAVA2D;
   }
 
