@@ -1,12 +1,17 @@
 0190
 
+_ locations: sketchbook, examples, libraries
+_ 'export' and 'export application' titles and/or # of items
+_ 'run' and 'present' under sketch, and/or # of items
 
-_ disappearing horizontal scroll bar
-_   http://code.google.com/p/processing/issues/detail?id=316
 
+_ the open button on the toolbar is goofed up 
+_   http://code.google.com/p/processing/issues/detail?id=323
 _ launch4j problem
 _   no crash when double-clicking a sketch and loading it
 _   http://code.google.com/p/processing/issues/detail?id=231
+_ disappearing horizontal scroll bar
+_   http://code.google.com/p/processing/issues/detail?id=316
 
 _ fix line endings in revisions.txt for windows
 
@@ -1222,6 +1227,10 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=1345
 
 LIBRARIES / Serial
 
+_ serial ports missing from list
+_   http://code.google.com/p/processing/issues/detail?id=52
+_ Serial.write problem with Bluetooth SPP virtual serial port 
+_   http://code.google.com/p/processing/issues/detail?id=318
 _ syslog issues on macosx
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1147
 _ port buffering not working properly
