@@ -178,7 +178,7 @@ public class StdXMLBuilder
 
       if (this.stack.empty()) {
     	  //System.out.println("setting root");
-    	  parent.set(fullName, nsURI, systemID, lineNr);
+    	  parent.init(fullName, nsURI, systemID, lineNr);
     	  stack.push(parent);
     	  root = parent;
       } else {
@@ -236,7 +236,7 @@ public class StdXMLBuilder
 
          if (child.getLocalName() == null) {
             elt.setContent(child.getContent());
-            elt.removeChildAtIndex(0);
+            elt.removeChild(0);
          }
       }
    }
@@ -276,15 +276,15 @@ public class StdXMLBuilder
 
       if (top.hasAttribute(fullName)) {
          throw new XMLParseException(top.getSystemID(),
-                                     top.getLineNr(),
+                                     top.getLine(),
                                      "Duplicate attribute: " + key);
       }
 
-      if (nsPrefix != null) {
-         top.setAttribute(fullName, nsURI, value);
-      } else {
-         top.setAttribute(fullName, value);
-      }
+//      if (nsPrefix != null) {
+//         top.setAttribute(fullName, nsURI, value);
+//      } else {
+      top.set(fullName, value);
+//      }
    }
 
 
