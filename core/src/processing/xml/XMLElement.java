@@ -49,33 +49,23 @@ import processing.core.PApplet;
  */
 public class XMLElement implements Serializable {
 
-    /**
-     * No line number defined.
-     */
+    /** No line number defined. */
     public static final int NO_LINE = -1;
 
 
-    /**
-     * The parent element.
-     */
+    /** The parent element. */
     private XMLElement parent;
 
 
-    /**
-     * The attributes of the element.
-     */
+     /** The attributes of the element. */
     private Vector<XMLAttribute> attributes;
 
 
-    /**
-     * The child elements.
-     */
+    /** The child elements. */
     private Vector<XMLElement> children;
 
 
-    /**
-     * The name of the element.
-     */
+    /** The name of the element. */
     private String name;
 
 
@@ -106,7 +96,7 @@ public class XMLElement implements Serializable {
     /**
      * The line in the source data where this element starts.
      */
-    private int lineNr;
+    private int line;
 
 
     /**
@@ -118,7 +108,7 @@ public class XMLElement implements Serializable {
     }
 
 
-    protected void set(String fullName,
+    protected void init(String fullName,
                            String namespace,
                            String systemID,
                            int lineNr) {
@@ -134,7 +124,7 @@ public class XMLElement implements Serializable {
                 }
         }
         this.namespace = namespace;
-        this.lineNr = lineNr;
+        this.line = lineNr;
         this.systemID = systemID;
     }
 
@@ -203,7 +193,7 @@ public class XMLElement implements Serializable {
         }
         this.namespace = namespace;
         this.content = null;
-        this.lineNr = lineNr;
+        this.line = lineNr;
         this.systemID = systemID;
         this.parent = null;
     }
@@ -487,19 +477,20 @@ public class XMLElement implements Serializable {
      *
      * @param index the index of the child, where the first child has index 0.
      */
-    public void removeChildAtIndex(int index) {
+//    public void removeChildAtIndex(int index) {
+    public void removeChild(int index) {
         this.children.removeElementAt(index);
     }
 
 
-    /**
-     * Returns an enumeration of all child elements.
-     *
-     * @return the non-null enumeration
-     */
-    public Enumeration<XMLElement> enumerateChildren() {
-        return this.children.elements();
-    }
+//    /**
+//     * Returns an enumeration of all child elements.
+//     *
+//     * @return the non-null enumeration
+//     */
+//    public Enumeration<XMLElement> enumerateChildren() {
+//        return this.children.elements();
+//    }
 
 
     /**
@@ -829,32 +820,32 @@ public class XMLElement implements Serializable {
     }
 
 
-    /**
-     * Searches an attribute.
-     *
-     * @param name the non-null short name of the attribute.
-     * @param namespace the name space, which may be null.
-     *
-     * @return the attribute, or null if the attribute does not exist.
-     */
-    private XMLAttribute findAttribute(String name,
-                                       String namespace) {
-        Enumeration<XMLAttribute> en = this.attributes.elements();
-        while (en.hasMoreElements()) {
-            XMLAttribute attr = (XMLAttribute) en.nextElement();
-            boolean found = attr.getName().equals(name);
-            if (namespace == null) {
-                found &= (attr.getNamespace() == null);
-            } else {
-                found &= namespace.equals(attr.getNamespace());
-            }
-
-            if (found) {
-                return attr;
-            }
-        }
-        return null;
-    }
+//    /**
+//     * Searches an attribute.
+//     *
+//     * @param name the non-null short name of the attribute.
+//     * @param namespace the name space, which may be null.
+//     *
+//     * @return the attribute, or null if the attribute does not exist.
+//     */
+//    private XMLAttribute findAttribute(String name,
+//                                       String namespace) {
+//        Enumeration<XMLAttribute> en = this.attributes.elements();
+//        while (en.hasMoreElements()) {
+//            XMLAttribute attr = (XMLAttribute) en.nextElement();
+//            boolean found = attr.getName().equals(name);
+//            if (namespace == null) {
+//                found &= (attr.getNamespace() == null);
+//            } else {
+//                found &= namespace.equals(attr.getNamespace());
+//            }
+//
+//            if (found) {
+//                return attr;
+//            }
+//        }
+//        return null;
+//    }
 
 
     /**
@@ -862,6 +853,13 @@ public class XMLElement implements Serializable {
      */
     public int getAttributeCount() {
         return this.attributes.size();
+    }
+    
+    
+    public String[] listAttributes() {
+      String[] outgoing = new String[attributes.size()];
+      attributes.copyInto(outgoing);
+      return outgoing;
     }
 
 
@@ -885,8 +883,7 @@ public class XMLElement implements Serializable {
      *
      * @return the value, or defaultValue if the attribute does not exist.
      */
-    public String getAttribute(String name,
-                               String defaultValue) {
+    public String getAttribute(String name, String defaultValue) {
         XMLAttribute attr = this.findAttribute(name);
         if (attr == null) {
             return defaultValue;
@@ -904,23 +901,28 @@ public class XMLElement implements Serializable {
      * @param defaultValue the default value of the attribute.
      *
      * @return the value, or defaultValue if the attribute does not exist.
+     * @deprecated namespace code is more trouble than it's worth
      */
-    public String getAttribute(String name,
-                               String namespace,
-                               String defaultValue) {
-        XMLAttribute attr = this.findAttribute(name, namespace);
-        if (attr == null) {
-            return defaultValue;
-        } else {
-            return attr.getValue();
-        }
-    }
+//    public String getAttribute(String name,
+//                               String namespace,
+//                               String defaultValue) {
+//        XMLAttribute attr = this.findAttribute(name, namespace);
+//        if (attr == null) {
+//            return defaultValue;
+//        } else {
+//            return attr.getValue();
+//        }
+//    }
 
-    
+
+    /**
+     * @deprecated use getString() or getAttribute()
+     */
     public String getStringAttribute(String name) {
         return getAttribute(name);
     }
 
+    
     /**
      * Returns a String attribute of the element.
      * If the <b>default</b> parameter is used and the attribute doesn't exist, the <b>default</b> value is returned.
@@ -931,23 +933,98 @@ public class XMLElement implements Serializable {
      * @param default Value value returned if the attribute is not found
      * 
      * @brief Returns a String attribute of the element.
+     * @deprecated use getString() or getAttribute()
      */
     public String getStringAttribute(String name, String defaultValue) {
         return getAttribute(name, defaultValue);
     }
 
 
-    public String getStringAttribute(String name,
-                                     String namespace,
-                                     String defaultValue) {
-        return getAttribute(name, namespace, defaultValue);
+//    /**
+//     * @deprecated namespace code is more trouble than it's worth
+//     */
+//    public String getStringAttribute(String name,
+//                                     String namespace,
+//                                     String defaultValue) {
+//        return getAttribute(name, namespace, defaultValue);
+//    }
+    
+    
+    public String getString(String name) {
+      return getAttribute(name);
     }
 
+    
+    public String getString(String name, String defaultValue) {
+      return getAttribute(name, defaultValue);
+    }
+
+    
+    /**
+     * Returns a boolean attribute of the element.
+     */
+    public boolean getBoolean(String name) {
+        return getBoolean(name, false);
+    }
+
+
+    /**
+     * Returns a boolean attribute of the element.
+     * If the <b>defaultValue</b> parameter is used and the attribute doesn't exist, the <b>defaultValue</b> is returned.
+     * When using the version of the method without the <b>defaultValue</b> parameter, if the attribute doesn't exist, the value false is returned.
+     *
+     * @param name the name of the attribute
+     * @param defaultValue value returned if the attribute is not found
+     *
+     * @webref
+     * @brief Returns a boolean attribute of the element.
+     * @return the value, or defaultValue if the attribute does not exist.
+     */
+    public boolean getBoolean(String name, boolean defaultValue) {
+        String value = this.getAttribute(name, Boolean.toString(defaultValue));
+        return value.equals("1") || value.toLowerCase().equals("true");
+    }
+
+
+    /**
+     * Returns the value of an attribute.
+     *
+     * @param name the non-null name of the attribute.
+     * @param namespace the namespace URI, which may be null.
+     * @param defaultValue the default value of the attribute.
+     *
+     * @return the value, or defaultValue if the attribute does not exist.
+     */
+//    public boolean getBooleanAttribute(String name,
+//                                       String namespace,
+//                                       boolean defaultValue) {
+//        String value = this.getAttribute(name, namespace,
+//                                         Boolean.toString(defaultValue));
+//        return value.equals("1") || value.toLowerCase().equals("true");
+//    }
+
+
+    /**
+     * @deprecated use getInt() instead
+     */
+    public int getIntAttribute(String name) {
+      return getInt(name, 0);
+    }
+    
+    
+    /**
+     * @deprecated use getInt() instead
+     */
+    public int getIntAttribute(String name, int defaultValue) {
+      return getInt(name, defaultValue);
+    }
+    
+    
     /**
      * Returns an integer attribute of the element.
      */
-    public int getIntAttribute(String name) {
-        return getIntAttribute(name, 0);
+    public int getInt(String name) {
+        return getInt(name, 0);
     }
 
 
@@ -963,33 +1040,44 @@ public class XMLElement implements Serializable {
      * @brief Returns an integer attribute of the element.
      * @return the value, or defaultValue if the attribute does not exist.
      */
-    public int getIntAttribute(String name,
-                               int defaultValue) {
+    public int getInt(String name, int defaultValue) {
         String value = this.getAttribute(name, Integer.toString(defaultValue));
         return Integer.parseInt(value);
     }
 
 
+//    /**
+//     * Returns the value of an attribute.
+//     *
+//     * @param name the non-null name of the attribute.
+//     * @param namespace the namespace URI, which may be null.
+//     * @param defaultValue the default value of the attribute.
+//     *
+//     * @return the value, or defaultValue if the attribute does not exist.
+//     * @deprecated namespace code is more trouble than it's worth
+//     */
+//    public int getIntAttribute(String name,
+//                               String namespace,
+//                               int defaultValue) {
+//        String value = this.getAttribute(name, namespace,
+//                                         Integer.toString(defaultValue));
+//        return Integer.parseInt(value);
+//    }
+
+
     /**
-     * Returns the value of an attribute.
-     *
-     * @param name the non-null name of the attribute.
-     * @param namespace the namespace URI, which may be null.
-     * @param defaultValue the default value of the attribute.
-     *
-     * @return the value, or defaultValue if the attribute does not exist.
+     * @deprecated use getFloat() instead
      */
-    public int getIntAttribute(String name,
-                               String namespace,
-                               int defaultValue) {
-        String value = this.getAttribute(name, namespace,
-                                         Integer.toString(defaultValue));
-        return Integer.parseInt(value);
+    public float getFloatAttribute(String name) {
+      return getFloat(name, 0);
     }
 
-
-    public float getFloatAttribute(String name) {
-        return getFloatAttribute(name, 0);
+    
+    /**
+     * @deprecated use getFloat() instead
+     */
+    public float getFloatAttribute(String name, float defaultValue) {
+        return getFloat(name, 0);
     }
 
 
@@ -1006,34 +1094,34 @@ public class XMLElement implements Serializable {
      * @webref
      * @brief Returns a float attribute of the element.
      */
-    public float getFloatAttribute(String name,
-                                   float defaultValue) {
+    public float getFloat(String name, float defaultValue) {
         String value = this.getAttribute(name, Float.toString(defaultValue));
         return Float.parseFloat(value);
     }
 
 
-    /**
-     * Returns the value of an attribute.
-     *
-     * @param name the non-null name of the attribute.
-     * @param namespace the namespace URI, which may be null.
-     * @param defaultValue the default value of the attribute.
-     *
-     * @return the value, or defaultValue if the attribute does not exist.
-     * @nowebref
-     */
-    public float getFloatAttribute(String name,
-                                   String namespace,
-                                   float defaultValue) {
-        String value = this.getAttribute(name, namespace,
-                                         Float.toString(defaultValue));
-        return Float.parseFloat(value);
-    }
+//    /**
+//     * Returns the value of an attribute.
+//     *
+//     * @param name the non-null name of the attribute.
+//     * @param namespace the namespace URI, which may be null.
+//     * @param defaultValue the default value of the attribute.
+//     *
+//     * @return the value, or defaultValue if the attribute does not exist.
+//     * @nowebref
+//     * @deprecated namespace code is more trouble than it's worth
+//     */
+//    public float getFloatAttribute(String name,
+//                                   String namespace,
+//                                   float defaultValue) {
+//        String value = this.getAttribute(name, namespace,
+//                                         Float.toString(defaultValue));
+//        return Float.parseFloat(value);
+//    }
 
 
-    public double getDoubleAttribute(String name) {
-        return getDoubleAttribute(name, 0);
+    public double getDouble(String name) {
+        return getDouble(name, 0);
     }
 
 
@@ -1045,82 +1133,89 @@ public class XMLElement implements Serializable {
      *
      * @return the value, or defaultValue if the attribute does not exist.
      */
-    public double getDoubleAttribute(String name,
-                                     double defaultValue) {
+    public double getDouble(String name, double defaultValue) {
         String value = this.getAttribute(name, Double.toString(defaultValue));
         return Double.parseDouble(value);
     }
 
 
-    /**
-     * Returns the value of an attribute.
-     *
-     * @param name the non-null name of the attribute.
-     * @param namespace the namespace URI, which may be null.
-     * @param defaultValue the default value of the attribute.
-     *
-     * @return the value, or defaultValue if the attribute does not exist.
-     */
-    public double getDoubleAttribute(String name,
-                                     String namespace,
-                                     double defaultValue) {
-        String value = this.getAttribute(name, namespace,
-                                         Double.toString(defaultValue));
-        return Double.parseDouble(value);
-    }
+//    /**
+//     * Returns the value of an attribute.
+//     *
+//     * @param name the non-null name of the attribute.
+//     * @param namespace the namespace URI, which may be null.
+//     * @param defaultValue the default value of the attribute.
+//     *
+//     * @return the value, or defaultValue if the attribute does not exist.
+//     */
+//    public double getDoubleAttribute(String name,
+//                                     String namespace,
+//                                     double defaultValue) {
+//        String value = this.getAttribute(name, namespace,
+//                                         Double.toString(defaultValue));
+//        return Double.parseDouble(value);
+//    }
 
 
-    /**
-     * Returns the type of an attribute.
-     *
-     * @param name the non-null full name of the attribute.
-     *
-     * @return the type, or null if the attribute does not exist.
-     */
-    public String getAttributeType(String name) {
-        XMLAttribute attr = this.findAttribute(name);
-        if (attr == null) {
-            return null;
-        } else {
-            return attr.getType();
-        }
-    }
+//    /**
+//     * Returns the type of an attribute.
+//     *
+//     * @param name the non-null full name of the attribute.
+//     *
+//     * @return the type, or null if the attribute does not exist.
+//     */
+//    public String getAttributeType(String name) {
+//        XMLAttribute attr = this.findAttribute(name);
+//        if (attr == null) {
+//            return null;
+//        } else {
+//            return attr.getType();
+//        }
+//    }
 
 
-    /**
-     * Returns the namespace of an attribute.
-     *
-     * @param name the non-null full name of the attribute.
-     *
-     * @return the namespace, or null if there is none associated.
-     */
-    public String getAttributeNamespace(String name) {
-        XMLAttribute attr = this.findAttribute(name);
-        if (attr == null) {
-            return null;
-        } else {
-            return attr.getNamespace();
-        }
-    }
+//    /**
+//     * Returns the namespace of an attribute.
+//     *
+//     * @param name the non-null full name of the attribute.
+//     *
+//     * @return the namespace, or null if there is none associated.
+//     */
+//    public String getAttributeNamespace(String name) {
+//        XMLAttribute attr = this.findAttribute(name);
+//        if (attr == null) {
+//            return null;
+//        } else {
+//            return attr.getNamespace();
+//        }
+//    }
 
 
-    /**
-     * Returns the type of an attribute.
-     *
-     * @param name the non-null name of the attribute.
-     * @param namespace the namespace URI, which may be null.
-     *
-     * @return the type, or null if the attribute does not exist.
-     */
-    public String getAttributeType(String name,
-                                   String namespace) {
-        XMLAttribute attr = this.findAttribute(name, namespace);
-        if (attr == null) {
-            return null;
-        } else {
-            return attr.getType();
-        }
-    }
+//    /**
+//     * Returns the type of an attribute.
+//     *
+//     * @param name the non-null name of the attribute.
+//     * @param namespace the namespace URI, which may be null.
+//     *
+//     * @return the type, or null if the attribute does not exist.
+//     */
+//    public String getAttributeType(String name,
+//                                   String namespace) {
+//        XMLAttribute attr = this.findAttribute(name, namespace);
+//        if (attr == null) {
+//            return null;
+//        } else {
+//            return attr.getType();
+//        }
+//    }
+
+
+//    /**
+//     * @deprecated use set()
+//     */
+//    public void setAttribute(String name, String value) {
+//      set(name, value);
+//    }
 
 
     /**
@@ -1129,8 +1224,7 @@ public class XMLElement implements Serializable {
      * @param name the non-null full name of the attribute.
      * @param value the non-null value of the attribute.
      */
-    public void setAttribute(String name,
-                             String value) {
+    public void set(String name, String value) {
         XMLAttribute attr = this.findAttribute(name);
         if (attr == null) {
             attr = new XMLAttribute(name, name, null, value, "CDATA");
@@ -1141,34 +1235,34 @@ public class XMLElement implements Serializable {
     }
 
 
-    /**
-     * Sets an attribute.
-     *
-     * @param fullName the non-null full name of the attribute.
-     * @param namespace the namespace URI of the attribute, which may be null.
-     * @param value the non-null value of the attribute.
-     */
-    public void setAttribute(String fullName,
-                             String namespace,
-                             String value) {
-        int index = fullName.indexOf(':');
-        String vorname = fullName.substring(index + 1);
-        XMLAttribute attr = this.findAttribute(vorname, namespace);
-        if (attr == null) {
-            attr = new XMLAttribute(fullName, vorname, namespace, value, "CDATA");
-            this.attributes.addElement(attr);
-        } else {
-            attr.setValue(value);
-        }
-    }
+//    /**
+//     * Sets an attribute.
+//     *
+//     * @param fullName the non-null full name of the attribute.
+//     * @param namespace the namespace URI of the attribute, which may be null.
+//     * @param value the non-null value of the attribute.
+//     */
+//    public void setAttribute(String fullName,
+//                             String namespace,
+//                             String value) {
+//        int index = fullName.indexOf(':');
+//        String vorname = fullName.substring(index + 1);
+//        XMLAttribute attr = this.findAttribute(vorname, namespace);
+//        if (attr == null) {
+//            attr = new XMLAttribute(fullName, vorname, namespace, value, "CDATA");
+//            this.attributes.addElement(attr);
+//        } else {
+//            attr.setValue(value);
+//        }
+//    }
 
 
     /**
-     * Removes an attribute.
+     * Removes an attribute. Formerly removeAttribute().
      *
      * @param name the non-null name of the attribute.
      */
-    public void removeAttribute(String name) {
+    public void remove(String name) {
         for (int i = 0; i < this.attributes.size(); i++) {
             XMLAttribute attr = (XMLAttribute) this.attributes.elementAt(i);
             if (attr.getFullName().equals(name)) {
@@ -1179,45 +1273,45 @@ public class XMLElement implements Serializable {
     }
 
 
-    /**
-     * Removes an attribute.
-     *
-     * @param name the non-null name of the attribute.
-     * @param namespace the namespace URI of the attribute, which may be null.
-     */
-    public void removeAttribute(String name,
-                                String namespace) {
-        for (int i = 0; i < this.attributes.size(); i++) {
-            XMLAttribute attr = (XMLAttribute) this.attributes.elementAt(i);
-            boolean found = attr.getName().equals(name);
-            if (namespace == null) {
-                found &= (attr.getNamespace() == null);
-            } else {
-                found &= attr.getNamespace().equals(namespace);
-            }
+//    /**
+//     * Removes an attribute.
+//     *
+//     * @param name the non-null name of the attribute.
+//     * @param namespace the namespace URI of the attribute, which may be null.
+//     */
+//    public void removeAttribute(String name,
+//                                String namespace) {
+//        for (int i = 0; i < this.attributes.size(); i++) {
+//            XMLAttribute attr = (XMLAttribute) this.attributes.elementAt(i);
+//            boolean found = attr.getName().equals(name);
+//            if (namespace == null) {
+//                found &= (attr.getNamespace() == null);
+//            } else {
+//                found &= attr.getNamespace().equals(namespace);
+//            }
+//
+//            if (found) {
+//                this.attributes.removeElementAt(i);
+//                return;
+//            }
+//        }
+//    }
 
-            if (found) {
-                this.attributes.removeElementAt(i);
-                return;
-            }
-        }
-    }
 
-
-    /**
-     * Returns an enumeration of all attribute names.
-     *
-     * @return the non-null enumeration.
-     */
-    public Enumeration<String> enumerateAttributeNames() {
-        Vector<String> result = new Vector<String>();
-        Enumeration<XMLAttribute> en = this.attributes.elements();
-        while (en.hasMoreElements()) {
-            XMLAttribute attr = (XMLAttribute) en.nextElement();
-            result.addElement(attr.getFullName());
-        }
-        return result.elements();
-    }
+//    /**
+//     * Returns an enumeration of all attribute names.
+//     *
+//     * @return the non-null enumeration.
+//     */
+//    public Enumeration<String> enumerateAttributeNames() {
+//        Vector<String> result = new Vector<String>();
+//        Enumeration<XMLAttribute> en = this.attributes.elements();
+//        while (en.hasMoreElements()) {
+//            XMLAttribute attr = (XMLAttribute) en.nextElement();
+//            result.addElement(attr.getFullName());
+//        }
+//        return result.elements();
+//    }
 
 
     /**
@@ -1230,57 +1324,57 @@ public class XMLElement implements Serializable {
     }
 
 
-    /**
-     * Returns whether an attribute exists.
-     *
-     * @return true if the attribute exists.
-     */
-    public boolean hasAttribute(String name,
-                                String namespace) {
-        return this.findAttribute(name, namespace) != null;
-    }
+//    /**
+//     * Returns whether an attribute exists.
+//     *
+//     * @return true if the attribute exists.
+//     */
+//    public boolean hasAttribute(String name,
+//                                String namespace) {
+//        return this.findAttribute(name, namespace) != null;
+//    }
 
 
-    /**
-     * Returns all attributes as a Properties object.
-     *
-     * @return the non-null set.
-     */
-    public Properties getAttributes() {
-        Properties result = new Properties();
-        Enumeration<XMLAttribute> en = this.attributes.elements();
-        while (en.hasMoreElements()) {
-            XMLAttribute attr = (XMLAttribute) en.nextElement();
-            result.put(attr.getFullName(), attr.getValue());
-        }
-        return result;
-    }
+//    /**
+//     * Returns all attributes as a Properties object.
+//     *
+//     * @return the non-null set.
+//     */
+//    public Properties getAttributes() {
+//        Properties result = new Properties();
+//        Enumeration<XMLAttribute> en = this.attributes.elements();
+//        while (en.hasMoreElements()) {
+//            XMLAttribute attr = (XMLAttribute) en.nextElement();
+//            result.put(attr.getFullName(), attr.getValue());
+//        }
+//        return result;
+//    }
 
 
-    /**
-     * Returns all attributes in a specific namespace as a Properties object.
-     *
-     * @param namespace the namespace URI of the attributes, which may be null.
-     *
-     * @return the non-null set.
-     */
-    public Properties getAttributesInNamespace(String namespace) {
-        Properties result = new Properties();
-        Enumeration<XMLAttribute> en = this.attributes.elements();
-        while (en.hasMoreElements()) {
-            XMLAttribute attr = (XMLAttribute) en.nextElement();
-            if (namespace == null) {
-                if (attr.getNamespace() == null) {
-                    result.put(attr.getName(), attr.getValue());
-                }
-            } else {
-                if (namespace.equals(attr.getNamespace())) {
-                    result.put(attr.getName(), attr.getValue());
-                }
-            }
-        }
-        return result;
-    }
+//    /**
+//     * Returns all attributes in a specific namespace as a Properties object.
+//     *
+//     * @param namespace the namespace URI of the attributes, which may be null.
+//     *
+//     * @return the non-null set.
+//     */
+//    public Properties getAttributesInNamespace(String namespace) {
+//        Properties result = new Properties();
+//        Enumeration<XMLAttribute> en = this.attributes.elements();
+//        while (en.hasMoreElements()) {
+//            XMLAttribute attr = (XMLAttribute) en.nextElement();
+//            if (namespace == null) {
+//                if (attr.getNamespace() == null) {
+//                    result.put(attr.getName(), attr.getValue());
+//                }
+//            } else {
+//                if (namespace.equals(attr.getNamespace())) {
+//                    result.put(attr.getName(), attr.getValue());
+//                }
+//            }
+//        }
+//        return result;
+//    }
 
 
     /**
@@ -1303,8 +1397,8 @@ public class XMLElement implements Serializable {
      * @see #NO_LINE
      * @see #getSystemID
      */
-    public int getLineNr() {
-        return this.lineNr;
+    public int getLine() {
+        return this.line;
     }
 
 
@@ -1341,58 +1435,114 @@ public class XMLElement implements Serializable {
      *
      * @param rawElement the element to compare to
      */
-    public boolean equals(Object rawElement) {
-        try {
-            return this.equalsXMLElement((XMLElement) rawElement);
-        } catch (ClassCastException e) {
-            return false;
-        }
-    }
+    public boolean equals(Object object) {
+      if (!(object instanceof XMLElement)) {
+        return false;
+      }
+      XMLElement rawElement = (XMLElement) object;
+      
+      if (! this.name.equals(rawElement.getLocalName())) {
+          return false;
+      }
+      if (this.attributes.size() != rawElement.getAttributeCount()) {
+          return false;
+      }
+      Enumeration<XMLAttribute> en = this.attributes.elements();
+      while (en.hasMoreElements()) {
+          XMLAttribute attr = (XMLAttribute) en.nextElement();
+//          if (! rawElement.hasAttribute(attr.getName(), attr.getNamespace())) {
+          if (!rawElement.hasAttribute(attr.getFullName())) {
+              return false;
+          }
+//          String value = rawElement.getAttribute(attr.getName(),
+//                                          attr.getNamespace(),
+//                                          null);
+          String value = rawElement.getAttribute(attr.getFullName(), null);
+          if (! attr.getValue().equals(value)) {
+              return false;
+          }
+//          String type = 
+//            rawElement.getAttributeType(attr.getName(), attr.getNamespace());
+//          if (!attr.getType().equals(type)) {
+//              return false;
+//          }
+      }
+      if (this.children.size() != rawElement.getChildCount()) {
+          return false;
+      }
+      for (int i = 0; i < this.children.size(); i++) {
+          XMLElement child1 = this.getChildAtIndex(i);
+          XMLElement child2 = rawElement.getChildAtIndex(i);
+
+          if (!child1.equals(child2)) {
+              return false;
+          }
+      }
+      return true;
+  }
+    
+//    /**
+//     * Returns true if the element equals another element.
+//     *
+//     * @param rawElement the element to compare to
+//     */
+//    public boolean equals(Object rawElement) {
+//      if (!(rawElement instanceof XMLElement)) {
+//        return false;
+//      }
+//        try {
+//            return this.equalsXMLElement((XMLElement) rawElement);
+//        } catch (ClassCastException e) {
+//            return false;
+//        }
+//    }
 
 
-    /**
-     * Returns true if the element equals another element.
-     *
-     * @param rawElement the element to compare to
-     */
-    public boolean equalsXMLElement(XMLElement rawElement) {
-        if (! this.name.equals(rawElement.getLocalName())) {
-            return false;
-        }
-        if (this.attributes.size() != rawElement.getAttributeCount()) {
-            return false;
-        }
-        Enumeration<XMLAttribute> en = this.attributes.elements();
-        while (en.hasMoreElements()) {
-            XMLAttribute attr = (XMLAttribute) en.nextElement();
-            if (! rawElement.hasAttribute(attr.getName(), attr.getNamespace())) {
-                return false;
-            }
-            String value = rawElement.getAttribute(attr.getName(),
-                                            attr.getNamespace(),
-                                            null);
-            if (! attr.getValue().equals(value)) {
-                return false;
-            }
-            String type = rawElement.getAttributeType(attr.getName(),
-                                               attr.getNamespace());
-            if (! attr.getType().equals(type)) {
-                return false;
-            }
-        }
-        if (this.children.size() != rawElement.getChildCount()) {
-            return false;
-        }
-        for (int i = 0; i < this.children.size(); i++) {
-            XMLElement child1 = this.getChildAtIndex(i);
-            XMLElement child2 = rawElement.getChildAtIndex(i);
-
-            if (! child1.equalsXMLElement(child2)) {
-                return false;
-            }
-        }
-        return true;
-    }
+//    /**
+//     * Returns true if the element equals another element.
+//     *
+//     * @param rawElement the element to compare to
+//     */
+//    public boolean equalsXMLElement(XMLElement rawElement) {
+//        if (! this.name.equals(rawElement.getLocalName())) {
+//            return false;
+//        }
+//        if (this.attributes.size() != rawElement.getAttributeCount()) {
+//            return false;
+//        }
+//        Enumeration<XMLAttribute> en = this.attributes.elements();
+//        while (en.hasMoreElements()) {
+//            XMLAttribute attr = (XMLAttribute) en.nextElement();
+////            if (! rawElement.hasAttribute(attr.getName(), attr.getNamespace())) {
+//            if (!rawElement.hasAttribute(attr.getFullName())) {
+//                return false;
+//            }
+////            String value = rawElement.getAttribute(attr.getName(),
+////                                            attr.getNamespace(),
+////                                            null);
+//            String value = rawElement.getAttribute(attr.getFullName(), null);
+//            if (! attr.getValue().equals(value)) {
+//                return false;
+//            }
+////            String type = 
+////              rawElement.getAttributeType(attr.getName(), attr.getNamespace());
+////            if (!attr.getType().equals(type)) {
+////                return false;
+////            }
+//        }
+//        if (this.children.size() != rawElement.getChildCount()) {
+//            return false;
+//        }
+//        for (int i = 0; i < this.children.size(); i++) {
+//            XMLElement child1 = this.getChildAtIndex(i);
+//            XMLElement child2 = rawElement.getChildAtIndex(i);
+//
+//            if (! child1.equalsXMLElement(child2)) {
+//                return false;
+//            }
+//        }
+//        return true;
+//    }
 
 
     public String toString() {
@@ -1405,11 +1555,7 @@ public class XMLElement implements Serializable {
         OutputStreamWriter osw = new OutputStreamWriter(baos);
         XMLWriter writer = new XMLWriter(osw);
         try {
-          if (pretty) {
-            writer.write(this, true, 2, true);
-          } else {
-            writer.write(this, false, 0, true);
-          }
+          writer.write(this, pretty);
         } catch (IOException e) {
             e.printStackTrace();
         }

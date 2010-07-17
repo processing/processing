@@ -3,8 +3,15 @@
 
 LIBRARIES / XML
 
-_ add getBoolean() methods?
+X add getBoolean() methods?
 _   http://code.google.com/p/processing/issues/detail?id=304
+X removing namespace versions of the getXxxx() methods
+X   these were never documented, and cause more trouble than they're worth
+X changing getIntAttribute() et al to getInt()
+_   need to make the reference change for the next release
+X add listChildren() method
+_   add to reference
+_ adding write() method?
 _ handle charset decoding in xml element parser?
 _   same with the other methods like loadStrings()
 _   could also be a way to handle gzip too?
@@ -13,11 +20,14 @@ _ need to handle how save() works inside xml lib
 _ need to handle <!ENTITY tags for svg documents
 _ vectors shouldn't be exposed, need to expose attr lists as arrays
 _   or also add a method for getting the vectors?
-2 _ XML attributes named "xmlns" always return NULL
-2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1196
+_ XML attributes named "xmlns" always return NULL
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1196
+_   http://code.google.com/p/processing/issues/detail?id=166
 _ save xml elements back out again
 _   http://dev.processing.org/bugs/show_bug.cgi?id=963
+_   http://code.google.com/p/processing/issues/detail?id=126
 _   or make the call that it's read-only, and remove the saving code
+_ when re-saving and ods file, not including all the name spaces at the top
 
 
 _ possible addition for 'implementation' variable
