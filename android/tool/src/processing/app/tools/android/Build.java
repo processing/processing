@@ -31,10 +31,13 @@ class Build {
 
   static final String sdkVersion = "7";
 
-  String sketchSize;
-  String sketchWidth = "screenWidth"; 
-  String sketchHeight = "screenHeight";
-  String sketchRenderer = "A2D";
+  String sizeStatement;
+  String sketchWidth; 
+  String sketchHeight;
+  String sketchRenderer;
+//  String sketchWidth = "screenWidth"; 
+//  String sketchHeight = "screenHeight";
+//  String sketchRenderer = "A2D";
   
 
   public Build(final Editor editor, final AndroidSDK sdk) {
@@ -44,42 +47,58 @@ class Build {
 
 
   // TODO this needs to be a generic function inside Sketch or elsewhere
+
   protected boolean calcSketchSize() {
     // This matches against any uses of the size() function, whether numbers
     // or variables or whatever. This way, no warning is shown if size() isn't
     // actually used in the applet, which is the case especially for anyone
     // who is cutting/pasting from the reference.
-    final String sizeRegex =
-      "(?:^|\\s|;)size\\s*\\(\\s*(\\S+)\\s*,\\s*(\\d+),?\\s*([^\\)]*)\\s*\\)\\s*\\;";
-//      "(?:^|\\s|;)size\\s*\\(\\s*(\\S+)\\s*,\\s*(\\d+),?\\s*([^\\)]*)\\s*\\)";
-    // This is identical to the version in Sketch.java, but adds the semicolon
 
     Sketch sketch = editor.getSketch();
     String scrubbed = Sketch.scrubComments(sketch.getCode(0).getProgram());
-    String[] matches = PApplet.match(scrubbed, sizeRegex);
+    String[] matches = PApplet.match(scrubbed, Sketch.SIZE_REGEX);
+//    PApplet.println("matches: ");
+//    PApplet.println(matches);
 
     if (matches != null) {
-      try {
-        // these are ignored, just checking for the exception
-        Integer.parseInt(matches[1]);
-        Integer.parseInt(matches[2]);
-      } catch (final NumberFormatException e) {
-        // found a reference to size, but it didn't
-        // seem to contain numbers
+      boolean badSize = false;
+      
+      if (!matches[1].equals("screenWidth") &&
+          !matches[1].equals("screenHeight") &&
+          PApplet.parseInt(matches[1], -1) == -1) {
+        badSize = true;
+      }
+      if (!matches[2].equals("screenWidth") &&
+          !matches[2].equals("screenHeight") &&
+          PApplet.parseInt(matches[2], -1) == -1) {
+        badSize = true;
+      }
+
+      if (badSize) {
+        // found a reference to size, but it didn't seem to contain numbers
         final String message = 
-          "The size of this applet could not automatically be\n" +
-          "determined from your code.\n" +
-          "Use only numeric values (not variables) for the size()\n" +
-          "command. See the size() reference for an explanation.";
+          "The size of this applet could not automatically be determined\n" +
+          "from your code. Use only numeric values (not variables) for the\n" +
+          "size() command. See the size() reference for more information.";
         Base.showWarning("Could not find sketch size", message, null);
+        System.out.println("More about the size() command on Android can be");
+        System.out.println("found here: http://wiki.processing.org/w/Android");
         return false;
       }
-      sketchSize = matches[0];
+
+//      PApplet.println(matches);
+      sizeStatement = matches[0];  // the full method to be removed from the source
       sketchWidth = matches[1];
       sketchHeight = matches[2];
-      if (matches[3].trim().length() != 0) {
-        sketchRenderer = matches[3];
+      sketchRenderer = matches[3].trim();
+      if (sketchRenderer.length() == 0) {
+        sketchRenderer = null;
       }
+    } else {
+      sizeStatement = null;
+      sketchWidth = null;
+      sketchHeight = null;
+      sketchRenderer = null;
     }
     return true;
   }
@@ -348,10 +367,10 @@ class Build {
 
     public PreprocessResult write(Writer out, String program, String codeFolderPackages[])
     throws RunnerException, RecognitionException, TokenStreamException {
-      if (sketchSize != null) {
-        int start = program.indexOf(sketchSize);
+      if (sizeStatement != null) {
+        int start = program.indexOf(sizeStatement);
         program = program.substring(0, start) + 
-          program.substring(start + sketchSize.length());
+          program.substring(start + sizeStatement.length());
       }
       return super.write(out, program, codeFolderPackages);
     }
@@ -375,9 +394,15 @@ class Build {
 
       if ((mode == Mode.STATIC) || (mode == Mode.ACTIVE)) {
         out.println();
-        out.println(indent + "public int sketchWidth() { return " + sketchWidth + "; }");
-        out.println(indent + "public int sketchHeight() { return " + sketchHeight + "; }");
-        out.println(indent + "public String sketchRenderer() { return " + sketchRenderer + "; }");
+        if (sketchWidth != null) {
+          out.println(indent + "public int sketchWidth() { return " + sketchWidth + "; }");
+        }
+        if (sketchHeight != null) {
+          out.println(indent + "public int sketchHeight() { return " + sketchHeight + "; }");
+        }
+        if (sketchRenderer != null) {
+          out.println(indent + "public String sketchRenderer() { return " + sketchRenderer + "; }");
+        }
 
         // close off the class definition
         out.println("}");

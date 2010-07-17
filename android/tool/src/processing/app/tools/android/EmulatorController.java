@@ -3,6 +3,7 @@ package processing.app.tools.android;
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 import processing.app.Preferences;
+import processing.app.exec.LineProcessor;
 import processing.app.exec.ProcessRegistry;
 import processing.app.exec.StreamPump;
 import processing.core.PApplet;
@@ -61,15 +62,41 @@ class EmulatorController {
     // beginning execution of the emulator, so we are now officially "Launched"
     setState(State.WAITING_FOR_BOOT);
 
-    // TODO need to suppress this warning on OS X
+    final String title = PApplet.join(cmd, ' ');
+    
+    // when this shows up on stdout:
+    // emulator: ERROR: the cache image is used by another emulator. aborting
+    // need to reset adb and try again, since it's running but adb is hosed
+    StreamPump outie = new StreamPump(p.getInputStream(), "out: " + title);
+    outie.addTarget(new LineProcessor() {
+      public void processLine(String line) {
+        if (line.contains("the cache image is used by another emulator")) {
+          
+        } else {
+//          System.out.println(line);
+          System.out.println(title + ": " + line);
+        }
+      }      
+    });    
+    //new StreamPump(p.getInputStream(), "out: " + title).addTarget(System.out).start();
+    
+    // suppress this warning on OS X, otherwise we're gonna get a lot of reports:
     // 2010-04-13 15:26:56.380 emulator[91699:903] Warning once: This 
     // application, or a library it uses, is using NSQuickDrawView, which has 
     // been deprecated. Apps should cease use of QuickDraw and move to Quartz.
-    final String title = PApplet.join(cmd, ' ');
-    new StreamPump(p.getInputStream(), "out: " + title).addTarget(System.out)
-        .start();
-    new StreamPump(p.getErrorStream(), "err: " + title).addTarget(System.err)
-        .start();
+    StreamPump errie = new StreamPump(p.getErrorStream(), "err: " + title);
+    errie.addTarget(new LineProcessor() {
+      public void processLine(String line) {
+        if (line.contains("This application, or a library it uses, is using NSQuickDrawView")) {
+          // i don't really care
+        } else {
+//          System.err.println(line);
+          System.err.println(title + ": " + line);
+        }
+      }      
+    });    
+    //new StreamPump(p.getErrorStream(), "err: " + title).addTarget(System.err).start();
+
     final CountDownLatch latch = new CountDownLatch(1);
     new Thread(new Runnable() {
       public void run() {
@@ -78,7 +105,7 @@ class EmulatorController {
           while (state == State.WAITING_FOR_BOOT) {
             System.out.println("sleeping for 2 seconds " + new java.util.Date().toString());
             Thread.sleep(2000);
-            System.out.println("done sleeping");
+//            System.out.println("done sleeping");
             for (final String device : AndroidEnvironment.listDevices()) {
               if (device.contains("emulator")) {
                 //                System.err.println("EmulatorController: Emulator booted.");

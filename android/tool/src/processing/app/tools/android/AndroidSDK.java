@@ -197,7 +197,8 @@ class AndroidSDK {
     } else {
       adbCmd = cmd;
     }
-//    PApplet.println(adbCmd);
+    // printing this here to see if anyone else is killing the adb server
+    PApplet.println(adbCmd);
 //    try {
     ProcessResult adbResult = new ProcessHelper(adbCmd).execute();
     // Ignore messages about starting up an adb daemon
