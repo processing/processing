@@ -27,8 +27,6 @@ _ change skewX/Y to shearX/Y
 
 _ possibly add rounded rect method
 
-_ cover the svg changes in a future release
-
 _ need to wrap mouse/key events for p5
 _   need a version that works with both android and desktop
 _   also need to interleave events properly (as per report)
@@ -616,6 +614,9 @@ _ for PShape, need to be able to set the origin (flash people)
 
 CORE / PShapeSVG
 
+_ cover the svg changes in a future release
+_ load PShape from a string object
+_   http://code.google.com/p/processing/issues/detail?id=277
 _ breaking up classes / figure out how to handle fonts subclass
 _ when using get(), reset the bounds for the objects
 _   otherwise it's always relative to the original document
