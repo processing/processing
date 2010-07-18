@@ -680,6 +680,7 @@ public class Editor extends JFrame implements RunnerListener {
       item = createToolMenuItem("processing.app.tools.android.AndroidTool");
       item.setAccelerator(KeyStroke.getKeyStroke('D', modifiers));
       menu.add(item);
+      menu.add(createToolMenuItem("processing.app.tools.android.Permissions"));
       menu.add(createToolMenuItem("processing.app.tools.android.Reset"));
     }
 
