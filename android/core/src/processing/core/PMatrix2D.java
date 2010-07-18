@@ -189,12 +189,12 @@ public class PMatrix2D implements PMatrix {
   }
 
 
-  public void skewX(float angle) {
+  public void shearX(float angle) {
     apply(1, 0, 1,  tan(angle), 0, 0);
   }
 
 
-  public void skewY(float angle) {
+  public void shearY(float angle) {
     apply(1, 0, 1,  0, tan(angle), 0);
   }
 
@@ -423,7 +423,7 @@ public class PMatrix2D implements PMatrix {
 
   // TODO make this more efficient, or move into PMatrix2D
   protected boolean isWarped() {
-    // was &&, but changed so skewX and skewY will work
+    // was &&, but changed so shearX and shearY will work
     return ((m00 != 1) || (m01 != 0) || 
             (m10 != 0) || (m11 != 1));
   }

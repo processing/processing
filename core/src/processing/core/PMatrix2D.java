@@ -190,12 +190,12 @@ public class PMatrix2D implements PMatrix {
   }
 
 
-  public void skewX(float angle) {
+  public void shearX(float angle) {
     apply(1, 0, 1,  tan(angle), 0, 0);
   }
 
 
-  public void skewY(float angle) {
+  public void shearY(float angle) {
     apply(1, 0, 1,  0, tan(angle), 0);
   }
 

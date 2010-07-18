@@ -8940,20 +8940,20 @@ public class PApplet extends Applet
 
 
   /**
-   * Skew along X axis
+   * Shear along X axis
    */
-  public void skewX(float angle) {
-    if (recorder != null) recorder.skewX(angle);
-    g.skewX(angle);
+  public void shearX(float angle) {
+    if (recorder != null) recorder.shearX(angle);
+    g.shearX(angle);
   }
 
 
   /**
    * Skew along Y axis
    */
-  public void skewY(float angle) {
-    if (recorder != null) recorder.skewY(angle);
-    g.skewY(angle);
+  public void shearY(float angle) {
+    if (recorder != null) recorder.shearY(angle);
+    g.shearY(angle);
   }
 
 

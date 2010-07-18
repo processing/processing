@@ -3905,18 +3905,18 @@ public class PGraphics extends PImage implements PConstants {
   
   
   /**
-   * Skew along X axis
+   * Shear along X axis
    */
-  public void skewX(float angle) {
-    showMissingWarning("skewX");
+  public void shearX(float angle) {
+    showMissingWarning("shearX");
   }
 
 
   /**
-   * Skew along Y axis
+   * Shear along Y axis
    */
-  public void skewY(float angle) {
-    showMissingWarning("skewY");
+  public void shearY(float angle) {
+    showMissingWarning("shearY");
   }
 
 
