@@ -1,7 +1,6 @@
 package processing.app.tools.android;
 
 import java.io.*;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import org.apache.tools.ant.*;
@@ -18,18 +17,16 @@ import processing.core.PApplet;
 
 
 class Build {
-  static SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMdd.HHmm");
-
-  static String basePackage = "processing.android.test";
+  static final String basePackage = "processing.android.test";
+  static final String sdkVersion = "7";
 
   private final Editor editor;
   private final AndroidSDK sdk;
 
+  Manifest manifest;
   String className;
   File tempBuildFolder;
   File buildFile;
-
-  static final String sdkVersion = "7";
 
   String sizeStatement;
   String sketchWidth; 
@@ -119,8 +116,10 @@ class Build {
 //    Base.openFolder(tempBuildFolder);
 
     try {
+      manifest = new Manifest(editor);
+      
       final File javaFolder = 
-        mkdirs(srcFolder, getPackageName().replace('.', '/'));
+        mkdirs(srcFolder, manifest.getPackageName().replace('.', '/'));
       // File srcFile = new File(actualSrc, className + ".java");
       final String buildPath = javaFolder.getAbsolutePath();
 
@@ -138,8 +137,8 @@ class Build {
       }
       className = sketch.preprocess(buildPath, new Preproc(sketch.getName()));
       if (className != null) {
-        final File androidXML = new File(tempBuildFolder, "AndroidManifest.xml");
-        writeAndroidManifest(androidXML, sketch.getName(), className);
+//        final File androidXML = new File(tempBuildFolder, "AndroidManifest.xml");
+//        writeAndroidManifest(androidXML, sketch.getName(), className);
         writeBuildProps(new File(tempBuildFolder, "build.properties"));
         buildFile = new File(tempBuildFolder, "build.xml");
         writeBuildXML(buildFile, sketch.getName());
@@ -206,8 +205,9 @@ class Build {
     // Create the 'android' build folder, and move any existing version out. 
     File androidFolder = new File(sketch.getFolder(), "android");
     if (androidFolder.exists()) {
-      Date mod = new Date(androidFolder.lastModified());
-      File dest = new File(sketch.getFolder(), "android." + dateFormat.format(mod));
+//      Date mod = new Date(androidFolder.lastModified());
+      String stamp = AndroidTool.getDateStamp(androidFolder.lastModified());
+      File dest = new File(sketch.getFolder(), "android." + stamp);
       boolean result = androidFolder.renameTo(dest);
       if (!result) {
         ProcessHelper mv;
@@ -340,9 +340,9 @@ class Build {
   }
 
   
-  protected String getPackageName() {
-    return basePackage + "." + editor.getSketch().getName().toLowerCase();
-  }
+//  protected String getPackageName() {
+//    return basePackage + "." + editor.getSketch().getName().toLowerCase();
+//  }
 
   
   protected String getClassName() {
@@ -445,6 +445,7 @@ class Build {
   }
 
   
+  /*
   private void writeAndroidManifest(final File file, final String sketchName,
                                     final String className) {
     final PrintWriter writer = PApplet.createWriter(file);
@@ -473,7 +474,8 @@ class Build {
     writer.flush();
     writer.close();
   }
-
+  */
+  
   
   private void writeBuildProps(final File file) {
     final PrintWriter writer = PApplet.createWriter(file);
@@ -493,11 +495,6 @@ class Build {
     writer.println("  <property file=\"default.properties\"/>");
 
     writer.println("  <path id=\"android.antlibs\">");
-    // writer.println("    <pathelement path=\"${sdk-location}/tools/lib/anttasks.jar\" />");
-    // writer.println("    <pathelement path=\"${sdk-location}/tools/lib/sdklib.jar\" />");
-    // writer.println("    <pathelement path=\"${sdk-location}/tools/lib/androidprefs.jar\" />");
-    // writer.println("    <pathelement path=\"${sdk-location}/tools/lib/apkbuilder.jar\" />");
-    // writer.println("    <pathelement path=\"${sdk-location}/tools/lib/jarutils.jar\" />");
     writer.println("    <pathelement path=\"${sdk.dir}/tools/lib/anttasks.jar\" />");
     writer.println("    <pathelement path=\"${sdk.dir}/tools/lib/sdklib.jar\" />");
     writer.println("    <pathelement path=\"${sdk.dir}/tools/lib/androidprefs.jar\" />");
@@ -510,21 +507,6 @@ class Build {
     writer.println("           classpathref=\"android.antlibs\" />");
 
     writer.println("  <setup />");
-
-    // copy the 'compile' target to the main build file, since the error
-    // stream from javac isn't being passed through properly
-    // writer.println("<target name=\"compile\" depends=\"resource-src, aidl\">");
-    // writer.println("  <javac encoding=\"ascii\" target=\"1.5\" debug=\"true\" extdirs=\"\"");
-    // writer.println("         destdir=\"${out-classes}\"");
-    // writer.println("         bootclasspathref=\"android.target.classpath\">");
-    // writer.println("    <src path=\"${source-folder}\" />");
-    // writer.println("    <src path=\"${gen-folder}\" />");
-    // writer.println("    <classpath>");
-    // writer.println("      <fileset dir=\"${external-libs-folder}\" includes=\"*.jar\"/>");
-    // writer.println("      <pathelement path=\"${main-out-classes}\"/>");
-    // writer.println("    </classpath>");
-    // writer.println("  </javac>");
-    // writer.println("</target>");
 
     writer.println("</project>");
     writer.flush();
@@ -666,13 +648,18 @@ class Build {
   }
 
   
-  /**
-   * Place quotes around a string to avoid dreadful syntax mess of escaping
-   * quotes near quoted strings. Mmmm!
-   */
-  private static final String q(final String what) {
-    return "\"" + what + "\"";
+  protected String getPackageName() {
+    return manifest.getPackageName();
   }
+
+
+//  /**
+//   * Place quotes around a string to avoid dreadful syntax mess of escaping
+//   * quotes near quoted strings. Mmmm!
+//   */
+//  private static final String q(final String what) {
+//    return "\"" + what + "\"";
+//  }
 
   
   public void cleanup() {

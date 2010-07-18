@@ -24,6 +24,7 @@ package processing.app.tools.android;
 import java.awt.Frame;
 import java.io.*;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.regex.*;
@@ -125,7 +126,19 @@ public class AndroidTool implements Tool, DeviceListener {
     }
     return true;
   }
+  
+  
+  static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMdd.HHmm");
+  
+  static public String getDateStamp() {
+    return dateFormat.format(new Date());
+  }
 
+  static public String getDateStamp(long stamp) {
+    return dateFormat.format(new Date(stamp));
+  }
+
+  
 //  public Editor getEditor() {
 //    return editor;
 //  }
