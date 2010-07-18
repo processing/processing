@@ -117,6 +117,7 @@ class Build {
 
     try {
       manifest = new Manifest(editor);
+      System.out.println(manifest + " " + manifest.getPackageName());
       
       final File javaFolder = 
         mkdirs(srcFolder, manifest.getPackageName().replace('.', '/'));
@@ -140,6 +141,9 @@ class Build {
 //        final File androidXML = new File(tempBuildFolder, "AndroidManifest.xml");
 //        writeAndroidManifest(androidXML, sketch.getName(), className);
         manifest.setClassName(className);
+        File tempManifest = new File(tempBuildFolder, "AndroidManifest.xml");
+        manifest.save(tempManifest);
+
         writeBuildProps(new File(tempBuildFolder, "build.properties"));
         buildFile = new File(tempBuildFolder, "build.xml");
         writeBuildXML(buildFile, sketch.getName());
