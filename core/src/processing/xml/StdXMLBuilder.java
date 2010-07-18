@@ -283,7 +283,7 @@ public class StdXMLBuilder
 //      if (nsPrefix != null) {
 //         top.setAttribute(fullName, nsURI, value);
 //      } else {
-      top.set(fullName, value);
+      top.setString(fullName, value);
 //      }
    }
 

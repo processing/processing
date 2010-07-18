@@ -684,7 +684,7 @@ public class XMLElement implements Serializable {
     Enumeration<XMLAttribute> en = this.attributes.elements();
     while (en.hasMoreElements()) {
       XMLAttribute attr = (XMLAttribute) en.nextElement();
-      if (attr.getFullName().equals(fullName)) {
+      if (attr.getName().equals(fullName)) {
         return attr;
       }
     }
@@ -724,13 +724,15 @@ public class XMLElement implements Serializable {
    * Returns the number of attributes.
    */
   public int getAttributeCount() {
-    return this.attributes.size();
+    return attributes.size();
   }
 
 
   public String[] listAttributes() {
     String[] outgoing = new String[attributes.size()];
-    attributes.copyInto(outgoing);
+    for (int i = 0; i < attributes.size(); i++) {
+      outgoing[i] = attributes.get(i).getName();
+    }
     return outgoing;
   }
 
@@ -741,7 +743,7 @@ public class XMLElement implements Serializable {
    * @return the value, or null if the attribute does not exist.
    */
   public String getAttribute(String name) {
-    return this.getAttribute(name, null);
+    return getAttribute(name, null);
   }
 
 
@@ -1094,7 +1096,7 @@ public class XMLElement implements Serializable {
    * @param name the non-null full name of the attribute.
    * @param value the non-null value of the attribute.
    */
-  public void set(String name, String value) {
+  public void setString(String name, String value) {
     XMLAttribute attr = this.findAttribute(name);
     if (attr == null) {
       attr = new XMLAttribute(name, name, null, value, "CDATA");
@@ -1102,6 +1104,26 @@ public class XMLElement implements Serializable {
     } else {
       attr.setValue(value);
     }
+  }
+
+
+  public void setBoolean(String name, boolean value) {
+    setString(name, String.valueOf(value));
+  }
+
+
+  public void setInt(String name, int value) {
+    setString(name, String.valueOf(value));
+  }
+
+
+  public void setFloat(String name, float value) {
+    setString(name, String.valueOf(value));
+  }
+
+
+  public void setDouble(String name, double value) {
+    setString(name, String.valueOf(value));
   }
 
 
@@ -1135,7 +1157,7 @@ public class XMLElement implements Serializable {
   public void remove(String name) {
     for (int i = 0; i < this.attributes.size(); i++) {
       XMLAttribute attr = (XMLAttribute) this.attributes.elementAt(i);
-      if (attr.getFullName().equals(name)) {
+      if (attr.getName().equals(name)) {
         this.attributes.removeElementAt(i);
         return;
       }
@@ -1321,13 +1343,13 @@ public class XMLElement implements Serializable {
     while (en.hasMoreElements()) {
       XMLAttribute attr = (XMLAttribute) en.nextElement();
       //          if (! rawElement.hasAttribute(attr.getName(), attr.getNamespace())) {
-      if (!rawElement.hasAttribute(attr.getFullName())) {
+      if (!rawElement.hasAttribute(attr.getName())) {
         return false;
       }
       //          String value = rawElement.getAttribute(attr.getName(),
       //                                          attr.getNamespace(),
       //                                          null);
-      String value = rawElement.getAttribute(attr.getFullName(), null);
+      String value = rawElement.getAttribute(attr.getName(), null);
       if (! attr.getValue().equals(value)) {
         return false;
       }
@@ -1461,6 +1483,7 @@ public class XMLElement implements Serializable {
     XMLWriter xmlw = new XMLWriter(writer);
     try {
       xmlw.write(this, true);
+      writer.flush();
       return true;
 
     } catch (IOException e) {

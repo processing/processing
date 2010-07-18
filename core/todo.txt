@@ -1,5 +1,7 @@
 0190 core
 
+_ setAttribute? setString/Int/Float or just set?
+
 xml fixes
 X add getBoolean() methods?
 X   http://code.google.com/p/processing/issues/detail?id=304
