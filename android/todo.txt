@@ -24,6 +24,9 @@ X   because Paint.ascent() is returning negative values
 X properly handle setting whatever permissions are necessary
 X   added dialog box to set permissions 
 
+X change skewX/Y to shearX/Y
+_   need updated reference for this
+
 P1 _ exceptions with StreamPump and adb devices on osx and linux
 P1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1545
 P1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1527
@@ -38,10 +41,21 @@ P3 _   example sketch added to bug report
 P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1472
 P3 _   http://code.google.com/p/processing/issues/detail?id=232
 
+_ add method to set the icon (and package name?)
+o   http://dev.processing.org/bugs/show_bug.cgi?id=1429
+_   http://code.google.com/p/processing/issues/detail?id=221
+_   http://developer.android.com/guide/publishing/preparing.html
+
+_ add information to wiki about preparing apps for release
+_   http://developer.android.com/guide/publishing/preparing.html
+
 _ additional manifest gui necessary:
 _   icons are apparently important
+_   android:icon and android:label in <application>
+_   http://developer.android.com/guide/practices/ui_guidelines/icon_design.html
 _   setting the default package
 _   some sort of warning re: messing with AndroidManifest.xml
+_   Remove the android:debuggable="true" attribute from <application>
 
 _ also for the wiki:
 _   add information about permissions, since loadStrings() will break
@@ -256,9 +270,6 @@ P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1439
 P4 _ don't require android tools to be installed already
 P4 _   or implement automatic download/install of android tools
 P4 _   http://dev.processing.org/bugs/show_bug.cgi?id=1383
-P4 _ add method to set the icon (and package name?)
-P4 _   http://dev.processing.org/bugs/show_bug.cgi?id=1429
-P4 _   http://developer.android.com/guide/publishing/preparing.html
 
 P5 _ remove the need for a "Reset Android" menu option
 P5 _   might need to just put this in the menu for times when things go weird

@@ -1,4 +1,6 @@
 0190 core
+X change skewX/Y to shearX/Y
+_   need reference update for this
 
 _ setAttribute? setString/Int/Float or just set?
 
@@ -27,8 +29,6 @@ X need to handle how save() works inside xml lib
 
 _ possible addition for 'implementation' variable
 _   http://code.google.com/p/processing/issues/detail?id=281
-
-_ change skewX/Y to shearX/Y
 
 _ possibly add rounded rect method
 
