@@ -7361,13 +7361,13 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
-  public void skewX(float angle) {
-    g.skewX(angle);
+  public void shearX(float angle) {
+    g.shearX(angle);
   }
 
 
-  public void skewY(float angle) {
-    g.skewY(angle);
+  public void shearY(float angle) {
+    g.shearY(angle);
   }
 
 

@@ -2790,12 +2790,12 @@ public class PGraphicsAndroid3D extends PGraphics {
     modelviewUpdated = false;
   }
 
-  public void skewX(float angle) {
+  public void shearX(float angle) {
     float t = (float) Math.tan(angle);
     applyMatrix(1, t, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
   }
 
-  public void skewY(float angle) {
+  public void shearY(float angle) {
     float t = (float) Math.tan(angle);
     applyMatrix(1, 0, 0, 0, t, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
   }

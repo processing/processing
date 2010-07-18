@@ -1252,12 +1252,12 @@ public class PGraphicsAndroid2D extends PGraphics {
   }
   
   
-  public void skewX(float angle) {
+  public void shearX(float angle) {
     canvas.skew((float) Math.tan(angle), 0);
   }
 
 
-  public void skewY(float angle) {
+  public void shearY(float angle) {
     canvas.skew(0, (float) Math.tan(angle));
   }
 
