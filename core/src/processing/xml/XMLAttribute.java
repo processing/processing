@@ -43,13 +43,13 @@ class XMLAttribute
    /**
     * The full name of the attribute.
     */
-   private String fullName;
+   private String name;
 
 
    /**
     * The short name of the attribute.
     */
-   private String name;
+   private String localName;
 
 
    /**
@@ -85,8 +85,8 @@ class XMLAttribute
                 String value,
                 String type)
    {
-      this.fullName = fullName;
-      this.name = name;
+      this.name = fullName;
+      this.localName = name;
       this.namespace = namespace;
       this.value = value;
       this.type = type;
@@ -96,18 +96,18 @@ class XMLAttribute
    /**
     * Returns the full name of the attribute.
     */
-   String getFullName()
+   String getName()
    {
-      return this.fullName;
+      return this.name;
    }
 
 
    /**
     * Returns the short name of the attribute.
     */
-   String getName()
+   String getLocalName()
    {
-      return this.name;
+      return this.localName;
    }
 
 
