@@ -23,7 +23,7 @@ public class Permissions extends JFrame implements Tool {
   static final int BORDER_HORIZ = 5;
   static final int BORDER_VERT = 3;
 
-  JScrollPane permissionsScroller;
+  JScrollPane permissionScroller;
   JList permissionList;
   JLabel descriptionLabel;
 //  JTextArea descriptionLabel;
@@ -84,7 +84,8 @@ public class Permissions extends JFrame implements Tool {
 //    int h = permissionList.getFixedCellHeight();
 //    permissionList.setFixedCellHeight(h + 8);
     permissionList.setFixedCellHeight(20);
-    permissionList.setBorder(new EmptyBorder(BORDER_VERT, BORDER_HORIZ, BORDER_VERT, BORDER_HORIZ));
+    permissionList.setBorder(new EmptyBorder(BORDER_VERT, BORDER_HORIZ, 
+                                             BORDER_VERT, BORDER_HORIZ));
 
     DefaultListModel model = new DefaultListModel();
     permissionList.setModel(model);
@@ -92,7 +93,7 @@ public class Permissions extends JFrame implements Tool {
       model.addElement(new JCheckBox(item));
     }
 
-    permissionsScroller = 
+    permissionScroller = 
       new JScrollPane(permissionList, 
                       ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
                       ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -113,13 +114,14 @@ public class Permissions extends JFrame implements Tool {
     });
 
     Container outer = getContentPane();
-    outer.setLayout(new BorderLayout());
+//    outer.setLayout(new BorderLayout());
 
-    JPanel pain = new JPanel();
+//    JPanel pain = new JPanel();
+    Box pain = Box.createVerticalBox();
     pain.setBorder(new EmptyBorder(13, 13, 13, 13));
-    outer.add(pain, BorderLayout.CENTER);
-
-    pain.setLayout(new BoxLayout(pain, BoxLayout.Y_AXIS));
+//    outer.add(pain, BorderLayout.CENTER);
+    outer.add(pain);
+//    pain.setLayout(new BoxLayout(pain, BoxLayout.Y_AXIS));
 
     String labelText =
       "<html>" +
@@ -139,17 +141,26 @@ public class Permissions extends JFrame implements Tool {
 //    JTextArea textarea = new JTextArea(labelText);
 //    JTextArea textarea = new JTextArea(5, 40);
 //    textarea.setText(labelText);
-    JLabel textarea = new JLabel(labelText) {
-      public Dimension getPreferredSize() {
-        return new Dimension(400, 100);
+    JLabel textarea = new JLabel(labelText);
+//    JLabel textarea = new JLabel(labelText) {
+//      public Dimension getPreferredSize() {
+//        return new Dimension(400, 100);
+//      }
+//      public Dimension getMinimumSize() {
+//        return getPreferredSize();
+//      }
+//      public Dimension getMaximumSize() {
+//        return getPreferredSize();
+//      }
+//    };
+    textarea.setPreferredSize(new Dimension(400, 100));
+    textarea.addMouseListener(new MouseAdapter() {
+      public void mouseClicked(MouseEvent e) {
+        Base.openURL(GUIDE_URL);
       }
-      public Dimension getMinimumSize() {
-        return getPreferredSize();
-      }
-      public Dimension getMaximumSize() {
-        return getPreferredSize();
-      }
-    };
+    });
+    //textarea.setHorizontalAlignment(SwingConstants.LEFT);
+    textarea.setAlignmentX(LEFT_ALIGNMENT);
 
 //    textarea.setBorder(new EmptyBorder(13, 8, 13, 8));
     
@@ -164,26 +175,46 @@ public class Permissions extends JFrame implements Tool {
 
 //    permissionList.setEnabled(false);
 
-    pain.add(permissionsScroller);
+    permissionScroller.setAlignmentX(LEFT_ALIGNMENT);
+    pain.add(permissionScroller);
+//    pain.add(permissionList);
     pain.add(Box.createVerticalStrut(8));
     
 //    descriptionLabel = new JTextArea(4, 10);
-    descriptionLabel = new JLabel() {
-      public Dimension getPreferredSize() {
-        return new Dimension(400, 100);
-      }
-      public Dimension getMinimumSize() {
-        return getPreferredSize();
-      }
-      public Dimension getMaximumSize() {
-        return getPreferredSize();
-      }
-    };
+    descriptionLabel = new JLabel();
+//    descriptionLabel = new JLabel() {
+//      public Dimension getPreferredSize() {
+//        return new Dimension(400, 100);
+//      }
+//      public Dimension getMinimumSize() {
+//        return new Dimension(400, 100);
+//      }
+//      public Dimension getMaximumSize() {
+//        return new Dimension(400, 100);
+//      }
+//    };
+    descriptionLabel.setPreferredSize(new Dimension(400, 50));
     descriptionLabel.setVerticalAlignment(JLabel.TOP);
+    descriptionLabel.setAlignmentX(LEFT_ALIGNMENT);
     pain.add(descriptionLabel);
     pain.add(Box.createVerticalStrut(8));
 
     JPanel buttons = new JPanel();
+//    buttons.setPreferredSize(new Dimension(400, 35));
+//    JPanel buttons = new JPanel() {
+//      public Dimension getPreferredSize() {
+//        return new Dimension(400, 35);
+//      }
+//      public Dimension getMinimumSize() {
+//        return new Dimension(400, 35);
+//      }
+//      public Dimension getMaximumSize() {
+//        return new Dimension(400, 35);
+//      }
+//    };
+
+//    Box buttons = Box.createHorizontalBox();
+    buttons.setAlignmentX(LEFT_ALIGNMENT);
     JButton okButton = new JButton("OK");
     Dimension dim = new Dimension(Preferences.BUTTON_WIDTH, 
                                   okButton.getPreferredSize().height);
@@ -195,7 +226,27 @@ public class Permissions extends JFrame implements Tool {
       }
     });
     okButton.setEnabled(true);
-    buttons.add(okButton);
+    
+    JButton cancelButton = new JButton("Cancel");
+    cancelButton.setPreferredSize(dim);
+    cancelButton.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        setVisible(false);
+      }
+    });
+    cancelButton.setEnabled(true);
+
+    // think different, biznatchios!
+    if (Base.isMacOS()) {
+      buttons.add(cancelButton);
+//      buttons.add(Box.createHorizontalStrut(8));
+      buttons.add(okButton);
+    } else {
+      buttons.add(okButton);
+//      buttons.add(Box.createHorizontalStrut(8));
+      buttons.add(cancelButton);
+    }
+//    buttons.setMaximumSize(new Dimension(300, buttons.getPreferredSize().height));
     pain.add(buttons);
 
     JRootPane root = getRootPane();
