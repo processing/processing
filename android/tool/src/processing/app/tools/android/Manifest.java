@@ -48,7 +48,7 @@ public class Manifest {
   private Sketch sketch;
   
   // entries we care about from the manifest file
-  private String packageName;
+//  private String packageName;
   
   /** the manifest data read from the file */
   private XMLElement xml;
@@ -57,22 +57,24 @@ public class Manifest {
   public Manifest(Editor editor) {
     this.editor = editor;
     this.sketch = editor.getSketch();
+    load();
   }
   
   
-  private String getDefaultPackageName() {
+  private String defaultPackageName() {
     Sketch sketch = editor.getSketch();
     return Build.basePackage + "." + sketch.getName().toLowerCase();
   }
   
   
   public String getPackageName() {
-    return packageName;
+//    return packageName;
+    return xml.getString("package");
   }
   
   
   public void setPackageName(String packageName) {
-    this.packageName = packageName;
+//    this.packageName = packageName;
     // this is the package attribute in the root <manifest> object
     xml.setString("package", packageName);
     save();
@@ -126,7 +128,7 @@ public class Manifest {
     final PrintWriter writer = PApplet.createWriter(file);
     writer.println("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
     writer.println("<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\" ");
-    writer.println("          package=\"" + getDefaultPackageName() + "\" ");
+    writer.println("          package=\"" + defaultPackageName() + "\" ");
     writer.println("          android:versionCode=\"1\" ");
     writer.println("          android:versionName=\"1.0\">");
     writer.println("  <uses-sdk android:minSdkVersion=\"" + Build.sdkVersion + "\" />");    
@@ -186,11 +188,24 @@ public class Manifest {
   }
   
   
+  /**
+   * Save to the sketch folder, so that it can be copied in later.
+   */
   protected void save() {
+    save(getManifestFile());
+  }
+
+
+  /**
+   * Save to another location (such as the temp build folder).
+   */
+  protected void save(File file) {
 //    Sketch sketch = editor.getSketch();
 //    File manifestFile = new File(sketch.getFolder(), MANIFEST_XML);
-//    File manifestFile 
-    xml.write(PApplet.createWriter(getManifestFile()));
+//    File manifestFile
+    PrintWriter writer = PApplet.createWriter(file);
+    xml.write(writer);
+    writer.close();
   }
   
   

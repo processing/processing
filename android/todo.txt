@@ -21,6 +21,8 @@ o   http://code.google.com/p/processing/issues/detail?id=249
 X text ascent/descent problem, text("blah\nblah") doesn't work properly
 X   reverting to using the PGraphics version rather than P2D
 X   because Paint.ascent() is returning negative values
+X properly handle setting whatever permissions are necessary
+X   added dialog box to set permissions 
 
 P1 _ exceptions with StreamPump and adb devices on osx and linux
 P1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1545
@@ -29,7 +31,6 @@ P1 _ implement certificates (self-signed) for distribution
 P1 _   http://developer.android.com/guide/publishing/app-signing.html
 P1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1430
 P1 _   http://code.google.com/p/processing/issues/detail?id=222
-P1 _ properly handle setting whatever permissions are necessary
 
 P3 _ Errors show up that .java files are duplicates with the Android tools.
 P3 _   problem is with the packages and where the preproc is putting the file
