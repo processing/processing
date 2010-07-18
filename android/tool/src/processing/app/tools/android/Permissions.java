@@ -3,6 +3,7 @@ package processing.app.tools.android;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.*;
 import javax.swing.border.*;
@@ -221,7 +222,8 @@ public class Permissions extends JFrame implements Tool {
     okButton.setPreferredSize(dim);
     okButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        PApplet.println(getSelections());
+        //PApplet.println(getSelections());
+        saveSelections();
         setVisible(false);
       }
     });
@@ -270,6 +272,19 @@ public class Permissions extends JFrame implements Tool {
   }
 
 
+  protected void setSelections(String[] sel) {
+    HashMap<String,Object> map = new HashMap<String, Object>();
+    for (String s : sel) {
+      map.put(s, new Object());
+    }
+    DefaultListModel model = (DefaultListModel) permissionList.getModel();
+    for (int i = 0; i < count; i++) {
+      JCheckBox box = (JCheckBox) model.get(i);
+      box.setSelected(map.containsKey(box.getName()));
+    }
+  }
+
+
   protected String[] getSelections() {
     ArrayList<String> sel = new ArrayList<String>();
     DefaultListModel model = (DefaultListModel) permissionList.getModel();
@@ -280,6 +295,13 @@ public class Permissions extends JFrame implements Tool {
     }
     return sel.toArray(new String[0]);
   }
+  
+  
+  protected void saveSelections() {
+    String[] sel = getSelections();
+    Manifest mf = new Manifest(editor);
+    mf.setPermissions(sel);
+  }
 
 
   public String getMenuTitle() {
@@ -288,12 +310,16 @@ public class Permissions extends JFrame implements Tool {
 
 
   public void init(Editor editor) {
-    this.editor = editor;
+    this.editor = editor;    
   }
 
 
   public void run() {
-    // parse the manifest file here and figure out what permissions are valid
+    // parse the manifest file here and figure out what permissions are set
+    Manifest mf = new Manifest(editor);
+    setSelections(mf.getPermissions());
+    
+    // show the window and get to work
     setVisible(true);
   }
   
