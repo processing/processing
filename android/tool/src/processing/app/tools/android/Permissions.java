@@ -9,11 +9,12 @@ import javax.swing.border.*;
 
 import processing.app.Base;
 import processing.app.Editor;
+import processing.app.tools.Tool;
 //import processing.core.*;
 import processing.core.PApplet;
 
 
-public class Permissions extends JFrame {
+public class Permissions extends JFrame implements Tool {
   static final String GUIDE_URL = 
     "http://developer.android.com/guide/topics/security/security.html#permissions";
 
@@ -155,17 +156,31 @@ public class Permissions extends JFrame {
     
   JScrollPane permissionsScroller;
   JList permissionList;
+  JLabel descriptionLabel;
 
   Editor editor;
 
-
-  public Permissions(Editor editor) {
+  
+  public Permissions() {
+  //public Permissions(Editor editor) {
     super("Android Permissions Selector");    
-    this.editor = editor;
+//    this.editor = editor;
 
 //    XMLElement xml = 
 
     permissionList = new CheckBoxList();
+    permissionList.addMouseListener(new MouseAdapter() {
+      public void mousePressed(MouseEvent e) {
+        if (isEnabled()) {
+          int index = permissionList.locationToIndex(e.getPoint());
+          if (index == -1) {
+            descriptionLabel.setText("");
+          } else {
+            descriptionLabel.setText("<html>" + description[index] + "</html>");
+          }
+        }
+      }
+    });
     DefaultListModel model = new DefaultListModel();
     permissionList.setModel(model);
     for (String item : title) {
@@ -187,24 +202,60 @@ public class Permissions extends JFrame {
     pain.setLayout(new BoxLayout(pain, BoxLayout.Y_AXIS));
 
     String labelText =
-      "<html><body>" +
+      "<html>" +
       "Android applications must specifically ask for permission\n" +
       "to do things like connect to the internet, write a file,\n" +
       "or make phone calls. When installing your application,\n" + 
       "users will be asked whether they want to allow such access.\n" +
       "More about permissions can be found " +
       "<a href=\"" + GUIDE_URL + "\">here</a>.</body></html>";
-    JTextArea textarea = new JTextArea(labelText);
+//      "<html>" +
+//      "Android applications must specifically ask for permission\n" +
+//      "to do things like connect to the internet, write a file,\n" +
+//      "or make phone calls. When installing your application,\n" + 
+//      "users will be asked whether they want to allow such access.\n" +
+//      "More about permissions can be found " +
+//      "<a href=\"" + GUIDE_URL + "\">here</a>.</body></html>";
+//    JTextArea textarea = new JTextArea(labelText);
+//    JTextArea textarea = new JTextArea(5, 40);
+//    textarea.setText(labelText);
+    JLabel textarea = new JLabel(labelText) {
+      public Dimension getPreferredSize() {
+        return new Dimension(400, 200);
+      }
+      public Dimension getMinimumSize() {
+        return getPreferredSize();
+      }
+      public Dimension getMaximumSize() {
+        return getPreferredSize();
+      }
+    };
+
     textarea.setBorder(new EmptyBorder(13, 8, 13, 8));
-    textarea.setBackground(null);
-    textarea.setEditable(false);
-    textarea.setHighlighter(null);
+//    textarea.setBackground(null);
+    textarea.setBackground(Color.RED);
+//    textarea.setEditable(false);
+//    textarea.setHighlighter(null);
     textarea.setFont(new Font("Dialog", Font.PLAIN, 12));
     pain.add(textarea);
 
 //    permissionList.setEnabled(false);
 
     pain.add(permissionsScroller);
+    pain.add(Box.createVerticalStrut(8));
+    
+    descriptionLabel = new JLabel(labelText) {
+      public Dimension getPreferredSize() {
+        return new Dimension(400, 200);
+      }
+      public Dimension getMinimumSize() {
+        return getPreferredSize();
+      }
+      public Dimension getMaximumSize() {
+        return getPreferredSize();
+      }
+    };
+    pain.add(descriptionLabel);
     pain.add(Box.createVerticalStrut(8));
 
     JPanel buttons = new JPanel();
@@ -236,7 +287,7 @@ public class Permissions extends JFrame {
 
     setLocation((screen.width - windowSize.width) / 2,
                 (screen.height - windowSize.height) / 2);
-    setVisible(true);
+//    setVisible(true);
   }
 
 
@@ -250,6 +301,21 @@ public class Permissions extends JFrame {
     }
     return sel.toArray(new String[0]);
   }
+
+
+  public String getMenuTitle() {
+    return "Android Permissions";
+  }
+
+
+  public void init(Editor editor) {
+    this.editor = editor;
+  }
+
+
+  public void run() {
+    setVisible(true);
+  }
 }
 
 
@@ -261,19 +327,29 @@ public class Permissions extends JFrame {
 // original author. [fry 20100216]
 class CheckBoxList extends JList {
   protected static Border noFocusBorder = new EmptyBorder(1, 1, 1, 1);
+  int checkboxWidth;
 
   public CheckBoxList() {
     setCellRenderer(new CellRenderer());
 
+    // get the width of a checkbox so we can figure out if the mouse is inside
+    checkboxWidth = new JCheckBox().getPreferredSize().width;
+    
     addMouseListener(new MouseAdapter() {
       public void mousePressed(MouseEvent e) {
         if (isEnabled()) {
+//          System.out.println("cbw = " + checkboxWidth);
           int index = locationToIndex(e.getPoint());
-
+//          descriptionLabel.setText(description[index]);
           if (index != -1) {
             JCheckBox checkbox = (JCheckBox) getModel().getElementAt(index);
-            checkbox.setSelected(!checkbox.isSelected());
-            repaint();
+            //System.out.println("mouse event in list: " + e);
+//            System.out.println(checkbox.getSize() + " ... " + checkbox);
+//            if (e.getX() < checkbox.getSize().height) {
+            if (e.getX() < checkboxWidth) {
+              checkbox.setSelected(!checkbox.isSelected());
+              repaint();
+            }
           }
         }
       }
