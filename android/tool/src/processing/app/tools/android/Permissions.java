@@ -293,6 +293,7 @@ public class Permissions extends JFrame implements Tool {
 
 
   public void run() {
+    // parse the manifest file here and figure out what permissions are valid
     setVisible(true);
   }
   
