@@ -14,7 +14,7 @@ import processing.app.Editor;
 import processing.app.Preferences;
 import processing.app.tools.Tool;
 //import processing.core.*;
-import processing.core.PApplet;
+//import processing.core.PApplet;
 
 
 public class Permissions extends JFrame implements Tool {
@@ -273,6 +273,8 @@ public class Permissions extends JFrame implements Tool {
 
 
   protected void setSelections(String[] sel) {
+//    processing.core.PApplet.println("permissions are:");
+//    processing.core.PApplet.println(sel);
     HashMap<String,Object> map = new HashMap<String, Object>();
     for (String s : sel) {
       map.put(s, new Object());
@@ -280,7 +282,8 @@ public class Permissions extends JFrame implements Tool {
     DefaultListModel model = (DefaultListModel) permissionList.getModel();
     for (int i = 0; i < count; i++) {
       JCheckBox box = (JCheckBox) model.get(i);
-      box.setSelected(map.containsKey(box.getName()));
+//      System.out.println(map.containsKey(box.getText()) + " " + box.getText());
+      box.setSelected(map.containsKey(box.getText()));
     }
   }
 
