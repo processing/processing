@@ -34,11 +34,15 @@ import processing.xml.XMLElement;
 public class Manifest {
   static final String MANIFEST_XML = "AndroidManifest.xml";
 
-  static final String CRAP_REALLY_SORRY =  
+  static final String WORLD_OF_HURT_COMING =  
     "Errors occurred while reading or writing " + MANIFEST_XML + ",\n" + 
     "which means lots of things are likely to stop working properly.\n" +
     "To prevent losing any data, it's recommended that you use “Save As”\n" + 
     "to save a separate copy of your sketch, and the restart Processing."; 
+  static final String MULTIPLE_ACTIVITIES = 
+    "Processing only supports a single Activity in the AndroidManifest.xml\n" +
+    "file. Only the first activity entry will be updated, and you better \n" + 
+    "hope that's the right one, smart guy.";
 
   private Editor editor;
   private Sketch sketch;
@@ -102,7 +106,22 @@ public class Manifest {
     save();
   }
 
-  
+
+  public void setClassName(String className) {
+    XMLElement[] kids = xml.getChildren("application/activity");
+    if (kids.length != 1) {
+      Base.showWarning("Don't touch that", MULTIPLE_ACTIVITIES, null);
+    }
+    XMLElement activity = kids[0];
+    String currentName = activity.getString("android:name");
+    // only update if there are changes
+    if (currentName == null || !currentName.equals(className)) {
+      activity.setString("android:name", "." + className);
+      save();
+    }
+  }
+
+
   private void writeBlankManifest(final File file) {
     final PrintWriter writer = PApplet.createWriter(file);
     writer.println("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
@@ -161,7 +180,7 @@ public class Manifest {
       }
     }
     if (xml == null) {
-      Base.showWarning("Error handling " + MANIFEST_XML, CRAP_REALLY_SORRY, null);
+      Base.showWarning("Error handling " + MANIFEST_XML, WORLD_OF_HURT_COMING, null);
     }
 //    return xml;
   }

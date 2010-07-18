@@ -139,6 +139,7 @@ class Build {
       if (className != null) {
 //        final File androidXML = new File(tempBuildFolder, "AndroidManifest.xml");
 //        writeAndroidManifest(androidXML, sketch.getName(), className);
+        manifest.setClassName(className);
         writeBuildProps(new File(tempBuildFolder, "build.properties"));
         buildFile = new File(tempBuildFolder, "build.xml");
         writeBuildXML(buildFile, sketch.getName());
