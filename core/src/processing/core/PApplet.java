@@ -8949,7 +8949,7 @@ public class PApplet extends Applet
 
 
   /**
-   * Skew along Y axis
+   * Shear along Y axis
    */
   public void shearY(float angle) {
     if (recorder != null) recorder.shearY(angle);
