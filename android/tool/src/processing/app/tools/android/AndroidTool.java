@@ -204,7 +204,7 @@ public class AndroidTool implements Tool, DeviceListener {
                                        "Building and launching...",
                                        "Creating project...");
     try {
-      if (build.createProject() == null) {
+      if (build.createProject(target) == null) {
         return;
       }
       try {
@@ -264,7 +264,7 @@ public class AndroidTool implements Tool, DeviceListener {
                                        "Building and exporting...",
                                        "Creating project...");
     try {
-      File tempFolder = build.createProject();
+      File tempFolder = build.createProject("release");
       if (tempFolder == null) {
         return;
       }

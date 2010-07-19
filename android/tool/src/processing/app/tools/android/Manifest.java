@@ -66,10 +66,12 @@ public class Manifest {
     return Build.basePackage + "." + sketch.getName().toLowerCase();
   }
   
-  
+
+  // called by other classes who want an actual package name
+  // internally, we'll figure this out ourselves whether it's filled or not
   public String getPackageName() {
-//    return packageName;
-    return xml.getString("package");
+    String pkg = xml.getString("package");
+    return pkg.length() == 0 ? defaultPackageName() : pkg;
   }
   
   
@@ -128,14 +130,21 @@ public class Manifest {
     final PrintWriter writer = PApplet.createWriter(file);
     writer.println("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
     writer.println("<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\" ");
-    writer.println("          package=\"" + defaultPackageName() + "\" ");
+//    writer.println("          package=\"" + defaultPackageName() + "\" ");
+    writer.println("          package=\"\" ");
     writer.println("          android:versionCode=\"1\" ");
     writer.println("          android:versionName=\"1.0\">");
-    writer.println("  <uses-sdk android:minSdkVersion=\"" + Build.sdkVersion + "\" />");    
-    writer.println("  <application android:label=\"@string/app_name\"");
+    // for now including this... we're wiring to a particular SDK version anyway...
+    writer.println("  <uses-sdk android:minSdkVersion=\"" + Build.sdkVersion + "\" />");
+//    writer.println("  <uses-sdk android:minSdkVersion=\"\" />");  // insert sdk version
+//    writer.println("  <application android:label=\"@string/app_name\"");
+    writer.println("  <application android:label=\"\"");  // insert pretty name
+    writer.println("               android:icon=\"@drawable/icon\"");
     writer.println("               android:debuggable=\"true\">");
-    writer.println("    <activity android:name=\".NO_CLASS_SPECIFIED\"");
-    writer.println("              android:label=\"@string/app_name\">");
+//    writer.println("    <activity android:name=\".NO_CLASS_SPECIFIED\"");
+    writer.println("    <activity android:name=\"\"");  // insert class name prefixed w/ dot
+//    writer.println("              android:label=\"@string/app_name\">");  // pretty name
+    writer.println("              android:label=\"\">");
     writer.println("      <intent-filter>");
     writer.println("        <action android:name=\"android.intent.action.MAIN\" />");
     writer.println("        <category android:name=\"android.intent.category.LAUNCHER\" />");
@@ -144,6 +153,38 @@ public class Manifest {
     writer.println("  </application>");
     writer.println("</manifest>");
     writer.flush();
+    writer.close();
+  }
+
+
+  /**
+   * Save a new version of the manifest info to the build location. 
+   * Also fill in any missing attributes that aren't yet set properly.
+   */
+  protected void writeBuild(File file, String className, boolean debug) {
+    // package name, or default
+    String p = xml.getString("package").trim();
+    if (p.length() == 0) {
+      xml.setString("package", defaultPackageName());
+    }
+
+    // app name and label, or the class name
+    XMLElement app = xml.getChild("application");
+    String label = app.getString("android:label");
+    if (label.length() == 0) {
+      app.setString("android:label", className);
+    }
+    app.setString("android:debuggable", debug ? "true" : "false");
+
+    XMLElement activity = app.getChild("activity");
+    activity.setString("android:name", "." + className);  // this has to be right
+    label = activity.getString("android:label");
+    if (label.length() == 0) {
+      activity.setString("android:label", className);
+    }
+
+    PrintWriter writer = PApplet.createWriter(file);
+    xml.write(writer);
     writer.close();
   }
 
@@ -192,23 +233,12 @@ public class Manifest {
    * Save to the sketch folder, so that it can be copied in later.
    */
   protected void save() {
-    save(getManifestFile());
-  }
-
-
-  /**
-   * Save to another location (such as the temp build folder).
-   */
-  protected void save(File file) {
-//    Sketch sketch = editor.getSketch();
-//    File manifestFile = new File(sketch.getFolder(), MANIFEST_XML);
-//    File manifestFile
-    PrintWriter writer = PApplet.createWriter(file);
+    PrintWriter writer = PApplet.createWriter(getManifestFile());
     xml.write(writer);
     writer.close();
   }
-  
-  
+
+
   private File getManifestFile() {
     return new File(sketch.getFolder(), MANIFEST_XML);
   }
