@@ -101,7 +101,7 @@ class Build {
   }
 
   
-  public File createProject() {
+  public File createProject(String target) {
     final Sketch sketch = editor.getSketch();
 
     try {
@@ -142,7 +142,7 @@ class Build {
 //        writeAndroidManifest(androidXML, sketch.getName(), className);
         manifest.setClassName(className);
         File tempManifest = new File(tempBuildFolder, "AndroidManifest.xml");
-        manifest.save(tempManifest);
+        manifest.writeBuild(tempManifest, className, target.equals("debug"));
 
         writeBuildProps(new File(tempBuildFolder, "build.properties"));
         buildFile = new File(tempBuildFolder, "build.xml");
@@ -543,14 +543,74 @@ class Build {
   }
 
   
-  private void writeRes(final File resFolder, final String className)
-      throws RunnerException {
-    final File layoutFolder = mkdirs(resFolder, "layout");
-    final File layoutFile = new File(layoutFolder, "main.xml");
+  static final String ICON_72 = "icon-72.png";
+  static final String ICON_48 = "icon-48.png";
+  static final String ICON_36 = "icon-36.png";
+
+  private void writeRes(File resFolder, 
+                        String className) throws RunnerException {
+    File layoutFolder = mkdirs(resFolder, "layout");
+    File layoutFile = new File(layoutFolder, "main.xml");
     writeResLayoutMain(layoutFile);
-    final File valuesFolder = mkdirs(resFolder, "values");
-    final File stringsFile = new File(valuesFolder, "strings.xml");
-    writeResValuesStrings(stringsFile, className);
+
+    // write the icon files
+    File sketchFolder = editor.getSketch().getFolder();
+    File localIcon36 = new File(sketchFolder, ICON_36);
+    File localIcon48 = new File(sketchFolder, ICON_48);
+    File localIcon72 = new File(sketchFolder, ICON_72);
+    
+//    File drawableFolder = new File(resFolder, "drawable");
+//    drawableFolder.mkdirs()
+    File buildIcon48 = new File(resFolder, "drawable/icon.png");
+    File buildIcon36 = new File(resFolder, "drawable-ldpi/icon.png");
+    File buildIcon72 = new File(resFolder, "drawable-hdpi/icon.png");
+
+    if (!localIcon36.exists() && 
+        !localIcon48.exists() && 
+        !localIcon72.exists()) {
+      // if no icons are in the sketch folder, then copy all the defaults
+      if (new File(resFolder, "drawable-ldpi").mkdirs()) {
+        PApplet.saveStream(buildIcon36, getClass().getResourceAsStream("data/icon-36.png"));
+      } else {
+        System.err.println("Could not create \"drawable-ldpi\" folder.");
+      }
+      if (new File(resFolder, "drawable").mkdirs()) {
+        PApplet.saveStream(buildIcon48, getClass().getResourceAsStream("data/icon-48.png"));
+      } else {
+        System.err.println("Could not create \"drawable\" folder.");
+      }
+      if (new File(resFolder, "drawable-hdpi").mkdirs()) {
+        PApplet.saveStream(buildIcon72, getClass().getResourceAsStream("data/icon-72.png"));
+      } else {
+        System.err.println("Could not create \"drawable-hdpi\" folder.");
+      }
+    } else {
+      // if at least one of the icons already exists, then use that across the board
+      try {
+        if (localIcon36.exists()) {
+          if (new File(resFolder, "drawable-ldpi").mkdirs()) {
+            Base.copyFile(localIcon36, buildIcon36);
+          }
+        }
+        if (localIcon48.exists()) {
+          if (new File(resFolder, "drawable").mkdirs()) {
+            Base.copyFile(localIcon48, buildIcon48);
+          }
+        }
+        if (localIcon72.exists()) {
+          if (new File(resFolder, "drawable-hdpi").mkdirs()) {
+            Base.copyFile(localIcon72, buildIcon72);
+          }
+        }
+      } catch (IOException e) {
+        System.err.println("Problem while copying icons.");
+        e.printStackTrace();
+      }
+    }
+    
+//    final File valuesFolder = mkdirs(resFolder, "values");
+//    final File stringsFile = new File(valuesFolder, "strings.xml");
+//    writeResValuesStrings(stringsFile, className);
   }
 
   
@@ -576,18 +636,20 @@ class Build {
     writer.close();
   }
 
-  
-  /** This recommended to be a string resource so that it can be localized. */
-  private static void writeResValuesStrings(final File file,
-                                            final String className) {
-    final PrintWriter writer = PApplet.createWriter(file);
-    writer.println("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
-    writer.println("<resources>");
-    writer.println("  <string name=\"app_name\">" + className + "</string>");
-    writer.println("</resources>");
-    writer.flush();
-    writer.close();
-  }
+
+  // This recommended to be a string resource so that it can be localized. 
+  // nah.. we're gonna be messing with it in the GUI anyway... 
+  // people can edit themselves if they need to
+//  private static void writeResValuesStrings(final File file,
+//                                            final String className) {
+//    final PrintWriter writer = PApplet.createWriter(file);
+//    writer.println("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+//    writer.println("<resources>");
+//    writer.println("  <string name=\"app_name\">" + className + "</string>");
+//    writer.println("</resources>");
+//    writer.flush();
+//    writer.close();
+//  }
 
   
   private void writeLibraries(final File libsFolder, final File assetsFolder)
