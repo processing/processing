@@ -24,6 +24,7 @@ package processing.app.tools.android;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.PrintWriter;
 
 import processing.app.*;
@@ -161,15 +162,22 @@ public class Manifest {
    * Save a new version of the manifest info to the build location. 
    * Also fill in any missing attributes that aren't yet set properly.
    */
-  protected void writeBuild(File file, String className, boolean debug) {
+  protected void writeBuild(File file, String className, 
+                            boolean debug) throws IOException {
+    // write a copy to the build location
+    save(file);
+    
+    // load the copy from the build location and start messing with it
+    XMLElement mf = new XMLElement(new FileReader(file));
+
     // package name, or default
-    String p = xml.getString("package").trim();
+    String p = mf.getString("package").trim();
     if (p.length() == 0) {
-      xml.setString("package", defaultPackageName());
+      mf.setString("package", defaultPackageName());
     }
 
     // app name and label, or the class name
-    XMLElement app = xml.getChild("application");
+    XMLElement app = mf.getChild("application");
     String label = app.getString("android:label");
     if (label.length() == 0) {
       app.setString("android:label", className);
@@ -184,7 +192,7 @@ public class Manifest {
     }
 
     PrintWriter writer = PApplet.createWriter(file);
-    xml.write(writer);
+    mf.write(writer);
     writer.close();
   }
 
@@ -229,11 +237,16 @@ public class Manifest {
   }
   
   
+  protected void save() {
+    save(getManifestFile());
+  }
+
+  
   /**
    * Save to the sketch folder, so that it can be copied in later.
    */
-  protected void save() {
-    PrintWriter writer = PApplet.createWriter(getManifestFile());
+  protected void save(File file) {
+    PrintWriter writer = PApplet.createWriter(file);
     xml.write(writer);
     writer.close();
   }
