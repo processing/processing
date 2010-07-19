@@ -23,7 +23,9 @@ X   reverting to using the PGraphics version rather than P2D
 X   because Paint.ascent() is returning negative values
 X properly handle setting whatever permissions are necessary
 X   added dialog box to set permissions 
-
+X re: rewriting manifest on each build
+o   http://dev.processing.org/bugs/show_bug.cgi?id=1429
+X   http://code.google.com/p/processing/issues/detail?id=221
 X change skewX/Y to shearX/Y
 _   need updated reference for this
 
@@ -41,13 +43,7 @@ P3 _   example sketch added to bug report
 P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1472
 P3 _   http://code.google.com/p/processing/issues/detail?id=232
 
-_ add method to set the icon (and package name?)
-o   http://dev.processing.org/bugs/show_bug.cgi?id=1429
-_   http://code.google.com/p/processing/issues/detail?id=221
-_   http://developer.android.com/guide/publishing/preparing.html
-
-_ add information to wiki about preparing apps for release
-_   http://developer.android.com/guide/publishing/preparing.html
+_ remove 'import processing.opengl.*' in the preprocessor?
 
 _ additional manifest gui necessary:
 _   icons are apparently important
@@ -56,9 +52,30 @@ _   http://developer.android.com/guide/practices/ui_guidelines/icon_design.html
 _   setting the default package
 _   some sort of warning re: messing with AndroidManifest.xml
 _   Remove the android:debuggable="true" attribute from <application>
+_   http://developer.android.com/guide/publishing/preparing.html
+
+"Medium-density assets go in a res/drawable-mdpi/ directory 
+(or in the default res/drawable/ directory),"
+
+icon.png, icon-hdpi, icon-ldpi, icon-mdpi
+
+android:icon="@drawable/app_notes"
+./res/drawable-hdpi/app_notes.png -> 72x72
+./res/drawable-hdpi-v6/app_notes.png
+./res/drawable-ldpi-v6/app_notes.png -> 36x36
+./res/drawable-mdpi/app_notes.png -> 48x48
+./res/drawable-mdpi-v6/app_notes.png
+
+android:icon="@drawable/app_lunar_lander"
+./res/drawable/app_lunar_lander.png -> 64x64
+
+JetBoy... <application android:icon="@drawable/icon"
+res/drawable/icon.png -> 48x48
 
 _ also for the wiki:
 _   add information about permissions, since loadStrings() will break
+_ add information to wiki about preparing apps for release
+_   http://developer.android.com/guide/publishing/preparing.html
 
 _ don't let the keystore message show up in red
 _   Using keystore: /Users/fry/.android/debug.keystore
@@ -248,6 +265,9 @@ P2 _ android mode is currently per-editor (and clunky)
 P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1379
 P2 _ save state re: whether sketches are android or java mode (or others?)
 P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1380
+
+_ compiler errors on Windows not highlighting line number
+_   http://code.google.com/p/processing/issues/detail?id=253
 
 P3 _ compiler errors not appearing properly on windows
 P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1546

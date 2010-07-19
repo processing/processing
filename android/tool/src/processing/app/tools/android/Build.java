@@ -113,12 +113,12 @@ class Build {
 
     // Create the 'src' folder with the preprocessed code.
     final File srcFolder = new File(tempBuildFolder, "src");
-//    Base.openFolder(tempBuildFolder);
+    Base.openFolder(tempBuildFolder);
 
     try {
       manifest = new Manifest(editor);
-      System.out.println(manifest + " " + manifest.getPackageName());
-      
+//      System.out.println(manifest + " " + manifest.getPackageName());
+
       final File javaFolder = 
         mkdirs(srcFolder, manifest.getPackageName().replace('.', '/'));
       // File srcFile = new File(actualSrc, className + ".java");
@@ -140,7 +140,7 @@ class Build {
       if (className != null) {
 //        final File androidXML = new File(tempBuildFolder, "AndroidManifest.xml");
 //        writeAndroidManifest(androidXML, sketch.getName(), className);
-        manifest.setClassName(className);
+//        manifest.setClassName(className);
         File tempManifest = new File(tempBuildFolder, "AndroidManifest.xml");
         manifest.writeBuild(tempManifest, className, target.equals("debug"));
 

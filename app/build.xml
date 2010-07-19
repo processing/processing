@@ -112,6 +112,9 @@
 	   includeAntRuntime="false" 
 	   classpath="../core/core.jar; ${env.JAVA_HOME}/lib/tools.jar; lib/ant.jar; lib/ant-launcher.jar; lib/antlr.jar; lib/apple.jar; lib/ecj.jar; lib/jna.jar" 
 	   />
+    <copy todir="bin/processing/app/tools/android/data">
+      <fileset dir="../android/tool/src/processing/app/tools/android/data/" />
+    </copy>
   </target>
 
   <target name="build" depends="compile" description="Build PDE">
