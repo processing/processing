@@ -74,4 +74,12 @@
             natureId="org.processing.editor.processingSketchNature">
       </image>
    </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            class="org.processing.wizards.NewSketchWizard"
+            id="org.processing.wizards.NewSketchWizard"
+            name="New Sketch Wizard">
+      </wizard>
+   </extension>
 </plugin>
