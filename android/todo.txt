@@ -29,6 +29,20 @@ X   http://code.google.com/p/processing/issues/detail?id=221
 X change skewX/Y to shearX/Y
 _   need updated reference for this
 
+http://developer.android.com/reference/android/view/KeyEvent.html
+key == KeyEvent.KEYCODE_BACK (why not keyCode?)
+
+included
+KEYCODE_MENU
+KEYCODE_BACK
+KEYCODE_DPAD_CENTER --> DPAD? 
+
+not included
+KEYCODE_VOLUME_DOWN
+KEYCODE_VOLUME_UP
+KEYCODE_CAMERA
+KEYCODE_HOME
+
 P1 _ exceptions with StreamPump and adb devices on osx and linux
 P1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1545
 P1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1527
@@ -43,7 +57,13 @@ P3 _   example sketch added to bug report
 P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1472
 P3 _   http://code.google.com/p/processing/issues/detail?id=232
 
+_ seems to have problems on 64-bit windows 
+_   removing local version of java helped someone fix it
+
 _ remove 'import processing.opengl.*' in the preprocessor?
+
+_ may need to add screen orientation as a built-in function
+_   fairly common to use, and otherwise needs an obscure import
 
 _ additional manifest gui necessary:
 _   icons are apparently important
@@ -332,6 +352,9 @@ android:screenOrientation="landscape"
 _   or programmatically specify:
 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+get the dpi of the screen
+http://developer.android.com/reference/android/util/DisplayMetrics.html
 
 _ show/hide the virtual keyboard
 InputMethodManager imm = 

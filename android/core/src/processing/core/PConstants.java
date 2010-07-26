@@ -444,14 +444,17 @@ public interface PConstants {
   static final int CODED     = 0xffff;
 
   // key will be CODED and keyCode will be this value
-//  static final int UP        = KeyEvent.VK_UP;
-//  static final int DOWN      = KeyEvent.VK_DOWN;
-//  static final int LEFT      = KeyEvent.VK_LEFT;
-//  static final int RIGHT     = KeyEvent.VK_RIGHT;
   static final int UP        = KeyEvent.KEYCODE_DPAD_UP;
   static final int DOWN      = KeyEvent.KEYCODE_DPAD_DOWN;
   static final int LEFT      = KeyEvent.KEYCODE_DPAD_LEFT;
   static final int RIGHT     = KeyEvent.KEYCODE_DPAD_RIGHT;
+
+  // These seem essential for most sketches, so they're included. 
+  // Others can be found in the KeyEvent reference:
+  // http://developer.android.com/reference/android/view/KeyEvent.html
+  static final int BACK = KeyEvent.KEYCODE_BACK;
+  static final int MENU = KeyEvent.KEYCODE_MENU;
+  static final int DPAD = KeyEvent.KEYCODE_DPAD_CENTER;
 
 
   // key will be CODED and keyCode will be this value
