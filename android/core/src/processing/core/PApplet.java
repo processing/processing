@@ -2016,10 +2016,10 @@ public class PApplet extends Activity implements PConstants, Runnable {
     // which is a problem if the space bar or tab key are used.
     key = (char) event.getUnicodeChar();
     // if not mappable to a unicode character, instead mark as coded key
-    if (key == 0) {
+    if (key == 0 || key == 0xFFFF) {
 //      System.out.println("  key is coded");
       key = CODED;
-    } else {
+//    } else {
 //      System.out.println("  key is unicode");
     }
 
@@ -2039,8 +2039,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
     // set key to zero (or something besides the "ESC").
 //    println(event);
     if (action == KeyEvent.ACTION_DOWN) {
-      if (key == KeyEvent.KEYCODE_BACK) {
-//        println("KEYCODE_BACK, calling exit()");
+      if (keyCode == KeyEvent.KEYCODE_BACK) {
+        println("KEYCODE_BACK, calling exit()");
         exit();
       }
     }
@@ -2421,6 +2421,43 @@ public class PApplet extends Activity implements PConstants, Runnable {
       // don't care about applet security exceptions
     }
   }
+
+  
+  
+  //////////////////////////////////////////////////////////////
+  
+
+  public void method(String name) {
+//    final Object o = this;
+//    final Class<?> c = getClass();
+    try {
+      Method method = getClass().getMethod(name, new Class[] {});
+      method.invoke(this, new Object[] { });
+
+    } catch (IllegalArgumentException e) {
+      e.printStackTrace();
+    } catch (IllegalAccessException e) {
+      e.printStackTrace();
+    } catch (InvocationTargetException e) {
+      e.getTargetException().printStackTrace();
+    } catch (NoSuchMethodException nsme) {
+      System.err.println("There is no public " + name + "() method " +
+                         "in the class " + getClass().getName());
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+
+  public void thread(final String name) {
+    Thread later = new Thread() {
+      public void run() {
+        method(name);
+      }
+    };
+    later.start();
+  }
+
 
 
   //////////////////////////////////////////////////////////////

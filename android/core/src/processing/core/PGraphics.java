@@ -2467,7 +2467,6 @@ public class PGraphics extends PImage implements PConstants {
       }
       */
       textSize(which.size);
-      PApplet.println("size should be " + which.size);
 
     } else {
       throw new RuntimeException(ERROR_TEXTFONT_NULL_PFONT);

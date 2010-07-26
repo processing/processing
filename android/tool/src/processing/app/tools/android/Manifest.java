@@ -133,8 +133,15 @@ public class Manifest {
     writer.println("<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\" ");
 //    writer.println("          package=\"" + defaultPackageName() + "\" ");
     writer.println("          package=\"\" ");
+    
+    // Tempting to use 'preferExternal' here, but might annoy some users. 
+    // 'auto' at least enables it to be moved back and forth
+    // http://developer.android.com/guide/appendix/install-location.html
+    writer.println("          android:installLocation=\"auto\" ");
+
     writer.println("          android:versionCode=\"1\" ");
     writer.println("          android:versionName=\"1.0\">");
+
     // for now including this... we're wiring to a particular SDK version anyway...
     writer.println("  <uses-sdk android:minSdkVersion=\"" + Build.sdkVersion + "\" />");
 //    writer.println("  <uses-sdk android:minSdkVersion=\"\" />");  // insert sdk version
