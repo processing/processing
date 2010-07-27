@@ -74,12 +74,17 @@
             natureId="org.processing.editor.processingSketchNature">
       </image>
    </extension>
-   <extension
-         point="org.eclipse.ui.newWizards">
+   <extension point="org.eclipse.ui.newWizards">
       <wizard
+            category="org.processing.wizards"
             class="org.processing.wizards.NewSketchWizard"
             id="org.processing.wizards.NewSketchWizard"
-            name="New Sketch Wizard">
+            name="Processing Sketch"
+            project="true">
       </wizard>
+      <category
+            id="org.processing.wizards"
+            name="Processing">
+      </category>
    </extension>
 </plugin>
