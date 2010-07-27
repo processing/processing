@@ -5,7 +5,6 @@ import java.io.File;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -17,9 +16,10 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+
+import processing.app.Sketch;
 
 
 public class NewSketchWizardPage extends WizardPage {
@@ -162,10 +162,8 @@ public class NewSketchWizardPage extends WizardPage {
 		
 		// ensure the sketch isn't already present in the sketchbook
 		String sketchName = getSketchName();
-		System.out.println(sketchName);
 		for( File child : sketchbookLoc.toFile().listFiles()){
 			if (child.isDirectory() && child.getName().equals(sketchName)){
-				System.out.println(child.getName() + " is a conflict!");
 				setMessage(null);
 				setErrorMessage("A sketch with that name already exists. Please choose another.");
 				return;
@@ -179,14 +177,18 @@ public class NewSketchWizardPage extends WizardPage {
 	}
 
 	/**
-	 * Trims and returns the sketchNameField contents
+	 * Sanitizes and returns the sketchNameField contents
+	 * <p>
+	 * Uses the Processing sanitize method to ensure consistent naming
+	 * rules across editors.
 	 * 
 	 * @return the contents of the sketchNameField as a string or null
 	 */
-	private String getSketchName() {
+	protected String getSketchName() {
 		String text = sketchNameField.getText().trim();
 		if (text.length() == 0)
 			return null;
+		text = Sketch.sanitizeName(text);
 		return text;
 	}
 
@@ -196,7 +198,7 @@ public class NewSketchWizardPage extends WizardPage {
 	 * 
 	 * @return an absolute IPath handle to the contents of the sketchbookPathField or null
 	 */
-	private IPath getSketchbookLoc() {
+	protected IPath getSketchbookLoc() {
 		String text = sketchbookPathField.getText().trim();
 		if (text.length() == 0)
 			return null;
@@ -205,5 +207,5 @@ public class NewSketchWizardPage extends WizardPage {
 			path = ResourcesPlugin.getWorkspace().getRoot().getLocation().append(path);
 		return path;
 	}
-
+	
 }

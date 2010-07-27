@@ -56,5 +56,12 @@ public class ProcessingSketchNature implements IProjectNature {
 		ProcessingSketchAuditor.removeBuilderFromProject(project);
 		ProcessingSketchAuditor.deleteProblemMarkers(project);
 	}
+	
+	public static void addNature(IProject project){
+		// Cannot modify closed projects.
+		if (!project.isOpen())
+			return;
+		
+	}
 
 }
