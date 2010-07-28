@@ -57,9 +57,6 @@
    			<run class="org.processing.builder.ProcessingSketchNature"/>
    		</runtime>
    		<builder id="org.processing.editor.processingSketchBuilder"/>
-     <requires-nature
-           id="org.eclipse.jdt.core.javanature">
-     </requires-nature>
    </extension>
    <extension id="processingSketchBuilder" name="Processing Sketch Builder" point="org.eclipse.core.resources.builders">
       <builder hasNature="true">
