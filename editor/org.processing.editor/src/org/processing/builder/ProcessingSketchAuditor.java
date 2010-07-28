@@ -223,7 +223,7 @@ public class ProcessingSketchAuditor extends IncrementalProjectBuilder {
 		// so we get the list at the beginning of each build and use folderContents
 		// whenever we need to get access to the source files during the build.
 		IResource[] folderContents = proj.members(); //TODO make this location a preference, link to sketchbook
-		
+
 		// 1. concatenate all .pde files to the 'main' pde
 		
 		StringBuffer bigCode = new StringBuffer(); // this will hold the program
@@ -234,7 +234,8 @@ public class ProcessingSketchAuditor extends IncrementalProjectBuilder {
 		
 		for(int i = 0; i < folderContents.length; i++){
 			IResource file = folderContents[i];
-			if(file.getFileExtension() == "pde"){ // filters out only .pde files
+			if(file instanceof IFile && file.getFileExtension().equalsIgnoreCase("pde")){ // filters out only .pde files
+				System.out.println("win");
 				String content = readFile((IFile) file);
 				preprocOffsets[i] = bigCount;
 				bigCode.append(content);
@@ -270,7 +271,7 @@ public class ProcessingSketchAuditor extends IncrementalProjectBuilder {
 			
 		}catch(antlr.RecognitionException re){
 			//TODO define the RecognitionException problem marker 
-			
+						
 			// first assume that it's the main file
 			int errorFile = 0;
 			int errorLine = re.getLine() - 1;
@@ -279,7 +280,7 @@ public class ProcessingSketchAuditor extends IncrementalProjectBuilder {
 			// since they've also been combined into the main pde
 			for(int i = 1; i < folderContents.length; i++){
 				IResource file = folderContents[i];
-				if(file.getFileExtension() == "pde" && (preprocOffsets[i] < errorLine)){ 
+				if(file instanceof IFile && file.getFileExtension().equalsIgnoreCase("pde") && (preprocOffsets[i] < errorLine)){ 
 					errorFile = i;
 				}
 			}
@@ -326,9 +327,9 @@ public class ProcessingSketchAuditor extends IncrementalProjectBuilder {
 		// copy any .java files to the output directory
 		for(int i = 0; i < folderContents.length; i++){
 			IResource file = folderContents[i];
-			if(file.getFileExtension() == "java"){ // copy .java files into the build directory
+			if(file instanceof IFile && file.getFileExtension().equalsIgnoreCase("java")){ // copy .java files into the build directory
 				folderContents[i].copy(outputFolder.getProjectRelativePath(), IResource.DERIVED, monitor);
-			} else if (file.getFileExtension() == "pde"){
+			} else if (file instanceof IFile && file.getFileExtension().equalsIgnoreCase("pde")){
 				// The compiler and runner will need this to have a proper offset
 				preprocOffsets[i] += result.headerOffset;
 			}
