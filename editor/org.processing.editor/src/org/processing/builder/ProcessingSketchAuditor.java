@@ -2,6 +2,7 @@ package org.processing.builder;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -33,6 +34,7 @@ import org.processing.editor.ProcessingLog;
 import processing.app.Preferences;
 import processing.app.preproc.PdePreprocessor;
 import processing.app.preproc.PreprocessResult;
+import processing.app.debug.Compiler;
 
 /**
  * builder for Processing sketches. 
@@ -211,31 +213,52 @@ public class ProcessingSketchAuditor extends IncrementalProjectBuilder {
 	private void fullBuild(IProgressMonitor monitor) throws CoreException {
 		
 		monitor.beginTask("Full Project Build", 4); // no idea how much 'work' to do here
-		IProject proj = getProject(); // get the project
+		IProject proj = getProject();
 
-		if(checkCancel(monitor))
-			return;
-		
-		if(!deleteProblemMarkers(proj))
-			return;
+		if(!proj.isOpen()) { return; } //project has to be open so we can access it
+		if(checkCancel(monitor)) { return; } 
+		if(!deleteProblemMarkers(proj)) { return; }
 		
 		// IResource.members() doesn't return the files in a consistent order
 		// so we get the list at the beginning of each build and use folderContents
 		// whenever we need to get access to the source files during the build.
-		IResource[] folderContents = proj.members(); //TODO make this location a preference, link to sketchbook
+		IResource[] folderContents = proj.members();
 
-		// 1. concatenate all .pde files to the 'main' pde
+		// get handles to the expected folders
+		IFolder codeFolder = proj.getFolder("code");
+		IFolder dataFolder = proj.getFolder("data");		
+		IFolder outputFolder = proj.getFolder("bin");
+		// we know we need the bin, so create it if it doesn't exist
+		if (!outputFolder.exists())
+			outputFolder.create(IResource.NONE, true, null);
+
+		String classPath = ""; //TODO fix this, its usually provided as a variable buildPath
+		String[] codeFolderPackages = null;
+		String libraryPath;
+		// check the contents of the code folder to see if there are files
+		// that need to be added to the imports
+		if (codeFolder.exists()){
+			libraryPath = codeFolder.getLocationURI().toString();
+			// get a list of .jar files in the code folder and its subfolders
+			String codeFolderClassPath = Compiler.contentsToClassPath(codeFolder.getLocation().toFile());
+			// append the jar files to the class path
+			classPath += File.pathSeparator + codeFolderClassPath;
+			// get the list of packages in those jars
+			codeFolderPackages = Compiler.packageListFromClassPath(codeFolderClassPath);
+			for(String s : codeFolderPackages){ System.out.println(s);}
+		} else { libraryPath = ""; }
 		
+		// 1. concatenate all .pde files to the 'main' pde		
 		StringBuffer bigCode = new StringBuffer(); // this will hold the program
-		int bigCount = 0; // how many lines are we talking about here?
+		int bigCount = 0; // line count
 		
 		// without a SketchCode object, this field needs to be tracked independently
 		int[] preprocOffsets = new int[folderContents.length];
 		
+		// look for pde files in the sketches root and append them together
 		for(int i = 0; i < folderContents.length; i++){
 			IResource file = folderContents[i];
 			if(file instanceof IFile && file.getFileExtension().equalsIgnoreCase("pde")){ // filters out only .pde files
-				System.out.println("win");
 				String content = readFile((IFile) file);
 				preprocOffsets[i] = bigCount;
 				bigCode.append(content);
@@ -245,23 +268,17 @@ public class ProcessingSketchAuditor extends IncrementalProjectBuilder {
 		}
 
 		monitor.worked(1);
-		if(checkCancel(monitor))
-			return;
+		if(checkCancel(monitor)) { return; } 
 		
-		spoof_preferences();// fake the preferences object.
-		PdePreprocessor preproc = new PdePreprocessor(proj.getName(), 4); //TODO make tab size a preference?
+		// fake the preferences object and start the preprocessor
+		spoof_preferences();
+		PdePreprocessor preproc = new PdePreprocessor(proj.getName(), 4);
 		
-		//final File java = new File(buildPath, name + ".java");
-		IFolder outputFolder = proj.getFolder("bin"); // just a handle to the resource //TODO make the derived resources folder a preference
-		if (!outputFolder.exists())
-			outputFolder.create(IResource.NONE, true, null);
-		
-		PreprocessResult result = null;
+		final PreprocessResult result;
 		try{
 			IFile outputFile = outputFolder.getFile(proj.getName() + ".java"); 
-				
 			StringWriter outputFileContents = new StringWriter();
-			result = preproc.write(outputFileContents, bigCode.toString());
+			result = preproc.write(outputFileContents, bigCode.toString(), codeFolderPackages);
 			
 			// Ugh. It wants an InputStream
 			ByteArrayInputStream inStream = new ByteArrayInputStream(outputFileContents.toString().getBytes());
@@ -270,7 +287,6 @@ public class ProcessingSketchAuditor extends IncrementalProjectBuilder {
 			outputFile.setDerived(true); // let the platform know this is a generated file
 			
 		}catch(antlr.RecognitionException re){
-			//TODO define the RecognitionException problem marker 
 						
 			// first assume that it's the main file
 			int errorFile = 0;
@@ -287,8 +303,8 @@ public class ProcessingSketchAuditor extends IncrementalProjectBuilder {
 			errorLine -= preprocOffsets[errorFile];
 						
 			//DEBUG
-			System.out.println("error line - error file - offset");
-	      	System.out.println(errorLine + " - " + errorFile + " - " + preprocOffsets[errorFile]);
+			//System.out.println("error line - error file - offset");
+	      	//System.out.println(errorLine + " - " + errorFile + " - " + preprocOffsets[errorFile]);
 			
 			String msg = re.getMessage();		
 			
@@ -321,8 +337,8 @@ public class ProcessingSketchAuditor extends IncrementalProjectBuilder {
 		}
 		
 		monitor.worked(1);
-		if(checkCancel(monitor))
-			return;
+		if(checkCancel(monitor)) { return; } 
+
 		
 		// copy any .java files to the output directory
 		for(int i = 0; i < folderContents.length; i++){
@@ -339,8 +355,7 @@ public class ProcessingSketchAuditor extends IncrementalProjectBuilder {
 		
 		
 		monitor.worked(1);
-		if(checkCancel(monitor))
-			return;
+		if(checkCancel(monitor)) { return; } 
 		
 		//to the java batch compiler!
 		//org.eclipse.jdt.core.compiler.CompilationProgress progress = null;
@@ -439,7 +454,6 @@ public class ProcessingSketchAuditor extends IncrementalProjectBuilder {
 	 * @param isError is this an error
 	 */
 	private void reportProblem( String msg, IFile file, int line_number, boolean isError){
-		System.out.println( (isError ? "ERROR: " : "WARNING: ") + msg);
 		try{
 			IMarker marker = file.createMarker(IMarker.PROBLEM);
 			marker.setAttribute(IMarker.MESSAGE, msg);
