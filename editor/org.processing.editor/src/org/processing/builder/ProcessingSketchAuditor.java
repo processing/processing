@@ -49,7 +49,7 @@ import processing.app.preproc.PreprocessResult;
  */
 public class ProcessingSketchAuditor extends IncrementalProjectBuilder {
 	
-	public static final String BUILDER_ID = ProcessingEditorPlugin.PLUGIN_ID + ".procesingSketchBuilder";
+	public static final String BUILDER_ID = ProcessingEditorPlugin.PLUGIN_ID + ".processingSketchBuilder";
 	
 	/**
 	 * Adds the processing builder to a project
@@ -157,7 +157,6 @@ public class ProcessingSketchAuditor extends IncrementalProjectBuilder {
 //				incrementalBuild(delta, monitor);
 //			}
 //		}
-		System.out.println("BUILD!");
 
 		// every build is a full build for now, @see incrementalBuild
 		fullBuild(monitor);

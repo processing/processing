@@ -31,7 +31,7 @@ import org.processing.editor.util.ProcessingColorProvider;
  */
 public class ProcessingEditorPlugin extends AbstractUIPlugin {
 	
-	public static final String PLUGIN_ID = "org.processing.ProcessingEditor";
+	public static final String PLUGIN_ID = "org.processing.editor";
 	//public static final String JAVA_PARTITIONING= "__java_example_partitioning";   //$NON-NLS-1$
 	public static final String PROCESSING_PARTITIONING= "__processing_partitioning";   //$NON-NLS-1$
 	

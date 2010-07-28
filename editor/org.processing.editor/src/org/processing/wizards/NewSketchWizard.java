@@ -17,14 +17,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
+import org.processing.builder.ProcessingSketchNature;
 
 /**
  * A wizard to create a new Processing sketch project.
@@ -38,13 +37,11 @@ public class NewSketchWizard extends Wizard implements INewWizard {
 	
 	/** The single page in the wizard */
 	private NewSketchWizardPage page;
-	
-	private IWorkbench workbench;
+	/** The project to be created */
 	private IProject project;
 
 	/** Constructor */
 	public NewSketchWizard(){
-		// TODO implement the dialog settings stuff
 //		IDialogSettings processingSettings = ProcessingEditorPlugin.getDefault().getDialogSettings();
 //		IDialogSettings wizardSettings = processingSettings.getSection("NewSketchWizard");
 //		if (wizardSettings == null)
@@ -89,8 +86,6 @@ public class NewSketchWizard extends Wizard implements INewWizard {
 			return false;
 		}
 		
-		// TODO update Perspective(config);
-		// TODO re-enable this when the bigger problem is fixed BasicNewResourceWizard.selectAndReveal(project, workbench.getActiveWorkbenchWindow());
 		return true;
 	}
 	
@@ -134,13 +129,14 @@ public class NewSketchWizard extends Wizard implements INewWizard {
 			if (monitor.isCanceled()){throw new OperationCanceledException();}
 
 			//create the main file
-			addFileToProject(container, new Path(project.getName() + ".pde"), null, new SubProgressMonitor(monitor, 100));
-			
-			
-			
+			addFileToContainer(container, new Path(project.getName() + ".pde"), null, new SubProgressMonitor(monitor, 100));
 		} finally{
 			monitor.done();
 		}
+		
+		// this is a new project
+		ProcessingSketchNature.addNature(proj);
+		
 	}
 
 	/**
@@ -152,7 +148,7 @@ public class NewSketchWizard extends Wizard implements INewWizard {
 	 * @param monitor report the progress back to the user
 	 * @throws CoreException if there are problems with the resource
 	 */
-	private void addFileToProject(IContainer container, Path path, InputStream contentStream, IProgressMonitor monitor) throws CoreException{
+	private void addFileToContainer(IContainer container, Path path, InputStream contentStream, IProgressMonitor monitor) throws CoreException{
 		final IFile file = container.getFile(path);
 		if (contentStream == null){
 			contentStream = new ByteArrayInputStream(" void setup(){} \n void draw(){}  ".getBytes());
