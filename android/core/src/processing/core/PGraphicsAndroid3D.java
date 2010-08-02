@@ -5092,8 +5092,15 @@ public class PGraphicsAndroid3D extends PGraphics {
                                                // be supported.
         vboSupported = true;
       }
-      if (-1 < extensions.indexOf("framebuffer_object")) {
-        fboSupported = true;
+      if (-1 < extensions.indexOf("framebuffer_object") && gl11xp != null) {
+        try {
+          gl11xp.glCheckFramebufferStatusOES(GL11ExtensionPack.GL_FRAMEBUFFER_OES);
+          fboSupported = true;
+        } catch (UnsupportedOperationException e) {
+          // This takes care of Android 2.1 and older where the FBO extension appears to be supported,
+          // but any call to the FBO functions would result in an error.
+          fboSupported = false;
+        }        
       }
 
       usingModelviewStack = gl11 == null || !matrixGetSupported;
