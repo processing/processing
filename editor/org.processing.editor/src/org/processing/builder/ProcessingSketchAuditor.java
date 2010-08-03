@@ -28,13 +28,16 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.QualifiedName;
 import org.processing.editor.ProcessingEditorPlugin;
 import org.processing.editor.ProcessingLog;
 
 import processing.app.Preferences;
+import processing.app.SketchCode;
 import processing.app.preproc.PdePreprocessor;
 import processing.app.preproc.PreprocessResult;
 import processing.app.debug.Compiler;
+import processing.core.PApplet;
 
 /**
  * builder for Processing sketches. 
@@ -53,6 +56,27 @@ public class ProcessingSketchAuditor extends IncrementalProjectBuilder {
 	
 	public static final String BUILDER_ID = ProcessingEditorPlugin.PLUGIN_ID + ".processingSketchBuilder";
 	
+	/* a collection of fields from the sketch object 
+	 * the sketch object cannot reused because it relies
+	 * on an editor
+	 */
+	private boolean foundMain = false;
+	private File primaryFile; // main pde file
+	private String name; // name of the sketch
+	//private boolean modified;
+	private IProject sketch; // sketch folder that contains the sketch
+	private IFolder dataFolder; // data folder, may not exist
+	private IFolder codeFolder; // code folder, may not exist
+	private IFolder outputFolder; // equivalent to tempBuildFolder in Sketch.java
+	private SketchCode current;
+	private int currentIndex;
+	private int codeCount; // number of sketchCode objects in the current sketch, same as code.lenth
+	private SketchCode[] code;
+	private String appletClassName;
+	private String classPath;
+	private String libraryPath; // not the Processing libs path, but the Java libs path for the compiler
+	private ArrayList<File> importedLibraries; // list of library folders
+		
 	/**
 	 * Adds the processing builder to a project
 	 * 
@@ -166,18 +190,18 @@ public class ProcessingSketchAuditor extends IncrementalProjectBuilder {
 	}
 
 	/**
-	 * re-compile only the files that have changed
-	 * 
-	 * should be much faster than a full build, but because the preprocessor
+	 * Re-compile only the files that have changed.
+	 * <p>
+	 * Should be much faster than a full build, but because the preprocessor
 	 * mashes together all the source files for a sketch, there is only one
 	 * resource that gets changed every time a sketch is compiled. Until the
-	 * preprocessor is rewritten and can mark up multiple files, every recompile 
+	 * preprocessor is rewritten to handle individual files, every recompile 
 	 * request will result in a full build. To save a little time, the build
 	 * method has been modified to reflect this and never call the incremental
 	 * builder, so we avoid the hassle of crawling the resources to try and
 	 * identify which ones will be recomputed -- its safe to assume all of the
 	 * files will be used because even the ones that are unchanged will be 
-	 * grabbed eventually.
+	 * grabbed.
 	 * 
 	 * @param delta an object containing the resource changes
 	 * @param monitor let the user know things are happening
@@ -200,41 +224,49 @@ public class ProcessingSketchAuditor extends IncrementalProjectBuilder {
 	}
 
 	/**
-	 * completely rebuilds the sketch file
-	 * 
-	 * this code is essentially a translation of the processing.core sketch
-	 * code to the Eclipse platform. The same code cannot just be reused
-	 * because we need to use the Eclipse virtual file system to access files
-	 * from inside Eclipse.
+	 * Preprocess and Compile the current code.
+	 * <p>
+	 * This is an adaptation of the processing.core sketch code to the Eclipse 
+	 * platform. Unfortunately the original code is so tightly integrated to the PDE 
+	 * that the original code cannot be re-used.
 	 * 
 	 * @param monitor let the user know things are happening
 	 * @throws CoreException if there are problems accessing the files
 	 */
 	private void fullBuild(IProgressMonitor monitor) throws CoreException {
+		//PREPARE
+		monitor.beginTask("Full Project Build", 400); // not sure how much work to use, but there are 4 majors steps to the process
+		sketch = getProject();
 		
-		monitor.beginTask("Full Project Build", 4); // no idea how much 'work' to do here
-		IProject proj = getProject();
-
-		if(!proj.isOpen()) { return; } //project has to be open so we can access it
-		if(checkCancel(monitor)) { return; } 
-		if(!deleteProblemMarkers(proj)) { return; }
+		if(!sketch.isOpen()) { return; } // has to be open to access it, similar to 'exists'
+		if(checkCancel(monitor)) { return; } // user hasn't interfered
+		if(!deleteProblemMarkers(sketch)) { return; } // clean out the boogers from the last build
 		
 		// IResource.members() doesn't return the files in a consistent order
 		// so we get the list at the beginning of each build and use folderContents
 		// whenever we need to get access to the source files during the build.
-		IResource[] folderContents = proj.members();
+		IResource[] folderContents = sketch.members();
 
 		// get handles to the expected folders
-		IFolder codeFolder = proj.getFolder("code");
-		IFolder dataFolder = proj.getFolder("data");		
-		IFolder outputFolder = proj.getFolder("bin");
+		codeFolder = sketch.getFolder("code");
+		dataFolder = sketch.getFolder("data");
+		outputFolder = sketch.getFolder("bin");
 		// we know we need the bin, so create it if it doesn't exist
 		if (!outputFolder.exists())
 			outputFolder.create(IResource.NONE, true, null);
 
-		String classPath = ""; //TODO fix this, its usually provided as a variable buildPath
+		monitor.worked(100); 
+		if(checkCancel(monitor)) { return; } 
+		
+		//PREPROCESS
+
+		spoof_preferences(); // fake the preferences object and start the preprocessor
+		PdePreprocessor preprocessor = new PdePreprocessor(sketch.getName(), 4);
+
 		String[] codeFolderPackages = null;
-		String libraryPath;
+		String classPath = outputFolder.getLocation().toOSString(); //build folder
+		
+
 		// check the contents of the code folder to see if there are files
 		// that need to be added to the imports
 		if (codeFolder.exists()){
@@ -245,48 +277,48 @@ public class ProcessingSketchAuditor extends IncrementalProjectBuilder {
 			classPath += File.pathSeparator + codeFolderClassPath;
 			// get the list of packages in those jars
 			codeFolderPackages = Compiler.packageListFromClassPath(codeFolderClassPath);
-			for(String s : codeFolderPackages){ System.out.println(s);}
+			// debug
+			//for(String s : codeFolderPackages){ System.out.println(s);}
 		} else { libraryPath = ""; }
 		
 		// 1. concatenate all .pde files to the 'main' pde		
-		StringBuffer bigCode = new StringBuffer(); // this will hold the program
+		//    store line number for starting point of each code bit
+		
+		StringBuffer bigCode = new StringBuffer();
 		int bigCount = 0; // line count
-		
-		// without a SketchCode object, this field needs to be tracked independently
-		int[] preprocOffsets = new int[folderContents.length];
-		
-		// look for pde files in the sketches root and append them together
+				
 		for(int i = 0; i < folderContents.length; i++){
 			IResource file = folderContents[i];
 			if(file instanceof IFile && file.getFileExtension().equalsIgnoreCase("pde")){ // filters out only .pde files
+				setPreprocOffset((IFile) file, bigCount);
 				String content = readFile((IFile) file);
-				preprocOffsets[i] = bigCount;
 				bigCode.append(content);
 				bigCode.append("\n");
 				bigCount += getLineCount(content);
 			}
 		}
 
-		monitor.worked(1);
+		monitor.worked(10);
 		if(checkCancel(monitor)) { return; } 
 		
-		// fake the preferences object and start the preprocessor
-		spoof_preferences();
-		PdePreprocessor preproc = new PdePreprocessor(proj.getName(), 4);
-		
-		final PreprocessResult result;
-		try{
-			IFile outputFile = outputFolder.getFile(proj.getName() + ".java"); 
-			StringWriter outputFileContents = new StringWriter();
-			result = preproc.write(outputFileContents, bigCode.toString(), codeFolderPackages);
+		PreprocessResult result = null; // any exception catch will pooch the rest of the build, should 'return;' to stop the build
+		try{ 
+			IFile outputFile = outputFolder.getFile(sketch.getName() + ".java"); 
+			StringWriter stream = new StringWriter();
+			result = preprocessor.write(stream, bigCode.toString(), codeFolderPackages);
 			
-			// Ugh. It wants an InputStream
-			ByteArrayInputStream inStream = new ByteArrayInputStream(outputFileContents.toString().getBytes());
-			
-			outputFile.create(inStream, true, monitor); // force flag = true means this should overwrite any existing files
-			outputFile.setDerived(true); // let the platform know this is a generated file
-			
-		}catch(antlr.RecognitionException re){
+			// Eclipse idiom for generating the java file and marking it as a generated file
+			ByteArrayInputStream inStream = new ByteArrayInputStream(stream.toString().getBytes());
+			if (outputFile.exists()){ 
+				outputFile.setContents(inStream, true, false, monitor); 
+			} else {
+				outputFile.create(inStream, true, monitor); 
+			}
+			outputFile.setDerived(true);
+		} catch (CoreException e){
+			ProcessingLog.logError(e);
+			return;
+		} catch(antlr.RecognitionException re){
 						
 			// first assume that it's the main file
 			int errorFile = 0;
@@ -296,15 +328,16 @@ public class ProcessingSketchAuditor extends IncrementalProjectBuilder {
 			// since they've also been combined into the main pde
 			for(int i = 1; i < folderContents.length; i++){
 				IResource file = folderContents[i];
-				if(file instanceof IFile && file.getFileExtension().equalsIgnoreCase("pde") && (preprocOffsets[i] < errorLine)){ 
+				if(file instanceof IFile && file.getFileExtension().equalsIgnoreCase("pde") && (getPreprocOffset((IFile) file) < errorLine)){ 
 					errorFile = i;
 				}
 			}
-			errorLine -= preprocOffsets[errorFile];
-						
+			
+			errorLine -= getPreprocOffset((IFile) folderContents[errorFile]);			
+			
 			//DEBUG
 			//System.out.println("error line - error file - offset");
-	      	//System.out.println(errorLine + " - " + errorFile + " - " + preprocOffsets[errorFile]);
+	      	//System.out.println(errorLine + " - " + errorFile + " - " + getPreprocOffset((IFile) folderContents[errorFile]));
 			
 			String msg = re.getMessage();		
 			
@@ -328,33 +361,91 @@ public class ProcessingSketchAuditor extends IncrementalProjectBuilder {
 		    if (msg.indexOf("preproc.web_colors") != -1) {
 		        msg = "A web color (such as #ffcc00) must be six digits.";
 		    }
+
 		    
 		    // if there is no friendly translation, just report what you can
   			reportProblem(msg, (IFile) folderContents[errorFile], errorLine, true);
-		
+  			return;
+		} catch (antlr.TokenStreamRecognitionException tsre) {
+			// while this seems to store line and column internally,
+			// there doesn't seem to be a method to grab it..
+			// so instead it's done using a regexp
+			
+			// System.out.println("and then she tells me " + tsre.toString());
+			// TODO test this ... ^ could be a problem
+		    String mess = "^line (\\d+):(\\d+):\\s";
+		    
+		    String[] matches = PApplet.match(tsre.toString(), mess);
+		    if (matches != null){
+		    	int errorLine = Integer.parseInt(matches[1]) - 1;
+		    	int errorColumn = Integer.parseInt(matches[2]);
+		    	
+		    	int errorFile = 0;
+		    	for(int i = 1; i < folderContents.length; i++){
+					IResource file = folderContents[i];
+					if(file instanceof IFile && file.getFileExtension().equalsIgnoreCase("pde") && (getPreprocOffset((IFile) file) < errorLine)){ 
+						errorFile = i;
+					}
+				}
+				errorLine -= getPreprocOffset((IFile) folderContents[errorFile]);
+	  			reportProblem(tsre.getMessage(), (IFile) folderContents[errorFile], errorLine, true);
+		    } else {
+		    	try{ // tries to the default to the main class
+		    		reportProblem( tsre.toString(), sketch.getFile(sketch.getName() + ".pde"), 0, true);
+		    	} catch (Exception e) {	ProcessingLog.logError(e); return; } // file may not exist (could be the problem)
+		    }
+		    return;
 		} catch (Exception e){
+			// uncaught exception
 			ProcessingLog.logError(e);
+			return;
 		}
 		
-		monitor.worked(1);
+		monitor.worked(10);
 		if(checkCancel(monitor)) { return; } 
 
+		//grab the imports from the code just preproc'd
 		
-		// copy any .java files to the output directory
-		for(int i = 0; i < folderContents.length; i++){
-			IResource file = folderContents[i];
-			if(file instanceof IFile && file.getFileExtension().equalsIgnoreCase("java")){ // copy .java files into the build directory
-				folderContents[i].copy(outputFolder.getProjectRelativePath(), IResource.DERIVED, monitor);
-			} else if (file instanceof IFile && file.getFileExtension().equalsIgnoreCase("pde")){
-				// The compiler and runner will need this to have a proper offset
-				preprocOffsets[i] += result.headerOffset;
+		importedLibraries = new ArrayList<File>();
+		for (String item : result.extraImports){
+			// remove things up to the last dot
+			int dot = item.lastIndexOf('.');
+			String entry = (dot == -1) ? item : item.substring(0, dot);
+			// TODO workaround to avoid using Base to get the library. consider something with prefs.
+			File libFolder = null;
+			if (libFolder.exists()){
+				importedLibraries.add(libFolder);
+				classPath += Compiler.contentsToClassPath(libFolder);
+				libraryPath += File.pathSeparator + libFolder.getAbsolutePath();
 			}
 		}
 		
-		boolean foundMain = preproc.getFoundMain(); // is this still necessary?
+		String javaClassPath = System.getProperty("java.class.path");
+		// Remove quotes if any ... an annoying ( and frequent ) Windows problem
+		if (javaClassPath.startsWith("\"") && javaClassPath.endsWith("\"")) {
+			javaClassPath = javaClassPath.substring(1,javaClassPath.length()-1);
+		}
+		classPath += File.pathSeparator + javaClassPath;
 		
+		monitor.worked(10);
+		if(checkCancel(monitor)) { return; } 
 		
-		monitor.worked(1);
+		for(int i = 0; i < folderContents.length; i++){
+			IResource file = folderContents[i];
+			if(file instanceof IFile && file.getFileExtension().equalsIgnoreCase("java")){ 
+				folderContents[i].copy(outputFolder.getProjectRelativePath(), IResource.DERIVED, monitor);
+			} else if (file instanceof IFile && file.getFileExtension().equalsIgnoreCase("pde")){
+				// The compiler and runner will need this to have a proper offset
+				if (result == null)
+					System.out.println("Danger!");
+				addPreprocOffset((IFile) file, result.headerOffset);
+			}
+		}
+		
+		boolean foundMain = preprocessor.getFoundMain(); // is this still necessary?
+		//return result.className
+		
+		monitor.worked(10);
 		if(checkCancel(monitor)) { return; } 
 		
 		//to the java batch compiler!
@@ -462,8 +553,7 @@ public class ProcessingSketchAuditor extends IncrementalProjectBuilder {
 		} catch(CoreException e){
 			ProcessingLog.logError(e);
 			return;
-		}
-		
+		}	
 	}
 	
 	/**
@@ -480,6 +570,44 @@ public class ProcessingSketchAuditor extends IncrementalProjectBuilder {
 			return true;
 		}
 		return false;		
+	}
+	
+	/**
+	 * Utility method to mimic setPreprocOffset method of a SketchCode
+	 * object using session properties of an eclipse resource
+	 * 
+	 * @param file the resource to modify
+	 * @throws CoreException if the resource doesn't exist or cannot be accessed
+	 */
+	private void setPreprocOffset(IFile file, int offset) throws CoreException{
+		file.setSessionProperty(new QualifiedName(BUILDER_ID, "Preproc Offset"), offset);
+	}
+	
+	/**
+	 * Utility method to mimic getPreprocOffset method of a SketchCode
+	 * object using session properties of an eclipse resource
+	 * 
+	 * @param file the resource to modify
+	 * @return the preprocessor offset or null if there is none
+	 * @throws CoreException if the resource doesn't exist or cannot be accessed
+	 * @throws ClassCastException if the session property cannot be converted to a string
+	 */
+	private int getPreprocOffset(IFile file) throws CoreException{
+		Integer result = ((Integer) file.getSessionProperty(new QualifiedName(BUILDER_ID, "Preproc Offset")));
+		return (result == null) ? result.intValue() : 0;
+	}
+	
+	/**
+	 * Utility method to mimic addPreprocOffset method of a SketchCode
+	 * object combining the other two utility methods for getting and
+	 * setting the preprocessor session property
+	 * 
+	 * @param file the resource to modify
+	 * @param additionalOffset the amount of offset to add
+	 * @throws CoreException if the resource doesn't exist or cannot be accessed
+	 */
+	private void addPreprocOffset(IFile file, int additionalOffset) throws CoreException{
+		setPreprocOffset(file, getPreprocOffset(file)+additionalOffset);
 	}
 	
 	/**
