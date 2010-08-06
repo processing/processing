@@ -471,6 +471,7 @@ public interface PConstants {
   static final int ENABLE_OPENGL_4X_SMOOTH     =  2;
 
   static final int ENABLE_NATIVE_FONTS         =  3;
+  static final int DISABLE_NATIVE_FONTS         = -3;
 
   static final int DISABLE_DEPTH_TEST          =  4;
   static final int ENABLE_DEPTH_TEST           = -4;
