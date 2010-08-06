@@ -3036,11 +3036,11 @@ public class PGraphics extends PImage implements PConstants {
   public void textFont(PFont which) {
     if (which != null) {
       textFont = which;
-      if (hints[ENABLE_NATIVE_FONTS]) {
-        //if (which.font == null) {
-        which.findFont();
-        //}
-      }
+//      if (hints[ENABLE_NATIVE_FONTS]) {
+//        //if (which.font == null) {
+//        which.findFont();
+//        //}
+//      }
       /*
       textFontNative = which.font;
 
