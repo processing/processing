@@ -29,19 +29,37 @@ X   http://code.google.com/p/processing/issues/detail?id=221
 X change skewX/Y to shearX/Y
 _   need updated reference for this
 
-http://developer.android.com/reference/android/view/KeyEvent.html
-key == KeyEvent.KEYCODE_BACK (why not keyCode?)
-
-included
-KEYCODE_MENU
-KEYCODE_BACK
-KEYCODE_DPAD_CENTER --> DPAD? 
-
 not included
 KEYCODE_VOLUME_DOWN
 KEYCODE_VOLUME_UP
 KEYCODE_CAMERA
 KEYCODE_HOME
+
+create new keystore
+location: [   ] (browse)
+password: [   ]
+confirm: [   ]
+then asks for 
+alias, password, confirm, validity (years)
+first/last name, ounit, org, city/locale, state/province, country code (xx)
+
+_ application local storage: context.getFilesDir().getPath()
+"For those of you interested, the internal 8GB of storage on the phone
+is mounted at /emmc (r/w mode, of course) and microSD cards still
+shows up normally at /sdcard as expected." 
+
+_ add to wiki - rename 'data' folder to 'assets' when inside eclipse
+_ other useful tidbits (handlers etc)
+_   http://developer.android.com/guide/appendix/faq/commontasks.html
+
+_ simple example of reading the compass (also note that won't work w/ sim)
+_ and also the gps, i assume (can do fake data w/ sim)
+
+_ add hutch stuff to the wiki
+http://lukehutch.wordpress.com/2010/01/06/my-multi-touch-code-ported-to-eclair/
+
+_ maybe the back button shouldn't quit apps, the home button should?
+_   back button use in apps is so infuriating...
 
 P1 _ exceptions with StreamPump and adb devices on osx and linux
 P1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1545
@@ -286,11 +304,9 @@ P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1379
 P2 _ save state re: whether sketches are android or java mode (or others?)
 P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1380
 
-_ compiler errors on Windows not highlighting line number
+_ compiler errors on Windows not appearing, nor highlighting the line number
 _   http://code.google.com/p/processing/issues/detail?id=253
 
-P3 _ compiler errors not appearing properly on windows
-P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1546
 P3 _ remove various debug messages on the console
 P3 _   right now, there are too many places where errors occur
 P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1385

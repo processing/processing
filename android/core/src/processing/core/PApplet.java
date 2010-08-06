@@ -1840,16 +1840,19 @@ public class PApplet extends Activity implements PConstants, Runnable {
         }
       }
       // allocate more PMotionEvent objects if we're out
-      if (motionEventCount + event.getHistorySize() >= motionEventQueue.length) {
-        PMotionEvent[] temp = new PMotionEvent[motionEventCount << 1];
-//        System.out.println("allocating " + temp.length + " entries for motion events");
+      int historyCount = event.getHistorySize();
+//      println("motion: " + motionEventCount + " " + historyCount + " " + motionEventQueue.length);
+      if (motionEventCount + historyCount >= motionEventQueue.length) {
+        int atLeast = motionEventCount + historyCount + 1;
+        PMotionEvent[] temp = new PMotionEvent[max(atLeast, motionEventCount << 1)];
+println("motion: " + motionEventCount + " " + historyCount + " " + motionEventQueue.length);
+println("allocating " + temp.length + " entries for motion events");
         System.arraycopy(motionEventQueue, 0, temp, 0, motionEventCount);
         motionEventQueue = temp;
         for (int i = motionEventCount; i < motionEventQueue.length; i++) {
           motionEventQueue[i] = new PMotionEvent();
         }
       }
-      int historyCount = event.getHistorySize();
 
       // this will be the last event in the list
       PMotionEvent pme = motionEventQueue[motionEventCount + historyCount];
