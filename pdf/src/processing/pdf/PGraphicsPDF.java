@@ -584,7 +584,7 @@ public class PGraphicsPDF extends PGraphicsJava2D {
                                  "when drawing text using the PDF library.");
     } else if (textMode != SHAPE) {
       if (textFont.isStream()) {
-        throw new RuntimeException("Use textMode(SHAPE) with when loading " +
+        throw new RuntimeException("Use textMode(SHAPE) with PDF when loading " +
                                    ".ttf and .otf files with createFont().");
       } else if (mapper.getAliases().get(textFont.getName()) == null) {
         //System.out.println("alias for " + name + " = " + mapper.getAliases().get(name));
