@@ -1,9 +1,20 @@
 0190
 
+earlier
+X add warning message when not using a version of sun java w/ p5 on linux
+
+_ linux permissions not set because of tar in ant
+_   http://code.google.com/p/processing/issues/detail?id=343
+
+_ accented letter input is broken (on os x)
+_   http://code.google.com/p/processing/issues/detail?id=335
+
+_ auto-format screws up if/else/else if blocks
+_   http://code.google.com/p/processing/issues/detail?id=325
+
 _ locations: sketchbook, examples, libraries
 _ 'export' and 'export application' titles and/or # of items
 _ 'run' and 'present' under sketch, and/or # of items
-
 
 _ the open button on the toolbar is goofed up 
 _   http://code.google.com/p/processing/issues/detail?id=323
@@ -101,7 +112,6 @@ _   or rather, why can't they be overridden?
 _   should fonts at least be in prefs.txt?
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1444
 
-_ add warning message when not using a version of sun java w/ p5 on linux
 _ console output has wrong character encoding
 _   this may be fixed now, but writing lots of NULs to the output
 _   message(new String(b, offset, length), err, false);
