@@ -7105,7 +7105,7 @@ public class PApplet extends Applet
    *                       editor window, for placement of applet window
    * </PRE>
    */
-  static public void main(String args[]) {
+  static public void runSketch(String args[], final PApplet constructedApplet) {
     // Disable abyssmally slow Sun renderer on OS X 10.5.
     if (platform == MACOSX) {
       // Only run this on OS X otherwise it can cause a permissions error.
@@ -7246,13 +7246,17 @@ public class PApplet extends Applet
     frame.setTitle(name);
 
     final PApplet applet;
-    try {
-      Class<?> c = Thread.currentThread().getContextClassLoader().loadClass(name);
-      applet = (PApplet) c.newInstance();
-    } catch (Exception e) {
-      throw new RuntimeException(e);
+    if (constructedApplet != null) {
+      applet = constructedApplet;
+    } else {
+      try {
+        Class<?> c = Thread.currentThread().getContextClassLoader().loadClass(name);
+        applet = (PApplet) c.newInstance();
+      } catch (Exception e) {
+        throw new RuntimeException(e);
+      }
     }
-
+    
     // these are needed before init/start
     applet.frame = frame;
     applet.sketchPath = folder;
@@ -7432,6 +7436,33 @@ public class PApplet extends Applet
     //applet.requestFocus(); // ask for keydowns
   }
 
+  public static void main(final String[] args) {
+    runSketch(args, null);
+  }
+  
+  /**
+   * These methods provide a means for running an already-constructed
+   * sketch. In particular, it makes it easy to launch a sketch in
+   * Jython:
+   * 
+   * <pre>class MySketch(PApplet):
+   *     pass
+   * 
+   *MySketch().runSketch();</pre>
+   */
+  protected void runSketch(final String[] args) {
+    final String[] argsWithSketchName = new String[args.length + 1];
+    System.arraycopy(args, 0, argsWithSketchName, 0, args.length);
+    final String className = this.getClass().getSimpleName();
+    final  String cleanedClass = 
+      className.replaceAll("__[^_]+__\\$", "").replaceAll("\\$\\d+", "");
+    argsWithSketchName[args.length] = cleanedClass;
+    runSketch(argsWithSketchName, this);
+  }
+
+  protected void runSketch() {
+    runSketch(new String[0]);
+  }
 
   //////////////////////////////////////////////////////////////
 
