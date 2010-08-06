@@ -116,12 +116,16 @@ public class PFont implements PConstants {
    */
   protected Font font;
 
-  /** True if this font was loaded from a stream, rather than from the OS. */
+  /** 
+   * True if this font was loaded from a stream, rather than from the OS.
+   * It's always safe to use the native version of a font loaded from a TTF
+   * file, since that's how it'll look when exported. Otherwise, you'll have
+   * to use hint(ENABLE_NATIVE_FONTS) to get the native version working with
+   * renderers that support it.
+   */
   protected boolean stream;
   
-  /** 
-   * True if we've already tried to find the native AWT version of this font.
-   */
+  /** True if already tried to find the native AWT version of this font. */
   protected boolean fontSearched;
 
   /**
@@ -132,12 +136,16 @@ public class PFont implements PConstants {
   static protected Font[] fonts;
   static protected HashMap<String,Font> fontDifferent;
 
-
-  // objects to handle creation of font characters only as they're needed
-  BufferedImage lazyImage;
-  Graphics2D lazyGraphics;
-  FontMetrics lazyMetrics;
-  int[] lazySamples;  
+//  /**
+//   * If not null, this font is set to load dynamically. This is the default  
+//   * when createFont() method is called without a character set. Bitmap 
+//   * versions of characters are only created when prompted by an index() call.
+//   */
+//  protected Font lazyFont;  
+  protected BufferedImage lazyImage;
+  protected Graphics2D lazyGraphics;
+  protected FontMetrics lazyMetrics;
+  protected int[] lazySamples;  
 
 
   public PFont() { }  // for subclasses
@@ -208,7 +216,8 @@ public class PFont implements PConstants {
 
     if (charset == null) {
       lazy = true;
-      
+//      lazyFont = font;
+
     } else {
       // charset needs to be sorted to make index lookup run more quickly
       // http://dev.processing.org/bugs/show_bug.cgi?id=494
@@ -345,6 +354,9 @@ public class PFont implements PConstants {
     if (version == 11) {
       smooth = is.readBoolean();
     }
+    // See if there's a native version of this font that can be used, 
+    // in case that's of interest later.
+    findFont();
   }
 
 
@@ -443,7 +455,9 @@ public class PFont implements PConstants {
 
   
   /**
-   * Set the native complement of this font.
+   * Set the native complement of this font. Might be set internally via the
+   * findFont() function, or externally by a deriveFont() call if the font
+   * is resized by PGraphicsJava2D.
    */
   public void setFont(Font font) {
     this.font = font;

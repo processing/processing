@@ -1,6 +1,24 @@
 0190 core
 X change skewX/Y to shearX/Y
 _   need reference update for this
+X ENABLE_NATIVE_FONTS was being ignored, native fonts were used no matter what
+X   fix the behavior
+_ need to finish font changes wrt native fonts before any release
+_   right now not in a good place--default font will be bitmapped and ugly
+
+_ image resizing is ugly (just use java2d?)
+_   http://code.google.com/p/processing/issues/detail?id=332
+
+_ show an error when using a font character that isn't available
+_   maybe fall back on other characters instead?
+
+_ nfc() is a problem on intl systems when subsetting fonts
+
+_ OpenGL noSmooth() problems
+_   http://code.google.com/p/processing/issues/detail?id=328
+
+_ color() problem with alpha
+_   http://code.google.com/p/processing/issues/detail?id=327
 
 _ setAttribute? setString/Int/Float or just set?
 
@@ -25,6 +43,7 @@ X   or make the call that it's read-only, and remove the saving code
 _   document save() and write(), and their differences
 X adding write() method?
 X need to handle how save() works inside xml lib
+_ constructor has changed to .parse(...) instead of new XMLElement(str)
 
 
 _ possible addition for 'implementation' variable
@@ -112,6 +131,7 @@ Oct  6 15:49:18 Shiny [0x0-0x12d12d].com.apple.Safari[3059]: Start called.
 big ones
 _ ortho() behaving differently in P3D vs OPENGL
 _   http://dev.processing.org/bugs/show_bug.cgi?id=100
+_   http://code.google.com/p/processing/issues/detail?id=37
 _   shows a blank canvas
 _   (was only happening once b/c was drawing first in perspective)
 _   seems to be mapping to 0, 0 - width/2, height/2

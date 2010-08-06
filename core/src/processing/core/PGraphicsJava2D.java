@@ -970,12 +970,13 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
     if (textFont == null) {
       defaultFontOrDeath("textAscent");
     }
+    
     Font font = textFont.getFont();
-    if (font == null) {
-      return super.textAscent();
+    if (font != null && (textFont.isStream() || hints[ENABLE_NATIVE_FONTS])) {
+      FontMetrics metrics = parent.getFontMetrics(font);
+      return metrics.getAscent();
     }
-    FontMetrics metrics = parent.getFontMetrics(font);
-    return metrics.getAscent();
+    return super.textAscent();
   }
 
 
@@ -984,11 +985,11 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
       defaultFontOrDeath("textAscent");
     }
     Font font = textFont.getFont();
-    if (font == null) {
-      return super.textDescent();
+    if (font != null && (textFont.isStream() || hints[ENABLE_NATIVE_FONTS])) {
+      FontMetrics metrics = parent.getFontMetrics(font);
+      return metrics.getDescent();
     }
-    FontMetrics metrics = parent.getFontMetrics(font);
-    return metrics.getDescent();
+    return super.textDescent();
   }
 
 
@@ -1027,7 +1028,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 //      textFontNativeMetrics = g2.getFontMetrics(textFontNative);
 //    }
     Font font = textFont.getFont();
-    if (font != null) {
+    if (font != null && (textFont.isStream() || hints[ENABLE_NATIVE_FONTS])) {
       Font dfont = font.deriveFont(size);
       g2.setFont(dfont);
       textFont.setFont(dfont);
@@ -1048,13 +1049,13 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 
   protected float textWidthImpl(char buffer[], int start, int stop) {
     Font font = textFont.getFont();
-    if (font == null) {
-      return super.textWidthImpl(buffer, start, stop);
+    if (font != null && (textFont.isStream() || hints[ENABLE_NATIVE_FONTS])) {
+      // maybe should use one of the newer/fancier functions for this?
+      int length = stop - start;
+      FontMetrics metrics = g2.getFontMetrics(font);
+      return metrics.charsWidth(buffer, start, length);
     }
-    // maybe should use one of the newer/fancier functions for this?
-    int length = stop - start;
-    FontMetrics metrics = g2.getFontMetrics(font);
-    return metrics.charsWidth(buffer, start, length);
+    return super.textWidthImpl(buffer, start, stop);
   }
 
 
@@ -1079,66 +1080,65 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   protected void textLineImpl(char buffer[], int start, int stop,
                               float x, float y) {
     Font font = textFont.getFont();
-    if (font == null) {
+    if (font != null && (textFont.isStream() || hints[ENABLE_NATIVE_FONTS])) {
+      /*
+      // save the current setting for text smoothing. note that this is
+      // different from the smooth() function, because the font smoothing
+      // is controlled when the font is created, not now as it's drawn.
+      // fixed a bug in 0116 that handled this incorrectly.
+      Object textAntialias =
+        g2.getRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING); 
+
+      // override the current text smoothing setting based on the font
+      // (don't change the global smoothing settings)
+      g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                          textFont.smooth ?
+                          RenderingHints.VALUE_ANTIALIAS_ON :
+                          RenderingHints.VALUE_ANTIALIAS_OFF);
+      */
+      Object antialias =
+        g2.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
+      if (antialias == null) {
+        // if smooth() and noSmooth() not called, this will be null (0120)
+        antialias = RenderingHints.VALUE_ANTIALIAS_DEFAULT;
+      }
+
+      // override the current smoothing setting based on the font
+      // also changes global setting for antialiasing, but this is because it's
+      // not possible to enable/disable them independently in some situations.
+      g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                          textFont.smooth ?
+                          RenderingHints.VALUE_ANTIALIAS_ON :
+                          RenderingHints.VALUE_ANTIALIAS_OFF);
+
+      //System.out.println("setting frac metrics");
+      //g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
+      //                    RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+
+      g2.setColor(fillColorObject);
+      int length = stop - start;
+      g2.drawChars(buffer, start, length, (int) (x + 0.5f), (int) (y + 0.5f));
+      // better to use drawString() with floats? (nope, draws the same)
+      //g2.drawString(new String(buffer, start, length), x, y);
+
+      // this didn't seem to help the scaling issue
+      // and creates garbage because of the new temporary object
+      //java.awt.font.GlyphVector gv = textFontNative.createGlyphVector(g2.getFontRenderContext(), new String(buffer, start, stop));
+      //g2.drawGlyphVector(gv, x, y);
+
+      //    System.out.println("text() " + new String(buffer, start, stop));
+
+      // return to previous smoothing state if it was changed
+      //g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, textAntialias);
+      g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antialias);
+
+      textX = x + textWidthImpl(buffer, start, stop);
+      textY = y;
+      textZ = 0;  // this will get set by the caller if non-zero
+
+    } else {  // otherwise just do the default
       super.textLineImpl(buffer, start, stop, x, y);
-      return;
     }
-
-    /*
-    // save the current setting for text smoothing. note that this is
-    // different from the smooth() function, because the font smoothing
-    // is controlled when the font is created, not now as it's drawn.
-    // fixed a bug in 0116 that handled this incorrectly.
-    Object textAntialias =
-      g2.getRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING);
-
-    // override the current text smoothing setting based on the font
-    // (don't change the global smoothing settings)
-    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-                        textFont.smooth ?
-                        RenderingHints.VALUE_ANTIALIAS_ON :
-                        RenderingHints.VALUE_ANTIALIAS_OFF);
-    */
-
-    Object antialias =
-      g2.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
-    if (antialias == null) {
-      // if smooth() and noSmooth() not called, this will be null (0120)
-      antialias = RenderingHints.VALUE_ANTIALIAS_DEFAULT;
-    }
-
-    // override the current smoothing setting based on the font
-    // also changes global setting for antialiasing, but this is because it's
-    // not possible to enable/disable them independently in some situations.
-    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                        textFont.smooth ?
-                        RenderingHints.VALUE_ANTIALIAS_ON :
-                        RenderingHints.VALUE_ANTIALIAS_OFF);
-
-    //System.out.println("setting frac metrics");
-    //g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
-    //                    RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-
-    g2.setColor(fillColorObject);
-    int length = stop - start;
-    g2.drawChars(buffer, start, length, (int) (x + 0.5f), (int) (y + 0.5f));
-    // better to use drawString() with floats? (nope, draws the same)
-    //g2.drawString(new String(buffer, start, length), x, y);
-
-    // this didn't seem to help the scaling issue
-    // and creates garbage because of the new temporary object
-    //java.awt.font.GlyphVector gv = textFontNative.createGlyphVector(g2.getFontRenderContext(), new String(buffer, start, stop));
-    //g2.drawGlyphVector(gv, x, y);
-
-//    System.out.println("text() " + new String(buffer, start, stop));
-
-    // return to previous smoothing state if it was changed
-    //g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, textAntialias);
-    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antialias);
-
-    textX = x + textWidthImpl(buffer, start, stop);
-    textY = y;
-    textZ = 0;  // this will get set by the caller if non-zero
   }
 
 
