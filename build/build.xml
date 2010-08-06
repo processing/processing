@@ -348,7 +348,16 @@
 
     <get src="http://processing.googlecode.com/files/jre-tools-6u20-linux-i586.tgz" 
 	 dest="linux/jre.tgz" 
-	 usetimestamp="true" />    
+	 usetimestamp="true" />
+
+<!--
+http://www.gnu.org/software/tar/manual/html_section/transform.html
+    <exec executable="tar">
+      <arg value="xvfz" />
+      <arg value="linux/jre.tgz" />
+    </exec>
+-->
+	   
     <untar compression="gzip" 
 	   dest="linux/work" 
 	   src="linux/jre.tgz" 
