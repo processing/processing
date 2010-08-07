@@ -20,8 +20,6 @@ _   http://code.google.com/p/processing/issues/detail?id=328
 _ color() problem with alpha
 _   http://code.google.com/p/processing/issues/detail?id=327
 
-_ setAttribute? setString/Int/Float or just set?
-
 xml fixes
 X add getBoolean() methods?
 X   http://code.google.com/p/processing/issues/detail?id=304
@@ -44,6 +42,9 @@ _   document save() and write(), and their differences
 X adding write() method?
 X need to handle how save() works inside xml lib
 _ constructor has changed to .parse(...) instead of new XMLElement(str)
+X update XMLElement constructor problem
+X   http://code.google.com/p/processing/issues/detail?id=342
+_ setAttribute? setString/Int/Float or just set?
 
 
 _ possible addition for 'implementation' variable
