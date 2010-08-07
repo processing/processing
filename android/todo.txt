@@ -4,7 +4,7 @@ X   right now would cause NumberFormatException
 X add notes to the wiki about the size() method
 X make sure sketchRenderer()/sketchWidth()/sketchHeight() are working on desktop
 o   see about getting them documented in the reference
-_   do a writeup of the size() method in the wiki
+X   do a writeup of the size() method in the wiki
 X size() command is currently ignored in Android
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1397
 X   http://code.google.com/p/processing/issues/detail?id=211
@@ -29,11 +29,7 @@ X   http://code.google.com/p/processing/issues/detail?id=221
 X change skewX/Y to shearX/Y
 _   need updated reference for this
 
-not included
-KEYCODE_VOLUME_DOWN
-KEYCODE_VOLUME_UP
-KEYCODE_CAMERA
-KEYCODE_HOME
+_ throw an error if a file in the 'data' dir ends with .gz
 
 create new keystore
 location: [   ] (browse)
@@ -270,8 +266,6 @@ _   probably same as memory error above
 
 // jdf maybedone
 _ if hitting 'run' in p5, need to kill any sketch that's currently running
-
-_ throw an error if a file in the 'data' dir ends with .gz
 
 _ need to make data folder copy more efficient than just copying everything
 _   right now, first copies to src inside Build.java (which then copies to bin)
