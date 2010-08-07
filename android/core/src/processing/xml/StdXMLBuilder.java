@@ -28,24 +28,19 @@
 
 package processing.xml;
 
-
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Stack;
 
 
 /**
- * StdXMLBuilder is a concrete implementation of IXMLBuilder which creates a
- * tree of IXMLElement from an XML data source.
+ * StdXMLBuilder creates a tree of XML elements from a data source. 
  *
  * @see processing.xml.XMLElement
  *
  * @author Marc De Scheemaecker
- * @version $Name: RELEASE_2_2_1 $, $Revision: 1.3 $
  */
-public class StdXMLBuilder
-{
-
+public class StdXMLBuilder {
    /**
     * This stack contains the current element and its parents.
     */
@@ -60,41 +55,20 @@ public class StdXMLBuilder
    private XMLElement parent;
 
    /**
-    * Prototype element for creating the tree.
-    */
-   //private XMLElement prototype;
-
-
-   /**
     * Creates the builder.
     */
-   public StdXMLBuilder()
-   {
+   public StdXMLBuilder() {
+     this(new XMLElement());
 	   this.stack = null;
 	   this.root = null;
-      //this(new XMLElement());
    }
 
 
-   public StdXMLBuilder(XMLElement parent)
-   {
+   public StdXMLBuilder(XMLElement parent) {
 	   this.parent = parent;
    }
 
    
-   /**
-    * Creates the builder.
-    *
-    * @param prototype the prototype to use when building the tree.
-    */
-//   public StdXMLBuilder(XMLElement prototype)
-//   {
-//      this.stack = null;
-//      this.root = null;
-//      this.prototype = prototype;
-//   }
-
-
    /**
     * Cleans up the object when it's destroyed.
     */
@@ -178,7 +152,7 @@ public class StdXMLBuilder
 
       if (this.stack.empty()) {
     	  //System.out.println("setting root");
-    	  parent.set(fullName, nsURI, systemID, lineNr);
+    	  parent.init(fullName, nsURI, systemID, lineNr);
     	  stack.push(parent);
     	  root = parent;
       } else {
@@ -232,11 +206,11 @@ public class StdXMLBuilder
       XMLElement elt = (XMLElement) this.stack.pop();
 
       if (elt.getChildCount() == 1) {
-         XMLElement child = elt.getChildAtIndex(0);
+         XMLElement child = elt.getChild(0);
 
          if (child.getLocalName() == null) {
             elt.setContent(child.getContent());
-            elt.removeChildAtIndex(0);
+            elt.removeChild(0);
          }
       }
    }
@@ -276,15 +250,15 @@ public class StdXMLBuilder
 
       if (top.hasAttribute(fullName)) {
          throw new XMLParseException(top.getSystemID(),
-                                     top.getLineNr(),
+                                     top.getLine(),
                                      "Duplicate attribute: " + key);
       }
 
-      if (nsPrefix != null) {
-         top.setAttribute(fullName, nsURI, value);
-      } else {
-         top.setAttribute(fullName, value);
-      }
+//      if (nsPrefix != null) {
+//         top.setAttribute(fullName, nsURI, value);
+//      } else {
+      top.setString(fullName, value);
+//      }
    }
 
 

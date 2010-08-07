@@ -497,17 +497,18 @@ public class StdXMLParser {
          attrTypes.addElement("CDATA");
       }
 
-      for (int i = 0; i < attrNames.size(); i++) {
-         String key = (String) attrNames.elementAt(i);
-         String value = (String) attrValues.elementAt(i);
-         //String type = (String) attrTypes.elementAt(i);
+      // post 1.2.1, just treat namespaces like any other attribute
+//      for (int i = 0; i < attrNames.size(); i++) {
+//         String key = (String) attrNames.elementAt(i);
+//         String value = (String) attrValues.elementAt(i);
+//         //String type = (String) attrTypes.elementAt(i);
 
-         if (key.equals("xmlns")) {
-            defaultNamespace = value;
-         } else if (key.startsWith("xmlns:")) {
-            namespaces.put(key.substring(6), value);
-         }
-      }
+//         if (key.equals("xmlns")) {
+//            defaultNamespace = value;
+//         } else if (key.startsWith("xmlns:")) {
+//            namespaces.put(key.substring(6), value);
+//         }
+//      }
 
       if (prefix == null) {
          this.builder.startElement(name, prefix, defaultNamespace,
@@ -523,9 +524,9 @@ public class StdXMLParser {
       for (int i = 0; i < attrNames.size(); i++) {
          String key = (String) attrNames.elementAt(i);
 
-         if (key.startsWith("xmlns")) {
-            continue;
-         }
+//         if (key.startsWith("xmlns")) {
+//            continue;
+//         }
 
          String value = (String) attrValues.elementAt(i);
          String type = (String) attrTypes.elementAt(i);
