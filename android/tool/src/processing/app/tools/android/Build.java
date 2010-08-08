@@ -113,16 +113,17 @@ class Build {
 
     // Create the 'src' folder with the preprocessed code.
     final File srcFolder = new File(tempBuildFolder, "src");
-    Base.openFolder(tempBuildFolder);
+    if (AndroidTool.DEBUG) Base.openFolder(tempBuildFolder);
 
     try {
       manifest = new Manifest(editor);
 //      System.out.println(manifest + " " + manifest.getPackageName());
 
-      final File javaFolder = 
-        mkdirs(srcFolder, manifest.getPackageName().replace('.', '/'));
-      // File srcFile = new File(actualSrc, className + ".java");
-      final String buildPath = javaFolder.getAbsolutePath();
+      // the preproc should take care of this now
+//      final File javaFolder = 
+//        mkdirs(srcFolder, manifest.getPackageName().replace('.', '/'));
+//      // File srcFile = new File(actualSrc, className + ".java");
+//      final String buildPath = javaFolder.getAbsolutePath();
 
       // String prefsLine = Preferences.get("preproc.imports");
       // System.out.println("imports are " + prefsLine);
@@ -136,7 +137,9 @@ class Build {
         editor.statusError("Could not parse the size() command.");
         return null; 
       }
-      className = sketch.preprocess(buildPath, new Preproc(sketch.getName()));
+      className = sketch.preprocess(srcFolder.getAbsolutePath(), //buildPath, 
+                                    manifest.getPackageName(), 
+                                    new Preproc(sketch.getName()));
       if (className != null) {
 //        final File androidXML = new File(tempBuildFolder, "AndroidManifest.xml");
 //        writeAndroidManifest(androidXML, sketch.getName(), className);
@@ -377,6 +380,11 @@ class Build {
         program = program.substring(0, start) + 
           program.substring(start + sizeStatement.length());
       }
+//      String[] found = PApplet.match(program, "import\\s+processing.opengl.*\\s*");
+//      if (found != null) {
+//      }
+      program = program.replaceAll("import\\s+processing\\.opengl\\.\\S+;", "");
+//      PApplet.println(program);
       return super.write(out, program, codeFolderPackages);
     }
     

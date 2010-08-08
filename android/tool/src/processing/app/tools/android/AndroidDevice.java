@@ -170,7 +170,7 @@ class AndroidDevice implements AndroidDeviceProperties {
     final List<String> stackCopy = Collections
         .unmodifiableList(new ArrayList<String>(stackTrace));
     for (final DeviceListener listener : listeners) {
-      listener.stacktrace(stackCopy);
+      listener.stackTrace(stackCopy);
     }
     stackTrace.clear();
   }

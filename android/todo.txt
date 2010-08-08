@@ -61,6 +61,19 @@ _ StreamPump has been quieted, but maybe this needs to be a global log setting
 X fix the width of the build window
 X some sort of warning re: messing with AndroidManifest.xml
 X   added to the wiki
+X implement createGraphics() for A3D/P3D/OPENGL
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1488
+X   http://code.google.com/p/processing/issues/detail?id=240
+X   added a note to the wiki
+X make sure that AndroidManifest and other files are copied on Save As
+X   icons.. any others?
+X Errors show up that .java files are duplicates with the Android tools.
+X   problem is with the packages and where the preproc is putting the file
+X   example sketch added to bug report
+X   http://code.google.com/p/processing/issues/detail?id=232
+X prevent adding the opengl library when it's not needed
+X   preprocessor removes the code by before export
+X   added a note to the wiki
 
 earlier
 X if sketchRenderer() et al are used in android, need to add to desktop
@@ -117,15 +130,6 @@ confirm: [   ]
 alias, password, confirm, validity (years)
 first/last name, ounit, org, city/locale, state/province, country code (xx)
 
-_ make sure that AndroidManifest and other files are copied on Save As
-_   icons.. any others?
-
-P3 _ Errors show up that .java files are duplicates with the Android tools.
-P3 _   problem is with the packages and where the preproc is putting the file
-P3 _   example sketch added to bug report
-P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1472
-P3 _   http://code.google.com/p/processing/issues/detail?id=232
-
 _ seems to have problems on 64-bit windows 
 _   removing local version of java helped someone fix it
 
@@ -148,10 +152,10 @@ _ "Unable to resolve target 'Google...'" when APIs aren't installed
 _   add an error message that explains what to do
 
 _ for libraries that don't work with android, don't let them export
-_   e.g. people adding the opengl library when it's not needed
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1524
+_   http://code.google.com/p/processing/issues/detail?id=248
 _   add line for export in libraries to say whether they're compatible
 _     even just 'android=' will be ok
+_     or 'mode=java,android,python'
 
 _ error messages in runner that are handled special (OOME) need different
 _   handling for android vs others.. argh
@@ -178,9 +182,6 @@ CORE (PApplet, P2D et al)
 
 P2 _ too many temporary objects (particularly w/ color) created with A2D
 P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1399
-
-P3 _ implement createGraphics() for A3D/P3D/OPENGL
-P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1488
 
 P3 _ mouseClicked() is currently missing
 P3 _   implement tap methods to handle mouseClicked() 
