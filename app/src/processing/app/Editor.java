@@ -1314,8 +1314,9 @@ public class Editor extends JFrame implements RunnerListener {
   }
 
 
-  protected void handleDiscourseCopy() {
-    new DiscourseFormat(Editor.this).show();
+  public void handleCopyAsHTML() {
+    textarea.copyAsHTML();
+    statusNotice("Code formatted as HTML has been copied to the clipboard.");
   }
 
 
@@ -2139,9 +2140,6 @@ public class Editor extends JFrame implements RunnerListener {
    * Returns the edit popup menu.
    */
   class TextAreaPopup extends JPopupMenu {
-    //String currentDir = System.getProperty("user.dir");
-    String referenceFile = null;
-
     JMenuItem cutItem;
     JMenuItem copyItem;
     JMenuItem discourseItem;
@@ -2167,10 +2165,10 @@ public class Editor extends JFrame implements RunnerListener {
         });
       this.add(copyItem);
 
-      discourseItem = new JMenuItem("Copy for Discourse");
+      discourseItem = new JMenuItem("Copy as HTML");
       discourseItem.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
-            handleDiscourseCopy();
+            handleCopyAsHTML();
           }
         });
       this.add(discourseItem);
@@ -2236,7 +2234,7 @@ public class Editor extends JFrame implements RunnerListener {
         discourseItem.setEnabled(true);
 
         String sel = textarea.getSelectedText().trim();
-        referenceFile = PdeKeywords.getReference(sel);
+        String referenceFile = PdeKeywords.getReference(sel);
         referenceItem.setEnabled(referenceFile != null);
 
       } else {
