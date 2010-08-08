@@ -207,10 +207,6 @@ public class Manifest {
     // the '.' prefix is just an alias for the full package name
     // http://developer.android.com/guide/topics/manifest/activity-element.html#name
     activity.setString("android:name", "." + className);  // this has to be right
-    label = activity.getString("android:label");
-    if (label.length() == 0) {
-      activity.setString("android:label", className);
-    }
 
     PrintWriter writer = PApplet.createWriter(file);
     mf.write(writer);
