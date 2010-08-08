@@ -1,7 +1,21 @@
 0190
+X be more specific about linux/sun/java error messages
+X allow 'oracle' in java version name string
+X the open button on the toolbar is goofed up 
+X   http://code.google.com/p/processing/issues/detail?id=323
 
 earlier
 X add warning message when not using a version of sun java w/ p5 on linux
+X Ctrl-Z will undo, but not scroll to where the undo happens. 
+X   is this now somehow fixed? (or only on os x?)
+X   so user thinks nothing is happening and overundo. 
+X   http://dev.processing.org/bugs/show_bug.cgi?id=35
+X   http://code.google.com/p/processing/issues/detail?id=15
+
+
+_ add processing.js export tool from florian
+_   http://github.com/fjenett/processingjstool/
+_   http://github.com/fjenett/processingjstool/zipball/v0.0.6
 
 _ linux permissions not set because of tar in ant
 _   http://code.google.com/p/processing/issues/detail?id=343
@@ -16,8 +30,6 @@ _ locations: sketchbook, examples, libraries
 _ 'export' and 'export application' titles and/or # of items
 _ 'run' and 'present' under sketch, and/or # of items
 
-_ the open button on the toolbar is goofed up 
-_   http://code.google.com/p/processing/issues/detail?id=323
 _ launch4j problem
 _   no crash when double-clicking a sketch and loading it
 _   http://code.google.com/p/processing/issues/detail?id=231
@@ -26,16 +38,7 @@ _   http://code.google.com/p/processing/issues/detail?id=316
 
 _ fix line endings in revisions.txt for windows
 
-_ Ctrl-Z will undo, but not scroll to where the undo happens. 
-_   is this now somehow fixed? (or only on os x?)
-_   so user thinks nothing is happening and overundo. 
-_   http://dev.processing.org/bugs/show_bug.cgi?id=35
-_   http://code.google.com/p/processing/issues/detail?id=15
-
 closing this bug, because we'll be replacing the current video library with another sometime later this summer. as such, i won't be doing any more bug fixes on the current video library. in the meantime, we recommend using gsvideo, opencv, or one of the other video libraries that are available.
-
-_ add processing.js export tool from florian
-_   http://github.com/fjenett/processingjstool/zipball/v0.0.6
 
 _ Signature issue on contributed libraries affects unrelated opengl sketches
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1570

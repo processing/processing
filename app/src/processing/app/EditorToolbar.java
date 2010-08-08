@@ -239,10 +239,9 @@ public class EditorToolbar extends JComponent implements MouseInputListener, Key
 
 
   public void mouseMoved(MouseEvent e) {
-    if (!isEnabled())
-      return;
-    
-    // mouse events before paint();
+    if (!isEnabled()) return;
+
+    // ignore mouse events before the first paintComponent() call
     if (state == null) return;
 
     if (state[OPEN] != INACTIVE) {
@@ -271,11 +270,11 @@ public class EditorToolbar extends JComponent implements MouseInputListener, Key
       }
     }
     int sel = findSelection(x, y);
-    if (sel == -1) return;
-
-    if (state[sel] != ACTIVE) {
-      setState(sel, ROLLOVER, true);
-      currentRollover = sel;
+    if (sel != -1) {
+      if (state[sel] != ACTIVE) {
+        setState(sel, ROLLOVER, true);
+        currentRollover = sel;
+      }
     }
   }
 
@@ -311,9 +310,12 @@ public class EditorToolbar extends JComponent implements MouseInputListener, Key
 
 
   public void mouseExited(MouseEvent e) {
-    // if the popup menu for is visible, don't register this,
+    // if the 'open' popup menu is visible, don't register this,
     // because the popup being set visible will fire a mouseExited() event
     if ((popup != null) && popup.isVisible()) return;
+
+    // there is no more rollover, make sure that the rollover text goes away
+    currentRollover = -1;
 
     if (state[OPEN] != INACTIVE) {
       setState(OPEN, INACTIVE, true);
@@ -325,16 +327,13 @@ public class EditorToolbar extends JComponent implements MouseInputListener, Key
 
 
   public void mousePressed(MouseEvent e) {
-    
-    // jdf
-    if (!isEnabled())
-      return;
-    
+    // ignore mouse presses so hitting 'run' twice doesn't cause problems
+    if (!isEnabled()) return;
+
     final int x = e.getX();
     final int y = e.getY();
 
     int sel = findSelection(x, y);
-    ///if (sel == -1) return false;
     if (sel == -1) return;
     currentRollover = -1;
 
