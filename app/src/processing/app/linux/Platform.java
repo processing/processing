@@ -30,28 +30,27 @@ import processing.app.Base;
 import processing.app.Preferences;
 
 
-/**
- * Used by Base for platform-specific tweaking, for instance finding the
- * sketchbook location using the Windows registry, or OS X event handling.
- */
 public class Platform extends processing.app.Platform {
-  
+
   public void init(Base base) {
     super.init(base);
-    
+
     String javaVendor = System.getProperty("java.vendor");
     String javaVM = System.getProperty("java.vm.name");
-    if (javaVendor == null || !javaVendor.contains("Sun") || 
+    if (javaVendor == null ||
+        (!javaVendor.contains("Sun") && !javaVendor.contains("Oracle")) ||
         javaVM == null || !javaVM.contains("Java")) {
-      Base.showWarning("Not fond of this Java VM", 
+      Base.showWarning("Not fond of this Java VM",
         "Processing requires Java 6 from Sun (i.e. the sun-java-jdk\n" +
         "package on Ubuntu). Other versions such as OpenJDK, IcedTea,\n" +
-        "and GCJ are not (yet) recommended. For more, read the wiki:\n" +
+        "and GCJ are strongly discouraged. Among other things, you're\n" +
+        "likely to run into problems with sketch window size and\n" +
+        "placement. For more background, please read the wiki:\n" +
         "http://wiki.processing.org/w/Supported_Platforms#Linux", null);
     }
   }
 
-  
+
   // TODO Need to be smarter here since KDE people ain't gonna like that GTK.
   //      It may even throw a weird exception at 'em for their trouble.
   public void setLookAndFeel() throws Exception {
@@ -68,7 +67,7 @@ public class Platform extends processing.app.Platform {
     UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
   }
 
-  
+
   public void openURL(String url) throws Exception {
     if (openFolderAvailable()) {
       String launcher = Preferences.get("launcher");
