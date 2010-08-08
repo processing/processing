@@ -55,6 +55,8 @@ public class Sketch {
    */
   public static final String SIZE_REGEX = 
     "(?:^|\\s|;)size\\s*\\(\\s*(\\S+)\\s*,\\s*([^\\s,\\)]+),?\\s*([^\\)]*)\\s*\\)\\s*\\;";
+  public static final String PACKAGE_REGEX = 
+    "(?:^|\\s|;)package\\s+(\\S+)\\;";
   
   private Editor editor;
   private boolean foundMain = false;
@@ -797,9 +799,8 @@ public class Sketch {
       }
     } catch (IOException e) { }
 
-    // if the new folder already exists, then need to remove
-    // its contents before copying everything over
-    // (user will have already been warned)
+    // if the new folder already exists, then first remove its contents before 
+    // copying everything over (user will have already been warned)
     if (newFolder.exists()) {
       Base.removeDir(newFolder);
     }
@@ -815,12 +816,49 @@ public class Sketch {
       current.setProgram(editor.getText());
     }
 
+    File[] copyItems = folder.listFiles(new FileFilter() {
+      public boolean accept(File file) {
+        String name = file.getName();
+        // just in case the OS likes to return these as if they're legit
+        if (name.equals(".") || name.equals("..")) {
+          return false;
+        }
+        // list of files/folders to be ignored during "save as"
+        for (String ignorable : getIgnorable()) {
+          if (name.equals(ignorable)) {
+            return false;
+          }
+        }
+        // ignore the extensions for code, since that'll be copied below
+        for (String ext : getExtensions()) {
+          if (name.endsWith(ext)) {
+            return false;
+          }
+        }
+        // don't do screen captures, since there might be thousands. kind of 
+        // a hack, but seems harmless. hm, where have i heard that before...
+        if (name.startsWith("screen-")) {
+          return false;
+        }
+        return true;
+      }
+    });
+    // now copy over the items that make sense
+    for (File copyable : copyItems) {
+      if (copyable.isDirectory()) {
+        Base.copyDir(copyable, new File(newFolder, copyable.getName())); 
+      } else {
+        Base.copyFile(copyable, new File(newFolder, copyable.getName()));
+      }
+    }
+
     // save the other tabs to their new location
     for (int i = 1; i < codeCount; i++) {
       File newFile = new File(newFolder, code[i].getFileName());
       code[i].saveAs(newFile);
     }
 
+    /*
     // re-copy the data folder (this may take a while.. add progress bar?)
     if (dataFolder.exists()) {
       File newDataFolder = new File(newFolder, "data");
@@ -840,6 +878,7 @@ public class Sketch {
       File newHtml = new File(newFolder, "applet.html");
       Base.copyFile(customHtml, newHtml);
     }
+    */
 
     // save the main tab with its new name
     File newFile = new File(newFolder, newName + ".pde");
@@ -1210,12 +1249,14 @@ public class Sketch {
    * @return null if compilation failed, main class name if not
    */
   public String preprocess(String buildPath) throws RunnerException {
-    return preprocess(buildPath, new PdePreprocessor(name));
+    return preprocess(buildPath, "", new PdePreprocessor(name));
   }
 
 
-  public String preprocess(String buildPath, PdePreprocessor preprocessor) throws RunnerException {
-    // make sure the user didn't hide the sketch folder
+  public String preprocess(String buildPath, 
+                           String packageName,
+                           PdePreprocessor preprocessor) throws RunnerException {
+    // make sure the user isn't playing "hide the sketch folder"
     ensureExistence();
 
     String[] codeFolderPackages = null;
@@ -1254,9 +1295,14 @@ public class Sketch {
       }
     }
 
+      
     final PreprocessResult result;
     try {
-      final File java = new File(buildPath, name + ".java");
+      final File outputFolder = 
+        new File(buildPath, packageName.replace('.', '/'));
+      outputFolder.mkdirs();
+      //final File java = new File(buildPath, name + ".java");
+      final File java = new File(outputFolder, name + ".java");
       final PrintWriter stream = new PrintWriter(new FileWriter(java));
       try {
         result = preprocessor.write(stream, bigCode.toString(),
@@ -1414,7 +1460,21 @@ public class Sketch {
         // shtuff so that unicode bunk is properly handled
         String filename = sc.getFileName(); //code[i].name + ".java";
         try {
-          Base.saveFile(sc.getProgram(), new File(buildPath, filename));
+          String program = sc.getProgram();
+          //Base.saveFile(program, new File(buildPath, filename));
+
+          String[] pkg = PApplet.match(program, PACKAGE_REGEX);
+          // if no package, we'll have to add one
+          if (pkg == null) {
+            // use the default package name, since package-less code will break
+            pkg = new String[] { packageName };
+            // add the package name to the source before writing it
+            program = "package " + packageName + ";" + program;
+          }
+          File packageFolder = new File(buildPath, pkg[0].replace('.', '/'));
+          packageFolder.mkdirs();
+          Base.saveFile(program, new File(packageFolder, filename));
+
         } catch (IOException e) {
           e.printStackTrace();
           throw new RunnerException("Problem moving " + filename +
@@ -2871,6 +2931,19 @@ public class Sketch {
     return new String[] { "pde", "java" };
   }
 
+  
+  /**
+   * Get array of file/directory names that needn't be copied during "Save As".
+   */
+  public String[] getIgnorable() {
+    return new String[] { 
+      "applet",
+      "application.macosx",
+      "application.windows",
+      "application.linux"
+    };
+  }
+  
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
