@@ -839,11 +839,7 @@ public class Editor extends JFrame implements RunnerListener {
     item = Base.newJMenuItemShift("Copy as HTML", 'C');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-//          SwingUtilities.invokeLater(new Runnable() {
-//              public void run() {
-          new DiscourseFormat(Editor.this).show();
-//              }
-//            });
+          handleCopyAsHTML();
         }
       });
     menu.add(item);
