@@ -25,8 +25,14 @@ import java.util.Vector;
 import java.awt.im.InputMethodRequests;
 
 import processing.app.syntax.im.InputMethodSupport;
+import processing.core.PApplet;
 
 /**
+ * The text area component from the JEdit Syntax (syntax.jedit.org) project.
+ * This is a very early version of what later was completely rewritten and
+ * become jEdit (jedit.org). Over the years we've also added minor features 
+ * for use with Processing (notably mouse wheel support and copyAsHTML). [fry]
+ * <p>
  * jEdit's text area component. It is more suited for editing program
  * source code than JEditorPane, because it drops the unnecessary features
  * (images, variable-width lines, and so on) and adds a whole bunch of
@@ -42,8 +48,8 @@ import processing.app.syntax.im.InputMethodSupport;
  * </ul>
  * It is also faster and doesn't have as many problems. It can be used
  * in other applications; the only other part of jEdit it depends on is
- * the syntax package.<p>
- *
+ * the syntax package.
+ * <p>
  * To use it in your app, treat it like any other component, for example:
  * <pre>JEditTextArea ta = new JEditTextArea();
  * ta.setTokenMarker(new JavaTokenMarker());
@@ -54,7 +60,6 @@ import processing.app.syntax.im.InputMethodSupport;
  *     + "}");</pre>
  *
  * @author Slava Pestov
- * @version $Id$
  */
 public class JEditTextArea extends JComponent
 {
@@ -1512,26 +1517,24 @@ public class JEditTextArea extends JComponent
     eventListenerList.remove(CaretListener.class,listener);
   }
 
+
   /**
    * Deletes the selected text from the text area and places it
    * into the clipboard.
    */
-  public void cut()
-  {
-    if(editable)
-      {
-        copy();
-        setSelectedText("");
-      }
+  public void cut() {
+    if (editable) {
+      copy();
+      setSelectedText("");
+    }
   }
 
+  
   /**
    * Places the selected text into the clipboard.
    */
-  public void copy()
-  {
-    if(selectionStart != selectionEnd)
-      {
+  public void copy() {
+    if (selectionStart != selectionEnd) {
         Clipboard clipboard = getToolkit().getSystemClipboard();
 
         String selection = getSelectedText();
@@ -1544,6 +1547,139 @@ public class JEditTextArea extends JComponent
         clipboard.setContents(new StringSelection(buf.toString()),null);
       }
   }
+  
+  
+  /**
+   * Copy the current selection as HTML, formerly "Format for Discourse".
+   * <p/>
+   * Original code by <A HREF="http://usuarios.iponet.es/imoreta">owd</A>.
+   * <p/>
+   * Revised and updated for revision 0108 by Ben Fry (10 March 2006).
+   * <p/>
+   * Updated for 0122 to simply copy the code directly to the clipboard,
+   * rather than opening a new window.
+   * <p/>
+   * Updated for 0144 to only format the selected lines.
+   * <p/> 
+   * Updated for 0185 to incorporate the HTML changes from the Arduino project, 
+   * and set the formatter to always use HTML (disabling, but not removing the 
+   * YaBB version of the code) and also fixing it for the Tools API.
+   * <p/>
+   * Updated for 0190 to simply be part of JEditTextArea, removed YaBB code. 
+   * Simplest and most sensible to have it live here, since it's no longer
+   * specific to any language or version of the PDE.    
+   */
+  public void copyAsHTML() {
+    StringBuffer cf = new StringBuffer("<pre>\n");
+
+    int selStart = getSelectionStart();
+    int selStop = getSelectionStop();
+
+    int startLine = getSelectionStartLine();
+    int stopLine = getSelectionStopLine();
+
+    // If no selection, convert all the lines
+    if (selStart == selStop) {
+      startLine = 0;
+      stopLine = getLineCount() - 1;
+    } else {
+      // Make sure the selection doesn't end at the beginning of the last line
+      if (getLineStartOffset(stopLine) == selStop) {
+        stopLine--;
+      }
+    }
+
+    // Read the code line by line
+    for (int i = startLine; i <= stopLine; i++) {
+      emitAsHTML(cf, i);
+    }
+
+    cf.append("\n</pre>");
+
+    StringSelection formatted = new StringSelection(cf.toString());
+    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+    clipboard.setContents(formatted, new ClipboardOwner() {
+        public void lostOwnership(Clipboard clipboard, Transferable contents) {
+          // i don't care about ownership
+        }
+      });
+  }
+
+
+  private void emitAsHTML(StringBuffer cf, int line) {
+    Segment segment = new Segment();
+    getLineText(line, segment);
+
+    char[] segmentArray = segment.array;
+    int limit = segment.getEndIndex();
+    int segmentOffset = segment.offset;
+    int segmentCount = segment.count;
+
+    TokenMarker tokenMarker = getTokenMarker();
+    // If syntax coloring is disabled, do simple translation
+    if (tokenMarker == null) {
+      for (int j = 0; j < segmentCount; j++) {
+        char c = segmentArray[j + segmentOffset];
+        cf = cf.append(c);
+      }
+    } else {
+      // If syntax coloring is enabled, we have to do this
+      // because tokens can vary in width
+      Token tokens;
+      if ((painter.getCurrentLineIndex() == line) &&
+          (painter.getCurrentLineTokens() != null)) {
+        tokens = painter.getCurrentLineTokens();
+
+      } else {
+        painter.setCurrentLineIndex(line);
+        painter.setCurrentLineTokens(tokenMarker.markTokens(segment, line));
+        tokens = painter.getCurrentLineTokens();
+      }
+
+      int offset = 0;
+      SyntaxStyle[] styles = painter.getStyles();
+
+      for (;;) {
+        byte id = tokens.id;
+        if (id == Token.END) {
+          char c = segmentArray[segmentOffset + offset];
+          if (segmentOffset + offset < limit) {
+            cf.append(c);
+          } else {
+            cf.append('\n');
+          }
+          return; // cf.toString();
+        }
+        if (id != Token.NULL) {
+          cf.append("<span style=\"color: #");
+          cf.append(PApplet.hex(styles[id].getColor().getRGB() & 0xFFFFFF, 6));
+          cf.append(";\">");
+
+          if (styles[id].isBold())
+            cf.append("<b>");
+        }
+        int length = tokens.length;
+
+        for (int j = 0; j < length; j++) {
+          char c = segmentArray[segmentOffset + offset + j];
+          if (offset == 0 && c == ' ') {
+            // Force spaces at the beginning of the line
+            cf.append("&nbsp;");
+          } else {
+            cf.append(c);
+          }
+          // Place close tags [/]
+          if (j == (length - 1) && id != Token.NULL && styles[id].isBold())
+            cf.append("</b>");
+          if (j == (length - 1) && id != Token.NULL)
+            cf.append("</span>");
+        }
+        offset += length;
+        tokens = tokens.next;
+      }
+    }
+  }
+
 
   /**
    * Inserts the clipboard contents into the text.
