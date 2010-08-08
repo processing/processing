@@ -314,13 +314,13 @@ public class EditorToolbar extends JComponent implements MouseInputListener, Key
     // because the popup being set visible will fire a mouseExited() event
     if ((popup != null) && popup.isVisible()) return;
 
-    // there is no more rollover, make sure that the rollover text goes away
-    currentRollover = -1;
-
     if (state[OPEN] != INACTIVE) {
       setState(OPEN, INACTIVE, true);
     }
     handleMouse(e);
+    
+    // there is no more rollover, make sure that the rollover text goes away
+    currentRollover = -1;
   }
 
   int wasDown = -1;
