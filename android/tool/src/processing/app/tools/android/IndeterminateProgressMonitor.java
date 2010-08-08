@@ -18,9 +18,8 @@ class IndeterminateProgressMonitor {
 
   IndeterminateProgressMonitor(final Component parentComponent,
                                final Object message, final String note) {
-
-    cancelOption = new Object[] { UIManager
-        .getString("OptionPane.cancelButtonText") };
+    cancelOption = 
+      new Object[] { UIManager.getString("OptionPane.cancelButtonText") };
     progressBar = new JProgressBar();
     progressBar.setIndeterminate(true);
     noteLabel = new JLabel(note);
@@ -35,13 +34,8 @@ class IndeterminateProgressMonitor {
       super(messageList, JOptionPane.INFORMATION_MESSAGE,
             JOptionPane.DEFAULT_OPTION, null,
             IndeterminateProgressMonitor.this.cancelOption, null);
-      setPreferredSize(new Dimension(getPreferredSize().width + 80,
+      setPreferredSize(new Dimension(getPreferredSize().width + 120,
                                      getPreferredSize().height));
-    }
-
-    @Override
-    public int getMaxCharactersPerLineCount() {
-      return 60;
     }
 
     @Override
