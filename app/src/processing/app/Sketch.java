@@ -92,8 +92,6 @@ public class Sketch {
   private int codeCount;
   private SketchCode[] code;
 
-  /** Class name for the PApplet, as determined by the preprocessor. */
-  private String appletClassName;
   /** Class path determined during build. */
   private String classPath;
 
@@ -3000,11 +2998,6 @@ public class Sketch {
 
   public boolean isUntitled() {
     return editor.untitled;
-  }
-
-
-  public String getAppletClassName2() {
-    return appletClassName;
   }
 
 
