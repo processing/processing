@@ -53,9 +53,11 @@ class AndroidEnvironment {
     }
   }
 
-  
+
   private AndroidEnvironment() {
-    System.out.println("Starting up AndroidEnvironment");
+    if (AndroidTool.DEBUG) {
+      System.out.println("Starting up AndroidEnvironment");
+    }
 //    killAdbServer();
     Runtime.getRuntime().addShutdownHook(
       new Thread("AndroidEnvironment Shutdown") {

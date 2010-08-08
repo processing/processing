@@ -84,14 +84,16 @@ public class Manifest {
   }
   
   
-//  writer.println("  <uses-permission android:name=\"android.permission.INTERNET\" />");
-//  writer.println("  <uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\" />");
+//writer.println("  <uses-permission android:name=\"android.permission.INTERNET\" />");
+//writer.println("  <uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\" />");
+  static final String PERMISSION_PREFIX = "android.permission.";
+  
   public String[] getPermissions() {
     XMLElement[] elements = xml.getChildren("uses-permission");
     int count = elements.length;
     String[] names = new String[count];
     for (int i = 0; i < count; i++) {
-      names[i] = elements[i].getString("android:name");
+      names[i] = elements[i].getString("android:name").substring(PERMISSION_PREFIX.length());
     }
     return names;
   }
@@ -105,7 +107,7 @@ public class Manifest {
     // ...and add the new kids back
     for (String name : names) {
       XMLElement newbie = new XMLElement("uses-permission");
-      newbie.setString("android:name", name);
+      newbie.setString("android:name", PERMISSION_PREFIX + name);
       xml.addChild(newbie);
     }
     save();
