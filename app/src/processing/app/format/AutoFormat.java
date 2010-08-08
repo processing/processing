@@ -6,7 +6,7 @@
   Original Copyright (c) 1997, 1998 Van Di-Han HO. All Rights Reserved.
   Updates Copyright (c) 2001 Jason Pell.
   Further updates Copyright (c) 2003 Martin Gomez, Ateneo de Manila University
-  Bug fixes Copyright (c) 2005-09 Ben Fry and Casey Reas
+  Additional updates Copyright (c) 2005-10 Ben Fry and Casey Reas
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -415,37 +415,38 @@ public class AutoFormat {
           c_level = 0;
           buf.append(c);
           writeIndentedLine();
-          break;
-        }
-        if_lev = s_if_lev[c_level] - 1;
-        if (if_lev < 0) {
-          if_lev = 0;
-        }
-        if_flg = s_if_flg[c_level];
-        trimRight(buf);
-        writeIndentedLine();
-        tabs--;
 
-        trimRight(result);
-        result.append("\n");
-        printIndentation();
-        result.append(c);
-        if (peek() == ';') {
-          result.append(next());
-        }
-        getnl();
-        writeIndentedLine();
-        result.append("\n");
-        s_flag = true;
-        if (c_level < s_level[level]) {
-          if (level > 0) {
-            level--;
+        } else {
+          if_lev = s_if_lev[c_level] - 1;
+          if (if_lev < 0) {
+            if_lev = 0;
           }
-        }
-        if (ind[level] != 0) {
-          tabs -= p_flg[level];
-          p_flg[level] = 0;
-          ind[level] = 0;
+          if_flg = s_if_flg[c_level];
+          trimRight(buf);
+          writeIndentedLine();
+          tabs--;
+
+          trimRight(result);
+          result.append("\n");
+          printIndentation();
+          result.append(c);
+          if (peek() == ';') {
+            result.append(next());
+          }
+          getnl();
+          writeIndentedLine();
+          result.append("\n");
+          s_flag = true;
+          if (c_level < s_level[level]) {
+            if (level > 0) {
+              level--;
+            }
+          }
+          if (ind[level] != 0) {
+            tabs -= p_flg[level];
+            p_flg[level] = 0;
+            ind[level] = 0;
+          }
         }
         break;
 
