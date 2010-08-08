@@ -43,6 +43,8 @@ public class AndroidTool implements Tool, DeviceListener {
   private AndroidSDK sdk;
   private Editor editor;
   private Build build;
+  
+  static public boolean DEBUG = true;
 
   private static final String ANDROID_CORE_FILENAME =
     "processing-android-core-" + Base.VERSION_NAME + ".zip";
@@ -258,13 +260,13 @@ public class AndroidTool implements Tool, DeviceListener {
   }
 
 
-  private void buildReleaseForExport() throws MonitorCanceled {
+  private void buildReleaseForExport(String target) throws MonitorCanceled {
     final IndeterminateProgressMonitor monitor =
       new IndeterminateProgressMonitor(editor,
                                        "Building and exporting...",
                                        "Creating project...");
     try {
-      File tempFolder = build.createProject("release");
+      File tempFolder = build.createProject(target);
       if (tempFolder == null) {
         return;
       }
@@ -273,9 +275,9 @@ public class AndroidTool implements Tool, DeviceListener {
           throw new MonitorCanceled();
         }
         monitor.setNote("Building release version...");
-        if (!build.antBuild("release")) {
-          return;
-        }
+//        if (!build.antBuild("release")) {
+//          return;
+//        }
 
         if (monitor.isCanceled()) {
           throw new MonitorCanceled();
@@ -377,7 +379,7 @@ public class AndroidTool implements Tool, DeviceListener {
    * in the package. If the packaging for droid sketches changes,
    * this method will have to change too.
    */
-  public void stacktrace(final List<String> trace) {
+  public void stackTrace(final List<String> trace) {
     final Iterator<String> frames = trace.iterator();
     final String exceptionLine = frames.next();
 
@@ -460,7 +462,7 @@ public class AndroidTool implements Tool, DeviceListener {
   private class ExportHandler implements Runnable {
     public void run() {
       try {
-        buildReleaseForExport();
+        buildReleaseForExport("debug");
       } catch (final MonitorCanceled ok) {
         editor.statusNotice("Canceled.");
       } finally {
@@ -475,6 +477,8 @@ public class AndroidTool implements Tool, DeviceListener {
    */
   private class ExportAppHandler implements Runnable {
     public void run() {
+      //buildReleaseForExport("release");
+
       // Need to implement an entire signing setup first
       // http://dev.processing.org/bugs/show_bug.cgi?id=1430
       editor.statusError("Export application not yet implemented.");
