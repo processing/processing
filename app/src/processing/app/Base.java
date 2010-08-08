@@ -1244,10 +1244,8 @@ public class Base {
       } else {
         // not a sketch folder, but maybe a subfolder containing sketches
         JMenu submenu = new JMenu(list[i]);
-        // needs to be separate var
-        // otherwise would set ifound to false
-        //boolean found = addSketches(submenu, subfolder, openReplaces); //, false);
-        boolean found = addSketches(submenu, subfolder, false);
+        // needs to be separate var otherwise would set ifound to false
+        boolean found = addSketches(submenu, subfolder, replaceExisting);
         if (found) {
           menu.add(submenu);
           ifound = true;
