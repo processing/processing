@@ -28,100 +28,55 @@ o   http://dev.processing.org/bugs/show_bug.cgi?id=1429
 X   http://code.google.com/p/processing/issues/detail?id=221
 X change skewX/Y to shearX/Y
 _   need updated reference for this
+X copy the changes over from the xml library
+_ post processing-android-core-0190.zip to the download page
+_   get some help w/ the dist script to make the right file
+_ remove 'import processing.opengl.*' in the preprocessor?
+X add to wiki - rename 'data' folder to 'assets' when inside eclipse
+X prevent rotation of applications? (or require a certain orientation)
+o   add to activity tag in the manifest:
+o     android:configChanges="keyboardHidden|orientation"
+o     android:screenOrientation="landscape"
+X   or programmatically specify:
+X     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+X     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+X get the dpi of the screen (added to wiki)
+X   http://developer.android.com/reference/android/util/DisplayMetrics.html
+X add hutch stuff to the wiki
+X   http://lukehutch.wordpress.com/2010/01/06/my-multi-touch-code-ported-to-eclair/
+X also for the wiki:
+X   add information about permissions, since loadStrings() will break
+X add information to wiki about preparing apps for release
+X   http://developer.android.com/guide/publishing/preparing.html
+X make size() work to place the component at the center of the screen
+X make size() work to change the renderer
+X how does size work? 
+X   if size() method is used, things are scaled based on that
+X   if no size() method, then the full screen/full resolution is used
+X   make apps properly handle screen resize
+o remove SurfaceView2D/SurfaceView3D separation, or clean up
+o test controlp5 with android
+X get core.zip out of svn (once tool is separate, modes stuff working etc)
+_ StreamPump has been quieted, but maybe this needs to be a global log setting
+
+earlier
+X if sketchRenderer() et al are used in android, need to add to desktop
+X remove processing.opengl.* classes and finish PGraphicsAndroid3D
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1401
 
 _ throw an error if a file in the 'data' dir ends with .gz
-
-create new keystore
-location: [   ] (browse)
-password: [   ]
-confirm: [   ]
-then asks for 
-alias, password, confirm, validity (years)
-first/last name, ounit, org, city/locale, state/province, country code (xx)
 
 _ application local storage: context.getFilesDir().getPath()
 "For those of you interested, the internal 8GB of storage on the phone
 is mounted at /emmc (r/w mode, of course) and microSD cards still
 shows up normally at /sdcard as expected." 
 
-_ add to wiki - rename 'data' folder to 'assets' when inside eclipse
-_ other useful tidbits (handlers etc)
-_   http://developer.android.com/guide/appendix/faq/commontasks.html
-
-_ simple example of reading the compass (also note that won't work w/ sim)
-_ and also the gps, i assume (can do fake data w/ sim)
-
-_ add hutch stuff to the wiki
-http://lukehutch.wordpress.com/2010/01/06/my-multi-touch-code-ported-to-eclair/
-
-_ maybe the back button shouldn't quit apps, the home button should?
-_   back button use in apps is so infuriating...
-
 P1 _ exceptions with StreamPump and adb devices on osx and linux
 P1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1545
 P1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1527
-P1 _ implement certificates (self-signed) for distribution
-P1 _   http://developer.android.com/guide/publishing/app-signing.html
-P1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1430
-P1 _   http://code.google.com/p/processing/issues/detail?id=222
-
-P3 _ Errors show up that .java files are duplicates with the Android tools.
-P3 _   problem is with the packages and where the preproc is putting the file
-P3 _   example sketch added to bug report
-P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1472
-P3 _   http://code.google.com/p/processing/issues/detail?id=232
-
-_ seems to have problems on 64-bit windows 
-_   removing local version of java helped someone fix it
-
-_ remove 'import processing.opengl.*' in the preprocessor?
-
-_ may need to add screen orientation as a built-in function
-_   fairly common to use, and otherwise needs an obscure import
-
-_ additional manifest gui necessary:
-_   icons are apparently important
-_   android:icon and android:label in <application>
-_   http://developer.android.com/guide/practices/ui_guidelines/icon_design.html
-_   setting the default package
-_   some sort of warning re: messing with AndroidManifest.xml
-_   Remove the android:debuggable="true" attribute from <application>
-_   http://developer.android.com/guide/publishing/preparing.html
-
-"Medium-density assets go in a res/drawable-mdpi/ directory 
-(or in the default res/drawable/ directory),"
-
-icon.png, icon-hdpi, icon-ldpi, icon-mdpi
-
-android:icon="@drawable/app_notes"
-./res/drawable-hdpi/app_notes.png -> 72x72
-./res/drawable-hdpi-v6/app_notes.png
-./res/drawable-ldpi-v6/app_notes.png -> 36x36
-./res/drawable-mdpi/app_notes.png -> 48x48
-./res/drawable-mdpi-v6/app_notes.png
-
-android:icon="@drawable/app_lunar_lander"
-./res/drawable/app_lunar_lander.png -> 64x64
-
-JetBoy... <application android:icon="@drawable/icon"
-res/drawable/icon.png -> 48x48
-
-_ also for the wiki:
-_   add information about permissions, since loadStrings() will break
-_ add information to wiki about preparing apps for release
-_   http://developer.android.com/guide/publishing/preparing.html
-
-_ don't let the keystore message show up in red
-_   Using keystore: /Users/fry/.android/debug.keystore
-
-_ post processing-android-core-0190.zip to the download page
-_   get some help w/ the dist script to make the right file
-
-_ copy the changes over from the xml library
-
-_ when starting the emulator, the adb server gets reset
-_   then it causes this exception, which kills the thread waiting for input
-_   so another reset is necessary
+P1 _   when starting the emulator, the adb server gets reset
+P1 _   then it causes this exception, which kills the thread waiting for input
+P1 _   so another reset is necessary
 Exception in thread "StreamPump 49" java.lang.RuntimeException: Inside processing.app.exec.StreamPump@1ebe8ec for out: adb devices
 	at processing.app.exec.StreamPump.run(StreamPump.java:82)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
@@ -141,22 +96,56 @@ Caused by: java.io.IOException: Stream closed
 	at processing.app.exec.StreamPump.run(StreamPump.java:71)
 	... 3 more
 
-_ major issue with sketches not quitting out of the run loop in background
+_ additional manifest gui necessary:
+X   icons are apparently important, android:icon
+X   http://developer.android.com/guide/practices/ui_guidelines/icon_design.html
+_ on export (application)
+_   increment manifest/android:versionCode each time 'export' is called
+_   Remove the android:debuggable="true" attribute from <application>
+_ provide manifest/android:versionName ('pretty' version number)
+_ setting the default package: manifest/package
+_ application/android:label
+_   used on home screen, manage applications, my downloads, etc
+_ some sort of warning re: messing with AndroidManifest.xml
+_ http://developer.android.com/guide/publishing/preparing.html
+P1 _ implement certificates (self-signed) for distribution
+P1 _   http://developer.android.com/guide/publishing/app-signing.html
+P1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1430
+P1 _   http://code.google.com/p/processing/issues/detail?id=222
+create new keystore
+location: [   ] (browse)
+password: [   ]
+confirm: [   ]
+...then asks for 
+alias, password, confirm, validity (years)
+first/last name, ounit, org, city/locale, state/province, country code (xx)
+
+_ make sure that AndroidManifest and other files are copied on Save As
+_   icons.. any others?
+
+P3 _ Errors show up that .java files are duplicates with the Android tools.
+P3 _   problem is with the packages and where the preproc is putting the file
+P3 _   example sketch added to bug report
+P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1472
+P3 _   http://code.google.com/p/processing/issues/detail?id=232
+
+_ seems to have problems on 64-bit windows 
+_   removing local version of java helped someone fix it
+
+_ don't let the keystore message show up in red
+_   Using keystore: /Users/fry/.android/debug.keystore
+
+_ possible major issue with sketches not quitting out of run() when in bg
 _   pause needs to actually kill the thread
 _   returning from pause needs to reset the clock
 _   this is currently draining batteries
 
-_ look into touch event code, see if there's a good way to integrate
+X look into touch event code, see if there's a good way to integrate
+_   make a decision on how to integrate touch event code
 _ add registered methods again
 _   need to figure out generic event queueing first
 _   may need a different subset of methods, and introduce new ones
 _     that will be usable on both android and desktop
-_ add line for export in libraries to say whether they're compatible
-_   even just 'android=' will be ok
-
-_ possibility of doing a compile (not run) using straight javac?
-_   this would be a faster way to check for errors
-_   w/o needing to use the incredibly slow android tools
 
 _ "Unable to resolve target 'Google...'" when APIs aren't installed
 _   add an error message that explains what to do
@@ -164,24 +153,17 @@ _   add an error message that explains what to do
 _ for libraries that don't work with android, don't let them export
 _   e.g. people adding the opengl library when it's not needed
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1524
+_   add line for export in libraries to say whether they're compatible
+_     even just 'android=' will be ok
 
 _ error messages in runner that are handled special (OOME) need different
 _   handling for android vs others.. argh
 
-_ test controlp5 with android
-
-_ make size() work to place the component at the center of the screen
-_ make size() work to change the renderer
-_ how does size work? 
-_   if size() method is used, things are scaled based on that
-_   if no size() method, then the full screen/full resolution is used
-_   make apps properly handle screen resize
 _ PShape examples are totally broken
-_ get core.zip out of svn (once tool is separate, modes stuff working etc)
-_ if sketchRenderer() et al are used in android, need to add to desktop
-_ remove SurfaceView2D/SurfaceView3D separation, or clean up
-_ what is resetLights() in PGraphics?
-_ remove model() method from end of PApplet (make it shape(PShape))
+
+_ clean up changes from andres
+_   what is resetLights() in PGraphics?
+_   remove model() method from end of PApplet (make it shape(PShape))
 
 P1 this is embarrassing, need to fix ASAP
 P2 need to fix before beta release
@@ -200,10 +182,8 @@ CORE (PApplet, P2D et al)
 P2 _ too many temporary objects (particularly w/ color) created with A2D
 P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1399
 
-P3 _ implement createGraphics() for A2D/P3D/OPENGL
+P3 _ implement createGraphics() for A3D/P3D/OPENGL
 P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1488
-P3 _ remove processing.opengl.* classes and finish PGraphicsAndroid3D
-P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1401
 
 P3 _ mouseClicked() is currently missing
 P3 _   implement tap methods to handle mouseClicked() 
@@ -329,7 +309,26 @@ P5 _   http://dev.processing.org/bugs/show_bug.cgi?id=1392
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+EXAMPLES
+
+_ simple example of reading the compass (also note that won't work w/ sim)
+_ and also the gps, i assume (can do fake data w/ sim)
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 SAVED FOR LATER
+
+_ may need to add screen orientation as a built-in function
+_   fairly common to use, and otherwise needs an obscure import
+
+_ possibility of doing a compile (not run) using straight javac?
+_   this would be a faster way to check for errors
+_   w/o needing to use the incredibly slow android tools
+
+_ maybe the back button shouldn't quit apps, the home button should?
+_   back button use in apps is so infuriating...
 
 DL _ add clear and close to all stream methods?
 DL _   http://code.google.com/p/processing/issues/detail?id=244
@@ -354,17 +353,6 @@ _ errors that cause a crash when setting sketchPath
 _   seems to be a filesystem that got too full
 _   no real signs of what went wrong, but deleting the avd fixed it
 _   if it reappears again, trap that condition, and tell the user the fix
-
-_ prevent rotation of applications? (or require a certain orientation)
-_   add to activity tag in the manifest:
-android:configChanges="keyboardHidden|orientation"
-android:screenOrientation="landscape"
-_   or programmatically specify:
-setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
-get the dpi of the screen
-http://developer.android.com/reference/android/util/DisplayMetrics.html
 
 _ show/hide the virtual keyboard
 InputMethodManager imm = 
@@ -394,3 +382,6 @@ try {
 } catch (IOException e) {
     Log.e(TAG, "Could not write file " + e.getMessage());
 }
+
+_ other useful tidbits (handlers etc)
+_   http://developer.android.com/guide/appendix/faq/commontasks.html
