@@ -43,7 +43,7 @@ public class Manifest {
   static final String MULTIPLE_ACTIVITIES = 
     "Processing only supports a single Activity in the AndroidManifest.xml\n" +
     "file. Only the first activity entry will be updated, and you better \n" + 
-    "hope that's the right one, smart guy.";
+    "hope that's the right one, smartypants.";
 
   private Editor editor;
   private Sketch sketch;
@@ -137,9 +137,14 @@ public class Manifest {
     // Tempting to use 'preferExternal' here, but might annoy some users. 
     // 'auto' at least enables it to be moved back and forth
     // http://developer.android.com/guide/appendix/install-location.html
-    writer.println("          android:installLocation=\"auto\" ");
+//    writer.println("          android:installLocation=\"auto\" ");
+    // Disabling this for now (0190), requires default.properties to use API 8
 
+    // This is just a number (like the Processing 'revision'). It should 
+    // increment with each release. Perhaps P5 should do this automatically
+    // with each build or read/write of the manifest file?
     writer.println("          android:versionCode=\"1\" ");
+    // This is the version number/name seen by users
     writer.println("          android:versionName=\"1.0\">");
 
     // for now including this... we're wiring to a particular SDK version anyway...
@@ -149,10 +154,17 @@ public class Manifest {
     writer.println("  <application android:label=\"\"");  // insert pretty name
     writer.println("               android:icon=\"@drawable/icon\"");
     writer.println("               android:debuggable=\"true\">");
-//    writer.println("    <activity android:name=\".NO_CLASS_SPECIFIED\"");
-    writer.println("    <activity android:name=\"\"");  // insert class name prefixed w/ dot
-//    writer.println("              android:label=\"@string/app_name\">");  // pretty name
-    writer.println("              android:label=\"\">");
+
+    // turns out label is not required for the activity, so nixing it
+//    writer.println("    <activity android:name=\"\"");  // insert class name prefixed w/ dot
+////    writer.println("              android:label=\"@string/app_name\">");  // pretty name
+//    writer.println("              android:label=\"\">");
+
+    // activity/android:name should be the full name (package + class name) of 
+    // the actual activity class. or the package can be replaced by a single 
+    // dot as a prefix as an easier shorthand.
+    writer.println("    <activity android:name=\"\">");
+
     writer.println("      <intent-filter>");
     writer.println("        <action android:name=\"android.intent.action.MAIN\" />");
     writer.println("        <category android:name=\"android.intent.category.LAUNCHER\" />");
@@ -192,6 +204,8 @@ public class Manifest {
     app.setString("android:debuggable", debug ? "true" : "false");
 
     XMLElement activity = app.getChild("activity");
+    // the '.' prefix is just an alias for the full package name
+    // http://developer.android.com/guide/topics/manifest/activity-element.html#name
     activity.setString("android:name", "." + className);  // this has to be right
     label = activity.getString("android:label");
     if (label.length() == 0) {
