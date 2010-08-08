@@ -59,6 +59,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
   /** The PGraphics renderer associated with this PApplet */
   public PGraphics g;
 
+  static final boolean DEBUG = true;
+  
   /** The frame containing this applet (if any) */
 //  public Frame frame;
 
@@ -396,7 +398,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
     super.onCreate(savedInstanceState);
 //    println("PApplet.onCreate()");
 
-    println("onCreate() happening here: " + Thread.currentThread().getName());
+    if (DEBUG) println("onCreate() happening here: " + Thread.currentThread().getName());
 
     Window window = getWindow();
 
@@ -415,7 +417,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
     screenHeight = dm.heightPixels;
 //    println("density is " + dm.density);
 //    println("densityDpi is " + dm.densityDpi);
-    println(dm);
+    if (DEBUG) println("display metrics: " + dm);
 
     //println("screen size is " + screenWidth + "x" + screenHeight);
 
@@ -532,7 +534,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
     // TODO need to bring back app state here!
 //    surfaceView.onResume();
-    System.out.println("PApplet.onResume() called");
+    if (DEBUG) System.out.println("PApplet.onResume() called");
     paused = false;
     //start();  // kick the thread back on
     resume();
@@ -2043,7 +2045,7 @@ println("allocating " + temp.length + " entries for motion events");
 //    println(event);
     if (action == KeyEvent.ACTION_DOWN) {
       if (keyCode == KeyEvent.KEYCODE_BACK) {
-        println("KEYCODE_BACK, calling exit()");
+//        println("KEYCODE_BACK, calling exit()");
         exit();
       }
     }
@@ -2393,7 +2395,7 @@ println("allocating " + temp.length + " entries for motion events");
    * to render a single frame, save it, and quit.
    */
   public void exit() {
-    println("exit() called");
+//    println("exit() called");
     if (thread == null) {
       // exit immediately, stop() has already been called,
       // meaning that the main thread has long since exited
