@@ -24,6 +24,7 @@
 package processing.app.debug;
 
 import processing.app.*;
+import processing.app.exec.StreamRedirectThread;
 import processing.core.*;
 
 import java.awt.Point;
