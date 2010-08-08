@@ -79,7 +79,8 @@ public class StreamPump implements Runnable {
     } catch (final IOException e) {
 //      System.err.println("StreamPump: " + name);
 //      e.printStackTrace(System.err);
-      throw new RuntimeException("Inside " + this + " for " + name, e);
+      // removing for 0190, but need a better way to handle these
+//      throw new RuntimeException("Inside " + this + " for " + name, e);
     }
   }
 
