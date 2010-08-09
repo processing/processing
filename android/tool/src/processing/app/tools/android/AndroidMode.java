@@ -22,6 +22,10 @@
 package processing.app.tools.android;
 
 import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.*;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -29,9 +33,13 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.regex.*;
 
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+
 import processing.app.*;
 import processing.app.debug.*;
-import processing.app.tools.Tool;
 
 import processing.core.PApplet;
 
@@ -39,7 +47,7 @@ import processing.core.PApplet;
 // http://dl.google.com/android/android-sdk_r3-mac.zip
 // http://dl.google.com/android/repository/tools_r03-macosx.zip
 
-public class AndroidTool implements Tool, DeviceListener {
+public class AndroidMode implements DeviceListener {
   private AndroidSDK sdk;
   private Editor editor;
   private Build build;
@@ -55,15 +63,95 @@ public class AndroidTool implements Tool, DeviceListener {
 //    "http://processing.googlecode.com/svn" +
 //    "/tags/processing-" + Base.VERSION_NAME + "/android/core.zip";
 
-  public String getMenuTitle() {
-    return "Android Mode";
-  }
+//  public String getMenuTitle() {
+//    return "Android Mode";
+//  }
 
-  public void init(final Editor parent) {
+//  public void init(final Editor parent) {
+//    this.editor = parent;
+//  }
+  
+  JCheckBoxMenuItem toggleItem;
+  
+  public void init(final Editor parent, final JMenuBar menubar) {
     this.editor = parent;
+    
+
+    JMenu menu = new JMenu("Android");    
+    JMenuItem item;
+    
+    toggleItem = Base.newJCheckBoxMenuItem("Android Mode", 'D');
+    toggleItem.addItemListener(new ItemListener() {
+      public void itemStateChanged(ItemEvent e) {
+        System.out.println("maybe?");
+        updateMode();
+      } 
+    });
+    menu.add(toggleItem);
+    
+    item = new JMenuItem("Wiki...");
+    item.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        Base.openURL("http://wiki.processing.org/w/Android");
+      }
+    });
+    menu.add(item);
+    
+    menu.addSeparator();
+
+    item = new JMenuItem("Options");
+    item.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        //new Permissions(editor);
+      }
+    });
+    menu.add(item);
+
+    item = new JMenuItem("Permissions");
+    item.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        new Permissions(editor);
+      }
+    });
+    menu.add(item);    
+    
+    menu.addSeparator();
+
+    item = new JMenuItem("Reset");
+    item.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        AndroidEnvironment.killAdbServer();
+      }
+    });
+    menu.add(item);    
+    
+    menubar.add(menu);
+  }
+  
+  
+  protected void updateMode() {
+    // When the selection is made, the menu will update itself
+    boolean active = toggleItem.isSelected();
+    if (active) {
+      boolean rolling = true;
+      if (sdk == null) {
+        rolling = loadAndroid();
+      }
+      if (rolling) {
+        editor.setHandlers(new RunHandler(), new PresentHandler(), 
+                           new StopHandler(), 
+                           new ExportHandler(),  new ExportAppHandler());
+        build = new Build(editor, sdk);
+        editor.statusNotice("Android mode enabled for this editor window.");
+      }
+    } else {
+      editor.resetHandlers();
+      editor.statusNotice("Android mode disabled.");
+    }
   }
 
-  public void run() {
+
+  protected boolean loadAndroid() {
     editor.statusNotice("Loading Android tools.");
 
     try {
@@ -71,19 +159,17 @@ public class AndroidTool implements Tool, DeviceListener {
     } catch (final Exception e) {
       Base.showWarning("Android Tools Error", e.getMessage(), null);
       editor.statusNotice("Android mode canceled.");
-      return;
+      return false;
     }
 
     // Make sure that the processing.android.core.* classes are available
     if (!checkCore()) {
       editor.statusNotice("Android mode canceled.");
-      return;
+      return false;
     }
 
-    editor.setHandlers(new RunHandler(), new PresentHandler(),
-      new StopHandler(), new ExportHandler(), new ExportAppHandler());
-    build = new Build(editor, sdk);
     editor.statusNotice("Done loading Android tools.");
+    return true;
   }
 
 

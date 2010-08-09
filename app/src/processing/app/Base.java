@@ -450,6 +450,14 @@ public class Base {
     menuItem.setAccelerator(KeyStroke.getKeyStroke(what, SHORTCUT_ALT_KEY_MASK));
     return menuItem;
   }
+  
+  
+  static public JCheckBoxMenuItem newJCheckBoxMenuItem(String title, int what) {
+    JCheckBoxMenuItem menuItem = new JCheckBoxMenuItem(title);
+    int modifiers = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+    menuItem.setAccelerator(KeyStroke.getKeyStroke(what, modifiers));
+    return menuItem;
+  }
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
