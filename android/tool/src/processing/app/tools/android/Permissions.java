@@ -12,12 +12,9 @@ import javax.swing.event.*;
 import processing.app.Base;
 import processing.app.Editor;
 import processing.app.Preferences;
-import processing.app.tools.Tool;
-//import processing.core.*;
-//import processing.core.PApplet;
 
 
-public class Permissions extends JFrame implements Tool {
+public class Permissions extends JFrame {
   static final String GUIDE_URL = 
     "http://developer.android.com/guide/topics/security/security.html#permissions";
 
@@ -32,10 +29,10 @@ public class Permissions extends JFrame implements Tool {
   Editor editor;
 
   
-  public Permissions() {
+  public Permissions(Editor editor) {
   //public Permissions(Editor editor) {
     super("Android Permissions Selector");    
-//    this.editor = editor;
+    this.editor = editor;
 
 //    XMLElement xml = 
 
@@ -268,7 +265,12 @@ public class Permissions extends JFrame implements Tool {
 
     setLocation((screen.width - windowSize.width) / 2,
                 (screen.height - windowSize.height) / 2);
-//    setVisible(true);
+
+    Manifest mf = new Manifest(editor);
+    setSelections(mf.getPermissions());
+
+    // show the window and get to work
+    setVisible(true);
   }
 
 
@@ -312,19 +314,19 @@ public class Permissions extends JFrame implements Tool {
   }
 
 
-  public void init(Editor editor) {
-    this.editor = editor;    
-  }
+//  public void init(Editor editor) {
+//    this.editor = editor;    
+//  }
 
 
-  public void run() {
-    // parse the manifest file here and figure out what permissions are set
-    Manifest mf = new Manifest(editor);
-    setSelections(mf.getPermissions());
-    
-    // show the window and get to work
-    setVisible(true);
-  }
+//  public void run() {
+//    // parse the manifest file here and figure out what permissions are set
+//    Manifest mf = new Manifest(editor);
+//    setSelections(mf.getPermissions());
+//    
+//    // show the window and get to work
+//    setVisible(true);
+//  }
   
   
   /**

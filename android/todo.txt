@@ -74,6 +74,7 @@ X   http://code.google.com/p/processing/issues/detail?id=232
 X prevent adding the opengl library when it's not needed
 X   preprocessor removes the code by before export
 X   added a note to the wiki
+X implement android menu
 
 earlier
 X if sketchRenderer() et al are used in android, need to add to desktop
@@ -256,8 +257,7 @@ W/System.err(  242): 	at android.app.ApplicationContext.openFileOutput(Applicati
 W/System.err(  242): 	at android.content.ContextWrapper.openFileOutput(ContextWrapper.java:158)
 W/System.err(  242): 	at processing.core.PApplet.createOutput(PApplet.java:3677)
 
-android menu (need to discuss) 
-_ reset adb
+android menu
 _ something to bring up the full console window
 _ signing tool
 _ selection of which avd (emulator), or plugged-in devices (if multiple)
