@@ -4,6 +4,7 @@ import java.awt.Frame;
 import java.io.File;
 import java.io.IOException;
 import javax.swing.JOptionPane;
+
 import processing.app.Base;
 import processing.app.Platform;
 import processing.app.Preferences;
@@ -198,7 +199,7 @@ class AndroidSDK {
       adbCmd = cmd;
     }
     // printing this here to see if anyone else is killing the adb server
-    PApplet.println(adbCmd);
+    if (AndroidMode.DEBUG) PApplet.println(adbCmd);
 //    try {
     ProcessResult adbResult = new ProcessHelper(adbCmd).execute();
     // Ignore messages about starting up an adb daemon
