@@ -32,6 +32,7 @@ import java.awt.datatransfer.*;
 import java.awt.event.*;
 import java.awt.print.*;
 import java.io.*;
+import java.lang.reflect.Method;
 import java.net.*;
 import java.util.*;
 import java.util.zip.*;
@@ -421,6 +422,21 @@ public class Editor extends JFrame implements RunnerListener {
     menubar.add(buildEditMenu());
     menubar.add(buildSketchMenu());
     menubar.add(buildToolsMenu());
+
+    // These are temporary entries while Android mode is being worked out.
+    // The mode will not be in the tools menu, and won't involve a cmd-key
+    if (!Base.RELEASE) {
+      try {
+        Class clazz = Class.forName("processing.app.tools.android.AndroidMode");
+        Object mode = clazz.newInstance();
+        Method m = clazz.getMethod("init", new Class[] { Editor.class, JMenuBar.class });
+        //String libraryPath = (String) m.invoke(null, new Object[] { });
+        m.invoke(mode, new Object[] { this, menubar });
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+
     menubar.add(buildHelpMenu());
     setJMenuBar(menubar);
   }
@@ -674,15 +690,15 @@ public class Editor extends JFrame implements RunnerListener {
     menu.add(createToolMenuItem("processing.app.tools.Archiver"));
     menu.add(createToolMenuItem("processing.app.tools.FixEncoding"));
 
-    // These are temporary entries while Android mode is being worked out.
-    // The mode will not be in the tools menu, and won't involve a cmd-key
-    if (!Base.RELEASE) {
-      item = createToolMenuItem("processing.app.tools.android.AndroidTool");
-      item.setAccelerator(KeyStroke.getKeyStroke('D', modifiers));
-      menu.add(item);
-      menu.add(createToolMenuItem("processing.app.tools.android.Permissions"));
-      menu.add(createToolMenuItem("processing.app.tools.android.Reset"));
-    }
+//    // These are temporary entries while Android mode is being worked out.
+//    // The mode will not be in the tools menu, and won't involve a cmd-key
+//    if (!Base.RELEASE) {
+//      item = createToolMenuItem("processing.app.tools.android.AndroidTool");
+//      item.setAccelerator(KeyStroke.getKeyStroke('D', modifiers));
+//      menu.add(item);
+//      menu.add(createToolMenuItem("processing.app.tools.android.Permissions"));
+//      menu.add(createToolMenuItem("processing.app.tools.android.Reset"));
+//    }
 
     return menu;
   }

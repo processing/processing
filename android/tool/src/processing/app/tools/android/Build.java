@@ -113,7 +113,7 @@ class Build {
 
     // Create the 'src' folder with the preprocessed code.
     final File srcFolder = new File(tempBuildFolder, "src");
-    if (AndroidTool.DEBUG) Base.openFolder(tempBuildFolder);
+    if (AndroidMode.DEBUG) Base.openFolder(tempBuildFolder);
 
     try {
       manifest = new Manifest(editor);
@@ -158,7 +158,7 @@ class Build {
         final File assetsFolder = mkdirs(tempBuildFolder, "assets");
 
         final InputStream input = 
-          PApplet.createInput(AndroidTool.getCoreZipLocation());
+          PApplet.createInput(AndroidMode.getCoreZipLocation());
         PApplet.saveStream(new File(libsFolder, "processing-core.jar"), input);
 
         try {
@@ -214,7 +214,7 @@ class Build {
     File androidFolder = new File(sketch.getFolder(), "android");
     if (androidFolder.exists()) {
 //      Date mod = new Date(androidFolder.lastModified());
-      String stamp = AndroidTool.getDateStamp(androidFolder.lastModified());
+      String stamp = AndroidMode.getDateStamp(androidFolder.lastModified());
       File dest = new File(sketch.getFolder(), "android." + stamp);
       boolean result = androidFolder.renameTo(dest);
       if (!result) {
