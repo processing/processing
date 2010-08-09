@@ -75,11 +75,23 @@ X prevent adding the opengl library when it's not needed
 X   preprocessor removes the code by before export
 X   added a note to the wiki
 X implement android menu
+X   reset option
+X   permissions
+X   run the 'android' application (since finding its location is painful)
+o remove the need for a "Reset Android" menu option
+o   might need to just put this in the menu for times when things go weird
+o   http://dev.processing.org/bugs/show_bug.cgi?id=1392
+o   http://code.google.com/p/processing/issues/detail?id=209
 
 earlier
 X if sketchRenderer() et al are used in android, need to add to desktop
 X remove processing.opengl.* classes and finish PGraphicsAndroid3D
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1401
+
+android menu
+_ something to bring up the full console window
+_ signing tool
+_ selection of which avd (emulator), or plugged-in devices (if multiple)
 
 _ throw an error if a file in the 'data' dir ends with .gz
 
@@ -257,12 +269,6 @@ W/System.err(  242): 	at android.app.ApplicationContext.openFileOutput(Applicati
 W/System.err(  242): 	at android.content.ContextWrapper.openFileOutput(ContextWrapper.java:158)
 W/System.err(  242): 	at processing.core.PApplet.createOutput(PApplet.java:3677)
 
-android menu
-_ something to bring up the full console window
-_ signing tool
-_ selection of which avd (emulator), or plugged-in devices (if multiple)
-_ run the 'android' application (since finding its location is painful)
-
 P2 _ need to prevent hitting 'run' twice (threaded, so would work)
 P2 _   currently things just keep restarting the build, bad state
 P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1387
@@ -298,11 +304,6 @@ P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1439
 P4 _ don't require android tools to be installed already
 P4 _   or implement automatic download/install of android tools
 P4 _   http://dev.processing.org/bugs/show_bug.cgi?id=1383
-
-P5 _ remove the need for a "Reset Android" menu option
-P5 _   might need to just put this in the menu for times when things go weird
-P5 _   http://dev.processing.org/bugs/show_bug.cgi?id=1392
-
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
