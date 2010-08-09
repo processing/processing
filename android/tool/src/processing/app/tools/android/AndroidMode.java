@@ -83,13 +83,12 @@ public class AndroidMode implements DeviceListener {
     toggleItem = Base.newJCheckBoxMenuItem("Android Mode", 'D');
     toggleItem.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
-        System.out.println("maybe?");
         updateMode();
       } 
     });
     menu.add(toggleItem);
     
-    item = new JMenuItem("Wiki...");
+    item = new JMenuItem("Guide");
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         Base.openURL("http://wiki.processing.org/w/Android");
@@ -99,7 +98,7 @@ public class AndroidMode implements DeviceListener {
     
     menu.addSeparator();
 
-    item = new JMenuItem("Options");
+    item = new JMenuItem("Sketch Options");
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         //new Permissions(editor);
@@ -107,7 +106,7 @@ public class AndroidMode implements DeviceListener {
     });
     menu.add(item);
 
-    item = new JMenuItem("Permissions");
+    item = new JMenuItem("Sketch Permissions");
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         new Permissions(editor);
@@ -117,7 +116,24 @@ public class AndroidMode implements DeviceListener {
     
     menu.addSeparator();
 
-    item = new JMenuItem("Reset");
+    item = new JMenuItem("Signing Key Setup");
+    item.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        new Keys(editor);
+      }
+    });
+    menu.add(item);
+    
+    item = new JMenuItem("Android SDK & AVD Manager");
+    item.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        File file = sdk.getAndroidTool();
+        PApplet.exec(new String[] { file.getAbsolutePath() });
+      }
+    });
+    menu.add(item);
+
+    item = new JMenuItem("Reset Connections");
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         AndroidEnvironment.killAdbServer();
