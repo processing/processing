@@ -6,6 +6,9 @@ X   fix the behavior
 _ need to finish font changes wrt native fonts before any release
 _   right now not in a good place--default font will be bitmapped and ugly
 
+_ bug in SVG parser for shorthand curves (T/t and S/s)
+_   http://code.google.com/p/processing/issues/detail?id=350
+
 _ image resizing is ugly (just use java2d?)
 _   http://code.google.com/p/processing/issues/detail?id=332
 

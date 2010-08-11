@@ -5,6 +5,9 @@ X the open button on the toolbar is goofed up
 X   http://code.google.com/p/processing/issues/detail?id=323
 X changed how "Save As" works, now copies everything in the folder
 X   but ignores applet, application.*, screen-* files/folders
+X Edit > Copy as HTML doesn't properly encode < and >
+X   http://code.google.com/p/processing/issues/detail?id=351
+X   also fixed unicode entities
 
 earlier
 X add warning message when not using a version of sun java w/ p5 on linux
