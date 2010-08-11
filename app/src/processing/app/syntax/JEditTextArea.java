@@ -1621,6 +1621,7 @@ public class JEditTextArea extends JComponent
       for (int j = 0; j < segmentCount; j++) {
         char c = segmentArray[j + segmentOffset];
         cf = cf.append(c);
+        appendAsHTML(cf, c);
       }
     } else {
       // If syntax coloring is enabled, we have to do this
@@ -1644,7 +1645,8 @@ public class JEditTextArea extends JComponent
         if (id == Token.END) {
           char c = segmentArray[segmentOffset + offset];
           if (segmentOffset + offset < limit) {
-            cf.append(c);
+//            cf.append(c);
+            appendAsHTML(cf, c);
           } else {
             cf.append('\n');
           }
@@ -1677,6 +1679,22 @@ public class JEditTextArea extends JComponent
         offset += length;
         tokens = tokens.next;
       }
+    }
+  }
+  
+
+  /**
+   * Handle encoding HTML entities for lt, gt, and anything non-ASCII. 
+   */
+  private void appendAsHTML(StringBuffer buffer, char c) {
+    if (c == '<') {
+      buffer.append("&lt;");
+    } else if (c == '>') {
+      buffer.append("&rt;");
+    } else if (c > 127) {
+      buffer.append("&#" + ((int) c) + ";");  // use unicode entity
+    } else {
+      buffer.append(c);  // normal character
     }
   }
 
