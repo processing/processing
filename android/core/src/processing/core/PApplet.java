@@ -59,7 +59,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
   /** The PGraphics renderer associated with this PApplet */
   public PGraphics g;
 
-  static final boolean DEBUG = true;
+//  static final boolean DEBUG = true;
+  static final boolean DEBUG = false;
   
   /** The frame containing this applet (if any) */
 //  public Frame frame;

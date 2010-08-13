@@ -113,7 +113,9 @@ class Build {
 
     // Create the 'src' folder with the preprocessed code.
     final File srcFolder = new File(tempBuildFolder, "src");
-    if (AndroidMode.DEBUG) Base.openFolder(tempBuildFolder);
+    if (processing.app.Base.DEBUG) {
+      Base.openFolder(tempBuildFolder);
+    }
 
     try {
       manifest = new Manifest(editor);

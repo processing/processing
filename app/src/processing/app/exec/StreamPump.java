@@ -12,6 +12,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
+import processing.app.Base;
 
 
 /**
@@ -77,10 +78,12 @@ public class StreamPump implements Runnable {
         }
       }
     } catch (final IOException e) {
-//      System.err.println("StreamPump: " + name);
-//      e.printStackTrace(System.err);
-      // removing for 0190, but need a better way to handle these
-//      throw new RuntimeException("Inside " + this + " for " + name, e);
+      if (Base.DEBUG) {
+        System.err.println("StreamPump: " + name);
+        e.printStackTrace(System.err);
+        // removing for 0190, but need a better way to handle these
+        throw new RuntimeException("Inside " + this + " for " + name, e);
+      }
     }
   }
 

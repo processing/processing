@@ -55,7 +55,7 @@ class AndroidEnvironment {
 
 
   private AndroidEnvironment() {
-    if (AndroidMode.DEBUG) {
+    if (processing.app.Base.DEBUG) {
       System.out.println("Starting up AndroidEnvironment");
     }
 //    killAdbServer();

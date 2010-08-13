@@ -46,6 +46,8 @@ public class Base {
   static public String VERSION_NAME = "0190";
   /** Set true if this a proper release rather than a numbered revision. */
   static public boolean RELEASE = false;
+  /** True if heavy debugging error/log messages are enabled */
+  static public boolean DEBUG = false;
 
   static HashMap<Integer, String> platformNames =
     new HashMap<Integer, String>();
