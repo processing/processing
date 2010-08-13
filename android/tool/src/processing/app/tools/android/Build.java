@@ -1,3 +1,24 @@
+/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+
+/*
+ Part of the Processing project - http://processing.org
+
+ Copyright (c) 2009-10 Ben Fry and Casey Reas
+
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License version 2
+ as published by the Free Software Foundation.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software Foundation,
+ Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
 package processing.app.tools.android;
 
 import java.io.*;
@@ -5,14 +26,9 @@ import java.util.*;
 
 import org.apache.tools.ant.*;
 
-import antlr.RecognitionException;
-import antlr.TokenStreamException;
-
 import processing.app.*;
 import processing.app.exec.*;
 import processing.app.debug.RunnerException;
-import processing.app.preproc.PdePreprocessor;
-import processing.app.preproc.PreprocessResult;
 import processing.core.PApplet;
 
 
@@ -141,7 +157,7 @@ class Build {
       }
       className = sketch.preprocess(srcFolder.getAbsolutePath(), //buildPath, 
                                     manifest.getPackageName(), 
-                                    new Preproc(sketch.getName()));
+                                    new Preprocessor(sketch.getName(), this));
       if (className != null) {
 //        final File androidXML = new File(tempBuildFolder, "AndroidManifest.xml");
 //        writeAndroidManifest(androidXML, sketch.getName(), className);
@@ -350,11 +366,6 @@ class Build {
   }
 
   
-//  protected String getPackageName() {
-//    return basePackage + "." + editor.getSketch().getName().toLowerCase();
-//  }
-
-  
   protected String getClassName() {
     return className;
   }
@@ -368,130 +379,7 @@ class Build {
     return apkFile.getAbsolutePath();
   }
 
-  
-  class Preproc extends PdePreprocessor {
-
-    public Preproc(final String sketchName) throws IOException {
-      super(sketchName);
-    }
-
-    public PreprocessResult write(Writer out, String program, String codeFolderPackages[])
-    throws RunnerException, RecognitionException, TokenStreamException {
-      if (sizeStatement != null) {
-        int start = program.indexOf(sizeStatement);
-        program = program.substring(0, start) + 
-          program.substring(start + sizeStatement.length());
-      }
-//      String[] found = PApplet.match(program, "import\\s+processing.opengl.*\\s*");
-//      if (found != null) {
-//      }
-      program = program.replaceAll("import\\s+processing\\.opengl\\.\\S+;", "");
-//      PApplet.println(program);
-      return super.write(out, program, codeFolderPackages);
-    }
     
-    @Override
-    protected int writeImports(final PrintWriter out,
-                               final List<String> programImports,
-                               final List<String> codeFolderImports) {
-      out.println("package " + getPackageName() + ";");
-      out.println();
-      // add two lines for the package above
-      return 2 + super.writeImports(out, programImports, codeFolderImports);
-    }
-    
-    protected void writeFooter(PrintWriter out, String className) {
-      if (mode == Mode.STATIC) {
-        // close off draw() definition
-        out.println("noLoop();");
-        out.println(indent + "}");
-      }
-
-      if ((mode == Mode.STATIC) || (mode == Mode.ACTIVE)) {
-        out.println();
-        if (sketchWidth != null) {
-          out.println(indent + "public int sketchWidth() { return " + sketchWidth + "; }");
-        }
-        if (sketchHeight != null) {
-          out.println(indent + "public int sketchHeight() { return " + sketchHeight + "; }");
-        }
-        if (sketchRenderer != null) {
-          out.println(indent + "public String sketchRenderer() { return " + sketchRenderer + "; }");
-        }
-
-        // close off the class definition
-        out.println("}");
-      }
-    }
-
-    @Override
-    public String[] getCoreImports() {
-      return new String[] { 
-        "processing.core.*", 
-        "processing.xml.*" 
-      };
-    }
-
-    @Override
-    public String[] getDefaultImports() {
-      final String prefsLine = Preferences.get("android.preproc.imports.list");
-      if (prefsLine != null) {
-        return PApplet.splitTokens(prefsLine, ", ");
-      }
-
-      // In the future, this may include standard classes for phone or
-      // accelerometer access within the Android APIs. This is currently living
-      // in code rather than preferences.txt because Android mode needs to
-      // maintain its independence from the rest of processing.app.
-      final String[] androidImports = new String[] {
-        "android.view.MotionEvent", "android.view.KeyEvent",
-        "android.graphics.Bitmap", //"java.awt.Image",
-        "java.io.*", // for BufferedReader, InputStream, etc
-        //"java.net.*", "java.text.*", // leaving otu for now
-        "java.util.*" // for ArrayList and friends
-      //"java.util.zip.*", "java.util.regex.*" // not necessary w/ newer i/o
-      };
-
-      Preferences.set("android.preproc.imports.list", 
-                      PApplet.join(androidImports, ","));
-
-      return androidImports;
-    }
-  }
-
-  
-  /*
-  private void writeAndroidManifest(final File file, final String sketchName,
-                                    final String className) {
-    final PrintWriter writer = PApplet.createWriter(file);
-    writer.println("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
-    writer.println("<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\" ");
-    writer.println("          package=\"" + getPackageName() + "\" ");
-    writer.println("          android:versionCode=\"1\" ");
-    writer.println("          android:versionName=\"1.0\">");
-
-    writer.println("  <uses-sdk android:minSdkVersion=" + q(sdkVersion) + " />");
-    
-    writer.println("  <uses-permission android:name=\"android.permission.INTERNET\" />");
-    writer.println("  <uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\" />");
-
-    writer.println("  <application android:label=" + q("@string/app_name"));
-    writer.println("               android:debuggable=" + q("true") + ">");
-    writer.println("    <activity android:name=" + q("." + className));
-    writer.println("              android:label=\"@string/app_name\">");
-    writer.println("      <intent-filter>");
-    writer.println("        <action android:name=\"android.intent.action.MAIN\" />");
-    writer.println("        <category android:name=\"android.intent.category.LAUNCHER\" />");
-    writer.println("      </intent-filter>");
-    writer.println("    </activity>");
-    writer.println("  </application>");
-    writer.println("</manifest>");
-    writer.flush();
-    writer.close();
-  }
-  */
-  
-  
   private void writeBuildProps(final File file) {
     final PrintWriter writer = PApplet.createWriter(file);
     writer.println("application-package=" + getPackageName());

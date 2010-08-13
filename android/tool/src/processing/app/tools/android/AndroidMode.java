@@ -96,13 +96,13 @@ public class AndroidMode implements DeviceListener {
     
     menu.addSeparator();
 
-    item = new JMenuItem("Sketch Options");
-    item.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        //new Permissions(editor);
-      }
-    });
-    menu.add(item);
+//    item = new JMenuItem("Sketch Options");
+//    item.addActionListener(new ActionListener() {
+//      public void actionPerformed(ActionEvent e) {
+//        //new Permissions(editor);
+//      }
+//    });
+//    menu.add(item);
 
     item = new JMenuItem("Sketch Permissions");
     item.addActionListener(new ActionListener() {
@@ -134,6 +134,7 @@ public class AndroidMode implements DeviceListener {
     item = new JMenuItem("Reset Connections");
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
+//        editor.statusNotice("Resetting the Android Debug Bridge server.");
         AndroidEnvironment.killAdbServer();
       }
     });
