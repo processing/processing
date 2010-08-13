@@ -18,6 +18,11 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=35
 X   http://code.google.com/p/processing/issues/detail?id=15
 
 
+mode work
+_ locations: sketchbook, examples, libraries
+_ 'export' and 'export application' titles and/or # of items
+_ 'run' and 'present' under sketch, and/or # of items
+
 _ add processing.js export tool from florian
 _   http://github.com/fjenett/processingjstool/
 _   http://github.com/fjenett/processingjstool/zipball/v0.0.6
@@ -31,9 +36,8 @@ _   http://code.google.com/p/processing/issues/detail?id=335
 _ auto-format screws up if/else/else if blocks
 _   http://code.google.com/p/processing/issues/detail?id=325
 
-_ locations: sketchbook, examples, libraries
-_ 'export' and 'export application' titles and/or # of items
-_ 'run' and 'present' under sketch, and/or # of items
+_ Exported libraries don't mantain symbolic links
+_   http://code.google.com/p/processing/issues/detail?id=353
 
 _ launch4j problem
 _   no crash when double-clicking a sketch and loading it
