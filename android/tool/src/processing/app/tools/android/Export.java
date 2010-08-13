@@ -3,7 +3,7 @@
 /*
  Part of the Processing project - http://processing.org
 
- Copyright (c) 2009 Ben Fry and Casey Reas
+ Copyright (c) 2009-10 Ben Fry and Casey Reas
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License version 2
@@ -19,22 +19,3 @@
  Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package processing.app.tools.android;
-
-import processing.app.Editor;
-import processing.app.tools.Tool;
-
-public class Reset implements Tool {
-  static final String MENU_TITLE = "Reset Android";
-
-  public String getMenuTitle() {
-    return MENU_TITLE;
-  }
-
-  public void init(final Editor editor) {
-  }
-
-  public void run() {
-    AndroidEnvironment.killAdbServer();
-  }
-}
