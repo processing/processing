@@ -26,8 +26,10 @@ class EmulatorController {
   }
 
   private void setState(final State state) {
-    System.out.println("Emulator state: " + state);
-    new Exception().printStackTrace(System.out);
+    if (processing.app.Base.DEBUG) {
+      System.out.println("Emulator state: " + state);
+      new Exception().printStackTrace(System.out);
+    }
     this.state = state;
   }
 
@@ -103,7 +105,9 @@ class EmulatorController {
         try {
           //          System.err.println("EmulatorController: Waiting for boot.");
           while (state == State.WAITING_FOR_BOOT) {
-            System.out.println("sleeping for 2 seconds " + new java.util.Date().toString());
+            if (processing.app.Base.DEBUG) {
+              System.out.println("sleeping for 2 seconds " + new java.util.Date().toString());
+            }
             Thread.sleep(2000);
 //            System.out.println("done sleeping");
             for (final String device : AndroidEnvironment.listDevices()) {

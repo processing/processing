@@ -52,8 +52,6 @@ public class AndroidMode implements DeviceListener {
   private Editor editor;
   private Build build;
   
-  static public boolean DEBUG = true;
-
   private static final String ANDROID_CORE_FILENAME =
     "processing-android-core-" + Base.VERSION_NAME + ".zip";
 
