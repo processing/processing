@@ -38,7 +38,7 @@ import processing.app.Preferences;
 public class Keys extends JFrame {
   Editor editor;
 
-  
+
   public Keys(Editor editor) {
     this.editor = editor;
     setVisible(true);

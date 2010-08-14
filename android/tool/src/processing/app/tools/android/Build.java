@@ -44,76 +44,10 @@ class Build {
   File tempBuildFolder;
   File buildFile;
 
-  String sizeStatement;
-  String sketchWidth; 
-  String sketchHeight;
-  String sketchRenderer;
-//  String sketchWidth = "screenWidth"; 
-//  String sketchHeight = "screenHeight";
-//  String sketchRenderer = "A2D";
-  
 
   public Build(final Editor editor, final AndroidSDK sdk) {
     this.editor = editor;
     this.sdk = sdk;
-  }
-
-
-  // TODO this needs to be a generic function inside Sketch or elsewhere
-
-  protected boolean calcSketchSize() {
-    // This matches against any uses of the size() function, whether numbers
-    // or variables or whatever. This way, no warning is shown if size() isn't
-    // actually used in the applet, which is the case especially for anyone
-    // who is cutting/pasting from the reference.
-
-    Sketch sketch = editor.getSketch();
-    String scrubbed = Sketch.scrubComments(sketch.getCode(0).getProgram());
-    String[] matches = PApplet.match(scrubbed, Sketch.SIZE_REGEX);
-//    PApplet.println("matches: ");
-//    PApplet.println(matches);
-
-    if (matches != null) {
-      boolean badSize = false;
-      
-      if (!matches[1].equals("screenWidth") &&
-          !matches[1].equals("screenHeight") &&
-          PApplet.parseInt(matches[1], -1) == -1) {
-        badSize = true;
-      }
-      if (!matches[2].equals("screenWidth") &&
-          !matches[2].equals("screenHeight") &&
-          PApplet.parseInt(matches[2], -1) == -1) {
-        badSize = true;
-      }
-
-      if (badSize) {
-        // found a reference to size, but it didn't seem to contain numbers
-        final String message = 
-          "The size of this applet could not automatically be determined\n" +
-          "from your code. Use only numeric values (not variables) for the\n" +
-          "size() command. See the size() reference for more information.";
-        Base.showWarning("Could not find sketch size", message, null);
-        System.out.println("More about the size() command on Android can be");
-        System.out.println("found here: http://wiki.processing.org/w/Android");
-        return false;
-      }
-
-//      PApplet.println(matches);
-      sizeStatement = matches[0];  // the full method to be removed from the source
-      sketchWidth = matches[1];
-      sketchHeight = matches[2];
-      sketchRenderer = matches[3].trim();
-      if (sketchRenderer.length() == 0) {
-        sketchRenderer = null;
-      }
-    } else {
-      sizeStatement = null;
-      sketchWidth = null;
-      sketchHeight = null;
-      sketchRenderer = null;
-    }
-    return true;
   }
 
   
@@ -135,29 +69,17 @@ class Build {
 
     try {
       manifest = new Manifest(editor);
-//      System.out.println(manifest + " " + manifest.getPackageName());
-
-      // the preproc should take care of this now
-//      final File javaFolder = 
-//        mkdirs(srcFolder, manifest.getPackageName().replace('.', '/'));
-//      // File srcFile = new File(actualSrc, className + ".java");
-//      final String buildPath = javaFolder.getAbsolutePath();
-
-      // String prefsLine = Preferences.get("preproc.imports");
-      // System.out.println("imports are " + prefsLine);
-      // Preferences.set("preproc.imports", "");
-
-      // need to change to a better set of imports here
-
-      // grab code from current editing window
+      // grab code from current editing window (GUI only)
       sketch.prepare();
-      if (!calcSketchSize()) {
+      // build the preproc and get to work
+      Preprocessor preproc = new Preprocessor(sketch, getPackageName());
+      if (!preproc.parseSketchSize()) {
         editor.statusError("Could not parse the size() command.");
         return null; 
       }
-      className = sketch.preprocess(srcFolder.getAbsolutePath(), //buildPath, 
+      className = sketch.preprocess(srcFolder.getAbsolutePath(), 
                                     manifest.getPackageName(), 
-                                    new Preprocessor(sketch.getName(), this));
+                                    preproc);
       if (className != null) {
 //        final File androidXML = new File(tempBuildFolder, "AndroidManifest.xml");
 //        writeAndroidManifest(androidXML, sketch.getName(), className);
@@ -549,17 +471,17 @@ class Build {
 //    writer.close();
 //  }
 
-  
-  private void writeLibraries(final File libsFolder, final File assetsFolder)
-      throws IOException {
+
+  private void writeLibraries(final File libsFolder, 
+                              final File assetsFolder) throws IOException {
     // Copy any libraries to the 'libs' folder
     final Sketch sketch = editor.getSketch();
     for (final File libraryFolder : sketch.getImportedLibraries()) {
       // in the list is a File object that points the
       // library sketch's "library" folder
       final File exportSettings = new File(libraryFolder, "export.txt");
-      final HashMap<String, String> exportTable = Base
-          .readSettings(exportSettings);
+      final HashMap<String, String> exportTable = 
+        Base.readSettings(exportSettings);
       final String androidList = exportTable.get("android");
       String exportList[] = null;
       if (androidList != null) {
@@ -603,8 +525,7 @@ class Build {
           final String name = item.getName();
           final String lcname = name.toLowerCase();
           if (lcname.endsWith(".jar") || lcname.endsWith(".zip")) {
-            final String jarName = name.substring(0, name.length() - 4)
-                + ".jar";
+            String jarName = name.substring(0, name.length() - 4) + ".jar";
             Base.copyFile(item, new File(libsFolder, jarName));
           }
         }
@@ -618,32 +539,9 @@ class Build {
   }
 
 
-//  /**
-//   * Place quotes around a string to avoid dreadful syntax mess of escaping
-//   * quotes near quoted strings. Mmmm!
-//   */
-//  private static final String q(final String what) {
-//    return "\"" + what + "\"";
-//  }
-
-  
   public void cleanup() {
     // don't want to be responsible for this
     //rm(tempBuildFolder);
     tempBuildFolder.deleteOnExit();
   }
-
-//  private void rm(final File f) {
-//    if (f.isDirectory()) {
-//      final File[] kids = f.listFiles(new FilenameFilter() {
-//        public boolean accept(final File dir, final String name) {
-//          return !(name.equals(".") || name.equals(".."));
-//        }
-//      });
-//      for (final File k : kids) {
-//        rm(k);
-//      }
-//    }
-//    f.delete();
-//  }
 }
