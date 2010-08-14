@@ -659,7 +659,9 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
     // part of SurfaceHolder.Callback
     public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
-      System.out.println("SketchSurfaceView2D.surfaceChanged() " + w + " " + h);
+      if (DEBUG) {
+        System.out.println("SketchSurfaceView2D.surfaceChanged() " + w + " " + h);
+      }
       surfaceChanged = true;
 
 //      width = w;
@@ -762,14 +764,18 @@ public class PApplet extends Activity implements PConstants, Runnable {
     // part of SurfaceHolder.Callback
     public void surfaceCreated(SurfaceHolder holder) {
       super.surfaceCreated(holder);
-      System.out.println("surfaceCreated()");
+      if (DEBUG) {
+        System.out.println("surfaceCreated()");
+      }
     }
 
 
     // part of SurfaceHolder.Callback
     public void surfaceDestroyed(SurfaceHolder holder) {
       super.surfaceDestroyed(holder);
-      System.out.println("surfaceDestroyed()");
+      if (DEBUG) {
+        System.out.println("surfaceDestroyed()");
+      }
       // I don't think we need this:
       //g.dispose();
     }
@@ -779,8 +785,10 @@ public class PApplet extends Activity implements PConstants, Runnable {
     public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
       super.surfaceChanged(holder, format, w, h);
 
-//      System.out.println("SketchSurfaceView3D.surfaceChanged() " + w + " " + h);
-      surfaceChanged = true;
+      if (DEBUG) {
+        System.out.println("SketchSurfaceView3D.surfaceChanged() " + w + " " + h);
+      }
+//      surfaceChanged = true;
 //      width = w;
 //      height = h;
 //      g.setSize(w, h);
