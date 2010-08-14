@@ -285,6 +285,7 @@ public class Runner implements MessageConsumer {
           "java -Xrunjdwp:transport=dt_socket,address=" + addr + ",suspend=y ";
       } else {
         commandArgs =
+//          "java -Xrunjdwp:transport=dt_socket,address=" + addr + ",suspend=y ";
           "java -d32 -Xrunjdwp:transport=dt_socket,address=" + addr + ",suspend=y ";
       }
     }

@@ -27,11 +27,9 @@ X re: rewriting manifest on each build
 o   http://dev.processing.org/bugs/show_bug.cgi?id=1429
 X   http://code.google.com/p/processing/issues/detail?id=221
 X change skewX/Y to shearX/Y
-_   need updated reference for this
+X   make updated reference
 X copy the changes over from the xml library
-_ post processing-android-core-0190.zip to the download page
-_   get some help w/ the dist script to make the right file
-_ remove 'import processing.opengl.*' in the preprocessor?
+X remove 'import processing.opengl.*' in the preprocessor?
 X add to wiki - rename 'data' folder to 'assets' when inside eclipse
 X prevent rotation of applications? (or require a certain orientation)
 o   add to activity tag in the manifest:
@@ -57,7 +55,6 @@ X   make apps properly handle screen resize
 o remove SurfaceView2D/SurfaceView3D separation, or clean up
 o test controlp5 with android
 X get core.zip out of svn (once tool is separate, modes stuff working etc)
-_ StreamPump has been quieted, but maybe this needs to be a global log setting
 X fix the width of the build window
 X some sort of warning re: messing with AndroidManifest.xml
 X   added to the wiki
@@ -87,6 +84,16 @@ earlier
 X if sketchRenderer() et al are used in android, need to add to desktop
 X remove processing.opengl.* classes and finish PGraphicsAndroid3D
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1401
+J need to prevent hitting 'run' twice (threaded, so would work)
+J   currently things just keep restarting the build, bad state
+J   http://dev.processing.org/bugs/show_bug.cgi?id=1387
+
+before 0190 release
+_ post processing-android-core-0190.zip to the download page
+_   get some help w/ the dist script to make the right file
+_ have casey do a reference build (skewX/Y to shearX/Y)
+_   also changes to the xml api naming
+_ change run/present/export/export application names in the menus
 
 android menu
 _ something to bring up the full console window
@@ -142,6 +149,8 @@ confirm: [   ]
 ...then asks for 
 alias, password, confirm, validity (years)
 first/last name, ounit, org, city/locale, state/province, country code (xx)
+
+_ StreamPump has been quieted, but maybe this needs to be a global log setting
 
 _ seems to have problems on 64-bit windows 
 _   removing local version of java helped someone fix it
@@ -229,17 +238,12 @@ DL _   http://code.google.com/p/processing/issues/detail?id=223
 
 TOOLS 
 
-// jdf maybedone
-_ only send error text to System.err (i.e. "Launching emulator" is not an error)
-_   send these debug log messages to System.out
+J only send error text to System.err (i.e. "Launching emulator" is not an error)
+J   send these debug log messages to System.out
+o "Sketch started on emulator" in spite of the emulator only halfway booted
+o   sent email about this one
 
-// jdf maybedone
-_ "Sketch started on emulator" in spite of the emulator only halfway booted
-_   sent email about this one
-
-// jdf don't understand
 _ errors in ActivityManager aren't coming through
-
 _ if AVD is deleted while processing still running, things flake out
 _   also no error messages, just 'giving up on launching emulator'
 
@@ -269,9 +273,6 @@ W/System.err(  242): 	at android.app.ApplicationContext.openFileOutput(Applicati
 W/System.err(  242): 	at android.content.ContextWrapper.openFileOutput(ContextWrapper.java:158)
 W/System.err(  242): 	at processing.core.PApplet.createOutput(PApplet.java:3677)
 
-P2 _ need to prevent hitting 'run' twice (threaded, so would work)
-P2 _   currently things just keep restarting the build, bad state
-P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1387
 P2 _ move the android tools into its own source package in SVN
 P2 _   started, but needs proper Tool or Mode packaging
 P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1388
@@ -282,8 +283,8 @@ P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1379
 P2 _ save state re: whether sketches are android or java mode (or others?)
 P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1380
 
-_ compiler errors on Windows not appearing, nor highlighting the line number
-_   http://code.google.com/p/processing/issues/detail?id=253
+DM _ compiler errors on Windows not appearing, nor highlighting the line number
+DM _   http://code.google.com/p/processing/issues/detail?id=253
 
 P3 _ remove various debug messages on the console
 P3 _   right now, there are too many places where errors occur
