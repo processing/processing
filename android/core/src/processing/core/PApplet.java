@@ -575,7 +575,9 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
   public void onDestroy() {
     stop();
-    System.out.println("PApplet.onDestroy() called");
+    if (PApplet.DEBUG) {
+      System.out.println("PApplet.onDestroy() called");
+    }
     super.onDestroy();
     //finish();
   }
@@ -1856,8 +1858,10 @@ public class PApplet extends Activity implements PConstants, Runnable {
       if (motionEventCount + historyCount >= motionEventQueue.length) {
         int atLeast = motionEventCount + historyCount + 1;
         PMotionEvent[] temp = new PMotionEvent[max(atLeast, motionEventCount << 1)];
-println("motion: " + motionEventCount + " " + historyCount + " " + motionEventQueue.length);
-println("allocating " + temp.length + " entries for motion events");
+        if (PApplet.DEBUG) {
+          println("motion: " + motionEventCount + " " + historyCount + " " + motionEventQueue.length);
+          println("allocating " + temp.length + " entries for motion events");
+        }
         System.arraycopy(motionEventQueue, 0, temp, 0, motionEventCount);
         motionEventQueue = temp;
         for (int i = motionEventCount; i < motionEventQueue.length; i++) {
