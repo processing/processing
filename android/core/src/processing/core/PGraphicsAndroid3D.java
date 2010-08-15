@@ -5191,10 +5191,12 @@ public class PGraphicsAndroid3D extends PGraphics {
       egl.eglChooseConfig(display, configAttribsGL2, configs, numConfigs,
           num_config);
 
-      for (EGLConfig config : configs) {
-        String configStr = "A3D - selected EGL config : "
+      if (PApplet.DEBUG) {
+        for (EGLConfig config : configs) {
+          String configStr = "A3D - selected EGL config : "
             + printConfig(egl, display, config);
-        System.out.println(configStr);
+          System.out.println(configStr);
+        }
       }
 
       /*
@@ -5224,11 +5226,12 @@ public class PGraphicsAndroid3D extends PGraphics {
         int b = findConfigAttrib(egl, display, config, EGL10.EGL_BLUE_SIZE, 0);
         int a = findConfigAttrib(egl, display, config, EGL10.EGL_ALPHA_SIZE, 0);
 
-        if (r == mRedSize && g == mGreenSize && b == mBlueSize
-            && a == mAlphaSize) {
-          String configStr = "A3D - selected EGL config : "
+        if (r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize) {
+          if (PApplet.DEBUG) {
+            String configStr = "A3D - selected EGL config : "
               + printConfig(egl, display, config);
-          System.out.println(configStr);
+            System.out.println(configStr);
+          }
           return config;
         }
       }
