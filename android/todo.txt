@@ -80,6 +80,11 @@ o   might need to just put this in the menu for times when things go weird
 o   http://dev.processing.org/bugs/show_bug.cgi?id=1392
 o   http://code.google.com/p/processing/issues/detail?id=209
 
+X added orientation(PORTRAIT) and orientation(LANDSCAPE)
+_   need to add documentation
+_   update the wiki pages
+_   add to keywords.txt
+
 earlier
 X if sketchRenderer() et al are used in android, need to add to desktop
 X remove processing.opengl.* classes and finish PGraphicsAndroid3D

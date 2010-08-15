@@ -26,6 +26,7 @@ package processing.core;
 import processing.xml.XMLElement;
 
 import android.content.*;
+import android.content.pm.ActivityInfo;
 import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.graphics.*;
@@ -59,8 +60,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
   /** The PGraphics renderer associated with this PApplet */
   public PGraphics g;
 
-//  static final boolean DEBUG = true;
-  static final boolean DEBUG = false;
+  static final boolean DEBUG = true;
+//  static final boolean DEBUG = false;
   
   /** The frame containing this applet (if any) */
 //  public Frame frame;
@@ -721,7 +722,6 @@ public class PApplet extends Activity implements PConstants, Runnable {
       surfaceHolder.addCallback(this);
       //surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_GPU);
 
-
       /* By default, GLSurfaceView() creates a RGB_565 opaque surface.
        * If we want a translucent one, we should change the surface's
        * format here, using PixelFormat.TRANSLUCENT for GL Surfaces
@@ -905,6 +905,15 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
   public String sketchRenderer() {
     return A2D;
+  }
+  
+  
+  public void orientation(int which) {
+    if (which == PORTRAIT) {
+      setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+    } else if (which == LANDSCAPE) {
+      setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+    }
   }
 
 
