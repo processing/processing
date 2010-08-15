@@ -471,6 +471,12 @@ public interface PConstants {
 //  static final int MOVE  = Cursor.MOVE_CURSOR;
 //  static final int TEXT  = Cursor.TEXT_CURSOR;
 //  static final int WAIT  = Cursor.WAIT_CURSOR;
+  
+  
+  /** Screen orientation constant for portrait (the hamburger way). */
+  static final int PORTRAIT = 1;
+  /** Screen orientation constant for landscape (the hot dog way). */
+  static final int LANDSCAPE = 2;
 
 
   // hints - hint values are positive for the alternate version,
