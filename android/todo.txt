@@ -80,6 +80,9 @@ o   might need to just put this in the menu for times when things go weird
 o   http://dev.processing.org/bugs/show_bug.cgi?id=1392
 o   http://code.google.com/p/processing/issues/detail?id=209
 
+_ add to wiki: 1MB file size is max for data folder
+_   Data exceeds UNCOMPRESS_DATA_MAX (11840328 vs 1048576)
+
 X added orientation(PORTRAIT) and orientation(LANDSCAPE)
 _   need to add documentation
 _   update the wiki pages

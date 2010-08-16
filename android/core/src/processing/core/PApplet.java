@@ -60,8 +60,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
   /** The PGraphics renderer associated with this PApplet */
   public PGraphics g;
 
-  static final boolean DEBUG = true;
-//  static final boolean DEBUG = false;
+//  static final boolean DEBUG = true;
+  static final boolean DEBUG = false;
   
   /** The frame containing this applet (if any) */
 //  public Frame frame;
@@ -790,7 +790,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
       if (DEBUG) {
         System.out.println("SketchSurfaceView3D.surfaceChanged() " + w + " " + h);
       }
-//      surfaceChanged = true;
+      surfaceChanged = true;
 //      width = w;
 //      height = h;
 //      g.setSize(w, h);
@@ -1688,7 +1688,14 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 
   public void handleDraw() {
-//    println("inside handleDraw() " + millis());
+    if (DEBUG) {
+      println("inside handleDraw() " + millis() + 
+              " changed=" + surfaceChanged + 
+              " ready=" + surfaceReady + 
+              " paused=" + paused + 
+              " looping=" + looping + 
+              " redraw=" + redraw);
+    }
     if (surfaceChanged) {
       int newWidth = surfaceView.getWidth();
       int newHeight = surfaceView.getHeight();
@@ -1699,7 +1706,9 @@ public class PApplet extends Activity implements PConstants, Runnable {
       }
       surfaceChanged = false;
       surfaceReady = true;
-//      println("surfaceChanged true, resized to " + width + "x" + height);
+      if (DEBUG) {
+        println("surfaceChanged true, resized to " + width + "x" + height);
+      }
     }
 
 //    if (surfaceView.isShown()) {
