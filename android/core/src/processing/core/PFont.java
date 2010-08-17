@@ -910,13 +910,15 @@ public class PFont implements PConstants {
       if (PGraphicsAndroid3D.BIG_ENDIAN)  {
         for (int y = 0; y < height; y++) {
           for (int x = 0; x < width; x++) {
-            rgba[t++] = 0xFFFFFF00 | image.pixels[p++];
+            //rgba[t++] = 0xFFFFFF00 | image.pixels[p++];
+            rgba[t++] = (image.pixels[p++] << 24) | 0xFFFFFFFF;
           }
         }
       } else {
         for (int y = 0; y < height; y++) {
           for (int x = 0; x < width; x++) {
-            rgba[t++] = (image.pixels[p++] << 24) | 0x00FFFFFF;
+            rgba[t++] = (image.pixels[p++] << 24) | 0xFFFFFFFF;
+            //rgba[t++] = (image.pixels[p++] << 24) | 0x00FFFFFF;
           }
         }
       }
@@ -944,8 +946,10 @@ public class PFont implements PConstants {
       }
       
       // We assume GL10.GL_TEXTURE_2D is enabled at this point.
-      gl.glBindTexture(GL10.GL_TEXTURE_2D, lastTexID);
-      currentTexID = lastTexID;
+      if (currentTexID != lastTexID) {
+        gl.glBindTexture(GL10.GL_TEXTURE_2D, lastTexID);
+        currentTexID = lastTexID;
+      }
       
       gl.glTexSubImage2D(GL10.GL_TEXTURE_2D, 0, offsetX, offsetY, width, height, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, IntBuffer.wrap(rgba));
       
