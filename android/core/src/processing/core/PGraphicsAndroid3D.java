@@ -552,15 +552,26 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
   }
 
+  protected void copyToScreenTexture(IntBuffer buffer) {
+    gl.glEnable(texture.getGLTarget());
+    gl.glBindTexture(texture.getGLTarget(), texture.getGLTextureID());    
+    gl.glTexSubImage2D(texture.getGLTarget(), 0, 0, 0, width, height, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, buffer);
+    gl.glDisable(texture.getGLTarget());
+  }
+  
   protected void copyFrameToScreenTexture() {
     gl.glFinish(); // Make sure that the execution off all the openGL commands
                            // is finished.
     
+    loadTexture();
+   
+    /*
+    // gl.glCopyTexImage2D method. Doesn't work on Galaxy S (powerSVG 540).
     gl.glEnable(texture.getGLTarget());
-    gl.glBindTexture(texture.getGLTarget(), texture.getGLTextureID()); 
+    gl.glBindTexture(texture.getGLTarget(), texture.getGLTextureID());
     gl.glCopyTexImage2D(texture.getGLTarget(), 0, GL10.GL_RGB, 0, 0, width, height, 0);
-    
     gl.glDisable(texture.getGLTarget());
+    */    
   }
 
   // ////////////////////////////////////////////////////////////
@@ -4638,19 +4649,13 @@ public class PGraphicsAndroid3D extends PGraphics {
       yindex -= width * 2;
     }
 
-    // re-pack ARGB data into RGBA for opengl (big endian)
-    // for (int i = 0; i < pixels.length; i++) {
-    // pixels[i] = ((pixels[i] >> 24) & 0xff) |
-    // ((pixels[i] << 8) & 0xffffff00);
-    // }
-
-    setRasterPos(0, 0); // lower-left corner
-
     pixelBuffer.put(pixels);
     pixelBuffer.rewind();
-    // TODO fix me for android
-    // gl.glDrawPixels(width, height,
-    // GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, pixelBuffer);
+    
+    // Copying pixel buffer to screen texture...
+    copyToScreenTexture(pixelBuffer);
+    // ...and drawing the texture to screen.
+    drawScreenTexture();    
   }
   
   
@@ -4667,9 +4672,24 @@ public class PGraphicsAndroid3D extends PGraphics {
       initTexture(NEAREST);
       texture.setFlippedY(true);
     }
+    
+    if ((pixels == null) || (pixels.length != width * height)) {
+      pixels = new int[width * height];
+      pixelBuffer = BufferUtil.newIntBuffer(pixels.length);
+      // pixelBuffer = IntBuffer.allocate(pixels.length);
+    }
+               
+    gl.glReadPixels(0, 0, width, height, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE,
+        pixelBuffer);
+    
+    copyToScreenTexture(pixelBuffer);
+    pixelBuffer.rewind();
   }
   
-  
+  // Draws wherever it is in the screen texture right now to the screen.
+  public void updateTexture() {
+    drawScreenTexture();
+  }
   
   // ////////////////////////////////////////////////////////////
 
