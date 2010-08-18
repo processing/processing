@@ -43,6 +43,8 @@ _ launch4j problem
 _   no crash when double-clicking a sketch and loading it
 _   http://code.google.com/p/processing/issues/detail?id=231
 _ disappearing horizontal scroll bar
+_   appears to have become much worse with the other scrollbar fix
+_   ...which itself doesn't seem to be working properly
 _   http://code.google.com/p/processing/issues/detail?id=316
 
 _ fix line endings in revisions.txt for windows
@@ -758,6 +760,8 @@ _ Improve detection and handling of missing semicolons
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1036
 
 medium (bugs/features)
+_ mismatched square brackets generate bizarre and/or misleading error messages
+_   http://code.google.com/p/processing/issues/detail?id=355
 _ with additional .pde files, don't allow static mode in front tab
 _   e.g. no setup()/draw() block
 _ don't allow "for (blah; blah; blah) ;"

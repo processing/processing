@@ -871,7 +871,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
   public boolean surfaceTouchEvent(MotionEvent event) {
 //    println(event);
     checkMotionEvent(event);
-    //return super.onTouchEvent(event);
+//    return super.onTouchEvent(event);
     return true;
   }
   

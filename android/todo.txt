@@ -79,14 +79,7 @@ o remove the need for a "Reset Android" menu option
 o   might need to just put this in the menu for times when things go weird
 o   http://dev.processing.org/bugs/show_bug.cgi?id=1392
 o   http://code.google.com/p/processing/issues/detail?id=209
-
-_ add to wiki: 1MB file size is max for data folder
-_   Data exceeds UNCOMPRESS_DATA_MAX (11840328 vs 1048576)
-
 X added orientation(PORTRAIT) and orientation(LANDSCAPE)
-_   need to add documentation
-_   update the wiki pages
-_   add to keywords.txt
 
 earlier
 X if sketchRenderer() et al are used in android, need to add to desktop
@@ -99,14 +92,20 @@ J   http://dev.processing.org/bugs/show_bug.cgi?id=1387
 before 0190 release
 _ post processing-android-core-0190.zip to the download page
 _   get some help w/ the dist script to make the right file
-_ have casey do a reference build (skewX/Y to shearX/Y)
-_   also changes to the xml api naming
-_ change run/present/export/export application names in the menus
+X have casey do a reference build (skewX/Y to shearX/Y)
+X   also changes to the xml api naming
+
+_ add to wiki: 1MB file size is max for data folder
+_   Data exceeds UNCOMPRESS_DATA_MAX (11840328 vs 1048576)
+_ add to wiki: orientation(PORTRAIT) and orientation(LANDSCAPE)
+_   add to keywords.txt
 
 android menu
 _ something to bring up the full console window
 _ signing tool
 _ selection of which avd (emulator), or plugged-in devices (if multiple)
+
+_ change run/present/export/export application names in the menus
 
 _ throw an error if a file in the 'data' dir ends with .gz
 
