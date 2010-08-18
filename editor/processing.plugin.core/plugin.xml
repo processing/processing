@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         id="sketchNature"
+         name="Processing Sketch Nature"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+            class="processing.plugin.core.builder.SketchNature">
+         </run>
+      </runtime>
+      <builder
+            id="processing.plugin.core.sketchBuilder">
+      </builder>
+   </extension>
+   <extension
+         id="sketchBuilder"
+         name="Processing Sketch Builder"
+         point="org.eclipse.core.resources.builders">
+      <builder
+            hasNature="true">
+         <run
+               class="processing.plugin.core.builder.SketchBuilder">
+         </run>
+      </builder>
+   </extension>
+   <extension
+         id="p5marker"
+         name="Processing Build Problem Marker"
+         point="org.eclipse.core.resources.markers">
+      <persistent
+            value="true">
+      </persistent>
+      <super
+            type="org.eclipse.core.resources.problemmarker">
+      </super>
+   </extension>
+
+</plugin>

@@ -1,0 +1,32 @@
+<antlib>
+  <typedef name="and"
+    classname="org.apache.tools.ant.types.resources.selectors.And" />
+  <typedef name="compare"
+    classname="org.apache.tools.ant.types.resources.selectors.Compare" />
+  <typedef name="contains"
+    classname="org.apache.tools.ant.types.selectors.ContainsSelector" />
+  <typedef name="containsregexp"
+    classname="org.apache.tools.ant.types.selectors.ContainsRegexpSelector" />
+  <typedef name="date"
+    classname="org.apache.tools.ant.types.resources.selectors.Date" />
+  <typedef name="exists"
+    classname="org.apache.tools.ant.types.resources.selectors.Exists" />
+  <typedef name="instanceof"
+    classname="org.apache.tools.ant.types.resources.selectors.InstanceOf" />
+  <typedef name="majority"
+    classname="org.apache.tools.ant.types.resources.selectors.Majority" />
+  <typedef name="modified"
+    classname="org.apache.tools.ant.types.selectors.modifiedselector.ModifiedSelector" />
+  <typedef name="name"
+    classname="org.apache.tools.ant.types.resources.selectors.Name" />
+  <typedef name="none"
+    classname="org.apache.tools.ant.types.resources.selectors.None" />
+  <typedef name="not"
+    classname="org.apache.tools.ant.types.resources.selectors.Not" />
+  <typedef name="or"
+    classname="org.apache.tools.ant.types.resources.selectors.Or" />
+  <typedef name="size"
+    classname="org.apache.tools.ant.types.resources.selectors.Size" />
+  <typedef name="type"
+    classname="org.apache.tools.ant.types.resources.selectors.Type" />
+</antlib>
