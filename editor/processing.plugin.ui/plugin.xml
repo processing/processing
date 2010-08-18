@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="processing.plugin.ui.processingeditor.ProcessingEditor"
+            default="true"
+            extensions="pde"
+            id="processing.plugin.ui.ProcessingEditor"
+            name="Processing Sketch Editor">
+      </editor>
+   </extension>
+   <extension
+         point="org.eclipse.core.filebuffers.documentSetup">
+      <participant
+            class="processing.plugin.ui.processingeditor.ProcessingDocumentSetupParticipant"
+            extensions="pde">
+      </participant>
+   </extension>
+<!--   <extension
+         name="Processing Editor Specific Actions"
+         point="org.eclipse.ui.editorActions">
+   </extension> -->
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            id="processing.plugin.ui.wizards"
+            name="Processing">
+      </category>
+      <wizard
+            category="org.processing.wizards"
+            class="processing.plugin.ui.wizards.NewSketchWizard"
+            id="processing.plugin.ui.wizards.NewSketchWizard"
+            name="Processing Sketch"
+            project="true">
+      </wizard>
+   </extension>
+
+</plugin>
