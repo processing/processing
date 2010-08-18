@@ -1,3 +1,120 @@
+PROCESSING REV 0190 - 18 August 2010
+
+This release is primarily for Android users. For the desktop version, there
+are some problems with fonts. If you're using text, especially with PDFs,
+you may want to wait until the next release.
+
+Android users should read the Wiki (http://wiki.processing.org/w/Android)
+which has a lot of new information. 
+
+[ android ] 
+
++ Added a new menu to cover enabling/disabling Android mode. 
+
++ Added a Permissions dialog, so that you can set permissions for your 
+  applications, e.g. so you can read from the internet or save files.
+
++ Added support for icons. Put files named icon-32.png, icon-48.png, 
+  and icon-72.png in your sketch folder, and they'll be added to your
+  project when it's created. Otherwise you'll get an ugly blue dot 
+  default icon. You've been warned.
+
++ Finish implementing the size() command on Android. See the Wiki for notes.
+  http://dev.processing.org/bugs/show_bug.cgi?id=1397
+  http://code.google.com/p/processing/issues/detail?id=211
+
++ Finish implementation of P3D/OpenGL/A3D for Android.
+  http://dev.processing.org/bugs/show_bug.cgi?id=1396
+  http://dev.processing.org/bugs/show_bug.cgi?id=1401
+
++ Allow screenWidth/Height as parameters to size().
+
++ Fix mouseX/Y mapping when using smaller screen sizes.
+
++ Fix text ascent/descent problem, text("blah\nblah") wasn't working.
+
++ Fixed how the manifest file is read/written. 
+  http://dev.processing.org/bugs/show_bug.cgi?id=1429
+  http://code.google.com/p/processing/issues/detail?id=221
+
++ Copied the XML and font changes from the desktop version of core.
+
++ Removing 'import processing.opengl.*' in the preprocessor, since it's
+  not needed, and will cause a conflict.
+
++ Added functions to lock orientation if necessary. Use:
+  orientation(LANDSCAPE) and orientation(PORTRAIT) if you need control.
+
++ createGraphics() works with A3D/P3D/OPENGL for phones that support it.
+  http://dev.processing.org/bugs/show_bug.cgi?id=1488
+  http://code.google.com/p/processing/issues/detail?id=240
+
++ Fix errors showing up that .java files were duplicates.
+  http://code.google.com/p/processing/issues/detail?id=232
+
+[ core ] 
+
++ Changed skewX/Y to shearX/Y.
+
++ ENABLE_NATIVE_FONTS was being ignored, native fonts were always used 
+  in some cases. However, this broke some other things. But that's why
+  this is a pre-release, not a final.
+
+[ xml fixes and changes ] 
+
++ Changed the XML constructor to take a String for a node name, instead of
+  parsing a document from a String. Instead, use XMLElement.parse(String) 
+  if you want to read a file.
+
++ Added getBoolean() methods.
+  http://code.google.com/p/processing/issues/detail?id=304
+
++ Removed namespace versions of the getXxxx() methods. These were never
+  documented, and cause more trouble than they're worth.
+
++ Changing getIntAttribute() et al to getInt(). The old versions are still
+  there, but have been deprecated.
+
++ Added listChildren() method.
+
++ XML attributes named "xmlns" always returned NULL, now fixed.
+  http://dev.processing.org/bugs/show_bug.cgi?id=1196
+  http://code.google.com/p/processing/issues/detail?id=166
+
++ When re-saving an .ods file, wasn't including all the namespace at the top.
+
++ Several fixes to how namespaces are handled (or not handled).
+
++ Methods to saved XML elements back out again.
+  http://dev.processing.org/bugs/show_bug.cgi?id=963
+  http://code.google.com/p/processing/issues/detail?id=126
+
++ Update XMLElement constructor problem.
+  http://code.google.com/p/processing/issues/detail?id=342
+
+[ environment ] 
+
++ Added more specific language to Lnux/Sun/Java error messages on Linux. 
+  Also added support for "Oracle" in the name.
+
++ Fix the New/Open buttons on the toolbar
+  http://code.google.com/p/processing/issues/detail?id=323
+
++ Changed how "Save As" works, now copies everything in the sketch folder.
+  But still ignores applet, application.*, screen-* files/folders
+
++ Edit > Copy as HTML didn't properly encode < and >
+  Also added support for other Unicode entities for non-ASCII characters.
+  http://code.google.com/p/processing/issues/detail?id=351
+
++ Ctrl-Z will undo, but not scroll to where the undo happens. Fixed earlier.
+  http://dev.processing.org/bugs/show_bug.cgi?id=35
+  http://code.google.com/p/processing/issues/detail?id=15
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING 1.2.1 (REV 0189) - 14 July 2010
 
 Fix for a problem with some static-mode programs. See below for
