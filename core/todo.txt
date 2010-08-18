@@ -3,8 +3,8 @@ X change skewX/Y to shearX/Y
 X   need reference update for this
 X ENABLE_NATIVE_FONTS was being ignored, native fonts were used no matter what
 X   fix the behavior
-_ there are problems with font handling in the desktop version
-_   add to release notes that it shouldn't be used by the finicky
+X there are problems with font handling in the desktop version
+X   add to release notes that it shouldn't be used by the finicky
 
 xml fixes
 X add getBoolean() methods?
