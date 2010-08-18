@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/processing.plugin_1.0.0.201008132349.jar" id="processing.plugin" version="1.0.0.201008132349">
+      <category name="processing_plug_in"/>
+   </feature>
+   <category-def name="processing_plug_in" label="Processing Plug-in for Eclipse">
+      <description>
+         Provides integration for the Processing programming language to the Eclipse platform. See http://www.processing.org to learn more.
+      </description>
+   </category-def>
+</site>

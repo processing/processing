@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Processing Plugin Core
+Bundle-SymbolicName: processing.plugin.core;singleton:=true
+Bundle-Version: 0.1.0.1
+Bundle-Activator: processing.plugin.core.ProcessingCore
+Bundle-Vendor: Processing.org
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.core.resources,
+ processing.plugin.appBundle;bundle-version="1.2.1";visibility:=reexport
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Export-Package: processing.plugin.core,
+ processing.plugin.core.builder

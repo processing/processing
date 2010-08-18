@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<antlib>
+  <!--
+/*
+ *   Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  See the NOTICE file distributed with
+ *  this work for additional information regarding copyright ownership.
+ *  The ASF licenses this file to You under the Apache License, Version 2.0
+ *  (the "License"); you may not use this file except in compliance with
+ *  the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
+
+  -->
+  <!-- Ant 1.6+ antlib declaration for conditions:
+  Use with the declaration xmlns:cond="antlib:org.apache.tools.ant.condition"
+  to
+  trigger Ant's autoload of this file into namespace 'cond' (or whatever name
+  suits).
+
+  Please keep this list in alphabetical order; it is easier to verify that way.
+
+  Additionally, ConditionBase uses this antlib to discover built-in conditions.
+  Prior to Ant 1.7, a new built-in condition required an addXXX method to be
+  added to ConditionBase.  Conditions added in or after version 1.7 need only
+  to be added to this antlib.
+  -->
+
+  <typedef name="and" onerror="ignore"
+           classname="org.apache.tools.ant.taskdefs.condition.And"/>
+  <typedef name="antversion" onerror="ignore"
+           classname="org.apache.tools.ant.taskdefs.condition.AntVersion"/>
+  <typedef name="contains" onerror="ignore"
+           classname="org.apache.tools.ant.taskdefs.condition.Contains"/>
+  <typedef name="equals" onerror="ignore"
+           classname="org.apache.tools.ant.taskdefs.condition.Equals"/>
+  <typedef name="filesmatch" onerror="ignore"
+           classname="org.apache.tools.ant.taskdefs.condition.FilesMatch"/>
+  <typedef name="hasfreespace" onerror="ignore"
+           classname="org.apache.tools.ant.taskdefs.condition.HasFreeSpace"/>
+  <typedef name="http" onerror="ignore"
+           classname="org.apache.tools.ant.taskdefs.condition.Http"/>
+  <typedef name="isfailure" onerror="ignore"
+           classname="org.apache.tools.ant.taskdefs.condition.IsFailure"/>
+  <typedef name="isfalse" onerror="ignore"
+           classname="org.apache.tools.ant.taskdefs.condition.IsFalse"/>
+  <typedef name="isfileselected" onerror="ignore"
+           classname="org.apache.tools.ant.taskdefs.condition.IsFileSelected"/>
+  <typedef name="isreachable" onerror="ignore"
+           classname="org.apache.tools.ant.taskdefs.condition.IsReachable"/>
+  <typedef name="isreference" onerror="ignore"
+           classname="org.apache.tools.ant.taskdefs.condition.IsReference"/>
+  <typedef name="isset" onerror="ignore"
+           classname="org.apache.tools.ant.taskdefs.condition.IsSet"/>
+  <typedef name="issigned" onerror="ignore"
+           classname="org.apache.tools.ant.taskdefs.condition.IsSigned"/>
+  <typedef name="istrue"  onerror="ignore"
+           classname="org.apache.tools.ant.taskdefs.condition.IsTrue"/>
+  <typedef name="not" onerror="ignore"
+           classname="org.apache.tools.ant.taskdefs.condition.Not"/>
+  <typedef name="matches" onerror="ignore"
+           classname="org.apache.tools.ant.taskdefs.condition.Matches"/>
+  <typedef name="or" onerror="ignore"
+           classname="org.apache.tools.ant.taskdefs.condition.Or"/>
+  <typedef name="os" onerror="ignore"
+           classname="org.apache.tools.ant.taskdefs.condition.Os"/>
+  <typedef name="parsersupports" onerror="ignore"
+           classname="org.apache.tools.ant.taskdefs.condition.ParserSupports"/>
+  <typedef name="resourcesmatch" onerror="ignore"
+           classname="org.apache.tools.ant.taskdefs.condition.ResourcesMatch"/>
+  <typedef name="scriptcondition" onerror="ignore"
+           classname="org.apache.tools.ant.types.optional.ScriptCondition"/>
+  <typedef name="socket" onerror="ignore"
+           classname="org.apache.tools.ant.taskdefs.condition.Socket"/>
+  <typedef name="typefound" onerror="ignore"
+           classname="org.apache.tools.ant.taskdefs.condition.TypeFound"/>
+  <typedef name="xor" onerror="ignore"
+           classname="org.apache.tools.ant.taskdefs.condition.Xor"/>
+</antlib>
