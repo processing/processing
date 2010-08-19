@@ -41,9 +41,9 @@ import processing.core.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
-  static final int REVISION = 190;
+  static final int REVISION = 191;
   /** This might be replaced by main() if there's a lib/version.txt file. */
-  static public String VERSION_NAME = "0190";
+  static public String VERSION_NAME = "0191";
   /** Set true if this a proper release rather than a numbered revision. */
   static public boolean RELEASE = false;
   /** True if heavy debugging error/log messages are enabled */
@@ -452,8 +452,8 @@ public class Base {
     menuItem.setAccelerator(KeyStroke.getKeyStroke(what, SHORTCUT_ALT_KEY_MASK));
     return menuItem;
   }
-  
-  
+
+
   static public JCheckBoxMenuItem newJCheckBoxMenuItem(String title, int what) {
     JCheckBoxMenuItem menuItem = new JCheckBoxMenuItem(title);
     int modifiers = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();

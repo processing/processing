@@ -1,3 +1,34 @@
+0190 core (pre)
+X change skewX/Y to shearX/Y
+X   need reference update for this
+X ENABLE_NATIVE_FONTS was being ignored, native fonts were used no matter what
+X   fix the behavior
+X there are problems with font handling in the desktop version
+X   add to release notes that it shouldn't be used by the finicky
+
+xml fixes
+X add getBoolean() methods?
+X   http://code.google.com/p/processing/issues/detail?id=304
+X removing namespace versions of the getXxxx() methods
+X   these were never documented, and cause more trouble than they're worth
+X changing getIntAttribute() et al to getInt()
+X   need to make the reference change for the next release
+X add listChildren() method
+X XML attributes named "xmlns" always return NULL
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1196
+X   http://code.google.com/p/processing/issues/detail?id=166
+X when re-saving and ods file, not including all the name spaces at the top
+X several fixes to how namespaces are handled (or not handled)
+X save xml elements back out again
+X   http://dev.processing.org/bugs/show_bug.cgi?id=963
+X   http://code.google.com/p/processing/issues/detail?id=126
+X   or make the call that it's read-only, and remove the saving code
+X adding write() method?
+X need to handle how save() works inside xml lib
+X update XMLElement constructor problem
+X   http://code.google.com/p/processing/issues/detail?id=342
+
+
 0189 core (1.2.1)
 X no changes, just the preproc issue
 
