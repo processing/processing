@@ -81,32 +81,32 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 	
 	/** Sketch folder that contains the sketch */
 	private IProject sketch; 
+	
 	/** Data folder, located in the sketch folder, may not exist */
 	private IFolder dataFolder;
+	
 	/** Code folder, located in the sketch folder, may not exist */
-	private IFolder codeFolder; 
+	private IFolder codeFolder;
+	
 	/** A temporary build folder, will be created if it doesn't exist */
 	private IFolder buildFolder;
+
+	/** The output applet folder for after the compile */
+	private IFolder appletFolder;
 	
-	/** 
-	 * A File handle to the Core libraries folder in the plug-in resources.
-	 * This has to be regular ol' File because its not in the workspace.
-	 */
-	private File coreLibs = getCoreLibsFolder();
-	/** 
-	 * A File handle to the SketchBook libraries folder. This is determined
-	 * relative to the location of the sketch; if the sketch is not in
-	 * a proper sketch book folder it will be null.
-	 * 
-	 * This has to be a regular ol' File because its not in the workspace. 
-	 */
-	private File sketchBookLibs = getSketchBookLibsFolder();
+	/** The core libraries folder in the plug-in resources. */
+	private File coreLibs;
 	
-	private String appletClassName;
+	/** The SketchBook libraries folder, may not exist */
+	private File sketchBookLibs;
+	
+	/** the library path for the compiler */
+	private String libraryPath;
+	
+	/** the class path for the compiler */
 	private String classPath;
 	
-	/** normally handled by processing.app.Base, but we need it now */
-	private HashMap<String, File> importToLibraryTable;
+	/** a list of library folders */
 	private ArrayList<File> importedLibraries; // list of library folders
 	
 	/**
@@ -138,6 +138,9 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 		this.codeFolder = sketch.getFolder("code");
 		this.dataFolder = sketch.getFolder("data");
 		this.buildFolder = sketch.getFolder("bin"); // TODO relocate to MyPlugin.getPlugin().getStateLocation().getFolder("bin")
+		this.appletFolder = sketch.getFolder("applet");
+		this.coreLibs = getCoreLibsFolder();
+		this.sketchBookLibs = getSketchBookLibsFolder();
 		
 		monitor.beginTask("Sketch Build", 400); // not sure how much work to do here
 		if(!sketch.isOpen()) { return null; } // has to be open to access it
@@ -155,6 +158,9 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 		if (!buildFolder.exists())
 			buildFolder.create(IResource.NONE, true, null);
 		
+		if (!appletFolder.exists())
+			appletFolder.create(IResource.NONE, true, null);
+		
 		monitor.worked(100); // 100 for every step of the process?
 		if(checkCancel(monitor)){ return null; }
 		
@@ -162,19 +168,17 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 		PdePreprocessor preproc = new PdePreprocessor(sketch.getName(), 4);
 		
 		String[] codeFolderPackages = null;
-		String classPath = buildFolder.getLocation().toOSString();
+		classPath = appletFolder.getLocation().toOSString();
 		
 		// check the contents of the code folder to see if there are files that need to be added to the imports
 		if (codeFolder.exists()){
-			libraryPath = codeFolder.getLocationURI().toString();
+			libraryPath = codeFolder.getLocation().toOSString();
 			// get a list of .jar files in the code folder and its subfolders
-			String codeFolderClassPath = Compiler.contentsToClassPath(codeFolder.getLocation().toFile());
+			String codeFolderClassPath = Utilities.contentsToClassPath(codeFolder.getLocation().toFile());
 			// append the jar files to the class path
 			classPath += File.pathSeparator + codeFolderClassPath;
 			// get the list of packages in those jars
-			codeFolderPackages = Compiler.packageListFromClassPath(codeFolderClassPath);
-			// debug
-			//for(String s : codeFolderPackages){ System.out.println(s);}
+			codeFolderPackages = Utilities.packageListFromClassPath(codeFolderClassPath);
 		} else { libraryPath = ""; }
 		
 		// concat all .pde files to the 'main' pde
@@ -186,10 +190,10 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 		for( IResource file : sketch.members()){
 			if(file.getFileExtension() != null && file.getFileExtension().equalsIgnoreCase("pde")){ 
 				file.setSessionProperty(new QualifiedName(ProcessingCore.BUILDER_ID, "preproc start"), bigCount);
-				String content = readFile((IFile) file);
+				String content = Utilities.readFile((IFile) file);
 				bigCode.append(content);
 				bigCode.append("\n");
-				bigCount += getLineCount(content);
+				bigCount += Utilities.getLineCount(content);
 				file.setSessionProperty(new QualifiedName(ProcessingCore.BUILDER_ID, "preproc end"), bigCount);
 			}
 		}
@@ -202,22 +206,21 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 			IFile outputFile = buildFolder.getFile(sketch.getName() + ".java"); 
 			StringWriter stream = new StringWriter();
 			result = preproc.write(stream, bigCode.toString(), codeFolderPackages);
-			
-			// Eclipse idiom for generating the java file and marking it as a generated file
-			ByteArrayInputStream inStream = new ByteArrayInputStream(stream.toString().getBytes());
-			if (outputFile.exists()) { 
-				outputFile.setContents(inStream, true, false, monitor);  
-			} else { 
-				outputFile.create(inStream, true, monitor);
+			try{
+				// Eclipse idiom for generating the java file and marking it as a generated file
+				ByteArrayInputStream inStream = new ByteArrayInputStream(stream.toString().getBytes());
+				if (outputFile.exists()) { 
+					outputFile.setContents(inStream, true, false, monitor);  
+				} else { 
+					outputFile.create(inStream, true, monitor);
+				}
+				outputFile.setDerived(true, monitor);
+			} finally{
+				stream.close();
 			}
-			
-			outputFile.setDerived(true, monitor);
 		} catch(antlr.RecognitionException re){
 			
-//			System.out.println(re.getMessage());
-			
-			// first assume that it's the main file
-			IResource errorFile = null; // lets get a better default error file here.
+			IResource errorFile = null; // if this remains null, the error is reported back on the sketch itself with no line
 			int errorLine = re.getLine() - 1;
 			
 			for( IResource file : sketch.members()){
@@ -238,7 +241,6 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 				errorLine = -1;
 			} 
 			
-			
 			//DEBUG
 			//System.out.println("error line - error file - offset");
 	      	//System.out.println(errorLine + " - " + errorFile + " - " + getPreprocOffset((IFile) folderContents[errorFile]));
@@ -258,7 +260,7 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 		    	msg = "A web color (such as #ffcc00) must be six digits.";
 		    
   			reportProblem(msg, errorFile, errorLine, true);
-  			return null;
+  			return null; // exit the build
 		} catch (antlr.TokenStreamRecognitionException tsre) { 
 			// System.out.println("and then she tells me " + tsre.toString());
 		    String mess = "^line (\\d+):(\\d+):\\s"; // a regexp to grab the line and column from the exception
@@ -304,22 +306,21 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 		
 		monitor.worked(10);
 		if(checkCancel(monitor)) { return null; } 
-		
+		//TODO START HERE TOMORROW
 		importedLibraries = new ArrayList<File>(); // freshen up the list
-		importToLibraryTable = new HashMap<String,File>();
-//		addLibraries( sketch.INCLUDEDLIBRARYPATH ); //TODO figure out how to include and access the standard libs
-		addLibraries(sketch.getLocation().removeLastSegments(1).append("libraries/").toFile()); // sketchbook library folder
+		//addLibraries( sketch.INCLUDEDLIBRARYPATH ); //TODO figure out how to include and access the standard libs
+		//addLibraries(sketch.getLocation().removeLastSegments(1).append("libraries/").toFile()); // sketchbook library folder
 		
 		for (String item : result.extraImports){
 			// remove things up to the last dot
 			int dot = item.lastIndexOf('.');
 			String entry = (dot == -1) ? item : item.substring(0, dot);
-			File libFolder = importToLibraryTable.get(entry);
-			if (libFolder.exists()){
-				importedLibraries.add(libFolder);
-				classPath += Compiler.contentsToClassPath(libFolder);
-				libraryPath += File.pathSeparator + libFolder.getAbsolutePath();
-			}
+			//File libFolder = importToLibraryTable.get(entry);
+//			if (libFolder.exists()){
+//				importedLibraries.add(libFolder);
+//				classPath += Compiler.contentsToClassPath(libFolder);
+//				libraryPath += File.pathSeparator + libFolder.getAbsolutePath();
+//			}
 		}
 		
 		String javaClassPath = System.getProperty("java.class.path");
@@ -424,11 +425,6 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 		 return false;
 	 }
 	 
-	 /** String representation for debugging */
-	 public String toString(){
-		 return (sketch == null) ? "SketchBuilder for unknown project" : "SketchBuilder for " + sketch.getName();
-	 }
-	 
 	 /**
 	  * Finds any Processing Libraries in the folder and loads them into the HashMap
 	  * importToLibraryTable so they can be imported later.
@@ -443,9 +439,9 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 
 	 /**
 	  * Finds the folder containing the Processing core libraries, which are bundled with the
-	  * plugin . This folder doesn't exist in the workspace, so we return it as a
-	  * plain File.
-	  * 
+	  * plugin. This folder doesn't exist in the workspace, so we return it as a plain File. 
+	  * If a CoreException is thrown it will be logged and this will return null.
+	  *  
 	  * @return File containing the core libraries folder or null if it cannot be found
 	  */
 	 public File getCoreLibsFolder() {
@@ -457,79 +453,24 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 			 return folder;
 		 } catch (Exception e) {
 			 ProcessingLog.logError(e);
+			 return null;
 		 }
-		 return null;
 	 }
 
 	 /**
-	  * Find the folder containing the Processing sketchbook libraries, which should
-	  * be contained in the same directory as the sketch itself. If there is no properly
-	  * named folder in that location this will return null. If there is another folder
-	  * that coincidentally has the right name relative to the sketch folder there will
-	  * be problems.
+	  * Find the folder containing the Processing sketchbook libraries, which should be contained 
+	  * in the same directory as the sketch itself. This only returns a handle to the folder. If 
+	  * a CoreException is thrown it will be logged and this will return null. 
 	  * 
 	  * @return File containing the Sketch book library folder, or null if it doesn't exist
 	  */
 	 public File getSketchBookLibsFolder() {
 		 try{
 			 File folder = sketch.getLocation().removeLastSegments(1).append("libraries").toFile();
-			 if(folder.exists())
-				 return folder;
+			 return folder;
 		 } catch (Exception e){
 			 ProcessingLog.logError(e);
+			 return null;
 		 }
-		 return null;
-	 }
-
-	 /* !!!!! GENERAL STATIC UTILITY METHODS - CONSIDER MOVING SOMEWHERE ELSE !!!! */
-	 
-	 /**
-	  * Utility method to read in a file and return it as a string
-	  * 
-	  * @param file a resource handler for a file
-	  * @return contents of the file
-	  */
-	 public static String readFile(IFile file) {
-		 if (!file.exists())
-			 return "";
-		 InputStream stream = null;
-		 try{
-			 stream = file.getContents();
-			 Reader reader = new BufferedReader(new InputStreamReader(stream));
-			 StringBuffer result = new StringBuffer(2048);
-			 char[] buf = new char[2048];
-			 while (true){
-				 int count = reader.read(buf);
-				 if (count < 0)
-					 break;
-				 result.append(buf, 0, count);
-			 }
-			 return result.toString();
-		 } catch (Exception e){ // IOException and CoreException
-			 ProcessingLog.logError(e);
-			 return "";
-		 } finally {
-			 try{
-				 if (stream != null)
-					 stream.close();
-			 } catch (IOException e){
-				 ProcessingLog.logError(e);
-				 return "";
-			 }
-		 }
-	 }
-
-	 /**
-	  * Count newlines in a string
-	  * 
-	  * @param what
-	  * @return number of newline statements
-	  */
-	 public static int getLineCount(String what){
-		 int count = 1;
-		 for (char c : what.toCharArray()) {
-			 if (c == '\n') count++;
-		 }
-		 return count;
 	 }
 }
