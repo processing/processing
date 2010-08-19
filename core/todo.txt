@@ -1,4 +1,6 @@
 0191 core
+X fix background(PImage) for OpenGL
+X   http://code.google.com/p/processing/issues/detail?id=336
 
 
 _ need to finish font changes wrt native fonts before any release
