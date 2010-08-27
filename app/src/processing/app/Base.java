@@ -90,7 +90,7 @@ public class Base {
   // classpath for all known libraries for p5
   // (both those in the p5/libs folder and those with lib subfolders
   // found in the sketchbook)
-  static public String librariesClassPath;
+//  static public String librariesClassPath;
 
   // Location for untitled items
   static File untitledFolder;
@@ -1328,8 +1328,8 @@ public class Base {
           Compiler.contentsToClassPath(libraryFolder);
         // grab all jars and classes from this folder,
         // and append them to the library classpath
-        librariesClassPath +=
-          File.pathSeparatorChar + libraryClassPath;
+//        librariesClassPath +=
+//          File.pathSeparatorChar + libraryClassPath;
         // need to associate each import with a library folder
         String packages[] =
           Compiler.packageListFromClassPath(libraryClassPath);
