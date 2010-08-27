@@ -29,8 +29,8 @@ import processing.core.*;
 
 /**
  * A simple library to write DXF files with Processing.
- * Because this is used with beginRaw() and endRaw(), only individual 
- * triangles and (discontinuous) line segments will be written to the file. 
+ * Because this is used with beginRaw() and endRaw(), only individual
+ * triangles and (discontinuous) line segments will be written to the file.
  * <P/>
  * Use something like a keyPressed() in PApplet to trigger it,
  * to avoid writing a bazillion .dxf files.
@@ -120,8 +120,8 @@ public class RawDXF extends PGraphics3D {
 
 
   public RawDXF() { }
-  
-  
+
+
   public void setPath(String path) {
     this.path = path;
     if (path != null) {
@@ -180,7 +180,7 @@ public class RawDXF extends PGraphics3D {
 
 
   public void endDraw() {
-    // nothing done here
+    writer.flush();
   }
 
 
