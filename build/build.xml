@@ -364,18 +364,23 @@ http://www.gnu.org/software/tar/manual/html_section/transform.html
 	   overwrite="false"/>
 
 <!--
-    <tar compression="gzip" basedir="linux/work" 
-	 destfile="linux/processing-${version}.tgz" />
--->
     <tar compression="gzip" destfile="linux/processing-${version}.tgz">
       <tarfileset dir="linux/work" prefix="processing-${version}" />
     </tar>
+-->
+    <exec executable="tar">
+      <arg value="-C" />
+      <arg value="linux" />
+      <arg value="-czpvf" />
+      <arg value="processing.tgz"/>
+      <arg value="work"/>
+    </exec>
 
     <echo>
       =======================================================
       Processing for Linux was built. Grab the archive from   
       
-      build/linux/processing-${version}.tgz
+      linux/processing-${version}.tgz
       =======================================================
     </echo>
   </target>
