@@ -1508,7 +1508,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
     if (g instanceof PGraphicsAndroid3D) {
       // TODO: Check why textures doesn't work in formats other than ARGB...
       image.format = ARGB;
-      image.initTexture();
+      image.loadTexture();
     }
     return image;
   }
@@ -1520,7 +1520,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
     if (g instanceof PGraphicsAndroid3D) {
       // TODO: Check why textures doesn't work in formats other than ARGB...
       image.format = ARGB;
-      image.initTexture(filter);
+      image.loadTexture(filter);
     }
     return image;
   }
@@ -1532,7 +1532,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
     if (g instanceof PGraphicsAndroid3D) {
       // TODO: Check why textures doesn't work in formats other than ARGB...
       image.format = params.format;
-      image.initTexture(params);
+      image.loadTexture(params);
     }
     return image;
   }
@@ -3313,7 +3313,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
     if (g instanceof PGraphicsAndroid3D) {
       // TODO: Check why textures doesn't work in formats other than ARGB...
       image.format = ARGB;
-      image.initTexture();
+      image.loadTexture();
     }
     return image;
   }

@@ -4771,7 +4771,7 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   public void loadTexture() {
     if (texture == null) {
-      initTexture(NEAREST);
+      loadTexture(NEAREST);
       texture.setFlippedY(true);
     }
     
