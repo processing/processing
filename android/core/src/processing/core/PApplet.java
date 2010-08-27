@@ -62,7 +62,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 //  static final boolean DEBUG = true;
   static final boolean DEBUG = false;
-  
+
   /** The frame containing this applet (if any) */
 //  public Frame frame;
 
@@ -431,12 +431,12 @@ public class PApplet extends Activity implements PConstants, Runnable {
 //    RelativeLayout layout = new RelativeLayout(this);
 //    RelativeLayout overallLayout = new RelativeLayout(this);
 //    RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.FILL_PARENT);
-//lp.addRule(RelativeLayout.RIGHT_OF, tv1.getId());    
+//lp.addRule(RelativeLayout.RIGHT_OF, tv1.getId());
 //    layout.setGravity(RelativeLayout.CENTER_IN_PARENT);
 
     int sw = sketchWidth();
     int sh = sketchHeight();
-    
+
     if (sketchRenderer().equals(A2D)) {
       surfaceView = new SketchSurfaceView2D(this, sw, sh);
     } else if (sketchRenderer().equals(A3D)) {
@@ -451,26 +451,26 @@ public class PApplet extends Activity implements PConstants, Runnable {
 //    layout.addView(surfaceView);
 //    AttributeSet as = new AttributeSet();
 //    RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(layout, as);
-    
-//    lp.addRule(android.R.styleable.ViewGroup_Layout_layout_height, 
+
+//    lp.addRule(android.R.styleable.ViewGroup_Layout_layout_height,
 //    layout.add
     //lp.addRule(, arg1)
-    //layout.addView(surfaceView, sketchWidth(), sketchHeight());    
+    //layout.addView(surfaceView, sketchWidth(), sketchHeight());
 
-//      new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, 
+//      new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
 //        RelativeLayout.LayoutParams.FILL_PARENT);
-    
+
     if (sw == screenWidth && sh == screenHeight) {
       // If using the full screen, don't embed inside other layouts
       window.setContentView(surfaceView);
-      
+
     } else {
-      // If not using full screen, setup awkward view-inside-a-view so that 
+      // If not using full screen, setup awkward view-inside-a-view so that
       // the sketch can be centered on screen. (If anyone has a more efficient
-      // way to do this, please file an issue on Google Code, otherwise you 
-      // can keep your "talentless hack" comments to yourself. Ahem.) 
+      // way to do this, please file an issue on Google Code, otherwise you
+      // can keep your "talentless hack" comments to yourself. Ahem.)
       RelativeLayout overallLayout = new RelativeLayout(this);
-      RelativeLayout.LayoutParams lp = 
+      RelativeLayout.LayoutParams lp =
         new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
           RelativeLayout.LayoutParams.WRAP_CONTENT);
       lp.addRule(RelativeLayout.CENTER_IN_PARENT);
@@ -480,7 +480,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
       overallLayout.addView(layout, lp);
       window.setContentView(overallLayout);
     }
-    
+
 //    layout.addView(surfaceView, lp);
 //    surfaceView.setLayoutParams(new LayoutParams(sketchWidth(), sketchHeight()));
 
@@ -491,7 +491,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
     // removing this in 0187
 //    width = screenWidth;
 //    height = screenHeight;
-    
+
 //    int left = (screenWidth - iwidth) / 2;
 //    int right = screenWidth - (left + iwidth);
 //    int top = (screenHeight - iheight) / 2;
@@ -520,7 +520,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
     println("calling loop()");
 //    Looper.loop();
     println("done with loop() call, will continue...");
-    
+
     start();
   }
 
@@ -590,7 +590,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
   // ANDROID SURFACE VIEW
 
 
-  // TODO this is only used by A2D, when finishing up a draw. but if the 
+  // TODO this is only used by A2D, when finishing up a draw. but if the
   // surfaceview has changed, then it might belong to an a3d surfaceview. hrm.
   public SurfaceHolder getSurfaceHolder() {
     return surfaceView.getHolder();
@@ -600,16 +600,16 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-  
+
   public interface SketchSurfaceView {
     public PGraphics getGraphics();
   }
-  
+
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-  
-  public class SketchSurfaceView2D extends SurfaceView 
+
+  public class SketchSurfaceView2D extends SurfaceView
   implements SketchSurfaceView, SurfaceHolder.Callback {
     PGraphicsAndroid2D g2;
     SurfaceHolder surfaceHolder;
@@ -642,8 +642,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
       requestFocus();
 //      println("done making surface view");
     }
-    
-    
+
+
     public PGraphics getGraphics() {
       return g2;
     }
@@ -706,10 +706,10 @@ public class PApplet extends Activity implements PConstants, Runnable {
 //    }
   }
 
-  
+
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-  
+
   public class SketchSurfaceView3D extends GLSurfaceView implements SketchSurfaceView {
     PGraphicsAndroid3D g3;
     SurfaceHolder surfaceHolder;
@@ -756,8 +756,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
       setFocusableInTouchMode(true);
       requestFocus();
     }
-    
-    
+
+
     public PGraphics getGraphics() {
       return g3;
     }
@@ -818,7 +818,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 //      }
     }
 
-    
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
       return surfaceTouchEvent(event);
@@ -836,7 +836,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
       return surfaceKeyUp(code, event);
     }
 
-    
+
     // don't think i want to call stop() from here, since it might be swapping renderers
 //    @Override
 //    protected void onDetachedFromWindow() {
@@ -849,7 +849,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  /** 
+  /**
    * Called by the sketch surface view, thought it could conceivably be called
    * by Android as well.
    */
@@ -874,8 +874,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
 //    return super.onTouchEvent(event);
     return true;
   }
-  
-  
+
+
   public boolean surfaceKeyDown(int code, KeyEvent event) {
     //  System.out.println("got onKeyDown for " + code + " " + event);
     checkKeyEvent(event);
@@ -906,8 +906,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
   public String sketchRenderer() {
     return A2D;
   }
-  
-  
+
+
   public void orientation(int which) {
     if (which == PORTRAIT) {
       setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -922,10 +922,10 @@ public class PApplet extends Activity implements PConstants, Runnable {
 //    //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 //  }
 
-  
+
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-  
+
   /**
    * Called by the browser or applet viewer to inform this applet that it
    * should start its execution. It is called after the init method and
@@ -1246,12 +1246,12 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 
   /**
-   * Starts up and creates a two-dimensional drawing surface, or resizes the 
+   * Starts up and creates a two-dimensional drawing surface, or resizes the
    * current drawing surface.
    * <P>
    * This should be the first thing called inside of setup().
    * <P>
-   * If called once a renderer has already been set, this will use the 
+   * If called once a renderer has already been set, this will use the
    * previous renderer and simply resize it.
    */
   public void size(int iwidth, int iheight) {
@@ -1328,7 +1328,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
     } else {  // renderer is being changed
       println("changing renderer inside size(....)");
-      
+
       // otherwise ok to fall through and create renderer below
       // the renderer is changing, so need to create a new object
 //      g = makeGraphics(iwidth, iheight, irenderer, ipath, true);
@@ -1689,11 +1689,11 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
   public void handleDraw() {
     if (DEBUG) {
-      println("inside handleDraw() " + millis() + 
-              " changed=" + surfaceChanged + 
-              " ready=" + surfaceReady + 
-              " paused=" + paused + 
-              " looping=" + looping + 
+      println("inside handleDraw() " + millis() +
+              " changed=" + surfaceChanged +
+              " ready=" + surfaceReady +
+              " paused=" + paused +
+              " looping=" + looping +
               " redraw=" + redraw);
     }
     if (surfaceChanged) {
@@ -2458,10 +2458,10 @@ public class PApplet extends Activity implements PConstants, Runnable {
     }
   }
 
-  
-  
+
+
   //////////////////////////////////////////////////////////////
-  
+
 
   public void method(String name) {
 //    final Object o = this;
@@ -5165,7 +5165,9 @@ public class PApplet extends Activity implements PConstants, Runnable {
   static public String[] trim(String[] array) {
     String[] outgoing = new String[array.length];
     for (int i = 0; i < array.length; i++) {
-      outgoing[i] = array[i].replace('\u00A0', ' ').trim();
+      if (array[i] != null) {
+        outgoing[i] = array[i].replace('\u00A0', ' ').trim();
+      }
     }
     return outgoing;
   }
@@ -8045,21 +8047,21 @@ public class PApplet extends Activity implements PConstants, Runnable {
                     int dx, int dy, int dw, int dh, int mode) {
     g.blend(src, sx, sy, sw, sh, dx, dy, dw, dh, mode);
   }
-  
+
   //////////////////////////////////////////////////////////////
-  
+
   // A3D-only functions
-  
-  // TODO: Discuss proper integration into PApplet API. 
-  public PImage getLastFrame() {    
+
+  // TODO: Discuss proper integration into PApplet API.
+  public PImage getLastFrame() {
     return g.getLastFrame();
   }
 
   public void blend(int mode) {
     g.blend(mode);
   }
-  
-  public void noBlend() {  
+
+  public void noBlend() {
     g.noBlend();
   }
 }
