@@ -191,19 +191,19 @@ public class PImage implements PConstants, Cloneable {
   }
   
   
-  public void initTexture() {
+  public void loadTexture() {
     texture = new PTexture(parent, width, height, new PTexture.Parameters(format));
     pixelsToTexture();
   }
   
 
-  public void initTexture(int filter) {
+  public void loadTexture(int filter) {
     texture = new PTexture(parent, width, height, new PTexture.Parameters(format, filter));
     pixelsToTexture();
   }
 
 
-  public void initTexture(PTexture.Parameters params) {
+  public void loadTexture(PTexture.Parameters params) {
     texture = new PTexture(parent, width, height, params);
     pixelsToTexture();
   }
@@ -518,6 +518,11 @@ public class PImage implements PConstants, Cloneable {
         index2 += w;
       }
     }
+    if (parent.g instanceof PGraphicsAndroid3D) {
+      // TODO: Check why textures doesn't work in formats other than ARGB...
+      newbie.format = ARGB;
+      newbie.loadTexture();
+    }        
     return newbie;
   }
 
@@ -527,7 +532,13 @@ public class PImage implements PConstants, Cloneable {
    */
   public PImage get() {
     try {
-      return (PImage) clone();
+      PImage img = (PImage) clone();
+      if (parent.g instanceof PGraphicsAndroid3D) {
+        // TODO: Check why textures doesn't work in formats other than ARGB...
+        img.format = ARGB;
+        img.loadTexture();
+      }      
+      return img;
     } catch (CloneNotSupportedException e) {
       return null;
     }
