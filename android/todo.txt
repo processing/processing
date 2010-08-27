@@ -1,5 +1,13 @@
 0191 android
 
+A Get opengl matrices in A3D when GL_OES_matrix_get extension is not available
+A   http://code.google.com/p/processing/issues/detail?id=286
+A Implement calculateModelviewInverse() in A3D
+A   http://code.google.com/p/processing/issues/detail?id=287
+A Automatic clear/noClear() switch in A3D
+A   http://code.google.com/p/processing/issues/detail?id=289
+A Camera issues in A3D
+A   http://code.google.com/p/processing/issues/detail?id=367
 
 _ add to wiki: 1MB file size is max for data folder
 _   Data exceeds UNCOMPRESS_DATA_MAX (11840328 vs 1048576)
