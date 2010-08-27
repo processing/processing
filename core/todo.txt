@@ -1,7 +1,10 @@
 0191 core
 X fix background(PImage) for OpenGL
 X   http://code.google.com/p/processing/issues/detail?id=336
+X skip null entries with trim(String[]) 
 
+_ textAlign() incorrect with default font on Mac OS X 10.6
+_   http://code.google.com/p/processing/issues/detail?id=362
 
 _ need to finish font changes wrt native fonts before any release
 _   right now not in a good place--default font will be bitmapped and ugly

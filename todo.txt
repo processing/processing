@@ -1,4 +1,6 @@
 0191 
+X remove unused librariesClassPath
+X   http://code.google.com/p/processing/issues/detail?id=360
 
 
 mode work
@@ -22,7 +24,7 @@ _   http://code.google.com/p/processing/issues/detail?id=325
 _ Exported libraries don't mantain symbolic links
 _   http://code.google.com/p/processing/issues/detail?id=353
 
-_ launch4j problem
+_ launch4j problem - FIXABLE
 _   no crash when double-clicking a sketch and loading it
 _   http://code.google.com/p/processing/issues/detail?id=231
 _ disappearing horizontal scroll bar
