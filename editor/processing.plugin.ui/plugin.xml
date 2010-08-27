@@ -18,10 +18,6 @@
             extensions="pde">
       </participant>
    </extension>
-<!--   <extension
-         name="Processing Editor Specific Actions"
-         point="org.eclipse.ui.editorActions">
-   </extension> -->
    <extension
          point="org.eclipse.ui.newWizards">
       <category
