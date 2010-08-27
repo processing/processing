@@ -997,6 +997,79 @@ public class PGraphicsAndroid3D extends PGraphics {
     report("bot beginDraw()");
   }
 
+  /*
+  void drawTextFontTex() {
+    int glid = textFont.texIDList[0];
+    int w = textFont.texWidth;
+    int h = textFont.texHeight;
+    
+    
+    if (parent.frameCount == 5) {
+      int w0 = 256;
+      int h0 = 256;
+      
+      int[] rgba = new int[w0 * h0];      
+      int t = 0;
+        for (int y = 0; y < h0; y++) {
+          for (int x = 0; x < w0; x++) {
+            //rgba[t++] = (image.pixels[p++] << 24) | 0x00FFFFFF;
+            rgba[t++] = 0xFF00FF00;
+          }
+        }  
+      gl.glEnable(GL10.GL_TEXTURE_2D);
+      gl.glBindTexture(GL10.GL_TEXTURE_2D, glid);        
+      gl.glTexSubImage2D(GL10.GL_TEXTURE_2D, 0, 0, 0, w0, h0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, IntBuffer.wrap(rgba));
+      gl.glBindTexture(GL10.GL_TEXTURE_2D, 0);      
+    }
+    
+
+    
+    gl.glEnable(GL10.GL_TEXTURE_2D);
+    gl.glBindTexture(GL10.GL_TEXTURE_2D, glid);
+    gl.glDepthMask(false);
+    gl.glDisable(GL10.GL_BLEND);
+
+    // There is no need to setup orthographic projection or any related matrix set/restore
+    // operations here because glDrawTexiOES operates on window coordinates:
+    // "glDrawTexiOES takes window coordinates and bypasses the transform pipeline 
+    // (except for mapping Z to the depth range), so there is no need for any 
+    // matrix setup/restore code."
+    // (from https://www.khronos.org/message_boards/viewtopic.php?f=4&t=948&p=2553).    
+        
+    // This is the right texture environment mode to ignore the fill color when drawing the texture:
+    // http://www.khronos.org/opengles/documentation/opengles1_0/html/glTexEnv.html    
+    gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_REPLACE);
+    
+    screenTexCrop = new int[4];
+    screenTexCrop[0] = 0;
+    screenTexCrop[1] = 0;
+    screenTexCrop[2] = textFont.texWidth;
+    screenTexCrop[3] = textFont.texHeight;      
+    gl11.glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, screenTexCrop, 0);
+    gl11x.glDrawTexiOES(0, 0, 0, textFont.texWidth, textFont.texHeight);
+    
+    // Returning to the default texture environment mode, GL_MODULATE. This allows tinting a texture
+    // with the current fill color.
+    gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_MODULATE);
+    
+    gl.glDisable(GL10.GL_TEXTURE_2D);
+    
+    if (hints[DISABLE_DEPTH_MASK]) {
+      gl.glDepthMask(false);  
+    } else {
+      gl.glDepthMask(true);
+    }
+    
+    if (blend) {
+      blend(blendMode);
+    } else {
+      noBlend();
+    }
+    
+  }
+  */
+  
+  
   public void endDraw() {
     if (primarySurface) {
       if (!clearColorBuffer0) {
@@ -1010,7 +1083,7 @@ public class PGraphicsAndroid3D extends PGraphics {
             popFramebuffer();
             
             // Only the primary surface in clear mode will write the contents of the
-            // ofscreen framebuffer to the screen.
+            // offscreen framebuffer to the screen.
             gl.glClearColor(0, 0, 0, 0);
             gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
       
@@ -1023,6 +1096,13 @@ public class PGraphicsAndroid3D extends PGraphics {
           if (texture != null) {
             copyFrameToScreenTexture();
           }
+          
+          
+         // if (textFont != null && textFont.texIDList != null) {
+         //   drawTextFontTex();
+         // }
+          
+          
         }
       }
     } else {
@@ -1725,8 +1805,8 @@ public class PGraphicsAndroid3D extends PGraphics {
 
     // Last transformation: inversion of coordinate to make compatible with
     // Processing's inverted Y axis.
-    gl.glPushMatrix();
-    gl.glScalef(1, -1, 1);
+    //gl.glPushMatrix();
+    //gl.glScalef(1, -1, 1);
 
     gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
     gl.glEnableClientState(GL10.GL_COLOR_ARRAY);
@@ -1831,7 +1911,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       sw0 = sw;
     }
 
-    gl.glPopMatrix();
+    //gl.glPopMatrix();
 
     report("render_lines out");
   }
@@ -1891,8 +1971,8 @@ public class PGraphicsAndroid3D extends PGraphics {
 
     // Last transformation: inversion of coordinate to make compatible with
     // Processing's inverted Y axis.
-    gl.glPushMatrix();
-    gl.glScalef(1, -1, 1);
+    //gl.glPushMatrix();
+    //gl.glScalef(1, -1, 1);
 
     gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
     gl.glEnableClientState(GL10.GL_COLOR_ARRAY);
@@ -2077,7 +2157,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     gl.glDisableClientState(GL10.GL_COLOR_ARRAY);
     gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
 
-    gl.glPopMatrix();
+    //gl.glPopMatrix();
 
     report("render_triangles out");
   }
@@ -2622,7 +2702,21 @@ public class PGraphicsAndroid3D extends PGraphics {
       // Add all the current glyphs to the texture.
       textFont.addAllGlyphsToTexture(gl);
     }
-
+    
+    /*
+    // Adding new glyphs to the font texture.
+    for (int index = start; index < stop; index++) {
+      char ch = buffer[index];
+      PFont.Glyph glyph = textFont.getGlyph(ch);
+      if (glyph.texture == null) {
+        glyph.addToTexture(gl);
+      }
+    }
+    gl.glBindTexture(GL10.GL_TEXTURE_2D, 0);
+    gl.glDisable(GL10.GL_TEXTURE_2D);
+    */
+    
+    gl.glEnable(GL10.GL_TEXTURE_2D);
     textFont.currentTexID = textFont.texIDList[0];
     gl.glBindTexture(GL10.GL_TEXTURE_2D, textFont.currentTexID);
 
@@ -2645,10 +2739,13 @@ public class PGraphicsAndroid3D extends PGraphics {
     PFont.Glyph glyph = textFont.getGlyph(ch);
 
     if (glyph != null) {
+      
+      
       if (glyph.texture == null) {
         // Adding new glyph to the font texture.
         glyph.addToTexture(gl);
       }
+       
       
       if (textMode == MODEL) {
         float high = glyph.height / (float) textFont.size;
@@ -2732,9 +2829,9 @@ public class PGraphicsAndroid3D extends PGraphics {
     // with respect to OpenGL. The other place where inversion occurs is when
     // drawing the geometric primitives (vertex arrays), where a -1 scaling
     // along Y is applied.
-    gl.glTranslatef(tx, -ty, tz);
+    gl.glTranslatef(tx, ty, tz);
     if (usingModelviewStack) {
-      modelviewStack.translate(tx, -ty, tz);
+      modelviewStack.translate(tx, ty, tz);
     }
     modelviewUpdated = false;
   }
@@ -3350,6 +3447,9 @@ public class PGraphicsAndroid3D extends PGraphics {
    */
   public void camera(float eyeX, float eyeY, float eyeZ, float centerX,
       float centerY, float centerZ, float upX, float upY, float upZ) {
+    eyeY = height - eyeY;
+    centerY = height - centerY;
+    
     // Calculating Z vector
     float z0 = eyeX - centerX;
     float z1 = eyeY - centerY;
@@ -3392,26 +3492,43 @@ public class PGraphicsAndroid3D extends PGraphics {
       y2 /= mag;
     }
 
-    glmodelview[0] = x0;
-    glmodelview[1] = y0;
-    glmodelview[2] = z0;
-    glmodelview[3] = 0.0f;
+    float[] m = glmodelview;
+    m[0] = x0;
+    m[1] = y0;
+    m[2] = z0;
+    m[3] = 0.0f;
 
-    glmodelview[4] = x1;
-    glmodelview[5] = y1;
-    glmodelview[6] = z1;
-    glmodelview[7] = 0.0f;
+    m[4] = x1;
+    m[5] = y1;
+    m[6] = z1;
+    m[7] = 0.0f;
 
-    glmodelview[8] = x2;
-    glmodelview[9] = y2;
-    glmodelview[10] = z2;
-    glmodelview[11] = 0;
+    m[8] = x2;
+    m[9] = y2;
+    m[10] = z2;
+    m[11] = 0;
+    
+    m[12] = 0.0f;
+    m[13] = 0.0f;
+    m[14] = 0.0f;
+    m[15] = 1.0f;
 
-    glmodelview[12] = -cameraX;
-    glmodelview[13] = cameraY;
-    glmodelview[14] = -cameraZ;
-    glmodelview[15] = 1.0f;
+    // Translating to the eye position, followed by a translation of height units along the Y axis.
+    // The last one is needed to properly invert coordinate axis of OpenGL so it matches Processing's.
+    float tx = -eyeX;
+    float ty = -eyeY + height;
+    float tz = -eyeZ;
+    m[12] += tx * m[0] + ty * m[4] + tz * m[8];
+    m[13] += tx * m[1] + ty * m[5] + tz * m[9];
+    m[14] += tx * m[2] + ty * m[6] + tz * m[10];
+    m[15] += tx * m[3] + ty * m[7] + tz * m[11];        
 
+    // Inverting Y axis.
+    m[4] = -m[4];
+    m[5] = -m[5];
+    m[6] = -m[6];
+    m[7] = -m[7];
+    
     gl.glMatrixMode(GL10.GL_MODELVIEW);
     gl.glLoadMatrixf(glmodelview, 0);
     if (usingModelviewStack) {
@@ -3611,9 +3728,6 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
 
   public float screenY(float x, float y, float z) {
-    y = -1 * y; // To take into account Processsing's inverted Y axis with
-                // respect to OpenGL.
-
     if (!modelviewUpdated) {
       getModelviewMatrix();
     }
@@ -3632,9 +3746,6 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
 
   public float screenZ(float x, float y, float z) {
-    y = -1 * y; // To take into account Processsing's inverted Y axis with
-                // respect to OpenGL.
-    
     if (!modelviewUpdated) {
       getModelviewMatrix();      
     }
@@ -3653,9 +3764,6 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
 
   public float modelX(float x, float y, float z) {
-    y = -1 * y; // To take into account Processsing's inverted Y axis with
-                // respect to OpenGL.
-    
     if (!modelviewUpdated) {
       getModelviewMatrix();
     }
@@ -3672,9 +3780,6 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
 
   public float modelY(float x, float y, float z) {
-    y = -1 * y; // To take into account Processsing's inverted Y axis with
-                // respect to OpenGL.
-
     if (!modelviewUpdated) {
       getModelviewMatrix();
     }
@@ -3691,9 +3796,6 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
 
   public float modelZ(float x, float y, float z) {
-    y = -1 * y; // To take into account Processsing's inverted Y axis with
-                // respect to OpenGL.
-
     if (!modelviewUpdated) {
       getModelviewMatrix();
     }
