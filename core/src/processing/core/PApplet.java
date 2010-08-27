@@ -5809,7 +5809,9 @@ public class PApplet extends Applet
   static public String[] trim(String[] array) {
     String[] outgoing = new String[array.length];
     for (int i = 0; i < array.length; i++) {
-      outgoing[i] = array[i].replace('\u00A0', ' ').trim();
+      if (array[i] != null) {
+        outgoing[i] = array[i].replace('\u00A0', ' ').trim();
+      }
     }
     return outgoing;
   }
