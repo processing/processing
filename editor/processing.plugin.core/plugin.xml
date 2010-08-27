@@ -7,7 +7,7 @@
          point="org.eclipse.core.resources.natures">
       <runtime>
          <run
-            class="processing.plugin.core.builder.SketchNature">
+            class="processing.plugin.core.builder.SketchProject">
          </run>
       </runtime>
       <builder
@@ -26,15 +26,29 @@
       </builder>
    </extension>
    <extension
-         id="p5marker"
-         name="Processing Build Problem Marker"
+         id="preprocError"
+         name="Processing Preprocessor Problem Marker"
          point="org.eclipse.core.resources.markers">
-      <persistent
-            value="true">
-      </persistent>
-      <super
-            type="org.eclipse.core.resources.problemmarker">
-      </super>
+      <persistent value="true" />
+      <super type="org.eclipse.core.resources.problemmarker" />
+   </extension>
+   <extension
+         id="compileError"
+         name="Processing Compile Problem Marker"
+         point="org.eclipse.core.resources.markers">
+      <persistent value="true" />
+      <super type="org.eclipse.core.resources.problemmarker" />
+   </extension>
+   <extension point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            category="Processing"
+            delegate="processing.plugin.core.launching.ProcessingSketchLaunchConfigurationDelegate"
+            id="processing.plugin.core.launching.processingSketch"
+            modes="run"
+            name="Processing Sketch">
+            <!--sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer"
+            sourceLocatorId="org.eclipse.jdt.launching.sourceLocator.JavaSourceLookupDirector" -->
+      </launchConfigurationType>
    </extension>
 
 </plugin>

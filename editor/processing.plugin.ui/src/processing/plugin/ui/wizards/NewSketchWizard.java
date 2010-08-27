@@ -23,7 +23,7 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import processing.plugin.core.builder.SketchNature;
+import processing.plugin.core.builder.SketchProject;
 import processing.plugin.ui.wizards.NewSketchWizardPage;
 
 /**
@@ -136,7 +136,7 @@ public class NewSketchWizard extends Wizard implements INewWizard {
 		}
 		
 		// this is a new project
-		SketchNature.addNature(proj);
+		SketchProject.addSketchNature(proj);
 		
 	}
 
