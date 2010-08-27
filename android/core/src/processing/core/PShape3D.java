@@ -1947,8 +1947,8 @@ public class PShape3D extends PShape implements PConstants {
       }
       
       // Last transformation: inversion of coordinate to make compatible with Processing's inverted Y axis.
-      gl.glPushMatrix();
-      gl.glScalef(1, -1, 1);
+      //gl.glPushMatrix();
+      //gl.glScalef(1, -1, 1);
       
       // Setting the stroke weight (line width's in OpenGL terminology) using either the group's weight 
       // or the renderer's weight. 
@@ -1965,7 +1965,7 @@ public class PShape3D extends PShape implements PConstants {
         // Using the overall's vertex mode assigned to the entire model.
         gl.glDrawArrays(glMode, group.first, group.last - group.first + 1);
       }
-      gl.glPopMatrix();
+      //gl.glPopMatrix();
       
       if (tex != null)  {
         if (pointSprites)   {
