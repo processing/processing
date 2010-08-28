@@ -1009,78 +1009,6 @@ public class PGraphicsAndroid3D extends PGraphics {
     report("bot beginDraw()");
   }
 
-  /*
-  void drawTextFontTex() {
-    int glid = textFont.texIDList[0];
-    int w = textFont.texWidth;
-    int h = textFont.texHeight;
-    
-    
-    if (parent.frameCount == 5) {
-      int w0 = 256;
-      int h0 = 256;
-      
-      int[] rgba = new int[w0 * h0];      
-      int t = 0;
-        for (int y = 0; y < h0; y++) {
-          for (int x = 0; x < w0; x++) {
-            //rgba[t++] = (image.pixels[p++] << 24) | 0x00FFFFFF;
-            rgba[t++] = 0xFF00FF00;
-          }
-        }  
-      gl.glEnable(GL10.GL_TEXTURE_2D);
-      gl.glBindTexture(GL10.GL_TEXTURE_2D, glid);        
-      gl.glTexSubImage2D(GL10.GL_TEXTURE_2D, 0, 0, 0, w0, h0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, IntBuffer.wrap(rgba));
-      gl.glBindTexture(GL10.GL_TEXTURE_2D, 0);      
-    }
-    
-
-    
-    gl.glEnable(GL10.GL_TEXTURE_2D);
-    gl.glBindTexture(GL10.GL_TEXTURE_2D, glid);
-    gl.glDepthMask(false);
-    gl.glDisable(GL10.GL_BLEND);
-
-    // There is no need to setup orthographic projection or any related matrix set/restore
-    // operations here because glDrawTexiOES operates on window coordinates:
-    // "glDrawTexiOES takes window coordinates and bypasses the transform pipeline 
-    // (except for mapping Z to the depth range), so there is no need for any 
-    // matrix setup/restore code."
-    // (from https://www.khronos.org/message_boards/viewtopic.php?f=4&t=948&p=2553).    
-        
-    // This is the right texture environment mode to ignore the fill color when drawing the texture:
-    // http://www.khronos.org/opengles/documentation/opengles1_0/html/glTexEnv.html    
-    gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_REPLACE);
-    
-    screenTexCrop = new int[4];
-    screenTexCrop[0] = 0;
-    screenTexCrop[1] = 0;
-    screenTexCrop[2] = textFont.texWidth;
-    screenTexCrop[3] = textFont.texHeight;      
-    gl11.glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, screenTexCrop, 0);
-    gl11x.glDrawTexiOES(0, 0, 0, textFont.texWidth, textFont.texHeight);
-    
-    // Returning to the default texture environment mode, GL_MODULATE. This allows tinting a texture
-    // with the current fill color.
-    gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_MODULATE);
-    
-    gl.glDisable(GL10.GL_TEXTURE_2D);
-    
-    if (hints[DISABLE_DEPTH_MASK]) {
-      gl.glDepthMask(false);  
-    } else {
-      gl.glDepthMask(true);
-    }
-    
-    if (blend) {
-      blend(blendMode);
-    } else {
-      noBlend();
-    }
-    
-  }
-  */
-  
   
   public void endDraw() {
     if (primarySurface) {
@@ -1108,13 +1036,6 @@ public class PGraphicsAndroid3D extends PGraphics {
           if (texture != null) {
             copyFrameToScreenTexture();
           }
-          
-          
-         // if (textFont != null && textFont.texIDList != null) {
-         //   drawTextFontTex();
-         // }
-          
-          
         }
       }
     } else {
@@ -2710,19 +2631,6 @@ public class PGraphicsAndroid3D extends PGraphics {
       textFont.addAllGlyphsToTexture(gl);
     }
     
-    /*
-    // Adding new glyphs to the font texture.
-    for (int index = start; index < stop; index++) {
-      char ch = buffer[index];
-      PFont.Glyph glyph = textFont.getGlyph(ch);
-      if (glyph.texture == null) {
-        glyph.addToTexture(gl);
-      }
-    }
-    gl.glBindTexture(GL10.GL_TEXTURE_2D, 0);
-    gl.glDisable(GL10.GL_TEXTURE_2D);
-    */
-    
     gl.glEnable(GL10.GL_TEXTURE_2D);
     textFont.currentTexID = textFont.texIDList[0];
     gl.glBindTexture(GL10.GL_TEXTURE_2D, textFont.currentTexID);
@@ -2863,6 +2771,12 @@ public class PGraphicsAndroid3D extends PGraphics {
       textFont.currentTexID = tex.glid;
     }
 
+    // There is no need to setup orthographic projection or any related matrix set/restore
+    // operations here because glDrawTexiOES operates on window coordinates:
+    // "glDrawTexiOES takes window coordinates and bypasses the transform pipeline 
+    // (except for mapping Z to the depth range), so there is no need for any 
+    // matrix setup/restore code."
+    // (from https://www.khronos.org/message_boards/viewtopic.php?f=4&t=948&p=2553).        
     gl11.glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES,
         tex.crop, 0);
     gl11x.glDrawTexiOES(xx, height - yy, 0, w0, h0);

@@ -708,18 +708,8 @@ public class PFont implements PConstants {
     gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S, GL10.GL_CLAMP_TO_EDGE);
     gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T, GL10.GL_CLAMP_TO_EDGE);
                         
-    /*
-     int[] rgba = new int[texWidth * texHeight];
-     for (int i = 0; i < texWidth * texHeight; i++) {
-       rgba[i] = 0xFFFFFFFF;
-     }
-    */
-    
-    //gl.glTexImage2D(GL10.GL_TEXTURE_2D, 0, GL10.GL_RGBA,  texWidth, texHeight, 0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, IntBuffer.wrap(rgba));
     gl.glTexImage2D(GL10.GL_TEXTURE_2D, 0, GL10.GL_RGBA,  texWidth, texHeight, 0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, null);
-    //gl.glBindTexture(GL10.GL_TEXTURE_2D, 0);
-    
-    
+        
     if (texIDList == null) {
       texIDList = new int[1];
       texIDList[0] = textures[0]; 
@@ -958,38 +948,8 @@ public class PFont implements PConstants {
         gl.glBindTexture(GL10.GL_TEXTURE_2D, lastTexID);
         currentTexID = lastTexID;
       }
-      
-      //PApplet.println("New Glyph: " + offsetX + " " + offsetY + " " + width + " " + height);
-      //gl.glTexSubImage2D(GL10.GL_TEXTURE_2D, 0, offsetX, offsetY, width, height, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, IntBuffer.wrap(rgba));
-      
-      /*
-      int w0 = 256;
-      int h0 = 256;
-      
-      int[] rgba2 = new int[w0 * h0];      
-      int t2 = 0;
-        for (int y = 0; y < h0; y++) {
-          for (int x = 0; x < w0; x++) {
-            //rgba[t++] = (image.pixels[p++] << 24) | 0x00FFFFFF;
-            rgba2[t2++] = 0xFF00FF00;
-          }
-        }  
-        */
-      //gl.glEnable(GL10.GL_TEXTURE_2D);
-      //gl.glBindTexture(GL10.GL_TEXTURE_2D,  lastTexID);        
-      //gl.glTexSubImage2D(GL10.GL_TEXTURE_2D, 0, offsetX, 0,w0, h0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, IntBuffer.wrap(rgba2));
-        
-        /*
-      gl.glTexSubImage2D(GL10.GL_TEXTURE_2D, 0, 0, 0,w0, h0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, IntBuffer.wrap(rgba2));
-      gl.glTexSubImage2D(GL10.GL_TEXTURE_2D, 0, 71, 0,w0, h0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, IntBuffer.wrap(rgba2));
-      gl.glTexSubImage2D(GL10.GL_TEXTURE_2D, 0, 132, 0,w0, h0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, IntBuffer.wrap(rgba2));
-      gl.glTexSubImage2D(GL10.GL_TEXTURE_2D, 0, 197, 0,w0, h0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, IntBuffer.wrap(rgba2));
-      */
         
       gl.glTexSubImage2D(GL10.GL_TEXTURE_2D, 0, offsetX, offsetY, width, height, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, IntBuffer.wrap(rgba));  
-      //gl.glTexSubImage2D(GL10.GL_TEXTURE_2D, 0, 0, 0, width, height, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, IntBuffer.wrap(rgba));
-      
-      
       
       texture = new TextureInfo(currentTexID, offsetX, offsetY + height, width, -height);
       offsetX += width;
