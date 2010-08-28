@@ -2024,8 +2024,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       }
 
       // Division by three needed because each int element in the buffer is used
-      // to
-      // store three coordinates.
+      // to store three coordinates.
       if (vertexBuffer.capacity() / 3 < 3 * faceLength[j]) {
         expandBuffers();
       }
