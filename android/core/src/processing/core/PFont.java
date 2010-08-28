@@ -992,7 +992,7 @@ public class PFont implements PConstants {
       
       
       texture = new TextureInfo(currentTexID, offsetX, offsetY + height, width, -height);
-      offsetX  += width;
+      offsetX += width;
     }
     
     public class TextureInfo {
@@ -1002,11 +1002,17 @@ public class PFont implements PConstants {
             crop[0] = cropX;
             crop[1] = cropY;
             crop[2] = cropW;
-            crop[3] = cropH;            
+            crop[3] = cropH;
+            u0 = (float)cropX / (float)texWidth;
+            u1 = u0 + (float)cropW / (float)texWidth;
+            v0 = (float)(cropY + cropH) / (float)texHeight;
+            v1 = (float)cropY / (float)texHeight;            
         }
 
         public int glid;
         public int[] crop;
+        public float u0, u1;
+        public float v0, v1;
     }    
   }
 }
