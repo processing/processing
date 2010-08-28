@@ -974,6 +974,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         }
       }
     } else {
+      
       if (!fboSupported) {
         throw new RuntimeException("PGraphicsAndroid3D: offscreen rendering requires FBO extension.");
       } 
@@ -4805,7 +4806,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   // ////////////////////////////////////////////////////////////
 
   // LOAD/UPDATE TEXTURE
-
+  
   public void loadTexture() {
     if (texture == null) {
       loadTexture(NEAREST);

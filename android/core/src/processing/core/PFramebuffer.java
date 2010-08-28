@@ -23,6 +23,8 @@
 package processing.core;
 
 import java.lang.reflect.Method;
+import java.nio.IntBuffer;
+
 import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11ExtensionPack;
 
@@ -48,9 +50,16 @@ public class PFramebuffer  {
   protected int recreateResourceIdx;  
   
   protected int numColorBuffers;
-  int[] colorBufferAttchPoints;
-  int[] glColorBufferTargets;
-  int[] glColorBufferIDs;
+  protected int[] colorBufferAttchPoints;
+  protected int[] glColorBufferTargets;
+  protected int[] glColorBufferIDs;
+
+  /*
+  protected int glBackupBufferID;
+  protected int glBackupBufferTarget;
+  protected IntBuffer pixelBuffer;
+  protected int[] backupCrop;
+  */
 
   PFramebuffer(PApplet parent) {
     this(parent, 0, 0, false);
@@ -100,6 +109,12 @@ public class PFramebuffer  {
     a3d.pushFramebuffer();
     a3d.setFramebuffer(this);
 
+    /*
+    if (!PGraphicsAndroid3D.fboSupported) {
+      // Set the color buffers here if there is no FBO...
+    } else {
+    */
+    
     // Making sure nothing is attached.
     for (int i = 0; i < numColorBuffers; i++) {
       gl.glFramebufferTexture2DOES(GL11ExtensionPack.GL_FRAMEBUFFER_OES,
@@ -132,6 +147,8 @@ public class PFramebuffer  {
       throw new RuntimeException("PFramebuffer: size undefined.");
     }
     
+    if (!PGraphicsAndroid3D.fboSupported) return;
+    
     a3d.pushFramebuffer();
     a3d.setFramebuffer(this);
 
@@ -163,6 +180,8 @@ public class PFramebuffer  {
       throw new RuntimeException("PFramebuffer: size undefined.");
     }
 
+    if (!PGraphicsAndroid3D.fboSupported) return;
+    
     a3d.pushFramebuffer();
     a3d.setFramebuffer(this);
 
@@ -192,9 +211,91 @@ public class PFramebuffer  {
   public void bind() {
     if (PGraphicsAndroid3D.fboSupported) {
       gl.glBindFramebufferOES(GL11ExtensionPack.GL_FRAMEBUFFER_OES, glFboID);  
-    }
+    }    
   }
     
+  /*
+  
+  // Uses the specified texture as a backup to save the region of the screen where the offscreen rendering
+  // will be performed.
+  public void addBackupBuffer(PTexture texture) {
+    glBackupBufferID = texture.getGLTextureID();
+    glBackupBufferTarget = texture.getGLTarget();    
+    backupBuffer = BufferUtil.newIntBuffer(width * height);  
+    backupCrop = new int[4];
+    backupCrop[0] = 0;
+    backupCrop[1] = 0;
+    backupCrop[2] = width;
+    backupCrop[3] = height;    
+    
+    texture.setFlippedY(true);  // do we need this?
+  }
+    
+  // Saves the current state of the screen to the backup texture. But what happens with the depth and stencil buffers?
+  // Can they be saved/restored (without FBOs)?
+  // Answer:
+ 
+"You can read the contents of the color, depth, and stencil buffers with the glReadPixels() command. Likewise, glDrawPixels() and glCopyPixels() are available for sending images to and BLTing images around in the OpenGL buffers."
+from http://www.opengl.org/resources/faq/technical/rasterization.htm
+  BUT: not possible in OpenGL ES
+  http://www.idevgames.com/forum/archive/index.php?t-15828.html
+  
+  public backupScreen() {  
+    gl.glReadPixels(0, 0, width, height, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, backupBuffer);    
+    copyToTexture(backupBuffer, glBackupBufferID, glBackupBufferTarget);
+  }
+  
+  // Draws the contents of the backup texture to the screen.
+  public restoreBackup() {
+    gl.glEnable(glBackupBufferTarget);
+    gl.glBindTexture(glBackupBufferTarget, glBackupBufferID);
+    gl.glDepthMask(false);
+    gl.glDisable(GL10.GL_BLEND);
+
+    gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_REPLACE);
+    
+    gl11.glTexParameteriv(glBackupBufferTarget, GL11Ext.GL_TEXTURE_CROP_RECT_OES, backupCrop, 0);
+    gl11x.glDrawTexiOES(0, 0, 0, width, height);
+    
+    // Returning to the default texture environment mode, GL_MODULATE. This allows tinting a texture
+    // with the current fill color.
+    gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_MODULATE);
+    
+    gl.glDisable(glBackupBufferTarget);
+    
+    if (hints[DISABLE_DEPTH_MASK]) {
+      gl.glDepthMask(false);  
+    } else {
+      gl.glDepthMask(true);
+    }
+    
+    if (blend) {
+      blend(blendMode);
+    } else {
+      noBlend();
+    }    
+  }
+  
+  // Copies current content of screen to color buffers.
+  public copyToColorBuffers() {
+    gl.glReadPixels(0, 0, width, height, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, backupBuffer);
+    for (int i = 0; i < numColorBuffers; i++) {
+      copyToTexture(backupBuffer, glColorBufferIDs[i], glColorBufferTargets[i]);
+    }
+  }
+  
+  // Internal copy to texture method.
+  protected void copyToTexture(IntBuffer buffer, int glid, int gltarget) {
+    gl.glEnable(gltarget);
+    gl.glBindTexture(gltarget, glid);    
+    gl.glTexSubImage2D(gltarget, 0, 0, 0, width, height, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, buffer);
+    gl.glDisable(gltarget);
+  }    
+   */
+  
+  
+  
+  
   protected void initFramebuffer(int w, int h, boolean onscreen) {
     width = w;
     height = h;
