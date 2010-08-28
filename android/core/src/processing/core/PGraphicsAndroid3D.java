@@ -217,16 +217,22 @@ public class PGraphicsAndroid3D extends PGraphics {
   private int[] colorArray;
   private int[] texCoordArray;
   private int[] normalArray;
-
-  // Buffers and array to draw text quads.
-  private IntBuffer textVerticesBuffer;
-  private IntBuffer textTexCoordsBuffer;    
-  private int[] textVerticesArray;
-  private int[] textTexCoordsArray;
   
   protected PImage textureImagePrev;
   protected boolean buffersAllocated = false;
 
+  // ........................................................
+
+  // Text:
+    
+  // Buffers and array to draw text quads.
+  private IntBuffer textVertexBuffer = null;
+  private IntBuffer textTexCoordBuffer = null;
+  private int[] textVertexArray = null;
+  private int[] textTexCoordArray = null;
+  
+  private int textVertexCount = 0;
+  
   /**
    * Set to true if the host system is big endian (PowerPC, MIPS, SPARC), false
    * if little endian (x86 Intel for Mac or PC).
@@ -453,19 +459,6 @@ public class PGraphicsAndroid3D extends PGraphics {
       colorArray = new int[DEFAULT_BUFFER_SIZE * 4];
       texCoordArray = new int[DEFAULT_BUFFER_SIZE * 2];
       normalArray = new int[DEFAULT_BUFFER_SIZE * 3];
-
-      vbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 3
-        * SIZEOF_INT);
-      vbb.order(ByteOrder.nativeOrder());
-      textVerticesBuffer = vbb.asIntBuffer();
-
-      tbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 2
-        * SIZEOF_INT);
-      tbb.order(ByteOrder.nativeOrder());
-      textTexCoordsBuffer = tbb.asIntBuffer();      
-    
-      textVerticesArray = new int[DEFAULT_BUFFER_SIZE * 3];
-      textTexCoordsArray = new int[DEFAULT_BUFFER_SIZE * 2];      
         
       buffersAllocated = true;
     }   
@@ -2068,9 +2061,7 @@ public class PGraphicsAndroid3D extends PGraphics {
           recordedVertices.add(new PVector(a[X], a[Y], a[Z]));
           recordedColors.add(new float[] { a[R], a[G], a[B], a[A] });
           recordedNormals.add(new PVector(a[NX], a[NY], a[NZ]));
-          recordedTexCoords.add(new PVector((cx + sx * a[U]) * uscale, (cy + sy
-              * a[V])
-              * vscale, 0.0f));
+          recordedTexCoords.add(new PVector((cx + sx * a[U]) * uscale, (cy + sy * a[V]) * vscale, 0.0f));
         } else {
           vertexArray[3 * n + 0] = toFixed32(a[X]);
           vertexArray[3 * n + 1] = toFixed32(a[Y]);
@@ -2094,9 +2085,7 @@ public class PGraphicsAndroid3D extends PGraphics {
           recordedVertices.add(new PVector(b[X], b[Y], b[Z]));
           recordedColors.add(new float[] { b[R], b[G], b[B], b[A] });
           recordedNormals.add(new PVector(b[NX], b[NY], b[NZ]));
-          recordedTexCoords.add(new PVector((cx + sx * b[U]) * uscale, (cy + sy
-              * b[V])
-              * vscale, 0.0f));
+          recordedTexCoords.add(new PVector((cx + sx * b[U]) * uscale, (cy + sy * b[V]) * vscale, 0.0f));
         } else {
           vertexArray[3 * n + 0] = toFixed32(b[X]);
           vertexArray[3 * n + 1] = toFixed32(b[Y]);
@@ -2120,9 +2109,7 @@ public class PGraphicsAndroid3D extends PGraphics {
           recordedVertices.add(new PVector(c[X], c[Y], c[Z]));
           recordedColors.add(new float[] { c[R], c[G], c[B], c[A] });
           recordedNormals.add(new PVector(c[NX], c[NY], c[NZ]));
-          recordedTexCoords.add(new PVector((cx + sx * c[U]) * uscale, (cy + sy
-              * c[V])
-              * vscale, 0.0f));
+          recordedTexCoords.add(new PVector((cx + sx * c[U]) * uscale, (cy + sy * c[V]) * vscale, 0.0f));
         } else {
           vertexArray[3 * n + 0] = toFixed32(c[X]);
           vertexArray[3 * n + 1] = toFixed32(c[Y]);
@@ -2743,8 +2730,22 @@ public class PGraphicsAndroid3D extends PGraphics {
     // Setting the current fill color as the font color.
     gl.glColor4f(colorFloats[0], colorFloats[1], colorFloats[2], colorFloats[3]);
 
+    if (textMode == MODEL) {
+      if (textVertexBuffer == null) {
+        allocateTextModel();
+      }
+      // Setting Z axis as the normal to the text geometry
+      gl.glNormal3f(0, 0, 1);
+      textVertexCount = 0;
+    }
+    
     super.textLineImpl(buffer, start, stop, x, y);
 
+    if (textMode == MODEL && 0 < textVertexCount) {
+      // Pushing text geometry to the GPU.
+      renderTextModel();
+    }
+    
     // Restoring current blend mode.
     if (blend) {
       blend(blendMode);
@@ -2760,12 +2761,10 @@ public class PGraphicsAndroid3D extends PGraphics {
 
     if (glyph != null) {
       
-      
       if (glyph.texture == null) {
         // Adding new glyph to the font texture.
         glyph.addToTexture(gl);
       }
-       
       
       if (textMode == MODEL) {
         float high = glyph.height / (float) textFont.size;
@@ -2795,88 +2794,66 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected void textCharModelImpl(Glyph.TextureInfo tex, float x1, float y1,
       float x2, float y2) {
     if (textFont.currentTexID != tex.glid) {
+      if (0 < textVertexCount) {
+        // Current texture changes (the font is so large that needs more than one texture).
+        // So rendering all we got until now, and reseting vertex counter.
+        renderTextModel();        
+        textVertexCount = 0;
+      }
       gl.glBindTexture(GL10.GL_TEXTURE_2D, tex.glid);
       textFont.currentTexID = tex.glid;
-    }
+    }   
 
+    // Division by three needed because each int element in the buffer is used
+    // to store three coordinates.
+    if (textVertexBuffer.capacity() < textVertexCount + 6) {
+      expandTextBuffers();
+    }    
     
-    gl11.glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES,
-        tex.crop, 0);
-    gl11x.glDrawTexfOES(x1, height - y2, 0, x2 - x1, y2 - y1);
-    
-
-    
-
-   // TODO: Finish 3D text (and test with KineticType): 
-/*
-    int n = 0;
-    
-    textVerticesArray[3 * n + 0] = toFixed32(x1);
-    textVerticesArray[3 * n + 1] = toFixed32(y1);
-    textVerticesArray[3 * n + 2] = toFixed32(0);
-    textTexCoordsArray[2 * n + 0] = toFixed32(0);
-    textTexCoordsArray[2 * n + 1] = toFixed32(0);
+    int n = textVertexCount;
+    textVertexArray[3 * n + 0] = toFixed32(x1);
+    textVertexArray[3 * n + 1] = toFixed32(y1);
+    textVertexArray[3 * n + 2] = toFixed32(0);
+    textTexCoordArray[2 * n + 0] = toFixed32(tex.u0);
+    textTexCoordArray[2 * n + 1] = toFixed32(tex.v0);
     n++;    
     
-    textVerticesArray[3 * n + 0] = toFixed32(x2);
-    textVerticesArray[3 * n + 1] = toFixed32(y2);
-    textVerticesArray[3 * n + 2] = toFixed32(0);
-    textTexCoordsArray[2 * n + 0] = toFixed32(1);
-    textTexCoordsArray[2 * n + 1] = toFixed32(1);
+    textVertexArray[3 * n + 0] = toFixed32(x2);
+    textVertexArray[3 * n + 1] = toFixed32(y2);
+    textVertexArray[3 * n + 2] = toFixed32(0);        
+    textTexCoordArray[2 * n + 0] = toFixed32(tex.u1);
+    textTexCoordArray[2 * n + 1] = toFixed32(tex.v1);
     n++;
     
-    textVerticesArray[3 * n + 0] = toFixed32(x1);
-    textVerticesArray[3 * n + 1] = toFixed32(y2);
-    textVerticesArray[3 * n + 2] = toFixed32(0);
-    textTexCoordsArray[2 * n + 0] = toFixed32(0);
-    textTexCoordsArray[2 * n + 1] = toFixed32(1);
+    textVertexArray[3 * n + 0] = toFixed32(x1);
+    textVertexArray[3 * n + 1] = toFixed32(y2);
+    textVertexArray[3 * n + 2] = toFixed32(0);
+    textTexCoordArray[2 * n + 0] = toFixed32(tex.u0);
+    textTexCoordArray[2 * n + 1] = toFixed32(tex.v1);
     n++;
-    
 
-    textVerticesArray[3 * n + 0] = toFixed32(x1);
-    textVerticesArray[3 * n + 1] = toFixed32(y1);
-    textVerticesArray[3 * n + 2] = toFixed32(0);
-    textTexCoordsArray[2 * n + 0] = toFixed32(0);
-    textTexCoordsArray[2 * n + 1] = toFixed32(0);
+    textVertexArray[3 * n + 0] = toFixed32(x1);
+    textVertexArray[3 * n + 1] = toFixed32(y1);
+    textVertexArray[3 * n + 2] = toFixed32(0);
+    textTexCoordArray[2 * n + 0] = toFixed32(tex.u0);
+    textTexCoordArray[2 * n + 1] = toFixed32(tex.v0);
     n++;    
     
-    textVerticesArray[3 * n + 0] = toFixed32(x2);
-    textVerticesArray[3 * n + 1] = toFixed32(y1);
-    textVerticesArray[3 * n + 2] = toFixed32(0);
-    textTexCoordsArray[2 * n + 0] = toFixed32(1);
-    textTexCoordsArray[2 * n + 1] = toFixed32(0);
+    textVertexArray[3 * n + 0] = toFixed32(x2);
+    textVertexArray[3 * n + 1] = toFixed32(y1);
+    textVertexArray[3 * n + 2] = toFixed32(0);
+    textTexCoordArray[2 * n + 0] = toFixed32(tex.u1);
+    textTexCoordArray[2 * n + 1] = toFixed32(tex.v0);
     n++;
     
-    textVerticesArray[3 * n + 0] = toFixed32(x2);
-    textVerticesArray[3 * n + 1] = toFixed32(y2);
-    textVerticesArray[3 * n + 2] = toFixed32(0);
-    textTexCoordsArray[2 * n + 0] = toFixed32(1);
-    textTexCoordsArray[2 * n + 1] = toFixed32(1);
+    textVertexArray[3 * n + 0] = toFixed32(x2);
+    textVertexArray[3 * n + 1] = toFixed32(y2);
+    textVertexArray[3 * n + 2] = toFixed32(0);
+    textTexCoordArray[2 * n + 0] = toFixed32(tex.u1);
+    textTexCoordArray[2 * n + 1] = toFixed32(tex.v1);
     n++;
-
     
-    
-    
-    textVerticesBuffer.position(0);
-    textTexCoordsBuffer.position(0);
-            
-    textVerticesBuffer.put(textVerticesArray);
-    textTexCoordsBuffer.put(textTexCoordsArray);
-
-    
-    
-    
-    
-    gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
-    gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
-        
-    gl.glVertexPointer(3, GL10.GL_FIXED, 0, textVerticesBuffer);
-    gl.glTexCoordPointer(2, GL10.GL_FIXED, 0, textTexCoordsBuffer);
-    gl.glDrawArrays(GL10.GL_TRIANGLES, 0, 6);
-
-    gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
-    gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
-    */
+    textVertexCount = n;
   }
 
   protected void textCharScreenImpl(Glyph.TextureInfo tex, int xx, int yy,
@@ -2891,6 +2868,57 @@ public class PGraphicsAndroid3D extends PGraphics {
     gl11x.glDrawTexiOES(xx, height - yy, 0, w0, h0);
   }
 
+  protected void allocateTextModel() {  
+    ByteBuffer vbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 3
+      * SIZEOF_INT);
+    vbb.order(ByteOrder.nativeOrder());
+    textVertexBuffer = vbb.asIntBuffer();
+
+    ByteBuffer tbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 2
+      * SIZEOF_INT);
+    tbb.order(ByteOrder.nativeOrder());
+    textTexCoordBuffer = tbb.asIntBuffer();      
+            
+    textVertexArray = new int[DEFAULT_BUFFER_SIZE * 3];
+    textTexCoordArray = new int[DEFAULT_BUFFER_SIZE * 2];
+  }
+
+  protected void renderTextModel() {  
+    textVertexBuffer.position(0);    
+    textTexCoordBuffer.position(0);
+            
+    textVertexBuffer.put(textVertexArray);
+    textTexCoordBuffer.put(textTexCoordArray);
+    
+    gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
+    gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+
+    textVertexBuffer.position(0);
+    textTexCoordBuffer.position(0);
+    
+    gl.glVertexPointer(3, GL10.GL_FIXED, 0, textVertexBuffer);
+    gl.glTexCoordPointer(2, GL10.GL_FIXED, 0, textTexCoordBuffer);
+    gl.glDrawArrays(GL10.GL_TRIANGLES, 0, textVertexCount);
+
+    gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+    gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);    
+  }  
+  
+  protected void expandTextBuffers() {
+    int newSize = textVertexBuffer.capacity() / 3 << 1;
+
+    ByteBuffer vbb = ByteBuffer.allocateDirect(newSize * 3 * SIZEOF_INT);
+    vbb.order(ByteOrder.nativeOrder());
+    textVertexBuffer = vbb.asIntBuffer();
+
+    ByteBuffer tbb = ByteBuffer.allocateDirect(newSize * 2 * SIZEOF_INT);
+    tbb.order(ByteOrder.nativeOrder());
+    textTexCoordBuffer = tbb.asIntBuffer();
+
+    textVertexArray = new int[newSize * 3];
+    textTexCoordArray = new int[newSize * 2];
+  }
+  
   // ////////////////////////////////////////////////////////////
 
   // MATRIX STACK
