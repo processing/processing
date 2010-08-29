@@ -376,10 +376,10 @@ http://www.gnu.org/software/tar/manual/html_section/transform.html
 
     <exec executable="tar">
       <arg value="-C" />
-      <arg value="linux" />
+      <arg value="linux/work" />
       <arg value="-czpvf" />
-      <arg value="processing.tgz"/>
-      <arg value="work"/>
+      <arg value="processing-${version}.tgz"/>
+<!--      <arg value="."/>-->
     </exec>
 
     <echo>
