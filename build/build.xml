@@ -350,24 +350,30 @@
 	 dest="linux/jre.tgz" 
 	 usetimestamp="true" />
 
-<!--
-http://www.gnu.org/software/tar/manual/html_section/transform.html
-    <exec executable="tar">
-      <arg value="xvfz" />
-      <arg value="linux/jre.tgz" />
-    </exec>
--->
-	   
+<!--	   
     <untar compression="gzip" 
 	   dest="linux/work" 
 	   src="linux/jre.tgz" 
 	   overwrite="false"/>
+-->
+
+<!--
+http://www.gnu.org/software/tar/manual/html_section/transform.html
+-->
+
+   <exec executable="tar">
+     <arg value="-C" /> <!-- Change directory -->
+     <arg value="linux/work" />
+     <arg value="-xzpvf" />
+     <arg value="linux/jre.tgz"/>
+   </exec>
 
 <!--
     <tar compression="gzip" destfile="linux/processing-${version}.tgz">
       <tarfileset dir="linux/work" prefix="processing-${version}" />
     </tar>
 -->
+
     <exec executable="tar">
       <arg value="-C" />
       <arg value="linux" />
