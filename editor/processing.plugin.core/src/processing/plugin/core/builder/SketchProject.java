@@ -12,16 +12,11 @@ import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.launching.IVMInstall;
-import org.eclipse.jdt.launching.JavaRuntime;
 
 import processing.plugin.core.ProcessingCore;
 import processing.plugin.core.ProcessingLog;
@@ -33,9 +28,7 @@ public class SketchProject implements IProjectNature {
 
 	/** The basic project entry being managed */
 	protected IProject project;
-	
-	/** The Java project underlying the SketchProject */
-	protected IJavaProject jproject;
+
 	
 	/** 
 	 * Return the SketchProject associated with the given IProject, or null
@@ -86,7 +79,7 @@ public class SketchProject implements IProjectNature {
 		project.setDescription(description, null);
 	}
 
-	/** Removes the nature from the project if it has it	 */
+	/** Removes the sketch and java natures from a project */
 	public static void removeSketchNature(IProject project) throws CoreException{
 		if (!project.isOpen())
 			return;
@@ -100,10 +93,11 @@ public class SketchProject implements IProjectNature {
 		List<String> newIds = new ArrayList<String>();
 		newIds.addAll(Arrays.asList(description.getNatureIds()));
 		newIds.remove(newIds.indexOf(NATURE_ID));
+		if (newIds.contains(JavaCore.NATURE_ID))
+			newIds.remove(newIds.indexOf(JavaCore.NATURE_ID));
 		description.setNatureIds(newIds.toArray(new String[newIds.size()]));
 
 		project.setDescription(description,null);
-
 	}
 
 	/** Access method for this nature's project */
@@ -121,7 +115,7 @@ public class SketchProject implements IProjectNature {
 
 	/** Access method for this nature's java project */
 	public IJavaProject getJavaProject(){
-		return jproject;
+		return JavaCore.create(project);
 	}
 	
 	/** Associate the sketch builder with this nature's project */
@@ -134,6 +128,7 @@ public class SketchProject implements IProjectNature {
 		IFolder dataFolder = project.getFolder("data");
 		IFolder buildFolder = project.getFolder("bin"); // TODO relocate to MyPlugin.getPlugin().getStateLocation().getFolder("bin")
 		IFolder appletFolder = project.getFolder("applet");
+		IFolder javaBuildFolder = buildFolder.getFolder("compile");
 		
 		if(!codeFolder.exists())
 			buildFolder.create(IResource.NONE, true, null);
@@ -143,10 +138,16 @@ public class SketchProject implements IProjectNature {
 			buildFolder.create(IResource.NONE, true, null);
 		if(!appletFolder.exists())
 			appletFolder.create(IResource.NONE, true, null);
+		if(!javaBuildFolder.exists())
+			javaBuildFolder.create(IResource.NONE, true, null);
 		
 		// Setup the Java project underlying the Sketch
-		jproject = JavaCore.create(project);
+		IJavaProject jproject = JavaCore.create(project);
 				
+		// Mark the output and resource folders
+		jproject.setOutputLocation(javaBuildFolder.getFullPath(), new NullProgressMonitor());
+		
+		
 		// Check the description to see if it already has the builder
 		IProjectDescription description = this.project.getDescription();
 		List<ICommand> newCmds = new ArrayList<ICommand>();
@@ -162,7 +163,7 @@ public class SketchProject implements IProjectNature {
 			return;
 		
 		if (ploc > 0)
-			newCmds.remove(ploc); // its not where we want it, remove it and add to the beggining
+			newCmds.remove(ploc); // its not where we want it, remove it and add to the beginning
 		
 		ICommand command = description.newCommand();
 		command.setBuilderName(SketchBuilder.BUILDER_ID);
