@@ -1,5 +1,7 @@
 package processing.plugin.core.builder;
 
+import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -12,20 +14,27 @@ import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.JavaRuntime;
 
 import processing.plugin.core.ProcessingCore;
+import processing.plugin.core.ProcessingCorePreferences;
 import processing.plugin.core.ProcessingLog;
 
 public class SketchProject implements IProjectNature {
 
 	/** value: <code>"processing.plugin.core.processingnature"</code> */
 	public static final String NATURE_ID = ProcessingCore.PLUGIN_ID + ".sketchNature";
-
+	
 	/** The basic project entry being managed */
 	protected IProject project;
 
@@ -128,7 +137,10 @@ public class SketchProject implements IProjectNature {
 		IFolder dataFolder = project.getFolder("data");
 		IFolder buildFolder = project.getFolder("bin"); // TODO relocate to MyPlugin.getPlugin().getStateLocation().getFolder("bin")
 		IFolder appletFolder = project.getFolder("applet");
-		IFolder javaBuildFolder = buildFolder.getFolder("compile");
+		IFolder javaBuildFolder = project.getFolder("compile");
+		
+		File coreResources = getCoreResourcesFolder(); // includes core Libs
+		File sketchbookLibs = getSketchBookLibsFolder(project);
 		
 		if(!codeFolder.exists())
 			buildFolder.create(IResource.NONE, true, null);
@@ -143,10 +155,33 @@ public class SketchProject implements IProjectNature {
 		
 		// Setup the Java project underlying the Sketch
 		IJavaProject jproject = JavaCore.create(project);
-				
-		// Mark the output and resource folders
-		jproject.setOutputLocation(javaBuildFolder.getFullPath(), new NullProgressMonitor());
 		
+		// Get a default VM to toss in the mix
+		IPath containerPath = new Path(JavaRuntime.JRE_CONTAINER);
+		IVMInstall vm = JavaRuntime.getDefaultVMInstall();
+		IPath vmPath = containerPath.append(vm.getVMInstallType().getId()).append(vm.getName());
+				
+		// Setup dynamic classpath containers so we don't have to recalculate them and set them every time	
+		List<IClasspathEntry> entries = new ArrayList<IClasspathEntry>();
+		
+		entries.add(JavaCore.newContainerEntry(vmPath.makeAbsolute())); // JVM
+		entries.add(JavaCore.newSourceEntry(buildFolder.getFullPath().makeAbsolute())); // java source
+		entries.add(JavaCore.newContainerEntry(codeFolder.getFullPath().makeAbsolute())); // data source
+		if(coreResources != null)
+			entries.add(JavaCore.newContainerEntry(new Path(coreResources.getAbsolutePath()))); // core libs container
+		if(sketchbookLibs != null)
+			entries.add(JavaCore.newContainerEntry(new Path(sketchbookLibs.getAbsolutePath()))); // sketchbook libs container
+
+		// casting doesn't work so we have to explicitly unpack the list.
+		IClasspathEntry[] classpathEntries = new IClasspathEntry[entries.size()];
+		for(int i=0; i< entries.size(); i++ ){
+			classpathEntries[i] = entries.get(i);
+		}
+		
+		// Combine all of these entries and set the raw classpath of the project.
+		// None of these should require further modification because they are dynamic
+		// Also provide an explicit output folder and a null progress monitor
+		jproject.setRawClasspath( classpathEntries, javaBuildFolder.getFullPath(), null);
 		
 		// Check the description to see if it already has the builder
 		IProjectDescription description = this.project.getDescription();
@@ -237,6 +272,84 @@ public class SketchProject implements IProjectNature {
 	/** Trigger a full build of the project being managed */
 	public void fullBuild(IProgressMonitor monitor) throws CoreException{
 		project.build(IncrementalProjectBuilder.FULL_BUILD, monitor);
+	}
+	
+
+	/**
+	 * Finds the folder containing the Processing core libraries, which are bundled with the
+	 * plugin. This folder doesn't exist in the workspace, so we return it as a File, not IFile. 
+	 * If something goes wrong, logs an error and returns null.
+	 *  
+	 * @return File containing the core libraries folder or null
+	 */
+	public File getCoreLibsFolder() {
+		URL fileLocation = ProcessingCore.getProcessingCore().getPluginResource("libraries");
+		try {
+			File folder = new File(FileLocator.toFileURL(fileLocation).getPath());
+			if (folder.exists())
+				return folder;
+		} catch (Exception e) {
+			ProcessingLog.logError(e);
+		}
+		return null;
+	}
+	
+	/**
+	 * Resolves the plug-in resources folder to a File and returns it. This will include the
+	 * Processing libraries and the core libraries folder.
+	 * 
+	 * @return File reference to the core resources
+	 */
+	public File getCoreResourcesFolder(){
+		URL fileLocation = ProcessingCore.getProcessingCore().getPluginResource("");
+		try {
+			File folder = new File(FileLocator.toFileURL(fileLocation).getPath());
+			if (folder.exists())
+				return folder;
+		} catch (Exception e) {
+			ProcessingLog.logError(e);
+		}
+		return null;
+	}
+
+	/**
+	 * Find the folder containing the users libraries, which should be in the sketchbook.
+	 * Looks in the user's preferences first, then look relative to the sketch location.
+	 * 
+	 * @return File containing the Sketch book library folder, or null if it can't be located
+	 */
+	public File getSketchBookLibsFolder(IProject proj) {
+		IPath sketchbook = ProcessingCorePreferences.current().getSketchbookPath();
+		if (sketchbook == null)
+			sketchbook = findSketchBookLibsFolder(proj);
+		if (sketchbook == null)
+			return null;
+		return new File(sketchbook.toOSString());
+	}
+
+	/**
+	 * Tries to locate the sketchbook library folder relative to the project path
+	 * based on the default sketch / sketchbook setup. If such a folder exists, loop
+	 * through its contents until a valid library is found and then return the path
+	 * to the sketchbook. If no valid libraries are found (empty folder, improper 
+	 * sketchbook setup), or if no valid folder is found, return null.
+	 * 
+	 * @return IPath containing the location of the new library folder, or null
+	 */
+	public IPath findSketchBookLibsFolder(IProject proj) {
+		try{
+			IPath guess = proj.getLocation().removeLastSegments(1).append("libraries");
+			File folder = new File(guess.toOSString());
+			if(folder.isDirectory())
+				for( File file : folder.listFiles()){
+					if(file.isDirectory())
+						if (ProcessingCore.isLibrary(file))
+							return guess;
+				}
+		} catch (Exception e){
+			ProcessingLog.logError(e);
+		}
+		return null;
 	}
 	
 }
