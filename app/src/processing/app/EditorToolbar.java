@@ -188,6 +188,10 @@ public class EditorToolbar extends JComponent implements MouseInputListener, Key
     g.setColor(bgcolor); //getBackground());
     g.fillRect(0, 0, width, height);
 
+    Graphics2D g2 = (Graphics2D) g;
+    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+
     for (int i = 0; i < buttonCount; i++) {
       g.drawImage(stateImage[i], x1[i], y1, null);
     }

@@ -346,9 +346,11 @@
   <target name="linux-dist" depends="linux-build" 
 	  description="Build .tar.gz of linux version">
 
+<!--
     <get src="http://processing.googlecode.com/files/jre-tools-6u20-linux-i586.tgz" 
 	 dest="linux/jre.tgz" 
 	 usetimestamp="true" />
+-->
 
 <!--	   
     <untar compression="gzip" 
@@ -364,7 +366,7 @@ http://www.gnu.org/software/tar/manual/html_section/transform.html
    <exec executable="tar">
      <arg value="-C" /> <!-- Change directory -->
      <arg value="linux/work" />
-     <arg value="-xzpvf" />
+     <arg value="-xzpf" />
      <arg value="linux/jre.tgz"/>
    </exec>
 
@@ -374,13 +376,19 @@ http://www.gnu.org/software/tar/manual/html_section/transform.html
     </tar>
 -->
 
-    <exec executable="tar">
-      <arg value="-C" />
-      <arg value="linux/work" />
-      <arg value="-czpvf" />
-      <arg value="processing-${version}.tgz"/>
-<!--      <arg value="."/>-->
-    </exec>
+   <!-- rename the work folder temporarily -->
+   <move file="linux/work" tofile="linux/processing-${version}" />
+
+   <exec executable="tar">
+     <arg value="--directory=linux" />
+     <arg value="--file=linux/processing-${version}.tgz" />
+     <arg value="-cpz" />
+     <arg value="processing-${version}" />
+
+   </exec>
+
+   <!-- put... the candle... back -->
+   <move file="linux/processing-${version}" tofile="linux/work" />
 
     <echo>
       =======================================================

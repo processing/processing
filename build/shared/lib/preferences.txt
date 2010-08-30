@@ -92,8 +92,10 @@ editor.font.macosx = Monaco,plain,10
 
 # anti-aliased text, turned off by default
 editor.antialias=false
+# linux fonts are hideous without anti-aliasing [0191]
+editor.antialias.linux=true
 
-# color to be used for background when 'external editor' enabled
+# currently using an external editor
 editor.external=false
 
 # caret blinking

@@ -154,11 +154,10 @@ public class EditorHeader extends JComponent {
     g.setFont(font);  // need to set this each time through
     metrics = g.getFontMetrics();
     fontAscent = metrics.getAscent();
-    //}
 
-    //Graphics2D g2 = (Graphics2D) g;
-    //g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-    //                    RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+    Graphics2D g2 = (Graphics2D) g;
+    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
     // set the background for the offscreen
     g.setColor(backgroundColor);
@@ -180,7 +179,6 @@ public class EditorHeader extends JComponent {
       // if modified, add the li'l glyph next to the name
       String text = "  " + codeName + (code.isModified() ? " \u00A7" : "  ");
 
-      Graphics2D g2 = (Graphics2D) g;
       int textWidth = (int)
         font.getStringBounds(text, g2.getFontRenderContext()).getWidth();
 
