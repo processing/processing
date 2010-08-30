@@ -167,8 +167,15 @@ public class SketchProject implements IProjectNature {
 		entries.add(JavaCore.newContainerEntry(vmPath.makeAbsolute())); // JVM
 		entries.add(JavaCore.newSourceEntry(buildFolder.getFullPath().makeAbsolute())); // java source
 		entries.add(JavaCore.newContainerEntry(codeFolder.getFullPath().makeAbsolute())); // data source
-		if(coreResources != null)
-			entries.add(JavaCore.newContainerEntry(new Path(coreResources.getAbsolutePath()))); // core libs container
+		if(coreResources != null){
+			entries.add(
+				JavaCore.newLibraryEntry( new Path(coreResources.getAbsolutePath()).append("lib/core.jar"),
+					null, //no source
+					null, //no source
+					false //not exported
+				)
+			);
+		}
 		if(sketchbookLibs != null)
 			entries.add(JavaCore.newContainerEntry(new Path(sketchbookLibs.getAbsolutePath()))); // sketchbook libs container
 
