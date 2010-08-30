@@ -279,7 +279,7 @@ public class Preferences {
     fontSizeField.setText(String.valueOf(editorFont.getSize()));
     top += d.height + GUI_BETWEEN;
 
-
+    
     // [ ] Use smooth text in editor window 
 
     editorAntialiasBox =
