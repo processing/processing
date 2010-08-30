@@ -112,6 +112,7 @@ public class Preferences {
   int wide, high;
 
   JTextField sketchbookLocationField;
+  JCheckBox editorAntialiasBox;
   JCheckBox exportSeparateBox;
   JCheckBox deletePreviousBox;
   JCheckBox externalEditorBox;
@@ -279,6 +280,19 @@ public class Preferences {
     top += d.height + GUI_BETWEEN;
 
 
+    // [ ] Use smooth text in editor window 
+
+    editorAntialiasBox =
+      new JCheckBox("Use smooth text in editor window " + 
+                    "(requires restart of Processing)");
+    pain.add(editorAntialiasBox);
+    d = editorAntialiasBox.getPreferredSize();
+    // adding +10 because ubuntu + jre 1.5 truncating items
+    editorAntialiasBox.setBounds(left, top, d.width + 10, d.height);
+    right = Math.max(right, left + d.width);
+    top += d.height + GUI_BETWEEN;
+
+    
     // [ ] Increase maximum available memory to [______] MB
 
     Container memoryBox = Box.createHorizontalBox();
@@ -487,6 +501,8 @@ public class Preferences {
    * then send a message to the editor saying that it's time to do the same.
    */
   protected void applyFrame() {
+    setBoolean("editor.antialias", editorAntialiasBox.isSelected());
+    
     // put each of the settings into the table
     setBoolean("export.applet.separate_jar_files",
                exportSeparateBox.isSelected());
@@ -555,6 +571,8 @@ public class Preferences {
 
   protected void showFrame(Editor editor) {
     this.editor = editor;
+
+    editorAntialiasBox.setSelected(getBoolean("editor.antialias"));
 
     // set all settings entry boxes to their actual status
     exportSeparateBox.
