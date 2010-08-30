@@ -3,6 +3,8 @@ X remove unused librariesClassPath
 X   http://code.google.com/p/processing/issues/detail?id=360
 X add antialias option to the editor prefs window
 X add smoothing inside the Linux GUI, was looking nasty
+X linux permissions not set because of tar in ant
+X   http://code.google.com/p/processing/issues/detail?id=343
 
 mode work
 _ locations: sketchbook, examples, libraries
@@ -12,9 +14,6 @@ _ 'run' and 'present' under sketch, and/or # of items
 _ add processing.js export tool from florian
 _   http://github.com/fjenett/processingjstool/
 _   http://github.com/fjenett/processingjstool/zipball/v0.0.6
-
-_ linux permissions not set because of tar in ant
-_   http://code.google.com/p/processing/issues/detail?id=343
 
 _ accented letter input is broken (on os x)
 _   http://code.google.com/p/processing/issues/detail?id=335
