@@ -198,13 +198,12 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 		IProject sketch = sketchProject.getProject();
 
 		if ( sketch == null || !sketch.isAccessible() ){
-			System.out.println("Sketch is null!");
+			ProcessingLog.logError("Sketch is inaccessible!", null);
 			return null;
 		}
 
 		// Setup the folders
 		codeFolder = sketch.getFolder("code");
-//		dataFolder = sketch.getFolder("data");
 		buildFolder = sketch.getFolder("bin"); // TODO relocate to MyPlugin.getPlugin().getStateLocation().getFolder("bin")
 		appletFolder = sketch.getFolder("applet");
 
@@ -415,34 +414,36 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 		monitor.worked(10);
 		if(checkCancel(monitor)) { return null; } 
 
+////////// LIBRARY STUFF MOVED TO SKETCH PROJECT
+		
 		// Get the imports from the code that was preproc'd
-		importedLibraries = new ArrayList<File>();
+//		importedLibraries = new ArrayList<File>();
 
-		coreLibs = getCoreLibsFolder().getAbsoluteFile();
-		sketchBookLibs = getSketchBookLibsFolder(sketch).getAbsoluteFile();
+//		coreLibs = getCoreLibsFolder().getAbsoluteFile();
+//		sketchBookLibs = getSketchBookLibsFolder(sketch).getAbsoluteFile();
 
 		// Clean the library table and rebuild it
-		importToLibraryTable = new HashMap<String,File>();
+//		importToLibraryTable = new HashMap<String,File>();
 
 		// addLibraries internally checks for null folders
-		try{
-			addLibraries(coreLibs);
-			addLibraries(sketchBookLibs);
-		} catch (IOException e){
-			ProcessingLog.logError("Libraries could not be loaded.", e);
-		}
-
-		for (String item : result.extraImports){
-			// remove things up to the last dot
-			int dot = item.lastIndexOf('.');
-			String entry = (dot == -1) ? item : item.substring(0, dot);
-			File libFolder = importToLibraryTable.get(entry);
-			if (libFolder != null ){
-				importedLibraries.add(libFolder);
-				classPath += Utilities.contentsToClassPath(libFolder);
-				libraryPath += File.pathSeparator + libFolder.getAbsolutePath();
-			}
-		}
+//		try{
+//			addLibraries(coreLibs);
+//			addLibraries(sketchBookLibs);
+//		} catch (IOException e){
+//			ProcessingLog.logError("Libraries could not be loaded.", e);
+//		}
+//
+//		for (String item : result.extraImports){
+//			// remove things up to the last dot
+//			int dot = item.lastIndexOf('.');
+//			String entry = (dot == -1) ? item : item.substring(0, dot);
+//			File libFolder = importToLibraryTable.get(entry);
+//			if (libFolder != null ){
+//				importedLibraries.add(libFolder);
+//				classPath += Utilities.contentsToClassPath(libFolder);
+//				libraryPath += File.pathSeparator + libFolder.getAbsolutePath();
+//			}
+//		}
 
 		// Finally add the regular Java CLASSPATH
 		String javaClassPath = System.getProperty("java.class.path");
@@ -499,40 +500,40 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 		if(checkCancel(monitor)) { return null; } 
 
 		//COMPILE
-		
-		// setup the VM
-		IPath containerPath = new Path(JavaRuntime.JRE_CONTAINER);
-		IVMInstall vm = JavaRuntime.getDefaultVMInstall();
-		IPath vmPath = containerPath.append(vm.getVMInstallType().getId()).append(vm.getName());
-		
-		// Collect all the paths in one place
-		ArrayList<IPath> paths = new ArrayList<IPath>();
-		
-		// Split up the classPath, convert each member to a path
-		// and store them individually
-		System.out.println("classPath entries:");
-		for( String s : classPath.split(File.pathSeparator)){
-			if (!s.isEmpty()){
-				System.out.println(s);
-				paths.add(new Path(s));
-			}
-		}
-
-		IClasspathEntry[] classpathEntries = new IClasspathEntry[paths.size()+1]; 
-		
-		System.out.println("IClasspathEntry[] items:");		
-		for (int i = 0; i<paths.size(); i++){
-			System.out.println(paths.get(i).toString());
-			classpathEntries[i+1] = JavaCore.newSourceEntry(paths.get(i));
-		}
-		
-		// Add some extra paths, like the build folder
-		classpathEntries[0]=JavaCore.newContainerEntry(vmPath.makeAbsolute());
-		
-		// reset to the new class path, don't add to the old
-		sketchProject.getJavaProject().getOutputLocation();
-		sketchProject.getJavaProject().setRawClasspath(classpathEntries, new NullProgressMonitor());
-		// end this builder and let the Java builder run
+//		
+//		// setup the VM
+//		IPath containerPath = new Path(JavaRuntime.JRE_CONTAINER);
+//		IVMInstall vm = JavaRuntime.getDefaultVMInstall();
+//		IPath vmPath = containerPath.append(vm.getVMInstallType().getId()).append(vm.getName());
+//		
+//		// Collect all the paths in one place
+//		ArrayList<IPath> paths = new ArrayList<IPath>();
+//		
+//		// Split up the classPath, convert each member to a path
+//		// and store them individually
+//		System.out.println("classPath entries:");
+//		for( String s : classPath.split(File.pathSeparator)){
+//			if (!s.isEmpty()){
+//				System.out.println(s);
+//				paths.add(new Path(s));
+//			}
+//		}
+//
+//		IClasspathEntry[] classpathEntries = new IClasspathEntry[paths.size()+1]; 
+//		
+//		System.out.println("IClasspathEntry[] items:");		
+//		for (int i = 0; i<paths.size(); i++){
+//			System.out.println(paths.get(i).toString());
+//			classpathEntries[i+1] = JavaCore.newSourceEntry(paths.get(i));
+//		}
+//		
+//		// Add some extra paths, like the build folder
+//		classpathEntries[0]=JavaCore.newContainerEntry(vmPath.makeAbsolute());
+//		
+//		// reset to the new class path, don't add to the old
+//		sketchProject.getJavaProject().getOutputLocation();
+//		sketchProject.getJavaProject().setRawClasspath(classpathEntries, new NullProgressMonitor());
+//		// end this builder and let the Java builder run
 		return null;
 	}
 
@@ -610,101 +611,41 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 	 * @param folder the folder containing libraries
 	 * @return true if libraries were imported, false otherwise
 	 */
-	public boolean addLibraries(File folder) throws IOException{
-		if (folder == null)	return false;
-		if (!folder.isDirectory()) return false;
-
-		File list[] = folder.listFiles(new FilenameFilter() {
-			public boolean accept(File dir, String name) {
-				// skip .DS_Store files, .svn folders, etc
-				if (name.charAt(0) == '.') return false;
-				if (name.equals("CVS")) return false;
-				return (new File(dir, name).isDirectory());
-			}
-		});
-
-		// if a bad folder or something like that, this might come back null
-		if (list == null) return false;
-
-		boolean ifound = false;
-
-		for (File potentialFile : list){
-			if(ProcessingCore.isLibrary(potentialFile, true)){
-				File libraryFolder = new File(potentialFile, "library");
-				// get the path of all .jar files in this code folder
-				String libraryClassPath = Utilities.contentsToClassPath(libraryFolder);
-				// associate each import with a library folder
-				String packages[] = Utilities.packageListFromClassPath(libraryClassPath);
-				for (String pkg:packages){
-					importToLibraryTable.put(pkg, libraryFolder);
-				}
-				ifound = true;
-			} else {
-				if (addLibraries(potentialFile))  // recurse!
-					ifound = true;
-			}
-		}
-		
-		return ifound;
-	}
-
-	/**
-	 * Finds the folder containing the Processing core libraries, which are bundled with the
-	 * plugin. This folder doesn't exist in the workspace, so we return it as a File, not IFile. 
-	 * If something goes wrong, logs an error and returns null.
-	 *  
-	 * @return File containing the core libraries folder or null
-	 */
-	public File getCoreLibsFolder() {
-		URL fileLocation = ProcessingCore.getProcessingCore().getPluginResource("libraries");
-		try {
-			File folder = new File(FileLocator.toFileURL(fileLocation).getPath());
-			if (folder.exists())
-				return folder;
-		} catch (Exception e) {
-			ProcessingLog.logError(e);
-		}
-		return null;
-	}
-
-	/**
-	 * Find the folder containing the users libraries, which should be in the sketchbook.
-	 * Looks in the user's preferences first and if that is null it checks for the appropriate
-	 * folder relative to the sketch location.
-	 * 
-	 * @return File containing the Sketch book library folder, or null if it can't be located
-	 */
-	public File getSketchBookLibsFolder(IProject proj) {
-		IPath sketchbook = ProcessingCorePreferences.current().getSketchbookPath();
-		if (sketchbook == null)
-			sketchbook = findSketchBookLibsFolder(proj);
-		if (sketchbook == null)
-			return null;
-		return new File(sketchbook.toOSString());
-	}
-
-	/**
-	 * Tries to locate the sketchbook library folder relative to the project path
-	 * based on the default sketch / sketchbook setup. If such a folder exists, loop
-	 * through its contents until a valid library is found and then return the path
-	 * to the sketchbook. If no valid libraries are found (empty folder, improper 
-	 * sketchbook setup), or if no valid folder is found, return null.
-	 * 
-	 * @return IPath containing the location of the new library folder, or null
-	 */
-	public IPath findSketchBookLibsFolder(IProject proj) {
-		try{
-			IPath guess = proj.getLocation().removeLastSegments(1).append("libraries");
-			File folder = new File(guess.toOSString());
-			if(folder.isDirectory())
-				for( File file : folder.listFiles()){
-					if(file.isDirectory())
-						if (ProcessingCore.isLibrary(file))
-							return guess;
-				}
-		} catch (Exception e){
-			ProcessingLog.logError(e);
-		}
-		return null;
-	}
+//	public boolean addLibraries(File folder) throws IOException{
+//		if (folder == null)	return false;
+//		if (!folder.isDirectory()) return false;
+//
+//		File list[] = folder.listFiles(new FilenameFilter() {
+//			public boolean accept(File dir, String name) {
+//				// skip .DS_Store files, .svn folders, etc
+//				if (name.charAt(0) == '.') return false;
+//				if (name.equals("CVS")) return false;
+//				return (new File(dir, name).isDirectory());
+//			}
+//		});
+//
+//		// if a bad folder or something like that, this might come back null
+//		if (list == null) return false;
+//
+//		boolean ifound = false;
+//
+//		for (File potentialFile : list){
+//			if(ProcessingCore.isLibrary(potentialFile, true)){
+//				File libraryFolder = new File(potentialFile, "library");
+//				// get the path of all .jar files in this code folder
+//				String libraryClassPath = Utilities.contentsToClassPath(libraryFolder);
+//				// associate each import with a library folder
+//				String packages[] = Utilities.packageListFromClassPath(libraryClassPath);
+//				for (String pkg:packages){
+//					importToLibraryTable.put(pkg, libraryFolder);
+//				}
+//				ifound = true;
+//			} else {
+//				if (addLibraries(potentialFile))  // recurse!
+//					ifound = true;
+//			}
+//		}
+//		
+//		return ifound;
+//	}
 }
