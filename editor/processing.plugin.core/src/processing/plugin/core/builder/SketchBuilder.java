@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,6 +20,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
@@ -28,14 +28,11 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
-import org.osgi.framework.Bundle;
 
 import processing.app.Preferences;
-import processing.app.Sketch;
 import processing.app.debug.RunnerException;
 import processing.app.preproc.PdePreprocessor;
 import processing.app.preproc.PreprocessResult;
-import processing.core.PApplet;
 
 import processing.plugin.core.ProcessingCore;
 import processing.plugin.core.ProcessingCorePreferences;
@@ -106,9 +103,12 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 	// Right now it is building an ad-hoc model on the fly using the implied
 	// structure of a Sketch project. Minimally a model should manage these state
 	// objects, manage markers, and be controlled by the SketchProject object.
+	// The model would be really similar to what Sketch would look like if it was 
+	// truly separated from the UI. Possible create it in the PDE, and extend it
+	// here for marker management and such.
 
-	/** Data folder, located in the sketch folder, may not exist */
-	private IFolder dataFolder;
+//	/** Data folder, located in the sketch folder, may not exist */
+//	private IFolder dataFolder;
 
 	/** Code folder, located in the sketch folder, may not exist */
 	private IFolder codeFolder;
@@ -204,7 +204,7 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 
 		// Setup the folders
 		codeFolder = sketch.getFolder("code");
-		dataFolder = sketch.getFolder("data");
+//		dataFolder = sketch.getFolder("data");
 		buildFolder = sketch.getFolder("bin"); // TODO relocate to MyPlugin.getPlugin().getStateLocation().getFolder("bin")
 		appletFolder = sketch.getFolder("applet");
 
@@ -227,7 +227,7 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 		PdePreprocessor preproc = new PdePreprocessor(sketch.getName(), 4);
 
 		String[] codeFolderPackages = null;
-		classPath = appletFolder.getLocation().toOSString();
+		classPath = buildFolder.getLocation().toOSString();
 
 		// check the contents of the code folder to see if there are files that need to be added to the imports
 		if (codeFolder.exists()){
@@ -326,7 +326,7 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 			// System.out.println("and then she tells me " + tsre.toString());
 			String mess = "^line (\\d+):(\\d+):\\s"; // a regexp to grab the line and column from the exception
 
-			String[] matches = PApplet.match(tsre.toString(), mess); // TODO remove this processing.app dependency
+			String[] matches = Utilities.match(tsre.toString(), mess);
 			IResource errorFile = null; 
 			int errorLine = -1;
 
@@ -461,7 +461,7 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 				String filename = file.getName() + ".java";
 				try{
 					String program = Utilities.readFile((IFile) file);
-					String[] pkg = PApplet.match(program, Utilities.PACKAGE_REGEX); //TODO remove this processing.app dependency
+					String[] pkg = Utilities.match(program, Utilities.PACKAGE_REGEX);
 					// if no package, add one
 					if(pkg == null){
 						pkg = new String[] { packageName };
@@ -504,25 +504,35 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 		IPath containerPath = new Path(JavaRuntime.JRE_CONTAINER);
 		IVMInstall vm = JavaRuntime.getDefaultVMInstall();
 		IPath vmPath = containerPath.append(vm.getVMInstallType().getId()).append(vm.getName());
-
 		
+		// Collect all the paths in one place
+		ArrayList<IPath> paths = new ArrayList<IPath>();
+		
+		// Split up the classPath, convert each member to a path
+		// and store them individually
 		System.out.println("classPath entries:");
 		for( String s : classPath.split(File.pathSeparator)){
-			if (!s.isEmpty())
+			if (!s.isEmpty()){
 				System.out.println(s);
+				paths.add(new Path(s));
+			}
 		}
 
-		System.out.println("IClasspathEntry[] items:");
-		// Build the classpath entries
-		IClasspathEntry[] newClasspath = {
-		      JavaCore.newSourceEntry(buildFolder.getFullPath()),
-		      //JavaCore.newLibraryEntry(),
-		      JavaCore.newContainerEntry(vmPath)
-		      		};
-		for (IClasspathEntry s : newClasspath){
-			System.out.println(s.toString());
+		IClasspathEntry[] classpathEntries = new IClasspathEntry[paths.size()+1]; 
+		
+		System.out.println("IClasspathEntry[] items:");		
+		for (int i = 0; i<paths.size(); i++){
+			System.out.println(paths.get(i).toString());
+			classpathEntries[i+1] = JavaCore.newSourceEntry(paths.get(i));
 		}
-
+		
+		// Add some extra paths, like the build folder
+		classpathEntries[0]=JavaCore.newContainerEntry(vmPath.makeAbsolute());
+		
+		// reset to the new class path, don't add to the old
+		sketchProject.getJavaProject().getOutputLocation();
+		sketchProject.getJavaProject().setRawClasspath(classpathEntries, new NullProgressMonitor());
+		// end this builder and let the Java builder run
 		return null;
 	}
 
