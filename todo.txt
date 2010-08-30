@@ -1,7 +1,8 @@
 0191 
 X remove unused librariesClassPath
 X   http://code.google.com/p/processing/issues/detail?id=360
-
+X add antialias option to the editor prefs window
+X add smoothing inside the Linux GUI, was looking nasty
 
 mode work
 _ locations: sketchbook, examples, libraries
