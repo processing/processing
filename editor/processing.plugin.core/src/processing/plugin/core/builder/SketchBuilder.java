@@ -216,9 +216,6 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 		if (!buildFolder.exists())
 			buildFolder.create(IResource.NONE, true, null);
 
-		if (!appletFolder.exists())
-			appletFolder.create(IResource.NONE, true, null);
-
 		monitor.worked(100); // 100 for every step of the process?
 		if(checkCancel(monitor)){ return null; }
 

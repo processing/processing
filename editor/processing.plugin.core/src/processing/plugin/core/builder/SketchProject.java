@@ -139,7 +139,7 @@ public class SketchProject implements IProjectNature {
 		IFolder appletFolder = project.getFolder("applet");
 		IFolder javaBuildFolder = project.getFolder("compile");
 		
-		File coreResources = getCoreResourcesFolder(); // includes core Libs
+		File coreResources = getCoreResourcesFolder(); 
 		File sketchbookLibs = getSketchBookLibsFolder(project);
 		
 		if(!codeFolder.exists())
