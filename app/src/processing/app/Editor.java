@@ -445,13 +445,13 @@ public class Editor extends JFrame implements RunnerListener {
   public void setSaveItem(JMenuItem item) {
     saveMenuItem = item;
   }
-  
+
 
   public void setSaveAsItem(JMenuItem item) {
     saveAsMenuItem = item;
   }
 
-  
+
   protected JMenu buildSketchMenu() {
     JMenuItem item;
     sketchMenu = new JMenu("Sketch");
@@ -828,7 +828,13 @@ public class Editor extends JFrame implements RunnerListener {
     undoItem.addActionListener(undoAction = new UndoAction());
     menu.add(undoItem);
 
-    redoItem = Base.newJMenuItem("Redo", 'Y');
+    // Gotta follow them interface guidelines
+    // http://code.google.com/p/processing/issues/detail?id=363
+    if (Base.isWindows()) {
+      redoItem = Base.newJMenuItem("Redo", 'Y');
+    } else {  // Linux and OS X
+      redoItem = Base.newJMenuItemShift("Redo", 'Z');
+    }
     redoItem.addActionListener(redoAction = new RedoAction());
     menu.add(redoItem);
 
@@ -1581,8 +1587,8 @@ public class Editor extends JFrame implements RunnerListener {
   public void deactivateRun() {
     toolbar.deactivate(EditorToolbar.RUN);
   }
-  
-  
+
+
   public void deactivateExport() {
     toolbar.deactivate(EditorToolbar.EXPORT);
   }
