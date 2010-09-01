@@ -3,6 +3,15 @@ X fix background(PImage) for OpenGL
 X   http://code.google.com/p/processing/issues/detail?id=336
 X skip null entries with trim(String[]) 
 
+Hi all, just thought I'd share something. 
+For a while now, I've been having unexpected frame rate drops with JOGL when switching into fullscreen-exclusive mode (it halved no matter what I did - resolution switching, reducing how much I drew, etc). 
+Just recently I've started putting my latest game into fullscreen from the start instead of an option later, and so also started using apple.awt.fakefullscreen="true" - much to my surprise, this seemed to fix the problem. On closer examination, switching away from the game and back via command-tab (which wasn't possible without fakefullscreen) was the actual trigger. 
+I now have 
+app.requestForeground(true);
+// app extends com.apple.eawt.Application implements Runnable, GLEventListener 
+in my switch-to-fullscreen method, after creating the new fullscreen frame and before calling setFullScreenWindow(...); 
+Unfortunately I don't really understand the true cause of the underlying problem (and it requires apple.awt.fakefullscreen="true" to work), so this solution is voodoo programming at best. I hope someone finds it helpful regardless :)
+
 _ textAlign() incorrect with default font on Mac OS X 10.6
 _   http://code.google.com/p/processing/issues/detail?id=362
 

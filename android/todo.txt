@@ -8,6 +8,11 @@ A Automatic clear/noClear() switch in A3D
 A   http://code.google.com/p/processing/issues/detail?id=289
 A Camera issues in A3D
 A   http://code.google.com/p/processing/issues/detail?id=367
+A major fixes for type to work properly in 3D (fixes KineticType)
+A   http://code.google.com/p/processing/issues/detail?id=358
+
+1) I fixed a bug in the camera handling that a user pointed out recently (http://forum.processing.org/topic/possible-3d-bug). This was a quite urgent issue, since affected pretty much everything. It went unnoticed until now because the math error canceled out with the default camera settings.
+2) I also finished the implementation of the getImpl() method in PImage, so it initializes the texture of the new image in A3D mode. This makes the CubicVR example to work fine.
 
 _ add to wiki: 1MB file size is max for data folder
 _   Data exceeds UNCOMPRESS_DATA_MAX (11840328 vs 1048576)

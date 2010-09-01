@@ -5,6 +5,10 @@ X add antialias option to the editor prefs window
 X add smoothing inside the Linux GUI, was looking nasty
 X linux permissions not set because of tar in ant
 X   http://code.google.com/p/processing/issues/detail?id=343
+X fix 'redo' command to work properly for different OSes
+X   linux: ctrl-shift-z, macosx cmd-shift-z, windows ctrl-y
+X   http://en.wikipedia.org/wiki/Table_of_keyboard_shortcuts
+X   http://developer.apple.com/mac/library/documentation/UserExperience/Conceptual/AppleHIGuidelines/XHIGUserInput/XHIGUserInput.html
 
 mode work
 _ locations: sketchbook, examples, libraries
