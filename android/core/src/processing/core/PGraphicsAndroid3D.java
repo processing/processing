@@ -601,6 +601,7 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   public void popFramebuffer() {
     try {
+      currentFramebuffer.finish();
       currentFramebuffer = fbStack.pop();
       currentFramebuffer.bind();
     } catch (EmptyStackException e) {
