@@ -24,7 +24,6 @@ package processing.core;
 
 import java.lang.reflect.Method;
 import java.nio.IntBuffer;
-
 import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11ExtensionPack;
 
@@ -36,11 +35,12 @@ import javax.microedition.khronos.opengles.GL11ExtensionPack;
  * 
  * By Andres Colubri.
  */
-public class PFramebuffer  {
+public class PFramebuffer implements PConstants {
   
   protected PApplet parent;  
   protected PGraphicsAndroid3D a3d;
-  protected GL11ExtensionPack gl;  
+  protected GL10 gl;  
+  protected GL11ExtensionPack gl11xp;  
   protected int glFboID;
   protected int glDepthBufferID;
   protected int glStencilBufferID;
@@ -54,12 +54,15 @@ public class PFramebuffer  {
   protected int[] glColorBufferTargets;
   protected int[] glColorBufferIDs;
 
-  /*
-  protected int glBackupBufferID;
-  protected int glBackupBufferTarget;
+  protected boolean screenFb;
+  protected boolean noDepth;
+  protected boolean FboMode;
+   
+  //protected PTexture ;
+  //protected int glBackupBufferTarget;
+  protected PTexture backupTexture;
   protected IntBuffer pixelBuffer;
-  protected int[] backupCrop;
-  */
+  //protected int[] backupCrop;
 
   PFramebuffer(PApplet parent) {
     this(parent, 0, 0, false);
@@ -69,20 +72,28 @@ public class PFramebuffer  {
     this(parent, w, h, false);
   }
   
-  PFramebuffer(PApplet parent, int w, int h, boolean onscreen) {
+  PFramebuffer(PApplet parent, int w, int h, boolean screen) {
     this.parent = parent;
     a3d = (PGraphicsAndroid3D)parent.g;
     
-    // Checking we have what we need:    
-    gl = a3d.gl11xp;
-    if (gl == null) {
+    screenFb = screen;
+    noDepth = false;
+    FboMode = PGraphicsAndroid3D.fboSupported;
+    
+    gl = a3d.gl;
+    
+    // We need gl11 extension pack at least to bind a zero (screen) buffer.    
+    gl11xp = a3d.gl11xp;
+    if (gl11xp == null) {
       throw new RuntimeException("PFramebuffer: OpenGL ES 1.1 Extension Pack required");
-    }    
-    if (!PGraphicsAndroid3D.fboSupported && !onscreen) {
-       throw new RuntimeException("PFramebuffer: Frame Buffer Objects are not available");
     }
     
-    initFramebuffer(w, h, onscreen);
+    initFramebuffer(w, h);
+    
+    if (!screenFb && !FboMode) {
+      backupTexture = new PTexture(parent, width, height, new PTexture.Parameters(ARGB, NEAREST));
+      pixelBuffer = BufferUtil.newIntBuffer(width * height);  
+    }
     
     try {
       Method meth = this.getClass().getMethod("recreateResource", new Class[] { PGraphicsAndroid3D.class });
@@ -106,183 +117,180 @@ public class PFramebuffer  {
   }
 
   void setColorBuffers(PTexture[] textures, int n) {
-    a3d.pushFramebuffer();
-    a3d.setFramebuffer(this);
+    if (screenFb) return;
+    
+    if (FboMode) {
+      a3d.pushFramebuffer();
+      a3d.setFramebuffer(this);
 
-    /*
-    if (!PGraphicsAndroid3D.fboSupported) {
-      // Set the color buffers here if there is no FBO...
+      // Making sure nothing is attached.
+      for (int i = 0; i < numColorBuffers; i++) {
+        gl11xp.glFramebufferTexture2DOES(GL11ExtensionPack.GL_FRAMEBUFFER_OES,
+            GL11ExtensionPack.GL_COLOR_ATTACHMENT0_OES + i, GL10.GL_TEXTURE_2D, 0, 0);      
+      }
+
+      numColorBuffers = PApplet.min(n, textures.length);
+      colorBufferAttchPoints = new int[numColorBuffers];
+      glColorBufferTargets = new int[numColorBuffers];
+      glColorBufferIDs = new int[numColorBuffers];
+
+      for (int i = 0; i < numColorBuffers; i++) {
+        colorBufferAttchPoints[i] = GL11ExtensionPack.GL_COLOR_ATTACHMENT0_OES + i;
+        glColorBufferTargets[i] = textures[i].getGLTarget();
+        glColorBufferIDs[i] = textures[i].getGLTextureID();
+        gl11xp.glFramebufferTexture2DOES(GL11ExtensionPack.GL_FRAMEBUFFER_OES, colorBufferAttchPoints[i],
+            glColorBufferTargets[i], glColorBufferIDs[i], 0);
+      }
+
+      if (validFbo() && textures != null && 0 < textures.length) {
+        width = textures[0].getGLWidth();
+        height = textures[0].getGLHeight();
+      }
+
+      a3d.popFramebuffer();
     } else {
-    */
-    
-    // Making sure nothing is attached.
-    for (int i = 0; i < numColorBuffers; i++) {
-      gl.glFramebufferTexture2DOES(GL11ExtensionPack.GL_FRAMEBUFFER_OES,
-                                                              GL11ExtensionPack.GL_COLOR_ATTACHMENT0_OES + i, GL10.GL_TEXTURE_2D, 0, 0);      
+      numColorBuffers = PApplet.min(n, textures.length);
+      glColorBufferTargets = new int[numColorBuffers];
+      glColorBufferIDs = new int[numColorBuffers];      
+      for (int i = 0; i < numColorBuffers; i++) {
+        glColorBufferTargets[i] = textures[i].getGLTarget();
+        glColorBufferIDs[i] = textures[i].getGLTextureID();
+      }
     }
-    
-    numColorBuffers = PApplet.min(n, textures.length);
-    colorBufferAttchPoints = new int[numColorBuffers];
-    glColorBufferTargets = new int[numColorBuffers];
-    glColorBufferIDs = new int[numColorBuffers];
-    
-    for (int i = 0; i < numColorBuffers; i++) {
-      colorBufferAttchPoints[i] = GL11ExtensionPack.GL_COLOR_ATTACHMENT0_OES + i;
-      glColorBufferTargets[i] = textures[i].getGLTarget();
-      glColorBufferIDs[i] = textures[i].getGLTextureID();
-      gl.glFramebufferTexture2DOES(GL11ExtensionPack.GL_FRAMEBUFFER_OES, colorBufferAttchPoints[i],
-          glColorBufferTargets[i], glColorBufferIDs[i], 0);
-    }
-    
-    if (validFbo() && textures != null && 0 < textures.length) {
-      width = textures[0].getGLWidth();
-      height = textures[0].getGLHeight();
-    }
-
-    a3d.popFramebuffer();    
   }
   
   public void addDepthBuffer(int bits) {
+    if (screenFb) return;
+    
     if (width == 0 || height == 0) {
       throw new RuntimeException("PFramebuffer: size undefined.");
     }
     
-    if (!PGraphicsAndroid3D.fboSupported) return;
-    
-    a3d.pushFramebuffer();
-    a3d.setFramebuffer(this);
+    if (FboMode) {
+      a3d.pushFramebuffer();
+      a3d.setFramebuffer(this);
 
-    int[] tmp = new int[1];
-    gl.glGenRenderbuffersOES(1, tmp, 0);
-    glDepthBufferID = tmp[0];
-    
-    gl.glBindRenderbufferOES(GL11ExtensionPack.GL_RENDERBUFFER_OES, glDepthBufferID);
-    
-    int glConst = GL11ExtensionPack.GL_DEPTH_COMPONENT16;
-    if (bits == 16) {
-      glConst = GL11ExtensionPack.GL_DEPTH_COMPONENT16; 
-    } else if (bits == 24) {
-      glConst = GL11ExtensionPack.GL_DEPTH_COMPONENT24;
-    } else if (bits == 32) {
-      glConst = GL11ExtensionPack.GL_DEPTH_COMPONENT32;              
+      int[] tmp = new int[1];
+      gl11xp.glGenRenderbuffersOES(1, tmp, 0);
+      glDepthBufferID = tmp[0];
+
+      gl11xp.glBindRenderbufferOES(GL11ExtensionPack.GL_RENDERBUFFER_OES, glDepthBufferID);
+
+      int glConst = GL11ExtensionPack.GL_DEPTH_COMPONENT16;
+      if (bits == 16) {
+        glConst = GL11ExtensionPack.GL_DEPTH_COMPONENT16; 
+      } else if (bits == 24) {
+        glConst = GL11ExtensionPack.GL_DEPTH_COMPONENT24;
+      } else if (bits == 32) {
+        glConst = GL11ExtensionPack.GL_DEPTH_COMPONENT32;              
+      }
+      gl11xp.glRenderbufferStorageOES(GL11ExtensionPack.GL_RENDERBUFFER_OES, glConst, width, height);              
+
+      gl11xp.glFramebufferRenderbufferOES(GL11ExtensionPack.GL_FRAMEBUFFER_OES,            
+          GL11ExtensionPack.GL_DEPTH_ATTACHMENT_OES,
+          GL11ExtensionPack.GL_RENDERBUFFER_OES, glDepthBufferID);
+
+      a3d.popFramebuffer();
     }
-    gl.glRenderbufferStorageOES(GL11ExtensionPack.GL_RENDERBUFFER_OES, glConst, width, height);              
-    
-    gl.glFramebufferRenderbufferOES(GL11ExtensionPack.GL_FRAMEBUFFER_OES,            
-                                                                  GL11ExtensionPack.GL_DEPTH_ATTACHMENT_OES,
-                                                                  GL11ExtensionPack.GL_RENDERBUFFER_OES, glDepthBufferID);
-            
-    a3d.popFramebuffer();
   }
     
   public void addStencilBuffer(int bits) {
+    if (screenFb) return;
+    
     if (width == 0 || height == 0) {
       throw new RuntimeException("PFramebuffer: size undefined.");
     }
 
-    if (!PGraphicsAndroid3D.fboSupported) return;
-    
-    a3d.pushFramebuffer();
-    a3d.setFramebuffer(this);
+    if (FboMode) {    
+      a3d.pushFramebuffer();
+      a3d.setFramebuffer(this);
 
-    int[] tmp = new int[1];
-    gl.glGenRenderbuffersOES(1, tmp, 0);
-    glStencilBufferID = tmp[0];
-    
-    gl.glBindRenderbufferOES(GL11ExtensionPack.GL_RENDERBUFFER_OES, glStencilBufferID);
-            
-    int glConst = GL11ExtensionPack.GL_STENCIL_INDEX1_OES;
-    if (bits == 1) {
-      glConst = GL11ExtensionPack.GL_STENCIL_INDEX1_OES; 
-    } else if (bits == 4) {
-      glConst = GL11ExtensionPack.GL_STENCIL_INDEX4_OES;
-    } else if (bits == 8) {
-      glConst = GL11ExtensionPack.GL_STENCIL_INDEX8_OES;              
+      int[] tmp = new int[1];
+      gl11xp.glGenRenderbuffersOES(1, tmp, 0);
+      glStencilBufferID = tmp[0];
+
+      gl11xp.glBindRenderbufferOES(GL11ExtensionPack.GL_RENDERBUFFER_OES, glStencilBufferID);
+
+      int glConst = GL11ExtensionPack.GL_STENCIL_INDEX1_OES;
+      if (bits == 1) {
+        glConst = GL11ExtensionPack.GL_STENCIL_INDEX1_OES; 
+      } else if (bits == 4) {
+        glConst = GL11ExtensionPack.GL_STENCIL_INDEX4_OES;
+      } else if (bits == 8) {
+        glConst = GL11ExtensionPack.GL_STENCIL_INDEX8_OES;              
+      }
+      gl11xp.glRenderbufferStorageOES(GL11ExtensionPack.GL_RENDERBUFFER_OES, glConst, width, height);              
+
+      gl11xp.glFramebufferRenderbufferOES(GL11ExtensionPack.GL_FRAMEBUFFER_OES,
+          GL11ExtensionPack.GL_STENCIL_ATTACHMENT_OES,
+          GL11ExtensionPack.GL_RENDERBUFFER_OES, glStencilBufferID);
+
+      a3d.popFramebuffer();
     }
-    gl.glRenderbufferStorageOES(GL11ExtensionPack.GL_RENDERBUFFER_OES, glConst, width, height);              
-              
-    gl.glFramebufferRenderbufferOES(GL11ExtensionPack.GL_FRAMEBUFFER_OES,
-                                                                  GL11ExtensionPack.GL_STENCIL_ATTACHMENT_OES,
-                                                                  GL11ExtensionPack.GL_RENDERBUFFER_OES, glStencilBufferID);
-    
-    a3d.popFramebuffer();            
   }
   
   public void bind() {
-    if (PGraphicsAndroid3D.fboSupported) {
-      gl.glBindFramebufferOES(GL11ExtensionPack.GL_FRAMEBUFFER_OES, glFboID);  
-    }    
-  }
-    
-  /*
-  
-  // Uses the specified texture as a backup to save the region of the screen where the offscreen rendering
-  // will be performed.
-  public void addBackupBuffer(PTexture texture) {
-    glBackupBufferID = texture.getGLTextureID();
-    glBackupBufferTarget = texture.getGLTarget();    
-    backupBuffer = BufferUtil.newIntBuffer(width * height);  
-    backupCrop = new int[4];
-    backupCrop[0] = 0;
-    backupCrop[1] = 0;
-    backupCrop[2] = width;
-    backupCrop[3] = height;    
-    
-    texture.setFlippedY(true);  // do we need this?
-  }
-    
-  // Saves the current state of the screen to the backup texture. But what happens with the depth and stencil buffers?
-  // Can they be saved/restored (without FBOs)?
-  // Answer:
- 
-"You can read the contents of the color, depth, and stencil buffers with the glReadPixels() command. Likewise, glDrawPixels() and glCopyPixels() are available for sending images to and BLTing images around in the OpenGL buffers."
-from http://www.opengl.org/resources/faq/technical/rasterization.htm
-  BUT: not possible in OpenGL ES
-  http://www.idevgames.com/forum/archive/index.php?t-15828.html
-  
-  public backupScreen() {  
-    gl.glReadPixels(0, 0, width, height, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, backupBuffer);    
-    copyToTexture(backupBuffer, glBackupBufferID, glBackupBufferTarget);
-  }
-  
-  // Draws the contents of the backup texture to the screen.
-  public restoreBackup() {
-    gl.glEnable(glBackupBufferTarget);
-    gl.glBindTexture(glBackupBufferTarget, glBackupBufferID);
-    gl.glDepthMask(false);
-    gl.glDisable(GL10.GL_BLEND);
-
-    gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_REPLACE);
-    
-    gl11.glTexParameteriv(glBackupBufferTarget, GL11Ext.GL_TEXTURE_CROP_RECT_OES, backupCrop, 0);
-    gl11x.glDrawTexiOES(0, 0, 0, width, height);
-    
-    // Returning to the default texture environment mode, GL_MODULATE. This allows tinting a texture
-    // with the current fill color.
-    gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_MODULATE);
-    
-    gl.glDisable(glBackupBufferTarget);
-    
-    if (hints[DISABLE_DEPTH_MASK]) {
-      gl.glDepthMask(false);  
+    if (screenFb) {
+      if (PGraphicsAndroid3D.fboSupported) {
+        gl11xp.glBindFramebufferOES(GL11ExtensionPack.GL_FRAMEBUFFER_OES, 0);
+      }
+    } else if (FboMode) {
+      gl11xp.glBindFramebufferOES(GL11ExtensionPack.GL_FRAMEBUFFER_OES, glFboID);  
     } else {
-      gl.glDepthMask(true);
+      backupScreen();
+      if (noDepth) {
+        gl.glDisable(GL10.GL_DEPTH_TEST); 
+      }
     }
+  }
+  
+  public void disableDepthTest() {
+    noDepth = true;  
+  }
+  
+  public void finish() {
+    if (!screenFb && !FboMode) {
+      copyToColorBuffers();
+      restoreBackup();
+      if (noDepth) {
+        // No need to clear depth buffer because depth testing was disabled.
+        if (a3d.hints[DISABLE_DEPTH_TEST]) {
+          gl.glDisable(GL10.GL_DEPTH_TEST);
+        } else {
+          gl.glEnable(GL10.GL_DEPTH_TEST);
+        }        
+      } else {
+        // Reading the contents of the depth buffer is not possible in OpenGL ES:
+        // http://www.idevgames.com/forum/archive/index.php?t-15828.html
+        // so if this framebuffer uses depth and is offscreen with no FBOs, then
+        // the depth buffer is cleared to avoid artifacts when rendering more stuff
+        // after this offscreen render.
+        // A consequence of this behavior is that all the offscreen rendering when
+        // no FBOs are available should be done before any onscreen drawing.
+        gl.glClearColor(0, 0, 0, 0);
+        gl.glClear(GL10.GL_DEPTH_BUFFER_BIT);
+      }
+    }
+  }
     
-    if (blend) {
-      blend(blendMode);
-    } else {
-      noBlend();
-    }    
+  // Saves content of the screen into the backup texture.
+  public void backupScreen() {  
+    gl.glReadPixels(0, 0, width, height, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, pixelBuffer);    
+    copyToTexture(pixelBuffer, backupTexture.getGLTextureID(), backupTexture.getGLTarget());
+  }
+
+  // Draws the contents of the backup texture to the screen.
+  public void restoreBackup() {
+    a3d.drawTexture(backupTexture, 0, 0, width, height, 0, 0, width, height);
   }
   
   // Copies current content of screen to color buffers.
-  public copyToColorBuffers() {
-    gl.glReadPixels(0, 0, width, height, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, backupBuffer);
+  public void copyToColorBuffers() {
+    gl.glReadPixels(0, 0, width, height, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, pixelBuffer);
     for (int i = 0; i < numColorBuffers; i++) {
-      copyToTexture(backupBuffer, glColorBufferIDs[i], glColorBufferTargets[i]);
+      copyToTexture(pixelBuffer, glColorBufferIDs[i], glColorBufferTargets[i]);
     }
-  }
+  }  
   
   // Internal copy to texture method.
   protected void copyToTexture(IntBuffer buffer, int glid, int gltarget) {
@@ -290,42 +298,39 @@ from http://www.opengl.org/resources/faq/technical/rasterization.htm
     gl.glBindTexture(gltarget, glid);    
     gl.glTexSubImage2D(gltarget, 0, 0, 0, width, height, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, buffer);
     gl.glDisable(gltarget);
-  }    
-   */
+  }      
   
-  
-  
-  
-  protected void initFramebuffer(int w, int h, boolean onscreen) {
+  protected void initFramebuffer(int w, int h) {
     width = w;
     height = h;
         
-    if (onscreen) {
-      // On-screen buffer has no associated FBO.
+    if (screenFb) {
       glFboID = 0;
-    } else {  
+    } else if (FboMode) {  
       int[] tmp = new int[1];
-      gl.glGenFramebuffersOES(1, tmp, 0);
+      gl11xp.glGenFramebuffersOES(1, tmp, 0);
       glFboID = tmp[0];
-    }    
+    }  else {
+      glFboID = 0;
+    }
   }
 
   protected void deleteFramebuffer() {
     if (glFboID != 0) {
       int[] tmp = { glFboID };
-      gl.glDeleteFramebuffersOES(1, tmp, 0);
+      gl11xp.glDeleteFramebuffersOES(1, tmp, 0);
       glFboID = 0;
     }
     
     if (glDepthBufferID !=  0) {
       int[] tmp = { glDepthBufferID };
-      gl.glDeleteRenderbuffersOES(1, tmp, 0);
+      gl11xp.glDeleteRenderbuffersOES(1, tmp, 0);
       glDepthBufferID = 0;
     }    
     
     if (glStencilBufferID !=  0) {
       int[] tmp = { glStencilBufferID };
-      gl.glDeleteRenderbuffersOES(1, tmp, 0);
+      gl11xp.glDeleteRenderbuffersOES(1, tmp, 0);
       glStencilBufferID = 0;
     }
     
@@ -337,7 +342,7 @@ from http://www.opengl.org/resources/faq/technical/rasterization.htm
   }
   
   public boolean validFbo() {
-    int status = gl.glCheckFramebufferStatusOES(GL11ExtensionPack.GL_FRAMEBUFFER_OES);        
+    int status = gl11xp.glCheckFramebufferStatusOES(GL11ExtensionPack.GL_FRAMEBUFFER_OES);        
     if (status == GL11ExtensionPack.GL_FRAMEBUFFER_COMPLETE_OES) {
       return true;
     } else if (status == GL11ExtensionPack.GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_OES) {
