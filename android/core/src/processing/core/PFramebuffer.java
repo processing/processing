@@ -58,11 +58,8 @@ public class PFramebuffer implements PConstants {
   protected boolean noDepth;
   protected boolean FboMode;
    
-  //protected PTexture ;
-  //protected int glBackupBufferTarget;
   protected PTexture backupTexture;
   protected IntBuffer pixelBuffer;
-  //protected int[] backupCrop;
 
   PFramebuffer(PApplet parent) {
     this(parent, 0, 0, false);
@@ -79,6 +76,7 @@ public class PFramebuffer implements PConstants {
     screenFb = screen;
     noDepth = false;
     FboMode = PGraphicsAndroid3D.fboSupported;
+    numColorBuffers = 0;
     
     gl = a3d.gl;
     
@@ -249,17 +247,19 @@ public class PFramebuffer implements PConstants {
   }
   
   public void finish() {
+    if (noDepth) {
+      // No need to clear depth buffer because depth testing was disabled.
+      if (a3d.hints[DISABLE_DEPTH_TEST]) {
+        gl.glDisable(GL10.GL_DEPTH_TEST);
+      } else {
+        gl.glEnable(GL10.GL_DEPTH_TEST);
+      }        
+    }
+    
     if (!screenFb && !FboMode) {
       copyToColorBuffers();
       restoreBackup();
-      if (noDepth) {
-        // No need to clear depth buffer because depth testing was disabled.
-        if (a3d.hints[DISABLE_DEPTH_TEST]) {
-          gl.glDisable(GL10.GL_DEPTH_TEST);
-        } else {
-          gl.glEnable(GL10.GL_DEPTH_TEST);
-        }        
-      } else {
+      if (!noDepth) {
         // Reading the contents of the depth buffer is not possible in OpenGL ES:
         // http://www.idevgames.com/forum/archive/index.php?t-15828.html
         // so if this framebuffer uses depth and is offscreen with no FBOs, then
@@ -291,6 +291,10 @@ public class PFramebuffer implements PConstants {
       copyToTexture(pixelBuffer, glColorBufferIDs[i], glColorBufferTargets[i]);
     }
   }  
+  
+  public IntBuffer getPixelBuffer() {
+    return pixelBuffer;
+  }
   
   // Internal copy to texture method.
   protected void copyToTexture(IntBuffer buffer, int glid, int gltarget) {

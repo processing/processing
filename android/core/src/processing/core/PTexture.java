@@ -264,11 +264,8 @@ public class PTexture implements PConstants {
     // FBO copy:
     a3d.pushFramebuffer();
     a3d.setFramebuffer(fbo);
-    // Clearing depth buffer (just in case).
-    gl.glClearColor(0, 0, 0, 0);
-    gl.glClear(GL10.GL_DEPTH_BUFFER_BIT);
     // Rendering tex into this.
-    a3d.drawTexture(tex, 0, 0, tex.glWidth, glHeight, 0, 0, glWidth, glHeight);    
+    a3d.drawTexture(tex, 0, 0, tex.glWidth, tex.glHeight, 0, 0, glWidth, glHeight);    
     a3d.popFramebuffer();
   }
 
@@ -319,24 +316,43 @@ public class PTexture implements PConstants {
     if ((pixels == null) || (pixels.length != width * height)) {
       pixels = new int[width * height];
     }
-    
-    int size = glWidth * glHeight;
-    int[] tmp = new int[size];
-    IntBuffer pixelBuffer = BufferUtil.newIntBuffer(size);
-    
-    // Attaching the texture to the color buffer of a FBO, binding the FBO and reading the pixels
-    // from the current draw buffer (which is the color buffer of the FBO).
-    PFramebuffer fbo = new PFramebuffer(parent, glWidth, glHeight);
-    fbo.setColorBuffer(this);
-    
-    a3d.pushFramebuffer();
-    a3d.setFramebuffer(fbo);
-    gl.glReadPixels(0, 0, glWidth, glHeight, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, pixelBuffer);
-    a3d.popFramebuffer();
-
-    pixelBuffer.get(tmp);
-    pixelBuffer.rewind();
         
+    int size = glWidth * glHeight;
+    
+    // TODO: This operation could be optimized somehow by declaring these two variables global
+    // and allocating them only once.
+    int[] tmp = new int[size];
+    IntBuffer buffer;
+    PFramebuffer fbo;
+    
+    if (PGraphicsAndroid3D.fboSupported) {
+      // Attaching the texture to the color buffer of a FBO, binding the FBO and reading the pixels
+      // from the current draw buffer (which is the color buffer of the FBO).
+    
+      buffer = BufferUtil.newIntBuffer(size);
+    
+      fbo = new PFramebuffer(parent, glWidth, glHeight);
+      fbo.setColorBuffer(this);
+    
+      a3d.pushFramebuffer();
+      a3d.setFramebuffer(fbo);
+      gl.glReadPixels(0, 0, glWidth, glHeight, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, buffer);
+      a3d.popFramebuffer();
+    } else {
+      // Here we don't have FBOs, so the method above is of no use. What we do instead is
+      // to draw the texture to the framebuffer, and then grab the pixels from the screen.
+      
+      fbo = new PFramebuffer(parent, glWidth, glHeight);
+      a3d.pushFramebuffer();
+      a3d.setFramebuffer(fbo);
+      a3d.drawTexture(this, 0, 0, glWidth, glHeight, 0, 0, glWidth, glHeight);
+      buffer = fbo.getPixelBuffer();
+      a3d.popFramebuffer();
+    }
+    
+    buffer.get(tmp);
+    buffer.rewind();
+    
     convertToARGB(tmp, pixels);
     if (flippedX) flipArrayOnX(pixels, 1);
     if (flippedY) flipArrayOnY(pixels, 1);    
