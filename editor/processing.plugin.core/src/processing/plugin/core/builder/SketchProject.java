@@ -115,7 +115,7 @@ public class SketchProject implements IProjectNature {
 	public IProject getProject() {
 		return project;
 	}
-
+	
 	/** 
 	 * Should not be triggered by clients.
 	 * Sent by the NatureManager when the nature is added to a project.
@@ -138,7 +138,7 @@ public class SketchProject implements IProjectNature {
 		getDataFolder();
 		
 		// Check the description to see if it already has the builder
-		IProjectDescription description = this.project.getDescription();
+		IProjectDescription description = project.getDescription();
 		List<ICommand> newCmds = new ArrayList<ICommand>();
 		newCmds.addAll(Arrays.asList(description.getBuildSpec()));
 
@@ -173,7 +173,7 @@ public class SketchProject implements IProjectNature {
 		if (!project.isOpen())
 			return;
 
-		IProjectDescription description = this.project.getDescription();
+		IProjectDescription description = project.getDescription();
 		ICommand[] cmds = description.getBuildSpec();
 		for (int i=0; i<cmds.length; i++){
 			if (cmds[i].getBuilderName().equals(SketchBuilder.BUILDER_ID)){
@@ -251,34 +251,41 @@ public class SketchProject implements IProjectNature {
 	}
 
 	/** 
-	 * Return a vanilla File handle to the output folder for the Java compiler
-	 * inside the cached build folder, or null if it cannot be created.  
+	 * Return a vanilla File handle to the output folder for the Java compiler or null if it cannot be created. 
+	 * <p>
+	 * Users shouldn't be messing with this folder unless they know what they're doing.
+	 * Unfortunately, JDT requires the build folder to be in the project file system 
+	 * somewhere, so we can't hide it in a system temp folder like the PDE does.
 	 */
 	public File getJavaBuildFolder(){
-		File build = getBuildFolder();
-		if(build != null){
-			File compile = new File(build, "compile");
+		File preproc = getBuildFolder();
+		if(preproc != null){
+			File compile = new File(preproc.getParent(), "compiler");
 			compile.mkdirs();
 			if(compile.exists())
 				return compile;
 		}
-		ProcessingLog.logError("Could not create the temporary build (compile) folder.", null);
+		ProcessingLog.logError("Could not create " + preproc.getParent() + File.separator + "compiler" + " folder.", null);
 		return null;
 	}
 	
 	/**
-	 * Returns a vanilla File handle to the project specific build folder, which is located inside
-	 * the temp directory of the plug-in's local cache, or null if it doesn't exist
+	 * Returns a vanilla File handle to the project specific build folder or null if it doesn't exist
+	 * <p>
+	 * Users shouldn't be messing with this unless they know what they're doing.
+	 * Unfortunately, JDT requires the build folder to be in the project file system 
+	 * somewhere, so we can't hide this in a system temp folder like the PDE does. 
 	 */
 	public File getBuildFolder(){
-		//File tempBuildFolder = File.createTempFile("")
-		File tempBuildFolder = new File(ProcessingCore.getProcessingCore().getPluginTempFolder(), project.getName());
-		tempBuildFolder.mkdirs();
-		if(tempBuildFolder.exists())
-			return tempBuildFolder;
-		ProcessingLog.logError("Could not create the temporary build (preprocess) folder.", null);
+		File tempBuildFolder = project.getFolder("generated").getFullPath().toFile();
+		//File tempBuildFolder = new File(ProcessingCore.getProcessingCore().getPluginTempFolder(), project.getName());
+		//tempBuildFolder.mkdirs();
+		File preprocBuildFolder = new File(tempBuildFolder, "preproc");
+		preprocBuildFolder.mkdirs();
+		if(preprocBuildFolder.exists())
+			return preprocBuildFolder;
+		ProcessingLog.logError("Could not create " + preprocBuildFolder.getPath() + " folder.", null);
 		return null;
-		//return project.getFolder("bin").getFullPath().toFile();
 	}
 
 	/**
@@ -306,20 +313,22 @@ public class SketchProject implements IProjectNature {
 		// this should include the build folder and the code folder, if it was necessary
 		if(srcFolderPathList != null){
 			for( IPath p : srcFolderPathList){
-				entries.add(JavaCore.newSourceEntry(p.makeAbsolute())); 
+				if (p!=null) entries.add(JavaCore.newSourceEntry(p.makeAbsolute())); 
 			}
 		}
 		
 		if(libraryJarPathList != null){
 			for(IPath p : libraryJarPathList){
 				//System.out.println(p.toString());
-				entries.add(
-					JavaCore.newLibraryEntry(p.makeAbsolute(),
-						null, // no source
-						null, // no source
-						false // not exported
-					)
-				);
+				if (p != null){
+					entries.add(
+						JavaCore.newLibraryEntry(p.makeAbsolute(),
+							null, // no source
+							null, // no source
+							false // not exported
+						)
+					);
+				}
 			}
 		}
 
@@ -329,13 +338,17 @@ public class SketchProject implements IProjectNature {
 		IClasspathEntry[] classpathEntries = new IClasspathEntry[entries.size()];
 		
 		int i = 0;
-		for (IClasspathEntry cpe : entries) classpathEntries[i++] = cpe;
+		for (IClasspathEntry cpe : entries){
+			classpathEntries[i++] = cpe;
+			System.out.println(cpe.toString());
+		}
+		
+		
 
-		// Combine all of these entries and set the raw classpath of the project.
-		// None of these should require further modification because they are dynamic
-		// Also provide an explicit output folder and a null progress monitor
+
 		try {
-			jproject.setRawClasspath( classpathEntries, new Path(this.getJavaBuildFolder().getCanonicalPath()), null);
+			jproject.setOutputLocation( new Path(getJavaBuildFolder().getCanonicalPath()), null);
+			jproject.setRawClasspath( classpathEntries, null);
 		} catch (Exception e) {
 			ProcessingLog.logError("There was a problem setting the compiler class path.", e);
 		}
