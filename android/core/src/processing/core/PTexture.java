@@ -259,6 +259,7 @@ public class PTexture implements PConstants {
     PFramebuffer fbo = new PFramebuffer(parent, glWidth, glHeight);
     // This is the color (destination) buffer of the FBO. 
     fbo.setColorBuffer(this);
+    fbo.disableDepthTest();
     
     // FBO copy:
     a3d.pushFramebuffer();
@@ -920,17 +921,17 @@ public class PTexture implements PConstants {
      * Creates an instance of GLTextureParameters, setting all the parameters to default values.
      */
     public Parameters() {
-      target = PTexture.TEXTURE2D;
-      format = PTexture.ARGB;
-      minFilter = PTexture.LINEAR;
-      magFilter = PTexture.LINEAR;   
+      target = TEXTURE2D;
+      format = ARGB;
+      minFilter = LINEAR;
+      magFilter = LINEAR;   
     }
       
     public Parameters(int format) {
-      target = PTexture.TEXTURE2D;
+      target = TEXTURE2D;
       this.format = format;
-      minFilter = PTexture.LINEAR;
-      magFilter = PTexture.LINEAR;   
+      minFilter = LINEAR;
+      magFilter = LINEAR;   
     }
 
     public Parameters(int format, int filter) {
