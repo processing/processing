@@ -1846,6 +1846,9 @@ public class PGraphicsAndroid3D extends PGraphics {
       sw0 = sw;
     }
 
+    gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
+    gl.glDisableClientState(GL10.GL_COLOR_ARRAY);    
+    
     //gl.glPopMatrix();
 
     report("render_lines out");
@@ -2638,7 +2641,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     gl.glBindTexture(GL10.GL_TEXTURE_2D, textFont.currentTexID);
 
     // Setting the current fill color as the font color.
-    gl.glColor4f(colorFloats[0], colorFloats[1], colorFloats[2], colorFloats[3]);
+    gl.glColor4f(fillR, fillG, fillB, fillA);
 
     if (textMode == MODEL) {
       if (textVertexBuffer == null) {
