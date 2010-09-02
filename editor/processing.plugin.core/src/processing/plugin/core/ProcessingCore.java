@@ -13,6 +13,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
@@ -21,6 +23,9 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Plugin;
 
 import processing.plugin.core.builder.Utilities;
@@ -87,9 +92,32 @@ public final class ProcessingCore extends Plugin {
 		}
 	}
 
+	/**
+	 * Resolves the plug-in resources folder to a File and returns it. This will include the
+	 * Processing libraries and the core libraries folder.
+	 * 
+	 * @return File reference to the core resources
+	 */
+	public File getPluginResourceFolder(){
+		URL fileLocation = ProcessingCore.getProcessingCore().getPluginResource("");
+		try {
+			File folder = new File(FileLocator.toFileURL(fileLocation).getPath());
+			if (folder.exists())
+				return folder;
+		} catch (Exception e) {
+			ProcessingLog.logError(e);
+		}
+		return null;
+	}
+
 	/** Returns a file handle to the plug-in's local cache folder. */
 	public File getBuiltInCacheFolder(){
 		return new File(this.getStateLocation().toString());
+	}
+
+	/** Returns a file handle to the temp folder in the plug-in's local cache*/
+	public File getPluginTempFolder(){
+		return new File(getBuiltInCacheFolder(), "temp");
 	}
 
 	/** Returns the plug-in's resource bundle */
@@ -114,19 +142,19 @@ public final class ProcessingCore extends Plugin {
 	}
 
 	/** Returns true if the resource is a Processing file */	
-	public static boolean isPDEFile(IResource resource){
+	public static boolean isProcessingFile(IResource resource){
 		if (resource.getType() == IResource.FILE)
-			return isPDEFilename(resource.getName());
+			return isProcessingFile(resource.getName());
 		return false;
 	}
 
 	/** Returns true if the file is a Processing file  */
-	public static boolean isPDEFile(IFile resource) {
-		return isPDEFilename(resource.getName());
+	public static boolean isProcessingFile(IFile resource) {
+		return isProcessingFile(resource.getName());
 	}
 
 	/** Returns true if the file has a Processing extension */
-	public static boolean isPDEFilename(String filename){
+	public static boolean isProcessingFile(String filename){
 		return filename.endsWith(".pde");
 	}
 
@@ -142,7 +170,7 @@ public final class ProcessingCore extends Plugin {
 	public static boolean isLibrary(File rootFolder){
 		return isLibrary(rootFolder, false);
 	}
-	
+
 	/**
 	 * Returns true if the folder is a Processing library root folder.
 	 * When complain is false only errors are logged and reported. When 
@@ -150,31 +178,51 @@ public final class ProcessingCore extends Plugin {
 	 * libraries will also be reported.
 	 */
 	public static boolean isLibrary(File rootFolder, boolean complain){
-		if (rootFolder != null){
-			String name = rootFolder.getName();
-			try {
-				File libraryJar = new File(rootFolder.getCanonicalPath() + 
-						File.separatorChar + "library" + File.separatorChar + 
-						name + ".jar");
-				if (libraryJar.exists())
-					if (Utilities.sanitizeName(name).equals(name)){
-						return true;
-					} else {
-						if(complain){
+		if (rootFolder == null) return false;
+		if(!rootFolder.isDirectory()) return false;
+
+		String name = rootFolder.getName();
+		try {
+			File libraryJar = new File(rootFolder.getCanonicalPath() + 
+					File.separatorChar + "library" + File.separatorChar + 
+					name + ".jar");
+			if (libraryJar.exists())
+				if (Utilities.sanitizeName(name).equals(name)){
+					return true;
+				} else {
+					if(complain){
 						String mess =
 							"The library \"" + name + "\" cannot be used.\n" +
 							"Library names must contain only basic letters and numbers.\n" +
 							"(ASCII only and no spaces, and it cannot start with a number)";
 						ProcessingLog.logInfo("Ignoring bad library " + name + "\n" + mess);
-						}
 					}
-			} catch (IOException e) {
-				ProcessingLog.logError("Problem checking librarary " +
-						name + ", could not resolve canonical path.", e);
-			}
+				}
+		} catch (IOException e) {
+			ProcessingLog.logError("Problem checking library " +
+					name + ", could not resolve canonical path.", e);
 		}
+
 		return false;	
 	}
 
+	/**
+	 * Finds the folder containing the Processing core libraries, which are bundled with the
+	 * plugin. This folder doesn't exist in the workspace, so we return it as a File, not IFile. 
+	 * If something goes wrong, logs an error and returns null.
+	 *  
+	 * @return File containing the core libraries folder or null
+	 */
+	public File getCoreLibsFolder() {
+		URL fileLocation = getPluginResource("libraries");
+		try {
+			File folder = new File(FileLocator.toFileURL(fileLocation).getPath());
+			if (folder.exists())
+				return folder;
+		} catch (Exception e) {
+			ProcessingLog.logError(e);
+		}
+		return null;
+	}
 
 }
