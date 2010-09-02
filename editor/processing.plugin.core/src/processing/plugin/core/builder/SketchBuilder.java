@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.jdt.core.IClasspathEntry;
 
 import processing.app.Preferences;
 import processing.app.debug.RunnerException;
@@ -52,22 +51,13 @@ import processing.plugin.core.ProcessingLog;
  */
 public class SketchBuilder extends IncrementalProjectBuilder{	
 
-	/**
-	 * The identifier for the Processing builder
-	 * (value <code>"processing.plugin.core.processingbuilder"</code>).
-	 */
+	/** The identifier for the Processing builder (value <code>"processing.plugin.core.processingbuilder"</code>). */
 	public static final String BUILDER_ID = ProcessingCore.PLUGIN_ID + ".sketchBuilder";
 
-	/** 
-	 * Problem marker for processing preprocessor issues 
-	 * (value <code>"processing.plugin.core.preprocError"</code>).
-	 */
+	/** Problem marker for processing preprocessor issues (value <code>"processing.plugin.core.preprocError"</code>). */
 	public static final String PREPROCMARKER = ProcessingCore.PLUGIN_ID + ".preprocError";
 
-	/**
-	 * Problem marker for processing compile issues
-	 * value <code>"processing.plugin.core.compileError"</code>
-	 */
+	/** Problem marker for processing compile issues value <code>"processing.plugin.core.compileError"</code> */
 	public static final String COMPILEMARKER = ProcessingCore.PLUGIN_ID + ".compileError";
 
 	/** All of these need to be set for the Processing.app classes. */
@@ -87,31 +77,24 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 		Preferences.set("preproc.imports.list", "java.applet.*,java.awt.Dimension,java.awt.Frame,java.awt.event.MouseEvent,java.awt.event.KeyEvent,java.awt.event.FocusEvent,java.awt.Image,java.io.*,java.net.*,java.text.*,java.util.*,java.util.zip.*,java.util.regex.*");
 	}
 
-	///** For testing */
-	//public boolean DEBUG = true;
-
-	// TODO the builder is maintaining too much state. move this all to a model
-	// Right now it is building an ad-hoc model on the fly using the implied
-	// structure of a Sketch project. Minimally a model should manage these state
-	// objects, manage markers, and be controlled by the SketchProject object.
-	// The model would be really similar to what Sketch would look like if it was 
-	// truly separated from the UI. Possible create it in the PDE, and extend it
-	// here for marker management and such.
-
-	//	/** Data folder, located in the sketch folder, may not exist */
-	//	private IFolder dataFolder;
-
+	// TODO move this stuff to a model
+	//
+	// Right now an ad-hoc model is implied by the SketchProject methods and
+	// some of these fields. A proper model should manage these state objects,
+	// manage markers, and be controlled by the SketchProject object.
+	//
+	// A good starting model would look like processing.app.Sketch, separated
+	// from the UI. Possible create it in the PDE, and extend it here for marker 
+	// management and such.
+	//
+	// Further extensions would add flexibility, possibly integrate things
+	// with the JDT more completely.
+	
 	/** Full paths to source folders for the JDT  */
 	private ArrayList<IPath>srcFolderPathList;
 
 	/** Full paths to jars required to compile the sketch */
 	private ArrayList<IPath>libraryJarPathList;
-
-	/** Code folder, located in the sketch folder, may not exist */
-	private IFolder codeFolder;
-
-	/** A temporary build folder, will be created if it doesn't exist */
-	private File buildFolder;
 
 	/** Clean any leftover state from previous builds. */
 	protected void clean(SketchProject sketch, IProgressMonitor monitor) throws CoreException{
@@ -119,17 +102,14 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 		srcFolderPathList = new ArrayList<IPath>();
 		libraryJarPathList = new ArrayList<IPath>();
 		// if this is the first run of the builder the build folder will not be stored yet,
-		// but if there is an old build folder from a trial run it should still be nuked.
+		// but if there is an old build folder from an earlier session it should still be nuked.
 		// get the handle to it from the project's configuration
 		Utilities.deleteFolderContents(sketch.getBuildFolder());
 
-
-
 		// any other cleaning stuff goes here
-		// Eventually, a model should control the markers, and once a model is
-		// written it should be controlled by the SketchProject. Cleaning the model 
-		// should be in a method called beCleaned() in the SketchProject.
-		// This method will then look something like:
+		// Eventually, a model (controlled by SketchProject) should manage the markers,
+		// folders, etc. Cleaning the model should be in a method called beCleaned() 
+		// in the SketchProject. This method will then look something like:
 		// SketchProject sketch = SketchProject.forProject(this.getProject());
 		// sketch.beCleaned();
 	}
@@ -171,7 +151,7 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 	 * This can be a long running process, so we use a monitor.
 	 */	
 	protected IProject[] fullBuild( SketchProject sketchProject, IProgressMonitor monitor) throws CoreException {
-		this.clean(sketchProject, monitor);
+		clean(sketchProject, monitor);
 		IProject sketch = sketchProject.getProject();
 
 		if ( sketch == null || !sketch.isAccessible() ){
@@ -179,9 +159,14 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 			return null;
 		}
 
-		// Get handles to the folders
-		codeFolder = sketchProject.getCodeFolder();
-		buildFolder = sketchProject.getBuildFolder(); // null if it couldn't be created
+		// may not exist.
+		IFolder codeFolder = sketchProject.getCodeFolder();
+		
+		/*
+		 * A (temporary?) build folder, will be created if it doesn't exist.
+		 * Markers cannot be added to this because it is a vanilla File.
+		 */
+		File buildFolder = sketchProject.getBuildFolder(); 
 
 		if (buildFolder == null){
 			ProcessingLog.logError("Build folder could not be accessed.", null);
@@ -200,13 +185,13 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 		//       Add their paths to the library jar list for addition to the class path later on 
 		//       Get the packages of those jars so they can be added to the imports
 		//    Add it to the class path source folders
-		if (codeFolder.exists()){
+		if (codeFolder != null && codeFolder.exists()){
 			String codeFolderClassPath = Utilities.contentsToClassPath(codeFolder.getLocation().toFile());
 			for( String s : codeFolderClassPath.split(File.separator)){
-				libraryJarPathList.add(new Path(s));
+				libraryJarPathList.add(new Path(s).makeAbsolute());
 			}
 			codeFolderPackages = Utilities.packageListFromClassPath(codeFolderClassPath);
-			srcFolderPathList.add(codeFolder.getFullPath()); // not sure about this one
+//			srcFolderPathList.add(codeFolder.getFullPath()); // TODO verify this.
 		}
 
 		// concatenate the individual .pde files into one large file using temporary 
@@ -398,7 +383,7 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 //			System.out.println(entry);
 			IPath libPath = importToLibraryTable.get(entry);
 			if (libPath != null ){
-				libraryJarPathList.add(libPath); // huzzah! we've found it, make sure its fed to the compiler
+				libraryJarPathList.add(libPath.makeAbsolute()); // huzzah! we've found it, make sure its fed to the compiler
 			} else { 
 				// The user is trying to import something we won't be able to find.
 				reportProblem(
