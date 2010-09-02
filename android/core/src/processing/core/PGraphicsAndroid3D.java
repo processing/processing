@@ -976,10 +976,6 @@ public class PGraphicsAndroid3D extends PGraphics {
       }
     } else {
       
-      if (!fboSupported) {
-        throw new RuntimeException("PGraphicsAndroid3D: offscreen rendering requires FBO extension.");
-      } 
-      
       if (offscreenFramebuffer == null) {
         createOffscreenFramebuffer();
       }
