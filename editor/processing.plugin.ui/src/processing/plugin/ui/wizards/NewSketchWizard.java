@@ -6,7 +6,6 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
@@ -42,17 +41,10 @@ public class NewSketchWizard extends Wizard implements INewWizard {
 	private IProject project;
 
 	/** Constructor */
-	public NewSketchWizard(){
-//		IDialogSettings processingSettings = ProcessingEditorPlugin.getDefault().getDialogSettings();
-//		IDialogSettings wizardSettings = processingSettings.getSection("NewSketchWizard");
-//		if (wizardSettings == null)
-//			wizardSettings = processingSettings.addNewSection("NewSketchWizard");
-//		setDialogSettings(processingSettings);
-	}
+	public NewSketchWizard(){}
 	
-	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		// init code
-	}
+	/** There is not init code. */
+	public void init(IWorkbench workbench, IStructuredSelection selection) {}
 	
 	/**
 	 * When the finish button is called, create the project
@@ -102,49 +94,30 @@ public class NewSketchWizard extends Wizard implements INewWizard {
 	 */
 	protected void createNewProject(IProjectDescription description, IProject proj,
 			IProgressMonitor monitor) throws CoreException, OperationCanceledException{
-		monitor.beginTask("Creating a new Sketch", 500);
+		monitor.beginTask("Creating a new Sketch", 400);
 		
 		try{
 			// create the project root
 			proj.create(description, new SubProgressMonitor(monitor, 100));			
 			proj.open(IResource.BACKGROUND_REFRESH, new SubProgressMonitor(monitor, 100));
 
-
 			if (monitor.isCanceled()){throw new OperationCanceledException();}
 
-			// create the folders
 			IContainer container = (IContainer) proj;
-
-			// Configuring the project will set up the folder structure
-			
-			//data
-//			IFolder dataFolder = container.getFolder(new Path("data"));
-//			dataFolder.create(true, true, monitor);
-//			monitor.worked(33);
-//			//code
-//			IFolder codeFolder = container.getFolder(new Path("code"));
-//			codeFolder.create(true, true, monitor);
-//			monitor.worked(33);
-//			//bin
-//			IFolder binFolder = container.getFolder(new Path("bin"));
-//			binFolder.create(true, true, monitor);
-			monitor.worked(34);
-
-			if (monitor.isCanceled()){throw new OperationCanceledException();}
-
-			//create the main file
+			//create the default sketch file
 			addFileToContainer(container, new Path(project.getName() + ".pde"), null, new SubProgressMonitor(monitor, 100));
 		} finally{
 			monitor.done();
 		}
 		
-		// this is a new project
+		// adding the nature will setup the folder structure
 		SketchProject.addSketchNature(proj);
-		
 	}
 
 	/**
-	 * Adds a new file to a project
+	 * Adds a new file to a project.
+	 * If no content stream is provided, a default file will be loaded
+	 * with setup and draw methods.
 	 * 
 	 * @param container where to add the file
 	 * @param path the path to the file
@@ -155,7 +128,13 @@ public class NewSketchWizard extends Wizard implements INewWizard {
 	private void addFileToContainer(IContainer container, Path path, InputStream contentStream, IProgressMonitor monitor) throws CoreException{
 		final IFile file = container.getFile(path);
 		if (contentStream == null){
-			contentStream = new ByteArrayInputStream(" void setup(){} \n void draw(){}  ".getBytes());
+			contentStream = new ByteArrayInputStream(
+					("void setup(){ \n" +
+					"\tsize(200,200); \n" +
+					"} \n \n" +
+					"void draw(){ \n" +
+					"\tellipse(50,50,80,80); \n" +
+					"} ").getBytes());
 		}
 		if(file.exists()){
 			file.setContents(contentStream, true, true, monitor);
