@@ -114,17 +114,20 @@ public class NewSketchWizard extends Wizard implements INewWizard {
 
 			// create the folders
 			IContainer container = (IContainer) proj;
+
+			// Configuring the project will set up the folder structure
+			
 			//data
-			IFolder dataFolder = container.getFolder(new Path("data"));
-			dataFolder.create(true, true, monitor);
-			monitor.worked(33);
-			//code
-			IFolder codeFolder = container.getFolder(new Path("code"));
-			codeFolder.create(true, true, monitor);
-			monitor.worked(33);
-			//bin
-			IFolder binFolder = container.getFolder(new Path("bin"));
-			binFolder.create(true, true, monitor);
+//			IFolder dataFolder = container.getFolder(new Path("data"));
+//			dataFolder.create(true, true, monitor);
+//			monitor.worked(33);
+//			//code
+//			IFolder codeFolder = container.getFolder(new Path("code"));
+//			codeFolder.create(true, true, monitor);
+//			monitor.worked(33);
+//			//bin
+//			IFolder binFolder = container.getFolder(new Path("bin"));
+//			binFolder.create(true, true, monitor);
 			monitor.worked(34);
 
 			if (monitor.isCanceled()){throw new OperationCanceledException();}
