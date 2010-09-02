@@ -1,11 +1,8 @@
 package processing.plugin.core.builder;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.net.URL;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,17 +14,12 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.launching.IVMInstall;
-import org.eclipse.jdt.launching.JavaRuntime;
 
 import processing.app.Preferences;
 import processing.app.debug.RunnerException;
@@ -35,7 +27,6 @@ import processing.app.preproc.PdePreprocessor;
 import processing.app.preproc.PreprocessResult;
 
 import processing.plugin.core.ProcessingCore;
-import processing.plugin.core.ProcessingCorePreferences;
 import processing.plugin.core.ProcessingLog;
 
 /**
@@ -107,47 +98,33 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 	// truly separated from the UI. Possible create it in the PDE, and extend it
 	// here for marker management and such.
 
-//	/** Data folder, located in the sketch folder, may not exist */
-//	private IFolder dataFolder;
+	//	/** Data folder, located in the sketch folder, may not exist */
+	//	private IFolder dataFolder;
+
+	/** Full paths to source folders for the JDT  */
+	private ArrayList<IPath>srcFolderPathList;
+
+	/** Full paths to jars required to compile the sketch */
+	private ArrayList<IPath>libraryJarPathList;
 
 	/** Code folder, located in the sketch folder, may not exist */
 	private IFolder codeFolder;
 
 	/** A temporary build folder, will be created if it doesn't exist */
-	private IFolder buildFolder;
-
-	/** The output applet folder for after the compile */
-	private IFolder appletFolder;
-
-	/** The core libraries folder in the plug-in resources. */
-	private File coreLibs;
-
-	/** The SketchBook libraries folder, may not exist */
-	private File sketchBookLibs;
-
-	/** the library path for the compiler */
-	private String libraryPath;
-
-	/** the class path for the compiler */
-	private String classPath;
-
-	/** a list of library folders */
-	private ArrayList<File> importedLibraries; // list of library folders
-
-	/** a table resolving a package to the folder containing its .jar */
-	private HashMap<String,File> importToLibraryTable;
-
-	/** Supplied as a build argument, usually empty */
-	private String packageName = "";
+	private File buildFolder;
 
 	/** Clean any leftover state from previous builds. */
 	protected void clean(SketchProject sketch, IProgressMonitor monitor) throws CoreException{
 		deleteP5ProblemMarkers(sketch);
-		if (buildFolder != null && buildFolder.exists()){
-			for( IResource r : buildFolder.members()){
-				r.delete(IResource.FORCE, monitor);
-			}
-		}
+		srcFolderPathList = new ArrayList<IPath>();
+		libraryJarPathList = new ArrayList<IPath>();
+		// if this is the first run of the builder the build folder will not be stored yet,
+		// but if there is an old build folder from a trial run it should still be nuked.
+		// get the handle to it from the project's configuration
+		Utilities.deleteFolderContents(sketch.getBuildFolder());
+
+
+
 		// any other cleaning stuff goes here
 		// Eventually, a model should control the markers, and once a model is
 		// written it should be controlled by the SketchProject. Cleaning the model 
@@ -202,48 +179,45 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 			return null;
 		}
 
-		// Setup the folders
-		codeFolder = sketch.getFolder("code");
-		buildFolder = sketch.getFolder("bin"); // TODO relocate to MyPlugin.getPlugin().getStateLocation().getFolder("bin")
-		appletFolder = sketch.getFolder("applet");
+		// Get handles to the folders
+		codeFolder = sketchProject.getCodeFolder();
+		buildFolder = sketchProject.getBuildFolder(); // null if it couldn't be created
+
+		if (buildFolder == null){
+			ProcessingLog.logError("Build folder could not be accessed.", null);
+			return null;
+		}
 
 		monitor.beginTask("Sketch Build", 400); // not sure how much work to do here
 		if(!sketch.isOpen()) { return null; } // has to be open to access it
 		if(checkCancel(monitor)) { return null; }
 
-		// 1 . PREPARE
-
-		if (!buildFolder.exists())
-			buildFolder.create(IResource.NONE, true, null);
-
-		monitor.worked(100); // 100 for every step of the process?
-		if(checkCancel(monitor)){ return null; }
-
-		// 2 . PREPROCESS
 		PdePreprocessor preproc = new PdePreprocessor(sketch.getName(), 4);
-
 		String[] codeFolderPackages = null;
-		classPath = buildFolder.getLocation().toOSString();
 
-		// check the contents of the code folder to see if there are files that need to be added to the imports
+		// If the code folder exists:
+		//    Find any .jar files in it and its subfolders
+		//       Add their paths to the library jar list for addition to the class path later on 
+		//       Get the packages of those jars so they can be added to the imports
+		//    Add it to the class path source folders
 		if (codeFolder.exists()){
-			libraryPath = codeFolder.getLocation().toOSString();
-			// get a list of .jar files in the code folder and its subfolders
 			String codeFolderClassPath = Utilities.contentsToClassPath(codeFolder.getLocation().toFile());
-			// append the jar files to the class path
-			classPath += File.pathSeparator + codeFolderClassPath;
-			// get the list of packages in those jars
+			for( String s : codeFolderClassPath.split(File.separator)){
+				libraryJarPathList.add(new Path(s));
+			}
 			codeFolderPackages = Utilities.packageListFromClassPath(codeFolderClassPath);
-		} else { libraryPath = ""; }
+			srcFolderPathList.add(codeFolder.getFullPath()); // not sure about this one
+		}
 
-		// concat all .pde files to the 'main' pde
-		// store line number for the starting and ending points of each bit
+		// concatenate the individual .pde files into one large file using temporary 
+		// 'session properties' attached to the IResource files, mark the start and end lines that they 
+		// contribute to the bigCode file. This information will be used later for mapping errors backwards
 
 		StringBuffer bigCode = new StringBuffer();
 		int bigCount = 0; // line count
 
 		for( IResource file : sketch.members()){
-			if(file.getFileExtension() != null && file.getFileExtension().equalsIgnoreCase("pde")){ 
+			if("pde".equalsIgnoreCase(file.getFileExtension())){ 
 				file.setSessionProperty(new QualifiedName(BUILDER_ID, "preproc start"), bigCount);
 				String content = Utilities.readFile((IFile) file);
 				bigCode.append(content);
@@ -257,31 +231,22 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 		if(checkCancel(monitor)) { return null; } 
 
 		PreprocessResult result = null;
-		try{ 
-			IFile outputFile = buildFolder.getFile(sketch.getName() + ".java"); 
-			StringWriter stream = new StringWriter();
-			result = preproc.write(stream, bigCode.toString(), codeFolderPackages);
-
-			// Eclipse idiom for generating the java file and marking it as a generated file
-			ByteArrayInputStream inStream = new ByteArrayInputStream(stream.toString().getBytes());
+		try{
+			final File java = new File(buildFolder, sketch.getName() + ".java"); 
+			final PrintWriter stream = new PrintWriter(new FileWriter(java));
 			try{
-				if (outputFile.exists()) { 
-					outputFile.setContents(inStream, true, false, monitor);  
-				} else { 
-					outputFile.create(inStream, true, monitor);
-				}
-				outputFile.setDerived(true, monitor);
+				result = preproc.write(stream, bigCode.toString(), codeFolderPackages);
+				srcFolderPathList.add(new Path(buildFolder.getCanonicalPath()));
 			} finally {
 				stream.close();
-				inStream.close();
 			}
 		} catch(antlr.RecognitionException re){
 
-			IResource errorFile = null; // if this remains null, the error is reported back on the sketch itself with no line
+			IResource errorFile = null; // if this remains null, the error is reported back on the sketch itself with no line number
 			int errorLine = re.getLine() - 1;
 
 			for( IResource file : sketch.members()){
-				if(file.getFileExtension() != null && file.getFileExtension().equalsIgnoreCase("pde")){ 
+				if("pde".equalsIgnoreCase(file.getFileExtension())){ 
 					int low = (Integer) file.getSessionProperty(new QualifiedName(BUILDER_ID, "preproc start"));
 					int high = (Integer) file.getSessionProperty(new QualifiedName(BUILDER_ID, "preproc end"));
 					if( low <= errorLine && high > errorLine){
@@ -298,13 +263,11 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 				errorLine = -1;
 			} 
 
-			//DEBUG
-			//System.out.println("error line - error file - offset");
-			//System.out.println(errorLine + " - " + errorFile + " - " + getPreprocOffset((IFile) folderContents[errorFile]));
-
 			String msg = re.getMessage();		
 
-			//TODO better remapping of errors, matching errors often get put after the document end. see highlightLine() inside editor.
+			//TODO better errors handling, matching errors often get put after the document end. see highlightLine() inside editor.
+			// try to find a way to put all this error handling code in one spot. All of the message parsing and resource blaming,
+			// so it doesn't appear multiple times in the source.
 			if (msg.equals("expecting RCURLY, found 'null'"))
 				msg = "Found one too many { characters without a } to match it.";
 			if (msg.indexOf("expecting RBRACK") != -1)
@@ -331,7 +294,7 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 				//		    	int errorColumn = Integer.parseInt(matches[2]); // unused in the builder
 
 				for( IResource file : sketch.members()){
-					if(file.getFileExtension() != null && file.getFileExtension().equalsIgnoreCase("pde")){ 
+					if("pde".equalsIgnoreCase(file.getFileExtension())){
 						int low = (Integer) file.getSessionProperty(new QualifiedName(BUILDER_ID, "preproc start"));
 						int high = (Integer) file.getSessionProperty(new QualifiedName(BUILDER_ID, "preproc end"));
 						if( low <= errorLine && high > errorLine){
@@ -363,7 +326,7 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 			int errorLine = re.getCodeLine() + 1;
 
 			for( IResource file : sketch.members()){
-				if(file.getFileExtension() != null && file.getFileExtension().equalsIgnoreCase("pde")){ 
+				if("pde".equalsIgnoreCase(file.getFileExtension())){
 					int low = (Integer) file.getSessionProperty(new QualifiedName(BUILDER_ID, "preproc start"));
 					int high = (Integer) file.getSessionProperty(new QualifiedName(BUILDER_ID, "preproc end"));
 					if( low <= errorLine && high > errorLine){
@@ -386,7 +349,7 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 
 			String msg = re.getMessage();		
 
-			//TODO better remapping of errors, matching errors often get put after the document end. see highlightLine() inside editor.
+			//TODO see better error mapping todo above
 			if (msg.equals("expecting RCURLY, found 'null'"))
 				msg = "Found one too many { characters without a } to match it.";
 			if (msg.indexOf("expecting RBRACK") != -1)
@@ -400,137 +363,118 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 
 			reportProblem(msg, errorFile, errorLine, true);
 			return null; // exit the build
-		} catch (CoreException e){
-			ProcessingLog.logError(e); // logging the error is a better  
-			return null;
 		} catch (Exception e){
 			ProcessingLog.logError(e); 
 			return null;
 		}
 
 		monitor.worked(10);
-		if(checkCancel(monitor)) { return null; } 
+		if(checkCancel(monitor)) { return null; }
 
-////////// LIBRARY STUFF MOVED TO SKETCH PROJECT
-		
-		// Get the imports from the code that was preproc'd
-//		importedLibraries = new ArrayList<File>();
+		ArrayList<String> libs = new ArrayList<String>(); // a list of all the libraries that can be found
 
-//		coreLibs = getCoreLibsFolder().getAbsoluteFile();
-//		sketchBookLibs = getSketchBookLibsFolder(sketch).getAbsoluteFile();
+		libs.addAll( Utilities.getLibraryJars(ProcessingCore.getProcessingCore().getCoreLibsFolder()) );
+		libs.addAll( Utilities.getLibraryJars(Utilities.getSketchBookLibsFolder(sketch)) );
 
-		// Clean the library table and rebuild it
-//		importToLibraryTable = new HashMap<String,File>();
+		// setup the library table
+		HashMap<String, IPath> importToLibraryTable = new HashMap<String, IPath>();
 
-		// addLibraries internally checks for null folders
-//		try{
-//			addLibraries(coreLibs);
-//			addLibraries(sketchBookLibs);
-//		} catch (IOException e){
-//			ProcessingLog.logError("Libraries could not be loaded.", e);
-//		}
-//
-//		for (String item : result.extraImports){
-//			// remove things up to the last dot
-//			int dot = item.lastIndexOf('.');
-//			String entry = (dot == -1) ? item : item.substring(0, dot);
-//			File libFolder = importToLibraryTable.get(entry);
-//			if (libFolder != null ){
-//				importedLibraries.add(libFolder);
-//				classPath += Utilities.contentsToClassPath(libFolder);
-//				libraryPath += File.pathSeparator + libFolder.getAbsolutePath();
-//			}
-//		}
-
-		// Finally add the regular Java CLASSPATH
-		String javaClassPath = System.getProperty("java.class.path");
-		// Remove quotes if any ... an annoying ( and frequent ) Windows problem
-		if (javaClassPath.startsWith("\"") && javaClassPath.endsWith("\""))
-			javaClassPath = javaClassPath.substring(1,javaClassPath.length()-1);
-		classPath += File.pathSeparator + javaClassPath;	
-
-		monitor.worked(10);
-		if(checkCancel(monitor)) { return null; } 
-
-		// 3. loop over the code[] and save each .java file
-
-		for( IResource file : sketch.members()){
-			if(file.getFileExtension() != null && file.getFileExtension().equalsIgnoreCase("java")){
-				String filename = file.getName() + ".java";
-				try{
-					String program = Utilities.readFile((IFile) file);
-					String[] pkg = Utilities.match(program, Utilities.PACKAGE_REGEX);
-					// if no package, add one
-					if(pkg == null){
-						pkg = new String[] { packageName };
-						// add the package name to the source
-						program = "package " + packageName + ";" + program;
-					}
-					IFolder packageFolder = buildFolder.getFolder(pkg[0].replace('.', '/'));
-					if (!packageFolder.exists())
-						packageFolder.create(IResource.NONE, true, null);
-
-					IFile modFile = packageFolder.getFile(file.getName() + ".java");
-
-					ByteArrayInputStream inStream = new ByteArrayInputStream(program.getBytes());
-					try{
-						if (modFile.exists()) { 
-							modFile.setContents(inStream, true, false, monitor);  
-						} else { 
-							modFile.create(inStream, true, monitor);
-						}
-						modFile.setDerived(true, monitor);
-					} finally {
-						inStream.close();
-					}
-				} catch (Exception e){
-					ProcessingLog.logError("Problem moving " + filename + " to the build folder.", e);
-				}
-			} else if (file.getFileExtension() != null && file.getFileExtension().equalsIgnoreCase("pde")){
-				// The compiler will need this to have a proper offset
-				// not sure why every file gets the same offset, but ok I'll go with it... [lonnen] aug 20 2011 
-				file.setSessionProperty(new QualifiedName(BUILDER_ID, "preproc start"), result.headerOffset);
+//		System.out.println("Libraries found (path sep: " + File.separator + " ) :");	
+		for (String s : libs ){
+//			System.out.println(s);
+			String[] packages = Utilities.packageListFromClassPath(s);
+			for (String pkg : packages){
+				importToLibraryTable.put(pkg, new Path(s));
+//				System.out.println(pkg);
 			}
 		}
 
+//		System.out.println("There were a few extra imports: " + result.extraImports.size());
+		for (int i=0; i < result.extraImports.size(); i++){
+			String item = result.extraImports.get(i);
+			// remove things up to the last dot
+			int dot = item.lastIndexOf('.');
+			String entry = (dot == -1) ? item : item.substring(0, dot);
+//			System.out.println(entry);
+			IPath libPath = importToLibraryTable.get(entry);
+			if (libPath != null ){
+				libraryJarPathList.add(libPath); // huzzah! we've found it, make sure its fed to the compiler
+			} else { 
+				// The user is trying to import something we won't be able to find.
+				reportProblem(
+						"Library import " + entry +" could not be found. Check the library folder in your sketchbook.",
+						sketch.getFile( sketch.getName() + ".pde"), i+1, true 
+				);
+			}
+		}
+
+		// Adding the ol' Java classpath is handled by Eclipse. We don't worry about it.
+
 		monitor.worked(10);
 		if(checkCancel(monitor)) { return null; } 
 
-		//COMPILE
-//		
-//		// setup the VM
-//		IPath containerPath = new Path(JavaRuntime.JRE_CONTAINER);
-//		IVMInstall vm = JavaRuntime.getDefaultVMInstall();
-//		IPath vmPath = containerPath.append(vm.getVMInstallType().getId()).append(vm.getName());
-//		
-//		// Collect all the paths in one place
-//		ArrayList<IPath> paths = new ArrayList<IPath>();
-//		
-//		// Split up the classPath, convert each member to a path
-//		// and store them individually
-//		System.out.println("classPath entries:");
-//		for( String s : classPath.split(File.pathSeparator)){
-//			if (!s.isEmpty()){
-//				System.out.println(s);
-//				paths.add(new Path(s));
-//			}
-//		}
-//
-//		IClasspathEntry[] classpathEntries = new IClasspathEntry[paths.size()+1]; 
-//		
-//		System.out.println("IClasspathEntry[] items:");		
-//		for (int i = 0; i<paths.size(); i++){
-//			System.out.println(paths.get(i).toString());
-//			classpathEntries[i+1] = JavaCore.newSourceEntry(paths.get(i));
-//		}
-//		
-//		// Add some extra paths, like the build folder
-//		classpathEntries[0]=JavaCore.newContainerEntry(vmPath.makeAbsolute());
-//		
-//		// reset to the new class path, don't add to the old
-//		sketchProject.getJavaProject().getOutputLocation();
-//		sketchProject.getJavaProject().setRawClasspath(classpathEntries, new NullProgressMonitor());
-//		// end this builder and let the Java builder run
+		// I don't think this next part is necessary.
+		// At this point we've written the derived java file and the code folder,
+		// if it exists, is marked to be added to the classpath. There's not much sense
+		// to copying things to the code folder and further messing with the offsets.
+
+		//		// 3. loop over the code[] and save each .java file
+		//
+		//		for( IResource file : sketch.members()){
+		//			if("java".equalsIgnoreCase(file.getFileExtension())){
+		//				String filename = file.getName() + ".java";
+		//				try{
+		//					String program = Utilities.readFile((IFile) file);
+		//					String[] pkg = Utilities.match(program, Utilities.PACKAGE_REGEX);
+		//					// if no package, add one
+		//					if(pkg == null){
+		//						pkg = new String[] { packageName };
+		//						// add the package name to the source
+		//						program = "package " + packageName + ";" + program;
+		//					}
+		//					IFolder packageFolder = buildFolder.getFolder(pkg[0].replace('.', '/'));
+		//					if (!packageFolder.exists())
+		//						packageFolder.create(IResource.NONE, true, null);
+		//
+		//					IFile modFile = packageFolder.getFile(file.getName() + ".java");
+		//
+		//					ByteArrayInputStream inStream = new ByteArrayInputStream(program.getBytes());
+		//					try{
+		//						if (modFile.exists()) { 
+		//							modFile.setContents(inStream, true, false, monitor);  
+		//						} else { 
+		//							modFile.create(inStream, true, monitor);
+		//						}
+		//						modFile.setDerived(true, monitor);
+		//					} finally {
+		//						inStream.close();
+		//					}
+		//				} catch (Exception e){
+		//					ProcessingLog.logError("Problem moving " + filename + " to the build folder.", e);
+		//				}
+		//			} else if("pde".equalsIgnoreCase(file.getFileExtension())){
+		//				// The compiler will need this to have a proper offset
+		//				// not sure why every file gets the same offset, but ok I'll go with it... [lonnen] aug 20 2011 
+		//				file.setSessionProperty(new QualifiedName(BUILDER_ID, "preproc start"), result.headerOffset);
+		//			}
+		//		}
+
+		monitor.worked(10);
+		if(checkCancel(monitor)) { return null; }
+		
+		// Even though the list types are specified, Java still tosses errors when I try 
+		// to directly convert them or cast them. So instead I'm stuck doing this.
+		
+		IPath[] libPaths = new IPath[libraryJarPathList.size()];
+		int i=0;
+		for(IPath path : libraryJarPathList) libPaths[i++] = path;
+
+		IPath[] srcPaths = new IPath[srcFolderPathList.size()];
+		i=0;
+		for(IPath path : srcFolderPathList) srcPaths[i++] = path;
+		
+		sketchProject.updateClasspathEntries( srcPaths, libPaths);
+		
 		return null;
 	}
 
@@ -544,17 +488,15 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 	 * @throws CoreException
 	 */
 	protected static void deleteP5ProblemMarkers(IResource resource) throws CoreException{
-		if(resource != null && resource.exists())
+		if(resource != null && resource.exists()){
 			resource.deleteMarkers(SketchBuilder.PREPROCMARKER, true, IResource.DEPTH_INFINITE);
-		resource.deleteMarkers(SketchBuilder.COMPILEMARKER, true, IResource.DEPTH_INFINITE);
+			resource.deleteMarkers(SketchBuilder.COMPILEMARKER, true, IResource.DEPTH_INFINITE);
+		}
 	}
 
 	protected static void deleteP5ProblemMarkers(SketchProject sketch)throws CoreException{
-		if(sketch != null){
-			IProject proj = sketch.getProject();
-			if (proj.exists())
-				deleteP5ProblemMarkers(proj);
-		}
+		if(sketch != null)
+			deleteP5ProblemMarkers(sketch.getProject());
 	}
 
 	/**
@@ -568,7 +510,7 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 	 * @param line_number what line did the problem occur on
 	 * @param isError is this an error
 	 */
-	private void reportProblem( String msg, IResource file, int lineNumber, boolean isError){
+	private void reportProblem(String msg, IResource file, int lineNumber, boolean isError){
 		try{
 			IMarker marker = file.createMarker(SketchBuilder.PREPROCMARKER);
 			marker.setAttribute(IMarker.MESSAGE, msg);
@@ -599,50 +541,4 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 		if (isInterrupted()){ return true; }
 		return false;
 	}
-
-	/**
-	 * Finds any Processing Libraries in the folder and loads them into the HashMap
-	 * importToLibraryTable so they can be imported later. Based on the Base.addLibraries,
-	 * but adapted to avoid GUI elements
-	 * 
-	 * @param folder the folder containing libraries
-	 * @return true if libraries were imported, false otherwise
-	 */
-//	public boolean addLibraries(File folder) throws IOException{
-//		if (folder == null)	return false;
-//		if (!folder.isDirectory()) return false;
-//
-//		File list[] = folder.listFiles(new FilenameFilter() {
-//			public boolean accept(File dir, String name) {
-//				// skip .DS_Store files, .svn folders, etc
-//				if (name.charAt(0) == '.') return false;
-//				if (name.equals("CVS")) return false;
-//				return (new File(dir, name).isDirectory());
-//			}
-//		});
-//
-//		// if a bad folder or something like that, this might come back null
-//		if (list == null) return false;
-//
-//		boolean ifound = false;
-//
-//		for (File potentialFile : list){
-//			if(ProcessingCore.isLibrary(potentialFile, true)){
-//				File libraryFolder = new File(potentialFile, "library");
-//				// get the path of all .jar files in this code folder
-//				String libraryClassPath = Utilities.contentsToClassPath(libraryFolder);
-//				// associate each import with a library folder
-//				String packages[] = Utilities.packageListFromClassPath(libraryClassPath);
-//				for (String pkg:packages){
-//					importToLibraryTable.put(pkg, libraryFolder);
-//				}
-//				ifound = true;
-//			} else {
-//				if (addLibraries(potentialFile))  // recurse!
-//					ifound = true;
-//			}
-//		}
-//		
-//		return ifound;
-//	}
 }

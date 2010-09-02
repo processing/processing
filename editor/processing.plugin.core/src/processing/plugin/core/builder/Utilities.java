@@ -2,6 +2,7 @@ package processing.plugin.core.builder;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -16,7 +17,12 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
+import processing.plugin.core.ProcessingCore;
+import processing.plugin.core.ProcessingCorePreferences;
 import processing.plugin.core.ProcessingLog;
 
 /**
@@ -174,7 +180,7 @@ public class Utilities {
 	/**
 	 * Get a list of packages contained in a .zip file
 	 */
-	static private void packageListFromZip(String filename, Hashtable table) {
+	static public void packageListFromZip(String filename, Hashtable table) {
 		try {
 			ZipFile file = new ZipFile(filename);
 			Enumeration entries = file.entries();
@@ -206,7 +212,7 @@ public class Utilities {
 	 * class is found in a folder, add its containing set of folders to the package 
 	 * list. If another folder is found, walk down into that folder and continue.
 	 */
-	static private void packageListFromFolder(File dir, String sofar, Hashtable table) {
+	static public void packageListFromFolder(File dir, String sofar, Hashtable table) {
 
 		boolean foundClass = false;
 		String files[] = dir.list();
@@ -227,169 +233,269 @@ public class Utilities {
 			}
 		}
 	}
-
-	  /**
-	   * Produce a sanitized name that fits our standards for likely to work.
-	   * <p/>
-	   * Java classes have a wider range of names that are technically allowed
-	   * (supposedly any Unicode name) than what we support. The reason for
-	   * going more narrow is to avoid situations with text encodings and
-	   * converting during the process of moving files between operating
-	   * systems, i.e. uploading from a Windows machine to a Linux server,
-	   * or reading a FAT32 partition in OS X and using a thumb drive.
-	   * <p/>
-	   * This helper function replaces everything but A-Z, a-z, and 0-9 with
-	   * underscores. Also disallows starting the sketch name with a digit.
-	   */
-	  static public String sanitizeName(String origName) {
-	    char c[] = origName.toCharArray();
-	    StringBuffer buffer = new StringBuffer();
-
-	    // can't lead with a digit, so start with an underscore
-	    if ((c[0] >= '0') && (c[0] <= '9')) {
-	      buffer.append('_');
-	    }
-	    for (int i = 0; i < c.length; i++) {
-	      if (((c[i] >= '0') && (c[i] <= '9')) ||
-	          ((c[i] >= 'a') && (c[i] <= 'z')) ||
-	          ((c[i] >= 'A') && (c[i] <= 'Z'))) {
-	        buffer.append(c[i]);
-
-	      } else {
-	        buffer.append('_');
-	      }
-	    }
-	    // let's not be ridiculous about the length of filenames.
-	    // in fact, Mac OS 9 can handle 255 chars, though it can't really
-	    // deal with filenames longer than 31 chars in the Finder.
-	    // but limiting to that for sketches would mean setting the
-	    // upper-bound on the character limit here to 25 characters
-	    // (to handle the base name + ".class")
-	    if (buffer.length() > 63) {
-	      buffer.setLength(63);
-	    }
-	    return buffer.toString();
-	  }
 	
-	  /**
-	   * Match a string with a regular expression, and returns the match as an
-	   * array. The first index is the matching expression, and array elements
-	   * [1] and higher represent each of the groups (sequences found in parens).
-	   *
-	   * This uses multiline matching (Pattern.MULTILINE) and dotall mode
-	   * (Pattern.DOTALL) by default, so that ^ and $ match the beginning and
-	   * end of any lines found in the source, and the . operator will also
-	   * pick up newline characters.
-	   */
-	  static public String[] match(String what, String regexp) {
-	    Pattern p = matchPattern(regexp);
-	    Matcher m = p.matcher(what);
-	    if (m.find()) {
-	      int count = m.groupCount() + 1;
-	      String[] groups = new String[count];
-	      for (int i = 0; i < count; i++) {
-	        groups[i] = m.group(i);
-	      }
-	      return groups;
-	    }
-	    return null;
-	  }
-	  
-	  static protected HashMap<String, Pattern> matchPatterns;
-	  
-	  static Pattern matchPattern(String regexp) {
-		    Pattern p = null;
-		    if (matchPatterns == null) {
-		      matchPatterns = new HashMap<String, Pattern>();
-		    } else {
-		      p = matchPatterns.get(regexp);
-		    }
-		    if (p == null) {
-		      if (matchPatterns.size() == 10) {
-		        // Just clear out the match patterns here if more than 10 are being
-		        // used. It's not terribly efficient, but changes that you have >10
-		        // different match patterns are very slim, unless you're doing
-		        // something really tricky (like custom match() methods), in which
-		        // case match() won't be efficient anyway. (And you should just be
-		        // using your own Java code.) The alternative is using a queue here,
-		        // but that's a silly amount of work for negligible benefit.
-		        matchPatterns.clear();
-		      }
-		      p = Pattern.compile(regexp, Pattern.MULTILINE | Pattern.DOTALL);
-		      matchPatterns.put(regexp, p);
-		    }
-		    return p;
-		  }
+	/**
+	 * Find the folder containing the users libraries, which should be in the sketchbook.
+	 * Looks in the user's preferences first, then look relative to the sketch location.
+	 * 
+	 * @return File containing the Sketch book library folder, or null if it can't be located
+	 */
+	public static File getSketchBookLibsFolder(IProject proj) {
+		IPath sketchbook = ProcessingCorePreferences.current().getSketchbookPath();
+		if (sketchbook == null)
+			sketchbook = findSketchBookLibsFolder(proj);
+		if (sketchbook == null)
+			return null;
+		return new File(sketchbook.toOSString());
+	}
 
-	  /**
-	   * Split a String on a specific delimiter. Unlike Java's String.split()
-	   * method, this does not parse the delimiter as a regexp because it's more
-	   * confusing than necessary, and String.split() is always available for
-	   * those who want regexp.
-	   */
-	  static public String[] split(String what, String delim) {
-	    ArrayList<String> items = new ArrayList<String>();
-	    int index;
-	    int offset = 0;
-	    while ((index = what.indexOf(delim, offset)) != -1) {
-	      items.add(what.substring(offset, index));
-	      offset = index + delim.length();
-	    }
-	    items.add(what.substring(offset));
-	    String[] outgoing = new String[items.size()];
-	    items.toArray(outgoing);
-	    return outgoing;
-	  }
-	  
-	  /**
-	   * Split a string into pieces along a specific character.
-	   * Most commonly used to break up a String along a space or a tab
-	   * character.
-	   * <P>
-	   * This operates differently than the others, where the
-	   * single delimeter is the only breaking point, and consecutive
-	   * delimeters will produce an empty string (""). This way,
-	   * one can split on tab characters, but maintain the column
-	   * alignments (of say an excel file) where there are empty columns.
-	   */
-	  static public String[] split(String what, char delim) {
-	    // do this so that the exception occurs inside the user's
-	    // program, rather than appearing to be a bug inside split()
-	    if (what == null) return null;
-	    //return split(what, String.valueOf(delim));  // huh
+	/**
+	 * Tries to locate the sketchbook library folder relative to the project path
+	 * based on the default sketch / sketchbook setup. If such a folder exists, loop
+	 * through its contents until a valid library is found and then return the path
+	 * to the sketchbook. If no valid libraries are found (empty folder, improper 
+	 * sketchbook setup), or if no valid folder is found, return null.
+	 * 
+	 * @return IPath containing the location of the new library folder, or null
+	 */
+	public static IPath findSketchBookLibsFolder(IProject proj) {
+		try{
+			IPath guess = proj.getLocation().removeLastSegments(1).append("libraries");
+			File folder = new File(guess.toOSString());
+			if(folder.isDirectory())
+				for( File file : folder.listFiles()){
+					if(file.isDirectory())
+						if (ProcessingCore.isLibrary(file))
+							return guess;
+				}
+		} catch (Exception e){
+			ProcessingLog.logError(e);
+		}
+		return null;
+	}
 
-	    char chars[] = what.toCharArray();
-	    int splitCount = 0; //1;
-	    for (int i = 0; i < chars.length; i++) {
-	      if (chars[i] == delim) splitCount++;
-	    }
-	    // make sure that there is something in the input string
-	    //if (chars.length > 0) {
-	      // if the last char is a delimeter, get rid of it..
-	      //if (chars[chars.length-1] == delim) splitCount--;
-	      // on second thought, i don't agree with this, will disable
-	    //}
-	    if (splitCount == 0) {
-	      String splits[] = new String[1];
-	      splits[0] = new String(what);
-	      return splits;
-	    }
-	    //int pieceCount = splitCount + 1;
-	    String splits[] = new String[splitCount + 1];
-	    int splitIndex = 0;
-	    int startIndex = 0;
-	    for (int i = 0; i < chars.length; i++) {
-	      if (chars[i] == delim) {
-	        splits[splitIndex++] =
-	          new String(chars, startIndex, i-startIndex);
-	        startIndex = i + 1;
-	      }
-	    }
-	    //if (startIndex != chars.length) {
-	      splits[splitIndex] =
-	        new String(chars, startIndex, chars.length-startIndex);
-	    //}
-	    return splits;
-	  }
+	/** 
+	 * If the folder is the root of a Processing library, return a String containing
+	 * the canonical path to the library's Jar. If it is not, return null.
+	 */
+	public static String getLibraryJarPath(File folder){
+		if( ProcessingCore.isLibrary(folder) ){
+			try {
+				return folder.getCanonicalPath().concat( File.separatorChar + "library" + File.separatorChar + folder.getName() + ".jar"  );
+			} catch (IOException e) {
+				ProcessingLog.logError("Could not get the library jar for library " + folder.getName(), e);
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Looks in the provided folder for valid libraries and returns a list of paths to them.
+	 * Returns an empty list if there are no valid libraries.
+	 * 
+	 * @param folder
+	 * @return
+	 */
+	public static ArrayList<String> getLibraryJars(File folder){
+		ArrayList<String> libPaths = new ArrayList<String>();
+		if(folder == null) return libPaths;
+		if(!folder.exists()) return libPaths;
+		
+		for (File f : folder.listFiles()){
+			if ( ProcessingCore.isLibrary(f) ){
+				// if it is a library, add the jar
+				String path = getLibraryJarPath(f);
+				if (path!= null)
+					libPaths.add(path);
+			} else if (f.isDirectory()){
+				// if it is not a library, but is a directory, recurse
+				// and add all libraries in it to our list
+				libPaths.addAll(getLibraryJars(f));
+			}
+			// we don't care about anything else.
+		}
+		return libPaths;
+	}
+
+	/**
+	 * Produce a sanitized name that fits our standards for likely to work.
+	 * <p/>
+	 * Java classes have a wider range of names that are technically allowed
+	 * (supposedly any Unicode name) than what we support. The reason for
+	 * going more narrow is to avoid situations with text encodings and
+	 * converting during the process of moving files between operating
+	 * systems, i.e. uploading from a Windows machine to a Linux server,
+	 * or reading a FAT32 partition in OS X and using a thumb drive.
+	 * <p/>
+	 * This helper function replaces everything but A-Z, a-z, and 0-9 with
+	 * underscores. Also disallows starting the sketch name with a digit.
+	 */
+	static public String sanitizeName(String origName) {
+		char c[] = origName.toCharArray();
+		StringBuffer buffer = new StringBuffer();
+
+		// can't lead with a digit, so start with an underscore
+		if ((c[0] >= '0') && (c[0] <= '9')) {
+			buffer.append('_');
+		}
+		for (int i = 0; i < c.length; i++) {
+			if (((c[i] >= '0') && (c[i] <= '9')) ||
+					((c[i] >= 'a') && (c[i] <= 'z')) ||
+					((c[i] >= 'A') && (c[i] <= 'Z'))) {
+				buffer.append(c[i]);
+
+			} else {
+				buffer.append('_');
+			}
+		}
+		// let's not be ridiculous about the length of filenames.
+		// in fact, Mac OS 9 can handle 255 chars, though it can't really
+		// deal with filenames longer than 31 chars in the Finder.
+		// but limiting to that for sketches would mean setting the
+		// upper-bound on the character limit here to 25 characters
+		// (to handle the base name + ".class")
+		if (buffer.length() > 63) {
+			buffer.setLength(63);
+		}
+		return buffer.toString();
+	}
+
+	/**
+	 * Match a string with a regular expression, and returns the match as an
+	 * array. The first index is the matching expression, and array elements
+	 * [1] and higher represent each of the groups (sequences found in parens).
+	 *
+	 * This uses multiline matching (Pattern.MULTILINE) and dotall mode
+	 * (Pattern.DOTALL) by default, so that ^ and $ match the beginning and
+	 * end of any lines found in the source, and the . operator will also
+	 * pick up newline characters.
+	 */
+	static public String[] match(String what, String regexp) {
+		Pattern p = matchPattern(regexp);
+		Matcher m = p.matcher(what);
+		if (m.find()) {
+			int count = m.groupCount() + 1;
+			String[] groups = new String[count];
+			for (int i = 0; i < count; i++) {
+				groups[i] = m.group(i);
+			}
+			return groups;
+		}
+		return null;
+	}
+
+	static protected HashMap<String, Pattern> matchPatterns;
+
+	static public Pattern matchPattern(String regexp) {
+		Pattern p = null;
+		if (matchPatterns == null) {
+			matchPatterns = new HashMap<String, Pattern>();
+		} else {
+			p = matchPatterns.get(regexp);
+		}
+		if (p == null) {
+			if (matchPatterns.size() == 10) {
+				// Just clear out the match patterns here if more than 10 are being
+				// used. It's not terribly efficient, but changes that you have >10
+				// different match patterns are very slim, unless you're doing
+				// something really tricky (like custom match() methods), in which
+				// case match() won't be efficient anyway. (And you should just be
+				// using your own Java code.) The alternative is using a queue here,
+				// but that's a silly amount of work for negligible benefit.
+				matchPatterns.clear();
+			}
+			p = Pattern.compile(regexp, Pattern.MULTILINE | Pattern.DOTALL);
+			matchPatterns.put(regexp, p);
+		}
+		return p;
+	}
+
+	/**
+	 * Split a String on a specific delimiter. Unlike Java's String.split()
+	 * method, this does not parse the delimiter as a regexp because it's more
+	 * confusing than necessary, and String.split() is always available for
+	 * those who want regexp.
+	 */
+	static public String[] split(String what, String delim) {
+		ArrayList<String> items = new ArrayList<String>();
+		int index;
+		int offset = 0;
+		while ((index = what.indexOf(delim, offset)) != -1) {
+			items.add(what.substring(offset, index));
+			offset = index + delim.length();
+		}
+		items.add(what.substring(offset));
+		String[] outgoing = new String[items.size()];
+		items.toArray(outgoing);
+		return outgoing;
+	}
+
+	/**
+	 * Split a string into pieces along a specific character.
+	 * Most commonly used to break up a String along a space or a tab
+	 * character.
+	 * <P>
+	 * This operates differently than the others, where the
+	 * single delimeter is the only breaking point, and consecutive
+	 * delimeters will produce an empty string (""). This way,
+	 * one can split on tab characters, but maintain the column
+	 * alignments (of say an excel file) where there are empty columns.
+	 */
+	static public String[] split(String what, char delim) {
+		// do this so that the exception occurs inside the user's
+		// program, rather than appearing to be a bug inside split()
+		if (what == null) return null;
+		//return split(what, String.valueOf(delim));  // huh
+
+		char chars[] = what.toCharArray();
+		int splitCount = 0; //1;
+		for (int i = 0; i < chars.length; i++) {
+			if (chars[i] == delim) splitCount++;
+		}
+		// make sure that there is something in the input string
+		//if (chars.length > 0) {
+		// if the last char is a delimeter, get rid of it..
+		//if (chars[chars.length-1] == delim) splitCount--;
+		// on second thought, i don't agree with this, will disable
+		//}
+		if (splitCount == 0) {
+			String splits[] = new String[1];
+			splits[0] = new String(what);
+			return splits;
+		}
+		//int pieceCount = splitCount + 1;
+		String splits[] = new String[splitCount + 1];
+		int splitIndex = 0;
+		int startIndex = 0;
+		for (int i = 0; i < chars.length; i++) {
+			if (chars[i] == delim) {
+				splits[splitIndex++] =
+					new String(chars, startIndex, i-startIndex);
+				startIndex = i + 1;
+			}
+		}
+		//if (startIndex != chars.length) {
+		splits[splitIndex] =
+			new String(chars, startIndex, chars.length-startIndex);
+		//}
+		return splits;
+	}
+
+	public static void deleteFolderContents(File folder) {
+		if (folder == null) return;
+		if (!folder.isDirectory()) return;
+		for (File f : folder.listFiles()){
+			if(!f.delete()){
+				if(f.isDirectory()) {
+					deleteFolderContents(f);
+				} else {
+					// that's odd. could not be deleted and isn't a directory. it might be locked or have permissions issues
+					ProcessingLog.logError(	"Could not delete " + f.getName() 
+							+ ". If it causes problems, you may have to manually delete it. You can find it here: " 
+							+ f.getAbsolutePath(), null);
+				}
+			}
+		}		
+	}
 
 }
