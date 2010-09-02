@@ -20,16 +20,15 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import processing.app.Sketch;
+import processing.plugin.core.ProcessingCorePreferences;
 
 public class NewSketchWizardPage extends WizardPage {
 
 	/** field containing the name of the sketch to be created */
 	private Text sketchNameField; 
 	/** field containing path of the sketch book folder that will contain the sketch */
-	private Text sketchbookPathField; // TODO get the default from the plugin preferences
-	/** the actual path of the sketch book folder */
-	private IPath initialSketchbookPath;
-	
+	private Text sketchbookPathField;
+
 	public NewSketchWizardPage() {
 		super("selectFiles");
 		setTitle("New Sketch Wizard");
@@ -101,15 +100,10 @@ public class NewSketchWizardPage extends WizardPage {
 
 	/** initialize the contents of the sketch book path */
 	private void initContents() {
-		if (initialSketchbookPath == null){
-			setPageComplete(false);
-			return;
-		}
-		// see if the sketchbook path has been set in the prefs
-//		IPreferenceStore prefs = ProcessingEditorPlugin.getDefault().getPreferenceStore();
-//		
-//		IPath rootLoc = ResourcesPlugin.getWorkspace().getRoot().getLocation();
-		
+		IPath sketchbook = ProcessingCorePreferences.current().getSketchbookPath();
+		if(sketchbook != null)
+			sketchbookPathField.setText(sketchbook.toString());
+		updatePageComplete();
 	}
 
 	/**
