@@ -2,7 +2,6 @@ package processing.plugin.core.builder;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -19,8 +18,6 @@ import java.util.zip.ZipFile;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
-
 import processing.plugin.core.ProcessingCore;
 import processing.plugin.core.ProcessingCorePreferences;
 import processing.plugin.core.ProcessingLog;
@@ -102,7 +99,9 @@ public class Utilities {
 	 * This function doesn't bother checking to see if there are any .class
 	 * files in the folder or within a subfolder.
 	 */
-	static public String contentsToClassPath(File folder) {
+	static public String contentsToClassPath(File folder) { 
+		//TODO Review this method and make sure that it is returning only paths directly to jars and zip files
+		// It was returning empty paths which was breaking things. Needs to be reviewed.
 		if (folder == null) return "";
 
 		StringBuffer abuffer = new StringBuffer();
@@ -497,5 +496,5 @@ public class Utilities {
 			}
 		}		
 	}
-
+	
 }
