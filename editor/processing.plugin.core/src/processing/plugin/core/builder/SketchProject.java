@@ -56,48 +56,26 @@ public class SketchProject implements IProjectNature {
 	}
 
 	/** 
-	 * Add the Sketch Project nature to the front of the nature list if the
-	 * project doesn't already have it as a nature, or move it to the front
-	 * of the nature list if it does.
+	 * Add the Sketch Project and Java Project natures to the nature list of the project.
+	 * <p>
+	 * The order they are added determines the order they are configured, so the Sketch
+	 * Project nature is added second to ensure the builders are configured in the correct
+	 * order.
 	 */
 	public static void addSketchNature(IProject project) throws CoreException{
 		if (!project.isOpen())
 			return;
 
-		if (SketchProject.isSketchProject(project)){
-			IProjectDescription description = project.getDescription();
-			List<String> newIds = new ArrayList<String>();
-			newIds.addAll(Arrays.asList(description.getNatureIds()));
-			newIds.remove(NATURE_ID);
-			newIds.add(0,NATURE_ID);
-			description.setNatureIds(newIds.toArray(new String[newIds.size()]));
-			return;
-		}
+		if (SketchProject.isSketchProject(project)) return;
 
 		IProjectDescription description = project.getDescription();
 
 		List<String> newIds = new ArrayList<String>();
-		newIds.add(NATURE_ID); // front of the line
-		newIds.add(JavaCore.NATURE_ID); // add the nature ID afterwards
+		newIds.add(JavaCore.NATURE_ID); 
+		newIds.add(SketchProject.NATURE_ID);
 		newIds.addAll(Arrays.asList(description.getNatureIds()));
 		description.setNatureIds(newIds.toArray(new String[newIds.size()]));
 
-		// Now make sure the build order is right. 
-		// Adding the Java nature just screwed it up and configure() is done running
-		List<ICommand> newCmds = new ArrayList<ICommand>();
-		newCmds.addAll(Arrays.asList(description.getBuildSpec()));
-		int ploc = -1;
-		for (int i = 0; i < newCmds.size(); i++){
-			if (newCmds.get(i).getBuilderName().equals(SketchBuilder.BUILDER_ID))
-				ploc = i;
-		}
-		if (ploc > 0) { // set processing builder to be first up
-			ICommand command = newCmds.remove(ploc);
-			newCmds.add(0, command);
-			description.setBuildSpec(
-				(ICommand[]) newCmds.toArray(new ICommand[newCmds.size()])
-			);
-		}
 		project.setDescription(description, null);
 	}
 
@@ -149,35 +127,32 @@ public class SketchProject implements IProjectNature {
 		getDataFolder();
 		getBuildFolder();
 		getJavaBuildFolder();
-		
-		
+
 		// Check the description to see if it already has the builder
 		IProjectDescription description = project.getDescription();
 		List<ICommand> newCmds = new ArrayList<ICommand>();
 		newCmds.addAll(Arrays.asList(description.getBuildSpec()));
 
-		// Remove all instances of the builder that may be in the build order
-		int ploc = 0; // builder ID location
-		while(ploc > -1){
-			ploc = -1; // -1 is not found.
-			for (int i = 0; i < newCmds.size(); i++){
-				if (newCmds.get(i).getBuilderName().equals(SketchBuilder.BUILDER_ID))
-					ploc = i;
-			}
-			if (ploc > -1)	newCmds.remove(ploc);
+		ICommand command = description.newCommand();
+		command.setBuilderName(SketchBuilder.BUILDER_ID);
+		
+		int ploc = newCmds.lastIndexOf(SketchBuilder.BUILDER_ID);
+
+		// remove it if it does
+		if (ploc != -1) newCmds.remove(ploc);
+		
+		newCmds.add(0, command);
+				
+		for(ICommand c : newCmds){
+			System.out.println( c.toString() );
 		}
 		
 		//  Now that we're sure it's gone, add a single instance to the front of the list
-		ICommand command = description.newCommand();
-		command.setBuilderName(SketchBuilder.BUILDER_ID);
-		newCmds.add(0, command);
 		description.setBuildSpec(
-				(ICommand[]) newCmds.toArray(new ICommand[newCmds.size()]));
+			(ICommand[]) newCmds.toArray(new ICommand[newCmds.size()]));
 		project.setDescription(description,null);
-
-		// refresh the local space, folders may have been created
-		updateClasspathEntries(null, null); // we don't have anything for the classpath yet, but we can set some basics.
-//		project.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+		
+		updateClasspathEntries(null, null);
 	}
 
 	/**
@@ -384,6 +359,18 @@ public class SketchProject implements IProjectNature {
 			ProcessingLog.logError("There was a problem setting the compiler class path.", e);
 		}
 		
+		ignoreWarnings();
+	}
+	
+	/**
+	 * Sets the Java options to ignore all of the warnings because the Processing build chain
+	 * doesn't acknowledge or deal with compiler warnings.
+	 * <p>
+	 * Unlike the batch compiler, the JavaCore has no direct way of passing something simple,
+	 * like -nowarn, so each preference that could set a warning is explicitly set to ignore.
+	 * If there is a way to simplify this, please file a bug and suggest a fix!
+	 */
+	public void ignoreWarnings(){
 		Hashtable options = JavaCore.getOptions();
 		options.put(JavaCore.COMPILER_PB_ANNOTATION_SUPER_INTERFACE, JavaCore.IGNORE);
 		options.put(JavaCore.COMPILER_PB_AUTOBOXING, JavaCore.IGNORE);
@@ -445,6 +432,6 @@ public class SketchProject implements IProjectNature {
 		options.put(JavaCore.COMPILER_PB_VARARGS_ARGUMENT_NEED_CAST, JavaCore.IGNORE);
 		// its finally over! yeah!
 		
-		JavaCore.setOptions(options);		
+		JavaCore.setOptions(options);	
 	}
 }
