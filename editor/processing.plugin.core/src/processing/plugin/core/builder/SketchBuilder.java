@@ -1,8 +1,8 @@
 package processing.plugin.core.builder;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -104,7 +104,9 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 		// if this is the first run of the builder the build folder will not be stored yet,
 		// but if there is an old build folder from an earlier session it should still be nuked.
 		// get the handle to it from the project's configuration
-		Utilities.deleteFolderContents(sketch.getBuildFolder());
+		IFolder build = sketch.getBuildFolder();
+		if (build != null)
+			for( IResource r : build.members()) r.delete(true, monitor);
 
 		// any other cleaning stuff goes here
 		// Eventually, a model (controlled by SketchProject) should manage the markers,
@@ -153,7 +155,7 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 	protected IProject[] fullBuild( SketchProject sketchProject, IProgressMonitor monitor) throws CoreException {
 		clean(sketchProject, monitor);
 		IProject sketch = sketchProject.getProject();
-
+		
 		if ( sketch == null || !sketch.isAccessible() ){
 			ProcessingLog.logError("Sketch is inaccessible!", null);
 			return null;
@@ -166,7 +168,7 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 		 * A (temporary?) build folder, will be created if it doesn't exist.
 		 * Markers cannot be added to this because it is a vanilla File.
 		 */
-		File buildFolder = sketchProject.getBuildFolder(); 
+		IFolder buildFolder = sketchProject.getBuildFolder(); 
 
 		if (buildFolder == null){
 			ProcessingLog.logError("Build folder could not be accessed.", null);
@@ -217,14 +219,22 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 
 		PreprocessResult result = null;
 		try{
-			final File java = new File(buildFolder, sketch.getName() + ".java"); 
-			final PrintWriter stream = new PrintWriter(new FileWriter(java));
+			IFile output = buildFolder.getFile(sketch.getName()+".java");
+			StringWriter stream = new StringWriter();
+			
+			result = preproc.write(stream, bigCode.toString(), codeFolderPackages);
+			ByteArrayInputStream inStream = new ByteArrayInputStream(stream.toString().getBytes());
 			try{
-				result = preproc.write(stream, bigCode.toString(), codeFolderPackages);
-				srcFolderPathList.add(new Path(buildFolder.getCanonicalPath()));
+				if (!output.exists()){
+					output.create(inStream, true, monitor);
+				} else {
+					output.setContents(inStream, true, false, monitor);
+				}
 			} finally {
 				stream.close();
+				inStream.close();
 			}
+			srcFolderPathList.add(buildFolder.getFullPath());
 		} catch(antlr.RecognitionException re){
 
 			IResource errorFile = null; // if this remains null, the error is reported back on the sketch itself with no line number

@@ -1,8 +1,6 @@
 package processing.plugin.core.builder;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -16,18 +14,13 @@ import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.launching.IVMInstall;
-import org.eclipse.jdt.launching.JavaRuntime;
 
 import processing.plugin.core.ProcessingCore;
 import processing.plugin.core.ProcessingLog;
@@ -87,6 +80,22 @@ public class SketchProject implements IProjectNature {
 		newIds.addAll(Arrays.asList(description.getNatureIds()));
 		description.setNatureIds(newIds.toArray(new String[newIds.size()]));
 
+		// Now make sure the build order is right. 
+		// Adding the Java nature just screwed it up and configure() is done running
+		List<ICommand> newCmds = new ArrayList<ICommand>();
+		newCmds.addAll(Arrays.asList(description.getBuildSpec()));
+		int ploc = -1;
+		for (int i = 0; i < newCmds.size(); i++){
+			if (newCmds.get(i).getBuilderName().equals(SketchBuilder.BUILDER_ID))
+				ploc = i;
+		}
+		if (ploc > 0) { // set processing builder to be first up
+			ICommand command = newCmds.remove(ploc);
+			newCmds.add(0, command);
+			description.setBuildSpec(
+				(ICommand[]) newCmds.toArray(new ICommand[newCmds.size()])
+			);
+		}
 		project.setDescription(description, null);
 	}
 
@@ -136,24 +145,27 @@ public class SketchProject implements IProjectNature {
 
 		getCodeFolder();
 		getDataFolder();
+		getBuildFolder();
+		getJavaBuildFolder();
+		
 		
 		// Check the description to see if it already has the builder
 		IProjectDescription description = project.getDescription();
 		List<ICommand> newCmds = new ArrayList<ICommand>();
 		newCmds.addAll(Arrays.asList(description.getBuildSpec()));
 
-		int ploc = -1; // builder ID location
-		for (int i = 0; i < newCmds.size(); i++){
-			if (newCmds.get(i).getBuilderName().equals(SketchBuilder.BUILDER_ID))
-				ploc = i;
-		}		
-
-		if (ploc == 0) // its there and where we want it
-			return;
-
-		if (ploc > 0)
-			newCmds.remove(ploc); // its not where we want it, remove it and add to the beginning
-
+		// Remove all instances of the builder that may be in the build order
+		int ploc = 0; // builder ID location
+		while(ploc > -1){
+			ploc = -1; // -1 is not found.
+			for (int i = 0; i < newCmds.size(); i++){
+				if (newCmds.get(i).getBuilderName().equals(SketchBuilder.BUILDER_ID))
+					ploc = i;
+			}
+			if (ploc > -1)	newCmds.remove(ploc);
+		}
+		
+		//  Now that we're sure it's gone, add a single instance to the front of the list
 		ICommand command = description.newCommand();
 		command.setBuilderName(SketchBuilder.BUILDER_ID);
 		newCmds.add(0, command);
@@ -162,7 +174,8 @@ public class SketchProject implements IProjectNature {
 		project.setDescription(description,null);
 
 		// refresh the local space, folders may have been created
-		project.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+		updateClasspathEntries(null, null); // we don't have anything for the classpath yet, but we can set some basics.
+//		project.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
 	}
 
 	/**
@@ -257,34 +270,41 @@ public class SketchProject implements IProjectNature {
 	 * Unfortunately, JDT requires the build folder to be in the project file system 
 	 * somewhere, so we can't hide it in a system temp folder like the PDE does.
 	 */
-	public File getJavaBuildFolder(){
-		File preproc = getBuildFolder();
-		if(preproc != null){
-			File compile = new File(preproc.getParent(), "compiler");
-			compile.mkdirs();
-			if(compile.exists())
+	public IFolder getJavaBuildFolder(){
+		try {
+			IFolder preproc = getBuildFolder();
+			if(preproc != null){
+				IFolder parent = (IFolder) preproc.getParent();
+				IFolder compile = parent.getFolder("compiler");
+				if(!compile.exists())
+					compile.create(IResource.NONE, true, null);
 				return compile;
+			}
+		} catch (Exception e) {
+			ProcessingLog.logError("Compiler folder could not be created.", e);
 		}
-		ProcessingLog.logError("Could not create " + preproc.getParent() + File.separator + "compiler" + " folder.", null);
 		return null;
 	}
 	
 	/**
-	 * Returns a vanilla File handle to the project specific build folder or null if it doesn't exist
+	 * Returns a handle to the project specific build folder or null if it doesn't exist
 	 * <p>
 	 * Users shouldn't be messing with this unless they know what they're doing.
 	 * Unfortunately, JDT requires the build folder to be in the project file system 
 	 * somewhere, so we can't hide this in a system temp folder like the PDE does. 
 	 */
-	public File getBuildFolder(){
-		File tempBuildFolder = project.getFolder("generated").getFullPath().toFile();
-		//File tempBuildFolder = new File(ProcessingCore.getProcessingCore().getPluginTempFolder(), project.getName());
-		//tempBuildFolder.mkdirs();
-		File preprocBuildFolder = new File(tempBuildFolder, "preproc");
-		preprocBuildFolder.mkdirs();
-		if(preprocBuildFolder.exists())
+	public IFolder getBuildFolder(){
+		try {
+			IFolder tempBuildFolder = project.getFolder("generated");
+			if(!tempBuildFolder.exists())
+				tempBuildFolder.create(IResource.NONE, true, null);
+			IFolder preprocBuildFolder = tempBuildFolder.getFolder("preproc");
+			if(!preprocBuildFolder.exists())
+				preprocBuildFolder.create(IResource.NONE, true, null);
 			return preprocBuildFolder;
-		ProcessingLog.logError("Could not create " + preprocBuildFolder.getPath() + " folder.", null);
+		} catch (Exception e) {
+			ProcessingLog.logError("Preproc folder could not be created.", e);
+		}
 		return null;
 	}
 
@@ -299,15 +319,15 @@ public class SketchProject implements IProjectNature {
 		IJavaProject jproject = this.getJavaProject();
 		
 		// Get a default VM to toss in the mix
-		IPath containerPath = new Path(JavaRuntime.JRE_CONTAINER);
-		IVMInstall vm = JavaRuntime.getDefaultVMInstall();
-		IPath vmPath = containerPath.append(vm.getVMInstallType().getId()).append(vm.getName());
+//		IPath containerPath = new Path(JavaRuntime.JRE_CONTAINER);
+//		IVMInstall vm = JavaRuntime.getDefaultVMInstall();
+//		IPath vmPath = containerPath.append(vm.getVMInstallType().getId()).append(vm.getName());
 
 		// Duplicate entries cause errors, so prep them with a set
 		HashSet<IClasspathEntry> entries = new HashSet<IClasspathEntry>();
 		
 		// VM
-		entries.add(JavaCore.newContainerEntry(vmPath.makeAbsolute())); // JVM
+//		entries.add(JavaCore.newContainerEntry(vmPath.makeAbsolute())); // JVM
 		
 		// if we were given a list of source folders, add them to the list
 		// this should include the build folder and the code folder, if it was necessary
@@ -347,8 +367,9 @@ public class SketchProject implements IProjectNature {
 
 
 		try {
-			jproject.setOutputLocation( new Path(getJavaBuildFolder().getCanonicalPath()), null);
-			jproject.setRawClasspath( classpathEntries, null);
+			jproject.setOutputLocation( getJavaBuildFolder().getFullPath(), null);
+			jproject.setRawClasspath(classpathEntries, null);
+//			jproject.setRawClasspath(new IClasspathEntry[0], null);
 		} catch (Exception e) {
 			ProcessingLog.logError("There was a problem setting the compiler class path.", e);
 		}
