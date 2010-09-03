@@ -32,5 +32,16 @@
             project="true">
       </wizard>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="processing.plugin.ui.preferences.CorePreferencePage"
+            id="processing.plugin.ui.preferences.CorePreferencePage"
+            name="Processing">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+   </extension>
 
 </plugin>

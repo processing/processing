@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="processing.plugin"
-      label="Processing Plugin for Eclipse"
+      label="Processing Plug-In for Eclipse"
       version="1.0.0.qualifier"
       provider-name="Processing.org">
 
