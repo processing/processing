@@ -13,8 +13,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
@@ -24,8 +22,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Plugin;
 
 import processing.plugin.core.builder.Utilities;
@@ -132,11 +128,7 @@ public final class ProcessingCore extends Plugin {
 		return ResourcesPlugin.getWorkspace();
 	}
 
-	/** 
-	 * Returns the single instance of the Processing core plug-in runtime class.
-	 *
-	 * @return the single instance of the Processing core plug-in runtime class
-	 */
+	/** Returns the single instance of the Processing core plug-in runtime class. */
 	public static ProcessingCore getProcessingCore(){
 		return plugin;
 	}
@@ -222,6 +214,27 @@ public final class ProcessingCore extends Plugin {
 		} catch (Exception e) {
 			ProcessingLog.logError(e);
 		}
+		return null;
+	}
+	
+	/**
+	 * Finds and retrieves core.jar in the resource bundle.
+	 * 
+	 * @return File core.jar
+	 */
+	public File getCoreJarFile(){
+		URL coreLoc = getPluginResource("lib");
+		try{
+			File folder = new File(FileLocator.toFileURL(coreLoc).getPath());
+			if (folder.exists()){
+				File core = new File(folder, "core.jar");
+				if (core.exists())
+					return core;
+			}
+		}catch (Exception e) {
+			ProcessingLog.logError(e);
+		}
+		ProcessingLog.logInfo("Something went wrong getting the core.jar file from the Processing plug-in. All sketches will break without this. Please reinstall the plug-in.");
 		return null;
 	}
 
