@@ -11,9 +11,7 @@ package processing.plugin.core;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.preferences.ConfigurationScope;
-import org.osgi.service.prefs.BackingStoreException;
-import org.osgi.service.prefs.Preferences;
+import org.eclipse.core.runtime.Preferences;
 
 /**
  * Container class for controlling access to the Procesing Core 
@@ -26,18 +24,14 @@ public class ProcessingCorePreferences {
 	private static ProcessingCorePreferences current;
 	
 	// instantiate the plug in
-	static {
-		current = new ProcessingCorePreferences();
-	}
-	
-	// EVERY PREFERENCE SHOULD HAVE A SIMILAR SETUP
-	
+	static { current = new ProcessingCorePreferences(); }
+		
 	/** Name of the sketchbook location preference for lookup. */
 	protected static final String SKETCHBOOK = ProcessingCore.PLUGIN_ID + ".preferences.skethbook";
 	
 	/** Returns the stored sketchbook path as a string. */
 	public String getSketchbookPathString(){
-		return this.getStore().get(SKETCHBOOK, "");
+		return this.getStore().getString(SKETCHBOOK);
 	}
 	
 	/** Returns the path to the sketchbook or null if there is none. */
@@ -47,13 +41,11 @@ public class ProcessingCorePreferences {
 	
 	/** Saves the path to the sketchbook. */
 	public void setSketchbookPath(String sketchbookPath){
-		this.getStore().put(SKETCHBOOK, sketchbookPath);
+		this.getStore().setValue(SKETCHBOOK, sketchbookPath);
 		this.save();
 	}
 	
-	// an identifier, get string value, and set new string value
-	// also, directly getting something useful instead of a string (like a path)
-
+	
 	/** Singleton pattern */
 	private ProcessingCorePreferences(){}
 	
@@ -64,16 +56,12 @@ public class ProcessingCorePreferences {
 	
 	/** Save any preference changes */
 	public void save(){
-		try{
-			this.getStore().flush();
-		} catch (BackingStoreException e){
-			ProcessingLog.logError("Preferences could not be saved.", e);
-		}
+		ProcessingCore.getProcessingCore().savePluginPreferences();
 	}
 	
 	/** Get the preferences store. */
-	protected Preferences getStore(){
-		return new ConfigurationScope().getNode(ProcessingCore.PLUGIN_ID);
+	public Preferences getStore(){
+		return ProcessingCore.getProcessingCore().getPluginPreferences();
 	}
 	
 	/** Utility method that returns a path from a string or null */
