@@ -190,7 +190,10 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 		if (codeFolder != null && codeFolder.exists()){
 			String codeFolderClassPath = Utilities.contentsToClassPath(codeFolder.getLocation().toFile());
 			for( String s : codeFolderClassPath.split(File.separator)){
-				libraryJarPathList.add(new Path(s).makeAbsolute());
+				if (!s.isEmpty()){
+					libraryJarPathList.add(new Path(s).makeAbsolute());
+//					System.out.println("Library added " + s);
+				}
 			}
 			codeFolderPackages = Utilities.packageListFromClassPath(codeFolderClassPath);
 //			srcFolderPathList.add(codeFolder.getFullPath()); // TODO verify this.
@@ -235,6 +238,7 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 				inStream.close();
 			}
 			srcFolderPathList.add(buildFolder.getFullPath());
+//			System.out.println("Source added " + buildFolder.getFullPath());
 		} catch(antlr.RecognitionException re){
 
 			IResource errorFile = null; // if this remains null, the error is reported back on the sketch itself with no line number
@@ -370,7 +374,7 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 
 		libs.addAll( Utilities.getLibraryJars(ProcessingCore.getProcessingCore().getCoreLibsFolder()) );
 		libs.addAll( Utilities.getLibraryJars(Utilities.getSketchBookLibsFolder(sketch)) );
-
+		
 		// setup the library table
 		HashMap<String, IPath> importToLibraryTable = new HashMap<String, IPath>();
 
@@ -394,6 +398,7 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 			IPath libPath = importToLibraryTable.get(entry);
 			if (libPath != null ){
 				libraryJarPathList.add(libPath.makeAbsolute()); // huzzah! we've found it, make sure its fed to the compiler
+//				System.out.println("Extra lib added: " + libPath.makeAbsolute());
 			} else { 
 				// The user is trying to import something we won't be able to find.
 				reportProblem(
