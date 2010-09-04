@@ -537,7 +537,16 @@ public class PVector {
     double dot = v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
     double v1mag = Math.sqrt(v1.x * v1.x + v1.y * v1.y + v1.z * v1.z);
     double v2mag = Math.sqrt(v2.x * v2.x + v2.y * v2.y + v2.z * v2.z);
-    return (float) Math.acos(dot / (v1mag * v2mag));
+    // This should be a number between -1 and 1, since it's "normalized"
+    double amt = dot / (v1mag * v2mag);
+    // But if it's not due to rounding error, then we need to fix it
+    // http://code.google.com/p/processing/issues/detail?id=340
+    // Otherwise if outside the range, acos() will return NaN 
+    // http://www.cppreference.com/wiki/c/math/acos
+    if (amt <= -1 || amt >= 1) {
+      return PConstants.PI;
+    }
+    return (float) Math.acos(amt);
   }
 
 
