@@ -345,7 +345,8 @@ public class PGraphicsAndroid3D extends PGraphics {
   static protected boolean vboSupported;
   static protected boolean fboSupported;
   static protected int maxTextureSize;
-  static protected float maxPointSize;  
+  static protected float maxPointSize;
+  static protected float maxLineWidth;
   
   // ........................................................
   
@@ -5265,16 +5266,17 @@ public class PGraphicsAndroid3D extends PGraphics {
 
       usingModelviewStack = gl11 == null || !matrixGetSupported;
       
-      int maxTexSize[] = new int[1];
-      gl.glGetIntegerv(GL10.GL_MAX_TEXTURE_SIZE, maxTexSize, 0);
-      maxTextureSize = maxTexSize[0];
+      int temp[] = new int[2];    
+      
+      gl.glGetIntegerv(GL10.GL_MAX_TEXTURE_SIZE, temp, 0);
+      maxTextureSize = temp[0];
 
-      if (gl11 != null) {
-        float[] maxPtSize = { 0.0f };
-        gl11.glGetFloatv(GL11.GL_POINT_SIZE_MAX, maxPtSize, 0);
-        maxPointSize = maxPtSize[0];
-      }
-
+      gl.glGetIntegerv(GL10.GL_ALIASED_LINE_WIDTH_RANGE, temp, 0);
+      maxLineWidth  = temp[1];        
+      
+      gl.glGetIntegerv(GL10.GL_ALIASED_POINT_SIZE_RANGE, temp, 0);
+      maxPointSize = temp[1];        
+      
       recreateResources();
       gl = null;
       gl11 = null;
