@@ -43,5 +43,43 @@
    <extension
          point="org.eclipse.core.runtime.preferences">
    </extension>
+   <extension
+         point="org.eclipse.ui.ide.resourceFilters">
+      <filter
+      		pattern = "generated"
+            selected="true">
+         <description>
+            Hides the generated folder and its contents from the UI.
+         </description>
+            
+      </filter>
+   </extension>
+   <extension point="org.eclipse.debug.ui.launchShortcuts">
+      <shortcut
+            category="Processing"
+            class="processing.plugin.ui.launching.RunSketchAsAppletShortcut"
+            description="Runs the Sketch as an applet, equivalent to the PDE run button."
+            icon="Resources/16x16_icon.gif"
+            id="processing.plugin.ui.launching.runSketchAsApplet"
+            label="Processing Sketch (Applet)"
+            modes="run">
+         <contextualLaunch>
+            <enablement>
+            	<with variable="selection">
+            		<count value="1" />
+            			<iterate>
+            				<or>
+            					<test property="org.eclipse.jdt.launching.hasProjectNature" args="processing.plugin.core.sketchNature"/>
+            					<test property="org.eclipse.debug.ui.matchesPattern" value="*.pde"/>
+            				</or>
+            			</iterate>
+            	</with>
+            </enablement>
+         </contextualLaunch>
+      </shortcut>
+   </extension>
+
+
+
 
 </plugin>

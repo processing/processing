@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.Preferences;
  * be done by preferences pages in processing.plugin.ui plug-in, but
  * may be programatically accessed in the case of headless operation.
  */
+@SuppressWarnings("deprecation")
 public class ProcessingCorePreferences {
 
 	private static ProcessingCorePreferences current;
