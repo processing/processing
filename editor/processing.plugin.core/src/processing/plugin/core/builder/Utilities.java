@@ -18,6 +18,7 @@ import java.util.zip.ZipFile;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
+
 import processing.plugin.core.ProcessingCore;
 import processing.plugin.core.ProcessingCorePreferences;
 import processing.plugin.core.ProcessingLog;
@@ -37,7 +38,9 @@ import processing.plugin.core.ProcessingLog;
 public class Utilities {
 
 	public static final String PACKAGE_REGEX = "(?:^|\\s|;)package\\s+(\\S+)\\;";
-
+	public static final String SIZE_REGEX = 
+	    "(?:^|\\s|;)size\\s*\\(\\s*(\\S+)\\s*,\\s*([^\\s,\\)]+),?\\s*([^\\)]*)\\s*\\)\\s*\\;";
+	  
 	/**
 	 * Read in a file and return it as a string
 	 * 
@@ -496,5 +499,53 @@ public class Utilities {
 			}
 		}		
 	}
+
+	static public String scrubComments(String what) {
+	    char p[] = what.toCharArray();
+
+	    int index = 0;
+	    while (index < p.length) {
+	      // for any double slash comments, ignore until the end of the line
+	      if ((p[index] == '/') &&
+	          (index < p.length - 1) &&
+	          (p[index+1] == '/')) {
+	        p[index++] = ' ';
+	        p[index++] = ' ';
+	        while ((index < p.length) &&
+	               (p[index] != '\n')) {
+	          p[index++] = ' ';
+	        }
+
+	        // check to see if this is the start of a new multiline comment.
+	        // if it is, then make sure it's actually terminated somewhere.
+	      } else if ((p[index] == '/') &&
+	                 (index < p.length - 1) &&
+	                 (p[index+1] == '*')) {
+	        p[index++] = ' ';
+	        p[index++] = ' ';
+	        boolean endOfRainbow = false;
+	        while (index < p.length - 1) {
+	          if ((p[index] == '*') && (p[index+1] == '/')) {
+	            p[index++] = ' ';
+	            p[index++] = ' ';
+	            endOfRainbow = true;
+	            break;
+
+	          } else {
+	            // continue blanking this area
+	            p[index++] = ' ';
+	          }
+	        }
+	        if (!endOfRainbow) {
+	          throw new RuntimeException("Missing the */ from the end of a " +
+	                                     "/* comment */");
+	        }
+	      } else {  // any old character, move along
+	        index++;
+	      }
+	    }
+	    return new String(p);
+	  }
+
 	
 }

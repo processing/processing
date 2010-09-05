@@ -226,6 +226,45 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 			StringWriter stream = new StringWriter();
 			
 			result = preproc.write(stream, bigCode.toString(), codeFolderPackages);
+
+			String scrubbed = Utilities.scrubComments(stream.toString());
+			String[] matches = Utilities.match(scrubbed, Utilities.SIZE_REGEX);
+			
+			if(matches != null){
+				try {
+			        int wide = Integer.parseInt(matches[1]);
+			        int high = Integer.parseInt(matches[2]);
+
+			        if (high > 0){
+			        	SketchProject.sketch_height = high;
+			        } else { 
+				        SketchProject.sketch_height = -1;
+			        }
+			        if( wide > 0) {
+			        	SketchProject.sketch_width = wide;
+			        } else {
+				        SketchProject.sketch_width = -1;
+			        }
+			        
+			      } catch (NumberFormatException e) {
+			        // found a reference to size, but it didn't
+			        // seem to contain numbers
+			    	  
+//			        final String message =
+//			          "The size of this applet could not automatically be\n" +
+//			          "determined from your code. You'll have to edit the\n" +
+//			          "HTML file to set the size of the applet.\n" +
+//			          "Use only numeric values (not variables) for the size()\n" +
+//			          "command. See the size() reference for an explanation.";
+
+			        // set these back to null
+			        SketchProject.sketch_height = -1;
+			        SketchProject.sketch_width = -1;
+			        
+			        ProcessingLog.logInfo("Could not find applet size");
+			      }
+			    }  // else no size() command found
+			
 			ByteArrayInputStream inStream = new ByteArrayInputStream(stream.toString().getBytes());
 			try{
 				if (!output.exists()){

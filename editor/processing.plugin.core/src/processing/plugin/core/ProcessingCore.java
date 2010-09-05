@@ -22,6 +22,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Plugin;
 
 import processing.plugin.core.builder.Utilities;
@@ -75,19 +76,30 @@ public final class ProcessingCore extends Plugin {
 	/* 	public void start(BundleContext context) throws Exception {} */
 	/* 	public void stop(BundleContext context) throws Exception {} */
 
-
 	/** 
 	 * Gets a URL to a file or folder in the plug-in's Resources folder.
-	 * Returns null if something went wrong.
+	 * Returns null if the path results in a bad URL.
+	 * 
+	 * @param path relative path from the Resources folder
 	 */
-	public URL getPluginResource(String fileName){
+	public URL getPluginResource(String path){
 		try{
-			return new URL(this.getBundle().getEntry("/"), "Resources/" + fileName);
+			return new URL(this.getBundle().getEntry("/"), "Resources/" + path);
 		} catch (MalformedURLException e){
 			return null;
 		}
 	}
 
+	/**
+	 * Returns a URL to a file or folder in the plug-in's Resources folder.
+	 * Returns null if the path results in a bad URL.
+	 * 
+	 * @param path relative from the Resources folder
+	 */
+	public URL getPluginResource(IPath path){
+		return getPluginResource(path.toOSString());
+	}
+	
 	/**
 	 * Resolves the plug-in resources folder to a File and returns it. This will include the
 	 * Processing libraries and the core libraries folder.
@@ -95,7 +107,7 @@ public final class ProcessingCore extends Plugin {
 	 * @return File reference to the core resources
 	 */
 	public File getPluginResourceFolder(){
-		URL fileLocation = ProcessingCore.getProcessingCore().getPluginResource("");
+		URL fileLocation = getPluginResource("");
 		try {
 			File folder = new File(FileLocator.toFileURL(fileLocation).getPath());
 			if (folder.exists())
