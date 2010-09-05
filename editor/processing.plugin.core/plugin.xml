@@ -45,7 +45,7 @@
             delegate="processing.plugin.core.launching.ProcessingSketchLaunchConfigurationDelegate"
             id="processing.plugin.core.launching.processingSketch"
             modes="run"
-            name="Processing Sketch">
+            name="Processing Sketch Applet">
             <!--sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer"
             sourceLocatorId="org.eclipse.jdt.launching.sourceLocator.JavaSourceLookupDirector" -->
       </launchConfigurationType>

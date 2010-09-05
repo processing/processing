@@ -29,12 +29,19 @@ import processing.plugin.core.ProcessingLog;
 
 public class SketchProject implements IProjectNature {
 
-	/** value: <code>"processing.plugin.core.processingnature"</code> */
+	/** value: <code>"processing.plugin.core.sketchNature"</code> */
 	public static final String NATURE_ID = ProcessingCore.PLUGIN_ID + ".sketchNature";
 
 	/** The basic project entry being managed */
 	protected IProject project;
 
+	// TODO make these a preference
+	public static final int DEFAULT_WIDTH = 100;
+	public static final int DEFAULT_HEIGHT = 100;
+	
+	// set every build
+	protected static int sketch_width = -1;
+	protected static int sketch_height = -1;
 
 	/** 
 	 * Return the SketchProject associated with the given IProject, or null
@@ -434,4 +441,20 @@ public class SketchProject implements IProjectNature {
 		
 		JavaCore.setOptions(options);	
 	}
+
+	/** Return the sketch's height, or the default height if size() has not been specified */
+	public int getHeight() {
+		return (sketch_height == -1) ? DEFAULT_HEIGHT : sketch_height;
+	}
+	
+	/** Return the sketch's width, or the default width if size() has not been specified */
+	public int getWidth(){
+		return (sketch_width == -1) ? DEFAULT_WIDTH : sketch_width;
+	}
+
+	/** Returns the name of the main type of the compiled sketch*/
+	public String getMainType() {
+		return project.getName();
+	}
+	
 }
