@@ -1,3 +1,13 @@
+/**
+ * Copyright (c) 2010 Chris Lonnen. All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the 
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution, 
+ * and is available at http://www.opensource.org/licenses/eclipse-1.0.php
+ * 
+ * Contributors:
+ *     Chris Lonnen - initial API and implementation
+ */
 package processing.plugin.core.builder;
 
 import java.util.ArrayList;
@@ -21,28 +31,45 @@ import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 
 import processing.plugin.core.ProcessingCore;
 import processing.plugin.core.ProcessingLog;
 
+/** 
+ * A nature indicating that the project is a Processing sketch.
+ * <p>
+ * This handles all the setup and config for the sketch builder
+ * and the JDT JavaProject that underlies a Processing sketch.
+ * Attempts to muck about with the sketch settings should do so
+ * through methods presented in this nature to prevent things
+ * from turning ugly. Actually, any mucking about will probably
+ * mess things up.
+ * <p>
+ * This also holds state information about the sketch itself
+ * that is generated and collected from the sketch files, the 
+ * builder, a thorough background check, and maybe a little
+ * dumpster diving. It acs as an ad-hoc model of a sketch project.  
+ */
 public class SketchProject implements IProjectNature {
 
 	/** value: <code>"processing.plugin.core.sketchNature"</code> */
 	public static final String NATURE_ID = ProcessingCore.PLUGIN_ID + ".sketchNature";
 
-	/** The basic project entry being managed */
-	protected IProject project;
-
 	// TODO make these a preference
 	public static final int DEFAULT_WIDTH = 100;
 	public static final int DEFAULT_HEIGHT = 100;
 	
-	// set every build
-	protected static int sketch_width = -1;
-	protected static int sketch_height = -1;
+	/** The basic project entry being managed */
+	protected IProject project;
 
+	protected int sketch_width = -1;
+	protected int sketch_height = -1;
+
+	protected boolean wasLastBuildSuccessful = false;
+	
 	/** 
 	 * Return the SketchProject associated with the given IProject, or null
 	 * if the project is not associated with a SketchProject.
@@ -88,19 +115,15 @@ public class SketchProject implements IProjectNature {
 
 	/** Removes the sketch and java natures from a project */
 	public static void removeSketchNature(IProject project) throws CoreException{
-		if (!project.isOpen())
-			return;
-
-		// doesn't have the nature, we're done
-		if (!SketchProject.isSketchProject(project))
-			return;
+		if (!project.isOpen())	return;
+		if (!SketchProject.isSketchProject(project)) return;
 
 		IProjectDescription description = project.getDescription();
 
 		List<String> newIds = new ArrayList<String>();
 		newIds.addAll(Arrays.asList(description.getNatureIds()));
 		newIds.remove(newIds.indexOf(NATURE_ID));
-		if (newIds.contains(JavaCore.NATURE_ID))
+		if (newIds.contains(JavaCore.NATURE_ID)) 
 			newIds.remove(newIds.indexOf(JavaCore.NATURE_ID));
 		description.setNatureIds(newIds.toArray(new String[newIds.size()]));
 
@@ -127,8 +150,7 @@ public class SketchProject implements IProjectNature {
 
 	/** Associate the sketch builder with this nature's project */
 	public void configure() throws CoreException {
-		if (!project.isOpen())
-			return;
+		if (!project.isOpen()) return;
 
 		getCodeFolder();
 		getDataFolder();
@@ -149,14 +171,11 @@ public class SketchProject implements IProjectNature {
 		if (ploc != -1) newCmds.remove(ploc);
 		
 		newCmds.add(0, command);
-				
-		for(ICommand c : newCmds){
-			System.out.println( c.toString() );
-		}
 		
 		//  Now that we're sure it's gone, add a single instance to the front of the list
 		description.setBuildSpec(
-			(ICommand[]) newCmds.toArray(new ICommand[newCmds.size()]));
+			(ICommand[]) newCmds.toArray(new ICommand[newCmds.size()])
+		);
 		project.setDescription(description,null);
 		
 		updateClasspathEntries(null, null);
@@ -167,8 +186,9 @@ public class SketchProject implements IProjectNature {
 	 * project and remove the markers it generated.
 	 */
 	public void deconfigure() throws CoreException {
-		if (!project.isOpen())
-			return;
+		if (!project.isOpen()) return;
+		
+		SketchBuilder.deleteP5ProblemMarkers(project); // clean up annotations
 
 		IProjectDescription description = project.getDescription();
 		ICommand[] cmds = description.getBuildSpec();
@@ -180,9 +200,6 @@ public class SketchProject implements IProjectNature {
 				description.setBuildSpec(newCmds.toArray(new ICommand[newCmds.size()]));
 			}
 		}
-
-		// clean up your tokens
-		SketchBuilder.deleteP5ProblemMarkers(project);
 	}
 
 	/** Returns a qualified name for the property relative to this plug-in */
@@ -299,7 +316,7 @@ public class SketchProject implements IProjectNature {
 	 * @param srcFolderPathList A list of absolute paths to source folders
 	 * @param libraryJarPathList A list of absolute paths to source folders
 	 */
-	public void updateClasspathEntries( IPath[] srcFolderPathList,	IPath[] libraryJarPathList) {
+	public void updateClasspathEntries( IPath[] srcFolderPathList,	IPath[] libraryJarPathList) throws JavaModelException {
 		IJavaProject jproject = this.getJavaProject();
 		
 		// Get a default VM to toss in the mix
@@ -358,13 +375,9 @@ public class SketchProject implements IProjectNature {
 //			}
 //		}		
 		
-		try {
-			jproject.setOutputLocation( getJavaBuildFolder().getFullPath(), null);
-			jproject.setRawClasspath(classpathEntries, null);
-//			jproject.setRawClasspath(new IClasspathEntry[0], null);
-		} catch (Exception e) {
-			ProcessingLog.logError("There was a problem setting the compiler class path.", e);
-		}
+		jproject.setOutputLocation( getJavaBuildFolder().getFullPath(), null);
+		jproject.setRawClasspath(classpathEntries, null);
+//		jproject.setRawClasspath(new IClasspathEntry[0], null);
 		
 		ignoreWarnings();
 	}
@@ -442,6 +455,11 @@ public class SketchProject implements IProjectNature {
 		JavaCore.setOptions(options);	
 	}
 
+	/** Getter for classes outside of this package */
+	public boolean wasLastBuildSuccessful(){
+		return wasLastBuildSuccessful;
+	}
+	
 	/** Return the sketch's height, or the default height if size() has not been specified */
 	public int getHeight() {
 		return (sketch_height == -1) ? DEFAULT_HEIGHT : sketch_height;

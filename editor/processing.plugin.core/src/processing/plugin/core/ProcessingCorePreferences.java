@@ -1,12 +1,13 @@
-/*******************************************************************************
+/**
+ * Copyright (c) 2010 Chris Lonnen. All rights reserved.
+ *
  * This program and the accompanying materials are made available under the 
- * terms of the Common Public License v1.0 which accompanies this distribution, 
- * and is available at http://www.opensource.org/licenses/cpl1.0.php
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution, 
+ * and is available at http://www.opensource.org/licenses/eclipse-1.0.php
  * 
  * Contributors:
- *     Red Robin - Design pattern
- *     Chris Lonnen - Initial API and implementation 
- *******************************************************************************/
+ *     Chris Lonnen - initial API and implementation
+ */
 package processing.plugin.core;
 
 import org.eclipse.core.runtime.IPath;
@@ -14,13 +15,13 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Preferences;
 
 /**
- * Container class for controlling access to the Procesing Core 
- * preference store. Modification of these preferences should only
- * be done by preferences pages in processing.plugin.ui plug-in, but
- * may be programatically accessed in the case of headless operation.
+ * Utility class for controlling access to the Processing Core preference store.
+ * <p>
+ * Every expected preference has its own getter / setter
  */
 @SuppressWarnings("deprecation")
 public class ProcessingCorePreferences {
+	//TODO this uses the depreciated Preferences store. Fix that.
 
 	private static ProcessingCorePreferences current;
 	
@@ -28,24 +29,28 @@ public class ProcessingCorePreferences {
 	static { current = new ProcessingCorePreferences(); }
 		
 	/** Name of the sketchbook location preference for lookup. */
-	protected static final String SKETCHBOOK = ProcessingCore.PLUGIN_ID + ".preferences.skethbook";
+	protected static final String SKETCHBOOK = ProcessingCore.PLUGIN_ID + ".preferences.sketchbook";
 	
 	/** Returns the stored sketchbook path as a string. */
-	public String getSketchbookPathString(){
+	public String getSketchbookPathAsString(){
 		return this.getStore().getString(SKETCHBOOK);
 	}
 	
-	/** Returns the path to the sketchbook or null if there is none. */
-	public IPath getSketchbookPath(){
-		return this.pathOrNull(this.getSketchbookPathString());
-	}
-	
 	/** Saves the path to the sketchbook. */
-	public void setSketchbookPath(String sketchbookPath){
+	public void setSketchbookPathWithString(String sketchbookPath){
 		this.getStore().setValue(SKETCHBOOK, sketchbookPath);
 		this.save();
 	}
 	
+	/** Returns the path to the sketchbook or null if there is none. */
+	public IPath getSketchbookPath(){
+		return this.pathOrNull(this.getSketchbookPathAsString());
+	}
+	
+	/** Set the sketchbook path using a path */
+	public void setSketchbookPathWithPath(IPath sketchbookPath){
+		this.getStore().setValue(SKETCHBOOK, sketchbookPath.toOSString());
+	}
 	
 	/** Singleton pattern */
 	private ProcessingCorePreferences(){}
@@ -66,7 +71,7 @@ public class ProcessingCorePreferences {
 	}
 	
 	/** Utility method that returns a path from a string or null */
-	protected IPath pathOrNull(String pathString){
+	private IPath pathOrNull(String pathString){
 		return ( pathString.length()== 0 ) ? null : new Path(pathString);
 	}
 }

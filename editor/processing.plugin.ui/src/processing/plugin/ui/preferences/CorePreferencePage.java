@@ -1,3 +1,13 @@
+/**
+ * Copyright (c) 2010 Chris Lonnen. All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the 
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution, 
+ * and is available at http://www.opensource.org/licenses/eclipse-1.0.php
+ * 
+ * Contributors:
+ *     Chris Lonnen - initial API and implementation
+ */
 package processing.plugin.ui.preferences;
 
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -74,7 +84,7 @@ public class CorePreferencePage extends PreferencePage implements IWorkbenchPref
 	}
 	
 	public void initContents(){
-		String sketchbook = ProcessingCorePreferences.current().getSketchbookPathString();
+		String sketchbook = ProcessingCorePreferences.current().getSketchbookPathAsString();
 		if(sketchbook != null){
 			System.out.println("INIT: " + sketchbook + ";");
 			sketchbookPathField.setText(sketchbook.toString());
@@ -136,7 +146,7 @@ public class CorePreferencePage extends PreferencePage implements IWorkbenchPref
 		setValid(true);
 		setMessage(null);
 		setErrorMessage(null);
-		ProcessingCorePreferences.current().setSketchbookPath(sketchbookPathField.getText());
+		ProcessingCorePreferences.current().setSketchbookPathWithString(sketchbookPathField.getText());
 	}
 
 	/**
