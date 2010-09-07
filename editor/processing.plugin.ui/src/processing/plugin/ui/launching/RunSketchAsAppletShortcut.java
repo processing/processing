@@ -1,12 +1,13 @@
-/*******************************************************************************
+/**
+ * Copyright (c) 2010 Chris Lonnen. All rights reserved.
+ *
  * This program and the accompanying materials are made available under the 
- * terms of the Common Public License v1.0 which accompanies this distribution, 
- * and is available at http://www.opensource.org/licenses/cpl1.0.php
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution, 
+ * and is available at http://www.opensource.org/licenses/eclipse-1.0.php
  * 
  * Contributors:
- *     IBM Corporation - initial API
- *     Chris Lonnen - implementation for Processing
- *******************************************************************************/
+ *     Chris Lonnen - initial API and implementation
+ */
 package processing.plugin.ui.launching;
 
 import org.eclipse.core.resources.IFile;
@@ -43,6 +44,7 @@ public class RunSketchAsAppletShortcut implements ILaunchShortcut {
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_WIDTH, sketch.getWidth());
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_HEIGHT, sketch.getHeight());
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_NAME, "Processing Sketch");
+			wc.setAttribute("wasLastBuildSuccessful", sketch.wasLastBuildSuccessful());
 			wc.setMappedResources(new IResource[] { sketch.getJavaProject().getUnderlyingResource() });
 //			config =wc.doSave();
 			config = wc; // this prevents a run config from being saved and sticking around.

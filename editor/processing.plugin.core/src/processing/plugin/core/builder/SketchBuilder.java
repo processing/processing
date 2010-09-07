@@ -1,3 +1,13 @@
+/**
+ * Copyright (c) 2010 Chris Lonnen. All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the 
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution, 
+ * and is available at http://www.opensource.org/licenses/eclipse-1.0.php
+ * 
+ * Contributors:
+ *     Chris Lonnen - initial API and implementation
+ */
 package processing.plugin.core.builder;
 
 import java.io.ByteArrayInputStream;
@@ -12,13 +22,17 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+//import org.eclipse.core.resources.IResourceChangeListener;
+//import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
+//import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.jdt.core.JavaModelException;
 
 import processing.app.Preferences;
 import processing.app.debug.RunnerException;
@@ -29,12 +43,12 @@ import processing.plugin.core.ProcessingCore;
 import processing.plugin.core.ProcessingLog;
 
 /**
- * Builder for Processing Sketches
+ * Builder for Processing Sketches.
  * <p>
  * Preprocesses .pde sketches into Java. Errors returned are reflected back on the source files.
- * From Eclipse's perspective, Sketch projects are actually specially configured Java projects.
- * The SketchNature manages this configuration stuff, so woe be to those who would carelessly
- * manipulate this builder directly.
+ * The SketchNature class is tightly integrated and manages the configuration so this builder 
+ * works together with the JDT, so woe be to those who would carelessly manipulate this builder 
+ * directly.
  * </p>
  * <p>
  * The builder is compatible with the PDE, and it expects sketches to be laid out with the
@@ -43,11 +57,10 @@ import processing.plugin.core.ProcessingLog;
  * able to use the PDE interchangeably with this builder.
  * </p>
  * <p>
- * Though this implements the Incremental Project Builder, all builds are really full
- * builds because the preprocessor is not incremental.
+ * Though this implements the Incremental Project Builder, the preprocessor is not incremental
+ * and forces all builds to be full builds. To save a little bit of time, any build request is
+ * treated as a full build without an inspection of the resource delta.
  * </p>
- * @author lonnen
- *
  */
 public class SketchBuilder extends IncrementalProjectBuilder{	
 
@@ -153,56 +166,50 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 	 * This can be a long running process, so we use a monitor.
 	 */	
 	protected IProject[] fullBuild( SketchProject sketchProject, IProgressMonitor monitor) throws CoreException {
-		clean(sketchProject, monitor);
-		IProject sketch = sketchProject.getProject();
+		clean(sketchProject, monitor); // tabula rasa
 		
+		IProject sketch = sketchProject.getProject();
 		if ( sketch == null || !sketch.isAccessible() ){
-			ProcessingLog.logError("Sketch is inaccessible!", null);
+			ProcessingLog.logError("Sketch is inaccessible. Aborting build process.", null);
 			return null;
 		}
 
-		// may not exist.
-		IFolder codeFolder = sketchProject.getCodeFolder();
-		
-		/*
-		 * A (temporary?) build folder, will be created if it doesn't exist.
-		 * Markers cannot be added to this because it is a vanilla File.
-		 */
-		IFolder buildFolder = sketchProject.getBuildFolder(); 
-
+		sketchProject.wasLastBuildSuccessful = false; 
+		IFolder buildFolder = sketchProject.getBuildFolder(); // created by the getter
 		if (buildFolder == null){
 			ProcessingLog.logError("Build folder could not be accessed.", null);
 			return null;
 		}
 
-		monitor.beginTask("Sketch Build", 400); // not sure how much work to do here
-		if(!sketch.isOpen()) { return null; } // has to be open to access it
+		monitor.beginTask("Sketch Build", 40); // not sure how much work to do here
 		if(checkCancel(monitor)) { return null; }
-
-		PdePreprocessor preproc = new PdePreprocessor(sketch.getName(), 4);
+		/* If the code folder exists:
+		 *   Find any .jar files in it and its subfolders
+		 *     Add their paths to the library jar list for addition to the class path later on 
+		 *     Get the packages of those jars so they can be added to the imports
+		 *   Add it to the class path source folders
+		 */
+		
+		IFolder codeFolder = sketchProject.getCodeFolder();	// may not exist
 		String[] codeFolderPackages = null;
-
-		// If the code folder exists:
-		//    Find any .jar files in it and its subfolders
-		//       Add their paths to the library jar list for addition to the class path later on 
-		//       Get the packages of those jars so they can be added to the imports
-		//    Add it to the class path source folders
 		if (codeFolder != null && codeFolder.exists()){
 			String codeFolderClassPath = Utilities.contentsToClassPath(codeFolder.getLocation().toFile());
 			for( String s : codeFolderClassPath.split(File.separator)){
 				if (!s.isEmpty()){
 					libraryJarPathList.add(new Path(s).makeAbsolute());
-//					System.out.println("Library added " + s);
 				}
 			}
 			codeFolderPackages = Utilities.packageListFromClassPath(codeFolderClassPath);
-//			srcFolderPathList.add(codeFolder.getFullPath()); // TODO verify this.
 		}
 
-		// concatenate the individual .pde files into one large file using temporary 
-		// 'session properties' attached to the IResource files, mark the start and end lines that they 
-		// contribute to the bigCode file. This information will be used later for mapping errors backwards
-
+		monitor.worked(10);
+		if(checkCancel(monitor)) { return null; }
+		/* concatenate the individual .pde files into one large file. 
+		 * Using temporary session properties attached to IResource files, mark where the file
+		 * starts and ends in the bigCode file. This information is used later for mapping
+		 * errors back to their source.
+		 */
+		
 		StringBuffer bigCode = new StringBuffer();
 		int bigCount = 0; // line count
 
@@ -219,7 +226,9 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 
 		monitor.worked(10);
 		if(checkCancel(monitor)) { return null; } 
-
+		// Feed everything to the preprocessor
+		
+		PdePreprocessor preproc = new PdePreprocessor(sketch.getName(), 4);
 		PreprocessResult result = null;
 		try{
 			IFile output = buildFolder.getFile(sketch.getName()+".java");
@@ -227,48 +236,34 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 			
 			result = preproc.write(stream, bigCode.toString(), codeFolderPackages);
 
+	    	sketchProject.sketch_width = -1;
+	    	sketchProject.sketch_height = -1;
+	    	
 			String scrubbed = Utilities.scrubComments(stream.toString());
-			String[] matches = Utilities.match(scrubbed, Utilities.SIZE_REGEX);
-			
+			String[] matches = Utilities.match(scrubbed, Utilities.SIZE_REGEX);	
 			if(matches != null){
 				try {
 			        int wide = Integer.parseInt(matches[1]);
 			        int high = Integer.parseInt(matches[2]);
 
-			        if (high > 0){
-			        	SketchProject.sketch_height = high;
-			        } else { 
-				        SketchProject.sketch_height = -1;
-			        }
-			        if( wide > 0) {
-			        	SketchProject.sketch_width = wide;
-			        } else {
-				        SketchProject.sketch_width = -1;
-			        }
-			        
+			        if(wide > 0) sketchProject.sketch_width = wide;
+			        if (high > 0) sketchProject.sketch_height = high;			        
 			      } catch (NumberFormatException e) {
-			        // found a reference to size, but it didn't
-			        // seem to contain numbers
-			    	  
-//			        final String message =
-//			          "The size of this applet could not automatically be\n" +
-//			          "determined from your code. You'll have to edit the\n" +
-//			          "HTML file to set the size of the applet.\n" +
-//			          "Use only numeric values (not variables) for the size()\n" +
-//			          "command. See the size() reference for an explanation.";
-
-			        // set these back to null
-			        SketchProject.sketch_height = -1;
-			        SketchProject.sketch_width = -1;
-			        
-			        ProcessingLog.logInfo("Could not find applet size");
+			    	  ProcessingLog.logInfo(
+			    			  "Found a reference to size, but it didn't seem to contain numbers. "
+			    			  + "Will use default sizes instead."
+			    			  );
 			      }
-			    }  // else no size() command found
+			    }  // else no size() command found, defaults are used
 			
 			ByteArrayInputStream inStream = new ByteArrayInputStream(stream.toString().getBytes());
 			try{
 				if (!output.exists()){
 					output.create(inStream, true, monitor);
+					//TODO resource change listener to move trace back JDT errors
+//					IWorkspace w = ResourcesPlugin.getWorkspace();
+//					IResourceChangeListener rcl = new ProblemListener(output);
+//					w.addResourceChangeListener(rcl);
 				} else {
 					output.setContents(inStream, true, false, monitor);
 				}
@@ -276,8 +271,9 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 				stream.close();
 				inStream.close();
 			}
+			
 			srcFolderPathList.add(buildFolder.getFullPath());
-//			System.out.println("Source added " + buildFolder.getFullPath());
+		
 		} catch(antlr.RecognitionException re){
 
 			IResource errorFile = null; // if this remains null, the error is reported back on the sketch itself with no line number
@@ -301,36 +297,18 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 				errorLine = -1;
 			} 
 
-			String msg = re.getMessage();		
-
-			//TODO better errors handling, matching errors often get put after the document end. see highlightLine() inside editor.
-			// try to find a way to put all this error handling code in one spot. All of the message parsing and resource blaming,
-			// so it doesn't appear multiple times in the source.
-			if (msg.equals("expecting RCURLY, found 'null'"))
-				msg = "Found one too many { characters without a } to match it.";
-			if (msg.indexOf("expecting RBRACK") != -1)
-				msg = "Syntax error, maybe a missing right ] character?";
-			if (msg.indexOf("expecting SEMI") != -1)
-				msg = "Syntax error, maybe a missing semicolon?";
-			if (msg.indexOf("expecting RPAREN") != -1)
-				msg = "Syntax error, maybe a missing right parenthesis?";
-			if (msg.indexOf("preproc.web_colors") != -1)
-				msg = "A web color (such as #ffcc00) must be six digits.";
-
-			reportProblem(msg, errorFile, errorLine, true);
-			return null; // exit the build
+			reportProblem(re.getMessage(), errorFile, errorLine, true);
+			return null; // bail early
 		} catch (antlr.TokenStreamRecognitionException tsre) { 
+
 			// System.out.println("and then she tells me " + tsre.toString());
 			String mess = "^line (\\d+):(\\d+):\\s"; // a regexp to grab the line and column from the exception
 
 			String[] matches = Utilities.match(tsre.toString(), mess);
 			IResource errorFile = null; 
 			int errorLine = -1;
-
 			if (matches != null){
 				errorLine = Integer.parseInt(matches[1]) - 1;
-				//		    	int errorColumn = Integer.parseInt(matches[2]); // unused in the builder
-
 				for( IResource file : sketch.members()){
 					if("pde".equalsIgnoreCase(file.getFileExtension())){
 						int low = (Integer) file.getSessionProperty(new QualifiedName(BUILDER_ID, "preproc start"));
@@ -342,8 +320,6 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 						}
 					}			
 				}
-
-
 			} 
 
 			// If no file was found or the regex failed
@@ -353,15 +329,14 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 			} 
 
 			reportProblem(tsre.getMessage(), errorFile, errorLine, true);		
-			return null;
+			return null; // bail early
 		} catch (RunnerException re){
 			/* 
 			 * This error is not addressed in the PDE. I've only seen it correspond to
-			 * an unclosed, double quote mark ("). The runner reports 1 line behind where
-			 * it occurs, so we add 1 to its line.
+			 * an unclosed, double quote mark (").
 			 */
 			IResource errorFile = null; // if this remains null, the error is reported back on the sketch itself with no line
-			int errorLine = re.getCodeLine() + 1;
+			int errorLine = re.getCodeLine() + 1; // always reported 1 line early
 
 			for( IResource file : sketch.members()){
 				if("pde".equalsIgnoreCase(file.getFileExtension())){
@@ -379,153 +354,80 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 			if (errorFile == null){
 				errorFile = sketch;
 				errorLine = -1;
-			} 
+			}
 
-			//DEBUG
-			//System.out.println("error line - error file - offset");
-			//System.out.println(errorLine + " - " + errorFile + " - " + getPreprocOffset((IFile) folderContents[errorFile]));
-
-			String msg = re.getMessage();		
-
-			//TODO see better error mapping todo above
-			if (msg.equals("expecting RCURLY, found 'null'"))
-				msg = "Found one too many { characters without a } to match it.";
-			if (msg.indexOf("expecting RBRACK") != -1)
-				msg = "Syntax error, maybe a missing right ] character?";
-			if (msg.indexOf("expecting SEMI") != -1)
-				msg = "Syntax error, maybe a missing semicolon?";
-			if (msg.indexOf("expecting RPAREN") != -1)
-				msg = "Syntax error, maybe a missing right parenthesis?";
-			if (msg.indexOf("preproc.web_colors") != -1)
-				msg = "A web color (such as #ffcc00) must be six digits.";
-
-			reportProblem(msg, errorFile, errorLine, true);
-			return null; // exit the build
+			reportProblem(re.getMessage(), errorFile, errorLine, true);
+			return null; // bail
 		} catch (Exception e){
 			ProcessingLog.logError(e); 
-			return null;
+			return null; // bail
 		}
 
 		monitor.worked(10);
 		if(checkCancel(monitor)) { return null; }
+		// Library import checking
 
-		ArrayList<String> libs = new ArrayList<String>(); // a list of all the libraries that can be found
+		ArrayList<String> allFoundLibraries = new ArrayList<String>(); // a list of all the libraries that can be found
 
-		libs.addAll( Utilities.getLibraryJars(ProcessingCore.getProcessingCore().getCoreLibsFolder()) );
-		libs.addAll( Utilities.getLibraryJars(Utilities.getSketchBookLibsFolder(sketch)) );
+		allFoundLibraries.addAll( Utilities.getLibraryJars(ProcessingCore.getProcessingCore().getCoreLibsFolder()) );
+		allFoundLibraries.addAll( Utilities.getLibraryJars(Utilities.getSketchBookLibsFolder(sketch)) );
 		
-		// setup the library table
-		HashMap<String, IPath> importToLibraryTable = new HashMap<String, IPath>();
+		HashMap<String, IPath> libraryImportToPathTable = new HashMap<String, IPath>();
 
-//		System.out.println("Libraries found (path sep: " + File.separator + " ) :");	
-		for (String s : libs ){
-//			System.out.println(s);
-			String[] packages = Utilities.packageListFromClassPath(s);
-			for (String pkg : packages){
-				importToLibraryTable.put(pkg, new Path(s));
-//				System.out.println(pkg);
-			}
+		for (String libraryPath : allFoundLibraries ){
+			String[] packages = Utilities.packageListFromClassPath(libraryPath);
+			for (String pkg : packages) libraryImportToPathTable.put(pkg, new Path(libraryPath));
 		}
 
-//		System.out.println("There were a few extra imports: " + result.extraImports.size());
+		boolean importProblems = false;
 		for (int i=0; i < result.extraImports.size(); i++){
-			String item = result.extraImports.get(i);
-			// remove things up to the last dot
-			int dot = item.lastIndexOf('.');
-			String entry = (dot == -1) ? item : item.substring(0, dot);
-//			System.out.println(entry);
-			IPath libPath = importToLibraryTable.get(entry);
+			String importPackage = result.extraImports.get(i);
+			int dot = importPackage.lastIndexOf('.');
+			String entry = (dot == -1) ? importPackage : importPackage.substring(0, dot);
+			IPath libPath = libraryImportToPathTable.get(entry);
 			if (libPath != null ){
-				libraryJarPathList.add(libPath.makeAbsolute()); // huzzah! we've found it, make sure its fed to the compiler
-//				System.out.println("Extra lib added: " + libPath.makeAbsolute());
+				libraryJarPathList.add(libPath.makeAbsolute()); // we've got it!
 			} else { 
 				// The user is trying to import something we won't be able to find.
 				reportProblem(
-						"Library import " + entry +" could not be found. Check the library folder in your sketchbook.",
+						"Library import "+ entry +" could not be found. Check the library folder in your sketchbook.",
 						sketch.getFile( sketch.getName() + ".pde"), i+1, true 
 				);
+				importProblems=true;
 			}
 		}
-
-		// Adding the ol' Java classpath is handled by Eclipse. We don't worry about it.
+		if (importProblems) return null; // bail after all errors are found.
 
 		monitor.worked(10);
 		if(checkCancel(monitor)) { return null; } 
-
-		// I don't think this next part is necessary.
-		// At this point we've written the derived java file and the code folder,
-		// if it exists, is marked to be added to the classpath. There's not much sense
-		// to copying things to the code folder and further messing with the offsets.
-
-		//		// 3. loop over the code[] and save each .java file
-		//
-		//		for( IResource file : sketch.members()){
-		//			if("java".equalsIgnoreCase(file.getFileExtension())){
-		//				String filename = file.getName() + ".java";
-		//				try{
-		//					String program = Utilities.readFile((IFile) file);
-		//					String[] pkg = Utilities.match(program, Utilities.PACKAGE_REGEX);
-		//					// if no package, add one
-		//					if(pkg == null){
-		//						pkg = new String[] { packageName };
-		//						// add the package name to the source
-		//						program = "package " + packageName + ";" + program;
-		//					}
-		//					IFolder packageFolder = buildFolder.getFolder(pkg[0].replace('.', '/'));
-		//					if (!packageFolder.exists())
-		//						packageFolder.create(IResource.NONE, true, null);
-		//
-		//					IFile modFile = packageFolder.getFile(file.getName() + ".java");
-		//
-		//					ByteArrayInputStream inStream = new ByteArrayInputStream(program.getBytes());
-		//					try{
-		//						if (modFile.exists()) { 
-		//							modFile.setContents(inStream, true, false, monitor);  
-		//						} else { 
-		//							modFile.create(inStream, true, monitor);
-		//						}
-		//						modFile.setDerived(true, monitor);
-		//					} finally {
-		//						inStream.close();
-		//					}
-		//				} catch (Exception e){
-		//					ProcessingLog.logError("Problem moving " + filename + " to the build folder.", e);
-		//				}
-		//			} else if("pde".equalsIgnoreCase(file.getFileExtension())){
-		//				// The compiler will need this to have a proper offset
-		//				// not sure why every file gets the same offset, but ok I'll go with it... [lonnen] aug 20 2011 
-		//				file.setSessionProperty(new QualifiedName(BUILDER_ID, "preproc start"), result.headerOffset);
-		//			}
-		//		}
-
-		monitor.worked(10);
-		if(checkCancel(monitor)) { return null; }
+		// Almost there! Set a new classpath using all this stuff we've computed.
 		
 		// Even though the list types are specified, Java still tosses errors when I try 
-		// to directly convert them or cast them. So instead I'm stuck doing this.
+		// to cast them. So instead I'm stuck with explicit iteration.
 		
 		IPath[] libPaths = new IPath[libraryJarPathList.size()];
+		
 		int i=0;
 		for(IPath path : libraryJarPathList) libPaths[i++] = path;
 
 		IPath[] srcPaths = new IPath[srcFolderPathList.size()];
+		
 		i=0;
 		for(IPath path : srcFolderPathList) srcPaths[i++] = path;
 		
-		sketchProject.updateClasspathEntries( srcPaths, libPaths);
+		try{
+			sketchProject.updateClasspathEntries( srcPaths, libPaths);
+		} catch (JavaModelException e) {
+			ProcessingLog.logError("There was a problem setting the compiler class path.", e);
+			return null; // bail !
+		}
 		
+		// everything is cool
+		sketchProject.wasLastBuildSuccessful = true;
 		return null;
 	}
 
-	/**
-	 * Try to delete all of the existing P5 problem markers
-	 * <p>
-	 * This should only remove the Processing specific markers.
-	 * 
-	 * @param project the project to be stripped of problem markers
-	 * @return true if all markers were deleted, false if some remain
-	 * @throws CoreException
-	 */
+	/** Delete all of the existing P5 problem markers. */
 	protected static void deleteP5ProblemMarkers(IResource resource) throws CoreException{
 		if(resource != null && resource.exists()){
 			resource.deleteMarkers(SketchBuilder.PREPROCMARKER, true, IResource.DEPTH_INFINITE);
@@ -533,26 +435,35 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 		}
 	}
 
+	/** Purge all the Processing set problem markers from the Processing sketch. */
 	protected static void deleteP5ProblemMarkers(SketchProject sketch)throws CoreException{
 		if(sketch != null)
 			deleteP5ProblemMarkers(sketch.getProject());
 	}
 
 	/**
-	 * Generates a problem marker from the preprocessor output
+	 * Generates and assigns a processing problem marker.
 	 * <p>
 	 * Tags the whole line and adds an issue to the Problems box. If the problem could not be tied
 	 * to a specific file it will be marked against the project and the line will not be marked.
-	 * 
-	 * @param msg error message
-	 * @param file where the problem occurred
-	 * @param line_number what line did the problem occur on
-	 * @param isError is this an error
 	 */
-	private void reportProblem(String msg, IResource file, int lineNumber, boolean isError){
+	private void reportProblem(String message, IResource problemFile, int lineNumber, boolean isError){
+		
+		// translate error messages to a friendlier form
+		if (message.equals("expecting RCURLY, found 'null'"))
+			message = "Found one too many { characters without a } to match it.";
+		if (message.indexOf("expecting RBRACK") != -1)
+			message = "Syntax error, maybe a missing right ] character?";
+		if (message.indexOf("expecting SEMI") != -1)
+			message = "Syntax error, maybe a missing semicolon?";
+		if (message.indexOf("expecting RPAREN") != -1)
+			message = "Syntax error, maybe a missing right parenthesis?";
+		if (message.indexOf("preproc.web_colors") != -1)
+			message = "A web color (such as #ffcc00) must be six digits.";
+
 		try{
-			IMarker marker = file.createMarker(SketchBuilder.PREPROCMARKER);
-			marker.setAttribute(IMarker.MESSAGE, msg);
+			IMarker marker = problemFile.createMarker(SketchBuilder.PREPROCMARKER);
+			marker.setAttribute(IMarker.MESSAGE, message);
 			marker.setAttribute(IMarker.SEVERITY, isError ? IMarker.SEVERITY_ERROR : IMarker.SEVERITY_WARNING);
 			if( lineNumber != -1)
 				marker.setAttribute(IMarker.LINE_NUMBER, lineNumber);
@@ -563,15 +474,13 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 	}
 
 	/**
-	 * Check for interruptions
+	 * Check for interruptions.
 	 * <p>
 	 * The build process is rather long so if the user cancels things toss an exception.
 	 * Builds also tie up the workspace, so check to see if something is demanding to
 	 * interrupt it and let it. Usually these interruptions would force a rebuild of the
 	 * system anyhow, so save some CPU cycles and time.
-	 * </p>
-	 * 
-	 * @param monitor
+	 * </p> 
 	 * @return true if the build is hogging the resource thread
 	 * @throws OperationCanceledException is the user cancels
 	 */
