@@ -1,3 +1,13 @@
+/**
+ * Copyright (c) 2010 Chris Lonnen. All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the 
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution, 
+ * and is available at http://www.opensource.org/licenses/eclipse-1.0.php
+ * 
+ * Contributors:
+ *     Chris Lonnen - initial API and implementation
+ */
 package processing.plugin.core;
 
 import org.eclipse.core.runtime.IStatus;
@@ -10,7 +20,8 @@ import org.eclipse.core.runtime.Status;
  * @author lonnen
  */
 public class ProcessingLog {
-
+	//TODO merge with ProcessingCore. Having multiple ProcessingLog files is friggin' confusing.
+	
 	// Who needs a constructor?
 	
 	/**

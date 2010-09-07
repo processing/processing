@@ -1,12 +1,13 @@
-/*******************************************************************************
+/**
+ * Copyright (c) 2010 Chris Lonnen. All rights reserved.
+ *
  * This program and the accompanying materials are made available under the 
- * terms of the Common Public License v1.0 which accompanies this distribution, 
- * and is available at http://www.opensource.org/licenses/cpl1.0.php
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution, 
+ * and is available at http://www.opensource.org/licenses/eclipse-1.0.php
  * 
  * Contributors:
- *     IBM Corporation - initial API and implementation
- *     Chris Lonnen - adaptation for Processing
- *******************************************************************************/
+ *     Chris Lonnen - initial API and implementation
+ */
 package processing.plugin.core.launching;
 
 import java.io.File;
@@ -28,10 +29,14 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.JavaLaunchDelegate;
 import org.eclipse.jdt.launching.JavaRuntime;
 
+import processing.plugin.core.ProcessingLog;
+
 /**
- * The launch configuration delegate for Processing Sketches. It is really a customized Java
- * launch configuration delegate, as Processing Sketches are compiled down and ultimately run
- * as Java applications (shhh! don't tell anyone).
+ * The default launch configuration delegate for Processing Sketches. 
+ * <p>
+ * Checks to make sure the last build was successful and that the sketch is not being run in debug mode.
+ * Then it computes some sensible defaults, builds a simple html wrapper and launches the sketch as an
+ * applet. This is not the same process as an export, and will not populate the applet folder.
  */
 public class ProcessingSketchLaunchConfigurationDelegate extends JavaLaunchDelegate implements IDebugEventSetListener {
 
@@ -63,7 +68,9 @@ public class ProcessingSketchLaunchConfigurationDelegate extends JavaLaunchDeleg
 	 */
 	public boolean preLaunchCheck(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
 		if(mode.equals(ILaunchManager.RUN_MODE)){
-			return true;
+			if(configuration.getAttribute("wasLastBuildSuccessful", false)) 
+				return true;
+			ProcessingLog.logInfo("Aborting launch -- Sketch has unresolved build problems.");
 		}
 		return false;
 	}
@@ -78,21 +85,12 @@ public class ProcessingSketchLaunchConfigurationDelegate extends JavaLaunchDeleg
 				fgLaunchToFileMap.remove(launch);
 				temp.delete();
 			} finally {
-				// unregister any listeners? there shouldn't be any
+				// unregister any debug listeners? there shouldn't be any
 				// because we don't support debugging
 			}
 		}
 
 	}
-
-	//	URL fileLocation = ProcessingCore.getProcessingCore().getPluginResource("");
-	//	try {
-	//		File folder = new File(FileLocator.toFileURL(fileLocation).getPath());
-	//		if (folder.exists())
-	//			return folder;
-	//	} catch (Exception e) {
-	//		ProcessingLog.logError(e);
-	//	}
 
 	public File buildHTMLFile(ILaunchConfiguration configuration, File dir) {
 		FileWriter writer = null;
@@ -173,17 +171,11 @@ public class ProcessingSketchLaunchConfigurationDelegate extends JavaLaunchDeleg
 	//		return arguments.toString();
 	//	}
 
-
 	public String getMainTypeName(ILaunchConfiguration configuration) throws CoreException{
 		return configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_APPLETVIEWER_CLASS, IJavaLaunchConfigurationConstants.DEFAULT_APPLETVIEWER_CLASS);
 	}
 
-	/**
-	 * Returns the applet's main type name.
-	 * 
-	 * @param configuration
-	 * @throws CoreException 
-	 */
+	/** Returns the applet's main type name. */
 	public String getAppletMainTypeName(ILaunchConfiguration configuration) throws CoreException{
 		return super.getMainTypeName(configuration);
 	}

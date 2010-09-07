@@ -1,3 +1,13 @@
+/**
+ * Copyright (c) 2010 Chris Lonnen. All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the 
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution, 
+ * and is available at http://www.opensource.org/licenses/eclipse-1.0.php
+ * 
+ * Contributors:
+ *     Chris Lonnen - initial API and implementation
+ */
 package processing.plugin.core.builder;
 
 import java.io.BufferedReader;
@@ -26,12 +36,12 @@ import processing.plugin.core.ProcessingLog;
 /**
  * General container for static utility methods related to the build
  * process that should not be grouped with the ProcessingCore class.
- * 
+ * <p>
  * Many of these are taken from PApplet or Base or some other class
  * that invokes UI. They have been placed here and sometimes modified
  * slightly to avoid invoking any UI components which cause warnings 
  * and other scary messages in Eclipse that might spook users.
- * 
+ * <p>
  * All the UI stuff hasn't quite been removed yet, but if code is in here
  * it is not part of the problem, so that's something.
  */

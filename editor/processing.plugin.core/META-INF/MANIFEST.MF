@@ -15,3 +15,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: processing.plugin.core,
  processing.plugin.core.builder
+Import-Package: org.eclipse.core.commands

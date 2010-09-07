@@ -1,12 +1,13 @@
-/*******************************************************************************
+/**
+ * Copyright (c) 2010 Chris Lonnen. All rights reserved.
+ *
  * This program and the accompanying materials are made available under the 
- * terms of the Common Public License v1.0 which accompanies this distribution, 
- * and is available at http://www.opensource.org/licenses/cpl1.0.php
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution, 
+ * and is available at http://www.opensource.org/licenses/eclipse-1.0.php
  * 
  * Contributors:
  *     Chris Lonnen - initial API and implementation
- *******************************************************************************/
-
+ */
 package processing.plugin.core;
 
 import java.io.File;
@@ -28,12 +29,7 @@ import org.eclipse.core.runtime.Plugin;
 import processing.plugin.core.builder.Utilities;
 
 /**
- * The plug-in runtime class containing the core (UI-free) support for Processing 
- * sketches.
- * <p>
- * Like all plug-in runtime classes (subclasses of <code>Plugin</code>), this class 
- * is automatically instantiated by the platform when the plug-in gets activated. 
- * </p>
+ * The plug-in activator enabling the core (UI-free) support for Processing sketches.
  * <p>
  * The single instance of this class can be accessed from any plug-in declaring the 
  * Processing core plug-in as a prerequisite via 
