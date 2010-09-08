@@ -83,7 +83,7 @@
       <perspective
             class="processing.plugin.ui.perspective.Sketching"
             icon="Resources/16x16_icon.gif"
-            id="processing.plugin.ui.perspecitve"
+            id="processing.plugin.ui.sketchingPerspective"
             name="Processing">
          <description>
             Write Processing sketches.
