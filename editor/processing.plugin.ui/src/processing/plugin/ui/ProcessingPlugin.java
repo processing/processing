@@ -28,11 +28,12 @@ public class ProcessingPlugin extends AbstractUIPlugin {
 	/** The ID of the Processing UI Plugin */
 	public static final String PLUGIN_ID = "processing.plugin.ui"; //$NON-NLS-1$
 
-	/** The ID of a planned but unimplemented Processing Perspective */ //TODO Implement P5 Perspective
-	public static final String ID_PERSPECTIVE = PLUGIN_ID + ".ProcessingPerspective";
+	/** The ID of a planned but unimplemented Processing Perspective */
+	public static final String ID_PERSPECTIVE = PLUGIN_ID + ".sketchingPerspecitve";
 	
 	/** The ID of the processing  */
 	public static final String PROCESSING_PARTITIONING = "__processing_partitioning";
+	
 	
 	/** The shared plugin instance */
 	private static ProcessingPlugin plugin;
