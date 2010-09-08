@@ -19,41 +19,23 @@ public class Sketching implements IPerspectiveFactory {
 
 	/* (non-JavaDoc) organization suggested by http://www.eclipse.org/articles/using-perspectives/PerspectiveArticle.html */
 	public void createInitialLayout(IPageLayout layout) {
-			defineMenuItemOptions(layout);
-			defineLayout(layout);
-	}
-	
-	/** Define what menu items */
-	public void defineMenuItemOptions(IPageLayout layout){
-		layout.addNewWizardShortcut("org.eclipse.ui.wizards.new.file");
-		layout.addNewWizardShortcut("org.eclipse.ui.wizards.new.folder");
-		layout.addNewWizardShortcut("processing.plugin.ui.wizards.NewSketchWizard");
-		//TODO "processing.plugin.ui.wizards.NewTab" equivalent
-
-		// Add them to the Window -> Show view menu
-		layout.addShowViewShortcut(IPageLayout.ID_EDITOR_AREA);
-		layout.addShowViewShortcut(IPageLayout.ID_PROBLEM_VIEW);
-		layout.addShowViewShortcut("org.eclipse.ui.console.ConsoleView");
-		layout.addShowViewShortcut(IPageLayout.ID_PROJECT_EXPLORER);
-	}
-	
-	public void defineLayout(IPageLayout layout){
 		//Editors are in assumed to be in the center, so there is no placement info for them.
+		String editorAreaIdentifier = layout.getEditorArea();
+
+		// Left set of stuff
+		float leftPanelSizeAsRatio = 0.2f;
+		IFolderLayout leftPanels =
+			layout.createFolder("left", IPageLayout.LEFT, leftPanelSizeAsRatio, editorAreaIdentifier);
+		leftPanels.addView(IPageLayout.ID_RES_NAV);
 		
-		// Fast view of the file manager
-		float fastViewSizeAsRatio = 0.3f; // ratio of the screen this should overlay
-		layout.addFastView(IPageLayout.ID_PROJECT_EXPLORER, fastViewSizeAsRatio);
-		
-		// Bottom set of tabs.
+		// Bottom set of tabs
 		// strangely, this number is the screen ratio the bottom panel should *not* take up
 		// which is different than the fast view size as ratio
 		float bottomPanelSizeAsInverseRatio = 0.7f;
-		String editorAreaIdentifier = layout.getEditorArea();
 		IFolderLayout bottomPanels = 
 			layout.createFolder("bottom", IPageLayout.BOTTOM, bottomPanelSizeAsInverseRatio, editorAreaIdentifier);
 		bottomPanels.addView(IPageLayout.ID_PROBLEM_VIEW);
-		bottomPanels.addView("org.eclipse.ui.console.ConsoleView");
-	}
+		bottomPanels.addView("org.eclipse.ui.console.ConsoleView");	}
 	
 	/* //TODO Fix the toolbars
 	 * Frustratingly I cannot figure out much here. Toolbar contributions
