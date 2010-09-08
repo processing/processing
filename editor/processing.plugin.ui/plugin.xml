@@ -42,19 +42,6 @@
             name="Processing">
       </page>
    </extension>
-   <extension
-         point="org.eclipse.core.runtime.preferences">
-   </extension>
-   <extension
-         point="org.eclipse.ui.ide.resourceFilters">
-      <filter
-      		pattern = "generated"
-            selected="true">
-         <description>
-            Hides the generated folder and its contents from the UI.
-         </description>
-      </filter>
-   </extension>
    <extension point="org.eclipse.debug.ui.launchShortcuts">
       <shortcut
             category="Processing"
@@ -64,7 +51,6 @@
             id="processing.plugin.ui.launching.runSketchAsApplet"
             label="Processing Sketch (Applet)"
             modes="run">
-            <perspective id="processing.plugin.ui.sketchingPerspective"/>
          <contextualLaunch>
             <enablement>
             	<with variable="selection">
@@ -80,8 +66,7 @@
          </contextualLaunch>
       </shortcut>
    </extension>
-   <extension
-         point="org.eclipse.ui.perspectives">
+   <extension point="org.eclipse.ui.perspectives">
       <perspective
             class="processing.plugin.ui.perspective.Sketching"
             icon="Resources/16x16_icon.gif"
@@ -92,39 +77,78 @@
          </description>
       </perspective>
    </extension>
-   <extension
-         point="org.eclipse.ui.perspectiveExtensions">
+   <extension point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension targetID="processing.plugin.ui.sketchingPerspective">
+         <newWizardShortcut id="processing.plugin.ui.wizards.NewSketchWizard" />
+         <newWizardShortcut id="org.eclipse.ui.wizards.new.file" />
+         <newWizardShortcut id="org.eclipse.ui.wizards.new.folder" />
+         <perspectiveShortcut id="org.eclipse.jdt.ui.JavaPerspective" />
+         <viewShortcut id="org.eclipse.ui.navigator.ProjectExplorer" />
+         <viewShortcut id="org.eclipse.ui.views.ProblemView" />
+         <viewShortcut id="org.eclipse.ui.views.ResourceNavigator" />
+         <viewShortcut id="org.eclipse.ui.console.ConsoleView" />
+      </perspectiveExtension>
       <perspectiveExtension
-            targetID="processing.plugin.ui.sketchingPerspective">
-         <newWizardShortcut
-               id="processing.plugin.ui.wizards.NewSketchWizard">
-         </newWizardShortcut>
-         <newWizardShortcut
-               id="org.eclipse.ui.wizards.new.file">
-         </newWizardShortcut>
-         <newWizardShortcut
-               id="org.eclipse.ui.wizards.new.folder">
-         </newWizardShortcut>
-         <perspectiveShortcut
-               id="org.eclipse.jdt.ui.JavaPerspective">
-         </perspectiveShortcut>
-         <viewShortcut
-               id="org.eclipse.ui.navigator.ProjectExplorer">
-         </viewShortcut>
-         <showInPart></showInPart>
-         <viewShortcut
-               id="org.eclipse.ui.views.ProblemView">
-         </viewShortcut>
-         <viewShortcut
-               id="org.eclipse.ui.views.ResourceNavigator">
-         </viewShortcut>
-         <viewShortcut
-               id="org.eclipse.ui.console.ConsoleView">
-         </viewShortcut>
+            targetID="org.eclipse.ui.resourcePerspective">
+         <view
+               id="processing.plugin.ui.views.sketchView"
+               ratio="0.2"
+               relationship="stack"
+               relative="org.eclipse.ui.navigator.ProjectExplorer">
+         </view>
       </perspectiveExtension>
    </extension>
-
-
-
-
+   <extension point="org.eclipse.ui.views">
+      <view
+            class="org.eclipse.ui.navigator.CommonNavigator"
+            icon="Resources/16x16_icon.gif"
+            id="processing.plugin.ui.views.sketchView"
+            name="Sketch Navigator">
+      </view>
+   </extension>
+   <extension point="org.eclipse.ui.navigator.viewer">
+      <viewerActionBinding
+            viewerId="processing.plugin.ui.views.sketchView">
+         <includes>
+            <actionExtension pattern="org.eclipse.ui.navigator.resources.*" />
+         </includes>
+      </viewerActionBinding>
+      <viewerContentBinding viewerId="processing.plugin.ui.views.sketchView">
+         <includes>
+            <contentExtension pattern="org.eclipse.ui.navigator.resourceContent" />
+            <contentExtension pattern="org.eclipse.ui.navigator.resources.filters.*" />
+            <contentExtension pattern="org.eclipse.ui.navigator.resources.linkHelper" />
+            <contentExtension pattern="org.eclipse.ui.navigator.resources.workingSets" />
+            <contentExtension pattern="processing.plugin.ui.filters.excludeGenerated" />
+            <contentExtension pattern="processing.plugin.ui.filters.excludeNonSketches" />
+         </includes>
+      </viewerContentBinding>
+   </extension>
+   <extension point="org.eclipse.ui.navigator.navigatorContent">
+      <commonFilter
+            activeByDefault="true"
+            description="Exclude derived resources generated during the Sketch building process."
+            id="processing.plugin.ui.filters.excludeGenerated"
+            name="Generated Folder"
+            visibleInUI="true">
+          <filterExpression>
+          	<test property="org.eclipse.core.resources.name" value="generated" />      
+          </filterExpression>
+      </commonFilter>
+      <commonFilter
+            activeByDefault="true"
+            description="Hides projects that are not Processing Sketches"
+            id="processing.plugin.ui.filters.excludeNonSketches"
+            name="Non-Sketch Projects"
+            visibleInUI="true">
+         <filterExpression>
+              <instanceof value="org.eclipse.core.resources.IProject" />
+              <and>
+    		    <not>
+       		      <test args="processing.plugin.core.sketchNature" property="org.eclipse.jdt.launching.hasProjectNature" />
+		        </not>
+		      </and>
+         </filterExpression>
+      </commonFilter>
+   </extension>
 </plugin>

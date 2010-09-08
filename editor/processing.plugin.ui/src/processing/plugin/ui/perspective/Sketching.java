@@ -26,8 +26,9 @@ public class Sketching implements IPerspectiveFactory {
 		float leftPanelSizeAsRatio = 0.2f;
 		IFolderLayout leftPanels =
 			layout.createFolder("left", IPageLayout.LEFT, leftPanelSizeAsRatio, editorAreaIdentifier);
-		leftPanels.addView(IPageLayout.ID_RES_NAV);
-		
+
+		leftPanels.addView("processing.plugin.ui.views.sketchView");
+			
 		// Bottom set of tabs
 		// strangely, this number is the screen ratio the bottom panel should *not* take up
 		// which is different than the fast view size as ratio
@@ -55,10 +56,9 @@ public class Sketching implements IPerspectiveFactory {
 	 * the PDE toolbars are -- run, stop?, new, open, save, export  
 	 * 
 	 * For now, the Java perspective may actually be a better way for
-	 * people to interact with the sketch. Don't force this on anyone 
-	 * until it is better developed.
+	 * people to interact with the sketch.
 	 * 
-	 * @see Bug 36968 -  "[Contributions] Improve action contributions "
+	 * @see Eclipse Bug 36968 -  "[Contributions] Improve action contributions "
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=36968   
 	 */
 
