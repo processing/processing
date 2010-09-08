@@ -18,15 +18,17 @@
             extensions="pde">
       </participant>
    </extension>
-   <extension
-         point="org.eclipse.ui.newWizards">
+   <extension point="org.eclipse.ui.newWizards">
       <category
             id="processing.plugin.ui.wizards"
-            name="Processing">
+            name="Processing Wizards">
       </category>
       <wizard
-            category="org.processing.wizards"
+            category="processing.plugin.ui.wizards"
             class="processing.plugin.ui.wizards.NewSketchWizard"
+            descriptionImage="Resources/16x16_icon.gif"
+            finalPerspective="processing.plugin.ui.sketchingPerspective"
+            icon="Resources/16x16_icon.gif"
             id="processing.plugin.ui.wizards.NewSketchWizard"
             name="Processing Sketch"
             project="true">
@@ -51,7 +53,6 @@
          <description>
             Hides the generated folder and its contents from the UI.
          </description>
-            
       </filter>
    </extension>
    <extension point="org.eclipse.debug.ui.launchShortcuts">
@@ -63,6 +64,7 @@
             id="processing.plugin.ui.launching.runSketchAsApplet"
             label="Processing Sketch (Applet)"
             modes="run">
+            <perspective id="processing.plugin.ui.sketchingPerspective"/>
          <contextualLaunch>
             <enablement>
             	<with variable="selection">
@@ -89,6 +91,37 @@
             Write Processing sketches.
          </description>
       </perspective>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="processing.plugin.ui.sketchingPerspective">
+         <newWizardShortcut
+               id="processing.plugin.ui.wizards.NewSketchWizard">
+         </newWizardShortcut>
+         <newWizardShortcut
+               id="org.eclipse.ui.wizards.new.file">
+         </newWizardShortcut>
+         <newWizardShortcut
+               id="org.eclipse.ui.wizards.new.folder">
+         </newWizardShortcut>
+         <perspectiveShortcut
+               id="org.eclipse.jdt.ui.JavaPerspective">
+         </perspectiveShortcut>
+         <viewShortcut
+               id="org.eclipse.ui.navigator.ProjectExplorer">
+         </viewShortcut>
+         <showInPart></showInPart>
+         <viewShortcut
+               id="org.eclipse.ui.views.ProblemView">
+         </viewShortcut>
+         <viewShortcut
+               id="org.eclipse.ui.views.ResourceNavigator">
+         </viewShortcut>
+         <viewShortcut
+               id="org.eclipse.ui.console.ConsoleView">
+         </viewShortcut>
+      </perspectiveExtension>
    </extension>
 
 

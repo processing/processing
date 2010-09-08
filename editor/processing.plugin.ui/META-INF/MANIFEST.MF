@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Processing Plugin User Interface Elements
 Bundle-SymbolicName: processing.plugin.ui;singleton:=true
-Bundle-Version: 0.1.0.1
+Bundle-Version: 0.1.3.1
 Bundle-Activator: processing.plugin.ui.ProcessingPlugin
 Bundle-Vendor: Processing.org
 Require-Bundle: org.eclipse.ui,
