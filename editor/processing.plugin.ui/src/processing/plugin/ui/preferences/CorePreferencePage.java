@@ -32,7 +32,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import processing.plugin.core.ProcessingCorePreferences;
 
-/** 
+/**
  * Pref pane class for the Core preferences. 
  * <p>
  * Has a single field corresponding to the sketchbook path. Paths are verified, then if they

@@ -474,5 +474,14 @@ public class SketchProject implements IProjectNature {
 	public String getMainType() {
 		return project.getName();
 	}
+
+	/** 
+	 * Tries to export the sketch as an applet
+	 * returns whether or not it was successful
+	 */
+	public boolean exportAsApplet() {
+		if (!wasLastBuildSuccessful) return false;
+		return false;
+	}
 	
 }
