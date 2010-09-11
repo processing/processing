@@ -18,13 +18,21 @@
             extensions="pde">
       </participant>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="processing.plugin.ui.preferences.CorePreferencePage"
+            id="processing.plugin.ui.preferences.CorePreferencePage"
+            name="Processing">
+      </page>
+   </extension>
    <extension point="org.eclipse.ui.newWizards">
       <category
-            id="processing.plugin.ui.wizards"
-            name="Processing Wizards">
+            id="processing.plugin.ui.newWizards"
+            name="Processing">
       </category>
       <wizard
-            category="processing.plugin.ui.wizards"
+            category="processing.plugin.ui.newWizards"
             class="processing.plugin.ui.wizards.NewSketchWizard"
             descriptionImage="Resources/16x16_icon.gif"
             finalPerspective="processing.plugin.ui.sketchingPerspective"
@@ -34,13 +42,18 @@
             project="true">
       </wizard>
    </extension>
-   <extension
-         point="org.eclipse.ui.preferencePages">
-      <page
-            class="processing.plugin.ui.preferences.CorePreferencePage"
-            id="processing.plugin.ui.preferences.CorePreferencePage"
+   <extension point="org.eclipse.ui.exportWizards">
+      <category
+            id="processing.plugin.ui.exportWizards"
             name="Processing">
-      </page>
+      </category>
+      <wizard
+            category="processing.plugin.ui.exportWizards"
+            class="processing.plugin.ui.wizards.ExportAsAppletWizard"
+            icon="Resources/16x16_icon.gif"
+            id="processing.plugin.ui.wizards.exportAsAppletWizard"
+            name="Export Sketch as Applet">
+      </wizard>
    </extension>
    <extension point="org.eclipse.debug.ui.launchShortcuts">
       <shortcut
