@@ -62,15 +62,13 @@ public class RunSketchAsAppletShortcut implements ILaunchShortcut {
 	public void launch(ISelection selection, String mode) {
 		if (selection instanceof IStructuredSelection) {
 			Object element = ((IStructuredSelection)selection).getFirstElement();
-
 			if (element instanceof IResource){
 				IProject proj = ((IResource)element).getProject();
 				try{
-					if (proj.hasNature("processing.plugin.core.sketchNature")){
+					if (proj.hasNature("processing.plugin.core.sketchNature"))
 						launch(createConfiguration(proj), mode);
-					} else {
+					else 
 						ProcessingLog.logInfo("Sketch could not be launched. The selected project does not have the required Sketch nature.");
-					}
 				} catch (CoreException e){
 					ProcessingLog.logError("Launch aborted.", e);
 				}
@@ -80,29 +78,30 @@ public class RunSketchAsAppletShortcut implements ILaunchShortcut {
 		}
 	}
 
-	// have to implement. log a warning.
-	// there isn't a great way to launch this without a model
+	
 	public void launch(IEditorPart editor, String mode) {
 		IFile file = ResourceUtil.getFile(editor.getEditorInput());
-		if(file != null){
-			IProject proj = file.getProject();
-			try{
-				if (proj.hasNature("processing.plugin.core.sketchNature")){
-					launch(createConfiguration(proj), mode);
-				} else {
-					ProcessingLog.logInfo("Sketch could not be launched. The editor contains a file that is not part of a project with a Sketch nature.");
-				}
-			} catch (CoreException e){
-				ProcessingLog.logError("Launch aborted.", e);
-			}
-		} else {
+		
+		if(file == null){
 			ProcessingLog.logInfo("Launch aborted. Editor contents are not part of a Sketch Project in the workspace");
+			return;
+		}
+		
+		IProject proj = file.getProject();
+		try{
+			if (!proj.hasNature("processing.plugin.core.sketchNature")){
+				ProcessingLog.logInfo("Sketch could not be launched. The editor contains a file that is not part of a project with a Sketch nature.");
+				return;
+			}
+			launch(createConfiguration(proj), mode);
+		} catch (CoreException e){
+			ProcessingLog.logError("Launch aborted.", e);
 		}
 	}
 
 	private void launch(ILaunchConfiguration config, String mode) {
-		if (config != null)
-			DebugUITools.launch(config, mode);
+		if (config == null) return;
+		DebugUITools.launch(config, mode);
 	}
 
 	
