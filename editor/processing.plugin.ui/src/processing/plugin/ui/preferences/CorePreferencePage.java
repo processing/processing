@@ -38,6 +38,9 @@ import processing.plugin.core.ProcessingCorePreferences;
  * Has a single field corresponding to the sketchbook path. Paths are verified, then if they
  * are invalid a warning message is displayed. Whenever an empty path or a valid path is set
  * it is saved. The OK button is only clickable after a successful save or a legit path.
+ * <p>
+ * Because the Processing Core plug-in is not an Abstract UI plugin, it does not carry a 
+ * preference store.
  */
 public class CorePreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
