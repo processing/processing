@@ -1531,7 +1531,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
     image.parent = this;  // make save() work
     if (g instanceof PGraphicsAndroid3D) {
       // TODO: Check why textures doesn't work in formats other than ARGB...
-      image.format = params.format;
+      image.format = ARGB;
       image.loadTexture(params);
     }
     return image;
@@ -3288,8 +3288,15 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 //  protected String[] loadImageFormats;
 
-
   public PImage loadImage(String filename) {
+    return loadImage(filename, new PTexture.Parameters(ARGB));    
+  }
+
+  public PImage loadImage(String filename, int filter) {
+    return loadImage(filename, new PTexture.Parameters(ARGB, filter));
+  }
+  
+  public PImage loadImage(String filename, PTexture.Parameters params) {
 //    return loadImage(filename, null);
     InputStream stream = createInput(filename);
     if (stream == null) {
@@ -3313,7 +3320,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
     if (g instanceof PGraphicsAndroid3D) {
       // TODO: Check why textures doesn't work in formats other than ARGB...
       image.format = ARGB;
-      image.loadTexture();
+      image.loadTexture(params);
     }
     return image;
   }
