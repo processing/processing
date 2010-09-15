@@ -28,6 +28,8 @@ import java.nio.IntBuffer;
 import javax.microedition.khronos.opengles.*;
 import javax.microedition.khronos.egl.EGL10;
 
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
 import android.opengl.GLUtils;
 
 import java.nio.*;
@@ -293,12 +295,44 @@ public class PTexture implements PConstants {
     if (usingMipmaps) {
       if (a3d.gl11 != null && PGraphicsAndroid3D.mipmapSupported) {
         gl.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_GENERATE_MIPMAP, GL11.GL_TRUE);
+        gl.glTexSubImage2D(glTarget, 0, 0, 0, glWidth, glHeight, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, IntBuffer.wrap(convArray));
       } else {
-        // TODO: alternative mipmap generation. See the following link for more info:
+        // Code by Mike Miller obtained from here:
         // http://insanitydesign.com/wp/2009/08/01/android-opengl-es-mipmaps/
+        int level = 0;
+        int w = glWidth;
+        int h = glHeight;
+        
+        // We create a Bitmap because then we use its built-in filtered downsampling
+        // functionality.
+        Bitmap bitmap = Bitmap.createBitmap(w, h, Config.ARGB_8888);
+        bitmap.setPixels(convArray, 0, w, 0, 0, w, h);
+        
+        while (w >= 1 || h >= 1) {
+          //First of all, generate the texture from our bitmap and set it to the according level
+          GLUtils.texImage2D(GL10.GL_TEXTURE_2D, level, bitmap, 0);
+
+          // We are done.
+          if (w == 1 || h == 1) {
+            break;
+          }
+ 
+          // Increase the mipmap level
+          level++;
+ 
+          // Downsampling bitmap
+          h /= 2;
+          w /= 2;
+          Bitmap bitmap2 = Bitmap.createScaledBitmap(bitmap, w, h, true);
+ 
+          // Clean up
+          bitmap.recycle();
+          bitmap = bitmap2;
+        }
       }
+    } else {
+      gl.glTexSubImage2D(glTarget, 0, 0, 0, glWidth, glHeight, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, IntBuffer.wrap(convArray));
     }
-    gl.glTexSubImage2D(glTarget, 0, 0, 0, glWidth, glHeight, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, IntBuffer.wrap(convArray));
 
     gl.glDisable(glTarget);
   }  
