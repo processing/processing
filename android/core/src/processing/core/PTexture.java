@@ -287,18 +287,19 @@ public class PTexture implements PConstants {
     }   
     
     int[] convArray = new int[glWidth * glHeight];
-    convertToRGBA(intArray, convArray, arrayFormat);    
     
     gl.glEnable(glTarget);
     gl.glBindTexture(glTarget, glTextureID);
                 
     if (usingMipmaps) {
       if (a3d.gl11 != null && PGraphicsAndroid3D.mipmapSupported) {
+        convertToRGBA(intArray, convArray, arrayFormat);
         gl.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_GENERATE_MIPMAP, GL11.GL_TRUE);
         gl.glTexSubImage2D(glTarget, 0, 0, 0, glWidth, glHeight, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, IntBuffer.wrap(convArray));
       } else {
         // Code by Mike Miller obtained from here:
         // http://insanitydesign.com/wp/2009/08/01/android-opengl-es-mipmaps/
+        copyARGB(intArray, convArray);
         int level = 0;
         int w = glWidth;
         int h = glHeight;
@@ -331,6 +332,7 @@ public class PTexture implements PConstants {
         }
       }
     } else {
+      convertToRGBA(intArray, convArray, arrayFormat);
       gl.glTexSubImage2D(glTarget, 0, 0, 0, glWidth, glHeight, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, IntBuffer.wrap(convArray));
     }
 
@@ -724,6 +726,23 @@ public class PTexture implements PConstants {
     }
   }
     
+  /**
+   * Copies the pixel array in ARGB intArray into cIntArray. The size of the incoming 
+   * array is assumed to be width*height, and the size of the returned array is 
+   * glWidth * glHeight.
+   * @param intArray int[]
+   * @param cIntArray int[]
+   */      
+  protected void copyARGB(int[] intArray, int[] cIntArray) {
+    int t = 0; 
+    int p = 0;
+    for (int y = 0; y < height; y++) {
+      for (int x = 0; x < width; x++) {
+        cIntArray[t++] = intArray[p++];
+      }
+       t += glWidth - width;
+    }
+  }
   
   ///////////////////////////////////////////////////////////  
 
