@@ -218,7 +218,8 @@ public class PGraphicsAndroid3D extends PGraphics {
   private int[] texCoordArray;
   private int[] normalArray;
   
-  protected PImage textureImagePrev;
+  protected PImage textureImagePrev;  
+  protected IntBuffer getsetBuffer;
   protected boolean buffersAllocated = false;
 
   // ........................................................
@@ -460,7 +461,10 @@ public class PGraphicsAndroid3D extends PGraphics {
       colorArray = new int[DEFAULT_BUFFER_SIZE * 4];
       texCoordArray = new int[DEFAULT_BUFFER_SIZE * 2];
       normalArray = new int[DEFAULT_BUFFER_SIZE * 3];
-        
+      
+      getsetBuffer = IntBuffer.allocate(1);
+      getsetBuffer.rewind();
+      
       buffersAllocated = true;
     }   
   }
@@ -4432,18 +4436,12 @@ public class PGraphicsAndroid3D extends PGraphics {
    */
   private final void calcColorBuffer() {
     if (colorFloats == null) {
-      // colorBuffer = BufferUtil.newFloatBuffer(4);
       colorFloats = new float[4];
     }
     colorFloats[0] = calcR;
     colorFloats[1] = calcG;
     colorFloats[2] = calcB;
     colorFloats[3] = calcA;
-    // colorBuffer.put(0, calcR);
-    // colorBuffer.put(1, calcG);
-    // colorBuffer.put(2, calcB);
-    // colorBuffer.put(3, calcA);
-    // colorBuffer.rewind();
   }
 
   // ////////////////////////////////////////////////////////////
@@ -4515,9 +4513,9 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   public void loadPixels() {
     if ((pixels == null) || (pixels.length != width * height)) {
-      pixels = new int[width * height];
-      pixelBuffer = BufferUtil.newIntBuffer(pixels.length);
-      // pixelBuffer = IntBuffer.allocate(pixels.length);
+      pixels = new int[width * height];      
+      pixelBuffer = IntBuffer.allocate(pixels.length);
+      pixelBuffer.rewind();
     }
 
     gl.glReadPixels(0, 0, width, height, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE,
@@ -4816,8 +4814,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     if ((pixels == null) || (pixels.length != width * height)) {
       pixels = new int[width * height];
-      pixelBuffer = BufferUtil.newIntBuffer(pixels.length);
-      // pixelBuffer = IntBuffer.allocate(pixels.length);
+      pixelBuffer = IntBuffer.allocate(pixels.length);
+      pixelBuffer.rewind();
     }
                
     gl.glReadPixels(0, 0, width, height, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE,
@@ -4843,12 +4841,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   // ////////////////////////////////////////////////////////////
 
   // GET/SET
-
-  // IntBuffer getsetBuffer = IntBuffer.allocate(1);
-  IntBuffer getsetBuffer = BufferUtil.newIntBuffer(1);
-
-  // int getset[] = new int[1];
-
+  
   public int get(int x, int y) {
     gl.glReadPixels(x, y, 1, 1, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE,
         getsetBuffer);
@@ -4866,9 +4859,8 @@ public class PGraphicsAndroid3D extends PGraphics {
   // public PImage get(int x, int y, int w, int h)
 
   protected PImage getImpl(int x, int y, int w, int h) {
-    PImage newbie = new PImage(w, h); // new int[w*h], w, h, ARGB);
+    PImage newbie = new PImage(w, h);
 
-    // IntBuffer newbieBuffer = BufferUtil.newIntBuffer(w*h);
     IntBuffer newbieBuffer = IntBuffer.allocate(w * h);
     gl.glReadPixels(x, y, w, h, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE,
         newbieBuffer);
@@ -4917,7 +4909,9 @@ public class PGraphicsAndroid3D extends PGraphics {
     javaToNativeARGB(source);
 
     // TODO is this possible without intbuffer?
-    IntBuffer setBuffer = BufferUtil.newIntBuffer(source.pixels.length);
+    IntBuffer setBuffer = IntBuffer.allocate(source.pixels.length);
+    setBuffer.rewind();
+      
     setBuffer.put(source.pixels);
     setBuffer.rewind();
 
@@ -4944,21 +4938,21 @@ public class PGraphicsAndroid3D extends PGraphics {
    *          the Y-coordinate, which is flipped upside down in OpenGL
    */
   protected void setRasterPos(float x, float y) {
-    // float z = 0;
-    // float w = 1;
-    //
-    // float fx, fy;
-    //
+     //float z = 0;
+     //float w = 1;
+    
+     //float fx, fy;
+    
     // // Push current matrix mode and viewport attributes
     // gl.glPushAttrib(GL.GL_TRANSFORM_BIT | GL.GL_VIEWPORT_BIT);
-    //
+    
     // // Setup projection parameters
-    // gl.glMatrixMode(GL.GL_PROJECTION);
-    // gl.glPushMatrix();
-    // gl.glLoadIdentity();
-    // gl.glMatrixMode(GL.GL_MODELVIEW);
-    // gl.glPushMatrix();
-    // gl.glLoadIdentity();
+    //gl.glMatrixMode(GL10.GL_PROJECTION);
+    //gl.glPushMatrix();
+    //gl.glLoadIdentity();
+    //gl.glMatrixMode(GL.GL_MODELVIEW);
+   // gl.glPushMatrix();
+    //gl.glLoadIdentity();
     //
     // gl.glDepthRange(z, z);
     // gl.glViewport((int) x - 1, (int) y - 1, 2, 2);
@@ -4967,6 +4961,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     // fx = x - (int) x;
     // fy = y - (int) y;
     // gl.glRasterPos4f(fx, fy, 0, w);
+    // gl.glR
+     
     //
     // // restore matrices, viewport and matrix mode
     // gl.glPopMatrix();
@@ -4974,6 +4970,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     // gl.glPopMatrix();
     //
     // gl.glPopAttrib();
+    
   }
 
   // Utility function to render texture.
@@ -5649,15 +5646,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
 
   }
-}
-
-class BufferUtil {
-  static IntBuffer newIntBuffer(int big) {
-    IntBuffer buffer = IntBuffer.allocate(big);
-    buffer.rewind();
-    return buffer;
-  }
-
+  
   /**
    * Return true if this renderer supports 2D drawing. Defaults to true.
    */

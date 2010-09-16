@@ -365,7 +365,8 @@ public class PTexture implements PConstants {
       // Attaching the texture to the color buffer of a FBO, binding the FBO and reading the pixels
       // from the current draw buffer (which is the color buffer of the FBO).
     
-      buffer = BufferUtil.newIntBuffer(size);
+      buffer = IntBuffer.allocate(size);
+      buffer.rewind();  
     
       fbo = new PFramebuffer(parent, glWidth, glHeight);
       fbo.setColorBuffer(this);

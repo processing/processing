@@ -90,7 +90,8 @@ public class PFramebuffer implements PConstants {
     
     if (!screenFb && !FboMode) {
       backupTexture = new PTexture(parent, width, height, new PTexture.Parameters(ARGB, NEAREST));
-      pixelBuffer = BufferUtil.newIntBuffer(width * height);  
+      pixelBuffer = IntBuffer.allocate(width * height);
+      pixelBuffer.rewind();        
     }
     
     try {
