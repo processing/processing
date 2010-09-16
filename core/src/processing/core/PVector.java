@@ -24,6 +24,8 @@
 
 package processing.core;
 
+import java.io.Serializable;
+
 /**
  * A class to describe a two or three dimensional vector.
  * <p>
@@ -38,7 +40,12 @@ package processing.core;
  * <p>
  * Initially based on the Vector3D class by <a href="http://www.shiffman.net">Dan Shiffman</a>.
  */
-public class PVector {
+public class PVector implements Serializable {
+
+  /**
+   * Generated 2010-09-14 by jdf
+   */
+  private static final long serialVersionUID = -6717872085945400694L;
 
   /** The x component of the vector. */
   public float x;
@@ -50,8 +57,7 @@ public class PVector {
   public float z;
 
   /** Array so that this can be temporarily used in an array context */
-  protected float[] array;
-
+  transient protected float[] array;
 
   /**
    * Constructor for an empty vector: x, y, and z are set to 0.
@@ -569,6 +575,21 @@ public class PVector {
     array[2] = z;
     return array;
   }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (!(obj instanceof PVector))
+      return false;
+    final PVector p = (PVector) obj;
+    return x == p.x && y == p.y && z == p.z;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = 1;
+    result = 31 * result + Float.floatToIntBits(x);
+    result = 31 * result + Float.floatToIntBits(y);
+    result = 31 * result + Float.floatToIntBits(z);
+    return result;
+  }
 }
-
-
