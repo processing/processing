@@ -578,7 +578,7 @@ public class PApplet extends Applet
   /**
    * true if this applet has had it.
    */
-  public boolean finished;
+  public volatile boolean finished;
 
   /**
    * true if exit() has been called so that things shut down
