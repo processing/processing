@@ -13,9 +13,12 @@ package processing.plugin.ui.processingeditor.util;
 import org.eclipse.jface.text.rules.IWordDetector;
 
 /** 
- * Processing Words are Java words, so this class wraps Character methods to detect 
- * Java words. JavaDoc for the methods can be found in the IWordDetector interface.
- * */
+ * Detects Processing words
+ * <p>
+ * Processing Words are Java words, so this class wraps Character 
+ * methods to detect Java words. The interface prevents these
+ * from being made static.
+ */
 public class ProcessingWordDetector implements IWordDetector {
 
 	public boolean isWordPart(char character) {

@@ -22,6 +22,7 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceDelta;
 //import org.eclipse.core.resources.IResourceChangeListener;
 //import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
@@ -102,7 +103,7 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 	//
 	// Further extensions would add flexibility, possibly integrate things
 	// with the JDT more completely.
-	
+
 	/** Full paths to source folders for the JDT  */
 	private ArrayList<IPath>srcFolderPathList;
 
@@ -143,19 +144,39 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 	 * 
 	 */
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException{
-		SketchProject sketch = SketchProject.forProject(this.getProject());
-		// Eventually we may distinguish between build types.
-		//		switch (kind){
-		//		case FULL_BUILD:
-		//			return this.fullBuild(sketch, monitor);
-		//		case AUTO_BUILD:
-		//			return this.autoBuild(sketch, monitor);
-		//		case INCREMENTAL_BUILD:
-		//			return this.incrementalBuild(sketch, monitor);
-		//		default:
-		//			return null
-		//		}
-		return this.fullBuild(sketch, monitor);
+		IProject project =  this.getProject();
+		SketchProject sketch = SketchProject.forProject(project);
+		
+		switch (kind){
+		case FULL_BUILD:
+			return this.fullBuild(sketch, monitor);
+		case AUTO_BUILD:
+			return (fullBuildRequired(project)) ? this.fullBuild(sketch, monitor) : null;
+//			return this.autoBuild(sketch, monitor);
+		case INCREMENTAL_BUILD:
+			return (fullBuildRequired(project)) ? this.fullBuild(sketch, monitor) : null;
+//			return this.incrementalBuild(sketch, monitor);
+		default:
+			return null;
+		}
+	}
+
+	/** 
+	 * Returns false if the resource change definitely didn't affect this project. 
+	 * <p>
+	 * Runs simple checks to try and rule out a build. If it can't find a reason
+	 * to rule out a build, it defaults to true. Hopefully this will spare a few 
+	 * CPU cycles, though there is a lot of room for improvement here.
+	 */
+	private boolean fullBuildRequired(IProject proj) {
+		if (proj == null) return false;
+		IResourceDelta delta = this.getDelta(proj);
+		if (delta == null) return false;
+		if (delta.getResource().getType() == IResource.PROJECT){
+			IProject changedProject = (IProject) delta.getResource();
+			if (changedProject != proj) return false;
+		}
+		return true;
 	}
 
 	/**
@@ -167,7 +188,7 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 	 */	
 	protected IProject[] fullBuild( SketchProject sketchProject, IProgressMonitor monitor) throws CoreException {
 		clean(sketchProject, monitor); // tabula rasa
-		
+
 		IProject sketch = sketchProject.getProject();
 		if ( sketch == null || !sketch.isAccessible() ){
 			ProcessingLog.logError("Sketch is inaccessible. Aborting build process.", null);
@@ -189,7 +210,7 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 		 *     Get the packages of those jars so they can be added to the imports
 		 *   Add it to the class path source folders
 		 */
-		
+
 		IFolder codeFolder = sketchProject.getCodeFolder();	// may not exist
 		String[] codeFolderPackages = null;
 		if (codeFolder != null && codeFolder.exists()){
@@ -209,7 +230,7 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 		 * starts and ends in the bigCode file. This information is used later for mapping
 		 * errors back to their source.
 		 */
-		
+
 		StringBuffer bigCode = new StringBuffer();
 		int bigCount = 0; // line count
 
@@ -227,43 +248,43 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 		monitor.worked(10);
 		if(checkCancel(monitor)) { return null; } 
 		// Feed everything to the preprocessor
-		
+
 		PdePreprocessor preproc = new PdePreprocessor(sketch.getName(), 4);
 		PreprocessResult result = null;
 		try{
 			IFile output = buildFolder.getFile(sketch.getName()+".java");
 			StringWriter stream = new StringWriter();
-			
+
 			result = preproc.write(stream, bigCode.toString(), codeFolderPackages);
 
-	    	sketchProject.sketch_width = -1;
-	    	sketchProject.sketch_height = -1;
-	    	
+			sketchProject.sketch_width = -1;
+			sketchProject.sketch_height = -1;
+
 			String scrubbed = Utilities.scrubComments(stream.toString());
 			String[] matches = Utilities.match(scrubbed, Utilities.SIZE_REGEX);	
 			if(matches != null){
 				try {
-			        int wide = Integer.parseInt(matches[1]);
-			        int high = Integer.parseInt(matches[2]);
+					int wide = Integer.parseInt(matches[1]);
+					int high = Integer.parseInt(matches[2]);
 
-			        if(wide > 0) sketchProject.sketch_width = wide;
-			        if (high > 0) sketchProject.sketch_height = high;			        
-			      } catch (NumberFormatException e) {
-			    	  ProcessingLog.logInfo(
-			    			  "Found a reference to size, but it didn't seem to contain numbers. "
-			    			  + "Will use default sizes instead."
-			    			  );
-			      }
-			    }  // else no size() command found, defaults are used
-			
+					if(wide > 0) sketchProject.sketch_width = wide;
+					if (high > 0) sketchProject.sketch_height = high;			        
+				} catch (NumberFormatException e) {
+					ProcessingLog.logInfo(
+							"Found a reference to size, but it didn't seem to contain numbers. "
+							+ "Will use default sizes instead."
+					);
+				}
+			}  // else no size() command found, defaults are used
+
 			ByteArrayInputStream inStream = new ByteArrayInputStream(stream.toString().getBytes());
 			try{
 				if (!output.exists()){
 					output.create(inStream, true, monitor);
 					//TODO resource change listener to move trace back JDT errors
-//					IWorkspace w = ResourcesPlugin.getWorkspace();
-//					IResourceChangeListener rcl = new ProblemListener(output);
-//					w.addResourceChangeListener(rcl);
+					//					IWorkspace w = ResourcesPlugin.getWorkspace();
+					//					IResourceChangeListener rcl = new ProblemListener(output);
+					//					w.addResourceChangeListener(rcl);
 				} else {
 					output.setContents(inStream, true, false, monitor);
 				}
@@ -271,9 +292,9 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 				stream.close();
 				inStream.close();
 			}
-			
+
 			srcFolderPathList.add(buildFolder.getFullPath());
-		
+
 		} catch(antlr.RecognitionException re){
 
 			IResource errorFile = null; // if this remains null, the error is reported back on the sketch itself with no line number
@@ -371,7 +392,7 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 
 		allFoundLibraries.addAll( Utilities.getLibraryJars(ProcessingCore.getProcessingCore().getCoreLibsFolder()) );
 		allFoundLibraries.addAll( Utilities.getLibraryJars(Utilities.getSketchBookLibsFolder(sketch)) );
-		
+
 		HashMap<String, IPath> libraryImportToPathTable = new HashMap<String, IPath>();
 
 		for (String libraryPath : allFoundLibraries ){
@@ -401,27 +422,27 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 		monitor.worked(10);
 		if(checkCancel(monitor)) { return null; } 
 		// Almost there! Set a new classpath using all this stuff we've computed.
-		
+
 		// Even though the list types are specified, Java still tosses errors when I try 
 		// to cast them. So instead I'm stuck with explicit iteration.
-		
+
 		IPath[] libPaths = new IPath[libraryJarPathList.size()];
-		
+
 		int i=0;
 		for(IPath path : libraryJarPathList) libPaths[i++] = path;
 
 		IPath[] srcPaths = new IPath[srcFolderPathList.size()];
-		
+
 		i=0;
 		for(IPath path : srcFolderPathList) srcPaths[i++] = path;
-		
+
 		try{
 			sketchProject.updateClasspathEntries( srcPaths, libPaths);
 		} catch (JavaModelException e) {
 			ProcessingLog.logError("There was a problem setting the compiler class path.", e);
 			return null; // bail !
 		}
-		
+
 		// everything is cool
 		sketchProject.wasLastBuildSuccessful = true;
 		return null;
@@ -448,7 +469,7 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 	 * to a specific file it will be marked against the project and the line will not be marked.
 	 */
 	private void reportProblem(String message, IResource problemFile, int lineNumber, boolean isError){
-		
+
 		// translate error messages to a friendlier form
 		if (message.equals("expecting RCURLY, found 'null'"))
 			message = "Found one too many { characters without a } to match it.";

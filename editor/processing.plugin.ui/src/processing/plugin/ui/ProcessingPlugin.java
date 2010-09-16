@@ -91,9 +91,7 @@ public class ProcessingPlugin extends AbstractUIPlugin {
 	 * @return a scanner for creating Processing partitions
 	 */
 	 public ProcessingPartitionScanner getProcessingPartitionScanner() {
-		if (fPartitionScanner == null)
-			fPartitionScanner= new ProcessingPartitionScanner();
-		return fPartitionScanner;
+		return (fPartitionScanner == null) ? new ProcessingPartitionScanner() : fPartitionScanner;
 	}
 	
 	/**
@@ -102,9 +100,7 @@ public class ProcessingPlugin extends AbstractUIPlugin {
 	 * @return the singleton Processing code scanner
 	 */
 	 public RuleBasedScanner getProcessingCodeScanner() {
-	 	if (fCodeScanner == null)
-			fCodeScanner= new ProcessingCodeScanner(getProcessingColorProvider());
-		return fCodeScanner;
+		return (fCodeScanner == null) ? new ProcessingCodeScanner(getProcessingColorProvider()) : fCodeScanner;
 	}
 	
 	/**
@@ -113,9 +109,7 @@ public class ProcessingPlugin extends AbstractUIPlugin {
 	 * @return the singleton Processing color provider
 	 */
 	 public ProcessingColorProvider getProcessingColorProvider() {
-	 	if (fColorProvider == null)
-			fColorProvider= new ProcessingColorProvider();
-		return fColorProvider;
+		return (fColorProvider == null) ? new ProcessingColorProvider() : fColorProvider;
 	}
 
 }
