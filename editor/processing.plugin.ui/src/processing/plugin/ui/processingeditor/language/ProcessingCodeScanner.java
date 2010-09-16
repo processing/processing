@@ -169,7 +169,7 @@ public class ProcessingCodeScanner extends RuleBasedScanner {
 			wordRule.addWord(fgOperators[i], operator);
 		for (int i= 0; i < fgInvalids.length; i++)
 			wordRule.addWord(fgInvalids[i], invalid);
-		// Set these as the colorizing rules for the document
+		// Set these as the coloring rules for the document
 		rules.add(wordRule);
 
 		IRule[] result= new IRule[rules.size()];
@@ -179,8 +179,6 @@ public class ProcessingCodeScanner extends RuleBasedScanner {
 	
 	/**
 	 * Concatenates the keyword arrays into one array and returns it.
-	 * 
-	 * @return A string array of all the keywords
 	 */
 	public final static String[] getKeywords(){
 		String[] result = new String[fgKeywords1.length + fgKeywords2.length + fgKeywords3.length];

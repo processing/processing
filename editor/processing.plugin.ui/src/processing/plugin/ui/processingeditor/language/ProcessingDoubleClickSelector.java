@@ -16,15 +16,12 @@ import org.eclipse.jface.text.ITextDoubleClickStrategy;
 import org.eclipse.jface.text.ITextViewer;
 
 /**
- * On a double click, try to automatically highlight a logical section of the source code.
+ * On a double click, try to automatically highlight a sensible section of the source code.
  * <p>
  * If the double click is near an opening or closing bracket type, this should highlight to
  * the other bracket in the set.
- * </p>
  * <p>
  * If the user didn't double click a bracket, assume they wanted the word 
- * 
- * @author lonnen
  */
 public class ProcessingDoubleClickSelector implements ITextDoubleClickStrategy {
 
@@ -42,20 +39,17 @@ public class ProcessingDoubleClickSelector implements ITextDoubleClickStrategy {
 		/* Method declared on ITextDoubleClickStrategy */
 		public void doubleClicked(ITextViewer text) {
 			fPos = text.getSelectedRange().x;
-
-			if (fPos < 0)
-				return;
-
-			fText= text;
-
-			// If a matching bracket wasn't found, assume the user wants the word
-			if (!selectBracketBlock())
+			
+			if (fPos < 0) return;
+			
+			fText = text;
+			
+			if (!selectBracketBlock()) // if you can't match brackets, try to grab the word
 				selectWord();
 		}
 		
 		/**
-		 * Match the brackets at the current selection. 
-		 * Return <code>true</code> if successful, <code>false</code> otherwise.
+		 * Tries to find a matching bracket. the brackets at the current selection. 
 		 * 
 		 * @return <code>true</code> if brackets match, <code>false</code> otherwise
 		 */
@@ -106,7 +100,6 @@ public class ProcessingDoubleClickSelector implements ITextDoubleClickStrategy {
 			} catch (BadLocationException x) {
 				// assume everything is cool
 			}
-
 			return false;
 		}
 		

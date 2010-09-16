@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010 Chris Lonnen. All rights reserved.
+r * Copyright (c) 2010 Chris Lonnen. All rights reserved.
  *
  * This program and the accompanying materials are made available under the 
  * terms of the Eclipse Public License v1.0 which accompanies this distribution, 
@@ -25,7 +25,7 @@ import org.osgi.service.prefs.Preferences;
 public class ProcessingCorePreferences {
 
 	private static ProcessingCorePreferences current;
-	
+		
 	static { current = new ProcessingCorePreferences(); }
 		
 	protected static final String CORE_PREFERENCES = ProcessingCore.PLUGIN_ID + ".preferences";

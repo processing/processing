@@ -18,7 +18,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
-/** Manages the colors used in the Java Editor */
+/** Manages the colors used in the Processing Editor */
 public class ProcessingColorProvider {
 
 	public static final RGB COMMENT1= new RGB(126, 126, 126); //comment 1
@@ -34,9 +34,9 @@ public class ProcessingColorProvider {
 	public static final RGB STRING= new RGB(0, 102, 153);   
 	public static final RGB DEFAULT= new RGB(0, 0, 0);
 	
-	protected Map fColorTable= new HashMap(17);
+	protected Map fColorTable= new HashMap(12); // number of color categories
 
-	/** Release all of the color resources held onto by the receiver. */	
+	/** Release all of the color resources held onto by the receiver. */
 	public void dispose() {
 		Iterator e= fColorTable.values().iterator();
 		while (e.hasNext())
@@ -44,10 +44,9 @@ public class ProcessingColorProvider {
 	}
 	
 	/**
-	 * convert an RGB value to a Color using the resource table
-	 *  
-	 * @param rgb the RGB value 
-	 * @return the color stored in the color table for the given RGB value
+	 * Convert an RGB value to a Color using the resource table.
+	 * <p>
+	 * Please note that this is an SWT color, not a Processing color.
 	 */
 	public Color getColor(RGB rgb) {
 		Color color= (Color) fColorTable.get(rgb);

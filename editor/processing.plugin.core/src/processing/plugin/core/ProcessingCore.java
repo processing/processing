@@ -140,7 +140,7 @@ public final class ProcessingCore extends Plugin {
 	public static ProcessingCore getProcessingCore(){
 		return plugin;
 	}
-
+	
 	/** Returns true if the resource is a Processing file */	
 	public static boolean isProcessingFile(IResource resource){
 		if (resource.getType() == IResource.FILE)

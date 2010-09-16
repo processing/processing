@@ -12,6 +12,14 @@ package processing.plugin.ui.processingeditor.util;
 
 import org.eclipse.jface.text.rules.IWhitespaceDetector;
 
+/** 
+ * Detects Processing whitespace.
+ * <p>
+ * Processing whitespace is the same as Java whitespace, so this is all 
+ * a big wrapper for <code>Characer.isWhitespace()</code>. The method
+ * itself is not static because it has to implement the IWhitespaceDetector
+ * interface.
+ */
 public class ProcessingWhitespaceDetector implements IWhitespaceDetector {
 
 		public boolean isWhitespace(char character){
