@@ -10,20 +10,15 @@
  */
 package processing.plugin.ui.wizards;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
 
 import processing.plugin.core.builder.SketchProject;
-import processing.plugin.ui.ProcessingPlugin;
 
 /**
  * A wizard to export a Processing sketch project as an applet

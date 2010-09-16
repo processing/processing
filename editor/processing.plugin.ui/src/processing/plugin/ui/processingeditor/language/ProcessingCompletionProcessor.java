@@ -24,10 +24,7 @@ import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 /**
  * Naive auto completion provider.
  * <p>
- * None of this is particularly useful, but may be extended in the future.
- * 
- * 
- * @author lonnen
+ * None of this is particularly useful without a language model.
  */
 public class ProcessingCompletionProcessor implements IContentAssistProcessor {
 
