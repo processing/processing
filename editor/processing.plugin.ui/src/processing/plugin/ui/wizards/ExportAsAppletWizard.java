@@ -10,33 +10,25 @@
  */
 package processing.plugin.ui.wizards;
 
-import java.util.Iterator;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
+//import java.util.Iterator;
+//import org.eclipse.core.resources.IProject;
+//import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
 
-import processing.plugin.core.builder.SketchProject;
 
 /**
- * A wizard to export a Processing sketch project as an applet
+ * An export wizard for processing projects.
  * <p>
- * Contains a single page.
- * @author lonnen
- *
+ * The single page presents users with a list of open sketch Projects in 
+ * the workspace and the user can check one or all of them to export.
  */
 public class ExportAsAppletWizard extends Wizard implements IExportWizard {
 	
 	/** single page */
-	private ExportAsAppletWizardPage page;
-
-	/** The project to be exported */
-	private IProject project;
-
-	/** The current selection when the export is called. */
-	private IStructuredSelection fSelection;
+	private ExportAsAppletSelectProjectsWizardPage page;
 
 	public ExportAsAppletWizard() {}
 
@@ -48,39 +40,34 @@ public class ExportAsAppletWizard extends Wizard implements IExportWizard {
 	 * page prompts with the name of the sketch before continuing. 
 	 */
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		workbench.getActiveWorkbenchWindow().getActivePage();
-		Iterator iter = selection.iterator();
-		while (iter.hasNext()){
-			Object selectedElement = iter.next();
-			if (selectedElement instanceof IProject) {
-				IProject proj = (IProject) selectedElement;
-				if(SketchProject.isSketchProject(proj)){
-
-				}
-			} else if (selectedElement instanceof IResource){
-				IProject proj = ((IResource) selectedElement).getProject();
-				if(SketchProject.isSketchProject(proj)){
-					setProject(proj);
-					break;
-				}
-			}
-		}		
-
-	}
-
-	public void setProject(IProject project){
-		this.project = project;
-		if (page != null) page.setProject(project);
-	}
+//		workbench.getActiveWorkbenchWindow().getActivePage();
+//		Iterator iter = selection.iterator();
+//		while (iter.hasNext()){
+//			Object selectedElement = iter.next();
+//			if (selectedElement instanceof IProject) {
+//				IProject proj = (IProject) selectedElement;
+//				if(SketchProject.isSketchProject(proj)){
+//
+//				}
+//			} else if (selectedElement instanceof IResource){
+//				IProject proj = ((IResource) selectedElement).getProject();
+//				if(SketchProject.isSketchProject(proj)){
+//					setProject(proj);
+//					break;
+//				}
+//			}
+		// Nowadays the page takes care of it. User selects from whatever is open.
+	
+	}		
 
 	public void addPages(){
-		page = new ExportAsAppletWizardPage("Export Sketch Wizard");
-		page.setProject(project);
+		page = new ExportAsAppletSelectProjectsWizardPage("Export Sketch Wizard");
 		addPage(page);
 	}
 
 	public boolean performFinish() {
-		return SketchProject.forProject(page.getProject()).exportAsApplet();
+//		return SketchProject.forProject(page.getProject()).exportAsApplet();
+		return false;
 	}
 
 }
