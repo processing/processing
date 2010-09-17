@@ -49,8 +49,11 @@ DILATE	LITERAL2
 DIRECTIONAL	LITERAL2
 DISABLE_ACCURATE_TEXTURES	LITERAL2
 DISABLE_DEPTH_SORT	LITERAL2
+DISABLE_DEPTH_TEST	LITERAL2
 DISABLE_NATIVE_FONTS	LITERAL2
 DISABLE_OPENGL_ERROR_REPORT	LITERAL2
+DISABLE_OPENGL_2X_SMOOTH	LITERAL2
+DISABLE_OPENGL_4X_SMOOTH	LITERAL2
 DISABLE_TEXT_SMOOTH	LITERAL2	
 DISABLED	LITERAL2
 DODGE	LITERAL2
@@ -58,8 +61,9 @@ DOWN	LITERAL2
 DXF	LITERAL2
 ENABLE_ACCURATE_TEXTURES	LITERAL2
 ENABLE_DEPTH_SORT	LITERAL2
+ENABLE_DEPTH_TEST	LITERAL2
 ENABLE_NATIVE_FONTS	LITERAL2
-DISABLE_OPENGL_2X_SMOOTH	LITERAL2
+ENABLE_OPENGL_2X_SMOOTH	LITERAL2
 ENABLE_OPENGL_4X_SMOOTH	LITERAL2
 ENABLE_OPENGL_ERROR_REPORT	LITERAL2
 ENTER	LITERAL2	
@@ -270,10 +274,13 @@ boolean	KEYWORD2	boolean_
 box	KEYWORD2	box_
 break	KEYWORD1	break
 brightness	KEYWORD2	brightness_
+BufferedReader	KEYWORD2	BufferedReader_
+readLine	KEYWORD2	BufferedReader_readLine_
 byte	KEYWORD1	byte
 byte	KEYWORD2	byte_
 camera	KEYWORD2	camera_
 case	KEYWORD1	case
+catch	KEYWORD1	catch
 ceil	KEYWORD2	ceil_
 char	KEYWORD1	char
 char	KEYWORD2	char_
@@ -487,8 +494,7 @@ PShape	KEYWORD1	PShape
 disableStyle	KEYWORD2	PShape_disableStyle_
 enableStyle	KEYWORD2	PShape_enableStyle_
 getChild	KEYWORD2	PShape_getChild_
-getHeight	KEYWORD2	PShape_getHeight_
-getWidth	KEYWORD2	PShape_getWidth_
+height	LITERAL2	PShape_height
 isVisible	KEYWORD2	PShape_isVisible_
 resetMatrix	KEYWORD2	PShape_resetMatrix_
 rotate	KEYWORD2	PShape_rotate_
@@ -497,9 +503,8 @@ rotateY	KEYWORD2	PShape_rotateY_
 rotateZ	KEYWORD2	PShape_rotateZ_
 scale	KEYWORD2	PShape_scale_
 setVisible	KEYWORD2	PShape_setVisible_
-skewX	KEYWORD2	PShape_skewX_
-skewY	KEYWORD2	PShape_skewY_
 translate	KEYWORD2	PShape_translate_
+width	LITERAL2	PShape_width
 public	KEYWORD1	public
 pushMatrix	KEYWORD2	pushMatrix_
 pushStyle	KEYWORD3	pushStyle_
@@ -520,6 +525,7 @@ normalize	KEYWORD2	PVector_normalize_
 set	KEYWORD2	PVector_set_
 sub	KEYWORD2	PVector_sub_
 quad	KEYWORD2	quad_
+QUARTER_PI	LITERAL2	QUARTER_PI
 radians	KEYWORD2	radians_
 random	KEYWORD2	random_
 randomSeed	KEYWORD2	randomSeed_
@@ -544,9 +550,9 @@ saveFrame	KEYWORD2	saveFrame_
 saveStream	KEYWORD2	saveStream_
 saveStrings	KEYWORD2	saveStrings_
 scale	KEYWORD2	scale_
-skewX	KEYWORD2	skewX_
-skewY	KEYWORD2	skewY_
 screen	LITERAL2	screen
+screenHeight	LITERAL2	screenHeight
+screenWidth	LITERAL2	screenWidth
 screenX	KEYWORD2	screenX_
 screenY	KEYWORD2	screenY_
 screenZ	KEYWORD2	screenZ_
@@ -559,6 +565,8 @@ set	KEYWORD2	set_
 setup	KEYWORD3	setup_
 shape	KEYWORD2	shape_
 shapeMode	KEYWORD2	shapeMode_
+shearX	KEYWORD2	shearX_
+shearY	KEYWORD2	shearY_
 shininess	KEYWORD2	shininess_
 shorten	KEYWORD2	shorten_
 sin	KEYWORD2	sin_
@@ -611,6 +619,7 @@ translate	KEYWORD2	translate_
 triangle	KEYWORD2	triangle_
 trim	KEYWORD2	trim_
 true	KEYWORD1	true
+try	KEYWORD1	try
 TWO_PI	LITERAL2	TWO_PI
 unbinary	KEYWORD2	unbinary_
 unhex	KEYWORD2	unhex_
@@ -624,8 +633,8 @@ getChild	KEYWORD2	XMLElement_getChild_
 getChildCount	KEYWORD2	XMLElement_getChildCount_
 getChildren	KEYWORD2	XMLElement_getChildren_
 getContent	KEYWORD2	XMLElement_getContent_
-getFloatAttribute	KEYWORD2	XMLElement_getFloatAttribute_
-getIntAttribute	KEYWORD2	XMLElement_getIntAttribute_
+getFloat	KEYWORD2	XMLElement_getFloat_
+getInt	KEYWORD2	XMLElement_getInt_
 getName	KEYWORD2	XMLElement_getName_
-getStringAttribute	KEYWORD2	XMLElement_getStringAttribute_
+getString	KEYWORD2	XMLElement_getString_
 year	KEYWORD2	year_
