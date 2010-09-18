@@ -520,5 +520,10 @@ public interface PConstants {
     "Too many calls to pushMatrix().";
   static final String ERROR_PUSHMATRIX_UNDERFLOW =
     "Too many calls to popMatrix(), and not enough to pushMatrix().";
-   
+  
+  
+  // Some currently missing GLES constants.
+  
+  static final int GL_MIN_EXT = 0x8007;
+  static final int GL_MAX_EXT = 0x8008;
 }
