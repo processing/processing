@@ -219,7 +219,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   protected PImage textureImagePrev;  
   protected IntBuffer getsetBuffer;
-  protected PTexture getsetTex;
+  protected PTexture getsetTexture;
   protected boolean buffersAllocated = false;
 
   // ........................................................
@@ -464,7 +464,6 @@ public class PGraphicsAndroid3D extends PGraphics {
       
       getsetBuffer = IntBuffer.allocate(1);
       getsetBuffer.rewind();
-      getsetTex = new PTexture(parent, 1, 1, new PTexture.Parameters(ARGB, NEAREST));
       
       buffersAllocated = true;
     }   
@@ -4767,7 +4766,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   // GET/SET
   
   public int get(int x, int y) {
-    gl.glReadPixels(x, y, 1, 1, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE,
+    gl.glReadPixels(x, height - y, 1, 1, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE,
         getsetBuffer);
     int getset = getsetBuffer.get(0);
 
@@ -4783,14 +4782,14 @@ public class PGraphicsAndroid3D extends PGraphics {
   // public PImage get(int x, int y, int w, int h)
 
   protected PImage getImpl(int x, int y, int w, int h) {
-    PImage newbie = new PImage(w, h);
+    PImage newbie = parent.createImage(w, h, ARGB);
+    PTexture newbieTex = newbie.getTexture();
 
     IntBuffer newbieBuffer = IntBuffer.allocate(w * h);
-    gl.glReadPixels(x, y, w, h, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE,
-        newbieBuffer);
-    newbieBuffer.get(newbie.pixels);
-
-    nativeToJavaARGB(newbie);
+    gl.glReadPixels(x, height - y, w, -h, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, newbieBuffer);
+    copyToTexture(newbieTex, newbieBuffer, 0, 0, w, h);
+    newbie.textureToPixels();
+    
     return newbie;
   }
 
@@ -4812,9 +4811,12 @@ public class PGraphicsAndroid3D extends PGraphics {
     getsetBuffer.put(0, getset);
     getsetBuffer.rewind();    
     
-    copyToTexture(getsetTex, getsetBuffer, 0, 0, 1, 1);
+    if (getsetTexture == null) {
+      getsetTexture = new PTexture(parent, 1, 1, new PTexture.Parameters(ARGB, NEAREST));
+    }
     
-    drawTexture(getsetTex, 0, 0, 1, 1, x, y, 1, 1);
+    copyToTexture(getsetTexture, getsetBuffer, 0, 0, 1, 1);    
+    drawTexture(getsetTexture, 0, 0, 1, 1, x, height - y, 1, 1);
   }
 
   /**
@@ -4825,9 +4827,12 @@ public class PGraphicsAndroid3D extends PGraphics {
     // In A3D we can safely assume that the PImage has a valid associated texture.
     PTexture tex = source.getTexture();
     if (tex != null) {
-      drawTexture(tex, 0, 0, source.width, source.height, x, y, source.width, source.height);
+      int w = source.width; 
+      int h = source.height;
+      // The crop region and draw rectangle are given like this to take into account
+      // inverted y-axis in Processin with respect to OpenGL.
+      drawTexture(tex, 0, h, w, -h, x, height - y, w, h);
     } else {
-      // throw warning here...
       PGraphics.showWarning("A3D: The image doesn't have an associated texture to use.");
     }
   }
@@ -4856,7 +4861,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     // (except for mapping Z to the depth range), so there is no need for any 
     // matrix setup/restore code."
     // (from https://www.khronos.org/message_boards/viewtopic.php?f=4&t=948&p=2553).      
-    gl11x.glDrawTexiOES(0, x, y, w, h);
+    gl11x.glDrawTexiOES(x, y, 0, w, h);
     
     // Returning to the default texture environment mode, GL_MODULATE. This allows tinting a texture
     // with the current fill color.
