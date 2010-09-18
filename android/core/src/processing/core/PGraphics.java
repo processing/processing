@@ -5069,9 +5069,9 @@ public class PGraphics extends PImage implements PConstants {
   
   // TODO: Discuss proper integration into PGraphics API. 
 
-  public PImage getLastFrame() {
+  public PImage getOffscreenImage() {
     if (!(this instanceof PGraphicsAndroid3D)) {
-      showMissingWarning("getLastFrame");
+      showMissingWarning("getOffscreenImage");
     }
     return null;
   }

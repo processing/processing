@@ -8060,8 +8060,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
   // A3D-only functions
 
   // TODO: Discuss proper integration into PApplet API.
-  public PImage getLastFrame() {
-    return g.getLastFrame();
+  public PImage getOffscreenImage() {
+    return g.getOffscreenImage();
   }
 
   public void blend(int mode) {

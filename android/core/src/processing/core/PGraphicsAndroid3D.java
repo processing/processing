@@ -48,7 +48,6 @@ import processing.core.PShape3D.VertexGroup;
 
 // drawPixels is missing...calls to glDrawPixels are commented out
 //   setRasterPos() is also commented out
-// remove the BufferUtil class at the end (verify the endian order, rewind, etc)
 
 /*
  * Android 3D renderer implemented with pure OpenGL ES 1.0/1.1
@@ -220,6 +219,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   protected PImage textureImagePrev;  
   protected IntBuffer getsetBuffer;
+  protected PTexture getsetTex;
   protected boolean buffersAllocated = false;
 
   // ........................................................
@@ -464,6 +464,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       
       getsetBuffer = IntBuffer.allocate(1);
       getsetBuffer.rewind();
+      getsetTex = new PTexture(parent, 1, 1, new PTexture.Parameters(ARGB, NEAREST));
       
       buffersAllocated = true;
     }   
@@ -531,87 +532,17 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
 
   protected void drawScreenTexture() {
-    gl.glEnable(texture.getGLTarget());
-    gl.glBindTexture(texture.getGLTarget(), texture.getGLTextureID());
-    gl.glDepthMask(false);
-    gl.glDisable(GL10.GL_BLEND);
-
-    // There is no need to setup orthographic projection or any related matrix set/restore
-    // operations here because glDrawTexiOES operates on window coordinates:
-    // "glDrawTexiOES takes window coordinates and bypasses the transform pipeline 
-    // (except for mapping Z to the depth range), so there is no need for any 
-    // matrix setup/restore code."
-    // (from https://www.khronos.org/message_boards/viewtopic.php?f=4&t=948&p=2553).    
-        
-    // This is the right texture environment mode to ignore the fill color when drawing the texture:
-    // http://www.khronos.org/opengles/documentation/opengles1_0/html/glTexEnv.html    
-    gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_REPLACE);
-    
-    gl11.glTexParameteriv(texture.getGLTarget(), GL11Ext.GL_TEXTURE_CROP_RECT_OES, screenTexCrop, 0);
-    gl11x.glDrawTexiOES(0, 0, 0, width, height);
-    
-    // Returning to the default texture environment mode, GL_MODULATE. This allows tinting a texture
-    // with the current fill color.
-    gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_MODULATE);
-    
-    gl.glDisable(texture.getGLTarget());
-    
-    if (hints[DISABLE_DEPTH_MASK]) {
-      gl.glDepthMask(false);  
-    } else {
-      gl.glDepthMask(true);
-    }
-    
-    if (blend) {
-      blend(blendMode);
-    } else {
-      noBlend();
-    }
+    drawTexture(texture, screenTexCrop, 0, 0, width, height);
   }
 
   protected void copyToScreenTexture(IntBuffer buffer) {
-    gl.glEnable(texture.getGLTarget());
-    gl.glBindTexture(texture.getGLTarget(), texture.getGLTextureID());    
-    gl.glTexSubImage2D(texture.getGLTarget(), 0, 0, 0, width, height, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, buffer);
-    gl.glDisable(texture.getGLTarget());
+    copyToTexture(texture, buffer, 0, 0, width, height);
   }
   
   protected void copyFrameToScreenTexture() {
     gl.glFinish(); // Make sure that the execution off all the openGL commands
                            // is finished.
-    
-    loadTexture();
-   
-    /*
-    // gl.glCopyTexImage2D method. Doesn't work on Galaxy S (powerSVG 540).
-    gl.glEnable(texture.getGLTarget());
-    gl.glBindTexture(texture.getGLTarget(), texture.getGLTextureID());
-    gl.glCopyTexImage2D(texture.getGLTarget(), 0, GL10.GL_RGB, 0, 0, width, height, 0);
-    gl.glDisable(texture.getGLTarget());
-    */    
-  }
-
-  // ////////////////////////////////////////////////////////////
-
-  // FRAMEBUFFERS
-  
-  public void pushFramebuffer() {
-    fbStack.push(currentFramebuffer);
-  }
-
-  public void setFramebuffer(PFramebuffer fbo) {
-    currentFramebuffer = fbo;
-    currentFramebuffer.bind();
-  }
-
-  public void popFramebuffer() {
-    try {
-      currentFramebuffer.finish();
-      currentFramebuffer = fbStack.pop();
-      currentFramebuffer.bind();
-    } catch (EmptyStackException e) {
-      PGraphics.showWarning("A3D: Empty framebuffer stack");
-    }
+    loadTexture();    
   }
 
   // ////////////////////////////////////////////////////////////  
@@ -662,37 +593,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   
   protected void drawOffscreenTexture(int idx) {
-    PTexture tex = offscreenTextures[idx];
-
-    gl.glEnable(tex.getGLTarget());
-    gl.glBindTexture(tex.getGLTarget(), tex.getGLTextureID());
-    gl.glDepthMask(false);
-    gl.glDisable(GL10.GL_BLEND);
-    
-    // This is the right texture environment mode to ignore the fill color when drawing the texture:
-    // http://www.khronos.org/opengles/documentation/opengles1_0/html/glTexEnv.html    
-    gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_REPLACE);
-    
-    gl11.glTexParameteriv(tex.getGLTarget(), GL11Ext.GL_TEXTURE_CROP_RECT_OES, offscreenTexCrop, 0);
-    gl11x.glDrawTexiOES(0, 0, 0, width, height);
-    
-    // Returning to the default texture environment mode, GL_MODULATE. This allows tinting a texture
-    // with the current fill color.
-    gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_MODULATE);
-    
-    gl.glDisable(tex.getGLTarget());
-    
-    if (hints[DISABLE_DEPTH_MASK]) {
-      gl.glDepthMask(false);  
-    } else {
-      gl.glDepthMask(true);
-    }
-    
-    if (blend) {
-      blend(blendMode);
-    } else {
-      noBlend();
-    }
+    drawTexture(offscreenTextures[idx], offscreenTexCrop, 0, 0, width, height);
   }
   
   
@@ -701,6 +602,29 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
   
   
+  // ////////////////////////////////////////////////////////////
+
+  // FRAMEBUFFERS
+  
+  public void pushFramebuffer() {
+    fbStack.push(currentFramebuffer);
+  }
+
+  public void setFramebuffer(PFramebuffer fbo) {
+    currentFramebuffer = fbo;
+    currentFramebuffer.bind();
+  }
+
+  public void popFramebuffer() {
+    try {
+      currentFramebuffer.finish();
+      currentFramebuffer = fbStack.pop();
+      currentFramebuffer.bind();
+    } catch (EmptyStackException e) {
+      PGraphics.showWarning("A3D: Empty framebuffer stack");
+    }
+  }
+
   // ////////////////////////////////////////////////////////////
 
   // FRAME
@@ -948,7 +872,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);        
       } else {
         // We need to save the color buffer after finishing with the rendering of the this frame,
-        // to use is as the background for the next frame (incremental rendering). 
+        // to use is as the background for the next frame (I call this "incremental rendering"). 
        
         if (fboSupported) {
           if (offscreenFramebuffer != null) {
@@ -4798,7 +4722,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
   
   
-  public PImage getLastFrame() {
+  public PImage getOffscreenImage() {
     return offscreenImages[(offscreenIndex + 1) % 2];
   }
 
@@ -4880,112 +4804,62 @@ public class PGraphicsAndroid3D extends PGraphics {
     if (BIG_ENDIAN) {
       // convert ARGB to RGBA
       getset = (argb << 8) | 0xff;
-
     } else {
       // convert ARGB to ABGR
       getset = (argb & 0xff00ff00) | ((argb << 16) & 0xff0000)
           | ((argb >> 16) & 0xff);
     }
     getsetBuffer.put(0, getset);
-    getsetBuffer.rewind();
-    // gl.glRasterPos2f(x + EPSILON, y + EPSILON);
-    setRasterPos(x, (height - y) - 1);
-    // TODO whither drawPixels?
-    // gl.glDrawPixels(1, 1, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, getsetBuffer);
+    getsetBuffer.rewind();    
+    
+    copyToTexture(getsetTex, getsetBuffer, 0, 0, 1, 1);
+    
+    drawTexture(getsetTex, 0, 0, 1, 1, x, y, 1, 1);
   }
 
   /**
    * Set an image directly to the screen.
-   * <P>
-   * TODO not optimized properly, creates multiple temporary buffers the size of
-   * the image. Needs to instead use image cache, but that requires two types of
-   * image cache. One for power of 2 textures and another for
-   * glReadPixels/glDrawPixels data that's flipped vertically. Both have their
-   * components all swapped to native.
+   * 
    */
   public void set(int x, int y, PImage source) {
-    int[] backup = new int[source.pixels.length];
-    System.arraycopy(source.pixels, 0, backup, 0, source.pixels.length);
-    javaToNativeARGB(source);
-
-    // TODO is this possible without intbuffer?
-    IntBuffer setBuffer = IntBuffer.allocate(source.pixels.length);
-    setBuffer.rewind();
-      
-    setBuffer.put(source.pixels);
-    setBuffer.rewind();
-
-    setRasterPos(x, (height - y) - source.height); // +source.height);
-    // gl.glDrawPixels(source.width, source.height,
-    // GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, setBuffer);
-    source.pixels = backup;
-  }
-
-  // TODO remove the implementation above and use setImpl instead,
-  // since it'll be more efficient
-  // http://dev.processing.org/bugs/show_bug.cgi?id=943
-  // protected void setImpl(int dx, int dy, int sx, int sy, int sw, int sh,
-  // PImage src)
-
-  /**
-   * Definitive method for setting raster pos, including offscreen locations.
-   * The raster position is tricky because it's affected by the modelview and
-   * projection matrices. Further, offscreen coords won't properly set the
-   * raster position. This code gets around both issues.
-   * http://www.mesa3d.org/brianp/sig97/gotchas.htm
-   * 
-   * @param y
-   *          the Y-coordinate, which is flipped upside down in OpenGL
-   */
-  protected void setRasterPos(float x, float y) {
-     //float z = 0;
-     //float w = 1;
-    
-     //float fx, fy;
-    
-    // // Push current matrix mode and viewport attributes
-    // gl.glPushAttrib(GL.GL_TRANSFORM_BIT | GL.GL_VIEWPORT_BIT);
-    
-    // // Setup projection parameters
-    //gl.glMatrixMode(GL10.GL_PROJECTION);
-    //gl.glPushMatrix();
-    //gl.glLoadIdentity();
-    //gl.glMatrixMode(GL.GL_MODELVIEW);
-   // gl.glPushMatrix();
-    //gl.glLoadIdentity();
-    //
-    // gl.glDepthRange(z, z);
-    // gl.glViewport((int) x - 1, (int) y - 1, 2, 2);
-    //
-    // // set the raster (window) position
-    // fx = x - (int) x;
-    // fy = y - (int) y;
-    // gl.glRasterPos4f(fx, fy, 0, w);
-    // gl.glR
-     
-    //
-    // // restore matrices, viewport and matrix mode
-    // gl.glPopMatrix();
-    // gl.glMatrixMode(GL.GL_PROJECTION);
-    // gl.glPopMatrix();
-    //
-    // gl.glPopAttrib();
-    
+    // In A3D we can safely assume that the PImage has a valid associated texture.
+    PTexture tex = source.getTexture();
+    if (tex != null) {
+      drawTexture(tex, 0, 0, source.width, source.height, x, y, source.width, source.height);
+    } else {
+      // throw warning here...
+      PGraphics.showWarning("A3D: The image doesn't have an associated texture to use.");
+    }
   }
 
   // Utility function to render texture.
   protected void drawTexture(PTexture tex, int x1, int y1, int w1, int h1, int x2, int y2, int w2, int h2) {
+    int[] crop = {x1, y1, w1, h1};
+    drawTexture(tex, crop, x2, y2, w2, h2);    
+  }
+  
+  protected void drawTexture(PTexture tex, int[] crop, int x, int y, int w, int h) {
     gl.glEnable(tex.getGLTarget());
     gl.glBindTexture(tex.getGLTarget(), tex.getGLTextureID());
     gl.glDepthMask(false);    
     gl.glDisable(GL10.GL_BLEND);
 
+    // The texels of the texture replace the color of wherever is in the screen.
     gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_REPLACE);
     
-    int[] crop = {x1, y1, w1, h1};
+    // Setting texture crop.
     gl11.glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, crop, 0);
-    gl11x.glDrawTexiOES(0, x2, y2, w2, h2);
+
+    // There is no need to setup orthographic projection or any related matrix set/restore
+    // operations here because glDrawTexiOES operates on window coordinates directly:
+    // "glDrawTexiOES takes window coordinates and bypasses the transform pipeline 
+    // (except for mapping Z to the depth range), so there is no need for any 
+    // matrix setup/restore code."
+    // (from https://www.khronos.org/message_boards/viewtopic.php?f=4&t=948&p=2553).      
+    gl11x.glDrawTexiOES(0, x, y, w, h);
     
+    // Returning to the default texture environment mode, GL_MODULATE. This allows tinting a texture
+    // with the current fill color.
     gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_MODULATE);
     
     gl.glDisable(tex.getGLTarget());
@@ -5002,6 +4876,14 @@ public class PGraphicsAndroid3D extends PGraphics {
       noBlend();
     }    
   }
+  
+  // Utility function to copy buffer to texture
+  protected void copyToTexture(PTexture tex, IntBuffer buffer, int x, int y, int w, int h) {
+    gl.glEnable(tex.getGLTarget());
+    gl.glBindTexture(tex.getGLTarget(), tex.getGLTextureID());    
+    gl.glTexSubImage2D(tex.getGLTarget(), 0, x, y, w, h, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, buffer);
+    gl.glDisable(tex.getGLTarget());
+  }  
   
   // ////////////////////////////////////////////////////////////
 
