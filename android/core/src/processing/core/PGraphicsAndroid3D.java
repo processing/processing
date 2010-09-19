@@ -345,6 +345,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   static protected boolean matrixGetSupported;
   static protected boolean vboSupported;
   static protected boolean fboSupported;
+  static protected boolean blendEqSupported;
   static protected int maxTextureSize;
   static protected float maxPointSize;
   static protected float maxLineWidth;
@@ -2551,7 +2552,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     if (!blend || blendMode != BLEND) {
       gl.glEnable(GL10.GL_BLEND);
-      if (gl11xp != null) gl11xp.glBlendEquation(GL11ExtensionPack.GL_FUNC_ADD);
+      if (blendEqSupported) gl11xp.glBlendEquation(GL11ExtensionPack.GL_FUNC_ADD);
       gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
     }
     
@@ -4988,37 +4989,36 @@ public class PGraphicsAndroid3D extends PGraphics {
     blendMode = mode;
     gl.glEnable(GL10.GL_BLEND);
     if (mode == REPLACE) {  
-      if (gl11xp != null) gl11xp.glBlendEquation(GL11ExtensionPack.GL_FUNC_ADD);
+      if (blendEqSupported) gl11xp.glBlendEquation(GL11ExtensionPack.GL_FUNC_ADD);
       gl.glBlendFunc(GL10.GL_ONE, GL10.GL_ZERO);
     } else if (mode == BLEND) {
-      if (gl11xp != null) gl11xp.glBlendEquation(GL11ExtensionPack.GL_FUNC_ADD);
+      if (blendEqSupported) gl11xp.glBlendEquation(GL11ExtensionPack.GL_FUNC_ADD);
       gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
     } else if (mode == ADD) {
-      if (gl11xp != null) gl11xp.glBlendEquation(GL11ExtensionPack.GL_FUNC_ADD);
+      if (blendEqSupported) gl11xp.glBlendEquation(GL11ExtensionPack.GL_FUNC_ADD);
       gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE);
     } else if (mode == MULTIPLY) {
-      if (gl11xp != null) gl11xp.glBlendEquation(GL11ExtensionPack.GL_FUNC_ADD);      
+      if (blendEqSupported) gl11xp.glBlendEquation(GL11ExtensionPack.GL_FUNC_ADD);      
       gl.glBlendFunc(GL10.GL_DST_COLOR, GL10.GL_SRC_COLOR);
     } else if (mode == SUBTRACT) {
-      if (gl11xp != null) gl11xp.glBlendEquation(GL11ExtensionPack.GL_FUNC_ADD);      
+      if (blendEqSupported) gl11xp.glBlendEquation(GL11ExtensionPack.GL_FUNC_ADD);      
       gl.glBlendFunc(GL10.GL_ONE_MINUS_DST_COLOR, GL10.GL_ZERO); 
     } else if (mode == DARKEST) {
-      if (gl11xp != null) { 
+      if (blendEqSupported) { 
         gl11xp.glBlendEquation(GL_MIN_EXT);      
        gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_DST_ALPHA);
       } else {
         PGraphics.showWarning("A3D: This blend mode is currently unsupported.");  
       }
     } else if (mode == LIGHTEST) {
-      if (gl11xp != null) { 
+      if (blendEqSupported) { 
         gl11xp.glBlendEquation(GL_MAX_EXT);
         gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_DST_ALPHA);
       } else {
         PGraphics.showWarning("A3D: This blend mode is currently unsupported.");
       }
-
     } else if (mode == DIFFERENCE) {
-      if (gl11xp != null) {
+      if (blendEqSupported) {
         gl11xp.glBlendEquation(GL11ExtensionPack.GL_FUNC_REVERSE_SUBTRACT);
         gl.glBlendFunc(GL10.GL_ONE, GL10.GL_ONE);
       } else {
@@ -5189,7 +5189,20 @@ public class PGraphicsAndroid3D extends PGraphics {
           fboSupported = false;
         }        
       }
-
+            
+      if (gl11xp != null) { 
+        try {
+          gl11xp.glBlendEquation(GL11ExtensionPack.GL_FUNC_ADD);
+          blendEqSupported = true;
+        } catch (UnsupportedOperationException e) {
+          // This takes care of Android 2.1 and older where the glBlendEquation is present in the API,
+          // but any call to it will result in an error.
+          blendEqSupported = false;
+        }
+      } else {
+        blendEqSupported = false;
+      }
+      
       usingModelviewStack = gl11 == null || !matrixGetSupported;
       
       int temp[] = new int[2];    
