@@ -421,6 +421,13 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 
 		monitor.worked(10);
 		if(checkCancel(monitor)) { return null; } 
+		
+		// Add data folder if there is stuff in it
+		IFolder dataFolder = sketchProject.getDataFolder();
+		if (dataFolder.isAccessible()){
+			if (dataFolder.members().length > 0) srcFolderPathList.add(dataFolder.getFullPath());
+		}
+		
 		// Almost there! Set a new classpath using all this stuff we've computed.
 
 		// Even though the list types are specified, Java still tosses errors when I try 
