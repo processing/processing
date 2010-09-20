@@ -66,7 +66,6 @@ public class ExportAsAppletSelectProjectsWizardPage extends WizardPage {
 					if (entry.setEntry(p)) entries.add(entry);
 				}
 			}
-
 		}
 
 	}
@@ -168,13 +167,28 @@ public class ExportAsAppletSelectProjectsWizardPage extends WizardPage {
 		table.setLayoutData(formData);
 		table.setHeaderVisible(true);
 
-		final TableColumn rightTableColumn = new TableColumn(table,SWT.NONE);
-		rightTableColumn.setWidth(200);
-		rightTableColumn.setText("Name");
-
 		final TableColumn leftTableColumn = new TableColumn(table,SWT.NONE);
-		leftTableColumn.setWidth(250);
-		leftTableColumn.setText("Notes");
+		leftTableColumn.setWidth(200);
+		leftTableColumn.setText("Name");
+
+		final TableColumn rightTableColumn = new TableColumn(table,SWT.NONE);
+		rightTableColumn.setWidth(250);
+		rightTableColumn.setText("Notes");
+	}
+	
+	/** 
+	 * Override of setVisible to update and display the content only
+	 * when the page is becoming visible.
+	 * <p>
+	 * {@inheritDoc} 
+	 */
+	public void setVisible(boolean visible){
+		if (visible) projectTable.setInput(visible);
+		/* setInput needs an object, but it really doesn't matter what is
+		 * handed to it as long as the content provider is the private class 
+		 * ProjectTableConentProvider, because that provider ignores the object
+		 * and builds everything itself. */
+		super.setVisible(visible);
 	}
 
 }
