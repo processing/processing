@@ -58,22 +58,48 @@ public class RunSketchAsAppletShortcut implements ILaunchShortcut {
 		ILaunchManager lm = DebugPlugin.getDefault().getLaunchManager();
 		return lm.getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLET);
 	}
+	
+	public void launch(IProject proj, String mode){
+		try{
+			if (proj.hasNature("processing.plugin.core.sketchNature"))
+				launch(createConfiguration(proj), mode);
+			else 
+				ProcessingLog.logInfo("Sketch could not be launched. "
+						+ "The selected project does not have the required Sketch nature.");
+		} catch (CoreException e){
+			ProcessingLog.logError("Launch aborted. CoreException error occured while accessing the project.", e);
+		}
+	}
 
 	public void launch(ISelection selection, String mode) {
 		if (selection instanceof IStructuredSelection) {
 			Object element = ((IStructuredSelection)selection).getFirstElement();
 			if (element instanceof IResource){
 				IProject proj = ((IResource)element).getProject();
-				try{
-					if (proj.hasNature("processing.plugin.core.sketchNature"))
-						launch(createConfiguration(proj), mode);
-					else 
-						ProcessingLog.logInfo("Sketch could not be launched. The selected project does not have the required Sketch nature.");
-				} catch (CoreException e){
-					ProcessingLog.logError("Launch aborted.", e);
+				if (proj.isAccessible()){
+					launch(proj, mode);
+				} else {
+					ProcessingLog.logInfo("Sketch could not be launched. " +
+					"Project was not accessible.");
 				}
-			} else {
-				ProcessingLog.logInfo("Sketch could not be launched. Launcher was provided with a non-resource selection.");
+//			if (element instanceof JavaProject){
+//				/* The Java perspective hijacks Processing sketches and reports them through the selection
+//				 * interface as JavaProjects instead of IProjects or IResources or SketchProjects, all of
+//				 * which they happen to be, so I'm stuck accessing restricted code. Great. 
+//				 */
+//				IProject project = ((JavaProject)element).getProject();
+//				if(project.isAccessible()){
+//					launch( project, mode);
+//				} else {
+//					ProcessingLog.logInfo("Sketch could not be launched. " +
+//					"Project was not accessible. Try launching from the Processing Perspective");
+//				}
+//			}
+			}else {
+//				System.out.println(element.getClass().getName());
+				ProcessingLog.logInfo("Sketch could not be launched. " +
+						"The launcher could not find a Sketch project associated with the provided selection." + 
+						"Try relaunching from the Processing Perspective, or launching a specific *.pde file.");
 			}
 		}
 	}
