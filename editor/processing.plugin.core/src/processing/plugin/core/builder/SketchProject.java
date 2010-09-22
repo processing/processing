@@ -12,11 +12,13 @@ package processing.plugin.core.builder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 
 import org.eclipse.core.resources.ICommand;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -68,6 +70,9 @@ public class SketchProject implements IProjectNature {
 	protected int sketch_width = -1;
 	protected int sketch_height = -1;
 
+	protected String renderer = "";
+
+	
 	protected boolean wasLastBuildSuccessful = false;
 	
 	/** 
@@ -308,6 +313,17 @@ public class SketchProject implements IProjectNature {
 		}
 		return null;
 	}
+	
+	/**
+	 * Returns a handle to the main file for the sketch.
+	 * <p>
+	 * The main file being the *.pde file that shares the name of the sketch.
+	 *  
+	 */
+	public IFile getMainFile(){
+		IFile main = project.getFile(project.getName()+".pde");
+		return (main.isAccessible()) ? main : null;
+	}
 
 	/**
 	 * Register a new set of class path entries from the provided source folder list and library jars.
@@ -481,6 +497,36 @@ public class SketchProject implements IProjectNature {
 	 */
 	public boolean exportAsApplet() {
 		if (!wasLastBuildSuccessful) return false;
+		if (!project.isAccessible()) return false;
+		
+		IFile code = this.getMainFile();
+		if (!code.isAccessible()) return false;
+		
+		HashMap<String,Object> zipFileContents = new HashMap<String,Object>();
+		
+		int wide = this.getWidth();
+		int high = this.getHeight();
+		
+		String codeContents = Utilities.readFile(code);
+		
+		String description ="";
+		String[] javadoc = Utilities.match(codeContents, "/\\*{2,}(.*)\\*+/");
+		if (javadoc != null){
+			StringBuffer dbuffer = new StringBuffer();
+			String[] pieces = Utilities.split(javadoc[1], '\n');
+			for (String line : pieces){
+				// if this line starts with * characters, remove em
+				String[] m = Utilities.match(line, "^\\s*\\*+(.*)");
+				dbuffer.append(m != null ? m[1] : line);
+				dbuffer.append('\n');
+			}
+			description = dbuffer.toString();
+			ProcessingLog.logInfo(description);
+		}
+		
+		IJavaProject jproject = this.getJavaProject();
+		//export
+		
 		return false;
 	}
 	
