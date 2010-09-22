@@ -256,12 +256,16 @@ public class SketchProject implements IProjectNature {
 		}
 	}
 	
-	/** Return the sketch's code folder or null if it cannot be retrieved. */
 	public IFolder getAppletFolder(){
+		return getAppletFolder(false);
+	}
+	
+	/** Return the sketch's code folder or null if it cannot be retrieved. */
+	public IFolder getAppletFolder(boolean delete){
 		try{
 			IFolder applet = project.getFolder("applet");
-			if(!applet.exists())
-				applet.create(IResource.NONE, true, null);
+			if(delete && applet.exists()) applet.delete(true, null);
+			if(!applet.exists()) applet.create(IResource.NONE, true, null);
 			return project.getFolder("applet");
 		} catch (Exception e){
 			ProcessingLog.logError("Applet folder could not be created.", e);
@@ -500,34 +504,46 @@ public class SketchProject implements IProjectNature {
 		if (!project.isAccessible()) return false;
 		
 		IFile code = this.getMainFile();
-		if (!code.isAccessible()) return false;
+		if (code == null) return false;
 		
-		HashMap<String,Object> zipFileContents = new HashMap<String,Object>();
+		IFolder exportFolder = getAppletFolder(true); // true nukes the folder if it exists
 		
-		int wide = this.getWidth();
-		int high = this.getHeight();
-		
-		String codeContents = Utilities.readFile(code);
-		
-		String description ="";
-		String[] javadoc = Utilities.match(codeContents, "/\\*{2,}(.*)\\*+/");
-		if (javadoc != null){
-			StringBuffer dbuffer = new StringBuffer();
-			String[] pieces = Utilities.split(javadoc[1], '\n');
-			for (String line : pieces){
-				// if this line starts with * characters, remove em
-				String[] m = Utilities.match(line, "^\\s*\\*+(.*)");
-				dbuffer.append(m != null ? m[1] : line);
-				dbuffer.append('\n');
+		// if the code folder has stuff, dump it to a jar
+		try{
+			IFolder codeFolder = getCodeFolder();
+			if(codeFolder != null){
+				if(codeFolder.members().length > 0){
+					for(IResource r : codeFolder.members()){
+						
+					}
+				}
 			}
-			description = dbuffer.toString();
-			ProcessingLog.logInfo(description);
+		} catch (CoreException e) {
+			ProcessingLog.logError("Could not export. CoreException while getting code folder.", e);
+			return false;
 		}
 		
-		IJavaProject jproject = this.getJavaProject();
-		//export
-		
+//		int wide = this.getWidth();
+//		int high = this.getHeight();
+//		
+//		String codeContents = Utilities.readFile(code);
+//		
+//		String description ="";
+//		String[] javadoc = Utilities.match(codeContents, "/\\*{2,}(.*)\\*+/");
+//		if (javadoc != null){
+//			StringBuffer dbuffer = new StringBuffer();
+//			String[] pieces = Utilities.split(javadoc[1], '\n');
+//			for (String line : pieces){
+//				// if this line starts with * characters, remove em
+//				String[] m = Utilities.match(line, "^\\s*\\*+(.*)");
+//				dbuffer.append(m != null ? m[1] : line);
+//				dbuffer.append('\n');
+//			}
+//			description = dbuffer.toString();
+//			ProcessingLog.logInfo(description);
+//		}
+
 		return false;
 	}
-	
+		
 }
