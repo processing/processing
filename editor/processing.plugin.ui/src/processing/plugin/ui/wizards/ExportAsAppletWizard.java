@@ -13,10 +13,15 @@ package processing.plugin.ui.wizards;
 //import java.util.Iterator;
 //import org.eclipse.core.resources.IProject;
 //import org.eclipse.core.resources.IResource;
+import java.util.ArrayList;
+
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
+
+import processing.plugin.core.ProcessingLog;
+import processing.plugin.core.builder.SketchProject;
 
 
 /**
@@ -67,7 +72,16 @@ public class ExportAsAppletWizard extends Wizard implements IExportWizard {
 
 	public boolean performFinish() {
 //		return SketchProject.forProject(page.getProject()).exportAsApplet();
-		return false;
+		ArrayList<String> couldNotExport = new ArrayList<String>();
+		for(SketchProject sp : page.getSelectedProjects()){
+//			System.out.println(sp.getProject().getName());
+			if (!sp.exportAsApplet()) couldNotExport.add(sp.getProject().getName());
+		}
+		
+		if (couldNotExport.size() > 0)
+			for(String s : couldNotExport) ProcessingLog.logInfo( "Unable to export " + s + ".");
+			
+		return true;
 	}
 
 }
