@@ -85,7 +85,7 @@ public class ExportAsAppletSelectProjectsWizardPage extends WizardPage {
 		public boolean setEntry(SketchProject project){
 			if (project == null) return false;
 			sp = project;
-			System.out.println("Adding: " + project.getProject().getName());
+//			System.out.println("Adding: " + project.getProject().getName());
 			return true;
 		}
 
@@ -117,8 +117,8 @@ public class ExportAsAppletSelectProjectsWizardPage extends WizardPage {
 
 		/** Gets the column text */
 		public String getColumnText(Object element, int columnIndex) {
-			System.out.println(element.toString());
-			System.out.println(columnIndex);
+//			System.out.println(element.toString());
+//			System.out.println(columnIndex);
 			switch (columnIndex) {
 			case 0: // project
 				if (element instanceof ProjectTableEntryModel)
@@ -189,6 +189,15 @@ public class ExportAsAppletSelectProjectsWizardPage extends WizardPage {
 		 * ProjectTableConentProvider, because that provider ignores the object
 		 * and builds everything itself. */
 		super.setVisible(visible);
+	}
+	
+	public SketchProject[] getSelectedProjects(){
+		Object[] elements = projectTable.getCheckedElements();
+		SketchProject[] selectedProjects = new SketchProject[elements.length];
+		for(int i=0; i<elements.length; i++){
+			 selectedProjects[i] = ((ProjectTableEntryModel) elements[i]).getProject();
+		}
+		return selectedProjects;
 	}
 
 }

@@ -202,12 +202,13 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 			return null;
 		}
 		
-		IFile mainFile = sketch.getFile( sketch.getName() + ".pde");
+		IFile mainFile = sketchProject.getMainFile();
 		if (!mainFile.isAccessible()){
 			reportProblem(
-					"Could not find "+ sketch.getName() + ".pde, so things may get wierd.",
-					sketch, -1, false 
+					"Could not find "+ sketch.getName() + ".pde, please rename your primary sketch file.",
+					sketch, -1, true 
 			);
+			return null;
 		}
 
 		monitor.beginTask("Sketch Build", 40); // not sure how much work to do here
