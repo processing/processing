@@ -201,6 +201,14 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 			ProcessingLog.logError("Build folder could not be accessed.", null);
 			return null;
 		}
+		
+		IFile mainFile = sketch.getFile( sketch.getName() + ".pde");
+		if (!mainFile.isAccessible()){
+			reportProblem(
+					"Could not find "+ sketch.getName() + ".pde, so things may get wierd.",
+					sketch, -1, false 
+			);
+		}
 
 		monitor.beginTask("Sketch Build", 40); // not sure how much work to do here
 		if(checkCancel(monitor)) { return null; }
@@ -267,8 +275,19 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 					int wide = Integer.parseInt(matches[1]);
 					int high = Integer.parseInt(matches[2]);
 
-					if(wide > 0) sketchProject.sketch_width = wide;
-					if (high > 0) sketchProject.sketch_height = high;			        
+					if(wide > 0) 
+						sketchProject.sketch_width = wide;
+					else
+						ProcessingLog.logInfo("Width cannot be negative. Using default width instead.");
+					
+					if (high > 0)
+						sketchProject.sketch_height = high;
+					else 
+						ProcessingLog.logInfo("Height cannot be negative. Using default height instead.");
+
+					if(matches.length==4) sketchProject.renderer = matches[3].trim();
+					// "Actually matches.length should always be 4..." - ProcSketch.java
+	
 				} catch (NumberFormatException e) {
 					ProcessingLog.logInfo(
 							"Found a reference to size, but it didn't seem to contain numbers. "
