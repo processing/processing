@@ -224,7 +224,7 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 		String[] codeFolderPackages = null;
 		if (codeFolder != null && codeFolder.exists()){
 			String codeFolderClassPath = Utilities.contentsToClassPath(codeFolder.getLocation().toFile());
-			for( String s : codeFolderClassPath.split(File.separator)){
+			for( String s : codeFolderClassPath.split(File.pathSeparator)){
 				if (!s.isEmpty()){
 					libraryJarPathList.add(new Path(s).makeAbsolute());
 				}

@@ -12,7 +12,6 @@ package processing.plugin.core.builder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
@@ -358,14 +357,17 @@ public class SketchProject implements IProjectNature {
 		// this should include the build folder and the code folder, if it was necessary
 		if(srcFolderPathList != null){
 			for( IPath p : srcFolderPathList){
-				if (p!=null) entries.add(JavaCore.newSourceEntry(p.makeAbsolute())); 
+				if (p!=null){ 
+					System.out.println(p.toOSString());
+					entries.add(JavaCore.newSourceEntry(p.makeAbsolute()));
+				}
 			}
 		}
 		
 		if(libraryJarPathList != null){
 			for(IPath p : libraryJarPathList){
-				//System.out.println(p.toString());
 				if (p != null){
+					System.out.println(p.toString());
 					entries.add(
 						JavaCore.newLibraryEntry(p.makeAbsolute(),
 							null, // no source
@@ -493,57 +495,6 @@ public class SketchProject implements IProjectNature {
 	/** Returns the name of the main type of the compiled sketch*/
 	public String getMainType() {
 		return project.getName();
-	}
-
-	/** 
-	 * Tries to export the sketch as an applet
-	 * returns whether or not it was successful
-	 */
-	public boolean exportAsApplet() {
-		if (!wasLastBuildSuccessful) return false;
-		if (!project.isAccessible()) return false;
-		
-		IFile code = this.getMainFile();
-		if (code == null) return false;
-		
-		IFolder exportFolder = getAppletFolder(true); // true nukes the folder if it exists
-		
-		// if the code folder has stuff, dump it to a jar
-		try{
-			IFolder codeFolder = getCodeFolder();
-			if(codeFolder != null){
-				if(codeFolder.members().length > 0){
-					for(IResource r : codeFolder.members()){
-						
-					}
-				}
-			}
-		} catch (CoreException e) {
-			ProcessingLog.logError("Could not export. CoreException while getting code folder.", e);
-			return false;
-		}
-		
-//		int wide = this.getWidth();
-//		int high = this.getHeight();
-//		
-//		String codeContents = Utilities.readFile(code);
-//		
-//		String description ="";
-//		String[] javadoc = Utilities.match(codeContents, "/\\*{2,}(.*)\\*+/");
-//		if (javadoc != null){
-//			StringBuffer dbuffer = new StringBuffer();
-//			String[] pieces = Utilities.split(javadoc[1], '\n');
-//			for (String line : pieces){
-//				// if this line starts with * characters, remove em
-//				String[] m = Utilities.match(line, "^\\s*\\*+(.*)");
-//				dbuffer.append(m != null ? m[1] : line);
-//				dbuffer.append('\n');
-//			}
-//			description = dbuffer.toString();
-//			ProcessingLog.logInfo(description);
-//		}
-
-		return false;
 	}
 		
 }
