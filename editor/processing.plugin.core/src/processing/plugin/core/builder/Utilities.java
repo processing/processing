@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -116,7 +117,8 @@ public class Utilities {
 		//TODO Review this method and make sure that it is returning only paths directly to jars and zip files
 		// It was returning empty paths which was breaking things. Needs to be reviewed.
 		if (folder == null) return "";
-
+		if (!folder.isDirectory()) return "";
+		
 		StringBuffer abuffer = new StringBuffer();
 		String sep = System.getProperty("path.separator");
 
@@ -125,11 +127,10 @@ public class Utilities {
 
 			// When getting the name of this folder, make sure it has a slash
 			// after it, so that the names of sub-items can be added.
-			if (!path.endsWith(File.separator)) {
-				path += File.separator;
-			}
+			if (!path.endsWith(File.separator)) path += File.separator;
 
 			String list[] = folder.list();
+
 			for (int i = 0; i < list.length; i++) {
 				// Skip . and ._ files. Prior to 0125p3, .jar files that had
 				// OS X AppleDouble files associated would cause trouble.
@@ -492,6 +493,31 @@ public class Utilities {
 		//}
 		return splits;
 	}
+	
+	/**
+	   * Splits a string into pieces, using any of the chars in the
+	   * String 'delim' as separator characters. For instance,
+	   * in addition to white space, you might want to treat commas
+	   * as a separator. The delimeter characters won't appear in
+	   * the returned String array.
+	   * <PRE>
+	   * i.e. splitTokens("a, b", " ,") -> { "a", "b" }
+	   * </PRE>
+	   * To include all the whitespace possibilities, use the variable
+	   * WHITESPACE, found in PConstants:
+	   * <PRE>
+	   * i.e. splitTokens("a   | b", WHITESPACE + "|");  ->  { "a", "b" }</PRE>
+	   */
+	  static public String[] splitTokens(String what, String delim) {
+	    StringTokenizer toker = new StringTokenizer(what, delim);
+	    String pieces[] = new String[toker.countTokens()];
+
+	    int index = 0;
+	    while (toker.hasMoreTokens()) {
+	      pieces[index++] = toker.nextToken();
+	    }
+	    return pieces;
+	  }
 
 	public static void deleteFolderContents(File folder) {
 		if (folder == null) return;
