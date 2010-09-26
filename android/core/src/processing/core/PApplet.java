@@ -6964,6 +6964,11 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  public void noTexture() {
+    g.noTexture();
+  }
+  
+  
   public void vertex(float x, float y) {
     g.vertex(x, y);
   }
