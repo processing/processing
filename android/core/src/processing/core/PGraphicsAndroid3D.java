@@ -1663,11 +1663,6 @@ public class PGraphicsAndroid3D extends PGraphics {
 
     float sw0 = 0;
 
-    // Last transformation: inversion of coordinate to make compatible with
-    // Processing's inverted Y axis.
-    //gl.glPushMatrix();
-    //gl.glScalef(1, -1, 1);
-
     gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
     gl.glEnableClientState(GL10.GL_COLOR_ARRAY);
 
@@ -1773,8 +1768,6 @@ public class PGraphicsAndroid3D extends PGraphics {
 
     gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
     gl.glDisableClientState(GL10.GL_COLOR_ARRAY);    
-    
-    //gl.glPopMatrix();
 
     report("render_lines out");
   }
@@ -1798,23 +1791,25 @@ public class PGraphicsAndroid3D extends PGraphics {
     triangles[triangleCount][VERTEX1] = a;
     triangles[triangleCount][VERTEX2] = b;
     triangles[triangleCount][VERTEX3] = c;
-
-    triangleCount++;
-    boolean firstFace = triangleCount == 1;
-    if (textureImage != textureImagePrev || firstFace) {
+    
+    PImage tex = verticesTexture[a];
+   
+    boolean firstFace = triangleCount == 0;
+    if (tex != textureImagePrev || firstFace) {
       // A new face starts at the first triangle or when the texture changes.
-      addNewFace(firstFace);
+      addNewFace(firstFace, tex);
     } else {
       // mark this triangle as being part of the current face.
       faceLength[faceCount - 1]++;
     }
-
-    textureImagePrev = textureImage;
+    triangleCount++;
+    
+    textureImagePrev = tex;
   }
 
   // New "face" starts. A face is just a range of consecutive triangles
   // with the same texture applied to them (it could be null).
-  protected void addNewFace(boolean firstFace) {
+  protected void addNewFace(boolean firstFace, PImage tex) {
     if (faceCount == faceOffset.length) {
       faceOffset = PApplet.expand(faceOffset);
       faceLength = PApplet.expand(faceLength);
@@ -1822,7 +1817,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
     faceOffset[faceCount] = firstFace ? 0 : triangleCount;
     faceLength[faceCount] = 1;
-    faceTexture[faceCount] = textureImage;
+    faceTexture[faceCount] = tex;
     faceCount++;
   }
 
@@ -1832,21 +1827,17 @@ public class PGraphicsAndroid3D extends PGraphics {
     PTexture tex = null;
     boolean texturing = false;
 
-    // Last transformation: inversion of coordinate to make compatible with
-    // Processing's inverted Y axis.
-    //gl.glPushMatrix();
-    //gl.glScalef(1, -1, 1);
-
     gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
     gl.glEnableClientState(GL10.GL_COLOR_ARRAY);
     gl.glEnableClientState(GL10.GL_NORMAL_ARRAY);
-
+    
     for (int j = start; j < stop; j++) {
+      
       int i = faceOffset[j];
       FACECOUNT++;
-
+      
       if (faceTexture[j] != null) {
-        tex = faceTexture[j].getTexture();
+        tex = faceTexture[j].getTexture();        
         if (tex != null) {
           gl.glEnable(tex.getGLTarget());
           gl.glBindTexture(tex.getGLTarget(), tex.getGLTextureID());
@@ -1862,8 +1853,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       if (recordingModel) {
         int n0 = recordedVertices.size();
         int n1 = n0 + 3 * faceLength[j] - 1;
-        VertexGroup group = PShape3D.newVertexGroup(n0, n1, TRIANGLES, 0,
-            faceTexture[j]);
+        VertexGroup group = PShape3D.newVertexGroup(n0, n1, TRIANGLES, 0, faceTexture[j]);
         recordedGroups.add(group);
       }
 
@@ -2005,7 +1995,6 @@ public class PGraphicsAndroid3D extends PGraphics {
       }
 
       if (texturing) {
-        gl.glBindTexture(tex.getGLTarget(), 0);
         gl.glDisable(tex.getGLTarget());
         gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
       }
@@ -2014,8 +2003,6 @@ public class PGraphicsAndroid3D extends PGraphics {
     gl.glDisableClientState(GL10.GL_NORMAL_ARRAY);
     gl.glDisableClientState(GL10.GL_COLOR_ARRAY);
     gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
-
-    //gl.glPopMatrix();
 
     report("render_triangles out");
   }
