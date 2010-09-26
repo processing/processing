@@ -403,6 +403,7 @@ public class PGraphics extends PImage implements PConstants {
   protected float vertices[][] =
     new float[DEFAULT_VERTICES][VERTEX_FIELD_COUNT];
   protected int vertexCount; // total number of vertices
+  protected PImage verticesTexture[] = new PImage[DEFAULT_VERTICES];
 
   // ........................................................
 
@@ -934,12 +935,26 @@ public class PGraphics extends PImage implements PConstants {
     textureImage = image;
   }
 
-
+  
+  /**
+   * Removes texture image for current shape.
+   * Needs to be called between @see beginShape and @see endShape
+   *
+   */
+  public void noTexture() {
+    textureImage = null;
+  }
+  
+  
   protected void vertexCheck() {
     if (vertexCount == vertices.length) {
       float temp[][] = new float[vertexCount << 1][VERTEX_FIELD_COUNT];
       System.arraycopy(vertices, 0, temp, 0, vertexCount);
       vertices = temp;
+      
+      PImage texTmp[] = new PImage[vertexCount << 1];
+      System.arraycopy(verticesTexture, 0, texTmp, 0, vertexCount);
+      verticesTexture = texTmp;
     }
   }
 
@@ -976,6 +991,8 @@ public class PGraphics extends PImage implements PConstants {
       vertex[V] = textureV;
     }
 
+    verticesTexture[vertexCount] = textureImage;
+    
     vertexCount++;
   }
 
@@ -1067,6 +1084,8 @@ public class PGraphics extends PImage implements PConstants {
 
     vertex[BEEN_LIT] = 0;
 
+    verticesTexture[vertexCount] = textureImage;
+    
     vertexCount++;
   }
 
@@ -1081,6 +1100,7 @@ public class PGraphics extends PImage implements PConstants {
     curveVertexCount = 0;
     float[] vertex = vertices[vertexCount];
     System.arraycopy(v, 0, vertex, 0, VERTEX_FIELD_COUNT);
+    verticesTexture[vertexCount] = textureImage;
     vertexCount++;
   }
 
