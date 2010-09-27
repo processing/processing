@@ -558,6 +558,33 @@ public class PShape3D extends PShape implements PConstants {
     
     return res;
   }
+
+  
+  public void setColor(int c) {
+    int a = (c >> 24) & 0xFF;
+    int r = (c >> 16) & 0xFF;
+    int g = (c >> 8) & 0xFF;
+    int b = (c  >> 0) & 0xFF;
+    
+    setColor(r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f);
+  }
+
+  
+  public void setColor(float r, float g, float b) {
+    setColor(r, g, b, 1.0f);
+  }
+  
+ 
+  public void setColor(float r, float g, float b, float a) {  
+    firstUpdateIdx = 0;
+    lastUpdateIdx = numVertices - 1;    
+    for (int i = 0; i < numVertices; i++) {
+      colorArray[4 * i + 0] = r;
+      colorArray[4 * i + 1] = g;
+      colorArray[4 * i + 2] = b;
+      colorArray[4 * i + 3] = a;      
+    }
+  }
   
   
   public void setColor(int idx, int c) {
