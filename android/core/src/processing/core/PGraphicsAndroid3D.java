@@ -824,6 +824,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     // set up the default camera and initis modelview matrix.
     camera();
 
+    lights = false;
     lightCount = 0;
     lightFalloff(1, 0, 0);
     lightSpecular(0, 0, 0);
@@ -4037,7 +4038,7 @@ public class PGraphicsAndroid3D extends PGraphics {
    * </PRE>
    */
   public void lights() {
-    enableLights();
+    glEnableLights();
 
     // need to make sure colorMode is RGB 255 here
     int colorModeSaved = colorMode;
@@ -4056,7 +4057,7 @@ public class PGraphicsAndroid3D extends PGraphics {
    * Disables lighting.
    */
   public void noLights() {
-    disableLights();
+    glDisableLights();
     lightCount = 0;
   }
 
@@ -4073,7 +4074,7 @@ public class PGraphicsAndroid3D extends PGraphics {
    */
   public void ambientLight(float r, float g, float b, float x, float y, float z) {
     if (!lights) {
-      enableLights();
+      glEnableLights();
     }
     if (lightCount == MAX_LIGHTS) {
       throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
@@ -4107,7 +4108,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   public void directionalLight(float r, float g, float b, float nx, float ny,
       float nz) {
     if (!lights) {
-      enableLights();
+      glEnableLights();
     }    
     if (lightCount == MAX_LIGHTS) {
       throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
@@ -4146,7 +4147,7 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   public void pointLight(float r, float g, float b, float x, float y, float z) {
     if (!lights) {
-      enableLights();
+      glEnableLights();
     }    
     if (lightCount == MAX_LIGHTS) {
       throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
@@ -4184,7 +4185,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   public void spotLight(float r, float g, float b, float x, float y, float z,
       float nx, float ny, float nz, float angle, float concentration) {
     if (!lights) {
-      enableLights();
+      glEnableLights();
     }    
     if (lightCount == MAX_LIGHTS) {
       throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
@@ -4252,12 +4253,12 @@ public class PGraphicsAndroid3D extends PGraphics {
     currentLightSpecular[3] = 1.0f;
   }
 
-  private void enableLights() {
+  private void glEnableLights() {
     lights = true;
     gl.glEnable(GL10.GL_LIGHTING);
   }
 
-  private void disableLights() {
+  private void glDisableLights() {
     lights = false;
     gl.glDisable(GL10.GL_LIGHTING);
   }
