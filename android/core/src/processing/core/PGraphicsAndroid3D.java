@@ -3938,7 +3938,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   // LIGHTING
 
   /**
-   * Sets up an ambient and directional light using OpenGL. API takef from
+   * Sets up an ambient and directional light using OpenGL. API taken from
    * PGraphics3D.
    * 
    * <PRE>
@@ -4037,8 +4037,7 @@ public class PGraphicsAndroid3D extends PGraphics {
    * </PRE>
    */
   public void lights() {
-    lights = true;
-    gl.glEnable(GL10.GL_LIGHTING);
+    enableLights();
 
     // need to make sure colorMode is RGB 255 here
     int colorModeSaved = colorMode;
@@ -4057,8 +4056,7 @@ public class PGraphicsAndroid3D extends PGraphics {
    * Disables lighting.
    */
   public void noLights() {
-    lights = false;
-    gl.glDisable(GL10.GL_LIGHTING);
+    disableLights();
     lightCount = 0;
   }
 
@@ -4074,6 +4072,9 @@ public class PGraphicsAndroid3D extends PGraphics {
    * an (x, y, z) position for situations where the falloff distance is used.
    */
   public void ambientLight(float r, float g, float b, float x, float y, float z) {
+    if (!lights) {
+      enableLights();
+    }
     if (lightCount == MAX_LIGHTS) {
       throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
     }
@@ -4097,12 +4098,17 @@ public class PGraphicsAndroid3D extends PGraphics {
     glLightPosition(lightCount);
     glLightFalloff(lightCount);
     glLightNoSpot(lightCount);
-
+    glLightNoDiffuse(lightCount);
+    glLightNoSpecular(lightCount);
+    
     lightCount++;
   }
 
   public void directionalLight(float r, float g, float b, float nx, float ny,
       float nz) {
+    if (!lights) {
+      enableLights();
+    }    
     if (lightCount == MAX_LIGHTS) {
       throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
     }
@@ -4139,6 +4145,9 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
 
   public void pointLight(float r, float g, float b, float x, float y, float z) {
+    if (!lights) {
+      enableLights();
+    }    
     if (lightCount == MAX_LIGHTS) {
       throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
     }
@@ -4174,6 +4183,9 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   public void spotLight(float r, float g, float b, float x, float y, float z,
       float nx, float ny, float nz, float angle, float concentration) {
+    if (!lights) {
+      enableLights();
+    }    
     if (lightCount == MAX_LIGHTS) {
       throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
     }
@@ -4240,6 +4252,16 @@ public class PGraphicsAndroid3D extends PGraphics {
     currentLightSpecular[3] = 1.0f;
   }
 
+  private void enableLights() {
+    lights = true;
+    gl.glEnable(GL10.GL_LIGHTING);
+  }
+
+  private void disableLights() {
+    lights = false;
+    gl.glDisable(GL10.GL_LIGHTING);
+  }
+    
   private void glLightAmbient(int num) {
     gl.glLightfv(GL10.GL_LIGHT0 + num, GL10.GL_AMBIENT, lightDiffuse[num], 0);
   }
@@ -4247,8 +4269,9 @@ public class PGraphicsAndroid3D extends PGraphics {
   private void glLightNoAmbient(int num) {
     gl.glLightfv(GL10.GL_LIGHT0 + num, GL10.GL_AMBIENT, zeroLight, 0);
   }
-
+  
   private void glLightNoSpot(int num) {
+    
     gl.glLightf(GL10.GL_LIGHT0 + num, GL10.GL_SPOT_CUTOFF, 180);
     gl.glLightf(GL10.GL_LIGHT0 + num, GL10.GL_SPOT_EXPONENT, 0);
   }
@@ -4257,6 +4280,10 @@ public class PGraphicsAndroid3D extends PGraphics {
     gl.glLightfv(GL10.GL_LIGHT0 + num, GL10.GL_DIFFUSE, lightDiffuse[num], 0);
   }
 
+  private void glLightNoDiffuse(int num) { 
+    gl.glLightfv(GL10.GL_LIGHT0 + num, GL10.GL_DIFFUSE, zeroLight, 0);
+  }
+    
   private void glLightDirection(int num) {
     if (lightType[num] == DIRECTIONAL) {
       // TODO this expects a fourth arg that will be set to 1
@@ -4297,6 +4324,10 @@ public class PGraphicsAndroid3D extends PGraphics {
     gl.glLightfv(GL10.GL_LIGHT0 + num, GL10.GL_SPECULAR, lightSpecular[num], 0);
   }
 
+  private void glLightNoSpecular(int num) {
+    gl.glLightfv(GL10.GL_LIGHT0 + num, GL10.GL_SPECULAR, zeroLight, 0);
+  }
+  
   private void glLightSpotAngle(int num) {
     gl.glLightf(GL10.GL_LIGHT0 + num, GL10.GL_SPOT_CUTOFF, lightSpotAngle[num]);
   }
