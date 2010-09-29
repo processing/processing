@@ -20,6 +20,7 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -108,32 +109,29 @@ public class ExportAsAppletWizard extends Wizard implements IExportWizard {
 		IFile code = sp.getMainFile();
 		if (code == null) return false;
 		
-		// true to nuke the folder contents, if they exist
-		IFolder exportFolder = sp.getAppletFolder(true);
+		IFolder exportFolder = sp.getAppletFolder(true); // true to nuke the folder contents, if they exist
 		
-		// if the code folder has stuff, move it to the applet folder
+		// add the contents of the code folder to the jar
 		IFolder codeFolder = sp.getCodeFolder();
-		if(codeFolder != null){
+		if (codeFolder != null){
 			try{
-		        String includes = Utilities.contentsToClassPath(codeFolder.getFullPath().toFile());
-		        String[] codeList = Utilities.splitTokens(includes,File.separator);
-		        for (String path : codeList){
-		        	System.out.println("Found file: " + path + ".");
-		        	if (path.toLowerCase().endsWith(".jar") ||
-		        			path.toLowerCase().endsWith(".zip")) {
-		        		IFile exportFile = codeFolder.getFile(new Path(path));
-		        		if (exportFile.isAccessible()){
-		        			exportFile.copy(exportFolder.getFullPath(), true, null);
-		        			System.out.println("Copied the file to " + exportFolder.getFullPath().toString() + " .");
-		        		}
-		        	} 
-		        }
-			} catch (CoreException e) {
-				ProcessingLog.logError("Could not export. CoreException while packaging the code folder.", e);
-				return false;
+				for(IResource r : codeFolder.members()){
+					if(!(r instanceof IFile)) continue;
+					if(r.getName().startsWith(".")) continue;
+					if ("jar".equalsIgnoreCase(r.getFileExtension()) || 
+							"zip".equalsIgnoreCase(r.getFileExtension())){
+						r.copy(exportFolder.getFullPath().append(r.getName()), true, null);
+	        			//System.out.println("Copied the file to " + exportFolder.getFullPath().toString() + " .");
+					}
+				}
+			} catch (CoreException e){
+				ProcessingLog.logError("Code Folder entries could not be included in export." +
+						"Export for " + sp.getProject().getName() + " may not function properly.", e);
 			}
 		}
-		////
+		
+		
+		// Get the compiled source and package it as a jar
 //		Shell parentShell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 //	    JarPackageData codePackageData = new JarPackageData();
 //	    codePackageData.setJarLocation(sp.getAppletFolder().getFullPath().append(sp.getProject().getName() + ".jar"));
@@ -150,8 +148,8 @@ public class ExportAsAppletWizard extends Wizard implements IExportWizard {
 //        }
 
 		
-//		int wide = this.getWidth();
-//		int high = this.getHeight();
+//		int wide = sp.getWidth();
+//		int high = sp.getHeight();
 //		
 //		String codeContents = Utilities.readFile(code);
 //		
