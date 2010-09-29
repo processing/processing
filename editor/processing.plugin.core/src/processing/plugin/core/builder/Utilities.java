@@ -29,7 +29,6 @@ import java.util.zip.ZipFile;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
-
 import processing.plugin.core.ProcessingCore;
 import processing.plugin.core.ProcessingCorePreferences;
 import processing.plugin.core.ProcessingLog;
@@ -101,21 +100,19 @@ public class Utilities {
 		}
 		return count;
 	}
-
+	
 	/**
 	 * Given a folder, return a list of absolute paths to all .jar and .zip
 	 * (but not .class) files inside that folder, separated by the system's
 	 * path separator character.
-	 *
+	 * <p>
 	 * This will prepend the system's path separator so that it can be directly 
 	 * appended to another path string.
-	 *
+	 * <p>
 	 * This function doesn't bother checking to see if there are any .class
 	 * files in the folder or within a subfolder.
 	 */
 	static public String contentsToClassPath(File folder) { 
-		//TODO Review this method and make sure that it is returning only paths directly to jars and zip files
-		// It was returning empty paths which was breaking things. Needs to be reviewed.
 		if (folder == null) return "";
 		if (!folder.isDirectory()) return "";
 		

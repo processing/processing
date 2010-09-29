@@ -229,7 +229,7 @@ public class SketchProject implements IProjectNature {
 		project.build(IncrementalProjectBuilder.FULL_BUILD, monitor);
 	}
 	
-	/** Return the sketch's code folder or null if it cannot be retrieved */
+	/** Return the sketch's code folder or null if it cannot be retrieved. */
 	public IFolder getCodeFolder(){
 		try{
 			IFolder code = project.getFolder("code");
@@ -358,7 +358,7 @@ public class SketchProject implements IProjectNature {
 		if(srcFolderPathList != null){
 			for( IPath p : srcFolderPathList){
 				if (p!=null){ 
-					System.out.println(p.toOSString());
+//					System.out.println(p.toOSString());
 					entries.add(JavaCore.newSourceEntry(p.makeAbsolute()));
 				}
 			}
@@ -367,7 +367,7 @@ public class SketchProject implements IProjectNature {
 		if(libraryJarPathList != null){
 			for(IPath p : libraryJarPathList){
 				if (p != null){
-					System.out.println(p.toString());
+//					System.out.println(p.toString());
 					entries.add(
 						JavaCore.newLibraryEntry(p.makeAbsolute(),
 							null, // no source
