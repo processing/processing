@@ -4126,7 +4126,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     lightSpecular[lightCount][0] = currentLightSpecular[0];
     lightSpecular[lightCount][1] = currentLightSpecular[1];
     lightSpecular[lightCount][2] = currentLightSpecular[2];
-    lightSpecular[lightCount][2] = currentLightSpecular[3];
+    lightSpecular[lightCount][3] = currentLightSpecular[3];
 
     float invn = 1.0f / PApplet.dist(0, 0, 0, nx, ny, nz);
     lightNormal[lightCount][0] = invn * nx;
