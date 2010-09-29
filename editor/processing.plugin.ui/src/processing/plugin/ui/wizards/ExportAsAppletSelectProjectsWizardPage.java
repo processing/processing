@@ -158,10 +158,10 @@ public class ExportAsAppletSelectProjectsWizardPage extends WizardPage {
 		projectTable.setLabelProvider(new ProjectTableLabelProvider());
 
 		final FormData formData = new FormData();
-		formData.bottom = new FormAttachment(100,0);
-		formData.right = new FormAttachment(100,0);
-		formData.top = new FormAttachment(0,0);
-		formData.left = new FormAttachment(0,0);
+		formData.bottom = new FormAttachment(95,0);
+		formData.right = new FormAttachment(95,0);
+		formData.top = new FormAttachment(5,0);
+		formData.left = new FormAttachment(5,0);
 
 		final Table table = projectTable.getTable();
 		table.setLayoutData(formData);
