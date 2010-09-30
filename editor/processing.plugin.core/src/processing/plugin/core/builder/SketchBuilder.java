@@ -268,7 +268,8 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 
 			sketchProject.sketch_width = -1;
 			sketchProject.sketch_height = -1;
-
+			sketchProject.renderer = "";
+			
 			String scrubbed = Utilities.scrubComments(stream.toString());
 			String[] matches = Utilities.match(scrubbed, Utilities.SIZE_REGEX);	
 			if(matches != null){
@@ -287,7 +288,7 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 						ProcessingLog.logInfo("Height cannot be negative. Using default height instead.");
 
 					if(matches.length==4) sketchProject.renderer = matches[3].trim();
-					// "Actually matches.length should always be 4..." - ProcSketch.java
+					// "Actually matches.length should always be 4..." - Processing Sketch.java
 	
 				} catch (NumberFormatException e) {
 					ProcessingLog.logInfo(
