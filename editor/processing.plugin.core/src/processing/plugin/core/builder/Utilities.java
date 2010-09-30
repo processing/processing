@@ -10,11 +10,16 @@
  */
 package processing.plugin.core.builder;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -580,5 +585,21 @@ public class Utilities {
 	    return new String(p);
 	  }
 
+	static public void copyFile(File sourceFile, File targetFile) throws IOException {
+		InputStream from = new BufferedInputStream(new FileInputStream(sourceFile));
+		OutputStream to = new BufferedOutputStream(new FileOutputStream(targetFile));
+		byte[] buffer = new byte[16 * 1024];
+		int bytesRead;
+		while ((bytesRead = from.read(buffer)) != -1) {
+			to.write(buffer, 0, bytesRead);
+		}
+		to.flush();
+		from.close(); // ??
+		from = null;
+		to.close(); // ??
+		to = null;
+		
+		targetFile.setLastModified(sourceFile.lastModified());
+	}
 	
 }
