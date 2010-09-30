@@ -54,7 +54,8 @@ public class Sketch {
    * and pasting from the reference.
    */
   public static final String SIZE_REGEX = 
-    "(?:^|\\s|;)size\\s*\\(\\s*(\\S+)\\s*,\\s*([^\\s,\\)]+),?\\s*([^\\)]*)\\s*\\)\\s*\\;";
+    "(?:^|\\s|;)size\\s*\\(\\s*([^\\s,]+)\\s*,\\s*([^\\s,\\)]+),?\\s*([^\\)]*)\\s*\\)\\s*\\;";
+    //"(?:^|\\s|;)size\\s*\\(\\s*(\\S+)\\s*,\\s*([^\\s,\\)]+),?\\s*([^\\)]*)\\s*\\)\\s*\\;";
   public static final String PACKAGE_REGEX = 
     "(?:^|\\s|;)package\\s+(\\S+)\\;";
   
@@ -1435,9 +1436,13 @@ public class Sketch {
       File libFolder = (File) Base.importToLibraryTable.get(entry);
 
       if (libFolder != null) {
-        importedLibraries.add(libFolder);
-        classPath += Compiler.contentsToClassPath(libFolder);
-        libraryPath += File.pathSeparator + libFolder.getAbsolutePath();
+        if (!importedLibraries.contains(libFolder)) {
+          importedLibraries.add(libFolder);
+          classPath += Compiler.contentsToClassPath(libFolder);
+          libraryPath += File.pathSeparator + libFolder.getAbsolutePath();
+//        } else {
+//          PApplet.println("skipping additional inclusion of " + libFolder);
+        }
       }
     }
 
@@ -1951,9 +1956,9 @@ public class Sketch {
     if (customHtml.exists()) {
       is = new FileInputStream(customHtml);
     }
-    for (File libraryFolder : importedLibraries) {
-      System.out.println(libraryFolder + " " + libraryFolder.getAbsolutePath());
-    }
+//    for (File libraryFolder : importedLibraries) {
+//      System.out.println(libraryFolder + " " + libraryFolder.getAbsolutePath());
+//    }
     // If the renderer is set to the built-in OpenGL library, 
     // then it's definitely an OpenGL applet.
     if (renderer.equals("OPENGL")) {
