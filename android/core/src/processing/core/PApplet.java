@@ -3863,7 +3863,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
    */
   static public PrintWriter createWriter(OutputStream output) {
     try {
-      OutputStreamWriter osw = new OutputStreamWriter(output, "UTF-8");
+      BufferedOutputStream bos = new BufferedOutputStream(output, 8192);
+      OutputStreamWriter osw = new OutputStreamWriter(bos, "UTF-8");
       return new PrintWriter(osw);
     } catch (UnsupportedEncodingException e) { }  // not gonna happen
     return null;
@@ -4289,6 +4290,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
     File tempFile = null;
     try {
       File parentDir = targetFile.getParentFile();
+      createPath(targetFile);
       tempFile = File.createTempFile(targetFile.getName(), null, parentDir);
 
       BufferedInputStream bis = new BufferedInputStream(sourceStream, 16384);
@@ -4461,9 +4463,9 @@ public class PApplet extends Activity implements PConstants, Runnable {
    */
   public String savePath(String where) {
     if (where == null) return null;
-    System.out.println("filename before sketchpath is " + where);
+//    System.out.println("filename before sketchpath is " + where);
     String filename = sketchPath(where);
-    System.out.println("filename after sketchpath is " + filename);
+//    System.out.println("filename after sketchpath is " + filename);
     createPath(filename);
     return filename;
   }
@@ -4512,15 +4514,19 @@ public class PApplet extends Activity implements PConstants, Runnable {
    * may not actually exist.
    */
   static public void createPath(String path) {
+    createPath(new File(path));
+  }
+
+
+  static public void createPath(File file) {
     try {
-      File file = new File(path);
       String parent = file.getParent();
       if (parent != null) {
         File unit = new File(parent);
         if (!unit.exists()) unit.mkdirs();
       }
     } catch (SecurityException se) {
-      System.err.println("You don't have permissions to create " + path);
+      System.err.println("You don't have permissions to create " + file.getAbsolutePath());
     }
   }
 

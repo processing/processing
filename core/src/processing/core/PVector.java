@@ -3,13 +3,12 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 200X Dan Shiffman
-  Copyright (c) 2008 Ben Fry and Casey Reas
+  Copyright (c) 2008 Dan Shiffman
+  Copyright (c) 2008-10 Ben Fry and Casey Reas
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
+  License version 2.1 as published by the Free Software Foundation.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -20,7 +19,7 @@
   Public License along with this library; if not, write to the
   Free Software Foundation, Inc., 59 Temple Place, Suite 330,
   Boston, MA  02111-1307  USA
- */
+*/
 
 package processing.core;
 
@@ -434,8 +433,8 @@ public class PVector implements Serializable {
   public float dot(float x, float y, float z) {
     return this.x*x + this.y*y + this.z*z;
   }
-  
-  
+
+
   static public float dot(PVector v1, PVector v2) {
       return v1.x*v2.x + v1.y*v2.y + v1.z*v2.z;
   }
@@ -547,7 +546,7 @@ public class PVector implements Serializable {
     double amt = dot / (v1mag * v2mag);
     // But if it's not due to rounding error, then we need to fix it
     // http://code.google.com/p/processing/issues/detail?id=340
-    // Otherwise if outside the range, acos() will return NaN 
+    // Otherwise if outside the range, acos() will return NaN
     // http://www.cppreference.com/wiki/c/math/acos
     if (amt <= -1 || amt >= 1) {
       return PConstants.PI;

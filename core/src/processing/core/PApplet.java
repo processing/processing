@@ -4424,7 +4424,8 @@ public class PApplet extends Applet
    */
   static public PrintWriter createWriter(OutputStream output) {
     try {
-      OutputStreamWriter osw = new OutputStreamWriter(output, "UTF-8");
+      BufferedOutputStream bos = new BufferedOutputStream(output, 8192);
+      OutputStreamWriter osw = new OutputStreamWriter(bos, "UTF-8");
       return new PrintWriter(osw);
     } catch (UnsupportedEncodingException e) { }  // not gonna happen
     return null;
@@ -4893,6 +4894,8 @@ public class PApplet extends Applet
     File tempFile = null;
     try {
       File parentDir = targetFile.getParentFile();
+      // make sure that this path actually exists before writing
+      createPath(targetFile);
       tempFile = File.createTempFile(targetFile.getName(), null, parentDir);
 
       BufferedInputStream bis = new BufferedInputStream(sourceStream, 16384);

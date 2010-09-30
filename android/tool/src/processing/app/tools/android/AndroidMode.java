@@ -120,6 +120,7 @@ public class AndroidMode implements DeviceListener {
         new Keys(editor);
       }
     });
+    item.setEnabled(false);
     menu.add(item);
     
     item = new JMenuItem("Android SDK & AVD Manager");

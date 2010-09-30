@@ -742,9 +742,9 @@ public class XMLElement implements Serializable {
    * @param name the non-null name of the attribute.
    * @return the value, or null if the attribute does not exist.
    */
-  public String getAttribute(String name) {
-    return getAttribute(name, null);
-  }
+//  public String getAttribute(String name) {
+//    return getAttribute(name, null);
+//  }
 
 
   /**
@@ -755,14 +755,14 @@ public class XMLElement implements Serializable {
    *
    * @return the value, or defaultValue if the attribute does not exist.
    */
-  public String getAttribute(String name, String defaultValue) {
-    XMLAttribute attr = this.findAttribute(name);
-    if (attr == null) {
-      return defaultValue;
-    } else {
-      return attr.getValue();
-    }
-  }
+//  public String getAttribute(String name, String defaultValue) {
+//    XMLAttribute attr = this.findAttribute(name);
+//    if (attr == null) {
+//      return defaultValue;
+//    } else {
+//      return attr.getValue();
+//    }
+//  }
 
 
 //    /**
@@ -791,7 +791,7 @@ public class XMLElement implements Serializable {
    * @deprecated use getString() or getAttribute()
    */
   public String getStringAttribute(String name) {
-    return getAttribute(name);
+    return getString(name);
   }
 
     
@@ -808,7 +808,7 @@ public class XMLElement implements Serializable {
    * @deprecated use getString() or getAttribute()
    */
   public String getStringAttribute(String name, String defaultValue) {
-    return getAttribute(name, defaultValue);
+    return getString(name, defaultValue);
   }
 
 
@@ -823,12 +823,17 @@ public class XMLElement implements Serializable {
     
     
   public String getString(String name) {
-    return getAttribute(name);
+    return getString(name, null);
   }
 
 
   public String getString(String name, String defaultValue) {
-    return getAttribute(name, defaultValue);
+    XMLAttribute attr = this.findAttribute(name);
+    if (attr == null) {
+      return defaultValue;
+    } else {
+      return attr.getValue();
+    }
   }
 
 
@@ -853,8 +858,8 @@ public class XMLElement implements Serializable {
    * @return the value, or defaultValue if the attribute does not exist.
    */
   public boolean getBoolean(String name, boolean defaultValue) {
-    String value = this.getAttribute(name, Boolean.toString(defaultValue));
-    return value.equals("1") || value.toLowerCase().equals("true");
+    String value = getString(name);
+    return (value != null) && (value.equals("1") || value.toLowerCase().equals("true"));
   }
 
 
@@ -913,8 +918,8 @@ public class XMLElement implements Serializable {
    * @return the value, or defaultValue if the attribute does not exist.
    */
   public int getInt(String name, int defaultValue) {
-    String value = this.getAttribute(name, Integer.toString(defaultValue));
-    return Integer.parseInt(value);
+    String value = getString(name); 
+    return (value == null) ? defaultValue : PApplet.parseInt(value, defaultValue);
   }
 
 
@@ -952,6 +957,11 @@ public class XMLElement implements Serializable {
     return getFloat(name, 0);
   }
 
+  
+  public float getFloat(String name) {
+    return getFloat(name, 0);
+  }
+
 
   /**
    * Returns a float attribute of the element.
@@ -967,8 +977,13 @@ public class XMLElement implements Serializable {
    * @brief Returns a float attribute of the element.
    */
   public float getFloat(String name, float defaultValue) {
-    String value = this.getAttribute(name, Float.toString(defaultValue));
-    return Float.parseFloat(value);
+    String value = getString(name);
+    if (value == null) {
+      return defaultValue;
+    }
+    return PApplet.parseFloat(value, defaultValue);
+//    String value = this.getAttribute(name, Float.toString(defaultValue));
+//    return Float.parseFloat(value);
   }
 
 
@@ -1006,8 +1021,8 @@ public class XMLElement implements Serializable {
    * @return the value, or defaultValue if the attribute does not exist.
    */
   public double getDouble(String name, double defaultValue) {
-    String value = this.getAttribute(name, Double.toString(defaultValue));
-    return Double.parseDouble(value);
+    String value = getString(name);
+    return (value == null) ? defaultValue : Double.parseDouble(value);
   }
 
 
@@ -1349,7 +1364,7 @@ public class XMLElement implements Serializable {
       //          String value = rawElement.getAttribute(attr.getName(),
       //                                          attr.getNamespace(),
       //                                          null);
-      String value = rawElement.getAttribute(attr.getName(), null);
+      String value = rawElement.getString(attr.getName(), null);
       if (! attr.getValue().equals(value)) {
         return false;
       }
