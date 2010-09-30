@@ -2805,16 +2805,17 @@ public class PImage implements PConstants, Cloneable {
     boolean success = false;
 
     File file = new File(filename);
-    if (!file.isAbsolute()) {
-      if (parent != null) {
-        //file = new File(parent.savePath(filename));
-        filename = parent.savePath(filename);
-      } else {
-        String msg = "PImage.save() requires an absolute path. " +
-          "Use createImage(), or pass savePath() to save().";
-        PGraphics.showException(msg);
-      }
+//    if (!file.isAbsolute()) {
+    // always use savePath(), so that the intermediate directories are created
+    if (parent != null) {
+      //file = new File(parent.savePath(filename));
+      filename = parent.savePath(filename);
+    } else {
+      String msg = "PImage.save() requires an absolute path. " +
+      "Use createImage(), or pass savePath() to save().";
+      PGraphics.showException(msg);
     }
+//    }
 
     // Make sure the pixel data is ready to go
     loadPixels();

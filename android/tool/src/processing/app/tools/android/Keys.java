@@ -21,18 +21,16 @@
 
 package processing.app.tools.android;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.HashMap;
+//import java.awt.*;
+//import java.awt.event.*;
+//import java.util.ArrayList;
+//import java.util.HashMap;
 
 import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
+//import javax.swing.border.*;
+//import javax.swing.event.*;
 
-import processing.app.Base;
-import processing.app.Editor;
-import processing.app.Preferences;
+import processing.app.*;
 
 
 public class Keys extends JFrame {

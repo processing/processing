@@ -1,5 +1,9 @@
 0191 android
+X won't interpret size() in Android Mode without spaces between arguments
+X   http://code.google.com/p/processing/issues/detail?id=390
 
+A Implement offscreen operations in A3D when FBO extension is not available
+A   http://code.google.com/p/processing/issues/detail?id=300
 A Get opengl matrices in A3D when GL_OES_matrix_get extension is not available
 A   http://code.google.com/p/processing/issues/detail?id=286
 A Implement calculateModelviewInverse() in A3D
@@ -10,14 +14,34 @@ A Camera issues in A3D
 A   http://code.google.com/p/processing/issues/detail?id=367
 A major fixes for type to work properly in 3D (fixes KineticType)
 A   http://code.google.com/p/processing/issues/detail?id=358
+A Lighting and materials testing in A3D
+A   http://code.google.com/p/processing/issues/detail?id=294
+A Generate mipmaps when the GL_OES_generate_mipmaps extension is not available.
+A   http://code.google.com/p/processing/issues/detail?id=288
+A Finish screen pixels/texture operations in A3D
+A   http://code.google.com/p/processing/issues/detail?id=298
 
 1) I fixed a bug in the camera handling that a user pointed out recently (http://forum.processing.org/topic/possible-3d-bug). This was a quite urgent issue, since affected pretty much everything. It went unnoticed until now because the math error canceled out with the default camera settings.
 2) I also finished the implementation of the getImpl() method in PImage, so it initializes the texture of the new image in A3D mode. This makes the CubicVR example to work fine.
 
+
+_ Blacked-out screen when restoring Android app from background.
+_   http://code.google.com/p/processing/issues/detail?id=381
+_   probably related to the other thread hooey
+
+_ salaryper crashed when connecting to ctr500 and was re-routed
+_   instead of sending back the gzip file, sent the error page
+_   unlike java, where a 404 would give us null data
+
+add to wiki
 _ add to wiki: 1MB file size is max for data folder
 _   Data exceeds UNCOMPRESS_DATA_MAX (11840328 vs 1048576)
+_   File storage = android.os.Environment.getExternalStorageDirectory();
+_   File folder = new File(storage, "awesomeapp");
+_   also check the data folder on run/export
 _ add to wiki: orientation(PORTRAIT) and orientation(LANDSCAPE)
 _   add to keywords.txt
+_ ctrl-F12 (ctrl-fn-f12 on mac) will rotate the emulator
 
 android menu
 _ something to bring up the full console window

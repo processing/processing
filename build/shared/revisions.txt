@@ -1,3 +1,92 @@
+PROCESSING REV 0191 - 30 September 2010
+
+Bug fix release. Contains major fixes to 3D for Android.
+
+[ changes ] 
+
++ Added option to preferences panel to enable/disable smoothing of text
+  inside the editor.
+
++ Added more anti-aliasing to the Linux interface. Things were downright
+  ugly in places where defaults different from Windows and Mac OS X.
+
+[ bug fixes ] 
+
++ Fix a problem with Linux permissions in the download.
+  http://code.google.com/p/processing/issues/detail?id=343
+
++ Fix 'redo' command to follow various OS conventions.
+  http://code.google.com/p/processing/issues/detail?id=363
+  Linux: ctrl-shift-z, macosx cmd-shift-z, windows ctrl-y
+  http://en.wikipedia.org/wiki/Table_of_keyboard_shortcuts
+  http://developer.apple.com/mac/library/documentation/UserExperience/Conceptual/AppleHIGuidelines/XHIGUserInput/XHIGUserInput.html
+
++ Remove extraneous console messages on export.
+
++ When exporting, don't include a library multiple times. 
+
++ Fixed a problem where no spaces in the size() command caused an error.
+  http://code.google.com/p/processing/issues/detail?id=390
+
+[ andres 1, android 0 ]
+
++ Implemented offscreen operations in A3D when FBO extension is not available
+  http://code.google.com/p/processing/issues/detail?id=300
+
++ Get OpenGL matrices in A3D when GL_OES_matrix_get extension is not available
+  http://code.google.com/p/processing/issues/detail?id=286
+
++ Implemented calculateModelviewInverse() in A3D
+  http://code.google.com/p/processing/issues/detail?id=287
+
++ Automatic clear/noClear() switch in A3D
+  http://code.google.com/p/processing/issues/detail?id=289
+
++ Fix camera issues in A3D
+  http://code.google.com/p/processing/issues/detail?id=367
+
++ Major fixes for type to work properly in 3D (fixes KineticType)
+  http://code.google.com/p/processing/issues/detail?id=358
+
++ Lighting and materials testing in A3D
+  http://code.google.com/p/processing/issues/detail?id=294
+
++ Generate mipmaps when the GL_OES_generate_mipmaps extension is not available.
+  http://code.google.com/p/processing/issues/detail?id=288
+
++ Finish screen pixels/texture operations in A3D
+  http://code.google.com/p/processing/issues/detail?id=298
+
++ Fixed a bug in the camera handling. This was a quite urgent issue, 
+  since affected pretty much everything. It went unnoticed until now because
+  the math error canceled out with the default camera settings.
+  http://forum.processing.org/topic/possible-3d-bug
+
++ Also finished the implementation of the getImpl() method in PImage, 
+  so it initializes the texture of the new image in A3D mode. 
+  This makes the CubicVR example to work fine.
+
+[ core ] 
+
++ Fix background(PImage) for OpenGL
+  http://code.google.com/p/processing/issues/detail?id=336
+
++ Skip null entries with trim(String[]) 
+
++ Fix NaN with PVector.angleBetween
+  http://code.google.com/p/processing/issues/detail?id=340
+
++ Fix missing getFloat() method in XML library
+
++ Make sure that paths are created with saveStream(). 
+  (saveStream() wasn't working when intermediate directories didn't exist)
+
++ Make createWriter() use an 8k buffer by default. 
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING REV 0190 - 18 August 2010
 
 This release is primarily for Android users. For the desktop version, there

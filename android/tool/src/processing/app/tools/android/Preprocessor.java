@@ -65,6 +65,8 @@ public class Preprocessor extends PdePreprocessor {
 
     String scrubbed = Sketch.scrubComments(sketch.getCode(0).getProgram());
     String[] matches = PApplet.match(scrubbed, Sketch.SIZE_REGEX);
+//    PApplet.println("matches: " + Sketch.SIZE_REGEX);
+//    PApplet.println(matches);
 
     if (matches != null) {
       boolean badSize = false;

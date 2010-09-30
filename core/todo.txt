@@ -4,6 +4,13 @@ X   http://code.google.com/p/processing/issues/detail?id=336
 X skip null entries with trim(String[]) 
 X NaN with PVector.angleBetween
 X   http://code.google.com/p/processing/issues/detail?id=340
+X fix missing getFloat() method in XML library
+X setAttribute? setString/Int/Float or just set?
+X   get() set() methods are confusing.. too spare
+X make sure that paths are created with saveStream() 
+X make createWriter() use buffering
+X saveStream() doesn't work when intermediate directories don't exist
+
 
 Hi all, just thought I'd share something. 
 For a while now, I've been having unexpected frame rate drops with JOGL when switching into fullscreen-exclusive mode (it halved no matter what I did - resolution switching, reducing how much I drew, etc). 
@@ -13,6 +20,9 @@ app.requestForeground(true);
 // app extends com.apple.eawt.Application implements Runnable, GLEventListener 
 in my switch-to-fullscreen method, after creating the new fullscreen frame and before calling setFullScreenWindow(...); 
 Unfortunately I don't really understand the true cause of the underlying problem (and it requires apple.awt.fakefullscreen="true" to work), so this solution is voodoo programming at best. I hope someone finds it helpful regardless :)
+
+_ Seeming problem displaying SVG data when layer data is grouped
+_   http://code.google.com/p/processing/issues/detail?id=388
 
 _ textAlign() incorrect with default font on Mac OS X 10.6
 _   http://code.google.com/p/processing/issues/detail?id=362
@@ -38,8 +48,7 @@ _ color() problem with alpha
 _   http://code.google.com/p/processing/issues/detail?id=327
 
 hanging chads for the xml library
-_ setAttribute? setString/Int/Float or just set?
-_ constructor has changed to .parse(...) instead of new XMLElement(str)
+_ ref: constructor has changed to .parse(...) instead of new XMLElement(str)
 _ add XMLElement.listChildren() to reference
 _ document XMLElement save() and write(), and their differences
 
@@ -47,6 +56,7 @@ _ possible addition for 'implementation' variable
 _   http://code.google.com/p/processing/issues/detail?id=281
 
 _ possibly add rounded rect method
+_   check with casey about finalizing and adding to the docs
 
 _ need to wrap mouse/key events for p5
 _   need a version that works with both android and desktop
