@@ -70,7 +70,6 @@ public class SketchProject implements IProjectNature {
 	protected int sketch_height = -1;
 
 	protected String renderer = "";
-
 	
 	protected boolean wasLastBuildSuccessful = false;
 	
@@ -480,6 +479,10 @@ public class SketchProject implements IProjectNature {
 	/** Getter for classes outside of this package */
 	public boolean wasLastBuildSuccessful(){
 		return wasLastBuildSuccessful;
+	}
+	
+	public String getRenderer(){
+		return renderer;
 	}
 	
 	/** Return the sketch's height, or the default height if size() has not been specified */

@@ -14,6 +14,7 @@ package processing.plugin.ui.wizards;
 //import org.eclipse.core.resources.IProject;
 //import org.eclipse.core.resources.IResource;
 import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 
 import org.eclipse.core.resources.IContainer;
@@ -22,6 +23,7 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.ui.jarpackager.JarPackageData;
@@ -32,6 +34,7 @@ import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 
+import processing.plugin.core.ProcessingCore;
 import processing.plugin.core.ProcessingLog;
 import processing.plugin.core.builder.SketchProject;
 import processing.plugin.core.builder.Utilities;
@@ -99,17 +102,80 @@ public class ExportAsAppletWizard extends Wizard implements IExportWizard {
 	}
 	
 	/** 
-	 * Tries to export the sketch as an applet
-	 * returns whether or not it was successful
+	 * Tries to export the sketch as an applet, returns whether it was successful.
+	 * <p>
+	 * This method relies on non-workspace resources, and so invoking it knocks
+	 * things out of sync with the file system. It triggers a workspace refresh
+	 * of the project after it is finished to realign things.
 	 */
 	public boolean exportAsApplet(SketchProject sp) {
+		if (sp == null) return false;
 		if (!sp.wasLastBuildSuccessful()) return false;
 		if (!sp.getProject().isAccessible()) return false;
 		
 		IFile code = sp.getMainFile();
-		if (code == null) return false;
+		if (code == null) return false;	
+		String codeContents = Utilities.readFile(code);
 		
 		IFolder exportFolder = sp.getAppletFolder(true); // true to nuke the folder contents, if they exist
+		
+		// Get size and renderer info from the project
+		int wide = sp.getWidth();
+		int high = sp.getHeight();
+		String renderer = sp.getRenderer();
+		
+		// Grab the Javadoc-style description from the main code		
+		String description ="";
+		String[] javadoc = Utilities.match(codeContents, "/\\*{2,}(.*)\\*+/");
+		if (javadoc != null){
+			StringBuffer dbuffer = new StringBuffer();
+			String[] pieces = Utilities.split(javadoc[1], '\n');
+			for (String line : pieces){
+				// if this line starts with * characters, remove em
+				String[] m = Utilities.match(line, "^\\s*\\*+(.*)");
+				dbuffer.append(m != null ? m[1] : line);
+				dbuffer.append('\n');
+			}
+			description = dbuffer.toString();
+			System.out.println(description);
+		}
+		
+		//Copy the source files to the target, since we like to encourage people to share their code
+		try{
+			for(IResource r : sp.getProject().members()){
+				if(!(r instanceof IFile)) continue;
+				if(r.getName().startsWith(".")) continue;
+				if("pde".equalsIgnoreCase(r.getFileExtension())){
+					r.copy(exportFolder.getFullPath().append(r.getName()), true, null);
+					System.out.println("Copied the source file " + r.getName() 
+							+ " to " + exportFolder.getFullPath().toString());
+				}
+			}
+		} catch (CoreException e){
+			ProcessingLog.logError("Sketch source files could not be included in export of "
+					+ sp.getProject().getName() +". Trying to continue export anyway. ", e);
+		}
+		
+		// Copy the loading gif to the applet
+		String LOADING_IMAGE = "loading.gif";
+		IFile loadingImage = sp.getProject().getFile(LOADING_IMAGE); // user can specify their own loader
+		try {
+			loadingImage.copy(exportFolder.getFullPath().append(LOADING_IMAGE), true, null);
+		} catch (CoreException e) {
+			// This will happen when the copy fails, which we expect if there is no
+			// image file. It isn't worth reporting.
+			File resourceFolder = ProcessingCore.getProcessingCore().getPluginResourceFolder();
+			try {
+				File exportResourcesFolder = new File(resourceFolder, "export");
+				File loadingImageCoreResource = new File(exportResourcesFolder, LOADING_IMAGE);
+				Utilities.copyFile(loadingImageCoreResource, new File(exportFolder.getFullPath().toString(), LOADING_IMAGE));
+			} catch (Exception ex) {
+				// This is not expected, and should be reported, because we are about to bail
+				ProcessingLog.logError("Could not access the Processing Plug-in Core resources. " +
+						"Export aborted.", ex);
+				return false;
+			}
+		}
 		
 		// add the contents of the code folder to the jar
 		IFolder codeFolder = sp.getCodeFolder();
@@ -130,7 +196,6 @@ public class ExportAsAppletWizard extends Wizard implements IExportWizard {
 			}
 		}
 		
-		
 		// Get the compiled source and package it as a jar
 //		Shell parentShell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 //	    JarPackageData codePackageData = new JarPackageData();
@@ -147,26 +212,13 @@ public class ExportAsAppletWizard extends Wizard implements IExportWizard {
 //            // operation has been canceled.
 //        }
 
-		
-//		int wide = sp.getWidth();
-//		int high = sp.getHeight();
-//		
-//		String codeContents = Utilities.readFile(code);
-//		
-//		String description ="";
-//		String[] javadoc = Utilities.match(codeContents, "/\\*{2,}(.*)\\*+/");
-//		if (javadoc != null){
-//			StringBuffer dbuffer = new StringBuffer();
-//			String[] pieces = Utilities.split(javadoc[1], '\n');
-//			for (String line : pieces){
-//				// if this line starts with * characters, remove em
-//				String[] m = Utilities.match(line, "^\\s*\\*+(.*)");
-//				dbuffer.append(m != null ? m[1] : line);
-//				dbuffer.append('\n');
-//			}
-//			description = dbuffer.toString();
-//			ProcessingLog.logInfo(description);
-//		}
+		// java.io has changed things, so force the workspace to refresh or everything will disappear
+		try {
+			sp.getProject().refreshLocal(IResource.DEPTH_INFINITE, null);
+		} catch (CoreException e) {
+			ProcessingLog.logError("The workspace could not refresh after the export wizard ran. " +
+					"You may need to manually refresh the workspace to continue.", e);
+		}
 		
 		//DEBUG
 		ProcessingLog.logError("Could not export " + sp.getProject().getName() + " because the exporter is not finished.", null);
