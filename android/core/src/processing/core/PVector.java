@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 200X Dan Shiffman
+  Copyright (c) 2008 Dan Shiffman
   Copyright (c) 2008-10 Ben Fry and Casey Reas
 
   This library is free software; you can redistribute it and/or
@@ -23,6 +23,8 @@
 
 package processing.core;
 
+import java.io.Serializable;
+
 /**
  * A class to describe a two or three dimensional vector.
  * <p>
@@ -37,7 +39,12 @@ package processing.core;
  * <p>
  * Initially based on the Vector3D class by <a href="http://www.shiffman.net">Dan Shiffman</a>.
  */
-public class PVector {
+public class PVector implements Serializable {
+
+  /**
+   * Generated 2010-09-14 by jdf
+   */
+  private static final long serialVersionUID = -6717872085945400694L;
 
   /** The x component of the vector. */
   public float x;
@@ -49,8 +56,7 @@ public class PVector {
   public float z;
 
   /** Array so that this can be temporarily used in an array context */
-  protected float[] array;
-
+  transient protected float[] array;
 
   /**
    * Constructor for an empty vector: x, y, and z are set to 0.
@@ -428,10 +434,11 @@ public class PVector {
     return this.x*x + this.y*y + this.z*z;
   }
 
-  
+
   static public float dot(PVector v1, PVector v2) {
       return v1.x*v2.x + v1.y*v2.y + v1.z*v2.z;
-  }  
+  }
+
 
   /**
    * Return a vector composed of the cross product between this and another.
@@ -532,9 +539,19 @@ public class PVector {
    * @return the angle between the vectors
    */
   static public float angleBetween(PVector v1, PVector v2) {
-    float dot = v1.dot(v2);
-    float theta = (float) Math.acos(dot / (v1.mag() * v2.mag()));
-    return theta;
+    double dot = v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
+    double v1mag = Math.sqrt(v1.x * v1.x + v1.y * v1.y + v1.z * v1.z);
+    double v2mag = Math.sqrt(v2.x * v2.x + v2.y * v2.y + v2.z * v2.z);
+    // This should be a number between -1 and 1, since it's "normalized"
+    double amt = dot / (v1mag * v2mag);
+    // But if it's not due to rounding error, then we need to fix it
+    // http://code.google.com/p/processing/issues/detail?id=340
+    // Otherwise if outside the range, acos() will return NaN
+    // http://www.cppreference.com/wiki/c/math/acos
+    if (amt <= -1 || amt >= 1) {
+      return PConstants.PI;
+    }
+    return (float) Math.acos(amt);
   }
 
 
@@ -557,6 +574,21 @@ public class PVector {
     array[2] = z;
     return array;
   }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (!(obj instanceof PVector))
+      return false;
+    final PVector p = (PVector) obj;
+    return x == p.x && y == p.y && z == p.z;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = 1;
+    result = 31 * result + Float.floatToIntBits(x);
+    result = 31 * result + Float.floatToIntBits(y);
+    result = 31 * result + Float.floatToIntBits(z);
+    return result;
+  }
 }
-
-

@@ -201,7 +201,7 @@ public class XMLWriter {
 //         while (en.hasMoreElements()) {
 //            String key = (String) en.nextElement();
          for (String key : xml.listAttributes()) {
-            String value = xml.getAttribute(key, null);
+            String value = xml.getString(key, null);
             this.writer.print(" " + key + "=\"");
             this.writeEncoded(value);
             this.writer.print('"');

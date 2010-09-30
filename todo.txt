@@ -6,9 +6,20 @@ X add smoothing inside the Linux GUI, was looking nasty
 X linux permissions not set because of tar in ant
 X   http://code.google.com/p/processing/issues/detail?id=343
 X fix 'redo' command to work properly for different OSes
+X   http://code.google.com/p/processing/issues/detail?id=363
 X   linux: ctrl-shift-z, macosx cmd-shift-z, windows ctrl-y
 X   http://en.wikipedia.org/wiki/Table_of_keyboard_shortcuts
 X   http://developer.apple.com/mac/library/documentation/UserExperience/Conceptual/AppleHIGuidelines/XHIGUserInput/XHIGUserInput.html
+X there's an extra println showing the library debug when exporting (argh)
+X 1 import per library isn't correct
+X   some libraries will have multiple import lines
+X   don't keep repeating them
+
+
+_ remove version number from splash image
+_   http://code.google.com/p/processing/issues/detail?id=324
+_ make sure there aren't library jar files named the same thing 
+_   i.e. if one library has db.jar, then that's gonna kill another db.jar
 
 mode work
 _ locations: sketchbook, examples, libraries
