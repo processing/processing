@@ -1,28 +1,4 @@
-0191 android
-X won't interpret size() in Android Mode without spaces between arguments
-X   http://code.google.com/p/processing/issues/detail?id=390
-
-A Implement offscreen operations in A3D when FBO extension is not available
-A   http://code.google.com/p/processing/issues/detail?id=300
-A Get opengl matrices in A3D when GL_OES_matrix_get extension is not available
-A   http://code.google.com/p/processing/issues/detail?id=286
-A Implement calculateModelviewInverse() in A3D
-A   http://code.google.com/p/processing/issues/detail?id=287
-A Automatic clear/noClear() switch in A3D
-A   http://code.google.com/p/processing/issues/detail?id=289
-A Camera issues in A3D
-A   http://code.google.com/p/processing/issues/detail?id=367
-A major fixes for type to work properly in 3D (fixes KineticType)
-A   http://code.google.com/p/processing/issues/detail?id=358
-A Lighting and materials testing in A3D
-A   http://code.google.com/p/processing/issues/detail?id=294
-A Generate mipmaps when the GL_OES_generate_mipmaps extension is not available.
-A   http://code.google.com/p/processing/issues/detail?id=288
-A Finish screen pixels/texture operations in A3D
-A   http://code.google.com/p/processing/issues/detail?id=298
-
-1) I fixed a bug in the camera handling that a user pointed out recently (http://forum.processing.org/topic/possible-3d-bug). This was a quite urgent issue, since affected pretty much everything. It went unnoticed until now because the math error canceled out with the default camera settings.
-2) I also finished the implementation of the getImpl() method in PImage, so it initializes the texture of the new image in A3D mode. This makes the CubicVR example to work fine.
+0192 android
 
 
 _ Blacked-out screen when restoring Android app from background.
