@@ -1,15 +1,4 @@
-0191 core
-X fix background(PImage) for OpenGL
-X   http://code.google.com/p/processing/issues/detail?id=336
-X skip null entries with trim(String[]) 
-X NaN with PVector.angleBetween
-X   http://code.google.com/p/processing/issues/detail?id=340
-X fix missing getFloat() method in XML library
-X setAttribute? setString/Int/Float or just set?
-X   get() set() methods are confusing.. too spare
-X make sure that paths are created with saveStream() 
-X make createWriter() use buffering
-X saveStream() doesn't work when intermediate directories don't exist
+0192 core
 
 
 Hi all, just thought I'd share something. 
