@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.EmptyStackException;
 import java.util.Stack;
 
+import android.graphics.PixelFormat;
 import android.opengl.GLU;
 import android.view.SurfaceHolder;
 
@@ -71,7 +72,8 @@ public class PGraphicsAndroid3D extends PGraphics {
   static protected int EGL_CONTEXT = 1;
   // Translucency.
   static protected boolean TRANSLUCENT = true;
-  // Color, depth and stencil bits.
+  // Target color, depth and stencil bits. The actual values
+  // will depend on the capabilities of the device.
   static protected int RED_BITS = 8;
   static protected int GREEN_BITS = 8;
   static protected int BLUE_BITS = 8;
@@ -5251,50 +5253,53 @@ public class PGraphicsAndroid3D extends PGraphics {
     return configChooser;
   }
 
-  public static class A3DConfigChooser implements EGLConfigChooser {
-    // Subclasses can adjust these values:
-    protected int mRedSize;
-    protected int mGreenSize;
-    protected int mBlueSize;
-    protected int mAlphaSize;
-    protected int mDepthSize;
-    protected int mStencilSize;
-    private int[] mValue = new int[1];
+  public class A3DConfigChooser implements EGLConfigChooser {
+    // Desired size (in bits) for the rgba color, depth and stencil buffers.
+    protected int redTarget;
+    protected int greenTarget;
+    protected int blueTarget;
+    protected int alphaTarget;
+    protected int depthTarget;
+    protected int stencilTarget;
+    
+    // Actual rgba color, depth and stencil sizes (in bits) supported by the device.
+    protected int redBits;
+    protected int greenBits;
+    protected int blueBits;
+    protected int alphaBits;
+    protected int depthBits;
+    protected int stencilBits;
+    private int[] tmpValue = new int[1];
 
     /*
      * This EGL config specification is used to specify 2.0 rendering. We use a
      * minimum size of 4 bits for red/green/blue, but will perform actual
      * matching in chooseConfig() below.
      */
-    private static int EGL_OPENGL_ES_BIT = 0x01; // EGL 1.x attribute value for
+    private int EGL_OPENGL_ES_BIT = 0x01; // EGL 1.x attribute value for
                                                  // GL_RENDERABLE_TYPE.
-    private static int EGL_OPENGL_ES2_BIT = 0x04; // EGL 2.x attribute value for
+    private int EGL_OPENGL_ES2_BIT = 0x04; // EGL 2.x attribute value for
                                                   // GL_RENDERABLE_TYPE.
-    private static int[] configAttribsGL2 = { EGL10.EGL_RED_SIZE, 4,
+    private int[] configAttribsGL2 = { EGL10.EGL_RED_SIZE, 4,
         EGL10.EGL_GREEN_SIZE, 4, EGL10.EGL_BLUE_SIZE, 4,
         EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT,
-        //EGL10.EGL_RENDER_BUFFER, EGL10.EGL_SINGLE_BUFFER,
-        //EGL10.EGL_RENDER_BUFFER, EGL10.EGL_BACK_BUFFER,
         EGL10.EGL_NONE };
 
-    public A3DConfigChooser(int r, int g, int b, int a, int depth, int stencil) {
-      mRedSize = r;
-      mGreenSize = g;
-      mBlueSize = b;
-      mAlphaSize = a;
-      mDepthSize = depth;
-      mStencilSize = stencil;
+    public A3DConfigChooser(int r, int g, int b, int a, int d, int s) {
+      redTarget = r;
+      greenTarget = g;
+      blueTarget = b;
+      alphaTarget = a;
+      depthTarget = d;
+      stencilTarget = s;
     }
 
     public EGLConfig chooseConfig(EGL10 egl, EGLDisplay display) {
-
       if (EGL_CONTEXT == 2) {
         configAttribsGL2[7] = EGL_OPENGL_ES2_BIT;
       }
 
-      /*
-       * Get the number of minimally matching EGL configurations
-       */
+      // Get the number of minimally matching EGL configurations
       int[] num_config = new int[1];
       egl.eglChooseConfig(display, configAttribsGL2, null, 0, num_config);
 
@@ -5304,9 +5309,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         throw new IllegalArgumentException("No EGL configs match configSpec");
       }
 
-      /*
-       * Allocate then read the array of minimally matching EGL configs
-       */
+      // Allocate then read the array of minimally matching EGL configs
       EGLConfig[] configs = new EGLConfig[numConfigs];
       egl.eglChooseConfig(display, configAttribsGL2, configs, numConfigs,
           num_config);
@@ -5319,72 +5322,55 @@ public class PGraphicsAndroid3D extends PGraphics {
         }
       }
 
-      /*
-       * if (DEBUG) { printConfigs(egl, display, configs); }
-       */
-
-      /*
-       * Now return the "best" one
-       */
-      return chooseConfig(egl, display, configs);
+      // Now return the configuration that best matches the target one.
+      return chooseBestConfig(egl, display, configs);
     }
 
-    public EGLConfig chooseConfig(EGL10 egl, EGLDisplay display,
+    public EGLConfig chooseBestConfig(EGL10 egl, EGLDisplay display,
         EGLConfig[] configs) {
+      EGLConfig bestConfig = null;
+      float bestScore = 1000;
+      
       for (EGLConfig config : configs) {
         int d = findConfigAttrib(egl, display, config, EGL10.EGL_DEPTH_SIZE, 0);
-        int s = findConfigAttrib(egl, display, config, EGL10.EGL_STENCIL_SIZE,
-            0);
+        int s = findConfigAttrib(egl, display, config, EGL10.EGL_STENCIL_SIZE, 0);
 
-        // We need at least mDepthSize and mStencilSize bits
-        if (d < mDepthSize || s < mStencilSize)
-          continue;
-
-        // We want an *exact* match for red/green/blue/alpha
         int r = findConfigAttrib(egl, display, config, EGL10.EGL_RED_SIZE, 0);
         int g = findConfigAttrib(egl, display, config, EGL10.EGL_GREEN_SIZE, 0);
         int b = findConfigAttrib(egl, display, config, EGL10.EGL_BLUE_SIZE, 0);
         int a = findConfigAttrib(egl, display, config, EGL10.EGL_ALPHA_SIZE, 0);
 
-        if (r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize) {
-          if (PApplet.DEBUG) {
-            String configStr = "A3D - selected EGL config : "
-              + printConfig(egl, display, config);
-            System.out.println(configStr);
-          }
-          return config;
+        float score = 0.20f * PApplet.abs(r - redTarget) + 
+                      0.20f * PApplet.abs(g - greenTarget) + 
+                      0.20f * PApplet.abs(b - blueTarget) +
+                      0.15f * PApplet.abs(a - blueTarget) +
+                      0.15f * PApplet.abs(d - depthTarget) +
+                      0.10f * PApplet.abs(s - stencilTarget);
+                      
+        if (score < bestScore) {
+          // We look for the config closest to the target config.
+          // Closeness is measured by the score function defined above:
+          // we give more weight to the RGB components, followed by the 
+          // alpha and finally by stencil bits.
+          bestConfig = config;
+          bestScore = score;
+
+          redBits = r;
+          greenBits = g;
+          blueBits = b;
+          alphaBits = a;
+          depthBits = d;
+          stencilBits = s;
         }
       }
-      return null;
+      
+      if (PApplet.DEBUG) {
+        String configStr = "A3D - selected EGL config : "
+          + printConfig(egl, display, bestConfig);
+        System.out.println(configStr);
+      }
+      return bestConfig;
     }
-
-    /*
-     * public EGLConfig chooseConfig(EGL10 egl, EGLDisplay display) {
-     * 
-     * // Specify a configuration for our opengl session // and grab the first
-     * configuration that matches is int[] configSpecs = { //EGL10.EGL_RED_SIZE,
-     * 8, //EGL10.EGL_GREEN_SIZE, 8, //EGL10.EGL_BLUE_SIZE, 8,
-     * //EGL10.EGL_ALPHA_SIZE, 0, EGL10.EGL_DEPTH_SIZE, 16,
-     * //EGL10.EGL_STENCIL_SIZE, 0, EGL10.EGL_NONE};
-     * 
-     * 
-     * int[] num_config = new int[1]; egl.eglChooseConfig(display, configSpecs,
-     * null, 0, num_config);
-     * 
-     * int numConfigs = num_config[0];
-     * 
-     * if (numConfigs <= 0) { throw new
-     * IllegalArgumentException("No EGL configs match configSpec"); }
-     * 
-     * EGLConfig[] configs = new EGLConfig[numConfigs];
-     * 
-     * egl.eglChooseConfig(display, configSpecs, configs, numConfigs,
-     * num_config); // best choice : select first config String configStr =
-     * "A3D - selected EGL config : " + printConfig(egl, display, configs[0]);
-     * System.out.println(configStr);
-     * 
-     * return configs[0]; }
-     */
 
     private String printConfig(EGL10 egl, EGLDisplay display, EGLConfig config) {
       int r = findConfigAttrib(egl, display, config, EGL10.EGL_RED_SIZE, 0);
@@ -5407,10 +5393,9 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
 
     private int findConfigAttrib(EGL10 egl, EGLDisplay display,
-        EGLConfig config, int attribute, int defaultValue) {
-      // int[] mValue = new int[1];
-      if (egl.eglGetConfigAttrib(display, config, attribute, mValue)) {
-        return mValue[0];
+      EGLConfig config, int attribute, int defaultValue) {
+      if (egl.eglGetConfigAttrib(display, config, attribute, tmpValue)) {
+        return tmpValue[0];
       }
       return defaultValue;
     }
@@ -5427,9 +5412,9 @@ public class PGraphicsAndroid3D extends PGraphics {
     return contextFactory;
   }
 
-  public static class A3DContextFactory implements
+  public class A3DContextFactory implements
       GLSurfaceView.EGLContextFactory {
-    private static int EGL_CONTEXT_CLIENT_VERSION = 0x3098;
+    private int EGL_CONTEXT_CLIENT_VERSION = 0x3098;
 
     public EGLContext createContext(EGL10 egl, EGLDisplay display,
         EGLConfig eglConfig) {
