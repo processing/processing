@@ -722,17 +722,14 @@ public class PApplet extends Activity implements PConstants, Runnable {
       surfaceHolder.addCallback(this);
       //surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_GPU);
 
-      /* By default, GLSurfaceView() creates a RGB_565 opaque surface.
-       * If we want a translucent one, we should change the surface's
-       * format here, using PixelFormat.TRANSLUCENT for GL Surfaces
-       * is interpreted as any 32-bit surface with alpha by SurfaceFlinger.
-       */
-      if (PGraphicsAndroid3D.TRANSLUCENT) {
-        this.getHolder().setFormat(PixelFormat.TRANSLUCENT);
-      }
-
 //      System.out.println("Creating PGraphicsAndroid3D " + width + " " + height);
 
+      // We set translucent format even if the config chooser in PGraphicsAndroid3D
+      // cannot find alpha bits > 0.
+      if (PGraphicsAndroid3D.TRANSLUCENT) {
+       this.getHolder().setFormat(PixelFormat.TRANSLUCENT);
+      }      
+      
       // The PGraphics object needs to be created here so the renderer is not
       // null. This is required because PApplet.onResume events (which call
       // this.onResume() and thus require a valid renderer) are triggered
