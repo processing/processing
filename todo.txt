@@ -1,5 +1,30 @@
 0192
 
+_ need to deal with classpath conflicts
+_   avoid garbage that people have installed on their machines
+_   antlr.jar in the classpath will cause trouble.. 
+_     http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1138652326
+_   jogl jar files, or jogl install will cause trouble
+_     /System/Library/Java/Extensions or /Library/Java/Extensions
+_     the /System one contains qtjava
+_     the /Library one is empty (by default), maybe skip it?
+_     http://dev.processing.org/bugs/show_bug.cgi?id=1259
+_   another problem with opengl libraries
+_     http://dev.processing.org/bugs/show_bug.cgi?id=1570
+_ when a conflicting library is found, need to report it
+_   altho prolly only when it's actually different (md5hash it?)
+_   this seems to be causing a lot of trouble with recent releases
+_   (opengl changes and whatnot)
+_ jar files like the bad aiexport plugin will cause serious problems
+_   need to ignore processing.core classes showing up in other jar files
+_   tougher than it looks, because it all depends on what java wants to use
+_     i.e. even if not specified, the stuff will be in the classpath
+_   need to make classpath code be less promiscuous
+_   the order of adding libraries to classpath should be opposite
+_     the important local libraries should be first in cp, user contrib later
+_   http://dev.processing.org/bugs/show_bug.cgi?id=321
+_   http://code.google.com/p/processing/issues/detail?id=56
+
 
 _ remove version number from splash image
 _   http://code.google.com/p/processing/issues/detail?id=324
@@ -348,29 +373,6 @@ _ move export.txt to xml? (nah, it's only flat information)
 _ need better platform designation setup for libs
 _ library installation should use the sketchbook folder, not the p5 folder
 _   actually enforce this, give users a warning about other libs
-_ need to deal with classpath conflicts
-_   avoid garbage that people have installed on their machines
-_   antlr.jar in the classpath will cause trouble.. 
-_     http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1138652326
-_   jogl jar files, or jogl install will cause trouble
-_     /System/Library/Java/Extensions or /Library/Java/Extensions
-_     the /System one contains qtjava
-_     the /Library one is empty (by default), maybe skip it?
-_     http://dev.processing.org/bugs/show_bug.cgi?id=1259
-_   another problem with opengl libraries
-_     http://dev.processing.org/bugs/show_bug.cgi?id=1570
-_ when a conflicting library is found, need to report it
-_   altho prolly only when it's actually different (md5hash it?)
-_   this seems to be causing a lot of trouble with recent releases
-_   (opengl changes and whatnot)
-_ jar files like the bad aiexport plugin will cause serious problems
-_   need to ignore processing.core classes showing up in other jar files
-_   tougher than it looks, because it all depends on what java wants to use
-_     i.e. even if not specified, the stuff will be in the classpath
-_   need to make classpath code be less promiscuous
-_   the order of adding libraries to classpath should be opposite
-_     the important local libraries should be first in cp, user contrib later
-_   http://dev.processing.org/bugs/show_bug.cgi?id=321
 _ java.extension.dirs has the library/extn stuff
 _   can probably set this blank
 _ the jar from which a class file has been loaded

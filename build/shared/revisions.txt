@@ -1,3 +1,8 @@
+PROCESSING REV 0192 - XX October 2010
+
+Mmmmm.. bug fixes!
+
+
 PROCESSING REV 0191 - 30 September 2010
 
 Bug fix release. Contains major fixes to 3D for Android.
