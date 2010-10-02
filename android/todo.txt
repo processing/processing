@@ -1,4 +1,6 @@
 0192 android
+X compile android-core with java 5 as the target so that it works on OS X 10.5
+
 
 
 _ Blacked-out screen when restoring Android app from background.
