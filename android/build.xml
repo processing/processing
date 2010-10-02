@@ -8,7 +8,8 @@
 
   <target name="build" if="env.ANDROID_SDK">
     <mkdir dir="core/bin" />
-    <javac encoding="UTF-8"
+    <javac target="1.5" 
+	   encoding="UTF-8"
 	   includeAntRuntime="false"
 	   bootclasspath="${env.ANDROID_SDK}/platforms/android-2.1/android.jar"
 	   srcdir="core/src" destdir="core/bin" />

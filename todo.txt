@@ -1,5 +1,7 @@
 0192
 
+_ 64-bit windows causes UnsatisfiedLinkError with OpenGL
+
 _ need to deal with classpath conflicts
 _   avoid garbage that people have installed on their machines
 _   antlr.jar in the classpath will cause trouble.. 
