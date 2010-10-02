@@ -1433,7 +1433,7 @@ public class Sketch {
       int dot = item.lastIndexOf('.');
       // http://dev.processing.org/bugs/show_bug.cgi?id=1145
       String entry = (dot == -1) ? item : item.substring(0, dot);
-      File libFolder = (File) Base.importToLibraryTable.get(entry);
+      File libFolder = Base.importToLibraryTable.get(entry);
 
       if (libFolder != null) {
         if (!importedLibraries.contains(libFolder)) {

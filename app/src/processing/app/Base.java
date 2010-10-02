@@ -1131,12 +1131,20 @@ public class Base {
   }
 
 
+  PrintWriter pw;
+  
   public void rebuildImportMenu() {  //JMenu importMenu) {
     //System.out.println("rebuilding import menu");
     importMenu.removeAll();
 
     // reset the table mapping imports to libraries
     importToLibraryTable = new HashMap<String, File>();
+    
+    try {
+      pw = new PrintWriter(new FileWriter(System.getProperty("user.home") + "/Desktop/libs.csv"));
+    } catch (IOException e1) {
+      e1.printStackTrace();
+    }
 
     // Add from the "libraries" subfolder in the Processing directory
     try {
@@ -1158,6 +1166,9 @@ public class Base {
     } catch (IOException e) {
       e.printStackTrace();
     }
+    
+    pw.flush();
+    pw.close();
   }
 
 
@@ -1334,7 +1345,17 @@ public class Base {
         String packages[] =
           Compiler.packageListFromClassPath(libraryClassPath);
         for (String pkg : packages) {
-          importToLibraryTable.put(pkg, libraryFolder);
+          pw.println(pkg + "\t" + libraryFolder.getAbsolutePath());
+          File already = importToLibraryTable.get(pkg); 
+          if (already != null) {
+            Base.showWarning("Library Calling", "The library found in\n" +
+              libraryFolder.getAbsolutePath() + "\n" + 
+              "conflicts with the library found in\n" + 
+              already.getAbsolutePath() + "\n" + 
+              "which already defines the package " + pkg, null);
+          } else {
+            importToLibraryTable.put(pkg, libraryFolder);
+          }
         }
 
         JMenuItem item = new JMenuItem(libraryName);
