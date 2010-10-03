@@ -6920,6 +6920,15 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  public PShape beginRecord() {
+    if (g instanceof PGraphicsAndroid3D) {
+      return ((PGraphicsAndroid3D) g).beginRecord();
+    } else  {
+       throw new RuntimeException("The shapes recorder can only be used with the A3D renderer.");
+    }    
+  }
+  
+  
   public void beginShapesRecorder() {
     if (g instanceof PGraphicsAndroid3D) {
       ((PGraphicsAndroid3D) g).beginShapesRecorder();
@@ -7012,6 +7021,15 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  public void endRecord() {
+    if (g instanceof PGraphicsAndroid3D) {
+      ((PGraphicsAndroid3D) g).endRecord();
+    } else  {
+       throw new RuntimeException("The shapes recorder can only be used with the A3D renderer.");
+    }    
+  }
+  
+  
   public PShape3D endShapesRecorder() {
     if (g instanceof PGraphicsAndroid3D) {
       return ((PGraphicsAndroid3D) g).endShapesRecorder();
