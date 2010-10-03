@@ -96,11 +96,21 @@ public class PShape3D extends PShape implements PConstants {
 
   // Constructors.
 
+  public PShape3D(PApplet parent) {
+    this.parent = parent;
+    a3d = (PGraphicsAndroid3D)parent.g;
+    
+    try {
+      Method meth = this.getClass().getMethod("recreateResource", new Class[] { PGraphicsAndroid3D.class });
+      recreateResourceIdx =  a3d.addRecreateResourceMethod(this, meth);
+    } catch (Exception e) {
+      recreateResourceIdx = -1;
+    } 
+  }
   
   public PShape3D(PApplet parent, int numVert) {
     this(parent, numVert, new Parameters()); 
   }  
-
   
   public PShape3D(PApplet parent, String filename, int mode) {
     this.parent = parent;
@@ -145,30 +155,14 @@ public class PShape3D extends PShape implements PConstants {
     this.parent = parent;
     a3d = (PGraphicsAndroid3D)parent.g;
     
-    // Checking we have what we need:
-    gl = a3d.gl11;
-    if (gl == null) {
-      throw new RuntimeException("PShape3D: OpenGL ES 1.1 required");
-    }
-    if (!PGraphicsAndroid3D.vboSupported) {
-       throw new RuntimeException("PShape3D: Vertex Buffer Objects are not available");
-    }
+    initShape(numVert, params);
     
-    setParameters(params);
-    createModel(numVert);    
-    initGroups();      
-    updateElement = -1;
-    
-    width = height = depth = 0;
-    xmin = ymin = zmin = 10000;
-    xmax = ymax = zmax = -10000;
-
     try {
       Method meth = this.getClass().getMethod("recreateResource", new Class[] { PGraphicsAndroid3D.class });
       recreateResourceIdx =  a3d.addRecreateResourceMethod(this, meth);
     } catch (Exception e) {
       recreateResourceIdx = -1;
-    }
+    }    
   }
   
 
@@ -1488,7 +1482,7 @@ public class PShape3D extends PShape implements PConstants {
     int numVert0 = numVertices;
     
     // Recreating the model with the new number of vertices.
-    createModel(numVert);
+    createShape(numVert);
     updateElement = -1;
 
     // Setting the old data.
@@ -1586,8 +1580,32 @@ public class PShape3D extends PShape implements PConstants {
   
   // Data allocation, deletion.
 
+  protected void initShape(int numVert) {
+    initShape(numVert, new Parameters());
+  }
   
-  protected void createModel(int numVert) {
+  protected void initShape(int numVert, Parameters params) {
+    // Checking we have what we need:
+    gl = a3d.gl11;
+    if (gl == null) {
+      throw new RuntimeException("PShape3D: OpenGL ES 1.1 required");
+    }
+    if (!PGraphicsAndroid3D.vboSupported) {
+       throw new RuntimeException("PShape3D: Vertex Buffer Objects are not available");
+    }
+    
+    setParameters(params);
+    createShape(numVert);    
+    initGroups();      
+    updateElement = -1;
+    
+    width = height = depth = 0;
+    xmin = ymin = zmin = 10000;
+    xmax = ymax = zmax = -10000;
+    
+  }
+  
+  protected void createShape(int numVert) {
     numVertices = numVert;
 
     initVertexData();
@@ -2472,7 +2490,7 @@ public class PShape3D extends PShape implements PConstants {
     }
     
     // Allocate space for the geometry that the triangulator has generated from the OBJ model.
-    createModel(a3d.recordedVertices.size());    
+    createShape(a3d.recordedVertices.size());    
     initGroups();      
     updateElement = -1;
     

@@ -296,16 +296,17 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected ArrayList<GLResource> recreateResourceMethods;
 
   // This is only used by non primary surfaces.
-  int recreateResourceIdx;
+  protected int recreateResourceIdx;
   
   // ........................................................
 
-  boolean recordingModel;
-  ArrayList<PVector> recordedVertices;
-  ArrayList<float[]> recordedColors;
-  ArrayList<PVector> recordedNormals;
-  ArrayList<PVector> recordedTexCoords;
-  ArrayList<VertexGroup> recordedGroups;
+  protected boolean recordingShape;
+  protected PShape3D recordedShape;
+  protected ArrayList<PVector> recordedVertices;
+  protected ArrayList<float[]> recordedColors;
+  protected ArrayList<PVector> recordedNormals;
+  protected ArrayList<PVector> recordedTexCoords;
+  protected ArrayList<VertexGroup> recordedGroups;
 
   // .......................................................
   
@@ -493,7 +494,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       try {
         resource.method.invoke(resource.object, new Object[] { this });
       } catch (Exception e) {
-        System.err.println("Error, opengl resources in " + resource.object
+        System.err.println("A3D: Error, opengl resources in " + resource.object
             + " cannot be recreated.");
         e.printStackTrace();
       }
@@ -1084,6 +1085,17 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // public void beginShape()
 
+  public PShape3D beginRecord() {
+    if (recordingShape) {
+      System.err.println("A3D: Already recording.");
+      return recordedShape;
+    } else {
+      recordedShape = new PShape3D(parent);
+      beginShapeRecorderImpl();
+      return recordedShape;
+    }
+  }
+  
   public void beginShapeRecorder() {
     beginShapeRecorder(POLYGON);
   }
@@ -1094,7 +1106,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
 
   public void beginShapesRecorder() {
-    if (recordingModel) {
+    if (recordingShape) {
       System.err
           .println("Already recording shapes. Recording cannot be nested");
     } else {
@@ -1103,7 +1115,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
 
   protected void beginShapeRecorderImpl() {
-    recordingModel = true;
+    recordingShape = true;
     recordedVertices = new ArrayList<PVector>(vertexBuffer.capacity() / 3);
     recordedColors = new ArrayList<float[]>(colorBuffer.capacity() / 4);
     recordedNormals = new ArrayList<PVector>(normalBuffer.capacity() / 4);
@@ -1409,8 +1421,20 @@ public class PGraphicsAndroid3D extends PGraphics {
     return shape;
   }
 
+  public void endRecord() {
+    if (recordingShape) {
+      if (0 < recordedVertices.size()) {
+        recordedShape.initShape(recordedVertices.size());
+      }
+      endShapeRecorderImpl(recordedShape);
+      recordedShape = null;
+    } else {
+      System.err.println("A3D: Start recording with beginRecord().");
+    }    
+  }
+  
   public PShape3D endShapesRecorder() {
-    if (recordingModel) {
+    if (recordingShape) {
       PShape3D shape = null;
       if (0 < recordedVertices.size()) {
         shape = new PShape3D(parent, recordedVertices.size());
@@ -1418,13 +1442,13 @@ public class PGraphicsAndroid3D extends PGraphics {
       endShapeRecorderImpl(shape);
       return shape;
     } else {
-      System.err.println("Start recording with beginShapesRecorder().");
+      System.err.println("A3D: Start recording with beginShapesRecorder().");
       return null;
     }
   }
 
   protected void endShapeRecorderImpl(PShape3D shape) {
-    recordingModel = false;
+    recordingShape = false;
     if (0 < recordedVertices.size() && shape != null) {
       shape.beginUpdate(VERTICES);
       shape.setVertex(recordedVertices);
@@ -1676,7 +1700,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       // stroke weight zero will cause a gl error
       if (sw > 0) {
         gl.glLineWidth(sw);
-        if (sw0 != sw && recordingModel) {
+        if (sw0 != sw && recordingShape) {
           // Add new vertex group.
 
           int n0 = recordedVertices.size();
@@ -1714,7 +1738,7 @@ public class PGraphicsAndroid3D extends PGraphics {
 
         // always draw a first point
         float a[] = vertices[lines[i][VERTEX1]];
-        if (recordingModel) {
+        if (recordingShape) {
           recordedVertices.add(new PVector(a[X], a[Y], a[Z]));
           recordedColors.add(new float[] { a[SR], a[SG], a[SB], a[SA] });
           recordedNormals.add(new PVector(0, 0, 0));
@@ -1734,7 +1758,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         for (int k = 0; k < pathLength[j]; k++) {
           float b[] = vertices[lines[i][VERTEX2]];
 
-          if (recordingModel) {
+          if (recordingShape) {
             recordedVertices.add(new PVector(b[X], b[Y], b[Z]));
             recordedColors.add(new float[] { b[SR], b[SG], b[SB], b[SA] });
             recordedNormals.add(new PVector(0, 0, 0));
@@ -1753,7 +1777,7 @@ public class PGraphicsAndroid3D extends PGraphics {
           i++;
         }
 
-        if (!recordingModel) {
+        if (!recordingShape) {
           vertexBuffer.put(vertexArray);
           colorBuffer.put(colorArray);
 
@@ -1853,7 +1877,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         texturing = false;
       }
 
-      if (recordingModel) {
+      if (recordingShape) {
         int n0 = recordedVertices.size();
         int n1 = n0 + 3 * faceLength[j] - 1;
         VertexGroup group = PShape3D.newVertexGroup(n0, n1, TRIANGLES, 0, faceTexture[j]);
@@ -1901,7 +1925,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         }
 
         // Adding vertex A.
-        if (recordingModel) {
+        if (recordingShape) {
           recordedVertices.add(new PVector(a[X], a[Y], a[Z]));
           recordedColors.add(new float[] { a[R], a[G], a[B], a[A] });
           recordedNormals.add(new PVector(a[NX], a[NY], a[NZ]));
@@ -1925,7 +1949,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         }
 
         // Adding vertex B.
-        if (recordingModel) {
+        if (recordingShape) {
           recordedVertices.add(new PVector(b[X], b[Y], b[Z]));
           recordedColors.add(new float[] { b[R], b[G], b[B], b[A] });
           recordedNormals.add(new PVector(b[NX], b[NY], b[NZ]));
@@ -1949,7 +1973,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         }
 
         // Adding vertex C.
-        if (recordingModel) {
+        if (recordingShape) {
           recordedVertices.add(new PVector(c[X], c[Y], c[Z]));
           recordedColors.add(new float[] { c[R], c[G], c[B], c[A] });
           recordedNormals.add(new PVector(c[NX], c[NY], c[NZ]));
@@ -1975,7 +1999,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         i++;
       }
 
-      if (!recordingModel) {
+      if (!recordingShape) {
         vertexBuffer.put(vertexArray);
         colorBuffer.put(colorArray);
         normalBuffer.put(normalArray);
