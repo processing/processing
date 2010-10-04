@@ -91,6 +91,9 @@ public class PGraphicsAndroid3D extends PGraphics {
   public float cameraNear, cameraFar;
   /** Aspect ratio of camera's view. */
   public float cameraAspect;
+  
+  protected float currentEyeX;
+  protected float currentCenterY;
 
   /** Modelview and projection matrices **/
   
@@ -819,14 +822,14 @@ public class PGraphicsAndroid3D extends PGraphics {
     // setup opengl viewport.
     gl.glViewport(0, 0, width, height);
     
+    // set up the default camera and initializes modelview matrix.
+    camera();
+
     // defaults to perspective, if the user has setup up their
     // own projection, they'll need to fix it after resize anyway.
     // this helps the people who haven't set up their own projection.
     perspective();
-
-    // set up the default camera and initis modelview matrix.
-    camera();
-
+        
     lights = false;
     lightCount = 0;
     lightFalloff(1, 0, 0);
@@ -3432,6 +3435,10 @@ public class PGraphicsAndroid3D extends PGraphics {
     eyeY = height - eyeY;
     centerY = height - centerY;
     
+    // Needed for properly setting ortographic projection.
+    currentEyeX = eyeX;
+    currentCenterY = centerY;
+      
     // Calculating Z vector
     float z0 = eyeX - centerX;
     float z1 = eyeY - centerY;
@@ -3538,22 +3545,40 @@ public class PGraphicsAndroid3D extends PGraphics {
   // ////////////////////////////////////////////////////////////
 
   // PROJECTION
-
+  
   /**
    * Calls ortho() with the proper parameters for Processing's standard
    * orthographic projection.
    */
   public void ortho() {
-    ortho(0, width, 0, height, -10, 10);
+    ortho(0, width, 0, height, cameraNear, cameraFar);
   }
 
   /**
-   * Similar to gluOrtho(), but wipes out the current projection matrix.
-   * <P>
-   * Implementation partially based on Mesa's matrix.c.
+   * Calls ortho() with the specified size of the viewing volume along
+   * the X and Z directions. The near and far clipping planes are taken
+   * from the current camera configuration.
+   */  
+  public void ortho(float left, float right, float bottom, float top) {
+    ortho(0, width, 0, height, cameraNear, cameraFar);
+  }  
+  
+  /**
+   * Properly setting the ortographic projection depends on the values 
+   * used to set the camera (eye and center).
+   * 
    */
   public void ortho(float left, float right, float bottom, float top,
       float near, float far) {
+    // TODO: check if this equation is correct in the case the camera is not aligned
+    // to the XYZ axis (I guess the eye-camera vector needs to be used to determine
+    // the amounds to substract from left,right,bottom and top).
+    left -= currentEyeX;
+    right -= currentEyeX;
+    
+    bottom -= currentCenterY;
+    top -= currentCenterY;
+    
     float x = 2.0f / (right - left);
     float y = 2.0f / (top - bottom);
     float z = -2.0f / (far - near);
@@ -3620,11 +3645,11 @@ public class PGraphicsAndroid3D extends PGraphics {
    * Similar to gluPerspective(). Implementation based on Mesa's glu.c
    */
   public void perspective(float fov, float aspect, float zNear, float zFar) {
-    float ymax = cameraNear * (float) Math.tan(cameraFOV / 2);
+    float ymax = zNear * (float) Math.tan(fov / 2);
     float ymin = -ymax;
-    float xmin = ymin * cameraAspect;
-    float xmax = ymax * cameraAspect;
-    frustum(xmin, xmax, ymin, ymax, cameraNear, cameraFar);
+    float xmin = ymin * aspect;
+    float xmax = ymax * aspect;
+    frustum(xmin, xmax, ymin, ymax, zNear, zFar);
   }
 
   /**
