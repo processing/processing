@@ -306,6 +306,10 @@ public class PImage implements PConstants, Cloneable {
     if (bitmap != null) {
       bitmap.getPixels(pixels, 0, width, 0, 0, width, height); 
     }
+    
+    if (texture != null) {
+      // texture.get(pixels); HERE?
+    }
   }
 
 
@@ -362,6 +366,10 @@ public class PImage implements PConstants, Cloneable {
       if (x2 > mx2) mx2 = x2;
       if (y2 < my1) my1 = y2;
       if (y2 > my2) my2 = y2;
+    }
+    
+    if (texture != null) {
+      // texture.set(this);  HERE?
     }
   }
 

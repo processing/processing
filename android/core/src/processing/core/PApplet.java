@@ -7579,7 +7579,11 @@ public class PApplet extends Activity implements PConstants, Runnable {
     g.ortho();
   }
 
-
+  public void ortho(float left, float right,
+                    float bottom, float top) {
+    g.ortho(left, right, bottom, top);
+  }
+  
   public void ortho(float left, float right,
                     float bottom, float top,
                     float near, float far) {
