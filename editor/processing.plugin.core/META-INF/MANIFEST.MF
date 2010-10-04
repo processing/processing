@@ -2,11 +2,10 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Processing Plugin Core
 Bundle-SymbolicName: processing.plugin.core;singleton:=true
-Bundle-Version: 0.2.1.0
+Bundle-Version: 0.2.2.0
 Bundle-Activator: processing.plugin.core.ProcessingCore
 Bundle-Vendor: Processing.org
 Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.core.resources,
  processing.plugin.appBundle;visibility:=reexport,
  org.eclipse.debug.core,
  org.eclipse.jdt.core,
@@ -15,4 +14,3 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: processing.plugin.core,
  processing.plugin.core.builder
-Import-Package: org.eclipse.core.commands

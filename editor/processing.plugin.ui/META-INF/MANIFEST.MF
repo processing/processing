@@ -2,24 +2,20 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Processing Plugin User Interface Elements
 Bundle-SymbolicName: processing.plugin.ui;singleton:=true
-Bundle-Version: 0.2.1.0
+Bundle-Version: 0.2.2.0
 Bundle-Activator: processing.plugin.ui.ProcessingPlugin
 Bundle-Vendor: Processing.org
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.eclipse.core.filebuffers,
- org.eclipse.jdt.debug.ui,
  org.eclipse.jface.text;bundle-version="3.6.0",
  org.eclipse.ui.editors;bundle-version="3.6.0",
- org.eclipse.core.resources;bundle-version="3.6.0",
- processing.plugin.core;bundle-version="0.1.0",
+ processing.plugin.core,
  org.eclipse.debug.ui,
- org.eclipse.jdt.launching;bundle-version="3.5.100",
+ org.eclipse.jdt.launching,
  org.eclipse.ui.ide;bundle-version="3.6.0",
- org.eclipse.jdt.core;bundle-version="3.6.0",
- org.eclipse.ui.navigator,
- org.eclipse.ui.navigator.resources,
- org.eclipse.jdt.ui;bundle-version="3.6.0"
+ org.eclipse.jdt.ui;bundle-version="3.6.0",
+ org.eclipse.jdt.core,
+ org.eclipse.ui.navigator;bundle-version="3.5.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Import-Package: org.eclipse.ui.actions

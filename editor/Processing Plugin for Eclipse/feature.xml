@@ -2,7 +2,7 @@
 <feature
       id="processing.plugin"
       label="Processing Plug-In for Eclipse"
-      version="1.2.0.qualifier"
+      version="1.2.2.qualifier"
       provider-name="Processing.org">
 
    <description url="http://www.processing.org/">
@@ -22,35 +22,30 @@ Portions of the code were written by other contributors and are attributed in th
 There are many contributions to the Exhibition and Examples on the Processing.org website and these are attributed in context. The Reference for the Language and Environment are under a Creative Commons license which makes it possible to re-use this content for non-commercial purposes if it is credited.
    </copyright>
 
-   <license url="http://www.example.com/license">
-      This program and the accompanying materials, unless otherwise noted, are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at http://www.opensource.org/licenses/eclipse-1.0.php
-
-Several libraries are included from the Processing language and Processing development environment. These are included under the GNU LGPL (http://www.gnu.org/licenses/lgpl.html).
-
-All images are included under a creative commons license (http://creativecommons.org/) that allows re-use for non-commercial work if it is credited.
+   <license url="http://www.opensource.org/licenses/eclipse-1.0.php ">
+      This program and the accompanying materials, unless otherwise
+noted, are made available under the terms of the Eclipse Public
+License v1.0 which accompanies this distribution, and is available
+at http://www.opensource.org/licenses/eclipse-1.0.php
+Several libraries are included from the Processing language and
+Processing development environment. These are included under
+the GNU LGPL (http://www.gnu.org/licenses/lgpl.html).
+All images are included under a creative commons license (http://creativecommons.org/)
+that allows re-use for non-commercial work if it is credited.
    </license>
 
    <requires>
       <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.debug.core"/>
       <import plugin="org.eclipse.jdt.core"/>
       <import plugin="org.eclipse.jdt.launching"/>
-      <import plugin="org.eclipse.core.commands"/>
       <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.core.filebuffers"/>
-      <import plugin="org.eclipse.jdt.debug.ui"/>
       <import plugin="org.eclipse.jface.text" version="3.6.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui.editors" version="3.6.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.resources" version="3.6.0" match="greaterOrEqual"/>
-      <import plugin="processing.plugin.core" version="0.1.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.debug.ui"/>
-      <import plugin="org.eclipse.jdt.launching" version="3.5.100" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui.ide" version="3.6.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.jdt.core" version="3.6.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.navigator"/>
-      <import plugin="org.eclipse.ui.navigator.resources"/>
       <import plugin="org.eclipse.jdt.ui" version="3.6.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.navigator" version="3.5.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin

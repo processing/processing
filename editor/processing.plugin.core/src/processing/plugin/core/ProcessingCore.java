@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Plugin;
 
 import processing.plugin.core.builder.Utilities;
-
+ 
 /**
  * The plug-in activator enabling the core (UI-free) support for Processing sketches.
  * <p>
