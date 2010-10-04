@@ -2,7 +2,7 @@
 <feature
       id="processing.plugin"
       label="Processing Plug-In for Eclipse"
-      version="1.2.2.qualifier"
+      version="1.2.3.qualifier"
       provider-name="Processing.org">
 
    <description url="http://www.processing.org/">
@@ -40,12 +40,12 @@ that allows re-use for non-commercial work if it is credited.
       <import plugin="org.eclipse.jdt.core"/>
       <import plugin="org.eclipse.jdt.launching"/>
       <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.jface.text" version="3.6.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.editors" version="3.6.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.jface.text" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.editors" match="greaterOrEqual"/>
       <import plugin="org.eclipse.debug.ui"/>
-      <import plugin="org.eclipse.ui.ide" version="3.6.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.jdt.ui" version="3.6.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.navigator" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.ide" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.jdt.ui" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.navigator"/>
    </requires>
 
    <plugin
