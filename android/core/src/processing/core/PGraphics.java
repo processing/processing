@@ -3498,7 +3498,11 @@ public class PGraphics extends PImage implements PConstants {
   public void ortho() {
     showMissingWarning("ortho");
   }
-
+  
+  public void ortho(float left, float right,
+                    float bottom, float top) {
+    showMissingWarning("ortho");  
+  }    
 
   public void ortho(float left, float right,
                     float bottom, float top,
