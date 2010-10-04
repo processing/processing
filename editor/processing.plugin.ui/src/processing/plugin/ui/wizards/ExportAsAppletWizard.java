@@ -164,9 +164,8 @@ public class ExportAsAppletWizard extends Wizard implements IExportWizard {
 		} catch (CoreException e) {
 			// This will happen when the copy fails, which we expect if there is no
 			// image file. It isn't worth reporting.
-			File resourceFolder = ProcessingCore.getProcessingCore().getPluginResourceFolder();
 			try {
-				File exportResourcesFolder = new File(resourceFolder, "export");
+				File exportResourcesFolder = new File(ProcessingCore.getProcessingCore().getPluginResourceFolder().getCanonicalPath(), "export");
 				File loadingImageCoreResource = new File(exportResourcesFolder, LOADING_IMAGE);
 				Utilities.copyFile(loadingImageCoreResource, new File(exportFolder.getFullPath().toString(), LOADING_IMAGE));
 			} catch (Exception ex) {

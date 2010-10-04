@@ -39,16 +39,4 @@
       <persistent value="true" />
       <super type="org.eclipse.core.resources.problemmarker" />
    </extension>
-   <extension point="org.eclipse.debug.core.launchConfigurationTypes">
-      <launchConfigurationType
-            category="Processing"
-            delegate="processing.plugin.core.launching.ProcessingSketchLaunchConfigurationDelegate"
-            id="processing.plugin.core.launching.processingSketch"
-            modes="run"
-            name="Processing Sketch Applet">
-            <!--sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer"
-            sourceLocatorId="org.eclipse.jdt.launching.sourceLocator.JavaSourceLookupDirector" -->
-      </launchConfigurationType>
-   </extension>
-
 </plugin>
