@@ -3,6 +3,9 @@
    <feature url="features/processing.plugin_1.2.2.201010041152.jar" id="processing.plugin" version="1.2.2.201010041152">
       <category name="processing_plug_in"/>
    </feature>
+   <feature url="features/processing.plugin_1.2.3.201010041220.jar" id="processing.plugin" version="1.2.3.201010041220">
+      <category name="processing_plug_in"/>
+   </feature>
    <category-def name="processing_plug_in" label="Processing Plug-in for Eclipse">
       <description>
          Provides integration for the Processing programming language to the Eclipse platform. See http://www.processing.org to learn more.
