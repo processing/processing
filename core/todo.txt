@@ -1,5 +1,7 @@
 0192 core
 
+X regression in XMLElement.getBoolean(String, boolean)
+X   http://code.google.com/p/processing/issues/detail?id=399
 
 Hi all, just thought I'd share something. 
 For a while now, I've been having unexpected frame rate drops with JOGL when switching into fullscreen-exclusive mode (it halved no matter what I did - resolution switching, reducing how much I drew, etc). 
