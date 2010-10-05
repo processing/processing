@@ -1506,9 +1506,14 @@ public class Sketch {
     return foundMain;
   }
 
-//  public ArrayList<File> getImportedLibraries() {
-//    return importedLibraries;
-//  }
+  
+  /**
+   * Get the list of imported libraries. Used by external tools like Android mode.
+   * @return list of library folders connected to this sketch.
+   */
+  public ArrayList<LibraryFolder> getImportedLibraries() {
+    return importedLibraries;
+  }
 
 
   /**
