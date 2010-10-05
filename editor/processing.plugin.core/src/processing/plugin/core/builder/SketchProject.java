@@ -73,6 +73,8 @@ public class SketchProject implements IProjectNature {
 	
 	protected boolean wasLastBuildSuccessful = false;
 	
+	protected ArrayList<IPath> libraryPaths = null;
+	
 	/** 
 	 * Return the SketchProject associated with the given IProject, or null
 	 * if the project is not associated with a SketchProject.
@@ -498,6 +500,10 @@ public class SketchProject implements IProjectNature {
 	/** Returns the name of the main type of the compiled sketch*/
 	public String getMainType() {
 		return project.getName();
+	}
+	
+	public ArrayList<IPath> getLibraryPaths(){
+		return libraryPaths;
 	}
 		
 }
