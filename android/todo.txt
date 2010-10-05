@@ -1,11 +1,14 @@
 0192 android
 X compile android-core with java 5 as the target so that it works on OS X 10.5
 
-
+_ android sdk/build location has changed (android-7 not 2.1) fix build.xml
 
 _ Blacked-out screen when restoring Android app from background.
 _   http://code.google.com/p/processing/issues/detail?id=381
 _   probably related to the other thread hooey
+
+_ saveStream() on processing-android-core.zip breaks behind firewall
+_   downloads a 5kb html login page rather than the correct file
 
 _ salaryper crashed when connecting to ctr500 and was re-routed
 _   instead of sending back the gzip file, sent the error page
