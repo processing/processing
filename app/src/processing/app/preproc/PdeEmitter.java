@@ -257,11 +257,27 @@ public class PdeEmitter implements PdeTokenTypes {
     print(thenPath);
 
     // optional "else" clause: an SLIST or an EXPR
+    // what could be simpler?
     final AST elsePath = thenPath.getNextSibling();
     if (elsePath != null) {
       out.print("else");
-      dumpHiddenBefore(getBestPrintableNode(elsePath, true));
-      print(elsePath);
+      final AST bestPrintableNode = getBestPrintableNode(elsePath, true);
+      dumpHiddenBefore(bestPrintableNode);
+      final CommonHiddenStreamToken hiddenBefore =
+        ((CommonASTWithHiddenTokens) elsePath).getHiddenBefore();
+      if (elsePath.getType() == PdeTokenTypes.SLIST && elsePath.getNumberOfChildren() == 0 && 
+          hiddenBefore == null) {
+        out.print("{");
+        final CommonHiddenStreamToken hiddenAfter = 
+          ((CommonASTWithHiddenTokens) elsePath).getHiddenAfter();
+        if (hiddenAfter == null) {
+          out.print("}");
+        } else {
+          dumpHiddenTokens(hiddenAfter);
+        }
+      } else {
+        print(elsePath);
+      }
     }
   }
 
