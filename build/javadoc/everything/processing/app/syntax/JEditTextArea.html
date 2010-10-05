@@ -104,7 +104,12 @@ java.lang.Object
 </PRE>
 
 <P>
-jEdit's text area component. It is more suited for editing program
+The text area component from the JEdit Syntax (syntax.jedit.org) project.
+ This is a very early version of what later was completely rewritten and
+ become jEdit (jedit.org). Over the years we've also added minor features 
+ for use with Processing (notably mouse wheel support and copyAsHTML). [fry]
+ <p>
+ jEdit's text area component. It is more suited for editing program
  source code than JEditorPane, because it drops the unnecessary features
  (images, variable-width lines, and so on) and adds a whole bunch of
  useful goodies such as:
@@ -119,8 +124,8 @@ jEdit's text area component. It is more suited for editing program
  </ul>
  It is also faster and doesn't have as many problems. It can be used
  in other applications; the only other part of jEdit it depends on is
- the syntax package.<p>
-
+ the syntax package.
+ <p>
  To use it in your app, treat it like any other component, for example:
  <pre>JEditTextArea ta = new JEditTextArea();
  ta.setTokenMarker(new JavaTokenMarker());
@@ -284,6 +289,14 @@ jEdit's text area component. It is more suited for editing program
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Places the selected text into the clipboard.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../processing/app/syntax/JEditTextArea.html#copyAsHTML()">copyAsHTML</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copy the current selection as HTML, formerly "Format for Discourse".</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -2204,6 +2217,36 @@ copy</H3>
 public void <B>copy</B>()</PRE>
 <DL>
 <DD>Places the selected text into the clipboard.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="copyAsHTML()"><!-- --></A><H3>
+copyAsHTML</H3>
+<PRE>
+public void <B>copyAsHTML</B>()</PRE>
+<DL>
+<DD>Copy the current selection as HTML, formerly "Format for Discourse".
+ <p/>
+ Original code by <A HREF="http://usuarios.iponet.es/imoreta">owd</A>.
+ <p/>
+ Revised and updated for revision 0108 by Ben Fry (10 March 2006).
+ <p/>
+ Updated for 0122 to simply copy the code directly to the clipboard,
+ rather than opening a new window.
+ <p/>
+ Updated for 0144 to only format the selected lines.
+ <p/> 
+ Updated for 0185 to incorporate the HTML changes from the Arduino project, 
+ and set the formatter to always use HTML (disabling, but not removing the 
+ YaBB version of the code) and also fixing it for the Tools API.
+ <p/>
+ Updated for 0190 to simply be part of JEditTextArea, removed YaBB code. 
+ Simplest and most sensible to have it live here, since it's no longer
+ specific to any language or version of the PDE.
 <P>
 <DD><DL>
 </DL>

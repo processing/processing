@@ -107,18 +107,6 @@ java.lang.Object
 
 <P>
 Find & Replace window for the Processing editor.
- <p/>
- One major annoyance in this is that the window is re-created each time
- that "Find" is called. This is because Mac OS X has a strange focus
- issue with windows that are re-shown with setVisible() or show().
- requestFocusInWindow() properly sets the focus to the find field,
- however, just a short moment later, the focus is set to null. Even
- trying to catch this scenario and request it again doesn't seem to work.
- Most likely this is some annoyance buried deep in one of Apple's docs,
- or in the doc for the focus stuff (I tend to think the former because
- Windows doesn't seem to be quite so beligerent). Filed as
- <A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=244"> Bug 244</A>
- should anyone have clues about how to fix.
 <P>
 
 <P>
