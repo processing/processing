@@ -73,9 +73,9 @@ function windowTitle()
 </TR>
 <TR>
 <TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
-  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
 <TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
-DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
 </TR>
 </TABLE>
 <A NAME="skip-navbar_top"></A>
@@ -105,7 +105,32 @@ Stores information about files in the current sketch
 <HR>
 
 <P>
+<!-- =========== FIELD SUMMARY =========== -->
 
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Sketch.html#PACKAGE_REGEX">PACKAGE_REGEX</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Sketch.html#SIZE_REGEX">SIZE_REGEX</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Regular expression for parsing the size() method.</TD>
+</TR>
+</TABLE>
+&nbsp;
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
 
 <A NAME="constructor_summary"><!-- --></A>
@@ -176,8 +201,9 @@ Stores information about files in the current sketch
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/app/Sketch.html#exportApplication(java.lang.String, int)">exportApplication</A></B>(java.lang.String&nbsp;destPath,
-                  int&nbsp;exportPlatform)</CODE>
+<TD><CODE><B><A HREF="../../processing/app/Sketch.html#exportApplication(java.lang.String, int, int)">exportApplication</A></B>(java.lang.String&nbsp;destPath,
+                  int&nbsp;exportPlatform,
+                  int&nbsp;exportBits)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Export to application without GUI.</TD>
@@ -186,14 +212,6 @@ Stores information about files in the current sketch
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;boolean</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/app/Sketch.html#exportApplicationPrompt()">exportApplicationPrompt</A></B>()</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/app/Sketch.html#getAppletClassName2()">getAppletClassName2</A></B>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -293,6 +311,14 @@ Stores information about files in the current sketch
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Sketch.html#getIgnorable()">getIgnorable</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get array of file/directory names that needn't be copied during "Save As".</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -495,7 +521,8 @@ Stores information about files in the current sketch
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;java.lang.String</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/app/Sketch.html#preprocess(java.lang.String, processing.app.preproc.PdePreprocessor)">preprocess</A></B>(java.lang.String&nbsp;buildPath,
+<TD><CODE><B><A HREF="../../processing/app/Sketch.html#preprocess(java.lang.String, java.lang.String, processing.app.preproc.PdePreprocessor)">preprocess</A></B>(java.lang.String&nbsp;buildPath,
+           java.lang.String&nbsp;packageName,
            <A HREF="../../processing/app/preproc/PdePreprocessor.html" title="class in processing.app.preproc">PdePreprocessor</A>&nbsp;preprocessor)</CODE>
 
 <BR>
@@ -570,6 +597,41 @@ Stores information about files in the current sketch
 </TABLE>
 &nbsp;
 <P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="SIZE_REGEX"><!-- --></A><H3>
+SIZE_REGEX</H3>
+<PRE>
+public static final java.lang.String <B>SIZE_REGEX</B></PRE>
+<DL>
+<DD>Regular expression for parsing the size() method. This should match 
+ against any uses of the size() function, whether numbers or variables 
+ or whatever. This way, no warning is shown if size() isn't actually used 
+ in the sketch, which is the case especially for anyone who is cutting
+ and pasting from the reference.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../constant-values.html#processing.app.Sketch.SIZE_REGEX">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PACKAGE_REGEX"><!-- --></A><H3>
+PACKAGE_REGEX</H3>
+<PRE>
+public static final java.lang.String <B>PACKAGE_REGEX</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../constant-values.html#processing.app.Sketch.PACKAGE_REGEX">Constant Field Values</A></DL>
+</DL>
 
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 
@@ -821,10 +883,11 @@ public java.lang.String <B>preprocess</B>(java.lang.String&nbsp;buildPath)
 </DL>
 <HR>
 
-<A NAME="preprocess(java.lang.String, processing.app.preproc.PdePreprocessor)"><!-- --></A><H3>
+<A NAME="preprocess(java.lang.String, java.lang.String, processing.app.preproc.PdePreprocessor)"><!-- --></A><H3>
 preprocess</H3>
 <PRE>
 public java.lang.String <B>preprocess</B>(java.lang.String&nbsp;buildPath,
+                                   java.lang.String&nbsp;packageName,
                                    <A HREF="../../processing/app/preproc/PdePreprocessor.html" title="class in processing.app.preproc">PdePreprocessor</A>&nbsp;preprocessor)
                             throws <A HREF="../../processing/app/debug/RunnerException.html" title="class in processing.app.debug">RunnerException</A></PRE>
 <DL>
@@ -962,11 +1025,12 @@ public boolean <B>exportApplicationPrompt</B>()
 </DL>
 <HR>
 
-<A NAME="exportApplication(java.lang.String, int)"><!-- --></A><H3>
+<A NAME="exportApplication(java.lang.String, int, int)"><!-- --></A><H3>
 exportApplication</H3>
 <PRE>
 public boolean <B>exportApplication</B>(java.lang.String&nbsp;destPath,
-                                 int&nbsp;exportPlatform)
+                                 int&nbsp;exportPlatform,
+                                 int&nbsp;exportBits)
                           throws java.io.IOException,
                                  <A HREF="../../processing/app/debug/RunnerException.html" title="class in processing.app.debug">RunnerException</A></PRE>
 <DL>
@@ -1069,6 +1133,19 @@ getExtensions</H3>
 public java.lang.String[] <B>getExtensions</B>()</PRE>
 <DL>
 <DD>Returns a String[] array of proper extensions.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getIgnorable()"><!-- --></A><H3>
+getIgnorable</H3>
+<PRE>
+public java.lang.String[] <B>getIgnorable</B>()</PRE>
+<DL>
+<DD>Get array of file/directory names that needn't be copied during "Save As".
 <P>
 <DD><DL>
 </DL>
@@ -1281,17 +1358,6 @@ public boolean <B>isUntitled</B>()</PRE>
 </DL>
 <HR>
 
-<A NAME="getAppletClassName2()"><!-- --></A><H3>
-getAppletClassName2</H3>
-<PRE>
-public java.lang.String <B>getAppletClassName2</B>()</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
-
 <A NAME="checkName(java.lang.String)"><!-- --></A><H3>
 checkName</H3>
 <PRE>
@@ -1391,9 +1457,9 @@ public static java.lang.String <B>sanitizeName</B>(java.lang.String&nbsp;origNam
 </TR>
 <TR>
 <TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
-  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
 <TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
-DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
 </TR>
 </TABLE>
 <A NAME="skip-navbar_bottom"></A>

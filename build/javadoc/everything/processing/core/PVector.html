@@ -92,9 +92,12 @@ Class PVector</H2>
 java.lang.Object
   <IMG SRC="../../resources/inherit.gif" ALT="extended by "><B>processing.core.PVector</B>
 </PRE>
+<DL>
+<DT><B>All Implemented Interfaces:</B> <DD>java.io.Serializable</DD>
+</DL>
 <HR>
 <DL>
-<DT><PRE>public class <B>PVector</B><DT>extends java.lang.Object</DL>
+<DT><PRE>public class <B>PVector</B><DT>extends java.lang.Object<DT>implements java.io.Serializable</DL>
 </PRE>
 
 <P>
@@ -113,6 +116,8 @@ A class to describe a two or three dimensional vector.
 <P>
 
 <P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../serialized-form.html#processing.core.PVector">Serialized Form</A></DL>
 <HR>
 
 <P>
@@ -373,6 +378,14 @@ A class to describe a two or three dimensional vector.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PVector.html#equals(java.lang.Object)">equals</A></B>(java.lang.Object&nbsp;obj)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;<A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/core/PVector.html#get()">get</A></B>()</CODE>
 
@@ -383,6 +396,14 @@ A class to describe a two or three dimensional vector.
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;float[]</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/core/PVector.html#get(float[])">get</A></B>(float[]&nbsp;target)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PVector.html#hashCode()">hashCode</A></B>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -561,7 +582,7 @@ A class to describe a two or three dimensional vector.
 <TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE>equals, getClass, hashCode, notify, notifyAll, wait, wait, wait</CODE></TD>
+<TD><CODE>getClass, notify, notifyAll, wait, wait, wait</CODE></TD>
 </TR>
 </TABLE>
 &nbsp;
@@ -678,6 +699,9 @@ public void <B>set</B>(float&nbsp;x,
 <DD>Set x, y, and z coordinates.
 <P>
 <DD><DL>
+</DL>
+</DD>
+<DD><DL>
 <DT><B>Parameters:</B><DD><CODE>x</CODE> - the x coordinate.<DD><CODE>y</CODE> - the y coordinate.<DD><CODE>z</CODE> - the z coordinate.</DL>
 </DD>
 </DL>
@@ -691,6 +715,9 @@ public void <B>set</B>(<A HREF="../../processing/core/PVector.html" title="class
 <DD>Set x, y, and z coordinates from a Vector3D object.
 <P>
 <DD><DL>
+</DL>
+</DD>
+<DD><DL>
 <DT><B>Parameters:</B><DD><CODE>v</CODE> - the PVector object to be copied</DL>
 </DD>
 </DL>
@@ -703,6 +730,9 @@ public void <B>set</B>(float[]&nbsp;source)</PRE>
 <DL>
 <DD>Set the x, y (and maybe z) coordinates using a float[] array as the source.
 <P>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 <DT><B>Parameters:</B><DD><CODE>source</CODE> - array to copy from</DL>
 </DD>
@@ -719,6 +749,9 @@ public <A HREF="../../processing/core/PVector.html" title="class in processing.c
 <DD><DL>
 </DL>
 </DD>
+<DD><DL>
+</DL>
+</DD>
 </DL>
 <HR>
 
@@ -727,6 +760,9 @@ get</H3>
 <PRE>
 public float[] <B>get</B>(float[]&nbsp;target)</PRE>
 <DL>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 </DL>
 </DD>
@@ -741,6 +777,9 @@ public float <B>mag</B>()</PRE>
 <DD>Calculate the magnitude (length) of the vector
 <P>
 <DD><DL>
+</DL>
+</DD>
+<DD><DL>
 
 <DT><B>Returns:</B><DD>the magnitude of the vector</DL>
 </DD>
@@ -754,6 +793,9 @@ public void <B>add</B>(<A HREF="../../processing/core/PVector.html" title="class
 <DL>
 <DD>Add a vector to this vector
 <P>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 <DT><B>Parameters:</B><DD><CODE>v</CODE> - the vector to be added</DL>
 </DD>
@@ -770,6 +812,9 @@ public void <B>add</B>(float&nbsp;x,
 <DD><DL>
 </DL>
 </DD>
+<DD><DL>
+</DL>
+</DD>
 </DL>
 <HR>
 
@@ -781,6 +826,9 @@ public static <A HREF="../../processing/core/PVector.html" title="class in proce
 <DL>
 <DD>Add two vectors
 <P>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 <DT><B>Parameters:</B><DD><CODE>v1</CODE> - a vector<DD><CODE>v2</CODE> - another vector
 <DT><B>Returns:</B><DD>a new vector that is the sum of v1 and v2</DL>
@@ -798,6 +846,9 @@ public static <A HREF="../../processing/core/PVector.html" title="class in proce
 <DD>Add two vectors into a target vector
 <P>
 <DD><DL>
+</DL>
+</DD>
+<DD><DL>
 <DT><B>Parameters:</B><DD><CODE>v1</CODE> - a vector<DD><CODE>v2</CODE> - another vector<DD><CODE>target</CODE> - the target vector (if null, a new vector will be created)
 <DT><B>Returns:</B><DD>a new vector that is the sum of v1 and v2</DL>
 </DD>
@@ -811,6 +862,9 @@ public void <B>sub</B>(<A HREF="../../processing/core/PVector.html" title="class
 <DL>
 <DD>Subtract a vector from this vector
 <P>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 <DT><B>Parameters:</B><DD><CODE>v</CODE> - the vector to be subtracted</DL>
 </DD>
@@ -827,6 +881,9 @@ public void <B>sub</B>(float&nbsp;x,
 <DD><DL>
 </DL>
 </DD>
+<DD><DL>
+</DL>
+</DD>
 </DL>
 <HR>
 
@@ -838,6 +895,9 @@ public static <A HREF="../../processing/core/PVector.html" title="class in proce
 <DL>
 <DD>Subtract one vector from another
 <P>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 <DT><B>Parameters:</B><DD><CODE>v1</CODE> - a vector<DD><CODE>v2</CODE> - another vector
 <DT><B>Returns:</B><DD>a new vector that is v1 - v2</DL>
@@ -855,6 +915,9 @@ public static <A HREF="../../processing/core/PVector.html" title="class in proce
 <DD><DL>
 </DL>
 </DD>
+<DD><DL>
+</DL>
+</DD>
 </DL>
 <HR>
 
@@ -865,6 +928,9 @@ public void <B>mult</B>(float&nbsp;n)</PRE>
 <DL>
 <DD>Multiply this vector by a scalar
 <P>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 <DT><B>Parameters:</B><DD><CODE>n</CODE> - the value to multiply by</DL>
 </DD>
@@ -879,6 +945,9 @@ public static <A HREF="../../processing/core/PVector.html" title="class in proce
 <DL>
 <DD>Multiply a vector by a scalar
 <P>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 <DT><B>Parameters:</B><DD><CODE>v</CODE> - a vector<DD><CODE>n</CODE> - scalar
 <DT><B>Returns:</B><DD>a new vector that is v1 * n</DL>
@@ -896,6 +965,9 @@ public static <A HREF="../../processing/core/PVector.html" title="class in proce
 <DD>Multiply a vector by a scalar, and write the result into a target PVector.
 <P>
 <DD><DL>
+</DL>
+</DD>
+<DD><DL>
 <DT><B>Parameters:</B><DD><CODE>v</CODE> - a vector<DD><CODE>n</CODE> - scalar<DD><CODE>target</CODE> - PVector to store the result
 <DT><B>Returns:</B><DD>the target vector, now set to v1 * n</DL>
 </DD>
@@ -909,6 +981,9 @@ public void <B>mult</B>(<A HREF="../../processing/core/PVector.html" title="clas
 <DL>
 <DD>Multiply each element of one vector by the elements of another vector.
 <P>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 <DT><B>Parameters:</B><DD><CODE>v</CODE> - the vector to multiply by</DL>
 </DD>
@@ -927,6 +1002,9 @@ public static <A HREF="../../processing/core/PVector.html" title="class in proce
 <DD><DL>
 </DL>
 </DD>
+<DD><DL>
+</DL>
+</DD>
 </DL>
 <HR>
 
@@ -941,6 +1019,9 @@ public static <A HREF="../../processing/core/PVector.html" title="class in proce
  vector, and write the result into a target vector.
 <P>
 <DD><DL>
+</DL>
+</DD>
+<DD><DL>
 <DT><B>Parameters:</B><DD><CODE>v1</CODE> - the first vector<DD><CODE>v2</CODE> - the second vector<DD><CODE>target</CODE> - PVector to store the result</DL>
 </DD>
 </DL>
@@ -953,6 +1034,9 @@ public void <B>div</B>(float&nbsp;n)</PRE>
 <DL>
 <DD>Divide this vector by a scalar
 <P>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 <DT><B>Parameters:</B><DD><CODE>n</CODE> - the value to divide by</DL>
 </DD>
@@ -967,6 +1051,9 @@ public static <A HREF="../../processing/core/PVector.html" title="class in proce
 <DL>
 <DD>Divide a vector by a scalar and return the result in a new vector.
 <P>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 <DT><B>Parameters:</B><DD><CODE>v</CODE> - a vector<DD><CODE>n</CODE> - scalar
 <DT><B>Returns:</B><DD>a new vector that is v1 / n</DL>
@@ -984,6 +1071,9 @@ public static <A HREF="../../processing/core/PVector.html" title="class in proce
 <DD><DL>
 </DL>
 </DD>
+<DD><DL>
+</DL>
+</DD>
 </DL>
 <HR>
 
@@ -994,6 +1084,9 @@ public void <B>div</B>(<A HREF="../../processing/core/PVector.html" title="class
 <DL>
 <DD>Divide each element of one vector by the elements of another vector.
 <P>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 </DL>
 </DD>
@@ -1012,6 +1105,9 @@ public static <A HREF="../../processing/core/PVector.html" title="class in proce
 <DD><DL>
 </DL>
 </DD>
+<DD><DL>
+</DL>
+</DD>
 </DL>
 <HR>
 
@@ -1026,6 +1122,9 @@ public static <A HREF="../../processing/core/PVector.html" title="class in proce
  vector, and write the result into a target vector.
 <P>
 <DD><DL>
+</DL>
+</DD>
+<DD><DL>
 <DT><B>Parameters:</B><DD><CODE>v1</CODE> - the first vector<DD><CODE>v2</CODE> - the second vector<DD><CODE>target</CODE> - PVector to store the result</DL>
 </DD>
 </DL>
@@ -1038,6 +1137,9 @@ public float <B>dist</B>(<A HREF="../../processing/core/PVector.html" title="cla
 <DL>
 <DD>Calculate the Euclidean distance between two points (considering a point as a vector object)
 <P>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 <DT><B>Parameters:</B><DD><CODE>v</CODE> - another vector
 <DT><B>Returns:</B><DD>the Euclidean distance between</DL>
@@ -1054,6 +1156,9 @@ public static float <B>dist</B>(<A HREF="../../processing/core/PVector.html" tit
 <DD>Calculate the Euclidean distance between two points (considering a point as a vector object)
 <P>
 <DD><DL>
+</DL>
+</DD>
+<DD><DL>
 <DT><B>Parameters:</B><DD><CODE>v1</CODE> - a vector<DD><CODE>v2</CODE> - another vector
 <DT><B>Returns:</B><DD>the Euclidean distance between v1 and v2</DL>
 </DD>
@@ -1067,6 +1172,9 @@ public float <B>dot</B>(<A HREF="../../processing/core/PVector.html" title="clas
 <DL>
 <DD>Calculate the dot product with another vector
 <P>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 
 <DT><B>Returns:</B><DD>the dot product</DL>
@@ -1084,6 +1192,9 @@ public float <B>dot</B>(float&nbsp;x,
 <DD><DL>
 </DL>
 </DD>
+<DD><DL>
+</DL>
+</DD>
 </DL>
 <HR>
 
@@ -1093,6 +1204,9 @@ dot</H3>
 public static float <B>dot</B>(<A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A>&nbsp;v1,
                         <A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A>&nbsp;v2)</PRE>
 <DL>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 </DL>
 </DD>
@@ -1106,6 +1220,9 @@ public <A HREF="../../processing/core/PVector.html" title="class in processing.c
 <DL>
 <DD>Return a vector composed of the cross product between this and another.
 <P>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 </DL>
 </DD>
@@ -1124,6 +1241,9 @@ public <A HREF="../../processing/core/PVector.html" title="class in processing.c
 <DD><DL>
 </DL>
 </DD>
+<DD><DL>
+</DL>
+</DD>
 </DL>
 <HR>
 
@@ -1134,6 +1254,9 @@ public static <A HREF="../../processing/core/PVector.html" title="class in proce
                             <A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A>&nbsp;v2,
                             <A HREF="../../processing/core/PVector.html" title="class in processing.core">PVector</A>&nbsp;target)</PRE>
 <DL>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 </DL>
 </DD>
@@ -1150,6 +1273,9 @@ public void <B>normalize</B>()</PRE>
 <DD><DL>
 </DL>
 </DD>
+<DD><DL>
+</DL>
+</DD>
 </DL>
 <HR>
 
@@ -1160,6 +1286,9 @@ public <A HREF="../../processing/core/PVector.html" title="class in processing.c
 <DL>
 <DD>Normalize this vector, storing the result in another vector.
 <P>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 <DT><B>Parameters:</B><DD><CODE>target</CODE> - Set to null to create a new vector
 <DT><B>Returns:</B><DD>a new vector (if target was null), or target</DL>
@@ -1175,6 +1304,9 @@ public void <B>limit</B>(float&nbsp;max)</PRE>
 <DD>Limit the magnitude of this vector
 <P>
 <DD><DL>
+</DL>
+</DD>
+<DD><DL>
 <DT><B>Parameters:</B><DD><CODE>max</CODE> - the maximum length to limit this vector</DL>
 </DD>
 </DL>
@@ -1187,6 +1319,9 @@ public float <B>heading2D</B>()</PRE>
 <DL>
 <DD>Calculate the angle of rotation for this vector (only 2D vectors)
 <P>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 
 <DT><B>Returns:</B><DD>the angle of rotation</DL>
@@ -1202,6 +1337,9 @@ public static float <B>angleBetween</B>(<A HREF="../../processing/core/PVector.h
 <DL>
 <DD>Calculate the angle between two vectors, using the dot product
 <P>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 <DT><B>Parameters:</B><DD><CODE>v1</CODE> - a vector<DD><CODE>v2</CODE> - another vector
 <DT><B>Returns:</B><DD>the angle between the vectors</DL>
@@ -1232,6 +1370,37 @@ public float[] <B>array</B>()</PRE>
  temporary use. If used in any other fashion, the contents should be copied
  by using the get() command to copy into your own array.
 <P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="equals(java.lang.Object)"><!-- --></A><H3>
+equals</H3>
+<PRE>
+public boolean <B>equals</B>(java.lang.Object&nbsp;obj)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE>equals</CODE> in class <CODE>java.lang.Object</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="hashCode()"><!-- --></A><H3>
+hashCode</H3>
+<PRE>
+public int <B>hashCode</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE>hashCode</CODE> in class <CODE>java.lang.Object</CODE></DL>
+</DD>
 <DD><DL>
 </DL>
 </DD>

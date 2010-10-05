@@ -150,23 +150,23 @@ XMLElement is a representation of an XML object. The object is able to parse XML
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates an empty element to be used for #PCDATA content.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#XMLElement(processing.core.PApplet, java.lang.String)">XMLElement</A></B>(<A HREF="../../processing/core/PApplet.html" title="class in processing.core">PApplet</A>&nbsp;parent,
+<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#XMLElement(processing.core.PApplet, java.lang.String)">XMLElement</A></B>(<A HREF="../../processing/core/PApplet.html" title="class in processing.core">PApplet</A>&nbsp;sketch,
            java.lang.String&nbsp;filename)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Begin parsing XML data passed in from a PApplet.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#XMLElement(java.io.Reader)">XMLElement</A></B>(java.io.Reader&nbsp;r)</CODE>
+<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#XMLElement(java.io.Reader)">XMLElement</A></B>(java.io.Reader&nbsp;reader)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#XMLElement(java.lang.String)">XMLElement</A></B>(java.lang.String&nbsp;xml)</CODE>
+<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#XMLElement(java.lang.String)">XMLElement</A></B>(java.lang.String&nbsp;fullName)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates an empty element.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#XMLElement(java.lang.String, java.lang.String, java.lang.String, int)">XMLElement</A></B>(java.lang.String&nbsp;fullName,
@@ -197,90 +197,11 @@ XMLElement is a representation of an XML object. The object is able to parse XML
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;<A HREF="../../processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#createElement(java.lang.String, java.lang.String)">createElement</A></B>(java.lang.String&nbsp;fullName,
-              java.lang.String&nbsp;namespace)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates an empty element.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;<A HREF="../../processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#createElement(java.lang.String, java.lang.String, java.lang.String, int)">createElement</A></B>(java.lang.String&nbsp;fullName,
-              java.lang.String&nbsp;namespace,
-              java.lang.String&nbsp;systemID,
-              int&nbsp;lineNr)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates an empty element.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;<A HREF="../../processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#createPCDataElement()">createPCDataElement</A></B>()</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates an element to be used for #PCDATA content.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;java.util.Enumeration&lt;java.lang.String&gt;</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#enumerateAttributeNames()">enumerateAttributeNames</A></B>()</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns an enumeration of all attribute names.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;java.util.Enumeration&lt;<A HREF="../../processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>&gt;</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#enumerateChildren()">enumerateChildren</A></B>()</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns an enumeration of all child elements.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#equals(java.lang.Object)">equals</A></B>(java.lang.Object&nbsp;rawElement)</CODE>
+<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#equals(java.lang.Object)">equals</A></B>(java.lang.Object&nbsp;object)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns true if the element equals another element.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#equalsXMLElement(processing.xml.XMLElement)">equalsXMLElement</A></B>(<A HREF="../../processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>&nbsp;rawElement)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns true if the element equals another element.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#getAttribute(java.lang.String)">getAttribute</A></B>(java.lang.String&nbsp;name)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the value of an attribute.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#getAttribute(java.lang.String, java.lang.String)">getAttribute</A></B>(java.lang.String&nbsp;name,
-             java.lang.String&nbsp;defaultValue)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the value of an attribute.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#getAttribute(java.lang.String, java.lang.String, java.lang.String)">getAttribute</A></B>(java.lang.String&nbsp;name,
-             java.lang.String&nbsp;namespace,
-             java.lang.String&nbsp;defaultValue)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the value of an attribute.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -292,44 +213,20 @@ XMLElement is a representation of an XML object. The object is able to parse XML
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#getAttributeNamespace(java.lang.String)">getAttributeNamespace</A></B>(java.lang.String&nbsp;name)</CODE>
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#getBoolean(java.lang.String)">getBoolean</A></B>(java.lang.String&nbsp;name)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the namespace of an attribute.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a boolean attribute of the element.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;java.util.Properties</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#getAttributes()">getAttributes</A></B>()</CODE>
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#getBoolean(java.lang.String, boolean)">getBoolean</A></B>(java.lang.String&nbsp;name,
+           boolean&nbsp;defaultValue)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns all attributes as a Properties object.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;java.util.Properties</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#getAttributesInNamespace(java.lang.String)">getAttributesInNamespace</A></B>(java.lang.String&nbsp;namespace)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns all attributes in a specific namespace as a Properties object.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#getAttributeType(java.lang.String)">getAttributeType</A></B>(java.lang.String&nbsp;name)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the type of an attribute.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#getAttributeType(java.lang.String, java.lang.String)">getAttributeType</A></B>(java.lang.String&nbsp;name,
-                 java.lang.String&nbsp;namespace)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the type of an attribute.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a boolean attribute of the element.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -346,14 +243,6 @@ XMLElement is a representation of an XML object. The object is able to parse XML
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the child XMLElement as specified by the <b>index</b> parameter.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;<A HREF="../../processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#getChildAtIndex(int)">getChildAtIndex</A></B>(int&nbsp;index)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the child at a specific index.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -390,7 +279,7 @@ XMLElement is a representation of an XML object. The object is able to parse XML
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;double</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#getDoubleAttribute(java.lang.String)">getDoubleAttribute</A></B>(java.lang.String&nbsp;name)</CODE>
+<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#getDouble(java.lang.String)">getDouble</A></B>(java.lang.String&nbsp;name)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -398,18 +287,8 @@ XMLElement is a representation of an XML object. The object is able to parse XML
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;double</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#getDoubleAttribute(java.lang.String, double)">getDoubleAttribute</A></B>(java.lang.String&nbsp;name,
-                   double&nbsp;defaultValue)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the value of an attribute.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;double</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#getDoubleAttribute(java.lang.String, java.lang.String, double)">getDoubleAttribute</A></B>(java.lang.String&nbsp;name,
-                   java.lang.String&nbsp;namespace,
-                   double&nbsp;defaultValue)</CODE>
+<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#getDouble(java.lang.String, double)">getDouble</A></B>(java.lang.String&nbsp;name,
+          double&nbsp;defaultValue)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the value of an attribute.</TD>
@@ -417,10 +296,27 @@ XMLElement is a representation of an XML object. The object is able to parse XML
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;float</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#getFloatAttribute(java.lang.String)">getFloatAttribute</A></B>(java.lang.String&nbsp;name)</CODE>
+<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#getFloat(java.lang.String)">getFloat</A></B>(java.lang.String&nbsp;name)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;float</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#getFloat(java.lang.String, float)">getFloat</A></B>(java.lang.String&nbsp;name,
+         float&nbsp;defaultValue)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a float attribute of the element.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;float</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#getFloatAttribute(java.lang.String)">getFloatAttribute</A></B>(java.lang.String&nbsp;name)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use getFloat() instead</I></TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -429,17 +325,24 @@ XMLElement is a representation of an XML object. The object is able to parse XML
                   float&nbsp;defaultValue)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a float attribute of the element.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use getFloat() instead</I></TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;float</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#getFloatAttribute(java.lang.String, java.lang.String, float)">getFloatAttribute</A></B>(java.lang.String&nbsp;name,
-                  java.lang.String&nbsp;namespace,
-                  float&nbsp;defaultValue)</CODE>
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#getInt(java.lang.String)">getInt</A></B>(java.lang.String&nbsp;name)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the value of an attribute.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns an integer attribute of the element.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#getInt(java.lang.String, int)">getInt</A></B>(java.lang.String&nbsp;name,
+       int&nbsp;defaultValue)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns an integer attribute of the element.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -447,7 +350,7 @@ XMLElement is a representation of an XML object. The object is able to parse XML
 <TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#getIntAttribute(java.lang.String)">getIntAttribute</A></B>(java.lang.String&nbsp;name)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns an integer attribute of the element.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use getInt() instead</I></TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -456,22 +359,12 @@ XMLElement is a representation of an XML object. The object is able to parse XML
                 int&nbsp;defaultValue)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns an integer attribute of the element.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use getInt() instead</I></TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#getIntAttribute(java.lang.String, java.lang.String, int)">getIntAttribute</A></B>(java.lang.String&nbsp;name,
-                java.lang.String&nbsp;namespace,
-                int&nbsp;defaultValue)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the value of an attribute.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#getLineNr()">getLineNr</A></B>()</CODE>
+<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#getLine()">getLine</A></B>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the line number in the data where the element started.</TD>
@@ -482,7 +375,7 @@ XMLElement is a representation of an XML object. The object is able to parse XML
 <TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#getLocalName()">getLocalName</A></B>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the name of the element.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the name of the element without its namespace.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -511,10 +404,27 @@ XMLElement is a representation of an XML object. The object is able to parse XML
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;java.lang.String</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#getStringAttribute(java.lang.String)">getStringAttribute</A></B>(java.lang.String&nbsp;name)</CODE>
+<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#getString(java.lang.String)">getString</A></B>(java.lang.String&nbsp;name)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#getString(java.lang.String, java.lang.String)">getString</A></B>(java.lang.String&nbsp;name,
+          java.lang.String&nbsp;defaultValue)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#getStringAttribute(java.lang.String)">getStringAttribute</A></B>(java.lang.String&nbsp;name)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use getString() or getAttribute()</I></TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -523,17 +433,7 @@ XMLElement is a representation of an XML object. The object is able to parse XML
                    java.lang.String&nbsp;defaultValue)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a String attribute of the element.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#getStringAttribute(java.lang.String, java.lang.String, java.lang.String)">getStringAttribute</A></B>(java.lang.String&nbsp;name,
-                   java.lang.String&nbsp;namespace,
-                   java.lang.String&nbsp;defaultValue)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use getString() or getAttribute()</I></TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -547,15 +447,6 @@ XMLElement is a representation of an XML object. The object is able to parse XML
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;boolean</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#hasAttribute(java.lang.String)">hasAttribute</A></B>(java.lang.String&nbsp;name)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns whether an attribute exists.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#hasAttribute(java.lang.String, java.lang.String)">hasAttribute</A></B>(java.lang.String&nbsp;name,
-             java.lang.String&nbsp;namespace)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns whether an attribute exists.</TD>
@@ -588,6 +479,14 @@ XMLElement is a representation of an XML object. The object is able to parse XML
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;java.lang.String[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#listAttributes()">listAttributes</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String[]</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#listChildren()">listChildren</A></B>()</CODE>
 
 <BR>
@@ -595,8 +494,24 @@ XMLElement is a representation of an XML object. The object is able to parse XML
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#parse(java.io.Reader)">parse</A></B>(java.io.Reader&nbsp;r)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#parse(java.lang.String)">parse</A></B>(java.lang.String&nbsp;xml)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#removeAttribute(java.lang.String)">removeAttribute</A></B>(java.lang.String&nbsp;name)</CODE>
+<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#remove(java.lang.String)">remove</A></B>(java.lang.String&nbsp;name)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Removes an attribute.</TD>
@@ -604,11 +519,10 @@ XMLElement is a representation of an XML object. The object is able to parse XML
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#removeAttribute(java.lang.String, java.lang.String)">removeAttribute</A></B>(java.lang.String&nbsp;name,
-                java.lang.String&nbsp;namespace)</CODE>
+<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#removeChild(int)">removeChild</A></B>(int&nbsp;index)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Removes an attribute.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Removes the child located at a certain index.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -620,30 +534,20 @@ XMLElement is a representation of an XML object. The object is able to parse XML
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#removeChildAtIndex(int)">removeChildAtIndex</A></B>(int&nbsp;index)</CODE>
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#save(java.lang.String)">save</A></B>(java.lang.String&nbsp;filename)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Removes the child located at a certain index.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#setAttribute(java.lang.String, java.lang.String)">setAttribute</A></B>(java.lang.String&nbsp;name,
-             java.lang.String&nbsp;value)</CODE>
+<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#setBoolean(java.lang.String, boolean)">setBoolean</A></B>(java.lang.String&nbsp;name,
+           boolean&nbsp;value)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets an attribute.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#setAttribute(java.lang.String, java.lang.String, java.lang.String)">setAttribute</A></B>(java.lang.String&nbsp;fullName,
-             java.lang.String&nbsp;namespace,
-             java.lang.String&nbsp;value)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets an attribute.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -652,6 +556,33 @@ XMLElement is a representation of an XML object. The object is able to parse XML
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the #PCDATA content.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#setDouble(java.lang.String, double)">setDouble</A></B>(java.lang.String&nbsp;name,
+          double&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#setFloat(java.lang.String, float)">setFloat</A></B>(java.lang.String&nbsp;name,
+         float&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#setInt(java.lang.String, int)">setInt</A></B>(java.lang.String&nbsp;name,
+       int&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -672,6 +603,15 @@ XMLElement is a representation of an XML object. The object is able to parse XML
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#setString(java.lang.String, java.lang.String)">setString</A></B>(java.lang.String&nbsp;name,
+          java.lang.String&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets an attribute.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;java.lang.String</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#toString()">toString</A></B>()</CODE>
 
@@ -682,6 +622,14 @@ XMLElement is a representation of an XML object. The object is able to parse XML
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;java.lang.String</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#toString(boolean)">toString</A></B>(boolean&nbsp;pretty)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/xml/XMLElement.html#write(java.io.PrintWriter)">write</A></B>(java.io.PrintWriter&nbsp;writer)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -740,6 +688,18 @@ public <B>XMLElement</B>()</PRE>
 </DL>
 <HR>
 
+<A NAME="XMLElement(java.lang.String)"><!-- --></A><H3>
+XMLElement</H3>
+<PRE>
+public <B>XMLElement</B>(java.lang.String&nbsp;fullName)</PRE>
+<DL>
+<DD>Creates an empty element.
+<P>
+<DL>
+<DT><B>Parameters:</B><DD><CODE>fullName</CODE> - the name of the element.</DL>
+</DL>
+<HR>
+
 <A NAME="XMLElement(java.lang.String, java.lang.String, java.lang.String, int)"><!-- --></A><H3>
 XMLElement</H3>
 <PRE>
@@ -748,7 +708,7 @@ public <B>XMLElement</B>(java.lang.String&nbsp;fullName,
                   java.lang.String&nbsp;systemID,
                   int&nbsp;lineNr)</PRE>
 <DL>
-<DD>Creates an empty element.
+<DD>Creates an empty element. (Used internally for parsing/building.)
 <P>
 <DL>
 <DT><B>Parameters:</B><DD><CODE>fullName</CODE> - the full name of the element<DD><CODE>namespace</CODE> - the namespace URI.<DD><CODE>systemID</CODE> - the system ID of the XML data where the element starts.<DD><CODE>lineNr</CODE> - the line in the XML data where the element starts.</DL>
@@ -758,7 +718,7 @@ public <B>XMLElement</B>(java.lang.String&nbsp;fullName,
 <A NAME="XMLElement(processing.core.PApplet, java.lang.String)"><!-- --></A><H3>
 XMLElement</H3>
 <PRE>
-public <B>XMLElement</B>(<A HREF="../../processing/core/PApplet.html" title="class in processing.core">PApplet</A>&nbsp;parent,
+public <B>XMLElement</B>(<A HREF="../../processing/core/PApplet.html" title="class in processing.core">PApplet</A>&nbsp;sketch,
                   java.lang.String&nbsp;filename)</PRE>
 <DL>
 <DD>Begin parsing XML data passed in from a PApplet. This code
@@ -773,15 +733,7 @@ public <B>XMLElement</B>(<A HREF="../../processing/core/PApplet.html" title="cla
 <A NAME="XMLElement(java.io.Reader)"><!-- --></A><H3>
 XMLElement</H3>
 <PRE>
-public <B>XMLElement</B>(java.io.Reader&nbsp;r)</PRE>
-<DL>
-</DL>
-<HR>
-
-<A NAME="XMLElement(java.lang.String)"><!-- --></A><H3>
-XMLElement</H3>
-<PRE>
-public <B>XMLElement</B>(java.lang.String&nbsp;xml)</PRE>
+public <B>XMLElement</B>(java.io.Reader&nbsp;reader)</PRE>
 <DL>
 </DL>
 
@@ -795,13 +747,11 @@ public <B>XMLElement</B>(java.lang.String&nbsp;xml)</PRE>
 </TR>
 </TABLE>
 
-<A NAME="createPCDataElement()"><!-- --></A><H3>
-createPCDataElement</H3>
+<A NAME="parse(java.lang.String)"><!-- --></A><H3>
+parse</H3>
 <PRE>
-public <A HREF="../../processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A> <B>createPCDataElement</B>()</PRE>
+public static <A HREF="../../processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A> <B>parse</B>(java.lang.String&nbsp;xml)</PRE>
 <DL>
-<DD>Creates an element to be used for #PCDATA content.
-<P>
 <DD><DL>
 </DL>
 </DD>
@@ -811,38 +761,16 @@ public <A HREF="../../processing/xml/XMLElement.html" title="class in processing
 </DL>
 <HR>
 
-<A NAME="createElement(java.lang.String, java.lang.String)"><!-- --></A><H3>
-createElement</H3>
+<A NAME="parse(java.io.Reader)"><!-- --></A><H3>
+parse</H3>
 <PRE>
-public <A HREF="../../processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A> <B>createElement</B>(java.lang.String&nbsp;fullName,
-                                java.lang.String&nbsp;namespace)</PRE>
+public static <A HREF="../../processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A> <B>parse</B>(java.io.Reader&nbsp;r)</PRE>
 <DL>
-<DD>Creates an empty element.
-<P>
 <DD><DL>
 </DL>
 </DD>
 <DD><DL>
-<DT><B>Parameters:</B><DD><CODE>fullName</CODE> - the full name of the element<DD><CODE>namespace</CODE> - the namespace URI.</DL>
-</DD>
 </DL>
-<HR>
-
-<A NAME="createElement(java.lang.String, java.lang.String, java.lang.String, int)"><!-- --></A><H3>
-createElement</H3>
-<PRE>
-public <A HREF="../../processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A> <B>createElement</B>(java.lang.String&nbsp;fullName,
-                                java.lang.String&nbsp;namespace,
-                                java.lang.String&nbsp;systemID,
-                                int&nbsp;lineNr)</PRE>
-<DL>
-<DD>Creates an empty element.
-<P>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-<DT><B>Parameters:</B><DD><CODE>fullName</CODE> - the full name of the element<DD><CODE>namespace</CODE> - the namespace URI.<DD><CODE>systemID</CODE> - the system ID of the XML data where the element starts.<DD><CODE>lineNr</CODE> - the line in the XML data where the element starts.</DL>
 </DD>
 </DL>
 <HR>
@@ -887,7 +815,7 @@ getLocalName</H3>
 <PRE>
 public java.lang.String <B>getLocalName</B>()</PRE>
 <DL>
-<DD>Returns the name of the element.
+<DD>Returns the name of the element without its namespace.
 <P>
 <DD><DL>
 </DL>
@@ -1000,10 +928,10 @@ public void <B>removeChild</B>(<A HREF="../../processing/xml/XMLElement.html" ti
 </DL>
 <HR>
 
-<A NAME="removeChildAtIndex(int)"><!-- --></A><H3>
-removeChildAtIndex</H3>
+<A NAME="removeChild(int)"><!-- --></A><H3>
+removeChild</H3>
 <PRE>
-public void <B>removeChildAtIndex</B>(int&nbsp;index)</PRE>
+public void <B>removeChild</B>(int&nbsp;index)</PRE>
 <DL>
 <DD>Removes the child located at a certain index.
 <P>
@@ -1012,23 +940,6 @@ public void <B>removeChildAtIndex</B>(int&nbsp;index)</PRE>
 </DD>
 <DD><DL>
 <DT><B>Parameters:</B><DD><CODE>index</CODE> - the index of the child, where the first child has index 0.</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="enumerateChildren()"><!-- --></A><H3>
-enumerateChildren</H3>
-<PRE>
-public java.util.Enumeration&lt;<A HREF="../../processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>&gt; <B>enumerateChildren</B>()</PRE>
-<DL>
-<DD>Returns an enumeration of all child elements.
-<P>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-
-<DT><B>Returns:</B><DD>the non-null enumeration</DL>
 </DD>
 </DL>
 <HR>
@@ -1153,26 +1064,6 @@ public <A HREF="../../processing/xml/XMLElement.html" title="class in processing
 </DL>
 <HR>
 
-<A NAME="getChildAtIndex(int)"><!-- --></A><H3>
-getChildAtIndex</H3>
-<PRE>
-public <A HREF="../../processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A> <B>getChildAtIndex</B>(int&nbsp;index)
-                           throws java.lang.ArrayIndexOutOfBoundsException</PRE>
-<DL>
-<DD>Returns the child at a specific index.
-<P>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-<DT><B>Parameters:</B><DD><CODE>index</CODE> - the index of the child
-<DT><B>Returns:</B><DD>the non-null child
-<DT><B>Throws:</B>
-<DD><CODE>java.lang.ArrayIndexOutOfBoundsException</CODE> - if the index is out of bounds.</DL>
-</DD>
-</DL>
-<HR>
-
 <A NAME="getChildren(java.lang.String)"><!-- --></A><H3>
 getChildren</H3>
 <PRE>
@@ -1209,56 +1100,16 @@ public int <B>getAttributeCount</B>()</PRE>
 </DL>
 <HR>
 
-<A NAME="getAttribute(java.lang.String)"><!-- --></A><H3>
-getAttribute</H3>
+<A NAME="listAttributes()"><!-- --></A><H3>
+listAttributes</H3>
 <PRE>
-public java.lang.String <B>getAttribute</B>(java.lang.String&nbsp;name)</PRE>
+public java.lang.String[] <B>listAttributes</B>()</PRE>
 <DL>
-<DD>Returns the value of an attribute.
-<P>
 <DD><DL>
 </DL>
 </DD>
 <DD><DL>
-<DT><B>Parameters:</B><DD><CODE>name</CODE> - the non-null name of the attribute.
-<DT><B>Returns:</B><DD>the value, or null if the attribute does not exist.</DL>
-</DD>
 </DL>
-<HR>
-
-<A NAME="getAttribute(java.lang.String, java.lang.String)"><!-- --></A><H3>
-getAttribute</H3>
-<PRE>
-public java.lang.String <B>getAttribute</B>(java.lang.String&nbsp;name,
-                                     java.lang.String&nbsp;defaultValue)</PRE>
-<DL>
-<DD>Returns the value of an attribute.
-<P>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-<DT><B>Parameters:</B><DD><CODE>name</CODE> - the non-null full name of the attribute.<DD><CODE>defaultValue</CODE> - the default value of the attribute.
-<DT><B>Returns:</B><DD>the value, or defaultValue if the attribute does not exist.</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="getAttribute(java.lang.String, java.lang.String, java.lang.String)"><!-- --></A><H3>
-getAttribute</H3>
-<PRE>
-public java.lang.String <B>getAttribute</B>(java.lang.String&nbsp;name,
-                                     java.lang.String&nbsp;namespace,
-                                     java.lang.String&nbsp;defaultValue)</PRE>
-<DL>
-<DD>Returns the value of an attribute.
-<P>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-<DT><B>Parameters:</B><DD><CODE>name</CODE> - the non-null name of the attribute.<DD><CODE>namespace</CODE> - the namespace URI, which may be null.<DD><CODE>defaultValue</CODE> - the default value of the attribute.
-<DT><B>Returns:</B><DD>the value, or defaultValue if the attribute does not exist.</DL>
 </DD>
 </DL>
 <HR>
@@ -1268,6 +1119,8 @@ getStringAttribute</H3>
 <PRE>
 public java.lang.String <B>getStringAttribute</B>(java.lang.String&nbsp;name)</PRE>
 <DL>
+<DD><B>Deprecated.</B>&nbsp;<I>use getString() or getAttribute()</I>
+<P>
 <DD><DL>
 </DL>
 </DD>
@@ -1283,6 +1136,8 @@ getStringAttribute</H3>
 public java.lang.String <B>getStringAttribute</B>(java.lang.String&nbsp;name,
                                            java.lang.String&nbsp;defaultValue)</PRE>
 <DL>
+<DD><B>Deprecated.</B>&nbsp;<I>use getString() or getAttribute()</I>
+<P>
 <DD>Returns a String attribute of the element.
  If the <b>default</b> parameter is used and the attribute doesn't exist, the <b>default</b> value is returned.
  When using the version of the method without the <b>default</b> parameter, if the attribute doesn't exist, the value 0 is returned.
@@ -1296,12 +1151,10 @@ public java.lang.String <B>getStringAttribute</B>(java.lang.String&nbsp;name,
 </DL>
 <HR>
 
-<A NAME="getStringAttribute(java.lang.String, java.lang.String, java.lang.String)"><!-- --></A><H3>
-getStringAttribute</H3>
+<A NAME="getString(java.lang.String)"><!-- --></A><H3>
+getString</H3>
 <PRE>
-public java.lang.String <B>getStringAttribute</B>(java.lang.String&nbsp;name,
-                                           java.lang.String&nbsp;namespace,
-                                           java.lang.String&nbsp;defaultValue)</PRE>
+public java.lang.String <B>getString</B>(java.lang.String&nbsp;name)</PRE>
 <DL>
 <DD><DL>
 </DL>
@@ -1312,12 +1165,63 @@ public java.lang.String <B>getStringAttribute</B>(java.lang.String&nbsp;name,
 </DL>
 <HR>
 
+<A NAME="getString(java.lang.String, java.lang.String)"><!-- --></A><H3>
+getString</H3>
+<PRE>
+public java.lang.String <B>getString</B>(java.lang.String&nbsp;name,
+                                  java.lang.String&nbsp;defaultValue)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBoolean(java.lang.String)"><!-- --></A><H3>
+getBoolean</H3>
+<PRE>
+public boolean <B>getBoolean</B>(java.lang.String&nbsp;name)</PRE>
+<DL>
+<DD>Returns a boolean attribute of the element.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBoolean(java.lang.String, boolean)"><!-- --></A><H3>
+getBoolean</H3>
+<PRE>
+public boolean <B>getBoolean</B>(java.lang.String&nbsp;name,
+                          boolean&nbsp;defaultValue)</PRE>
+<DL>
+<DD>Returns a boolean attribute of the element.
+ If the <b>defaultValue</b> parameter is used and the attribute doesn't exist, the <b>defaultValue</b> is returned.
+ When using the version of the method without the <b>defaultValue</b> parameter, if the attribute doesn't exist, the value false is returned.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>name</CODE> - the name of the attribute<DD><CODE>defaultValue</CODE> - value returned if the attribute is not found
+<DT><B>Returns:</B><DD>the value, or defaultValue if the attribute does not exist.</DL>
+</DD>
+</DL>
+<HR>
+
 <A NAME="getIntAttribute(java.lang.String)"><!-- --></A><H3>
 getIntAttribute</H3>
 <PRE>
 public int <B>getIntAttribute</B>(java.lang.String&nbsp;name)</PRE>
 <DL>
-<DD>Returns an integer attribute of the element.
+<DD><B>Deprecated.</B>&nbsp;<I>use getInt() instead</I>
 <P>
 <DD><DL>
 </DL>
@@ -1334,6 +1238,39 @@ getIntAttribute</H3>
 public int <B>getIntAttribute</B>(java.lang.String&nbsp;name,
                            int&nbsp;defaultValue)</PRE>
 <DL>
+<DD><B>Deprecated.</B>&nbsp;<I>use getInt() instead</I>
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getInt(java.lang.String)"><!-- --></A><H3>
+getInt</H3>
+<PRE>
+public int <B>getInt</B>(java.lang.String&nbsp;name)</PRE>
+<DL>
+<DD>Returns an integer attribute of the element.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getInt(java.lang.String, int)"><!-- --></A><H3>
+getInt</H3>
+<PRE>
+public int <B>getInt</B>(java.lang.String&nbsp;name,
+                  int&nbsp;defaultValue)</PRE>
+<DL>
 <DD>Returns an integer attribute of the element.
  If the <b>default</b> parameter is used and the attribute doesn't exist, the <b>default</b> value is returned.
  When using the version of the method without the <b>default</b> parameter, if the attribute doesn't exist, the value 0 is returned.
@@ -1348,30 +1285,13 @@ public int <B>getIntAttribute</B>(java.lang.String&nbsp;name,
 </DL>
 <HR>
 
-<A NAME="getIntAttribute(java.lang.String, java.lang.String, int)"><!-- --></A><H3>
-getIntAttribute</H3>
-<PRE>
-public int <B>getIntAttribute</B>(java.lang.String&nbsp;name,
-                           java.lang.String&nbsp;namespace,
-                           int&nbsp;defaultValue)</PRE>
-<DL>
-<DD>Returns the value of an attribute.
-<P>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-<DT><B>Parameters:</B><DD><CODE>name</CODE> - the non-null name of the attribute.<DD><CODE>namespace</CODE> - the namespace URI, which may be null.<DD><CODE>defaultValue</CODE> - the default value of the attribute.
-<DT><B>Returns:</B><DD>the value, or defaultValue if the attribute does not exist.</DL>
-</DD>
-</DL>
-<HR>
-
 <A NAME="getFloatAttribute(java.lang.String)"><!-- --></A><H3>
 getFloatAttribute</H3>
 <PRE>
 public float <B>getFloatAttribute</B>(java.lang.String&nbsp;name)</PRE>
 <DL>
+<DD><B>Deprecated.</B>&nbsp;<I>use getFloat() instead</I>
+<P>
 <DD><DL>
 </DL>
 </DD>
@@ -1387,6 +1307,37 @@ getFloatAttribute</H3>
 public float <B>getFloatAttribute</B>(java.lang.String&nbsp;name,
                                float&nbsp;defaultValue)</PRE>
 <DL>
+<DD><B>Deprecated.</B>&nbsp;<I>use getFloat() instead</I>
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFloat(java.lang.String)"><!-- --></A><H3>
+getFloat</H3>
+<PRE>
+public float <B>getFloat</B>(java.lang.String&nbsp;name)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFloat(java.lang.String, float)"><!-- --></A><H3>
+getFloat</H3>
+<PRE>
+public float <B>getFloat</B>(java.lang.String&nbsp;name,
+                      float&nbsp;defaultValue)</PRE>
+<DL>
 <DD>Returns a float attribute of the element.
  If the <b>default</b> parameter is used and the attribute doesn't exist, the <b>default</b> value is returned.
  When using the version of the method without the <b>default</b> parameter, if the attribute doesn't exist, the value 0 is returned.
@@ -1401,29 +1352,10 @@ public float <B>getFloatAttribute</B>(java.lang.String&nbsp;name,
 </DL>
 <HR>
 
-<A NAME="getFloatAttribute(java.lang.String, java.lang.String, float)"><!-- --></A><H3>
-getFloatAttribute</H3>
+<A NAME="getDouble(java.lang.String)"><!-- --></A><H3>
+getDouble</H3>
 <PRE>
-public float <B>getFloatAttribute</B>(java.lang.String&nbsp;name,
-                               java.lang.String&nbsp;namespace,
-                               float&nbsp;defaultValue)</PRE>
-<DL>
-<DD>Returns the value of an attribute.
-<P>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-<DT><B>Parameters:</B><DD><CODE>name</CODE> - the non-null name of the attribute.<DD><CODE>namespace</CODE> - the namespace URI, which may be null.<DD><CODE>defaultValue</CODE> - the default value of the attribute.
-<DT><B>Returns:</B><DD>the value, or defaultValue if the attribute does not exist.</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="getDoubleAttribute(java.lang.String)"><!-- --></A><H3>
-getDoubleAttribute</H3>
-<PRE>
-public double <B>getDoubleAttribute</B>(java.lang.String&nbsp;name)</PRE>
+public double <B>getDouble</B>(java.lang.String&nbsp;name)</PRE>
 <DL>
 <DD><DL>
 </DL>
@@ -1434,11 +1366,11 @@ public double <B>getDoubleAttribute</B>(java.lang.String&nbsp;name)</PRE>
 </DL>
 <HR>
 
-<A NAME="getDoubleAttribute(java.lang.String, double)"><!-- --></A><H3>
-getDoubleAttribute</H3>
+<A NAME="getDouble(java.lang.String, double)"><!-- --></A><H3>
+getDouble</H3>
 <PRE>
-public double <B>getDoubleAttribute</B>(java.lang.String&nbsp;name,
-                                 double&nbsp;defaultValue)</PRE>
+public double <B>getDouble</B>(java.lang.String&nbsp;name,
+                        double&nbsp;defaultValue)</PRE>
 <DL>
 <DD>Returns the value of an attribute.
 <P>
@@ -1452,82 +1384,11 @@ public double <B>getDoubleAttribute</B>(java.lang.String&nbsp;name,
 </DL>
 <HR>
 
-<A NAME="getDoubleAttribute(java.lang.String, java.lang.String, double)"><!-- --></A><H3>
-getDoubleAttribute</H3>
+<A NAME="setString(java.lang.String, java.lang.String)"><!-- --></A><H3>
+setString</H3>
 <PRE>
-public double <B>getDoubleAttribute</B>(java.lang.String&nbsp;name,
-                                 java.lang.String&nbsp;namespace,
-                                 double&nbsp;defaultValue)</PRE>
-<DL>
-<DD>Returns the value of an attribute.
-<P>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-<DT><B>Parameters:</B><DD><CODE>name</CODE> - the non-null name of the attribute.<DD><CODE>namespace</CODE> - the namespace URI, which may be null.<DD><CODE>defaultValue</CODE> - the default value of the attribute.
-<DT><B>Returns:</B><DD>the value, or defaultValue if the attribute does not exist.</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="getAttributeType(java.lang.String)"><!-- --></A><H3>
-getAttributeType</H3>
-<PRE>
-public java.lang.String <B>getAttributeType</B>(java.lang.String&nbsp;name)</PRE>
-<DL>
-<DD>Returns the type of an attribute.
-<P>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-<DT><B>Parameters:</B><DD><CODE>name</CODE> - the non-null full name of the attribute.
-<DT><B>Returns:</B><DD>the type, or null if the attribute does not exist.</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="getAttributeNamespace(java.lang.String)"><!-- --></A><H3>
-getAttributeNamespace</H3>
-<PRE>
-public java.lang.String <B>getAttributeNamespace</B>(java.lang.String&nbsp;name)</PRE>
-<DL>
-<DD>Returns the namespace of an attribute.
-<P>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-<DT><B>Parameters:</B><DD><CODE>name</CODE> - the non-null full name of the attribute.
-<DT><B>Returns:</B><DD>the namespace, or null if there is none associated.</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="getAttributeType(java.lang.String, java.lang.String)"><!-- --></A><H3>
-getAttributeType</H3>
-<PRE>
-public java.lang.String <B>getAttributeType</B>(java.lang.String&nbsp;name,
-                                         java.lang.String&nbsp;namespace)</PRE>
-<DL>
-<DD>Returns the type of an attribute.
-<P>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-<DT><B>Parameters:</B><DD><CODE>name</CODE> - the non-null name of the attribute.<DD><CODE>namespace</CODE> - the namespace URI, which may be null.
-<DT><B>Returns:</B><DD>the type, or null if the attribute does not exist.</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="setAttribute(java.lang.String, java.lang.String)"><!-- --></A><H3>
-setAttribute</H3>
-<PRE>
-public void <B>setAttribute</B>(java.lang.String&nbsp;name,
-                         java.lang.String&nbsp;value)</PRE>
+public void <B>setString</B>(java.lang.String&nbsp;name,
+                      java.lang.String&nbsp;value)</PRE>
 <DL>
 <DD>Sets an attribute.
 <P>
@@ -1540,70 +1401,78 @@ public void <B>setAttribute</B>(java.lang.String&nbsp;name,
 </DL>
 <HR>
 
-<A NAME="setAttribute(java.lang.String, java.lang.String, java.lang.String)"><!-- --></A><H3>
-setAttribute</H3>
+<A NAME="setBoolean(java.lang.String, boolean)"><!-- --></A><H3>
+setBoolean</H3>
 <PRE>
-public void <B>setAttribute</B>(java.lang.String&nbsp;fullName,
-                         java.lang.String&nbsp;namespace,
-                         java.lang.String&nbsp;value)</PRE>
+public void <B>setBoolean</B>(java.lang.String&nbsp;name,
+                       boolean&nbsp;value)</PRE>
 <DL>
-<DD>Sets an attribute.
-<P>
 <DD><DL>
 </DL>
 </DD>
 <DD><DL>
-<DT><B>Parameters:</B><DD><CODE>fullName</CODE> - the non-null full name of the attribute.<DD><CODE>namespace</CODE> - the namespace URI of the attribute, which may be null.<DD><CODE>value</CODE> - the non-null value of the attribute.</DL>
+</DL>
 </DD>
 </DL>
 <HR>
 
-<A NAME="removeAttribute(java.lang.String)"><!-- --></A><H3>
-removeAttribute</H3>
+<A NAME="setInt(java.lang.String, int)"><!-- --></A><H3>
+setInt</H3>
 <PRE>
-public void <B>removeAttribute</B>(java.lang.String&nbsp;name)</PRE>
+public void <B>setInt</B>(java.lang.String&nbsp;name,
+                   int&nbsp;value)</PRE>
 <DL>
-<DD>Removes an attribute.
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setFloat(java.lang.String, float)"><!-- --></A><H3>
+setFloat</H3>
+<PRE>
+public void <B>setFloat</B>(java.lang.String&nbsp;name,
+                     float&nbsp;value)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setDouble(java.lang.String, double)"><!-- --></A><H3>
+setDouble</H3>
+<PRE>
+public void <B>setDouble</B>(java.lang.String&nbsp;name,
+                      double&nbsp;value)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="remove(java.lang.String)"><!-- --></A><H3>
+remove</H3>
+<PRE>
+public void <B>remove</B>(java.lang.String&nbsp;name)</PRE>
+<DL>
+<DD>Removes an attribute. Formerly removeAttribute().
 <P>
 <DD><DL>
 </DL>
 </DD>
 <DD><DL>
 <DT><B>Parameters:</B><DD><CODE>name</CODE> - the non-null name of the attribute.</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="removeAttribute(java.lang.String, java.lang.String)"><!-- --></A><H3>
-removeAttribute</H3>
-<PRE>
-public void <B>removeAttribute</B>(java.lang.String&nbsp;name,
-                            java.lang.String&nbsp;namespace)</PRE>
-<DL>
-<DD>Removes an attribute.
-<P>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-<DT><B>Parameters:</B><DD><CODE>name</CODE> - the non-null name of the attribute.<DD><CODE>namespace</CODE> - the namespace URI of the attribute, which may be null.</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="enumerateAttributeNames()"><!-- --></A><H3>
-enumerateAttributeNames</H3>
-<PRE>
-public java.util.Enumeration&lt;java.lang.String&gt; <B>enumerateAttributeNames</B>()</PRE>
-<DL>
-<DD>Returns an enumeration of all attribute names.
-<P>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-
-<DT><B>Returns:</B><DD>the non-null enumeration.</DL>
 </DD>
 </DL>
 <HR>
@@ -1625,58 +1494,6 @@ public boolean <B>hasAttribute</B>(java.lang.String&nbsp;name)</PRE>
 </DL>
 <HR>
 
-<A NAME="hasAttribute(java.lang.String, java.lang.String)"><!-- --></A><H3>
-hasAttribute</H3>
-<PRE>
-public boolean <B>hasAttribute</B>(java.lang.String&nbsp;name,
-                            java.lang.String&nbsp;namespace)</PRE>
-<DL>
-<DD>Returns whether an attribute exists.
-<P>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-
-<DT><B>Returns:</B><DD>true if the attribute exists.</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="getAttributes()"><!-- --></A><H3>
-getAttributes</H3>
-<PRE>
-public java.util.Properties <B>getAttributes</B>()</PRE>
-<DL>
-<DD>Returns all attributes as a Properties object.
-<P>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-
-<DT><B>Returns:</B><DD>the non-null set.</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="getAttributesInNamespace(java.lang.String)"><!-- --></A><H3>
-getAttributesInNamespace</H3>
-<PRE>
-public java.util.Properties <B>getAttributesInNamespace</B>(java.lang.String&nbsp;namespace)</PRE>
-<DL>
-<DD>Returns all attributes in a specific namespace as a Properties object.
-<P>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-<DT><B>Parameters:</B><DD><CODE>namespace</CODE> - the namespace URI of the attributes, which may be null.
-<DT><B>Returns:</B><DD>the non-null set.</DL>
-</DD>
-</DL>
-<HR>
-
 <A NAME="getSystemID()"><!-- --></A><H3>
 getSystemID</H3>
 <PRE>
@@ -1689,15 +1506,15 @@ public java.lang.String <B>getSystemID</B>()</PRE>
 </DD>
 <DD><DL>
 
-<DT><B>Returns:</B><DD>the system ID, or null if unknown.<DT><B>See Also:</B><DD><A HREF="../../processing/xml/XMLElement.html#getLineNr()"><CODE>getLineNr()</CODE></A></DL>
+<DT><B>Returns:</B><DD>the system ID, or null if unknown.<DT><B>See Also:</B><DD><CODE>#getLineNr</CODE></DL>
 </DD>
 </DL>
 <HR>
 
-<A NAME="getLineNr()"><!-- --></A><H3>
-getLineNr</H3>
+<A NAME="getLine()"><!-- --></A><H3>
+getLine</H3>
 <PRE>
-public int <B>getLineNr</B>()</PRE>
+public int <B>getLine</B>()</PRE>
 <DL>
 <DD>Returns the line number in the data where the element started.
 <P>
@@ -1754,28 +1571,12 @@ public void <B>setContent</B>(java.lang.String&nbsp;content)</PRE>
 <A NAME="equals(java.lang.Object)"><!-- --></A><H3>
 equals</H3>
 <PRE>
-public boolean <B>equals</B>(java.lang.Object&nbsp;rawElement)</PRE>
+public boolean <B>equals</B>(java.lang.Object&nbsp;object)</PRE>
 <DL>
 <DD>Returns true if the element equals another element.
 <P>
 <DD><DL>
 <DT><B>Overrides:</B><DD><CODE>equals</CODE> in class <CODE>java.lang.Object</CODE></DL>
-</DD>
-<DD><DL>
-<DT><B>Parameters:</B><DD><CODE>rawElement</CODE> - the element to compare to</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="equalsXMLElement(processing.xml.XMLElement)"><!-- --></A><H3>
-equalsXMLElement</H3>
-<PRE>
-public boolean <B>equalsXMLElement</B>(<A HREF="../../processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>&nbsp;rawElement)</PRE>
-<DL>
-<DD>Returns true if the element equals another element.
-<P>
-<DD><DL>
-</DL>
 </DD>
 <DD><DL>
 <DT><B>Parameters:</B><DD><CODE>rawElement</CODE> - the element to compare to</DL>
@@ -1801,6 +1602,34 @@ public java.lang.String <B>toString</B>()</PRE>
 toString</H3>
 <PRE>
 public java.lang.String <B>toString</B>(boolean&nbsp;pretty)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="save(java.lang.String)"><!-- --></A><H3>
+save</H3>
+<PRE>
+public boolean <B>save</B>(java.lang.String&nbsp;filename)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="write(java.io.PrintWriter)"><!-- --></A><H3>
+write</H3>
+<PRE>
+public boolean <B>write</B>(java.io.PrintWriter&nbsp;writer)</PRE>
 <DL>
 <DD><DL>
 </DL>

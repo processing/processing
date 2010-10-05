@@ -994,12 +994,6 @@ Static variable in interface processing.core.<A HREF="./processing/core/PConstan
 <DT><A HREF="./processing/core/PApplet.html#cos(float)"><B>cos(float)</B></A> - 
 Static method in class processing.core.<A HREF="./processing/core/PApplet.html" title="class in processing.core">PApplet</A>
 <DD>&nbsp;
-<DT><A HREF="./processing/xml/XMLElement.html#createElement(java.lang.String, java.lang.String)"><B>createElement(String, String)</B></A> - 
-Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
-<DD>Creates an empty element.
-<DT><A HREF="./processing/xml/XMLElement.html#createElement(java.lang.String, java.lang.String, java.lang.String, int)"><B>createElement(String, String, String, int)</B></A> - 
-Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
-<DD>Creates an empty element.
 <DT><A HREF="./processing/core/PApplet.html#createFont(java.lang.String, float)"><B>createFont(String, float)</B></A> - 
 Method in class processing.core.<A HREF="./processing/core/PApplet.html" title="class in processing.core">PApplet</A>
 <DD>&nbsp;
@@ -1044,9 +1038,6 @@ Static method in class processing.core.<A HREF="./processing/core/PApplet.html" 
 <DT><A HREF="./processing/core/PApplet.html#createPath(java.io.File)"><B>createPath(File)</B></A> - 
 Static method in class processing.core.<A HREF="./processing/core/PApplet.html" title="class in processing.core">PApplet</A>
 <DD>&nbsp;
-<DT><A HREF="./processing/xml/XMLElement.html#createPCDataElement()"><B>createPCDataElement()</B></A> - 
-Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
-<DD>Creates an element to be used for #PCDATA content.
 <DT><A HREF="./processing/core/PApplet.html#createReader(java.lang.String)"><B>createReader(String)</B></A> - 
 Method in class processing.core.<A HREF="./processing/core/PApplet.html" title="class in processing.core">PApplet</A>
 <DD>I want to read lines from a file.
@@ -1269,6 +1260,9 @@ Static variable in interface processing.core.<A HREF="./processing/core/PConstan
 Static variable in interface processing.core.<A HREF="./processing/core/PConstants.html" title="interface in processing.core">PConstants</A>
 <DD>&nbsp;
 <DT><A HREF="./processing/core/PConstants.html#DISABLE_DEPTH_TEST"><B>DISABLE_DEPTH_TEST</B></A> - 
+Static variable in interface processing.core.<A HREF="./processing/core/PConstants.html" title="interface in processing.core">PConstants</A>
+<DD>&nbsp;
+<DT><A HREF="./processing/core/PConstants.html#DISABLE_NATIVE_FONTS"><B>DISABLE_NATIVE_FONTS</B></A> - 
 Static variable in interface processing.core.<A HREF="./processing/core/PConstants.html" title="interface in processing.core">PConstants</A>
 <DD>&nbsp;
 <DT><A HREF="./processing/core/PConstants.html#DISABLE_OPENGL_2X_SMOOTH"><B>DISABLE_OPENGL_2X_SMOOTH</B></A> - 
@@ -1537,19 +1531,13 @@ Method in class processing.core.<A HREF="./processing/core/PGraphicsJava2D.html"
 <DT><A HREF="./processing/core/PConstants.html#ENTER"><B>ENTER</B></A> - 
 Static variable in interface processing.core.<A HREF="./processing/core/PConstants.html" title="interface in processing.core">PConstants</A>
 <DD>&nbsp;
-<DT><A HREF="./processing/xml/XMLElement.html#enumerateAttributeNames()"><B>enumerateAttributeNames()</B></A> - 
-Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
-<DD>Returns an enumeration of all attribute names.
-<DT><A HREF="./processing/xml/XMLElement.html#enumerateChildren()"><B>enumerateChildren()</B></A> - 
-Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
-<DD>Returns an enumeration of all child elements.
 <DT><A HREF="./processing/core/PConstants.html#EPSILON"><B>EPSILON</B></A> - 
 Static variable in interface processing.core.<A HREF="./processing/core/PConstants.html" title="interface in processing.core">PConstants</A>
 <DD>&nbsp;
+<DT><A HREF="./processing/core/PVector.html#equals(java.lang.Object)"><B>equals(Object)</B></A> - 
+Method in class processing.core.<A HREF="./processing/core/PVector.html" title="class in processing.core">PVector</A>
+<DD>&nbsp;
 <DT><A HREF="./processing/xml/XMLElement.html#equals(java.lang.Object)"><B>equals(Object)</B></A> - 
-Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
-<DD>Returns true if the element equals another element.
-<DT><A HREF="./processing/xml/XMLElement.html#equalsXMLElement(processing.xml.XMLElement)"><B>equalsXMLElement(XMLElement)</B></A> - 
 Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
 <DD>Returns true if the element equals another element.
 <DT><A HREF="./processing/core/PConstants.html#ER"><B>ER</B></A> - 
@@ -1715,7 +1703,7 @@ Method in class processing.core.<A HREF="./processing/core/PImage.html" title="c
 <DT><A HREF="./processing/core/PShape.html#findChild(java.lang.String)"><B>findChild(String)</B></A> - 
 Method in class processing.core.<A HREF="./processing/core/PShape.html" title="class in processing.core">PShape</A>
 <DD>Same as getChild(name), except that it first walks all the way up the
- hierarchy to the farthest parent, so that children can be found anywhere.
+ hierarchy to the eldest grandparent, so that children can be found anywhere.
 <DT><A HREF="./processing/core/PFont.html#findFont()"><B>findFont()</B></A> - 
 Method in class processing.core.<A HREF="./processing/core/PFont.html" title="class in processing.core">PFont</A>
 <DD>Attempt to find the native version of this font.
@@ -1846,39 +1834,21 @@ Method in class processing.core.<A HREF="./processing/core/PVector.html" title="
 <DT><A HREF="./processing/core/PVector.html#get(float[])"><B>get(float[])</B></A> - 
 Method in class processing.core.<A HREF="./processing/core/PVector.html" title="class in processing.core">PVector</A>
 <DD>&nbsp;
-<DT><A HREF="./processing/xml/XMLElement.html#getAttribute(java.lang.String)"><B>getAttribute(String)</B></A> - 
-Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
-<DD>Returns the value of an attribute.
-<DT><A HREF="./processing/xml/XMLElement.html#getAttribute(java.lang.String, java.lang.String)"><B>getAttribute(String, String)</B></A> - 
-Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
-<DD>Returns the value of an attribute.
-<DT><A HREF="./processing/xml/XMLElement.html#getAttribute(java.lang.String, java.lang.String, java.lang.String)"><B>getAttribute(String, String, String)</B></A> - 
-Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
-<DD>Returns the value of an attribute.
 <DT><A HREF="./processing/xml/XMLElement.html#getAttributeCount()"><B>getAttributeCount()</B></A> - 
 Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
 <DD>Returns the number of attributes.
 <DT><A HREF="./processing/xml/XMLValidationException.html#getAttributeName()"><B>getAttributeName()</B></A> - 
 Method in exception processing.xml.<A HREF="./processing/xml/XMLValidationException.html" title="class in processing.xml">XMLValidationException</A>
 <DD>Returns the name of the attribute in which the validation is violated.
-<DT><A HREF="./processing/xml/XMLElement.html#getAttributeNamespace(java.lang.String)"><B>getAttributeNamespace(String)</B></A> - 
-Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
-<DD>Returns the namespace of an attribute.
-<DT><A HREF="./processing/xml/XMLElement.html#getAttributes()"><B>getAttributes()</B></A> - 
-Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
-<DD>Returns all attributes as a Properties object.
-<DT><A HREF="./processing/xml/XMLElement.html#getAttributesInNamespace(java.lang.String)"><B>getAttributesInNamespace(String)</B></A> - 
-Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
-<DD>Returns all attributes in a specific namespace as a Properties object.
-<DT><A HREF="./processing/xml/XMLElement.html#getAttributeType(java.lang.String)"><B>getAttributeType(String)</B></A> - 
-Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
-<DD>Returns the type of an attribute.
-<DT><A HREF="./processing/xml/XMLElement.html#getAttributeType(java.lang.String, java.lang.String)"><B>getAttributeType(String, String)</B></A> - 
-Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
-<DD>Returns the type of an attribute.
 <DT><A HREF="./processing/xml/XMLValidationException.html#getAttributeValue()"><B>getAttributeValue()</B></A> - 
 Method in exception processing.xml.<A HREF="./processing/xml/XMLValidationException.html" title="class in processing.xml">XMLValidationException</A>
 <DD>Returns the value of the attribute in which the validation is violated.
+<DT><A HREF="./processing/xml/XMLElement.html#getBoolean(java.lang.String)"><B>getBoolean(String)</B></A> - 
+Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
+<DD>Returns a boolean attribute of the element.
+<DT><A HREF="./processing/xml/XMLElement.html#getBoolean(java.lang.String, boolean)"><B>getBoolean(String, boolean)</B></A> - 
+Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
+<DD>Returns a boolean attribute of the element.
 <DT><A HREF="./processing/xml/StdXMLParser.html#getBuilder()"><B>getBuilder()</B></A> - 
 Method in class processing.xml.<A HREF="./processing/xml/StdXMLParser.html" title="class in processing.xml">StdXMLParser</A>
 <DD>Returns the builder which creates the logical structure of the XML data.
@@ -1903,9 +1873,6 @@ Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title=
 <DT><A HREF="./processing/xml/XMLElement.html#getChild(java.lang.String)"><B>getChild(String)</B></A> - 
 Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
 <DD>Returns the child XMLElement as specified by the <b>index</b> parameter.
-<DT><A HREF="./processing/xml/XMLElement.html#getChildAtIndex(int)"><B>getChildAtIndex(int)</B></A> - 
-Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
-<DD>Returns the child at a specific index.
 <DT><A HREF="./processing/core/PShape.html#getChildCount()"><B>getChildCount()</B></A> - 
 Method in class processing.core.<A HREF="./processing/core/PShape.html" title="class in processing.core">PShape</A>
 <DD>&nbsp;
@@ -1921,13 +1888,10 @@ Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title=
 <DT><A HREF="./processing/xml/XMLElement.html#getContent()"><B>getContent()</B></A> - 
 Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
 <DD>Returns the content of an element.
-<DT><A HREF="./processing/xml/XMLElement.html#getDoubleAttribute(java.lang.String)"><B>getDoubleAttribute(String)</B></A> - 
+<DT><A HREF="./processing/xml/XMLElement.html#getDouble(java.lang.String)"><B>getDouble(String)</B></A> - 
 Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
 <DD>&nbsp;
-<DT><A HREF="./processing/xml/XMLElement.html#getDoubleAttribute(java.lang.String, double)"><B>getDoubleAttribute(String, double)</B></A> - 
-Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
-<DD>Returns the value of an attribute.
-<DT><A HREF="./processing/xml/XMLElement.html#getDoubleAttribute(java.lang.String, java.lang.String, double)"><B>getDoubleAttribute(String, String, double)</B></A> - 
+<DT><A HREF="./processing/xml/XMLElement.html#getDouble(java.lang.String, double)"><B>getDouble(String, double)</B></A> - 
 Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
 <DD>Returns the value of an attribute.
 <DT><A HREF="./processing/xml/XMLValidationException.html#getElementName()"><B>getElementName()</B></A> - 
@@ -1943,15 +1907,18 @@ Method in exception processing.xml.<A HREF="./processing/xml/XMLException.html" 
 <DT><A HREF="./processing/core/PShape.html#getFamily()"><B>getFamily()</B></A> - 
 Method in class processing.core.<A HREF="./processing/core/PShape.html" title="class in processing.core">PShape</A>
 <DD>The shape type, one of GROUP, PRIMITIVE, PATH, or GEOMETRY.
-<DT><A HREF="./processing/xml/XMLElement.html#getFloatAttribute(java.lang.String)"><B>getFloatAttribute(String)</B></A> - 
+<DT><A HREF="./processing/xml/XMLElement.html#getFloat(java.lang.String)"><B>getFloat(String)</B></A> - 
 Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
 <DD>&nbsp;
-<DT><A HREF="./processing/xml/XMLElement.html#getFloatAttribute(java.lang.String, float)"><B>getFloatAttribute(String, float)</B></A> - 
+<DT><A HREF="./processing/xml/XMLElement.html#getFloat(java.lang.String, float)"><B>getFloat(String, float)</B></A> - 
 Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
 <DD>Returns a float attribute of the element.
-<DT><A HREF="./processing/xml/XMLElement.html#getFloatAttribute(java.lang.String, java.lang.String, float)"><B>getFloatAttribute(String, String, float)</B></A> - 
+<DT><A HREF="./processing/xml/XMLElement.html#getFloatAttribute(java.lang.String)"><B>getFloatAttribute(String)</B></A> - 
 Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
-<DD>Returns the value of an attribute.
+<DD><B>Deprecated.</B>&nbsp;<I>use getFloat() instead</I>
+<DT><A HREF="./processing/xml/XMLElement.html#getFloatAttribute(java.lang.String, float)"><B>getFloatAttribute(String, float)</B></A> - 
+Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
+<DD><B>Deprecated.</B>&nbsp;<I>use getFloat() instead</I>
 <DT><A HREF="./processing/core/PFont.html#getFont()"><B>getFont()</B></A> - 
 Method in class processing.core.<A HREF="./processing/core/PFont.html" title="class in processing.core">PFont</A>
 <DD>Return the native java.awt.Font associated with this PFont (if any).
@@ -1967,27 +1934,30 @@ Method in class processing.core.<A HREF="./processing/core/PImage.html" title="c
 <DT><A HREF="./processing/core/PGraphicsJava2D.html#getImpl(int, int, int, int)"><B>getImpl(int, int, int, int)</B></A> - 
 Method in class processing.core.<A HREF="./processing/core/PGraphicsJava2D.html" title="class in processing.core">PGraphicsJava2D</A>
 <DD>&nbsp;
+<DT><A HREF="./processing/xml/XMLElement.html#getInt(java.lang.String)"><B>getInt(String)</B></A> - 
+Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
+<DD>Returns an integer attribute of the element.
+<DT><A HREF="./processing/xml/XMLElement.html#getInt(java.lang.String, int)"><B>getInt(String, int)</B></A> - 
+Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
+<DD>Returns an integer attribute of the element.
 <DT><A HREF="./processing/xml/XMLElement.html#getIntAttribute(java.lang.String)"><B>getIntAttribute(String)</B></A> - 
 Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
-<DD>Returns an integer attribute of the element.
+<DD><B>Deprecated.</B>&nbsp;<I>use getInt() instead</I>
 <DT><A HREF="./processing/xml/XMLElement.html#getIntAttribute(java.lang.String, int)"><B>getIntAttribute(String, int)</B></A> - 
 Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
-<DD>Returns an integer attribute of the element.
-<DT><A HREF="./processing/xml/XMLElement.html#getIntAttribute(java.lang.String, java.lang.String, int)"><B>getIntAttribute(String, String, int)</B></A> - 
+<DD><B>Deprecated.</B>&nbsp;<I>use getInt() instead</I>
+<DT><A HREF="./processing/xml/XMLElement.html#getLine()"><B>getLine()</B></A> - 
 Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
-<DD>Returns the value of an attribute.
+<DD>Returns the line number in the data where the element started.
 <DT><A HREF="./processing/xml/StdXMLReader.html#getLineNr()"><B>getLineNr()</B></A> - 
 Method in class processing.xml.<A HREF="./processing/xml/StdXMLReader.html" title="class in processing.xml">StdXMLReader</A>
 <DD>Returns the line number of the data in the current stream.
-<DT><A HREF="./processing/xml/XMLElement.html#getLineNr()"><B>getLineNr()</B></A> - 
-Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
-<DD>Returns the line number in the data where the element started.
 <DT><A HREF="./processing/xml/XMLException.html#getLineNr()"><B>getLineNr()</B></A> - 
 Method in exception processing.xml.<A HREF="./processing/xml/XMLException.html" title="class in processing.xml">XMLException</A>
 <DD>Returns the line number in the XML data where the exception occurred.
 <DT><A HREF="./processing/xml/XMLElement.html#getLocalName()"><B>getLocalName()</B></A> - 
 Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
-<DD>Returns the name of the element.
+<DD>Returns the name of the element without its namespace.
 <DT><A HREF="./processing/core/PApplet.html#getMatrix()"><B>getMatrix()</B></A> - 
 Method in class processing.core.<A HREF="./processing/core/PApplet.html" title="class in processing.core">PApplet</A>
 <DD>&nbsp;
@@ -2033,9 +2003,18 @@ Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title=
 <DT><A HREF="./processing/xml/XMLElement.html#getNamespace()"><B>getNamespace()</B></A> - 
 Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
 <DD>Returns the namespace of the element.
+<DT><A HREF="./processing/core/PShape.html#getParam(int)"><B>getParam(int)</B></A> - 
+Method in class processing.core.<A HREF="./processing/core/PShape.html" title="class in processing.core">PShape</A>
+<DD>&nbsp;
 <DT><A HREF="./processing/xml/XMLValidator.html#getParameterEntityResolver()"><B>getParameterEntityResolver()</B></A> - 
 Method in class processing.xml.<A HREF="./processing/xml/XMLValidator.html" title="class in processing.xml">XMLValidator</A>
 <DD>Returns the parameter entity resolver.
+<DT><A HREF="./processing/core/PShape.html#getParams()"><B>getParams()</B></A> - 
+Method in class processing.core.<A HREF="./processing/core/PShape.html" title="class in processing.core">PShape</A>
+<DD>&nbsp;
+<DT><A HREF="./processing/core/PShape.html#getParams(float[])"><B>getParams(float[])</B></A> - 
+Method in class processing.core.<A HREF="./processing/core/PShape.html" title="class in processing.core">PShape</A>
+<DD>&nbsp;
 <DT><A HREF="./processing/xml/XMLElement.html#getParent()"><B>getParent()</B></A> - 
 Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
 <DD>Returns the parent element.
@@ -2057,27 +2036,21 @@ Method in class processing.xml.<A HREF="./processing/xml/StdXMLParser.html" titl
 <DT><A HREF="./processing/xml/StdXMLBuilder.html#getResult()"><B>getResult()</B></A> - 
 Method in class processing.xml.<A HREF="./processing/xml/StdXMLBuilder.html" title="class in processing.xml">StdXMLBuilder</A>
 <DD>Returns the result of the building process.
-<DT><A HREF="./processing/core/PApplet.html#getSketchHeight()"><B>getSketchHeight()</B></A> - 
-Method in class processing.core.<A HREF="./processing/core/PApplet.html" title="class in processing.core">PApplet</A>
-<DD>&nbsp;
-<DT><A HREF="./processing/core/PApplet.html#getSketchRenderer()"><B>getSketchRenderer()</B></A> - 
-Method in class processing.core.<A HREF="./processing/core/PApplet.html" title="class in processing.core">PApplet</A>
-<DD>&nbsp;
-<DT><A HREF="./processing/core/PApplet.html#getSketchWidth()"><B>getSketchWidth()</B></A> - 
-Method in class processing.core.<A HREF="./processing/core/PApplet.html" title="class in processing.core">PApplet</A>
-<DD>&nbsp;
 <DT><A HREF="./processing/xml/StdXMLReader.html#getStreamLevel()"><B>getStreamLevel()</B></A> - 
 Method in class processing.xml.<A HREF="./processing/xml/StdXMLReader.html" title="class in processing.xml">StdXMLReader</A>
 <DD>Returns the current "level" of the stream on the stack of streams.
+<DT><A HREF="./processing/xml/XMLElement.html#getString(java.lang.String)"><B>getString(String)</B></A> - 
+Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
+<DD>&nbsp;
+<DT><A HREF="./processing/xml/XMLElement.html#getString(java.lang.String, java.lang.String)"><B>getString(String, String)</B></A> - 
+Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
+<DD>&nbsp;
 <DT><A HREF="./processing/xml/XMLElement.html#getStringAttribute(java.lang.String)"><B>getStringAttribute(String)</B></A> - 
 Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
-<DD>&nbsp;
+<DD><B>Deprecated.</B>&nbsp;<I>use getString() or getAttribute()</I>
 <DT><A HREF="./processing/xml/XMLElement.html#getStringAttribute(java.lang.String, java.lang.String)"><B>getStringAttribute(String, String)</B></A> - 
 Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
-<DD>Returns a String attribute of the element.
-<DT><A HREF="./processing/xml/XMLElement.html#getStringAttribute(java.lang.String, java.lang.String, java.lang.String)"><B>getStringAttribute(String, String, String)</B></A> - 
-Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
-<DD>&nbsp;
+<DD><B>Deprecated.</B>&nbsp;<I>use getString() or getAttribute()</I>
 <DT><A HREF="./processing/core/PGraphics.html#getStyle()"><B>getStyle()</B></A> - 
 Method in class processing.core.<A HREF="./processing/core/PGraphics.html" title="class in processing.core">PGraphics</A>
 <DD>&nbsp;
@@ -2167,12 +2140,12 @@ Static variable in interface processing.core.<A HREF="./processing/core/PConstan
 <DT><A HREF="./processing/xml/XMLElement.html#hasAttribute(java.lang.String)"><B>hasAttribute(String)</B></A> - 
 Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
 <DD>Returns whether an attribute exists.
-<DT><A HREF="./processing/xml/XMLElement.html#hasAttribute(java.lang.String, java.lang.String)"><B>hasAttribute(String, String)</B></A> - 
-Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
-<DD>Returns whether an attribute exists.
 <DT><A HREF="./processing/xml/XMLElement.html#hasChildren()"><B>hasChildren()</B></A> - 
 Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
 <DD>Returns whether the element has children.
+<DT><A HREF="./processing/core/PVector.html#hashCode()"><B>hashCode()</B></A> - 
+Method in class processing.core.<A HREF="./processing/core/PVector.html" title="class in processing.core">PVector</A>
+<DD>&nbsp;
 <DT><A HREF="./processing/core/PVector.html#heading2D()"><B>heading2D()</B></A> - 
 Method in class processing.core.<A HREF="./processing/core/PVector.html" title="class in processing.core">PVector</A>
 <DD>Calculate the angle of rotation for this vector (only 2D vectors)
@@ -2537,6 +2510,9 @@ Static variable in interface processing.core.<A HREF="./processing/core/PConstan
 Static method in class processing.core.<A HREF="./processing/core/PFont.html" title="class in processing.core">PFont</A>
 <DD>Get a list of the fonts installed on the system that can be used
  by Java.
+<DT><A HREF="./processing/xml/XMLElement.html#listAttributes()"><B>listAttributes()</B></A> - 
+Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
+<DD>&nbsp;
 <DT><A HREF="./processing/xml/XMLElement.html#listChildren()"><B>listChildren()</B></A> - 
 Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
 <DD>Put the names of all children into an array.
@@ -2679,7 +2655,7 @@ Method in class processing.core.<A HREF="./processing/core/PVector.html" title="
 <DD>Calculate the magnitude (length) of the vector
 <DT><A HREF="./processing/core/PApplet.html#main(java.lang.String[])"><B>main(String[])</B></A> - 
 Static method in class processing.core.<A HREF="./processing/core/PApplet.html" title="class in processing.core">PApplet</A>
-<DD>main() method for running this class from the command line.
+<DD>&nbsp;
 <DT><A HREF="./processing/core/PApplet.html#map(float, float, float, float, float)"><B>map(float, float, float, float, float)</B></A> - 
 Static method in class processing.core.<A HREF="./processing/core/PApplet.html" title="class in processing.core">PApplet</A>
 <DD>Convenience function to map a variable from one coordinate space
@@ -3231,6 +3207,12 @@ Variable in class processing.core.<A HREF="./processing/core/PImage.html" title=
 <DT><A HREF="./processing/xml/StdXMLParser.html#parse()"><B>parse()</B></A> - 
 Method in class processing.xml.<A HREF="./processing/xml/StdXMLParser.html" title="class in processing.xml">StdXMLParser</A>
 <DD>Parses the data and lets the builder create the logical data structure.
+<DT><A HREF="./processing/xml/XMLElement.html#parse(java.lang.String)"><B>parse(String)</B></A> - 
+Static method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
+<DD>&nbsp;
+<DT><A HREF="./processing/xml/XMLElement.html#parse(java.io.Reader)"><B>parse(Reader)</B></A> - 
+Static method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
+<DD>&nbsp;
 <DT><A HREF="./processing/core/PApplet.html#parseBoolean(int)"><B>parseBoolean(int)</B></A> - 
 Static method in class processing.core.<A HREF="./processing/core/PApplet.html" title="class in processing.core">PApplet</A>
 <DD>Convert an integer to a boolean.
@@ -3796,12 +3778,24 @@ Variable in class processing.core.<A HREF="./processing/core/PApplet.html" title
 <DT><A HREF="./processing/core/PApplet.html#rect(float, float, float, float)"><B>rect(float, float, float, float)</B></A> - 
 Method in class processing.core.<A HREF="./processing/core/PApplet.html" title="class in processing.core">PApplet</A>
 <DD>Draws a rectangle to the screen.
+<DT><A HREF="./processing/core/PApplet.html#rect(float, float, float, float, float, float)"><B>rect(float, float, float, float, float, float)</B></A> - 
+Method in class processing.core.<A HREF="./processing/core/PApplet.html" title="class in processing.core">PApplet</A>
+<DD>&nbsp;
+<DT><A HREF="./processing/core/PApplet.html#rect(float, float, float, float, float, float, float, float)"><B>rect(float, float, float, float, float, float, float, float)</B></A> - 
+Method in class processing.core.<A HREF="./processing/core/PApplet.html" title="class in processing.core">PApplet</A>
+<DD>&nbsp;
 <DT><A HREF="./processing/core/PConstants.html#RECT"><B>RECT</B></A> - 
 Static variable in interface processing.core.<A HREF="./processing/core/PConstants.html" title="interface in processing.core">PConstants</A>
 <DD>&nbsp;
 <DT><A HREF="./processing/core/PGraphics.html#rect(float, float, float, float)"><B>rect(float, float, float, float)</B></A> - 
 Method in class processing.core.<A HREF="./processing/core/PGraphics.html" title="class in processing.core">PGraphics</A>
 <DD>Draws a rectangle to the screen.
+<DT><A HREF="./processing/core/PGraphics.html#rect(float, float, float, float, float, float)"><B>rect(float, float, float, float, float, float)</B></A> - 
+Method in class processing.core.<A HREF="./processing/core/PGraphics.html" title="class in processing.core">PGraphics</A>
+<DD>&nbsp;
+<DT><A HREF="./processing/core/PGraphics.html#rect(float, float, float, float, float, float, float, float)"><B>rect(float, float, float, float, float, float, float, float)</B></A> - 
+Method in class processing.core.<A HREF="./processing/core/PGraphics.html" title="class in processing.core">PGraphics</A>
+<DD>&nbsp;
 <DT><A HREF="./processing/core/PApplet.html#rectMode(int)"><B>rectMode(int)</B></A> - 
 Method in class processing.core.<A HREF="./processing/core/PApplet.html" title="class in processing.core">PApplet</A>
 <DD>&nbsp;
@@ -3851,10 +3845,7 @@ Method in class processing.core.<A HREF="./processing/core/PApplet.html" title="
 Method in class processing.core.<A HREF="./processing/core/PApplet.RegisteredMethods.html" title="class in processing.core">PApplet.RegisteredMethods</A>
 <DD>Removes first object/method pair matched (and only the first,
  must be called multiple times if object is registered multiple times).
-<DT><A HREF="./processing/xml/XMLElement.html#removeAttribute(java.lang.String)"><B>removeAttribute(String)</B></A> - 
-Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
-<DD>Removes an attribute.
-<DT><A HREF="./processing/xml/XMLElement.html#removeAttribute(java.lang.String, java.lang.String)"><B>removeAttribute(String, String)</B></A> - 
+<DT><A HREF="./processing/xml/XMLElement.html#remove(java.lang.String)"><B>remove(String)</B></A> - 
 Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
 <DD>Removes an attribute.
 <DT><A HREF="./processing/core/PApplet.html#removeCache(java.lang.Object)"><B>removeCache(Object)</B></A> - 
@@ -3866,7 +3857,7 @@ Method in class processing.core.<A HREF="./processing/core/PImage.html" title="c
 <DT><A HREF="./processing/xml/XMLElement.html#removeChild(processing.xml.XMLElement)"><B>removeChild(XMLElement)</B></A> - 
 Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
 <DD>Removes a child element.
-<DT><A HREF="./processing/xml/XMLElement.html#removeChildAtIndex(int)"><B>removeChildAtIndex(int)</B></A> - 
+<DT><A HREF="./processing/xml/XMLElement.html#removeChild(int)"><B>removeChild(int)</B></A> - 
 Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
 <DD>Removes the child located at a certain index.
 <DT><A HREF="./processing/core/PSmoothTriangle.html#render()"><B>render()</B></A> - 
@@ -4105,6 +4096,9 @@ Static variable in interface processing.core.<A HREF="./processing/core/PConstan
 <DT><A HREF="./processing/core/PApplet.html#run()"><B>run()</B></A> - 
 Method in class processing.core.<A HREF="./processing/core/PApplet.html" title="class in processing.core">PApplet</A>
 <DD>Main method for the primary animation thread.
+<DT><A HREF="./processing/core/PApplet.html#runSketch(java.lang.String[], processing.core.PApplet)"><B>runSketch(String[], PApplet)</B></A> - 
+Static method in class processing.core.<A HREF="./processing/core/PApplet.html" title="class in processing.core">PApplet</A>
+<DD>main() method for running this class from the command line.
 </DL>
 <HR>
 <A NAME="_S_"><!-- --></A><H2>
@@ -4129,6 +4123,9 @@ Method in class processing.core.<A HREF="./processing/core/PFont.html" title="cl
 <DT><A HREF="./processing/core/PImage.html#save(java.lang.String)"><B>save(String)</B></A> - 
 Method in class processing.core.<A HREF="./processing/core/PImage.html" title="class in processing.core">PImage</A>
 <DD>Saves the image into a file.
+<DT><A HREF="./processing/xml/XMLElement.html#save(java.lang.String)"><B>save(String)</B></A> - 
+Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
+<DD>&nbsp;
 <DT><A HREF="./processing/core/PApplet.html#saveBytes(java.lang.String, byte[])"><B>saveBytes(String, byte[])</B></A> - 
 Method in class processing.core.<A HREF="./processing/core/PApplet.html" title="class in processing.core">PApplet</A>
 <DD>Saves bytes to a file to inside the sketch folder.
@@ -4427,12 +4424,9 @@ Method in class processing.core.<A HREF="./processing/core/PVector.html" title="
 <DT><A HREF="./processing/core/PVector.html#set(float[])"><B>set(float[])</B></A> - 
 Method in class processing.core.<A HREF="./processing/core/PVector.html" title="class in processing.core">PVector</A>
 <DD>Set the x, y (and maybe z) coordinates using a float[] array as the source.
-<DT><A HREF="./processing/xml/XMLElement.html#setAttribute(java.lang.String, java.lang.String)"><B>setAttribute(String, String)</B></A> - 
+<DT><A HREF="./processing/xml/XMLElement.html#setBoolean(java.lang.String, boolean)"><B>setBoolean(String, boolean)</B></A> - 
 Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
-<DD>Sets an attribute.
-<DT><A HREF="./processing/xml/XMLElement.html#setAttribute(java.lang.String, java.lang.String, java.lang.String)"><B>setAttribute(String, String, String)</B></A> - 
-Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
-<DD>Sets an attribute.
+<DD>&nbsp;
 <DT><A HREF="./processing/xml/StdXMLParser.html#setBuilder(processing.xml.StdXMLBuilder)"><B>setBuilder(StdXMLBuilder)</B></A> - 
 Method in class processing.xml.<A HREF="./processing/xml/StdXMLParser.html" title="class in processing.xml">StdXMLParser</A>
 <DD>Sets the builder which creates the logical structure of the XML data.
@@ -4456,11 +4450,20 @@ Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title=
 <DT><A HREF="./processing/core/PTriangle.html#setCulling(boolean)"><B>setCulling(boolean)</B></A> - 
 Method in class processing.core.<A HREF="./processing/core/PTriangle.html" title="class in processing.core">PTriangle</A>
 <DD>Sets backface culling on/off
+<DT><A HREF="./processing/xml/XMLElement.html#setDouble(java.lang.String, double)"><B>setDouble(String, double)</B></A> - 
+Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
+<DD>&nbsp;
+<DT><A HREF="./processing/xml/XMLElement.html#setFloat(java.lang.String, float)"><B>setFloat(String, float)</B></A> - 
+Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
+<DD>&nbsp;
 <DT><A HREF="./processing/core/PFont.html#setFont(java.awt.Font)"><B>setFont(Font)</B></A> - 
 Method in class processing.core.<A HREF="./processing/core/PFont.html" title="class in processing.core">PFont</A>
 <DD>Set the native complement of this font.
 <DT><A HREF="./processing/core/PLine.html#setIndex(int)"><B>setIndex(int)</B></A> - 
 Method in class processing.core.<A HREF="./processing/core/PLine.html" title="class in processing.core">PLine</A>
+<DD>&nbsp;
+<DT><A HREF="./processing/xml/XMLElement.html#setInt(java.lang.String, int)"><B>setInt(String, int)</B></A> - 
+Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
 <DD>&nbsp;
 <DT><A HREF="./processing/core/PLine.html#setIntensities(float, float, float, float, float, float, float, float)"><B>setIntensities(float, float, float, float, float, float, float, float)</B></A> - 
 Method in class processing.core.<A HREF="./processing/core/PLine.html" title="class in processing.core">PLine</A>
@@ -4553,6 +4556,9 @@ Method in class processing.core.<A HREF="./processing/core/PGraphicsJava2D.html"
 <DD>Called in response to a resize event, handles setting the
  new width and height internally, as well as re-allocating
  the pixel buffer for the new size.
+<DT><A HREF="./processing/xml/XMLElement.html#setString(java.lang.String, java.lang.String)"><B>setString(String, String)</B></A> - 
+Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
+<DD>Sets an attribute.
 <DT><A HREF="./processing/xml/StdXMLReader.html#setSystemID(java.lang.String)"><B>setSystemID(String)</B></A> - 
 Method in class processing.xml.<A HREF="./processing/xml/StdXMLReader.html" title="class in processing.xml">StdXMLReader</A>
 <DD>Sets the system ID of the current stream.
@@ -4627,6 +4633,42 @@ Method in class processing.core.<A HREF="./processing/core/PGraphics.html" title
 <DT><A HREF="./processing/core/PStyle.html#shapeMode"><B>shapeMode</B></A> - 
 Variable in class processing.core.<A HREF="./processing/core/PStyle.html" title="class in processing.core">PStyle</A>
 <DD>&nbsp;
+<DT><A HREF="./processing/core/PApplet.html#shearX(float)"><B>shearX(float)</B></A> - 
+Method in class processing.core.<A HREF="./processing/core/PApplet.html" title="class in processing.core">PApplet</A>
+<DD>Shear along X axis
+<DT><A HREF="./processing/core/PGraphics.html#shearX(float)"><B>shearX(float)</B></A> - 
+Method in class processing.core.<A HREF="./processing/core/PGraphics.html" title="class in processing.core">PGraphics</A>
+<DD>Shear along X axis
+<DT><A HREF="./processing/core/PGraphics3D.html#shearX(float)"><B>shearX(float)</B></A> - 
+Method in class processing.core.<A HREF="./processing/core/PGraphics3D.html" title="class in processing.core">PGraphics3D</A>
+<DD>&nbsp;
+<DT><A HREF="./processing/core/PMatrix.html#shearX(float)"><B>shearX(float)</B></A> - 
+Method in interface processing.core.<A HREF="./processing/core/PMatrix.html" title="interface in processing.core">PMatrix</A>
+<DD>&nbsp;
+<DT><A HREF="./processing/core/PMatrix2D.html#shearX(float)"><B>shearX(float)</B></A> - 
+Method in class processing.core.<A HREF="./processing/core/PMatrix2D.html" title="class in processing.core">PMatrix2D</A>
+<DD>&nbsp;
+<DT><A HREF="./processing/core/PMatrix3D.html#shearX(float)"><B>shearX(float)</B></A> - 
+Method in class processing.core.<A HREF="./processing/core/PMatrix3D.html" title="class in processing.core">PMatrix3D</A>
+<DD>&nbsp;
+<DT><A HREF="./processing/core/PApplet.html#shearY(float)"><B>shearY(float)</B></A> - 
+Method in class processing.core.<A HREF="./processing/core/PApplet.html" title="class in processing.core">PApplet</A>
+<DD>Shear along Y axis
+<DT><A HREF="./processing/core/PGraphics.html#shearY(float)"><B>shearY(float)</B></A> - 
+Method in class processing.core.<A HREF="./processing/core/PGraphics.html" title="class in processing.core">PGraphics</A>
+<DD>Shear along Y axis
+<DT><A HREF="./processing/core/PGraphics3D.html#shearY(float)"><B>shearY(float)</B></A> - 
+Method in class processing.core.<A HREF="./processing/core/PGraphics3D.html" title="class in processing.core">PGraphics3D</A>
+<DD>&nbsp;
+<DT><A HREF="./processing/core/PMatrix.html#shearY(float)"><B>shearY(float)</B></A> - 
+Method in interface processing.core.<A HREF="./processing/core/PMatrix.html" title="interface in processing.core">PMatrix</A>
+<DD>&nbsp;
+<DT><A HREF="./processing/core/PMatrix2D.html#shearY(float)"><B>shearY(float)</B></A> - 
+Method in class processing.core.<A HREF="./processing/core/PMatrix2D.html" title="class in processing.core">PMatrix2D</A>
+<DD>&nbsp;
+<DT><A HREF="./processing/core/PMatrix3D.html#shearY(float)"><B>shearY(float)</B></A> - 
+Method in class processing.core.<A HREF="./processing/core/PMatrix3D.html" title="class in processing.core">PMatrix3D</A>
+<DD>&nbsp;
 <DT><A HREF="./processing/core/PConstants.html#SHIFT"><B>SHIFT</B></A> - 
 Static variable in interface processing.core.<A HREF="./processing/core/PConstants.html" title="interface in processing.core">PConstants</A>
 <DD>&nbsp;
@@ -4687,6 +4729,9 @@ Method in class processing.core.<A HREF="./processing/core/PApplet.html" title="
 <DT><A HREF="./processing/core/PApplet.html#sketchFile(java.lang.String)"><B>sketchFile(String)</B></A> - 
 Method in class processing.core.<A HREF="./processing/core/PApplet.html" title="class in processing.core">PApplet</A>
 <DD>&nbsp;
+<DT><A HREF="./processing/core/PApplet.html#sketchHeight()"><B>sketchHeight()</B></A> - 
+Method in class processing.core.<A HREF="./processing/core/PApplet.html" title="class in processing.core">PApplet</A>
+<DD>&nbsp;
 <DT><A HREF="./processing/core/PApplet.html#sketchPath"><B>sketchPath</B></A> - 
 Variable in class processing.core.<A HREF="./processing/core/PApplet.html" title="class in processing.core">PApplet</A>
 <DD>Path to sketch folder
@@ -4694,41 +4739,11 @@ Variable in class processing.core.<A HREF="./processing/core/PApplet.html" title
 Method in class processing.core.<A HREF="./processing/core/PApplet.html" title="class in processing.core">PApplet</A>
 <DD>Prepend the sketch folder path to the filename (or path) that is
  passed in.
-<DT><A HREF="./processing/core/PApplet.html#skewX(float)"><B>skewX(float)</B></A> - 
+<DT><A HREF="./processing/core/PApplet.html#sketchRenderer()"><B>sketchRenderer()</B></A> - 
 Method in class processing.core.<A HREF="./processing/core/PApplet.html" title="class in processing.core">PApplet</A>
-<DD>Skew along X axis
-<DT><A HREF="./processing/core/PGraphics.html#skewX(float)"><B>skewX(float)</B></A> - 
-Method in class processing.core.<A HREF="./processing/core/PGraphics.html" title="class in processing.core">PGraphics</A>
-<DD>Skew along X axis
-<DT><A HREF="./processing/core/PGraphics3D.html#skewX(float)"><B>skewX(float)</B></A> - 
-Method in class processing.core.<A HREF="./processing/core/PGraphics3D.html" title="class in processing.core">PGraphics3D</A>
 <DD>&nbsp;
-<DT><A HREF="./processing/core/PMatrix.html#skewX(float)"><B>skewX(float)</B></A> - 
-Method in interface processing.core.<A HREF="./processing/core/PMatrix.html" title="interface in processing.core">PMatrix</A>
-<DD>&nbsp;
-<DT><A HREF="./processing/core/PMatrix2D.html#skewX(float)"><B>skewX(float)</B></A> - 
-Method in class processing.core.<A HREF="./processing/core/PMatrix2D.html" title="class in processing.core">PMatrix2D</A>
-<DD>&nbsp;
-<DT><A HREF="./processing/core/PMatrix3D.html#skewX(float)"><B>skewX(float)</B></A> - 
-Method in class processing.core.<A HREF="./processing/core/PMatrix3D.html" title="class in processing.core">PMatrix3D</A>
-<DD>&nbsp;
-<DT><A HREF="./processing/core/PApplet.html#skewY(float)"><B>skewY(float)</B></A> - 
+<DT><A HREF="./processing/core/PApplet.html#sketchWidth()"><B>sketchWidth()</B></A> - 
 Method in class processing.core.<A HREF="./processing/core/PApplet.html" title="class in processing.core">PApplet</A>
-<DD>Skew along Y axis
-<DT><A HREF="./processing/core/PGraphics.html#skewY(float)"><B>skewY(float)</B></A> - 
-Method in class processing.core.<A HREF="./processing/core/PGraphics.html" title="class in processing.core">PGraphics</A>
-<DD>Skew along Y axis
-<DT><A HREF="./processing/core/PGraphics3D.html#skewY(float)"><B>skewY(float)</B></A> - 
-Method in class processing.core.<A HREF="./processing/core/PGraphics3D.html" title="class in processing.core">PGraphics3D</A>
-<DD>&nbsp;
-<DT><A HREF="./processing/core/PMatrix.html#skewY(float)"><B>skewY(float)</B></A> - 
-Method in interface processing.core.<A HREF="./processing/core/PMatrix.html" title="interface in processing.core">PMatrix</A>
-<DD>&nbsp;
-<DT><A HREF="./processing/core/PMatrix2D.html#skewY(float)"><B>skewY(float)</B></A> - 
-Method in class processing.core.<A HREF="./processing/core/PMatrix2D.html" title="class in processing.core">PMatrix2D</A>
-<DD>&nbsp;
-<DT><A HREF="./processing/core/PMatrix3D.html#skewY(float)"><B>skewY(float)</B></A> - 
-Method in class processing.core.<A HREF="./processing/core/PMatrix3D.html" title="class in processing.core">PMatrix3D</A>
 <DD>&nbsp;
 <DT><A HREF="./processing/core/PApplet.html#smooth()"><B>smooth()</B></A> - 
 Method in class processing.core.<A HREF="./processing/core/PApplet.html" title="class in processing.core">PApplet</A>
@@ -4965,8 +4980,7 @@ Method in class processing.xml.<A HREF="./processing/xml/StdXMLReader.html" titl
 <DT><A HREF="./processing/core/PApplet.html#status(java.lang.String)"><B>status(String)</B></A> - 
 Method in class processing.core.<A HREF="./processing/core/PApplet.html" title="class in processing.core">PApplet</A>
 <DD>Displays message in the browser's status area.
-<DT><A HREF="./processing/xml/StdXMLBuilder.html" title="class in processing.xml"><B>StdXMLBuilder</B></A> - Class in <A HREF="./processing/xml/package-summary.html">processing.xml</A><DD>StdXMLBuilder is a concrete implementation of IXMLBuilder which creates a
- tree of IXMLElement from an XML data source.<DT><A HREF="./processing/xml/StdXMLBuilder.html#StdXMLBuilder()"><B>StdXMLBuilder()</B></A> - 
+<DT><A HREF="./processing/xml/StdXMLBuilder.html" title="class in processing.xml"><B>StdXMLBuilder</B></A> - Class in <A HREF="./processing/xml/package-summary.html">processing.xml</A><DD>StdXMLBuilder creates a tree of XML elements from a data source.<DT><A HREF="./processing/xml/StdXMLBuilder.html#StdXMLBuilder()"><B>StdXMLBuilder()</B></A> - 
 Constructor for class processing.xml.<A HREF="./processing/xml/StdXMLBuilder.html" title="class in processing.xml">StdXMLBuilder</A>
 <DD>Creates the builder.
 <DT><A HREF="./processing/xml/StdXMLBuilder.html#StdXMLBuilder(processing.xml.XMLElement)"><B>StdXMLBuilder(XMLElement)</B></A> - 
@@ -5843,6 +5857,9 @@ Variable in class processing.core.<A HREF="./processing/core/PShape.html" title=
 <DT><A HREF="./processing/core/PConstants.html#WINDOWS"><B>WINDOWS</B></A> - 
 Static variable in interface processing.core.<A HREF="./processing/core/PConstants.html" title="interface in processing.core">PConstants</A>
 <DD>&nbsp;
+<DT><A HREF="./processing/xml/XMLElement.html#write(java.io.PrintWriter)"><B>write(PrintWriter)</B></A> - 
+Method in class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
+<DD>&nbsp;
 <DT><A HREF="./processing/xml/XMLWriter.html#write(processing.xml.XMLElement)"><B>write(XMLElement)</B></A> - 
 Method in class processing.xml.<A HREF="./processing/xml/XMLWriter.html" title="class in processing.xml">XMLWriter</A>
 <DD>Writes an XML element.
@@ -5852,7 +5869,7 @@ Method in class processing.xml.<A HREF="./processing/xml/XMLWriter.html" title="
 <DT><A HREF="./processing/xml/XMLWriter.html#write(processing.xml.XMLElement, boolean, int)"><B>write(XMLElement, boolean, int)</B></A> - 
 Method in class processing.xml.<A HREF="./processing/xml/XMLWriter.html" title="class in processing.xml">XMLWriter</A>
 <DD>Writes an XML element.
-<DT><A HREF="./processing/xml/XMLWriter.html#write(processing.xml.XMLElement, boolean, int, boolean)"><B>write(XMLElement, boolean, int, boolean)</B></A> - 
+<DT><A HREF="./processing/xml/XMLWriter.html#write(processing.xml.XMLElement, boolean, int, int, boolean)"><B>write(XMLElement, boolean, int, int, boolean)</B></A> - 
 Method in class processing.xml.<A HREF="./processing/xml/XMLWriter.html" title="class in processing.xml">XMLWriter</A>
 <DD>Writes an XML element.
 </DL>
@@ -5869,6 +5886,9 @@ Variable in class processing.core.<A HREF="./processing/core/PVector.html" title
 <DT><A HREF="./processing/xml/XMLElement.html" title="class in processing.xml"><B>XMLElement</B></A> - Class in <A HREF="./processing/xml/package-summary.html">processing.xml</A><DD>XMLElement is a representation of an XML object.<DT><A HREF="./processing/xml/XMLElement.html#XMLElement()"><B>XMLElement()</B></A> - 
 Constructor for class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
 <DD>Creates an empty element to be used for #PCDATA content.
+<DT><A HREF="./processing/xml/XMLElement.html#XMLElement(java.lang.String)"><B>XMLElement(String)</B></A> - 
+Constructor for class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
+<DD>Creates an empty element.
 <DT><A HREF="./processing/xml/XMLElement.html#XMLElement(java.lang.String, java.lang.String, java.lang.String, int)"><B>XMLElement(String, String, String, int)</B></A> - 
 Constructor for class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
 <DD>Creates an empty element.
@@ -5876,9 +5896,6 @@ Constructor for class processing.xml.<A HREF="./processing/xml/XMLElement.html" 
 Constructor for class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
 <DD>Begin parsing XML data passed in from a PApplet.
 <DT><A HREF="./processing/xml/XMLElement.html#XMLElement(java.io.Reader)"><B>XMLElement(Reader)</B></A> - 
-Constructor for class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
-<DD>&nbsp;
-<DT><A HREF="./processing/xml/XMLElement.html#XMLElement(java.lang.String)"><B>XMLElement(String)</B></A> - 
 Constructor for class processing.xml.<A HREF="./processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>
 <DD>&nbsp;
 <DT><A HREF="./processing/xml/XMLEntityResolver.html" title="class in processing.xml"><B>XMLEntityResolver</B></A> - Class in <A HREF="./processing/xml/package-summary.html">processing.xml</A><DD>An XMLEntityResolver resolves entities.<DT><A HREF="./processing/xml/XMLEntityResolver.html#XMLEntityResolver()"><B>XMLEntityResolver()</B></A> - 

@@ -118,8 +118,16 @@ The base class for the main processing application.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/app/Base.html#librariesClassPath">librariesClassPath</A></B></CODE>
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Base.html#DEBUG">DEBUG</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;True if heavy debugging error/log messages are enabled</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;javax.swing.JMenu</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Base.html#defaultFileMenu">defaultFileMenu</A></B></CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -165,6 +173,14 @@ The base class for the main processing application.
 <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
 <TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
 <B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;javax.swing.JMenu</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Base.html#buildFileMenu(processing.app.Editor)">buildFileMenu</A></B>(<A HREF="../../processing/app/Editor.html" title="class in processing.app">Editor</A>&nbsp;editor)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -498,6 +514,44 @@ The base class for the main processing application.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;javax.swing.JCheckBoxMenuItem</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Base.html#newJCheckBoxMenuItem(java.lang.String, int)">newJCheckBoxMenuItem</A></B>(java.lang.String&nbsp;title,
+                     int&nbsp;what)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;javax.swing.JMenuItem</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Base.html#newJMenuItem(java.lang.String, int)">newJMenuItem</A></B>(java.lang.String&nbsp;title,
+             int&nbsp;what)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A software engineer, somewhere, needs to have his abstraction
+ taken away.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;javax.swing.JMenuItem</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Base.html#newJMenuItemAlt(java.lang.String, int)">newJMenuItemAlt</A></B>(java.lang.String&nbsp;title,
+                int&nbsp;what)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Same as newJMenuItem(), but adds the ALT (on Linux and Windows)
+ or OPTION (on Mac OS X) key as a modifier.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;javax.swing.JMenuItem</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Base.html#newJMenuItemShift(java.lang.String, int)">newJMenuItemShift</A></B>(java.lang.String&nbsp;title,
+                  int&nbsp;what)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Like newJMenuItem() but adds shift as a modifier for the shortcut.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/app/Base.html#openFolder(java.io.File)">openFolder</A></B>(java.io.File&nbsp;file)</CODE>
 
@@ -537,7 +591,15 @@ The base class for the main processing application.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/app/Base.html#rebuildImportMenu(javax.swing.JMenu)">rebuildImportMenu</A></B>(javax.swing.JMenu&nbsp;importMenu)</CODE>
+<TD><CODE><B><A HREF="../../processing/app/Base.html#rebuildImportMenu()">rebuildImportMenu</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Base.html#rebuildLibraryList()">rebuildLibraryList</A></B>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -600,6 +662,14 @@ The base class for the main processing application.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Base.html#showChanges()">showChanges</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/app/Base.html#showEnvironment()">showEnvironment</A></B>()</CODE>
 
 <BR>
@@ -614,6 +684,22 @@ The base class for the main processing application.
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Show an error message that's actually fatal to the program.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Base.html#showFAQ()">showFAQ</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Base.html#showGettingStarted()">showGettingStarted</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -735,10 +821,22 @@ public static boolean <B>RELEASE</B></PRE>
 </DL>
 <HR>
 
-<A NAME="librariesClassPath"><!-- --></A><H3>
-librariesClassPath</H3>
+<A NAME="DEBUG"><!-- --></A><H3>
+DEBUG</H3>
 <PRE>
-public static java.lang.String <B>librariesClassPath</B></PRE>
+public static boolean <B>DEBUG</B></PRE>
+<DL>
+<DD>True if heavy debugging error/log messages are enabled
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="defaultFileMenu"><!-- --></A><H3>
+defaultFileMenu</H3>
+<PRE>
+public static javax.swing.JMenu <B>defaultFileMenu</B></PRE>
 <DL>
 <DL>
 </DL>
@@ -786,6 +884,75 @@ public static void <B>main</B>(java.lang.String[]&nbsp;args)</PRE>
 initPlatform</H3>
 <PRE>
 public static void <B>initPlatform</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="newJMenuItem(java.lang.String, int)"><!-- --></A><H3>
+newJMenuItem</H3>
+<PRE>
+public static javax.swing.JMenuItem <B>newJMenuItem</B>(java.lang.String&nbsp;title,
+                                                 int&nbsp;what)</PRE>
+<DL>
+<DD>A software engineer, somewhere, needs to have his abstraction
+ taken away. In some countries they jail or beat people for crafting
+ the sort of API that would require a five line helper function
+ just to set the shortcut key for a menu item.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="newJMenuItemShift(java.lang.String, int)"><!-- --></A><H3>
+newJMenuItemShift</H3>
+<PRE>
+public static javax.swing.JMenuItem <B>newJMenuItemShift</B>(java.lang.String&nbsp;title,
+                                                      int&nbsp;what)</PRE>
+<DL>
+<DD>Like newJMenuItem() but adds shift as a modifier for the shortcut.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="newJMenuItemAlt(java.lang.String, int)"><!-- --></A><H3>
+newJMenuItemAlt</H3>
+<PRE>
+public static javax.swing.JMenuItem <B>newJMenuItemAlt</B>(java.lang.String&nbsp;title,
+                                                    int&nbsp;what)</PRE>
+<DL>
+<DD>Same as newJMenuItem(), but adds the ALT (on Linux and Windows)
+ or OPTION (on Mac OS X) key as a modifier.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="newJCheckBoxMenuItem(java.lang.String, int)"><!-- --></A><H3>
+newJCheckBoxMenuItem</H3>
+<PRE>
+public static javax.swing.JCheckBoxMenuItem <B>newJCheckBoxMenuItem</B>(java.lang.String&nbsp;title,
+                                                                 int&nbsp;what)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="buildFileMenu(processing.app.Editor)"><!-- --></A><H3>
+buildFileMenu</H3>
+<PRE>
+public javax.swing.JMenu <B>buildFileMenu</B>(<A HREF="../../processing/app/Editor.html" title="class in processing.app">Editor</A>&nbsp;editor)</PRE>
 <DL>
 <DD><DL>
 </DL>
@@ -888,10 +1055,21 @@ public boolean <B>handleQuit</B>()</PRE>
 </DL>
 <HR>
 
-<A NAME="rebuildImportMenu(javax.swing.JMenu)"><!-- --></A><H3>
+<A NAME="rebuildLibraryList()"><!-- --></A><H3>
+rebuildLibraryList</H3>
+<PRE>
+public void <B>rebuildLibraryList</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="rebuildImportMenu()"><!-- --></A><H3>
 rebuildImportMenu</H3>
 <PRE>
-public void <B>rebuildImportMenu</B>(javax.swing.JMenu&nbsp;importMenu)</PRE>
+public void <B>rebuildImportMenu</B>()</PRE>
 <DL>
 <DD><DL>
 </DL>
@@ -1251,6 +1429,39 @@ public static void <B>showReference</B>()</PRE>
 showEnvironment</H3>
 <PRE>
 public static void <B>showEnvironment</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="showChanges()"><!-- --></A><H3>
+showChanges</H3>
+<PRE>
+public static void <B>showChanges</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="showFAQ()"><!-- --></A><H3>
+showFAQ</H3>
+<PRE>
+public static void <B>showFAQ</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="showGettingStarted()"><!-- --></A><H3>
+showGettingStarted</H3>
+<PRE>
+public static void <B>showGettingStarted</B>()</PRE>
 <DL>
 <DD><DL>
 </DL>
