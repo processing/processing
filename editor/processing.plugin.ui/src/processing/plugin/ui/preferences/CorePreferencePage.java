@@ -89,7 +89,7 @@ public class CorePreferencePage extends PreferencePage implements IWorkbenchPref
 	public void initContents(){
 		String sketchbook = ProcessingCorePreferences.current().getSketchbookPathAsString();
 		if(sketchbook != null){
-			System.out.println("INIT: " + sketchbook + ";");
+//			System.out.println("INIT: " + sketchbook + ";");
 			sketchbookPathField.setText(sketchbook.toString());
 		} else {
 			sketchbookPathField.setText("");
@@ -97,7 +97,7 @@ public class CorePreferencePage extends PreferencePage implements IWorkbenchPref
 	}
 	
 	/**
-	 * Browse button functionality to find a destination folder
+	 * Browse button functionality to find a destination folder.
 	 * <p>
 	 * Prettifies the file path if it happens to be in the workspace
 	 */
@@ -155,7 +155,6 @@ public class CorePreferencePage extends PreferencePage implements IWorkbenchPref
 	/**
 	 * Tries to resolve the contents of the sketch book path field to an IPath, and returns it.
 	 * If the field contains a relative path it will be resolved relative to the Eclipse workspace folder.
-	 *
 	 * 
 	 * @return an absolute IPath handle to the contents of the sketchbookPathField, or null
 	 */

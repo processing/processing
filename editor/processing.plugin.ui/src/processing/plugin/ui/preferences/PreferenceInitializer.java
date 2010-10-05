@@ -29,8 +29,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		IPreferenceStore store = ProcessingPlugin.getDefault().getPreferenceStore();
 		store.setDefault(PreferenceConstants.P_BOOLEAN, true);
 		store.setDefault(PreferenceConstants.P_CHOICE, "choice2");
-		store.setDefault(PreferenceConstants.P_STRING,
-				"Default value");
+		store.setDefault(PreferenceConstants.P_STRING, "Default value");
 	}
 
 }

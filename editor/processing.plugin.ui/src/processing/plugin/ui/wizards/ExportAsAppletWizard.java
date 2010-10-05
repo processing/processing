@@ -16,6 +16,7 @@ package processing.plugin.ui.wizards;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -36,8 +37,8 @@ import org.eclipse.ui.PlatformUI;
 
 import processing.plugin.core.ProcessingCore;
 import processing.plugin.core.ProcessingLog;
+import processing.plugin.core.ProcessingUtilities;
 import processing.plugin.core.builder.SketchProject;
-import processing.plugin.core.builder.Utilities;
 import processing.plugin.ui.ProcessingPlugin;
 
 
@@ -115,7 +116,7 @@ public class ExportAsAppletWizard extends Wizard implements IExportWizard {
 		
 		IFile code = sp.getMainFile();
 		if (code == null) return false;	
-		String codeContents = Utilities.readFile(code);
+		String codeContents = ProcessingUtilities.readFile(code);
 		
 		IFolder exportFolder = sp.getAppletFolder(true); // true to nuke the folder contents, if they exist
 		
@@ -126,13 +127,13 @@ public class ExportAsAppletWizard extends Wizard implements IExportWizard {
 		
 		// Grab the Javadoc-style description from the main code		
 		String description ="";
-		String[] javadoc = Utilities.match(codeContents, "/\\*{2,}(.*)\\*+/");
+		String[] javadoc = ProcessingUtilities.match(codeContents, "/\\*{2,}(.*)\\*+/");
 		if (javadoc != null){
 			StringBuffer dbuffer = new StringBuffer();
-			String[] pieces = Utilities.split(javadoc[1], '\n');
+			String[] pieces = ProcessingUtilities.split(javadoc[1], '\n');
 			for (String line : pieces){
 				// if this line starts with * characters, remove em
-				String[] m = Utilities.match(line, "^\\s*\\*+(.*)");
+				String[] m = ProcessingUtilities.match(line, "^\\s*\\*+(.*)");
 				dbuffer.append(m != null ? m[1] : line);
 				dbuffer.append('\n');
 			}
@@ -167,7 +168,7 @@ public class ExportAsAppletWizard extends Wizard implements IExportWizard {
 			try {
 				File exportResourcesFolder = new File(ProcessingCore.getProcessingCore().getPluginResourceFolder().getCanonicalPath(), "export");
 				File loadingImageCoreResource = new File(exportResourcesFolder, LOADING_IMAGE);
-				Utilities.copyFile(loadingImageCoreResource, new File(exportFolder.getFullPath().toString(), LOADING_IMAGE));
+				ProcessingUtilities.copyFile(loadingImageCoreResource, new File(exportFolder.getFullPath().toString(), LOADING_IMAGE));
 			} catch (Exception ex) {
 				// This is not expected, and should be reported, because we are about to bail
 				ProcessingLog.logError("Could not access the Processing Plug-in Core resources. " +
@@ -192,6 +193,48 @@ public class ExportAsAppletWizard extends Wizard implements IExportWizard {
 			} catch (CoreException e){
 				ProcessingLog.logError("Code Folder entries could not be included in export." +
 						"Export for " + sp.getProject().getName() + " may not function properly.", e);
+			}
+		}
+
+		// snag the opengl library path so we can test for it later
+		File openglLibraryFolder = new File(ProcessingCore.getProcessingCore().getCoreLibsFolder(), "opengl/library");
+		String openglLibraryPath = openglLibraryFolder.getAbsolutePath();
+		boolean openglApplet = false;			
+		
+		// add the library jar files to the folder and detect if opengl is in use
+		ArrayList<IPath> sketchLibraryImportPaths = sp.getLibraryPaths();
+		if(sketchLibraryImportPaths != null){
+			for(IPath path : sketchLibraryImportPaths){
+				File libraryFolder = new File(path.toOSString());
+				if (path.toOSString().equalsIgnoreCase(openglLibraryPath)) openglApplet=true;
+				File exportSettings = new File(libraryFolder, "export.txt");
+				HashMap<String,String> exportTable = ProcessingUtilities.readSettings(exportSettings);
+				String appletList = (String) exportTable.get("applet");
+				String exportList[] = null;
+				if(appletList != null){
+					exportList = ProcessingUtilities.splitTokens(appletList, ", ");
+				} else {
+					exportList = libraryFolder.list();
+				}
+				for (String s : exportList){
+					if (s.equals(".") || s.equals("..")) continue;
+					
+					s = ProcessingUtilities.trim(s);
+					if (s.equals("")) continue;
+					
+					File exportFile = new File( libraryFolder, s);
+					if(!exportFile.exists()) {
+						ProcessingLog.logError("Export File " + s + " does not exist.", null);
+					} else if (exportFile.isDirectory()) {
+						ProcessingLog.logInfo("Ignoring sub-folder \"" + s + "\"");
+					} else if ( exportFile.getName().toLowerCase().endsWith(".zip") ||
+								exportFile.getName().toLowerCase().endsWith(".jar")){
+						// the PDE checks for separate jar boolean, but if we're here we have
+						// met the conditions that require it
+//						File exportFile = new File(codeFolder, s);
+					}
+					
+				}
 			}
 		}
 		
