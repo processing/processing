@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Plugin;
 
-import processing.plugin.core.builder.Utilities;
+import processing.plugin.core.ProcessingUtilities;
  
 /**
  * The plug-in activator enabling the core (UI-free) support for Processing sketches.
@@ -187,7 +187,7 @@ public final class ProcessingCore extends Plugin {
 					File.separatorChar + "library" + File.separatorChar + 
 					name + ".jar");
 			if (libraryJar.exists())
-				if (Utilities.sanitizeName(name).equals(name)){
+				if (ProcessingUtilities.sanitizeName(name).equals(name)){
 					return true;
 				} else {
 					if(complain){

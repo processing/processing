@@ -42,6 +42,7 @@ import processing.app.preproc.PreprocessResult;
 
 import processing.plugin.core.ProcessingCore;
 import processing.plugin.core.ProcessingLog;
+import processing.plugin.core.ProcessingUtilities;
 
 /**
  * Builder for Processing Sketches.
@@ -223,13 +224,13 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 		IFolder codeFolder = sketchProject.getCodeFolder();	// may not exist
 		String[] codeFolderPackages = null;
 		if (codeFolder != null && codeFolder.exists()){
-			String codeFolderClassPath = Utilities.contentsToClassPath(codeFolder.getLocation().toFile());
+			String codeFolderClassPath = ProcessingUtilities.contentsToClassPath(codeFolder.getLocation().toFile());
 			for( String s : codeFolderClassPath.split(File.pathSeparator)){
 				if (!s.isEmpty()){
 					libraryJarPathList.add(new Path(s).makeAbsolute());
 				}
 			}
-			codeFolderPackages = Utilities.packageListFromClassPath(codeFolderClassPath);
+			codeFolderPackages = ProcessingUtilities.packageListFromClassPath(codeFolderClassPath);
 		}
 
 		monitor.worked(10);
@@ -246,10 +247,10 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 		for( IResource file : sketch.members()){
 			if("pde".equalsIgnoreCase(file.getFileExtension())){ 
 				file.setSessionProperty(new QualifiedName(BUILDER_ID, "preproc start"), bigCount);
-				String content = Utilities.readFile((IFile) file);
+				String content = ProcessingUtilities.readFile((IFile) file);
 				bigCode.append(content);
 				bigCode.append("\n");
-				bigCount += Utilities.getLineCount(content);
+				bigCount += ProcessingUtilities.getLineCount(content);
 				file.setSessionProperty(new QualifiedName(BUILDER_ID, "preproc end"), bigCount);
 			}
 		}
@@ -270,8 +271,8 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 			sketchProject.sketch_height = -1;
 			sketchProject.renderer = "";
 			
-			String scrubbed = Utilities.scrubComments(stream.toString());
-			String[] matches = Utilities.match(scrubbed, Utilities.SIZE_REGEX);	
+			String scrubbed = ProcessingUtilities.scrubComments(stream.toString());
+			String[] matches = ProcessingUtilities.match(scrubbed, ProcessingUtilities.SIZE_REGEX);	
 			if(matches != null){
 				try {
 					int wide = Integer.parseInt(matches[1]);
@@ -346,7 +347,7 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 			// System.out.println("and then she tells me " + tsre.toString());
 			String mess = "^line (\\d+):(\\d+):\\s"; // a regexp to grab the line and column from the exception
 
-			String[] matches = Utilities.match(tsre.toString(), mess);
+			String[] matches = ProcessingUtilities.match(tsre.toString(), mess);
 			IResource errorFile = null; 
 			int errorLine = -1;
 			if (matches != null){
@@ -411,17 +412,18 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 
 		ArrayList<String> allFoundLibraries = new ArrayList<String>(); // a list of all the libraries that can be found
 
-		allFoundLibraries.addAll( Utilities.getLibraryJars(ProcessingCore.getProcessingCore().getCoreLibsFolder()) );
-		allFoundLibraries.addAll( Utilities.getLibraryJars(Utilities.getSketchBookLibsFolder(sketch)) );
+		allFoundLibraries.addAll( ProcessingUtilities.getLibraryJars(ProcessingCore.getProcessingCore().getCoreLibsFolder()) );
+		allFoundLibraries.addAll( ProcessingUtilities.getLibraryJars(ProcessingUtilities.getSketchBookLibsFolder(sketch)) );
 
 		HashMap<String, IPath> libraryImportToPathTable = new HashMap<String, IPath>();
 
 		for (String libraryPath : allFoundLibraries ){
-			String[] packages = Utilities.packageListFromClassPath(libraryPath);
+			String[] packages = ProcessingUtilities.packageListFromClassPath(libraryPath);
 			for (String pkg : packages) libraryImportToPathTable.put(pkg, new Path(libraryPath));
 		}
 
 		boolean importProblems = false;
+		sketchProject.libraryPaths = null;
 		for (int i=0; i < result.extraImports.size(); i++){
 			String importPackage = result.extraImports.get(i);
 			int dot = importPackage.lastIndexOf('.');
@@ -429,6 +431,7 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 			IPath libPath = libraryImportToPathTable.get(entry);
 			if (libPath != null ){
 				libraryJarPathList.add(libPath.makeAbsolute()); // we've got it!
+				sketchProject.libraryPaths.add(libPath.makeAbsolute());
 			} else { 
 				// The user is trying to import something we won't be able to find.
 				reportProblem(
