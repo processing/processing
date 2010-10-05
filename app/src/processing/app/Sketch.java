@@ -107,7 +107,8 @@ public class Sketch {
   /**
    * List of library folders.
    */
-  private ArrayList<File> importedLibraries;
+  private ArrayList<LibraryFolder> importedLibraries;
+  //private ArrayList<File> importedLibraries;
 
   /**
    * path is location of the main .pde file, because this is also
@@ -1427,24 +1428,30 @@ public class Sketch {
 
     // grab the imports from the code just preproc'd
 
-    importedLibraries = new ArrayList<File>();
+//    importedLibraries = new ArrayList<File>();
+    importedLibraries = new ArrayList<LibraryFolder>();
     for (String item : result.extraImports) {
       // remove things up to the last dot
       int dot = item.lastIndexOf('.');
       // http://dev.processing.org/bugs/show_bug.cgi?id=1145
       String entry = (dot == -1) ? item : item.substring(0, dot);
-      File libFolder = Base.importToLibraryTable.get(entry);
+//      File libFolder = Base.importToLibraryTable.get(entry);
+      LibraryFolder library = Base.importToLibraryTable.get(entry);
 
-      if (libFolder != null) {
-        if (!importedLibraries.contains(libFolder)) {
-          importedLibraries.add(libFolder);
-          classPath += Compiler.contentsToClassPath(libFolder);
-          libraryPath += File.pathSeparator + libFolder.getAbsolutePath();
+      if (library != null) {
+        if (!importedLibraries.contains(library)) {
+          importedLibraries.add(library);
+          classPath += library.getClassPath(); //Compiler.contentsToClassPath(libFolder);
+          //libraryPath += File.pathSeparator + libFolder.getAbsolutePath();
+          libraryPath += File.pathSeparator + library.getNativePath();
 //        } else {
 //          PApplet.println("skipping additional inclusion of " + libFolder);
         }
+      } else {
+        PApplet.println("no library found for " + entry);
       }
     }
+//    PApplet.println(PApplet.split(libraryPath, File.pathSeparatorChar));
 
     // Finally, add the regular Java CLASSPATH
     String javaClassPath = System.getProperty("java.class.path");
@@ -1499,9 +1506,9 @@ public class Sketch {
     return foundMain;
   }
 
-  public ArrayList<File> getImportedLibraries() {
-    return importedLibraries;
-  }
+//  public ArrayList<File> getImportedLibraries() {
+//    return importedLibraries;
+//  }
 
 
   /**
@@ -1822,54 +1829,50 @@ public class Sketch {
     // if a file called 'export.txt' is in there, it contains
     // a list of the files that should be exported.
     // otherwise, all files are exported.
-    for (File libraryFolder : importedLibraries) {
-      if (libraryFolder.getAbsolutePath().equals(openglLibraryPath)) {
+    for (LibraryFolder library : importedLibraries) {
+      if (library.getPath().equals(openglLibraryPath)) {
         openglApplet = true;
       }
       // in the list is a File object that points the
       // library sketch's "library" folder
-      File exportSettings = new File(libraryFolder, "export.txt");
-      HashMap<String,String> exportTable = Base.readSettings(exportSettings);
-      String appletList = (String) exportTable.get("applet");
-      String exportList[] = null;
-      if (appletList != null) {
-        exportList = PApplet.splitTokens(appletList, ", ");
-      } else {
-        exportList = libraryFolder.list();
-      }
-      for (int i = 0; i < exportList.length; i++) {
-        if (exportList[i].equals(".") ||
-            exportList[i].equals("..")) continue;
+//      File exportSettings = new File(library.getLi, "export.txt");
+//      HashMap<String,String> exportTable = Base.readSettings(exportSettings);
+//      String appletList = exportTable.get("applet");
+//      String exportList[] = null;
+//      if (appletList != null) {
+//        exportList = PApplet.splitTokens(appletList, ", ");
+//      } else {
+//        exportList = libraryFolder.list();
+//      }
+//      File[] exportList = library.getAppletExports();
+//      for (int i = 0; i < exportList.length; i++) {
+//      for (String item : exportList) {
+      for (File exportFile : library.getAppletExports()) {
+        String exportName = exportFile.getName();
+//        if (exportList[i].equals(".") ||
+//            exportList[i].equals("..")) continue;
+//        exportList[i] = PApplet.trim(exportList[i]);
+//        if (item.equals("")) continue;  // should not be possible
 
-        exportList[i] = PApplet.trim(exportList[i]);
-        if (exportList[i].equals("")) continue;
-
-        File exportFile = new File(libraryFolder, exportList[i]);
+//        File exportFile = new File(library.getLibraryPath(), item);
         if (!exportFile.exists()) {
-          System.err.println("File " + exportList[i] + " does not exist");
+          System.err.println("File " + exportFile.getAbsolutePath() + " does not exist");
 
         } else if (exportFile.isDirectory()) {
-          System.err.println("Ignoring sub-folder \"" + exportList[i] + "\"");
+          System.err.println("Ignoring sub-folder \"" + exportFile.getAbsolutePath() + "\"");
 
-        } else if (exportFile.getName().toLowerCase().endsWith(".zip") ||
-                   exportFile.getName().toLowerCase().endsWith(".jar")) {
+        } else if (exportName.toLowerCase().endsWith(".zip") ||
+                   exportName.toLowerCase().endsWith(".jar")) {
           if (separateJar) {
-            String exportFilename = exportFile.getName();
-            Base.copyFile(exportFile, new File(appletFolder, exportFilename));
-//            if (renderer.equals("OPENGL") &&
-//                exportFilename.indexOf("natives") != -1) {
-              // don't add these to the archives list
-//            } else {
-            archives.append("," + exportFilename);
-//            }
+            Base.copyFile(exportFile, new File(appletFolder, exportName));
+            archives.append("," + exportName);
           } else {
             String path = exportFile.getAbsolutePath();
             packClassPathIntoZipFile(path, zos, zipFileContents);
           }
 
         } else {  // just copy the file over.. prolly a .dll or something
-          Base.copyFile(exportFile,
-                        new File(appletFolder, exportFile.getName()));
+          Base.copyFile(exportFile, new File(appletFolder, exportName));
         }
       }
     }
@@ -2255,36 +2258,41 @@ public class Sketch {
    * Export to application via GUI.
    */
   protected boolean exportApplication() throws IOException, RunnerException {
-    if (Preferences.getBoolean("export.application.platform.windows")) {
-      String windowsPath =
-        new File(folder, "application.windows").getAbsolutePath();
-      if (!exportApplication(windowsPath, PConstants.WINDOWS)) {
-        return false;
+    String path = null;
+    for (String platformName : PConstants.platformNames) {
+      int platform = Base.getPlatformIndex(platformName);
+      if (Preferences.getBoolean("export.application.platform." + platformName)) {
+        if (LibraryFolder.hasMultipleArch(platform, importedLibraries)) {
+          // export the 32-bit version
+          path = new File(folder, "application." + platformName + "32").getAbsolutePath();
+          if (!exportApplication(path, platform, 32)) {
+            return false;
+          }
+          // export the 64-bit version
+          path = new File(folder, "application." + platformName + "64").getAbsolutePath();
+          if (!exportApplication(path, platform, 64)) {
+            return false;
+          }
+        }
       }
     }
-    if (Preferences.getBoolean("export.application.platform.macosx")) {
-      String macosxPath =
-        new File(folder, "application.macosx").getAbsolutePath();
-      if (!exportApplication(macosxPath, PConstants.MACOSX)) {
-        return false;
-      }
-    }
-    if (Preferences.getBoolean("export.application.platform.linux")) {
-      String linuxPath =
-        new File(folder, "application.linux").getAbsolutePath();
-      if (!exportApplication(linuxPath, PConstants.LINUX)) {
-        return false;
-      }
-    }
-    return true;
+    return true;  // all good
   }
+
+
+//  public boolean exportApplication(String destPath,
+//                                   String platformName, 
+//                                   int exportBits) throws IOException, RunnerException {
+//    return exportApplication(destPath, Base.getPlatformIndex(platformName), exportBits);
+//  }
 
 
   /**
    * Export to application without GUI.
    */
   public boolean exportApplication(String destPath,
-                                   int exportPlatform) throws IOException, RunnerException {
+                                   int exportPlatform, 
+                                   int exportBits) throws IOException, RunnerException {
     // make sure the user didn't hide the sketch folder
     ensureExistence();
 
@@ -2473,71 +2481,78 @@ public class Sketch {
     // if a file called 'export.txt' is in there, it contains
     // a list of the files that should be exported.
     // otherwise, all files are exported.
-    for (File libraryFolder : importedLibraries) {
+    for (LibraryFolder library : importedLibraries) {
+//      File libraryFolder = library.getLibraryPath();
       //System.out.println(libraryFolder + " " + libraryFolder.getAbsolutePath());
       // in the list is a File object that points the
       // library sketch's "library" folder
-      File exportSettings = new File(libraryFolder, "export.txt");
-      HashMap<String,String> exportTable = Base.readSettings(exportSettings);
-      String commaList = null;
-      String exportList[] = null;
+//      File exportSettings = new File(libraryFolder, "export.txt");
+//      HashMap<String,String> exportTable = Base.readSettings(exportSettings);
+//      String commaList = null;
+//      String exportList[] = null;
 
       // first check to see if there's something like application.blargh
-      if (exportPlatform == PConstants.MACOSX) {
-        commaList = (String) exportTable.get("application.macosx");
-      } else if (exportPlatform == PConstants.WINDOWS) {
-        commaList = (String) exportTable.get("application.windows");
-      } else if (exportPlatform == PConstants.LINUX) {
-        commaList = (String) exportTable.get("application.linux");
-      } else {
-        // next check to see if something for 'application' is specified
-        commaList = (String) exportTable.get("application");
-      }
-      if (commaList == null) {
-        // otherwise just dump the whole folder
-        exportList = libraryFolder.list();
-      } else {
-        exportList = PApplet.splitTokens(commaList, ", ");
-      }
+//      if (exportPlatform == PConstants.MACOSX) {
+//        commaList = (String) exportTable.get("application.macosx");
+//      } else if (exportPlatform == PConstants.WINDOWS) {
+//        commaList = (String) exportTable.get("application.windows");
+//      } else if (exportPlatform == PConstants.LINUX) {
+//        commaList = (String) exportTable.get("application.linux");
+//      } else {
+//        // next check to see if something for 'application' is specified
+//        commaList = (String) exportTable.get("application");
+//      }
+//      if (commaList == null) {
+//        // otherwise just dump the whole folder
+//        exportList = libraryFolder.list();
+//      } else {
+//        exportList = PApplet.splitTokens(commaList, ", ");
+//      }
 
       // add each item from the library folder / export list to the output
-      for (int i = 0; i < exportList.length; i++) {
-        if (exportList[i].equals(".") ||
-            exportList[i].equals("..")) continue;
+      for (File exportFile : library.getApplicationExports(exportPlatform, exportBits)) { 
+        String exportName = exportFile.getName();
+//      String[] exportList = library.getExports(exportPlatform, exportBits);
+//      for (String item : exportList) {
+//      for (int i = 0; i < exportList.length; i++) {
+//        if (exportList[i].equals(".") ||
+//            exportList[i].equals("..")) continue;
 
-        exportList[i] = PApplet.trim(exportList[i]);
-        if (exportList[i].equals("")) continue;
+//        exportList[i] = PApplet.trim(exportList[i]);
+//        if (exportList[i].equals("")) continue;
 
-        File exportFile = new File(libraryFolder, exportList[i]);
+//        File exportFile = new File(libraryFolder, exportList[i]);
+//        File exportFile = new File(library.getLibraryPath(), )
         if (!exportFile.exists()) {
-          System.err.println("File " + exportList[i] + " does not exist");
+          System.err.println("File " + exportFile.getName() + " does not exist");
 
         } else if (exportFile.isDirectory()) {
           //System.err.println("Ignoring sub-folder \"" + exportList[i] + "\"");
           if (exportPlatform == PConstants.MACOSX) {
             // For OS X, copy subfolders to Contents/Resources/Java
-            Base.copyDir(exportFile, new File(jarFolder, exportFile.getName()));
+            Base.copyDir(exportFile, new File(jarFolder, exportName));
           } else {
             // For other platforms, just copy the folder to the same directory
             // as the application.
-            Base.copyDir(exportFile, new File(destFolder, exportFile.getName()));
+            Base.copyDir(exportFile, new File(destFolder, exportName));
           }
 
         } else if (exportFile.getName().toLowerCase().endsWith(".zip") ||
                    exportFile.getName().toLowerCase().endsWith(".jar")) {
           //packClassPathIntoZipFile(exportFile.getAbsolutePath(), zos);
-          Base.copyFile(exportFile, new File(jarFolder, exportList[i]));
-          jarListVector.add(exportList[i]);
+//          Base.copyFile(exportFile, new File(jarFolder, exportList[i]));
+//          jarListVector.add(exportList[i]);
+          Base.copyFile(exportFile, new File(jarFolder, exportName));
+          jarListVector.add(exportName);
 
         } else if ((exportPlatform == PConstants.MACOSX) &&
                    (exportFile.getName().toLowerCase().endsWith(".jnilib"))) {
           // jnilib files can be placed in Contents/Resources/Java
-          Base.copyFile(exportFile, new File(jarFolder, exportList[i]));
+          Base.copyFile(exportFile, new File(jarFolder, exportName));
 
         } else {
           // copy the file to the main directory.. prolly a .dll or something
-          Base.copyFile(exportFile,
-                        new File(destFolder, exportFile.getName()));
+          Base.copyFile(exportFile, new File(destFolder, exportName));
         }
       }
     }
