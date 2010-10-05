@@ -35,14 +35,14 @@ import processing.core.PApplet;
  * <br><br>
  * The encoding parameter inside XML files is ignored, only UTF-8 (or plain ASCII) are parsed properly.
  * =advanced
- * XMLElement is an XML element. This is the base class used for the 
+ * XMLElement is an XML element. This is the base class used for the
  * Processing XML library, representing a single node of an XML tree.
- * 
+ *
  * This code is based on a modified version of NanoXML by Marc De Scheemaecker.
  *
  * @author Marc De Scheemaecker
  * @author processing.org
- * 
+ *
  * @webref data:composite
  * @usage Web &amp; Application
  * @instanceName xml any variable of type XMLElement
@@ -53,7 +53,7 @@ public class XMLElement implements Serializable {
 
   /** The sketch creating this element. */
   private PApplet sketch;
-  
+
   /** The parent element. */
   private XMLElement parent;
 
@@ -328,7 +328,7 @@ public class XMLElement implements Serializable {
    * prefix) of the element.
    *
    * @webref
-   * @brief  	Returns the name of the element.
+   * @brief     Returns the name of the element.
    * @return the name, or null if the element only contains #PCDATA.
    */
   public String getName() {
@@ -337,7 +337,7 @@ public class XMLElement implements Serializable {
 
 
   /**
-   * Returns the name of the element without its namespace. 
+   * Returns the name of the element without its namespace.
    *
    * @return the name, or null if the element only contains #PCDATA.
    */
@@ -511,7 +511,7 @@ public class XMLElement implements Serializable {
 
 
   /**
-   * Put the names of all children into an array. Same as looping through 
+   * Put the names of all children into an array. Same as looping through
    * each child and calling getName() on each XMLElement.
    */
   public String[] listChildren() {
@@ -522,8 +522,8 @@ public class XMLElement implements Serializable {
     }
     return outgoing;
   }
-    
-    
+
+
   /**
    * Returns an array containing all the child elements.
    */
@@ -548,10 +548,10 @@ public class XMLElement implements Serializable {
   /**
    * Returns the child XMLElement as specified by the <b>index</b> parameter. The value of the <b>index</b> parameter must be less than the total number of children to avoid going out of the array storing the child elements.
    * When the <b>path</b> parameter is specified, then it will return all children that match that path. The path is a series of elements and sub-elements, separated by slashes.
-   * 
+   *
    * @return the element
    * @author processing.org
-   * 
+   *
    * @webref
    * @see processing.xml.XMLElement#getChildCount()
    * @see processing.xml.XMLElement#getChildren(String)
@@ -626,11 +626,11 @@ public class XMLElement implements Serializable {
    * Returns all of the children as an XMLElement array.
    * When the <b>path</b> parameter is specified, then it will return all children that match that path.
    * The path is a series of elements and sub-elements, separated by slashes.
-   * 
+   *
    * @param path element name or path/to/element
    * @return array of child elements that match
    * @author processing.org
-   * 
+   *
    * @webref
    * @brief Returns all of the children as an XMLElement array.
    * @see processing.xml.XMLElement#getChildCount()
@@ -794,16 +794,16 @@ public class XMLElement implements Serializable {
     return getString(name);
   }
 
-    
+
   /**
    * Returns a String attribute of the element.
    * If the <b>default</b> parameter is used and the attribute doesn't exist, the <b>default</b> value is returned.
    * When using the version of the method without the <b>default</b> parameter, if the attribute doesn't exist, the value 0 is returned.
-   * 
+   *
    * @webref
    * @param name the name of the attribute
    * @param default Value value returned if the attribute is not found
-   * 
+   *
    * @brief Returns a String attribute of the element.
    * @deprecated use getString() or getAttribute()
    */
@@ -820,8 +820,8 @@ public class XMLElement implements Serializable {
 //                                     String defaultValue) {
 //        return getAttribute(name, namespace, defaultValue);
 //    }
-    
-    
+
+
   public String getString(String name) {
     return getString(name, null);
   }
@@ -859,7 +859,10 @@ public class XMLElement implements Serializable {
    */
   public boolean getBoolean(String name, boolean defaultValue) {
     String value = getString(name);
-    return (value != null) && (value.equals("1") || value.toLowerCase().equals("true"));
+    if (value == null) {
+      return defaultValue;
+    }
+    return (value.equals("1") || value.toLowerCase().equals("true"));
   }
 
 
@@ -918,7 +921,7 @@ public class XMLElement implements Serializable {
    * @return the value, or defaultValue if the attribute does not exist.
    */
   public int getInt(String name, int defaultValue) {
-    String value = getString(name); 
+    String value = getString(name);
     return (value == null) ? defaultValue : PApplet.parseInt(value, defaultValue);
   }
 
@@ -957,7 +960,7 @@ public class XMLElement implements Serializable {
     return getFloat(name, 0);
   }
 
-  
+
   public float getFloat(String name) {
     return getFloat(name, 0);
   }
@@ -972,7 +975,7 @@ public class XMLElement implements Serializable {
    * @param defaultValue value returned if the attribute is not found
    *
    * @return the value, or defaultValue if the attribute does not exist.
-   * 
+   *
    * @webref
    * @brief Returns a float attribute of the element.
    */
@@ -1317,8 +1320,8 @@ public class XMLElement implements Serializable {
    * sections can be retrieved as unnamed child objects. In this case,
    * this method returns null.
    *
-   * @webref 
-   * @brief  	Returns the content of an element
+   * @webref
+   * @brief     Returns the content of an element
    * @return the content.
    */
   public String getContent() {
@@ -1368,7 +1371,7 @@ public class XMLElement implements Serializable {
       if (! attr.getValue().equals(value)) {
         return false;
       }
-      //          String type = 
+      //          String type =
       //            rawElement.getAttributeType(attr.getName(), attr.getNamespace());
       //          if (!attr.getType().equals(type)) {
       //              return false;
@@ -1387,7 +1390,7 @@ public class XMLElement implements Serializable {
     }
     return true;
   }
-    
+
 //    /**
 //     * Returns true if the element equals another element.
 //     *
@@ -1431,7 +1434,7 @@ public class XMLElement implements Serializable {
 //            if (! attr.getValue().equals(value)) {
 //                return false;
 //            }
-////            String type = 
+////            String type =
 ////              rawElement.getAttributeType(attr.getName(), attr.getNamespace());
 ////            if (!attr.getType().equals(type)) {
 ////                return false;
@@ -1468,7 +1471,7 @@ public class XMLElement implements Serializable {
     }
     return baos.toString();
   }
-  
+
 
   private PApplet findSketch() {
     if (sketch != null) {
@@ -1480,7 +1483,7 @@ public class XMLElement implements Serializable {
     return null;
   }
 
-  
+
   public boolean save(String filename) {
     if (sketch == null) {
       sketch = findSketch();
