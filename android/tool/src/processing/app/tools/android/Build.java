@@ -476,7 +476,7 @@ class Build {
                               final File assetsFolder) throws IOException {
     // Copy any libraries to the 'libs' folder
     final Sketch sketch = editor.getSketch();
-    for (final File libraryFolder : sketch.getImportedLibraries()) {
+    for (LibraryFolder library : sketch.getImportedLibraries()) {
       // in the list is a File object that points the
       // library sketch's "library" folder
       final File exportSettings = new File(libraryFolder, "export.txt");

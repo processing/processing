@@ -1,4 +1,7 @@
 0192
+X Getting error: Syntax error on token "else", } expected
+X   http://code.google.com/p/processing/issues/detail?id=400
+
 
 _ 64-bit windows causes UnsatisfiedLinkError with OpenGL
 

@@ -1,6 +1,15 @@
 0192 android
 X compile android-core with java 5 as the target so that it works on OS X 10.5
 
+_ android debug certificate expired
+_   http://forum.processing.org/topic/ant-rules-r3-xml-209-395-error#25080000000262001
+_   just delete ~/.android/debug.keystore
+Try renaming the .android folder in your home directory to something else. Next time you try to build, it should re-create the .android folder with a proper debug certificate. If you don't know what that means, do this:
+1. Open /Applications/Utilities/Terminal.app
+2. type "mv .android .android.bad"
+3. Try running a sketch again
+It's an Android SDK problem (not a Processing problem), but we're still trying to figure out why it's happening. 
+
 _ android sdk/build location has changed (android-7 not 2.1) fix build.xml
 
 _ Blacked-out screen when restoring Android app from background.
