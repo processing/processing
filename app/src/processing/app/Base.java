@@ -30,7 +30,6 @@ import java.util.*;
 
 import javax.swing.*;
 
-import processing.app.debug.Compiler;
 import processing.core.*;
 
 
@@ -81,11 +80,12 @@ public class Base {
   static private File librariesFolder;
   static private File toolsFolder;
 
-  ArrayList<LibraryFolder> builtinLibraries;
+  ArrayList<LibraryFolder> coreLibraries;
   ArrayList<LibraryFolder> contribLibraries;
 
   // maps imported packages to their library folder
-  static HashMap<String, File> importToLibraryTable;
+//  static HashMap<String, File> importToLibraryTable;
+  static HashMap<String, LibraryFolder> importToLibraryTable;
 
   // classpath for all known libraries for p5
   // (both those in the p5/libs folder and those with lib subfolders
@@ -1131,44 +1131,84 @@ public class Base {
   }
 
 
-  PrintWriter pw;
+  public void rebuildLibraryList() {
+    // reset the table mapping imports to libraries
+    importToLibraryTable = new HashMap<String, LibraryFolder>();
+
+    try {
+      coreLibraries = LibraryFolder.list(librariesFolder);
+      contribLibraries = LibraryFolder.list(getSketchbookLibrariesFolder());
+    } catch (IOException e) {
+      Base.showWarning("Unhappiness", 
+                       "An error occurred while loading libraries.\n" +
+                       "not all the books will be in place.", e);
+    }    
+  }
+
+
+//  PrintWriter pw;
   
   public void rebuildImportMenu() {  //JMenu importMenu) {
     //System.out.println("rebuilding import menu");
     importMenu.removeAll();
 
-    // reset the table mapping imports to libraries
-    importToLibraryTable = new HashMap<String, File>();
+    rebuildLibraryList();
     
-    try {
-      pw = new PrintWriter(new FileWriter(System.getProperty("user.home") + "/Desktop/libs.csv"));
-    } catch (IOException e1) {
-      e1.printStackTrace();
+    ActionListener listener = new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        activeEditor.getSketch().importLibrary(e.getActionCommand());
+      }
+    };
+
+//    try {
+//      pw = new PrintWriter(new FileWriter(System.getProperty("user.home") + "/Desktop/libs.csv"));
+//    } catch (IOException e1) {
+//      e1.printStackTrace();
+//    }
+
+    for (LibraryFolder library : coreLibraries) {
+      JMenuItem item = new JMenuItem(library.getName());
+      item.addActionListener(listener);
+      item.setActionCommand(library.getJarPath());
+      importMenu.add(item);
+    }
+    
+    if (contribLibraries.size() != 0) {
+      importMenu.addSeparator();
+      JMenuItem contrib = new JMenuItem("Contributed");
+      contrib.setEnabled(false);
+
+      for (LibraryFolder library : contribLibraries) {
+        JMenuItem item = new JMenuItem(library.getName());
+        item.addActionListener(listener);
+        item.setActionCommand(library.getJarPath());
+        importMenu.add(item);
+      }
     }
 
-    // Add from the "libraries" subfolder in the Processing directory
-    try {
-      addLibraries(importMenu, librariesFolder);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    // Add libraries found in the sketchbook folder
-    int separatorIndex = importMenu.getItemCount();
-    try {
-      File sketchbookLibraries = getSketchbookLibrariesFolder();
-      boolean found = addLibraries(importMenu, sketchbookLibraries);
-      if (found) {
-        JMenuItem contrib = new JMenuItem("Contributed");
-        contrib.setEnabled(false);
-        importMenu.insert(contrib, separatorIndex);
-        importMenu.insertSeparator(separatorIndex);
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+//    // Add from the "libraries" subfolder in the Processing directory
+//    try {
+//      addLibraries(importMenu, librariesFolder);
+//    } catch (IOException e) {
+//      e.printStackTrace();
+//    }
+//    // Add libraries found in the sketchbook folder
+//    int separatorIndex = importMenu.getItemCount();
+//    try {
+//      File sketchbookLibraries = getSketchbookLibrariesFolder();
+//      boolean found = addLibraries(importMenu, sketchbookLibraries);
+//      if (found) {
+//        JMenuItem contrib = new JMenuItem("Contributed");
+//        contrib.setEnabled(false);
+//        importMenu.insert(contrib, separatorIndex);
+//        importMenu.insertSeparator(separatorIndex);
+//      }
+//    } catch (IOException e) {
+//      e.printStackTrace();
+//    }
     
-    pw.flush();
-    pw.close();
+//    pw.flush();
+//    pw.close();
   }
 
 
@@ -1277,6 +1317,7 @@ public class Base {
   }
 
 
+  /*
   protected boolean addLibraries(JMenu menu, File folder) throws IOException {
     if (!folder.isDirectory()) return false;
 
@@ -1345,8 +1386,9 @@ public class Base {
         String packages[] =
           Compiler.packageListFromClassPath(libraryClassPath);
         for (String pkg : packages) {
-          pw.println(pkg + "\t" + libraryFolder.getAbsolutePath());
-          File already = importToLibraryTable.get(pkg); 
+//          pw.println(pkg + "\t" + libraryFolder.getAbsolutePath());
+          LibraryFolder library = importToLibraryTable.get(pkg); 
+          File already = library.getPath(); 
           if (already != null) {
             Base.showWarning("Library Calling", "The library found in\n" +
               libraryFolder.getAbsolutePath() + "\n" + 
@@ -1376,6 +1418,7 @@ public class Base {
     }
     return ifound;
   }
+  */
 
 
   // .................................................................
@@ -2177,24 +2220,24 @@ public class Base {
    */
   static public HashMap<String,String> readSettings(File inputFile) {
     HashMap<String,String> outgoing = new HashMap<String,String>();
-    if (!inputFile.exists()) return outgoing;  // return empty hash
+    if (inputFile.exists()) {
+      String lines[] = PApplet.loadStrings(inputFile);
+      for (int i = 0; i < lines.length; i++) {
+        int hash = lines[i].indexOf('#');
+        String line = (hash == -1) ?
+          lines[i].trim() : lines[i].substring(0, hash).trim();
+          if (line.length() == 0) continue;
 
-    String lines[] = PApplet.loadStrings(inputFile);
-    for (int i = 0; i < lines.length; i++) {
-      int hash = lines[i].indexOf('#');
-      String line = (hash == -1) ?
-        lines[i].trim() : lines[i].substring(0, hash).trim();
-      if (line.length() == 0) continue;
-
-      int equals = line.indexOf('=');
-      if (equals == -1) {
-        System.err.println("ignoring illegal line in " + inputFile);
-        System.err.println("  " + line);
-        continue;
+        int equals = line.indexOf('=');
+        if (equals == -1) {
+          System.err.println("ignoring illegal line in " + inputFile);
+          System.err.println("  " + line);
+          continue;
+        }
+        String attr = line.substring(0, equals).trim();
+        String valu = line.substring(equals + 1).trim();
+        outgoing.put(attr, valu);
       }
-      String attr = line.substring(0, equals).trim();
-      String valu = line.substring(equals + 1).trim();
-      outgoing.put(attr, valu);
     }
     return outgoing;
   }
