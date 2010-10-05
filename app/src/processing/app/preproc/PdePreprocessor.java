@@ -430,7 +430,7 @@ public class PdePreprocessor implements PdeTokenTypes {
     // Because the meanings of < and > are overloaded to support
     // type arguments and type parameters, we have to treat them
     // as copyable to hidden text (or else the following syntax,
-    // such as (); and what not gets lost under certain circumstances
+    // such as (); and what not gets lost under certain circumstances)
     // -- jdf
     filter.copy(PdeRecognizer.LT);
     filter.copy(PdeRecognizer.GT);

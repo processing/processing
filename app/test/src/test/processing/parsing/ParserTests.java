@@ -275,4 +275,8 @@ public class ParserTests {
     expectGood("bug315g");
   }
 
+  @Test
+  public void bug400g() {
+    expectGood("bug400g");
+  }
 }
