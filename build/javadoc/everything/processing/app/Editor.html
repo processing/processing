@@ -356,6 +356,14 @@ Main editor panel for the Processing Development Environment.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Editor.html#handleCopyAsHTML()">handleCopyAsHTML</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/app/Editor.html#handleCut()">handleCut</A></B>()</CODE>
 
 <BR>
@@ -467,35 +475,6 @@ Main editor panel for the Processing Development Environment.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;javax.swing.JMenuItem</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/app/Editor.html#newJMenuItem(java.lang.String, int)">newJMenuItem</A></B>(java.lang.String&nbsp;title,
-             int&nbsp;what)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A software engineer, somewhere, needs to have his abstraction
- taken away.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;javax.swing.JMenuItem</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/app/Editor.html#newJMenuItemAlt(java.lang.String, int)">newJMenuItemAlt</A></B>(java.lang.String&nbsp;title,
-                int&nbsp;what)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Same as newJMenuItem(), but adds the ALT (on Linux and Windows)
- or OPTION (on Mac OS X) key as a modifier.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;javax.swing.JMenuItem</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/app/Editor.html#newJMenuItemShift(java.lang.String, int)">newJMenuItemShift</A></B>(java.lang.String&nbsp;title,
-                  int&nbsp;what)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Like newJMenuItem() but adds shift as a modifier for the key command.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/app/Editor.html#resetHandlers()">resetHandlers</A></B>()</CODE>
 
@@ -522,6 +501,22 @@ Main editor panel for the Processing Development Environment.
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Replace the text on a specified line.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Editor.html#setSaveAsItem(javax.swing.JMenuItem)">setSaveAsItem</A></B>(javax.swing.JMenuItem&nbsp;item)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Editor.html#setSaveItem(javax.swing.JMenuItem)">setSaveItem</A></B>(javax.swing.JMenuItem&nbsp;item)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -701,17 +696,11 @@ public <B>Editor</B>(<A HREF="../../processing/app/Base.html" title="class in pr
 </TR>
 </TABLE>
 
-<A NAME="newJMenuItem(java.lang.String, int)"><!-- --></A><H3>
-newJMenuItem</H3>
+<A NAME="setSaveItem(javax.swing.JMenuItem)"><!-- --></A><H3>
+setSaveItem</H3>
 <PRE>
-public static javax.swing.JMenuItem <B>newJMenuItem</B>(java.lang.String&nbsp;title,
-                                                 int&nbsp;what)</PRE>
+public void <B>setSaveItem</B>(javax.swing.JMenuItem&nbsp;item)</PRE>
 <DL>
-<DD>A software engineer, somewhere, needs to have his abstraction
- taken away. In some countries they jail or beat people for writing
- the sort of API that would require a five line helper function
- just to set the command key for a menu item.
-<P>
 <DD><DL>
 </DL>
 </DD>
@@ -721,32 +710,11 @@ public static javax.swing.JMenuItem <B>newJMenuItem</B>(java.lang.String&nbsp;ti
 </DL>
 <HR>
 
-<A NAME="newJMenuItemShift(java.lang.String, int)"><!-- --></A><H3>
-newJMenuItemShift</H3>
+<A NAME="setSaveAsItem(javax.swing.JMenuItem)"><!-- --></A><H3>
+setSaveAsItem</H3>
 <PRE>
-public static javax.swing.JMenuItem <B>newJMenuItemShift</B>(java.lang.String&nbsp;title,
-                                                      int&nbsp;what)</PRE>
+public void <B>setSaveAsItem</B>(javax.swing.JMenuItem&nbsp;item)</PRE>
 <DL>
-<DD>Like newJMenuItem() but adds shift as a modifier for the key command.
-<P>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="newJMenuItemAlt(java.lang.String, int)"><!-- --></A><H3>
-newJMenuItemAlt</H3>
-<PRE>
-public static javax.swing.JMenuItem <B>newJMenuItemAlt</B>(java.lang.String&nbsp;title,
-                                                    int&nbsp;what)</PRE>
-<DL>
-<DD>Same as newJMenuItem(), but adds the ALT (on Linux and Windows)
- or OPTION (on Mac OS X) key as a modifier.
-<P>
 <DD><DL>
 </DL>
 </DD>
@@ -1151,6 +1119,20 @@ public void <B>handleCopy</B>()</PRE>
 <DL>
 <DD>Implements Edit &rarr; Copy.
 <P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="handleCopyAsHTML()"><!-- --></A><H3>
+handleCopyAsHTML</H3>
+<PRE>
+public void <B>handleCopyAsHTML</B>()</PRE>
+<DL>
 <DD><DL>
 </DL>
 </DD>

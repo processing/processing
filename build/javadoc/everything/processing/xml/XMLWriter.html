@@ -158,7 +158,7 @@ An XMLWriter writes XML data to a stream.
 <CODE>&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/xml/XMLWriter.html#write(processing.xml.XMLElement, boolean, int)">write</A></B>(<A HREF="../../processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>&nbsp;xml,
       boolean&nbsp;prettyPrint,
-      int&nbsp;indent)</CODE>
+      int&nbsp;initialIndent)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Writes an XML element.</TD>
@@ -166,9 +166,10 @@ An XMLWriter writes XML data to a stream.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/xml/XMLWriter.html#write(processing.xml.XMLElement, boolean, int, boolean)">write</A></B>(<A HREF="../../processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>&nbsp;xml,
+<TD><CODE><B><A HREF="../../processing/xml/XMLWriter.html#write(processing.xml.XMLElement, boolean, int, int, boolean)">write</A></B>(<A HREF="../../processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>&nbsp;xml,
       boolean&nbsp;prettyPrint,
-      int&nbsp;indent,
+      int&nbsp;initialIndent,
+      int&nbsp;eachIndent,
       boolean&nbsp;collapseEmptyElements)</CODE>
 
 <BR>
@@ -269,7 +270,7 @@ write</H3>
 <PRE>
 public void <B>write</B>(<A HREF="../../processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>&nbsp;xml,
                   boolean&nbsp;prettyPrint,
-                  int&nbsp;indent)
+                  int&nbsp;initialIndent)
            throws java.io.IOException</PRE>
 <DL>
 <DD>Writes an XML element.
@@ -283,12 +284,13 @@ public void <B>write</B>(<A HREF="../../processing/xml/XMLElement.html" title="c
 </DL>
 <HR>
 
-<A NAME="write(processing.xml.XMLElement, boolean, int, boolean)"><!-- --></A><H3>
+<A NAME="write(processing.xml.XMLElement, boolean, int, int, boolean)"><!-- --></A><H3>
 write</H3>
 <PRE>
 public void <B>write</B>(<A HREF="../../processing/xml/XMLElement.html" title="class in processing.xml">XMLElement</A>&nbsp;xml,
                   boolean&nbsp;prettyPrint,
-                  int&nbsp;indent,
+                  int&nbsp;initialIndent,
+                  int&nbsp;eachIndent,
                   boolean&nbsp;collapseEmptyElements)
            throws java.io.IOException</PRE>
 <DL>
@@ -296,7 +298,7 @@ public void <B>write</B>(<A HREF="../../processing/xml/XMLElement.html" title="c
 <P>
 <DD><DL>
 <DT><B>Parameters:</B><DD><CODE>xml</CODE> - the non-null XML element to write.<DD><CODE>prettyPrint</CODE> - if spaces need to be inserted to make the output more
-                    readable<DD><CODE>indent</CODE> - how many spaces to indent the element.
+                    readable<DD><CODE>initialIndent</CODE> - how many spaces to indent the first element.
 <DT><B>Throws:</B>
 <DD><CODE>java.io.IOException</CODE></DL>
 </DD>
