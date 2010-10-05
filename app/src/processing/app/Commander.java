@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2008 Ben Fry and Casey Reas
+  Copyright (c) 2008-10 Ben Fry and Casey Reas
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -50,8 +50,12 @@ import processing.app.debug.*;
  * --export-application Export an application.
  * --platform           Specify the platform (export to application only).
  *                      Should be one of 'windows', 'macosx', or 'linux'.
+ * --bits               Must be specified if libraries are used that are
+ *                      32- or 64-bit specific such as the OpenGL library.
+ *                      Otherwise specify 0 or leave it out.
  *
- * --preferences=&lt;file&gt; Specify a preferences file to use (optional).
+ * --preferences=&lt;file&gt; Specify a preferences file to use. Required if the
+ *                      sketch uses libraries found in your sketchbook folder.
  * </PRE>
  *
  * To build the command line version, first build for your platform,
@@ -71,6 +75,7 @@ public class Commander implements RunnerListener {
   static final String exportAppletArg = "--export-applet";
   static final String exportApplicationArg = "--export-application";
   static final String platformArg = "--platform=";
+  static final String bitsArg = "--bits=";
   static final String preferencesArg = "--preferences=";
 
   static final int HELP = -1;
@@ -104,6 +109,7 @@ public class Commander implements RunnerListener {
     String outputPath = null;
     String preferencesPath = null;
     int platformIndex = PApplet.platform; // default to this platform
+    int platformBits = 0;
     int mode = HELP;
 
     for (String arg : args) {
@@ -222,14 +228,14 @@ public class Commander implements RunnerListener {
           }
         } else if (mode == EXPORT_APPLICATION) {
           if (outputPath != null) {
-            success = sketch.exportApplication(outputPath, platformIndex);
+            success = sketch.exportApplication(outputPath, platformIndex, platformBits);
           } else {
             //String sketchFolder =
             //  pdePath.substring(0, pdePath.lastIndexOf(File.separatorChar));
             outputPath =
               sketchFolder + File.separatorChar +
               "application." + Base.getPlatformName(platformIndex);
-            success = sketch.exportApplication(outputPath, platformIndex);
+            success = sketch.exportApplication(outputPath, platformIndex, platformBits);
           }
         }
         System.exit(success ? 0 : 1);
@@ -298,7 +304,11 @@ public class Commander implements RunnerListener {
     out.println("--export-application Export an application.");
     out.println("--platform           Specify the platform (export to application only).");
     out.println("                     Should be one of 'windows', 'macosx', or 'linux'.");
+    out.println("--bits               Must be specified if libraries are used that are");
+    out.println("                     32- or 64-bit specific such as the OpenGL library.");
+    out.println("                     Otherwise specify 0 or leave it out."); 
     out.println();
-    out.println("--preferences=<file> Specify a preferences file to use (optional).");
+    out.println("--preferences=<file> Specify a preferences file to use. Required if the");
+    out.println("                     sketch uses libraries found in your sketchbook folder.");
   }
 }

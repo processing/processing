@@ -42,7 +42,7 @@ _ add processing.js export tool from florian
 _   http://github.com/fjenett/processingjstool/
 _   http://github.com/fjenett/processingjstool/zipball/v0.0.6
 
-_ accented letter input is broken (on os x)
+_ accented letter input is broken (on os x and windows)
 _   http://code.google.com/p/processing/issues/detail?id=335
 
 _ auto-format screws up if/else/else if blocks
