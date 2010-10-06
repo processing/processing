@@ -35,10 +35,9 @@ import android.opengl.GLUtils;
 import java.nio.*;
 
 /**
- * This class adds an opengl texture to a PImage object.
+ * This class wraps an OpenGL texture.
  * By Andres Colubri
- *  TODO: Finish integration with PImage
- *  TODO: Revise updating mechanism (what happens when the pixels change in the PImage, etc). 
+ * 
  */
 @SuppressWarnings("unused")
 public class PTexture implements PConstants { 
@@ -163,7 +162,7 @@ public class PTexture implements PConstants {
   
   /**
    * Sets the size of the image and texture to width x height. If the texture is already initialized,
-   * it first destroys the current opengl texture object and then creates a new one with the specified
+   * it first destroys the current OpenGL texture object and then creates a new one with the specified
    * size.
    * @param width int
    * @param height int
@@ -175,7 +174,7 @@ public class PTexture implements PConstants {
 
   /**
    * Sets the size of the image and texture to width x height, and the parameters of the texture to params.
-   * If the texture is already  initialized, it first destroys the current opengl texture object and then creates 
+   * If the texture is already  initialized, it first destroys the current OpenGL texture object and then creates 
    * a new one with the specified size.
    * @param width int
    * @param height int
@@ -190,17 +189,18 @@ public class PTexture implements PConstants {
 
 
   public void resize(int wide, int high) {
-    // Creating new texture with the apropriate size.
+    // Creating new texture with the appropriate size.
     PTexture tex = new PTexture(parent, wide, high, getParameters());
     
     // Copying the contents of this texture into tex.
     tex.set(this);
     
-    // Now, overwriting this with tex.
+    // Now, overwriting "this" with tex.
     copy(tex);
     
     // Zeroing the texture id of tex, so the texture is not 
-    // deleted by opengl when the object is finalized by the GC.
+    // deleted by OpenGL when the object is finalized by the GC.
+    // "This" texture now wraps the one created in tex.
     tex.glTextureID = 0;
   }
 
@@ -224,10 +224,9 @@ public class PTexture implements PConstants {
       width = img.width;
       height = img.height;      
       createTexture(width, height);      
-    }
-    
+    }    
     img.loadPixels();
-    set(img.pixels, img.format);
+    set(img.texture);
   }
   
   
@@ -243,42 +242,58 @@ public class PTexture implements PConstants {
       width = h;      
       createTexture(w, h); 
     }
-    
-    img.loadPixels();
-    int p0;
-    int dest[] = new int[w * h];
-    for (int j = 0; j < h; j++) {
-      p0 = y * img.width + x + (img.width - w) * j;
-      PApplet.arrayCopy(img.pixels, p0 + w * j, dest, w * j, w);
-    }
-   
-    set(dest, img.format);
+    img.loadPixels();  
+    set(img.texture, x, y, w, h);
+  }
+  
+  
+  public void set(PTexture tex) {
+    set(tex, 0, 0, tex.width, tex.height);
   }
   
   
   // Copies source texture to this by means of FBO.
-  public void set(PTexture tex) {
+  public void set(PTexture tex, int x, int y, int w, int h) {
+    if (tex == null) {
+      throw new RuntimeException("PTexture: source texture is null");
+    }        
+    
     PFramebuffer fbo = new PFramebuffer(parent, glWidth, glHeight);
-    // This is the color (destination) buffer of the FBO. 
+    // This texture is the color (destination) buffer of the FBO. 
     fbo.setColorBuffer(this);
     fbo.disableDepthTest();
     
     // FBO copy:
     a3d.pushFramebuffer();
     a3d.setFramebuffer(fbo);
-    // Rendering tex into this.
-    a3d.drawTexture(tex, 0, 0, tex.glWidth, tex.glHeight, 0, 0, glWidth, glHeight);    
+    // Rendering tex into "this", and scaling the source rectangle
+    // to cover the entire destination region.
+    a3d.drawTexture(tex, x, y, w, h, 0, 0, width, height);    
     a3d.popFramebuffer();
   }
 
   
   public void set(int[] pixels) {
-    set(pixels, ARGB); 
+    set(pixels, 0, 0, glWidth, glHeight, ARGB); 
   }
 
   
-  public void set(int[] intArray, int arrayFormat) {  
-    if (intArray.length != width * height) {
+  public void set(int[] pixels, int format) {
+    set(pixels, 0, 0, glWidth, glHeight, format); 
+  }
+  
+  
+  public void set(int[] pixels, int x, int y, int w, int h) {
+    set(pixels, x, y, w, h, ARGB); 
+  }
+  
+  
+  public void set(int[] pixels, int x, int y, int w, int h, int format) {
+    // TODO: Should we throw exceptions here or just a warning?
+    if (pixels == null) {
+      throw new RuntimeException("PTexture: null pixels array");
+    }    
+    if (pixels.length != width * height) {
       throw new RuntimeException("PTexture: wrong length of pixels array");
     }
     
@@ -286,35 +301,53 @@ public class PTexture implements PConstants {
       createTexture(width, height);
     }   
     
-    int[] convArray = new int[glWidth * glHeight];
+    /*
+    int p0;
+    int dest[] = new int[w * h];
+    for (int j = 0; j < h; j++) {
+      p0 = y * img.width + x + (img.width - w) * j;
+      PApplet.arrayCopy(img.pixels, p0 + w * j, dest, w * j, w);
+    }
+    int p0;
+    int dest[] = new int[w * h];
+    for (int j = 0; j < h; j++) {
+      p0 = y * img.width + x + (img.width - w) * j;
+      PApplet.arrayCopy(img.pixels, p0 + w * j, dest, w * j, w);
+    }
+    */
     
     gl.glEnable(glTarget);
     gl.glBindTexture(glTarget, glTextureID);
                 
     if (usingMipmaps) {
       if (a3d.gl11 != null && PGraphicsAndroid3D.mipmapSupported) {
-        convertToRGBA(intArray, convArray, arrayFormat);
+        int[] rgbaPixels = new int[glWidth * glHeight];
+        convertToRGBA(pixels, rgbaPixels, format, 0, 0, width, height);
         gl.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_GENERATE_MIPMAP, GL11.GL_TRUE);
-        gl.glTexSubImage2D(glTarget, 0, 0, 0, glWidth, glHeight, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, IntBuffer.wrap(convArray));
+        gl.glTexSubImage2D(glTarget, 0, x, y, w, h, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, IntBuffer.wrap(rgbaPixels));
       } else {
+        /*
         // Code by Mike Miller obtained from here:
         // http://insanitydesign.com/wp/2009/08/01/android-opengl-es-mipmaps/
-        copyARGB(intArray, convArray);
+        // TODO: Check if this algorithm works only for pot textures or for any resolution.
+        //       and adapt for copying only one texture rectangle.
+        int[] argbPixels = new int[glWidth * glHeight];
+        copyARGB(pixels, argbPixels);
         int level = 0;
-        int w = glWidth;
-        int h = glHeight;
+        int w0 = glWidth;
+        int h0 = glHeight;
         
         // We create a Bitmap because then we use its built-in filtered downsampling
         // functionality.
         Bitmap bitmap = Bitmap.createBitmap(w, h, Config.ARGB_8888);
-        bitmap.setPixels(convArray, 0, w, 0, 0, w, h);
+        bitmap.setPixels(argbPixels, 0, w0, 0, 0, w0, h0);
         
-        while (w >= 1 || h >= 1) {
+        while (w0 >= 1 || h0 >= 1) {
           //First of all, generate the texture from our bitmap and set it to the according level
           GLUtils.texImage2D(GL10.GL_TEXTURE_2D, level, bitmap, 0);
-
+          
           // We are done.
-          if (w == 1 || h == 1) {
+          if (w0 == 1 || h0 == 1) {
             break;
           }
  
@@ -322,18 +355,25 @@ public class PTexture implements PConstants {
           level++;
  
           // Downsampling bitmap
-          h /= 2;
-          w /= 2;
-          Bitmap bitmap2 = Bitmap.createScaledBitmap(bitmap, w, h, true);
+          h0 /= 2;
+          w0 /= 2;
+          Bitmap bitmap2 = Bitmap.createScaledBitmap(bitmap, w0, h0, true);
  
           // Clean up
           bitmap.recycle();
           bitmap = bitmap2;
         }
+      */
+        // No mipmaps for now.
+        int[] rgbaPixels = new int[glWidth * glHeight];
+        convertToRGBA(pixels, rgbaPixels, format, 0, 0, width, height);
+        gl.glTexSubImage2D(glTarget, 0, x, y, w, h, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, IntBuffer.wrap(rgbaPixels));
+        
       }
     } else {
-      convertToRGBA(intArray, convArray, arrayFormat);
-      gl.glTexSubImage2D(glTarget, 0, 0, 0, glWidth, glHeight, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, IntBuffer.wrap(convArray));
+      int[] rgbaPixels = new int[glWidth * glHeight];
+      convertToRGBA(pixels, rgbaPixels, format, 0, 0, width, height);
+      gl.glTexSubImage2D(glTarget, 0, x, y, w, h, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, IntBuffer.wrap(rgbaPixels));
     }
 
     gl.glDisable(glTarget);
@@ -342,13 +382,15 @@ public class PTexture implements PConstants {
   
   ////////////////////////////////////////////////////////////
   
-  // Update methods
+  // Get methods
   
   
   /**     
    * Copy texture to pixels. Involves video memory to main memory transfer (slow).
    */   
   public void get(int[] pixels) {
+    // TODO: here is ok to create a new pixels array, or an error/warning
+    // should be thrown instead?
     if ((pixels == null) || (pixels.length != width * height)) {
       pixels = new int[width * height];
     }
@@ -398,7 +440,7 @@ public class PTexture implements PConstants {
     
   ////////////////////////////////////////////////////////////     
  
-  // Get opengl parameters
+  // Get OpenGL parameters
   
   
   protected int getGLWidth() {
@@ -412,7 +454,7 @@ public class PTexture implements PConstants {
   
   
   /**
-   * Provides the ID of the opengll texture object.
+   * Provides the ID of the OpenGL texture object.
    * @return int
    */	
   protected int getGLTextureID()  {
@@ -592,7 +634,8 @@ public class PTexture implements PConstants {
    * @param tIntArray int[]
    * @param arrayFormat int	 
    */
-  protected void convertToRGBA(int[] intArray, int[] tIntArray, int arrayFormat)  {
+  // TODO: Finish handling of rectangular area.
+  protected void convertToRGBA(int[] intArray, int[] tIntArray, int arrayFormat, int x0, int y0, int w, int h)  {
     int t = 0; 
     int p = 0;
     if (PGraphicsAndroid3D.BIG_ENDIAN)  {
