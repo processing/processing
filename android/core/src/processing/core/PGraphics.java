@@ -5094,7 +5094,7 @@ public class PGraphics extends PImage implements PConstants {
   // TODO: Discuss proper integration into PGraphics API. 
 
   public PImage getOffscreenImage() {
-    if (!(this instanceof PGraphicsAndroid3D)) {
+    if (!is3D()) {
       showMissingWarning("getOffscreenImage");
     }
     return null;
@@ -5102,14 +5102,14 @@ public class PGraphics extends PImage implements PConstants {
   
 
   public void blend(int mode) {
-    if (!(this instanceof PGraphicsAndroid3D)) {
+    if (!is3D()) {
       showMissingWarning("blend");
     }
   }
   
   
   public void noBlend() {
-    if (!(this instanceof PGraphicsAndroid3D)) {
+    if (!is3D()) {
       showMissingWarning("noBlend");
     }
   }  

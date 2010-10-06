@@ -59,6 +59,16 @@ public class PImage implements PConstants, Cloneable {
 
   protected Bitmap bitmap;
   protected PTexture texture;
+  
+  // This boolean variable is used to indicate that there
+  // was a change in the contents of the pixels array and
+  // hasn't been transfered to the texture yet.
+  protected boolean texUpdated = false;
+
+  // This boolean variable is used to indicate that there
+  // was a change in the contents of the texture and
+  // hasn't been transfered to the pixels array yet.  
+  protected boolean pixUpdated = true;  
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -192,42 +202,77 @@ public class PImage implements PConstants, Cloneable {
   
   
   public void loadTexture() {
-    texture = new PTexture(parent, width, height, new PTexture.Parameters(format));
-    pixelsToTexture();
+    if (texture == null) {
+      texture = new PTexture(parent, width, height, new PTexture.Parameters(format));
+      texUpdated = false;
+    }
+    if (pixels != null) {
+      // loadTexture has lower "permissions" than loadPixels, because
+      // loadPixels calls loadTexture which in turns creates the texture
+      // if it is null, but the contrary doesn't happen (loadTexture cannot
+      // result in the creation of the pixels array if it is null).
+      pixelsToTexture();
+    }
   }
   
 
   public void loadTexture(int filter) {
-    texture = new PTexture(parent, width, height, new PTexture.Parameters(format, filter));
-    pixelsToTexture();
+    if (texture == null) {
+      texture = new PTexture(parent, width, height, new PTexture.Parameters(format, filter));
+      texUpdated = false;
+    }
+    if (pixels != null) {      
+      pixelsToTexture();
+    }
   }
 
 
   public void loadTexture(PTexture.Parameters params) {
-    texture = new PTexture(parent, width, height, params);
-    pixelsToTexture();
+    if (texture == null) { 
+      texture = new PTexture(parent, width, height, params);
+      texUpdated = false;
+    }
+    if (pixels != null) {      
+      pixelsToTexture();
+    }
   }
   
-  
-  public void pixelsToTexture() {
-    loadPixels();
-    texture.set(this);
+
+  public void setTexture(PTexture tex) {
+    if (tex.width == width && tex.height == height) { 
+      texture.set(tex);
+      pixUpdated = false;
+    } else {
+      System.err.println("PImage: cannot set texture with different resolution from PImage object");
+    }
   }
   
-  
-  public void textureToPixels() {
-    loadPixels();
-    texture.get(pixels);
-  }  
-  
-  
-  public void setTexture(PTexture texture) {
-    this.texture = texture;
-  }
-  
-  
+
   public PTexture getTexture() {
     return texture;
+  }
+
+  
+  public void updateTexture() {
+    if (pixels != null) {
+      textureToPixels();
+    }
+  }
+  
+  
+  protected void pixelsToTexture() {    
+    if (!texUpdated) {
+      texture.set(pixels);
+      texUpdated = true;
+    }
+  }
+  
+  
+  protected void textureToPixels() {
+    if (!pixUpdated) {
+      texture.get(pixels);
+      pixUpdated = true;
+    }
   }
 
 
@@ -306,9 +351,8 @@ public class PImage implements PConstants, Cloneable {
     if (bitmap != null) {
       bitmap.getPixels(pixels, 0, width, 0, 0, width, height); 
     }
-    
-    if (texture != null) {
-      // texture.get(pixels); HERE?
+    if (parent.g.is3D()) {
+      loadTexture();
     }
   }
 
@@ -369,10 +413,13 @@ public class PImage implements PConstants, Cloneable {
     }
     
     if (texture != null) {
-      // texture.set(this);  HERE?
+      texture.set(pixels, mx1, my1, mx2 - mx1, my2 - my1);
+      // Assuming in good faith that the user only messed up
+      // with the pixels in the specified region. We don't have
+      // any way to know if he or she is lying.
+      texUpdated = true;
     }
   }
-
 
 
   //////////////////////////////////////////////////////////////
@@ -526,7 +573,7 @@ public class PImage implements PConstants, Cloneable {
         index2 += w;
       }
     }
-    if (parent.g instanceof PGraphicsAndroid3D) {
+    if (parent.g.is3D()) {
       // TODO: Check why textures doesn't work in formats other than ARGB...
       newbie.format = ARGB;
       newbie.loadTexture();
@@ -541,7 +588,7 @@ public class PImage implements PConstants, Cloneable {
   public PImage get() {
     try {
       PImage img = (PImage) clone();
-      if (parent.g instanceof PGraphicsAndroid3D) {
+      if (parent.g.is3D()) {
         // TODO: Check why textures doesn't work in formats other than ARGB...
         img.format = ARGB;
         img.loadTexture();
@@ -2744,4 +2791,3 @@ public class PImage implements PConstants, Cloneable {
     //return success;
   }
 }
-
