@@ -1502,7 +1502,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
   public PImage createImage(int wide, int high, int format) {
     PImage image = new PImage(wide, high, format);
     image.parent = this;  // make save() work
-    if (g instanceof PGraphicsAndroid3D) {
+    if (g.is3D()) {
       // TODO: Check why textures doesn't work in formats other than ARGB...
       image.format = ARGB;
       image.loadTexture();
@@ -1514,7 +1514,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
   public PImage createImage(int wide, int high, int format, int filter) {
     PImage image = new PImage(wide, high, format);
     image.parent = this;  // make save() work
-    if (g instanceof PGraphicsAndroid3D) {
+    if (g.is3D()) {
       // TODO: Check why textures doesn't work in formats other than ARGB...
       image.format = ARGB;
       image.loadTexture(filter);
@@ -1526,7 +1526,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
   public PImage createImage(int wide, int high, PTexture.Parameters params) {
     PImage image = new PImage(wide, high, params.format);
     image.parent = this;  // make save() work
-    if (g instanceof PGraphicsAndroid3D) {
+    if (g.is3D()) {
       // TODO: Check why textures doesn't work in formats other than ARGB...
       image.format = ARGB;
       image.loadTexture(params);
@@ -3314,7 +3314,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 //    println("loadImage(" + filename + ") was " + nfc(much));
     PImage image = new PImage(bitmap);
     image.parent = this;
-    if (g instanceof PGraphicsAndroid3D) {
+    if (g.is3D()) {
       // TODO: Check why textures doesn't work in formats other than ARGB...
       image.format = ARGB;
       image.loadTexture(params);
@@ -3493,7 +3493,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
         e.printStackTrace();
       }
     } else if (filename.toLowerCase().endsWith(".obj")) {
-      if (g instanceof PGraphicsAndroid3D) {
+      if (g.is3D()) {
         return new PShape3D(this, filename, mode);
       } else {
         throw new RuntimeException("OBJ files can be loaded only when using the A3D renderer.");
@@ -3515,7 +3515,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
    * Creates an empty 3D shape, with space for nvert vertices.
    */
   public PShape3D createShape(int nvert, int kind, int mode) {
-    if (g instanceof PGraphicsAndroid3D) {
+    if (g.is3D()) {
       PShape3D.Parameters params = PShape3D.newParameters(kind, mode);
       PShape3D model = new PShape3D(this, nvert, params);
       return model;
@@ -3537,7 +3537,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
    * Tesselates a PShape into a PShape3D with the desired drawing mode (STATID or DYNAMIC)..
    */
   public PShape3D createShape(PShape shape, int mode) {
-    if (g instanceof PGraphicsAndroid3D) {
+    if (g.is3D()) {
       PGraphicsAndroid3D a3d = (PGraphicsAndroid3D)g;
       a3d.beginShapeRecorderImpl();
       shape(shape, 0, 0, 1, 1);
@@ -6921,7 +6921,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 
   public PShape beginRecord() {
-    if (g instanceof PGraphicsAndroid3D) {
+    if (g.is3D()) {
       return ((PGraphicsAndroid3D) g).beginRecord();
     } else  {
        throw new RuntimeException("The shapes recorder can only be used with the A3D renderer.");
@@ -6930,7 +6930,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
   
   
   public void beginShapesRecorder() {
-    if (g instanceof PGraphicsAndroid3D) {
+    if (g.is3D()) {
       ((PGraphicsAndroid3D) g).beginShapesRecorder();
     } else  {
        throw new RuntimeException("The shapes recorder can only be used with the A3D renderer.");
@@ -6939,7 +6939,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 
   public void beginShapeRecorder() {
-    if (g instanceof PGraphicsAndroid3D) {
+    if (g.is3D()) {
       ((PGraphicsAndroid3D) g).beginShapeRecorder();
     } else  {
        throw new RuntimeException("The shape recorder can only be used with the A3D renderer.");
@@ -6948,7 +6948,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 
   public void beginShapeRecorder(int kind) {
-    if (g instanceof PGraphicsAndroid3D) {
+    if (g.is3D()) {
       ((PGraphicsAndroid3D) g).beginShapeRecorder(kind);
     } else  {
        throw new RuntimeException("The shape recorder can only be used with the A3D renderer.");
@@ -7022,7 +7022,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 
   public void endRecord() {
-    if (g instanceof PGraphicsAndroid3D) {
+    if (g.is3D()) {
       ((PGraphicsAndroid3D) g).endRecord();
     } else  {
        throw new RuntimeException("The shapes recorder can only be used with the A3D renderer.");
@@ -7031,7 +7031,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
   
   
   public PShape3D endShapesRecorder() {
-    if (g instanceof PGraphicsAndroid3D) {
+    if (g.is3D()) {
       return ((PGraphicsAndroid3D) g).endShapesRecorder();
     } else  {
        throw new RuntimeException("The shapes recorder can only be used with the A3D renderer.");
@@ -7040,7 +7040,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 
   public PShape3D endShapeRecorder() {
-    if (g instanceof PGraphicsAndroid3D) {
+    if (g.is3D()) {
       return ((PGraphicsAndroid3D) g).endShapeRecorder();
     } else  {
        throw new RuntimeException("The shape recorder can only be used with the A3D renderer.");
@@ -7049,7 +7049,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 
   public PShape3D endShapeRecorder(int mode) {
-    if (g instanceof PGraphicsAndroid3D) {
+    if (g.is3D()) {
       return ((PGraphicsAndroid3D) g).endShapeRecorder(mode);
     } else  {
        throw new RuntimeException("The shape recorder can only be used with the A3D renderer.");

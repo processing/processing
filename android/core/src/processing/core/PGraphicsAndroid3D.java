@@ -51,7 +51,7 @@ import processing.core.PShape3D.VertexGroup;
 //   setRasterPos() is also commented out
 
 /*
- * Android 3D renderer implemented with pure OpenGL ES 1.0/1.1
+ * Android 3D renderer implemented with pure OpenGL ES 1.1
  * By Andres Colubri
  *
  * TODO: Comment A3D, PShape3D, PTexture, PFramebuffer, 
@@ -92,9 +92,6 @@ public class PGraphicsAndroid3D extends PGraphics {
   /** Aspect ratio of camera's view. */
   public float cameraAspect;
   
-  protected float currentEyeX;
-  protected float currentCenterY;
-
   /** Modelview and projection matrices **/
   
   // Array version for use with OpenGL
@@ -3434,11 +3431,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       float centerY, float centerZ, float upX, float upY, float upZ) {
     eyeY = height - eyeY;
     centerY = height - centerY;
-    
-    // Needed for properly setting ortographic projection.
-    currentEyeX = eyeX;
-    currentCenterY = centerY;
-      
+          
     // Calculating Z vector
     float z0 = eyeX - centerX;
     float z1 = eyeY - centerY;
@@ -3564,20 +3557,21 @@ public class PGraphicsAndroid3D extends PGraphics {
   }  
   
   /**
-   * Properly setting the ortographic projection depends on the values 
-   * used to set the camera (eye and center).
+   * Sets orthographic projection. The left, right, bottom and top
+   * values refer to the top left corner of the screen, not to the
+   * center or eye of the camera. This is like this because making
+   * it relative to the camera is not very intuitive if we think
+   * of the perspective function, which is also independent of the
+   * camera position.
    * 
    */
   public void ortho(float left, float right, float bottom, float top,
       float near, float far) {
-    // TODO: check if this equation is correct in the case the camera is not aligned
-    // to the XYZ axis (I guess the eye-camera vector needs to be used to determine
-    // the amounds to substract from left,right,bottom and top).
-    left -= currentEyeX;
-    right -= currentEyeX;
+    left -= width/2;
+    right -= width/2;
     
-    bottom -= currentCenterY;
-    top -= currentCenterY;
+    bottom -= height/2;
+    top -= height/2;
     
     float x = 2.0f / (right - left);
     float y = 2.0f / (top - bottom);
@@ -4927,8 +4921,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     // Setting texture crop.
     gl11.glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, crop, 0);
 
-    // There is no need to setup orthographic projection or any related matrix set/restore
-    // operations here because glDrawTexiOES operates on window coordinates directly:
+    // There is no need to setup orthographic projection or call any related matrix set/restore
+    // functions here because glDrawTexiOES operates on window coordinates directly:
     // "glDrawTexiOES takes window coordinates and bypasses the transform pipeline 
     // (except for mapping Z to the depth range), so there is no need for any 
     // matrix setup/restore code."
@@ -5418,6 +5412,13 @@ public class PGraphicsAndroid3D extends PGraphics {
           + printConfig(egl, display, bestConfig);
         System.out.println(configStr);
       }
+      PApplet.println("OPENGL DISPLAY CONFIG:");
+      PApplet.println("redBits " + redBits);
+      PApplet.println("greenBits " + greenBits);
+      PApplet.println("blueBits " + blueBits);
+      PApplet.println("alphaBits " + alphaBits);
+      PApplet.println("depthBits " + depthBits);
+      PApplet.println("stencilBits " + stencilBits);
       return bestConfig;
     }
 
