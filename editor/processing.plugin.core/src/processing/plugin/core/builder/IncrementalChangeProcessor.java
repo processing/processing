@@ -58,7 +58,7 @@ public class IncrementalChangeProcessor {
 
 	/** Process an IResourceChangeEvent */
 	public boolean resourceChanged(IResourceChangeEvent event){
-		printEvent(event);
+		//Event(event);
 		IResourceDelta delta = event.getDelta();
 		return this.resourceChanged(delta);
 	}
@@ -66,7 +66,7 @@ public class IncrementalChangeProcessor {
 	/** Process an IResourceDelta */
 	public boolean resourceChanged(IResourceDelta delta){
 		if (delta == null) return false;
-		printResourceChanges(delta);
+		//printResourceChanges(delta);
 
 		IResourceDeltaVisitor visitor = new IResourceDeltaVisitor() {
 			public boolean visit(IResourceDelta delta) throws CoreException {

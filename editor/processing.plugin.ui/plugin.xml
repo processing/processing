@@ -34,7 +34,6 @@
       <wizard
             category="processing.plugin.ui.newWizards"
             class="processing.plugin.ui.wizards.NewSketchWizard"
-            descriptionImage="Resources/16x16_icon.gif"
             finalPerspective="processing.plugin.ui.sketchingPerspective"
             icon="Resources/16x16_icon.gif"
             id="processing.plugin.ui.wizards.NewSketchWizard"
@@ -54,6 +53,20 @@
             id="processing.plugin.ui.wizards.exportAsAppletWizard"
             name="Export Sketch as Applet">
       </wizard>
+   </extension>
+   <extension point="org.eclipse.ui.importWizards">
+      <category
+            id="processing.plugin.ui.importWizards"
+            name="Processing">
+      </category>
+      <wizard
+            category="processing.plugin.ui.importWizards"
+            class="processing.plugin.ui.wizards.ImportSketchWizard"
+            icon="Resources/16x16_icon.gif"
+            id="processing.plugin.ui.wizards.importSketchWizard"
+            name="Import Sketch Wizard">
+      </wizard>
+
    </extension>
    <extension point="org.eclipse.debug.ui.launchShortcuts">
       <shortcut

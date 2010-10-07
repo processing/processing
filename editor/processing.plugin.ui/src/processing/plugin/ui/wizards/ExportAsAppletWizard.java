@@ -237,22 +237,6 @@ public class ExportAsAppletWizard extends Wizard implements IExportWizard {
 				}
 			}
 		}
-		
-		// Get the compiled source and package it as a jar
-//		Shell parentShell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-//	    JarPackageData codePackageData = new JarPackageData();
-//	    codePackageData.setJarLocation(sp.getAppletFolder().getFullPath().append(sp.getProject().getName() + ".jar"));
-//	    codePackageData.setSaveManifest(true);
-//        description.setManifestMainClass(mainType);
-//        description.setElements(filestoExport);
-//        IJarExportRunnable runnable= description.createJarExportRunnable(parentShell);
-//        try {
-//            new ProgressMonitorDialog(parentShell).run(true,true, runnable);
-//        } catch (InvocationTargetException e) {
-//            // An error has occurred while executing the operation
-//        } catch (InterruptedException e) {
-//            // operation has been canceled.
-//        }
 
 		// java.io has changed things, so force the workspace to refresh or everything will disappear
 		try {
