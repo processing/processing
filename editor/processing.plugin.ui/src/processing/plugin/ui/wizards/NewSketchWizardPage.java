@@ -51,18 +51,18 @@ public class NewSketchWizardPage extends WizardPage {
 		gridLayout.numColumns = 3;
 		container.setLayout(gridLayout);
 		setControl(container);
-		
+
 		final Label label = new Label(container, SWT.NONE);
 		final GridData gridData = new GridData();
 		gridData.horizontalSpan = 3;
 		label.setLayoutData(gridData);
-		label.setText("Select a name for the new sketch.");
-		
+		label.setText("Select a name for the new sketch");
+
 		final Label label_1 = new Label(container, SWT.NONE);
 		final GridData gridData_1 = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		label_1.setLayoutData(gridData_1);
 		label_1.setText("Sketch Name:");
-		
+
 		sketchNameField = new Text(container, SWT.BORDER);
 		sketchNameField.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e){
@@ -70,19 +70,18 @@ public class NewSketchWizardPage extends WizardPage {
 			}
 		});
 		sketchNameField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		final Label label_2 = new Label(container, SWT.NONE);
 		final GridData gridData_2 = new GridData();
 		gridData_2.horizontalSpan = 3;
 		label_2.setLayoutData(gridData_2);
-		
+
 		final Label label_3 = new Label(container, SWT.NONE);
 		final GridData gridData_3 = new GridData();
 		gridData_3.horizontalSpan = 3;
 		label_3.setLayoutData(gridData_3);
-		label_3.setLayoutData(gridData_3);
-		label_3.setText("Select the sketchbook folder that will contain the sketch:");
-		
+		label_3.setText("Select the sketchbook folder that will contain the sketch");
+
 		final Label label_4 = new Label(container, SWT.NONE);
 		final GridData gridData_4 = new GridData();
 		gridData_4.horizontalIndent = 20;
@@ -97,14 +96,14 @@ public class NewSketchWizardPage extends WizardPage {
 					}
 				});
 		sketchbookPathField.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
-		
+
 		final Button button_1 = new Button(container, SWT.NONE);
 		button_1.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e){browseForDestinationFolder();
 			}
 		});
 		button_1.setText("Browse...");
-		
+
 		initContents();
 	}
 
@@ -148,13 +147,13 @@ public class NewSketchWizardPage extends WizardPage {
 			return null;
 		return new Path(result);		
 	}
-	
+
 	/**
 	 * Verifies that the sketchbook path exists and does not already contain a sketch with that name.
- 	 */
+	 */
 	private void updatePageComplete() {
 		setPageComplete(false);
-		
+
 		// check the sketchbook path first
 		IPath sketchbookLoc = getSketchbookLoc();
 		if (sketchbookLoc == null || !sketchbookLoc.toFile().exists()){
@@ -162,20 +161,19 @@ public class NewSketchWizardPage extends WizardPage {
 			setErrorMessage("Please specify a sketchbook folder.");
 			return;
 		}
-		
+
 		// ensure the sketch isn't already present in the sketchbook
 		String sketchName = getSketchName();
-		for( File child : sketchbookLoc.toFile().listFiles()){
-			if (child.isDirectory() && child.getName().equals(sketchName)){
-				setMessage(null);
-				setErrorMessage("A sketch with that name already exists. Please choose another.");
-				return;
-			}	
+		File child = (sketchName == null) ? null : new File(sketchbookLoc.toFile(), sketchName);
+		if (child != null && child.exists() && child.isDirectory()){
+			setMessage(null);
+			setErrorMessage("A sketch with that name already exists in that location. Please choose another.");
+			return;
 		}
-		
+
 		// if nothing was caught, enable the finish button 
 		setPageComplete(true);
-		setMessage(null);
+		setMessage("Press finish to create a new sketch");
 		setErrorMessage(null);
 	}
 
@@ -210,5 +208,5 @@ public class NewSketchWizardPage extends WizardPage {
 			path = ResourcesPlugin.getWorkspace().getRoot().getLocation().append(path);
 		return path;
 	}
-	
+
 }

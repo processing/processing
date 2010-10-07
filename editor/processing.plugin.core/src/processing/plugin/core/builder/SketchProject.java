@@ -52,7 +52,7 @@ import processing.plugin.core.ProcessingLog;
  * This also holds state information about the sketch itself
  * that is generated and collected from the sketch files, the 
  * builder, a thorough background check, and maybe a little
- * dumpster diving. It acs as an ad-hoc model of a sketch project.  
+ * dumpster diving. It acts as an ad-hoc model of a sketch project.  
  */
 public class SketchProject implements IProjectNature {
 
@@ -73,7 +73,7 @@ public class SketchProject implements IProjectNature {
 	
 	protected boolean wasLastBuildSuccessful = false;
 	
-	protected ArrayList<IPath> libraryPaths = null;
+	protected ArrayList<IPath> libraryPaths = new ArrayList<IPath>();
 	
 	/** 
 	 * Return the SketchProject associated with the given IProject, or null
@@ -156,7 +156,14 @@ public class SketchProject implements IProjectNature {
 	/** Associate the sketch builder with this nature's project */
 	public void configure() throws CoreException {
 		if (!project.isOpen()) return;
-
+		
+		/* When the workspace is out of date after an import, 
+		 * but before the background refresh is finished these will
+		 * fail iff the folder already exists, so we expect a logged
+		 * error but no real negative consequences. The first build 
+		 * after the refresh is finished will align everything
+		 * properly again.
+		 */
 		getCodeFolder();
 		getDataFolder();
 		getBuildFolder();

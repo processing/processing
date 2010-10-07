@@ -40,8 +40,6 @@ import processing.plugin.ui.wizards.NewSketchWizardPage;
  * <p>
  * Contains a single page the requests the name of the sketch
  * and the sketch book folder to put the sketch in.
- * 
- * @author lonnen
  */
 public class NewSketchWizard extends Wizard implements INewWizard {
 	
@@ -65,7 +63,6 @@ public class NewSketchWizard extends Wizard implements INewWizard {
 	 * and potentially canceled by the user.
 	 */
 	public boolean performFinish() {
-		
 		final String sketchName = page.getSketchName();
 		final IPath sketchbookPath = page.getSketchbookLoc().append(sketchName);
 		project = ResourcesPlugin.getWorkspace().getRoot().getProject(sketchName);
@@ -104,18 +101,18 @@ public class NewSketchWizard extends Wizard implements INewWizard {
 	 */
 	protected void createNewProject(IProjectDescription description, IProject proj,
 			IProgressMonitor monitor) throws CoreException, OperationCanceledException{
-		monitor.beginTask("Creating a new Sketch", 400);
+		monitor.beginTask("Creating a new Sketch", 4);
 		
 		try{
 			// create the project root
-			proj.create(description, new SubProgressMonitor(monitor, 100));			
-			proj.open(IResource.BACKGROUND_REFRESH, new SubProgressMonitor(monitor, 100));
+			proj.create(description, new SubProgressMonitor(monitor, 1));			
+			proj.open(IResource.BACKGROUND_REFRESH, new SubProgressMonitor(monitor, 1));
 
 			if (monitor.isCanceled()){throw new OperationCanceledException();}
 
 			IContainer container = (IContainer) proj;
 			//create the default sketch file
-			addFileToContainer(container, new Path(project.getName() + ".pde"), null, new SubProgressMonitor(monitor, 100));
+			addFileToContainer(container, new Path(project.getName() + ".pde"), null, new SubProgressMonitor(monitor, 1));
 		} finally{
 			monitor.done();
 		}

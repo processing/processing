@@ -426,7 +426,7 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 		}
 
 		boolean importProblems = false;
-		sketchProject.libraryPaths = null;
+		sketchProject.libraryPaths.clear();
 		for (int i=0; i < result.extraImports.size(); i++){
 			String importPackage = result.extraImports.get(i);
 			int dot = importPackage.lastIndexOf('.');
