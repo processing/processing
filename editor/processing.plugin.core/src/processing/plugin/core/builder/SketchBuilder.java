@@ -51,24 +51,24 @@ import processing.plugin.core.ProcessingUtilities;
  * The SketchNature class is tightly integrated and manages the configuration so this builder 
  * works together with the JDT, so woe be to those who would carelessly manipulate this builder 
  * directly.
- * </p>
  * <p>
  * The builder is compatible with the PDE, and it expects sketches to be laid out with the
  * same folder structure. It may store metadata and temporary build files in the sketch 
  * file system but these will not change how the PDE interacts with it. Users should be 
  * able to use the PDE interchangeably with this builder.
- * </p>
  * <p>
  * Though this implements the Incremental Project Builder, the preprocessor is not incremental
  * and forces all builds to be full builds. To save a little bit of time, any build request is
  * treated as a full build without an inspection of the resource delta.
- * </p>
  */
 public class SketchBuilder extends IncrementalProjectBuilder{	
 
 	/** The identifier for the Processing builder (value <code>"processing.plugin.core.processingbuilder"</code>). */
 	public static final String BUILDER_ID = ProcessingCore.PLUGIN_ID + ".sketchBuilder";
 
+	/** Parent marker for Processing created markers (value <code>"processing.plugin.core.processingMarker"</code>). */
+	public static final String PROCESSINGMARKER = ProcessingCore.PLUGIN_ID + ".processingMarker";
+	
 	/** Problem marker for processing preprocessor issues (value <code>"processing.plugin.core.preprocError"</code>). */
 	public static final String PREPROCMARKER = ProcessingCore.PLUGIN_ID + ".preprocError";
 
@@ -111,9 +111,14 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 	/** Full paths to jars required to compile the sketch */
 	private ArrayList<IPath>libraryJarPathList;
 
-	/** Clean any leftover state from previous builds. */
-	protected void clean(SketchProject sketch, IProgressMonitor monitor) throws CoreException{
-		deleteP5ProblemMarkers(sketch);
+	/**
+	 * Triggered by platform Clean command. 
+	 * <p>
+	 * Reset any state from previous builds. 
+	 */
+	protected void clean(IProgressMonitor monitor) throws CoreException{
+		SketchProject sketch = SketchProject.forProject(this.getProject());
+		deleteP5ProblemMarkers(sketch.getProject());
 		srcFolderPathList = new ArrayList<IPath>();
 		libraryJarPathList = new ArrayList<IPath>();
 		// if this is the first run of the builder the build folder will not be stored yet,
@@ -127,7 +132,6 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 		// Eventually, a model (controlled by SketchProject) should manage the markers,
 		// folders, etc. Cleaning the model should be in a method called beCleaned() 
 		// in the SketchProject. This method will then look something like:
-		// SketchProject sketch = SketchProject.forProject(this.getProject());
 		// sketch.beCleaned();
 	}
 
@@ -137,47 +141,44 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 	 * This usually means grabbing all the Processing files and compiling them
 	 * to Java source files and moving them into a designated folder where the
 	 * JDT will grab them and build them.
-	 * </p>
 	 * <p>
 	 * For now all builds are full builds because the preprocessor does not
-	 * handle incremental builds. 
-	 * </p>
-	 * 
+	 * handle incremental builds.
 	 */
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException{
 		IProject project =  this.getProject();
 		SketchProject sketch = SketchProject.forProject(project);
-		
-		switch (kind){
-		case FULL_BUILD:
-			return this.fullBuild(sketch, monitor);
-		case AUTO_BUILD:
-			return (fullBuildRequired(project)) ? this.fullBuild(sketch, monitor) : null;
-//			return this.autoBuild(sketch, monitor);
-		case INCREMENTAL_BUILD:
-			return (fullBuildRequired(project)) ? this.fullBuild(sketch, monitor) : null;
-//			return this.incrementalBuild(sketch, monitor);
-		default:
-			return null;
+		switch (kind) {
+			case FULL_BUILD: 
+				return this.fullBuild(sketch, monitor);
+			case AUTO_BUILD:
+				return this.autoBuild(sketch, monitor);
+			case INCREMENTAL_BUILD:
+				return this.incrementalBuild(sketch, monitor);
+			default:
+				return null; // everything falls through to return null
 		}
 	}
-
-	/** 
-	 * Returns false if the resource change definitely didn't affect this project. 
-	 * <p>
-	 * Runs simple checks to try and rule out a build. If it can't find a reason
-	 * to rule out a build, it defaults to true. Hopefully this will spare a few 
-	 * CPU cycles, though there is a lot of room for improvement here.
-	 */
-	private boolean fullBuildRequired(IProject proj) {
-		if (proj == null) return false;
-		IResourceDelta delta = this.getDelta(proj);
-		if (delta == null) return false;
-		if (delta.getResource().getType() == IResource.PROJECT){
-			IProject changedProject = (IProject) delta.getResource();
-			if (changedProject != proj) return false;
-		}
-		return true;
+	
+	/** Handles platform auto builds */
+	protected IProject[] autoBuild(SketchProject sketchProject, IProgressMonitor monitor) throws CoreException{
+		//System.err.println("Auto Build");
+		IResourceDelta delta = this.getDelta(this.getProject());
+		IncrementalChangeProcessor changeProcessor = new IncrementalChangeProcessor(sketchProject);
+		boolean shouldBuild = changeProcessor.resourceChanged(delta);
+		if (shouldBuild) 
+			fullBuild(sketchProject, monitor);
+		return null;
+	}
+	
+	/** Incremental builds are ignored. */
+	protected IProject[] incrementalBuild(SketchProject sketchProject, IProgressMonitor monitor){
+		//System.err.println("Incremental Build");
+		
+		// triggered by launching a sketch or explicitly by a user iff auto build is off
+		// if auto build is on, launching a sketch triggers an auto build first
+		// save a few cycles by ignoring these
+		return null;
 	}
 
 	/**
@@ -188,7 +189,9 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 	 * This can be a long running process, so we use a monitor.
 	 */	
 	protected IProject[] fullBuild( SketchProject sketchProject, IProgressMonitor monitor) throws CoreException {
-		clean(sketchProject, monitor); // tabula rasa
+//		System.err.println("Full Build of " + sketchProject.getProject().getName());
+
+		clean(monitor); // tabula rasa
 
 		IProject sketch = sketchProject.getProject();
 		if ( sketch == null || !sketch.isAccessible() ){
@@ -481,16 +484,8 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 
 	/** Delete all of the existing P5 problem markers. */
 	protected static void deleteP5ProblemMarkers(IResource resource) throws CoreException{
-		if(resource != null && resource.exists()){
-			resource.deleteMarkers(SketchBuilder.PREPROCMARKER, true, IResource.DEPTH_INFINITE);
-			resource.deleteMarkers(SketchBuilder.COMPILEMARKER, true, IResource.DEPTH_INFINITE);
-		}
-	}
-
-	/** Purge all the Processing set problem markers from the Processing sketch. */
-	protected static void deleteP5ProblemMarkers(SketchProject sketch)throws CoreException{
-		if(sketch != null)
-			deleteP5ProblemMarkers(sketch.getProject());
+		if(resource != null && resource.exists())
+			resource.deleteMarkers(SketchBuilder.PROCESSINGMARKER , true, IResource.DEPTH_INFINITE);
 	}
 
 	/**
@@ -500,7 +495,6 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 	 * to a specific file it will be marked against the project and the line will not be marked.
 	 */
 	private void reportProblem(String message, IResource problemFile, int lineNumber, boolean isError){
-
 		// translate error messages to a friendlier form
 		if (message.equals("expecting RCURLY, found 'null'"))
 			message = "Found one too many { characters without a } to match it.";
@@ -528,17 +522,18 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 	/**
 	 * Check for interruptions.
 	 * <p>
-	 * The build process is rather long so if the user cancels things toss an exception.
+	 * The build process can run long, so if the user cancels things toss an exception.
 	 * Builds also tie up the workspace, so check to see if something is demanding to
 	 * interrupt it and let it. Usually these interruptions would force a rebuild of the
-	 * system anyhow, so save some CPU cycles and time.
+	 * system anyhow, nullifying the work being done now, so save some cycles and let
+	 * it budge in line.
 	 * </p> 
 	 * @return true if the build is hogging the resource thread
 	 * @throws OperationCanceledException is the user cancels
 	 */
 	private boolean checkCancel(IProgressMonitor monitor){
-		if (monitor.isCanceled()){ throw new OperationCanceledException(); }
-		if (isInterrupted()){ return true; }
+		if (monitor.isCanceled()) throw new OperationCanceledException();
+		if (isInterrupted()) return true;
 		return false;
 	}
 }
