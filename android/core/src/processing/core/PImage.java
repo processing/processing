@@ -206,11 +206,9 @@ public class PImage implements PConstants, Cloneable {
       texture = new PTexture(parent, width, height, new PTexture.Parameters(format));
       texUpdated = false;
     }
-    if (pixels != null) {
-      // loadTexture has lower "permissions" than loadPixels, because
-      // loadPixels calls loadTexture which in turns creates the texture
-      // if it is null, but the contrary doesn't happen (loadTexture cannot
-      // result in the creation of the pixels array if it is null).
+    if (pixels == null) {
+      loadPixels(); // loadPixels calls pixelsToTexture().
+    } else {
       pixelsToTexture();
     }
   }
@@ -221,7 +219,9 @@ public class PImage implements PConstants, Cloneable {
       texture = new PTexture(parent, width, height, new PTexture.Parameters(format, filter));
       texUpdated = false;
     }
-    if (pixels != null) {      
+    if (pixels == null) {
+      loadPixels(); // loadPixels calls pixelsToTexture().
+    } else {
       pixelsToTexture();
     }
   }
@@ -232,7 +232,9 @@ public class PImage implements PConstants, Cloneable {
       texture = new PTexture(parent, width, height, params);
       texUpdated = false;
     }
-    if (pixels != null) {      
+    if (pixels == null) {
+      loadPixels(); // loadPixels calls pixelsToTexture().
+    } else {
       pixelsToTexture();
     }
   }
@@ -352,7 +354,11 @@ public class PImage implements PConstants, Cloneable {
       bitmap.getPixels(pixels, 0, width, 0, 0, width, height); 
     }
     if (parent.g.is3D()) {
-      loadTexture();
+      if (texture == null) {
+        texture = new PTexture(parent, width, height, new PTexture.Parameters(format));
+        texUpdated = false;
+      }      
+      pixelsToTexture();
     }
   }
 

@@ -5394,7 +5394,7 @@ public class PGraphicsAndroid3D extends PGraphics {
           // We look for the config closest to the target config.
           // Closeness is measured by the score function defined above:
           // we give more weight to the RGB components, followed by the 
-          // alpha and finally by stencil bits.
+          // alpha, depth and finally stencil bits.
           bestConfig = config;
           bestScore = score;
 
