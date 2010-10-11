@@ -305,8 +305,10 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected PTexture[] offscreenTextures;
   protected int offscreenIndex;
   protected int[] offscreenTexCrop;
-  protected int offscreenDepthBits = 16;
-  protected int offscreenStencilBits = 0;
+  
+  // These are public so they can be changed by the (advanced) users.
+  public int offscreenDepthBits = 16;
+  public int offscreenStencilBits = 0;
 
   // .......................................................
   
@@ -4077,7 +4079,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     lightSpecular(0, 0, 0);
 
     ambientLight(colorModeX * 0.5f, colorModeY * 0.5f, colorModeZ * 0.5f);
-    directionalLight(colorModeX * 0.5f, colorModeY * 0.5f, colorModeZ * 0.5f, 0, 0, -1);
+    //directionalLight(colorModeX * 0.5f, colorModeY * 0.5f, colorModeZ * 0.5f, 0, 0, -1);
 
     colorMode = colorModeSaved;
   }
