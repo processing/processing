@@ -721,14 +721,6 @@ public class PApplet extends Activity implements PConstants, Runnable {
       // are these two needed?
       surfaceHolder.addCallback(this);
       //surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_GPU);
-
-//      System.out.println("Creating PGraphicsAndroid3D " + width + " " + height);
-
-      // We set translucent format even if the config chooser in PGraphicsAndroid3D
-      // cannot find alpha bits > 0.
-      if (PGraphicsAndroid3D.TRANSLUCENT) {
-       this.getHolder().setFormat(PixelFormat.TRANSLUCENT);
-      }      
       
       // The PGraphics object needs to be created here so the renderer is not
       // null. This is required because PApplet.onResume events (which call
@@ -739,13 +731,41 @@ public class PApplet extends Activity implements PConstants, Runnable {
       g3.setSize(wide, high);
       g3.setParent(PApplet.this);
       g3.setPrimary(true);
-//      g = newGraphics;
 
       // Set context factory. This make possible to have 2.x contexts.
-      setEGLContextFactory(g3.getContextFactory());
+      // We don't need this for the time being since we are using GLES 1.1.
+      // setEGLContextFactory(g3.getContextFactory());
 
-      // The renderer can be set only once.
-      setEGLConfigChooser(g3.getConfigChooser());
+      String depth = sketchColorDepth();
+      if (!depth.equals(DEFAULT_COLOR_DEPTH)) {
+        // Setting user specified color depth. Otherwise, we let the 
+        // device to choose the configuration it pleases.
+        
+        if (sketchTranslucentSurface()) {
+          surfaceHolder.setFormat(PixelFormat.TRANSLUCENT);
+        }
+
+        String list[] = depth.split(":");
+        int val[] = {4, 4, 4, 4, 16, 0};
+        if (3 < list.length) {
+          // Getting RGBA bits.
+          for (int i = 0; i < 4; i++) {
+            val[i] = parseInt(list[i]);  
+          }
+        }
+        if (4 < list.length) {
+          // Getting depth bits.
+          val[4] = parseInt(list[4]);
+        }        
+        if (5 < list.length) {
+          // Getting stencil bits.
+          val[5] = parseInt(list[5]);
+        }
+        
+        setEGLConfigChooser(g3.getConfigChooser(val[0], val[1], val[2], val[3], val[4], val[5]));  
+      }
+      
+      // The renderer can be set only once.      
       setRenderer(g3.getRenderer());
       setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 
@@ -904,6 +924,14 @@ public class PApplet extends Activity implements PConstants, Runnable {
     return A2D;
   }
 
+  
+  public boolean sketchTranslucentSurface() {
+    return true;
+  }
+  
+  public String sketchColorDepth() {
+    return DEFAULT_COLOR_DEPTH;
+  }
 
   public void orientation(int which) {
     if (which == PORTRAIT) {
