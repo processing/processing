@@ -70,7 +70,6 @@
    </extension>
    <extension point="org.eclipse.debug.ui.launchShortcuts">
       <shortcut
-            category="Processing"
             class="processing.plugin.ui.launching.RunSketchAsAppletShortcut"
             description="Runs the Sketch as an applet, equivalent to the PDE run button."
             icon="Resources/16x16_icon.gif"
@@ -176,5 +175,23 @@
 		      </and>
          </filterExpression>
       </commonFilter>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            categoryId="org.eclipse.debug.ui.category.run"
+            description="Run a Processing sketch as an applet"
+            id="processing.plugin.ui.launchApplet"
+            name="Processing Sketch Launch (Applet)">
+      <!-- the above command needs a defaultHandler before it is functional -->
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="processing.plugin.ui.launchApplet"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+R">
+      </key>
    </extension>
 </plugin>
