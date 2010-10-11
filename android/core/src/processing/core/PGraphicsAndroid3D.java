@@ -61,25 +61,11 @@ import processing.core.PShape3D.VertexGroup;
 public class PGraphicsAndroid3D extends PGraphics {
   public SurfaceHolder holder;
   protected A3DRenderer renderer;
-  protected A3DConfigChooser configChooser;
   
   public GL10 gl;
   public GL11 gl11;
   public GL11Ext gl11x;
   public GL11ExtensionPack gl11xp;
-
-  // Set to 1 or 2 depending on whether to use EGL 1.x or 2.x
-  static protected int EGL_CONTEXT = 1;
-  // Translucency.
-  static protected boolean TRANSLUCENT = true;
-  // Target color, depth and stencil bits. The actual values
-  // will depend on the capabilities of the device.
-  static protected int RED_BITS = 8;
-  static protected int GREEN_BITS = 8;
-  static protected int BLUE_BITS = 8;
-  static protected int ALPHA_BITS = 8;
-  static protected int DEPTH_BITS = 16;
-  static protected int STENCIL_BITS = 0;
 
   // ........................................................
 
@@ -319,6 +305,8 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected PTexture[] offscreenTextures;
   protected int offscreenIndex;
   protected int[] offscreenTexCrop;
+  protected int offscreenDepthBits = 16;
+  protected int offscreenStencilBits = 0;
 
   // .......................................................
   
@@ -364,9 +352,6 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   public PGraphicsAndroid3D() {
     renderer = new A3DRenderer();
-    configChooser = new A3DConfigChooser(RED_BITS, GREEN_BITS, BLUE_BITS,
-        ALPHA_BITS, DEPTH_BITS, STENCIL_BITS);
-    contextFactory = new A3DContextFactory();
     recreateResourceMethods = new ArrayList<GLResource>();
   }
   
@@ -376,9 +361,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     super.setPrimary(primary);
 
     // argh, a semi-transparent opengl surface? Yes!
-    if (primarySurface && TRANSLUCENT) {
-      format = ARGB;
-    }
+    format = ARGB;
   }
   // public void setPath(String path)
 
@@ -588,9 +571,9 @@ public class PGraphicsAndroid3D extends PGraphics {
 
     offscreenFramebuffer = new PFramebuffer(parent, offscreenTextures[0].getGLWidth(), offscreenTextures[0].getGLHeight(), false);
 
-    offscreenFramebuffer.addDepthBuffer(DEPTH_BITS);
-    if (0 < STENCIL_BITS) {
-      offscreenFramebuffer.addStencilBuffer(STENCIL_BITS); 
+    offscreenFramebuffer.addDepthBuffer(offscreenDepthBits);
+    if (0 < offscreenStencilBits) {
+      offscreenFramebuffer.addStencilBuffer(offscreenStencilBits); 
     }    
   }
   
@@ -795,6 +778,10 @@ public class PGraphicsAndroid3D extends PGraphics {
     textureImage = null;
     textureImagePrev = null;
 
+    // The default shade model is GL_SMOOTH, but we set
+    // here just in case...
+    gl.glShadeModel(GL10.GL_SMOOTH);
+    
     // Blend is needed for alpha (i.e. fonts) to work.
     blend(BLEND);
 
@@ -846,7 +833,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     gl.glEnable(GL10.GL_RESCALE_NORMAL);
     // gl.GlLightModeli(GL10.GL_LIGHT_MODEL_COLOR_CONTROL,
     // GL10.GL_SEPARATE_SPECULAR_COLOR);
-
+   
     shapeFirst = 0;
     
     if (primarySurface) {
@@ -982,17 +969,14 @@ public class PGraphicsAndroid3D extends PGraphics {
     if (primarySurface) {
       // glFlush should be called only once, since it is an expensive
       // operation. Thus, only the main renderer (the primary surface)
-      // should called at the end of draw, not any of the offscreen 
-      // renderers..
+      // should call it at the end of draw, and none of the offscreen 
+      // renderers...
       gl.glFlush();
     } else { 
       ((PGraphicsAndroid3D)parent.g).restoreGLState();
     }
     
     report("top endDraw()");
-    /*
-     * if (hints[ENABLE_DEPTH_SORT]) { flush(); }
-     */
   }
 
   public GL10 beginGL() {
@@ -5052,6 +5036,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     blend = true;
     blendMode = mode;
     gl.glEnable(GL10.GL_BLEND);
+    gl.glDisable(GL10.GL_CULL_FACE);
     if (mode == REPLACE) {  
       if (blendEqSupported) gl11xp.glBlendEquation(GL11ExtensionPack.GL_FUNC_ADD);
       gl.glBlendFunc(GL10.GL_ONE, GL10.GL_ZERO);
@@ -5114,7 +5099,13 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   public void noBlend() {
     blend = false;
-    gl.glDisable(GL10.GL_BLEND);
+    gl.glDisable(GL10.GL_BLEND);    
+    // When blending is disabled is advisable to
+    // enable backface culling for performance reasons,
+    // since those faces won't be seen anyways. Check for
+    // a more detailed explanation here:
+    // http://stackoverflow.com/questions/2393429/should-i-always-use-gl-cull-face
+    gl.glEnable(GL10.GL_CULL_FACE);
   }
   
   // ////////////////////////////////////////////////////////////
@@ -5292,7 +5283,8 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // Config chooser
 
-  public GLSurfaceView.EGLConfigChooser getConfigChooser() {
+  public GLSurfaceView.EGLConfigChooser getConfigChooser(int r, int g, int b, int a, int d, int s) {
+    A3DConfigChooser configChooser = new A3DConfigChooser(r, g, b, a, d, s);
     return configChooser;
   }
 
@@ -5323,7 +5315,7 @@ public class PGraphicsAndroid3D extends PGraphics {
                                                  // GL_RENDERABLE_TYPE.
     private int EGL_OPENGL_ES2_BIT = 0x04; // EGL 2.x attribute value for
                                                   // GL_RENDERABLE_TYPE.
-    private int[] configAttribsGL2 = { EGL10.EGL_RED_SIZE, 4,
+    private int[] configAttribsGL = { EGL10.EGL_RED_SIZE, 4,
         EGL10.EGL_GREEN_SIZE, 4, EGL10.EGL_BLUE_SIZE, 4,
         EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT,
         EGL10.EGL_NONE };
@@ -5338,13 +5330,10 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
 
     public EGLConfig chooseConfig(EGL10 egl, EGLDisplay display) {
-      if (EGL_CONTEXT == 2) {
-        configAttribsGL2[7] = EGL_OPENGL_ES2_BIT;
-      }
 
       // Get the number of minimally matching EGL configurations
       int[] num_config = new int[1];
-      egl.eglChooseConfig(display, configAttribsGL2, null, 0, num_config);
+      egl.eglChooseConfig(display, configAttribsGL, null, 0, num_config);
 
       int numConfigs = num_config[0];
 
@@ -5354,7 +5343,7 @@ public class PGraphicsAndroid3D extends PGraphics {
 
       // Allocate then read the array of minimally matching EGL configs
       EGLConfig[] configs = new EGLConfig[numConfigs];
-      egl.eglChooseConfig(display, configAttribsGL2, configs, numConfigs,
+      egl.eglChooseConfig(display, configAttribsGL, configs, numConfigs,
           num_config);
 
       if (PApplet.DEBUG) {
@@ -5404,6 +5393,9 @@ public class PGraphicsAndroid3D extends PGraphics {
           alphaBits = a;
           depthBits = d;
           stencilBits = s;
+          
+          offscreenDepthBits = d;
+          offscreenStencilBits = s;
         }
       }
       
@@ -5412,13 +5404,6 @@ public class PGraphicsAndroid3D extends PGraphics {
           + printConfig(egl, display, bestConfig);
         System.out.println(configStr);
       }
-      PApplet.println("OPENGL DISPLAY CONFIG:");
-      PApplet.println("redBits " + redBits);
-      PApplet.println("greenBits " + greenBits);
-      PApplet.println("blueBits " + blueBits);
-      PApplet.println("alphaBits " + alphaBits);
-      PApplet.println("depthBits " + depthBits);
-      PApplet.println("stencilBits " + stencilBits);
       return bestConfig;
     }
 
@@ -5456,9 +5441,8 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // Context factory
 
-  A3DContextFactory contextFactory;
-
   public GLSurfaceView.EGLContextFactory getContextFactory() {
+    A3DContextFactory contextFactory = new A3DContextFactory();
     return contextFactory;
   }
 
@@ -5470,7 +5454,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         EGLConfig eglConfig) {
       // Log.w(TAG, "creating OpenGL ES 2.0 context");
       // checkEglError("Before eglCreateContext", egl);
-      int[] attrib_list = { EGL_CONTEXT_CLIENT_VERSION, EGL_CONTEXT,
+      int[] attrib_list = { EGL_CONTEXT_CLIENT_VERSION, 1,
           EGL10.EGL_NONE };
       EGLContext context = egl.eglCreateContext(display, eglConfig,
           EGL10.EGL_NO_CONTEXT, attrib_list);
