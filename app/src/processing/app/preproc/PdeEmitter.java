@@ -738,6 +738,22 @@ public class PdeEmitter implements PdeTokenTypes {
       printChildren(ast);
       break;
 
+    case ANNOTATION:
+      out.print("@");
+      printChildren(ast);
+      break;
+      
+    case ANNOTATION_ARRAY_INIT:
+      printChildren(ast);
+      break;
+      
+    case ANNOTATION_MEMBER_VALUE_PAIR:
+      print(ast.getFirstChild());
+      out.print("=");
+      dumpHiddenBefore(getBestPrintableNode(ast.getFirstChild().getNextSibling(), false));
+      print(ast.getFirstChild().getNextSibling());
+      break;
+
     default:
       debug.println("Unrecognized type:" + ast.getType() + " ("
           + TokenUtil.nameOf(ast) + ")");
