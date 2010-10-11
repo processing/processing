@@ -1219,7 +1219,6 @@ public class ProcessingUtilities implements PConstants{
 		}
 	}
 
-
 	/**
 	 * Calculate the size of the contents of a folder.
 	 * Used to determine whether sketches are empty or not.

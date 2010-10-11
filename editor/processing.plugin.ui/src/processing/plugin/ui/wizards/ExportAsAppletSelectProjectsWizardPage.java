@@ -92,7 +92,7 @@ public class ExportAsAppletSelectProjectsWizardPage extends WizardPage {
 		public SketchProject getProject(){	return sp; }
 
 		public String getAdditionalMessage(){
-			return (sp.wasLastBuildSuccessful()) ? "" : "Warning: there were errors on the last build.";
+			return (sp.wasLastBuildSuccessful()) ? "" : "Warning: last build unsuccessful. May not export.";
 		}
 
 	}
