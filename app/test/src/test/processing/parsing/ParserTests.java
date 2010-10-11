@@ -2,6 +2,9 @@ package test.processing.parsing;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static test.processing.parsing.ProcessingTestUtil.COMPILER;
+import static test.processing.parsing.ProcessingTestUtil.preprocess;
+import static test.processing.parsing.ProcessingTestUtil.res;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.regex.Matcher;
@@ -11,9 +14,6 @@ import org.junit.Test;
 import processing.app.debug.RunnerException;
 import processing.app.exec.ProcessResult;
 import antlr.RecognitionException;
-import static test.processing.parsing.ProcessingTestUtil.res;
-import static test.processing.parsing.ProcessingTestUtil.COMPILER;
-import static test.processing.parsing.ProcessingTestUtil.preprocess;
 
 public class ParserTests {
 
@@ -278,5 +278,10 @@ public class ParserTests {
   @Test
   public void bug400g() {
     expectGood("bug400g");
+  }
+  
+  @Test
+  public void annotations() {
+    expectGood("annotations");
   }
 }
