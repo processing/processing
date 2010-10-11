@@ -116,6 +116,11 @@ public interface PConstants {
 
   static final String A2D    = "processing.core.PGraphicsAndroid2D";
   static final String A3D    = "processing.core.PGraphicsAndroid3D";
+  
+  static final String DEFAULT_COLOR_DEPTH = "DEFAULT";
+  static final String MINIMUM_COLOR_DEPTH = "4:4:4:4:16:0";
+  static final String MEDIUM_COLOR_DEPTH = "8:8:8:8:16:0";
+  static final String BEST_COLOR_DEPTH = "8:8:8:8:24:8";
 
   /** Alias to the Android-specific A2D renderer (for compatibility).*/
   static final String P2D = A2D;
