@@ -307,9 +307,9 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 				if (!output.exists()){
 					output.create(inStream, true, monitor);
 					//TODO resource change listener to move trace back JDT errors
-					//					IWorkspace w = ResourcesPlugin.getWorkspace();
-					//					IResourceChangeListener rcl = new ProblemListener(output);
-					//					w.addResourceChangeListener(rcl);
+					//	IWorkspace w = ResourcesPlugin.getWorkspace();
+					//	IResourceChangeListener rcl = new ProblemListener(output);
+					//	w.addResourceChangeListener(rcl);
 				} else {
 					output.setContents(inStream, true, false, monitor);
 				}

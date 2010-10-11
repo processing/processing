@@ -14,9 +14,13 @@ package processing.plugin.ui.wizards;
 //import org.eclipse.core.resources.IProject;
 //import org.eclipse.core.resources.IResource;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -89,10 +93,10 @@ public class ExportAsAppletWizard extends Wizard implements IExportWizard {
 	}
 
 	public boolean performFinish() {
-//		return SketchProject.forProject(page.getProject()).exportAsApplet();
+		//return SketchProject.forProject(page.getProject()).exportAsApplet();
 		ArrayList<String> couldNotExport = new ArrayList<String>();
 		for(SketchProject sp : page.getSelectedProjects()){
-//			System.out.println(sp.getProject().getName());
+			//System.out.println(sp.getProject().getName());
 			if (!exportAsApplet(sp)) couldNotExport.add(sp.getProject().getName());
 		}
 		
@@ -111,14 +115,27 @@ public class ExportAsAppletWizard extends Wizard implements IExportWizard {
 	 */
 	public boolean exportAsApplet(SketchProject sp) {
 		if (sp == null) return false;
-		if (!sp.wasLastBuildSuccessful()) return false;
 		if (!sp.getProject().isAccessible()) return false;
-		
+
+		try{
+			sp.fullBuild(null);
+		} catch (CoreException e){
+			ProcessingLog.logError(e);
+			return false;
+		}
+		if (!sp.wasLastBuildSuccessful()){
+			ProcessingLog.logError("Could not export " + sp.getProject().getName() + 
+					". There were erros building the project.", null);
+			return false;
+		}
+				
 		IFile code = sp.getMainFile();
 		if (code == null) return false;	
 		String codeContents = ProcessingUtilities.readFile(code);
 		
 		IFolder exportFolder = sp.getAppletFolder(true); // true to nuke the folder contents, if they exist
+
+		HashMap<String,Object> zipFileContents = new HashMap<String,Object>();
 		
 		// Get size and renderer info from the project
 		int wide = sp.getWidth();
@@ -138,24 +155,37 @@ public class ExportAsAppletWizard extends Wizard implements IExportWizard {
 				dbuffer.append('\n');
 			}
 			description = dbuffer.toString();
-			System.out.println(description);
+			//System.out.println(description);
 		}
 		
-		//Copy the source files to the target, since we like to encourage people to share their code
+		// Copy the source files to the target, since we like to encourage people to share their code
+		// Get links for each copied code file
+		StringBuffer sources = new StringBuffer();
 		try{
 			for(IResource r : sp.getProject().members()){
 				if(!(r instanceof IFile)) continue;
 				if(r.getName().startsWith(".")) continue;
 				if("pde".equalsIgnoreCase(r.getFileExtension())){
-					r.copy(exportFolder.getFullPath().append(r.getName()), true, null);
-					System.out.println("Copied the source file " + r.getName() 
-							+ " to " + exportFolder.getFullPath().toString());
+					try{
+						r.copy(exportFolder.getFullPath().append(r.getName()), true, null);
+						sources.append("<a href=\"" + r.getName() + "\">" +
+							r.getName().subSequence(0, r.getName().lastIndexOf(".")-1)
+							+ "</a> ");
+					} catch (CoreException e) {
+						ProcessingLog.logError("Sketch source files could not be included in export of "
+						+ sp.getProject().getName() +". Trying to continue export anyway.", e);
+					}
 				}
 			}
 		} catch (CoreException e){
-			ProcessingLog.logError("Sketch source files could not be included in export of "
-					+ sp.getProject().getName() +". Trying to continue export anyway. ", e);
+			ProcessingLog.logError(e); // problem getting members
 		}
+		
+		// Use separate jarfiles
+		boolean separateJar = true; 
+		// = Preferences.getBoolean("export.applet.separate_jar_files)||
+		// codeFolder.exists() ||
+		// (libraryPath.length() != 0);
 		
 		// Copy the loading gif to the applet
 		String LOADING_IMAGE = "loading.gif";
@@ -168,7 +198,7 @@ public class ExportAsAppletWizard extends Wizard implements IExportWizard {
 			try {
 				File exportResourcesFolder = new File(ProcessingCore.getProcessingCore().getPluginResourceFolder().getCanonicalPath(), "export");
 				File loadingImageCoreResource = new File(exportResourcesFolder, LOADING_IMAGE);
-				ProcessingUtilities.copyFile(loadingImageCoreResource, new File(exportFolder.getFullPath().toString(), LOADING_IMAGE));
+				ProcessingUtilities.copyFile(loadingImageCoreResource, new File(exportFolder.getLocation().toFile(), LOADING_IMAGE));
 			} catch (Exception ex) {
 				// This is not expected, and should be reported, because we are about to bail
 				ProcessingLog.logError("Could not access the Processing Plug-in Core resources. " +
@@ -177,6 +207,22 @@ public class ExportAsAppletWizard extends Wizard implements IExportWizard {
 			}
 		}
 		
+	    // Create new .jar file
+	    FileOutputStream zipOutputFile;
+		try {
+			zipOutputFile = new FileOutputStream(new File(exportFolder.getLocation().toFile(), sp.getProject().getName() + ".jar"));
+		} catch (FileNotFoundException fnfe) {
+			ProcessingLog.logError(" ",fnfe);
+			return false;
+		}
+	    ZipOutputStream zos = new ZipOutputStream(zipOutputFile);
+	    ZipEntry entry;
+
+	    StringBuffer archives = new StringBuffer();
+	    archives.append(sp.getProject().getName() + ".jar");		
+
+	    //addmanifest(zos);
+	    
 		// add the contents of the code folder to the jar
 		IFolder codeFolder = sp.getCodeFolder();
 		if (codeFolder != null){
@@ -197,44 +243,47 @@ public class ExportAsAppletWizard extends Wizard implements IExportWizard {
 		}
 
 		// snag the opengl library path so we can test for it later
-		File openglLibraryFolder = new File(ProcessingCore.getProcessingCore().getCoreLibsFolder(), "opengl/library");
-		String openglLibraryPath = openglLibraryFolder.getAbsolutePath();
+		File openglLibrary = new File(ProcessingCore.getProcessingCore().getCoreLibsFolder(), "opengl/library/opengl.jar");
+		String openglLibraryPath = openglLibrary.getAbsolutePath();
 		boolean openglApplet = false;			
 		
 		// add the library jar files to the folder and detect if opengl is in use
 		ArrayList<IPath> sketchLibraryImportPaths = sp.getLibraryPaths();
 		if(sketchLibraryImportPaths != null){
 			for(IPath path : sketchLibraryImportPaths){
-				File libraryFolder = new File(path.toOSString());
-				if (path.toOSString().equalsIgnoreCase(openglLibraryPath)) openglApplet=true;
-				File exportSettings = new File(libraryFolder, "export.txt");
-				HashMap<String,String> exportTable = ProcessingUtilities.readSettings(exportSettings);
-				String appletList = (String) exportTable.get("applet");
-				String exportList[] = null;
-				if(appletList != null){
-					exportList = ProcessingUtilities.splitTokens(appletList, ", ");
-				} else {
-					exportList = libraryFolder.list();
-				}
-				for (String s : exportList){
-					if (s.equals(".") || s.equals("..")) continue;
-					
-					s = ProcessingUtilities.trim(s);
-					if (s.equals("")) continue;
-					
-					File exportFile = new File( libraryFolder, s);
-					if(!exportFile.exists()) {
-						ProcessingLog.logError("Export File " + s + " does not exist.", null);
-					} else if (exportFile.isDirectory()) {
-						ProcessingLog.logInfo("Ignoring sub-folder \"" + s + "\"");
-					} else if ( exportFile.getName().toLowerCase().endsWith(".zip") ||
-								exportFile.getName().toLowerCase().endsWith(".jar")){
-						// the PDE checks for separate jar boolean, but if we're here we have
-						// met the conditions that require it
-//						File exportFile = new File(codeFolder, s);
-					}
-					
-				}
+				if (path.toOSString().equals(openglLibraryPath)) openglApplet = true;
+
+				
+//				File libraryFolder = new File(path.toOSString());
+//				if (path.toOSString().equalsIgnoreCase(openglLibraryPath)) openglApplet=true;
+//				File exportSettings = new File(libraryFolder, "export.txt");
+//				HashMap<String,String> exportTable = ProcessingUtilities.readSettings(exportSettings);
+//				String appletList = (String) exportTable.get("applet");
+//				String exportList[] = null;
+//				if(appletList != null){
+//					exportList = ProcessingUtilities.splitTokens(appletList, ", ");
+//				} else {
+//					exportList = libraryFolder.list();
+//				}
+//				for (String s : exportList){
+//					if (s.equals(".") || s.equals("..")) continue;
+//					
+//					s = ProcessingUtilities.trim(s);
+//					if (s.equals("")) continue;
+//					
+//					File exportFile = new File( libraryFolder, s);
+//					if(!exportFile.exists()) {
+//						ProcessingLog.logError("Export File " + s + " does not exist.", null);
+//					} else if (exportFile.isDirectory()) {
+//						ProcessingLog.logInfo("Ignoring sub-folder \"" + s + "\"");
+//					} else if ( exportFile.getName().toLowerCase().endsWith(".zip") ||
+//								exportFile.getName().toLowerCase().endsWith(".jar")){
+//						// the PDE checks for separate jar boolean, but if we're here we have
+//						// met the conditions that require it
+////						File exportFile = new File(codeFolder, s);
+//					}
+//					
+//				}
 			}
 		}
 
