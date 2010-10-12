@@ -12,5 +12,10 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.jdt.launching
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Export-Package: processing.plugin.core,
- processing.plugin.core.builder
+Export-Package: processing.plugin.core;
+  uses:="org.eclipse.core.runtime,
+   org.osgi.service.prefs,
+   org.eclipse.core.resources,
+   processing.core",
+ processing.plugin.core.builder;uses:="org.eclipse.core.runtime,org.eclipse.jdt.core,org.eclipse.core.resources",
+ processing.plugin.core.exporter
