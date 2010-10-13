@@ -52,6 +52,8 @@ public class ProcessingCorePreferences {
 		} catch (BackingStoreException bse){
 			ProcessingLog.logError("Could not save Processing Core Preferences.", bse);	
 		}
+		// if things have changed, we'll need to rebuild the library list
+		ProcessingCore.getCore().getLibraryModel().rebuildLibraryList();
 	}
 	
 	/** Returns the stored sketchbook path as a string. */

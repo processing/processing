@@ -36,9 +36,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.IPath;
-
 import processing.core.PConstants;
 
 /**
@@ -56,6 +53,30 @@ import processing.core.PConstants;
  */
 public class ProcessingUtilities implements PConstants{
 
+	 /**
+	   * Current platform in use, one of the
+	   * PConstants WINDOWS, MACOSX, MACOS9, LINUX or OTHER.
+	   */
+	  static public int platform;
+
+	  static {
+	    String osname = System.getProperty("os.name");
+
+	    if (osname.indexOf("Mac") != -1) {
+	      platform = MACOSX;
+
+	    } else if (osname.indexOf("Windows") != -1) {
+	      platform = WINDOWS;
+
+	    } else if (osname.equals("Linux")) {  // true for the ibm vm
+	      platform = LINUX;
+
+	    } else {
+	      platform = OTHER;
+	    }
+	  }
+	
+	
 	/** This class is not meant to be instantiated. */
 	private ProcessingUtilities(){}
 
@@ -254,89 +275,6 @@ public class ProcessingUtilities implements PConstants{
 				}
 			}
 		}
-	}
-
-	/**
-	 * Find the folder containing the users libraries, which should be in the sketchbook.
-	 * Looks in the user's preferences first, then look relative to the sketch location.
-	 * 
-	 * @return File containing the Sketch book library folder, or null if it can't be located
-	 */
-	public static File getSketchBookLibsFolder(IProject proj) {
-		IPath sketchbook = ProcessingCorePreferences.current().getSketchbookPath();
-		if (sketchbook == null)
-			sketchbook = findSketchBookLibsFolder(proj);
-		if (sketchbook == null)
-			return null;
-		return new File(sketchbook.toOSString());
-	}
-
-	/**
-	 * Tries to locate the sketchbook library folder relative to the project path
-	 * based on the default sketch / sketchbook setup. If such a folder exists, loop
-	 * through its contents until a valid library is found and then return the path
-	 * to the sketchbook. If no valid libraries are found (empty folder, improper 
-	 * sketchbook setup), or if no valid folder is found, return null.
-	 * 
-	 * @return IPath containing the location of the new library folder, or null
-	 */
-	public static IPath findSketchBookLibsFolder(IProject proj) {
-		try{
-			IPath guess = proj.getLocation().removeLastSegments(1).append("libraries");
-			File folder = new File(guess.toOSString());
-			if(folder.isDirectory())
-				for( File file : folder.listFiles()){
-					if(file.isDirectory())
-						if (ProcessingCore.isLibrary(file))
-							return guess;
-				}
-		} catch (Exception e){
-			ProcessingLog.logError(e);
-		}
-		return null;
-	}
-
-	/** 
-	 * If the folder is the root of a Processing library, return a String containing
-	 * the canonical path to the library's Jar. If it is not, return null.
-	 */
-	public static String getLibraryJarPath(File folder){
-		if( ProcessingCore.isLibrary(folder) ){
-			try {
-				return folder.getCanonicalPath().concat( File.separatorChar + "library" + File.separatorChar + folder.getName() + ".jar"  );
-			} catch (IOException e) {
-				ProcessingLog.logError("Could not get the library jar for library " + folder.getName(), e);
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Looks in the provided folder for valid libraries and returns a list of paths to them.
-	 * Returns an empty list if there are no valid libraries.
-	 * 
-	 * @param folder
-	 * @return
-	 */
-	public static ArrayList<String> getLibraryJars(File folder){
-		ArrayList<String> libPaths = new ArrayList<String>();
-		if(folder == null) return libPaths;
-		if(!folder.exists()) return libPaths;
-
-		for (File f : folder.listFiles()){
-			if ( ProcessingCore.isLibrary(f) ){
-				// if it is a library, add the jar
-				String path = getLibraryJarPath(f);
-				if (path!= null)
-					libPaths.add(path);
-			} else if (f.isDirectory()){
-				// if it is not a library, but is a directory, recurse
-				// and add all libraries in it to our list
-				libPaths.addAll(getLibraryJars(f));
-			}
-			// we don't care about anything else.
-		}
-		return libPaths;
 	}
 
 	/**
@@ -708,9 +646,7 @@ public class ProcessingUtilities implements PConstants{
 	}
 
 
-	/**
-	 * Spews a buffer of bytes to an OutputStream.
-	 */
+	/** Spews a buffer of bytes to an OutputStream. */
 	static public void saveBytes(OutputStream output, byte buffer[]) {
 		try {
 			output.write(buffer);
@@ -774,6 +710,17 @@ public class ProcessingUtilities implements PConstants{
 					file.getAbsolutePath(), se);
 		}
 	}
+	
+	//////////////////////////////////////////////////////////////
+	
+	// ARRAYS
+	
+	  static public String[] concat(String a[], String b[]) {
+		    String c[] = new String[a.length + b.length];
+		    System.arraycopy(a, 0, c, 0, a.length);
+		    System.arraycopy(b, 0, c, a.length, b.length);
+		    return c;
+		  }
 
 	//////////////////////////////////////////////////////////////
 

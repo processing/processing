@@ -14,7 +14,6 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
@@ -23,10 +22,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
-//import org.eclipse.core.resources.IResourceChangeListener;
-//import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
-//import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -43,6 +39,7 @@ import processing.app.preproc.PreprocessResult;
 import processing.plugin.core.ProcessingCore;
 import processing.plugin.core.ProcessingLog;
 import processing.plugin.core.ProcessingUtilities;
+import processing.plugin.core.model.LibraryFolder;
 
 /**
  * Builder for Processing Sketches.
@@ -68,7 +65,7 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 
 	/** Parent marker for Processing created markers (value <code>"processing.plugin.core.processingMarker"</code>). */
 	public static final String PROCESSINGMARKER = ProcessingCore.PLUGIN_ID + ".processingMarker";
-	
+
 	/** Problem marker for processing preprocessor issues (value <code>"processing.plugin.core.preprocError"</code>). */
 	public static final String PREPROCMARKER = ProcessingCore.PLUGIN_ID + ".preprocError";
 
@@ -149,17 +146,17 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 		IProject project =  this.getProject();
 		SketchProject sketch = SketchProject.forProject(project);
 		switch (kind) {
-			case FULL_BUILD: 
-				return this.fullBuild(sketch, monitor);
-			case AUTO_BUILD:
-				return this.autoBuild(sketch, monitor);
-			case INCREMENTAL_BUILD:
-				return this.incrementalBuild(sketch, monitor);
-			default:
-				return null; // everything falls through to return null
+		case FULL_BUILD: 
+			return this.fullBuild(sketch, monitor);
+		case AUTO_BUILD:
+			return this.autoBuild(sketch, monitor);
+		case INCREMENTAL_BUILD:
+			return this.incrementalBuild(sketch, monitor);
+		default:
+			return null; // everything falls through to return null
 		}
 	}
-	
+
 	/** Handles platform auto builds */
 	protected IProject[] autoBuild(SketchProject sketchProject, IProgressMonitor monitor) throws CoreException{
 		//System.err.println("Auto Build");
@@ -170,11 +167,11 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 			fullBuild(sketchProject, monitor);
 		return null;
 	}
-	
+
 	/** Incremental builds are ignored. */
 	protected IProject[] incrementalBuild(SketchProject sketchProject, IProgressMonitor monitor){
 		//System.err.println("Incremental Build");
-		
+
 		// triggered by launching a sketch or explicitly by a user iff auto build is off
 		// if auto build is on, launching a sketch triggers an auto build first
 		// save a few cycles by ignoring these
@@ -189,7 +186,7 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 	 * This can be a long running process, so we use a monitor.
 	 */	
 	protected IProject[] fullBuild( SketchProject sketchProject, IProgressMonitor monitor) throws CoreException {
-//		System.err.println("Full Build of " + sketchProject.getProject().getName());
+		//		System.err.println("Full Build of " + sketchProject.getProject().getName());
 
 		clean(monitor); // tabula rasa
 
@@ -205,7 +202,7 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 			ProcessingLog.logError("Build folder could not be accessed.", null);
 			return null;
 		}
-		
+
 		IFile mainFile = sketchProject.getMainFile();
 		if (!mainFile.isAccessible()){
 			reportProblem(
@@ -273,7 +270,7 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 			sketchProject.sketch_width = -1;
 			sketchProject.sketch_height = -1;
 			sketchProject.renderer = "";
-			
+
 			String scrubbed = ProcessingUtilities.scrubComments(stream.toString());
 			String[] matches = ProcessingUtilities.match(scrubbed, ProcessingUtilities.SIZE_REGEX);	
 			if(matches != null){
@@ -285,7 +282,7 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 						sketchProject.sketch_width = wide;
 					else
 						ProcessingLog.logInfo("Width cannot be negative. Using default width instead.");
-					
+
 					if (high > 0)
 						sketchProject.sketch_height = high;
 					else 
@@ -293,7 +290,7 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 
 					if(matches.length==4) sketchProject.renderer = matches[3].trim();
 					// "Actually matches.length should always be 4..." - Processing Sketch.java
-	
+
 				} catch (NumberFormatException e) {
 					ProcessingLog.logInfo(
 							"Found a reference to size, but it didn't seem to contain numbers. "
@@ -411,54 +408,44 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 
 		monitor.worked(10);
 		if(checkCancel(monitor)) { return null; }
+
 		// Library import checking
-
-		ArrayList<String> allFoundLibraries = new ArrayList<String>(); // a list of all the libraries that can be found
-
-		allFoundLibraries.addAll( ProcessingUtilities.getLibraryJars(ProcessingCore.getProcessingCore().getCoreLibsFolder()) );
-		allFoundLibraries.addAll( ProcessingUtilities.getLibraryJars(ProcessingUtilities.getSketchBookLibsFolder(sketch)) );
-
-		HashMap<String, IPath> libraryImportToPathTable = new HashMap<String, IPath>();
-
-		for (String libraryPath : allFoundLibraries ){
-			String[] packages = ProcessingUtilities.packageListFromClassPath(libraryPath);
-			for (String pkg : packages) libraryImportToPathTable.put(pkg, new Path(libraryPath));
-		}
 
 		boolean importProblems = false;
 		sketchProject.libraryPaths.clear();
-		for (int i=0; i < result.extraImports.size(); i++){
-			String importPackage = result.extraImports.get(i);
+		for (String importPackage : result.extraImports){
 			int dot = importPackage.lastIndexOf('.');
 			String entry = (dot == -1) ? importPackage : importPackage.substring(0, dot);
-			IPath libPath = libraryImportToPathTable.get(entry);
-			if (libPath != null ){
-				libraryJarPathList.add(libPath.makeAbsolute()); // we've got it!
-				sketchProject.libraryPaths.add(libPath.makeAbsolute());
-			} else { 
+			LibraryFolder libFolder = ProcessingCore.getCore().getLibraryModel().getLibraryFolder(entry);
+			if (libFolder == null ){
 				// The user is trying to import something we won't be able to find.
 				reportProblem(
-						"Library import "+ entry +" could not be found. Check the library folder in your sketchbook.",
-						sketch.getFile( sketch.getName() + ".pde"), i+1, true 
+						"Library import \""+ entry +"\" could not be found. Check the library folder in your sketchbook.",
+						sketch, -1, true 
 				);
 				importProblems=true;
-			}
+				continue;
+			} 
+			// found what they're looking for!
+			libraryJarPathList.add( new Path(libFolder.getJarPath()) ); 
+			sketchProject.libraryPaths.add( new Path(libFolder.getJarPath()) );
 		}
+
 		if (importProblems) return null; // bail after all errors are found.
 
 		monitor.worked(10);
 		if(checkCancel(monitor)) { return null; } 
-		
+
 		// Add data folder if there is stuff in it
 		IFolder dataFolder = sketchProject.getDataFolder();
 		if (dataFolder.isAccessible()){
 			if (dataFolder.members().length > 0) srcFolderPathList.add(dataFolder.getFullPath());
 		}
-		
+
 		// Almost there! Set a new classpath using all this stuff we've computed.
 
 		// Even though the list types are specified, Java still tosses errors when I try 
-		// to cast them. So instead I'm stuck with explicit iteration.
+		// to cast them. So instead I'm stuck with this idiom.
 
 		IPath[] libPaths = new IPath[libraryJarPathList.size()];
 
@@ -491,8 +478,8 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 	/**
 	 * Generates and assigns a processing problem marker.
 	 * <p>
-	 * Tags the whole line and adds an issue to the Problems box. If the problem could not be tied
-	 * to a specific file it will be marked against the project and the line will not be marked.
+	 * A negative line number indicates that the problem could not be tied back to a specific line.
+	 * Message strings generated by the preprocessor will be translated into a more readable form.
 	 */
 	private void reportProblem(String message, IResource problemFile, int lineNumber, boolean isError){
 		// translate error messages to a friendlier form
@@ -511,12 +498,11 @@ public class SketchBuilder extends IncrementalProjectBuilder{
 			IMarker marker = problemFile.createMarker(SketchBuilder.PREPROCMARKER);
 			marker.setAttribute(IMarker.MESSAGE, message);
 			marker.setAttribute(IMarker.SEVERITY, isError ? IMarker.SEVERITY_ERROR : IMarker.SEVERITY_WARNING);
-			if( lineNumber != -1)
-				marker.setAttribute(IMarker.LINE_NUMBER, lineNumber);
+			if(lineNumber > -1)	marker.setAttribute(IMarker.LINE_NUMBER, lineNumber);
 		} catch(CoreException e){
 			ProcessingLog.logError(e);
 			return;
-		}	
+		}
 	}
 
 	/**

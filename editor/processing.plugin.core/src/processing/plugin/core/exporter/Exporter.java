@@ -28,6 +28,7 @@ import processing.plugin.core.ProcessingCore;
 import processing.plugin.core.ProcessingLog;
 import processing.plugin.core.ProcessingUtilities;
 import processing.plugin.core.builder.SketchProject;
+import processing.plugin.core.model.LibraryModel;
 
 /** Static export functions. */
 public class Exporter {
@@ -129,7 +130,7 @@ public class Exporter {
 			// This will happen when the copy fails, which we expect if there is no
 			// image file. It isn't worth reporting.
 			try {
-				File exportResourcesFolder = new File(ProcessingCore.getProcessingCore().getPluginResourceFolder().getCanonicalPath(), "export");
+				File exportResourcesFolder = new File(ProcessingCore.getCore().getPluginResourceFolder().getCanonicalPath(), "export");
 				File loadingImageCoreResource = new File(exportResourcesFolder, LOADING_IMAGE);
 				ProcessingUtilities.copyFile(loadingImageCoreResource, new File(exportFolder.getLocation().toFile(), LOADING_IMAGE));
 			} catch (Exception ex) {
@@ -176,9 +177,9 @@ public class Exporter {
 		}
 
 		// snag the opengl library path so we can test for it later
-		File openglLibrary = new File(ProcessingCore.getProcessingCore().getCoreLibsFolder(), "opengl/library/opengl.jar");
+		File openglLibrary = new File(LibraryModel.getCoreLibsFolder(), "opengl/library/opengl.jar");
 		String openglLibraryPath = openglLibrary.getAbsolutePath();
-		boolean openglApplet = false;			
+		boolean openglApplet = false;
 		
 		// add the library jar files to the folder and detect if opengl is in use
 		ArrayList<IPath> sketchLibraryImportPaths = sp.getLibraryPaths();
@@ -188,7 +189,7 @@ public class Exporter {
 					openglApplet = true;
 				
 				// for each exportFile in library.getAppletExports()
-				
+
 				
 //				File libraryFolder = new File(path.toOSString());
 //				if (path.toOSString().equalsIgnoreCase(openglLibraryPath)) openglApplet=true;
