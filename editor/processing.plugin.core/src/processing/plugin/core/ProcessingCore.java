@@ -11,14 +11,12 @@
 package processing.plugin.core;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -26,7 +24,7 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Plugin;
 
-import processing.plugin.core.ProcessingUtilities;
+import processing.plugin.core.model.LibraryModel;
  
 /**
  * The plug-in activator enabling the core (UI-free) support for Processing sketches.
@@ -45,8 +43,10 @@ public final class ProcessingCore extends Plugin {
 	/** shared plugin object */
 	private static ProcessingCore plugin;
 
-	/** shared resource bundle */
+	// shared objects
 	private ResourceBundle resourceBundle;
+	private LibraryModel pLibs;
+
 
 	/**
 	 * Creates the Processing core plug-in.
@@ -68,17 +68,22 @@ public final class ProcessingCore extends Plugin {
 		}
 	}
 
-	// special initialization and shutdown goes here
+	/** Returns the single model instance providing access to Processing libraries */
+	public LibraryModel getLibraryModel(){
+		return (pLibs == null) ? new LibraryModel() : pLibs;
+	}
+	
+	// any special initialization and shutdown goes here
 	/* 	public void start(BundleContext context) throws Exception {} */
 	/* 	public void stop(BundleContext context) throws Exception {} */
-
+	
 	/** 
 	 * Gets a URL to a file or folder in the plug-in's Resources folder.
 	 * Returns null if the path results in a bad URL.
 	 * 
 	 * @param path relative path from the Resources folder
 	 */
-	public URL getPluginResource(String path){
+	public URL getPluginResource(String path) {
 		try{
 			return new URL(this.getBundle().getEntry("/"), "Resources/" + path);
 		} catch (MalformedURLException e){
@@ -92,7 +97,7 @@ public final class ProcessingCore extends Plugin {
 	 * 
 	 * @param path relative from the Resources folder
 	 */
-	public URL getPluginResource(IPath path){
+	public URL getPluginResource(IPath path) {
 		return getPluginResource(path.toOSString());
 	}
 	
@@ -102,7 +107,7 @@ public final class ProcessingCore extends Plugin {
 	 * 
 	 * @return File reference to the core resources
 	 */
-	public File getPluginResourceFolder(){
+	public File getPluginResourceFolder() {
 		URL fileLocation = getPluginResource("");
 		try {
 			File folder = new File(FileLocator.toFileURL(fileLocation).getPath());
@@ -115,7 +120,7 @@ public final class ProcessingCore extends Plugin {
 	}
 
 	/** Returns a file handle to the plug-in's local cache folder. */
-	public File getBuiltInCacheFolder(){
+	public File getBuiltInCacheFolder() {
 		return new File(this.getStateLocation().toString());
 	}
 
@@ -137,7 +142,7 @@ public final class ProcessingCore extends Plugin {
 	}
 
 	/** Returns the single instance of the Processing core plug-in runtime class. */
-	public static ProcessingCore getProcessingCore(){
+	public static ProcessingCore getCore(){
 		return plugin;
 	}
 	
@@ -156,73 +161,6 @@ public final class ProcessingCore extends Plugin {
 	/** Returns true if the file has a Processing extension */
 	public static boolean isProcessingFile(String filename){
 		return filename.endsWith(".pde");
-	}
-
-	/** Returns true if the IFolder is a Processing library root folder */
-	public static boolean isLibrary(IFolder rootFolder){
-		return isLibrary(rootFolder.getFullPath().toFile());
-	}
-
-	/** 
-	 * Returns true if the folder is a Processing library root folder and
-	 * only complains if there is an error.
-	 */
-	public static boolean isLibrary(File rootFolder){
-		return isLibrary(rootFolder, false);
-	}
-
-	/**
-	 * Returns true if the folder is a Processing library root folder.
-	 * When complain is false only errors are logged and reported. When 
-	 * complain is true the standard PDE warning for improperly named
-	 * libraries will also be reported.
-	 */
-	public static boolean isLibrary(File rootFolder, boolean complain){
-		if (rootFolder == null) return false;
-		if(!rootFolder.isDirectory()) return false;
-
-		String name = rootFolder.getName();
-		try {
-			File libraryJar = new File(rootFolder.getCanonicalPath() + 
-					File.separatorChar + "library" + File.separatorChar + 
-					name + ".jar");
-			if (libraryJar.exists())
-				if (ProcessingUtilities.sanitizeName(name).equals(name)){
-					return true;
-				} else {
-					if(complain){
-						String mess =
-							"The library \"" + name + "\" cannot be used.\n" +
-							"Library names must contain only basic letters and numbers.\n" +
-							"(ASCII only and no spaces, and it cannot start with a number)";
-						ProcessingLog.logInfo("Ignoring bad library " + name + "\n" + mess);
-					}
-				}
-		} catch (IOException e) {
-			ProcessingLog.logError("Problem checking library " +
-					name + ", could not resolve canonical path.", e);
-		}
-
-		return false;	
-	}
-
-	/**
-	 * Finds the folder containing the Processing core libraries, which are bundled with the
-	 * plugin. This folder doesn't exist in the workspace, so we return it as a File, not IFile. 
-	 * If something goes wrong, logs an error and returns null.
-	 *  
-	 * @return File containing the core libraries folder or null
-	 */
-	public File getCoreLibsFolder() {
-		URL fileLocation = getPluginResource("libraries");
-		try {
-			File folder = new File(FileLocator.toFileURL(fileLocation).getPath());
-			if (folder.exists())
-				return folder;
-		} catch (Exception e) {
-			ProcessingLog.logError(e);
-		}
-		return null;
 	}
 	
 	/**

@@ -34,7 +34,6 @@ public class ProcessingPlugin extends AbstractUIPlugin {
 	/** The ID of the processing  */
 	public static final String PROCESSING_PARTITIONING = "__processing_partitioning";
 	
-	
 	/** The shared plugin instance */
 	private static ProcessingPlugin plugin;
 	
