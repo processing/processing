@@ -358,7 +358,7 @@ public class SketchProject implements IProjectNature {
 		entries.add(JavaCore.newContainerEntry(vmPath.makeAbsolute())); // JVM
 		
 		// Processing Libraries
-		IPath plibs = new Path(ProcessingCore.getProcessingCore().getCoreJarFile().getAbsolutePath());
+		IPath plibs = new Path(ProcessingCore.getCore().getCoreJarFile().getAbsolutePath());
 		entries.add(JavaCore.newLibraryEntry( plibs, null, null, false ));
 		
 		// if we were given a list of source folders, add them to the list

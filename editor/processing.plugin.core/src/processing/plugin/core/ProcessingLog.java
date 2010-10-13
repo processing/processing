@@ -83,7 +83,7 @@ public class ProcessingLog {
 	 * @param status
 	 */
 	public static void log(IStatus status){
-		ProcessingCore.getProcessingCore().getLog().log(status);
+		ProcessingCore.getCore().getLog().log(status);
 	}
 	
 }
