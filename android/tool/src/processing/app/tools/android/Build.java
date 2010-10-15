@@ -477,6 +477,7 @@ class Build {
     // Copy any libraries to the 'libs' folder
     final Sketch sketch = editor.getSketch();
     for (LibraryFolder library : sketch.getImportedLibraries()) {
+	  File libraryFolder = new File(library.getPath());
       // in the list is a File object that points the
       // library sketch's "library" folder
       final File exportSettings = new File(libraryFolder, "export.txt");
