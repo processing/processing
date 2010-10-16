@@ -5081,7 +5081,6 @@ public class PGraphicsAndroid3D extends PGraphics {
     blend = true;
     blendMode = mode;
     gl.glEnable(GL10.GL_BLEND);
-    gl.glDisable(GL10.GL_CULL_FACE);
     if (mode == REPLACE) {  
       if (blendEqSupported) gl11xp.glBlendEquation(GL11ExtensionPack.GL_FUNC_ADD);
       gl.glBlendFunc(GL10.GL_ONE, GL10.GL_ZERO);
@@ -5095,11 +5094,12 @@ public class PGraphicsAndroid3D extends PGraphics {
       if (blendEqSupported) gl11xp.glBlendEquation(GL11ExtensionPack.GL_FUNC_ADD);      
       gl.glBlendFunc(GL10.GL_DST_COLOR, GL10.GL_SRC_COLOR);
     } else if (mode == SUBTRACT) {
+      if (blendEqSupported) gl11xp.glBlendEquation(GL11ExtensionPack.GL_FUNC_ADD);
       gl.glBlendFunc(GL10.GL_ONE_MINUS_DST_COLOR, GL10.GL_ZERO); 
     } else if (mode == DARKEST) {
       if (blendEqSupported) { 
         gl11xp.glBlendEquation(GL_MIN_EXT);      
-       gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_DST_ALPHA);
+        gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_DST_ALPHA);
       } else {
         PGraphics.showWarning("A3D: This blend mode is currently unsupported.");  
       }
@@ -5143,13 +5143,7 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   public void noBlend() {
     blend = false;
-    gl.glDisable(GL10.GL_BLEND);    
-    // When blending is disabled is advisable to
-    // enable backface culling for performance reasons,
-    // since those faces won't be seen anyways. Check for
-    // a more detailed explanation here:
-    // http://stackoverflow.com/questions/2393429/should-i-always-use-gl-cull-face
-    gl.glEnable(GL10.GL_CULL_FACE);
+    gl.glDisable(GL10.GL_BLEND);
   }
   
   // ////////////////////////////////////////////////////////////
