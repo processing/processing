@@ -25,12 +25,12 @@ package processing.core;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.EmptyStackException;
 import java.util.Stack;
 
-import android.graphics.PixelFormat;
 import android.opengl.GLU;
 import android.view.SurfaceHolder;
 
@@ -160,9 +160,11 @@ public class PGraphicsAndroid3D extends PGraphics {
   public float currentLightFalloffLinear;
   public float currentLightFalloffQuadratic;
 
-  /** Used to store empty values to be passed when a light has no ambient value **/
-  public float[] zeroLight = { 0.0f, 0.0f, 0.0f, 0.0f };
-
+  /** Used to store empty values to be passed when a light has no 
+      ambient, diffuse or specular component **/
+  public float[] zeroLight = { 0.0f, 0.0f, 0.0f, 1.0f };
+  public float[] baseLight = { 0.2f, 0.2f, 0.2f, 1.0f };
+ 
   boolean lightsAllocated = false;
 
   // ........................................................
@@ -646,7 +648,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     } else {
       gl.glDepthMask(true);
     }
-    
+        
     // Restoring blending.
     if (blend) {
       blend(blendMode);
@@ -658,7 +660,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     if (fill) {
       fillFromCalc();  
     }    
-    
+
     // Restoring material properties.
     calcR = ambientR;
     calcG = ambientG;
@@ -683,11 +685,15 @@ public class PGraphicsAndroid3D extends PGraphics {
       for (int i = 0; i < lightCount; i++) {
         glLightEnable(i);
         if (lightType[i] == AMBIENT) {
+          glLightEnable(i);
           glLightAmbient(i);
           glLightPosition(i);
           glLightFalloff(i);
           glLightNoSpot(i);
+          glLightNoDiffuse(i);
+          glLightNoSpecular(i);
         } else if (lightType[i] == DIRECTIONAL) {
+          glLightEnable(i);
           glLightNoAmbient(i);
           glLightDirection(i);
           glLightDiffuse(i);
@@ -695,6 +701,7 @@ public class PGraphicsAndroid3D extends PGraphics {
           glLightFalloff(i);
           glLightNoSpot(i);
         } else if (lightType[i] == POINT) {
+          glLightEnable(i);
           glLightNoAmbient(i);
           glLightPosition(i);
           glLightDiffuse(i);
@@ -702,6 +709,7 @@ public class PGraphicsAndroid3D extends PGraphics {
           glLightFalloff(i);
           glLightNoSpot(i);
         } else if (lightType[i] == SPOT) {
+          glLightEnable(i);
           glLightNoAmbient(i);
           glLightPosition(i);
           glLightDirection(i);
@@ -714,7 +722,20 @@ public class PGraphicsAndroid3D extends PGraphics {
       }
     } else {
       noLights();
-    }    
+    } 
+    
+    // Some things the user might have changed from OpenGL, 
+    // but we want to make sure they return to the Processing
+    // defaults (plus these cannot be changed through the API
+    // so they remain constant anyways):
+    gl.glShadeModel(GL10.GL_SMOOTH);    
+    gl.glFrontFace(GL10.GL_CW);    
+    gl.glDepthFunc(GL10.GL_LEQUAL);
+    gl.glEnable(GL10.GL_COLOR_MATERIAL);
+    gl.glEnable(GL10.GL_NORMALIZE);
+    gl.glEnable(GL10.GL_RESCALE_NORMAL);
+    gl.glLightModelfv(GL10.GL_LIGHT_MODEL_AMBIENT, baseLight, 0);
+    gl.glLightModelx(GL10.GL_LIGHT_MODEL_TWO_SIDE, 0);
   }  
   
   
@@ -768,10 +789,8 @@ public class PGraphicsAndroid3D extends PGraphics {
       defaultSettings();
     }
 
-    //resetMatrix(); // reset model matrix.
-
     report("top beginDraw()");
-
+    
     vertexBuffer.rewind();
     colorBuffer.rewind();
     texCoordBuffer.rewind();
@@ -779,7 +798,7 @@ public class PGraphicsAndroid3D extends PGraphics {
 
     textureImage = null;
     textureImagePrev = null;
-
+    
     // The default shade model is GL_SMOOTH, but we set
     // here just in case...
     gl.glShadeModel(GL10.GL_SMOOTH);
@@ -801,9 +820,6 @@ public class PGraphicsAndroid3D extends PGraphics {
     } else {
       gl.glDepthMask(true);
     }
-    
-    // because y is flipped
-    gl.glFrontFace(GL10.GL_CW);
 
     // setup opengl viewport.
     gl.glViewport(0, 0, width, height);
@@ -821,21 +837,33 @@ public class PGraphicsAndroid3D extends PGraphics {
     lightFalloff(1, 0, 0);
     lightSpecular(0, 0, 0);
 
-    // coloured stuff
+    // because y is flipped
+    gl.glFrontFace(GL10.GL_CW);
+    
+    // The ambient and diffuse components for each vertex are taken
+    // from the glColor/color buffer setting:
     gl.glEnable(GL10.GL_COLOR_MATERIAL);
-    // TODO maybe not available in OpenGL ES?
-    // gl.glColorMaterial(GL10.GL_FRONT_AND_BACK, GL10.GL_AMBIENT_AND_DIFFUSE);
-    // gl.glColorMaterial(GL10.GL_FRONT_AND_BACK, GL10.GL_SPECULAR);
-
-    // these tend to make life easier
-    // (but sometimes at the expense of a little speed)
-    // Not using them right now because we're doing our own lighting.
+    // glColorMaterial is not available in GLES, I suspect that is using 
+    // GL10.GL_FRONT_AND_BACK, GL10.GL_AMBIENT_AND_DIFFUSE implicitly
+    // For a quick overview of how the lighting model works in OpenGL
+    // see this page:
+    // http://www.sjbaker.org/steve/omniv/opengl_lighting.html
+    
+    // Some normal related settings:
     gl.glEnable(GL10.GL_NORMALIZE);
-    // gl.glEnable(GL10.GL_AUTO_NORMAL); // I think this is OpenGL 1.2 only
     gl.glEnable(GL10.GL_RESCALE_NORMAL);
-    // gl.GlLightModeli(GL10.GL_LIGHT_MODEL_COLOR_CONTROL,
-    // GL10.GL_SEPARATE_SPECULAR_COLOR);
-   
+    
+    // Light model defaults:
+    // The default ambient light for the entire scene is (0.2, 0.2, 0.2),
+    // here we set our own default value.
+    gl.glLightModelfv(GL10.GL_LIGHT_MODEL_AMBIENT, baseLight, 0);
+    gl.glLightModelx(GL10.GL_LIGHT_MODEL_TWO_SIDE, 0);
+    
+    // I think this is OpenGL 1.2 only, issue 345:
+    // http://code.google.com/p/processing/issues/detail?id=345
+    // should take care of it:
+    // gl.glEnable(GL10.GL_AUTO_NORMAL); 
+    
     shapeFirst = 0;
     
     if (primarySurface) {
@@ -982,13 +1010,17 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
 
   public GL10 beginGL() {
-    gl.glPushMatrix();
-    gl.glScalef(1, -1, 1);
+    saveGLState();
+    // OpenGL is using Processing defaults at this point,
+    // such as the inverted Y axis, GL_COLOR_MATERIAL mode, etc.
+    // The user is free to change anything she wants, endGL will
+    // try to do its best to restore things to the Processing
+    // settings valid at the time of calling beginGL().
     return gl;
   }
 
   public void endGL() {
-    gl.glPopMatrix();
+    restoreGLState();
   }
   
   // //////////////////////////////////////////////////////////
@@ -3880,8 +3912,11 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected void fillFromCalc() {
     super.fillFromCalc();
     calcColorBuffer();
-    gl.glMaterialfv(GL10.GL_FRONT_AND_BACK, GL10.GL_AMBIENT_AND_DIFFUSE,
-        colorFloats, 0);
+    
+    // A3D uses GL_COLOR_MATERIAL mode, so the ambient and diffuse components
+    // for all vertices are taken from the glColor/color buffer settings.
+    //gl.glMaterialfv(GL10.GL_FRONT_AND_BACK, GL10.GL_AMBIENT_AND_DIFFUSE,
+    //    colorFloats, 0);
   }
 
   // ////////////////////////////////////////////////////////////
@@ -3909,6 +3944,9 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected void ambientFromCalc() {
     super.ambientFromCalc();
     calcColorBuffer();
+    
+    // A3D uses GL_COLOR_MATERIAL mode, so the ambient and diffuse components
+    // for all vertices are taken from the glColor/color buffer settings.    
     gl.glMaterialfv(GL10.GL_FRONT_AND_BACK, GL10.GL_AMBIENT, colorFloats, 0);
   }
 
@@ -4079,8 +4117,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     lightSpecular(0, 0, 0);
 
     ambientLight(colorModeX * 0.5f, colorModeY * 0.5f, colorModeZ * 0.5f);
-    //directionalLight(colorModeX * 0.5f, colorModeY * 0.5f, colorModeZ * 0.5f, 0, 0, -1);
-
+    directionalLight(colorModeX * 0.5f, colorModeY * 0.5f, colorModeZ * 0.5f, 0, 0, -1);
+    
     colorMode = colorModeSaved;
   }
 
@@ -4124,7 +4162,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     lightPosition[lightCount][1] = y;
     lightPosition[lightCount][2] = z;
     lightPosition[lightCount][3] = 1.0f;
-
+    
     glLightEnable(lightCount);
     glLightAmbient(lightCount);
     glLightPosition(lightCount);
@@ -4294,8 +4332,10 @@ public class PGraphicsAndroid3D extends PGraphics {
     gl.glDisable(GL10.GL_LIGHTING);
   }
     
-  private void glLightAmbient(int num) {
-    gl.glLightfv(GL10.GL_LIGHT0 + num, GL10.GL_AMBIENT, lightDiffuse[num], 0);
+  private void glLightAmbient(int num) {    
+    FloatBuffer buf = FloatBuffer.wrap(lightDiffuse[num]);
+    gl.glLightfv(GL10.GL_LIGHT0 + num, GL10.GL_AMBIENT, buf);
+    //gl.glLightfv(GL10.GL_LIGHT0 + num, GL10.GL_AMBIENT, lightDiffuse[num], 0);
   }
 
   private void glLightNoAmbient(int num) {
@@ -4303,7 +4343,6 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
   
   private void glLightNoSpot(int num) {
-    
     gl.glLightf(GL10.GL_LIGHT0 + num, GL10.GL_SPOT_CUTOFF, 180);
     gl.glLightf(GL10.GL_LIGHT0 + num, GL10.GL_SPOT_EXPONENT, 0);
   }
@@ -4312,8 +4351,10 @@ public class PGraphicsAndroid3D extends PGraphics {
     gl.glLightfv(GL10.GL_LIGHT0 + num, GL10.GL_DIFFUSE, lightDiffuse[num], 0);
   }
 
-  private void glLightNoDiffuse(int num) { 
-    gl.glLightfv(GL10.GL_LIGHT0 + num, GL10.GL_DIFFUSE, zeroLight, 0);
+  private void glLightNoDiffuse(int num) {
+    FloatBuffer buf = FloatBuffer.wrap(zeroLight);
+    gl.glLightfv(GL10.GL_LIGHT0 + num, GL10.GL_DIFFUSE, buf);
+    //gl.glLightfv(GL10.GL_LIGHT0 + num, GL10.GL_DIFFUSE, zeroLight, 0);
   }
     
   private void glLightDirection(int num) {
@@ -4349,7 +4390,9 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
 
   private void glLightPosition(int num) {
-    gl.glLightfv(GL10.GL_LIGHT0 + num, GL10.GL_POSITION, lightPosition[num], 0);
+    FloatBuffer buf = FloatBuffer.wrap(lightPosition[num]);
+    gl.glLightfv(GL10.GL_LIGHT0 + num, GL10.GL_POSITION, buf);
+    //gl.glLightfv(GL10.GL_LIGHT0 + num, GL10.GL_POSITION, lightPosition[num], 0);
   }
 
   private void glLightSpecular(int num) {
@@ -5052,7 +5095,6 @@ public class PGraphicsAndroid3D extends PGraphics {
       if (blendEqSupported) gl11xp.glBlendEquation(GL11ExtensionPack.GL_FUNC_ADD);      
       gl.glBlendFunc(GL10.GL_DST_COLOR, GL10.GL_SRC_COLOR);
     } else if (mode == SUBTRACT) {
-      if (blendEqSupported) gl11xp.glBlendEquation(GL11ExtensionPack.GL_FUNC_ADD);      
       gl.glBlendFunc(GL10.GL_ONE_MINUS_DST_COLOR, GL10.GL_ZERO); 
     } else if (mode == DARKEST) {
       if (blendEqSupported) { 
