@@ -5348,18 +5348,19 @@ public class PGraphics extends PImage implements PConstants {
   // own bit shifting operations to setup 'color' data types.
 
 
-  public final int color(int gray) {  // ignore
-    if (((gray & 0xff000000) == 0) && (gray <= colorModeX)) {
-      if (colorModeDefault) {
-        // bounds checking to make sure the numbers aren't to high or low
-        if (gray > 255) gray = 255; else if (gray < 0) gray = 0;
-        return 0xff000000 | (gray << 16) | (gray << 8) | gray;
-      } else {
-        colorCalc(gray);
-      }
-    } else {
-      colorCalcARGB(gray, colorModeA);
-    }
+  public final int color(int c) {  // ignore
+//    if (((c & 0xff000000) == 0) && (c <= colorModeX)) {
+//      if (colorModeDefault) {
+//        // bounds checking to make sure the numbers aren't to high or low
+//        if (c > 255) c = 255; else if (c < 0) c = 0;
+//        return 0xff000000 | (c << 16) | (c << 8) | c;
+//      } else {
+//        colorCalc(c);
+//      }
+//    } else {
+//      colorCalcARGB(c, colorModeA);
+//    }
+    colorCalc(c);
     return calcColor;
   }
 
@@ -5371,30 +5372,30 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * @param gray can be packed ARGB or a gray in this case
+   * @param c can be packed ARGB or a gray in this case
    */
-  public final int color(int gray, int alpha) {  // ignore
-    if (colorModeDefault) {
-      // bounds checking to make sure the numbers aren't to high or low
-      if (gray > 255) gray = 255; else if (gray < 0) gray = 0;
-      if (alpha > 255) alpha = 255; else if (alpha < 0) alpha = 0;
-
-      return ((alpha & 0xff) << 24) | (gray << 16) | (gray << 8) | gray;
-    }
-    colorCalc(gray, alpha);
+  public final int color(int c, int alpha) {  // ignore
+//    if (colorModeDefault) {
+//      // bounds checking to make sure the numbers aren't to high or low
+//      if (c > 255) c = 255; else if (c < 0) c = 0;
+//      if (alpha > 255) alpha = 255; else if (alpha < 0) alpha = 0;
+//
+//      return ((alpha & 0xff) << 24) | (c << 16) | (c << 8) | c;
+//    }
+    colorCalc(c, alpha);
     return calcColor;
   }
 
 
   /**
-   * @param rgb can be packed ARGB or a gray in this case
+   * @param c can be packed ARGB or a gray in this case
    */
-  public final int color(int rgb, float alpha) {  // ignore
-    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {
-      colorCalc(rgb, alpha);
-    } else {
-      colorCalcARGB(rgb, alpha);
-    }
+  public final int color(int c, float alpha) {  // ignore
+//    if (((c & 0xff000000) == 0) && (c <= colorModeX)) {
+    colorCalc(c, alpha);
+//  } else {
+//    colorCalcARGB(c, alpha);
+//  }
     return calcColor;
   }
 
@@ -5406,14 +5407,14 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public final int color(int x, int y, int z) {  // ignore
-    if (colorModeDefault) {
-      // bounds checking to make sure the numbers aren't to high or low
-      if (x > 255) x = 255; else if (x < 0) x = 0;
-      if (y > 255) y = 255; else if (y < 0) y = 0;
-      if (z > 255) z = 255; else if (z < 0) z = 0;
-
-      return 0xff000000 | (x << 16) | (y << 8) | z;
-    }
+//    if (colorModeDefault) {
+//      // bounds checking to make sure the numbers aren't to high or low
+//      if (x > 255) x = 255; else if (x < 0) x = 0;
+//      if (y > 255) y = 255; else if (y < 0) y = 0;
+//      if (z > 255) z = 255; else if (z < 0) z = 0;
+//
+//      return 0xff000000 | (x << 16) | (y << 8) | z;
+//    }
     colorCalc(x, y, z);
     return calcColor;
   }
@@ -5426,15 +5427,15 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public final int color(int x, int y, int z, int a) {  // ignore
-    if (colorModeDefault) {
-      // bounds checking to make sure the numbers aren't to high or low
-      if (a > 255) a = 255; else if (a < 0) a = 0;
-      if (x > 255) x = 255; else if (x < 0) x = 0;
-      if (y > 255) y = 255; else if (y < 0) y = 0;
-      if (z > 255) z = 255; else if (z < 0) z = 0;
-
-      return (a << 24) | (x << 16) | (y << 8) | z;
-    }
+//    if (colorModeDefault) {
+//      // bounds checking to make sure the numbers aren't to high or low
+//      if (a > 255) a = 255; else if (a < 0) a = 0;
+//      if (x > 255) x = 255; else if (x < 0) x = 0;
+//      if (y > 255) y = 255; else if (y < 0) y = 0;
+//      if (z > 255) z = 255; else if (z < 0) z = 0;
+//
+//      return (a << 24) | (x << 16) | (y << 8) | z;
+//    }
     colorCalc(x, y, z, a);
     return calcColor;
   }
