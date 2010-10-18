@@ -3,6 +3,9 @@ X regression in XMLElement.getBoolean(String, boolean)
 X   http://code.google.com/p/processing/issues/detail?id=399
 o JNLPAppletlauncher doesn't work anymore with OpenGL jar
 o   http://code.google.com/p/processing/issues/detail?id=352
+X color() problem with alpha
+X   http://code.google.com/p/processing/issues/detail?id=327
+X   appears to have been some old code that wasn't removed
 
 _ present mode is no longer centering on osx?
 _ bug: textAlign(RIGHT) is shutting off native fonts
@@ -53,9 +56,6 @@ _ nfc() is a problem on intl systems when subsetting fonts
 
 _ OpenGL noSmooth() problems
 _   http://code.google.com/p/processing/issues/detail?id=328
-
-_ color() problem with alpha
-_   http://code.google.com/p/processing/issues/detail?id=327
 
 hanging chads for the xml library
 _ ref: constructor has changed to .parse(...) instead of new XMLElement(str)
