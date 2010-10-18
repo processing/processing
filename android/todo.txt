@@ -1,5 +1,27 @@
 0192 android
 X compile android-core with java 5 as the target so that it works on OS X 10.5
+X A3D should use lower color depth on older devices
+X   http://code.google.com/p/processing/issues/detail?id=391
+X new api for begin/endRecord()
+
+_ when returning to android application, sometimes screen stays black
+_   http://code.google.com/p/processing/issues/detail?id=237
+
+_ .java files are reported with Syntax Error with the Android build 0191
+_   http://code.google.com/p/processing/issues/detail?id=404
+
+_ register(this, "pause") -> libs will need pause events on android
+_ thread is continually running - 'inside handleDraw()' running continually
+_   inside run() it shouldn't still be going
+
+_ Error 336  Can't run any sketch.
+_   http://code.google.com/p/processing/issues/detail?id=393
+_   javac.exe not included with the download
+
+_ gui stuff: http://hg.postspectacular.com/cp5magic/wiki/Home
+
+_ "failed to get signature key" problem
+_   Caused by: /Users/aandnota/Documents/android-sdk-mac_x86/tools/ant/ant_rules_r3.xml:209: com.android.sdklib.build.ApkCreationException: Unable to get debug signature key
 
 _ android debug certificate expired
 _   http://forum.processing.org/topic/ant-rules-r3-xml-209-395-error#25080000000262001
