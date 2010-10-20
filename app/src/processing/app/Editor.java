@@ -181,7 +181,7 @@ public class Editor extends JFrame implements RunnerListener {
 
     textarea = new JEditTextArea(new PdeTextAreaDefaults());
     textarea.setRightClickPopup(new TextAreaPopup());
-    textarea.setHorizontalOffset(6);
+    textarea.setHorizontalOffset(JEditTextArea.leftHandGutter);
 
     // assemble console panel, consisting of status area and the console itself
     consolePanel = new JPanel();
