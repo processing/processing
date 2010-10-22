@@ -1,6 +1,22 @@
 0192
 X Getting error: Syntax error on token "else", } expected
 X   http://code.google.com/p/processing/issues/detail?id=400
+C disappearing horizontal scroll bar
+C   appears to have become much worse with the other scrollbar fix
+C   ...which itself doesn't seem to be working properly
+C   http://code.google.com/p/processing/issues/detail?id=316
+
+_ Processing cannot run because it could not ... store your settings.
+_   http://code.google.com/p/processing/issues/detail?id=410
+
+_ Debugger highlights wrong line, and sometimes the wrong file
+_   http://code.google.com/p/processing/issues/detail?id=412
+
+_ "save" clears undo information
+_   http://code.google.com/p/processing/issues/detail?id=411
+_ don't reload sketch on "save as"
+_   this can result in loss of data (undo is lost)
+_   http://code.google.com/p/processing/issues/detail?id=62
 
 _ build is currently broken for p5 because of changes to the file layout
 _   something that gets fixed my 'make clean'
@@ -74,10 +90,6 @@ _   http://code.google.com/p/processing/issues/detail?id=353
 _ launch4j problem - FIXABLE
 _   no crash when double-clicking a sketch and loading it
 _   http://code.google.com/p/processing/issues/detail?id=231
-_ disappearing horizontal scroll bar
-_   appears to have become much worse with the other scrollbar fix
-_   ...which itself doesn't seem to be working properly
-_   http://code.google.com/p/processing/issues/detail?id=316
 
 _ fix line endings in revisions.txt for windows
 
@@ -1074,9 +1086,6 @@ _ need to set dock icon title on osx
 
 PDE / Sketch & Sketchbook
 
-_ don't reload sketch on "save as"
-_   this can result in loss of data (undo is lost)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=433
 _ ArticulatePrint-070103a.pde from ArticulatePrint-070103a loads ok
 _   but when opening the sketch, it leaves out the file
 _   because there's a dash in the name
