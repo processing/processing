@@ -42,6 +42,7 @@ _   http://code.google.com/p/processing/issues/detail?id=362
 
 _ need to finish font changes wrt native fonts before any release
 _   right now not in a good place--default font will be bitmapped and ugly
+_   http://code.google.com/p/processing/issues/detail?id=416
 
 _ bug in SVG parser for shorthand curves (T/t and S/s)
 _   http://code.google.com/p/processing/issues/detail?id=350
