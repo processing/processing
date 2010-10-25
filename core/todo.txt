@@ -7,6 +7,10 @@ X color() problem with alpha
 X   http://code.google.com/p/processing/issues/detail?id=327
 X   appears to have been some old code that wasn't removed
 
+_ need to finish font changes wrt native fonts before any release
+_   right now not in a good place--default font will be bitmapped and ugly
+_   http://code.google.com/p/processing/issues/detail?id=416
+
 _ present mode is no longer centering on osx?
 _ bug: textAlign(RIGHT) is shutting off native fonts
 _   makes salaryper super ugly
@@ -39,10 +43,6 @@ _   http://code.google.com/p/processing/issues/detail?id=388
 
 _ textAlign() incorrect with default font on Mac OS X 10.6
 _   http://code.google.com/p/processing/issues/detail?id=362
-
-_ need to finish font changes wrt native fonts before any release
-_   right now not in a good place--default font will be bitmapped and ugly
-_   http://code.google.com/p/processing/issues/detail?id=416
 
 _ bug in SVG parser for shorthand curves (T/t and S/s)
 _   http://code.google.com/p/processing/issues/detail?id=350

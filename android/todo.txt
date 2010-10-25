@@ -18,6 +18,9 @@ _ Error 336  Can't run any sketch.
 _   http://code.google.com/p/processing/issues/detail?id=393
 _   javac.exe not included with the download
 
+_ verify that processing-core.jar has downloaded properly
+_   http://code.google.com/p/processing/issues/detail?id=421
+
 _ gui stuff: http://hg.postspectacular.com/cp5magic/wiki/Home
 
 _ "failed to get signature key" problem

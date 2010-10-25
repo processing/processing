@@ -6,6 +6,9 @@ C   appears to have become much worse with the other scrollbar fix
 C   ...which itself doesn't seem to be working properly
 C   http://code.google.com/p/processing/issues/detail?id=316
 
+_ Autoformat bug (new java "for loop" syntax)
+_   http://code.google.com/p/processing/issues/detail?id=420
+
 _ Processing cannot run because it could not ... store your settings.
 _   http://code.google.com/p/processing/issues/detail?id=410
 
