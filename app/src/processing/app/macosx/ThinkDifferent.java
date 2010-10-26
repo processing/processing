@@ -38,6 +38,7 @@ import com.apple.eawt.*;
  * As of 0140, this code need not be built on platforms other than OS X, 
  * because of the new platform structure which isolates through reflection.
  */
+@SuppressWarnings("deprecation")
 public class ThinkDifferent implements ApplicationListener {
 
   // pseudo-singleton model; no point in making multiple instances
