@@ -871,6 +871,14 @@ public class Base {
 
     File file = new File(path);
     if (!file.exists()) return null;
+    
+    if (!Sketch.isSanitaryName(file.getName())) {
+      Base.showWarning("You're tricky, but not tricky enough",
+                       file.getName() + " is not a valid name for a sketch.\n" +
+                       "Better to stick to ASCII, no spaces, and make sure\n" + 
+                       "it doesn't start with a number.", null);
+      return null;
+    }
 
 //    System.err.println("  editors: " + editors);
     // Cycle through open windows to make sure that it's not already open.
