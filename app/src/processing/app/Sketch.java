@@ -3124,6 +3124,9 @@ public class Sketch {
    * Return true if the name is valid for a Processing sketch.
    */
   static public boolean isSanitaryName(String name) {
+    if (name.toLowerCase().endsWith(".pde")) {
+      name = name.substring(0, name.length() - 4);
+    }
     return sanitizeName(name).equals(name);
   }
 
