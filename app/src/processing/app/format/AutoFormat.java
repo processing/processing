@@ -327,6 +327,7 @@ public class AutoFormat {
       case ',':
         trimRight(buf);
         buf.append(c);
+        buf.append(' ');
         break;
 
       case ' ':
@@ -581,7 +582,7 @@ public class AutoFormat {
 
         if ((lookup("for"))) {
           c = get_string();
-          while (c != ';') {
+          while (c != ';' && c != ':') {
             c = get_string();
           }
           ct = 0;
