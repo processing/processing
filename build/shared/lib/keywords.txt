@@ -344,6 +344,8 @@ final	KEYWORD1	final
 float	KEYWORD1	float
 float	KEYWORD2	float_
 floor	KEYWORD2	floor_
+focusGained	KEYWORD3	focusGained_
+focusLost	KEYWORD3	focusLost_
 focused	LITERAL2	focused
 for	KEYWORD1	for_
 frameCount	LITERAL2	frameCount
