@@ -22,6 +22,5 @@
 	<classpathentry exported="true" kind="lib" path="lib/ant-launcher.jar"/>
 	<classpathentry kind="lib" path="lib/apple.jar"/>
 	<classpathentry kind="lib" path="test/lib/junit-4.8.1.jar"/>
-	<classpathentry kind="lib" path="C:/jdk1.6.0_21/lib/tools.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
