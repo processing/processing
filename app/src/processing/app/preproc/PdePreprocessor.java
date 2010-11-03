@@ -27,6 +27,7 @@
 
 package processing.app.preproc;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -179,7 +180,7 @@ public class PdePreprocessor implements PdeTokenTypes {
   protected Mode mode;
 
   public void setMode(final Mode mode) {
-    //    System.err.println("Setting program type to " + programType);
+    // System.err.println("Setting mode to " + mode);
     this.mode = mode;
   }
 
@@ -401,55 +402,22 @@ public class PdePreprocessor implements PdeTokenTypes {
    */
   private String write(final String program, final PrintWriter stream)
       throws RunnerException, RecognitionException, TokenStreamException {
-    // create a lexer with the stream reader, and tell it to handle
-    // hidden tokens (eg whitespace, comments) since we want to pass these
-    // through so that the line numbers when the compiler reports errors
-    // match those that will be highlighted in the PDE IDE
-    //
-    PdeLexer lexer = new PdeLexer(new StringReader(program));
-    lexer.setTokenObjectClass("antlr.CommonHiddenStreamToken");
 
-    // create the filter for hidden tokens and specify which tokens to
-    // hide and which to copy to the hidden text
-    //
-    filter = new TokenStreamCopyingHiddenTokenFilter(lexer);
-    filter.hide(PdeRecognizer.SL_COMMENT);
-    filter.hide(PdeRecognizer.ML_COMMENT);
-    filter.hide(PdeRecognizer.WS);
-    filter.copy(PdeRecognizer.SEMI);
-    filter.copy(PdeRecognizer.LPAREN);
-    filter.copy(PdeRecognizer.RPAREN);
-    filter.copy(PdeRecognizer.LCURLY);
-    filter.copy(PdeRecognizer.RCURLY);
-    filter.copy(PdeRecognizer.COMMA);
-    filter.copy(PdeRecognizer.RBRACK);
-    filter.copy(PdeRecognizer.LBRACK);
-    filter.copy(PdeRecognizer.COLON);
-    filter.copy(PdeRecognizer.TRIPLE_DOT);
-
-    // Because the meanings of < and > are overloaded to support
-    // type arguments and type parameters, we have to treat them
-    // as copyable to hidden text (or else the following syntax,
-    // such as (); and what not gets lost under certain circumstances)
-    // -- jdf
-    filter.copy(PdeRecognizer.LT);
-    filter.copy(PdeRecognizer.GT);
-    filter.copy(PdeRecognizer.SR);
-    filter.copy(PdeRecognizer.BSR);
-
-    // create a parser and set what sort of AST should be generated
-    //
-    PdeRecognizer parser = new PdeRecognizer(this, filter);
-
-    // use our extended AST class
-    //
-    parser.setASTNodeClass("antlr.ExtendedCommonASTWithHiddenTokens");
-
+    PdeRecognizer parser = createParser(program);
     if (PUBLIC_CLASS.matcher(program).find()) {
       try {
-        parser.javaProgram();
+        final PrintStream saved = System.err;
+        try {
+          // throw away stderr for this tentative parse
+          System.setErr(new PrintStream(new ByteArrayOutputStream()));
+          parser.javaProgram();
+        } finally {
+          System.setErr(saved);
+        }
         setMode(Mode.JAVA);
       } catch (Exception e) {
+        // I can't figure out any other way of resetting the parser.
+        parser = createParser(program);
         parser.pdeProgram();
       }
     } else if (FUNCTION_DECL.matcher(program).find()) {
@@ -458,7 +426,7 @@ public class PdePreprocessor implements PdeTokenTypes {
     } else {
       parser.pdeProgram();
     }
-    
+
     // set up the AST for traversal by PdeEmitter
     //
     ASTFactory factory = new ASTFactory();
@@ -511,6 +479,53 @@ public class PdePreprocessor implements PdeTokenTypes {
     }
 
     return className;
+  }
+
+  private PdeRecognizer createParser(final String program) {
+    // create a lexer with the stream reader, and tell it to handle
+    // hidden tokens (eg whitespace, comments) since we want to pass these
+    // through so that the line numbers when the compiler reports errors
+    // match those that will be highlighted in the PDE IDE
+    //
+    PdeLexer lexer = new PdeLexer(new StringReader(program));
+    lexer.setTokenObjectClass("antlr.CommonHiddenStreamToken");
+
+    // create the filter for hidden tokens and specify which tokens to
+    // hide and which to copy to the hidden text
+    //
+    filter = new TokenStreamCopyingHiddenTokenFilter(lexer);
+    filter.hide(PdeRecognizer.SL_COMMENT);
+    filter.hide(PdeRecognizer.ML_COMMENT);
+    filter.hide(PdeRecognizer.WS);
+    filter.copy(PdeRecognizer.SEMI);
+    filter.copy(PdeRecognizer.LPAREN);
+    filter.copy(PdeRecognizer.RPAREN);
+    filter.copy(PdeRecognizer.LCURLY);
+    filter.copy(PdeRecognizer.RCURLY);
+    filter.copy(PdeRecognizer.COMMA);
+    filter.copy(PdeRecognizer.RBRACK);
+    filter.copy(PdeRecognizer.LBRACK);
+    filter.copy(PdeRecognizer.COLON);
+    filter.copy(PdeRecognizer.TRIPLE_DOT);
+
+    // Because the meanings of < and > are overloaded to support
+    // type arguments and type parameters, we have to treat them
+    // as copyable to hidden text (or else the following syntax,
+    // such as (); and what not gets lost under certain circumstances)
+    // -- jdf
+    filter.copy(PdeRecognizer.LT);
+    filter.copy(PdeRecognizer.GT);
+    filter.copy(PdeRecognizer.SR);
+    filter.copy(PdeRecognizer.BSR);
+
+    // create a parser and set what sort of AST should be generated
+    //
+    final PdeRecognizer parser = new PdeRecognizer(this, filter);
+
+    // use our extended AST class
+    //
+    parser.setASTNodeClass("antlr.ExtendedCommonASTWithHiddenTokens");
+    return parser;
   }
 
   /**

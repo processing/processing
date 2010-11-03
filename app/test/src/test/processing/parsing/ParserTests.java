@@ -281,6 +281,11 @@ public class ParserTests {
   }
   
   @Test
+  public void bug427g() {
+    expectGood("bug427g");
+  }
+
+  @Test
   public void annotations() {
     expectGood("annotations");
   }
