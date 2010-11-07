@@ -4890,6 +4890,11 @@ public class PApplet extends Applet
   }
 
 
+  public boolean saveStream(String targetFilename, InputStream sourceStream) {
+    return saveStream(saveFile(targetFilename), sourceStream);
+  }
+
+
   static public boolean saveStream(File targetFile, InputStream sourceStream) {
     File tempFile = null;
     try {
