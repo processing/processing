@@ -6,7 +6,12 @@ o   http://code.google.com/p/processing/issues/detail?id=352
 X color() problem with alpha
 X   http://code.google.com/p/processing/issues/detail?id=327
 X   appears to have been some old code that wasn't removed
+X anglebetween regression
+X   http://code.google.com/p/processing/issues/detail?id=435
 
+
+_ OpenGL Applets won't load with JRE 6 update 21 or higher
+_   http://code.google.com/p/processing/issues/detail?id=429
 
 _ need to finish font changes wrt native fonts before any release
 _   right now not in a good place--default font will be bitmapped and ugly
@@ -324,8 +329,10 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=806
 _ accessors inside PFont need a lot of work
 _ osx 10.5 (not 10.4) performing text width calculation differently
 _   http://dev.processing.org/bugs/show_bug.cgi?id=972
+_   http://code.google.com/p/processing/issues/detail?id=128
 _ Automatically use textMode(SCREEN) with text() when possible
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1020
+_   http://code.google.com/p/processing/issues/detail?id=134
 
 
 P2D, P3D, PPolygon [1.0]

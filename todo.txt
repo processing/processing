@@ -1,6 +1,6 @@
 0192
-X Getting error: Syntax error on token "else", } expected
-X   http://code.google.com/p/processing/issues/detail?id=400
+J Getting error: Syntax error on token "else", } expected
+J   http://code.google.com/p/processing/issues/detail?id=400
 C disappearing horizontal scroll bar
 C   appears to have become much worse with the other scrollbar fix
 C   ...which itself doesn't seem to be working properly
@@ -9,8 +9,15 @@ J Autoformat bug (new java "for loop" syntax)
 J   http://code.google.com/p/processing/issues/detail?id=420
 J matching brace problem in PDE
 J   http://code.google.com/p/processing/issues/detail?id=417
+J fix syntax highlighting of focusGained and others
+J   http://dev.processing.org/bugs/show_bug.cgi?id=659
+J   http://code.google.com/p/processing/issues/detail?id=82
+J compiling with static final global variable
+J   http://code.google.com/p/processing/issues/detail?id=427
 X don't let PDE open sketches with bad names (reported by max)
 
+_ Patch: Processing IDE destroys symbolic links
+_   http://code.google.com/p/processing/issues/detail?id=432
 
 _ Processing cannot run because it could not ... store your settings.
 _   http://code.google.com/p/processing/issues/detail?id=410
@@ -559,8 +566,6 @@ _   problem with big floats:
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1061302380
 _   problem with small floats:
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1115500448
-_ fix syntax highlighting of focusGained and others
-_   http://dev.processing.org/bugs/show_bug.cgi?id=659
 _ verify (and document) public access members of PApplet
 _   http://dev.processing.org/bugs/show_bug.cgi?id=660
 _ some docs missing (therefore not syntax highlighting)
