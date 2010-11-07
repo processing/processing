@@ -24,6 +24,7 @@
 package processing.core;
 
 import java.awt.*;
+import java.awt.font.TextLayout;
 import java.awt.geom.*;
 import java.awt.image.*;
 
@@ -1053,8 +1054,22 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
       // maybe should use one of the newer/fancier functions for this?
       int length = stop - start;
       FontMetrics metrics = g2.getFontMetrics(font);
+      // Using fractional metrics makes the measurement worse, not better, 
+      // at least on OS X 10.6 (November, 2010). 
+      // TextLayout returns the same value as charsWidth().
+//      System.err.println("using native");
+//      g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
+//                          RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+//      float m1 = metrics.charsWidth(buffer, start, length);
+//      //float m2 = (float) metrics.getStringBounds(buffer, start, stop, g2).getWidth();
+//      TextLayout tl = new TextLayout(new String(buffer, start, length), font, g2.getFontRenderContext());
+//      float m2 = (float) tl.getBounds().getWidth();
+//      System.err.println(m1 + " " + m2);
+////      return m1;
+//      return m2;
       return metrics.charsWidth(buffer, start, length);
     }
+//    System.err.println("not native");
     return super.textWidthImpl(buffer, start, stop);
   }
 
