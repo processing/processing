@@ -23,37 +23,7 @@
 
 package processing.core;
 
-import processing.xml.XMLElement;
-
-import android.content.*;
-import android.content.pm.ActivityInfo;
-import android.content.res.AssetManager;
-import android.content.res.Configuration;
-import android.graphics.*;
-
-import java.io.*;
-import java.lang.reflect.*;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.text.NumberFormat;
-import java.util.*;
-import java.util.regex.*;
-import java.util.zip.*;
-
-import android.app.Activity;
-import android.net.Uri;
-import android.text.format.Time;
-import android.util.*;
-import android.view.SurfaceView;
-import android.opengl.GLSurfaceView;
-import android.view.WindowManager;
-import android.os.Bundle;
-import android.os.Handler;
-//import android.os.Looper;
-import android.view.*;
-//import android.view.ViewGroup.LayoutParams;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
+import java.io.InputStream;
 
 
 public class PApplet extends Activity implements PConstants, Runnable {
@@ -4308,6 +4278,11 @@ public class PApplet extends Activity implements PConstants, Runnable {
    */
   public boolean saveStream(File targetFile, String sourceLocation) {
     return saveStream(targetFile, createInputRaw(sourceLocation));
+  }
+
+
+  public boolean saveStream(String targetFilename, InputStream sourceStream) {
+    return saveStream(saveFile(targetFilename), sourceStream);
   }
 
 
