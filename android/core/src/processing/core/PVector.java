@@ -548,8 +548,11 @@ public class PVector implements Serializable {
     // http://code.google.com/p/processing/issues/detail?id=340
     // Otherwise if outside the range, acos() will return NaN
     // http://www.cppreference.com/wiki/c/math/acos
-    if (amt <= -1 || amt >= 1) {
+    if (amt <= -1) {
       return PConstants.PI;
+    } else if (amt >= 1) {
+      // http://code.google.com/p/processing/issues/detail?id=435
+      return 0;
     }
     return (float) Math.acos(amt);
   }
