@@ -930,10 +930,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
    * PAppletGL needs to have a usable screen before getting things rolling.
    */
   public void start() {
-    // When running inside a browser, start() will be called when someone
-    // returns to a page containing this applet.
-    // http://dev.processing.org/bugs/show_bug.cgi?id=581
     finished = false;
+    paused = false; // unpause the thread
 
     if (thread == null) {
       thread = new Thread(this, "Animation Thread");
@@ -951,15 +949,12 @@ public class PApplet extends Activity implements PConstants, Runnable {
    * or when moving between web pages), and it's not always called.
    */
   public void stop() {
-    // bringing this back for 0111, hoping it'll help opengl shutdown
-    finished = true;  // why did i comment this out?
-
-    // don't run stop and disposers twice
-    if (thread == null) return;
-    thread = null;
-
-    // call to shut down renderer, in case it needs it (pdf does)
-    if (g != null) g.dispose();
+    // this used to shut down the sketch, but that code has
+    // been moved to dispose() 
+    
+    paused = true; // sleep the animation thread
+    
+    //TODO listeners
   }
 
 
@@ -978,7 +973,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
    * when moving between pages), though.
    */
   public void destroy() {
-    ((PApplet)this).stop();
+    ((PApplet)this).exit();
   }
 
 
@@ -1614,6 +1609,15 @@ public class PApplet extends Activity implements PConstants, Runnable {
     final int NO_DELAYS_PER_YIELD = 15;
 
     while ((Thread.currentThread() == thread) && !finished) {
+      
+      while (paused) {
+        try{
+          thread.sleep(100L);
+        } catch (InterruptedException e) { 
+          //ignore?
+        }
+      }
+      
       // Don't resize the renderer from the EDT (i.e. from a ComponentEvent),
       // otherwise it may attempt a resize mid-render.
 //      if (resizeRequest) {
@@ -2435,10 +2439,10 @@ public class PApplet extends Activity implements PConstants, Runnable {
       exitCalled = true;
 
     } else if (!looping) {
-      // if not looping, need to call stop explicitly,
+      // if not looping, shut down things explicitly,
       // because the main thread will be sleeping
-      stop();
-
+      dispose();
+      
       // now get out
       exit2();
     }
@@ -2453,7 +2457,25 @@ public class PApplet extends Activity implements PConstants, Runnable {
     }
   }
 
+  /** 
+   * Called to dispose of resources and shut down the sketch. 
+   * Destroys the thread, dispose the renderer,and notify listeners.
+   * <p>
+   * Not to be called or overriden by users. If called multiple times, 
+   * will only notify listeners once. Register a dispose listener instead.
+   */
+  public void dispose(){
+    // moved here from stop()
+    finished = true;  // let the sketch know it is shut down time
 
+    // don't run stop and disposers twice
+    if (thread == null) return;
+    thread = null;
+
+    // call to shut down renderer, in case it needs it (pdf does)
+    if (g != null) g.dispose();
+    disposeMethods.handle();
+  }
 
   //////////////////////////////////////////////////////////////
 
