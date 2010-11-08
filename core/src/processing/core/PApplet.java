@@ -579,6 +579,11 @@ public class PApplet extends Applet
    * true if this applet has had it.
    */
   public volatile boolean finished;
+  
+  /**
+   * true if the animation thread is paused.
+   */
+  public volatile boolean paused;
 
   /**
    * true if exit() has been called so that things shut down
@@ -758,14 +763,14 @@ public class PApplet extends Applet
    * PAppletGL needs to have a usable screen before getting things rolling.
    */
   public void start() {
-    // When running inside a browser, start() will be called when someone
-    // returns to a page containing this applet.
-    // http://dev.processing.org/bugs/show_bug.cgi?id=581
     finished = false;
-
-    if (thread != null) return;
-    thread = new Thread(this, "Animation Thread");
-    thread.start();
+    paused = false; // unpause the thread
+    
+    // if this is the first run, setup and run the thread
+    if (thread == null) {
+      thread = new Thread(this, "Animation Thread");
+      thread.start();
+    }
   }
 
 
@@ -778,19 +783,12 @@ public class PApplet extends Applet
    * or when moving between web pages), and it's not always called.
    */
   public void stop() {
-    // bringing this back for 0111, hoping it'll help opengl shutdown
-    finished = true;  // why did i comment this out?
-
-    // don't run stop and disposers twice
-    if (thread == null) return;
-    thread = null;
-
-    // call to shut down renderer, in case it needs it (pdf does)
-    if (g != null) g.dispose();
-
-    // maybe this should be done earlier? might help ensure it gets called
-    // before the vm just craps out since 1.5 craps out so aggressively.
-    disposeMethods.handle();
+    // this used to shut down the sketch, but that code has
+    // been moved to dispose()
+    
+    paused = true; // causes animation thread to sleep
+    
+    //TODO listeners
   }
 
 
@@ -799,9 +797,6 @@ public class PApplet extends Applet
    * that it is being reclaimed and that it should destroy
    * any resources that it has allocated.
    * <p/>
-   * This also attempts to call PApplet.stop(), in case there
-   * was an inadvertent override of the stop() function by a user.
-   * <p/>
    * destroy() supposedly gets called as the applet viewer
    * is shutting down the applet. stop() is called
    * first, and then destroy() to really get rid of things.
@@ -809,7 +804,7 @@ public class PApplet extends Applet
    * when moving between pages), though.
    */
   public void destroy() {
-    ((PApplet)this).stop();
+    ((PApplet)this).exit();
   }
 
 
@@ -1491,6 +1486,15 @@ public class PApplet extends Applet
      */
 
     while ((Thread.currentThread() == thread) && !finished) {
+      
+      while (paused) {
+        try{
+          thread.sleep(100L);
+        } catch (InterruptedException e){ 
+          //ignore?
+        }
+      }
+      
       // Don't resize the renderer from the EDT (i.e. from a ComponentEvent),
       // otherwise it may attempt a resize mid-render.
       if (resizeRequest) {
@@ -1548,7 +1552,7 @@ public class PApplet extends Applet
       beforeTime = System.nanoTime();
     }
 
-    stop();  // call to shutdown libs?
+    dispose();  // call to shutdown libs?
 
     // If the user called the exit() function, the window should close,
     // rather than the sketch just halting.
@@ -2543,7 +2547,7 @@ public class PApplet extends Applet
    * display an error. Mostly this is here to be improved later.
    */
   public void die(String what) {
-    stop();
+    dispose();
     throw new RuntimeException(what);
   }
 
@@ -2563,27 +2567,26 @@ public class PApplet extends Applet
    */
   public void exit() {
     if (thread == null) {
-      // exit immediately, stop() has already been called,
+      // exit immediately, dispose() has already been called,
       // meaning that the main thread has long since exited
       exit2();
 
     } else if (looping) {
-      // stop() will be called as the thread exits
+      // dispose() will be called as the thread exits
       finished = true;
       // tell the code to call exit2() to do a System.exit()
       // once the next draw() has completed
       exitCalled = true;
 
     } else if (!looping) {
-      // if not looping, need to call stop explicitly,
+      // if not looping, shut down things explicitly,
       // because the main thread will be sleeping
-      stop();
-
+      dispose();
+      
       // now get out
-      exit2();
+      exit2(); 
     }
   }
-
 
   void exit2() {
     try {
@@ -2593,10 +2596,27 @@ public class PApplet extends Applet
     }
   }
 
-
+  /** 
+   * Called to dispose of resources and shut down the sketch. 
+   * Destroys the thread, dispose the renderer,and notify listeners.
+   * <p>
+   * Not to be called or overriden by users. If called multiple times, 
+   * will only notify listeners once. Register a dispose listener instead.
+   */
+  public void dispose(){
+    // moved here from stop()
+    finished = true;  // let the sketch know it is shut down time
+    
+    // don't run the disposers twice
+    if (thread == null) return; 
+    thread = null;
+    
+    // shut down renderer
+    if (g != null) g.dispose();
+    disposeMethods.handle();
+  }
 
   //////////////////////////////////////////////////////////////
-
 
   public void method(String name) {
 //    final Object o = this;
@@ -4882,6 +4902,7 @@ public class PApplet extends Applet
   /**
    * Identical to the other saveStream(), but writes to a File
    * object, for greater control over the file location.
+   * <p/>
    * Note that unlike other api methods, this will not automatically
    * compress or uncompress gzip files.
    */
