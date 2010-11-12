@@ -47,18 +47,20 @@ public class PTexture implements PConstants {
   protected PGraphicsAndroid3D a3d;  
   protected GL10 gl;
 
-  protected int glTextureID; 
+  protected int glID; 
   protected int glTarget;
-  protected int glInternalFormat;
+  protected int glFormat;
   protected int glMinFilter;  
   protected int glMagFilter;
-
+  protected int glWrapS; 
+  protected int glWrapT;
+  
   protected int glWidth;
   protected int glHeight;
   
   protected boolean usingMipmaps; 
-  protected float maxTexCoordS;
-  protected float maxTexCoordT;
+  protected float maxTexCoordU;
+  protected float maxTexCoordV;
   
   protected boolean flippedX;   
   protected boolean flippedY;
@@ -98,7 +100,7 @@ public class PTexture implements PConstants {
     a3d = (PGraphicsAndroid3D)parent.g;
     gl = a3d.gl;
     
-    glTextureID = 0;
+    glID = 0;
     
     setParameters(params);
     createTexture(width, height);
@@ -134,7 +136,7 @@ public class PTexture implements PConstants {
     a3d = (PGraphicsAndroid3D)parent.g;
     gl = a3d.gl;	
 
-    glTextureID = 0;
+    glID = 0;
     
     PImage img = parent.loadImage(filename);
     setParameters(params);
@@ -201,7 +203,7 @@ public class PTexture implements PConstants {
     // Zeroing the texture id of tex, so the texture is not 
     // deleted by OpenGL when the object is finalized by the GC.
     // "This" texture now wraps the one created in tex.
-    tex.glTextureID = 0;
+    tex.glID = 0;
   }
 
   
@@ -210,7 +212,7 @@ public class PTexture implements PConstants {
    * @return boolean
    */  
   public boolean available()  {
-    return 0 < glTextureID;
+    return 0 < glID;
   }
 
   
@@ -252,7 +254,7 @@ public class PTexture implements PConstants {
   }
   
   
-  // Copies source texture to this by means of FBO.
+  // Copies source texture to this.
   public void set(PTexture tex, int x, int y, int w, int h) {
     if (tex == null) {
       throw new RuntimeException("PTexture: source texture is null");
@@ -297,7 +299,7 @@ public class PTexture implements PConstants {
       throw new RuntimeException("PTexture: wrong length of pixels array");
     }
     
-    if (glTextureID == 0) {
+    if (glID == 0) {
       createTexture(width, height);
     }   
     
@@ -317,7 +319,7 @@ public class PTexture implements PConstants {
     */
     
     gl.glEnable(glTarget);
-    gl.glBindTexture(glTarget, glTextureID);
+    gl.glBindTexture(glTarget, glID);
                 
     if (usingMipmaps) {
       if (a3d.gl11 != null && PGraphicsAndroid3D.mipmapSupported) {
@@ -457,8 +459,8 @@ public class PTexture implements PConstants {
    * Provides the ID of the OpenGL texture object.
    * @return int
    */	
-  protected int getGLTextureID()  {
-    return glTextureID;
+  protected int getGLID()  {
+    return glID;
   }
 
   
@@ -475,8 +477,8 @@ public class PTexture implements PConstants {
    * Returns the texture internal format.
    * @return int
    */	
-  protected int getGLInternalFormat() {
-    return glInternalFormat;
+  protected int getGLFormat() {
+    return glFormat;
   }
 
   
@@ -497,7 +499,22 @@ public class PTexture implements PConstants {
     return glMagFilter;
   }
 	
+  /**
+   * Returns the texture wrapping mode for the S coordinate.
+   * @return int
+   */ 
+  protected int getGLWrapS() {
+    return glWrapS;
+  }
   
+  /**
+   * Returns the texture wrapping mode for the T coordinate.
+   * @return int
+   */ 
+  protected int getGLWrapT() {
+    return glWrapT;
+  }
+    
   /**
    * Returns true or false whether or not the texture is using mipmaps.
    * @return boolean
@@ -508,20 +525,20 @@ public class PTexture implements PConstants {
 	
   
   /**
-   * Returns the maximum possible value for the texture coordinate S.
+   * Returns the maximum possible value for the texture coordinate U (horizontal).
    * @return float
    */	
-  protected float getMaxTextureCoordS() {
-    return maxTexCoordS;
+  protected float getMaxTexCoordU() {
+    return maxTexCoordU;
   }
 	
   
   /**
-   * Returns the maximum possible value for the texture coordinate T.
+   * Returns the maximum possible value for the texture coordinate V (vertical).
    * @return float
    */	
-  protected float getMaxTextureCoordT() {
-    return maxTexCoordT;
+  protected float getMaxTexCoordV() {
+    return maxTexCoordV;
   }
 	
   
@@ -803,7 +820,7 @@ public class PTexture implements PConstants {
       
     if (PGraphicsAndroid3D.npotTexSupported) {
       glWidth = w;
-      glHeight =h;
+      glHeight = h;
     } else {
       glWidth = nextPowerOfTwo(w);
       glHeight = nextPowerOfTwo(h);
@@ -824,14 +841,14 @@ public class PTexture implements PConstants {
      gl.glEnable(glTarget);
      int[] tmp = new int[1];
      gl.glGenTextures(1, tmp, 0);
-     glTextureID = tmp[0];
-     gl.glBindTexture(glTarget, glTextureID);
+     glID = tmp[0];
+     gl.glBindTexture(glTarget, glID);
      gl.glTexParameterf(glTarget, GL10.GL_TEXTURE_MIN_FILTER, glMinFilter);
      gl.glTexParameterf(glTarget, GL10.GL_TEXTURE_MAG_FILTER, glMagFilter);
-     gl.glTexParameterf(glTarget, GL10.GL_TEXTURE_WRAP_S, GL10.GL_CLAMP_TO_EDGE);
-     gl.glTexParameterf(glTarget, GL10.GL_TEXTURE_WRAP_T, GL10.GL_CLAMP_TO_EDGE);
-
-     gl.glTexImage2D(glTarget, 0, glInternalFormat,  glWidth,  glHeight, 0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, null);
+     gl.glTexParameterf(glTarget, GL10.GL_TEXTURE_WRAP_S, glWrapS);
+     gl.glTexParameterf(glTarget, GL10.GL_TEXTURE_WRAP_T, glWrapT);
+     
+     gl.glTexImage2D(glTarget, 0, glFormat,  glWidth,  glHeight, 0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, null);
      gl.glDisable(glTarget);
         
      flippedX = false;
@@ -841,8 +858,8 @@ public class PTexture implements PConstants {
      // is non-power-of-two, then glWidth (glHeight) will be greater than w (h) because it
      // is chosen to be the next power of two, and this quotient will give the appropriate
      // maximum texture coordinate value given this situation.
-     maxTexCoordS = (float)w / glWidth;
-     maxTexCoordT = (float)h / glHeight; 
+     maxTexCoordU = (float)w / glWidth;
+     maxTexCoordV = (float)h / glHeight; 
   }
 
     
@@ -850,10 +867,10 @@ public class PTexture implements PConstants {
    * Deletes the opengl texture object.
    */
   protected void deleteTexture() {
-    if (glTextureID != 0) {
-      int[] tmp = { glTextureID };
+    if (glID != 0) {
+      int[] tmp = { glID };
       gl.glDeleteTextures(1, tmp, 0);  
-      glTextureID = 0;
+      glID = 0;
     }
   }
   
@@ -874,9 +891,9 @@ public class PTexture implements PConstants {
     a3d = src.a3d;
     gl = src.gl;
     
-    glTextureID = src.glTextureID;
+    glID = src.glID;
     glTarget = src.glTarget;
-    glInternalFormat = src.glInternalFormat;
+    glFormat = src.glFormat;
     glMinFilter = src.glMinFilter;  
     glMagFilter = src.glMagFilter;
 
@@ -884,8 +901,8 @@ public class PTexture implements PConstants {
     glHeight = src.glHeight;
   
     usingMipmaps = src.usingMipmaps; 
-    maxTexCoordS = src.maxTexCoordS;
-    maxTexCoordT = src.maxTexCoordT;
+    maxTexCoordU = src.maxTexCoordU;
+    maxTexCoordV = src.maxTexCoordV;
   
     flippedX = src.flippedX;   
     flippedY = src.flippedY;
@@ -905,11 +922,11 @@ public class PTexture implements PConstants {
         res.target = TEXTURE2D;
     }
     
-    if (glInternalFormat == GL10.GL_RGB)  {
+    if (glFormat == GL10.GL_RGB)  {
       res.format = RGB;
-    } else  if (glInternalFormat == GL10.GL_RGBA) {
+    } else  if (glFormat == GL10.GL_RGBA) {
       res.format = ARGB;
-    } else  if (glInternalFormat == GL10.GL_ALPHA) {
+    } else  if (glFormat == GL10.GL_ALPHA) {
       res.format = ALPHA;
     }
     
@@ -929,8 +946,20 @@ public class PTexture implements PConstants {
     
     if (glMagFilter == GL10.GL_NEAREST)  {
       res.magFilter = NEAREST;
-    } else if (glMagFilter == GL10.GL_LINEAR)  {
+    } else if (glMagFilter == GL10.GL_LINEAR) {
       res.magFilter = LINEAR;
+    }
+
+    if (glWrapS == GL10.GL_CLAMP_TO_EDGE) {
+      res.wrapU = CLAMP;  
+    } else if (glWrapS == GL10.GL_REPEAT) {
+      res.wrapU = REPEAT;
+    }
+
+    if (glWrapT == GL10.GL_CLAMP_TO_EDGE) {
+      res.wrapV = CLAMP;  
+    } else if (glWrapT == GL10.GL_REPEAT) {
+      res.wrapV = REPEAT;
     }
     
     return res;
@@ -950,11 +979,11 @@ public class PTexture implements PConstants {
 	  }
 	  
     if (params.format == RGB)  {
-      glInternalFormat = GL10.GL_RGB;
+      glFormat = GL10.GL_RGB;
     } else  if (params.format == ARGB) {
-      glInternalFormat = GL10.GL_RGBA;
+      glFormat = GL10.GL_RGBA;
     } else  if (params.format == ALPHA) {
-      glInternalFormat = GL10.GL_ALPHA;
+      glFormat = GL10.GL_ALPHA;
     } else {
       throw new RuntimeException("GTexture: Unknown texture format");     
     }
@@ -975,12 +1004,28 @@ public class PTexture implements PConstants {
       throw new RuntimeException("GTexture: Unknown minimization filter");     
     }
     
-    if (params.magFilter == NEAREST)  {
+    if (params.magFilter == NEAREST) {
       glMagFilter = GL10.GL_NEAREST;
     } else if (params.magFilter == LINEAR)  {
       glMagFilter = GL10.GL_LINEAR;
     } else {
       throw new RuntimeException("GTexture: Unknown magnification filter");     
+    }
+    
+    if (params.wrapU == CLAMP) {
+      glWrapS = GL10.GL_CLAMP_TO_EDGE;  
+    } else if (params.wrapU == REPEAT)  {
+      glWrapS = GL10.GL_REPEAT;
+    } else {
+      throw new RuntimeException("GTexture: Unknown wrapping mode");     
+    }
+    
+    if (params.wrapV == CLAMP) {
+      glWrapT = GL10.GL_CLAMP_TO_EDGE;  
+    } else if (params.wrapV == REPEAT)  {
+      glWrapT = GL10.GL_REPEAT;
+    } else {
+      throw new RuntimeException("GTexture: Unknown wrapping mode");     
     }
   }	
 
@@ -1029,7 +1074,17 @@ public class PTexture implements PConstants {
      * Texture magnification filter.
      */
     public int magFilter; 
-        
+    
+    /**
+     * Wrapping mode along U.
+     */    
+    public int wrapU;
+    
+    /**
+     * Wrapping mode along V.
+     */    
+    public int wrapV;
+    
     /**
      * Creates an instance of GLTextureParameters, setting all the parameters to default values.
      */
@@ -1037,7 +1092,9 @@ public class PTexture implements PConstants {
       target = TEXTURE2D;
       format = ARGB;
       minFilter = LINEAR;
-      magFilter = LINEAR;   
+      magFilter = LINEAR;
+      wrapU = CLAMP;
+      wrapV = CLAMP;
     }
       
     public Parameters(int format) {
@@ -1045,13 +1102,17 @@ public class PTexture implements PConstants {
       this.format = format;
       minFilter = LINEAR;
       magFilter = LINEAR;   
+      wrapU = CLAMP;
+      wrapV = CLAMP;
     }
 
     public Parameters(int format, int filter) {
       target = PTexture.TEXTURE2D;
       this.format = format;
       minFilter = filter;
-      magFilter = filter;   
+      magFilter = filter;
+      wrapU = CLAMP;
+      wrapV = CLAMP;      
     }
   }
 }
