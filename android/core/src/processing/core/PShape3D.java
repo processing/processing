@@ -775,8 +775,8 @@ public class PShape3D extends PShape implements PConstants {
         cy = 1.0f;      
         sy = -1.0f;
       }        
-      uscale *= tex.getMaxTextureCoordS();
-      vscale *= tex.getMaxTextureCoordT();        
+      uscale *= tex.getMaxTexCoordU();
+      vscale *= tex.getMaxTexCoordV();        
       
       // Inverting the texture coordinate transformation.
       u = (u / uscale - cx) / sx;
@@ -844,8 +844,8 @@ public class PShape3D extends PShape implements PConstants {
           cy = 1.0f;      
           sy = -1.0f;
         }        
-        uscale *= tex.getMaxTextureCoordS();
-        vscale *= tex.getMaxTextureCoordT();
+        uscale *= tex.getMaxTexCoordU();
+        vscale *= tex.getMaxTexCoordV();
         
         w = vertGroup[i].texture.width;
         h = vertGroup[i].texture.height;
@@ -920,8 +920,8 @@ public class PShape3D extends PShape implements PConstants {
         cy = 1.0f;      
         sy = -1.0f;
       }        
-      uscale *= tex.getMaxTextureCoordS();
-      vscale *= tex.getMaxTextureCoordT();    
+      uscale *= tex.getMaxTexCoordU();
+      vscale *= tex.getMaxTexCoordV();    
       
       // Texture coordinate transformation.
       u = (cx +  sx * u) * uscale;
@@ -1003,8 +1003,8 @@ public class PShape3D extends PShape implements PConstants {
           cy = 1.0f;      
           sy = -1.0f;
         }        
-        uscale *= tex.getMaxTextureCoordS();
-        vscale *= tex.getMaxTextureCoordT();
+        uscale *= tex.getMaxTexCoordU();
+        vscale *= tex.getMaxTexCoordV();
         
         img = vertGroup[i].texture;
       }
@@ -1085,8 +1085,8 @@ public class PShape3D extends PShape implements PConstants {
           cy = 1.0f;      
           sy = -1.0f;
         }        
-        uscale *= tex.getMaxTextureCoordS();
-        vscale *= tex.getMaxTextureCoordT();
+        uscale *= tex.getMaxTexCoordU();
+        vscale *= tex.getMaxTexCoordV();
         
         img = vertGroup[i].texture;
       }    
@@ -1223,8 +1223,8 @@ public class PShape3D extends PShape implements PConstants {
                                   tex.height != group.texture.height ||
                                   tex1.flippedX != tex0.flippedX ||
                                   tex1.flippedY != tex0.flippedY ||
-                                  tex1.maxTexCoordS != tex0.maxTexCoordS ||
-                                  tex1.maxTexCoordT != tex0.maxTexCoordT;
+                                  tex1.maxTexCoordU != tex0.maxTexCoordU ||
+                                  tex1.maxTexCoordV != tex0.maxTexCoordV;
                                   
       if (diff) {
         float uscale = 1.0f;
@@ -1253,8 +1253,8 @@ public class PShape3D extends PShape implements PConstants {
               cy = 1.0f;      
               sy = -1.0f;
             }        
-            uscale *= tex0.getMaxTextureCoordS();
-            vscale *= tex0.getMaxTextureCoordT();        
+            uscale *= tex0.getMaxTexCoordU();
+            vscale *= tex0.getMaxTexCoordV();        
       
             u = (u / uscale - cx) / sx;
             v = (v / vscale - cy) / sy;
@@ -1273,8 +1273,8 @@ public class PShape3D extends PShape implements PConstants {
             cy = 1.0f;      
             sy = -1.0f;
           }        
-          uscale *= tex1.getMaxTextureCoordS();
-          vscale *= tex1.getMaxTextureCoordT();
+          uscale *= tex1.getMaxTexCoordU();
+          vscale *= tex1.getMaxTexCoordV();
 
           u = (cx +  sx * u) * uscale;
           v = (cy +  sy * v) * vscale;
@@ -1948,7 +1948,7 @@ public class PShape3D extends PShape implements PConstants {
         // Binding texture units.
          
         gl.glActiveTexture(GL11.GL_TEXTURE0);
-        gl.glBindTexture(texTarget, tex.getGLTextureID());
+        gl.glBindTexture(texTarget, tex.getGLID());
          
         if (pointSprites) {
           // Texturing with point sprites.

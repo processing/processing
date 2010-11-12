@@ -144,17 +144,22 @@ public class PFont implements PConstants {
   /**
    * Required for OpenGL-based font rendering.
    */
-  protected PGraphicsAndroid3D a3d;
-  protected GL10 gl10;
-  protected int texWidth;
-  protected int texHeight;
+  protected PApplet parent;
+  protected int maxTexWidth;
+  protected int maxTexHeight;
   protected int offsetX;
   protected int offsetY;
   protected int lineHeight;
+  protected PTexture[] textures = null;
+  protected int currentTex;
+  protected int lastTex;
+  
+  /*
   protected int[] texIDList = null;
-  protected int currentTexID = -1;
-  protected int lastTexID = -1;
-  protected int recreateResourceIdx;
+  protected int[] texWidthList = null;
+  protected int[] texHeightList = null;
+  */
+  
   
   public PFont() { }  // for subclasses
 
@@ -323,14 +328,6 @@ public class PFont implements PConstants {
     }
     if (version == 11) {
       smooth = is.readBoolean();
-    }
-  }
-
-  protected void finalize() {
-    if (gl10 != null && texIDList != null) {
-      a3d.removeRecreateResourceMethod(recreateResourceIdx);
-      gl10.glDeleteTextures(texIDList.length, texIDList, 0);
-      texIDList = null;
     }
   }
   
@@ -676,59 +673,57 @@ public class PFont implements PConstants {
 
   // OPENGL stuff
   
-  public void initTexture(GL10 gl, int w, int h) {
-    gl10 = gl;
-    texWidth = w;
-    texHeight = h;
+  public void initTexture(PApplet p, int w, int h) {
+    parent = p;
+    maxTexWidth = w;
+    maxTexHeight = h;
     
-    addTexture(gl);
+    currentTex = -1;
+    lastTex = -1;
+    
+    addTexture();
     
     offsetX = 0;
     offsetY = 0;
-    lineHeight = 0;
-    
-    try {
-      Method meth = this.getClass().getMethod("recreateResource", new Class[] { PGraphicsAndroid3D.class });
-      recreateResourceIdx =  a3d.addRecreateResourceMethod(this, meth);
-    } catch (Exception e) {
-      recreateResourceIdx = -1;
-    }    
+    lineHeight = 0;    
   }
   
-  public int addTexture(GL10 gl) {
-    int[] textures = new int[1];
+  public int addTexture() {
+    int w = maxTexWidth;
+    int h = maxTexHeight;
 
-    // We assume GL10.GL_TEXTURE_2D is enabled at this point (shoud be called by PGraphicsAndroid3D.textLineImpl()).
-    gl.glGenTextures(1, textures, 0);
-    gl.glBindTexture(GL10.GL_TEXTURE_2D, textures[0]);    
-
-    gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_NEAREST);
-    gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_NEAREST);
-
-    gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S, GL10.GL_CLAMP_TO_EDGE);
-    gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T, GL10.GL_CLAMP_TO_EDGE);
-                        
-    gl.glTexImage2D(GL10.GL_TEXTURE_2D, 0, GL10.GL_RGBA,  texWidth, texHeight, 0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, null);
-        
-    if (texIDList == null) {
-      texIDList = new int[1];
-      texIDList[0] = textures[0]; 
-    } else {
-      int[] tmp = texIDList;
-      texIDList = new int[texIDList.length + 1];
-      PApplet.arrayCopy(tmp, texIDList, tmp.length);
-      texIDList[tmp.length] = textures[0];
-    }
-    currentTexID = textures[0];
+    PTexture tex = new PTexture(parent, w, h, new PTexture.Parameters(ARGB, NEAREST));
     
-    return currentTexID;
+    if (textures == null) {
+      textures = new PTexture[1];
+      textures[0] = tex;
+    } else {
+      PTexture[] tmp = textures;
+      textures = new PTexture[textures.length + 1];
+      PApplet.arrayCopy(tmp, textures, tmp.length);
+      textures[tmp.length] = tex;
+    }
+    currentTex = textures.length - 1;
+    return currentTex;
+  }
+  
+  public void setFirstTexture() {
+    setTexture(0);
+  }
+  
+  public void setTexture(int idx) {
+    if (0 <= idx && idx < textures.length) {
+      GL10 gl = ((PGraphicsAndroid3D)parent.g).gl;
+      gl.glBindTexture(textures[idx].glTarget, textures[idx].glID);
+      currentTex = idx;
+    }
   }
   
   // Add all the current glyphs to opengl texture.
-  public void addAllGlyphsToTexture(GL10 gl) {
+  public void addAllGlyphsToTexture() {
     // loop over current glyphs.
     for (int i = 0; i < glyphCount; i++) {
-      glyphs[i].addToTexture(gl);
+      glyphs[i].addToTexture();
     }
   }
     
@@ -901,8 +896,9 @@ public class PFont implements PConstants {
     }
     
     // Adds this glyph to the opengl texture in PFont.
-    protected void addToTexture(GL10 gl) {           
+    protected void addToTexture() {           
       // Converting the pixels array from the PImage into a valid RGBA array for OpenGL.
+      GL10 gl = ((PGraphicsAndroid3D)parent.g).gl;
       
       int[] rgba = new int[width * height];
       int t = 0;
@@ -922,16 +918,16 @@ public class PFont implements PConstants {
       }
       
       // Is there room for this glyph on the current line?
-      if (offsetX + width> texWidth) {
+      if (offsetX + width> textures[currentTex].glWidth) {
         // No room, go to the next line:
         offsetX = 0;
         offsetY += lineHeight;
         lineHeight = 0;
       }
       lineHeight = Math.max(lineHeight, height);
-      if (offsetY + lineHeight > texHeight) {    
+      if (offsetY + lineHeight > textures[currentTex].glHeight) {    
         // We run out of space in the current texture, we add a new texture:
-        lastTexID = addTexture(gl);
+        lastTex = addTexture();
             
         // Reseting texture coordinates and line.
         offsetX = 0;
@@ -939,40 +935,40 @@ public class PFont implements PConstants {
         lineHeight = 0; 
       }
       
-      if (lastTexID == -1) { 
-        lastTexID = texIDList[0];
+      if (lastTex == -1) { 
+        lastTex = 0;
       }
       
       // We assume GL10.GL_TEXTURE_2D is enabled at this point.
-      if (currentTexID != lastTexID) {
-        gl.glBindTexture(GL10.GL_TEXTURE_2D, lastTexID);
-        currentTexID = lastTexID;
+      if (currentTex != lastTex) {
+        setTexture(lastTex);
       }
         
-      gl.glTexSubImage2D(GL10.GL_TEXTURE_2D, 0, offsetX, offsetY, width, height, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, IntBuffer.wrap(rgba));  
+      gl.glTexSubImage2D(textures[currentTex].glTarget, 0, offsetX, offsetY, width, height, 
+                         GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, IntBuffer.wrap(rgba));  
       
-      texture = new TextureInfo(currentTexID, offsetX, offsetY + height, width, -height);
+      texture = new TextureInfo(currentTex, offsetX, offsetY + height, width, -height);
       offsetX += width;
     }
     
     public class TextureInfo {
-        public TextureInfo(int glid, int cropX, int cropY, int cropW, int cropH) {
-            this.glid = glid;          
-            crop = new int[4];
-            crop[0] = cropX;
-            crop[1] = cropY;
-            crop[2] = cropW;
-            crop[3] = cropH;
-            u0 = (float)cropX / (float)texWidth;
-            u1 = u0 + (float)cropW / (float)texWidth;
-            v0 = (float)(cropY + cropH) / (float)texHeight;
-            v1 = (float)cropY / (float)texHeight;            
-        }
+      public TextureInfo(int n, int cropX, int cropY, int cropW, int cropH) {
+        tex = n;          
+        crop = new int[4];
+        crop[0] = cropX;
+        crop[1] = cropY;
+        crop[2] = cropW;
+        crop[3] = cropH;
+        u0 = (float)cropX / (float)textures[n].glWidth;
+        u1 = u0 + (float)cropW / (float)textures[n].glWidth;
+        v0 = (float)(cropY + cropH) / (float)textures[n].glHeight;
+        v1 = (float)cropY / (float)textures[n].glHeight;
+      }
 
-        public int glid;
-        public int[] crop;
-        public float u0, u1;
-        public float v0, v1;
+      public int tex;
+      public int[] crop;
+      public float u0, u1;
+      public float v0, v1;
     }    
   }
 }

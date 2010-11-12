@@ -89,6 +89,10 @@ public class PFramebuffer implements PConstants {
     initFramebuffer(w, h);
     
     if (!screenFb && !FboMode) {
+      // When FBOs are not available, rendering to texture is implemented by saving a portion of
+      // the screen, doing the "offscreen" rendering on this portion, copying the screen color 
+      // buffer to the texture bound as color buffer to this PFramebuffer object and then drawing 
+      // the backup texture back on the screen.
       backupTexture = new PTexture(parent, width, height, new PTexture.Parameters(ARGB, NEAREST));
       pixelBuffer = IntBuffer.allocate(width * height);
       pixelBuffer.rewind();        
@@ -136,7 +140,7 @@ public class PFramebuffer implements PConstants {
       for (int i = 0; i < numColorBuffers; i++) {
         colorBufferAttchPoints[i] = GL11ExtensionPack.GL_COLOR_ATTACHMENT0_OES + i;
         glColorBufferTargets[i] = textures[i].getGLTarget();
-        glColorBufferIDs[i] = textures[i].getGLTextureID();
+        glColorBufferIDs[i] = textures[i].getGLID();
         gl11xp.glFramebufferTexture2DOES(GL11ExtensionPack.GL_FRAMEBUFFER_OES, colorBufferAttchPoints[i],
             glColorBufferTargets[i], glColorBufferIDs[i], 0);
       }
@@ -153,7 +157,7 @@ public class PFramebuffer implements PConstants {
       glColorBufferIDs = new int[numColorBuffers];      
       for (int i = 0; i < numColorBuffers; i++) {
         glColorBufferTargets[i] = textures[i].getGLTarget();
-        glColorBufferIDs[i] = textures[i].getGLTextureID();
+        glColorBufferIDs[i] = textures[i].getGLID();
       }
     }
   }
@@ -277,7 +281,7 @@ public class PFramebuffer implements PConstants {
   // Saves content of the screen into the backup texture.
   public void backupScreen() {  
     gl.glReadPixels(0, 0, width, height, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, pixelBuffer);    
-    copyToTexture(pixelBuffer, backupTexture.getGLTextureID(), backupTexture.getGLTarget());
+    copyToTexture(pixelBuffer, backupTexture.getGLID(), backupTexture.getGLTarget());
   }
 
   // Draws the contents of the backup texture to the screen.
