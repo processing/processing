@@ -392,6 +392,10 @@ public interface PConstants {
   /** This constant identifies the linear/linear function to build mipmaps  */
   public static final int LINEAR_MIPMAP_LINEAR = 5;
   
+  /** This constant identifies the clamp-to-edge wrapping mode */
+  public static final int CLAMP = 0;
+  /** This constant identifies the repeat wrapping mode */
+  public static final int REPEAT = 1;
   
   // PShape3D
   

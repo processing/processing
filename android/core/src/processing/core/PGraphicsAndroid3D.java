@@ -1885,7 +1885,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         tex = faceTexture[j].getTexture();        
         if (tex != null) {
           gl.glEnable(tex.getGLTarget());
-          gl.glBindTexture(tex.getGLTarget(), tex.getGLTextureID());
+          gl.glBindTexture(tex.getGLTarget(), tex.getGLID());
           gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
           texturing = true;
         } else {
@@ -1928,8 +1928,8 @@ public class PGraphicsAndroid3D extends PGraphics {
         float cy = 0.0f;
         float sy = +1.0f;
         if (texturing) {
-          uscale *= tex.getMaxTextureCoordS();
-          vscale *= tex.getMaxTextureCoordT();
+          uscale *= tex.getMaxTexCoordU();
+          vscale *= tex.getMaxTexCoordV();
 
           if (tex.isFlippedX()) {
             cx = 1.0f;
@@ -2588,15 +2588,14 @@ public class PGraphicsAndroid3D extends PGraphics {
       gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
     }
     
-    if (textFont.texIDList == null) {
-      textFont.initTexture(gl, maxTextureSize, maxTextureSize);
+    if (textFont.textures == null) {
+      textFont.initTexture(parent, maxTextureSize, maxTextureSize);
       // Add all the current glyphs to the texture.
-      textFont.addAllGlyphsToTexture(gl);
+      textFont.addAllGlyphsToTexture();
     }
     
     gl.glEnable(GL10.GL_TEXTURE_2D);
-    textFont.currentTexID = textFont.texIDList[0];
-    gl.glBindTexture(GL10.GL_TEXTURE_2D, textFont.currentTexID);
+    textFont.setFirstTexture();
 
     // Setting the current fill color as the font color.
     gl.glColor4f(fillR, fillG, fillB, fillA);
@@ -2634,7 +2633,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       
       if (glyph.texture == null) {
         // Adding new glyph to the font texture.
-        glyph.addToTexture(gl);
+        glyph.addToTexture();
       }
       
       if (textMode == MODEL) {
@@ -2662,17 +2661,16 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
   }
 
-  protected void textCharModelImpl(Glyph.TextureInfo tex, float x1, float y1,
+  protected void textCharModelImpl(Glyph.TextureInfo info, float x1, float y1,
       float x2, float y2) {
-    if (textFont.currentTexID != tex.glid) {
+    if (textFont.currentTex != info.tex) {
       if (0 < textVertexCount) {
         // Current texture changes (the font is so large that needs more than one texture).
         // So rendering all we got until now, and reseting vertex counter.
         renderTextModel();        
         textVertexCount = 0;
       }
-      gl.glBindTexture(GL10.GL_TEXTURE_2D, tex.glid);
-      textFont.currentTexID = tex.glid;
+      textFont.setTexture(info.tex);      
     }   
 
     // Division by three needed because each int element in the buffer is used
@@ -2685,53 +2683,52 @@ public class PGraphicsAndroid3D extends PGraphics {
     textVertexArray[3 * n + 0] = toFixed32(x1);
     textVertexArray[3 * n + 1] = toFixed32(y1);
     textVertexArray[3 * n + 2] = toFixed32(0);
-    textTexCoordArray[2 * n + 0] = toFixed32(tex.u0);
-    textTexCoordArray[2 * n + 1] = toFixed32(tex.v0);
+    textTexCoordArray[2 * n + 0] = toFixed32(info.u0);
+    textTexCoordArray[2 * n + 1] = toFixed32(info.v0);
     n++;    
     
     textVertexArray[3 * n + 0] = toFixed32(x2);
     textVertexArray[3 * n + 1] = toFixed32(y2);
     textVertexArray[3 * n + 2] = toFixed32(0);        
-    textTexCoordArray[2 * n + 0] = toFixed32(tex.u1);
-    textTexCoordArray[2 * n + 1] = toFixed32(tex.v1);
+    textTexCoordArray[2 * n + 0] = toFixed32(info.u1);
+    textTexCoordArray[2 * n + 1] = toFixed32(info.v1);
     n++;
     
     textVertexArray[3 * n + 0] = toFixed32(x1);
     textVertexArray[3 * n + 1] = toFixed32(y2);
     textVertexArray[3 * n + 2] = toFixed32(0);
-    textTexCoordArray[2 * n + 0] = toFixed32(tex.u0);
-    textTexCoordArray[2 * n + 1] = toFixed32(tex.v1);
+    textTexCoordArray[2 * n + 0] = toFixed32(info.u0);
+    textTexCoordArray[2 * n + 1] = toFixed32(info.v1);
     n++;
 
     textVertexArray[3 * n + 0] = toFixed32(x1);
     textVertexArray[3 * n + 1] = toFixed32(y1);
     textVertexArray[3 * n + 2] = toFixed32(0);
-    textTexCoordArray[2 * n + 0] = toFixed32(tex.u0);
-    textTexCoordArray[2 * n + 1] = toFixed32(tex.v0);
+    textTexCoordArray[2 * n + 0] = toFixed32(info.u0);
+    textTexCoordArray[2 * n + 1] = toFixed32(info.v0);
     n++;    
     
     textVertexArray[3 * n + 0] = toFixed32(x2);
     textVertexArray[3 * n + 1] = toFixed32(y1);
     textVertexArray[3 * n + 2] = toFixed32(0);
-    textTexCoordArray[2 * n + 0] = toFixed32(tex.u1);
-    textTexCoordArray[2 * n + 1] = toFixed32(tex.v0);
+    textTexCoordArray[2 * n + 0] = toFixed32(info.u1);
+    textTexCoordArray[2 * n + 1] = toFixed32(info.v0);
     n++;
     
     textVertexArray[3 * n + 0] = toFixed32(x2);
     textVertexArray[3 * n + 1] = toFixed32(y2);
     textVertexArray[3 * n + 2] = toFixed32(0);
-    textTexCoordArray[2 * n + 0] = toFixed32(tex.u1);
-    textTexCoordArray[2 * n + 1] = toFixed32(tex.v1);
+    textTexCoordArray[2 * n + 0] = toFixed32(info.u1);
+    textTexCoordArray[2 * n + 1] = toFixed32(info.v1);
     n++;
     
     textVertexCount = n;
   }
 
-  protected void textCharScreenImpl(Glyph.TextureInfo tex, int xx, int yy,
+  protected void textCharScreenImpl(Glyph.TextureInfo info, int xx, int yy,
       int w0, int h0) {
-    if (textFont.currentTexID != tex.glid) {
-      gl.glBindTexture(GL10.GL_TEXTURE_2D, tex.glid);
-      textFont.currentTexID = tex.glid;
+    if (textFont.currentTex != info.tex) {
+      textFont.setTexture(info.tex);
     }
 
     // There is no need to setup orthographic projection or any related matrix set/restore
@@ -2740,8 +2737,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     // (except for mapping Z to the depth range), so there is no need for any 
     // matrix setup/restore code."
     // (from https://www.khronos.org/message_boards/viewtopic.php?f=4&t=948&p=2553).        
-    gl11.glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES,
-        tex.crop, 0);
+    gl11.glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, info.crop, 0);
     gl11x.glDrawTexiOES(xx, height - yy, 0, w0, h0);
   }
 
@@ -4940,7 +4936,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   protected void drawTexture(PTexture tex, int[] crop, int x, int y, int w, int h) {
     gl.glEnable(tex.getGLTarget());
-    gl.glBindTexture(tex.getGLTarget(), tex.getGLTextureID());
+    gl.glBindTexture(tex.getGLTarget(), tex.getGLID());
     gl.glDepthMask(false);    
     gl.glDisable(GL10.GL_BLEND);
 
@@ -4980,7 +4976,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   // Utility function to copy buffer to texture
   protected void copyToTexture(PTexture tex, IntBuffer buffer, int x, int y, int w, int h) {
     gl.glEnable(tex.getGLTarget());
-    gl.glBindTexture(tex.getGLTarget(), tex.getGLTextureID());    
+    gl.glBindTexture(tex.getGLTarget(), tex.getGLID());    
     gl.glTexSubImage2D(tex.getGLTarget(), 0, x, y, w, h, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, buffer);
     gl.glDisable(tex.getGLTarget());
   }  
