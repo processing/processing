@@ -230,29 +230,11 @@ public class PTexture implements PConstants {
 
   
   public void set(PImage img) {
-    if (img.width != width || img.height != height) {
-      width = img.width;
-      height = img.height;      
-      createTexture(width, height);      
-    }    
-    img.loadPixels();
     set(img.texture);
   }
   
   
   public void set(PImage img, int x, int y, int w, int h) {
-    x = PApplet.constrain(x, 0, img.width);
-    y = PApplet.constrain(y, 0, img.height);
-    
-    w = PApplet.constrain(w, 0, img.width - x);
-    h = PApplet.constrain(h, 0, img.height - y);
-    
-    if ((w != width) || (h != height)) {
-      width = w;
-      width = h;      
-      createTexture(w, h); 
-    }
-    img.loadPixels();  
     set(img.texture, x, y, w, h);
   }
   
@@ -268,12 +250,12 @@ public class PTexture implements PConstants {
 
   
   public void set(int[] pixels) {
-    set(pixels, 0, 0, glWidth, glHeight, ARGB); 
+    set(pixels, 0, 0, width, height, ARGB); 
   }
 
   
   public void set(int[] pixels, int format) {
-    set(pixels, 0, 0, glWidth, glHeight, format); 
+    set(pixels, 0, 0, width, height, format); 
   }
   
   
@@ -287,7 +269,7 @@ public class PTexture implements PConstants {
     if (pixels == null) {
       throw new RuntimeException("PTexture: null pixels array");
     }    
-    if (pixels.length != width * height) {
+    if (pixels.length != w * h) {
       throw new RuntimeException("PTexture: wrong length of pixels array");
     }
     
@@ -295,31 +277,18 @@ public class PTexture implements PConstants {
       createTexture(width, height);
     }   
     
-    /*
-    int p0;
-    int dest[] = new int[w * h];
-    for (int j = 0; j < h; j++) {
-      p0 = y * img.width + x + (img.width - w) * j;
-      PApplet.arrayCopy(img.pixels, p0 + w * j, dest, w * j, w);
-    }
-    int p0;
-    int dest[] = new int[w * h];
-    for (int j = 0; j < h; j++) {
-      p0 = y * img.width + x + (img.width - w) * j;
-      PApplet.arrayCopy(img.pixels, p0 + w * j, dest, w * j, w);
-    }
-    */
-    
     gl.glEnable(glTarget);
     gl.glBindTexture(glTarget, glID);
                 
     if (usingMipmaps) {
       if (a3d.gl11 != null && PGraphicsAndroid3D.mipmapSupported) {
-        int[] rgbaPixels = new int[glWidth * glHeight];
-        convertToRGBA(pixels, rgbaPixels, format, 0, 0, width, height);
+        int[] rgbaPixels = new int[w * h];
+        convertToRGBA(pixels, rgbaPixels, format);
         gl.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_GENERATE_MIPMAP, GL11.GL_TRUE);
         setTexels(x, y, w, h, rgbaPixels);
       } else {
+        
+        
         /*
         // Code by Mike Miller obtained from here:
         // http://insanitydesign.com/wp/2009/08/01/android-opengl-es-mipmaps/
@@ -358,16 +327,17 @@ public class PTexture implements PConstants {
           bitmap = bitmap2;
         }
       */
-        // No mipmaps for now.
-        int[] rgbaPixels = new int[glWidth * glHeight];
-        convertToRGBA(pixels, rgbaPixels, format, 0, 0, width, height);
-        gl.glTexSubImage2D(glTarget, 0, x, y, w, h, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, IntBuffer.wrap(rgbaPixels));
         
+        
+        // No mipmaps for now.
+        int[] rgbaPixels = new int[w * h];
+        convertToRGBA(pixels, rgbaPixels, format);        
+        setTexels(x, y, w, h, rgbaPixels);
       }
     } else {
-      int[] rgbaPixels = new int[glWidth * glHeight];
-      convertToRGBA(pixels, rgbaPixels, format, 0, 0, width, height);
-      gl.glTexSubImage2D(glTarget, 0, x, y, w, h, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, IntBuffer.wrap(rgbaPixels));
+      int[] rgbaPixels = new int[w * h];
+      convertToRGBA(pixels, rgbaPixels, format);
+      setTexels(x, y, w, h, rgbaPixels);
     }
 
     gl.glDisable(glTarget);
@@ -426,7 +396,8 @@ public class PTexture implements PConstants {
   
   ////////////////////////////////////////////////////////////
   
-  // Put methods
+  // Put methods (the source texture is not resized to cover the entire
+  // destination).
   
   
   public void put(PTexture tex) {
@@ -644,100 +615,78 @@ public class PTexture implements PConstants {
   
   /**
    * Reorders a pixel array in ARGB format into the order required by OpenGL (RGBA).
-   * The size of the incoming array is assumed to be width*height, and the size of the
-   * returned array is glWidth * glHeight.
+   * Both arrays are assumed to be of the same length.
    * @param intArray int[]
    * @param tIntArray int[]
    * @param arrayFormat int	 
    */
-  // TODO: Finish handling of rectangular area.
-  protected void convertToRGBA(int[] intArray, int[] tIntArray, int arrayFormat, int x0, int y0, int w, int h)  {
-    int t = 0; 
-    int p = 0;
+  protected void convertToRGBA(int[] intArray, int[] tIntArray, int arrayFormat)  {
     if (PGraphicsAndroid3D.BIG_ENDIAN)  {
       switch (arrayFormat) {
       case ALPHA:
                 	
-        for (int y = 0; y < height; y++) {
-          for (int x = 0; x < width; x++) {
-            tIntArray[t++] = 0xFFFFFF00 | intArray[p++];
-          }
-          t += glWidth - width;
+        for (int i = 0; i< intArray.length; i++) {
+          tIntArray[i] = 0xFFFFFF00 | intArray[i];
         }
         break;
 
       case RGB:
                 	
-        for (int y = 0; y < height; y++)  {
-          for (int x = 0; x < width; x++)  {
-            int pixel = intArray[p++];
-            tIntArray[t++] = (pixel << 8) | 0xff;
-          }
-          t += glWidth - width;
+        for (int i = 0; i< intArray.length; i++) {
+          int pixel = intArray[i];
+          tIntArray[i] = (pixel << 8) | 0xff;
         }
         break;
 
       case ARGB:
                 	
-        for (int y = 0; y < height; y++)  {
-          for (int x = 0; x < width; x++)  {
-            int pixel = intArray[p++];
-            tIntArray[t++] = (pixel << 8) | ((pixel >> 24) & 0xff);
-          }
-          t += glWidth - width;
+        for (int i = 0; i< intArray.length; i++) {
+          int pixel = intArray[i];
+          tIntArray[i] = (pixel << 8) | ((pixel >> 24) & 0xff);
         }
         break;
                     
       }       
     } else {  
-            // LITTLE_ENDIAN
-            // ARGB native, and RGBA opengl means ABGR on windows
-            // for the most part just need to swap two components here
-            // the sun.cpu.endian here might be "false", oddly enough..
-            // (that's why just using an "else", rather than check for "little")
+      // LITTLE_ENDIAN
+      // ARGB native, and RGBA opengl means ABGR on windows
+      // for the most part just need to swap two components here
+      // the sun.cpu.endian here might be "false", oddly enough..
+      // (that's why just using an "else", rather than check for "little")
         
       switch (arrayFormat)  {    
       case ALPHA:
             	
-        for (int y = 0; y < height; y++) {
-          for (int x = 0; x < width; x++) {
-            tIntArray[t++] = (intArray[p++] << 24) | 0x00FFFFFF;
-          }
-          t += glWidth - width;
+        for (int i = 0; i< intArray.length; i++) {
+          tIntArray[i] = (intArray[i] << 24) | 0x00FFFFFF;
         }
         break;
 
       case RGB:
                 	
-        for (int y = 0; y < height; y++) {
-          for (int x = 0; x < width; x++) {
-            int pixel = intArray[p++];
-              // needs to be ABGR, stored in memory xRGB
-              // so R and B must be swapped, and the x just made FF
-              tIntArray[t++] = 0xff000000 |  // force opacity for good measure
-                                            ((pixel & 0xFF) << 16) |
-                                            ((pixel & 0xFF0000) >> 16) |
-                                            (pixel & 0x0000FF00);
-          }
-          t += glWidth - width;
+        for (int i = 0; i< intArray.length; i++) {
+          int pixel = intArray[i];
+          // needs to be ABGR, stored in memory xRGB
+          // so R and B must be swapped, and the x just made FF
+          tIntArray[i] = 0xff000000 |  // force opacity for good measure
+                         ((pixel & 0xFF) << 16) |
+                         ((pixel & 0xFF0000) >> 16) |
+                         (pixel & 0x0000FF00);
         }
         break;
 
       case ARGB:
                     	
-        for (int y = 0; y < height; y++) {
-          for (int x = 0; x < width; x++) {
-            int pixel = intArray[p++];
-              // needs to be ABGR stored in memory ARGB
-              // so R and B must be swapped, A and G just brought back in
-              tIntArray[t++] =((pixel & 0xFF) << 16) |
-                                           ((pixel & 0xFF0000) >> 16) |
-                                           (pixel & 0xFF00FF00);
-          }
-          t += glWidth - width;
+        for (int i = 0; i< intArray.length; i++) {
+          int pixel = intArray[i];
+          // needs to be ABGR stored in memory ARGB
+          // so R and B must be swapped, A and G just brought back in
+          tIntArray[i] = ((pixel & 0xFF) << 16) |
+                         ((pixel & 0xFF0000) >> 16) |
+                         (pixel & 0xFF00FF00);
         }
         break;
-          
+ 
       }
     }
   }
@@ -753,15 +702,15 @@ public class PTexture implements PConstants {
     int t = 0; 
     int p = 0;
     if (PGraphicsAndroid3D.BIG_ENDIAN) {
-      
-            for (int y = 0; y < height; y++)  {
-              for (int x = 0; x < width; x++) {
-                int pixel = intArray[p++];
-                tIntArray[t++] = (pixel >> 8) | ((pixel << 24) & 0xff);
-              }
-              p += glWidth - width;
-            }
-            
+
+      for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+          int pixel = intArray[p++];
+          tIntArray[t++] = (pixel >> 8) | ((pixel << 24) & 0xff);
+        }
+        p += glWidth - width;
+      }
+
     } else {  
       // LITTLE_ENDIAN
       // ARGB native, and RGBA opengl means ABGR on windows
@@ -770,7 +719,7 @@ public class PTexture implements PConstants {
       // (that's why just using an "else", rather than check for "little")
         
       for (int y = 0; y < height; y++) {
-        for (int x = 0; x < width; x++)  {
+        for (int x = 0; x < width; x++) {
           int pixel = intArray[p++];
                      
           // needs to be ARGB stored in memory ABGR (RGBA = ABGR -> ARGB) 
@@ -788,7 +737,7 @@ public class PTexture implements PConstants {
     
   /**
    * Copies the pixel array in ARGB intArray into cIntArray. The size of the incoming 
-   * array is assumed to be width*height, and the size of the returned array is 
+   * array is assumed to be width * height, and the size of the returned array is 
    * glWidth * glHeight.
    * @param intArray int[]
    * @param cIntArray int[]
