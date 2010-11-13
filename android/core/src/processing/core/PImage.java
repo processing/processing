@@ -59,17 +59,6 @@ public class PImage implements PConstants, Cloneable {
 
   protected Bitmap bitmap;
   protected PTexture texture;
-  
-  // This boolean variable is used to indicate that there
-  // was a change in the contents of the pixels array and
-  // hasn't been transfered to the texture yet.
-  protected boolean texUpdated = false;
-
-  // This boolean variable is used to indicate that there
-  // was a change in the contents of the texture and
-  // hasn't been transfered to the pixels array yet.  
-  protected boolean pixUpdated = true;  
-
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
@@ -204,7 +193,6 @@ public class PImage implements PConstants, Cloneable {
   public void loadTexture() {
     if (texture == null) {
       texture = new PTexture(parent, width, height, new PTexture.Parameters(format));
-      texUpdated = false;
     }
     if (pixels == null) {
       loadPixels(); // loadPixels calls pixelsToTexture().
@@ -217,7 +205,6 @@ public class PImage implements PConstants, Cloneable {
   public void loadTexture(int filter) {
     if (texture == null) {
       texture = new PTexture(parent, width, height, new PTexture.Parameters(format, filter));
-      texUpdated = false;
     }
     if (pixels == null) {
       loadPixels(); // loadPixels calls pixelsToTexture().
@@ -230,7 +217,6 @@ public class PImage implements PConstants, Cloneable {
   public void loadTexture(PTexture.Parameters params) {
     if (texture == null) { 
       texture = new PTexture(parent, width, height, params);
-      texUpdated = false;
     }
     if (pixels == null) {
       loadPixels(); // loadPixels calls pixelsToTexture().
@@ -243,7 +229,6 @@ public class PImage implements PConstants, Cloneable {
   public void setTexture(PTexture tex) {
     if (tex.width == width && tex.height == height) { 
       texture.set(tex);
-      pixUpdated = false;
     } else {
       System.err.println("PImage: cannot set texture with different resolution from PImage object");
     }
@@ -263,20 +248,20 @@ public class PImage implements PConstants, Cloneable {
   
   
   protected void pixelsToTexture() {    
-    if (!texUpdated) {
-      texture.set(pixels);
-      texUpdated = true;
-    }
+    texture.set(pixels);
   }
   
   
   protected void textureToPixels() {
-    if (!pixUpdated) {
-      texture.get(pixels);
-      pixUpdated = true;
-    }
+    texture.get(pixels);
   }
 
+  
+  protected void reloadTexture() {
+    if (texture != null) {
+      texture = new PTexture(parent, width, height, texture.getParameters());
+    }
+  }
 
   //////////////////////////////////////////////////////////////
 
@@ -356,7 +341,6 @@ public class PImage implements PConstants, Cloneable {
     if (parent.g.is3D()) {
       if (texture == null) {
         texture = new PTexture(parent, width, height, new PTexture.Parameters(format));
-        texUpdated = false;
       }      
       pixelsToTexture();
     }
@@ -423,7 +407,6 @@ public class PImage implements PConstants, Cloneable {
       // Assuming in good faith that the user only messed up
       // with the pixels in the specified region. We don't have
       // any way to know if he or she is lying.
-      texUpdated = true;
     }
   }
 
@@ -477,12 +460,16 @@ public class PImage implements PConstants, Cloneable {
         high = (int) (height * diff);
       }
       PImage temp = new PImage(wide, high, this.format);
+      temp.parent = parent;
       temp.copy(this, 0, 0, width, height, 0, 0, wide, high);
       this.width = wide;
       this.height = high;
       this.pixels = temp.pixels;
       this.bitmap = null;
-    }
+      if (parent.g.is3D()) {
+        reloadTexture();
+      }
+    }    
     // Mark the pixels array as altered
     updatePixels();
   }
@@ -2480,6 +2467,10 @@ public class PImage implements PConstants, Cloneable {
     }
 
     PImage outgoing = new PImage(width, height, RGB);
+    
+    // Not possible because this method is static, so careful when using it. 
+    // outgoing.parent = parent;  
+    
     int index = 768;
     count /= 3;
     for (int i = 0; i < count; i++) {

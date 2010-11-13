@@ -65,6 +65,9 @@ public class PTexture implements PConstants {
   protected boolean flippedX;   
   protected boolean flippedY;
 
+  protected int[] tmpPixels = null;
+  protected PFramebuffer tmpFbo = null;
+  
   protected int recreateResourceIdx;
   
   ////////////////////////////////////////////////////////////
@@ -198,12 +201,17 @@ public class PTexture implements PConstants {
     tex.set(this);
     
     // Now, overwriting "this" with tex.
-    copy(tex);
+    copyObject(tex);
     
     // Zeroing the texture id of tex, so the texture is not 
     // deleted by OpenGL when the object is finalized by the GC.
     // "This" texture now wraps the one created in tex.
     tex.glID = 0;
+    
+    // Nullifying some utility objects so they are recreated with the appropriate
+    // size when needed.
+    tmpPixels = null;
+    tmpFbo = null;
   }
 
   
@@ -250,29 +258,13 @@ public class PTexture implements PConstants {
   
   
   public void set(PTexture tex) {
-    set(tex, 0, 0, tex.width, tex.height);
+    copyTexels(tex, 0, 0, tex.width, tex.height, true);
   }
   
   
-  // Copies source texture to this.
   public void set(PTexture tex, int x, int y, int w, int h) {
-    if (tex == null) {
-      throw new RuntimeException("PTexture: source texture is null");
-    }        
-    
-    PFramebuffer fbo = new PFramebuffer(parent, glWidth, glHeight);
-    // This texture is the color (destination) buffer of the FBO. 
-    fbo.setColorBuffer(this);
-    fbo.disableDepthTest();
-    
-    // FBO copy:
-    a3d.pushFramebuffer();
-    a3d.setFramebuffer(fbo);
-    // Rendering tex into "this", and scaling the source rectangle
-    // to cover the entire destination region.
-    a3d.drawTexture(tex, x, y, w, h, 0, 0, width, height);    
-    a3d.popFramebuffer();
-  }
+    copyTexels(tex, x, y, w, h, true);
+  }  
 
   
   public void set(int[] pixels) {
@@ -326,7 +318,7 @@ public class PTexture implements PConstants {
         int[] rgbaPixels = new int[glWidth * glHeight];
         convertToRGBA(pixels, rgbaPixels, format, 0, 0, width, height);
         gl.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_GENERATE_MIPMAP, GL11.GL_TRUE);
-        gl.glTexSubImage2D(glTarget, 0, x, y, w, h, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, IntBuffer.wrap(rgbaPixels));
+        setTexels(x, y, w, h, rgbaPixels);
       } else {
         /*
         // Code by Mike Miller obtained from here:
@@ -398,47 +390,54 @@ public class PTexture implements PConstants {
     }
         
     int size = glWidth * glHeight;
-    
-    // TODO: This operation could be optimized somehow by declaring these two variables global
-    // and allocating them only once.
-    int[] tmp = new int[size];
-    IntBuffer buffer;
-    PFramebuffer fbo;
+        
+    if (tmpFbo == null) {
+      tmpFbo = new PFramebuffer(parent, glWidth, glHeight);
+    }
     
     if (PGraphicsAndroid3D.fboSupported) {
       // Attaching the texture to the color buffer of a FBO, binding the FBO and reading the pixels
       // from the current draw buffer (which is the color buffer of the FBO).
-    
-      buffer = IntBuffer.allocate(size);
-      buffer.rewind();  
-    
-      fbo = new PFramebuffer(parent, glWidth, glHeight);
-      fbo.setColorBuffer(this);
-    
+      tmpFbo.setColorBuffer(this);
       a3d.pushFramebuffer();
-      a3d.setFramebuffer(fbo);
-      gl.glReadPixels(0, 0, glWidth, glHeight, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, buffer);
+      a3d.setFramebuffer(tmpFbo);
+      tmpFbo.readPixels();
       a3d.popFramebuffer();
     } else {
       // Here we don't have FBOs, so the method above is of no use. What we do instead is
-      // to draw the texture to the framebuffer, and then grab the pixels from the screen.
-      
-      fbo = new PFramebuffer(parent, glWidth, glHeight);
+      // to draw the texture to the screen framebuffer, and then grab the pixels from there.      
       a3d.pushFramebuffer();
-      a3d.setFramebuffer(fbo);
+      a3d.setFramebuffer(tmpFbo);
       a3d.drawTexture(this, 0, 0, glWidth, glHeight, 0, 0, glWidth, glHeight);
-      buffer = fbo.getPixelBuffer();
+      tmpFbo.readPixels();
       a3d.popFramebuffer();
     }
     
-    buffer.get(tmp);
-    buffer.rewind();
+    if (tmpPixels == null) {
+      tmpPixels = new int[size];
+    }
+    tmpFbo.getPixels(tmpPixels);
     
-    convertToARGB(tmp, pixels);
+    convertToARGB(tmpPixels, pixels);
     if (flippedX) flipArrayOnX(pixels, 1);
     if (flippedY) flipArrayOnY(pixels, 1);    
   }
+
   
+  ////////////////////////////////////////////////////////////
+  
+  // Put methods
+  
+  
+  public void put(PTexture tex) {
+    copyTexels(tex, 0, 0, tex.width, tex.height, false);
+  }  
+
+  
+  public void put(PTexture tex, int x, int y, int w, int h) {
+    copyTexels(tex, x, y, w, h, false);
+  }   
+    
     
   ////////////////////////////////////////////////////////////     
  
@@ -880,7 +879,44 @@ public class PTexture implements PConstants {
   }
 
   
-  protected void copy(PTexture src) {
+  // Copies source texture to this.
+  protected void copyTexels(PTexture tex, int x, int y, int w, int h, boolean scale) {
+    if (tex == null) {
+      throw new RuntimeException("PTexture: source texture is null");
+    }        
+    
+    if (tmpFbo == null) {
+      tmpFbo = new PFramebuffer(parent, glWidth, glHeight);
+    }
+    // This texture is the color (destination) buffer of the FBO. 
+    tmpFbo.setColorBuffer(this);
+    tmpFbo.disableDepthTest();
+    
+    // FBO copy:
+    a3d.pushFramebuffer();
+    a3d.setFramebuffer(tmpFbo);
+    if (scale) {
+      // Rendering tex into "this", and scaling the source rectangle
+      // to cover the entire destination region.
+      a3d.drawTexture(tex, x, y, w, h, 0, 0, width, height);    
+    } else {
+      // Rendering tex into "this" but without scaling so the contents 
+      // of the source texture fall in the corresponding texels of the
+      // destination.
+      a3d.drawTexture(tex, x, y, w, h, x, y, w, h);
+    }
+    a3d.popFramebuffer();
+  }  
+  
+  protected void setTexels(int x, int y, int w, int h, int[] pix) {
+    gl.glTexSubImage2D(glTarget, 0, x, y, w, h, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, IntBuffer.wrap(pix));
+  }
+  
+  protected void bind() {
+    gl.glBindTexture(glTarget, glID);
+  }
+  
+  protected void copyObject(PTexture src) {
     a3d.removeRecreateResourceMethod(recreateResourceIdx);    
     deleteTexture();
   
