@@ -163,7 +163,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   /** Used to store empty values to be passed when a light has no 
       ambient, diffuse or specular component **/
   public float[] zeroLight = { 0.0f, 0.0f, 0.0f, 1.0f };
-  public float[] baseLight = { 0.2f, 0.2f, 0.2f, 1.0f };
+  public float[] baseLight = { 0.0f, 0.0f, 0.0f, 1.0f };
  
   boolean lightsAllocated = false;
 
@@ -727,7 +727,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     // Some things the user might have changed from OpenGL, 
     // but we want to make sure they return to the Processing
     // defaults (plus these cannot be changed through the API
-    // so they remain constant anyways):
+    // so they should remain constant anyways):
     gl.glShadeModel(GL10.GL_SMOOTH);    
     gl.glFrontFace(GL10.GL_CW);    
     gl.glDepthFunc(GL10.GL_LEQUAL);
@@ -1581,35 +1581,6 @@ public class PGraphicsAndroid3D extends PGraphics {
   // ////////////////////////////////////////////////////////////
 
   // POINTS (override from P3D)
-
-  // Buffers to be passed to gl*Pointer() functions
-  // must be direct, i.e., they must be placed on the
-  // native heap where the garbage collector cannot
-  // move them.
-  //
-  // Buffers with multi-byte datatypes (e.g., short, int, float)
-  // must have their byte order set to native order
-
-  // ByteBuffer vbb = ByteBuffer.allocateDirect(vertices.length*4);
-  // vbb.order(ByteOrder.nativeOrder());
-  // mVertexBuffer = vbb.asIntBuffer();
-  // mVertexBuffer.put(vertices);
-  // mVertexBuffer.position(0);
-  //
-  // ByteBuffer cbb = ByteBuffer.allocateDirect(colors.length*4);
-  // cbb.order(ByteOrder.nativeOrder());
-  // mColorBuffer = cbb.asIntBuffer();
-  // mColorBuffer.put(colors);
-  // mColorBuffer.position(0);
-  //
-  // mIndexBuffer = ByteBuffer.allocateDirect(indices.length);
-  // mIndexBuffer.put(indices);
-  // mIndexBuffer.position(0);
-
-  // gl.glFrontFace(gl.GL_CW);
-  // gl.glVertexPointer(3, gl.GL_FIXED, 0, mVertexBuffer);
-  // gl.glColorPointer(4, gl.GL_FIXED, 0, mColorBuffer);
-  // gl.glDrawElements(gl.GL_TRIANGLES, 36, gl.GL_UNSIGNED_BYTE, mIndexBuffer);
 
   protected void renderPoints(int start, int stop) {
     gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
@@ -4937,10 +4908,10 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected void drawTexture(PTexture tex, int[] crop, int x, int y, int w, int h) {
     gl.glEnable(tex.getGLTarget());
     gl.glBindTexture(tex.getGLTarget(), tex.getGLID());
-    gl.glDepthMask(false);    
+    gl.glDepthMask(false);
     gl.glDisable(GL10.GL_BLEND);
 
-    // The texels of the texture replace the color of wherever is in the screen.
+    // The texels of the texture replace the color of wherever is on the screen.
     gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_REPLACE);
     
     // Setting texture crop.
