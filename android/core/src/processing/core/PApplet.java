@@ -736,12 +736,12 @@ public class PApplet extends Activity implements PConstants, Runnable {
       // We don't need this for the time being since we are using GLES 1.1.
       // setEGLContextFactory(g3.getContextFactory());
 
-      String depth = sketchColorDepth();
+      String depth = sketchColordepth();
       if (!depth.equals(DEFAULT_COLOR_DEPTH)) {
         // Setting user specified color depth. Otherwise, we let the 
         // device to choose the configuration it pleases.
         
-        if (sketchTranslucentSurface()) {
+        if (sketchTranslucency()) {
           surfaceHolder.setFormat(PixelFormat.TRANSLUCENT);
         }
 
@@ -925,11 +925,11 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
   
-  public boolean sketchTranslucentSurface() {
+  public boolean sketchTranslucency() {
     return true;
   }
   
-  public String sketchColorDepth() {
+  public String sketchColordepth() {
     return DEFAULT_COLOR_DEPTH;
   }
 

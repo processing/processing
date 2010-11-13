@@ -32,6 +32,8 @@ import javax.microedition.khronos.opengles.GL11ExtensionPack;
  * When created with onscreen == true, it represents the normal
  * framebuffer. Needed by the stack mechanism in A3D to return
  * to onscreen rendering after a sequence of pushFramebuffer calls.
+ * It transparently handles the situations when the FBO extension is
+ * not available.
  * 
  * By Andres Colubri.
  */
@@ -88,14 +90,15 @@ public class PFramebuffer implements PConstants {
     
     initFramebuffer(w, h);
     
+    pixelBuffer = IntBuffer.allocate(width * height);
+    pixelBuffer.rewind();    
+    
     if (!screenFb && !FboMode) {
       // When FBOs are not available, rendering to texture is implemented by saving a portion of
       // the screen, doing the "offscreen" rendering on this portion, copying the screen color 
       // buffer to the texture bound as color buffer to this PFramebuffer object and then drawing 
       // the backup texture back on the screen.
-      backupTexture = new PTexture(parent, width, height, new PTexture.Parameters(ARGB, NEAREST));
-      pixelBuffer = IntBuffer.allocate(width * height);
-      pixelBuffer.rewind();        
+      backupTexture = new PTexture(parent, width, height, new PTexture.Parameters(ARGB, NEAREST));       
     }
     
     try {
@@ -297,6 +300,15 @@ public class PFramebuffer implements PConstants {
     }
   }  
   
+  public void readPixels() {
+    gl.glReadPixels(0, 0, width, height, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, pixelBuffer);
+  }
+  
+  public void getPixels(int[] pixels) {
+    pixelBuffer.get(pixels);
+    pixelBuffer.rewind();    
+  }
+  
   public IntBuffer getPixelBuffer() {
     return pixelBuffer;
   }
@@ -307,7 +319,7 @@ public class PFramebuffer implements PConstants {
     gl.glBindTexture(gltarget, glid);    
     gl.glTexSubImage2D(gltarget, 0, 0, 0, width, height, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, buffer);
     gl.glDisable(gltarget);
-  }      
+  }
   
   protected void initFramebuffer(int w, int h) {
     width = w;
