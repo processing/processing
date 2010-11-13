@@ -287,27 +287,28 @@ public class PTexture implements PConstants {
         gl.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_GENERATE_MIPMAP, GL11.GL_TRUE);
         setTexels(x, y, w, h, rgbaPixels);
       } else {
+        if (w != width || h != height) {
+          System.err.println("Sorry but I don't know how to generate mipmaps for a subregion.");
+          return;
+        }
         
-        
-        /*
         // Code by Mike Miller obtained from here:
         // http://insanitydesign.com/wp/2009/08/01/android-opengl-es-mipmaps/
         // TODO: Check if this algorithm works only for pot textures or for any resolution.
-        //       and adapt for copying only one texture rectangle.
-        int[] argbPixels = new int[glWidth * glHeight];
+        int w0 = glWidth;
+        int h0 = glHeight;        
+        int[] argbPixels = new int[w0 * h0];
         copyARGB(pixels, argbPixels);
         int level = 0;
-        int w0 = glWidth;
-        int h0 = glHeight;
         
         // We create a Bitmap because then we use its built-in filtered downsampling
         // functionality.
-        Bitmap bitmap = Bitmap.createBitmap(w, h, Config.ARGB_8888);
+        Bitmap bitmap = Bitmap.createBitmap(w0, h0, Config.ARGB_8888);
         bitmap.setPixels(argbPixels, 0, w0, 0, 0, w0, h0);
         
         while (w0 >= 1 || h0 >= 1) {
           //First of all, generate the texture from our bitmap and set it to the according level
-          GLUtils.texImage2D(GL10.GL_TEXTURE_2D, level, bitmap, 0);
+          GLUtils.texImage2D(glTarget, level, bitmap, 0);
           
           // We are done.
           if (w0 == 1 || h0 == 1) {
@@ -326,13 +327,6 @@ public class PTexture implements PConstants {
           bitmap.recycle();
           bitmap = bitmap2;
         }
-      */
-        
-        
-        // No mipmaps for now.
-        int[] rgbaPixels = new int[w * h];
-        convertToRGBA(pixels, rgbaPixels, format);        
-        setTexels(x, y, w, h, rgbaPixels);
       }
     } else {
       int[] rgbaPixels = new int[w * h];
