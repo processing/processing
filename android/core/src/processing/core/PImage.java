@@ -403,10 +403,23 @@ public class PImage implements PConstants, Cloneable {
     }
     
     if (texture != null) {
-      texture.set(pixels, mx1, my1, mx2 - mx1, my2 - my1);
-      // Assuming in good faith that the user only messed up
-      // with the pixels in the specified region. We don't have
-      // any way to know if he or she is lying.
+      int mw = mx2 - mx1; 
+      int mh = my2 - my1;      
+      int[] pix;
+
+      if (mw != width || mh != height) {
+        // Only a sub-region of the whole image was changed, so copying
+        // the pixels of this region into a smaller pixels array.
+        pix = new int[mw * mh];
+        for (int j = 0; j < mh; j++) {
+          int p0 = my1 * width + mx1 + (width - mw) * j;
+          PApplet.arrayCopy(pixels, p0 + mw * j, pix, mw * j, mw);
+        }        
+      } else {
+        pix = pixels;
+      }
+      
+      texture.set(pix, mx1, my1, mw, mh);
     }
   }
 

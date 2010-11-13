@@ -24,8 +24,6 @@
 package processing.core;
 
 import java.io.*;
-import java.lang.reflect.Method;
-import java.nio.IntBuffer;
 import java.util.Arrays;
 import java.util.HashMap;
 import android.graphics.Bitmap;
@@ -34,7 +32,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.graphics.Bitmap.Config;
-import javax.microedition.khronos.opengles.GL10;
 
 /**
  * Grayscale bitmap font class used by Processing.
@@ -936,7 +933,6 @@ public class PFont implements PConstants {
         for (int y = 0; y < height; y++) {
           for (int x = 0; x < width; x++) {
             rgba[t++] = (image.pixels[p++] << 24) | 0x00FFFFFF;
-            //rgba[t++] = 0xFF00FF00;
           }
         }
       }
