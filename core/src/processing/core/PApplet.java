@@ -667,8 +667,8 @@ public class PApplet extends Applet
   // for 0116, the CRUSTY_THREADS are being disabled to fix lots of bugs.
   //static final boolean CRUSTY_THREADS = false; //true;
 
-
   public void init() {
+//    println("init() called " + Integer.toHexString(hashCode()));
     // using a local version here since the class variable is deprecated
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     screenWidth = screen.width;
@@ -763,6 +763,9 @@ public class PApplet extends Applet
    * PAppletGL needs to have a usable screen before getting things rolling.
    */
   public void start() {
+//    println("start() called");
+//    new Exception().printStackTrace(System.out);
+
     finished = false;
     paused = false; // unpause the thread
     
@@ -1487,6 +1490,7 @@ public class PApplet extends Applet
 
     while ((Thread.currentThread() == thread) && !finished) {
       while (paused) {
+//        println("paused...");
         try {
           Thread.sleep(100L);
         } catch (InterruptedException e) { 
