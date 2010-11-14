@@ -24,7 +24,6 @@
 package processing.core;
 
 import java.awt.*;
-import java.awt.font.TextLayout;
 import java.awt.geom.*;
 import java.awt.image.*;
 

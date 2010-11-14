@@ -1486,11 +1486,10 @@ public class PApplet extends Applet
      */
 
     while ((Thread.currentThread() == thread) && !finished) {
-      
       while (paused) {
-        try{
-          thread.sleep(100L);
-        } catch (InterruptedException e){ 
+        try {
+          Thread.sleep(100L);
+        } catch (InterruptedException e) { 
           //ignore?
         }
       }
