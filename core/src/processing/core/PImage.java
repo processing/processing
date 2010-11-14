@@ -2804,7 +2804,7 @@ public class PImage implements PConstants, Cloneable {
   public void save(String filename) {  // ignore
     boolean success = false;
 
-    File file = new File(filename);
+//    File file = new File(filename);
 //    if (!file.isAbsolute()) {
     // always use savePath(), so that the intermediate directories are created
     if (parent != null) {
