@@ -772,6 +772,9 @@ LIBRARIES / PGraphicsPDF
 
 _ pdf not rendering unicode with beginRecord()
 _   http://dev.processing.org/bugs/show_bug.cgi?id=727
+_ beginRecord() doesn't use current settings of the sketch
+_   sometimes reported as a bug, but probably not a good way to 
+_   consistently carry these over
 _ pdf sketches exiting before writing has finished
 _   people have to call exit() (so that dispose() is called in particular)
 _ when using noLoop() and the PDF renderer, sketch should exit gracefully
