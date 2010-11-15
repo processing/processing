@@ -125,6 +125,13 @@ public class PFont implements PConstants {
    */
   protected boolean stream;
   
+  /**
+   * True if this font should return 'null' for getFont(), so that the native
+   * font will be used to create a subset, but the native version of the font
+   * will not be used. 
+   */
+  protected boolean subsetting; 
+
   /** True if already tried to find the native AWT version of this font. */
   protected boolean fontSearched;
 
@@ -468,15 +475,20 @@ public class PFont implements PConstants {
    * Return the native java.awt.Font associated with this PFont (if any).
    */
   public Font getFont() {
-//    if (font == null && !fontSearched) {
-//      font = findFont();
-//    }
+    if (subsetting) {
+      return null;  // don't return the font for use
+    }
     return font;
+  }
+
+
+  public boolean isStream() {
+    return stream;
   }
   
   
-  public boolean isStream() {
-    return stream;
+  public void setSubsetting() {
+    subsetting = true;
   }
 
 
