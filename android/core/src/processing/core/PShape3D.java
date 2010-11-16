@@ -2317,6 +2317,8 @@ public class PShape3D extends PShape implements PConstants {
             // Loading texture map.
             String texname = elements[1];
             currentMtl.kdMap = parent.loadImage(texname);
+            // Texture orientation in Processing is inverted with respecto to OpenGL.
+            currentMtl.kdMap.getTexture().setFlippedY(true);
           } else if (elements[0].equals("Ka") && elements.length > 3) {
             // The ambient color of the material
             currentMtl.ka.x = Float.valueOf(elements[1]).floatValue();
