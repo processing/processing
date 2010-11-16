@@ -16,6 +16,7 @@ _   http://code.google.com/p/processing/issues/detail?id=429
 _ need to finish font changes wrt native fonts before any release
 _   right now not in a good place--default font will be bitmapped and ugly
 _   http://code.google.com/p/processing/issues/detail?id=416
+_   need to have some kind of subsetting mode, but 'subsetting' a bad name
 
 _ present mode is no longer centering on osx?
 _ bug: textAlign(RIGHT) is shutting off native fonts
