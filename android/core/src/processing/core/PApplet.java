@@ -1642,7 +1642,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
       
       while (paused) {
         try{
-          thread.sleep(100L);
+          Thread.sleep(100L);
         } catch (InterruptedException e) { 
           //ignore?
         }

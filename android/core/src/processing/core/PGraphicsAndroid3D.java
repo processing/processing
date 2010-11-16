@@ -5357,7 +5357,7 @@ public class PGraphicsAndroid3D extends PGraphics {
      */
     private int EGL_OPENGL_ES_BIT = 0x01; // EGL 1.x attribute value for
                                                  // GL_RENDERABLE_TYPE.
-    private int EGL_OPENGL_ES2_BIT = 0x04; // EGL 2.x attribute value for
+//    private int EGL_OPENGL_ES2_BIT = 0x04; // EGL 2.x attribute value for
                                                   // GL_RENDERABLE_TYPE.
     private int[] configAttribsGL = { EGL10.EGL_RED_SIZE, 4,
         EGL10.EGL_GREEN_SIZE, 4, EGL10.EGL_BLUE_SIZE, 4,
