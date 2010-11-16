@@ -163,7 +163,8 @@ public class PGraphicsAndroid3D extends PGraphics {
   /** Used to store empty values to be passed when a light has no 
       ambient, diffuse or specular component **/
   public float[] zeroLight = { 0.0f, 0.0f, 0.0f, 1.0f };
-  public float[] baseLight = { 0.0f, 0.0f, 0.0f, 1.0f };
+  /** Default ambient light for the entire scene **/
+  public float[] baseLight = { 0.05f, 0.05f, 0.05f, 1.0f };
  
   boolean lightsAllocated = false;
 
@@ -866,6 +867,9 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     shapeFirst = 0;
     
+    // The current normal vector is set to zero.
+    normalX = normalY = normalZ = 0;
+    
     if (primarySurface) {
       // This instance of PGraphicsAndroid3D is the primary (onscreen) drawing surface.
       
@@ -1164,7 +1168,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     textureImage = null;
     textureImagePrev = null;
 
-    normalMode = NORMAL_MODE_AUTO;
+    normalMode = AUTO;
   }
 
   // public void edge(boolean e)
@@ -1232,6 +1236,10 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
 
     shape = 0;
+    
+    if (normalMode == SHAPE) {
+      normalX = normalY = normalZ = 0;
+    }
   }
 
   protected void endShapeStroke(int mode) {
@@ -1892,6 +1900,41 @@ public class PGraphicsAndroid3D extends PGraphics {
         float b[] = vertices[triangles[i][VERTEX2]];
         float c[] = vertices[triangles[i][VERTEX3]];
 
+        if (normalMode == AUTO && (a[HAS_NORMAL] == 0 || 
+                                   b[HAS_NORMAL] == 0 || 
+                                   c[HAS_NORMAL] == 0)) {
+          // Ok, some of the vertices defining the current triangle have not been
+          // assigned a normal, and the normal mode is AUTO, so we generate the normal
+          // for all the vertices of this triangle.
+          
+          // Assuming CW vertex ordering, so the outside direction for this triangle
+          // should be given by the cross product (b - a) x (b - c):
+          float x1 = b[X] - a[X]; 
+          float y1 = b[Y] - a[Y];
+          float z1 = b[Z] - a[Z]; 
+          
+          float x2 = b[X] - c[X]; 
+          float y2 = b[Y] - c[Y];
+          float z2 = b[Z] - c[Z]; 
+            
+          float cx = y1 * z2 - y2 * z1;
+          float cy = z1 * x2 - z2 * x1;
+          float cz = x1 * y2 - x2 * y1;          
+          
+          float norm = PApplet.sqrt(cx * cx + cy * cy + cz * cz);
+          
+          cx /= norm;
+          cy /= norm;
+          cz /= norm;
+          
+          // Same normal vector assigned to the three vertices:
+          a[NX] = b[NX] = c[NX] = cx;
+          a[NY] = b[NY] = c[NY] = cy;
+          a[NZ] = b[NZ] = c[NZ] = cz;
+          
+          a[HAS_NORMAL] = b[HAS_NORMAL] = c[HAS_NORMAL] = 1;
+        }
+        
         float uscale = 1.0f;
         float vscale = 1.0f;
         float cx = 0.0f;
@@ -5574,9 +5617,9 @@ public class PGraphicsAndroid3D extends PGraphics {
       float t = 1.0f - c;
       
       mult((t*rx*rx) + c, (t*rx*ry) - (s*rz), (t*rx*rz) + (s*ry), 0,
-               (t*rx*ry) + (s*rz), (t*ry*ry) + c, (t*ry*rz) - (s*rx), 0,
-               (t*rx*rz) - (s*ry), (t*ry*rz) + (s*rx), (t*rz*rz) + c, 0,
-               0, 0, 0, 1);
+           (t*rx*ry) + (s*rz), (t*ry*ry) + c, (t*ry*rz) - (s*rx), 0,
+           (t*rx*rz) - (s*ry), (t*ry*rz) + (s*rx), (t*rz*rz) + c, 0,
+           0, 0, 0, 1);
     }
     
     public void scale(float sx, float sy, float sz) {
