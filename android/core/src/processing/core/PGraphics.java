@@ -1073,15 +1073,6 @@ public class PGraphics extends PImage implements PConstants {
     vertex[NX] = normalX;
     vertex[NY] = normalY;
     vertex[NZ] = normalZ;
-    
-    if (normalMode == VERTEX || normalMode == AUTO) {
-      // The AUTO mode works as the VERTEX mode (it allows the user to specify
-      // per-vertex normals) but if there are triangles where some of the vertices
-      // have no normal, then it will calculate the normal for that triangle (in
-      // the renderTriangles() method of PGraphicsAndroid3D).
-      normalX = normalY = normalZ = 0;  
-    }
-    
 
     verticesTexture[vertexCount] = textureImage;
     
