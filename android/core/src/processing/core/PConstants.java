@@ -81,6 +81,9 @@ public interface PConstants {
 
 
   // material properties
+  // TODO: check whether we still need them in PGraphicsAndroid3D and if yes
+  // how the work in combination with the global material properties (ambient, diffuse, 
+  // emissive, specular colors).
 
   // Ambient color (usually to be kept the same as diffuse)
   // fill(_) sets both ambient and diffuse.
@@ -105,10 +108,10 @@ public interface PConstants {
   static public final int ER = 32;
   static public final int EG = 33;
   static public final int EB = 34;
-
-  // has this vertex been lit yet
-  static public final int BEEN_LIT = 35;
-
+  
+  // has this vertex been assigned a normal yet
+  static public final int HAS_NORMAL = 35;
+  
   static public final int VERTEX_FIELD_COUNT = 36;
 
 
@@ -371,6 +374,27 @@ public interface PConstants {
   static final int SHAPE = 5;
 
 
+  // normal modes.
+  
+  /**
+   * In the vertex mode, the user should specify a normal for
+   * each vertex.
+   */  
+  static final int VERTEX = 6;
+  
+  /**
+   * Normal vectors are automatically calculated if not set.
+   */  
+  static final int AUTO = 7;
+  
+  /**
+   * ... and, the constant SHAPE from text placement modes
+   * is used to set the SHAPE normal mode, where the same shape
+   * is used for all the vertices in a shape. This conflict in the
+   * name of constants should be solved (TODO).
+   */  
+
+  
   // text alignment modes
   // are inherited from LEFT, CENTER, RIGHT  
 

@@ -2317,7 +2317,7 @@ public class PShape3D extends PShape implements PConstants {
             // Loading texture map.
             String texname = elements[1];
             currentMtl.kdMap = parent.loadImage(texname);
-            // Texture orientation in Processing is inverted with respecto to OpenGL.
+            // Texture orientation in Processing is inverted with respect to OpenGL.
             currentMtl.kdMap.getTexture().setFlippedY(true);
           } else if (elements[0].equals("Ka") && elements.length > 3) {
             // The ambient color of the material
@@ -2357,6 +2357,9 @@ public class PShape3D extends PShape implements PConstants {
     // Using normal mode for texture coordinates (i.e.: normalized between 0 and 1).
     int tMode0 = a3d.textureMode;
     a3d.textureMode = NORMAL;
+    
+    int nMode0 = a3d.normalMode;
+    a3d.normalMode = AUTO;
     
     // Using RGB mode for coloring.
     int cMode0 = a3d.colorMode; 
@@ -2502,9 +2505,10 @@ public class PShape3D extends PShape implements PConstants {
     
     a3d.endShapeRecorderImpl(this);
     
-    // Restore texture and color modes.
+    // Restore texture, color, and normal modes.
     a3d.textureMode = tMode0;
     a3d.colorMode = cMode0;
+    a3d.normalMode = nMode0;
     
     // Restore colors
     a3d.calcR = specularR0;
