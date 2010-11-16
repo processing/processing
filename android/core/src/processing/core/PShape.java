@@ -957,6 +957,11 @@ public class PShape implements PConstants {
     matrix.scale(x, y, z);
   }
 
+  
+  public void centerAt(float cx, float cy, float cz) {
+    
+  }
+  
 
   //
 

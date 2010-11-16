@@ -116,7 +116,7 @@ public class PShape3D extends PShape implements PConstants {
     this.parent = parent;
     a3d = (PGraphicsAndroid3D)parent.g;
     
-    // Checking we have what we need:
+    // Checking we have all we need:
     gl = a3d.gl11;
     if (gl == null) {
       throw new RuntimeException("PShape3D: OpenGL ES 1.1 required");
@@ -141,6 +141,7 @@ public class PShape3D extends PShape implements PConstants {
     
     parseOBJ(reader, vertices, normals, textures, faces, materials);
     recordOBJ(vertices, normals, textures, faces, materials);
+    centerAt(0, 0, 0);
     
     try {
       Method meth = this.getClass().getMethod("recreateResource", new Class[] { PGraphicsAndroid3D.class });
@@ -1406,7 +1407,7 @@ public class PShape3D extends PShape implements PConstants {
         }
       }
       
-      // Deleting superflous groups.
+      // Deleting superfluous groups.
       for (int i = groups.size() -1; i >= 0; i--) {
         gr1 = (VertexGroup)groups.get(i);
         if (gr1.last == -1) {
@@ -1815,7 +1816,7 @@ public class PShape3D extends PShape implements PConstants {
     getVertexArrayImpl(tmpVertexArray, 0, numVertices, 0);
     endUpdate();
     
-    // Rotating (around xmin, ymin, zmin)
+    // Rotating around xmin, ymin, zmin)
     float c = PApplet.cos(angle);
     float s = PApplet.sin(angle);
     float t = 1.0f - c;
@@ -1883,6 +1884,38 @@ public class PShape3D extends PShape implements PConstants {
     return true;
   }
   
+  public void centerAt(float cx, float cy, float cz) {
+    float[] tmpVertexArray = new float[numVertices * 3];
+    
+    // Getting vertex data.
+    beginUpdate(VERTICES);
+    getVertexArrayImpl(tmpVertexArray, 0, numVertices, 0);
+    endUpdate();
+    
+    float dx = cx - 0.5f * (xmin + xmax);
+    float dy = cy - 0.5f * (ymin + ymax);
+    float dz = cz - 0.5f * (zmin + zmax);
+    
+    // Centering
+    for (int i = 0; i < numVertices; i++) {
+      tmpVertexArray[3 * i + 0] += dx;
+      tmpVertexArray[3 * i + 1] += dy;
+      tmpVertexArray[3 * i + 2] += dz;  
+    }    
+    
+    // Updating bounding box
+    xmin += dx;
+    xmax += dx;
+    ymin += dy;
+    ymax += dy;
+    zmin += dz;
+    zmax += dz;
+    
+    // Pushing back to GPU.
+    beginUpdateImpl(VERTICES, 0, numVertices - 1);
+    setVertex(tmpVertexArray);
+    endUpdate();         
+  }
   
   ///////////////////////////////////////////////////////////  
 
