@@ -403,6 +403,8 @@ public class PGraphics extends PImage implements PConstants {
   protected float vertices[][] =
     new float[DEFAULT_VERTICES][VERTEX_FIELD_COUNT];
   protected int vertexCount; // total number of vertices
+  
+  // This array allows to assign a different texture for each vertex.
   protected PImage verticesTexture[] = new PImage[DEFAULT_VERTICES];
 
   // ........................................................
@@ -490,19 +492,9 @@ public class PGraphics extends PImage implements PConstants {
 
   // ........................................................
 
-  /// normal calculated per triangle
-  static protected final int NORMAL_MODE_AUTO = 0;
-  /// one normal manually specified per shape
-  static protected final int NORMAL_MODE_SHAPE = 1;
-  /// normals specified for each shape vertex
-  static protected final int NORMAL_MODE_VERTEX = 2;
-
   /// Current mode for normals, one of AUTO, SHAPE, or VERTEX
   protected int normalMode;
-
-  /// Keep track of how many calls to normal, to determine the mode.
-  //protected int normalCount;
-
+  
   /** Current normal vector. */
   public float normalX, normalY, normalZ;
 
@@ -703,6 +695,8 @@ public class PGraphics extends PImage implements PConstants {
 
     rectMode(CORNER);
     ellipseMode(DIAMETER);
+    
+    normalMode = AUTO;
 
     // no current font
     textFont = null;
@@ -876,16 +870,20 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
+   * Sets the normal mode, either AUTO, SHAPE or VERTEX.
+   */  
+  public void normalMode(int mode) {
+    this.normalMode = mode;   
+  }
+  
+  
+  /**
    * Sets the current normal vector. Only applies with 3D rendering
    * and inside a beginShape/endShape block.
    * <P/>
    * This is for drawing three dimensional shapes and surfaces,
    * allowing you to specify a vector perpendicular to the surface
    * of the shape, which determines how lighting affects it.
-   * <P/>
-   * For the most part, PGraphics3D will attempt to automatically
-   * assign normals to shapes, but since that's imperfect,
-   * this is a better option when you want more control.
    * <P/>
    * For people familiar with OpenGL, this function is basically
    * identical to glNormal3f().
@@ -894,25 +892,6 @@ public class PGraphics extends PImage implements PConstants {
     normalX = nx;
     normalY = ny;
     normalZ = nz;
-
-    // if drawing a shape and the normal hasn't been set yet,
-    // then we need to set the normals for each vertex so far
-    if (shape != 0) {
-      if (normalMode == NORMAL_MODE_AUTO) {
-        // either they set the normals, or they don't [0149]
-//        for (int i = vertex_start; i < vertexCount; i++) {
-//          vertices[i][NX] = normalX;
-//          vertices[i][NY] = normalY;
-//          vertices[i][NZ] = normalZ;
-//        }
-        // One normal per begin/end shape
-        normalMode = NORMAL_MODE_SHAPE;
-
-      } else if (normalMode == NORMAL_MODE_SHAPE) {
-        // a separate normal for each vertex
-        normalMode = NORMAL_MODE_VERTEX;
-      }
-    }
   }
 
 
@@ -1078,11 +1057,31 @@ public class PGraphics extends PImage implements PConstants {
       vertex[V] = textureV;
     }
 
+    float norm2 = normalX * normalX + normalY * normalY + normalZ * normalZ;
+    if (norm2 < EPSILON) {
+      vertex[HAS_NORMAL] = 0;  
+    } else {
+      if (Math.abs(norm2 - 1) < EPSILON) {
+        float norm = PApplet.sqrt(norm2);
+        normalX /= norm;
+        normalY /= norm;
+        normalZ /= norm;
+      }
+      vertex[HAS_NORMAL] = 1;
+    }
+    
     vertex[NX] = normalX;
     vertex[NY] = normalY;
     vertex[NZ] = normalZ;
-
-    vertex[BEEN_LIT] = 0;
+    
+    if (normalMode == VERTEX || normalMode == AUTO) {
+      // The AUTO mode works as the VERTEX mode (it allows the user to specify
+      // per-vertex normals) but if there are triangles where some of the vertices
+      // have no normal, then it will calculate the normal for that triangle (in
+      // the renderTriangles() method of PGraphicsAndroid3D).
+      normalX = normalY = normalZ = 0;  
+    }
+    
 
     verticesTexture[vertexCount] = textureImage;
     
