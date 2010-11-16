@@ -1236,10 +1236,6 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
 
     shape = 0;
-    
-    if (normalMode == SHAPE) {
-      normalX = normalY = normalZ = 0;
-    }
   }
 
   protected void endShapeStroke(int mode) {

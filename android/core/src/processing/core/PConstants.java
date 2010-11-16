@@ -380,20 +380,12 @@ public interface PConstants {
    * In the vertex mode, the user should specify a normal for
    * each vertex.
    */  
-  static final int VERTEX = 6;
+  static final int MANUAL = 6;
   
   /**
    * Normal vectors are automatically calculated if not set.
    */  
   static final int AUTO = 7;
-  
-  /**
-   * ... and, the constant SHAPE from text placement modes
-   * is used to set the SHAPE normal mode, where the same shape
-   * is used for all the vertices in a shape. This conflict in the
-   * name of constants should be solved (TODO).
-   */  
-
   
   // text alignment modes
   // are inherited from LEFT, CENTER, RIGHT  
