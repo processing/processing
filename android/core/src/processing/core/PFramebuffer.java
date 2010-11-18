@@ -176,9 +176,9 @@ public class PFramebuffer implements PConstants {
       a3d.pushFramebuffer();
       a3d.setFramebuffer(this);
 
-      int[] tmp = new int[1];
-      gl11xp.glGenRenderbuffersOES(1, tmp, 0);
-      glDepthBufferID = tmp[0];
+      int[] temp = new int[1];
+      gl11xp.glGenRenderbuffersOES(1, temp, 0);
+      glDepthBufferID = temp[0];
 
       gl11xp.glBindRenderbufferOES(GL11ExtensionPack.GL_RENDERBUFFER_OES, glDepthBufferID);
 
@@ -211,9 +211,9 @@ public class PFramebuffer implements PConstants {
       a3d.pushFramebuffer();
       a3d.setFramebuffer(this);
 
-      int[] tmp = new int[1];
-      gl11xp.glGenRenderbuffersOES(1, tmp, 0);
-      glStencilBufferID = tmp[0];
+      int[] temp = new int[1];
+      gl11xp.glGenRenderbuffersOES(1, temp, 0);
+      glStencilBufferID = temp[0];
 
       gl11xp.glBindRenderbufferOES(GL11ExtensionPack.GL_RENDERBUFFER_OES, glStencilBufferID);
 
@@ -328,9 +328,9 @@ public class PFramebuffer implements PConstants {
     if (screenFb) {
       glFboID = 0;
     } else if (FboMode) {  
-      int[] tmp = new int[1];
-      gl11xp.glGenFramebuffersOES(1, tmp, 0);
-      glFboID = tmp[0];
+      int[] temp = new int[1];
+      gl11xp.glGenFramebuffersOES(1, temp, 0);
+      glFboID = temp[0];
     }  else {
       glFboID = 0;
     }
@@ -338,20 +338,20 @@ public class PFramebuffer implements PConstants {
 
   protected void deleteFramebuffer() {
     if (glFboID != 0) {
-      int[] tmp = { glFboID };
-      gl11xp.glDeleteFramebuffersOES(1, tmp, 0);
+      int[] temp = { glFboID };
+      gl11xp.glDeleteFramebuffersOES(1, temp, 0);
       glFboID = 0;
     }
     
     if (glDepthBufferID !=  0) {
-      int[] tmp = { glDepthBufferID };
-      gl11xp.glDeleteRenderbuffersOES(1, tmp, 0);
+      int[] temp = { glDepthBufferID };
+      gl11xp.glDeleteRenderbuffersOES(1, temp, 0);
       glDepthBufferID = 0;
     }    
     
     if (glStencilBufferID !=  0) {
-      int[] tmp = { glStencilBufferID };
-      gl11xp.glDeleteRenderbuffersOES(1, tmp, 0);
+      int[] temp = { glStencilBufferID };
+      gl11xp.glDeleteRenderbuffersOES(1, temp, 0);
       glStencilBufferID = 0;
     }
     
