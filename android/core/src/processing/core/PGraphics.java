@@ -109,13 +109,6 @@ import android.graphics.Color;
  * them for their separate audiences. Ouch.
  */
 public class PGraphics extends PImage implements PConstants {
-
-  // These three are only for debugging/benchmarking purposes. I will remove soon (Andres):
-  public int VERTEXCOUNT = 0;
-  public int TRIANGLECOUNT = 0;
-  public int FACECOUNT = 0;
-  
-  
   // ........................................................
 
   // width and height are already inherited from PImage

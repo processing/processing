@@ -342,9 +342,12 @@ public class PGraphicsAndroid3D extends PGraphics {
   static protected boolean vboSupported;
   static protected boolean fboSupported;
   static protected boolean blendEqSupported;
+  
+  // Some OpenGL limits
   static protected int maxTextureSize;
   static protected float maxPointSize;
   static protected float maxLineWidth;
+  static protected int maxTextureUnits;
   
   // ........................................................
   
@@ -757,10 +760,6 @@ public class PGraphicsAndroid3D extends PGraphics {
   // }
 
   public void beginDraw() {
-    VERTEXCOUNT = 0;
-    TRIANGLECOUNT = 0;
-    FACECOUNT = 0;
-
     if (!primarySurface) {      
       PGraphicsAndroid3D a3d = (PGraphicsAndroid3D)parent.g;
       a3d.saveGLState();
@@ -1854,7 +1853,6 @@ public class PGraphicsAndroid3D extends PGraphics {
     for (int j = start; j < stop; j++) {
       
       int i = faceOffset[j];
-      FACECOUNT++;
       
       if (faceTexture[j] != null) {
         tex = faceTexture[j].getTexture();        
@@ -1890,8 +1888,6 @@ public class PGraphicsAndroid3D extends PGraphics {
 
       int n = 0;
       for (int k = 0; k < faceLength[j]; k++) {
-        TRIANGLECOUNT++;
-
         float a[] = vertices[triangles[i][VERTEX1]];
         float b[] = vertices[triangles[i][VERTEX2]];
         float c[] = vertices[triangles[i][VERTEX3]];
@@ -1972,8 +1968,6 @@ public class PGraphicsAndroid3D extends PGraphics {
           texCoordArray[2 * n + 0] = toFixed32((cx + sx * a[U]) * uscale);
           texCoordArray[2 * n + 1] = toFixed32((cy + sy * a[V]) * vscale);
           n++;
-
-          VERTEXCOUNT++;
         }
 
         // Adding vertex B.
@@ -1996,8 +1990,6 @@ public class PGraphicsAndroid3D extends PGraphics {
           texCoordArray[2 * n + 0] = toFixed32((cx + sx * b[U]) * uscale);
           texCoordArray[2 * n + 1] = toFixed32((cy + sy * b[V]) * vscale);
           n++;
-
-          VERTEXCOUNT++;
         }
 
         // Adding vertex C.
@@ -2020,8 +2012,6 @@ public class PGraphicsAndroid3D extends PGraphics {
           texCoordArray[2 * n + 0] = toFixed32((cx + sx * c[U]) * uscale);
           texCoordArray[2 * n + 1] = toFixed32((cy + sy * c[V]) * vscale);
           n++;
-
-          VERTEXCOUNT++;
         }
 
         i++;
@@ -5296,7 +5286,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       usingModelviewStack = gl11 == null || !matrixGetSupported;
       
       int temp[] = new int[2];    
-      
+            
       gl.glGetIntegerv(GL10.GL_MAX_TEXTURE_SIZE, temp, 0);
       maxTextureSize = temp[0];
 
@@ -5306,6 +5296,9 @@ public class PGraphicsAndroid3D extends PGraphics {
       gl.glGetIntegerv(GL10.GL_ALIASED_POINT_SIZE_RANGE, temp, 0);
       maxPointSize = temp[1];        
       
+      gl.glGetIntegerv(GL10.GL_MAX_TEXTURE_UNITS, temp, 0);
+      maxTextureUnits = temp[0];
+            
       recreateResources();
       gl = null;
       gl11 = null;
