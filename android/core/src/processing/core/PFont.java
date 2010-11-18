@@ -709,10 +709,10 @@ public class PFont implements PConstants {
       textures[currentTex] = tex;
     } else {
       // Adding new texture to the list.
-      PTexture[] tmp = textures;
+      PTexture[] temp = textures;
       textures = new PTexture[textures.length + 1];
-      PApplet.arrayCopy(tmp, textures, tmp.length);
-      textures[tmp.length] = tex;
+      PApplet.arrayCopy(temp, textures, temp.length);
+      textures[temp.length] = tex;
       currentTex = textures.length - 1;
     }
     lastTex = currentTex;
