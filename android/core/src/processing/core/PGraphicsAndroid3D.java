@@ -1607,9 +1607,9 @@ public class PGraphicsAndroid3D extends PGraphics {
       int n = 0;
       for (int i = start; i < stop; i++) {
         float[] a = vertices[points[i][VERTEX1]];
-        vertexArray[3 * n + 0] = toFixed32(a[VX]);
-        vertexArray[3 * n + 1] = toFixed32(a[VY]);
-        vertexArray[3 * n + 2] = toFixed32(a[VZ]);
+        vertexArray[3 * n + 0] = toFixed32(a[X]);
+        vertexArray[3 * n + 1] = toFixed32(a[Y]);
+        vertexArray[3 * n + 2] = toFixed32(a[Z]);
         colorArray[4 * n + 0] = toFixed32(a[SR]);
         colorArray[4 * n + 1] = toFixed32(a[SG]);
         colorArray[4 * n + 2] = toFixed32(a[SB]);
@@ -5082,11 +5082,14 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   /**
    * Allows to set custom blend modes for the entire scene, using openGL.
+   * Reference article about blending modes:
+   * http://www.pegtop.net/delphi/articles/blendmodes/
    */
   public void blend(int mode) {    
     blend = true;
     blendMode = mode;
     gl.glEnable(GL10.GL_BLEND);
+    
     if (mode == REPLACE) {  
       if (blendEqSupported) gl11xp.glBlendEquation(GL11ExtensionPack.GL_FUNC_ADD);
       gl.glBlendFunc(GL10.GL_ONE, GL10.GL_ZERO);
@@ -5096,25 +5099,22 @@ public class PGraphicsAndroid3D extends PGraphics {
     } else if (mode == ADD) {
       if (blendEqSupported) gl11xp.glBlendEquation(GL11ExtensionPack.GL_FUNC_ADD);
       gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE);
-    } else if (mode == MULTIPLY) {
-      if (blendEqSupported) gl11xp.glBlendEquation(GL11ExtensionPack.GL_FUNC_ADD);      
-      gl.glBlendFunc(GL10.GL_DST_COLOR, GL10.GL_SRC_COLOR);
     } else if (mode == SUBTRACT) {
       if (blendEqSupported) gl11xp.glBlendEquation(GL11ExtensionPack.GL_FUNC_ADD);
       gl.glBlendFunc(GL10.GL_ONE_MINUS_DST_COLOR, GL10.GL_ZERO); 
-    } else if (mode == DARKEST) {
-      if (blendEqSupported) { 
-        gl11xp.glBlendEquation(GL_MIN_EXT);      
-        gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_DST_ALPHA);
-      } else {
-        PGraphics.showWarning("A3D: This blend mode is currently unsupported.");  
-      }
     } else if (mode == LIGHTEST) {
       if (blendEqSupported) { 
         gl11xp.glBlendEquation(GL_MAX_EXT);
         gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_DST_ALPHA);
       } else {
         PGraphics.showWarning("A3D: This blend mode is currently unsupported.");
+      }
+    } else if (mode == DARKEST) {
+      if (blendEqSupported) { 
+        gl11xp.glBlendEquation(GL_MIN_EXT);      
+        gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_DST_ALPHA);
+      } else {
+        PGraphics.showWarning("A3D: This blend mode is currently unsupported.");  
       }
     } else if (mode == DIFFERENCE) {
       if (blendEqSupported) {
@@ -5123,28 +5123,19 @@ public class PGraphicsAndroid3D extends PGraphics {
       } else {
         PGraphics.showWarning("A3D: This blend mode is currently unsupported.");
       }       
-    }
-
-
-    
-    
-    //gl11xp.glBlendEquation(arg0)
-    //gl11xp.glBlendEquationSeparate(arg0, arg1)
-    //gl11xp.glBlendFuncSeparate(arg0, arg1, arg2, arg3)
-    
-    // TODO: implement all these other blending modes:
-    
-    // else if (blend)
-    // else if (blendMode == EXCLUSION)
-    // else if (blendMode == SCREEN)
-    // else if (blendMode == OVERLAY)
-    // else if (blendMode == HARD_LIGHT)
-    // else if (blendMode == SOFT_LIGHT)
-    // else if (blendMode == DODGE)
-    // else if (blendMode == BURN)
-    
-    // All the blending modes are explained here:
-    // http://www.pegtop.net/delphi/articles/blendmodes/
+    } else if (mode == EXCLUSION) {
+      if (blendEqSupported) gl11xp.glBlendEquation(GL11ExtensionPack.GL_FUNC_ADD);
+      gl.glBlendFunc(GL10.GL_ONE_MINUS_DST_COLOR, GL10.GL_ONE_MINUS_SRC_COLOR);
+    } else if (mode == MULTIPLY) {
+      if (blendEqSupported) gl11xp.glBlendEquation(GL11ExtensionPack.GL_FUNC_ADD);      
+      gl.glBlendFunc(GL10.GL_DST_COLOR, GL10.GL_SRC_COLOR);
+    } else if (mode == SCREEN) {
+      if (blendEqSupported) gl11xp.glBlendEquation(GL11ExtensionPack.GL_FUNC_ADD);
+      gl.glBlendFunc(GL10.GL_ONE_MINUS_DST_COLOR, GL10.GL_ONE);
+    }  
+    // HARD_LIGHT, SOFT_LIGHT, OVERLAY, DODGE, BURN modes cannot be implemented/
+    // in fixed-function pipeline because they require conditional blending and
+    // non-linear blending equations.
   }
 
   public void noBlend() {

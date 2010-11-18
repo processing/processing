@@ -1043,7 +1043,7 @@ public class PGraphics extends PImage implements PConstants {
       vertex[EG] = emissiveG;
       vertex[EB] = emissiveB;
     }
-
+    
     if (stroke) {
       vertex[SR] = strokeR;
       vertex[SG] = strokeG;
@@ -1061,7 +1061,8 @@ public class PGraphics extends PImage implements PConstants {
     if (norm2 < EPSILON) {
       vertex[HAS_NORMAL] = 0;  
     } else {
-      if (Math.abs(norm2 - 1) < EPSILON) {
+      if (Math.abs(norm2 - 1) > EPSILON) {
+        // The normal vector is not normalized.
         float norm = PApplet.sqrt(norm2);
         normalX /= norm;
         normalY /= norm;
