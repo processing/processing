@@ -55,7 +55,6 @@ public interface PConstants {
 
   static public final int EDGE = 12;
 
-
   // stroke
 
   /** stroke argb values */
@@ -67,9 +66,6 @@ public interface PConstants {
   /** stroke weight */
   static public final int SW = 17;
 
-
-  // transformations (2D and 3D)
-
   static public final int TX = 18; // transformed xyzw
   static public final int TY = 19;
   static public final int TZ = 20;
@@ -78,12 +74,6 @@ public interface PConstants {
   static public final int VY = 22;
   static public final int VZ = 23;
   static public final int VW = 24;
-
-
-  // material properties
-  // TODO: check whether we still need them in PGraphicsAndroid3D and if yes
-  // how the work in combination with the global material properties (ambient, diffuse, 
-  // emissive, specular colors).
 
   // Ambient color (usually to be kept the same as diffuse)
   // fill(_) sets both ambient and diffuse.
@@ -198,11 +188,12 @@ public interface PConstants {
 
   // for colors and/or images
 
-  static final int RGB   = 1;  // image & color
-  static final int ARGB  = 2;  // image
-  static final int HSB   = 3;  // color
-  static final int ALPHA = 4;  // image
-  static final int CMYK  = 5;  // image & color (someday)
+  static final int RGB    = 1;  // image & color
+  static final int ARGB   = 2;  // image
+  static final int HSB    = 3;  // color
+  static final int ALPHA  = 4;  // image
+  static final int CMYK   = 5;  // image & color (someday)
+  static final int YUV420 = 6;  // android video preview.
 
 
   // image file types
