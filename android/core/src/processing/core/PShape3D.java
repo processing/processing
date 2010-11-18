@@ -1937,10 +1937,6 @@ public class PShape3D extends PShape implements PConstants {
 	  PTexture tex;
 	  float pointSize;
 	  
-    g.VERTEXCOUNT = vertexBuffer.capacity() / 3;
-    g.FACECOUNT = groups.size();
-    g.TRIANGLECOUNT = g.VERTEXCOUNT / 3; 
-	  
 	  // Setting line width and point size from stroke value.
     // TODO: Here the stroke weight from the g renderer is used. Normally, no issue here, but
     // in the case the shape is being rendered from an offscreen A3D surface, then this might
@@ -1975,14 +1971,24 @@ public class PShape3D extends PShape implements PConstants {
       tex = null;
       if (img != null && img.getTexture() != null)  {
         tex = img.getTexture();
-         
+        
+        // Binding texture units.
         texTarget = tex.getGLTarget();
         gl.glEnable(texTarget);
-        // Binding texture units.
-         
         gl.glActiveTexture(GL11.GL_TEXTURE0);
         gl.glBindTexture(texTarget, tex.getGLID());
          
+        /*
+        img = group.textures;
+        for (int n = 0; n < img.length.; n++) {
+          tex = img[n].getTexture();
+          texTarget = tex.getGLTarget();
+          gl.glEnable(texTarget);          
+          gl.glActiveTexture(GL.GL_TEXTURE0 + n);
+          gl.glBindTexture(GL.GL_TEXTURE_2D, tex.getGLID());
+        }        
+        */
+        
         if (pointSprites) {
           // Texturing with point sprites.
                         
@@ -1992,8 +1998,8 @@ public class PShape3D extends PShape implements PConstants {
            
           // The alpha of a point is calculated to allow the fading of points 
           // instead of shrinking them past a defined threshold size. The threshold 
-          // is defined by GL_POINT_FADE_THRESHOLD_SIZE_ARB and is not clamped to 
-          // the minimum and maximum point sizes.
+          // is defined by GL_POINT_FADE_THRESHOLD_SIZE and is not clamped to the 
+          // minimum and maximum point sizes.
           gl.glPointParameterf(GL11.GL_POINT_FADE_THRESHOLD_SIZE, 0.6f * pointSize);
           gl.glPointParameterf(GL11.GL_POINT_SIZE_MIN, 1.0f);
           gl.glPointParameterf(GL11.GL_POINT_SIZE_MAX, PGraphicsAndroid3D.maxPointSize);
@@ -2009,6 +2015,15 @@ public class PShape3D extends PShape implements PConstants {
           gl.glClientActiveTexture(GL11.GL_TEXTURE0);
           gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glTexCoordBufferID[0]);
           gl.glTexCoordPointer(2, GL11.GL_FLOAT, 0, 0);
+          
+          /*
+          gl.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
+          for (int n = 0; n < img.length.; n++) {
+            gl.glClientActiveTexture(GL11.GL_TEXTURE0 + n);
+            gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glTexCoordBufferID[n]);
+            gl.glTexCoordPointer(2, GL11.GL_FLOAT, 0, 0);
+          }          
+          */
         }
       }
       
