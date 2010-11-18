@@ -419,6 +419,12 @@ public interface PConstants {
   public static final int NORMALS = 1;
   public static final int COLORS = 2;
   public static final int TEXTURES = 3;
+  /*
+  public static final int TEXTURES1 = 3;  
+  public static final int TEXTURES2 = 4;
+  public static final int TEXTURES3 = 5;
+  public static final int TEXTURES4 = 6;
+   */
   public static final int GROUPS = 4;  
   
 
