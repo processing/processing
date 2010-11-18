@@ -924,9 +924,9 @@ public class PGraphics extends PImage implements PConstants {
       System.arraycopy(vertices, 0, temp, 0, vertexCount);
       vertices = temp;
       
-      PImage texTmp[] = new PImage[vertexCount << 1];
-      System.arraycopy(verticesTexture, 0, texTmp, 0, vertexCount);
-      verticesTexture = texTmp;
+      PImage texTemp[] = new PImage[vertexCount << 1];
+      System.arraycopy(verticesTexture, 0, texTemp, 0, vertexCount);
+      verticesTexture = texTemp;
     }
   }
 

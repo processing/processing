@@ -3101,9 +3101,9 @@ public class PGraphicsAndroid3D extends PGraphics {
    * Print the current model (or "transformation") matrix.
    */
   public void printMatrix() {
-    PMatrix3D tmp = new PMatrix3D();
-    copyGLArrayToPMatrix(glmodelview, tmp);
-    tmp.print();
+    PMatrix3D temp = new PMatrix3D();
+    copyGLArrayToPMatrix(glmodelview, temp);
+    temp.print();
   }
 
   /*
@@ -3544,9 +3544,9 @@ public class PGraphicsAndroid3D extends PGraphics {
    * Print the current camera matrix.
    */
   public void printCamera() {
-    PMatrix3D tmp = new PMatrix3D();
-    copyGLArrayToPMatrix(pcamera, tmp);
-    tmp.print();
+    PMatrix3D temp = new PMatrix3D();
+    copyGLArrayToPMatrix(pcamera, temp);
+    temp.print();
   }
 
   // ////////////////////////////////////////////////////////////
@@ -3704,9 +3704,9 @@ public class PGraphicsAndroid3D extends PGraphics {
    * Print the current projection matrix.
    */
   public void printProjection() {
-    PMatrix3D tmp = new PMatrix3D();
-    copyGLArrayToPMatrix(glprojection, tmp);
-    tmp.print();
+    PMatrix3D temp = new PMatrix3D();
+    copyGLArrayToPMatrix(glprojection, temp);
+    temp.print();
   }
 
   // ////////////////////////////////////////////////////////////
@@ -5297,7 +5297,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       maxPointSize = temp[1];        
       
       gl.glGetIntegerv(GL10.GL_MAX_TEXTURE_UNITS, temp, 0);
-      maxTextureUnits = temp[0];
+      maxTextureUnits = PApplet.min(4, temp[0]);
             
       recreateResources();
       gl = null;
@@ -5332,7 +5332,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     protected int alphaBits;
     protected int depthBits;
     protected int stencilBits;
-    private int[] tmpValue = new int[1];
+    private int[] tempValue = new int[1];
 
     /*
      * This EGL config specification is used to specify 2.0 rendering. We use a
@@ -5457,8 +5457,8 @@ public class PGraphicsAndroid3D extends PGraphics {
 
     private int findConfigAttrib(EGL10 egl, EGLDisplay display,
       EGLConfig config, int attribute, int defaultValue) {
-      if (egl.eglGetConfigAttrib(display, config, attribute, tmpValue)) {
-        return tmpValue[0];
+      if (egl.eglGetConfigAttrib(display, config, attribute, tempValue)) {
+        return tempValue[0];
       }
       return defaultValue;
     }
