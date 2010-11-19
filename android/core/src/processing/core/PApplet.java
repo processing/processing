@@ -7026,11 +7026,25 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
-  public void texture(PImage image) {
-    g.texture(image);
+  public void texture(PImage image1) {
+    g.texture(image1);
   }
 
+  public void texture(PImage image, int unit) {
+  }
+  
+  public void textures(PImage image1, PImage image2) {    
+  }
+  
 
+  public void textures(PImage image1, PImage image2, PImage image3) {    
+  }
+  
+
+  public void textures(PImage image1, PImage image2, PImage image3, PImage image4) {    
+  }
+  
+  
   public void noTexture() {
     g.noTexture();
   }
