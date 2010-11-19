@@ -1100,6 +1100,9 @@ public class PGraphics extends PImage implements PConstants {
     vertex(x, y, z);
   }
 
+  
+  
+  
 
   /**
    * Internal method to copy all style information for the given vertex.
