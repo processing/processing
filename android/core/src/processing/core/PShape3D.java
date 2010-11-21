@@ -189,30 +189,30 @@ public class PShape3D extends PShape implements PConstants {
 
   
   public void setTexture(PImage tex, int unit) {
-    int n = unit - TEXTURES1;
+    int n = unit - TEXTURES0;
     for (int gr = 0; gr < groups.size(); gr++) {
       setGroupTextureImpl(gr, tex, n);
     }
   }  
   
   
-  public void setTextures(PImage tex1, PImage tex2) {
+  public void setTextures(PImage tex0, PImage tex1) {
     for (int gr = 0; gr < groups.size(); gr++) {
-      setGroupTextureArrayImpl(gr, new PImage[] {tex1, tex2});
+      setGroupTextureArrayImpl(gr, new PImage[] {tex0, tex1});
     }
   }
 
   
-  public void setTextures(PImage tex1, PImage tex2, PImage tex3) {
+  public void setTextures(PImage tex0, PImage tex1, PImage tex2) {
     for (int gr = 0; gr < groups.size(); gr++) {
-      setGroupTextureArrayImpl(gr, new PImage[] {tex1, tex2, tex3});
+      setGroupTextureArrayImpl(gr, new PImage[] {tex0, tex1, tex0});
     }
   }  
   
 
-  public void setTextures(PImage tex1, PImage tex2, PImage tex3, PImage tex4) {
+  public void setTextures(PImage tex0, PImage tex1, PImage tex2, PImage tex3) {
     for (int gr = 0; gr < groups.size(); gr++) {
-      setGroupTextureArrayImpl(gr, new PImage[] {tex1, tex2, tex3, tex4});
+      setGroupTextureArrayImpl(gr, new PImage[] {tex0, tex1, tex2, tex3});
     }
   }  
 
@@ -274,8 +274,8 @@ public class PShape3D extends PShape implements PConstants {
       normalBuffer.limit(normalBuffer.capacity());      
       normalBuffer.rewind();      
       normalBuffer.get(normalArray, offset, size);
-    } else if (TEXTURES1 <= updateElement && updateElement <= TEXTURES4) {      
-      int n = updateElement - TEXTURES1;
+    } else if (TEXTURES0 <= updateElement && updateElement <= TEXTURES3) {      
+      int n = updateElement - TEXTURES0;
             
       // Adding needed textures.
       for (int i = 0; i < n - numTexUnits; i++) {
@@ -345,7 +345,7 @@ public class PShape3D extends PShape implements PConstants {
     
       gl.glBufferSubData(GL11.GL_ARRAY_BUFFER, offset * SIZEOF_FLOAT, size * SIZEOF_FLOAT, normalBuffer);
       gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
-    } else if (TEXTURES1 <= updateElement && updateElement <= TEXTURES4) {
+    } else if (TEXTURES0 <= updateElement && updateElement <= TEXTURES3) {
       int offset = firstUpdateIdx * 2;
       int size = (lastUpdateIdx - firstUpdateIdx + 1) * 2;
       
@@ -356,7 +356,7 @@ public class PShape3D extends PShape implements PConstants {
       gl.glBufferSubData(GL11.GL_ARRAY_BUFFER, offset * SIZEOF_FLOAT, size * SIZEOF_FLOAT, texCoordBuffer);
       gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
       
-      int n = updateElement - TEXTURES1;
+      int n = updateElement - TEXTURES0;
       texCoordSet[n] = true;
     } else if (updateElement == GROUPS) {
       // TODO: check consistency of newly created groups (make sure that there are not overlapping groups)      
@@ -795,10 +795,10 @@ public class PShape3D extends PShape implements PConstants {
   
   
   public PVector getTexCoord(int idx) {
-    if (updateElement < TEXTURES1 || TEXTURES4 < updateElement) {
+    if (updateElement < TEXTURES0 || TEXTURES3 < updateElement) {
       throw new RuntimeException("PShape3D: update mode is not set to TEXTURES");
     }
-    int n = updateElement - TEXTURES1;
+    int n = updateElement - TEXTURES0;
 
     float u = texCoordArray[2 * idx + 0];
     float v = texCoordArray[2 * idx + 1];
@@ -838,10 +838,10 @@ public class PShape3D extends PShape implements PConstants {
   
   
   public float[] getTexCoordArray() {
-    if (updateElement < TEXTURES1 || TEXTURES4 < updateElement) {
+    if (updateElement < TEXTURES0 || TEXTURES3 < updateElement) {
       throw new RuntimeException("PShape3D: update mode is not set to TEXTURES");
     }
-    int n = updateElement - TEXTURES1;    
+    int n = updateElement - TEXTURES0;    
     
     float[] res = new float[numVertices * 2];
     getTexCoordArrayImpl(res, 0, numVertices, 0);
@@ -921,7 +921,7 @@ public class PShape3D extends PShape implements PConstants {
 
   
   public ArrayList<PVector> getTexCoordArrayList() {
-    if (updateElement < TEXTURES1 || TEXTURES4 < updateElement) {
+    if (updateElement < TEXTURES0 || TEXTURES3 < updateElement) {
       throw new RuntimeException("PShape3D: update mode is not set to TEXTURES");
     }
 
@@ -935,10 +935,10 @@ public class PShape3D extends PShape implements PConstants {
   
   
   public void setTexCoord(int idx, float u, float v) {
-    if (updateElement < TEXTURES1 || TEXTURES4 < updateElement) {
+    if (updateElement < TEXTURES0 || TEXTURES3 < updateElement) {
       throw new RuntimeException("PShape3D: update mode is not set to TEXTURES");
     }
-    int n = updateElement - TEXTURES1;
+    int n = updateElement - TEXTURES0;
     
     if (idx < firstUpdateIdx) firstUpdateIdx = idx;
     if (lastUpdateIdx < idx) lastUpdateIdx = idx;
@@ -988,10 +988,10 @@ public class PShape3D extends PShape implements PConstants {
 
   
   public void setTexCoord(float[] data) {
-    if (updateElement < TEXTURES1 || TEXTURES4 < updateElement) {
+    if (updateElement < TEXTURES0 || TEXTURES3 < updateElement) {
       throw new RuntimeException("PShape3D: update mode is not set to TEXTURES");
     }
-    int n = updateElement - TEXTURES1;
+    int n = updateElement - TEXTURES0;
     
     firstUpdateIdx = 0;
     firstUpdateIdx = numVertices - 1;
@@ -1067,10 +1067,10 @@ public class PShape3D extends PShape implements PConstants {
   
   
   public void setTexCoord(ArrayList<PVector> data) {
-    if (updateElement < TEXTURES1 || TEXTURES4 < updateElement) {
+    if (updateElement < TEXTURES0 || TEXTURES3 < updateElement) {
       throw new RuntimeException("PShape3D: update mode is not set to TEXTURES");
     }
-    int n = updateElement - TEXTURES1;
+    int n = updateElement - TEXTURES0;
 
     firstUpdateIdx = 0;
     lastUpdateIdx = numVertices - 1;
@@ -1192,6 +1192,26 @@ public class PShape3D extends PShape implements PConstants {
   
   
   public void setGroup(int gr, int idx0, int idx1, PImage tex) {
+    setGroupImpl(gr, idx0, idx1, new PImage[] {tex});
+  }  
+
+  
+  public void setGroup(int gr, int idx0, int idx1, PImage tex0, PImage tex1) {
+    setGroupImpl(gr, idx0, idx1, new PImage[] {tex0, tex1});
+  }  
+
+
+  public void setGroup(int gr, int idx0, int idx1, PImage tex0, PImage tex1, PImage tex2) {
+    setGroupImpl(gr, idx0, idx1, new PImage[] {tex0, tex1, tex2});
+  }  
+  
+  
+  public void setGroup(int gr, int idx0, int idx1, PImage tex0, PImage tex1, PImage tex2, PImage tex3) {
+    setGroupImpl(gr, idx0, idx1, new PImage[] {tex0, tex1, tex2, tex3});
+  }  
+
+  
+  protected void setGroupImpl(int gr, int idx0, int idx1, PImage[] tex) {
     if (updateElement != GROUPS) {
       throw new RuntimeException("PShape3D: update mode is not set to GROUPS");
     }
@@ -1232,23 +1252,23 @@ public class PShape3D extends PShape implements PConstants {
 
   
   public void setGroupTexture(int gr, PImage tex, int unit) {
-    int n = unit - TEXTURES1;
+    int n = unit - TEXTURES0;
     setGroupTextureImpl(gr, tex, n);
   }  
     
   
-  public void setGroupTextures(int gr, PImage tex1, PImage tex2) {
-    setGroupTextureArrayImpl(gr, new PImage[] {tex1, tex2});
+  public void setGroupTextures(int gr, PImage tex0, PImage tex1) {
+    setGroupTextureArrayImpl(gr, new PImage[] {tex0, tex1});
   }  
   
   
-  public void setGroupTextures(int gr, PImage tex1, PImage tex2, PImage tex3) {
-    setGroupTextureArrayImpl(gr, new PImage[] {tex1, tex2, tex3});
+  public void setGroupTextures(int gr, PImage tex0, PImage tex1, PImage tex2) {
+    setGroupTextureArrayImpl(gr, new PImage[] {tex0, tex1, tex2});
   }    
   
   
-  public void setGroupTextures(int gr, PImage tex1, PImage tex2, PImage tex3, PImage tex4) {
-    setGroupTextureArrayImpl(gr, new PImage[] {tex1, tex2, tex3, tex4});
+  public void setGroupTextures(int gr, PImage tex0, PImage tex1, PImage tex2, PImage tex3) {
+    setGroupTextureArrayImpl(gr, new PImage[] {tex0, tex1, tex2, tex3});
   }    
   
   
@@ -1294,12 +1314,12 @@ public class PShape3D extends PShape implements PConstants {
       PTexture tex1 = tex.getTexture(); 
 
       boolean diff = tex0 == null ||
-      tex.width != group.textures[idx].width ||
-      tex.height != group.textures[idx].height ||
-      tex1.flippedX != tex0.flippedX ||
-      tex1.flippedY != tex0.flippedY ||
-      tex1.maxTexCoordU != tex0.maxTexCoordU ||
-      tex1.maxTexCoordV != tex0.maxTexCoordV;
+        tex.width != group.textures[idx].width ||
+        tex.height != group.textures[idx].height ||
+        tex1.flippedX != tex0.flippedX ||
+        tex1.flippedY != tex0.flippedY ||
+        tex1.maxTexCoordU != tex0.maxTexCoordU ||
+        tex1.maxTexCoordV != tex0.maxTexCoordV;
 
       if (diff) {
         float uscale = 1.0f;
@@ -1310,7 +1330,7 @@ public class PShape3D extends PShape implements PConstants {
         float sy = +1.0f;        
         float u, v;
 
-        beginUpdateImpl(TEXTURES1 + idx, group.first, group.last);
+        beginUpdateImpl(TEXTURES0 + idx, group.first, group.last);
         firstUpdateIdx = group.first;
         lastUpdateIdx = group.last;    
         for (int i = group.first; i <= group.last; i++) {
@@ -1384,7 +1404,7 @@ public class PShape3D extends PShape implements PConstants {
   
   public PImage getGroupTexture(int gr, int unit) {
     VertexGroup group = (VertexGroup)groups.get(gr);
-    int n = unit - TEXTURES1;
+    int n = unit - TEXTURES0;
     return group.textures[n];
   }
   
@@ -1511,7 +1531,7 @@ public class PShape3D extends PShape implements PConstants {
   }
   
   
-  protected void addGroup(int idx0, int idx1, PImage tex) {
+  protected void addGroup(int idx0, int idx1, PImage[] tex) {
     if (0 <= idx0 && idx0 <=  idx1) {
       VertexGroup group = new VertexGroup(idx0, idx1, tex);
       groups.add(group);
@@ -2229,21 +2249,20 @@ public class PShape3D extends PShape implements PConstants {
     return new VertexGroup(n0, n1);  
   }
   
-
-  static public VertexGroup newVertexGroup(int n0, int n1, PImage tex) {
+  
+  static public VertexGroup newVertexGroup(int n0, int n1, PImage[] tex) {
     return new VertexGroup(n0, n1, tex);  
   }    
 
   
-  static public VertexGroup newVertexGroup(int n0, int n1, int mode, PImage tex) {
+  static public VertexGroup newVertexGroup(int n0, int n1, int mode, PImage[] tex) {
     return new VertexGroup(n0, n1, mode, tex);  
   }        
         
 
-  static public VertexGroup newVertexGroup(int n0, int n1, int mode, float weight, PImage tex) {
+  static public VertexGroup newVertexGroup(int n0, int n1, int mode, float weight, PImage[] tex) {
     return new VertexGroup(n0, n1, mode, weight, tex);  
-  }        
-  
+  }     
   
 	static public class VertexGroup {
     VertexGroup(int n0, int n1) {
@@ -2254,19 +2273,24 @@ public class PShape3D extends PShape implements PConstants {
       textures[0] = textures[1] = textures[2] = textures[3] = null;
     }
 
-    VertexGroup(int n0, int n1, PImage tex) {
+    VertexGroup(int n0, int n1, PImage[] tex) {
       first = n0;
       last = n1; 
       glMode = 0;
       sw = 0;
-      textures[0] = tex;
-    }
-
-    VertexGroup(int n0, int n1, int mode, PImage tex) {
-      this(n0, n1, mode, 0, tex);
+      textures[0] = textures[1] = textures[2] = textures[3] = null;
+      if (tex != null) {
+        for (int i = 0; i < PApplet.min(4, tex.length); i++) {
+          textures[i] = tex[i];
+        }
+      }
     }    
     
-    VertexGroup(int n0, int n1, int mode, float weight, PImage tex) {
+    VertexGroup(int n0, int n1, int mode, PImage[] tex) {
+      this(n0, n1, mode, 0, tex);
+    }     
+    
+    VertexGroup(int n0, int n1, int mode, float weight, PImage[] tex) {
       first = n0;
       last = n1; 
       if (mode == POINTS) glMode = GL11.GL_POINTS;
@@ -2281,7 +2305,12 @@ public class PShape3D extends PShape implements PConstants {
         throw new RuntimeException("PShape3D: Unknown draw mode");
       }      
       sw = weight;
-      textures[0] = tex;
+      textures[0] = textures[1] = textures[2] = textures[3] = null;
+      if (tex != null) {      
+        for (int i = 0; i < PApplet.min(4, tex.length); i++) {
+          textures[i] = tex[i];
+        }
+      }
     }
     
     boolean equalTo(VertexGroup gr) {

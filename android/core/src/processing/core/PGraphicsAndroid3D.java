@@ -45,18 +45,16 @@ import javax.microedition.khronos.egl.EGLContext;
 import javax.microedition.khronos.egl.EGLDisplay;
 
 import processing.core.PFont.Glyph;
+import processing.core.PGraphics.MultiImage;
 import processing.core.PShape3D.VertexGroup;
 
 // drawPixels is missing...calls to glDrawPixels are commented out
 //   setRasterPos() is also commented out
 
 /*
- * Android 3D renderer implemented with pure OpenGL ES 1.1
+ * Android 3D renderer implemented with OpenGL ES 1.1
  * By Andres Colubri
  *
- * TODO: Comment A3D, PShape3D, PTexture, PFramebuffer, 
- * TODO: Check lighting and materials.
- * TODO: Revise triangulator (issues are particularly apparent when tesselating SVG shapes).
  */
 public class PGraphicsAndroid3D extends PGraphics {
   public SurfaceHolder holder;
@@ -208,7 +206,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   private int[] texCoordArray;
   private int[] normalArray;
   
-  protected PImage textureImagePrev;  
+  protected MultiImage textureImagesPrev = null;  
   protected IntBuffer getsetBuffer;
   protected PTexture getsetTexture;
   protected boolean buffersAllocated = false;
@@ -266,7 +264,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected int faceCount;
   protected int[] faceOffset = new int[64];
   protected int[] faceLength = new int[64];
-  protected PImage[] faceTexture = new PImage[64];
+  protected MultiImage[] faceTexture = new MultiImage[64];
 
   // ........................................................
 
@@ -796,8 +794,9 @@ public class PGraphicsAndroid3D extends PGraphics {
     texCoordBuffer.rewind();
     normalBuffer.rewind();
 
-    textureImage = null;
-    textureImagePrev = null;
+    initTextures();
+    textureImages.clear();
+    textureImagesPrev.clear();
     
     // The default shade model is GL_SMOOTH, but we set
     // here just in case...
@@ -1164,8 +1163,8 @@ public class PGraphicsAndroid3D extends PGraphics {
       triangleCount = 0;
     }
 
-    textureImage = null;
-    textureImagePrev = null;
+    textureImages.clear();
+    textureImagesPrev.clear();
 
     normalMode = AUTO;
   }
@@ -1173,10 +1172,6 @@ public class PGraphicsAndroid3D extends PGraphics {
   // public void edge(boolean e)
   // public void normal(float nx, float ny, float nz)
   // public void textureMode(int mode)
-
-  public void texture(PImage image) {
-    textureImage = image;
-  }
 
   static public int toFixed32(float x) {
     return (int) (x * 65536.0f);
@@ -1710,8 +1705,7 @@ public class PGraphicsAndroid3D extends PGraphics {
             n1 = n0 + pathLength[k];
           }
 
-          VertexGroup group = PShape3D.newVertexGroup(n0, n1, LINE_STRIP, sw,
-              null);
+          VertexGroup group = PShape3D.newVertexGroup(n0, n1, LINE_STRIP, sw, null);
 
           recordedGroups.add(group);
         }
@@ -1811,10 +1805,10 @@ public class PGraphicsAndroid3D extends PGraphics {
     triangles[triangleCount][VERTEX2] = b;
     triangles[triangleCount][VERTEX3] = c;
     
-    PImage tex = verticesTexture[a];
+    MultiImage tex = vertTexImages[a];
    
     boolean firstFace = triangleCount == 0;
-    if (tex != textureImagePrev || firstFace) {
+    if (textureImagesPrev.equals(tex) || firstFace) {
       // A new face starts at the first triangle or when the texture changes.
       addNewFace(firstFace, tex);
     } else {
@@ -1823,20 +1817,29 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
     triangleCount++;
     
-    textureImagePrev = tex;
+    textureImagesPrev.set(tex);
   }
 
   // New "face" starts. A face is just a range of consecutive triangles
-  // with the same texture applied to them (it could be null).
-  protected void addNewFace(boolean firstFace, PImage tex) {
+  // with the same textures applied to them (they could be null).
+  protected void addNewFace(boolean firstFace, MultiImage tex) {
     if (faceCount == faceOffset.length) {
       faceOffset = PApplet.expand(faceOffset);
       faceLength = PApplet.expand(faceLength);
-      faceTexture = PApplet.expand(faceTexture);
+      int l0 = faceTexture.length; 
+      faceTexture = (MultiImage[])PApplet.expand(faceTexture);
+      for (int i = l0; i < faceTexture.length; i++) {
+        faceTexture[i] = null;
+      }
     }
     faceOffset[faceCount] = firstFace ? 0 : triangleCount;
     faceLength[faceCount] = 1;
-    faceTexture[faceCount] = tex;
+    if (faceTexture[faceCount] == null) {
+      faceTexture[faceCount] = newMultiImage(tex);
+    } else {
+      faceTexture[faceCount].set(tex);  
+    }
+    
     faceCount++;
   }
 
@@ -1854,8 +1857,9 @@ public class PGraphicsAndroid3D extends PGraphics {
       
       int i = faceOffset[j];
       
-      if (faceTexture[j] != null) {
-        tex = faceTexture[j].getTexture();        
+      PImage img = faceTexture[j].get(0);
+      if (img != null) {
+        tex = img.getTexture();        
         if (tex != null) {
           gl.glEnable(tex.getGLTarget());
           gl.glBindTexture(tex.getGLTarget(), tex.getGLID());
@@ -1871,7 +1875,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       if (recordingShape) {
         int n0 = recordedVertices.size();
         int n1 = n0 + 3 * faceLength[j] - 1;
-        VertexGroup group = PShape3D.newVertexGroup(n0, n1, TRIANGLES, 0, faceTexture[j]);
+        VertexGroup group = PShape3D.newVertexGroup(n0, n1, TRIANGLES, 0, new PImage[] {img});
         recordedGroups.add(group);
       }
 
@@ -2274,6 +2278,18 @@ public class PGraphicsAndroid3D extends PGraphics {
     texCoordArray = new int[newSize * 2];
     normalArray = new int[newSize * 3];
   }
+  
+  
+  protected void initTextures() {
+    super.initTextures();
+    if (textureImagesPrev == null) {
+      textureImagesPrev = new MultiImage(4);
+      for (int i = 0; i < faceTexture.length; i++) {
+        faceTexture[i] = null;  
+      }
+    }
+  }
+
 
   // ////////////////////////////////////////////////////////////
 
