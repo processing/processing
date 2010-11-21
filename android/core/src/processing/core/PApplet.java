@@ -7030,21 +7030,27 @@ public class PApplet extends Activity implements PConstants, Runnable {
     g.texture(image1);
   }
 
+  
   public void texture(PImage image, int unit) {
+    g.texture(image, unit);
   }
   
-  public void textures(PImage image1, PImage image2) {    
+  
+  public void textures(PImage image0, PImage image1) {
+    g.textures(image0, image1);
   }
   
 
-  public void textures(PImage image1, PImage image2, PImage image3) {    
+  public void textures(PImage image0, PImage image1, PImage image2) {
+    g.textures(image0, image1, image2);
   }
   
 
-  public void textures(PImage image1, PImage image2, PImage image3, PImage image4) {    
+  public void textures(PImage image0, PImage image1, PImage image2, PImage image3) {
+    g.textures(image0, image1, image2, image3);
   }
   
-  
+
   public void noTexture() {
     g.noTexture();
   }
@@ -7070,11 +7076,53 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  public void vertex(float x, float y, float u0, float v0,
+                                       float u1, float v1) {
+    g.vertex(x, y, u0, v0, u1, v1);
+  }
+  
+  
+  public void vertex(float x, float y, float u0, float v0,
+                                       float u1, float v1,
+                                       float u2, float v2) {
+    g.vertex(x, y, u0, v0, u1, v1, u2, v2);
+  }  
+  
+
+  public void vertex(float x, float y, float u0, float v0,
+                                       float u1, float v1,
+                                       float u2, float v2,
+                                       float u3, float v3) {
+    g.vertex(x, y, u0, v0, u1, v1, u2, v2, u3, v3);
+  }   
+  
+  
   public void vertex(float x, float y, float z, float u, float v) {
     g.vertex(x, y, z, u, v);
   }
 
 
+  public void vertex(float x, float y, float z, float u0, float v0,
+                                                float u1, float v1) {
+    g.vertex(x, y, z, u0, v0, u1, v1);
+  }
+
+
+  public void vertex(float x, float y, float z, float u0, float v0,
+                                                float u1, float v1,
+                                                float u2, float v2) {
+    g.vertex(x, y, z, u0, v0, u1, v1, u2, v2);
+  }  
+
+
+  public void vertex(float x, float y, float z, float u0, float v0,
+                                                float u1, float v1,
+                                                float u2, float v2,
+                                                float u3, float v3) {
+    g.vertex(x, y, z, u0, v0, u1, v1, u2, v2, u3, v3);
+  }   
+  
+  
   public void breakShape() {
     g.breakShape();
   }

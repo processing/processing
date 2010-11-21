@@ -189,12 +189,14 @@ public class PPolygon implements PConstants {
   
   
   protected void checkExpand() {
+    /*
     if (smooth) {
       for (int i = 0; i < vertexCount; i++) {
         vertices[i][TX] /= SUBXRES;
         vertices[i][TY] /= SUBYRES;
       }
     }
+    */
   }
   
   
@@ -251,6 +253,7 @@ public class PPolygon implements PConstants {
     }
     */
 
+    /*
     if (smooth) {
       for (int i = 0; i < vertexCount; i++) {
         vertices[i][TX] *= SUBXRES;
@@ -258,7 +261,9 @@ public class PPolygon implements PConstants {
       }
       firstModY = -1;
     }
+    */
 
+    /*
     // find top vertex (y is zero at top, higher downwards)
     int topi = 0;
     float ymin = vertices[0][TY];
@@ -272,7 +277,9 @@ public class PPolygon implements PConstants {
         ymax = vertices[i][TY];
       }
     }
+    */
 
+    /*
     // the last row is an exceptional case, because there won't
     // necessarily be 8 rows of subpixel lines that will force
     // the final line to render. so instead, the algo keeps track
@@ -338,6 +345,9 @@ public class PPolygon implements PConstants {
         increment(r, dr);
       }
     }
+    */
+    
+    
     //if (smooth) {
     //System.out.println("y/lasty/lastmody = " + y + " " + lastY + " " + lastModY);
     //}
@@ -350,12 +360,17 @@ public class PPolygon implements PConstants {
       sp[i] = 0; sdp[i] = 0;
     }
 
+    /*
     // this rounding doesn't seem to be relevant with smooth
     int lx = (int) (l[TX] + 0.49999f);  // ceil(l[TX]-.5);
     if (lx < 0) lx = 0;
     int rx = (int) (r[TX] - 0.5f);
     if (rx > width1) rx = width1;
+    */
 
+    int lx = 0;
+    int rx = width1;
+    
     if (lx > rx) return;
 
     if (smooth) {
@@ -616,6 +631,7 @@ public class PPolygon implements PConstants {
 
   private void incrementalizeY(float p1[], float p2[],
                                float p[], float dp[], int y) {
+    /*
     float delta = p2[TY] - p1[TY];
     if (delta == 0) delta = 1;
     float fraction = y + 0.5f - p1[TY];
@@ -624,7 +640,10 @@ public class PPolygon implements PConstants {
       dp[TX] = (p2[TX] - p1[TX]) / delta;
       p[TX] = p1[TX] + dp[TX] * fraction;
     }
-
+    */
+    float delta = 1;
+    float fraction = y + 0.5f;
+    
     if (interpARGB) {
       dp[R] = (p2[R] - p1[R]) / delta;
       dp[G] = (p2[G] - p1[G]) / delta;
@@ -648,6 +667,7 @@ public class PPolygon implements PConstants {
 
   private void incrementalizeX(float p1[], float p2[],
                                float p[], float dp[], int x) {
+    /*
     float delta = p2[TX] - p1[TX];
     if (delta == 0) delta = 1;
     float fraction = x + 0.5f - p1[TX];
@@ -655,11 +675,16 @@ public class PPolygon implements PConstants {
       delta /= SUBXRES;
       fraction /= SUBXRES;
     }
-
+    */
+    float delta = 1;
+    float fraction = x + 0.5f;
+    
+    /*
     if (interpX) {
       dp[TX] = (p2[TX] - p1[TX]) / delta;
       p[TX] = p1[TX] + dp[TX] * fraction;
     }
+    */
 
     if (interpARGB) {
       dp[R] = (p2[R] - p1[R]) / delta;
@@ -683,7 +708,9 @@ public class PPolygon implements PConstants {
 
 
   private void increment(float p[], float dp[]) {
+    /*
     if (interpX) p[TX] += dp[TX];
+    */
 
     if (interpARGB) {
       p[R] += dp[R];
