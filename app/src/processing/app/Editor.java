@@ -219,7 +219,7 @@ public class Editor extends JFrame implements RunnerListener {
       splitPane.setDividerSize(dividerSize);
     }
 
-//    splitPane.setMinimumSize(new Dimension(600, 400));
+    splitPane.setMinimumSize(new Dimension(600, 400));
     box.add(splitPane);
 
     // hopefully these are no longer needed w/ swing
