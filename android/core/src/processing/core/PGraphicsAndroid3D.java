@@ -484,24 +484,20 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
 
     if (!buffersAllocated) {
-      ByteBuffer vbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 3
-          * SIZEOF_INT);
+      ByteBuffer vbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 3 * SIZEOF_INT);
       vbb.order(ByteOrder.nativeOrder());
       vertexBuffer = vbb.asIntBuffer();
 
-      ByteBuffer cbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 4
-          * SIZEOF_INT);
+      ByteBuffer cbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 4 * SIZEOF_INT);
       cbb.order(ByteOrder.nativeOrder());
       colorBuffer = cbb.asIntBuffer();
 
-      ByteBuffer nbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 3
-          * SIZEOF_INT);
+      ByteBuffer nbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 3 * SIZEOF_INT);
       nbb.order(ByteOrder.nativeOrder());
       normalBuffer = nbb.asIntBuffer();
 
       texCoordBuffer = new IntBuffer[MAX_TEXTURES];
-      ByteBuffer tbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 2
-          * SIZEOF_INT);
+      ByteBuffer tbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 2 * SIZEOF_INT);
       tbb.order(ByteOrder.nativeOrder());
       texCoordBuffer[0] = tbb.asIntBuffer();
             
@@ -1414,7 +1410,15 @@ public class PGraphicsAndroid3D extends PGraphics {
     }    
   }  
   
-  protected void addTextureBuffers() {
+  protected void addTextureBuffers(int more) {
+    int n0 = numTexBuffers - 1;
+    int size = texCoordBuffer[n0].capacity();
+    for (int i = 0; i < more; i++) {
+      ByteBuffer tbb = ByteBuffer.allocateDirect(size * SIZEOF_INT);
+      tbb.order(ByteOrder.nativeOrder());
+      texCoordBuffer[n0 + i] = tbb.asIntBuffer();    
+    }
+    numTexBuffers += more;
     
   }
 
@@ -2138,7 +2142,7 @@ public class PGraphicsAndroid3D extends PGraphics {
 
       if (0 < numTextures) {
         if (numTexBuffers < numTextures) {
-          addTextureBuffers();
+          addTextureBuffers(numTextures - numTexBuffers);
         }        
         gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
       }
