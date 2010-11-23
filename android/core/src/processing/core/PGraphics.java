@@ -396,9 +396,6 @@ public class PGraphics extends PImage implements PConstants {
   protected float vertices[][] =
     new float[DEFAULT_VERTICES][VERTEX_FIELD_COUNT];
   protected int vertexCount; // total number of vertices
-  
-  // This array allows to assign a set of different (multi)textures for each vertex.
-  protected MultiImage[] vertTexImages;
 
   // ........................................................
 
@@ -504,13 +501,13 @@ public class PGraphics extends PImage implements PConstants {
    * Current horizontal coordinate for texture, will always
    * be between 0 and 1, even if using textureMode(IMAGE).
    */
-  public float[] textureU = {0, 0, 0, 0};
+  public float textureU;
 
   /** Current vertical coordinate for texture, see above. */
-  public float[] textureV = {0, 0, 0, 0};
+  public float textureV;
 
-  /** Current images being used as a (multi)textures */
-  public MultiImage textureImages = null;
+  /** Current image being used as a texture */
+  public PImage textureImage = null;
 
   // ........................................................
 
@@ -583,8 +580,6 @@ public class PGraphics extends PImage implements PConstants {
     width1 = width - 1;
     height1 = height - 1;
 
-    
-    initTextures();
     allocate();
     reapplySettings();
   }
@@ -906,36 +901,8 @@ public class PGraphics extends PImage implements PConstants {
    * @param image reference to a PImage object
    */
   public void texture(PImage image) {
-    textureImages.set(0, image);
+    textureImage = image;
   }
-
-  
-  public void texture(PImage image, int unit) {
-    if (0 <= unit && unit < textureImages.size()) {
-      textureImages.set(unit, image);
-    }
-  }  
-  
-  
-  public void textures(PImage image0, PImage image1) {
-    textureImages.set(0, image0);
-    textureImages.set(1, image1);
-  }
-
-
-  public void textures(PImage image0, PImage image1, PImage image2) {
-    textureImages.set(0, image0);
-    textureImages.set(1, image1);
-    textureImages.set(2, image2);
-  }
-  
-  
-  public void textures(PImage image0, PImage image1, PImage image2, PImage image3) {
-    textureImages.set(0, image0);
-    textureImages.set(1, image1);
-    textureImages.set(2, image2);
-    textureImages.set(2, image3);
-  }  
   
   
   /**
@@ -944,42 +911,15 @@ public class PGraphics extends PImage implements PConstants {
    *
    */
   public void noTexture() {
-    textureImages.clear();
+    textureImage = null;
   }
   
-  
-  protected void initTextures() {
-    if (textureImages == null) {
-      textureImages = new MultiImage(4);
-      vertTexImages = new MultiImage[DEFAULT_VERTICES];
-      for (int i = 0; i < vertTexImages.length; i++) {
-        vertTexImages[i] = null;
-      }
-    }
-  }
-
-  
-  protected void setVertTexImages(int n) {
-    if (vertTexImages[n] == null) {
-      vertTexImages[n] = newMultiImage(textureImages);
-    } else {
-      vertTexImages[n].set(textureImages);
-    }
-  }
-  
-  
+    
   protected void vertexCheck() {
     if (vertexCount == vertices.length) {
       float temp[][] = new float[vertexCount << 1][VERTEX_FIELD_COUNT];
       System.arraycopy(vertices, 0, temp, 0, vertexCount);
       vertices = temp;
-      
-      MultiImage[] texTemp = new MultiImage[vertexCount << 1];
-      System.arraycopy(vertTexImages, 0, texTemp, 0, vertexCount);
-      for (int i = vertexCount >> 1; i < vertexCount; i++) {
-        texTemp[i] = null;
-      }       
-      vertTexImages = texTemp;
     }
   }
 
@@ -1010,15 +950,9 @@ public class PGraphics extends PImage implements PConstants {
       vertex[SA] = strokeA;
       vertex[SW] = strokeWeight;
     }
-
-    for (int i = 0; i < textureImages.size(); i++) {
-      if (textureImages.get(i) != null) {
-        vertex[U0 + i] = textureU[i];
-        vertex[V0 + i] = textureV[i];
-      }   
-    }
-
-    setVertTexImages(vertexCount);
+    
+    vertex[U] = textureU;
+    vertex[V] = textureV;
         
     vertexCount++;
   }
@@ -1056,7 +990,8 @@ public class PGraphics extends PImage implements PConstants {
 
     vertex[EDGE] = edge ? 1 : 0;
 
-    boolean textured = textureImages.hasImages();
+    //boolean textured = textureImages.hasImages();
+    boolean textured = false;
     if (fill || textured) {
       if (textured) {
         vertex[R] = fillR;
@@ -1102,14 +1037,10 @@ public class PGraphics extends PImage implements PConstants {
       vertex[SA] = strokeA;
       vertex[SW] = strokeWeight;
     }
-
-    for (int i = 0; i < textureImages.size(); i++) {
-      if (textureImages.get(i) != null) {
-        vertex[U0 + i] = textureU[i];
-        vertex[V0 + i] = textureV[i];
-      }   
-    }
-
+    
+    vertex[U] = textureU;
+    vertex[V] = textureV;
+    
     float norm2 = normalX * normalX + normalY * normalY + normalZ * normalZ;
     if (norm2 < EPSILON) {
       vertex[HAS_NORMAL] = 0;  
@@ -1127,8 +1058,6 @@ public class PGraphics extends PImage implements PConstants {
     vertex[NX] = normalX;
     vertex[NY] = normalY;
     vertex[NZ] = normalZ;
-
-    setVertTexImages(vertexCount);
     
     vertexCount++;
   }
@@ -1144,82 +1073,21 @@ public class PGraphics extends PImage implements PConstants {
     curveVertexCount = 0;
     float[] vertex = vertices[vertexCount];
     System.arraycopy(v, 0, vertex, 0, VERTEX_FIELD_COUNT);
-    setVertTexImages(vertexCount);
     vertexCount++;
   }
 
 
   public void vertex(float x, float y, float u, float v) {
-    vertexTexture(u, v, 0);
+    vertexTexture(u, v);
     vertex(x, y);
   }
-
-  
-  public void vertex(float x, float y, float u0, float v0, 
-                                       float u1, float v1) {
-    vertexTexture(u0, v0, 0);
-    vertexTexture(u1, v1, 1);
-    vertex(x, y);
-  }  
-  
-  
-  public void vertex(float x, float y, float u0, float v0, 
-                                       float u1, float v1,
-                                       float u2, float v2) {
-    vertexTexture(u0, v0, 0);
-    vertexTexture(u1, v1, 1);
-    vertexTexture(v2, v2, 2);    
-    vertex(x, y);
-  }   
-  
-
-  public void vertex(float x, float y, float u0, float v0, 
-                                       float u1, float v1, 
-                                       float u2, float v2,
-                                       float u3, float v3) {
-    vertexTexture(u0, v0, 0);
-    vertexTexture(u1, v1, 1);
-    vertexTexture(v2, v2, 2);
-    vertexTexture(v3, v3, 3);
-    vertex(x, y);
-  }    
   
   
   public void vertex(float x, float y, float z, float u, float v) {
-    vertexTexture(u, v, 0);
+    vertexTexture(u, v);
     vertex(x, y, z);
   }
 
-  
-  public void vertex(float x, float y, float z, float u0, float v0,
-                                                float u1, float v1) {
-    vertexTexture(u0, v0, 0);
-    vertexTexture(u1, v1, 0);
-    vertex(x, y, z);
-  }  
-  
-
-  public void vertex(float x, float y, float z, float u0, float v0,
-                                                float u1, float v1,
-                                                float u2, float v2) {
-    vertexTexture(u0, v0, 0);
-    vertexTexture(u1, v1, 0);
-    vertexTexture(u2, v2, 0);
-    vertex(x, y, z);
-  }  
-  
-
-  public void vertex(float x, float y, float z, float u0, float v0,
-                                                float u1, float v1,
-                                                float u2, float v2,
-                                                float u3, float v3) {
-    vertexTexture(u0, v0, 0);
-    vertexTexture(u1, v1, 0);
-    vertexTexture(u2, v2, 0);
-    vertexTexture(u3, v3, 0);
-    vertex(x, y, z);
-  }
-  
   
   /**
    * Internal method to copy all style information for the given vertex.
@@ -1244,25 +1112,24 @@ public class PGraphics extends PImage implements PConstants {
    * <p/>
    * Used by both PGraphics2D (for images) and PGraphics3D.
    */
-  protected void vertexTexture(float u, float v, int i) {
-    PImage img = textureImages.get(i);
-    if (img == null) {
+  protected void vertexTexture(float u, float v) {
+    if (textureImage == null) {
       throw new RuntimeException("You must first call texture() before " +
                                  "using u and v coordinates with vertex()");
     }
     if (textureMode == IMAGE) {
-      u /= (float) img.width;
-      v /= (float) img.height;
+      u /= (float) textureImage.width;
+      v /= (float) textureImage.height;
     }
 
-    textureU[i] = u;
-    textureV[i] = v;
+    textureU = u;
+    textureV = v;
 
-    if (textureU[i] < 0) textureU[i] = 0;
-    else if (textureU[i] > 1) textureU[i] = 1;
+    if (textureU < 0) textureU = 0;
+    else if (textureU > 1) textureU = 1;
 
-    if (textureV[i] < 0) textureV[i] = 0;
-    else if (textureV[i] > 1) textureV[i] = 1;
+    if (textureV < 0) textureV = 0;
+    else if (textureV > 1) textureV = 1;
   }
 
 
@@ -5217,79 +5084,19 @@ public class PGraphics extends PImage implements PConstants {
     if (!is3D()) {
       showMissingWarning("noBlend");
     }
-  }  
- 
-  protected MultiImage newMultiImage() {
-    return new MultiImage();
   }
   
-  protected MultiImage newMultiImage(int n) {
-    return new MultiImage(n);
-  }  
   
-  protected MultiImage newMultiImage(MultiImage mimg0) {
-    MultiImage mimg;
-    mimg = new MultiImage(mimg0.size());
-    mimg.set(mimg0);
-    return mimg;
+  public void multitextureBlend(int mode) {
+    if (!is3D()) {
+      showMissingWarning("multitextureBlend");
+    }
   }
   
-  protected class MultiImage {
-    PImage[] images;
-    
-    MultiImage() {
-      this(4);
-    }
-    
-    MultiImage(int n) {
-      images = new PImage[n];
-    }
-    
-    int size() {
-      return images.length;
-    }
-    
-    boolean hasImages() {
-      for (int i = 0; i < images.length; i++) {
-        if (images[i] != null) {
-          return true;
-        }
-      }      
-      return false;
-    }
-    
-    void clear() {
-      for (int i = 0; i < images.length; i++) {
-        images[i] = null;  
-      }
-    }
-    
-    boolean equals(MultiImage mimg) {
-      int n = PApplet.min(mimg.images.length, images.length);
-      for (int i = 0; i < n; i++) {
-        if (mimg.images[i] != images[i]) {
-          return false;
-        }
-      }
-      return true;  
-    }
-    
-    PImage get(int i) {
-      return images[i];
-    }
-    
-    void set(MultiImage mimg) {
-      int n = PApplet.min(mimg.images.length, images.length);
-      for (int i = 0; i < n; i++) {
-        images[i] = mimg.images[i];  
-      }      
-    }
-    
-    void set(int i, PImage img) {
-      if (0 <= i && i < images.length) {
-        images[i] = img;
-      }                
+  
+  public void setMultitexture(int unit) {
+    if (!is3D()) {
+      showMissingWarning("setMultitexture");
     }    
   }
-  
 }
