@@ -47,15 +47,15 @@ public class PShape3D extends PShape implements PConstants {
   protected PGraphicsAndroid3D a3d;
   
   protected int numVertices;
-  protected int numTexUnits;
+  protected int numTextures;
   protected int glMode;
   protected int glUsage;
   protected boolean pointSprites;
   
-  protected int[] glVertexBufferID   = { 0 };
-  protected int[] glColorBufferID    = { 0 };
-  protected int[] glNormalBufferID   = { 0 };
-  protected int[] glTexCoordBufferID = { 0, 0, 0, 0};  
+  protected int[] glVertexBufferID   = new int[1];
+  protected int[] glColorBufferID    = new int[1];
+  protected int[] glNormalBufferID   = new int[1];
+  protected int[] glTexCoordBufferID = new int[PGraphicsAndroid3D.MAX_TEXTURES];
 
   protected FloatBuffer vertexBuffer;
   protected FloatBuffer colorBuffer;
@@ -86,11 +86,13 @@ public class PShape3D extends PShape implements PConstants {
   
   protected float ptDistAtt[] = { 1.0f, 0.0f, 0.01f, 1.0f };
   
-  protected boolean[] texCoordSet = { false, false, false, false };
+  protected boolean[] texCoordSet = new boolean[PGraphicsAndroid3D.MAX_TEXTURES];
   protected boolean vertexColor = true;
 
-  protected static final int SIZEOF_FLOAT = Float.SIZE / 8;
+  protected int TEXTURESMAX;
   
+  protected static final int SIZEOF_FLOAT = Float.SIZE / 8;
+
   
   ////////////////////////////////////////////////////////////
 
@@ -99,6 +101,8 @@ public class PShape3D extends PShape implements PConstants {
   public PShape3D(PApplet parent) {
     this.parent = parent;
     a3d = (PGraphicsAndroid3D)parent.g;
+  
+    TEXTURESMAX = TEXTURES0 + PGraphicsAndroid3D.maxTextureUnits;
     
     try {
       Method meth = this.getClass().getMethod("recreateResource", new Class[] { PGraphicsAndroid3D.class });
@@ -115,6 +119,8 @@ public class PShape3D extends PShape implements PConstants {
   public PShape3D(PApplet parent, String filename, int mode) {
     this.parent = parent;
     a3d = (PGraphicsAndroid3D)parent.g;
+    
+    TEXTURESMAX = TEXTURES0 + PGraphicsAndroid3D.maxTextureUnits;
     
     // Checking we have all we need:
     gl = a3d.gl11;
@@ -156,6 +162,8 @@ public class PShape3D extends PShape implements PConstants {
     this.parent = parent;
     a3d = (PGraphicsAndroid3D)parent.g;
     
+    TEXTURESMAX = TEXTURES0 + PGraphicsAndroid3D.maxTextureUnits;
+    
     initShape(numVert, params);
     
     try {
@@ -181,38 +189,16 @@ public class PShape3D extends PShape implements PConstants {
   
   // Textures
   
-  public void setTexture(PImage tex1) {
+  public void setTexture(PImage tex) {
     for (int gr = 0; gr < groups.size(); gr++) {
-      setGroupTextureImpl(gr, tex1, 0);
+      setGroupTextureImpl(gr, tex, 0);
     }
-  }
+  }  
 
   
   public void setTexture(PImage tex, int unit) {
-    int n = unit - TEXTURES0;
     for (int gr = 0; gr < groups.size(); gr++) {
-      setGroupTextureImpl(gr, tex, n);
-    }
-  }  
-  
-  
-  public void setTextures(PImage tex0, PImage tex1) {
-    for (int gr = 0; gr < groups.size(); gr++) {
-      setGroupTextureArrayImpl(gr, new PImage[] {tex0, tex1});
-    }
-  }
-
-  
-  public void setTextures(PImage tex0, PImage tex1, PImage tex2) {
-    for (int gr = 0; gr < groups.size(); gr++) {
-      setGroupTextureArrayImpl(gr, new PImage[] {tex0, tex1, tex0});
-    }
-  }  
-  
-
-  public void setTextures(PImage tex0, PImage tex1, PImage tex2, PImage tex3) {
-    for (int gr = 0; gr < groups.size(); gr++) {
-      setGroupTextureArrayImpl(gr, new PImage[] {tex0, tex1, tex2, tex3});
+      setGroupTextureImpl(gr, tex, unit);
     }
   }  
 
@@ -274,18 +260,18 @@ public class PShape3D extends PShape implements PConstants {
       normalBuffer.limit(normalBuffer.capacity());      
       normalBuffer.rewind();      
       normalBuffer.get(normalArray, offset, size);
-    } else if (TEXTURES0 <= updateElement && updateElement <= TEXTURES3) {      
-      int n = updateElement - TEXTURES0;
+    } else if (TEXTURES0 <= updateElement && updateElement < TEXTURESMAX)  {      
+      int t = updateElement - TEXTURES0;
             
       // Adding needed textures.
-      for (int i = 0; i < n - numTexUnits; i++) {
+      for (int i = 0; i < t - numTextures; i++) {
         boolean res = addTexUnit();
         if (!res) {
           return;
         }
       }
       
-      gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glTexCoordBufferID[n]);
+      gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glTexCoordBufferID[t]);
           
       int offset = first * 2;
       int size = (last - first + 1) * 2;
@@ -345,7 +331,7 @@ public class PShape3D extends PShape implements PConstants {
     
       gl.glBufferSubData(GL11.GL_ARRAY_BUFFER, offset * SIZEOF_FLOAT, size * SIZEOF_FLOAT, normalBuffer);
       gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
-    } else if (TEXTURES0 <= updateElement && updateElement <= TEXTURES3) {
+    } else if (TEXTURES0 <= updateElement && updateElement < TEXTURESMAX) {
       int offset = firstUpdateIdx * 2;
       int size = (lastUpdateIdx - firstUpdateIdx + 1) * 2;
       
@@ -356,8 +342,8 @@ public class PShape3D extends PShape implements PConstants {
       gl.glBufferSubData(GL11.GL_ARRAY_BUFFER, offset * SIZEOF_FLOAT, size * SIZEOF_FLOAT, texCoordBuffer);
       gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
       
-      int n = updateElement - TEXTURES0;
-      texCoordSet[n] = true;
+      int t = updateElement - TEXTURES0;
+      texCoordSet[t] = true;
     } else if (updateElement == GROUPS) {
       // TODO: check consistency of newly created groups (make sure that there are not overlapping groups)      
     }
@@ -375,7 +361,7 @@ public class PShape3D extends PShape implements PConstants {
     return numVertices;
   }
   
-//  public PVector getVertex(int idx) {
+
   public float[] getVertex(int idx) {
     if (updateElement != VERTICES) {
       throw new RuntimeException("PShape3D: update mode is not set to VERTICES");
@@ -385,8 +371,6 @@ public class PShape3D extends PShape implements PConstants {
     float y = vertexArray[3 * idx + 1];
     float z = vertexArray[3 * idx + 2];
     
-//    PVector res = new PVector(x, y, z);
-//    return res;
     return new float[] { x, y, z };
   }
 
@@ -405,7 +389,7 @@ public class PShape3D extends PShape implements PConstants {
   
   protected float[] getVertexArrayImpl(float[] data, int firstUpd, int length, int firstData) {
     PApplet.arrayCopy(vertexArray, firstUpd * 3, data, firstData * 3,  length * 3);
-    return  data;
+    return data;
   }
 
 
@@ -476,11 +460,12 @@ public class PShape3D extends PShape implements PConstants {
       grIdx1 = numVertices - 1;
     }
     
+    // TODO: extract minimum and maximum values using some sorting algorithm. 
     for (int i = 0; i < numVertices; i++) {
       updateBounds(data[3 * i + 0], data[3 * i + 1], data[3 * i + 2]);      
     }
     
-    PApplet.arrayCopy(data, vertexArray);
+    PApplet.arrayCopy(data, 0, vertexArray, 0, numVertices * 3);
   }
   
   
@@ -580,7 +565,7 @@ public class PShape3D extends PShape implements PConstants {
 
   protected float[] getColorArrayImpl(float[] data, int firstUpd, int length, int firstData) {
     PApplet.arrayCopy(colorArray, firstUpd * 4, data, firstData * 4,  length * 4);
-    return  data;
+    return data;
   }
     
   
@@ -662,7 +647,7 @@ public class PShape3D extends PShape implements PConstants {
     
     firstUpdateIdx = 0;
     firstUpdateIdx = numVertices - 1;   
-    PApplet.arrayCopy(data, colorArray);
+    PApplet.arrayCopy(data, 0, colorArray, 0, numVertices * 4);
   }
   
   
@@ -723,7 +708,7 @@ public class PShape3D extends PShape implements PConstants {
 
   protected float[] getNormalArrayImpl(float[] data, int firstUpd, int length, int firstData) {
     PApplet.arrayCopy(normalArray, firstUpd * 3, data, firstData * 3, length * 3);
-    return  data;
+    return data;
   }
   
   
@@ -767,7 +752,7 @@ public class PShape3D extends PShape implements PConstants {
     
     firstUpdateIdx = 0;
     firstUpdateIdx = numVertices - 1;    
-    PApplet.arrayCopy(data, normalArray);
+    PApplet.arrayCopy(data, 0, normalArray, 0, numVertices * 3);
   }
   
   
@@ -795,16 +780,16 @@ public class PShape3D extends PShape implements PConstants {
   
   
   public PVector getTexCoord(int idx) {
-    if (updateElement < TEXTURES0 || TEXTURES3 < updateElement) {
+    if (TEXTURES0 <= updateElement && updateElement < TEXTURESMAX) {
       throw new RuntimeException("PShape3D: update mode is not set to TEXTURES");
     }
-    int n = updateElement - TEXTURES0;
+    int t = updateElement - TEXTURES0;
 
     float u = texCoordArray[2 * idx + 0];
     float v = texCoordArray[2 * idx + 1];
     
-    if (vertGroup[idx] != null && vertGroup[idx].textures[n] != null) { 
-      PTexture tex = vertGroup[idx].textures[n].getTexture();
+    if (vertGroup[idx] != null && vertGroup[idx].textures[t] != null) { 
+      PTexture tex = vertGroup[idx].textures[t].getTexture();
       
       float uscale = 1.0f;
       float vscale = 1.0f;
@@ -827,8 +812,8 @@ public class PShape3D extends PShape implements PConstants {
       u = (u / uscale - cx) / sx;
       v = (v / vscale - cy) / sy;
       if (a3d.imageMode == IMAGE) {
-        u *= vertGroup[idx].textures[n].width;
-        v *= vertGroup[idx].textures[n].height;
+        u *= tex.width;
+        v *= tex.height;
       }
     }
     
@@ -838,10 +823,10 @@ public class PShape3D extends PShape implements PConstants {
   
   
   public float[] getTexCoordArray() {
-    if (updateElement < TEXTURES0 || TEXTURES3 < updateElement) {
+    if (TEXTURES0 <= updateElement && updateElement < TEXTURESMAX) {
       throw new RuntimeException("PShape3D: update mode is not set to TEXTURES");
     }
-    int n = updateElement - TEXTURES0;    
+    int t = updateElement - TEXTURES0;    
     
     float[] res = new float[numVertices * 2];
     getTexCoordArrayImpl(res, 0, numVertices, 0);
@@ -852,7 +837,7 @@ public class PShape3D extends PShape implements PConstants {
     // which is not needed if there are no textures assigned to the shape.
     boolean textured = false;
     for (int i = 0; i < vertGroup.length; i++) {
-      if (vertGroup[i].textures[n] != null) {
+      if (vertGroup[i].textures[t] != null) {
         textured = true;
         break;
       }
@@ -873,8 +858,8 @@ public class PShape3D extends PShape implements PConstants {
     int h = 1;
     float u, v;
     for (int i = 0; i < numVertices; i++) {
-      if (vertGroup[i] != null && vertGroup[i].textures[n] != img) {
-        PTexture tex = vertGroup[i].textures[n].getTexture();
+      if (vertGroup[i] != null && vertGroup[i].textures[t] != img) {
+        PTexture tex = vertGroup[i].textures[t].getTexture();
       
         uscale = 1.0f;
         vscale = 1.0f;
@@ -893,9 +878,9 @@ public class PShape3D extends PShape implements PConstants {
         uscale *= tex.getMaxTexCoordU();
         vscale *= tex.getMaxTexCoordV();
         
-        w = vertGroup[i].textures[n].width;
-        h = vertGroup[i].textures[n].height;
-        img = vertGroup[i].textures[n];
+        w = tex.width;
+        h = tex.height;
+        img = vertGroup[i].textures[t];
       }
     
       // Inverting the texture coordinate transformation.
@@ -921,7 +906,7 @@ public class PShape3D extends PShape implements PConstants {
 
   
   public ArrayList<PVector> getTexCoordArrayList() {
-    if (updateElement < TEXTURES0 || TEXTURES3 < updateElement) {
+    if (TEXTURES0 <= updateElement && updateElement < TEXTURESMAX) {
       throw new RuntimeException("PShape3D: update mode is not set to TEXTURES");
     }
 
@@ -935,17 +920,17 @@ public class PShape3D extends PShape implements PConstants {
   
   
   public void setTexCoord(int idx, float u, float v) {
-    if (updateElement < TEXTURES0 || TEXTURES3 < updateElement) {
+    if (TEXTURES0 <= updateElement && updateElement < TEXTURESMAX) {
       throw new RuntimeException("PShape3D: update mode is not set to TEXTURES");
     }
-    int n = updateElement - TEXTURES0;
+    int t = updateElement - TEXTURES0;
     
     if (idx < firstUpdateIdx) firstUpdateIdx = idx;
     if (lastUpdateIdx < idx) lastUpdateIdx = idx;
     
-    if (vertGroup[idx] != null && vertGroup[idx].textures[n] != null) {
+    if (vertGroup[idx] != null && vertGroup[idx].textures[t] != null) {
       // Inverting the texture coordinate transformation. 
-      PTexture tex = vertGroup[idx].textures[n].getTexture();
+      PTexture tex = vertGroup[idx].textures[t].getTexture();
       
       float uscale = 1.0f;
       float vscale = 1.0f;
@@ -953,8 +938,8 @@ public class PShape3D extends PShape implements PConstants {
       float sx = +1.0f;
       float cy = 0.0f;
       float sy = +1.0f;
-      int w = vertGroup[idx].textures[n].width;
-      int h = vertGroup[idx].textures[n].height;      
+      int w = tex.width;
+      int h = tex.height;      
       if (tex.isFlippedX()) {
         cx = 1.0f;      
         sx = -1.0f;
@@ -988,10 +973,10 @@ public class PShape3D extends PShape implements PConstants {
 
   
   public void setTexCoord(float[] data) {
-    if (updateElement < TEXTURES0 || TEXTURES3 < updateElement) {
+    if (TEXTURES0 <= updateElement && updateElement < TEXTURESMAX) {
       throw new RuntimeException("PShape3D: update mode is not set to TEXTURES");
     }
-    int n = updateElement - TEXTURES0;
+    int t = updateElement - TEXTURES0;
     
     firstUpdateIdx = 0;
     firstUpdateIdx = numVertices - 1;
@@ -1000,7 +985,7 @@ public class PShape3D extends PShape implements PConstants {
     // which is not needed if there are no textures assigned to the shape.
     boolean textured = false;
     for (int i = 0; i < vertGroup.length; i++) {
-      if (vertGroup[i].textures != null) {
+      if (vertGroup[i].textures[t] != null) {
         textured = true;
         break;
       }
@@ -1021,8 +1006,8 @@ public class PShape3D extends PShape implements PConstants {
     int h = 1;       
     float u, v;    
     for (int i = 0; i < numVertices; i++) {
-      if (vertGroup[i] != null && vertGroup[i].textures[n] != img) {
-        PTexture tex = vertGroup[i].textures[n].getTexture();
+      if (vertGroup[i] != null && vertGroup[i].textures[t] != img) {
+        PTexture tex = vertGroup[i].textures[t].getTexture();
       
         uscale = 1.0f;
         vscale = 1.0f;
@@ -1030,8 +1015,8 @@ public class PShape3D extends PShape implements PConstants {
         sx = +1.0f;
         cy = 0.0f;
         sy = +1.0f;
-        w = vertGroup[i].textures[n].width;
-        h = vertGroup[i].textures[n].height;       
+        w = tex.width;
+        h = tex.height;       
         if (tex.isFlippedX()) {
           cx = 1.0f;      
           sx = -1.0f;
@@ -1042,8 +1027,7 @@ public class PShape3D extends PShape implements PConstants {
         }        
         uscale *= tex.getMaxTexCoordU();
         vscale *= tex.getMaxTexCoordV();
-        
-        img = vertGroup[i].textures[n];
+        img = vertGroup[i].textures[t];
       }
       
       // Texture coordinate transformation.
@@ -1067,19 +1051,19 @@ public class PShape3D extends PShape implements PConstants {
   
   
   public void setTexCoord(ArrayList<PVector> data) {
-    if (updateElement < TEXTURES0 || TEXTURES3 < updateElement) {
+    if (TEXTURES0 <= updateElement && updateElement < TEXTURESMAX) {
       throw new RuntimeException("PShape3D: update mode is not set to TEXTURES");
     }
-    int n = updateElement - TEXTURES0;
+    int t = updateElement - TEXTURES0;
 
     firstUpdateIdx = 0;
     lastUpdateIdx = numVertices - 1;
 
     // The transformation of texture coordinates require looping through all the vertices,
-    // which is not needed if there are no texures assigned to the shape.
+    // which is not needed if there are no textures assigned to the shape.
     boolean textured = false;
     for (int i = 0; i < vertGroup.length; i++) {
-      if (vertGroup[i].textures != null) {
+      if (vertGroup[i].textures[t] != null) {
         textured = true;
         break;
       }
@@ -1097,8 +1081,8 @@ public class PShape3D extends PShape implements PConstants {
     float u, v;
     PVector vec;
     for (int i = 0; i < numVertices; i++) {
-      if (vertGroup[i] != null && vertGroup[i].textures[n] != img) {
-        PTexture tex = vertGroup[i].textures[n].getTexture();
+      if (vertGroup[i] != null && vertGroup[i].textures[t] != img) {
+        PTexture tex = vertGroup[i].textures[t].getTexture();
       
         uscale = 1.0f;
         vscale = 1.0f;
@@ -1106,8 +1090,8 @@ public class PShape3D extends PShape implements PConstants {
         sx = +1.0f;
         cy = 0.0f;
         sy = +1.0f;
-        w = vertGroup[i].textures[n].width;
-        h = vertGroup[i].textures[n].height;       
+        w = tex.width;
+        h = tex.height;       
         if (tex.isFlippedX()) {
           cx = 1.0f;      
           sx = -1.0f;
@@ -1119,7 +1103,7 @@ public class PShape3D extends PShape implements PConstants {
         uscale *= tex.getMaxTexCoordU();
         vscale *= tex.getMaxTexCoordV();
         
-        img = vertGroup[i].textures[n];
+        img = vertGroup[i].textures[t];
       }    
     
       vec = (PVector)data.get(i);
@@ -1230,6 +1214,7 @@ public class PShape3D extends PShape implements PConstants {
   public void setGroups(ArrayList<VertexGroup> list) {
     groups = new ArrayList<VertexGroup>(list);
   }
+
   
   public int getNumGroups() {
     return groups.size();
@@ -1246,46 +1231,46 @@ public class PShape3D extends PShape implements PConstants {
   }
 
 
-  public void setGroupTexture(int gr, PImage tex1) {
-    setGroupTextureImpl(gr, tex1, 0);
+  public void setGroupTexture(int gr, PImage tex) {
+    setGroupTextureImpl(gr, tex, 0);
   }
 
   
   public void setGroupTexture(int gr, PImage tex, int unit) {
-    int n = unit - TEXTURES0;
-    setGroupTextureImpl(gr, tex, n);
+    setGroupTextureImpl(gr, tex, unit);
   }  
     
   
   public void setGroupTextures(int gr, PImage tex0, PImage tex1) {
-    setGroupTextureArrayImpl(gr, new PImage[] {tex0, tex1});
+    setGroupTextures(gr, new PImage[] {tex0, tex1});
   }  
   
   
   public void setGroupTextures(int gr, PImage tex0, PImage tex1, PImage tex2) {
-    setGroupTextureArrayImpl(gr, new PImage[] {tex0, tex1, tex2});
+    setGroupTextures(gr, new PImage[] {tex0, tex1, tex2});
   }    
   
   
   public void setGroupTextures(int gr, PImage tex0, PImage tex1, PImage tex2, PImage tex3) {
-    setGroupTextureArrayImpl(gr, new PImage[] {tex0, tex1, tex2, tex3});
+    setGroupTextures(gr, new PImage[] {tex0, tex1, tex2, tex3});
   }    
   
   
-  protected void setGroupTextureArrayImpl(int gr, PImage[] textures) {
+  protected void setGroupTextures(int gr, PImage[] textures) {
     for (int n = 0; n < textures.length; n++) {
       setGroupTextureImpl(gr, textures[n], n);
     }
   }
   
   
-  protected void setGroupTextureImpl(int gr, PImage tex, int idx) {
-    if (idx < 0 || PGraphicsAndroid3D.maxTextureUnits <= idx) {
-      PGraphics.showWarning("PShape3D: Wrong texture index.");
+  protected void setGroupTextureImpl(int gr, PImage tex, int unit) {
+    if (unit < 0 || PGraphicsAndroid3D.maxTextureUnits <= unit) {
+      System.err.println("PShape3D: Wrong texture index.");
+      return;
     }
     
     // Adding needed textures.
-    for (int i = 0; i < idx - numTexUnits; i++) {
+    for (int i = 0; i < unit - numTextures; i++) {
       boolean res = addTexUnit();
       if (!res) {
         return;
@@ -1297,7 +1282,7 @@ public class PShape3D extends PShape implements PConstants {
     } 
     
     VertexGroup group = (VertexGroup)groups.get(gr);
-    if  (updateElement == -1 && texCoordSet[idx]) {
+    if  (updateElement == -1 && texCoordSet[unit]) {
       // Ok, setting a new texture for group, when texture coordinates have
       // already been set. What is the problem? the new texture might have different
       // width, height, flippingX/Y values, so the texture coordinates need
@@ -1306,16 +1291,16 @@ public class PShape3D extends PShape implements PConstants {
       // why the updateElement == -1 condition.
       
       PTexture tex0;
-      if (group.textures[idx] == null) {
+      if (group.textures[unit] == null) {
         tex0 = null;
       } else {
-        tex0 = group.textures[idx].getTexture();  
+        tex0 = group.textures[unit].getTexture();  
       }
       PTexture tex1 = tex.getTexture(); 
 
       boolean diff = tex0 == null ||
-        tex.width != group.textures[idx].width ||
-        tex.height != group.textures[idx].height ||
+        tex.width != group.textures[unit].width ||
+        tex.height != group.textures[unit].height ||
         tex1.flippedX != tex0.flippedX ||
         tex1.flippedY != tex0.flippedY ||
         tex1.maxTexCoordU != tex0.maxTexCoordU ||
@@ -1330,7 +1315,7 @@ public class PShape3D extends PShape implements PConstants {
         float sy = +1.0f;        
         float u, v;
 
-        beginUpdateImpl(TEXTURES0 + idx, group.first, group.last);
+        beginUpdateImpl(TEXTURES0 + unit, group.first, group.last);
         firstUpdateIdx = group.first;
         lastUpdateIdx = group.last;    
         for (int i = group.first; i <= group.last; i++) {
@@ -1354,8 +1339,8 @@ public class PShape3D extends PShape implements PConstants {
             u = (u / uscale - cx) / sx;
             v = (v / vscale - cy) / sy;
             if (a3d.imageMode == IMAGE) {
-              u *= group.textures[idx].width;
-              v *= group.textures[idx].height;
+              u *= group.textures[unit].width;
+              v *= group.textures[unit].height;
             }             
           }
 
@@ -1389,10 +1374,10 @@ public class PShape3D extends PShape implements PConstants {
         }
         endUpdate();
       }
-      group.textures[idx] = tex;
+      group.textures[unit] = tex;
 
     } else {
-      group.textures[idx] = tex;  
+      group.textures[unit] = tex;  
     }    
   }
 
@@ -1714,7 +1699,7 @@ public class PShape3D extends PShape implements PConstants {
   
   protected void createShape(int numVert) {
     numVertices = numVert;
-    numTexUnits = 1;
+    numTextures = 1;
 
     initVertexData();
     createVertexBuffer();   
@@ -1822,8 +1807,8 @@ public class PShape3D extends PShape implements PConstants {
   
   
   protected boolean addTexUnit() {
-    if (numTexUnits < PGraphicsAndroid3D.maxTextureUnits) {
-      deleteTexCoordBuffer(numTexUnits); // Just in case.
+    if (numTextures < PGraphicsAndroid3D.maxTextureUnits) {
+      deleteTexCoordBuffer(numTextures); // Just in case.
       
       int[] temp = {0};
       gl.glGenBuffers(1, temp, 0);
@@ -1832,8 +1817,8 @@ public class PShape3D extends PShape implements PConstants {
       gl.glBufferData(GL11.GL_ARRAY_BUFFER, bufferSize, texCoordBuffer, glUsage);
       gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);     
       
-      glTexCoordBufferID[numTexUnits] = temp[0];
-      numTexUnits++;
+      glTexCoordBufferID[numTextures] = temp[0];
+      numTextures++;
       return true;
     } else {
       PGraphics.showWarning("PShape3D: cannot add texture unit (max:" + PGraphicsAndroid3D.maxTextureUnits + ").");
@@ -1867,7 +1852,7 @@ public class PShape3D extends PShape implements PConstants {
 
   
   protected void deleteTexCoordBuffer() {
-    for (int i = 0; i < numTexUnits; i++) { 
+    for (int i = 0; i < numTextures; i++) { 
       deleteTexCoordBuffer(i);    
     }
   }
@@ -1959,13 +1944,13 @@ public class PShape3D extends PShape implements PConstants {
     float t = 1.0f - c;
     float[] m = new float[9];
     m[0] = (t*v0*v0) + c;          // 0, 0
-    m[1] = (t*v0*v1) - (s*v2);   // 0, 1
-    m[2] = (t*v0*v2) + (s*v1); // 0, 2 
-    m[3] = (t*v0*v1) + (s*v2); // 1, 0
+    m[1] = (t*v0*v1) - (s*v2);     // 0, 1
+    m[2] = (t*v0*v2) + (s*v1);     // 0, 2 
+    m[3] = (t*v0*v1) + (s*v2);     // 1, 0
     m[4] = (t*v1*v1) + c;          // 1, 1
-    m[5] =  (t*v1*v2) - (s*v0);  // 1, 2
-    m[6] = (t*v0*v2) - (s*v1);   // 2, 0
-    m[7] = (t*v1*v2) + (s*v0); // 2, 1 
+    m[5] =  (t*v1*v2) - (s*v0);    // 1, 2
+    m[6] = (t*v0*v2) - (s*v1);     // 2, 0
+    m[7] = (t*v1*v2) + (s*v0);     // 2, 1 
     m[8] = (t*v2*v2) + c;          // 2, 2
     float x, y, z;
     for (int i = 0; i < numVertices; i++) {
@@ -2097,7 +2082,7 @@ public class PShape3D extends PShape implements PConstants {
     gl.glEnableClientState(GL11.GL_VERTEX_ARRAY);            
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glVertexBufferID[0]);
     gl.glVertexPointer(3, GL11.GL_FLOAT, 0, 0);
-
+    
     VertexGroup group;
     for (int i = gr0; i <= gr1; i++) {
       group = (VertexGroup)groups.get(i);
@@ -2139,7 +2124,7 @@ public class PShape3D extends PShape implements PConstants {
         } else {
           // Regular texturing.         
           gl.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
-          for (int n = 0; n < numTexUnits; n++) {
+          for (int n = 0; n < numTextures; n++) {
             gl.glClientActiveTexture(GL11.GL_TEXTURE0 + n);
             gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glTexCoordBufferID[n]);
             gl.glTexCoordPointer(2, GL11.GL_FLOAT, 0, 0);
@@ -2182,7 +2167,7 @@ public class PShape3D extends PShape implements PConstants {
           gl.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
         }
         
-        for (int n = 0; n < numTexUnits; n++) {
+        for (int n = 0; n < numTextures; n++) {
           if (imgs[n] != null && imgs[n].getTexture() != null) {
             PTexture tex = imgs[n].getTexture();
             int texTarget = tex.getGLTarget();        
@@ -2265,12 +2250,19 @@ public class PShape3D extends PShape implements PConstants {
   }     
   
 	static public class VertexGroup {
+    int first;
+    int last;
+    int glMode;
+    float sw;
+    PImage[] textures;  
+    
     VertexGroup(int n0, int n1) {
       first = n0;
       last = n1;
       glMode = 0;
       sw = 0;
-      textures[0] = textures[1] = textures[2] = textures[3] = null;
+      textures = new PImage[PGraphicsAndroid3D.maxTextureUnits];
+      clearTextures();
     }
 
     VertexGroup(int n0, int n1, PImage[] tex) {
@@ -2278,12 +2270,8 @@ public class PShape3D extends PShape implements PConstants {
       last = n1; 
       glMode = 0;
       sw = 0;
-      textures[0] = textures[1] = textures[2] = textures[3] = null;
-      if (tex != null) {
-        for (int i = 0; i < PApplet.min(4, tex.length); i++) {
-          textures[i] = tex[i];
-        }
-      }
+      textures = new PImage[PGraphicsAndroid3D.maxTextureUnits];
+      setTextures(tex);
     }    
     
     VertexGroup(int n0, int n1, int mode, PImage[] tex) {
@@ -2305,18 +2293,15 @@ public class PShape3D extends PShape implements PConstants {
         throw new RuntimeException("PShape3D: Unknown draw mode");
       }      
       sw = weight;
-      textures[0] = textures[1] = textures[2] = textures[3] = null;
-      if (tex != null) {      
-        for (int i = 0; i < PApplet.min(4, tex.length); i++) {
-          textures[i] = tex[i];
-        }
-      }
+      
+      textures = new PImage[PGraphicsAndroid3D.maxTextureUnits];
+      setTextures(tex);
     }
     
     boolean equalTo(VertexGroup gr) {
       boolean res = glMode == gr.glMode && sw == gr.sw; 
       if (!res) return false;
-      for (int i = 0; i < 4; i++) {
+      for (int i = 0; i < textures.length; i++) {
         if (textures[i] != gr.textures[i]) {
           res = false;
         }
@@ -2326,7 +2311,7 @@ public class PShape3D extends PShape implements PConstants {
     
     boolean hasTexture() {
       boolean res = false;
-      for (int i = 0; i < 4; i++) {
+      for (int i = 0; i < textures.length; i++) {
         if (textures[i] != null && textures[i].getTexture() != null) {
           res = true;  
           break;
@@ -2335,11 +2320,23 @@ public class PShape3D extends PShape implements PConstants {
       return res;
     }
     
-	  int first;
-	  int last;
-	  int glMode;
-	  float sw;
-    PImage[] textures = {null, null, null, null};      
+    void clearTextures() {
+      for (int i = 0; i < textures.length; i++) {
+        textures[i] = null;
+      }  
+    }
+    
+    void setTextures(PImage[] tex) {
+      if (tex != null) {     
+        int n = PApplet.min(textures.length, tex.length);
+        for (int i = 0; i < n; i++) {
+          textures[i] = tex[i];
+        }        
+        for (int i = n; i < textures.length; i++) {
+          textures[i] = null;
+        }
+      }      
+    }
 	}
 	
   ///////////////////////////////////////////////////////////////////////////   

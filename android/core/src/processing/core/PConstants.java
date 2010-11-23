@@ -49,31 +49,22 @@ public interface PConstants {
   static public final int U = 7; // texture
   static public final int V = 8;
   
-  static public final int U0 = 7;  // multitexture
-  static public final int V0 = 8;  
-  static public final int U1 = 9;
-  static public final int V1 = 10;  
-  static public final int U2 = 11;
-  static public final int V2 = 12;  
-  static public final int U3 = 13;
-  static public final int V3 = 14;  
-  
-  static public final int NX = 15; // normal
-  static public final int NY = 16;
-  static public final int NZ = 17;
+  static public final int NX = 9; // normal
+  static public final int NY = 10;
+  static public final int NZ = 11;
 
-  static public final int EDGE = 18;
+  static public final int EDGE = 12;
 
   // stroke
 
   /** stroke argb values */
-  static public final int SR = 19;
-  static public final int SG = 20;
-  static public final int SB = 21;
-  static public final int SA = 22;
-
+  static public final int SR = 13;
+  static public final int SG = 14;
+  static public final int SB = 15;
+  static public final int SA = 16;
+  
   /** stroke weight */
-  static public final int SW = 23;
+  static public final int SW = 17;
 
   /* 
   static public final int TX = 18; // transformed xyzw
@@ -111,10 +102,9 @@ public interface PConstants {
   */
   
   // has this vertex been assigned a normal yet
-  static public final int HAS_NORMAL = 24;
+  static public final int HAS_NORMAL = 18;
   
-  static public final int VERTEX_FIELD_COUNT = 25;
-
+  static public final int VERTEX_FIELD_COUNT = 19;
 
   // built-in rendering options
 
@@ -204,7 +194,7 @@ public interface PConstants {
   static final int HSB    = 3;  // color
   static final int ALPHA  = 4;  // image
   static final int CMYK   = 5;  // image & color (someday)
-  static final int YUV420 = 6;  // android video preview.
+  static final int YUV420 = 6;  // Android video preview.
 
 
   // image file types
@@ -434,7 +424,7 @@ public interface PConstants {
   public static final int TEXTURES1 = 4;
   public static final int TEXTURES2 = 5;
   public static final int TEXTURES3 = 6;
-  public static final int GROUPS = 4;  
+  public static final int GROUPS = 7;  
   
 
   // stroke modes
