@@ -203,6 +203,34 @@ public class PShape3D extends PShape implements PConstants {
   }  
 
   
+  public void setTextures(PImage tex0, PImage tex1) {
+    for (int gr = 0; gr < groups.size(); gr++) {
+      setGroupTextures(gr, new PImage[] {tex0, tex1});
+    }
+  }  
+  
+  
+  public void setGroupTextures(PImage tex0, PImage tex1, PImage tex2) {
+    for (int gr = 0; gr < groups.size(); gr++) {
+      setGroupTextures(gr, new PImage[] {tex0, tex1, tex2});
+    }
+  }    
+  
+  
+  public void setGroupTextures(PImage tex0, PImage tex1, PImage tex2, PImage tex3) {
+    for (int gr = 0; gr < groups.size(); gr++) {
+      setGroupTextures(gr, new PImage[] {tex0, tex1, tex2, tex3});
+    }
+  }    
+  
+  
+  protected void setGroupTextures(PImage[] textures) {
+    for (int gr = 0; gr < groups.size(); gr++) {
+      setGroupTextures(gr, textures);
+    }
+  }
+  
+  
   public PImage getTexture() {
     return getGroupTexture(0);
   }
