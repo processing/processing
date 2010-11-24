@@ -1885,8 +1885,18 @@ public class PGraphics2D extends PGraphics {
     public void scale(float x, float y, float z) {
       showDepthWarningXYZ("scale");
     }
+    
+    
+    public void skewX(float angle) {
+      ctm.shearX(angle);
+    }
 
 
+    public void skewY(float angle) {
+      ctm.shearY(angle);
+    }
+
+    
 
     //////////////////////////////////////////////////////////////
 
