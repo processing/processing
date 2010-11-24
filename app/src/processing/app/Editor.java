@@ -206,7 +206,7 @@ public class Editor extends JFrame implements RunnerListener {
     // repaint child panes while resizing
     splitPane.setContinuousLayout(true);
     // if window increases in size, give all of increase to
-    // the textarea in the uppper pane
+    // the textarea in the upper pane
     splitPane.setResizeWeight(1D);
 
     // to fix ugliness.. normally macosx java 1.3 puts an
@@ -218,8 +218,7 @@ public class Editor extends JFrame implements RunnerListener {
     if (dividerSize != 0) {
       splitPane.setDividerSize(dividerSize);
     }
-
-    splitPane.setMinimumSize(new Dimension(600, 400));
+    
     box.add(splitPane);
 
     // hopefully these are no longer needed w/ swing
@@ -372,18 +371,28 @@ public class Editor extends JFrame implements RunnerListener {
 
     TextAreaPainter painter = textarea.getPainter();
     if (external) {
+      
       // disable line highlight and turn off the caret when disabling
       Color color = Theme.getColor("editor.external.bgcolor");
       painter.setBackground(color);
       painter.setLineHighlightEnabled(false);
       textarea.setCaretVisible(false);
-
-    } else {
+      
+      // new stuff
+      splitPane.setDividerLocation(toolbar.getHeight() + header.getHeight());
+      splitPane.setResizeWeight(0D);
+      textarea.setMinimumSize(new Dimension(textarea.getWidth(), 0));
+    } else {      
       Color color = Theme.getColor("editor.bgcolor");
       painter.setBackground(color);
       boolean highlight = Preferences.getBoolean("editor.linehighlight");
       painter.setLineHighlightEnabled(highlight);
       textarea.setCaretVisible(true);
+      
+      // new stuff
+      splitPane.setDividerLocation(-1); // any negative value resets to preferred size
+      splitPane.setResizeWeight(1D);
+      textarea.setMinimumSize(null);
     }
 
     // apply changes to the font size for the editor
