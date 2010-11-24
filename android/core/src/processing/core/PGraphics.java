@@ -482,8 +482,7 @@ public class PGraphics extends PImage implements PConstants {
 
   // ........................................................
 
-  /// Current mode for normals, one of AUTO, SHAPE, or VERTEX
-  protected int normalMode;
+  protected boolean autoNormal;
   
   /** Current normal vector. */
   public float normalX, normalY, normalZ;
@@ -686,7 +685,7 @@ public class PGraphics extends PImage implements PConstants {
     rectMode(CORNER);
     ellipseMode(DIAMETER);
     
-    normalMode = AUTO;
+    autoNormal = true;
 
     // no current font
     textFont = null;
@@ -860,10 +859,10 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Sets the normal mode, either AUTO, SHAPE or VERTEX.
+   * Sets the automatic normal calculation mode.
    */  
-  public void normalMode(int mode) {
-    this.normalMode = mode;   
+  public void autoNormal(boolean auto) {
+    this.autoNormal = auto;   
   }
   
   
@@ -936,11 +935,26 @@ public class PGraphics extends PImage implements PConstants {
 
     vertex[EDGE] = edge ? 1 : 0;
 
-    if (fill) {
-      vertex[R] = fillR;
-      vertex[G] = fillG;
-      vertex[B] = fillB;
-      vertex[A] = fillA;
+    boolean textured = textureImage != null;
+    if (fill || textured) {
+      if (textured) {
+        vertex[R] = fillR;
+        vertex[G] = fillG;
+        vertex[B] = fillB;
+        vertex[A] = fillA;
+      } else {
+        if (tint) {
+          vertex[R] = tintR;
+          vertex[G] = tintG;
+          vertex[B] = tintB;
+          vertex[A] = tintA;
+        } else {
+          vertex[R] = 1;
+          vertex[G] = 1;
+          vertex[B] = 1;
+          vertex[A] = 1;
+        }
+      }
     }
 
     if (stroke) {
@@ -954,6 +968,28 @@ public class PGraphics extends PImage implements PConstants {
     vertex[U] = textureU;
     vertex[V] = textureV;
         
+    if (autoNormal) {
+      float norm2 = normalX * normalX + normalY * normalY + normalZ * normalZ;
+      if (norm2 < EPSILON) {
+        vertex[HAS_NORMAL] = 0;  
+      } else {
+        if (Math.abs(norm2 - 1) > EPSILON) {
+          // The normal vector is not normalized.
+          float norm = PApplet.sqrt(norm2);
+          normalX /= norm;
+          normalY /= norm;
+          normalZ /= norm;
+        }
+        vertex[HAS_NORMAL] = 1;
+      }
+    } else {
+      vertex[HAS_NORMAL] = 1;  
+    }
+    
+    vertex[NX] = normalX;
+    vertex[NY] = normalY;
+    vertex[NZ] = normalZ;    
+    
     vertexCount++;
   }
 
@@ -1040,23 +1076,23 @@ public class PGraphics extends PImage implements PConstants {
     vertex[U] = textureU;
     vertex[V] = textureV;
     
-    // TODO: properly define auto-normalization methods to enable/disable this:
-    /*
-    float norm2 = normalX * normalX + normalY * normalY + normalZ * normalZ;
-    if (norm2 < EPSILON) {
-      vertex[HAS_NORMAL] = 0;  
-    } else {
-      if (Math.abs(norm2 - 1) > EPSILON) {
-        // The normal vector is not normalized.
-        float norm = PApplet.sqrt(norm2);
-        normalX /= norm;
-        normalY /= norm;
-        normalZ /= norm;
+    if (autoNormal) {
+      float norm2 = normalX * normalX + normalY * normalY + normalZ * normalZ;
+      if (norm2 < EPSILON) {
+        vertex[HAS_NORMAL] = 0;  
+      } else {
+        if (Math.abs(norm2 - 1) > EPSILON) {
+          // The normal vector is not normalized.
+          float norm = PApplet.sqrt(norm2);
+          normalX /= norm;
+          normalY /= norm;
+          normalZ /= norm;
+        }
+        vertex[HAS_NORMAL] = 1;
       }
+    } else {
       vertex[HAS_NORMAL] = 1;
     }
-    */
-    vertex[HAS_NORMAL] = 1;
     
     vertex[NX] = normalX;
     vertex[NY] = normalY;

@@ -2585,8 +2585,8 @@ public class PShape3D extends PShape implements PConstants {
     int tMode0 = a3d.textureMode;
     a3d.textureMode = NORMAL;
     
-    int nMode0 = a3d.normalMode;
-    a3d.normalMode = AUTO;
+    boolean auto0 = a3d.autoNormal;
+    a3d.autoNormal = true;
     
     // Using RGB mode for coloring.
     int cMode0 = a3d.colorMode; 
@@ -2735,7 +2735,7 @@ public class PShape3D extends PShape implements PConstants {
     // Restore texture, color, and normal modes.
     a3d.textureMode = tMode0;
     a3d.colorMode = cMode0;
-    a3d.normalMode = nMode0;
+    a3d.autoNormal = auto0;
     
     // Restore colors
     a3d.calcR = specularR0;
