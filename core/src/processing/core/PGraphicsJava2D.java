@@ -1234,6 +1234,16 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   public void scale(float sx, float sy, float sz) {
     showDepthWarningXYZ("scale");
   }
+  
+
+  public void skewX(float angle) {
+    g2.shear(Math.tan(angle), 0);
+  }
+
+
+  public void skewY(float angle) {
+    g2.shear(0, Math.tan(angle));
+  }
 
 
 

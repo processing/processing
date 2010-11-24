@@ -8,7 +8,21 @@ X   http://code.google.com/p/processing/issues/detail?id=327
 X   appears to have been some old code that wasn't removed
 X anglebetween regression
 X   http://code.google.com/p/processing/issues/detail?id=435
+L double stop() called with noLoop()
+L   http://dev.processing.org/bugs/show_bug.cgi?id=1270
+L   http://code.google.com/p/processing/issues/detail?id=180
+X more chatter with this
+X   http://dev.processing.org/bugs/show_bug.cgi?id=131
+X   http://code.google.com/p/processing/issues/detail?id=43
+X shearX and shearY not implemented with P2D and JAVA2D
+X   http://code.google.com/p/processing/issues/detail?id=452
 
+
+_ saving a PGraphics as jpg using save() makes a cmyk file
+_   need to shut off the alpha channel when writing
+_   http://code.google.com/p/processing/issues/detail?id=415
+
+_ definite present-mode weirdness with background colors
 
 _ OpenGL Applets won't load with JRE 6 update 21 or higher
 _   http://code.google.com/p/processing/issues/detail?id=429
@@ -27,9 +41,6 @@ _   http://mrl.nyu.edu/~perlin/experiments/borg/render/index.html
 _   http://en.wikipedia.org/wiki/Clip_Mapping
 _   http://www.cubic.org/docs/3dclip.htm
 _ perspective() applied after camera()... problems?
-
-_ saving a PGraphics as jpg using save() doesnt work
-_   http://code.google.com/p/processing/issues/detail?id=415
 
 _ clean up filter stuff?
 _   filter(GRAY) -> to push things to luminosity-based gray
@@ -107,9 +118,6 @@ _   does stop() unwind the thread, or does the thread unwind call stop?
 _   browser will call start() and stop() methods
 _ need to figure out start/stop signals coming from the browser
 _   is it dispose/destroy? 
-_ double stop() called with noLoop()
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1270
-_   http://code.google.com/p/processing/issues/detail?id=180
 _ stop() not getting called
 _   http://dev.processing.org/bugs/show_bug.cgi?id=183 (dupe of 131)
 _   major problem for libraries
@@ -125,9 +133,6 @@ _   make sure the main() doesn't exit until the applet has finished
 _   i.e. problem with main calling itself multiple times in Alpheus
 _   if exit() (or stop) is called, then System.exit() gets called,
 _   even though the main() wants to keep going
-_ more chatter with this
-_   http://dev.processing.org/bugs/show_bug.cgi?id=131
-_   http://code.google.com/p/processing/issues/detail?id=43
 _ opengl applet problems
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1364
 _   http://code.google.com/p/processing/issues/detail?id=196
@@ -147,7 +152,7 @@ _   seems to be mapping to 0, 0 - width/2, height/2
 _   fix 3D > OrthoVsPerspective example once ortho works properly
 _     there's a depth problem in addition to the ortho weirdness
 _ modelx/y/z broken when aiming a camera
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1074
+_   http://code.google.com/p/processing/issues/detail?id=148
 _ opengl + resize window => window content garbled
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1360
 _ modify PVector to include better methods for chaining operations
@@ -253,8 +258,9 @@ _   http://www.exampledepot.com/egs/javax.xml.parsers/pkg.html
 
 [ known problems ]
 
-_ OPENGL sketches flicker w/ Vista when background() not used inside draw()
-_   http://dev.processing.org/bugs/show_bug.cgi?id=930
+_ lousy graphics cards cause background to flicker if background() not used
+_   http://code.google.com/p/processing/issues/detail?id=146
+_   OPENGL sketches flicker w/ Vista when background() not used inside draw()
 _   Disabling Aero scheme sometimes prevents the problem
 _   Updating graphics drivers may prevent the problem 
 
