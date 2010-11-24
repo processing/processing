@@ -1713,13 +1713,6 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
     updatePixels();
   }
 
-
-  public void resize(int wide, int high) {
-    showMethodWarning("resize");
-  }
-
-
-
   //////////////////////////////////////////////////////////////
 
   // GET/SET
