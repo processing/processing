@@ -849,7 +849,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       texCoordBuffer[t].rewind();
     }
     
-    // Each frame starts with  multitexturing disabled.
+    // Each frame starts with multitexturing disabled.
     usingMultitexturing = false;
     textureUnit = 0;
     clearMultitextures();
@@ -899,8 +899,6 @@ public class PGraphicsAndroid3D extends PGraphics {
     // The ambient and diffuse components for each vertex are taken
     // from the glColor/color buffer setting:
     gl.glEnable(GL10.GL_COLOR_MATERIAL);
-    // glColorMaterial is not available in GLES, I suspect that is using 
-    // GL10.GL_FRONT_AND_BACK, GL10.GL_AMBIENT_AND_DIFFUSE implicitly
     // For a quick overview of how the lighting model works in OpenGL
     // see this page:
     // http://www.sjbaker.org/steve/omniv/opengl_lighting.html
@@ -910,16 +908,11 @@ public class PGraphicsAndroid3D extends PGraphics {
     gl.glEnable(GL10.GL_RESCALE_NORMAL);
     
     // Light model defaults:
-    // The default ambient light for the entire scene is (0.2, 0.2, 0.2),
+    // The default opengl ambient light is (0.2, 0.2, 0.2), so
     // here we set our own default value.
     gl.glLightModelfv(GL10.GL_LIGHT_MODEL_AMBIENT, baseLight, 0);
     gl.glLightModelx(GL10.GL_LIGHT_MODEL_TWO_SIDE, 0);
-    
-    // I think this is OpenGL 1.2 only, issue 345:
-    // http://code.google.com/p/processing/issues/detail?id=345
-    // should take care of it:
-    // gl.glEnable(GL10.GL_AUTO_NORMAL); 
-    
+        
     shapeFirst = 0;
     
     // The current normal vector is set to zero.
@@ -1253,8 +1246,6 @@ public class PGraphicsAndroid3D extends PGraphics {
 
     clearMultitextures();
     clearMultitextures0();
-
-    normalMode = AUTO;
   }
 
   // public void edge(boolean e)
@@ -1391,36 +1382,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
   }
   
-  
-  
   public void vertex(float x, float y) {
     super.vertex(x, y);
-    
-    /*
-    // TODO: Use multitexture information.
-    float[] vertex = vertices[vertexCount - 1];    
-    boolean textured = textureImage != null;
-    if (fill || textured) {
-      if (textured) {
-        vertex[R] = fillR;
-        vertex[G] = fillG;
-        vertex[B] = fillB;
-        vertex[A] = fillA;
-      } else {
-        if (tint) {
-          vertex[R] = tintR;
-          vertex[G] = tintG;
-          vertex[B] = tintB;
-          vertex[A] = tintA;
-        } else {
-          vertex[R] = 1;
-          vertex[G] = 1;
-          vertex[B] = 1;
-          vertex[A] = 1;
-        }
-      }
-    */
-    
     setVertexTex(vertexCount - 1);
   }
   
@@ -1453,7 +1416,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       System.arraycopy(vertexTex, 0, tempi, 0, vertexCount);
       vertexTex = tempi;
     }
-  }  
+  }    
   
   protected void setVertexTex(int n) {
     PImage[] p = vertexTex[n];
@@ -2284,12 +2247,12 @@ public class PGraphicsAndroid3D extends PGraphics {
         float b[] = vertices[triangles[i][VERTEX2]];
         float c[] = vertices[triangles[i][VERTEX3]];
 
-        if (normalMode == AUTO && (a[HAS_NORMAL] == 0 || 
-                                   b[HAS_NORMAL] == 0 || 
-                                   c[HAS_NORMAL] == 0)) {
+        if (autoNormal && (a[HAS_NORMAL] == 0 || 
+                           b[HAS_NORMAL] == 0 || 
+                           c[HAS_NORMAL] == 0)) {
           // Ok, some of the vertices defining the current triangle have not been
-          // assigned a normal, and the normal mode is AUTO, so we generate the normal
-          // for all the vertices of this triangle.
+          // assigned a normal, and the automatic normal calculation is enabled, so 
+          // we generate the normal for all the vertices of this triangle.
           
           // Assuming CW vertex ordering, so the outside direction for this triangle
           // should be given by the cross product (b - a) x (b - c):
