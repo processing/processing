@@ -7015,7 +7015,12 @@ public class PApplet extends Activity implements PConstants, Runnable {
     g.edge(edge);
   }
 
+  
+  public void autoNormal(boolean auto) {
+    g.autoNormal(auto);
+  }
 
+  
   public void normal(float nx, float ny, float nz) {
     g.normal(nx, ny, nz);
   }

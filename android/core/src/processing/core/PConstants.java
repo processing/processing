@@ -365,19 +365,6 @@ public interface PConstants {
    */
   static final int SHAPE = 5;
 
-
-  // normal modes.
-  
-  /**
-   * In the vertex mode, the user should specify a normal for
-   * each vertex.
-   */  
-  static final int MANUAL = 6;
-  
-  /**
-   * Normal vectors are automatically calculated if not set.
-   */  
-  static final int AUTO = 7;
   
   // text alignment modes
   // are inherited from LEFT, CENTER, RIGHT  
