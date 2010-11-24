@@ -15,6 +15,24 @@ J   http://code.google.com/p/processing/issues/detail?id=82
 J compiling with static final global variable
 J   http://code.google.com/p/processing/issues/detail?id=427
 X don't let PDE open sketches with bad names (reported by max)
+L Properly enforce the editors minimum size
+L   http://code.google.com/p/processing/issues/detail?id=451
+
+fixed earlier
+X should really be doing the 'right' thing with sketch file handling
+X   create temporary file when saving
+X   once done writing, use remove the original and rename the old
+X   some basic stuff like this..
+X   http://dev.processing.org/bugs/show_bug.cgi?id=968
+X   http://code.google.com/p/processing/issues/detail?id=127
+
+Hm, should we just support resize() for the renderers? 
+
+Though I guess it's really messy, and we're better off having them do a fresh createGraphics() instead. 
+
+Can you do a fix to implement resize() in PGraphics where it just provides the error, so that it's implemented across the other renderers?
+
+_ need to get a new stable release out there, the docs/ref are out of sync
 
 _ Patch: Processing IDE destroys symbolic links
 _   http://code.google.com/p/processing/issues/detail?id=432
@@ -30,6 +48,8 @@ _   http://code.google.com/p/processing/issues/detail?id=411
 _ don't reload sketch on "save as"
 _   this can result in loss of data (undo is lost)
 _   http://code.google.com/p/processing/issues/detail?id=62
+_ sketch marked as modified too aggressively
+_   http://dev.processing.org/bugs/show_bug.cgi?id=328
 
 _ build is currently broken for p5 because of changes to the file layout
 _   something that gets fixed my 'make clean'
@@ -150,6 +170,7 @@ _   there's so much platform code in there, it's not worth the extra work
 _   also include update check for logging
 _ command line support is currently broken
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1048
+_   http://code.google.com/p/processing/issues/detail?id=142
 _   some fixes can be found in the bug report
 _   need to deal with setting path to sketchbook/examples
 _   also deal with the script not being in the right folder
@@ -847,18 +868,11 @@ PDE / Editor
 
 3 _ cmd-shift-n not creating new tab (related to 505?)
 3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1081
-_ sketch marked as modified too aggressively
-_   http://dev.processing.org/bugs/show_bug.cgi?id=328
 _ improve update check message "a new release (1.0.1) is available"
 _   be more descriptive, use a second line in latest.txt
 _   maybe just include the full text of the update message there?
 _ go through other sketch-opening menus to check for disappearing sketches
 _ deal with isManagingFocus() warning in the editor src
-_ should really be doing the 'right' thing with sketch file handling
-_   create temporary file when saving
-_   once done writing, use remove the original and rename the old
-_   some basic stuff like this..
-_   http://dev.processing.org/bugs/show_bug.cgi?id=968
 _ saved window positions.. if displays has changed, becomes a problem
 _   record the display that it was on?
 _     GraphicsDevice gd = frame.getGraphicsConfiguration().getDevice();

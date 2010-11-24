@@ -120,6 +120,13 @@ public class PFont implements PConstants {
   protected Typeface typeface;
 
   /**
+   * True if this font should return 'null' for getFont(), so that the native
+   * font will be used to create a subset, but the native version of the font
+   * will not be used. 
+   */
+  protected boolean subsetting; 
+  
+  /**
    * True if we've already tried to find the native version of this font.
    */
   protected boolean typefaceSearched;
@@ -429,6 +436,9 @@ public class PFont implements PConstants {
    * Return the native Typeface object associated with this PFont (if any).
    */
   public Typeface getTypeface() {
+    if (subsetting) {
+      return null;
+    }
     return typeface;
   }
 
