@@ -990,8 +990,7 @@ public class PGraphics extends PImage implements PConstants {
 
     vertex[EDGE] = edge ? 1 : 0;
 
-    //boolean textured = textureImages.hasImages();
-    boolean textured = false;
+    boolean textured = textureImage != null;
     if (fill || textured) {
       if (textured) {
         vertex[R] = fillR;
@@ -1041,6 +1040,8 @@ public class PGraphics extends PImage implements PConstants {
     vertex[U] = textureU;
     vertex[V] = textureV;
     
+    // TODO: properly define auto-normalization methods to enable/disable this:
+    /*
     float norm2 = normalX * normalX + normalY * normalY + normalZ * normalZ;
     if (norm2 < EPSILON) {
       vertex[HAS_NORMAL] = 0;  
@@ -1054,6 +1055,8 @@ public class PGraphics extends PImage implements PConstants {
       }
       vertex[HAS_NORMAL] = 1;
     }
+    */
+    vertex[HAS_NORMAL] = 1;
     
     vertex[NX] = normalX;
     vertex[NY] = normalY;

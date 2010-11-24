@@ -504,7 +504,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       vertexArray = new int[DEFAULT_BUFFER_SIZE * 3];
       colorArray = new int[DEFAULT_BUFFER_SIZE * 4];      
       normalArray = new int[DEFAULT_BUFFER_SIZE * 3];
-      texCoordArray = new int[MAX_TEXTURES][DEFAULT_BUFFER_SIZE * 2];
+      texCoordArray = new int[1][DEFAULT_BUFFER_SIZE * 2];
       
       getsetBuffer = IntBuffer.allocate(1);
       getsetBuffer.rewind();
@@ -1395,6 +1395,32 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   public void vertex(float x, float y) {
     super.vertex(x, y);
+    
+    /*
+    // TODO: Use multitexture information.
+    float[] vertex = vertices[vertexCount - 1];    
+    boolean textured = textureImage != null;
+    if (fill || textured) {
+      if (textured) {
+        vertex[R] = fillR;
+        vertex[G] = fillG;
+        vertex[B] = fillB;
+        vertex[A] = fillA;
+      } else {
+        if (tint) {
+          vertex[R] = tintR;
+          vertex[G] = tintG;
+          vertex[B] = tintB;
+          vertex[A] = tintA;
+        } else {
+          vertex[R] = 1;
+          vertex[G] = 1;
+          vertex[B] = 1;
+          vertex[A] = 1;
+        }
+      }
+    */
+    
     setVertexTex(vertexCount - 1);
   }
   
@@ -1502,8 +1528,10 @@ public class PGraphicsAndroid3D extends PGraphics {
       tbb.order(ByteOrder.nativeOrder());
       texCoordBuffer[n0 + i] = tbb.asIntBuffer();    
     }
-    numTexBuffers += more;
     
+    texCoordArray = new int[numTexBuffers + more][size];
+    
+    numTexBuffers += more;    
   }
 
   // public void breakShape()
@@ -1798,14 +1826,11 @@ public class PGraphicsAndroid3D extends PGraphics {
       shape.setNormal(recordedNormals);
       shape.endUpdate();
       
-      int tu0 = textureUnit;
       for (int t = 0; t < numRecordedTextures; t++) {
-        textureUnit = t;
-        shape.beginUpdate(TEXTURES);
+        shape.beginUpdate(TEXTURES0 + textureUnit);
         shape.setTexCoord(recordedTexCoords[t]);
         shape.endUpdate();
       }
-      textureUnit = tu0;
     
       shape.setGroups(recordedGroups);
       shape.optimizeGroups();
