@@ -3,6 +3,13 @@ X compile android-core with java 5 as the target so that it works on OS X 10.5
 X A3D should use lower color depth on older devices
 X   http://code.google.com/p/processing/issues/detail?id=391
 X new api for begin/endRecord()
+A Finish opengl blending modes in A3D
+A   http://code.google.com/p/processing/issues/detail?id=290
+A Automatic normal calculation in A3D
+A   http://code.google.com/p/processing/issues/detail?id=345
+A Improve texture handling in A3D's PFont
+A   http://code.google.com/p/processing/issues/detail?id=394
+
 
 _ when returning to android application, sometimes screen stays black
 _   http://code.google.com/p/processing/issues/detail?id=237
