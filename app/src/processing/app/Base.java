@@ -2287,6 +2287,14 @@ public class Base {
    */
   static public void saveFile(String str, File file) throws IOException {
     File temp = File.createTempFile(file.getName(), null, file.getParentFile());
+    try{
+      // fix from cjwant to prevent symlinks from being destroyed.
+      File canon = file.getCanonicalFile();
+      file = canon;
+    } catch (IOException e) {
+      throw new IOException("Could not resolve canonical representation of " +
+                            file.getAbsolutePath());
+    }
     PApplet.saveStrings(temp, new String[] { str });
     if (file.exists()) {
       boolean result = file.delete();
