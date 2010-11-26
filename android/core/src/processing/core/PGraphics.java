@@ -937,7 +937,7 @@ public class PGraphics extends PImage implements PConstants {
 
     boolean textured = textureImage != null;
     if (fill || textured) {
-      if (textured) {
+      if (fill) {
         vertex[R] = fillR;
         vertex[G] = fillG;
         vertex[B] = fillB;
@@ -1028,7 +1028,7 @@ public class PGraphics extends PImage implements PConstants {
 
     boolean textured = textureImage != null;
     if (fill || textured) {
-      if (textured) {
+      if (fill) {
         vertex[R] = fillR;
         vertex[G] = fillG;
         vertex[B] = fillB;
@@ -5126,16 +5126,86 @@ public class PGraphics extends PImage implements PConstants {
   }
   
   
-  public void multitextureBlend(int mode) {
+  public void texture(PImage image0, PImage image1) {
     if (!is3D()) {
-      showMissingWarning("multitextureBlend");
+      showMissingWarning("texture(PImage image0, PImage image1)");
     }
   }
   
   
-  public void setMultitexture(int unit) {
+  public void texture(PImage image0, PImage image1, PImage image2) {
     if (!is3D()) {
-      showMissingWarning("setMultitexture");
+      showMissingWarning("texture(PImage image0, PImage image1, PImage image2)");
+    }
+  }
+  
+
+  public void texture(PImage image0, PImage image1, PImage image2, PImage image3) {
+    if (!is3D()) {
+      showMissingWarning("texture(PImage image0, PImage image1, PImage image2, PImage image3)");
+    }
+  }
+
+  
+  public void texture(PImage[] images) {
+    if (!is3D()) {
+      showMissingWarning("texture(PImage[] images)");
+    }
+  }
+  
+  
+  public void vertex(float x, float y, float u0, float v0, float u1, float v1) {
+    if (!is3D()) {
+      showMissingWarning("vertex(float x, float y, float u0, float v0, float u1, float v1)");
     }    
   }
+  
+  
+  public void vertex(float x, float y, float u0, float v0, float u1, float v1, float u2, float v2) {
+    if (!is3D()) {
+      showMissingWarning("vertex(float x, float y, float u0, float v0, float u1, float v1, float u2, float v2)");
+    }      
+  }  
+  
+  
+  public void vertex(float x, float y, float u0, float v0, float u1, float v1, float u2, float v2, float u3, float v3) {
+    if (!is3D()) {
+      showMissingWarning("vertex(float x, float y, float u0, float v0, float u1, float v1, float u2, float v2, float u3, float v3)");
+    } 
+  }  
+  
+  
+  public void vertex(float x, float y, float[] u, float[] v) {
+    if (!is3D()) {
+      showMissingWarning("vertex(float x, float y, float[] u, float[] v)");
+    }
+  }
+ 
+  
+  public void vertex(float x, float y, float z, float u0, float v0, float u1, float v1) {
+    if (!is3D()) {
+      showMissingWarning("vertex(float x, float y, float z, float u0, float v0, float u1, float v1)");
+    }    
+  }
+  
+  
+  public void vertex(float x, float y, float z, float u0, float v0, float u1, float v1, float u2, float v2) {
+    if (!is3D()) {
+      showMissingWarning("vertex(float x, float y, float z, float u0, float v0, float u1, float v1, float u2, float v2)");
+    }      
+  }  
+  
+  
+  public void vertex(float x, float y, float z, float u0, float v0, float u1, float v1, float u2, float v2, float u3, float v3) {
+    if (!is3D()) {
+      showMissingWarning("vertex(float x, float y, float z, float u0, float v0, float u1, float v1, float u2, float v2, float u3, float v3)");
+    } 
+  }  
+  
+  
+  public void vertex(float x, float y, float z, float[] u, float[] v) {
+    if (!is3D()) {
+      showMissingWarning("vertex(float x, float y, float z, float[] u, float[] v)");
+    }
+  }  
 }
