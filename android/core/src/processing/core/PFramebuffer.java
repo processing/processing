@@ -111,7 +111,7 @@ public class PFramebuffer implements PConstants {
 
   protected void finalize() {
     a3d.removeRecreateResourceMethod(recreateResourceIdx);    
-    deleteFramebuffer();
+    //deleteFramebuffer();
   }
 
   void setColorBuffer(PTexture tex) {

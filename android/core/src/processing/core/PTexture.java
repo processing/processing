@@ -156,7 +156,7 @@ public class PTexture implements PConstants {
 
   protected void finalize() {
     a3d.removeRecreateResourceMethod(recreateResourceIdx);    
-    deleteTexture();
+    //deleteTexture();
   }
 
   

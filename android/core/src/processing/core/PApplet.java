@@ -795,8 +795,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
       if (DEBUG) {
         System.out.println("surfaceDestroyed()");
       }
-      // I don't think we need this:
-      //g.dispose();
+      g3.dispose();
     }
 
 
@@ -8161,13 +8160,53 @@ public class PApplet extends Activity implements PConstants, Runnable {
   public void noBlend() {
     g.noBlend();
   }
-
-  public void setMultitexture(int unit) {
-    g.multitextureBlend(unit);
+  
+  public void texture(PImage image0, PImage image1) {
+    g.texture(image0, image1);
   }  
   
-  public void multitextureBlend(int mode) {
-    g.multitextureBlend(mode);
+  public void texture(PImage image0, PImage image1, PImage image2) {
+    g.texture(image0, image1, image2);
+  }
+
+  public void texture(PImage image0, PImage image1, PImage image2, PImage image3) {
+    g.texture(image0, image1, image2, image3);
+  }
+  
+  public void texture(PImage[] images) {
+    g.texture(images);
+  }
+  
+  public void vertex(float x, float y, float u0, float v0, float u1, float v1) {
+    g.vertex(x, y, u0, v0, u1, v1); 
+  }
+  
+  public void vertex(float x, float y, float u0, float v0, float u1, float v1, float u2, float v2) {
+    g.vertex(x, y, u0, v0, u1, v1, u2, v2);
+  }
+  
+  public void vertex(float x, float y, float u0, float v0, float u1, float v1, float u2, float v2, float u3, float v3) {
+    g.vertex(x, y, u0, v0, u1, v1, u2, v2, u3, v3);
+  }
+  
+  public void vertex(float x, float y, float[] u, float[] v) {
+    g.vertex(x, y, u, v);
+  }  
+
+  public void vertex(float x, float y, float z, float u0, float v0, float u1, float v1) {
+    g.vertex(x, y, z, u0, v0, u1, v1); 
+  }
+  
+  public void vertex(float x, float y, float z, float u0, float v0, float u1, float v1, float u2, float v2) {
+    g.vertex(x, y, z, u0, v0, u1, v1, u2, v2);
+  }
+  
+  public void vertex(float x, float y, float z, float u0, float v0, float u1, float v1, float u2, float v2, float u3, float v3) {
+    g.vertex(x, y, z, u0, v0, u1, v1, u2, v2, u3, v3);
+  }
+  
+  public void vertex(float x, float y, float z, float[] u, float[] v) {
+    g.vertex(x, y, z, u, v);
   }  
 }
 

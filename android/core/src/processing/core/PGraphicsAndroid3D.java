@@ -176,19 +176,13 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   // Set to false at the start of each drawing loop, turned to true if the user
   // specifies a texture unit different from zero.
-  protected boolean usingMultitexturing;
-  
-  // Current texture unit in use.
-  protected int textureUnit;
+  protected boolean usingMultitexture;
   
   // Number of currently initialized texture buffers.
   protected int numTexBuffers;
   
-  // Array used in the renderTriangles method to put the textures in use.
+  // Array used in the renderTriangles method to store the textures in use.
   protected PTexture[] renderTextures = new PTexture[MAX_TEXTURES];
-  
-  // Current blend mode.
-  protected int multitextureBlendMode;
   
   // Current texture images.
   protected PImage[] multitextureImages = new PImage[MAX_TEXTURES];
@@ -201,11 +195,11 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected float[] multitextureV = new float[MAX_TEXTURES];
   
   // Multitexture UV coordinates for all vertices.
-  float vertexU[][] = new float[DEFAULT_VERTICES][MAX_TEXTURES];
-  float vertexV[][] = new float[DEFAULT_VERTICES][MAX_TEXTURES];
+  float vertexU[][] = new float[DEFAULT_VERTICES][1];
+  float vertexV[][] = new float[DEFAULT_VERTICES][1];
   
   // Texture images assigned to each vertex.
-  PImage vertexTex[][] = new PImage[DEFAULT_VERTICES][MAX_TEXTURES];
+  PImage vertexTex[][] = new PImage[DEFAULT_VERTICES][1];
   
   // UV arrays used in renderTriangles().
   float renderUa[] = new float[MAX_TEXTURES];
@@ -516,6 +510,8 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
 
   public void dispose() {  
+    
+    
   }
   
   // TODO: finalize or dispose to clean up opengl resources?
@@ -850,8 +846,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
     
     // Each frame starts with multitexturing disabled.
-    usingMultitexturing = false;
-    textureUnit = 0;
+    usingMultitexture = false;
     clearMultitextures();
     clearMultitextures0();
     
@@ -1210,8 +1205,9 @@ public class PGraphicsAndroid3D extends PGraphics {
       // We need to initialize all the buffers for recording of texture coordinates,
       // since we don't know in advance the number of texture units that will be used
       // in this recording.
+      int size = texCoordBuffer[0].capacity() / 2;
       for (int t = 0; t < maxTextureUnits; t++) {
-        recordedTexCoords[t] = new ArrayList<PVector>(texCoordBuffer[t].capacity() / 2);  
+        recordedTexCoords[t] = new ArrayList<PVector>(size);  
       }  
     } else {
       for (int t = 0; t < maxTextureUnits; t++) {
@@ -1259,40 +1255,88 @@ public class PGraphicsAndroid3D extends PGraphics {
   static public int toFixed16(float x) {
     return (int) (x * 4096.0f);
   }
-
-  public void setMultitexture(int unit) {
-    if (0 <= unit && unit < maxTextureUnits) {
-        textureUnit = unit;
-        usingMultitexturing = 0 < unit;
-    } else {
-      System.err.println("A3D: Invalid texture unit.");
-    }
-  }     
   
   public void texture(PImage image) {
-    if (textureUnit == 0) {
-      super.texture(image);
-      multitextureImages[0] = image;
-    } else {
-      multitextureImages[textureUnit] = image;
+    super.texture(image);
+    usingMultitexture = false;
+    multitextureImages[0] = image;
+    for (int t = 1; t < maxTextureUnits; t++) {
+      multitextureImages[t] = null;
     }
   }
+  
+  public void texture(PImage image0, PImage image1) {
+    if (1 < maxTextureUnits) {
+      super.texture(image0);
+      multitextureImages[0] = image0;
+      multitextureImages[1] = image1;
+      usingMultitexture = true;
+      if (numTexBuffers < 2) {
+        addTexBuffers(2 - numTexBuffers);
+      }      
+      for (int t = 2; t < maxTextureUnits; t++) {
+        multitextureImages[t] = null;
+      }      
+    } else {
+      System.err.println("A3D: insufficient texture units.");
+    }  
+  }
+  
+  public void texture(PImage image0, PImage image1, PImage image2) {
+    if (2 < maxTextureUnits) {
+      super.texture(image0);
+      multitextureImages[0] = image0;
+      multitextureImages[1] = image1;
+      multitextureImages[2] = image2;
+      usingMultitexture = true;
+      if (numTexBuffers < 3) {
+        addTexBuffers(3 - numTexBuffers);
+      }      
+    } else {
+      System.err.println("A3D: insufficient texture units.");
+    }  
+  }  
+  
+  public void texture(PImage image0, PImage image1, PImage image2, PImage image3) {
+    if (3 < maxTextureUnits) {
+      super.texture(image0);
+      multitextureImages[0] = image0;
+      multitextureImages[1] = image1;
+      multitextureImages[2] = image2;
+      multitextureImages[3] = image3;
+      usingMultitexture = true;
+      if (numTexBuffers < 4) {
+        addTexBuffers(4 - numTexBuffers);
+      }      
+    } else {
+      System.err.println("A3D: insufficient texture units.");
+    }  
+  }  
+
+  public void texture(PImage[] images) {
+    if (images.length <= maxTextureUnits) {
+      super.texture(images[0]);
+      PApplet.arrayCopy(images, 0, multitextureImages, 0, images.length);
+      usingMultitexture = true;
+      if (numTexBuffers < images.length) {
+        addTexBuffers(images.length - numTexBuffers);
+      }      
+    } else {
+      System.err.println("A3D: insufficient texture units.");
+    }  
+  }  
   
   public void noTexture() {
     super.noTexture();
     clearMultitextures();
   }
   
-  public void multitextureBlend(int mode) {
-    multitextureBlendMode = mode;
-  }
-
   protected void setMulitextureCombiners(int[] glids) {
     // http://www.opengl.org/wiki/Texture_Combiners
     // http://www.khronos.org/opengles/sdk/1.1/docs/man/glTexEnv.xml
     // http://techconficio.ca/Blog/files/OpenGL_ES_multiTex_example.html  
     
-    if (multitextureBlendMode == MULTIPLY) {
+    if (blendMode == MULTIPLY) {
       // multiply tex0 and tex1
       // The keyword here is GL_MODULATE, which does the actual multiplication.
       gl11.glActiveTexture(GL11.GL_TEXTURE0);
@@ -1315,7 +1359,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC1_ALPHA, GL11.GL_TEXTURE);
       gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND0_ALPHA, GL11.GL_SRC_ALPHA);
       gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND1_ALPHA, GL11.GL_SRC_ALPHA);
-    } else if (multitextureBlendMode == BLEND) {
+    } else if (blendMode == BLEND) {
       // Blend tex1 and tex2 based on alpha of tex0
       // The keyword here is GL_INTERPOLATE.
       gl11.glActiveTexture(GL11.GL_TEXTURE0);
@@ -1350,7 +1394,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND0_ALPHA, GL11.GL_SRC_ALPHA);
       gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND1_ALPHA, GL11.GL_SRC_ALPHA);
       gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND2_ALPHA, GL11.GL_SRC_ALPHA);      
-    } else if (multitextureBlendMode == ADD) {
+    } else if (blendMode == ADD) {
       // Add tex0 and tex1
       // The keyword here is GL_ADD.
       gl11.glActiveTexture(GL11.GL_TEXTURE0);
@@ -1381,48 +1425,147 @@ public class PGraphicsAndroid3D extends PGraphics {
       gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND1_ALPHA, GL11.GL_SRC_ALPHA);      
     }
   }
-  
-  public void vertex(float x, float y) {
-    super.vertex(x, y);
-    setVertexTex(vertexCount - 1);
+
+  public void vertex(float x, float y, float u, float v) {  
+    vertexTexture(u, v, 0);
+    vertex(x, y);
+    int n = vertexCount - 1;
+    vertexTex[n][0] = multitextureImages[0];
+    vertexU[n][0] = multitextureU[0];
+    vertexV[n][0] = multitextureV[0];
+  }
+
+  public void vertex(float x, float y, float u0, float v0, float u1, float v1) {
+    if (2 <= maxTextureUnits) {
+      vertexTexture(u0, v0, 0);
+      vertexTexture(u1, v1, 1);
+      vertex(x, y);
+      setMultitextureData(2);
+    } else {
+      System.err.println("A3D: insufficient texture units.");
+    }
   }
   
-  public void vertex(float x, float y, float z) {
-    super.vertex(x, y, z);
-    setVertexTex(vertexCount - 1);
+  public void vertex(float x, float y, float u0, float v0, float u1, float v1, float u2, float v2) {
+    if (3 <= maxTextureUnits) {     
+      vertexTexture(u0, v0, 0);
+      vertexTexture(u1, v1, 1);
+      vertexTexture(u2, v2, 2);    
+      vertex(x, y);    
+      setMultitextureData(3);
+    } else {
+      System.err.println("A3D: insufficient texture units.");
+    }    
+  }  
+  
+  public void vertex(float x, float y, float u0, float v0, float u1, float v1, float u2, float v2, float u3, float v3) {  
+    if (4 <= maxTextureUnits) {    
+      vertexTexture(u0, v0, 0);
+      vertexTexture(u1, v1, 1);
+      vertexTexture(u2, v2, 2);
+      vertexTexture(u2, v2, 3);
+      vertex(x, y);    
+      setMultitextureData(4);
+    } else {
+      System.err.println("A3D: insufficient texture units.");
+    }      
+  }  
+  
+  public void vertex(float x, float y, float[] u, float[] v) {  
+    int len = PApplet.min(u.length, v.length);
+    if (len <= maxTextureUnits) {
+      for (int t = 0; t < len; t++) {
+        vertexTexture(u[t], v[t], t);  
+      }
+      vertex(x, y);
+      setMultitextureData(len);
+    } else {
+      System.err.println("A3D: insufficient texture units.");
+    }    
+  }  
+  
+  public void vertex(float x, float y, float z, float u, float v) {  
+    vertexTexture(u, v, 0);
+    vertex(x, y, z);
+    int n = vertexCount - 1;
+    vertexTex[n][0] = multitextureImages[0];
+    vertexU[n][0] = multitextureU[0];
+    vertexV[n][0] = multitextureV[0];
+  }
+
+  public void vertex(float x, float y, float z, float u0, float v0, float u1, float v1) {
+    if (2 <= maxTextureUnits) {
+      vertexTexture(u0, v0, 0);
+      vertexTexture(u1, v1, 1);
+      vertex(x, y, z);
+      setMultitextureData(2);
+    } else {
+      System.err.println("A3D: insufficient texture units.");
+    }
   }
   
-  public void vertex(float[] v) {
-    super.vertex(v);
-    setVertexTex(vertexCount - 1);
-  }
+  public void vertex(float x, float y, float z, float u0, float v0, float u1, float v1, float u2, float v2) {
+    if (3 <= maxTextureUnits) {    
+      vertexTexture(u0, v0, 0);
+      vertexTexture(u1, v1, 1);
+      vertexTexture(u2, v2, 2);    
+      vertex(x, y, z);    
+      setMultitextureData(3);
+    } else {
+      System.err.println("A3D: insufficient texture units.");
+    }    
+  }  
+  
+  public void vertex(float x, float y, float z, float u0, float v0, float u1, float v1, float u2, float v2, float u3, float v3) {  
+    if (4 <= maxTextureUnits) {    
+      vertexTexture(u0, v0, 0);
+      vertexTexture(u1, v1, 1);
+      vertexTexture(u2, v2, 2);
+      vertexTexture(u2, v2, 3);
+      vertex(x, y, z);    
+      setMultitextureData(4);
+    } else {
+      System.err.println("A3D: insufficient texture units.");
+    }      
+  }  
+  
+  public void vertex(float x, float y, float z, float[] u, float[] v) {  
+    int len = PApplet.min(u.length, v.length);
+    if (len <= maxTextureUnits) {
+      for (int t = 0; t < len; t++) {
+        vertexTexture(u[t], v[t], t);  
+      }
+      vertex(x, y, z);
+      setMultitextureData(len);
+    } else {
+      System.err.println("A3D: insufficient texture units.");
+    }    
+  }  
   
   protected void vertexCheck() {
     super.vertexCheck();
     
-    if (vertexCount == vertices.length) {
-      float tempf[][];
+    if (vertexCount == vertexTex.length) {
+      float tempu[][];
+      float tempv[][];
       PImage tempi[][];
       
-      tempf = new float[vertexCount << 1][MAX_TEXTURES];
-      System.arraycopy(vertexU, 0, tempf, 0, vertexCount);
-      vertexU = tempf;
+      tempu = new float[vertexCount << 1][numTexBuffers];
+      tempv = new float[vertexCount << 1][numTexBuffers];
+      tempi = new PImage[vertexCount << 1][numTexBuffers];
       
-      tempf = new float[vertexCount << 1][MAX_TEXTURES];
-      System.arraycopy(vertexV, 0, tempf, 0, vertexCount);
-      vertexV = tempf;
+      for (int i = 0; i < vertexCount; i++) {
+        System.arraycopy(vertexU[i], 0, tempu[i], 0, numTexBuffers);
+        System.arraycopy(vertexV[i], 0, tempv[i], 0, numTexBuffers);
+        System.arraycopy(vertexTex[i], 0, tempi[i], 0, numTexBuffers);  
+      }
       
-      tempi = new PImage[vertexCount << 1][MAX_TEXTURES];
-      System.arraycopy(vertexTex, 0, tempi, 0, vertexCount);
+      vertexU = tempu;
+      vertexV = tempv;
       vertexTex = tempi;
     }
-  }    
-  
-  protected void setVertexTex(int n) {
-    PImage[] p = vertexTex[n];
-    p[textureUnit] = multitextureImages[textureUnit];
-  }  
-  
+  }
+
   protected void clearMultitextures() {
     for (int i = 0; i < maxTextureUnits; i++) {
       multitextureImages[i] = null;  
@@ -1436,7 +1579,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
   
   protected boolean diffFromMultitextures0(PImage[] images) {
-    if (usingMultitexturing) {
+    if (usingMultitexture) {
       for (int i = 0; i < maxTextureUnits; i++) {
         if (multitextureImages0[i] != images[i]) {
           return true;
@@ -1449,20 +1592,20 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
   
   protected void setMultitextures0(PImage[] images) {
-    if (usingMultitexturing) {
+    if (usingMultitexture) {
       System.arraycopy(images, 0, multitextureImages0, 0, maxTextureUnits);
     } else {
       multitextureImages0[0] = images[0];  
     }
   }
   
-  protected void vertexTexture(float u, float v) {
-    if (textureUnit == 0) {
+  protected void vertexTexture(float u, float v, int t) {
+    if (t == 0) {
       super.vertexTexture(u, v);
       multitextureU[0] = textureU; 
       multitextureV[0] = textureV;
     } else {
-      PImage img = multitextureImages[textureUnit];
+      PImage img = multitextureImages[t];
       if (img == null) {
         throw new RuntimeException("You must first call texture() before " +
                                    "using u and v coordinates with vertex()");
@@ -1472,31 +1615,59 @@ public class PGraphicsAndroid3D extends PGraphics {
         v /= (float) img.height;
       }
 
-      multitextureU[textureUnit] = u;
-      multitextureV[textureUnit] = v;
+      multitextureU[t] = u;
+      multitextureV[t] = v;
 
-      if (multitextureU[textureUnit] < 0) multitextureU[textureUnit] = 0;
-      else if (multitextureU[textureUnit] > 1) multitextureU[textureUnit] = 1;
+      if (multitextureU[t] < 0) multitextureU[t] = 0;
+      else if (multitextureU[t] > 1) multitextureU[t] = 1;
 
-      if (multitextureV[textureUnit] < 0) multitextureV[textureUnit] = 0;
-      else if (multitextureV[textureUnit] > 1) multitextureV[textureUnit] = 1;
+      if (multitextureV[t] < 0) multitextureV[t] = 0;
+      else if (multitextureV[t] > 1) multitextureV[t] = 1;
     }    
   }  
   
-  protected void addTextureBuffers(int more) {
-    int n0 = numTexBuffers - 1;
-    int size = texCoordBuffer[n0].capacity();
+  protected void addTexBuffers(int more) {
+    int size = texCoordBuffer[numTexBuffers - 1].capacity();
     for (int i = 0; i < more; i++) {
       ByteBuffer tbb = ByteBuffer.allocateDirect(size * SIZEOF_INT);
       tbb.order(ByteOrder.nativeOrder());
-      texCoordBuffer[n0 + i] = tbb.asIntBuffer();    
+      texCoordBuffer[numTexBuffers + i] = tbb.asIntBuffer();    
     }
     
     texCoordArray = new int[numTexBuffers + more][size];
+
+    // Adding room for additional texture units to the U, V and vertex texture arrays.
+    // However, we need to preserve the information already stored in them, that's why
+    // the temporal arrays and copy.
+    size = vertexTex.length;
+    float tempu[][] = new float[size][numTexBuffers + more];
+    float tempv[][] = new float[size][numTexBuffers + more];
+    PImage tempi[][] = new PImage[size][numTexBuffers + more];
+    
+    for (int i = 0; i < size; i++) {
+      System.arraycopy(vertexU[i], 0, tempu[i], 0, numTexBuffers);
+      System.arraycopy(vertexV[i], 0, tempv[i], 0, numTexBuffers);
+      System.arraycopy(vertexTex[i], 0, tempi[i], 0, numTexBuffers);  
+    }
+    
+    vertexU = tempu;
+    vertexV = tempv;
+    vertexTex = tempi;
     
     numTexBuffers += more;    
   }
 
+  protected void setMultitextureData(int ntex) {
+    if (numTexBuffers < ntex) {
+      addTexBuffers(ntex - numTexBuffers);
+    }    
+    
+    int n = vertexCount - 1;
+    System.arraycopy(multitextureU, 0, vertexU[n], 0, ntex);
+    System.arraycopy(multitextureV, 0, vertexV[n], 0, ntex);
+    System.arraycopy(multitextureImages, 0, vertexTex[n], 0, ntex); 
+  }
+  
   // public void breakShape()
 
   // public void endShape()
@@ -1790,7 +1961,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       shape.endUpdate();
       
       for (int t = 0; t < numRecordedTextures; t++) {
-        shape.beginUpdate(TEXTURES0 + textureUnit);
+        shape.beginUpdate(TEXTURES0 + t);
         shape.setTexCoord(recordedTexCoords[t]);
         shape.endUpdate();
       }
@@ -2126,7 +2297,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     triangles[triangleCount][VERTEX2] = b;
     triangles[triangleCount][VERTEX3] = c;
     
-    PImage[] images = vertexTex[a];   
+    PImage[] images = vertexTex[a];
     boolean firstFace = triangleCount == 0;
     if (diffFromMultitextures0(images) || firstFace) {
       // A new face starts at the first triangle or when the texture changes.
@@ -2155,7 +2326,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     faceLength[faceCount] = 1;
       
     PImage p[] = faceTextures[faceCount];
-    if (usingMultitexturing) {
+    if (usingMultitexture) {
       System.arraycopy(images, 0, p, 0, maxTextureUnits);
     } else {
       p[0] = images[0];
@@ -2177,7 +2348,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       int i = faceOffset[j];
       
       PImage[] images = faceTextures[j];
-      if (usingMultitexturing) {
+      if (usingMultitexture) {
         for (int t = 0; t < maxTextureUnits; t++) 
           if (images[t] != null) {
             PTexture tex = images[t].getTexture();
@@ -2214,7 +2385,7 @@ public class PGraphicsAndroid3D extends PGraphics {
 
       if (0 < numTextures) {
         if (numTexBuffers < numTextures) {
-          addTextureBuffers(numTextures - numTexBuffers);
+          addTexBuffers(numTextures - numTexBuffers);
         }        
         gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
       }
@@ -2243,13 +2414,14 @@ public class PGraphicsAndroid3D extends PGraphics {
 
       int n = 0;
       for (int k = 0; k < faceLength[j]; k++) {
-        float a[] = vertices[triangles[i][VERTEX1]];
-        float b[] = vertices[triangles[i][VERTEX2]];
-        float c[] = vertices[triangles[i][VERTEX3]];
+        int na = triangles[i][VERTEX1];
+        int nb = triangles[i][VERTEX2];
+        int nc = triangles[i][VERTEX3];
+        float a[] = vertices[na];
+        float b[] = vertices[nb];
+        float c[] = vertices[nc];
 
-        if (autoNormal && (a[HAS_NORMAL] == 0 || 
-                           b[HAS_NORMAL] == 0 || 
-                           c[HAS_NORMAL] == 0)) {
+        if (autoNormal && (a[HAS_NORMAL] == 0 || b[HAS_NORMAL] == 0 || c[HAS_NORMAL] == 0)) {
           // Ok, some of the vertices defining the current triangle have not been
           // assigned a normal, and the automatic normal calculation is enabled, so 
           // we generate the normal for all the vertices of this triangle.
@@ -2282,7 +2454,7 @@ public class PGraphicsAndroid3D extends PGraphics {
           a[HAS_NORMAL] = b[HAS_NORMAL] = c[HAS_NORMAL] = 1;
         }
         
-        for (int t = 0; t < numTextures; t++) {
+        if (numTextures == 1) {
           float uscale = 1.0f;
           float vscale = 1.0f;
           float cx = 0.0f;
@@ -2290,7 +2462,7 @@ public class PGraphicsAndroid3D extends PGraphics {
           float cy = 0.0f;
           float sy = +1.0f;
           
-          PTexture tex = renderTextures[t];
+          PTexture tex = renderTextures[0];
           uscale *= tex.getMaxTexCoordU();
           vscale *= tex.getMaxTexCoordV();
 
@@ -2303,17 +2475,53 @@ public class PGraphicsAndroid3D extends PGraphics {
             cy = 1.0f;
             sy = -1.0f;
           }
-          
-          renderUa[t] = (cx + sx * a[U]) * uscale;
-          renderVa[t] = (cy + sy * a[V]) * vscale;
-          
-          renderUb[t] = (cx + sx * b[U]) * uscale;
-          renderVb[t] = (cy + sy * b[V]) * vscale;
 
-          renderUc[t] = (cx + sx * c[U]) * uscale;
-          renderVc[t] = (cy + sy * c[V]) * vscale;
+          // No multitexturing, so getting the texture coordinates
+          // directly from the U, V fields in the vertices array.
+          renderUa[0] = (cx + sx * a[U]) * uscale;
+          renderVa[0] = (cy + sy * a[V]) * vscale;
+          
+          renderUb[0] = (cx + sx * b[U]) * uscale;
+          renderVb[0] = (cy + sy * b[V]) * vscale;
+
+          renderUc[0] = (cx + sx * c[U]) * uscale;
+          renderVc[0] = (cy + sy * c[V]) * vscale;
+        } else if (1 < numTextures) {
+          for (int t = 0; t < numTextures; t++) {
+            float uscale = 1.0f;
+            float vscale = 1.0f;
+            float cx = 0.0f;
+            float sx = +1.0f;
+            float cy = 0.0f;
+            float sy = +1.0f;
+
+            PTexture tex = renderTextures[t];
+            uscale *= tex.getMaxTexCoordU();
+            vscale *= tex.getMaxTexCoordV();
+
+            if (tex.isFlippedX()) {
+              cx = 1.0f;
+              sx = -1.0f;
+            }
+
+            if (tex.isFlippedY()) {
+              cy = 1.0f;
+              sy = -1.0f;
+            }
+
+            // The texture coordinates are obtained from the vertexU, vertexV
+            // arrays that store multitexture U, V coordinates.
+            renderUa[t] = (cx + sx * vertexU[na][t]) * uscale;
+            renderVa[t] = (cy + sy * vertexV[na][t]) * vscale;
+
+            renderUb[t] = (cx + sx * vertexU[nb][t]) * uscale;
+            renderVb[t] = (cy + sy * vertexV[nb][t]) * vscale;
+
+            renderUc[t] = (cx + sx * vertexU[nc][t]) * uscale;
+            renderVc[t] = (cy + sy * vertexV[nc][t]) * vscale;
+          }
         }
-
+        
         // Adding vertex A.
         if (recordingShape) {
           recordedVertices.add(new PVector(a[X], a[Y], a[Z]));
@@ -2424,17 +2632,17 @@ public class PGraphicsAndroid3D extends PGraphics {
         for (int t = 0; t < numTextures; t++) {
           texCoordBuffer[t].position(0);
         }
-
+        
         gl.glVertexPointer(3, GL10.GL_FIXED, 0, vertexBuffer);
         gl.glColorPointer(4, GL10.GL_FIXED, 0, colorBuffer);
         gl.glNormalPointer(GL10.GL_FIXED, 0, normalBuffer);
-        for (int t = 0; n < numTextures; n++) {
-          gl.glClientActiveTexture(GL11.GL_TEXTURE0 + t);
+        for (int t = 0; t < numTextures; t++) {
+          gl.glClientActiveTexture(GL10.GL_TEXTURE0 + t);
           gl.glTexCoordPointer(2, GL10.GL_FIXED, 0, texCoordBuffer[t]);          
         }
         gl.glDrawArrays(GL10.GL_TRIANGLES, 0, 3 * faceLength[j]);
       }
-
+      
       if (0 < numTextures) {
         for (int t = 0; t < numTextures; t++) {
           PTexture tex = renderTextures[t];
