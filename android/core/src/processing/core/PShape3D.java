@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
 import java.io.BufferedReader;
-import java.lang.reflect.Method;
 
 /**
  * This class holds a 3D model composed of vertices, normals, colors (per vertex) and 
@@ -52,11 +51,11 @@ public class PShape3D extends PShape implements PConstants {
   protected int glUsage;
   protected boolean pointSprites;
   
-  protected int[] glVertexBufferID   = new int[1];
-  protected int[] glColorBufferID    = new int[1];
-  protected int[] glNormalBufferID   = new int[1];
+  protected int glVertexBufferID;
+  protected int glColorBufferID;
+  protected int glNormalBufferID;
   protected int[] glTexCoordBufferID = new int[PGraphicsAndroid3D.MAX_TEXTURES];
-
+  
   protected FloatBuffer vertexBuffer;
   protected FloatBuffer colorBuffer;
   protected FloatBuffer normalBuffer;
@@ -77,8 +76,6 @@ public class PShape3D extends PShape implements PConstants {
   protected boolean firstSetGroup;
   protected int grIdx0;
   protected int grIdx1;
-
-  protected int recreateResourceIdx;
   
   protected float xmin, xmax;
   protected float ymin, ymax;
@@ -91,8 +88,7 @@ public class PShape3D extends PShape implements PConstants {
 
   protected int TEXTURESMAX;
   
-  protected static final int SIZEOF_FLOAT = Float.SIZE / 8;
-
+  protected static final int SIZEOF_FLOAT = Float.SIZE / 8; 
   
   ////////////////////////////////////////////////////////////
 
@@ -101,15 +97,13 @@ public class PShape3D extends PShape implements PConstants {
   public PShape3D(PApplet parent) {
     this.parent = parent;
     a3d = (PGraphicsAndroid3D)parent.g;
-  
-    TEXTURESMAX = TEXTURES0 + PGraphicsAndroid3D.maxTextureUnits;
+
+    glVertexBufferID = 0;
+    glColorBufferID = 0;
+    glNormalBufferID = 0;
+    java.util.Arrays.fill(glTexCoordBufferID, 0);
     
-    try {
-      Method meth = this.getClass().getMethod("recreateResource", new Class[] { PGraphicsAndroid3D.class });
-      recreateResourceIdx =  a3d.addRecreateResourceMethod(this, meth);
-    } catch (Exception e) {
-      recreateResourceIdx = -1;
-    } 
+    TEXTURESMAX = TEXTURES0 + PGraphicsAndroid3D.maxTextureUnits;
   }
   
   public PShape3D(PApplet parent, int numVert) {
@@ -119,6 +113,11 @@ public class PShape3D extends PShape implements PConstants {
   public PShape3D(PApplet parent, String filename, int mode) {
     this.parent = parent;
     a3d = (PGraphicsAndroid3D)parent.g;
+
+    glVertexBufferID = 0;
+    glColorBufferID = 0;
+    glNormalBufferID = 0;
+    java.util.Arrays.fill(glTexCoordBufferID, 0);
     
     TEXTURESMAX = TEXTURES0 + PGraphicsAndroid3D.maxTextureUnits;
     
@@ -148,13 +147,6 @@ public class PShape3D extends PShape implements PConstants {
     parseOBJ(reader, vertices, normals, textures, faces, materials);
     recordOBJ(vertices, normals, textures, faces, materials);
     centerAt(0, 0, 0);
-    
-    try {
-      Method meth = this.getClass().getMethod("recreateResource", new Class[] { PGraphicsAndroid3D.class });
-      recreateResourceIdx =  a3d.addRecreateResourceMethod(this, meth);
-    } catch (Exception e) {
-      recreateResourceIdx = -1;
-    }    
   }  
   
   
@@ -162,22 +154,18 @@ public class PShape3D extends PShape implements PConstants {
     this.parent = parent;
     a3d = (PGraphicsAndroid3D)parent.g;
     
+    glVertexBufferID = 0;
+    glColorBufferID = 0;
+    glNormalBufferID = 0;
+    java.util.Arrays.fill(glTexCoordBufferID, 0);    
+    
     TEXTURESMAX = TEXTURES0 + PGraphicsAndroid3D.maxTextureUnits;
     
     initShape(numVert, params);
-    
-    try {
-      Method meth = this.getClass().getMethod("recreateResource", new Class[] { PGraphicsAndroid3D.class });
-      recreateResourceIdx =  a3d.addRecreateResourceMethod(this, meth);
-    } catch (Exception e) {
-      recreateResourceIdx = -1;
-    }    
   }
   
 
-  protected void finalize() {
-    a3d.removeRecreateResourceMethod(recreateResourceIdx);
-    
+  public void delete() {
     //deleteVertexBuffer();
     //deleteColorBuffer();
     //deleteTexCoordBuffer();
@@ -261,7 +249,7 @@ public class PShape3D extends PShape implements PConstants {
     lastUpdateIdx = -1;
     
     if (updateElement == VERTICES) {
-      gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glVertexBufferID[0]);      
+      gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glVertexBufferID);      
       
       int offset = first * 3;
       int size = (last - first + 1) * 3;
@@ -273,7 +261,7 @@ public class PShape3D extends PShape implements PConstants {
       creatingGroup = false;
       firstSetGroup = true;
     } else if (updateElement == COLORS) {
-      gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glColorBufferID[0]);
+      gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glColorBufferID);
             
       int offset = first * 4;
       int size = (last - first + 1) * 4;
@@ -281,7 +269,7 @@ public class PShape3D extends PShape implements PConstants {
       colorBuffer.rewind();
       colorBuffer.get(colorArray, offset, size);
     } else if (updateElement == NORMALS) {
-      gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glNormalBufferID[0]);
+      gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glNormalBufferID);
             
       int offset = first * 3;
       int size = (last - first + 1) * 3;
@@ -1746,10 +1734,10 @@ public class PShape3D extends PShape implements PConstants {
   
   
   protected void createVertexBuffer() {    
-    deleteVertexBuffer();  // Just in case.
+    deleteVertexBuffer();  // Just in the case this object is being re-initialized.
     
-    gl.glGenBuffers(1, glVertexBufferID, 0);
-    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glVertexBufferID[0]);
+    glVertexBufferID = a3d.createGLResource(PGraphicsAndroid3D.GL_VERTEX_BUFFER);    
+    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glVertexBufferID);    
     final int bufferSize = vertexBuffer.capacity() * SIZEOF_FLOAT;
     gl.glBufferData(GL11.GL_ARRAY_BUFFER, bufferSize, vertexBuffer, glUsage);
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
@@ -1772,10 +1760,10 @@ public class PShape3D extends PShape implements PConstants {
   
   
   protected void createColorBuffer() {
-    deleteColorBuffer();  // Just in case.
+    deleteColorBuffer();
     
-    gl.glGenBuffers(1, glColorBufferID, 0);
-    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glColorBufferID[0]);
+    glColorBufferID = a3d.createGLResource(PGraphicsAndroid3D.GL_VERTEX_BUFFER);
+    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glColorBufferID);
     final int bufferSize = colorBuffer.capacity() * SIZEOF_FLOAT;    
     gl.glBufferData(GL11.GL_ARRAY_BUFFER, bufferSize, colorBuffer, glUsage);
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
@@ -1794,10 +1782,10 @@ public class PShape3D extends PShape implements PConstants {
 
   
   protected void createNormalBuffer() {
-    deleteNormalBuffer();  // Just in case.
+    deleteNormalBuffer();
     
-    gl.glGenBuffers(1, glNormalBufferID, 0);
-    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glNormalBufferID[0]);
+    glNormalBufferID = a3d.createGLResource(PGraphicsAndroid3D.GL_VERTEX_BUFFER);
+    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glNormalBufferID);
     final int bufferSize = normalBuffer.capacity() * SIZEOF_FLOAT;    
     gl.glBufferData(GL11.GL_ARRAY_BUFFER, bufferSize, normalBuffer, glUsage);
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
@@ -1816,9 +1804,9 @@ public class PShape3D extends PShape implements PConstants {
   
   
   protected void createTexCoordBuffer() {
-    deleteTexCoordBuffer(); // Just in case.
+    deleteTexCoordBuffer();
     
-    gl.glGenBuffers(1, glTexCoordBufferID, 0);
+    glTexCoordBufferID[0] = a3d.createGLResource(PGraphicsAndroid3D.GL_VERTEX_BUFFER);
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glTexCoordBufferID[0]);
     final int bufferSize = texCoordBuffer.capacity() * SIZEOF_FLOAT;
     gl.glBufferData(GL11.GL_ARRAY_BUFFER, bufferSize, texCoordBuffer, glUsage);
@@ -1828,15 +1816,14 @@ public class PShape3D extends PShape implements PConstants {
   
   protected void addTexBuffers(int more) {
     for (int i = 0; i < more; i++) {
-      deleteTexCoordBuffer(numTexBuffers + i); // Just in case.
+      int t = numTexBuffers + i;
+      deleteTexCoordBuffer(t);
       
-      int[] temp = {0};
-      gl.glGenBuffers(1, temp, 0);
-      gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, temp[0]);
+      glTexCoordBufferID[t] = a3d.createGLResource(PGraphicsAndroid3D.GL_VERTEX_BUFFER);      
+      gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glTexCoordBufferID[t]);
       final int bufferSize = texCoordBuffer.capacity() * SIZEOF_FLOAT;
       gl.glBufferData(GL11.GL_ARRAY_BUFFER, bufferSize, texCoordBuffer, glUsage);
       gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);     
-      glTexCoordBufferID[numTexBuffers + i] = temp[0];
     }
     
     numTexBuffers += more;
@@ -1844,25 +1831,25 @@ public class PShape3D extends PShape implements PConstants {
   
   
   protected void deleteVertexBuffer() {
-    if (glVertexBufferID[0] != 0) {    
-      gl.glDeleteBuffers(1, glVertexBufferID, 0);
-      glVertexBufferID[0] = 0;
+    if (glVertexBufferID != 0) {    
+      a3d.deleteGLResource(glVertexBufferID, PGraphicsAndroid3D.GL_VERTEX_BUFFER);   
+      glVertexBufferID = 0;
     }
   }  
   
 
   protected void deleteColorBuffer() {
-    if (glColorBufferID[0] != 0) {    
-      gl.glDeleteBuffers(1, glColorBufferID, 0);
-      glColorBufferID[0] = 0;
+    if (glColorBufferID != 0) {
+      a3d.deleteGLResource(glColorBufferID, PGraphicsAndroid3D.GL_VERTEX_BUFFER);
+      glColorBufferID = 0;
     }
   }
   
   
   protected void deleteNormalBuffer() {
-    if (glNormalBufferID[0] != 0) {    
-      gl.glDeleteBuffers(1, glNormalBufferID, 0);
-      glNormalBufferID[0] = 0;
+    if (glNormalBufferID != 0) {
+      a3d.deleteGLResource(glNormalBufferID, PGraphicsAndroid3D.GL_VERTEX_BUFFER);
+      glNormalBufferID = 0;
     }
   }  
 
@@ -1875,26 +1862,16 @@ public class PShape3D extends PShape implements PConstants {
   
   
   protected void deleteTexCoordBuffer(int idx) {  
-    if (glTexCoordBufferID[idx] != 0) {    
-      int[] temp = {glTexCoordBufferID[idx]};
-      gl.glDeleteBuffers(1, temp, 0);
+    if (glTexCoordBufferID[idx] != 0) {
+      a3d.deleteGLResource(glTexCoordBufferID[idx], PGraphicsAndroid3D.GL_VERTEX_BUFFER);
       glTexCoordBufferID[idx] = 0;
     }
   }
   
-  
-  
-  protected void recreateResource(PGraphicsAndroid3D renderer) {
-    createVertexBuffer();   
-    createColorBuffer();
-    createNormalBuffer();
-    createTexCoordBuffer();
-  }
-  
-  
+
   ///////////////////////////////////////////////////////////  
 
-  // Reimplementing methods inherited from PShape.
+  // Re-implementing methods inherited from PShape.
   
   
   public void translate(float tx, float ty) {
@@ -2070,7 +2047,7 @@ public class PShape3D extends PShape implements PConstants {
   
   
   public void draw(PGraphics g, int gr0, int gr1) {
-	  PImage[] imgs = null;
+	  PImage[] images = null;
 	  boolean textured = false;
 	  float pointSize;
 	  
@@ -2086,17 +2063,17 @@ public class PShape3D extends PShape implements PConstants {
     gl.glPointSize(pointSize);
   
     gl.glEnableClientState(GL11.GL_NORMAL_ARRAY);
-    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glNormalBufferID[0]);
+    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glNormalBufferID);
     gl.glNormalPointer(GL11.GL_FLOAT, 0, 0);    
 
     if (vertexColor) {
       gl.glEnableClientState(GL11.GL_COLOR_ARRAY);
-      gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glColorBufferID[0]);
+      gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glColorBufferID);
       gl.glColorPointer(4, GL11.GL_FLOAT, 0, 0);
     }        
     
     gl.glEnableClientState(GL11.GL_VERTEX_ARRAY);            
-    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glVertexBufferID[0]);
+    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glVertexBufferID);
     gl.glVertexPointer(3, GL11.GL_FLOAT, 0, 0);
     
     VertexGroup group;
@@ -2106,13 +2083,13 @@ public class PShape3D extends PShape implements PConstants {
       if (group.hasTexture())  {
         textured = true;
         // Binding texture units.
-        imgs = group.textures;
-        for (int n = 0; n < imgs.length; n++) {
-          if (imgs[n] != null && imgs[n].getTexture() != null) {
-            PTexture tex = imgs[n].getTexture();
+        images = group.textures;
+        for (int t = 0; t < images.length; t++) {
+          if (images[t] != null && images[t].getTexture() != null) {
+            PTexture tex = images[t].getTexture();
             int texTarget = tex.getGLTarget();
             gl.glEnable(texTarget);          
-            gl.glActiveTexture(GL10.GL_TEXTURE0 + n);
+            gl.glActiveTexture(GL10.GL_TEXTURE0 + t);
             gl.glBindTexture(texTarget, tex.getGLID());
           }
         }
@@ -2140,9 +2117,9 @@ public class PShape3D extends PShape implements PConstants {
         } else {
           // Regular texturing.         
           gl.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
-          for (int n = 0; n < numTexBuffers; n++) {
-            gl.glClientActiveTexture(GL11.GL_TEXTURE0 + n);
-            gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glTexCoordBufferID[n]);
+          for (int t = 0; t < numTexBuffers; t++) {
+            gl.glClientActiveTexture(GL11.GL_TEXTURE0 + t);
+            gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glTexCoordBufferID[t]);
             gl.glTexCoordPointer(2, GL11.GL_FLOAT, 0, 0);
           }
         }
@@ -2183,9 +2160,9 @@ public class PShape3D extends PShape implements PConstants {
           gl.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
         }
         
-        for (int n = 0; n < numTexBuffers; n++) {
-          if (imgs[n] != null && imgs[n].getTexture() != null) {
-            PTexture tex = imgs[n].getTexture();
+        for (int t = 0; t < numTexBuffers; t++) {
+          if (images[t] != null && images[t].getTexture() != null) {
+            PTexture tex = images[t].getTexture();
             int texTarget = tex.getGLTarget();        
             gl.glDisable(texTarget);
           }

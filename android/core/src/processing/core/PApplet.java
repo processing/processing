@@ -546,6 +546,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
   protected void onPause() {
     super.onPause();
+    
 
     // TODO need to save all application state here!
 //    System.out.println("PApplet.onPause() called");
@@ -795,7 +796,6 @@ public class PApplet extends Activity implements PConstants, Runnable {
       if (DEBUG) {
         System.out.println("surfaceDestroyed()");
       }
-      g3.dispose();
     }
 
 
@@ -2500,7 +2500,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
     // don't run stop and disposers twice
     if (thread == null) return;
     thread = null;
-
+    
     // call to shut down renderer, in case it needs it (pdf does)
     if (g != null) g.dispose();
     disposeMethods.handle();

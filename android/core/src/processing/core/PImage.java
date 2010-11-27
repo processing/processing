@@ -139,6 +139,13 @@ public class PImage implements PConstants, Cloneable {
 //    this.cache = null;
   }
 
+  
+  public void delete() {
+    if (texture != null) {
+      texture.delete();
+    }
+  }
+  
 
   /**
    * Check the alpha on an image, using a really primitive loop.
