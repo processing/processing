@@ -16,6 +16,10 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=131
 X   http://code.google.com/p/processing/issues/detail?id=43
 X shearX and shearY not implemented with P2D and JAVA2D
 X   http://code.google.com/p/processing/issues/detail?id=452
+L PGraphicsJava2D.resize() not working the same as PGraphics2D.resize()
+L   http://dev.processing.org/bugs/show_bug.cgi?id=1107
+X   http://code.google.com/p/processing/issues/detail?id=150
+X   resize is not available with renderers, use createGraphics()
 
 
 _ saving a PGraphics as jpg using save() makes a cmyk file
@@ -558,8 +562,6 @@ _ make sure line() commands don't try to have a fill
 
 CORE / PGraphicsJava2D
 
-_ PGraphicsJava2D.resize() not working the same as PGraphics2D.resize()
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1107
 _ some optimizations from zach
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=os_core_pde;action=display;num=1121670787
 _ textMode(SCREEN) needs to be faster
