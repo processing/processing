@@ -359,7 +359,7 @@ public class PShape3D extends PShape implements PConstants {
       int t = updateElement - TEXTURES0;
       texCoordSet[t] = true;
     } else if (updateElement == GROUPS) {
-      // TODO: check consistency of newly created groups (make sure that there are not overlapping groups)      
+      checkGroups();      
     }
     
     updateElement = -1;
@@ -1509,7 +1509,7 @@ public class PShape3D extends PShape implements PConstants {
       }
       
       // Deleting superfluous groups.
-      for (int i = groups.size() -1; i >= 0; i--) {
+      for (int i = groups.size() - 1; i >= 0; i--) {
         gr1 = (VertexGroup)groups.get(i);
         if (gr1.last == -1) {
           groups.remove(i);
@@ -1527,7 +1527,7 @@ public class PShape3D extends PShape implements PConstants {
   
   
   protected void addGroup(int idx0, int idx1, PImage[] tex) {
-    if (0 <= idx0 && idx0 <=  idx1) {
+    if (0 <= idx0 && idx0 <= idx1) {
       VertexGroup group = new VertexGroup(idx0, idx1, tex);
       groups.add(group);
       for (int n = idx0; n <= idx1; n++) {
@@ -1541,6 +1541,23 @@ public class PShape3D extends PShape implements PConstants {
     groups.clear();
     for (int n = 0; n < numVertices; n++) {
        vertGroup[n] = null;
+    }
+  }
+  
+  
+  protected void checkGroups() {
+    VertexGroup gri, grj;
+    for (int i = 0; i < groups.size(); i++) {
+      gri = (VertexGroup)groups.get(i);
+      for (int j = i + 1; j < groups.size(); j++) {
+        grj = (VertexGroup)groups.get(j);
+        
+        if ((grj.first < gri.last && gri.first < grj.last) ||
+            (gri.first < grj.last && grj.first < gri.last)) {
+          PGraphics.showWarning("PShape3D: Overlapping vertex groups");
+          return;  
+        }
+      }
     }
   }
   
@@ -2049,7 +2066,7 @@ public class PShape3D extends PShape implements PConstants {
   
   
   public void draw(PGraphics g, int gr0, int gr1) {
-	  int numTextures = 0;
+	  int numTextures;
 	  float pointSize;
 	  
 	  // Setting line width and point size from stroke value.
@@ -2081,6 +2098,7 @@ public class PShape3D extends PShape implements PConstants {
     for (int i = gr0; i <= gr1; i++) {
       group = (VertexGroup)groups.get(i);
       
+      numTextures = 0;
       PImage[] images = group.textures;
       for (int t = 0; t < images.length; t++) {
         if (images[t] != null) {
@@ -2088,7 +2106,7 @@ public class PShape3D extends PShape implements PConstants {
           if (tex != null) {
             gl.glEnable(tex.getGLTarget());
             gl.glActiveTexture(GL10.GL_TEXTURE0 + t);
-            gl.glBindTexture(tex.getGLTarget(), tex.getGLID());   
+            gl.glBindTexture(tex.getGLTarget(), tex.getGLID());
             renderTextures[numTextures] = tex;
             numTextures++;
           } else {
