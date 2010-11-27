@@ -22,7 +22,6 @@
 
 package processing.core;
 
-import java.lang.reflect.Method;
 import java.nio.IntBuffer;
 import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11ExtensionPack;
@@ -48,8 +47,6 @@ public class PFramebuffer implements PConstants {
   protected int glStencilBufferID;
   protected int width;
   protected int height;
-
-  protected int recreateResourceIdx;  
   
   protected int numColorBuffers;
   protected int[] colorBufferAttchPoints;
@@ -75,6 +72,9 @@ public class PFramebuffer implements PConstants {
     this.parent = parent;
     a3d = (PGraphicsAndroid3D)parent.g;
     
+    glFboID = 0;
+    glDepthBufferID = 0;
+    glStencilBufferID = 0;    
     screenFb = screen;
     noDepth = false;
     FboMode = PGraphicsAndroid3D.fboSupported;
@@ -88,7 +88,7 @@ public class PFramebuffer implements PConstants {
       throw new RuntimeException("PFramebuffer: OpenGL ES 1.1 Extension Pack required");
     }
     
-    initFramebuffer(w, h);
+    createFramebuffer(w, h);
     
     pixelBuffer = IntBuffer.allocate(width * height);
     pixelBuffer.rewind();    
@@ -99,30 +99,22 @@ public class PFramebuffer implements PConstants {
       // buffer to the texture bound as color buffer to this PFramebuffer object and then drawing 
       // the backup texture back on the screen.
       backupTexture = new PTexture(parent, width, height, new PTexture.Parameters(ARGB, NEAREST));       
-    }
-    
-    try {
-      Method meth = this.getClass().getMethod("recreateResource", new Class[] { PGraphicsAndroid3D.class });
-      recreateResourceIdx =  a3d.addRecreateResourceMethod(this, meth);
-    } catch (Exception e) {
-      recreateResourceIdx = -1;
-    }    
+    }  
   }
 
-  protected void finalize() {
-    a3d.removeRecreateResourceMethod(recreateResourceIdx);    
-    //deleteFramebuffer();
+  public void delete() {
+    deleteFramebuffer();
   }
 
-  void setColorBuffer(PTexture tex) {
+  public void setColorBuffer(PTexture tex) {
     setColorBuffers(new PTexture[] { tex }, 1);
   }
 
-  void setColorBuffers(PTexture[] textures) {
+  public void setColorBuffers(PTexture[] textures) {
     setColorBuffers(textures, textures.length);
   }
 
-  void setColorBuffers(PTexture[] textures, int n) {
+  public void setColorBuffers(PTexture[] textures, int n) {
     if (screenFb) return;
     
     if (FboMode) {
@@ -176,10 +168,7 @@ public class PFramebuffer implements PConstants {
       a3d.pushFramebuffer();
       a3d.setFramebuffer(this);
 
-      int[] temp = new int[1];
-      gl11xp.glGenRenderbuffersOES(1, temp, 0);
-      glDepthBufferID = temp[0];
-
+      glDepthBufferID = a3d.createGLResource(PGraphicsAndroid3D.GL_RENDER_BUFFER);
       gl11xp.glBindRenderbufferOES(GL11ExtensionPack.GL_RENDERBUFFER_OES, glDepthBufferID);
 
       int glConst = GL11ExtensionPack.GL_DEPTH_COMPONENT16;
@@ -211,10 +200,7 @@ public class PFramebuffer implements PConstants {
       a3d.pushFramebuffer();
       a3d.setFramebuffer(this);
 
-      int[] temp = new int[1];
-      gl11xp.glGenRenderbuffersOES(1, temp, 0);
-      glStencilBufferID = temp[0];
-
+      glStencilBufferID = a3d.createGLResource(PGraphicsAndroid3D.GL_RENDER_BUFFER);
       gl11xp.glBindRenderbufferOES(GL11ExtensionPack.GL_RENDERBUFFER_OES, glStencilBufferID);
 
       int glConst = GL11ExtensionPack.GL_STENCIL_INDEX1_OES;
@@ -321,45 +307,38 @@ public class PFramebuffer implements PConstants {
     gl.glDisable(gltarget);
   }
   
-  protected void initFramebuffer(int w, int h) {
+  protected void createFramebuffer(int w, int h) {
+    deleteFramebuffer(); // Just in the case this object is being re-initialized.
+    
     width = w;
     height = h;
         
     if (screenFb) {
       glFboID = 0;
-    } else if (FboMode) {  
-      int[] temp = new int[1];
-      gl11xp.glGenFramebuffersOES(1, temp, 0);
-      glFboID = temp[0];
+    } else if (FboMode) {
+      glFboID = a3d.createGLResource(PGraphicsAndroid3D.GL_FRAME_BUFFER); 
     }  else {
       glFboID = 0;
     }
   }
-
+  
   protected void deleteFramebuffer() {
     if (glFboID != 0) {
-      int[] temp = { glFboID };
-      gl11xp.glDeleteFramebuffersOES(1, temp, 0);
+      a3d.deleteGLResource(glFboID, PGraphicsAndroid3D.GL_FRAME_BUFFER);
       glFboID = 0;
     }
     
-    if (glDepthBufferID !=  0) {
-      int[] temp = { glDepthBufferID };
-      gl11xp.glDeleteRenderbuffersOES(1, temp, 0);
+    if (glDepthBufferID != 0) {
+      a3d.deleteGLResource(glDepthBufferID, PGraphicsAndroid3D.GL_RENDER_BUFFER);
       glDepthBufferID = 0;
-    }    
+    }
     
-    if (glStencilBufferID !=  0) {
-      int[] temp = { glStencilBufferID };
-      gl11xp.glDeleteRenderbuffersOES(1, temp, 0);
+    if (glStencilBufferID != 0) {
+      a3d.deleteGLResource(glStencilBufferID, PGraphicsAndroid3D.GL_RENDER_BUFFER);
       glStencilBufferID = 0;
     }
     
-    width = height = 0;
-  }
-  
-  protected void recreateResource(PGraphicsAndroid3D renderer) {
-    // Recreate GL resources (buffers, etc).
+    width = height = 0;    
   }
   
   public boolean validFbo() {

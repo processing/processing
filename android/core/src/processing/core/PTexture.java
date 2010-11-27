@@ -68,8 +68,6 @@ public class PTexture implements PConstants {
   protected int[] tmpPixels = null;
   protected PFramebuffer tmpFbo = null;
   
-  protected int recreateResourceIdx;
-  
   ////////////////////////////////////////////////////////////
   
   // Constructors.
@@ -106,14 +104,7 @@ public class PTexture implements PConstants {
     glID = 0;
     
     setParameters(params);
-    createTexture(width, height);
-    
-    try {
-      Method meth = this.getClass().getMethod("recreateResource", new Class[] { PGraphicsAndroid3D.class });
-      recreateResourceIdx =  a3d.addRecreateResourceMethod(this, meth);
-    } catch (Exception e) {
-      recreateResourceIdx = -1;
-    }        
+    createTexture(width, height);        
   }	
 	
 
@@ -143,20 +134,12 @@ public class PTexture implements PConstants {
     
     PImage img = parent.loadImage(filename);
     setParameters(params);
-    set(img);
-    
-    try {
-      Method meth = this.getClass().getMethod("recreateResource", new Class[] { PGraphicsAndroid3D.class });
-      recreateResourceIdx =  a3d.addRecreateResourceMethod(this, meth);
-    } catch (Exception e) {
-      recreateResourceIdx = -1;
-    }        
+    set(img);       
   }
 
 
-  protected void finalize() {
-    a3d.removeRecreateResourceMethod(recreateResourceIdx);    
-    //deleteTexture();
+  public void delete() {    
+    deleteTexture();
   }
 
   
@@ -889,7 +872,7 @@ public class PTexture implements PConstants {
    * @param h int	 
    */
   protected void createTexture(int w, int h) {
-    deleteTexture();
+    deleteTexture(); // Just in the case this object is being re-initialized.
       
     if (PGraphicsAndroid3D.npotTexSupported) {
       glWidth = w;
@@ -912,9 +895,7 @@ public class PTexture implements PConstants {
                                      (glMinFilter == GL10.GL_LINEAR_MIPMAP_LINEAR));
      
      gl.glEnable(glTarget);
-     int[] tmp = new int[1];
-     gl.glGenTextures(1, tmp, 0);
-     glID = tmp[0];
+     glID = a3d.createGLResource(PGraphicsAndroid3D.GL_TEXTURE_OBJECT);     
      gl.glBindTexture(glTarget, glID);
      gl.glTexParameterf(glTarget, GL10.GL_TEXTURE_MIN_FILTER, glMinFilter);
      gl.glTexParameterf(glTarget, GL10.GL_TEXTURE_MAG_FILTER, glMagFilter);
@@ -941,17 +922,10 @@ public class PTexture implements PConstants {
    */
   protected void deleteTexture() {
     if (glID != 0) {
-      int[] tmp = { glID };
-      gl.glDeleteTextures(1, tmp, 0);  
+      a3d.deleteGLResource(glID, PGraphicsAndroid3D.GL_TEXTURE_OBJECT);
       glID = 0;
     }
   }
-  
-
-  protected void recreateResource(PGraphicsAndroid3D renderer) {
-    createTexture(width, height);
-  }
-
   
   // Copies source texture to this.
   protected void copyTexels(PTexture tex, int x, int y, int w, int h, boolean scale) {
@@ -991,8 +965,9 @@ public class PTexture implements PConstants {
   }
   
   protected void copyObject(PTexture src) {
-    a3d.removeRecreateResourceMethod(recreateResourceIdx);    
-    deleteTexture();
+    // The OpenGL texture of this object is replaced with the one from the source object, 
+    // so we delete the former to avoid resource wasting.
+    deleteTexture(); 
   
     width = src.width;
     height = src.height;
@@ -1016,8 +991,6 @@ public class PTexture implements PConstants {
   
     flippedX = src.flippedX;   
     flippedY = src.flippedY;
-
-    recreateResourceIdx = src.recreateResourceIdx;
   }
     
   ///////////////////////////////////////////////////////////  
