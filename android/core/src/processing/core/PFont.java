@@ -330,6 +330,13 @@ public class PFont implements PConstants {
   }
   
   
+  public void delete() {
+    for (int i = 0; i < textures.length; i++) {
+      textures[i].delete();
+    }
+  }
+  
+  
   /**
    * Write this PFont to an OutputStream.
    * <p>
@@ -758,9 +765,7 @@ public class PFont implements PConstants {
     }
   }
   
-  
-  protected void recreateResource(PGraphicsAndroid3D renderer) {
-  }
+
   
   /////////////////////////////////////////////////////////////
 

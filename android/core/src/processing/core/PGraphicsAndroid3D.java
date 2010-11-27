@@ -29,6 +29,8 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.EmptyStackException;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.Stack;
 
 import android.opengl.GLU;
@@ -190,6 +192,8 @@ public class PGraphicsAndroid3D extends PGraphics {
   // Used to detect changes in the current texture images.
   protected PImage multitextureImages0[] = new PImage[MAX_TEXTURES];
 
+  protected PImage textureImage0;
+  
   // Current multitexture UV coordinates.
   protected float[] multitextureU = new float[MAX_TEXTURES];
   protected float[] multitextureV = new float[MAX_TEXTURES];
@@ -309,14 +313,17 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // ........................................................
 
-  // This array contains the recreateResource methods of all the GL objects
-  // created in Processing. These methods are used to recreate the open GL
-  // data when there is a context change or surface creation in Android.
-  // TODO: Check the resource recreation method.
-  protected ArrayList<GLResource> recreateResourceMethods;
-
-  // This is only used by non primary surfaces.
-  protected int recreateResourceIdx;
+  // OpenGL resources
+  
+  static protected final int GL_TEXTURE_OBJECT = 0;
+  static protected final int GL_VERTEX_BUFFER = 1;
+  static protected final int GL_FRAME_BUFFER = 2;
+  static protected final int GL_RENDER_BUFFER = 3;
+  
+  Set<Integer> glTextureObjects;
+  Set<Integer> glVertexBuffers;
+  Set<Integer> glFrameBuffers;
+  Set<Integer> glRenderBuffers;
   
   // ........................................................
 
@@ -404,7 +411,11 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   public PGraphicsAndroid3D() {
     renderer = new A3DRenderer();
-    recreateResourceMethods = new ArrayList<GLResource>();
+    
+    glTextureObjects = new HashSet<Integer>();
+    glVertexBuffers = new HashSet<Integer>();
+    glFrameBuffers = new HashSet<Integer>();
+    glRenderBuffers = new HashSet<Integer>();
   }
   
   // public void setParent(PApplet parent)
@@ -509,49 +520,99 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
   }
 
-  public void dispose() {  
+  public void dispose() {
+    // Releasing any remaining OpenGL resources.
     
+    if (!glTextureObjects.isEmpty()) {
+      Object[] glids = glTextureObjects.toArray();
+      for (int i = 0; i < glids.length; i++) {
+        int id = ((Integer)glids[i]).intValue();
+        int[] temp = { id };
+        gl.glDeleteTextures(1, temp, 0);          
+      }
+    }
     
+    if (!glVertexBuffers.isEmpty()) {
+      Object[] glids = glVertexBuffers.toArray();
+      for (int i = 0; i < glids.length; i++) {
+        int id = ((Integer)glids[i]).intValue();
+        int[] temp = { id };
+        gl11.glDeleteBuffers(1, temp, 0);          
+      }      
+    }
+    
+    if (!glFrameBuffers.isEmpty()) {
+      Object[] glids = glFrameBuffers.toArray();
+      for (int i = 0; i < glids.length; i++) {
+        int id = ((Integer)glids[i]).intValue();
+        int[] temp = { id };
+        gl11xp.glDeleteFramebuffersOES(1, temp, 0);          
+      }      
+    }
+    
+    if (!glRenderBuffers.isEmpty()) {
+      Object[] glids = glRenderBuffers.toArray();
+      for (int i = 0; i < glids.length; i++) {
+        int id = ((Integer)glids[i]).intValue();
+        int[] temp = { id };
+        gl11xp.glDeleteRenderbuffersOES(1, temp, 0);          
+      }
+    }    
   }
   
-  // TODO: finalize or dispose to clean up opengl resources?
-  protected void finalize() {
-    if (!primarySurface) {
-      PGraphicsAndroid3D a3d = (PGraphicsAndroid3D)parent.g;
-      if (a3d != null) {
-        a3d.removeRecreateResourceMethod(recreateResourceIdx);
+  protected int createGLResource(int type) {
+    int id = 0;
+    if (type == GL_TEXTURE_OBJECT) {
+      int[] temp = new int[1];
+      gl.glGenTextures(1, temp, 0);
+      id = temp[0];
+      glTextureObjects.add(id);
+    } else if (type == GL_VERTEX_BUFFER) {
+      int[] temp = new int[1];
+      gl11.glGenBuffers(1, temp, 0);
+      id = temp[0];
+      glVertexBuffers.add(id);      
+    } else if (type == GL_FRAME_BUFFER) {
+      int[] temp = new int[1];
+      gl11xp.glGenFramebuffersOES(1, temp, 0);
+      id = temp[0];
+      glFrameBuffers.add(id);       
+    } else if (type == GL_RENDER_BUFFER) {
+      int[] temp = new int[1];
+      gl11xp.glGenRenderbuffersOES(1, temp, 0);
+      id = temp[0];
+      glRenderBuffers.add(id);       
+    } 
+      
+    return id;
+  }
+  
+  protected void deleteGLResource(int id, int type) {
+    if (type == GL_TEXTURE_OBJECT) {
+      if (glTextureObjects.contains(id)) {
+        int[] temp = { id };
+        gl.glDeleteTextures(1, temp, 0);
+        glTextureObjects.remove(id);
       }
-    }
-  }
-
-  public void recreateResources() {
-    // Recreate the openGL resources of the registered GL objects (PTexture,
-    // PShape3D, PFramebuffer, PFont)
-    for (int i = 0; i < recreateResourceMethods.size(); i++) {
-      GLResource resource = (GLResource) recreateResourceMethods.get(i);
-      try {
-        resource.method.invoke(resource.object, new Object[] { this });
-      } catch (Exception e) {
-        System.err.println("A3D: Error, opengl resources in " + resource.object
-            + " cannot be recreated.");
-        e.printStackTrace();
+    } else if (type == GL_VERTEX_BUFFER) {
+      if (glVertexBuffers.contains(id)) {
+        int[] temp = { id };
+        gl11.glDeleteBuffers(1, temp, 0);
+        glVertexBuffers.remove(id);
       }
+    } else if (type == GL_FRAME_BUFFER) {
+      if (glFrameBuffers.contains(id)) {
+        int[] temp = { id };
+        gl11xp.glDeleteFramebuffersOES(1, temp, 0);
+        glFrameBuffers.remove(id);
+      }
+    } else if (type == GL_RENDER_BUFFER) {
+      if (glRenderBuffers.contains(id)) {
+        int[] temp = { id };
+        gl11xp.glDeleteRenderbuffersOES(1, temp, 0);
+        glRenderBuffers.remove(id);
+      }      
     }
-  }
-
-  protected int addRecreateResourceMethod(Object obj, Method meth) {
-    recreateResourceMethods.add(new GLResource(obj, meth));
-    return recreateResourceMethods.size() - 1;
-  }
-
-  protected void removeRecreateResourceMethod(int idx) {
-    if (-1 < idx && idx < recreateResourceMethods.size()) {
-      recreateResourceMethods.remove(idx);
-    }
-  }
-
-  protected void recreateResource(PGraphicsAndroid3D renderer) {
-    
   }  
   
   // ////////////////////////////////////////////////////////////
@@ -847,6 +908,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     // Each frame starts with multitexturing disabled.
     usingMultitexture = false;
+    textureImage0 = null;
     clearMultitextures();
     clearMultitextures0();
     
@@ -1097,16 +1159,6 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     // easiest for beginners
     textureMode(IMAGE);
-    
-    if (!primarySurface) {
-      PGraphicsAndroid3D a3d = (PGraphicsAndroid3D)parent.g;
-      try {
-        Method meth = this.getClass().getMethod("recreateResource", new Class[] { PGraphicsAndroid3D.class });
-        recreateResourceIdx =  a3d.addRecreateResourceMethod(this, meth);
-      } catch (Exception e) {
-        recreateResourceIdx = -1;
-      }      
-    }
   }
 
   // reapplySettings
@@ -1242,6 +1294,7 @@ public class PGraphicsAndroid3D extends PGraphics {
 
     clearMultitextures();
     clearMultitextures0();
+    textureImage0 = null;
   }
 
   // public void edge(boolean e)
@@ -1259,10 +1312,12 @@ public class PGraphicsAndroid3D extends PGraphics {
   public void texture(PImage image) {
     super.texture(image);
     usingMultitexture = false;
+    
     multitextureImages[0] = image;
     for (int t = 1; t < maxTextureUnits; t++) {
       multitextureImages[t] = null;
     }
+    
   }
   
   public void texture(PImage image0, PImage image1) {
@@ -1276,7 +1331,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       }      
       for (int t = 2; t < maxTextureUnits; t++) {
         multitextureImages[t] = null;
-      }      
+      }
     } else {
       System.err.println("A3D: insufficient texture units.");
     }  
@@ -1307,6 +1362,9 @@ public class PGraphicsAndroid3D extends PGraphics {
       usingMultitexture = true;
       if (numTexBuffers < 4) {
         addTexBuffers(4 - numTexBuffers);
+      }
+      for (int t = 4; t < maxTextureUnits; t++) {
+        multitextureImages[t] = null;
       }      
     } else {
       System.err.println("A3D: insufficient texture units.");
@@ -1320,7 +1378,10 @@ public class PGraphicsAndroid3D extends PGraphics {
       usingMultitexture = true;
       if (numTexBuffers < images.length) {
         addTexBuffers(images.length - numTexBuffers);
-      }      
+      }
+      for (int t = images.length; t < maxTextureUnits; t++) {
+        multitextureImages[t] = null;
+      }
     } else {
       System.err.println("A3D: insufficient texture units.");
     }  
@@ -1484,14 +1545,18 @@ public class PGraphicsAndroid3D extends PGraphics {
     }    
   }  
   
+  /*
   public void vertex(float x, float y, float z, float u, float v) {  
     vertexTexture(u, v, 0);
     vertex(x, y, z);
+    
     int n = vertexCount - 1;
     vertexTex[n][0] = multitextureImages[0];
     vertexU[n][0] = multitextureU[0];
     vertexV[n][0] = multitextureV[0];
+        
   }
+  */
 
   public void vertex(float x, float y, float z, float u0, float v0, float u1, float v1) {
     if (2 <= maxTextureUnits) {
@@ -2297,7 +2362,13 @@ public class PGraphicsAndroid3D extends PGraphics {
     triangles[triangleCount][VERTEX2] = b;
     triangles[triangleCount][VERTEX3] = c;
     
-    PImage[] images = vertexTex[a];
+    /*
+    PImage[] images;
+    if (usingMultitexture) {
+      images = vertexTex[a];
+    } else {
+      images = new PImage[] {textureImage};
+    }
     boolean firstFace = triangleCount == 0;
     if (diffFromMultitextures0(images) || firstFace) {
       // A new face starts at the first triangle or when the texture changes.
@@ -2307,8 +2378,36 @@ public class PGraphicsAndroid3D extends PGraphics {
       faceLength[faceCount - 1]++;
     }
     triangleCount++;
-    
     setMultitextures0(images);
+    */
+    
+    
+    if (usingMultitexture) {
+      PImage[] images = vertexTex[a];
+      boolean firstFace = triangleCount == 0;
+      if (diffFromMultitextures0(images) || firstFace) {
+        // A new face starts at the first triangle or when the texture changes.
+        addNewFace(firstFace, images);
+      } else {
+        // mark this triangle as being part of the current face.
+        faceLength[faceCount - 1]++;
+      }
+      triangleCount++;
+      setMultitextures0(images);      
+    } else {
+
+      PImage image = textureImage;
+      boolean firstFace = triangleCount == 0;
+      if (image != textureImage0 || firstFace) {
+        // A new face starts at the first triangle or when the texture changes.
+        addNewFace(firstFace, image);
+      } else {
+        // mark this triangle as being part of the current face.
+        faceLength[faceCount - 1]++;
+      }
+      triangleCount++;
+      textureImage0 = textureImage;
+    }
   }
 
   // New "face" starts. A face is just a range of consecutive triangles
@@ -2335,6 +2434,27 @@ public class PGraphicsAndroid3D extends PGraphics {
     faceCount++;
   }
 
+  
+  
+  protected void addNewFace(boolean firstFace, PImage image) {
+    if (faceCount == faceOffset.length) {
+      faceOffset = PApplet.expand(faceOffset);
+      faceLength = PApplet.expand(faceLength);
+      
+      PImage tempi[][] = new PImage[faceCount << 1][MAX_TEXTURES];
+      System.arraycopy(faceTextures, 0, tempi, 0, faceCount);
+      faceTextures = tempi;
+    }
+    faceOffset[faceCount] = firstFace ? 0 : triangleCount;
+    faceLength[faceCount] = 1;
+      
+    PImage p[] = faceTextures[faceCount];
+    p[0] = image;
+    
+    faceCount++;
+  }
+  
+  
   protected void renderTriangles(int start, int stop) {
     report("render_triangles in");
 
@@ -2371,6 +2491,7 @@ public class PGraphicsAndroid3D extends PGraphics {
           }
       } else if (images[0] != null) {
         PTexture tex = images[0].getTexture();
+        
         if (tex != null) {
           gl.glEnable(tex.getGLTarget());
           gl.glActiveTexture(GL10.GL_TEXTURE0);
@@ -2381,6 +2502,7 @@ public class PGraphicsAndroid3D extends PGraphics {
           // Null PTexture field in A3D? no good!
           throw new RuntimeException("A3D: missing image texture");
         }
+        
       }
 
       if (0 < numTextures) {
@@ -5909,8 +6031,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       
       gl.glGetIntegerv(GL10.GL_MAX_TEXTURE_UNITS, temp, 0);
       maxTextureUnits = PApplet.min(MAX_TEXTURES, temp[0]);
-            
-      recreateResources();
+      
       gl = null;
       gl11 = null;
       gl11x = null;
