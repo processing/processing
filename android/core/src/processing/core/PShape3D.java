@@ -23,6 +23,7 @@
 package processing.core;
 
 import javax.microedition.khronos.opengles.*;
+
 import java.nio.FloatBuffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -83,6 +84,7 @@ public class PShape3D extends PShape implements PConstants {
   
   protected float ptDistAtt[] = { 1.0f, 0.0f, 0.01f, 1.0f };
   
+  protected PTexture[] renderTextures = new PTexture[PGraphicsAndroid3D.MAX_TEXTURES];  
   protected boolean[] texCoordSet = new boolean[PGraphicsAndroid3D.MAX_TEXTURES];
   protected boolean vertexColor = true;
 
@@ -2047,8 +2049,7 @@ public class PShape3D extends PShape implements PConstants {
   
   
   public void draw(PGraphics g, int gr0, int gr1) {
-	  PImage[] images = null;
-	  boolean textured = false;
+	  int numTextures = 0;
 	  float pointSize;
 	  
 	  // Setting line width and point size from stroke value.
@@ -2080,20 +2081,26 @@ public class PShape3D extends PShape implements PConstants {
     for (int i = gr0; i <= gr1; i++) {
       group = (VertexGroup)groups.get(i);
       
-      if (group.hasTexture())  {
-        textured = true;
-        // Binding texture units.
-        images = group.textures;
-        for (int t = 0; t < images.length; t++) {
-          if (images[t] != null && images[t].getTexture() != null) {
-            PTexture tex = images[t].getTexture();
-            int texTarget = tex.getGLTarget();
-            gl.glEnable(texTarget);          
+      PImage[] images = group.textures;
+      for (int t = 0; t < images.length; t++) {
+        if (images[t] != null) {
+          PTexture tex = images[t].getTexture();
+          if (tex != null) {
+            gl.glEnable(tex.getGLTarget());
             gl.glActiveTexture(GL10.GL_TEXTURE0 + t);
-            gl.glBindTexture(texTarget, tex.getGLID());
+            gl.glBindTexture(tex.getGLTarget(), tex.getGLID());   
+            renderTextures[numTextures] = tex;
+            numTextures++;
+          } else {
+            // Null PTexture field in A3D? no good!
+            throw new RuntimeException("A3D: missing image texture");  
           }
+        } else {
+          break;
         }
-        
+      }
+      
+      if (0 < numTextures)  {        
         if (pointSprites) {
           // Texturing with point sprites.
                         
@@ -2121,12 +2128,13 @@ public class PShape3D extends PShape implements PConstants {
             gl.glClientActiveTexture(GL11.GL_TEXTURE0 + t);
             gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glTexCoordBufferID[t]);
             gl.glTexCoordPointer(2, GL11.GL_FLOAT, 0, 0);
-          }
+          }          
+          if (1 < numTextures) a3d.setMultitextureBlend(renderTextures, numTextures);
         }
       }
       
       if (!vertexColor) {
-        if (textured) {
+        if (0 < numTextures) {
           if (g.tint) {
             gl.glColor4f(g.tintR, g.tintG, g.tintB, g.tintA);  
           } else {
@@ -2153,21 +2161,17 @@ public class PShape3D extends PShape implements PConstants {
         gl.glDrawArrays(glMode, group.first, group.last - group.first + 1);
       }
       
-      if (textured)  {
+      if (0 < numTextures) {
         if (pointSprites)   {
           gl.glDisable(GL11.GL_POINT_SPRITE_OES);
-        } else  {
+        } else {
           gl.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
         }
-        
-        for (int t = 0; t < numTexBuffers; t++) {
-          if (images[t] != null && images[t].getTexture() != null) {
-            PTexture tex = images[t].getTexture();
-            int texTarget = tex.getGLTarget();        
-            gl.glDisable(texTarget);
-          }
+        for (int t = 0; t < numTextures; t++) {
+            PTexture tex = renderTextures[t];
+            gl.glDisable(tex.getGLTarget()); 
         }
-      }       
+      }
     }
 
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
@@ -2302,7 +2306,7 @@ public class PShape3D extends PShape implements PConstants {
       return res; 
     }
     
-    boolean hasTexture() {
+    boolean hasTextures() {
       boolean res = false;
       for (int i = 0; i < textures.length; i++) {
         if (textures[i] != null && textures[i].getTexture() != null) {
