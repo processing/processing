@@ -1250,18 +1250,18 @@ public class PGraphicsAndroid3D extends PGraphics {
       recordedNormals.ensureCapacity(normalBuffer.capacity() / 3);
     }
     
+    int size = texCoordBuffer[0].capacity() / 2;
     if (recordedTexCoords == null) {      
       recordedTexCoords = new ArrayList[MAX_TEXTURES];
       // We need to initialize all the buffers for recording of texture coordinates,
       // since we don't know in advance the number of texture units that will be used
       // in this recording.
-      int size = texCoordBuffer[0].capacity() / 2;
       for (int t = 0; t < maxTextureUnits; t++) {
         recordedTexCoords[t] = new ArrayList<PVector>(size);  
       }  
     } else {
       for (int t = 0; t < maxTextureUnits; t++) {
-        recordedTexCoords[t].ensureCapacity(texCoordBuffer[t].capacity() / 2);  
+        recordedTexCoords[t].ensureCapacity(size);  
       }      
     }
     
