@@ -1,10 +1,10 @@
 0192
 J Getting error: Syntax error on token "else", } expected
 J   http://code.google.com/p/processing/issues/detail?id=400
-C disappearing horizontal scroll bar
-C   appears to have become much worse with the other scrollbar fix
-C   ...which itself doesn't seem to be working properly
-C   http://code.google.com/p/processing/issues/detail?id=316
+L disappearing horizontal scroll bar
+L   appears to have become much worse with the other scrollbar fix
+L   ...which itself doesn't seem to be working properly
+L   http://code.google.com/p/processing/issues/detail?id=316
 J Autoformat bug (new java "for loop" syntax)
 J   http://code.google.com/p/processing/issues/detail?id=420
 J matching brace problem in PDE
@@ -17,6 +17,8 @@ J   http://code.google.com/p/processing/issues/detail?id=427
 X don't let PDE open sketches with bad names (reported by max)
 L Properly enforce the editors minimum size
 L   http://code.google.com/p/processing/issues/detail?id=451
+L Patch: Processing IDE destroys symbolic links
+L   http://code.google.com/p/processing/issues/detail?id=432
 
 fixed earlier
 X should really be doing the 'right' thing with sketch file handling
@@ -33,9 +35,6 @@ Though I guess it's really messy, and we're better off having them do a fresh cr
 Can you do a fix to implement resize() in PGraphics where it just provides the error, so that it's implemented across the other renderers?
 
 _ need to get a new stable release out there, the docs/ref are out of sync
-
-_ Patch: Processing IDE destroys symbolic links
-_   http://code.google.com/p/processing/issues/detail?id=432
 
 _ Processing cannot run because it could not ... store your settings.
 _   http://code.google.com/p/processing/issues/detail?id=410

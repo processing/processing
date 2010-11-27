@@ -9,6 +9,10 @@ A Automatic normal calculation in A3D
 A   http://code.google.com/p/processing/issues/detail?id=345
 A Improve texture handling in A3D's PFont
 A   http://code.google.com/p/processing/issues/detail?id=394
+A OpenGL resource release mechanism in A3D is broken
+A   http://code.google.com/p/processing/issues/detail?id=456
+A Multitexturing in A3D
+A   http://code.google.com/p/processing/issues/detail?id=344
 
 
 _ when returning to android application, sometimes screen stays black

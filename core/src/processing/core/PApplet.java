@@ -7626,6 +7626,12 @@ public class PApplet extends Applet
   }
 
 
+  public void resize(int wide, int high) {
+    if (recorder != null) recorder.resize(wide, high);
+    g.resize(wide, high);
+  }
+
+
   /**
    * Set various hints and hacks for the renderer. This is used to handle obscure rendering features that cannot be implemented in a consistent manner across renderers. Many options will often graduate to standard features instead of hints over time.
    * <br><br>hint(ENABLE_OPENGL_4X_SMOOTH) - Enable 4x anti-aliasing for OpenGL. This can help force anti-aliasing if it has not been enabled by the user. On some graphics cards, this can also be set by the graphics driver's control panel, however not all cards make this available. This hint must be called immediately after the size() command because it resets the renderer, obliterating any settings and anything drawn (and like size(), re-running the code that came before it again).
