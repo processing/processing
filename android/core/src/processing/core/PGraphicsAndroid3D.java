@@ -1389,13 +1389,15 @@ public class PGraphicsAndroid3D extends PGraphics {
     clearMultitextures();
   }
   
-  public void vertex(float x, float y, float u, float v) {  
+  public void vertex(float x, float y, float u, float v) {
     vertexTexture(u, v, 0);
     vertex(x, y);
     int n = vertexCount - 1;
-    vertexTex[n][0] = multitextureImages[0];
-    vertexU[n][0] = multitextureU[0];
-    vertexV[n][0] = multitextureV[0];
+    for (int i = 0; i < numTexBuffers; i++) {
+      vertexTex[n][i] = multitextureImages[i];
+      vertexU[n][i] = multitextureU[0];
+      vertexV[n][i] = multitextureV[0];        
+    }
   }
 
   public void vertex(float x, float y, float u0, float v0, float u1, float v1) {
@@ -1451,9 +1453,11 @@ public class PGraphicsAndroid3D extends PGraphics {
     vertexTexture(u, v, 0);
     vertex(x, y, z);  
     int n = vertexCount - 1;
-    vertexTex[n][0] = multitextureImages[0];
-    vertexU[n][0] = multitextureU[0];
-    vertexV[n][0] = multitextureV[0];
+    for (int i = 0; i < numTexBuffers; i++) {
+      vertexTex[n][i] = multitextureImages[i];
+      vertexU[n][i] = multitextureU[0];
+      vertexV[n][i] = multitextureV[0];        
+    }    
   }
 
   public void vertex(float x, float y, float z, float u0, float v0, float u1, float v1) {
@@ -1623,7 +1627,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected void setMultitextureData(int ntex) {
     if (numTexBuffers < ntex) {
       addTexBuffers(ntex - numTexBuffers);
-    }    
+    }
     
     int n = vertexCount - 1;
     System.arraycopy(multitextureU, 0, vertexU[n], 0, ntex);
@@ -5724,7 +5728,13 @@ public class PGraphicsAndroid3D extends PGraphics {
     // Some useful info about multitexturing with combiners:
     // http://www.opengl.org/wiki/Texture_Combiners
     // http://www.khronos.org/opengles/sdk/1.1/docs/man/glTexEnv.xml
-    // http://techconficio.ca/Blog/files/OpenGL_ES_multiTex_example.html  
+    // http://techconficio.ca/Blog/files/OpenGL_ES_multiTex_example.html
+    // The GL_DOT3_RGB parameter can be used to implement bump mapping with 
+    // the fixed pipeline of GLES 1.1:
+    // http://iphone-3d-programming.labs.oreilly.com/ch08.html
+    // http://nehe.gamedev.net/data/articles/article.asp?article=20
+    // http://www.paulsprojects.net/tutorials/simplebump/simplebump.html
+    // I 'll try to put this functionality in later.
     
     gl.glDisable(GL10.GL_BLEND);
     
