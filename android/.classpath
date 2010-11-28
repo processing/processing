@@ -2,6 +2,5 @@
 <classpath>
 	<classpathentry kind="src" path="core/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/Users/andres/Coding/Android/android-sdk-mac_x86/platforms/android-7/android.jar"/>
 	<classpathentry kind="output" path="core/bin"/>
 </classpath>
