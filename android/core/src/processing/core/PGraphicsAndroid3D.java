@@ -2038,12 +2038,12 @@ public class PGraphicsAndroid3D extends PGraphics {
     gl.glEnableClientState(GL10.GL_COLOR_ARRAY);
 
     // Division by three needed because each int element in the buffer is used
-    // to
-    // store three coordinates.
-    if (vertexBuffer.capacity() / 3 < 3 * (stop - start)) {
+    // to store three coordinates.
+    int size = 3 * (stop - start);
+    while (vertexBuffer.capacity() / 3 < size) {
       expandBuffers();
     }
-
+    
     float sw = vertices[lines[start][VERTEX1]][SW];
     if (sw > 0) {
       gl.glPointSize(sw); // can only be set outside glBegin/glEnd
@@ -2164,7 +2164,8 @@ public class PGraphicsAndroid3D extends PGraphics {
 
         // Division by three needed because each int element in the buffer is
         // used to store three coordinates.
-        if (vertexBuffer.capacity() / 3 <= 3 * (pathLength[j] + 1)) {
+        int size = 3 * (pathLength[j] + 1);
+        while (vertexBuffer.capacity() / 3 < size) {
           expandBuffers();
         }
 
@@ -2240,8 +2241,8 @@ public class PGraphicsAndroid3D extends PGraphics {
 
     gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
     gl.glDisableClientState(GL10.GL_COLOR_ARRAY);    
-
     report("render_lines out");
+
   }
 
   // protected void rawLines(int start, int stop)
@@ -2372,7 +2373,8 @@ public class PGraphicsAndroid3D extends PGraphics {
 
       // Division by three needed because each int element in the buffer is used
       // to store three coordinates.
-      if (vertexBuffer.capacity() / 3 < 3 * faceLength[j]) {
+      int size = 3 * faceLength[j];
+      while (vertexBuffer.capacity() / 3 < size) { 
         expandBuffers();
       }
 
@@ -2539,6 +2541,7 @@ public class PGraphicsAndroid3D extends PGraphics {
             recordedTexCoords[t].add(new PVector(0.0f, 0.0f, 0.0f));
           }
         } else {
+          //PApplet.println(vertexArray.length + " " + (3 * n + 0));
           vertexArray[3 * n + 0] = toFixed32(b[X]);
           vertexArray[3 * n + 1] = toFixed32(b[Y]);
           vertexArray[3 * n + 2] = toFixed32(b[Z]);
