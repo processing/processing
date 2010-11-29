@@ -80,7 +80,7 @@ public class PTexture implements PConstants {
    * @param parent PApplet
    * @param width  int
    * @param height  int
-   */	 
+   */  
   public PTexture(PApplet parent, int width, int height) {
     this(parent, width, height, new Parameters());
   }
@@ -92,8 +92,8 @@ public class PTexture implements PConstants {
    * @param parent PApplet
    * @param width int 
    * @param height int 
-   * @param params Parameters 			
-   */	 
+   * @param params Parameters       
+   */  
   public PTexture(PApplet parent, int width, int height, Parameters params) { 
     this.parent = parent;
     this.width = width;
@@ -106,14 +106,14 @@ public class PTexture implements PConstants {
     
     setParameters(params);
     createTexture(width, height);        
-  }	
-	
+  } 
+  
 
   /**
    * Creates an instance of PTexture using image file filename as source.
    * @param parent PApplet
    * @param filename String
-   */	
+   */ 
   public PTexture(PApplet parent, String filename)  {
     this(parent, filename,  new Parameters());
   }
@@ -124,12 +124,12 @@ public class PTexture implements PConstants {
    * @param parent PApplet
    * @param filename String
    * @param params Parameters
-   */	
+   */ 
   public PTexture(PApplet parent, String filename, Parameters params)  {
     this.parent = parent;
-	   
+     
     a3d = (PGraphicsAndroid3D)parent.g;
-    gl = a3d.gl;	
+    gl = a3d.gl;  
 
     glID = 0;
     
@@ -143,6 +143,11 @@ public class PTexture implements PConstants {
     deleteTexture();
   }
 
+  /*
+  protected void finalize() {    
+    deleteTexture();
+  } 
+  */ 
   
   ////////////////////////////////////////////////////////////
   
@@ -186,11 +191,6 @@ public class PTexture implements PConstants {
     
     // Now, overwriting "this" with tex.
     copyObject(tex);
-    
-    // Zeroing the texture id of tex, so the texture is not 
-    // deleted by OpenGL when the object is finalized by the GC.
-    // "This" texture now wraps the one created in tex.
-    tex.glID = 0;
     
     // Nullifying some utility objects so they are recreated with the appropriate
     // size when needed.
@@ -406,7 +406,7 @@ public class PTexture implements PConstants {
   /**
    * Provides the ID of the OpenGL texture object.
    * @return int
-   */	
+   */ 
   protected int getGLID()  {
     return glID;
   }
@@ -415,7 +415,7 @@ public class PTexture implements PConstants {
   /**
    * Returns the texture target.
    * @return int
-   */	
+   */ 
   protected int getGLTarget()  {
     return glTarget;
   }    
@@ -424,7 +424,7 @@ public class PTexture implements PConstants {
   /**
    * Returns the texture internal format.
    * @return int
-   */	
+   */ 
   protected int getGLFormat() {
     return glFormat;
   }
@@ -433,7 +433,7 @@ public class PTexture implements PConstants {
   /**
    * Returns the texture minimization filter.
    * @return int
-   */	
+   */ 
   protected int getGLMinFilter() {
     return glMinFilter;
   }
@@ -442,11 +442,11 @@ public class PTexture implements PConstants {
   /**
    * Returns the texture magnification filter.
    * @return int
-   */	
+   */ 
   protected int getGLMagFilter() {
     return glMagFilter;
   }
-	
+  
   /**
    * Returns the texture wrapping mode for the S coordinate.
    * @return int
@@ -466,34 +466,34 @@ public class PTexture implements PConstants {
   /**
    * Returns true or false whether or not the texture is using mipmaps.
    * @return boolean
-   */	
+   */ 
   protected boolean usingMipmaps()  {
     return usingMipmaps;
   }
-	
+  
   
   /**
    * Returns the maximum possible value for the texture coordinate U (horizontal).
    * @return float
-   */	
+   */ 
   protected float getMaxTexCoordU() {
     return maxTexCoordU;
   }
-	
+  
   
   /**
    * Returns the maximum possible value for the texture coordinate V (vertical).
    * @return float
-   */	
+   */ 
   protected float getMaxTexCoordV() {
     return maxTexCoordV;
   }
-	
+  
   
   /**
    * Returns true if the texture is flipped along the horizontal direction.
    * @return boolean;
-   */	
+   */ 
   protected boolean isFlippedX() {
     return flippedX;
   }
@@ -502,16 +502,16 @@ public class PTexture implements PConstants {
   /**
    * Sets the texture as flipped or not flipped on the horizontal direction.
    * @param v boolean;
-   */	
+   */ 
   protected void setFlippedX(boolean v) {
     flippedX = v;
-  }	
-	
+  } 
+  
   
   /**
    * Returns true if the texture is flipped along the vertical direction.
    * @return boolean;
-   */	
+   */ 
   protected boolean isFlippedY() {
     return flippedY;
   }
@@ -520,12 +520,12 @@ public class PTexture implements PConstants {
   /**
    * Sets the texture as flipped or not flipped on the vertical direction.
    * @param v boolean;
-   */	
+   */ 
   protected void setFlippedY(boolean v) {
     flippedY = v;
   }
     
-	
+  
   ////////////////////////////////////////////////////////////     
  
   // Utilities 
@@ -588,7 +588,7 @@ public class PTexture implements PConstants {
       }
       yindex -= mult * width * 2;
     }
-	}
+  }
   
   
   /**
@@ -597,7 +597,7 @@ public class PTexture implements PConstants {
    * are used in the YUV420 to RBGBA conversion.
    * @param intArray int[]
    * @param tIntArray int[]
-   * @param arrayFormat int	 
+   * @param arrayFormat int  
    * @param w int
    * @param h int
    */
@@ -605,7 +605,7 @@ public class PTexture implements PConstants {
     if (PGraphicsAndroid3D.BIG_ENDIAN)  {
       switch (arrayFormat) {
       case ALPHA:
-                	
+                  
         // Converting from xxxA into RGBA. RGB is set to white 
         // (0xFFFFFF, i.e.: (255, 255, 255))
         for (int i = 0; i< intArray.length; i++) {
@@ -614,7 +614,7 @@ public class PTexture implements PConstants {
         break;
 
       case RGB:
-                	
+                  
         // Converting xRGB into RGBA. A is set to 0xFF (255, full opacity).
         for (int i = 0; i< intArray.length; i++) {
           int pixel = intArray[i];
@@ -672,7 +672,7 @@ public class PTexture implements PConstants {
         
       switch (arrayFormat)  {    
       case ALPHA:
-            	
+              
         // Converting xxxA into ARGB, with RGB set to white.
         for (int i = 0; i< intArray.length; i++) {
           tIntArray[i] = (intArray[i] << 24) | 0x00FFFFFF;
@@ -693,7 +693,7 @@ public class PTexture implements PConstants {
         break;
 
       case ARGB:
-                    	
+                      
         // We need to convert ARGB into ABGR,
         // so R and B must be swapped, A and G just brought back in.        
         for (int i = 0; i< intArray.length; i++) {
@@ -743,7 +743,7 @@ public class PTexture implements PConstants {
    * Reorders a pixel array in a given format into ARGB. The input array must be
    * of size width * height, while the output array must be of glWidth * glHeight.
    * @param intArray int[]
-   * @param intArray int[]	 
+   * @param intArray int[]   
    * @param arrayFormat int
    */    
   protected void convertToARGB(int[] intArray, int[] tIntArray, int arrayFormat) {
@@ -870,7 +870,7 @@ public class PTexture implements PConstants {
   /**
    * Creates the opengl texture object.
    * @param w int
-   * @param h int	 
+   * @param h int  
    */
   protected void createTexture(int w, int h) {
     deleteTexture(); // Just in the case this object is being re-initialized.
@@ -1052,16 +1052,16 @@ public class PTexture implements PConstants {
   
   /**
    * Sets texture target and internal format according to the target and  type specified.
-   * @param target int		   
+   * @param target int       
    * @param params GLTextureParameters
-   */		
+   */   
   protected void setParameters(Parameters params) {    
-	  if (params.target == TEXTURE2D)  {
+    if (params.target == TEXTURE2D)  {
         glTarget = GL10.GL_TEXTURE_2D;
     } else {
-      throw new RuntimeException("GTexture: Unknown texture target");	    
-	  }
-	  
+      throw new RuntimeException("GTexture: Unknown texture target");     
+    }
+    
     if (params.format == RGB)  {
       glFormat = GL10.GL_RGB;
     } else  if (params.format == ARGB) {
@@ -1076,13 +1076,13 @@ public class PTexture implements PConstants {
       glMinFilter = GL10.GL_NEAREST;
     } else if (params.minFilter == LINEAR)  {
       glMinFilter = GL10.GL_LINEAR;
-	  } else if (params.minFilter == NEAREST_MIPMAP_NEAREST) {
+    } else if (params.minFilter == NEAREST_MIPMAP_NEAREST) {
       glMinFilter = GL10.GL_NEAREST_MIPMAP_NEAREST;
-	  } else if (params.minFilter == LINEAR_MIPMAP_NEAREST) {
+    } else if (params.minFilter == LINEAR_MIPMAP_NEAREST) {
       glMinFilter = GL10.GL_LINEAR_MIPMAP_NEAREST;
-	  } else if (params.minFilter == NEAREST_MIPMAP_LINEAR) {
+    } else if (params.minFilter == NEAREST_MIPMAP_LINEAR) {
       glMinFilter = GL10.GL_NEAREST_MIPMAP_LINEAR;
-	  } else if (params.minFilter == LINEAR_MIPMAP_LINEAR) {
+    } else if (params.minFilter == LINEAR_MIPMAP_LINEAR) {
       glMinFilter = GL10.GL_LINEAR_MIPMAP_LINEAR;
     } else {
       throw new RuntimeException("GTexture: Unknown minimization filter");     
@@ -1111,7 +1111,7 @@ public class PTexture implements PConstants {
     } else {
       throw new RuntimeException("GTexture: Unknown wrapping mode");     
     }
-  }	
+  } 
 
 
   /////////////////////////////////////////////////////////////////////////// 

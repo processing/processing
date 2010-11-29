@@ -727,6 +727,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
       // null. This is required because PApplet.onResume events (which call
       // this.onResume() and thus require a valid renderer) are triggered
       // before surfaceChanged() is ever called.
+      println("Creating A3D");
       g3 = new PGraphicsAndroid3D();
       // Set semi-arbitrary size; will be set properly when surfaceChanged() called
       g3.setSize(wide, high);
@@ -797,7 +798,17 @@ public class PApplet extends Activity implements PConstants, Runnable {
         System.out.println("surfaceDestroyed()");
       }
       
-      //g3.dispose();
+      /*
+      // TODO: Check how to make sure of calling g3.dispose() when this call to
+      // surfaceDestoryed corresponds to the sketch being shut down instead of just
+      // taken to the background.
+       
+      // For instance, something like this would be ok?
+      // The sketch is being stopped, so we dispose the resources.
+      if (!paused) {
+        g3.dispose();
+      }
+      */
     }
 
 
