@@ -189,6 +189,9 @@ public class PTexture implements PConstants {
     // Copying the contents of this texture into tex.
     tex.set(this);
     
+    // Releasing the opengl resources associated to "this".
+    this.delete();
+    
     // Now, overwriting "this" with tex.
     copyObject(tex);
     

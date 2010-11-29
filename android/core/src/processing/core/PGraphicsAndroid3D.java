@@ -997,7 +997,9 @@ public class PGraphicsAndroid3D extends PGraphics {
         // Creating framebuffer object or draw texture for the primary surface, depending on the
         // availability of FBOs.
         if (fboSupported) {
-          createOffscreenFramebuffer();          
+          if (offscreenFramebuffer == null) {
+            createOffscreenFramebuffer();
+          }
         } else {
           if (gl11 == null || gl11x == null) {
             throw new RuntimeException("A3D:  no clear mode with no FBOs requires OpenGL ES 1.1");
