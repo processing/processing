@@ -317,10 +317,10 @@ public class PGraphicsAndroid3D extends PGraphics {
   static protected final int GL_FRAME_BUFFER = 2;
   static protected final int GL_RENDER_BUFFER = 3;
   
-  Set<Integer> glTextureObjects;
-  Set<Integer> glVertexBuffers;
-  Set<Integer> glFrameBuffers;
-  Set<Integer> glRenderBuffers;
+  static protected Set<Integer> glTextureObjects;
+  static protected Set<Integer> glVertexBuffers;
+  static protected Set<Integer> glFrameBuffers;
+  static protected Set<Integer> glRenderBuffers;
   
   // ........................................................
 
@@ -401,7 +401,10 @@ public class PGraphicsAndroid3D extends PGraphics {
   static public boolean BIG_ENDIAN = ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN;
 
   // Size of an int (in bytes).
-  static protected int SIZEOF_INT = Integer.SIZE / 8;
+  protected static final int SIZEOF_INT = Integer.SIZE / 8;
+   
+  // Size of a float (in bytes).
+  protected static final int SIZEOF_FLOAT = Float.SIZE / 8;
   
   
   // ////////////////////////////////////////////////////////////
@@ -409,10 +412,12 @@ public class PGraphicsAndroid3D extends PGraphics {
   public PGraphicsAndroid3D() {
     renderer = new A3DRenderer();
     
-    glTextureObjects = new HashSet<Integer>();
-    glVertexBuffers = new HashSet<Integer>();
-    glFrameBuffers = new HashSet<Integer>();
-    glRenderBuffers = new HashSet<Integer>();
+    if (glTextureObjects == null) {
+      glTextureObjects = new HashSet<Integer>();
+      glVertexBuffers = new HashSet<Integer>();
+      glFrameBuffers = new HashSet<Integer>();
+      glRenderBuffers = new HashSet<Integer>();
+    }
   }
   
   // public void setParent(PApplet parent)
@@ -430,7 +435,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     height = iheight;
     width1 = width - 1;
     height1 = height - 1;
-
+    
     allocate();
     reapplySettings();
 
@@ -517,45 +522,10 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
   }
 
+  
   public void dispose() {
-    // Releasing any remaining OpenGL resources.
-    
-    if (!glTextureObjects.isEmpty()) {
-      Object[] glids = glTextureObjects.toArray();
-      for (int i = 0; i < glids.length; i++) {
-        int id = ((Integer)glids[i]).intValue();
-        int[] temp = { id };
-        gl.glDeleteTextures(1, temp, 0);          
-      }
-    }
-    
-    if (!glVertexBuffers.isEmpty()) {
-      Object[] glids = glVertexBuffers.toArray();
-      for (int i = 0; i < glids.length; i++) {
-        int id = ((Integer)glids[i]).intValue();
-        int[] temp = { id };
-        gl11.glDeleteBuffers(1, temp, 0);          
-      }      
-    }
-    
-    if (!glFrameBuffers.isEmpty()) {
-      Object[] glids = glFrameBuffers.toArray();
-      for (int i = 0; i < glids.length; i++) {
-        int id = ((Integer)glids[i]).intValue();
-        int[] temp = { id };
-        gl11xp.glDeleteFramebuffersOES(1, temp, 0);          
-      }      
-    }
-    
-    if (!glRenderBuffers.isEmpty()) {
-      Object[] glids = glRenderBuffers.toArray();
-      for (int i = 0; i < glids.length; i++) {
-        int id = ((Integer)glids[i]).intValue();
-        int[] temp = { id };
-        gl11xp.glDeleteRenderbuffersOES(1, temp, 0);          
-      }
-    }    
   }
+  
   
   protected int createGLResource(int type) {
     int id = 0;
@@ -568,17 +538,17 @@ public class PGraphicsAndroid3D extends PGraphics {
       int[] temp = new int[1];
       gl11.glGenBuffers(1, temp, 0);
       id = temp[0];
-      glVertexBuffers.add(id);      
+      glVertexBuffers.add(id);
     } else if (type == GL_FRAME_BUFFER) {
       int[] temp = new int[1];
       gl11xp.glGenFramebuffersOES(1, temp, 0);
       id = temp[0];
-      glFrameBuffers.add(id);       
+      glFrameBuffers.add(id);    
     } else if (type == GL_RENDER_BUFFER) {
       int[] temp = new int[1];
       gl11xp.glGenRenderbuffersOES(1, temp, 0);
       id = temp[0];
-      glRenderBuffers.add(id);       
+      glRenderBuffers.add(id);
     } 
       
     return id;
@@ -611,6 +581,50 @@ public class PGraphicsAndroid3D extends PGraphics {
       }      
     }
   }  
+
+  
+  protected void deleteAllGLResources() {
+    super.delete();
+    
+    // Releasing any remaining OpenGL resources.
+    
+    if (!glTextureObjects.isEmpty()) {
+      Object[] glids = glTextureObjects.toArray();
+      for (int i = 0; i < glids.length; i++) {
+        int id = ((Integer)glids[i]).intValue();
+        int[] temp = { id };
+        gl.glDeleteTextures(1, temp, 0);
+      }
+    }
+    
+    if (!glVertexBuffers.isEmpty()) {
+      Object[] glids = glVertexBuffers.toArray();
+      for (int i = 0; i < glids.length; i++) {
+        int id = ((Integer)glids[i]).intValue();
+        int[] temp = { id };
+        gl11.glDeleteBuffers(1, temp, 0);
+      }      
+    }
+    
+    if (!glFrameBuffers.isEmpty()) {
+      Object[] glids = glFrameBuffers.toArray();
+      for (int i = 0; i < glids.length; i++) {
+        int id = ((Integer)glids[i]).intValue();
+        int[] temp = { id };
+        gl11xp.glDeleteFramebuffersOES(1, temp, 0);
+      }      
+    }
+    
+    if (!glRenderBuffers.isEmpty()) {
+      Object[] glids = glRenderBuffers.toArray();
+      for (int i = 0; i < glids.length; i++) {
+        int id = ((Integer)glids[i]).intValue();
+        int[] temp = { id };
+        gl11xp.glDeleteRenderbuffersOES(1, temp, 0);
+      }
+    }
+  }
+  
   
   // ////////////////////////////////////////////////////////////
 
@@ -2541,7 +2555,6 @@ public class PGraphicsAndroid3D extends PGraphics {
             recordedTexCoords[t].add(new PVector(0.0f, 0.0f, 0.0f));
           }
         } else {
-          //PApplet.println(vertexArray.length + " " + (3 * n + 0));
           vertexArray[3 * n + 0] = toFixed32(b[X]);
           vertexArray[3 * n + 1] = toFixed32(b[Y]);
           vertexArray[3 * n + 2] = toFixed32(b[Z]);
@@ -5936,7 +5949,7 @@ public class PGraphicsAndroid3D extends PGraphics {
 
     public void onSurfaceCreated(GL10 igl, EGLConfig config) {
       gl = igl;
-
+      
       try {
         gl11 = (GL11) gl;
       } catch (ClassCastException cce) {
@@ -6023,6 +6036,15 @@ public class PGraphicsAndroid3D extends PGraphics {
       
       gl.glGetIntegerv(GL10.GL_MAX_TEXTURE_UNITS, temp, 0);
       maxTextureUnits = PApplet.min(MAX_TEXTURES, temp[0]);
+      
+      // Any remanining resources are deleted now, so we (re) start
+      // from scratch.
+      // Since this method is only called when the sketch starts or 
+      // when the screen changes orientation (always before the sketch's
+      // setup() method is triggered) then this seems to be the best 
+      // location to release resources. Also, at this point we are 
+      // guaranteed to have all the gl objects non-null. 
+      deleteAllGLResources();
       
       gl = null;
       gl11 = null;

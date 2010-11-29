@@ -23,6 +23,7 @@
 package processing.core;
 
 import java.lang.reflect.Method;
+import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
 import javax.microedition.khronos.opengles.*;

@@ -90,7 +90,7 @@ public class PShape3D extends PShape implements PConstants {
 
   protected int TEXTURESMAX;
   
-  protected static final int SIZEOF_FLOAT = Float.SIZE / 8; 
+   
   
   ////////////////////////////////////////////////////////////
 
@@ -318,7 +318,8 @@ public class PShape3D extends PShape implements PConstants {
       vertexBuffer.put(vertexArray, offset, size);
       vertexBuffer.flip();
     
-      gl.glBufferSubData(GL11.GL_ARRAY_BUFFER, offset * SIZEOF_FLOAT, size * SIZEOF_FLOAT, vertexBuffer);
+      gl.glBufferSubData(GL11.GL_ARRAY_BUFFER, offset * PGraphicsAndroid3D.SIZEOF_FLOAT, 
+                         size * PGraphicsAndroid3D.SIZEOF_FLOAT, vertexBuffer);
       gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
       
       if (creatingGroup) {
@@ -333,7 +334,8 @@ public class PShape3D extends PShape implements PConstants {
       colorBuffer.put(colorArray, offset, size);
       colorBuffer.flip();
     
-      gl.glBufferSubData(GL11.GL_ARRAY_BUFFER, offset * SIZEOF_FLOAT, size * SIZEOF_FLOAT, colorBuffer);
+      gl.glBufferSubData(GL11.GL_ARRAY_BUFFER, offset * PGraphicsAndroid3D.SIZEOF_FLOAT, 
+                                               size * PGraphicsAndroid3D.SIZEOF_FLOAT, colorBuffer);
       gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
     } else if (updateElement == NORMALS) {
       int offset = firstUpdateIdx * 3;
@@ -343,7 +345,8 @@ public class PShape3D extends PShape implements PConstants {
       normalBuffer.put(normalArray, offset, size);
       normalBuffer.flip();
     
-      gl.glBufferSubData(GL11.GL_ARRAY_BUFFER, offset * SIZEOF_FLOAT, size * SIZEOF_FLOAT, normalBuffer);
+      gl.glBufferSubData(GL11.GL_ARRAY_BUFFER, offset * PGraphicsAndroid3D.SIZEOF_FLOAT, 
+                         size * PGraphicsAndroid3D.SIZEOF_FLOAT, normalBuffer);
       gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
     } else if (TEXTURES0 <= updateElement && updateElement < TEXTURESMAX) {
       int offset = firstUpdateIdx * 2;
@@ -353,7 +356,8 @@ public class PShape3D extends PShape implements PConstants {
       texCoordBuffer.put(texCoordArray, offset, size);
       texCoordBuffer.flip();
       
-      gl.glBufferSubData(GL11.GL_ARRAY_BUFFER, offset * SIZEOF_FLOAT, size * SIZEOF_FLOAT, texCoordBuffer);
+      gl.glBufferSubData(GL11.GL_ARRAY_BUFFER, offset * PGraphicsAndroid3D.SIZEOF_FLOAT, 
+                         size * PGraphicsAndroid3D.SIZEOF_FLOAT, texCoordBuffer);
       gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
       
       int t = updateElement - TEXTURES0;
@@ -1742,7 +1746,7 @@ public class PShape3D extends PShape implements PConstants {
   
   
   protected void initVertexData() {    
-    ByteBuffer vbb = ByteBuffer.allocateDirect(numVertices * 3 * SIZEOF_FLOAT);
+    ByteBuffer vbb = ByteBuffer.allocateDirect(numVertices * 3 * PGraphicsAndroid3D.SIZEOF_FLOAT);
     vbb.order(ByteOrder.nativeOrder());
     vertexBuffer = vbb.asFloatBuffer();    
     
@@ -1757,14 +1761,14 @@ public class PShape3D extends PShape implements PConstants {
     
     glVertexBufferID = a3d.createGLResource(PGraphicsAndroid3D.GL_VERTEX_BUFFER);    
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glVertexBufferID);    
-    final int bufferSize = vertexBuffer.capacity() * SIZEOF_FLOAT;
+    final int bufferSize = vertexBuffer.capacity() * PGraphicsAndroid3D.SIZEOF_FLOAT;
     gl.glBufferData(GL11.GL_ARRAY_BUFFER, bufferSize, vertexBuffer, glUsage);
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
   }
   
 
   protected void initColorData() {
-    ByteBuffer vbb = ByteBuffer.allocateDirect(numVertices * 4 * SIZEOF_FLOAT);
+    ByteBuffer vbb = ByteBuffer.allocateDirect(numVertices * 4 * PGraphicsAndroid3D.SIZEOF_FLOAT);
     vbb.order(ByteOrder.nativeOrder());                
     colorBuffer = vbb.asFloatBuffer();          
 
@@ -1783,14 +1787,14 @@ public class PShape3D extends PShape implements PConstants {
     
     glColorBufferID = a3d.createGLResource(PGraphicsAndroid3D.GL_VERTEX_BUFFER);
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glColorBufferID);
-    final int bufferSize = colorBuffer.capacity() * SIZEOF_FLOAT;    
+    final int bufferSize = colorBuffer.capacity() * PGraphicsAndroid3D.SIZEOF_FLOAT;    
     gl.glBufferData(GL11.GL_ARRAY_BUFFER, bufferSize, colorBuffer, glUsage);
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
   }
   
 
   protected void initNormalData() {
-    ByteBuffer vbb = ByteBuffer.allocateDirect(numVertices * 3 * SIZEOF_FLOAT);
+    ByteBuffer vbb = ByteBuffer.allocateDirect(numVertices * 3 * PGraphicsAndroid3D.SIZEOF_FLOAT);
     vbb.order(ByteOrder.nativeOrder());
     normalBuffer = vbb.asFloatBuffer();    
     
@@ -1805,14 +1809,14 @@ public class PShape3D extends PShape implements PConstants {
     
     glNormalBufferID = a3d.createGLResource(PGraphicsAndroid3D.GL_VERTEX_BUFFER);
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glNormalBufferID);
-    final int bufferSize = normalBuffer.capacity() * SIZEOF_FLOAT;    
+    final int bufferSize = normalBuffer.capacity() * PGraphicsAndroid3D.SIZEOF_FLOAT;    
     gl.glBufferData(GL11.GL_ARRAY_BUFFER, bufferSize, normalBuffer, glUsage);
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
   }
   
 
   protected void initTexCoordData() {
-    ByteBuffer vbb = ByteBuffer.allocateDirect(numVertices * 2 * SIZEOF_FLOAT);
+    ByteBuffer vbb = ByteBuffer.allocateDirect(numVertices * 2 * PGraphicsAndroid3D.SIZEOF_FLOAT);
     vbb.order(ByteOrder.nativeOrder());
     texCoordBuffer = vbb.asFloatBuffer();    
     
@@ -1827,7 +1831,7 @@ public class PShape3D extends PShape implements PConstants {
     
     glTexCoordBufferID[0] = a3d.createGLResource(PGraphicsAndroid3D.GL_VERTEX_BUFFER);
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glTexCoordBufferID[0]);
-    final int bufferSize = texCoordBuffer.capacity() * SIZEOF_FLOAT;
+    final int bufferSize = texCoordBuffer.capacity() * PGraphicsAndroid3D.SIZEOF_FLOAT;
     gl.glBufferData(GL11.GL_ARRAY_BUFFER, bufferSize, texCoordBuffer, glUsage);
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);    
   }
@@ -1840,7 +1844,7 @@ public class PShape3D extends PShape implements PConstants {
       
       glTexCoordBufferID[t] = a3d.createGLResource(PGraphicsAndroid3D.GL_VERTEX_BUFFER);      
       gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glTexCoordBufferID[t]);
-      final int bufferSize = texCoordBuffer.capacity() * SIZEOF_FLOAT;
+      final int bufferSize = texCoordBuffer.capacity() * PGraphicsAndroid3D.SIZEOF_FLOAT;
       gl.glBufferData(GL11.GL_ARRAY_BUFFER, bufferSize, texCoordBuffer, glUsage);
       gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);     
     }
