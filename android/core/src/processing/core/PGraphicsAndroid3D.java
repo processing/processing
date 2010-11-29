@@ -164,7 +164,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   /** Default ambient light for the entire scene **/
   public float[] baseLight = { 0.05f, 0.05f, 0.05f, 1.0f };
  
-  boolean lightsAllocated = false;
+  protected boolean lightsAllocated = false;
 
   // ........................................................
 
@@ -189,26 +189,26 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected PImage[] multitextureImages = new PImage[MAX_TEXTURES];
   
   // Used to detect changes in the current texture images.
-  protected PImage multitextureImages0[] = new PImage[MAX_TEXTURES];
+  protected PImage[] multitextureImages0 = new PImage[MAX_TEXTURES];
   
   // Current multitexture UV coordinates.
   protected float[] multitextureU = new float[MAX_TEXTURES];
   protected float[] multitextureV = new float[MAX_TEXTURES];
   
   // Multitexture UV coordinates for all vertices.
-  float vertexU[][] = new float[DEFAULT_VERTICES][1];
-  float vertexV[][] = new float[DEFAULT_VERTICES][1];
+  protected float[][] vertexU = new float[DEFAULT_VERTICES][1];
+  protected float[][] vertexV = new float[DEFAULT_VERTICES][1];
   
   // Texture images assigned to each vertex.
-  PImage vertexTex[][] = new PImage[DEFAULT_VERTICES][1];
+  protected PImage[][] vertexTex = new PImage[DEFAULT_VERTICES][1];
   
   // UV arrays used in renderTriangles().
-  float renderUa[] = new float[MAX_TEXTURES];
-  float renderVa[] = new float[MAX_TEXTURES];
-  float renderUb[] = new float[MAX_TEXTURES];
-  float renderVb[] = new float[MAX_TEXTURES];
-  float renderUc[] = new float[MAX_TEXTURES];
-  float renderVc[] = new float[MAX_TEXTURES];  
+  protected float[] renderUa = new float[MAX_TEXTURES];
+  protected float[] renderVa = new float[MAX_TEXTURES];
+  protected float[] renderUb = new float[MAX_TEXTURES];
+  protected float[] renderVb = new float[MAX_TEXTURES];
+  protected float[] renderUc = new float[MAX_TEXTURES];
+  protected float[] renderVc = new float[MAX_TEXTURES];  
   
   // ........................................................
 
@@ -223,22 +223,22 @@ public class PGraphicsAndroid3D extends PGraphics {
   static protected final int TRIANGLE_FIELD_COUNT = 3;
 
   // Points
-  static final int DEFAULT_POINTS = 512;
+  public static final int DEFAULT_POINTS = 512;
   protected int pointCount;
   protected int[][] points = new int[DEFAULT_POINTS][POINT_FIELD_COUNT];
 
   // Lines.
-  static final int DEFAULT_LINES = 512;
+  public static final int DEFAULT_LINES = 512;
   protected int lineCount;
   protected int[][] lines = new int[DEFAULT_LINES][LINE_FIELD_COUNT];
 
   // Triangles.
-  static final int DEFAULT_TRIANGLES = 256;
+  public static final int DEFAULT_TRIANGLES = 256;
   protected int triangleCount; // total number of triangles
   protected int[][] triangles = new int[DEFAULT_TRIANGLES][TRIANGLE_FIELD_COUNT];
 
   // Vertex, color, texture coordinate and normal buffers.
-  static final int DEFAULT_BUFFER_SIZE = 512;
+  public static final int DEFAULT_BUFFER_SIZE = 512;
   private IntBuffer vertexBuffer;
   private IntBuffer colorBuffer;
   private IntBuffer normalBuffer;
@@ -282,23 +282,27 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // ........................................................
 
+  public static final int DEFAULT_PATHS = 64;
+  
   // This is done to keep track of start/stop information for lines in the
   // line array, so that lines can be shown as a single path, rather than just
   // individual segments.
   protected int pathCount;
-  protected int[] pathOffset = new int[64];
-  protected int[] pathLength = new int[64];
+  protected int[] pathOffset = new int[DEFAULT_PATHS];
+  protected int[] pathLength = new int[DEFAULT_PATHS];
 
   // ........................................................
 
+  public static final int DEFAULT_FACES = 64;
+    
   // And this is done to keep track of start/stop information for textured
   // triangles in the triangle array, so that a range of triangles with the
   // same texture applied to them are correctly textured during the
   // rendering stage.
   protected int faceCount;
-  protected int[] faceOffset = new int[64];
-  protected int[] faceLength = new int[64];
-  protected PImage[][] faceTextures = new PImage[64][MAX_TEXTURES];
+  protected int[] faceOffset = new int[DEFAULT_FACES];
+  protected int[] faceLength = new int[DEFAULT_FACES];
+  protected PImage[][] faceTextures = new PImage[DEFAULT_FACES][MAX_TEXTURES];
 
   // ........................................................
 
@@ -317,10 +321,10 @@ public class PGraphicsAndroid3D extends PGraphics {
   static protected final int GL_FRAME_BUFFER = 2;
   static protected final int GL_RENDER_BUFFER = 3;
   
-  static protected Set<Integer> glTextureObjects;
-  static protected Set<Integer> glVertexBuffers;
-  static protected Set<Integer> glFrameBuffers;
-  static protected Set<Integer> glRenderBuffers;
+  static protected Set<Integer> glTextureObjects = new HashSet<Integer>();
+  static protected Set<Integer> glVertexBuffers = new HashSet<Integer>();
+  static protected Set<Integer> glFrameBuffers = new HashSet<Integer>();
+  static protected Set<Integer> glRenderBuffers = new HashSet<Integer>();
   
   // ........................................................
 
@@ -352,17 +356,17 @@ public class PGraphicsAndroid3D extends PGraphics {
   // .......................................................
   
   static protected boolean usingModelviewStack;    
-  static A3DMatrixStack modelviewStack;
+  static protected A3DMatrixStack modelviewStack;
   
   // ........................................................
 
   // Used to save a copy of the last drawn frame in order to repaint on the
   // backbuffer when using no clear mode.
-  public int[] screenTexCrop;
+  protected int[] screenTexCrop;
 
   // This variable controls clearing of the color buffer.
-  boolean clearColorBuffer;
-  boolean clearColorBuffer0;
+  protected boolean clearColorBuffer;
+  protected boolean clearColorBuffer0;
   
   // ........................................................
   
@@ -406,18 +410,11 @@ public class PGraphicsAndroid3D extends PGraphics {
   // Size of a float (in bytes).
   protected static final int SIZEOF_FLOAT = Float.SIZE / 8;
   
-  
   // ////////////////////////////////////////////////////////////
 
+  
   public PGraphicsAndroid3D() {
     renderer = new A3DRenderer();
-    
-    if (glTextureObjects == null) {
-      glTextureObjects = new HashSet<Integer>();
-      glVertexBuffers = new HashSet<Integer>();
-      glFrameBuffers = new HashSet<Integer>();
-      glRenderBuffers = new HashSet<Integer>();
-    }
   }
   
   // public void setParent(PApplet parent)
@@ -426,7 +423,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     super.setPrimary(primary);
 
     // argh, a semi-transparent opengl surface? Yes!
-    format = ARGB;
+    format = ARGB;    
   }
   // public void setPath(String path)
 
@@ -519,11 +516,19 @@ public class PGraphicsAndroid3D extends PGraphics {
       numTexBuffers = 1;
       
       buffersAllocated = true;
-    }
+    }    
   }
 
   
+  public void delete() {
+    super.delete();
+    deleteAllGLResources();
+  }
+  
+  
   public void dispose() {
+    super.dispose();
+    deleteAllGLResources();    
   }
   
   
@@ -902,7 +907,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         // changed accordingly.
         noLights();  
       }
-    }
+    } 
     
     if (!settingsInited) {
       defaultSettings();
@@ -992,9 +997,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         // Creating framebuffer object or draw texture for the primary surface, depending on the
         // availability of FBOs.
         if (fboSupported) {
-          if (offscreenFramebuffer == null) {
-            createOffscreenFramebuffer();
-          }
+          createOffscreenFramebuffer();          
         } else {
           if (gl11 == null || gl11x == null) {
             throw new RuntimeException("A3D:  no clear mode with no FBOs requires OpenGL ES 1.1");
@@ -1011,7 +1014,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         gl.glClearColor(0, 0, 0, 0);
         gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);        
       } else {
-        // We need to save the color buffer after finishing with the rendering of the this frame,
+        // We need to save the color buffer after finishing with the rendering of this frame,
         // to use is as the background for the next frame (I call this "incremental rendering"). 
        
         if (fboSupported) {
@@ -1072,7 +1075,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     // buffer might be bound, but should popped to the screen buffer for correct
     // continuation of onscreen rendering.
     clearColorBuffer0 = clearColorBuffer;
-    
+
     report("bot beginDraw()");
   }
 
@@ -1281,7 +1284,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     numRecordedTextures = 0;
     
-    recordedGroups = new ArrayList<VertexGroup>(64);
+    recordedGroups = new ArrayList<VertexGroup>(PApplet.max(DEFAULT_PATHS, DEFAULT_FACES));
   }
 
   public void beginShape(int kind) {
@@ -5422,7 +5425,7 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // LOAD/UPDATE TEXTURE
   
-  public void loadTexture() {
+  public void loadTexture() {    
     if (texture == null) {
       loadTexture(NEAREST);
       texture.setFlippedY(true);
@@ -5434,8 +5437,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       pixelBuffer.rewind();
     }
                
-    gl.glReadPixels(0, 0, width, height, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE,
-        pixelBuffer);
+    gl.glReadPixels(0, 0, width, height, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, pixelBuffer);
     
     copyToScreenTexture(pixelBuffer);
     pixelBuffer.rewind();
@@ -6044,7 +6046,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       // setup() method is triggered) then this seems to be the best 
       // location to release resources. Also, at this point we are 
       // guaranteed to have all the gl objects non-null. 
-      deleteAllGLResources();
+      //deleteAllGLResources();
       
       gl = null;
       gl11 = null;

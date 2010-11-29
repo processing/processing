@@ -90,8 +90,7 @@ public class PFramebuffer implements PConstants {
     
     createFramebuffer(w, h);
     
-    pixelBuffer = IntBuffer.allocate(width * height);
-    pixelBuffer.rewind();    
+    pixelBuffer = null;
     
     if (!screenFb && !FboMode) {
       // When FBOs are not available, rendering to texture is implemented by saving a portion of
@@ -269,6 +268,7 @@ public class PFramebuffer implements PConstants {
     
   // Saves content of the screen into the backup texture.
   public void backupScreen() {  
+    if (pixelBuffer == null) allocatePixelBuffer();
     gl.glReadPixels(0, 0, width, height, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, pixelBuffer);    
     copyToTexture(pixelBuffer, backupTexture.getGLID(), backupTexture.getGLTarget());
   }
@@ -280,6 +280,7 @@ public class PFramebuffer implements PConstants {
   
   // Copies current content of screen to color buffers.
   public void copyToColorBuffers() {
+    if (pixelBuffer == null) allocatePixelBuffer();
     gl.glReadPixels(0, 0, width, height, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, pixelBuffer);
     for (int i = 0; i < numColorBuffers; i++) {
       copyToTexture(pixelBuffer, glColorBufferIDs[i], glColorBufferTargets[i]);
@@ -287,12 +288,15 @@ public class PFramebuffer implements PConstants {
   }  
   
   public void readPixels() {
+    if (pixelBuffer == null) allocatePixelBuffer();
     gl.glReadPixels(0, 0, width, height, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, pixelBuffer);
   }
   
   public void getPixels(int[] pixels) {
-    pixelBuffer.get(pixels);
-    pixelBuffer.rewind();    
+    if (pixelBuffer != null) {
+      pixelBuffer.get(pixels);
+      pixelBuffer.rewind();    
+    }
   }
   
   public IntBuffer getPixelBuffer() {
@@ -305,6 +309,11 @@ public class PFramebuffer implements PConstants {
     gl.glBindTexture(gltarget, glid);    
     gl.glTexSubImage2D(gltarget, 0, 0, 0, width, height, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, buffer);
     gl.glDisable(gltarget);
+  }
+  
+  protected void allocatePixelBuffer() {
+    pixelBuffer = IntBuffer.allocate(width * height);
+    pixelBuffer.rewind();     
   }
   
   protected void createFramebuffer(int w, int h) {
