@@ -802,11 +802,10 @@ public class PGraphics extends PImage implements PConstants {
 
     //reapplySettings = false;
   }
-  
-  public void resize(int wide, int high) {
-    showMethodWarning("resize");
-  }
 
+  // inherit from PImage
+  //public void resize(int wide, int high){ }  
+  
   //////////////////////////////////////////////////////////////
 
   // HINTS
