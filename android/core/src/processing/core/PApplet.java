@@ -796,6 +796,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
       if (DEBUG) {
         System.out.println("surfaceDestroyed()");
       }
+      
+      //g3.dispose();
     }
 
 
@@ -806,7 +808,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
       if (DEBUG) {
         System.out.println("SketchSurfaceView3D.surfaceChanged() " + w + " " + h);
       }
-      surfaceChanged = true;
+      surfaceChanged = true;      
 //      width = w;
 //      height = h;
 //      g.setSize(w, h);
