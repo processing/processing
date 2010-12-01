@@ -217,6 +217,20 @@ public class AutoFormat {
     return lastNonWhitespace;
   }
 
+  private void advanceToNonSpace() {
+    if (EOF) {
+      return;
+    }
+    do {
+      pos++;
+    } while (pos < chars.length && chars[pos] == ' ');
+    if (pos == chars.length - 1) {
+      EOF = true;
+    } else {
+      pos--; // reset for next()
+    }
+  }
+
   private char next() {
     if (EOF) {
       return 0;
@@ -328,6 +342,7 @@ public class AutoFormat {
         trimRight(buf);
         buf.append(c);
         buf.append(' ');
+        advanceToNonSpace();
         break;
 
       case ' ':

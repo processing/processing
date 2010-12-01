@@ -45,7 +45,11 @@ public class ProcessingTestUtil {
   
   static String format(final File resource)
   {
-    return normalize(new AutoFormat().format(read(resource)));
+    return format(read(resource));
+  }
+
+  static String format(final String programText) {
+    return normalize(new AutoFormat().format(programText));
   }
 
   static File res(final String resourceName) {
