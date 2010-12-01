@@ -24,9 +24,15 @@ package processing.app.windows;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;
+import com.sun.jna.NativeMapped;
+import com.sun.jna.PointerType;
+import com.sun.jna.win32.W32APIFunctionMapper;
+import com.sun.jna.win32.W32APITypeMapper;
 
 import processing.app.Base;
 import processing.app.Preferences;
@@ -182,19 +188,34 @@ public class Platform extends processing.app.Platform {
     // Value Type: REG_SZ
     // Value Data: path
 
-    String keyPath =
-      "Software\\Microsoft\\Windows\\CurrentVersion" +
-      "\\Explorer\\Shell Folders";
-    String appDataPath =
-      Registry.getStringValue(REGISTRY_ROOT_KEY.CURRENT_USER, keyPath, "AppData");
+    //String keyPath =
+    //  "Software\\Microsoft\\Windows\\CurrentVersion" +
+    // "\\Explorer\\Shell Folders";
+    //String appDataPath =
+    //  Registry.getStringValue(REGISTRY_ROOT_KEY.CURRENT_USER, keyPath, "AppData");
+    
+    // Fix for Issue 410
+    // Java 1.6 doesn't provide a good workaround (http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6519127)
+    // Using JNA and SHGetFolderPath instead.
+    
+    char[] pszPath = new char[Shell32.MAX_PATH]; // this will be contain the path if SHGetFolderPath is successful
+    int hResult = Shell32.INSTANCE.SHGetFolderPath(null, Shell32.CSIDL_APPDATA, null, Shell32.SHGFP_TYPE_CURRENT, pszPath);
+    
+    if (Shell32.S_OK != hResult){ 
+      throw new Exception("Problem city, population your computer");
+    }
 
-    File dataFolder = new File(appDataPath, "Processing");
-    return dataFolder;
+    String appDataPath = new String(pszPath);
+    int len = appDataPath.indexOf("\0");
+    appDataPath = appDataPath.substring(0, len);
+    
+    // DEBUG
+    //throw new Exception("win: " + appDataPath);
+    return new File(appDataPath, "Processing");
   }
 
 
   // looking for Documents and Settings/blah/My Documents/Processing
-  // (though using a reg key since it's different on other platforms)
   public File getDefaultSketchbookFolder() throws Exception {
 
     // http://support.microsoft.com/?kbid=221837&sd=RMVP
@@ -211,12 +232,28 @@ public class Platform extends processing.app.Platform {
     // in some instances, this may be overridden by a policy, in which case check:
     // HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders
 
-    String keyPath =
-      "Software\\Microsoft\\Windows\\CurrentVersion" +
-      "\\Explorer\\Shell Folders";
-    String personalPath =
-      Registry.getStringValue(REGISTRY_ROOT_KEY.CURRENT_USER, keyPath, "Personal");
+    //String keyPath =
+    //  "Software\\Microsoft\\Windows\\CurrentVersion" +
+    //  "\\Explorer\\Shell Folders";
+    //String personalPath =
+    //  Registry.getStringValue(REGISTRY_ROOT_KEY.CURRENT_USER, keyPath, "Personal");
+    
+    // "The "Shell Folders" key exists solely to permit four programs written 
+    //  in 1994 to continue running on the RTM version of Windows 95." -- Raymond Chen, MSDN
 
+    char[] pszPath = new char[Shell32.MAX_PATH]; // this will be contain the path if SHGetFolderPath is successful
+    int hResult = Shell32.INSTANCE.SHGetFolderPath(null, Shell32.CSIDL_PERSONAL, null, Shell32.SHGFP_TYPE_CURRENT, pszPath);
+    
+    if (Shell32.S_OK != hResult){ 
+      throw new Exception("Problem city, population your computer");
+    }
+
+    String personalPath = new String(pszPath);
+    int len = personalPath.indexOf("\0");
+    personalPath = personalPath.substring(0, len);
+    
+    // DEBUG
+    //throw new Exception("win: " + personalPath);
     return new File(personalPath, "Processing");
   }
 
@@ -285,7 +322,7 @@ public class Platform extends processing.app.Platform {
     public int _putenv(String name);
   }
 
-
+  
   public void setenv(String variable, String value) {
     //WinLibC clib = WinLibC.INSTANCE;
     clib._putenv(variable + "=" + value);
@@ -303,4 +340,47 @@ public class Platform extends processing.app.Platform {
     //return 0;
     return clib._putenv(variable + "=");
   }
+  
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+  
+  // JNA code for using SHGetFolderPath to fix Issue 410
+  // Based on answer provided by McDowell at
+  // http://stackoverflow.com/questions/585534/
+  //      what-is-the-best-way-to-find-the-users-home-directory-in-java/586917#586917
+  
+  private static Map<String, Object> OPTIONS = new HashMap<String, Object>();
+  
+  static{
+    OPTIONS.put(Library.OPTION_TYPE_MAPPER, W32APITypeMapper.UNICODE);
+    OPTIONS.put(Library.OPTION_FUNCTION_MAPPER, W32APIFunctionMapper.UNICODE);
+  }
+  
+  static class HANDLE extends PointerType implements NativeMapped{}
+  
+  static class HWND extends HANDLE {}
+  
+  public interface Shell32 extends Library{
+    
+    public static final int MAX_PATH = 260;
+    public static final int SHGFP_TYPE_CURRENT = 0;
+    public static final int SHGFP_TYPE_DEFAULT = 1;
+    public static final int S_OK = 0;
+    
+    // KNOWNFOLDERIDs are preferred to CSDIL values
+    // but Windows XP only supports CSDIL so thats what we have to use
+    public static final int CSIDL_APPDATA = 0x001c; // "Application Data"
+    public static final int CSIDL_PERSONAL = 0x0005;      // "My Documents"
+    
+    static Shell32 INSTANCE = (Shell32) Native.loadLibrary("shell32", Shell32.class, OPTIONS);
+    
+    /**
+     * see http://msdn.microsoft.com/en-us/library/bb762181(VS.85).aspx
+     * 
+     * HRESULT SHGetFolderPath( HWND hwndOwner, int nFolder, HANDLE hToken,
+     * DWORD dwFlags, LPTSTR pszPath);
+     */
+    public int SHGetFolderPath(HWND hwndOwner, int nFolder, HANDLE hToken,
+                    int dwFlags, char[] pszPath);
+  }
+  
 }
