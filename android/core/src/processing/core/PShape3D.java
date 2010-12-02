@@ -691,7 +691,7 @@ public class PShape3D extends PShape implements PConstants {
 
   
   public void addChild(String name, int n0, int n1) {
-    PShape child = createChild(name, n0, n1, glMode);
+    PShape child = createChild(name, n0, n1, getDrawModeImpl());
     addChild(child);
   }
   
@@ -721,7 +721,7 @@ public class PShape3D extends PShape implements PConstants {
       who3d.papplet = papplet;
       who3d.a3d = a3d;
       who3d.gl = gl;
-      for (int n = who3d.firstVertex; n < who3d.lastVertex; n++) {
+      for (int n = who3d.firstVertex; n <= who3d.lastVertex; n++) {
         vertexChild[n] = who3d;
       }       
     } else {
