@@ -46,7 +46,6 @@ import javax.microedition.khronos.egl.EGLContext;
 import javax.microedition.khronos.egl.EGLDisplay;
 
 import processing.core.PFont.Glyph;
-import processing.core.PShape3D.VertexGroup;
 
 // drawPixels is missing...calls to glDrawPixels are commented out
 //   setRasterPos() is also commented out
@@ -335,7 +334,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected ArrayList<float[]> recordedColors = null;
   protected ArrayList<PVector> recordedNormals = null;
   protected ArrayList<PVector>[] recordedTexCoords = null;
-  protected ArrayList<VertexGroup> recordedGroups = null;
+  protected ArrayList<PShape3D> recordedChildren = null;
 
   // .......................................................
   
@@ -521,8 +520,14 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   
   public void delete() {
-    super.delete();
-    deleteAllGLResources();
+    if (primarySurface) {
+      PGraphics.showWarning("You cannot delete the primary rendering surface!");
+    } else {
+      super.delete();
+      if (offscreenFramebuffer != null) {
+        offscreenFramebuffer.delete();
+      }
+    }
   }
   
   
@@ -1286,7 +1291,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     numRecordedTextures = 0;
     
-    recordedGroups = new ArrayList<VertexGroup>(PApplet.max(DEFAULT_PATHS, DEFAULT_FACES));
+    recordedChildren = new ArrayList<PShape3D>(PApplet.max(DEFAULT_PATHS, DEFAULT_FACES));
   }
 
   public void beginShape(int kind) {
@@ -1934,27 +1939,17 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected void endShapeRecorderImpl(PShape3D shape) {
     recordingShape = false;
     if (0 < recordedVertices.size() && shape != null) {
-      shape.beginUpdate(VERTICES);
-      shape.setVertex(recordedVertices);
-      shape.endUpdate();
-
-      shape.beginUpdate(COLORS);
-      shape.setColor(recordedColors);
-      shape.endUpdate();
-
-      shape.beginUpdate(NORMALS);
-      shape.setNormal(recordedNormals);
-      shape.endUpdate();
       
-      for (int t = 0; t < numRecordedTextures; t++) {
-        shape.beginUpdate(TEXTURES0 + t);
-        shape.setTexCoord(recordedTexCoords[t]);
-        shape.endUpdate();
+      shape.setVertices(recordedVertices);
+      shape.setColors(recordedColors);
+      shape.setNormals(recordedNormals);
+      for (int t = 0; t < numRecordedTextures; t++) {        
+        shape.setTexcoords(t, recordedTexCoords[t]);
       }
     
-      shape.setGroups(recordedGroups);
-      shape.optimizeGroups();
-
+      shape.setChildren(recordedChildren);
+      shape.optimizeChildren();
+      
       // Releasing memory.
       recordedVertices.clear();
       recordedColors.clear();
@@ -1962,7 +1957,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       for (int t = 0; t < maxTextureUnits; t++) {
         recordedTexCoords[t].clear();
       }
-      recordedGroups.clear();
+      recordedChildren.clear();
     }
   }
 
@@ -2177,8 +2172,8 @@ public class PGraphicsAndroid3D extends PGraphics {
             n1 = n0 + pathLength[k];
           }
 
-          VertexGroup group = PShape3D.newVertexGroup(n0, n1, LINE_STRIP, sw, null);
-          recordedGroups.add(group);
+          PShape3D child = (PShape3D)PShape3D.createChild("Child" + recordedChildren.size(), n0, n1, LINE_STRIP, sw, null);
+          recordedChildren.add(child);
         }
 
         // Division by three needed because each int element in the buffer is
@@ -2386,8 +2381,8 @@ public class PGraphicsAndroid3D extends PGraphics {
         
         int n0 = recordedVertices.size();
         int n1 = n0 + 3 * faceLength[j] - 1;
-        VertexGroup group = PShape3D.newVertexGroup(n0, n1, TRIANGLES, 0, images);        
-        recordedGroups.add(group);
+        PShape3D child = (PShape3D)PShape3D.createChild("Child" + recordedChildren.size(), n0, n1, TRIANGLES, 0, images);
+        recordedChildren.add(child);
       }
 
       // Division by three needed because each int element in the buffer is used
