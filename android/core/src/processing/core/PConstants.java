@@ -398,20 +398,6 @@ public interface PConstants {
   public static final int STATIC = 0;
   /**  Dynamic usage mode for PShape3D (vertices will be updated after creation). */
   public static final int DYNAMIC = 1;    
- 
-  
-  /**
-   * Elements handled by PShape3D (vertices, normals, color, texture coordinates and groups).
-   */    
-  public static final int VERTICES = 0;
-  public static final int NORMALS = 1;
-  public static final int COLORS = 2;
-  public static final int TEXTURES = 3;
-  public static final int TEXTURES0 = 3;  
-  public static final int TEXTURES1 = 4;
-  public static final int TEXTURES2 = 5;
-  public static final int TEXTURES3 = 6;
-  public static final int GROUPS = 7;  
   
 
   // stroke modes
