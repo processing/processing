@@ -42,15 +42,12 @@ import java.io.BufferedReader;
  * 
  */
 public class PShape3D extends PShape implements PConstants {
-  protected PApplet parent;    
+  protected PApplet papplet;    
   protected GL11 gl;  
   protected PGraphicsAndroid3D a3d;
-  
-  protected int numVertices;
+   
   protected int numTexBuffers;
-  protected int glMode;
   protected int glUsage;
-  protected boolean pointSprites;
   
   protected int glVertexBufferID;
   protected int glColorBufferID;
@@ -62,42 +59,57 @@ public class PShape3D extends PShape implements PConstants {
   protected FloatBuffer normalBuffer;
   protected FloatBuffer texCoordBuffer;
   
-  protected float[] vertexArray;
-  protected float[] colorArray;
-  protected float[] normalArray;
-  protected float[] texCoordArray;
+  // Arrays for setting/getting vertices, colors, normals, and 
+  // texture coordinates.
+  public float[] vertices;
+  public float[] colors;
+  public float[] normals;
+  public float[] texcoords;  
   
-  protected int updateElement;
-  protected int firstUpdateIdx;
-  protected int lastUpdateIdx;
+  // Child-only properties: first and last vertex, draw mode, point sprites 
+  // and textures. Stroke weight is inherited from PShape.
+  protected int firstVertex;
+  protected int lastVertex; 
+  protected int glMode;
+  protected boolean pointSprites;  
+  protected PImage[] textures;  
   
-  protected ArrayList<VertexGroup> groups;
-  protected VertexGroup[] vertGroup;
-  protected boolean creatingGroup;
-  protected boolean firstSetGroup;
-  protected int grIdx0;
-  protected int grIdx1;
-  
+  // Bounding box: 
   protected float xmin, xmax;
   protected float ymin, ymax;
   protected float zmin, zmax;
+
+  // PShape3D child associated to each vertex.
+  protected PShape3D[] vertexChild;  
   
+  protected boolean vertexColor = true;
   protected float ptDistAtt[] = { 1.0f, 0.0f, 0.01f, 1.0f };
   
   protected PTexture[] renderTextures = new PTexture[PGraphicsAndroid3D.MAX_TEXTURES];  
-  protected boolean[] texCoordSet = new boolean[PGraphicsAndroid3D.MAX_TEXTURES];
-  protected boolean vertexColor = true;
+  protected boolean[] texCoordSet = new boolean[PGraphicsAndroid3D.MAX_TEXTURES];  
 
-  protected int TEXTURESMAX;
+  // Elements handled by PShape3D (vertices, normals, color, texture coordinates).
+  protected static final int VERTICES = 0;
+  protected static final int NORMALS = 1;
+  protected static final int COLORS = 2;
+  protected static final int TEXCOORDS = 3; 
   
-   
+  protected int updateElement;
+  protected int updateTexunit;
+  protected int firstUpdateIdx;
+  protected int lastUpdateIdx;
+
   
   ////////////////////////////////////////////////////////////
 
   // Constructors.
 
+  public PShape3D() {
+    style = false;
+  }
+  
   public PShape3D(PApplet parent) {
-    this.parent = parent;
+    this.papplet = parent;
     a3d = (PGraphicsAndroid3D)parent.g;
 
     glVertexBufferID = 0;
@@ -105,7 +117,7 @@ public class PShape3D extends PShape implements PConstants {
     glNormalBufferID = 0;
     java.util.Arrays.fill(glTexCoordBufferID, 0);
     
-    TEXTURESMAX = TEXTURES0 + PGraphicsAndroid3D.maxTextureUnits;
+    style = false;
   }
   
   public PShape3D(PApplet parent, int numVert) {
@@ -113,15 +125,16 @@ public class PShape3D extends PShape implements PConstants {
   }  
   
   public PShape3D(PApplet parent, String filename, int mode) {
-    this.parent = parent;
+    this.papplet = parent;
     a3d = (PGraphicsAndroid3D)parent.g;
 
+    this.family = PShape.GROUP;
     glVertexBufferID = 0;
     glColorBufferID = 0;
     glNormalBufferID = 0;
     java.util.Arrays.fill(glTexCoordBufferID, 0);
     
-    TEXTURESMAX = TEXTURES0 + PGraphicsAndroid3D.maxTextureUnits;
+    style = false;
     
     // Checking we have all we need:
     gl = a3d.gl11;
@@ -152,8 +165,8 @@ public class PShape3D extends PShape implements PConstants {
   }  
   
   
-  public PShape3D(PApplet parent, int numVert, Parameters params) {
-    this.parent = parent;
+  public PShape3D(PApplet parent, int size, Parameters params) {
+    this.papplet = parent;
     a3d = (PGraphicsAndroid3D)parent.g;
     
     glVertexBufferID = 0;
@@ -161,353 +174,347 @@ public class PShape3D extends PShape implements PConstants {
     glNormalBufferID = 0;
     java.util.Arrays.fill(glTexCoordBufferID, 0);    
     
-    TEXTURESMAX = TEXTURES0 + PGraphicsAndroid3D.maxTextureUnits;
+    style = false;
     
-    initShape(numVert, params);
+    initShape(size, params);
   }
   
 
   public void delete() {
-    //deleteVertexBuffer();
-    //deleteColorBuffer();
-    //deleteTexCoordBuffer();
-    //deleteNormalBuffer();
+    if (family == PShape.GROUP) {
+      deleteVertexBuffer();
+      deleteColorBuffer();
+      deleteTexCoordBuffer();
+      deleteNormalBuffer();
+    }
   }
 
-  
   ////////////////////////////////////////////////////////////
-  
-  // Textures
-  
-  public void setTexture(PImage tex) {
-    for (int gr = 0; gr < groups.size(); gr++) {
-      setGroupTextureImpl(gr, tex, 0);
-    }
-  }  
 
+  // load/update/set/get methods
+ 
   
-  public void setTexture(PImage tex, int unit) {
-    for (int gr = 0; gr < groups.size(); gr++) {
-      setGroupTextureImpl(gr, tex, unit);
-    }
-  }  
-
-  
-  public void setTextures(PImage tex0, PImage tex1) {
-    for (int gr = 0; gr < groups.size(); gr++) {
-      setGroupTextures(gr, new PImage[] {tex0, tex1});
-    }
-  }  
-  
-  
-  public void setTextures(PImage tex0, PImage tex1, PImage tex2) {
-    for (int gr = 0; gr < groups.size(); gr++) {
-      setGroupTextures(gr, new PImage[] {tex0, tex1, tex2});
-    }
-  }    
-  
-  
-  public void setTextures(PImage tex0, PImage tex1, PImage tex2, PImage tex3) {
-    for (int gr = 0; gr < groups.size(); gr++) {
-      setGroupTextures(gr, new PImage[] {tex0, tex1, tex2, tex3});
-    }
-  }    
-  
-  
-  protected void setTextures(PImage[] textures) {
-    for (int gr = 0; gr < groups.size(); gr++) {
-      setGroupTextures(gr, textures);
-    }
-  }
-  
-  
-  public PImage getTexture() {
-    return getGroupTexture(0);
+  public void loadVertices() {
+    loadVertices(0, vertexCount - 1);
   }
 
   
-  public PImage[] getTextures() {
-    return getGroupTextures(0);
-  } 
-  
-  
-  ////////////////////////////////////////////////////////////
-  
-  // beginUpdate/endUpdate
-  
-  
-  public void beginUpdate(int element) {
-    beginUpdateImpl(element, 0, numVertices - 1);
-  }
-  
-  
-  protected void beginUpdateImpl(int element, int first, int last) {
-    if (updateElement != -1) {
-      throw new RuntimeException("PShape3D: only one element can be updated at the time");
-    }
-    
-    updateElement = element;
-    firstUpdateIdx = numVertices;
-    lastUpdateIdx = -1;
-    
-    if (updateElement == VERTICES) {
-      gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glVertexBufferID);      
-      
-      int offset = first * 3;
-      int size = (last - first + 1) * 3;
-      vertexBuffer.limit(vertexBuffer.capacity());      
-      vertexBuffer.rewind();
-      vertexBuffer.get(vertexArray, offset, size);
-      
-      // For group creation inside update vertices block.
-      creatingGroup = false;
-      firstSetGroup = true;
-    } else if (updateElement == COLORS) {
-      gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glColorBufferID);
-            
-      int offset = first * 4;
-      int size = (last - first + 1) * 4;
-      colorBuffer.limit(colorBuffer.capacity());
-      colorBuffer.rewind();
-      colorBuffer.get(colorArray, offset, size);
-    } else if (updateElement == NORMALS) {
-      gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glNormalBufferID);
-            
-      int offset = first * 3;
-      int size = (last - first + 1) * 3;
-      normalBuffer.limit(normalBuffer.capacity());      
-      normalBuffer.rewind();      
-      normalBuffer.get(normalArray, offset, size);
-    } else if (TEXTURES0 <= updateElement && updateElement < TEXTURESMAX)  {      
-      int t = updateElement - TEXTURES0;
-      
-      if (numTexBuffers <= t) {
-        addTexBuffers(t - numTexBuffers + 1);
-      }
-      
-      gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glTexCoordBufferID[t]);
-          
-      int offset = first * 2;
-      int size = (last - first + 1) * 2;
-      texCoordBuffer.limit(texCoordBuffer.capacity());      
-      texCoordBuffer.rewind();
-      texCoordBuffer.get(texCoordArray, offset, size);
-    } else if (updateElement == GROUPS) {
-      deleteGroups();
-    } else {
-      throw new RuntimeException("PShape3D: unknown element to update");  
-    }    
-  }
-  
-  
-  public void endUpdate() {
-    if (updateElement == -1) {
-      throw new RuntimeException("PShape3D: call beginUpdate() first");
-    }
-    
-    if (lastUpdateIdx < firstUpdateIdx) {
+  public void loadVertices(int first, int last) {
+    if (last < first || first < 0 || vertexCount <= last) {
+      PGraphics.showWarning("PShape3D: wrong vertex index");
       updateElement = -1;
       return;  
     }
     
-    if (updateElement == VERTICES) {      
+    if (updateElement != -1) {
+      PGraphics.showWarning("PShape3D: can load only one type of data at the time");
+      return;        
+    }
+    
+    updateElement = VERTICES;
+    firstUpdateIdx = first;
+    lastUpdateIdx = last;
+    
+    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glVertexBufferID);      
+    
+    int offset = first * 3;
+    int size = (last - first + 1) * 3;
+    vertexBuffer.limit(vertexBuffer.capacity());      
+    vertexBuffer.rewind();
+    vertexBuffer.get(vertices, offset, size);    
+  }  
+  
+  
+  public void updateVertices() {
+    if (updateElement == VERTICES) {
       int offset = firstUpdateIdx * 3;
       int size = (lastUpdateIdx - firstUpdateIdx + 1) * 3;
+    
+      updateBounds();
       
       vertexBuffer.position(0);
-      vertexBuffer.put(vertexArray, offset, size);
+      vertexBuffer.put(vertices, offset, size);
       vertexBuffer.flip();
-    
+      
       gl.glBufferSubData(GL11.GL_ARRAY_BUFFER, offset * PGraphicsAndroid3D.SIZEOF_FLOAT, 
                          size * PGraphicsAndroid3D.SIZEOF_FLOAT, vertexBuffer);
       gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
-      
-      if (creatingGroup) {
-        // The last group being created is added.
-        addGroup(grIdx0, grIdx1, null);
-      }
-    } else if (updateElement == COLORS) {      
+    
+      updateElement = -1;
+    } else {
+      PGraphics.showWarning("PShape3D: need to call loadVertices() first");
+    }
+  }
+  
+  
+  public void loadColors() {
+    loadColors(0, vertexCount - 1);
+  }
+
+  
+  public void loadColors(int first, int last) {
+    if (last < first || first < 0 || vertexCount <= last) {
+      PGraphics.showWarning("PShape3D: wrong vertex index");
+      updateElement = -1;
+      return;  
+    }
+    
+    if (updateElement != -1) {
+      PGraphics.showWarning("PShape3D: can load only one type of data at the time");
+      return;        
+    }
+    
+    updateElement = COLORS;
+    firstUpdateIdx = first;
+    lastUpdateIdx = last;
+    
+    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glColorBufferID);
+    
+    int offset = first * 4;
+    int size = (last - first + 1) * 4;
+    colorBuffer.limit(colorBuffer.capacity());
+    colorBuffer.rewind();
+    colorBuffer.get(colors, offset, size);    
+  }
+  
+  
+  public void updateColors() {
+    if (updateElement == COLORS) {    
       int offset = firstUpdateIdx * 4;
       int size = (lastUpdateIdx - firstUpdateIdx + 1) * 4;
-            
+          
       colorBuffer.position(0);      
-      colorBuffer.put(colorArray, offset, size);
+      colorBuffer.put(colors, offset, size);
       colorBuffer.flip();
-    
+  
       gl.glBufferSubData(GL11.GL_ARRAY_BUFFER, offset * PGraphicsAndroid3D.SIZEOF_FLOAT, 
                                                size * PGraphicsAndroid3D.SIZEOF_FLOAT, colorBuffer);
       gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
-    } else if (updateElement == NORMALS) {
+      
+      updateElement = -1;      
+    } else {
+      PGraphics.showWarning("PShape3D: need to call loadColors() first");
+    }    
+  }
+  
+
+  public void loadNormals() {
+    loadNormals(0, vertexCount - 1);
+  }  
+  
+  
+  public void loadNormals(int first, int last) {
+    if (last < first || first < 0 || vertexCount <= last) {
+      PGraphics.showWarning("PShape3D: wrong vertex index");
+      updateElement = -1;
+      return;  
+    }
+    
+    if (updateElement != -1) {
+      PGraphics.showWarning("PShape3D: can load only one type of data at the time");
+      return;        
+    }    
+    
+    updateElement = NORMALS;
+    firstUpdateIdx = first;
+    lastUpdateIdx = last;
+    
+    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glNormalBufferID);
+    
+    int offset = first * 3;
+    int size = (last - first + 1) * 3;
+    normalBuffer.limit(normalBuffer.capacity());      
+    normalBuffer.rewind();      
+    normalBuffer.get(normals, offset, size);    
+  }
+  
+  
+  public void updateNormals() {
+    if (updateElement == NORMALS) {    
       int offset = firstUpdateIdx * 3;
       int size = (lastUpdateIdx - firstUpdateIdx + 1) * 3;
       
       normalBuffer.position(0);      
-      normalBuffer.put(normalArray, offset, size);
+      normalBuffer.put(normals, offset, size);
       normalBuffer.flip();
     
       gl.glBufferSubData(GL11.GL_ARRAY_BUFFER, offset * PGraphicsAndroid3D.SIZEOF_FLOAT, 
                          size * PGraphicsAndroid3D.SIZEOF_FLOAT, normalBuffer);
       gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
-    } else if (TEXTURES0 <= updateElement && updateElement < TEXTURESMAX) {
+      
+      updateElement = -1;      
+    } else {
+      PGraphics.showWarning("PShape3D: need to call loadNormals() first");
+    }      
+  }  
+  
+  
+  public void loadTexcoords() {
+    loadTexcoords(0);
+  }
+  
+  
+  public void loadTexcoords(int unit) {
+    loadTexcoords(unit, 0, vertexCount - 1);
+  }  
+  
+  
+  protected void loadTexcoords(int unit, int first, int last) {
+    if (last < first || first < 0 || vertexCount <= last) {
+      PGraphics.showWarning("PShape3D: wrong vertex index");
+      updateElement = -1;
+      return;  
+    }
+    
+    if (updateElement != -1) {
+      PGraphics.showWarning("PShape3D: can load only one type of data at the time");
+      return;        
+    }    
+    
+    if (PGraphicsAndroid3D.maxTextureUnits <= unit) {
+      PGraphics.showWarning("PShape3D: wrong texture unit");
+      return;
+    }
+    
+    updateElement = TEXCOORDS;
+    firstUpdateIdx = first;
+    lastUpdateIdx = last;
+    
+    if (numTexBuffers <= unit) {
+      addTexBuffers(unit - numTexBuffers + 1);
+    }
+    
+    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glTexCoordBufferID[unit]);
+        
+    int offset = first * 2;
+    int size = (last - first + 1) * 2;
+    texCoordBuffer.limit(texCoordBuffer.capacity());      
+    texCoordBuffer.rewind();
+    texCoordBuffer.get(texcoords, offset, size);
+    
+    normalizeTexcoords(unit);
+    
+    updateTexunit = unit;    
+  }  
+  
+  
+  public void updateTexcoords() {
+    if (updateElement == TEXCOORDS) {    
       int offset = firstUpdateIdx * 2;
       int size = (lastUpdateIdx - firstUpdateIdx + 1) * 2;
       
+      unnormalizeTexcoords(updateTexunit);
+      
       texCoordBuffer.position(0);      
-      texCoordBuffer.put(texCoordArray, offset, size);
+      texCoordBuffer.put(texcoords, offset, size);
       texCoordBuffer.flip();
       
       gl.glBufferSubData(GL11.GL_ARRAY_BUFFER, offset * PGraphicsAndroid3D.SIZEOF_FLOAT, 
                          size * PGraphicsAndroid3D.SIZEOF_FLOAT, texCoordBuffer);
       gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
       
-      int t = updateElement - TEXTURES0;
-      texCoordSet[t] = true;
-    } else if (updateElement == GROUPS) {
-      checkGroups();      
+      texCoordSet[updateTexunit] = true;
+      
+      updateElement = -1;      
+    } else {
+      PGraphics.showWarning("PShape3D: need to call loadTexcoords() first");
+    }       
+  }  
+  
+  
+  public float[] get(int idx) {
+    float[] v = null;
+    if (updateElement == VERTICES) {
+      v = new float[3];
+      PApplet.arrayCopy(vertices, 3 * idx, v, 0, 3);
+    } else if (updateElement == COLORS) {
+      v = new float[4];
+      PApplet.arrayCopy(colors, 4 * idx, v, 0, 4);    
+    } else if (updateElement == NORMALS) {
+      v = new float[3];
+      PApplet.arrayCopy(normals, 3 * idx, v, 0, 3);    
+    } else if (updateElement == TEXCOORDS) {
+      v = new float[2];
+      PApplet.arrayCopy(texcoords, 2 * idx, v, 0, 2);        
     }
-    
-    updateElement = -1;
+    return v;
   }
   
   
-  ////////////////////////////////////////////////////////////  
-  
-  // SET/GET VERTICES
-  
-  
-  public int getNumVertices() {
-    return numVertices;
-  }
-  
-
-  public float[] getVertex(int idx) {
-    if (updateElement != VERTICES) {
-      throw new RuntimeException("PShape3D: update mode is not set to VERTICES");
-    }
-
-    float x = vertexArray[3 * idx + 0];
-    float y = vertexArray[3 * idx + 1];
-    float z = vertexArray[3 * idx + 2];
-    
-    return new float[] { x, y, z };
+  public void set(int idx, float[] v) {
+    if (updateElement == VERTICES) {
+      PApplet.arrayCopy(v, 0, vertices, 3 * idx, 3);
+    } else if (updateElement == COLORS) {
+      PApplet.arrayCopy(v, 0, colors, 4 * idx, 4);    
+    } else if (updateElement == NORMALS) {
+      PApplet.arrayCopy(v, 0, normals, 3 * idx, 3);    
+    } else if (updateElement == TEXCOORDS) {
+      PApplet.arrayCopy(v, 0, texcoords, 2 * idx, 2);        
+    }    
   }
 
-
-  public float[] getVertexArray() {
-    if (updateElement != VERTICES) {
-      throw new RuntimeException("PShape3D: update mode is not set to VERTICES");
+  
+  public void set(int idx, int c) {
+    set(idx, rgba(c)); 
+  }
+  
+  
+  public void set(int idx, float x, float y) {
+    if (updateElement == VERTICES) {
+      set(idx, new float[] {x, y, 0});
+    } else if (updateElement == TEXCOORDS) {
+      set(idx, new float[] {x, y});    
     }
+  }
+  
+  
+  public void set(int idx, float x, float y, float z) {
+    if (updateElement == VERTICES) {
+      set(idx, new float[] {x, y, z});
+    } else if (updateElement == NORMALS) {
+      set(idx, new float[] {x, y, z});    
+    }
+  }
+
+  
+  public void set(int idx, float x, float y, float z, float w) {
+    if (updateElement == COLORS) {
+      set(idx, new float[] {x, y, z, w});
+    }
+  }
+
+  
+  static public int color(float[] rgba) {
+    int r = (int)(rgba[0] * 255);
+    int g = (int)(rgba[1] * 255);
+    int b = (int)(rgba[2] * 255);
+    int a = (int)(rgba[3] * 255);
     
-    float[] res = new float[numVertices * 3];
-    getVertexArrayImpl(res, 0, numVertices, 0);
+    return a << 24 | r << 16 | g << 8 | b;
+  }
+  
+  
+  static public float[] rgba(int c) {
+    int a = (c >> 24) & 0xFF;
+    int r = (c >> 16) & 0xFF;
+    int g = (c >> 8) & 0xFF;
+    int b = (c  >> 0) & 0xFF;
+
+    float[] res = new float[4];
+    res[0] = r / 255.0f;
+    res[1] = g / 255.0f;
+    res[2] = b / 255.0f;
+    res[3] = a / 255.0f;
     
     return res;
   }
-
-  
-  protected float[] getVertexArrayImpl(float[] data, int firstUpd, int length, int firstData) {
-    PApplet.arrayCopy(vertexArray, firstUpd * 3, data, firstData * 3,  length * 3);
-    return data;
-  }
-
-
-  public ArrayList<PVector> getVertexArrayList() {
-    if (updateElement != VERTICES) {
-      throw new RuntimeException("PShape3D: update mode is not set to VERTICES");
-    }
-
-    ArrayList<PVector> res;
-    res = new ArrayList<PVector>();
-    
-    for (int i = 0; i < numVertices; i++) {
-      float[] v = getVertex(i);
-      res.add(new PVector(v[0], v[1], v[2]));
-    }
-    
-    return res;
-  }  
-
-  
-  public void setVertex(int idx, float x, float y) {
-    setVertex(idx, x, y, 0);  
-  }
   
   
-  public void setVertex(int idx, float x, float y, float z) {
-    if (updateElement != VERTICES) {
-      throw new RuntimeException("PShape3D: update mode is not set to VERTICES");
-    }
-
-    if (idx < firstUpdateIdx) firstUpdateIdx = idx;
-    if (lastUpdateIdx < idx) lastUpdateIdx = idx;
-    
-    if (creatingGroup) {
-      if (grIdx0 == -1) {
-        grIdx0 = idx;
-      }
-      grIdx1 = idx;  
-    }
-    
-    updateBounds(x, y, z);
-    vertexArray[3 * idx + 0] = x;
-    vertexArray[3 * idx + 1] = y;
-    vertexArray[3 * idx + 2] = z;    
-  }
-
-  
-  public void setVertex(int idx, PVector p) {
-    setVertex(idx, p.x, p.y, p.z);  
-  }  
-  
-  
-  public void setVertex(int idx, float[] p) {
-    setVertex(idx, p[0], p[1], p[2]);  
-  }  
-  
-  
-  public void setVertex(float[] data) {
-    if (updateElement != VERTICES) {
-      throw new RuntimeException("PShape3D: updadate mode is not set to VERTICES");
-    }
-    
-    firstUpdateIdx = 0;
-    lastUpdateIdx = numVertices - 1;    
-    
-    if (creatingGroup) {
-      grIdx0 = 0;
-      grIdx1 = numVertices - 1;
-    }
-    
+  protected void updateBounds() {
     // TODO: extract minimum and maximum values using some sorting algorithm. 
-    for (int i = 0; i < numVertices; i++) {
-      updateBounds(data[3 * i + 0], data[3 * i + 1], data[3 * i + 2]);      
-    }
-    
-    PApplet.arrayCopy(data, 0, vertexArray, 0, numVertices * 3);
-  }
-  
-  
-  public void setVertex(ArrayList<PVector> data) {
-    if (updateElement != VERTICES) {
-      throw new RuntimeException("PShape3D: updadate mode is not set to VERTICES");
-    }
-
-    firstUpdateIdx = 0;
-    lastUpdateIdx = numVertices - 1;
-
-    if (creatingGroup) {
-      grIdx0 = 0;
-      grIdx1 = numVertices - 1;
-    }
-        
-    PVector vec;
-    for (int i = 0; i < numVertices; i++) {
-      vec = (PVector)data.get(i);
-      vertexArray[3 * i + 0] = vec.x;
-      vertexArray[3 * i + 1] = vec.y;
-      vertexArray[3 * i + 2] = vec.z;
-      updateBounds(vec.x, vec.y, vec.z);
-    }
+    for (int i = firstUpdateIdx; i <= lastUpdateIdx; i++) {
+      updateBounds(vertices[3 * i + 0], vertices[3 * i + 1], vertices[3 * i + 2]);      
+    }      
   }
   
   
@@ -524,1117 +531,297 @@ public class PShape3D extends PShape implements PConstants {
     width = xmax - xmin;
     height = ymax - ymin;
     depth = zmax - zmin;
-  }
-
-  ////////////////////////////////////////////////////////////
-  
-  // SET/GET COLORS
-  
-  
-  public int color(float[] rgba) {
-    int r = (int)(rgba[0] * 255);
-    int g = (int)(rgba[1] * 255);
-    int b = (int)(rgba[2] * 255);
-    int a = (int)(rgba[3] * 255);
-    
-    return a << 24 | r << 16 | g << 8 | b;
-  }
-  
-  
-  public float[] rgba(int c) {
-    int a = (c >> 24) & 0xFF;
-    int r = (c >> 16) & 0xFF;
-    int g = (c >> 8) & 0xFF;
-    int b = (c  >> 0) & 0xFF;
-
-    float[] res = new float[4];
-    res[0] = r / 255.0f;
-    res[1] = g / 255.0f;
-    res[2] = b / 255.0f;
-    res[3] = a / 255.0f;
-    
-    return res;
-  }
-  
-  
-  public float[] getColor(int idx) {
-    if (updateElement != COLORS) {
-      throw new RuntimeException("PShape3D: update mode is not set to COLORS");
-    }
-    
-    float[] res = new float[4];
-    PApplet.arrayCopy(colorArray, idx * 4, res, 0, 4);
-    
-    return res;
-  }
-  
-  
-  public float[] getColorArray() {
-    if (updateElement != COLORS) {
-      throw new RuntimeException("PShape3D: update mode is not set to COLORS");
-    }
-    
-    float[] res = new float[numVertices];
-    getColorArrayImpl(res, 0, numVertices, 0);
-    
-    return res;
-  }
-
-
-  protected float[] getColorArrayImpl(float[] data, int firstUpd, int length, int firstData) {
-    PApplet.arrayCopy(colorArray, firstUpd * 4, data, firstData * 4,  length * 4);
-    return data;
-  }
-    
-  
-  public ArrayList<float[]> getColorArrayList() {
-    if (updateElement != COLORS) {
-      throw new RuntimeException("PShape3D: update mode is not set to COLORS");
-    }
-
-    ArrayList<float[]> res;
-    res = new ArrayList<float[]>();
-    
-    for (int i = 0; i < numVertices; i++) res.add(getColor(i));
-    
-    return res;
-  }
-
-  
-  public void setColor(int c) {
-    int a = (c >> 24) & 0xFF;
-    int r = (c >> 16) & 0xFF;
-    int g = (c >> 8) & 0xFF;
-    int b = (c  >> 0) & 0xFF;
-    
-    setColor(r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f);
-  }
-
-  
-  public void setColor(float r, float g, float b) {
-    setColor(r, g, b, 1.0f);
-  }
-  
- 
-  public void setColor(float r, float g, float b, float a) {  
-    firstUpdateIdx = 0;
-    lastUpdateIdx = numVertices - 1;    
-    for (int i = 0; i < numVertices; i++) {
-      colorArray[4 * i + 0] = r;
-      colorArray[4 * i + 1] = g;
-      colorArray[4 * i + 2] = b;
-      colorArray[4 * i + 3] = a;      
-    }
-  }
-  
-  
-  public void setColor(int idx, int c) {
-    int a = (c >> 24) & 0xFF;
-    int r = (c >> 16) & 0xFF;
-    int g = (c >> 8) & 0xFF;
-    int b = (c  >> 0) & 0xFF;
-    
-    setColor(idx, r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f);
-  }
-  
-  
-  public void setColor(int idx, float r, float g, float b) {
-    setColor(idx, r, g, b, 1.0f);  
-  }
-  
-  
-  public void setColor(int idx, float r, float g, float b, float a) {
-    if (updateElement != COLORS) {
-      throw new RuntimeException("PShape3D: update mode is not set to COLORS");
-    }
-
-    if (idx < firstUpdateIdx) firstUpdateIdx = idx;
-    if (lastUpdateIdx < idx) lastUpdateIdx = idx;
-    
-    colorArray[4 * idx + 0] = r;
-    colorArray[4 * idx + 1] = g;
-    colorArray[4 * idx + 2] = b;
-    colorArray[4 * idx + 3] = a;    
-  }
-
-  
-  public void setColor(float[] data) {
-    if (updateElement != COLORS) {
-      throw new RuntimeException("PShape3D: update mode is not set to COLORS");
-    }
-    
-    firstUpdateIdx = 0;
-    firstUpdateIdx = numVertices - 1;   
-    PApplet.arrayCopy(data, 0, colorArray, 0, numVertices * 4);
-  }
-  
-  
-  public void setColor(ArrayList<float[]> data) {
-    if (updateElement != COLORS) {
-      throw new RuntimeException("PShape3D: update mode is not set to COLORS");
-    }
-
-    firstUpdateIdx = 0;
-    lastUpdateIdx = numVertices - 1;
-    
-    float[] rgba;
-    for (int i = 0; i < numVertices; i++) {
-      rgba = (float[])data.get(i);
-      colorArray[4 * i + 0] = rgba[0];
-      colorArray[4 * i + 1] = rgba[1];
-      colorArray[4 * i + 2] = rgba[2];
-      colorArray[4 * i + 3] = rgba[3];      
-    }
-  }
-  
-  
-  public void vertexColor(boolean v) {
-    vertexColor = v;
-  }
-  
-
-  ////////////////////////////////////////////////////////////
-  
-  // SET/GET NORMALS
-  
-  
-  public PVector getNormal(int idx) {
-    if (updateElement != NORMALS) {
-      throw new RuntimeException("PShape3D: update mode is not set to NORMALS");
-    }
-
-    float x = normalArray[3 * idx + 0];
-    float y = normalArray[3 * idx + 1];
-    float z = normalArray[3 * idx + 2];
-    
-    PVector res = new PVector(x, y, z);
-    return res;
-  }
-  
-
-  public float[] getNormalArray() {
-    if (updateElement != NORMALS) {
-      throw new RuntimeException("PShape3D: update mode is not set to NORMALS");
-    }
-    
-    float[] res = new float[numVertices * 3];
-    getNormalArrayImpl(res, 0, numVertices, 0);
-    
-    return res;
-  }
-
-
-  protected float[] getNormalArrayImpl(float[] data, int firstUpd, int length, int firstData) {
-    PApplet.arrayCopy(normalArray, firstUpd * 3, data, firstData * 3, length * 3);
-    return data;
-  }
-  
-  
-  public ArrayList<PVector> getNormalArrayList() {
-    if (updateElement != NORMALS) {
-      throw new RuntimeException("PShape3D: update mode is not set to NORMALS");
-    }
-
-    ArrayList<PVector> res;
-    res = new ArrayList<PVector>();
-    
-    for (int i = 0; i < numVertices; i++) res.add(getNormal(i));
-    
-    return res;
-  }
-  
-  
-  public void setNormal(int idx, float x, float y) {
-    setNormal(idx, x, y, 0);  
-  }
-  
-  
-  public void setNormal(int idx, float x, float y, float z) {
-    if (updateElement != NORMALS) {
-      throw new RuntimeException("PShape3D: update mode is not set to NORMALS");
-    }
-
-    if (idx < firstUpdateIdx) firstUpdateIdx = idx;
-    if (lastUpdateIdx < idx) lastUpdateIdx = idx;
-    
-    normalArray[3 * idx + 0] = x;
-    normalArray[3 * idx + 1] = y;
-    normalArray[3 * idx + 2] = z;
-  }
-
-  
-  public void setNormal(float[] data) {
-    if (updateElement != NORMALS) {
-      throw new RuntimeException("PShape3D: update mode is not set to NORMALS");
-    }
-    
-    firstUpdateIdx = 0;
-    firstUpdateIdx = numVertices - 1;    
-    PApplet.arrayCopy(data, 0, normalArray, 0, numVertices * 3);
-  }
-  
-  
-  public void setNormal(ArrayList<PVector> data) {
-    if (updateElement != NORMALS) {
-      throw new RuntimeException("PShape3D: update mode is not set to NORMALS");
-    }
-
-    firstUpdateIdx = 0;
-    lastUpdateIdx = numVertices - 1;
-    
-    PVector vec;
-    for (int i = 0; i < numVertices; i++) {
-      vec = (PVector)data.get(i);
-      normalArray[3 * i + 0] = vec.x;
-      normalArray[3 * i + 1] = vec.y;
-      normalArray[3 * i + 2] = vec.z;
-    }
-  }
-
-  
-  ////////////////////////////////////////////////////////////  
-
-  // SET/GET TEXTURE COORDINATES
-  
-  
-  public PVector getTexCoord(int idx) {
-    if (updateElement < TEXTURES0 && TEXTURESMAX <= updateElement) {
-      throw new RuntimeException("PShape3D: update mode is not set to TEXTURES");
-    }
-    int t = updateElement - TEXTURES0;
-
-    float u = texCoordArray[2 * idx + 0];
-    float v = texCoordArray[2 * idx + 1];
-    
-    if (vertGroup[idx] != null && vertGroup[idx].textures[t] != null) { 
-      PTexture tex = vertGroup[idx].textures[t].getTexture();
-      
-      float uscale = 1.0f;
-      float vscale = 1.0f;
-      float cx = 0.0f;
-      float sx = +1.0f;
-      float cy = 0.0f;
-      float sy = +1.0f;    
-      if (tex.isFlippedX()) {
-        cx = 1.0f;      
-        sx = -1.0f;
-      }
-      if (tex.isFlippedY()) {
-        cy = 1.0f;      
-        sy = -1.0f;
-      }        
-      uscale *= tex.getMaxTexCoordU();
-      vscale *= tex.getMaxTexCoordV();        
-      
-      // Inverting the texture coordinate transformation.
-      u = (u / uscale - cx) / sx;
-      v = (v / vscale - cy) / sy;
-      if (a3d.imageMode == IMAGE) {
-        u *= tex.width;
-        v *= tex.height;
-      }
-    }
-    
-    PVector res = new PVector(u, v, 0);
-    return res;
-  }
-  
-  
-  public float[] getTexCoordArray() {
-    if (updateElement < TEXTURES0 && TEXTURESMAX <= updateElement) {
-      throw new RuntimeException("PShape3D: update mode is not set to TEXTURES");
-    }
-    int t = updateElement - TEXTURES0;    
-    
-    float[] res = new float[numVertices * 2];
-    getTexCoordArrayImpl(res, 0, numVertices, 0);
-    
-    PApplet.arrayCopy(texCoordArray, res);
-    
-    // The inversion of texture coordinates require looping through all the vertices,
-    // which is not needed if there are no textures assigned to the shape.
-    boolean textured = false;
-    for (int i = 0; i < vertGroup.length; i++) {
-      if (vertGroup[i].textures[t] != null) {
-        textured = true;
-        break;
-      }
-    }
-    if (!textured) {
-      // No texturing, no further processing is required.
-      return res;
-    }
-    
-    PImage img = null;
-    float uscale = 1.0f;
-    float vscale = 1.0f;
-    float cx = 0.0f;
-    float sx = +1.0f;
-    float cy = 0.0f;
-    float sy = +1.0f;
-    int w = 1;
-    int h = 1;
-    float u, v;
-    for (int i = 0; i < numVertices; i++) {
-      if (vertGroup[i] != null && vertGroup[i].textures[t] != img) {
-        PTexture tex = vertGroup[i].textures[t].getTexture();
-      
-        uscale = 1.0f;
-        vscale = 1.0f;
-        cx = 0.0f;
-        sx = +1.0f;
-        cy = 0.0f;
-        sy = +1.0f;    
-        if (tex.isFlippedX()) {
-          cx = 1.0f;      
-          sx = -1.0f;
-        }
-        if (tex.isFlippedY()) {
-          cy = 1.0f;      
-          sy = -1.0f;
-        }        
-        uscale *= tex.getMaxTexCoordU();
-        vscale *= tex.getMaxTexCoordV();
-        
-        w = tex.width;
-        h = tex.height;
-        img = vertGroup[i].textures[t];
-      }
-    
-      // Inverting the texture coordinate transformation.
-      u = (res[2 * i + 0] / uscale - cx) / sx;
-      v = (res[2 * i + 1] / vscale - cy) / sy;
-      if (a3d.imageMode == IMAGE) {
-        u *= w;
-        v *= h;
-      }      
-      
-      res[2 * i + 0] = u;
-      res[2 * i + 1] = v;      
-    }
-    
-    return res;
-  }
-
-
-  protected float[] getTexCoordArrayImpl(float[] data, int firstUpd, int length, int firstData) {
-    PApplet.arrayCopy(texCoordArray, firstUpd * 2, data, firstData * 2,  length * 2);
-    return  data;   
-  }
-
-  
-  public ArrayList<PVector> getTexCoordArrayList() {
-    if (updateElement < TEXTURES0 && TEXTURESMAX <= updateElement) {
-      throw new RuntimeException("PShape3D: update mode is not set to TEXTURES");
-    }
-
-    ArrayList<PVector> res;
-    res = new ArrayList<PVector>();
-    
-    for (int i = 0; i < numVertices; i++) res.add(getTexCoord(i));
-    
-    return res;
   }  
   
   
-  public void setTexCoord(int idx, float u, float v) {
-    if (updateElement < TEXTURES0 && TEXTURESMAX <= updateElement) {
-      throw new RuntimeException("PShape3D: update mode is not set to TEXTURES");
-    }
-    int t = updateElement - TEXTURES0;
-    
-    if (idx < firstUpdateIdx) firstUpdateIdx = idx;
-    if (lastUpdateIdx < idx) lastUpdateIdx = idx;
-    
-    if (vertGroup[idx] != null && vertGroup[idx].textures[t] != null) {
-      // Inverting the texture coordinate transformation. 
-      PTexture tex = vertGroup[idx].textures[t].getTexture();
-      
-      float uscale = 1.0f;
-      float vscale = 1.0f;
-      float cx = 0.0f;
-      float sx = +1.0f;
-      float cy = 0.0f;
-      float sy = +1.0f;
-      int w = tex.width;
-      int h = tex.height;      
-      if (tex.isFlippedX()) {
-        cx = 1.0f;      
-        sx = -1.0f;
-      }
-      if (tex.isFlippedY()) {
-        cy = 1.0f;      
-        sy = -1.0f;
-      }        
-      uscale *= tex.getMaxTexCoordU();
-      vscale *= tex.getMaxTexCoordV();    
-      
-      // Texture coordinate transformation.
-      u = (cx +  sx * u) * uscale;
-      v = (cy +  sy * v) * vscale;
-      
-      if (a3d.imageMode == IMAGE) {
-        u /= w;
-        v /= h;
-      }
-      
-      if (u < 0) v = 0;
-      else if (u > 1) u = 1;
-
-      if (v < 0) v = 0;
-      else if (v > 1) v = 1;    
-    }
-    
-    texCoordArray[2 * idx + 0] = u;
-    texCoordArray[2 * idx + 1] = v;
-  }
-
-  
-  public void setTexCoord(float[] data) {
-    if (updateElement < TEXTURES0 && TEXTURESMAX <= updateElement) {
-      throw new RuntimeException("PShape3D: update mode is not set to TEXTURES");
-    }
-    int t = updateElement - TEXTURES0;
-    
-    firstUpdateIdx = 0;
-    firstUpdateIdx = numVertices - 1;
-       
-    // The transformation of texture coordinates require looping through all the vertices,
-    // which is not needed if there are no textures assigned to the shape.
-    boolean textured = false;
-    for (int i = 0; i < vertGroup.length; i++) {
-      if (vertGroup[i].textures[t] != null) {
-        textured = true;
-        break;
-      }
-    }
-    if (!textured) {
-      // No texturing, no further processing is required.
-      PApplet.arrayCopy(data, texCoordArray);
-    }
-
-    PImage img = null;
-    float uscale = 1.0f;
-    float vscale = 1.0f;
-    float cx = 0.0f;
-    float sx = +1.0f;
-    float cy = 0.0f;
-    float sy = +1.0f;
-    int w = 1;
-    int h = 1;       
-    float u, v;    
-    for (int i = 0; i < numVertices; i++) {
-      if (vertGroup[i] != null && vertGroup[i].textures[t] != img) {
-        PTexture tex = vertGroup[i].textures[t].getTexture();
-      
-        uscale = 1.0f;
-        vscale = 1.0f;
-        cx = 0.0f;
-        sx = +1.0f;
-        cy = 0.0f;
-        sy = +1.0f;
-        w = tex.width;
-        h = tex.height;       
-        if (tex.isFlippedX()) {
-          cx = 1.0f;      
-          sx = -1.0f;
-        }
-        if (tex.isFlippedY()) {
-          cy = 1.0f;      
-          sy = -1.0f;
-        }        
-        uscale *= tex.getMaxTexCoordU();
-        vscale *= tex.getMaxTexCoordV();
-        img = vertGroup[i].textures[t];
-      }
-      
-      // Texture coordinate transformation.
-      u = (cx +  sx * data[2 * i + 0]) * uscale;
-      v = (cy +  sy * data[2 * i + 1]) * vscale;
-      if (a3d.imageMode == IMAGE) {
-        u /= w;
-        v /= h;
-      }
-      
-      if (u < 0) v = 0;
-      else if (u > 1) u = 1;
-
-      if (v < 0) v = 0;
-      else if (v > 1) v = 1;        
-      
-      texCoordArray[2 * i + 0] = u;
-      texCoordArray[2 * i + 1] = v;      
-    }
-  }
-  
-  
-  public void setTexCoord(ArrayList<PVector> data) {
-    if (updateElement < TEXTURES0 && TEXTURESMAX <= updateElement) {
-      throw new RuntimeException("PShape3D: update mode is not set to TEXTURES");
-    }
-    int t = updateElement - TEXTURES0;
-
-    firstUpdateIdx = 0;
-    lastUpdateIdx = numVertices - 1;
-
-    // The transformation of texture coordinates require looping through all the vertices,
-    // which is not needed if there are no textures assigned to the shape.
-    boolean textured = false;
-    for (int i = 0; i < vertGroup.length; i++) {
-      if (vertGroup[i].textures[t] != null) {
-        textured = true;
-        break;
-      }
-    }
-
-    PImage img = null;
-    float uscale = 1.0f;
-    float vscale = 1.0f;
-    float cx = 0.0f;
-    float sx = +1.0f;
-    float cy = 0.0f;
-    float sy = +1.0f;
-    int w = 1;
-    int h = 1;       
+  // Convert texture coordinates as read from the GPU to normalized values
+  // expected by the user. 
+  protected void normalizeTexcoords(int unit) {
+    PTexture tex;
     float u, v;
-    PVector vec;
-    for (int i = 0; i < numVertices; i++) {
-      if (vertGroup[i] != null && vertGroup[i].textures[t] != img) {
-        PTexture tex = vertGroup[i].textures[t].getTexture();
-      
-        uscale = 1.0f;
-        vscale = 1.0f;
-        cx = 0.0f;
-        sx = +1.0f;
-        cy = 0.0f;
-        sy = +1.0f;
-        w = tex.width;
-        h = tex.height;       
-        if (tex.isFlippedX()) {
-          cx = 1.0f;      
-          sx = -1.0f;
-        }
-        if (tex.isFlippedY()) {
-          cy = 1.0f;      
-          sy = -1.0f;
-        }        
-        uscale *= tex.getMaxTexCoordU();
-        vscale *= tex.getMaxTexCoordV();
-        
-        img = vertGroup[i].textures[t];
-      }    
     
-      vec = (PVector)data.get(i);
-      if (textured) {
-        // Texture coordinate transformation.
-        u = (cx +  sx * vec.x) * uscale;
-        v = (cy +  sy * vec.y) * vscale;
-        if (a3d.imageMode == IMAGE) {
-          u /= w;
-          v /= h;
+    PTexture tex0 = null;
+    float uscale = 1.0f;
+    float vscale = 1.0f;
+    float cx = 0.0f;
+    float sx = +1.0f;
+    float cy = 0.0f;
+    float sy = +1.0f;
+    for (int i = firstUpdateIdx; i <= lastUpdateIdx; i++) {
+      if (vertexChild[i] != null && vertexChild[i].textures[unit] != null) {
+        tex = vertexChild[i].textures[unit].getTexture();
+        
+        if (tex != tex0) {
+          uscale = 1.0f;
+          vscale = 1.0f;
+          cx = 0.0f;
+          sx = +1.0f;
+          cy = 0.0f;
+          sy = +1.0f;
+          
+          if (tex.isFlippedX()) {
+            cx = 1.0f;      
+            sx = -1.0f;
+          }
+          
+          if (tex.isFlippedY()) {
+            cy = 1.0f;      
+            sy = -1.0f;
+          }
+          
+          uscale *= tex.getMaxTexCoordU();
+          vscale *= tex.getMaxTexCoordV();        
+          tex0 = tex;
         }
-      
+
+        u = texcoords[2 * i + 0];
+        v = texcoords[2 * i + 1];
+        
+        // Inverting the texture coordinate transformation.
+        u = (u / uscale - cx) / sx;
+        v = (v / vscale - cy) / sy;          
+  
+        texcoords[2 * i + 0] = u;
+        texcoords[2 * i + 1] = v;        
+      }  
+    }    
+  }
+  
+  
+  // Convert texture coordinates given by the user to values required by
+  // the GPU (non-necessarily normalized because of texture sizes being smaller
+  // than image sizes, for instance). 
+  protected void unnormalizeTexcoords(int unit) {
+    PTexture tex;
+    float u, v;
+    
+    PTexture tex0 = null;
+    float uscale = 1.0f;
+    float vscale = 1.0f;
+    float cx = 0.0f;
+    float sx = +1.0f;
+    float cy = 0.0f;
+    float sy = +1.0f;
+    for (int i = firstUpdateIdx; i <= lastUpdateIdx; i++) {
+      if (vertexChild[i] != null && vertexChild[i].textures[unit] != null) {
+        tex = vertexChild[i].textures[unit].getTexture();
+        
+        if (tex != tex0) {
+          uscale = 1.0f;
+          vscale = 1.0f;
+          cx = 0.0f;
+          sx = +1.0f;
+          cy = 0.0f;
+          sy = +1.0f;
+          
+          if (tex.isFlippedX()) {
+            cx = 1.0f;      
+            sx = -1.0f;
+          }
+          
+          if (tex.isFlippedY()) {
+            cy = 1.0f;      
+            sy = -1.0f;
+          }
+          
+          uscale *= tex.getMaxTexCoordU();
+          vscale *= tex.getMaxTexCoordV();        
+          tex0 = tex;
+        }
+
+        u = texcoords[2 * i + 0];
+        v = texcoords[2 * i + 1];
+        
+        u = (cx +  sx * u) * uscale;
+        v = (cy +  sy * v) * vscale;
+        
         if (u < 0) v = 0;
         else if (u > 1) u = 1;
 
         if (v < 0) v = 0;
-        else if (v > 1) v = 1;
+        else if (v > 1) v = 1;    
         
-        texCoordArray[2 * i + 0] = u;
-        texCoordArray[2 * i + 1] = v;        
-      } else {
-        texCoordArray[2 * i + 0] = vec.x;
-        texCoordArray[2 * i + 1] = vec.y;
-      }
-    }
-  }
-
-  
-  ////////////////////////////////////////////////////////////  
-  
-  // GROUPS   
-  
-  
-  public void setGroup(int gr) {
-    if (updateElement != VERTICES) {
-      throw new RuntimeException("PShape3D: setGroup() with group number as only argument must be used while updating vertices");
-    }
-    
-    if (firstSetGroup) {
-      // The first time the method setGroup is called inside the update vertices block, all the current groups
-      // are erased.
-      firstSetGroup = false;
-      deleteGroups();
-    }
-    
-    if (creatingGroup) {
-      // One group was being specified. Now it is finished, before we start a new one.
-      addGroup(grIdx0, grIdx1, null);
-    }
-    
-    creatingGroup = true;
-    grIdx0 =  grIdx1 = -1;
-  }
-  
-  
-  public void setGroup(int gr, int idx0, int idx1) {
-    if (updateElement != GROUPS) {
-      throw new RuntimeException("PShape3D: update mode is not set to GROUPS");
-    }
-
-    if (groups.size() != gr) {
-      throw new RuntimeException("PShape3D: wrong group index");
-    }
-
-    if (idx0 < firstUpdateIdx) firstUpdateIdx = idx0;
-    if (lastUpdateIdx < idx1) lastUpdateIdx = idx1;
-        
-    addGroup(idx0, idx1, null);
-  }  
-  
-  
-  public void setGroup(int gr, int idx0, int idx1, PImage tex) {
-    setGroupImpl(gr, idx0, idx1, new PImage[] {tex});
-  }  
-
-  
-  public void setGroup(int gr, int idx0, int idx1, PImage tex0, PImage tex1) {
-    setGroupImpl(gr, idx0, idx1, new PImage[] {tex0, tex1});
-  }  
-
-
-  public void setGroup(int gr, int idx0, int idx1, PImage tex0, PImage tex1, PImage tex2) {
-    setGroupImpl(gr, idx0, idx1, new PImage[] {tex0, tex1, tex2});
-  }  
-  
-  
-  public void setGroup(int gr, int idx0, int idx1, PImage tex0, PImage tex1, PImage tex2, PImage tex3) {
-    setGroupImpl(gr, idx0, idx1, new PImage[] {tex0, tex1, tex2, tex3});
-  }  
-
-  
-  protected void setGroupImpl(int gr, int idx0, int idx1, PImage[] tex) {
-    if (updateElement != GROUPS) {
-      throw new RuntimeException("PShape3D: update mode is not set to GROUPS");
-    }
-
-    if (groups.size() != gr) {
-      throw new RuntimeException("PShape3D: wrong group index");
-    }
-        
-    if (idx0 < firstUpdateIdx) firstUpdateIdx = idx0;
-    if (lastUpdateIdx < idx1) lastUpdateIdx = idx1;
-    
-    addGroup(idx0, idx1, tex);
-  }  
-  
-  
-  public void setGroups(ArrayList<VertexGroup> list) {
-    groups = new ArrayList<VertexGroup>(list);
-  }
-
-  
-  public int getNumGroups() {
-    return groups.size();
-  }
-  
-  
-  public int getGroupFirst(int gr) {
-    return ((VertexGroup)groups.get(gr)).first;
-  }
-  
-  
-  public int getGroupLast(int gr) {
-    return ((VertexGroup)groups.get(gr)).last;
-  }
-
-
-  public void setGroupTexture(int gr, PImage tex) {
-    setGroupTextureImpl(gr, tex, 0);
-  }
-
-  
-  public void setGroupTexture(int gr, PImage tex, int unit) {
-    setGroupTextureImpl(gr, tex, unit);
-  }  
-    
-  
-  public void setGroupTextures(int gr, PImage tex0, PImage tex1) {
-    setGroupTextures(gr, new PImage[] {tex0, tex1});
-  }  
-  
-  
-  public void setGroupTextures(int gr, PImage tex0, PImage tex1, PImage tex2) {
-    setGroupTextures(gr, new PImage[] {tex0, tex1, tex2});
-  }    
-  
-  
-  public void setGroupTextures(int gr, PImage tex0, PImage tex1, PImage tex2, PImage tex3) {
-    setGroupTextures(gr, new PImage[] {tex0, tex1, tex2, tex3});
-  }    
-  
-  
-  protected void setGroupTextures(int gr, PImage[] textures) {
-    for (int n = 0; n < textures.length; n++) {
-      setGroupTextureImpl(gr, textures[n], n);
-    }
-  }
-  
-  
-  protected void setGroupTextureImpl(int gr, PImage tex, int unit) {
-    if (unit < 0 || PGraphicsAndroid3D.maxTextureUnits <= unit) {
-      System.err.println("PShape3D: Wrong texture unit.");
-      return;
-    }
-    
-    if (numTexBuffers <= unit) {
-      addTexBuffers(unit - numTexBuffers + 1);
-    }
-    
-    if (tex == null || tex.getTexture() == null) {
-      throw new RuntimeException("PShape3D: trying to set null texture.");
-    } 
-    
-    VertexGroup group = (VertexGroup)groups.get(gr);
-    if  (updateElement == -1 && texCoordSet[unit]) {
-      // Ok, setting a new texture for group, when texture coordinates have
-      // already been set. What is the problem? the new texture might have different
-      // width, height, flippingX/Y values, so the texture coordinates need
-      // to be updated accordingly...
-      // Also, we must be sure of not being inside an update block, this is
-      // why the updateElement == -1 condition.
-      
-      PTexture tex0;
-      if (group.textures[unit] == null) {
-        tex0 = null;
-      } else {
-        tex0 = group.textures[unit].getTexture();  
-      }
-      PTexture tex1 = tex.getTexture(); 
-
-      boolean diff = tex0 == null ||
-        tex.width != group.textures[unit].width ||
-        tex.height != group.textures[unit].height ||
-        tex1.flippedX != tex0.flippedX ||
-        tex1.flippedY != tex0.flippedY ||
-        tex1.maxTexCoordU != tex0.maxTexCoordU ||
-        tex1.maxTexCoordV != tex0.maxTexCoordV;
-
-      if (diff) {
-        float uscale = 1.0f;
-        float vscale = 1.0f;
-        float cx = 0.0f;
-        float sx = +1.0f;
-        float cy = 0.0f;
-        float sy = +1.0f;        
-        float u, v;
-
-        beginUpdateImpl(TEXTURES0 + unit, group.first, group.last);
-        firstUpdateIdx = group.first;
-        lastUpdateIdx = group.last;    
-        for (int i = group.first; i <= group.last; i++) {
-          u = texCoordArray[2 * i + 0];
-          v = texCoordArray[2 * i + 1];
-
-          if (tex0 != null) {
-            // First, inverting coordinate transformation corresponding to
-            // previous texture (if any).      
-            if (tex0.isFlippedX()) {
-              cx = 1.0f;      
-              sx = -1.0f;
-            }
-            if (tex0.isFlippedY()) {
-              cy = 1.0f;      
-              sy = -1.0f;
-            }        
-            uscale *= tex0.getMaxTexCoordU();
-            vscale *= tex0.getMaxTexCoordV();        
-
-            u = (u / uscale - cx) / sx;
-            v = (v / vscale - cy) / sy;
-            if (a3d.imageMode == IMAGE) {
-              u *= group.textures[unit].width;
-              v *= group.textures[unit].height;
-            }             
-          }
-
-          // Texture coordinate transformation with the new texture.
-          if (tex1.isFlippedX()) {
-            cx = 1.0f;      
-            sx = -1.0f;
-          }
-          if (tex1.isFlippedY()) {
-            cy = 1.0f;      
-            sy = -1.0f;
-          }        
-          uscale *= tex1.getMaxTexCoordU();
-          vscale *= tex1.getMaxTexCoordV();
-
-          u = (cx +  sx * u) * uscale;
-          v = (cy +  sy * v) * vscale;
-          if (a3d.imageMode == IMAGE) {
-            u /= tex.width;
-            v /= tex.height;
-          }
-
-          if (u < 0) v = 0;
-          else if (u > 1) u = 1;
-
-          if (v < 0) v = 0;
-          else if (v > 1) v = 1;
-
-          texCoordArray[2 * i + 0] = u;
-          texCoordArray[2 * i + 1] = v;        
-        }
-        endUpdate();
-      }
-      group.textures[unit] = tex;
-
-    } else {
-      group.textures[unit] = tex;  
+        texcoords[2 * i + 0] = u;
+        texcoords[2 * i + 1] = v;        
+      }  
     }    
   }
-
   
-  public PImage getGroupTexture(int gr) {
-    return getGroupTexture(gr, 0);
-  }
-
+  ////////////////////////////////////////////////////////////  
   
-  public PImage getGroupTexture(int gr, int unit) {
-    VertexGroup group = (VertexGroup)groups.get(gr);
-    int n = unit - TEXTURES0;
-    return group.textures[n];
-  }
+  // Children   
   
-
-  public PImage[] getGroupTextures(int gr) {
-    VertexGroup group = (VertexGroup)groups.get(gr);
-    return group.textures;
+  
+  static public PShape createChild(int n0, int n1) {
+    return createChild(null, n0, n1, POINTS, 0, null);
+  }   
+  
+  
+  static public PShape createChild(String name, int n0, int n1) {
+    return createChild(name, n0, n1, POINTS, 0, null);
   }  
   
   
-  public void setGroupColor(int gr, int c) {
-    int a = (c >> 24) & 0xFF;
-    int r = (c >> 16) & 0xFF;
-    int g = (c >> 8) & 0xFF;
-    int b = (c  >> 0) & 0xFF;
-    
-    setGroupColor(gr, r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f);
+  static public PShape createChild(String name, int n0, int n1, int mode) {
+    return createChild(name, n0, n1, mode, 0, null);
   }
   
   
-  public void setGroupColor(int gr, float r, float g, float b) {
-    setGroupColor(gr, r, g, b, 1.0f);  
+  static public PShape createChild(String name, int n0, int n1, int mode, float weight) {
+    return createChild(name, n0, n1, mode, weight, null);
   }
   
   
-  public void setGroupColor(int gr, float r, float g, float b, float a) {
-    VertexGroup group = (VertexGroup)groups.get(gr);
-    beginUpdateImpl(COLORS, group.first, group.last);
-    firstUpdateIdx = group.first;
-    lastUpdateIdx = group.last;    
-    for (int i = group.first; i <= group.last; i++) {
-      colorArray[4 * i + 0] = r;
-      colorArray[4 * i + 1] = g;
-      colorArray[4 * i + 2] = b;
-      colorArray[4 * i + 3] = a;      
+  static public PShape createChild(String name, int n0, int n1, int mode, float weight, PImage[] tex) {
+    PShape3D child = new PShape3D();
+    child.family = PShape.GEOMETRY;
+    child.name = name;
+    child.firstVertex = n0;
+    child.lastVertex = n1;
+    child.setDrawModeImpl(mode);    
+    child.strokeWeight = weight;
+    child.textures = new PImage[PGraphicsAndroid3D.MAX_TEXTURES];
+    java.util.Arrays.fill(child.textures, null);    
+    if (tex != null) {
+      int n = PApplet.min(tex.length, child.textures.length);
+      PApplet.arrayCopy(tex, 0, child.textures, 0, n);
     }
-    endUpdate();
+    return child;
+  }
+
+  
+  public void addChild(String name, int n0, int n1) {
+    PShape child = createChild(name, n0, n1, glMode);
+    addChild(child);
   }
   
   
-  public void setGroupNormal(int i, float x, float y) {
-    setGroupNormal(i, x, y, 0.0f);  
+  public void addChild(String name, int n0, int n1, int mode) {
+    PShape child = createChild(name, n0, n1, mode);
+    addChild(child);
   }
   
   
-  public void setGroupNormal(int gr, float x, float y, float z) {
-    VertexGroup group = (VertexGroup)groups.get(gr);
-    beginUpdateImpl(NORMALS, group.first, group.last);
-    firstUpdateIdx = group.first;
-    lastUpdateIdx = group.last;    
-    for (int i = group.first; i <= group.last; i++) {
-      normalArray[3 * i + 0] = x;
-      normalArray[3 * i + 1] = y;
-      normalArray[3 * i + 2] = z;
-    }
-    endUpdate();
-  }  
-  
-  
-  public void setGroupDrawMode(int gr, int mode) {
-    VertexGroup group = (VertexGroup)groups.get(gr);    
-    if (mode == POINTS) group.glMode = GL11.GL_POINTS;
-    else if (mode == POINT_SPRITES)  throw new RuntimeException("PShape3D: point sprites can only be set for entire model");
-    else if (mode == LINES) group.glMode = GL11.GL_LINES;
-    else if (mode == LINE_STRIP) group.glMode = GL11.GL_LINE_STRIP;
-    else if (mode == LINE_LOOP) group.glMode = GL11.GL_LINE_LOOP;
-    else if (mode == TRIANGLES) group.glMode = GL11.GL_TRIANGLES; 
-    else if (mode == TRIANGLE_FAN) group.glMode = GL11.GL_TRIANGLE_FAN;
-    else if (mode == TRIANGLE_STRIP) group.glMode = GL11.GL_TRIANGLE_STRIP;
-    else {
-      throw new RuntimeException("PShape3D: Unknown draw mode");
-    }
+  public void addChild(String name, int n0, int n1, int mode, float weight) {
+    PShape child = createChild(name, n0, n1, mode, weight);
+    addChild(child);
   }
   
   
-  public void useModelDrawMode() {
-    VertexGroup group;
-    for (int i = 0; i < groups.size(); i++) {
-      group = (VertexGroup)groups.get(i);
-      group.glMode = 0;
-    }
+  public void addChild(String name, int n0, int n1, int mode, float weight, PImage[] tex) {
+    PShape child = createChild(name, n0, n1, mode, weight, tex);
+    addChild(child);
   }
+      
   
-  
-  public void setGroupStrokeWeight(int gr, float sw) {
-    VertexGroup group = (VertexGroup)groups.get(gr);
-    group.sw = sw;
-  }
-  
-  
-  protected void optimizeGroups() {
-    if (groups.size() == 0) {
-      initGroups();
+  public void addChild(PShape who) {
+    if (family == GROUP) {
+      super.addChild(who);
+      PShape3D who3d = (PShape3D)who;
+      who3d.papplet = papplet;
+      who3d.a3d = a3d;
+      who3d.gl = gl;
+      for (int n = who3d.firstVertex; n < who3d.lastVertex; n++) {
+        vertexChild[n] = who3d;
+      }       
     } else {
-      VertexGroup gr0, gr1;
-      
-      // Expanding identical, contiguous groups.
-      gr0 = (VertexGroup)groups.get(0);
-      for (int i = 1; i < groups.size(); i++) {
-        gr1 = (VertexGroup)groups.get(i);
-        if (gr0.equalTo(gr1)) {
-          gr0.last = gr1.last;          // Extending gr0.
-          gr1.first = gr1.last = -1; // Marking for deletion.
-        } else {
-          gr0 = gr1;  
-        }
-      }
-      
-      // Deleting superfluous groups.
-      for (int i = groups.size() - 1; i >= 0; i--) {
-        gr1 = (VertexGroup)groups.get(i);
-        if (gr1.last == -1) {
-          groups.remove(i);
-        }
-      }
-      
+      PGraphics.showWarning("PShape3D: Child shapes can also be added to the root shape.");
+    }  
+  }
+
+  
+  protected void addDefaultChild() {
+    PShape child = createChild("Default", 0, vertexCount - 1, glMode, 0, null);
+    addChild(child);
+  }
+  
+  
+  public int getFirstVertex() {
+    if (family == GROUP) {
+      return getFirstVertex(0);
+    } else { 
+      return firstVertex;
     }
   }
+
   
-  protected void initGroups() {
-    groups = new ArrayList<VertexGroup>();
-    vertGroup = new VertexGroup[numVertices];
-    addGroup(0, numVertices - 1, null);
+  public int getFirstVertex(int idx) {
+    if (0 <= idx && idx < childCount) {
+      return ((PShape3D)children[idx]).firstVertex;
+    }      
+    return -1;
+  }  
+  
+  
+  public void setFirstVertex(int n0) {
+    if (family == GROUP) {
+      setFirstVertex(0, n0);
+    } else { 
+      firstVertex = n0;
+    }    
+  }  
+  
+  
+  public void setFirstVertex(int idx, int n0) {
+    if (0 <= idx && idx < childCount) {
+      ((PShape3D)children[idx]).firstVertex = n0;
+    }     
   }
   
   
-  protected void addGroup(int idx0, int idx1, PImage[] tex) {
-    if (0 <= idx0 && idx0 <= idx1) {
-      VertexGroup group = new VertexGroup(idx0, idx1, tex);
-      groups.add(group);
-      for (int n = idx0; n <= idx1; n++) {
-        vertGroup[n] = group;
-      }
+  public int getLastVertex() {
+    if (family == GROUP) {
+      return getLastVertex(0);
+    } else { 
+      return lastVertex;
     }
   }
+   
   
-  
-  protected void deleteGroups() {
-    groups.clear();
-    for (int n = 0; n < numVertices; n++) {
-       vertGroup[n] = null;
+  public int getLastVertex(int idx) {
+    if (0 <= idx && idx < childCount) {
+      return ((PShape3D)children[idx]).lastVertex;    
     }
+    return -1;    
   }
   
   
-  protected void checkGroups() {
-    VertexGroup gri, grj;
-    for (int i = 0; i < groups.size(); i++) {
-      gri = (VertexGroup)groups.get(i);
-      for (int j = i + 1; j < groups.size(); j++) {
-        grj = (VertexGroup)groups.get(j);
-        
-        if ((grj.first < gri.last && gri.first < grj.last) ||
-            (gri.first < grj.last && grj.first < gri.last)) {
-          PGraphics.showWarning("PShape3D: Overlapping vertex groups");
-          return;  
-        }
-      }
-    }
+  public void setLastVertex(int n1) {
+    if (family == GROUP) {
+      setLastVertex(0, n1);
+    } else { 
+      lastVertex = n1;
+    }    
+  }  
+  
+  
+  public void setLastVertex(int idx, int n1) {
+    if (0 <= idx && idx < childCount) {
+      ((PShape3D)children[idx]).firstVertex = n1;
+    }     
   }
-  
-  
-  ////////////////////////////////////////////////////////////  
-  
-  // Resize   
-
-  /*
-   * This method resizes the model to numVert vertices, and keeps 
-   * the data already stored in it by copying to the beginning of the 
-   * new buffers. 
-   * 
-   * TODO: Test!
-   *  
-   */
-  public void resize(int numVert) {
-    // Getting the current data stored in the model.
-    float[] tempVertexArray = new float[numVert * 3];
-    float[] tempColorArray = new float[numVert * 4];
-    float[] tempNormalArray = new float[numVert * 3];
-    float[] tempTexCoordArray = new float[numVert * 2];    
-    
-    // Getting current data.
-    beginUpdate(VERTICES);
-    getVertexArrayImpl(tempVertexArray, 0, numVertices, 0);
-    endUpdate();
-    
-    beginUpdate(COLORS);
-    getColorArrayImpl(tempColorArray, 0, numVertices, 0);
-    endUpdate();
-
-    beginUpdate(NORMALS);
-    getNormalArrayImpl(tempNormalArray, 0, numVertices, 0);
-    endUpdate();
-    
-    beginUpdate(TEXTURES);
-    getTexCoordArrayImpl(tempTexCoordArray, 0, numVertices, 0);
-    endUpdate();
-
-    int numVert0 = numVertices;
-    
-    // Recreating the model with the new number of vertices.
-    createShape(numVert);
-    updateElement = -1;
-
-    // Setting the old data.
-    int n = PApplet.min(numVert0, numVert);
-    
-    beginUpdateImpl(VERTICES, 0, n);
-    setVertex(tempVertexArray);
-    endUpdate();
-
-    beginUpdateImpl(COLORS, 0, n);
-    setColor(tempColorArray);
-    endUpdate();
-
-    beginUpdateImpl(NORMALS, 0,n);
-    setNormal(tempNormalArray);
-    endUpdate();
-    
-    beginUpdateImpl(TEXTURES, 0, n);
-    setTexCoord(tempTexCoordArray);
-    endUpdate();
-  }
-  
-  
-  ////////////////////////////////////////////////////////////  
-  
-  // Parameters  
   
   
   public void setDrawMode(int mode) {
+    if (family == GROUP) {
+      setDrawModeImpl(mode);
+      for (int n = 0; n < childCount; n++) {
+        setDrawMode(n, mode);
+      }
+    } else { 
+      setDrawModeImpl(mode);
+    }     
+  }
+  
+  
+  public void setDrawMode(int idx, int mode) {
+    if (0 <= idx && idx < childCount) {
+      ((PShape3D)children[idx]).setDrawModeImpl(mode);
+    }
+  }
+  
+  
+  protected void setDrawModeImpl(int mode) {
     pointSprites = false;
     if (mode == POINTS) glMode = GL11.GL_POINTS;
     else if (mode == POINT_SPRITES) {
@@ -1649,23 +836,430 @@ public class PShape3D extends PShape implements PConstants {
     else if (mode == TRIANGLE_STRIP) glMode = GL11.GL_TRIANGLE_STRIP;
     else {
       throw new RuntimeException("PShape3D: Unknown draw mode");
+    }    
+  }
+  
+  
+  public int getDrawMode() {
+    if (family == GROUP) {
+      return getDrawMode(0);
+    } else { 
+      return getDrawModeImpl();
+    }     
+  }
+  
+  
+  public int getDrawMode(int idx) {
+    if (0 <= idx && idx < childCount) {
+      return ((PShape3D)children[idx]).getDrawModeImpl();
+    }
+    return -1;
+  }
+  
+  
+  protected int getDrawModeImpl() {
+    if (glMode == GL11.GL_POINTS) {
+      if (pointSprites) return POINT_SPRITES;
+      else return POINTS;
+    } else if (glMode == GL11.GL_LINES) return LINES;
+    else if (glMode == GL11.GL_LINE_STRIP) return LINE_STRIP;
+    else if (glMode == GL11.GL_LINE_LOOP) return LINE_LOOP;
+    else if (glMode == GL11.GL_TRIANGLES) return TRIANGLES; 
+    else if (glMode == GL11.GL_TRIANGLE_FAN) return TRIANGLE_FAN;
+    else if (glMode == GL11.GL_TRIANGLE_STRIP) return TRIANGLE_STRIP;
+    else return -1;
+  }  
+  
+  
+  public void setTexture(PImage tex) {
+    if (family == GROUP) {
+      setTexture(0, tex);
+    } else {
+      setTextureImpl(tex, 0);
+    }      
+  }
+  
+  
+  public void setTexture(PImage tex0, PImage tex1) {
+    if (family == GROUP) {
+      setTexture(0, tex0, tex1);
+    } else {
+      setTextureImpl(tex0, 0);
+      setTextureImpl(tex1, 1);
+    }     
+  }  
+  
+  
+  public void setTexture(PImage tex0, PImage tex1, PImage tex2) {
+    if (family == GROUP) {
+      setTexture(0, tex0, tex1, tex2);
+    } else {
+      setTextureImpl(tex0, 0);
+      setTextureImpl(tex1, 1);
+      setTextureImpl(tex2, 2);
+    }    
+  }  
+  
+  
+  public void setTexture(PImage tex0, PImage tex1, PImage tex2, PImage tex3) {
+    if (family == GROUP) {
+      setTexture(0, tex0, tex1, tex2, tex3);
+    } else {
+      setTextureImpl(tex0, 0);
+      setTextureImpl(tex1, 1);
+      setTextureImpl(tex2, 2);
+      setTextureImpl(tex3, 3);      
+    }
+  }  
+  
+  
+  public void setTexture(PImage[] tex) {
+    if (family == GROUP) {
+      setTexture(0, tex);
+    } else {
+      for (int i = 0; i < tex.length; i++) {
+        setTextureImpl(tex[i], i);
+      }
+    }
+  }   
+  
+  
+  public void setTexture(int idx, PImage tex) {
+    if (0 <= idx && idx < childCount) {
+      PShape3D child = (PShape3D)children[idx];
+      child.setTextureImpl(tex, 0);
+    }    
+  }
+  
+  
+  public void setTexture(int idx, PImage tex0, PImage tex1) {
+    if (0 <= idx && idx < childCount) {
+      PShape3D child = (PShape3D)children[idx];
+      child.setTextureImpl(tex0, 0);
+      child.setTextureImpl(tex1, 1);
+    }        
+  }  
+  
+  
+  public void setTexture(int idx, PImage tex0, PImage tex1, PImage tex2) {
+    if (0 <= idx && idx < childCount) {
+      PShape3D child = (PShape3D)children[idx];
+      child.setTextureImpl(tex0, 0);
+      child.setTextureImpl(tex1, 1);
+      child.setTextureImpl(tex2, 2);      
+    }        
+  }  
+  
+  
+  public void setTexture(int idx, PImage tex0, PImage tex1, PImage tex2, PImage tex3) {
+    if (0 <= idx && idx < childCount) {
+      PShape3D child = (PShape3D)children[idx];
+      child.setTextureImpl(tex0, 0);
+      child.setTextureImpl(tex1, 1);
+      child.setTextureImpl(tex2, 2);
+      child.setTextureImpl(tex3, 3);      
+    }            
+  }  
+  
+  
+  public void setTexture(int idx, PImage[] tex) {
+    if (0 <= idx && idx < childCount) {
+      PShape3D child = (PShape3D)children[idx];    
+      for (int i = 0; i < tex.length; i++) {
+        child.setTextureImpl(tex[i], i);
+      }    
+    }
+  }     
+ 
+  
+  public void setTextureImpl(PImage tex, int unit) {
+    if (unit < 0 || PGraphicsAndroid3D.maxTextureUnits <= unit) {
+      System.err.println("PShape3D: Wrong texture unit.");
+      return;
+    }
+    
+    PShape3D p3d = (PShape3D)parent;
+    
+    if (p3d.numTexBuffers <= unit) {
+      p3d.addTexBuffers(unit - p3d.numTexBuffers + 1);
+    }
+    
+    if (tex == null || tex.getTexture() == null) {
+      throw new RuntimeException("PShape3D: trying to set null texture.");
+    } 
+    
+    if  (p3d.texCoordSet[unit]) {
+      // Ok, setting a new texture, when texture coordinates have already been set. 
+      // What is the problem? the new texture might have different max UV coords, 
+      // flippedX/Y values, so the texture coordinates need to be updated accordingly...
+      
+      // The way to do it is just load the texcoords array (in the parent), which
+      // will be normalized with the old texture...
+      p3d.loadTexcoords(unit, firstVertex, lastVertex);
+      // ... then replacing the old texture with the new and...
+      textures[unit] = tex;
+      // finally, updating the texture coordinats, step in which the texcoords
+      // array is unnormalized, this time using the new texture.
+      p3d.updateTexcoords();
+    } else {
+      textures[unit] = tex;  
+    }    
+  }
+   
+  
+  public PImage[] getTexture() {
+    if (family == GROUP) {
+      return getTexture(0);
+    } else {
+      return textures;
+    }          
+  }
+  
+  
+  public PImage[] getTexture(int idx) {
+    if (0 <= idx && idx < childCount) {
+      return ((PShape3D)children[idx]).textures;
+    }
+    return null;
+  }
+  
+  
+  public float getStrokeWeight() {
+    if (family == GROUP) {
+      return getStrokeWeight(0);
+    } else { 
+      return strokeWeight;
     }
   }
   
   
+  public float getStrokeWeight(int idx) {
+    if (0 <= idx && idx < childCount) {
+      return ((PShape3D)children[idx]).strokeWeight;
+    }
+    return 0;
+  }
+  
+  
+  
+  public void setStrokeWeight(float sw) {
+    if (family == GROUP) {
+      setStrokeWeight(0, sw);
+    } else { 
+      strokeWeight = sw;
+    }
+  }
+  
+  
+  public void setStrokeWeight(int idx, float sw) {
+    if (0 <= idx && idx < childCount) {
+      ((PShape3D)children[idx]).strokeWeight = sw;
+    }
+  }  
+
+  
+  public void setColor(int c) {
+    setColor(rgba(c));
+  }    
+  
+  
+  public void setColor(float r, float g, float b, float a) {
+    setColor(new float[] {r, g, b, a});
+  }  
+  
+  
+  public void setColor(float[] c) {
+    if (family == GROUP) {
+      setColor(0, c);
+    } else {
+      setColorImpl(c);
+    }
+  }
+
+  
+  public void setColor(int idx, int c) {
+    setColor(idx, rgba(c));
+  }    
+  
+  
+  public void setColor(int idx, float r, float g, float b, float a) {
+    setColor(idx, new float[] {r, g, b, a}); 
+  }  
+  
+  
+  public void setColor(int idx, float[] c) {
+    if (0 <= idx && idx < childCount) {
+      ((PShape3D)children[idx]).setColorImpl(c);
+    }
+  } 
+  
+  
+  protected void setColorImpl(float[] c) {
+    PShape3D p = (PShape3D)parent;
+    p.loadColors(firstVertex, lastVertex);
+    for (int i = firstVertex; i <= lastVertex; i++) {
+      p.set(i, c);
+    }
+    p.updateColors();
+  }
+  
+  
+  public void setNormal(float nx, float ny, float nz) {
+    setNormal(new float[] {nx, ny, nz});  
+  }  
+  
+  
+  public void setNormal(float[] n) {
+    if (family == GROUP) {
+      setNormal(0, n);
+    } else {
+      setNormalImpl(n);
+    }
+  }
+
+  
+  public void setNormal(int idx, float nx, float ny, float nz) {
+    setNormal(idx, new float[] {nx, ny, nz});  
+  } 
+  
+
+  public void setNormal(int idx, float[] n) {
+    if (0 <= idx && idx < childCount) {
+      ((PShape3D)children[idx]).setNormalImpl(n);
+    }    
+  } 
+    
+  
+  protected void setNormalImpl(float[] n) {
+    PShape3D p = (PShape3D)parent;
+    p.loadNormals(firstVertex, lastVertex);
+    for (int i = firstVertex; i <= lastVertex; i++) {
+      p.set(i, n);
+    }
+    p.updateNormals();
+  }  
+  
+  
+  protected void optimizeChildren() {
+    if (children == null) {
+      addDefaultChild();
+    } else {
+      PShape3D child0, child1;
+
+      // Expanding identical, contiguous children.     
+      int ndiff = 1;
+      child0 = (PShape3D)children[0];
+      for (int i = 1; i < childCount; i++) {
+        child1 = (PShape3D)children[i];
+        if (child0.equalTo(child1)) {
+          child0.lastVertex = child1.lastVertex;       // Extending child0.
+          child1.firstVertex = child1.lastVertex = -1; // Marking for deletion.
+        } else {
+          child0 = child1;
+          ndiff++;
+        }
+      }
+      
+      // Deleting superfluous groups.
+      PShape[] temp = new PShape[ndiff]; 
+      int n = 0;
+      for (int i = 0; i < childCount; i++) {
+        child1 = (PShape3D)children[i];      
+        if (child1.lastVertex == -1 && child1.getName() != null && nameTable != null) {
+          nameTable.remove(child1.getName());
+        } else {
+          temp[n++] = child1;
+        }
+      }      
+      children = temp;
+      childCount = ndiff;
+    }
+  }
+
+  
+  protected void initChildren() {
+    children = null;
+    vertexChild = new PShape3D[vertexCount];
+  }
+  
+  
+  protected boolean equalTo(PShape3D child) {
+    boolean res = family == child.family && glMode == child.glMode && strokeWeight == child.strokeWeight; 
+    if (!res) return false;
+    for (int i = 0; i < textures.length; i++) {
+      if (textures[i] != child.textures[i]) {
+        res = false;
+      }
+    }
+    return res; 
+  }  
+  
+  ////////////////////////////////////////////////////////////  
+  
+  // Bulk set methods.
+  
+  public void setVertices(ArrayList<PVector> vertexList) {
+    loadVertices();
+    for (int i = 0; i < vertexCount; i++) {
+      PVector v = (PVector)vertexList.get(i);
+      set(i, v.x, v.y, v.z);
+    }
+    updateVertices();
+  }
+  
+  
+  public void setColors(ArrayList<float[]> colorList) {
+    loadColors();
+    for (int i = 0; i < vertexCount; i++) {
+      float[] c = (float[])colorList.get(i);
+      set(i, c);
+    }
+    updateColors();    
+  }  
+  
+
+  public void setNormals(ArrayList<PVector> normalList) {
+    loadNormals();
+    for (int i = 0; i < vertexCount; i++) {
+      PVector n = (PVector)normalList.get(i);
+      set(i, n.x, n.y, n.z);
+    }
+    updateNormals();    
+  }  
+
+  
+  public void setTexcoords(ArrayList<PVector> tcoordList) {
+    setTexcoords(0, tcoordList);
+  }  
+
+  
+  public void setTexcoords(int unit, ArrayList<PVector> tcoordList) {
+    loadTexcoords(unit);
+    for (int i = 0; i < vertexCount; i++) {
+      PVector tc = (PVector)tcoordList.get(i);
+      set(i, tc.x, tc.y);
+    }
+    updateTexcoords();     
+  }  
+    
+  
+  public void setChildren(ArrayList<PShape3D> who) {
+    childCount = 0;
+    for (int i = 0; i < who.size(); i++) {
+      PShape child = (PShape)who.get(i);
+      addChild(child);   
+    }
+  }  
+  
+  
+  ////////////////////////////////////////////////////////////  
+  
+  // Parameters  
+  
   public Parameters getParameters() {
     Parameters res = new Parameters();
     
-    if (glMode == GL11.GL_POINTS) {
-      if (pointSprites) res.drawMode = POINT_SPRITES;
-      else res.drawMode = POINTS;
-    }
-    else if (glMode == GL11.GL_LINES) res.drawMode = LINES;
-    else if (glMode == GL11.GL_LINE_STRIP) res.drawMode = LINE_STRIP;
-    else if (glMode == GL11.GL_LINE_LOOP) res.drawMode = LINE_LOOP;
-    else if (glMode == GL11.GL_TRIANGLES) res.drawMode = TRIANGLES; 
-    else if (glMode == GL11.GL_TRIANGLE_FAN) res.drawMode = TRIANGLE_FAN;
-    else if (glMode == GL11.GL_TRIANGLE_STRIP) res.drawMode = TRIANGLE_STRIP;
+    res.drawMode = getDrawModeImpl();
     
     if (glUsage == GL11.GL_STATIC_DRAW) res.updateMode = STATIC;
     else if (glUsage == GL11.GL_DYNAMIC_DRAW) res.updateMode = DYNAMIC;
@@ -1674,23 +1268,9 @@ public class PShape3D extends PShape implements PConstants {
   }
   
   
-  protected void setParameters(Parameters params) {
-    pointSprites = false;
-    if (params.drawMode == POINTS) glMode = GL11.GL_POINTS;
-    else if (params.drawMode == POINT_SPRITES) {
-      glMode = GL11.GL_POINTS;
-      pointSprites = true;
-    }
-    else if (params.drawMode == LINES) glMode = GL11.GL_LINES;
-    else if (params.drawMode == LINE_STRIP) glMode = GL11.GL_LINE_STRIP;
-    else if (params.drawMode == LINE_LOOP) glMode = GL11.GL_LINE_LOOP;
-    else if (params.drawMode == TRIANGLES) glMode = GL11.GL_TRIANGLES; 
-    else if (params.drawMode == TRIANGLE_FAN) glMode = GL11.GL_TRIANGLE_FAN;
-    else if (params.drawMode == TRIANGLE_STRIP) glMode = GL11.GL_TRIANGLE_STRIP;
-    else {
-      throw new RuntimeException("PShape3D: Unknown draw mode");
-    }
-    
+  protected void setParameters(Parameters params) {    
+    setDrawModeImpl(params.drawMode);
+
     if (params.updateMode == STATIC) glUsage = GL11.GL_STATIC_DRAW;
     else if (params.updateMode == DYNAMIC) glUsage = GL11.GL_DYNAMIC_DRAW;
     else {
@@ -1707,6 +1287,7 @@ public class PShape3D extends PShape implements PConstants {
     initShape(numVert, new Parameters());
   }
   
+  
   protected void initShape(int numVert, Parameters params) {
     // Checking we have what we need:
     gl = a3d.gl11;
@@ -1719,7 +1300,7 @@ public class PShape3D extends PShape implements PConstants {
     
     setParameters(params);
     createShape(numVert);    
-    initGroups();      
+    initChildren();      
     updateElement = -1;
     
     width = height = depth = 0;
@@ -1728,8 +1309,9 @@ public class PShape3D extends PShape implements PConstants {
     
   }
   
+  
   protected void createShape(int numVert) {
-    numVertices = numVert;
+    vertexCount = numVert;
     numTexBuffers = 1;
 
     initVertexData();
@@ -1741,17 +1323,17 @@ public class PShape3D extends PShape implements PConstants {
     initTexCoordData();
     createTexCoordBuffer();
     
-    initGroups();    
+    initChildren();    
   }
   
   
   protected void initVertexData() {    
-    ByteBuffer vbb = ByteBuffer.allocateDirect(numVertices * 3 * PGraphicsAndroid3D.SIZEOF_FLOAT);
+    ByteBuffer vbb = ByteBuffer.allocateDirect(vertexCount * 3 * PGraphicsAndroid3D.SIZEOF_FLOAT);
     vbb.order(ByteOrder.nativeOrder());
     vertexBuffer = vbb.asFloatBuffer();    
     
-    vertexArray = new float[numVertices * 3];
-    vertexBuffer.put(vertexArray);
+    vertices = new float[vertexCount * 3];
+    vertexBuffer.put(vertices);
     vertexBuffer.flip();    
   }
   
@@ -1768,16 +1350,16 @@ public class PShape3D extends PShape implements PConstants {
   
 
   protected void initColorData() {
-    ByteBuffer vbb = ByteBuffer.allocateDirect(numVertices * 4 * PGraphicsAndroid3D.SIZEOF_FLOAT);
+    ByteBuffer vbb = ByteBuffer.allocateDirect(vertexCount * 4 * PGraphicsAndroid3D.SIZEOF_FLOAT);
     vbb.order(ByteOrder.nativeOrder());                
     colorBuffer = vbb.asFloatBuffer();          
 
-    colorArray = new float[numVertices * 4];
+    colors = new float[vertexCount * 4];
     // Set the initial color of all vertices to white, so they are initially visible
     // even if the user doesn't set any vertex color.
-    Arrays.fill(colorArray, 1.0f);
+    Arrays.fill(colors, 1.0f);
     
-    colorBuffer.put(colorArray);
+    colorBuffer.put(colors);
     colorBuffer.flip();    
   }  
   
@@ -1794,12 +1376,12 @@ public class PShape3D extends PShape implements PConstants {
   
 
   protected void initNormalData() {
-    ByteBuffer vbb = ByteBuffer.allocateDirect(numVertices * 3 * PGraphicsAndroid3D.SIZEOF_FLOAT);
+    ByteBuffer vbb = ByteBuffer.allocateDirect(vertexCount * 3 * PGraphicsAndroid3D.SIZEOF_FLOAT);
     vbb.order(ByteOrder.nativeOrder());
     normalBuffer = vbb.asFloatBuffer();    
     
-    normalArray = new float[numVertices * 3];
-    normalBuffer.put(normalArray);
+    normals = new float[vertexCount * 3];
+    normalBuffer.put(normals);
     normalBuffer.flip();
   }  
 
@@ -1816,12 +1398,12 @@ public class PShape3D extends PShape implements PConstants {
   
 
   protected void initTexCoordData() {
-    ByteBuffer vbb = ByteBuffer.allocateDirect(numVertices * 2 * PGraphicsAndroid3D.SIZEOF_FLOAT);
+    ByteBuffer vbb = ByteBuffer.allocateDirect(vertexCount * 2 * PGraphicsAndroid3D.SIZEOF_FLOAT);
     vbb.order(ByteOrder.nativeOrder());
     texCoordBuffer = vbb.asFloatBuffer();    
     
-    texCoordArray = new float[numVertices * 2];
-    texCoordBuffer.put(texCoordArray);
+    texcoords = new float[vertexCount * 2];
+    texCoordBuffer.put(texcoords);
     texCoordBuffer.flip();   
   }  
   
@@ -1894,7 +1476,49 @@ public class PShape3D extends PShape implements PConstants {
 
   ///////////////////////////////////////////////////////////  
 
-  // Re-implementing methods inherited from PShape.
+  // Re-implementing methods inherited from PShape.  
+  
+  
+  public float[] getVertex(int index) {
+    PGraphics.showMethodWarning("getVertex");
+    return null;
+  }
+  
+  
+  public float getVertexX(int index) {
+    PGraphics.showMethodWarning("getVertexX");
+    return 0;    
+  }
+
+  
+  public float getVertexY(int index) {
+    PGraphics.showMethodWarning("getVertexY");
+    return 0;    
+  }
+
+  
+  public float getVertexZ(int index) {
+    PGraphics.showMethodWarning("getVertexZ");
+    return 0;      
+  }
+
+
+  public int[] getVertexCodes() {
+    PGraphics.showMethodWarning("getVertexCodes");
+    return null;
+  }
+
+
+  public int getVertexCodeCount() {
+    PGraphics.showMethodWarning("getVertexCodeCount");
+    return 0;         
+  }
+  
+
+  public int getVertexCode(int index) {
+    PGraphics.showMethodWarning("getVertexCode");
+    return 0;    
+  }
   
   
   public void translate(float tx, float ty) {
@@ -1903,24 +1527,16 @@ public class PShape3D extends PShape implements PConstants {
 
 
   public void translate(float tx, float ty, float tz) {
-    float[] tempVertexArray = new float[numVertices * 3];
-    
-    // Getting vertex data.
-    beginUpdate(VERTICES);
-    getVertexArrayImpl(tempVertexArray, 0, numVertices, 0);
-    endUpdate();
+    loadVertices();
     
     // Translating.
-    for (int i = 0; i < numVertices; i++) {
-      tempVertexArray[3 * i + 0] += tx;
-      tempVertexArray[3 * i + 1] += -ty;
-      tempVertexArray[3 * i + 2] += tz;  
+    for (int i = 0; i < vertexCount; i++) {
+      vertices[3 * i + 0] += tx;
+      vertices[3 * i + 1] += -ty;
+      vertices[3 * i + 2] += tz;  
     }
     
-    // Pushing back to GPU.
-    beginUpdateImpl(VERTICES, 0, numVertices - 1);
-    setVertex(tempVertexArray);
-    endUpdate();    
+    updateVertices();
   }  
   
   
@@ -1946,13 +1562,7 @@ public class PShape3D extends PShape implements PConstants {
 
   public void rotate(float angle, float v0, float v1, float v2) {
     // TODO should make sure this vector is normalized, and test that this method works ok.
-    
-    float[] tempVertexArray = new float[numVertices * 3];
-    
-    // Getting vertex data.
-    beginUpdate(VERTICES);
-    getVertexArrayImpl(tempVertexArray, 0, numVertices, 0);
-    endUpdate();
+    loadVertices();
     
     // Rotating around xmin, ymin, zmin)
     float c = PApplet.cos(angle);
@@ -1969,20 +1579,17 @@ public class PShape3D extends PShape implements PConstants {
     m[7] = (t*v1*v2) + (s*v0);     // 2, 1 
     m[8] = (t*v2*v2) + c;          // 2, 2
     float x, y, z;
-    for (int i = 0; i < numVertices; i++) {
-      x = tempVertexArray[3 * i + 0] - xmin; 
-      y = tempVertexArray[3 * i + 1] - ymin;
-      z = tempVertexArray[3 * i + 2] - zmin;      
+    for (int i = 0; i < vertexCount; i++) {
+      x = vertices[3 * i + 0] - xmin; 
+      y = vertices[3 * i + 1] - ymin;
+      z = vertices[3 * i + 2] - zmin;      
       
-      tempVertexArray[3 * i + 0] = m[0] * x + m[1] * y + m[2] * z + xmin; 
-      tempVertexArray[3 * i + 1] = m[3] * x + m[4] * y + m[5] * z + ymin;
-      tempVertexArray[3 * i + 2] = m[6] * x + m[7] * y + m[8] * z + zmin;
+      vertices[3 * i + 0] = m[0] * x + m[1] * y + m[2] * z + xmin; 
+      vertices[3 * i + 1] = m[3] * x + m[4] * y + m[5] * z + ymin;
+      vertices[3 * i + 2] = m[6] * x + m[7] * y + m[8] * z + zmin;
     }        
     
-    // Pushing back to GPU.
-    beginUpdateImpl(VERTICES, 0, numVertices - 1);
-    setVertex(tempVertexArray);
-    endUpdate();        
+    updateVertices();       
   }
 
   
@@ -1997,48 +1604,31 @@ public class PShape3D extends PShape implements PConstants {
 
 
   public void scale(float x, float y, float z) {
-    float[] tempVertexArray = new float[numVertices * 3];
-    
-    // Getting vertex data.
-    beginUpdate(VERTICES);
-    getVertexArrayImpl(tempVertexArray, 0, numVertices, 0);
-    endUpdate();
+    loadVertices();
     
     // Scaling.
-    for (int i = 0; i < numVertices; i++) {
-      tempVertexArray[3 * i + 0] *= x;
-      tempVertexArray[3 * i + 1] *= y;
-      tempVertexArray[3 * i + 2] *= z;  
+    for (int i = 0; i < vertexCount; i++) {
+      vertices[3 * i + 0] *= x;
+      vertices[3 * i + 1] *= y;
+      vertices[3 * i + 2] *= z;  
     }    
     
-    // Pushing back to GPU.
-    beginUpdateImpl(VERTICES, 0, numVertices - 1);
-    setVertex(tempVertexArray);
-    endUpdate();         
+    updateVertices();       
   }
   
-  
-  public boolean is3D() {
-    return true;
-  }
   
   public void centerAt(float cx, float cy, float cz) {
-    float[] tempVertexArray = new float[numVertices * 3];
-    
-    // Getting vertex data.
-    beginUpdate(VERTICES);
-    getVertexArrayImpl(tempVertexArray, 0, numVertices, 0);
-    endUpdate();
+    loadVertices();
     
     float dx = cx - 0.5f * (xmin + xmax);
     float dy = cy - 0.5f * (ymin + ymax);
     float dz = cz - 0.5f * (zmin + zmax);
     
     // Centering
-    for (int i = 0; i < numVertices; i++) {
-      tempVertexArray[3 * i + 0] += dx;
-      tempVertexArray[3 * i + 1] += dy;
-      tempVertexArray[3 * i + 2] += dz;  
+    for (int i = 0; i < vertexCount; i++) {
+      vertices[3 * i + 0] += dx;
+      vertices[3 * i + 1] += dy;
+      vertices[3 * i + 2] += dz;  
     }    
     
     // Updating bounding box
@@ -2049,31 +1639,51 @@ public class PShape3D extends PShape implements PConstants {
     zmin += dz;
     zmax += dz;
     
-    // Pushing back to GPU.
-    beginUpdateImpl(VERTICES, 0, numVertices - 1);
-    setVertex(tempVertexArray);
-    endUpdate();         
+    updateVertices();         
   }
   
+  
+  public boolean is3D() {
+    return true;
+  }
+  
+  
   ///////////////////////////////////////////////////////////  
+  
+  //
+  
+  // Drawing methods
+	 
 
-  // Drawing methods   
-   
-   public void draw(PGraphics g) {
-     draw(g, 0, groups.size() - 1);
-   }
-   
-  
-	 public void draw(PGraphics g, int gr) {
-	   draw(g, gr, gr);
-	 }
-  
-  
-  public void draw(PGraphics g, int gr0, int gr1) {
-	  int numTextures;
-	  float pointSize;
-	  
-	  // Setting line width and point size from stroke value.
+  protected void drawGroup(PGraphics g) {
+    if (children == null) {
+      addDefaultChild();
+    }
+    super.drawGroup(g);
+  }
+
+
+  public void draw(String target) {
+    PShape child = getChild(target);
+    if (child != null) {
+      child.draw(a3d);
+    }
+  }
+
+
+  public void draw(int idx) {
+    if (0 <= idx && idx < childCount) {
+      children[idx].draw(a3d);	   
+    }
+  }
+
+
+  protected void drawGeometry(PGraphics g) {
+    PShape3D p3d = (PShape3D)parent;
+    int numTextures;
+    float pointSize;
+
+    // Setting line width and point size from stroke value.
     // TODO: Here the stroke weight from the g renderer is used. Normally, no issue here, but
     // in the case the shape is being rendered from an offscreen A3D surface, then this might
     // lead to the possibility of a stroke weight different from that of the main renderer.
@@ -2081,132 +1691,125 @@ public class PShape3D extends PShape implements PConstants {
     // of the main renderer is used. But what about other properties such as textureMode or
     // colorMode. Right now they are read from a3d, which refers to the main renderer.
     // So what should be the normal behavior.
-		pointSize = PApplet.min(g.strokeWeight, PGraphicsAndroid3D.maxPointSize);
+    pointSize = PApplet.min(g.strokeWeight, PGraphicsAndroid3D.maxPointSize);
     gl.glPointSize(pointSize);
-  
+
     gl.glEnableClientState(GL11.GL_NORMAL_ARRAY);
-    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glNormalBufferID);
+    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, p3d.glNormalBufferID);
     gl.glNormalPointer(GL11.GL_FLOAT, 0, 0);    
 
-    if (vertexColor) {
+    if (p3d.vertexColor) {
       gl.glEnableClientState(GL11.GL_COLOR_ARRAY);
-      gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glColorBufferID);
+      gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, p3d.glColorBufferID);
       gl.glColorPointer(4, GL11.GL_FLOAT, 0, 0);
     }        
-    
+
     gl.glEnableClientState(GL11.GL_VERTEX_ARRAY);            
-    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glVertexBufferID);
+    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, p3d.glVertexBufferID);
     gl.glVertexPointer(3, GL11.GL_FLOAT, 0, 0);
-    
-    VertexGroup group;
-    for (int i = gr0; i <= gr1; i++) {
-      group = (VertexGroup)groups.get(i);
-      
-      numTextures = 0;
-      PImage[] images = group.textures;
-      for (int t = 0; t < images.length; t++) {
-        if (images[t] != null) {
-          PTexture tex = images[t].getTexture();
-          if (tex != null) {
-            gl.glEnable(tex.getGLTarget());
-            gl.glActiveTexture(GL10.GL_TEXTURE0 + t);
-            gl.glBindTexture(tex.getGLTarget(), tex.getGLID());
-            renderTextures[numTextures] = tex;
-            numTextures++;
-          } else {
-            // Null PTexture field in A3D? no good!
-            throw new RuntimeException("A3D: missing image texture");  
-          }
-        } else {
-          break;
-        }
-      }
-      
-      if (0 < numTextures)  {        
-        if (pointSprites) {
-          // Texturing with point sprites.
-                        
-          // This is how will our point sprite's size will be modified by 
-          // distance from the viewer             
-          gl.glPointParameterfv(GL11.GL_POINT_DISTANCE_ATTENUATION, ptDistAtt, 0);
-           
-          // The alpha of a point is calculated to allow the fading of points 
-          // instead of shrinking them past a defined threshold size. The threshold 
-          // is defined by GL_POINT_FADE_THRESHOLD_SIZE and is not clamped to the 
-          // minimum and maximum point sizes.
-          gl.glPointParameterf(GL11.GL_POINT_FADE_THRESHOLD_SIZE, 0.6f * pointSize);
-          gl.glPointParameterf(GL11.GL_POINT_SIZE_MIN, 1.0f);
-          gl.glPointParameterf(GL11.GL_POINT_SIZE_MAX, PGraphicsAndroid3D.maxPointSize);
 
-          // Specify point sprite texture coordinate replacement mode for each 
-          // texture unit
-          gl.glTexEnvf(GL11.GL_POINT_SPRITE_OES, GL11.GL_COORD_REPLACE_OES, GL11.GL_TRUE);
+    numTextures = 0;
+    for (int t = 0; t < textures.length; t++) {
+      if (textures[t] != null) {
+        PTexture tex = textures[t].getTexture();
+        if (tex != null) {
+          gl.glEnable(tex.getGLTarget());
+          gl.glActiveTexture(GL10.GL_TEXTURE0 + t);
+          gl.glBindTexture(tex.getGLTarget(), tex.getGLID());
+          renderTextures[numTextures] = tex;
+          numTextures++;
+        } else {
+          // Null PTexture field in A3D? no good!
+          throw new RuntimeException("A3D: missing image texture");  
+        }
+      } else {
+        break;
+      }
+    }
 
-          gl.glEnable(GL11.GL_POINT_SPRITE_OES);           
-        } else {
-          // Regular texturing.         
-          gl.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
-          for (int t = 0; t < numTexBuffers; t++) {
-            gl.glClientActiveTexture(GL11.GL_TEXTURE0 + t);
-            gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glTexCoordBufferID[t]);
-            gl.glTexCoordPointer(2, GL11.GL_FLOAT, 0, 0);
-          }          
-          if (1 < numTextures) {
-            a3d.setMultitextureBlend(renderTextures, numTextures);
-          }
-        }
-      }
-      
-      if (!vertexColor) {
-        if (0 < numTextures) {
-          if (g.tint) {
-            gl.glColor4f(g.tintR, g.tintG, g.tintB, g.tintA);  
-          } else {
-            gl.glColor4f(1, 1, 1, 1);  
-          }
-        } else {
-          gl.glColor4f(g.fillR, g.fillG, g.fillB, g.fillA);          
-        }              
-      }
-            
-      // Setting the stroke weight (line width's in OpenGL terminology) using either the group's weight 
-      // or the renderer's weight. 
-      if (0 < group.sw) {
-        gl.glLineWidth(group.sw);
+    if (0 < numTextures)  {        
+      if (pointSprites) {
+        // Texturing with point sprites.
+
+        // This is how will our point sprite's size will be modified by 
+        // distance from the viewer             
+        gl.glPointParameterfv(GL11.GL_POINT_DISTANCE_ATTENUATION, ptDistAtt, 0);
+
+        // The alpha of a point is calculated to allow the fading of points 
+        // instead of shrinking them past a defined threshold size. The threshold 
+        // is defined by GL_POINT_FADE_THRESHOLD_SIZE and is not clamped to the 
+        // minimum and maximum point sizes.
+        gl.glPointParameterf(GL11.GL_POINT_FADE_THRESHOLD_SIZE, 0.6f * pointSize);
+        gl.glPointParameterf(GL11.GL_POINT_SIZE_MIN, 1.0f);
+        gl.glPointParameterf(GL11.GL_POINT_SIZE_MAX, PGraphicsAndroid3D.maxPointSize);
+
+        // Specify point sprite texture coordinate replacement mode for each 
+        // texture unit
+        gl.glTexEnvf(GL11.GL_POINT_SPRITE_OES, GL11.GL_COORD_REPLACE_OES, GL11.GL_TRUE);
+
+        gl.glEnable(GL11.GL_POINT_SPRITE_OES);           
       } else {
-        gl.glLineWidth(g.strokeWeight);
-      }
-      
-      if (0 < group.glMode && !pointSprites) {
-        // Using the group's vertex mode.
-        gl.glDrawArrays(group.glMode, group.first, group.last - group.first + 1);
-      } else {
-        // Using the overall's vertex mode assigned to the entire model.
-        gl.glDrawArrays(glMode, group.first, group.last - group.first + 1);
-      }
-      
-      if (0 < numTextures) {
-        if (1 < numTextures) {
-          a3d.clearMultitextureBlend(numTextures);
-        }        
-        if (pointSprites)   {
-          gl.glDisable(GL11.GL_POINT_SPRITE_OES);
-        } else {
-          gl.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
-        }
+        // Regular texturing.         
+        gl.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
         for (int t = 0; t < numTextures; t++) {
-            PTexture tex = renderTextures[t];
-            gl.glDisable(tex.getGLTarget()); 
+          gl.glClientActiveTexture(GL11.GL_TEXTURE0 + t);
+          gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, p3d.glTexCoordBufferID[t]);
+          gl.glTexCoordPointer(2, GL11.GL_FLOAT, 0, 0);
+        }          
+        if (1 < numTextures) {
+          a3d.setMultitextureBlend(renderTextures, numTextures);
         }
+      }
+    }
+
+    if (!p3d.vertexColor) {
+      if (0 < numTextures) {
+        if (g.tint) {
+          gl.glColor4f(g.tintR, g.tintG, g.tintB, g.tintA);  
+        } else {
+          gl.glColor4f(1, 1, 1, 1);  
+        }
+      } else {
+        gl.glColor4f(g.fillR, g.fillG, g.fillB, g.fillA);          
+      }              
+    }
+
+    // Setting the stroke weight (line width's in OpenGL terminology) using 
+    // either the group's weight or the renderer's weight. 
+    if (0 < strokeWeight) {
+      gl.glLineWidth(strokeWeight);
+    } else {
+      gl.glLineWidth(g.strokeWeight);
+    }
+
+    if (0 < glMode && !pointSprites) {
+      // Using the group's vertex mode.
+      gl.glDrawArrays(glMode, firstVertex, lastVertex - firstVertex + 1);
+    } else {
+      // Using the overall's vertex mode assigned to the entire model.
+      gl.glDrawArrays(glMode, firstVertex, lastVertex - firstVertex + 1);
+    }
+
+    if (0 < numTextures) {
+      if (1 < numTextures) {
+        a3d.clearMultitextureBlend(numTextures);
+      }        
+      if (pointSprites)   {
+        gl.glDisable(GL11.GL_POINT_SPRITE_OES);
+      } else {
+        gl.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
+      }
+      for (int t = 0; t < numTextures; t++) {
+        PTexture tex = renderTextures[t];
+        gl.glDisable(tex.getGLTarget()); 
       }
     }
 
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
     gl.glDisableClientState(GL11.GL_VERTEX_ARRAY);
-	  gl.glDisableClientState(GL11.GL_COLOR_ARRAY);
+    gl.glDisableClientState(GL11.GL_COLOR_ARRAY);
     gl.glDisableClientState(GL11.GL_NORMAL_ARRAY);
-	}	
-  
+  }	 	 
 	
   ///////////////////////////////////////////////////////////////////////////   
   
@@ -2252,116 +1855,6 @@ public class PShape3D extends PShape implements PConstants {
     }
   }  
   
-  // Vertex groups
-  
-  static public VertexGroup newVertexGroup(int n0, int n1) {
-    return new VertexGroup(n0, n1);  
-  }
-  
-  
-  static public VertexGroup newVertexGroup(int n0, int n1, PImage[] tex) {
-    return new VertexGroup(n0, n1, tex);  
-  }    
-
-  
-  static public VertexGroup newVertexGroup(int n0, int n1, int mode, PImage[] tex) {
-    return new VertexGroup(n0, n1, mode, tex);  
-  }        
-        
-
-  static public VertexGroup newVertexGroup(int n0, int n1, int mode, float weight, PImage[] tex) {
-    return new VertexGroup(n0, n1, mode, weight, tex);  
-  }     
-  
-	static public class VertexGroup {
-    int first;
-    int last;
-    int glMode;
-    float sw;
-    PImage[] textures;  
-    
-    VertexGroup(int n0, int n1) {
-      first = n0;
-      last = n1;
-      glMode = 0;
-      sw = 0;
-      textures = new PImage[PGraphicsAndroid3D.maxTextureUnits];
-      clearTextures();
-    }
-
-    VertexGroup(int n0, int n1, PImage[] tex) {
-      first = n0;
-      last = n1; 
-      glMode = 0;
-      sw = 0;
-      textures = new PImage[PGraphicsAndroid3D.maxTextureUnits];
-      setTextures(tex);
-    }    
-    
-    VertexGroup(int n0, int n1, int mode, PImage[] tex) {
-      this(n0, n1, mode, 0, tex);
-    }     
-    
-    VertexGroup(int n0, int n1, int mode, float weight, PImage[] tex) {
-      first = n0;
-      last = n1; 
-      if (mode == POINTS) glMode = GL11.GL_POINTS;
-      else if (mode == POINT_SPRITES)  throw new RuntimeException("PShape3D: point sprites can only be set for entire model");
-      else if (mode == LINES) glMode = GL11.GL_LINES;
-      else if (mode == LINE_STRIP) glMode = GL11.GL_LINE_STRIP;
-      else if (mode == LINE_LOOP) glMode = GL11.GL_LINE_LOOP;
-      else if (mode == TRIANGLES) glMode = GL11.GL_TRIANGLES; 
-      else if (mode == TRIANGLE_FAN) glMode = GL11.GL_TRIANGLE_FAN;
-      else if (mode == TRIANGLE_STRIP) glMode = GL11.GL_TRIANGLE_STRIP;
-      else {
-        throw new RuntimeException("PShape3D: Unknown draw mode");
-      }      
-      sw = weight;
-      
-      textures = new PImage[PGraphicsAndroid3D.maxTextureUnits];
-      setTextures(tex);
-    }
-    
-    boolean equalTo(VertexGroup gr) {
-      boolean res = glMode == gr.glMode && sw == gr.sw; 
-      if (!res) return false;
-      for (int i = 0; i < textures.length; i++) {
-        if (textures[i] != gr.textures[i]) {
-          res = false;
-        }
-      }
-      return res; 
-    }
-    
-    boolean hasTextures() {
-      boolean res = false;
-      for (int i = 0; i < textures.length; i++) {
-        if (textures[i] != null && textures[i].getTexture() != null) {
-          res = true;  
-          break;
-        }
-      }
-      return res;
-    }
-    
-    void clearTextures() {
-      for (int i = 0; i < textures.length; i++) {
-        textures[i] = null;
-      }  
-    }
-    
-    void setTextures(PImage[] tex) {
-      if (tex != null) {     
-        int n = PApplet.min(textures.length, tex.length);
-        for (int i = 0; i < n; i++) {
-          textures[i] = tex[i];
-        }        
-        for (int i = n; i < textures.length; i++) {
-          textures[i] = null;
-        }
-      }      
-    }
-	}
 	
   ///////////////////////////////////////////////////////////////////////////   
   
@@ -2369,7 +1862,7 @@ public class PShape3D extends PShape implements PConstants {
 	
 	
   protected BufferedReader getBufferedReader(String filename) {
-    BufferedReader retval = parent.createReader(filename);
+    BufferedReader retval = papplet.createReader(filename);
     if (retval != null) {
       return retval;
     } else {
@@ -2539,7 +2032,7 @@ public class PShape3D extends PShape implements PConstants {
           } else if (elements[0].equals("map_Kd") && elements.length > 1) {
             // Loading texture map.
             String texname = elements[1];
-            currentMtl.kdMap = parent.loadImage(texname);
+            currentMtl.kdMap = papplet.loadImage(texname);
             // Texture orientation in Processing is inverted with respect to OpenGL.
             currentMtl.kdMap.getTexture().setFlippedY(true);
           } else if (elements[0].equals("Ka") && elements.length > 3) {
@@ -2719,7 +2212,7 @@ public class PShape3D extends PShape implements PConstants {
     
     // Allocate space for the geometry that the triangulator has generated from the OBJ model.
     createShape(a3d.recordedVertices.size());    
-    initGroups();      
+    initChildren();      
     updateElement = -1;
     
     width = height = depth = 0;
