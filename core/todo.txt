@@ -20,7 +20,12 @@ L PGraphicsJava2D.resize() not working the same as PGraphics2D.resize()
 L   http://dev.processing.org/bugs/show_bug.cgi?id=1107
 X   http://code.google.com/p/processing/issues/detail?id=150
 X   resize is not available with renderers, use createGraphics()
+X   added a note to the reference
+X frame.setResizable(true) does not enable maximize button
+X   http://code.google.com/p/processing/issues/detail?id=467
 
+_ selectInput() and selectOutput() freeze on OS X
+_   http://code.google.com/p/processing/issues/detail?id=445
 
 _ saving a PGraphics as jpg using save() makes a cmyk file
 _   need to shut off the alpha channel when writing
