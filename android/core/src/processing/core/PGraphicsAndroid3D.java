@@ -2330,7 +2330,6 @@ public class PGraphicsAndroid3D extends PGraphics {
 
       PImage[] images = faceTextures[j];
       if (1 < numMultitextures) {
-        PApplet.println("multitexture");
         for (int t = 0; t < numMultitextures; t++) 
           if (images[t] != null) {
             PTexture tex = images[t].getTexture();
@@ -2352,7 +2351,6 @@ public class PGraphicsAndroid3D extends PGraphics {
             break;            
           }
       } else if (images[0] != null) {
-        PApplet.println("single texture");
         PTexture tex = images[0].getTexture();      
         if (tex != null) {
           gl.glEnable(tex.getGLTarget());
@@ -2367,7 +2365,6 @@ public class PGraphicsAndroid3D extends PGraphics {
       }
 
       if (0 < numTextures) {
-        PApplet.println("Texturing");
         if (numTexBuffers < numTextures) {
           addTexBuffers(numTextures - numTexBuffers);
         }                
