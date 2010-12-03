@@ -368,7 +368,7 @@ public class Platform extends processing.app.Platform {
     
     // KNOWNFOLDERIDs are preferred to CSDIL values
     // but Windows XP only supports CSDIL so thats what we have to use
-    public static final int CSIDL_APPDATA = 0x001c; // "Application Data"
+    public static final int CSIDL_APPDATA = 0x001a; // "Application Data"
     public static final int CSIDL_PERSONAL = 0x0005;      // "My Documents"
     
     static Shell32 INSTANCE = (Shell32) Native.loadLibrary("shell32", Shell32.class, OPTIONS);
