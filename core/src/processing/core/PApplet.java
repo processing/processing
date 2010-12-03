@@ -579,7 +579,7 @@ public class PApplet extends Applet
    * true if this applet has had it.
    */
   public volatile boolean finished;
-  
+
   /**
    * true if the animation thread is paused.
    */
@@ -768,7 +768,7 @@ public class PApplet extends Applet
 
     finished = false;
     paused = false; // unpause the thread
-    
+
     // if this is the first run, setup and run the thread
     if (thread == null) {
       thread = new Thread(this, "Animation Thread");
@@ -788,9 +788,9 @@ public class PApplet extends Applet
   public void stop() {
     // this used to shut down the sketch, but that code has
     // been moved to dispose()
-    
+
     paused = true; // causes animation thread to sleep
-    
+
     //TODO listeners
   }
 
@@ -1493,11 +1493,11 @@ public class PApplet extends Applet
 //        println("paused...");
         try {
           Thread.sleep(100L);
-        } catch (InterruptedException e) { 
+        } catch (InterruptedException e) {
           //ignore?
         }
       }
-      
+
       // Don't resize the renderer from the EDT (i.e. from a ComponentEvent),
       // otherwise it may attempt a resize mid-render.
       if (resizeRequest) {
@@ -2585,9 +2585,9 @@ public class PApplet extends Applet
       // if not looping, shut down things explicitly,
       // because the main thread will be sleeping
       dispose();
-      
+
       // now get out
-      exit2(); 
+      exit2();
     }
   }
 
@@ -2599,21 +2599,21 @@ public class PApplet extends Applet
     }
   }
 
-  /** 
-   * Called to dispose of resources and shut down the sketch. 
+  /**
+   * Called to dispose of resources and shut down the sketch.
    * Destroys the thread, dispose the renderer,and notify listeners.
    * <p>
-   * Not to be called or overriden by users. If called multiple times, 
+   * Not to be called or overriden by users. If called multiple times,
    * will only notify listeners once. Register a dispose listener instead.
    */
   public void dispose(){
     // moved here from stop()
     finished = true;  // let the sketch know it is shut down time
-    
+
     // don't run the disposers twice
-    if (thread == null) return; 
+    if (thread == null) return;
     thread = null;
-    
+
     // shut down renderer
     if (g != null) g.dispose();
     disposeMethods.handle();
@@ -4646,7 +4646,7 @@ public class PApplet extends Applet
     }
 
     // Finally, something special for the Internet Explorer users. Turns out
-    // that we can't get files that are part of the same folder using the 
+    // that we can't get files that are part of the same folder using the
     // methods above when using IE, so we have to resort to the old skool
     // getDocumentBase() from teh applet dayz. 1996, my brotha.
     try {
@@ -4659,7 +4659,7 @@ public class PApplet extends Applet
 //      HttpURLConnection httpConnection = (HttpURLConnection) conn;
 //      // test for 401 result (HTTP only)
 //      int responseCode = httpConnection.getResponseCode();
-//    }        
+//    }
       }
     } catch (Exception e) { }  // IO or NPE or...
 
@@ -4698,7 +4698,7 @@ public class PApplet extends Applet
       //die(e.getMessage(), e);
       e.printStackTrace();
     }
-    
+
     return null;
   }
 
@@ -7272,7 +7272,8 @@ public class PApplet extends Applet
 
     // remove the grow box by default
     // users who want it back can call frame.setResizable(true)
-    frame.setResizable(false);
+    //frame.setResizable(false);
+    // moved later (issue #467)
 
     // Set the trimmings around the image
     Image image = Toolkit.getDefaultToolkit().createImage(ICON_IMAGE);
@@ -7290,7 +7291,7 @@ public class PApplet extends Applet
         throw new RuntimeException(e);
       }
     }
-    
+
     // these are needed before init/start
     applet.frame = frame;
     applet.sketchPath = folder;
@@ -7332,6 +7333,10 @@ public class PApplet extends Applet
     }
     // insufficient, places the 100x100 sketches offset strangely
     //frame.validate();
+
+    // disabling resize has to happen after pack() to avoid apparent Apple bug
+    // http://code.google.com/p/processing/issues/detail?id=467
+    frame.setResizable(false);
 
     applet.init();
 
@@ -7473,22 +7478,22 @@ public class PApplet extends Applet
   public static void main(final String[] args) {
     runSketch(args, null);
   }
-  
+
   /**
    * These methods provide a means for running an already-constructed
    * sketch. In particular, it makes it easy to launch a sketch in
    * Jython:
-   * 
+   *
    * <pre>class MySketch(PApplet):
    *     pass
-   * 
+   *
    *MySketch().runSketch();</pre>
    */
   protected void runSketch(final String[] args) {
     final String[] argsWithSketchName = new String[args.length + 1];
     System.arraycopy(args, 0, argsWithSketchName, 0, args.length);
     final String className = this.getClass().getSimpleName();
-    final  String cleanedClass = 
+    final  String cleanedClass =
       className.replaceAll("__[^_]+__\\$", "").replaceAll("\\$\\d+", "");
     argsWithSketchName[args.length] = cleanedClass;
     runSketch(argsWithSketchName, this);
@@ -7623,12 +7628,6 @@ public class PApplet extends Applet
   public void flush() {
     if (recorder != null) recorder.flush();
     g.flush();
-  }
-
-
-  public void resize(int wide, int high) {
-    if (recorder != null) recorder.resize(wide, high);
-    g.resize(wide, high);
   }
 
 
