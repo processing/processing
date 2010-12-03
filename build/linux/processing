@@ -71,7 +71,7 @@ APPDIR=`dirname "$APPDIR"`
 log APPDIR
 
 # Try using a local JDK from the same directory as this script
-JDKDIR=`readlink -f "$APPDIR/java"`
+JDKDIR=`readlink -f "$APPDIR/java"` && JDKDIR=`dirname "$JDKDIR"`/..
 make_jdkcp "$JDKDIR"
 log SUCCESS
 
