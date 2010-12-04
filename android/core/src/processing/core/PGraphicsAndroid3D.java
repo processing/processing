@@ -380,6 +380,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   static protected boolean vboSupported;
   static protected boolean fboSupported;
   static protected boolean blendEqSupported;
+  static protected boolean texenvCrossbarSupported;
   
   // Some OpenGL limits
   static protected int maxTextureSize;
@@ -5554,7 +5555,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     gl11x.glDrawTexiOES(x, y, 0, w, h);
     
     // Returning to the default texture environment mode, GL_MODULATE. This allows tinting a texture
-    // with the current fill color.
+    // with the current fragment color.
     gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_MODULATE);
     
     gl.glDisable(tex.getGLTarget());
@@ -5732,127 +5733,189 @@ public class PGraphicsAndroid3D extends PGraphics {
     gl.glDisable(GL10.GL_BLEND);
   }
   
+  // Some useful info about multitexturing with combiners:
+  // http://www.opengl.org/wiki/Texture_Combiners
+  // http://www.khronos.org/opengles/sdk/1.1/docs/man/glTexEnv.xml
+  // http://techconficio.ca/Blog/files/OpenGL_ES_multiTex_example.html
+  // The GL_DOT3_RGB parameter can be used to implement bump mapping with 
+  // the fixed pipeline of GLES 1.1:
+  // http://iphone-3d-programming.labs.oreilly.com/ch08.html
+  // http://nehe.gamedev.net/data/articles/article.asp?article=20
+  // http://www.paulsprojects.net/tutorials/simplebump/simplebump.html
+  // I 'll try to put this functionality in later.  
+  // This post explains how to use texture crossbar to properly apply
+  // geometry lighting and tinting to the result of the texure combination.
+  // http://www.imgtec.com/forum/forum_posts.asp?TID=701
   protected void setMultitextureBlend(PTexture[] textures, int num) {
     if (2 < num) {
       PGraphics.showWarning("A3D: multitexture blending currently supports only two textures.");
       return;
     }
- 
-    // Some useful info about multitexturing with combiners:
-    // http://www.opengl.org/wiki/Texture_Combiners
-    // http://www.khronos.org/opengles/sdk/1.1/docs/man/glTexEnv.xml
-    // http://techconficio.ca/Blog/files/OpenGL_ES_multiTex_example.html
-    // The GL_DOT3_RGB parameter can be used to implement bump mapping with 
-    // the fixed pipeline of GLES 1.1:
-    // http://iphone-3d-programming.labs.oreilly.com/ch08.html
-    // http://nehe.gamedev.net/data/articles/article.asp?article=20
-    // http://www.paulsprojects.net/tutorials/simplebump/simplebump.html
-    // I 'll try to put this functionality in later.
-    
+
     gl.glDisable(GL10.GL_BLEND);
-    
-    if (blendMode == REPLACE) {
-      // Texture 0:
-      gl11.glActiveTexture(GL11.GL_TEXTURE0);
-      gl11.glBindTexture(textures[0].getGLTarget(), textures[0].getGLID());
-      // Simply sample the texture:
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_DECAL);
-      // Texture 1:
-      gl11.glActiveTexture(GL11.GL_TEXTURE1);
-      gl11.glBindTexture(textures[1].getGLTarget(), textures[1].getGLID());
-      // Sample the texture, replacing the previous one.
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_REPLACE);
-    } else if (blendMode == BLEND) {
-      // Texture 0:
-      gl11.glActiveTexture(GL11.GL_TEXTURE0);
-      gl11.glBindTexture(textures[0].getGLTarget(), textures[0].getGLID());
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_DECAL);
-      // Texture 1:
-      gl11.glActiveTexture(GL11.GL_TEXTURE1);
-      gl11.glBindTexture(textures[1].getGLTarget(), textures[1].getGLID());
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_COMBINE);
-      // Interpolate RGB with RGB...
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_COMBINE_RGB, GL11.GL_INTERPOLATE);   
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC0_RGB, GL11.GL_PREVIOUS);
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC1_RGB, GL11.GL_TEXTURE);
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC2_RGB, GL11.GL_TEXTURE);           
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND0_RGB, GL11.GL_SRC_COLOR);
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND1_RGB, GL11.GL_SRC_COLOR);
-      // ...using ALPHA of tex1 as interpolation factor.
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND2_RGB, GL11.GL_ONE_MINUS_SRC_ALPHA);
-      // Interpolate ALPHA with ALPHA...
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_COMBINE_ALPHA, GL11.GL_INTERPOLATE); 
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC0_ALPHA, GL11.GL_PREVIOUS);
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC1_ALPHA, GL11.GL_TEXTURE);
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC2_ALPHA, GL11.GL_TEXTURE);
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND0_ALPHA, GL11.GL_SRC_ALPHA);
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND1_ALPHA, GL11.GL_SRC_ALPHA);
-      // ...using ALPHA of tex1 as interpolation factor.
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND2_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);   
-    } else if (blendMode == MULTIPLY) {
-      // Texture 0:
-      gl11.glActiveTexture(GL11.GL_TEXTURE0);
-      gl11.glBindTexture(textures[0].getGLTarget(), textures[0].getGLID());
-      // Simply sample the texture.
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_DECAL);
-      // Texture 1:
-      gl11.glActiveTexture(GL11.GL_TEXTURE1);
-      gl11.glBindTexture(textures[1].getGLTarget(), textures[1].getGLID());
-      // Combine this texture with the previous one.
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_COMBINE);
-      // Modulate (multiply) RGB with RGB:
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_COMBINE_RGB, GL11.GL_MODULATE);   
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC0_RGB, GL11.GL_PREVIOUS);
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC1_RGB, GL11.GL_TEXTURE);
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND0_RGB, GL11.GL_SRC_COLOR);
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND1_RGB, GL11.GL_SRC_COLOR);
-      // Modulate (multiply) ALPHA with ALPHA:
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_COMBINE_ALPHA, GL11.GL_MODULATE);  
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC0_ALPHA, GL11.GL_PREVIOUS);
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC1_ALPHA, GL11.GL_TEXTURE);
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND0_ALPHA, GL11.GL_SRC_ALPHA);
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND1_ALPHA, GL11.GL_SRC_ALPHA);      
-    } else if (blendMode == ADD) {
-      gl11.glActiveTexture(GL11.GL_TEXTURE0);
-      gl11.glBindTexture(textures[0].getGLTarget(), textures[0].getGLID());
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_REPLACE);
-      // Add RGB with RGB:
-      gl11.glActiveTexture(GL11.GL_TEXTURE1);
-      gl11.glBindTexture(textures[1].getGLTarget(), textures[1].getGLID());
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_COMBINE);
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_COMBINE_RGB, GL11.GL_ADD);    
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC0_RGB, GL11.GL_PREVIOUS);
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC1_RGB, GL11.GL_TEXTURE);
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND0_RGB, GL11.GL_SRC_COLOR);
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND1_RGB, GL11.GL_SRC_COLOR);
-      // Add ALPHA with ALPHA:
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_COMBINE_ALPHA, GL11.GL_ADD);    
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC0_ALPHA, GL11.GL_PREVIOUS);
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC1_ALPHA, GL11.GL_TEXTURE);
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND0_ALPHA, GL11.GL_SRC_ALPHA);
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND1_ALPHA, GL11.GL_SRC_ALPHA);      
-    } else if (blendMode == SUBTRACT) {
-      gl11.glActiveTexture(GL11.GL_TEXTURE0);
-      gl11.glBindTexture(textures[0].getGLTarget(), textures[0].getGLID());
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_REPLACE);
-      // Subtract RGB with RGB:
-      gl11.glActiveTexture(GL11.GL_TEXTURE1);
-      gl11.glBindTexture(textures[1].getGLTarget(), textures[1].getGLID());
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_COMBINE);
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_COMBINE_RGB, GL11.GL_SUBTRACT);    
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC0_RGB, GL11.GL_PREVIOUS);
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC1_RGB, GL11.GL_TEXTURE);
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND0_RGB, GL11.GL_SRC_COLOR);
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND1_RGB, GL11.GL_SRC_COLOR);
-      // Subtract ALPHA with ALPHA:
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_COMBINE_ALPHA, GL11.GL_ADD);    
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC0_ALPHA, GL11.GL_PREVIOUS);
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC1_ALPHA, GL11.GL_TEXTURE);
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND0_ALPHA, GL11.GL_SRC_ALPHA);
-      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND1_ALPHA, GL11.GL_SRC_ALPHA);      
+
+    if (!texenvCrossbarSupported) {
+      PGraphics.showWarning("A3D: Texture environment crossbar not supported, so the textures won't be affected by tint or light.");
+      // Without texture environment crossbar we have to use the first sampler just to read the first texture,
+      // and the second to do the mixing, in this way we don't have a way to modulate the output of the
+      // texture mixing with the pixel tint or lighting.
+      if (blendMode == REPLACE) {
+        // Texture 0:
+        gl11.glActiveTexture(GL11.GL_TEXTURE0);
+        gl11.glBindTexture(textures[0].getGLTarget(), textures[0].getGLID());
+        // Simply sample the texture:
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_REPLACE);
+        // Texture 1:
+        gl11.glActiveTexture(GL11.GL_TEXTURE1);
+        gl11.glBindTexture(textures[1].getGLTarget(), textures[1].getGLID());
+        // Sample the texture, replacing the previous one.
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_REPLACE);
+      } else if (blendMode == BLEND) {
+        // Texture 0:
+        gl11.glActiveTexture(GL11.GL_TEXTURE0);
+        gl11.glBindTexture(textures[0].getGLTarget(), textures[0].getGLID());
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_REPLACE);
+        // Texture 1:
+        gl11.glActiveTexture(GL11.GL_TEXTURE1);
+        gl11.glBindTexture(textures[1].getGLTarget(), textures[1].getGLID());
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_COMBINE);
+        // Interpolate RGB with RGB...
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_COMBINE_RGB, GL11.GL_INTERPOLATE);   
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC0_RGB, GL11.GL_PREVIOUS);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC1_RGB, GL11.GL_TEXTURE);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC2_RGB, GL11.GL_TEXTURE);           
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND0_RGB, GL11.GL_SRC_COLOR);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND1_RGB, GL11.GL_SRC_COLOR);
+        // ...using ALPHA of tex1 as interpolation factor.
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND2_RGB, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        // Interpolate ALPHA with ALPHA...
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_COMBINE_ALPHA, GL11.GL_INTERPOLATE); 
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC0_ALPHA, GL11.GL_PREVIOUS);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC1_ALPHA, GL11.GL_TEXTURE);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC2_ALPHA, GL11.GL_TEXTURE);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND0_ALPHA, GL11.GL_SRC_ALPHA);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND1_ALPHA, GL11.GL_SRC_ALPHA);
+        // ...using ALPHA of tex1 as interpolation factor.
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND2_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);   
+      } else if (blendMode == MULTIPLY) {
+        // Texture 0:
+        gl11.glActiveTexture(GL11.GL_TEXTURE0);
+        gl11.glBindTexture(textures[0].getGLTarget(), textures[0].getGLID());
+        // Simply sample the texture.
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_REPLACE);
+        // Texture 1:
+        gl11.glActiveTexture(GL11.GL_TEXTURE1);
+        gl11.glBindTexture(textures[1].getGLTarget(), textures[1].getGLID());
+        // Combine this texture with the previous one.
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_COMBINE);
+        // Modulate (multiply) RGB with RGB:
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_COMBINE_RGB, GL11.GL_MODULATE);   
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC0_RGB, GL11.GL_PREVIOUS);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC1_RGB, GL11.GL_TEXTURE);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND0_RGB, GL11.GL_SRC_COLOR);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND1_RGB, GL11.GL_SRC_COLOR);
+        // Modulate (multiply) ALPHA with ALPHA:
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_COMBINE_ALPHA, GL11.GL_MODULATE);  
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC0_ALPHA, GL11.GL_PREVIOUS);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC1_ALPHA, GL11.GL_TEXTURE);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND0_ALPHA, GL11.GL_SRC_ALPHA);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND1_ALPHA, GL11.GL_SRC_ALPHA);      
+      } else if (blendMode == ADD) {
+        gl11.glActiveTexture(GL11.GL_TEXTURE0);
+        gl11.glBindTexture(textures[0].getGLTarget(), textures[0].getGLID());
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_REPLACE);
+        // Add RGB with RGB:
+        gl11.glActiveTexture(GL11.GL_TEXTURE1);
+        gl11.glBindTexture(textures[1].getGLTarget(), textures[1].getGLID());
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_COMBINE);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_COMBINE_RGB, GL11.GL_ADD);    
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC0_RGB, GL11.GL_PREVIOUS);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC1_RGB, GL11.GL_TEXTURE);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND0_RGB, GL11.GL_SRC_COLOR);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND1_RGB, GL11.GL_SRC_COLOR);
+        // Add ALPHA with ALPHA:
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_COMBINE_ALPHA, GL11.GL_ADD);    
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC0_ALPHA, GL11.GL_PREVIOUS);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC1_ALPHA, GL11.GL_TEXTURE);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND0_ALPHA, GL11.GL_SRC_ALPHA);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND1_ALPHA, GL11.GL_SRC_ALPHA);      
+      } else if (blendMode == SUBTRACT) {
+        gl11.glActiveTexture(GL11.GL_TEXTURE0);
+        gl11.glBindTexture(textures[0].getGLTarget(), textures[0].getGLID());
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_REPLACE);
+        // Subtract RGB with RGB:
+        gl11.glActiveTexture(GL11.GL_TEXTURE1);
+        gl11.glBindTexture(textures[1].getGLTarget(), textures[1].getGLID());
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_COMBINE);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_COMBINE_RGB, GL11.GL_SUBTRACT);    
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC0_RGB, GL11.GL_PREVIOUS);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC1_RGB, GL11.GL_TEXTURE);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND0_RGB, GL11.GL_SRC_COLOR);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND1_RGB, GL11.GL_SRC_COLOR);
+        // Subtract ALPHA with ALPHA:
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_COMBINE_ALPHA, GL11.GL_ADD);    
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC0_ALPHA, GL11.GL_PREVIOUS);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC1_ALPHA, GL11.GL_TEXTURE);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND0_ALPHA, GL11.GL_SRC_ALPHA);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND1_ALPHA, GL11.GL_SRC_ALPHA);      
+      } else {
+        PGraphics.showWarning("A3D: This blend mode is currently unsupported in multitexture mode.");
+      }
     } else {
-      PGraphics.showWarning("A3D: This blend mode is currently unsupported in multitexture mode.");
+      // With texture environment crossbar we can do the texture mixing in the first sampler,
+      // and the modulation with the pixel color (which includes tint and light) in the second,
+      // as explained here:
+      // http://www.imgtec.com/forum/forum_posts.asp?TID=701
+      if (blendMode == REPLACE) {
+      } else if (blendMode == BLEND) {
+        // Sampler 0: interpolation between textures 0 and 1 using alpha of 1.
+        gl11.glActiveTexture(GL11.GL_TEXTURE0);
+        gl11.glBindTexture(textures[0].getGLTarget(), textures[0].getGLID());
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_COMBINE);
+        // Interpolate RGB with RGB...
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_COMBINE_RGB, GL11.GL_INTERPOLATE);   
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC0_RGB, GL11.GL_TEXTURE0);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC1_RGB, GL11.GL_TEXTURE1);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC2_RGB, GL11.GL_TEXTURE1);           
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND0_RGB, GL11.GL_SRC_COLOR);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND1_RGB, GL11.GL_SRC_COLOR);
+        // ...using ALPHA of tex1 as interpolation factor.
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND2_RGB, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        // Interpolate ALPHA with ALPHA...
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_COMBINE_ALPHA, GL11.GL_INTERPOLATE); 
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC0_ALPHA, GL11.GL_TEXTURE0);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC1_ALPHA, GL11.GL_TEXTURE1);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC2_ALPHA, GL11.GL_TEXTURE1);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND0_ALPHA, GL11.GL_SRC_ALPHA);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND1_ALPHA, GL11.GL_SRC_ALPHA);
+        // ...using ALPHA of tex1 as interpolation factor.
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND2_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        // Sampler 1: modulation with pixel color:
+        gl11.glActiveTexture(GL11.GL_TEXTURE1);
+        gl11.glBindTexture(textures[1].getGLTarget(), textures[1].getGLID());
+        // Interpolate RGB of previous color (result of blending in sampler 0) with RGB
+        // of primary color (tinted and lit from pixel)...
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_COMBINE);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_COMBINE_RGB, GL11.GL_MODULATE);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC0_RGB, GL11.GL_PREVIOUS);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC1_RGB, GL11.GL_PRIMARY_COLOR);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND0_RGB, GL11.GL_SRC_COLOR);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND1_RGB, GL11.GL_SRC_COLOR);
+        // Resulting ALPHA is that of mixed textures...
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_COMBINE_ALPHA, GL11.GL_REPLACE);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC0_ALPHA, GL11.GL_PREVIOUS);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND0_ALPHA, GL11.GL_SRC_ALPHA);        
+      } else if (blendMode == MULTIPLY) {
+      } else if (blendMode == ADD) {
+      } else if (blendMode == SUBTRACT) {
+      } else {
+        PGraphics.showWarning("A3D: This blend mode is currently unsupported in multitexture mode.");
+      }      
     }
+    
+    // Mixes result of the texture combination with the color value already in the color buffer:
+    gl.glEnable(GL10.GL_BLEND); 
+    gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
   }  
   
   protected void clearMultitextureBlend(int num) {
@@ -5972,9 +6035,10 @@ public class PGraphicsAndroid3D extends PGraphics {
       npotTexSupported = false;
       mipmapSupported = false;
       matrixGetSupported = false;
+      texenvCrossbarSupported = false;
       vboSupported = false;
       fboSupported = false;
-      String extensions = gl.glGetString(GL10.GL_EXTENSIONS);
+      String extensions = gl.glGetString(GL10.GL_EXTENSIONS);      
       if (-1 < extensions.indexOf("texture_non_power_of_two")) {
         npotTexSupported = true;
       }
@@ -5983,6 +6047,9 @@ public class PGraphicsAndroid3D extends PGraphics {
       }
       if (-1 < extensions.indexOf("matrix_get")) {
         matrixGetSupported = true;
+      }
+      if (-1 < extensions.indexOf("texture_env_crossbar")) {
+        texenvCrossbarSupported = true;
       }
       if (-1 < extensions.indexOf("vertex_buffer_object")
           || -1 < OPENGL_VERSION.indexOf("1.1") || // Just in case
