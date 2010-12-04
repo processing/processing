@@ -2331,7 +2331,7 @@ public class PGraphicsAndroid3D extends PGraphics {
 
       PImage[] images = faceTextures[j];
       if (1 < numMultitextures) {
-        for (int t = 0; t < numMultitextures; t++) 
+        for (int t = 0; t < numMultitextures; t++) {
           if (images[t] != null) {
             PTexture tex = images[t].getTexture();
             if (tex != null) {
@@ -2341,8 +2341,10 @@ public class PGraphicsAndroid3D extends PGraphics {
               renderTextures[numTextures] = tex;
               numTextures++;
             } else {
-              // Null PTexture field in A3D? no good!
-              throw new RuntimeException("A3D: missing image texture");  
+              // Null PTexture field in A3D. It can happen and things still ok
+              // when, for example, a PImage is being loaded asynchronously and
+              // used for drawing in the meantime...
+              break; 
             }
           } else {
             // If there is a null texture image at some point in the
@@ -2351,6 +2353,7 @@ public class PGraphicsAndroid3D extends PGraphics {
             // the user, anyways.
             break;            
           }
+        }
       } else if (images[0] != null) {
         PTexture tex = images[0].getTexture();      
         if (tex != null) {
@@ -2359,9 +2362,6 @@ public class PGraphicsAndroid3D extends PGraphics {
           gl.glBindTexture(tex.getGLTarget(), tex.getGLID());   
           renderTextures[0] = tex;
           numTextures = 1;
-        } else {
-          // Null PTexture field in A3D? no good!
-          throw new RuntimeException("A3D: missing image texture");
         }
       }
 
