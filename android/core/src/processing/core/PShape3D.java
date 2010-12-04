@@ -1719,8 +1719,10 @@ public class PShape3D extends PShape implements PConstants {
           renderTextures[numTextures] = tex;
           numTextures++;
         } else {
-          // Null PTexture field in A3D? no good!
-          throw new RuntimeException("A3D: missing image texture");  
+          // Null PTexture field in A3D. It can happen and things still ok
+          // when, for example, a PImage is being loaded asynchronously and
+          // used for drawing in the meantime...
+          break;  
         }
       } else {
         break;

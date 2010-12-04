@@ -198,6 +198,7 @@ public class PImage implements PConstants, Cloneable {
   
   
   public void loadTexture() {
+    if (width == 0 || height == 0) return;
     if (texture == null) {
       texture = new PTexture(parent, width, height, new PTexture.Parameters(format));
     }
@@ -210,6 +211,7 @@ public class PImage implements PConstants, Cloneable {
   
 
   public void loadTexture(int filter) {
+    if (width == 0 || height == 0) return;
     if (texture == null) {
       texture = new PTexture(parent, width, height, new PTexture.Parameters(format, filter));
     }
@@ -222,6 +224,7 @@ public class PImage implements PConstants, Cloneable {
 
 
   public void loadTexture(PTexture.Parameters params) {
+    if (width == 0 || height == 0) return;
     if (texture == null) { 
       texture = new PTexture(parent, width, height, params);
     }
@@ -265,6 +268,7 @@ public class PImage implements PConstants, Cloneable {
 
   
   protected void reloadTexture() {
+    if (width == 0 || height == 0) return;
     if (texture != null) {
       texture = new PTexture(parent, width, height, texture.getParameters());
     }
@@ -345,7 +349,7 @@ public class PImage implements PConstants, Cloneable {
     if (bitmap != null) {
       bitmap.getPixels(pixels, 0, width, 0, 0, width, height); 
     }
-    if (parent.g.is3D()) {
+    if (parent.g.is3D() && 0 < width && 0 < height) {
       if (texture == null) {
         texture = new PTexture(parent, width, height, new PTexture.Parameters(format));
       }      
