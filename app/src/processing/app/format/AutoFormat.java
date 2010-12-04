@@ -301,7 +301,6 @@ public class AutoFormat {
   }
 
   public String format(final String source) {
-    // Adding an additional newline as a hack around other errors
     final String normalizedText = source.replaceAll("\r", "");
     final String cleanText = normalizedText
         + (normalizedText.endsWith("\n") ? "" : "\n");
@@ -592,10 +591,20 @@ public class AutoFormat {
       case '(':
         castFlags.push(Pattern.matches("^.*?(?:int|color|float)\\s*$", buf));
 
+        final boolean isFor = lookup("for");
+        final boolean isIf = lookup("if");
+
+        if (isFor || isIf || lookup("while")) {
+          if (!Character.isWhitespace(buf.charAt(buf.length() - 1))) {
+            buf.append(' ');
+          }
+        }
+
         buf.append(c);
         paren++;
 
-        if ((lookup("for"))) {
+        if (isFor) {
+          // TODO(feinberg): handle new-style for loops
           c = get_string();
           while (c != ';' && c != ':') {
             c = get_string();
@@ -618,8 +627,7 @@ public class AutoFormat {
           } // endwhile for_done
           paren--;
           if (paren < 0) {
-            paren = 0;//EOF = true;
-            //System.out.println("eof d");
+            paren = 0;
           }
           writeIndentedLine();
           if (getnl()) {
@@ -629,9 +637,7 @@ public class AutoFormat {
             ind[level] = 0;
           }
           break;
-        }
-
-        if (lookup("if")) {
+        } else if (isIf) {
           writeIndentedLine();
           s_tabs[c_level][if_lev] = tabs;
           sp_flg[c_level][if_lev] = p_flg[level];
