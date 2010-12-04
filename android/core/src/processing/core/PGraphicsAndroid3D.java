@@ -5840,13 +5840,15 @@ public class PGraphicsAndroid3D extends PGraphics {
         gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND0_ALPHA, GL11.GL_SRC_ALPHA);
         gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND1_ALPHA, GL11.GL_SRC_ALPHA);      
       } else if (blendMode == SUBTRACT) {
+        // Texture 0:
         gl11.glActiveTexture(GL11.GL_TEXTURE0);
         gl11.glBindTexture(textures[0].getGLTarget(), textures[0].getGLID());
         gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_REPLACE);
-        // Subtract RGB with RGB:
+        // Texture 1:
         gl11.glActiveTexture(GL11.GL_TEXTURE1);
         gl11.glBindTexture(textures[1].getGLTarget(), textures[1].getGLID());
         gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_COMBINE);
+        // Subtract RGB with RGB:
         gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_COMBINE_RGB, GL11.GL_SUBTRACT);    
         gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC0_RGB, GL11.GL_PREVIOUS);
         gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC1_RGB, GL11.GL_TEXTURE);
@@ -5867,6 +5869,21 @@ public class PGraphicsAndroid3D extends PGraphics {
       // as explained here:
       // http://www.imgtec.com/forum/forum_posts.asp?TID=701
       if (blendMode == REPLACE) {
+        // Sampler 0:
+        gl11.glActiveTexture(GL11.GL_TEXTURE0);
+        gl11.glBindTexture(textures[0].getGLTarget(), textures[0].getGLID());         
+        // Replace using texture 1:
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_COMBINE);
+        // Replace RGB:
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_COMBINE_RGB, GL11.GL_REPLACE);   
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC0_RGB, GL11.GL_TEXTURE1);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND0_RGB, GL11.GL_SRC_COLOR);
+        // Replace ALPHA with ALPHA:
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_COMBINE_ALPHA, GL11.GL_REPLACE);  
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC0_ALPHA, GL11.GL_TEXTURE1);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND0_ALPHA, GL11.GL_SRC_ALPHA);
+        // Sampler 1:
+        modulateWithPrimaryColor(1, textures[1]);
       } else if (blendMode == BLEND) {
         // Sampler 0: interpolation between textures 0 and 1 using alpha of 1.
         gl11.glActiveTexture(GL11.GL_TEXTURE0);
@@ -5890,33 +5907,93 @@ public class PGraphicsAndroid3D extends PGraphics {
         gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND1_ALPHA, GL11.GL_SRC_ALPHA);
         // ...using ALPHA of tex1 as interpolation factor.
         gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND2_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        // Sampler 1: modulation with pixel color:
-        gl11.glActiveTexture(GL11.GL_TEXTURE1);
-        gl11.glBindTexture(textures[1].getGLTarget(), textures[1].getGLID());
-        // Interpolate RGB of previous color (result of blending in sampler 0) with RGB
-        // of primary color (tinted and lit from pixel)...
+        // Sampler 1:
+        modulateWithPrimaryColor(1, textures[1]);        
+      } else if (blendMode == MULTIPLY) {
+        // Sampler 0:
+        gl11.glActiveTexture(GL11.GL_TEXTURE0);
+        gl11.glBindTexture(textures[0].getGLTarget(), textures[0].getGLID());        
+        // Modulate (multiply) texture 0 with texture 1.
         gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_COMBINE);
-        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_COMBINE_RGB, GL11.GL_MODULATE);
-        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC0_RGB, GL11.GL_PREVIOUS);
-        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC1_RGB, GL11.GL_PRIMARY_COLOR);
+        // Modulate RGB with RGB:
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_COMBINE_RGB, GL11.GL_MODULATE);   
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC0_RGB, GL11.GL_TEXTURE0);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC1_RGB, GL11.GL_TEXTURE1);
         gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND0_RGB, GL11.GL_SRC_COLOR);
         gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND1_RGB, GL11.GL_SRC_COLOR);
-        // Resulting ALPHA is that of mixed textures...
-        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_COMBINE_ALPHA, GL11.GL_REPLACE);
-        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC0_ALPHA, GL11.GL_PREVIOUS);
-        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND0_ALPHA, GL11.GL_SRC_ALPHA);        
-      } else if (blendMode == MULTIPLY) {
+        // Modulate ALPHA with ALPHA:
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_COMBINE_ALPHA, GL11.GL_MODULATE);  
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC0_ALPHA, GL11.GL_TEXTURE0);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC1_ALPHA, GL11.GL_TEXTURE1);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND0_ALPHA, GL11.GL_SRC_ALPHA);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND1_ALPHA, GL11.GL_SRC_ALPHA);      
+        // Sampler 1:
+        modulateWithPrimaryColor(1, textures[1]);  
       } else if (blendMode == ADD) {
+        // Sampler 0:
+        gl11.glActiveTexture(GL11.GL_TEXTURE0);
+        gl11.glBindTexture(textures[0].getGLTarget(), textures[0].getGLID());        
+        // Add texture 0 to texture 1:
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_COMBINE);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_COMBINE_RGB, GL11.GL_ADD);    
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC0_RGB, GL11.GL_TEXTURE0);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC1_RGB, GL11.GL_TEXTURE1);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND0_RGB, GL11.GL_SRC_COLOR);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND1_RGB, GL11.GL_SRC_COLOR);
+        // Add ALPHA with ALPHA:
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_COMBINE_ALPHA, GL11.GL_ADD);    
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC0_ALPHA, GL11.GL_TEXTURE0);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC1_ALPHA, GL11.GL_TEXTURE1);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND0_ALPHA, GL11.GL_SRC_ALPHA);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND1_ALPHA, GL11.GL_SRC_ALPHA);        
+        // Sampler 1:
+        modulateWithPrimaryColor(1, textures[1]);                
       } else if (blendMode == SUBTRACT) {
+        // Sampler 0:
+        gl11.glActiveTexture(GL11.GL_TEXTURE0);
+        gl11.glBindTexture(textures[0].getGLTarget(), textures[0].getGLID());        
+        // Substract texture 1 from texture 0:
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_COMBINE);
+        // Subtract RGB with RGB:
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_COMBINE_RGB, GL11.GL_SUBTRACT);    
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC0_RGB, GL11.GL_TEXTURE0);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC1_RGB, GL11.GL_TEXTURE1);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND0_RGB, GL11.GL_SRC_COLOR);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND1_RGB, GL11.GL_SRC_COLOR);
+        // Subtract ALPHA with ALPHA:
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_COMBINE_ALPHA, GL11.GL_SUBTRACT);    
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC0_ALPHA, GL11.GL_TEXTURE0);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC1_ALPHA, GL11.GL_TEXTURE1);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND0_ALPHA, GL11.GL_SRC_ALPHA);
+        gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND1_ALPHA, GL11.GL_SRC_ALPHA);      
+        // Sampler 1:
+        modulateWithPrimaryColor(1, textures[1]);
       } else {
         PGraphics.showWarning("A3D: This blend mode is currently unsupported in multitexture mode.");
       }      
     }
     
-    // Mixes result of the texture combination with the color value already in the color buffer:
+    // Mix result of the texture combination with the color already stored in the color buffer:
     gl.glEnable(GL10.GL_BLEND); 
     gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
   }  
+
+  protected void modulateWithPrimaryColor(int unit, PTexture tex) {
+    gl11.glActiveTexture(GL11.GL_TEXTURE0 + unit);
+    gl11.glBindTexture(tex.getGLTarget(), tex.getGLID());
+    // Interpolate RGB of previous color (result of blending in sampler 0) with RGB
+    // of primary color (tinted and lit from pixel)...
+    gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_COMBINE);
+    gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_COMBINE_RGB, GL11.GL_MODULATE);
+    gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC0_RGB, GL11.GL_PREVIOUS);
+    gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC1_RGB, GL11.GL_PRIMARY_COLOR);
+    gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND0_RGB, GL11.GL_SRC_COLOR);
+    gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND1_RGB, GL11.GL_SRC_COLOR);
+    // Resulting ALPHA is that of mixed textures...
+    gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_COMBINE_ALPHA, GL11.GL_REPLACE);
+    gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC0_ALPHA, GL11.GL_PREVIOUS);
+    gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND0_ALPHA, GL11.GL_SRC_ALPHA);            
+  }
   
   protected void clearMultitextureBlend(int num) {
     gl11.glActiveTexture(GL11.GL_TEXTURE0);

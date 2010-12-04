@@ -473,6 +473,8 @@ public class PShape3D extends PShape implements PConstants {
       set(idx, new float[] {x, y, z});
     } else if (updateElement == NORMALS) {
       set(idx, new float[] {x, y, z});    
+    } else if (updateElement == COLORS) {
+      set(idx, new float[] {x, y, z, 1});
     }
   }
 
@@ -731,7 +733,7 @@ public class PShape3D extends PShape implements PConstants {
 
   
   protected void addDefaultChild() {
-    PShape child = createChild("Default", 0, vertexCount - 1, glMode, 0, null);
+    PShape child = createChild("Default", 0, vertexCount - 1, getDrawModeImpl(), 0, null);
     addChild(child);
   }
   
@@ -873,6 +875,9 @@ public class PShape3D extends PShape implements PConstants {
   
   public void setTexture(PImage tex) {
     if (family == GROUP) {
+      if (children == null) {
+        addDefaultChild();
+      }
       setTexture(0, tex);
     } else {
       setTextureImpl(tex, 0);
@@ -882,6 +887,9 @@ public class PShape3D extends PShape implements PConstants {
   
   public void setTexture(PImage tex0, PImage tex1) {
     if (family == GROUP) {
+      if (children == null) {
+        addDefaultChild();
+      }      
       setTexture(0, tex0, tex1);
     } else {
       setTextureImpl(tex0, 0);
@@ -892,6 +900,9 @@ public class PShape3D extends PShape implements PConstants {
   
   public void setTexture(PImage tex0, PImage tex1, PImage tex2) {
     if (family == GROUP) {
+      if (children == null) {
+        addDefaultChild();
+      }      
       setTexture(0, tex0, tex1, tex2);
     } else {
       setTextureImpl(tex0, 0);
@@ -903,6 +914,9 @@ public class PShape3D extends PShape implements PConstants {
   
   public void setTexture(PImage tex0, PImage tex1, PImage tex2, PImage tex3) {
     if (family == GROUP) {
+      if (children == null) {
+        addDefaultChild();
+      }      
       setTexture(0, tex0, tex1, tex2, tex3);
     } else {
       setTextureImpl(tex0, 0);
@@ -915,6 +929,9 @@ public class PShape3D extends PShape implements PConstants {
   
   public void setTexture(PImage[] tex) {
     if (family == GROUP) {
+      if (children == null) {
+        addDefaultChild();
+      }      
       setTexture(0, tex);
     } else {
       for (int i = 0; i < tex.length; i++) {
@@ -1784,13 +1801,13 @@ public class PShape3D extends PShape implements PConstants {
       gl.glLineWidth(g.strokeWeight);
     }
 
-    if (0 < glMode && !pointSprites) {
+    //if (0 < glMode && !pointSprites) {
       // Using the group's vertex mode.
-      gl.glDrawArrays(glMode, firstVertex, lastVertex - firstVertex + 1);
-    } else {
+    //  gl.glDrawArrays(glMode, firstVertex, lastVertex - firstVertex + 1);
+    //} else {
       // Using the overall's vertex mode assigned to the entire model.
       gl.glDrawArrays(glMode, firstVertex, lastVertex - firstVertex + 1);
-    }
+    //}
 
     if (0 < numTextures) {
       if (1 < numTextures) {
