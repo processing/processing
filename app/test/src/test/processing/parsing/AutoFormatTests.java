@@ -52,6 +52,11 @@ public class AutoFormatTests {
   }
 
   @Test
+  public void bug405() {
+    expectGood("bug405");
+  }
+  
+  @Test
   public void bug420() {
     expectGood("bug420");
   }
