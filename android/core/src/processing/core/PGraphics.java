@@ -5124,6 +5124,20 @@ public class PGraphics extends PImage implements PConstants {
       showMissingWarning("noBlend");
     }
   }
+
+  
+  public void textureBlend(int mode) {
+    if (!is3D()) {
+      showMissingWarning("blend");
+    }
+  }
+  
+  
+  public void noTextureBlend() {
+    if (!is3D()) {
+      showMissingWarning("noBlend");
+    }
+  }
   
   
   public void texture(PImage image0, PImage image1) {
