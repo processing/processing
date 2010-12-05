@@ -1136,6 +1136,11 @@ public class PTexture implements PConstants {
     return new Parameters(format, filter);  
   }        
       
+
+  static public Parameters newParameters(Parameters params) {
+    return new Parameters();  
+  }
+  
   
   /**
    * This class stores the parameters for a texture: target, internal format, minimization filter
@@ -1176,30 +1181,58 @@ public class PTexture implements PConstants {
      * Creates an instance of GLTextureParameters, setting all the parameters to default values.
      */
     public Parameters() {
-      target = TEXTURE2D;
-      format = ARGB;
-      minFilter = LINEAR;
-      magFilter = LINEAR;
-      wrapU = CLAMP;
-      wrapV = CLAMP;
+      this.target = TEXTURE2D;
+      this.format = ARGB;
+      this.minFilter = LINEAR;
+      this.magFilter = LINEAR;
+      this.wrapU = CLAMP;
+      this.wrapV = CLAMP;
     }
       
     public Parameters(int format) {
-      target = TEXTURE2D;
+      this.target = TEXTURE2D;
       this.format = format;
-      minFilter = LINEAR;
-      magFilter = LINEAR;   
-      wrapU = CLAMP;
-      wrapV = CLAMP;
+      this.minFilter = LINEAR;
+      this.magFilter = LINEAR;   
+      this.wrapU = CLAMP;
+      this.wrapV = CLAMP;
     }
 
     public Parameters(int format, int filter) {
-      target = PTexture.TEXTURE2D;
+      this.target = TEXTURE2D;
       this.format = format;
-      minFilter = filter;
-      magFilter = filter;
-      wrapU = CLAMP;
-      wrapV = CLAMP;      
+      this.minFilter = filter;
+      this.magFilter = filter;
+      this.wrapU = CLAMP;
+      this.wrapV = CLAMP;      
     }
+    
+    public Parameters(Parameters src) {
+      this.target = src.target;
+      this.format = src.format;
+      this.minFilter = src.minFilter;
+      this.magFilter = src.magFilter;
+      this.wrapU = src.wrapU;
+      this.wrapV = src.wrapV;      
+    }
+    
+    public void set(int format) {
+      this.format = format;
+    }
+
+    public void set(int format, int filter) {
+      this.format = format;
+      this.minFilter = filter;
+      this.magFilter = filter;
+    }
+    
+    public void set(Parameters src) {
+      this.target = src.target;
+      this.format = src.format;
+      this.minFilter = src.minFilter;
+      this.magFilter = src.magFilter;
+      this.wrapU = src.wrapU;
+      this.wrapV = src.wrapV;      
+    }    
   }
 }

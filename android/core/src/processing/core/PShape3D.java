@@ -552,27 +552,32 @@ public class PShape3D extends PShape implements PConstants {
     for (int i = firstUpdateIdx; i <= lastUpdateIdx; i++) {
       if (vertexChild[i] != null && vertexChild[i].textures[unit] != null) {
         tex = vertexChild[i].textures[unit].getTexture();
+        if (tex == null) {
+          tex = vertexChild[i].textures[unit].createTexture();
+        }        
         
-        if (tex != tex0) {
+        if (tex != null && tex != tex0) {
           uscale = 1.0f;
           vscale = 1.0f;
           cx = 0.0f;
           sx = +1.0f;
           cy = 0.0f;
           sy = +1.0f;
+
+          if (tex != null) {
+            if (tex.isFlippedX()) {
+              cx = 1.0f;      
+              sx = -1.0f;
+            }
           
-          if (tex.isFlippedX()) {
-            cx = 1.0f;      
-            sx = -1.0f;
+            if (tex.isFlippedY()) {
+              cy = 1.0f;      
+              sy = -1.0f;
+            }
+          
+            uscale *= tex.getMaxTexCoordU();
+            vscale *= tex.getMaxTexCoordV();
           }
-          
-          if (tex.isFlippedY()) {
-            cy = 1.0f;      
-            sy = -1.0f;
-          }
-          
-          uscale *= tex.getMaxTexCoordU();
-          vscale *= tex.getMaxTexCoordV();        
           tex0 = tex;
         }
 
@@ -607,6 +612,9 @@ public class PShape3D extends PShape implements PConstants {
     for (int i = firstUpdateIdx; i <= lastUpdateIdx; i++) {
       if (vertexChild[i] != null && vertexChild[i].textures[unit] != null) {
         tex = vertexChild[i].textures[unit].getTexture();
+        if (tex == null) {
+          tex = vertexChild[i].textures[unit].createTexture();
+        }        
         
         if (tex != tex0) {
           uscale = 1.0f;
@@ -616,18 +624,20 @@ public class PShape3D extends PShape implements PConstants {
           cy = 0.0f;
           sy = +1.0f;
           
-          if (tex.isFlippedX()) {
-            cx = 1.0f;      
-            sx = -1.0f;
-          }
+          if (tex != null) {
+            if (tex.isFlippedX()) {
+              cx = 1.0f;      
+              sx = -1.0f;
+            }
           
-          if (tex.isFlippedY()) {
-            cy = 1.0f;      
-            sy = -1.0f;
-          }
+            if (tex.isFlippedY()) {
+              cy = 1.0f;      
+              sy = -1.0f;
+            }
           
-          uscale *= tex.getMaxTexCoordU();
-          vscale *= tex.getMaxTexCoordV();        
+            uscale *= tex.getMaxTexCoordU();
+            vscale *= tex.getMaxTexCoordV();
+          }
           tex0 = tex;
         }
 
@@ -1001,7 +1011,7 @@ public class PShape3D extends PShape implements PConstants {
       p3d.addTexBuffers(unit - p3d.numTexBuffers + 1);
     }
     
-    if (tex == null || tex.getTexture() == null) {
+    if (tex == null) {
       throw new RuntimeException("PShape3D: trying to set null texture.");
     } 
     
@@ -1729,18 +1739,18 @@ public class PShape3D extends PShape implements PConstants {
     for (int t = 0; t < textures.length; t++) {
       if (textures[t] != null) {
         PTexture tex = textures[t].getTexture();
-        if (tex != null) {
-          gl.glEnable(tex.getGLTarget());
-          gl.glActiveTexture(GL10.GL_TEXTURE0 + t);
-          gl.glBindTexture(tex.getGLTarget(), tex.getGLID());
-          renderTextures[numTextures] = tex;
-          numTextures++;
-        } else {
-          // Null PTexture field in A3D. It can happen and things still ok
-          // when, for example, a PImage is being loaded asynchronously and
-          // used for drawing in the meantime...
-          break;  
+        if (tex == null) {
+          tex = textures[t].createTexture();
+          if (tex == null) {
+            break;
+          }
         }
+        
+        gl.glEnable(tex.getGLTarget());
+        gl.glActiveTexture(GL10.GL_TEXTURE0 + t);
+        gl.glBindTexture(tex.getGLTarget(), tex.getGLID());
+        renderTextures[numTextures] = tex;
+        numTextures++;
       } else {
         break;
       }
@@ -2052,8 +2062,6 @@ public class PShape3D extends PShape implements PConstants {
             // Loading texture map.
             String texname = elements[1];
             currentMtl.kdMap = papplet.loadImage(texname);
-            // Texture orientation in Processing is inverted with respect to OpenGL.
-            currentMtl.kdMap.getTexture().setFlippedY(true);
           } else if (elements[0].equals("Ka") && elements.length > 3) {
             // The ambient color of the material
             currentMtl.ka.x = Float.valueOf(elements[1]).floatValue();
@@ -2209,6 +2217,11 @@ public class PShape3D extends PShape implements PConstants {
             }
           }
           
+          PTexture texMtl = mtl.kdMap.getTexture();
+          if (texMtl != null) {     
+            // Texture orientation in Processing is inverted with respect to OpenGL.
+            texMtl.setFlippedY(true);          
+          }
           a3d.texture(mtl.kdMap);
           if (norms != null) {
             a3d.normal(norms.x, norms.y, norms.z);

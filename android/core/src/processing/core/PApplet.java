@@ -1537,9 +1537,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
     PImage image = new PImage(wide, high, format);
     image.parent = this;  // make save() work
     if (g.is3D()) {
-      // TODO: Check why textures doesn't work in formats other than ARGB...
-      image.format = ARGB;
-      image.loadTexture();
+      image.createTexParams(format);
     }
     return image;
   }
@@ -1549,9 +1547,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
     PImage image = new PImage(wide, high, format);
     image.parent = this;  // make save() work
     if (g.is3D()) {
-      // TODO: Check why textures doesn't work in formats other than ARGB...
-      image.format = ARGB;
-      image.loadTexture(filter);
+      image.createTexParams(format, filter);
     }
     return image;
   }
@@ -1561,9 +1557,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
     PImage image = new PImage(wide, high, params.format);
     image.parent = this;  // make save() work
     if (g.is3D()) {
-      // TODO: Check why textures doesn't work in formats other than ARGB...
-      image.format = ARGB;
-      image.loadTexture(params);
+      image.createTexParams(params);
     }
     return image;
   }
@@ -3376,9 +3370,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
     PImage image = new PImage(bitmap);
     image.parent = this;
     if (g.is3D()) {
-      // TODO: Check why textures doesn't work in formats other than ARGB...
-      image.format = ARGB;
-      image.loadTexture(params);
+      image.createTexParams(params);
     }
     return image;
   }
