@@ -695,8 +695,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
     
     offscreenTextures = new PTexture[2];
-    offscreenTextures[0] = offscreenImages[0].getTexture();
-    offscreenTextures[1] = offscreenImages[1].getTexture();
+    offscreenTextures[0] = offscreenImages[0].createTexture();
+    offscreenTextures[1] = offscreenImages[1].createTexture();
     
     // Drawing textures are marked as flipped along Y to ensure they are properly
     // rendered by Processing, which has inverted Y axis with respect to
@@ -2334,18 +2334,18 @@ public class PGraphicsAndroid3D extends PGraphics {
         for (int t = 0; t < numMultitextures; t++) {
           if (images[t] != null) {
             PTexture tex = images[t].getTexture();
-            if (tex != null) {
-              gl.glEnable(tex.getGLTarget());
-              gl.glActiveTexture(GL10.GL_TEXTURE0 + t);
-              gl.glBindTexture(tex.getGLTarget(), tex.getGLID());   
-              renderTextures[numTextures] = tex;
-              numTextures++;
-            } else {
-              // Null PTexture field in A3D. It can happen and things still ok
-              // when, for example, a PImage is being loaded asynchronously and
-              // used for drawing in the meantime...
-              break; 
+            if (tex == null) {
+              tex = images[t].createTexture();
+              if (tex == null) {
+                break;
+              }
             }
+              
+            gl.glEnable(tex.getGLTarget());
+            gl.glActiveTexture(GL10.GL_TEXTURE0 + t);
+            gl.glBindTexture(tex.getGLTarget(), tex.getGLID());   
+            renderTextures[numTextures] = tex;
+            numTextures++;
           } else {
             // If there is a null texture image at some point in the
             // list, all subsequent images are ignored. This situation
@@ -2355,8 +2355,12 @@ public class PGraphicsAndroid3D extends PGraphics {
           }
         }
       } else if (images[0] != null) {
-        PTexture tex = images[0].getTexture();      
-        if (tex != null) {
+        PTexture tex = images[0].getTexture();
+        if (tex == null) {
+          tex = images[0].createTexture();
+        }        
+        
+        if (tex != null) {      
           gl.glEnable(tex.getGLTarget());
           gl.glActiveTexture(GL10.GL_TEXTURE0);
           gl.glBindTexture(tex.getGLTarget(), tex.getGLID());   
@@ -5474,7 +5478,7 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   protected PImage getImpl(int x, int y, int w, int h) {
     PImage newbie = parent.createImage(w, h, ARGB);
-    PTexture newbieTex = newbie.getTexture();
+    PTexture newbieTex = newbie.createTexture();
 
     IntBuffer newbieBuffer = IntBuffer.allocate(w * h);
     gl.glReadPixels(x, height - y, w, -h, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, newbieBuffer);
@@ -5523,8 +5527,6 @@ public class PGraphicsAndroid3D extends PGraphics {
       // The crop region and draw rectangle are given like this to take into account
       // inverted y-axis in Processin with respect to OpenGL.
       drawTexture(tex, 0, h, w, -h, x, height - y, w, h);
-    } else {
-      PGraphics.showWarning("A3D: The image doesn't have an associated texture to use.");
     }
   }
 
