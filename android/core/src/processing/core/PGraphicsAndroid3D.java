@@ -180,6 +180,9 @@ public class PGraphicsAndroid3D extends PGraphics {
   // Number of currently initialized texture buffers.
   protected int numTexBuffers;
   
+  // Blending mode use to combine multitextures.
+  protected int multitexureBlendMode;
+  
   // Array used in the renderTriangles method to store the textures in use.
   protected PTexture[] renderTextures = new PTexture[MAX_TEXTURES];
   
@@ -369,7 +372,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   // ........................................................
   
   boolean blend;
-  int blendMode;  
+  int blendMode;
 
   // ........................................................
 
@@ -939,6 +942,9 @@ public class PGraphicsAndroid3D extends PGraphics {
     // Blend is needed for alpha (i.e. fonts) to work.
     blend(BLEND);
 
+    // Default multitexture blending:
+    textureBlend(BLEND);
+    
     // this is necessary for 3D drawing
     if (hints[DISABLE_DEPTH_TEST]) {
       gl.glDisable(GL10.GL_DEPTH_TEST);
@@ -5735,6 +5741,17 @@ public class PGraphicsAndroid3D extends PGraphics {
     gl.glDisable(GL10.GL_BLEND);
   }
   
+  
+  public void textureBlend(int mode) {
+    multitexureBlendMode = mode;
+  }
+
+  
+  public void noTextureBlend() {
+    multitexureBlendMode = REPLACE;
+  }  
+  
+  
   // Some useful info about multitexturing with combiners:
   // http://www.opengl.org/wiki/Texture_Combiners
   // http://www.khronos.org/opengles/sdk/1.1/docs/man/glTexEnv.xml
@@ -5754,14 +5771,12 @@ public class PGraphicsAndroid3D extends PGraphics {
       return;
     }
 
-    gl.glDisable(GL10.GL_BLEND);
-
     if (!texenvCrossbarSupported) {
       PGraphics.showWarning("A3D: Texture environment crossbar not supported, so the textures won't be affected by tint or light.");
       // Without texture environment crossbar we have to use the first sampler just to read the first texture,
       // and the second to do the mixing, in this way we don't have a way to modulate the output of the
       // texture mixing with the pixel tint or lighting.
-      if (blendMode == REPLACE) {
+      if (multitexureBlendMode == REPLACE) {
         // Texture 0:
         gl11.glActiveTexture(GL11.GL_TEXTURE0);
         gl11.glBindTexture(textures[0].getGLTarget(), textures[0].getGLID());
@@ -5772,7 +5787,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         gl11.glBindTexture(textures[1].getGLTarget(), textures[1].getGLID());
         // Sample the texture, replacing the previous one.
         gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_REPLACE);
-      } else if (blendMode == BLEND) {
+      } else if (multitexureBlendMode == BLEND) {
         // Texture 0:
         gl11.glActiveTexture(GL11.GL_TEXTURE0);
         gl11.glBindTexture(textures[0].getGLTarget(), textures[0].getGLID());
@@ -5799,7 +5814,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND1_ALPHA, GL11.GL_SRC_ALPHA);
         // ...using ALPHA of tex1 as interpolation factor.
         gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND2_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);   
-      } else if (blendMode == MULTIPLY) {
+      } else if (multitexureBlendMode == MULTIPLY) {
         // Texture 0:
         gl11.glActiveTexture(GL11.GL_TEXTURE0);
         gl11.glBindTexture(textures[0].getGLTarget(), textures[0].getGLID());
@@ -5822,7 +5837,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC1_ALPHA, GL11.GL_TEXTURE);
         gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND0_ALPHA, GL11.GL_SRC_ALPHA);
         gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND1_ALPHA, GL11.GL_SRC_ALPHA);      
-      } else if (blendMode == ADD) {
+      } else if (multitexureBlendMode == ADD) {
         gl11.glActiveTexture(GL11.GL_TEXTURE0);
         gl11.glBindTexture(textures[0].getGLTarget(), textures[0].getGLID());
         gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_REPLACE);
@@ -5841,7 +5856,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_SRC1_ALPHA, GL11.GL_TEXTURE);
         gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND0_ALPHA, GL11.GL_SRC_ALPHA);
         gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND1_ALPHA, GL11.GL_SRC_ALPHA);      
-      } else if (blendMode == SUBTRACT) {
+      } else if (multitexureBlendMode == SUBTRACT) {
         // Texture 0:
         gl11.glActiveTexture(GL11.GL_TEXTURE0);
         gl11.glBindTexture(textures[0].getGLTarget(), textures[0].getGLID());
@@ -5870,7 +5885,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       // and the modulation with the pixel color (which includes tint and light) in the second,
       // as explained here:
       // http://www.imgtec.com/forum/forum_posts.asp?TID=701
-      if (blendMode == REPLACE) {
+      if (multitexureBlendMode == REPLACE) {
         // Sampler 0:
         gl11.glActiveTexture(GL11.GL_TEXTURE0);
         gl11.glBindTexture(textures[0].getGLTarget(), textures[0].getGLID());         
@@ -5886,7 +5901,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND0_ALPHA, GL11.GL_SRC_ALPHA);
         // Sampler 1:
         modulateWithPrimaryColor(1, textures[1]);
-      } else if (blendMode == BLEND) {
+      } else if (multitexureBlendMode == BLEND) {
         // Sampler 0: interpolation between textures 0 and 1 using alpha of 1.
         gl11.glActiveTexture(GL11.GL_TEXTURE0);
         gl11.glBindTexture(textures[0].getGLTarget(), textures[0].getGLID());
@@ -5911,7 +5926,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND2_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         // Sampler 1:
         modulateWithPrimaryColor(1, textures[1]);        
-      } else if (blendMode == MULTIPLY) {
+      } else if (multitexureBlendMode == MULTIPLY) {
         // Sampler 0:
         gl11.glActiveTexture(GL11.GL_TEXTURE0);
         gl11.glBindTexture(textures[0].getGLTarget(), textures[0].getGLID());        
@@ -5931,7 +5946,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND1_ALPHA, GL11.GL_SRC_ALPHA);      
         // Sampler 1:
         modulateWithPrimaryColor(1, textures[1]);  
-      } else if (blendMode == ADD) {
+      } else if (multitexureBlendMode == ADD) {
         // Sampler 0:
         gl11.glActiveTexture(GL11.GL_TEXTURE0);
         gl11.glBindTexture(textures[0].getGLTarget(), textures[0].getGLID());        
@@ -5950,7 +5965,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND1_ALPHA, GL11.GL_SRC_ALPHA);        
         // Sampler 1:
         modulateWithPrimaryColor(1, textures[1]);                
-      } else if (blendMode == SUBTRACT) {
+      } else if (multitexureBlendMode == SUBTRACT) {
         // Sampler 0:
         gl11.glActiveTexture(GL11.GL_TEXTURE0);
         gl11.glBindTexture(textures[0].getGLTarget(), textures[0].getGLID());        
@@ -5975,9 +5990,8 @@ public class PGraphicsAndroid3D extends PGraphics {
       }      
     }
     
-    // Mix result of the texture combination with the color already stored in the color buffer:
-    gl.glEnable(GL10.GL_BLEND); 
-    gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+    // The result of the texture combination will be mixed with the color already stored in 
+    // the color buffer depending on the current blend mode.
   }  
 
   protected void modulateWithPrimaryColor(int unit, PTexture tex) {
@@ -5998,16 +6012,10 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
   
   protected void clearMultitextureBlend(int num) {
-    gl11.glActiveTexture(GL11.GL_TEXTURE0);
-    gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_MODULATE);
-    gl11.glActiveTexture(GL11.GL_TEXTURE1);
-    gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_MODULATE);
-    
-    if (blend) {
-      blend(blendMode);
-    } else { 
-      noBlend();
-    }    
+    for (int i = 0; i < num; i++) {
+      gl11.glActiveTexture(GL11.GL_TEXTURE0 + i);
+      gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_MODULATE);
+    }
   }
   
   // ////////////////////////////////////////////////////////////
