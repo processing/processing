@@ -1163,12 +1163,6 @@ public class PGraphics extends PImage implements PConstants {
 
     textureU = u;
     textureV = v;
-
-    if (textureU < 0) textureU = 0;
-    else if (textureU > 1) textureU = 1;
-
-    if (textureV < 0) textureV = 0;
-    else if (textureV > 1) textureV = 1;
   }
 
 

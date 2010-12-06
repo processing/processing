@@ -1138,7 +1138,7 @@ public class PTexture implements PConstants {
       
 
   static public Parameters newParameters(Parameters params) {
-    return new Parameters();  
+    return new Parameters(params);  
   }
   
   
@@ -1213,7 +1213,7 @@ public class PTexture implements PConstants {
       this.minFilter = src.minFilter;
       this.magFilter = src.magFilter;
       this.wrapU = src.wrapU;
-      this.wrapV = src.wrapV;      
+      this.wrapV = src.wrapV;
     }
     
     public void set(int format) {
