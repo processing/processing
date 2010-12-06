@@ -99,6 +99,12 @@ public class PShape3D extends PShape implements PConstants {
   protected int firstUpdateIdx;
   protected int lastUpdateIdx;
 
+  boolean readFromOBJ = false;
+  ArrayList<PVector> objVertices; 
+  ArrayList<PVector> objNormal; 
+  ArrayList<PVector> objTexCoords;    
+  ArrayList<OBJFace> objFaces;
+  ArrayList<OBJMaterial> objMaterials;
   
   ////////////////////////////////////////////////////////////
 
@@ -145,11 +151,12 @@ public class PShape3D extends PShape implements PConstants {
        throw new RuntimeException("PShape3D: Vertex Buffer Objects are not available");
     }
 
-    ArrayList<PVector> vertices = new ArrayList<PVector>(); 
-    ArrayList<PVector> normals = new ArrayList<PVector>(); 
-    ArrayList<PVector> textures = new ArrayList<PVector>();    
-    ArrayList<OBJFace> faces = new ArrayList<OBJFace>();
-    ArrayList<OBJMaterial> materials = new ArrayList<OBJMaterial>();
+    readFromOBJ = true;
+    objVertices = new ArrayList<PVector>(); 
+    objNormal = new ArrayList<PVector>(); 
+    objTexCoords = new ArrayList<PVector>();    
+    objFaces = new ArrayList<OBJFace>();
+    objMaterials = new ArrayList<OBJMaterial>();
     BufferedReader reader = getBufferedReader(filename);
     if (reader == null) {
       throw new RuntimeException("PShape3D: Cannot read source file");
@@ -159,9 +166,11 @@ public class PShape3D extends PShape implements PConstants {
     Parameters params = PShape3D.newParameters(TRIANGLES, mode); 
     setParameters(params);
     
-    parseOBJ(reader, vertices, normals, textures, faces, materials);
-    recordOBJ(vertices, normals, textures, faces, materials);
-    centerAt(0, 0, 0);
+    parseOBJ(reader, objVertices, objNormal, objTexCoords, objFaces, objMaterials);
+    
+    // Putting the number of vertices retrieved from the OBJ file in the vertex count
+    // field, although the actual geometry hasn't been sent to the VBOs yet.
+    vertexCount = objVertices.size();
   }  
   
   
@@ -1683,6 +1692,18 @@ public class PShape3D extends PShape implements PConstants {
 	 
 
   protected void drawGroup(PGraphics g) {
+    if (readFromOBJ) {
+      recordOBJ(objVertices, objNormal, objTexCoords, objFaces, objMaterials);
+      centerAt(0, 0, 0);
+      
+      readFromOBJ = false;
+      objVertices = null; 
+      objNormal = null; 
+      objTexCoords = null;    
+      objFaces = null;
+      objMaterials = null;
+    }
+    
     if (children == null) {
       addDefaultChild();
     }
@@ -1902,7 +1923,7 @@ public class PShape3D extends PShape implements PConstants {
   
   
   protected void parseOBJ(BufferedReader reader, ArrayList<PVector> vertices, ArrayList<PVector> normals, ArrayList<PVector> textures, ArrayList<OBJFace> faces, ArrayList<OBJMaterial> materials) {
-    Hashtable<String, Integer> materialsHash  = new Hashtable<String, Integer>();
+    Hashtable<String, Integer> mtlTable  = new Hashtable<String, Integer>();
     int mtlIdxCur = -1;
     boolean readv, readvn, readvt;
     try {
@@ -1953,7 +1974,7 @@ public class PShape3D extends PShape implements PConstants {
             // Object name is ignored, for now.
           } else if (elements[0].equals("mtllib")) {
             if (elements[1] != null) {
-              parseMTL(getBufferedReader(elements[1]), materials, materialsHash); 
+              parseMTL(getBufferedReader(elements[1]), materials, mtlTable); 
             }
           } else if (elements[0].equals("g")) {
             // Grouping is ignored, for now. Groups are automatically generated during recording by the triangulator.
@@ -1961,8 +1982,8 @@ public class PShape3D extends PShape implements PConstants {
             // Getting index of current active material (will be applied on all subsequent faces)..
             if (elements[1] != null) {
               String mtlname = elements[1];
-              if (materialsHash.containsKey(mtlname)) {
-                Integer tempInt = materialsHash.get(mtlname);
+              if (mtlTable.containsKey(mtlname)) {
+                Integer tempInt = mtlTable.get(mtlname);
                 mtlIdxCur = tempInt.intValue();
               } else {
                 mtlIdxCur = -1;                
