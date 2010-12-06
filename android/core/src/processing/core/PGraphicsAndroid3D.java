@@ -1609,12 +1609,6 @@ public class PGraphicsAndroid3D extends PGraphics {
 
       multitextureU[t] = u;
       multitextureV[t] = v;
-
-      if (multitextureU[t] < 0) multitextureU[t] = 0;
-      else if (multitextureU[t] > 1) multitextureU[t] = 1;
-
-      if (multitextureV[t] < 0) multitextureV[t] = 0;
-      else if (multitextureV[t] > 1) multitextureV[t] = 1;
     }    
   }  
   

@@ -401,7 +401,7 @@ public class PShape3D extends PShape implements PConstants {
     texCoordBuffer.rewind();
     texCoordBuffer.get(texcoords, offset, size);
     
-    normalizeTexcoords(unit);
+    //normalizeTexcoords(unit);
     
     updateTexunit = unit;    
   }  
@@ -412,7 +412,7 @@ public class PShape3D extends PShape implements PConstants {
       int offset = firstUpdateIdx * 2;
       int size = (lastUpdateIdx - firstUpdateIdx + 1) * 2;
       
-      unnormalizeTexcoords(updateTexunit);
+      //unnormalizeTexcoords(updateTexunit);
       
       texCoordBuffer.position(0);      
       texCoordBuffer.put(texcoords, offset, size);
@@ -655,12 +655,6 @@ public class PShape3D extends PShape implements PConstants {
         
         u = (cx +  sx * u) * uscale;
         v = (cy +  sy * v) * vscale;
-        
-        if (u < 0) v = 0;
-        else if (u > 1) u = 1;
-
-        if (v < 0) v = 0;
-        else if (v > 1) v = 1;    
         
         texcoords[2 * i + 0] = u;
         texcoords[2 * i + 1] = v;        
