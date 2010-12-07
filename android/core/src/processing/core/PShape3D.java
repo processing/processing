@@ -401,7 +401,7 @@ public class PShape3D extends PShape implements PConstants {
     texCoordBuffer.rewind();
     texCoordBuffer.get(texcoords, offset, size);
     
-    //normalizeTexcoords(unit);
+   normalizeTexcoords(unit);
     
     updateTexunit = unit;    
   }  
@@ -412,7 +412,7 @@ public class PShape3D extends PShape implements PConstants {
       int offset = firstUpdateIdx * 2;
       int size = (lastUpdateIdx - firstUpdateIdx + 1) * 2;
       
-      //unnormalizeTexcoords(updateTexunit);
+      unnormalizeTexcoords(updateTexunit);
       
       texCoordBuffer.position(0);      
       texCoordBuffer.put(texcoords, offset, size);
@@ -1826,13 +1826,7 @@ public class PShape3D extends PShape implements PConstants {
       gl.glLineWidth(g.strokeWeight);
     }
 
-    //if (0 < glMode && !pointSprites) {
-      // Using the group's vertex mode.
-    //  gl.glDrawArrays(glMode, firstVertex, lastVertex - firstVertex + 1);
-    //} else {
-      // Using the overall's vertex mode assigned to the entire model.
-      gl.glDrawArrays(glMode, firstVertex, lastVertex - firstVertex + 1);
-    //}
+    gl.glDrawArrays(glMode, firstVertex, lastVertex - firstVertex + 1);
 
     if (0 < numTextures) {
       if (1 < numTextures) {
@@ -1845,7 +1839,12 @@ public class PShape3D extends PShape implements PConstants {
       }
       for (int t = 0; t < numTextures; t++) {
         PTexture tex = renderTextures[t];
-        gl.glDisable(tex.getGLTarget()); 
+        gl.glActiveTexture(GL10.GL_TEXTURE0 + t);
+        gl.glBindTexture(tex.getGLTarget(), 0); 
+      }      
+      for (int t = 0; t < numTextures; t++) {
+        PTexture tex = renderTextures[t];
+        gl.glDisable(tex.getGLTarget());
       }
     }
 

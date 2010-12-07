@@ -321,6 +321,7 @@ public class PTexture implements PConstants {
       setTexels(x, y, w, h, rgbaPixels);
     }
 
+    gl.glBindTexture(glTarget, 0);
     gl.glDisable(glTarget);
   }  
 
@@ -524,7 +525,7 @@ public class PTexture implements PConstants {
    * Sets the texture as flipped or not flipped on the vertical direction.
    * @param v boolean;
    */ 
-  protected void setFlippedY(boolean v) {
+  public void setFlippedY(boolean v) {
     flippedY = v;
   }
     
@@ -907,6 +908,7 @@ public class PTexture implements PConstants {
      gl.glTexParameterf(glTarget, GL10.GL_TEXTURE_WRAP_T, glWrapT);
      
      gl.glTexImage2D(glTarget, 0, glFormat,  glWidth,  glHeight, 0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, null);
+     gl.glBindTexture(glTarget, 0);
      gl.glDisable(glTarget);
         
      flippedX = false;
@@ -966,6 +968,10 @@ public class PTexture implements PConstants {
   
   protected void bind() {
     gl.glBindTexture(glTarget, glID);
+  }
+  
+  protected void unbind() {
+    gl.glBindTexture(glTarget, 0);    
   }
   
   protected void copyObject(PTexture src) {
