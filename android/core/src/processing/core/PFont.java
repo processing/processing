@@ -711,7 +711,7 @@ public class PFont implements PConstants {
       resize = false;
     }
      
-    PTexture tex = new PTexture(parent, w, h, new PTexture.Parameters(ARGB, NEAREST));
+    PTexture tex = new PTexture(parent, w, h, new PTexture.Parameters(ARGB, POINT));
     
     if (textures == null) {
       textures = new PTexture[1];

@@ -1543,11 +1543,11 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
-  public PImage createImage(int wide, int high, int format, int filter) {
+  public PImage createImage(int wide, int high, int format, int sampling) {
     PImage image = new PImage(wide, high, format);
     image.parent = this;  // make save() work
     if (g.is3D()) {
-      image.createTexParams(format, filter);
+      image.createTexParams(format, sampling);
     }
     return image;
   }
@@ -3344,8 +3344,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
     return loadImage(filename, new PTexture.Parameters(ARGB));    
   }
 
-  public PImage loadImage(String filename, int filter) {
-    return loadImage(filename, new PTexture.Parameters(ARGB, filter));
+  public PImage loadImage(String filename, int sampling) {
+    return loadImage(filename, new PTexture.Parameters(ARGB, sampling));
   }
   
   public PImage loadImage(String filename, PTexture.Parameters params) {

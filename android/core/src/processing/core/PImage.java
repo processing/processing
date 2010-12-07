@@ -214,14 +214,13 @@ public class PImage implements PConstants, Cloneable {
   }
   
 
-  public void loadTexture(int filter) {
+  public void loadTexture(int sampling) {
     if (width == 0 || height == 0) return;
     if (texture == null) {
       if (texParams == null) {
         texParams = PTexture.newParameters();
       }      
-      texParams.magFilter = filter;
-      texParams.minFilter = filter;
+      texParams.sampling = sampling;
       texture = new PTexture(parent, width, height, texParams);
     }
     if (pixels == null) {
@@ -308,8 +307,8 @@ public class PImage implements PConstants, Cloneable {
     this.format = texParams.format;    
   }
 
-  protected void createTexParams(int format, int filter) {
-    texParams = PTexture.newParameters(format, filter);
+  protected void createTexParams(int format, int sampling) {
+    texParams = PTexture.newParameters(format, sampling);
     this.format = texParams.format;    
   }  
   

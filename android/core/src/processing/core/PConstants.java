@@ -265,7 +265,7 @@ public interface PConstants {
 
   //static final int GROUP           = (1 << 2);
 
-  static final int POINT           = 2;  // shared with light (!)
+  static final int POINT           = 2;  // shared with light and texture filtering (!)
   static final int POINTS          = 2;
 
   static final int LINE            = 4;
@@ -374,18 +374,14 @@ public interface PConstants {
   /** This constant identifies the texture target GL_TEXTURE_2D, that is, textures with normalized coordinates */
   public static final int TEXTURE2D = 0;
   
-  /** This constant identifies the nearest texture filter  */
-  public static final int NEAREST = 0;
-  /** This constant identifies the linear texture filter  */
-  public static final int LINEAR = 1;
-  /** This constant identifies the nearest/nearest function to build mipmaps  */
-  public static final int NEAREST_MIPMAP_NEAREST = 2;
-  /** This constant identifies the linear/nearest function to build mipmaps  */
-  public static final int LINEAR_MIPMAP_NEAREST = 3;
-  /** This constant identifies the nearest/linear function to build mipmaps  */
-  public static final int NEAREST_MIPMAP_LINEAR = 4;
+  /** This constant identifies the nearest texture filter (point sampling) */
+  //public static final int POINT = 2; // shared with shape feature  
+  /** This constant identifies the linear texture filter, usually called bilinear sampling */
+  public static final int BILINEAR = 3;
   /** This constant identifies the linear/linear function to build mipmaps  */
-  public static final int LINEAR_MIPMAP_LINEAR = 5;
+  public static final int TRILINEAR = 4;
+  
+  
   
   /** This constant identifies the clamp-to-edge wrapping mode */
   public static final int CLAMP = 0;
