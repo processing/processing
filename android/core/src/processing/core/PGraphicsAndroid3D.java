@@ -903,17 +903,10 @@ public class PGraphicsAndroid3D extends PGraphics {
       gl11xp = a3d.gl11xp;
             
       // Disabling all lights, so the offscreen renderer can set completely
-      // new light configuration (otherwise some light config from the 
+      // new light configuration (otherwise some light configuration from the 
       // primary renderer might stay).
       for (int i = 0; i < a3d.lightCount; i++) {
         a3d.glLightDisable(i);
-      }
-      
-      if (a3d.lights) {
-        // The offscreen renderer starts with lights off by default. 
-        // If the primary surface had lights on, the OpenGL state is
-        // changed accordingly.
-        noLights();  
       }
     } 
     
@@ -971,8 +964,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     // this helps the people who haven't set up their own projection.
     perspective();
         
-    lights = false;
-    lightCount = 0;
+    noLights();
     lightFalloff(1, 0, 0);
     lightSpecular(0, 0, 0);
 
@@ -2312,6 +2304,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       // previous textured shape.
       p[0] = null;
     }
+    java.util.Arrays.fill(p, numMultitextures, maxTextureUnits, null);
     
     faceCount++;
   }
@@ -2638,9 +2631,20 @@ public class PGraphicsAndroid3D extends PGraphics {
           clearMultitextureBlend(numTextures);
         }
         for (int t = 0; t < numTextures; t++) {
-          PTexture tex = renderTextures[t];
-          gl.glDisable(tex.getGLTarget()); 
+          PTexture tex = renderTextures[t];          
+          gl.glActiveTexture(GL10.GL_TEXTURE0 + t);
+          gl.glBindTexture(tex.getGLTarget(), 0);
         }
+        // Disable the texture targets at the end in a separate loop, otherwise the 
+        // textures are not properly unbound. Example: we have multitexturing, with 
+        // two 2D textures. If the glDisable() call in in the previous loop, then the
+        // 2D texture target is disabled in the first iteration, which invalidates the
+        // glBindTexture in the second iteration.
+        for (int t = 0; t < numTextures; t++) {
+          PTexture tex = renderTextures[t];
+          gl.glDisable(tex.getGLTarget());
+        }
+        
         gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
       }
     }
@@ -5560,6 +5564,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     // with the current fragment color.
     gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_MODULATE);
     
+    gl.glBindTexture(tex.getGLTarget(), 0);
     gl.glDisable(tex.getGLTarget());
     
     if (hints[DISABLE_DEPTH_MASK]) {
@@ -5580,6 +5585,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     gl.glEnable(tex.getGLTarget());
     gl.glBindTexture(tex.getGLTarget(), tex.getGLID());    
     gl.glTexSubImage2D(tex.getGLTarget(), 0, x, y, w, h, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, buffer);
+    gl.glBindTexture(tex.getGLTarget(), 0);
     gl.glDisable(tex.getGLTarget());
   }  
   
@@ -5984,8 +5990,8 @@ public class PGraphicsAndroid3D extends PGraphics {
       }      
     }
     
-    // The result of the texture combination will be mixed with the color already stored in 
-    // the color buffer depending on the current blend mode.
+    // The result of the texture combination will replace the current content of the color buffer.
+    gl.glDisable(GL10.GL_BLEND);
   }  
 
   protected void modulateWithPrimaryColor(int unit, PTexture tex) {
@@ -6009,6 +6015,12 @@ public class PGraphicsAndroid3D extends PGraphics {
     for (int i = 0; i < num; i++) {
       gl11.glActiveTexture(GL11.GL_TEXTURE0 + i);
       gl11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_MODULATE);
+    }
+    // Re-enabling blending.
+    if (blend) {
+      blend(blendMode);
+    } else {
+      noBlend();
     }
   }
   

@@ -308,6 +308,7 @@ public class PFramebuffer implements PConstants {
     gl.glEnable(gltarget);
     gl.glBindTexture(gltarget, glid);    
     gl.glTexSubImage2D(gltarget, 0, 0, 0, width, height, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, buffer);
+    gl.glBindTexture(gltarget, 0);
     gl.glDisable(gltarget);
   }
   
