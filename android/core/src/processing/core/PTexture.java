@@ -66,8 +66,8 @@ public class PTexture implements PConstants {
   protected boolean flippedX;   
   protected boolean flippedY;
 
-  protected int[] tmpPixels = null;
-  protected PFramebuffer tmpFbo = null;
+  protected int[] tempPixels = null;
+  protected PFramebuffer tempFbo = null;
   
   ////////////////////////////////////////////////////////////
   
@@ -197,8 +197,8 @@ public class PTexture implements PConstants {
     
     // Nullifying some utility objects so they are recreated with the appropriate
     // size when needed.
-    tmpPixels = null;
-    tmpFbo = null;
+    tempPixels = null;
+    tempFbo = null;
   }
 
   
@@ -268,12 +268,14 @@ public class PTexture implements PConstants {
     gl.glBindTexture(glTarget, glID);
                 
     if (usingMipmaps) {
-      if (a3d.gl11 != null && PGraphicsAndroid3D.mipmapSupported) {
+      if (a3d.gl11 != null && PGraphicsAndroid3D.mipmapGeneration) {
+        // Automatic mipmap generation.
         int[] rgbaPixels = new int[w * h];
         convertToRGBA(pixels, rgbaPixels, format, w, h);
         gl.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_GENERATE_MIPMAP, GL11.GL_TRUE);
         setTexels(x, y, w, h, rgbaPixels);
       } else {
+        // Manual mipmap generation.
         if (w != width || h != height) {
           System.err.println("Sorry but I don't know how to generate mipmaps for a subregion.");
           return;
@@ -281,33 +283,34 @@ public class PTexture implements PConstants {
         
         // Code by Mike Miller obtained from here:
         // http://insanitydesign.com/wp/2009/08/01/android-opengl-es-mipmaps/
-        // TODO: Check if this algorithm works only for pot textures or for any resolution.
         int w0 = glWidth;
         int h0 = glHeight;        
         int[] argbPixels = new int[w0 * h0];
         convertToARGB(pixels, argbPixels, format);
         int level = 0;
+        int denom = 1;
         
         // We create a Bitmap because then we use its built-in filtered downsampling
         // functionality.
         Bitmap bitmap = Bitmap.createBitmap(w0, h0, Config.ARGB_8888);
         bitmap.setPixels(argbPixels, 0, w0, 0, 0, w0, h0);
-        
+              
         while (w0 >= 1 || h0 >= 1) {
           //First of all, generate the texture from our bitmap and set it to the according level
           GLUtils.texImage2D(glTarget, level, bitmap, 0);
           
           // We are done.
-          if (w0 == 1 || h0 == 1) {
+          if (w0 == 1 && h0 == 1) {
             break;
           }
  
           // Increase the mipmap level
           level++;
+          denom *= 2;
  
-          // Downsampling bitmap
-          h0 /= 2;
-          w0 /= 2;
+          // Downsampling bitmap. This update formula allows for NPOT resolutions:
+          w0 = PApplet.max(1, PApplet.floor((float)glWidth / denom));
+          h0 = PApplet.max(1, PApplet.floor((float)glHeight / denom));
           Bitmap bitmap2 = Bitmap.createScaledBitmap(bitmap, w0, h0, true);
  
           // Clean up
@@ -343,34 +346,34 @@ public class PTexture implements PConstants {
         
     int size = glWidth * glHeight;
         
-    if (tmpFbo == null) {
-      tmpFbo = new PFramebuffer(parent, glWidth, glHeight);
+    if (tempFbo == null) {
+      tempFbo = new PFramebuffer(parent, glWidth, glHeight);
     }
     
     if (PGraphicsAndroid3D.fboSupported) {
       // Attaching the texture to the color buffer of a FBO, binding the FBO and reading the pixels
       // from the current draw buffer (which is the color buffer of the FBO).
-      tmpFbo.setColorBuffer(this);
+      tempFbo.setColorBuffer(this);
       a3d.pushFramebuffer();
-      a3d.setFramebuffer(tmpFbo);
-      tmpFbo.readPixels();
+      a3d.setFramebuffer(tempFbo);
+      tempFbo.readPixels();
       a3d.popFramebuffer();
     } else {
       // Here we don't have FBOs, so the method above is of no use. What we do instead is
       // to draw the texture to the screen framebuffer, and then grab the pixels from there.      
       a3d.pushFramebuffer();
-      a3d.setFramebuffer(tmpFbo);
+      a3d.setFramebuffer(tempFbo);
       a3d.drawTexture(this, 0, 0, glWidth, glHeight, 0, 0, glWidth, glHeight);
-      tmpFbo.readPixels();
+      tempFbo.readPixels();
       a3d.popFramebuffer();
     }
     
-    if (tmpPixels == null) {
-      tmpPixels = new int[size];
+    if (tempPixels == null) {
+      tempPixels = new int[size];
     }
-    tmpFbo.getPixels(tmpPixels);
+    tempFbo.getPixels(tempPixels);
     
-    convertToARGB(tmpPixels, pixels);
+    convertToARGB(tempPixels, pixels);
     if (flippedX) flipArrayOnX(pixels, 1);
     if (flippedY) flipArrayOnY(pixels, 1);    
   }
@@ -700,7 +703,7 @@ public class PTexture implements PConstants {
                       
         // We need to convert ARGB into ABGR,
         // so R and B must be swapped, A and G just brought back in.        
-        for (int i = 0; i< intArray.length; i++) {
+        for (int i = 0; i < intArray.length; i++) {
           int pixel = intArray[i];
           tIntArray[i] = ((pixel & 0xFF) << 16) |
                          ((pixel & 0xFF0000) >> 16) |
@@ -894,32 +897,29 @@ public class PTexture implements PConstants {
                                  " with this graphics card.");
     }    
     
-    usingMipmaps = ((glMinFilter == GL10.GL_NEAREST_MIPMAP_NEAREST) ||
-                                     (glMinFilter == GL10.GL_LINEAR_MIPMAP_NEAREST) ||
-                                     (glMinFilter == GL10.GL_NEAREST_MIPMAP_LINEAR) ||
-                                     (glMinFilter == GL10.GL_LINEAR_MIPMAP_LINEAR));
+    usingMipmaps = glMinFilter == GL10.GL_LINEAR_MIPMAP_LINEAR;
      
-     gl.glEnable(glTarget);
-     glID = a3d.createGLResource(PGraphicsAndroid3D.GL_TEXTURE_OBJECT);     
-     gl.glBindTexture(glTarget, glID);
-     gl.glTexParameterf(glTarget, GL10.GL_TEXTURE_MIN_FILTER, glMinFilter);
-     gl.glTexParameterf(glTarget, GL10.GL_TEXTURE_MAG_FILTER, glMagFilter);
-     gl.glTexParameterf(glTarget, GL10.GL_TEXTURE_WRAP_S, glWrapS);
-     gl.glTexParameterf(glTarget, GL10.GL_TEXTURE_WRAP_T, glWrapT);
+    gl.glEnable(glTarget);
+    glID = a3d.createGLResource(PGraphicsAndroid3D.GL_TEXTURE_OBJECT);     
+    gl.glBindTexture(glTarget, glID);
+    gl.glTexParameterf(glTarget, GL10.GL_TEXTURE_MIN_FILTER, glMinFilter);
+    gl.glTexParameterf(glTarget, GL10.GL_TEXTURE_MAG_FILTER, glMagFilter);
+    gl.glTexParameterf(glTarget, GL10.GL_TEXTURE_WRAP_S, glWrapS);
+    gl.glTexParameterf(glTarget, GL10.GL_TEXTURE_WRAP_T, glWrapT);
      
-     gl.glTexImage2D(glTarget, 0, glFormat,  glWidth,  glHeight, 0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, null);
-     gl.glBindTexture(glTarget, 0);
-     gl.glDisable(glTarget);
+    gl.glTexImage2D(glTarget, 0, glFormat,  glWidth,  glHeight, 0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, null);
+    gl.glBindTexture(glTarget, 0);
+    gl.glDisable(glTarget);
         
-     flippedX = false;
-     flippedY = false;
+    flippedX = false;
+    flippedY = false;
  
-     // If non-power-of-two textures are not supported, and the specified width or height
-     // is non-power-of-two, then glWidth (glHeight) will be greater than w (h) because it
-     // is chosen to be the next power of two, and this quotient will give the appropriate
-     // maximum texture coordinate value given this situation.
-     maxTexCoordU = (float)w / glWidth;
-     maxTexCoordV = (float)h / glHeight; 
+    // If non-power-of-two textures are not supported, and the specified width or height
+    // is non-power-of-two, then glWidth (glHeight) will be greater than w (h) because it
+    // is chosen to be the next power of two, and this quotient will give the appropriate
+    // maximum texture coordinate value given this situation.
+    maxTexCoordU = (float)w / glWidth;
+    maxTexCoordV = (float)h / glHeight; 
   }
 
     
@@ -933,22 +933,22 @@ public class PTexture implements PConstants {
     }
   }
   
-  // Copies source texture to this.
+  // Copies source texture tex into this.
   protected void copyTexels(PTexture tex, int x, int y, int w, int h, boolean scale) {
     if (tex == null) {
       throw new RuntimeException("PTexture: source texture is null");
     }        
     
-    if (tmpFbo == null) {
-      tmpFbo = new PFramebuffer(parent, glWidth, glHeight);
+    if (tempFbo == null) {
+      tempFbo = new PFramebuffer(parent, glWidth, glHeight);
     }
     // This texture is the color (destination) buffer of the FBO. 
-    tmpFbo.setColorBuffer(this);
-    tmpFbo.disableDepthTest();
+    tempFbo.setColorBuffer(this);
+    tempFbo.disableDepthTest();
     
     // FBO copy:
     a3d.pushFramebuffer();
-    a3d.setFramebuffer(tmpFbo);
+    a3d.setFramebuffer(tempFbo);
     if (scale) {
       // Rendering tex into "this", and scaling the source rectangle
       // to cover the entire destination region.
@@ -963,6 +963,10 @@ public class PTexture implements PConstants {
   }  
   
   protected void setTexels(int x, int y, int w, int h, int[] pix) {
+    setTexels(0, x, y, w, h, pix);
+  }
+  
+  protected void setTexels(int level, int x, int y, int w, int h, int[] pix) {
     gl.glTexSubImage2D(glTarget, 0, x, y, w, h, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, IntBuffer.wrap(pix));
   }
   
@@ -1024,23 +1028,11 @@ public class PTexture implements PConstants {
     }
     
     if (glMinFilter == GL10.GL_NEAREST)  {
-      res.minFilter = NEAREST;
+      res.sampling = POINT;
     } else if (glMinFilter == GL10.GL_LINEAR)  {
-      res.minFilter = LINEAR;
-    } else if (glMinFilter == GL10.GL_NEAREST_MIPMAP_NEAREST) {
-      res.minFilter = NEAREST_MIPMAP_NEAREST;
-    } else if (glMinFilter == GL10.GL_LINEAR_MIPMAP_NEAREST) {
-      res.minFilter = LINEAR_MIPMAP_NEAREST;
-    } else if (glMinFilter == GL10.GL_NEAREST_MIPMAP_LINEAR) {
-      res.minFilter = NEAREST_MIPMAP_LINEAR;
+      res.sampling = BILINEAR;
     } else if (glMinFilter == GL10.GL_LINEAR_MIPMAP_LINEAR) {
-      res.minFilter = LINEAR_MIPMAP_LINEAR;
-    }
-    
-    if (glMagFilter == GL10.GL_NEAREST)  {
-      res.magFilter = NEAREST;
-    } else if (glMagFilter == GL10.GL_LINEAR) {
-      res.magFilter = LINEAR;
+      res.sampling = TRILINEAR;
     }
 
     if (glWrapS == GL10.GL_CLAMP_TO_EDGE) {
@@ -1081,28 +1073,17 @@ public class PTexture implements PConstants {
       throw new RuntimeException("GTexture: Unknown texture format");     
     }
     
-    if (params.minFilter == NEAREST)  {
-      glMinFilter = GL10.GL_NEAREST;
-    } else if (params.minFilter == LINEAR)  {
-      glMinFilter = GL10.GL_LINEAR;
-    } else if (params.minFilter == NEAREST_MIPMAP_NEAREST) {
-      glMinFilter = GL10.GL_NEAREST_MIPMAP_NEAREST;
-    } else if (params.minFilter == LINEAR_MIPMAP_NEAREST) {
-      glMinFilter = GL10.GL_LINEAR_MIPMAP_NEAREST;
-    } else if (params.minFilter == NEAREST_MIPMAP_LINEAR) {
-      glMinFilter = GL10.GL_NEAREST_MIPMAP_LINEAR;
-    } else if (params.minFilter == LINEAR_MIPMAP_LINEAR) {
-      glMinFilter = GL10.GL_LINEAR_MIPMAP_LINEAR;
-    } else {
-      throw new RuntimeException("GTexture: Unknown minimization filter");     
-    }
-    
-    if (params.magFilter == NEAREST) {
+    if (params.sampling == POINT) {
       glMagFilter = GL10.GL_NEAREST;
-    } else if (params.magFilter == LINEAR)  {
+      glMinFilter = GL10.GL_NEAREST;
+    } else if (params.sampling == BILINEAR)  {
       glMagFilter = GL10.GL_LINEAR;
+      glMinFilter = GL10.GL_LINEAR;
+    } else if (params.sampling == TRILINEAR)  {
+      glMagFilter = GL10.GL_LINEAR;
+      glMinFilter = GL10.GL_LINEAR_MIPMAP_LINEAR;      
     } else {
-      throw new RuntimeException("GTexture: Unknown magnification filter");     
+      throw new RuntimeException("GTexture: Unknown texture sampling mode");     
     }
     
     if (params.wrapU == CLAMP) {
@@ -1164,14 +1145,9 @@ public class PTexture implements PConstants {
     public int format;
       
     /**
-     * Texture minimization filter.
+     * Texture sampling (POINT, BILINEAR or TRILINEAR).
      */
-    public int minFilter;
-      
-    /**
-     * Texture magnification filter.
-     */
-    public int magFilter; 
+    public int sampling;
     
     /**
      * Wrapping mode along U.
@@ -1189,8 +1165,7 @@ public class PTexture implements PConstants {
     public Parameters() {
       this.target = TEXTURE2D;
       this.format = ARGB;
-      this.minFilter = LINEAR;
-      this.magFilter = LINEAR;
+      this.sampling = BILINEAR;
       this.wrapU = CLAMP;
       this.wrapV = CLAMP;
     }
@@ -1198,17 +1173,15 @@ public class PTexture implements PConstants {
     public Parameters(int format) {
       this.target = TEXTURE2D;
       this.format = format;
-      this.minFilter = LINEAR;
-      this.magFilter = LINEAR;   
+      this.sampling = BILINEAR;   
       this.wrapU = CLAMP;
       this.wrapV = CLAMP;
     }
 
-    public Parameters(int format, int filter) {
+    public Parameters(int format, int sampling) {
       this.target = TEXTURE2D;
       this.format = format;
-      this.minFilter = filter;
-      this.magFilter = filter;
+      this.sampling = sampling;
       this.wrapU = CLAMP;
       this.wrapV = CLAMP;      
     }
@@ -1216,8 +1189,7 @@ public class PTexture implements PConstants {
     public Parameters(Parameters src) {
       this.target = src.target;
       this.format = src.format;
-      this.minFilter = src.minFilter;
-      this.magFilter = src.magFilter;
+      this.sampling = src.sampling;
       this.wrapU = src.wrapU;
       this.wrapV = src.wrapV;
     }
@@ -1226,17 +1198,15 @@ public class PTexture implements PConstants {
       this.format = format;
     }
 
-    public void set(int format, int filter) {
+    public void set(int format, int sampling) {
       this.format = format;
-      this.minFilter = filter;
-      this.magFilter = filter;
+      this.sampling = sampling;
     }
     
     public void set(Parameters src) {
       this.target = src.target;
       this.format = src.format;
-      this.minFilter = src.minFilter;
-      this.magFilter = src.magFilter;
+      this.sampling = src.sampling;
       this.wrapU = src.wrapU;
       this.wrapV = src.wrapV;      
     }    

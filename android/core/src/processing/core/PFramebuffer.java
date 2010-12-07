@@ -97,7 +97,7 @@ public class PFramebuffer implements PConstants {
       // the screen, doing the "offscreen" rendering on this portion, copying the screen color 
       // buffer to the texture bound as color buffer to this PFramebuffer object and then drawing 
       // the backup texture back on the screen.
-      backupTexture = new PTexture(parent, width, height, new PTexture.Parameters(ARGB, NEAREST));       
+      backupTexture = new PTexture(parent, width, height, new PTexture.Parameters(ARGB, POINT));       
     }  
   }
 
@@ -112,7 +112,7 @@ public class PFramebuffer implements PConstants {
   public void setColorBuffers(PTexture[] textures) {
     setColorBuffers(textures, textures.length);
   }
-
+  
   public void setColorBuffers(PTexture[] textures, int n) {
     if (screenFb) return;
     
