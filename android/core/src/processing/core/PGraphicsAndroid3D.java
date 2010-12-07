@@ -378,7 +378,7 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // Extensions support.
   static protected boolean npotTexSupported;
-  static protected boolean mipmapSupported;
+  static protected boolean mipmapGeneration;
   static protected boolean matrixGetSupported;
   static protected boolean vboSupported;
   static protected boolean fboSupported;
@@ -687,14 +687,14 @@ public class PGraphicsAndroid3D extends PGraphics {
       // Nearest filtering is used for the primary surface, otherwise some 
       // artifacts appear (diagonal line when blending, for instance). This
       // might deserve further examination.
-      offscreenImages[0] = parent.createImage(width, height, ARGB, NEAREST);
-      offscreenImages[1] = parent.createImage(width, height, ARGB, NEAREST);          
+      offscreenImages[0] = parent.createImage(width, height, ARGB, POINT);
+      offscreenImages[1] = parent.createImage(width, height, ARGB, POINT);          
     } else {
       // Linear filtering is needed to keep decent image quality when rendering 
       // texture at a size different from its original resolution. This is expected
       // to happen for offscreen rendering.
-      offscreenImages[0] = parent.createImage(width, height, ARGB, LINEAR);
-      offscreenImages[1] = parent.createImage(width, height, ARGB, LINEAR);                
+      offscreenImages[0] = parent.createImage(width, height, ARGB, BILINEAR);
+      offscreenImages[1] = parent.createImage(width, height, ARGB, BILINEAR);                
     }
     
     offscreenTextures = new PTexture[2];
@@ -4938,9 +4938,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
     
   private void glLightAmbient(int num) {    
-    FloatBuffer buf = FloatBuffer.wrap(lightDiffuse[num]);
-    gl.glLightfv(GL10.GL_LIGHT0 + num, GL10.GL_AMBIENT, buf);
-    //gl.glLightfv(GL10.GL_LIGHT0 + num, GL10.GL_AMBIENT, lightDiffuse[num], 0);
+    gl.glLightfv(GL10.GL_LIGHT0 + num, GL10.GL_AMBIENT, lightDiffuse[num], 0);
   }
 
   private void glLightNoAmbient(int num) {
@@ -4957,9 +4955,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
 
   private void glLightNoDiffuse(int num) {
-    FloatBuffer buf = FloatBuffer.wrap(zeroLight);
-    gl.glLightfv(GL10.GL_LIGHT0 + num, GL10.GL_DIFFUSE, buf);
-    //gl.glLightfv(GL10.GL_LIGHT0 + num, GL10.GL_DIFFUSE, zeroLight, 0);
+    gl.glLightfv(GL10.GL_LIGHT0 + num, GL10.GL_DIFFUSE, zeroLight, 0);
   }
     
   private void glLightDirection(int num) {
@@ -4972,8 +4968,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       gl.glLightfv(GL10.GL_LIGHT0 + num, GL10.GL_POSITION, lightNormal[num], 0);
     } else { // spotlight
       // this one only needs the 3 arg version
-      gl.glLightfv(GL10.GL_LIGHT0 + num, GL10.GL_SPOT_DIRECTION,
-          lightNormal[num], 0);
+      gl.glLightfv(GL10.GL_LIGHT0 + num, GL10.GL_SPOT_DIRECTION, lightNormal[num], 0);
     }
   }
 
@@ -4995,9 +4990,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
 
   private void glLightPosition(int num) {
-    FloatBuffer buf = FloatBuffer.wrap(lightPosition[num]);
-    gl.glLightfv(GL10.GL_LIGHT0 + num, GL10.GL_POSITION, buf);
-    //gl.glLightfv(GL10.GL_LIGHT0 + num, GL10.GL_POSITION, lightPosition[num], 0);
+    gl.glLightfv(GL10.GL_LIGHT0 + num, GL10.GL_POSITION, lightPosition[num], 0);
   }
 
   private void glLightSpecular(int num) {
@@ -5431,7 +5424,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   public void loadTexture() {    
     if (texture == null) {
-      loadTexture(NEAREST);
+      loadTexture(POINT);
       texture.setFlippedY(true);
     }
     
@@ -5511,7 +5504,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     getsetBuffer.rewind();    
     
     if (getsetTexture == null) {
-      getsetTexture = new PTexture(parent, 1, 1, new PTexture.Parameters(ARGB, NEAREST));
+      getsetTexture = new PTexture(parent, 1, 1, new PTexture.Parameters(ARGB, POINT));
     }
     
     copyToTexture(getsetTexture, getsetBuffer, 0, 0, 1, 1);    
@@ -6126,7 +6119,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       OPENGL_VERSION = gl.glGetString(GL10.GL_VERSION);
 
       npotTexSupported = false;
-      mipmapSupported = false;
+      mipmapGeneration = false;
       matrixGetSupported = false;
       texenvCrossbarSupported = false;
       vboSupported = false;
@@ -6136,7 +6129,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         npotTexSupported = true;
       }
       if (-1 < extensions.indexOf("generate_mipmap")) {
-        mipmapSupported = true;
+        mipmapGeneration = true;
       }
       if (-1 < extensions.indexOf("matrix_get")) {
         matrixGetSupported = true;
