@@ -26,12 +26,16 @@ package processing.core;
 import java.io.*;
 import java.util.Arrays;
 import java.util.HashMap;
+
+import javax.microedition.khronos.opengles.GL10;
+
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.graphics.Bitmap.Config;
+import android.opengl.GLU;
 
 /**
  * Grayscale bitmap font class used by Processing.
@@ -712,18 +716,19 @@ public class PFont implements PConstants {
     }
      
     PTexture tex = new PTexture(parent, w, h, new PTexture.Parameters(ARGB, POINT));
-    
+            
     if (textures == null) {
       textures = new PTexture[1];
       textures[0] = tex;
-      currentTex = 0;
+      currentTex = 0;     
     } else if (resize) {
       // Replacing old smaller texture with larger one.
       // But first we must copy the contents of the older
       // texture into the new one.
-      PTexture tex0 = textures[currentTex]; 
+      PTexture tex0 = textures[currentTex];
       tex.put(tex0);
       textures[currentTex] = tex;
+      tex0.delete();
     } else {
       // Adding new texture to the list.
       PTexture[] temp = textures;
@@ -733,6 +738,9 @@ public class PFont implements PConstants {
       currentTex = textures.length - 1;
     }
     lastTex = currentTex;
+    
+    // Make sure that the current texture is bound.
+    tex.bind();
     
     return resize;
   }
@@ -989,7 +997,7 @@ public class PFont implements PConstants {
       if (currentTex != lastTex || resized) {
         setTexture(lastTex);
       }
-       
+      
       textures[currentTex].setTexels(offsetX, offsetY, width, height, rgba);
       
       texture = new TextureInfo(currentTex, offsetX, offsetY + height, width, -height);

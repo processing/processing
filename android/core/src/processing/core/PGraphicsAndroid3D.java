@@ -3203,7 +3203,6 @@ public class PGraphicsAndroid3D extends PGraphics {
       textFont.addAllGlyphsToTexture();
     }
     
-    gl.glEnable(GL10.GL_TEXTURE_2D);
     textFont.setFirstTexture();
 
     // Setting the current fill color as the font color.
@@ -3232,6 +3231,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       noBlend();
     }
     
+    gl.glBindTexture(GL10.GL_TEXTURE_2D, 0);   
     gl.glDisable(GL10.GL_TEXTURE_2D);    
   }
 
