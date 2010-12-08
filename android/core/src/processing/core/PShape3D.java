@@ -83,6 +83,9 @@ public class PShape3D extends PShape implements PConstants {
   protected PShape3D[] vertexChild;  
   
   protected boolean vertexColor = true;
+  protected boolean useTextures = true;
+  protected boolean useOwnStrokeWeigth = true;
+  
   protected float ptDistAtt[] = { 1.0f, 0.0f, 0.01f, 1.0f };
   
   protected PTexture[] renderTextures = new PTexture[PGraphicsAndroid3D.MAX_TEXTURES];  
@@ -122,8 +125,7 @@ public class PShape3D extends PShape implements PConstants {
     glColorBufferID = 0;
     glNormalBufferID = 0;
     java.util.Arrays.fill(glTexCoordBufferID, 0);
-    
-    style = false;
+    style = false;    
   }
   
   public PShape3D(PApplet parent, int numVert) {
@@ -736,6 +738,9 @@ public class PShape3D extends PShape implements PConstants {
       who3d.papplet = papplet;
       who3d.a3d = a3d;
       who3d.gl = gl;
+      who3d.vertexColor = vertexColor;
+      who3d.useTextures = useTextures;
+      who3d.useOwnStrokeWeigth = useOwnStrokeWeigth;
       for (int n = who3d.firstVertex; n <= who3d.lastVertex; n++) {
         vertexChild[n] = who3d;
       }       
@@ -1673,10 +1678,34 @@ public class PShape3D extends PShape implements PConstants {
   }
   
   
+  public void disableStyle() {
+    vertexColor = false;
+    useTextures = false;
+    useOwnStrokeWeigth = false;
+    
+    if (family == GROUP) {
+      for (int i = 0; i < childCount; i++) {
+        children[i].disableStyle();
+      }     
+    }   
+  }
+
+  
+  public void enableStyle() {
+    vertexColor = true;
+    useTextures = true;
+    useOwnStrokeWeigth = true;
+    
+    if (family == GROUP) {
+      for (int i = 0; i < childCount; i++) {
+        children[i].enableStyle();
+      }     
+    }   
+  }  
+  
   public boolean is3D() {
     return true;
-  }
-  
+  }  
   
   ///////////////////////////////////////////////////////////  
   
@@ -1740,7 +1769,7 @@ public class PShape3D extends PShape implements PConstants {
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, p3d.glNormalBufferID);
     gl.glNormalPointer(GL11.GL_FLOAT, 0, 0);    
 
-    if (p3d.vertexColor) {
+    if (vertexColor) {
       gl.glEnableClientState(GL11.GL_COLOR_ARRAY);
       gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, p3d.glColorBufferID);
       gl.glColorPointer(4, GL11.GL_FLOAT, 0, 0);
@@ -1751,26 +1780,28 @@ public class PShape3D extends PShape implements PConstants {
     gl.glVertexPointer(3, GL11.GL_FLOAT, 0, 0);
 
     numTextures = 0;
-    for (int t = 0; t < textures.length; t++) {
-      if (textures[t] != null) {
-        PTexture tex = textures[t].getTexture();
-        if (tex == null) {
-          tex = textures[t].createTexture();
+    if (useTextures) {
+      for (int t = 0; t < textures.length; t++) {
+        if (textures[t] != null) {
+          PTexture tex = textures[t].getTexture();
           if (tex == null) {
-            break;
+            tex = textures[t].createTexture();
+            if (tex == null) {
+              break;
+            }
           }
+
+          gl.glEnable(tex.getGLTarget());
+          gl.glActiveTexture(GL10.GL_TEXTURE0 + t);
+          gl.glBindTexture(tex.getGLTarget(), tex.getGLID());
+          renderTextures[numTextures] = tex;
+          numTextures++;
+        } else {
+          break;
         }
-        
-        gl.glEnable(tex.getGLTarget());
-        gl.glActiveTexture(GL10.GL_TEXTURE0 + t);
-        gl.glBindTexture(tex.getGLTarget(), tex.getGLID());
-        renderTextures[numTextures] = tex;
-        numTextures++;
-      } else {
-        break;
       }
     }
-
+    
     if (0 < numTextures)  {        
       if (pointSprites) {
         // Texturing with point sprites.
@@ -1806,7 +1837,7 @@ public class PShape3D extends PShape implements PConstants {
       }
     }
 
-    if (!p3d.vertexColor) {
+    if (!vertexColor) {
       if (0 < numTextures) {
         if (g.tint) {
           gl.glColor4f(g.tintR, g.tintG, g.tintB, g.tintA);  
@@ -1820,7 +1851,7 @@ public class PShape3D extends PShape implements PConstants {
 
     // Setting the stroke weight (line width's in OpenGL terminology) using 
     // either the group's weight or the renderer's weight. 
-    if (0 < strokeWeight) {
+    if (0 < strokeWeight && useOwnStrokeWeigth) {
       gl.glLineWidth(strokeWeight);
     } else {
       gl.glLineWidth(g.strokeWeight);
