@@ -28,8 +28,9 @@ import org.apache.tools.ant.*;
 
 import processing.app.*;
 import processing.app.exec.*;
-import processing.app.debug.RunnerException;
 import processing.core.PApplet;
+import processing.java.LibraryFolder;
+import processing.java.runner.RunnerException;
 
 
 class Build {
@@ -70,14 +71,14 @@ class Build {
     try {
       manifest = new Manifest(editor);
       // grab code from current editing window (GUI only)
-      sketch.prepare();
+      sketch.prepareRun();
       // build the preproc and get to work
       Preprocessor preproc = new Preprocessor(sketch, getPackageName());
       if (!preproc.parseSketchSize()) {
         editor.statusError("Could not parse the size() command.");
         return null; 
       }
-      className = sketch.preprocess(srcFolder.getAbsolutePath(), 
+      className = sketch.preprocess(srcFolder, 
                                     manifest.getPackageName(), 
                                     preproc);
       if (className != null) {

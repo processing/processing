@@ -8,9 +8,9 @@ import java.io.StringWriter;
 import antlr.ANTLRException;
 import processing.app.Base;
 import processing.app.Preferences;
-import processing.app.debug.RunnerException;
 import processing.app.format.AutoFormat;
-import processing.app.preproc.PdePreprocessor;
+import processing.java.preproc.PdePreprocessor;
+import processing.java.runner.RunnerException;
 
 public class ProcessingTestUtil {
   static void init() {

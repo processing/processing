@@ -11,8 +11,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import processing.app.debug.RunnerException;
 import processing.app.exec.ProcessResult;
+import processing.java.runner.RunnerException;
 import antlr.RecognitionException;
 
 public class ParserTests {

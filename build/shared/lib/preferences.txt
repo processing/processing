@@ -48,11 +48,6 @@
 # and "library" on macosx, set this to the alternate location.
 #settings.path=data
 
-# temporary build path, normally this goes into the default
-# "temp" folder for that platform (as defined by java)
-# but this can be used to set a specific file in case of problems
-#build.path=build
-
 # By default, no sketches currently open
 last.sketch.count=0
 
@@ -119,10 +114,8 @@ editor.keys.home_and_end_travel_far = false
 # if you don't like it, this is the preference to change
 editor.keys.home_and_end_travel_far.macosx = true
 
-console			 = true
-console.output.file      = stdout.txt
-console.error.file       = stderr.txt
-console.lines            = 4
+# number of lines to show by default
+console.lines = 4
 
 # set to false to disable automatically clearing the console
 # each time 'run' is hit

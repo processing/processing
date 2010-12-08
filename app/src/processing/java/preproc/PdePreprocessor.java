@@ -4,7 +4,7 @@
   PdePreprocessor - wrapper for default ANTLR-generated parser
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-09 Ben Fry and Casey Reas
+  Copyright (c) 2004-10 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   ANTLR-generated parser and several supporting classes written
@@ -25,34 +25,18 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package processing.app.preproc;
+package processing.java.preproc;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.io.*;
+import java.util.*;
 import java.util.regex.Pattern;
 import processing.app.Preferences;
 import processing.app.antlr.PdeLexer;
 import processing.app.antlr.PdeRecognizer;
 import processing.app.antlr.PdeTokenTypes;
-import processing.app.debug.RunnerException;
 import processing.core.PApplet;
-import antlr.ASTFactory;
-import antlr.CommonAST;
-import antlr.CommonASTWithHiddenTokens;
-import antlr.CommonHiddenStreamToken;
-import antlr.RecognitionException;
-import antlr.TokenStreamCopyingHiddenTokenFilter;
-import antlr.TokenStreamException;
+import processing.java.runner.RunnerException;
+import antlr.*;
 import antlr.collections.AST;
 
 /**
@@ -147,7 +131,7 @@ import antlr.collections.AST;
  * Hacked to death in 2010 by
  * @author Jonathan Feinberg &lt;jdf@pobox.com&gt;
  */
-public class PdePreprocessor implements PdeTokenTypes {
+public class PdePreprocessor {
 
   // used for calling the ASTFactory to get the root node
   private static final int ROOT_ID = 0;
@@ -535,23 +519,24 @@ public class PdePreprocessor implements PdeTokenTypes {
    * @param node
    */
   private void makeSimpleMethodsPublic(final AST node) {
-    if (node.getType() == METHOD_DEF) {
+    if (node.getType() == PdeTokenTypes.METHOD_DEF) {
       final AST mods = node.getFirstChild();
       final AST oldFirstMod = mods.getFirstChild();
       for (AST mod = oldFirstMod; mod != null; mod = mod.getNextSibling()) {
         final int t = mod.getType();
-        if (t == LITERAL_private || t == LITERAL_protected
-            || t == LITERAL_public) {
+        if (t == PdeTokenTypes.LITERAL_private || 
+            t == PdeTokenTypes.LITERAL_protected || 
+            t == PdeTokenTypes.LITERAL_public) {
           return;
         }
       }
-      if (mods.getNextSibling().getType() == TYPE_PARAMETERS) {
+      if (mods.getNextSibling().getType() == PdeTokenTypes.TYPE_PARAMETERS) {
         return;
       }
-      final CommonHiddenStreamToken publicToken = new CommonHiddenStreamToken(
-          LITERAL_public, "public") {
+      final CommonHiddenStreamToken publicToken = 
+        new CommonHiddenStreamToken(PdeTokenTypes.LITERAL_public, "public") {
         {
-          setHiddenAfter(new CommonHiddenStreamToken(WS, " "));
+          setHiddenAfter(new CommonHiddenStreamToken(PdeTokenTypes.WS, " "));
         }
       };
       final AST publicNode = new CommonASTWithHiddenTokens(publicToken);

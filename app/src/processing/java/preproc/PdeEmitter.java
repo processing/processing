@@ -1,6 +1,6 @@
 /* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
-package processing.app.preproc;
+package processing.java.preproc;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
@@ -8,7 +8,7 @@ import java.util.BitSet;
 import java.util.Stack;
 import processing.app.Preferences;
 import processing.app.antlr.PdeTokenTypes;
-import processing.app.debug.RunnerException;
+import processing.java.runner.RunnerException;
 import antlr.CommonASTWithHiddenTokens;
 import antlr.CommonHiddenStreamToken;
 import antlr.collections.AST;

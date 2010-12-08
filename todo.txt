@@ -19,6 +19,14 @@ L Properly enforce the editors minimum size
 L   http://code.google.com/p/processing/issues/detail?id=451
 L Patch: Processing IDE destroys symbolic links
 L   http://code.google.com/p/processing/issues/detail?id=432
+L Processing cannot run because it could not ... store your settings.
+L   http://code.google.com/p/processing/issues/detail?id=410
+J AutoFormat unecessarily adds spaces to function with multiple args
+J   http://code.google.com/p/processing/issues/detail?id=462
+X fix for linux build script (thanks to Kevin Keraudren)
+X   http://code.google.com/p/processing/issues/detail?id=466
+o occasional exception in "copy for discourse"
+o   http://dev.processing.org/bugs/show_bug.cgi?id=729
 
 fixed earlier
 X should really be doing the 'right' thing with sketch file handling
@@ -27,48 +35,31 @@ X   once done writing, use remove the original and rename the old
 X   some basic stuff like this..
 X   http://dev.processing.org/bugs/show_bug.cgi?id=968
 X   http://code.google.com/p/processing/issues/detail?id=127
+o add to mac reference for present mode
+o   can make full screen work via Info.plist key
+o   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1135921427;start=7#7
+X   added to export defaults in a much earlier version
+X when running externally, set window frame title to the sketch name
+X   is this only a problem on macosx? 
 
-Hm, should we just support resize() for the renderers? 
+console, preferences
+X removed build.path from preferences.txt
+X   not really used anywhere, just trying to clean things up
+X removed 'console.output.file' and 'console.error.file'
+X   these weren't respected as paths, no reason for them
+X change console to write to the 'console/' folder in settings
+X   this may eventually create a problem with logs that need to be cleaned
+X   but we'll keep an eye on it for now
+X removed 'console' true/false from preferences
+o console output has wrong character encoding
+o   this may be fixed now, but writing lots of NULs to the output
+o   message(new String(b, offset, length), err, false);
+o   http://code.google.com/p/processing/issues/detail?id=197
+X   couldn't find a good way to reproduce this, closing
 
-Though I guess it's really messy, and we're better off having them do a fresh createGraphics() instead. 
-
-Can you do a fix to implement resize() in PGraphics where it just provides the error, so that it's implemented across the other renderers?
-
-_ need to get a new stable release out there, the docs/ref are out of sync
-
-_ Processing cannot run because it could not ... store your settings.
-_   http://code.google.com/p/processing/issues/detail?id=410
-
-_ Debugger highlights wrong line, and sometimes the wrong file
-_   http://code.google.com/p/processing/issues/detail?id=412
-
-_ "save" clears undo information
-_   http://code.google.com/p/processing/issues/detail?id=411
-_ don't reload sketch on "save as"
-_   this can result in loss of data (undo is lost)
-_   http://code.google.com/p/processing/issues/detail?id=62
-_ sketch marked as modified too aggressively
-_   http://dev.processing.org/bugs/show_bug.cgi?id=328
-
-_ build is currently broken for p5 because of changes to the file layout
-_   something that gets fixed my 'make clean'
-
-protected void finalize() throws Throwable {
-    try {
-        close();        
-    } catch(Exception e) {
-        
-    }
-    finally {        
-        super.finalize();
-        //more code can be written here as per need of application        
-    }
-}
-
-_ 64-bit windows causes UnsatisfiedLinkError with OpenGL
-_ ctrl-slash not working with esfera on linux (line ending trouble?)
-_ not properly revving the version numbers in releases in the .app file
-_   figure out a better way to do this automatically during build
+libraries
+o Exported libraries don't mantain symbolic links
+o   http://code.google.com/p/processing/issues/detail?id=353
 
 _ need to deal with classpath conflicts
 _   avoid garbage that people have installed on their machines
@@ -94,12 +85,59 @@ _   the order of adding libraries to classpath should be opposite
 _     the important local libraries should be first in cp, user contrib later
 _   http://dev.processing.org/bugs/show_bug.cgi?id=321
 _   http://code.google.com/p/processing/issues/detail?id=56
+_ changing the sketchbook folder will make libraries show up
+_   but it won't reload the library mapping table
+_ 64-bit windows causes UnsatisfiedLinkError with OpenGL
 
+_ when are prefs saved? could instead save whenever changes are made
+_   and then if the file gets modified, it'll put up an error message
+_   also, this may be part of why other sketches aren't reloading properly
+_ add a 150 ms or more lag before opening the untitled window (on os x)
+_ Editor.applyFrame() may not have a valid 'editor' object to work with
+_   if windows closed, and prefs altered, NPE thrown
+_ clear up prefs so that multiple editors don't trash each other's prefs
+_ make sure editor isn't trying to apply prefs when no editor is open
+_   (on mac os x, due to the change for no windows open)
+
+_ how to handle double-clicked files on windows?
+_   big deal for psk and others
+
+_ need to get a new stable release out there, the docs/ref are out of sync
+_ build is currently broken for p5 because of changes to the file layout
+_   something that gets fixed my 'make clean'
+
+_ Debugger highlights wrong line, and sometimes the wrong file
+_   http://code.google.com/p/processing/issues/detail?id=412
+_ "save" clears undo information
+_   http://code.google.com/p/processing/issues/detail?id=411
+_ don't reload sketch on "save as"
+_   this can result in loss of data (undo is lost)
+_   http://code.google.com/p/processing/issues/detail?id=62
+_ sketch marked as modified too aggressively
+_   http://dev.processing.org/bugs/show_bug.cgi?id=328
+
+protected void finalize() throws Throwable {
+    try {
+        close();        
+    } catch(Exception e) {
+        
+    }
+    finally {        
+        super.finalize();
+        //more code can be written here as per need of application        
+    }
+}
+
+_ ctrl-slash not working with esfera on linux (line ending trouble?)
+_   or maybe ctrl-slash just broken on linux?
+_ not properly revving the version numbers in releases in the .app file
+_   figure out a better way to do this automatically during build
 
 _ remove version number from splash image
 _   http://code.google.com/p/processing/issues/detail?id=324
 _ make sure there aren't library jar files named the same thing 
 _   i.e. if one library has db.jar, then that's gonna kill another db.jar
+_   when the files are copied over
 
 mode work
 _ locations: sketchbook, examples, libraries
@@ -112,12 +150,6 @@ _   http://github.com/fjenett/processingjstool/zipball/v0.0.6
 
 _ accented letter input is broken (on os x and windows)
 _   http://code.google.com/p/processing/issues/detail?id=335
-
-_ auto-format screws up if/else/else if blocks
-_   http://code.google.com/p/processing/issues/detail?id=325
-
-_ Exported libraries don't mantain symbolic links
-_   http://code.google.com/p/processing/issues/detail?id=353
 
 _ launch4j problem - FIXABLE
 _   no crash when double-clicking a sketch and loading it
@@ -185,6 +217,9 @@ svn copy svn://processing.org/trunk/processing svn://processing.org/tags/process
 svn copy svn+ssh://dev.processing.org/var/svn/trunk/processing svn+ssh://dev.processing.org/var/svn/tags/processing-0178
 svn copy -r 6334 svn+ssh://dev.processing.org/var/svn/trunk/processing svn+ssh://dev.processing.org/var/svn/tags/processing-0178
 
+svn copy https://processing.googlecode.com/svn/trunk/processing https://processing.googlecode.com/svn/branches/processing-0192-refactor
+svn switch https://processing.googlecode.com/svn/branches/processing-0192-refactor .
+
 from user Batuff
 > sudo apt-get install xvfb
 > Xvfb :2 -screen 0 1024x768x24 &
@@ -202,12 +237,6 @@ _ why aren't prefs from theme.txt showing up in preferences.txt? hrm
 _   or rather, why can't they be overridden? 
 _   should fonts at least be in prefs.txt?
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1444
-
-_ console output has wrong character encoding
-_   this may be fixed now, but writing lots of NULs to the output
-_   message(new String(b, offset, length), err, false);
-_   http://code.google.com/p/processing/issues/detail?id=197
-
 
 _ automatically add version numbers to Info.plist
 _   would help with beta releases, and not having to edit by hand
@@ -343,11 +372,6 @@ _   (when the pref for close last window = quit is set)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=835
 _ not remembering window size/placement preferences
 _   http://dev.processing.org/bugs/show_bug.cgi?id=837
-
-_ add option to use full screen exclusive mode on present inside pde?
-_   override default setting of macosx (yes) and linux/win (no)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1043
-_   linux present mode isn't working properly
 
 _ make better version of the windows launcher for debugging
 
@@ -578,9 +602,7 @@ all i can do is find things that might trigger them, but it's more likely
 than not to be a java problem, and not something that can be fixed
 _ notes about getting best results from text in each renderer
 _   http://dev.processing.org/bugs/show_bug.cgi?id=466
-_ add to mac reference for present mode
-_   can make full screen work via Info.plist key
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1135921427;start=7#7
+
 _ add to troubleshooting
 _   problem with big floats:
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1061302380
@@ -1013,17 +1035,13 @@ _ show error when no main() is included but class extends PApplet
 _   error can happen or be checked 
 _ errors during export don't show up properly (no red status bar)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=194
-_ need to decide how to handle "stop" button in present mode
-_   http://dev.processing.org/bugs/show_bug.cgi?id=63
-_   when running externally, people need to write their own stop function
-_   just get export to application working so this can be supported
-_   for now, they're stuck w/ running in the env and getting the ugliness
 _ make export put a timestamp in the html code (hidden or visible)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=66
 _ exporting application copies .java files 
 _   .java files are copied to the root folder as well as the source folder
 _ javadoc comment in a static mode app doesn't get moved to the top
 _   http://dev.processing.org/bugs/show_bug.cgi?id=924
+
 
 
 PDE / Find & Replace
@@ -1096,16 +1114,22 @@ _   need to talk to VM and read when 'finished' var is set
 _ does closing the window call stop()?
 _   need to make sure hitting stop button and closing window explicitly call
 _   set finished to true, then join() the animation thread
-_ stop() not working very well 
-_   as a result, dispose() methods aren't being called on libraries
-_   http://dev.processing.org/bugs/show_bug.cgi?id=131
-_   http://dev.processing.org/bugs/show_bug.cgi?id=77 (dupe)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=183 (dupe)
+_ need to set dock icon title on osx
+
+
+PDE / Present 
+
+_ add option to use full screen exclusive mode on present inside pde?
+_   override default setting of macosx (yes) and linux/win (no)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1043
+_   linux present mode isn't working properly
+_ need to decide how to handle "stop" button in present mode
+_   http://dev.processing.org/bugs/show_bug.cgi?id=63
+_   when running externally, people need to write their own stop function
+_   just get export to application working so this can be supported
+_   for now, they're stuck w/ running in the env and getting the ugliness
 _ quitting from present mode doesn't kill run button
 _   http://dev.processing.org/bugs/show_bug.cgi?id=80
-X when running externally, set window frame title to the sketch name
-X   is this only a problem on macosx? 
-_ need to set dock icon title on osx
 
 
 PDE / Sketch & Sketchbook
@@ -1207,15 +1231,10 @@ _ pasting into color picker doesn't update the color values
 _   http://dev.processing.org/bugs/show_bug.cgi?id=503
 
 
-TOOLS / Copy for Discourse
-
-_ occasional exception in "copy for discourse"
-_   http://dev.processing.org/bugs/show_bug.cgi?id=729
-
-
 TOOLS / Auto Format
 
-enhancements
+_ auto-format screws up if/else/else if blocks
+_   http://code.google.com/p/processing/issues/detail?id=325
 _ do a better job of maintaining cursor during beautify 
 _   jdf says: a specification would help here!
 _ only auto format a particular section of code

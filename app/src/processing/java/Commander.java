@@ -20,16 +20,19 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package processing.app;
+package processing.java;
 
 
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 
+import processing.app.Base;
+import processing.app.Preferences;
+import processing.app.Sketch;
 import processing.core.PApplet;
+import processing.java.runner.*;
 
-import processing.app.debug.*;
 
 
 /**
@@ -203,7 +206,7 @@ public class Commander implements RunnerListener {
       try {
         sketch = new Sketch(null, pdePath);
         if (mode == PREPROCESS) {
-          success = sketch.preprocess(outputPath) != null;
+          success = sketch.preprocess(new File(outputPath)) != null;
 
         } else if (mode == BUILD) {
           success = sketch.build(outputPath) != null;

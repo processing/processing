@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-08 Ben Fry and Casey Reas
+  Copyright (c) 2004-10 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -21,11 +21,11 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package processing.app.debug;
+package processing.java.runner;
 
 import processing.app.Base;
 import processing.app.Sketch;
-import processing.app.SketchCode;
+//import processing.app.SketchCode;
 import processing.core.*;
 
 import java.io.*;
@@ -43,14 +43,16 @@ public class Compiler {
   /**
    * Compile with ECJ. See http://j.mp/8paifz for documentation.
    *
-   * @param sketch Sketch object to be compiled.
+   * @param sketch Sketch object to be compiled, used for placing exceptions
    * @param buildPath Where the temporary files live and will be built from.
    * @return true if successful.
    * @throws RunnerException Only if there's a problem. Only then.
    */
   public boolean compile(Sketch sketch,
-                         String buildPath,
-                         String primaryClassName, 
+                         File srcFolder,
+                         File binFolder,
+                         String primaryClassName,
+                         String sketchClassPath,
                          String bootClassPath) throws RunnerException {
     // This will be filled in if anyone gets angry
     RunnerException exception = null;
@@ -61,29 +63,31 @@ public class Compiler {
       //"-noExit",  // not necessary for ecj
       "-source", "1.5",
       "-target", "1.5",
-      "-classpath", sketch.getClassPath(),
+      "-classpath", sketchClassPath,
       "-nowarn", // we're not currently interested in warnings (works in ecj)
-      "-d", buildPath // output the classes in the buildPath
+      "-d", binFolder.getAbsolutePath() // output the classes in the buildPath
     };
     //PApplet.println(baseCommand);
 
-    // make list of code files that need to be compiled
-    // (some files are skipped if they contain no class)
-    String[] sourceFiles = new String[sketch.getCodeCount()];
-    int sourceCount = 0;
-    sourceFiles[sourceCount++] =
-      new File(buildPath, primaryClassName + ".java").getAbsolutePath();
+    // make list of code files that need to be compiled    
+//    String[] sourceFiles = new String[sketch.getCodeCount()];
+//    int sourceCount = 0;
+//    sourceFiles[sourceCount++] =
+//      new File(buildPath, primaryClassName + ".java").getAbsolutePath();
+//
+//    for (SketchCode code : sketch.getCode()) {
+//      if (code.isExtension("java")) {
+//        String path = new File(buildPath, code.getFileName()).getAbsolutePath();
+//        sourceFiles[sourceCount++] = path;
+//      }
+//    }
+    String[] sourceFiles = Base.listFiles(srcFolder, false, ".java");
 
-    for (SketchCode code : sketch.getCode()) {
-      if (code.isExtension("java")) {
-        String path = new File(buildPath, code.getFileName()).getAbsolutePath();
-        sourceFiles[sourceCount++] = path;
-      }
-    }
-    String[] command = new String[baseCommand.length + sourceCount];
-    System.arraycopy(baseCommand, 0, command, 0, baseCommand.length);
-    // append each of the files to the command string
-    System.arraycopy(sourceFiles, 0, command, baseCommand.length, sourceCount);
+//    String[] command = new String[baseCommand.length + sourceFiles.length];
+//    System.arraycopy(baseCommand, 0, command, 0, baseCommand.length);
+//    // append each of the files to the command string
+//    System.arraycopy(sourceFiles, 0, command, baseCommand.length, sourceCount);
+    String[] command = PApplet.concat(baseCommand, sourceFiles);
 
     //PApplet.println(command);
 
@@ -91,7 +95,7 @@ public class Compiler {
       // Load errors into a local StringBuffer
       final StringBuffer errorBuffer = new StringBuffer();
 
-      // Create single method dummy writer class to slurp errors from javac
+      // Create single method dummy writer class to slurp errors from ecj
       Writer internalWriter = new Writer() {
           public void write(char[] buf, int off, int len) {
             errorBuffer.append(buf, off, len);

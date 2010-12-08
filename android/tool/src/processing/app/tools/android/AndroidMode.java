@@ -39,9 +39,9 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
 import processing.app.*;
-import processing.app.debug.*;
 
 import processing.core.PApplet;
+import processing.java.runner.*;
 
 // http://dl.google.com/android/repository/repository.xml
 // http://dl.google.com/android/android-sdk_r3-mac.zip

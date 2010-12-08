@@ -20,12 +20,14 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package processing.app;
+package processing.java;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Vector;
 import javax.swing.*;
+
+import processing.app.Preferences;
 
 
 /**

@@ -1,4 +1,4 @@
-package processing.app.preproc;
+package processing.java.preproc;
 
 import java.lang.reflect.Field;
 import antlr.collections.AST;

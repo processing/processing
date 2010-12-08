@@ -22,10 +22,11 @@
 
 package processing.app;
 
-import processing.app.debug.*;
 import processing.app.syntax.*;
 import processing.app.tools.*;
 import processing.core.*;
+import processing.java.Build;
+import processing.java.runner.*;
 
 import java.awt.*;
 import java.awt.datatransfer.*;
@@ -47,7 +48,6 @@ import javax.swing.undo.*;
  * Main editor panel for the Processing Development Environment.
  */
 public class Editor extends JFrame implements RunnerListener {
-
   final Base base;
 
   // otherwise, if the window is resized with the message label
@@ -93,7 +93,6 @@ public class Editor extends JFrame implements RunnerListener {
   private Point sketchWindowLocation;
   private Runner runtime;
 
-//  private JMenuItem exportAppItem;
   private JMenuItem saveMenuItem;
   private JMenuItem saveAsMenuItem;
 
@@ -104,26 +103,30 @@ public class Editor extends JFrame implements RunnerListener {
   private UndoManager undo;
   // used internally, and only briefly
   private CompoundEdit compoundEdit;
+  // maintain caret position during undo operations
+  private final Stack<Integer> caretUndoStack = new Stack<Integer>();
+  private final Stack<Integer> caretRedoStack = new Stack<Integer>();
 
   private FindReplace find;
 
-  private Runnable runHandler;
-  private Runnable presentHandler;
-  private Runnable stopHandler;
-  private Runnable exportHandler;
-  private Runnable exportAppHandler;
+//  private Runnable runHandler;
+//  private Runnable presentHandler;
+//  private Runnable stopHandler;
+//  private Runnable exportHandler;
+//  private Runnable exportAppHandler;
 
-  private final Stack<Integer> caretUndoStack = new Stack<Integer>();
-  private final Stack<Integer> caretRedoStack = new Stack<Integer>();
 
   public Editor(Base ibase, String path, int[] location) {
     super("Processing");
     this.base = ibase;
+    
+    System.out.println("new editor! " + ibase + " " + path);
+    PApplet.println(location);
 
     Base.setIcon(this);
 
     // Install default actions for Run, Present, etc.
-    resetHandlers();
+//    resetHandlers();
 
     // add listener to handle window close box hit event
     addWindowListener(new WindowAdapter() {
@@ -199,8 +202,7 @@ public class Editor extends JFrame implements RunnerListener {
     consolePanel.add(lineStatus, BorderLayout.SOUTH);
 
     upper.add(textarea);
-    splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
-                               upper, consolePanel);
+    splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, upper, consolePanel);
 
     splitPane.setOneTouchExpandable(true);
     // repaint child panes while resizing
@@ -239,7 +241,7 @@ public class Editor extends JFrame implements RunnerListener {
 
     // Set the minimum size for the editor window
     setMinimumSize(new Dimension(Preferences.getInteger("editor.window.width.min"),
-        Preferences.getInteger("editor.window.height.min")));
+                                 Preferences.getInteger("editor.window.height.min")));
     
     // Bring back the general options for the editor
     applyPreferences();
@@ -297,7 +299,8 @@ public class Editor extends JFrame implements RunnerListener {
           }
         }
       } catch (Exception e) {
-        e.printStackTrace();
+        Base.showWarning("Drag & Drop Problem", 
+                         "An error occurred while trying to add files to the sketch.", e);
         return false;
       }
 
@@ -340,18 +343,6 @@ public class Editor extends JFrame implements RunnerListener {
   }
 
 
-  /**
-   * Hack for #@#)$(* Mac OS X 10.2.
-   * <p/>
-   * This appears to only be required on OS X 10.2, and is not
-   * even being called on later versions of OS X or Windows.
-   */
-//  public Dimension getMinimumSize() {
-//    //System.out.println("getting minimum size");
-//    return new Dimension(500, 550);
-//  }
-
-
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
@@ -371,7 +362,6 @@ public class Editor extends JFrame implements RunnerListener {
 
     TextAreaPainter painter = textarea.getPainter();
     if (external) {
-      
       // disable line highlight and turn off the caret when disabling
       Color color = Theme.getColor("editor.external.bgcolor");
       painter.setBackground(color);
@@ -379,10 +369,10 @@ public class Editor extends JFrame implements RunnerListener {
       textarea.setCaretVisible(false);
       
       // new stuff
-      splitPane.setDividerLocation(toolbar.getHeight() + header.getHeight());
-      splitPane.setResizeWeight(0D);
-      textarea.setMinimumSize(new Dimension(textarea.getWidth(), 0));
-    } else {      
+//      splitPane.setDividerLocation(toolbar.getHeight() + header.getHeight());
+//      splitPane.setResizeWeight(0D);
+//      textarea.setMinimumSize(new Dimension(textarea.getWidth(), 0));
+    } else {
       Color color = Theme.getColor("editor.bgcolor");
       painter.setBackground(color);
       boolean highlight = Preferences.getBoolean("editor.linehighlight");
@@ -390,16 +380,13 @@ public class Editor extends JFrame implements RunnerListener {
       textarea.setCaretVisible(true);
       
       // new stuff
-      splitPane.setDividerLocation(-1); // any negative value resets to preferred size
-      splitPane.setResizeWeight(1D);
-      textarea.setMinimumSize(null);
+//      splitPane.setDividerLocation(-1); // any negative value resets to preferred size
+//      splitPane.setResizeWeight(1D);
+//      textarea.setMinimumSize(null);
     }
 
     // apply changes to the font size for the editor
-    //TextAreaPainter painter = textarea.getPainter();
     painter.setFont(Preferences.getFont("editor.font"));
-    //Font font = painter.getFont();
-    //textarea.getPainter().setFont(new Font("Courier", Font.PLAIN, 36));
 
     // in case tab expansion stuff has changed
     listener.applyPreferences();
@@ -1037,24 +1024,24 @@ public class Editor extends JFrame implements RunnerListener {
   // abstract from the editor in this fashion.
 
 
-  public void setHandlers(Runnable runHandler, Runnable presentHandler,
-                          Runnable stopHandler,
-                          Runnable exportHandler, Runnable exportAppHandler) {
-    this.runHandler = runHandler;
-    this.presentHandler = presentHandler;
-    this.stopHandler = stopHandler;
-    this.exportHandler = exportHandler;
-    this.exportAppHandler = exportAppHandler;
-  }
+//  public void setHandlers(Runnable runHandler, Runnable presentHandler,
+//                          Runnable stopHandler,
+//                          Runnable exportHandler, Runnable exportAppHandler) {
+//    this.runHandler = runHandler;
+//    this.presentHandler = presentHandler;
+//    this.stopHandler = stopHandler;
+//    this.exportHandler = exportHandler;
+//    this.exportAppHandler = exportAppHandler;
+//  }
 
 
-  public void resetHandlers() {
-    runHandler = new DefaultRunHandler();
-    presentHandler = new DefaultPresentHandler();
-    stopHandler = new DefaultStopHandler();
-    exportHandler = new DefaultExportHandler();
-    exportAppHandler = new DefaultExportAppHandler();
-  }
+//  public void resetHandlers() {
+//    runHandler = new DefaultRunHandler();
+//    presentHandler = new DefaultPresentHandler();
+//    stopHandler = new DefaultStopHandler();
+//    exportHandler = new DefaultExportHandler();
+//    exportAppHandler = new DefaultExportAppHandler();
+//  }
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -1501,7 +1488,8 @@ public class Editor extends JFrame implements RunnerListener {
   class DefaultRunHandler implements Runnable {
     public void run() {
       try {
-        sketch.prepare();
+        Build build = new Build(sketch);
+        build.prepareRun();
         String appletClassName = sketch.build();
         if (appletClassName != null) {
           runtime = new Runner(Editor.this, sketch);
@@ -1517,7 +1505,7 @@ public class Editor extends JFrame implements RunnerListener {
   class DefaultPresentHandler implements Runnable {
     public void run() {
       try {
-        sketch.prepare();
+        sketch.prepareRun();
         String appletClassName = sketch.build();
         if (appletClassName != null) {
           runtime = new Runner(Editor.this, sketch);
@@ -1603,7 +1591,7 @@ public class Editor extends JFrame implements RunnerListener {
       stopHandler.run();
     } catch (Exception e) { }
 
-    sketch.cleanup();
+//    sketch.cleanup();
   }
 
 

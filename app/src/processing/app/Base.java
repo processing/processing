@@ -31,6 +31,7 @@ import java.util.*;
 import javax.swing.*;
 
 import processing.core.*;
+import processing.java.*;
 
 
 /**
@@ -48,6 +49,7 @@ public class Base {
   /** True if heavy debugging error/log messages are enabled */
   static public boolean DEBUG = false;
 
+  
   static HashMap<Integer, String> platformNames =
     new HashMap<Integer, String>();
   static {
@@ -73,24 +75,7 @@ public class Base {
   // so that the errors while building don't show up again.
   boolean builtOnce;
 
-  static File buildFolder;
-
-  // these are static because they're used by Sketch
-  static private File examplesFolder;
-  static private File librariesFolder;
-  static private File toolsFolder;
-
-  ArrayList<LibraryFolder> coreLibraries;
-  ArrayList<LibraryFolder> contribLibraries;
-
-  // maps imported packages to their library folder
-//  static HashMap<String, File> importToLibraryTable;
-  static HashMap<String, LibraryFolder> importToLibraryTable;
-
-  // classpath for all known libraries for p5
-  // (both those in the p5/libs folder and those with lib subfolders
-  // found in the sketchbook)
-//  static public String librariesClassPath;
+//  static File buildFolder;
 
   // Location for untitled items
   static File untitledFolder;
@@ -101,9 +86,11 @@ public class Base {
   // a lone file menu to be used when all sketch windows are closed
   static public JMenu defaultFileMenu;
 
+  Mode defaultMode = new Mode();
 
+  
   static public void main(final String[] args) {
-    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+    EventQueue.invokeLater(new Runnable() {
         public void run() {
           createAndShowGUI(args);
         }
@@ -155,10 +142,19 @@ public class Base {
     }
 
     // Create a location for untitled sketches
-    untitledFolder = createTempFolder("untitled");
-    untitledFolder.deleteOnExit();
+    try {
+      untitledFolder = Base.createTempFolder("untitled", "sketches");
+      untitledFolder.deleteOnExit();
+    } catch (IOException e) {
+      //e.printStackTrace();
+      Base.showError("Trouble without a name", 
+                     "Could not create a place to store untitled sketches.\n" + 
+                     "That's gonna prevent us from continuing.", e);
+    }
 
+//    System.out.println("about to create base...");
     new Base(args);
+//    System.out.println("done creating base...");
   }
 
 
@@ -267,7 +263,10 @@ public class Base {
 
     // Create a new empty window (will be replaced with any files to be opened)
     if (!opened) {
+      System.out.println("opening a new window");
       handleNew();
+    } else {
+      System.out.println("something else was opened");
     }
 
     // check for updates
@@ -761,11 +760,15 @@ public class Base {
       if (path != null) {
         Editor editor = handleOpen(path);
         editor.untitled = true;
+      } else {
+        System.err.println("untitled went null...");
       }
 
     } catch (IOException e) {
       if (activeEditor != null) {
         activeEditor.statusError(e);
+      } else {
+        e.printStackTrace();
       }
     }
   }
@@ -955,6 +958,8 @@ public class Base {
 //      if (Preferences.getBoolean("sketchbook.closing_last_window_quits") ||
 //          (editor.untitled && !editor.getSketch().isModified())) {
       if (Base.isMacOS()) {
+        // If the central menubar isn't supported on this OS X JVM, 
+        // we have to do the old behavior. Yuck!
         if (defaultFileMenu == null) {
           Object[] options = { "OK", "Cancel" };
           String prompt =
@@ -1615,6 +1620,7 @@ public class Base {
   }
 
 
+  /*
   static public File getBuildFolder() {
     if (buildFolder == null) {
       String buildPath = Preferences.get("build.path");
@@ -1630,28 +1636,21 @@ public class Base {
     }
     return buildFolder;
   }
+  */
 
 
   /**
-   * Get the path to the platform's temporary folder, by creating
-   * a temporary temporary file and getting its parent folder.
-   * <br/>
-   * Modified for revision 0094 to actually make the folder randomized
-   * to avoid conflicts in multi-user environments. (Bug 177)
+   * Create a temporary folder by using the createTempFile() mechanism, 
+   * deleting the file it creates, and making a folder using the location
+   * that was provided.
    */
-  static public File createTempFolder(String name) {
-    try {
-      File folder = File.createTempFile(name, null);
-      //String tempPath = ignored.getParent();
-      //return new File(tempPath);
-      folder.delete();
-      folder.mkdirs();
-      return folder;
-
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    return null;
+  static public File createTempFolder(String prefix, String suffix) throws IOException {
+    File folder = File.createTempFile(prefix, suffix);
+    // Now delete that file and create a folder in its place
+    folder.delete();
+    folder.mkdirs();
+    // And send the folder back to your friends
+    return folder;
   }
 
 
@@ -2413,15 +2412,30 @@ public class Base {
    * and returns a list of their relative paths.
    * Ignores any files/folders prefixed with a dot.
    */
-  static public String[] listFiles(String path, boolean relative) {
-    return listFiles(new File(path), relative);
-  }
+//  static public String[] listFiles(String path, boolean relative) {
+//    return listFiles(new File(path), relative);
+//  }
 
 
   static public String[] listFiles(File folder, boolean relative) {
     String path = folder.getAbsolutePath();
     Vector<String> vector = new Vector<String>();
-    listFiles(relative ? (path + File.separator) : "", path, vector);
+    listFiles(relative ? (path + File.separator) : "", path, null, vector);
+    String outgoing[] = new String[vector.size()];
+    vector.copyInto(outgoing);
+    return outgoing;
+  }
+
+  
+  static public String[] listFiles(File folder, boolean relative, String extension) {
+    String path = folder.getAbsolutePath();
+    Vector<String> vector = new Vector<String>();
+    if (extension != null) {
+      if (!extension.startsWith(".")) {
+        extension = "." + extension;
+      }
+    }
+    listFiles(relative ? (path + File.separator) : "", path, extension, vector);
     String outgoing[] = new String[vector.size()];
     vector.copyInto(outgoing);
     return outgoing;
@@ -2429,22 +2443,24 @@ public class Base {
 
 
   static protected void listFiles(String basePath,
-                                  String path, Vector<String> vector) {
+                                  String path, String extension, 
+                                  Vector<String> vector) {
     File folder = new File(path);
-    String list[] = folder.list();
-    if (list == null) return;
-
-    for (int i = 0; i < list.length; i++) {
-      if (list[i].charAt(0) == '.') continue;
-
-      File file = new File(path, list[i]);
-      String newPath = file.getAbsolutePath();
-      if (newPath.startsWith(basePath)) {
-        newPath = newPath.substring(basePath.length());
-      }
-      vector.add(newPath);
-      if (file.isDirectory()) {
-        listFiles(basePath, newPath, vector);
+    String[] list = folder.list();
+    if (list != null) {
+      for (String item : list) {
+        if (item.charAt(0) == '.') continue;
+        if (extension == null || item.toLowerCase().endsWith(extension)) {
+          File file = new File(path, item);
+          String newPath = file.getAbsolutePath();
+          if (newPath.startsWith(basePath)) {
+            newPath = newPath.substring(basePath.length());
+          }
+          vector.add(newPath);
+          if (file.isDirectory()) {
+            listFiles(basePath, newPath, extension, vector);
+          }
+        }
       }
     }
   }

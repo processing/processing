@@ -1,4 +1,4 @@
-package processing.app;
+package processing.java;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -6,9 +6,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import processing.app.debug.Compiler;
+
+import processing.app.Base;
+import processing.app.Sketch;
 import processing.core.PApplet;
 import processing.core.PConstants;
+import processing.java.runner.Compiler;
 
 //import java.awt.event.*;
 //import java.io.*;
@@ -26,6 +29,7 @@ public class LibraryFolder implements PConstants {
   File folder;
   File libraryFolder;   // name/library
   File examplesFolder;  // name/examples
+  File referenceFile;   // name/reference/index.html
 
   String name;          // "pdf" or "PDF Export"
 //  String prettyName;    // PDF Export
@@ -74,6 +78,7 @@ public class LibraryFolder implements PConstants {
       // skip .DS_Store files, .svn folders, etc
       if (name.charAt(0) == '.') return false;
       if (name.equals("CVS")) return false;
+      if (name.equals("export.txt")) return false;
       File file = new File(dir, name); 
       return (!file.isDirectory());
     }
@@ -142,6 +147,7 @@ public class LibraryFolder implements PConstants {
     this.folder = folder;
     libraryFolder = new File(folder, "library");
     examplesFolder = new File(folder, "examples");
+    referenceFile = new File(folder, "reference/index.html");
 
     File exportSettings = new File(libraryFolder, "export.txt");
     HashMap<String,String> exportTable = Base.readSettings(exportSettings);
@@ -154,7 +160,9 @@ public class LibraryFolder implements PConstants {
     exportList = new HashMap<String, String[]>();
 
     // get the list of files just in the library root
-    String[] baseList = folder.list(simpleFilter);
+    String[] baseList = libraryFolder.list(simpleFilter);
+    System.out.println("Loading " + name + "...");
+//    PApplet.println(baseList);
 
     String appletExportStr = exportTable.get("applet");
     if (appletExportStr != null) {
@@ -236,6 +244,10 @@ public class LibraryFolder implements PConstants {
           exportList.put(platformName64, platformList64);
         }
       }
+    }
+    for (String p : exportList.keySet()) {
+      System.out.println(p + " -> ");
+      PApplet.println(exportList.get(p));
     }
 
     // get the path for all .jar files in this code folder
@@ -324,6 +336,12 @@ public class LibraryFolder implements PConstants {
   }
 
 
+  /**
+   * Applet exports don't go by platform, since by their nature applets are
+   * meant to be cross-platform. Technically, you could have a situation where
+   * you want to export applet code for different platforms, but it's too 
+   * obscure a case that we're not interested in supporting it. 
+   */
   public File[] getAppletExports() {
     return wrapFiles(appletExportList);
   }
