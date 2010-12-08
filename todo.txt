@@ -60,7 +60,6 @@ X   couldn't find a good way to reproduce this, closing
 libraries
 o Exported libraries don't mantain symbolic links
 o   http://code.google.com/p/processing/issues/detail?id=353
-
 _ need to deal with classpath conflicts
 _   avoid garbage that people have installed on their machines
 _   antlr.jar in the classpath will cause trouble.. 
@@ -88,6 +87,9 @@ _   http://code.google.com/p/processing/issues/detail?id=56
 _ changing the sketchbook folder will make libraries show up
 _   but it won't reload the library mapping table
 _ 64-bit windows causes UnsatisfiedLinkError with OpenGL
+_ make sure there aren't library jar files named the same thing 
+_   i.e. if one library has db.jar, then that's gonna kill another db.jar
+_   when the files are copied over
 
 _ when are prefs saved? could instead save whenever changes are made
 _   and then if the file gets modified, it'll put up an error message
@@ -135,9 +137,6 @@ _   figure out a better way to do this automatically during build
 
 _ remove version number from splash image
 _   http://code.google.com/p/processing/issues/detail?id=324
-_ make sure there aren't library jar files named the same thing 
-_   i.e. if one library has db.jar, then that's gonna kill another db.jar
-_   when the files are copied over
 
 mode work
 _ locations: sketchbook, examples, libraries

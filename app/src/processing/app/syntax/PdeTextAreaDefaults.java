@@ -185,23 +185,16 @@ public class PdeTextAreaDefaults extends TextAreaDefaults {
 
     caretVisible = true;
     caretBlinks = Preferences.getBoolean("editor.caret.blink");
+    antialias = Preferences.getBoolean("editor.antialias");
+    
     caretColor = Theme.getColor("editor.caret.color");
-
     selectionColor = Theme.getColor("editor.selection.color");
-
-    lineHighlight =
-      Theme.getBoolean("editor.linehighlight");
-    lineHighlightColor =
-      Theme.getColor("editor.linehighlight.color");
-
-    bracketHighlight =
-      Theme.getBoolean("editor.brackethighlight");
-    bracketHighlightColor =
-      Theme.getColor("editor.brackethighlight.color");
-
+    lineHighlight = Theme.getBoolean("editor.linehighlight");
+    lineHighlightColor = Theme.getColor("editor.linehighlight.color");
+    bracketHighlight = Theme.getBoolean("editor.brackethighlight");
+    bracketHighlightColor = Theme.getColor("editor.brackethighlight.color");
     eolMarkers = Theme.getBoolean("editor.eolmarkers");
     eolMarkerColor = Theme.getColor("editor.eolmarkers.color");
 
-    paintInvalid = Theme.getBoolean("editor.invalid");
   }
 }

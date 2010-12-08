@@ -37,14 +37,13 @@ import processing.core.*;
  * and to make way for future ability to customize.
  */
 public class Theme {
-
   /** Copy of the defaults in case the user mangles a preference. */
-  static HashMap<String,String> defaults;
+  HashMap<String,String> defaults;
   /** Table of attributes/values for the theme. */
-  static HashMap<String,String> table = new HashMap<String,String>();;
+  HashMap<String,String> table = new HashMap<String,String>();;
 
 
-  static protected void init() {
+  public Theme(File file) throws IOException {
     try {
       load(Base.getLibStream("theme/theme.txt"));
     } catch (Exception te) {
@@ -69,10 +68,7 @@ public class Theme {
 
     // clone the hash table
     defaults = (HashMap<String, String>) table.clone();
-  }
 
-
-  static protected void load(InputStream input) throws IOException {
     String[] lines = PApplet.loadStrings(input);
     for (String line : lines) {
       if ((line.length() == 0) ||

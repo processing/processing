@@ -96,9 +96,6 @@ editor.external=false
 # caret blinking
 editor.caret.blink=true
 
-# area that's not in use by the text (replaced with tildes)
-editor.invalid=false
-
 # enable ctrl-ins, shift-ins, shift-delete for cut/copy/paste
 # on windows and linux, but disable on the mac
 editor.keys.alternative_cut_copy_paste = true
@@ -113,6 +110,10 @@ editor.keys.home_and_end_travel_far = false
 # the OS X HI Guidelines say that home/end are relative to the document
 # if you don't like it, this is the preference to change
 editor.keys.home_and_end_travel_far.macosx = true
+
+# font choice and size for the console
+console.font = Monospaced,plain,11
+console.font.macosx = Monaco,plain,10
 
 # number of lines to show by default
 console.lines = 4

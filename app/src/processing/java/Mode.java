@@ -47,7 +47,6 @@ public class Mode {
 //  static public String librariesClassPath;
 
 
-  public Editor createEditor(Base ibase, String path, int[] location) {
-    
-  }
+//  public Editor createEditor(Base ibase, String path, int[] location) {
+//  }
 }

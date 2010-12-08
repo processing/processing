@@ -137,46 +137,10 @@ public class EditorConsole extends JScrollPane {
     consoleTextPane = new JTextPane(consoleDoc);
     consoleTextPane.setEditable(false);
 
-    // necessary?
-    MutableAttributeSet standard = new SimpleAttributeSet();
-    StyleConstants.setAlignment(standard, StyleConstants.ALIGN_LEFT);
-    consoleDoc.setParagraphAttributes(0, 0, standard, true);
-
-    // build styles for different types of console output
-    Color bgColor = Theme.getColor("console.color");
-    Color fgColorOut = Theme.getColor("console.output.color");
-    Color fgColorErr = Theme.getColor("console.error.color");
-    Font font = Theme.getFont("console.font");
-
-    stdStyle = new SimpleAttributeSet();
-    StyleConstants.setForeground(stdStyle, fgColorOut);
-    StyleConstants.setBackground(stdStyle, bgColor);
-    StyleConstants.setFontSize(stdStyle, font.getSize());
-    StyleConstants.setFontFamily(stdStyle, font.getFamily());
-    StyleConstants.setBold(stdStyle, font.isBold());
-    StyleConstants.setItalic(stdStyle, font.isItalic());
-
-    errStyle = new SimpleAttributeSet();
-    StyleConstants.setForeground(errStyle, fgColorErr);
-    StyleConstants.setBackground(errStyle, bgColor);
-    StyleConstants.setFontSize(errStyle, font.getSize());
-    StyleConstants.setFontFamily(errStyle, font.getFamily());
-    StyleConstants.setBold(errStyle, font.isBold());
-    StyleConstants.setItalic(errStyle, font.isItalic());
-
-    consoleTextPane.setBackground(bgColor);
+    updateMode();
 
     // add the jtextpane to this scrollpane
     this.setViewportView(consoleTextPane);
-
-    // calculate height of a line of text in pixels
-    // and size window accordingly
-    FontMetrics metrics = this.getFontMetrics(font);
-    int height = metrics.getAscent() + metrics.getDescent();
-    int lines = Preferences.getInteger("console.lines"); //, 4);
-    int sizeFudge = 6; //10; // unclear why this is necessary, but it is
-    setPreferredSize(new Dimension(1024, (height * lines) + sizeFudge));
-    setMinimumSize(new Dimension(1024, (height * 4) + sizeFudge));
 
     // to fix ugliness.. normally macosx java 1.3 puts an
     // ugly white border around this object, so turn it off.
@@ -197,6 +161,53 @@ public class EditorConsole extends JScrollPane {
         }
       }
     }).start();
+  }
+  
+  
+  /**
+   * Change coloring, fonts, etc in response to a mode change.
+   */
+  protected void updateMode() {
+    Mode mode = editor.getMode();
+
+    // necessary?
+    MutableAttributeSet standard = new SimpleAttributeSet();
+    StyleConstants.setAlignment(standard, StyleConstants.ALIGN_LEFT);
+    consoleDoc.setParagraphAttributes(0, 0, standard, true);
+
+    Font font = Preferences.getFont("console.font");
+
+    // build styles for different types of console output
+    Color bgColor = mode.getColor("console.color");
+    Color fgColorOut = mode.getColor("console.output.color");
+    Color fgColorErr = mode.getColor("console.error.color");
+
+    stdStyle = new SimpleAttributeSet();
+    StyleConstants.setForeground(stdStyle, fgColorOut);
+    StyleConstants.setBackground(stdStyle, bgColor);
+    StyleConstants.setFontSize(stdStyle, font.getSize());
+    StyleConstants.setFontFamily(stdStyle, font.getFamily());
+    StyleConstants.setBold(stdStyle, font.isBold());
+    StyleConstants.setItalic(stdStyle, font.isItalic());
+
+    errStyle = new SimpleAttributeSet();
+    StyleConstants.setForeground(errStyle, fgColorErr);
+    StyleConstants.setBackground(errStyle, bgColor);
+    StyleConstants.setFontSize(errStyle, font.getSize());
+    StyleConstants.setFontFamily(errStyle, font.getFamily());
+    StyleConstants.setBold(errStyle, font.isBold());
+    StyleConstants.setItalic(errStyle, font.isItalic());
+
+    consoleTextPane.setBackground(bgColor);
+
+    // calculate height of a line of text in pixels
+    // and size window accordingly
+    FontMetrics metrics = this.getFontMetrics(font);
+    int height = metrics.getAscent() + metrics.getDescent();
+    int lines = Preferences.getInteger("console.lines"); //, 4);
+    int sizeFudge = 6; //10; // unclear why this is necessary, but it is
+    setPreferredSize(new Dimension(1024, (height * lines) + sizeFudge));
+    setMinimumSize(new Dimension(1024, (height * 4) + sizeFudge));
   }
 
   
