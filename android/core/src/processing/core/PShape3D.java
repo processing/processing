@@ -221,7 +221,7 @@ public class PShape3D extends PShape implements PConstants {
       PGraphics.showWarning("PShape3D: can load only one type of data at the time");
       return;        
     }
-    
+        
     updateElement = VERTICES;
     firstUpdateIdx = first;
     lastUpdateIdx = last;
@@ -274,6 +274,7 @@ public class PShape3D extends PShape implements PConstants {
       PGraphics.showWarning("PShape3D: can load only one type of data at the time");
       return;        
     }
+       
     
     updateElement = COLORS;
     firstUpdateIdx = first;
@@ -758,6 +759,7 @@ public class PShape3D extends PShape implements PConstants {
   
   public int getFirstVertex() {
     if (family == GROUP) {
+      init();
       return getFirstVertex(0);
     } else { 
       return firstVertex;
@@ -775,6 +777,7 @@ public class PShape3D extends PShape implements PConstants {
   
   public void setFirstVertex(int n0) {
     if (family == GROUP) {
+      init();
       setFirstVertex(0, n0);
     } else { 
       firstVertex = n0;
@@ -791,6 +794,7 @@ public class PShape3D extends PShape implements PConstants {
   
   public int getLastVertex() {
     if (family == GROUP) {
+      init();
       return getLastVertex(0);
     } else { 
       return lastVertex;
@@ -808,6 +812,7 @@ public class PShape3D extends PShape implements PConstants {
   
   public void setLastVertex(int n1) {
     if (family == GROUP) {
+      init();
       setLastVertex(0, n1);
     } else { 
       lastVertex = n1;
@@ -824,6 +829,7 @@ public class PShape3D extends PShape implements PConstants {
   
   public void setDrawMode(int mode) {
     if (family == GROUP) {
+      init();
       setDrawModeImpl(mode);
       for (int n = 0; n < childCount; n++) {
         setDrawMode(n, mode);
@@ -862,6 +868,7 @@ public class PShape3D extends PShape implements PConstants {
   
   public int getDrawMode() {
     if (family == GROUP) {
+      init();
       return getDrawMode(0);
     } else { 
       return getDrawModeImpl();
@@ -893,6 +900,7 @@ public class PShape3D extends PShape implements PConstants {
   
   public void setTexture(PImage tex) {
     if (family == GROUP) {
+      init();
       if (children == null) {
         addDefaultChild();
       }
@@ -905,6 +913,7 @@ public class PShape3D extends PShape implements PConstants {
   
   public void setTexture(PImage tex0, PImage tex1) {
     if (family == GROUP) {
+      init();
       if (children == null) {
         addDefaultChild();
       }      
@@ -918,6 +927,7 @@ public class PShape3D extends PShape implements PConstants {
   
   public void setTexture(PImage tex0, PImage tex1, PImage tex2) {
     if (family == GROUP) {
+      init();
       if (children == null) {
         addDefaultChild();
       }      
@@ -932,6 +942,7 @@ public class PShape3D extends PShape implements PConstants {
   
   public void setTexture(PImage tex0, PImage tex1, PImage tex2, PImage tex3) {
     if (family == GROUP) {
+      init();
       if (children == null) {
         addDefaultChild();
       }      
@@ -947,6 +958,7 @@ public class PShape3D extends PShape implements PConstants {
   
   public void setTexture(PImage[] tex) {
     if (family == GROUP) {
+      init();
       if (children == null) {
         addDefaultChild();
       }      
@@ -1044,6 +1056,7 @@ public class PShape3D extends PShape implements PConstants {
   
   public PImage[] getTexture() {
     if (family == GROUP) {
+      init();
       return getTexture(0);
     } else {
       return textures;
@@ -1061,6 +1074,7 @@ public class PShape3D extends PShape implements PConstants {
   
   public float getStrokeWeight() {
     if (family == GROUP) {
+      init();
       return getStrokeWeight(0);
     } else { 
       return strokeWeight;
@@ -1079,6 +1093,7 @@ public class PShape3D extends PShape implements PConstants {
   
   public void setStrokeWeight(float sw) {
     if (family == GROUP) {
+      init();
       setStrokeWeight(0, sw);
     } else { 
       strokeWeight = sw;
@@ -1105,6 +1120,7 @@ public class PShape3D extends PShape implements PConstants {
   
   public void setColor(float[] c) {
     if (family == GROUP) {
+      init();
       setColor(0, c);
     } else {
       setColorImpl(c);
@@ -1146,6 +1162,7 @@ public class PShape3D extends PShape implements PConstants {
   
   public void setNormal(float[] n) {
     if (family == GROUP) {
+      init();
       setNormal(0, n);
     } else {
       setNormalImpl(n);
@@ -1318,6 +1335,13 @@ public class PShape3D extends PShape implements PConstants {
   
   // Data allocation, deletion.
 
+  protected void init() {
+    if (readFromOBJ) {
+      recordOBJ();
+      centerAt(0, 0, 0);      
+    }    
+  }
+  
   protected void initShape(int numVert) {
     initShape(numVert, new Parameters());
   }
@@ -1562,6 +1586,8 @@ public class PShape3D extends PShape implements PConstants {
 
 
   public void translate(float tx, float ty, float tz) {
+    init();
+    
     loadVertices();
     
     // Translating.
@@ -1596,6 +1622,8 @@ public class PShape3D extends PShape implements PConstants {
 
 
   public void rotate(float angle, float v0, float v1, float v2) {
+    init();
+    
     // TODO should make sure this vector is normalized, and test that this method works ok.
     loadVertices();
     
@@ -1639,6 +1667,8 @@ public class PShape3D extends PShape implements PConstants {
 
 
   public void scale(float x, float y, float z) {
+    init();
+    
     loadVertices();
     
     // Scaling.
@@ -1684,6 +1714,7 @@ public class PShape3D extends PShape implements PConstants {
     useOwnStrokeWeigth = false;
     
     if (family == GROUP) {
+      init();
       for (int i = 0; i < childCount; i++) {
         children[i].disableStyle();
       }     
@@ -1697,6 +1728,7 @@ public class PShape3D extends PShape implements PConstants {
     useOwnStrokeWeigth = true;
     
     if (family == GROUP) {
+      init();
       for (int i = 0; i < childCount; i++) {
         children[i].enableStyle();
       }     
@@ -1715,17 +1747,7 @@ public class PShape3D extends PShape implements PConstants {
 	 
 
   protected void drawGroup(PGraphics g) {
-    if (readFromOBJ) {
-      recordOBJ(objVertices, objNormal, objTexCoords, objFaces, objMaterials);
-      centerAt(0, 0, 0);
-      
-      readFromOBJ = false;
-      objVertices = null; 
-      objNormal = null; 
-      objTexCoords = null;    
-      objFaces = null;
-      objMaterials = null;
-    }
+    init();
     
     if (children == null) {
       addDefaultChild();
@@ -2137,6 +2159,16 @@ public class PShape3D extends PShape implements PConstants {
     }    
   }
   
+  protected void recordOBJ() {
+    recordOBJ(objVertices, objNormal, objTexCoords, objFaces, objMaterials);
+    objVertices = null; 
+    objNormal = null; 
+    objTexCoords = null;    
+    objFaces = null;
+    objMaterials = null;    
+    
+    readFromOBJ = false;
+  }
   
   protected void recordOBJ(ArrayList<PVector> vertices, ArrayList<PVector> normals, ArrayList<PVector> textures, ArrayList<OBJFace> faces, ArrayList<OBJMaterial> materials) {
     int mtlIdxCur = -1;
