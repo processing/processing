@@ -1734,7 +1734,15 @@ public class Sketch {
 
         Base.showWarning("Could not find applet size", message, null);
       }
-    }  // else no size() command found
+    } else { 
+      // no size() found
+      final String message =
+        "This applet appears to be missing size().\n" +
+        "Assuming size(" + Integer.toString(wide) + ", " + 
+        Integer.toString(high) + ", JAVA2D)";
+      
+      Base.showWarning("Could not find applet size", message, null);
+    }   
 
     // Grab the Javadoc-style description from the main code.
     String description = "";
