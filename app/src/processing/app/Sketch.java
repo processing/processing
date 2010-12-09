@@ -27,7 +27,6 @@ import processing.core.*;
 import processing.java.LibraryFolder;
 import processing.java.preproc.*;
 import processing.java.runner.Compiler;
-import processing.java.runner.RunnerException;
 
 import java.awt.*;
 import java.awt.event.*;

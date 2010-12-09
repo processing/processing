@@ -31,11 +31,11 @@ import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
 import processing.app.Preferences;
+import processing.app.RunnerException;
 import processing.app.antlr.PdeLexer;
 import processing.app.antlr.PdeRecognizer;
 import processing.app.antlr.PdeTokenTypes;
 import processing.core.PApplet;
-import processing.java.runner.RunnerException;
 import antlr.*;
 import antlr.collections.AST;
 

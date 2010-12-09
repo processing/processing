@@ -76,15 +76,17 @@ public class EditorStatus extends JPanel /*implements ActionListener*/ {
     empty();
 
     if (bgcolor == null) {
+      Settings theme = editor.getTheme();
+      
       bgcolor = new Color[3]; //4];
-      bgcolor[0] = Theme.getColor("status.notice.bgcolor");
-      bgcolor[1] = Theme.getColor("status.error.bgcolor");
-      bgcolor[2] = Theme.getColor("status.edit.bgcolor");
+      bgcolor[0] = theme.getColor("status.notice.bgcolor");
+      bgcolor[1] = theme.getColor("status.error.bgcolor");
+      bgcolor[2] = theme.getColor("status.edit.bgcolor");
 
       fgcolor = new Color[3]; //4];
-      fgcolor[0] = Theme.getColor("status.notice.fgcolor");
-      fgcolor[1] = Theme.getColor("status.error.fgcolor");
-      fgcolor[2] = Theme.getColor("status.edit.fgcolor");
+      fgcolor[0] = theme.getColor("status.notice.fgcolor");
+      fgcolor[1] = theme.getColor("status.error.fgcolor");
+      fgcolor[2] = theme.getColor("status.edit.fgcolor");
     }
   }
 

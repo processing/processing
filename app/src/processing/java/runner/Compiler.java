@@ -24,6 +24,7 @@
 package processing.java.runner;
 
 import processing.app.Base;
+import processing.app.RunnerException;
 import processing.app.Sketch;
 //import processing.app.SketchCode;
 import processing.core.*;

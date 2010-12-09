@@ -30,7 +30,6 @@ import processing.app.*;
 import processing.app.exec.*;
 import processing.core.PApplet;
 import processing.java.LibraryFolder;
-import processing.java.runner.RunnerException;
 
 
 class Build {

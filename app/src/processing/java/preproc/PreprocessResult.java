@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import processing.java.runner.RunnerException;
+import processing.app.RunnerException;
 
 /**
  * 

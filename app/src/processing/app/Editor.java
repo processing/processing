@@ -25,8 +25,7 @@ package processing.app;
 import processing.app.syntax.*;
 import processing.app.tools.*;
 import processing.core.*;
-import processing.java.Build;
-import processing.java.runner.*;
+import processing.java.*;
 
 import java.awt.*;
 import java.awt.datatransfer.*;
@@ -48,7 +47,8 @@ import javax.swing.undo.*;
  * Main editor panel for the Processing Development Environment.
  */
 public class Editor extends JFrame implements RunnerListener {
-  final Base base;
+  Base base;
+  Mode mode;
 
   // otherwise, if the window is resized with the message label
   // set to blank, it's preferredSize() will be fukered
@@ -91,7 +91,6 @@ public class Editor extends JFrame implements RunnerListener {
 
   // runtime information and window placement
   private Point sketchWindowLocation;
-  private Runner runtime;
 
   private JMenuItem saveMenuItem;
   private JMenuItem saveAsMenuItem;
@@ -116,11 +115,10 @@ public class Editor extends JFrame implements RunnerListener {
 //  private Runnable exportAppHandler;
 
 
-  public Editor(Base ibase, String path, int[] location) {
+  public Editor(final Base base, Mode mode, String path, int[] location) {
     super("Processing");
-    this.base = ibase;
+    this.base = base;
     
-    System.out.println("new editor! " + ibase + " " + path);
     PApplet.println(location);
 
     Base.setIcon(this);
@@ -182,7 +180,7 @@ public class Editor extends JFrame implements RunnerListener {
     header = new EditorHeader(this);
     upper.add(header);
 
-    textarea = new JEditTextArea(new PdeTextAreaDefaults());
+    textarea = new JEditTextArea(new PdeTextAreaDefaults(mode.getTheme()));
     textarea.setRightClickPopup(new TextAreaPopup());
     textarea.setHorizontalOffset(JEditTextArea.leftHandGutter);
 
@@ -316,6 +314,16 @@ public class Editor extends JFrame implements RunnerListener {
       return true;
     }
   }
+  
+  
+  public Mode getMode() {
+    return mode;
+  }
+  
+  
+  public Settings getTheme() {
+    return mode.getTheme();
+  }
 
 
   protected void setPlacement(int[] location) {
@@ -352,7 +360,6 @@ public class Editor extends JFrame implements RunnerListener {
    * with things in the Preferences window.
    */
   protected void applyPreferences() {
-
     // apply the setting for 'use external editor'
     boolean external = Preferences.getBoolean("editor.external");
 
@@ -363,7 +370,7 @@ public class Editor extends JFrame implements RunnerListener {
     TextAreaPainter painter = textarea.getPainter();
     if (external) {
       // disable line highlight and turn off the caret when disabling
-      Color color = Theme.getColor("editor.external.bgcolor");
+      Color color = mode.getTheme().getColor("editor.external.bgcolor");
       painter.setBackground(color);
       painter.setLineHighlightEnabled(false);
       textarea.setCaretVisible(false);
@@ -373,7 +380,7 @@ public class Editor extends JFrame implements RunnerListener {
 //      splitPane.setResizeWeight(0D);
 //      textarea.setMinimumSize(new Dimension(textarea.getWidth(), 0));
     } else {
-      Color color = Theme.getColor("editor.bgcolor");
+      Color color = mode.getTheme().getColor("editor.bgcolor");
       painter.setBackground(color);
       boolean highlight = Preferences.getBoolean("editor.linehighlight");
       painter.setLineHighlightEnabled(highlight);
@@ -471,7 +478,6 @@ public class Editor extends JFrame implements RunnerListener {
 
     if (Base.importMenu == null) {
       Base.importMenu = new JMenu("Import Library...");
-      //base.rebuildImportMenu(importMenu);
       base.rebuildImportMenu();
     }
     sketchMenu.add(Base.importMenu);
@@ -1258,7 +1264,7 @@ public class Editor extends JFrame implements RunnerListener {
       code.setDocument(document);
 
       // turn on syntax highlighting
-      document.setTokenMarker(new PdeKeywords());
+      document.setTokenMarker(mode.getTokenMarker());
 
       // insert the program text into the document object
       try {
@@ -1398,7 +1404,17 @@ public class Editor extends JFrame implements RunnerListener {
   }
 
 
-  protected void handleIndentOutdent(boolean indent) {
+  public void handleIndent() {
+    handleIndentOutdent(true);
+  }
+  
+  
+  public void handleOutdent() {
+    handleIndentOutdent(false);
+  }
+  
+  
+  public void handleIndentOutdent(boolean indent) {
     int tabSize = Preferences.getInteger("editor.tabs.size");
     String tabString = Editor.EMPTY.substring(0, tabSize);
 
@@ -1448,7 +1464,7 @@ public class Editor extends JFrame implements RunnerListener {
       statusNotice("First select a word to find in the reference.");
 
     } else {
-      String referenceFile = PdeKeywords.getReference(text);
+      String referenceFile = mode.getReference(text);
       //System.out.println("reference file is " + referenceFile);
       if (referenceFile == null) {
         statusNotice("No reference available for \"" + text + "\"");
@@ -1460,76 +1476,6 @@ public class Editor extends JFrame implements RunnerListener {
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-
-
-  /**
-   * Implements Sketch &rarr; Run.
-   * @param present Set true to run in full screen (present mode).
-   */
-  public void handleRun(boolean present) {
-    internalCloseRunner();
-    toolbar.activate(EditorToolbar.RUN);
-    statusEmpty();
-
-    // do this to advance/clear the terminal window / dos prompt / etc
-    for (int i = 0; i < 10; i++) System.out.println();
-
-    // clear the console on each run, unless the user doesn't want to
-    if (Preferences.getBoolean("console.auto_clear")) {
-      console.clear();
-    }
-
-    // Cannot use invokeLater() here, otherwise it gets
-    // placed on the event thread and causes a hang--bad idea all around.
-    new Thread(present ? presentHandler : runHandler).start();
-  }
-
-
-  class DefaultRunHandler implements Runnable {
-    public void run() {
-      try {
-        Build build = new Build(sketch);
-        build.prepareRun();
-        String appletClassName = sketch.build();
-        if (appletClassName != null) {
-          runtime = new Runner(Editor.this, sketch);
-          runtime.launch(appletClassName, false);
-        }
-      } catch (Exception e) {
-        statusError(e);
-      }
-    }
-  }
-
-
-  class DefaultPresentHandler implements Runnable {
-    public void run() {
-      try {
-        sketch.prepareRun();
-        String appletClassName = sketch.build();
-        if (appletClassName != null) {
-          runtime = new Runner(Editor.this, sketch);
-          runtime.launch(appletClassName, true);
-        }
-      } catch (Exception e) {
-        statusError(e);
-      }
-    }
-  }
-
-
-  class DefaultStopHandler implements Runnable {
-    public void run() {
-      try {
-        if (runtime != null) {
-          runtime.close();  // kills the window
-          runtime = null; // will this help?
-        }
-      } catch (Exception e) {
-        statusError(e);
-      }
-    }
-  }
 
 
   /**
@@ -1547,51 +1493,6 @@ public class Editor extends JFrame implements RunnerListener {
    */
   public Point getSketchLocation() {
     return sketchWindowLocation;
-  }
-
-
-  /**
-   * Implements Sketch &rarr; Stop, or pressing Stop on the toolbar.
-   */
-  public void handleStop() {  // called by menu or buttons
-    toolbar.activate(EditorToolbar.STOP);
-
-    internalCloseRunner();
-
-    toolbar.deactivate(EditorToolbar.RUN);
-    toolbar.deactivate(EditorToolbar.STOP);
-
-    // focus the PDE again after quitting presentation mode [toxi 030903]
-    toFront();
-  }
-
-
-  /**
-   * Deactivate the Run button. This is called by Runner to notify that the
-   * sketch has stopped running, usually in response to an error (or maybe
-   * the sketch completing and exiting?) Tools should not call this function.
-   * To initiate a "stop" action, call handleStop() instead.
-   */
-  public void deactivateRun() {
-    toolbar.deactivate(EditorToolbar.RUN);
-  }
-
-
-  public void deactivateExport() {
-    toolbar.deactivate(EditorToolbar.EXPORT);
-  }
-
-
-  /**
-   * Handle internal shutdown of the runner.
-   */
-  public void internalCloseRunner() {
-    if (stopHandler != null)
-    try {
-      stopHandler.run();
-    } catch (Exception e) { }
-
-//    sketch.cleanup();
   }
 
 
@@ -1902,110 +1803,6 @@ public class Editor extends JFrame implements RunnerListener {
 
 
   /**
-   * Called by Sketch &rarr; Export.
-   * Handles calling the export() function on sketch, and
-   * queues all the gui status stuff that comes along with it.
-   * <p/>
-   * Made synchronized to (hopefully) avoid problems of people
-   * hitting export twice, quickly, and horking things up.
-   */
-  synchronized public void handleExport() {
-    if (!handleExportCheckModified()) return;
-    toolbar.activate(EditorToolbar.EXPORT);
-
-    new Thread(exportHandler).start();
-  }
-
-
-  class DefaultExportHandler implements Runnable {
-    public void run() {
-      try {
-        boolean success = sketch.exportApplet();
-        if (success) {
-          File appletFolder = new File(sketch.getFolder(), "applet");
-          Base.openFolder(appletFolder);
-          statusNotice("Done exporting.");
-        } else {
-          // error message will already be visible
-        }
-      } catch (Exception e) {
-        statusError(e);
-      }
-      //toolbar.clear();
-      toolbar.deactivate(EditorToolbar.EXPORT);
-    }
-  }
-
-
-  /**
-   * Handler for Sketch &rarr; Export Application
-   */
-  synchronized public void handleExportApplication() {
-    if (!handleExportCheckModified()) return;
-    toolbar.activate(EditorToolbar.EXPORT);
-
-    // previous was using SwingUtilities.invokeLater()
-    new Thread(exportAppHandler).start();
-  }
-
-
-  class DefaultExportAppHandler implements Runnable {
-    public void run() {
-      statusNotice("Exporting application...");
-      try {
-        if (sketch.exportApplicationPrompt()) {
-          Base.openFolder(sketch.getFolder());
-          statusNotice("Done exporting.");
-        } else {
-          // error message will already be visible
-          // or there was no error, in which case it was canceled.
-        }
-      } catch (Exception e) {
-        statusNotice("Error during export.");
-        e.printStackTrace();
-      }
-      //toolbar.clear();
-      toolbar.deactivate(EditorToolbar.EXPORT);
-    }
-  }
-
-
-  /**
-   * Checks to see if the sketch has been modified, and if so,
-   * asks the user to save the sketch or cancel the export.
-   * This prevents issues where an incomplete version of the sketch
-   * would be exported, and is a fix for
-   * <A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=157">Bug 157</A>
-   */
-  protected boolean handleExportCheckModified() {
-    if (!sketch.isModified()) return true;
-
-    Object[] options = { "OK", "Cancel" };
-    int result = JOptionPane.showOptionDialog(this,
-                                              "Save changes before export?",
-                                              "Save",
-                                              JOptionPane.OK_CANCEL_OPTION,
-                                              JOptionPane.QUESTION_MESSAGE,
-                                              null,
-                                              options,
-                                              options[0]);
-
-    if (result == JOptionPane.OK_OPTION) {
-      handleSave(true);
-
-    } else {
-      // why it's not CANCEL_OPTION is beyond me (at least on the mac)
-      // but f-- it.. let's get this shite done..
-      //} else if (result == JOptionPane.CANCEL_OPTION) {
-      statusNotice("Export canceled, changes must first be saved.");
-      //toolbar.clear();
-      return false;
-    }
-    return true;
-  }
-
-
-  /**
    * Handler for File &rarr; Page Setup.
    */
   public void handlePageSetup() {
@@ -2240,7 +2037,7 @@ public class Editor extends JFrame implements RunnerListener {
         discourseItem.setEnabled(true);
 
         String sel = textarea.getSelectedText().trim();
-        String referenceFile = PdeKeywords.getReference(sel);
+        String referenceFile = mode.getReference(sel);
         referenceItem.setEnabled(referenceFile != null);
 
       } else {

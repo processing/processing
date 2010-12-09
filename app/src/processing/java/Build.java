@@ -60,6 +60,7 @@ import javax.swing.border.TitledBorder;
 
 import processing.app.Base;
 import processing.app.Preferences;
+import processing.app.RunnerException;
 import processing.app.Sketch;
 import processing.app.SketchCode;
 import processing.core.PApplet;
@@ -67,7 +68,6 @@ import processing.core.PConstants;
 import processing.java.preproc.PdePreprocessor;
 import processing.java.preproc.PreprocessResult;
 import processing.java.runner.Compiler;
-import processing.java.runner.RunnerException;
 
 
 public class Build {

@@ -21,12 +21,16 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package processing.app;
+package processing.java;
 
+import processing.app.Editor;
+import processing.app.Preferences;
+import processing.app.Sketch;
 import processing.app.syntax.*;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Arrays;
 
 
 /**
@@ -34,11 +38,13 @@ import java.awt.event.*;
  * <p/>
  * For version 0099, some changes have been made to make the indents
  * smarter. There are still issues though:
- * + indent happens when it picks up a curly brace on the previous line,
+ * <UL>
+ * <LI> indent happens when it picks up a curly brace on the previous line,
  *   but not if there's a  blank line between them.
- * + It also doesn't handle single indent situations where a brace
+ * <LI> It also doesn't handle single indent situations where a brace
  *   isn't used (i.e. an if statement or for loop that's a single line).
  *   It shouldn't actually be using braces.
+ * </UL>
  * Solving these issues, however, would probably best be done by a
  * smarter parser/formatter, rather than continuing to hack this class.
  */
@@ -48,7 +54,7 @@ public class EditorListener {
 
   private boolean externalEditor;
   private boolean tabsExpand;
-  private boolean tabsIndent;
+//  private boolean tabsIndent;
   private int tabSize;
   private String tabString;
   private boolean autoIndent;
@@ -74,17 +80,11 @@ public class EditorListener {
 
   public void applyPreferences() {
     tabsExpand = Preferences.getBoolean("editor.tabs.expand");
-    //tabsIndent = Preferences.getBoolean("editor.tabs.indent");
     tabSize = Preferences.getInteger("editor.tabs.size");
-    tabString = Editor.EMPTY.substring(0, tabSize);
+    tabString = spaces(tabSize);
     autoIndent = Preferences.getBoolean("editor.indent");
     externalEditor = Preferences.getBoolean("editor.external");
   }
-
-
-  //public void setExternalEditor(boolean externalEditor) {
-  //this.externalEditor = externalEditor;
-  //}
 
 
   /**
@@ -214,66 +214,68 @@ public class EditorListener {
 
     case 9:  // TAB
       if (textarea.isSelectionActive()) {
-        boolean outdent = (event.getModifiers() & KeyEvent.SHIFT_MASK) != 0;
-        editor.handleIndentOutdent(!outdent);
-
+        if ((event.getModifiers() & KeyEvent.SHIFT_MASK) == 0) {
+          editor.handleIndent();
+        } else {
+          editor.handleOutdent();
+        }
       } else if (tabsExpand) {  // expand tabs
         textarea.setSelectedText(tabString);
         event.consume();
         return true;
 
-      } else if (tabsIndent) {
-        // this code is incomplete
-
-        // if this brace is the only thing on the line, outdent
-        //char contents[] = getCleanedContents();
-        char contents[] = textarea.getText().toCharArray();
-        // index to the character to the left of the caret
-        int prevCharIndex = textarea.getCaretPosition() - 1;
-
-        // now find the start of this line
-        int lineStart = calcLineStart(prevCharIndex, contents);
-
-        int lineEnd = lineStart;
-        while ((lineEnd < contents.length - 1) &&
-               (contents[lineEnd] != 10)) {
-          lineEnd++;
-        }
-
-        // get the number of braces, to determine whether this is an indent
-        int braceBalance = 0;
-        int index = lineStart;
-        while ((index < contents.length) &&
-               (contents[index] != 10)) {
-          if (contents[index] == '{') {
-            braceBalance++;
-          } else if (contents[index] == '}') {
-            braceBalance--;
-          }
-          index++;
-        }
-
-        // if it's a starting indent, need to ignore it, so lineStart
-        // will be the counting point. but if there's a closing indent,
-        // then the lineEnd should be used.
-        int where = (braceBalance > 0) ? lineStart : lineEnd;
-        int indent = calcBraceIndent(where, contents);
-        if (indent == -1) {
-          // no braces to speak of, do nothing
-          indent = 0;
-        } else {
-          indent += tabSize;
-        }
-
-        // and the number of spaces it has
-        int spaceCount = calcSpaceCount(prevCharIndex, contents);
-
-        textarea.setSelectionStart(lineStart);
-        textarea.setSelectionEnd(lineStart + spaceCount);
-        textarea.setSelectedText(Editor.EMPTY.substring(0, indent));
-
-        event.consume();
-        return true;
+//      } else if (tabsIndent) {
+//        // this code is incomplete
+//
+//        // if this brace is the only thing on the line, outdent
+//        //char contents[] = getCleanedContents();
+//        char contents[] = textarea.getText().toCharArray();
+//        // index to the character to the left of the caret
+//        int prevCharIndex = textarea.getCaretPosition() - 1;
+//
+//        // now find the start of this line
+//        int lineStart = calcLineStart(prevCharIndex, contents);
+//
+//        int lineEnd = lineStart;
+//        while ((lineEnd < contents.length - 1) &&
+//               (contents[lineEnd] != 10)) {
+//          lineEnd++;
+//        }
+//
+//        // get the number of braces, to determine whether this is an indent
+//        int braceBalance = 0;
+//        int index = lineStart;
+//        while ((index < contents.length) &&
+//               (contents[index] != 10)) {
+//          if (contents[index] == '{') {
+//            braceBalance++;
+//          } else if (contents[index] == '}') {
+//            braceBalance--;
+//          }
+//          index++;
+//        }
+//
+//        // if it's a starting indent, need to ignore it, so lineStart
+//        // will be the counting point. but if there's a closing indent,
+//        // then the lineEnd should be used.
+//        int where = (braceBalance > 0) ? lineStart : lineEnd;
+//        int indent = calcBraceIndent(where, contents);
+//        if (indent == -1) {
+//          // no braces to speak of, do nothing
+//          indent = 0;
+//        } else {
+//          indent += tabSize;
+//        }
+//
+//        // and the number of spaces it has
+//        int spaceCount = calcSpaceCount(prevCharIndex, contents);
+//
+//        textarea.setSelectionStart(lineStart);
+//        textarea.setSelectionEnd(lineStart + spaceCount);
+//        textarea.setSelectedText(Editor.EMPTY.substring(0, indent));
+//
+//        event.consume();
+//        return true;
       }
       break;
 
@@ -381,7 +383,7 @@ public class EditorListener {
           textarea.setSelectionEnd(textarea.getSelectionStop() - spaceCount);
           textarea.setSelectedText("\n");
         } else {
-          String insertion = "\n" + Editor.EMPTY.substring(0, spaceCount);
+          String insertion = "\n" + spaces(spaceCount);
           textarea.setSelectedText(insertion);
         }
 
@@ -392,7 +394,7 @@ public class EditorListener {
           // http://dev.processing.org/bugs/show_bug.cgi?id=484
           if (sel - tabSize >= 0) {
             textarea.select(sel - tabSize, sel);
-            String s = Editor.EMPTY.substring(0, tabSize);
+            String s = spaces(tabSize);
             // if these are spaces that we can delete
             if (textarea.getSelectedText().equals(s)) {
               textarea.setSelectedText("");
@@ -449,7 +451,7 @@ public class EditorListener {
         if (pairedSpaceCount == -1) return false;
 
         textarea.setSelectionStart(lineStartIndex);
-        textarea.setSelectedText(Editor.EMPTY.substring(0, pairedSpaceCount));
+        textarea.setSelectedText(spaces(pairedSpaceCount));
 
         // mark this event as already handled
         event.consume();
@@ -557,34 +559,41 @@ public class EditorListener {
   }
 
 
-  /**
-   * Get the character array and blank out the commented areas.
-   * This hasn't yet been tested, the plan was to make auto-indent
-   * less gullible (it gets fooled by braces that are commented out).
-   */
-  protected char[] getCleanedContents() {
-    char c[] = textarea.getText().toCharArray();
+//  /**
+//   * Get the character array and blank out the commented areas.
+//   * This hasn't yet been tested, the plan was to make auto-indent
+//   * less gullible (it gets fooled by braces that are commented out).
+//   */
+//  protected char[] getCleanedContents() {
+//    char c[] = textarea.getText().toCharArray();
+//
+//    int index = 0;
+//    while (index < c.length - 1) {
+//      if ((c[index] == '/') && (c[index+1] == '*')) {
+//        c[index++] = 0;
+//        c[index++] = 0;
+//        while ((index < c.length - 1) &&
+//               !((c[index] == '*') && (c[index+1] == '/'))) {
+//          c[index++] = 0;
+//        }
+//
+//      } else if ((c[index] == '/') && (c[index+1] == '/')) {
+//        // clear out until the end of the line
+//        while ((index < c.length) && (c[index] != 10)) {
+//          c[index++] = 0;
+//        }
+//        if (index != c.length) {
+//          index++;  // skip over the newline
+//        }
+//      }
+//    }
+//    return c;
+//  }
 
-    int index = 0;
-    while (index < c.length - 1) {
-      if ((c[index] == '/') && (c[index+1] == '*')) {
-        c[index++] = 0;
-        c[index++] = 0;
-        while ((index < c.length - 1) &&
-               !((c[index] == '*') && (c[index+1] == '/'))) {
-          c[index++] = 0;
-        }
 
-      } else if ((c[index] == '/') && (c[index+1] == '/')) {
-        // clear out until the end of the line
-        while ((index < c.length) && (c[index] != 10)) {
-          c[index++] = 0;
-        }
-        if (index != c.length) {
-          index++;  // skip over the newline
-        }
-      }
-    }
-    return c;
+  static String spaces(int count) {
+    char[] c = new char[count];
+    Arrays.fill(c, ' ');
+    return new String(c);
   }
 }

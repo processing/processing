@@ -26,6 +26,7 @@ import java.awt.im.InputMethodRequests;
 
 import processing.app.syntax.im.InputMethodSupport;
 import processing.core.PApplet;
+import processing.java.EditorListener;
 
 /**
  * The text area component from the JEdit Syntax (syntax.jedit.org) project.
@@ -93,7 +94,7 @@ public class JEditTextArea extends JComponent
     enableEvents(AWTEvent.KEY_EVENT_MASK);
 
     // Initialize some misc. stuff
-    painter = new TextAreaPainter(this,defaults);
+    painter = new TextAreaPainter(this, defaults);
     documentHandler = new DocumentHandler();
     eventListenerList = new EventListenerList();
     caretEvent = new MutableCaretEvent();
@@ -131,9 +132,10 @@ public class JEditTextArea extends JComponent
 
     addMouseWheelListener(new MouseWheelListener() {
       public void mouseWheelMoved(MouseWheelEvent e) {
-        if (!scrollBarsInitialized) return;
-        int amt = e.getWheelRotation();
-        vertical.setValue(vertical.getValue() + amt * 3);
+        if (scrollBarsInitialized) {
+          int amt = e.getWheelRotation();
+          vertical.setValue(vertical.getValue() + amt);
+        }
       }
     });
   }

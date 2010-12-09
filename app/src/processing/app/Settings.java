@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-06 Ben Fry and Casey Reas
+  Copyright (c) 2004-10 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -36,19 +36,40 @@ import processing.core.*;
  * class for 1.0 so that the coloring wouldn't conflict with previous releases
  * and to make way for future ability to customize.
  */
-public class Theme {
+public class Settings {
   /** Copy of the defaults in case the user mangles a preference. */
   HashMap<String,String> defaults;
   /** Table of attributes/values for the theme. */
   HashMap<String,String> table = new HashMap<String,String>();;
+  /** Associated file for this settings data. */
+  File file;
 
 
-  public Theme(File file) throws IOException {
-    try {
-      load(Base.getLibStream("theme/theme.txt"));
-    } catch (Exception te) {
-      Base.showError(null, "Could not read color theme settings.\n" +
-                           "You'll need to reinstall Processing.", te);
+  public Settings(File file) throws IOException {
+    this.file = file;
+    load();
+
+    // other things that have to be set explicitly for the defaults
+    setColor("run.window.bgcolor", SystemColor.control);
+
+    // clone the hash table
+    defaults = (HashMap<String,String>) table.clone();
+  }
+
+
+  public void load() {
+    String[] lines = PApplet.loadStrings(file);
+    for (String line : lines) {
+      if ((line.length() == 0) ||
+          (line.charAt(0) == '#')) continue;
+
+      // this won't properly handle = signs being in the text
+      int equals = line.indexOf('=');
+      if (equals != -1) {
+        String key = line.substring(0, equals).trim();
+        String value = line.substring(equals + 1).trim();
+        table.put(key, value);
+      }
     }
 
     // check for platform-specific properties in the defaults
@@ -62,68 +83,65 @@ public class Theme {
         table.put(actualKey, value);
       }
     }
-
-    // other things that have to be set explicitly for the defaults
-    setColor("run.window.bgcolor", SystemColor.control);
-
-    // clone the hash table
-    defaults = (HashMap<String, String>) table.clone();
-
-    String[] lines = PApplet.loadStrings(input);
-    for (String line : lines) {
-      if ((line.length() == 0) ||
-          (line.charAt(0) == '#')) continue;
-
-      // this won't properly handle = signs being in the text
-      int equals = line.indexOf('=');
-      if (equals != -1) {
-        String key = line.substring(0, equals).trim();
-        String value = line.substring(equals + 1).trim();
-        table.put(key, value);
-      }
-    }
   }
 
 
-  static public String get(String attribute) {
-    return (String) table.get(attribute);
+  public String get(String attribute) {
+    return table.get(attribute);
   }
 
 
-  static public String getDefault(String attribute) {
-    return (String) defaults.get(attribute);
+  /**
+   * It's necessary to keep a copy of the defaults around, because the user may
+   * have mangled a setting on their own. In the past, we used to load the 
+   * defaults, then replace those with what was in the user's preferences file.
+   * Problem is, if something like a font entry in the user's file no longer 
+   * parses properly, we need to be able to get back to a clean version of that
+   * setting so we can recover.
+   */
+  public String getDefault(String attribute) {
+    return defaults.get(attribute);
   }
 
 
-  static public void set(String attribute, String value) {
+  public void set(String attribute, String value) {
     table.put(attribute, value);
   }
 
 
-  static public boolean getBoolean(String attribute) {
+  public boolean getBoolean(String attribute) {
     String value = get(attribute);
-    return (new Boolean(value)).booleanValue();
+    if (value == null) {
+      System.err.println("Boolean not found: " + attribute);
+      return false;
+    }
+    return Boolean.parseBoolean(value);
   }
 
 
-  static public void setBoolean(String attribute, boolean value) {
+  public void setBoolean(String attribute, boolean value) {
     set(attribute, value ? "true" : "false");
   }
 
 
-  static public int getInteger(String attribute) {
-    return Integer.parseInt(get(attribute));
+  public int getInteger(String attribute) {
+    String value = get(attribute);
+    if (value == null) {
+      System.err.println("Integer not found: " + attribute);
+      return 0;
+    }
+    return Integer.parseInt(value);
   }
 
 
-  static public void setInteger(String key, int value) {
+  public void setInteger(String key, int value) {
     set(key, String.valueOf(value));
   }
 
 
-  static public Color getColor(String name) {
+  public Color getColor(String attribute) {
     Color parsed = null;
-    String s = get(name);
+    String s = get(attribute);
     if ((s != null) && (s.indexOf("#") == 0)) {
       try {
         int v = Integer.parseInt(s.substring(1), 16);
@@ -135,12 +153,12 @@ public class Theme {
   }
 
 
-  static public void setColor(String attr, Color what) {
+  public void setColor(String attr, Color what) {
     set(attr, "#" + PApplet.hex(what.getRGB() & 0xffffff, 6));
   }
 
 
-  static public Font getFont(String attr) {
+  public Font getFont(String attr) {
     boolean replace = false;
     String value = get(attr);
     if (value == null) {
@@ -180,7 +198,7 @@ public class Theme {
   }
 
 
-  static public SyntaxStyle getStyle(String what) {
+  public SyntaxStyle getStyle(String what) {
     String str = get("editor." + what + ".style");
 
     StringTokenizer st = new StringTokenizer(str, ",");

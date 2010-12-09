@@ -28,11 +28,11 @@ import java.util.List;
 
 import processing.app.Base;
 import processing.app.Preferences;
+import processing.app.RunnerException;
 import processing.app.Sketch;
 import processing.core.PApplet;
 import processing.java.preproc.PdePreprocessor;
 import processing.java.preproc.PreprocessResult;
-import processing.java.runner.RunnerException;
 import antlr.RecognitionException;
 import antlr.TokenStreamException;
 

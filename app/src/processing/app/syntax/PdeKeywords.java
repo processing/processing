@@ -24,7 +24,6 @@
 
 package processing.app.syntax;
 
-import processing.app.*;
 import processing.core.PApplet;
 
 import java.io.*;
@@ -51,52 +50,52 @@ public class PdeKeywords extends TokenMarker {
   private int lastKeyword;
   
   
-  public PdeKeywords(File file) {
+  public PdeKeywords(File file) throws IOException {
     //super(false, getKeywords());
 //    this.cpp = cpp;
 //    this.keywordColoring = keywordColoring;
-    try {
-      BufferedReader reader = PApplet.createReader(file);
+//    try {
+    BufferedReader reader = PApplet.createReader(file);
 
-      keywordColoring = new KeywordMap(false);
-      keywordToReference = new HashMap<String, String>();
+    keywordColoring = new KeywordMap(false);
+    keywordToReference = new HashMap<String, String>();
 
-//      InputStream input = Base.getLibStream("keywords.txt");
-//      InputStreamReader isr = new InputStreamReader(input);
-//      BufferedReader reader = new BufferedReader(isr);
+    //      InputStream input = Base.getLibStream("keywords.txt");
+    //      InputStreamReader isr = new InputStreamReader(input);
+    //      BufferedReader reader = new BufferedReader(isr);
 
-      String line = null;
-      while ((line = reader.readLine()) != null) {
-        String pieces[] = processing.core.PApplet.split(line, '\t');
-        if (pieces.length >= 2) {
-          String keyword = pieces[0].trim();
-          String coloring = pieces[1].trim();
+    String line = null;
+    while ((line = reader.readLine()) != null) {
+      String pieces[] = processing.core.PApplet.split(line, '\t');
+      if (pieces.length >= 2) {
+        String keyword = pieces[0].trim();
+        String coloring = pieces[1].trim();
 
-          if (coloring.length() > 0) {
-            // text will be KEYWORD or LITERAL
-            boolean isKey = (coloring.charAt(0) == 'K');
-            // KEYWORD1 -> 0, KEYWORD2 -> 1, etc
-            int num = coloring.charAt(coloring.length() - 1) - '1';
-            byte id = (byte) ((isKey ? Token.KEYWORD1 : Token.LITERAL1) + num);
-            //System.out.println("got " + (isKey ? "keyword" : "literal") +
-            //                 (num+1) + " for " + keyword);
-            keywordColoring.add(keyword, id);
-          }
-          if (pieces.length >= 3) {
-            String htmlFilename = pieces[2].trim();
-            if (htmlFilename.length() > 0) {
-              keywordToReference.put(keyword, htmlFilename);
-            }
+        if (coloring.length() > 0) {
+          // text will be KEYWORD or LITERAL
+          boolean isKey = (coloring.charAt(0) == 'K');
+          // KEYWORD1 -> 0, KEYWORD2 -> 1, etc
+          int num = coloring.charAt(coloring.length() - 1) - '1';
+          byte id = (byte) ((isKey ? Token.KEYWORD1 : Token.LITERAL1) + num);
+          //System.out.println("got " + (isKey ? "keyword" : "literal") +
+          //                 (num+1) + " for " + keyword);
+          keywordColoring.add(keyword, id);
+        }
+        if (pieces.length >= 3) {
+          String htmlFilename = pieces[2].trim();
+          if (htmlFilename.length() > 0) {
+            keywordToReference.put(keyword, htmlFilename);
           }
         }
       }
-      reader.close();
-
-    } catch (Exception e) {
-      Base.showError("Problem loading keywords",
-                     "Could not load keywords.txt,\n" + 
-                     "please re-install Processing.", e);
     }
+    reader.close();
+
+//    } catch (Exception e) {
+//      Base.showError("Problem loading keywords",
+//                     "Could not load keywords.txt,\n" + 
+//                     "please re-install Processing.", e);
+//    }
   }
 
 

@@ -119,13 +119,10 @@ public class EditorToolbar extends JComponent implements MouseInputListener, Key
 
     currentRollover = -1;
 
-    bgcolor = Theme.getColor("buttons.bgcolor");
-    statusFont = Theme.getFont("buttons.status.font");
-    statusColor = Theme.getColor("buttons.status.color");
-
-//    modeButtonColor = Theme.getColor("mode.button.bgcolor");
-//    modeTextFont = Theme.getFont("mode.button.font");
-//    modeTextColor = Theme.getColor("mode.button.color");
+    Settings theme = editor.getTheme();
+    bgcolor = theme.getColor("buttons.bgcolor");
+    statusFont = theme.getFont("buttons.status.font");
+    statusColor = theme.getColor("buttons.status.color");
 
     addMouseListener(this);
     addMouseMotionListener(this);

@@ -93,9 +93,6 @@ editor.antialias.linux=true
 # currently using an external editor
 editor.external=false
 
-# caret blinking
-editor.caret.blink=true
-
 # enable ctrl-ins, shift-ins, shift-delete for cut/copy/paste
 # on windows and linux, but disable on the mac
 editor.keys.alternative_cut_copy_paste = true

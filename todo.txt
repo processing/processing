@@ -57,6 +57,15 @@ o   message(new String(b, offset, length), err, false);
 o   http://code.google.com/p/processing/issues/detail?id=197
 X   couldn't find a good way to reproduce this, closing
 
+_ TextAreaDefaults
+_   is editable in use?
+_   what's electricScroll?
+_   caretBlinks always true.. just remove the pref?
+_   blockCaret always false.. remove it?
+_ JEditTextArea
+_   focusedComponent = this -> bad solution for a symptom
+_   in Editor, textarea.requestFocus -> requestFocusInWindow, watch the bool
+
 libraries
 o Exported libraries don't mantain symbolic links
 o   http://code.google.com/p/processing/issues/detail?id=353
