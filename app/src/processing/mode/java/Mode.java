@@ -19,7 +19,7 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package processing.java;
+package processing.mode.java;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -35,7 +35,7 @@ import processing.app.syntax.PdeKeywords;
 import processing.app.syntax.SyntaxStyle;
 import processing.app.syntax.TokenMarker;
 import processing.core.PApplet;
-import processing.java.runner.Runner;
+import processing.mode.java.runner.Runner;
 
 
 public class Mode {

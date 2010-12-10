@@ -20,7 +20,7 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package processing.java;
+package processing.mode.java;
 
 import java.awt.*;
 import java.awt.event.*;

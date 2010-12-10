@@ -31,7 +31,7 @@ import java.util.*;
 import javax.swing.*;
 
 import processing.core.*;
-import processing.java.*;
+import processing.mode.java.*;
 
 
 /**

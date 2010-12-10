@@ -20,7 +20,7 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package processing.java;
+package processing.mode.java;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -65,9 +65,6 @@ import processing.app.Sketch;
 import processing.app.SketchCode;
 import processing.core.PApplet;
 import processing.core.PConstants;
-import processing.java.preproc.PdePreprocessor;
-import processing.java.preproc.PreprocessResult;
-import processing.java.runner.Compiler;
 
 
 public class Build {

@@ -1,4 +1,4 @@
-package processing.java;
+package processing.mode.java;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -11,20 +11,8 @@ import processing.app.Base;
 import processing.app.Sketch;
 import processing.core.PApplet;
 import processing.core.PConstants;
-import processing.java.runner.Compiler;
-
-//import java.awt.event.*;
-//import java.io.*;
-//import java.util.*;
-//
-//import javax.swing.JMenu;
-//import javax.swing.JMenuItem;
-//
-//import processing.app.debug.Compiler;
-//import processing.core.PApplet;
 
 
-//public class LibraryFolder implements PConstants, Comparable {
 public class LibraryFolder implements PConstants {
   File folder;
   File libraryFolder;   // name/library

@@ -20,7 +20,7 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package processing.java;
+package processing.mode.java;
 
 
 import java.io.File;
@@ -32,7 +32,7 @@ import processing.app.Preferences;
 import processing.app.RunnerException;
 import processing.app.Sketch;
 import processing.core.PApplet;
-import processing.java.runner.*;
+import processing.mode.java.runner.*;
 
 
 

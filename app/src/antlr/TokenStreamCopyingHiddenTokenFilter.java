@@ -1,10 +1,9 @@
 /* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 package antlr;
-//package processing.app.preproc;
 
 
-//import antlr.*;
+import antlr.*;
 import antlr.collections.impl.BitSet;
 
 /**

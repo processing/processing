@@ -26,7 +26,6 @@ import java.awt.im.InputMethodRequests;
 
 import processing.app.syntax.im.InputMethodSupport;
 import processing.core.PApplet;
-import processing.java.EditorListener;
 
 /**
  * The text area component from the JEdit Syntax (syntax.jedit.org) project.
@@ -1753,7 +1752,7 @@ public class JEditTextArea extends JComponent
    * This is slightly faster than using a KeyListener
    * because some Swing overhead is avoided.
    */
-  public EditorListener editorListener;
+  public processing.mode.java.EditorListener editorListener;
 
   /**
    * The component that tracks the current line number.
