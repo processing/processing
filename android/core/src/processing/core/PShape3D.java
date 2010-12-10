@@ -35,7 +35,7 @@ import java.io.BufferedReader;
 /**
  * This class holds a 3D model composed of vertices, normals, colors (per vertex) and 
  * texture coordinates (also per vertex). All this data is stored in Vertex Buffer Objects
- * (VBO) in GPU memory for very fast access. 
+ * (VBO) in GPU memory for very fast access.
  * OBJ loading implemented using code from Saito's OBJLoader library (http://code.google.com/p/saitoobjloader/)
  * and OBJReader from Ahmet Kizilay (http://www.openprocessing.org/visuals/?visualID=191). 
  * By Andres Colubri
@@ -46,25 +46,75 @@ public class PShape3D extends PShape implements PConstants {
   protected GL11 gl;  
   protected PGraphicsAndroid3D a3d;
    
+  // GROUP level properties:
+  
+  // Number of texture buffers currently in use:
   protected int numTexBuffers;
+  
+  // STATIC or DYNAMIC
   protected int glUsage;
   
+  // The OpenGL IDs for the different VBOs
   protected int glVertexBufferID;
   protected int glColorBufferID;
   protected int glNormalBufferID;
   protected int[] glTexCoordBufferID = new int[PGraphicsAndroid3D.MAX_TEXTURES];
   
+  // The float buffers (directy allocated) used to put data into the VBOs
   protected FloatBuffer vertexBuffer;
   protected FloatBuffer colorBuffer;
   protected FloatBuffer normalBuffer;
   protected FloatBuffer texCoordBuffer;
   
-  // Arrays for setting/getting vertices, colors, normals, and 
-  // texture coordinates.
+  // Bounding box: 
+  protected float xmin, xmax;
+  protected float ymin, ymax;
+  protected float zmin, zmax;
+
+  // Public arrays for setting/getting vertices, colors, normals, and 
+  // texture coordinates when using loadVertices/updateVertices,
+  // loadNormals/updateNormals, etc. This is modeled following the
+  // loadPixels/updatePixels API for setting/getting pixel data in 
+  // PImage.
   public float[] vertices;
   public float[] colors;
   public float[] normals;
-  public float[] texcoords;  
+  public float[] texcoords;
+  
+  // To put the texture coordinate values adjusted according to texture 
+  // flipping mode, max UV range, etc.
+  protected float[] convTexcoords;
+  // The array of arrays holding the texture coordinates for all texture units.
+  protected float[][] allTexcoords;
+  
+  // Child PShape3D associated to each vertex in the model.
+  protected PShape3D[] vertexChild;  
+  
+  // Element types handled by PShape3D (vertices, normals, color, texture coordinates).
+  protected static final int VERTICES = 0;
+  protected static final int NORMALS = 1;
+  protected static final int COLORS = 2;
+  protected static final int TEXCOORDS = 3; 
+  
+  // Element type being currently updated, indices and texture units.
+  protected int updateElement;
+  protected int updateTexunit;
+  protected int firstUpdateIdx;
+  protected int lastUpdateIdx;
+  
+  // Some utility arrays.
+  protected PTexture[] renderTextures = new PTexture[PGraphicsAndroid3D.MAX_TEXTURES];  
+  protected boolean[] texCoordSet = new boolean[PGraphicsAndroid3D.MAX_TEXTURES];  
+
+  // For OBJ loading  
+  boolean readFromOBJ = false;
+  ArrayList<PVector> objVertices; 
+  ArrayList<PVector> objNormal; 
+  ArrayList<PVector> objTexCoords;    
+  ArrayList<OBJFace> objFaces;
+  ArrayList<OBJMaterial> objMaterials;
+  
+  // GEOMETRY (child) level properties:
   
   // Child-only properties: first and last vertex, draw mode, point sprites 
   // and textures. Stroke weight is inherited from PShape.
@@ -74,40 +124,12 @@ public class PShape3D extends PShape implements PConstants {
   protected boolean pointSprites;  
   protected PImage[] textures;  
   
-  // Bounding box: 
-  protected float xmin, xmax;
-  protected float ymin, ymax;
-  protected float zmin, zmax;
-
-  // PShape3D child associated to each vertex.
-  protected PShape3D[] vertexChild;  
-  
   protected boolean vertexColor = true;
   protected boolean useTextures = true;
   protected boolean useOwnStrokeWeigth = true;
   
-  protected float ptDistAtt[] = { 1.0f, 0.0f, 0.01f, 1.0f };
-  
-  protected PTexture[] renderTextures = new PTexture[PGraphicsAndroid3D.MAX_TEXTURES];  
-  protected boolean[] texCoordSet = new boolean[PGraphicsAndroid3D.MAX_TEXTURES];  
-
-  // Elements handled by PShape3D (vertices, normals, color, texture coordinates).
-  protected static final int VERTICES = 0;
-  protected static final int NORMALS = 1;
-  protected static final int COLORS = 2;
-  protected static final int TEXCOORDS = 3; 
-  
-  protected int updateElement;
-  protected int updateTexunit;
-  protected int firstUpdateIdx;
-  protected int lastUpdateIdx;
-
-  boolean readFromOBJ = false;
-  ArrayList<PVector> objVertices; 
-  ArrayList<PVector> objNormal; 
-  ArrayList<PVector> objTexCoords;    
-  ArrayList<OBJFace> objFaces;
-  ArrayList<OBJMaterial> objMaterials;
+  // Coefficients for point sprite distance attenuation function
+  protected float ptDistAtt[] = { 1.0f, 0.0f, 0.0f };
   
   ////////////////////////////////////////////////////////////
 
@@ -228,11 +250,13 @@ public class PShape3D extends PShape implements PConstants {
     
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glVertexBufferID);      
     
+    /*
     int offset = first * 3;
     int size = (last - first + 1) * 3;
     vertexBuffer.limit(vertexBuffer.capacity());      
     vertexBuffer.rewind();
-    vertexBuffer.get(vertices, offset, size);    
+    vertexBuffer.get(vertices, offset, size);
+    */
   }  
   
   
@@ -282,11 +306,13 @@ public class PShape3D extends PShape implements PConstants {
     
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glColorBufferID);
     
+    /*
     int offset = first * 4;
     int size = (last - first + 1) * 4;
     colorBuffer.limit(colorBuffer.capacity());
     colorBuffer.rewind();
-    colorBuffer.get(colors, offset, size);    
+    colorBuffer.get(colors, offset, size);
+    */    
   }
   
   
@@ -333,11 +359,13 @@ public class PShape3D extends PShape implements PConstants {
     
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glNormalBufferID);
     
+    /*
     int offset = first * 3;
     int size = (last - first + 1) * 3;
     normalBuffer.limit(normalBuffer.capacity());      
     normalBuffer.rewind();      
-    normalBuffer.get(normals, offset, size);    
+    normalBuffer.get(normals, offset, size);
+    */    
   }
   
   
@@ -391,22 +419,25 @@ public class PShape3D extends PShape implements PConstants {
     updateElement = TEXCOORDS;
     firstUpdateIdx = first;
     lastUpdateIdx = last;
+    updateTexunit = unit;
     
     if (numTexBuffers <= unit) {
       addTexBuffers(unit - numTexBuffers + 1);
     }
     
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glTexCoordBufferID[unit]);
-        
+    
+    texcoords = allTexcoords[unit];
+    
+        /*
     int offset = first * 2;
     int size = (last - first + 1) * 2;
     texCoordBuffer.limit(texCoordBuffer.capacity());      
     texCoordBuffer.rewind();
-    texCoordBuffer.get(texcoords, offset, size);
-    
-   normalizeTexcoords(unit);
-    
-    updateTexunit = unit;    
+    texCoordBuffer.get(texcoords0, offset, size);
+        
+    normalizeTexcoords();
+    */    
   }  
   
   
@@ -415,10 +446,10 @@ public class PShape3D extends PShape implements PConstants {
       int offset = firstUpdateIdx * 2;
       int size = (lastUpdateIdx - firstUpdateIdx + 1) * 2;
       
-      unnormalizeTexcoords(updateTexunit);
+      convertTexcoords();
       
       texCoordBuffer.position(0);      
-      texCoordBuffer.put(texcoords, offset, size);
+      texCoordBuffer.put(convTexcoords, offset, size);
       texCoordBuffer.flip();
       
       gl.glBufferSubData(GL11.GL_ARRAY_BUFFER, offset * PGraphicsAndroid3D.SIZEOF_FLOAT, 
@@ -548,69 +579,10 @@ public class PShape3D extends PShape implements PConstants {
   }  
   
   
-  // Convert texture coordinates as read from the GPU to normalized values
-  // expected by the user. 
-  protected void normalizeTexcoords(int unit) {
-    PTexture tex;
-    float u, v;
-    
-    PTexture tex0 = null;
-    float uscale = 1.0f;
-    float vscale = 1.0f;
-    float cx = 0.0f;
-    float sx = +1.0f;
-    float cy = 0.0f;
-    float sy = +1.0f;
-    for (int i = firstUpdateIdx; i <= lastUpdateIdx; i++) {
-      if (vertexChild[i] != null && vertexChild[i].textures[unit] != null) {
-        tex = vertexChild[i].textures[unit].getTexture();
-        if (tex == null) {
-          tex = vertexChild[i].textures[unit].createTexture();
-        }        
-        
-        if (tex != null && tex != tex0) {
-          uscale = 1.0f;
-          vscale = 1.0f;
-          cx = 0.0f;
-          sx = +1.0f;
-          cy = 0.0f;
-          sy = +1.0f;
-
-          if (tex != null) {
-            if (tex.isFlippedX()) {
-              cx = 1.0f;      
-              sx = -1.0f;
-            }
-          
-            if (tex.isFlippedY()) {
-              cy = 1.0f;      
-              sy = -1.0f;
-            }
-          
-            uscale *= tex.getMaxTexCoordU();
-            vscale *= tex.getMaxTexCoordV();
-          }
-          tex0 = tex;
-        }
-
-        u = texcoords[2 * i + 0];
-        v = texcoords[2 * i + 1];
-        
-        // Inverting the texture coordinate transformation.
-        u = (u / uscale - cx) / sx;
-        v = (v / vscale - cy) / sy;          
-  
-        texcoords[2 * i + 0] = u;
-        texcoords[2 * i + 1] = v;        
-      }  
-    }    
-  }
-  
-  
   // Convert texture coordinates given by the user to values required by
-  // the GPU (non-necessarily normalized because of texture sizes being smaller
-  // than image sizes, for instance). 
-  protected void unnormalizeTexcoords(int unit) {
+  // the GPU (non-necessarily normalized because of texture size being smaller
+  // than image size, for instance). 
+  protected void convertTexcoords() {
     PTexture tex;
     float u, v;
     
@@ -622,10 +594,10 @@ public class PShape3D extends PShape implements PConstants {
     float cy = 0.0f;
     float sy = +1.0f;
     for (int i = firstUpdateIdx; i <= lastUpdateIdx; i++) {
-      if (vertexChild[i] != null && vertexChild[i].textures[unit] != null) {
-        tex = vertexChild[i].textures[unit].getTexture();
+      if (vertexChild[i] != null && vertexChild[i].textures[updateTexunit] != null) {
+        tex = vertexChild[i].textures[updateTexunit].getTexture();
         if (tex == null) {
-          tex = vertexChild[i].textures[unit].createTexture();
+          tex = vertexChild[i].textures[updateTexunit].createTexture();
         }        
         
         if (tex != tex0) {
@@ -659,8 +631,8 @@ public class PShape3D extends PShape implements PConstants {
         u = (cx +  sx * u) * uscale;
         v = (cy +  sy * v) * vscale;
         
-        texcoords[2 * i + 0] = u;
-        texcoords[2 * i + 1] = v;        
+        convTexcoords[2 * i + 0] = u;
+        convTexcoords[2 * i + 1] = v;        
       }  
     }    
   }
@@ -738,13 +710,24 @@ public class PShape3D extends PShape implements PConstants {
       PShape3D who3d = (PShape3D)who;
       who3d.papplet = papplet;
       who3d.a3d = a3d;
-      who3d.gl = gl;
+      who3d.gl = gl; 
       who3d.vertexColor = vertexColor;
       who3d.useTextures = useTextures;
       who3d.useOwnStrokeWeigth = useOwnStrokeWeigth;
       for (int n = who3d.firstVertex; n <= who3d.lastVertex; n++) {
         vertexChild[n] = who3d;
-      }       
+      }
+
+      // If this new child shape has textures, then we should update the texture coordinates
+      // for the vertices involved. All we need to do is to call loadTexcoords and updateTexcoords
+      // so the current texture coordinates are converted into values that take into account
+      // the texture flipping, max UV ranges, etc.
+      for (int i = 0; i < who3d.textures.length; i++) {
+        if (who3d.textures[i] != null && texCoordSet[i]) {
+          loadTexcoords(i, who3d.firstVertex, who3d.lastVertex);  
+          updateTexcoords();
+        }
+      }
     } else {
       PGraphics.showWarning("PShape3D: Child shapes can also be added to the root shape.");
     }  
@@ -1040,13 +1023,12 @@ public class PShape3D extends PShape implements PConstants {
       // What is the problem? the new texture might have different max UV coords, 
       // flippedX/Y values, so the texture coordinates need to be updated accordingly...
       
-      // The way to do it is just load the texcoords array (in the parent), which
-      // will be normalized with the old texture...
+      // The way to do it is just load the texcoords array (in the parent)...
       p3d.loadTexcoords(unit, firstVertex, lastVertex);
       // ... then replacing the old texture with the new and...
       textures[unit] = tex;
-      // finally, updating the texture coordinats, step in which the texcoords
-      // array is unnormalized, this time using the new texture.
+      // ...,finally, updating the texture coordinates, step in which the texcoords
+      // array is converted, this time using the new texture.
       p3d.updateTexcoords();
     } else {
       textures[unit] = tex;  
@@ -1107,6 +1089,41 @@ public class PShape3D extends PShape implements PConstants {
     }
   }  
 
+  
+  public float getSpriteAttenuation() {
+    if (family == GROUP) {
+      init();
+      return getSpriteAttenuation(0);
+    } else { 
+      return ptDistAtt[1];
+    }
+  }
+  
+  
+  public float getSpriteAttenuation(int idx) {
+    if (0 <= idx && idx < childCount) {
+      return ((PShape3D)children[idx]).ptDistAtt[1];
+    }
+    return 0;
+  }
+  
+  
+  public void setSpriteAttenuation(float sa) {
+    if (family == GROUP) {
+      init();
+      setSpriteAttenuation(0, sa);
+    } else { 
+      ptDistAtt[1] = sa;
+    }
+  }
+  
+  
+  public void setSpriteAttenuation(int idx, float sa) {
+    if (0 <= idx && idx < childCount) {
+      ((PShape3D)children[idx]).ptDistAtt[1] = sa;
+    }
+  }    
+  
   
   public void setColor(int c) {
     setColor(rgba(c));
@@ -1205,6 +1222,10 @@ public class PShape3D extends PShape implements PConstants {
         child1 = (PShape3D)children[i];
         if (child0.equalTo(child1)) {
           child0.lastVertex = child1.lastVertex;       // Extending child0.
+          // Updating the vertex data:
+          for (int n = child0.firstVertex; n <= child0.lastVertex; n++) {
+            vertexChild[n] = child0;
+          }    
           child1.firstVertex = child1.lastVertex = -1; // Marking for deletion.
         } else {
           child0 = child1;
@@ -1461,8 +1482,10 @@ public class PShape3D extends PShape implements PConstants {
     vbb.order(ByteOrder.nativeOrder());
     texCoordBuffer = vbb.asFloatBuffer();    
     
-    texcoords = new float[vertexCount * 2];
-    texCoordBuffer.put(texcoords);
+    allTexcoords = new float[1][vertexCount * 2];
+    texcoords = allTexcoords[0];
+    convTexcoords = new float[vertexCount * 2];
+    texCoordBuffer.put(convTexcoords);
     texCoordBuffer.flip();   
   }  
   
@@ -1489,6 +1512,15 @@ public class PShape3D extends PShape implements PConstants {
       gl.glBufferData(GL11.GL_ARRAY_BUFFER, bufferSize, texCoordBuffer, glUsage);
       gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);     
     }
+    
+    // We need more arrays for texture coordinates, and to save the contents of the already
+    // existing ones.
+    float temp[][] = new float[numTexBuffers + more][vertexCount * 2];
+    for (int i = 0; i < numTexBuffers; i++) {
+      PApplet.arrayCopy(allTexcoords[i], temp[i]);
+    }
+    allTexcoords = temp;
+    texcoords = allTexcoords[0];
     
     numTexBuffers += more;
   }
@@ -1744,17 +1776,6 @@ public class PShape3D extends PShape implements PConstants {
   //
   
   // Drawing methods
-	 
-
-  protected void drawGroup(PGraphics g) {
-    init();
-    
-    if (children == null) {
-      addDefaultChild();
-    }
-    super.drawGroup(g);
-  }
-
 
   public void draw(String target) {
     PShape child = getChild(target);
@@ -1766,8 +1787,17 @@ public class PShape3D extends PShape implements PConstants {
 
   public void draw(int idx) {
     if (0 <= idx && idx < childCount) {
-      children[idx].draw(a3d);	   
+      children[idx].draw(a3d);     
     }
+  }  
+
+  protected void drawGroup(PGraphics g) {
+    init();
+    
+    if (children == null) {
+      addDefaultChild();
+    }
+    super.drawGroup(g);
   }
 
 
@@ -1776,17 +1806,17 @@ public class PShape3D extends PShape implements PConstants {
     int numTextures;
     float pointSize;
 
-    // Setting line width and point size from stroke value.
-    // TODO: Here the stroke weight from the g renderer is used. Normally, no issue here, but
-    // in the case the shape is being rendered from an offscreen A3D surface, then this might
-    // lead to the possibility of a stroke weight different from that of the main renderer.
-    // For strokeWeight it seems to make sense that the value of the offscreen renderer and not
-    // of the main renderer is used. But what about other properties such as textureMode or
-    // colorMode. Right now they are read from a3d, which refers to the main renderer.
-    // So what should be the normal behavior.
-    pointSize = PApplet.min(g.strokeWeight, PGraphicsAndroid3D.maxPointSize);
+    // Setting line width and point size from stroke value, using 
+    // either the group's weight or the renderer's weight. 
+    if (0 < strokeWeight && useOwnStrokeWeigth) {
+      gl.glLineWidth(strokeWeight);
+      pointSize = PApplet.min(strokeWeight, PGraphicsAndroid3D.maxPointSize);
+    } else {
+      gl.glLineWidth(g.strokeWeight);
+      pointSize = PApplet.min(g.strokeWeight, PGraphicsAndroid3D.maxPointSize);
+    }
     gl.glPointSize(pointSize);
-
+    
     gl.glEnableClientState(GL11.GL_NORMAL_ARRAY);
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, p3d.glNormalBufferID);
     gl.glNormalPointer(GL11.GL_FLOAT, 0, 0);    
@@ -1827,9 +1857,12 @@ public class PShape3D extends PShape implements PConstants {
     if (0 < numTextures)  {        
       if (pointSprites) {
         // Texturing with point sprites.
-
+        
         // This is how will our point sprite's size will be modified by 
-        // distance from the viewer             
+        // distance from the viewer:
+        // actualSize = desiredSize / sqrt(p[0] + p[1] * d + p[2] * d * d)
+        // where d is the distance from the point sprite to the camera and 
+        // p is the array parameter passed in the following call: 
         gl.glPointParameterfv(GL11.GL_POINT_DISTANCE_ATTENUATION, ptDistAtt, 0);
 
         // The alpha of a point is calculated to allow the fading of points 
@@ -1869,14 +1902,6 @@ public class PShape3D extends PShape implements PConstants {
       } else {
         gl.glColor4f(g.fillR, g.fillG, g.fillB, g.fillA);          
       }              
-    }
-
-    // Setting the stroke weight (line width's in OpenGL terminology) using 
-    // either the group's weight or the renderer's weight. 
-    if (0 < strokeWeight && useOwnStrokeWeigth) {
-      gl.glLineWidth(strokeWeight);
-    } else {
-      gl.glLineWidth(g.strokeWeight);
     }
 
     gl.glDrawArrays(glMode, firstVertex, lastVertex - firstVertex + 1);
@@ -2181,6 +2206,10 @@ public class PShape3D extends PShape implements PConstants {
     boolean auto0 = a3d.autoNormal;
     a3d.autoNormal = true;
     
+    // TODO: finish the integration with PShape's styles.
+    boolean stroke0 = a3d.stroke;
+    a3d.stroke = false;
+    
     // Using RGB mode for coloring.
     int cMode0 = a3d.colorMode; 
     a3d.colorMode = RGB;
@@ -2296,7 +2325,7 @@ public class PShape3D extends PShape implements PConstants {
           
           PTexture texMtl = mtl.kdMap.getTexture();
           if (texMtl != null) {     
-            // Texture orientation in Processing is inverted with respect to OpenGL.
+            // Texture orientation in Processing is inverted.
             texMtl.setFlippedY(true);          
           }
           a3d.texture(mtl.kdMap);
@@ -2334,6 +2363,7 @@ public class PShape3D extends PShape implements PConstants {
     a3d.textureMode = tMode0;
     a3d.colorMode = cMode0;
     a3d.autoNormal = auto0;
+    a3d.stroke = stroke0;
     
     // Restore colors
     a3d.calcR = specularR0;
