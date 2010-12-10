@@ -1,7 +1,6 @@
 package processing.app.tools;
 
 import processing.app.Editor;
-import processing.app.format.AutoFormat;
 
 public class AutoFormatTool implements Tool {
   private Editor editor;

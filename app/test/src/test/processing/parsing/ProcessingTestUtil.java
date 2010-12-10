@@ -9,7 +9,7 @@ import antlr.ANTLRException;
 import processing.app.Base;
 import processing.app.Preferences;
 import processing.app.RunnerException;
-import processing.app.format.AutoFormat;
+import processing.app.tools.AutoFormat;
 import processing.java.preproc.PdePreprocessor;
 
 public class ProcessingTestUtil {
