@@ -1930,12 +1930,15 @@ public class PGraphicsAndroid3D extends PGraphics {
       shape.setVertices(recordedVertices);
       shape.setColors(recordedColors);
       shape.setNormals(recordedNormals);
+      
+      // We set children first because they contain the textures...
+      shape.setChildren(recordedChildren);
+      shape.optimizeChildren();           
+      // ... and then the texture coordinates.
       for (int t = 0; t < numRecordedTextures; t++) {        
         shape.setTexcoords(t, recordedTexCoords[t]);
       }
     
-      shape.setChildren(recordedChildren);
-      shape.optimizeChildren();
       
       // Releasing memory.
       recordedVertices.clear();
@@ -2511,7 +2514,7 @@ public class PGraphicsAndroid3D extends PGraphics {
           recordedColors.add(new float[] { a[R], a[G], a[B], a[A] });
           recordedNormals.add(new PVector(a[NX], a[NY], a[NZ]));
           for (int t = 0; t < numTextures; t++) {
-            recordedTexCoords[t].add(new PVector(renderUa[t], renderVa[t], 0.0f));
+            recordedTexCoords[t].add(new PVector(vertexU[na][t], vertexV[na][t], 0.0f));
           }
           // We need to add texture coordinate values for all the recorded vertices and all
           // texture units because even if this part of the recording doesn't use textures,
@@ -2544,7 +2547,7 @@ public class PGraphicsAndroid3D extends PGraphics {
           recordedColors.add(new float[] { b[R], b[G], b[B], b[A] });
           recordedNormals.add(new PVector(b[NX], b[NY], b[NZ]));
           for (int t = 0; t < numTextures; t++) {
-            recordedTexCoords[t].add(new PVector(renderUb[t], renderVb[t], 0.0f));
+            recordedTexCoords[t].add(new PVector(vertexU[nb][t], vertexV[nb][t], 0.0f));
           }
           // Idem to comment in section corresponding to vertex A.          
           for (int t = numTextures; t < maxTextureUnits; t++) {
@@ -2574,7 +2577,7 @@ public class PGraphicsAndroid3D extends PGraphics {
           recordedColors.add(new float[] { c[R], c[G], c[B], c[A] });
           recordedNormals.add(new PVector(c[NX], c[NY], c[NZ]));
           for (int t = 0; t < numTextures; t++) {
-            recordedTexCoords[t].add(new PVector(renderUc[t], renderVc[t], 0.0f));
+            recordedTexCoords[t].add(new PVector(vertexU[nc][t], vertexV[nc][t], 0.0f));
           }
           // Idem to comment in section corresponding to vertex A.          
           for (int t = numTextures; t < maxTextureUnits; t++) {
