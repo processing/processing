@@ -1,7 +1,7 @@
 /* -*- mode: antlr; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 header {
-package processing.app.antlr;
-import processing.app.preproc.PdePreprocessor;
+package processing.mode.java.preproc.antlr;
+import processing.mode.java.preproc.PdePreprocessor;
 }
 
 class PdeRecognizer extends JavaRecognizer;

@@ -1,5 +1,5 @@
 header {
-package processing.app.antlr;
+package processing.mode.preproc.antlr;
 }
 
 /** Java 1.5 Recognizer
