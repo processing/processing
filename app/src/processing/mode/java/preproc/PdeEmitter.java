@@ -1,6 +1,6 @@
 /* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
-package processing.java.preproc;
+package processing.mode.java.preproc;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;

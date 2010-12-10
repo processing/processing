@@ -32,7 +32,7 @@
  * redistribute the Software for such purposes.
  */
 
-package processing.java.runner;
+package processing.mode.java.runner;
 
 import java.io.PrintWriter;
 import java.util.HashMap;

@@ -3,7 +3,8 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2008 Ben Fry and Casey Reas
+  Copyright (c) 2004-06 Ben Fry and Casey Reas
+  Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -20,14 +21,22 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package processing.java.runner;
+package processing.mode.java.runner;
 
 
-public interface RunnerListener {
-  
-  public void statusError(String message);
+/**
+ * Interface for dealing with parser/compiler output.
+ * <P>
+ * Different instances of MessageStream need to do different things with
+ * messages.  In particular, a stream instance used for parsing output from
+ * the compiler compiler has to interpret its messages differently than one
+ * parsing output from the runtime.
+ * <P>
+ * Classes which consume messages and do something with them
+ * should implement this interface.
+ */
+public interface MessageConsumer {
 
-  public void statusError(Exception exception);
-  
-  public void statusNotice(String message);
+  public void message(String s);
+
 }

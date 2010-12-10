@@ -21,7 +21,7 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package processing.java.runner;
+package processing.mode.java.runner;
 
 import processing.app.Base;
 import processing.app.RunnerException;
