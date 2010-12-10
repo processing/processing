@@ -8,7 +8,7 @@ import java.util.BitSet;
 import java.util.Stack;
 import processing.app.Preferences;
 import processing.app.RunnerException;
-import processing.mode.java.preproc.antlr.PdeTokenTypes;
+import processing.app.antlr.PdeTokenTypes;
 import antlr.CommonASTWithHiddenTokens;
 import antlr.CommonHiddenStreamToken;
 import antlr.collections.AST;
