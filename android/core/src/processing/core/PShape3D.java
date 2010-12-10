@@ -123,20 +123,16 @@ public class PShape3D extends PShape implements PConstants {
   protected int glMode;
   protected boolean pointSprites;  
   protected PImage[] textures;  
-  
-  protected boolean vertexColor = true;
-  protected boolean useTextures = true;
-  protected boolean useOwnStrokeWeigth = true;
-  
-  // Coefficients for point sprite distance attenuation function
-  protected float ptDistAtt[] = { 1.0f, 0.0f, 0.0f };
+ 
+  // Coefficients for point sprite distance attenuation function.
+  // These default values correspond to the constant sprite size.
+  protected float spriteDistAtt[] = { 1.0f, 0.0f, 0.0f };
   
   ////////////////////////////////////////////////////////////
 
   // Constructors.
 
   public PShape3D() {
-    style = false;
   }
   
   public PShape3D(PApplet parent) {
@@ -146,8 +142,7 @@ public class PShape3D extends PShape implements PConstants {
     glVertexBufferID = 0;
     glColorBufferID = 0;
     glNormalBufferID = 0;
-    java.util.Arrays.fill(glTexCoordBufferID, 0);
-    style = false;    
+    java.util.Arrays.fill(glTexCoordBufferID, 0);    
   }
   
   public PShape3D(PApplet parent, int numVert) {
@@ -163,8 +158,6 @@ public class PShape3D extends PShape implements PConstants {
     glColorBufferID = 0;
     glNormalBufferID = 0;
     java.util.Arrays.fill(glTexCoordBufferID, 0);
-    
-    style = false;
     
     // Checking we have all we need:
     gl = a3d.gl11;
@@ -205,9 +198,7 @@ public class PShape3D extends PShape implements PConstants {
     glVertexBufferID = 0;
     glColorBufferID = 0;
     glNormalBufferID = 0;
-    java.util.Arrays.fill(glTexCoordBufferID, 0);    
-    
-    style = false;
+    java.util.Arrays.fill(glTexCoordBufferID, 0);
     
     initShape(size, params);
   }
@@ -711,9 +702,11 @@ public class PShape3D extends PShape implements PConstants {
       who3d.papplet = papplet;
       who3d.a3d = a3d;
       who3d.gl = gl; 
-      who3d.vertexColor = vertexColor;
-      who3d.useTextures = useTextures;
-      who3d.useOwnStrokeWeigth = useOwnStrokeWeigth;
+      
+      // In case the style was disabled from the parent.
+      who3d.style = style;
+      
+      // Updating vertex information.
       for (int n = who3d.firstVertex; n <= who3d.lastVertex; n++) {
         vertexChild[n] = who3d;
       }
@@ -1072,7 +1065,6 @@ public class PShape3D extends PShape implements PConstants {
   }
   
   
-  
   public void setStrokeWeight(float sw) {
     if (family == GROUP) {
       init();
@@ -1089,40 +1081,51 @@ public class PShape3D extends PShape implements PConstants {
     }
   }  
 
+
+  public float getMaxSpriteSize() {
+    return PGraphicsAndroid3D.maxPointSize;
+  }
   
-  public float getSpriteAttenuation() {
+  
+  public void setSpriteSize(float s, float d) {
+    setSpriteSize(s, d, true);
+  }
+  
+  
+  public void setSpriteSize(float s, float d, boolean linear) {
     if (family == GROUP) {
       init();
-      return getSpriteAttenuation(0);
-    } else { 
-      return ptDistAtt[1];
+      setSpriteSize(0, s, d, linear);
+    } else {
+      setSpriteSizeImpl(s, d, linear);      
     }
   }
   
   
-  public float getSpriteAttenuation(int idx) {
+  public void setSpriteSize(int idx, float s, float d) {
+    setSpriteSize(idx, s, d, true);
+  }
+  
+  
+  public void setSpriteSize(int idx, float s, float d, boolean linear) {
     if (0 <= idx && idx < childCount) {
-      return ((PShape3D)children[idx]).ptDistAtt[1];
+      ((PShape3D)children[idx]).setSpriteSizeImpl(s, d, linear);
     }
-    return 0;
+  }  
+  
+  
+  // Sets the coefficient of the distance attenuation function so that the 
+  // size of the sprite is exactly s when its distance from the camera is d.
+  protected void setSpriteSizeImpl(float s, float d, boolean linear) {
+    float s0 = PGraphicsAndroid3D.maxPointSize;
+    if (linear) {
+      spriteDistAtt[1] = (s0 - s) / (d * s);
+      spriteDistAtt[2] = 0;
+    } else {
+      spriteDistAtt[1] = 0; 
+      spriteDistAtt[2] = (s0 - s) / (d * d * s);
+    }
   }
-  
-  
-  public void setSpriteAttenuation(float sa) {
-    if (family == GROUP) {
-      init();
-      setSpriteAttenuation(0, sa);
-    } else { 
-      ptDistAtt[1] = sa;
-    }
-  }
-  
-  
-  public void setSpriteAttenuation(int idx, float sa) {
-    if (0 <= idx && idx < childCount) {
-      ((PShape3D)children[idx]).ptDistAtt[1] = sa;
-    }
-  }    
   
   
   public void setColor(int c) {
@@ -1741,10 +1744,7 @@ public class PShape3D extends PShape implements PConstants {
   
   
   public void disableStyle() {
-    vertexColor = false;
-    useTextures = false;
-    useOwnStrokeWeigth = false;
-    
+    style = false;    
     if (family == GROUP) {
       init();
       for (int i = 0; i < childCount; i++) {
@@ -1755,10 +1755,7 @@ public class PShape3D extends PShape implements PConstants {
 
   
   public void enableStyle() {
-    vertexColor = true;
-    useTextures = true;
-    useOwnStrokeWeigth = true;
-    
+    style = true;
     if (family == GROUP) {
       init();
       for (int i = 0; i < childCount; i++) {
@@ -1766,6 +1763,10 @@ public class PShape3D extends PShape implements PConstants {
       }     
     }   
   }  
+  
+  protected void styles(PGraphics g) {
+    // Nothing to do here. The styles are set in the drawGeometry() method.  
+  }
   
   public boolean is3D() {
     return true;
@@ -1808,20 +1809,23 @@ public class PShape3D extends PShape implements PConstants {
 
     // Setting line width and point size from stroke value, using 
     // either the group's weight or the renderer's weight. 
-    if (0 < strokeWeight && useOwnStrokeWeigth) {
+    if (0 < strokeWeight && style) {
       gl.glLineWidth(strokeWeight);
       pointSize = PApplet.min(strokeWeight, PGraphicsAndroid3D.maxPointSize);
     } else {
       gl.glLineWidth(g.strokeWeight);
       pointSize = PApplet.min(g.strokeWeight, PGraphicsAndroid3D.maxPointSize);
     }
-    gl.glPointSize(pointSize);
+    if (!pointSprites) {
+      // Point sprites use their own size variable (set below).
+      gl.glPointSize(pointSize); 
+    }
     
     gl.glEnableClientState(GL11.GL_NORMAL_ARRAY);
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, p3d.glNormalBufferID);
     gl.glNormalPointer(GL11.GL_FLOAT, 0, 0);    
 
-    if (vertexColor) {
+    if (style) {
       gl.glEnableClientState(GL11.GL_COLOR_ARRAY);
       gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, p3d.glColorBufferID);
       gl.glColorPointer(4, GL11.GL_FLOAT, 0, 0);
@@ -1832,7 +1836,7 @@ public class PShape3D extends PShape implements PConstants {
     gl.glVertexPointer(3, GL11.GL_FLOAT, 0, 0);
 
     numTextures = 0;
-    if (useTextures) {
+    if (style) {
       for (int t = 0; t < textures.length; t++) {
         if (textures[t] != null) {
           PTexture tex = textures[t].getTexture();
@@ -1858,12 +1862,14 @@ public class PShape3D extends PShape implements PConstants {
       if (pointSprites) {
         // Texturing with point sprites.
         
+        gl.glPointSize(PGraphicsAndroid3D.maxPointSize);
         // This is how will our point sprite's size will be modified by 
         // distance from the viewer:
-        // actualSize = desiredSize / sqrt(p[0] + p[1] * d + p[2] * d * d)
-        // where d is the distance from the point sprite to the camera and 
-        // p is the array parameter passed in the following call: 
-        gl.glPointParameterfv(GL11.GL_POINT_DISTANCE_ATTENUATION, ptDistAtt, 0);
+        // actualSize = pointSize / sqrt(p[0] + p[1] * d + p[2] * d * d)
+        // where pointSize is the value set with glPointSize(), d is the distance from 
+        // the point sprite to the camera and p is the array parameter passed in the 
+        // following call: 
+        gl.glPointParameterfv(GL11.GL_POINT_DISTANCE_ATTENUATION, spriteDistAtt, 0);
 
         // The alpha of a point is calculated to allow the fading of points 
         // instead of shrinking them past a defined threshold size. The threshold 
@@ -1892,7 +1898,8 @@ public class PShape3D extends PShape implements PConstants {
       }
     }
 
-    if (!vertexColor) {
+    if (!style) {
+      // Using fill or tint color when the style is disabled.
       if (0 < numTextures) {
         if (g.tint) {
           gl.glColor4f(g.tintR, g.tintG, g.tintB, g.tintA);  
@@ -2206,7 +2213,7 @@ public class PShape3D extends PShape implements PConstants {
     boolean auto0 = a3d.autoNormal;
     a3d.autoNormal = true;
     
-    // TODO: finish the integration with PShape's styles.
+    // Strokes are not used to draw the model.
     boolean stroke0 = a3d.stroke;
     a3d.stroke = false;
     
