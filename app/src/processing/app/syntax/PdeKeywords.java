@@ -43,13 +43,14 @@ public class PdeKeywords extends TokenMarker {
 //  private static final KeywordMap keywordColoring;
   // lookup table that maps keywords to their html reference pages
 //  private static final Hashtable keywordToReference;
-  private HashMap<String,String> keywordToReference;
+//  private HashMap<String,String> keywordToReference;
 
   // used internally
   private int lastOffset;
   private int lastKeyword;
   
-  
+
+  /*
   public PdeKeywords(File file) throws IOException {
     //super(false, getKeywords());
 //    this.cpp = cpp;
@@ -97,10 +98,16 @@ public class PdeKeywords extends TokenMarker {
 //                     "please re-install Processing.", e);
 //    }
   }
-
-
-  public String getReference(String keyword) {
-    return keywordToReference.get(keyword);
+  */
+  
+  
+  public void addColoring(String keyword, String coloring) {
+    // text will be KEYWORD or LITERAL
+    boolean isKey = (coloring.charAt(0) == 'K');
+    // KEYWORD1 -> 0, KEYWORD2 -> 1, etc
+    int num = coloring.charAt(coloring.length() - 1) - '1';
+    byte id = (byte) ((isKey ? Token.KEYWORD1 : Token.LITERAL1) + num);
+    keywordColoring.add(keyword, id);
   }
 
 

@@ -308,7 +308,7 @@ public class Build {
     }
 
 
-    PreprocessResult result;
+    PreprocessorResult result;
     try {
       File outputFolder = new File(srcFolder, packageName.replace('.', '/'));
       outputFolder.mkdirs();
@@ -435,13 +435,13 @@ public class Build {
 
     // grab the imports from the code just preproc'd
 
-    importedLibraries = new ArrayList<LibraryFolder>();
+    importedLibraries = new ArrayList<JavaLibrary>();
     for (String item : result.extraImports) {
       // remove things up to the last dot
       int dot = item.lastIndexOf('.');
       // http://dev.processing.org/bugs/show_bug.cgi?id=1145
       String entry = (dot == -1) ? item : item.substring(0, dot);
-      LibraryFolder library = Base.importToLibraryTable.get(entry);
+      JavaLibrary library = Base.importToLibraryTable.get(entry);
 
       if (library != null) {
         if (!importedLibraries.contains(library)) {
@@ -536,7 +536,7 @@ public class Build {
    * Get the list of imported libraries. Used by external tools like Android mode.
    * @return list of library folders connected to this sketch.
    */
-  public ArrayList<LibraryFolder> getImportedLibraries() {
+  public ArrayList<JavaLibrary> getImportedLibraries() {
     return importedLibraries;
   }
 
@@ -803,7 +803,7 @@ public class Build {
     HashMap<String,Object> zipFileContents = new HashMap<String,Object>();
 
     // add contents of 'library' folders
-    for (LibraryFolder library : importedLibraries) {
+    for (JavaLibrary library : importedLibraries) {
       if (library.getPath().equals(openglLibraryPath)) {
         openglApplet = true;
       }
@@ -1229,7 +1229,7 @@ public class Build {
     for (String platformName : PConstants.platformNames) {
       int platform = Base.getPlatformIndex(platformName);
       if (Preferences.getBoolean("export.application.platform." + platformName)) {
-        if (LibraryFolder.hasMultipleArch(platform, importedLibraries)) {
+        if (JavaLibrary.hasMultipleArch(platform, importedLibraries)) {
           // export the 32-bit version
           path = new File(folder, "application." + platformName + "32").getAbsolutePath();
           if (!exportApplication(path, platform, 32)) {
@@ -1415,7 +1415,7 @@ public class Build {
 
     /// add contents of 'library' folders to the export
 
-    for (LibraryFolder library : importedLibraries) {
+    for (JavaLibrary library : importedLibraries) {
       // add each item from the library folder / export list to the output
       for (File exportFile : library.getApplicationExports(exportPlatform, exportBits)) { 
         String exportName = exportFile.getName();

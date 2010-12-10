@@ -65,6 +65,7 @@ _   blockCaret always false.. remove it?
 _ JEditTextArea
 _   focusedComponent = this -> bad solution for a symptom
 _   in Editor, textarea.requestFocus -> requestFocusInWindow, watch the bool
+_ EditorToolbar, two TODO items for open menu handling
 
 libraries
 o Exported libraries don't mantain symbolic links

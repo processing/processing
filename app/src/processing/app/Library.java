@@ -1,38 +1,27 @@
-package processing.mode.java;
+package processing.app;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.io.*;
+import java.util.*;
 
-import processing.app.Base;
-import processing.app.Sketch;
-import processing.core.PApplet;
-import processing.core.PConstants;
+import processing.core.*;
 
 
-public class LibraryFolder implements PConstants {
-  File folder;
-  File libraryFolder;   // name/library
-  File examplesFolder;  // name/examples
-  File referenceFile;   // name/reference/index.html
+public class Library {
+  protected File folder;
+  protected File libraryFolder;   // name/library
+  protected File examplesFolder;  // name/examples
+  protected File referenceFile;   // name/reference/index.html
 
-  String name;          // "pdf" or "PDF Export"
-//  String prettyName;    // PDF Export
-  String author;        // Ben Fry
-  String authorURL;     // http://processing.org
-  String sentence;      // Write graphics to PDF files.
-  String paragraph;     // <paragraph length description for site>
-  int version;          // 102
-  String prettyVersion; // "1.0.2"
-//  String[] packages;
+  protected String name;          // "pdf" or "PDF Export"
+  protected String author;        // Ben Fry
+  protected String authorURL;     // http://processing.org
+  protected String sentence;      // Write graphics to PDF files.
+  protected String paragraph;     // <paragraph length description for site>
+  protected int version;          // 102
+  protected String prettyVersion; // "1.0.2"
 
-//  static final int BITS_ANY = 0;
-//  static final int BITS_32 = 1;
-//  static final int BITS_64 = 2;
-//  String[][][] exportList;  // [platform][bits][index]
+  static final String[] platformNames = PConstants.platformNames;
+  
   HashMap<String,String[]> exportList;
   String[] appletExportList;
   boolean[] multipleArch = new boolean[platformNames.length];
@@ -60,8 +49,8 @@ public class LibraryFolder implements PConstants {
     }
   }  
 
-  /** Filter to pull out just files and no directories */
-  FilenameFilter simpleFilter = new FilenameFilter() {
+  /** Filter to pull out just files and no directories, and to skip export.txt */
+  FilenameFilter standardFilter = new FilenameFilter() {
     public boolean accept(File dir, String name) {
       // skip .DS_Store files, .svn folders, etc
       if (name.charAt(0) == '.') return false;
@@ -82,56 +71,7 @@ public class LibraryFolder implements PConstants {
   };
 
 
-  static protected ArrayList<LibraryFolder> list(File folder) throws IOException {
-    ArrayList<LibraryFolder> libraries = new ArrayList<LibraryFolder>();
-    list(folder, libraries);
-    return libraries;
-  }
-
-
-  static protected void list(File folder, ArrayList<LibraryFolder> libraries) throws IOException {
-    if (folder.isDirectory()) {
-      String[] list = folder.list(new FilenameFilter() {
-        public boolean accept(File dir, String name) {
-          // skip .DS_Store files, .svn folders, etc
-          if (name.charAt(0) == '.') return false;
-          if (name.equals("CVS")) return false;
-          return (new File(dir, name).isDirectory());
-        }
-      });
-      // if a bad folder or something like that, this might come back null
-      if (list != null) {
-        // alphabetize list, since it's not always alpha order
-        // replaced hella slow bubble sort with this feller for 0093
-        Arrays.sort(list, String.CASE_INSENSITIVE_ORDER);
-
-        for (String potentialName : list) {
-          File baseFolder = new File(folder, potentialName);
-          File libraryFolder = new File(baseFolder, "library");
-          File libraryJar = new File(libraryFolder, potentialName + ".jar");
-          // If a .jar file of the same prefix as the folder exists
-          // inside the 'library' subfolder of the sketch
-          if (libraryJar.exists()) {
-            String sanityCheck = Sketch.sanitizeName(potentialName);
-            if (sanityCheck.equals(potentialName)) {
-              libraries.add(new LibraryFolder(baseFolder));              
-
-            } else {
-              String mess =
-                "The library \"" + potentialName + "\" cannot be used.\n" +
-                "Library names must contain only basic letters and numbers.\n" +
-                "(ASCII only and no spaces, and it cannot start with a number)";
-              Base.showMessage("Ignoring bad library name", mess);
-              continue;
-            }
-          }
-        }
-      }
-    }
-  }
-  
-  
-  public LibraryFolder(File folder) {
+  public Library(File folder) {
     this.folder = folder;
     libraryFolder = new File(folder, "library");
     examplesFolder = new File(folder, "examples");
@@ -148,7 +88,7 @@ public class LibraryFolder implements PConstants {
     exportList = new HashMap<String, String[]>();
 
     // get the list of files just in the library root
-    String[] baseList = libraryFolder.list(simpleFilter);
+    String[] baseList = libraryFolder.list(standardFilter);
     System.out.println("Loading " + name + "...");
 //    PApplet.println(baseList);
 
@@ -194,19 +134,19 @@ public class LibraryFolder implements PConstants {
       if (platformAll == null) {
         File folderAll = new File(libraryFolder, platformName);
         if (folderAll.exists()) {
-          platformList = PApplet.concat(baseList, folderAll.list(simpleFilter));
+          platformList = PApplet.concat(baseList, folderAll.list(standardFilter));
         }
       }
       if (platform32 == null) {
         File folder32 = new File(libraryFolder, platformName32);
         if (folder32.exists()) {
-          platformList32 = PApplet.concat(baseList, folder32.list(simpleFilter));
+          platformList32 = PApplet.concat(baseList, folder32.list(standardFilter));
         }
       }
       if (platform64 == null) {
         File folder64 = new File(libraryFolder, platformName64);
         if (folder64.exists()) {
-          platformList64 = PApplet.concat(baseList, folder64.list(simpleFilter));
+          platformList64 = PApplet.concat(baseList, folder64.list(standardFilter));
         }
       }
 
@@ -240,11 +180,11 @@ public class LibraryFolder implements PConstants {
 
     // get the path for all .jar files in this code folder
     String[] packages =
-      Compiler.packageListFromClassPath(getClassPath());
+      Base.packageListFromClassPath(getClassPath());
 //    PApplet.println(packages);
     for (String pkg : packages) {
       //    pw.println(pkg + "\t" + libraryFolder.getAbsolutePath());
-      LibraryFolder library = Base.importToLibraryTable.get(pkg);
+      Library library = Base.importToLibraryTable.get(pkg);
       if (library != null) {
         //      Base.showWarning("Library Calling", "The library found in\n" +
         //        getPath() + "\n" + 
@@ -371,8 +311,8 @@ public class LibraryFolder implements PConstants {
   
 //  static boolean hasMultipleArch(String platformName, ArrayList<LibraryFolder> libraries) {
 //    int platform = Base.getPlatformIndex(platformName);
-  static boolean hasMultipleArch(int platform, ArrayList<LibraryFolder> libraries) {
-    for (LibraryFolder library : libraries) {
+  static boolean hasMultipleArch(int platform, ArrayList<Library> libraries) {
+    for (Library library : libraries) {
       if (library.hasMultipleArch(platform)) {
         return true;
       }
@@ -380,8 +320,61 @@ public class LibraryFolder implements PConstants {
     return false;
   }
   
-  
+
+  // for sorting
 //  public int compareTo(Object o) {
 //    return prettyName.compareTo(((LibraryFolder) o).prettyName);
-//  }
+//  }}
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  static protected ArrayList<Library> list(File folder) throws IOException {
+    ArrayList<Library> libraries = new ArrayList<Library>();
+    list(folder, libraries);
+    return libraries;
+  }
+
+
+  static protected void list(File folder, ArrayList<Library> libraries) throws IOException {
+    if (folder.isDirectory()) {
+      String[] list = folder.list(new FilenameFilter() {
+        public boolean accept(File dir, String name) {
+          // skip .DS_Store files, .svn folders, etc
+          if (name.charAt(0) == '.') return false;
+          if (name.equals("CVS")) return false;
+          return (new File(dir, name).isDirectory());
+        }
+      });
+      // if a bad folder or something like that, this might come back null
+      if (list != null) {
+        // alphabetize list, since it's not always alpha order
+        // replaced hella slow bubble sort with this feller for 0093
+        Arrays.sort(list, String.CASE_INSENSITIVE_ORDER);
+
+        for (String potentialName : list) {
+          File baseFolder = new File(folder, potentialName);
+          File libraryFolder = new File(baseFolder, "library");
+          File libraryJar = new File(libraryFolder, potentialName + ".jar");
+          // If a .jar file of the same prefix as the folder exists
+          // inside the 'library' subfolder of the sketch
+          if (libraryJar.exists()) {
+            String sanityCheck = Sketch.sanitizeName(potentialName);
+            if (sanityCheck.equals(potentialName)) {
+              libraries.add(new Library(baseFolder));              
+
+            } else {
+              String mess =
+                "The library \"" + potentialName + "\" cannot be used.\n" +
+                "Library names must contain only basic letters and numbers.\n" +
+                "(ASCII only and no spaces, and it cannot start with a number)";
+              Base.showMessage("Ignoring bad library name", mess);
+              continue;
+            }
+          }
+        }
+      }
+    }
+  }
 }

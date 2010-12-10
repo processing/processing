@@ -271,12 +271,12 @@ public class PdePreprocessor {
     }
   }
 
-  public PreprocessResult write(final Writer out, String program)
+  public PreprocessorResult write(final Writer out, String program)
       throws RunnerException, RecognitionException, TokenStreamException {
     return write(out, program, null);
   }
 
-  public PreprocessResult write(Writer out, String program,
+  public PreprocessorResult write(Writer out, String program,
                                 String codeFolderPackages[])
       throws RunnerException, RecognitionException, TokenStreamException {
 
@@ -331,7 +331,7 @@ public class PdePreprocessor {
     final PrintWriter stream = new PrintWriter(out);
     final int headerOffset = writeImports(stream, programImports,
       codeFolderImports);
-    return new PreprocessResult(mode, headerOffset + 2, write(program, stream),
+    return new PreprocessorResult(mode, headerOffset + 2, write(program, stream),
                                 programImports);
   }
 

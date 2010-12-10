@@ -23,12 +23,16 @@ package processing.mode.java;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import javax.swing.JOptionPane;
+import javax.swing.*;
 
 import processing.app.*;
 import processing.app.syntax.PdeKeywords;
@@ -38,22 +42,7 @@ import processing.core.PApplet;
 import processing.mode.java.runner.Runner;
 
 
-public class Mode {
-  // these are static because they're used by Sketch
-  static private File examplesFolder;
-  static private File librariesFolder;
-  static private File toolsFolder;
-
-  ArrayList<LibraryFolder> coreLibraries;
-  ArrayList<LibraryFolder> contribLibraries;
-
-  // maps imported packages to their library folder
-//  static HashMap<String, File> importToLibraryTable;
-  static HashMap<String, LibraryFolder> importToLibraryTable;
-  
-  protected PdeKeywords keywords;
-  protected Settings theme;
-
+public class JavaMode extends Mode {
   private Runner runtime;
 
   // classpath for all known libraries for p5
@@ -62,9 +51,11 @@ public class Mode {
 //  static public String librariesClassPath;
 
 
-  public Mode(File folder) {
+  public JavaMode(Base base, File folder) {
+    super(base, folder);
+
     try {
-      keywords = new PdeKeywords(new File(folder, "keywords.txt"));
+      loadKeywords();
     } catch (IOException e) {
       Base.showError("Problem loading keywords",
                      "Could not load keywords.txt, please re-install Processing.", e);
@@ -76,9 +67,91 @@ public class Mode {
       Base.showError("Problem loading theme.txt", 
                      "Could not load theme.txt, please re-install Processing", e);
     }
+    
+    /*
+    item = newJMenuItem("Export", 'E');
+    if (editor != null) {
+      item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          editor.handleExport();
+        }
+      });
+    } else {
+      item.setEnabled(false);
+    }
+    fileMenu.add(item);
+
+    item = newJMenuItemShift("Export Application", 'E');
+    if (editor != null) {
+      item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          editor.handleExportApplication();
+        }
+      });
+    } else {
+      item.setEnabled(false);
+    }
+    fileMenu.add(item);
+     */
   }
+
+
+  public JMenu buildFileMenu(final Editor editor) {
+    JMenuItem exportApplet = Base.newJMenuItem("Export Applet", 'E');
+    exportApplet.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        handleExport();
+      }
+    });
+      
+    JMenuItem exportApplication = Base.newJMenuItemShift("Export Application", 'E');
+    exportApplication.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        handleExportApplication();
+      }
+    });
+    return base.buildFileMenu(editor, new JMenuItem[] { exportApplet, exportApplication });
+  }
+
+
+  protected void loadKeywords() throws IOException {
+    File file = new File(folder, "keywords.txt");
+    BufferedReader reader = PApplet.createReader(file);
+
+    tokenMarker = new PdeKeywords();
+    keywordToReference = new HashMap<String, String>();
+
+    String line = null;
+    while ((line = reader.readLine()) != null) {
+      String[] pieces = PApplet.trim(PApplet.split(line, '\t'));
+      if (pieces.length >= 2) {
+        String keyword = pieces[0];
+        String coloring = pieces[1];
+
+        if (coloring.length() > 0) {
+          tokenMarker.addColoring(keyword, coloring);
+        }
+        if (pieces.length == 3) {
+          String htmlFilename = pieces[2];
+          if (htmlFilename.length() > 0) {
+            keywordToReference.put(keyword, htmlFilename);
+          }
+        }
+      }
+    }
+  }
+
   
-  
+  public String getTitle() {
+    return "Standard";
+  }
+
+
+  public EditorToolbar createToolbar(Editor editor) {
+    return new Toolbar(editor);
+  }
+
+
 //  public Editor createEditor(Base ibase, String path, int[] location) {
 //  }
   
@@ -92,7 +165,7 @@ public class Mode {
    */
   public void handleRun(boolean present) {
     internalCloseRunner();
-    toolbar.activate(EditorToolbar.RUN);
+    toolbar.activate(Toolbar.RUN);
     statusEmpty();
 
     // do this to advance/clear the terminal window / dos prompt / etc
@@ -142,33 +215,46 @@ public class Mode {
   }
 
 
-  class DefaultStopHandler implements Runnable {
-    public void run() {
-      try {
-        if (runtime != null) {
-          runtime.close();  // kills the window
-          runtime = null; // will this help?
-        }
-      } catch (Exception e) {
-        statusError(e);
-      }
-    }
-  }
-
-  
   /**
    * Implements Sketch &rarr; Stop, or pressing Stop on the toolbar.
    */
-  public void handleStop() {  // called by menu or buttons
-    toolbar.activate(EditorToolbar.STOP);
+  public void handleStop(Editor editor) {  // called by menu or buttons
+    Toolbar toolbar = editor.getToolbar();
+    toolbar.activate(Toolbar.STOP);
 
-    internalCloseRunner();
+    internalCloseRunner(editor);
 
-    toolbar.deactivate(EditorToolbar.RUN);
-    toolbar.deactivate(EditorToolbar.STOP);
+    toolbar.deactivate(Toolbar.RUN);
+    toolbar.deactivate(Toolbar.STOP);
 
     // focus the PDE again after quitting presentation mode [toxi 030903]
-    toFront();
+    editor.toFront();
+  }
+  
+  
+//  class DefaultStopHandler implements Runnable {
+//    public void run() {
+//      try {
+//        if (runtime != null) {
+//          runtime.close();  // kills the window
+//          runtime = null; // will this help?
+//        }
+//      } catch (Exception e) {
+//        statusError(e);
+//      }
+//    }
+//  }
+
+  
+  public void handleStopImpl(Editor editor) {
+    try {
+      if (runtime != null) {
+        runtime.close();  // kills the window
+        runtime = null; // will this help?
+      }
+    } catch (Exception e) {
+      editor.statusError(e);
+    }
   }
 
 
@@ -191,7 +277,7 @@ public class Mode {
   /**
    * Handle internal shutdown of the runner.
    */
-  public void internalCloseRunner() {
+  public void internalCloseRunner(Editor editor) {
     if (stopHandler != null)
     try {
       stopHandler.run();
@@ -303,54 +389,4 @@ public class Mode {
     }
     return true;
   }
-
-
-  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-
-  
-  public Settings getTheme() {
-    return theme;
-  }
-  
-  
-  public String getReference(String keyword) {
-    return keywords.getReference(keyword);
-  }
-  
-  
-  public TokenMarker getTokenMarker() {
-    return new PdeKeywords();
-  }
-
-
-  /*
-  public String get(String attribute) {
-    return theme.get(attribute);
-  }
-
-  
-  public boolean getBoolean(String attribute) {
-    return theme.getBoolean(attribute);
-  }
-  
-  
-  public int getInteger(String attribute) {
-    return theme.getInteger(attribute);
-  }
-
-
-  public Color getColor(String attribute) {
-    return theme.getColor(attribute);
-  }
-
-
-  public Font getFont(String attribute) {
-    return theme.getFont(attribute);
-  }
-
-
-  public SyntaxStyle getStyle(String attribute) {
-    return theme.getStyle(attribute);
-  }
-  */
 }

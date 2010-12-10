@@ -112,7 +112,7 @@ public class Preprocessor extends PdePreprocessor {
   }
 
 
-  public PreprocessResult write(Writer out, String program, String codeFolderPackages[])
+  public PreprocessorResult write(Writer out, String program, String codeFolderPackages[])
   throws RunnerException, RecognitionException, TokenStreamException {
     if (sizeStatement != null) {
       int start = program.indexOf(sizeStatement);
@@ -140,13 +140,13 @@ public class Preprocessor extends PdePreprocessor {
 
 
   protected void writeFooter(PrintWriter out, String className) {
-    if (mode == Mode.STATIC) {
+    if (mode == JavaMode.STATIC) {
       // close off draw() definition
       out.println("noLoop();");
       out.println(indent + "}");
     }
 
-    if ((mode == Mode.STATIC) || (mode == Mode.ACTIVE)) {
+    if ((mode == JavaMode.STATIC) || (mode == JavaMode.ACTIVE)) {
       out.println();
       if (sketchWidth != null) {
         out.println(indent + "public int sketchWidth() { return " + sketchWidth + "; }");

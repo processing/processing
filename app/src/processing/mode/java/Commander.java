@@ -30,6 +30,7 @@ import java.io.PrintStream;
 import processing.app.Base;
 import processing.app.Preferences;
 import processing.app.RunnerException;
+import processing.app.RunnerListener;
 import processing.app.Sketch;
 import processing.core.PApplet;
 import processing.mode.java.runner.*;

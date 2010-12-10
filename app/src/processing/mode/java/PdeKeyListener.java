@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-08 Ben Fry and Casey Reas
+  Copyright (c) 2004-10 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -48,16 +48,16 @@ import java.util.Arrays;
  * Solving these issues, however, would probably best be done by a
  * smarter parser/formatter, rather than continuing to hack this class.
  */
-public class EditorListener {
+public class PdeKeyListener {
   private Editor editor;
   private JEditTextArea textarea;
 
-  private boolean externalEditor;
-  private boolean tabsExpand;
-//  private boolean tabsIndent;
-  private int tabSize;
-  private String tabString;
-  private boolean autoIndent;
+//  private boolean externalEditor;
+//  private boolean tabsExpand;
+////  private boolean tabsIndent;
+//  private int tabSize;
+//  private String tabString;
+//  private boolean autoIndent;
 
 //  private int selectionStart, selectionEnd;
 //  private int position;
@@ -67,24 +67,24 @@ public class EditorListener {
     Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 
 
-  public EditorListener(Editor editor, JEditTextArea textarea) {
+  public PdeKeyListener(Editor editor, JEditTextArea textarea) {
     this.editor = editor;
     this.textarea = textarea;
 
     // let him know that i'm leechin'
     textarea.editorListener = this;
 
-    applyPreferences();
+//    applyPreferences();
   }
 
 
-  public void applyPreferences() {
-    tabsExpand = Preferences.getBoolean("editor.tabs.expand");
-    tabSize = Preferences.getInteger("editor.tabs.size");
-    tabString = spaces(tabSize);
-    autoIndent = Preferences.getBoolean("editor.indent");
-    externalEditor = Preferences.getBoolean("editor.external");
-  }
+//  public void applyPreferences() {
+//    tabsExpand = Preferences.getBoolean("editor.tabs.expand");
+//    tabSize = Preferences.getInteger("editor.tabs.size");
+//    tabString = spaces(tabSize);
+//    autoIndent = Preferences.getBoolean("editor.indent");
+//    externalEditor = Preferences.getBoolean("editor.external");
+//  }
 
 
   /**
@@ -97,7 +97,7 @@ public class EditorListener {
    */
   public boolean keyPressed(KeyEvent event) {
     // don't do things if the textarea isn't editable
-    if (externalEditor) return false;
+    if (Preferences.getBoolean("editor.external")) return false;
 
     //deselect();  // this is for paren balancing
     char c = event.getKeyChar();
@@ -219,8 +219,9 @@ public class EditorListener {
         } else {
           editor.handleOutdent();
         }
-      } else if (tabsExpand) {  // expand tabs
-        textarea.setSelectedText(tabString);
+      } else if (Preferences.getBoolean("editor.tabs.expand")) {
+        int tabSize = Preferences.getInteger("editor.tabs.size");
+        textarea.setSelectedText(spaces(tabSize));
         event.consume();
         return true;
 
@@ -281,8 +282,9 @@ public class EditorListener {
 
     case 10:  // auto-indent
     case 13:
-      if (autoIndent) {
+      if (Preferences.getBoolean("editor.indent")) {
         char contents[] = textarea.getText().toCharArray();
+        int tabSize = Preferences.getInteger("editor.tabs.size");
 
         // this is the previous character
         // (i.e. when you hit return, it'll be the last character
@@ -414,7 +416,7 @@ public class EditorListener {
       return true;
 
     case '}':
-      if (autoIndent) {
+      if (Preferences.getBoolean("editor.indent")) {
         // first remove anything that was there (in case this multiple
         // characters are selected, so that it's not in the way of the
         // spaces for the auto-indent

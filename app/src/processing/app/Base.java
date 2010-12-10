@@ -27,6 +27,8 @@ import java.awt.event.*;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import javax.swing.*;
 
@@ -49,6 +51,15 @@ public class Base {
   /** True if heavy debugging error/log messages are enabled */
   static public boolean DEBUG = false;
 
+  // maps imported packages to their library folder
+  protected HashMap<String, Library> importToLibraryTable;
+
+  protected File examplesFolder;
+  protected File librariesFolder;
+  protected File toolsFolder;
+
+  protected ArrayList<Library> coreLibraries;
+  protected ArrayList<Library> contribLibraries;
   
   static HashMap<Integer, String> platformNames =
     new HashMap<Integer, String>();
@@ -86,7 +97,7 @@ public class Base {
   // a lone file menu to be used when all sketch windows are closed
   static public JMenu defaultFileMenu;
 
-  Mode defaultMode = new Mode();
+  Mode defaultMode = new JavaMode(this, getContentFile("modes/java"));
 
   
   static public void main(final String[] args) {
@@ -127,7 +138,7 @@ public class Base {
     Preferences.init(null);
 
     // setup the theme coloring fun
-    Theme.init();
+//    Theme.init();
 
     // Set the look and feel before opening the window
     try {
@@ -273,6 +284,16 @@ public class Base {
     if (Preferences.getBoolean("update.check")) {
       new UpdateCheck(this);
     }
+  }
+  
+  
+  /**
+   * Single location for the default extension, rather than hardwiring .pde 
+   * all over the place. While it may seem like fun to send the Arduino guys 
+   * on a treasure hunt, it gets old after a while.
+   */
+  protected String getExtension() {
+    return ".pde";
   }
 
 
@@ -469,7 +490,7 @@ public class Base {
   static JMenu importMenu;
 
 
-  public JMenu buildFileMenu(final Editor editor) {
+  public JMenu buildFileMenu(final Editor editor, final JMenuItem[] exportItems) {
     JMenuItem item;
     JMenu fileMenu = new JMenu("File");
 
@@ -503,7 +524,7 @@ public class Base {
 
     item = newJMenuItem("Close", 'W');
     if (editor != null) {
-    item.addActionListener(new ActionListener() {
+      item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           handleClose(editor);
         }
@@ -539,30 +560,11 @@ public class Base {
     }
     fileMenu.add(item);
 
-    item = newJMenuItem("Export", 'E');
-    if (editor != null) {
-      item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          editor.handleExport();
-        }
-      });
-    } else {
-      item.setEnabled(false);
+    if (exportItems != null) {
+      for (JMenuItem ei : exportItems) {
+        fileMenu.add(ei);
+      }
     }
-    fileMenu.add(item);
-
-    item = newJMenuItemShift("Export Application", 'E');
-    if (editor != null) {
-      item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          editor.handleExportApplication();
-        }
-      });
-    } else {
-      item.setEnabled(false);
-    }
-    fileMenu.add(item);
-
     fileMenu.addSeparator();
 
     item = newJMenuItemShift("Page Setup", 'P');
@@ -745,7 +747,7 @@ public class Base {
     newbieDir.mkdirs();
 
     // Make an empty pde file
-    File newbieFile = new File(newbieDir, newbieName + ".pde");
+    File newbieFile = new File(newbieDir, newbieName + getExtension());
     new FileOutputStream(newbieFile);  // create the file
     return newbieFile.getAbsolutePath();
   }
@@ -841,7 +843,7 @@ public class Base {
         public boolean accept(File dir, String name) {
           // TODO this doesn't seem to ever be used. AWESOME.
           //System.out.println("check filter on " + dir + " " + name);
-          return name.toLowerCase().endsWith(".pde");
+          return name.toLowerCase().endsWith(getExtension());
         }
       });
 
@@ -1146,15 +1148,15 @@ public class Base {
 
   public void rebuildLibraryList() {
     // reset the table mapping imports to libraries
-    importToLibraryTable = new HashMap<String, LibraryFolder>();
+    importToLibraryTable = new HashMap<String, Library>();
 
     try {
-      coreLibraries = LibraryFolder.list(librariesFolder);
-      contribLibraries = LibraryFolder.list(getSketchbookLibrariesFolder());
+      coreLibraries = Library.list(librariesFolder);
+      contribLibraries = Library.list(getSketchbookLibrariesFolder());
     } catch (IOException e) {
       Base.showWarning("Unhappiness", 
                        "An error occurred while loading libraries.\n" +
-                       "not all the books will be in place.", e);
+                       "Not all the books will be in place.", e);
     }    
   }
 
@@ -1179,19 +1181,19 @@ public class Base {
 //      e1.printStackTrace();
 //    }
 
-    for (LibraryFolder library : coreLibraries) {
+    for (Library library : coreLibraries) {
       JMenuItem item = new JMenuItem(library.getName());
       item.addActionListener(listener);
       item.setActionCommand(library.getJarPath());
       importMenu.add(item);
     }
-    
+
     if (contribLibraries.size() != 0) {
       importMenu.addSeparator();
       JMenuItem contrib = new JMenuItem("Contributed");
       contrib.setEnabled(false);
 
-      for (LibraryFolder library : contribLibraries) {
+      for (Library library : contribLibraries) {
         JMenuItem item = new JMenuItem(library.getName());
         item.addActionListener(listener);
         item.setActionCommand(library.getJarPath());
@@ -1271,7 +1273,7 @@ public class Base {
               handleOpen(path);
             }
           } else {
-            showWarning("Sketch Does Not Exist",
+            showWarning("Sketch Disappeared",
                         "The selected sketch no longer exists.\n" +
                         "You may need to restart Processing to update\n" +
                         "the sketchbook menu.", null);
@@ -1290,7 +1292,7 @@ public class Base {
       File subfolder = new File(folder, list[i]);
       if (!subfolder.isDirectory()) continue;
 
-      File entry = new File(subfolder, list[i] + ".pde");
+      File entry = new File(subfolder, list[i] + getExtension());
       // if a .pde file of the same prefix as the folder exists..
       if (entry.exists()) {
         //String sanityCheck = sanitizedName(list[i]);
@@ -2153,6 +2155,7 @@ public class Base {
 
   /**
    * Get an image associated with the current color theme.
+   * @deprecated
    */
   static public Image getThemeImage(String name, Component who) {
     return getLibImage("theme/" + name, who);
@@ -2161,6 +2164,7 @@ public class Base {
 
   /**
    * Return an Image object from inside the Processing lib folder.
+   * @deprecated
    */
   static public Image getLibImage(String name, Component who) {
     Image image = null;
@@ -2460,6 +2464,173 @@ public class Base {
           if (file.isDirectory()) {
             listFiles(basePath, newPath, extension, vector);
           }
+        }
+      }
+    }
+  }
+
+
+  /////////////////////////////////////////////////////////////////////////////
+
+
+  /**
+   * Given a folder, return a list of absolute paths to all jar or zip files
+   * inside that folder, separated by pathSeparatorChar.
+   *
+   * This will prepend a colon (or whatever the path separator is)
+   * so that it can be directly appended to another path string.
+   *
+   * As of 0136, this will no longer add the root folder as well.
+   *
+   * This function doesn't bother checking to see if there are any .class
+   * files in the folder or within a subfolder.
+   */
+  static public String contentsToClassPath(File folder) {
+    if (folder == null) return "";
+
+    StringBuffer abuffer = new StringBuffer();
+    String sep = System.getProperty("path.separator");
+
+    try {
+      String path = folder.getCanonicalPath();
+
+//    disabled as of 0136
+      // add the folder itself in case any unzipped files
+//      abuffer.append(sep);
+//      abuffer.append(path);
+//
+      // When getting the name of this folder, make sure it has a slash
+      // after it, so that the names of sub-items can be added.
+      if (!path.endsWith(File.separator)) {
+        path += File.separator;
+      }
+
+      String list[] = folder.list();
+      for (int i = 0; i < list.length; i++) {
+        // Skip . and ._ files. Prior to 0125p3, .jar files that had
+        // OS X AppleDouble files associated would cause trouble.
+        if (list[i].startsWith(".")) continue;
+
+        if (list[i].toLowerCase().endsWith(".jar") ||
+            list[i].toLowerCase().endsWith(".zip")) {
+          abuffer.append(sep);
+          abuffer.append(path);
+          abuffer.append(list[i]);
+        }
+      }
+    } catch (IOException e) {
+      e.printStackTrace();  // this would be odd
+    }
+    //System.out.println("included path is " + abuffer.toString());
+    //packageListFromClassPath(abuffer.toString());  // WHY?
+    return abuffer.toString();
+  }
+
+
+  /**
+   * A classpath, separated by the path separator, will contain
+   * a series of .jar/.zip files or directories containing .class
+   * files, or containing subdirectories that have .class files.
+   *
+   * @param path the input classpath
+   * @return array of possible package names
+   */
+  static public String[] packageListFromClassPath(String path) {
+    Hashtable table = new Hashtable();
+    String pieces[] =
+      PApplet.split(path, File.pathSeparatorChar);
+
+    for (int i = 0; i < pieces.length; i++) {
+      //System.out.println("checking piece '" + pieces[i] + "'");
+      if (pieces[i].length() == 0) continue;
+
+      if (pieces[i].toLowerCase().endsWith(".jar") ||
+          pieces[i].toLowerCase().endsWith(".zip")) {
+        //System.out.println("checking " + pieces[i]);
+        packageListFromZip(pieces[i], table);
+
+      } else {  // it's another type of file or directory
+        File dir = new File(pieces[i]);
+        if (dir.exists() && dir.isDirectory()) {
+          packageListFromFolder(dir, null, table);
+          //importCount = magicImportsRecursive(dir, null,
+          //                                  table);
+                                              //imports, importCount);
+        }
+      }
+    }
+    int tableCount = table.size();
+    String output[] = new String[tableCount];
+    int index = 0;
+    Enumeration e = table.keys();
+    while (e.hasMoreElements()) {
+      output[index++] = ((String) e.nextElement()).replace('/', '.');
+    }
+    //System.arraycopy(imports, 0, output, 0, importCount);
+    //PApplet.printarr(output);
+    return output;
+  }
+
+
+  static private void packageListFromZip(String filename, Hashtable table) {
+    try {
+      ZipFile file = new ZipFile(filename);
+      Enumeration entries = file.entries();
+      while (entries.hasMoreElements()) {
+        ZipEntry entry = (ZipEntry) entries.nextElement();
+
+        if (!entry.isDirectory()) {
+          String name = entry.getName();
+
+          if (name.endsWith(".class")) {
+            int slash = name.lastIndexOf('/');
+            if (slash == -1) continue;
+
+            String pname = name.substring(0, slash);
+            if (table.get(pname) == null) {
+              table.put(pname, new Object());
+            }
+          }
+        }
+      }
+    } catch (IOException e) {
+      System.err.println("Ignoring " + filename + " (" + e.getMessage() + ")");
+      //e.printStackTrace();
+    }
+  }
+
+
+  /**
+   * Make list of package names by traversing a directory hierarchy.
+   * Each time a class is found in a folder, add its containing set
+   * of folders to the package list. If another folder is found,
+   * walk down into that folder and continue.
+   */
+  static private void packageListFromFolder(File dir, String sofar,
+                                            Hashtable table) {
+                                          //String imports[],
+                                          //int importCount) {
+    //System.err.println("checking dir '" + dir + "'");
+    boolean foundClass = false;
+    String files[] = dir.list();
+
+    for (int i = 0; i < files.length; i++) {
+      if (files[i].equals(".") || files[i].equals("..")) continue;
+
+      File sub = new File(dir, files[i]);
+      if (sub.isDirectory()) {
+        String nowfar =
+          (sofar == null) ? files[i] : (sofar + "." + files[i]);
+        packageListFromFolder(sub, nowfar, table);
+        //System.out.println(nowfar);
+        //imports[importCount++] = nowfar;
+        //importCount = magicImportsRecursive(sub, nowfar,
+        //                                  imports, importCount);
+      } else if (!foundClass) {  // if no classes found in this folder yet
+        if (files[i].endsWith(".class")) {
+          //System.out.println("unique class: " + files[i] + " for " + sofar);
+          table.put(sofar, new Object());
+          foundClass = true;
         }
       }
     }

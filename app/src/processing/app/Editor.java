@@ -25,7 +25,7 @@ package processing.app;
 import processing.app.syntax.*;
 import processing.app.tools.*;
 import processing.core.*;
-import processing.java.*;
+import processing.mode.java.PdeKeyListener;
 
 import java.awt.*;
 import java.awt.datatransfer.*;
@@ -87,7 +87,7 @@ public class Editor extends JFrame implements RunnerListener {
   private final EditorLineStatus lineStatus;
 
   private final JEditTextArea textarea;
-  private final EditorListener listener;
+//  private final PdeKeyListener listener;
 
   // runtime information and window placement
   private Point sketchWindowLocation;
@@ -174,13 +174,14 @@ public class Editor extends JFrame implements RunnerListener {
       toolbarMenu = new JMenu();
       base.rebuildToolbarMenu(toolbarMenu);
     }
-    toolbar = new EditorToolbar(this, toolbarMenu);
+//    toolbar = new EditorToolbar(this, toolbarMenu);
+    toolbar = mode.createToolbar(this);
     upper.add(toolbar);
 
     header = new EditorHeader(this);
     upper.add(header);
 
-    textarea = new JEditTextArea(new PdeTextAreaDefaults(mode.getTheme()));
+    textarea = new JEditTextArea(new PdeTextAreaDefaults(mode));
     textarea.setRightClickPopup(new TextAreaPopup());
     textarea.setHorizontalOffset(JEditTextArea.leftHandGutter);
 
@@ -223,7 +224,7 @@ public class Editor extends JFrame implements RunnerListener {
 
     // hopefully these are no longer needed w/ swing
     // (har har har.. that was wishful thinking)
-    listener = new EditorListener(this, textarea);
+    listener = new PdeKeyListener(this, textarea);
     pain.add(box);
 
     // get shift down/up events so we can show the alt version of toolbar buttons
@@ -321,9 +322,9 @@ public class Editor extends JFrame implements RunnerListener {
   }
   
   
-  public Settings getTheme() {
-    return mode.getTheme();
-  }
+//  public Settings getTheme() {
+//    return mode.getTheme();
+//  }
 
 
   protected void setPlacement(int[] location) {
@@ -370,7 +371,7 @@ public class Editor extends JFrame implements RunnerListener {
     TextAreaPainter painter = textarea.getPainter();
     if (external) {
       // disable line highlight and turn off the caret when disabling
-      Color color = mode.getTheme().getColor("editor.external.bgcolor");
+      Color color = mode.getColor("editor.external.bgcolor");
       painter.setBackground(color);
       painter.setLineHighlightEnabled(false);
       textarea.setCaretVisible(false);
@@ -380,7 +381,7 @@ public class Editor extends JFrame implements RunnerListener {
 //      splitPane.setResizeWeight(0D);
 //      textarea.setMinimumSize(new Dimension(textarea.getWidth(), 0));
     } else {
-      Color color = mode.getTheme().getColor("editor.bgcolor");
+      Color color = mode.getColor("editor.bgcolor");
       painter.setBackground(color);
       boolean highlight = Preferences.getBoolean("editor.linehighlight");
       painter.setLineHighlightEnabled(highlight);
@@ -396,7 +397,8 @@ public class Editor extends JFrame implements RunnerListener {
     painter.setFont(Preferences.getFont("editor.font"));
 
     // in case tab expansion stuff has changed
-    listener.applyPreferences();
+    // removing this, just checking prefs directly instead
+//    listener.applyPreferences();
 
     // in case moved to a new location
     // For 0125, changing to async version (to be implemented later)
@@ -1495,6 +1497,11 @@ public class Editor extends JFrame implements RunnerListener {
     return sketchWindowLocation;
   }
 
+  
+  public void internalCloseRunner() {
+    mode.internalCloseRunner(this);
+  }
+
 
   /**
    * Check if the sketch is modified and ask user to save changes.
@@ -1720,6 +1727,7 @@ public class Editor extends JFrame implements RunnerListener {
   public boolean handleSave(boolean immediately) {
     //stopRunner();
     handleStop();  // 0136
+//    internalCloseRunner();  // 0192
 
     if (untitled) {
       return handleSaveAs();
@@ -1856,7 +1864,7 @@ public class Editor extends JFrame implements RunnerListener {
 
 
   /**
-   * Show an error int the status bar.
+   * Show an error in the status bar.
    */
   public void statusError(String what) {
     status.error(what);

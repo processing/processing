@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-08 Ben Fry and Casey Reas
+  Copyright (c) 2004-10 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -31,9 +31,9 @@ import javax.swing.*;
 /**
  * Panel just below the editing area that contains status messages.
  */
-public class EditorStatus extends JPanel /*implements ActionListener*/ {
-  static Color bgcolor[];
-  static Color fgcolor[];
+public class EditorStatus extends JPanel {
+  Color[] bgcolor;
+  Color[] fgcolor;
 
   static final int NOTICE = 0;
   static final int ERR    = 1;
@@ -61,40 +61,41 @@ public class EditorStatus extends JPanel /*implements ActionListener*/ {
   int sizeW, sizeH;
   int imageW, imageH;
 
-  //JButton yesButton;
-  //JButton noButton;
   JButton cancelButton;
   JButton okButton;
   JTextField editField;
 
-  //Thread promptThread;
   int response;
 
 
   public EditorStatus(Editor editor) {
     this.editor = editor;
     empty();
+    setTheme(editor.getTheme());
+  }
+  
+  
+  public void setTheme(Settings theme) {
+    bgcolor = new Color[] { 
+      theme.getColor("status.notice.bgcolor"),
+      theme.getColor("status.error.bgcolor"),
+      theme.getColor("status.edit.bgcolor")
+    };
 
-    if (bgcolor == null) {
-      Settings theme = editor.getTheme();
-      
-      bgcolor = new Color[3]; //4];
-      bgcolor[0] = theme.getColor("status.notice.bgcolor");
-      bgcolor[1] = theme.getColor("status.error.bgcolor");
-      bgcolor[2] = theme.getColor("status.edit.bgcolor");
+    fgcolor = new Color[] {
+      theme.getColor("status.notice.fgcolor"),
+      theme.getColor("status.error.fgcolor"),
+      theme.getColor("status.edit.fgcolor")
+    };
 
-      fgcolor = new Color[3]; //4];
-      fgcolor[0] = theme.getColor("status.notice.fgcolor");
-      fgcolor[1] = theme.getColor("status.error.fgcolor");
-      fgcolor[2] = theme.getColor("status.edit.fgcolor");
-    }
+    font = theme.getFont("status.font");
+    metrics = null;
   }
 
 
   public void empty() {
     mode = NOTICE;
     message = NO_MESSAGE;
-    //update();
     repaint();
   }
 
@@ -102,7 +103,6 @@ public class EditorStatus extends JPanel /*implements ActionListener*/ {
   public void notice(String message) {
     mode = NOTICE;
     this.message = message;
-    //update();
     repaint();
   }
 
@@ -116,31 +116,6 @@ public class EditorStatus extends JPanel /*implements ActionListener*/ {
     this.message = message;
     repaint();
   }
-
-
-  /*
-  public void prompt(String message) {
-    mode = PROMPT;
-    this.message = message;
-
-    response = 0;
-    yesButton.setVisible(true);
-    noButton.setVisible(true);
-    cancelButton.setVisible(true);
-    yesButton.requestFocus();
-
-    repaint();
-  }
-
-
-  // prompt has been handled, re-hide the buttons
-  public void unprompt() {
-    yesButton.setVisible(false);
-    noButton.setVisible(false);
-    cancelButton.setVisible(false);
-    empty();
-  }
-  */
 
 
   public void edit(String message, String dflt) {
@@ -166,26 +141,8 @@ public class EditorStatus extends JPanel /*implements ActionListener*/ {
   }
 
 
-  /*
-  public void update() {
-    Graphics g = this.getGraphics();
-    try {
-      setBackground(bgcolor[mode]);
-    } catch (NullPointerException e) { } // if not ready yet
-    if (g != null) paint(g);
-  }
-
-  public void update(Graphics g) {
-    paint(g);
-  }
-  */
-
-
   public void paintComponent(Graphics screen) {
-    //if (screen == null) return;
     if (okButton == null) setup();
-
-    //System.out.println("status.paintComponent");
 
     Dimension size = getSize();
     if ((size.width != sizeW) || (size.height != sizeH)) {
@@ -213,10 +170,8 @@ public class EditorStatus extends JPanel /*implements ActionListener*/ {
     }
 
     Graphics g = offscreen.getGraphics();
-    if (font == null) {
-      font = Theme.getFont("status.font");
-      //new Font("SansSerif", Font.PLAIN, 12));
-      g.setFont(font);
+    g.setFont(font);
+    if (metrics == null) {
       metrics = g.getFontMetrics();
       ascent = metrics.getAscent();
     }
@@ -269,20 +224,9 @@ public class EditorStatus extends JPanel /*implements ActionListener*/ {
       }
       setLayout(null);
 
-      /*
-      yesButton.addActionListener(this);
-      noButton.addActionListener(this);
-      cancelButton.addActionListener(this);
-      okButton.addActionListener(this);
-      */
-
-      //add(yesButton);
-      //add(noButton);
       add(cancelButton);
       add(okButton);
 
-      //yesButton.setVisible(false);
-      //noButton.setVisible(false);
       cancelButton.setVisible(false);
       okButton.setVisible(false);
 
@@ -407,10 +351,12 @@ public class EditorStatus extends JPanel /*implements ActionListener*/ {
     return getMinimumSize();
   }
 
+
   public Dimension getMinimumSize() {
     return new Dimension(300, Preferences.GRID_SIZE);
   }
 
+  
   public Dimension getMaximumSize() {
     return new Dimension(3000, Preferences.GRID_SIZE);
   }

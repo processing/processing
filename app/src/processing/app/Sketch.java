@@ -108,7 +108,7 @@ public class Sketch {
   /**
    * List of library folders, set up in the preprocess() method.
    */
-  private ArrayList<LibraryFolder> importedLibraries;
+  private ArrayList<JavaLibrary> importedLibraries;
   //private ArrayList<File> importedLibraries;
 
   /** 

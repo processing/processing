@@ -29,7 +29,7 @@ import processing.app.*;
 
 public class PdeTextAreaDefaults extends TextAreaDefaults {
 
-  public PdeTextAreaDefaults(Settings theme) {
+  public PdeTextAreaDefaults(Mode theme) {
     inputHandler = new DefaultInputHandler();
     //inputHandler.addDefaultKeyBindings();  // 0122
 
