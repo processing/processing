@@ -381,7 +381,9 @@ public interface PConstants {
   /** This constant identifies the linear/linear function to build mipmaps  */
   public static final int TRILINEAR = 4;
   
-  
+  // Point sprites distance attenuation functions
+  public static final int LINEAR = 0;
+  public static final int QUADRATIC = 1;
   
   /** This constant identifies the clamp-to-edge wrapping mode */
   public static final int CLAMP = 0;
