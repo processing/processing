@@ -67,10 +67,10 @@ public class PShape3D extends PShape implements PConstants {
   protected FloatBuffer texCoordBuffer;
   
   // Bounding box: 
-  protected float xmin, xmax;
-  protected float ymin, ymax;
-  protected float zmin, zmax;
-
+  public float xmin, xmax;
+  public float ymin, ymax;
+  public float zmin, zmax;
+  
   // Public arrays for setting/getting vertices, colors, normals, and 
   // texture coordinates when using loadVertices/updateVertices,
   // loadNormals/updateNormals, etc. This is modeled following the
@@ -124,7 +124,8 @@ public class PShape3D extends PShape implements PConstants {
   protected boolean pointSprites;  
   protected PImage[] textures;  
  
-  // Coefficients for point sprite distance attenuation function.
+  float maxSpriteSize = PGraphicsAndroid3D.maxPointSize;
+  // Coefficients for point sprite distance attenuation function.  
   // These default values correspond to the constant sprite size.
   protected float spriteDistAtt[] = { 1.0f, 0.0f, 0.0f };
   
@@ -239,15 +240,7 @@ public class PShape3D extends PShape implements PConstants {
     firstUpdateIdx = first;
     lastUpdateIdx = last;
     
-    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glVertexBufferID);      
-    
-    /*
-    int offset = first * 3;
-    int size = (last - first + 1) * 3;
-    vertexBuffer.limit(vertexBuffer.capacity());      
-    vertexBuffer.rewind();
-    vertexBuffer.get(vertices, offset, size);
-    */
+    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glVertexBufferID);    
   }  
   
   
@@ -296,14 +289,6 @@ public class PShape3D extends PShape implements PConstants {
     lastUpdateIdx = last;
     
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glColorBufferID);
-    
-    /*
-    int offset = first * 4;
-    int size = (last - first + 1) * 4;
-    colorBuffer.limit(colorBuffer.capacity());
-    colorBuffer.rewind();
-    colorBuffer.get(colors, offset, size);
-    */    
   }
   
   
@@ -349,14 +334,6 @@ public class PShape3D extends PShape implements PConstants {
     lastUpdateIdx = last;
     
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glNormalBufferID);
-    
-    /*
-    int offset = first * 3;
-    int size = (last - first + 1) * 3;
-    normalBuffer.limit(normalBuffer.capacity());      
-    normalBuffer.rewind();      
-    normalBuffer.get(normals, offset, size);
-    */    
   }
   
   
@@ -419,16 +396,6 @@ public class PShape3D extends PShape implements PConstants {
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glTexCoordBufferID[unit]);
     
     texcoords = allTexcoords[unit];
-    
-        /*
-    int offset = first * 2;
-    int size = (last - first + 1) * 2;
-    texCoordBuffer.limit(texCoordBuffer.capacity());      
-    texCoordBuffer.rewind();
-    texCoordBuffer.get(texcoords0, offset, size);
-        
-    normalizeTexcoords();
-    */    
   }  
   
   
@@ -546,11 +513,22 @@ public class PShape3D extends PShape implements PConstants {
   }
   
   
+  protected void resetBounds() {
+    width = height = depth = 0;
+    xmin = ymin = zmin = 10000;
+    xmax = ymax = zmax = -10000;    
+  }
+  
+  
   protected void updateBounds() {
+    if (firstUpdateIdx == 0 && lastUpdateIdx == vertexCount - 1) {
+      resetBounds();
+    }    
+    
     // TODO: extract minimum and maximum values using some sorting algorithm. 
     for (int i = firstUpdateIdx; i <= lastUpdateIdx; i++) {
       updateBounds(vertices[3 * i + 0], vertices[3 * i + 1], vertices[3 * i + 2]);      
-    }      
+    }
   }
   
   
@@ -995,7 +973,7 @@ public class PShape3D extends PShape implements PConstants {
   }     
  
   
-  public void setTextureImpl(PImage tex, int unit) {
+  protected void setTextureImpl(PImage tex, int unit) {
     if (unit < 0 || PGraphicsAndroid3D.maxTextureUnits <= unit) {
       System.err.println("PShape3D: Wrong texture unit.");
       return;
@@ -1080,50 +1058,77 @@ public class PShape3D extends PShape implements PConstants {
       ((PShape3D)children[idx]).strokeWeight = sw;
     }
   }  
-
-
+  
+  
   public float getMaxSpriteSize() {
-    return PGraphicsAndroid3D.maxPointSize;
-  }
-  
-  
-  public void setSpriteSize(float s, float d) {
-    setSpriteSize(s, d, true);
-  }
-  
-  
-  public void setSpriteSize(float s, float d, boolean linear) {
     if (family == GROUP) {
       init();
-      setSpriteSize(0, s, d, linear);
+      return getMaxSpriteSize(0);
+    } else { 
+      return maxSpriteSize;
+    }
+  }
+
+  
+  public float getMaxSpriteSize(int idx) {
+    if (0 <= idx && idx < childCount) {
+      return ((PShape3D)children[idx]).maxSpriteSize;
+    }
+    return 0;
+  }
+
+  
+  public void setMaxSpriteSize(float s) {
+    if (family == GROUP) {
+      init();
+      setMaxSpriteSize(0, s);
     } else {
-      setSpriteSizeImpl(s, d, linear);      
+      setMaxSpriteSizeImpl(s);
+    }
+  }
+  
+
+  public void setMaxSpriteSize(int idx, float s) {
+    if (0 <= idx && idx < childCount) {
+      ((PShape3D)children[idx]).setMaxSpriteSizeImpl(s);
+    }
+  }
+
+  
+  protected void setMaxSpriteSizeImpl(float s) {
+    maxSpriteSize = PApplet.min(s, PGraphicsAndroid3D.maxPointSize);    
+  }
+
+   
+  public void setSpriteSize(float s, float d, int mode) {
+    if (family == GROUP) {
+      init();
+      setSpriteSize(0, s, d, mode);
+    } else {
+      setSpriteSizeImpl(s, d, mode);      
     }
   }
   
   
-  public void setSpriteSize(int idx, float s, float d) {
-    setSpriteSize(idx, s, d, true);
-  }
-  
-  
-  public void setSpriteSize(int idx, float s, float d, boolean linear) {
+  public void setSpriteSize(int idx, float s, float d, int mode) {
     if (0 <= idx && idx < childCount) {
-      ((PShape3D)children[idx]).setSpriteSizeImpl(s, d, linear);
+      ((PShape3D)children[idx]).setSpriteSizeImpl(s, d, mode);
     }
   }  
   
   
   // Sets the coefficient of the distance attenuation function so that the 
   // size of the sprite is exactly s when its distance from the camera is d.
-  protected void setSpriteSizeImpl(float s, float d, boolean linear) {
-    float s0 = PGraphicsAndroid3D.maxPointSize;
-    if (linear) {
+  protected void setSpriteSizeImpl(float s, float d, int mode) {
+    float s0 = maxSpriteSize;
+    if (mode == LINEAR) {
       spriteDistAtt[1] = (s0 - s) / (d * s);
       spriteDistAtt[2] = 0;
-    } else {
+    } else if (mode == QUADRATIC) {
       spriteDistAtt[1] = 0; 
       spriteDistAtt[2] = (s0 - s) / (d * d * s);
+    } else {
+      PGraphics.showWarning("Invalid point sprite mode");
     }
   }
   
@@ -1386,10 +1391,7 @@ public class PShape3D extends PShape implements PConstants {
     initChildren();      
     updateElement = -1;
     
-    width = height = depth = 0;
-    xmin = ymin = zmin = 10000;
-    xmax = ymax = zmax = -10000;
-    
+    resetBounds();
   }
   
   
@@ -1658,11 +1660,22 @@ public class PShape3D extends PShape implements PConstants {
 
   public void rotate(float angle, float v0, float v1, float v2) {
     init();
+
+    float norm2 = v0 * v0 + v1 * v1 + v2 * v2;
+    if (Math.abs(norm2 - 1) > EPSILON) {
+      // Normalizing rotation axis vector.
+      float norm = PApplet.sqrt(norm2);
+      v0 /= norm;
+      v1 /= norm;
+      v2 /= norm;
+    }
     
-    // TODO should make sure this vector is normalized, and test that this method works ok.
-    loadVertices();
+    // Rotating around the center of the object.
+    float cx = 0.5f * (xmin + xmax);
+    float cy = 0.5f * (ymin + ymax);
+    float cz = 0.5f * (zmin + zmax);
     
-    // Rotating around xmin, ymin, zmin)
+    // Rotation matrix
     float c = PApplet.cos(angle);
     float s = PApplet.sin(angle);
     float t = 1.0f - c;
@@ -1672,22 +1685,44 @@ public class PShape3D extends PShape implements PConstants {
     m[2] = (t*v0*v2) + (s*v1);     // 0, 2 
     m[3] = (t*v0*v1) + (s*v2);     // 1, 0
     m[4] = (t*v1*v1) + c;          // 1, 1
-    m[5] =  (t*v1*v2) - (s*v0);    // 1, 2
+    m[5] = (t*v1*v2) - (s*v0);     // 1, 2
     m[6] = (t*v0*v2) - (s*v1);     // 2, 0
     m[7] = (t*v1*v2) + (s*v0);     // 2, 1 
     m[8] = (t*v2*v2) + c;          // 2, 2
+
     float x, y, z;
-    for (int i = 0; i < vertexCount; i++) {
-      x = vertices[3 * i + 0] - xmin; 
-      y = vertices[3 * i + 1] - ymin;
-      z = vertices[3 * i + 2] - zmin;      
-      
-      vertices[3 * i + 0] = m[0] * x + m[1] * y + m[2] * z + xmin; 
-      vertices[3 * i + 1] = m[3] * x + m[4] * y + m[5] * z + ymin;
-      vertices[3 * i + 2] = m[6] * x + m[7] * y + m[8] * z + zmin;
-    }        
     
-    updateVertices();       
+    loadVertices();    
+    for (int i = 0; i < vertexCount; i++) {
+      x = vertices[3 * i + 0] - cx; 
+      y = vertices[3 * i + 1] - cy;
+      z = vertices[3 * i + 2] - cz;      
+      
+      vertices[3 * i + 0] = m[0] * x + m[1] * y + m[2] * z + cx; 
+      vertices[3 * i + 1] = m[3] * x + m[4] * y + m[5] * z + cy;
+      vertices[3 * i + 2] = m[6] * x + m[7] * y + m[8] * z + cz;
+    }
+    updateVertices();
+    
+    // Re-centering, because of loss of precision when applying the
+    // rotation matrix, the center of rotation moves slightly so 
+    // after many consecutive rotations the object might translate
+    // significantly.
+    centerAt(cx, cy, cz);
+    
+    // The normals also need to be rotated to reflect the new orientation 
+    //of the faces.
+    loadNormals();
+    for (int i = 0; i < vertexCount; i++) {
+      x = normals[3 * i + 0]; 
+      y = normals[3 * i + 1];
+      z = normals[3 * i + 2];      
+      
+      normals[3 * i + 0] = m[0] * x + m[1] * y + m[2] * z + cx; 
+      normals[3 * i + 1] = m[3] * x + m[4] * y + m[5] * z + cy;
+      normals[3 * i + 2] = m[6] * x + m[7] * y + m[8] * z + cz;
+    }            
+    updateNormals();    
   }
 
   
@@ -1862,22 +1897,23 @@ public class PShape3D extends PShape implements PConstants {
       if (pointSprites) {
         // Texturing with point sprites.
         
-        gl.glPointSize(PGraphicsAndroid3D.maxPointSize);
-        // This is how will our point sprite's size will be modified by 
-        // distance from the viewer:
-        // actualSize = pointSize / sqrt(p[0] + p[1] * d + p[2] * d * d)
-        // where pointSize is the value set with glPointSize(), d is the distance from 
-        // the point sprite to the camera and p is the array parameter passed in the 
-        // following call: 
-        gl.glPointParameterfv(GL11.GL_POINT_DISTANCE_ATTENUATION, spriteDistAtt, 0);
-
         // The alpha of a point is calculated to allow the fading of points 
         // instead of shrinking them past a defined threshold size. The threshold 
         // is defined by GL_POINT_FADE_THRESHOLD_SIZE and is not clamped to the 
         // minimum and maximum point sizes.
-        gl.glPointParameterf(GL11.GL_POINT_FADE_THRESHOLD_SIZE, 0.6f * pointSize);
+        gl.glPointParameterf(GL11.GL_POINT_FADE_THRESHOLD_SIZE, 0.6f * maxSpriteSize);
         gl.glPointParameterf(GL11.GL_POINT_SIZE_MIN, 1.0f);
-        gl.glPointParameterf(GL11.GL_POINT_SIZE_MAX, PGraphicsAndroid3D.maxPointSize);
+        gl.glPointParameterf(GL11.GL_POINT_SIZE_MAX, maxSpriteSize);
+        gl.glPointSize(maxSpriteSize);
+        
+        // This is how will our point sprite's size will be modified by 
+        // distance from the viewer:
+        // actualSize = pointSize / sqrt(p[0] + p[1] * d + p[2] * d * d)
+        // where pointSize is the value set with glPointSize(), clamped to the extreme values
+        // in glPointParameterf(GL11.GL_POINT_SIZE_MIN/GL11.GL_POINT_SIZE_MAX. 
+        // d is the distance from the point sprite to the camera and p is the array parameter 
+        // passed in the following call: 
+        gl.glPointParameterfv(GL11.GL_POINT_DISTANCE_ATTENUATION, spriteDistAtt, 0);
 
         // Specify point sprite texture coordinate replacement mode for each 
         // texture unit

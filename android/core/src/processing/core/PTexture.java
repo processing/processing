@@ -308,7 +308,10 @@ public class PTexture implements PConstants {
           level++;
           denom *= 2;
  
-          // Downsampling bitmap. This update formula allows for NPOT resolutions:
+          // Downsampling bitmap. We must eventually arrive to the 1x1 level,
+          // and if the width and height are different, there will be a few 1D
+          // texture levels just before. 
+          // This update formula also allows for NPOT resolutions.
           w0 = PApplet.max(1, PApplet.floor((float)glWidth / denom));
           h0 = PApplet.max(1, PApplet.floor((float)glHeight / denom));
           Bitmap bitmap2 = Bitmap.createScaledBitmap(bitmap, w0, h0, true);
