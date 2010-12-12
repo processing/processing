@@ -1467,6 +1467,12 @@ public class PApplet extends Activity implements PConstants, Runnable {
     pg.setParent(this);
     pg.setPrimary(false);
     pg.setSize(iwidth, iheight);
+    
+    // In the case of A3D, the first beginDraw/endDraw
+    // call is needed to initialize the offscreen buffers.
+    pg.beginDraw();
+    pg.endDraw();
+    
     return pg;
   }
 
@@ -8153,10 +8159,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
   // A3D-only functions
 
   // TODO: Discuss proper integration into PApplet API.
-  public PImage getOffscreenImage() {
-    return g.getOffscreenImage();
-  }
-
+  
   public void blend(int mode) {
     g.blend(mode);
   }
