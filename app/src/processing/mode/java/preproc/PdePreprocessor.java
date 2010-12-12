@@ -372,12 +372,13 @@ public class PdePreprocessor {
     return new String(p2, 0, index);
   }
 
-  private static final Pattern PUBLIC_CLASS = Pattern.compile(
-    "(^|;)\\s*public\\s+class", Pattern.MULTILINE);
+  private static final Pattern PUBLIC_CLASS = 
+    Pattern.compile("(^|;)\\s*public\\s+class", Pattern.MULTILINE);
 
-  private static final Pattern FUNCTION_DECL = Pattern
-      .compile(
-        "(^|;)\\s*((public|private|protected|final|static)\\s+)*(void|int|float|double|String|char|byte)(\\s*\\[\\s*\\])?\\s+[a-zA-Z0-9]+\\s*\\(",
+  private static final Pattern FUNCTION_DECL = 
+    Pattern.compile("(^|;)\\s*((public|private|protected|final|static)\\s+)*" +
+    		"(void|int|float|double|String|char|byte)" +
+    		"(\\s*\\[\\s*\\])?\\s+[a-zA-Z0-9]+\\s*\\(",
         Pattern.MULTILINE);
 
   /**
@@ -751,5 +752,4 @@ public class PdePreprocessor {
       sb.append("]");
     return sb.toString();
   }
-
 }

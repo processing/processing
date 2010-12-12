@@ -31,14 +31,57 @@ import java.util.zip.*;
 import javax.swing.*;
 import javax.swing.border.*;
 
+<<<<<<< .mine
 import processing.app.*;
 import processing.core.*;
+import processing.mode.java.preproc.*;
+import processing.mode.java.runner.*;
+=======
+import processing.app.*;
+import processing.core.*;
+>>>>>>> .r7521
+
+// Would you believe there's a java.lang.Compiler class? I wouldn't.
+import processing.mode.java.runner.Compiler;
 
 
 public class Build {
   Editor editor;
   Sketch sketch;
+<<<<<<< .mine
 
+  // what happens in the build, stays in the build.
+  // (which is to say that everything below this line, stays within this class)
+  
+=======
+>>>>>>> .r7521
+  private File srcFolder;
+  private File binFolder;
+  private boolean foundMain = false;
+  private String classPath;
+
+<<<<<<< .mine
+  /**
+   * This will include the code folder, any library folders, etc. that might
+   * contain native libraries that need to be picked up with java.library.path. 
+   * This is *not* the "Processing" libraries path, this is the Java libraries
+   * path, as in java.library.path=BlahBlah, which identifies search paths for
+   * DLLs or JNILIBs. (It's Java's LD_LIBRARY_PATH, for you UNIX fans.)
+   * This is set by the preprocessor as it figures out where everything is.
+   */
+  private String javaLibraryPath;
+
+  /**
+   * List of library folders, as figured out during preprocessing.
+   */
+  private ArrayList<Library> importedLibraries;
+  //private ArrayList<File> importedLibraries;
+
+
+  public Build(Editor editor) {
+    this.editor = editor;
+    this.sketch = editor.getSketch();
+=======
   // what happens in the build, stays in the build.
 //  private File srcFolder;
 //  private File binFolder;
@@ -48,6 +91,7 @@ public class Build {
   public Build(Editor editor) {
     this.editor = editor;
     this.sketch = editor.getSketch();
+>>>>>>> .r7521
   }
   
   
@@ -126,9 +170,16 @@ public class Build {
 
     // compile the program. errors will happen as a RunnerException
     // that will bubble up to whomever called build().
+<<<<<<< .mine
+//    Compiler compiler = new Compiler(this);
+//    String bootClasses = System.getProperty("sun.boot.class.path");
+//    if (compiler.compile(this, srcFolder, binFolder, primaryClassName, getClassPath(), bootClasses)) {
+    if (Compiler.compile(this)) {
+=======
     Compiler compiler = new Compiler(this);
     String bootClasses = System.getProperty("sun.boot.class.path");
     if (compiler.compile(this, srcFolder, binFolder, primaryClassName, getClassPath(), bootClasses)) {
+>>>>>>> .r7521
       return primaryClassName;
     }
     return null;
@@ -150,13 +201,25 @@ public class Build {
    * @param buildPath Location to copy all the .java files
    * @return null if compilation failed, main class name if not
    */
+<<<<<<< .mine
+  public String preprocess() throws SketchException {
+    return preprocess(sketch.makeTempFolder());
+=======
   public String preprocess() throws SketchException {
       return preprocess(makeTempBuildFolder(), null, new PdePreprocessor(name));
+>>>>>>> .r7521
   }
+<<<<<<< .mine
+
+
+  public String preprocess(File srcFolder) throws SketchException {
+    return preprocess(srcFolder, null, new PdePreprocessor(sketch.getName()));
+=======
   
   
   public String preprocess(File srcFolder) throws SketchException {
     return preprocess(srcFolder, null, new PdePreprocessor(name));
+>>>>>>> .r7521
   }
 
 
@@ -171,25 +234,26 @@ public class Build {
                            String packageName,
                            PdePreprocessor preprocessor) throws SketchException {
     // make sure the user isn't playing "hide the sketch folder"
-    ensureExistence();
+    sketch.ensureExistence();
 
-    String[] codeFolderPackages = null;
     classPath = srcFolder.getAbsolutePath();
 
     // figure out the contents of the code folder to see if there
     // are files that need to be added to the imports
-    if (codeFolder.exists()) {
+    String[] codeFolderPackages = null;
+    if (sketch.hasCodeFolder()) {
+      File codeFolder = sketch.getCodeFolder();
       javaLibraryPath = codeFolder.getAbsolutePath();
 
       // get a list of .jar files in the "code" folder
       // (class files in subfolders should also be picked up)
       String codeFolderClassPath =
-        Compiler.contentsToClassPath(codeFolder);
+        Base.contentsToClassPath(codeFolder);
       // append the jar files in the code folder to the class path
       classPath += File.pathSeparator + codeFolderClassPath;
       // get list of packages found in those jars
       codeFolderPackages =
-        Compiler.packageListFromClassPath(codeFolderClassPath);
+        Base.packageListFromClassPath(codeFolderClassPath);
 
     } else {
       javaLibraryPath = "";
@@ -337,13 +401,13 @@ public class Build {
 
     // grab the imports from the code just preproc'd
 
-    importedLibraries = new ArrayList<JavaLibrary>();
+    importedLibraries = new ArrayList<Library>();
     for (String item : result.extraImports) {
       // remove things up to the last dot
       int dot = item.lastIndexOf('.');
       // http://dev.processing.org/bugs/show_bug.cgi?id=1145
       String entry = (dot == -1) ? item : item.substring(0, dot);
-      JavaLibrary library = Base.importToLibraryTable.get(entry);
+      Library library = Base.importToLibraryTable.get(entry);
 
       if (library != null) {
         if (!importedLibraries.contains(library)) {
@@ -429,6 +493,30 @@ public class Build {
   }
 
 
+  /** 
+   * Path to the folder that will contain processed .java source files. Not
+   * the location for .pde files, since that can be obtained from the sketch.
+   */
+  public File getSrcFolder() {
+    return srcFolder;
+  }
+
+
+  public File getBinFolder() {
+    return binFolder;
+  }
+  
+  
+  /** Class path determined during build. */
+  public String getClassPath() {
+    return classPath;
+  }
+
+
+  /** 
+   * Whether the preprocessor found a main() method. If main() is found, then
+   * it will be used to launch the sketch instead of PApplet.main().
+   */
   public boolean getFoundMain() {
     return foundMain;
   }
@@ -512,8 +600,8 @@ public class Build {
 //    System.out.println("code count is " + getCodeCount());
 
     // first check to see if it's a .java file
-    for (int i = 0; i < getCodeCount(); i++) {
-      SketchCode code = getCode(i);
+    for (int i = 0; i < sketch.getCodeCount(); i++) {
+      SketchCode code = sketch.getCode(i);
       if (code.isExtension("java")) {
         if (dotJavaFilename.equals(code.getFileName())) {
           codeIndex = i;
@@ -524,15 +612,15 @@ public class Build {
     }
 
     // If not the preprocessed file at this point, then need to get out
-    if (!dotJavaFilename.equals(name + ".java")) {
+    if (!dotJavaFilename.equals(sketch.getName() + ".java")) {
       return null;
     }
 
     // if it's not a .java file, codeIndex will still be 0
     // this section searches through the list of .pde files
     codeIndex = 0;
-    for (int i = 0; i < getCodeCount(); i++) {
-      SketchCode code = getCode(i);
+    for (int i = 0; i < sketch.getCodeCount(); i++) {
+      SketchCode code = sketch.getCode(i);
 
       if (code.isExtension("pde")) {
 //        System.out.println("preproc offset is " + code.getPreprocOffset());
@@ -564,10 +652,17 @@ public class Build {
   /**
    * Handle export to applet.
    */
+<<<<<<< .mine
+  public boolean exportApplet(File appletFolder) throws SketchException, IOException {
+    sketch.prepareBuild(appletFolder);
+    srcFolder = sketch.makeTempFolder();
+    binFolder = sketch.makeTempFolder();
+=======
   public boolean exportApplet(File appletFolder) throws SketchException, IOException {
     sketch.prepareBuild(appletFolder);
     File srcFolder = sketch.makeTempBuildFolder();
     File binFolder = sketch.makeTempBuildFolder();
+>>>>>>> .r7521
 //    srcFolder.deleteOnExit();
 //    binFolder.deleteOnExit();
     String foundName = build(srcFolder, binFolder);
@@ -577,10 +672,10 @@ public class Build {
     
     // If name != exportSketchName, then that's weirdness
     // BUG unfortunately, that can also be a bug in the preproc :(
-    if (!name.equals(foundName)) {
+    if (!sketch.getName().equals(foundName)) {
       Base.showWarning("Error during export",
-                       "Sketch name is " + name + " but the sketch\n" +
-                       "name in the code was " + foundName, null);
+                       "Sketch name is " + sketch.getName() + " but the\n" +
+                       "name found in the code was " + foundName + ".", null);
       return false;
     }
 
@@ -633,25 +728,27 @@ public class Build {
 
     // Add links to all the code
     StringBuffer sources = new StringBuffer();
-    for (int i = 0; i < codeCount; i++) {
-      sources.append("<a href=\"" + code[i].getFileName() + "\">" +
-                     code[i].getPrettyName() + "</a> ");
+    //for (int i = 0; i < codeCount; i++) {
+    for (SketchCode code : sketch.getCode()) {
+      sources.append("<a href=\"" + code.getFileName() + "\">" +
+                     code.getPrettyName() + "</a> ");
     }
 
     // Copy the source files to the target, since we like
     // to encourage people to share their code
-    for (int i = 0; i < codeCount; i++) {
+//    for (int i = 0; i < codeCount; i++) {
+    for (SketchCode code : sketch.getCode()) {
       try {
-        File exportedSource = new File(appletFolder, code[i].getFileName());
+        File exportedSource = new File(appletFolder, code.getFileName());
         //Base.copyFile(code[i].getFile(), exportedSource);
-        code[i].copyTo(exportedSource);
+        code.copyTo(exportedSource);
 
       } catch (IOException e) {
         e.printStackTrace();  // ho hum, just move on...
       }
     }
 
-    // Use separate jarfiles whenever a library or code folder is in use.
+    // Use separate .jar files whenever a library or code folder is in use.
     boolean separateJar =
       Preferences.getBoolean("export.applet.separate_jar_files") ||
       codeFolder.exists() ||

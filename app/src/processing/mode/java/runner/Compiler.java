@@ -23,10 +23,8 @@
 
 package processing.mode.java.runner;
 
-import processing.app.Base;
-import processing.app.RunnerException;
-import processing.app.Sketch;
-//import processing.app.SketchCode;
+import processing.app.*;
+import processing.mode.java.*;
 import processing.core.*;
 
 import java.io.*;
@@ -39,7 +37,7 @@ import org.eclipse.jdt.core.compiler.CompilationProgress;
 
 public class Compiler {
 
-  public Compiler() { }
+//  public Compiler() { }
 
   /**
    * Compile with ECJ. See http://j.mp/8paifz for documentation.
@@ -55,10 +53,10 @@ public class Compiler {
 //                         String primaryClassName,
 //                         String sketchClassPath,
 //                         String bootClassPath) throws RunnerException {
-  public boolean compile(PreprocessorResult) throws RunnerException {
+  static public boolean compile(Build build) throws SketchException {
 
     // This will be filled in if anyone gets angry
-    RunnerException exception = null;
+    SketchException exception = null;
     boolean success = false;
 
     String baseCommand[] = new String[] {
@@ -66,9 +64,9 @@ public class Compiler {
       //"-noExit",  // not necessary for ecj
       "-source", "1.5",
       "-target", "1.5",
-      "-classpath", sketchClassPath,
+      "-classpath", build.getClassPath(),
       "-nowarn", // we're not currently interested in warnings (works in ecj)
-      "-d", binFolder.getAbsolutePath() // output the classes in the buildPath
+      "-d", build.getBinFolder().getAbsolutePath // output the classes in the buildPath
     };
     //PApplet.println(baseCommand);
 

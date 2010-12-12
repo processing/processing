@@ -57,6 +57,38 @@ o   message(new String(b, offset, length), err, false);
 o   http://code.google.com/p/processing/issues/detail?id=197
 X   couldn't find a good way to reproduce this, closing
 
+<<<<<<< .mine
+for the examples menu
+top level directories will be grayed out categories
+  Basics, Topics, 3D, Books, Libraries, Contributed Libraries
+'book' examples will be another category
+  i'll add vida examples, can offer to others if they want
+  should be "Getting Started" not GettingStarted
+tempting to make an 'examples' button on the toolbar?
+  rather than merging things in an awkward way
+also, move open to a submenu? 
+  then we'd have open / recent / sketchbook
+
+move compiler to mode.java.* instead of runner
+
+change 'export' to 'export applet'
+android will be "Export Project", "Export Release Application"
+  along with "Run in Emulator" and "Run on Device"
+
+_ note for reference: auto-format has been moved to edit
+_   this might be the same as arduino?
+
+We're making an assumption that the idea of a "library" refers to a block of Java-based code. The reasoning is that from within the PDE, we anticipate that it will be Java-compatible versions of other languages (such as Jython, JRuby, or Scala) as opposed to more generic languages. In the future we could open this up, but we'd rather not complicate things for the moment.
+
+_ opt for separate examples/sketchbook/libraries for each mode
+_   better to put the onus on the mode developers than users
+_   and rather than trying to figure out a complicated scheme for inclusion
+_   we can have something that takes care of auto-copying per-mode examples
+
+_ on linux, mozilla shouldn't be the default browser anymore
+_   is there a way to query the default browser? gnome-open? xdg-open?
+
+=======
 for the examples menu
 top level directories will be grayed out categories
   Basics, Topics, 3D, Books, Libraries, Contributed Libraries
@@ -85,6 +117,7 @@ _   we can have something that takes care of auto-copying per-mode examples
 _ on linux, mozilla shouldn't be the default browser anymore
 _   is there a way to query the default browser? gnome-open? xdg-open?
 
+>>>>>>> .r7521
 _ TextAreaDefaults
 _   is editable in use?
 _   what's electricScroll?

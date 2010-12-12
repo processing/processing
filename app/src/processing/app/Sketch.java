@@ -91,6 +91,8 @@ public class Sketch {
   private int codeCount;
   private SketchCode[] code;
 
+<<<<<<< .mine
+=======
   /** Class path determined during build. */
   private String classPath;
 
@@ -107,6 +109,7 @@ public class Sketch {
   private ArrayList<Library> importedLibraries;
   //private ArrayList<File> importedLibraries;
 
+>>>>>>> .r7521
   /** 
    * Most recent, default build path. This will contain the .java files that
    * have been preprocessed, as well as any .class files that were compiled. 
@@ -1413,6 +1416,11 @@ public class Sketch {
   }
 
 
+  public boolean hasCodeFolder() {
+    return (codeFolder != null) && codeFolder.exists();
+  }
+
+
   /**
    * Create the code folder if it does not exist already. As a convenience,
    * it also returns the code folder, since it's likely about to be used.
@@ -1425,14 +1433,14 @@ public class Sketch {
   }
 
 
-  public String getClassPath() {
-    return classPath;
-  }
+//  public String getClassPath() {
+//    return classPath;
+//  }
 
 
-  public String getLibraryPath() {
-    return javaLibraryPath;
-  }
+//  public String getLibraryPath() {
+//    return javaLibraryPath;
+//  }
 
 
   public SketchCode[] getCode() {
