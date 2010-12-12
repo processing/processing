@@ -32,14 +32,13 @@ import processing.core.PApplet;
 /**
  * Handler for dealing with auto format.
  * Contributed by Martin Gomez, additional bug fixes by Ben Fry.
- * 
- * Slightly de-evilled by Jonathan Feinberg in March 2010.
- * 
+ * Additional fixes by Jonathan Feinberg in March 2010.
+ * <p/>
  * After some further digging, this code in fact appears to be a modified 
- * version of Jason Pell's GPLed "Java Beautifier" class found here:
- * http://www.geocities.com/jasonpell/programs.html
- * Which is itself based on code from Van Di-Han Ho:
- * http://www.geocities.com/~starkville/vancbj_idx.html
+ * version of Jason Pell's GPLed "Java Beautifier" class found 
+ * <a href="http://www.geocities.com/jasonpell/programs.html">here</a>.
+ * Which is itself based on code from Van Di-Han Ho from 
+ * <a href="http://www.geocities.com/~starkville/vancbj_idx.html">here</a>.
  * [Ben Fry, August 2009]
  */
 public class AutoFormat {
@@ -98,6 +97,7 @@ public class AutoFormat {
     return;
   }
 
+  
   private char get_string() {
     char ch;
     while (true) {
@@ -125,6 +125,7 @@ public class AutoFormat {
     }
   }
 
+  
   private void writeIndentedLine() {
     if (buf.length() == 0) {
       if (s_flag) {
@@ -149,6 +150,7 @@ public class AutoFormat {
     buf.setLength(0);
   }
 
+  
   private void writeIndentedComment() {
     final boolean saved_s_flag = s_flag;
     if (buf.length() > 0) {
@@ -180,6 +182,7 @@ public class AutoFormat {
     }
   }
 
+  
   private void handleSingleLineComment() {
     c = next();
     while (c != '\n') {
@@ -191,6 +194,7 @@ public class AutoFormat {
     s_flag = true;
   }
 
+  
   private void printIndentation() {
     if (tabs < 0) {
       tabs = 0;
@@ -204,6 +208,7 @@ public class AutoFormat {
     }
   }
 
+  
   private char peek() {
     if (pos + 1 >= chars.length) {
       return 0;
@@ -211,11 +216,14 @@ public class AutoFormat {
     return chars[pos + 1];
   }
 
+  
   private char lastNonWhitespace = 0;
 
+  
   private int prev() {
     return lastNonWhitespace;
   }
+
 
   private void advanceToNonSpace() {
     if (EOF) {
@@ -230,6 +238,7 @@ public class AutoFormat {
       pos--; // reset for next()
     }
   }
+
 
   private char next() {
     if (EOF) {
@@ -250,6 +259,7 @@ public class AutoFormat {
     return c;
   }
 
+
   /* else processing */
   private void gotelse() {
     tabs = s_tabs[c_level][if_lev];
@@ -258,6 +268,7 @@ public class AutoFormat {
     if_flg = true;
   }
 
+  
   /* read to new_line */
   private boolean getnl() {
     final int savedTabs = tabs;
@@ -291,14 +302,24 @@ public class AutoFormat {
     return false;
   }
 
+  
   private boolean lookup(final String keyword) {
     return Pattern.matches("^\\s*" + keyword + "(?![a-zA-Z0-9_&]).*$", buf);
   }
+
 
   private boolean lookup_com(final String keyword) {
     final String regex = "^\\s*" + keyword.replaceAll("\\*", "\\\\*") + ".*$";
     return Pattern.matches(regex, buf);
   }
+  
+  
+  private void trimRight(final StringBuilder sb) {
+    while (sb.length() >= 1
+        && Character.isWhitespace(sb.charAt(sb.length() - 1)))
+      sb.setLength(sb.length() - 1);
+  }
+
 
   public String format(final String source) {
     final String normalizedText = source.replaceAll("\r", "");
@@ -650,11 +671,5 @@ public class AutoFormat {
 
     final String formatted = result.toString();
     return formatted.equals(cleanText) ? source : formatted;
-  }
-
-  private void trimRight(final StringBuilder sb) {
-    while (sb.length() >= 1
-        && Character.isWhitespace(sb.charAt(sb.length() - 1)))
-      sb.setLength(sb.length() - 1);
   }
 }

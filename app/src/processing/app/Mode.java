@@ -316,13 +316,32 @@ public abstract class Mode {
       // get library examples
 //      JMenuItem coreItem = new JMenuItem("Core Libraries");
 //      coreItem.setEnabled(false);
-      Base.addDisabledItem(menu, "Core Libraries");
+      Base.addDisabledItem(menu, "Libraries");
       for (Library lib : coreLibraries) {
-        
+        if (lib.hasExamples()) {
+          JMenu libMenu = new JMenu(lib.getName());
+          base.addSketches(libMenu, lib.getExamplesFolder(), false);
+          menu.add(libMenu);
+        }
       }
-      
+
       // get contrib library examples
-      
+      boolean any = false;
+      for (Library lib : contribLibraries) {
+        if (lib.hasExamples()) {
+          any = true;
+        }
+      }
+      if (any) {
+        Base.addDisabledItem(menu, "Contributed");
+        for (Library lib : contribLibraries) {
+          if (lib.hasExamples()) {
+            JMenu libMenu = new JMenu(lib.getName());
+            base.addSketches(libMenu, lib.getExamplesFolder(), false);
+            menu.add(libMenu);
+          }
+        }
+      }
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -332,8 +351,8 @@ public abstract class Mode {
   public void handleActivated(Editor editor) {
     //// re-add the sub-menus that are shared by all windows
     fileMenu.insert(Base.sketchbookMenu, 2);
-    fileMenu.insert(examplesMenu, 3);
-    sketchMenu.insert(importMenu, 4);
+    fileMenu.insert(mode.examplesMenu, 3);
+    sketchMenu.insert(mode.importMenu, 4);
   }
 
 

@@ -219,6 +219,16 @@ public class Library {
   }
   
   
+  public boolean hasExamples() {
+    return examplesFolder.exists();
+  }
+
+
+  public File getExamplesFolder() {
+    return examplesFolder;
+  }
+  
+  
   public String getPath() {
     return folder.getAbsolutePath();
   }

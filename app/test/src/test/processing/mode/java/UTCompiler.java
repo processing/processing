@@ -1,4 +1,4 @@
-package test.processing.parsing;
+package test.processing.mode.java;
 
 import java.io.File;
 import java.io.FileWriter;
