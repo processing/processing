@@ -667,7 +667,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   protected void copyFrameToScreenTexture() {
     gl.glFinish(); // Make sure that the execution off all the openGL commands
-                           // is finished.
+                   // is finished.
     loadTexture();    
   }
 
@@ -714,7 +714,10 @@ public class PGraphicsAndroid3D extends PGraphics {
     offscreenFramebuffer.addDepthBuffer(offscreenDepthBits);
     if (0 < offscreenStencilBits) {
       offscreenFramebuffer.addStencilBuffer(offscreenStencilBits); 
-    }    
+    }
+    
+    // The image texture points to the current offscreen texture.
+    texture = offscreenTextures[offscreenIndex]; 
   }
   
   
@@ -724,7 +727,10 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   
   protected void swapOffscreenIndex() {
-    offscreenIndex = (offscreenIndex + 1) % 2; 
+    offscreenIndex = (offscreenIndex + 1) % 2;
+    
+    // The image texture points to the current offscreen texture.
+    texture = offscreenTextures[offscreenIndex];
   }
   
   
@@ -794,6 +800,10 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     // Restoring fill
     if (fill) {
+      calcR = fillR;
+      calcG = fillG;
+      calcB = fillB;
+      calcA = fillA;
       fillFromCalc();  
     }    
 
@@ -5415,12 +5425,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     // ...and drawing the texture to screen.
     drawScreenTexture();    
   }
-  
-  
-  public PImage getOffscreenImage() {
-    return offscreenImages[(offscreenIndex + 1) % 2];
-  }
 
+  
   // ////////////////////////////////////////////////////////////
 
   // LOAD/UPDATE TEXTURE
