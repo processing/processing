@@ -22,7 +22,7 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package processing.app.tools;
+package processing.mode.java;
 
 import java.util.Stack;
 import java.util.regex.Pattern;

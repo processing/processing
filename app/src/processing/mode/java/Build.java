@@ -22,57 +22,32 @@ Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package processing.mode.java;
 
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Rectangle;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Vector;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipOutputStream;
+import java.awt.*;
+import java.beans.*;
+import java.io.*;
+import java.util.*;
+import java.util.zip.*;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JCheckBox;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.TitledBorder;
+import javax.swing.*;
+import javax.swing.border.*;
 
-import processing.app.Base;
-import processing.app.Preferences;
-import processing.app.RunnerException;
-import processing.app.Sketch;
-import processing.app.SketchCode;
-import processing.core.PApplet;
-import processing.core.PConstants;
+import processing.app.*;
+import processing.core.*;
 
 
 public class Build {
+  Editor editor;
   Sketch sketch;
-  
 
-  public Build(Sketch sketch) {
-    
+  // what happens in the build, stays in the build.
+//  private File srcFolder;
+//  private File binFolder;
+  private boolean foundMain = false;
+
+
+  public Build(Editor editor) {
+    this.editor = editor;
+    this.sketch = editor.getSketch();
   }
   
   
@@ -122,61 +97,6 @@ public class Build {
 
 
   /**
-   * When running from the editor, take care of preparations before running
-   * the build, then start the build into a temporary folder.
-   */
-  public void prepareRun() throws RunnerException {
-    // make sure the user didn't hide the sketch folder
-    ensureExistence();
-
-    // make sure any edits have been stored
-    current.setProgram(editor.getText());
-
-    // if an external editor is being used, need to grab the
-    // latest version of the code from the file.
-    if (Preferences.getBoolean("editor.external")) {
-      // set current to null so that the tab gets updated
-      // http://dev.processing.org/bugs/show_bug.cgi?id=515
-      current = null;
-      // nuke previous files and settings, just get things loaded
-      load();
-    }
-  }
-  
-  /**
-   * Grab any extra files, and get the temporary build folder ready.
-   * The targetFolder will be deleted (and re-created), unless the user has 
-   * altered that entry in the preferences.
-   * @param targetFolder location to be cleaned so the build can commence.
-   * @throws RunnerException
-   */
-  protected void prepareExport(File targetFolder) throws RunnerException {
-    // make sure the user didn't hide the sketch folder
-    ensureExistence();
-
-    // fix for issue posted on the board. make sure that the code
-    // is reloaded when exporting and an external editor is being used.
-    if (Preferences.getBoolean("editor.external")) {
-      // don't do from the command line
-      if (editor != null) {
-        // nuke previous files and settings
-        load();
-      }
-    }
-
-    // Nuke the old applet/application folder because it can cause trouble
-    if (Preferences.getBoolean("export.delete_target_folder")) {
-      Base.removeDir(targetFolder);
-    }
-    // Create a fresh output folder (needed before preproc is run next)
-    targetFolder.mkdirs();
-
-    // create a safe/random place to do the build
-//    return new File(folder, "build" + ((int) (Math.random() * 1000)));
-  }
-
-
-  /**
    * Run the build inside the temporary build folder.
    * @return null if compilation failed, main class name if not
    * @throws RunnerException
@@ -200,13 +120,13 @@ public class Build {
    *
    * @return null if compilation failed, main class name if not
    */
-  public String build(File srcFolder, File binFolder) throws RunnerException {
+  public String build(File srcFolder, File binFolder) throws SketchException {
     // run the preprocessor
     String primaryClassName = preprocess(srcFolder);
 
     // compile the program. errors will happen as a RunnerException
     // that will bubble up to whomever called build().
-    Compiler compiler = new Compiler();
+    Compiler compiler = new Compiler(this);
     String bootClasses = System.getProperty("sun.boot.class.path");
     if (compiler.compile(this, srcFolder, binFolder, primaryClassName, getClassPath(), bootClasses)) {
       return primaryClassName;
@@ -230,30 +150,12 @@ public class Build {
    * @param buildPath Location to copy all the .java files
    * @return null if compilation failed, main class name if not
    */
-  public String preprocess() throws RunnerException {
+  public String preprocess() throws SketchException {
       return preprocess(makeTempBuildFolder(), null, new PdePreprocessor(name));
   }
   
   
-  protected File makeTempBuildFolder() {
-    try {
-      File buildFolder = Base.createTempFolder(name, "src");
-      if (buildFolder.mkdirs()) {
-        return buildFolder;
-
-      } else {
-        Base.showWarning("Build folder bad", 
-                         "Could not create a place to build the sketch.", null);
-      }
-    } catch (IOException e) {
-      Base.showWarning("Build folder bad", 
-                       "Could not find a place to build the sketch.", e);
-    }
-    return null;
-  }
-
-
-  public String preprocess(File srcFolder) throws RunnerException {
+  public String preprocess(File srcFolder) throws SketchException {
     return preprocess(srcFolder, null, new PdePreprocessor(name));
   }
 
@@ -263,11 +165,11 @@ public class Build {
    * @param packageName null, or the package name that should be used as default
    * @param preprocessor the preprocessor object ready to do the work
    * @return main PApplet class name found during preprocess, or null if error 
-   * @throws RunnerException
+   * @throws SketchException
    */
   public String preprocess(File srcFolder, 
                            String packageName,
-                           PdePreprocessor preprocessor) throws RunnerException {
+                           PdePreprocessor preprocessor) throws SketchException {
     // make sure the user isn't playing "hide the sketch folder"
     ensureExistence();
 
@@ -322,7 +224,7 @@ public class Build {
     } catch (FileNotFoundException fnfe) {
       fnfe.printStackTrace();
       String msg = "Build folder disappeared or could not be written";
-      throw new RunnerException(msg);
+      throw new SketchException(msg);
     } catch (antlr.RecognitionException re) {
       // re also returns a column that we're not bothering with for now
 
@@ -353,40 +255,40 @@ public class Build {
         // report "line 15" of a 14 line program. Added code to highlightLine()
         // inside Editor to deal with this situation (since that code is also
         // useful for other similar situations).
-        throw new RunnerException("Found one too many { characters " +
+        throw new SketchException("Found one too many { characters " +
                                   "without a } to match it.",
                                   errorFile, errorLine, re.getColumn());
       }
 
       if (msg.indexOf("expecting RBRACK") != -1) {
         System.err.println(msg);
-        throw new RunnerException("Syntax error, " +
+        throw new SketchException("Syntax error, " +
                                   "maybe a missing ] character?",
                                   errorFile, errorLine, re.getColumn());
       }
 
       if (msg.indexOf("expecting SEMI") != -1) {
         System.err.println(msg);
-        throw new RunnerException("Syntax error, " +
+        throw new SketchException("Syntax error, " +
                                   "maybe a missing semicolon?",
                                   errorFile, errorLine, re.getColumn());
       }
 
       if (msg.indexOf("expecting RPAREN") != -1) {
         System.err.println(msg);
-        throw new RunnerException("Syntax error, " +
+        throw new SketchException("Syntax error, " +
                                   "maybe a missing right parenthesis?",
                                   errorFile, errorLine, re.getColumn());
       }
 
       if (msg.indexOf("preproc.web_colors") != -1) {
-        throw new RunnerException("A web color (such as #ffcc00) " +
+        throw new SketchException("A web color (such as #ffcc00) " +
                                   "must be six digits.",
                                   errorFile, errorLine, re.getColumn(), false);
       }
 
       //System.out.println("msg is " + msg);
-      throw new RunnerException(msg, errorFile,
+      throw new SketchException(msg, errorFile,
                                 errorLine, re.getColumn());
 
     } catch (antlr.TokenStreamRecognitionException tsre) {
@@ -412,16 +314,16 @@ public class Build {
         }
         errorLine -= code[errorFile].getPreprocOffset();
 
-        throw new RunnerException(tsre.getMessage(),
+        throw new SketchException(tsre.getMessage(),
                                   errorFile, errorLine, errorColumn);
 
       } else {
         // this is bad, defaults to the main class.. hrm.
         String msg = tsre.toString();
-        throw new RunnerException(msg, 0, -1, -1);
+        throw new SketchException(msg, 0, -1, -1);
       }
 
-    } catch (RunnerException pe) {
+    } catch (SketchException pe) {
       // RunnerExceptions are caught here and re-thrown, so that they don't
       // get lost in the more general "Exception" handler below.
       throw pe;
@@ -430,7 +332,7 @@ public class Build {
       // TODO better method for handling this?
       System.err.println("Uncaught exception type:" + ex.getClass());
       ex.printStackTrace();
-      throw new RunnerException(ex.toString());
+      throw new SketchException(ex.toString());
     }
 
     // grab the imports from the code just preproc'd
@@ -514,7 +416,7 @@ public class Build {
         } catch (IOException e) {
           e.printStackTrace();
           String msg = "Problem moving " + filename + " to the build folder";
-          throw new RunnerException(msg);
+          throw new SketchException(msg);
         }
 
       } else if (sc.isExtension("pde")) {
@@ -536,7 +438,7 @@ public class Build {
    * Get the list of imported libraries. Used by external tools like Android mode.
    * @return list of library folders connected to this sketch.
    */
-  public ArrayList<JavaLibrary> getImportedLibraries() {
+  public ArrayList<Library> getImportedLibraries() {
     return importedLibraries;
   }
 
@@ -600,7 +502,7 @@ public class Build {
    * @return A RunnerException to be sent to the editor, or null if it wasn't
    *         possible to place the exception to the sketch code.
    */
-  public RunnerException placeException(String message,
+  public SketchException placeException(String message,
                                         String dotJavaFilename,
                                         int dotJavaLine) {
     int codeIndex = 0; //-1;
@@ -616,7 +518,7 @@ public class Build {
         if (dotJavaFilename.equals(code.getFileName())) {
           codeIndex = i;
           codeLine = dotJavaLine;
-          return new RunnerException(message, codeIndex, codeLine);
+          return new SketchException(message, codeIndex, codeLine);
         }
       }
     }
@@ -650,26 +552,22 @@ public class Build {
 //    if (codeLine == -1 && !dotJavaFilename.equals(name + ".java")) {
 //      return null;
 //    }
-    return new RunnerException(message, codeIndex, codeLine);
+    return new SketchException(message, codeIndex, codeLine);
   }
 
 
   protected boolean exportApplet() throws Exception {
-    return exportApplet(new File(folder, "applet").getAbsolutePath());
+    return exportApplet(new File(sketch.getFolder(), "applet"));
   }
 
 
   /**
    * Handle export to applet.
    */
-  public boolean exportApplet(String appletPath) throws RunnerException, IOException {
-    File appletFolder = new File(appletPath);
-    
-    // build the sketch
-//    String foundName = build(appletFolder.getPath());
-    prepareExport(appletFolder);
-    File srcFolder = makeTempBuildFolder();
-    File binFolder = makeTempBuildFolder();
+  public boolean exportApplet(File appletFolder) throws SketchException, IOException {
+    sketch.prepareBuild(appletFolder);
+    File srcFolder = sketch.makeTempBuildFolder();
+    File binFolder = sketch.makeTempBuildFolder();
 //    srcFolder.deleteOnExit();
 //    binFolder.deleteOnExit();
     String foundName = build(srcFolder, binFolder);
@@ -1037,7 +935,7 @@ public class Build {
   }
 
 
-  public boolean exportApplicationPrompt() throws IOException, RunnerException {
+  public boolean exportApplicationPrompt() throws IOException, SketchException {
     JPanel panel = new JPanel();
     panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
     panel.add(Box.createVerticalStrut(6));
@@ -1224,7 +1122,7 @@ public class Build {
   /**
    * Export to application via GUI.
    */
-  protected boolean exportApplication() throws IOException, RunnerException {
+  protected boolean exportApplication() throws IOException, SketchException {
     String path = null;
     for (String platformName : PConstants.platformNames) {
       int platform = Base.getPlatformIndex(platformName);
@@ -1259,7 +1157,7 @@ public class Build {
    */
   public boolean exportApplication(String destPath,
                                    int exportPlatform, 
-                                   int exportBits) throws IOException, RunnerException {
+                                   int exportBits) throws IOException, SketchException {
     File destFolder = new File(destPath);
     prepareExport(destFolder);
 

@@ -29,7 +29,7 @@ import java.io.PrintStream;
 
 import processing.app.Base;
 import processing.app.Preferences;
-import processing.app.RunnerException;
+import processing.app.SketchException;
 import processing.app.RunnerListener;
 import processing.app.Sketch;
 import processing.core.PApplet;
@@ -245,7 +245,7 @@ public class Commander implements RunnerListener {
         }
         System.exit(success ? 0 : 1);
 
-      } catch (RunnerException re) {
+      } catch (SketchException re) {
         statusError(re);
 
       } catch (IOException e) {
@@ -265,8 +265,8 @@ public class Commander implements RunnerListener {
 
 
   public void statusError(Exception exception) {
-    if (exception instanceof RunnerException) {
-      RunnerException re = (RunnerException) exception;
+    if (exception instanceof SketchException) {
+      SketchException re = (SketchException) exception;
 
       // format the runner exception like emacs
       //blah.java:2:10:2:13: Syntax Error: This is a big error message

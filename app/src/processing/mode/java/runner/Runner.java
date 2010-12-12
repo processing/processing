@@ -74,7 +74,7 @@ public class Runner implements MessageConsumer {
       "processing.*"
   };
 
-  protected RunnerException exception;
+  protected SketchException exception;
   //private PrintStream leechErr;
 
   protected Editor editor;
@@ -567,7 +567,7 @@ public class Runner implements MessageConsumer {
    * the location of the error, or if nothing is found, just return with a
    * RunnerException that wraps the error message itself.
    */
-  RunnerException findException(String message, ThreadReference thread) {
+  SketchException findException(String message, ThreadReference thread) {
     try {
       // use to dump the stack for debugging
 //      for (StackFrame frame : thread.frames()) {
@@ -581,7 +581,7 @@ public class Runner implements MessageConsumer {
           String filename = null;
           filename = location.sourceName();
           int lineNumber = location.lineNumber() - 1;
-          RunnerException rex = 
+          SketchException rex = 
             sketch.placeException(message, filename, lineNumber);
           if (rex != null) {
             return rex;
@@ -591,7 +591,7 @@ public class Runner implements MessageConsumer {
           // if that bit of data is missing. If so, just write out the error
           // message to the console.
           //e.printStackTrace();  // not useful
-          exception = new RunnerException(message);
+          exception = new SketchException(message);
           exception.hideStackTrace();
           listener.statusError(exception);
         }
@@ -602,7 +602,7 @@ public class Runner implements MessageConsumer {
       e.printStackTrace();
     }
     // Give up, nothing found inside the pile of stack frames
-    RunnerException rex = new RunnerException(message);
+    SketchException rex = new SketchException(message);
     // exception is being created /here/, so stack trace is not useful
     rex.hideStackTrace();
     return rex;

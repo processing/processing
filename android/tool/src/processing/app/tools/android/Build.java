@@ -29,7 +29,6 @@ import org.apache.tools.ant.*;
 import processing.app.*;
 import processing.app.exec.*;
 import processing.core.PApplet;
-import processing.java.LibraryFolder;
 
 
 class Build {
@@ -70,7 +69,7 @@ class Build {
     try {
       manifest = new Manifest(editor);
       // grab code from current editing window (GUI only)
-      sketch.prepareRun();
+      prepareRun();
       // build the preproc and get to work
       Preprocessor preproc = new Preprocessor(sketch, getPackageName());
       if (!preproc.parseSketchSize()) {
@@ -113,10 +112,10 @@ class Build {
           }
         } catch (final IOException e) {
           e.printStackTrace();
-          throw new RunnerException(e.getMessage());
+          throw new SketchException(e.getMessage());
         }
       }
-    } catch (final RunnerException e) {
+    } catch (final SketchException e) {
       editor.statusError(e);
       return null;
     } catch (final IOException e) {
@@ -272,7 +271,7 @@ class Build {
             final int lineNumber = PApplet.parseInt(pieces[2]) - 1;
             // PApplet.println("looking for " + fileName + " line " +
             // lineNumber);
-            final RunnerException rex = sketch.placeException(pieces[3],
+            final SketchException rex = sketch.placeException(pieces[3],
               fileName, lineNumber);
             if (rex != null) {
               rex.hideStackTrace();
@@ -368,7 +367,7 @@ class Build {
   static final String ICON_36 = "icon-36.png";
 
   private void writeRes(File resFolder, 
-                        String className) throws RunnerException {
+                        String className) throws SketchException {
     File layoutFolder = mkdirs(resFolder, "layout");
     File layoutFile = new File(layoutFolder, "main.xml");
     writeResLayoutMain(layoutFile);
@@ -435,10 +434,10 @@ class Build {
 
   
   private File mkdirs(final File parent, final String name)
-      throws RunnerException {
+      throws SketchException {
     final File result = new File(parent, name);
     if (!(result.exists() || result.mkdirs())) {
-      throw new RunnerException("Could not create " + result);
+      throw new SketchException("Could not create " + result);
     }
     return result;
   }

@@ -504,9 +504,9 @@ public class AndroidMode implements DeviceListener {
         if (lm.find()) {
           final String filename = lm.group(1);
           final int lineNumber = Integer.parseInt(lm.group(2)) - 1;
-          final RunnerException rex = editor.getSketch().placeException(
+          final SketchException rex = editor.getSketch().placeException(
             exceptionLine, filename, lineNumber);
-          editor.statusError(rex == null ? new RunnerException(exceptionLine,
+          editor.statusError(rex == null ? new SketchException(exceptionLine,
                                                                false) : rex);
           return;
         }

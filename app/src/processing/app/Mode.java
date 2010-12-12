@@ -1,34 +1,47 @@
 package processing.app;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Image;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
+import java.util.*;
 
-import javax.swing.ImageIcon;
+import javax.swing.*;
 
-import processing.app.syntax.PdeKeywords;
-import processing.app.syntax.SyntaxStyle;
+import processing.app.syntax.*;
+import processing.mode.java.AutoFormat;
 
 
 public abstract class Mode {
   protected Base base;
   
-//  protected String name;
-
   protected File folder;
 
   protected HashMap<String, String> keywordToReference;
   
   protected PdeKeywords tokenMarker;
   protected Settings theme;
+  
+  // maps imported packages to their library folder
+  protected HashMap<String, Library> importToLibraryTable;
+
+  protected JMenu toolbarMenu;
+  protected JMenu examplesMenu;
+  protected JMenu importMenu;
+
+  protected File examplesFolder;
+  protected File librariesFolder;
+
+  protected ArrayList<Library> coreLibraries;
+  protected ArrayList<Library> contribLibraries;  
 
   
   public Mode(Base base, File folder) {
     this.base = base;
     this.folder = folder;
+    
+    // Get paths for the libraries and examples in the mode folder
+    examplesFolder = new File(folder, "examples");
+    librariesFolder = new File(folder, "libraries");
   }
   
 
@@ -42,13 +55,294 @@ public abstract class Mode {
 //  public String getName() {
 //    return name;
 //  }
+  
+  
+  public File getExamplesFolder() {
+    return examplesFolder;
+  }
+
+
+  public File getLibrariesFolder() {
+    return librariesFolder;
+  }
+
+
+  public void rebuildLibraryList() {
+    // reset the table mapping imports to libraries
+    importToLibraryTable = new HashMap<String, Library>();
+
+    try {
+      coreLibraries = Library.list(librariesFolder);
+      contribLibraries = Library.list(base.getSketchbookLibrariesFolder());
+    } catch (IOException e) {
+      Base.showWarning("Unhappiness", 
+                       "An error occurred while loading libraries.\n" +
+                       "Not all the books will be in place.", e);
+    }
+  }
 
   
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+  
+  
+  // this lives in Mode because examples are per-mode
+  public JMenu buildFileMenu(final Editor editor, final JMenuItem[] exportItems) {
+    JMenuItem item;
+    JMenu fileMenu = new JMenu("File");
+
+    item = Base.newJMenuItem("New", 'N');
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          handleNew();
+        }
+      });
+    fileMenu.add(item);
+
+    item = Base.newJMenuItem("Open...", 'O');
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          base.handleOpenPrompt();
+        }
+      });
+    fileMenu.add(item);
+
+    fileMenu.add(base.getSketchbookMenu());
+    fileMenu.add(getExamplesMenu());
+
+    item = Base.newJMenuItem("Close", 'W');
+    if (editor != null) {
+      item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          base.handleClose(editor);
+        }
+      });
+    } else {
+      item.setEnabled(false);
+    }
+    fileMenu.add(item);
+
+    item = Base.newJMenuItem("Save", 'S');
+    if (editor != null) {
+      item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          editor.handleSave(false);
+        }
+      });
+      editor.setSaveItem(item);
+    } else {
+      item.setEnabled(false);
+    }
+    fileMenu.add(item);
+
+    item = Base.newJMenuItemShift("Save As...", 'S');
+    if (editor != null) {
+      item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          editor.handleSaveAs();
+        }
+      });
+      editor.setSaveAsItem(item);
+    } else {
+      item.setEnabled(false);
+    }
+    fileMenu.add(item);
+
+    if (exportItems != null) {
+      for (JMenuItem ei : exportItems) {
+        fileMenu.add(ei);
+      }
+    }
+    fileMenu.addSeparator();
+
+    item = Base.newJMenuItemShift("Page Setup", 'P');
+    if (editor != null) {
+      item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          editor.handlePageSetup();
+        }
+      });
+    } else {
+      item.setEnabled(false);
+    }
+    fileMenu.add(item);
+
+    item = Base.newJMenuItem("Print", 'P');
+    if (editor != null) {
+      item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          editor.handlePrint();
+        }
+      });
+    } else {
+      item.setEnabled(false);
+    }
+    fileMenu.add(item);
+
+    // Mac OS X already has its own preferences and quit menu.
+    // That's right! Think different, b*tches!
+    if (!Base.isMacOS()) {
+      fileMenu.addSeparator();
+
+      item = Base.newJMenuItem("Preferences", ',');
+      item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          base.handlePrefs();
+        }
+      });
+      fileMenu.add(item);
+
+      fileMenu.addSeparator();
+
+      item = Base.newJMenuItem("Quit", 'Q');
+      item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          base.handleQuit();
+        }
+      });
+      fileMenu.add(item);
+    }
+    return fileMenu;
+  }
+
+
+  // PrintWriter pw;
+
+  public void rebuildImportMenu() {  //JMenu importMenu) {
+    //System.out.println("rebuilding import menu");
+    importMenu.removeAll();
+
+    rebuildLibraryList();
+    
+    ActionListener listener = new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        base.activeEditor.getSketch().importLibrary(e.getActionCommand());
+      }
+    };
+
+//    try {
+//      pw = new PrintWriter(new FileWriter(System.getProperty("user.home") + "/Desktop/libs.csv"));
+//    } catch (IOException e1) {
+//      e1.printStackTrace();
+//    }
+
+    for (Library library : coreLibraries) {
+      JMenuItem item = new JMenuItem(library.getName());
+      item.addActionListener(listener);
+      item.setActionCommand(library.getJarPath());
+      importMenu.add(item);
+    }
+
+    if (contribLibraries.size() != 0) {
+      importMenu.addSeparator();
+      JMenuItem contrib = new JMenuItem("Contributed");
+      contrib.setEnabled(false);
+
+      for (Library library : contribLibraries) {
+        JMenuItem item = new JMenuItem(library.getName());
+        item.addActionListener(listener);
+        item.setActionCommand(library.getJarPath());
+        importMenu.add(item);
+      }
+    }
+  }
 
 
   abstract public EditorToolbar createToolbar(Editor editor);
   
+  
+  protected void rebuildToolbarMenu() {  //JMenu menu) {
+    JMenu menu = toolbarMenu;
+    JMenuItem item;
+    menu.removeAll();
+
+    //System.out.println("rebuilding toolbar menu");
+    // Add the single "Open" item
+    item = Base.newJMenuItem("Open...", 'O');
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          base.handleOpenPrompt();
+        }
+      });
+    menu.add(item);
+    menu.addSeparator();
+
+    // Add a list of all sketches and subfolders
+    try {
+      boolean sketches = base.addSketches(menu, base.getSketchbookFolder(), true);
+      if (sketches) menu.addSeparator();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    //System.out.println("rebuilding examples menu");
+    // Add each of the subfolders of examples directly to the menu
+    try {
+      base.addSketches(menu, examplesFolder, true);
+      //addSketches(menu, examplesFolder);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+  
+  
+  public JMenu getExamplesMenu() {
+    if (examplesMenu == null) {
+      examplesMenu = new JMenu("Examples");
+      rebuildExamplesMenu(examplesMenu);
+    }
+    return examplesMenu;
+  }
+
+
+  public void rebuildExamplesMenu(JMenu menu) {
+    try {
+      menu.removeAll();
+      //base.addSketches(menu, examplesFolder, false);
+      
+      // break down the examples folder for examples
+      File[] subfolders = examplesFolder.listFiles(new FilenameFilter() {
+        public boolean accept(File dir, String name) {
+          return dir.isDirectory() && name.charAt(0) != '.';
+        }
+      });
+      for (File sub : subfolders) {
+        Base.addDisabledItem(menu, sub.getName());
+//        JMenuItem categoryItem = new JMenuItem(sub.getName());
+//        categoryItem.setEnabled(false);
+//        menu.add(categoryItem);
+        base.addSketches(menu, sub, false);
+      }
+
+      // get library examples
+//      JMenuItem coreItem = new JMenuItem("Core Libraries");
+//      coreItem.setEnabled(false);
+      Base.addDisabledItem(menu, "Core Libraries");
+      for (Library lib : coreLibraries) {
+        
+      }
+      
+      // get contrib library examples
+      
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+
+  public void handleActivated(Editor editor) {
+    //// re-add the sub-menus that are shared by all windows
+    fileMenu.insert(Base.sketchbookMenu, 2);
+    fileMenu.insert(examplesMenu, 3);
+    sketchMenu.insert(importMenu, 4);
+  }
+
+
+  public void handleDeactivated(Editor editor) {
+    fileMenu.remove(Base.sketchbookMenu);
+    fileMenu.remove(examplesMenu);
+    sketchMenu.remove(importMenu);
+  }
+
   
   abstract public void internalCloseRunner(Editor editor);  
 
@@ -79,6 +373,14 @@ public abstract class Mode {
   //  File keywordsFile = new File(folder, "keywords.txt");
   //  return new PdeKeywords(keywordsFile);
   //}
+  public TokenMarker getTokenMarker() {
+    return tokenMarker;
+  }
+  
+  
+  public AutoFormat getFormatter() {
+    return new AutoFormat();
+  }
 
 
   //public String get(String attribute) {

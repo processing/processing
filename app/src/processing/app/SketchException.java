@@ -26,9 +26,9 @@ package processing.app;
 
 /**
  * An exception with a line number attached that occurs
- * during either compile time or run time.
+ * during either pre-processing, compile, or run time.
  */
-public class RunnerException extends Exception /*RuntimeException*/ {
+public class SketchException extends Exception /*RuntimeException*/ {
   protected String message;
   protected int codeIndex;
   protected int codeLine;
@@ -36,25 +36,25 @@ public class RunnerException extends Exception /*RuntimeException*/ {
   protected boolean showStackTrace;
 
   
-  public RunnerException(String message) {
+  public SketchException(String message) {
     this(message, true);
   }
 
-  public RunnerException(String message, boolean showStackTrace) {
+  public SketchException(String message, boolean showStackTrace) {
     this(message, -1, -1, -1, showStackTrace);
   }
 
-  public RunnerException(String message, int file, int line) {
+  public SketchException(String message, int file, int line) {
     this(message, file, line, -1, true);
   }
 
   
-  public RunnerException(String message, int file, int line, int column) {
+  public SketchException(String message, int file, int line, int column) {
     this(message, file, line, column, true);
   }
   
   
-  public RunnerException(String message, int file, int line, int column, 
+  public SketchException(String message, int file, int line, int column, 
                          boolean showStackTrace) {
     this.message = message;
     this.codeIndex = file;

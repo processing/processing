@@ -25,6 +25,7 @@ package processing.app;
 import processing.app.syntax.*;
 import processing.app.tools.*;
 import processing.core.*;
+import processing.mode.java.AutoFormat;
 import processing.mode.java.PdeKeyListener;
 
 import java.awt.*;
@@ -115,9 +116,10 @@ public class Editor extends JFrame implements RunnerListener {
 //  private Runnable exportAppHandler;
 
 
-  public Editor(final Base base, Mode mode, String path, int[] location) {
+  public Editor(final Base base, final Mode mode, String path, int[] location) {
     super("Processing");
     this.base = base;
+    this.mode = mode;
     
     PApplet.println(location);
 
@@ -142,25 +144,19 @@ public class Editor extends JFrame implements RunnerListener {
         public void windowActivated(WindowEvent e) {
 //          EditorConsole.systemOut.println("editor window activated");
           base.handleActivated(Editor.this);
-//          // re-add the sub-menus that are shared by all windows
-          fileMenu.insert(Base.sketchbookMenu, 2);
-          fileMenu.insert(Base.examplesMenu, 3);
-          sketchMenu.insert(Base.importMenu, 4);
+          mode.handleActivated(Editor.this);
         }
 
         // added for 1.0.5
         // http://dev.processing.org/bugs/show_bug.cgi?id=1260
         public void windowDeactivated(WindowEvent e) {
 //          EditorConsole.systemErr.println("editor window deactivated");
-          fileMenu.remove(Base.sketchbookMenu);
-          fileMenu.remove(Base.examplesMenu);
-          sketchMenu.remove(Base.importMenu);
+          mode.handleDeactivated(Editor.this);
         }
       });
 
     buildMenuBar();
 
-    // For rev 0120, placing things inside a JPanel
     Container contentPain = getContentPane();
     contentPain.setLayout(new BorderLayout());
     JPanel pain = new JPanel();
@@ -172,9 +168,8 @@ public class Editor extends JFrame implements RunnerListener {
 
     if (toolbarMenu == null) {
       toolbarMenu = new JMenu();
-      base.rebuildToolbarMenu(toolbarMenu);
+      mode.rebuildToolbarMenu();
     }
-//    toolbar = new EditorToolbar(this, toolbarMenu);
     toolbar = mode.createToolbar(this);
     upper.add(toolbar);
 
@@ -197,7 +192,7 @@ public class Editor extends JFrame implements RunnerListener {
     console.setBorder(null);
     consolePanel.add(console, BorderLayout.CENTER);
 
-    lineStatus = new EditorLineStatus(textarea);
+    lineStatus = new EditorLineStatus(this);
     consolePanel.add(lineStatus, BorderLayout.SOUTH);
 
     upper.add(textarea);
@@ -224,7 +219,7 @@ public class Editor extends JFrame implements RunnerListener {
 
     // hopefully these are no longer needed w/ swing
     // (har har har.. that was wishful thinking)
-    listener = new PdeKeyListener(this, textarea);
+//    listener = new PdeKeyListener(this, textarea);
     pain.add(box);
 
     // get shift down/up events so we can show the alt version of toolbar buttons
@@ -1350,6 +1345,38 @@ public class Editor extends JFrame implements RunnerListener {
   }
 
 
+  public void handleAutoFormat() {
+    final String source = getText();
+
+    try {
+      final AutoFormat formatter = mode.getFormatter();
+      final String formattedText = formatter.format(source);
+      // save current (rough) selection point
+      int selectionEnd = getSelectionStop();
+
+      // make sure the caret would be past the end of the text
+      if (formattedText.length() < selectionEnd - 1) {
+        selectionEnd = formattedText.length() - 1;
+      }
+
+      if (formattedText.equals(source)) {
+        statusNotice("No changes necessary for Auto Format.");
+      } else {
+        // replace with new bootiful text
+        // selectionEnd hopefully at least in the neighborhood
+        setText(formattedText);
+        setSelection(selectionEnd, selectionEnd);
+        getSketch().setModified(true);
+        // mark as finished
+        statusNotice("Auto Format finished.");
+      }
+
+    } catch (final Exception e) {
+      statusError(e);
+    }
+  }
+
+
   protected void handleCommentUncomment() {
     startCompoundEdit();
 
@@ -1883,8 +1910,8 @@ public class Editor extends JFrame implements RunnerListener {
 //      return;
 //    }
 
-    if (e instanceof RunnerException) {
-      RunnerException re = (RunnerException) e;
+    if (e instanceof SketchException) {
+      SketchException re = (SketchException) e;
       if (re.hasCodeIndex()) {
         sketch.setCurrentCode(re.getCodeIndex());
       }

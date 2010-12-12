@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import processing.app.RunnerException;
+import processing.app.SketchException;
 
 /**
  * 
@@ -19,9 +19,9 @@ public class PreprocessorResult {
 
   public PreprocessorResult(PdePreprocessor.Mode programType,
                           int headerOffset, String className,
-                          final List<String> extraImports) throws RunnerException {
+                          final List<String> extraImports) throws SketchException {
     if (className == null) {
-      throw new RunnerException("Could not find main class");
+      throw new SketchException("Could not find main class");
     }
     this.headerOffset = headerOffset;
     this.className = className;

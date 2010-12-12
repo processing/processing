@@ -9,7 +9,6 @@ package antlr;
 
 import java.io.*;
 
-import antlr.*;
 import antlr.collections.*;
 
 

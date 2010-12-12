@@ -24,9 +24,6 @@
 package processing.app;
 
 import processing.core.*;
-import processing.java.LibraryFolder;
-import processing.java.preproc.*;
-import processing.java.runner.Compiler;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -60,7 +57,6 @@ public class Sketch {
     "(?:^|\\s|;)package\\s+(\\S+)\\;";
   
   private Editor editor;
-  private boolean foundMain = false;
 
   /** main pde file for this sketch. */
   private File primaryFile;
@@ -108,7 +104,7 @@ public class Sketch {
   /**
    * List of library folders, set up in the preprocess() method.
    */
-  private ArrayList<JavaLibrary> importedLibraries;
+  private ArrayList<Library> importedLibraries;
   //private ArrayList<File> importedLibraries;
 
   /** 
@@ -1159,13 +1155,70 @@ public class Sketch {
   }
 
 
+  /** 
+   * Create a temporary folder that includes the sketch's name in its title.
+   */
+  public File makeTempFolder() {
+    try {
+      File buildFolder = Base.createTempFolder(name, "temp");
+      if (buildFolder.mkdirs()) {
+        return buildFolder;
+
+      } else {
+        Base.showWarning("Build folder bad", 
+                         "Could not create a place to build the sketch.", null);
+      }
+    } catch (IOException e) {
+      Base.showWarning("Build folder bad", 
+                       "Could not find a place to build the sketch.", e);
+    }
+    return null;
+  }
+
+
+  /**
+   * When running from the editor, take care of preparations before running
+   * a build or an export. Also erases and/or creates 'targetFolder' if it's
+   * not null, and if preferences say to do so when exporting.
+   */
+  public void prepareBuild(File targetFolder) throws SketchException {
+    // make sure the user didn't hide the sketch folder
+    ensureExistence();
+
+    // make sure any edits have been stored
+    current.setProgram(editor.getText());
+
+    // if an external editor is being used, need to grab the
+    // latest version of the code from the file.
+    if (Preferences.getBoolean("editor.external")) {
+      // set current to null so that the tab gets updated
+      // http://dev.processing.org/bugs/show_bug.cgi?id=515
+      current = null;
+      // don't do from the command line
+      if (editor != null) {
+        // nuke previous files and settings
+        load();
+      }
+    }
+
+    if (targetFolder != null) {
+      // Nuke the old applet/application folder because it can cause trouble
+      if (Preferences.getBoolean("export.delete_target_folder")) {
+        Base.removeDir(targetFolder);
+      }
+      // Create a fresh output folder (needed before preproc is run next)
+      targetFolder.mkdirs();
+    }
+  }
+
+
   /**
    * Make sure the sketch hasn't been moved or deleted by some
    * nefarious user. If they did, try to re-create it and save.
    * Only checks to see if the main folder is still around,
    * but not its contents.
    */
-  protected void ensureExistence() {
+  public void ensureExistence() {
     if (folder.exists()) return;
 
     Base.showWarning("Sketch Disappeared",

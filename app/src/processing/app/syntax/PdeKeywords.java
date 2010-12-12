@@ -24,11 +24,6 @@
 
 package processing.app.syntax;
 
-import processing.core.PApplet;
-
-import java.io.*;
-import java.util.*;
-
 import javax.swing.text.Segment;
 
 
@@ -100,7 +95,11 @@ public class PdeKeywords extends TokenMarker {
   }
   */
   
-  
+
+  /**
+   * Add a keyword, and the associated coloring.
+   * @param coloring one of KEYWORD1, KEYWORD2, LITERAL1, etc.
+   */
   public void addColoring(String keyword, String coloring) {
     // text will be KEYWORD or LITERAL
     boolean isKey = (coloring.charAt(0) == 'K');

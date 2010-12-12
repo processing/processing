@@ -7,7 +7,7 @@ import java.io.PrintWriter;
 import java.util.BitSet;
 import java.util.Stack;
 import processing.app.Preferences;
-import processing.app.RunnerException;
+import processing.app.SketchException;
 import processing.app.antlr.PdeTokenTypes;
 import antlr.CommonASTWithHiddenTokens;
 import antlr.CommonHiddenStreamToken;
@@ -111,7 +111,7 @@ public class PdeEmitter implements PdeTokenTypes {
    * @param ast The AST to print
    * @returns true iff anything was printed
    */
-  private boolean printChildren(final AST ast) throws RunnerException {
+  private boolean printChildren(final AST ast) throws SketchException {
     boolean ret = false;
     AST child = ast.getFirstChild();
     while (child != null) {
@@ -219,7 +219,7 @@ public class PdeEmitter implements PdeTokenTypes {
   /**
    * Prints a binary operator
    */
-  private void printBinaryOperator(final AST ast) throws RunnerException {
+  private void printBinaryOperator(final AST ast) throws SketchException {
     print(ast.getFirstChild());
     if (!OTHER_COPIED_TOKENS.get(ast.getType())) {
       out.print(ast.getText());
@@ -228,7 +228,7 @@ public class PdeEmitter implements PdeTokenTypes {
     print(ast.getFirstChild().getNextSibling());
   }
 
-  private void printMethodDef(final AST ast) throws RunnerException {
+  private void printMethodDef(final AST ast) throws SketchException {
     final AST modifiers = ast.getFirstChild();
     final AST typeParameters, type;
     if (modifiers.getNextSibling().getType() == TYPE_PARAMETERS) {
@@ -245,7 +245,7 @@ public class PdeEmitter implements PdeTokenTypes {
     printChildren(ast); 
   }
 
-  private void printIfThenElse(final AST literalIf) throws RunnerException {
+  private void printIfThenElse(final AST literalIf) throws SketchException {
     out.print(literalIf.getText());
     dumpHiddenAfter(literalIf);
 
@@ -287,7 +287,7 @@ public class PdeEmitter implements PdeTokenTypes {
    * It works by making recursive calls to print children.
    * So the code below is one big "switch" statement on the passed AST type.
    */
-  public void print(final AST ast) throws RunnerException {
+  public void print(final AST ast) throws SketchException {
     if (ast == null) {
       return;
     }

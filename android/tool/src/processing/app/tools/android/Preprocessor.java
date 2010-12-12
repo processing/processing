@@ -28,7 +28,7 @@ import java.util.List;
 
 import processing.app.Base;
 import processing.app.Preferences;
-import processing.app.RunnerException;
+import processing.app.SketchException;
 import processing.app.Sketch;
 import processing.core.PApplet;
 import processing.java.preproc.PdePreprocessor;
@@ -113,7 +113,7 @@ public class Preprocessor extends PdePreprocessor {
 
 
   public PreprocessorResult write(Writer out, String program, String codeFolderPackages[])
-  throws RunnerException, RecognitionException, TokenStreamException {
+  throws SketchException, RecognitionException, TokenStreamException {
     if (sizeStatement != null) {
       int start = program.indexOf(sizeStatement);
       program = program.substring(0, start) + 

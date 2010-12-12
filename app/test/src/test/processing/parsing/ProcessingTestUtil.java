@@ -8,9 +8,9 @@ import java.io.StringWriter;
 import antlr.ANTLRException;
 import processing.app.Base;
 import processing.app.Preferences;
-import processing.app.RunnerException;
-import processing.app.tools.AutoFormat;
+import processing.app.SketchException;
 import processing.java.preproc.PdePreprocessor;
+import processing.mode.java.AutoFormat;
 
 public class ProcessingTestUtil {
   static void init() {
@@ -36,7 +36,7 @@ public class ProcessingTestUtil {
   }
 
   static String preprocess(final String name, final File resource)
-      throws RunnerException, ANTLRException {
+      throws SketchException, ANTLRException {
     final String program = read(resource);
     final StringWriter out = new StringWriter();
     new PdePreprocessor(name, 4).write(out, program);

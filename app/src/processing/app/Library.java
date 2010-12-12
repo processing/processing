@@ -7,6 +7,8 @@ import processing.core.*;
 
 
 public class Library {
+  static final String[] platformNames = PConstants.platformNames;
+  
   protected File folder;
   protected File libraryFolder;   // name/library
   protected File examplesFolder;  // name/examples
@@ -20,12 +22,18 @@ public class Library {
   protected int version;          // 102
   protected String prettyVersion; // "1.0.2"
 
-  static final String[] platformNames = PConstants.platformNames;
+  /** Packages provided by this library. */
+  String[] packageList;
   
+  /** Per-platform exports for this library. */
   HashMap<String,String[]> exportList;
-  String[] appletExportList;
-  boolean[] multipleArch = new boolean[platformNames.length];
   
+  /** Applet exports (cross-platform by definition). */
+  String[] appletExportList;
+  
+  /** True if there are separate 32/64 bit for the specified platform index. */
+  boolean[] multipleArch = new boolean[platformNames.length];
+
   /**
    * For runtime, the native library path for this platform. e.g. on Windows 64, 
    * this might be the windows64 subfolder with the library.
@@ -101,7 +109,7 @@ public class Library {
 
     // for the host platform, need to figure out what's available
     File nativeLibraryFolder = libraryFolder;
-    String hostPlatform = platformNames[PApplet.platform];
+    String hostPlatform = Base.getPlatformName(); 
     // see if there's a 'windows', 'macosx', or 'linux' folder
     File hostLibrary = new File(libraryFolder, hostPlatform);
     if (hostLibrary.exists()) {
@@ -173,31 +181,34 @@ public class Library {
         }
       }
     }
-    for (String p : exportList.keySet()) {
-      System.out.println(p + " -> ");
-      PApplet.println(exportList.get(p));
-    }
+//    for (String p : exportList.keySet()) {
+//      System.out.println(p + " -> ");
+//      PApplet.println(exportList.get(p));
+//    }
 
     // get the path for all .jar files in this code folder
-    String[] packages =
-      Base.packageListFromClassPath(getClassPath());
+    packageList = Base.packageListFromClassPath(getClassPath());
+  }
+  
+
+  /** 
+   * Add the packages provided by this library to the master list that maps
+   * imports to specific libraries.
+   * @param importToLibraryTable mapping from package names to Library objects 
+   */
+  public void addPackageList(HashMap<String,Library> importToLibraryTable) {
 //    PApplet.println(packages);
-    for (String pkg : packages) {
+    for (String pkg : packageList) {
       //    pw.println(pkg + "\t" + libraryFolder.getAbsolutePath());
-      Library library = Base.importToLibraryTable.get(pkg);
+      Library library = importToLibraryTable.get(pkg);
       if (library != null) {
-        //      Base.showWarning("Library Calling", "The library found in\n" +
-        //        getPath() + "\n" + 
-        //        "conflicts with the library found in\n" + 
-        //        library.getPath() + "\n" + 
-        //        "which already defines the package " + pkg, null);
         System.err.println("The library found in " + getPath());
         System.err.println("conflicts with " + library.getPath());
         System.err.println("which already defines the package " + pkg);
         System.err.println();
       } else {
 //        PApplet.println("adding pkg " + pkg + " for " + name);
-        Base.importToLibraryTable.put(pkg, this);
+        importToLibraryTable.put(pkg, this);
       }
     }
   }

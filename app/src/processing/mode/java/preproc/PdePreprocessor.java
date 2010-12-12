@@ -31,7 +31,7 @@ import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
 import processing.app.Preferences;
-import processing.app.RunnerException;
+import processing.app.SketchException;
 import processing.app.antlr.PdeLexer;
 import processing.app.antlr.PdeRecognizer;
 import processing.app.antlr.PdeTokenTypes;
@@ -195,7 +195,7 @@ public class PdePreprocessor {
   }
 
   private static void checkForUnterminatedMultilineComment(final String program)
-      throws RunnerException {
+      throws SketchException {
     final int length = program.length();
     for (int i = 0; i < length; i++) {
       // for any double slash comments, ignore until the end of the line
@@ -222,7 +222,7 @@ public class PdePreprocessor {
           }
         }
         if (!terminated) {
-          throw new RunnerException("Unclosed /* comment */", 0,
+          throw new SketchException("Unclosed /* comment */", 0,
                                     countNewlines(program.substring(0,
                                       startOfComment)));
         }
@@ -244,14 +244,14 @@ public class PdePreprocessor {
           }
         }
         if (!terminated) {
-          throw new RunnerException("Unterminated string constant", 0,
+          throw new SketchException("Unterminated string constant", 0,
                                     countNewlines(program.substring(0,
                                       stringStart)));
         }
       } else if (program.charAt(i) == '\'') {
         i++;
         if (i >= length) {
-          throw new RunnerException("Unterminated character constant", 0,
+          throw new SketchException("Unterminated character constant", 0,
                                     countNewlines(program.substring(0, i)));
         }
         if (program.charAt(i) == '\\') {
@@ -259,11 +259,11 @@ public class PdePreprocessor {
         }
         i++;
         if (i >= length) {
-          throw new RunnerException("Unterminated character constant", 0,
+          throw new SketchException("Unterminated character constant", 0,
                                     countNewlines(program.substring(0, i)));
         }
         if (program.charAt(i) != '\'') {
-          throw new RunnerException("Badly formed character constant", 0,
+          throw new SketchException("Badly formed character constant", 0,
                                     countNewlines(program.substring(0, i)));
         }
       }
@@ -272,13 +272,13 @@ public class PdePreprocessor {
   }
 
   public PreprocessorResult write(final Writer out, String program)
-      throws RunnerException, RecognitionException, TokenStreamException {
+      throws SketchException, RecognitionException, TokenStreamException {
     return write(out, program, null);
   }
 
   public PreprocessorResult write(Writer out, String program,
                                 String codeFolderPackages[])
-      throws RunnerException, RecognitionException, TokenStreamException {
+      throws SketchException, RecognitionException, TokenStreamException {
 
     // these ones have the .* at the end, since a class name might be at the end
     // instead of .* which would make trouble other classes using this can lop
@@ -385,7 +385,7 @@ public class PdePreprocessor {
    * @return the class name of the exported Java
    */
   private String write(final String program, final PrintWriter stream)
-      throws RunnerException, RecognitionException, TokenStreamException {
+      throws SketchException, RecognitionException, TokenStreamException {
 
     PdeRecognizer parser = createParser(program);
     if (PUBLIC_CLASS.matcher(program).find()) {

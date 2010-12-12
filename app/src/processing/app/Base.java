@@ -51,16 +51,6 @@ public class Base {
   /** True if heavy debugging error/log messages are enabled */
   static public boolean DEBUG = false;
 
-  // maps imported packages to their library folder
-  protected HashMap<String, Library> importToLibraryTable;
-
-  protected File examplesFolder;
-  protected File librariesFolder;
-  protected File toolsFolder;
-
-  protected ArrayList<Library> coreLibraries;
-  protected ArrayList<Library> contribLibraries;
-  
   static HashMap<Integer, String> platformNames =
     new HashMap<Integer, String>();
   static {
@@ -93,13 +83,19 @@ public class Base {
 
   java.util.List<Editor> editors =
     Collections.synchronizedList(new ArrayList<Editor>());
-  Editor activeEditor;
+  protected Editor activeEditor;
   // a lone file menu to be used when all sketch windows are closed
   static public JMenu defaultFileMenu;
 
+  Mode[] modeList;
   Mode defaultMode = new JavaMode(this, getContentFile("modes/java"));
-
   
+  static JMenu sketchbookMenu;
+
+  protected File sketchbookFolder;
+  protected File toolsFolder;
+
+
   static public void main(final String[] args) {
     EventQueue.invokeLater(new Runnable() {
         public void run() {
@@ -196,8 +192,8 @@ public class Base {
                      "platform-specific code for your machine.", e);
     }
   }
-
-
+  
+  
   static protected void initRequirements() {
     try {
       Class.forName("com.sun.jdi.VirtualMachine");
@@ -212,42 +208,14 @@ public class Base {
 
 
   public Base(String[] args) {
-    // Get paths for the libraries and examples in the Processing folder
-    //String workingDirectory = System.getProperty("user.dir");
-    examplesFolder = getContentFile("examples");
-    librariesFolder = getContentFile("libraries");
-    toolsFolder = getContentFile("tools");
-
     // Put this after loading the examples, so that building the default file
     // menu works on Mac OS X (since  it needs examplesFolder to be set).
     platform.init(this);
 
+    toolsFolder = getContentFile("tools");
+
     // Get the sketchbook path, and make sure it's set properly
-    String sketchbookPath = Preferences.get("sketchbook.path");
-
-    // If a value is at least set, first check to see if the folder exists.
-    // If it doesn't, warn the user that the sketchbook folder is being reset.
-    if (sketchbookPath != null) {
-      File skechbookFolder = new File(sketchbookPath);
-      if (!skechbookFolder.exists()) {
-        Base.showWarning("Sketchbook folder disappeared",
-                         "The sketchbook folder no longer exists.\n" +
-                         "Processing will switch to the default sketchbook\n" +
-                         "location, and create a new sketchbook folder if\n" +
-                         "necessary. Procesing will then stop talking about\n" +
-                         "himself in the third person.", null);
-        sketchbookPath = null;
-      }
-    }
-
-    // If no path is set, get the default sketchbook folder for this platform
-    if (sketchbookPath == null) {
-      File defaultFolder = getDefaultSketchbookFolder();
-      Preferences.set("sketchbook.path", defaultFolder.getAbsolutePath());
-      if (!defaultFolder.exists()) {
-        defaultFolder.mkdirs();
-      }
-    }
+    determineSketchbookFolder(); 
 
     // Check if there were previously opened sketches to be restored
     boolean opened = restoreSketches();
@@ -292,7 +260,7 @@ public class Base {
    * all over the place. While it may seem like fun to send the Arduino guys 
    * on a treasure hunt, it gets old after a while.
    */
-  protected String getExtension() {
+  static protected String getExtension() {
     return ".pde";
   }
 
@@ -480,145 +448,22 @@ public class Base {
     menuItem.setAccelerator(KeyStroke.getKeyStroke(what, modifiers));
     return menuItem;
   }
+  
+
+  static public void addDisabledItem(JMenu menu, String title) {
+    JMenuItem item = new JMenuItem(title);
+    item.setEnabled(false);
+    menu.add(item);
+  }
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  static JMenu sketchbookMenu;
-  static JMenu examplesMenu;
-  static JMenu importMenu;
-
-
-  public JMenu buildFileMenu(final Editor editor, final JMenuItem[] exportItems) {
-    JMenuItem item;
-    JMenu fileMenu = new JMenu("File");
-
-    item = newJMenuItem("New", 'N');
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          handleNew();
-        }
-      });
-    fileMenu.add(item);
-
-    item = newJMenuItem("Open...", 'O');
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          handleOpenPrompt();
-        }
-      });
-    fileMenu.add(item);
-
-    if (sketchbookMenu == null) {
-      sketchbookMenu = new JMenu("Sketchbook");
-      rebuildSketchbookMenu(sketchbookMenu);
-    }
-    fileMenu.add(sketchbookMenu);
-
-    if (examplesMenu == null) {
-      examplesMenu = new JMenu("Examples");
-      rebuildExamplesMenu(examplesMenu);
-    }
-    fileMenu.add(examplesMenu);
-
-    item = newJMenuItem("Close", 'W');
-    if (editor != null) {
-      item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          handleClose(editor);
-        }
-      });
-    } else {
-      item.setEnabled(false);
-    }
-    fileMenu.add(item);
-
-    item = newJMenuItem("Save", 'S');
-    if (editor != null) {
-      item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          editor.handleSave(false);
-        }
-      });
-      editor.setSaveItem(item);
-    } else {
-      item.setEnabled(false);
-    }
-    fileMenu.add(item);
-
-    item = newJMenuItemShift("Save As...", 'S');
-    if (editor != null) {
-      item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          editor.handleSaveAs();
-        }
-      });
-      editor.setSaveAsItem(item);
-    } else {
-      item.setEnabled(false);
-    }
-    fileMenu.add(item);
-
-    if (exportItems != null) {
-      for (JMenuItem ei : exportItems) {
-        fileMenu.add(ei);
-      }
-    }
-    fileMenu.addSeparator();
-
-    item = newJMenuItemShift("Page Setup", 'P');
-    if (editor != null) {
-      item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          editor.handlePageSetup();
-        }
-      });
-    } else {
-      item.setEnabled(false);
-    }
-    fileMenu.add(item);
-
-    item = newJMenuItem("Print", 'P');
-    if (editor != null) {
-      item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          editor.handlePrint();
-        }
-      });
-    } else {
-      item.setEnabled(false);
-    }
-    fileMenu.add(item);
-
-    // Mac OS X already has its own preferences and quit menu.
-    // That's right! Think different, b*tches!
-    if (!Base.isMacOS()) {
-      fileMenu.addSeparator();
-
-      item = newJMenuItem("Preferences", ',');
-      item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          handlePrefs();
-        }
-      });
-      fileMenu.add(item);
-
-      fileMenu.addSeparator();
-
-      item = newJMenuItem("Quit", 'Q');
-      item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          handleQuit();
-        }
-      });
-      fileMenu.add(item);
-    }
-    return fileMenu;
+  /** Returns the frontmost, active editor window. */
+  public Editor getActiveEditor() {
+    return activeEditor;
   }
-
-
-  // .................................................................
 
 
   // Because of variations in native windowing systems, no guarantees about
@@ -630,6 +475,9 @@ public class Base {
 
     // set the current window to be the console that's getting output
     EditorConsole.setEditor(activeEditor);
+
+    // make this the next mode to be loaded 
+    defaultMode = whichEditor.getMode();
   }
 
 
@@ -675,9 +523,18 @@ public class Base {
       }
     }
   }
+  
+
+//  /**
+//   * Return the same mode as the active editor, or the default mode, which
+//   * begins as Java/Standard, but is updated with the last mode used. 
+//   */
+//  protected Mode nextEditorMode() {
+//    return (activeEditor == null) ? defaultMode : activeEditor.getMode();
+//  }
 
 
-  // .................................................................
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
   boolean breakTime = false;
@@ -698,7 +555,7 @@ public class Base {
 
     // In 0126, untitled sketches will begin in the temp folder,
     // and then moved to a new location because Save will default to Save As.
-    File sketchbookDir = getSketchbookFolder();
+//    File sketchbookDir = getSketchbookFolder();
     File newbieParentDir = untitledFolder;
 
     String prefix = Preferences.get("editor.untitled.prefix");
@@ -741,7 +598,7 @@ public class Base {
       newbieDir = new File(newbieParentDir, newbieName);
       index++;
       // Make sure it's not in the temp folder *and* it's not in the sketchbook
-    } while (newbieDir.exists() || new File(sketchbookDir, newbieName).exists());
+    } while (newbieDir.exists() || new File(sketchbookFolder, newbieName).exists());
 
     // Make the directory for the new sketch
     newbieDir.mkdirs();
@@ -910,7 +767,7 @@ public class Base {
 //    }
 
 //    System.err.println("  creating new editor");
-    Editor editor = new Editor(this, path, location);
+    Editor editor = new Editor(this, defaultMode, path, location);
 //    Editor editor = null;
 //    try {
 //      editor = new Editor(this, path, location);
@@ -1003,7 +860,8 @@ public class Base {
         editor.setVisible(false);
         editor.dispose();
         defaultFileMenu.insert(Base.sketchbookMenu, 2);
-        defaultFileMenu.insert(Base.examplesMenu, 3);
+//        defaultFileMenu.insert(Base.examplesMenu, 3);
+        defaultFileMenu.insert(defaultMode.getExamplesMenu());
         activeEditor = null;
       }
 
@@ -1089,8 +947,11 @@ public class Base {
     EventQueue.invokeLater(new Runnable() {
       public void run() {
         //System.out.println("starting rebuild");
-        rebuildSketchbookMenu(sketchbookMenu);
-        rebuildToolbarMenu(Editor.toolbarMenu);
+//        rebuildSketchbookMenu(sketchbookMenu);
+        rebuildSketchbookMenu();
+        for (Mode mode : modeList) {
+          mode.rebuildToolbarMenu();
+        }
         //System.out.println("done with rebuild");
       }
     });
@@ -1098,144 +959,24 @@ public class Base {
   }
 
 
-  protected void rebuildToolbarMenu(JMenu menu) {
-    JMenuItem item;
-    menu.removeAll();
-
-    //System.out.println("rebuilding toolbar menu");
-    // Add the single "Open" item
-    item = newJMenuItem("Open...", 'O');
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          handleOpenPrompt();
-        }
-      });
-    menu.add(item);
-    menu.addSeparator();
-
-    // Add a list of all sketches and subfolders
-    try {
-      boolean sketches = addSketches(menu, getSketchbookFolder(), true);
-      //boolean sketches = addSketches(menu, getSketchbookFolder());
-      if (sketches) menu.addSeparator();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-
-    //System.out.println("rebuilding examples menu");
-    // Add each of the subfolders of examples directly to the menu
-    try {
-      addSketches(menu, examplesFolder, true);
-      //addSketches(menu, examplesFolder);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
-
-
-  protected void rebuildSketchbookMenu(JMenu menu) {
+  protected void rebuildSketchbookMenu() {  //JMenu menu) {
     //System.out.println("rebuilding sketchbook menu");
     //new Exception().printStackTrace();
     try {
-      menu.removeAll();
-      addSketches(menu, getSketchbookFolder(), false);
-      //addSketches(menu, getSketchbookFolder());
+      sketchbookMenu.removeAll();
+      addSketches(sketchbookMenu, sketchbookFolder, false);
     } catch (IOException e) {
       e.printStackTrace();
     }
   }
 
 
-  public void rebuildLibraryList() {
-    // reset the table mapping imports to libraries
-    importToLibraryTable = new HashMap<String, Library>();
-
-    try {
-      coreLibraries = Library.list(librariesFolder);
-      contribLibraries = Library.list(getSketchbookLibrariesFolder());
-    } catch (IOException e) {
-      Base.showWarning("Unhappiness", 
-                       "An error occurred while loading libraries.\n" +
-                       "Not all the books will be in place.", e);
-    }    
-  }
-
-
-//  PrintWriter pw;
-  
-  public void rebuildImportMenu() {  //JMenu importMenu) {
-    //System.out.println("rebuilding import menu");
-    importMenu.removeAll();
-
-    rebuildLibraryList();
-    
-    ActionListener listener = new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        activeEditor.getSketch().importLibrary(e.getActionCommand());
-      }
-    };
-
-//    try {
-//      pw = new PrintWriter(new FileWriter(System.getProperty("user.home") + "/Desktop/libs.csv"));
-//    } catch (IOException e1) {
-//      e1.printStackTrace();
-//    }
-
-    for (Library library : coreLibraries) {
-      JMenuItem item = new JMenuItem(library.getName());
-      item.addActionListener(listener);
-      item.setActionCommand(library.getJarPath());
-      importMenu.add(item);
+  public JMenu getSketchbookMenu() {
+    if (sketchbookMenu == null) {
+      sketchbookMenu = new JMenu("Sketchbook");
+      rebuildSketchbookMenu();
     }
-
-    if (contribLibraries.size() != 0) {
-      importMenu.addSeparator();
-      JMenuItem contrib = new JMenuItem("Contributed");
-      contrib.setEnabled(false);
-
-      for (Library library : contribLibraries) {
-        JMenuItem item = new JMenuItem(library.getName());
-        item.addActionListener(listener);
-        item.setActionCommand(library.getJarPath());
-        importMenu.add(item);
-      }
-    }
-
-//    // Add from the "libraries" subfolder in the Processing directory
-//    try {
-//      addLibraries(importMenu, librariesFolder);
-//    } catch (IOException e) {
-//      e.printStackTrace();
-//    }
-//    // Add libraries found in the sketchbook folder
-//    int separatorIndex = importMenu.getItemCount();
-//    try {
-//      File sketchbookLibraries = getSketchbookLibrariesFolder();
-//      boolean found = addLibraries(importMenu, sketchbookLibraries);
-//      if (found) {
-//        JMenuItem contrib = new JMenuItem("Contributed");
-//        contrib.setEnabled(false);
-//        importMenu.insert(contrib, separatorIndex);
-//        importMenu.insertSeparator(separatorIndex);
-//      }
-//    } catch (IOException e) {
-//      e.printStackTrace();
-//    }
-    
-//    pw.flush();
-//    pw.close();
-  }
-
-
-  public void rebuildExamplesMenu(JMenu menu) {
-    //System.out.println("rebuilding examples menu");
-    try {
-      menu.removeAll();
-      addSketches(menu, examplesFolder, false);
-      //addSketches(menu, examplesFolder);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+    return sketchbookMenu;
   }
 
 
@@ -1332,110 +1073,6 @@ public class Base {
   }
 
 
-  /*
-  protected boolean addLibraries(JMenu menu, File folder) throws IOException {
-    if (!folder.isDirectory()) return false;
-
-    String list[] = folder.list(new FilenameFilter() {
-      public boolean accept(File dir, String name) {
-        // skip .DS_Store files, .svn folders, etc
-        if (name.charAt(0) == '.') return false;
-        if (name.equals("CVS")) return false;
-        return (new File(dir, name).isDirectory());
-      }
-    });
-    // if a bad folder or something like that, this might come back null
-    if (list == null) return false;
-
-    // alphabetize list, since it's not always alpha order
-    // replaced hella slow bubble sort with this feller for 0093
-    Arrays.sort(list, String.CASE_INSENSITIVE_ORDER);
-
-    ActionListener listener = new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          activeEditor.getSketch().importLibrary(e.getActionCommand());
-        }
-      };
-
-    boolean ifound = false;
-
-    for (String potentialName : list) {
-      File subfolder = new File(folder, potentialName);
-      File libraryFolder = new File(subfolder, "library");
-      File libraryJar = new File(libraryFolder, potentialName + ".jar");
-      // If a .jar file of the same prefix as the folder exists
-      // inside the 'library' subfolder of the sketch
-      if (libraryJar.exists()) {
-        String sanityCheck = Sketch.sanitizeName(potentialName);
-        if (!sanityCheck.equals(potentialName)) {
-          String mess =
-            "The library \"" + potentialName + "\" cannot be used.\n" +
-            "Library names must contain only basic letters and numbers.\n" +
-            "(ASCII only and no spaces, and it cannot start with a number)";
-          Base.showMessage("Ignoring bad library name", mess);
-          continue;
-        }
-
-        String libraryName = potentialName;
-        File exportFile = new File(libraryFolder, "export.txt");
-//        System.out.println(exportFile.getAbsolutePath());
-        if (exportFile.exists()) {
-          String[] exportLines = PApplet.loadStrings(exportFile);
-          for (String line : exportLines) {
-            String[] pieces = PApplet.trim(PApplet.split(line, '='));
-//            System.out.println(pieces);
-            if (pieces[0].equals("name")) {
-              libraryName = pieces[1].trim();
-            }
-          }
-        }
-
-        // get the path for all .jar files in this code folder
-        String libraryClassPath =
-          Compiler.contentsToClassPath(libraryFolder);
-        // grab all jars and classes from this folder,
-        // and append them to the library classpath
-//        librariesClassPath +=
-//          File.pathSeparatorChar + libraryClassPath;
-        // need to associate each import with a library folder
-        String packages[] =
-          Compiler.packageListFromClassPath(libraryClassPath);
-        for (String pkg : packages) {
-//          pw.println(pkg + "\t" + libraryFolder.getAbsolutePath());
-          LibraryFolder library = importToLibraryTable.get(pkg); 
-          File already = library.getPath(); 
-          if (already != null) {
-            Base.showWarning("Library Calling", "The library found in\n" +
-              libraryFolder.getAbsolutePath() + "\n" + 
-              "conflicts with the library found in\n" + 
-              already.getAbsolutePath() + "\n" + 
-              "which already defines the package " + pkg, null);
-          } else {
-            importToLibraryTable.put(pkg, libraryFolder);
-          }
-        }
-
-        JMenuItem item = new JMenuItem(libraryName);
-        item.addActionListener(listener);
-        item.setActionCommand(libraryJar.getAbsolutePath());
-        menu.add(item);
-        ifound = true;
-
-      } else {  // not a library, but is still a folder, so recurse
-        JMenu submenu = new JMenu(potentialName);
-        // needs to be separate var, otherwise would set ifound to false
-        boolean found = addLibraries(submenu, subfolder);
-        if (found) {
-          menu.add(submenu);
-          ifound = true;
-        }
-      }
-    }
-    return ifound;
-  }
-  */
-
-
   // .................................................................
 
 
@@ -1514,6 +1151,11 @@ public class Base {
 
 
   static public String getPlatformName() {
+    return PConstants.platformNames[PApplet.platform];
+  }
+
+  /*
+  static public String getPlatformName() {
     String osname = System.getProperty("os.name");
 
     if (osname.indexOf("Mac") != -1) {
@@ -1529,6 +1171,7 @@ public class Base {
       return "other";
     }
   }
+  */
 
 
   /**
@@ -1656,37 +1299,77 @@ public class Base {
   }
 
 
-  static public String getExamplesPath() {
-    return examplesFolder.getAbsolutePath();
-  }
+//  static public String getExamplesPath() {
+//    return examplesFolder.getAbsolutePath();
+//  }
+  
+//  public File getExamplesFolder() {
+//    return examplesFolder;
+//  }
 
 
-  static public String getLibrariesPath() {
-    return librariesFolder.getAbsolutePath();
-  }
+//  static public String getLibrariesPath() {
+//    return librariesFolder.getAbsolutePath();
+//  }
+  
+  
+//  public File getLibrariesFolder() {
+//    return librariesFolder;
+//  }
 
 
-  static public File getToolsFolder() {
+//  static public File getToolsFolder() {
+  public File getToolsFolder() {
     return toolsFolder;
   }
 
 
-  static public String getToolsPath() {
-    return toolsFolder.getAbsolutePath();
+//  static public String getToolsPath() {
+//    return toolsFolder.getAbsolutePath();
+//  }
+
+
+  protected void determineSketchbookFolder() {
+    // If a value is at least set, first check to see if the folder exists.
+    // If it doesn't, warn the user that the sketchbook folder is being reset.
+    String sketchbookPath = Preferences.get("sketchbook.path");
+    if (sketchbookPath != null) {
+      sketchbookFolder = new File(sketchbookPath);
+      if (!sketchbookFolder.exists()) {
+        Base.showWarning("Sketchbook folder disappeared",
+                         "The sketchbook folder no longer exists.\n" +
+                         "Processing will switch to the default sketchbook\n" +
+                         "location, and create a new sketchbook folder if\n" +
+                         "necessary. Procesing will then stop talking about\n" +
+                         "himself in the third person.", null);
+        sketchbookFolder = null;
+      }
+    }
+
+    // If no path is set, get the default sketchbook folder for this platform
+    if (sketchbookFolder == null) {
+      sketchbookFolder = getDefaultSketchbookFolder();
+      Preferences.set("sketchbook.path", sketchbookFolder.getAbsolutePath());
+      if (!sketchbookFolder.exists()) {
+        sketchbookFolder.mkdirs();
+      }
+    }
+  }
+    
+
+  public File getSketchbookFolder() {
+//    return new File(Preferences.get("sketchbook.path"));
+    return sketchbookFolder;
   }
 
 
-  static public File getSketchbookFolder() {
-    return new File(Preferences.get("sketchbook.path"));
+  public File getSketchbookLibrariesFolder() {
+//    return new File(getSketchbookFolder(), "libraries");
+    return new File(sketchbookFolder, "libraries");
   }
 
 
-  static public File getSketchbookLibrariesFolder() {
-    return new File(getSketchbookFolder(), "libraries");
-  }
-
-
-  protected File getDefaultSketchbookFolder() {
+  static protected File getDefaultSketchbookFolder() {
     File sketchbookFolder = null;
     try {
       sketchbookFolder = platform.getDefaultSketchbookFolder();
@@ -1716,18 +1399,17 @@ public class Base {
    * Check for a new sketchbook location.
    */
   static protected File promptSketchbookLocation() {
-    File folder = null;
-
-    folder = new File(System.getProperty("user.home"), "sketchbook");
+    // Most often this will happen on Linux, so default to their home dir. 
+    File folder = new File(System.getProperty("user.home"), "sketchbook");
+    String prompt = "Select (or create new) folder for sketches...";
+    folder = Base.selectFolder(prompt, folder, null);
+    if (folder == null) {
+      System.exit(0);
+    }
+    // Create the folder if it doesn't exist already
     if (!folder.exists()) {
       folder.mkdirs();
       return folder;
-    }
-
-    String prompt = "Select (or create new) folder for sketches...";
-    folder = Base.selectFolder(prompt, null, null);
-    if (folder == null) {
-      System.exit(0);
     }
     return folder;
   }

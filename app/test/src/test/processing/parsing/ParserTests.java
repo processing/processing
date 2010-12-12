@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import processing.app.RunnerException;
+import processing.app.SketchException;
 import processing.app.exec.ProcessResult;
 import antlr.RecognitionException;
 
@@ -48,7 +48,7 @@ public class ParserTests {
       preprocess(id, res(id + ".pde"));
       fail("Expected to fail with \"" + expectedMessage + "\" on line "
           + expectedLine);
-    } catch (RunnerException e) {
+    } catch (SketchException e) {
       assertEquals(expectedMessage, e.getMessage());
       assertEquals(expectedLine, e.getCodeLine());
     } catch (Exception e) {

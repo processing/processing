@@ -3,7 +3,6 @@
 package antlr;
 
 
-import antlr.*;
 import antlr.collections.impl.BitSet;
 
 /**
