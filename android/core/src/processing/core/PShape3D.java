@@ -820,6 +820,14 @@ public class PShape3D extends PShape implements PConstants {
   }
   
   
+  protected boolean isTexturable() {    
+    return glMode == GL11.GL_TRIANGLES || 
+           glMode == GL11.GL_TRIANGLE_FAN ||
+           glMode == GL11.GL_TRIANGLE_STRIP ||
+           pointSprites;       
+  }
+  
+  
   public int getDrawMode() {
     if (family == GROUP) {
       init();
@@ -858,7 +866,9 @@ public class PShape3D extends PShape implements PConstants {
       if (children == null) {
         addDefaultChild();
       }
-      setTexture(0, tex);
+      for (int i = 0; i < childCount; i++) {
+        setTexture(i, tex);
+      }
     } else {
       setTextureImpl(tex, 0);
     }      
@@ -870,8 +880,10 @@ public class PShape3D extends PShape implements PConstants {
       init();
       if (children == null) {
         addDefaultChild();
-      }      
-      setTexture(0, tex0, tex1);
+      }
+      for (int i = 0; i < childCount; i++) {
+        setTexture(i, tex0, tex1);
+      }
     } else {
       setTextureImpl(tex0, 0);
       setTextureImpl(tex1, 1);
@@ -885,7 +897,9 @@ public class PShape3D extends PShape implements PConstants {
       if (children == null) {
         addDefaultChild();
       }      
-      setTexture(0, tex0, tex1, tex2);
+      for (int i = 0; i < childCount; i++) {
+        setTexture(i, tex0, tex1, tex2);
+      }
     } else {
       setTextureImpl(tex0, 0);
       setTextureImpl(tex1, 1);
@@ -899,8 +913,10 @@ public class PShape3D extends PShape implements PConstants {
       init();
       if (children == null) {
         addDefaultChild();
-      }      
-      setTexture(0, tex0, tex1, tex2, tex3);
+      }
+      for (int i = 0; i < childCount; i++) {
+        setTexture(i, tex0, tex1, tex2, tex3);
+      }
     } else {
       setTextureImpl(tex0, 0);
       setTextureImpl(tex1, 1);
@@ -915,8 +931,10 @@ public class PShape3D extends PShape implements PConstants {
       init();
       if (children == null) {
         addDefaultChild();
-      }      
-      setTexture(0, tex);
+      }
+      for (int i = 0; i < childCount; i++) {
+        setTexture(i, tex);
+      }
     } else {
       for (int i = 0; i < tex.length; i++) {
         setTextureImpl(tex[i], i);
@@ -988,8 +1006,8 @@ public class PShape3D extends PShape implements PConstants {
     if (tex == null) {
       throw new RuntimeException("PShape3D: trying to set null texture.");
     } 
-    
-    if  (p3d.texCoordSet[unit]) {
+        
+    if  (p3d.texCoordSet[unit] && isTexturable()) {
       // Ok, setting a new texture, when texture coordinates have already been set. 
       // What is the problem? the new texture might have different max UV coords, 
       // flippedX/Y values, so the texture coordinates need to be updated accordingly...
@@ -1046,7 +1064,9 @@ public class PShape3D extends PShape implements PConstants {
   public void setStrokeWeight(float sw) {
     if (family == GROUP) {
       init();
-      setStrokeWeight(0, sw);
+      for (int i = 0; i < childCount; i++) {
+        setStrokeWeight(i, sw);
+      }            
     } else { 
       strokeWeight = sw;
     }
@@ -1081,7 +1101,9 @@ public class PShape3D extends PShape implements PConstants {
   public void setMaxSpriteSize(float s) {
     if (family == GROUP) {
       init();
-      setMaxSpriteSize(0, s);
+      for (int i = 0; i < childCount; i++) {
+        setMaxSpriteSize(i, s);
+      }      
     } else {
       setMaxSpriteSizeImpl(s);
     }
@@ -1100,14 +1122,35 @@ public class PShape3D extends PShape implements PConstants {
   }
 
    
+  public void setSpriteSize(float s) {
+    if (family == GROUP) {
+      init();
+      for (int i = 0; i < childCount; i++) {
+        setSpriteSize(i, s);
+      }            
+    } else {
+      setSpriteSizeImpl(s);      
+    }
+  }
+  
+  
   public void setSpriteSize(float s, float d, int mode) {
     if (family == GROUP) {
       init();
-      setSpriteSize(0, s, d, mode);
+      for (int i = 0; i < childCount; i++) {
+        setSpriteSize(i, s, d, mode);
+      }      
     } else {
       setSpriteSizeImpl(s, d, mode);      
     }
   }
+  
+
+  public void setSpriteSize(int idx, float s) {
+    if (0 <= idx && idx < childCount) {
+      ((PShape3D)children[idx]).setSpriteSizeImpl(s);
+    }
+  }  
   
   
   public void setSpriteSize(int idx, float s, float d, int mode) {
@@ -1132,6 +1175,14 @@ public class PShape3D extends PShape implements PConstants {
     }
   }
   
+
+  // Sets constant sprite size equal to s.
+  protected void setSpriteSizeImpl(float s) {
+    setMaxSpriteSizeImpl(s);
+    spriteDistAtt[1] = 0;
+    spriteDistAtt[2] = 0;
+  }
+  
   
   public void setColor(int c) {
     setColor(rgba(c));
@@ -1146,7 +1197,9 @@ public class PShape3D extends PShape implements PConstants {
   public void setColor(float[] c) {
     if (family == GROUP) {
       init();
-      setColor(0, c);
+      for (int i = 0; i < childCount; i++) {
+        setColor(i, c);
+      }      
     } else {
       setColorImpl(c);
     }
@@ -1187,8 +1240,10 @@ public class PShape3D extends PShape implements PConstants {
   
   public void setNormal(float[] n) {
     if (family == GROUP) {
-      init();
-      setNormal(0, n);
+      init();      
+      for (int i = 0; i < childCount; i++) {
+        setNormal(i, n);
+      }      
     } else {
       setNormalImpl(n);
     }

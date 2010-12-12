@@ -5098,14 +5098,6 @@ public class PGraphics extends PImage implements PConstants {
   
   // TODO: Discuss proper integration into PGraphics API. 
 
-  public PImage getOffscreenImage() {
-    if (!is3D()) {
-      showMissingWarning("getOffscreenImage");
-    }
-    return null;
-  }
-  
-
   public void blend(int mode) {
     if (!is3D()) {
       showMissingWarning("blend");
