@@ -27,15 +27,12 @@ import java.io.*;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import javax.microedition.khronos.opengles.GL10;
-
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.graphics.Bitmap.Config;
-import android.opengl.GLU;
 
 /**
  * Grayscale bitmap font class used by Processing.
