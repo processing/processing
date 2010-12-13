@@ -24,7 +24,6 @@ package processing.core;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.EmptyStackException;
@@ -608,6 +607,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         int[] temp = { id };
         gl.glDeleteTextures(1, temp, 0);
       }
+      glTextureObjects.clear();
     }
     
     if (!glVertexBuffers.isEmpty()) {
@@ -616,7 +616,8 @@ public class PGraphicsAndroid3D extends PGraphics {
         int id = ((Integer)glids[i]).intValue();
         int[] temp = { id };
         gl11.glDeleteBuffers(1, temp, 0);
-      }      
+      }
+      glVertexBuffers.clear();
     }
     
     if (!glFrameBuffers.isEmpty()) {
@@ -625,7 +626,8 @@ public class PGraphicsAndroid3D extends PGraphics {
         int id = ((Integer)glids[i]).intValue();
         int[] temp = { id };
         gl11xp.glDeleteFramebuffersOES(1, temp, 0);
-      }      
+      }
+      glFrameBuffers.clear();
     }
     
     if (!glRenderBuffers.isEmpty()) {
@@ -635,6 +637,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         int[] temp = { id };
         gl11xp.glDeleteRenderbuffersOES(1, temp, 0);
       }
+      glRenderBuffers.clear();
     }
   }
   
