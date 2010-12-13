@@ -20,6 +20,7 @@ public abstract class Mode {
   
   protected PdeKeywords tokenMarker;
   protected Settings theme;
+  protected Formatter formatter;
   
   // maps imported packages to their library folder
   protected HashMap<String, Library> importToLibraryTable;
@@ -397,11 +398,20 @@ public abstract class Mode {
   }
   
   
-  public AutoFormat getFormatter() {
-    return new AutoFormat();
+  abstract public Formatter createFormatter();
+
+
+  public Formatter getFormatter() {
+    return formatter; 
   }
+  
+
+  abstract public String getCommentPrefix();
 
 
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+  
   //public String get(String attribute) {
   //  return theme.get(attribute);
   //}

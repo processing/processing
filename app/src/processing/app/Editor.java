@@ -1349,8 +1349,7 @@ public class Editor extends JFrame implements RunnerListener {
     final String source = getText();
 
     try {
-      final AutoFormat formatter = mode.getFormatter();
-      final String formattedText = formatter.format(source);
+      final String formattedText = mode.getFormatter().format(source);
       // save current (rough) selection point
       int selectionEnd = getSelectionStop();
 
@@ -1380,6 +1379,9 @@ public class Editor extends JFrame implements RunnerListener {
   protected void handleCommentUncomment() {
     startCompoundEdit();
 
+    String prefix = mode.getCommentPrefix();
+    int prefixLen = prefix.length();
+
     int startLine = textarea.getSelectionStartLine();
     int stopLine = textarea.getSelectionStopLine();
 
@@ -1401,13 +1403,13 @@ public class Editor extends JFrame implements RunnerListener {
     boolean commented = true;
     for (int i = startLine; commented && (i <= stopLine); i++) {
       int pos = textarea.getLineStartOffset(i);
-      if (pos + 2 > length) {
+      if (pos + prefixLen > length) {
         commented = false;
       } else {
         // Check the first two characters to see if it's already a comment.
         String begin = textarea.getText(pos, 2);
         //System.out.println("begin is '" + begin + "'");
-        commented = begin.equals("//");
+        commented = begin.equals(prefix);
       }
     }
 
@@ -1415,14 +1417,14 @@ public class Editor extends JFrame implements RunnerListener {
       int location = textarea.getLineStartOffset(line);
       if (commented) {
         // remove a comment
-        textarea.select(location, location+2);
-        if (textarea.getSelectedText().equals("//")) {
+        textarea.select(location, location + prefixLen);
+        if (textarea.getSelectedText().equals(prefix)) {
           textarea.setSelectedText("");
         }
       } else {
         // add a comment
         textarea.select(location, location);
-        textarea.setSelectedText("//");
+        textarea.setSelectedText(prefix);
       }
     }
     // Subtract one from the end, otherwise selects past the current line.
@@ -1783,12 +1785,6 @@ public class Editor extends JFrame implements RunnerListener {
       } else {
         statusEmpty();
       }
-      // rebuild sketch menu in case a save-as was forced
-      // Disabling this for 0125, instead rebuild the menu inside
-      // the Save As method of the Sketch object, since that's the
-      // only one who knows whether something was renamed.
-      //sketchbook.rebuildMenus();
-      //sketchbook.rebuildMenusAsync();
 
     } catch (Exception e) {
       // show the error as a message in the window

@@ -26,6 +26,8 @@ package processing.mode.java;
 
 import java.util.Stack;
 import java.util.regex.Pattern;
+
+import processing.app.Formatter;
 import processing.app.Preferences;
 import processing.core.PApplet;
 
@@ -41,7 +43,7 @@ import processing.core.PApplet;
  * <a href="http://www.geocities.com/~starkville/vancbj_idx.html">here</a>.
  * [Ben Fry, August 2009]
  */
-public class AutoFormat {
+public class AutoFormat implements Formatter {
   private char[] chars;
   private final StringBuilder buf = new StringBuilder();
 

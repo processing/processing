@@ -151,6 +151,16 @@ public class JavaMode extends Mode {
     return new Toolbar(editor);
   }
 
+  
+  public Formatter createFormatter() {
+    return new AutoFormat();
+  }
+  
+  
+  public String getCommentPrefix() {
+    return "//";
+  }
+
 
 //  public Editor createEditor(Base ibase, String path, int[] location) {
 //  }
