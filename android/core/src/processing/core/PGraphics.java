@@ -3461,6 +3461,19 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  //////////////////////////////////////////////////////////////
+
+  // PROJECTION
+
+  public void beginProjection() {
+    showMethodWarning("beginProjection");
+  }
+
+  
+  public void endProjection() {
+    showMethodWarning("endProjection");
+  }
+  
 
   //////////////////////////////////////////////////////////////
 
