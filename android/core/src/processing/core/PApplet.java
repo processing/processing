@@ -8159,6 +8159,16 @@ public class PApplet extends Activity implements PConstants, Runnable {
   // A3D-only functions
 
   // TODO: Discuss proper integration into PApplet API.
+
+  public void beginProjection() {
+    g.beginProjection();
+  }
+
+  
+  public void endProjection() {
+    g.endProjection();
+  }
+  
   
   public void blend(int mode) {
     g.blend(mode);
