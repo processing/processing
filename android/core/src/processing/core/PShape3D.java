@@ -282,7 +282,6 @@ public class PShape3D extends PShape implements PConstants {
       PGraphics.showWarning("PShape3D: can load only one type of data at the time");
       return;        
     }
-       
     
     updateElement = COLORS;
     firstUpdateIdx = first;
@@ -863,9 +862,6 @@ public class PShape3D extends PShape implements PConstants {
   public void setTexture(PImage tex) {
     if (family == GROUP) {
       init();
-      if (children == null) {
-        addDefaultChild();
-      }
       for (int i = 0; i < childCount; i++) {
         setTexture(i, tex);
       }
@@ -878,9 +874,6 @@ public class PShape3D extends PShape implements PConstants {
   public void setTexture(PImage tex0, PImage tex1) {
     if (family == GROUP) {
       init();
-      if (children == null) {
-        addDefaultChild();
-      }
       for (int i = 0; i < childCount; i++) {
         setTexture(i, tex0, tex1);
       }
@@ -894,9 +887,6 @@ public class PShape3D extends PShape implements PConstants {
   public void setTexture(PImage tex0, PImage tex1, PImage tex2) {
     if (family == GROUP) {
       init();
-      if (children == null) {
-        addDefaultChild();
-      }      
       for (int i = 0; i < childCount; i++) {
         setTexture(i, tex0, tex1, tex2);
       }
@@ -911,9 +901,6 @@ public class PShape3D extends PShape implements PConstants {
   public void setTexture(PImage tex0, PImage tex1, PImage tex2, PImage tex3) {
     if (family == GROUP) {
       init();
-      if (children == null) {
-        addDefaultChild();
-      }
       for (int i = 0; i < childCount; i++) {
         setTexture(i, tex0, tex1, tex2, tex3);
       }
@@ -929,9 +916,6 @@ public class PShape3D extends PShape implements PConstants {
   public void setTexture(PImage[] tex) {
     if (family == GROUP) {
       init();
-      if (children == null) {
-        addDefaultChild();
-      }
       for (int i = 0; i < childCount; i++) {
         setTexture(i, tex);
       }
@@ -1423,6 +1407,9 @@ public class PShape3D extends PShape implements PConstants {
     if (readFromOBJ) {
       recordOBJ();
       centerAt(0, 0, 0);      
+    }    
+    if (children == null) {
+      addDefaultChild();
     }    
   }
   
