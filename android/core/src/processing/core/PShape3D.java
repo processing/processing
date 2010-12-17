@@ -45,7 +45,7 @@ public class PShape3D extends PShape implements PConstants {
   protected PApplet papplet;    
   protected GL11 gl;  
   protected PGraphicsAndroid3D a3d;
-   
+
   // GROUP level properties:
   
   // Number of texture buffers currently in use:
@@ -972,7 +972,7 @@ public class PShape3D extends PShape implements PConstants {
         child.setTextureImpl(tex[i], i);
       }    
     }
-  }     
+  }
  
   
   protected void setTextureImpl(PImage tex, int unit) {
@@ -981,28 +981,28 @@ public class PShape3D extends PShape implements PConstants {
       return;
     }
     
-    PShape3D p3d = (PShape3D)parent;
+    PShape3D p = (PShape3D)root;
     
-    if (p3d.numTexBuffers <= unit) {
-      p3d.addTexBuffers(unit - p3d.numTexBuffers + 1);
+    if (p.numTexBuffers <= unit) {
+      p.addTexBuffers(unit - p.numTexBuffers + 1);
     }
     
     if (tex == null) {
       throw new RuntimeException("PShape3D: trying to set null texture.");
     } 
         
-    if  (p3d.texCoordSet[unit] && isTexturable()) {
+    if  (p.texCoordSet[unit] && isTexturable()) {
       // Ok, setting a new texture, when texture coordinates have already been set. 
       // What is the problem? the new texture might have different max UV coords, 
       // flippedX/Y values, so the texture coordinates need to be updated accordingly...
       
       // The way to do it is just load the texcoords array (in the parent)...
-      p3d.loadTexcoords(unit, firstVertex, lastVertex);
+      p.loadTexcoords(unit, firstVertex, lastVertex);
       // ... then replacing the old texture with the new and...
       textures[unit] = tex;
       // ...,finally, updating the texture coordinates, step in which the texcoords
       // array is converted, this time using the new texture.
-      p3d.updateTexcoords();
+      p.updateTexcoords();
     } else {
       textures[unit] = tex;  
     }    
@@ -1208,7 +1208,7 @@ public class PShape3D extends PShape implements PConstants {
   
   
   protected void setColorImpl(float[] c) {
-    PShape3D p = (PShape3D)parent;
+    PShape3D p = (PShape3D)root;
     p.loadColors(firstVertex, lastVertex);
     for (int i = firstVertex; i <= lastVertex; i++) {
       p.set(i, c);
@@ -1247,7 +1247,7 @@ public class PShape3D extends PShape implements PConstants {
     
   
   protected void setNormalImpl(float[] n) {
-    PShape3D p = (PShape3D)parent;
+    PShape3D p = (PShape3D)root;
     p.loadNormals(firstVertex, lastVertex);
     for (int i = firstVertex; i <= lastVertex; i++) {
       p.set(i, n);
@@ -1316,7 +1316,7 @@ public class PShape3D extends PShape implements PConstants {
   
   ////////////////////////////////////////////////////////////  
   
-  // Bulk set methods.
+  // Bulk vertex operations.
   
   public void setVertices(ArrayList<PVector> vertexList) {
     loadVertices();
@@ -1370,6 +1370,141 @@ public class PShape3D extends PShape implements PConstants {
       addChild(child);   
     }
   }  
+  
+  
+  public void translateVertices(float tx, float ty) {
+    translateVertices(tx, ty, 0);
+  }
+
+
+  public void translateVertices(float tx, float ty, float tz) {
+    init();
+    
+    loadVertices();
+    
+    // Translating.
+    for (int i = 0; i < vertexCount; i++) {
+      vertices[3 * i + 0] += tx;
+      vertices[3 * i + 1] += -ty;
+      vertices[3 * i + 2] += tz;  
+    }
+    
+    updateVertices();
+  }  
+  
+  
+  public void rotateVerticesX(float angle) {
+    rotateVertices(angle, 1, 0, 0);
+  }
+
+
+  public void rotateVerticesY(float angle) {
+    rotateVertices(angle, 0, 1, 0);
+  }
+
+
+  public void rotateVerticesZ(float angle) {
+    rotateVertices(angle, 0, 0, 1);
+  }
+
+
+  public void rotateVertices(float angle) {
+    rotateVertices(angle, 0, 0, 1);
+  }
+
+
+  public void rotateVertices(float angle, float v0, float v1, float v2) {
+    init();
+
+    float norm2 = v0 * v0 + v1 * v1 + v2 * v2;
+    if (Math.abs(norm2 - 1) > EPSILON) {
+      // Normalizing rotation axis vector.
+      float norm = PApplet.sqrt(norm2);
+      v0 /= norm;
+      v1 /= norm;
+      v2 /= norm;
+    }
+    
+    // Rotating around the center of the object.
+    float cx = 0.5f * (xmin + xmax);
+    float cy = 0.5f * (ymin + ymax);
+    float cz = 0.5f * (zmin + zmax);
+    
+    // Rotation matrix
+    float c = PApplet.cos(angle);
+    float s = PApplet.sin(angle);
+    float t = 1.0f - c;
+    float[] m = new float[9];
+    m[0] = (t*v0*v0) + c;          // 0, 0
+    m[1] = (t*v0*v1) - (s*v2);     // 0, 1
+    m[2] = (t*v0*v2) + (s*v1);     // 0, 2 
+    m[3] = (t*v0*v1) + (s*v2);     // 1, 0
+    m[4] = (t*v1*v1) + c;          // 1, 1
+    m[5] = (t*v1*v2) - (s*v0);     // 1, 2
+    m[6] = (t*v0*v2) - (s*v1);     // 2, 0
+    m[7] = (t*v1*v2) + (s*v0);     // 2, 1 
+    m[8] = (t*v2*v2) + c;          // 2, 2
+
+    float x, y, z;
+    
+    loadVertices();    
+    for (int i = 0; i < vertexCount; i++) {
+      x = vertices[3 * i + 0] - cx; 
+      y = vertices[3 * i + 1] - cy;
+      z = vertices[3 * i + 2] - cz;      
+      
+      vertices[3 * i + 0] = m[0] * x + m[1] * y + m[2] * z + cx; 
+      vertices[3 * i + 1] = m[3] * x + m[4] * y + m[5] * z + cy;
+      vertices[3 * i + 2] = m[6] * x + m[7] * y + m[8] * z + cz;
+    }
+    updateVertices();
+    
+    // Re-centering, because of loss of precision when applying the
+    // rotation matrix, the center of rotation moves slightly so 
+    // after many consecutive rotations the object might translate
+    // significantly.
+    centerAt(cx, cy, cz);
+    
+    // The normals also need to be rotated to reflect the new orientation 
+    //of the faces.
+    loadNormals();
+    for (int i = 0; i < vertexCount; i++) {
+      x = normals[3 * i + 0]; 
+      y = normals[3 * i + 1];
+      z = normals[3 * i + 2];      
+      
+      normals[3 * i + 0] = m[0] * x + m[1] * y + m[2] * z + cx; 
+      normals[3 * i + 1] = m[3] * x + m[4] * y + m[5] * z + cy;
+      normals[3 * i + 2] = m[6] * x + m[7] * y + m[8] * z + cz;
+    }            
+    updateNormals();    
+  }
+
+  
+  public void scaleVertices(float s) {
+    scaleVertices(s, s, s);
+  }
+
+
+  public void scaleVertices(float sx, float sy) {
+    scaleVertices(sx, sy, 1);
+  }
+
+
+  public void scaleVertices(float x, float y, float z) {
+    init();
+    
+    loadVertices();
+    
+    // Scaling.
+    for (int i = 0; i < vertexCount; i++) {
+      vertices[3 * i + 0] *= x;
+      vertices[3 * i + 1] *= y;
+      vertices[3 * i + 2] *= z;  
+    }    
+    
+    updateVertices();       
+  }
   
   
   ////////////////////////////////////////////////////////////  
@@ -1659,141 +1794,6 @@ public class PShape3D extends PShape implements PConstants {
   }
   
   
-  public void translate(float tx, float ty) {
-    translate(tx, ty, 0);
-  }
-
-
-  public void translate(float tx, float ty, float tz) {
-    init();
-    
-    loadVertices();
-    
-    // Translating.
-    for (int i = 0; i < vertexCount; i++) {
-      vertices[3 * i + 0] += tx;
-      vertices[3 * i + 1] += -ty;
-      vertices[3 * i + 2] += tz;  
-    }
-    
-    updateVertices();
-  }  
-  
-  
-  public void rotateX(float angle) {
-    rotate(angle, 1, 0, 0);
-  }
-
-
-  public void rotateY(float angle) {
-    rotate(angle, 0, 1, 0);
-  }
-
-
-  public void rotateZ(float angle) {
-    rotate(angle, 0, 0, 1);
-  }
-
-
-  public void rotate(float angle) {
-    rotate(angle, 0, 0, 1);
-  }
-
-
-  public void rotate(float angle, float v0, float v1, float v2) {
-    init();
-
-    float norm2 = v0 * v0 + v1 * v1 + v2 * v2;
-    if (Math.abs(norm2 - 1) > EPSILON) {
-      // Normalizing rotation axis vector.
-      float norm = PApplet.sqrt(norm2);
-      v0 /= norm;
-      v1 /= norm;
-      v2 /= norm;
-    }
-    
-    // Rotating around the center of the object.
-    float cx = 0.5f * (xmin + xmax);
-    float cy = 0.5f * (ymin + ymax);
-    float cz = 0.5f * (zmin + zmax);
-    
-    // Rotation matrix
-    float c = PApplet.cos(angle);
-    float s = PApplet.sin(angle);
-    float t = 1.0f - c;
-    float[] m = new float[9];
-    m[0] = (t*v0*v0) + c;          // 0, 0
-    m[1] = (t*v0*v1) - (s*v2);     // 0, 1
-    m[2] = (t*v0*v2) + (s*v1);     // 0, 2 
-    m[3] = (t*v0*v1) + (s*v2);     // 1, 0
-    m[4] = (t*v1*v1) + c;          // 1, 1
-    m[5] = (t*v1*v2) - (s*v0);     // 1, 2
-    m[6] = (t*v0*v2) - (s*v1);     // 2, 0
-    m[7] = (t*v1*v2) + (s*v0);     // 2, 1 
-    m[8] = (t*v2*v2) + c;          // 2, 2
-
-    float x, y, z;
-    
-    loadVertices();    
-    for (int i = 0; i < vertexCount; i++) {
-      x = vertices[3 * i + 0] - cx; 
-      y = vertices[3 * i + 1] - cy;
-      z = vertices[3 * i + 2] - cz;      
-      
-      vertices[3 * i + 0] = m[0] * x + m[1] * y + m[2] * z + cx; 
-      vertices[3 * i + 1] = m[3] * x + m[4] * y + m[5] * z + cy;
-      vertices[3 * i + 2] = m[6] * x + m[7] * y + m[8] * z + cz;
-    }
-    updateVertices();
-    
-    // Re-centering, because of loss of precision when applying the
-    // rotation matrix, the center of rotation moves slightly so 
-    // after many consecutive rotations the object might translate
-    // significantly.
-    centerAt(cx, cy, cz);
-    
-    // The normals also need to be rotated to reflect the new orientation 
-    //of the faces.
-    loadNormals();
-    for (int i = 0; i < vertexCount; i++) {
-      x = normals[3 * i + 0]; 
-      y = normals[3 * i + 1];
-      z = normals[3 * i + 2];      
-      
-      normals[3 * i + 0] = m[0] * x + m[1] * y + m[2] * z + cx; 
-      normals[3 * i + 1] = m[3] * x + m[4] * y + m[5] * z + cy;
-      normals[3 * i + 2] = m[6] * x + m[7] * y + m[8] * z + cz;
-    }            
-    updateNormals();    
-  }
-
-  
-  public void scale(float s) {
-    scale(s, s, s);
-  }
-
-
-  public void scale(float sx, float sy) {
-    scale(sx, sy, 1);
-  }
-
-
-  public void scale(float x, float y, float z) {
-    init();
-    
-    loadVertices();
-    
-    // Scaling.
-    for (int i = 0; i < vertexCount; i++) {
-      vertices[3 * i + 0] *= x;
-      vertices[3 * i + 1] *= y;
-      vertices[3 * i + 2] *= z;  
-    }    
-    
-    updateVertices();       
-  }
-  
-  
   public void centerAt(float cx, float cy, float cz) {
     loadVertices();
     
@@ -1871,16 +1871,12 @@ public class PShape3D extends PShape implements PConstants {
 
   protected void drawGroup(PGraphics g) {
     init();
-    
-    if (children == null) {
-      addDefaultChild();
-    }
     super.drawGroup(g);
   }
 
 
   protected void drawGeometry(PGraphics g) {
-    PShape3D p3d = (PShape3D)parent;
+    PShape3D p = (PShape3D)root;
     int numTextures;
     float pointSize;
 
@@ -1899,17 +1895,17 @@ public class PShape3D extends PShape implements PConstants {
     }
     
     gl.glEnableClientState(GL11.GL_NORMAL_ARRAY);
-    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, p3d.glNormalBufferID);
+    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, p.glNormalBufferID);
     gl.glNormalPointer(GL11.GL_FLOAT, 0, 0);    
 
     if (style) {
       gl.glEnableClientState(GL11.GL_COLOR_ARRAY);
-      gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, p3d.glColorBufferID);
+      gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, p.glColorBufferID);
       gl.glColorPointer(4, GL11.GL_FLOAT, 0, 0);
     }        
 
     gl.glEnableClientState(GL11.GL_VERTEX_ARRAY);            
-    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, p3d.glVertexBufferID);
+    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, p.glVertexBufferID);
     gl.glVertexPointer(3, GL11.GL_FLOAT, 0, 0);
 
     numTextures = 0;
@@ -1934,7 +1930,7 @@ public class PShape3D extends PShape implements PConstants {
         }
       }
     }
-    
+
     if (0 < numTextures)  {        
       if (pointSprites) {
         // Texturing with point sprites.
@@ -1967,7 +1963,7 @@ public class PShape3D extends PShape implements PConstants {
         gl.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
         for (int t = 0; t < numTextures; t++) {
           gl.glClientActiveTexture(GL11.GL_TEXTURE0 + t);
-          gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, p3d.glTexCoordBufferID[t]);
+          gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, p.glTexCoordBufferID[t]);
           gl.glTexCoordPointer(2, GL11.GL_FLOAT, 0, 0);
         }          
         if (1 < numTextures) {

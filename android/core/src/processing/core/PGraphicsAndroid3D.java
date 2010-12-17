@@ -3431,7 +3431,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   // MATRIX STACK
 
   public void pushMatrix() {
-    gl.glPushMatrix();    
+    gl.glPushMatrix();  
     if (usingGLMatrixStack) {
       if (projectionMode) {
         projectionStack.push();         
@@ -3477,7 +3477,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         modelviewStack.translate(tx, ty, tz); 
         modelviewUpdated = false;
       }
-    }    
+    } 
   }
 
   /**
@@ -3540,7 +3540,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     if (manipulatingCamera) {
       scalingDuringCamManip = true;
     }
-    gl.glScalef(x, y, z);    
+    gl.glScalef(x, y, z);
     if (usingGLMatrixStack) {
       if (projectionMode) {
         projectionStack.scale(x, y, z);
@@ -3622,16 +3622,11 @@ public class PGraphicsAndroid3D extends PGraphics {
     if (usingGLMatrixStack) {
       if (projectionMode) {
         projectionStack.mult(mat);
+        projectionUpdated = false;
       } else {
         modelviewStack.mult(mat);
+        modelviewUpdated = false;   
       }
-    }    
-    
-    if (projectionMode) {
-      getProjectionMatrix();
-    } else {
-      getModelviewMatrix();
-      calculateModelviewInverse();
     }
   }
 

@@ -133,6 +133,7 @@ public class PShape implements PConstants {
   // should this be called vertices (consistent with PGraphics internals)
   // or does that hurt flexibility?
 
+  protected PShape root;
   protected PShape parent;
   protected int childCount;
   protected PShape[] children;
@@ -693,6 +694,11 @@ public class PShape implements PConstants {
     }
     children[childCount++] = who;
     who.parent = this;
+    if (who.parent.root == null) {
+      who.root = this;
+    } else {
+      who.root = who.parent.root; 
+    }
 
     if (who.getName() != null) {
       addName(who.getName(), who);
