@@ -17,16 +17,18 @@ support is somewhat broken. So with that caveat, no whining, please.
 
 On a happier note, the changes:
 
-[ android additions from andres ] 
+[ android fixes ] 
 
 + Compile android-core with Java 5 as the target so that it works on OS X 10.5.
+
+[ additions from andres ] 
 
 + A3D should use lower color depth on older devices.
   http://code.google.com/p/processing/issues/detail?id=391
 
 + New API for begin/endRecord().
 
-+ Finish opengl blending modes in A3D
++ Finish OpenGL blending modes in A3D
   http://code.google.com/p/processing/issues/detail?id=290
 
 + Automatic normal calculation in A3D
@@ -65,7 +67,7 @@ On a happier note, the changes:
 + AutoFormat unecessarily adds spaces to function with multiple args
   http://code.google.com/p/processing/issues/detail?id=462
 
-[ edits from lonnen ] 
+[ edits from Lonnen ] 
 
 + Fix for disappearing horizontal scroll bar regression
   http://code.google.com/p/processing/issues/detail?id=316
