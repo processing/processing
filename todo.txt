@@ -1,40 +1,18 @@
-0192
-J Getting error: Syntax error on token "else", } expected
-J   http://code.google.com/p/processing/issues/detail?id=400
-L disappearing horizontal scroll bar
-L   appears to have become much worse with the other scrollbar fix
-L   ...which itself doesn't seem to be working properly
-L   http://code.google.com/p/processing/issues/detail?id=316
-J Autoformat bug (new java "for loop" syntax)
-J   http://code.google.com/p/processing/issues/detail?id=420
-J matching brace problem in PDE
-J   http://code.google.com/p/processing/issues/detail?id=417
-J fix syntax highlighting of focusGained and others
-J   http://dev.processing.org/bugs/show_bug.cgi?id=659
-J   http://code.google.com/p/processing/issues/detail?id=82
-J compiling with static final global variable
-J   http://code.google.com/p/processing/issues/detail?id=427
-X don't let PDE open sketches with bad names (reported by max)
-L Properly enforce the editors minimum size
-L   http://code.google.com/p/processing/issues/detail?id=451
-L Patch: Processing IDE destroys symbolic links
-L   http://code.google.com/p/processing/issues/detail?id=432
-L Processing cannot run because it could not ... store your settings.
-L   http://code.google.com/p/processing/issues/detail?id=410
-J AutoFormat unecessarily adds spaces to function with multiple args
-J   http://code.google.com/p/processing/issues/detail?id=462
-X fix for linux build script (thanks to Kevin Keraudren)
-X   http://code.google.com/p/processing/issues/detail?id=466
-o occasional exception in "copy for discourse"
-o   http://dev.processing.org/bugs/show_bug.cgi?id=729
+0193
+
+
+[ from the major refactoring work, not in trunk ] 
+
+_ export is broken in 0192
+_   http://code.google.com/p/processing/issues/detail?id=487
+
+fixed in 0192
+J auto-format screws up if/else/else if blocks
+J   http://code.google.com/p/processing/issues/detail?id=325
+L Exported libraries don't mantain symbolic links
+L   http://code.google.com/p/processing/issues/detail?id=353
 
 fixed earlier
-X should really be doing the 'right' thing with sketch file handling
-X   create temporary file when saving
-X   once done writing, use remove the original and rename the old
-X   some basic stuff like this..
-X   http://dev.processing.org/bugs/show_bug.cgi?id=968
-X   http://code.google.com/p/processing/issues/detail?id=127
 o add to mac reference for present mode
 o   can make full screen work via Info.plist key
 o   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1135921427;start=7#7
@@ -57,7 +35,25 @@ o   message(new String(b, offset, length), err, false);
 o   http://code.google.com/p/processing/issues/detail?id=197
 X   couldn't find a good way to reproduce this, closing
 
-<<<<<<< .mine
++ Removed build.path from preferences.txt.
+  Not really used anywhere, just trying to clean things up.
+
++ Removed 'console.output.file' and 'console.error.file'.
+  These weren't respected as paths, no reason for them.
+
++ Change console to write to the 'console/' folder in settings. 
+  This may eventually create a problem with logs that need to be cleaned, 
+  but we'll keep an eye on it for now.
+
++ Removed 'console' true/false from preferences.
+
++ Cannot reproduce problem with wrong character encoding in the console.
+  http://code.google.com/p/processing/issues/detail?id=197
+
+_ casey's vote:
+_   Standard, Android, JavaScript, Jython
+_   or: Processing, Android, Processing.js, Processing.py
+
 for the examples menu
 top level directories will be grayed out categories
   Basics, Topics, 3D, Books, Libraries, Contributed Libraries
@@ -88,36 +84,6 @@ _   we can have something that takes care of auto-copying per-mode examples
 _ on linux, mozilla shouldn't be the default browser anymore
 _   is there a way to query the default browser? gnome-open? xdg-open?
 
-=======
-for the examples menu
-top level directories will be grayed out categories
-  Basics, Topics, 3D, Books, Libraries, Contributed Libraries
-'book' examples will be another category
-  i'll add vida examples, can offer to others if they want
-  should be "Getting Started" not GettingStarted
-tempting to make an 'examples' button on the toolbar?
-  rather than merging things in an awkward way
-also, move open to a submenu? 
-  then we'd have open / recent / sketchbook
-
-change 'export' to 'export applet'
-android will be "Export Project", "Export Release Application"
-  along with "Run in Emulator" and "Run on Device"
-
-_ note for reference: auto-format has been moved to edit
-_   this might be the same as arduino?
-
-We're making an assumption that the idea of a "library" refers to a block of Java-based code. The reasoning is that from within the PDE, we anticipate that it will be Java-compatible versions of other languages (such as Jython, JRuby, or Scala) as opposed to more generic languages. In the future we could open this up, but we'd rather not complicate things for the moment.
-
-_ opt for separate examples/sketchbook/libraries for each mode
-_   better to put the onus on the mode developers than users
-_   and rather than trying to figure out a complicated scheme for inclusion
-_   we can have something that takes care of auto-copying per-mode examples
-
-_ on linux, mozilla shouldn't be the default browser anymore
-_   is there a way to query the default browser? gnome-open? xdg-open?
-
->>>>>>> .r7521
 _ TextAreaDefaults
 _   is editable in use?
 _   what's electricScroll?
@@ -129,8 +95,6 @@ _   in Editor, textarea.requestFocus -> requestFocusInWindow, watch the bool
 _ EditorToolbar, two TODO items for open menu handling
 
 libraries
-o Exported libraries don't mantain symbolic links
-o   http://code.google.com/p/processing/issues/detail?id=353
 _ need to deal with classpath conflicts
 _   avoid garbage that people have installed on their machines
 _   antlr.jar in the classpath will cause trouble.. 
@@ -1303,8 +1267,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=503
 
 TOOLS / Auto Format
 
-_ auto-format screws up if/else/else if blocks
-_   http://code.google.com/p/processing/issues/detail?id=325
 _ do a better job of maintaining cursor during beautify 
 _   jdf says: a specification would help here!
 _ only auto format a particular section of code

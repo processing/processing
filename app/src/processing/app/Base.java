@@ -43,9 +43,9 @@ import processing.mode.java.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
-  static final int REVISION = 192;
+  static final int REVISION = 193;
   /** This might be replaced by main() if there's a lib/version.txt file. */
-  static public String VERSION_NAME = "0192";
+  static public String VERSION_NAME = "0193";
   /** Set true if this a proper release rather than a numbered revision. */
   static public boolean RELEASE = false;
   /** True if heavy debugging error/log messages are enabled */
@@ -89,7 +89,7 @@ public class Base {
 
   Mode[] modeList;
   Mode defaultMode = new JavaMode(this, getContentFile("modes/java"));
-  
+
   static JMenu sketchbookMenu;
 
   protected File sketchbookFolder;
@@ -154,8 +154,8 @@ public class Base {
       untitledFolder.deleteOnExit();
     } catch (IOException e) {
       //e.printStackTrace();
-      Base.showError("Trouble without a name", 
-                     "Could not create a place to store untitled sketches.\n" + 
+      Base.showError("Trouble without a name",
+                     "Could not create a place to store untitled sketches.\n" +
                      "That's gonna prevent us from continuing.", e);
     }
 
@@ -192,8 +192,8 @@ public class Base {
                      "platform-specific code for your machine.", e);
     }
   }
-  
-  
+
+
   static protected void initRequirements() {
     try {
       Class.forName("com.sun.jdi.VirtualMachine");
@@ -215,7 +215,7 @@ public class Base {
     toolsFolder = getContentFile("tools");
 
     // Get the sketchbook path, and make sure it's set properly
-    determineSketchbookFolder(); 
+    determineSketchbookFolder();
 
     // Check if there were previously opened sketches to be restored
     boolean opened = restoreSketches();
@@ -253,11 +253,11 @@ public class Base {
       new UpdateCheck(this);
     }
   }
-  
-  
+
+
   /**
-   * Single location for the default extension, rather than hardwiring .pde 
-   * all over the place. While it may seem like fun to send the Arduino guys 
+   * Single location for the default extension, rather than hardwiring .pde
+   * all over the place. While it may seem like fun to send the Arduino guys
    * on a treasure hunt, it gets old after a while.
    */
   static protected String getExtension() {
@@ -448,7 +448,7 @@ public class Base {
     menuItem.setAccelerator(KeyStroke.getKeyStroke(what, modifiers));
     return menuItem;
   }
-  
+
 
   static public void addDisabledItem(JMenu menu, String title) {
     JMenuItem item = new JMenuItem(title);
@@ -476,7 +476,7 @@ public class Base {
     // set the current window to be the console that's getting output
     EditorConsole.setEditor(activeEditor);
 
-    // make this the next mode to be loaded 
+    // make this the next mode to be loaded
     defaultMode = whichEditor.getMode();
   }
 
@@ -523,11 +523,11 @@ public class Base {
       }
     }
   }
-  
+
 
 //  /**
 //   * Return the same mode as the active editor, or the default mode, which
-//   * begins as Java/Standard, but is updated with the last mode used. 
+//   * begins as Java/Standard, but is updated with the last mode used.
 //   */
 //  protected Mode nextEditorMode() {
 //    return (activeEditor == null) ? defaultMode : activeEditor.getMode();
@@ -733,11 +733,11 @@ public class Base {
 
     File file = new File(path);
     if (!file.exists()) return null;
-    
+
     if (!Sketch.isSanitaryName(file.getName())) {
       Base.showWarning("You're tricky, but not tricky enough",
                        file.getName() + " is not a valid name for a sketch.\n" +
-                       "Better to stick to ASCII, no spaces, and make sure\n" + 
+                       "Better to stick to ASCII, no spaces, and make sure\n" +
                        "it doesn't start with a number.", null);
       return null;
     }
@@ -817,7 +817,7 @@ public class Base {
 //      if (Preferences.getBoolean("sketchbook.closing_last_window_quits") ||
 //          (editor.untitled && !editor.getSketch().isModified())) {
       if (Base.isMacOS()) {
-        // If the central menubar isn't supported on this OS X JVM, 
+        // If the central menubar isn't supported on this OS X JVM,
         // we have to do the old behavior. Yuck!
         if (defaultFileMenu == null) {
           Object[] options = { "OK", "Cancel" };
@@ -1285,7 +1285,7 @@ public class Base {
 
 
   /**
-   * Create a temporary folder by using the createTempFile() mechanism, 
+   * Create a temporary folder by using the createTempFile() mechanism,
    * deleting the file it creates, and making a folder using the location
    * that was provided.
    */
@@ -1302,7 +1302,7 @@ public class Base {
 //  static public String getExamplesPath() {
 //    return examplesFolder.getAbsolutePath();
 //  }
-  
+
 //  public File getExamplesFolder() {
 //    return examplesFolder;
 //  }
@@ -1311,8 +1311,8 @@ public class Base {
 //  static public String getLibrariesPath() {
 //    return librariesFolder.getAbsolutePath();
 //  }
-  
-  
+
+
 //  public File getLibrariesFolder() {
 //    return librariesFolder;
 //  }
@@ -1355,7 +1355,7 @@ public class Base {
       }
     }
   }
-    
+
 
   public File getSketchbookFolder() {
 //    return new File(Preferences.get("sketchbook.path"));
@@ -1399,7 +1399,7 @@ public class Base {
    * Check for a new sketchbook location.
    */
   static protected File promptSketchbookLocation() {
-    // Most often this will happen on Linux, so default to their home dir. 
+    // Most often this will happen on Linux, so default to their home dir.
     File folder = new File(System.getProperty("user.home"), "sketchbook");
     String prompt = "Select (or create new) folder for sketches...";
     folder = Base.selectFolder(prompt, folder, null);
@@ -2112,7 +2112,7 @@ public class Base {
     return outgoing;
   }
 
-  
+
   static public String[] listFiles(File folder, boolean relative, String extension) {
     String path = folder.getAbsolutePath();
     Vector<String> vector = new Vector<String>();
@@ -2129,7 +2129,7 @@ public class Base {
 
 
   static protected void listFiles(String basePath,
-                                  String path, String extension, 
+                                  String path, String extension,
                                   Vector<String> vector) {
     File folder = new File(path);
     String[] list = folder.list();

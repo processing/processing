@@ -52,7 +52,7 @@ public class Build {
 
   // what happens in the build, stays in the build.
   // (which is to say that everything below this line, stays within this class)
-  
+
 =======
 >>>>>>> .r7521
   private File srcFolder;
@@ -63,7 +63,7 @@ public class Build {
 <<<<<<< .mine
   /**
    * This will include the code folder, any library folders, etc. that might
-   * contain native libraries that need to be picked up with java.library.path. 
+   * contain native libraries that need to be picked up with java.library.path.
    * This is *not* the "Processing" libraries path, this is the Java libraries
    * path, as in java.library.path=BlahBlah, which identifies search paths for
    * DLLs or JNILIBs. (It's Java's LD_LIBRARY_PATH, for you UNIX fans.)
@@ -93,8 +93,8 @@ public class Build {
     this.sketch = editor.getSketch();
 >>>>>>> .r7521
   }
-  
-  
+
+
   /**
    * Cleanup temporary files used during a build/run.
    */
@@ -147,7 +147,7 @@ public class Build {
    */
 //  public String build() throws RunnerException {
 //    try {
-//      File folder = Base.createTempFolder(name, "classes"); 
+//      File folder = Base.createTempFolder(name, "classes");
 //      return build(folder.getAbsolutePath());
 //    } catch (IOException e) {
 //      throw new RuntimeException(e);
@@ -215,8 +215,8 @@ public class Build {
   public String preprocess(File srcFolder) throws SketchException {
     return preprocess(srcFolder, null, new PdePreprocessor(sketch.getName()));
 =======
-  
-  
+
+
   public String preprocess(File srcFolder) throws SketchException {
     return preprocess(srcFolder, null, new PdePreprocessor(name));
 >>>>>>> .r7521
@@ -227,10 +227,10 @@ public class Build {
    * @param srcFolder location where the .java source files will be placed
    * @param packageName null, or the package name that should be used as default
    * @param preprocessor the preprocessor object ready to do the work
-   * @return main PApplet class name found during preprocess, or null if error 
+   * @return main PApplet class name found during preprocess, or null if error
    * @throws SketchException
    */
-  public String preprocess(File srcFolder, 
+  public String preprocess(File srcFolder,
                            String packageName,
                            PdePreprocessor preprocessor) throws SketchException {
     // make sure the user isn't playing "hide the sketch folder"
@@ -416,11 +416,11 @@ public class Build {
           javaLibraryPath += File.pathSeparator + library.getNativePath();
         }
       } else {
-        // Don't bother complaining about java.* or javax.* because it's 
+        // Don't bother complaining about java.* or javax.* because it's
         // probably in boot.class.path. But we're not checking against that
         // path since it's enormous. Unfortunately we do still have to check
-        // for libraries that begin with a prefix like javax, since that 
-        // includes the OpenGL library. 
+        // for libraries that begin with a prefix like javax, since that
+        // includes the OpenGL library.
         if (!item.startsWith("java.") && !item.startsWith("javax.")) {
           System.err.println("No library found for " + entry);
         }
@@ -428,7 +428,7 @@ public class Build {
     }
 //    PApplet.println(PApplet.split(libraryPath, File.pathSeparatorChar));
 
-    // Finally, add the regular Java CLASSPATH. This contains everything 
+    // Finally, add the regular Java CLASSPATH. This contains everything
     // imported by the PDE itself (core.jar, pde.jar, quaqua.jar) which may
     // in fact be more of a problem.
     String javaClassPath = System.getProperty("java.class.path");
@@ -445,21 +445,21 @@ public class Build {
       if (sc.isExtension("java")) {
         // In most cases, no pre-processing services necessary for Java files.
         // Just write the the contents of 'program' to a .java file
-        // into the build directory. However, if a default package is being 
-        // used (as in Android), and no package is specified in the source, 
+        // into the build directory. However, if a default package is being
+        // used (as in Android), and no package is specified in the source,
         // then we need to move this code to the same package as the sketch.
         // Otherwise, the class may not be found, or at a minimum, the default
         // access across the packages will mean that things behave incorrectly.
         // For instance, desktop code that uses a .java file with no packages,
         // will be fine with the default access, but since Android's PApplet
-        // requires a package, code from that (default) package (such as the 
-        // PApplet itself) won't have access to methods/variables from the 
+        // requires a package, code from that (default) package (such as the
+        // PApplet itself) won't have access to methods/variables from the
         // package-less .java file (unless they're all marked public).
         String filename = sc.getFileName();
         try {
           String javaCode = sc.getProgram();
           String[] packageMatch = PApplet.match(javaCode, PACKAGE_REGEX);
-          // if no package, and a default package is being used 
+          // if no package, and a default package is being used
           // (i.e. on Android) we'll have to add one
 
           if (packageMatch == null && packageName == null) {
@@ -493,7 +493,7 @@ public class Build {
   }
 
 
-  /** 
+  /**
    * Path to the folder that will contain processed .java source files. Not
    * the location for .pde files, since that can be obtained from the sketch.
    */
@@ -505,15 +505,15 @@ public class Build {
   public File getBinFolder() {
     return binFolder;
   }
-  
-  
+
+
   /** Class path determined during build. */
   public String getClassPath() {
     return classPath;
   }
 
 
-  /** 
+  /**
    * Whether the preprocessor found a main() method. If main() is found, then
    * it will be used to launch the sketch instead of PApplet.main().
    */
@@ -521,7 +521,7 @@ public class Build {
     return foundMain;
   }
 
-  
+
   /**
    * Get the list of imported libraries. Used by external tools like Android mode.
    * @return list of library folders connected to this sketch.
@@ -652,24 +652,15 @@ public class Build {
   /**
    * Handle export to applet.
    */
-<<<<<<< .mine
   public boolean exportApplet(File appletFolder) throws SketchException, IOException {
     sketch.prepareBuild(appletFolder);
     srcFolder = sketch.makeTempFolder();
     binFolder = sketch.makeTempFolder();
-=======
-  public boolean exportApplet(File appletFolder) throws SketchException, IOException {
-    sketch.prepareBuild(appletFolder);
-    File srcFolder = sketch.makeTempBuildFolder();
-    File binFolder = sketch.makeTempBuildFolder();
->>>>>>> .r7521
-//    srcFolder.deleteOnExit();
-//    binFolder.deleteOnExit();
     String foundName = build(srcFolder, binFolder);
 
     // (already reported) error during export, exit this function
     if (foundName == null) return false;
-    
+
     // If name != exportSketchName, then that's weirdness
     // BUG unfortunately, that can also be a bug in the preproc :(
     if (!sketch.getName().equals(foundName)) {
@@ -777,7 +768,7 @@ public class Build {
     addManifest(zos);
 
     if (codeFolder.exists()) {
-      File[] codeJarFiles = codeFolder.listFiles(new FilenameFilter() {        
+      File[] codeJarFiles = codeFolder.listFiles(new FilenameFilter() {
         public boolean accept(File dir, String name) {
           if (name.charAt(0) == '.') return false;
           if (name.toLowerCase().endsWith(".jar")) return true;
@@ -790,7 +781,7 @@ public class Build {
       }
     }
 
-    File openglLibraryFolder = 
+    File openglLibraryFolder =
       new File(Base.getLibrariesPath(), "opengl/library");
     String openglLibraryPath = openglLibraryFolder.getAbsolutePath();
     boolean openglApplet = false;
@@ -924,7 +915,7 @@ public class Build {
 //    for (File libraryFolder : importedLibraries) {
 //      System.out.println(libraryFolder + " " + libraryFolder.getAbsolutePath());
 //    }
-    // If the renderer is set to the built-in OpenGL library, 
+    // If the renderer is set to the built-in OpenGL library,
     // then it's definitely an OpenGL applet.
     if (renderer.equals("OPENGL")) {
       openglApplet = true;
@@ -1243,7 +1234,7 @@ public class Build {
 
 
 //  public boolean exportApplication(String destPath,
-//                                   String platformName, 
+//                                   String platformName,
 //                                   int exportBits) throws IOException, RunnerException {
 //    return exportApplication(destPath, Base.getPlatformIndex(platformName), exportBits);
 //  }
@@ -1253,7 +1244,7 @@ public class Build {
    * Export to application without GUI.
    */
   public boolean exportApplication(String destPath,
-                                   int exportPlatform, 
+                                   int exportPlatform,
                                    int exportBits) throws IOException, SketchException {
     File destFolder = new File(destPath);
     prepareExport(destFolder);
@@ -1377,17 +1368,17 @@ public class Build {
     if (codeFolder.exists()) {
       String includes = Compiler.contentsToClassPath(codeFolder);
       // Use tokens to get rid of extra blanks, which causes huge exports
-      String[] codeList = PApplet.splitTokens(includes, File.separator);
+      String[] codeList = PApplet.splitTokens(includes, File.pathSeparator);
       String cp = "";
       for (int i = 0; i < codeList.length; i++) {
         if (codeList[i].toLowerCase().endsWith(".jar") ||
             codeList[i].toLowerCase().endsWith(".zip")) {
-          File exportFile = new File(codeFolder, codeList[i]);
+          File exportFile = new File(codeList[i]);
           String exportFilename = exportFile.getName();
           Base.copyFile(exportFile, new File(jarFolder, exportFilename));
           jarListVector.add(exportFilename);
         } else {
-          cp += codeList[i] + File.separatorChar;
+          cp += codeList[i] + File.pathSeparator;
         }
       }
       packClassPathIntoZipFile(cp, zos, zipFileContents);
@@ -1412,7 +1403,7 @@ public class Build {
 
     for (JavaLibrary library : importedLibraries) {
       // add each item from the library folder / export list to the output
-      for (File exportFile : library.getApplicationExports(exportPlatform, exportBits)) { 
+      for (File exportFile : library.getApplicationExports(exportPlatform, exportBits)) {
         String exportName = exportFile.getName();
 //      String[] exportList = library.getExports(exportPlatform, exportBits);
 //      for (String item : exportList) {
@@ -1605,7 +1596,7 @@ public class Build {
 //                         "You'll need to remove it by hand.", null);
 //      }
 //    }
-    // these will now be removed automatically via the temp folder deleteOnExit() 
+    // these will now be removed automatically via the temp folder deleteOnExit()
 
 
     /// goodbye
@@ -1624,8 +1615,8 @@ public class Build {
     zos.write(contents.getBytes());
     zos.closeEntry();
   }
-  
-  
+
+
   protected void addClasses(ZipOutputStream zos, File dir) throws IOException {
     addClasses(zos, dir, dir.getAbsolutePath());
   }

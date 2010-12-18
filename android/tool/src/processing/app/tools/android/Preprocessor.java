@@ -28,11 +28,11 @@ import java.util.List;
 
 import processing.app.Base;
 import processing.app.Preferences;
-import processing.app.SketchException;
 import processing.app.Sketch;
+import processing.app.debug.RunnerException;
+import processing.app.preproc.PdePreprocessor;
+import processing.app.preproc.PreprocessResult;
 import processing.core.PApplet;
-import processing.java.preproc.PdePreprocessor;
-import processing.java.preproc.PreprocessResult;
 import antlr.RecognitionException;
 import antlr.TokenStreamException;
 
@@ -112,8 +112,8 @@ public class Preprocessor extends PdePreprocessor {
   }
 
 
-  public PreprocessorResult write(Writer out, String program, String codeFolderPackages[])
-  throws SketchException, RecognitionException, TokenStreamException {
+  public PreprocessResult write(Writer out, String program, String codeFolderPackages[])
+  throws RunnerException, RecognitionException, TokenStreamException {
     if (sizeStatement != null) {
       int start = program.indexOf(sizeStatement);
       program = program.substring(0, start) + 
@@ -140,13 +140,13 @@ public class Preprocessor extends PdePreprocessor {
 
 
   protected void writeFooter(PrintWriter out, String className) {
-    if (mode == JavaMode.STATIC) {
+    if (mode == Mode.STATIC) {
       // close off draw() definition
       out.println("noLoop();");
       out.println(indent + "}");
     }
 
-    if ((mode == JavaMode.STATIC) || (mode == JavaMode.ACTIVE)) {
+    if ((mode == Mode.STATIC) || (mode == Mode.ACTIVE)) {
       out.println();
       if (sketchWidth != null) {
         out.println(indent + "public int sketchWidth() { return " + sketchWidth + "; }");

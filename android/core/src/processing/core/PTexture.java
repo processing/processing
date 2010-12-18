@@ -308,7 +308,10 @@ public class PTexture implements PConstants {
           level++;
           denom *= 2;
  
-          // Downsampling bitmap. This update formula allows for NPOT resolutions:
+          // Downsampling bitmap. We must eventually arrive to the 1x1 level,
+          // and if the width and height are different, there will be a few 1D
+          // texture levels just before. 
+          // This update formula also allows for NPOT resolutions.
           w0 = PApplet.max(1, PApplet.floor((float)glWidth / denom));
           h0 = PApplet.max(1, PApplet.floor((float)glHeight / denom));
           Bitmap bitmap2 = Bitmap.createScaledBitmap(bitmap, w0, h0, true);
@@ -942,6 +945,7 @@ public class PTexture implements PConstants {
     if (tempFbo == null) {
       tempFbo = new PFramebuffer(parent, glWidth, glHeight);
     }
+    
     // This texture is the color (destination) buffer of the FBO. 
     tempFbo.setColorBuffer(this);
     tempFbo.disableDepthTest();
@@ -971,10 +975,12 @@ public class PTexture implements PConstants {
   }
   
   protected void bind() {
+    gl.glEnable(glTarget);
     gl.glBindTexture(glTarget, glID);
   }
   
   protected void unbind() {
+    gl.glEnable(glTarget);
     gl.glBindTexture(glTarget, 0);    
   }
   
@@ -1083,7 +1089,7 @@ public class PTexture implements PConstants {
       glMagFilter = GL10.GL_LINEAR;
       glMinFilter = GL10.GL_LINEAR_MIPMAP_LINEAR;      
     } else {
-      throw new RuntimeException("GTexture: Unknown texture sampling mode");     
+      throw new RuntimeException("GTexture: Unknown texture filtering mode");     
     }
     
     if (params.wrapU == CLAMP) {
@@ -1119,8 +1125,8 @@ public class PTexture implements PConstants {
   }    
 
   
-  static public Parameters newParameters(int format, int filter) {
-    return new Parameters(format, filter);  
+  static public Parameters newParameters(int format, int sampling) {
+    return new Parameters(format, sampling);  
   }        
       
 
@@ -1145,7 +1151,7 @@ public class PTexture implements PConstants {
     public int format;
       
     /**
-     * Texture sampling (POINT, BILINEAR or TRILINEAR).
+     * Texture filtering (POINT, BILINEAR or TRILINEAR).
      */
     public int sampling;
     

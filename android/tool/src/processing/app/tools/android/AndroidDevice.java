@@ -8,13 +8,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import processing.app.debug.RunnerListener;
 import processing.app.exec.LineProcessor;
 import processing.app.exec.ProcessRegistry;
 import processing.app.exec.ProcessResult;
 import processing.app.exec.StreamPump;
 import processing.app.tools.android.LogEntry.Severity;
 import processing.core.PApplet;
-import processing.java.runner.RunnerListener;
 
 
 class AndroidDevice implements AndroidDeviceProperties {

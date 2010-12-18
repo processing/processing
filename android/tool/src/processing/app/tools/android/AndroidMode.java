@@ -39,9 +39,9 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
 import processing.app.*;
+import processing.app.debug.*;
 
 import processing.core.PApplet;
-import processing.java.runner.*;
 
 // http://dl.google.com/android/repository/repository.xml
 // http://dl.google.com/android/android-sdk_r3-mac.zip
@@ -504,9 +504,9 @@ public class AndroidMode implements DeviceListener {
         if (lm.find()) {
           final String filename = lm.group(1);
           final int lineNumber = Integer.parseInt(lm.group(2)) - 1;
-          final SketchException rex = editor.getSketch().placeException(
+          final RunnerException rex = editor.getSketch().placeException(
             exceptionLine, filename, lineNumber);
-          editor.statusError(rex == null ? new SketchException(exceptionLine,
+          editor.statusError(rex == null ? new RunnerException(exceptionLine,
                                                                false) : rex);
           return;
         }

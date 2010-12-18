@@ -28,6 +28,7 @@ import org.apache.tools.ant.*;
 
 import processing.app.*;
 import processing.app.exec.*;
+import processing.app.debug.RunnerException;
 import processing.core.PApplet;
 
 
@@ -69,14 +70,14 @@ class Build {
     try {
       manifest = new Manifest(editor);
       // grab code from current editing window (GUI only)
-      prepareRun();
+      sketch.prepare();
       // build the preproc and get to work
       Preprocessor preproc = new Preprocessor(sketch, getPackageName());
       if (!preproc.parseSketchSize()) {
         editor.statusError("Could not parse the size() command.");
         return null; 
       }
-      className = sketch.preprocess(srcFolder, 
+      className = sketch.preprocess(srcFolder.getAbsolutePath(), 
                                     manifest.getPackageName(), 
                                     preproc);
       if (className != null) {
@@ -112,10 +113,10 @@ class Build {
           }
         } catch (final IOException e) {
           e.printStackTrace();
-          throw new SketchException(e.getMessage());
+          throw new RunnerException(e.getMessage());
         }
       }
-    } catch (final SketchException e) {
+    } catch (final RunnerException e) {
       editor.statusError(e);
       return null;
     } catch (final IOException e) {
@@ -271,7 +272,7 @@ class Build {
             final int lineNumber = PApplet.parseInt(pieces[2]) - 1;
             // PApplet.println("looking for " + fileName + " line " +
             // lineNumber);
-            final SketchException rex = sketch.placeException(pieces[3],
+            final RunnerException rex = sketch.placeException(pieces[3],
               fileName, lineNumber);
             if (rex != null) {
               rex.hideStackTrace();
@@ -367,7 +368,7 @@ class Build {
   static final String ICON_36 = "icon-36.png";
 
   private void writeRes(File resFolder, 
-                        String className) throws SketchException {
+                        String className) throws RunnerException {
     File layoutFolder = mkdirs(resFolder, "layout");
     File layoutFile = new File(layoutFolder, "main.xml");
     writeResLayoutMain(layoutFile);
@@ -434,10 +435,10 @@ class Build {
 
   
   private File mkdirs(final File parent, final String name)
-      throws SketchException {
+      throws RunnerException {
     final File result = new File(parent, name);
     if (!(result.exists() || result.mkdirs())) {
-      throw new SketchException("Could not create " + result);
+      throw new RunnerException("Could not create " + result);
     }
     return result;
   }
@@ -475,7 +476,7 @@ class Build {
                               final File assetsFolder) throws IOException {
     // Copy any libraries to the 'libs' folder
     final Sketch sketch = editor.getSketch();
-    for (JavaLibrary library : sketch.getImportedLibraries()) {
+    for (LibraryFolder library : sketch.getImportedLibraries()) {
 	  File libraryFolder = new File(library.getPath());
       // in the list is a File object that points the
       // library sketch's "library" folder

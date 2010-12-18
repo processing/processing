@@ -24,7 +24,6 @@ package processing.core;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.EmptyStackException;
@@ -94,7 +93,10 @@ public class PGraphicsAndroid3D extends PGraphics {
   public PMatrix3D cameraInv;
   
   protected boolean modelviewUpdated;
+  protected boolean projectionUpdated;
 
+  protected boolean projectionMode = false;
+  
   protected boolean matricesAllocated = false;
 
   /**
@@ -356,8 +358,9 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // .......................................................
   
-  static protected boolean usingModelviewStack;    
+  static protected boolean usingGLMatrixStack;    
   static protected A3DMatrixStack modelviewStack;
+  static protected A3DMatrixStack projectionStack;
   
   // ........................................................
 
@@ -608,6 +611,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         int[] temp = { id };
         gl.glDeleteTextures(1, temp, 0);
       }
+      glTextureObjects.clear();
     }
     
     if (!glVertexBuffers.isEmpty()) {
@@ -616,7 +620,8 @@ public class PGraphicsAndroid3D extends PGraphics {
         int id = ((Integer)glids[i]).intValue();
         int[] temp = { id };
         gl11.glDeleteBuffers(1, temp, 0);
-      }      
+      }
+      glVertexBuffers.clear();
     }
     
     if (!glFrameBuffers.isEmpty()) {
@@ -625,7 +630,8 @@ public class PGraphicsAndroid3D extends PGraphics {
         int id = ((Integer)glids[i]).intValue();
         int[] temp = { id };
         gl11xp.glDeleteFramebuffersOES(1, temp, 0);
-      }      
+      }
+      glFrameBuffers.clear();
     }
     
     if (!glRenderBuffers.isEmpty()) {
@@ -635,6 +641,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         int[] temp = { id };
         gl11xp.glDeleteRenderbuffersOES(1, temp, 0);
       }
+      glRenderBuffers.clear();
     }
   }
   
@@ -667,7 +674,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   protected void copyFrameToScreenTexture() {
     gl.glFinish(); // Make sure that the execution off all the openGL commands
-                           // is finished.
+                   // is finished.
     loadTexture();    
   }
 
@@ -714,7 +721,10 @@ public class PGraphicsAndroid3D extends PGraphics {
     offscreenFramebuffer.addDepthBuffer(offscreenDepthBits);
     if (0 < offscreenStencilBits) {
       offscreenFramebuffer.addStencilBuffer(offscreenStencilBits); 
-    }    
+    }
+    
+    // The image texture points to the current offscreen texture.
+    texture = offscreenTextures[offscreenIndex]; 
   }
   
   
@@ -724,7 +734,10 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   
   protected void swapOffscreenIndex() {
-    offscreenIndex = (offscreenIndex + 1) % 2; 
+    offscreenIndex = (offscreenIndex + 1) % 2;
+    
+    // The image texture points to the current offscreen texture.
+    texture = offscreenTextures[offscreenIndex];
   }
   
   
@@ -794,6 +807,10 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     // Restoring fill
     if (fill) {
+      calcR = fillR;
+      calcG = fillG;
+      calcB = fillB;
+      calcA = fillA;
       fillFromCalc();  
     }    
 
@@ -1173,8 +1190,13 @@ public class PGraphicsAndroid3D extends PGraphics {
       setFramebuffer(screenFramebuffer);
     }    
     
-    if (usingModelviewStack && modelviewStack == null) {
-      modelviewStack = new  A3DMatrixStack();
+    if (usingGLMatrixStack) {
+      if (modelviewStack == null) {
+        modelviewStack = new  A3DMatrixStack();
+      }
+      if (projectionStack == null) {
+        projectionStack = new  A3DMatrixStack();
+      }      
     }     
     
     // easiest for beginners
@@ -1930,12 +1952,15 @@ public class PGraphicsAndroid3D extends PGraphics {
       shape.setVertices(recordedVertices);
       shape.setColors(recordedColors);
       shape.setNormals(recordedNormals);
+      
+      // We set children first because they contain the textures...
+      shape.setChildren(recordedChildren);
+      shape.optimizeChildren();           
+      // ... and then the texture coordinates.
       for (int t = 0; t < numRecordedTextures; t++) {        
         shape.setTexcoords(t, recordedTexCoords[t]);
       }
     
-      shape.setChildren(recordedChildren);
-      shape.optimizeChildren();
       
       // Releasing memory.
       recordedVertices.clear();
@@ -2511,7 +2536,7 @@ public class PGraphicsAndroid3D extends PGraphics {
           recordedColors.add(new float[] { a[R], a[G], a[B], a[A] });
           recordedNormals.add(new PVector(a[NX], a[NY], a[NZ]));
           for (int t = 0; t < numTextures; t++) {
-            recordedTexCoords[t].add(new PVector(renderUa[t], renderVa[t], 0.0f));
+            recordedTexCoords[t].add(new PVector(vertexU[na][t], vertexV[na][t], 0.0f));
           }
           // We need to add texture coordinate values for all the recorded vertices and all
           // texture units because even if this part of the recording doesn't use textures,
@@ -2544,7 +2569,7 @@ public class PGraphicsAndroid3D extends PGraphics {
           recordedColors.add(new float[] { b[R], b[G], b[B], b[A] });
           recordedNormals.add(new PVector(b[NX], b[NY], b[NZ]));
           for (int t = 0; t < numTextures; t++) {
-            recordedTexCoords[t].add(new PVector(renderUb[t], renderVb[t], 0.0f));
+            recordedTexCoords[t].add(new PVector(vertexU[nb][t], vertexV[nb][t], 0.0f));
           }
           // Idem to comment in section corresponding to vertex A.          
           for (int t = numTextures; t < maxTextureUnits; t++) {
@@ -2574,7 +2599,7 @@ public class PGraphicsAndroid3D extends PGraphics {
           recordedColors.add(new float[] { c[R], c[G], c[B], c[A] });
           recordedNormals.add(new PVector(c[NX], c[NY], c[NZ]));
           for (int t = 0; t < numTextures; t++) {
-            recordedTexCoords[t].add(new PVector(renderUc[t], renderVc[t], 0.0f));
+            recordedTexCoords[t].add(new PVector(vertexU[nc][t], vertexV[nc][t], 0.0f));
           }
           // Idem to comment in section corresponding to vertex A.          
           for (int t = numTextures; t < maxTextureUnits; t++) {
@@ -3203,7 +3228,6 @@ public class PGraphicsAndroid3D extends PGraphics {
       textFont.addAllGlyphsToTexture();
     }
     
-    gl.glEnable(GL10.GL_TEXTURE_2D);
     textFont.setFirstTexture();
 
     // Setting the current fill color as the font color.
@@ -3232,6 +3256,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       noBlend();
     }
     
+    gl.glBindTexture(GL10.GL_TEXTURE_2D, 0);   
     gl.glDisable(GL10.GL_TEXTURE_2D);    
   }
 
@@ -3406,18 +3431,27 @@ public class PGraphicsAndroid3D extends PGraphics {
   // MATRIX STACK
 
   public void pushMatrix() {
-    gl.glPushMatrix();    
-    if (usingModelviewStack) {
-      modelviewStack.push();
-    }
+    gl.glPushMatrix();  
+    if (usingGLMatrixStack) {
+      if (projectionMode) {
+        projectionStack.push();         
+      } else {          
+        modelviewStack.push();
+      }
+    }    
   }
 
   public void popMatrix() {
     gl.glPopMatrix();
-    if (usingModelviewStack) {
-      modelviewStack.pop();
+    if (usingGLMatrixStack) {
+      if (projectionMode) {
+        projectionStack.pop(); 
+        projectionUpdated = false;        
+      } else {          
+        modelviewStack.pop(); 
+        modelviewUpdated = false;
+      }
     }
-    modelviewUpdated = false;
   }
 
   // ////////////////////////////////////////////////////////////
@@ -3435,10 +3469,15 @@ public class PGraphicsAndroid3D extends PGraphics {
     // drawing the geometric primitives (vertex arrays), where a -1 scaling
     // along Y is applied.
     gl.glTranslatef(tx, ty, tz);
-    if (usingModelviewStack) {
-      modelviewStack.translate(tx, ty, tz);
-    }
-    modelviewUpdated = false;
+    if (usingGLMatrixStack) {
+      if (projectionMode) {
+        projectionStack.translate(tx, ty, tz);
+        projectionUpdated = false;        
+      } else {          
+        modelviewStack.translate(tx, ty, tz); 
+        modelviewUpdated = false;
+      }
+    } 
   }
 
   /**
@@ -3469,10 +3508,15 @@ public class PGraphicsAndroid3D extends PGraphics {
    */
   public void rotate(float angle, float v0, float v1, float v2) {
     gl.glRotatef(PApplet.degrees(angle), v0, v1, v2);
-    if (usingModelviewStack) {
-      modelviewStack.rotate(angle, v0, v1, v2);
-    }    
-    modelviewUpdated = false;
+    if (usingGLMatrixStack) {
+      if (projectionMode) {
+        projectionStack.rotate(angle, v0, v1, v2);
+        projectionUpdated = false;        
+      } else {          
+        modelviewStack.rotate(angle, v0, v1, v2); 
+        modelviewUpdated = false;
+      }
+    }
   }
 
   /**
@@ -3497,10 +3541,15 @@ public class PGraphicsAndroid3D extends PGraphics {
       scalingDuringCamManip = true;
     }
     gl.glScalef(x, y, z);
-    if (usingModelviewStack) {
-      modelviewStack.scale(x, y, z);
-    }    
-    modelviewUpdated = false;
+    if (usingGLMatrixStack) {
+      if (projectionMode) {
+        projectionStack.scale(x, y, z);
+        projectionUpdated = false;        
+      } else {          
+        modelviewStack.scale(x, y, z); 
+        modelviewUpdated = false;
+      }
+    }
   }
 
   public void shearX(float angle) {
@@ -3570,12 +3619,15 @@ public class PGraphicsAndroid3D extends PGraphics {
 
     gl.glMultMatrixf(mat, 0);
 
-    if (usingModelviewStack) {
-      modelviewStack.mult(mat);
-    }    
-    
-    getModelviewMatrix();
-    calculateModelviewInverse();
+    if (usingGLMatrixStack) {
+      if (projectionMode) {
+        projectionStack.mult(mat);
+        projectionUpdated = false;
+      } else {
+        modelviewStack.mult(mat);
+        modelviewUpdated = false;   
+      }
+    }
   }
 
   public void updateModelview() {
@@ -3590,17 +3642,10 @@ public class PGraphicsAndroid3D extends PGraphics {
       copyPMatrixToGLArray(modelviewInv, glmodelviewInv);
     }
     gl.glLoadMatrixf(glmodelview, 0);
-    if (usingModelviewStack) {
+    if (usingGLMatrixStack) {
       modelviewStack.set(glmodelview);
     }
     modelviewUpdated = true;
-  }
-
-  public void updateProjection() {
-    copyPMatrixToGLArray(projection, glprojection);
-    gl.glMatrixMode(GL10.GL_PROJECTION);
-    gl.glLoadMatrixf(glprojection, 0);
-    gl.glMatrixMode(GL10.GL_MODELVIEW);
   }
 
   public void updateCamera() {
@@ -3610,7 +3655,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     }    
     copyPMatrixToGLArray(camera, glmodelview);
     gl.glLoadMatrixf(glmodelview, 0);
-    if (usingModelviewStack) {
+    if (usingGLMatrixStack) {
       modelviewStack.set(glmodelview);
     }
     scalingDuringCamManip = true; // Assuming general transformation.
@@ -3741,6 +3786,43 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // ////////////////////////////////////////////////////////////
 
+  // PROJECTION
+
+  public void beginProjection() {
+    gl.glMatrixMode(GL10.GL_PROJECTION);
+    projectionMode = true;
+  }
+  
+  public void endProjection() {
+    gl.glMatrixMode(GL10.GL_MODELVIEW);
+    projectionMode = false;
+  }
+  
+  protected void getProjectionMatrix() {
+    if (usingGLMatrixStack) {
+      projectionStack.get(glprojection);
+    } else {
+      gl11.glGetFloatv(GL11.GL_PROJECTION_MATRIX, glprojection, 0);
+    }
+    copyGLArrayToPMatrix(glprojection, projection);
+    projectionUpdated = true;
+  }
+  
+  public void updateProjection() {
+    copyPMatrixToGLArray(projection, glprojection);
+    gl.glMatrixMode(GL10.GL_PROJECTION);
+    gl.glLoadMatrixf(glprojection, 0);
+    if (!projectionMode) { 
+      gl.glMatrixMode(GL10.GL_MODELVIEW);
+    }    
+    if (usingGLMatrixStack) {
+      projection.set(glmodelview);
+    }
+    projectionUpdated = true;
+  }
+  
+  // ////////////////////////////////////////////////////////////
+
   // CAMERA
 
   /**
@@ -3749,7 +3831,7 @@ public class PGraphicsAndroid3D extends PGraphics {
    * <P>
    * Note that the camera matrix is *not* the perspective matrix, it contains
    * the values of the modelview matrix immediatly after the latter was
-   * initialized with ortho() or camera(), or the modelview matrix as resul of
+   * initialized with ortho() or camera(), or the modelview matrix as result of
    * the operations applied between beginCamera()/endCamera().
    * <P>
    * beginCamera() specifies that all coordinate transforms until endCamera()
@@ -3838,7 +3920,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
 
   protected void getModelviewMatrix() {
-    if (usingModelviewStack) {
+    if (usingGLMatrixStack) {
       modelviewStack.get(glmodelview);
     } else {
       gl11.glGetFloatv(GL11.GL_MODELVIEW_MATRIX, glmodelview, 0);
@@ -4136,7 +4218,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     gl.glMatrixMode(GL10.GL_MODELVIEW);
     gl.glLoadMatrixf(glmodelview, 0);
-    if (usingModelviewStack) {
+    if (usingGLMatrixStack) {
       modelviewStack.set(glmodelview);
     }
     copyGLArrayToPMatrix(glmodelview, modelview);
@@ -4227,6 +4309,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     gl.glMatrixMode(GL10.GL_PROJECTION);
     gl.glLoadMatrixf(glprojection, 0);
     copyGLArrayToPMatrix(glprojection, projection);
+    projectionUpdated = true;
     
     // The matrix mode is always MODELVIEW, because the user will be doing
     // geometrical transformations all the time, projection transformations 
@@ -4302,6 +4385,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     gl.glMatrixMode(GL10.GL_PROJECTION);
     gl.glLoadMatrixf(glprojection, 0);
     copyGLArrayToPMatrix(glprojection, projection);
+    projectionUpdated = true;
 
     // The matrix mode is always MODELVIEW, because the user will be doing
     // geometrical transformations all the time, projection transformations 
@@ -4337,7 +4421,11 @@ public class PGraphicsAndroid3D extends PGraphics {
     if (!modelviewUpdated) {
       getModelviewMatrix();      
     }
-      
+
+    if (!projectionUpdated) {
+      getProjectionMatrix();      
+    }
+        
     float ax = glmodelview[0] * x + glmodelview[4] * y + glmodelview[8] * z + glmodelview[12];
     float ay = glmodelview[1] * x + glmodelview[5] * y + glmodelview[9] * z  + glmodelview[13];
     float az = glmodelview[2] * x + glmodelview[6] * y + glmodelview[10] * z + glmodelview[14];
@@ -4346,16 +4434,24 @@ public class PGraphicsAndroid3D extends PGraphics {
     float ox = glprojection[0] * ax + glprojection[4] * ay + glprojection[8] * az + glprojection[12] * aw;
     float ow = glprojection[3] * ax + glprojection[7] * ay + glprojection[11] * az + glprojection[15] * aw;
 
-    if (ow != 0)
+    if (ow != 0) {
       ox /= ow;
+    }
     return width * (1 + ox) / 2.0f;
   }
 
   public float screenY(float x, float y, float z) {
+    y = -1 * y; // To take into account Processsing's inverted Y axis with
+                // respect to OpenGL.
+    
     if (!modelviewUpdated) {
       getModelviewMatrix();
     }
 
+    if (!projectionUpdated) {
+      getProjectionMatrix();      
+    }
+        
     float ax = glmodelview[0] * x + glmodelview[4] * y + glmodelview[8] * z + glmodelview[12];
     float ay = glmodelview[1] * x + glmodelview[5] * y + glmodelview[9] * z  + glmodelview[13];
     float az = glmodelview[2] * x + glmodelview[6] * y + glmodelview[10] * z + glmodelview[14];
@@ -4364,16 +4460,24 @@ public class PGraphicsAndroid3D extends PGraphics {
     float oy = glprojection[1] * ax + glprojection[5] * ay + glprojection[9] * az + glprojection[13] * aw;
     float ow = glprojection[3] * ax + glprojection[7] * ay + glprojection[11] * az + glprojection[15] * aw;
 
-    if (ow != 0)
+    if (ow != 0) {
       oy /= ow;
+    }
     return height * (1 + oy) / 2.0f;
   }
 
   public float screenZ(float x, float y, float z) {
+    y = -1 * y; // To take into account Processsing's inverted Y axis with
+                // respect to OpenGL.
+    
     if (!modelviewUpdated) {
       getModelviewMatrix();      
     }
 
+    if (!projectionUpdated) {
+      getProjectionMatrix();      
+    }
+    
     float ax = glmodelview[0] * x + glmodelview[4] * y + glmodelview[8] * z + glmodelview[12];
     float ay = glmodelview[1] * x + glmodelview[5] * y + glmodelview[9] * z  + glmodelview[13];
     float az = glmodelview[2] * x + glmodelview[6] * y + glmodelview[10] * z + glmodelview[14];
@@ -4382,8 +4486,9 @@ public class PGraphicsAndroid3D extends PGraphics {
     float oz = glprojection[2] * ax + glprojection[6] * ay + glprojection[10] * az + glprojection[14] * aw;
     float ow = glprojection[3] * ax + glprojection[7] * ay + glprojection[11] * az + glprojection[15] * aw;
 
-    if (ow != 0)
+    if (ow != 0) {
       oz /= ow;
+    }
     return (oz + 1) / 2.0f;
   }
 
@@ -5412,12 +5517,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     // ...and drawing the texture to screen.
     drawScreenTexture();    
   }
-  
-  
-  public PImage getOffscreenImage() {
-    return offscreenImages[(offscreenIndex + 1) % 2];
-  }
 
+  
   // ////////////////////////////////////////////////////////////
 
   // LOAD/UPDATE TEXTURE
@@ -6171,7 +6272,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         blendEqSupported = false;
       }
       
-      usingModelviewStack = gl11 == null || !matrixGetSupported;
+      usingGLMatrixStack = gl11 == null || !matrixGetSupported;
       
       int temp[] = new int[2];    
             
