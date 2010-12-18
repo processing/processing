@@ -11,7 +11,7 @@
     <javac target="1.5" 
 	   encoding="UTF-8"
 	   includeAntRuntime="false"
-	   bootclasspath="${env.ANDROID_SDK}/platforms/android-2.1/android.jar"
+	   bootclasspath="${env.ANDROID_SDK}/platforms/android-7/android.jar"
 	   srcdir="core/src" destdir="core/bin" />
 
 <!--

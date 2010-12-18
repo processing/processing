@@ -47,18 +47,18 @@ public class Sketch {
   static private File tempBuildFolder;
 
   /**
-   * Regular expression for parsing the size() method. This should match 
-   * against any uses of the size() function, whether numbers or variables 
-   * or whatever. This way, no warning is shown if size() isn't actually used 
+   * Regular expression for parsing the size() method. This should match
+   * against any uses of the size() function, whether numbers or variables
+   * or whatever. This way, no warning is shown if size() isn't actually used
    * in the sketch, which is the case especially for anyone who is cutting
    * and pasting from the reference.
    */
-  public static final String SIZE_REGEX = 
+  public static final String SIZE_REGEX =
     "(?:^|\\s|;)size\\s*\\(\\s*([^\\s,]+)\\s*,\\s*([^\\s,\\)]+),?\\s*([^\\)]*)\\s*\\)\\s*\\;";
     //"(?:^|\\s|;)size\\s*\\(\\s*(\\S+)\\s*,\\s*([^\\s,\\)]+),?\\s*([^\\)]*)\\s*\\)\\s*\\;";
-  public static final String PACKAGE_REGEX = 
+  public static final String PACKAGE_REGEX =
     "(?:^|\\s|;)package\\s+(\\S+)\\;";
-  
+
   private Editor editor;
   private boolean foundMain = false;
 
@@ -801,7 +801,7 @@ public class Sketch {
       }
     } catch (IOException e) { }
 
-    // if the new folder already exists, then first remove its contents before 
+    // if the new folder already exists, then first remove its contents before
     // copying everything over (user will have already been warned)
     if (newFolder.exists()) {
       Base.removeDir(newFolder);
@@ -837,7 +837,7 @@ public class Sketch {
             return false;
           }
         }
-        // don't do screen captures, since there might be thousands. kind of 
+        // don't do screen captures, since there might be thousands. kind of
         // a hack, but seems harmless. hm, where have i heard that before...
         if (name.startsWith("screen-")) {
           return false;
@@ -848,7 +848,7 @@ public class Sketch {
     // now copy over the items that make sense
     for (File copyable : copyItems) {
       if (copyable.isDirectory()) {
-        Base.copyDir(copyable, new File(newFolder, copyable.getName())); 
+        Base.copyDir(copyable, new File(newFolder, copyable.getName()));
       } else {
         Base.copyFile(copyable, new File(newFolder, copyable.getName()));
       }
@@ -1255,7 +1255,7 @@ public class Sketch {
   }
 
 
-  public String preprocess(String buildPath, 
+  public String preprocess(String buildPath,
                            String packageName,
                            PdePreprocessor preprocessor) throws RunnerException {
     // make sure the user isn't playing "hide the sketch folder"
@@ -1297,10 +1297,10 @@ public class Sketch {
       }
     }
 
-      
+
     final PreprocessResult result;
     try {
-      final File outputFolder = 
+      final File outputFolder =
         new File(buildPath, packageName.replace('.', '/'));
       outputFolder.mkdirs();
       //final File java = new File(buildPath, name + ".java");
@@ -1506,7 +1506,7 @@ public class Sketch {
     return foundMain;
   }
 
-  
+
   /**
    * Get the list of imported libraries. Used by external tools like Android mode.
    * @return list of library folders connected to this sketch.
@@ -1667,7 +1667,7 @@ public class Sketch {
     return exportApplet(new File(folder, "applet").getAbsolutePath());
   }
 
-  
+
   /**
    * Handle export to applet.
    */
@@ -1734,15 +1734,15 @@ public class Sketch {
 
         Base.showWarning("Could not find applet size", message, null);
       }
-    } else { 
+    } else {
       // no size() found
       final String message =
         "This applet appears to be missing size().\n" +
-        "Assuming size(" + Integer.toString(wide) + ", " + 
+        "Assuming size(" + Integer.toString(wide) + ", " +
         Integer.toString(high) + ", JAVA2D)";
-      
+
       Base.showWarning("Could not find applet size", message, null);
-    }   
+    }
 
     // Grab the Javadoc-style description from the main code.
     String description = "";
@@ -1813,17 +1813,17 @@ public class Sketch {
     // unpacks all jar files, unless multi jar files selected in prefs
     if (codeFolder.exists()) {
       String includes = Compiler.contentsToClassPath(codeFolder);
-      String[] codeList = PApplet.splitTokens(includes, File.separator);
+      String[] codeList = PApplet.splitTokens(includes, File.pathSeparator);
       String cp = "";
       for (int i = 0; i < codeList.length; i++) {
         if (codeList[i].toLowerCase().endsWith(".jar") ||
             codeList[i].toLowerCase().endsWith(".zip")) {
           if (separateJar) {
-            File exportFile = new File(codeFolder, codeList[i]);
+            File exportFile = new File(codeList[i]);
             String exportFilename = exportFile.getName();
             Base.copyFile(exportFile, new File(appletFolder, exportFilename));
           } else {
-            cp += codeList[i] + File.pathSeparatorChar;
+            cp += codeList[i] + File.pathSeparator;
             //packClassPathIntoZipFile(cp, zos);
           }
         }
@@ -1833,7 +1833,7 @@ public class Sketch {
       }
     }
 
-    File openglLibraryFolder = 
+    File openglLibraryFolder =
       new File(Base.getLibrariesPath(), "opengl/library");
     String openglLibraryPath = openglLibraryFolder.getAbsolutePath();
     boolean openglApplet = false;
@@ -1975,7 +1975,7 @@ public class Sketch {
 //    for (File libraryFolder : importedLibraries) {
 //      System.out.println(libraryFolder + " " + libraryFolder.getAbsolutePath());
 //    }
-    // If the renderer is set to the built-in OpenGL library, 
+    // If the renderer is set to the built-in OpenGL library,
     // then it's definitely an OpenGL applet.
     if (renderer.equals("OPENGL")) {
       openglApplet = true;
@@ -2294,7 +2294,7 @@ public class Sketch {
 
 
 //  public boolean exportApplication(String destPath,
-//                                   String platformName, 
+//                                   String platformName,
 //                                   int exportBits) throws IOException, RunnerException {
 //    return exportApplication(destPath, Base.getPlatformIndex(platformName), exportBits);
 //  }
@@ -2304,7 +2304,7 @@ public class Sketch {
    * Export to application without GUI.
    */
   public boolean exportApplication(String destPath,
-                                   int exportPlatform, 
+                                   int exportPlatform,
                                    int exportBits) throws IOException, RunnerException {
     // make sure the user didn't hide the sketch folder
     ensureExistence();
@@ -2458,17 +2458,17 @@ public class Sketch {
     if (codeFolder.exists()) {
       String includes = Compiler.contentsToClassPath(codeFolder);
       // Use tokens to get rid of extra blanks, which causes huge exports
-      String[] codeList = PApplet.splitTokens(includes, File.separator);
+      String[] codeList = PApplet.splitTokens(includes, File.pathSeparator);
       String cp = "";
       for (int i = 0; i < codeList.length; i++) {
         if (codeList[i].toLowerCase().endsWith(".jar") ||
             codeList[i].toLowerCase().endsWith(".zip")) {
-          File exportFile = new File(codeFolder, codeList[i]);
+          File exportFile = new File(codeList[i]);
           String exportFilename = exportFile.getName();
           Base.copyFile(exportFile, new File(jarFolder, exportFilename));
           jarListVector.add(exportFilename);
         } else {
-          cp += codeList[i] + File.separatorChar;
+          cp += codeList[i] + File.pathSeparator;
         }
       }
       packClassPathIntoZipFile(cp, zos, zipFileContents);
@@ -2523,7 +2523,7 @@ public class Sketch {
 //      }
 
       // add each item from the library folder / export list to the output
-      for (File exportFile : library.getApplicationExports(exportPlatform, exportBits)) { 
+      for (File exportFile : library.getApplicationExports(exportPlatform, exportBits)) {
         String exportName = exportFile.getName();
 //      String[] exportList = library.getExports(exportPlatform, exportBits);
 //      for (String item : exportList) {
@@ -2964,19 +2964,19 @@ public class Sketch {
     return new String[] { "pde", "java" };
   }
 
-  
+
   /**
    * Get array of file/directory names that needn't be copied during "Save As".
    */
   public String[] getIgnorable() {
-    return new String[] { 
+    return new String[] {
       "applet",
       "application.macosx",
       "application.windows",
       "application.linux"
     };
   }
-  
+
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 

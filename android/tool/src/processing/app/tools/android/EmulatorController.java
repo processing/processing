@@ -51,21 +51,23 @@ class EmulatorController {
 
     // See http://developer.android.com/guide/developing/tools/emulator.html
     final String[] cmd = new String[] {
-      "emulator", 
-      "-avd", AVD.defaultAVD.name, 
-      "-port", portString, 
-      "-no-boot-anim" 
+      "emulator",
+      "-avd", AVD.defaultAVD.name,
+      "-port", portString,
+      "-no-boot-anim"
     };
     //System.err.println("EmulatorController: Launching emulator");
+    //System.out.println(processing.core.PApplet.join(cmd, " "));
     final Process p = Runtime.getRuntime().exec(cmd);
     ProcessRegistry.watch(p);
+    new StreamPump(p.getInputStream(), "emulator: ").addTarget(System.out).start();
 
     // if we've gotten this far, then we've at least succeeded in finding and
     // beginning execution of the emulator, so we are now officially "Launched"
     setState(State.WAITING_FOR_BOOT);
 
     final String title = PApplet.join(cmd, ' ');
-    
+
     // when this shows up on stdout:
     // emulator: ERROR: the cache image is used by another emulator. aborting
     // need to reset adb and try again, since it's running but adb is hosed
@@ -73,18 +75,18 @@ class EmulatorController {
     outie.addTarget(new LineProcessor() {
       public void processLine(String line) {
         if (line.contains("the cache image is used by another emulator")) {
-          
+
         } else {
 //          System.out.println(line);
           System.out.println(title + ": " + line);
         }
-      }      
-    });    
+      }
+    });
     //new StreamPump(p.getInputStream(), "out: " + title).addTarget(System.out).start();
-    
+
     // suppress this warning on OS X, otherwise we're gonna get a lot of reports:
-    // 2010-04-13 15:26:56.380 emulator[91699:903] Warning once: This 
-    // application, or a library it uses, is using NSQuickDrawView, which has 
+    // 2010-04-13 15:26:56.380 emulator[91699:903] Warning once: This
+    // application, or a library it uses, is using NSQuickDrawView, which has
     // been deprecated. Apps should cease use of QuickDraw and move to Quartz.
     StreamPump errie = new StreamPump(p.getErrorStream(), "err: " + title);
     errie.addTarget(new LineProcessor() {
@@ -95,8 +97,8 @@ class EmulatorController {
 //          System.err.println(line);
           System.err.println(title + ": " + line);
         }
-      }      
-    });    
+      }
+    });
     //new StreamPump(p.getErrorStream(), "err: " + title).addTarget(System.err).start();
 
     final CountDownLatch latch = new CountDownLatch(1);
