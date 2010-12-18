@@ -38,6 +38,9 @@ X   some basic stuff like this..
 X   http://dev.processing.org/bugs/show_bug.cgi?id=968
 X   http://code.google.com/p/processing/issues/detail?id=127
 
+_ export is broken in 0192
+_   http://code.google.com/p/processing/issues/detail?id=487
+
 _ need to get a new stable release out there, the docs/ref are out of sync
 
 _ Debugger highlights wrong line, and sometimes the wrong file
