@@ -24,7 +24,7 @@ import processing.app.tools.android.EmulatorController.State;
  *
  */
 class AndroidEnvironment {
-  private static final String ADB_DEVICES_ERROR = 
+  private static final String ADB_DEVICES_ERROR =
     "Received unfamiliar output from “adb devices”.\n" +
     "The device list may have errors.";
 
@@ -34,9 +34,9 @@ class AndroidEnvironment {
     return INSTANCE;
   }
 
-  private final Map<String, AndroidDevice> devices = 
+  private final Map<String, AndroidDevice> devices =
     new ConcurrentHashMap<String, AndroidDevice>();
-  private final ExecutorService deviceLaunchThread = 
+  private final ExecutorService deviceLaunchThread =
     Executors.newSingleThreadExecutor();
 
 
@@ -77,14 +77,14 @@ class AndroidEnvironment {
     killAdbServer();
   }
 
-  
+
   public Future<AndroidDevice> getEmulator() {
     final Callable<AndroidDevice> androidFinder = new Callable<AndroidDevice>() {
       public AndroidDevice call() throws Exception {
         return blockingGetEmulator();
       }
     };
-    final FutureTask<AndroidDevice> task = 
+    final FutureTask<AndroidDevice> task =
       new FutureTask<AndroidDevice>(androidFinder);
     deviceLaunchThread.execute(task);
     return task;
@@ -154,7 +154,7 @@ class AndroidEnvironment {
         return blockingGetHardware();
       }
     };
-    final FutureTask<AndroidDevice> task = 
+    final FutureTask<AndroidDevice> task =
       new FutureTask<AndroidDevice>(androidFinder);
     deviceLaunchThread.execute(task);
     return task;
@@ -190,7 +190,7 @@ class AndroidEnvironment {
     }
   }
 
-  
+
   private void addDevice(final AndroidDevice device) {
     //    System.err.println("AndroidEnvironment: adding " + device.getId());
     try {
@@ -213,7 +213,7 @@ class AndroidEnvironment {
     }
   }
 
-  
+
   /**
    *    <p>First line starts "List of devices"
 

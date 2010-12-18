@@ -1,6 +1,140 @@
-PROCESSING REV 0192 - XX October 2010
+PROCESSING REV 0192 - 15 December 2010
 
-Mmmmm.. bug fixes!
+This release contains a roll-up of lots of bug fixes. However, it's being
+released before it's ready, so it should only be used by people who are having
+trouble with the new Android SDK release (revision 8) from Google, which 
+completely broke Android support last week.
+
+The problem is that major changes were underway regarding how libraries are
+handled, so it's quite possible that library support (in both the standard or
+Android version) or code folder support is somewhat broken. 
+
+So with that caveat, no whining, please.
+
+On a happier note, the bug fixes:
+
+[ preprocessor, from jdf ]
+
++ Fixed "Syntax error on token "else", } expected"
+  http://code.google.com/p/processing/issues/detail?id=400
+
++ Autoformat bug (new java "for loop" syntax)
+  http://code.google.com/p/processing/issues/detail?id=420
+
++ Fix matching brace problem in PDE
+  http://code.google.com/p/processing/issues/detail?id=417
+
++ Fix syntax highlighting of focusGained and others
+  http://dev.processing.org/bugs/show_bug.cgi?id=659
+  http://code.google.com/p/processing/issues/detail?id=82
+
++ Error when compiling with static final global variable.
+  http://code.google.com/p/processing/issues/detail?id=427
+
++ AutoFormat unecessarily adds spaces to function with multiple args
+  http://code.google.com/p/processing/issues/detail?id=462
+
+[ edits from lonnen ] 
+
++ Fix for disappearing horizontal scroll bar regression
+  http://code.google.com/p/processing/issues/detail?id=316
+
++ Fix problems with stop().
+  http://dev.processing.org/bugs/show_bug.cgi?id=131
+  http://code.google.com/p/processing/issues/detail?id=43
+  ...as a result, dispose() methods aren't being called on libraries
+  http://dev.processing.org/bugs/show_bug.cgi?id=131
+  http://dev.processing.org/bugs/show_bug.cgi?id=77 (dupe)
+  http://dev.processing.org/bugs/show_bug.cgi?id=183 (dupe)
+  ...also a double stop() called with noLoop()
+  http://dev.processing.org/bugs/show_bug.cgi?id=1270
+  http://code.google.com/p/processing/issues/detail?id=180
+
++ Properly enforce the minimum size for editor windows.
+  http://code.google.com/p/processing/issues/detail?id=451
+
++ Patch: Processing IDE destroys symbolic links
+  http://code.google.com/p/processing/issues/detail?id=432
+
++ Windows: Processing cannot run because it could not ... store your settings.
+  http://code.google.com/p/processing/issues/detail?id=410
+
++ PGraphicsJava2D.resize() not working the same as PGraphics2D.resize()
+  http://dev.processing.org/bugs/show_bug.cgi?id=1107
+  http://code.google.com/p/processing/issues/detail?id=150
+  Resize is not available with renderers, use createGraphics().
+  Added a note to the reference.
+
+[ more fixes and edits ]
+
++ Removed build.path from preferences.txt.
+  Not really used anywhere, just trying to clean things up.
+
++ Removed 'console.output.file' and 'console.error.file'.
+  These weren't respected as paths, no reason for them.
+
++ Change console to write to the 'console/' folder in settings. 
+  This may eventually create a problem with logs that need to be cleaned, 
+  but we'll keep an eye on it for now.
+
++ Removed 'console' true/false from preferences.
+
++ Cannot reproduce problem with wrong character encoding in the console.
+  http://code.google.com/p/processing/issues/detail?id=197
+
++ Don't let PDE open sketches with bad names (reported by Max)
+
++ Exported libraries don't mantain symbolic links
+  http://code.google.com/p/processing/issues/detail?id=353
+
++ Repair regression in XMLElement.getBoolean(String, boolean)
+  http://code.google.com/p/processing/issues/detail?id=399
+
++ color() problem with alpha
+  http://code.google.com/p/processing/issues/detail?id=327
+
++ PVector.angleBetween() regression
+  http://code.google.com/p/processing/issues/detail?id=435
+
++ Fix for linux build script (thanks to Kevin Keraudren)
+  http://code.google.com/p/processing/issues/detail?id=466
+
++ shearX and shearY not properly implemented with P2D and JAVA2D
+  http://code.google.com/p/processing/issues/detail?id=452
+
++ frame.setResizable(true) does not enable maximize button. 
+  Thanks to Christian Thiemann for a workaround.
+  http://code.google.com/p/processing/issues/detail?id=467
+
+[ android additions from andres ] 
+
++ Compile android-core with Java 5 as the target so that it works on OS X 10.5.
+
++ A3D should use lower color depth on older devices.
+  http://code.google.com/p/processing/issues/detail?id=391
+
++ New API for begin/endRecord().
+
++ Finish opengl blending modes in A3D
+  http://code.google.com/p/processing/issues/detail?id=290
+
++ Automatic normal calculation in A3D
+  http://code.google.com/p/processing/issues/detail?id=345
+
++ Improve texture handling in A3D's PFont
+  http://code.google.com/p/processing/issues/detail?id=394
+
++ OpenGL resource release mechanism in A3D is broken
+  http://code.google.com/p/processing/issues/detail?id=456
+
++ Multitexturing in A3D
+  http://code.google.com/p/processing/issues/detail?id=344
+
++ Problems when loading images asynchronously in A3D.
+  http://code.google.com/p/processing/issues/detail?id=465
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
 PROCESSING REV 0191 - 30 September 2010

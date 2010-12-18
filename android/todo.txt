@@ -13,7 +13,23 @@ A OpenGL resource release mechanism in A3D is broken
 A   http://code.google.com/p/processing/issues/detail?id=456
 A Multitexturing in A3D
 A   http://code.google.com/p/processing/issues/detail?id=344
+X make several changes to get android running properly with sdk tools r8
 
+_ error in 'create avd' with "Emulator already exists" when it needs an upgrade
+_   or cannot be used with the current setup
+_   use 'android list avds' on the command line to see the problem in this case
+_ when there's a 'create avd' error, things still keep running. yay!
+
+_ don't give user a "User cancelled attempt to find SDK" error message
+_   it's annoying.. they f*king know they just did that
+_ also gives an error if it unsets the sdk path itself, saying that the 
+_   environment variable isn't set. which isn't true--it's set, but it doesn't
+_   think the location is valid, which is totally different.
+_   ...because it's ignoring the exception messages that come in from trying
+_   to create the new sdk object
+
+_ need to do this for utf8: "overridable Ant javac properties: java.encoding"
+_   new for sdk tools r8, it's using ascii as the default, we're utf-8
 
 _ when returning to android application, sometimes screen stays black
 _   http://code.google.com/p/processing/issues/detail?id=237

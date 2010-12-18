@@ -15,25 +15,26 @@ import processing.core.PApplet;
 class AndroidSDK {
   private final File sdk;
   private final File tools;
+  private final File platformTools;
   private final File androidTool;
 
-  private static final String ANDROID_SDK_PRIMARY = 
+  private static final String ANDROID_SDK_PRIMARY =
     "Is the Android SDK installed?";
 
-  private static final String ANDROID_SDK_SECONDARY = 
-    "The Android SDK does not appear to be installed, <br>" + 
-    "because the ANDROID_SDK variable is not set. <br>" + 
-    "If it is installed, click “Yes” to select the <br>" + 
-    "location of the SDK, or “No” to visit the SDK<br>" + 
+  private static final String ANDROID_SDK_SECONDARY =
+    "The Android SDK does not appear to be installed, <br>" +
+    "because the ANDROID_SDK variable is not set. <br>" +
+    "If it is installed, click “Yes” to select the <br>" +
+    "location of the SDK, or “No” to visit the SDK<br>" +
     "download site at http://developer.android.com/sdk.";
 
-  private static final String SELECT_ANDROID_SDK_FOLDER = 
+  private static final String SELECT_ANDROID_SDK_FOLDER =
     "Choose the location of the Android SDK";
 
-  private static final String NOT_ANDROID_SDK = 
+  private static final String NOT_ANDROID_SDK =
     "The selected folder does not appear to contain an Android SDK.";
 
-  private static final String ANDROID_SDK_URL = 
+  private static final String ANDROID_SDK_URL =
     "http://developer.android.com/sdk/";
 
 
@@ -48,6 +49,11 @@ class AndroidSDK {
       throw new BadSDKException("There is no tools folder in " + sdk);
     }
 
+    platformTools = new File(sdk, "platform-tools");
+    if (!platformTools.exists()) {
+      throw new BadSDKException("There is no platform-tools folder in " + sdk);
+    }
+
     androidTool = findAndroidTool(tools);
 
     final Platform p = Base.getPlatform();
@@ -55,12 +61,13 @@ class AndroidSDK {
     String path = p.getenv("PATH");
 
     p.setenv("ANDROID_SDK", sdk.getCanonicalPath());
-    path = tools.getCanonicalPath() + File.pathSeparator + path;
+    path = platformTools.getCanonicalPath() + File.pathSeparator +
+      tools.getCanonicalPath() + File.pathSeparator + path;
 
     final String javaHomeProp = System.getProperty("java.home");
     if (javaHomeProp == null) {
       throw new RuntimeException("I don't know how to deal with " +
-      		"a null java.home proprty, to be quite frank.");
+                "a null java.home proprty, to be quite frank.");
     }
     final File javaHome = new File(javaHomeProp).getCanonicalFile();
     p.setenv("JAVA_HOME", javaHome.getCanonicalPath());
@@ -70,7 +77,7 @@ class AndroidSDK {
     p.setenv("PATH", path);
   }
 
-  
+
   public File getAndroidTool() {
     return androidTool;
   }
@@ -80,14 +87,21 @@ class AndroidSDK {
     return androidTool.getAbsolutePath();
   }
 
-  
+
   public File getSdkFolder() {
     return sdk;
   }
 
-  
+
+  /*
   public File getToolsFolder() {
     return tools;
+  }
+  */
+
+
+  public File getPlatformToolsFolder() {
+    return platformTools;
   }
 
 
@@ -111,20 +125,20 @@ class AndroidSDK {
 
 
   /**
-   * Check for the ANDROID_SDK environment variable. If the variable is set, 
+   * Check for the ANDROID_SDK environment variable. If the variable is set,
    * and refers to a legitimate Android SDK, then use that and save the pref.
-   * 
-   * Check for a previously set android.sdk.path preference. If the pref 
+   *
+   * Check for a previously set android.sdk.path preference. If the pref
    * is set, and refers to a legitimate Android SDK, then use that.
-   * 
-   * Prompt the user to select an Android SDK. If the user selects a 
+   *
+   * Prompt the user to select an Android SDK. If the user selects a
    * legitimate Android SDK, then use that, and save the preference.
-   * 
+   *
    * @return an AndroidSDK
    * @throws BadSDKException
-   * @throws IOException 
+   * @throws IOException
    */
-  public static AndroidSDK find(final Frame window) 
+  public static AndroidSDK find(final Frame window)
   throws BadSDKException, IOException {
     final Platform platform = Base.getPlatform();
 
@@ -161,7 +175,7 @@ class AndroidSDK {
     final int result = Base.showYesNoQuestion(window, "Android SDK",
       ANDROID_SDK_PRIMARY, ANDROID_SDK_SECONDARY);
     if (result == JOptionPane.CANCEL_OPTION) {
-      throw new BadSDKException("User cancelled attempt to find SDK.");
+      throw new BadSDKException("User canceled attempt to find SDK.");
     }
     if (result == JOptionPane.NO_OPTION) {
       // user admitted they don't have the SDK installed, and need help.
@@ -214,10 +228,10 @@ class AndroidSDK {
           sb.append(line).append("\n");
         }
       }
-      return new ProcessResult(adbResult.getCmd(), 
-                               adbResult.getResult(), 
-                               sb.toString(), 
-                               adbResult.getStderr(), 
+      return new ProcessResult(adbResult.getCmd(),
+                               adbResult.getResult(),
+                               sb.toString(),
+                               adbResult.getStderr(),
                                adbResult.getTime());
     }
     return adbResult;

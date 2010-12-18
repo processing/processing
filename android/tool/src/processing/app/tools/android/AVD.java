@@ -8,6 +8,12 @@ import processing.app.exec.ProcessHelper;
 import processing.app.exec.ProcessResult;
 
 public class AVD {
+  private static final String AVD_CREATE_ERROR =
+    "An error occurred while running “android create avd”\n" +
+    "to set up the default Android emulator. Make sure that the\n" +
+    "Android SDK is installed properly, and that the Android\n" +
+    "and Google APIs are installed for level " + Build.sdkVersion + ".";
+
   // Tempting to switch to WVGA854 (854x480), the same aspect ratio
   // (with rounding), as 1920x1080, or 16:9.
 //  static final int DEFAULT_WIDTH = 320;
@@ -25,9 +31,10 @@ public class AVD {
   /**
    * Default virtual device used by Processing.
    */
-  public static final AVD defaultAVD = 
+  public static final AVD defaultAVD =
     new AVD("Processing-Android-" + Build.sdkVersion,
             "Google Inc.:Google APIs:" + Build.sdkVersion);
+
 
   public static boolean ensureEclairAVD(final AndroidSDK sdk) {
     try {
@@ -57,13 +64,17 @@ public class AVD {
 
   protected boolean exists(final AndroidSDK sdk) throws IOException {
     try {
-      ProcessResult listResult = 
+      ProcessResult listResult =
         new ProcessHelper(sdk.getAndroidToolPath(), "list", "avds").execute();
       if (listResult.succeeded()) {
         for (String line : listResult) {
           final Matcher m = AVD_ROW.matcher(line);
           if (m.matches() && m.group(1).equals(name)) {
             return true;
+          }
+          // "The following Android Virtual Devices could not be loaded:"
+          if (line.contains("could not be loaded:")) {
+            break;
           }
         }
       } else {
@@ -79,13 +90,13 @@ public class AVD {
   protected boolean create(final AndroidSDK sdk) throws IOException {
     final String[] params = {
       sdk.getAndroidToolPath(),
-      "create", "avd", 
-      "-n", name, "-t", target, 
+      "create", "avd",
+      "-n", name, "-t", target,
       "-c", "64M",
       "-s", DEFAULT_SKIN
 //      "-s", DEFAULT_WIDTH + "x" + DEFAULT_HEIGHT
     };
-    final ProcessHelper p = new ProcessHelper(params); 
+    final ProcessHelper p = new ProcessHelper(params);
     try {
       final ProcessResult createAvdResult = p.execute();
       if (createAvdResult.succeeded()) {
@@ -96,10 +107,4 @@ public class AVD {
     }
     return false;
   }
-
-  private static final String AVD_CREATE_ERROR = "An error occurred while running “android create avd”\n"
-      + "to set up the default Android emulator. Make sure that the\n"
-      + "Android SDK is installed properly, and that the Android\n"
-      + "and Google APIs are installed for level " + Build.sdkVersion + ".";
-
 }
