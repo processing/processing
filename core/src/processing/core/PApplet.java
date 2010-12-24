@@ -162,6 +162,7 @@ import processing.xml.XMLElement;
  * do by hand w/ some Java code.</P>
  * @usage Web &amp; Application
  */
+@SuppressWarnings("serial")
 public class PApplet extends Applet
   implements PConstants, Runnable,
              MouseListener, MouseMotionListener, KeyListener, FocusListener
