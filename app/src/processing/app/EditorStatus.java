@@ -71,24 +71,25 @@ public class EditorStatus extends JPanel {
   public EditorStatus(Editor editor) {
     this.editor = editor;
     empty();
-    setTheme(editor.getTheme());
+    updateMode();
   }
   
   
-  public void setTheme(Settings theme) {
+  public void updateMode() {
+    Mode mode = editor.getMode();
     bgcolor = new Color[] { 
-      theme.getColor("status.notice.bgcolor"),
-      theme.getColor("status.error.bgcolor"),
-      theme.getColor("status.edit.bgcolor")
+      mode.getColor("status.notice.bgcolor"),
+      mode.getColor("status.error.bgcolor"),
+      mode.getColor("status.edit.bgcolor")
     };
 
     fgcolor = new Color[] {
-      theme.getColor("status.notice.fgcolor"),
-      theme.getColor("status.error.fgcolor"),
-      theme.getColor("status.edit.fgcolor")
+      mode.getColor("status.notice.fgcolor"),
+      mode.getColor("status.error.fgcolor"),
+      mode.getColor("status.edit.fgcolor")
     };
 
-    font = theme.getFont("status.font");
+    font = mode.getFont("status.font");
     metrics = null;
   }
 

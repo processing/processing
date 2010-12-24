@@ -28,8 +28,6 @@ import processing.mode.java.*;
 import processing.core.*;
 
 import java.io.*;
-import java.util.*;
-import java.util.zip.*;
 
 import org.eclipse.jdt.core.compiler.batch.BatchCompiler;
 import org.eclipse.jdt.core.compiler.CompilationProgress;
@@ -66,7 +64,7 @@ public class Compiler {
       "-target", "1.5",
       "-classpath", build.getClassPath(),
       "-nowarn", // we're not currently interested in warnings (works in ecj)
-      "-d", build.getBinFolder().getAbsolutePath // output the classes in the buildPath
+      "-d", build.getBinFolder().getAbsolutePath() // output the classes in the buildPath
     };
     //PApplet.println(baseCommand);
 
@@ -82,7 +80,7 @@ public class Compiler {
 //        sourceFiles[sourceCount++] = path;
 //      }
 //    }
-    String[] sourceFiles = Base.listFiles(srcFolder, false, ".java");
+    String[] sourceFiles = Base.listFiles(build.getSrcFolder(), false, ".java");
 
 //    String[] command = new String[baseCommand.length + sourceFiles.length];
 //    System.arraycopy(baseCommand, 0, command, 0, baseCommand.length);
@@ -134,7 +132,7 @@ public class Compiler {
 
         // if it's something unexpected, die and print the mess to the console
         if (pieces == null) {
-          exception = new RunnerException("Cannot parse error text: " + line);
+          exception = new SketchException("Cannot parse error text: " + line);
           exception.hideStackTrace();
           // Send out the rest of the error message to the console.
           System.err.println(line);
@@ -151,7 +149,7 @@ public class Compiler {
         int dotJavaLineIndex = PApplet.parseInt(pieces[2]) - 1;
         String errorMessage = pieces[4];
 
-        exception = sketch.placeException(errorMessage, 
+        exception = build.placeException(errorMessage, 
                                           dotJavaFilename, 
                                           dotJavaLineIndex);
         /*
@@ -189,7 +187,7 @@ public class Compiler {
         */
 
         if (exception == null) {
-          exception = new RunnerException(errorMessage);
+          exception = new SketchException(errorMessage);
         }
 
         // for a test case once message parsing is implemented,
@@ -229,13 +227,13 @@ public class Compiler {
                                " does not exist. " +
                                "You might be missing a library.");
 
-          // Actually create the folder and open it for the user
-          File sketchbookLibraries = Base.getSketchbookLibrariesFolder();
-          if (!sketchbookLibraries.exists()) {
-            if (sketchbookLibraries.mkdirs()) {
-              Base.openFolder(sketchbookLibraries);
-            }
-          }
+//          // Actually create the folder and open it for the user
+//          File sketchbookLibraries = Base.getSketchbookLibrariesFolder();
+//          if (!sketchbookLibraries.exists()) {
+//            if (sketchbookLibraries.mkdirs()) {
+//              Base.openFolder(sketchbookLibraries);
+//            }
+//          }
 
         } else if (errorMessage.endsWith("cannot be resolved to a type")) {
           // xxx cannot be resolved to a type
@@ -305,7 +303,7 @@ public class Compiler {
       }
     } catch (IOException e) {
       String bigSigh = "Error while compiling. (" + e.getMessage() + ")";
-      exception = new RunnerException(bigSigh);
+      exception = new SketchException(bigSigh);
       e.printStackTrace();
       success = false;
     }
@@ -659,7 +657,7 @@ public class Compiler {
 //  }
 
 
-  void handleCrustyCode(RunnerException rex) {
+  static protected void handleCrustyCode(SketchException rex) {
     rex.setMessage("This code needs to be updated, " +
                    "please read the Changes page on the Wiki.");
     Base.showChanges();

@@ -69,6 +69,7 @@ import processing.mode.java.runner.*;
  *
  * @author fry
  */
+/*
 public class Commander implements RunnerListener {
   static final String helpArg = "--help";
   static final String preprocArg = "--preprocess";
@@ -317,3 +318,4 @@ public class Commander implements RunnerListener {
     out.println("                     sketch uses libraries found in your sketchbook folder.");
   }
 }
+*/

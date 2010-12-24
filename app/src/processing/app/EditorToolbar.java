@@ -126,18 +126,14 @@ public class EditorToolbar extends JComponent implements MouseInputListener, Key
 
 
   public void updateMode() {
-    Settings theme = editor.getTheme();
-    bgcolor = theme.getColor("buttons.bgcolor");
-    statusFont = theme.getFont("buttons.status.font");
-    statusColor = theme.getColor("buttons.status.color");
-    
     mode = editor.getMode();
-    modeTitle = mode.getName().toUpperCase();    
+    bgcolor = mode.getColor("buttons.bgcolor");
+    statusFont = mode.getFont("buttons.status.font");
+    statusColor = mode.getColor("buttons.status.color");    
+    modeTitle = mode.getTitle().toUpperCase();    
   }
 
 
-//  public Image[][] splitButtonImage(Image allButtons) {
-//  public Image[][] splitButtonImage(File file) {
   public Image[][] loadImages() {
 //    Image allButtons = Base.getThemeImage("buttons.gif", this);
 //    Image allButtons = Base.loadImage(file);

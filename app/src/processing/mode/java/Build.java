@@ -23,6 +23,7 @@ Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package processing.mode.java;
 
 import java.awt.*;
+import java.awt.event.*;
 import java.beans.*;
 import java.io.*;
 import java.util.*;
@@ -31,36 +32,40 @@ import java.util.zip.*;
 import javax.swing.*;
 import javax.swing.border.*;
 
-<<<<<<< .mine
 import processing.app.*;
 import processing.core.*;
 import processing.mode.java.preproc.*;
 import processing.mode.java.runner.*;
-=======
-import processing.app.*;
-import processing.core.*;
->>>>>>> .r7521
 
 // Would you believe there's a java.lang.Compiler class? I wouldn't.
 import processing.mode.java.runner.Compiler;
 
 
 public class Build {
+  /**
+   * Regular expression for parsing the size() method. This should match 
+   * against any uses of the size() function, whether numbers or variables 
+   * or whatever. This way, no warning is shown if size() isn't actually used 
+   * in the sketch, which is the case especially for anyone who is cutting
+   * and pasting from the reference.
+   */
+  public static final String SIZE_REGEX = 
+    "(?:^|\\s|;)size\\s*\\(\\s*([^\\s,]+)\\s*,\\s*([^\\s,\\)]+),?\\s*([^\\)]*)\\s*\\)\\s*\\;";
+    //"(?:^|\\s|;)size\\s*\\(\\s*(\\S+)\\s*,\\s*([^\\s,\\)]+),?\\s*([^\\)]*)\\s*\\)\\s*\\;";
+  public static final String PACKAGE_REGEX = 
+    "(?:^|\\s|;)package\\s+(\\S+)\\;";
+
   Editor editor;
   Sketch sketch;
-<<<<<<< .mine
 
   // what happens in the build, stays in the build.
   // (which is to say that everything below this line, stays within this class)
 
-=======
->>>>>>> .r7521
   private File srcFolder;
   private File binFolder;
   private boolean foundMain = false;
   private String classPath;
 
-<<<<<<< .mine
   /**
    * This will include the code folder, any library folders, etc. that might
    * contain native libraries that need to be picked up with java.library.path.
@@ -81,17 +86,6 @@ public class Build {
   public Build(Editor editor) {
     this.editor = editor;
     this.sketch = editor.getSketch();
-=======
-  // what happens in the build, stays in the build.
-//  private File srcFolder;
-//  private File binFolder;
-  private boolean foundMain = false;
-
-
-  public Build(Editor editor) {
-    this.editor = editor;
-    this.sketch = editor.getSketch();
->>>>>>> .r7521
   }
 
 
@@ -170,16 +164,10 @@ public class Build {
 
     // compile the program. errors will happen as a RunnerException
     // that will bubble up to whomever called build().
-<<<<<<< .mine
 //    Compiler compiler = new Compiler(this);
 //    String bootClasses = System.getProperty("sun.boot.class.path");
 //    if (compiler.compile(this, srcFolder, binFolder, primaryClassName, getClassPath(), bootClasses)) {
     if (Compiler.compile(this)) {
-=======
-    Compiler compiler = new Compiler(this);
-    String bootClasses = System.getProperty("sun.boot.class.path");
-    if (compiler.compile(this, srcFolder, binFolder, primaryClassName, getClassPath(), bootClasses)) {
->>>>>>> .r7521
       return primaryClassName;
     }
     return null;
@@ -201,25 +189,13 @@ public class Build {
    * @param buildPath Location to copy all the .java files
    * @return null if compilation failed, main class name if not
    */
-<<<<<<< .mine
   public String preprocess() throws SketchException {
     return preprocess(sketch.makeTempFolder());
-=======
-  public String preprocess() throws SketchException {
-      return preprocess(makeTempBuildFolder(), null, new PdePreprocessor(name));
->>>>>>> .r7521
   }
-<<<<<<< .mine
 
 
   public String preprocess(File srcFolder) throws SketchException {
     return preprocess(srcFolder, null, new PdePreprocessor(sketch.getName()));
-=======
-
-
-  public String preprocess(File srcFolder) throws SketchException {
-    return preprocess(srcFolder, null, new PdePreprocessor(name));
->>>>>>> .r7521
   }
 
 
@@ -264,7 +240,7 @@ public class Build {
 
     StringBuffer bigCode = new StringBuffer();
     int bigCount = 0;
-    for (SketchCode sc : code) {
+    for (SketchCode sc : sketch.getCode()) {
       if (sc.isExtension("pde")) {
         sc.setPreprocOffset(bigCount);
         bigCode.append(sc.getProgram());
@@ -278,7 +254,7 @@ public class Build {
     try {
       File outputFolder = new File(srcFolder, packageName.replace('.', '/'));
       outputFolder.mkdirs();
-      final File java = new File(outputFolder, name + ".java");
+      final File java = new File(outputFolder, sketch.getName() + ".java");
       final PrintWriter stream = new PrintWriter(new FileWriter(java));
       try {
         result = preprocessor.write(stream, bigCode.toString(), codeFolderPackages);
@@ -293,19 +269,13 @@ public class Build {
       // re also returns a column that we're not bothering with for now
 
       // first assume that it's the main file
-      int errorFile = 0;
+//      int errorFile = 0;
       int errorLine = re.getLine() - 1;
 
       // then search through for anyone else whose preprocName is null,
       // since they've also been combined into the main pde.
-      for (int i = 1; i < codeCount; i++) {
-        if (code[i].isExtension("pde") &&
-            (code[i].getPreprocOffset() < errorLine)) {
-          // keep looping until the errorLine is past the offset
-          errorFile = i;
-        }
-      }
-      errorLine -= code[errorFile].getPreprocOffset();
+      int errorFile = findErrorFile(errorLine);
+      errorLine -= sketch.getCode(errorFile).getPreprocOffset();
 
 //      System.out.println("i found this guy snooping around..");
 //      System.out.println("whatcha want me to do with 'im boss?");
@@ -370,13 +340,14 @@ public class Build {
         int errorColumn = Integer.parseInt(matches[2]);
 
         int errorFile = 0;
-        for (int i = 1; i < codeCount; i++) {
-          if (code[i].isExtension("pde") &&
-              (code[i].getPreprocOffset() < errorLine)) {
+        for (int i = 1; i < sketch.getCodeCount(); i++) {
+          SketchCode sc = sketch.getCode(i);
+          if (sc.isExtension("pde") &&
+              (sc.getPreprocOffset() < errorLine)) {
             errorFile = i;
           }
         }
-        errorLine -= code[errorFile].getPreprocOffset();
+        errorLine -= sketch.getCode(errorFile).getPreprocOffset();
 
         throw new SketchException(tsre.getMessage(),
                                   errorFile, errorLine, errorColumn);
@@ -407,7 +378,7 @@ public class Build {
       int dot = item.lastIndexOf('.');
       // http://dev.processing.org/bugs/show_bug.cgi?id=1145
       String entry = (dot == -1) ? item : item.substring(0, dot);
-      Library library = Base.importToLibraryTable.get(entry);
+      Library library = mode.importToLibraryTable.get(entry);
 
       if (library != null) {
         if (!importedLibraries.contains(library)) {
@@ -441,7 +412,7 @@ public class Build {
 
     // 3. then loop over the code[] and save each .java file
 
-    for (SketchCode sc : code) {
+    for (SketchCode sc : sketch.getCode()) {
       if (sc.isExtension("java")) {
         // In most cases, no pre-processing services necessary for Java files.
         // Just write the the contents of 'program' to a .java file
@@ -490,6 +461,18 @@ public class Build {
     }
     foundMain = preprocessor.getFoundMain();
     return result.className;
+  }
+  
+  
+  protected int findErrorFile(int errorLine) {
+    for (int i = 1; i < sketch.getCodeCount(); i++) {
+      SketchCode sc = sketch.getCode(i);
+      if (sc.isExtension("pde") && (sc.getPreprocOffset() < errorLine)) {
+        // keep looping until the errorLine is past the offset
+        return i;
+      }
+    }
+    return 0;  // i give up
   }
 
 
@@ -674,7 +657,7 @@ public class Build {
     int high = PApplet.DEFAULT_HEIGHT;
     String renderer = "";
 
-    String scrubbed = scrubComments(code[0].getProgram());
+    String scrubbed = scrubComments(sketch.getCode(0).getProgram());
     String[] matches = PApplet.match(scrubbed, SIZE_REGEX);
 
     if (matches != null) {
@@ -702,7 +685,7 @@ public class Build {
 
     // Grab the Javadoc-style description from the main code.
     String description = "";
-    String[] javadoc = PApplet.match(code[0].getProgram(), "/\\*{2,}(.*)\\*+/");
+    String[] javadoc = PApplet.match(sketch.getCode(0).getProgram(), "/\\*{2,}(.*)\\*+/");
     if (javadoc != null) {
       StringBuffer dbuffer = new StringBuffer();
       String[] pieces = PApplet.split(javadoc[1], '\n');
@@ -742,13 +725,13 @@ public class Build {
     // Use separate .jar files whenever a library or code folder is in use.
     boolean separateJar =
       Preferences.getBoolean("export.applet.separate_jar_files") ||
-      codeFolder.exists() ||
+      sketch.hasCodeFolder() ||
       javaLibraryPath.length() != 0;
 
     // Copy the loading gif to the applet
     String LOADING_IMAGE = "loading.gif";
     // Check if the user already has their own loader image
-    File loadingImage = new File(folder, LOADING_IMAGE);
+    File loadingImage = new File(sketch.getFolder(), LOADING_IMAGE);
     if (!loadingImage.exists()) {
       File skeletonFolder = new File(Base.getContentFile("lib"), "export");
       loadingImage = new File(skeletonFolder, LOADING_IMAGE);
@@ -757,18 +740,18 @@ public class Build {
 
     // Create new .jar file
     FileOutputStream zipOutputFile =
-      new FileOutputStream(new File(appletFolder, name + ".jar"));
+      new FileOutputStream(new File(appletFolder, sketch.getName() + ".jar"));
     ZipOutputStream zos = new ZipOutputStream(zipOutputFile);
 //    ZipEntry entry;
 
     StringBuffer archives = new StringBuffer();
-    archives.append(name + ".jar");
+    archives.append(sketch.getName() + ".jar");
 
     // Add the manifest file
     addManifest(zos);
 
-    if (codeFolder.exists()) {
-      File[] codeJarFiles = codeFolder.listFiles(new FilenameFilter() {
+    if (sketch.hasCodeFolder()) {
+      File[] codeJarFiles = sketch.getCodeFolder().listFiles(new FilenameFilter() {
         public boolean accept(File dir, String name) {
           if (name.charAt(0) == '.') return false;
           if (name.toLowerCase().endsWith(".jar")) return true;
@@ -782,14 +765,14 @@ public class Build {
     }
 
     File openglLibraryFolder =
-      new File(Base.getLibrariesPath(), "opengl/library");
+      new File(editor.getMode().getLibrariesFolder(), "opengl/library");
     String openglLibraryPath = openglLibraryFolder.getAbsolutePath();
     boolean openglApplet = false;
 
     HashMap<String,Object> zipFileContents = new HashMap<String,Object>();
 
     // add contents of 'library' folders
-    for (JavaLibrary library : importedLibraries) {
+    for (Library library : importedLibraries) {
       if (library.getPath().equals(openglLibraryPath)) {
         openglApplet = true;
       }
@@ -908,7 +891,7 @@ public class Build {
 
     InputStream is = null;
     // if there is an applet.html file in the sketch folder, use that
-    File customHtml = new File(folder, "applet.html");
+    File customHtml = new File(sketch.getFolder(), "applet.html");
     if (customHtml.exists()) {
       is = new FileInputStream(customHtml);
     }
@@ -936,7 +919,7 @@ public class Build {
         int index = 0;
         while ((index = sb.indexOf("@@sketch@@")) != -1) {
           sb.replace(index, index + "@@sketch@@".length(),
-                     name);
+                     sketch.getName());
         }
         while ((index = sb.indexOf("@@source@@")) != -1) {
           sb.replace(index, index + "@@source@@".length(),
@@ -1215,14 +1198,14 @@ public class Build {
     for (String platformName : PConstants.platformNames) {
       int platform = Base.getPlatformIndex(platformName);
       if (Preferences.getBoolean("export.application.platform." + platformName)) {
-        if (JavaLibrary.hasMultipleArch(platform, importedLibraries)) {
+        if (Library.hasMultipleArch(platform, importedLibraries)) {
           // export the 32-bit version
-          path = new File(folder, "application." + platformName + "32").getAbsolutePath();
+          path = new File(sketch.getFolder(), "application." + platformName + "32").getAbsolutePath();
           if (!exportApplication(path, platform, 32)) {
             return false;
           }
           // export the 64-bit version
-          path = new File(folder, "application." + platformName + "64").getAbsolutePath();
+          path = new File(sketch.getFolder(), "application." + platformName + "64").getAbsolutePath();
           if (!exportApplication(path, platform, 64)) {
             return false;
           }
@@ -1247,11 +1230,11 @@ public class Build {
                                    int exportPlatform,
                                    int exportBits) throws IOException, SketchException {
     File destFolder = new File(destPath);
-    prepareExport(destFolder);
+    sketch.prepareBuild(destFolder);
 
     // build the sketch
-    File srcFolder = makeTempBuildFolder();
-    File binFolder = makeTempBuildFolder();
+    File srcFolder = sketch.makeTempFolder();
+    File binFolder = sketch.makeTempFolder();
     String foundName = build(srcFolder, binFolder);
 
     // (already reported) error during export, exit this function
@@ -1259,9 +1242,9 @@ public class Build {
 
     // if name != exportSketchName, then that's weirdness
     // BUG unfortunately, that can also be a bug in the preproc :(
-    if (!name.equals(foundName)) {
+    if (!sketch.getName().equals(foundName)) {
       Base.showWarning("Error during export",
-                       "Sketch name is " + name + " but the sketch\n" +
+                       "Sketch name is " + sketch.getName() + " but the sketch\n" +
                        "name in the code was " + foundName, null);
       return false;
     }
@@ -1280,7 +1263,7 @@ public class Build {
     /// also where the jar files will be placed
     File dotAppFolder = null;
     if (exportPlatform == PConstants.MACOSX) {
-      dotAppFolder = new File(destFolder, name + ".app");
+      dotAppFolder = new File(destFolder, sketch.getName() + ".app");
       String APP_SKELETON = "skeleton.app";
       //File dotAppSkeleton = new File(folder, APP_SKELETON);
       File dotAppSkeleton = new File(skeletonFolder, APP_SKELETON);
@@ -1323,7 +1306,7 @@ public class Build {
 
     if (exportPlatform == PConstants.WINDOWS) {
       Base.copyFile(new File(skeletonFolder, "application.exe"),
-                    new File(destFolder, this.name + ".exe"));
+                    new File(destFolder, sketch.getName() + ".exe"));
     }
 
 
@@ -1337,7 +1320,7 @@ public class Build {
     HashMap<String,Object> zipFileContents = new HashMap<String,Object>();
 
     FileOutputStream zipOutputFile =
-      new FileOutputStream(new File(jarFolder, name + ".jar"));
+      new FileOutputStream(new File(jarFolder, sketch.getName() + ".jar"));
     ZipOutputStream zos = new ZipOutputStream(zipOutputFile);
 //    ZipEntry entry;
 
@@ -1365,8 +1348,8 @@ public class Build {
     addDataFolder(zos);
 
     // add the contents of the code folder to the jar
-    if (codeFolder.exists()) {
-      String includes = Compiler.contentsToClassPath(codeFolder);
+    if (sketch.hasCodeFolder()) {
+      String includes = Base.contentsToClassPath(sketch.getCodeFolder());
       // Use tokens to get rid of extra blanks, which causes huge exports
       String[] codeList = PApplet.splitTokens(includes, File.pathSeparator);
       String cp = "";
@@ -1387,7 +1370,7 @@ public class Build {
     zos.flush();
     zos.close();
 
-    jarListVector.add(name + ".jar");
+    jarListVector.add(sketch.getName() + ".jar");
 
 
     /// add core.jar to the jar destination folder
@@ -1401,7 +1384,7 @@ public class Build {
 
     /// add contents of 'library' folders to the export
 
-    for (JavaLibrary library : importedLibraries) {
+    for (Library library : importedLibraries) {
       // add each item from the library folder / export list to the output
       for (File exportFile : library.getApplicationExports(exportPlatform, exportBits)) {
         String exportName = exportFile.getName();
@@ -1489,7 +1472,7 @@ public class Build {
 
     if (exportPlatform == PConstants.MACOSX) {
       String PLIST_TEMPLATE = "template.plist";
-      File plistTemplate = new File(folder, PLIST_TEMPLATE);
+      File plistTemplate = new File(sketch.getFolder(), PLIST_TEMPLATE);
       if (!plistTemplate.exists()) {
         plistTemplate = new File(skeletonFolder, PLIST_TEMPLATE);
       }
@@ -1507,7 +1490,7 @@ public class Build {
           }
           while ((index = sb.indexOf("@@sketch@@")) != -1) {
             sb.replace(index, index + "@@sketch@@".length(),
-                       name);
+                       sketch.getName());
           }
           while ((index = sb.indexOf("@@classpath@@")) != -1) {
             sb.replace(index, index + "@@classpath@@".length(),
@@ -1531,14 +1514,14 @@ public class Build {
 
       pw.println(runOptions);
 
-      pw.println(this.name);
+      pw.println(sketch.getName());
       pw.println(exportClassPath);
 
       pw.flush();
       pw.close();
 
     } else {
-      File shellScript = new File(destFolder, this.name);
+      File shellScript = new File(destFolder, sketch.getName());
       PrintWriter pw = PApplet.createWriter(shellScript);
 
       // do the newlines explicitly so that windows CRLF
@@ -1551,7 +1534,7 @@ public class Build {
       pw.print("java " + Preferences.get("run.options") +
                " -Djava.library.path=\"$APPDIR\"" +
                " -cp \"" + exportClassPath + "\"" +
-               " " + this.name + "\n");
+               " " + sketch.getName() + "\n");
 
       pw.flush();
       pw.close();
@@ -1570,17 +1553,15 @@ public class Build {
     File sourceFolder = new File(destFolder, "source");
     sourceFolder.mkdirs();
 
-    for (int i = 0; i < codeCount; i++) {
+    for (SketchCode code : sketch.getCode()) {
       try {
-//        Base.copyFile(code[i].getFile(),
-//                      new File(sourceFolder, code[i].file.getFileName()));
-        code[i].copyTo(new File(sourceFolder, code[i].getFileName()));
+        code.copyTo(new File(sourceFolder, code.getFileName()));
       } catch (IOException e) {
         e.printStackTrace();
       }
     }
     // move the .java file from the preproc there too
-    String preprocFilename = this.name + ".java";
+    String preprocFilename = sketch.getName() + ".java";
     File preprocFile = new File(destFolder, preprocFilename);
     if (preprocFile.exists()) {
       preprocFile.renameTo(new File(sourceFolder, preprocFilename));
@@ -1611,7 +1592,7 @@ public class Build {
     String contents =
       "Manifest-Version: 1.0\n" +
       "Created-By: Processing " + Base.VERSION_NAME + "\n" +
-      "Main-Class: " + name + "\n";  // TODO not package friendly
+      "Main-Class: " + sketch.getName() + "\n";  // TODO not package friendly
     zos.write(contents.getBytes());
     zos.closeEntry();
   }
@@ -1647,10 +1628,9 @@ public class Build {
 
 
   protected void addDataFolder(ZipOutputStream zos) throws IOException {
-    if (dataFolder.exists()) {
-      String[] dataFiles = Base.listFiles(dataFolder, false);
-      int offset = folder.getAbsolutePath().length() + 1;
-      //for (int i = 0; i < dataFiles.length; i++) {
+    if (sketch.hasDataFolder()) {
+      String[] dataFiles = Base.listFiles(sketch.getDataFolder(), false);
+      int offset = sketch.getFolder().getAbsolutePath().length() + 1;
       for (String path : dataFiles) {
         if (Base.isWindows()) {
           //dataFiles[i] = dataFiles[i].replace('\\', '/');

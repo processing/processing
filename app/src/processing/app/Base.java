@@ -165,7 +165,7 @@ public class Base {
   }
 
 
-  static protected void setCommandLine() {
+  public static void setCommandLine() {
     commandLine = true;
   }
 
@@ -194,7 +194,7 @@ public class Base {
   }
 
 
-  static protected void initRequirements() {
+  public static void initRequirements() {
     try {
       Class.forName("com.sun.jdi.VirtualMachine");
     } catch (ClassNotFoundException cnfe) {
@@ -861,7 +861,7 @@ public class Base {
         editor.dispose();
         defaultFileMenu.insert(Base.sketchbookMenu, 2);
 //        defaultFileMenu.insert(Base.examplesMenu, 3);
-        defaultFileMenu.insert(defaultMode.getExamplesMenu());
+        defaultFileMenu.insert(defaultMode.getExamplesMenu(), 3);
         activeEditor = null;
       }
 

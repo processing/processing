@@ -26,36 +26,15 @@ package processing.app;
 import processing.core.*;
 
 import java.awt.*;
-import java.awt.event.*;
-import java.beans.*;
 import java.io.*;
-import java.util.*;
-import java.util.zip.*;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.TitledBorder;
 
 
 /**
  * Stores information about files in the current sketch
  */
 public class Sketch {
-//  private File tempBuildFolder;
-
-  /**
-   * Regular expression for parsing the size() method. This should match 
-   * against any uses of the size() function, whether numbers or variables 
-   * or whatever. This way, no warning is shown if size() isn't actually used 
-   * in the sketch, which is the case especially for anyone who is cutting
-   * and pasting from the reference.
-   */
-  public static final String SIZE_REGEX = 
-    "(?:^|\\s|;)size\\s*\\(\\s*([^\\s,]+)\\s*,\\s*([^\\s,\\)]+),?\\s*([^\\)]*)\\s*\\)\\s*\\;";
-    //"(?:^|\\s|;)size\\s*\\(\\s*(\\S+)\\s*,\\s*([^\\s,\\)]+),?\\s*([^\\)]*)\\s*\\)\\s*\\;";
-  public static final String PACKAGE_REGEX = 
-    "(?:^|\\s|;)package\\s+(\\S+)\\;";
-  
   private Editor editor;
 
   /** main pde file for this sketch. */
@@ -91,25 +70,22 @@ public class Sketch {
   private int codeCount;
   private SketchCode[] code;
 
-<<<<<<< .mine
-=======
-  /** Class path determined during build. */
-  private String classPath;
+//  /** Class path determined during build. */
+//  private String classPath;
+//
+//  /**
+//   * This is *not* the "Processing" libraries path, this is the Java libraries
+//   * path, as in java.library.path=BlahBlah, which identifies search paths for
+//   * DLLs or JNILIBs. (It's Java's LD_LIBRARY_PATH, for you UNIX fans.)
+//   */
+//  private String javaLibraryPath;
+//
+//  /**
+//   * List of library folders, set up in the preprocess() method.
+//   */
+//  private ArrayList<Library> importedLibraries;
+//  //private ArrayList<File> importedLibraries;
 
-  /**
-   * This is *not* the "Processing" libraries path, this is the Java libraries
-   * path, as in java.library.path=BlahBlah, which identifies search paths for
-   * DLLs or JNILIBs. (It's Java's LD_LIBRARY_PATH, for you UNIX fans.)
-   */
-  private String javaLibraryPath;
-
-  /**
-   * List of library folders, set up in the preprocess() method.
-   */
-  private ArrayList<Library> importedLibraries;
-  //private ArrayList<File> importedLibraries;
-
->>>>>>> .r7521
   /** 
    * Most recent, default build path. This will contain the .java files that
    * have been preprocessed, as well as any .class files that were compiled. 
@@ -1088,7 +1064,7 @@ public class Sketch {
     // make sure the user didn't hide the sketch folder
     ensureExistence();
 
-    String list[] = Compiler.packageListFromClassPath(jarPath);
+    String[] list = Base.packageListFromClassPath(jarPath);
 
     // import statements into the main sketch file (code[0])
     // if the current code is a .java file, insert into current
@@ -1254,8 +1230,9 @@ public class Sketch {
    */
   public boolean isReadOnly() {
     String apath = folder.getAbsolutePath();
-    if (apath.startsWith(Base.getExamplesPath()) ||
-        apath.startsWith(Base.getLibrariesPath())) {
+    Mode mode = editor.getMode();
+    if (apath.startsWith(mode.getExamplesFolder().getAbsolutePath()) ||
+        apath.startsWith(mode.getLibrariesFolder().getAbsolutePath())) {
       return true;
 
       // canWrite() doesn't work on directories
@@ -1393,6 +1370,11 @@ public class Sketch {
    */
   public File getDataFolder() {
     return dataFolder;
+  }
+
+  
+  public boolean hasDataFolder() {
+    return dataFolder.exists();
   }
 
 

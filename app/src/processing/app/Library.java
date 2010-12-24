@@ -332,7 +332,7 @@ public class Library {
   
 //  static boolean hasMultipleArch(String platformName, ArrayList<LibraryFolder> libraries) {
 //    int platform = Base.getPlatformIndex(platformName);
-  static boolean hasMultipleArch(int platform, ArrayList<Library> libraries) {
+  static public boolean hasMultipleArch(int platform, ArrayList<Library> libraries) {
     for (Library library : libraries) {
       if (library.hasMultipleArch(platform)) {
         return true;

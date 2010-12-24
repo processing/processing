@@ -145,13 +145,33 @@ _   something that gets fixed my 'make clean'
 
 _ Debugger highlights wrong line, and sometimes the wrong file
 _   http://code.google.com/p/processing/issues/detail?id=412
+
+. . . . 
+
 _ "save" clears undo information
 _   http://code.google.com/p/processing/issues/detail?id=411
+The problem comes from Editor.java's UndoAction inner class. The updateUndoState() method marks a sketch as unmodified when the undo stack is exhausted. This made sense when the undo stack was cleared on save, but it is no longer correct.
+Fix: remove lines 985-987 from Editor.java
+
+_ saved window positions.. if displays has changed, becomes a problem
+_   record the display that it was on?
+_     GraphicsDevice gd = frame.getGraphicsConfiguration().getDevice();
+_   make sure that the application is within the bounds of the current display?
+_   (from 0, 0 to width, height)
+_   messy since some displays have negative coords
+_   http://dev.processing.org/bugs/show_bug.cgi?id=72
+_   http://code.google.com/p/processing/issues/detail?id=27
+Base.restoreSketches() has commented out code that checked for out of bounds windows with the preferences last.window.x and last.window.y. These prefs don't exist anymore, but it would be quick to implement it again using last.sketch<i>.location instead. It would probably result in less code, because it would mean we could get rid of the windowPositionValid stuff.
+
 _ don't reload sketch on "save as"
 _   this can result in loss of data (undo is lost)
 _   http://code.google.com/p/processing/issues/detail?id=62
+Chris has attached a patch for this one.
+
 _ sketch marked as modified too aggressively
 _   http://dev.processing.org/bugs/show_bug.cgi?id=328
+
+. . . . 
 
 protected void finalize() throws Throwable {
     try {
@@ -928,13 +948,6 @@ _   be more descriptive, use a second line in latest.txt
 _   maybe just include the full text of the update message there?
 _ go through other sketch-opening menus to check for disappearing sketches
 _ deal with isManagingFocus() warning in the editor src
-_ saved window positions.. if displays has changed, becomes a problem
-_   record the display that it was on?
-_     GraphicsDevice gd = frame.getGraphicsConfiguration().getDevice();
-_   make sure that the application is within the bounds of the current display?
-_   (from 0, 0 to width, height)
-_   messy since some displays have negative coords
-_   http://dev.processing.org/bugs/show_bug.cgi?id=72
 _ [LaunchRunner Error] processing.app.Base.main(String[]) threw an exception
 _   http://dev.processing.org/bugs/show_bug.cgi?id=821
 _ file-save stops running sketch
