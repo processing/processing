@@ -39,6 +39,7 @@ import java.io.PrintWriter;
  * @author Marc De Scheemaecker
  * @version $Name: RELEASE_2_2_1 $, $Revision: 1.4 $
  */
+@SuppressWarnings("serial")
 public class XMLException
    extends Exception
 {
