@@ -36,6 +36,7 @@ package processing.xml;
  * @author Marc De Scheemaecker
  * @version $Name: RELEASE_2_2_1 $, $Revision: 1.3 $
  */
+@SuppressWarnings("serial")
 public class XMLValidationException
    extends XMLException
 {

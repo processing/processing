@@ -47,6 +47,7 @@ import processing.core.PApplet;
  * @usage Web &amp; Application
  * @instanceName xml any variable of type XMLElement
  */
+@SuppressWarnings("serial")
 public class XMLElement implements Serializable {
   /** No line number defined. */
   public static final int NO_LINE = -1;
