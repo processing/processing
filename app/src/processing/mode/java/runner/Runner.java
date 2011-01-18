@@ -26,6 +26,7 @@ package processing.mode.java.runner;
 import processing.app.*;
 import processing.app.exec.StreamRedirectThread;
 import processing.core.*;
+import processing.mode.java.Build;
 
 import java.awt.Point;
 import java.io.*;
@@ -78,13 +79,16 @@ public class Runner implements MessageConsumer {
   //private PrintStream leechErr;
 
   protected Editor editor;
-  protected Sketch sketch;
-  private String appletClassName;
+//  protected Sketch sketch;
+  protected Build build;
+//  private String appletClassName;
 
 
-  public Runner(RunnerListener listener, Sketch sketch) {
+//  public Runner(RunnerListener listener, Sketch sketch) {
+  public Runner(RunnerListener listener, Build build) {
     this.listener = listener;
-    this.sketch = sketch;
+//    this.sketch = sketch;
+    this.build = build;
 
     if (listener instanceof Editor) {
       this.editor = (Editor) listener;
@@ -94,13 +98,11 @@ public class Runner implements MessageConsumer {
   }
 
 
-  public void launch(String appletClassName, boolean presenting) {
-    this.appletClassName = appletClassName;
+//  public void launch(String appletClassName, boolean presenting) {
+//    this.appletClassName = appletClassName;
+  public void launch(boolean presenting) {
     this.presenting = presenting;
     
-    // TODO entire class is a total mess as of release 0136.
-    // This will be cleaned up significantly over the next couple months.
-
     // all params have to be stored as separate items,
     // so a growable array needs to be used. i.e. -Xms128m -Xmx1024m
     // will throw an error if it's shoved into a single array element
@@ -155,19 +157,19 @@ public class Runner implements MessageConsumer {
     }
 
     if (Base.isMacOS()) {
-      params.add("-Xdock:name=" + appletClassName);
+      params.add("-Xdock:name=" + build.getSketchClassName());
 //      params.add("-Dcom.apple.mrj.application.apple.menu.about.name=" +
 //                 sketch.getMainClassName());
     }
     // sketch.libraryPath might be ""
     // librariesClassPath will always have sep char prepended
     params.add("-Djava.library.path=" +
-               sketch.getLibraryPath() +
+               build.getJavaLibraryPath() +
                File.pathSeparator +
                System.getProperty("java.library.path"));
 
     params.add("-cp");
-    params.add(sketch.getClassPath());
+    params.add(build.getClassPath());
 //    params.add(sketch.getClassPath() +
 //        File.pathSeparator +
 //        Base.librariesClassPath);
@@ -203,8 +205,8 @@ public class Runner implements MessageConsumer {
     // It's dangerous to add your own main() to your code, 
     // but if you've done it, we'll respect your right to hang yourself.
     // http://dev.processing.org/bugs/show_bug.cgi?id=1446
-    if (sketch.getFoundMain()) {
-      params.add(appletClassName);
+    if (build.getFoundMain()) {
+      params.add(build.getSketchClassName());
     } else {
       params.add("processing.core.PApplet");
 
@@ -231,7 +233,7 @@ public class Runner implements MessageConsumer {
       params.add(PApplet.ARGS_DISPLAY + "=" +
                  Preferences.get("run.display"));
       params.add(PApplet.ARGS_SKETCH_FOLDER + "=" +
-                 sketch.getFolder().getAbsolutePath());
+                 build.getSketchPath());
 
       if (presenting) {
         params.add(PApplet.ARGS_PRESENT);
@@ -244,7 +246,7 @@ public class Runner implements MessageConsumer {
                    Preferences.get("run.present.bgcolor"));
       }
 
-      params.add(appletClassName);
+      params.add(build.getSketchClassName());
     }
 
 //    String outgoing[] = new String[params.size()];
@@ -497,7 +499,7 @@ public class Runner implements MessageConsumer {
 //    if (name.startsWith("java.lang.")) {
 //      name = name.substring(10);
     if (!handleCommonErrors(exceptionName, message, listener)) {
-        reportException(message, event.thread());
+      reportException(message, event.thread());
     }
     if (editor != null) {
       editor.deactivateRun();
@@ -582,7 +584,7 @@ public class Runner implements MessageConsumer {
           filename = location.sourceName();
           int lineNumber = location.lineNumber() - 1;
           SketchException rex = 
-            sketch.placeException(message, filename, lineNumber);
+            build.placeException(message, filename, lineNumber);
           if (rex != null) {
             return rex;
           }

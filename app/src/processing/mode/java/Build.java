@@ -65,6 +65,7 @@ public class Build {
   private File binFolder;
   private boolean foundMain = false;
   private String classPath;
+  private String appletClassName;
 
   /**
    * This will include the code folder, any library folders, etc. that might
@@ -160,7 +161,7 @@ public class Build {
    */
   public String build(File srcFolder, File binFolder) throws SketchException {
     // run the preprocessor
-    String primaryClassName = preprocess(srcFolder);
+    String classNameFound = preprocess(srcFolder);
 
     // compile the program. errors will happen as a RunnerException
     // that will bubble up to whomever called build().
@@ -168,9 +169,15 @@ public class Build {
 //    String bootClasses = System.getProperty("sun.boot.class.path");
 //    if (compiler.compile(this, srcFolder, binFolder, primaryClassName, getClassPath(), bootClasses)) {
     if (Compiler.compile(this)) {
-      return primaryClassName;
+      appletClassName = classNameFound;
+      return classNameFound;
     }
     return null;
+  }
+  
+  
+  public String getSketchClassName() {
+    return appletClassName;
   }
 
 
@@ -490,9 +497,26 @@ public class Build {
   }
 
 
+  /**
+   * Absolute path to the sketch folder. Used to set the working directry of
+   * the sketch when running, i.e. so that saveFrame() goes to the right 
+   * location when running from the PDE, instead of the same folder as the 
+   * Processing.exe or the root of the user's home dir.
+   */
+  public String getSketchPath() {
+    return sketch.getFolder().getAbsolutePath();
+  }
+
+
   /** Class path determined during build. */
   public String getClassPath() {
     return classPath;
+  }
+  
+  
+  /** Return the java.library.path for this sketch (for all the native DLLs etc). */
+  public String getJavaLibraryPath() {
+    return javaLibraryPath;
   }
 
 

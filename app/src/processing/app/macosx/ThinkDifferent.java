@@ -75,7 +75,7 @@ public class ThinkDifferent implements ApplicationListener {
         appClass.getMethod("setDefaultMenuBar", new Class[] { JMenuBar.class });
       if (method != null) {
         JMenuBar defaultMenuBar = new JMenuBar();
-        JMenu fileMenu = base.buildFileMenu(null);
+        JMenu fileMenu = base.getDefaultMode().buildFileMenu(null);
         defaultMenuBar.add(fileMenu);
         method.invoke(application, new Object[] { defaultMenuBar });
         // This is kind of a gross way to do this, but the alternatives? Hrm.

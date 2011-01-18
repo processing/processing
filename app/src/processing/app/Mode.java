@@ -8,7 +8,7 @@ import java.util.*;
 import javax.swing.*;
 
 import processing.app.syntax.*;
-import processing.mode.java.AutoFormat;
+import processing.app.tools.Tool;
 
 
 public abstract class Mode {
@@ -20,7 +20,8 @@ public abstract class Mode {
   
   protected PdeKeywords tokenMarker;
   protected Settings theme;
-  protected Formatter formatter;
+//  protected Formatter formatter;
+  protected Tool formatter;
   
   // maps imported packages to their library folder
   protected HashMap<String, Library> importToLibraryTable;
@@ -86,8 +87,13 @@ public abstract class Mode {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
   
   
+  public JMenu buildFileMenu(Editor editor) {
+    return buildFileMenu(editor, null);
+  }
+  
+  
   // this lives in Mode because examples are per-mode
-  public JMenu buildFileMenu(final Editor editor, final JMenuItem[] exportItems) {
+  protected JMenu buildFileMenu(Editor editor, JMenuItem[] exportItems) {
     JMenuItem item;
     JMenu fileMenu = new JMenu("File");
 
@@ -349,19 +355,19 @@ public abstract class Mode {
   }
 
 
-  public void handleActivated(Editor editor) {
-    //// re-add the sub-menus that are shared by all windows
-    fileMenu.insert(Base.sketchbookMenu, 2);
-    fileMenu.insert(mode.examplesMenu, 3);
-    sketchMenu.insert(mode.importMenu, 4);
-  }
+//  public void handleActivated(Editor editor) {
+//    //// re-add the sub-menus that are shared by all windows
+//    fileMenu.insert(Base.sketchbookMenu, 2);
+//    fileMenu.insert(mode.examplesMenu, 3);
+//    sketchMenu.insert(mode.importMenu, 4);
+//  }
 
 
-  public void handleDeactivated(Editor editor) {
-    fileMenu.remove(Base.sketchbookMenu);
-    fileMenu.remove(examplesMenu);
-    sketchMenu.remove(importMenu);
-  }
+//  public void handleDeactivated(Editor editor) {
+//    fileMenu.remove(Base.sketchbookMenu);
+//    fileMenu.remove(examplesMenu);
+//    sketchMenu.remove(importMenu);
+//  }
 
   
   abstract public void internalCloseRunner(Editor editor);  
@@ -401,7 +407,10 @@ public abstract class Mode {
   abstract public Formatter createFormatter();
 
 
-  public Formatter getFormatter() {
+//  public Formatter getFormatter() {
+//    return formatter; 
+//  }
+  public Tool getFormatter() {
     return formatter; 
   }
   

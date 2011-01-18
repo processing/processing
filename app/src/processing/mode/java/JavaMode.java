@@ -96,7 +96,7 @@ public class JavaMode extends Mode {
   }
 
 
-  public JMenu buildFileMenu(final Editor editor) {
+  public JMenu buildFileMenu(Editor editor) {
     JMenuItem exportApplet = Base.newJMenuItem("Export Applet", 'E');
     exportApplet.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -110,7 +110,7 @@ public class JavaMode extends Mode {
         handleExportApplication();
       }
     });
-    return base.buildFileMenu(editor, new JMenuItem[] { exportApplet, exportApplication });
+    return buildFileMenu(editor, new JMenuItem[] { exportApplet, exportApplication });
   }
 
 
@@ -308,28 +308,21 @@ public class JavaMode extends Mode {
   synchronized public void handleExport() {
     if (!handleExportCheckModified()) return;
     toolbar.activate(EditorToolbar.EXPORT);
-
-    new Thread(exportHandler).start();
-  }
-
-
-  class DefaultExportHandler implements Runnable {
-    public void run() {
-      try {
-        boolean success = sketch.exportApplet();
-        if (success) {
-          File appletFolder = new File(sketch.getFolder(), "applet");
-          Base.openFolder(appletFolder);
-          statusNotice("Done exporting.");
-        } else {
-          // error message will already be visible
-        }
-      } catch (Exception e) {
-        statusError(e);
+    
+    try {
+      boolean success = sketch.exportApplet();
+      if (success) {
+        File appletFolder = new File(sketch.getFolder(), "applet");
+        Base.openFolder(appletFolder);
+        statusNotice("Done exporting.");
+      } else {
+        // error message will already be visible
       }
-      //toolbar.clear();
-      toolbar.deactivate(EditorToolbar.EXPORT);
+    } catch (Exception e) {
+      statusError(e);
     }
+    //toolbar.clear();
+    toolbar.deactivate(EditorToolbar.EXPORT);
   }
 
 

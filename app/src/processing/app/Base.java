@@ -27,8 +27,7 @@ import java.awt.event.*;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+import java.util.zip.*;
 
 import javax.swing.*;
 
@@ -87,8 +86,8 @@ public class Base {
   // a lone file menu to be used when all sketch windows are closed
   static public JMenu defaultFileMenu;
 
-  Mode[] modeList;
-  Mode defaultMode = new JavaMode(this, getContentFile("modes/java"));
+  private Mode[] modeList;
+  private Mode defaultMode = new JavaMode(this, getContentFile("modes/java"));
 
   static JMenu sketchbookMenu;
 
@@ -262,6 +261,11 @@ public class Base {
    */
   static protected String getExtension() {
     return ".pde";
+  }
+  
+  
+  public Mode getDefaultMode() {
+    return defaultMode;
   }
 
 

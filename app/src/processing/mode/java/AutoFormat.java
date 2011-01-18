@@ -72,7 +72,8 @@ public class AutoFormat implements Formatter {
   private char c;
 
   private final Stack<Boolean> castFlags = new Stack<Boolean>();
-
+  
+  
   private void comment() {
     final boolean save_s_flg = s_flag;
 

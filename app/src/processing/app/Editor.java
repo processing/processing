@@ -144,14 +144,20 @@ public class Editor extends JFrame implements RunnerListener {
         public void windowActivated(WindowEvent e) {
 //          EditorConsole.systemOut.println("editor window activated");
           base.handleActivated(Editor.this);
-          mode.handleActivated(Editor.this);
+//          mode.handleActivated(Editor.this);
+          fileMenu.insert(Base.sketchbookMenu, 2);
+          fileMenu.insert(mode.examplesMenu, 3);
+          sketchMenu.insert(mode.importMenu, 4);
         }
 
         // added for 1.0.5
         // http://dev.processing.org/bugs/show_bug.cgi?id=1260
         public void windowDeactivated(WindowEvent e) {
 //          EditorConsole.systemErr.println("editor window deactivated");
-          mode.handleDeactivated(Editor.this);
+//          mode.handleDeactivated(Editor.this);
+          fileMenu.remove(Base.sketchbookMenu);
+          fileMenu.remove(mode.examplesMenu);
+          sketchMenu.remove(mode.importMenu);
         }
       });
 
@@ -409,7 +415,7 @@ public class Editor extends JFrame implements RunnerListener {
   protected void buildMenuBar() {
     JMenuBar menubar = new JMenuBar();
     menubar = new JMenuBar();
-    menubar.add(fileMenu = base.buildFileMenu(this));
+    menubar.add(fileMenu = mode.buildFileMenu(this));
     menubar.add(buildEditMenu());
     menubar.add(buildSketchMenu());
     menubar.add(buildToolsMenu());
@@ -1349,7 +1355,7 @@ public class Editor extends JFrame implements RunnerListener {
     final String source = getText();
 
     try {
-      final String formattedText = mode.getFormatter().format(source);
+      final String formattedText = mode.getFormatter().run();  //format(source);
       // save current (rough) selection point
       int selectionEnd = getSelectionStop();
 

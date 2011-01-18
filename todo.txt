@@ -50,6 +50,9 @@ X   couldn't find a good way to reproduce this, closing
 + Cannot reproduce problem with wrong character encoding in the console.
   http://code.google.com/p/processing/issues/detail?id=197
 
+_ updated serial lib for mac osx
+_   http://code.google.com/p/processing/issues/detail?id=503
+
 _ casey's vote:
 _   Standard, Android, JavaScript, Jython
 _   or: Processing, Android, Processing.js, Processing.py
