@@ -50,6 +50,11 @@ public class JavaMode extends Mode {
   // found in the sketchbook)
 //  static public String librariesClassPath;
 
+  
+  public Editor createEditor(Base base, String path, int[] location) {
+    return new JaveEditor(base, path, location, this);
+  }
+
 
   public JavaMode(Base base, File folder) {
     super(base, folder);
@@ -96,24 +101,6 @@ public class JavaMode extends Mode {
   }
 
 
-  public JMenu buildFileMenu(Editor editor) {
-    JMenuItem exportApplet = Base.newJMenuItem("Export Applet", 'E');
-    exportApplet.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        handleExport();
-      }
-    });
-      
-    JMenuItem exportApplication = Base.newJMenuItemShift("Export Application", 'E');
-    exportApplication.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        handleExportApplication();
-      }
-    });
-    return buildFileMenu(editor, new JMenuItem[] { exportApplet, exportApplication });
-  }
-
-
   protected void loadKeywords() throws IOException {
     File file = new File(folder, "keywords.txt");
     BufferedReader reader = PApplet.createReader(file);
@@ -157,11 +144,6 @@ public class JavaMode extends Mode {
   }
   
   
-  public String getCommentPrefix() {
-    return "//";
-  }
-
-
 //  public Editor createEditor(Base ibase, String path, int[] location) {
 //  }
   

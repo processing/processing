@@ -771,7 +771,8 @@ public class Base {
 //    }
 
 //    System.err.println("  creating new editor");
-    Editor editor = new Editor(this, defaultMode, path, location);
+//    Editor editor = new Editor(this, defaultMode, path, location);
+    Editor editor = defaultMode.createEditor(this, path, location);
 //    Editor editor = null;
 //    try {
 //      editor = new Editor(this, path, location);

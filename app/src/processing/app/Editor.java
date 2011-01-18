@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-10 Ben Fry and Casey Reas
+  Copyright (c) 2004-11 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -47,7 +47,7 @@ import javax.swing.undo.*;
 /**
  * Main editor panel for the Processing Development Environment.
  */
-public class Editor extends JFrame implements RunnerListener {
+public abstract class Editor extends JFrame implements RunnerListener {
   Base base;
   Mode mode;
 
@@ -116,14 +116,12 @@ public class Editor extends JFrame implements RunnerListener {
 //  private Runnable exportAppHandler;
 
 
-  public Editor(final Base base, final Mode mode, String path, int[] location) {
+  protected Editor(final Base base, String path, int[] location, final Mode mode) {
     super("Processing");
     this.base = base;
     this.mode = mode;
     
-    PApplet.println(location);
-
-    Base.setIcon(this);
+    Base.setIcon(this);  // TODO should this be per-mode?
 
     // Install default actions for Run, Present, etc.
 //    resetHandlers();
@@ -415,67 +413,288 @@ public class Editor extends JFrame implements RunnerListener {
   protected void buildMenuBar() {
     JMenuBar menubar = new JMenuBar();
     menubar = new JMenuBar();
-    menubar.add(fileMenu = mode.buildFileMenu(this));
+    fileMenu = buildFileMenu();
+    menubar.add(fileMenu);
     menubar.add(buildEditMenu());
     menubar.add(buildSketchMenu());
     menubar.add(buildToolsMenu());
-
-    // These are temporary entries while Android mode is being worked out.
-    // The mode will not be in the tools menu, and won't involve a cmd-key
-    if (!Base.RELEASE) {
-      try {
-        Class clazz = Class.forName("processing.app.tools.android.AndroidMode");
-        Object mode = clazz.newInstance();
-        Method m = clazz.getMethod("init", new Class[] { Editor.class, JMenuBar.class });
-        //String libraryPath = (String) m.invoke(null, new Object[] { });
-        m.invoke(mode, new Object[] { this, menubar });
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
+    
+    JMenu modeMenu = buildModeMenu();
+    if (modeMenu != null) {
+      menubar.add(modeMenu);
     }
+
+//    // These are temporary entries while Android mode is being worked out.
+//    // The mode will not be in the tools menu, and won't involve a cmd-key
+//    if (!Base.RELEASE) {
+//      try {
+//        Class clazz = Class.forName("processing.app.tools.android.AndroidMode");
+//        Object mode = clazz.newInstance();
+//        Method m = clazz.getMethod("init", new Class[] { Editor.class, JMenuBar.class });
+//        //String libraryPath = (String) m.invoke(null, new Object[] { });
+//        m.invoke(mode, new Object[] { this, menubar });
+//      } catch (Exception e) {
+//        e.printStackTrace();
+//      }
+//    }
 
     menubar.add(buildHelpMenu());
     setJMenuBar(menubar);
   }
+    
 
+  abstract public JMenu buildFileMenu();
+  
+  
+//  public JMenu buildFileMenu(Editor editor) {
+//    return buildFileMenu(editor, null);
+//  }
+//
+//
+//  // most of these items are per-mode
+//  protected JMenu buildFileMenu(Editor editor, JMenuItem[] exportItems) {
+  
+  
+  protected JMenu buildFileMenu(JMenuItem[] exportItems) {
+    JMenuItem item;
+    JMenu fileMenu = new JMenu("File");
 
-  public void setSaveItem(JMenuItem item) {
+    item = Base.newJMenuItem("New", 'N');
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          base.handleNew();
+        }
+      });
+    fileMenu.add(item);
+
+    item = Base.newJMenuItem("Open...", 'O');
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          base.handleOpenPrompt();
+        }
+      });
+    fileMenu.add(item);
+
+    fileMenu.add(base.getSketchbookMenu());
+    fileMenu.add(mode.getExamplesMenu());
+
+    item = Base.newJMenuItem("Close", 'W');
+    item.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        base.handleClose(Editor.this);
+      }
+    });
+    fileMenu.add(item);
+
+    item = Base.newJMenuItem("Save", 'S');
+    item.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        handleSave(false);
+      }
+    });
     saveMenuItem = item;
-  }
+    fileMenu.add(item);
 
-
-  public void setSaveAsItem(JMenuItem item) {
+    item = Base.newJMenuItemShift("Save As...", 'S');
+    item.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        handleSaveAs();
+      }
+    });
     saveAsMenuItem = item;
+    fileMenu.add(item);
+
+    if (exportItems != null) {
+      for (JMenuItem ei : exportItems) {
+        fileMenu.add(ei);
+      }
+    }
+    fileMenu.addSeparator();
+
+    item = Base.newJMenuItemShift("Page Setup", 'P');
+    item.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        handlePageSetup();
+      }
+    });
+    fileMenu.add(item);
+
+    item = Base.newJMenuItem("Print", 'P');
+    item.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        handlePrint();
+      }
+    });
+    fileMenu.add(item);
+
+    // Mac OS X already has its own preferences and quit menu.
+    // That's right! Think different, b*tches!
+    if (!Base.isMacOS()) {
+      fileMenu.addSeparator();
+
+      item = Base.newJMenuItem("Preferences", ',');
+      item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          base.handlePrefs();
+        }
+      });
+      fileMenu.add(item);
+
+      fileMenu.addSeparator();
+
+      item = Base.newJMenuItem("Quit", 'Q');
+      item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          base.handleQuit();
+        }
+      });
+      fileMenu.add(item);
+    }
+    return fileMenu;
+  }
+  
+  
+//  public void setSaveItem(JMenuItem item) {
+//    saveMenuItem = item;
+//  }
+
+
+//  public void setSaveAsItem(JMenuItem item) {
+//    saveAsMenuItem = item;
+//  }
+
+  
+  protected JMenu buildEditMenu() {
+    JMenu menu = new JMenu("Edit");
+    JMenuItem item;
+
+    undoItem = Base.newJMenuItem("Undo", 'Z');
+    undoItem.addActionListener(undoAction = new UndoAction());
+    menu.add(undoItem);
+
+    // Gotta follow them interface guidelines
+    // http://code.google.com/p/processing/issues/detail?id=363
+    if (Base.isWindows()) {
+      redoItem = Base.newJMenuItem("Redo", 'Y');
+    } else {  // Linux and OS X
+      redoItem = Base.newJMenuItemShift("Redo", 'Z');
+    }
+    redoItem.addActionListener(redoAction = new RedoAction());
+    menu.add(redoItem);
+
+    menu.addSeparator();
+
+    // TODO "cut" and "copy" should really only be enabled
+    // if some text is currently selected
+    item = Base.newJMenuItem("Cut", 'X');
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          handleCut();
+        }
+      });
+    menu.add(item);
+
+    item = Base.newJMenuItem("Copy", 'C');
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          textarea.copy();
+        }
+      });
+    menu.add(item);
+
+    item = Base.newJMenuItemShift("Copy as HTML", 'C');
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          handleCopyAsHTML();
+        }
+      });
+    menu.add(item);
+
+    item = Base.newJMenuItem("Paste", 'V');
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          textarea.paste();
+          sketch.setModified(true);
+        }
+      });
+    menu.add(item);
+
+    item = Base.newJMenuItem("Select All", 'A');
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          textarea.selectAll();
+        }
+      });
+    menu.add(item);
+
+    menu.addSeparator();
+
+    item = Base.newJMenuItem("Comment/Uncomment", '/');
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          handleCommentUncomment();
+        }
+    });
+    menu.add(item);
+
+    item = Base.newJMenuItem("Increase Indent", ']');
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          handleIndentOutdent(true);
+        }
+    });
+    menu.add(item);
+
+    item = Base.newJMenuItem("Decrease Indent", '[');
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          handleIndentOutdent(false);
+        }
+    });
+    menu.add(item);
+
+    menu.addSeparator();
+
+    item = Base.newJMenuItem("Find...", 'F');
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          if (find == null) {
+            find = new FindReplace(Editor.this);
+          }
+          //new FindReplace(Editor.this).show();
+          find.setVisible(true);
+        }
+      });
+    menu.add(item);
+
+    // TODO find next should only be enabled after a
+    // search has actually taken place
+    item = Base.newJMenuItem("Find Next", 'G');
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          if (find != null) {
+            //find.find(true);
+            //FindReplace find = new FindReplace(Editor.this); //.show();
+            find.find(true);
+          }
+        }
+      });
+    menu.add(item);
+
+    return menu;
   }
 
 
-  protected JMenu buildSketchMenu() {
+  abstract public JMenu buildSketchMenu();
+  
+  
+  protected JMenu buildSketchMenu(JMenuItem[] runItems) {
     JMenuItem item;
     sketchMenu = new JMenu("Sketch");
 
-    item = Base.newJMenuItem("Run", 'R');
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          handleRun(false);
-        }
-      });
-    sketchMenu.add(item);
-
-    item = Base.newJMenuItemShift("Present", 'R');
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          handleRun(true);
-        }
-      });
-    sketchMenu.add(item);
-
-    item = new JMenuItem("Stop");
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          handleStop();
-        }
-      });
-    sketchMenu.add(item);
+    for (JMenuItem mi : runItems) {
+      sketchMenu.add(mi);
+    }
 
     sketchMenu.addSeparator();
 
@@ -617,6 +836,14 @@ public class Editor extends JFrame implements RunnerListener {
     for (String title : toolList) {
       menu.add((JMenuItem) toolItems.get(title));
     }
+  }
+
+
+  /**
+   * Override this if you want a special menu for your particular 'mode'.
+   */
+  public JMenu buildModeMenu() {
+    return null;
   }
 
 
@@ -811,127 +1038,6 @@ public class Editor extends JFrame implements RunnerListener {
         });
       menu.add(item);
     }
-
-    return menu;
-  }
-
-
-  protected JMenu buildEditMenu() {
-    JMenu menu = new JMenu("Edit");
-    JMenuItem item;
-
-    undoItem = Base.newJMenuItem("Undo", 'Z');
-    undoItem.addActionListener(undoAction = new UndoAction());
-    menu.add(undoItem);
-
-    // Gotta follow them interface guidelines
-    // http://code.google.com/p/processing/issues/detail?id=363
-    if (Base.isWindows()) {
-      redoItem = Base.newJMenuItem("Redo", 'Y');
-    } else {  // Linux and OS X
-      redoItem = Base.newJMenuItemShift("Redo", 'Z');
-    }
-    redoItem.addActionListener(redoAction = new RedoAction());
-    menu.add(redoItem);
-
-    menu.addSeparator();
-
-    // TODO "cut" and "copy" should really only be enabled
-    // if some text is currently selected
-    item = Base.newJMenuItem("Cut", 'X');
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          handleCut();
-        }
-      });
-    menu.add(item);
-
-    item = Base.newJMenuItem("Copy", 'C');
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          textarea.copy();
-        }
-      });
-    menu.add(item);
-
-    item = Base.newJMenuItemShift("Copy as HTML", 'C');
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          handleCopyAsHTML();
-        }
-      });
-    menu.add(item);
-
-    item = Base.newJMenuItem("Paste", 'V');
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          textarea.paste();
-          sketch.setModified(true);
-        }
-      });
-    menu.add(item);
-
-    item = Base.newJMenuItem("Select All", 'A');
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          textarea.selectAll();
-        }
-      });
-    menu.add(item);
-
-    menu.addSeparator();
-
-    item = Base.newJMenuItem("Comment/Uncomment", '/');
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          handleCommentUncomment();
-        }
-    });
-    menu.add(item);
-
-    item = Base.newJMenuItem("Increase Indent", ']');
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          handleIndentOutdent(true);
-        }
-    });
-    menu.add(item);
-
-    item = Base.newJMenuItem("Decrease Indent", '[');
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          handleIndentOutdent(false);
-        }
-    });
-    menu.add(item);
-
-    menu.addSeparator();
-
-    item = Base.newJMenuItem("Find...", 'F');
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          if (find == null) {
-            find = new FindReplace(Editor.this);
-          }
-          //new FindReplace(Editor.this).show();
-          find.setVisible(true);
-        }
-      });
-    menu.add(item);
-
-    // TODO find next should only be enabled after a
-    // search has actually taken place
-    item = Base.newJMenuItem("Find Next", 'G');
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          if (find != null) {
-            //find.find(true);
-            //FindReplace find = new FindReplace(Editor.this); //.show();
-            find.find(true);
-          }
-        }
-      });
-    menu.add(item);
 
     return menu;
   }
@@ -1382,10 +1488,13 @@ public class Editor extends JFrame implements RunnerListener {
   }
 
 
+  abstract public String getCommentPrefix();
+
+
   protected void handleCommentUncomment() {
     startCompoundEdit();
 
-    String prefix = mode.getCommentPrefix();
+    String prefix = getCommentPrefix();
     int prefixLen = prefix.length();
 
     int startLine = textarea.getSelectionStartLine();

@@ -46,6 +46,9 @@ public abstract class Mode {
     librariesFolder = new File(folder, "libraries");
   }
   
+  
+  abstract public Editor createEditor(Base base, String path, int[] location);
+  
 
   /** 
    * Return the pretty/printable/menu name for this mode. This is separate from
@@ -87,131 +90,6 @@ public abstract class Mode {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
   
   
-  public JMenu buildFileMenu(Editor editor) {
-    return buildFileMenu(editor, null);
-  }
-  
-  
-  // this lives in Mode because examples are per-mode
-  protected JMenu buildFileMenu(Editor editor, JMenuItem[] exportItems) {
-    JMenuItem item;
-    JMenu fileMenu = new JMenu("File");
-
-    item = Base.newJMenuItem("New", 'N');
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          handleNew();
-        }
-      });
-    fileMenu.add(item);
-
-    item = Base.newJMenuItem("Open...", 'O');
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          base.handleOpenPrompt();
-        }
-      });
-    fileMenu.add(item);
-
-    fileMenu.add(base.getSketchbookMenu());
-    fileMenu.add(getExamplesMenu());
-
-    item = Base.newJMenuItem("Close", 'W');
-    if (editor != null) {
-      item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          base.handleClose(editor);
-        }
-      });
-    } else {
-      item.setEnabled(false);
-    }
-    fileMenu.add(item);
-
-    item = Base.newJMenuItem("Save", 'S');
-    if (editor != null) {
-      item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          editor.handleSave(false);
-        }
-      });
-      editor.setSaveItem(item);
-    } else {
-      item.setEnabled(false);
-    }
-    fileMenu.add(item);
-
-    item = Base.newJMenuItemShift("Save As...", 'S');
-    if (editor != null) {
-      item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          editor.handleSaveAs();
-        }
-      });
-      editor.setSaveAsItem(item);
-    } else {
-      item.setEnabled(false);
-    }
-    fileMenu.add(item);
-
-    if (exportItems != null) {
-      for (JMenuItem ei : exportItems) {
-        fileMenu.add(ei);
-      }
-    }
-    fileMenu.addSeparator();
-
-    item = Base.newJMenuItemShift("Page Setup", 'P');
-    if (editor != null) {
-      item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          editor.handlePageSetup();
-        }
-      });
-    } else {
-      item.setEnabled(false);
-    }
-    fileMenu.add(item);
-
-    item = Base.newJMenuItem("Print", 'P');
-    if (editor != null) {
-      item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          editor.handlePrint();
-        }
-      });
-    } else {
-      item.setEnabled(false);
-    }
-    fileMenu.add(item);
-
-    // Mac OS X already has its own preferences and quit menu.
-    // That's right! Think different, b*tches!
-    if (!Base.isMacOS()) {
-      fileMenu.addSeparator();
-
-      item = Base.newJMenuItem("Preferences", ',');
-      item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          base.handlePrefs();
-        }
-      });
-      fileMenu.add(item);
-
-      fileMenu.addSeparator();
-
-      item = Base.newJMenuItem("Quit", 'Q');
-      item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          base.handleQuit();
-        }
-      });
-      fileMenu.add(item);
-    }
-    return fileMenu;
-  }
-
-
   // PrintWriter pw;
 
   public void rebuildImportMenu() {  //JMenu importMenu) {
@@ -415,9 +293,6 @@ public abstract class Mode {
   }
   
 
-  abstract public String getCommentPrefix();
-
-
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
   
@@ -454,12 +329,12 @@ public abstract class Mode {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
   
   
-  public void handleNew() {
-    base.handleNew();    
-  }
-
-
-  public void handleNewReplace() {
-    base.handleNewReplace();
-  }
+//  public void handleNew() {
+//    base.handleNew();    
+//  }
+//
+//
+//  public void handleNewReplace() {
+//    base.handleNewReplace();
+//  }
 }
