@@ -118,19 +118,14 @@ public class EditorToolbar extends JComponent implements MouseInputListener, Key
 //    currentRollover = -1;
     rollover = null;
 
-    updateMode();
-
-    addMouseListener(this);
-    addMouseMotionListener(this);
-  }
-
-
-  public void updateMode() {
     mode = editor.getMode();
     bgcolor = mode.getColor("buttons.bgcolor");
     statusFont = mode.getFont("buttons.status.font");
     statusColor = mode.getColor("buttons.status.color");    
     modeTitle = mode.getTitle().toUpperCase();    
+
+    addMouseListener(this);
+    addMouseMotionListener(this);
   }
 
 

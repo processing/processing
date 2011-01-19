@@ -66,14 +66,19 @@ public class Toolbar extends EditorToolbar {
   public void handlePressed(MouseEvent e, int sel) {
     boolean shift = e.isShiftDown();
     JavaMode m = (JavaMode) mode;
+    JavaEditor jeditor = (JavaEditor) editor;
     
     switch (sel) {
     case RUN:
-      m.handleRun(shift);
+      if (shift) {
+        jeditor.handlePresent();
+      } else {
+        jeditor.handleRun();
+      }
       break;
 
     case STOP:
-      m.handleStop();
+      jeditor.handleStop();
       break;
 
     case OPEN:
@@ -83,21 +88,21 @@ public class Toolbar extends EditorToolbar {
 
     case NEW:
       if (shift) {
-        mode.handleNew();
+        editor.base.handleNew();
       } else {
         mode.handleNewReplace();
       }
       break;
 
     case SAVE:
-      editor.handleSave(false);
+      jeditor.handleSave(false);
       break;
 
     case EXPORT:
       if (shift) {
-        m.handleExportApplication();
+        jeditor.handleExportApplication();
       } else {
-        m.handleExport();
+        jeditor.handleExportApplet();
       }
       break;
     }

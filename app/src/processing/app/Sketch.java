@@ -36,6 +36,7 @@ import javax.swing.*;
  */
 public class Sketch {
   private Editor editor;
+  private Mode mode;
 
   /** main pde file for this sketch. */
   private File primaryFile;
@@ -99,13 +100,14 @@ public class Sketch {
    */
   public Sketch(Editor editor, String path) throws IOException {
     this.editor = editor;
+    this.mode = editor.getMode();
 
     primaryFile = new File(path);
 
     // get the name of the sketch by chopping .pde or .java
     // off of the main file name
     String mainFilename = primaryFile.getName();
-    int suffixLength = getDefaultExtension().length() + 1;
+    int suffixLength = mode.getDefaultExtension().length() + 1;
     name = mainFilename.substring(0, mainFilename.length() - suffixLength);
 
     // lib/build must exist when the application is started
@@ -161,7 +163,7 @@ public class Sketch {
 
     code = new SketchCode[list.length];
 
-    String[] extensions = getExtensions();
+    String[] extensions = mode.getExtensions();
 
     for (String filename : list) {
       // Ignoring the dot prefix files is especially important to avoid files
@@ -327,7 +329,7 @@ public class Sketch {
 
     // Add the extension here, this simplifies some of the logic below.
     if (newName.indexOf('.') == -1) {
-      newName += "." + getDefaultExtension();
+      newName += "." + mode.getDefaultExtension();
     }
 
     // if renaming to the same thing as before, just ignore.
@@ -354,7 +356,7 @@ public class Sketch {
     }
 
     String newExtension = newName.substring(dot+1).toLowerCase();
-    if (!validExtension(newExtension)) {
+    if (!mode.validExtension(newExtension)) {
       Base.showWarning("Problem with rename",
                        "\"." + newExtension + "\"" +
                        "is not a valid extension.", null);
@@ -362,7 +364,7 @@ public class Sketch {
     }
 
     // Don't let the user create the main tab as a .java file instead of .pde
-    if (!isDefaultExtension(newExtension)) {
+    if (!mode.isDefaultExtension(newExtension)) {
       if (renamingCode) {  // If creating a new tab, don't show this error
         if (current == code[0]) {  // If this is the main tab, disallow
           Base.showWarning("Problem with rename",
@@ -809,13 +811,13 @@ public class Sketch {
           return false;
         }
         // list of files/folders to be ignored during "save as"
-        for (String ignorable : getIgnorable()) {
+        for (String ignorable : mode.getIgnorable()) {
           if (name.equals(ignorable)) {
             return false;
           }
         }
         // ignore the extensions for code, since that'll be copied below
-        for (String ext : getExtensions()) {
+        for (String ext : mode.getExtensions()) {
           if (name.endsWith(ext)) {
             return false;
           }
@@ -961,7 +963,7 @@ public class Sketch {
       destFile = new File(codeFolder, filename);
 
     } else {
-      for (String extension : getExtensions()) {
+      for (String extension : mode.getExtensions()) {
         String lower = filename.toLowerCase();
         if (lower.endsWith("." + extension)) {
           destFile = new File(this.folder, filename);
@@ -1053,39 +1055,6 @@ public class Sketch {
       }
     }
     return true;
-  }
-
-
-  /**
-   * Add import statements to the current tab for all of packages inside
-   * the specified jar file.
-   */
-  public void importLibrary(String jarPath) {
-    // make sure the user didn't hide the sketch folder
-    ensureExistence();
-
-    String[] list = Base.packageListFromClassPath(jarPath);
-
-    // import statements into the main sketch file (code[0])
-    // if the current code is a .java file, insert into current
-    //if (current.flavor == PDE) {
-    if (hasDefaultExtension(current)) {
-      setCurrentCode(0);
-    }
-    // could also scan the text in the file to see if each import
-    // statement is already in there, but if the user has the import
-    // commented out, then this will be a problem.
-    StringBuffer buffer = new StringBuffer();
-    for (int i = 0; i < list.length; i++) {
-      buffer.append("import ");
-      buffer.append(list[i]);
-      buffer.append(".*;\n");
-    }
-    buffer.append('\n');
-    buffer.append(editor.getText());
-    editor.setText(buffer.toString());
-    editor.setSelection(0, 0);  // scroll to start
-    setModified(true);
   }
 
 
@@ -1255,79 +1224,6 @@ public class Sketch {
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-  // Breaking out extension types in order to clean up the code, and make it
-  // easier for other environments (like Arduino) to incorporate changes.
-
-
-  /**
-   * True if the specified extension should be hidden when shown on a tab.
-   * For Processing, this is true for .pde files. (Broken out for subclasses.)
-   */
-  public boolean hideExtension(String what) {
-    return what.equals(getDefaultExtension());
-  }
-
-
-  /**
-   * True if the specified code has the default file extension.
-   */
-  public boolean hasDefaultExtension(SketchCode code) {
-    return code.getExtension().equals(getDefaultExtension());
-  }
-
-
-  /**
-   * True if the specified extension is the default file extension.
-   */
-  public boolean isDefaultExtension(String what) {
-    return what.equals(getDefaultExtension());
-  }
-
-
-  /**
-   * Check this extension (no dots, please) against the list of valid
-   * extensions.
-   */
-  public boolean validExtension(String what) {
-    String[] ext = getExtensions();
-    for (int i = 0; i < ext.length; i++) {
-      if (ext[i].equals(what)) return true;
-    }
-    return false;
-  }
-
-
-  /**
-   * Returns the default extension for this editor setup.
-   */
-  public String getDefaultExtension() {
-    return "pde";
-  }
-
-
-  /**
-   * Returns a String[] array of proper extensions.
-   */
-  public String[] getExtensions() {
-    return new String[] { "pde", "java" };
-  }
-
-  
-  /**
-   * Get array of file/directory names that needn't be copied during "Save As".
-   */
-  public String[] getIgnorable() {
-    return new String[] { 
-      "applet",
-      "application.macosx",
-      "application.windows",
-      "application.linux"
-    };
-  }
-  
-
-  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-
   // Additional accessors added in 0136 because of package work.
   // These will also be helpful for tool developers.
 
@@ -1465,7 +1361,7 @@ public class Sketch {
   }
 
 
-  // .................................................................
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
   /**

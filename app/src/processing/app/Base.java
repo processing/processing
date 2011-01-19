@@ -89,7 +89,7 @@ public class Base {
   private Mode[] modeList;
   private Mode defaultMode = new JavaMode(this, getContentFile("modes/java"));
 
-  static JMenu sketchbookMenu;
+  private JMenu sketchbookMenu;
 
   protected File sketchbookFolder;
   protected File toolsFolder;

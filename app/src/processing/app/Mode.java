@@ -26,10 +26,14 @@ public abstract class Mode {
   // maps imported packages to their library folder
   protected HashMap<String, Library> importToLibraryTable;
 
-  protected JMenu toolbarMenu;
+  // these menus are shared so that they needn't be rebuilt for all windows
+  // each time a sketch is created, renamed, or moved.
   protected JMenu examplesMenu;
   protected JMenu importMenu;
-
+  
+  // popup menu used for the toolbar
+  protected JMenu toolbarMenu;
+  
   protected File examplesFolder;
   protected File librariesFolder;
 
@@ -47,9 +51,6 @@ public abstract class Mode {
   }
   
   
-  abstract public Editor createEditor(Base base, String path, int[] location);
-  
-
   /** 
    * Return the pretty/printable/menu name for this mode. This is separate from
    * the single word name of the folder that contains this mode. It could even
@@ -57,11 +58,13 @@ public abstract class Mode {
    */
   abstract public String getTitle();
 
-//  public String getName() {
-//    return name;
-//  }
+
+  /**
+   * Create a new editor associated with this mode. 
+   */
+  abstract public Editor createEditor(Base base, String path, int[] location);
   
-  
+
   public File getExamplesFolder() {
     return examplesFolder;
   }
@@ -88,9 +91,53 @@ public abstract class Mode {
 
   
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+    
+
+  abstract public EditorToolbar createToolbar(Editor editor);
   
   
-  // PrintWriter pw;
+  protected void rebuildToolbarMenu() {  //JMenu menu) {
+    JMenuItem item;
+    toolbarMenu.removeAll();
+
+    //System.out.println("rebuilding toolbar menu");
+    // Add the single "Open" item
+    item = Base.newJMenuItem("Open...", 'O');
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          base.handleOpenPrompt();
+        }
+      });
+    toolbarMenu.add(item);
+    toolbarMenu.addSeparator();
+
+    // Add a list of all sketches and subfolders
+    try {
+      boolean sketches = base.addSketches(toolbarMenu, base.getSketchbookFolder(), true);
+      if (sketches) {
+        toolbarMenu.addSeparator();
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    //System.out.println("rebuilding examples menu");
+    // Add each of the subfolders of examples directly to the menu
+    try {
+      base.addSketches(toolbarMenu, examplesFolder, true);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+
+  public JMenu getImportMenu() {
+    if (importMenu == null) {
+      importMenu = new JMenu("Import Library...");
+    }
+    return importMenu;
+  }
+
 
   public void rebuildImportMenu() {  //JMenu importMenu) {
     //System.out.println("rebuilding import menu");
@@ -100,7 +147,7 @@ public abstract class Mode {
     
     ActionListener listener = new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        base.activeEditor.getSketch().importLibrary(e.getActionCommand());
+        base.activeEditor.handleImportLibrary(e.getActionCommand());
       }
     };
 
@@ -128,44 +175,6 @@ public abstract class Mode {
         item.setActionCommand(library.getJarPath());
         importMenu.add(item);
       }
-    }
-  }
-
-
-  abstract public EditorToolbar createToolbar(Editor editor);
-  
-  
-  protected void rebuildToolbarMenu() {  //JMenu menu) {
-    JMenu menu = toolbarMenu;
-    JMenuItem item;
-    menu.removeAll();
-
-    //System.out.println("rebuilding toolbar menu");
-    // Add the single "Open" item
-    item = Base.newJMenuItem("Open...", 'O');
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          base.handleOpenPrompt();
-        }
-      });
-    menu.add(item);
-    menu.addSeparator();
-
-    // Add a list of all sketches and subfolders
-    try {
-      boolean sketches = base.addSketches(menu, base.getSketchbookFolder(), true);
-      if (sketches) menu.addSeparator();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-
-    //System.out.println("rebuilding examples menu");
-    // Add each of the subfolders of examples directly to the menu
-    try {
-      base.addSketches(menu, examplesFolder, true);
-      //addSketches(menu, examplesFolder);
-    } catch (IOException e) {
-      e.printStackTrace();
     }
   }
   
@@ -231,7 +240,7 @@ public abstract class Mode {
       e.printStackTrace();
     }
   }
-
+  
 
 //  public void handleActivated(Editor editor) {
 //    //// re-add the sub-menus that are shared by all windows
@@ -248,7 +257,7 @@ public abstract class Mode {
 //  }
 
   
-  abstract public void internalCloseRunner(Editor editor);  
+//  abstract public void internalCloseRunner(Editor editor);  
 
   
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -329,6 +338,70 @@ public abstract class Mode {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
   
   
+  // Breaking out extension types in order to clean up the code, and make it
+  // easier for other environments (like Arduino) to incorporate changes.
+
+
+  /**
+   * True if the specified extension should be hidden when shown on a tab.
+   * For Processing, this is true for .pde files. (Broken out for subclasses.)
+   */
+  public boolean hideExtension(String what) {
+    return what.equals(getDefaultExtension());
+  }
+
+
+  /**
+   * True if the specified code has the default file extension.
+   */
+  public boolean isDefaultExtension(SketchCode code) {
+    return code.getExtension().equals(getDefaultExtension());
+  }
+
+
+  /**
+   * True if the specified extension is the default file extension.
+   */
+  public boolean isDefaultExtension(String what) {
+    return what.equals(getDefaultExtension());
+  }
+
+
+  /**
+   * Check this extension (no dots, please) against the list of valid
+   * extensions.
+   */
+  public boolean validExtension(String what) {
+    String[] ext = getExtensions();
+    for (int i = 0; i < ext.length; i++) {
+      if (ext[i].equals(what)) return true;
+    }
+    return false;
+  }
+
+
+  /**
+   * Returns the default extension for this editor setup.
+   */
+  abstract public String getDefaultExtension();
+  
+
+
+  /**
+   * Returns a String[] array of proper extensions.
+   */
+  abstract public String[] getExtensions();
+
+
+  /**
+   * Get array of file/directory names that needn't be copied during "Save As".
+   */
+  abstract public String[] getIgnorable();
+  
+ 
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
 //  public void handleNew() {
 //    base.handleNew();    
 //  }

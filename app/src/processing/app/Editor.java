@@ -49,7 +49,7 @@ import javax.swing.undo.*;
  */
 public abstract class Editor extends JFrame implements RunnerListener {
   Base base;
-  Mode mode;
+  protected Mode mode;
 
   // otherwise, if the window is resized with the message label
   // set to blank, it's preferredSize() will be fukered
@@ -68,33 +68,25 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
   // file and sketch menus for re-inserting items
   private JMenu fileMenu;
+  private JMenuItem saveMenuItem;
+  private JMenuItem saveAsMenuItem;
+
   private JMenu sketchMenu;
 
-  private final EditorToolbar toolbar;
-  // these menus are shared so that they needn't be rebuilt for all windows
-  // each time a sketch is created, renamed, or moved.
-  static JMenu toolbarMenu;
-
-  EditorHeader header;
-  EditorStatus status;
-  EditorConsole console;
-
-  private final JSplitPane splitPane;
-  private final JPanel consolePanel;
+  protected EditorHeader header;
+  protected EditorToolbar toolbar;
+  protected JEditTextArea textarea;
+  protected EditorStatus status;
+  protected JSplitPane splitPane;
+  protected JPanel consolePanel;
+  protected EditorConsole console;
+  protected EditorLineStatus lineStatus;
 
   // currently opened program
-  private Sketch sketch;
-
-  private final EditorLineStatus lineStatus;
-
-  private final JEditTextArea textarea;
-//  private final PdeKeyListener listener;
+  protected Sketch sketch;
 
   // runtime information and window placement
   private Point sketchWindowLocation;
-
-  private JMenuItem saveMenuItem;
-  private JMenuItem saveAsMenuItem;
 
   // undo fellers
   private JMenuItem undoItem, redoItem;
@@ -108,12 +100,6 @@ public abstract class Editor extends JFrame implements RunnerListener {
   private final Stack<Integer> caretRedoStack = new Stack<Integer>();
 
   private FindReplace find;
-
-//  private Runnable runHandler;
-//  private Runnable presentHandler;
-//  private Runnable stopHandler;
-//  private Runnable exportHandler;
-//  private Runnable exportAppHandler;
 
 
   protected Editor(final Base base, String path, int[] location, final Mode mode) {
@@ -143,9 +129,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
 //          EditorConsole.systemOut.println("editor window activated");
           base.handleActivated(Editor.this);
 //          mode.handleActivated(Editor.this);
-          fileMenu.insert(Base.sketchbookMenu, 2);
-          fileMenu.insert(mode.examplesMenu, 3);
-          sketchMenu.insert(mode.importMenu, 4);
+          fileMenu.insert(base.getSketchbookMenu(), 2);
+          fileMenu.insert(mode.getExamplesMenu(), 3);
+          sketchMenu.insert(mode.getImportMenu(), 4);
         }
 
         // added for 1.0.5
@@ -153,9 +139,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
         public void windowDeactivated(WindowEvent e) {
 //          EditorConsole.systemErr.println("editor window deactivated");
 //          mode.handleDeactivated(Editor.this);
-          fileMenu.remove(Base.sketchbookMenu);
-          fileMenu.remove(mode.examplesMenu);
-          sketchMenu.remove(mode.importMenu);
+          fileMenu.remove(base.getSketchbookMenu());
+          fileMenu.remove(mode.getExamplesMenu());
+          sketchMenu.remove(mode.getImportMenu());
         }
       });
 
@@ -698,11 +684,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     sketchMenu.addSeparator();
 
-    if (Base.importMenu == null) {
-      Base.importMenu = new JMenu("Import Library...");
-      base.rebuildImportMenu();
-    }
-    sketchMenu.add(Base.importMenu);
+    sketchMenu.add(mode.getImportMenu());
 
     item = Base.newJMenuItem("Show Sketch Folder", 'K');
     item.addActionListener(new ActionListener() {
@@ -723,14 +705,17 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     return sketchMenu;
   }
+  
+  
+  abstract public void handleImportLibrary(String item);
 
 
   protected JMenu buildToolsMenu() {
     JMenu menu = new JMenu("Tools");
 
     addInternalTools(menu);
-    addTools(menu, Base.getToolsFolder());
-    File sketchbookTools = new File(Base.getSketchbookFolder(), "tools");
+    addTools(menu, base.getToolsFolder());
+    File sketchbookTools = new File(base.getSketchbookFolder(), "tools");
     addTools(menu, sketchbookTools);
 
     return menu;
@@ -901,12 +886,11 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
 
   protected JMenu addInternalTools(JMenu menu) {
-    JMenuItem item;
-
-    item = createToolMenuItem("processing.app.tools.AutoFormatTool");
-    int modifiers = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
-    item.setAccelerator(KeyStroke.getKeyStroke('T', modifiers));
-    menu.add(item);
+//    JMenuItem item;
+//    item = createToolMenuItem("processing.app.tools.AutoFormatTool");
+//    int modifiers = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+//    item.setAccelerator(KeyStroke.getKeyStroke('T', modifiers));
+//    menu.add(item);
 
     menu.add(createToolMenuItem("processing.app.tools.CreateFont"));
     menu.add(createToolMenuItem("processing.app.tools.ColorSelector"));
@@ -1642,9 +1626,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
   }
 
   
-  public void internalCloseRunner() {
-    mode.internalCloseRunner(this);
-  }
+//  public void internalCloseRunner() {
+//    mode.internalCloseRunner(this);
+//  }
 
 
   /**
@@ -2007,7 +1991,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
   public void statusError(String what) {
     status.error(what);
     //new Exception("deactivating RUN").printStackTrace();
-    toolbar.deactivate(EditorToolbar.RUN);
+//    toolbar.deactivate(EditorToolbar.RUN);
   }
 
 
