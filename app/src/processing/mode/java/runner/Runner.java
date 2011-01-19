@@ -84,8 +84,7 @@ public class Runner implements MessageConsumer {
 //  private String appletClassName;
 
 
-//  public Runner(RunnerListener listener, Sketch sketch) {
-  public Runner(RunnerListener listener, Build build) {
+  public Runner(Build build, RunnerListener listener) {
     this.listener = listener;
 //    this.sketch = sketch;
     this.build = build;

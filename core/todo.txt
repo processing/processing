@@ -1,10 +1,12 @@
 0193 core
 
-
 _ need to finish font changes wrt native fonts before any release
 _   right now not in a good place--default font will be bitmapped and ugly
 _   http://code.google.com/p/processing/issues/detail?id=416
 _   need to have some kind of subsetting mode, but 'subsetting' a bad name
+
+_ check glyph code < 0 instead of Font.canDisplay() 
+_   OS X claims that it can display more glyphs because of substitutions
 
 _ selectInput() and selectOutput() freeze on OS X
 _   http://code.google.com/p/processing/issues/detail?id=445

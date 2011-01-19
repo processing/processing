@@ -60,6 +60,7 @@ public class EditorToolbar extends JComponent implements MouseInputListener, Key
   static final int ROLLOVER = 1;
   static final int ACTIVE   = 2;
 
+  protected Base base;
   protected Editor editor;
   protected Mode mode;
 
@@ -100,8 +101,9 @@ public class EditorToolbar extends JComponent implements MouseInputListener, Key
   ArrayList<Button> buttons;
 
 
-  public EditorToolbar(Editor editor) {  //, JMenu menu) {
+  public EditorToolbar(Editor editor, Base base) {  //, JMenu menu) {
     this.editor = editor;
+    this.base = base;
 //    this.menu = menu;
 
     buttons = new ArrayList<Button>();

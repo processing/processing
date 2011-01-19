@@ -93,7 +93,7 @@ public abstract class Mode {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
     
 
-  abstract public EditorToolbar createToolbar(Editor editor);
+//  abstract public EditorToolbar createToolbar(Editor editor);
   
   
   protected void rebuildToolbarMenu() {  //JMenu menu) {

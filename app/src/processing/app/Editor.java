@@ -475,7 +475,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     item = Base.newJMenuItem("Save", 'S');
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        handleSave(false);
+        handleSaveRequest(false);
       }
     });
     saveMenuItem = item;
@@ -1650,7 +1650,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
                                       JOptionPane.QUESTION_MESSAGE);
 
       if (result == JOptionPane.YES_OPTION) {
-        return handleSave(true);
+        return handleSaveRequest(true);
 
       } else if (result == JOptionPane.NO_OPTION) {
         return true;  // ok to continue
@@ -1702,7 +1702,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
       Object result = pane.getValue();
       if (result == options[0]) {  // save (and close/quit)
-        return handleSave(true);
+        return handleSaveRequest(true);
 
       } else if (result == options[2]) {  // don't save (still close/quit)
         return true;
@@ -1852,22 +1852,20 @@ public abstract class Editor extends JFrame implements RunnerListener {
    * won't run properly while a quit is happening. This fixes
    * <A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=276">Bug 276</A>.
    */
-  public boolean handleSave(boolean immediately) {
-    //stopRunner();
-    handleStop();  // 0136
-//    internalCloseRunner();  // 0192
+  public boolean handleSaveRequest(boolean immediately) {
+//    handleStop();  // 0136
 
     if (untitled) {
       return handleSaveAs();
       // need to get the name, user might also cancel here
 
     } else if (immediately) {
-      handleSave2();
+      handleSave();
 
     } else {
       SwingUtilities.invokeLater(new Runnable() {
           public void run() {
-            handleSave2();
+            handleSave();
           }
         });
     }
@@ -1875,8 +1873,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
   }
 
 
-  protected void handleSave2() {
-    toolbar.activate(EditorToolbar.SAVE);
+  public void handleSave() {
     statusNotice("Saving...");
     try {
       if (sketch.save()) {
@@ -1894,19 +1891,10 @@ public abstract class Editor extends JFrame implements RunnerListener {
       //checkModifiedMode = 0;
       // this is used when another operation calls a save
     }
-    //toolbar.clear();
-    toolbar.deactivate(EditorToolbar.SAVE);
   }
 
 
   public boolean handleSaveAs() {
-    //stopRunner();  // formerly from 0135
-    handleStop();
-
-    toolbar.activate(EditorToolbar.SAVE);
-
-    //SwingUtilities.invokeLater(new Runnable() {
-    //public void run() {
     statusNotice("Saving...");
     try {
       if (sketch.saveAs()) {
@@ -1922,12 +1910,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     } catch (Exception e) {
       // show the error as a message in the window
       statusError(e);
-
-    } finally {
-      // make sure the toolbar button deactivates
-      toolbar.deactivate(EditorToolbar.SAVE);
     }
-
     return true;
   }
 

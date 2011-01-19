@@ -1,18 +1,36 @@
 package processing.mode.java;
 
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.io.IOException;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JCheckBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
 
 import processing.app.Base;
 import processing.app.Editor;
 import processing.app.EditorToolbar;
 import processing.app.Mode;
 import processing.app.Preferences;
+import processing.app.SketchException;
 
 public class JavaEditor extends Editor {
   JavaMode jmode;
@@ -91,9 +109,9 @@ public class JavaEditor extends Editor {
    */
   public void handleExportApplet() {
     if (handleExportCheckModified()) {
-      toolbar.activate(Toolbar.EXPORT);    
+      toolbar.activate(Toolbar.EXPORT);
       try {
-        boolean success = jmode.handleExportApplet();
+        boolean success = jmode.handleExportApplet(this);
         if (success) {
           File appletFolder = new File(sketch.getFolder(), "applet");
           Base.openFolder(appletFolder);
@@ -110,28 +128,27 @@ public class JavaEditor extends Editor {
   }
   
   
-  public void handleExportApplication() {
-    toolbar.activate(Toolbar.EXPORT);
-    try {
-      jmode.handleExportApplication();
-    } catch (Exception e) {
-      statusError(e);
-    }
-    toolbar.deactivate(Toolbar.EXPORT);
-  }  
-  
+//  public void handleExportApplication() {
+//    toolbar.activate(Toolbar.EXPORT);
+//    try {
+//      jmode.handleExportApplication();
+//    } catch (Exception e) {
+//      statusError(e);
+//    }
+//    toolbar.deactivate(Toolbar.EXPORT);
+//  }  
   
 
   /**
    * Handler for Sketch &rarr; Export Application
    */
-  synchronized public void handleExportApplication() {
+  public void handleExportApplication() {
     toolbar.activate(Toolbar.EXPORT);
-
+    
     if (handleExportCheckModified()) {
       statusNotice("Exporting application...");
       try {
-        if (jmode.exportApplicationPrompt()) {
+        if (exportApplicationPrompt()) {
           Base.openFolder(sketch.getFolder());
           statusNotice("Done exporting.");
         } else {
@@ -142,9 +159,192 @@ public class JavaEditor extends Editor {
         statusNotice("Error during export.");
         e.printStackTrace();
       }
-      //toolbar.clear();
-      toolbar.deactivate(EditorToolbar.EXPORT);
     }
+    toolbar.deactivate(Toolbar.EXPORT);
+  }
+  
+  
+  protected boolean exportApplicationPrompt() throws IOException, SketchException {
+    JPanel panel = new JPanel();
+    panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+    panel.add(Box.createVerticalStrut(6));
+
+    //Box panel = Box.createVerticalBox();
+
+    //Box labelBox = Box.createHorizontalBox();
+//    String msg = "<html>Click Export to Application to create a standalone, " +
+//      "double-clickable application for the selected plaforms.";
+
+//    String msg = "Export to Application creates a standalone, \n" +
+//      "double-clickable application for the selected plaforms.";
+    String line1 = "Export to Application creates double-clickable,";
+    String line2 = "standalone applications for the selected plaforms.";
+    JLabel label1 = new JLabel(line1, SwingConstants.CENTER);
+    JLabel label2 = new JLabel(line2, SwingConstants.CENTER);
+    label1.setAlignmentX(Component.LEFT_ALIGNMENT);
+    label2.setAlignmentX(Component.LEFT_ALIGNMENT);
+//    label1.setAlignmentX();
+//    label2.setAlignmentX(0);
+    panel.add(label1);
+    panel.add(label2);
+    int wide = label2.getPreferredSize().width;
+    panel.add(Box.createVerticalStrut(12));
+
+    final JCheckBox windowsButton = new JCheckBox("Windows");
+    //windowsButton.setMnemonic(KeyEvent.VK_W);
+    windowsButton.setSelected(Preferences.getBoolean("export.application.platform.windows"));
+    windowsButton.addItemListener(new ItemListener() {
+      public void itemStateChanged(ItemEvent e) {
+        Preferences.setBoolean("export.application.platform.windows", windowsButton.isSelected());
+      }
+    });
+
+    final JCheckBox macosxButton = new JCheckBox("Mac OS X");
+    //macosxButton.setMnemonic(KeyEvent.VK_M);
+    macosxButton.setSelected(Preferences.getBoolean("export.application.platform.macosx"));
+    macosxButton.addItemListener(new ItemListener() {
+      public void itemStateChanged(ItemEvent e) {
+        Preferences.setBoolean("export.application.platform.macosx", macosxButton.isSelected());
+      }
+    });
+
+    final JCheckBox linuxButton = new JCheckBox("Linux");
+    //linuxButton.setMnemonic(KeyEvent.VK_L);
+    linuxButton.setSelected(Preferences.getBoolean("export.application.platform.linux"));
+    linuxButton.addItemListener(new ItemListener() {
+      public void itemStateChanged(ItemEvent e) {
+        Preferences.setBoolean("export.application.platform.linux", linuxButton.isSelected());
+      }
+    });
+
+    JPanel platformPanel = new JPanel();
+    //platformPanel.setLayout(new BoxLayout(platformPanel, BoxLayout.X_AXIS));
+    platformPanel.add(windowsButton);
+    platformPanel.add(Box.createHorizontalStrut(6));
+    platformPanel.add(macosxButton);
+    platformPanel.add(Box.createHorizontalStrut(6));
+    platformPanel.add(linuxButton);
+    platformPanel.setBorder(new TitledBorder("Platforms"));
+    //Dimension goodIdea = new Dimension(wide, platformPanel.getPreferredSize().height);
+    //platformPanel.setMaximumSize(goodIdea);
+    wide = Math.max(wide, platformPanel.getPreferredSize().width);
+    platformPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+    panel.add(platformPanel);
+
+//  Box indentPanel = Box.createHorizontalBox();
+//  indentPanel.add(Box.createHorizontalStrut(new JCheckBox().getPreferredSize().width));
+    final JCheckBox showStopButton = new JCheckBox("Show a Stop button");
+    //showStopButton.setMnemonic(KeyEvent.VK_S);
+    showStopButton.setSelected(Preferences.getBoolean("export.application.stop"));
+    showStopButton.addItemListener(new ItemListener() {
+      public void itemStateChanged(ItemEvent e) {
+        Preferences.setBoolean("export.application.stop", showStopButton.isSelected());
+      }
+    });
+    showStopButton.setEnabled(Preferences.getBoolean("export.application.fullscreen"));
+    showStopButton.setBorder(new EmptyBorder(3, 13, 6, 13));
+//  indentPanel.add(showStopButton);
+//  indentPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+    final JCheckBox fullScreenButton = new JCheckBox("Full Screen (Present mode)");
+    //fullscreenButton.setMnemonic(KeyEvent.VK_F);
+    fullScreenButton.setSelected(Preferences.getBoolean("export.application.fullscreen"));
+    fullScreenButton.addItemListener(new ItemListener() {
+      public void itemStateChanged(ItemEvent e) {
+        boolean sal = fullScreenButton.isSelected();
+        Preferences.setBoolean("export.application.fullscreen", sal);
+        showStopButton.setEnabled(sal);
+      }
+    });
+    fullScreenButton.setBorder(new EmptyBorder(3, 13, 3, 13));
+
+    JPanel optionPanel = new JPanel();
+    optionPanel.setLayout(new BoxLayout(optionPanel, BoxLayout.Y_AXIS));
+    optionPanel.add(fullScreenButton);
+    optionPanel.add(showStopButton);
+//    optionPanel.add(indentPanel);
+    optionPanel.setBorder(new TitledBorder("Options"));
+    wide = Math.max(wide, platformPanel.getPreferredSize().width);
+    //goodIdea = new Dimension(wide, optionPanel.getPreferredSize().height);
+    optionPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+    //optionPanel.setMaximumSize(goodIdea);
+    panel.add(optionPanel);
+
+    Dimension good;
+    //label1, label2, platformPanel, optionPanel
+    good = new Dimension(wide, label1.getPreferredSize().height);
+    label1.setMaximumSize(good);
+    good = new Dimension(wide, label2.getPreferredSize().height);
+    label2.setMaximumSize(good);
+    good = new Dimension(wide, platformPanel.getPreferredSize().height);
+    platformPanel.setMaximumSize(good);
+    good = new Dimension(wide, optionPanel.getPreferredSize().height);
+    optionPanel.setMaximumSize(good);
+
+//    JPanel actionPanel = new JPanel();
+//    optionPanel.setLayout(new BoxLayout(optionPanel, BoxLayout.X_AXIS));
+//    optionPanel.add(Box.createHorizontalGlue());
+
+//    final JDialog frame = new JDialog(editor, "Export to Application");
+
+//    JButton cancelButton = new JButton("Cancel");
+//    cancelButton.addActionListener(new ActionListener() {
+//      public void actionPerformed(ActionEvent e) {
+//        frame.dispose();
+//        return false;
+//      }
+//    });
+
+    // Add the buttons in platform-specific order
+//    if (PApplet.platform == PConstants.MACOSX) {
+//      optionPanel.add(cancelButton);
+//      optionPanel.add(exportButton);
+//    } else {
+//      optionPanel.add(exportButton);
+//      optionPanel.add(cancelButton);
+//    }
+    String[] options = { "Export", "Cancel" };
+    final JOptionPane optionPane = new JOptionPane(panel,
+                                                   JOptionPane.PLAIN_MESSAGE,
+                                                   //JOptionPane.QUESTION_MESSAGE,
+                                                   JOptionPane.YES_NO_OPTION,
+                                                   null,
+                                                   options,
+                                                   options[0]);
+
+    final JDialog dialog = new JDialog(this, "Export Options", true);
+    dialog.setContentPane(optionPane);
+
+    optionPane.addPropertyChangeListener(new PropertyChangeListener() {
+      public void propertyChange(PropertyChangeEvent e) {
+        String prop = e.getPropertyName();
+
+        if (dialog.isVisible() &&
+            (e.getSource() == optionPane) &&
+            (prop.equals(JOptionPane.VALUE_PROPERTY))) {
+          //If you were going to check something
+          //before closing the window, you'd do
+          //it here.
+          dialog.setVisible(false);
+        }
+      }
+    });
+    dialog.pack();
+    dialog.setResizable(false);
+
+    Rectangle bounds = getBounds();
+    dialog.setLocation(bounds.x + (bounds.width - dialog.getSize().width) / 2,
+                       bounds.y + (bounds.height - dialog.getSize().height) / 2);
+    dialog.setVisible(true);
+
+    Object value = optionPane.getValue();
+    if (value.equals(options[0])) {
+      return jmode.exportApplication(this);
+    } else if (value.equals(options[1]) || value.equals(new Integer(-1))) {
+      // closed window by hitting Cancel or ESC
+      statusNotice("Export to Application canceled.");
+    }
+    return false;
   }
 
 
@@ -168,7 +368,7 @@ public class JavaEditor extends Editor {
                                                 options[0]);
 
       if (result == JOptionPane.OK_OPTION) {
-        handleSave(true);
+        handleSaveRequest(true);
 
       } else {
         // why it's not CANCEL_OPTION is beyond me (at least on the mac)
@@ -232,6 +432,23 @@ public class JavaEditor extends Editor {
 
     // focus the PDE again after quitting presentation mode [toxi 030903]
     toFront();
+  }
+  
+  
+  public void handleSave() {
+    toolbar.activate(Toolbar.SAVE);
+    handleStop();
+    super.handleSave();
+    toolbar.deactivate(Toolbar.SAVE);
+  }
+  
+  
+  public boolean handleSaveAs() {
+    toolbar.activate(Toolbar.SAVE);
+    handleStop();
+    boolean result = super.handleSaveAs();
+    toolbar.deactivate(Toolbar.SAVE);
+    return result;
   }
   
   

@@ -25,9 +25,9 @@ import java.awt.event.MouseEvent;
 import javax.swing.JMenu;
 import javax.swing.JPopupMenu;
 
+import processing.app.Base;
 import processing.app.Editor;
 import processing.app.EditorToolbar;
-import processing.app.EditorToolbar.Button;
 
 
 public class Toolbar extends EditorToolbar {
@@ -53,8 +53,8 @@ public class Toolbar extends EditorToolbar {
   JMenu menu;
 
   
-  public Toolbar(Editor editor) {
-    super(editor);
+  public Toolbar(Editor editor, Base base) {
+    super(editor, base);
     
     Image[][] images = loadImages();
     for (int i = 0; i < 6; i++) {
@@ -65,7 +65,6 @@ public class Toolbar extends EditorToolbar {
 
   public void handlePressed(MouseEvent e, int sel) {
     boolean shift = e.isShiftDown();
-    JavaMode m = (JavaMode) mode;
     JavaEditor jeditor = (JavaEditor) editor;
     
     switch (sel) {
@@ -88,14 +87,14 @@ public class Toolbar extends EditorToolbar {
 
     case NEW:
       if (shift) {
-        editor.base.handleNew();
+        base.handleNew();
       } else {
-        mode.handleNewReplace();
+        base.handleNewReplace();
       }
       break;
 
     case SAVE:
-      jeditor.handleSave(false);
+      jeditor.handleSaveRequest(false);
       break;
 
     case EXPORT:

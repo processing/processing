@@ -1,5 +1,6 @@
 0193
 
+DO NOT USE "JVMArchs". It is deprecated, and manually overrides the natural architecture launching and ordering that LaunchServices does, including accommodating the 32-bit checkbox in the Get Info window.
 
 [ from the major refactoring work, not in trunk ] 
 

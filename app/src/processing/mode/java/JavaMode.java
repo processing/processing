@@ -21,23 +21,20 @@
 
 package processing.mode.java;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 
-import javax.swing.*;
-
-import processing.app.*;
+import processing.app.Base;
+import processing.app.Editor;
+import processing.app.Formatter;
+import processing.app.Mode;
+import processing.app.RunnerListener;
+import processing.app.Settings;
+import processing.app.Sketch;
+import processing.app.SketchException;
 import processing.app.syntax.PdeKeywords;
-import processing.app.syntax.SyntaxStyle;
-import processing.app.syntax.TokenMarker;
 import processing.core.PApplet;
 import processing.mode.java.runner.Runner;
 
@@ -134,9 +131,9 @@ public class JavaMode extends Mode {
   }
 
 
-  public EditorToolbar createToolbar(Editor editor) {
-    return new Toolbar(editor);
-  }
+//  public EditorToolbar createToolbar(Editor editor) {
+//    return new Toolbar(editor);
+//  }
 
   
   public Formatter createFormatter() {
@@ -177,38 +174,29 @@ public class JavaMode extends Mode {
   /**
    * Implements Sketch &rarr; Run.
    * @param present Set true to run in full screen (present mode).
+   * @throws SketchException 
    */
-  public void handleRun(Editor editor, Sketch sketch) {
-    Build build = new Build(editor);
-    build.prepareRun();
-    String appletClassName = sketch.build();
+  public void handleRun(Sketch sketch, RunnerListener listener) throws SketchException {
+    Build build = new Build(sketch);
+    String appletClassName = build.build();
     if (appletClassName != null) {
-      runtime = new Runner(Editor.this, sketch);
-      runtime.launch(appletClassName, false);
+      runtime = new Runner(build, listener);
+      runtime.launch(false);
     }
   }
 
 
-  public void handlePresent(Editor editor, Sketch sketch) {
-    Build build = new Build(editor);
-    build.prepareRun();
-    String appletClassName = sketch.build();
+  public void handlePresent(Sketch sketch, RunnerListener listener) throws SketchException {
+    Build build = new Build(sketch);
+    String appletClassName = build.build();
     if (appletClassName != null) {
-      runtime = new Runner(Editor.this, sketch);
-      runtime.launch(appletClassName, true);
+      runtime = new Runner(build, listener);
+      runtime.launch(true);
     }
   }
 
 
-  public void handleStop(Editor editor) {
-//    try {
-//      if (runtime != null) {
-//        runtime.close();  // kills the window
-//        runtime = null; // will this help?
-//      }
-//    } catch (Exception e) {
-//      editor.statusError(e);
-//    }
+  public void handleStop() {
     if (runtime != null) {
       runtime.close();  // kills the window
       runtime = null; // will this help?
@@ -216,7 +204,14 @@ public class JavaMode extends Mode {
   }
   
   
-  public boolean handleExportApplet(Editor editor, Sketch sketch) {
-    
+  public boolean handleExportApplet(Sketch sketch) throws SketchException, IOException {
+    Build build = new Build(sketch);
+    return build.exportApplet();
+  }
+  
+  
+  public boolean handleExportApplication(Sketch sketch) throws SketchException, IOException {
+    Build build = new Build(sketch);
+    return build.exportApplication();
   }
 }
