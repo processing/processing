@@ -1435,4 +1435,9 @@ public class Sketch {
     }
     return buffer.toString();
   }
+  
+  
+  public Mode getMode() {
+    return mode;
+  }
 }

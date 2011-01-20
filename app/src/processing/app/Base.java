@@ -864,7 +864,7 @@ public class Base {
       } else {
         editor.setVisible(false);
         editor.dispose();
-        defaultFileMenu.insert(Base.sketchbookMenu, 2);
+        defaultFileMenu.insert(sketchbookMenu, 2);
 //        defaultFileMenu.insert(Base.examplesMenu, 3);
         defaultFileMenu.insert(defaultMode.getExamplesMenu(), 3);
         activeEditor = null;

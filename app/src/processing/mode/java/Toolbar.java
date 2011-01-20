@@ -22,7 +22,6 @@ package processing.mode.java;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
 
-import javax.swing.JMenu;
 import javax.swing.JPopupMenu;
 
 import processing.app.Base;
@@ -49,8 +48,8 @@ public class Toolbar extends EditorToolbar {
   static final int SAVE   = 4;
   static final int EXPORT = 5;
 
-  JPopupMenu popup;
-  JMenu menu;
+//  JPopupMenu popup;
+//  JMenu menu;
 
   
   public Toolbar(Editor editor, Base base) {
@@ -81,7 +80,9 @@ public class Toolbar extends EditorToolbar {
       break;
 
     case OPEN:
-      popup = menu.getPopupMenu();
+//      popup = menu.getPopupMenu();
+      // TODO I think we need a longer chain of accessors here.
+      JPopupMenu popup = editor.getMode().getToolbarMenu().getPopupMenu();
       popup.show(this, e.getX(), e.getY());
       break;
 

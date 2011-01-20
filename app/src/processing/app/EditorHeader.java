@@ -170,8 +170,9 @@ public class EditorHeader extends JComponent {
     for (int i = 0; i < sketch.getCodeCount(); i++) {
       SketchCode code = sketch.getCode(i);
 
-      String codeName = sketch.hideExtension(code.getExtension()) ? 
-        code.getPrettyName() : code.getFileName();
+      // hide extensions for .pde files (or whatever else is the norm elsewhere
+      boolean hide = editor.getMode().hideExtension(code.getExtension());
+      String codeName = hide ? code.getPrettyName() : code.getFileName();
 
       // if modified, add the li'l glyph next to the name
       String text = "  " + codeName + (code.isModified() ? " \u00A7" : "  ");

@@ -22,20 +22,13 @@ Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package processing.mode.java;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.beans.*;
 import java.io.*;
 import java.util.*;
 import java.util.zip.*;
 
-import javax.swing.*;
-import javax.swing.border.*;
-
 import processing.app.*;
 import processing.core.*;
 import processing.mode.java.preproc.*;
-import processing.mode.java.runner.*;
 
 // Would you believe there's a java.lang.Compiler class? I wouldn't.
 import processing.mode.java.runner.Compiler;
@@ -197,9 +190,9 @@ public class Build {
    * @param buildPath Location to copy all the .java files
    * @return null if compilation failed, main class name if not
    */
-  public String preprocess() throws SketchException {
-    return preprocess(sketch.makeTempFolder());
-  }
+//  public String preprocess() throws SketchException {
+//    return preprocess(sketch.makeTempFolder());
+//  }
 
 
   public String preprocess(File srcFolder) throws SketchException {
@@ -386,7 +379,7 @@ public class Build {
       int dot = item.lastIndexOf('.');
       // http://dev.processing.org/bugs/show_bug.cgi?id=1145
       String entry = (dot == -1) ? item : item.substring(0, dot);
-      Library library = mode.importToLibraryTable.get(entry);
+      Library library = sketch.getMode().getLibrary(entry);
 
       if (library != null) {
         if (!importedLibraries.contains(library)) {

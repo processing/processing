@@ -642,8 +642,9 @@ public class Runner implements MessageConsumer {
     if (s.indexOf(PApplet.EXTERNAL_STOP) == 0) {
       //System.out.println("external: quit");
       if (editor != null) {
-        //editor.internalCloseRunner();  // [091124]
-        editor.handleStop();
+//        editor.internalCloseRunner();  // [091124]
+//        editor.handleStop();  // prior to 0192
+        editor.internalCloseRunner();  // 0192
       }
       return;
     }

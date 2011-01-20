@@ -82,11 +82,24 @@ public abstract class Mode {
     try {
       coreLibraries = Library.list(librariesFolder);
       contribLibraries = Library.list(base.getSketchbookLibrariesFolder());
+      
+      for (Library lib : coreLibraries) {
+        lib.addPackageList(importToLibraryTable);
+      }
+      for (Library lib : contribLibraries) {
+        lib.addPackageList(importToLibraryTable);
+      }
+      
     } catch (IOException e) {
       Base.showWarning("Unhappiness", 
                        "An error occurred while loading libraries.\n" +
                        "Not all the books will be in place.", e);
     }
+  }
+  
+  
+  public Library getLibrary(String name) {
+    return importToLibraryTable.get(name);
   }
 
   
@@ -94,6 +107,15 @@ public abstract class Mode {
     
 
 //  abstract public EditorToolbar createToolbar(Editor editor);
+  
+  
+  public JMenu getToolbarMenu() {
+    if (toolbarMenu == null) {
+      toolbarMenu = new JMenu();
+      rebuildToolbarMenu();
+    }
+    return toolbarMenu;
+  }
   
   
   protected void rebuildToolbarMenu() {  //JMenu menu) {
@@ -291,15 +313,17 @@ public abstract class Mode {
   }
   
   
-  abstract public Formatter createFormatter();
+//  abstract public Formatter createFormatter();
 
 
 //  public Formatter getFormatter() {
 //    return formatter; 
 //  }
-  public Tool getFormatter() {
-    return formatter; 
-  }
+  
+  
+//  public Tool getFormatter() {
+//    return formatter; 
+//  }
   
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -345,6 +369,7 @@ public abstract class Mode {
   /**
    * True if the specified extension should be hidden when shown on a tab.
    * For Processing, this is true for .pde files. (Broken out for subclasses.)
+   * You can override this in your Mode subclass to handle it differently.
    */
   public boolean hideExtension(String what) {
     return what.equals(getDefaultExtension());

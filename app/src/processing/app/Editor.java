@@ -25,15 +25,12 @@ package processing.app;
 import processing.app.syntax.*;
 import processing.app.tools.*;
 import processing.core.*;
-import processing.mode.java.AutoFormat;
-import processing.mode.java.PdeKeyListener;
 
 import java.awt.*;
 import java.awt.datatransfer.*;
 import java.awt.event.*;
 import java.awt.print.*;
 import java.io.*;
-import java.lang.reflect.Method;
 import java.net.*;
 import java.util.*;
 import java.util.zip.*;
@@ -48,7 +45,7 @@ import javax.swing.undo.*;
  * Main editor panel for the Processing Development Environment.
  */
 public abstract class Editor extends JFrame implements RunnerListener {
-  Base base;
+  protected Base base;
   protected Mode mode;
 
   // otherwise, if the window is resized with the message label
@@ -156,11 +153,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     Box box = Box.createVerticalBox();
     Box upper = Box.createVerticalBox();
 
-    if (toolbarMenu == null) {
-      toolbarMenu = new JMenu();
-      mode.rebuildToolbarMenu();
-    }
-    toolbar = mode.createToolbar(this);
+    toolbar = createToolbar();
     upper.add(toolbar);
 
     header = new EditorHeader(this);
@@ -310,6 +303,12 @@ public abstract class Editor extends JFrame implements RunnerListener {
 //  public Settings getTheme() {
 //    return mode.getTheme();
 //  }
+  
+  
+  abstract public EditorToolbar createToolbar();
+  
+  
+  abstract public Formatter createFormatter();
 
 
   protected void setPlacement(int[] location) {
@@ -1445,7 +1444,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     final String source = getText();
 
     try {
-      final String formattedText = mode.getFormatter().run();  //format(source);
+      final String formattedText = createFormatter().format(source);
       // save current (rough) selection point
       int selectionEnd = getSelectionStop();
 
@@ -1965,6 +1964,16 @@ public abstract class Editor extends JFrame implements RunnerListener {
   }
 
 
+  /** 
+   * Halt the current runner for whatever reason. Might be the VM dying, 
+   * the window closing, an error... 
+   */
+  abstract public void internalCloseRunner();
+  
+  
+  abstract public void deactivateRun();
+
+  
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 

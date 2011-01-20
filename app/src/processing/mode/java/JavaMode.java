@@ -28,7 +28,6 @@ import java.util.HashMap;
 
 import processing.app.Base;
 import processing.app.Editor;
-import processing.app.Formatter;
 import processing.app.Mode;
 import processing.app.RunnerListener;
 import processing.app.Settings;
@@ -136,9 +135,9 @@ public class JavaMode extends Mode {
 //  }
 
   
-  public Formatter createFormatter() {
-    return new AutoFormat();
-  }
+//  public Formatter createFormatter() {
+//    return new AutoFormat();
+//  }
   
   
 //  public Editor createEditor(Base ibase, String path, int[] location) {

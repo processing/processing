@@ -28,6 +28,7 @@ import javax.swing.border.TitledBorder;
 import processing.app.Base;
 import processing.app.Editor;
 import processing.app.EditorToolbar;
+import processing.app.Formatter;
 import processing.app.Mode;
 import processing.app.Preferences;
 import processing.app.SketchException;
@@ -41,7 +42,17 @@ public class JavaEditor extends Editor {
     jmode = (JavaMode) mode;
   }
 
-
+  
+  public EditorToolbar createToolbar() {
+    return new Toolbar(this, base);
+  }
+  
+  
+  public Formatter createFormatter() {
+    return new AutoFormat();
+  }
+  
+  
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
   
@@ -111,7 +122,7 @@ public class JavaEditor extends Editor {
     if (handleExportCheckModified()) {
       toolbar.activate(Toolbar.EXPORT);
       try {
-        boolean success = jmode.handleExportApplet(this);
+        boolean success = jmode.handleExportApplet(sketch);
         if (success) {
           File appletFolder = new File(sketch.getFolder(), "applet");
           Base.openFolder(appletFolder);
@@ -339,7 +350,7 @@ public class JavaEditor extends Editor {
 
     Object value = optionPane.getValue();
     if (value.equals(options[0])) {
-      return jmode.exportApplication(this);
+      return jmode.handleExportApplication(sketch);
     } else if (value.equals(options[1]) || value.equals(new Integer(-1))) {
       // closed window by hitting Cancel or ESC
       statusNotice("Export to Application canceled.");
@@ -401,7 +412,7 @@ public class JavaEditor extends Editor {
   public void handleRun() {
     prepareRun();
     try {
-      jmode.handleRun(this, sketch);
+      jmode.handleRun(sketch, this);
     } catch (Exception e) {
       statusError(e);
     }
@@ -411,7 +422,7 @@ public class JavaEditor extends Editor {
   public void handlePresent() {
     prepareRun();
     try {
-      jmode.handlePresent(this, sketch);
+      jmode.handlePresent(sketch, this);
     } catch (Exception e) {
       statusError(e);
     }
@@ -422,7 +433,7 @@ public class JavaEditor extends Editor {
     toolbar.activate(Toolbar.STOP);
 
     try {
-      jmode.handleStop(this);
+      jmode.handleStop();
     } catch (Exception e) {
       statusError(e);
     }
@@ -498,5 +509,10 @@ public class JavaEditor extends Editor {
 
   public void deactivateExport() {
     toolbar.deactivate(Toolbar.EXPORT);
+  }
+  
+  
+  public void internalCloseRunner() {
+    jmode.handleStop();
   }
 }
