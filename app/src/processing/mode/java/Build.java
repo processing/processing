@@ -48,7 +48,7 @@ public class Build {
     "(?:^|\\s|;)package\\s+(\\S+)\\;";
 
 //  Editor editor;
-  Sketch sketch;
+  protected Sketch sketch;
 
   // what happens in the build, stays in the build.
   // (which is to say that everything below this line, stays within this class)

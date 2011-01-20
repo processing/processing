@@ -31,8 +31,8 @@ import javax.swing.border.*;
 import javax.swing.event.*;
 
 import processing.app.Base;
-import processing.app.Editor;
 import processing.app.Preferences;
+import processing.app.Sketch;
 
 
 public class Permissions extends JFrame {
@@ -47,13 +47,14 @@ public class Permissions extends JFrame {
   JLabel descriptionLabel;
 //  JTextArea descriptionLabel;
 
-  Editor editor;
+//  Editor editor;
+  Sketch sketch;
 
   
-  public Permissions(Editor editor) {
+  public Permissions(Sketch sketch) {
   //public Permissions(Editor editor) {
     super("Android Permissions Selector");    
-    this.editor = editor;
+//    this.editor = editor;
 
 //    XMLElement xml = 
 
@@ -287,7 +288,7 @@ public class Permissions extends JFrame {
     setLocation((screen.width - windowSize.width) / 2,
                 (screen.height - windowSize.height) / 2);
 
-    Manifest mf = new Manifest(editor);
+    Manifest mf = new Manifest(sketch);
     setSelections(mf.getPermissions());
 
     // show the window and get to work
@@ -325,7 +326,7 @@ public class Permissions extends JFrame {
   
   protected void saveSelections() {
     String[] sel = getSelections();
-    Manifest mf = new Manifest(editor);
+    Manifest mf = new Manifest(sketch);
     mf.setPermissions(sel);
   }
 
