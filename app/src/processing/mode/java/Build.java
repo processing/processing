@@ -31,7 +31,6 @@ import processing.core.*;
 import processing.mode.java.preproc.*;
 
 // Would you believe there's a java.lang.Compiler class? I wouldn't.
-import processing.mode.java.runner.Compiler;
 
 
 public class Build {
