@@ -121,7 +121,7 @@ public class SketchCode {
   }
   
   
-  protected void copyTo(File dest) throws IOException {
+  public void copyTo(File dest) throws IOException {
     Base.saveFile(program, dest);
   }
   

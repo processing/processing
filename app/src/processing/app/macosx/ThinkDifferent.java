@@ -21,9 +21,13 @@
 
 package processing.app.macosx;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.lang.reflect.Method;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+
 import processing.app.Base;
 
 import com.apple.eawt.*;
@@ -37,6 +41,10 @@ import com.apple.eawt.*;
  * 
  * As of 0140, this code need not be built on platforms other than OS X, 
  * because of the new platform structure which isolates through reflection.
+ * 
+ * This suppresses deprecation warnings because to use the new code, all users 
+ * would be forced to use Java Update 3 on OS X 10.6, and Java Update 8 on 
+ * OS X 10.5, which doesn't seem likely at the moment.
  */
 @SuppressWarnings("deprecation")
 public class ThinkDifferent implements ApplicationListener {
@@ -75,7 +83,7 @@ public class ThinkDifferent implements ApplicationListener {
         appClass.getMethod("setDefaultMenuBar", new Class[] { JMenuBar.class });
       if (method != null) {
         JMenuBar defaultMenuBar = new JMenuBar();
-        JMenu fileMenu = base.buildFileMenu(null);
+        JMenu fileMenu = buildFileMenu(base);
         defaultMenuBar.add(fileMenu);
         method.invoke(application, new Object[] { defaultMenuBar });
         // This is kind of a gross way to do this, but the alternatives? Hrm.
@@ -89,6 +97,36 @@ public class ThinkDifferent implements ApplicationListener {
   
   public ThinkDifferent(Base base) {
     this.base = base;
+  }
+  
+
+  /**
+   * Gimpy file menu to be used on OS X when no sketches are open.
+   */
+  static protected JMenu buildFileMenu(final Base base) {
+    JMenuItem item;
+    JMenu fileMenu = new JMenu("File");
+
+    item = Base.newJMenuItem("New", 'N');
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          base.handleNew();
+        }
+      });
+    fileMenu.add(item);
+
+    item = Base.newJMenuItem("Open...", 'O');
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          base.handleOpenPrompt();
+        }
+      });
+    fileMenu.add(item);
+
+    fileMenu.add(base.getSketchbookMenu());
+    fileMenu.add(base.getDefaultMode().getExamplesMenu());
+
+    return fileMenu;
   }
   
   

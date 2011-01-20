@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-06 Ben Fry and Casey Reas
+  Copyright (c) 2004-10 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -26,18 +26,27 @@ package processing.app;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+
 import javax.swing.*;
 import javax.swing.text.*;
+import processing.core.PApplet;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 
 /**
  * Message console that sits below the editing area.
- * <P>
- * Debugging this class is tricky... If it's throwing exceptions,
+ * <p />
+ * Be careful when debugging this class, because if it's throwing exceptions,
  * don't take over System.err, and debug while watching just System.out
- * or just write println() or whatever directly to systemOut or systemErr.
+ * or just call println() or whatever directly to systemOut or systemErr.
+ * <p />
+ * Also note that encodings will not work properly when run from Eclipse. This
+ * means that if you use non-ASCII characters in a println() or some such, 
+ * the characters won't print properly in the Processing and/or Eclipse console.
+ * It seems that Eclipse's console-grabbing and that of Processing don't 
+ * get along with one another. Use 'ant run' to work on encoding-related issues.  
  */
 public class EditorConsole extends JScrollPane {
   Editor editor;
@@ -50,16 +59,12 @@ public class EditorConsole extends JScrollPane {
 
   int maxLineCount;
 
-  static File errFile;
-  static File outFile;
-  static File tempFolder;
-
   // Single static instance shared because there's only one real System.out.
   // Within the input handlers, the currentConsole variable will be used to
   // echo things to the correct location.
   
-  static public PrintStream systemOut;
-  static public PrintStream systemErr;
+  static PrintStream systemOut;
+  static PrintStream systemErr;
 
   static PrintStream consoleOut;
   static PrintStream consoleErr;
@@ -75,42 +80,53 @@ public class EditorConsole extends JScrollPane {
     systemOut = System.out;
     systemErr = System.err;
 
-    // Create a temporary folder which will have a randomized name. Has to 
-    // be randomized otherwise another instance of Processing (or one of its 
-    // sister IDEs) might collide with the file causing permissions problems. 
-    // The files and folders are not deleted on exit because they may be 
-    // needed for debugging or bug reporting.
-    tempFolder = Base.createTempFolder("console");
+    // placing everything inside a try block because this can be a dangerous
+    // time for the lights to blink out and crash for and obscure reason.
     try {
-      String outFileName = Preferences.get("console.output.file");
-      if (outFileName != null) {
-        outFile = new File(tempFolder, outFileName);
-        stdoutFile = new FileOutputStream(outFile);
-      }
+      // Create output files that will have a randomized name. Has to 
+      // be randomized otherwise another instance of Processing (or one of its 
+      // sister IDEs) might collide with the file causing permissions problems. 
+      // The files and folders are not deleted on exit because they may be 
+      // needed for debugging or bug reporting.
+      SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd");
+      String randy = PApplet.nf((int) (1000 * Math.random()), 4);
+      String stamp = formatter.format(new Date()) + "_" + randy;
 
-      String errFileName = Preferences.get("console.error.file");
-      if (errFileName != null) {
-        errFile = new File(tempFolder, errFileName);
-        stderrFile = new FileOutputStream(errFile);
-      }
-    } catch (IOException e) {
-      Base.showWarning("Console Error",
-        "A problem occurred while trying to open the\n" +
-        "files used to store the console output.", e);
-    }
-    consoleOut = new PrintStream(new EditorConsoleStream(false));
-    consoleErr = new PrintStream(new EditorConsoleStream(true));
+      File consoleDir = Base.getSettingsFile("console");
+      consoleDir.mkdirs();
+      File outFile = new File(consoleDir, stamp + ".out");
+      stdoutFile = new FileOutputStream(outFile);
+      File errFile = new File(consoleDir, stamp + ".err");
+      stderrFile = new FileOutputStream(errFile);
+
+      consoleOut = new PrintStream(new EditorConsoleStream(false));
+      consoleErr = new PrintStream(new EditorConsoleStream(true));
     
-    if (Preferences.getBoolean("console")) {
-      try {
-        System.setOut(consoleOut);
-        System.setErr(consoleErr);
-      } catch (Exception e) {
-        e.printStackTrace(systemErr);
-      }
+      System.setOut(consoleOut);
+      System.setErr(consoleErr);
+
+//    } catch (Exception e) {
+//      stdoutFile = null;
+//      stderrFile = null;
+//
+//      e.printStackTrace();
+//      Base.showWarning("Console Error",
+//                       "A problem occurred while trying to open the\n" +
+//                       "files used to store the console output.", e);
+    } catch (Exception e) {
+      stdoutFile = null;
+      stderrFile = null;
+      
+      consoleOut = null;
+      consoleErr = null;
+      
+      System.setOut(systemOut);
+      System.setErr(systemErr);
+      
+      e.printStackTrace(systemErr);
     }
   }
-  
+
 
   public EditorConsole(Editor editor) {
     this.editor = editor;
@@ -121,46 +137,10 @@ public class EditorConsole extends JScrollPane {
     consoleTextPane = new JTextPane(consoleDoc);
     consoleTextPane.setEditable(false);
 
-    // necessary?
-    MutableAttributeSet standard = new SimpleAttributeSet();
-    StyleConstants.setAlignment(standard, StyleConstants.ALIGN_LEFT);
-    consoleDoc.setParagraphAttributes(0, 0, standard, true);
-
-    // build styles for different types of console output
-    Color bgColor    = Theme.getColor("console.color");
-    Color fgColorOut = Theme.getColor("console.output.color");
-    Color fgColorErr = Theme.getColor("console.error.color");
-    Font font        = Theme.getFont("console.font");
-
-    stdStyle = new SimpleAttributeSet();
-    StyleConstants.setForeground(stdStyle, fgColorOut);
-    StyleConstants.setBackground(stdStyle, bgColor);
-    StyleConstants.setFontSize(stdStyle, font.getSize());
-    StyleConstants.setFontFamily(stdStyle, font.getFamily());
-    StyleConstants.setBold(stdStyle, font.isBold());
-    StyleConstants.setItalic(stdStyle, font.isItalic());
-
-    errStyle = new SimpleAttributeSet();
-    StyleConstants.setForeground(errStyle, fgColorErr);
-    StyleConstants.setBackground(errStyle, bgColor);
-    StyleConstants.setFontSize(errStyle, font.getSize());
-    StyleConstants.setFontFamily(errStyle, font.getFamily());
-    StyleConstants.setBold(errStyle, font.isBold());
-    StyleConstants.setItalic(errStyle, font.isItalic());
-
-    consoleTextPane.setBackground(bgColor);
+    updateMode();
 
     // add the jtextpane to this scrollpane
     this.setViewportView(consoleTextPane);
-
-    // calculate height of a line of text in pixels
-    // and size window accordingly
-    FontMetrics metrics = this.getFontMetrics(font);
-    int height = metrics.getAscent() + metrics.getDescent();
-    int lines = Preferences.getInteger("console.lines"); //, 4);
-    int sizeFudge = 6; //10; // unclear why this is necessary, but it is
-    setPreferredSize(new Dimension(1024, (height * lines) + sizeFudge));
-    setMinimumSize(new Dimension(1024, (height * 4) + sizeFudge));
 
     // to fix ugliness.. normally macosx java 1.3 puts an
     // ugly white border around this object, so turn it off.
@@ -182,6 +162,53 @@ public class EditorConsole extends JScrollPane {
       }
     }).start();
   }
+  
+  
+  /**
+   * Change coloring, fonts, etc in response to a mode change.
+   */
+  protected void updateMode() {
+    Mode mode = editor.getMode();
+
+    // necessary?
+    MutableAttributeSet standard = new SimpleAttributeSet();
+    StyleConstants.setAlignment(standard, StyleConstants.ALIGN_LEFT);
+    consoleDoc.setParagraphAttributes(0, 0, standard, true);
+
+    Font font = Preferences.getFont("console.font");
+
+    // build styles for different types of console output
+    Color bgColor = mode.getColor("console.color");
+    Color fgColorOut = mode.getColor("console.output.color");
+    Color fgColorErr = mode.getColor("console.error.color");
+
+    stdStyle = new SimpleAttributeSet();
+    StyleConstants.setForeground(stdStyle, fgColorOut);
+    StyleConstants.setBackground(stdStyle, bgColor);
+    StyleConstants.setFontSize(stdStyle, font.getSize());
+    StyleConstants.setFontFamily(stdStyle, font.getFamily());
+    StyleConstants.setBold(stdStyle, font.isBold());
+    StyleConstants.setItalic(stdStyle, font.isItalic());
+
+    errStyle = new SimpleAttributeSet();
+    StyleConstants.setForeground(errStyle, fgColorErr);
+    StyleConstants.setBackground(errStyle, bgColor);
+    StyleConstants.setFontSize(errStyle, font.getSize());
+    StyleConstants.setFontFamily(errStyle, font.getFamily());
+    StyleConstants.setBold(errStyle, font.isBold());
+    StyleConstants.setItalic(errStyle, font.isItalic());
+
+    consoleTextPane.setBackground(bgColor);
+
+    // calculate height of a line of text in pixels
+    // and size window accordingly
+    FontMetrics metrics = this.getFontMetrics(font);
+    int height = metrics.getAscent() + metrics.getDescent();
+    int lines = Preferences.getInteger("console.lines"); //, 4);
+    int sizeFudge = 6; //10; // unclear why this is necessary, but it is
+    setPreferredSize(new Dimension(1024, (height * lines) + sizeFudge));
+    setMinimumSize(new Dimension(1024, (height * 4) + sizeFudge));
+  }
 
   
   static public void setEditor(Editor editor) {
@@ -202,34 +229,32 @@ public class EditorConsole extends JScrollPane {
     System.setOut(systemOut);
     System.setErr(systemErr);
 
-    // close the PrintStream
-    consoleOut.close();
-    consoleErr.close();
-
-    // also have to close the original FileOutputStream
-    // otherwise it won't be shut down completely
     try {
-      stdoutFile.close();
-      stderrFile.close();
+      // close the PrintStream
+      if (consoleOut != null) consoleOut.close();
+      if (consoleErr != null) consoleErr.close();
+
+      // also have to close the original FileOutputStream
+      // otherwise it won't be shut down completely
+      if (stdoutFile != null) stdoutFile.close();
+      if (stderrFile != null) stderrFile.close();
+
     } catch (IOException e) {
-      e.printStackTrace(systemOut);
+      e.printStackTrace(systemErr);
     }
-
-    outFile.delete();
-    errFile.delete();
-    tempFolder.delete();
   }
 
 
-  public void write(byte b[], int offset, int length, boolean err) {
-    // we could do some cross platform CR/LF mangling here before outputting
-    // add text to output document
-    message(new String(b, offset, length), err, false);
-  }
-
-
+//  public void write(byte b[], int offset, int length, boolean err) {
+//    // we could do some cross platform CR/LF mangling here before outputting
+//    // add text to output document
+//    message(new String(b, offset, length), err, false);
+//  }
+  
+  
   // added sync for 0091.. not sure if it helps or hinders
-  synchronized public void message(String what, boolean err, boolean advance) {
+  //synchronized public void message(String what, boolean err, boolean advance) {
+  synchronized public void message(String what, boolean err) {
     if (err) {
       systemErr.print(what);
       //systemErr.print("CE" + what);
@@ -238,35 +263,24 @@ public class EditorConsole extends JScrollPane {
       //systemOut.print("CO" + what);
     }
 
-    if (advance) {
-      appendText("\n", err);
-      if (err) {
-        systemErr.println();
-      } else {
-        systemOut.println();
-      }
-    }
+//    if (advance) {
+//      appendText("\n", err);
+//      if (err) {
+//        systemErr.println();
+//      } else {
+//        systemOut.println();
+//      }
+//    }
 
-    // to console display    
-    appendText(what, err);
-    // moved down here since something is punting
-  }
-
-
-  /**
-   * Append a piece of text to the console.
-   * <P>
-   * Swing components are NOT thread-safe, and since the MessageSiphon
-   * instantiates new threads, and in those callbacks, they often print
-   * output to stdout and stderr, which are wrapped by EditorConsoleStream
-   * and eventually leads to EditorConsole.appendText(), which directly
-   * updates the Swing text components, causing deadlock.
-   * <P>
-   * Updates are buffered to the console and displayed at regular
-   * intervals on Swing's event-dispatching thread. (patch by David Mellis)
-   */
-  synchronized private void appendText(String txt, boolean e) {
-    consoleDoc.appendString(txt, e ? errStyle : stdStyle);
+    // Append a piece of text to the console. Swing components are NOT 
+    // thread-safe, and since the MessageSiphon instantiates new threads, 
+    // and in those callbacks, they often print output to stdout and stderr, 
+    // which are wrapped by EditorConsoleStream and eventually leads to 
+    // EditorConsole.appendText(), which directly updates the Swing text 
+    // components, causing deadlock. Updates are buffered to the console and 
+    // displayed at regular intervals on Swing's event-dispatching thread. 
+    // (patch by David Mellis)
+    consoleDoc.appendString(what, err ? errStyle : stdStyle);
   }
 
 
@@ -297,33 +311,14 @@ public class EditorConsole extends JScrollPane {
     public void flush() { }
 
     public void write(byte b[]) {  // appears never to be used
-      if (currentConsole != null) {
-        currentConsole.write(b, 0, b.length, err);
-      } else {
-        try {
-          if (err) {
-            systemErr.write(b);
-          } else {
-            systemOut.write(b);
-          }
-        } catch (IOException e) { }  // just ignore, where would we write?
-      }
-
-      OutputStream echo = err ? stderrFile : stdoutFile;
-      if (echo != null) {
-        try {
-          echo.write(b);
-          echo.flush();
-        } catch (IOException e) {
-          e.printStackTrace();
-          echo = null;
-        }
-      }
+      write(b, 0, b.length);
     }
 
     public void write(byte b[], int offset, int length) {
       if (currentConsole != null) {
-        currentConsole.write(b, offset, length, err);
+        //currentConsole.write(b, offset, length, err);
+//        currentConsole.message(new String(b, offset, length), err, false);
+        currentConsole.message(new String(b, offset, length), err);
       } else {
         try {
           if (err) {
@@ -347,24 +342,8 @@ public class EditorConsole extends JScrollPane {
     }
 
     public void write(int b) {
-      single[0] = (byte)b;
-      if (currentConsole != null) {
-        currentConsole.write(single, 0, 1, err);
-      } else {
-        // redirect for all the extra handling above
-        write(new byte[] { (byte) b }, 0, 1);
-      }
-
-      OutputStream echo = err ? stderrFile : stdoutFile;
-      if (echo != null) {
-        try {
-          echo.write(b);
-          echo.flush();
-        } catch (IOException e) {
-          e.printStackTrace();
-          echo = null;
-        }
-      }
+      single[0] = (byte) b;
+      write(single, 0, 1);
     }
   }
 }

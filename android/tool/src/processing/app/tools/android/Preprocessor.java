@@ -29,10 +29,10 @@ import java.util.List;
 import processing.app.Base;
 import processing.app.Preferences;
 import processing.app.Sketch;
-import processing.app.debug.RunnerException;
-import processing.app.preproc.PdePreprocessor;
-import processing.app.preproc.PreprocessResult;
+import processing.app.SketchException;
 import processing.core.PApplet;
+import processing.mode.java.preproc.PdePreprocessor;
+import processing.mode.java.preproc.PreprocessorResult;
 import antlr.RecognitionException;
 import antlr.TokenStreamException;
 
@@ -63,8 +63,8 @@ public class Preprocessor extends PdePreprocessor {
     // actually used in the applet, which is the case especially for anyone
     // who is cutting/pasting from the reference.
 
-    String scrubbed = Sketch.scrubComments(sketch.getCode(0).getProgram());
-    String[] matches = PApplet.match(scrubbed, Sketch.SIZE_REGEX);
+    String scrubbed = processing.mode.java.Build.scrubComments(sketch.getCode(0).getProgram());
+    String[] matches = PApplet.match(scrubbed, processing.mode.java.Build.SIZE_REGEX);
 //    PApplet.println("matches: " + Sketch.SIZE_REGEX);
 //    PApplet.println(matches);
 
@@ -112,8 +112,8 @@ public class Preprocessor extends PdePreprocessor {
   }
 
 
-  public PreprocessResult write(Writer out, String program, String codeFolderPackages[])
-  throws RunnerException, RecognitionException, TokenStreamException {
+  public PreprocessorResult write(Writer out, String program, String codeFolderPackages[])
+  throws SketchException, RecognitionException, TokenStreamException {
     if (sizeStatement != null) {
       int start = program.indexOf(sizeStatement);
       program = program.substring(0, start) + 

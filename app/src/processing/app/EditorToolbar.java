@@ -24,6 +24,7 @@ package processing.app;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 
 import javax.swing.*;
 import javax.swing.event.*;
@@ -34,17 +35,18 @@ import javax.swing.event.*;
  */
 public class EditorToolbar extends JComponent implements MouseInputListener, KeyListener {
 
-  /** Rollover titles for each button. */
-  static final String title[] = {
-    "Run", "Stop", "New", "Open", "Save", "Export"
-  };
-  
-  /** Titles for each button when the shift key is pressed. */ 
-  static final String titleShift[] = {
-    "Present", "Stop", "New Editor Window", "Open in Another Window", "Save", "Export to Application"
-  };
+//  /** Rollover titles for each button. */
+//  static final String title[] = {
+//    "Run", "Stop", "New", "Open", "Save", "Export"
+//  };
+//  
+//  /** Titles for each button when the shift key is pressed. */ 
+//  static final String titleShift[] = {
+//    "Present", "Stop", "New Editor Window", "Open in Another Window", "Save", "Export to Application"
+//  };
 
-  static final int BUTTON_COUNT = title.length;
+
+//  static final int BUTTON_COUNT = title.length;
   /** Width of each toolbar button. */
   static final int BUTTON_WIDTH = 27;
   /** Height of each toolbar button. */
@@ -54,89 +56,89 @@ public class EditorToolbar extends JComponent implements MouseInputListener, Key
   /** Size of the button image being chopped up. */
   static final int BUTTON_IMAGE_SIZE = 33;
 
-
-  static final int RUN      = 0;
-  static final int STOP     = 1;
-
-  static final int NEW      = 2;
-  static final int OPEN     = 3;
-  static final int SAVE     = 4;
-  static final int EXPORT   = 5;
-
   static final int INACTIVE = 0;
   static final int ROLLOVER = 1;
   static final int ACTIVE   = 2;
 
-  Editor editor;
+  protected Base base;
+  protected Editor editor;
+  protected Mode mode;
 
   Image offscreen;
   int width, height;
 
   Color bgcolor;
 
-  static Image[][] buttonImages;
-  int currentRollover;
+//  static Image[][] buttonImages;
+//  int currentRollover;
+  protected Button rollover;
 
-  JPopupMenu popup;
-  JMenu menu;
+//  int buttonCount;
+  /** Current state for this button */
+//  int[] state; // = new int[BUTTON_COUNT];
+  /** Current image for this button's state */
+//  Image[] stateImage;
+//  int which[]; // mapping indices to implementation
 
-  int buttonCount;
-  int[] state = new int[BUTTON_COUNT];
-  Image[] stateImage;
-  int which[]; // mapping indices to implementation
-
-  int x1[], x2[];
-  int y1, y2;
+//  int x1[], x2[];
+  static final int TOP = 0; 
+  static final int BOTTOM = BUTTON_HEIGHT;
 
   Font statusFont;
   Color statusColor;
   
   boolean shiftPressed;
-  
-//  Color modeButtonColor;
-//  Font modeTextFont;
-//  Color modeTextColor;
-//  String modeTitle = "JAVA"; //"Java";
+
+  // what the mode indicator looks like
+  Color modeButtonColor;
+  Font modeTextFont;
+  Color modeTextColor;
+  String modeTitle;  // = "JAVA"; //"Java";
 //  String modeTitle = "ANDROID"; //"Java";
-//  int modeX1, modeY1;
-//  int modeX2, modeY2;
+  int modeX1, modeY1;
+  int modeX2, modeY2;
+  
+  ArrayList<Button> buttons;
 
 
-  public EditorToolbar(Editor editor, JMenu menu) {
+  public EditorToolbar(Editor editor, Base base) {  //, JMenu menu) {
     this.editor = editor;
-    this.menu = menu;
+    this.base = base;
+//    this.menu = menu;
 
-    buttonCount = 0;
-    which = new int[BUTTON_COUNT];
+    buttons = new ArrayList<Button>();
+//    buttonCount = 0;
+//    which = new int[BUTTON_COUNT];
 
-    //which[buttonCount++] = NOTHING;
-    which[buttonCount++] = RUN;
-    which[buttonCount++] = STOP;
-    which[buttonCount++] = NEW;
-    which[buttonCount++] = OPEN;
-    which[buttonCount++] = SAVE;
-    which[buttonCount++] = EXPORT;
+//    which[buttonCount++] = RUN;
+//    which[buttonCount++] = STOP;
+//    which[buttonCount++] = NEW;
+//    which[buttonCount++] = OPEN;
+//    which[buttonCount++] = SAVE;
+//    which[buttonCount++] = EXPORT;
 
-    currentRollover = -1;
+//    currentRollover = -1;
+    rollover = null;
 
-    bgcolor = Theme.getColor("buttons.bgcolor");
-    statusFont = Theme.getFont("buttons.status.font");
-    statusColor = Theme.getColor("buttons.status.color");
-
-//    modeButtonColor = Theme.getColor("mode.button.bgcolor");
-//    modeTextFont = Theme.getFont("mode.button.font");
-//    modeTextColor = Theme.getColor("mode.button.color");
+    mode = editor.getMode();
+    bgcolor = mode.getColor("buttons.bgcolor");
+    statusFont = mode.getFont("buttons.status.font");
+    statusColor = mode.getColor("buttons.status.color");    
+    modeTitle = mode.getTitle().toUpperCase();    
 
     addMouseListener(this);
     addMouseMotionListener(this);
   }
 
 
-  protected void loadButtons() {
-    Image allButtons = Base.getThemeImage("buttons.gif", this);
-    buttonImages = new Image[BUTTON_COUNT][3];
+  public Image[][] loadImages() {
+//    Image allButtons = Base.getThemeImage("buttons.gif", this);
+//    Image allButtons = Base.loadImage(file);
+    Image allButtons = mode.loadImage("buttons.gif");
+    int count = allButtons.getWidth(this) / BUTTON_WIDTH;
+    Image[][] buttonImages = new Image[count][3];
     
-    for (int i = 0; i < BUTTON_COUNT; i++) {
+    for (int i = 0; i < count; i++) {
       for (int state = 0; state < 3; state++) {
         Image image = createImage(BUTTON_WIDTH, BUTTON_HEIGHT);
         Graphics g = image.getGraphics();
@@ -146,28 +148,29 @@ public class EditorToolbar extends JComponent implements MouseInputListener, Key
         buttonImages[i][state] = image;
       }
     }
+    return buttonImages;
   }
 
 
   @Override
   public void paintComponent(Graphics screen) {
     // this data is shared by all EditorToolbar instances
-    if (buttonImages == null) {
-      loadButtons();
-    }
+//    if (buttonImages == null) {
+//      loadButtons();
+//    }
 
     // this happens once per instance of EditorToolbar
-    if (stateImage == null) {
-      state = new int[buttonCount];
-      stateImage = new Image[buttonCount];
-      for (int i = 0; i < buttonCount; i++) {
-        setState(i, INACTIVE, false);
-      }
-      y1 = 0;
-      y2 = BUTTON_HEIGHT;
-      x1 = new int[buttonCount];
-      x2 = new int[buttonCount];
-    }
+//    if (stateImage == null) {
+//      state = new int[buttonCount];
+//      stateImage = new Image[buttonCount];
+//      for (int i = 0; i < buttonCount; i++) {
+//        setState(i, INACTIVE, false);
+//      }
+//      y1 = 0;
+//      y2 = BUTTON_HEIGHT;
+//      x1 = new int[buttonCount];
+//      x2 = new int[buttonCount];
+//    }
 
     Dimension size = getSize();
     if ((offscreen == null) ||
@@ -177,12 +180,20 @@ public class EditorToolbar extends JComponent implements MouseInputListener, Key
       height = size.height;
 
       int offsetX = 3;
-      for (int i = 0; i < buttonCount; i++) {
-        x1[i] = offsetX;
-        if (i == 2) x1[i] += BUTTON_GAP;
-        x2[i] = x1[i] + BUTTON_WIDTH;
-        offsetX = x2[i];
+      for (Button b : buttons) {
+        b.left = offsetX;
+        if (b.gap) {
+          b.left += BUTTON_GAP;
+        }
+        b.right = b.left + BUTTON_WIDTH; 
+        offsetX = b.right;
       }
+//      for (int i = 0; i < buttons.size(); i++) {
+//        x1[i] = offsetX;
+//        if (i == 2) x1[i] += BUTTON_GAP;
+//        x2[i] = x1[i] + BUTTON_WIDTH;
+//        offsetX = x2[i];
+//      }
     }
     Graphics g = offscreen.getGraphics();
     g.setColor(bgcolor); //getBackground());
@@ -192,8 +203,11 @@ public class EditorToolbar extends JComponent implements MouseInputListener, Key
     g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
                         RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
-    for (int i = 0; i < buttonCount; i++) {
-      g.drawImage(stateImage[i], x1[i], y1, null);
+//    for (int i = 0; i < buttonCount; i++) {
+//      g.drawImage(stateImage[i], x1[i], y1, null);
+//    }
+    for (Button b : buttons) {
+      g.drawImage(b.stateImage, b.left, TOP, null);
     }
 
     g.setColor(statusColor);
@@ -206,32 +220,34 @@ public class EditorToolbar extends JComponent implements MouseInputListener, Key
 //    float statusX = (getSize().width - statusW) / 2;
 //    g2.drawString(status, statusX, statusY);
 
-    if (currentRollover != -1) {
+//    if (currentRollover != -1) {
+    if (rollover != null) {
       int statusY = (BUTTON_HEIGHT + g.getFontMetrics().getAscent()) / 2;
-      String status = shiftPressed ? titleShift[currentRollover] : title[currentRollover];
-      g.drawString(status, buttonCount * BUTTON_WIDTH + 3 * BUTTON_GAP, statusY);
+      //String status = shiftPressed ? titleShift[currentRollover] : title[currentRollover];
+      String status = shiftPressed ? rollover.titleShift : rollover.title;
+      g.drawString(status, buttons.size() * BUTTON_WIDTH + 3 * BUTTON_GAP, statusY);
     }
-    
-////    Color modeButtonColor;
-////    Font modeTextFont;
-////    Color modeTextColor;
-//    g.setFont(modeTextFont);
-//    FontMetrics metrics = g.getFontMetrics();
-//    int modeH = metrics.getAscent();
-//    int modeW = metrics.stringWidth(modeTitle);
-//    final int modeGapH = 6;
-//    final int modeGapV = 3;
-//    modeX2 = getWidth() - 16;
-//    modeX1 = modeX2 - (modeGapH + modeW + modeGapH);
-//    modeY1 = (getHeight() - modeH)/2 - modeGapV;
-//    modeY2 = modeY1 + modeH + modeGapV*2;
-////    g.setColor(modeButtonColor);
-////    g.fillRect(modeX1, modeY1, modeX2 - modeX1, modeY2 - modeY1);
-////    g.setColor(modeTextColor);
-////    g.drawString(modeTitle, modeX1 + modeGapH, modeY2 - modeGapV);
+
+//    Color modeButtonColor;
+//    Font modeTextFont;
+//    Color modeTextColor;
+    g.setFont(modeTextFont);
+    FontMetrics metrics = g.getFontMetrics();
+    int modeH = metrics.getAscent();
+    int modeW = metrics.stringWidth(modeTitle);
+    final int modeGapH = 6;
+    final int modeGapV = 3;
+    modeX2 = getWidth() - 16;
+    modeX1 = modeX2 - (modeGapH + modeW + modeGapH);
+    modeY1 = (getHeight() - modeH)/2 - modeGapV;
+    modeY2 = modeY1 + modeH + modeGapV*2;
 //    g.setColor(modeButtonColor);
-//    g.drawRect(modeX1, modeY1, modeX2 - modeX1, modeY2 - modeY1);
+//    g.fillRect(modeX1, modeY1, modeX2 - modeX1, modeY2 - modeY1);
+//    g.setColor(modeTextColor);
 //    g.drawString(modeTitle, modeX1 + modeGapH, modeY2 - modeGapV);
+    g.setColor(modeButtonColor);
+    g.drawRect(modeX1, modeY1, modeX2 - modeX1, modeY2 - modeY1);
+    g.drawString(modeTitle, modeX1 + modeGapH, modeY2 - modeGapV);
 
     screen.drawImage(offscreen, 0, 0, null);
     
@@ -246,151 +262,197 @@ public class EditorToolbar extends JComponent implements MouseInputListener, Key
     if (!isEnabled()) return;
 
     // ignore mouse events before the first paintComponent() call
-    if (state == null) return;
+    if (offscreen == null) return;
 
-    if (state[OPEN] != INACTIVE) {
-      // avoid flicker, since there will probably be an update event
-      setState(OPEN, INACTIVE, false);
+    // TODO this isn't quite right, since it's gonna kill rollovers too
+//    if (state[OPEN] != INACTIVE) {
+//      // avoid flicker, since there should be another update event soon
+//      setState(OPEN, INACTIVE, false);
+//    }
+
+    int x = e.getX();
+    int y = e.getY();
+
+    //      if (currentRollover != -1) {
+    if (rollover != null) {
+      //        if ((x > x1[currentRollover]) && (y > y1) &&
+      //            (x < x2[currentRollover]) && (y < y2)) {
+      if (y > TOP && y < BOTTOM && x > rollover.left && x < rollover.right) {
+        // nothing has changed
+        return;
+
+      } else {
+        //          setState(currentRollover, INACTIVE, true);
+        rollover.setState(INACTIVE, true);
+        //          currentRollover = -1;
+        rollover = null;
+      }
     }
-    handleMouse(e);
+    //      int sel = findSelection(x, y);
+    Button over = findSelection(x, y);
+    if (over != null) {
+      //        if (state[sel] != ACTIVE) {
+      if (over.state != ACTIVE) {
+        //          setState(sel, ROLLOVER, true);
+        over.setState(ROLLOVER, true);
+        //          currentRollover = sel;
+        rollover = over;
+      }
+    }
   }
 
 
   public void mouseDragged(MouseEvent e) { }
 
 
-  public void handleMouse(MouseEvent e) {
-    int x = e.getX();
-    int y = e.getY();
+//  public void handleMouse(MouseEvent e) {
+//    int x = e.getX();
+//    int y = e.getY();
+//
+////    if (currentRollover != -1) {
+//    if (rollover != null) {
+////      if ((x > x1[currentRollover]) && (y > y1) &&
+////          (x < x2[currentRollover]) && (y < y2)) {
+//      if (y > y1 && y < y2 && x > rollover.left && x < rollover.right) {
+//        // nothing has changed
+//        return;
+//
+//      } else {
+////        setState(currentRollover, INACTIVE, true);
+//        rollover.setState(INACTIVE, true);
+////        currentRollover = -1;
+//        rollover = null;
+//      }
+//    }
+////    int sel = findSelection(x, y);
+//    Button over = findSelection(x, y);
+//    if (over != null) {
+////      if (state[sel] != ACTIVE) {
+//      if (over.state != ACTIVE) {
+////        setState(sel, ROLLOVER, true);
+//        over.setState(ROLLOVER, true);
+////        currentRollover = sel;
+//        rollover = over;
+//      }
+//    }
+//  }
 
-    if (currentRollover != -1) {
-      if ((x > x1[currentRollover]) && (y > y1) &&
-          (x < x2[currentRollover]) && (y < y2)) {
-        return;
 
-      } else {
-        setState(currentRollover, INACTIVE, true);
-        currentRollover = -1;
-      }
-    }
-    int sel = findSelection(x, y);
-    if (sel != -1) {
-      if (state[sel] != ACTIVE) {
-        setState(sel, ROLLOVER, true);
-        currentRollover = sel;
-      }
-    }
-  }
+//  private int findSelection(int x, int y) {
+//    // if app loads slowly and cursor is near the buttons
+//    // when it comes up, the app may not have time to load
+//    if ((x1 == null) || (x2 == null)) return -1;
+//
+//    for (int i = 0; i < buttonCount; i++) {
+//      if ((y > y1) && (x > x1[i]) &&
+//          (y < y2) && (x < x2[i])) {
+//        //System.out.println("sel is " + i);
+//        return i;
+//      }
+//    }
+//    return -1;
+//  }
 
-
-  private int findSelection(int x, int y) {
+  
+  private Button findSelection(int x, int y) {
     // if app loads slowly and cursor is near the buttons
     // when it comes up, the app may not have time to load
-    if ((x1 == null) || (x2 == null)) return -1;
-
-    for (int i = 0; i < buttonCount; i++) {
-      if ((y > y1) && (x > x1[i]) &&
-          (y < y2) && (x < x2[i])) {
-        //System.out.println("sel is " + i);
-        return i;
+    if (offscreen != null && y > TOP && y < BOTTOM) {
+      for (Button b : buttons) {
+        if (x > b.left && x < b.right) {
+          return b;
+        }
       }
     }
-    return -1;
+    return null;
   }
 
 
-  private void setState(int slot, int newState, boolean updateAfter) {
-    state[slot] = newState;
-    stateImage[slot] = buttonImages[which[slot]][newState];
-    if (updateAfter) {
-      repaint();
-    }
-  }
+//  private void setState(int slot, int newState, boolean updateAfter) {
+//    if (buttonImages != null) {
+//      state[slot] = newState;
+//      stateImage[slot] = buttonImages[which[slot]][newState];
+//      if (updateAfter) {
+//        repaint();
+//      }
+//    }
+//  }
 
 
   public void mouseEntered(MouseEvent e) {
-    handleMouse(e);
+//    handleMouse(e);
   }
 
 
   public void mouseExited(MouseEvent e) {
-    // if the 'open' popup menu is visible, don't register this,
-    // because the popup being set visible will fire a mouseExited() event
-    if ((popup != null) && popup.isVisible()) return;
-
-    if (state[OPEN] != INACTIVE) {
-      setState(OPEN, INACTIVE, true);
+//    // if the 'open' popup menu is visible, don't register this,
+//    // because the popup being set visible will fire a mouseExited() event
+//    if ((popup != null) && popup.isVisible()) return;
+    // this might be better
+    if (e.getComponent() != this) {
+      return;
     }
-    handleMouse(e);
+
+    // TODO another weird one.. come back to this
+//    if (state[OPEN] != INACTIVE) {
+//      setState(OPEN, INACTIVE, true);
+//    }
+//    handleMouse(e);
     
     // there is no more rollover, make sure that the rollover text goes away
-    currentRollover = -1;
+//    currentRollover = -1;
+    if (rollover != null) {
+      rollover.setState(INACTIVE, true);
+    }
   }
 
-  int wasDown = -1;
+//  int wasDown = -1;
 
 
   public void mousePressed(MouseEvent e) {
     // ignore mouse presses so hitting 'run' twice doesn't cause problems
     if (!isEnabled()) return;
 
-    final int x = e.getX();
-    final int y = e.getY();
+//    final int x = e.getX();
+//    final int y = e.getY();
 
-    int sel = findSelection(x, y);
-    if (sel == -1) return;
-    currentRollover = -1;
+//    int sel = findSelection(x, y);
+//    if (sel == -1) return;
+//    currentRollover = -1;
 
-    switch (sel) {
-    case RUN:
-      editor.handleRun(e.isShiftDown());
-      break;
-
-    case STOP:
-      editor.handleStop();
-      break;
-
-    case OPEN:
-      popup = menu.getPopupMenu();
-      popup.show(EditorToolbar.this, x, y);
-      break;
-
-    case NEW:
-      if (shiftPressed) {
-        editor.base.handleNew();
-      } else {
-        editor.base.handleNewReplace();
-      }
-      break;
-
-    case SAVE:
-      editor.handleSave(false);
-      break;
-
-    case EXPORT:
-      if (e.isShiftDown()) {
-        editor.handleExportApplication();
-      } else {
-        editor.handleExport();
-      }
-      break;
+//    Button sel = findSelection(x, y);
+//    if (sel != null) {
+//      rollover = sel;
+//      handlePressed(sel);
+//    }
+    if (rollover != null) {
+      handlePressed(rollover);
     }
   }
-
-
+  
+  
   public void mouseClicked(MouseEvent e) { }
 
 
   public void mouseReleased(MouseEvent e) { }
 
 
+  public void handlePressed(Button b) {
+    handlePressed(buttons.indexOf(b));
+  }
+  
+  
+  public void handlePressed(int index) {
+    // override me!
+  }
+  
+  
   /**
    * Set a particular button to be active.
    */
   public void activate(int what) {
-    if (buttonImages != null) {
-      setState(what, ACTIVE, true);
-    }
+//    setState(what, ACTIVE, true);
+    buttons.get(what).setState(ACTIVE, true);
   }
 
 
@@ -398,9 +460,8 @@ public class EditorToolbar extends JComponent implements MouseInputListener, Key
    * Set a particular button to be active.
    */
   public void deactivate(int what) {
-    if (buttonImages != null) {
-      setState(what, INACTIVE, true);
-    }
+//    setState(what, INACTIVE, true);
+    buttons.get(what).setState(INACTIVE, true);
   }
 
 
@@ -410,7 +471,7 @@ public class EditorToolbar extends JComponent implements MouseInputListener, Key
 
 
   public Dimension getMinimumSize() {
-    return new Dimension((BUTTON_COUNT + 1)*BUTTON_WIDTH, BUTTON_HEIGHT);
+    return new Dimension((buttons.size() + 1)*BUTTON_WIDTH, BUTTON_HEIGHT);
   }
 
 
@@ -436,4 +497,59 @@ public class EditorToolbar extends JComponent implements MouseInputListener, Key
 
 
   public void keyTyped(KeyEvent e) { }
+
+  
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+  
+  public void addButton(String title, String shiftTitle, Image[] images, boolean gap) {
+    Button b = new Button(title, shiftTitle, images, gap);
+    buttons.add(b);
+  }
+  
+
+  public class Button {
+    /** Button's description. */ 
+    String title;
+    /** Description of alternate behavior when shift is down. */ 
+    String titleShift;
+    /** Three state images. */
+    Image[] images;
+    /** Current state value, one of ACTIVE, INACTIVE, ROLLOVER. */
+    int state;
+    /** Current state image. */
+    Image stateImage;
+    /** Left and right coordinates. */
+    int left, right;
+    /** Whether there's a gap before this button. */
+    boolean gap;
+    
+//    JPopupMenu popup;
+//    JMenu menu;
+
+
+    public Button(String title, String titleShift, Image[] images, boolean gap) {
+      this.title = title;
+      this.titleShift = titleShift;
+      this.images = images;
+      this.gap = gap;
+      
+      state = INACTIVE;
+      stateImage = images[INACTIVE];
+    }
+    
+    
+//    public void setMenu(JMenu menu) {
+//      this.menu = menu;
+//    }
+
+    
+    public void setState(int newState, boolean updateAfter) {
+      state = newState;
+      stateImage = images[newState];
+      if (updateAfter) {
+        repaint();
+      }
+    }
+  }
 }
