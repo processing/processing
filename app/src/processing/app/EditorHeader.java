@@ -33,8 +33,8 @@ import javax.swing.*;
  * Sketch tabs at the top of the editor window.
  */
 public class EditorHeader extends JComponent {
-  static Color backgroundColor;
-  static Color textColor[] = new Color[2];
+  Color backgroundColor;
+  Color textColor[] = new Color[2];
 
   Editor editor;
 
@@ -65,7 +65,7 @@ public class EditorHeader extends JComponent {
 
   static final int PIECE_WIDTH = 4;
 
-  static Image[][] pieces;
+  Image[][] pieces;
 
   //
 
@@ -75,26 +75,9 @@ public class EditorHeader extends JComponent {
 
 
   public EditorHeader(Editor eddie) {
-    this.editor = eddie; // weird name for listener
+    this.editor = eddie;
 
-    if (pieces == null) {
-      pieces = new Image[STATUS.length][WHERE.length];
-      for (int i = 0; i < STATUS.length; i++) {
-        for (int j = 0; j < WHERE.length; j++) {
-          String path = "tab-" + STATUS[i] + "-" + WHERE[j] + ".gif";
-          pieces[i][j] = Base.getThemeImage(path, this);
-        }
-      }
-    }
-
-    if (backgroundColor == null) {
-      backgroundColor =
-        Theme.getColor("header.bgcolor");
-      textColor[SELECTED] =
-        Theme.getColor("header.text.selected.color");
-      textColor[UNSELECTED] =
-        Theme.getColor("header.text.unselected.color");
-    }
+    updateMode();
 
     addMouseListener(new MouseAdapter() {
         public void mousePressed(MouseEvent e) {
@@ -115,6 +98,23 @@ public class EditorHeader extends JComponent {
           }
         }
       });
+  }
+
+
+  public void updateMode() {
+    Mode mode = editor.getMode();
+    pieces = new Image[STATUS.length][WHERE.length];
+    for (int i = 0; i < STATUS.length; i++) {
+      for (int j = 0; j < WHERE.length; j++) {
+        String filename = "tab-" + STATUS[i] + "-" + WHERE[j] + ".gif";
+        pieces[i][j] = mode.loadImage(filename);
+      }
+    }
+
+    backgroundColor = mode.getColor("header.bgcolor");
+    textColor[SELECTED] = mode.getColor("header.text.selected.color");
+    textColor[UNSELECTED] = mode.getColor("header.text.unselected.color");
+    font = mode.getFont("header.text.font");
   }
 
 
@@ -148,9 +148,6 @@ public class EditorHeader extends JComponent {
     }
 
     Graphics g = offscreen.getGraphics();
-    if (font == null) {
-      font = Theme.getFont("header.text.font");
-    }
     g.setFont(font);  // need to set this each time through
     metrics = g.getFontMetrics();
     fontAscent = metrics.getAscent();
@@ -173,8 +170,9 @@ public class EditorHeader extends JComponent {
     for (int i = 0; i < sketch.getCodeCount(); i++) {
       SketchCode code = sketch.getCode(i);
 
-      String codeName = sketch.hideExtension(code.getExtension()) ? 
-        code.getPrettyName() : code.getFileName();
+      // hide extensions for .pde files (or whatever else is the norm elsewhere
+      boolean hide = editor.getMode().hideExtension(code.getExtension());
+      String codeName = hide ? code.getPrettyName() : code.getFileName();
 
       // if modified, add the li'l glyph next to the name
       String text = "  " + codeName + (code.isModified() ? " \u00A7" : "  ");

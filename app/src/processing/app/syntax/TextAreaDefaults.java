@@ -10,7 +10,6 @@
 package processing.app.syntax;
 
 import java.awt.*;
-//import javax.swing.JPopupMenu;
 
 /**
  * Encapsulates default settings for a text area. This can be passed
@@ -18,8 +17,7 @@ import java.awt.*;
  * The advantage of doing this over calling lots of set() methods after
  * creating the text area is that this method is faster.
  */
-public class TextAreaDefaults
-{
+public class TextAreaDefaults {
   public InputHandler inputHandler;
   public SyntaxDocument document;
   public boolean editable;
@@ -42,15 +40,14 @@ public class TextAreaDefaults
   public boolean eolMarkers;
   public boolean paintInvalid;
 
-
   // moved from TextAreaPainter [fry]
   public Font font;
   public Color fgcolor;
   public Color bgcolor;
+  public boolean antialias;
 
-  //public JPopupMenu popup;
 
-
+  /*
   private static final TextAreaDefaults DEFAULTS = new TextAreaDefaults();
   static {
     DEFAULTS.inputHandler = new DefaultInputHandler();
@@ -76,12 +73,10 @@ public class TextAreaDefaults
     DEFAULTS.paintInvalid = true;
   }
   
-  /**
-   * Returns a new TextAreaDefaults object with the default values filled
-   * in.
-   */
+  /// Returns a new TextAreaDefaults object with the default values filled in.
   public static TextAreaDefaults getDefaults()
   {
     return DEFAULTS;
   }
+  */
 }

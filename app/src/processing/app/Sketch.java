@@ -23,44 +23,20 @@
 
 package processing.app;
 
-import processing.app.debug.Compiler;
-import processing.app.debug.RunnerException;
-import processing.app.preproc.*;
 import processing.core.*;
 
 import java.awt.*;
-import java.awt.event.*;
-import java.beans.*;
 import java.io.*;
-import java.util.*;
-import java.util.zip.*;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.TitledBorder;
 
 
 /**
  * Stores information about files in the current sketch
  */
-public class Sketch {
-  static private File tempBuildFolder;
-
-  /**
-   * Regular expression for parsing the size() method. This should match
-   * against any uses of the size() function, whether numbers or variables
-   * or whatever. This way, no warning is shown if size() isn't actually used
-   * in the sketch, which is the case especially for anyone who is cutting
-   * and pasting from the reference.
-   */
-  public static final String SIZE_REGEX =
-    "(?:^|\\s|;)size\\s*\\(\\s*([^\\s,]+)\\s*,\\s*([^\\s,\\)]+),?\\s*([^\\)]*)\\s*\\)\\s*\\;";
-    //"(?:^|\\s|;)size\\s*\\(\\s*(\\S+)\\s*,\\s*([^\\s,\\)]+),?\\s*([^\\)]*)\\s*\\)\\s*\\;";
-  public static final String PACKAGE_REGEX =
-    "(?:^|\\s|;)package\\s+(\\S+)\\;";
-
+public class Sketch {  
   private Editor editor;
-  private boolean foundMain = false;
+  private Mode mode;
 
   /** main pde file for this sketch. */
   private File primaryFile;
@@ -95,34 +71,43 @@ public class Sketch {
   private int codeCount;
   private SketchCode[] code;
 
-  /** Class path determined during build. */
-  private String classPath;
+//  /** Class path determined during build. */
+//  private String classPath;
+//
+//  /**
+//   * This is *not* the "Processing" libraries path, this is the Java libraries
+//   * path, as in java.library.path=BlahBlah, which identifies search paths for
+//   * DLLs or JNILIBs. (It's Java's LD_LIBRARY_PATH, for you UNIX fans.)
+//   */
+//  private String javaLibraryPath;
+//
+//  /**
+//   * List of library folders, set up in the preprocess() method.
+//   */
+//  private ArrayList<Library> importedLibraries;
+//  //private ArrayList<File> importedLibraries;
 
-  /**
-   * This is *not* the "Processing" libraries path, this is the Java libraries
-   * path, as in java.library.path=BlahBlah, which identifies search paths for
-   * DLLs or JNILIBs.
+  /** 
+   * Most recent, default build path. This will contain the .java files that
+   * have been preprocessed, as well as any .class files that were compiled. 
    */
-  private String libraryPath;
-  /**
-   * List of library folders.
-   */
-  private ArrayList<LibraryFolder> importedLibraries;
-  //private ArrayList<File> importedLibraries;
-
+//  private File buildFolder;
+  
+  
   /**
    * path is location of the main .pde file, because this is also
    * simplest to use when opening the file from the finder/explorer.
    */
   public Sketch(Editor editor, String path) throws IOException {
     this.editor = editor;
+    this.mode = editor.getMode();
 
     primaryFile = new File(path);
 
     // get the name of the sketch by chopping .pde or .java
     // off of the main file name
     String mainFilename = primaryFile.getName();
-    int suffixLength = getDefaultExtension().length() + 1;
+    int suffixLength = mode.getDefaultExtension().length() + 1;
     name = mainFilename.substring(0, mainFilename.length() - suffixLength);
 
     // lib/build must exist when the application is started
@@ -141,7 +126,7 @@ public class Sketch {
                         "the application to complete the repair.", null);
     }
     */
-    tempBuildFolder = Base.getBuildFolder();
+//    tempBuildFolder = Base.getBuildFolder();
     //Base.addBuildFolderToClassPath();
 
     folder = new File(new File(path).getParent());
@@ -178,7 +163,7 @@ public class Sketch {
 
     code = new SketchCode[list.length];
 
-    String[] extensions = getExtensions();
+    String[] extensions = mode.getExtensions();
 
     for (String filename : list) {
       // Ignoring the dot prefix files is especially important to avoid files
@@ -344,7 +329,7 @@ public class Sketch {
 
     // Add the extension here, this simplifies some of the logic below.
     if (newName.indexOf('.') == -1) {
-      newName += "." + getDefaultExtension();
+      newName += "." + mode.getDefaultExtension();
     }
 
     // if renaming to the same thing as before, just ignore.
@@ -371,7 +356,7 @@ public class Sketch {
     }
 
     String newExtension = newName.substring(dot+1).toLowerCase();
-    if (!validExtension(newExtension)) {
+    if (!mode.validExtension(newExtension)) {
       Base.showWarning("Problem with rename",
                        "\"." + newExtension + "\"" +
                        "is not a valid extension.", null);
@@ -379,7 +364,7 @@ public class Sketch {
     }
 
     // Don't let the user create the main tab as a .java file instead of .pde
-    if (!isDefaultExtension(newExtension)) {
+    if (!mode.isDefaultExtension(newExtension)) {
       if (renamingCode) {  // If creating a new tab, don't show this error
         if (current == code[0]) {  // If this is the main tab, disallow
           Base.showWarning("Problem with rename",
@@ -826,13 +811,13 @@ public class Sketch {
           return false;
         }
         // list of files/folders to be ignored during "save as"
-        for (String ignorable : getIgnorable()) {
+        for (String ignorable : mode.getIgnorable()) {
           if (name.equals(ignorable)) {
             return false;
           }
         }
         // ignore the extensions for code, since that'll be copied below
-        for (String ext : getExtensions()) {
+        for (String ext : mode.getExtensions()) {
           if (name.endsWith(ext)) {
             return false;
           }
@@ -978,7 +963,7 @@ public class Sketch {
       destFile = new File(codeFolder, filename);
 
     } else {
-      for (String extension : getExtensions()) {
+      for (String extension : mode.getExtensions()) {
         String lower = filename.toLowerCase();
         if (lower.endsWith("." + extension)) {
           destFile = new File(this.folder, filename);
@@ -1074,39 +1059,6 @@ public class Sketch {
 
 
   /**
-   * Add import statements to the current tab for all of packages inside
-   * the specified jar file.
-   */
-  public void importLibrary(String jarPath) {
-    // make sure the user didn't hide the sketch folder
-    ensureExistence();
-
-    String list[] = Compiler.packageListFromClassPath(jarPath);
-
-    // import statements into the main sketch file (code[0])
-    // if the current code is a .java file, insert into current
-    //if (current.flavor == PDE) {
-    if (hasDefaultExtension(current)) {
-      setCurrentCode(0);
-    }
-    // could also scan the text in the file to see if each import
-    // statement is already in there, but if the user has the import
-    // commented out, then this will be a problem.
-    StringBuffer buffer = new StringBuffer();
-    for (int i = 0; i < list.length; i++) {
-      buffer.append("import ");
-      buffer.append(list[i]);
-      buffer.append(".*;\n");
-    }
-    buffer.append('\n');
-    buffer.append(editor.getText());
-    editor.setText(buffer.toString());
-    editor.setSelection(0, 0);  // scroll to start
-    setModified(true);
-  }
-
-
-  /**
    * Change what file is currently being edited. Changes the current tab index.
    * <OL>
    * <LI> store the String for the text of the current file.
@@ -1151,75 +1103,46 @@ public class Sketch {
   }
 
 
-  /**
-   * Cleanup temporary files used during a build/run.
+  /** 
+   * Create a temporary folder that includes the sketch's name in its title.
    */
-  protected void cleanup() {
-    // if the java runtime is holding onto any files in the build dir, we
-    // won't be able to delete them, so we need to force a gc here
-    System.gc();
+  public File makeTempFolder() {
+    try {
+      File buildFolder = Base.createTempFolder(name, "temp");
+      if (buildFolder.mkdirs()) {
+        return buildFolder;
 
-    // note that we can't remove the builddir itself, otherwise
-    // the next time we start up, internal runs using Runner won't
-    // work because the build dir won't exist at startup, so the classloader
-    // will ignore the fact that that dir is in the CLASSPATH in run.sh
-    Base.removeDescendants(tempBuildFolder);
+      } else {
+        Base.showWarning("Build folder bad", 
+                         "Could not create a place to build the sketch.", null);
+      }
+    } catch (IOException e) {
+      Base.showWarning("Build folder bad", 
+                       "Could not find a place to build the sketch.", e);
+    }
+    return null;
   }
 
 
   /**
-   * Preprocess, Compile, and Run the current code.
-   * <P>
-   * There are three main parts to this process:
-   * <PRE>
-   *   (0. if not java, then use another 'engine'.. i.e. python)
-   *
-   *    1. do the p5 language preprocessing
-   *       this creates a working .java file in a specific location
-   *       better yet, just takes a chunk of java code and returns a
-   *       new/better string editor can take care of saving this to a
-   *       file location
-   *
-   *    2. compile the code from that location
-   *       catching errors along the way
-   *       placing it in a ready classpath, or .. ?
-   *
-   *    3. run the code
-   *       needs to communicate location for window
-   *       and maybe setup presentation space as well
-   *       run externally if a code folder exists,
-   *       or if more than one file is in the project
-   *
-   *    X. afterwards, some of these steps need a cleanup function
-   * </PRE>
-   */
-  //protected String compile() throws RunnerException {
-
-
-  /**
    * When running from the editor, take care of preparations before running
-   * the build.
+   * a build or an export. Also erases and/or creates 'targetFolder' if it's
+   * not null, and if preferences say to do so when exporting.
    */
-  public void prepare() {
+  public void prepareBuild(File targetFolder) throws SketchException {
     // make sure the user didn't hide the sketch folder
     ensureExistence();
 
+    // make sure any edits have been stored
     current.setProgram(editor.getText());
-
-    // TODO record history here
-    //current.history.record(program, SketchHistory.RUN);
 
     // if an external editor is being used, need to grab the
     // latest version of the code from the file.
     if (Preferences.getBoolean("editor.external")) {
-      // history gets screwed by the open..
-      //String historySaved = history.lastRecorded;
-      //handleOpen(sketch);
-      //history.lastRecorded = historySaved;
-
       // set current to null so that the tab gets updated
       // http://dev.processing.org/bugs/show_bug.cgi?id=515
       current = null;
+<<<<<<< .working
       // nuke previous files and settings, just get things loaded
       load();
     }
@@ -2312,6 +2235,8 @@ public class Sketch {
     // fix for issue posted on the board. make sure that the code
     // is reloaded when exporting and an external editor is being used.
     if (Preferences.getBoolean("editor.external")) {
+=======
+>>>>>>> .merge-right.r7553
       // don't do from the command line
       if (editor != null) {
         // nuke previous files and settings
@@ -2319,73 +2244,15 @@ public class Sketch {
       }
     }
 
-    File destFolder = new File(destPath);
-    if (Preferences.getBoolean("export.delete_target_folder")) {
-      Base.removeDir(destFolder);
-    }
-    destFolder.mkdirs();
-
-    // build the sketch
-    String foundName = build(destFolder.getPath());
-
-    // (already reported) error during export, exit this function
-    if (foundName == null) return false;
-
-    // if name != exportSketchName, then that's weirdness
-    // BUG unfortunately, that can also be a bug in the preproc :(
-    if (!name.equals(foundName)) {
-      Base.showWarning("Error during export",
-                       "Sketch name is " + name + " but the sketch\n" +
-                       "name in the code was " + foundName, null);
-      return false;
-    }
-
-
-    /// figure out where the jar files will be placed
-
-    File jarFolder = new File(destFolder, "lib");
-
-
-    /// where all the skeleton info lives
-
-    File skeletonFolder = new File(Base.getContentFile("lib"), "export");
-
-    /// on macosx, need to copy .app skeleton since that's
-    /// also where the jar files will be placed
-    File dotAppFolder = null;
-    if (exportPlatform == PConstants.MACOSX) {
-      dotAppFolder = new File(destFolder, name + ".app");
-      String APP_SKELETON = "skeleton.app";
-      //File dotAppSkeleton = new File(folder, APP_SKELETON);
-      File dotAppSkeleton = new File(skeletonFolder, APP_SKELETON);
-      Base.copyDir(dotAppSkeleton, dotAppFolder);
-
-      String stubName = "Contents/MacOS/JavaApplicationStub";
-      // need to set the stub to executable
-      // will work on osx or *nix, but just dies on windows, oh well..
-      if (Base.isWindows()) {
-        File warningFile = new File(destFolder, "readme.txt");
-        PrintWriter pw = PApplet.createWriter(warningFile);
-        pw.println("This application was created on Windows, which does not");
-        pw.println("properly support setting files as \"executable\",");
-        pw.println("a necessity for applications on Mac OS X.");
-        pw.println();
-        pw.println("To fix this, use the Terminal on Mac OS X, and from this");
-        pw.println("directory, type the following:");
-        pw.println();
-        pw.println("chmod +x " + dotAppFolder.getName() + "/" + stubName);
-        pw.flush();
-        pw.close();
-
-      } else {
-        File stubFile = new File(dotAppFolder, stubName);
-        String stubPath = stubFile.getAbsolutePath();
-        Runtime.getRuntime().exec(new String[] { "chmod", "+x", stubPath });
+    if (targetFolder != null) {
+      // Nuke the old applet/application folder because it can cause trouble
+      if (Preferences.getBoolean("export.delete_target_folder")) {
+        Base.removeDir(targetFolder);
       }
-
-      // set the jar folder to a different location than windows/linux
-      jarFolder = new File(dotAppFolder, "Contents/Resources/Java");
+      // Create a fresh output folder (needed before preproc is run next)
+      targetFolder.mkdirs();
     }
+<<<<<<< .working
 
 
     /// make the jar folder (windows and linux)
@@ -2723,124 +2590,8 @@ public class Sketch {
 
     /// goodbye
     return true;
-  }
-
-
-  protected void addManifest(ZipOutputStream zos) throws IOException {
-    ZipEntry entry = new ZipEntry("META-INF/MANIFEST.MF");
-    zos.putNextEntry(entry);
-
-    String contents =
-      "Manifest-Version: 1.0\n" +
-      "Created-By: Processing " + Base.VERSION_NAME + "\n" +
-      "Main-Class: " + name + "\n";  // TODO not package friendly
-    zos.write(contents.getBytes());
-    zos.closeEntry();
-  }
-
-
-  /**
-   * Slurps up .class files from a colon (or semicolon on windows)
-   * separated list of paths and adds them to a ZipOutputStream.
-   */
-  protected void packClassPathIntoZipFile(String path,
-                                          ZipOutputStream zos,
-                                          HashMap<String,Object> zipFileContents)
-    throws IOException {
-    String[] pieces = PApplet.split(path, File.pathSeparatorChar);
-
-    for (int i = 0; i < pieces.length; i++) {
-      if (pieces[i].length() == 0) continue;
-
-      // is it a jar file or directory?
-      if (pieces[i].toLowerCase().endsWith(".jar") ||
-          pieces[i].toLowerCase().endsWith(".zip")) {
-        try {
-          ZipFile file = new ZipFile(pieces[i]);
-          Enumeration<?> entries = file.entries();
-          while (entries.hasMoreElements()) {
-            ZipEntry entry = (ZipEntry) entries.nextElement();
-            if (entry.isDirectory()) {
-              // actually 'continue's for all dir entries
-
-            } else {
-              String entryName = entry.getName();
-              // ignore contents of the META-INF folders
-              if (entryName.indexOf("META-INF") == 0) continue;
-
-              // don't allow duplicate entries
-              if (zipFileContents.get(entryName) != null) continue;
-              zipFileContents.put(entryName, new Object());
-
-              ZipEntry entree = new ZipEntry(entryName);
-
-              zos.putNextEntry(entree);
-              byte buffer[] = new byte[(int) entry.getSize()];
-              InputStream is = file.getInputStream(entry);
-
-              int offset = 0;
-              int remaining = buffer.length;
-              while (remaining > 0) {
-                int count = is.read(buffer, offset, remaining);
-                offset += count;
-                remaining -= count;
-              }
-
-              zos.write(buffer);
-              zos.flush();
-              zos.closeEntry();
-            }
-          }
-        } catch (IOException e) {
-          System.err.println("Error in file " + pieces[i]);
-          e.printStackTrace();
-        }
-      } else {  // not a .jar or .zip, prolly a directory
-        File dir = new File(pieces[i]);
-        // but must be a dir, since it's one of several paths
-        // just need to check if it exists
-        if (dir.exists()) {
-          packClassPathIntoZipFileRecursive(dir, null, zos);
-        }
-      }
-    }
-  }
-
-
-  /**
-   * Continue the process of magical exporting. This function
-   * can be called recursively to walk through folders looking
-   * for more goodies that will be added to the ZipOutputStream.
-   */
-  static protected void packClassPathIntoZipFileRecursive(File dir,
-                                                          String sofar,
-                                                          ZipOutputStream zos)
-    throws IOException {
-    String files[] = dir.list();
-    for (int i = 0; i < files.length; i++) {
-      // ignore . .. and .DS_Store
-      if (files[i].charAt(0) == '.') continue;
-
-      File sub = new File(dir, files[i]);
-      String nowfar = (sofar == null) ?
-        files[i] : (sofar + "/" + files[i]);
-
-      if (sub.isDirectory()) {
-        packClassPathIntoZipFileRecursive(sub, nowfar, zos);
-
-      } else {
-        // don't add .jar and .zip files, since they only work
-        // inside the root, and they're unpacked
-        if (!files[i].toLowerCase().endsWith(".jar") &&
-            !files[i].toLowerCase().endsWith(".zip") &&
-            files[i].charAt(0) != '.') {
-          ZipEntry entry = new ZipEntry(nowfar);
-          zos.putNextEntry(entry);
-          zos.write(Base.loadBytesRaw(sub));
-          zos.closeEntry();
-        }
-      }
-    }
+=======
+>>>>>>> .merge-right.r7553
   }
 
 
@@ -2850,7 +2601,7 @@ public class Sketch {
    * Only checks to see if the main folder is still around,
    * but not its contents.
    */
-  protected void ensureExistence() {
+  public void ensureExistence() {
     if (folder.exists()) return;
 
     Base.showWarning("Sketch Disappeared",
@@ -2883,8 +2634,9 @@ public class Sketch {
    */
   public boolean isReadOnly() {
     String apath = folder.getAbsolutePath();
-    if (apath.startsWith(Base.getExamplesPath()) ||
-        apath.startsWith(Base.getLibrariesPath())) {
+    Mode mode = editor.getMode();
+    if (apath.startsWith(mode.getExamplesFolder().getAbsolutePath()) ||
+        apath.startsWith(mode.getLibrariesFolder().getAbsolutePath())) {
       return true;
 
       // canWrite() doesn't work on directories
@@ -2907,6 +2659,7 @@ public class Sketch {
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
+<<<<<<< .working
   // Breaking out extension types in order to clean up the code, and make it
   // easier for other environments (like Arduino) to incorporate changes.
 
@@ -2980,6 +2733,8 @@ public class Sketch {
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
+=======
+>>>>>>> .merge-right.r7553
   // Additional accessors added in 0136 because of package work.
   // These will also be helpful for tool developers.
 
@@ -3024,6 +2779,11 @@ public class Sketch {
     return dataFolder;
   }
 
+  
+  public boolean hasDataFolder() {
+    return dataFolder.exists();
+  }
+
 
   /**
    * Create the data folder if it does not exist already. As a convenience,
@@ -3045,6 +2805,11 @@ public class Sketch {
   }
 
 
+  public boolean hasCodeFolder() {
+    return (codeFolder != null) && codeFolder.exists();
+  }
+
+
   /**
    * Create the code folder if it does not exist already. As a convenience,
    * it also returns the code folder, since it's likely about to be used.
@@ -3057,14 +2822,14 @@ public class Sketch {
   }
 
 
-  public String getClassPath() {
-    return classPath;
-  }
+//  public String getClassPath() {
+//    return classPath;
+//  }
 
 
-  public String getLibraryPath() {
-    return libraryPath;
-  }
+//  public String getLibraryPath() {
+//    return javaLibraryPath;
+//  }
 
 
   public SketchCode[] getCode() {
@@ -3107,7 +2872,7 @@ public class Sketch {
   }
 
 
-  // .................................................................
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
   /**
@@ -3180,5 +2945,10 @@ public class Sketch {
       buffer.setLength(63);
     }
     return buffer.toString();
+  }
+  
+  
+  public Mode getMode() {
+    return mode;
   }
 }

@@ -34,8 +34,6 @@ import processing.app.syntax.*;
 import processing.core.*;
 
 
-
-
 /**
  * Storage class for user preferences and environment settings.
  * <P>

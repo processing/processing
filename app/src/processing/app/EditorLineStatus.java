@@ -22,8 +22,6 @@
 
 package processing.app;
 
-import processing.app.syntax.*;
-
 import java.awt.*;
 import javax.swing.*;
 
@@ -32,7 +30,8 @@ import javax.swing.*;
  * Li'l status bar fella that shows the line number.
  */
 public class EditorLineStatus extends JComponent {
-  JEditTextArea textarea;
+  Editor editor;
+//  JEditTextArea textarea;
   int start = -1, stop;
 
   Image resize;
@@ -45,21 +44,28 @@ public class EditorLineStatus extends JComponent {
   String text = "";
 
 
-  public EditorLineStatus(JEditTextArea textarea) {
-    this.textarea = textarea;
-    textarea.editorLineStatus = this;
+  public EditorLineStatus(Editor editor) {
+    this.editor = editor;
+    
+//    textarea = editor.getTextArea();
+    // not pretty, but it just does one thing...
+//    textarea.editorLineStatus = this;
+    editor.getTextArea().editorLineStatus = this;
 
-    background = Theme.getColor("linestatus.bgcolor");
-    font = Theme.getFont("linestatus.font");
-    foreground = Theme.getColor("linestatus.color");
-    high = Theme.getInteger("linestatus.height");
+    updateMode();
+  }
+  
+  
+  public void updateMode() {
+    Mode mode = editor.getMode();
+    background = mode.getColor("linestatus.bgcolor");
+    font = mode.getFont("linestatus.font");
+    foreground = mode.getColor("linestatus.color");
+    high = mode.getInteger("linestatus.height");
 
     if (Base.isMacOS()) {
-      resize = Base.getThemeImage("resize.gif", this);
+      resize = mode.loadImage("resize.gif");
     }
-    //linestatus.bgcolor = #000000
-    //linestatus.font    = SansSerif,plain,10
-    //linestatus.color   = #FFFFFF
   }
 
 

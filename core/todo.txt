@@ -1,28 +1,12 @@
-0192 core
-X regression in XMLElement.getBoolean(String, boolean)
-X   http://code.google.com/p/processing/issues/detail?id=399
-o JNLPAppletlauncher doesn't work anymore with OpenGL jar
-o   http://code.google.com/p/processing/issues/detail?id=352
-X color() problem with alpha
-X   http://code.google.com/p/processing/issues/detail?id=327
-X   appears to have been some old code that wasn't removed
-X anglebetween regression
-X   http://code.google.com/p/processing/issues/detail?id=435
-L double stop() called with noLoop()
-L   http://dev.processing.org/bugs/show_bug.cgi?id=1270
-L   http://code.google.com/p/processing/issues/detail?id=180
-X more chatter with this
-X   http://dev.processing.org/bugs/show_bug.cgi?id=131
-X   http://code.google.com/p/processing/issues/detail?id=43
-X shearX and shearY not implemented with P2D and JAVA2D
-X   http://code.google.com/p/processing/issues/detail?id=452
-L PGraphicsJava2D.resize() not working the same as PGraphics2D.resize()
-L   http://dev.processing.org/bugs/show_bug.cgi?id=1107
-X   http://code.google.com/p/processing/issues/detail?id=150
-X   resize is not available with renderers, use createGraphics()
-X   added a note to the reference
-X frame.setResizable(true) does not enable maximize button
-X   http://code.google.com/p/processing/issues/detail?id=467
+0193 core
+
+_ need to finish font changes wrt native fonts before any release
+_   right now not in a good place--default font will be bitmapped and ugly
+_   http://code.google.com/p/processing/issues/detail?id=416
+_   need to have some kind of subsetting mode, but 'subsetting' a bad name
+
+_ check glyph code < 0 instead of Font.canDisplay() 
+_   OS X claims that it can display more glyphs because of substitutions
 
 _ selectInput() and selectOutput() freeze on OS X
 _   http://code.google.com/p/processing/issues/detail?id=445
@@ -35,11 +19,6 @@ _ definite present-mode weirdness with background colors
 
 _ OpenGL Applets won't load with JRE 6 update 21 or higher
 _   http://code.google.com/p/processing/issues/detail?id=429
-
-_ need to finish font changes wrt native fonts before any release
-_   right now not in a good place--default font will be bitmapped and ugly
-_   http://code.google.com/p/processing/issues/detail?id=416
-_   need to have some kind of subsetting mode, but 'subsetting' a bad name
 
 _ present mode is no longer centering on osx?
 _ bug: textAlign(RIGHT) is shutting off native fonts

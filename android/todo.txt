@@ -1,19 +1,13 @@
-0192 android
-X compile android-core with java 5 as the target so that it works on OS X 10.5
-X A3D should use lower color depth on older devices
-X   http://code.google.com/p/processing/issues/detail?id=391
-X new api for begin/endRecord()
-A Finish opengl blending modes in A3D
-A   http://code.google.com/p/processing/issues/detail?id=290
-A Automatic normal calculation in A3D
-A   http://code.google.com/p/processing/issues/detail?id=345
-A Improve texture handling in A3D's PFont
-A   http://code.google.com/p/processing/issues/detail?id=394
-A OpenGL resource release mechanism in A3D is broken
-A   http://code.google.com/p/processing/issues/detail?id=456
-A Multitexturing in A3D
-A   http://code.google.com/p/processing/issues/detail?id=344
-X make several changes to get android running properly with sdk tools r8
+0193 android
+
+
+_ error in 'create avd' with "Emulator already exists" when it needs an upgrade
+_   or cannot be used with the current setup
+_   use 'android list avds' on the command line to see the problem in this case
+_ when there's a 'create avd' error, things still keep running. yay!
+
+_ need to do this for utf8: "overridable Ant javac properties: java.encoding"
+_   new for sdk tools r8, it's using ascii as the default, we're utf-8
 
 _ error in 'create avd' with "Emulator already exists" when it needs an upgrade
 _   or cannot be used with the current setup
@@ -31,6 +25,11 @@ _   to create the new sdk object
 _ need to do this for utf8: "overridable Ant javac properties: java.encoding"
 _   new for sdk tools r8, it's using ascii as the default, we're utf-8
 
+_ just use generic android apis as requirement, not the google apis
+_   though it does give us the emulator skin.. maybe another option
+
+_ need to do something to make it easier to do new screen sizes.
+
 _ when returning to android application, sometimes screen stays black
 _   http://code.google.com/p/processing/issues/detail?id=237
 
@@ -47,6 +46,9 @@ _   javac.exe not included with the download
 
 _ verify that processing-core.jar has downloaded properly
 _   http://code.google.com/p/processing/issues/detail?id=421
+_   this is the download page: 
+_     http://code.google.com/p/processing/downloads/detail?name=processing-android-core-0191.zip
+_   so look for "SHA1 Checksum: 1ed63f9316441fe46949ef5a92a28f58cc7ee226"
 
 _ gui stuff: http://hg.postspectacular.com/cp5magic/wiki/Home
 

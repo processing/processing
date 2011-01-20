@@ -39,15 +39,17 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
 import processing.app.*;
-import processing.app.debug.*;
 
 import processing.core.PApplet;
+import processing.mode.java.JavaMode;
+import processing.mode.java.runner.Runner;
 
 // http://dl.google.com/android/repository/repository.xml
 // http://dl.google.com/android/android-sdk_r3-mac.zip
 // http://dl.google.com/android/repository/tools_r03-macosx.zip
 
-public class AndroidMode implements DeviceListener {
+
+public class AndroidMode extends JavaMode implements DeviceListener {  
   private AndroidSDK sdk;
   private Editor editor;
   private Build build;
@@ -70,6 +72,25 @@ public class AndroidMode implements DeviceListener {
 //  }
   
   JCheckBoxMenuItem toggleItem;
+  
+  
+  public AndroidMode(Base base, File folder) {
+    super(base, folder);
+  }
+
+  
+  @Override
+  public Editor createEditor(Base base, String path, int[] location) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+
+  @Override
+  public String getTitle() {
+    return "Android";
+  }
+
   
   public void init(final Editor parent, final JMenuBar menubar) {
     this.editor = parent;
@@ -107,7 +128,7 @@ public class AndroidMode implements DeviceListener {
     item = new JMenuItem("Sketch Permissions");
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        new Permissions(editor);
+        new Permissions(editor.getSketch());
       }
     });
     menu.add(item);    
@@ -212,7 +233,7 @@ public class AndroidMode implements DeviceListener {
     }
 
     // otherwise do the usual
-    return new File(Base.getSketchbookFolder(), ANDROID_CORE_FILENAME);
+    return new File(base.getSketchbookFolder(), ANDROID_CORE_FILENAME);
   }
 
 
@@ -504,9 +525,9 @@ public class AndroidMode implements DeviceListener {
         if (lm.find()) {
           final String filename = lm.group(1);
           final int lineNumber = Integer.parseInt(lm.group(2)) - 1;
-          final RunnerException rex = editor.getSketch().placeException(
-            exceptionLine, filename, lineNumber);
-          editor.statusError(rex == null ? new RunnerException(exceptionLine,
+          final SketchException rex = 
+            editor.getSketch().placeException(exceptionLine, filename, lineNumber);
+          editor.statusError(rex == null ? new SketchException(exceptionLine,
                                                                false) : rex);
           return;
         }
@@ -599,5 +620,4 @@ public class AndroidMode implements DeviceListener {
   @SuppressWarnings("serial")
   private static class MonitorCanceled extends Exception {
   }
-
 }

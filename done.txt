@@ -1,3 +1,44 @@
+0192 (pre)
+J Getting error: Syntax error on token "else", } expected
+J   http://code.google.com/p/processing/issues/detail?id=400
+L disappearing horizontal scroll bar
+L   appears to have become much worse with the other scrollbar fix
+L   ...which itself doesn't seem to be working properly
+L   http://code.google.com/p/processing/issues/detail?id=316
+J Autoformat bug (new java "for loop" syntax)
+J   http://code.google.com/p/processing/issues/detail?id=420
+J matching brace problem in PDE
+J   http://code.google.com/p/processing/issues/detail?id=417
+J fix syntax highlighting of focusGained and others
+J   http://dev.processing.org/bugs/show_bug.cgi?id=659
+J   http://code.google.com/p/processing/issues/detail?id=82
+J compiling with static final global variable
+J   http://code.google.com/p/processing/issues/detail?id=427
+X don't let PDE open sketches with bad names (reported by max)
+L Properly enforce the editors minimum size
+L   http://code.google.com/p/processing/issues/detail?id=451
+L Patch: Processing IDE destroys symbolic links
+L   http://code.google.com/p/processing/issues/detail?id=432
+X Code folder oddity on application export (in SVN)
+X   http://code.google.com/p/processing/issues/detail?id=486
+L Processing cannot run because it could not ... store your settings.
+L   http://code.google.com/p/processing/issues/detail?id=410
+J AutoFormat unecessarily adds spaces to function with multiple args
+J   http://code.google.com/p/processing/issues/detail?id=462
+X fix for linux build script (thanks to Kevin Keraudren)
+X   http://code.google.com/p/processing/issues/detail?id=466
+o occasional exception in "copy for discourse"
+o   http://dev.processing.org/bugs/show_bug.cgi?id=729
+
+fixed earlier
+X should really be doing the 'right' thing with sketch file handling
+X   create temporary file when saving
+X   once done writing, use remove the original and rename the old
+X   some basic stuff like this..
+X   http://dev.processing.org/bugs/show_bug.cgi?id=968
+X   http://code.google.com/p/processing/issues/detail?id=127
+
+
 0191 (pre)
 X remove unused librariesClassPath
 X   http://code.google.com/p/processing/issues/detail?id=360

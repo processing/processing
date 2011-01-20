@@ -16,8 +16,7 @@ header.text.unselected.color = #ffffff
 header.text.font = SansSerif,plain,12
 
 # GUI - CONSOLE
-console.font = Monospaced,plain,11
-console.font.macosx = Monaco,plain,10
+# font is handled by preferences, since size/etc is modifiable
 console.color = #000000
 console.output.color = #cccccc
 console.error.color = #ff3000
