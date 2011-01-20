@@ -8,7 +8,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import processing.app.debug.RunnerListener;
+
+import processing.app.RunnerListener;
 import processing.app.exec.LineProcessor;
 import processing.app.exec.ProcessRegistry;
 import processing.app.exec.ProcessResult;

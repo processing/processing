@@ -45,7 +45,7 @@ public class Manifest {
     "file. Only the first activity entry will be updated, and you better \n" + 
     "hope that's the right one, smartypants.";
 
-  private Editor editor;
+//  private Editor editor;
   private Sketch sketch;
   
   // entries we care about from the manifest file
@@ -55,15 +55,19 @@ public class Manifest {
   private XMLElement xml;
 
 
-  public Manifest(Editor editor) {
-    this.editor = editor;
-    this.sketch = editor.getSketch();
+//  public Manifest(Editor editor) {
+//    this.editor = editor;
+//    this.sketch = editor.getSketch();
+//    load();
+//  }
+  public Manifest(Sketch sketch) {
+    this.sketch = sketch;
     load();
   }
   
   
   private String defaultPackageName() {
-    Sketch sketch = editor.getSketch();
+//    Sketch sketch = editor.getSketch();
     return Build.basePackage + "." + sketch.getName().toLowerCase();
   }
   

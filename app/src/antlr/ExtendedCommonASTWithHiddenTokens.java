@@ -8,9 +8,9 @@ package antlr;
  */
 
 import java.io.*;
-//import antlr.*;
+
 import antlr.collections.*;
-//import antlr.collections.impl.*;
+
 
 /** A CommonAST whose initialization copies hidden token
  *  information from the Token used to create a node.

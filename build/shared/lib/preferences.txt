@@ -48,11 +48,6 @@
 # and "library" on macosx, set this to the alternate location.
 #settings.path=data
 
-# temporary build path, normally this goes into the default
-# "temp" folder for that platform (as defined by java)
-# but this can be used to set a specific file in case of problems
-#build.path=build
-
 # By default, no sketches currently open
 last.sketch.count=0
 
@@ -98,12 +93,6 @@ editor.antialias.linux=true
 # currently using an external editor
 editor.external=false
 
-# caret blinking
-editor.caret.blink=true
-
-# area that's not in use by the text (replaced with tildes)
-editor.invalid=false
-
 # enable ctrl-ins, shift-ins, shift-delete for cut/copy/paste
 # on windows and linux, but disable on the mac
 editor.keys.alternative_cut_copy_paste = true
@@ -119,10 +108,12 @@ editor.keys.home_and_end_travel_far = false
 # if you don't like it, this is the preference to change
 editor.keys.home_and_end_travel_far.macosx = true
 
-console			 = true
-console.output.file      = stdout.txt
-console.error.file       = stderr.txt
-console.lines            = 4
+# font choice and size for the console
+console.font = Monospaced,plain,11
+console.font.macosx = Monaco,plain,10
+
+# number of lines to show by default
+console.lines = 4
 
 # set to false to disable automatically clearing the console
 # each time 'run' is hit

@@ -28,15 +28,14 @@ import org.apache.tools.ant.*;
 
 import processing.app.*;
 import processing.app.exec.*;
-import processing.app.debug.RunnerException;
 import processing.core.PApplet;
 
 
-class Build {
+class Build extends processing.mode.java.Build {
   static final String basePackage = "processing.android.test";
   static final String sdkVersion = "7";
 
-  private final Editor editor;
+//  private final Editor editor;
   private final AndroidSDK sdk;
 
   Manifest manifest;
@@ -45,14 +44,15 @@ class Build {
   File buildFile;
 
 
-  public Build(final Editor editor, final AndroidSDK sdk) {
-    this.editor = editor;
+  public Build(final Sketch sketch, final AndroidSDK sdk) {
+    super(sketch);
+//    this.editor = editor;
     this.sdk = sdk;
   }
 
   
   public File createProject(String target) {
-    final Sketch sketch = editor.getSketch();
+//    final Sketch sketch = editor.getSketch();
 
     try {
       tempBuildFolder = createTempBuildFolder(sketch);
@@ -77,9 +77,9 @@ class Build {
         editor.statusError("Could not parse the size() command.");
         return null; 
       }
-      className = sketch.preprocess(srcFolder.getAbsolutePath(), 
-                                    manifest.getPackageName(), 
-                                    preproc);
+      className = preprocess(srcFolder.getAbsolutePath(), 
+                             manifest.getPackageName(), 
+                             preproc);
       if (className != null) {
 //        final File androidXML = new File(tempBuildFolder, "AndroidManifest.xml");
 //        writeAndroidManifest(androidXML, sketch.getName(), className);
@@ -113,10 +113,10 @@ class Build {
           }
         } catch (final IOException e) {
           e.printStackTrace();
-          throw new RunnerException(e.getMessage());
+          throw new SketchException(e.getMessage());
         }
       }
-    } catch (final RunnerException e) {
+    } catch (final SketchException e) {
       editor.statusError(e);
       return null;
     } catch (final IOException e) {
@@ -149,7 +149,7 @@ class Build {
   
   
   protected File createExportFolder() throws IOException {
-    Sketch sketch = editor.getSketch();
+//    Sketch sketch = editor.getSketch();
     // Create the 'android' build folder, and move any existing version out. 
     File androidFolder = new File(sketch.getFolder(), "android");
     if (androidFolder.exists()) {
@@ -259,11 +259,11 @@ class Build {
         final int javacIndex = line.indexOf(javacPrefix);
         if (javacIndex != -1) {
           // System.out.println("checking: " + line);
-          final Sketch sketch = editor.getSketch();
+//          final Sketch sketch = editor.getSketch();
           // String sketchPath = sketch.getFolder().getAbsolutePath();
-          final int offset = javacIndex + javacPrefix.length() + 1;
-          final String[] pieces = PApplet.match(line.substring(offset),
-            "^(.+):([0-9]+):\\s+(.+)$");
+          int offset = javacIndex + javacPrefix.length() + 1;
+          String[] pieces = 
+            PApplet.match(line.substring(offset), "^(.+):([0-9]+):\\s+(.+)$");
           if (pieces != null) {
             // PApplet.println(pieces);
             String fileName = pieces[1];
@@ -272,7 +272,7 @@ class Build {
             final int lineNumber = PApplet.parseInt(pieces[2]) - 1;
             // PApplet.println("looking for " + fileName + " line " +
             // lineNumber);
-            final RunnerException rex = sketch.placeException(pieces[3],
+            final SketchException rex = placeException(pieces[3],
               fileName, lineNumber);
             if (rex != null) {
               rex.hideStackTrace();
@@ -368,7 +368,7 @@ class Build {
   static final String ICON_36 = "icon-36.png";
 
   private void writeRes(File resFolder, 
-                        String className) throws RunnerException {
+                        String className) throws SketchException {
     File layoutFolder = mkdirs(resFolder, "layout");
     File layoutFile = new File(layoutFolder, "main.xml");
     writeResLayoutMain(layoutFile);
@@ -434,11 +434,10 @@ class Build {
   }
 
   
-  private File mkdirs(final File parent, final String name)
-      throws RunnerException {
+  private File mkdirs(final File parent, final String name) throws SketchException {
     final File result = new File(parent, name);
     if (!(result.exists() || result.mkdirs())) {
-      throw new RunnerException("Could not create " + result);
+      throw new SketchException("Could not create " + result);
     }
     return result;
   }
@@ -476,7 +475,7 @@ class Build {
                               final File assetsFolder) throws IOException {
     // Copy any libraries to the 'libs' folder
     final Sketch sketch = editor.getSketch();
-    for (LibraryFolder library : sketch.getImportedLibraries()) {
+    for (Library library : sketch.getImportedLibraries()) {
 	  File libraryFolder = new File(library.getPath());
       // in the list is a File object that points the
       // library sketch's "library" folder
