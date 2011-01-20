@@ -1,5 +1,19 @@
 <?xml version="1.0"?>
 <project name="Processing" default="build">
+
+  <echo>
+    The build is broken! The build is broken! 
+
+    I'm currently doing major work on the innards of the PDE. 
+    As such, the current SVN (mostly just within /app)
+    will be a mess for a few days/weeks as I sort that out. 
+
+    As always, if you need a working build, use a tagged version 
+    of a release build, i.e. tags/processing-0192 for Android, 
+    or tags/processing-0191 for the desktop version.
+
+    http://code.google.com/p/processing/issues/detail?id=519
+  </echo>
   
   <!-- Sets properties for macosx/windows/linux depending on current system -->
   <condition property="macosx"><os family="mac" /></condition>
