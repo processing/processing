@@ -1561,51 +1561,6 @@ public class Base {
   // .................................................................
 
 
-  static public void showReference(String filename) {
-    File referenceFolder = Base.getContentFile("reference");
-    File referenceFile = new File(referenceFolder, filename);
-    openURL(referenceFile.getAbsolutePath());
-  }
-
-
-  static public void showReference() {
-    showReference("index.html");
-  }
-
-
-  static public void showEnvironment() {
-    showReference("environment" + File.separator + "index.html");
-  }
-
-
-  static public void showChanges() {
-    openURL("http://wiki.processing.org/w/Changes");
-  }
-
-
-  static public void showFAQ() {
-    openURL("http://wiki.processing.org/w/FAQ");
-  }
-
-
-  static public void showGettingStarted() {
-    openURL("http://processing.org/learning/gettingstarted/");
-  }
-
-
-  static public void showPlatforms() {
-    openURL("http://wiki.processing.org/w/Supported_Platforms");
-  }
-
-
-  static public void showTroubleshooting() {
-    openURL("http://wiki.processing.org/w/Troubleshooting");
-  }
-
-
-  // .................................................................
-
-
   /**
    * "No cookie for you" type messages. Nothing fatal or all that
    * much of a bummer, but something to notify the user about.
