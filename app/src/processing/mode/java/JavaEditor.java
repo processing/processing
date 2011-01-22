@@ -101,6 +101,86 @@ public class JavaEditor extends Editor {
   }
   
 
+  public JMenu buildHelpMenu() {
+    // To deal with a Mac OS X 10.5 bug, add an extra space after the name
+    // so that the OS doesn't try to insert its slow help menu.
+    JMenu menu = new JMenu("Help ");
+    JMenuItem item;
+
+    item = new JMenuItem("Getting Started");
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          Base.openURL("http://processing.org/learning/gettingstarted/");
+        }
+      });
+    menu.add(item);
+
+    item = new JMenuItem("Environment");
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          showReference("environment" + File.separator + "index.html");
+        }
+      });
+    menu.add(item);
+
+    item = new JMenuItem("Troubleshooting");
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          Base.openURL("http://wiki.processing.org/w/Troubleshooting");
+        }
+      });
+    menu.add(item);
+
+    item = new JMenuItem("Reference");
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          showReference("index.html");
+        }
+      });
+    menu.add(item);
+
+    item = Base.newJMenuItemShift("Find in Reference", 'F');
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          if (textarea.isSelectionActive()) {
+            handleFindReference();
+          }
+        }
+      });
+    menu.add(item);
+
+    item = new JMenuItem("Frequently Asked Questions");
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          Base.openURL("http://wiki.processing.org/w/FAQ");
+        }
+      });
+    menu.add(item);
+
+    item = new JMenuItem("Visit Processing.org");
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          Base.openURL("http://processing.org/");
+        }
+      });
+    menu.add(item);
+
+    // macosx already has its own about menu
+    if (!Base.isMacOS()) {
+      menu.addSeparator();
+      item = new JMenuItem("About Processing");
+      item.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            base.handleAbout();
+          }
+        });
+      menu.add(item);
+    }
+
+    return menu;
+  }    
+  
+
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
   
