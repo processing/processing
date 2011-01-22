@@ -63,8 +63,8 @@ public class AndroidPreprocessor extends PdePreprocessor {
     // actually used in the applet, which is the case especially for anyone
     // who is cutting/pasting from the reference.
 
-    String scrubbed = processing.mode.java.Build.scrubComments(sketch.getCode(0).getProgram());
-    String[] matches = PApplet.match(scrubbed, processing.mode.java.Build.SIZE_REGEX);
+    String scrubbed = processing.mode.java.JavaBuild.scrubComments(sketch.getCode(0).getProgram());
+    String[] matches = PApplet.match(scrubbed, processing.mode.java.JavaBuild.SIZE_REGEX);
 //    PApplet.println("matches: " + Sketch.SIZE_REGEX);
 //    PApplet.println(matches);
 

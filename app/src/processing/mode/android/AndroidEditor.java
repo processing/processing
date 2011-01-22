@@ -3,7 +3,7 @@
 /*
  Part of the Processing project - http://processing.org
 
- Copyright (c) 2009-10 Ben Fry and Casey Reas
+ Copyright (c) 2009-11 Ben Fry and Casey Reas
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License version 2
@@ -48,6 +48,12 @@ import processing.mode.java.runner.Runner;
 // http://dl.google.com/android/android-sdk_r3-mac.zip
 // http://dl.google.com/android/repository/tools_r03-macosx.zip
 
+// contains the android guts, the google specifics, and the usb driver for windows
+// https://dl-ssl.google.com/android/repository/addon.xml
+
+// need to lock to a specific sdk version and tools version anyway
+// may as well do the auto-download thing.
+
 
 public class AndroidEditor extends JavaEditor implements DeviceListener {  
   private AndroidSDK sdk;
@@ -59,19 +65,8 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
 
   private static final String ANDROID_CORE_URL =
     "http://processing.googlecode.com/files/" + ANDROID_CORE_FILENAME;
-//  private static final String ANDROID_CORE_URL =
-//    "http://processing.googlecode.com/svn" +
-//    "/tags/processing-" + Base.VERSION_NAME + "/android/core.zip";
-
-//  public String getMenuTitle() {
-//    return "Android Mode";
-//  }
-
-//  public void init(final Editor parent) {
-//    this.editor = parent;
-//  }
   
-  JCheckBoxMenuItem toggleItem;
+//  JCheckBoxMenuItem toggleItem;
   AndroidMode amode;
   
   
@@ -80,21 +75,58 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
     amode = (AndroidMode) mode;
   }
 
-  
-  public void init(final Editor parent, final JMenuBar menubar) {
-    this.editor = parent;
-    
 
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+  
+  public JMenu buildFileMenu() {
+    String exportTitle = AndroidToolbar.getTitle(AndroidToolbar.EXPORT, false);
+    JMenuItem exportProject = Base.newJMenuItem(exportTitle, 'E');
+    exportProject.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        handleExportProject();
+      }
+    });
+      
+    exportTitle = AndroidToolbar.getTitle(AndroidToolbar.EXPORT, true);
+    JMenuItem exportPackage = Base.newJMenuItemShift(exportTitle, 'E');
+    exportPackage.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        handleExportPackage();
+      }
+    });
+    return buildFileMenu(new JMenuItem[] { exportProject, exportPackage });
+  }
+  
+  
+  public JMenu buildSketchMenu() {
+    JMenuItem runItem = Base.newJMenuItem(AndroidToolbar.getTitle(AndroidToolbar.RUN, false), 'R');
+    runItem.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          handleRun();
+        }
+      });
+
+    JMenuItem presentItem = Base.newJMenuItemShift(AndroidToolbar.getTitle(AndroidToolbar.RUN, true), 'R');
+    presentItem.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          handlePresent();
+        }
+      });
+
+    JMenuItem stopItem = new JMenuItem(AndroidToolbar.getTitle(AndroidToolbar.STOP, false));
+    stopItem.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          handleStop();
+        }
+      });
+    return buildSketchMenu(new JMenuItem[] { runItem, presentItem, stopItem });
+  }
+
+
+  public JMenu buildModeMenu() {
     JMenu menu = new JMenu("Android");    
     JMenuItem item;
-    
-    toggleItem = Base.newJCheckBoxMenuItem("Android Mode", 'D');
-    toggleItem.addItemListener(new ItemListener() {
-      public void itemStateChanged(ItemEvent e) {
-        updateMode();
-      } 
-    });
-    menu.add(toggleItem);
     
     item = new JMenuItem("Guide");
     item.addActionListener(new ActionListener() {
@@ -105,14 +137,6 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
     menu.add(item);
     
     menu.addSeparator();
-
-//    item = new JMenuItem("Sketch Options");
-//    item.addActionListener(new ActionListener() {
-//      public void actionPerformed(ActionEvent e) {
-//        //new Permissions(editor);
-//      }
-//    });
-//    menu.add(item);
 
     item = new JMenuItem("Sketch Permissions");
     item.addActionListener(new ActionListener() {
@@ -151,7 +175,7 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
     });
     menu.add(item);    
     
-    menubar.add(menu);
+    return menu;
   }
   
   

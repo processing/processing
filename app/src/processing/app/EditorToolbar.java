@@ -33,7 +33,7 @@ import javax.swing.event.*;
 /**
  * run/stop/etc buttons for the ide
  */
-public class EditorToolbar extends JComponent implements MouseInputListener, KeyListener {
+public abstract class EditorToolbar extends JComponent implements MouseInputListener, KeyListener {
 
 //  /** Rollover titles for each button. */
 //  static final String title[] = {
@@ -150,6 +150,9 @@ public class EditorToolbar extends JComponent implements MouseInputListener, Key
     }
     return buttonImages;
   }
+  
+  
+//  abstract static public String getTitle(int index, boolean shift);
 
 
   @Override

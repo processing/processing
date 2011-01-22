@@ -176,7 +176,7 @@ public class JavaMode extends Mode {
    * @throws SketchException 
    */
   public void handleRun(Sketch sketch, RunnerListener listener) throws SketchException {
-    Build build = new Build(sketch);
+    JavaBuild build = new JavaBuild(sketch);
     String appletClassName = build.build();
     if (appletClassName != null) {
       runtime = new Runner(build, listener);
@@ -186,7 +186,7 @@ public class JavaMode extends Mode {
 
 
   public void handlePresent(Sketch sketch, RunnerListener listener) throws SketchException {
-    Build build = new Build(sketch);
+    JavaBuild build = new JavaBuild(sketch);
     String appletClassName = build.build();
     if (appletClassName != null) {
       runtime = new Runner(build, listener);
@@ -204,13 +204,13 @@ public class JavaMode extends Mode {
   
   
   public boolean handleExportApplet(Sketch sketch) throws SketchException, IOException {
-    Build build = new Build(sketch);
+    JavaBuild build = new JavaBuild(sketch);
     return build.exportApplet();
   }
   
   
   public boolean handleExportApplication(Sketch sketch) throws SketchException, IOException {
-    Build build = new Build(sketch);
+    JavaBuild build = new JavaBuild(sketch);
     return build.exportApplication();
   }
 }

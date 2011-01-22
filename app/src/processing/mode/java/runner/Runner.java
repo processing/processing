@@ -26,7 +26,7 @@ package processing.mode.java.runner;
 import processing.app.*;
 import processing.app.exec.StreamRedirectThread;
 import processing.core.*;
-import processing.mode.java.Build;
+import processing.mode.java.JavaBuild;
 
 import java.awt.Point;
 import java.io.*;
@@ -80,11 +80,11 @@ public class Runner implements MessageConsumer {
 
   protected Editor editor;
 //  protected Sketch sketch;
-  protected Build build;
+  protected JavaBuild build;
 //  private String appletClassName;
 
 
-  public Runner(Build build, RunnerListener listener) {
+  public Runner(JavaBuild build, RunnerListener listener) {
     this.listener = listener;
 //    this.sketch = sketch;
     this.build = build;
