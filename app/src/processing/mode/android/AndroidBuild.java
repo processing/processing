@@ -143,7 +143,7 @@ class AndroidBuild extends JavaBuild {
     File androidFolder = new File(sketch.getFolder(), "android");
     if (androidFolder.exists()) {
 //      Date mod = new Date(androidFolder.lastModified());
-      String stamp = AndroidEditor.getDateStamp(androidFolder.lastModified());
+      String stamp = AndroidMode.getDateStamp(androidFolder.lastModified());
       File dest = new File(sketch.getFolder(), "android." + stamp);
       boolean result = androidFolder.renameTo(dest);
       if (!result) {
