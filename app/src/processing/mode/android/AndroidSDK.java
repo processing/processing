@@ -13,7 +13,7 @@ import processing.app.exec.ProcessResult;
 import processing.core.PApplet;
 
 class AndroidSDK {
-  private final File sdk;
+  private final File folder;
   private final File tools;
   private final File platformTools;
   private final File androidTool;
@@ -39,19 +39,19 @@ class AndroidSDK {
 
 
   public AndroidSDK(final String sdkPath) throws BadSDKException, IOException {
-    sdk = new File(sdkPath);
-    if (!sdk.exists()) {
-      throw new BadSDKException(sdk + " does not exist");
+    folder = new File(sdkPath);
+    if (!folder.exists()) {
+      throw new BadSDKException(folder + " does not exist");
     }
 
-    tools = new File(sdk, "tools");
+    tools = new File(folder, "tools");
     if (!tools.exists()) {
-      throw new BadSDKException("There is no tools folder in " + sdk);
+      throw new BadSDKException("There is no tools folder in " + folder);
     }
 
-    platformTools = new File(sdk, "platform-tools");
+    platformTools = new File(folder, "platform-tools");
     if (!platformTools.exists()) {
-      throw new BadSDKException("There is no platform-tools folder in " + sdk);
+      throw new BadSDKException("There is no platform-tools folder in " + folder);
     }
 
     androidTool = findAndroidTool(tools);
@@ -60,7 +60,7 @@ class AndroidSDK {
 
     String path = p.getenv("PATH");
 
-    p.setenv("ANDROID_SDK", sdk.getCanonicalPath());
+    p.setenv("ANDROID_SDK", folder.getCanonicalPath());
     path = platformTools.getCanonicalPath() + File.pathSeparator +
       tools.getCanonicalPath() + File.pathSeparator + path;
 
@@ -89,7 +89,7 @@ class AndroidSDK {
 
 
   public File getSdkFolder() {
-    return sdk;
+    return folder;
   }
 
 

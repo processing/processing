@@ -57,7 +57,7 @@ public class JavaBuild {
   private File binFolder;
   private boolean foundMain = false;
   private String classPath;
-  private String appletClassName;
+  protected String sketchClassName;
 
   /**
    * This will include the code folder, any library folders, etc. that might
@@ -162,7 +162,7 @@ public class JavaBuild {
 //    String bootClasses = System.getProperty("sun.boot.class.path");
 //    if (compiler.compile(this, srcFolder, binFolder, primaryClassName, getClassPath(), bootClasses)) {
     if (Compiler.compile(this)) {
-      appletClassName = classNameFound;
+      sketchClassName = classNameFound;
       return classNameFound;
     }
     return null;
@@ -170,7 +170,7 @@ public class JavaBuild {
   
   
   public String getSketchClassName() {
-    return appletClassName;
+    return sketchClassName;
   }
 
 

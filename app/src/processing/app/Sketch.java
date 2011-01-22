@@ -1128,22 +1128,23 @@ public class Sketch {
    * When running from the editor, take care of preparations before running
    * a build or an export. Also erases and/or creates 'targetFolder' if it's
    * not null, and if preferences say to do so when exporting.
+   * @param targetFolder is something like applet, application, android...
    */
   public void prepareBuild(File targetFolder) throws SketchException {
     // make sure the user didn't hide the sketch folder
     ensureExistence();
 
-    // make sure any edits have been stored
-    current.setProgram(editor.getText());
+    // don't do from the command line
+    if (editor != null) {
+      // make sure any edits have been stored
+      current.setProgram(editor.getText());
 
-    // if an external editor is being used, need to grab the
-    // latest version of the code from the file.
-    if (Preferences.getBoolean("editor.external")) {
-      // set current to null so that the tab gets updated
-      // http://dev.processing.org/bugs/show_bug.cgi?id=515
-      current = null;
-      // don't do from the command line
-      if (editor != null) {
+      // if an external editor is being used, need to grab the
+      // latest version of the code from the file.
+      if (Preferences.getBoolean("editor.external")) {
+        // set current to null so that the tab gets updated
+        // http://dev.processing.org/bugs/show_bug.cgi?id=515
+        current = null;
         // nuke previous files and settings
         load();
       }

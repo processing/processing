@@ -51,6 +51,14 @@ public abstract class Mode {
   }
   
   
+  public File getContentFile(String path) {
+    return new File(folder, path);
+  }
+  
+  
+  
+
+  
   /** 
    * Return the pretty/printable/menu name for this mode. This is separate from
    * the single word name of the folder that contains this mode. It could even
