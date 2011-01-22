@@ -61,7 +61,7 @@ public class JavaEditor extends Editor {
     JMenuItem exportApplet = Base.newJMenuItem(appletTitle, 'E');
     exportApplet.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        handleExportProject();
+        handleExportApplet();
       }
     });
 
@@ -69,7 +69,7 @@ public class JavaEditor extends Editor {
     JMenuItem exportApplication = Base.newJMenuItemShift(appTitle, 'E');
     exportApplication.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        handleExportPackage();
+        handleExportApplication();
       }
     });
     return buildFileMenu(new JMenuItem[] { exportApplet, exportApplication });
@@ -200,7 +200,7 @@ public class JavaEditor extends Editor {
    * Made synchronized to (hopefully) avoid problems of people
    * hitting export twice, quickly, and horking things up.
    */
-  public void handleExportProject() {
+  public void handleExportApplet() {
     if (handleExportCheckModified()) {
       toolbar.activate(JavaToolbar.EXPORT);
       try {
@@ -235,7 +235,7 @@ public class JavaEditor extends Editor {
   /**
    * Handler for Sketch &rarr; Export Application
    */
-  public void handleExportPackage() {
+  public void handleExportApplication() {
     toolbar.activate(JavaToolbar.EXPORT);
     
     if (handleExportCheckModified()) {
