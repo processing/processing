@@ -32,10 +32,10 @@ import java.util.*;
 import java.util.regex.Pattern;
 import processing.app.Preferences;
 import processing.app.SketchException;
-import processing.app.antlr.PdeLexer;
-import processing.app.antlr.PdeRecognizer;
-import processing.app.antlr.PdeTokenTypes;
 import processing.core.PApplet;
+import processing.mode.java.preproc.antlr.PdeLexer;
+import processing.mode.java.preproc.antlr.PdeRecognizer;
+import processing.mode.java.preproc.antlr.PdeTokenTypes;
 import antlr.*;
 import antlr.collections.AST;
 
