@@ -25,8 +25,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -287,17 +285,6 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
 //    return true;
 //  }
   
-  
-  static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMdd.HHmm");
-  
-  static public String getDateStamp() {
-    return dateFormat.format(new Date());
-  }
-
-  static public String getDateStamp(long stamp) {
-    return dateFormat.format(new Date(stamp));
-  }
-
   
   // if user asks for 480x320, 320x480, 854x480 etc, then launch like that
   // though would need to query the emulator to see if it can do that

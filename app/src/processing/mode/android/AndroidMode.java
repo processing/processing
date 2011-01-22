@@ -22,6 +22,8 @@
 package processing.mode.android;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import processing.app.*;
 import processing.mode.java.JavaMode;
@@ -48,6 +50,9 @@ public class AndroidMode extends JavaMode {
   }
   
   
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+  
   protected File getCoreZipLocation() {
     if (coreZipLocation == null) {
       // for debugging only, check to see if this is an svn checkout
@@ -68,4 +73,24 @@ public class AndroidMode extends JavaMode {
     }
     return coreZipLocation;
   }
+  
+  
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+  
+  
+  static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMdd.HHmm");
+  
+  
+  static public String getDateStamp() {
+    return dateFormat.format(new Date());
+  }
+
+  
+  static public String getDateStamp(long stamp) {
+    return dateFormat.format(new Date(stamp));
+  }
+
+  
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
 }
