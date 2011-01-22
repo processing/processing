@@ -1,4 +1,4 @@
-package processing.app.tools.android;
+package processing.mode.android;
 
 import java.awt.Component;
 import java.awt.Dimension;
