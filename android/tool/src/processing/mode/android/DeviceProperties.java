@@ -1,4 +1,4 @@
-package processing.app.tools.android;
+package processing.mode.android;
 
 public interface DeviceProperties {
   public static final String APP_STARTED = "android.device.app.started";

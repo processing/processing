@@ -19,7 +19,7 @@
  Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package processing.app.tools.android;
+package processing.mode.android;
 
 import java.io.IOException;
 import java.io.PrintWriter;

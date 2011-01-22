@@ -1,4 +1,4 @@
-package processing.app.tools.android;
+package processing.mode.android;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ import java.util.concurrent.FutureTask;
 
 //import processing.app.EditorConsole;
 import processing.app.exec.ProcessResult;
-import processing.app.tools.android.EmulatorController.State;
+import processing.mode.android.EmulatorController.State;
 
 /**
  * <pre> AndroidEnvironment env = AndroidEnvironment.getInstance();

@@ -1,4 +1,4 @@
-package processing.app.tools.android;
+package processing.mode.android;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
