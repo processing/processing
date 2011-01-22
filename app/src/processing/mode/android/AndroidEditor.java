@@ -72,23 +72,12 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
 //  }
   
   JCheckBoxMenuItem toggleItem;
+  AndroidMode amode;
   
   
-  public AndroidEditor(Base base, File folder) {
-    super(base, folder);
-  }
-
-  
-  @Override
-  public Editor createEditor(Base base, String path, int[] location) {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-
-  @Override
-  public String getTitle() {
-    return "Android";
+  protected AndroidEditor(Base base, String path, int[] location, Mode mode) {
+    super(base, path, location, mode);
+    amode = (AndroidMode) mode;
   }
 
   
