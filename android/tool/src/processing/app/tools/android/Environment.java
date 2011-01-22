@@ -23,19 +23,19 @@ import processing.app.tools.android.EmulatorController.State;
  * @author Jonathan Feinberg &lt;jdf@pobox.com&gt;
  *
  */
-class AndroidEnvironment {
+class Environment {
   private static final String ADB_DEVICES_ERROR =
     "Received unfamiliar output from “adb devices”.\n" +
     "The device list may have errors.";
 
-  private static final AndroidEnvironment INSTANCE = new AndroidEnvironment();
+  private static final Environment INSTANCE = new Environment();
 
-  public static AndroidEnvironment getInstance() {
+  public static Environment getInstance() {
     return INSTANCE;
   }
 
-  private final Map<String, AndroidDevice> devices =
-    new ConcurrentHashMap<String, AndroidDevice>();
+  private final Map<String, Device> devices =
+    new ConcurrentHashMap<String, Device>();
   private final ExecutorService deviceLaunchThread =
     Executors.newSingleThreadExecutor();
 
@@ -54,7 +54,7 @@ class AndroidEnvironment {
   }
 
 
-  private AndroidEnvironment() {
+  private Environment() {
     if (processing.app.Base.DEBUG) {
       System.out.println("Starting up AndroidEnvironment");
     }
@@ -71,28 +71,28 @@ class AndroidEnvironment {
 
   private void shutdown() {
     System.out.println("Shutting down AndroidEnvironment");
-    for (AndroidDevice device : new ArrayList<AndroidDevice>(devices.values())) {
+    for (Device device : new ArrayList<Device>(devices.values())) {
       device.shutdown();
     }
     killAdbServer();
   }
 
 
-  public Future<AndroidDevice> getEmulator() {
-    final Callable<AndroidDevice> androidFinder = new Callable<AndroidDevice>() {
-      public AndroidDevice call() throws Exception {
+  public Future<Device> getEmulator() {
+    final Callable<Device> androidFinder = new Callable<Device>() {
+      public Device call() throws Exception {
         return blockingGetEmulator();
       }
     };
-    final FutureTask<AndroidDevice> task =
-      new FutureTask<AndroidDevice>(androidFinder);
+    final FutureTask<Device> task =
+      new FutureTask<Device>(androidFinder);
     deviceLaunchThread.execute(task);
     return task;
   }
 
 
-  private final AndroidDevice blockingGetEmulator() {
-    AndroidDevice emu = find(true);
+  private final Device blockingGetEmulator() {
+    Device emu = find(true);
     if (emu != null) {
       return emu;
     }
@@ -131,10 +131,10 @@ class AndroidEnvironment {
   }
 
 
-  private AndroidDevice find(final boolean wantEmulator) {
+  private Device find(final boolean wantEmulator) {
     refresh();
     synchronized (devices) {
-      for (final AndroidDevice device : devices.values()) {
+      for (final Device device : devices.values()) {
         final boolean isEmulator = device.getId().contains("emulator");
         if ((isEmulator && wantEmulator) || (!isEmulator && !wantEmulator)) {
           return device;
@@ -148,21 +148,21 @@ class AndroidEnvironment {
   /**
    * @return the first Android hardware device known to be running, or null if there are none.
    */
-  public Future<AndroidDevice> getHardware() {
-    final Callable<AndroidDevice> androidFinder = new Callable<AndroidDevice>() {
-      public AndroidDevice call() throws Exception {
+  public Future<Device> getHardware() {
+    final Callable<Device> androidFinder = new Callable<Device>() {
+      public Device call() throws Exception {
         return blockingGetHardware();
       }
     };
-    final FutureTask<AndroidDevice> task =
-      new FutureTask<AndroidDevice>(androidFinder);
+    final FutureTask<Device> task =
+      new FutureTask<Device>(androidFinder);
     deviceLaunchThread.execute(task);
     return task;
   }
 
 
-  private final AndroidDevice blockingGetHardware() {
-    AndroidDevice hardware = find(false);
+  private final Device blockingGetHardware() {
+    Device hardware = find(false);
     if (hardware != null) {
       return hardware;
     }
@@ -185,13 +185,13 @@ class AndroidEnvironment {
     final List<String> activeDevices = listDevices();
     for (final String deviceId : activeDevices) {
       if (!devices.containsKey(deviceId)) {
-        addDevice(new AndroidDevice(this, deviceId));
+        addDevice(new Device(this, deviceId));
       }
     }
   }
 
 
-  private void addDevice(final AndroidDevice device) {
+  private void addDevice(final Device device) {
     //    System.err.println("AndroidEnvironment: adding " + device.getId());
     try {
       device.initialize();
@@ -205,7 +205,7 @@ class AndroidEnvironment {
   }
 
 
-  void deviceRemoved(final AndroidDevice device) {
+  void deviceRemoved(final Device device) {
     //    System.err.println("AndroidEnvironment: removing " + device.getId());
     if (devices.remove(device.getId()) == null) {
       throw new IllegalStateException("I didn't know about device "

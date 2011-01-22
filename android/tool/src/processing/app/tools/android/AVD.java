@@ -12,7 +12,7 @@ public class AVD {
     "An error occurred while running “android create avd”\n" +
     "to set up the default Android emulator. Make sure that the\n" +
     "Android SDK is installed properly, and that the Android\n" +
-    "and Google APIs are installed for level " + Build.sdkVersion + ".";
+    "and Google APIs are installed for level " + AndroidBuild.sdkVersion + ".";
 
   // Tempting to switch to WVGA854 (854x480), the same aspect ratio
   // (with rounding), as 1920x1080, or 16:9.
@@ -32,8 +32,8 @@ public class AVD {
    * Default virtual device used by Processing.
    */
   public static final AVD defaultAVD =
-    new AVD("Processing-Android-" + Build.sdkVersion,
-            "Google Inc.:Google APIs:" + Build.sdkVersion);
+    new AVD("Processing-Android-" + AndroidBuild.sdkVersion,
+            "Google Inc.:Google APIs:" + AndroidBuild.sdkVersion);
 
 
   public static boolean ensureEclairAVD(final AndroidSDK sdk) {

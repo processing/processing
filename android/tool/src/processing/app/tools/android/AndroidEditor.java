@@ -52,7 +52,7 @@ import processing.mode.java.runner.Runner;
 public class AndroidEditor extends JavaEditor implements DeviceListener {  
   private AndroidSDK sdk;
   private Editor editor;
-  private Build build;
+  private AndroidBuild build;
   
   private static final String ANDROID_CORE_FILENAME =
     "processing-android-core-" + Base.VERSION_NAME + ".zip";
@@ -157,7 +157,7 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 //        editor.statusNotice("Resetting the Android Debug Bridge server.");
-        AndroidEnvironment.killAdbServer();
+        Environment.killAdbServer();
       }
     });
     menu.add(item);    
@@ -178,7 +178,7 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
         editor.setHandlers(new RunHandler(), new PresentHandler(), 
                            new StopHandler(), 
                            new ExportHandler(),  new ExportAppHandler());
-        build = new Build(editor, sdk);
+        build = new AndroidBuild(editor, sdk);
         editor.statusNotice("Android mode enabled for this editor window.");
       }
     } else {
@@ -279,7 +279,7 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
   // if user asks for 480x320, 320x480, 854x480 etc, then launch like that
   // though would need to query the emulator to see if it can do that
 
-  private boolean startSketch(final AndroidDevice device) {
+  private boolean startSketch(final Device device) {
     final String packageName = build.getPackageName();
     final String className = build.getClassName();
     try {
@@ -292,7 +292,7 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
     return false;
   }
 
-  private AndroidDevice waitForDevice(final Future<AndroidDevice> deviceFuture,
+  private Device waitForDevice(final Future<Device> deviceFuture,
                                       final IndeterminateProgressMonitor monitor)
       throws MonitorCanceled {
     for (int i = 0; i < 120; i++) {
@@ -317,12 +317,12 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
   }
 
 
-  private volatile AndroidDevice lastRunDevice = null;
+  private volatile Device lastRunDevice = null;
 
   /**
    * @param target "debug" or "release"
    */
-  private void runSketchOnDevice(final Future<AndroidDevice> deviceFuture,
+  private void runSketchOnDevice(final Future<Device> deviceFuture,
                                  final String target) throws MonitorCanceled {
     final IndeterminateProgressMonitor monitor =
       new IndeterminateProgressMonitor(editor,
@@ -345,7 +345,7 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
           throw new MonitorCanceled();
         }
         monitor.setNote("Waiting for device to become available...");
-        final AndroidDevice device = waitForDevice(deviceFuture, monitor);
+        final Device device = waitForDevice(deviceFuture, monitor);
         if (device == null || !device.isAlive()) {
           editor.statusError("Device killed or disconnected.");
           return;
@@ -548,7 +548,7 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
     public void run() {
       AVD.ensureEclairAVD(sdk);
       try {
-        runSketchOnDevice(AndroidEnvironment.getInstance().getEmulator(), "debug");
+        runSketchOnDevice(Environment.getInstance().getEmulator(), "debug");
       } catch (final MonitorCanceled ok) {
         sketchStopped();
         editor.statusNotice("Canceled.");
@@ -562,7 +562,7 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
   class PresentHandler implements Runnable {
     public void run() {
       try {
-        runSketchOnDevice(AndroidEnvironment.getInstance().getHardware(), "debug");
+        runSketchOnDevice(Environment.getInstance().getHardware(), "debug");
       } catch (final MonitorCanceled ok) {
         sketchStopped();
         editor.statusNotice("Canceled.");
