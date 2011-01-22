@@ -910,122 +910,63 @@ public abstract class Editor extends JFrame implements RunnerListener {
   }
 
 
-  protected JMenu buildHelpMenu() {
-    // To deal with a Mac OS X 10.5 bug, add an extra space after the name
-    // so that the OS doesn't try to insert its slow help menu.
-    JMenu menu = new JMenu("Help ");
-    JMenuItem item;
+  /*
+  // testing internal web server to serve up docs from a zip file
+  item = new JMenuItem("Web Server Test");
+  item.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        //WebServer ws = new WebServer();
+        SwingUtilities.invokeLater(new Runnable() {
+          public void run() {
+            try {
+              int port = WebServer.launch("/Users/fry/coconut/processing/build/shared/reference.zip");
+              Base.openURL("http://127.0.0.1:" + port + "/reference/setup_.html");
 
-    /*
-    // testing internal web server to serve up docs from a zip file
-    item = new JMenuItem("Web Server Test");
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          //WebServer ws = new WebServer();
-          SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-              try {
-                int port = WebServer.launch("/Users/fry/coconut/processing/build/shared/reference.zip");
-                Base.openURL("http://127.0.0.1:" + port + "/reference/setup_.html");
-
-              } catch (IOException e1) {
-                e1.printStackTrace();
-              }
+            } catch (IOException e1) {
+              e1.printStackTrace();
             }
-          });
-        }
-      });
-    menu.add(item);
-    */
-
-    /*
-    item = new JMenuItem("Browser Test");
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          //Base.openURL("http://processing.org/learning/gettingstarted/");
-          //JFrame browserFrame = new JFrame("Browser");
-          BrowserStartup bs = new BrowserStartup("jar:file:/Users/fry/coconut/processing/build/shared/reference.zip!/reference/setup_.html");
-          bs.initUI();
-          bs.launch();
-        }
-      });
-    menu.add(item);
-    */
-
-    item = new JMenuItem("Getting Started");
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          Base.showGettingStarted();
-        }
-      });
-    menu.add(item);
-
-    item = new JMenuItem("Environment");
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          Base.showEnvironment();
-        }
-      });
-    menu.add(item);
-
-    item = new JMenuItem("Troubleshooting");
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          Base.showTroubleshooting();
-        }
-      });
-    menu.add(item);
-
-    item = new JMenuItem("Reference");
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          Base.showReference();
-        }
-      });
-    menu.add(item);
-
-    item = Base.newJMenuItemShift("Find in Reference", 'F');
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          if (textarea.isSelectionActive()) {
-            handleFindReference();
-          }
-        }
-      });
-    menu.add(item);
-
-    item = new JMenuItem("Frequently Asked Questions");
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          Base.showFAQ();
-        }
-      });
-    menu.add(item);
-
-    item = Base.newJMenuItem("Visit Processing.org", '5');
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          Base.openURL("http://processing.org/");
-        }
-      });
-    menu.add(item);
-
-    // macosx already has its own about menu
-    if (!Base.isMacOS()) {
-      menu.addSeparator();
-      item = new JMenuItem("About Processing");
-      item.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            base.handleAbout();
           }
         });
-      menu.add(item);
-    }
+      }
+    });
+  menu.add(item);
+  */
 
-    return menu;
+  /*
+  item = new JMenuItem("Browser Test");
+  item.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        //Base.openURL("http://processing.org/learning/gettingstarted/");
+        //JFrame browserFrame = new JFrame("Browser");
+        BrowserStartup bs = new BrowserStartup("jar:file:/Users/fry/coconut/processing/build/shared/reference.zip!/reference/setup_.html");
+        bs.initUI();
+        bs.launch();
+      }
+    });
+  menu.add(item);
+  */
+
+
+  abstract public JMenu buildHelpMenu();
+  
+  
+  public void showReference(String filename) {
+    File referenceFolder = Base.getContentFile("reference");
+    File referenceFile = new File(referenceFolder, filename);
+    Base.openURL(referenceFile.getAbsolutePath());
   }
 
+  
+  public void showChanges() {
+    Base.openURL("http://wiki.processing.org/w/Changes");
+  }
 
+  
+//  static public void showPlatforms() {
+//    openURL("http://wiki.processing.org/w/Supported_Platforms");
+//  }
+
+  
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 

@@ -128,16 +128,6 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
     JMenu menu = new JMenu("Android");    
     JMenuItem item;
     
-    item = new JMenuItem("Guide");
-    item.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        Base.openURL("http://wiki.processing.org/w/Android");
-      }
-    });
-    menu.add(item);
-    
-    menu.addSeparator();
-
     item = new JMenuItem("Sketch Permissions");
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -178,27 +168,58 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
     return menu;
   }
   
-  
-  protected void updateMode() {
-    // When the selection is made, the menu will update itself
-    boolean active = toggleItem.isSelected();
-    if (active) {
-      boolean rolling = true;
-      if (sdk == null) {
-        rolling = loadAndroid();
+
+  /**
+   * Uses the main help menu, and adds a few extra options. If/when there's 
+   * Android-specific documentation, we'll switch to that. 
+   */
+  public JMenu buildHelpMenu() {
+    JMenu menu = super.buildHelpMenu();
+    JMenuItem item;
+    
+    menu.addSeparator();
+    
+    item = new JMenuItem("Processing for Android Wiki");
+    item.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        Base.openURL("http://wiki.processing.org/w/Android");
       }
-      if (rolling) {
-        editor.setHandlers(new RunHandler(), new PresentHandler(), 
-                           new StopHandler(), 
-                           new ExportHandler(),  new ExportAppHandler());
-        build = new AndroidBuild(editor, sdk);
-        editor.statusNotice("Android mode enabled for this editor window.");
+    });
+    menu.add(item);
+    
+    
+    item = new JMenuItem("Android Developers Site");
+    item.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        Base.openURL("http://developer.android.com/index.html");
       }
-    } else {
-      editor.resetHandlers();
-      editor.statusNotice("Android mode disabled.");
-    }
+    });
+    menu.add(item);
+
+    return menu;
   }
+  
+  
+//  protected void updateMode() {
+//    // When the selection is made, the menu will update itself
+//    boolean active = toggleItem.isSelected();
+//    if (active) {
+//      boolean rolling = true;
+//      if (sdk == null) {
+//        rolling = loadAndroid();
+//      }
+//      if (rolling) {
+//        editor.setHandlers(new RunHandler(), new PresentHandler(), 
+//                           new StopHandler(), 
+//                           new ExportHandler(),  new ExportAppHandler());
+//        build = new AndroidBuild(editor, sdk);
+//        editor.statusNotice("Android mode enabled for this editor window.");
+//      }
+//    } else {
+//      editor.resetHandlers();
+//      editor.statusNotice("Android mode disabled.");
+//    }
+//  }
 
 
   protected boolean loadAndroid() {
