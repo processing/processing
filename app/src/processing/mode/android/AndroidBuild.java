@@ -47,20 +47,17 @@ class AndroidBuild extends Build {
 
   public AndroidBuild(final Sketch sketch, final AndroidSDK sdk) {
     super(sketch);
-//    this.editor = editor;
     this.sdk = sdk;
   }
 
   
-  public File createProject(String target) {
-//    final Sketch sketch = editor.getSketch();
-
-    try {
-      tempBuildFolder = createTempBuildFolder(sketch);
-    } catch (final IOException e) {
-      editor.statusError(e);
-      return null;
-    }
+  public File createProject(String target) throws IOException, SketchException {
+//    try {
+    tempBuildFolder = createTempBuildFolder(sketch);
+//    } catch (final IOException e) {
+//      editor.statusError(e);
+//      return null;
+//    }
 
     // Create the 'src' folder with the preprocessed code.
     final File srcFolder = new File(tempBuildFolder, "src");
@@ -68,64 +65,65 @@ class AndroidBuild extends Build {
       Base.openFolder(tempBuildFolder);
     }
 
-    try {
-      manifest = new Manifest(editor);
-      // grab code from current editing window (GUI only)
-      sketch.prepare();
-      // build the preproc and get to work
-      AndroidPreprocessor preproc = new AndroidPreprocessor(sketch, getPackageName());
-      if (!preproc.parseSketchSize()) {
-        editor.statusError("Could not parse the size() command.");
-        return null; 
-      }
-      className = preprocess(srcFolder.getAbsolutePath(), 
-                             manifest.getPackageName(), 
-                             preproc);
-      if (className != null) {
+//    try {
+    manifest = new Manifest(sketch);
+    // grab code from current editing window (GUI only)
+    sketch.prepare();
+    // build the preproc and get to work
+    AndroidPreprocessor preproc = new AndroidPreprocessor(sketch, getPackageName());
+    if (!preproc.parseSketchSize()) {
+      editor.statusError("Could not parse the size() command.");
+      return null; 
+    }
+    className = preprocess(srcFolder.getAbsolutePath(), 
+                           manifest.getPackageName(), 
+                           preproc);
+    if (className != null) {
 //        final File androidXML = new File(tempBuildFolder, "AndroidManifest.xml");
 //        writeAndroidManifest(androidXML, sketch.getName(), className);
 //        manifest.setClassName(className);
-        File tempManifest = new File(tempBuildFolder, "AndroidManifest.xml");
-        manifest.writeBuild(tempManifest, className, target.equals("debug"));
+      File tempManifest = new File(tempBuildFolder, "AndroidManifest.xml");
+      manifest.writeBuild(tempManifest, className, target.equals("debug"));
 
-        writeBuildProps(new File(tempBuildFolder, "build.properties"));
-        buildFile = new File(tempBuildFolder, "build.xml");
-        writeBuildXML(buildFile, sketch.getName());
-        writeDefaultProps(new File(tempBuildFolder, "default.properties"));
-        writeLocalProps(new File(tempBuildFolder, "local.properties"));
-        writeRes(new File(tempBuildFolder, "res"), className);
+      writeBuildProps(new File(tempBuildFolder, "build.properties"));
+      buildFile = new File(tempBuildFolder, "build.xml");
+      writeBuildXML(buildFile, sketch.getName());
+      writeDefaultProps(new File(tempBuildFolder, "default.properties"));
+      writeLocalProps(new File(tempBuildFolder, "local.properties"));
+      writeRes(new File(tempBuildFolder, "res"), className);
 
-        final File libsFolder = mkdirs(tempBuildFolder, "libs");
-        final File assetsFolder = mkdirs(tempBuildFolder, "assets");
+      final File libsFolder = mkdirs(tempBuildFolder, "libs");
+      final File assetsFolder = mkdirs(tempBuildFolder, "assets");
 
-        final InputStream input = 
-          PApplet.createInput(AndroidEditor.getCoreZipLocation());
-        PApplet.saveStream(new File(libsFolder, "processing-core.jar"), input);
+      final InputStream input = 
+        PApplet.createInput(AndroidEditor.getCoreZipLocation());
+      PApplet.saveStream(new File(libsFolder, "processing-core.jar"), input);
 
-        try {
-          // Copy any imported libraries or code folder contents to the project
-          writeLibraries(libsFolder, assetsFolder);
+      try {
+        // Copy any imported libraries or code folder contents to the project
+        writeLibraries(libsFolder, assetsFolder);
 
-          // Copy the data folder, if one exists, to the 'assets' folder of the
-          // project
-          final File sketchDataFolder = sketch.getDataFolder();
-          if (sketchDataFolder.exists()) {
-            Base.copyDir(sketchDataFolder, assetsFolder);
-          }
-        } catch (final IOException e) {
-          e.printStackTrace();
-          throw new SketchException(e.getMessage());
+        // Copy the data folder, if one exists, to the 'assets' folder of the
+        // project
+        final File sketchDataFolder = sketch.getDataFolder();
+        if (sketchDataFolder.exists()) {
+          Base.copyDir(sketchDataFolder, assetsFolder);
         }
+      } catch (final IOException e) {
+        e.printStackTrace();
+        throw new SketchException(e.getMessage());
       }
-    } catch (final SketchException e) {
-      editor.statusError(e);
-      return null;
-    } catch (final IOException e) {
-      editor.statusError(e);
-      return null;
     }
+//    } catch (final SketchException e) {
+//      editor.statusError(e);
+//      return null;
+//    } catch (final IOException e) {
+//      editor.statusError(e);
+//      return null;
+//    }
     return tempBuildFolder;
   }
+
 
   /**
    * The Android dex util pukes on paths containing spaces, which will happen
@@ -147,8 +145,8 @@ class AndroidBuild extends Build {
     }
     return tmp;
   }
-  
-  
+
+
   protected File createExportFolder() throws IOException {
 //    Sketch sketch = editor.getSketch();
     // Create the 'android' build folder, and move any existing version out. 
@@ -166,10 +164,10 @@ class AndroidBuild extends Build {
           mv = new ProcessHelper("mv", androidFolder.getAbsolutePath(), dest.getAbsolutePath());
           pr = mv.execute();
 
-        } catch (IOException e) {
-          editor.statusError(e);
-          return null;
-
+//        } catch (IOException e) {
+//          editor.statusError(e);
+//          return null;
+//
         } catch (InterruptedException e) {
           e.printStackTrace();
           return null;
@@ -196,7 +194,6 @@ class AndroidBuild extends Build {
     }
     return androidFolder;
   }
-
   
 
   /**
@@ -295,7 +292,6 @@ class AndroidBuild extends Build {
 
   
   String getPathForAPK(final String target) {
-    final Sketch sketch = editor.getSketch();
     String suffix = target.equals("release") ? "unsigned" : "debug";
     String apkName = "bin/" + sketch.getName() + "-" + suffix + ".apk";
     final File apkFile = new File(tempBuildFolder, apkName);
@@ -375,7 +371,7 @@ class AndroidBuild extends Build {
     writeResLayoutMain(layoutFile);
 
     // write the icon files
-    File sketchFolder = editor.getSketch().getFolder();
+    File sketchFolder = sketch.getFolder();
     File localIcon36 = new File(sketchFolder, ICON_36);
     File localIcon48 = new File(sketchFolder, ICON_48);
     File localIcon72 = new File(sketchFolder, ICON_72);
@@ -475,9 +471,8 @@ class AndroidBuild extends Build {
   private void writeLibraries(final File libsFolder, 
                               final File assetsFolder) throws IOException {
     // Copy any libraries to the 'libs' folder
-    final Sketch sketch = editor.getSketch();
-    for (Library library : sketch.getImportedLibraries()) {
-	  File libraryFolder = new File(library.getPath());
+    for (Library library : getImportedLibraries()) {
+      File libraryFolder = new File(library.getPath());
       // in the list is a File object that points the
       // library sketch's "library" folder
       final File exportSettings = new File(libraryFolder, "export.txt");
