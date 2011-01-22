@@ -234,7 +234,7 @@ public class Manifest {
         
         // remove the old manifest file, rename it with date stamp
         long lastModified = manifestFile.lastModified();
-        String stamp = AndroidMode.getDateStamp(lastModified);
+        String stamp = AndroidEditor.getDateStamp(lastModified);
         File dest = new File(sketch.getFolder(), MANIFEST_XML + "." + stamp);
         boolean moved = manifestFile.renameTo(dest);
         if (!moved) {
