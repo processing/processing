@@ -1,20 +1,25 @@
 <?xml version="1.0"?>
 <project name="Processing PDE" default="build">
 
-  <property name="generated" value="${basedir}/generated/processing/app/antlr" />
-  <property name="grammars" value="${basedir}/grammars" />
-  <property name="antlrjar" value="${basedir}/lib/antlr.jar" />
+  <property name="generated" 
+	    value="${basedir}/generated/processing/mode/java/preproc" />
+
+  <property name="grammars" 
+	    value="${basedir}/src/processing/mode/java/preproc" />
+
+  <property name="antlrjar" 
+	    value="${basedir}/lib/antlr.jar" />
 
   <classloader taskname="antlr">
     <classpath path="lib/antlr.jar" />
   </classloader>
 
   <target name="clean" description="Clean the build directories">
-
     <!-- THIS SECTION SHOULD BE REMOVED AFTER A MONTH OR TWO -->
     <!-- jdf sez: clean up after old layout of generated resources -->
+<!--
     <delete failonerror="false">
-      <fileset dir="${basedir}/src/antlr/java">
+      <fileset dir="${basedir}/src/antlr">
 	<include name="*.java" />
 	<include name="*.tokens" />
 	<include name="*.txt" />
@@ -23,7 +28,9 @@
       </fileset>
     </delete>
     <delete failonerror="false">
+-->
       <!-- jdf sez: don't name anything FooRecognizer or FooLexer in this package -->
+<!--
       <fileset dir="${basedir}/src/processing/app/preproc">
 	<include name="*Recognizer.java" />
 	<include name="*Lexer.java" />
@@ -33,6 +40,7 @@
 	<include name="*.smap" />
       </fileset>
     </delete>
+-->
     <!-- END SECTION TO CLEAN UP AFTER OLD PROJECT LAYOUT -->
 
     <delete dir="bin" />
@@ -53,7 +61,9 @@
     <antlr target="${grammars}/java15.g" outputdirectory="${generated}">
       <classpath path="${antlrjar}" />
     </antlr>
-    <antlr target="${grammars}/pde.g" outputdirectory="${generated}" glib="${grammars}/java15.g">
+    <antlr target="${grammars}/pde.g" 
+	   outputdirectory="${generated}" 
+	   glib="${grammars}/java15.g">
       <classpath path="${antlrjar}" />
     </antlr>
   </target>

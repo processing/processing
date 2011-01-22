@@ -2,7 +2,7 @@ package processing.mode.java.preproc;
 
 import java.lang.reflect.Field;
 import antlr.collections.AST;
-import processing.mode.java.preproc.antlr.PdeTokenTypes;
+import processing.mode.java.preproc.PdeTokenTypes;
 
 /**
  * 
