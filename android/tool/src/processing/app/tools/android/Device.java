@@ -18,8 +18,8 @@ import processing.app.tools.android.LogEntry.Severity;
 import processing.core.PApplet;
 
 
-class AndroidDevice implements AndroidDeviceProperties {
-  private final AndroidEnvironment env;
+class Device implements DeviceProperties {
+  private final Environment env;
   private final String id;
   private final Set<Integer> activeProcesses = new HashSet<Integer>();
   private final Set<DeviceListener> listeners = 
@@ -28,7 +28,7 @@ class AndroidDevice implements AndroidDeviceProperties {
   // mutable state
   private Process logcat;
 
-  public AndroidDevice(final AndroidEnvironment env, final String id) {
+  public Device(final Environment env, final String id) {
     this.env = env;
     this.id = id;
   }
@@ -231,7 +231,7 @@ class AndroidDevice implements AndroidDeviceProperties {
     return id;
   }
 
-  public AndroidEnvironment getEnv() {
+  public Environment getEnv() {
     return env;
   }
 

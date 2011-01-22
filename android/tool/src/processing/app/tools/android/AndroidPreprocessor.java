@@ -37,7 +37,7 @@ import antlr.RecognitionException;
 import antlr.TokenStreamException;
 
 
-public class Preprocessor extends PdePreprocessor {
+public class AndroidPreprocessor extends PdePreprocessor {
   Sketch sketch;
   String packageName;
   
@@ -47,7 +47,7 @@ public class Preprocessor extends PdePreprocessor {
   String sketchRenderer;
 
 
-  public Preprocessor(final Sketch sketch, 
+  public AndroidPreprocessor(final Sketch sketch, 
                       final String packageName) throws IOException {
     super(sketch.getName());
     this.sketch = sketch;

@@ -68,7 +68,7 @@ public class Manifest {
   
   private String defaultPackageName() {
 //    Sketch sketch = editor.getSketch();
-    return Build.basePackage + "." + sketch.getName().toLowerCase();
+    return AndroidBuild.basePackage + "." + sketch.getName().toLowerCase();
   }
   
 
@@ -154,7 +154,7 @@ public class Manifest {
     writer.println("          android:versionName=\"1.0\">");
 
     // for now including this... we're wiring to a particular SDK version anyway...
-    writer.println("  <uses-sdk android:minSdkVersion=\"" + Build.sdkVersion + "\" />");
+    writer.println("  <uses-sdk android:minSdkVersion=\"" + AndroidBuild.sdkVersion + "\" />");
 //    writer.println("  <uses-sdk android:minSdkVersion=\"\" />");  // insert sdk version
 //    writer.println("  <application android:label=\"@string/app_name\"");
     writer.println("  <application android:label=\"\"");  // insert pretty name
