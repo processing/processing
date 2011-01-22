@@ -33,9 +33,9 @@ import java.util.regex.Pattern;
 import processing.app.Preferences;
 import processing.app.SketchException;
 import processing.core.PApplet;
-import processing.mode.java.preproc.antlr.PdeLexer;
-import processing.mode.java.preproc.antlr.PdeRecognizer;
-import processing.mode.java.preproc.antlr.PdeTokenTypes;
+import processing.mode.java.preproc.PdeLexer;
+import processing.mode.java.preproc.PdeRecognizer;
+import processing.mode.java.preproc.PdeTokenTypes;
 import antlr.*;
 import antlr.collections.AST;
 
