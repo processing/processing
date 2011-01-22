@@ -99,7 +99,7 @@ public class AndroidToolbar extends EditorToolbar {
 
     case EXPORT:
       if (shift) {
-        aeditor.handleExportPackage();
+        aeditor.handleExportApplication();
       } else {
         aeditor.handleExportProject();
       }

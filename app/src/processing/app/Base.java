@@ -197,7 +197,9 @@ public class Base {
     try {
       Class.forName("com.sun.jdi.VirtualMachine");
     } catch (ClassNotFoundException cnfe) {
-      Base.showPlatforms();
+      //Base.showPlatforms();
+      //static public void showPlatforms() {
+      Base.openURL("http://wiki.processing.org/w/Supported_Platforms");
       Base.showError("Please install JDK 1.5 or later",
                      "Processing requires a full JDK (not just a JRE)\n" +
                      "to run. Please install JDK 1.5 or later.\n" +

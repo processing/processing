@@ -113,7 +113,7 @@ public class JavaToolbar extends EditorToolbar {
 
     case EXPORT:
       if (shift) {
-        jeditor.handleExportPackage();
+        jeditor.handleExportApplication();
       } else {
         jeditor.handleExportProject();
       }

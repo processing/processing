@@ -957,14 +957,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
   }
 
   
-  public void showChanges() {
+  static public void showChanges() {
     Base.openURL("http://wiki.processing.org/w/Changes");
-  }
-
-  
-//  static public void showPlatforms() {
-//    openURL("http://wiki.processing.org/w/Supported_Platforms");
-//  }
+  }  
 
   
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -1539,7 +1534,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
       if (referenceFile == null) {
         statusNotice("No reference available for \"" + text + "\"");
       } else {
-        Base.showReference(referenceFile + ".html");
+        showReference(referenceFile + ".html");
       }
     }
   }
