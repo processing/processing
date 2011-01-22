@@ -57,7 +57,7 @@ import processing.mode.java.runner.Runner;
 
 public class AndroidEditor extends JavaEditor implements DeviceListener {  
   private AndroidSDK sdk;
-  private Editor editor;
+//  private Editor editor;
   private AndroidBuild build;
   
   private static final String ANDROID_CORE_FILENAME =
@@ -92,7 +92,7 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
     JMenuItem exportPackage = Base.newJMenuItemShift(exportTitle, 'E');
     exportPackage.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        handleExportPackage();
+        handleExportApplication();
       }
     });
     return buildFileMenu(new JMenuItem[] { exportProject, exportPackage });
@@ -103,14 +103,14 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
     JMenuItem runItem = Base.newJMenuItem(AndroidToolbar.getTitle(AndroidToolbar.RUN, false), 'R');
     runItem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          handleRun();
+          handleRunEmulator();
         }
       });
 
     JMenuItem presentItem = Base.newJMenuItemShift(AndroidToolbar.getTitle(AndroidToolbar.RUN, true), 'R');
     presentItem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          handlePresent();
+          handleRunDevice();
         }
       });
 
@@ -131,7 +131,7 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
     item = new JMenuItem("Sketch Permissions");
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        new Permissions(editor.getSketch());
+        new Permissions(sketch);
       }
     });
     menu.add(item);    
@@ -141,7 +141,7 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
     item = new JMenuItem("Signing Key Setup");
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        new Keys(editor);
+        new Keys(AndroidEditor.this);
       }
     });
     item.setEnabled(false);
@@ -223,7 +223,7 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
 
 
   protected boolean loadAndroid() {
-    editor.statusNotice("Loading Android tools.");
+    statusNotice("Loading Android tools.");
 
     try {
       sdk = AndroidSDK.find((editor instanceof Frame) ? (Frame) editor : null);
@@ -298,18 +298,6 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
   }
 
   
-//  public Editor getEditor() {
-//    return editor;
-//  }
-
-//  public Sketch getSketch() {
-//    return editor.getSketch();
-//  }
-
-//  public Build getBuilder() {
-//    return build;
-//  }
-
   // if user asks for 480x320, 320x480, 854x480 etc, then launch like that
   // though would need to query the emulator to see if it can do that
 
@@ -326,9 +314,9 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
     return false;
   }
 
-  private Device waitForDevice(final Future<Device> deviceFuture,
-                                      final IndeterminateProgressMonitor monitor)
-      throws MonitorCanceled {
+  
+  private Device waitForDevice(final Future<Device> deviceFuture, 
+                               final IndeterminateProgressMonitor monitor) throws MonitorCanceled {
     for (int i = 0; i < 120; i++) {
       if (monitor.isCanceled()) {
         deviceFuture.cancel(true);
@@ -337,16 +325,16 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
       try {
         return deviceFuture.get(1, TimeUnit.SECONDS);
       } catch (final InterruptedException e) {
-        editor.statusError("Interrupted.");
+        statusError("Interrupted.");
         return null;
       } catch (final ExecutionException e) {
-        editor.statusError(e);
+        statusError(e);
         return null;
       } catch (final TimeoutException expected) {
       }
     }
-    editor.statusError("No, on second thought, I'm giving up " +
-                       "on waiting for that device to show up.");
+    statusError("No, on second thought, I'm giving up " +
+                "on waiting for that device to show up.");
     return null;
   }
 
@@ -359,7 +347,7 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
   private void runSketchOnDevice(final Future<Device> deviceFuture,
                                  final String target) throws MonitorCanceled {
     final IndeterminateProgressMonitor monitor =
-      new IndeterminateProgressMonitor(editor,
+      new IndeterminateProgressMonitor(this,
                                        "Building and launching...",
                                        "Creating project...");
     try {
@@ -381,7 +369,7 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
         monitor.setNote("Waiting for device to become available...");
         final Device device = waitForDevice(deviceFuture, monitor);
         if (device == null || !device.isAlive()) {
-          editor.statusError("Device killed or disconnected.");
+          statusError("Device killed or disconnected.");
           return;
         }
 
@@ -391,8 +379,8 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
           throw new MonitorCanceled();
         }
         monitor.setNote("Installing sketch on " + device.getId());
-        if (!device.installApp(build.getPathForAPK(target), editor)) {
-          editor.statusError("Device killed or disconnected.");
+        if (!device.installApp(build.getPathForAPK(target), this)) {
+          statusError("Device killed or disconnected.");
           return;
         }
 
@@ -401,10 +389,10 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
         }
         monitor.setNote("Starting sketch on " + device.getId());
         if (startSketch(device)) {
-          editor.statusNotice("Sketch launched on the "
+          statusNotice("Sketch launched on the "
               + (device.isEmulator() ? "emulator" : "phone") + ".");
         } else {
-          editor.statusError("Could not start the sketch.");
+          statusError("Could not start the sketch.");
         }
 
         lastRunDevice = device;
@@ -419,7 +407,7 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
 
   private void buildReleaseForExport(String target) throws MonitorCanceled {
     final IndeterminateProgressMonitor monitor =
-      new IndeterminateProgressMonitor(editor,
+      new IndeterminateProgressMonitor(this,
                                        "Building and exporting...",
                                        "Creating project...");
     try {
@@ -444,13 +432,13 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
         File exportFolder = build.createExportFolder();
         if (exportFolder != null) {
           Base.copyDir(tempFolder, exportFolder);
-          editor.statusNotice("Done with export.");
+          statusNotice("Done with export.");
           Base.openFolder(exportFolder);
         } else {
-          editor.statusError("Could not copy files to export folder.");
+          statusError("Could not copy files to export folder.");
         }
       } catch (IOException e) {
-        editor.statusError(e);
+        statusError(e);
 
       } finally {
         build.cleanup();
@@ -459,69 +447,6 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
       monitor.close();
     }
   }
-
-
-  /*
-  private void buildReleaseForDevice(final Future<AndroidDevice> deviceFuture) throws Cancelled {
-    final IndeterminateProgressMonitor monitor =
-      new IndeterminateProgressMonitor(editor,
-                                       "Building and running...",
-                                       "Creating project...");
-    try {
-      if (build.createProject() == null) {
-        return;
-      }
-      try {
-        if (monitor.isCanceled()) {
-          throw new Cancelled();
-        }
-        monitor.setNote("Building...");
-        if (!build.antBuild("release")) {
-          return;
-        }
-
-        if (monitor.isCanceled()) {
-          throw new Cancelled();
-        }
-
-        monitor.setNote("Waiting for device to become available...");
-        final AndroidDevice device = waitForDevice(deviceFuture, monitor);
-        if (device == null || !device.isAlive()) {
-          editor.statusError("Device killed or disconnected.");
-          return;
-        }
-
-        device.addListener(this);
-
-        if (monitor.isCanceled()) {
-          throw new Cancelled();
-        }
-        monitor.setNote("Installing sketch on " + device.getId());
-        if (!device.installApp(build.getPathForAPK("release"), editor)) {
-          editor.statusError("Device killed or disconnected.");
-          return;
-        }
-
-        if (monitor.isCanceled()) {
-          throw new Cancelled();
-        }
-        monitor.setNote("Starting sketch on " + device.getId());
-        if (startSketch(device)) {
-          editor.statusNotice("Release version of sketch launched on the "
-              + (device.isEmulator() ? "emulator" : "phone") + ".");
-        } else {
-          editor.statusError("Could not start the sketch.");
-        }
-        lastRunDevice = device;
-
-      } finally {
-        build.cleanup();
-      }
-    } finally {
-      monitor.close();
-    }
-  }
-  */
 
 
   private static final Pattern LOCATION =
@@ -544,11 +469,11 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
     if (!m.matches()) {
       System.err.println("Can't parse this exception line:");
       System.err.println(exceptionLine);
-      editor.statusError("Unknown exception");
+      statusError("Unknown exception");
       return;
     }
     final String exceptionClass = m.group(1);
-    if (Runner.handleCommonErrors(exceptionClass, exceptionLine, editor)) {
+    if (Runner.handleCommonErrors(exceptionClass, exceptionLine, this)) {
       return;
     }
 
@@ -560,9 +485,8 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
           final String filename = lm.group(1);
           final int lineNumber = Integer.parseInt(lm.group(2)) - 1;
           final SketchException rex = 
-            editor.getSketch().placeException(exceptionLine, filename, lineNumber);
-          editor.statusError(rex == null ? new SketchException(exceptionLine,
-                                                               false) : rex);
+            sketch.placeException(exceptionLine, filename, lineNumber);
+          statusError(rex == null ? new SketchException(exceptionLine, false) : rex);
           return;
         }
       }
@@ -570,77 +494,83 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
     }
   }
 
+
   public void sketchStopped() {
-    editor.deactivateRun();
-    editor.statusEmpty();
+    deactivateRun();
+    statusEmpty();
   }
 
+  
   /**
    * Build the sketch and run it inside an emulator with the debugger.
    */
-  class RunHandler implements Runnable {
-    public void run() {
-      AVD.ensureEclairAVD(sdk);
-      try {
-        runSketchOnDevice(Environment.getInstance().getEmulator(), "debug");
-      } catch (final MonitorCanceled ok) {
-        sketchStopped();
-        editor.statusNotice("Canceled.");
-      }
+  public void handleRunEmulator() {
+    AVD.ensureEclairAVD(sdk);
+    try {
+      runSketchOnDevice(Environment.getInstance().getEmulator(), "debug");
+    } catch (final MonitorCanceled ok) {
+      sketchStopped();
+      statusNotice("Canceled.");
     }
   }
 
   /**
    * Build the sketch and run it on a device with the debugger connected.
    */
-  class PresentHandler implements Runnable {
-    public void run() {
-      try {
-        runSketchOnDevice(Environment.getInstance().getHardware(), "debug");
-      } catch (final MonitorCanceled ok) {
-        sketchStopped();
-        editor.statusNotice("Canceled.");
-      }
+  public void handleRunDevice() {
+    try {
+      runSketchOnDevice(Environment.getInstance().getHardware(), "debug");
+    } catch (final MonitorCanceled ok) {
+      sketchStopped();
+      statusNotice("Canceled.");
     }
   }
 
-  private class StopHandler implements Runnable {
-    public void run() {
-      if (lastRunDevice != null) {
-        lastRunDevice.bringLauncherToFront();
-      }
+
+  public void handleStop() {
+    if (lastRunDevice != null) {
+      lastRunDevice.bringLauncherToFront();
     }
   }
 
+  
   /**
    * Create a release build of the sketch and have its apk files ready.
    * If users want a debug build, they can do that from the command line.
    */
-  private class ExportHandler implements Runnable {
-    public void run() {
-      try {
-        buildReleaseForExport("debug");
-      } catch (final MonitorCanceled ok) {
-        editor.statusNotice("Canceled.");
-      } finally {
-        editor.deactivateExport();
-      }
+  public void handleExportProject() {
+    try {
+      buildReleaseForExport("debug");
+    } catch (final MonitorCanceled ok) {
+      statusNotice("Canceled.");
+    } finally {
+      deactivateExport();
     }
   }
 
+  
   /**
    * Create a release build of the sketch and install its apk files on the
    * attached device.
    */
-  private class ExportAppHandler implements Runnable {
-    public void run() {
-      //buildReleaseForExport("release");
+  public void handleExportPackage() {
+    // Need to implement an entire signing setup first
+    // http://dev.processing.org/bugs/show_bug.cgi?id=1430
+    statusError("Export application not yet implemented.");
+    deactivateExport();
 
-      // Need to implement an entire signing setup first
-      // http://dev.processing.org/bugs/show_bug.cgi?id=1430
-      editor.statusError("Export application not yet implemented.");
-      editor.deactivateExport();
+    // make a release build
+//    try {
+//      buildReleaseForExport("release");
+//    } catch (final MonitorCanceled ok) {
+//      statusNotice("Canceled.");
+//    } finally {
+//      deactivateExport();
+//    }
+    
+    // TODO now sign it... lots of fun signing code mess to go here. yay!
 
+    // maybe even send it to the device? mmm?
 //      try {
 //        runSketchOnDevice(AndroidEnvironment.getInstance().getHardware(), "release");
 //      } catch (final MonitorCanceled ok) {
@@ -648,8 +578,8 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
 //      } finally {
 //        editor.deactivateExport();
 //      }
-    }
   }
+
 
   @SuppressWarnings("serial")
   private static class MonitorCanceled extends Exception {

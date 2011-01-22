@@ -659,7 +659,7 @@ public class Compiler {
   static protected void handleCrustyCode(SketchException rex) {
     rex.setMessage("This code needs to be updated, " +
                    "please read the Changes page on the Wiki.");
-    Base.showChanges();
+    JavaEditor.showChanges();
   }
 
 
