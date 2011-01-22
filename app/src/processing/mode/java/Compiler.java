@@ -50,7 +50,7 @@ public class Compiler {
 //                         String primaryClassName,
 //                         String sketchClassPath,
 //                         String bootClassPath) throws RunnerException {
-  static public boolean compile(Build build) throws SketchException {
+  static public boolean compile(JavaBuild build) throws SketchException {
 
     // This will be filled in if anyone gets angry
     SketchException exception = null;

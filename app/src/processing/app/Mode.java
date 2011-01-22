@@ -8,7 +8,7 @@ import java.util.*;
 import javax.swing.*;
 
 import processing.app.syntax.*;
-import processing.app.tools.Tool;
+//import processing.app.tools.Tool;
 
 
 public abstract class Mode {
@@ -21,7 +21,7 @@ public abstract class Mode {
   protected PdeKeywords tokenMarker;
   protected Settings theme;
 //  protected Formatter formatter;
-  protected Tool formatter;
+//  protected Tool formatter;
   
   // maps imported packages to their library folder
   protected HashMap<String, Library> importToLibraryTable;
