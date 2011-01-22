@@ -29,9 +29,10 @@ import org.apache.tools.ant.*;
 import processing.app.*;
 import processing.app.exec.*;
 import processing.core.PApplet;
+import processing.mode.java.Build;
 
 
-class Build extends processing.mode.java.Build {
+class AndroidBuild extends Build {
   static final String basePackage = "processing.android.test";
   static final String sdkVersion = "7";
 
@@ -44,7 +45,7 @@ class Build extends processing.mode.java.Build {
   File buildFile;
 
 
-  public Build(final Sketch sketch, final AndroidSDK sdk) {
+  public AndroidBuild(final Sketch sketch, final AndroidSDK sdk) {
     super(sketch);
 //    this.editor = editor;
     this.sdk = sdk;
@@ -72,7 +73,7 @@ class Build extends processing.mode.java.Build {
       // grab code from current editing window (GUI only)
       sketch.prepare();
       // build the preproc and get to work
-      Preprocessor preproc = new Preprocessor(sketch, getPackageName());
+      AndroidPreprocessor preproc = new AndroidPreprocessor(sketch, getPackageName());
       if (!preproc.parseSketchSize()) {
         editor.statusError("Could not parse the size() command.");
         return null; 
