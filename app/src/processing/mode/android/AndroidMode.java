@@ -28,18 +28,44 @@ import processing.mode.java.JavaMode;
 
 
 public class AndroidMode extends JavaMode {
+  static private File coreZipLocation;
 
+  
   public AndroidMode(Base base, File folder) {
     super(base, folder);
   }
 
+  
   @Override
   public Editor createEditor(Base base, String path, int[] location) {
     return new AndroidEditor(base, path, location, this);
   }
 
+  
   @Override
   public String getTitle() {
     return "Android";
+  }
+  
+  
+  protected File getCoreZipLocation() {
+    if (coreZipLocation == null) {
+      // for debugging only, check to see if this is an svn checkout
+      File debugFile = new File("../../../android/core.zip");
+      if (!debugFile.exists() && Base.isMacOS()) {
+        // current path might be inside Processing.app, so need to go much higher
+        debugFile = new File("../../../../../../../android/core.zip");
+      }
+      if (debugFile.exists()) {
+        System.out.println("Using version of core.zip from local SVN checkout.");
+//        return debugFile;
+        coreZipLocation = debugFile;
+      }
+
+      // otherwise do the usual
+      //    return new File(base.getSketchbookFolder(), ANDROID_CORE_FILENAME);
+      coreZipLocation = getContentFile("android-core.zip");
+    }
+    return coreZipLocation;
   }
 }

@@ -115,7 +115,7 @@ public class JavaToolbar extends EditorToolbar {
       if (shift) {
         jeditor.handleExportApplication();
       } else {
-        jeditor.handleExportProject();
+        jeditor.handleExportApplet();
       }
       break;
     }

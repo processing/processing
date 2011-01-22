@@ -21,27 +21,29 @@
 
 package processing.mode.android;
 
-import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.io.*;
-import java.net.URL;
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.regex.*;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
-import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
-import processing.app.*;
-
+import processing.app.Base;
+import processing.app.Mode;
+import processing.app.SketchException;
 import processing.core.PApplet;
-import processing.mode.java.*;
+import processing.mode.java.JavaEditor;
 import processing.mode.java.runner.Runner;
 
 // http://dl.google.com/android/repository/repository.xml
@@ -57,22 +59,40 @@ import processing.mode.java.runner.Runner;
 
 public class AndroidEditor extends JavaEditor implements DeviceListener {  
   private AndroidSDK sdk;
-//  private Editor editor;
   private AndroidBuild build;
-  
-  private static final String ANDROID_CORE_FILENAME =
-    "processing-android-core-" + Base.VERSION_NAME + ".zip";
 
-  private static final String ANDROID_CORE_URL =
-    "http://processing.googlecode.com/files/" + ANDROID_CORE_FILENAME;
+//  private static final String ANDROID_CORE_FILENAME =
+//    "processing-android-core-" + Base.VERSION_NAME + ".zip";
+
+//  private static final String ANDROID_CORE_URL =
+//    "http://processing.googlecode.com/files/" + ANDROID_CORE_FILENAME;
   
-//  JCheckBoxMenuItem toggleItem;
   AndroidMode amode;
   
   
   protected AndroidEditor(Base base, String path, int[] location, Mode mode) {
     super(base, path, location, mode);
     amode = (AndroidMode) mode;
+
+    statusNotice("Loading Android tools.");
+
+    if (sdk == null) {
+      try {
+        sdk = AndroidSDK.find(this);
+        statusNotice("Done loading Android tools.");
+
+      } catch (Exception e) {
+        Base.showWarning("Android Tools Error", e.getMessage(), null);
+        statusError("Android Mode is disabled.");
+      }
+    }
+
+    // Make sure that the processing.android.core.* classes are available
+    //  if (!checkCore()) {
+    //    statusNotice("Android mode canceled.");
+    //    return false;
+    //  }
+
   }
 
 
@@ -222,69 +242,50 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
 //  }
 
 
-  protected boolean loadAndroid() {
-    statusNotice("Loading Android tools.");
-
-    try {
-      sdk = AndroidSDK.find((editor instanceof Frame) ? (Frame) editor : null);
-    } catch (final Exception e) {
-      Base.showWarning("Android Tools Error", e.getMessage(), null);
-      editor.statusNotice("Android mode canceled.");
-      return false;
-    }
-
-    // Make sure that the processing.android.core.* classes are available
-    if (!checkCore()) {
-      editor.statusNotice("Android mode canceled.");
-      return false;
-    }
-
-    editor.statusNotice("Done loading Android tools.");
-    return true;
-  }
-
-
-  static private File coreZipLocation;
-
-  static protected File getCoreZipLocation() {
-    if (coreZipLocation == null) {
-      coreZipLocation = checkCoreZipLocation();
-    }
-    return coreZipLocation;
-  }
+//  protected boolean loadAndroid() {
+//    statusNotice("Loading Android tools.");
+//
+//    try {
+//      sdk = AndroidSDK.find(this);
+//    } catch (final Exception e) {
+//      Base.showWarning("Android Tools Error", e.getMessage(), null);
+//      statusNotice("Android mode canceled.");
+//      return false;
+//    }
+//
+//    // Make sure that the processing.android.core.* classes are available
+//    if (!checkCore()) {
+//      statusNotice("Android mode canceled.");
+//      return false;
+//    }
+//
+//    statusNotice("Done loading Android tools.");
+//    return true;
+//  }
 
 
-  static protected File checkCoreZipLocation() {
-    // for debugging only, check to see if this is an svn checkout
-    File debugFile = new File("../../../android/core.zip");
-    if (!debugFile.exists() && Base.isMacOS()) {
-      // current path might be inside Processing.app, so need to go much higher
-      debugFile = new File("../../../../../../../android/core.zip");
-    }
-    if (debugFile.exists()) {
-      System.out.println("Using version of core.zip from local SVN checkout.");
-      return debugFile;
-    }
-
-    // otherwise do the usual
-    return new File(base.getSketchbookFolder(), ANDROID_CORE_FILENAME);
-  }
+//  static protected File getCoreZipLocation() {
+//    if (coreZipLocation == null) {
+//      coreZipLocation = checkCoreZipLocation();
+//    }
+//    return coreZipLocation;
+//  }
 
 
-  private boolean checkCore() {
-    final File target = getCoreZipLocation();
-    if (!target.exists()) {
-      try {
-        final URL url = new URL(ANDROID_CORE_URL);
-        PApplet.saveStream(target, url.openStream());
-      } catch (final Exception e) {
-        Base.showWarning("Download Error",
-          "Could not download Android core.zip", e);
-        return false;
-      }
-    }
-    return true;
-  }
+//  private boolean checkCore() {
+//    final File target = getCoreZipLocation();
+//    if (!target.exists()) {
+//      try {
+//        final URL url = new URL(ANDROID_CORE_URL);
+//        PApplet.saveStream(target, url.openStream());
+//      } catch (final Exception e) {
+//        Base.showWarning("Download Error",
+//          "Could not download Android core.zip", e);
+//        return false;
+//      }
+//    }
+//    return true;
+//  }
   
   
   static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMdd.HHmm");
@@ -303,7 +304,7 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
 
   private boolean startSketch(final Device device) {
     final String packageName = build.getPackageName();
-    final String className = build.getClassName();
+    final String className = build.getSketchClassName();
     try {
       if (device.launchApp(packageName, className)) {
         return true;
@@ -351,16 +352,26 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
                                        "Building and launching...",
                                        "Creating project...");
     try {
-      if (build.createProject(target) == null) {
-        return;
+      try {
+        if (build.createProject(target, amode.getCoreZipLocation()) == null) {
+          return;
+        }
+      } catch (SketchException se) {
+        statusError(se);
+      } catch (IOException e) {
+        statusError(e);
       }
       try {
         if (monitor.isCanceled()) {
           throw new MonitorCanceled();
         }
         monitor.setNote("Building...");
-        if (!build.antBuild(target)) {
-          return;
+        try {
+          if (!build.antBuild(target)) {
+            return;
+          }
+        } catch (SketchException se) {
+          statusError(se);
         }
 
         if (monitor.isCanceled()) {
@@ -411,9 +422,16 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
                                        "Building and exporting...",
                                        "Creating project...");
     try {
-      File tempFolder = build.createProject(target);
-      if (tempFolder == null) {
-        return;
+      File tempFolder = null;
+      try {
+        tempFolder = build.createProject(target, amode.getCoreZipLocation());
+        if (tempFolder == null) {
+          return;
+        }
+      } catch (IOException e) {
+        e.printStackTrace();
+      } catch (SketchException se) {
+        se.printStackTrace();
       }
       try {
         if (monitor.isCanceled()) {
@@ -484,8 +502,8 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
         if (lm.find()) {
           final String filename = lm.group(1);
           final int lineNumber = Integer.parseInt(lm.group(2)) - 1;
-          final SketchException rex = 
-            sketch.placeException(exceptionLine, filename, lineNumber);
+          final SketchException rex =
+            build.placeException(exceptionLine, filename, lineNumber);
           statusError(rex == null ? new SketchException(exceptionLine, false) : rex);
           return;
         }
