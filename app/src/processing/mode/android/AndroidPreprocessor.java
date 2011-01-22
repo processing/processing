@@ -48,7 +48,7 @@ public class AndroidPreprocessor extends PdePreprocessor {
 
 
   public AndroidPreprocessor(final Sketch sketch, 
-                      final String packageName) throws IOException {
+                             final String packageName) throws IOException {
     super(sketch.getName());
     this.sketch = sketch;
     this.packageName = packageName;

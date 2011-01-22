@@ -1,3 +1,28 @@
+PROCESSING REV 0193 - XX February 2011
+
+The PDE is receiving a major overhaul. 
+
+[ internal changes ] 
+
++ Removed build.path from preferences.txt.
+  Not really used anywhere, just trying to clean things up.
+
++ Removed 'console.output.file' and 'console.error.file'.
+  These weren't respected as paths, no reason for them.
+
++ Change console to write to the 'console/' folder in settings. 
+  This may eventually create a problem with logs that need to be cleaned, 
+  but we'll keep an eye on it for now.
+
++ Removed 'console' true/false from preferences.
+
++ Cannot reproduce problem with wrong character encoding in the console.
+  http://code.google.com/p/processing/issues/detail?id=197
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING REV 0192 - 18 December 2010
 
 This release contains a roll-up of lots of bug fixes. However, it's being

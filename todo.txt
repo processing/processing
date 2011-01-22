@@ -10,16 +10,6 @@ X   http://code.google.com/p/processing/issues/detail?id=466
 o occasional exception in "copy for discourse"
 o   http://dev.processing.org/bugs/show_bug.cgi?id=729
 
-DO NOT USE "JVMArchs". It is deprecated, and manually overrides the natural architecture launching and ordering that LaunchServices does, including accommodating the 32-bit checkbox in the Get Info window.
-
-[ from the major refactoring work, not in trunk ] 
-
-_ export is broken in 0192
-_   http://code.google.com/p/processing/issues/detail?id=487
-
-_ the build is broken! the build is broken!
-_   http://code.google.com/p/processing/issues/detail?id=519
-
 fixed in 0192
 J auto-format screws up if/else/else if blocks
 J   http://code.google.com/p/processing/issues/detail?id=325
@@ -48,6 +38,18 @@ o   this may be fixed now, but writing lots of NULs to the output
 o   message(new String(b, offset, length), err, false);
 o   http://code.google.com/p/processing/issues/detail?id=197
 X   couldn't find a good way to reproduce this, closing
+
+_ remove any reference to 'Editor' from Sketch.java
+_   or is that excessive, since Document is in there, etc
+_   Build does the heavy lifting anyway...
+
+_ export is broken in 0192
+_   http://code.google.com/p/processing/issues/detail?id=487
+
+_ the build is broken! the build is broken!
+_   http://code.google.com/p/processing/issues/detail?id=519
+
+DO NOT USE "JVMArchs". It is deprecated, and manually overrides the natural architecture launching and ordering that LaunchServices does, including accommodating the 32-bit checkbox in the Get Info window.
 
 + Removed build.path from preferences.txt.
   Not really used anywhere, just trying to clean things up.

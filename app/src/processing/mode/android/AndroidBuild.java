@@ -40,8 +40,10 @@ class AndroidBuild extends JavaBuild {
   private final AndroidSDK sdk;
 
   Manifest manifest;
-  String className;
-  File tempBuildFolder;
+//  String className;
+  /** temporary folder safely inside a 8.3-friendly folder */
+  File tmpFolder;
+  /** build.xml file for this project */
   File buildFile;
 
 
@@ -50,54 +52,42 @@ class AndroidBuild extends JavaBuild {
     this.sdk = sdk;
   }
 
-  
-  public File createProject(String target) throws IOException, SketchException {
-//    try {
-    tempBuildFolder = createTempBuildFolder(sketch);
-//    } catch (final IOException e) {
-//      editor.statusError(e);
-//      return null;
-//    }
+
+  public File createProject(String target, File coreZipFile) throws IOException, SketchException {
+    tmpFolder = createTempBuildFolder(sketch);
 
     // Create the 'src' folder with the preprocessed code.
-    final File srcFolder = new File(tempBuildFolder, "src");
+    final File srcFolder = new File(tmpFolder, "src");
     if (processing.app.Base.DEBUG) {
-      Base.openFolder(tempBuildFolder);
+      Base.openFolder(tmpFolder);
     }
 
-//    try {
     manifest = new Manifest(sketch);
     // grab code from current editing window (GUI only)
-    sketch.prepare();
+    sketch.prepareBuild(null);
     // build the preproc and get to work
     AndroidPreprocessor preproc = new AndroidPreprocessor(sketch, getPackageName());
     if (!preproc.parseSketchSize()) {
-      editor.statusError("Could not parse the size() command.");
-      return null; 
+      throw new SketchException("Could not parse the size() command.");
     }
-    className = preprocess(srcFolder.getAbsolutePath(), 
-                           manifest.getPackageName(), 
-                           preproc);
-    if (className != null) {
-//        final File androidXML = new File(tempBuildFolder, "AndroidManifest.xml");
-//        writeAndroidManifest(androidXML, sketch.getName(), className);
-//        manifest.setClassName(className);
-      File tempManifest = new File(tempBuildFolder, "AndroidManifest.xml");
-      manifest.writeBuild(tempManifest, className, target.equals("debug"));
+    sketchClassName = preprocess(srcFolder, manifest.getPackageName(), preproc);
+    if (sketchClassName != null) {
+      File tempManifest = new File(tmpFolder, "AndroidManifest.xml");
+      manifest.writeBuild(tempManifest, sketchClassName, target.equals("debug"));
 
-      writeBuildProps(new File(tempBuildFolder, "build.properties"));
-      buildFile = new File(tempBuildFolder, "build.xml");
+      writeBuildProps(new File(tmpFolder, "build.properties"));
+      buildFile = new File(tmpFolder, "build.xml");
       writeBuildXML(buildFile, sketch.getName());
-      writeDefaultProps(new File(tempBuildFolder, "default.properties"));
-      writeLocalProps(new File(tempBuildFolder, "local.properties"));
-      writeRes(new File(tempBuildFolder, "res"), className);
+      writeDefaultProps(new File(tmpFolder, "default.properties"));
+      writeLocalProps(new File(tmpFolder, "local.properties"));
+      writeRes(new File(tmpFolder, "res"), sketchClassName);
 
-      final File libsFolder = mkdirs(tempBuildFolder, "libs");
-      final File assetsFolder = mkdirs(tempBuildFolder, "assets");
+      final File libsFolder = mkdirs(tmpFolder, "libs");
+      final File assetsFolder = mkdirs(tmpFolder, "assets");
 
-      final InputStream input = 
-        PApplet.createInput(AndroidEditor.getCoreZipLocation());
-      PApplet.saveStream(new File(libsFolder, "processing-core.jar"), input);
+//      InputStream input = PApplet.createInput(getCoreZipLocation());
+//      PApplet.saveStream(new File(libsFolder, "processing-core.jar"), input);
+      Base.copyFile(coreZipFile, new File(libsFolder, "processing-core.jar"));
 
       try {
         // Copy any imported libraries or code folder contents to the project
@@ -121,7 +111,7 @@ class AndroidBuild extends JavaBuild {
 //      editor.statusError(e);
 //      return null;
 //    }
-    return tempBuildFolder;
+    return tmpFolder;
   }
 
 
@@ -199,7 +189,7 @@ class AndroidBuild extends JavaBuild {
   /**
    * @param target "debug" or "release"
    */
-  protected boolean antBuild(final String target) {
+  protected boolean antBuild(final String target) throws SketchException {
     final Project p = new Project();
     String path = buildFile.getAbsolutePath().replace('\\', '/');
     p.setUserProperty("ant.file", path);
@@ -225,7 +215,7 @@ class AndroidBuild extends JavaBuild {
     p.addBuildListener(errorLogger);
 
     try {
-      editor.statusNotice("Building sketch for Android...");
+//      editor.statusNotice("Building sketch for Android...");
       p.fireBuildStarted();
       p.init();
       final ProjectHelper helper = ProjectHelper.getProjectHelper();
@@ -233,7 +223,7 @@ class AndroidBuild extends JavaBuild {
       helper.parse(p, buildFile);
       // p.executeTarget(p.getDefaultTarget());
       p.executeTarget(target);
-      editor.statusNotice("Finished building sketch.");
+//      editor.statusNotice("Finished building sketch.");
       return true;
 
     } catch (final BuildException e) {
@@ -270,31 +260,35 @@ class AndroidBuild extends JavaBuild {
             final int lineNumber = PApplet.parseInt(pieces[2]) - 1;
             // PApplet.println("looking for " + fileName + " line " +
             // lineNumber);
-            final SketchException rex = placeException(pieces[3],
-              fileName, lineNumber);
+            SketchException rex = placeException(pieces[3], fileName, lineNumber);
             if (rex != null) {
-              rex.hideStackTrace();
-              editor.statusError(rex);
-              return false; // get outta here
+//              rex.hideStackTrace();
+//              editor.statusError(rex);
+//              return false; // get outta here
+              throw rex;
             }
           }
         }
       }
-      editor.statusError(e);
+//      editor.statusError(e);
+      System.err.println("Problem during build:");
+      e.printStackTrace();
+      // Couldn't parse the exception, so wrap it up and chuck it
+//      throw new SketchException(e);
     }
     return false;
   }
 
   
-  protected String getClassName() {
-    return className;
-  }
+//  protected String getClassName() {
+//    return className;
+//  }
 
   
   String getPathForAPK(final String target) {
     String suffix = target.equals("release") ? "unsigned" : "debug";
     String apkName = "bin/" + sketch.getName() + "-" + suffix + ".apk";
-    final File apkFile = new File(tempBuildFolder, apkName);
+    final File apkFile = new File(tmpFolder, apkName);
     return apkFile.getAbsolutePath();
   }
 
@@ -538,6 +532,6 @@ class AndroidBuild extends JavaBuild {
   public void cleanup() {
     // don't want to be responsible for this
     //rm(tempBuildFolder);
-    tempBuildFolder.deleteOnExit();
+    tmpFolder.deleteOnExit();
   }
 }
