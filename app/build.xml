@@ -3,6 +3,7 @@
 
   <property name="generated" 
 	    value="${basedir}/generated/processing/mode/java/preproc" />
+  <mkdir dir="${generated}" />
 
   <property name="grammars" 
 	    value="${basedir}/src/processing/mode/java/preproc" />
