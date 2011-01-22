@@ -29,10 +29,10 @@ import org.apache.tools.ant.*;
 import processing.app.*;
 import processing.app.exec.*;
 import processing.core.PApplet;
-import processing.mode.java.Build;
+import processing.mode.java.JavaBuild;
 
 
-class AndroidBuild extends Build {
+class AndroidBuild extends JavaBuild {
   static final String basePackage = "processing.android.test";
   static final String sdkVersion = "7";
 

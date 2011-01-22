@@ -33,7 +33,7 @@ import processing.mode.java.preproc.*;
 // Would you believe there's a java.lang.Compiler class? I wouldn't.
 
 
-public class Build {
+public class JavaBuild {
   /**
    * Regular expression for parsing the size() method. This should match 
    * against any uses of the size() function, whether numbers or variables 
@@ -81,7 +81,7 @@ public class Build {
 //    this.sketch = editor.getSketch();
 //  }
 
-  public Build(Sketch sketch) {
+  public JavaBuild(Sketch sketch) {
     this.sketch = sketch;
   }
 

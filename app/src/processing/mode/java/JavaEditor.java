@@ -57,17 +57,19 @@ public class JavaEditor extends Editor {
 
   
   public JMenu buildFileMenu() {
-    JMenuItem exportApplet = Base.newJMenuItem("Export Applet", 'E');
+    String appletTitle = JavaToolbar.getTitle(JavaToolbar.EXPORT, false);
+    JMenuItem exportApplet = Base.newJMenuItem(appletTitle, 'E');
     exportApplet.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        handleExportApplet();
+        handleExportProject();
       }
     });
-      
-    JMenuItem exportApplication = Base.newJMenuItemShift("Export Application", 'E');
+
+    String appTitle = JavaToolbar.getTitle(JavaToolbar.EXPORT, true);
+    JMenuItem exportApplication = Base.newJMenuItemShift(appTitle, 'E');
     exportApplication.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        handleExportApplication();
+        handleExportPackage();
       }
     });
     return buildFileMenu(new JMenuItem[] { exportApplet, exportApplication });
@@ -75,21 +77,21 @@ public class JavaEditor extends Editor {
   
   
   public JMenu buildSketchMenu() {
-    JMenuItem runItem = Base.newJMenuItem("Run", 'R');
+    JMenuItem runItem = Base.newJMenuItem(JavaToolbar.getTitle(JavaToolbar.RUN, false), 'R');
     runItem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           handleRun();
         }
       });
 
-    JMenuItem presentItem = Base.newJMenuItemShift("Present", 'R');
+    JMenuItem presentItem = Base.newJMenuItemShift(JavaToolbar.getTitle(JavaToolbar.RUN, true), 'R');
     presentItem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           handlePresent();
         }
       });
 
-    JMenuItem stopItem = new JMenuItem("Stop");
+    JMenuItem stopItem = new JMenuItem(JavaToolbar.getTitle(JavaToolbar.STOP, false));
     stopItem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           handleStop();
@@ -118,7 +120,7 @@ public class JavaEditor extends Editor {
    * Made synchronized to (hopefully) avoid problems of people
    * hitting export twice, quickly, and horking things up.
    */
-  public void handleExportApplet() {
+  public void handleExportProject() {
     if (handleExportCheckModified()) {
       toolbar.activate(JavaToolbar.EXPORT);
       try {
@@ -153,7 +155,7 @@ public class JavaEditor extends Editor {
   /**
    * Handler for Sketch &rarr; Export Application
    */
-  public void handleExportApplication() {
+  public void handleExportPackage() {
     toolbar.activate(JavaToolbar.EXPORT);
     
     if (handleExportCheckModified()) {
