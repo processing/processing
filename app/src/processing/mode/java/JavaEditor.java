@@ -44,7 +44,7 @@ public class JavaEditor extends Editor {
 
   
   public EditorToolbar createToolbar() {
-    return new Toolbar(this, base);
+    return new JavaToolbar(this, base);
   }
   
   
@@ -120,7 +120,7 @@ public class JavaEditor extends Editor {
    */
   public void handleExportApplet() {
     if (handleExportCheckModified()) {
-      toolbar.activate(Toolbar.EXPORT);
+      toolbar.activate(JavaToolbar.EXPORT);
       try {
         boolean success = jmode.handleExportApplet(sketch);
         if (success) {
@@ -134,7 +134,7 @@ public class JavaEditor extends Editor {
       } catch (Exception e) {
         statusError(e);
       }
-      toolbar.deactivate(Toolbar.EXPORT);
+      toolbar.deactivate(JavaToolbar.EXPORT);
     }
   }
   
@@ -154,7 +154,7 @@ public class JavaEditor extends Editor {
    * Handler for Sketch &rarr; Export Application
    */
   public void handleExportApplication() {
-    toolbar.activate(Toolbar.EXPORT);
+    toolbar.activate(JavaToolbar.EXPORT);
     
     if (handleExportCheckModified()) {
       statusNotice("Exporting application...");
@@ -171,7 +171,7 @@ public class JavaEditor extends Editor {
         e.printStackTrace();
       }
     }
-    toolbar.deactivate(Toolbar.EXPORT);
+    toolbar.deactivate(JavaToolbar.EXPORT);
   }
   
   
@@ -396,7 +396,7 @@ public class JavaEditor extends Editor {
 
   protected void prepareRun() {
     internalCloseRunner();
-    toolbar.activate(Toolbar.RUN);
+    toolbar.activate(JavaToolbar.RUN);
     statusEmpty();
 
     // do this to advance/clear the terminal window / dos prompt / etc
@@ -430,7 +430,7 @@ public class JavaEditor extends Editor {
   
   
   public void handleStop() {
-    toolbar.activate(Toolbar.STOP);
+    toolbar.activate(JavaToolbar.STOP);
 
     try {
       jmode.handleStop();
@@ -438,8 +438,8 @@ public class JavaEditor extends Editor {
       statusError(e);
     }
 
-    toolbar.deactivate(Toolbar.RUN);
-    toolbar.deactivate(Toolbar.STOP);
+    toolbar.deactivate(JavaToolbar.RUN);
+    toolbar.deactivate(JavaToolbar.STOP);
 
     // focus the PDE again after quitting presentation mode [toxi 030903]
     toFront();
@@ -447,18 +447,18 @@ public class JavaEditor extends Editor {
   
   
   public void handleSave() {
-    toolbar.activate(Toolbar.SAVE);
+    toolbar.activate(JavaToolbar.SAVE);
     handleStop();
     super.handleSave();
-    toolbar.deactivate(Toolbar.SAVE);
+    toolbar.deactivate(JavaToolbar.SAVE);
   }
   
   
   public boolean handleSaveAs() {
-    toolbar.activate(Toolbar.SAVE);
+    toolbar.activate(JavaToolbar.SAVE);
     handleStop();
     boolean result = super.handleSaveAs();
-    toolbar.deactivate(Toolbar.SAVE);
+    toolbar.deactivate(JavaToolbar.SAVE);
     return result;
   }
   
@@ -503,12 +503,12 @@ public class JavaEditor extends Editor {
    * To initiate a "stop" action, call handleStop() instead.
    */
   public void deactivateRun() {
-    toolbar.deactivate(Toolbar.RUN);
+    toolbar.deactivate(JavaToolbar.RUN);
   }
 
 
   public void deactivateExport() {
-    toolbar.deactivate(Toolbar.EXPORT);
+    toolbar.deactivate(JavaToolbar.EXPORT);
   }
   
   

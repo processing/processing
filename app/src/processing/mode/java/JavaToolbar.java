@@ -1,7 +1,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2010 Ben Fry and Casey Reas
+  Copyright (c) 2010-11 Ben Fry and Casey Reas
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License version 2
@@ -29,7 +29,7 @@ import processing.app.Editor;
 import processing.app.EditorToolbar;
 
 
-public class Toolbar extends EditorToolbar {
+public class JavaToolbar extends EditorToolbar {
   /** Rollover titles for each button. */
   static final String title[] = {
     "Run", "Stop", "New", "Open", "Save", "Export"
@@ -52,7 +52,7 @@ public class Toolbar extends EditorToolbar {
 //  JMenu menu;
 
   
-  public Toolbar(Editor editor, Base base) {
+  public JavaToolbar(Editor editor, Base base) {
     super(editor, base);
     
     Image[][] images = loadImages();
