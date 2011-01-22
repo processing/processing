@@ -41,7 +41,7 @@ import javax.swing.JMenuItem;
 import processing.app.*;
 
 import processing.core.PApplet;
-import processing.mode.java.JavaMode;
+import processing.mode.java.*;
 import processing.mode.java.runner.Runner;
 
 // http://dl.google.com/android/repository/repository.xml
@@ -49,7 +49,7 @@ import processing.mode.java.runner.Runner;
 // http://dl.google.com/android/repository/tools_r03-macosx.zip
 
 
-public class AndroidMode extends JavaMode implements DeviceListener {  
+public class AndroidEditor extends JavaEditor implements DeviceListener {  
   private AndroidSDK sdk;
   private Editor editor;
   private Build build;
@@ -74,7 +74,7 @@ public class AndroidMode extends JavaMode implements DeviceListener {
   JCheckBoxMenuItem toggleItem;
   
   
-  public AndroidMode(Base base, File folder) {
+  public AndroidEditor(Base base, File folder) {
     super(base, folder);
   }
 
