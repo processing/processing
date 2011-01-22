@@ -1,4 +1,4 @@
-package processing.app.tools.android;
+package processing.mode.android;
 
 @SuppressWarnings("serial")
 public class BadSDKException extends Exception {

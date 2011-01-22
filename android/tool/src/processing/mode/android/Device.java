@@ -1,4 +1,4 @@
-package processing.app.tools.android;
+package processing.mode.android;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,8 +14,8 @@ import processing.app.exec.LineProcessor;
 import processing.app.exec.ProcessRegistry;
 import processing.app.exec.ProcessResult;
 import processing.app.exec.StreamPump;
-import processing.app.tools.android.LogEntry.Severity;
 import processing.core.PApplet;
+import processing.mode.android.LogEntry.Severity;
 
 
 class Device implements DeviceProperties {
