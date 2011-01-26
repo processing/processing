@@ -39,6 +39,12 @@ o   message(new String(b, offset, length), err, false);
 o   http://code.google.com/p/processing/issues/detail?id=197
 X   couldn't find a good way to reproduce this, closing
 
+_ add splash image on os x
+If you want a bundled app to show a splash screen you can do so by adding an entry named SplashFile to the Java section of the Info.plist:
+<key>SplashFile</key>
+<string>$JAVAROOT/splash.png</string>
+I do not know if it still works but it did in 2008 (see <http://lists.apple.com/archives/Java-dev/2008/Jun/msg00012.html>).
+
 _ remove any reference to 'Editor' from Sketch.java
 _   or is that excessive, since Document is in there, etc
 _   Build does the heavy lifting anyway...
@@ -208,6 +214,7 @@ _   http://github.com/fjenett/processingjstool/zipball/v0.0.6
 
 _ accented letter input is broken (on os x and windows)
 _   http://code.google.com/p/processing/issues/detail?id=335
+_   disabled input method support for now
 
 _ launch4j problem - FIXABLE
 _   no crash when double-clicking a sketch and loading it
