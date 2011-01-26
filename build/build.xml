@@ -112,6 +112,22 @@
 	<exclude name="**/._*" />
       </fileset>
     </copy>
+
+    <copy todir="${target.path}/modes/android">
+      <fileset dir="../android">
+	<include name="android-core.zip" />
+	<include name="examples/**" />
+	<include name="theme/**" />
+	<include name="keywords.txt" />
+<!--
+	<exclude name="**/bin/**" />
+	<exclude name="**/src/**" />
+	<exclude name="cmd" />
+	<exclude name="reference.zip" />
+-->
+	<exclude name="**/._*" />
+      </fileset>
+    </copy>
     
     <!-- copy libraries -->
 <!--
