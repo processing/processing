@@ -423,6 +423,7 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
 //    currentRollover = -1;
     if (rollover != null) {
       rollover.setState(INACTIVE, true);
+      rollover = null;
     }
   }
 
@@ -446,7 +447,8 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
 //      handlePressed(sel);
 //    }
     if (rollover != null) {
-      handlePressed(rollover);
+      //handlePressed(rollover);
+      handlePressed(e, buttons.indexOf(rollover));
     }
   }
   
@@ -457,14 +459,12 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
   public void mouseReleased(MouseEvent e) { }
 
 
-  public void handlePressed(Button b) {
-    handlePressed(buttons.indexOf(b));
-  }
+//  public void handlePressed(Button b) {
+//    handlePressed(buttons.indexOf(b));
+//  }
   
   
-  public void handlePressed(int index) {
-    // override me!
-  }
+  abstract public void handlePressed(MouseEvent e, int index);
   
   
   /**

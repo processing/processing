@@ -180,7 +180,7 @@ public class Runner implements MessageConsumer {
     String outgoing[] = new String[params.size()];
     params.toArray(outgoing);
 
-    //PApplet.println(outgoing);
+//    PApplet.println(outgoing);
 //    PApplet.println(PApplet.split(outgoing[0], ":"));
 //    PApplet.println();
 //    PApplet.println("class path");
