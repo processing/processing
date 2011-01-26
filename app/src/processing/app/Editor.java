@@ -1898,6 +1898,37 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
 
   /** 
+   * Grab current contents of the sketch window, advance the console, 
+   * stop any other running sketches... not in that order.
+   */
+  public void prepareRun() {
+    internalCloseRunner();
+    statusEmpty();
+
+    // do this to advance/clear the terminal window / dos prompt / etc
+    for (int i = 0; i < 10; i++) System.out.println();
+
+    // clear the console on each run, unless the user doesn't want to
+    if (Preferences.getBoolean("console.auto_clear")) {
+      console.clear();
+    }
+    
+    // make sure the user didn't hide the sketch folder
+    sketch.ensureExistence();
+
+    // make sure any edits have been stored
+    //current.setProgram(editor.getText());
+    sketch.getCurrentCode().setProgram(getText());
+
+    // if an external editor is being used, need to grab the
+    // latest version of the code from the file.
+    if (Preferences.getBoolean("editor.external")) {
+      sketch.reload();
+    }
+  }
+
+
+  /** 
    * Halt the current runner for whatever reason. Might be the VM dying, 
    * the window closing, an error... 
    */

@@ -48,6 +48,7 @@ public class JavaBuild {
     "(?:^|\\s|;)package\\s+(\\S+)\\;";
 
   protected Sketch sketch;
+  protected Mode mode;
 
   // what happens in the build, stays in the build.
   // (which is to say that everything below this line, stays within this class)
@@ -82,6 +83,7 @@ public class JavaBuild {
 
   public JavaBuild(Sketch sketch) {
     this.sketch = sketch;
+    this.mode = sketch.getMode();
   }
 
 
@@ -383,7 +385,7 @@ public class JavaBuild {
       int dot = item.lastIndexOf('.');
       // http://dev.processing.org/bugs/show_bug.cgi?id=1145
       String entry = (dot == -1) ? item : item.substring(0, dot);
-      Library library = sketch.getMode().getLibrary(entry);
+      Library library = mode.getLibrary(entry);
 
       if (library != null) {
         if (!importedLibraries.contains(library)) {
@@ -658,7 +660,8 @@ public class JavaBuild {
    * Handle export to applet.
    */
   public boolean exportApplet(File appletFolder) throws SketchException, IOException {
-    sketch.prepareBuild(appletFolder);
+    mode.prepareExportFolder(appletFolder);
+    
     srcFolder = sketch.makeTempFolder();
     binFolder = sketch.makeTempFolder();
     String foundName = build(srcFolder, binFolder);
@@ -926,7 +929,6 @@ public class JavaBuild {
     if (renderer.equals("OPENGL")) {
       openglApplet = true;
     }
-    Mode mode = sketch.getMode();
     if (is == null) {
       if (openglApplet) {
         is = mode.getContentStream("applet/template-opengl.html");
@@ -1070,7 +1072,8 @@ public class JavaBuild {
                                    int exportPlatform,
                                    int exportBits) throws IOException, SketchException {
     File destFolder = new File(destPath);
-    sketch.prepareBuild(destFolder);
+//    sketch.prepareBuild(destFolder);
+    mode.prepareExportFolder(destFolder);
 
     // build the sketch
     File srcFolder = sketch.makeTempFolder();
@@ -1096,8 +1099,6 @@ public class JavaBuild {
 
 
     /// where all the skeleton info lives
-
-    Mode mode = sketch.getMode();
 
     /// on macosx, need to copy .app skeleton since that's
     /// also where the jar files will be placed
