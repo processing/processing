@@ -155,8 +155,8 @@ public class JavaBuild {
     this.srcFolder = srcFolder;
     this.binFolder = binFolder;
 
-    Base.openFolder(srcFolder);
-    Base.openFolder(binFolder);
+//    Base.openFolder(srcFolder);
+//    Base.openFolder(binFolder);
     
     // run the preprocessor
     String classNameFound = preprocess(srcFolder);
@@ -647,7 +647,8 @@ public class JavaBuild {
 //    if (codeLine == -1 && !dotJavaFilename.equals(name + ".java")) {
 //      return null;
 //    }
-    return new SketchException(message, codeIndex, codeLine);
+//    return new SketchException(message, codeIndex, codeLine);
+    return new SketchException(message, codeIndex, codeLine, -1, false);  // changed for 0194 for compile errors, but...
   }
 
 

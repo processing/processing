@@ -97,7 +97,7 @@ public class Library {
 
     // get the list of files just in the library root
     String[] baseList = libraryFolder.list(standardFilter);
-    System.out.println("Loading " + name + "...");
+//    System.out.println("Loading " + name + "...");
 //    PApplet.println(baseList);
 
     String appletExportStr = exportTable.get("applet");

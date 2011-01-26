@@ -75,8 +75,6 @@ public class Base {
   // so that the errors while building don't show up again.
   boolean builtOnce;
 
-//  static File buildFolder;
-
   // Location for untitled items
   static File untitledFolder;
 
@@ -249,10 +247,10 @@ public class Base {
 
     // Create a new empty window (will be replaced with any files to be opened)
     if (!opened) {
-      System.out.println("opening a new window");
+//      System.out.println("opening a new window");
       handleNew();
-    } else {
-      System.out.println("something else was opened");
+//    } else {
+//      System.out.println("something else was opened");
     }
 
     // check for updates
@@ -974,8 +972,7 @@ public class Base {
 
   protected void rebuildSketchbookMenu() {
     try {
-      System.err.println("sketchbook: " + sketchbookFolder);
-
+//      System.err.println("sketchbook: " + sketchbookFolder);
       sketchbookMenu.removeAll();
       addSketches(sketchbookMenu, sketchbookFolder, false);
     } catch (IOException e) {
@@ -1367,7 +1364,7 @@ public class Base {
         sketchbookFolder.mkdirs();
       }
     }
-    System.err.println("sketchbook: " + sketchbookFolder);
+//    System.err.println("sketchbook: " + sketchbookFolder);
   }
 
 
