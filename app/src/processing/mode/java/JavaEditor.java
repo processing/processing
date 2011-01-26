@@ -35,10 +35,17 @@ import processing.app.SketchException;
 
 public class JavaEditor extends Editor {
   JavaMode jmode;
+  // TODO this needs prefs to be applied when necessary
+  PdeKeyListener listener;
 
-
+  
   protected JavaEditor(Base base, String path, int[] location, Mode mode) {
-    super(base, path, location, mode);
+    super(base, path, location, mode);    
+    
+    // hopefully these are no longer needed w/ swing
+    // (har har har.. that was wishful thinking)
+    listener = new PdeKeyListener(this, textarea);
+
     jmode = (JavaMode) mode;
   }
 

@@ -30,7 +30,6 @@ import processing.app.Base;
 import processing.app.Editor;
 import processing.app.Mode;
 import processing.app.RunnerListener;
-import processing.app.Settings;
 import processing.app.Sketch;
 import processing.app.SketchException;
 import processing.app.syntax.PdeKeywords;
@@ -60,13 +59,6 @@ public class JavaMode extends Mode {
     } catch (IOException e) {
       Base.showError("Problem loading keywords",
                      "Could not load keywords.txt, please re-install Processing.", e);
-    }
-    
-    try {
-      theme = new Settings(new File(folder, "theme/theme.txt"));
-    } catch (IOException e) {
-      Base.showError("Problem loading theme.txt", 
-                     "Could not load theme.txt, please re-install Processing", e);
     }
     
     /*
