@@ -63,7 +63,7 @@ public class JavaMode extends Mode {
     }
     
     try {
-      theme = new Settings(new File(folder, "theme.txt"));
+      theme = new Settings(new File(folder, "theme/theme.txt"));
     } catch (IOException e) {
       Base.showError("Problem loading theme.txt", 
                      "Could not load theme.txt, please re-install Processing", e);

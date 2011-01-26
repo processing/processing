@@ -134,8 +134,9 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
   public Image[][] loadImages() {
 //    Image allButtons = Base.getThemeImage("buttons.gif", this);
 //    Image allButtons = Base.loadImage(file);
-    Image allButtons = mode.loadImage("buttons.gif");
+    Image allButtons = mode.loadImage("theme/buttons.gif");
     int count = allButtons.getWidth(this) / BUTTON_WIDTH;
+//    System.out.println("width is " + allButtons.getWidth(this));
     Image[][] buttonImages = new Image[count][3];
     
     for (int i = 0; i < count; i++) {

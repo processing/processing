@@ -101,6 +101,9 @@ public class PdeKeywords extends TokenMarker {
    * @param coloring one of KEYWORD1, KEYWORD2, LITERAL1, etc.
    */
   public void addColoring(String keyword, String coloring) {
+    if (keywordColoring == null) {
+      keywordColoring = new KeywordMap(true);
+    }
     // text will be KEYWORD or LITERAL
     boolean isKey = (coloring.charAt(0) == 'K');
     // KEYWORD1 -> 0, KEYWORD2 -> 1, etc

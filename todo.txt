@@ -39,6 +39,9 @@ o   message(new String(b, offset, length), err, false);
 o   http://code.google.com/p/processing/issues/detail?id=197
 X   couldn't find a good way to reproduce this, closing
 
+_ can't do fileMenu.add(base.getSketchbookMenu()); inside ThinkDifferent
+_   sketchbook location hasn't been determined yet
+
 _ add splash image on os x
 If you want a bundled app to show a splash screen you can do so by adding an entry named SplashFile to the Java section of the Info.plist:
 <key>SplashFile</key>
