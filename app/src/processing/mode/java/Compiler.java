@@ -149,8 +149,8 @@ public class Compiler {
         String errorMessage = pieces[4];
 
         exception = build.placeException(errorMessage, 
-                                          dotJavaFilename, 
-                                          dotJavaLineIndex);
+                                         dotJavaFilename, 
+                                         dotJavaLineIndex);
         /*
         int codeIndex = 0; //-1;
         int codeLine = -1;

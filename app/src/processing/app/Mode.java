@@ -93,7 +93,7 @@ public abstract class Mode {
 
 
   public void rebuildLibraryList() {
-    System.out.println("rebuildLibraryList()");
+//    System.out.println("rebuildLibraryList()");
 
     // reset the table mapping imports to libraries
     importToLibraryTable = new HashMap<String, Library>();
@@ -150,25 +150,31 @@ public abstract class Mode {
         }
       });
     toolbarMenu.add(item);
+    
+    JMenu examplesMenu = new JMenu("Examples");
+    rebuildExamplesMenu(examplesMenu);
+    toolbarMenu.add(examplesMenu);
+    
     toolbarMenu.addSeparator();
 
     // Add a list of all sketches and subfolders
     try {
-      boolean sketches = base.addSketches(toolbarMenu, base.getSketchbookFolder(), true);
-      if (sketches) {
-        toolbarMenu.addSeparator();
-      }
+      base.addSketches(toolbarMenu, base.getSketchbookFolder(), true);
+//      boolean sketches = base.addSketches(toolbarMenu, base.getSketchbookFolder(), true);
+//      if (sketches) {
+//        toolbarMenu.addSeparator();
+//      }
     } catch (IOException e) {
       e.printStackTrace();
     }
 
     //System.out.println("rebuilding examples menu");
     // Add each of the subfolders of examples directly to the menu
-    try {
-      base.addSketches(toolbarMenu, examplesFolder, true);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+//    try {
+//      base.addSketches(toolbarMenu, examplesFolder, true);
+//    } catch (IOException e) {
+//      e.printStackTrace();
+//    }
   }
 
 
@@ -235,7 +241,7 @@ public abstract class Mode {
       //base.addSketches(menu, examplesFolder, false);
       
       // break down the examples folder for examples
-      System.out.println("checking examples folder " + examplesFolder);
+//      System.out.println("checking examples folder " + examplesFolder);
       File[] subfolders = examplesFolder.listFiles(new FilenameFilter() {
         public boolean accept(File dir, String name) {
           return dir.isDirectory() && name.charAt(0) != '.';
@@ -372,7 +378,7 @@ public abstract class Mode {
 
 
   public Font getFont(String attribute) {
-    System.out.println("getFont(" + attribute + ") -> " + theme.getFont(attribute));
+//    System.out.println("getFont(" + attribute + ") -> " + theme.getFont(attribute));
     return theme.getFont(attribute);
   }
 
