@@ -164,7 +164,6 @@ public class JavaMode extends Mode {
   
   /**
    * Implements Sketch &rarr; Run.
-   * @param present Set true to run in full screen (present mode).
    * @throws SketchException 
    */
   public void handleRun(Sketch sketch, RunnerListener listener) throws SketchException {

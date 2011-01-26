@@ -47,7 +47,6 @@ public class JavaBuild {
   public static final String PACKAGE_REGEX = 
     "(?:^|\\s|;)package\\s+(\\S+)\\;";
 
-//  Editor editor;
   protected Sketch sketch;
 
   // what happens in the build, stays in the build.
@@ -137,11 +136,7 @@ public class JavaBuild {
    * @throws RunnerException
    */
   public String build() throws SketchException {
-    srcFolder = sketch.makeTempFolder();
-    binFolder = sketch.makeTempFolder();
-//    System.out.println("src: " + srcFolder);
-//    System.out.println("bin: " + binFolder);
-    return build(srcFolder, binFolder);
+    return build(sketch.makeTempFolder(), sketch.makeTempFolder());
   }
 
 
@@ -155,6 +150,12 @@ public class JavaBuild {
    * @return null if compilation failed, main class name if not
    */
   public String build(File srcFolder, File binFolder) throws SketchException {
+    this.srcFolder = srcFolder;
+    this.binFolder = binFolder;
+
+    Base.openFolder(srcFolder);
+    Base.openFolder(binFolder);
+    
     // run the preprocessor
     String classNameFound = preprocess(srcFolder);
 
@@ -215,7 +216,7 @@ public class JavaBuild {
     sketch.ensureExistence();
 
 //    System.out.println("srcFolder is " + srcFolder);
-    classPath = srcFolder.getAbsolutePath();
+    classPath = binFolder.getAbsolutePath();
 
     // figure out the contents of the code folder to see if there
     // are files that need to be added to the imports
