@@ -134,7 +134,7 @@ public class Sketch {
 
     load();
   }
-
+  
 
   /**
    * Build the list of files.
@@ -212,6 +212,19 @@ public class Sketch {
     if (editor != null) {
       setCurrentCode(0);
     }
+  }
+
+
+  /** 
+   * Reload the current sketch. Used to update the text area when 
+   * an external editor is in use.
+   */
+  public void reload() {
+    // set current to null so that the tab gets updated
+    // http://dev.processing.org/bugs/show_bug.cgi?id=515
+    current = null;
+    // nuke previous files and settings
+    load();
   }
 
 
@@ -1130,6 +1143,7 @@ public class Sketch {
    * not null, and if preferences say to do so when exporting.
    * @param targetFolder is something like applet, application, android...
    */
+  /*
   public void prepareBuild(File targetFolder) throws SketchException {
     // make sure the user didn't hide the sketch folder
     ensureExistence();
@@ -1161,6 +1175,7 @@ public class Sketch {
       targetFolder.mkdirs();
     }
   }
+  */
 
 
   /**

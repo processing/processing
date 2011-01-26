@@ -450,6 +450,23 @@ public abstract class Mode {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
+  /**
+   * Create a fresh applet/application folder if the 'delete target folder' 
+   * pref has been set in the preferences.
+   */
+  public void prepareExportFolder(File targetFolder) {
+    if (targetFolder != null) {
+      // Nuke the old applet/application folder because it can cause trouble
+      if (Preferences.getBoolean("export.delete_target_folder")) {
+        System.out.println("temporarily skipping deletion of " + targetFolder);
+        //      Base.removeDir(targetFolder);
+        //      targetFolder.renameTo(dest);
+      }
+      // Create a fresh output folder (needed before preproc is run next)
+      targetFolder.mkdirs();
+    }
+  }
+
 //  public void handleNew() {
 //    base.handleNew();    
 //  }
