@@ -759,7 +759,8 @@ public class JavaBuild {
     // Check if the user already has their own loader image
     File loadingImage = new File(sketch.getFolder(), LOADING_IMAGE);
     if (!loadingImage.exists()) {
-      File skeletonFolder = new File(Base.getContentFile("lib"), "export");
+//      File skeletonFolder = new File(Base.getContentFile("lib"), "export");
+      File skeletonFolder = mode.getContentFile("applet");
       loadingImage = new File(skeletonFolder, LOADING_IMAGE);
     }
     Base.copyFile(loadingImage, new File(appletFolder, LOADING_IMAGE));
@@ -1441,7 +1442,12 @@ public class JavaBuild {
 
 
   protected void addClasses(ZipOutputStream zos, File dir) throws IOException {
-    addClasses(zos, dir, dir.getAbsolutePath());
+    String path = dir.getAbsolutePath();
+    if (!path.endsWith("/") && !path.endsWith("\\")) {
+      path += '/';
+    }
+//    System.out.println("path is " + path);
+    addClasses(zos, dir, path);
   }
 
 

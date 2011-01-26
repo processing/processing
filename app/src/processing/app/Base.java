@@ -32,6 +32,7 @@ import java.util.zip.*;
 import javax.swing.*;
 
 import processing.core.*;
+import processing.mode.android.AndroidMode;
 import processing.mode.java.*;
 
 
@@ -84,8 +85,9 @@ public class Base {
   // a lone file menu to be used when all sketch windows are closed
   static public JMenu defaultFileMenu;
 
-  private Mode[] modeList;
   private Mode defaultMode = new JavaMode(this, getContentFile("modes/java"));
+  private Mode androidMode = new AndroidMode(this, getContentFile("modes/android"));
+  private Mode[] modeList = { defaultMode, androidMode };
 
   private JMenu sketchbookMenu;
 
@@ -1001,6 +1003,10 @@ public class Base {
     // skip .DS_Store files, etc (this shouldn't actually be necessary)
     if (!folder.isDirectory()) return false;
 
+    if (folder.getName().equals("libraries")) {
+      return false;  // let's not go there
+    }
+    
     String[] list = folder.list();
     // If a bad folder or unreadable or whatever, this will come back null
     if (list == null) return false;
