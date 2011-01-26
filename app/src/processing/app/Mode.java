@@ -152,7 +152,7 @@ public abstract class Mode {
     toolbarMenu.add(item);
     
     JMenu examplesMenu = new JMenu("Examples");
-    rebuildExamplesMenu(examplesMenu);
+    rebuildExamplesMenu(examplesMenu, true);
     toolbarMenu.add(examplesMenu);
     
     toolbarMenu.addSeparator();
@@ -229,13 +229,13 @@ public abstract class Mode {
   public JMenu getExamplesMenu() {
     if (examplesMenu == null) {
       examplesMenu = new JMenu("Examples");
-      rebuildExamplesMenu(examplesMenu);
+      rebuildExamplesMenu(examplesMenu, false);
     }
     return examplesMenu;
   }
 
 
-  public void rebuildExamplesMenu(JMenu menu) {
+  public void rebuildExamplesMenu(JMenu menu, boolean replace) {
     try {
       menu.removeAll();
       //base.addSketches(menu, examplesFolder, false);
@@ -252,7 +252,7 @@ public abstract class Mode {
 //        JMenuItem categoryItem = new JMenuItem(sub.getName());
 //        categoryItem.setEnabled(false);
 //        menu.add(categoryItem);
-        base.addSketches(menu, sub, false);
+        base.addSketches(menu, sub, replace);
         menu.addSeparator();
       }
 
@@ -263,7 +263,7 @@ public abstract class Mode {
       for (Library lib : coreLibraries) {
         if (lib.hasExamples()) {
           JMenu libMenu = new JMenu(lib.getName());
-          base.addSketches(libMenu, lib.getExamplesFolder(), false);
+          base.addSketches(libMenu, lib.getExamplesFolder(), replace);
           menu.add(libMenu);
         }
       }
@@ -281,7 +281,7 @@ public abstract class Mode {
         for (Library lib : contribLibraries) {
           if (lib.hasExamples()) {
             JMenu libMenu = new JMenu(lib.getName());
-            base.addSketches(libMenu, lib.getExamplesFolder(), false);
+            base.addSketches(libMenu, lib.getExamplesFolder(), replace);
             menu.add(libMenu);
           }
         }
