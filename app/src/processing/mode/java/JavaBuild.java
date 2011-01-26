@@ -139,6 +139,8 @@ public class JavaBuild {
   public String build() throws SketchException {
     srcFolder = sketch.makeTempFolder();
     binFolder = sketch.makeTempFolder();
+//    System.out.println("src: " + srcFolder);
+//    System.out.println("bin: " + binFolder);
     return build(srcFolder, binFolder);
   }
 
@@ -212,6 +214,7 @@ public class JavaBuild {
     // make sure the user isn't playing "hide the sketch folder"
     sketch.ensureExistence();
 
+//    System.out.println("srcFolder is " + srcFolder);
     classPath = srcFolder.getAbsolutePath();
 
     // figure out the contents of the code folder to see if there
@@ -252,7 +255,8 @@ public class JavaBuild {
 
     PreprocessorResult result;
     try {
-      File outputFolder = new File(srcFolder, packageName.replace('.', '/'));
+      File outputFolder = (packageName == null) ? 
+        srcFolder : new File(srcFolder, packageName.replace('.', '/'));
       outputFolder.mkdirs();
       final File java = new File(outputFolder, sketch.getName() + ".java");
       final PrintWriter stream = new PrintWriter(new FileWriter(java));
