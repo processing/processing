@@ -68,25 +68,25 @@
   <target name="subprojects-clean">
     <subant buildpath="../core" target="clean"/>
     <subant buildpath="../app" target="clean"/>
-    <subant buildpath="../dxf" target="clean"/>
-    <subant buildpath="../net" target="clean"/>
-    <subant buildpath="../opengl" target="clean"/>
-    <subant buildpath="../pdf" target="clean"/>
-    <subant buildpath="../serial" target="clean"/>
-    <subant buildpath="../video" target="clean"/>
-    <subant buildpath="../android" target="clean"/>
+    <subant buildpath="../java/libraries/dxf" target="clean"/>
+    <subant buildpath="../java/libraries/net" target="clean"/>
+    <subant buildpath="../java/libraries/opengl" target="clean"/>
+    <subant buildpath="../java/libraries/pdf" target="clean"/>
+    <subant buildpath="../java/libraries/serial" target="clean"/>
+    <subant buildpath="../java/libraries/video" target="clean"/>
+    <subant buildpath="../android/core" target="clean"/>
   </target>
   
   <target name="subprojects-build">
     <subant buildpath="../core" target="build"/>
     <subant buildpath="../app" target="build"/>
-    <subant buildpath="../dxf" target="build"/>
-    <subant buildpath="../net" target="build"/>
-    <subant buildpath="../opengl" target="build"/>
-    <subant buildpath="../pdf" target="build"/>
-    <subant buildpath="../serial" target="build"/>
-    <subant buildpath="../video" target="build"/>
-    <subant buildpath="../android" target="build"/>
+    <subant buildpath="../java/libraries/dxf" target="build"/>
+    <subant buildpath="../java/libraries/net" target="build"/>
+    <subant buildpath="../java/libraries/opengl" target="build"/>
+    <subant buildpath="../java/libraries/pdf" target="build"/>
+    <subant buildpath="../java/libraries/serial" target="build"/>
+    <subant buildpath="../java/libraries/video" target="build"/>
+    <subant buildpath="../android/core" target="build"/>
   </target>
   
 
@@ -102,14 +102,26 @@
     <copy todir="${target.path}/tools">
       <fileset dir="shared/tools" />
     </copy>
+
+    <copy todir="${target.path}/modes/java">
+      <fileset dir="../java">
+	<exclude name="**/bin/**" />
+	<exclude name="**/src/**" />
+	<exclude name="cmd" />
+	<exclude name="reference.zip" />
+	<exclude name="**/._*" />
+      </fileset>
+    </copy>
     
     <!-- copy libraries -->
+<!--
     <copy todir="${target.path}/modes/java/libraries">
       <fileset dir="../java/libraries">
 	<include name="**/library/**" />
 	<include name="**/src/**" />
       </fileset>
     </copy>
+-->
 
     <!-- copy shared library folder -->
 <!--
@@ -152,7 +164,7 @@
     </unzip>
 -->
     <unzip dest="${target.path}/modes/java" 
-	   src="shared/modes/java/reference.zip" 
+	   src="../java/reference.zip" 
 	   overwrite="false">
       <patternset>
 	<exclude name="__MACOSX/**" />
