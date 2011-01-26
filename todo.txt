@@ -391,7 +391,7 @@ _   have a means to load them from "teacher" version of p5
 _   figure out how to use the 
 
 _ add proper copyright and license information for all included projects
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1303
+_   http://code.google.com/p/processing/issues/detail?id=185
 
 _ need an "install library" option to deal with urls.. oy
 _ move library examples to the examples menu
