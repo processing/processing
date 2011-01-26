@@ -1273,6 +1273,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
   }
 
+  @SuppressWarnings("unchecked")
   protected void beginShapeRecorderImpl() {
     recordingShape = true;  
     
@@ -1295,7 +1296,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
     
     int size = texCoordBuffer[0].capacity() / 2;
-    if (recordedTexCoords == null) {      
+    if (recordedTexCoords == null) {
       recordedTexCoords = new ArrayList[MAX_TEXTURES];
       // We need to initialize all the buffers for recording of texture coordinates,
       // since we don't know in advance the number of texture units that will be used
