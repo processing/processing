@@ -64,7 +64,8 @@ class AndroidBuild extends JavaBuild {
 
     manifest = new Manifest(sketch);
     // grab code from current editing window (GUI only)
-    sketch.prepareBuild(null);
+//    prepareExport(null);
+    
     // build the preproc and get to work
     AndroidPreprocessor preproc = new AndroidPreprocessor(sketch, getPackageName());
     if (!preproc.parseSketchSize()) {

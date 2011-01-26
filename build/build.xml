@@ -5,8 +5,8 @@
     The build is broken! The build is broken! 
 
     I'm currently doing major work on the innards of the PDE. 
-    As such, the current SVN (mostly just within /app)
-    will be a mess for a few days/weeks as I sort that out. 
+    As such, the current SVN will be a mess for a few days/weeks 
+    as I sort that out. 
 
     As always, if you need a working build, use a tagged version 
     of a release build, i.e. tags/processing-0192 for Android, 

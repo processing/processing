@@ -1,37 +1,15 @@
 package processing.mode.java;
 
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.io.File;
-import java.io.IOException;
+import java.awt.*;
+import java.awt.event.*;
+import java.beans.*;
+import java.io.*;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JCheckBox;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.TitledBorder;
+import javax.swing.*;
+import javax.swing.border.*;
 
-import processing.app.Base;
-import processing.app.Editor;
-import processing.app.EditorToolbar;
-import processing.app.Formatter;
-import processing.app.Mode;
-import processing.app.Preferences;
-import processing.app.SketchException;
+import processing.app.*;
+
 
 public class JavaEditor extends Editor {
   JavaMode jmode;
@@ -481,24 +459,11 @@ public class JavaEditor extends Editor {
     }
     return true;
   }
-  
 
-  protected void prepareRun() {
-    internalCloseRunner();
-    toolbar.activate(JavaToolbar.RUN);
-    statusEmpty();
 
-    // do this to advance/clear the terminal window / dos prompt / etc
-    for (int i = 0; i < 10; i++) System.out.println();
-
-    // clear the console on each run, unless the user doesn't want to
-    if (Preferences.getBoolean("console.auto_clear")) {
-      console.clear();
-    }
-  }
-  
-  
   public void handleRun() {
+    toolbar.activate(JavaToolbar.RUN);
+
     prepareRun();
     try {
       jmode.handleRun(sketch, this);
@@ -509,6 +474,8 @@ public class JavaEditor extends Editor {
   
   
   public void handlePresent() {
+    toolbar.activate(JavaToolbar.RUN);
+
     prepareRun();
     try {
       jmode.handlePresent(sketch, this);

@@ -510,6 +510,7 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
    * Build the sketch and run it inside an emulator with the debugger.
    */
   public void handleRunEmulator() {
+    prepareRun();
     AVD.ensureEclairAVD(sdk);
     try {
       runSketchOnDevice(Environment.getInstance().getEmulator(), "debug");
