@@ -54,8 +54,12 @@
         <string>Editor</string>
       </dict>
     </array>
+
     <key>Java</key>
     <dict>
+      <key>SplashFile</key>
+      <string>$JAVAROOT/lib/about.jpg</string>
+
       <key>VMOptions</key>
       <array>
         <string>-Xms128M</string>
