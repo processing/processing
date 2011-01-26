@@ -41,7 +41,10 @@ public class AndroidToolbar extends EditorToolbar {
   
   public AndroidToolbar(Editor editor, Base base) {
     super(editor, base);
-    
+  }
+  
+  
+  public void init() {
     Image[][] images = loadImages();
     for (int i = 0; i < 6; i++) {
       addButton(getTitle(i, false), getTitle(i, true), images[i], i == NEW);
