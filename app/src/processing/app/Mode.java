@@ -245,6 +245,7 @@ public abstract class Mode {
 //        categoryItem.setEnabled(false);
 //        menu.add(categoryItem);
         base.addSketches(menu, sub, false);
+        menu.addSeparator();
       }
 
       // get library examples
@@ -267,6 +268,7 @@ public abstract class Mode {
         }
       }
       if (any) {
+        menu.addSeparator();
         Base.addDisabledItem(menu, "Contributed");
         for (Library lib : contribLibraries) {
           if (lib.hasExamples()) {

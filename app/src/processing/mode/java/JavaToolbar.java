@@ -67,12 +67,12 @@ public class JavaToolbar extends EditorToolbar {
   
   static public String getTitle(int index, boolean shift) {
     switch (index) {
-    case RUN:    return shift ? "Run" : "Present";
+    case RUN:    return !shift ? "Run" : "Present";
     case STOP:   return "Stop";
-    case NEW:    return shift ? "New" : "New Editor Window";
-    case OPEN:   return shift ? "Open" : "Open in Another Window";
+    case NEW:    return !shift ? "New" : "New Editor Window";
+    case OPEN:   return !shift ? "Open" : "Open in Another Window";
     case SAVE:   return "Save";
-    case EXPORT: return shift ? "Export Applet" : "Export Application";
+    case EXPORT: return !shift ? "Export Applet" : "Export Application";
     }
     return null;
   }
