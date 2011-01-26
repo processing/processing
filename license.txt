@@ -1,7 +1,10 @@
-this file includes licensing information for parts of processing.
+We use GPL v2 for the parts of the project that we've developed ourselves.
+For the 'core' library, it's LGPL, for everything else, it's GPL.
 
-the gnu general public license covers the main body of the processing code 
-(in general, all the stuff inside the 'app' subfolder).
+Over the course of many years of development, files being moved around,
+and other code being added and removed, the license information has become
+quite a mess. Please help us clean this up:
+http://code.google.com/p/processing/issues/detail?id=185
 
 
 .....................................................................

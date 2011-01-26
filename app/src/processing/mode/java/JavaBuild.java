@@ -926,11 +926,12 @@ public class JavaBuild {
     if (renderer.equals("OPENGL")) {
       openglApplet = true;
     }
+    Mode mode = sketch.getMode();
     if (is == null) {
       if (openglApplet) {
-        is = Base.getLibStream("export/applet-opengl.html");
+        is = mode.getContentStream("applet/template-opengl.html");
       } else {
-        is = Base.getLibStream("export/applet.html");
+        is = mode.getContentStream("applet/template.html");
       }
     }
     BufferedReader reader = PApplet.createReader(is);
@@ -1096,16 +1097,16 @@ public class JavaBuild {
 
     /// where all the skeleton info lives
 
-    File skeletonFolder = new File(Base.getContentFile("lib"), "export");
+    Mode mode = sketch.getMode();
 
     /// on macosx, need to copy .app skeleton since that's
     /// also where the jar files will be placed
     File dotAppFolder = null;
     if (exportPlatform == PConstants.MACOSX) {
       dotAppFolder = new File(destFolder, sketch.getName() + ".app");
-      String APP_SKELETON = "skeleton.app";
+//      String APP_SKELETON = "skeleton.app";
       //File dotAppSkeleton = new File(folder, APP_SKELETON);
-      File dotAppSkeleton = new File(skeletonFolder, APP_SKELETON);
+      File dotAppSkeleton = mode.getContentFile("application/template.app");
       Base.copyDir(dotAppSkeleton, dotAppFolder);
 
       String stubName = "Contents/MacOS/JavaApplicationStub";
@@ -1144,7 +1145,7 @@ public class JavaBuild {
     /// on windows, copy the exe file
 
     if (exportPlatform == PConstants.WINDOWS) {
-      Base.copyFile(new File(skeletonFolder, "application.exe"),
+      Base.copyFile(mode.getContentFile("application/template.exe"),
                     new File(destFolder, sketch.getName() + ".exe"));
     }
 
@@ -1313,7 +1314,7 @@ public class JavaBuild {
       String PLIST_TEMPLATE = "template.plist";
       File plistTemplate = new File(sketch.getFolder(), PLIST_TEMPLATE);
       if (!plistTemplate.exists()) {
-        plistTemplate = new File(skeletonFolder, PLIST_TEMPLATE);
+        plistTemplate = mode.getContentFile("application/template.plist");
       }
       File plistFile = new File(dotAppFolder, "Contents/Info.plist");
       PrintWriter pw = PApplet.createWriter(plistFile);
