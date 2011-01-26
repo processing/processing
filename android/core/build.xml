@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project default="build" name="Create .zip file for core">
+  <property environment="env" />
+
+  <target name="build" if="env.ANDROID_SDK">
+    <mkdir dir="bin" />
+    <javac target="1.5" 
+	   encoding="UTF-8"
+	   includeAntRuntime="false"
+	   bootclasspath="${env.ANDROID_SDK}/platforms/android-7/android.jar"
+	   srcdir="src" destdir="bin" />
+
+    <jar basedir="bin" destfile="../android-core.zip" />
+  </target>
+
+  <target name="clean" if="env.ANDROID_SDK"
+	  description="Clean out the build directories">
+    <delete dir="bin" />
+    <delete file="../android-core.zip" />
+  </target>
+</project>
