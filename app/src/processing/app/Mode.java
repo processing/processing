@@ -48,6 +48,13 @@ public abstract class Mode {
     // Get paths for the libraries and examples in the mode folder
     examplesFolder = new File(folder, "examples");
     librariesFolder = new File(folder, "libraries");
+    
+    try {
+      theme = new Settings(new File(folder, "theme/theme.txt"));
+    } catch (IOException e) {
+      Base.showError("Problem loading theme.txt", 
+                     "Could not load theme.txt, please re-install Processing", e);
+    }
   }
   
   
@@ -361,6 +368,7 @@ public abstract class Mode {
 
 
   public Font getFont(String attribute) {
+    System.out.println("getFont(" + attribute + ") -> " + theme.getFont(attribute));
     return theme.getFont(attribute);
   }
 

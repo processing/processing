@@ -200,9 +200,6 @@ public abstract class Editor extends JFrame implements RunnerListener {
     
     box.add(splitPane);
 
-    // hopefully these are no longer needed w/ swing
-    // (har har har.. that was wishful thinking)
-//    listener = new PdeKeyListener(this, textarea);
     pain.add(box);
 
     // get shift down/up events so we can show the alt version of toolbar buttons
