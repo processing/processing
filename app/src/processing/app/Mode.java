@@ -84,6 +84,8 @@ public abstract class Mode {
 
 
   public void rebuildLibraryList() {
+    System.out.println("rebuildLibraryList()");
+
     // reset the table mapping imports to libraries
     importToLibraryTable = new HashMap<String, Library>();
 
@@ -224,6 +226,7 @@ public abstract class Mode {
       //base.addSketches(menu, examplesFolder, false);
       
       // break down the examples folder for examples
+      System.out.println("checking examples folder " + examplesFolder);
       File[] subfolders = examplesFolder.listFiles(new FilenameFilter() {
         public boolean accept(File dir, String name) {
           return dir.isDirectory() && name.charAt(0) != '.';

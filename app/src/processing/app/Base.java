@@ -209,14 +209,20 @@ public class Base {
 
 
   public Base(String[] args) {
+    // Get the sketchbook path, and make sure it's set properly
+    determineSketchbookFolder();
+
+    // Make sure ThinkDifferent has library examples too
+    defaultMode.rebuildLibraryList();
+
     // Put this after loading the examples, so that building the default file
-    // menu works on Mac OS X (since  it needs examplesFolder to be set).
+    // menu works on Mac OS X (since it needs examplesFolder to be set).
     platform.init(this);
 
     toolsFolder = getContentFile("tools");
 
-    // Get the sketchbook path, and make sure it's set properly
-    determineSketchbookFolder();
+//    // Get the sketchbook path, and make sure it's set properly
+//    determineSketchbookFolder();
 
     // Check if there were previously opened sketches to be restored
     boolean opened = restoreSketches();
@@ -966,10 +972,10 @@ public class Base {
   }
 
 
-  protected void rebuildSketchbookMenu() {  //JMenu menu) {
-    //System.out.println("rebuilding sketchbook menu");
-    //new Exception().printStackTrace();
+  protected void rebuildSketchbookMenu() {
     try {
+      System.err.println("sketchbook: " + sketchbookFolder);
+
       sketchbookMenu.removeAll();
       addSketches(sketchbookMenu, sketchbookFolder, false);
     } catch (IOException e) {
@@ -1361,6 +1367,7 @@ public class Base {
         sketchbookFolder.mkdirs();
       }
     }
+    System.err.println("sketchbook: " + sketchbookFolder);
   }
 
 
