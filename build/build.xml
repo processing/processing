@@ -104,38 +104,42 @@
     </copy>
     
     <!-- copy shared library folder -->
-    <copy todir="${target.path}/libraries">
-      <fileset dir="shared/libraries" />
+    <copy todir="${target.path}/modes/java/libraries">
+      <fileset dir="shared/modes/java/libraries" />
     </copy>
     
     <!-- copy libraries for dxf, pdf, etc. -->
-    <copy todir="${target.path}/libraries/dxf">
+    <copy todir="${target.path}/modes/java/libraries/dxf">
       <fileset dir="../dxf" includes="library/**,src/**" />
     </copy>
-    <copy todir="${target.path}/libraries/net">
+    <copy todir="${target.path}/modes/java/libraries/net">
       <fileset dir="../net" includes="library/**,src/**" />
     </copy>
-    <copy todir="${target.path}/libraries/opengl">
+    <copy todir="${target.path}/modes/java/libraries/opengl">
       <fileset dir="../opengl" includes="library/**,src/**" />
     </copy>
-    <copy todir="${target.path}/libraries/pdf">
+    <copy todir="${target.path}/modes/java/libraries/pdf">
       <fileset dir="../pdf" includes="library/**,src/**" />
     </copy>
-    <copy todir="${target.path}/libraries/serial">
+    <copy todir="${target.path}/modes/java/libraries/serial">
       <fileset dir="../serial" includes="library/**,src/**" />
     </copy>
-    <copy todir="${target.path}/libraries/video">
+    <copy todir="${target.path}/modes/java/libraries/video">
       <fileset dir="../video" includes="library/**,src/**" />
     </copy>
     
     <!-- Unzip documentation + examples -->
-    <unzip dest="${target.path}" src="shared/examples.zip" overwrite="false">
+    <unzip dest="${target.path}/modes/java" 
+	   src="shared/modes/java/examples.zip" 
+	   overwrite="false">
       <patternset>
 	<exclude name="__MACOSX/**" />
 	<exclude name="**/._*" />
       </patternset>
     </unzip>
-    <unzip dest="${target.path}" src="shared/reference.zip" overwrite="false">
+    <unzip dest="${target.path}/modes/java" 
+	   src="shared/modes/java/reference.zip" 
+	   overwrite="false">
       <patternset>
 	<exclude name="__MACOSX/**" />
 	<exclude name="**/._*" />
@@ -248,6 +252,7 @@
     
     <copy todir="macosx/work/Processing.app/Contents/Resources/Java">
       <fileset dir="shared" includes="lib/**" />
+      <fileset dir="shared" includes="modes/**" />
       <fileset file="shared/revisions.txt" />
     </copy>
 
@@ -337,6 +342,7 @@
     
     <copy todir="linux/work">
       <fileset dir="shared" includes="lib/**" />
+      <fileset dir="shared" includes="modes/**" />
       <fileset file="shared/revisions.txt" />
     </copy>
     
@@ -448,6 +454,7 @@ http://www.gnu.org/software/tar/manual/html_section/transform.html
     
     <copy todir="windows/work">
       <fileset dir="shared" includes="lib/**" />
+      <fileset dir="shared" includes="modes/**" />
       <fileset file="shared/revisions.txt" />
     </copy>
     

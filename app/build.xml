@@ -116,6 +116,7 @@
       <src path="src" />
       <src path="generated" />
     </javac>
+<!--
     <javac target="1.5" 
 	   srcdir="../android/tool/src" 
 	   destdir="bin" 
@@ -126,6 +127,7 @@
     <copy todir="bin/processing/app/tools/android/data">
       <fileset dir="../android/tool/src/processing/app/tools/android/data/" />
     </copy>
+-->
   </target>
 
   <target name="build" depends="compile" description="Build PDE">
