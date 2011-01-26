@@ -98,7 +98,7 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
   int modeX1, modeY1;
   int modeX2, modeY2;
   
-  ArrayList<Button> buttons;
+  protected ArrayList<Button> buttons;
 
 
   public EditorToolbar(Editor editor, Base base) {  //, JMenu menu) {
@@ -131,6 +131,14 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
   }
 
 
+  /** Load images and add toolbar buttons */
+  abstract public void init();
+
+
+  /**
+   * Only call this from paintComponent, or when the comp is displayable, 
+   * otherwise createImage() might fail.
+   */
   public Image[][] loadImages() {
 //    Image allButtons = Base.getThemeImage("buttons.gif", this);
 //    Image allButtons = Base.loadImage(file);
@@ -141,6 +149,9 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
     
     for (int i = 0; i < count; i++) {
       for (int state = 0; state < 3; state++) {
+//        Toolkit tk = Toolkit.getDefaultToolkit();
+//        Image image = tk.createImage(BUTTON_WIDTH, BUTTON_HEIGHT);
+//        System.out.println("image is " + image + " " + BUTTON_WIDTH + " " + BUTTON_HEIGHT);
         Image image = createImage(BUTTON_WIDTH, BUTTON_HEIGHT);
         Graphics g = image.getGraphics();
         g.drawImage(allButtons, 
@@ -158,6 +169,10 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
 
   @Override
   public void paintComponent(Graphics screen) {
+    if (buttons.size() == 0) {
+      init();
+    }
+
     // this data is shared by all EditorToolbar instances
 //    if (buttonImages == null) {
 //      loadButtons();
