@@ -106,7 +106,7 @@ public class EditorHeader extends JComponent {
     pieces = new Image[STATUS.length][WHERE.length];
     for (int i = 0; i < STATUS.length; i++) {
       for (int j = 0; j < WHERE.length; j++) {
-        String filename = "tab-" + STATUS[i] + "-" + WHERE[j] + ".gif";
+        String filename = "theme/tab-" + STATUS[i] + "-" + WHERE[j] + ".gif";
         pieces[i][j] = mode.loadImage(filename);
       }
     }
