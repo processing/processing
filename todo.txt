@@ -9,6 +9,7 @@ X fix for linux build script (thanks to Kevin Keraudren)
 X   http://code.google.com/p/processing/issues/detail?id=466
 o occasional exception in "copy for discourse"
 o   http://dev.processing.org/bugs/show_bug.cgi?id=729
+X move compiler to mode.java.* instead of runner
 
 fixed in 0192
 J auto-format screws up if/else/else if blocks
@@ -39,16 +40,23 @@ o   message(new String(b, offset, length), err, false);
 o   http://code.google.com/p/processing/issues/detail?id=197
 X   couldn't find a good way to reproduce this, closing
 
-_ remove PdeKeyListener, roll it into the Java InputHandler for JEditTextArea
-
-_ can't do fileMenu.add(base.getSketchbookMenu()); inside ThinkDifferent
-_   sketchbook location hasn't been determined yet
-
-_ add splash image on os x
+macosx
+X add splash image on os x
 If you want a bundled app to show a splash screen you can do so by adding an entry named SplashFile to the Java section of the Info.plist:
 <key>SplashFile</key>
 <string>$JAVAROOT/splash.png</string>
 I do not know if it still works but it did in 2008 (see <http://lists.apple.com/archives/Java-dev/2008/Jun/msg00012.html>).
+
+mode work
+X opt for separate examples/sketchbook/libraries for each mode
+X   better to put the onus on the mode developers than users
+X   and rather than trying to figure out a complicated scheme for inclusion
+X   we can have something that takes care of auto-copying per-mode examples
+
+_ remove PdeKeyListener, roll it into the Java InputHandler for JEditTextArea
+
+_ can't do fileMenu.add(base.getSketchbookMenu()); inside ThinkDifferent
+_   sketchbook location hasn't been determined yet
 
 _ remove any reference to 'Editor' from Sketch.java
 _   or is that excessive, since Document is in there, etc
@@ -69,18 +77,16 @@ _ casey's vote:
 _   Standard, Android, JavaScript, Jython
 _   or: Processing, Android, Processing.js, Processing.py
 
-for the examples menu
-top level directories will be grayed out categories
-  Basics, Topics, 3D, Books, Libraries, Contributed Libraries
-'book' examples will be another category
-  i'll add vida examples, can offer to others if they want
-  should be "Getting Started" not GettingStarted
-tempting to make an 'examples' button on the toolbar?
-  rather than merging things in an awkward way
-also, move open to a submenu? 
-  then we'd have open / recent / sketchbook
-
-move compiler to mode.java.* instead of runner
+examples menu
+X top level directories will be grayed out categories
+X   Basics, Topics, 3D, Books, Libraries, Contributed Libraries
+X 'book' examples will be another category
+X   i'll add vida examples, can offer to others if they want
+X   should be "Getting Started" not GettingStarted
+_ examples button on toolbar?
+_ window that opens and contains list of examples
+_ also, move open to a submenu? 
+_   then we'd have open / recent / sketchbook
 
 change 'export' to 'export applet'
 android will be "Export Project", "Export Release Application"
@@ -90,11 +96,6 @@ _ note for reference: auto-format has been moved to edit
 _   this might be the same as arduino?
 
 We're making an assumption that the idea of a "library" refers to a block of Java-based code. The reasoning is that from within the PDE, we anticipate that it will be Java-compatible versions of other languages (such as Jython, JRuby, or Scala) as opposed to more generic languages. In the future we could open this up, but we'd rather not complicate things for the moment.
-
-_ opt for separate examples/sketchbook/libraries for each mode
-_   better to put the onus on the mode developers than users
-_   and rather than trying to figure out a complicated scheme for inclusion
-_   we can have something that takes care of auto-copying per-mode examples
 
 _ on linux, mozilla shouldn't be the default browser anymore
 _   is there a way to query the default browser? gnome-open? xdg-open?
