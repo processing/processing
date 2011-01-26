@@ -73,15 +73,7 @@ public class JEditTextArea extends JComponent
   /** The size of the offset between the leftmost padding and the code */
   public static final int leftHandGutter = 6;
 
-  /**
-   * Creates a new JEditTextArea with the default settings.
-   */
-  /*
-  public JEditTextArea()
-  {
-    this(TextAreaDefaults.getDefaults());
-  }
-   */
+  private InputMethodSupport inputMethodSupport = null;
 
   /**
    * Creates a new JEditTextArea with the specified settings.
@@ -144,12 +136,16 @@ public class JEditTextArea extends JComponent
   /**
    * Inline Input Method Support for Japanese.
    */
-  private InputMethodSupport inputMethodSupport = null;
   public InputMethodRequests getInputMethodRequests() {
-    if (inputMethodSupport == null) {
-      inputMethodSupport = new InputMethodSupport(this);
+    // Temporarily disabling for now.
+    // http://code.google.com/p/processing/issues/detail?id=335
+    if (false) {
+      if (inputMethodSupport == null) {
+        inputMethodSupport = new InputMethodSupport(this);
+      }
+      return inputMethodSupport;
     }
-    return inputMethodSupport;
+    return null;
   }
 
   /**
