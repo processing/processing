@@ -6,6 +6,7 @@ status.error.bgcolor = #662000
 status.edit.fgcolor = #000000
 status.edit.bgcolor = #cc9900
 status.font = SansSerif,plain,12
+#status.font.macosx = Helvetica,plain,12
 
 # GUI - TABS
 # settings for the tabs at the top
@@ -14,6 +15,7 @@ header.bgcolor = #818b95
 header.text.selected.color = #1a1a00
 header.text.unselected.color = #ffffff
 header.text.font = SansSerif,plain,12
+#header.text.font.macosx = Helvetica,plain,12
 
 # GUI - CONSOLE
 # font is handled by preferences, since size/etc is modifiable
@@ -24,11 +26,13 @@ console.error.color = #ff3000
 # GUI - BUTTONS
 buttons.bgcolor = #4a545e
 buttons.status.font = SansSerif,plain,12
+#buttons.status.font.macosx = Helvetica,plain,12
 buttons.status.color = #ffffff
 
 # GUI - MODE
 mode.button.bgcolor = #9ca6b0
 mode.button.font = SansSerif,plain,9
+#mode.button.font.macosx = Helvetica,plain,9
 mode.button.color = #4a545e
 
 # GUI - LINESTATUS
@@ -101,5 +105,6 @@ editor.comment2.style = #7e7e7e,plain
 
 
 # LINE STATUS - editor line number status bar at the bottom of the screen
-linestatus.font	   = SansSerif,plain,10
+linestatus.font = SansSerif,plain,10
+#linestatus.font.macosx = Helvetica,plain,10
 linestatus.height  = 20

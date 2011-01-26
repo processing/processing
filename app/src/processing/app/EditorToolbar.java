@@ -123,8 +123,9 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
     mode = editor.getMode();
     bgcolor = mode.getColor("buttons.bgcolor");
     statusFont = mode.getFont("buttons.status.font");
-    statusColor = mode.getColor("buttons.status.color");    
-    modeTitle = mode.getTitle().toUpperCase();    
+    statusColor = mode.getColor("buttons.status.color");
+    modeTitle = mode.getTitle().toUpperCase();
+    modeTextFont = mode.getFont("mode.button.font");
 
     addMouseListener(this);
     addMouseMotionListener(this);
