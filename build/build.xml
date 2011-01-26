@@ -103,12 +103,23 @@
       <fileset dir="shared/tools" />
     </copy>
     
+    <!-- copy libraries -->
+    <copy todir="${target.path}/modes/java/libraries">
+      <fileset dir="../java/libraries">
+	<include name="**/library/**" />
+	<include name="**/src/**" />
+      </fileset>
+    </copy>
+
     <!-- copy shared library folder -->
+<!--
     <copy todir="${target.path}/modes/java/libraries">
       <fileset dir="shared/modes/java/libraries" />
     </copy>
+-->
     
     <!-- copy libraries for dxf, pdf, etc. -->
+<!--
     <copy todir="${target.path}/modes/java/libraries/dxf">
       <fileset dir="../dxf" includes="library/**,src/**" />
     </copy>
@@ -127,8 +138,10 @@
     <copy todir="${target.path}/modes/java/libraries/video">
       <fileset dir="../video" includes="library/**,src/**" />
     </copy>
+-->
     
     <!-- Unzip documentation + examples -->
+<!--
     <unzip dest="${target.path}/modes/java" 
 	   src="shared/modes/java/examples.zip" 
 	   overwrite="false">
@@ -137,6 +150,7 @@
 	<exclude name="**/._*" />
       </patternset>
     </unzip>
+-->
     <unzip dest="${target.path}/modes/java" 
 	   src="shared/modes/java/reference.zip" 
 	   overwrite="false">
