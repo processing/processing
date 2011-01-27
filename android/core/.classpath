@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="processing/core/PPolygon.java" kind="src" path="src"/>
+	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="var" path="ANDROID_LIB"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
