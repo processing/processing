@@ -1041,6 +1041,25 @@ public class JavaBuild {
    * Export to application via GUI.
    */
   protected boolean exportApplication() throws IOException, SketchException {
+    // Do the build once, so that we know what libraries are in use (and what
+    // the situation is with their native libs), and also for efficiency of 
+    // not redoing the compilation for each platform. In particular, though, 
+    // importedLibraries won't be set until the preprocessing has finished, 
+    // so we have to do that before the stuff below.
+    String foundName = build();
+
+    // (already reported) error during export, exit this function
+    if (foundName == null) return false;
+
+    // if name != exportSketchName, then that's weirdness
+    // BUG unfortunately, that can also be a bug in the preproc :(
+    if (!sketch.getName().equals(foundName)) {
+      Base.showWarning("Error during export",
+                       "Sketch name is " + sketch.getName() + " but the sketch\n" +
+                       "name in the code was " + foundName, null);
+      return false;
+    }
+
     String path = null;
     for (String platformName : PConstants.platformNames) {
       int platform = Base.getPlatformIndex(platformName);
@@ -1073,32 +1092,14 @@ public class JavaBuild {
   /**
    * Export to application without GUI.
    */
-  public boolean exportApplication(String destPath,
+  private boolean exportApplication(String destPath,
                                    int exportPlatform,
                                    int exportBits) throws IOException, SketchException {
     File destFolder = new File(destPath);
 //    sketch.prepareBuild(destFolder);
     mode.prepareExportFolder(destFolder);
 
-    // build the sketch
-//    File srcFolder = sketch.makeTempFolder();
-//    File binFolder = sketch.makeTempFolder();
-//    String foundName = build(srcFolder, binFolder);
-    String foundName = build();
-
-    // (already reported) error during export, exit this function
-    if (foundName == null) return false;
-
-    // if name != exportSketchName, then that's weirdness
-    // BUG unfortunately, that can also be a bug in the preproc :(
-    if (!sketch.getName().equals(foundName)) {
-      Base.showWarning("Error during export",
-                       "Sketch name is " + sketch.getName() + " but the sketch\n" +
-                       "name in the code was " + foundName, null);
-      return false;
-    }
-
-
+    
     /// figure out where the jar files will be placed
 
     File jarFolder = new File(destFolder, "lib");
