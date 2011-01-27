@@ -81,8 +81,8 @@ import processing.core.*;
  * }
  * </PRE>
  */
+@SuppressWarnings("deprecation")
 public class MovieMaker {
-
   public static final int RAW = StdQTConstants.kRawCodecType;
   public static final int ANIMATION = StdQTConstants.kAnimationCodecType;
   public static final int BASE = StdQTConstants.kBaseCodecType;

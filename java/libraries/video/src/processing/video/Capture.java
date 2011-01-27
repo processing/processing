@@ -38,6 +38,7 @@ import quicktime.util.RawEncodedImage;
 /**
  * Watchin' shit on the telly.
  */
+@SuppressWarnings("deprecation")
 public class Capture extends PImage implements Runnable {
 
   // there are more, but these are all we'll provide for now
