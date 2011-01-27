@@ -1060,19 +1060,24 @@ public class JavaBuild {
       return false;
     }
 
-    String path = null;
+    File folder = null;
     for (String platformName : PConstants.platformNames) {
       int platform = Base.getPlatformIndex(platformName);
       if (Preferences.getBoolean("export.application.platform." + platformName)) {
         if (Library.hasMultipleArch(platform, importedLibraries)) {
           // export the 32-bit version
-          path = new File(sketch.getFolder(), "application." + platformName + "32").getAbsolutePath();
-          if (!exportApplication(path, platform, 32)) {
+          folder = new File(sketch.getFolder(), "application." + platformName + "32");
+          if (!exportApplication(folder, platform, 32)) {
             return false;
           }
           // export the 64-bit version
-          path = new File(sketch.getFolder(), "application." + platformName + "64").getAbsolutePath();
-          if (!exportApplication(path, platform, 64)) {
+          folder = new File(sketch.getFolder(), "application." + platformName + "64");
+          if (!exportApplication(folder, platform, 64)) {
+            return false;
+          }
+        } else { // just make a single one for this platform
+          folder = new File(sketch.getFolder(), "application." + platformName);
+          if (!exportApplication(folder, platform, 0)) {
             return false;
           }
         }
@@ -1092,11 +1097,9 @@ public class JavaBuild {
   /**
    * Export to application without GUI.
    */
-  private boolean exportApplication(String destPath,
+  private boolean exportApplication(File destFolder,
                                    int exportPlatform,
                                    int exportBits) throws IOException, SketchException {
-    File destFolder = new File(destPath);
-//    sketch.prepareBuild(destFolder);
     mode.prepareExportFolder(destFolder);
 
     

@@ -58,7 +58,7 @@ public class Library {
   }  
 
   /** Filter to pull out just files and no directories, and to skip export.txt */
-  FilenameFilter standardFilter = new FilenameFilter() {
+  static FilenameFilter standardFilter = new FilenameFilter() {
     public boolean accept(File dir, String name) {
       // skip .DS_Store files, .svn folders, etc
       if (name.charAt(0) == '.') return false;
@@ -69,7 +69,7 @@ public class Library {
     }
   };
 
-  FilenameFilter jarFilter = new FilenameFilter() {
+  static FilenameFilter jarFilter = new FilenameFilter() {
     public boolean accept(File dir, String name) {
       if (name.charAt(0) == '.') return false;  // skip ._blah.jar crap on OS X
       if (new File(dir, name).isDirectory()) return false;
@@ -140,22 +140,25 @@ public class Library {
       String[] platformList64 = platform64 == null ? null : PApplet.splitTokens(platform64, ", ");
 
       if (platformAll == null) {
-        File folderAll = new File(libraryFolder, platformName);
-        if (folderAll.exists()) {
-          platformList = PApplet.concat(baseList, folderAll.list(standardFilter));
-        }
+        platformList = listPlatformEntries(libraryFolder, platformName, baseList);
+//        File folderAll = new File(libraryFolder, platformName);
+//        if (folderAll.exists()) {
+//          platformList = PApplet.concat(baseList, folderAll.list(standardFilter));
+//        }
       }
       if (platform32 == null) {
-        File folder32 = new File(libraryFolder, platformName32);
-        if (folder32.exists()) {
-          platformList32 = PApplet.concat(baseList, folder32.list(standardFilter));
-        }
+        platformList32 = listPlatformEntries(libraryFolder, platformName32, baseList);
+//        File folder32 = new File(libraryFolder, platformName32);
+//        if (folder32.exists()) {
+//          platformList32 = PApplet.concat(baseList, folder32.list(standardFilter));
+//        }
       }
       if (platform64 == null) {
-        File folder64 = new File(libraryFolder, platformName64);
-        if (folder64.exists()) {
-          platformList64 = PApplet.concat(baseList, folder64.list(standardFilter));
-        }
+        platformList64 = listPlatformEntries(libraryFolder, platformName64, baseList);
+//        File folder64 = new File(libraryFolder, platformName64);
+//        if (folder64.exists()) {
+//          platformList64 = PApplet.concat(baseList, folder64.list(standardFilter));
+//        }
       }
 
       if (platformList32 != null || platformList64 != null) {
@@ -188,6 +191,27 @@ public class Library {
 
     // get the path for all .jar files in this code folder
     packageList = Base.packageListFromClassPath(getClassPath());
+  }
+  
+  
+  /**
+   * List who's inside a windows64, macosx, linux32, etc folder.
+   */
+  static String[] listPlatformEntries(File libraryFolder, String folderName, String[] baseList) {
+    File folder = new File(libraryFolder, folderName);
+    if (folder.exists()) {
+      String[] entries = folder.list(standardFilter);
+      if (entries != null) {
+        String[] outgoing = new String[entries.length + baseList.length];
+        for (int i = 0; i < entries.length; i++) {
+          outgoing[i] = folderName + "/" + entries[i];
+        }
+        // Copy the base libraries in there as well
+        System.arraycopy(baseList, 0, outgoing, entries.length, baseList.length);
+        return outgoing;
+      }
+    }
+    return null;
   }
   
 
