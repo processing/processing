@@ -38,6 +38,7 @@ import quicktime.util.QTHandle;
 import quicktime.util.RawEncodedImage;
 
 
+@SuppressWarnings("deprecation")
 public class Movie extends PImage implements PConstants, Runnable {
   Method movieEventMethod;
   String filename;
