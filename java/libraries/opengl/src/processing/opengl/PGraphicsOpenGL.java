@@ -28,7 +28,11 @@ import processing.core.*;
 import java.awt.*;
 import java.awt.font.*;
 import java.awt.geom.*;
+import java.io.*;
+import java.lang.reflect.Field;
 import java.nio.*;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
 import javax.media.opengl.*;
 import javax.media.opengl.glu.*;
@@ -110,6 +114,15 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
 
   public PGraphicsOpenGL() {
+    /*
+    AccessController.doPrivileged(new PrivilegedAction() {
+      public Object run() {
+        checkNatives();
+        return null;
+      }
+    });
+    */
+    
     glu = new GLU();
 
     tobj = glu.gluNewTess();
@@ -133,6 +146,86 @@ public class PGraphicsOpenGL extends PGraphics3D {
 //    lightBuffer = BufferUtil.newFloatBuffer(4);
 //    lightBuffer.put(3, 1.0f);
 //    lightBuffer.rewind();
+  }
+  
+  
+  boolean nativeLoaded;
+  static final String[] nativeList = { 
+    "jogl", "jogl_awt", "gluegen-rt"
+//    "jogl", "jogl_cg", "jogl_awt", "gluegen-rt"
+  };
+  
+  public static void addDir(String s) throws IOException {
+    try {
+        Field field = ClassLoader.class.getDeclaredField("usr_paths");
+        field.setAccessible(true);
+        String[] paths = (String[]) field.get(null);
+        for (int i = 0; i < paths.length; i++) {
+            if (s.equals(paths[i])) {
+                return;
+            }
+        }
+        String[] tmp = new String[paths.length + 1];
+        System.arraycopy(paths, 0, tmp, 0, paths.length);
+        tmp[paths.length] = s;
+        field.set(null, tmp);
+        System.setProperty("java.library.path", System.getProperty("java.library.path") + File.pathSeparator + s);
+    } catch (IllegalAccessException e) {
+        throw new IOException("Failed to get permissions to set library path");
+    } catch (NoSuchFieldException e) {
+        throw new IOException("Failed to get field handle to set library path");
+    }
+  }
+
+  void checkNatives() {
+    if (!nativeLoaded) {
+      String platform = "macosx";
+      try {
+//        /*
+        File folder = File.createTempFile("processing", "opengl");
+        folder.delete();  // kill the file
+        folder.mkdirs();  // make a folder instead
+        folder.deleteOnExit();  // destroy the evidence later
+        PApplet.open(folder.getAbsolutePath());
+//        String jlp = System.getProperty("java.library.path");
+//        jlp += File.pathSeparator + folder.getAbsolutePath();
+//        System.setProperty("java.library.path", jlp); // doubt it
+        
+//        System.setProperty("java.library.path", folder.getAbsolutePath());
+//        System.out.println("jlp now " + System.getProperty("java.library.path"));
+        
+        addDir(folder.getAbsolutePath());
+//         */
+//        File folder = new File(".");
+
+        for (String n : nativeList) {
+          String who = "lib" + n + ".jnilib";
+          InputStream input = 
+            getClass().getResourceAsStream("/natives/" + platform + "/" + who);
+          File targetFile = new File(folder, who);
+          System.out.println("natives to " + targetFile);
+          PApplet.saveStream(targetFile, input);
+          System.load(targetFile.getAbsolutePath());
+        }
+        
+        System.out.println("trying my own loadLibrary() hmmm...");
+        try {
+          System.loadLibrary("jogl");
+        } catch (RuntimeException e) {
+          e.printStackTrace();
+          System.out.println("did not go well");
+        }
+        System.out.println("done with that.");
+        
+        // Don't worry about it, I've already loaded 'em
+        com.sun.opengl.impl.NativeLibLoader.disableLoading();
+
+        nativeLoaded = true;
+        System.out.println("native loaded " + nativeLoaded);
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
   }
 
 
