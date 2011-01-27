@@ -380,12 +380,15 @@ public class JavaBuild {
     // grab the imports from the code just preproc'd
 
     importedLibraries = new ArrayList<Library>();
+    System.out.println("extra imports: " + result.extraImports);
     for (String item : result.extraImports) {
       // remove things up to the last dot
       int dot = item.lastIndexOf('.');
       // http://dev.processing.org/bugs/show_bug.cgi?id=1145
       String entry = (dot == -1) ? item : item.substring(0, dot);
+      System.out.println("library searching for " + entry);
       Library library = mode.getLibrary(entry);
+      System.out.println("  found " + library);
 
       if (library != null) {
         if (!importedLibraries.contains(library)) {
@@ -1078,9 +1081,10 @@ public class JavaBuild {
     mode.prepareExportFolder(destFolder);
 
     // build the sketch
-    File srcFolder = sketch.makeTempFolder();
-    File binFolder = sketch.makeTempFolder();
-    String foundName = build(srcFolder, binFolder);
+//    File srcFolder = sketch.makeTempFolder();
+//    File binFolder = sketch.makeTempFolder();
+//    String foundName = build(srcFolder, binFolder);
+    String foundName = build();
 
     // (already reported) error during export, exit this function
     if (foundName == null) return false;
