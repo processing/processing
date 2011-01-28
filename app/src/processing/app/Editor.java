@@ -97,6 +97,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
   private final Stack<Integer> caretRedoStack = new Stack<Integer>();
 
   private FindReplace find;
+  JMenu modeMenu;  
 
 
   protected Editor(final Base base, String path, int[] location, final Mode mode) {
@@ -153,6 +154,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     Box box = Box.createVerticalBox();
     Box upper = Box.createVerticalBox();
 
+    initModeMenu();
     toolbar = createToolbar();
     upper.add(toolbar);
 
@@ -295,6 +297,34 @@ public abstract class Editor extends JFrame implements RunnerListener {
   public Mode getMode() {
     return mode;
   }
+  
+  
+  protected void initModeMenu() {
+    modeMenu = new JMenu();
+    for (final Mode m : base.getModeList()) {
+      if (mode == m) {
+        JCheckBoxMenuItem item = new JCheckBoxMenuItem(m.getTitle());
+        // doesn't need a listener, since it doesn't do anything
+        item.setSelected(true);
+        modeMenu.add(item);
+      } else {
+        JMenuItem item = new JMenuItem(m.getTitle());
+        item.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            //          System.out.println(e);
+            base.changeMode(m);
+          }
+        });
+        modeMenu.add(item);
+      }
+    }
+  }
+  
+  
+  public JMenu getModeMenu() {
+    return modeMenu;
+  }
+
   
   
 //  public Settings getTheme() {

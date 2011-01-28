@@ -88,7 +88,7 @@ public class Base {
   private Mode defaultMode;
 //  private Mode androidMode;
   private Mode[] modeList;
-  private JMenu modeMenu;
+//  private JMenu modeMenu;
 
   private JMenu sketchbookMenu;
 
@@ -214,17 +214,6 @@ public class Base {
     defaultMode = new JavaMode(this, getContentFile("modes/java"));
     Mode androidMode = new AndroidMode(this, getContentFile("modes/android"));
     modeList = new Mode[] { defaultMode, androidMode };
-    modeMenu = new JMenu();
-    for (final Mode mode : modeList) {
-      JMenuItem item = new JMenuItem(mode.getTitle());
-      item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-//          System.out.println(e);
-          changeMode(mode);
-        }
-      });
-      modeMenu.add(item);
-    }
 
     // Get the sketchbook path, and make sure it's set properly
     determineSketchbookFolder();
@@ -287,11 +276,6 @@ public class Base {
 //  static protected String getExtension() {
 //    return ".pde";
 //  }
-  
-  
-  public JMenu getModeMenu() {
-    return modeMenu;
-  }
   
   
 //  public Mode getDefaultMode() {
@@ -525,6 +509,11 @@ public class Base {
         handleOpen(mainPath, where);
       }
     }
+  }
+  
+  
+  public Mode[] getModeList() {
+    return modeList;
   }
 
 
