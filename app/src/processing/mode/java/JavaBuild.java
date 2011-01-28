@@ -380,15 +380,15 @@ public class JavaBuild {
     // grab the imports from the code just preproc'd
 
     importedLibraries = new ArrayList<Library>();
-    System.out.println("extra imports: " + result.extraImports);
+//    System.out.println("extra imports: " + result.extraImports);
     for (String item : result.extraImports) {
       // remove things up to the last dot
       int dot = item.lastIndexOf('.');
       // http://dev.processing.org/bugs/show_bug.cgi?id=1145
       String entry = (dot == -1) ? item : item.substring(0, dot);
-      System.out.println("library searching for " + entry);
+//      System.out.println("library searching for " + entry);
       Library library = mode.getLibrary(entry);
-      System.out.println("  found " + library);
+//      System.out.println("  found " + library);
 
       if (library != null) {
         if (!importedLibraries.contains(library)) {
