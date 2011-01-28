@@ -52,6 +52,8 @@ X opt for separate examples/sketchbook/libraries for each mode
 X   better to put the onus on the mode developers than users
 X   and rather than trying to figure out a complicated scheme for inclusion
 X   we can have something that takes care of auto-copying per-mode examples
+X implement option to change modes
+X preliminary, ugly version of android coloring
 
 _ remove PdeKeyListener, roll it into the Java InputHandler for JEditTextArea
 
