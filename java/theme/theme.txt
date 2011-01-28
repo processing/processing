@@ -30,10 +30,11 @@ buttons.status.font = SansSerif,plain,12
 buttons.status.color = #ffffff
 
 # GUI - MODE
-mode.button.bgcolor = #9ca6b0
+#mode.button.bgcolor = #9ca6b0
 mode.button.font = SansSerif,plain,9
 #mode.button.font.macosx = Helvetica,plain,9
-mode.button.color = #4a545e
+#mode.button.color = #4a545e
+mode.button.color = #9ca6b0
 
 # GUI - LINESTATUS
 linestatus.color = #ffffff

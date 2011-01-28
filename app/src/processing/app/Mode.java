@@ -28,7 +28,7 @@ public abstract class Mode {
 
   // these menus are shared so that they needn't be rebuilt for all windows
   // each time a sketch is created, renamed, or moved.
-  protected JMenu examplesMenu;
+  protected JMenu examplesMenu;  // this is for the menubar, not the toolbar
   protected JMenu importMenu;
   
   // popup menu used for the toolbar
@@ -48,7 +48,11 @@ public abstract class Mode {
     // Get paths for the libraries and examples in the mode folder
     examplesFolder = new File(folder, "examples");
     librariesFolder = new File(folder, "libraries");
-    
+
+//    rebuildToolbarMenu();
+    rebuildLibraryList();
+//    rebuildExamplesMenu();
+
     try {
       theme = new Settings(new File(folder, "theme/theme.txt"));
     } catch (IOException e) {
@@ -130,16 +134,20 @@ public abstract class Mode {
   
   public JMenu getToolbarMenu() {
     if (toolbarMenu == null) {
-      toolbarMenu = new JMenu();
+//      toolbarMenu = new JMenu();
       rebuildToolbarMenu();
     }
     return toolbarMenu;
   }
-  
-  
+
+
   protected void rebuildToolbarMenu() {  //JMenu menu) {
     JMenuItem item;
-    toolbarMenu.removeAll();
+    if (toolbarMenu == null) {
+      toolbarMenu = new JMenu();
+    } else {
+      toolbarMenu.removeAll();
+    }
 
     //System.out.println("rebuilding toolbar menu");
     // Add the single "Open" item
@@ -228,20 +236,23 @@ public abstract class Mode {
   
   public JMenu getExamplesMenu() {
     if (examplesMenu == null) {
-      examplesMenu = new JMenu("Examples");
-      rebuildExamplesMenu(examplesMenu, false);
+      rebuildExamplesMenu();
     }
     return examplesMenu;
   }
 
 
+  public void rebuildExamplesMenu() {
+    if (examplesMenu == null) {
+      examplesMenu = new JMenu("Examples");
+    }
+    rebuildExamplesMenu(examplesMenu, false);
+  }
+  
+  
   public void rebuildExamplesMenu(JMenu menu, boolean replace) {
     try {
-      menu.removeAll();
-      //base.addSketches(menu, examplesFolder, false);
-      
       // break down the examples folder for examples
-//      System.out.println("checking examples folder " + examplesFolder);
       File[] subfolders = examplesFolder.listFiles(new FilenameFilter() {
         public boolean accept(File dir, String name) {
           return dir.isDirectory() && name.charAt(0) != '.';
@@ -256,9 +267,11 @@ public abstract class Mode {
         menu.addSeparator();
       }
 
+//      if (coreLibraries == null) {
+//        rebuildLibraryList();
+//      }
+      
       // get library examples
-//      JMenuItem coreItem = new JMenuItem("Core Libraries");
-//      coreItem.setEnabled(false);
       Base.addDisabledItem(menu, "Libraries");
       for (Library lib : coreLibraries) {
         if (lib.hasExamples()) {

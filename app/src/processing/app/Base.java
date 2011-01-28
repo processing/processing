@@ -85,9 +85,10 @@ public class Base {
   // a lone file menu to be used when all sketch windows are closed
   static public JMenu defaultFileMenu;
 
-  private Mode defaultMode = new JavaMode(this, getContentFile("modes/java"));
-  private Mode androidMode = new AndroidMode(this, getContentFile("modes/android"));
-  private Mode[] modeList = { defaultMode, androidMode };
+  private Mode defaultMode;
+//  private Mode androidMode;
+  private Mode[] modeList;
+  private JMenu modeMenu;
 
   private JMenu sketchbookMenu;
 
@@ -117,7 +118,7 @@ public class Base {
     } catch (Exception e) {
       e.printStackTrace();
     }
-
+    
     initPlatform();
 
     // Use native popups so they don't look so crappy on osx
@@ -209,6 +210,22 @@ public class Base {
 
 
   public Base(String[] args) {
+    // TODO this will be dynamically loading modes in no time
+    defaultMode = new JavaMode(this, getContentFile("modes/java"));
+    Mode androidMode = new AndroidMode(this, getContentFile("modes/android"));
+    modeList = new Mode[] { defaultMode, androidMode };
+    modeMenu = new JMenu();
+    for (final Mode mode : modeList) {
+      JMenuItem item = new JMenuItem(mode.getTitle());
+      item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+//          System.out.println(e);
+          changeMode(mode);
+        }
+      });
+      modeMenu.add(item);
+    }
+
     // Get the sketchbook path, and make sure it's set properly
     determineSketchbookFolder();
 
@@ -267,14 +284,19 @@ public class Base {
    * all over the place. While it may seem like fun to send the Arduino guys
    * on a treasure hunt, it gets old after a while.
    */
-  static protected String getExtension() {
-    return ".pde";
+//  static protected String getExtension() {
+//    return ".pde";
+//  }
+  
+  
+  public JMenu getModeMenu() {
+    return modeMenu;
   }
   
   
-  public Mode getDefaultMode() {
-    return defaultMode;
-  }
+//  public Mode getDefaultMode() {
+//    return defaultMode;
+//  }
 
 
   /**
@@ -478,6 +500,34 @@ public class Base {
   }
 
 
+  protected void changeMode(Mode mode) {
+    if (activeEditor.getMode() != mode) {
+      Sketch sketch = activeEditor.getSketch();
+      if (sketch.isModified()) {
+        Base.showWarning("Save", 
+                         "Please save the sketch before changing the mode.", 
+                         null);
+      } else {
+        String mainPath = sketch.getMainFilePath();
+
+        // save a mode file into this sketch folder
+        File sketchProps = new File(sketch.getFolder(), "sketch.properties"); 
+        PrintWriter writer = PApplet.createWriter(sketchProps);
+        writer.println("mode=" + mode.getTitle());
+        writer.flush();
+        writer.close();
+
+        // close this sketch
+        int[] where = activeEditor.getPlacement();
+        handleClose(activeEditor);
+        
+        // re-open the sketch
+        handleOpen(mainPath, where);
+      }
+    }
+  }
+
+
   // Because of variations in native windowing systems, no guarantees about
   // changes to the focused and active Windows can be made. Developers must
   // never assume that this Window is the focused or active Window until this
@@ -537,13 +587,13 @@ public class Base {
   }
 
 
-//  /**
-//   * Return the same mode as the active editor, or the default mode, which
-//   * begins as Java/Standard, but is updated with the last mode used.
-//   */
-//  protected Mode nextEditorMode() {
-//    return (activeEditor == null) ? defaultMode : activeEditor.getMode();
-//  }
+  /**
+   * Return the same mode as the active editor, or the default mode, which
+   * begins as Java/Standard, but is updated with the last mode used.
+   */
+  public Mode nextEditorMode() {
+    return (activeEditor == null) ? defaultMode : activeEditor.getMode();
+  }
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -616,7 +666,8 @@ public class Base {
     newbieDir.mkdirs();
 
     // Make an empty pde file
-    File newbieFile = new File(newbieDir, newbieName + getExtension());
+    //File newbieFile = new File(newbieDir, newbieName + getExtension());
+    File newbieFile = new File(newbieDir, newbieName + "." + defaultMode.getDefaultExtension());
     new FileOutputStream(newbieFile);  // create the file
     return newbieFile.getAbsolutePath();
   }
@@ -707,12 +758,22 @@ public class Base {
     //fd.setDirectory(Preferences.get("sketchbook.path"));
     //fd.setDirectory(getSketchbookPath());
 
+    final ArrayList<String> extensions = new ArrayList<String>();
+    for (Mode mode : modeList) {
+      extensions.add(mode.getDefaultExtension());
+    }
+    
     // Only show .pde files as eligible bachelors
     fd.setFilenameFilter(new FilenameFilter() {
         public boolean accept(File dir, String name) {
           // TODO this doesn't seem to ever be used. AWESOME.
-          //System.out.println("check filter on " + dir + " " + name);
-          return name.toLowerCase().endsWith(getExtension());
+          System.out.println("check filter on " + dir + " " + name);
+          for (String ext : extensions) {
+            if (name.toLowerCase().endsWith("." + ext)) {
+              return true;
+            }
+          }
+          return false; 
         }
       });
 
@@ -778,20 +839,28 @@ public class Base {
 //      }
 //    }
 
-//    System.err.println("  creating new editor");
-//    Editor editor = new Editor(this, defaultMode, path, location);
-    Editor editor = defaultMode.createEditor(this, path, location);
-//    Editor editor = null;
-//    try {
-//      editor = new Editor(this, path, location);
-//    } catch (Exception e) {
-//      e.printStackTrace();
-//      System.err.flush();
-//      System.out.flush();
-//      System.exit(1);
-//    }
-//    System.err.println("  done creating new editor");
-//    EditorConsole.systemErr.println("  done creating new editor");
+    Mode nextMode = nextEditorMode();
+    try {
+      File sketchFolder = new File(path).getParentFile();
+      File sketchProps = new File(sketchFolder, "sketch.properties");
+      if (sketchProps.exists()) {
+        Settings props = new Settings(sketchProps);
+        String modeTitle = props.get("mode");
+        if (modeTitle != null) {
+          nextMode = findMode(modeTitle);
+          if (nextMode == null) {
+            Base.showWarning("Depeche Mode", 
+                             "This sketch was last used in “" + modeTitle + "” mode,\n" +
+                             "which does not appear to be installed. The sketch will\n" +
+                             "be opened in “" + defaultMode.getTitle() + "” mode instead.", null);
+            nextMode = defaultMode;
+          }
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    Editor editor = nextMode.createEditor(this, path, location);
 
     // Make sure that the sketch actually loaded
     if (editor.getSketch() == null) {
@@ -806,6 +875,16 @@ public class Base {
     editor.setVisible(true);
 
     return editor;
+  }
+  
+  
+  protected Mode findMode(String title) {
+    for (Mode mode : modeList) {
+      if (mode.getTitle().equals(title)) {
+        return mode;
+      }
+    }
+    return null;
   }
 
 
@@ -1001,7 +1080,9 @@ public class Base {
   protected boolean addSketches(JMenu menu, File folder,
                                 final boolean replaceExisting) throws IOException {
     // skip .DS_Store files, etc (this shouldn't actually be necessary)
-    if (!folder.isDirectory()) return false;
+    if (!folder.isDirectory()) {
+      return false;
+    }
 
     if (folder.getName().equals("libraries")) {
       return false;  // let's not go there
@@ -1009,12 +1090,12 @@ public class Base {
     
     String[] list = folder.list();
     // If a bad folder or unreadable or whatever, this will come back null
-    if (list == null) return false;
+    if (list == null) {
+      return false;
+    }
 
-    // Alphabetize list, since it's not always alpha order
+    // Alphabetize the list, since it's not always alpha order
     Arrays.sort(list, String.CASE_INSENSITIVE_ORDER);
-    //processing.core.PApplet.println("adding sketches " + folder.getAbsolutePath());
-    //PApplet.println(list);
 
     ActionListener listener = new ActionListener() {
         public void actionPerformed(ActionEvent e) {
@@ -1040,52 +1121,92 @@ public class Base {
     // offers no speed improvement
     //menu.addActionListener(listener);
 
-    boolean ifound = false;
+    boolean found = false;
 
-    for (int i = 0; i < list.length; i++) {
-      if ((list[i].charAt(0) == '.') ||
-          list[i].equals("CVS")) continue;
+//    for (int i = 0; i < list.length; i++) {
+//      if ((list[i].charAt(0) == '.') ||
+//          list[i].equals("CVS")) continue;
+    for (String name : list) {
+      if (name.charAt(0) == '.') {
+        continue;
+      }
 
-      File subfolder = new File(folder, list[i]);
-      if (!subfolder.isDirectory()) continue;
+      File subfolder = new File(folder, name);
+      if (subfolder.isDirectory()) {
+        File entry = checkSketchFolder(subfolder, name);
+        if (entry != null) {
 
-      File entry = new File(subfolder, list[i] + getExtension());
-      // if a .pde file of the same prefix as the folder exists..
-      if (entry.exists()) {
-        //String sanityCheck = sanitizedName(list[i]);
-        //if (!sanityCheck.equals(list[i])) {
-        if (!Sketch.isSanitaryName(list[i])) {
-          if (!builtOnce) {
-            String complaining =
-              "The sketch \"" + list[i] + "\" cannot be used.\n" +
-              "Sketch names must contain only basic letters and numbers\n" +
-              "(ASCII-only with no spaces, " +
-              "and it cannot start with a number).\n" +
-              "To get rid of this message, remove the sketch from\n" +
-              entry.getAbsolutePath();
-            Base.showMessage("Ignoring sketch with bad name", complaining);
+//      File entry = new File(subfolder, list[i] + getExtension());
+//      // if a .pde file of the same prefix as the folder exists..
+//      if (entry.exists()) {
+//        //String sanityCheck = sanitizedName(list[i]);
+//        //if (!sanityCheck.equals(list[i])) {
+//        if (!Sketch.isSanitaryName(list[i])) {
+//          if (!builtOnce) {
+//            String complaining =
+//              "The sketch \"" + list[i] + "\" cannot be used.\n" +
+//              "Sketch names must contain only basic letters and numbers\n" +
+//              "(ASCII-only with no spaces, " +
+//              "and it cannot start with a number).\n" +
+//              "To get rid of this message, remove the sketch from\n" +
+//              entry.getAbsolutePath();
+//            Base.showMessage("Ignoring sketch with bad name", complaining);
+//          }
+//          continue;
+//        }
+
+          JMenuItem item = new JMenuItem(name);
+          item.addActionListener(listener);
+          item.setActionCommand(entry.getAbsolutePath());
+          menu.add(item);
+          found = true;
+
+        } else {
+          // not a sketch folder, but maybe a subfolder containing sketches
+          JMenu submenu = new JMenu(name);
+          // needs to be separate var otherwise would set ifound to false
+          boolean anything = addSketches(submenu, subfolder, replaceExisting);
+          if (anything) {
+            menu.add(submenu);
+            found = true;
           }
-          continue;
-        }
-
-        JMenuItem item = new JMenuItem(list[i]);
-        item.addActionListener(listener);
-        item.setActionCommand(entry.getAbsolutePath());
-        menu.add(item);
-        ifound = true;
-
-      } else {
-        // not a sketch folder, but maybe a subfolder containing sketches
-        JMenu submenu = new JMenu(list[i]);
-        // needs to be separate var otherwise would set ifound to false
-        boolean found = addSketches(submenu, subfolder, replaceExisting);
-        if (found) {
-          menu.add(submenu);
-          ifound = true;
         }
       }
     }
-    return ifound;  // actually ignored, but..
+    return found;  // actually ignored, but..
+  }
+
+
+  /**
+   * Check through the various modes and see if this is a legit sketch. 
+   * Because the default mode will be the first in the list, this will always
+   * prefer that one over the others.
+   */
+  File checkSketchFolder(File subfolder, String item) {
+    for (Mode mode : modeList) {
+      File entry = new File(subfolder, item + "." + mode.getDefaultExtension());
+      // if a .pde file of the same prefix as the folder exists..
+      if (entry.exists()) {
+        return entry;
+      }
+      // for the new releases, don't bother lecturing.. just ignore the sketch
+      /*
+      if (!Sketch.isSanitaryName(list[i])) {
+        if (!builtOnce) {
+          String complaining =
+            "The sketch \"" + list[i] + "\" cannot be used.\n" +
+            "Sketch names must contain only basic letters and numbers\n" +
+            "(ASCII-only with no spaces, " +
+            "and it cannot start with a number).\n" +
+            "To get rid of this message, remove the sketch from\n" +
+            entry.getAbsolutePath();
+          Base.showMessage("Ignoring sketch with bad name", complaining);
+        }
+        continue;
+      }
+      */
+    }
+    return null;
   }
 
 
