@@ -97,6 +97,7 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
 //  String modeTitle = "ANDROID"; //"Java";
   int modeX1, modeY1;
   int modeX2, modeY2;
+  JMenu modeMenu;
   
   protected ArrayList<Button> buttons;
 
@@ -126,6 +127,7 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
     statusColor = mode.getColor("buttons.status.color");
     modeTitle = mode.getTitle().toUpperCase();
     modeTextFont = mode.getFont("mode.button.font");
+    modeButtonColor = mode.getColor("mode.button.color");
 
     addMouseListener(this);
     addMouseMotionListener(this);
@@ -432,23 +434,18 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
 
   public void mousePressed(MouseEvent e) {
     // ignore mouse presses so hitting 'run' twice doesn't cause problems
-    if (!isEnabled()) return;
-
-//    final int x = e.getX();
-//    final int y = e.getY();
-
-//    int sel = findSelection(x, y);
-//    if (sel == -1) return;
-//    currentRollover = -1;
-
-//    Button sel = findSelection(x, y);
-//    if (sel != null) {
-//      rollover = sel;
-//      handlePressed(sel);
-//    }
-    if (rollover != null) {
-      //handlePressed(rollover);
-      handlePressed(e, buttons.indexOf(rollover));
+    if (isEnabled()) {
+      int x = e.getX();
+      int y = e.getY();
+      if (x > modeX1 && x < modeX2 && y > modeY1 && y < modeY2) {
+        JPopupMenu popup = base.getModeMenu().getPopupMenu();
+        popup.show(this, x, y);
+      }
+      
+      if (rollover != null) {
+        //handlePressed(rollover);
+        handlePressed(e, buttons.indexOf(rollover));
+      }
     }
   }
   
