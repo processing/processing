@@ -438,7 +438,7 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
       int x = e.getX();
       int y = e.getY();
       if (x > modeX1 && x < modeX2 && y > modeY1 && y < modeY2) {
-        JPopupMenu popup = base.getModeMenu().getPopupMenu();
+        JPopupMenu popup = editor.getModeMenu().getPopupMenu();
         popup.show(this, x, y);
       }
       
