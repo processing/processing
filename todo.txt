@@ -103,6 +103,15 @@ _ test code folder on android
 _ test libraries on android
 _ test opengl on android
 
+ugliness
+_ inside AndroidPreprocessor
+_   processing.mode.java.JavaBuild.scrubComments(sketch.getCode(0).getProgram())
+_   PApplet.match(scrubbed, processing.mode.java.JavaBuild.SIZE_REGEX);
+_ remove PdeKeyListener, roll it into the Java InputHandler for JEditTextArea
+_ remove any reference to 'Editor' from Sketch.java
+_   or is that excessive, since Document is in there, etc
+_   Build does the heavy lifting anyway...
+
 _ don't make examples read-only
 _   just do them from psk files
 
@@ -112,11 +121,6 @@ _ make sure that android is working again
 
 _ the build is broken! the build is broken!
 _   http://code.google.com/p/processing/issues/detail?id=519
-
-_ remove PdeKeyListener, roll it into the Java InputHandler for JEditTextArea
-_ remove any reference to 'Editor' from Sketch.java
-_   or is that excessive, since Document is in there, etc
-_   Build does the heavy lifting anyway...
 
 _ export is broken in 0192
 _   http://code.google.com/p/processing/issues/detail?id=487

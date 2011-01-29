@@ -328,10 +328,11 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
   }
 
   
-  private Device waitForDevice(final Future<Device> deviceFuture, 
-                               final IndeterminateProgressMonitor monitor) throws MonitorCanceled {
+  private Device waitForDevice(Future<Device> deviceFuture, RunnerListener listener) throws MonitorCanceled { 
+//                               final IndeterminateProgressMonitor monitor) 
     for (int i = 0; i < 120; i++) {
-      if (monitor.isCanceled()) {
+//      if (monitor.isCanceled()) {
+      if (listener.isHalted()) {
         deviceFuture.cancel(true);
         throw new MonitorCanceled();
       }
@@ -360,13 +361,13 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
   private void runSketchOnDevice(final Future<Device> deviceFuture,
                                  final String target,
                                  RunnerListener listener) throws MonitorCanceled {
-    final IndeterminateProgressMonitor monitor =
-      new IndeterminateProgressMonitor(this,
-                                       "Building and launching...",
-                                       "Creating project...");
+//    final IndeterminateProgressMonitor monitor =
+//      new IndeterminateProgressMonitor(this,
+//                                       "Building and launching...",
+//                                       "Creating project...");
 
     listener.startIndeterminate();
-    listener.statusNotice("Building and launching...");
+    listener.statusNotice("Creating project...");
     
     build = new AndroidBuild(sketch, amode.getSDK());
     try {
@@ -380,10 +381,11 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
         statusError(e);
       }
       try {
-        if (monitor.isCanceled()) {
-          throw new MonitorCanceled();
-        }
-        monitor.setNote("Building...");
+//        if (monitor.isCanceled()) {
+//          throw new MonitorCanceled();
+//        }
+//        monitor.setNote("Building...");
+        listener.statusNotice("Building...");
         try {
           if (!build.antBuild(target)) {
             return;
@@ -392,11 +394,13 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
           statusError(se);
         }
 
-        if (monitor.isCanceled()) {
-          throw new MonitorCanceled();
-        }
-        monitor.setNote("Waiting for device to become available...");
-        final Device device = waitForDevice(deviceFuture, monitor);
+//        if (monitor.isCanceled()) {
+//          throw new MonitorCanceled();
+//        }
+//        monitor.setNote("Waiting for device to become available...");
+        listener.statusNotice("Waiting for device to become available...");
+//        final Device device = waitForDevice(deviceFuture, monitor);
+        final Device device = waitForDevice(deviceFuture, listener);
         if (device == null || !device.isAlive()) {
           statusError("Device killed or disconnected.");
           return;
@@ -404,19 +408,22 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
 
         device.addListener(this);
 
-        if (monitor.isCanceled()) {
+        if (listener.isHalted()) {
+//        if (monitor.isCanceled()) {
           throw new MonitorCanceled();
         }
-        monitor.setNote("Installing sketch on " + device.getId());
+//        monitor.setNote("Installing sketch on " + device.getId());
+        statusNotice("Installing sketch on " + device.getId());
         if (!device.installApp(build.getPathForAPK(target), this)) {
           statusError("Device killed or disconnected.");
           return;
         }
 
-        if (monitor.isCanceled()) {
-          throw new MonitorCanceled();
-        }
-        monitor.setNote("Starting sketch on " + device.getId());
+//        if (monitor.isCanceled()) {
+//          throw new MonitorCanceled();
+//        }
+//        monitor.setNote("Starting sketch on " + device.getId());
+        listener.statusNotice("Starting sketch on " + device.getId());
         if (startSketch(device)) {
           statusNotice("Sketch launched on the "
               + (device.isEmulator() ? "emulator" : "phone") + ".");
@@ -429,7 +436,8 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
         build.cleanup();
       }
     } finally {
-      monitor.close();
+//      monitor.close();
+      listener.stopIndeterminate();
     }
   }
 
