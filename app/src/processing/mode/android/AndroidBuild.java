@@ -96,21 +96,21 @@ class AndroidBuild extends JavaBuild {
 //      PApplet.saveStream(new File(libsFolder, "processing-core.jar"), input);
       Base.copyFile(coreZipFile, new File(libsFolder, "processing-core.jar"));
 
-      try {
-        // Copy any imported libraries or code folder contents to the project
-        copyLibraries(libsFolder, assetsFolder);
-        copyCodeFolder(libsFolder);
+//      try {
+      // Copy any imported libraries or code folder contents to the project
+      copyLibraries(libsFolder, assetsFolder);
+      copyCodeFolder(libsFolder);
 
-        // Copy the data folder, if one exists, to the 'assets' folder of the
-        // project
-        final File sketchDataFolder = sketch.getDataFolder();
-        if (sketchDataFolder.exists()) {
-          Base.copyDir(sketchDataFolder, assetsFolder);
-        }
-      } catch (final IOException e) {
-        e.printStackTrace();
-        throw new SketchException(e.getMessage());
+      // Copy the data folder, if one exists, to the 'assets' folder of the
+      // project
+      final File sketchDataFolder = sketch.getDataFolder();
+      if (sketchDataFolder.exists()) {
+        Base.copyDir(sketchDataFolder, assetsFolder);
       }
+//      } catch (final IOException e) {
+//        e.printStackTrace();
+//        throw new SketchException(e.getMessage());
+//      }
     }
 //    } catch (final SketchException e) {
 //      editor.statusError(e);
