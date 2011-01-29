@@ -26,17 +26,25 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import processing.app.*;
+import processing.app.Base;
+import processing.app.Editor;
+import processing.app.RunnerListener;
+import processing.app.Sketch;
+import processing.app.SketchException;
 import processing.mode.java.JavaMode;
 
 
 public class AndroidMode extends JavaMode {
-  static private AndroidSDK sdk;
-  static private File coreZipLocation;
+  private AndroidSDK sdk;
+  private File coreZipLocation;
+  private AndroidRunner runner;
 
-  
+
   public AndroidMode(Base base, File folder) {
     super(base, folder);
+    
+    // keytool -list -v -storepass android -keystore debug.keystore
+    // Valid from: Mon Nov 02 15:38:52 EST 2009 until: Tue Nov 02 16:38:52 EDT 2010
   }
 
   
@@ -108,4 +116,129 @@ public class AndroidMode extends JavaMode {
   
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
+  
+//  public void handleRun(Sketch sketch, RunnerListener listener) throws SketchException {
+//    JavaBuild build = new JavaBuild(sketch);
+//    String appletClassName = build.build();
+//    if (appletClassName != null) {
+//      runtime = new Runner(build, listener);
+//      runtime.launch(false);
+//    }
+//  }
+  public void handleRunEmulator(Sketch sketch, RunnerListener listener) throws SketchException, IOException {
+    listener.startIndeterminate();
+    listener.statusNotice("Starting build...");
+    AndroidBuild build = new AndroidBuild(sketch, this);
+    
+    listener.statusNotice("Building Android project...");
+    build.build("debug");
+    
+    listener.statusNotice("Running sketch on emulator...");
+    runner = new AndroidRunner(build, listener);
+    runner.launch(Devices.getInstance().getEmulator());
+  }
+  
+
+  public void handleRunDevice(Sketch sketch, RunnerListener listener) throws SketchException, IOException {
+//    JavaBuild build = new JavaBuild(sketch);
+//    String appletClassName = build.build();
+//    if (appletClassName != null) {
+//      runtime = new Runner(build, listener);
+//      runtime.launch(true);
+//    }
+    
+//    try {
+//      runSketchOnDevice(Environment.getInstance().getHardware(), "debug", this);
+//    } catch (final MonitorCanceled ok) {
+//      sketchStopped();
+//      statusNotice("Canceled.");
+//    }
+    listener.startIndeterminate();
+    listener.statusNotice("Starting build...");
+    AndroidBuild build = new AndroidBuild(sketch, this);
+    
+    listener.statusNotice("Building Android project...");
+    build.build("debug");
+    
+    listener.statusNotice("Running sketch on device...");
+    runner = new AndroidRunner(build, listener);
+    runner.launch(Devices.getInstance().getHardware());
+  }
+  
+  
+  public void handleStop(RunnerListener listener) {
+    listener.statusNotice("");
+    listener.stopIndeterminate();
+    
+//    if (runtime != null) {
+//      runtime.close();  // kills the window
+//      runtime = null; // will this help?
+//    }
+    if (runner != null) {
+      runner.close();
+      runner = null;
+    }
+  }
+  
+  
+//  public void handleExport(Sketch sketch, )
+  
+
+  /*
+  protected void buildReleaseForExport(Sketch sketch, String target) throws MonitorCanceled {
+//    final IndeterminateProgressMonitor monitor =
+//      new IndeterminateProgressMonitor(this,
+//                                       "Building and exporting...",
+//                                       "Creating project...");
+    try {
+      AndroidBuild build = new AndroidBuild(sketch, sdk);
+      File tempFolder = null;
+      try {
+        tempFolder = build.createProject(target, getCoreZipLocation());
+        if (tempFolder == null) {
+          return;
+        }
+      } catch (IOException e) {
+        e.printStackTrace();
+      } catch (SketchException se) {
+        se.printStackTrace();
+      }
+      try {
+        if (monitor.isCanceled()) {
+          throw new MonitorCanceled();
+        }
+        monitor.setNote("Building release version...");
+//        if (!build.antBuild("release")) {
+//          return;
+//        }
+
+        if (monitor.isCanceled()) {
+          throw new MonitorCanceled();
+        }
+
+        // If things built successfully, copy the contents to the export folder
+        File exportFolder = build.createExportFolder();
+        if (exportFolder != null) {
+          Base.copyDir(tempFolder, exportFolder);
+          listener.statusNotice("Done with export.");
+          Base.openFolder(exportFolder);
+        } else {
+          listener.statusError("Could not copy files to export folder.");
+        }
+      } catch (IOException e) {
+        listener.statusError(e);
+
+      } finally {
+        build.cleanup();
+      }
+    } finally {
+      monitor.close();
+    }
+  }
+  
+  
+  @SuppressWarnings("serial")
+  private static class MonitorCanceled extends Exception {
+  }
+  */
 }

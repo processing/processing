@@ -162,10 +162,6 @@ public class JavaMode extends Mode {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
   
-  /**
-   * Implements Sketch &rarr; Run.
-   * @throws SketchException 
-   */
   public void handleRun(Sketch sketch, RunnerListener listener) throws SketchException {
     JavaBuild build = new JavaBuild(sketch);
     String appletClassName = build.build();
