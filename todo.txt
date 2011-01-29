@@ -93,13 +93,19 @@ _ window that opens and contains list of examples
 _ also, move open to a submenu? 
 _   then we'd have open / recent / sketchbook
 
+regressions
+X test code folder on desktop
+X   with applet
+X   with application
+_ test controlp5 on app
+_ test controlp5 on applet
+_ test code folder on android
+_ test libraries on android
+_ test opengl on android
 
-_ library/export testing
-_   test controlp5
-_   test code folder on desktop
-_   test code folder on android
-_   test libraries on android
-_   test opengl on android
+_ strange window flicker when first opened
+
+_ make sure that android is working again
 
 _ the build is broken! the build is broken!
 _   http://code.google.com/p/processing/issues/detail?id=519
