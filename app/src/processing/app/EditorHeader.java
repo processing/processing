@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-08 Ben Fry and Casey Reas
+  Copyright (c) 2004-11 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -25,6 +25,7 @@ package processing.app;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Arrays;
 
 import javax.swing.*;
 
@@ -38,8 +39,8 @@ public class EditorHeader extends JComponent {
 
   Editor editor;
 
-  int tabLeft[];
-  int tabRight[];
+  Tab[] tabs = new Tab[0];
+  Tab[] visitOrder;
 
   Font font;
   FontMetrics metrics;
@@ -89,11 +90,32 @@ public class EditorHeader extends JComponent {
 
           } else {
             Sketch sketch = editor.getSketch();
-            for (int i = 0; i < sketch.getCodeCount(); i++) {
-              if ((x > tabLeft[i]) && (x < tabRight[i])) {
-                sketch.setCurrentCode(i);
+//            for (int i = 0; i < sketch.getCodeCount(); i++) {
+//              if ((x > tabLeft[i]) && (x < tabRight[i])) {
+//                sketch.setCurrentCode(i);
+//                repaint();
+//              }
+//            }
+            for (Tab tab : tabs) {
+              if (tab.contains(x)) {
+                sketch.setCurrentCode(tab.index);
                 repaint();
               }
+            }
+          }
+        }
+        
+        public void mouseExited(MouseEvent e) {
+          editor.statusEmpty();
+        }
+    });
+
+    addMouseMotionListener(new MouseMotionAdapter() {
+        public void mouseMoved(MouseEvent e) {
+          int x = e.getX();
+          for (Tab tab : tabs) {
+            if (tab.contains(x) && !tab.textVisible) {
+              editor.statusNotice(editor.getSketch().getCode(tab.index).getPrettyName());
             }
           }
         }
@@ -146,7 +168,7 @@ public class EditorHeader extends JComponent {
       imageH = sizeH;
       offscreen = createImage(imageW, imageH);
     }
-
+    
     Graphics g = offscreen.getGraphics();
     g.setFont(font);  // need to set this each time through
     metrics = g.getFontMetrics();
@@ -160,58 +182,154 @@ public class EditorHeader extends JComponent {
     g.setColor(backgroundColor);
     g.fillRect(0, 0, imageW, imageH);
 
-    int codeCount = sketch.getCodeCount();
-    if ((tabLeft == null) || (tabLeft.length < codeCount)) {
-      tabLeft = new int[codeCount];
-      tabRight = new int[codeCount];
+//    int codeCount = sketch.getCodeCount();
+//    if ((tabLeft == null) || (tabLeft.length < codeCount)) {
+//      tabLeft = new int[codeCount];
+//      tabRight = new int[codeCount];
+//    }
+    if (tabs.length != sketch.getCodeCount()) {
+      tabs = new Tab[sketch.getCodeCount()];
+      for (int i = 0; i < tabs.length; i++) {
+        tabs[i] = new Tab(i);
+      }
+      visitOrder = new Tab[sketch.getCodeCount() - 1];
     }
 
-    int x = 6; // offset from left edge of the component
-    for (int i = 0; i < sketch.getCodeCount(); i++) {
-      SketchCode code = sketch.getCode(i);
+//    int x = 6; // offset from left edge of the component
+    menuRight = sizeW - 16;
+    menuLeft = menuRight - pieces[0][MENU].getWidth(this);
+//    int tabMax = menuLeft - x;
+    int tabLeft = 6;
+    int tabMax = menuLeft - tabLeft;
 
+    // reset all tab positions
+    for (Tab tab : tabs) {
+      SketchCode code = sketch.getCode(tab.index);
+      tab.textVisible = true;
+      tab.lastVisited = code.lastVisited();
+      
       // hide extensions for .pde files (or whatever else is the norm elsewhere
       boolean hide = editor.getMode().hideExtension(code.getExtension());
       String codeName = hide ? code.getPrettyName() : code.getFileName();
-
       // if modified, add the li'l glyph next to the name
-      String text = "  " + codeName + (code.isModified() ? " \u00A7" : "  ");
-
-      int textWidth = (int)
-        font.getStringBounds(text, g2.getFontRenderContext()).getWidth();
-
-      int pieceCount = 2 + (textWidth / PIECE_WIDTH);
-      int pieceWidth = pieceCount * PIECE_WIDTH;
-
-      int state = (code == sketch.getCurrentCode()) ? SELECTED : UNSELECTED;
-      g.drawImage(pieces[state][LEFT], x, 0, null);
-      x += PIECE_WIDTH;
-
-      int contentLeft = x;
-      tabLeft[i] = x;
-      for (int j = 0; j < pieceCount; j++) {
-        g.drawImage(pieces[state][MIDDLE], x, 0, null);
-        x += PIECE_WIDTH;
-      }
-      tabRight[i] = x;
-      int textLeft = contentLeft + (pieceWidth - textWidth) / 2;
-
-      g.setColor(textColor[state]);
-      int baseline = (sizeH + fontAscent) / 2;
-      //g.drawString(sketch.code[i].name, textLeft, baseline);
-      g.drawString(text, textLeft, baseline);
-
-      g.drawImage(pieces[state][RIGHT], x, 0, null);
-      x += PIECE_WIDTH - 1;  // overlap by 1 pixel
+      tab.text = "  " + codeName + (code.isModified() ? " \u00A7" : "  ");
+      
+      tab.textWidth = (int)
+        font.getStringBounds(tab.text, g2.getFontRenderContext()).getWidth();
     }
 
-    menuLeft = sizeW - (16 + pieces[0][MENU].getWidth(this));
-    menuRight = sizeW - 16;
+    // make sure everything can fit
+    if (!placeTabs(tabLeft, tabMax, null)) {
+      //System.arraycopy(tabs, 0, visitOrder, 0, tabs.length);
+      // always show the tab with the sketch's name
+//      System.arraycopy(tabs, 1, visitOrder, 0, tabs.length - 1);
+      int index = 0;
+      // stock the array backwards so that the rightmost tabs are closed by default
+      for (int i = tabs.length - 1; i > 0; --i) {
+        visitOrder[index++] = tabs[i];
+      }
+      Arrays.sort(visitOrder);  // sort on when visited
+//      for (int i = 0; i < visitOrder.length; i++) {
+//        System.out.println(visitOrder[i].index + " " + visitOrder[i].text);
+//      }
+//      System.out.println();
+      
+      for (int i = 0; i < visitOrder.length; i++) {
+        tabs[visitOrder[i].index].textVisible = false;
+        if (placeTabs(tabLeft, tabMax, null)) {
+          break;
+        }
+      }
+    }
+    
+    // now actually draw the tabs
+    placeTabs(tabLeft, tabMax, g);
+
+//    for (int i = 0; i < sketch.getCodeCount(); i++) {
+//      SketchCode code = sketch.getCode(i);
+//      Tab tab = tabs[i];
+//
+//      int pieceCount = 2 + (tab.textWidth / PIECE_WIDTH);
+//      int pieceWidth = pieceCount * PIECE_WIDTH;
+//
+//      int state = (code == sketch.getCurrentCode()) ? SELECTED : UNSELECTED;
+//      g.drawImage(pieces[state][LEFT], x, 0, null);
+//      x += PIECE_WIDTH;
+//
+//      int contentLeft = x;
+//      tab.left = x;
+//      for (int j = 0; j < pieceCount; j++) {
+//        g.drawImage(pieces[state][MIDDLE], x, 0, null);
+//        x += PIECE_WIDTH;
+//      }
+//      tab.right = x;
+//      int textLeft = contentLeft + (pieceWidth - tab.textWidth) / 2;
+//
+//      g.setColor(textColor[state]);
+//      int baseline = (sizeH + fontAscent) / 2;
+//      //g.drawString(sketch.code[i].name, textLeft, baseline);
+//      g.drawString(tab.text, textLeft, baseline);
+//
+//      g.drawImage(pieces[state][RIGHT], x, 0, null);
+//      x += PIECE_WIDTH - 1;  // overlap by 1 pixel
+//    }
+
+//    menuLeft = sizeW - (16 + pieces[0][MENU].getWidth(this));
+//    menuRight = sizeW - 16;
     // draw the dropdown menu target
     g.drawImage(pieces[popup.isVisible() ? SELECTED : UNSELECTED][MENU],
                 menuLeft, 0, null);
 
     screen.drawImage(offscreen, 0, 0, null);
+  }
+  
+  
+  private boolean placeTabs(int left, int right, Graphics g) {
+    Sketch sketch = editor.getSketch();
+    int x = left;
+
+    for (int i = 0; i < sketch.getCodeCount(); i++) {
+      SketchCode code = sketch.getCode(i);
+      Tab tab = tabs[i];
+
+      int pieceCount = 2 + (tab.textWidth / PIECE_WIDTH);
+      if (tab.textVisible == false) {
+        pieceCount = 4;
+      }
+      int pieceWidth = pieceCount * PIECE_WIDTH;
+
+      int state = (code == sketch.getCurrentCode()) ? SELECTED : UNSELECTED;
+      if (g != null) {
+        g.drawImage(pieces[state][LEFT], x, 0, null);
+      }
+      x += PIECE_WIDTH;
+
+      int contentLeft = x;
+      tab.left = x;
+      for (int j = 0; j < pieceCount; j++) {
+        if (g != null) {
+          g.drawImage(pieces[state][MIDDLE], x, 0, null);
+        }
+        x += PIECE_WIDTH;
+      }
+      tab.right = x;
+
+      if (tab.textVisible) {
+        int textLeft = contentLeft + (pieceWidth - tab.textWidth) / 2;
+        if (g != null) {
+          g.setColor(textColor[state]);
+          int baseline = (sizeH + fontAscent) / 2;
+          //g.drawString(sketch.code[i].name, textLeft, baseline);
+          g.drawString(tab.text, textLeft, baseline);
+        }
+      }
+      
+      if (g != null) {
+        g.drawImage(pieces[state][RIGHT], x, 0, null);
+      }
+      x += PIECE_WIDTH - 1;  // overlap by 1 pixel
+    }
+    return x <= right;
   }
 
 
@@ -386,5 +504,43 @@ public class EditorHeader extends JComponent {
       return new Dimension(3000, Preferences.GRID_SIZE);
     }
     return new Dimension(3000, Preferences.GRID_SIZE - 1);
+  }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  class Tab implements Comparable {
+    int index;
+    int left;
+    int right;
+    String text;
+    int textWidth;
+    boolean textVisible;
+    long lastVisited;
+    
+    Tab(int index) {
+      this.index = index;
+    }
+    
+    boolean contains(int x) {
+      return x >= left && x <= right;
+    }
+
+    // sort by the last time visited
+    public int compareTo(Object o) {
+      Tab other = (Tab) o;
+      // do this here to deal with situation where both are 0
+      if (lastVisited == other.lastVisited) {
+        return 0;
+      }
+      if (lastVisited == 0) {
+        return -1;
+      }
+      if (other.lastVisited == 0) {
+        return 1;
+      }
+      return (int) (lastVisited - other.lastVisited);
+    }
   }
 }
