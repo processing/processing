@@ -19,7 +19,7 @@ import processing.mode.android.LogEntry.Severity;
 
 
 class Device implements DeviceProperties {
-  private final Environment env;
+  private final Devices env;
   private final String id;
   private final Set<Integer> activeProcesses = new HashSet<Integer>();
   private final Set<DeviceListener> listeners = 
@@ -28,7 +28,7 @@ class Device implements DeviceProperties {
   // mutable state
   private Process logcat;
 
-  public Device(final Environment env, final String id) {
+  public Device(final Devices env, final String id) {
     this.env = env;
     this.id = id;
   }
@@ -231,7 +231,7 @@ class Device implements DeviceProperties {
     return id;
   }
 
-  public Environment getEnv() {
+  public Devices getEnv() {
     return env;
   }
 

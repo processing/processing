@@ -35,25 +35,56 @@ import processing.mode.java.JavaBuild;
 class AndroidBuild extends JavaBuild {
   static final String basePackage = "processing.android.test";
   static final String sdkVersion = "7";
+  static final String sdkTarget = "android-" + sdkVersion;
 
 //  private final Editor editor;
   private final AndroidSDK sdk;
+  private final File coreZipFile;
 
-  Manifest manifest;
-//  String className;
+  private String target;
+  private Manifest manifest;
+
   /** temporary folder safely inside a 8.3-friendly folder */
-  File tmpFolder;
+  private File tmpFolder;
+
   /** build.xml file for this project */
-  File buildFile;
+  private File buildFile;
 
 
-  public AndroidBuild(final Sketch sketch, final AndroidSDK sdk) {
+  public AndroidBuild(final Sketch sketch, final AndroidMode mode) {
     super(sketch);
-    this.sdk = sdk;
+    
+    sdk = mode.getSDK();
+    coreZipFile = mode.getCoreZipLocation();
+    
+    AVD.ensureEclairAVD(sdk);
   }
 
 
-  public File createProject(String target, File coreZipFile) throws IOException, SketchException {
+  /**
+   * Build into temporary folders (needed for the Windows 8.3 bugs in the Android SDK). 
+   * @param target
+   * @throws SketchException 
+   * @throws IOException 
+   */
+  public File build(String target) throws IOException, SketchException {
+    this.target = target;
+    File folder = createProject();
+    if (folder != null) {
+      if (!antBuild()) {
+        return null;
+      }
+    }
+    return folder;
+  }
+  
+  
+  /**
+   * Create an Android project folder, and run the preprocessor on the sketch. 
+   * Populates the 'src' folder with Java code, and 'libs' folder with the 
+   * libraries and code folder contents. Also copies data folder to 'assets'.
+   */
+  public File createProject() throws IOException, SketchException {
     tmpFolder = createTempBuildFolder(sketch);
 
     // Create the 'src' folder with the preprocessed code.
@@ -193,11 +224,37 @@ class AndroidBuild extends JavaBuild {
     return androidFolder;
   }
   
+  
+  public boolean exportProject() throws IOException, SketchException {
+    File projectFolder = build("debug");
+    if (projectFolder == null) {
+      return false;
+    }
+
+    File exportFolder = createExportFolder();
+    Base.copyDir(projectFolder, exportFolder);
+    return true;
+  }
+
+
+  public boolean exportPackage() throws IOException, SketchException {
+    File projectFolder = build("release");
+    if (projectFolder == null) {
+      return false;
+    }
+    
+    // TODO all the signing magic needs to happen here
+
+    File exportFolder = createExportFolder();
+    Base.copyDir(projectFolder, exportFolder);
+    return true;
+  }
+  
 
   /**
    * @param target "debug" or "release"
    */
-  protected boolean antBuild(final String target) throws SketchException {
+  protected boolean antBuild() throws SketchException {
     final Project p = new Project();
     String path = buildFile.getAbsolutePath().replace('\\', '/');
     p.setUserProperty("ant.file", path);
@@ -293,7 +350,7 @@ class AndroidBuild extends JavaBuild {
 //  }
 
   
-  String getPathForAPK(final String target) {
+  String getPathForAPK() {
     String suffix = target.equals("release") ? "unsigned" : "debug";
     String apkName = "bin/" + sketch.getName() + "-" + suffix + ".apk";
     final File apkFile = new File(tmpFolder, apkName);
@@ -341,7 +398,7 @@ class AndroidBuild extends JavaBuild {
   private void writeDefaultProps(final File file) {
     final PrintWriter writer = PApplet.createWriter(file);
     //writer.println("target=Google Inc.:Google APIs:" + sdkVersion);
-    writer.println("target=android-" + sdkVersion);
+    writer.println("target=" + sdkTarget);
     writer.flush();
     writer.close();
   }

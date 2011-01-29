@@ -33,7 +33,8 @@ public class AVD {
    */
   public static final AVD defaultAVD =
     new AVD("Processing-Android-" + AndroidBuild.sdkVersion,
-            "Google Inc.:Google APIs:" + AndroidBuild.sdkVersion);
+            AndroidBuild.sdkTarget);
+            //"Google Inc.:Google APIs:" + AndroidBuild.sdkVersion);
 
 
   public static boolean ensureEclairAVD(final AndroidSDK sdk) {

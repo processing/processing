@@ -23,14 +23,14 @@ import processing.mode.android.EmulatorController.State;
  * @author Jonathan Feinberg &lt;jdf@pobox.com&gt;
  *
  */
-class Environment {
+class Devices {
   private static final String ADB_DEVICES_ERROR =
     "Received unfamiliar output from “adb devices”.\n" +
     "The device list may have errors.";
 
-  private static final Environment INSTANCE = new Environment();
+  private static final Devices INSTANCE = new Devices();
 
-  public static Environment getInstance() {
+  public static Devices getInstance() {
     return INSTANCE;
   }
 
@@ -54,7 +54,7 @@ class Environment {
   }
 
 
-  private Environment() {
+  private Devices() {
     if (processing.app.Base.DEBUG) {
       System.out.println("Starting up AndroidEnvironment");
     }
