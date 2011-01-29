@@ -54,30 +54,33 @@ X   and rather than trying to figure out a complicated scheme for inclusion
 X   we can have something that takes care of auto-copying per-mode examples
 X implement option to change modes
 X preliminary, ugly version of android coloring
+X can't do fileMenu.add(base.getSketchbookMenu()); inside ThinkDifferent
+X   sketchbook location hasn't been determined yet
+X change 'export' to 'export applet'
+X android will be "Export Project", "Export Release Application"
+X   along with "Run in Emulator" and "Run on Device"
 
-_ remove PdeKeyListener, roll it into the Java InputHandler for JEditTextArea
+serial
+X updated serial lib for mac osx
+X   http://code.google.com/p/processing/issues/detail?id=503
+X   http://rxtx.qbang.org/wiki/index.php/Download
 
-_ can't do fileMenu.add(base.getSketchbookMenu()); inside ThinkDifferent
-_   sketchbook location hasn't been determined yet
-
-_ remove any reference to 'Editor' from Sketch.java
-_   or is that excessive, since Document is in there, etc
-_   Build does the heavy lifting anyway...
-
-_ export is broken in 0192
-_   http://code.google.com/p/processing/issues/detail?id=487
-
-_ the build is broken! the build is broken!
-_   http://code.google.com/p/processing/issues/detail?id=519
-
-DO NOT USE "JVMArchs". It is deprecated, and manually overrides the natural architecture launching and ordering that LaunchServices does, including accommodating the 32-bit checkbox in the Get Info window.
-
-_ updated serial lib for mac osx
-_   http://code.google.com/p/processing/issues/detail?id=503
-
-_ casey's vote:
-_   Standard, Android, JavaScript, Jython
-_   or: Processing, Android, Processing.js, Processing.py
+editor
+X accented letter input is broken (on os x and windows)
+X   http://code.google.com/p/processing/issues/detail?id=335
+X   disabled input method support for now
+X make some fancy extendo things because the tabs get too big
+X   either condense or popdown menu thingy
+o   http://dev.processing.org/bugs/show_bug.cgi?id=54
+X   http://code.google.com/p/processing/issues/detail?id=17
+X   don't show tabs when there are too many
+X   maybe move the list of files to the top?
+X   or indicate which are visible somehow
+X   slightly longer.. rearrange?
+X     or just show tabs in (alpha?) order based on what's most recently used
+X   have some indicator that shows the tabs when they've disappeared
+X   or little mini tabs that expand/contract?
+X     and a way to control who's expanded and not
 
 examples menu
 X top level directories will be grayed out categories
@@ -90,9 +93,30 @@ _ window that opens and contains list of examples
 _ also, move open to a submenu? 
 _   then we'd have open / recent / sketchbook
 
-change 'export' to 'export applet'
-android will be "Export Project", "Export Release Application"
-  along with "Run in Emulator" and "Run on Device"
+
+_ library/export testing
+_   test controlp5
+_   test code folder on desktop
+_   test code folder on android
+_   test libraries on android
+_   test opengl on android
+
+_ the build is broken! the build is broken!
+_   http://code.google.com/p/processing/issues/detail?id=519
+
+_ remove PdeKeyListener, roll it into the Java InputHandler for JEditTextArea
+_ remove any reference to 'Editor' from Sketch.java
+_   or is that excessive, since Document is in there, etc
+_   Build does the heavy lifting anyway...
+
+_ export is broken in 0192
+_   http://code.google.com/p/processing/issues/detail?id=487
+
+DO NOT USE "JVMArchs". It is deprecated, and manually overrides the natural architecture launching and ordering that LaunchServices does, including accommodating the 32-bit checkbox in the Get Info window.
+
+_ casey's vote:
+_   Standard, Android, JavaScript, Jython
+_   or: Processing, Android, Processing.js, Processing.py
 
 _ note for reference: auto-format has been moved to edit
 _   this might be the same as arduino?
@@ -161,9 +185,6 @@ _ need to get a new stable release out there, the docs/ref are out of sync
 _ build is currently broken for p5 because of changes to the file layout
 _   something that gets fixed my 'make clean'
 
-_ Debugger highlights wrong line, and sometimes the wrong file
-_   http://code.google.com/p/processing/issues/detail?id=412
-
 . . . . 
 
 _ "save" clears undo information
@@ -220,9 +241,8 @@ _ add processing.js export tool from florian
 _   http://github.com/fjenett/processingjstool/
 _   http://github.com/fjenett/processingjstool/zipball/v0.0.6
 
-_ accented letter input is broken (on os x and windows)
-_   http://code.google.com/p/processing/issues/detail?id=335
-_   disabled input method support for now
+_ Input Method support (for Japanese et al.) has been disabled
+_   http://code.google.com/p/processing/issues/detail?id=526
 
 _ launch4j problem - FIXABLE
 _   no crash when double-clicking a sketch and loading it
@@ -905,6 +925,8 @@ PDE / Compiler & Preprocessor
 need examples
 _ Improve detection and handling of missing semicolons
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1036
+_ Debugger highlights wrong line, and sometimes the wrong file
+_   http://code.google.com/p/processing/issues/detail?id=412
 
 medium (bugs/features)
 _ mismatched square brackets generate bizarre and/or misleading error messages
@@ -983,15 +1005,6 @@ _   either synchronize the open (at a minimum)
 _   or wait for mac handlers to register an open event
 _   can also cause problems with opening multiple copies of same sketch
 _ after fixing name of sketch, ensure sketch of that name does not exist
-_ do quick fix for tab bar
-_   don't show tabs when there are too many
-_   maybe move the list of files to the top?
-_   or indicate which are visible somehow
-_   slightly longer.. rearrange?
-_     or just show tabs in (alpha?) order based on what's most recently used
-_   have some indicator that shows the tabs when they've disappeared
-_   or little mini tabs that expand/contract?
-_     and a way to control who's expanded and not
 _ add auto-save to the editor
 _   http://dev.processing.org/bugs/show_bug.cgi?id=739
 _ dragging title bar while sketch running causes strange selection behavior
@@ -1062,9 +1075,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=37
 
 PDE / Editor Header
 
-2 _ make some fancy extendo things because the tabs get too big
-2 _   either condense or popdown menu thingy
-2 _   http://dev.processing.org/bugs/show_bug.cgi?id=54
 5 _ key command for prev/next tab works, but not menu
 5 _   menu options are actually disabled because of inconsistency
 5 _   http://dev.processing.org/bugs/show_bug.cgi?id=1044

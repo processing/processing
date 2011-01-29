@@ -755,8 +755,7 @@ public class Base {
     // Only show .pde files as eligible bachelors
     fd.setFilenameFilter(new FilenameFilter() {
         public boolean accept(File dir, String name) {
-          // TODO this doesn't seem to ever be used. AWESOME.
-          System.out.println("check filter on " + dir + " " + name);
+          // confirmed to be working properly [fry 110128]
           for (String ext : extensions) {
             if (name.toLowerCase().endsWith("." + ext)) {
               return true;

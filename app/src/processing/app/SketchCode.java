@@ -49,6 +49,9 @@ public class SketchCode {
   /** Document object for this tab. Currently this is a SyntaxDocument. */
   private Document document;
 
+  /** Last time this tab was visited */
+  long visited;
+  
   /**
    * Undo Manager for this tab, each tab keeps track of their own
    * Editor.undo will be set to this object when this code is the tab
@@ -238,6 +241,11 @@ public class SketchCode {
     selectionStart = start;
     selectionStop = stop;
     scrollPosition = pos;
+  }
+  
+
+  public long lastVisited() {
+    return visited;
   }
   
   

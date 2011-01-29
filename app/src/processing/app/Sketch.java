@@ -1080,6 +1080,11 @@ public class Sketch {
    * </OL>
    */
   public void setCurrentCode(int which) {
+//    // for the tab sizing 
+//    if (current != null) {
+//      current.visited = System.currentTimeMillis();
+//      System.out.println(current.visited);
+//    }
     // if current is null, then this is the first setCurrent(0)
     if ((currentIndex == which) && (current != null)) {
       return;
@@ -1095,9 +1100,11 @@ public class Sketch {
 
     current = code[which];
     currentIndex = which;
+    current.visited = System.currentTimeMillis();
 
     editor.setCode(current);
-    editor.header.rebuild();
+//    editor.header.rebuild();
+    editor.header.repaint();
   }
 
 
