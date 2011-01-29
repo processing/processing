@@ -780,20 +780,6 @@ public class JavaBuild {
     // Add the manifest file
     addManifest(zos);
 
-    if (sketch.hasCodeFolder()) {
-      File[] codeJarFiles = sketch.getCodeFolder().listFiles(new FilenameFilter() {
-        public boolean accept(File dir, String name) {
-          if (name.charAt(0) == '.') return false;
-          if (name.toLowerCase().endsWith(".jar")) return true;
-          if (name.toLowerCase().endsWith(".zip")) return true;
-          return false;
-        }
-      });
-      for (File exportFile : codeJarFiles) {
-        Base.copyFile(exportFile, new File(appletFolder, exportFile.getName()));
-      }
-    }
-
 //    File openglLibraryFolder =
 //      new File(editor.getMode().getLibrariesFolder(), "opengl/library");
 //    String openglLibraryPath = openglLibraryFolder.getAbsolutePath();
@@ -813,7 +799,7 @@ public class JavaBuild {
           System.err.println("File " + exportFile.getAbsolutePath() + " does not exist");
 
         } else if (exportFile.isDirectory()) {
-          System.err.println("Ignoring sub-folder \"" + exportFile.getAbsolutePath() + "\"");
+          System.out.println("Ignoring sub-folder \"" + exportFile.getAbsolutePath() + "\"");
 
         } else if (exportName.toLowerCase().endsWith(".zip") ||
                    exportName.toLowerCase().endsWith(".jar")) {
@@ -841,6 +827,22 @@ public class JavaBuild {
     } else {
       String bagelJarPath = bagelJar.getAbsolutePath();
       packClassPathIntoZipFile(bagelJarPath, zos, zipFileContents);
+    }
+    
+    if (sketch.hasCodeFolder()) {
+      File[] codeJarFiles = sketch.getCodeFolder().listFiles(new FilenameFilter() {
+        public boolean accept(File dir, String name) {
+          if (name.charAt(0) == '.') return false;
+          if (name.toLowerCase().endsWith(".jar")) return true;
+          if (name.toLowerCase().endsWith(".zip")) return true;
+          return false;
+        }
+      });
+      for (File exportFile : codeJarFiles) {
+        String name = exportFile.getName();
+        Base.copyFile(exportFile, new File(appletFolder, name));
+        archives.append("," + name);
+      }
     }
 
 //    if (dataFolder.exists()) {
