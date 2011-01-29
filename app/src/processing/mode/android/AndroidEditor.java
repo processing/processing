@@ -38,7 +38,9 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
 import processing.app.Base;
+import processing.app.EditorToolbar;
 import processing.app.Mode;
+import processing.app.RunnerListener;
 import processing.app.SketchException;
 import processing.core.PApplet;
 import processing.mode.java.JavaEditor;
@@ -104,6 +106,17 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
     //  }
 
   }
+
+  
+  public EditorToolbar createToolbar() {
+    return new AndroidToolbar(this, base);
+  }
+  
+
+  // inherit from the parent
+//  public Formatter createFormatter() {
+//    return new AutoFormat();
+//  }
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -345,11 +358,16 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
    * @param target "debug" or "release"
    */
   private void runSketchOnDevice(final Future<Device> deviceFuture,
-                                 final String target) throws MonitorCanceled {
+                                 final String target,
+                                 RunnerListener listener) throws MonitorCanceled {
     final IndeterminateProgressMonitor monitor =
       new IndeterminateProgressMonitor(this,
                                        "Building and launching...",
                                        "Creating project...");
+
+    listener.startIndeterminate();
+    listener.statusNotice("Building and launching...");
+    
     build = new AndroidBuild(sketch, amode.getSDK());
     try {
       try {
@@ -522,22 +540,27 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
    * Build the sketch and run it inside an emulator with the debugger.
    */
   public void handleRunEmulator() {
-    prepareRun();
-    AVD.ensureEclairAVD(amode.getSDK());
-    try {
-      runSketchOnDevice(Environment.getInstance().getEmulator(), "debug");
-    } catch (final MonitorCanceled ok) {
-      sketchStopped();
-      statusNotice("Canceled.");
-    }
+    new Thread() { 
+      public void run() {
+        prepareRun();
+        AVD.ensureEclairAVD(amode.getSDK());
+        try {
+          runSketchOnDevice(Environment.getInstance().getEmulator(), "debug", AndroidEditor.this);
+        } catch (final MonitorCanceled ok) {
+          sketchStopped();
+          statusNotice("Canceled.");
+        }
+      }
+    }.start();
   }
+
 
   /**
    * Build the sketch and run it on a device with the debugger connected.
    */
   public void handleRunDevice() {
     try {
-      runSketchOnDevice(Environment.getInstance().getHardware(), "debug");
+      runSketchOnDevice(Environment.getInstance().getHardware(), "debug", this);
     } catch (final MonitorCanceled ok) {
       sketchStopped();
       statusNotice("Canceled.");
