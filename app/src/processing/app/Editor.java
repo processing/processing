@@ -2060,6 +2060,16 @@ public abstract class Editor extends JFrame implements RunnerListener {
   public void stopIndeterminate() {
     status.stopIndeterminate();
   }
+  
+  
+  public void statusHalt() {
+    // stop called by someone else
+  }
+  
+  
+  public boolean isHalted() {
+    return false;
+  }
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
