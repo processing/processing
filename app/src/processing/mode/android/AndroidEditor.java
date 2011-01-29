@@ -35,7 +35,6 @@ import processing.app.Mode;
 import processing.app.SketchException;
 import processing.core.PApplet;
 import processing.mode.java.JavaEditor;
-import processing.mode.java.JavaToolbar;
 
 // http://dl.google.com/android/repository/repository.xml
 // http://dl.google.com/android/android-sdk_r3-mac.zip
@@ -68,7 +67,7 @@ public class AndroidEditor extends JavaEditor {
       AndroidSDK sdk = amode.loadSDK();
       if (sdk == null) {
         sdk = AndroidSDK.locate(this);
-      }
+      }      
     } catch (BadSDKException bse) {
       statusError(bse);
       

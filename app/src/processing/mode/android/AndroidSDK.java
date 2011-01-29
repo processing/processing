@@ -3,6 +3,11 @@ package processing.mode.android;
 import java.awt.Frame;
 import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import javax.swing.JOptionPane;
 
 import processing.app.Base;
@@ -71,6 +76,63 @@ class AndroidSDK {
     path = new File(javaHome, "bin").getCanonicalPath() + File.pathSeparator + path;
 
     p.setenv("PATH", path);
+    
+    checkDebugCertificate();
+  }
+  
+  
+  /**
+   * If a debug certificate exists, check its expiration date. If it's expired,
+   * remove it so that it doesn't cause problems during the build.
+   */
+  protected void checkDebugCertificate() {     
+    File dotAndroidFolder = new File(System.getProperty("user.home"), ".android");
+    File keystoreFile = new File(dotAndroidFolder, "debug.keystore");
+    if (keystoreFile.exists()) {
+      // keytool -list -v -storepass android -keystore debug.keystore
+      ProcessHelper ph = new ProcessHelper(new String[] { 
+        "keytool", "-list", "-v", 
+        "-storepass", "android", 
+        "-keystore", keystoreFile.getAbsolutePath()
+      });
+      try {
+        ProcessResult result = ph.execute();
+        if (result.succeeded()) {
+          // Valid from: Mon Nov 02 15:38:52 EST 2009 until: Tue Nov 02 16:38:52 EDT 2010
+          String[] lines = PApplet.split(result.getStdout(), '\n');
+          for (String line : lines) {
+            String[] m = PApplet.match(line, "Valid from: .* until: (.*)");
+            if (m != null) {
+              String timestamp = m[1];
+              // "Sun Jan 22 11:09:08 EST 2012"
+              // Hilariously, this is the format of Date.toString(), however 
+              // it isn't the default for SimpleDateFormat or others. Yay!
+              DateFormat df = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy");
+              try {
+                Date date = df.parse(timestamp);
+                long expireMillis = date.getTime();
+                if (expireMillis < System.currentTimeMillis()) {
+                  System.out.println("Removing expired debug.keystore file.");
+                  String hidingName = "debug.keystore." + AndroidMode.getDateStamp(expireMillis);
+                  File hidingFile = new File(keystoreFile.getParent(), hidingName);
+                  if (!keystoreFile.renameTo(hidingFile)) {
+                    System.err.println("Could not remove the expired debug.keystore file.");
+                    System.err.println("Please remove the file " + keystoreFile.getAbsolutePath());
+                  }
+//                } else {
+//                  System.out.println("Nah, that won't expire until " + date); //timestamp);
+                }
+              } catch (ParseException pe) {
+                System.err.println("The date “" + timestamp + "” could not be parsed.");
+                System.err.println("Please report this as a bug so we can fix it.");
+              }
+            }
+          }
+        }
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
   }
 
 

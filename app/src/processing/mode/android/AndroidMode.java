@@ -41,10 +41,7 @@ public class AndroidMode extends JavaMode {
 
 
   public AndroidMode(Base base, File folder) {
-    super(base, folder);
-    
-    // keytool -list -v -storepass android -keystore debug.keystore
-    // Valid from: Mon Nov 02 15:38:52 EST 2009 until: Tue Nov 02 16:38:52 EDT 2010
+    super(base, folder);    
   }
 
   
