@@ -30,4 +30,10 @@ public interface RunnerListener {
   public void statusError(Exception exception);
   
   public void statusNotice(String message);
+  
+  // 
+  
+  public void startIndeterminate();
+  
+  public void stopIndeterminate();
 }

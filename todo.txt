@@ -103,6 +103,9 @@ _ test code folder on android
 _ test libraries on android
 _ test opengl on android
 
+_ don't make examples read-only
+_   just do them from psk files
+
 _ strange window flicker when first opened
 
 _ make sure that android is working again

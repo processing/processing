@@ -38,8 +38,8 @@ class AndroidSDK {
     "http://developer.android.com/sdk/";
 
 
-  public AndroidSDK(final String sdkPath) throws BadSDKException, IOException {
-    folder = new File(sdkPath);
+  public AndroidSDK(File folder) throws BadSDKException, IOException {
+    this.folder = folder;
     if (!folder.exists()) {
       throw new BadSDKException(folder + " does not exist");
     }
@@ -64,12 +64,8 @@ class AndroidSDK {
     path = platformTools.getCanonicalPath() + File.pathSeparator +
       tools.getCanonicalPath() + File.pathSeparator + path;
 
-    final String javaHomeProp = System.getProperty("java.home");
-    if (javaHomeProp == null) {
-      throw new RuntimeException("I don't know how to deal with " +
-                "a null java.home proprty, to be quite frank.");
-    }
-    final File javaHome = new File(javaHomeProp).getCanonicalFile();
+    String javaHomeProp = System.getProperty("java.home");
+    File javaHome = new File(javaHomeProp).getCanonicalFile();
     p.setenv("JAVA_HOME", javaHome.getCanonicalPath());
 
     path = new File(javaHome, "bin").getCanonicalPath() + File.pathSeparator + path;
@@ -138,22 +134,20 @@ class AndroidSDK {
    * @throws BadSDKException
    * @throws IOException
    */
-  public static AndroidSDK find(final Frame window)
-  throws BadSDKException, IOException {
+  public static AndroidSDK load() throws BadSDKException, IOException {
     final Platform platform = Base.getPlatform();
 
     // The environment variable is king. The preferences.txt entry is a page.
     final String sdkEnvPath = platform.getenv("ANDROID_SDK");
     if (sdkEnvPath != null) {
       try {
-        final AndroidSDK androidSDK = new AndroidSDK(sdkEnvPath);
+        final AndroidSDK androidSDK = new AndroidSDK(new File(sdkEnvPath));
         // Set this value in preferences.txt, in case ANDROID_SDK
         // gets knocked out later. For instance, by that pesky Eclipse,
         // which nukes all env variables when launching from the IDE.
         Preferences.set("android.sdk.path", sdkEnvPath);
         return androidSDK;
-      } catch (final BadSDKException drop) {
-      }
+      } catch (final BadSDKException drop) { }
     }
 
     // If android.sdk.path exists as a preference, make sure that the folder
@@ -161,7 +155,7 @@ class AndroidSDK {
     final String sdkPrefsPath = Preferences.get("android.sdk.path");
     if (sdkPrefsPath != null) {
       try {
-        final AndroidSDK androidSDK = new AndroidSDK(sdkPrefsPath);
+        final AndroidSDK androidSDK = new AndroidSDK(new File(sdkPrefsPath));
         // Set this value in preferences.txt, in case ANDROID_SDK
         // gets knocked out later. For instance, by that pesky Eclipse,
         // which nukes all env variables when launching from the IDE.
@@ -171,7 +165,12 @@ class AndroidSDK {
         Preferences.unset("android.sdk.path");
       }
     }
-
+    return null;
+  }
+  
+  
+  static public AndroidSDK locate(final Frame window) 
+  throws BadSDKException, IOException {
     final int result = Base.showYesNoQuestion(window, "Android SDK",
       ANDROID_SDK_PRIMARY, ANDROID_SDK_SECONDARY);
     if (result == JOptionPane.CANCEL_OPTION) {
@@ -183,17 +182,16 @@ class AndroidSDK {
       throw new BadSDKException("No SDK installed.");
     }
     while (true) {
-      final File folder = Base.selectFolder(SELECT_ANDROID_SDK_FOLDER, null,
-        window);
+      File folder = Base.selectFolder(SELECT_ANDROID_SDK_FOLDER, null, window);
       if (folder == null) {
-        throw new BadSDKException("User cancelled attempt to find SDK.");
+        throw new BadSDKException("User canceled attempt to find SDK.");
       }
 
-      final String selectedPath = folder.getAbsolutePath();
       try {
-        final AndroidSDK androidSDK = new AndroidSDK(selectedPath);
-        Preferences.set("android.sdk.path", selectedPath);
+        final AndroidSDK androidSDK = new AndroidSDK(folder);
+        Preferences.set("android.sdk.path", folder.getAbsolutePath());
         return androidSDK;
+
       } catch (final BadSDKException nope) {
         JOptionPane.showMessageDialog(window, NOT_ANDROID_SDK);
       }
