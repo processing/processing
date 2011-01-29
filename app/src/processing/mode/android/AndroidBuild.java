@@ -61,7 +61,9 @@ class AndroidBuild extends JavaBuild {
     srcFolder = new File(tmpFolder, "src");
     // this folder isn't actually used, but it's used by the java preproc to 
     // figure out the classpath, so we have to set it to something
-    binFolder = new File(tmpFolder, "bin");
+//    binFolder = new File(tmpFolder, "bin");
+    // use the src folder, since 'bin' might be used by the ant build
+    binFolder = srcFolder;
     if (processing.app.Base.DEBUG) {
       Base.openFolder(tmpFolder);
     }
@@ -96,7 +98,8 @@ class AndroidBuild extends JavaBuild {
 
       try {
         // Copy any imported libraries or code folder contents to the project
-        writeLibraries(libsFolder, assetsFolder);
+        copyLibraries(libsFolder, assetsFolder);
+        copyCodeFolder(libsFolder);
 
         // Copy the data folder, if one exists, to the 'assets' folder of the
         // project
@@ -473,8 +476,12 @@ class AndroidBuild extends JavaBuild {
 //  }
 
 
-  private void writeLibraries(final File libsFolder, 
-                              final File assetsFolder) throws IOException {
+  /**
+   * For each library, copy .jar and .zip files to the 'libs' folder, 
+   * and copy anything else to the 'assets' folder.
+   */
+  private void copyLibraries(final File libsFolder, 
+                             final File assetsFolder) throws IOException {
     // Copy any libraries to the 'libs' folder
     for (Library library : getImportedLibraries()) {
       File libraryFolder = new File(library.getPath());
@@ -512,12 +519,16 @@ class AndroidBuild extends JavaBuild {
               name.substring(0, name.length() - 4) + ".jar";
             Base.copyFile(exportFile, new File(libsFolder, jarName));
           } else {
+            // just copy other files over directly
             Base.copyFile(exportFile, new File(assetsFolder, name));
           }
         }
       }
     }
-
+  }
+  
+  
+  private void copyCodeFolder(final File libsFolder) throws IOException {
     // Copy files from the 'code' directory into the 'libs' folder
     final File codeFolder = sketch.getCodeFolder();
     if (codeFolder != null && codeFolder.exists()) {
