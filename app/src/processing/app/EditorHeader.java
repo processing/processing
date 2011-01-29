@@ -74,6 +74,8 @@ public class EditorHeader extends JComponent {
   int sizeW, sizeH;
   int imageW, imageH;
 
+  String lastNoticeName;
+  
 
   public EditorHeader(Editor eddie) {
     this.editor = eddie;
@@ -106,7 +108,12 @@ public class EditorHeader extends JComponent {
         }
         
         public void mouseExited(MouseEvent e) {
-          editor.statusEmpty();
+          // only clear if it's been set
+          if (lastNoticeName != null) {
+            // only clear if it's the same as what we set it to
+            editor.clearNotice(lastNoticeName);
+            lastNoticeName = null;
+          }
         }
     });
 
@@ -115,7 +122,8 @@ public class EditorHeader extends JComponent {
           int x = e.getX();
           for (Tab tab : tabs) {
             if (tab.contains(x) && !tab.textVisible) {
-              editor.statusNotice(editor.getSketch().getCode(tab.index).getPrettyName());
+              lastNoticeName = editor.getSketch().getCode(tab.index).getPrettyName();
+              editor.statusNotice(lastNoticeName);
             }
           }
         }

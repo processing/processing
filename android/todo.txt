@@ -6,6 +6,9 @@ o     http://code.google.com/p/processing/downloads/detail?name=processing-andro
 o   so look for "SHA1 Checksum: 1ed63f9316441fe46949ef5a92a28f58cc7ee226"
 X just use generic android apis as requirement, not the google apis
 X   though it does give us the emulator skin.. maybe another option
+X android debug certificate expired
+X   http://forum.processing.org/topic/ant-rules-r3-xml-209-395-error#25080000000262001
+X   just delete ~/.android/debug.keystore
 
 _ need sizeChanged() method... 
 _   also add the param to the xml file saying that it can deal w/ rotation
@@ -44,6 +47,8 @@ _ need to do something to make it easier to do new screen sizes.
 
 _ when returning to android application, sometimes screen stays black
 _   http://code.google.com/p/processing/issues/detail?id=237
+_ sketches must be removed manually if the debug keystore changes
+_   http://code.google.com/p/processing/issues/detail?id=236
 
 _ .java files are reported with Syntax Error with the Android build 0191
 _   http://code.google.com/p/processing/issues/detail?id=404
@@ -60,15 +65,6 @@ _ gui stuff: http://hg.postspectacular.com/cp5magic/wiki/Home
 
 _ "failed to get signature key" problem
 _   Caused by: /Users/aandnota/Documents/android-sdk-mac_x86/tools/ant/ant_rules_r3.xml:209: com.android.sdklib.build.ApkCreationException: Unable to get debug signature key
-
-_ android debug certificate expired
-_   http://forum.processing.org/topic/ant-rules-r3-xml-209-395-error#25080000000262001
-_   just delete ~/.android/debug.keystore
-Try renaming the .android folder in your home directory to something else. Next time you try to build, it should re-create the .android folder with a proper debug certificate. If you don't know what that means, do this:
-1. Open /Applications/Utilities/Terminal.app
-2. type "mv .android .android.bad"
-3. Try running a sketch again
-It's an Android SDK problem (not a Processing problem), but we're still trying to figure out why it's happening. 
 
 _ android sdk/build location has changed (android-7 not 2.1) fix build.xml
 
