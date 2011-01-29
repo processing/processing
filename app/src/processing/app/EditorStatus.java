@@ -153,7 +153,6 @@ public class EditorStatus extends JPanel {
     thread = new Thread() {
       public void run() {
         while (Thread.currentThread() == thread) {
-          System.out.println("knight rider");
           repaint();
           try {
             Thread.sleep(1000 / 10);
@@ -217,13 +216,19 @@ public class EditorStatus extends JPanel {
 
     if (indeterminate) {
       int x = cancelButton.getX();
-      int y = cancelButton.getY();
       int w = cancelButton.getWidth();
-      int h = cancelButton.getHeight();
-      g.setColor(fgcolor[mode]);
+      int y = getHeight() / 3;
+      int h = getHeight() / 3;
+//      int y = cancelButton.getY();
+//      int h = cancelButton.getHeight();
+//      g.setColor(fgcolor[mode]);
+//      g.setColor(Color.DARK_GRAY);
+      g.setColor(new Color(0x80000000, true));
       g.drawRect(x, y, w, h);
-      int r = (int) (x + Math.random() * w);
-      g.drawLine(r, y, r, y+h);
+      for (int i = 0; i < 10; i++) {
+        int r = (int) (x + Math.random() * w);
+        g.drawLine(r, y, r, y+h);
+      }
     }
     
     screen.drawImage(offscreen, 0, 0, null);
