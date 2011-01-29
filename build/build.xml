@@ -117,6 +117,7 @@
       <fileset dir="../android">
 	<include name="android-core.zip" />
 	<include name="examples/**" />
+	<include name="icons/**" />
 	<include name="theme/**" />
 	<include name="keywords.txt" />
 <!--

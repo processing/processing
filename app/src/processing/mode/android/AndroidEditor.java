@@ -55,9 +55,9 @@ import processing.mode.java.runner.Runner;
 // may as well do the auto-download thing.
 
 
-public class AndroidEditor extends JavaEditor implements DeviceListener {  
-  private AndroidSDK sdk;
+public class AndroidEditor extends JavaEditor implements DeviceListener {
   private AndroidBuild build;
+  private AndroidMode amode;
 
 //  private static final String ANDROID_CORE_FILENAME =
 //    "processing-android-core-" + Base.VERSION_NAME + ".zip";
@@ -65,18 +65,29 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
 //  private static final String ANDROID_CORE_URL =
 //    "http://processing.googlecode.com/files/" + ANDROID_CORE_FILENAME;
   
-  AndroidMode amode;
   
   
   protected AndroidEditor(Base base, String path, int[] location, Mode mode) {
     super(base, path, location, mode);
     amode = (AndroidMode) mode;
 
-    statusNotice("Loading Android tools.");
+    try {
+      AndroidSDK sdk = amode.loadSDK();
+      if (sdk == null) {
+        sdk = AndroidSDK.locate(this);
+      }
+    } catch (BadSDKException bse) {
+      statusError(bse);
+      
+    } catch (IOException e) {
+      statusError(e);
+    }
 
+    /*
     if (sdk == null) {
+      statusNotice("Loading Android tools.");
       try {
-        sdk = AndroidSDK.find(this);
+        sdk = AndroidSDK.load();
         statusNotice("Done loading Android tools.");
 
       } catch (Exception e) {
@@ -84,6 +95,7 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
         statusError("Android Mode is disabled.");
       }
     }
+    */
 
     // Make sure that the processing.android.core.* classes are available
     //  if (!checkCore()) {
@@ -168,7 +180,7 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
     item = new JMenuItem("Android SDK & AVD Manager");
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        File file = sdk.getAndroidTool();
+        File file = amode.getSDK().getAndroidTool();
         PApplet.exec(new String[] { file.getAbsolutePath() });
       }
     });
@@ -338,6 +350,7 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
       new IndeterminateProgressMonitor(this,
                                        "Building and launching...",
                                        "Creating project...");
+    build = new AndroidBuild(sketch, amode.getSDK());
     try {
       try {
         if (build.createProject(target, amode.getCoreZipLocation()) == null) {
@@ -495,7 +508,6 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
           return;
         }
       }
-
     }
   }
 
@@ -511,7 +523,7 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
    */
   public void handleRunEmulator() {
     prepareRun();
-    AVD.ensureEclairAVD(sdk);
+    AVD.ensureEclairAVD(amode.getSDK());
     try {
       runSketchOnDevice(Environment.getInstance().getEmulator(), "debug");
     } catch (final MonitorCanceled ok) {
@@ -562,7 +574,7 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
   public void handleExportPackage() {
     // Need to implement an entire signing setup first
     // http://dev.processing.org/bugs/show_bug.cgi?id=1430
-    statusError("Export application not yet implemented.");
+    statusError("Exporting signed packages is not yet implemented.");
     deactivateExport();
 
     // make a release build

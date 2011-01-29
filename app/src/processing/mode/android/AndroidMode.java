@@ -22,6 +22,7 @@
 package processing.mode.android;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -30,6 +31,7 @@ import processing.mode.java.JavaMode;
 
 
 public class AndroidMode extends JavaMode {
+  static private AndroidSDK sdk;
   static private File coreZipLocation;
 
   
@@ -72,6 +74,19 @@ public class AndroidMode extends JavaMode {
       coreZipLocation = getContentFile("android-core.zip");
     }
     return coreZipLocation;
+  }
+  
+  
+  public AndroidSDK loadSDK() throws BadSDKException, IOException {
+    if (sdk == null) {
+      sdk = AndroidSDK.load();
+    }
+    return sdk;
+  }
+  
+  
+  public AndroidSDK getSDK() {
+    return sdk;
   }
   
   

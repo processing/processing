@@ -66,6 +66,10 @@ public class EditorStatus extends JPanel {
   JTextField editField;
 
   int response;
+  
+  boolean indeterminate;
+  Thread thread;
+  
 
 
   public EditorStatus(Editor editor) {
@@ -107,6 +111,7 @@ public class EditorStatus extends JPanel {
     repaint();
   }
 
+  
   public void unnotice(String unmessage) {
     if (message.equals(unmessage)) empty();
   }
@@ -134,11 +139,35 @@ public class EditorStatus extends JPanel {
     repaint();
   }
 
+  
   public void unedit() {
     okButton.setVisible(false);
     cancelButton.setVisible(false);
     editField.setVisible(false);
     empty();
+  }
+  
+  
+  public void startIndeterminate() {
+    indeterminate = true;
+    thread = new Thread() {
+      public void run() {
+        while (Thread.currentThread() == thread) {
+          System.out.println("knight rider");
+          repaint();
+          try {
+            Thread.sleep(1000 / 10);
+          } catch (InterruptedException e) { }
+        }
+      }
+    };
+    thread.start();
+  }
+  
+  
+  public void stopIndeterminate() {
+    indeterminate = false;
+    thread = null;
   }
 
 
@@ -186,6 +215,17 @@ public class EditorStatus extends JPanel {
     g.setFont(font); // needs to be set each time on osx
     g.drawString(message, Preferences.GUI_SMALL, (sizeH + ascent) / 2);
 
+    if (indeterminate) {
+      int x = cancelButton.getX();
+      int y = cancelButton.getY();
+      int w = cancelButton.getWidth();
+      int h = cancelButton.getHeight();
+      g.setColor(fgcolor[mode]);
+      g.drawRect(x, y, w, h);
+      int r = (int) (x + Math.random() * w);
+      g.drawLine(r, y, r, y+h);
+    }
+    
     screen.drawImage(offscreen, 0, 0, null);
   }
 
