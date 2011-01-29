@@ -25,14 +25,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -40,11 +32,9 @@ import javax.swing.JMenuItem;
 import processing.app.Base;
 import processing.app.EditorToolbar;
 import processing.app.Mode;
-import processing.app.RunnerListener;
 import processing.app.SketchException;
 import processing.core.PApplet;
 import processing.mode.java.JavaEditor;
-import processing.mode.java.runner.Runner;
 
 // http://dl.google.com/android/repository/repository.xml
 // http://dl.google.com/android/android-sdk_r3-mac.zip
@@ -57,8 +47,8 @@ import processing.mode.java.runner.Runner;
 // may as well do the auto-download thing.
 
 
-public class AndroidEditor extends JavaEditor implements DeviceListener {
-  private AndroidBuild build;
+public class AndroidEditor extends JavaEditor {
+//  private AndroidBuild build;
   private AndroidMode amode;
 
 //  private static final String ANDROID_CORE_FILENAME =
@@ -203,7 +193,7 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 //        editor.statusNotice("Resetting the Android Debug Bridge server.");
-        Environment.killAdbServer();
+        Devices.killAdbServer();
       }
     });
     menu.add(item);    
@@ -311,233 +301,6 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
 //  }
   
   
-  // if user asks for 480x320, 320x480, 854x480 etc, then launch like that
-  // though would need to query the emulator to see if it can do that
-
-  private boolean startSketch(final Device device) {
-    final String packageName = build.getPackageName();
-    final String className = build.getSketchClassName();
-    try {
-      if (device.launchApp(packageName, className)) {
-        return true;
-      }
-    } catch (final Exception e) {
-      e.printStackTrace(System.err);
-    }
-    return false;
-  }
-
-  
-  private Device waitForDevice(Future<Device> deviceFuture, RunnerListener listener) throws MonitorCanceled { 
-//                               final IndeterminateProgressMonitor monitor) 
-    for (int i = 0; i < 120; i++) {
-//      if (monitor.isCanceled()) {
-      if (listener.isHalted()) {
-        deviceFuture.cancel(true);
-        throw new MonitorCanceled();
-      }
-      try {
-        return deviceFuture.get(1, TimeUnit.SECONDS);
-      } catch (final InterruptedException e) {
-        statusError("Interrupted.");
-        return null;
-      } catch (final ExecutionException e) {
-        statusError(e);
-        return null;
-      } catch (final TimeoutException expected) {
-      }
-    }
-    statusError("No, on second thought, I'm giving up " +
-                "on waiting for that device to show up.");
-    return null;
-  }
-
-
-  private volatile Device lastRunDevice = null;
-
-  /**
-   * @param target "debug" or "release"
-   */
-  private void runSketchOnDevice(final Future<Device> deviceFuture,
-                                 final String target,
-                                 RunnerListener listener) throws MonitorCanceled {
-//    final IndeterminateProgressMonitor monitor =
-//      new IndeterminateProgressMonitor(this,
-//                                       "Building and launching...",
-//                                       "Creating project...");
-
-    listener.startIndeterminate();
-    listener.statusNotice("Creating project...");
-    
-    build = new AndroidBuild(sketch, amode.getSDK());
-    try {
-      try {
-        if (build.createProject(target, amode.getCoreZipLocation()) == null) {
-          return;
-        }
-      } catch (SketchException se) {
-        statusError(se);
-      } catch (IOException e) {
-        statusError(e);
-      }
-      try {
-//        if (monitor.isCanceled()) {
-//          throw new MonitorCanceled();
-//        }
-//        monitor.setNote("Building...");
-        listener.statusNotice("Building...");
-        try {
-          if (!build.antBuild(target)) {
-            return;
-          }
-        } catch (SketchException se) {
-          statusError(se);
-        }
-
-//        if (monitor.isCanceled()) {
-//          throw new MonitorCanceled();
-//        }
-//        monitor.setNote("Waiting for device to become available...");
-        listener.statusNotice("Waiting for device to become available...");
-//        final Device device = waitForDevice(deviceFuture, monitor);
-        final Device device = waitForDevice(deviceFuture, listener);
-        if (device == null || !device.isAlive()) {
-          statusError("Device killed or disconnected.");
-          return;
-        }
-
-        device.addListener(this);
-
-        if (listener.isHalted()) {
-//        if (monitor.isCanceled()) {
-          throw new MonitorCanceled();
-        }
-//        monitor.setNote("Installing sketch on " + device.getId());
-        statusNotice("Installing sketch on " + device.getId());
-        if (!device.installApp(build.getPathForAPK(target), this)) {
-          statusError("Device killed or disconnected.");
-          return;
-        }
-
-//        if (monitor.isCanceled()) {
-//          throw new MonitorCanceled();
-//        }
-//        monitor.setNote("Starting sketch on " + device.getId());
-        listener.statusNotice("Starting sketch on " + device.getId());
-        if (startSketch(device)) {
-          statusNotice("Sketch launched on the "
-              + (device.isEmulator() ? "emulator" : "phone") + ".");
-        } else {
-          statusError("Could not start the sketch.");
-        }
-
-        lastRunDevice = device;
-      } finally {
-        build.cleanup();
-      }
-    } finally {
-//      monitor.close();
-      listener.stopIndeterminate();
-    }
-  }
-
-
-  private void buildReleaseForExport(String target) throws MonitorCanceled {
-    final IndeterminateProgressMonitor monitor =
-      new IndeterminateProgressMonitor(this,
-                                       "Building and exporting...",
-                                       "Creating project...");
-    try {
-      File tempFolder = null;
-      try {
-        tempFolder = build.createProject(target, amode.getCoreZipLocation());
-        if (tempFolder == null) {
-          return;
-        }
-      } catch (IOException e) {
-        e.printStackTrace();
-      } catch (SketchException se) {
-        se.printStackTrace();
-      }
-      try {
-        if (monitor.isCanceled()) {
-          throw new MonitorCanceled();
-        }
-        monitor.setNote("Building release version...");
-//        if (!build.antBuild("release")) {
-//          return;
-//        }
-
-        if (monitor.isCanceled()) {
-          throw new MonitorCanceled();
-        }
-
-        // If things built successfully, copy the contents to the export folder
-        File exportFolder = build.createExportFolder();
-        if (exportFolder != null) {
-          Base.copyDir(tempFolder, exportFolder);
-          statusNotice("Done with export.");
-          Base.openFolder(exportFolder);
-        } else {
-          statusError("Could not copy files to export folder.");
-        }
-      } catch (IOException e) {
-        statusError(e);
-
-      } finally {
-        build.cleanup();
-      }
-    } finally {
-      monitor.close();
-    }
-  }
-
-
-  private static final Pattern LOCATION =
-    Pattern.compile("\\(([^:]+):(\\d+)\\)");
-  private static final Pattern EXCEPTION_PARSER =
-    Pattern.compile("^\\s*([a-z]+(?:\\.[a-z]+)+)(?:: .+)?$",
-                    Pattern.CASE_INSENSITIVE);
-
-  /**
-   * Currently figures out the first relevant stack trace line
-   * by looking for the telltale presence of "processing.android"
-   * in the package. If the packaging for droid sketches changes,
-   * this method will have to change too.
-   */
-  public void stackTrace(final List<String> trace) {
-    final Iterator<String> frames = trace.iterator();
-    final String exceptionLine = frames.next();
-
-    final Matcher m = EXCEPTION_PARSER.matcher(exceptionLine);
-    if (!m.matches()) {
-      System.err.println("Can't parse this exception line:");
-      System.err.println(exceptionLine);
-      statusError("Unknown exception");
-      return;
-    }
-    final String exceptionClass = m.group(1);
-    if (Runner.handleCommonErrors(exceptionClass, exceptionLine, this)) {
-      return;
-    }
-
-    while (frames.hasNext()) {
-      final String line = frames.next();
-      if (line.contains("processing.android")) {
-        final Matcher lm = LOCATION.matcher(line);
-        if (lm.find()) {
-          final String filename = lm.group(1);
-          final int lineNumber = Integer.parseInt(lm.group(2)) - 1;
-          final SketchException rex =
-            build.placeException(exceptionLine, filename, lineNumber);
-          statusError(rex == null ? new SketchException(exceptionLine, false) : rex);
-          return;
-        }
-      }
-    }
-  }
-
-
   public void sketchStopped() {
     deactivateRun();
     statusEmpty();
@@ -551,12 +314,12 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
     new Thread() { 
       public void run() {
         prepareRun();
-        AVD.ensureEclairAVD(amode.getSDK());
         try {
-          runSketchOnDevice(Environment.getInstance().getEmulator(), "debug", AndroidEditor.this);
-        } catch (final MonitorCanceled ok) {
-          sketchStopped();
-          statusNotice("Canceled.");
+          amode.handleRunEmulator(sketch, AndroidEditor.this);
+        } catch (SketchException e) {
+          statusError(e);
+        } catch (IOException e) {
+          statusError(e);
         }
       }
     }.start();
@@ -567,19 +330,23 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
    * Build the sketch and run it on a device with the debugger connected.
    */
   public void handleRunDevice() {
-    try {
-      runSketchOnDevice(Environment.getInstance().getHardware(), "debug", this);
-    } catch (final MonitorCanceled ok) {
-      sketchStopped();
-      statusNotice("Canceled.");
-    }
+    new Thread() {
+      public void run() {
+        prepareRun();
+        try {
+          amode.handleRunDevice(sketch, AndroidEditor.this);
+        } catch (SketchException e) {
+          statusError(e);
+        } catch (IOException e) {
+          statusError(e);
+        }
+      }
+    }.start();    
   }
 
 
   public void handleStop() {
-    if (lastRunDevice != null) {
-      lastRunDevice.bringLauncherToFront();
-    }
+    amode.handleStop();
   }
 
   
@@ -588,13 +355,24 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
    * If users want a debug build, they can do that from the command line.
    */
   public void handleExportProject() {
+    AndroidBuild build = new AndroidBuild(sketch, amode);
     try {
-      buildReleaseForExport("debug");
-    } catch (final MonitorCanceled ok) {
-      statusNotice("Canceled.");
-    } finally {
-      deactivateExport();
+      if (build.exportProject()) {
+        statusNotice("Done with export.");
+      }
+    } catch (IOException e) {
+      statusError(e);
+    } catch (SketchException e) {
+      statusError(e);
     }
+    
+//    try {
+//      buildReleaseForExport("debug");
+//    } catch (final MonitorCanceled ok) {
+//      statusNotice("Canceled.");
+//    } finally {
+//      deactivateExport();
+//    }
   }
 
   
@@ -627,10 +405,5 @@ public class AndroidEditor extends JavaEditor implements DeviceListener {
 //      } finally {
 //        editor.deactivateExport();
 //      }
-  }
-
-
-  @SuppressWarnings("serial")
-  private static class MonitorCanceled extends Exception {
   }
 }
