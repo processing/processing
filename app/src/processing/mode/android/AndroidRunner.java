@@ -84,7 +84,7 @@ public class AndroidRunner implements DeviceListener {
     } else {
       listener.statusError("Could not start the sketch.");
     }
-
+    listener.stopIndeterminate();
     lastRunDevice = device;
 //} finally {
 //  build.cleanup();
@@ -273,7 +273,7 @@ public class AndroidRunner implements DeviceListener {
     }
   }
 
-  
+
   // called by AndroidMode.handleStop()...
   public void close() {
     if (lastRunDevice != null) {
@@ -284,6 +284,7 @@ public class AndroidRunner implements DeviceListener {
 
   // sketch stopped on the device 
   public void sketchStopped() {
+    listener.stopIndeterminate();
     listener.statusHalt();
   }
 }

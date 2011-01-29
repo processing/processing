@@ -225,15 +225,15 @@ class AndroidBuild extends JavaBuild {
   }
   
   
-  public boolean exportProject() throws IOException, SketchException {
+  public File exportProject() throws IOException, SketchException {
     File projectFolder = build("debug");
     if (projectFolder == null) {
-      return false;
+      return null;
     }
 
     File exportFolder = createExportFolder();
     Base.copyDir(projectFolder, exportFolder);
-    return true;
+    return exportFolder;
   }
 
 

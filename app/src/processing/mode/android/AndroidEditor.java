@@ -35,6 +35,7 @@ import processing.app.Mode;
 import processing.app.SketchException;
 import processing.core.PApplet;
 import processing.mode.java.JavaEditor;
+import processing.mode.java.JavaToolbar;
 
 // http://dl.google.com/android/repository/repository.xml
 // http://dl.google.com/android/android-sdk_r3-mac.zip
@@ -355,15 +356,28 @@ public class AndroidEditor extends JavaEditor {
    * If users want a debug build, they can do that from the command line.
    */
   public void handleExportProject() {
-    AndroidBuild build = new AndroidBuild(sketch, amode);
-    try {
-      if (build.exportProject()) {
-        statusNotice("Done with export.");
-      }
-    } catch (IOException e) {
-      statusError(e);
-    } catch (SketchException e) {
-      statusError(e);
+    if (handleExportCheckModified()) {
+      new Thread() {
+        public void run() {
+          toolbar.activate(AndroidToolbar.EXPORT);
+          startIndeterminate();
+          statusNotice("Exporting a debug version of the sketch...");
+          AndroidBuild build = new AndroidBuild(sketch, amode);
+          try {
+            File exportFolder = build.exportProject(); 
+            if (exportFolder != null) {
+              Base.openFolder(exportFolder);
+              statusNotice("Done with export.");
+            }
+          } catch (IOException e) {
+            statusError(e);
+          } catch (SketchException e) {
+            statusError(e);
+          }
+          stopIndeterminate();
+          toolbar.deactivate(AndroidToolbar.EXPORT);
+        }
+      }.start();
     }
     
 //    try {

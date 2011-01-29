@@ -4,12 +4,14 @@ o   http://code.google.com/p/processing/issues/detail?id=421
 o   this is the download page: 
 o     http://code.google.com/p/processing/downloads/detail?name=processing-android-core-0191.zip
 o   so look for "SHA1 Checksum: 1ed63f9316441fe46949ef5a92a28f58cc7ee226"
+X just use generic android apis as requirement, not the google apis
+X   though it does give us the emulator skin.. maybe another option
+
+_ need sizeChanged() method... 
+_   also add the param to the xml file saying that it can deal w/ rotation
 
 _ try using the internal javac on windows and see if exceptions come through..
 _   actually i think that might have been worse...
-
-_ just use generic android apis as requirement, not the google apis
-_   though it does give us the emulator skin.. maybe another option
 
 _ instructions on installing the usb driver for windows
 _   http://developer.android.com/sdk/win-usb.html
