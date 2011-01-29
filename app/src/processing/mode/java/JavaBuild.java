@@ -53,8 +53,8 @@ public class JavaBuild {
   // what happens in the build, stays in the build.
   // (which is to say that everything below this line, stays within this class)
 
-  private File srcFolder;
-  private File binFolder;
+  protected File srcFolder;
+  protected File binFolder;
   private boolean foundMain = false;
   private String classPath;
   protected String sketchClassName;

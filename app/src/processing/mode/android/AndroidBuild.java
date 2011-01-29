@@ -57,7 +57,11 @@ class AndroidBuild extends JavaBuild {
     tmpFolder = createTempBuildFolder(sketch);
 
     // Create the 'src' folder with the preprocessed code.
-    final File srcFolder = new File(tmpFolder, "src");
+//    final File srcFolder = new File(tmpFolder, "src");
+    srcFolder = new File(tmpFolder, "src");
+    // this folder isn't actually used, but it's used by the java preproc to 
+    // figure out the classpath, so we have to set it to something
+    binFolder = new File(tmpFolder, "bin");
     if (processing.app.Base.DEBUG) {
       Base.openFolder(tmpFolder);
     }
@@ -65,7 +69,7 @@ class AndroidBuild extends JavaBuild {
     manifest = new Manifest(sketch);
     // grab code from current editing window (GUI only)
 //    prepareExport(null);
-    
+
     // build the preproc and get to work
     AndroidPreprocessor preproc = new AndroidPreprocessor(sketch, getPackageName());
     if (!preproc.parseSketchSize()) {
@@ -333,7 +337,8 @@ class AndroidBuild extends JavaBuild {
   
   private void writeDefaultProps(final File file) {
     final PrintWriter writer = PApplet.createWriter(file);
-    writer.println("target=Google Inc.:Google APIs:" + sdkVersion);
+    //writer.println("target=Google Inc.:Google APIs:" + sdkVersion);
+    writer.println("target=android-" + sdkVersion);
     writer.flush();
     writer.close();
   }
