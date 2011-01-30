@@ -1,9 +1,9 @@
 # GUI - STATUS
 status.notice.fgcolor = #000000
 #status.notice.bgcolor = #808080
-status.notice.bgcolor = #87ad3a
+status.notice.bgcolor = #819e48
 status.error.fgcolor = #ffffff
-status.error.bgcolor = #662000
+status.error.bgcolor = #66002c
 status.edit.fgcolor = #000000
 #status.edit.bgcolor = #cc9900
 status.edit.bgcolor = #6b8a2e
@@ -13,7 +13,7 @@ status.font = SansSerif,plain,12
 # GUI - TABS
 # settings for the tabs at the top
 # (tab images are stored in the lib/theme folder)
-header.bgcolor = #92bc3f
+header.bgcolor = #8cac4e
 header.text.selected.color = #1a1a00
 header.text.unselected.color = #ffffff
 header.text.font = SansSerif,plain,12
@@ -26,7 +26,7 @@ console.output.color = #cccccc
 console.error.color = #ff3000
 
 # GUI - BUTTONS
-buttons.bgcolor = #597226
+buttons.bgcolor = #55682f
 buttons.status.font = SansSerif,plain,12
 #buttons.status.font.macosx = Helvetica,plain,12
 buttons.status.color = #ffffff
@@ -37,11 +37,17 @@ mode.button.bgcolor = #9ca6b0
 mode.button.font = SansSerif,plain,9
 #mode.button.font.macosx = Helvetica,plain,9
 #mode.button.color = #4a545e
-mode.button.color = #a8cb62
+#mode.button.color = #a8cb62
+mode.button.color = #a3be6f
 
-# GUI - LINESTATUS
+# GUI - LINESTATUS - editor line number status bar at the bottom of the screen
 linestatus.color = #ffffff
-linestatus.bgcolor = #364517
+#linestatus.bgcolor = #364517
+linestatus.bgcolor = #343f1d
+linestatus.font = SansSerif,plain,10
+#linestatus.font.macosx = Helvetica,plain,10
+linestatus.height  = 20
+
 
 # EDITOR - DETAILS
 
@@ -76,28 +82,21 @@ editor.brackethighlight = true
 editor.brackethighlight.color = #006699
 
 
-# TEXT - KEYWORDS
+# TEXT - syntax highlighting
 
 # e.g abstract, final, private
 editor.keyword1.style = #799b34,plain
-
 # e.g. beginShape, point, line
 editor.keyword2.style = #799b34,plain
-
 # e.g. byte, char, short, color
 editor.keyword3.style = #799b34,bold
-
-
-# TEXT - LITERALS
 
 # constants: e.g. null, true, this, RGB, TWO_PI
 #editor.literal1.style = #627f26,plain
 editor.literal1.style = #336598,plain
-
 # p5 built in variables: e.g. mouseX, width, pixels
 #editor.literal2.style = #627f26,plain
 editor.literal2.style = #336598,plain
-
 # e.g. + - = /
 editor.operator.style = #000000,plain
 
@@ -105,15 +104,7 @@ editor.operator.style = #000000,plain
 # like in case statements or goto
 editor.label.style = #7e7e7e,bold
 
-
-# TEXT - COMMENTS
 #editor.comment1.style = #7e7e7e,plain
 #editor.comment2.style = #7e7e7e,plain
 editor.comment1.style = #8e8e8e,plain
 editor.comment2.style = #8e8e8e,plain
-
-
-# LINE STATUS - editor line number status bar at the bottom of the screen
-linestatus.font = SansSerif,plain,10
-#linestatus.font.macosx = Helvetica,plain,10
-linestatus.height  = 20
