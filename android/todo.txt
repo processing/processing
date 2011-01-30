@@ -9,6 +9,8 @@ X   though it does give us the emulator skin.. maybe another option
 X android debug certificate expired
 X   http://forum.processing.org/topic/ant-rules-r3-xml-209-395-error#25080000000262001
 X   just delete ~/.android/debug.keystore
+X .java files are reported with Syntax Error with the Android build 0191
+X   http://code.google.com/p/processing/issues/detail?id=404
 
 _ need sizeChanged() method... 
 _   also add the param to the xml file saying that it can deal w/ rotation
@@ -49,9 +51,6 @@ _ when returning to android application, sometimes screen stays black
 _   http://code.google.com/p/processing/issues/detail?id=237
 _ sketches must be removed manually if the debug keystore changes
 _   http://code.google.com/p/processing/issues/detail?id=236
-
-_ .java files are reported with Syntax Error with the Android build 0191
-_   http://code.google.com/p/processing/issues/detail?id=404
 
 _ register(this, "pause") -> libs will need pause events on android
 _ thread is continually running - 'inside handleDraw()' running continually
