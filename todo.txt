@@ -10,6 +10,7 @@ X   http://code.google.com/p/processing/issues/detail?id=466
 o occasional exception in "copy for discourse"
 o   http://dev.processing.org/bugs/show_bug.cgi?id=729
 X move compiler to mode.java.* instead of runner
+X fix the encoding on OS X for the "Fix Encoding and Reload" function
 
 fixed in 0192
 J auto-format screws up if/else/else if blocks
