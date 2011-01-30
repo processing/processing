@@ -3,12 +3,11 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2008 Ben Fry and Casey Reas
+  Copyright (c) 2008-11 Ben Fry and Casey Reas
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
-  the Free Software Foundation; either version 2 of the License, or
-  (at your option) any later version.
+  the Free Software Foundation, version 2.
 
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -24,8 +23,9 @@ package processing.app.tools;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 import javax.swing.JOptionPane;
 
@@ -84,8 +84,18 @@ public class FixEncoding implements Tool {
 
   protected String loadWithLocalEncoding(File file) throws IOException {
     // FileReader uses the default encoding, which is what we want.
-    FileReader fr = new FileReader(file);
-    BufferedReader reader = new BufferedReader(fr);
+    String encoding = System.getProperty("file.encoding");
+    if (Base.isMacOS()) {
+      // Remember that time that Apple decided to change the file encoding
+      // in later releases of Java? That was really awesome.      
+      if (encoding.equals("UTF-8")) {
+        // Changing from UTF-8 to UTF-8 isn't going to help much. Argh.
+        encoding = "MacRoman";
+      }
+    }
+    FileInputStream fis = new FileInputStream(file);
+    InputStreamReader isr = new InputStreamReader(fis, encoding);
+    BufferedReader reader = new BufferedReader(isr);
 
     StringBuffer buffer = new StringBuffer();
     String line = null;
