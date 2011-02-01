@@ -31,8 +31,6 @@ import java.awt.geom.*;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.nio.*;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 
 import javax.media.opengl.*;
 import javax.media.opengl.glu.*;
@@ -841,7 +839,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
   }
 
 
-  protected class ImageCache {
+  protected class ImageCache extends PMetadata {
     int tindex = -1;  // not yet ready
     int tpixels[];
     IntBuffer tbuffer;
@@ -849,7 +847,16 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
     int[] tp;
 
-
+    /**
+     * Manual OpenGL texture release.
+     */    
+    public void delete() {
+      if (tindex != -1) {
+        // free up the old memory
+        gl.glDeleteTextures(1, new int[] { tindex }, 0);
+      }      
+    }
+    
     /**
      * Delete any texture memory that had been allocated.
      * Added for 0125 to deal with memory problems reported in Bug #150.
