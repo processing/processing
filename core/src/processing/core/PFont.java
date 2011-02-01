@@ -28,6 +28,7 @@ import java.awt.image.*;
 import java.io.*;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Set;
 
 
 /**
@@ -154,7 +155,11 @@ public class PFont implements PConstants {
   protected FontMetrics lazyMetrics;
   protected int[] lazySamples;  
 
+  
+  /** for subclasses that need to store metadata about the font */
+  protected HashMap<PGraphics, PMetadata> cacheMap;  
 
+  
   public PFont() { }  // for subclasses
 
 
@@ -239,7 +244,8 @@ public class PFont implements PConstants {
           if (glyf.value < 128) {
             ascii[glyf.value] = glyphCount;
           }
-          glyphs[glyphCount++] = glyf;
+          glyf.index = glyphCount;
+          glyphs[glyphCount++] = glyf;           
         }
       }
 
@@ -340,6 +346,7 @@ public class PFont implements PConstants {
       if (glyph.value < 128) {
         ascii[glyph.value] = i;
       }
+      glyph.index = i;
       glyphs[i] = glyph;
     }
 
@@ -366,6 +373,19 @@ public class PFont implements PConstants {
     findFont();
   }
 
+  
+  void delete() {
+    if (cacheMap != null) {    
+      Set<PGraphics> keySet = cacheMap.keySet();
+      if (!keySet.isEmpty()) {
+        Object[] keys = keySet.toArray();
+        for (int i = 0; i < keys.length; i++) {
+          PMetadata data = getCache((PGraphics)keys[i]);
+          data.delete();    
+        }
+      }    
+    }
+  }
 
   /**
    * Write this PFont to an OutputStream.
@@ -420,6 +440,7 @@ public class PFont implements PConstants {
       glyphs = (Glyph[]) PApplet.expand(glyphs);
     }
     if (glyphCount == 0) {
+      glyph.index = 0;
       glyphs[glyphCount] = glyph;
       if (glyph.value < 128) {
         ascii[glyph.value] = 0;
@@ -440,6 +461,7 @@ public class PFont implements PConstants {
               ascii[glyphs[j].value] = j;
             }
           }
+          glyph.index = i;
           glyphs[i] = glyph;
           // cache locations of the ascii charset
           if (c < 128) ascii[c] = i;
@@ -481,6 +503,14 @@ public class PFont implements PConstants {
     return font;
   }
 
+  
+  /**
+   * Return size of this font.
+   */
+  public int getSize() {
+    return size;
+  }
+   
 
   public boolean isStream() {
     return stream;
@@ -627,6 +657,59 @@ public class PFont implements PConstants {
 
   //////////////////////////////////////////////////////////////
 
+  // METADATA REQUIRED BY THE RENDERERS
+  
+
+  /**
+   * Store data of some kind for a renderer that requires extra metadata of
+   * some kind. Usually this is a renderer-specific representation of the
+   * font data, for instance a custom OpenGL texture for PGraphicsOpenGL2.
+   * @param renderer The PGraphics renderer associated to the font
+   * @param storage The metadata required by the renderer    
+   */
+  public void setCache(PGraphics renderer, PMetadata storage) {
+    if (cacheMap == null) cacheMap = new HashMap<PGraphics, PMetadata>();
+    cacheMap.put(renderer, storage);
+  }
+
+
+  /**
+   * Get cache storage data for the specified renderer. Because each renderer
+   * will cache data in different formats, it's necessary to store cache data
+   * keyed by the renderer object. Otherwise, attempting to draw the same
+   * image to both a PGraphicsJava2D and a PGraphicsOpenGL2 will cause errors.
+   * @param renderer The PGraphics renderer associated to the font
+   * @return metadata stored for the specified renderer
+   */
+  public PMetadata getCache(PGraphics renderer) {
+    if (cacheMap == null) return null;
+    return cacheMap.get(renderer);
+  }
+
+
+  /**
+   * Remove information associated with this renderer from the cache, if any.
+   * @param parent The PGraphics renderer whose cache data should be removed
+   */
+  public void removeCache(PGraphics renderer) {
+    if (cacheMap != null) {
+      cacheMap.remove(renderer);
+    }
+  }
+  
+  
+  //////////////////////////////////////////////////////////////  
+  
+  public int getGlyphCount()  {
+    return glyphCount;
+  }
+  
+  public Glyph getGlyph(int i)  {
+    return glyphs[i];  
+  }
+  
+  //////////////////////////////////////////////////////////////
+
 
   static final char[] EXTRA_CHARS = {
     0x0080, 0x0081, 0x0082, 0x0083, 0x0084, 0x0085, 0x0086, 0x0087,
@@ -757,21 +840,24 @@ public class PFont implements PConstants {
    * A single character, and its visage.
    */
   public class Glyph {
-    PImage image;
-    int value;
-    int height;
-    int width;
-    int setWidth;
-    int topExtent;
-    int leftExtent;
-    
+    public PImage image;
+    public int value;
+    public int height;
+    public int width;
+    public int index;
+    public int setWidth;
+    public int topExtent;
+    public int leftExtent;
+
     
     protected Glyph() {
+      index = -1;
       // used when reading from a stream or for subclasses
     }
     
     
     protected Glyph(DataInputStream is) throws IOException {
+      index = -1;
       readHeader(is);
     }
     

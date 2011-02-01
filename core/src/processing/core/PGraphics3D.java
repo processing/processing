@@ -28,7 +28,6 @@ import java.awt.Toolkit;
 import java.awt.image.*;
 import java.util.*;
 
-
 /**
  * Subclass of PGraphics that handles 3D rendering.
  * It can render 3D inside a browser window and requires no plug-ins.
@@ -175,11 +174,15 @@ public class PGraphics3D extends PGraphics {
    * If we wanted to, this variable would have to become a stack.
    */
   protected boolean manipulatingCamera;
-
+  
   float[][] matrixStack = new float[MATRIX_STACK_DEPTH][16];
   float[][] matrixInvStack = new float[MATRIX_STACK_DEPTH][16];
   int matrixStackDepth;
 
+  protected boolean projectionMode = false;
+  float[][] pmatrixStack = new float[MATRIX_STACK_DEPTH][16];
+  int pmatrixStackDepth;
+  
   // These two matrices always point to either the modelview
   // or the modelviewInv, but they are swapped during
   // when in camera manipulation mode. That way camera transforms
@@ -2991,24 +2994,39 @@ public class PGraphics3D extends PGraphics {
 
 
   public void pushMatrix() {
-    if (matrixStackDepth == MATRIX_STACK_DEPTH) {
-      throw new RuntimeException(ERROR_PUSHMATRIX_OVERFLOW);
+    if (projectionMode) {
+      if (pmatrixStackDepth == MATRIX_STACK_DEPTH) {
+        throw new RuntimeException(ERROR_PUSHMATRIX_OVERFLOW);
+      }
+      projection.get(pmatrixStack[pmatrixStackDepth]);
+      pmatrixStackDepth++;      
+    } else {    
+      if (matrixStackDepth == MATRIX_STACK_DEPTH) {
+        throw new RuntimeException(ERROR_PUSHMATRIX_OVERFLOW);
+      }
+      modelview.get(matrixStack[matrixStackDepth]);
+      modelviewInv.get(matrixInvStack[matrixStackDepth]);
+      matrixStackDepth++;
     }
-    modelview.get(matrixStack[matrixStackDepth]);
-    modelviewInv.get(matrixInvStack[matrixStackDepth]);
-    matrixStackDepth++;
   }
 
 
   public void popMatrix() {
-    if (matrixStackDepth == 0) {
-      throw new RuntimeException(ERROR_PUSHMATRIX_UNDERFLOW);
+    if (projectionMode) {
+      if (pmatrixStackDepth == 0) {
+        throw new RuntimeException(ERROR_PUSHMATRIX_UNDERFLOW);
+      }
+      pmatrixStackDepth--;
+      projection.set(pmatrixStack[pmatrixStackDepth]);
+    } else {      
+      if (matrixStackDepth == 0) {
+        throw new RuntimeException(ERROR_PUSHMATRIX_UNDERFLOW);
+      }
+      matrixStackDepth--;
+      modelview.set(matrixStack[matrixStackDepth]);
+      modelviewInv.set(matrixInvStack[matrixStackDepth]);
     }
-    matrixStackDepth--;
-    modelview.set(matrixStack[matrixStackDepth]);
-    modelviewInv.set(matrixInvStack[matrixStackDepth]);
   }
-
 
 
   //////////////////////////////////////////////////////////////
@@ -3022,8 +3040,12 @@ public class PGraphics3D extends PGraphics {
 
 
   public void translate(float tx, float ty, float tz) {
-    forwardTransform.translate(tx, ty, tz);
-    reverseTransform.invTranslate(tx, ty, tz);
+    if (projectionMode) {
+      projection.translate(tx, ty, tz);
+    } else {
+      forwardTransform.translate(tx, ty, tz);
+      reverseTransform.invTranslate(tx, ty, tz);
+    }
   }
 
 
@@ -3039,20 +3061,32 @@ public class PGraphics3D extends PGraphics {
 
 
   public void rotateX(float angle) {
-    forwardTransform.rotateX(angle);
-    reverseTransform.invRotateX(angle);
+    if (projectionMode) {
+      projection.rotateX(angle);
+    } else { 
+      forwardTransform.rotateX(angle);
+      reverseTransform.invRotateX(angle);
+    }
   }
 
 
   public void rotateY(float angle) {
-    forwardTransform.rotateY(angle);
-    reverseTransform.invRotateY(angle);
+    if (projectionMode) {
+      projection.rotateY(angle);
+    } else {    
+      forwardTransform.rotateY(angle);
+      reverseTransform.invRotateY(angle);
+    }
   }
 
 
   public void rotateZ(float angle) {
-    forwardTransform.rotateZ(angle);
-    reverseTransform.invRotateZ(angle);
+    if (projectionMode) {
+      projection.rotateZ(angle);
+    } else {    
+      forwardTransform.rotateZ(angle);
+      reverseTransform.invRotateZ(angle);
+    }    
   }
 
 
@@ -3061,8 +3095,12 @@ public class PGraphics3D extends PGraphics {
    * except that it takes radians (instead of degrees).
    */
   public void rotate(float angle, float v0, float v1, float v2) {
-    forwardTransform.rotate(angle, v0, v1, v2);
-    reverseTransform.invRotate(angle, v0, v1, v2);
+    if (projectionMode) {
+      projection.rotate(angle, v0, v1, v2);
+    } else {    
+      forwardTransform.rotate(angle, v0, v1, v2);
+      reverseTransform.invRotate(angle, v0, v1, v2);
+    }
   }
 
 
@@ -3086,8 +3124,12 @@ public class PGraphics3D extends PGraphics {
    * Scale in three dimensions.
    */
   public void scale(float x, float y, float z) {
-    forwardTransform.scale(x, y, z);
-    reverseTransform.invScale(x, y, z);
+    if (projectionMode) {
+      projection.scale(x, y, z);
+    } else {    
+      forwardTransform.scale(x, y, z);
+      reverseTransform.invScale(x, y, z);
+    }
   }
   
   
@@ -3116,8 +3158,12 @@ public class PGraphics3D extends PGraphics {
 
 
   public void resetMatrix() {
-    forwardTransform.reset();
-    reverseTransform.reset();
+    if (projectionMode) {
+      projection.reset();
+    } else {        
+      forwardTransform.reset();
+      reverseTransform.reset();
+    }
   }
 
 
@@ -3153,16 +3199,22 @@ public class PGraphics3D extends PGraphics {
                           float n10, float n11, float n12, float n13,
                           float n20, float n21, float n22, float n23,
                           float n30, float n31, float n32, float n33) {
+    if (projectionMode) {
+      projection.apply(n00, n01, n02, n03,
+                       n10, n11, n12, n13,
+                       n20, n21, n22, n23,
+                       n30, n31, n32, n33);
+    } else {
+      forwardTransform.apply(n00, n01, n02, n03,
+                             n10, n11, n12, n13,
+                             n20, n21, n22, n23,
+                             n30, n31, n32, n33);
 
-    forwardTransform.apply(n00, n01, n02, n03,
-                           n10, n11, n12, n13,
-                           n20, n21, n22, n23,
-                           n30, n31, n32, n33);
-
-    reverseTransform.invApply(n00, n01, n02, n03,
-                              n10, n11, n12, n13,
-                              n20, n21, n22, n23,
-                              n30, n31, n32, n33);
+      reverseTransform.invApply(n00, n01, n02, n03,
+                                n10, n11, n12, n13,
+                                n20, n21, n22, n23,
+                                n30, n31, n32, n33);
+    }
   }
 
 
@@ -3636,7 +3688,28 @@ public class PGraphics3D extends PGraphics {
     projection.print();
   }
 
+  
+  public PMatrix getProjection() {
+    return projection.get();
+  }
+  
 
+  /**
+   * Enables projection mode. The geometric transformations and
+   * push/pop matrix operations are applied to the projection matrix
+   * instead to the modelview.
+   */ 
+  public void beginProjection() {
+    projectionMode = true;
+  }
+  
+  /**
+   * Disables projection mode.
+   */  
+  public void endProjection() {
+    projectionMode = false;
+  }  
+  
 
   //////////////////////////////////////////////////////////////
 

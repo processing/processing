@@ -108,6 +108,7 @@ public class PShape implements PConstants {
    * @brief  	Shape document height
    */
   public float height;
+  public float depth;
 
   // set to false if the object is hidden in the layers palette
   protected boolean visible = true;
@@ -289,7 +290,22 @@ public class PShape implements PConstants {
     return height;
   }
 
-
+  /**
+   * Get the depth of the shape area (not necessarily the shape boundary). Only makes sense for 3D PShape subclasses,
+   * such as PShape3D. 
+   */
+  public float getDepth() {
+    //checkBounds();
+    return depth;
+  } 
+  
+  /**
+   * Return true if this shape is 3D. Defaults to false.
+   */  
+  public boolean is3D() {
+    return false;
+  }  
+  
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
@@ -632,6 +648,10 @@ public class PShape implements PConstants {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
+  public PShape getParent() {
+    return parent;
+  }
+  
   public int getChildCount() {
     return childCount;
   }
@@ -697,11 +717,55 @@ public class PShape implements PConstants {
     }
   }
 
-
+  
+  // adds child who exactly at position idx in the array of children.
+  public void addChild(PShape who, int idx) {
+    if (idx < childCount) {
+      if (childCount == children.length) {
+        children = (PShape[]) PApplet.expand(children);
+      }
+      
+      // Copy [idx, childCount - 1] to [idx + 1, childCount]
+      for (int i = childCount - 1; i >= idx; i--) {
+        children[i + 1] = children[i];
+      }
+      childCount++;
+      
+      children[idx] = who;
+      
+      who.parent = this; 
+      
+      if (who.getName() != null) {
+        addName(who.getName(), who);
+      }      
+    }
+  }
+  
+  
+  /**
+   * Remove the child shape with index idx.
+   */  
+  public void removeChild(int idx) {
+    if (idx < childCount) {
+      PShape child = children[idx];
+     
+      // Copy [idx + 1, childCount - 1] to [idx, childCount - 2]
+      for (int i = idx; i < childCount - 1; i++) {
+        children[i] = children[i + 1];
+      }      
+      childCount--;
+      
+      if (child.getName() != null && nameTable != null) {
+        nameTable.remove(child.getName());
+      }       
+    }
+  }  
+  
+  
   /**
    * Add a shape to the name lookup table.
    */
-  protected void addName(String nom, PShape shape) {
+  public void addName(String nom, PShape shape) {
     if (parent != null) {
       parent.addName(nom, shape);
     } else {
@@ -712,6 +776,20 @@ public class PShape implements PConstants {
     }
   }
 
+  
+  /**
+   * Returns the index of child who.
+   */ 
+  public int getChildIndex(PShape who) {
+    for (int i = 0; i < childCount; i++) {
+      if (children[i] == who) {
+        return i;
+      }
+    }
+    return -1;
+  }
+  
+  
 
 //  public PShape createGroup() {
 //    PShape group = new PShape();

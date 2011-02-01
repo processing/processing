@@ -27,6 +27,7 @@ package processing.core;
 import java.awt.image.*;
 import java.io.*;
 import java.util.HashMap;
+import java.util.Set;
 
 import javax.imageio.ImageIO;
 
@@ -102,10 +103,11 @@ public class PImage implements PConstants, Cloneable {
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-
-  /** for subclasses that need to store info about the image */
-  protected HashMap<Object,Object> cacheMap;
-
+  /** for renderers that need to store info about the image */
+  protected HashMap<PGraphics, PMetadata> cacheMap;
+  
+  /** for renderers that need to store parameters about the image */
+  protected HashMap<PGraphics, PParameters> paramMap;
 
   /** modified portion of the image */
   protected boolean modified;
@@ -261,20 +263,36 @@ public class PImage implements PConstants, Cloneable {
     return image;
   }
 
-
+  
+  public void delete() {
+    if (cacheMap != null) {
+      Set<PGraphics> keySet = cacheMap.keySet();
+      if (!keySet.isEmpty()) {
+        Object[] keys = keySet.toArray();
+        for (int i = 0; i < keys.length; i++) {
+          PMetadata data = getCache((PGraphics)keys[i]);
+          data.delete();    
+        }
+      }
+    }
+  }
+  
   //////////////////////////////////////////////////////////////
 
-
+  // METADATA/PARAMETERS REQUIRED BY RENDERERS
+  
   /**
    * Store data of some kind for a renderer that requires extra metadata of
    * some kind. Usually this is a renderer-specific representation of the
    * image data, for instance a BufferedImage with tint() settings applied for
    * PGraphicsJava2D, or resized image data and OpenGL texture indices for
    * PGraphicsOpenGL.
+   * @param renderer The PGraphics renderer associated to the image
+   * @param storage The metadata required by the renderer   
    */
-  public void setCache(Object parent, Object storage) {
-    if (cacheMap == null) cacheMap = new HashMap<Object, Object>();
-    cacheMap.put(parent, storage);
+  public void setCache(PGraphics renderer, PMetadata storage) {
+    if (cacheMap == null) cacheMap = new HashMap<PGraphics, PMetadata>();
+    cacheMap.put(renderer, storage);
   }
 
 
@@ -283,27 +301,60 @@ public class PImage implements PConstants, Cloneable {
    * will cache data in different formats, it's necessary to store cache data
    * keyed by the renderer object. Otherwise, attempting to draw the same
    * image to both a PGraphicsJava2D and a PGraphicsOpenGL will cause errors.
-   * @param parent The PGraphics object (or any object, really) associated
-   * @return data stored for the specified parent
+   * @param renderer The PGraphics renderer associated to the image
+   * @return metadata stored for the specified renderer
    */
-  public Object getCache(Object parent) {
+  public PMetadata getCache(PGraphics renderer) {
     if (cacheMap == null) return null;
-    return cacheMap.get(parent);
+    return cacheMap.get(renderer);
   }
 
 
   /**
    * Remove information associated with this renderer from the cache, if any.
-   * @param parent The PGraphics object whose cache data should be removed
+   * @param renderer The PGraphics renderer whose cache data should be removed
    */
-  public void removeCache(Object parent) {
+  public void removeCache(PGraphics renderer) {
     if (cacheMap != null) {
-      cacheMap.remove(parent);
+      cacheMap.remove(renderer);
     }
   }
 
 
+  /**
+   * Store parameters for a renderer that requires extra metadata of
+   * some kind.
+   * @param renderer The PGraphics renderer associated to the image
+   * @param storage The parameters required by the renderer  
+   */
+  public void setParams(PGraphics renderer, PParameters params) {
+    if (paramMap == null) paramMap = new HashMap<PGraphics, PParameters>();
+    paramMap.put(renderer, params);
+  }
 
+
+  /**
+   * Get the parameters for the specified renderer.
+   * @param renderer The PGraphics renderer associated to the image
+   * @return parameters stored for the specified renderer
+   */
+  public PParameters getParams(PGraphics renderer) {
+    if (paramMap == null) return null;
+    return paramMap.get(renderer);
+  }
+
+
+  /**
+   * Remove information associated with this renderer from the cache, if any.
+   * @param renderer The PGraphics renderer whose parameters should be removed
+   */
+  public void removeParams(PGraphics renderer) {
+    if (paramMap != null) {
+      paramMap.remove(renderer);
+    }
+  }
+
+  
   //////////////////////////////////////////////////////////////
 
   // MARKING IMAGE AS MODIFIED / FOR USE w/ GET/SET
@@ -323,7 +374,27 @@ public class PImage implements PConstants, Cloneable {
     modified = m;
   }
 
+  
+  public int getModifiedX1() {
+    return mx1;
+  }
 
+  
+  public int getModifiedX2() {
+    return mx2;
+  }
+
+  
+  public int getModifiedY1() {
+    return my1;
+  }
+
+  
+  public int getModifiedY2() {
+    return my2;
+  }  
+  
+  
   /**
    * Loads the pixel data for the image into its <b>pixels[]</b> array. This function must always be called before reading from or writing to <b>pixels[]</b>.
    * <br><br>Certain renderers may or may not seem to require <b>loadPixels()</b> or <b>updatePixels()</b>. However, the rule is that any time you want to manipulate the <b>pixels[]</b> array, you must first call <b>loadPixels()</b>, and after changes have been made, call <b>updatePixels()</b>. Even if the renderer may not seem to use this function in the current Processing release, this will always be subject to change.
