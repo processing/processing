@@ -5965,43 +5965,31 @@ public class PGraphics extends PImage implements PConstants {
   }
   
   public void blend(int mode) {
-    if (!is3D()) {
-      showMissingWarning("blend");
-    }
+    showMissingWarning("blend");
   }
   
   
   public void noBlend() {
-    if (!is3D()) {
-      showMissingWarning("noBlend");
-    }
+    showMissingWarning("noBlend");
   }
 
   
   public void textureBlend(int mode) {
-    if (!is3D()) {
-      showMissingWarning("blend");
-    }
+    showMissingWarning("blend");
   }
   
   
   public void noTextureBlend() {
-    if (!is3D()) {
-      showMissingWarning("noBlend");
-    }
+    showMissingWarning("noBlend");
   }
   
   public PShape beginRecord() { // ignore
-    if (!is3D()) {
-      showMissingWarning("beginRecord");
-    }
+    showMissingWarning("beginRecord");
     return null;
   }
   
   public void endRecord() {  // ignore
-    if (!is3D()) {
-      showMissingWarning("endShapeRecord");
-    }    
+    showMissingWarning("endShapeRecord");    
   }
   
   public boolean isRecording() { // ignore
@@ -6009,23 +5997,17 @@ public class PGraphics extends PImage implements PConstants {
   }
   
   public void mergeRecord() { 
-    if (!is3D()) {
-      showMissingWarning("mergeRecord");
-    }    
+    showMissingWarning("mergeRecord");    
   }
 
   
   public void noMergeRecord() { 
-    if (!is3D()) {
-      showMissingWarning("noMergeRecord");
-    }    
+    showMissingWarning("noMergeRecord");
   }
   
   
   public void shapeName(String name) {
-    if (!is3D()) {
-      showMissingWarning("shapeName");
-    }
+    showMissingWarning("shapeName");
   }
   
   
