@@ -540,7 +540,7 @@ public class PApplet extends Applet
    * <P>
    * Used by the millis() function.
    */
-  long millisOffset;
+  long millisOffset = System.currentTimeMillis();
 
   /**
    * The current value of frames per second.
@@ -677,7 +677,7 @@ public class PApplet extends Applet
     // send tab keys through to the PApplet
     setFocusTraversalKeysEnabled(false);
 
-    millisOffset = System.currentTimeMillis();
+    //millisOffset = System.currentTimeMillis(); // moved to the variable declaration
 
     finished = false; // just for clarity
 
