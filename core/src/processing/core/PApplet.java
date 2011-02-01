@@ -162,7 +162,6 @@ import processing.xml.XMLElement;
  * do by hand w/ some Java code.</P>
  * @usage Web &amp; Application
  */
-@SuppressWarnings("serial")
 public class PApplet extends Applet
   implements PConstants, Runnable,
              MouseListener, MouseMotionListener, KeyListener, FocusListener
@@ -1382,6 +1381,14 @@ public class PApplet extends Applet
 
   /**
    * Creates a new PImage (the datatype for storing images). This provides a fresh buffer of pixels to play with. Set the size of the buffer with the <b>width</b> and <b>height</b> parameters. The <b>format</b> parameter defines how the pixels are stored. See the PImage reference for more information.
+   */ 
+  public PImage createImage(int wide, int high, int format) {
+    return createImage(wide, high, format, null);
+  }
+
+  
+  /**
+   * Creates a new PImage (the datatype for storing images). This provides a fresh buffer of pixels to play with. Set the size of the buffer with the <b>width</b> and <b>height</b> parameters. The <b>format</b> parameter defines how the pixels are stored. See the PImage reference for more information.
    * <br><br>Be sure to include all three parameters, specifying only the width and height (but no format) will produce a strange error.
    * <br><br>Advanced users please note that createImage() should be used instead of the syntax <tt>new PImage()</tt>.
    * =advanced
@@ -1397,8 +1404,11 @@ public class PApplet extends Applet
    * @see processing.core.PImage
    * @see processing.core.PGraphics
    */
-  public PImage createImage(int wide, int high, int format) {
+  public PImage createImage(int wide, int high, int format, PParameters params) {
     PImage image = new PImage(wide, high, format);
+    if (params != null) {
+      image.setParams(g, params);
+    }
     image.parent = this;  // make save() work
     return image;
   }
@@ -3618,14 +3628,28 @@ public class PApplet extends Applet
    * java.awt.Image to the PImage constructor that takes an AWT image.
    */
   public PImage loadImage(String filename) {
-    return loadImage(filename, null);
+    return loadImage(filename, null, null);
   }
 
-
+  
+  /**
+   * Load an image from the data folder or a local directory...
+   */  
+  public PImage loadImage(String filename, String extension) {
+    return loadImage(filename, extension, null);
+  }
+  
+  
+  public PImage loadImage(String filename, PParameters params) {
+    return loadImage(filename, null, params);
+  }
+  
+  
   /**
    * Loads an image into a variable of type <b>PImage</b>. Four types of images ( <b>.gif</b>, <b>.jpg</b>, <b>.tga</b>, <b>.png</b>) images may be loaded. To load correctly, images must be located in the data directory of the current sketch. In most cases, load all images in <b>setup()</b> to preload them at the start of the program. Loading images inside <b>draw()</b> will reduce the speed of a program.
    * <br><br>The <b>filename</b> parameter can also be a URL to a file found online. For security reasons, a Processing sketch found online can only download files from the same server from which it came. Getting around this restriction requires a <a href="http://processing.org/hacks/doku.php?id=hacks:signapplet">signed applet</a>.
    * <br><br>The <b>extension</b> parameter is used to determine the image type in cases where the image filename does not end with a proper extension. Specify the extension as the second parameter to <b>loadImage()</b>, as shown in the third example on this page.
+   * <br><br>The <b>params</b> parameter is used to set an parameter object for the image, as might be used by specific renderers such as OPENGL2. Specify the extension as the third parameter to <b>loadImage()</b>, as shown in the fourth example on this page.
    * <br><br>If an image is not loaded successfully, the <b>null</b> value is returned and an error message will be printed to the console. The error message does not halt the program, however the null value may cause a NullPointerException if your code does not check whether the value returned from <b>loadImage()</b> is null.<br><br>Depending on the type of error, a <b>PImage</b> object may still be returned, but the width and height of the image will be set to -1. This happens if bad image data is returned or cannot be decoded properly. Sometimes this happens with image URLs that produce a 403 error or that redirect to a password prompt, because <b>loadImage()</b> will attempt to interpret the HTML as image data.
    *
    * =advanced
@@ -3645,7 +3669,7 @@ public class PApplet extends Applet
    * @see processing.core.PApplet#imageMode(int)
    * @see processing.core.PApplet#background(float, float, float)
    */
-  public PImage loadImage(String filename, String extension) {
+  public PImage loadImage(String filename, String extension, PParameters params) {
     if (extension == null) {
       String lower = filename.toLowerCase();
       int dot = filename.lastIndexOf('.');
@@ -3667,7 +3691,11 @@ public class PApplet extends Applet
 
     if (extension.equals("tga")) {
       try {
-        return loadImageTGA(filename);
+        PImage image = loadImageTGA(filename);
+        if (params != null) {
+          image.setParams(g, params);
+        }
+        return image;
       } catch (IOException e) {
         e.printStackTrace();
         return null;
@@ -3676,7 +3704,11 @@ public class PApplet extends Applet
 
     if (extension.equals("tif") || extension.equals("tiff")) {
       byte bytes[] = loadBytes(filename);
-      return (bytes == null) ? null : PImage.loadTIFF(bytes);
+      PImage image =  (bytes == null) ? null : PImage.loadTIFF(bytes);
+      if (params != null) {
+        image.setParams(g, params);
+      }
+      return image;      
     }
 
     // For jpeg, gif, and png, load them using createImage(),
@@ -3700,6 +3732,10 @@ public class PApplet extends Applet
           if (extension.equals("gif") || extension.equals("png")) {
             image.checkAlpha();
           }
+          
+          if (params != null) {
+            image.setParams(g, params);
+          }
           return image;
         }
       }
@@ -3714,7 +3750,12 @@ public class PApplet extends Applet
     if (loadImageFormats != null) {
       for (int i = 0; i < loadImageFormats.length; i++) {
         if (extension.equals(loadImageFormats[i])) {
-          return loadImageIO(filename);
+          PImage image;
+          image = loadImageIO(filename);
+          if (params != null) {
+            image.setParams(g, params);
+          }
+          return image;
         }
       }
     }
@@ -3725,10 +3766,15 @@ public class PApplet extends Applet
   }
 
   public PImage requestImage(String filename) {
-    return requestImage(filename, null);
+    return requestImage(filename, null, null);
   }
 
+  
+  public PImage requestImage(String filename, String extension) {
+    return requestImage(filename, extension, null);
+  }
 
+  
   /**
    * This function load images on a separate thread so that your sketch does not freeze while images load during <b>setup()</b>. While the image is loading, its width and height will be 0. If an error occurs while loading the image, its width and height will be set to -1. You'll know when the image has loaded properly because its width and height will be greater than 0. Asynchronous image loading (particularly when downloading from a server) can dramatically improve performance.<br><br>
    * The <b>extension</b> parameter is used to determine the image type in cases where the image filename does not end with a proper extension. Specify the extension as the second parameter to <b>requestImage()</b>.
@@ -3740,8 +3786,8 @@ public class PApplet extends Applet
    * @see processing.core.PApplet#loadImage(String, String)
    * @see processing.core.PImage
    */
-  public PImage requestImage(String filename, String extension) {
-    PImage vessel = createImage(0, 0, ARGB);
+  public PImage requestImage(String filename, String extension, PParameters params) {
+    PImage vessel = createImage(0, 0, ARGB, params);
     AsyncImageLoader ail =
       new AsyncImageLoader(filename, extension, vessel);
     ail.start();
@@ -3765,7 +3811,7 @@ public class PApplet extends Applet
     String filename;
     String extension;
     PImage vessel;
-
+    
     public AsyncImageLoader(String filename, String extension, PImage vessel) {
       this.filename = filename;
       this.extension = extension;
@@ -4055,7 +4101,14 @@ public class PApplet extends Applet
 
   // SHAPE I/O
 
-
+  protected String[] loadShapeFormats;
+  
+  
+  public PShape loadShape(String filename) {
+    return loadShape(filename, null);
+  }
+  
+  
   /**
    * Loads vector shapes into a variable of type <b>PShape</b>. Currently, only SVG files may be loaded.
    * To load correctly, the file must be located in the data directory of the current sketch.
@@ -4073,11 +4126,27 @@ public class PApplet extends Applet
    * @see PApplet#shape(PShape)
    * @see PApplet#shapeMode(int)
    */
-  public PShape loadShape(String filename) {
-    if (filename.toLowerCase().endsWith(".svg")) {
+  public PShape loadShape(String filename, PParameters params) {
+    String extension;
+    
+    String lower = filename.toLowerCase();
+    int dot = filename.lastIndexOf('.');
+    if (dot == -1) {
+      extension = "unknown";  // no extension found
+    }
+    extension = lower.substring(dot + 1);
+
+    // check for, and strip any parameters on the url, i.e.
+    // filename.jpg?blah=blah&something=that
+    int question = extension.indexOf('?');
+    if (question != -1) {
+      extension = extension.substring(0, question);
+    }        
+    
+    if (extension.equals("svg")) {
       return new PShapeSVG(this, filename);
 
-    } else if (filename.toLowerCase().endsWith(".svgz")) {
+    } else if (extension.equals("svgz")) {
       try {
         InputStream input = new GZIPInputStream(createInput(filename));
         XMLElement xml = new XMLElement(createReader(input));
@@ -4085,12 +4154,33 @@ public class PApplet extends Applet
       } catch (IOException e) {
         e.printStackTrace();
       }
+    } else {
+      // Loading the formats supported by the renderer.
+    
+      loadShapeFormats = g.getSupportedShapeFormats();
+    
+      if (loadShapeFormats != null) {
+        for (int i = 0; i < loadShapeFormats.length; i++) {
+          if (extension.equals(loadShapeFormats[i])) {
+            return g.loadShape(filename, params);
+          }
+        }
+      }
+        
     }
+    
     return null;
   }
 
 
-
+  /**
+   * Creates an empty shape, with the specified size and parameters.
+   */  
+  public PShape createShape(int size, PParameters params) {
+    return g.createShape(size, params);
+  }
+  
+  
   //////////////////////////////////////////////////////////////
 
   // FONT I/O
@@ -7534,6 +7624,9 @@ public class PApplet extends Applet
       recorder.dispose();
       recorder = null;
     }
+    if (g.isRecording()) {
+      g.endRecord();
+    }
   }
 
 
@@ -7576,8 +7669,16 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * Starts shape recording and returns the PShape object that will 
+   * contain the geometry.   
+   */  
+  public PShape beginRecord() {
+    return g.beginRecord();
+  }
+  
   //////////////////////////////////////////////////////////////
-
+  
 
   /**
    * Loads the pixel data for the display window into the <b>pixels[]</b> array. This function must always be called before reading from or writing to <b>pixels[]</b>.
@@ -7656,6 +7757,11 @@ public class PApplet extends Applet
   }
 
 
+  public boolean hintEnabled(int which) {
+    return g.hintEnabled(which);
+  }
+
+
   /**
    * Start a new shape of type POLYGON
    */
@@ -7704,6 +7810,15 @@ public class PApplet extends Applet
 
 
   /**
+   * Sets the automatic normal calculation mode.
+   */  
+  public void autoNormal(boolean auto) {
+    if (recorder != null) recorder.autoNormal(auto);
+    g.autoNormal(auto);
+  }
+
+
+  /**
    * Sets the current normal vector. Only applies with 3D rendering
    * and inside a beginShape/endShape block.
    * <P/>
@@ -7743,6 +7858,17 @@ public class PApplet extends Applet
   public void texture(PImage image) {
     if (recorder != null) recorder.texture(image);
     g.texture(image);
+  }
+
+
+  /**
+   * Removes texture image for current shape.
+   * Needs to be called between @see beginShape and @see endShape
+   *
+   */
+  public void noTexture() {
+    if (recorder != null) recorder.noTexture();
+    g.noTexture();
   }
 
 
@@ -8733,6 +8859,18 @@ public class PApplet extends Applet
   }
 
 
+  public void beginText() {
+    if (recorder != null) recorder.beginText();
+    g.beginText();
+  }
+
+
+  public void endText() {
+    if (recorder != null) recorder.endText();
+    g.endText();
+  }
+
+
   public float textWidth(char c) {
     return g.textWidth(c);
   }
@@ -9133,6 +9271,18 @@ public class PApplet extends Applet
   public void printMatrix() {
     if (recorder != null) recorder.printMatrix();
     g.printMatrix();
+  }
+
+
+  public void beginProjection() {
+    if (recorder != null) recorder.beginProjection();
+    g.beginProjection();
+  }
+
+
+  public void endProjection() {
+    if (recorder != null) recorder.endProjection();
+    g.endProjection();
   }
 
 
@@ -10003,6 +10153,53 @@ public class PApplet extends Applet
 
 
   /**
+   * Display a warning that the specified method is only available with 3D.
+   * @param method The method name (no parentheses)
+   */
+  static public void showDepthWarning(String method) {
+    PGraphics.showDepthWarning(method);
+  }
+
+
+  /**
+   * Display a warning that the specified method that takes x, y, z parameters
+   * can only be used with x and y parameters in this renderer.
+   * @param method The method name (no parentheses)
+   */
+  static public void showDepthWarningXYZ(String method) {
+    PGraphics.showDepthWarningXYZ(method);
+  }
+
+
+  /**
+   * Display a warning that the specified method is simply unavailable.
+   */
+  static public void showMethodWarning(String method) {
+    PGraphics.showMethodWarning(method);
+  }
+
+
+  /**
+   * Error that a particular variation of a method is unavailable (even though
+   * other variations are). For instance, if vertex(x, y, u, v) is not
+   * available, but vertex(x, y) is just fine.
+   */
+  static public void showVariationWarning(String str) {
+    PGraphics.showVariationWarning(str);
+  }
+
+
+  /**
+   * Display a warning that the specified method is not implemented, meaning
+   * that it could be either a completely missing function, although other
+   * variations of it may still work properly.
+   */
+  static public void showMissingWarning(String method) {
+    PGraphics.showMissingWarning(method);
+  }
+
+
+  /**
    * Return true if this renderer should be drawn to the screen. Defaults to
    * returning true, since nearly all renderers are on-screen beasts. But can
    * be overridden for subclasses like PDF so that a window doesn't open up.
@@ -10015,16 +10212,138 @@ public class PApplet extends Applet
   }
 
 
+  public void blend(int mode) {
+    if (recorder != null) recorder.blend(mode);
+    g.blend(mode);
+  }
+
+
+  public void noBlend() {
+    if (recorder != null) recorder.noBlend();
+    g.noBlend();
+  }
+
+
+  public void textureBlend(int mode) {
+    if (recorder != null) recorder.textureBlend(mode);
+    g.textureBlend(mode);
+  }
+
+
+  public void noTextureBlend() {
+    if (recorder != null) recorder.noTextureBlend();
+    g.noTextureBlend();
+  }
+
+
+  public void mergeRecord() { 
+    if (recorder != null) recorder.mergeRecord();
+    g.mergeRecord();
+  }
+
+
+  public void noMergeRecord() { 
+    if (recorder != null) recorder.noMergeRecord();
+    g.noMergeRecord();
+  }
+
+
+  public void shapeName(String name) {
+    if (recorder != null) recorder.shapeName(name);
+    g.shapeName(name);
+  }
+
+
+  public void texture(PImage image0, PImage image1) {
+    if (recorder != null) recorder.texture(image0, image1);
+    g.texture(image0, image1);
+  }
+
+
+  public void texture(PImage image0, PImage image1, PImage image2) {
+    if (recorder != null) recorder.texture(image0, image1, image2);
+    g.texture(image0, image1, image2);
+  }
+
+
+  public void texture(PImage image0, PImage image1, PImage image2, PImage image3) {
+    if (recorder != null) recorder.texture(image0, image1, image2, image3);
+    g.texture(image0, image1, image2, image3);
+  }
+
+
+  public void texture(PImage[] images) {
+    if (recorder != null) recorder.texture(images);
+    g.texture(images);
+  }
+
+
+  public void vertex(float x, float y, float u0, float v0, float u1, float v1) {
+    if (recorder != null) recorder.vertex(x, y, u0, v0, u1, v1);
+    g.vertex(x, y, u0, v0, u1, v1);
+  }
+
+
+  public void vertex(float x, float y, float u0, float v0, float u1, float v1, float u2, float v2) {
+    if (recorder != null) recorder.vertex(x, y, u0, v0, u1, v1, u2, v2);
+    g.vertex(x, y, u0, v0, u1, v1, u2, v2);
+  }
+
+
+  public void vertex(float x, float y, float u0, float v0, float u1, float v1, float u2, float v2, float u3, float v3) {
+    if (recorder != null) recorder.vertex(x, y, u0, v0, u1, v1, u2, v2, u3, v3);
+    g.vertex(x, y, u0, v0, u1, v1, u2, v2, u3, v3);
+  }
+
+
+  public void vertex(float x, float y, float[] u, float[] v) {
+    if (recorder != null) recorder.vertex(x, y, u, v);
+    g.vertex(x, y, u, v);
+  }
+
+
+  public void vertex(float x, float y, float z, float u0, float v0, float u1, float v1) {
+    if (recorder != null) recorder.vertex(x, y, z, u0, v0, u1, v1);
+    g.vertex(x, y, z, u0, v0, u1, v1);
+  }
+
+
+  public void vertex(float x, float y, float z, float u0, float v0, float u1, float v1, float u2, float v2) {
+    if (recorder != null) recorder.vertex(x, y, z, u0, v0, u1, v1, u2, v2);
+    g.vertex(x, y, z, u0, v0, u1, v1, u2, v2);
+  }
+
+
+  public void vertex(float x, float y, float z, float u0, float v0, float u1, float v1, float u2, float v2, float u3, float v3) {
+    if (recorder != null) recorder.vertex(x, y, z, u0, v0, u1, v1, u2, v2, u3, v3);
+    g.vertex(x, y, z, u0, v0, u1, v1, u2, v2, u3, v3);
+  }
+
+
+  public void vertex(float x, float y, float z, float[] u, float[] v) {
+    if (recorder != null) recorder.vertex(x, y, z, u, v);
+    g.vertex(x, y, z, u, v);
+  }
+
+
+  public void delete() {
+    if (recorder != null) recorder.delete();
+    g.delete();
+  }
+
+
   /**
    * Store data of some kind for a renderer that requires extra metadata of
    * some kind. Usually this is a renderer-specific representation of the
    * image data, for instance a BufferedImage with tint() settings applied for
    * PGraphicsJava2D, or resized image data and OpenGL texture indices for
    * PGraphicsOpenGL.
+   * @param renderer The PGraphics renderer associated to the image
+   * @param storage The metadata required by the renderer   
    */
-  public void setCache(Object parent, Object storage) {
-    if (recorder != null) recorder.setCache(parent, storage);
-    g.setCache(parent, storage);
+  public void setCache(PGraphics renderer, PMetadata storage) {
+    if (recorder != null) recorder.setCache(renderer, storage);
+    g.setCache(renderer, storage);
   }
 
 
@@ -10033,21 +10352,53 @@ public class PApplet extends Applet
    * will cache data in different formats, it's necessary to store cache data
    * keyed by the renderer object. Otherwise, attempting to draw the same
    * image to both a PGraphicsJava2D and a PGraphicsOpenGL will cause errors.
-   * @param parent The PGraphics object (or any object, really) associated
-   * @return data stored for the specified parent
+   * @param renderer The PGraphics renderer associated to the image
+   * @return metadata stored for the specified renderer
    */
-  public Object getCache(Object parent) {
-    return g.getCache(parent);
+  public PMetadata getCache(PGraphics renderer) {
+    return g.getCache(renderer);
   }
 
 
   /**
    * Remove information associated with this renderer from the cache, if any.
-   * @param parent The PGraphics object whose cache data should be removed
+   * @param renderer The PGraphics renderer whose cache data should be removed
    */
-  public void removeCache(Object parent) {
-    if (recorder != null) recorder.removeCache(parent);
-    g.removeCache(parent);
+  public void removeCache(PGraphics renderer) {
+    if (recorder != null) recorder.removeCache(renderer);
+    g.removeCache(renderer);
+  }
+
+
+  /**
+   * Store parameters for a renderer that requires extra metadata of
+   * some kind.
+   * @param renderer The PGraphics renderer associated to the image
+   * @param storage The parameters required by the renderer  
+   */
+  public void setParams(PGraphics renderer, PParameters params) {
+    if (recorder != null) recorder.setParams(renderer, params);
+    g.setParams(renderer, params);
+  }
+
+
+  /**
+   * Get the parameters for the specified renderer.
+   * @param renderer The PGraphics renderer associated to the image
+   * @return parameters stored for the specified renderer
+   */
+  public PParameters getParams(PGraphics renderer) {
+    return g.getParams(renderer);
+  }
+
+
+  /**
+   * Remove information associated with this renderer from the cache, if any.
+   * @param renderer The PGraphics renderer whose parameters should be removed
+   */
+  public void removeParams(PGraphics renderer) {
+    if (recorder != null) recorder.removeParams(renderer);
+    g.removeParams(renderer);
   }
 
 
