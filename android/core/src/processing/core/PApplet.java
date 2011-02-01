@@ -546,7 +546,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
   protected void onPause() {
     super.onPause();
-
+    
 
     // TODO need to save all application state here!
 //    System.out.println("PApplet.onPause() called");
@@ -722,7 +722,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
       // are these two needed?
       surfaceHolder.addCallback(this);
       //surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_GPU);
-
+      
       // The PGraphics object needs to be created here so the renderer is not
       // null. This is required because PApplet.onResume events (which call
       // this.onResume() and thus require a valid renderer) are triggered
@@ -739,9 +739,9 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
       String depth = sketchColordepth();
       if (!depth.equals(DEFAULT_COLOR_DEPTH)) {
-        // Setting user specified color depth. Otherwise, we let the
+        // Setting user specified color depth. Otherwise, we let the 
         // device to choose the configuration it pleases.
-
+        
         if (sketchTranslucency()) {
           surfaceHolder.setFormat(PixelFormat.TRANSLUCENT);
         }
@@ -751,22 +751,22 @@ public class PApplet extends Activity implements PConstants, Runnable {
         if (3 < list.length) {
           // Getting RGBA bits.
           for (int i = 0; i < 4; i++) {
-            val[i] = parseInt(list[i]);
+            val[i] = parseInt(list[i]);  
           }
         }
         if (4 < list.length) {
           // Getting depth bits.
           val[4] = parseInt(list[4]);
-        }
+        }        
         if (5 < list.length) {
           // Getting stencil bits.
           val[5] = parseInt(list[5]);
         }
-
-        setEGLConfigChooser(g3.getConfigChooser(val[0], val[1], val[2], val[3], val[4], val[5]));
+        
+        setEGLConfigChooser(g3.getConfigChooser(val[0], val[1], val[2], val[3], val[4], val[5]));  
       }
-
-      // The renderer can be set only once.
+      
+      // The renderer can be set only once.      
       setRenderer(g3.getRenderer());
       setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 
@@ -796,12 +796,12 @@ public class PApplet extends Activity implements PConstants, Runnable {
       if (DEBUG) {
         System.out.println("surfaceDestroyed()");
       }
-
+      
       /*
       // TODO: Check how to make sure of calling g3.dispose() when this call to
       // surfaceDestoryed corresponds to the sketch being shut down instead of just
       // taken to the background.
-
+       
       // For instance, something like this would be ok?
       // The sketch is being stopped, so we dispose the resources.
       if (!paused) {
@@ -818,7 +818,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
       if (DEBUG) {
         System.out.println("SketchSurfaceView3D.surfaceChanged() " + w + " " + h);
       }
-      surfaceChanged = true;
+      surfaceChanged = true;      
 //      width = w;
 //      height = h;
 //      g.setSize(w, h);
@@ -935,11 +935,11 @@ public class PApplet extends Activity implements PConstants, Runnable {
     return A2D;
   }
 
-
+  
   public boolean sketchTranslucency() {
     return true;
   }
-
+  
   public String sketchColordepth() {
     return DEFAULT_COLOR_DEPTH;
   }
@@ -991,10 +991,10 @@ public class PApplet extends Activity implements PConstants, Runnable {
    */
   public void stop() {
     // this used to shut down the sketch, but that code has
-    // been moved to dispose()
-
+    // been moved to dispose() 
+    
     paused = true; // sleep the animation thread
-
+    
     //TODO listeners
   }
 
@@ -1118,7 +1118,6 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
-  /*
   public void registerSize(Object o) {
     Class<?> methodArgs[] = new Class[] { Integer.TYPE, Integer.TYPE };
     registerWithArgs(sizeMethods, "size", o, methodArgs);
@@ -1141,6 +1140,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
  //   registerWithArgs(mouseEventMethods, "mouseEvent", o, methodArgs);
   }
 
+
   public void registerKeyEvent(Object o) {
     Class<?> methodArgs[] = new Class[] { KeyEvent.class };
     registerWithArgs(keyEventMethods, "keyEvent", o, methodArgs);
@@ -1149,7 +1149,6 @@ public class PApplet extends Activity implements PConstants, Runnable {
   public void registerDispose(Object o) {
     //registerNoArgs(disposeMethods, "dispose", o);
   }
-  */
 
 
   protected void registerNoArgs(RegisteredMethods meth,
@@ -1186,7 +1185,6 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
-  /*
   public void unregisterSize(Object o) {
     Class<?> methodArgs[] = new Class[] { Integer.TYPE, Integer.TYPE };
     unregisterWithArgs(sizeMethods, "size", o, methodArgs);
@@ -1217,7 +1215,6 @@ public class PApplet extends Activity implements PConstants, Runnable {
   public void unregisterDispose(Object o) {
     unregisterNoArgs(disposeMethods, "dispose", o);
   }
-  */
 
 
   protected void unregisterNoArgs(RegisteredMethods meth,
@@ -1470,12 +1467,12 @@ public class PApplet extends Activity implements PConstants, Runnable {
     pg.setParent(this);
     pg.setPrimary(false);
     pg.setSize(iwidth, iheight);
-
+    
     // In the case of A3D, the first beginDraw/endDraw
     // call is needed to initialize the offscreen buffers.
     pg.beginDraw();
     pg.endDraw();
-
+    
     return pg;
   }
 
@@ -1653,15 +1650,15 @@ public class PApplet extends Activity implements PConstants, Runnable {
     final int NO_DELAYS_PER_YIELD = 15;
 
     while ((Thread.currentThread() == thread) && !finished) {
-
+      
       while (paused) {
         try{
           Thread.sleep(100L);
-        } catch (InterruptedException e) {
+        } catch (InterruptedException e) { 
           //ignore?
         }
       }
-
+      
       // Don't resize the renderer from the EDT (i.e. from a ComponentEvent),
       // otherwise it may attempt a resize mid-render.
 //      if (resizeRequest) {
@@ -2486,7 +2483,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
       // if not looping, shut down things explicitly,
       // because the main thread will be sleeping
       dispose();
-
+      
       // now get out
       exit2();
     }
@@ -2501,11 +2498,11 @@ public class PApplet extends Activity implements PConstants, Runnable {
     }
   }
 
-  /**
-   * Called to dispose of resources and shut down the sketch.
+  /** 
+   * Called to dispose of resources and shut down the sketch. 
    * Destroys the thread, dispose the renderer,and notify listeners.
    * <p>
-   * Not to be called or overriden by users. If called multiple times,
+   * Not to be called or overriden by users. If called multiple times, 
    * will only notify listeners once. Register a dispose listener instead.
    */
   public void dispose(){
@@ -2515,10 +2512,10 @@ public class PApplet extends Activity implements PConstants, Runnable {
     // don't run stop and disposers twice
     if (thread == null) return;
     thread = null;
-
+    
     // call to shut down renderer, in case it needs it (pdf does)
     if (g != null) g.dispose();
-    //disposeMethods.handle();
+    disposeMethods.handle();
   }
 
   //////////////////////////////////////////////////////////////
@@ -3350,13 +3347,13 @@ public class PApplet extends Activity implements PConstants, Runnable {
 //  protected String[] loadImageFormats;
 
   public PImage loadImage(String filename) {
-    return loadImage(filename, new PTexture.Parameters(ARGB));
+    return loadImage(filename, new PTexture.Parameters(ARGB));    
   }
 
   public PImage loadImage(String filename, int sampling) {
     return loadImage(filename, new PTexture.Parameters(ARGB, sampling));
   }
-
+  
   public PImage loadImage(String filename, PTexture.Parameters params) {
 //    return loadImage(filename, null);
     InputStream stream = createInput(filename);
@@ -6992,10 +6989,10 @@ public class PApplet extends Activity implements PConstants, Runnable {
       return ((PGraphicsAndroid3D) g).beginRecord();
     } else  {
        throw new RuntimeException("The shapes recorder can only be used with the A3D renderer.");
-    }
+    }    
   }
-
-
+  
+  
   public void beginShapesRecorder() {
     if (g.is3D()) {
       ((PGraphicsAndroid3D) g).beginShapesRecorder();
@@ -7027,12 +7024,12 @@ public class PApplet extends Activity implements PConstants, Runnable {
     g.edge(edge);
   }
 
-
+  
   public void autoNormal(boolean auto) {
     g.autoNormal(auto);
   }
 
-
+  
   public void normal(float nx, float ny, float nz) {
     g.normal(nx, ny, nz);
   }
@@ -7047,12 +7044,12 @@ public class PApplet extends Activity implements PConstants, Runnable {
     g.texture(image);
   }
 
-
+  
   public void noTexture() {
     g.noTexture();
   }
-
-
+  
+  
   public void vertex(float x, float y) {
     g.vertex(x, y);
   }
@@ -7071,13 +7068,13 @@ public class PApplet extends Activity implements PConstants, Runnable {
   public void vertex(float x, float y, float u, float v) {
     g.vertex(x, y, u, v);
   }
-
-
+  
+  
   public void vertex(float x, float y, float z, float u, float v) {
     g.vertex(x, y, z, u, v);
   }
 
-
+  
   public void breakShape() {
     g.breakShape();
   }
@@ -7098,10 +7095,10 @@ public class PApplet extends Activity implements PConstants, Runnable {
       ((PGraphicsAndroid3D) g).endRecord();
     } else  {
        throw new RuntimeException("The shapes recorder can only be used with the A3D renderer.");
-    }
+    }    
   }
-
-
+  
+  
   public PShape3D endShapesRecorder() {
     if (g.is3D()) {
       return ((PGraphicsAndroid3D) g).endShapesRecorder();
@@ -7655,7 +7652,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
                     float bottom, float top) {
     g.ortho(left, right, bottom, top);
   }
-
+  
   public void ortho(float left, float right,
                     float bottom, float top,
                     float near, float far) {
@@ -8167,12 +8164,12 @@ public class PApplet extends Activity implements PConstants, Runnable {
     g.beginProjection();
   }
 
-
+  
   public void endProjection() {
     g.endProjection();
   }
-
-
+  
+  
   public void blend(int mode) {
     g.blend(mode);
   }
@@ -8180,19 +8177,31 @@ public class PApplet extends Activity implements PConstants, Runnable {
   public void noBlend() {
     g.noBlend();
   }
-
+  
   public void textureBlend(int mode) {
     g.textureBlend(mode);
   }
 
   public void noTextureBlend() {
     g.noTextureBlend();
+  }  
+  
+  public void mergeRecord() { 
+    g.mergeRecord();
   }
 
+  public void noMergeRecord() {
+    g.noMergeRecord();
+  }
+
+  public void shapeName(String name) {
+    g.shapeName(name);
+  }
+  
   public void texture(PImage image0, PImage image1) {
     g.texture(image0, image1);
-  }
-
+  }  
+  
   public void texture(PImage image0, PImage image1, PImage image2) {
     g.texture(image0, image1, image2);
   }
@@ -8200,41 +8209,41 @@ public class PApplet extends Activity implements PConstants, Runnable {
   public void texture(PImage image0, PImage image1, PImage image2, PImage image3) {
     g.texture(image0, image1, image2, image3);
   }
-
+  
   public void texture(PImage[] images) {
     g.texture(images);
   }
-
+  
   public void vertex(float x, float y, float u0, float v0, float u1, float v1) {
-    g.vertex(x, y, u0, v0, u1, v1);
+    g.vertex(x, y, u0, v0, u1, v1); 
   }
-
+  
   public void vertex(float x, float y, float u0, float v0, float u1, float v1, float u2, float v2) {
     g.vertex(x, y, u0, v0, u1, v1, u2, v2);
   }
-
+  
   public void vertex(float x, float y, float u0, float v0, float u1, float v1, float u2, float v2, float u3, float v3) {
     g.vertex(x, y, u0, v0, u1, v1, u2, v2, u3, v3);
   }
-
+  
   public void vertex(float x, float y, float[] u, float[] v) {
     g.vertex(x, y, u, v);
-  }
+  }  
 
   public void vertex(float x, float y, float z, float u0, float v0, float u1, float v1) {
-    g.vertex(x, y, z, u0, v0, u1, v1);
+    g.vertex(x, y, z, u0, v0, u1, v1); 
   }
-
+  
   public void vertex(float x, float y, float z, float u0, float v0, float u1, float v1, float u2, float v2) {
     g.vertex(x, y, z, u0, v0, u1, v1, u2, v2);
   }
-
+  
   public void vertex(float x, float y, float z, float u0, float v0, float u1, float v1, float u2, float v2, float u3, float v3) {
     g.vertex(x, y, z, u0, v0, u1, v1, u2, v2, u3, v3);
   }
-
+  
   public void vertex(float x, float y, float z, float[] u, float[] v) {
     g.vertex(x, y, z, u, v);
-  }
+  }  
 }
 

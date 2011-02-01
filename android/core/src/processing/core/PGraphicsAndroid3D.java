@@ -84,6 +84,8 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected float[] pcamera;
   protected float[] pcameraInv;
   
+  protected float[] gltemp;
+  
   // PMatrix3D version for use in Processing.
   public PMatrix3D modelview;
   public PMatrix3D modelviewInv;
@@ -270,7 +272,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   private int textVertexCount = 0;  
   
   // ........................................................
-
+  
   // pos of first vertex of current shape in vertices array
   protected int shapeFirst;
 
@@ -333,6 +335,8 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   protected boolean recordingShape;
   protected int numRecordedTextures = 0;
+  protected boolean mergeRecShapes = false;  
+  protected String recShapeName; // Used to set name of shape during recording.  
   protected PShape3D recordedShape = null;
   protected ArrayList<PVector> recordedVertices = null;
   protected ArrayList<float[]> recordedColors = null;
@@ -466,13 +470,14 @@ public class PGraphicsAndroid3D extends PGraphics {
       glmodelviewInv = new float[16];
       pcamera = new float[16];
       pcameraInv = new float[16];
+      gltemp = new float[16];
       
       projection = new PMatrix3D();
       modelview = new PMatrix3D();
       modelviewInv = new PMatrix3D();
       camera = new PMatrix3D();
       cameraInv = new PMatrix3D();
-
+      
       matricesAllocated = true;
     }
 
@@ -1277,6 +1282,8 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected void beginShapeRecorderImpl() {
     recordingShape = true;  
     
+    recShapeName = "";
+    
     if (recordedVertices == null) {
       recordedVertices = new ArrayList<PVector>(vertexBuffer.capacity() / 3);  
     } else {
@@ -1296,7 +1303,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
     
     int size = texCoordBuffer[0].capacity() / 2;
-    if (recordedTexCoords == null) {
+    if (recordedTexCoords == null) {      
       recordedTexCoords = new ArrayList[MAX_TEXTURES];
       // We need to initialize all the buffers for recording of texture coordinates,
       // since we don't know in advance the number of texture units that will be used
@@ -1338,6 +1345,23 @@ public class PGraphicsAndroid3D extends PGraphics {
     numMultitextures = 0;
     clearMultitextures();
     clearMultitextures0();
+  }
+  
+  public void mergeRecord() {
+    // Setting this parameter to true has the result of A3D trying to
+    // set unique names to each shape being created between beginRecord/endRecord.
+    // In this way, even if two shapes have all of their parameters identical (mode,
+    // textures, etc), but their names are different, then they will be recorded in
+    // separate child shapes in the recorded shape.
+    mergeRecShapes = true;
+  }
+  
+  public void noMergeRecord() { 
+    mergeRecShapes = false;
+  }
+
+  public void shapeName(String name) {
+    recShapeName = name;
   }
 
   // public void edge(boolean e)
@@ -1955,14 +1979,14 @@ public class PGraphicsAndroid3D extends PGraphics {
       shape.setNormals(recordedNormals);
       
       // We set children first because they contain the textures...
+      shape.optimizeChildren(recordedChildren); // (we make sure that there are not superfluous shapes)
       shape.setChildren(recordedChildren);
-      shape.optimizeChildren();           
+            
       // ... and then the texture coordinates.
       for (int t = 0; t < numRecordedTextures; t++) {        
         shape.setTexcoords(t, recordedTexCoords[t]);
       }
-    
-      
+          
       // Releasing memory.
       recordedVertices.clear();
       recordedColors.clear();
@@ -2184,8 +2208,14 @@ public class PGraphicsAndroid3D extends PGraphics {
             }
             n1 = n0 + pathLength[k];
           }
-
-          PShape3D child = (PShape3D)PShape3D.createChild("Child" + recordedChildren.size(), n0, n1, LINE_STRIP, sw, null);
+          
+          String name = "shape";
+          if (mergeRecShapes) {
+            name = "shape";  
+          } else {
+            name = recShapeName.equals("") ? "shape:" + recordedChildren.size() : recShapeName;  
+          }          
+          PShape3D child = (PShape3D)PShape3D.createChild(name, n0, n1, LINE_STRIP, sw, null);
           recordedChildren.add(child);
         }
 
@@ -2403,7 +2433,14 @@ public class PGraphicsAndroid3D extends PGraphics {
         
         int n0 = recordedVertices.size();
         int n1 = n0 + 3 * faceLength[j] - 1;
-        PShape3D child = (PShape3D)PShape3D.createChild("Child" + recordedChildren.size(), n0, n1, TRIANGLES, 0, images);
+        
+        String name = "shape";
+        if (mergeRecShapes) {
+          name = "shape";  
+        } else {
+          name = recShapeName.equals("") ? "shape:" + recordedChildren.size() : recShapeName;
+        }
+        PShape3D child = (PShape3D)PShape3D.createChild(name, n0, n1, TRIANGLES, 0, images);
         recordedChildren.add(child);
       }
 
@@ -3310,7 +3347,7 @@ public class PGraphicsAndroid3D extends PGraphics {
 
     // Division by three needed because each int element in the buffer is used
     // to store three coordinates.
-    if (textVertexBuffer.capacity() < textVertexCount + 6) {
+    if (textVertexBuffer.capacity() / 3 < textVertexCount + 6) {
       expandTextBuffers();
     }    
     
@@ -3596,36 +3633,34 @@ public class PGraphicsAndroid3D extends PGraphics {
       float n10, float n11, float n12, float n13, float n20, float n21,
       float n22, float n23, float n30, float n31, float n32, float n33) {
 
-    float[] mat = new float[16];
+    gltemp[0] = n00;
+    gltemp[1] = n10;
+    gltemp[2] = n20;
+    gltemp[3] = n30;
 
-    mat[0] = n00;
-    mat[1] = n10;
-    mat[2] = n20;
-    mat[3] = n30;
+    gltemp[4] = n01;
+    gltemp[5] = n11;
+    gltemp[6] = n21;
+    gltemp[7] = n31;
 
-    mat[4] = n01;
-    mat[5] = n11;
-    mat[6] = n21;
-    mat[7] = n31;
+    gltemp[8] = n02;
+    gltemp[9] = n12;
+    gltemp[10] = n22;
+    gltemp[11] = n32;
 
-    mat[8] = n02;
-    mat[9] = n12;
-    mat[10] = n22;
-    mat[11] = n32;
+    gltemp[12] = n03;
+    gltemp[13] = n13;
+    gltemp[14] = n23;
+    gltemp[15] = n33;
 
-    mat[12] = n03;
-    mat[13] = n13;
-    mat[14] = n23;
-    mat[15] = n33;
-
-    gl.glMultMatrixf(mat, 0);
+    gl.glMultMatrixf(gltemp, 0);
 
     if (usingGLMatrixStack) {
       if (projectionMode) {
-        projectionStack.mult(mat);
+        projectionStack.mult(gltemp);
         projectionUpdated = false;
       } else {
-        modelviewStack.mult(mat);
+        modelviewStack.mult(gltemp);
         modelviewUpdated = false;   
       }
     }
@@ -6537,9 +6572,9 @@ public class PGraphicsAndroid3D extends PGraphics {
 
     public void mult(float[] mat) {
       mult(mat[0], mat[4], mat[8], mat[12],
-               mat[1], mat[5], mat[9], mat[13],
-               mat[2], mat[6], mat[10], mat[14],
-               mat[3], mat[7], mat[11], mat[15]);
+           mat[1], mat[5], mat[9], mat[13],
+           mat[2], mat[6], mat[10], mat[14],
+           mat[3], mat[7], mat[11], mat[15]);
     }
     
     public void mult(float n0, float n4, float n8, float n12,
