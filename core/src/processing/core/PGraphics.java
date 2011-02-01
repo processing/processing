@@ -406,7 +406,7 @@ public class PGraphics extends PImage implements PConstants {
   protected int shape;
 
   // vertices
-  static final int DEFAULT_VERTICES = 512;
+  public static final int DEFAULT_VERTICES = 512;
   protected float vertices[][] =
     new float[DEFAULT_VERTICES][VERTEX_FIELD_COUNT];
   protected int vertexCount; // total number of vertices
@@ -509,6 +509,8 @@ public class PGraphics extends PImage implements PConstants {
   /// Keep track of how many calls to normal, to determine the mode.
   //protected int normalCount;
 
+  protected boolean autoNormal;
+  
   /** Current normal vector. */
   public float normalX, normalY, normalZ;
 
@@ -712,6 +714,8 @@ public class PGraphics extends PImage implements PConstants {
 
     rectMode(CORNER);
     ellipseMode(DIAMETER);
+    
+    autoNormal = true;
 
     // no current font
     textFont = null;
@@ -836,6 +840,13 @@ public class PGraphics extends PImage implements PConstants {
     }
   }
 
+  public boolean hintEnabled(int which) {
+    if (which > 0) {
+      return hints[which];
+    } else {
+      return hints[-which];
+    }
+  }
 
 
   //////////////////////////////////////////////////////////////
@@ -885,6 +896,14 @@ public class PGraphics extends PImage implements PConstants {
    this.edge = edge;
   }
 
+  
+  /**
+   * Sets the automatic normal calculation mode.
+   */  
+  public void autoNormal(boolean auto) {
+    this.autoNormal = auto;   
+  }
+  
 
   /**
    * Sets the current normal vector. Only applies with 3D rendering
@@ -946,7 +965,17 @@ public class PGraphics extends PImage implements PConstants {
     textureImage = image;
   }
 
+  
+  /**
+   * Removes texture image for current shape.
+   * Needs to be called between @see beginShape and @see endShape
+   *
+   */
+  public void noTexture() {
+    textureImage = null;
+  }  
 
+  
   protected void vertexCheck() {
     if (vertexCount == vertices.length) {
       float temp[][] = new float[vertexCount << 1][VERTEX_FIELD_COUNT];
@@ -973,7 +1002,8 @@ public class PGraphics extends PImage implements PConstants {
 //      vertex[B] = fillB;
 //      vertex[A] = fillA;
 //    }
-    if (fill || textureImage != null) {
+    boolean textured = textureImage != null;
+    if (fill || textured) {
       if (textureImage == null) {
         vertex[R] = fillR;
         vertex[G] = fillG;
@@ -1002,11 +1032,29 @@ public class PGraphics extends PImage implements PConstants {
       vertex[SW] = strokeWeight;
     }
 
-    if (textureImage != null) {
+    if (textured) {
       vertex[U] = textureU;
       vertex[V] = textureV;
     }
 
+    if (autoNormal) {
+      float norm2 = normalX * normalX + normalY * normalY + normalZ * normalZ;
+      if (norm2 < EPSILON) {
+        vertex[HAS_NORMAL] = 0;  
+      } else {
+        if (Math.abs(norm2 - 1) > EPSILON) {
+          // The normal vector is not normalized.
+          float norm = PApplet.sqrt(norm2);
+          normalX /= norm;
+          normalY /= norm;
+          normalZ /= norm;
+        }
+        vertex[HAS_NORMAL] = 1;
+      }
+    } else {
+      vertex[HAS_NORMAL] = 1;  
+    }
+    
     vertexCount++;
   }
 
@@ -1043,7 +1091,8 @@ public class PGraphics extends PImage implements PConstants {
 
     vertex[EDGE] = edge ? 1 : 0;
 
-    if (fill || textureImage != null) {
+    boolean textured = textureImage != null;    
+    if (fill || textured) {
       if (textureImage == null) {
         vertex[R] = fillR;
         vertex[G] = fillG;
@@ -1087,10 +1136,28 @@ public class PGraphics extends PImage implements PConstants {
       vertex[SW] = strokeWeight;
     }
 
-    if (textureImage != null) {
+    if (textured) {
       vertex[U] = textureU;
       vertex[V] = textureV;
     }
+    
+    if (autoNormal) {
+      float norm2 = normalX * normalX + normalY * normalY + normalZ * normalZ;
+      if (norm2 < EPSILON) {
+        vertex[HAS_NORMAL] = 0;  
+      } else {
+        if (Math.abs(norm2 - 1) > EPSILON) {
+          // The normal vector is not normalized.
+          float norm = PApplet.sqrt(norm2);
+          normalX /= norm;
+          normalY /= norm;
+          normalZ /= norm;
+        }
+        vertex[HAS_NORMAL] = 1;
+      }
+    } else {
+      vertex[HAS_NORMAL] = 1;
+    }    
 
     vertex[NX] = normalX;
     vertex[NY] = normalY;
@@ -2110,22 +2177,20 @@ public class PGraphics extends PImage implements PConstants {
       sphereDetail(30);
     }
 
-    pushMatrix();
-    scale(r);
     edge(false);
 
     // 1st ring from south pole
     beginShape(TRIANGLE_STRIP);
     for (int i = 0; i < sphereDetailU; i++) {
       normal(0, -1, 0);
-      vertex(0, -1, 0);
+      vertex(0, -r, 0);
       normal(sphereX[i], sphereY[i], sphereZ[i]);
-      vertex(sphereX[i], sphereY[i], sphereZ[i]);
+      vertex(r * sphereX[i], r *sphereY[i], r * sphereZ[i]);
     }
     //normal(0, -1, 0);
     vertex(0, -1, 0);
     normal(sphereX[0], sphereY[0], sphereZ[0]);
-    vertex(sphereX[0], sphereY[0], sphereZ[0]);
+    vertex(r * sphereX[0], r * sphereY[0], r * sphereZ[0]);
     endShape();
 
     int v1,v11,v2;
@@ -2139,17 +2204,17 @@ public class PGraphics extends PImage implements PConstants {
       beginShape(TRIANGLE_STRIP);
       for (int j = 0; j < sphereDetailU; j++) {
         normal(sphereX[v1], sphereY[v1], sphereZ[v1]);
-        vertex(sphereX[v1], sphereY[v1], sphereZ[v1++]);
+        vertex(r * sphereX[v1], r * sphereY[v1], r * sphereZ[v1++]);
         normal(sphereX[v2], sphereY[v2], sphereZ[v2]);
-        vertex(sphereX[v2], sphereY[v2], sphereZ[v2++]);
+        vertex(r * sphereX[v2], r * sphereY[v2], r * sphereZ[v2++]);
       }
       // close each ring
       v1 = v11;
       v2 = voff;
       normal(sphereX[v1], sphereY[v1], sphereZ[v1]);
-      vertex(sphereX[v1], sphereY[v1], sphereZ[v1]);
+      vertex(r * sphereX[v1], r * sphereY[v1], sphereZ[v1]);
       normal(sphereX[v2], sphereY[v2], sphereZ[v2]);
-      vertex(sphereX[v2], sphereY[v2], sphereZ[v2]);
+      vertex(r * sphereX[v2], r * sphereY[v2], r * sphereZ[v2]);
       endShape();
     }
 
@@ -2158,18 +2223,17 @@ public class PGraphics extends PImage implements PConstants {
     for (int i = 0; i < sphereDetailU; i++) {
       v2 = voff + i;
       normal(sphereX[v2], sphereY[v2], sphereZ[v2]);
-      vertex(sphereX[v2], sphereY[v2], sphereZ[v2]);
+      vertex(r * sphereX[v2], r * sphereY[v2], r * sphereZ[v2]);
       normal(0, 1, 0);
-      vertex(0, 1, 0);
+      vertex(0, r, 0);
     }
     normal(sphereX[voff], sphereY[voff], sphereZ[voff]);
-    vertex(sphereX[voff], sphereY[voff], sphereZ[voff]);
+    vertex(r * sphereX[voff], r * sphereY[voff], r * sphereZ[voff]);
     normal(0, 1, 0);
-    vertex(0, 1, 0);
+    vertex(0, r, 0);
     endShape();
 
     edge(true);
-    popMatrix();
   }
 
 
@@ -3151,7 +3215,14 @@ public class PGraphics extends PImage implements PConstants {
     textLeading = (textAscent() + textDescent()) * 1.275f;
   }
 
+  public void beginText() {
+    showMissingWarning("beginText");
+  }
 
+  public void endText() {
+    showMissingWarning("endText");
+  }
+  
   // ........................................................
 
 
@@ -4046,6 +4117,19 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  //////////////////////////////////////////////////////////////
+
+  // PROJECTION
+
+  public void beginProjection() {
+    showMethodWarning("beginProjection");
+  }
+
+  
+  public void endProjection() {
+    showMethodWarning("endProjection");
+  }
+  
 
   //////////////////////////////////////////////////////////////
 
@@ -5750,7 +5834,7 @@ public class PGraphics extends PImage implements PConstants {
    * Display a warning that the specified method is only available with 3D.
    * @param method The method name (no parentheses)
    */
-  static protected void showDepthWarning(String method) {
+  static public void showDepthWarning(String method) {
     showWarning(method + "() can only be used with a renderer that " +
                 "supports 3D, such as P3D or OPENGL.");
   }
@@ -5761,7 +5845,7 @@ public class PGraphics extends PImage implements PConstants {
    * can only be used with x and y parameters in this renderer.
    * @param method The method name (no parentheses)
    */
-  static protected void showDepthWarningXYZ(String method) {
+  static public void showDepthWarningXYZ(String method) {
     showWarning(method + "() with x, y, and z coordinates " +
                 "can only be used with a renderer that " +
                 "supports 3D, such as P3D or OPENGL. " +
@@ -5772,7 +5856,7 @@ public class PGraphics extends PImage implements PConstants {
   /**
    * Display a warning that the specified method is simply unavailable.
    */
-  static protected void showMethodWarning(String method) {
+  static public void showMethodWarning(String method) {
     showWarning(method + "() is not available with this renderer.");
   }
 
@@ -5782,7 +5866,7 @@ public class PGraphics extends PImage implements PConstants {
    * other variations are). For instance, if vertex(x, y, u, v) is not
    * available, but vertex(x, y) is just fine.
    */
-  static protected void showVariationWarning(String str) {
+  static public void showVariationWarning(String str) {
     showWarning(str + " is not available with this renderer.");
   }
 
@@ -5792,7 +5876,7 @@ public class PGraphics extends PImage implements PConstants {
    * that it could be either a completely missing function, although other
    * variations of it may still work properly.
    */
-  static protected void showMissingWarning(String method) {
+  static public void showMissingWarning(String method) {
     showWarning(method + "(), or this particular variation of it, " +
                 "is not available with this renderer.");
   }
@@ -5863,4 +5947,143 @@ public class PGraphics extends PImage implements PConstants {
   public boolean is3D() {
     return false;
   }
+  
+  //////////////////////////////////////////////////////////////
+  
+  // New API:
+  
+  protected String[] getSupportedShapeFormats() {
+    return null;
+  }
+
+  protected PShape loadShape(String filename, PParameters params) {
+    return null;
+  }
+  
+  protected PShape createShape(int size, PParameters params) {
+    return null;
+  }
+  
+  public void blend(int mode) {
+    if (!is3D()) {
+      showMissingWarning("blend");
+    }
+  }
+  
+  
+  public void noBlend() {
+    if (!is3D()) {
+      showMissingWarning("noBlend");
+    }
+  }
+
+  
+  public void textureBlend(int mode) {
+    if (!is3D()) {
+      showMissingWarning("blend");
+    }
+  }
+  
+  
+  public void noTextureBlend() {
+    if (!is3D()) {
+      showMissingWarning("noBlend");
+    }
+  }
+  
+  public PShape beginRecord() { // ignore
+    if (!is3D()) {
+      showMissingWarning("beginRecord");
+    }
+    return null;
+  }
+  
+  public void endRecord() {  // ignore
+    if (!is3D()) {
+      showMissingWarning("endShapeRecord");
+    }    
+  }
+  
+  public boolean isRecording() { // ignore
+    return false;
+  }
+  
+  public void mergeRecord() { 
+    if (!is3D()) {
+      showMissingWarning("mergeRecord");
+    }    
+  }
+
+  
+  public void noMergeRecord() { 
+    if (!is3D()) {
+      showMissingWarning("noMergeRecord");
+    }    
+  }
+  
+  
+  public void shapeName(String name) {
+    if (!is3D()) {
+      showMissingWarning("shapeName");
+    }
+  }
+  
+  
+  public void texture(PImage image0, PImage image1) {
+    showMissingWarning("multitexturing requires OPENGL2");
+  }
+  
+  
+  public void texture(PImage image0, PImage image1, PImage image2) {
+    showMissingWarning("multitexturing requires OPENGL2");
+  }
+  
+
+  public void texture(PImage image0, PImage image1, PImage image2, PImage image3) {
+    showMissingWarning("multitexturing requires OPENGL2");
+  }
+
+  
+  public void texture(PImage[] images) {
+    showMissingWarning("multitexturing requires OPENGL2");
+  }
+  
+  
+  public void vertex(float x, float y, float u0, float v0, float u1, float v1) {
+    showMissingWarning("multitextured vertex requires OPENGL2"); 
+  }
+  
+  
+  public void vertex(float x, float y, float u0, float v0, float u1, float v1, float u2, float v2) {
+    showMissingWarning("multitextured vertex requires OPENGL2");    
+  }  
+  
+  
+  public void vertex(float x, float y, float u0, float v0, float u1, float v1, float u2, float v2, float u3, float v3) {
+    showMissingWarning("multitextured vertex requires OPENGL2"); 
+  }  
+
+  public void vertex(float x, float y, float[] u, float[] v) {
+    showMissingWarning("multitextured vertex requires OPENGL2"); 
+  }
+ 
+  
+  public void vertex(float x, float y, float z, float u0, float v0, float u1, float v1) {
+    showMissingWarning("multitextured vertex requires OPENGL2"); 
+  }
+  
+  
+  public void vertex(float x, float y, float z, float u0, float v0, float u1, float v1, float u2, float v2) {
+    showMissingWarning("multitextured vertex requires OPENGL2");       
+  }  
+  
+  
+  public void vertex(float x, float y, float z, float u0, float v0, float u1, float v1, float u2, float v2, float u3, float v3) {
+    showMissingWarning("multitextured vertex requires OPENGL2");    
+  }  
+  
+  
+  public void vertex(float x, float y, float z, float[] u, float[] v) {
+    showMissingWarning("multitextured vertex requires OPENGL2");
+  }    
 }

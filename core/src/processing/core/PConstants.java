@@ -111,17 +111,20 @@ public interface PConstants {
   // has this vertex been lit yet
   static public final int BEEN_LIT = 35;
 
-  static public final int VERTEX_FIELD_COUNT = 36;
-
+  // has this vertex been assigned a normal yet
+  static public final int HAS_NORMAL = 36;  
+  
+  static public final int VERTEX_FIELD_COUNT = 37;
 
   // renderers known to processing.core
 
-  static final String P2D    = "processing.core.PGraphics2D";
-  static final String P3D    = "processing.core.PGraphics3D";
-  static final String JAVA2D = "processing.core.PGraphicsJava2D";
-  static final String OPENGL = "processing.opengl.PGraphicsOpenGL";
-  static final String PDF    = "processing.pdf.PGraphicsPDF";
-  static final String DXF    = "processing.dxf.RawDXF";
+  static final String P2D     = "processing.core.PGraphics2D";
+  static final String P3D     = "processing.core.PGraphics3D";
+  static final String JAVA2D  = "processing.core.PGraphicsJava2D";
+  static final String OPENGL  = "processing.opengl.PGraphicsOpenGL";
+  static final String OPENGL2 = "processing.opengl2.PGraphicsOpenGL2";  
+  static final String PDF     = "processing.pdf.PGraphicsPDF";
+  static final String DXF     = "processing.dxf.RawDXF";
 
 
   // platform IDs for PApplet.platform
@@ -326,7 +329,11 @@ public interface PConstants {
   static final int SPHERE          = 40;
   static final int BOX             = 41;
 
+  static public final int LINE_STRIP    = 50;   
+  static public final int LINE_LOOP     = 51;   
+  static public final int POINT_SPRITES = 52;  
 
+  
   // shape closing modes
 
   static final int OPEN = 1;
@@ -403,7 +410,37 @@ public interface PConstants {
   // text alignment modes
   // are inherited from LEFT, CENTER, RIGHT
 
+  // PTexture
+  
+  /** This constant identifies the texture target GL_TEXTURE_2D, that is, textures with normalized coordinates */
+  public static final int TEXTURE2D = 0;
+  
+  /** This constant identifies the nearest texture filter (point sampling) */
+  //public static final int POINT = 2; // shared with shape feature  
+  /** This constant identifies the linear texture filter, usually called bilinear sampling */
+  public static final int BILINEAR = 3;
+  /** This constant identifies the linear/linear function to build mipmaps  */
+  public static final int TRILINEAR = 4;
+    
+  /** This constant identifies the clamp-to-edge wrapping mode */
+  public static final int CLAMP = 0;
+  /** This constant identifies the repeat wrapping mode */
+  public static final int REPEAT = 1;
 
+  /** Point sprite distance attenuation functions */
+  public static final int LINEAR = 0;
+  public static final int QUADRATIC = 1;
+    
+  // PShape3D
+  
+  /**  Static usage mode for PShape3D (vertices won't be updated after creation).  */
+  public static final int STATIC = 0;
+  /**  Dynamic usage mode for PShape3D (vertices will be updated after creation). */
+  public static final int DYNAMIC = 1;
+  /**  Dynamic usage mode for PShape3D (vertices will be updated at every frame). */
+  public static final int STREAM = 2;
+  
+  
   // stroke modes
 
   static final int SQUARE   = 1 << 0;  // called 'butt' in the svg spec
@@ -485,9 +522,18 @@ public interface PConstants {
   static final int ENABLE_ACCURATE_TEXTURES    =  7;
   static final int DISABLE_ACCURATE_TEXTURES   = -7;
 
+  static final int DISABLE_DEPTH_MASK          =  8;
+  static final int ENABLE_DEPTH_MASK           = -8;  
+  
   static final int HINT_COUNT                  = 10;
 
-
+  // Rendering pipeline modes
+  
+  static final int FIXED    = 0;
+  static final int PROG_GL2 = 1; 
+  static final int PROG_GL3 = 2;
+  static final int PROG_GL4 = 3;  
+  
   // error messages
 
   static final String ERROR_BACKGROUND_IMAGE_SIZE =
