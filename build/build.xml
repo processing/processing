@@ -71,6 +71,7 @@
     <subant buildpath="../java/libraries/dxf" target="clean"/>
     <subant buildpath="../java/libraries/net" target="clean"/>
     <subant buildpath="../java/libraries/opengl" target="clean"/>
+    <subant buildpath="../java/libraries/opengl2" target="clean"/>    
     <subant buildpath="../java/libraries/pdf" target="clean"/>
     <subant buildpath="../java/libraries/serial" target="clean"/>
     <subant buildpath="../java/libraries/video" target="clean"/>
@@ -83,6 +84,7 @@
     <subant buildpath="../java/libraries/dxf" target="build"/>
     <subant buildpath="../java/libraries/net" target="build"/>
     <subant buildpath="../java/libraries/opengl" target="build"/>
+    <subant buildpath="../java/libraries/opengl2" target="build"/>    
     <subant buildpath="../java/libraries/pdf" target="build"/>
     <subant buildpath="../java/libraries/serial" target="build"/>
     <subant buildpath="../java/libraries/video" target="build"/>
@@ -157,6 +159,9 @@
     </copy>
     <copy todir="${target.path}/modes/java/libraries/opengl">
       <fileset dir="../opengl" includes="library/**,src/**" />
+    </copy>
+    <copy todir="${target.path}/modes/java/libraries/opengl2">
+      <fileset dir="../opengl2" includes="library/**,src/**" />
     </copy>
     <copy todir="${target.path}/modes/java/libraries/pdf">
       <fileset dir="../pdf" includes="library/**,src/**" />
