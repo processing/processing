@@ -29,6 +29,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.io.BufferedReader;
 
@@ -46,30 +47,31 @@ public class PShape3D extends PShape implements PConstants {
   protected GL11 gl;  
   protected PGraphicsAndroid3D a3d;
 
-  // GROUP level properties:
-  
-  // Number of texture buffers currently in use:
-  protected int numTexBuffers;
-  
+  // Element types handled by PShape3D (vertices, normals, color, texture coordinates).
+  protected static final int VERTICES = 0;
+  protected static final int NORMALS = 1;
+  protected static final int COLORS = 2;
+  protected static final int TEXCOORDS = 3; 
+    
+  // ROOT shape properties:
+
   // STATIC or DYNAMIC
   protected int glUsage;
+  
+  // Number of texture buffers currently in use:
+  protected int numTexBuffers;  
   
   // The OpenGL IDs for the different VBOs
   protected int glVertexBufferID;
   protected int glColorBufferID;
   protected int glNormalBufferID;
-  protected int[] glTexCoordBufferID = new int[PGraphicsAndroid3D.MAX_TEXTURES];
+  protected int[] glTexCoordBufferID;
   
-  // The float buffers (directy allocated) used to put data into the VBOs
+  // The float buffers (directly allocated) used to put data into the VBOs
   protected FloatBuffer vertexBuffer;
   protected FloatBuffer colorBuffer;
   protected FloatBuffer normalBuffer;
   protected FloatBuffer texCoordBuffer;
-  
-  // Bounding box: 
-  public float xmin, xmax;
-  public float ymin, ymax;
-  public float zmin, zmax;
   
   // Public arrays for setting/getting vertices, colors, normals, and 
   // texture coordinates when using loadVertices/updateVertices,
@@ -88,62 +90,77 @@ public class PShape3D extends PShape implements PConstants {
   protected float[][] allTexcoords;
   
   // Child PShape3D associated to each vertex in the model.
-  protected PShape3D[] vertexChild;  
-  
-  // Element types handled by PShape3D (vertices, normals, color, texture coordinates).
-  protected static final int VERTICES = 0;
-  protected static final int NORMALS = 1;
-  protected static final int COLORS = 2;
-  protected static final int TEXCOORDS = 3; 
-  
-  // Element type being currently updated, indices and texture units.
-  protected int updateElement;
-  protected int updateTexunit;
-  protected int firstUpdateIdx;
-  protected int lastUpdateIdx;
-  
-  // Some utility arrays.
-  protected PTexture[] renderTextures = new PTexture[PGraphicsAndroid3D.MAX_TEXTURES];  
-  protected boolean[] texCoordSet = new boolean[PGraphicsAndroid3D.MAX_TEXTURES];  
+  protected PShape3D[] vertexChild;
 
-  // For OBJ loading  
+  // Some utility arrays.    
+  protected boolean[] texCoordSet;      
+    
+  protected boolean autoBounds = true;
+  
+  // For OBJ loading. Only used by the root shape.
   boolean readFromOBJ = false;
   ArrayList<PVector> objVertices; 
   ArrayList<PVector> objNormal; 
   ArrayList<PVector> objTexCoords;    
   ArrayList<OBJFace> objFaces;
-  ArrayList<OBJMaterial> objMaterials;
+  ArrayList<OBJMaterial> objMaterials;  
   
-  // GEOMETRY (child) level properties:
+  // GEOMETRY shape properties:
   
-  // Child-only properties: first and last vertex, draw mode, point sprites 
-  // and textures. Stroke weight is inherited from PShape.
-  protected int firstVertex;
-  protected int lastVertex; 
+  // Draw mode, point sprites and textures. 
+  // Stroke weight is inherited from PShape.
   protected int glMode;
   protected boolean pointSprites;  
   protected PImage[] textures;  
- 
-  float maxSpriteSize = PGraphicsAndroid3D.maxPointSize;
+  protected float maxSpriteSize = PGraphicsAndroid3D.maxPointSize;
   // Coefficients for point sprite distance attenuation function.  
   // These default values correspond to the constant sprite size.
   protected float spriteDistAtt[] = { 1.0f, 0.0f, 0.0f };
+  // Used in the drawGeometry() method.
+  protected PTexture[] renderTextures;
+  
+  // GROUP and GEOMETRY properties:
+  
+  // The root group shape.
+  protected PShape3D root;
+  
+  // Element type, vertex indices and texture units being currently updated.
+  protected int updateElement;
+  protected int updateTexunit;
+  protected int firstUpdateIdx;
+  protected int lastUpdateIdx;  
+  
+  // first and last vertex in the shape. For the root group shape, these are 0 and
+  // vertexCount - 1.
+  protected int firstVertex;
+  protected int lastVertex;  
+    
+  // Bounding box (defined for all shapes, group and geometry):
+  public float xmin, xmax;
+  public float ymin, ymax;
+  public float zmin, zmax;  
   
   ////////////////////////////////////////////////////////////
 
   // Constructors.
 
   public PShape3D() {
-  }
-  
-  public PShape3D(PApplet parent) {
-    this.papplet = parent;
-    a3d = (PGraphicsAndroid3D)parent.g;
-
+    this.papplet = null;
+    a3d = null;
+    
     glVertexBufferID = 0;
     glColorBufferID = 0;
     glNormalBufferID = 0;
-    java.util.Arrays.fill(glTexCoordBufferID, 0);    
+    glTexCoordBufferID = null; 
+  }
+  
+  public PShape3D(PApplet parent) {
+    this();
+    this.papplet = parent;
+    a3d = (PGraphicsAndroid3D)parent.g;
+    this.family = PShape.GROUP;
+    this.name = "root";
+    this.root = this;    
   }
   
   public PShape3D(PApplet parent, int numVert) {
@@ -155,40 +172,14 @@ public class PShape3D extends PShape implements PConstants {
     a3d = (PGraphicsAndroid3D)parent.g;
 
     this.family = PShape.GROUP;
+    this.name = "root";
+    this.root = this;
     glVertexBufferID = 0;
     glColorBufferID = 0;
     glNormalBufferID = 0;
-    java.util.Arrays.fill(glTexCoordBufferID, 0);
+    glTexCoordBufferID = null;
     
-    // Checking we have all we need:
-    gl = a3d.gl11;
-    if (gl == null) {
-      throw new RuntimeException("PShape3D: OpenGL ES 1.1 required");
-    }
-    if (!PGraphicsAndroid3D.vboSupported) {
-       throw new RuntimeException("PShape3D: Vertex Buffer Objects are not available");
-    }
-
-    readFromOBJ = true;
-    objVertices = new ArrayList<PVector>(); 
-    objNormal = new ArrayList<PVector>(); 
-    objTexCoords = new ArrayList<PVector>();    
-    objFaces = new ArrayList<OBJFace>();
-    objMaterials = new ArrayList<OBJMaterial>();
-    BufferedReader reader = getBufferedReader(filename);
-    if (reader == null) {
-      throw new RuntimeException("PShape3D: Cannot read source file");
-    }
-    
-    // Setting parameters.
-    Parameters params = PShape3D.newParameters(TRIANGLES, mode); 
-    setParameters(params);
-    
-    parseOBJ(reader, objVertices, objNormal, objTexCoords, objFaces, objMaterials);
-    
-    // Putting the number of vertices retrieved from the OBJ file in the vertex count
-    // field, although the actual geometry hasn't been sent to the VBOs yet.
-    vertexCount = objVertices.size();
+    initShapeOBJ(filename, mode);    
   }  
   
   
@@ -196,22 +187,25 @@ public class PShape3D extends PShape implements PConstants {
     this.papplet = parent;
     a3d = (PGraphicsAndroid3D)parent.g;
     
+    this.family = PShape.GROUP;
+    this.name = "root";
+    this.root = this;
     glVertexBufferID = 0;
     glColorBufferID = 0;
     glNormalBufferID = 0;
-    java.util.Arrays.fill(glTexCoordBufferID, 0);
+    glTexCoordBufferID = null;
     
     initShape(size, params);
   }
   
 
   public void delete() {
-    if (family == PShape.GROUP) {
-      deleteVertexBuffer();
-      deleteColorBuffer();
-      deleteTexCoordBuffer();
-      deleteNormalBuffer();
-    }
+    if (root != this) return; // Can be done only from the root shape.
+    
+    deleteVertexBuffer();
+    deleteColorBuffer();
+    deleteTexCoordBuffer();
+    deleteNormalBuffer();
   }
 
   ////////////////////////////////////////////////////////////
@@ -220,20 +214,20 @@ public class PShape3D extends PShape implements PConstants {
  
   
   public void loadVertices() {
-    loadVertices(0, vertexCount - 1);
+    loadVertices(firstVertex, lastVertex);
   }
 
   
   public void loadVertices(int first, int last) {
-    if (last < first || first < 0 || vertexCount <= last) {
+    if (last < first || first < firstVertex || lastVertex < last) {
       PGraphics.showWarning("PShape3D: wrong vertex index");
       updateElement = -1;
-      return;  
+      return;
     }
     
     if (updateElement != -1) {
       PGraphics.showWarning("PShape3D: can load only one type of data at the time");
-      return;        
+      return;
     }
         
     updateElement = VERTICES;
@@ -249,7 +243,9 @@ public class PShape3D extends PShape implements PConstants {
       int offset = firstUpdateIdx * 3;
       int size = (lastUpdateIdx - firstUpdateIdx + 1) * 3;
     
-      updateBounds();
+      if (root.autoBounds) { 
+        updateBounds(firstUpdateIdx, lastUpdateIdx);
+      }
       
       vertexBuffer.position(0);
       vertexBuffer.put(vertices, offset, size);
@@ -267,12 +263,12 @@ public class PShape3D extends PShape implements PConstants {
   
   
   public void loadColors() {
-    loadColors(0, vertexCount - 1);
+    loadColors(firstVertex, lastVertex);
   }
 
   
   public void loadColors(int first, int last) {
-    if (last < first || first < 0 || vertexCount <= last) {
+    if (last < first || first < firstVertex || lastVertex < last) {
       PGraphics.showWarning("PShape3D: wrong vertex index");
       updateElement = -1;
       return;  
@@ -312,12 +308,12 @@ public class PShape3D extends PShape implements PConstants {
   
 
   public void loadNormals() {
-    loadNormals(0, vertexCount - 1);
+    loadNormals(firstVertex, lastVertex);
   }  
   
   
   public void loadNormals(int first, int last) {
-    if (last < first || first < 0 || vertexCount <= last) {
+    if (last < first || first < firstVertex || lastVertex < last) {
       PGraphics.showWarning("PShape3D: wrong vertex index");
       updateElement = -1;
       return;  
@@ -362,12 +358,12 @@ public class PShape3D extends PShape implements PConstants {
   
   
   public void loadTexcoords(int unit) {
-    loadTexcoords(unit, 0, vertexCount - 1);
+    loadTexcoords(unit, firstVertex, lastVertex);
   }  
   
   
   protected void loadTexcoords(int unit, int first, int last) {
-    if (last < first || first < 0 || vertexCount <= last) {
+    if (last < first || first < firstVertex || lastVertex < last) {
       PGraphics.showWarning("PShape3D: wrong vertex index");
       updateElement = -1;
       return;  
@@ -511,25 +507,66 @@ public class PShape3D extends PShape implements PConstants {
     return res;
   }
   
+  public void autoBounds(boolean value) {
+    root.autoBounds = value;
+  }
   
+  public void updateBounds() {
+    updateBounds(firstVertex, lastVertex);
+  }
+  
+  protected void updateBounds(int first, int last) {
+    if (first <= firstVertex && lastVertex <= last) {
+      resetBounds();
+    }
+    
+    if (family == GROUP) {      
+      if (root == this && childCount == 0) {
+        // This might happen: the vertices has been set
+        // first but children still not initialized. So we
+        // need to calculate the bounding box directly:
+        for (int i = firstVertex; i <= lastVertex; i++) {
+          updateBounds(vertices[3 * i + 0], vertices[3 * i + 1], vertices[3 * i + 2]);      
+        }        
+      } else {      
+        for (int i = 0; i < childCount; i++) {
+          PShape3D child = (PShape3D)children[i];
+          child.updateBounds(first, last);
+          xmin = PApplet.min(xmin, child.xmin);
+          xmax = PApplet.max(xmax, child.xmax);
+        
+          ymin = PApplet.min(ymin, child.ymin);
+          ymax = PApplet.max(ymax, child.ymax);
+
+          zmin = PApplet.min(zmin, child.zmin);
+          zmax = PApplet.max(zmax, child.zmax);
+        
+          width = xmax - xmin;
+          height = ymax - ymin;
+          depth = zmax - zmin;        
+        }
+      }
+    } else {
+      // TODO: extract minimum and maximum values using some sorting algorithm (maybe).
+      int n0 = PApplet.max(first, firstVertex);
+      int n1 = PApplet.min(last, lastVertex);
+      
+      for (int i = n0; i <= n1; i++) {
+        updateBounds(vertices[3 * i + 0], vertices[3 * i + 1], vertices[3 * i + 2]);      
+      }
+    }   
+  }
+
   protected void resetBounds() {
+    if (family == GROUP) {            
+      for (int i = 0; i < childCount; i++) {
+        ((PShape3D)children[i]).resetBounds();
+      }      
+    }
     width = height = depth = 0;
     xmin = ymin = zmin = 10000;
     xmax = ymax = zmax = -10000;    
   }
-  
-  
-  protected void updateBounds() {
-    if (firstUpdateIdx == 0 && lastUpdateIdx == vertexCount - 1) {
-      resetBounds();
-    }    
-    
-    // TODO: extract minimum and maximum values using some sorting algorithm. 
-    for (int i = firstUpdateIdx; i <= lastUpdateIdx; i++) {
-      updateBounds(vertices[3 * i + 0], vertices[3 * i + 1], vertices[3 * i + 2]);      
-    }
-  }
-  
   
   protected void updateBounds(float x, float y, float z) {
     xmin = PApplet.min(xmin, x);
@@ -607,7 +644,7 @@ public class PShape3D extends PShape implements PConstants {
   
   ////////////////////////////////////////////////////////////  
   
-  // Children   
+  // Child shapes   
   
   
   static public PShape createChild(int n0, int n1) {
@@ -632,13 +669,15 @@ public class PShape3D extends PShape implements PConstants {
   
   static public PShape createChild(String name, int n0, int n1, int mode, float weight, PImage[] tex) {
     PShape3D child = new PShape3D();
-    child.family = PShape.GEOMETRY;
+    child.family = PShape.GEOMETRY;    
     child.name = name;
     child.firstVertex = n0;
     child.lastVertex = n1;
     child.setDrawModeImpl(mode);    
     child.strokeWeight = weight;
     child.textures = new PImage[PGraphicsAndroid3D.MAX_TEXTURES];
+    child.renderTextures = new PTexture[PGraphicsAndroid3D.MAX_TEXTURES];
+    
     java.util.Arrays.fill(child.textures, null);    
     if (tex != null) {
       int n = PApplet.min(tex.length, child.textures.length);
@@ -670,112 +709,255 @@ public class PShape3D extends PShape implements PConstants {
     PShape child = createChild(name, n0, n1, mode, weight, tex);
     addChild(child);
   }
-      
+  
   
   public void addChild(PShape who) {
+    addChildImpl(who, true);
+  }
+  
+  
+  protected void addChildImpl(PShape who, boolean newShape) {
     if (family == GROUP) {
       super.addChild(who);
-      PShape3D who3d = (PShape3D)who;
-      who3d.papplet = papplet;
-      who3d.a3d = a3d;
-      who3d.gl = gl; 
       
-      // In case the style was disabled from the parent.
-      who3d.style = style;
-      
-      // Updating vertex information.
-      for (int n = who3d.firstVertex; n <= who3d.lastVertex; n++) {
-        vertexChild[n] = who3d;
-      }
+      if (newShape) {
+        PShape3D who3d = (PShape3D)who;
+        who3d.papplet = papplet;
+        who3d.a3d = a3d;
+        who3d.gl = gl;        
+        who3d.root = root;        
+        
+        // So we can use the load/update methods in the child geometries.        
+        who3d.numTexBuffers = root.numTexBuffers;
+        
+        who3d.glVertexBufferID = root.glVertexBufferID;
+        who3d.glColorBufferID = root.glColorBufferID;
+        who3d.glNormalBufferID = root.glNormalBufferID;
+        who3d.glTexCoordBufferID = root.glTexCoordBufferID;
+        
+        who3d.vertexBuffer = root.vertexBuffer;
+        who3d.colorBuffer = root.colorBuffer;
+        who3d.normalBuffer = root.normalBuffer;
+        who3d.texCoordBuffer = root.texCoordBuffer;
+        
+        who3d.vertices = root.vertices;
+        who3d.colors = root.colors;
+        who3d.normals = root.normals;
+        who3d.texcoords = root.texcoords;
+        
+        who3d.convTexcoords = root.convTexcoords;
+        who3d.allTexcoords = root.allTexcoords;        
+        who3d.vertexChild = root.vertexChild;
+        who3d.texCoordSet = root.texCoordSet;
+        
+        // In case the style was disabled from the root.
+        who3d.style = root.style;
 
-      // If this new child shape has textures, then we should update the texture coordinates
-      // for the vertices involved. All we need to do is to call loadTexcoords and updateTexcoords
-      // so the current texture coordinates are converted into values that take into account
-      // the texture flipping, max UV ranges, etc.
-      for (int i = 0; i < who3d.textures.length; i++) {
-        if (who3d.textures[i] != null && texCoordSet[i]) {
-          loadTexcoords(i, who3d.firstVertex, who3d.lastVertex);  
-          updateTexcoords();
+        // Updating vertex information.
+        for (int n = who3d.firstVertex; n <= who3d.lastVertex; n++) {
+          who3d.vertexChild[n] = who3d;
         }
-      }
+
+        // If this new child shape has textures, then we should update the texture coordinates
+        // for the vertices involved. All we need to do is to call loadTexcoords and updateTexcoords
+        // so the current texture coordinates are converted into values that take into account
+        // the texture flipping, max UV ranges, etc.
+        for (int i = 0; i < who3d.textures.length; i++) {
+          if (who3d.textures[i] != null && who3d.texCoordSet[i]) {
+            who3d.loadTexcoords(i);  
+            who3d.updateTexcoords();
+          }
+        }
+      }      
     } else {
-      PGraphics.showWarning("PShape3D: Child shapes can also be added to the root shape.");
+      PGraphics.showWarning("PShape3D: Child shapes can only be added to a group shape.");
     }  
   }
 
-  
+  /**
+   * Add a shape to the name lookup table.
+   */
+  protected void addName(String nom, PShape shape) {    
+    if (nameTable == null) {
+      nameTable = new HashMap<String,PShape>();
+    }
+    nameTable.put(nom, shape);
+  }  
+
   protected void addDefaultChild() {
-    PShape child = createChild("Default", 0, vertexCount - 1, getDrawModeImpl(), 0, null);
+    PShape child = createChild("geometry", 0, vertexCount - 1, getDrawModeImpl(), 0, null);
     addChild(child);
   }
   
+
+  public PShape groupChildren(int cidx0, int cidx1, String gname) {
+    if (family != GROUP) return null; // Can be done only in a GROUP shape.
+    return groupChildren(new int[] {cidx0, cidx1}, gname);
+  }
+
   
-  public int getFirstVertex() {
-    if (family == GROUP) {
-      init();
-      return getFirstVertex(0);
-    } else { 
-      return firstVertex;
+  public PShape groupChildren(int cidx0, int cidx1, int cidx2, String gname) {
+    if (family != GROUP) return null; // Can be done only in a GROUP shape.
+    return groupChildren(new int[] {cidx0, cidx1, cidx2}, gname);
+  }  
+  
+  
+  public PShape groupChildren(int[] cidxs, String gname) {
+    if (family != GROUP) return null; // Can be done only in a GROUP shape.
+    PShape[] temp = new PShape[cidxs.length];
+    
+    int nsel = 0;    
+    for (int i = 0; i < cidxs.length; i++) {
+      PShape child = getChild(cidxs[i]);
+      if (child != null) { 
+        temp[nsel] = child;
+        nsel++;
+      }
     }
+    
+    PShape[] schildren = new PShape[nsel];
+    PApplet.arrayCopy(temp, schildren, nsel);    
+    
+    return groupChildren(schildren, gname);
+  }
+  
+  
+  public PShape groupChildren(String cname0, String cname1, String gname) {
+    if (family != GROUP) return null; // Can be done only in a GROUP shape.
+    return groupChildren(new String[] {cname0, cname1}, gname);
+  }
+  
+  
+  public PShape groupChildren(String cname0, String cname1, String cname2, String gname) {   
+    if (family != GROUP) return null; // Can be done only in a GROUP shape.
+    return groupChildren(new String[] {cname0, cname1, cname2}, gname);
+  }  
+  
+  
+  public PShape groupChildren(String[] cnames, String gname) {
+    if (family != GROUP) return null; // Can be done only in a GROUP shape.
+    
+    PShape[] temp = new PShape[cnames.length];
+    
+    int nsel = 0;    
+    for (int i = 0; i < cnames.length; i++) {
+      PShape child = getChild(cnames[i]);
+      if (child != null) { 
+        temp[nsel] = child;
+        nsel++;
+      }
+    }
+    
+    PShape[] schildren = new PShape[nsel];
+    PApplet.arrayCopy(temp, schildren, nsel);    
+    
+    return groupChildren(schildren, gname);
+  }  
+  
+  
+  public PShape groupChildren(PShape[] gchildren, String gname) {
+    if (family != GROUP) return null; // Can be done only in a GROUP shape.
+    
+    // Creating the new group containing the children.
+    PShape3D group = new PShape3D();
+    group.family = PShape.GROUP;
+    group.name = gname;
+    group.papplet = papplet;
+    group.a3d = a3d;
+    group.gl = gl; 
+    group.root = root;
+    
+    PShape child, p;
+    int idx;
+    
+    // Inserting the new group at the position of the first
+    // child shape in the group (in its original parent).
+    child = gchildren[0];    
+    p = child.parent;
+    if (p != null) {
+      idx = p.getChildIdx(child);
+      if (idx < 0) idx = 0; 
+    } else {
+      p = this;
+      idx = 0;
+    }
+    p.addChild(group, idx);
+    
+    // Removing the children in the new group from their
+    // respective parents.
+    for (int i = 0; i < gchildren.length; i++) {
+      child = gchildren[i];
+      p = child.parent;
+      if (p != null) {
+        idx = p.getChildIdx(child);
+        if (-1 < idx) {
+          p.removeChild(idx);
+        }
+      }
+    }
+    
+    group.firstVertex = root.vertexCount;
+    group.lastVertex = 0;
+    for (int i = 0; i < gchildren.length; i++) {
+      group.firstVertex = PApplet.min(group.firstVertex, ((PShape3D)gchildren[i]).firstVertex);
+      group.lastVertex = PApplet.max(group.lastVertex, ((PShape3D)gchildren[i]).lastVertex);
+    }
+    
+    // Adding the children shapes to the new group.
+    for (int i = 0; i < gchildren.length; i++) {
+      group.addChildImpl(gchildren[i], false);
+    }    
+    
+    return group; 
+  }
+  
+  
+  public int getFirstVertex() {     
+    return firstVertex;
   }
 
   
   public int getFirstVertex(int idx) {
     if (0 <= idx && idx < childCount) {
-      return ((PShape3D)children[idx]).firstVertex;
+      return ((PShape3D)children[idx]).getFirstVertex();
     }      
     return -1;
   }  
   
   
   public void setFirstVertex(int n0) {
-    if (family == GROUP) {
-      init();
-      setFirstVertex(0, n0);
-    } else { 
-      firstVertex = n0;
-    }    
+    firstVertex = n0;   
   }  
   
   
   public void setFirstVertex(int idx, int n0) {
     if (0 <= idx && idx < childCount) {
-      ((PShape3D)children[idx]).firstVertex = n0;
+      ((PShape3D)children[idx]).setFirstVertex(n0);
     }     
   }
   
   
   public int getLastVertex() {
-    if (family == GROUP) {
-      init();
-      return getLastVertex(0);
-    } else { 
-      return lastVertex;
-    }
+    return lastVertex;
   }
    
   
   public int getLastVertex(int idx) {
     if (0 <= idx && idx < childCount) {
-      return ((PShape3D)children[idx]).lastVertex;    
+      return ((PShape3D)children[idx]).getLastVertex();    
     }
     return -1;    
   }
   
   
   public void setLastVertex(int n1) {
-    if (family == GROUP) {
-      init();
-      setLastVertex(0, n1);
-    } else { 
-      lastVertex = n1;
-    }    
+    lastVertex = n1;
   }  
   
   
   public void setLastVertex(int idx, int n1) {
     if (0 <= idx && idx < childCount) {
-      ((PShape3D)children[idx]).firstVertex = n1;
+      ((PShape3D)children[idx]).setLastVertex(n1);
     }     
   }
   
@@ -795,7 +977,7 @@ public class PShape3D extends PShape implements PConstants {
   
   public void setDrawMode(int idx, int mode) {
     if (0 <= idx && idx < childCount) {
-      ((PShape3D)children[idx]).setDrawModeImpl(mode);
+      ((PShape3D)children[idx]).setDrawMode(mode);
     }
   }
   
@@ -839,7 +1021,7 @@ public class PShape3D extends PShape implements PConstants {
   
   public int getDrawMode(int idx) {
     if (0 <= idx && idx < childCount) {
-      return ((PShape3D)children[idx]).getDrawModeImpl();
+      return ((PShape3D)children[idx]).getDrawMode();
     }
     return -1;
   }
@@ -929,48 +1111,35 @@ public class PShape3D extends PShape implements PConstants {
   
   public void setTexture(int idx, PImage tex) {
     if (0 <= idx && idx < childCount) {
-      PShape3D child = (PShape3D)children[idx];
-      child.setTextureImpl(tex, 0);
+      ((PShape3D)children[idx]).setTexture(tex);
     }    
   }
   
   
   public void setTexture(int idx, PImage tex0, PImage tex1) {
     if (0 <= idx && idx < childCount) {
-      PShape3D child = (PShape3D)children[idx];
-      child.setTextureImpl(tex0, 0);
-      child.setTextureImpl(tex1, 1);
+      ((PShape3D)children[idx]).setTexture(tex0, tex1);
     }        
   }  
   
   
   public void setTexture(int idx, PImage tex0, PImage tex1, PImage tex2) {
     if (0 <= idx && idx < childCount) {
-      PShape3D child = (PShape3D)children[idx];
-      child.setTextureImpl(tex0, 0);
-      child.setTextureImpl(tex1, 1);
-      child.setTextureImpl(tex2, 2);      
+      ((PShape3D)children[idx]).setTexture(tex0, tex1, tex2);      
     }        
   }  
   
   
   public void setTexture(int idx, PImage tex0, PImage tex1, PImage tex2, PImage tex3) {
     if (0 <= idx && idx < childCount) {
-      PShape3D child = (PShape3D)children[idx];
-      child.setTextureImpl(tex0, 0);
-      child.setTextureImpl(tex1, 1);
-      child.setTextureImpl(tex2, 2);
-      child.setTextureImpl(tex3, 3);      
+      ((PShape3D)children[idx]).setTexture(tex0, tex1, tex2, tex3);      
     }            
   }  
   
   
   public void setTexture(int idx, PImage[] tex) {
     if (0 <= idx && idx < childCount) {
-      PShape3D child = (PShape3D)children[idx];    
-      for (int i = 0; i < tex.length; i++) {
-        child.setTextureImpl(tex[i], i);
-      }    
+      ((PShape3D)children[idx]).setTexture(tex);    
     }
   }
  
@@ -981,28 +1150,26 @@ public class PShape3D extends PShape implements PConstants {
       return;
     }
     
-    PShape3D p = (PShape3D)root;
-    
-    if (p.numTexBuffers <= unit) {
-      p.addTexBuffers(unit - p.numTexBuffers + 1);
+    if (numTexBuffers <= unit) {
+      root.addTexBuffers(unit - numTexBuffers + 1);
     }
     
     if (tex == null) {
       throw new RuntimeException("PShape3D: trying to set null texture.");
     } 
         
-    if  (p.texCoordSet[unit] && isTexturable()) {
+    if  (texCoordSet[unit] && isTexturable()) {
       // Ok, setting a new texture, when texture coordinates have already been set. 
       // What is the problem? the new texture might have different max UV coords, 
       // flippedX/Y values, so the texture coordinates need to be updated accordingly...
       
       // The way to do it is just load the texcoords array (in the parent)...
-      p.loadTexcoords(unit, firstVertex, lastVertex);
+      loadTexcoords(unit);
       // ... then replacing the old texture with the new and...
       textures[unit] = tex;
       // ...,finally, updating the texture coordinates, step in which the texcoords
       // array is converted, this time using the new texture.
-      p.updateTexcoords();
+      updateTexcoords();
     } else {
       textures[unit] = tex;  
     }    
@@ -1021,7 +1188,7 @@ public class PShape3D extends PShape implements PConstants {
   
   public PImage[] getTexture(int idx) {
     if (0 <= idx && idx < childCount) {
-      return ((PShape3D)children[idx]).textures;
+      return ((PShape3D)children[idx]).getTexture();
     }
     return null;
   }
@@ -1039,7 +1206,7 @@ public class PShape3D extends PShape implements PConstants {
   
   public float getStrokeWeight(int idx) {
     if (0 <= idx && idx < childCount) {
-      return ((PShape3D)children[idx]).strokeWeight;
+      return ((PShape3D)children[idx]).getStrokeWeight();
     }
     return 0;
   }
@@ -1059,7 +1226,7 @@ public class PShape3D extends PShape implements PConstants {
   
   public void setStrokeWeight(int idx, float sw) {
     if (0 <= idx && idx < childCount) {
-      ((PShape3D)children[idx]).strokeWeight = sw;
+      ((PShape3D)children[idx]).setStrokeWeight(sw);
     }
   }  
   
@@ -1076,7 +1243,7 @@ public class PShape3D extends PShape implements PConstants {
   
   public float getMaxSpriteSize(int idx) {
     if (0 <= idx && idx < childCount) {
-      return ((PShape3D)children[idx]).maxSpriteSize;
+      return ((PShape3D)children[idx]).getMaxSpriteSize();
     }
     return 0;
   }
@@ -1096,7 +1263,7 @@ public class PShape3D extends PShape implements PConstants {
 
   public void setMaxSpriteSize(int idx, float s) {
     if (0 <= idx && idx < childCount) {
-      ((PShape3D)children[idx]).setMaxSpriteSizeImpl(s);
+      ((PShape3D)children[idx]).setMaxSpriteSize(s);
     }
   }
 
@@ -1132,14 +1299,14 @@ public class PShape3D extends PShape implements PConstants {
 
   public void setSpriteSize(int idx, float s) {
     if (0 <= idx && idx < childCount) {
-      ((PShape3D)children[idx]).setSpriteSizeImpl(s);
+      ((PShape3D)children[idx]).setSpriteSize(s);
     }
   }  
   
   
   public void setSpriteSize(int idx, float s, float d, int mode) {
     if (0 <= idx && idx < childCount) {
-      ((PShape3D)children[idx]).setSpriteSizeImpl(s, d, mode);
+      ((PShape3D)children[idx]).setSpriteSize(s, d, mode);
     }
   }  
   
@@ -1202,14 +1369,14 @@ public class PShape3D extends PShape implements PConstants {
   
   public void setColor(int idx, float[] c) {
     if (0 <= idx && idx < childCount) {
-      ((PShape3D)children[idx]).setColorImpl(c);
+      ((PShape3D)children[idx]).setColor(c);
     }
   } 
   
   
   protected void setColorImpl(float[] c) {
     PShape3D p = (PShape3D)root;
-    p.loadColors(firstVertex, lastVertex);
+    p.loadColors();
     for (int i = firstVertex; i <= lastVertex; i++) {
       p.set(i, c);
     }
@@ -1241,33 +1408,249 @@ public class PShape3D extends PShape implements PConstants {
 
   public void setNormal(int idx, float[] n) {
     if (0 <= idx && idx < childCount) {
-      ((PShape3D)children[idx]).setNormalImpl(n);
+      ((PShape3D)children[idx]).setNormal(n);
     }    
   } 
     
   
   protected void setNormalImpl(float[] n) {
     PShape3D p = (PShape3D)root;
-    p.loadNormals(firstVertex, lastVertex);
+    p.loadNormals();
     for (int i = firstVertex; i <= lastVertex; i++) {
       p.set(i, n);
     }
     p.updateNormals();
   }  
   
+  // Optimizes the array list containing children shapes so that shapes with identical
+  // parameters are removed. Also, making sure that the names are unique.
+  protected void optimizeChildren(ArrayList<PShape3D> childList) {    
+    PShape3D child0, child1;
+
+    // Expanding identical, contiguous shapes. Names are taken into account (two
+    // shapes with different names are considered to be different, even though the
+    // rest of their parameters are identical).
+    child0 = (PShape3D)childList.get(0);
+    for (int i = 1; i < childList.size(); i++) {
+      child1 = (PShape3D)childList.get(i);
+      if (child0.equalTo(child1, false)) {
+        child0.lastVertex = child1.lastVertex;       // Extending child0.
+        // Updating the vertex data:
+        for (int n = child0.firstVertex; n <= child0.lastVertex; n++) {
+          vertexChild[n] = child0;
+        }    
+        child1.firstVertex = child1.lastVertex = -1; // Marking for deletion.
+      } else {
+        child0 = child1;
+      }
+    }
+      
+    // Deleting superfluous shapes.
+    for (int i = childList.size() - 1; i >= 0; i--) {
+      if (((PShape3D)childList.get(i)).lastVertex == -1) {
+        childList.remove(i);
+      }
+    }
+    
+    // Making sure the names are unique.
+    for (int i = 1; i < childList.size(); i++) {
+      child1 = (PShape3D)childList.get(i);
+      for (int j = i - 1; j >= 0; j--) {
+        child0 = (PShape3D)childList.get(j);
+        if (child1.name.equals(child0.name)) {
+          int pos = child0.name.indexOf(':');
+          if (-1 < pos) {
+            // The name of the preceding child contains the ':'
+            // character so trying to use the following substring
+            // as a number.
+            String nstr = child0.name.substring(pos + 1);
+            int n = 1;
+            try {
+              n = Integer.parseInt(nstr);              
+            } catch (NumberFormatException e) {
+              child0.name += ":1";   
+            } 
+            child1.name += ":" + (n + 1);
+          } else {
+            child0.name += ":1";
+            child1.name += ":2";
+          }
+        }         
+      }
+    }
+  }
+
+ 
+  protected boolean equalTo(PShape3D child, boolean ignoreNames) {
+    boolean res = family == child.family && 
+            glMode == child.glMode && 
+            strokeWeight == child.strokeWeight && 
+            (ignoreNames || name.equals(child.name));
+    if (!res) return false;
+    for (int i = 0; i < textures.length; i++) {
+      if (textures[i] != child.textures[i]) {
+        res = false;
+      }
+    }
+    return res; 
+  }  
   
-  protected void optimizeChildren() {
+  ////////////////////////////////////////////////////////////
+
+
+  // Some overloading of translate, rotate, scale
+  
+  public void resetMatrix() {
+    checkMatrix(3);
+    matrix.reset();
+  }
+  
+  public void translate(float tx, float ty) {
+    checkMatrix(3);
+    matrix.translate(tx, ty, 0);
+  }
+  
+  public void rotate(float angle) {
+    checkMatrix(3);
+    matrix.rotate(angle);
+  }  
+  
+  public void scale(float s) {
+    checkMatrix(3);
+    matrix.scale(s);
+  }
+
+  public void scale(float x, float y) {
+    checkMatrix(3);
+    matrix.scale(x, y);
+  }  
+  
+  public void centerAt(float cx, float cy, float cz) {
+    float dx = cx - 0.5f * (xmin + xmax);
+    float dy = cy - 0.5f * (ymin + ymax);
+    float dz = cz - 0.5f * (zmin + zmax);
+    // Centering
+    loadVertices();    
+    for (int i = 0; i < vertexCount; i++) {
+      vertices[3 * i + 0] += dx;
+      vertices[3 * i + 1] += dy;
+      vertices[3 * i + 2] += dz;  
+    }    
+    updateVertices();
+  }
+  
+  
+  ////////////////////////////////////////////////////////////  
+  
+  // Bulk vertex operations.
+  
+  public void setVertices(ArrayList<PVector> vertexList) {
+    setVertices(vertexList, 0); 
+  }
+  
+  public void setVertices(ArrayList<PVector> vertexList, int offset) {
+    loadVertices();
+    for (int i = firstVertex; i <= lastVertex; i++) {
+      PVector v = (PVector)vertexList.get(i - firstVertex + offset);
+      set(i, v.x, v.y, v.z);
+    }
+    updateVertices();
+  }
+  
+  public void setColors(ArrayList<float[]> colorList) {
+    setColors(colorList, 0);
+  }
+  
+  public void setColors(ArrayList<float[]> colorList, int offset) {
+    loadColors();
+    for (int i = firstVertex; i <= lastVertex; i++) {
+      float[] c = (float[])colorList.get(i - firstVertex + offset);
+      set(i, c);
+    }
+    updateColors();    
+  }  
+  
+  
+  public void setNormals(ArrayList<PVector> normalList) {
+    setNormals(normalList, 0); 
+  }
+
+  public void setNormals(ArrayList<PVector> normalList, int offset) {
+    loadNormals();
+    for (int i = firstVertex; i <= lastVertex; i++) {
+      PVector n = (PVector)normalList.get(i - firstVertex + offset);
+      set(i, n.x, n.y, n.z);
+    }
+    updateNormals();    
+  }  
+
+  
+  public void setTexcoords(ArrayList<PVector> tcoordList) {
+    setTexcoords(tcoordList, 0);
+  }
+  
+  public void setTexcoords(ArrayList<PVector> tcoordList, int offset) {
+    setTexcoords(0, tcoordList, offset);
+  }  
+  
+  public void setTexcoords(int unit, ArrayList<PVector> tcoordList) {
+    setTexcoords(unit, tcoordList, 0);
+  }
+  
+  public void setTexcoords(int unit, ArrayList<PVector> tcoordList, int offset) {
+    loadTexcoords(unit);
+    for (int i = firstVertex; i <= lastVertex; i++) {
+      PVector tc = (PVector)tcoordList.get(i - firstVertex + offset);
+      set(i, tc.x, tc.y);
+    }
+    updateTexcoords();     
+  }  
+    
+  
+  public void setChildren(ArrayList<PShape3D> who) {
+    if (family != GROUP) return; // Can be done only from a group shape.
+    
+    childCount = 0;
+    for (int i = 0; i < who.size(); i++) {
+      PShape child = (PShape)who.get(i);
+      addChild(child);   
+    }
+  }  
+  
+  public void mergeChildren() {
+    if (family != GROUP) return; // Can be done only from a group shape.
+    
     if (children == null) {
-      addDefaultChild();
+      if (root == this) {
+        addDefaultChild();
+      } else {
+        return;
+      }
     } else {
       PShape3D child0, child1;
 
-      // Expanding identical, contiguous children.     
-      int ndiff = 1;
-      child0 = (PShape3D)children[0];
-      for (int i = 1; i < childCount; i++) {
+      // Expanding identical, contiguous shapes (names are ignored).     
+      int ndiff = 1;    
+      // Looking for the first geometry child.
+      int i0 = 0;
+      child0 = null;
+      for (int i = 0; i < childCount; i++) {
+        child0 = (PShape3D)children[i];
+        if (child0.family == GROUP) {
+          child0.mergeChildren();
+        } else {
+          i0 = i + 1;
+          break;
+        }
+      }
+      if (i0 == 0) return; // No geometry child found.
+      for (int i = i0; i < childCount; i++) {
         child1 = (PShape3D)children[i];
-        if (child0.equalTo(child1)) {
+        if (child1.family == GROUP) {
+          child1.mergeChildren();
+          continue;
+        }        
+        if (child0.equalTo(child1, true)) {
           child0.lastVertex = child1.lastVertex;       // Extending child0.
           // Updating the vertex data:
           for (int n = child0.firstVertex; n <= child0.lastVertex; n++) {
@@ -1280,12 +1663,13 @@ public class PShape3D extends PShape implements PConstants {
         }
       }
       
-      // Deleting superfluous groups.
+      // Deleting superfluous shapes.
       PShape[] temp = new PShape[ndiff]; 
       int n = 0;
       for (int i = 0; i < childCount; i++) {
         child1 = (PShape3D)children[i];      
-        if (child1.lastVertex == -1 && child1.getName() != null && nameTable != null) {
+        if (child1.family == GEOMETRY && child1.lastVertex == -1 && 
+            child1.getName() != null && nameTable != null) {
           nameTable.remove(child1.getName());
         } else {
           temp[n++] = child1;
@@ -1294,83 +1678,7 @@ public class PShape3D extends PShape implements PConstants {
       children = temp;
       childCount = ndiff;
     }
-  }
-
-  
-  protected void initChildren() {
-    children = null;
-    vertexChild = new PShape3D[vertexCount];
-  }
-  
-  
-  protected boolean equalTo(PShape3D child) {
-    boolean res = family == child.family && glMode == child.glMode && strokeWeight == child.strokeWeight; 
-    if (!res) return false;
-    for (int i = 0; i < textures.length; i++) {
-      if (textures[i] != child.textures[i]) {
-        res = false;
-      }
-    }
-    return res; 
   }  
-  
-  ////////////////////////////////////////////////////////////  
-  
-  // Bulk vertex operations.
-  
-  public void setVertices(ArrayList<PVector> vertexList) {
-    loadVertices();
-    for (int i = 0; i < vertexCount; i++) {
-      PVector v = (PVector)vertexList.get(i);
-      set(i, v.x, v.y, v.z);
-    }
-    updateVertices();
-  }
-  
-  
-  public void setColors(ArrayList<float[]> colorList) {
-    loadColors();
-    for (int i = 0; i < vertexCount; i++) {
-      float[] c = (float[])colorList.get(i);
-      set(i, c);
-    }
-    updateColors();    
-  }  
-  
-
-  public void setNormals(ArrayList<PVector> normalList) {
-    loadNormals();
-    for (int i = 0; i < vertexCount; i++) {
-      PVector n = (PVector)normalList.get(i);
-      set(i, n.x, n.y, n.z);
-    }
-    updateNormals();    
-  }  
-
-  
-  public void setTexcoords(ArrayList<PVector> tcoordList) {
-    setTexcoords(0, tcoordList);
-  }  
-
-  
-  public void setTexcoords(int unit, ArrayList<PVector> tcoordList) {
-    loadTexcoords(unit);
-    for (int i = 0; i < vertexCount; i++) {
-      PVector tc = (PVector)tcoordList.get(i);
-      set(i, tc.x, tc.y);
-    }
-    updateTexcoords();     
-  }  
-    
-  
-  public void setChildren(ArrayList<PShape3D> who) {
-    childCount = 0;
-    for (int i = 0; i < who.size(); i++) {
-      PShape child = (PShape)who.get(i);
-      addChild(child);   
-    }
-  }  
-  
   
   public void translateVertices(float tx, float ty) {
     translateVertices(tx, ty, 0);
@@ -1379,16 +1687,12 @@ public class PShape3D extends PShape implements PConstants {
 
   public void translateVertices(float tx, float ty, float tz) {
     init();
-    
     loadVertices();
-    
-    // Translating.
-    for (int i = 0; i < vertexCount; i++) {
+    for (int i = firstVertex; i <= lastVertex; i++) {
       vertices[3 * i + 0] += tx;
       vertices[3 * i + 1] += -ty;
       vertices[3 * i + 2] += tz;  
     }
-    
     updateVertices();
   }  
   
@@ -1425,7 +1729,7 @@ public class PShape3D extends PShape implements PConstants {
       v2 /= norm;
     }
     
-    // Rotating around the center of the object.
+    // Rotating around the center of the shape.
     float cx = 0.5f * (xmin + xmax);
     float cy = 0.5f * (ymin + ymax);
     float cz = 0.5f * (zmin + zmax);
@@ -1448,7 +1752,7 @@ public class PShape3D extends PShape implements PConstants {
     float x, y, z;
     
     loadVertices();    
-    for (int i = 0; i < vertexCount; i++) {
+    for (int i = firstVertex; i <= lastVertex; i++) {
       x = vertices[3 * i + 0] - cx; 
       y = vertices[3 * i + 1] - cy;
       z = vertices[3 * i + 2] - cz;      
@@ -1468,7 +1772,7 @@ public class PShape3D extends PShape implements PConstants {
     // The normals also need to be rotated to reflect the new orientation 
     //of the faces.
     loadNormals();
-    for (int i = 0; i < vertexCount; i++) {
+    for (int i = firstVertex; i <= lastVertex; i++) {
       x = normals[3 * i + 0]; 
       y = normals[3 * i + 1];
       z = normals[3 * i + 2];      
@@ -1492,17 +1796,13 @@ public class PShape3D extends PShape implements PConstants {
 
 
   public void scaleVertices(float x, float y, float z) {
-    init();
-    
+    init();    
     loadVertices();
-    
-    // Scaling.
-    for (int i = 0; i < vertexCount; i++) {
+    for (int i = firstVertex; i <= lastVertex; i++) {
       vertices[3 * i + 0] *= x;
       vertices[3 * i + 1] *= y;
       vertices[3 * i + 2] *= z;  
-    }    
-    
+    }        
     updateVertices();       
   }
   
@@ -1512,6 +1812,8 @@ public class PShape3D extends PShape implements PConstants {
   // Parameters  
   
   public Parameters getParameters() {
+    if (root != this) return null; // Can be done only from the root shape.
+    
     Parameters res = new Parameters();
     
     res.drawMode = getDrawModeImpl();
@@ -1523,7 +1825,9 @@ public class PShape3D extends PShape implements PConstants {
   }
   
   
-  protected void setParameters(Parameters params) {    
+  protected void setParameters(Parameters params) {
+    if (root != this) return; // Can be done only from the root shape.
+    
     setDrawModeImpl(params.drawMode);
 
     if (params.updateMode == STATIC) glUsage = GL11.GL_STATIC_DRAW;
@@ -1538,7 +1842,9 @@ public class PShape3D extends PShape implements PConstants {
   
   // Data allocation, deletion.
 
-  protected void init() {
+  public void init() {
+    if (root != this) return; // Can be done only from the root shape.
+    
     if (readFromOBJ) {
       recordOBJ();
       centerAt(0, 0, 0);      
@@ -1547,6 +1853,7 @@ public class PShape3D extends PShape implements PConstants {
       addDefaultChild();
     }    
   }
+  
   
   protected void initShape(int numVert) {
     initShape(numVert, new Parameters());
@@ -1564,18 +1871,51 @@ public class PShape3D extends PShape implements PConstants {
     }
     
     setParameters(params);
-    createShape(numVert);    
-    initChildren();      
+    allocateShape(numVert);         
     updateElement = -1;
     
     resetBounds();
   }
   
   
-  protected void createShape(int numVert) {
+  protected void initShapeOBJ(String filename, int mode) {
+    // Checking we have all we need:
+    gl = a3d.gl11;
+    if (gl == null) {
+      throw new RuntimeException("PShape3D: OpenGL ES 1.1 required");
+    }
+    if (!PGraphicsAndroid3D.vboSupported) {
+       throw new RuntimeException("PShape3D: Vertex Buffer Objects are not available");
+    }
+
+    readFromOBJ = true;
+    objVertices = new ArrayList<PVector>(); 
+    objNormal = new ArrayList<PVector>(); 
+    objTexCoords = new ArrayList<PVector>();    
+    objFaces = new ArrayList<OBJFace>();
+    objMaterials = new ArrayList<OBJMaterial>();
+    BufferedReader reader = getBufferedReader(filename);
+    if (reader == null) {
+      throw new RuntimeException("PShape3D: Cannot read source file");
+    }
+    
+    // Setting parameters.
+    Parameters params = PShape3D.newParameters(TRIANGLES, mode); 
+    setParameters(params);
+    
+    parseOBJ(reader, objVertices, objNormal, objTexCoords, objFaces, objMaterials);
+    
+    // Putting the number of vertices retrieved from the OBJ file in the vertex count
+    // field, although the actual geometry hasn't been sent to the VBOs yet.
+    vertexCount = objVertices.size();
+  }
+    
+  protected void allocateShape(int numVert) {
     vertexCount = numVert;
     numTexBuffers = 1;
-
+    firstVertex = 0;
+    lastVertex = numVert - 1;
+    
     initVertexData();
     createVertexBuffer();   
     initColorData();
@@ -1585,9 +1925,13 @@ public class PShape3D extends PShape implements PConstants {
     initTexCoordData();
     createTexCoordBuffer();
     
-    initChildren();    
+    initChildrenData(); 
   }
   
+  protected void initChildrenData() {
+    children = null;
+    vertexChild = new PShape3D[vertexCount];    
+  }
   
   protected void initVertexData() {    
     ByteBuffer vbb = ByteBuffer.allocateDirect(vertexCount * 3 * PGraphicsAndroid3D.SIZEOF_FLOAT);
@@ -1669,11 +2013,18 @@ public class PShape3D extends PShape implements PConstants {
     convTexcoords = new float[vertexCount * 2];
     texCoordBuffer.put(convTexcoords);
     texCoordBuffer.flip();   
+    
+    texCoordSet = new boolean[PGraphicsAndroid3D.MAX_TEXTURES];
   }  
   
   
   protected void createTexCoordBuffer() {
-    deleteTexCoordBuffer();
+    if (glTexCoordBufferID == null) {
+      glTexCoordBufferID = new int[PGraphicsAndroid3D.MAX_TEXTURES];
+      java.util.Arrays.fill(glTexCoordBufferID, 0);      
+    } else {
+      deleteTexCoordBuffer();
+    }
     
     glTexCoordBufferID[0] = a3d.createGLResource(PGraphicsAndroid3D.GL_VERTEX_BUFFER);
     gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glTexCoordBufferID[0]);
@@ -1705,8 +2056,23 @@ public class PShape3D extends PShape implements PConstants {
     texcoords = allTexcoords[0];
     
     numTexBuffers += more;
+
+    // Updating the allTexcoords and numTexBuffers in all
+    // child geometries.
+    updateTexBuffers();
   }
   
+  protected void updateTexBuffers() {
+    if (family == GROUP) {
+      for (int i = 0; i < childCount; i++) {
+        ((PShape3D)children[i]).updateTexBuffers();
+      }
+    } else {
+      numTexBuffers = root.numTexBuffers;
+      allTexcoords = root.allTexcoords;
+      texcoords = allTexcoords[0];
+    }
+  }
   
   protected void deleteVertexBuffer() {
     if (glVertexBufferID != 0) {    
@@ -1749,7 +2115,7 @@ public class PShape3D extends PShape implements PConstants {
 
   ///////////////////////////////////////////////////////////  
 
-  // Re-implementing methods inherited from PShape.  
+  // These methods are not available in PShape3D.  
   
   
   public float[] getVertex(int index) {
@@ -1793,35 +2159,12 @@ public class PShape3D extends PShape implements PConstants {
     return 0;    
   }
   
+  ///////////////////////////////////////////////////////////    
   
-  public void centerAt(float cx, float cy, float cz) {
-    loadVertices();
-    
-    float dx = cx - 0.5f * (xmin + xmax);
-    float dy = cy - 0.5f * (ymin + ymax);
-    float dz = cz - 0.5f * (zmin + zmax);
-    
-    // Centering
-    for (int i = 0; i < vertexCount; i++) {
-      vertices[3 * i + 0] += dx;
-      vertices[3 * i + 1] += dy;
-      vertices[3 * i + 2] += dz;  
-    }    
-    
-    // Updating bounding box
-    xmin += dx;
-    xmax += dx;
-    ymin += dy;
-    ymax += dy;
-    zmin += dz;
-    zmax += dz;
-    
-    updateVertices();         
-  }
-  
+  // Style handling
   
   public void disableStyle() {
-    style = false;    
+    style = false;
     if (family == GROUP) {
       init();
       for (int i = 0; i < childCount; i++) {
@@ -1841,9 +2184,11 @@ public class PShape3D extends PShape implements PConstants {
     }   
   }  
   
+  
   protected void styles(PGraphics g) {
     // Nothing to do here. The styles are set in the drawGeometry() method.  
   }
+  
   
   public boolean is3D() {
     return true;
@@ -1854,29 +2199,73 @@ public class PShape3D extends PShape implements PConstants {
   //
   
   // Drawing methods
-
-  public void draw(String target) {
-    PShape child = getChild(target);
-    if (child != null) {
-      child.draw(a3d);
+  
+  
+  public void draw() {
+    draw(a3d);
+  }
+  
+  
+  public void draw(PGraphics g) {
+    if (visible) {
+      
+      if (matrix != null) {
+        g.pushMatrix();
+        g.applyMatrix(matrix);
+      }
+    
+      if (family == GROUP) {
+        
+        init();
+        for (int i = 0; i < childCount; i++) {
+          ((PShape3D)children[i]).draw(g);
+        }
+      
+      } else {
+        drawGeometry(g);
+      }
+    
+      if (matrix != null) {
+        g.popMatrix();
+      } 
     }
   }
 
-
-  public void draw(int idx) {
-    if (0 <= idx && idx < childCount) {
-      children[idx].draw(a3d);     
+  
+  protected void pre(PGraphics g) {
+    if (matrix != null) {
+      g.pushMatrix();
+      g.applyMatrix(matrix);
     }
-  }  
+    // No need to push and set styles.
+  }
+
+  
+  public void post(PGraphics g) {
+    if (matrix != null) {
+      g.popMatrix();
+    }
+  }
+  
+  
+  public void drawImpl(PGraphics g) {
+    if (family == GROUP) {
+      drawGroup(g);
+    } else {
+      drawGeometry(g);
+    }
+  }
+  
 
   protected void drawGroup(PGraphics g) {
     init();
-    super.drawGroup(g);
+    for (int i = 0; i < childCount; i++) {
+      children[i].draw(g);
+    }
   }
-
+  
 
   protected void drawGeometry(PGraphics g) {
-    PShape3D p = (PShape3D)root;
     int numTextures;
     float pointSize;
 
@@ -1895,17 +2284,17 @@ public class PShape3D extends PShape implements PConstants {
     }
     
     gl.glEnableClientState(GL11.GL_NORMAL_ARRAY);
-    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, p.glNormalBufferID);
+    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glNormalBufferID);
     gl.glNormalPointer(GL11.GL_FLOAT, 0, 0);    
 
     if (style) {
       gl.glEnableClientState(GL11.GL_COLOR_ARRAY);
-      gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, p.glColorBufferID);
+      gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glColorBufferID);
       gl.glColorPointer(4, GL11.GL_FLOAT, 0, 0);
     }        
 
     gl.glEnableClientState(GL11.GL_VERTEX_ARRAY);            
-    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, p.glVertexBufferID);
+    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glVertexBufferID);
     gl.glVertexPointer(3, GL11.GL_FLOAT, 0, 0);
 
     numTextures = 0;
@@ -1963,7 +2352,7 @@ public class PShape3D extends PShape implements PConstants {
         gl.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
         for (int t = 0; t < numTextures; t++) {
           gl.glClientActiveTexture(GL11.GL_TEXTURE0 + t);
-          gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, p.glTexCoordBufferID[t]);
+          gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glTexCoordBufferID[t]);
           gl.glTexCoordPointer(2, GL11.GL_FLOAT, 0, 0);
         }          
         if (1 < numTextures) {
@@ -2011,8 +2400,9 @@ public class PShape3D extends PShape implements PConstants {
     gl.glDisableClientState(GL11.GL_VERTEX_ARRAY);
     gl.glDisableClientState(GL11.GL_COLOR_ARRAY);
     gl.glDisableClientState(GL11.GL_NORMAL_ARRAY);
-  }	 	 
-	
+  }
+  
+  
   ///////////////////////////////////////////////////////////////////////////   
   
   // Parameters
@@ -2083,6 +2473,7 @@ public class PShape3D extends PShape implements PConstants {
       
       readv = readvn = readvt = false;
       String line;
+      String gname = "object";
       while ((line = reader.readLine()) != null) {
         
         // The below patch/hack comes from Carlos Tomas Marti and is a
@@ -2128,8 +2519,8 @@ public class PShape3D extends PShape implements PConstants {
             if (elements[1] != null) {
               parseMTL(getBufferedReader(elements[1]), materials, mtlTable); 
             }
-          } else if (elements[0].equals("g")) {
-            // Grouping is ignored, for now. Groups are automatically generated during recording by the triangulator.
+          } else if (elements[0].equals("g")) {            
+            gname = elements[1];
           } else if (elements[0].equals("usemtl")) {
             // Getting index of current active material (will be applied on all subsequent faces)..
             if (elements[1] != null) {
@@ -2143,8 +2534,9 @@ public class PShape3D extends PShape implements PConstants {
             }
           } else if (elements[0].equals("f")) {
             // Face setting
-           OBJFace face = new OBJFace();
-           face.matIdx = mtlIdxCur; 
+            OBJFace face = new OBJFace();
+            face.matIdx = mtlIdxCur; 
+            face.name = gname;
             
             for (int i = 1; i < elements.length; i++) {
               String seg = elements[i];
@@ -2295,6 +2687,11 @@ public class PShape3D extends PShape implements PConstants {
     int cMode0 = a3d.colorMode; 
     a3d.colorMode = RGB;
     
+    // The recorded shapes are not merged, they are grouped
+    // according to the group names found in the OBJ file.
+    boolean merge0 = a3d.mergeRecShapes;
+    a3d.mergeRecShapes = false;
+    
     // Saving current colors.
     float specularR0, specularG0, specularB0; 
     specularR0 = a3d.specularR;
@@ -2352,7 +2749,7 @@ public class PShape3D extends PShape implements PConstants {
         
         mtl = (OBJMaterial) materials.get(mtlIdxCur);
 
-         // Setting colors.
+        // Setting colors.
         a3d.specular(mtl.ks.x * 255.0f, mtl.ks.y * 255.0f, mtl.ks.z * 255.0f);
         a3d.ambient(mtl.ka.x * 255.0f, mtl.ka.y * 255.0f, mtl.ka.z * 255.0f);
         if (a3d.fill) {
@@ -2367,7 +2764,6 @@ public class PShape3D extends PShape implements PConstants {
       }
 
       // Recording current face.
-      
       if (face.vertIdx.size() == 3) {
         a3d.beginShape(TRIANGLES); // Face is a triangle, so using appropriate shape kind.
       } else if (face.vertIdx.size() == 4) {
@@ -2375,6 +2771,8 @@ public class PShape3D extends PShape implements PConstants {
       } else {
         a3d.beginShape();  
       }      
+      
+      a3d.shapeName(face.name);
       
       for (int j = 0; j < face.vertIdx.size(); j++){
         int vertIdx, normIdx;
@@ -2430,8 +2828,7 @@ public class PShape3D extends PShape implements PConstants {
     }
     
     // Allocate space for the geometry that the triangulator has generated from the OBJ model.
-    createShape(a3d.recordedVertices.size());    
-    initChildren();      
+    allocateShape(a3d.recordedVertices.size());          
     updateElement = -1;
     
     width = height = depth = 0;
@@ -2440,11 +2837,12 @@ public class PShape3D extends PShape implements PConstants {
     
     a3d.endShapeRecorderImpl(this);
     
-    // Restore texture, color, and normal modes.
+    // Restore A3D configuration.
     a3d.textureMode = tMode0;
     a3d.colorMode = cMode0;
     a3d.autoNormal = auto0;
     a3d.stroke = stroke0;
+    a3d.mergeRecShapes = merge0;
     
     // Restore colors
     a3d.calcR = specularR0;
@@ -2498,12 +2896,14 @@ public class PShape3D extends PShape implements PConstants {
     ArrayList<Integer> texIdx;
     ArrayList<Integer> normIdx;
     int matIdx;
+    String name;
     
     OBJFace() {
       vertIdx = new ArrayList<Integer>();
       texIdx = new ArrayList<Integer>();
       normIdx = new ArrayList<Integer>();
       matIdx = -1;
+      name = "";
     }
   }
 

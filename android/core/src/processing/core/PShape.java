@@ -133,7 +133,6 @@ public class PShape implements PConstants {
   // should this be called vertices (consistent with PGraphics internals)
   // or does that hurt flexibility?
 
-  protected PShape root;
   protected PShape parent;
   protected int childCount;
   protected PShape[] children;
@@ -693,18 +692,53 @@ public class PShape implements PConstants {
       children = (PShape[]) PApplet.expand(children);
     }
     children[childCount++] = who;
-    who.parent = this;
-    if (who.parent.root == null) {
-      who.root = this;
-    } else {
-      who.root = who.parent.root; 
-    }
+    who.parent = this; 
 
     if (who.getName() != null) {
       addName(who.getName(), who);
     }
   }
 
+  public void addChild(PShape who, int idx) {
+    if (idx < childCount) {
+      if (childCount == children.length) {
+        children = (PShape[]) PApplet.expand(children);
+      }
+      
+      // Copy [idx, childCount - 1] to [idx + 1, childCount]
+      for (int i = childCount - 1; i >= idx; i--) {
+        children[i + 1] = children[i];
+      }
+      childCount++;
+      
+      children[idx] = who;
+      
+      who.parent = this; 
+      
+      if (who.getName() != null) {
+        addName(who.getName(), who);
+      }      
+    }
+  }
+
+  /**
+   * Remove the shape with index idx.
+   */  
+  public void removeChild(int idx) {
+    if (idx < childCount) {
+      PShape child = children[idx];
+     
+      // Copy [idx + 1, childCount - 1] to [idx, childCount - 2]
+      for (int i = idx; i < childCount - 1; i++) {
+        children[i] = children[i + 1];
+      }      
+      childCount--;
+      
+      if (child.getName() != null && nameTable != null) {
+        nameTable.remove(child.getName());
+      }       
+    }
+  }
 
   /**
    * Add a shape to the name lookup table.
@@ -720,6 +754,19 @@ public class PShape implements PConstants {
     }
   }
 
+  
+  /**
+   * Returns the index of child who.
+   */ 
+  protected int getChildIdx(PShape who) {
+    for (int i = 0; i < childCount; i++) {
+      if (children[i] == who) {
+        return i;
+      }
+    }
+    return -1;
+  }
+ 
 
 //  public PShape createGroup() {
 //    PShape group = new PShape();
@@ -861,7 +908,7 @@ public class PShape implements PConstants {
    */
   public void translate(float tx, float ty, float tz) {
     checkMatrix(3);
-    matrix.translate(tx, ty, 0);
+    matrix.translate(tx, ty, tz);
   }
   
   /**
