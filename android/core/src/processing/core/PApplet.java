@@ -267,7 +267,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
    * <P>
    * Used by the millis() function.
    */
-  long millisOffset;
+  long millisOffset = System.currentTimeMillis();
 
   /**
    * The current value of frames per second.
@@ -503,7 +503,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
     // code below here formerly from init()
 
-    millisOffset = System.currentTimeMillis();
+    //millisOffset = System.currentTimeMillis(); // moved to the variable declaration
 
     finished = false; // just for clarity
 
