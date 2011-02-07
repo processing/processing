@@ -2373,7 +2373,7 @@ public class PShape3D extends PShape implements PConstants {
           gl.glTexCoordPointer(2, GL.GL_FLOAT, 0, 0);
         }          
         if (1 < numTextures) {
-          pgl.setMultitextureBlend(renderTextures, numTextures);
+          pgl.setupTextureBlend(renderTextures, numTextures);
         }
       }
     }
@@ -2395,7 +2395,7 @@ public class PShape3D extends PShape implements PConstants {
 
     if (0 < numTextures) {
       if (1 < numTextures) {
-        pgl.clearMultitextureBlend(numTextures);
+        pgl.cleanupTextureBlend(numTextures);
       }        
       if (pointSprites)   {
         gl.glDisable(GL2.GL_POINT_SPRITE);
