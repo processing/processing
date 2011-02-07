@@ -108,7 +108,7 @@ public class PImage implements PConstants, Cloneable {
   protected HashMap<PGraphics, Object> cacheMap;
   
   /** for renderers that need to store parameters about the image */
-  protected HashMap<PGraphics, PParameters> paramMap;
+  protected HashMap<PGraphics, Object> paramMap;
 
   /** modified portion of the image */
   protected boolean modified;
@@ -340,8 +340,8 @@ public class PImage implements PConstants, Cloneable {
    * @param renderer The PGraphics renderer associated to the image
    * @param storage The parameters required by the renderer  
    */
-  public void setParams(PGraphics renderer, PParameters params) {
-    if (paramMap == null) paramMap = new HashMap<PGraphics, PParameters>();
+  public void setParams(PGraphics renderer, Object params) {
+    if (paramMap == null) paramMap = new HashMap<PGraphics, Object>();
     paramMap.put(renderer, params);
   }
 
@@ -351,7 +351,7 @@ public class PImage implements PConstants, Cloneable {
    * @param renderer The PGraphics renderer associated to the image
    * @return parameters stored for the specified renderer
    */
-  public PParameters getParams(PGraphics renderer) {
+  public Object getParams(PGraphics renderer) {
     if (paramMap == null) return null;
     return paramMap.get(renderer);
   }
