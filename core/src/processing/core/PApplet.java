@@ -7810,15 +7810,6 @@ public class PApplet extends Applet
 
 
   /**
-   * Sets the automatic normal calculation mode.
-   */  
-  public void autoNormal(boolean auto) {
-    if (recorder != null) recorder.autoNormal(auto);
-    g.autoNormal(auto);
-  }
-
-
-  /**
    * Sets the current normal vector. Only applies with 3D rendering
    * and inside a beginShape/endShape block.
    * <P/>
@@ -10212,27 +10203,15 @@ public class PApplet extends Applet
   }
 
 
-  public void blend(int mode) {
-    if (recorder != null) recorder.blend(mode);
-    g.blend(mode);
-  }
-
-
-  public void noBlend() {
-    if (recorder != null) recorder.noBlend();
-    g.noBlend();
+  public void screenBlend(int mode) {
+    if (recorder != null) recorder.screenBlend(mode);
+    g.screenBlend(mode);
   }
 
 
   public void textureBlend(int mode) {
     if (recorder != null) recorder.textureBlend(mode);
     g.textureBlend(mode);
-  }
-
-
-  public void noTextureBlend() {
-    if (recorder != null) recorder.noTextureBlend();
-    g.noTextureBlend();
   }
 
 
@@ -10245,6 +10224,12 @@ public class PApplet extends Applet
   public void shapeName(String name) {
     if (recorder != null) recorder.shapeName(name);
     g.shapeName(name);
+  }
+
+
+  public void autoNormal(boolean auto) {
+    if (recorder != null) recorder.autoNormal(auto);
+    g.autoNormal(auto);
   }
 
 
