@@ -29,8 +29,6 @@ import java.nio.*;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PImage;
-import processing.core.PParameters;
-
 
 /**
  * This class wraps an OpenGL texture.
@@ -91,7 +89,7 @@ public class PTexture implements PConstants {
    * @param height int 
    * @param params Parameters       
    */  
-  public PTexture(PApplet parent, int width, int height, PParameters params) { 
+  public PTexture(PApplet parent, int width, int height, Object params) { 
     this.parent = parent;
     this.width = width;
     this.height = height;
@@ -122,7 +120,7 @@ public class PTexture implements PConstants {
    * @param filename String
    * @param params Parameters
    */ 
-  public PTexture(PApplet parent, String filename, PParameters params)  {
+  public PTexture(PApplet parent, String filename, Object params)  {
     this.parent = parent;
      
     pgl = (PGraphicsOpenGL2)parent.g;
@@ -1006,7 +1004,7 @@ public class PTexture implements PConstants {
    * This class stores the parameters for a texture: target, internal format, minimization filter
    * and magnification filter. 
    */
-  static public class Parameters extends PParameters {
+  static public class Parameters {
     /**
      * Texture target.
      */

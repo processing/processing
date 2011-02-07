@@ -6181,12 +6181,12 @@ public class PGraphicsOpenGL2 extends PGraphics {
   }
     
   
-  protected PShape loadShape(String filename, PParameters params) {
+  protected PShape loadShape(String filename, Object params) {
     return new PShape3D(parent, filename, (PShape3D.Parameters)params);
   }
   
   
-  protected PShape createShape(int size, PParameters params) {
+  protected PShape createShape(int size, Object params) {
     return new PShape3D(parent, size, (PShape3D.Parameters)params);
   }
   
