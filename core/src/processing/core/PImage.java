@@ -26,6 +26,7 @@ package processing.core;
 
 import java.awt.image.*;
 import java.io.*;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -104,7 +105,7 @@ public class PImage implements PConstants, Cloneable {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
   /** for renderers that need to store info about the image */
-  protected HashMap<PGraphics, PMetadata> cacheMap;
+  protected HashMap<PGraphics, Object> cacheMap;
   
   /** for renderers that need to store parameters about the image */
   protected HashMap<PGraphics, PParameters> paramMap;
@@ -269,9 +270,21 @@ public class PImage implements PConstants, Cloneable {
       Set<PGraphics> keySet = cacheMap.keySet();
       if (!keySet.isEmpty()) {
         Object[] keys = keySet.toArray();
-        for (int i = 0; i < keys.length; i++) {
-          PMetadata data = getCache((PGraphics)keys[i]);
-          data.delete();    
+        for (int i = 0; i < keys.length; i++) {          
+          Object data = getCache((PGraphics)keys[i]);
+          Method del = null;
+          
+          try {
+            Class<?> c = data.getClass();
+            del = c.getMethod("delete", new Class[] {});
+          } catch (Exception e) {}
+          
+          if (del != null) {
+            // The metadata have a delete method. We try running it.
+            try {
+              del.invoke(data, new Object[] {});
+            } catch (Exception e) {}
+          }
         }
       }
     }
@@ -290,8 +303,8 @@ public class PImage implements PConstants, Cloneable {
    * @param renderer The PGraphics renderer associated to the image
    * @param storage The metadata required by the renderer   
    */
-  public void setCache(PGraphics renderer, PMetadata storage) {
-    if (cacheMap == null) cacheMap = new HashMap<PGraphics, PMetadata>();
+  public void setCache(PGraphics renderer, Object storage) {
+    if (cacheMap == null) cacheMap = new HashMap<PGraphics, Object>();
     cacheMap.put(renderer, storage);
   }
 
@@ -304,7 +317,7 @@ public class PImage implements PConstants, Cloneable {
    * @param renderer The PGraphics renderer associated to the image
    * @return metadata stored for the specified renderer
    */
-  public PMetadata getCache(PGraphics renderer) {
+  public Object getCache(PGraphics renderer) {
     if (cacheMap == null) return null;
     return cacheMap.get(renderer);
   }

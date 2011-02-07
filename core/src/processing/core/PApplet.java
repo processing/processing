@@ -10341,7 +10341,7 @@ public class PApplet extends Applet
    * @param renderer The PGraphics renderer associated to the image
    * @param storage The metadata required by the renderer   
    */
-  public void setCache(PGraphics renderer, PMetadata storage) {
+  public void setCache(PGraphics renderer, Object storage) {
     if (recorder != null) recorder.setCache(renderer, storage);
     g.setCache(renderer, storage);
   }
@@ -10355,7 +10355,7 @@ public class PApplet extends Applet
    * @param renderer The PGraphics renderer associated to the image
    * @return metadata stored for the specified renderer
    */
-  public PMetadata getCache(PGraphics renderer) {
+  public Object getCache(PGraphics renderer) {
     return g.getCache(renderer);
   }
 
