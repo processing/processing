@@ -1404,7 +1404,7 @@ public class PApplet extends Applet
    * @see processing.core.PImage
    * @see processing.core.PGraphics
    */
-  public PImage createImage(int wide, int high, int format, PParameters params) {
+  public PImage createImage(int wide, int high, int format, Object params) {
     PImage image = new PImage(wide, high, format);
     if (params != null) {
       image.setParams(g, params);
@@ -3640,7 +3640,7 @@ public class PApplet extends Applet
   }
   
   
-  public PImage loadImage(String filename, PParameters params) {
+  public PImage loadImage(String filename, Object params) {
     return loadImage(filename, null, params);
   }
   
@@ -3669,7 +3669,7 @@ public class PApplet extends Applet
    * @see processing.core.PApplet#imageMode(int)
    * @see processing.core.PApplet#background(float, float, float)
    */
-  public PImage loadImage(String filename, String extension, PParameters params) {
+  public PImage loadImage(String filename, String extension, Object params) {
     if (extension == null) {
       String lower = filename.toLowerCase();
       int dot = filename.lastIndexOf('.');
@@ -3786,7 +3786,7 @@ public class PApplet extends Applet
    * @see processing.core.PApplet#loadImage(String, String)
    * @see processing.core.PImage
    */
-  public PImage requestImage(String filename, String extension, PParameters params) {
+  public PImage requestImage(String filename, String extension, Object params) {
     PImage vessel = createImage(0, 0, ARGB, params);
     AsyncImageLoader ail =
       new AsyncImageLoader(filename, extension, vessel);
@@ -4126,7 +4126,7 @@ public class PApplet extends Applet
    * @see PApplet#shape(PShape)
    * @see PApplet#shapeMode(int)
    */
-  public PShape loadShape(String filename, PParameters params) {
+  public PShape loadShape(String filename, Object params) {
     String extension;
     
     String lower = filename.toLowerCase();
@@ -4176,7 +4176,7 @@ public class PApplet extends Applet
   /**
    * Creates an empty shape, with the specified size and parameters.
    */  
-  public PShape createShape(int size, PParameters params) {
+  public PShape createShape(int size, Object params) {
     return g.createShape(size, params);
   }
   
@@ -10376,7 +10376,7 @@ public class PApplet extends Applet
    * @param renderer The PGraphics renderer associated to the image
    * @param storage The parameters required by the renderer  
    */
-  public void setParams(PGraphics renderer, PParameters params) {
+  public void setParams(PGraphics renderer, Object params) {
     if (recorder != null) recorder.setParams(renderer, params);
     g.setParams(renderer, params);
   }
@@ -10387,7 +10387,7 @@ public class PApplet extends Applet
    * @param renderer The PGraphics renderer associated to the image
    * @return parameters stored for the specified renderer
    */
-  public PParameters getParams(PGraphics renderer) {
+  public Object getParams(PGraphics renderer) {
     return g.getParams(renderer);
   }
 
