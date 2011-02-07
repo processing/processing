@@ -816,7 +816,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   }
 
 
-  class ImageCache extends PMetadata {
+  class ImageCache {
     PImage source;
     boolean tinted;
     int tintedColor;
