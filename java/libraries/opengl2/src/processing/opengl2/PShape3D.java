@@ -29,7 +29,6 @@ import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PGraphics;
 import processing.core.PImage;
-import processing.core.PParameters;
 import processing.core.PShape;
 import processing.core.PVector;
 import java.nio.FloatBuffer;
@@ -2440,7 +2439,7 @@ public class PShape3D extends PShape implements PConstants {
   }  
   
   
-  static public class Parameters extends PParameters {
+  static public class Parameters {
     public int drawMode;    
     public int updateMode;  
     
