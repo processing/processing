@@ -86,10 +86,10 @@ void draw() {
     if (mode == 0) {
       trefoil.enableStyle();
       hint(DISABLE_DEPTH_MASK);
-      blend(ADD);
+      screenBlend(ADD);
     } else {
       trefoil.disableStyle();
-      blend(BLEND);    
+      screenBlend(BLEND);    
     }  
   
     shape(trefoil);

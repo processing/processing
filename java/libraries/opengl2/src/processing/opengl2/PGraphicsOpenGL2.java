@@ -379,26 +379,26 @@ public class PGraphicsOpenGL2 extends PGraphics {
   public static final int MAX_TEXTURES = 2;
   
   /** Number of textures currently in use. */
-  protected int numMultitextures;
+  protected int numTextures;
   
   /** Number of currently initialized texture buffers. */
   protected int numTexBuffers;
   
   /** Blending mode used by the texture combiner. */
-  protected int multitexureBlendMode;
+  protected int texBlendMode;
   
   /** Array used in the renderTriangles method to store the textures in use. */
   protected PTexture[] renderTextures = new PTexture[MAX_TEXTURES];
   
   /** Current texture images. */
-  protected PImage[] multitextureImages = new PImage[MAX_TEXTURES];
+  protected PImage[] textureImages = new PImage[MAX_TEXTURES];
   
   /** Used to detect changes in the current texture images. */
-  protected PImage[] multitextureImages0 = new PImage[MAX_TEXTURES];
+  protected PImage[] textureImages0 = new PImage[MAX_TEXTURES];
   
   /** Current texture UV coordinates. */
-  protected float[] multitextureU = new float[MAX_TEXTURES];
-  protected float[] multitextureV = new float[MAX_TEXTURES];
+  protected float[] texturesU = new float[MAX_TEXTURES];
+  protected float[] texturesV = new float[MAX_TEXTURES];
   
   /** Texture UV coordinates for all vertices. */
   protected float[][] vertexU = new float[DEFAULT_VERTICES][1];
@@ -419,8 +419,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
   
   // Blending:
   
-  protected boolean blend;
-  protected int blendMode;  
+  protected int screenBlendMode;  
   
   // ........................................................
 
@@ -908,10 +907,10 @@ public class PGraphicsOpenGL2 extends PGraphics {
     // Each frame starts with textures disabled.
     noTexture();
         
-    // Blend is needed for alpha (i.e. fonts) to work.
-    blend(BLEND);
+    // Screen blend is needed for alpha (i.e. fonts) to work.
+    screenBlend(BLEND);
     
-    // Default multitexture blending:
+    // Default texture blending:
     textureBlend(BLEND);
     
     // this is necessary for 3D drawing
@@ -1048,11 +1047,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
     }
         
     // Restoring blending.
-    if (blend) {
-      blend(blendMode);
-    } else { 
-      noBlend();
-    }    
+    screenBlend(screenBlendMode);
     
     // Restoring fill
     if (fill) {
@@ -1367,18 +1362,18 @@ public class PGraphicsOpenGL2 extends PGraphics {
 
   public void texture(PImage image) {
     super.texture(image);
-    multitextureImages[0] = image;
-    java.util.Arrays.fill(multitextureImages, 1, maxTextureUnits, null);
-    numMultitextures = 1;    
+    textureImages[0] = image;
+    java.util.Arrays.fill(textureImages, 1, maxTextureUnits, null);
+    numTextures = 1;    
   }
   
   public void texture(PImage image0, PImage image1) {
     if (1 < maxTextureUnits) {
       super.texture(image0);
-      multitextureImages[0] = image0;
-      multitextureImages[1] = image1;
-      java.util.Arrays.fill(multitextureImages, 2, maxTextureUnits, null);
-      numMultitextures = 2;
+      textureImages[0] = image0;
+      textureImages[1] = image1;
+      java.util.Arrays.fill(textureImages, 2, maxTextureUnits, null);
+      numTextures = 2;
       if (numTexBuffers < 2) {
         addTexBuffers(2 - numTexBuffers);
       }      
@@ -1390,11 +1385,11 @@ public class PGraphicsOpenGL2 extends PGraphics {
   public void texture(PImage image0, PImage image1, PImage image2) {
     if (2 < maxTextureUnits) {
       super.texture(image0);
-      multitextureImages[0] = image0;
-      multitextureImages[1] = image1;
-      multitextureImages[2] = image2;
-      java.util.Arrays.fill(multitextureImages, 3, maxTextureUnits, null);       
-      numMultitextures = 3;
+      textureImages[0] = image0;
+      textureImages[1] = image1;
+      textureImages[2] = image2;
+      java.util.Arrays.fill(textureImages, 3, maxTextureUnits, null);       
+      numTextures = 3;
       if (numTexBuffers < 3) {
         addTexBuffers(3 - numTexBuffers);
       }      
@@ -1406,12 +1401,12 @@ public class PGraphicsOpenGL2 extends PGraphics {
   public void texture(PImage image0, PImage image1, PImage image2, PImage image3) {
     if (3 < maxTextureUnits) {
       super.texture(image0);
-      multitextureImages[0] = image0;
-      multitextureImages[1] = image1;
-      multitextureImages[2] = image2;
-      multitextureImages[3] = image3;
-      java.util.Arrays.fill(multitextureImages, 4, maxTextureUnits, null);      
-      numMultitextures = 4;
+      textureImages[0] = image0;
+      textureImages[1] = image1;
+      textureImages[2] = image2;
+      textureImages[3] = image3;
+      java.util.Arrays.fill(textureImages, 4, maxTextureUnits, null);      
+      numTextures = 4;
       if (numTexBuffers < 4) {
         addTexBuffers(4 - numTexBuffers);
       }
@@ -1424,9 +1419,9 @@ public class PGraphicsOpenGL2 extends PGraphics {
     int len = images.length;
     if (len <= maxTextureUnits) {
       super.texture(images[0]);
-      PApplet.arrayCopy(images, 0, multitextureImages, 0, len);
-      java.util.Arrays.fill(multitextureImages, len, maxTextureUnits, null);
-      numMultitextures = len;
+      PApplet.arrayCopy(images, 0, textureImages, 0, len);
+      java.util.Arrays.fill(textureImages, len, maxTextureUnits, null);
+      numTextures = len;
       if (numTexBuffers < len) {
         addTexBuffers(len - numTexBuffers);
       }
@@ -1437,19 +1432,19 @@ public class PGraphicsOpenGL2 extends PGraphics {
   
   public void noTexture() {
     super.noTexture();    
-    numMultitextures = 0;
-    clearMultitextures();
-    clearMultitextures0();
+    numTextures = 0;
+    clearTextures();
+    clearTextures0();
   }
   
   public void vertex(float x, float y, float u, float v) {
     vertexTexture(u, v, 0);
     vertex(x, y);
     int n = vertexCount - 1;
-    for (int i = 0; i < numMultitextures; i++) {
-      vertexTex[n][i] = multitextureImages[i];
-      vertexU[n][i] = multitextureU[0];
-      vertexV[n][i] = multitextureV[0];        
+    for (int i = 0; i < numTextures; i++) {
+      vertexTex[n][i] = textureImages[i];
+      vertexU[n][i] = texturesU[0];
+      vertexV[n][i] = texturesV[0];        
     }
   }
 
@@ -1458,7 +1453,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
       vertexTexture(u0, v0, 0);
       vertexTexture(u1, v1, 1);
       vertex(x, y);
-      setMultitextureData(2);
+      setTextureData(2);
     } else {
       System.err.println("OPENGL2: insufficient texture units.");
     }
@@ -1470,7 +1465,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
       vertexTexture(u1, v1, 1);
       vertexTexture(u2, v2, 2);    
       vertex(x, y);    
-      setMultitextureData(3);
+      setTextureData(3);
     } else {
       System.err.println("OPENGL2: insufficient texture units.");
     }    
@@ -1483,7 +1478,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
       vertexTexture(u2, v2, 2);
       vertexTexture(u2, v2, 3);
       vertex(x, y);    
-      setMultitextureData(4);
+      setTextureData(4);
     } else {
       System.err.println("OPENGL2: insufficient texture units.");
     }      
@@ -1496,7 +1491,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
         vertexTexture(u[t], v[t], t);  
       }
       vertex(x, y);
-      setMultitextureData(len);
+      setTextureData(len);
     } else {
       System.err.println("OPENGL2: insufficient texture units.");
     }    
@@ -1506,10 +1501,10 @@ public class PGraphicsOpenGL2 extends PGraphics {
     vertexTexture(u, v, 0);
     vertex(x, y, z);  
     int n = vertexCount - 1;
-    for (int i = 0; i < numMultitextures; i++) {
-      vertexTex[n][i] = multitextureImages[i];
-      vertexU[n][i] = multitextureU[0];
-      vertexV[n][i] = multitextureV[0];        
+    for (int i = 0; i < numTextures; i++) {
+      vertexTex[n][i] = textureImages[i];
+      vertexU[n][i] = texturesU[0];
+      vertexV[n][i] = texturesV[0];        
     }    
   }
 
@@ -1518,7 +1513,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
       vertexTexture(u0, v0, 0);
       vertexTexture(u1, v1, 1);
       vertex(x, y, z);
-      setMultitextureData(2);
+      setTextureData(2);
     } else {
       System.err.println("OPENGL2: insufficient texture units.");
     }
@@ -1530,7 +1525,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
       vertexTexture(u1, v1, 1);
       vertexTexture(u2, v2, 2);    
       vertex(x, y, z);    
-      setMultitextureData(3);
+      setTextureData(3);
     } else {
       System.err.println("OPENGL2: insufficient texture units.");
     }    
@@ -1543,7 +1538,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
       vertexTexture(u2, v2, 2);
       vertexTexture(u2, v2, 3);
       vertex(x, y, z);    
-      setMultitextureData(4);
+      setTextureData(4);
     } else {
       System.err.println("OPENGL2: insufficient texture units.");
     }      
@@ -1556,7 +1551,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
         vertexTexture(u[t], v[t], t);  
       }
       vertex(x, y, z);
-      setMultitextureData(len);
+      setTextureData(len);
     } else {
       System.err.println("OPENGL2: insufficient texture units.");
     }    
@@ -1587,46 +1582,46 @@ public class PGraphicsOpenGL2 extends PGraphics {
     }
   }
 
-  protected void clearMultitextures() {
-    java.util.Arrays.fill(multitextureImages, null);
+  protected void clearTextures() {
+    java.util.Arrays.fill(textureImages, null);
   }
  
-  protected void clearMultitextures0() {
-    java.util.Arrays.fill(multitextureImages0, null);
+  protected void clearTextures0() {
+    java.util.Arrays.fill(textureImages0, null);
   }
   
-  protected boolean diffFromMultitextures0(PImage[] images) {
-    if (1 < numMultitextures) {
-      for (int i = 0; i < numMultitextures; i++) {
-        if (multitextureImages0[i] != images[i]) {
+  protected boolean diffFromTextures0(PImage[] images) {
+    if (1 < numTextures) {
+      for (int i = 0; i < numTextures; i++) {
+        if (textureImages0[i] != images[i]) {
           return true;
         }
       }
       return false;
-    } else if (0 < numMultitextures) {
-      return multitextureImages0[0] != images[0];
+    } else if (0 < numTextures) {
+      return textureImages0[0] != images[0];
     } else {
-      return multitextureImages0[0] != null;
+      return textureImages0[0] != null;
     }
   }
   
-  protected void setMultitextures0(PImage[] images) {
-    if (1 < numMultitextures) {
-      PApplet.arrayCopy(images, 0, multitextureImages0, 0, numMultitextures);
-    } else if (0 < numMultitextures) { 
-      multitextureImages0[0] = images[0];
+  protected void setTextures0(PImage[] images) {
+    if (1 < numTextures) {
+      PApplet.arrayCopy(images, 0, textureImages0, 0, numTextures);
+    } else if (0 < numTextures) { 
+      textureImages0[0] = images[0];
     } else {
-      multitextureImages0[0] = null;
+      textureImages0[0] = null;
     }
   }
   
   protected void vertexTexture(float u, float v, int t) {
     if (t == 0) {
       super.vertexTexture(u, v);
-      multitextureU[0] = textureU; 
-      multitextureV[0] = textureV;
+      texturesU[0] = textureU; 
+      texturesV[0] = textureV;
     } else {
-      PImage img = multitextureImages[t];
+      PImage img = textureImages[t];
       if (img == null) {
         throw new RuntimeException("You must first call texture() before " +
                                    "using u and v coordinates with vertex()");
@@ -1636,8 +1631,8 @@ public class PGraphicsOpenGL2 extends PGraphics {
         v /= (float) img.height;
       }
 
-      multitextureU[t] = u;
-      multitextureV[t] = v;
+      texturesU[t] = u;
+      texturesV[t] = v;
     }    
   }  
   
@@ -1672,15 +1667,15 @@ public class PGraphicsOpenGL2 extends PGraphics {
     numTexBuffers += more;    
   }
 
-  protected void setMultitextureData(int ntex) {
+  protected void setTextureData(int ntex) {
     if (numTexBuffers < ntex) {
       addTexBuffers(ntex - numTexBuffers);
     }
     
     int n = vertexCount - 1;
-    PApplet.arrayCopy(multitextureU, 0, vertexU[n], 0, ntex);
-    PApplet.arrayCopy(multitextureV, 0, vertexV[n], 0, ntex);
-    PApplet.arrayCopy(multitextureImages, 0, vertexTex[n], 0, ntex); 
+    PApplet.arrayCopy(texturesU, 0, vertexU[n], 0, ntex);
+    PApplet.arrayCopy(texturesV, 0, vertexV[n], 0, ntex);
+    PApplet.arrayCopy(textureImages, 0, vertexTex[n], 0, ntex); 
   }
   
   // public void breakShape()
@@ -2318,7 +2313,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
     PImage[] images;
     images = vertexTex[a];
     boolean firstFace = triangleCount == 0;
-    if (diffFromMultitextures0(images) || firstFace) {
+    if (diffFromTextures0(images) || firstFace) {
       // A new face starts at the first triangle or when the texture changes.
       addNewFace(firstFace, images);
     } else {
@@ -2326,7 +2321,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
       faceLength[faceCount - 1]++;
     }
     triangleCount++;
-    setMultitextures0(images);
+    setTextures0(images);
   }
 
   // New "face" starts. A face is just a range of consecutive triangles
@@ -2344,16 +2339,16 @@ public class PGraphicsOpenGL2 extends PGraphics {
     faceLength[faceCount] = 1;
       
     PImage p[] = faceTextures[faceCount];
-    if (1 < numMultitextures) {
-      PApplet.arrayCopy(images, 0, p, 0, numMultitextures);
-    } if (0 < numMultitextures) {
+    if (1 < numTextures) {
+      PApplet.arrayCopy(images, 0, p, 0, numTextures);
+    } if (0 < numTextures) {
       p[0] = images[0];
     } else {
       // No textures in use, but images[0] might be non null because of a
       // previous textured shape.
       p[0] = null;
     }
-    java.util.Arrays.fill(p, numMultitextures, maxTextureUnits, null);
+    java.util.Arrays.fill(p, numTextures, maxTextureUnits, null);
     
     faceCount++;
   }
@@ -2372,8 +2367,8 @@ public class PGraphicsOpenGL2 extends PGraphics {
       int i = faceOffset[j];
 
       PImage[] images = faceTextures[j];
-      if (1 < numMultitextures) {
-        for (int t = 0; t < numMultitextures; t++) {
+      if (1 < numTextures) {
+        for (int t = 0; t < numTextures; t++) {
           if (images[t] != null) {            
             PTexture tex = getTexture(images[t]); 
             if (tex == null) {
@@ -2388,7 +2383,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
           } else {
             // If there is a null texture image at some point in the
             // list, all subsequent images are ignored. This situation
-            // corresponds to a wrong multitexture specification by
+            // corresponds to a wrong texture specification by
             // the user, anyways.
             break;            
           }
@@ -2410,7 +2405,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
         }                
         gl2f.glEnableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
         if (1 < numTextures) {
-          setMultitextureBlend(renderTextures, numTextures);
+          setupTextureBlend(renderTextures, numTextures);
         }
       }
       
@@ -2677,7 +2672,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
       
       if (0 < numTextures) {
         if (1 < numTextures) {
-          clearMultitextureBlend(numTextures);
+          cleanupTextureBlend(numTextures);
         }
         for (int t = 0; t < numTextures; t++) {
           PTexture tex = renderTextures[t];          
@@ -3213,7 +3208,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
         // Now we render all the text that has been pushed between 
         // beginText/endText.
         
-        if (!blend || blendMode != BLEND) {
+        if (screenBlendMode != BLEND) {
           gl.glEnable(GL.GL_BLEND);
           if (blendEqSupported) gl.glBlendEquation(GL.GL_FUNC_ADD);
           gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
@@ -3223,11 +3218,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
         renderTextModel();
         
         // Restoring current blend mode.
-        if (blend) {
-          blend(blendMode);
-        } else {
-          noBlend();
-        }
+        screenBlend(screenBlendMode);        
         
         gl.glBindTexture(GL.GL_TEXTURE_2D, 0);   
         gl.glDisable(GL.GL_TEXTURE_2D);      
@@ -3249,7 +3240,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
     // Init opengl state for text rendering...
     gl.glEnable(GL.GL_TEXTURE_2D);
     
-    if (!blend || blendMode != BLEND) {
+    if (screenBlendMode != BLEND) {
       gl.glEnable(GL.GL_BLEND);
       if (blendEqSupported) gl.glBlendEquation(GL.GL_FUNC_ADD);
       gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
@@ -3296,11 +3287,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
     }
     
     // Restoring current blend mode.
-    if (blend) {
-      blend(blendMode);
-    } else {
-      noBlend();
-    }
+    screenBlend(screenBlendMode);
     
     gl.glBindTexture(GL.GL_TEXTURE_2D, 0);   
     gl.glDisable(GL.GL_TEXTURE_2D);    
@@ -5818,12 +5805,12 @@ public class PGraphicsOpenGL2 extends PGraphics {
    * Reference article about blending modes:
    * http://www.pegtop.net/delphi/articles/blendmodes/
    */
-  public void blend(int mode) {    
-    blend = true;
-    blendMode = mode;
+  public void screenBlend(int mode) {    
+    screenBlendMode = mode;
     gl.glEnable(GL.GL_BLEND);
     
-    if (mode == REPLACE) {  
+    if (mode == REPLACE) {
+      // This is equivalent to disable blending.
       if (blendEqSupported) gl.glBlendEquation(GL.GL_FUNC_ADD);
       gl.glBlendFunc(GL.GL_ONE, GL.GL_ZERO);
     } else if (mode == BLEND) {
@@ -5872,21 +5859,10 @@ public class PGraphicsOpenGL2 extends PGraphics {
   }
 
   
-  public void noBlend() {
-    blend = false;
-    gl.glDisable(GL.GL_BLEND);
-  }
-  
-  
   public void textureBlend(int mode) {
-    multitexureBlendMode = mode;
+    texBlendMode = mode;
   }
 
-  
-  public void noTextureBlend() {
-    multitexureBlendMode = REPLACE;
-  }  
-  
   
   // Some useful info about multitexturing with combiners:
   // http://www.opengl.org/wiki/Texture_Combiners
@@ -5901,7 +5877,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
   // This post explains how to use texture crossbar to properly apply
   // geometry lighting and tinting to the result of the texure combination.
   // http://www.imgtec.com/forum/forum_posts.asp?TID=701
-  protected void setMultitextureBlend(PTexture[] textures, int num) {
+  protected void setupTextureBlend(PTexture[] textures, int num) {
     if (2 < num) {
       PGraphics.showWarning("OPENGL2: multitexture blending currently supports only two textures.");
       return;
@@ -5912,7 +5888,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
       // Without texture environment crossbar we have to use the first sampler just to read the first texture,
       // and the second to do the mixing, in this way we don't have a way to modulate the output of the
       // texture mixing with the pixel tint or lighting.
-      if (multitexureBlendMode == REPLACE) {
+      if (texBlendMode == REPLACE) {
         // Texture 0:
         gl2f.glActiveTexture(GL2.GL_TEXTURE0);
         gl2f.glBindTexture(textures[0].getGLTarget(), textures[0].getGLID());
@@ -5923,7 +5899,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
         gl2f.glBindTexture(textures[1].getGLTarget(), textures[1].getGLID());
         // Sample the texture, replacing the previous one.
         gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_REPLACE);
-      } else if (multitexureBlendMode == BLEND) {
+      } else if (texBlendMode == BLEND) {
         // Texture 0:
         gl2f.glActiveTexture(GL2.GL_TEXTURE0);
         gl2f.glBindTexture(textures[0].getGLTarget(), textures[0].getGLID());
@@ -5950,7 +5926,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
         gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND1_ALPHA, GL2.GL_SRC_ALPHA);
         // ...using ALPHA of tex1 as interpolation factor.
         gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND2_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);   
-      } else if (multitexureBlendMode == MULTIPLY) {
+      } else if (texBlendMode == MULTIPLY) {
         // Texture 0:
         gl2f.glActiveTexture(GL2.GL_TEXTURE0);
         gl2f.glBindTexture(textures[0].getGLTarget(), textures[0].getGLID());
@@ -5973,7 +5949,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
         gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_SRC1_ALPHA, GL2.GL_TEXTURE);
         gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND0_ALPHA, GL2.GL_SRC_ALPHA);
         gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND1_ALPHA, GL2.GL_SRC_ALPHA);      
-      } else if (multitexureBlendMode == ADD) {
+      } else if (texBlendMode == ADD) {
         gl2f.glActiveTexture(GL2.GL_TEXTURE0);
         gl2f.glBindTexture(textures[0].getGLTarget(), textures[0].getGLID());
         gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_REPLACE);
@@ -5992,7 +5968,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
         gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_SRC1_ALPHA, GL2.GL_TEXTURE);
         gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND0_ALPHA, GL2.GL_SRC_ALPHA);
         gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND1_ALPHA, GL2.GL_SRC_ALPHA);      
-      } else if (multitexureBlendMode == SUBTRACT) {
+      } else if (texBlendMode == SUBTRACT) {
         // Texture 0:
         gl2f.glActiveTexture(GL2.GL_TEXTURE0);
         gl2f.glBindTexture(textures[0].getGLTarget(), textures[0].getGLID());
@@ -6021,7 +5997,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
       // and the modulation with the pixel color (which includes tint and light) in the second,
       // as explained here:
       // http://www.imgtec.com/forum/forum_posts.asp?TID=701
-      if (multitexureBlendMode == REPLACE) {
+      if (texBlendMode == REPLACE) {
         // Sampler 0:
         gl2f.glActiveTexture(GL2.GL_TEXTURE0);
         gl2f.glBindTexture(textures[0].getGLTarget(), textures[0].getGLID());         
@@ -6037,7 +6013,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
         gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND0_ALPHA, GL2.GL_SRC_ALPHA);
         // Sampler 1:
         modulateWithPrimaryColor(1, textures[1]);
-      } else if (multitexureBlendMode == BLEND) {
+      } else if (texBlendMode == BLEND) {
         // Sampler 0: interpolation between textures 0 and 1 using alpha of 1.
         gl2f.glActiveTexture(GL2.GL_TEXTURE0);
         gl2f.glBindTexture(textures[0].getGLTarget(), textures[0].getGLID());
@@ -6062,7 +6038,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
         gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND2_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
         // Sampler 1:
         modulateWithPrimaryColor(1, textures[1]);        
-      } else if (multitexureBlendMode == MULTIPLY) {
+      } else if (texBlendMode == MULTIPLY) {
         // Sampler 0:
         gl2f.glActiveTexture(GL2.GL_TEXTURE0);
         gl2f.glBindTexture(textures[0].getGLTarget(), textures[0].getGLID());        
@@ -6082,7 +6058,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
         gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND1_ALPHA, GL2.GL_SRC_ALPHA);      
         // Sampler 1:
         modulateWithPrimaryColor(1, textures[1]);  
-      } else if (multitexureBlendMode == ADD) {
+      } else if (texBlendMode == ADD) {
         // Sampler 0:
         gl2f.glActiveTexture(GL2.GL_TEXTURE0);
         gl2f.glBindTexture(textures[0].getGLTarget(), textures[0].getGLID());        
@@ -6101,7 +6077,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
         gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND1_ALPHA, GL2.GL_SRC_ALPHA);        
         // Sampler 1:
         modulateWithPrimaryColor(1, textures[1]);                
-      } else if (multitexureBlendMode == SUBTRACT) {
+      } else if (texBlendMode == SUBTRACT) {
         // Sampler 0:
         gl2f.glActiveTexture(GL2.GL_TEXTURE0);
         gl2f.glBindTexture(textures[0].getGLTarget(), textures[0].getGLID());        
@@ -6127,7 +6103,8 @@ public class PGraphicsOpenGL2 extends PGraphics {
     }
     
     // The result of the texture combination will replace the current content of the color buffer.
-    gl2f.glDisable(GL2.GL_BLEND);
+    //gl2f.glDisable(GL.GL_BLEND);
+    screenBlend(REPLACE);
   }  
 
   
@@ -6149,17 +6126,13 @@ public class PGraphicsOpenGL2 extends PGraphics {
   }
   
   
-  protected void clearMultitextureBlend(int num) {
+  protected void cleanupTextureBlend(int num) {
     for (int i = 0; i < num; i++) {
       gl2f.glActiveTexture(GL2.GL_TEXTURE0 + i);
       gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_MODULATE);
     }
     // Re-enabling blending.
-    if (blend) {
-      blend(blendMode);
-    } else {
-      noBlend();
-    }
+    screenBlend(screenBlendMode);
   }  
 
   //////////////////////////////////////////////////////////////
@@ -6285,11 +6258,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
       gl.glDepthMask(true);
     }
 
-    if (blend) {
-      blend(blendMode);
-    } else {
-      noBlend();
-    }
+    screenBlend(screenBlendMode);
 
     // Restoring viewport.
     gl.glViewport(0, 0, width, height);

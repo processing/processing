@@ -26,11 +26,11 @@ void draw() {
   tint(255, 255);
   image(pic1, 0, 0, pic1.width, pic1.height);
 
-  blend(selMode);  
+  screenBlend(selMode);  
   tint(255, picAlpha);
   image(pic2, 0, 0, pic2.width, pic2.height);
     
-  noBlend();    
+  screenBlend(REPLACE);  
   fill(200, 50, 50);
   rect(0, height - 50, map(picAlpha, 0, 255, 0, width), 50);
   fill(255);  
