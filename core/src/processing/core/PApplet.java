@@ -10236,15 +10236,9 @@ public class PApplet extends Applet
   }
 
 
-  public void mergeRecord() { 
-    if (recorder != null) recorder.mergeRecord();
-    g.mergeRecord();
-  }
-
-
-  public void noMergeRecord() { 
-    if (recorder != null) recorder.noMergeRecord();
-    g.noMergeRecord();
+  public void mergeShapes(boolean val) { 
+    if (recorder != null) recorder.mergeShapes(val);
+    g.mergeShapes(val);
   }
 
 
