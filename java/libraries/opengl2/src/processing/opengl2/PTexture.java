@@ -29,7 +29,6 @@ import java.nio.*;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PImage;
-import processing.core.PMetadata;
 import processing.core.PParameters;
 
 
@@ -39,7 +38,7 @@ import processing.core.PParameters;
  * 
  */
 @SuppressWarnings("unused")
-public class PTexture extends PMetadata implements PConstants { 
+public class PTexture implements PConstants { 
   public int width, height;
     
   protected PApplet parent;
@@ -137,7 +136,7 @@ public class PTexture extends PMetadata implements PConstants {
   }
 
 
-  public void delete() {    
+  public void delete() {
     deleteTexture();
   }
 

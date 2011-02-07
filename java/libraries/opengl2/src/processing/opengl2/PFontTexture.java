@@ -27,7 +27,6 @@ import java.util.HashMap;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PFont;
-import processing.core.PMetadata;
 
 /**
  * All the infrastructure needed for optimized font rendering 
@@ -35,7 +34,7 @@ import processing.core.PMetadata;
  * By Andres Colubri
  * 
  */
-class PFontTexture extends PMetadata implements PConstants {
+class PFontTexture implements PConstants {
   protected PApplet parent;
   protected PFont font;
 
