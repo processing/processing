@@ -6641,6 +6641,94 @@ public class PGraphicsOpenGL2 extends PGraphics {
   
   // UTILITY INNER CLASSES    
   
+  protected abstract class Transformation {
+    abstract void apply();      
+  }
+
+  protected class PushMatrix extends Transformation {
+    void apply() {
+      pushMatrix();
+    }
+  }
+
+  protected class PopMatrix extends Transformation {
+    void apply() {
+      popMatrix();
+    }
+  }  
+  
+  protected class Translate extends Transformation {
+    float tx, ty, tz;
+    Translate(float tx, float ty, float tz) {
+      this.tx = tx;
+      this.ty = tz;
+      this.tz = tz;
+    }
+    void apply() {
+      translate(tx, ty, tz);
+    }
+  }    
+  
+  
+  protected class GeometryBuffer {
+    int mode;
+    int[] indicesTemp;
+    float[] verticesTemp;
+    float[] normalsTemp;
+    float[] colorsTemp;
+    
+    IntBuffer indicesBuffer;
+    FloatBuffer verticesBuffer;
+    
+    // For reusing and avoiding object deletion by GC.
+    void cleanup() {
+      
+    }
+    
+    void add(int gcount, int vcount, int[][] indices, float[][] vertices, PImage[] textures, float[] mm) {
+      if (mode == LINES) {
+        
+      } else if (mode == TRIANGLES) {
+        
+      }
+
+      // Check if there is enough space in the temporal arrays.
+      //...
+      
+      int n = 0;
+      for (int i = 0; i < gcount; i++) {
+        indicesTemp[n++] = indices[i][VERTEX1];
+        indicesTemp[n++] = indices[i][VERTEX2];
+        indicesTemp[n++] = indices[i][VERTEX2];
+      }
+      
+      n = 0;
+      float x, y, z;
+      float nx, ny, nz;
+      for (int i = 0; i < vcount; i++) {
+        x = vertices[i][X];
+        y = vertices[i][Y];
+        z = vertices[i][Z];
+        
+        nx = vertices[i][NX];
+        ny = vertices[i][NY];
+        nz = vertices[i][NZ];
+        
+        // Have path for the case when mm == identity matrix.
+        verticesTemp[n++] = x * mm[0] + y * mm[4] + z * mm[8] + mm[12];
+        verticesTemp[n++] = x * mm[1] + y * mm[5] + z * mm[9] + mm[13];
+        verticesTemp[n++] = x * mm[2] + y * mm[6] + z * mm[10] + mm[14];
+        
+        normalsTemp[n++] = nx + mm[12];
+        normalsTemp[n++] = ny + mm[13];
+        normalsTemp[n++] = nz + mm[14];        
+      }
+      
+      indicesBuffer.put(indicesTemp, 0, 3 * gcount);
+      //...
+    }
+  }
+  
   /**
    *  This class encapsulates the drawing state in Processing.
    */  
