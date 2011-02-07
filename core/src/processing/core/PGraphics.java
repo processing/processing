@@ -5956,11 +5956,11 @@ public class PGraphics extends PImage implements PConstants {
     return null;
   }
 
-  protected PShape loadShape(String filename, PParameters params) {
+  protected PShape loadShape(String filename, Object params) {
     return null;
   }
   
-  protected PShape createShape(int size, PParameters params) {
+  protected PShape createShape(int size, Object params) {
     return null;
   }
   
