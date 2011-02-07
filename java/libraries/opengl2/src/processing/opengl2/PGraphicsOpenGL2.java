@@ -1348,19 +1348,15 @@ public class PGraphicsOpenGL2 extends PGraphics {
     noTexture();
   }
   
-  public void mergeRecord() {
+  public void mergeShapes(boolean val) {
     // Setting this parameter to true has the result of A3D trying to
     // set unique names to each shape being created between beginRecord/endRecord.
     // In this way, even if two shapes have all of their parameters identical (mode,
     // textures, etc), but their names are different, then they will be recorded in
     // separate child shapes in the recorded shape.
-    mergeRecShapes = true;
+    mergeRecShapes = val;
   }
   
-  public void noMergeRecord() { 
-    mergeRecShapes = false;
-  }
-
   public void shapeName(String name) {
     recShapeName = name;
   }
