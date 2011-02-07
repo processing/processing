@@ -896,14 +896,6 @@ public class PGraphics extends PImage implements PConstants {
    this.edge = edge;
   }
 
-  
-  /**
-   * Sets the automatic normal calculation mode.
-   */  
-  public void autoNormal(boolean auto) {
-    this.autoNormal = auto;   
-  }
-  
 
   /**
    * Sets the current normal vector. Only applies with 3D rendering
@@ -5942,7 +5934,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Return true if this renderer supports 2D drawing. Defaults to true.
+   * Return true if this renderer supports 3D drawing. Defaults to false.
    */
   public boolean is3D() {
     return false;
@@ -5956,59 +5948,60 @@ public class PGraphics extends PImage implements PConstants {
     return null;
   }
 
+  
   protected PShape loadShape(String filename, Object params) {
+    showMissingWarning("loading OBJ files requires OPENGL2");
     return null;
   }
+  
   
   protected PShape createShape(int size, Object params) {
+    showMissingWarning("creating PShape3D objects requires OPENGL2");
     return null;
   }
   
-  public void blend(int mode) {
-    showMissingWarning("blend");
-  }
   
-  
-  public void noBlend() {
-    showMissingWarning("noBlend");
+  public void screenBlend(int mode) {
+    showMissingWarning("screen blending requires OPENGL2");
   }
 
   
   public void textureBlend(int mode) {
-    showMissingWarning("blend");
-  }
-  
-  
-  public void noTextureBlend() {
-    showMissingWarning("noBlend");
+    showMissingWarning("texture blending requires OPENGL2");
   }
   
   
   public PShape beginRecord() { // ignore
-    showMissingWarning("beginRecord");
+    showMissingWarning("shape recording requires OPENGL2");
     return null;
   }
   
   
   public void endRecord() {  // ignore
-    showMissingWarning("endShapeRecord");    
+    showMissingWarning("shape recording requires OPENGL2");   
   }
   
   
   public boolean isRecording() { // ignore
+    showMissingWarning("shape recording requires OPENGL2"); 
     return false;
   }
   
   
   public void mergeShapes(boolean val) { 
-    showMissingWarning("mergeShapes");    
+    showMissingWarning("shape recording requires OPENGL2");    
   }
   
   
   public void shapeName(String name) {
-    showMissingWarning("shapeName");
+    showMissingWarning("shape recording requires OPENGL2"); 
   }
   
+  
+  public void autoNormal(boolean auto) {
+    this.autoNormal = auto;   
+  }
+    
   
   public void texture(PImage image0, PImage image1) {
     showMissingWarning("multitexturing requires OPENGL2");
