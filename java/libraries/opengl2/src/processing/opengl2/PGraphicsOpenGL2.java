@@ -2357,7 +2357,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
   protected void renderTriangles(int start, int stop) {
     report("render_triangles in");    
 
-    int numTextures = 0;
+    int tcount = 0;
 
     gl2f.glEnableClientState(GL2.GL_VERTEX_ARRAY);
     gl2f.glEnableClientState(GL2.GL_COLOR_ARRAY);
@@ -2378,8 +2378,8 @@ public class PGraphicsOpenGL2 extends PGraphics {
             gl.glEnable(tex.getGLTarget());
             gl.glActiveTexture(GL.GL_TEXTURE0 + t);
             gl.glBindTexture(tex.getGLTarget(), tex.getGLID());   
-            renderTextures[numTextures] = tex;
-            numTextures++;
+            renderTextures[tcount] = tex;
+            tcount++;
           } else {
             // If there is a null texture image at some point in the
             // list, all subsequent images are ignored. This situation
@@ -2395,22 +2395,22 @@ public class PGraphicsOpenGL2 extends PGraphics {
           gl.glActiveTexture(GL.GL_TEXTURE0);
           gl.glBindTexture(tex.getGLTarget(), tex.getGLID());   
           renderTextures[0] = tex;
-          numTextures = 1;
+          tcount = 1;
         }
       }
 
-      if (0 < numTextures) {
-        if (numTexBuffers < numTextures) {
-          addTexBuffers(numTextures - numTexBuffers);
+      if (0 < tcount) {
+        if (numTexBuffers < tcount) {
+          addTexBuffers(tcount - numTexBuffers);
         }                
         gl2f.glEnableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
-        if (1 < numTextures) {
-          setupTextureBlend(renderTextures, numTextures);
+        if (1 < tcount) {
+          setupTextureBlend(renderTextures, tcount);
         }
       }
       
       if (recordingShape) {
-        numRecordedTextures = PApplet.max(numRecordedTextures, numTextures);
+        numRecordedTextures = PApplet.max(numRecordedTextures, tcount);
         
         int n0 = recordedVertices.size();
         int n1 = n0 + 3 * faceLength[j] - 1;
@@ -2435,7 +2435,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
       vertexBuffer.position(0);
       colorBuffer.position(0);
       normalBuffer.position(0);
-      for (int t = 0; t < numTextures; t++) {
+      for (int t = 0; t < tcount; t++) {
         texCoordBuffer[t].position(0);
       }
 
@@ -2481,7 +2481,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
           a[HAS_NORMAL] = b[HAS_NORMAL] = c[HAS_NORMAL] = 1;
         }
         
-        if (numTextures == 1) {
+        if (tcount == 1) {
           float uscale = 1.0f;
           float vscale = 1.0f;
           float cx = 0.0f;
@@ -2513,8 +2513,8 @@ public class PGraphicsOpenGL2 extends PGraphics {
 
           renderUc[0] = (cx + sx * c[U]) * uscale;
           renderVc[0] = (cy + sy * c[V]) * vscale;
-        } else if (1 < numTextures) {
-          for (int t = 0; t < numTextures; t++) {
+        } else if (1 < tcount) {
+          for (int t = 0; t < tcount; t++) {
             float uscale = 1.0f;
             float vscale = 1.0f;
             float cx = 0.0f;
@@ -2554,14 +2554,14 @@ public class PGraphicsOpenGL2 extends PGraphics {
           recordedVertices.add(new PVector(a[X], a[Y], a[Z]));
           recordedColors.add(new float[] { a[R], a[G], a[B], a[A] });
           recordedNormals.add(new PVector(a[NX], a[NY], a[NZ]));
-          for (int t = 0; t < numTextures; t++) {
+          for (int t = 0; t < tcount; t++) {
             recordedTexCoords[t].add(new PVector(vertexU[na][t], vertexV[na][t], 0.0f));
           }
           // We need to add texture coordinate values for all the recorded vertices and all
           // texture units because even if this part of the recording doesn't use textures,
           // a subsequent (previous) portion might (did), and when setting the texture coordinates
           // for a shape we need to provide coordinates for the whole shape.          
-          for (int t = numTextures; t < maxTextureUnits; t++) {
+          for (int t = tcount; t < maxTextureUnits; t++) {
             recordedTexCoords[t].add(new PVector(0.0f, 0.0f, 0.0f));
           }
         } else {
@@ -2575,7 +2575,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
           normalArray[3 * n + 0] = a[NX];
           normalArray[3 * n + 1] = a[NY];
           normalArray[3 * n + 2] = a[NZ];
-          for (int t = 0; t < numTextures; t++) {
+          for (int t = 0; t < tcount; t++) {
             texCoordArray[t][2 * n + 0] = renderUa[t];
             texCoordArray[t][2 * n + 1] = renderVa[t];
           }
@@ -2587,11 +2587,11 @@ public class PGraphicsOpenGL2 extends PGraphics {
           recordedVertices.add(new PVector(b[X], b[Y], b[Z]));
           recordedColors.add(new float[] { b[R], b[G], b[B], b[A] });
           recordedNormals.add(new PVector(b[NX], b[NY], b[NZ]));
-          for (int t = 0; t < numTextures; t++) {
+          for (int t = 0; t < tcount; t++) {
             recordedTexCoords[t].add(new PVector(vertexU[nb][t], vertexV[nb][t], 0.0f));
           }
           // Idem to comment in section corresponding to vertex A.          
-          for (int t = numTextures; t < maxTextureUnits; t++) {
+          for (int t = tcount; t < maxTextureUnits; t++) {
             recordedTexCoords[t].add(new PVector(0.0f, 0.0f, 0.0f));
           }
         } else {
@@ -2605,7 +2605,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
           normalArray[3 * n + 0] = b[NX];
           normalArray[3 * n + 1] = b[NY];
           normalArray[3 * n + 2] = b[NZ];
-          for (int t = 0; t < numTextures; t++) {
+          for (int t = 0; t < tcount; t++) {
             texCoordArray[t][2 * n + 0] = renderUb[t];
             texCoordArray[t][2 * n + 1] = renderVb[t];
           }
@@ -2617,11 +2617,11 @@ public class PGraphicsOpenGL2 extends PGraphics {
           recordedVertices.add(new PVector(c[X], c[Y], c[Z]));
           recordedColors.add(new float[] { c[R], c[G], c[B], c[A] });
           recordedNormals.add(new PVector(c[NX], c[NY], c[NZ]));
-          for (int t = 0; t < numTextures; t++) {
+          for (int t = 0; t < tcount; t++) {
             recordedTexCoords[t].add(new PVector(vertexU[nc][t], vertexV[nc][t], 0.0f));
           }
           // Idem to comment in section corresponding to vertex A.          
-          for (int t = numTextures; t < maxTextureUnits; t++) {
+          for (int t = tcount; t < maxTextureUnits; t++) {
             recordedTexCoords[t].add(new PVector(0.0f, 0.0f, 0.0f));
           }
         } else {
@@ -2635,7 +2635,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
           normalArray[3 * n + 0] = c[NX];
           normalArray[3 * n + 1] = c[NY];
           normalArray[3 * n + 2] = c[NZ];
-          for (int t = 0; t < numTextures; t++) {
+          for (int t = 0; t < tcount; t++) {
             texCoordArray[t][2 * n + 0] = renderUc[t];
             texCoordArray[t][2 * n + 1] = renderVc[t];
           }
@@ -2649,32 +2649,32 @@ public class PGraphicsOpenGL2 extends PGraphics {
         vertexBuffer.put(vertexArray);
         colorBuffer.put(colorArray);
         normalBuffer.put(normalArray);
-        for (int t = 0; t < numTextures; t++) {
+        for (int t = 0; t < tcount; t++) {
           texCoordBuffer[t].put(texCoordArray[t]);
         }
 
         vertexBuffer.position(0);
         colorBuffer.position(0);
         normalBuffer.position(0);
-        for (int t = 0; t < numTextures; t++) {
+        for (int t = 0; t < tcount; t++) {
           texCoordBuffer[t].position(0);
         }
         
         gl2f.glVertexPointer(3, GL.GL_FLOAT, 0, vertexBuffer);
         gl2f.glColorPointer(4, GL.GL_FLOAT, 0, colorBuffer);
         gl2f.glNormalPointer(GL.GL_FLOAT, 0, normalBuffer);
-        for (int t = 0; t < numTextures; t++) {
+        for (int t = 0; t < tcount; t++) {
           gl2f.glClientActiveTexture(GL.GL_TEXTURE0 + t);
           gl2f.glTexCoordPointer(2, GL.GL_FLOAT, 0, texCoordBuffer[t]);          
         }
         gl2f.glDrawArrays(GL.GL_TRIANGLES, 0, 3 * faceLength[j]);
       }
       
-      if (0 < numTextures) {
-        if (1 < numTextures) {
-          cleanupTextureBlend(numTextures);
+      if (0 < tcount) {
+        if (1 < tcount) {
+          cleanupTextureBlend(tcount);
         }
-        for (int t = 0; t < numTextures; t++) {
+        for (int t = 0; t < tcount; t++) {
           PTexture tex = renderTextures[t];          
           gl.glActiveTexture(GL.GL_TEXTURE0 + t);
           gl.glBindTexture(tex.getGLTarget(), 0);
@@ -2684,7 +2684,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
         // two 2D textures. If the glDisable() call in in the previous loop, then the
         // 2D texture target is disabled in the first iteration, which invalidates the
         // glBindTexture in the second iteration.
-        for (int t = 0; t < numTextures; t++) {
+        for (int t = 0; t < tcount; t++) {
           PTexture tex = renderTextures[t];
           gl.glDisable(tex.getGLTarget());
         }
