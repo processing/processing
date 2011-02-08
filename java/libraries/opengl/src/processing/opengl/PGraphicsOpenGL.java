@@ -839,7 +839,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
   }
 
 
-  protected class ImageCache extends PMetadata {
+  protected class ImageCache {
     int tindex = -1;  // not yet ready
     int tpixels[];
     IntBuffer tbuffer;
