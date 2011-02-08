@@ -3225,7 +3225,11 @@ public class PGraphics3D extends PGraphics {
 
 
   public PMatrix getMatrix() {
-    return modelview.get();
+    if (matrixMode == PROJECTION) {
+      return projection.get();
+    } else {
+      return modelview.get();  
+    }    
   }
 
 
@@ -3236,7 +3240,11 @@ public class PGraphics3D extends PGraphics {
     if (target == null) {
       target = new PMatrix3D();
     }
-    target.set(modelview);
+    if (matrixMode == PROJECTION) {
+      target.set(projection);
+    } else {
+      target.set(modelview);
+    }
     return target;
   }
 
@@ -3265,7 +3273,11 @@ public class PGraphics3D extends PGraphics {
    * Print the current model (or "transformation") matrix.
    */
   public void printMatrix() {
-    modelview.print();
+    if (matrixMode == PROJECTION) {
+      projection.print();
+    } else {
+      modelview.print();  
+    }    
   }
 
 
