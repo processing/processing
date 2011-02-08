@@ -3570,17 +3570,17 @@ public class PGraphicsOpenGL2 extends PGraphics {
   /**
    * Scale in three dimensions.
    */
-  public void scale(float x, float y, float z) {
+  public void scale(float sx, float sy, float sz) {
     if (manipulatingCamera) {
       scalingDuringCamManip = true;
     }
-    gl2f.glScalef(x, y, z);
+    gl2f.glScalef(sx, sy, sz);
     if (usingGLMatrixStack) {
       if (matrixMode == PROJECTION) {
-        projectionStack.scale(x, y, z);
+        projectionStack.scale(sx, sy, sz);
         projectionUpdated = false;        
       } else {          
-        modelviewStack.scale(x, y, z); 
+        modelviewStack.scale(sx, sy, sz); 
         modelviewUpdated = false;
       }
     }
@@ -3763,9 +3763,11 @@ public class PGraphicsOpenGL2 extends PGraphics {
   // MATRIX GET/SET/PRINT
 
   public PMatrix getMatrix() {
-    PMatrix res = new PMatrix3D();
-    copyGLArrayToPMatrix(glmodelview, (PMatrix3D)res);
-    return res;
+    if (matrixMode == PROJECTION) {
+      return projection.get();
+    } else {
+      return modelview.get();  
+    } 
   }
 
   // public PMatrix2D getMatrix(PMatrix2D target)
@@ -3774,7 +3776,11 @@ public class PGraphicsOpenGL2 extends PGraphics {
     if (target == null) {
       target = new PMatrix3D();
     }
-    copyGLArrayToPMatrix(glmodelview, target);
+    if (matrixMode == PROJECTION) {
+      target.set(projection);
+    } else {
+      target.set(modelview);
+    }
     return target;
   }
 
@@ -3799,9 +3805,11 @@ public class PGraphicsOpenGL2 extends PGraphics {
    * Print the current model (or "transformation") matrix.
    */
   public void printMatrix() {
-    PMatrix3D temp = new PMatrix3D();
-    copyGLArrayToPMatrix(glmodelview, temp);
-    temp.print();
+    if (matrixMode == PROJECTION) {
+      projection.print();
+    } else {
+      modelview.print();  
+    } 
   }
 
   /*
@@ -6674,56 +6682,98 @@ public class PGraphicsOpenGL2 extends PGraphics {
   
   protected class GeometryBuffer {
     int mode;
+    int texCount;
     int[] indicesTemp;
     float[] verticesTemp;
     float[] normalsTemp;
     float[] colorsTemp;
+    float[][] texcoordsTemp;
     
     IntBuffer indicesBuffer;
     FloatBuffer verticesBuffer;
+    FloatBuffer normalsBuffer;
+    FloatBuffer colorsBuffer;
+    FloatBuffer[] texcoordsBuffer;
+    
+    void init(int mode, PImage[] textures) {
+    
+    }
     
     // For reusing and avoiding object deletion by GC.
     void cleanup() {
       
     }
     
-    void add(int gcount, int vcount, int[][] indices, float[][] vertices, PImage[] textures, float[] mm) {
+    void add(int gcount, int vcount, int[][] indices, float[][] vertices) {
+      add(gcount, vcount, indices, vertices, null);
+    }
+    
+    void add(int gcount, int vcount, int[][] indices, float[][] vertices, float[] mm) {
       if (mode == LINES) {
         
       } else if (mode == TRIANGLES) {
         
       }
-
-      // Check if there is enough space in the temporal arrays.
-      //...
       
-      int n = 0;
+      int ni = 0;
       for (int i = 0; i < gcount; i++) {
-        indicesTemp[n++] = indices[i][VERTEX1];
-        indicesTemp[n++] = indices[i][VERTEX2];
-        indicesTemp[n++] = indices[i][VERTEX2];
+        indicesTemp[ni++] = indices[i][VERTEX1];
+        indicesTemp[ni++] = indices[i][VERTEX2];
+        indicesTemp[ni++] = indices[i][VERTEX2];
       }
       
-      n = 0;
+      int nv = 0;
+      int nn = 0;
+      int nc = 0;
+      int nt = 0;
       float x, y, z;
       float nx, ny, nz;
+      float[] vert;
       for (int i = 0; i < vcount; i++) {
-        x = vertices[i][X];
-        y = vertices[i][Y];
-        z = vertices[i][Z];
+        vert = vertices[i];
+                
+        x = vert[X];
+        y = vert[Y];
+        z = vert[Z];
         
-        nx = vertices[i][NX];
-        ny = vertices[i][NY];
-        nz = vertices[i][NZ];
+        nx = vert[NX];
+        ny = vert[NY];
+        nz = vert[NZ];
         
-        // Have path for the case when mm == identity matrix.
-        verticesTemp[n++] = x * mm[0] + y * mm[4] + z * mm[8] + mm[12];
-        verticesTemp[n++] = x * mm[1] + y * mm[5] + z * mm[9] + mm[13];
-        verticesTemp[n++] = x * mm[2] + y * mm[6] + z * mm[10] + mm[14];
+        if (mm == null) {
+          verticesTemp[nv++] = x;
+          verticesTemp[nv++] = y;
+          verticesTemp[nv++] = z;
+          
+          normalsTemp[nn++] = nx;
+          normalsTemp[nn++] = ny;
+          normalsTemp[nn++] = nz; 
+        } else {         
+          verticesTemp[nv++] = x * mm[0] + y * mm[4] + z * mm[8] + mm[12];
+          verticesTemp[nv++] = x * mm[1] + y * mm[5] + z * mm[9] + mm[13];
+          verticesTemp[nv++] = x * mm[2] + y * mm[6] + z * mm[10] + mm[14];
+          
+          normalsTemp[nn++] = nx + mm[12];
+          normalsTemp[nn++] = ny + mm[13];
+          normalsTemp[nn++] = nz + mm[14];
+        }
         
-        normalsTemp[n++] = nx + mm[12];
-        normalsTemp[n++] = ny + mm[13];
-        normalsTemp[n++] = nz + mm[14];        
+        colorsTemp[nc++] = vert[R];
+        colorsTemp[nc++] = vert[G];
+        colorsTemp[nc++] = vert[B];
+        colorsTemp[nc++] = vert[A];
+        
+        if (1 < texCount) {
+          float[] vertU = vertexU[i];
+          float[] vertV = vertexU[i];
+          for (int t = 0; t < texCount; t++) {
+            texcoordsTemp[nt++][t] = vertU[t];
+            texcoordsTemp[nt++][t] = vertV[t];
+          }
+        } else if (0 < texCount) {
+          texcoordsTemp[nt++][0] = vert[U];
+          texcoordsTemp[nt++][0] = vert[V];          
+        }
       }
       
       indicesBuffer.put(indicesTemp, 0, 3 * gcount);
