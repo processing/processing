@@ -179,7 +179,7 @@ public class PGraphics3D extends PGraphics {
   float[][] matrixInvStack = new float[MATRIX_STACK_DEPTH][16];
   int matrixStackDepth;
 
-  protected boolean projectionMode = false;
+  protected int matrixMode = MODELVIEW;
   float[][] pmatrixStack = new float[MATRIX_STACK_DEPTH][16];
   int pmatrixStackDepth;
   
@@ -2994,7 +2994,7 @@ public class PGraphics3D extends PGraphics {
 
 
   public void pushMatrix() {
-    if (projectionMode) {
+    if (matrixMode == PROJECTION) {
       if (pmatrixStackDepth == MATRIX_STACK_DEPTH) {
         throw new RuntimeException(ERROR_PUSHMATRIX_OVERFLOW);
       }
@@ -3012,7 +3012,7 @@ public class PGraphics3D extends PGraphics {
 
 
   public void popMatrix() {
-    if (projectionMode) {
+    if (matrixMode == PROJECTION) {
       if (pmatrixStackDepth == 0) {
         throw new RuntimeException(ERROR_PUSHMATRIX_UNDERFLOW);
       }
@@ -3040,7 +3040,7 @@ public class PGraphics3D extends PGraphics {
 
 
   public void translate(float tx, float ty, float tz) {
-    if (projectionMode) {
+    if (matrixMode == PROJECTION) {
       projection.translate(tx, ty, tz);
     } else {
       forwardTransform.translate(tx, ty, tz);
@@ -3061,7 +3061,7 @@ public class PGraphics3D extends PGraphics {
 
 
   public void rotateX(float angle) {
-    if (projectionMode) {
+    if (matrixMode == PROJECTION) {
       projection.rotateX(angle);
     } else { 
       forwardTransform.rotateX(angle);
@@ -3071,7 +3071,7 @@ public class PGraphics3D extends PGraphics {
 
 
   public void rotateY(float angle) {
-    if (projectionMode) {
+    if (matrixMode == PROJECTION) {
       projection.rotateY(angle);
     } else {    
       forwardTransform.rotateY(angle);
@@ -3081,7 +3081,7 @@ public class PGraphics3D extends PGraphics {
 
 
   public void rotateZ(float angle) {
-    if (projectionMode) {
+    if (matrixMode == PROJECTION) {
       projection.rotateZ(angle);
     } else {    
       forwardTransform.rotateZ(angle);
@@ -3095,7 +3095,7 @@ public class PGraphics3D extends PGraphics {
    * except that it takes radians (instead of degrees).
    */
   public void rotate(float angle, float v0, float v1, float v2) {
-    if (projectionMode) {
+    if (matrixMode == PROJECTION) {
       projection.rotate(angle, v0, v1, v2);
     } else {    
       forwardTransform.rotate(angle, v0, v1, v2);
@@ -3124,7 +3124,7 @@ public class PGraphics3D extends PGraphics {
    * Scale in three dimensions.
    */
   public void scale(float x, float y, float z) {
-    if (projectionMode) {
+    if (matrixMode == PROJECTION) {
       projection.scale(x, y, z);
     } else {    
       forwardTransform.scale(x, y, z);
@@ -3158,7 +3158,7 @@ public class PGraphics3D extends PGraphics {
 
 
   public void resetMatrix() {
-    if (projectionMode) {
+    if (matrixMode == PROJECTION) {
       projection.reset();
     } else {        
       forwardTransform.reset();
@@ -3199,7 +3199,7 @@ public class PGraphics3D extends PGraphics {
                           float n10, float n11, float n12, float n13,
                           float n20, float n21, float n22, float n23,
                           float n30, float n31, float n32, float n33) {
-    if (projectionMode) {
+    if (matrixMode == PROJECTION) {
       projection.apply(n00, n01, n02, n03,
                        n10, n11, n12, n13,
                        n20, n21, n22, n23,
@@ -3693,23 +3693,17 @@ public class PGraphics3D extends PGraphics {
     return projection.get();
   }
   
-
-  /**
-   * Enables projection mode. The geometric transformations and
-   * push/pop matrix operations are applied to the projection matrix
-   * instead to the modelview.
-   */ 
-  public void beginProjection() {
-    projectionMode = true;
-  }
   
-  /**
-   * Disables projection mode.
-   */  
-  public void endProjection() {
-    projectionMode = false;
+  public void matrixMode(int mode) {    
+    if (mode == PROJECTION) {
+      matrixMode = PROJECTION;
+    } else if (matrixMode == MODELVIEW) {
+      matrixMode = MODELVIEW;
+    } else {
+      showWarning("Invalid matrix mode. Use PROJECTION or MODELVIEW");
+    }
   }  
-  
+   
 
   //////////////////////////////////////////////////////////////
 
