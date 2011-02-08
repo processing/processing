@@ -290,6 +290,11 @@ public interface PConstants {
   static final int PROBLEM   = 2;
 
 
+  // types of transformation matrices
+  
+  static final int PROJECTION = 0;
+  static final int MODELVIEW  = 1;
+  
   // types of projection matrices
 
   static final int CUSTOM       = 0; // user-specified fanciness

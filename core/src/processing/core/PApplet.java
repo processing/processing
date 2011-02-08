@@ -9265,18 +9265,6 @@ public class PApplet extends Applet
   }
 
 
-  public void beginProjection() {
-    if (recorder != null) recorder.beginProjection();
-    g.beginProjection();
-  }
-
-
-  public void endProjection() {
-    if (recorder != null) recorder.endProjection();
-    g.endProjection();
-  }
-
-
   public void beginCamera() {
     if (recorder != null) recorder.beginCamera();
     g.beginCamera();
@@ -10230,6 +10218,12 @@ public class PApplet extends Applet
   public void autoNormal(boolean auto) {
     if (recorder != null) recorder.autoNormal(auto);
     g.autoNormal(auto);
+  }
+
+
+  public void matrixMode(int mode) {
+    if (recorder != null) recorder.matrixMode(mode);
+    g.matrixMode(mode);
   }
 
 
