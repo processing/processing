@@ -208,7 +208,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
   protected boolean modelviewUpdated;
   protected boolean projectionUpdated;
 
-  protected boolean projectionMode = false;  
+  protected int matrixMode = MODELVIEW;  
   protected boolean matricesAllocated = false;
   
   static protected boolean usingGLMatrixStack;
@@ -3466,7 +3466,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
   public void pushMatrix() {
     gl2f.glPushMatrix();  
     if (usingGLMatrixStack) {
-      if (projectionMode) {
+      if (matrixMode == PROJECTION) {
         projectionStack.push();         
       } else {          
         modelviewStack.push();
@@ -3478,7 +3478,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
   public void popMatrix() {
     gl2f.glPopMatrix();
     if (usingGLMatrixStack) {
-      if (projectionMode) {
+      if (matrixMode == PROJECTION) {
         projectionStack.pop(); 
         projectionUpdated = false;        
       } else {          
@@ -3504,7 +3504,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
     // along Y is applied.
     gl2f.glTranslatef(tx, ty, tz);
     if (usingGLMatrixStack) {
-      if (projectionMode) {
+      if (matrixMode == PROJECTION) {
         projectionStack.translate(tx, ty, tz);
         projectionUpdated = false;        
       } else {          
@@ -3543,7 +3543,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
   public void rotate(float angle, float v0, float v1, float v2) {
     gl2f.glRotatef(PApplet.degrees(angle), v0, v1, v2);
     if (usingGLMatrixStack) {
-      if (projectionMode) {
+      if (matrixMode == PROJECTION) {
         projectionStack.rotate(angle, v0, v1, v2);
         projectionUpdated = false;        
       } else {          
@@ -3576,7 +3576,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
     }
     gl2f.glScalef(x, y, z);
     if (usingGLMatrixStack) {
-      if (projectionMode) {
+      if (matrixMode == PROJECTION) {
         projectionStack.scale(x, y, z);
         projectionUpdated = false;        
       } else {          
@@ -3600,6 +3600,18 @@ public class PGraphicsOpenGL2 extends PGraphics {
 
   // MATRIX MORE!
 
+  public void matrixMode(int mode) {    
+    if (mode == PROJECTION) {
+      gl2f.glMatrixMode(GL2.GL_PROJECTION);
+      matrixMode = PROJECTION;
+    } else if (matrixMode == MODELVIEW) {
+      gl2f.glMatrixMode(GL2.GL_MODELVIEW);
+      matrixMode = MODELVIEW;
+    } else {
+      System.err.println("OPENGL2: incorrect matrix mode.");
+    }
+  }
+    
   public void resetMatrix() {
     gl2f.glLoadIdentity();
   }
@@ -3652,7 +3664,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
     gl2f.glMultMatrixf(gltemp, 0);
 
     if (usingGLMatrixStack) {
-      if (projectionMode) {
+      if (matrixMode == PROJECTION) {
         projectionStack.mult(gltemp);
         projectionUpdated = false;
       } else {
@@ -3819,16 +3831,6 @@ public class PGraphicsOpenGL2 extends PGraphics {
   //////////////////////////////////////////////////////////////
 
   // PROJECTION
-
-  public void beginProjection() {
-    gl2f.glMatrixMode(GL2.GL_PROJECTION);
-    projectionMode = true;
-  }
-  
-  public void endProjection() {
-    gl2f.glMatrixMode(GL2.GL_MODELVIEW);
-    projectionMode = false;
-  }
   
   protected void getProjectionMatrix() {
     if (usingGLMatrixStack) {
@@ -3844,7 +3846,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
     copyPMatrixToGLArray(projection, glprojection);
     gl2f.glMatrixMode(GL2.GL_PROJECTION);
     gl2f.glLoadMatrixf(glprojection, 0);
-    if (!projectionMode) { 
+    if (matrixMode == MODELVIEW) { 
       gl2f.glMatrixMode(GL2.GL_MODELVIEW);
     }    
     if (usingGLMatrixStack) {
