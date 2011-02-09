@@ -21,7 +21,7 @@ PShape planet2;
 PImage surftex2;
 
 void setup() {
-  size(480,  800,  OPENGL2);
+  size(800,  480,  OPENGL2);
   
   starfield = loadImage("starfield.jpg");
   suntex = loadImage("sun.jpg");  
@@ -42,7 +42,6 @@ void setup() {
 
   // Using 3D Perlin noise to generate a clouds texture that is seamless on
   // its edges so it can be applied on a sphere.
-  println("Generating clouds texture. It takes some time, please wait..."); 
   cloudtex.loadPixels();
   Perlin perlin = new Perlin();
   for (int j = 0; j < cloudtex.height; j++) {
@@ -61,7 +60,6 @@ void setup() {
     }
   }  
   cloudtex.updatePixels();
-  println("Done.");
 
   textureMode(NORMAL);
   noStroke();
@@ -103,9 +101,9 @@ void draw() {
       p.texcoords[2 * i + 0] = u;
   }
   p.updateTexcoords();
-
+  
   pushMatrix();
-  translate(width/2, height/2, -100);  
+  translate(width/2, height/2, -300);  
   
   pushMatrix();
   rotateY(PI * frameCount / 500);
@@ -121,9 +119,8 @@ void draw() {
   popMatrix();
   
   noLights();
-  pointLight(255,  255,  255,  0,  0,  100); 
+  pointLight(255,  255,  255,  0,  0,  -150); 
   
-  translate(0.75 * width,  0.6 * height,  350);
+  translate(0.75 * width,  0.6 * height,  50);
   shape(planet1);
 }
-
