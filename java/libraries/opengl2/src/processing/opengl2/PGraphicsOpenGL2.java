@@ -366,6 +366,8 @@ public class PGraphicsOpenGL2 extends PGraphics {
   protected int faceCount;
   protected int[] faceOffset = new int[DEFAULT_FACES];
   protected int[] faceLength = new int[DEFAULT_FACES];
+  protected int[] faceMinIndex = new int[DEFAULT_FACES];
+  protected int[] faceMaxIndex = new int[DEFAULT_FACES];
   protected PImage[][] faceTextures = new PImage[DEFAULT_FACES][MAX_TEXTURES];  
   
   // ........................................................
@@ -525,6 +527,9 @@ public class PGraphicsOpenGL2 extends PGraphics {
    
   /** Size of a float (in bytes). */
   protected static final int SIZEOF_FLOAT = Float.SIZE / 8;
+  
+  
+  GeometryBuffer gbuffer;
   
   
   //////////////////////////////////////////////////////////////
@@ -2310,15 +2315,22 @@ public class PGraphicsOpenGL2 extends PGraphics {
     triangles[triangleCount][VERTEX2] = b;
     triangles[triangleCount][VERTEX3] = c;
 
+    int mini = PApplet.min(a, b, c);
+    int maxi = PApplet.max(a, b, c);
+      
     PImage[] images;
     images = vertexTex[a];
     boolean firstFace = triangleCount == 0;
     if (diffFromTextures0(images) || firstFace) {
       // A new face starts at the first triangle or when the texture changes.
       addNewFace(firstFace, images);
+      faceMinIndex[faceCount - 1] = mini;      
+      faceMaxIndex[faceCount - 1] = maxi;
     } else {
       // mark this triangle as being part of the current face.
-      faceLength[faceCount - 1]++;
+      faceLength[faceCount - 1]++;      
+      faceMinIndex[faceCount - 1] = PApplet.min(faceMinIndex[faceCount - 1], mini);
+      faceMaxIndex[faceCount - 1] = PApplet.max(faceMaxIndex[faceCount - 1], maxi);
     }
     triangleCount++;
     setTextures0(images);
@@ -2330,6 +2342,8 @@ public class PGraphicsOpenGL2 extends PGraphics {
     if (faceCount == faceOffset.length) {
       faceOffset = PApplet.expand(faceOffset);
       faceLength = PApplet.expand(faceLength);
+      faceMinIndex = PApplet.expand(faceMinIndex);
+      faceMaxIndex = PApplet.expand(faceMaxIndex);
       
       PImage tempi[][] = new PImage[faceCount << 1][MAX_TEXTURES];
       PApplet.arrayCopy(faceTextures, 0, tempi, 0, faceCount);
@@ -2358,7 +2372,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
     report("render_triangles in");    
 
     int tcount = 0;
-
+    
     gl2f.glEnableClientState(GL2.GL_VERTEX_ARRAY);
     gl2f.glEnableClientState(GL2.GL_COLOR_ARRAY);
     gl2f.glEnableClientState(GL2.GL_NORMAL_ARRAY);
@@ -2398,7 +2412,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
           tcount = 1;
         }
       }
-
+      
       if (0 < tcount) {
         if (numTexBuffers < tcount) {
           addTexBuffers(tcount - numTexBuffers);
@@ -2439,6 +2453,12 @@ public class PGraphicsOpenGL2 extends PGraphics {
         texCoordBuffer[t].position(0);
       }
 
+      if (gbuffer == null) {
+        gbuffer = new GeometryBuffer();
+      }      
+      gbuffer.init(TRIANGLES);
+      gbuffer.add(triangles, i, i + faceLength[j] - 1, vertices, faceMinIndex[j], faceMaxIndex[j]);      
+      
       int n = 0;
       for (int k = 0; k < faceLength[j]; k++) {
         int na = triangles[i][VERTEX1];
@@ -2447,7 +2467,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
         float a[] = vertices[na];
         float b[] = vertices[nb];
         float c[] = vertices[nc];
-
+        
         if (autoNormal && (a[HAS_NORMAL] == 0 || b[HAS_NORMAL] == 0 || c[HAS_NORMAL] == 0)) {
           // Ok, some of the vertices defining the current triangle have not been
           // assigned a normal, and the automatic normal calculation is enabled, so 
@@ -6651,43 +6671,17 @@ public class PGraphicsOpenGL2 extends PGraphics {
   
   // UTILITY INNER CLASSES    
   
-  protected abstract class Transformation {
-    abstract void apply();      
-  }
-
-  protected class PushMatrix extends Transformation {
-    void apply() {
-      pushMatrix();
-    }
-  }
-
-  protected class PopMatrix extends Transformation {
-    void apply() {
-      popMatrix();
-    }
-  }  
-  
-  protected class Translate extends Transformation {
-    float tx, ty, tz;
-    Translate(float tx, float ty, float tz) {
-      this.tx = tx;
-      this.ty = tz;
-      this.tz = tz;
-    }
-    void apply() {
-      translate(tx, ty, tz);
-    }
-  }    
-  
-  
   protected class GeometryBuffer {
-    int mode;
+    int mode;    
+    int idxCount;
+    int vertCount;
     int texCount;
-    int[] indicesTemp;
-    float[] verticesTemp;
-    float[] normalsTemp;
-    float[] colorsTemp;
-    float[][] texcoordsTemp;
+    int[] indicesArray;
+    float[] verticesArray;
+    float[] normalsArray;
+    float[] colorsArray;
+    float[][] texcoordsArray;
+    PImage[] texturesArray;
     
     IntBuffer indicesBuffer;
     FloatBuffer verticesBuffer;
@@ -6695,31 +6689,141 @@ public class PGraphicsOpenGL2 extends PGraphics {
     FloatBuffer colorsBuffer;
     FloatBuffer[] texcoordsBuffer;
     
-    void init(int mode, PImage[] textures) {
+    int allocTexStorage;
     
-    }
-    
-    // For reusing and avoiding object deletion by GC.
-    void cleanup() {
+    GeometryBuffer() {
+      ByteBuffer ibb = ByteBuffer.allocateDirect(DEFAULT_TRIANGLES * SIZEOF_INT);
+      ibb.order(ByteOrder.nativeOrder());
+      indicesBuffer = ibb.asIntBuffer();
+            
+      ByteBuffer vbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 3 * SIZEOF_FLOAT);
+      vbb.order(ByteOrder.nativeOrder());
+      verticesBuffer = vbb.asFloatBuffer();
+
+      ByteBuffer cbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 4 * SIZEOF_FLOAT);
+      cbb.order(ByteOrder.nativeOrder());
+      colorsBuffer = cbb.asFloatBuffer();
+
+      ByteBuffer nbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 3 * SIZEOF_FLOAT);
+      nbb.order(ByteOrder.nativeOrder());
+      normalsBuffer = nbb.asFloatBuffer();      
       
+      texcoordsBuffer = new FloatBuffer[MAX_TEXTURES];
+      ByteBuffer tbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 2 * SIZEOF_FLOAT);
+      tbb.order(ByteOrder.nativeOrder());
+      texcoordsBuffer[0] = tbb.asFloatBuffer();    
+      
+      indicesArray = new int[DEFAULT_TRIANGLES];
+      verticesArray = new float[DEFAULT_BUFFER_SIZE * 3];
+      colorsArray = new float[DEFAULT_BUFFER_SIZE * 4];      
+      normalsArray = new float[DEFAULT_BUFFER_SIZE * 3];
+      texcoordsArray = new float[1][DEFAULT_BUFFER_SIZE * 2];    
+      
+      texturesArray = new PImage[MAX_TEXTURES];
+      
+      allocTexStorage = 1;
+      
+      idxCount = 0;
+      vertCount = 0;
+      texCount = 0;
     }
     
-    void add(int gcount, int vcount, int[][] indices, float[][] vertices) {
-      add(gcount, vcount, indices, vertices, null);
+    void init(int mode) {
+      init(mode, null);
     }
     
-    void add(int gcount, int vcount, int[][] indices, float[][] vertices, float[] mm) {
+    void init(int mode, PImage[] textures) {
+      if (textures == null) {
+        texCount = 0;
+      } else {
+        texCount = textures.length;
+        PApplet.arrayCopy(textures, texturesArray, texCount);
+      }
+      
+      if (allocTexStorage < texCount) {
+        int more = texCount - allocTexStorage;
+        
+        int size = texcoordsBuffer[allocTexStorage - 1].capacity();
+        for (int i = 0; i < more; i++) {
+          ByteBuffer tbb = ByteBuffer.allocateDirect(size * SIZEOF_FLOAT);
+          tbb.order(ByteOrder.nativeOrder());
+          texcoordsBuffer[allocTexStorage + i] = tbb.asFloatBuffer();    
+        }
+        
+        texcoordsArray = new float[allocTexStorage + more][size];
+        
+        allocTexStorage += more;          
+      }
+      
+      indicesBuffer.rewind();
+      verticesBuffer.rewind();
+      colorsBuffer.rewind();
+      normalsBuffer.rewind();
+      for (int t = 0; t < texCount; t++) {
+        texcoordsBuffer[t].rewind();
+      }
+    }
+    
+    void add(int[][] indices, int i0, int i1, float[][] vertices, int v0, int v1) {
+      add(indices, i0, i1, vertices, v0, v1, null);
+    }
+    
+    void add(int[][] indices, int i0, int i1, float[][] vertices, int v0, int v1, float[] mm) {
       if (mode == LINES) {
         
       } else if (mode == TRIANGLES) {
         
       }
       
+      int gcount = i1 - i0 + 1;
+      int vcount = v1 - v0 + 1;
+      
+      // expand arrays and buffers if necessary.
+      // set arrays as the backing arrays of the buffers? 
+      while (indicesBuffer.capacity() < idxCount + 3 * gcount) {
+        int newSize = indicesBuffer.capacity() << 1;
+        
+        ByteBuffer ibb = ByteBuffer.allocateDirect(newSize * SIZEOF_INT);
+        ibb.order(ByteOrder.nativeOrder());
+        indicesBuffer = ibb.asIntBuffer();
+        
+        indicesArray = new int[newSize];
+      }
+      
+      while (verticesBuffer.capacity() / 3 < vertCount + vcount) {
+        int newSize = verticesBuffer.capacity() / 3 << 1;
+        
+        ByteBuffer vbb = ByteBuffer.allocateDirect(newSize * 3 * SIZEOF_FLOAT);
+        vbb.order(ByteOrder.nativeOrder());
+        verticesBuffer = vbb.asFloatBuffer();
+
+        ByteBuffer cbb = ByteBuffer.allocateDirect(newSize * 4 * SIZEOF_FLOAT);
+        cbb.order(ByteOrder.nativeOrder());
+        colorsBuffer = cbb.asFloatBuffer();
+
+        ByteBuffer nbb = ByteBuffer.allocateDirect(newSize * 3 * SIZEOF_FLOAT);
+        nbb.order(ByteOrder.nativeOrder());
+        normalsBuffer = nbb.asFloatBuffer();
+
+        for (int t = 0; t < texCount; t++) {    
+          ByteBuffer tbb = ByteBuffer.allocateDirect(newSize * 2 * SIZEOF_FLOAT);
+          tbb.order(ByteOrder.nativeOrder());
+          texcoordsBuffer[t] = tbb.asFloatBuffer(); 
+        }
+        
+        verticesArray = new float[newSize * 3];
+        colorsArray = new float[newSize * 4];
+        normalsArray = new float[newSize * 3];
+        for (int t = 0; t < texCount; t++) { 
+          texcoordsArray[t] = new float[newSize * 2];
+        }   
+      }
+      
       int ni = 0;
-      for (int i = 0; i < gcount; i++) {
-        indicesTemp[ni++] = indices[i][VERTEX1];
-        indicesTemp[ni++] = indices[i][VERTEX2];
-        indicesTemp[ni++] = indices[i][VERTEX2];
+      for (int i = i0; i <= i1; i++) {
+        indicesArray[ni++] = indices[i][VERTEX1];
+        indicesArray[ni++] = indices[i][VERTEX2];
+        indicesArray[ni++] = indices[i][VERTEX2];
       }
       
       int nv = 0;
@@ -6729,7 +6833,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
       float x, y, z;
       float nx, ny, nz;
       float[] vert;
-      for (int i = 0; i < vcount; i++) {
+      for (int i = v0; i <= v1; i++) {
         vert = vertices[i];
                 
         x = vert[X];
@@ -6741,44 +6845,61 @@ public class PGraphicsOpenGL2 extends PGraphics {
         nz = vert[NZ];
         
         if (mm == null) {
-          verticesTemp[nv++] = x;
-          verticesTemp[nv++] = y;
-          verticesTemp[nv++] = z;
+          verticesArray[nv++] = x;
+          verticesArray[nv++] = y;
+          verticesArray[nv++] = z;
           
-          normalsTemp[nn++] = nx;
-          normalsTemp[nn++] = ny;
-          normalsTemp[nn++] = nz; 
+          normalsArray[nn++] = nx;
+          normalsArray[nn++] = ny;
+          normalsArray[nn++] = nz; 
         } else {         
-          verticesTemp[nv++] = x * mm[0] + y * mm[4] + z * mm[8] + mm[12];
-          verticesTemp[nv++] = x * mm[1] + y * mm[5] + z * mm[9] + mm[13];
-          verticesTemp[nv++] = x * mm[2] + y * mm[6] + z * mm[10] + mm[14];
+          verticesArray[nv++] = x * mm[0] + y * mm[4] + z * mm[8] + mm[12];
+          verticesArray[nv++] = x * mm[1] + y * mm[5] + z * mm[9] + mm[13];
+          verticesArray[nv++] = x * mm[2] + y * mm[6] + z * mm[10] + mm[14];
           
-          normalsTemp[nn++] = nx + mm[12];
-          normalsTemp[nn++] = ny + mm[13];
-          normalsTemp[nn++] = nz + mm[14];
+          normalsArray[nn++] = nx + mm[12];
+          normalsArray[nn++] = ny + mm[13];
+          normalsArray[nn++] = nz + mm[14];
         }
         
-        colorsTemp[nc++] = vert[R];
-        colorsTemp[nc++] = vert[G];
-        colorsTemp[nc++] = vert[B];
-        colorsTemp[nc++] = vert[A];
+        colorsArray[nc++] = vert[R];
+        colorsArray[nc++] = vert[G];
+        colorsArray[nc++] = vert[B];
+        colorsArray[nc++] = vert[A];
         
         if (1 < texCount) {
           float[] vertU = vertexU[i];
           float[] vertV = vertexU[i];
           for (int t = 0; t < texCount; t++) {
-            texcoordsTemp[nt++][t] = vertU[t];
-            texcoordsTemp[nt++][t] = vertV[t];
+            texcoordsArray[nt++][t] = vertU[t];
+            texcoordsArray[nt++][t] = vertV[t];
           }
         } else if (0 < texCount) {
-          texcoordsTemp[nt++][0] = vert[U];
-          texcoordsTemp[nt++][0] = vert[V];          
+          texcoordsArray[nt++][0] = vert[U];
+          texcoordsArray[nt++][0] = vert[V];          
         }
       }
       
-      indicesBuffer.put(indicesTemp, 0, 3 * gcount);
-      //...
+      indicesBuffer.put(indicesArray, 0, 3 * gcount);
+      verticesBuffer.put(verticesArray, 0, 3 * vcount);
+      normalsBuffer.put(normalsArray, 0, 3 * vcount);
+      colorsBuffer.put(normalsArray, 0, 4 * vcount);
+      for (int t = 0; t < texCount; t++) {
+        texcoordsBuffer[t].put(texcoordsArray[t], 0, 2 * vcount);
+      }
+      
+      idxCount += 3 * gcount;
+      vertCount += vcount;
     }
+    
+    void render() {
+      
+      
+      pgl.gl2f.glDrawElements(mode, idxCount, GL2.GL_UNSIGNED_INT, indicesBuffer);
+      
+      
+    } 
+    
   }
   
   /**
