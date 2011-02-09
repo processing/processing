@@ -2423,6 +2423,8 @@ public class PGraphicsOpenGL2 extends PGraphics {
         }
       }
       
+      
+      /*
       if (recordingShape) {
         numRecordedTextures = PApplet.max(numRecordedTextures, tcount);
         
@@ -2452,13 +2454,17 @@ public class PGraphicsOpenGL2 extends PGraphics {
       for (int t = 0; t < tcount; t++) {
         texCoordBuffer[t].position(0);
       }
+*/
 
       if (gbuffer == null) {
         gbuffer = new GeometryBuffer();
       }      
-      gbuffer.init(TRIANGLES);
+      gbuffer.init(TRIANGLES, renderTextures, tcount);
       gbuffer.add(triangles, i, i + faceLength[j] - 1, vertices, faceMinIndex[j], faceMaxIndex[j]);      
       
+      
+      // ************ Copying vertex data to buffers *******************
+      /*
       int n = 0;
       for (int k = 0; k < faceLength[j]; k++) {
         int na = triangles[i][VERTEX1];
@@ -2664,7 +2670,14 @@ public class PGraphicsOpenGL2 extends PGraphics {
 
         i++;
       }
-
+      */
+      // *******************************
+      
+       
+      gbuffer.render();
+      
+      /*
+      // ++++ the rendering in here +++++++
       if (!recordingShape) {
         vertexBuffer.put(vertexArray);
         colorBuffer.put(colorArray);
@@ -2689,6 +2702,11 @@ public class PGraphicsOpenGL2 extends PGraphics {
         }
         gl2f.glDrawArrays(GL.GL_TRIANGLES, 0, 3 * faceLength[j]);
       }
+      // +++++++++++++++++++++++++++
+      */
+      
+      
+      
       
       if (0 < tcount) {
         if (1 < tcount) {
@@ -6681,7 +6699,9 @@ public class PGraphicsOpenGL2 extends PGraphics {
     float[] normalsArray;
     float[] colorsArray;
     float[][] texcoordsArray;
-    PImage[] texturesArray;
+    PTexture[] texturesArray;
+    int minVertIndex;
+    int maxVertIndex;
     
     IntBuffer indicesBuffer;
     FloatBuffer verticesBuffer;
@@ -6719,7 +6739,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
       normalsArray = new float[DEFAULT_BUFFER_SIZE * 3];
       texcoordsArray = new float[1][DEFAULT_BUFFER_SIZE * 2];    
       
-      texturesArray = new PImage[MAX_TEXTURES];
+      texturesArray = new PTexture[MAX_TEXTURES];
       
       allocTexStorage = 1;
       
@@ -6729,15 +6749,15 @@ public class PGraphicsOpenGL2 extends PGraphics {
     }
     
     void init(int mode) {
-      init(mode, null);
+      init(mode, null, 0);
     }
     
-    void init(int mode, PImage[] textures) {
-      if (textures == null) {
+    void init(int mode, PTexture[] textures, int tc) {
+      if (textures == null || tc == 0) {
         texCount = 0;
       } else {
-        texCount = textures.length;
-        PApplet.arrayCopy(textures, texturesArray, texCount);
+        texCount = tc;
+        PApplet.arrayCopy(textures, texturesArray, tc);
       }
       
       if (allocTexStorage < texCount) {
@@ -6762,6 +6782,12 @@ public class PGraphicsOpenGL2 extends PGraphics {
       for (int t = 0; t < texCount; t++) {
         texcoordsBuffer[t].rewind();
       }
+      
+      idxCount = 0;
+      vertCount = 0;   
+            
+      minVertIndex = 100000; 
+      maxVertIndex = 0;
     }
     
     void add(int[][] indices, int i0, int i1, float[][] vertices, int v0, int v1) {
@@ -6775,11 +6801,12 @@ public class PGraphicsOpenGL2 extends PGraphics {
         
       }
       
+      minVertIndex = PApplet.min(minVertIndex, v0);
+      maxVertIndex = PApplet.max(maxVertIndex, v1);
+      
       int gcount = i1 - i0 + 1;
       int vcount = v1 - v0 + 1;
-      
-      // expand arrays and buffers if necessary.
-      // set arrays as the backing arrays of the buffers? 
+ 
       while (indicesBuffer.capacity() < idxCount + 3 * gcount) {
         int newSize = indicesBuffer.capacity() << 1;
         
@@ -6823,7 +6850,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
       for (int i = i0; i <= i1; i++) {
         indicesArray[ni++] = indices[i][VERTEX1];
         indicesArray[ni++] = indices[i][VERTEX2];
-        indicesArray[ni++] = indices[i][VERTEX2];
+        indicesArray[ni++] = indices[i][VERTEX3];
       }
       
       int nv = 0;
@@ -6865,25 +6892,43 @@ public class PGraphicsOpenGL2 extends PGraphics {
         colorsArray[nc++] = vert[R];
         colorsArray[nc++] = vert[G];
         colorsArray[nc++] = vert[B];
-        colorsArray[nc++] = vert[A];
+        colorsArray[nc++] = vert[A];        
         
-        if (1 < texCount) {
+        if (0 < texCount) {
           float[] vertU = vertexU[i];
-          float[] vertV = vertexU[i];
-          for (int t = 0; t < texCount; t++) {
-            texcoordsArray[nt++][t] = vertU[t];
-            texcoordsArray[nt++][t] = vertV[t];
+          float[] vertV = vertexV[i];
+          for (int t = 0; t < texCount; t++) {            
+            float uscale = 1.0f;
+            float vscale = 1.0f;
+            float cx = 0.0f;
+            float sx = +1.0f;
+            float cy = 0.0f;
+            float sy = +1.0f;
+            
+            PTexture tex = texturesArray[t];
+            uscale *= tex.getMaxTexCoordU();
+            vscale *= tex.getMaxTexCoordV();
+
+            if (tex.isFlippedX()) {
+              cx = 1.0f;
+              sx = -1.0f;
+            }
+
+            if (tex.isFlippedY()) {
+              cy = 1.0f;
+              sy = -1.0f;
+            } 
+            
+            texcoordsArray[t][nt++] = (cx + sx * vertU[t]) * uscale;
+            texcoordsArray[t][nt++] = (cy + sy * vertV[t]) * vscale;
           }
-        } else if (0 < texCount) {
-          texcoordsArray[nt++][0] = vert[U];
-          texcoordsArray[nt++][0] = vert[V];          
         }
       }
       
       indicesBuffer.put(indicesArray, 0, 3 * gcount);
       verticesBuffer.put(verticesArray, 0, 3 * vcount);
       normalsBuffer.put(normalsArray, 0, 3 * vcount);
-      colorsBuffer.put(normalsArray, 0, 4 * vcount);
+      colorsBuffer.put(colorsArray, 0, 4 * vcount);
       for (int t = 0; t < texCount; t++) {
         texcoordsBuffer[t].put(texcoordsArray[t], 0, 2 * vcount);
       }
@@ -6893,11 +6938,26 @@ public class PGraphicsOpenGL2 extends PGraphics {
     }
     
     void render() {
+      indicesBuffer.position(0);
+      verticesBuffer.position(0);
+      colorsBuffer.position(0);
+      normalsBuffer.position(0);
+      for (int t = 0; t < texCount; t++) {
+        texcoordsBuffer[t].position(0);
+      }
       
+      gl2f.glVertexPointer(3, GL.GL_FLOAT, 0, verticesBuffer);
+      gl2f.glColorPointer(4, GL.GL_FLOAT, 0, colorsBuffer);
+      gl2f.glNormalPointer(GL.GL_FLOAT, 0, normalsBuffer);
+      for (int t = 0; t < texCount; t++) {
+        gl2f.glClientActiveTexture(GL.GL_TEXTURE0 + t);
+        gl2f.glTexCoordPointer(2, GL.GL_FLOAT, 0, texcoordsBuffer[t]);          
+      }
       
-      pgl.gl2f.glDrawElements(mode, idxCount, GL2.GL_UNSIGNED_INT, indicesBuffer);
+      gl2f.glDrawElements(GL.GL_TRIANGLES, idxCount, GL2.GL_UNSIGNED_INT, indicesBuffer);      
       
-      
+      // Using glDrawRangeElements doesn't make any difference:
+      //gl2x.glDrawRangeElements(GL.GL_TRIANGLES, minVertIndex, maxVertIndex, idxCount, GL2.GL_UNSIGNED_INT, indicesBuffer);    
     } 
     
   }
