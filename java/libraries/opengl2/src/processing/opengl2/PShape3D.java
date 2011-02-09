@@ -49,7 +49,7 @@ import java.io.BufferedReader;
  * By Andres Colubri
  * 
  */
-public class PShape3D extends PShape implements PConstants {
+public class PShape3D extends PShape {
   protected PApplet papplet;    
   protected GL2ES1 gl;  
   protected PGraphicsOpenGL2 pgl;
