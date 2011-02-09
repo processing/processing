@@ -370,6 +370,12 @@ public class PGraphicsOpenGL2 extends PGraphics {
   protected int[] faceMaxIndex = new int[DEFAULT_FACES];
   protected PImage[][] faceTextures = new PImage[DEFAULT_FACES][MAX_TEXTURES];  
   
+  // Testing geometry buffer for now (but it already rocks) ...
+  public boolean USE_GBUFFER = false;
+  public boolean GBUFFER_MERGE_ALL = true;
+  public boolean GBUFFER_UPDATE_STACK = true;
+  public GeometryBuffer gbuffer;
+  
   // ........................................................
 
   // Texturing:  
@@ -528,10 +534,6 @@ public class PGraphicsOpenGL2 extends PGraphics {
   /** Size of a float (in bytes). */
   protected static final int SIZEOF_FLOAT = Float.SIZE / 8;
   
-  
-  GeometryBuffer gbuffer;
-  
-  
   //////////////////////////////////////////////////////////////
 
   // INIT/ALLOCATE/FINISH
@@ -640,6 +642,10 @@ public class PGraphicsOpenGL2 extends PGraphics {
       texCoordArray = new float[1][DEFAULT_BUFFER_SIZE * 2];
       
       numTexBuffers = 1;
+      
+      if (USE_GBUFFER) {
+        gbuffer = new GeometryBuffer();
+      }
       
       geometryAllocated = true;
     }      
@@ -908,7 +914,11 @@ public class PGraphicsOpenGL2 extends PGraphics {
     for (int t = 0; t < numTexBuffers; t++) { 
       texCoordBuffer[t].rewind();
     }
-        
+ 
+    if (USE_GBUFFER && GBUFFER_MERGE_ALL) {
+      gbuffer.init(TRIANGLES);
+    }
+    
     // Each frame starts with textures disabled.
     noTexture();
         
@@ -984,6 +994,16 @@ public class PGraphicsOpenGL2 extends PGraphics {
     
     super.endDraw();
 
+    if (USE_GBUFFER && GBUFFER_MERGE_ALL) {
+      gl2f.glEnableClientState(GL2.GL_VERTEX_ARRAY);
+      gl2f.glEnableClientState(GL2.GL_COLOR_ARRAY);
+      gl2f.glEnableClientState(GL2.GL_NORMAL_ARRAY);    
+      gbuffer.render();
+      gl2f.glDisableClientState(GL2.GL_NORMAL_ARRAY);
+      gl2f.glDisableClientState(GL2.GL_COLOR_ARRAY);
+      gl2f.glDisableClientState(GL2.GL_VERTEX_ARRAY);
+    }
+    
     if (hints[ENABLE_DEPTH_SORT]) {
       flush();
     }    
@@ -2320,6 +2340,8 @@ public class PGraphicsOpenGL2 extends PGraphics {
       
     PImage[] images;
     images = vertexTex[a];
+    
+    
     boolean firstFace = triangleCount == 0;
     if (diffFromTextures0(images) || firstFace) {
       // A new face starts at the first triangle or when the texture changes.
@@ -2423,132 +2445,96 @@ public class PGraphicsOpenGL2 extends PGraphics {
         }
       }
       
-      
-      /*
-      if (recordingShape) {
-        numRecordedTextures = PApplet.max(numRecordedTextures, tcount);
-        
-        int n0 = recordedVertices.size();
-        int n1 = n0 + 3 * faceLength[j] - 1;
-        
-        String name = "shape";
-        if (mergeRecShapes) {
-          name = "shape";  
-        } else {
-          name = recShapeName.equals("") ? "shape:" + recordedChildren.size() : recShapeName;
+      if (USE_GBUFFER) {
+        if (!GBUFFER_MERGE_ALL) {
+          gbuffer.init(TRIANGLES, renderTextures, tcount);
         }
-        PShape3D child = (PShape3D)PShape3D.createChild(name, n0, n1, TRIANGLES, 0, images);
-        recordedChildren.add(child);
-      }
-
-      // Division by three needed because each int element in the buffer is used
-      // to store three coordinates.
-      int size = 3 * faceLength[j];
-      while (vertexBuffer.capacity() / 3 < size) { 
-        expandBuffers();
-      }
-
-      vertexBuffer.position(0);
-      colorBuffer.position(0);
-      normalBuffer.position(0);
-      for (int t = 0; t < tcount; t++) {
-        texCoordBuffer[t].position(0);
-      }
-*/
-
-      if (gbuffer == null) {
-        gbuffer = new GeometryBuffer();
-      }      
-      gbuffer.init(TRIANGLES, renderTextures, tcount);
-      gbuffer.add(triangles, i, i + faceLength[j] - 1, vertices, faceMinIndex[j], faceMaxIndex[j]);      
-      
-      
-      // ************ Copying vertex data to buffers *******************
-      /*
-      int n = 0;
-      for (int k = 0; k < faceLength[j]; k++) {
-        int na = triangles[i][VERTEX1];
-        int nb = triangles[i][VERTEX2];
-        int nc = triangles[i][VERTEX3];
-        float a[] = vertices[na];
-        float b[] = vertices[nb];
-        float c[] = vertices[nc];
-        
-        if (autoNormal && (a[HAS_NORMAL] == 0 || b[HAS_NORMAL] == 0 || c[HAS_NORMAL] == 0)) {
-          // Ok, some of the vertices defining the current triangle have not been
-          // assigned a normal, and the automatic normal calculation is enabled, so 
-          // we generate the normal for all the vertices of this triangle.
+        gbuffer.add(triangles, i, i + faceLength[j] - 1, vertices, faceMinIndex[j], faceMaxIndex[j]);
+        if (!GBUFFER_MERGE_ALL) {
+          gbuffer.render();
+        }
+      } else {
+        if (recordingShape) {
+          numRecordedTextures = PApplet.max(numRecordedTextures, tcount);
           
-          // Assuming CW vertex ordering, so the outside direction for this triangle
-          // should be given by the cross product (b - a) x (b - c):
-          float x1 = b[X] - a[X]; 
-          float y1 = b[Y] - a[Y];
-          float z1 = b[Z] - a[Z]; 
+          int n0 = recordedVertices.size();
+          int n1 = n0 + 3 * faceLength[j] - 1;
           
-          float x2 = b[X] - c[X]; 
-          float y2 = b[Y] - c[Y];
-          float z2 = b[Z] - c[Z]; 
+          String name = "shape";
+          if (mergeRecShapes) {
+            name = "shape";  
+          } else {
+            name = recShapeName.equals("") ? "shape:" + recordedChildren.size() : recShapeName;
+          }
+          PShape3D child = (PShape3D)PShape3D.createChild(name, n0, n1, TRIANGLES, 0, images);
+          recordedChildren.add(child);
+        }
+
+        // Division by three needed because each int element in the buffer is used
+        // to store three coordinates.
+        int size = 3 * faceLength[j];
+        while (vertexBuffer.capacity() / 3 < size) { 
+          expandBuffers();
+        }
+
+        vertexBuffer.position(0);
+        colorBuffer.position(0);
+        normalBuffer.position(0);
+        for (int t = 0; t < tcount; t++) {
+          texCoordBuffer[t].position(0);
+        }
+
+        int n = 0;
+        for (int k = 0; k < faceLength[j]; k++) {
+          int na = triangles[i][VERTEX1];
+          int nb = triangles[i][VERTEX2];
+          int nc = triangles[i][VERTEX3];
+          float a[] = vertices[na];
+          float b[] = vertices[nb];
+          float c[] = vertices[nc];
+          
+          if (autoNormal && (a[HAS_NORMAL] == 0 || b[HAS_NORMAL] == 0 || c[HAS_NORMAL] == 0)) {
+            // Ok, some of the vertices defining the current triangle have not been
+            // assigned a normal, and the automatic normal calculation is enabled, so 
+            // we generate the normal for all the vertices of this triangle.
             
-          float cx = y1 * z2 - y2 * z1;
-          float cy = z1 * x2 - z2 * x1;
-          float cz = x1 * y2 - x2 * y1;          
-          
-          float norm = PApplet.sqrt(cx * cx + cy * cy + cz * cz);
-          
-          cx /= norm;
-          cy /= norm;
-          cz /= norm;
-          
-          // Same normal vector assigned to the three vertices:
-          a[NX] = b[NX] = c[NX] = cx;
-          a[NY] = b[NY] = c[NY] = cy;
-          a[NZ] = b[NZ] = c[NZ] = cz;
-          
-          a[HAS_NORMAL] = b[HAS_NORMAL] = c[HAS_NORMAL] = 1;
-        }
-        
-        if (tcount == 1) {
-          float uscale = 1.0f;
-          float vscale = 1.0f;
-          float cx = 0.0f;
-          float sx = +1.0f;
-          float cy = 0.0f;
-          float sy = +1.0f;
-          
-          PTexture tex = renderTextures[0];
-          uscale *= tex.getMaxTexCoordU();
-          vscale *= tex.getMaxTexCoordV();
-
-          if (tex.isFlippedX()) {
-            cx = 1.0f;
-            sx = -1.0f;
+            // Assuming CW vertex ordering, so the outside direction for this triangle
+            // should be given by the cross product (b - a) x (b - c):
+            float x1 = b[X] - a[X]; 
+            float y1 = b[Y] - a[Y];
+            float z1 = b[Z] - a[Z]; 
+            
+            float x2 = b[X] - c[X]; 
+            float y2 = b[Y] - c[Y];
+            float z2 = b[Z] - c[Z]; 
+              
+            float cx = y1 * z2 - y2 * z1;
+            float cy = z1 * x2 - z2 * x1;
+            float cz = x1 * y2 - x2 * y1;          
+            
+            float norm = PApplet.sqrt(cx * cx + cy * cy + cz * cz);
+            
+            cx /= norm;
+            cy /= norm;
+            cz /= norm;
+            
+            // Same normal vector assigned to the three vertices:
+            a[NX] = b[NX] = c[NX] = cx;
+            a[NY] = b[NY] = c[NY] = cy;
+            a[NZ] = b[NZ] = c[NZ] = cz;
+            
+            a[HAS_NORMAL] = b[HAS_NORMAL] = c[HAS_NORMAL] = 1;
           }
-
-          if (tex.isFlippedY()) {
-            cy = 1.0f;
-            sy = -1.0f;
-          }
-
-          // No multitexturing, so getting the texture coordinates
-          // directly from the U, V fields in the vertices array.
-          renderUa[0] = (cx + sx * a[U]) * uscale;
-          renderVa[0] = (cy + sy * a[V]) * vscale;
           
-          renderUb[0] = (cx + sx * b[U]) * uscale;
-          renderVb[0] = (cy + sy * b[V]) * vscale;
-
-          renderUc[0] = (cx + sx * c[U]) * uscale;
-          renderVc[0] = (cy + sy * c[V]) * vscale;
-        } else if (1 < tcount) {
-          for (int t = 0; t < tcount; t++) {
+          if (tcount == 1) {
             float uscale = 1.0f;
             float vscale = 1.0f;
             float cx = 0.0f;
             float sx = +1.0f;
             float cy = 0.0f;
             float sy = +1.0f;
-
-            PTexture tex = renderTextures[t];
+            
+            PTexture tex = renderTextures[0];
             uscale *= tex.getMaxTexCoordU();
             vscale *= tex.getMaxTexCoordV();
 
@@ -2562,152 +2548,174 @@ public class PGraphicsOpenGL2 extends PGraphics {
               sy = -1.0f;
             }
 
-            // The texture coordinates are obtained from the vertexU, vertexV
-            // arrays that store multitexture U, V coordinates.
-            renderUa[t] = (cx + sx * vertexU[na][t]) * uscale;
-            renderVa[t] = (cy + sy * vertexV[na][t]) * vscale;
+            // No multitexturing, so getting the texture coordinates
+            // directly from the U, V fields in the vertices array.
+            renderUa[0] = (cx + sx * a[U]) * uscale;
+            renderVa[0] = (cy + sy * a[V]) * vscale;
+            
+            renderUb[0] = (cx + sx * b[U]) * uscale;
+            renderVb[0] = (cy + sy * b[V]) * vscale;
 
-            renderUb[t] = (cx + sx * vertexU[nb][t]) * uscale;
-            renderVb[t] = (cy + sy * vertexV[nb][t]) * vscale;
+            renderUc[0] = (cx + sx * c[U]) * uscale;
+            renderVc[0] = (cy + sy * c[V]) * vscale;
+          } else if (1 < tcount) {
+            for (int t = 0; t < tcount; t++) {
+              float uscale = 1.0f;
+              float vscale = 1.0f;
+              float cx = 0.0f;
+              float sx = +1.0f;
+              float cy = 0.0f;
+              float sy = +1.0f;
 
-            renderUc[t] = (cx + sx * vertexU[nc][t]) * uscale;
-            renderVc[t] = (cy + sy * vertexV[nc][t]) * vscale;
+              PTexture tex = renderTextures[t];
+              uscale *= tex.getMaxTexCoordU();
+              vscale *= tex.getMaxTexCoordV();
+
+              if (tex.isFlippedX()) {
+                cx = 1.0f;
+                sx = -1.0f;
+              }
+
+              if (tex.isFlippedY()) {
+                cy = 1.0f;
+                sy = -1.0f;
+              }
+
+              // The texture coordinates are obtained from the vertexU, vertexV
+              // arrays that store multitexture U, V coordinates.
+              renderUa[t] = (cx + sx * vertexU[na][t]) * uscale;
+              renderVa[t] = (cy + sy * vertexV[na][t]) * vscale;
+
+              renderUb[t] = (cx + sx * vertexU[nb][t]) * uscale;
+              renderVb[t] = (cy + sy * vertexV[nb][t]) * vscale;
+
+              renderUc[t] = (cx + sx * vertexU[nc][t]) * uscale;
+              renderVc[t] = (cy + sy * vertexV[nc][t]) * vscale;
+            }
           }
+          
+          // Adding vertex A.
+          if (recordingShape) {
+            recordedVertices.add(new PVector(a[X], a[Y], a[Z]));
+            recordedColors.add(new float[] { a[R], a[G], a[B], a[A] });
+            recordedNormals.add(new PVector(a[NX], a[NY], a[NZ]));
+            for (int t = 0; t < tcount; t++) {
+              recordedTexCoords[t].add(new PVector(vertexU[na][t], vertexV[na][t], 0.0f));
+            }
+            // We need to add texture coordinate values for all the recorded vertices and all
+            // texture units because even if this part of the recording doesn't use textures,
+            // a subsequent (previous) portion might (did), and when setting the texture coordinates
+            // for a shape we need to provide coordinates for the whole shape.          
+            for (int t = tcount; t < maxTextureUnits; t++) {
+              recordedTexCoords[t].add(new PVector(0.0f, 0.0f, 0.0f));
+            }
+          } else {
+            vertexArray[3 * n + 0] = a[X];
+            vertexArray[3 * n + 1] = a[Y];
+            vertexArray[3 * n + 2] = a[Z];
+            colorArray[4 * n + 0] = a[R];
+            colorArray[4 * n + 1] = a[G];
+            colorArray[4 * n + 2] = a[B];
+            colorArray[4 * n + 3] = a[A];
+            normalArray[3 * n + 0] = a[NX];
+            normalArray[3 * n + 1] = a[NY];
+            normalArray[3 * n + 2] = a[NZ];
+            for (int t = 0; t < tcount; t++) {
+              texCoordArray[t][2 * n + 0] = renderUa[t];
+              texCoordArray[t][2 * n + 1] = renderVa[t];
+            }
+            n++;
+          }
+
+          // Adding vertex B.
+          if (recordingShape) {
+            recordedVertices.add(new PVector(b[X], b[Y], b[Z]));
+            recordedColors.add(new float[] { b[R], b[G], b[B], b[A] });
+            recordedNormals.add(new PVector(b[NX], b[NY], b[NZ]));
+            for (int t = 0; t < tcount; t++) {
+              recordedTexCoords[t].add(new PVector(vertexU[nb][t], vertexV[nb][t], 0.0f));
+            }
+            // Idem to comment in section corresponding to vertex A.          
+            for (int t = tcount; t < maxTextureUnits; t++) {
+              recordedTexCoords[t].add(new PVector(0.0f, 0.0f, 0.0f));
+            }
+          } else {
+            vertexArray[3 * n + 0] = b[X];
+            vertexArray[3 * n + 1] = b[Y];
+            vertexArray[3 * n + 2] = b[Z];
+            colorArray[4 * n + 0] = b[R];
+            colorArray[4 * n + 1] = b[G];
+            colorArray[4 * n + 2] = b[B];
+            colorArray[4 * n + 3] = b[A];
+            normalArray[3 * n + 0] = b[NX];
+            normalArray[3 * n + 1] = b[NY];
+            normalArray[3 * n + 2] = b[NZ];
+            for (int t = 0; t < tcount; t++) {
+              texCoordArray[t][2 * n + 0] = renderUb[t];
+              texCoordArray[t][2 * n + 1] = renderVb[t];
+            }
+            n++;
+          }
+
+          // Adding vertex C.
+          if (recordingShape) {
+            recordedVertices.add(new PVector(c[X], c[Y], c[Z]));
+            recordedColors.add(new float[] { c[R], c[G], c[B], c[A] });
+            recordedNormals.add(new PVector(c[NX], c[NY], c[NZ]));
+            for (int t = 0; t < tcount; t++) {
+              recordedTexCoords[t].add(new PVector(vertexU[nc][t], vertexV[nc][t], 0.0f));
+            }
+            // Idem to comment in section corresponding to vertex A.          
+            for (int t = tcount; t < maxTextureUnits; t++) {
+              recordedTexCoords[t].add(new PVector(0.0f, 0.0f, 0.0f));
+            }
+          } else {
+            vertexArray[3 * n + 0] = c[X];
+            vertexArray[3 * n + 1] = c[Y];
+            vertexArray[3 * n + 2] = c[Z];
+            colorArray[4 * n + 0] = c[R];
+            colorArray[4 * n + 1] = c[G];
+            colorArray[4 * n + 2] = c[B];
+            colorArray[4 * n + 3] = c[A];
+            normalArray[3 * n + 0] = c[NX];
+            normalArray[3 * n + 1] = c[NY];
+            normalArray[3 * n + 2] = c[NZ];
+            for (int t = 0; t < tcount; t++) {
+              texCoordArray[t][2 * n + 0] = renderUc[t];
+              texCoordArray[t][2 * n + 1] = renderVc[t];
+            }
+            n++;
+          }
+
+          i++;
         }
         
-        // Adding vertex A.
-        if (recordingShape) {
-          recordedVertices.add(new PVector(a[X], a[Y], a[Z]));
-          recordedColors.add(new float[] { a[R], a[G], a[B], a[A] });
-          recordedNormals.add(new PVector(a[NX], a[NY], a[NZ]));
+        if (!recordingShape) {
+          vertexBuffer.put(vertexArray);
+          colorBuffer.put(colorArray);
+          normalBuffer.put(normalArray);
           for (int t = 0; t < tcount; t++) {
-            recordedTexCoords[t].add(new PVector(vertexU[na][t], vertexV[na][t], 0.0f));
+            texCoordBuffer[t].put(texCoordArray[t]);
           }
-          // We need to add texture coordinate values for all the recorded vertices and all
-          // texture units because even if this part of the recording doesn't use textures,
-          // a subsequent (previous) portion might (did), and when setting the texture coordinates
-          // for a shape we need to provide coordinates for the whole shape.          
-          for (int t = tcount; t < maxTextureUnits; t++) {
-            recordedTexCoords[t].add(new PVector(0.0f, 0.0f, 0.0f));
-          }
-        } else {
-          vertexArray[3 * n + 0] = a[X];
-          vertexArray[3 * n + 1] = a[Y];
-          vertexArray[3 * n + 2] = a[Z];
-          colorArray[4 * n + 0] = a[R];
-          colorArray[4 * n + 1] = a[G];
-          colorArray[4 * n + 2] = a[B];
-          colorArray[4 * n + 3] = a[A];
-          normalArray[3 * n + 0] = a[NX];
-          normalArray[3 * n + 1] = a[NY];
-          normalArray[3 * n + 2] = a[NZ];
-          for (int t = 0; t < tcount; t++) {
-            texCoordArray[t][2 * n + 0] = renderUa[t];
-            texCoordArray[t][2 * n + 1] = renderVa[t];
-          }
-          n++;
-        }
 
-        // Adding vertex B.
-        if (recordingShape) {
-          recordedVertices.add(new PVector(b[X], b[Y], b[Z]));
-          recordedColors.add(new float[] { b[R], b[G], b[B], b[A] });
-          recordedNormals.add(new PVector(b[NX], b[NY], b[NZ]));
+          vertexBuffer.position(0);
+          colorBuffer.position(0);
+          normalBuffer.position(0);
           for (int t = 0; t < tcount; t++) {
-            recordedTexCoords[t].add(new PVector(vertexU[nb][t], vertexV[nb][t], 0.0f));
+            texCoordBuffer[t].position(0);
           }
-          // Idem to comment in section corresponding to vertex A.          
-          for (int t = tcount; t < maxTextureUnits; t++) {
-            recordedTexCoords[t].add(new PVector(0.0f, 0.0f, 0.0f));
-          }
-        } else {
-          vertexArray[3 * n + 0] = b[X];
-          vertexArray[3 * n + 1] = b[Y];
-          vertexArray[3 * n + 2] = b[Z];
-          colorArray[4 * n + 0] = b[R];
-          colorArray[4 * n + 1] = b[G];
-          colorArray[4 * n + 2] = b[B];
-          colorArray[4 * n + 3] = b[A];
-          normalArray[3 * n + 0] = b[NX];
-          normalArray[3 * n + 1] = b[NY];
-          normalArray[3 * n + 2] = b[NZ];
+          
+          gl2f.glVertexPointer(3, GL.GL_FLOAT, 0, vertexBuffer);
+          gl2f.glColorPointer(4, GL.GL_FLOAT, 0, colorBuffer);
+          gl2f.glNormalPointer(GL.GL_FLOAT, 0, normalBuffer);
           for (int t = 0; t < tcount; t++) {
-            texCoordArray[t][2 * n + 0] = renderUb[t];
-            texCoordArray[t][2 * n + 1] = renderVb[t];
+            gl2f.glClientActiveTexture(GL.GL_TEXTURE0 + t);
+            gl2f.glTexCoordPointer(2, GL.GL_FLOAT, 0, texCoordBuffer[t]);          
           }
-          n++;
-        }
-
-        // Adding vertex C.
-        if (recordingShape) {
-          recordedVertices.add(new PVector(c[X], c[Y], c[Z]));
-          recordedColors.add(new float[] { c[R], c[G], c[B], c[A] });
-          recordedNormals.add(new PVector(c[NX], c[NY], c[NZ]));
-          for (int t = 0; t < tcount; t++) {
-            recordedTexCoords[t].add(new PVector(vertexU[nc][t], vertexV[nc][t], 0.0f));
-          }
-          // Idem to comment in section corresponding to vertex A.          
-          for (int t = tcount; t < maxTextureUnits; t++) {
-            recordedTexCoords[t].add(new PVector(0.0f, 0.0f, 0.0f));
-          }
-        } else {
-          vertexArray[3 * n + 0] = c[X];
-          vertexArray[3 * n + 1] = c[Y];
-          vertexArray[3 * n + 2] = c[Z];
-          colorArray[4 * n + 0] = c[R];
-          colorArray[4 * n + 1] = c[G];
-          colorArray[4 * n + 2] = c[B];
-          colorArray[4 * n + 3] = c[A];
-          normalArray[3 * n + 0] = c[NX];
-          normalArray[3 * n + 1] = c[NY];
-          normalArray[3 * n + 2] = c[NZ];
-          for (int t = 0; t < tcount; t++) {
-            texCoordArray[t][2 * n + 0] = renderUc[t];
-            texCoordArray[t][2 * n + 1] = renderVc[t];
-          }
-          n++;
-        }
-
-        i++;
+          gl2f.glDrawArrays(GL.GL_TRIANGLES, 0, 3 * faceLength[j]);
+        }        
       }
-      */
-      // *******************************
-      
-       
-      gbuffer.render();
-      
-      /*
-      // ++++ the rendering in here +++++++
-      if (!recordingShape) {
-        vertexBuffer.put(vertexArray);
-        colorBuffer.put(colorArray);
-        normalBuffer.put(normalArray);
-        for (int t = 0; t < tcount; t++) {
-          texCoordBuffer[t].put(texCoordArray[t]);
-        }
-
-        vertexBuffer.position(0);
-        colorBuffer.position(0);
-        normalBuffer.position(0);
-        for (int t = 0; t < tcount; t++) {
-          texCoordBuffer[t].position(0);
-        }
-        
-        gl2f.glVertexPointer(3, GL.GL_FLOAT, 0, vertexBuffer);
-        gl2f.glColorPointer(4, GL.GL_FLOAT, 0, colorBuffer);
-        gl2f.glNormalPointer(GL.GL_FLOAT, 0, normalBuffer);
-        for (int t = 0; t < tcount; t++) {
-          gl2f.glClientActiveTexture(GL.GL_TEXTURE0 + t);
-          gl2f.glTexCoordPointer(2, GL.GL_FLOAT, 0, texCoordBuffer[t]);          
-        }
-        gl2f.glDrawArrays(GL.GL_TRIANGLES, 0, 3 * faceLength[j]);
-      }
-      // +++++++++++++++++++++++++++
-      */
-      
-      
-      
-      
+            
       if (0 < tcount) {
         if (1 < tcount) {
           cleanupTextureBlend(tcount);
@@ -3502,6 +3510,11 @@ public class PGraphicsOpenGL2 extends PGraphics {
   // MATRIX STACK
 
   public void pushMatrix() {
+    if (USE_GBUFFER && GBUFFER_MERGE_ALL && GBUFFER_UPDATE_STACK) {
+      gbuffer.stack.push();
+      return;
+    }    
+    
     gl2f.glPushMatrix();  
     if (usingGLMatrixStack) {
       if (matrixMode == PROJECTION) {
@@ -3509,11 +3522,16 @@ public class PGraphicsOpenGL2 extends PGraphics {
       } else {          
         modelviewStack.push();
       }
-    }    
+    }        
   }
 
   
   public void popMatrix() {
+    if (USE_GBUFFER && GBUFFER_MERGE_ALL && GBUFFER_UPDATE_STACK) {
+      gbuffer.stack.pop();
+      return;
+    }    
+        
     gl2f.glPopMatrix();
     if (usingGLMatrixStack) {
       if (matrixMode == PROJECTION) {
@@ -3523,7 +3541,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
         modelviewStack.pop(); 
         modelviewUpdated = false;
       }
-    }
+    }    
   }
   
   //////////////////////////////////////////////////////////////
@@ -3535,11 +3553,11 @@ public class PGraphicsOpenGL2 extends PGraphics {
   }
 
   public void translate(float tx, float ty, float tz) {
-    // Translation along Y is inverted to account for Processing's inverted Y
-    // axis
-    // with respect to OpenGL. The other place where inversion occurs is when
-    // drawing the geometric primitives (vertex arrays), where a -1 scaling
-    // along Y is applied.
+    if (USE_GBUFFER && GBUFFER_MERGE_ALL && GBUFFER_UPDATE_STACK) {
+      gbuffer.stack.translate(tx, ty, tz);
+      return;
+    }    
+    
     gl2f.glTranslatef(tx, ty, tz);
     if (usingGLMatrixStack) {
       if (matrixMode == PROJECTION) {
@@ -3549,7 +3567,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
         modelviewStack.translate(tx, ty, tz); 
         modelviewUpdated = false;
       }
-    } 
+    }    
   }
 
   /**
@@ -3579,6 +3597,10 @@ public class PGraphicsOpenGL2 extends PGraphics {
    * takes radians (instead of degrees).
    */
   public void rotate(float angle, float v0, float v1, float v2) {
+    if (USE_GBUFFER && GBUFFER_MERGE_ALL && GBUFFER_UPDATE_STACK) {      
+      gbuffer.stack.rotate(angle, v0, v1, v2); 
+      return;  
+    }
     gl2f.glRotatef(PApplet.degrees(angle), v0, v1, v2);
     if (usingGLMatrixStack) {
       if (matrixMode == PROJECTION) {
@@ -3588,7 +3610,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
         modelviewStack.rotate(angle, v0, v1, v2); 
         modelviewUpdated = false;
       }
-    }
+    }    
   }
 
   /**
@@ -3609,6 +3631,11 @@ public class PGraphicsOpenGL2 extends PGraphics {
    * Scale in three dimensions.
    */
   public void scale(float sx, float sy, float sz) {
+    if (USE_GBUFFER && GBUFFER_MERGE_ALL && GBUFFER_UPDATE_STACK) {
+      gbuffer.stack.scale(sx, sy, sz);
+      return;
+    }    
+        
     if (manipulatingCamera) {
       scalingDuringCamManip = true;
     }
@@ -3621,7 +3648,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
         modelviewStack.scale(sx, sy, sz); 
         modelviewUpdated = false;
       }
-    }
+    }    
   }
 
   public void shearX(float angle) {
@@ -6703,6 +6730,11 @@ public class PGraphicsOpenGL2 extends PGraphics {
     int minVertIndex;
     int maxVertIndex;
     
+    // The GeometryBuffer has its own stack (for now at least) because
+    // OpenGL stack contains the contribution of the camera placement, whereas
+    // for transforming the vertices don't need it.
+    GLMatrixStack stack;
+    
     IntBuffer indicesBuffer;
     FloatBuffer verticesBuffer;
     FloatBuffer normalsBuffer;
@@ -6742,6 +6774,8 @@ public class PGraphicsOpenGL2 extends PGraphics {
       texturesArray = new PTexture[MAX_TEXTURES];
       
       allocTexStorage = 1;
+      
+      stack = new GLMatrixStack();
       
       idxCount = 0;
       vertCount = 0;
@@ -6788,22 +6822,15 @@ public class PGraphicsOpenGL2 extends PGraphics {
             
       minVertIndex = 100000; 
       maxVertIndex = 0;
+      
+      stack.setIdentity();
     }
     
     void add(int[][] indices, int i0, int i1, float[][] vertices, int v0, int v1) {
-      add(indices, i0, i1, vertices, v0, v1, null);
+      add(indices, i0, i1, vertices, v0, v1, stack.current);
     }
     
-    void add(int[][] indices, int i0, int i1, float[][] vertices, int v0, int v1, float[] mm) {
-      if (mode == LINES) {
-        
-      } else if (mode == TRIANGLES) {
-        
-      }
-      
-      minVertIndex = PApplet.min(minVertIndex, v0);
-      maxVertIndex = PApplet.max(maxVertIndex, v1);
-      
+    void add(int[][] indices, int i0, int i1, float[][] vertices, int v0, int v1, float[] mm) {      
       int gcount = i1 - i0 + 1;
       int vcount = v1 - v0 + 1;
  
@@ -6848,10 +6875,13 @@ public class PGraphicsOpenGL2 extends PGraphics {
       
       int ni = 0;
       for (int i = i0; i <= i1; i++) {
-        indicesArray[ni++] = indices[i][VERTEX1];
-        indicesArray[ni++] = indices[i][VERTEX2];
-        indicesArray[ni++] = indices[i][VERTEX3];
+        indicesArray[ni++] = vertCount + indices[i][VERTEX1] - v0;
+        indicesArray[ni++] = vertCount + indices[i][VERTEX2] - v0;
+        indicesArray[ni++] = vertCount + indices[i][VERTEX3] - v0;
       }
+      
+      minVertIndex = vertCount;
+      maxVertIndex = vertCount + v1 - v0;      
       
       int nv = 0;
       int nn = 0;
@@ -7096,10 +7126,13 @@ public class PGraphicsOpenGL2 extends PGraphics {
     public GLMatrixStack() {
       matrixStack = new Stack<float[]>();
       current = new float[16];    
+    }
+    
+    public void setIdentity() {
       set(1, 0, 0, 0,
-             0, 1, 0, 0,
-             0, 0, 1, 0,
-             0, 0, 0, 1);
+          0, 1, 0, 0,
+          0, 0, 1, 0,
+          0, 0, 0, 1);
     }
     
     public void push() {
@@ -7125,9 +7158,9 @@ public class PGraphicsOpenGL2 extends PGraphics {
     }
     
     public void mult(float n0, float n4, float n8, float n12,
-                                     float n1, float n5, float n9, float n13,
-                                     float n2, float n6, float n10, float n14,
-                                     float n3, float n7, float n11, float n15) {
+                     float n1, float n5, float n9, float n13,
+                     float n2, float n6, float n10, float n14,
+                     float n3, float n7, float n11, float n15) {
       float r0 = current[0]*n0 + current[4]*n1 + current[8]*n2 + current[12]*n3;
       float r4 = current[0]*n4 + current[4]*n5 + current[8]*n6 + current[12]*n7;
       float r8 = current[0]*n8 + current[4]*n9 + current[8]*n10 + current[12]*n11;
@@ -7163,9 +7196,9 @@ public class PGraphicsOpenGL2 extends PGraphics {
     }
     
     public void set(float n0, float n4, float n8, float n12,
-                                     float n1, float n5, float n9, float n13,
-                                     float n2, float n6, float n10, float n14,
-                                     float n3, float n7, float n11, float n15) {
+                    float n1, float n5, float n9, float n13,
+                    float n2, float n6, float n10, float n14,
+                    float n3, float n7, float n11, float n15) {
       current[0] = n0; current[4] = n4; current[8] = n8; current[12] = n12;
       current[1] = n1; current[5] = n5; current[9] = n9; current[13] = n13;
       current[2] = n2; current[6] = n6; current[10] = n10; current[14] = n14;
