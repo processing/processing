@@ -121,7 +121,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
   protected GLContext context;
   
   /** The PApplet renderer. For the primary surface, pgl == this. */
-  protected PGraphicsOpenGL2 pgl;
+  protected PGraphicsOpenGL2 ogl;
 
   // ........................................................  
   
@@ -208,7 +208,8 @@ public class PGraphicsOpenGL2 extends PGraphics {
   protected boolean modelviewUpdated;
   protected boolean projectionUpdated;
 
-  protected int matrixMode = MODELVIEW;  
+  protected int matrixMode = MODELVIEW;
+  
   protected boolean matricesAllocated = false;
   
   static protected boolean usingGLMatrixStack;
@@ -270,8 +271,10 @@ public class PGraphicsOpenGL2 extends PGraphics {
   public float currentLightFalloffLinear;
   public float currentLightFalloffQuadratic;
 
-  /** Used to store empty values to be passed when a light has no 
-      ambient, diffuse or specular component **/
+  /** 
+   * Used to store empty values to be passed when a light has no
+   * ambient, diffuse or specular component 
+   */
   public float[] zeroLight = { 0.0f, 0.0f, 0.0f, 1.0f };
   /** Default ambient light for the entire scene **/
   public float[] baseLight = { 0.05f, 0.05f, 0.05f, 1.0f };
@@ -327,13 +330,15 @@ public class PGraphicsOpenGL2 extends PGraphics {
   /** Position of first vertex of current shape in vertices array. */
   protected int shapeFirst;
 
-  /** I think vertex_end is actually the last vertex in the current shape
+  /** 
+   * I think vertex_end is actually the last vertex in the current shape
    * and is separate from vertexCount for occasions where drawing happens
    * on endDraw() with all the triangles being depth sorted.
    */
   protected int shapeLast;
 
-  /** Used for sorting points when triangulating a polygon
+  /** 
+   * Used for sorting points when triangulating a polygon
    * warning - maximum number of vertices for a polygon is DEFAULT_VERTICES
    */
   protected int vertexOrder[] = new int[DEFAULT_VERTICES];  
@@ -344,7 +349,8 @@ public class PGraphicsOpenGL2 extends PGraphics {
   
   public static final int DEFAULT_PATHS = 64;
   
-  /** This is done to keep track of start/stop information for lines in the
+  /** 
+   * This is done to keep track of start/stop information for lines in the
    * line array, so that lines can be shown as a single path, rather than just
    * individual segments. 
    */
@@ -358,7 +364,8 @@ public class PGraphicsOpenGL2 extends PGraphics {
   
   public static final int DEFAULT_FACES = 64;
     
-  /** And this is done to keep track of start/stop information for textured
+  /** 
+   * And this is done to keep track of start/stop information for textured
    * triangles in the triangle array, so that a range of triangles with the
    * same texture applied to them are correctly textured during the
    * rendering stage.
@@ -380,7 +387,8 @@ public class PGraphicsOpenGL2 extends PGraphics {
 
   // Texturing:  
   
-  /** Hard-coded maximum number of texture units to use, although the actual maximum,
+  /** 
+   * Hard-coded maximum number of texture units to use, although the actual maximum,
    * maxTextureUnits, is calculated as the minimum between this value and the current
    * value for the OpenGL GL_MAX_TEXTURE_UNITS constant.
    */
@@ -900,12 +908,12 @@ public class PGraphicsOpenGL2 extends PGraphics {
     report("top beginDraw()");    
     
     if (!primarySurface) {
-      pgl.saveGLState();
+      ogl.saveGLState();
             
       // Disabling all lights, so the offscreen renderer can set completely
       // new light configuration (otherwise some light configuration from the 
       // primary renderer might stay).
-      pgl.disableLights();
+      ogl.disableLights();
     }     
     
     vertexBuffer.rewind();
@@ -1025,7 +1033,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
       }
       popFramebuffer();
       
-      pgl.restoreGLState();
+      ogl.restoreGLState();
     }    
     
     report("bot endDraw()");    
@@ -3292,7 +3300,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
       gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
     }    
     
-    textTex = (PFontTexture)textFont.getCache(pgl);     
+    textTex = (PFontTexture)textFont.getCache(ogl);     
     if (textTex == null) {
       textTex = new PFontTexture(parent, textFont, maxTextureSize, maxTextureSize);
       textFont.setCache(this, textTex);
@@ -5657,8 +5665,8 @@ public class PGraphicsOpenGL2 extends PGraphics {
       PTexture.Parameters params = PTexture.newParameters(ARGB, sampling);
       texture = new PTexture(parent, width, height, params);
       texture.setFlippedY(true);
-      this.setCache(pgl, texture);
-      this.setParams(pgl, params);
+      this.setCache(ogl, texture);
+      this.setParams(ogl, params);
       
       texCrop = new int[4];
       texCrop[0] = 0;
@@ -5775,7 +5783,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
    */
   public void set(int x, int y, PImage source) {
     // We can safely assume that the PImage has a valid associated texture.
-    PTexture tex = (PTexture)source.getCache(pgl);
+    PTexture tex = (PTexture)source.getCache(ogl);
     if (tex != null) {
       int w = source.width; 
       int h = source.height;
@@ -6245,7 +6253,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
    * @param img the image to have a texture metadata associated to it
    */  
   protected PTexture getTexture(PImage img) {
-    PTexture tex = (PTexture)img.getCache(pgl);
+    PTexture tex = (PTexture)img.getCache(ogl);
     if (tex == null) {
       tex = addTexture(img);
     } else if (img.isModified()) {
@@ -6469,7 +6477,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
     // RCP Application (Applet's, Webstart, Netbeans, ..) using JOGL may not be able 
     // to initialize JOGL before the first UI action.      
 
-    pgl = this;
+    ogl = this;
     
     profile = null;      
     
@@ -6535,10 +6543,10 @@ public class PGraphicsOpenGL2 extends PGraphics {
   
   protected void initOffscreen() {
     // Getting the context and capabilities from the main renderer.
-    pgl = (PGraphicsOpenGL2)parent.g;
+    ogl = (PGraphicsOpenGL2)parent.g;
     
-    context = pgl.getContext();
-    capabilities = pgl.getCapabilities();
+    context = ogl.getContext();
+    capabilities = ogl.getCapabilities();
     drawable = null;
     
     getGLObjects();
