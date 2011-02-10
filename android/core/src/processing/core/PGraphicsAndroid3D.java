@@ -55,26 +55,79 @@ import processing.core.PFont.Glyph;
  *
  */
 public class PGraphicsAndroid3D extends PGraphics {
-  public SurfaceHolder holder;
-  protected A3DRenderer renderer;
+  // GLES objects:
   
   public GL10 gl;
   public GL11 gl11;
   public GL11Ext gl11x;
   public GL11ExtensionPack gl11xp;
 
+  /** The PApplet renderer. For the primary surface, a3d == this. */
+  protected PGraphicsAndroid3D a3d;
+  
+  public SurfaceHolder holder;
+  protected A3DRenderer renderer;    
+  
   // ........................................................
 
+  // GL parameters  
+  
+  /** Extensions used by Processing */
+  static protected boolean npotTexSupported;
+  static protected boolean mipmapGeneration;
+  static protected boolean matrixGetSupported;
+  static protected boolean vboSupported;
+  static protected boolean fboSupported;
+  static protected boolean blendEqSupported;
+  static protected boolean texenvCrossbarSupported;
+  
+  /** Extensions used by Processing */
+  static protected int maxTextureSize;
+  static protected float maxPointSize;
+  static protected float maxLineWidth;
+  static protected int maxTextureUnits;
+  
+  /** OpenGL version strings */
+  static public String OPENGL_VENDOR;
+  static public String OPENGL_RENDERER;
+  static public String OPENGL_VERSION;    
+
+  // ........................................................
+
+  // OpenGL resources:
+  
+  static protected final int GL_TEXTURE_OBJECT = 0;
+  static protected final int GL_VERTEX_BUFFER = 1;
+  static protected final int GL_FRAME_BUFFER = 2;
+  static protected final int GL_RENDER_BUFFER = 3;
+  
+  static protected Set<Integer> glTextureObjects = new HashSet<Integer>();
+  static protected Set<Integer> glVertexBuffers = new HashSet<Integer>();
+  static protected Set<Integer> glFrameBuffers = new HashSet<Integer>();
+  static protected Set<Integer> glRenderBuffers = new HashSet<Integer>();
+  
+  // ........................................................  
+
+  // Camera:
+  
   /** Camera field of view. */
   public float cameraFOV;
 
   /** Position of the camera. */
   public float cameraX, cameraY, cameraZ;
+  /** Distance of the near and far planes. */
   public float cameraNear, cameraFar;
   /** Aspect ratio of camera's view. */
   public float cameraAspect;
   
-  /** Modelview and projection matrices **/
+  /** Flag to indicate that we are inside beginCamera/endCamera block. */
+  protected boolean manipulatingCamera;
+  
+  protected boolean scalingDuringCamManip;  
+  
+  // ........................................................
+
+  // Projection, modelview matrices:
   
   // Array version for use with OpenGL
   protected float[] glmodelview;
@@ -97,18 +150,17 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected boolean modelviewUpdated;
   protected boolean projectionUpdated;
 
-  protected boolean projectionMode = false;
+  protected int matrixMode = MODELVIEW;
   
   protected boolean matricesAllocated = false;
-
-  /**
-   * This is turned on at beginCamera, and off at endCamera Currently we don't
-   * support nested begin/end cameras.
-   */
-  protected boolean manipulatingCamera;
-  protected boolean scalingDuringCamManip;
-
+  
+  static protected boolean usingGLMatrixStack;    
+  static protected A3DMatrixStack modelviewStack;
+  static protected A3DMatrixStack projectionStack;
+  
   // ........................................................
+
+  // Lights:  
 
   /**
    * Maximum lights by default is 8, the minimum defined by OpenGL.
@@ -161,60 +213,16 @@ public class PGraphicsAndroid3D extends PGraphics {
   public float currentLightFalloffLinear;
   public float currentLightFalloffQuadratic;
 
-  /** Used to store empty values to be passed when a light has no 
-      ambient, diffuse or specular component **/
+  /** 
+   * Used to store empty values to be passed when a light has no 
+   * ambient, diffuse or specular component *
+   */
   public float[] zeroLight = { 0.0f, 0.0f, 0.0f, 1.0f };
   /** Default ambient light for the entire scene **/
   public float[] baseLight = { 0.05f, 0.05f, 0.05f, 1.0f };
  
   protected boolean lightsAllocated = false;
 
-  // ........................................................
-
-  // Multitexture:  
-  
-  // Hard-coded maximum number of texture units to use, although the actual maximum,
-  // maxTextureUnits, is calculated as the minimum between this value and the current
-  // value for the OpenGL GL_MAX_TEXTURE_UNITS constant.
-  public static final int MAX_TEXTURES = 2;
-  
-  // Number of multitextures currently in use.
-  protected int numMultitextures;
-  
-  // Number of currently initialized texture buffers.
-  protected int numTexBuffers;
-  
-  // Blending mode use to combine multitextures.
-  protected int multitexureBlendMode;
-  
-  // Array used in the renderTriangles method to store the textures in use.
-  protected PTexture[] renderTextures = new PTexture[MAX_TEXTURES];
-  
-  // Current texture images.
-  protected PImage[] multitextureImages = new PImage[MAX_TEXTURES];
-  
-  // Used to detect changes in the current texture images.
-  protected PImage[] multitextureImages0 = new PImage[MAX_TEXTURES];
-  
-  // Current multitexture UV coordinates.
-  protected float[] multitextureU = new float[MAX_TEXTURES];
-  protected float[] multitextureV = new float[MAX_TEXTURES];
-  
-  // Multitexture UV coordinates for all vertices.
-  protected float[][] vertexU = new float[DEFAULT_VERTICES][1];
-  protected float[][] vertexV = new float[DEFAULT_VERTICES][1];
-  
-  // Texture images assigned to each vertex.
-  protected PImage[][] vertexTex = new PImage[DEFAULT_VERTICES][1];
-  
-  // UV arrays used in renderTriangles().
-  protected float[] renderUa = new float[MAX_TEXTURES];
-  protected float[] renderVa = new float[MAX_TEXTURES];
-  protected float[] renderUb = new float[MAX_TEXTURES];
-  protected float[] renderVb = new float[MAX_TEXTURES];
-  protected float[] renderUc = new float[MAX_TEXTURES];
-  protected float[] renderVc = new float[MAX_TEXTURES];  
-  
   // ........................................................
 
   // Geometry:
@@ -255,83 +263,151 @@ public class PGraphicsAndroid3D extends PGraphics {
   private int[] normalArray;
   private int[][] texCoordArray;
   
-  protected IntBuffer getsetBuffer;
-  protected PTexture getsetTexture;
-  protected boolean buffersAllocated = false;
-
-  // ........................................................
-
-  // Text:
-    
-  // Buffers and array to draw text quads.
-  private IntBuffer textVertexBuffer = null;
-  private IntBuffer textTexCoordBuffer = null;
-  private int[] textVertexArray = null;
-  private int[] textTexCoordArray = null;
-  
-  private int textVertexCount = 0;  
+  protected boolean geometryAllocated = false;
   
   // ........................................................
   
-  // pos of first vertex of current shape in vertices array
+  // Shapes:
+  
+  /** Position of first vertex of current shape in vertices array. */
   protected int shapeFirst;
 
-  // i think vertex_end is actually the last vertex in the current shape
-  // and is separate from vertexCount for occasions where drawing happens
-  // on endDraw() with all the triangles being depth sorted
+  /** 
+   * I think vertex_end is actually the last vertex in the current shape
+   * and is separate from vertexCount for occasions where drawing happens
+   * on endDraw() with all the triangles being depth sorted.
+   */
   protected int shapeLast;
 
-  // used for sorting points when triangulating a polygon
-  // warning - maximum number of vertices for a polygon is DEFAULT_VERTICES
-  protected int vertexOrder[] = new int[DEFAULT_VERTICES];
-
+  /** 
+   * Used for sorting points when triangulating a polygon
+   * warning - maximum number of vertices for a polygon is DEFAULT_VERTICES
+   */
+  protected int vertexOrder[] = new int[DEFAULT_VERTICES]; 
+  
   // ........................................................
 
+  // Lines:
+  
   public static final int DEFAULT_PATHS = 64;
   
-  // This is done to keep track of start/stop information for lines in the
-  // line array, so that lines can be shown as a single path, rather than just
-  // individual segments.
+  /** 
+   * This is done to keep track of start/stop information for lines in the
+   * line array, so that lines can be shown as a single path, rather than just
+   * individual segments. 
+   */
   protected int pathCount;
   protected int[] pathOffset = new int[DEFAULT_PATHS];
   protected int[] pathLength = new int[DEFAULT_PATHS];
-
+  
   // ........................................................
+
+  // Faces:
 
   public static final int DEFAULT_FACES = 64;
     
-  // And this is done to keep track of start/stop information for textured
-  // triangles in the triangle array, so that a range of triangles with the
-  // same texture applied to them are correctly textured during the
-  // rendering stage.
+  /** 
+   * And this is done to keep track of start/stop information for textured
+   * triangles in the triangle array, so that a range of triangles with the
+   * same texture applied to them are correctly textured during the
+   * rendering stage.
+   */
   protected int faceCount;
   protected int[] faceOffset = new int[DEFAULT_FACES];
   protected int[] faceLength = new int[DEFAULT_FACES];
   protected PImage[][] faceTextures = new PImage[DEFAULT_FACES][MAX_TEXTURES];
-
-  // ........................................................
-
-  // / Used to hold color values to be sent to OpenGL
-  protected float[] colorFloats;
-
-  // / IntBuffer to go with the pixels[] array
-  protected IntBuffer pixelBuffer;
-
-  // ........................................................
-
-  // OpenGL resources
-  
-  static protected final int GL_TEXTURE_OBJECT = 0;
-  static protected final int GL_VERTEX_BUFFER = 1;
-  static protected final int GL_FRAME_BUFFER = 2;
-  static protected final int GL_RENDER_BUFFER = 3;
-  
-  static protected Set<Integer> glTextureObjects = new HashSet<Integer>();
-  static protected Set<Integer> glVertexBuffers = new HashSet<Integer>();
-  static protected Set<Integer> glFrameBuffers = new HashSet<Integer>();
-  static protected Set<Integer> glRenderBuffers = new HashSet<Integer>();
   
   // ........................................................
+
+  // Texturing:  
+  
+  /** 
+   * Hard-coded maximum number of texture units to use, although the actual maximum,
+   * maxTextureUnits, is calculated as the minimum between this value and the current
+   * value for the OpenGL GL_MAX_TEXTURE_UNITS constant.
+   */
+  public static final int MAX_TEXTURES = 2;
+  
+  /** Number of textures currently in use. */
+  protected int numMultitextures;
+  
+  /** Number of currently initialized texture buffers. */
+  protected int numTexBuffers;
+  
+  /** Blending mode used by the texture combiner. */
+  protected int multitexureBlendMode;
+  
+  /** Array used in the renderTriangles method to store the textures in use. */
+  protected PTexture[] renderTextures = new PTexture[MAX_TEXTURES];
+  
+  /** Current texture images. */
+  protected PImage[] multitextureImages = new PImage[MAX_TEXTURES];
+  
+  /** Used to detect changes in the current texture images. */
+  protected PImage[] multitextureImages0 = new PImage[MAX_TEXTURES];
+  
+  /** Current texture UV coordinates. */
+  protected float[] multitextureU = new float[MAX_TEXTURES];
+  protected float[] multitextureV = new float[MAX_TEXTURES];
+  
+  /** Texture UV coordinates for all vertices. */
+  protected float[][] vertexU = new float[DEFAULT_VERTICES][1];
+  protected float[][] vertexV = new float[DEFAULT_VERTICES][1];
+  
+  /** Texture images assigned to each vertex. */
+  protected PImage[][] vertexTex = new PImage[DEFAULT_VERTICES][1];
+  
+  /** UV arrays used in renderTriangles(). */
+  protected float[] renderUa = new float[MAX_TEXTURES];
+  protected float[] renderVa = new float[MAX_TEXTURES];
+  protected float[] renderUb = new float[MAX_TEXTURES];
+  protected float[] renderVb = new float[MAX_TEXTURES];
+  protected float[] renderUc = new float[MAX_TEXTURES];
+  protected float[] renderVc = new float[MAX_TEXTURES];  
+
+  // ........................................................
+  
+  // Blending:  
+  
+  boolean blend;
+  int blendMode;  
+  
+  // ........................................................
+
+  // Text:
+    
+  /** Buffers and array to draw text quads. */
+  private IntBuffer textVertexBuffer = null;
+  private IntBuffer textTexCoordBuffer = null;
+  private int[] textVertexArray = null;
+  private int[] textTexCoordArray = null;  
+  private int textVertexCount = 0;  
+  
+  // .......................................................
+  
+  // Framebuffer stack:
+
+  static protected Stack<PFramebuffer> fbStack;
+  static protected PFramebuffer screenFramebuffer;
+  static protected PFramebuffer currentFramebuffer;
+
+  // .......................................................
+  
+  // Offscreen rendering:
+  
+  protected PFramebuffer offscreenFramebuffer;
+  protected PImage[] offscreenImages;
+  protected PTexture[] offscreenTextures;
+  protected int offscreenIndex;
+  protected int[] offscreenTexCrop;
+  
+  /** These are public so they can be changed by advanced users. */
+  public int offscreenDepthBits = 16;
+  public int offscreenStencilBits = 0;  
+  
+  // ........................................................
+
+  // Shape recording:
 
   protected boolean recordingShape;
   protected int numRecordedTextures = 0;
@@ -342,84 +418,53 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected ArrayList<float[]> recordedColors = null;
   protected ArrayList<PVector> recordedNormals = null;
   protected ArrayList<PVector>[] recordedTexCoords = null;
-  protected ArrayList<PShape3D> recordedChildren = null;
-
-  // .......................................................
-  
-  static protected Stack<PFramebuffer> fbStack;
-  static protected PFramebuffer screenFramebuffer;
-  static protected PFramebuffer currentFramebuffer;
-  
-  protected PFramebuffer offscreenFramebuffer;
-  protected PImage[] offscreenImages;
-  protected PTexture[] offscreenTextures;
-  protected int offscreenIndex;
-  protected int[] offscreenTexCrop;
-  
-  // These are public so they can be changed by the (advanced) users.
-  public int offscreenDepthBits = 16;
-  public int offscreenStencilBits = 0;
-
-  // .......................................................
-  
-  static protected boolean usingGLMatrixStack;    
-  static protected A3DMatrixStack modelviewStack;
-  static protected A3DMatrixStack projectionStack;
+  protected ArrayList<PShape3D> recordedChildren = null;  
   
   // ........................................................
-
+  
+  // Drawing surface:
+  
   // Used to save a copy of the last drawn frame in order to repaint on the
   // backbuffer when using no clear mode.
   protected int[] screenTexCrop;
 
   // This variable controls clearing of the color buffer.
   protected boolean clearColorBuffer;
-  protected boolean clearColorBuffer0;
+  protected boolean clearColorBuffer0;  
+  
+  /** IntBuffer to go with the pixels[] array. */
+  protected IntBuffer pixelBuffer;
+  
+  /** 1-pixel get/set buffer. */  
+  protected IntBuffer getsetBuffer;
+  
+  /** 1-pixel get/set texture. */  
+  protected PTexture getsetTexture;  
   
   // ........................................................
+
+  // Utility variables:  
   
-  boolean blend;
-  int blendMode;
+  /** Used to hold color values to be sent to OpenGL. */
+  protected float[] colorFloats;
 
   // ........................................................
 
-  // Extensions support.
-  static protected boolean npotTexSupported;
-  static protected boolean mipmapGeneration;
-  static protected boolean matrixGetSupported;
-  static protected boolean vboSupported;
-  static protected boolean fboSupported;
-  static protected boolean blendEqSupported;
-  static protected boolean texenvCrossbarSupported;
+  // Utility constants:  
   
-  // Some OpenGL limits
-  static protected int maxTextureSize;
-  static protected float maxPointSize;
-  static protected float maxLineWidth;
-  static protected int maxTextureUnits;
-  
-  // ........................................................
-  
-  // OpenGL strings
-  static public String OPENGL_VENDOR;
-  static public String OPENGL_RENDERER;
-  static public String OPENGL_VERSION;  
-
-  // ........................................................
-
   /**
    * Set to true if the host system is big endian (PowerPC, MIPS, SPARC), false
    * if little endian (x86 Intel for Mac or PC).
    */
   static public boolean BIG_ENDIAN = ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN;
 
-  // Size of an int (in bytes).
+  /** Size of an int (in bytes). */
   protected static final int SIZEOF_INT = Integer.SIZE / 8;
    
-  // Size of a float (in bytes).
+  /** Size of a float (in bytes). */
   protected static final int SIZEOF_FLOAT = Float.SIZE / 8;
   
-  // ////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////
 
   
   public PGraphicsAndroid3D() {
@@ -497,7 +542,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       lightsAllocated = true;
     }
 
-    if (!buffersAllocated) {
+    if (!geometryAllocated) {
       ByteBuffer vbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 3 * SIZEOF_INT);
       vbb.order(ByteOrder.nativeOrder());
       vertexBuffer = vbb.asIntBuffer();
@@ -525,7 +570,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       
       numTexBuffers = 1;
       
-      buffersAllocated = true;
+      geometryAllocated = true;
     }    
   }
 
@@ -2369,7 +2414,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected void renderTriangles(int start, int stop) {
     report("render_triangles in");
 
-    int numTextures = 0;
+    int tcount = 0;
 
     gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
     gl.glEnableClientState(GL10.GL_COLOR_ARRAY);
@@ -2393,8 +2438,8 @@ public class PGraphicsAndroid3D extends PGraphics {
             gl.glEnable(tex.getGLTarget());
             gl.glActiveTexture(GL10.GL_TEXTURE0 + t);
             gl.glBindTexture(tex.getGLTarget(), tex.getGLID());   
-            renderTextures[numTextures] = tex;
-            numTextures++;
+            renderTextures[tcount] = tex;
+            tcount++;
           } else {
             // If there is a null texture image at some point in the
             // list, all subsequent images are ignored. This situation
@@ -2414,22 +2459,22 @@ public class PGraphicsAndroid3D extends PGraphics {
           gl.glActiveTexture(GL10.GL_TEXTURE0);
           gl.glBindTexture(tex.getGLTarget(), tex.getGLID());   
           renderTextures[0] = tex;
-          numTextures = 1;
+          tcount = 1;
         }
       }
 
-      if (0 < numTextures) {
-        if (numTexBuffers < numTextures) {
-          addTexBuffers(numTextures - numTexBuffers);
+      if (0 < tcount) {
+        if (numTexBuffers < tcount) {
+          addTexBuffers(tcount - numTexBuffers);
         }                
         gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
-        if (1 < numTextures) {
-          setMultitextureBlend(renderTextures, numTextures);
+        if (1 < tcount) {
+          setMultitextureBlend(renderTextures, tcount);
         }
       }
       
       if (recordingShape) {
-        numRecordedTextures = PApplet.max(numRecordedTextures, numTextures);
+        numRecordedTextures = PApplet.max(numRecordedTextures, tcount);
         
         int n0 = recordedVertices.size();
         int n1 = n0 + 3 * faceLength[j] - 1;
@@ -2454,7 +2499,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       vertexBuffer.position(0);
       colorBuffer.position(0);
       normalBuffer.position(0);
-      for (int t = 0; t < numTextures; t++) {
+      for (int t = 0; t < tcount; t++) {
         texCoordBuffer[t].position(0);
       }
 
@@ -2500,7 +2545,7 @@ public class PGraphicsAndroid3D extends PGraphics {
           a[HAS_NORMAL] = b[HAS_NORMAL] = c[HAS_NORMAL] = 1;
         }
         
-        if (numTextures == 1) {
+        if (tcount == 1) {
           float uscale = 1.0f;
           float vscale = 1.0f;
           float cx = 0.0f;
@@ -2532,8 +2577,8 @@ public class PGraphicsAndroid3D extends PGraphics {
 
           renderUc[0] = (cx + sx * c[U]) * uscale;
           renderVc[0] = (cy + sy * c[V]) * vscale;
-        } else if (1 < numTextures) {
-          for (int t = 0; t < numTextures; t++) {
+        } else if (1 < tcount) {
+          for (int t = 0; t < tcount; t++) {
             float uscale = 1.0f;
             float vscale = 1.0f;
             float cx = 0.0f;
@@ -2573,14 +2618,14 @@ public class PGraphicsAndroid3D extends PGraphics {
           recordedVertices.add(new PVector(a[X], a[Y], a[Z]));
           recordedColors.add(new float[] { a[R], a[G], a[B], a[A] });
           recordedNormals.add(new PVector(a[NX], a[NY], a[NZ]));
-          for (int t = 0; t < numTextures; t++) {
+          for (int t = 0; t < tcount; t++) {
             recordedTexCoords[t].add(new PVector(vertexU[na][t], vertexV[na][t], 0.0f));
           }
           // We need to add texture coordinate values for all the recorded vertices and all
           // texture units because even if this part of the recording doesn't use textures,
           // a subsequent (previous) portion might (did), and when setting the texture coordinates
           // for a shape we need to provide coordinates for the whole shape.          
-          for (int t = numTextures; t < maxTextureUnits; t++) {
+          for (int t = tcount; t < maxTextureUnits; t++) {
             recordedTexCoords[t].add(new PVector(0.0f, 0.0f, 0.0f));
           }
         } else {
@@ -2594,7 +2639,7 @@ public class PGraphicsAndroid3D extends PGraphics {
           normalArray[3 * n + 0] = toFixed32(a[NX]);
           normalArray[3 * n + 1] = toFixed32(a[NY]);
           normalArray[3 * n + 2] = toFixed32(a[NZ]);
-          for (int t = 0; t < numTextures; t++) {
+          for (int t = 0; t < tcount; t++) {
             texCoordArray[t][2 * n + 0] = toFixed32(renderUa[t]);
             texCoordArray[t][2 * n + 1] = toFixed32(renderVa[t]);
           }
@@ -2606,11 +2651,11 @@ public class PGraphicsAndroid3D extends PGraphics {
           recordedVertices.add(new PVector(b[X], b[Y], b[Z]));
           recordedColors.add(new float[] { b[R], b[G], b[B], b[A] });
           recordedNormals.add(new PVector(b[NX], b[NY], b[NZ]));
-          for (int t = 0; t < numTextures; t++) {
+          for (int t = 0; t < tcount; t++) {
             recordedTexCoords[t].add(new PVector(vertexU[nb][t], vertexV[nb][t], 0.0f));
           }
           // Idem to comment in section corresponding to vertex A.          
-          for (int t = numTextures; t < maxTextureUnits; t++) {
+          for (int t = tcount; t < maxTextureUnits; t++) {
             recordedTexCoords[t].add(new PVector(0.0f, 0.0f, 0.0f));
           }
         } else {
@@ -2624,7 +2669,7 @@ public class PGraphicsAndroid3D extends PGraphics {
           normalArray[3 * n + 0] = toFixed32(b[NX]);
           normalArray[3 * n + 1] = toFixed32(b[NY]);
           normalArray[3 * n + 2] = toFixed32(b[NZ]);
-          for (int t = 0; t < numTextures; t++) {
+          for (int t = 0; t < tcount; t++) {
             texCoordArray[t][2 * n + 0] = toFixed32(renderUb[t]);
             texCoordArray[t][2 * n + 1] = toFixed32(renderVb[t]);
           }
@@ -2636,11 +2681,11 @@ public class PGraphicsAndroid3D extends PGraphics {
           recordedVertices.add(new PVector(c[X], c[Y], c[Z]));
           recordedColors.add(new float[] { c[R], c[G], c[B], c[A] });
           recordedNormals.add(new PVector(c[NX], c[NY], c[NZ]));
-          for (int t = 0; t < numTextures; t++) {
+          for (int t = 0; t < tcount; t++) {
             recordedTexCoords[t].add(new PVector(vertexU[nc][t], vertexV[nc][t], 0.0f));
           }
           // Idem to comment in section corresponding to vertex A.          
-          for (int t = numTextures; t < maxTextureUnits; t++) {
+          for (int t = tcount; t < maxTextureUnits; t++) {
             recordedTexCoords[t].add(new PVector(0.0f, 0.0f, 0.0f));
           }
         } else {
@@ -2654,7 +2699,7 @@ public class PGraphicsAndroid3D extends PGraphics {
           normalArray[3 * n + 0] = toFixed32(c[NX]);
           normalArray[3 * n + 1] = toFixed32(c[NY]);
           normalArray[3 * n + 2] = toFixed32(c[NZ]);
-          for (int t = 0; t < numTextures; t++) {
+          for (int t = 0; t < tcount; t++) {
             texCoordArray[t][2 * n + 0] = toFixed32(renderUc[t]);
             texCoordArray[t][2 * n + 1] = toFixed32(renderVc[t]);
           }
@@ -2668,32 +2713,32 @@ public class PGraphicsAndroid3D extends PGraphics {
         vertexBuffer.put(vertexArray);
         colorBuffer.put(colorArray);
         normalBuffer.put(normalArray);
-        for (int t = 0; t < numTextures; t++) {
+        for (int t = 0; t < tcount; t++) {
           texCoordBuffer[t].put(texCoordArray[t]);
         }
 
         vertexBuffer.position(0);
         colorBuffer.position(0);
         normalBuffer.position(0);
-        for (int t = 0; t < numTextures; t++) {
+        for (int t = 0; t < tcount; t++) {
           texCoordBuffer[t].position(0);
         }
         
         gl.glVertexPointer(3, GL10.GL_FIXED, 0, vertexBuffer);
         gl.glColorPointer(4, GL10.GL_FIXED, 0, colorBuffer);
         gl.glNormalPointer(GL10.GL_FIXED, 0, normalBuffer);
-        for (int t = 0; t < numTextures; t++) {
+        for (int t = 0; t < tcount; t++) {
           gl.glClientActiveTexture(GL10.GL_TEXTURE0 + t);
           gl.glTexCoordPointer(2, GL10.GL_FIXED, 0, texCoordBuffer[t]);          
         }
         gl.glDrawArrays(GL10.GL_TRIANGLES, 0, 3 * faceLength[j]);
       }
       
-      if (0 < numTextures) {
-        if (1 < numTextures) {
-          clearMultitextureBlend(numTextures);
+      if (0 < tcount) {
+        if (1 < tcount) {
+          clearMultitextureBlend(tcount);
         }
-        for (int t = 0; t < numTextures; t++) {
+        for (int t = 0; t < tcount; t++) {
           PTexture tex = renderTextures[t];          
           gl.glActiveTexture(GL10.GL_TEXTURE0 + t);
           gl.glBindTexture(tex.getGLTarget(), 0);
@@ -2703,7 +2748,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         // two 2D textures. If the glDisable() call in in the previous loop, then the
         // 2D texture target is disabled in the first iteration, which invalidates the
         // glBindTexture in the second iteration.
-        for (int t = 0; t < numTextures; t++) {
+        for (int t = 0; t < tcount; t++) {
           PTexture tex = renderTextures[t];
           gl.glDisable(tex.getGLTarget());
         }
@@ -3471,7 +3516,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   public void pushMatrix() {
     gl.glPushMatrix();  
     if (usingGLMatrixStack) {
-      if (projectionMode) {
+      if (matrixMode == PROJECTION) {
         projectionStack.push();         
       } else {          
         modelviewStack.push();
@@ -3482,7 +3527,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   public void popMatrix() {
     gl.glPopMatrix();
     if (usingGLMatrixStack) {
-      if (projectionMode) {
+      if (matrixMode == PROJECTION) {
         projectionStack.pop(); 
         projectionUpdated = false;        
       } else {          
@@ -3508,7 +3553,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     // along Y is applied.
     gl.glTranslatef(tx, ty, tz);
     if (usingGLMatrixStack) {
-      if (projectionMode) {
+      if (matrixMode == PROJECTION) {
         projectionStack.translate(tx, ty, tz);
         projectionUpdated = false;        
       } else {          
@@ -3547,7 +3592,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   public void rotate(float angle, float v0, float v1, float v2) {
     gl.glRotatef(PApplet.degrees(angle), v0, v1, v2);
     if (usingGLMatrixStack) {
-      if (projectionMode) {
+      if (matrixMode == PROJECTION) {
         projectionStack.rotate(angle, v0, v1, v2);
         projectionUpdated = false;        
       } else {          
@@ -3580,7 +3625,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
     gl.glScalef(x, y, z);
     if (usingGLMatrixStack) {
-      if (projectionMode) {
+      if (matrixMode == PROJECTION) {
         projectionStack.scale(x, y, z);
         projectionUpdated = false;        
       } else {          
@@ -3604,6 +3649,19 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // MATRIX MORE!
 
+  
+  public void matrixMode(int mode) {    
+    if (mode == PROJECTION) {
+      gl.glMatrixMode(GL10.GL_PROJECTION);
+      matrixMode = PROJECTION;
+    } else if (matrixMode == MODELVIEW) {
+      gl.glMatrixMode(GL10.GL_MODELVIEW);
+      matrixMode = MODELVIEW;
+    } else {
+      System.err.println("OPENGL2: incorrect matrix mode.");
+    }
+  }  
+  
   public void resetMatrix() {
     gl.glLoadIdentity();
   }
@@ -3656,7 +3714,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     gl.glMultMatrixf(gltemp, 0);
 
     if (usingGLMatrixStack) {
-      if (projectionMode) {
+      if (matrixMode == PROJECTION) {
         projectionStack.mult(gltemp);
         projectionUpdated = false;
       } else {
@@ -3824,15 +3882,6 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // PROJECTION
 
-  public void beginProjection() {
-    gl.glMatrixMode(GL10.GL_PROJECTION);
-    projectionMode = true;
-  }
-  
-  public void endProjection() {
-    gl.glMatrixMode(GL10.GL_MODELVIEW);
-    projectionMode = false;
-  }
   
   protected void getProjectionMatrix() {
     if (usingGLMatrixStack) {
@@ -3844,11 +3893,12 @@ public class PGraphicsAndroid3D extends PGraphics {
     projectionUpdated = true;
   }
   
+  
   public void updateProjection() {
     copyPMatrixToGLArray(projection, glprojection);
     gl.glMatrixMode(GL10.GL_PROJECTION);
     gl.glLoadMatrixf(glprojection, 0);
-    if (!projectionMode) { 
+    if (matrixMode == MODELVIEW) { 
       gl.glMatrixMode(GL10.GL_MODELVIEW);
     }    
     if (usingGLMatrixStack) {
