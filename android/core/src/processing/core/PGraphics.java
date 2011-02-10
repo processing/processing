@@ -3460,20 +3460,6 @@ public class PGraphics extends PImage implements PConstants {
 
   //////////////////////////////////////////////////////////////
 
-  // PROJECTION
-
-  public void beginProjection() {
-    showMethodWarning("beginProjection");
-  }
-
-  
-  public void endProjection() {
-    showMethodWarning("endProjection");
-  }
-  
-
-  //////////////////////////////////////////////////////////////
-
   // CAMERA
 
 
@@ -5104,9 +5090,7 @@ public class PGraphics extends PImage implements PConstants {
   }
   //////////////////////////////////////////////////////////////
   
-  // A3D-only functions
-  
-  // TODO: Discuss proper integration into PGraphics API. 
+  // New API:
 
   public void blend(int mode) {
     if (!is3D()) {
@@ -5154,6 +5138,11 @@ public class PGraphics extends PImage implements PConstants {
     if (!is3D()) {
       showMissingWarning("shapeName");
     }
+  }
+  
+  
+  public void matrixMode(int mode) {
+    showMissingWarning("setting matrix mode requires OPENGL2"); 
   }
   
   
