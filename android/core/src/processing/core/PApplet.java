@@ -8156,19 +8156,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
   //////////////////////////////////////////////////////////////
 
-  // A3D-only functions
-
-  // TODO: Discuss proper integration into PApplet API.
-
-  public void beginProjection() {
-    g.beginProjection();
-  }
-
-  
-  public void endProjection() {
-    g.endProjection();
-  }
-  
+  // New API:
   
   public void blend(int mode) {
     g.blend(mode);
@@ -8196,6 +8184,10 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
   public void shapeName(String name) {
     g.shapeName(name);
+  }
+  
+  public void matrixMode(int mode) {
+    g.matrixMode(mode);
   }
   
   public void texture(PImage image0, PImage image1) {

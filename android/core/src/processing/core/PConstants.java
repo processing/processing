@@ -250,6 +250,10 @@ public interface PConstants {
   static final int COMPLAINT = 1;
   static final int PROBLEM   = 2;
 
+  // types of transformation matrices
+  
+  static final int PROJECTION = 0;
+  static final int MODELVIEW  = 1;  
 
   // types of projection matrices
 
