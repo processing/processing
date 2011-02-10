@@ -6457,7 +6457,12 @@ public class PGraphicsOpenGL2 extends PGraphics {
   // INITIALIZATION ROUTINES    
   
   protected void initPrimary() {
-    GLProfile.initSingleton(true);
+    // Calling this one leads to crash from native code in Linux 64 bits:
+    //GLProfile.initSingleton(true);
+    // Some more info that could be relevant is here:
+    // http://jogamp.762907.n3.nabble.com/QtJambi-JOGL-Ubuntu-Lucid-td909554.html
+    // Some more about threading, X11 and AWT:
+    // http://jogamp.762907.n3.nabble.com/SIGSEGV-when-closing-JOGL-applications-td895912.html
     
     // TODO: when running as applet use:      
     // GLProfile.initSingleton(false);      
