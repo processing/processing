@@ -2447,7 +2447,10 @@ public class PGraphicsOpenGL2 extends PGraphics {
         if (numTexBuffers < tcount) {
           addTexBuffers(tcount - numTexBuffers);
         }                
-        gl2f.glEnableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
+        for (int t = 0; t < tcount; t++) {
+          gl2f.glClientActiveTexture(GL.GL_TEXTURE0 + t);        
+          gl2f.glEnableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
+        }
         if (1 < tcount) {
           setupTextureBlend(renderTextures, tcount);
         }
@@ -2740,10 +2743,12 @@ public class PGraphicsOpenGL2 extends PGraphics {
         // glBindTexture in the second iteration.
         for (int t = 0; t < tcount; t++) {
           PTexture tex = renderTextures[t];
-          gl.glDisable(tex.getGLTarget());
+          gl.glDisable(tex.getGLTarget());          
+        }        
+        for (int t = 0; t < tcount; t++) {
+          gl2f.glClientActiveTexture(GL.GL_TEXTURE0 + t);        
+          gl2f.glDisableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
         }
-
-        gl2f.glDisableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
       }
     }
 
