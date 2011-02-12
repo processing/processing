@@ -24,8 +24,10 @@
 package processing.core;
 
 import java.io.*;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Set;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -145,6 +147,10 @@ public class PFont implements PConstants {
   Paint lazyPaint;
 //  FontMetrics lazyMetrics;
   int[] lazySamples;
+  
+  /** for subclasses that need to store metadata about the font */
+  protected HashMap<PGraphics, Object> cacheMap;    
+  
   
   /**
    * Required for OpenGL-based font rendering.
@@ -331,9 +337,28 @@ public class PFont implements PConstants {
   }
   
   
-  public void delete() {
-    for (int i = 0; i < textures.length; i++) {
-      textures[i].delete();
+  void delete() {
+    if (cacheMap != null) {    
+      Set<PGraphics> keySet = cacheMap.keySet();
+      if (!keySet.isEmpty()) {
+        Object[] keys = keySet.toArray();
+        for (int i = 0; i < keys.length; i++) {
+          Object data = getCache((PGraphics)keys[i]);
+          Method del = null;
+          
+          try {
+            Class<?> c = data.getClass();
+            del = c.getMethod("delete", new Class[] {});
+          } catch (Exception e) {}
+          
+          if (del != null) {
+            // The metadata have a delete method. We try running it.
+            try {
+              del.invoke(data, new Object[] {});
+            } catch (Exception e) {}
+          }   
+        }
+      }    
     }
   }
   
@@ -568,7 +593,60 @@ public class PFont implements PConstants {
 
   //////////////////////////////////////////////////////////////
 
+  // METADATA REQUIRED BY THE RENDERERS
+  
 
+  /**
+   * Store data of some kind for a renderer that requires extra metadata of
+   * some kind. Usually this is a renderer-specific representation of the
+   * font data, for instance a custom OpenGL texture for PGraphicsOpenGL2.
+   * @param renderer The PGraphics renderer associated to the font
+   * @param storage The metadata required by the renderer    
+   */
+  public void setCache(PGraphics renderer, Object storage) {
+    if (cacheMap == null) cacheMap = new HashMap<PGraphics, Object>();
+    cacheMap.put(renderer, storage);
+  }
+
+
+  /**
+   * Get cache storage data for the specified renderer. Because each renderer
+   * will cache data in different formats, it's necessary to store cache data
+   * keyed by the renderer object. Otherwise, attempting to draw the same
+   * image to both a PGraphicsJava2D and a PGraphicsOpenGL2 will cause errors.
+   * @param renderer The PGraphics renderer associated to the font
+   * @return metadata stored for the specified renderer
+   */
+  public Object getCache(PGraphics renderer) {
+    if (cacheMap == null) return null;
+    return cacheMap.get(renderer);
+  }
+
+
+  /**
+   * Remove information associated with this renderer from the cache, if any.
+   * @param parent The PGraphics renderer whose cache data should be removed
+   */
+  public void removeCache(PGraphics renderer) {
+    if (cacheMap != null) {
+      cacheMap.remove(renderer);
+    }
+  }  
+  
+  
+  //////////////////////////////////////////////////////////////  
+  
+  public int getGlyphCount()  {
+    return glyphCount;
+  }
+  
+  public Glyph getGlyph(int i)  {
+    return glyphs[i];  
+  }  
+  
+  //////////////////////////////////////////////////////////////
+
+  
   static final char[] EXTRA_CHARS = {
     0x0080, 0x0081, 0x0082, 0x0083, 0x0084, 0x0085, 0x0086, 0x0087,
     0x0088, 0x0089, 0x008A, 0x008B, 0x008C, 0x008D, 0x008E, 0x008F,
