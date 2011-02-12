@@ -5083,6 +5083,22 @@ public class PGraphics extends PImage implements PConstants {
   //////////////////////////////////////////////////////////////
   
   // New API:
+  
+  protected String[] getSupportedShapeFormats() {
+    return null;
+  }
+
+  
+  protected PShape loadShape(String filename, Object params) {
+    showMissingWarning("loading OBJ files requires A3D");
+    return null;
+  }
+  
+  
+  protected PShape createShape(int size, Object params) {
+    showMissingWarning("creating PShape3D objects requires A3D");
+    return null;
+  }  
 
   public void screenBlend(int mode) {
     showMissingWarning("screen blending requires A3D");
@@ -5131,88 +5147,61 @@ public class PGraphics extends PImage implements PConstants {
   }
   
   
-  
-  
   public void texture(PImage image0, PImage image1) {
-    if (!is3D()) {
-      showMissingWarning("texture(PImage image0, PImage image1)");
-    }
+    showMissingWarning("multitexturing requires OPENGL2");
   }
   
   
   public void texture(PImage image0, PImage image1, PImage image2) {
-    if (!is3D()) {
-      showMissingWarning("texture(PImage image0, PImage image1, PImage image2)");
-    }
+    showMissingWarning("multitexturing requires A3D");
   }
   
 
   public void texture(PImage image0, PImage image1, PImage image2, PImage image3) {
-    if (!is3D()) {
-      showMissingWarning("texture(PImage image0, PImage image1, PImage image2, PImage image3)");
-    }
+    showMissingWarning("multitexturing requires A3D");
   }
 
   
   public void texture(PImage[] images) {
-    if (!is3D()) {
-      showMissingWarning("texture(PImage[] images)");
-    }
+    showMissingWarning("multitexturing requires A3D");
   }
   
   
   public void vertex(float x, float y, float u0, float v0, float u1, float v1) {
-    if (!is3D()) {
-      showMissingWarning("vertex(float x, float y, float u0, float v0, float u1, float v1)");
-    }    
+    showMissingWarning("multitextured vertex requires A3D"); 
   }
   
   
   public void vertex(float x, float y, float u0, float v0, float u1, float v1, float u2, float v2) {
-    if (!is3D()) {
-      showMissingWarning("vertex(float x, float y, float u0, float v0, float u1, float v1, float u2, float v2)");
-    }      
+    showMissingWarning("multitextured vertex requires A3D");    
   }  
   
   
   public void vertex(float x, float y, float u0, float v0, float u1, float v1, float u2, float v2, float u3, float v3) {
-    if (!is3D()) {
-      showMissingWarning("vertex(float x, float y, float u0, float v0, float u1, float v1, float u2, float v2, float u3, float v3)");
-    } 
+    showMissingWarning("multitextured vertex requires A3D"); 
   }  
-  
-  
+
   public void vertex(float x, float y, float[] u, float[] v) {
-    if (!is3D()) {
-      showMissingWarning("vertex(float x, float y, float[] u, float[] v)");
-    }
+    showMissingWarning("multitextured vertex requires A3D"); 
   }
  
   
   public void vertex(float x, float y, float z, float u0, float v0, float u1, float v1) {
-    if (!is3D()) {
-      showMissingWarning("vertex(float x, float y, float z, float u0, float v0, float u1, float v1)");
-    }    
+    showMissingWarning("multitextured vertex requires A3D"); 
   }
   
   
   public void vertex(float x, float y, float z, float u0, float v0, float u1, float v1, float u2, float v2) {
-    if (!is3D()) {
-      showMissingWarning("vertex(float x, float y, float z, float u0, float v0, float u1, float v1, float u2, float v2)");
-    }      
+    showMissingWarning("multitextured vertex requires A3D");       
   }  
   
   
   public void vertex(float x, float y, float z, float u0, float v0, float u1, float v1, float u2, float v2, float u3, float v3) {
-    if (!is3D()) {
-      showMissingWarning("vertex(float x, float y, float z, float u0, float v0, float u1, float v1, float u2, float v2, float u3, float v3)");
-    } 
+    showMissingWarning("multitextured vertex requires A3D");    
   }  
   
   
   public void vertex(float x, float y, float z, float[] u, float[] v) {
-    if (!is3D()) {
-      showMissingWarning("vertex(float x, float y, float z, float[] u, float[] v)");
-    }
-  }  
+    showMissingWarning("multitextured vertex requires A3D");
+  }
 }
