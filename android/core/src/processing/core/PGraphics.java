@@ -857,14 +857,6 @@ public class PGraphics extends PImage implements PConstants {
    this.edge = edge;
   }
 
-
-  /**
-   * Sets the automatic normal calculation mode.
-   */  
-  public void autoNormal(boolean auto) {
-    this.autoNormal = auto;   
-  }
-  
   
   /**
    * Sets the current normal vector. Only applies with 3D rendering
@@ -5092,58 +5084,53 @@ public class PGraphics extends PImage implements PConstants {
   
   // New API:
 
-  public void blend(int mode) {
-    if (!is3D()) {
-      showMissingWarning("blend");
-    }
-  }
-  
-  
-  public void noBlend() {
-    if (!is3D()) {
-      showMissingWarning("noBlend");
-    }
+  public void screenBlend(int mode) {
+    showMissingWarning("screen blending requires A3D");
   }
 
   
   public void textureBlend(int mode) {
-    if (!is3D()) {
-      showMissingWarning("blend");
-    }
+    showMissingWarning("texture blending requires A3D");
   }
   
   
-  public void noTextureBlend() {
-    if (!is3D()) {
-      showMissingWarning("noBlend");
-    }
+  public PShape beginRecord() {
+    showMissingWarning("shape recording requires A3D");
+    return null;
   }
   
   
-  public void mergeRecord() { 
-    if (!is3D()) {
-      showMissingWarning("mergeRecord");
-    }    
+  public void endRecord() {
+    showMissingWarning("shape recording requires A3D");   
   }
-
   
-  public void noMergeRecord() { 
-    if (!is3D()) {
-      showMissingWarning("noMergeRecord");
-    }    
+  
+  public boolean isRecording() {
+    showMissingWarning("shape recording requires A3D"); 
+    return false;
+  }  
+  
+  
+  public void mergeShapes(boolean val) { 
+    showMissingWarning("shape recording requires A3D");      
   }
   
   
   public void shapeName(String name) {
-    if (!is3D()) {
-      showMissingWarning("shapeName");
-    }
+    showMissingWarning("shape recording requires A3D");
+  }
+  
+
+  public void autoNormal(boolean auto) {
+    this.autoNormal = auto;   
   }
   
   
   public void matrixMode(int mode) {
-    showMissingWarning("setting matrix mode requires OPENGL2"); 
+    showMissingWarning("setting matrix mode requires A3D"); 
   }
+  
+  
   
   
   public void texture(PImage image0, PImage image1) {
