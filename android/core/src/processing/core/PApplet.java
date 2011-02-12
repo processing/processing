@@ -8113,6 +8113,15 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
   
   
+  public void beginText() {
+    g.beginText();
+  }
+
+
+  public void endText() {
+    g.endText();
+  }  
+  
   public void texture(PImage image0, PImage image1) {
     g.texture(image0, image1);
   }  

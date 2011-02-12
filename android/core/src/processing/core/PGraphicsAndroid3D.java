@@ -25,6 +25,7 @@ package processing.core;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
+import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.EmptyStackException;
 import java.util.Set;
@@ -43,8 +44,6 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLContext;
 import javax.microedition.khronos.egl.EGLDisplay;
-
-import processing.core.PFont.Glyph;
 
 // drawPixels is missing...calls to glDrawPixels are commented out
 //   setRasterPos() is also commented out
@@ -319,6 +318,12 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected int[] faceMaxIndex = new int[DEFAULT_FACES];  
   protected PImage[][] faceTextures = new PImage[DEFAULT_FACES][MAX_TEXTURES];
   
+  // Testing geometry buffer for now (but it already rocks) ...
+  public boolean USE_GBUFFER = false;
+  public boolean GBUFFER_MERGE_ALL = false;
+  public boolean GBUFFER_UPDATE_STACK = true;
+  public GeometryBuffer gbuffer;  
+  
   // ........................................................
 
   // Texturing:  
@@ -386,6 +391,10 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected int[] textVertexArray = null;
   protected int[] textTexCoordArray = null;  
   protected int textVertexCount = 0;  
+  
+  /** Used in the text block method. */
+  protected boolean textBlockMode = false;
+  protected int textBlockTex;  
   
   // .......................................................
   
@@ -468,6 +477,9 @@ public class PGraphicsAndroid3D extends PGraphics {
    */
   static public boolean BIG_ENDIAN = ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN;
 
+  /** Size of a short (in bytes). */
+  protected static final int SIZEOF_SHORT = Short.SIZE / 8;  
+  
   /** Size of an int (in bytes). */
   protected static final int SIZEOF_INT = Integer.SIZE / 8;
    
@@ -805,6 +817,11 @@ public class PGraphicsAndroid3D extends PGraphics {
     for (int t = 0; t < numTexBuffers; t++) { 
       texCoordBuffer[t].rewind();
     }
+        
+    if (USE_GBUFFER) {
+      if (gbuffer == null) gbuffer = new GeometryBuffer();     
+      if (GBUFFER_MERGE_ALL) gbuffer.init(TRIANGLES);
+    }    
     
     // Each frame starts with textures disabled.
     noTexture();
@@ -874,6 +891,16 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   public void endDraw() {
     report("top endDraw()");
+    
+    if (USE_GBUFFER && GBUFFER_MERGE_ALL && (gbuffer != null)) {
+      gl.glEnableClientState(GL11.GL_VERTEX_ARRAY);
+      gl.glEnableClientState(GL11.GL_COLOR_ARRAY);
+      gl.glEnableClientState(GL11.GL_NORMAL_ARRAY);    
+      gbuffer.render();
+      gl.glDisableClientState(GL11.GL_NORMAL_ARRAY);
+      gl.glDisableClientState(GL11.GL_COLOR_ARRAY);
+      gl.glDisableClientState(GL11.GL_VERTEX_ARRAY);
+    }
     
     if (primarySurface) {
       
@@ -2314,120 +2341,96 @@ public class PGraphicsAndroid3D extends PGraphics {
         }
       }
       
-      if (recordingShape) {
-        numRecordedTextures = PApplet.max(numRecordedTextures, tcount);
-        
-        int n0 = recordedVertices.size();
-        int n1 = n0 + 3 * faceLength[j] - 1;
-        
-        String name = "shape";
-        if (mergeRecShapes) {
-          name = "shape";  
-        } else {
-          name = recShapeName.equals("") ? "shape:" + recordedChildren.size() : recShapeName;
+      if (USE_GBUFFER) {
+        if (!GBUFFER_MERGE_ALL) {
+          gbuffer.init(TRIANGLES, renderTextures, tcount);
         }
-        PShape3D child = (PShape3D)PShape3D.createChild(name, n0, n1, TRIANGLES, 0, images);
-        recordedChildren.add(child);
-      }
-
-      // Division by three needed because each int element in the buffer is used
-      // to store three coordinates.
-      int size = 3 * faceLength[j];
-      while (vertexBuffer.capacity() / 3 < size) { 
-        expandBuffers();
-      }
-
-      vertexBuffer.position(0);
-      colorBuffer.position(0);
-      normalBuffer.position(0);
-      for (int t = 0; t < tcount; t++) {
-        texCoordBuffer[t].position(0);
-      }
-
-      int n = 0;
-      for (int k = 0; k < faceLength[j]; k++) {
-        int na = triangles[i][VERTEX1];
-        int nb = triangles[i][VERTEX2];
-        int nc = triangles[i][VERTEX3];
-        float a[] = vertices[na];
-        float b[] = vertices[nb];
-        float c[] = vertices[nc];
-
-        if (autoNormal && (a[HAS_NORMAL] == 0 || b[HAS_NORMAL] == 0 || c[HAS_NORMAL] == 0)) {
-          // Ok, some of the vertices defining the current triangle have not been
-          // assigned a normal, and the automatic normal calculation is enabled, so 
-          // we generate the normal for all the vertices of this triangle.
+        gbuffer.add(triangles, i, i + faceLength[j] - 1, vertices, faceMinIndex[j], faceMaxIndex[j]);
+        if (!GBUFFER_MERGE_ALL) {
+          gbuffer.render();
+        }
+      } else {
+        if (recordingShape) {
+          numRecordedTextures = PApplet.max(numRecordedTextures, tcount);
           
-          // Assuming CW vertex ordering, so the outside direction for this triangle
-          // should be given by the cross product (b - a) x (b - c):
-          float x1 = b[X] - a[X]; 
-          float y1 = b[Y] - a[Y];
-          float z1 = b[Z] - a[Z]; 
+          int n0 = recordedVertices.size();
+          int n1 = n0 + 3 * faceLength[j] - 1;
           
-          float x2 = b[X] - c[X]; 
-          float y2 = b[Y] - c[Y];
-          float z2 = b[Z] - c[Z]; 
+          String name = "shape";
+          if (mergeRecShapes) {
+            name = "shape";  
+          } else {
+            name = recShapeName.equals("") ? "shape:" + recordedChildren.size() : recShapeName;
+          }
+          PShape3D child = (PShape3D)PShape3D.createChild(name, n0, n1, TRIANGLES, 0, images);
+          recordedChildren.add(child);
+        }
+
+        // Division by three needed because each int element in the buffer is used
+        // to store three coordinates.
+        int size = 3 * faceLength[j];
+        while (vertexBuffer.capacity() / 3 < size) { 
+          expandBuffers();
+        }
+
+        vertexBuffer.position(0);
+        colorBuffer.position(0);
+        normalBuffer.position(0);
+        for (int t = 0; t < tcount; t++) {
+          texCoordBuffer[t].position(0);
+        }
+
+        int n = 0;
+        for (int k = 0; k < faceLength[j]; k++) {
+          int na = triangles[i][VERTEX1];
+          int nb = triangles[i][VERTEX2];
+          int nc = triangles[i][VERTEX3];
+          float a[] = vertices[na];
+          float b[] = vertices[nb];
+          float c[] = vertices[nc];
+
+          if (autoNormal && (a[HAS_NORMAL] == 0 || b[HAS_NORMAL] == 0 || c[HAS_NORMAL] == 0)) {
+            // Ok, some of the vertices defining the current triangle have not been
+            // assigned a normal, and the automatic normal calculation is enabled, so 
+            // we generate the normal for all the vertices of this triangle.
             
-          float cx = y1 * z2 - y2 * z1;
-          float cy = z1 * x2 - z2 * x1;
-          float cz = x1 * y2 - x2 * y1;          
-          
-          float norm = PApplet.sqrt(cx * cx + cy * cy + cz * cz);
-          
-          cx /= norm;
-          cy /= norm;
-          cz /= norm;
-          
-          // Same normal vector assigned to the three vertices:
-          a[NX] = b[NX] = c[NX] = cx;
-          a[NY] = b[NY] = c[NY] = cy;
-          a[NZ] = b[NZ] = c[NZ] = cz;
-          
-          a[HAS_NORMAL] = b[HAS_NORMAL] = c[HAS_NORMAL] = 1;
-        }
-        
-        if (tcount == 1) {
-          float uscale = 1.0f;
-          float vscale = 1.0f;
-          float cx = 0.0f;
-          float sx = +1.0f;
-          float cy = 0.0f;
-          float sy = +1.0f;
-          
-          PTexture tex = renderTextures[0];
-          uscale *= tex.getMaxTexCoordU();
-          vscale *= tex.getMaxTexCoordV();
-
-          if (tex.isFlippedX()) {
-            cx = 1.0f;
-            sx = -1.0f;
+            // Assuming CW vertex ordering, so the outside direction for this triangle
+            // should be given by the cross product (b - a) x (b - c):
+            float x1 = b[X] - a[X]; 
+            float y1 = b[Y] - a[Y];
+            float z1 = b[Z] - a[Z]; 
+            
+            float x2 = b[X] - c[X]; 
+            float y2 = b[Y] - c[Y];
+            float z2 = b[Z] - c[Z]; 
+              
+            float cx = y1 * z2 - y2 * z1;
+            float cy = z1 * x2 - z2 * x1;
+            float cz = x1 * y2 - x2 * y1;          
+            
+            float norm = PApplet.sqrt(cx * cx + cy * cy + cz * cz);
+            
+            cx /= norm;
+            cy /= norm;
+            cz /= norm;
+            
+            // Same normal vector assigned to the three vertices:
+            a[NX] = b[NX] = c[NX] = cx;
+            a[NY] = b[NY] = c[NY] = cy;
+            a[NZ] = b[NZ] = c[NZ] = cz;
+            
+            a[HAS_NORMAL] = b[HAS_NORMAL] = c[HAS_NORMAL] = 1;
           }
-
-          if (tex.isFlippedY()) {
-            cy = 1.0f;
-            sy = -1.0f;
-          }
-
-          // No multitexturing, so getting the texture coordinates
-          // directly from the U, V fields in the vertices array.
-          renderUa[0] = (cx + sx * a[U]) * uscale;
-          renderVa[0] = (cy + sy * a[V]) * vscale;
           
-          renderUb[0] = (cx + sx * b[U]) * uscale;
-          renderVb[0] = (cy + sy * b[V]) * vscale;
-
-          renderUc[0] = (cx + sx * c[U]) * uscale;
-          renderVc[0] = (cy + sy * c[V]) * vscale;
-        } else if (1 < tcount) {
-          for (int t = 0; t < tcount; t++) {
+          if (tcount == 1) {
             float uscale = 1.0f;
             float vscale = 1.0f;
             float cx = 0.0f;
             float sx = +1.0f;
             float cy = 0.0f;
             float sy = +1.0f;
-
-            PTexture tex = renderTextures[t];
+            
+            PTexture tex = renderTextures[0];
             uscale *= tex.getMaxTexCoordU();
             vscale *= tex.getMaxTexCoordV();
 
@@ -2441,138 +2444,172 @@ public class PGraphicsAndroid3D extends PGraphics {
               sy = -1.0f;
             }
 
-            // The texture coordinates are obtained from the vertexU, vertexV
-            // arrays that store multitexture U, V coordinates.
-            renderUa[t] = (cx + sx * vertexU[na][t]) * uscale;
-            renderVa[t] = (cy + sy * vertexV[na][t]) * vscale;
+            // No multitexturing, so getting the texture coordinates
+            // directly from the U, V fields in the vertices array.
+            renderUa[0] = (cx + sx * a[U]) * uscale;
+            renderVa[0] = (cy + sy * a[V]) * vscale;
+            
+            renderUb[0] = (cx + sx * b[U]) * uscale;
+            renderVb[0] = (cy + sy * b[V]) * vscale;
 
-            renderUb[t] = (cx + sx * vertexU[nb][t]) * uscale;
-            renderVb[t] = (cy + sy * vertexV[nb][t]) * vscale;
+            renderUc[0] = (cx + sx * c[U]) * uscale;
+            renderVc[0] = (cy + sy * c[V]) * vscale;
+          } else if (1 < tcount) {
+            for (int t = 0; t < tcount; t++) {
+              float uscale = 1.0f;
+              float vscale = 1.0f;
+              float cx = 0.0f;
+              float sx = +1.0f;
+              float cy = 0.0f;
+              float sy = +1.0f;
 
-            renderUc[t] = (cx + sx * vertexU[nc][t]) * uscale;
-            renderVc[t] = (cy + sy * vertexV[nc][t]) * vscale;
+              PTexture tex = renderTextures[t];
+              uscale *= tex.getMaxTexCoordU();
+              vscale *= tex.getMaxTexCoordV();
+
+              if (tex.isFlippedX()) {
+                cx = 1.0f;
+                sx = -1.0f;
+              }
+
+              if (tex.isFlippedY()) {
+                cy = 1.0f;
+                sy = -1.0f;
+              }
+
+              // The texture coordinates are obtained from the vertexU, vertexV
+              // arrays that store multitexture U, V coordinates.
+              renderUa[t] = (cx + sx * vertexU[na][t]) * uscale;
+              renderVa[t] = (cy + sy * vertexV[na][t]) * vscale;
+
+              renderUb[t] = (cx + sx * vertexU[nb][t]) * uscale;
+              renderVb[t] = (cy + sy * vertexV[nb][t]) * vscale;
+
+              renderUc[t] = (cx + sx * vertexU[nc][t]) * uscale;
+              renderVc[t] = (cy + sy * vertexV[nc][t]) * vscale;
+            }
           }
+          
+          // Adding vertex A.
+          if (recordingShape) {
+            recordedVertices.add(new PVector(a[X], a[Y], a[Z]));
+            recordedColors.add(new float[] { a[R], a[G], a[B], a[A] });
+            recordedNormals.add(new PVector(a[NX], a[NY], a[NZ]));
+            for (int t = 0; t < tcount; t++) {
+              recordedTexCoords[t].add(new PVector(vertexU[na][t], vertexV[na][t], 0.0f));
+            }
+            // We need to add texture coordinate values for all the recorded vertices and all
+            // texture units because even if this part of the recording doesn't use textures,
+            // a subsequent (previous) portion might (did), and when setting the texture coordinates
+            // for a shape we need to provide coordinates for the whole shape.          
+            for (int t = tcount; t < maxTextureUnits; t++) {
+              recordedTexCoords[t].add(new PVector(0.0f, 0.0f, 0.0f));
+            }
+          } else {
+            vertexArray[3 * n + 0] = toFixed32(a[X]);
+            vertexArray[3 * n + 1] = toFixed32(a[Y]);
+            vertexArray[3 * n + 2] = toFixed32(a[Z]);
+            colorArray[4 * n + 0] = toFixed32(a[R]);
+            colorArray[4 * n + 1] = toFixed32(a[G]);
+            colorArray[4 * n + 2] = toFixed32(a[B]);
+            colorArray[4 * n + 3] = toFixed32(a[A]);
+            normalArray[3 * n + 0] = toFixed32(a[NX]);
+            normalArray[3 * n + 1] = toFixed32(a[NY]);
+            normalArray[3 * n + 2] = toFixed32(a[NZ]);
+            for (int t = 0; t < tcount; t++) {
+              texCoordArray[t][2 * n + 0] = toFixed32(renderUa[t]);
+              texCoordArray[t][2 * n + 1] = toFixed32(renderVa[t]);
+            }
+            n++;
+          }
+
+          // Adding vertex B.
+          if (recordingShape) {
+            recordedVertices.add(new PVector(b[X], b[Y], b[Z]));
+            recordedColors.add(new float[] { b[R], b[G], b[B], b[A] });
+            recordedNormals.add(new PVector(b[NX], b[NY], b[NZ]));
+            for (int t = 0; t < tcount; t++) {
+              recordedTexCoords[t].add(new PVector(vertexU[nb][t], vertexV[nb][t], 0.0f));
+            }
+            // Idem to comment in section corresponding to vertex A.          
+            for (int t = tcount; t < maxTextureUnits; t++) {
+              recordedTexCoords[t].add(new PVector(0.0f, 0.0f, 0.0f));
+            }
+          } else {
+            vertexArray[3 * n + 0] = toFixed32(b[X]);
+            vertexArray[3 * n + 1] = toFixed32(b[Y]);
+            vertexArray[3 * n + 2] = toFixed32(b[Z]);
+            colorArray[4 * n + 0] = toFixed32(b[R]);
+            colorArray[4 * n + 1] = toFixed32(b[G]);
+            colorArray[4 * n + 2] = toFixed32(b[B]);
+            colorArray[4 * n + 3] = toFixed32(b[A]);
+            normalArray[3 * n + 0] = toFixed32(b[NX]);
+            normalArray[3 * n + 1] = toFixed32(b[NY]);
+            normalArray[3 * n + 2] = toFixed32(b[NZ]);
+            for (int t = 0; t < tcount; t++) {
+              texCoordArray[t][2 * n + 0] = toFixed32(renderUb[t]);
+              texCoordArray[t][2 * n + 1] = toFixed32(renderVb[t]);
+            }
+            n++;
+          }
+
+          // Adding vertex C.
+          if (recordingShape) {
+            recordedVertices.add(new PVector(c[X], c[Y], c[Z]));
+            recordedColors.add(new float[] { c[R], c[G], c[B], c[A] });
+            recordedNormals.add(new PVector(c[NX], c[NY], c[NZ]));
+            for (int t = 0; t < tcount; t++) {
+              recordedTexCoords[t].add(new PVector(vertexU[nc][t], vertexV[nc][t], 0.0f));
+            }
+            // Idem to comment in section corresponding to vertex A.          
+            for (int t = tcount; t < maxTextureUnits; t++) {
+              recordedTexCoords[t].add(new PVector(0.0f, 0.0f, 0.0f));
+            }
+          } else {
+            vertexArray[3 * n + 0] = toFixed32(c[X]);
+            vertexArray[3 * n + 1] = toFixed32(c[Y]);
+            vertexArray[3 * n + 2] = toFixed32(c[Z]);
+            colorArray[4 * n + 0] = toFixed32(c[R]);
+            colorArray[4 * n + 1] = toFixed32(c[G]);
+            colorArray[4 * n + 2] = toFixed32(c[B]);
+            colorArray[4 * n + 3] = toFixed32(c[A]);
+            normalArray[3 * n + 0] = toFixed32(c[NX]);
+            normalArray[3 * n + 1] = toFixed32(c[NY]);
+            normalArray[3 * n + 2] = toFixed32(c[NZ]);
+            for (int t = 0; t < tcount; t++) {
+              texCoordArray[t][2 * n + 0] = toFixed32(renderUc[t]);
+              texCoordArray[t][2 * n + 1] = toFixed32(renderVc[t]);
+            }
+            n++;
+          }
+
+          i++;
         }
-        
-        // Adding vertex A.
-        if (recordingShape) {
-          recordedVertices.add(new PVector(a[X], a[Y], a[Z]));
-          recordedColors.add(new float[] { a[R], a[G], a[B], a[A] });
-          recordedNormals.add(new PVector(a[NX], a[NY], a[NZ]));
+
+        if (!recordingShape) {
+          vertexBuffer.put(vertexArray);
+          colorBuffer.put(colorArray);
+          normalBuffer.put(normalArray);
           for (int t = 0; t < tcount; t++) {
-            recordedTexCoords[t].add(new PVector(vertexU[na][t], vertexV[na][t], 0.0f));
+            texCoordBuffer[t].put(texCoordArray[t]);
           }
-          // We need to add texture coordinate values for all the recorded vertices and all
-          // texture units because even if this part of the recording doesn't use textures,
-          // a subsequent (previous) portion might (did), and when setting the texture coordinates
-          // for a shape we need to provide coordinates for the whole shape.          
-          for (int t = tcount; t < maxTextureUnits; t++) {
-            recordedTexCoords[t].add(new PVector(0.0f, 0.0f, 0.0f));
-          }
-        } else {
-          vertexArray[3 * n + 0] = toFixed32(a[X]);
-          vertexArray[3 * n + 1] = toFixed32(a[Y]);
-          vertexArray[3 * n + 2] = toFixed32(a[Z]);
-          colorArray[4 * n + 0] = toFixed32(a[R]);
-          colorArray[4 * n + 1] = toFixed32(a[G]);
-          colorArray[4 * n + 2] = toFixed32(a[B]);
-          colorArray[4 * n + 3] = toFixed32(a[A]);
-          normalArray[3 * n + 0] = toFixed32(a[NX]);
-          normalArray[3 * n + 1] = toFixed32(a[NY]);
-          normalArray[3 * n + 2] = toFixed32(a[NZ]);
-          for (int t = 0; t < tcount; t++) {
-            texCoordArray[t][2 * n + 0] = toFixed32(renderUa[t]);
-            texCoordArray[t][2 * n + 1] = toFixed32(renderVa[t]);
-          }
-          n++;
-        }
 
-        // Adding vertex B.
-        if (recordingShape) {
-          recordedVertices.add(new PVector(b[X], b[Y], b[Z]));
-          recordedColors.add(new float[] { b[R], b[G], b[B], b[A] });
-          recordedNormals.add(new PVector(b[NX], b[NY], b[NZ]));
+          vertexBuffer.position(0);
+          colorBuffer.position(0);
+          normalBuffer.position(0);
           for (int t = 0; t < tcount; t++) {
-            recordedTexCoords[t].add(new PVector(vertexU[nb][t], vertexV[nb][t], 0.0f));
+            texCoordBuffer[t].position(0);
           }
-          // Idem to comment in section corresponding to vertex A.          
-          for (int t = tcount; t < maxTextureUnits; t++) {
-            recordedTexCoords[t].add(new PVector(0.0f, 0.0f, 0.0f));
-          }
-        } else {
-          vertexArray[3 * n + 0] = toFixed32(b[X]);
-          vertexArray[3 * n + 1] = toFixed32(b[Y]);
-          vertexArray[3 * n + 2] = toFixed32(b[Z]);
-          colorArray[4 * n + 0] = toFixed32(b[R]);
-          colorArray[4 * n + 1] = toFixed32(b[G]);
-          colorArray[4 * n + 2] = toFixed32(b[B]);
-          colorArray[4 * n + 3] = toFixed32(b[A]);
-          normalArray[3 * n + 0] = toFixed32(b[NX]);
-          normalArray[3 * n + 1] = toFixed32(b[NY]);
-          normalArray[3 * n + 2] = toFixed32(b[NZ]);
+          
+          gl.glVertexPointer(3, GL10.GL_FIXED, 0, vertexBuffer);
+          gl.glColorPointer(4, GL10.GL_FIXED, 0, colorBuffer);
+          gl.glNormalPointer(GL10.GL_FIXED, 0, normalBuffer);
           for (int t = 0; t < tcount; t++) {
-            texCoordArray[t][2 * n + 0] = toFixed32(renderUb[t]);
-            texCoordArray[t][2 * n + 1] = toFixed32(renderVb[t]);
+            gl.glClientActiveTexture(GL10.GL_TEXTURE0 + t);
+            gl.glTexCoordPointer(2, GL10.GL_FIXED, 0, texCoordBuffer[t]);          
           }
-          n++;
-        }
-
-        // Adding vertex C.
-        if (recordingShape) {
-          recordedVertices.add(new PVector(c[X], c[Y], c[Z]));
-          recordedColors.add(new float[] { c[R], c[G], c[B], c[A] });
-          recordedNormals.add(new PVector(c[NX], c[NY], c[NZ]));
-          for (int t = 0; t < tcount; t++) {
-            recordedTexCoords[t].add(new PVector(vertexU[nc][t], vertexV[nc][t], 0.0f));
-          }
-          // Idem to comment in section corresponding to vertex A.          
-          for (int t = tcount; t < maxTextureUnits; t++) {
-            recordedTexCoords[t].add(new PVector(0.0f, 0.0f, 0.0f));
-          }
-        } else {
-          vertexArray[3 * n + 0] = toFixed32(c[X]);
-          vertexArray[3 * n + 1] = toFixed32(c[Y]);
-          vertexArray[3 * n + 2] = toFixed32(c[Z]);
-          colorArray[4 * n + 0] = toFixed32(c[R]);
-          colorArray[4 * n + 1] = toFixed32(c[G]);
-          colorArray[4 * n + 2] = toFixed32(c[B]);
-          colorArray[4 * n + 3] = toFixed32(c[A]);
-          normalArray[3 * n + 0] = toFixed32(c[NX]);
-          normalArray[3 * n + 1] = toFixed32(c[NY]);
-          normalArray[3 * n + 2] = toFixed32(c[NZ]);
-          for (int t = 0; t < tcount; t++) {
-            texCoordArray[t][2 * n + 0] = toFixed32(renderUc[t]);
-            texCoordArray[t][2 * n + 1] = toFixed32(renderVc[t]);
-          }
-          n++;
-        }
-
-        i++;
-      }
-
-      if (!recordingShape) {
-        vertexBuffer.put(vertexArray);
-        colorBuffer.put(colorArray);
-        normalBuffer.put(normalArray);
-        for (int t = 0; t < tcount; t++) {
-          texCoordBuffer[t].put(texCoordArray[t]);
-        }
-
-        vertexBuffer.position(0);
-        colorBuffer.position(0);
-        normalBuffer.position(0);
-        for (int t = 0; t < tcount; t++) {
-          texCoordBuffer[t].position(0);
-        }
-        
-        gl.glVertexPointer(3, GL10.GL_FIXED, 0, vertexBuffer);
-        gl.glColorPointer(4, GL10.GL_FIXED, 0, colorBuffer);
-        gl.glNormalPointer(GL10.GL_FIXED, 0, normalBuffer);
-        for (int t = 0; t < tcount; t++) {
-          gl.glClientActiveTexture(GL10.GL_TEXTURE0 + t);
-          gl.glTexCoordPointer(2, GL10.GL_FIXED, 0, texCoordBuffer[t]);          
-        }
-        gl.glDrawArrays(GL10.GL_TRIANGLES, 0, 3 * faceLength[j]);
+          gl.glDrawArrays(GL10.GL_TRIANGLES, 0, 3 * faceLength[j]);
+        }      
       }
       
       if (0 < tcount) {
@@ -3128,6 +3165,44 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   //////////////////////////////////////////////////////////////
 
+  // TEXT BLOCK
+
+  public void beginText() {
+    if (textMode == MODEL) {
+      textBlockMode = true;  
+      textVertexCount = 0;
+    }
+  }
+
+  
+  public void endText() {
+    if (textBlockMode) {
+      textBlockMode = false;
+      
+      if (0 < textVertexCount) {
+        // Now we render all the text that has been pushed between 
+        // beginText/endText.
+        
+        if (screenBlendMode != BLEND) {
+          gl.glEnable(GL10.GL_BLEND);
+          if (blendEqSupported) gl11xp.glBlendEquation(GL11ExtensionPack.GL_FUNC_ADD);
+          gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+        }    
+        
+        textTex.setTexture(textBlockTex);
+        renderTextModel();
+        
+        // Restoring current blend mode.
+        screenBlend(screenBlendMode);        
+        
+        gl.glBindTexture(GL10.GL_TEXTURE_2D, 0);   
+        gl.glDisable(GL10.GL_TEXTURE_2D);      
+      }
+    }
+  }    
+  
+  //////////////////////////////////////////////////////////////
+
   // TEXT IMPL
 
   // protected void textLineAlignImpl(char buffer[], int start, int stop,
@@ -3169,14 +3244,26 @@ public class PGraphicsAndroid3D extends PGraphics {
       // Setting Z axis as the normal to the text geometry      
       setDefNormals(0, 0, 1);
       
-      textVertexCount = 0;
+      if (!textBlockMode) {
+        // Resetting vertex count when we are not defining a 
+        // block of text.
+        textVertexCount = 0;
+      }
     }
     
     super.textLineImpl(buffer, start, stop, x, y);
 
     if (textMode == MODEL && 0 < textVertexCount) {
       // Pushing text geometry to the GPU.
-      renderTextModel();
+      if (!textBlockMode) {
+        // Pushing text geometry to the GPU.
+        renderTextModel();
+      } else {
+        // We don't push any geometry here because we will
+        // do it when endText is called. For now we just 
+        // save the current texture.
+        textBlockTex = textTex.currentTex;
+      }
     }
     
     // Restoring current blend mode.
@@ -3224,7 +3311,8 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   protected void textCharModelImpl(PFontTexture.TextureInfo info, float x1, float y1,
       float x2, float y2) {
-    if ((textTex.currentTex != info.texIndex)) {
+    if ((textTex.currentTex != info.texIndex) || 
+        (textBlockMode && textBlockTex != info.texIndex)) {
       if (0 < textVertexCount) {
         // Current texture changes (the font is so large that needs more than one texture).
         // So rendering all we got until now, and reseting vertex counter.
@@ -3349,6 +3437,11 @@ public class PGraphicsAndroid3D extends PGraphics {
   // MATRIX STACK
 
   public void pushMatrix() {
+    if (USE_GBUFFER && GBUFFER_MERGE_ALL && GBUFFER_UPDATE_STACK) {
+      gbuffer.stack.push();
+      return;
+    }    
+    
     gl.glPushMatrix();  
     if (usingGLMatrixStack) {
       if (matrixMode == PROJECTION) {
@@ -3360,6 +3453,11 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
 
   public void popMatrix() {
+    if (USE_GBUFFER && GBUFFER_MERGE_ALL && GBUFFER_UPDATE_STACK) {
+      gbuffer.stack.pop();
+      return;
+    }    
+    
     gl.glPopMatrix();
     if (usingGLMatrixStack) {
       if (matrixMode == PROJECTION) {
@@ -3381,6 +3479,11 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
 
   public void translate(float tx, float ty, float tz) {
+    if (USE_GBUFFER && GBUFFER_MERGE_ALL && GBUFFER_UPDATE_STACK) {
+      gbuffer.stack.translate(tx, ty, tz);
+      return;
+    }       
+    
     gl.glTranslatef(tx, ty, tz);
     if (usingGLMatrixStack) {
       if (matrixMode == PROJECTION) {
@@ -3420,6 +3523,11 @@ public class PGraphicsAndroid3D extends PGraphics {
    * takes radians (instead of degrees).
    */
   public void rotate(float angle, float v0, float v1, float v2) {
+    if (USE_GBUFFER && GBUFFER_MERGE_ALL && GBUFFER_UPDATE_STACK) {      
+      gbuffer.stack.rotate(angle, v0, v1, v2); 
+      return;  
+    }
+        
     gl.glRotatef(PApplet.degrees(angle), v0, v1, v2);
     if (usingGLMatrixStack) {
       if (matrixMode == PROJECTION) {
@@ -3449,17 +3557,22 @@ public class PGraphicsAndroid3D extends PGraphics {
   /**
    * Scale in three dimensions.
    */
-  public void scale(float x, float y, float z) {
+  public void scale(float sx, float sy, float sz) {
+    if (USE_GBUFFER && GBUFFER_MERGE_ALL && GBUFFER_UPDATE_STACK) {
+      gbuffer.stack.scale(sx, sy, sz);
+      return;
+    }    
+    
     if (manipulatingCamera) {
       scalingDuringCamManip = true;
     }
-    gl.glScalef(x, y, z);
+    gl.glScalef(sx, sy, sz);
     if (usingGLMatrixStack) {
       if (matrixMode == PROJECTION) {
-        projectionStack.scale(x, y, z);
+        projectionStack.scale(sx, sy, sz);
         projectionUpdated = false;        
       } else {          
-        modelviewStack.scale(x, y, z); 
+        modelviewStack.scale(sx, sy, sz); 
         modelviewUpdated = false;
       }
     }
@@ -6396,6 +6509,283 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   // UTILITY INNER CLASSES  
   
+  
+  protected class GeometryBuffer {
+    int mode;    
+    int idxCount;
+    int vertCount;
+    int texCount;
+    short[] indicesArray;
+    int[] verticesArray;
+    int[] normalsArray;
+    int[] colorsArray;
+    int[][] texcoordsArray;
+    PTexture[] texturesArray;
+    int minVertIndex;
+    int maxVertIndex;
+    
+    // The GeometryBuffer has its own stack (for now at least) because
+    // OpenGL stack contains the contribution of the camera placement, whereas
+    // for transforming the vertices don't need it.
+    GLMatrixStack stack;
+    
+    ShortBuffer indicesBuffer;
+    IntBuffer verticesBuffer;
+    IntBuffer normalsBuffer;
+    IntBuffer colorsBuffer;
+    IntBuffer[] texcoordsBuffer;
+    
+    int allocTexStorage;
+    
+    GeometryBuffer() {
+      ByteBuffer ibb = ByteBuffer.allocateDirect(DEFAULT_TRIANGLES * SIZEOF_SHORT);
+      ibb.order(ByteOrder.nativeOrder());
+      indicesBuffer = ibb.asShortBuffer();
+            
+      ByteBuffer vbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 3 * SIZEOF_INT);
+      vbb.order(ByteOrder.nativeOrder());
+      verticesBuffer = vbb.asIntBuffer();
+
+      ByteBuffer cbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 4 * SIZEOF_INT);
+      cbb.order(ByteOrder.nativeOrder());
+      colorsBuffer = cbb.asIntBuffer();
+
+      ByteBuffer nbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 3 * SIZEOF_INT);
+      nbb.order(ByteOrder.nativeOrder());
+      normalsBuffer = nbb.asIntBuffer();      
+      
+      texcoordsBuffer = new IntBuffer[MAX_TEXTURES];
+      ByteBuffer tbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 2 * SIZEOF_INT);
+      tbb.order(ByteOrder.nativeOrder());
+      texcoordsBuffer[0] = tbb.asIntBuffer();    
+      
+      indicesArray = new short[DEFAULT_TRIANGLES];
+      verticesArray = new int[DEFAULT_BUFFER_SIZE * 3];
+      colorsArray = new int[DEFAULT_BUFFER_SIZE * 4];      
+      normalsArray = new int[DEFAULT_BUFFER_SIZE * 3];
+      texcoordsArray = new int[1][DEFAULT_BUFFER_SIZE * 2];    
+      
+      texturesArray = new PTexture[MAX_TEXTURES];
+      
+      allocTexStorage = 1;
+      
+      stack = new GLMatrixStack();
+      
+      idxCount = 0;
+      vertCount = 0;
+      texCount = 0;
+    }
+    
+    void init(int mode) {
+      init(mode, null, 0);
+    }
+    
+    void init(int mode, PTexture[] textures, int tc) {
+      if (textures == null || tc == 0) {
+        texCount = 0;
+      } else {
+        texCount = tc;
+        PApplet.arrayCopy(textures, texturesArray, tc);
+      }
+      
+      if (allocTexStorage < texCount) {
+        int more = texCount - allocTexStorage;
+        
+        int size = texcoordsBuffer[allocTexStorage - 1].capacity();
+        for (int i = 0; i < more; i++) {
+          ByteBuffer tbb = ByteBuffer.allocateDirect(size * SIZEOF_INT);
+          tbb.order(ByteOrder.nativeOrder());
+          texcoordsBuffer[allocTexStorage + i] = tbb.asIntBuffer();    
+        }
+        
+        texcoordsArray = new int[allocTexStorage + more][size];
+        
+        allocTexStorage += more;          
+      }
+      
+      indicesBuffer.rewind();
+      verticesBuffer.rewind();
+      colorsBuffer.rewind();
+      normalsBuffer.rewind();
+      for (int t = 0; t < texCount; t++) {
+        texcoordsBuffer[t].rewind();
+      }
+      
+      idxCount = 0;
+      vertCount = 0;   
+            
+      minVertIndex = 100000; 
+      maxVertIndex = 0;
+      
+      stack.setIdentity();
+    }
+    
+    void add(int[][] indices, int i0, int i1, float[][] vertices, int v0, int v1) {
+      add(indices, i0, i1, vertices, v0, v1, stack.current);
+    }
+    
+    void add(int[][] indices, int i0, int i1, float[][] vertices, int v0, int v1, float[] mm) {      
+      int gcount = i1 - i0 + 1;
+      int vcount = v1 - v0 + 1;
+ 
+      while (indicesBuffer.capacity() < idxCount + 3 * gcount) {
+        int newSize = indicesBuffer.capacity() << 1;
+        
+        ByteBuffer ibb = ByteBuffer.allocateDirect(newSize * SIZEOF_SHORT);
+        ibb.order(ByteOrder.nativeOrder());
+        indicesBuffer = ibb.asShortBuffer();
+        
+        indicesArray = new short[newSize];
+      }
+      
+      while (verticesBuffer.capacity() / 3 < vertCount + vcount) {
+        int newSize = verticesBuffer.capacity() / 3 << 1;
+        
+        ByteBuffer vbb = ByteBuffer.allocateDirect(newSize * 3 * SIZEOF_INT);
+        vbb.order(ByteOrder.nativeOrder());
+        verticesBuffer = vbb.asIntBuffer();
+
+        ByteBuffer cbb = ByteBuffer.allocateDirect(newSize * 4 * SIZEOF_INT);
+        cbb.order(ByteOrder.nativeOrder());
+        colorsBuffer = cbb.asIntBuffer();
+
+        ByteBuffer nbb = ByteBuffer.allocateDirect(newSize * 3 * SIZEOF_INT);
+        nbb.order(ByteOrder.nativeOrder());
+        normalsBuffer = nbb.asIntBuffer();
+
+        for (int t = 0; t < texCount; t++) {    
+          ByteBuffer tbb = ByteBuffer.allocateDirect(newSize * 2 * SIZEOF_INT);
+          tbb.order(ByteOrder.nativeOrder());
+          texcoordsBuffer[t] = tbb.asIntBuffer(); 
+        }
+        
+        verticesArray = new int[newSize * 3];
+        colorsArray = new int[newSize * 4];
+        normalsArray = new int[newSize * 3];
+        for (int t = 0; t < texCount; t++) { 
+          texcoordsArray[t] = new int[newSize * 2];
+        }   
+      }
+      
+      int ni = 0;
+      for (int i = i0; i <= i1; i++) {
+        indicesArray[ni++] = (short)(vertCount + indices[i][VERTEX1] - v0);
+        indicesArray[ni++] = (short)(vertCount + indices[i][VERTEX2] - v0);
+        indicesArray[ni++] = (short)(vertCount + indices[i][VERTEX3] - v0);
+      }
+      
+      minVertIndex = vertCount;
+      maxVertIndex = vertCount + v1 - v0;      
+      
+      int nv = 0;
+      int nn = 0;
+      int nc = 0;
+      int nt = 0;
+      float x, y, z;
+      float nx, ny, nz;
+      float[] vert;
+      for (int i = v0; i <= v1; i++) {
+        vert = vertices[i];
+                
+        x = vert[X];
+        y = vert[Y];
+        z = vert[Z];
+        
+        nx = vert[NX];
+        ny = vert[NY];
+        nz = vert[NZ];
+        
+        if (mm == null) {
+          verticesArray[nv++] = toFixed32(x);
+          verticesArray[nv++] = toFixed32(y);
+          verticesArray[nv++] = toFixed32(z);
+          
+          normalsArray[nn++] = toFixed32(nx);
+          normalsArray[nn++] = toFixed32(ny);
+          normalsArray[nn++] = toFixed32(nz); 
+        } else {         
+          verticesArray[nv++] = toFixed32(x * mm[0] + y * mm[4] + z * mm[8] + mm[12]);
+          verticesArray[nv++] = toFixed32(x * mm[1] + y * mm[5] + z * mm[9] + mm[13]);
+          verticesArray[nv++] = toFixed32(x * mm[2] + y * mm[6] + z * mm[10] + mm[14]);
+          
+          normalsArray[nn++] = toFixed32(nx + mm[12]);
+          normalsArray[nn++] = toFixed32(ny + mm[13]);
+          normalsArray[nn++] = toFixed32(nz + mm[14]);
+        }
+        
+        colorsArray[nc++] = toFixed32(vert[R]);
+        colorsArray[nc++] = toFixed32(vert[G]);
+        colorsArray[nc++] = toFixed32(vert[B]);
+        colorsArray[nc++] = toFixed32(vert[A]);        
+        
+        if (0 < texCount) {
+          float[] vertU = vertexU[i];
+          float[] vertV = vertexV[i];
+          for (int t = 0; t < texCount; t++) {            
+            float uscale = 1.0f;
+            float vscale = 1.0f;
+            float cx = 0.0f;
+            float sx = +1.0f;
+            float cy = 0.0f;
+            float sy = +1.0f;
+            
+            PTexture tex = texturesArray[t];
+            uscale *= tex.getMaxTexCoordU();
+            vscale *= tex.getMaxTexCoordV();
+
+            if (tex.isFlippedX()) {
+              cx = 1.0f;
+              sx = -1.0f;
+            }
+
+            if (tex.isFlippedY()) {
+              cy = 1.0f;
+              sy = -1.0f;
+            } 
+            
+            texcoordsArray[t][nt++] = toFixed32((cx + sx * vertU[t]) * uscale);
+            texcoordsArray[t][nt++] = toFixed32((cy + sy * vertV[t]) * vscale);
+          }
+        }
+      }
+      
+      indicesBuffer.put(indicesArray, 0, 3 * gcount);
+      verticesBuffer.put(verticesArray, 0, 3 * vcount);
+      normalsBuffer.put(normalsArray, 0, 3 * vcount);
+      colorsBuffer.put(colorsArray, 0, 4 * vcount);
+      for (int t = 0; t < texCount; t++) {
+        texcoordsBuffer[t].put(texcoordsArray[t], 0, 2 * vcount);
+      }
+      
+      idxCount += 3 * gcount;
+      vertCount += vcount;
+    }
+    
+    void render() {
+      indicesBuffer.position(0);
+      verticesBuffer.position(0);
+      colorsBuffer.position(0);
+      normalsBuffer.position(0);
+      for (int t = 0; t < texCount; t++) {
+        texcoordsBuffer[t].position(0);
+      }
+      
+      gl.glVertexPointer(3, GL10.GL_FIXED, 0, verticesBuffer);
+      gl.glColorPointer(4, GL10.GL_FIXED, 0, colorsBuffer);
+      gl.glNormalPointer(GL10.GL_FIXED, 0, normalsBuffer);
+      for (int t = 0; t < texCount; t++) {
+        gl.glClientActiveTexture(GL10.GL_TEXTURE0 + t);
+        gl.glTexCoordPointer(2, GL10.GL_FIXED, 0, texcoordsBuffer[t]);          
+      }
+      
+      gl.glDrawElements(GL10.GL_TRIANGLES, idxCount, GL10.GL_UNSIGNED_SHORT, indicesBuffer);      
+      
+      // Using glDrawRangeElements doesn't make any difference:
+      //gl2x.glDrawRangeElements(GL.GL_TRIANGLES, minVertIndex, maxVertIndex, idxCount, GL2.GL_UNSIGNED_INT, indicesBuffer);    
+    } 
+    
+  }
+  
 
   /**
    *  This class encapsulates the drawing state in Processing.
@@ -6531,11 +6921,15 @@ public class PGraphicsAndroid3D extends PGraphics {
     public GLMatrixStack() {
       matrixStack = new Stack<float[]>();
       current = new float[16];    
-      set(1, 0, 0, 0,
-             0, 1, 0, 0,
-             0, 0, 1, 0,
-             0, 0, 0, 1);
+      setIdentity();
     }
+    
+    public void setIdentity() {
+      set(1, 0, 0, 0,
+          0, 1, 0, 0,
+          0, 0, 1, 0,
+          0, 0, 0, 1);
+    }    
     
     public void push() {
       float[] mat = new float[16];
