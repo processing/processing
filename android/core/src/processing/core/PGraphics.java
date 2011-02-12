@@ -5147,8 +5147,18 @@ public class PGraphics extends PImage implements PConstants {
   }
   
   
+  public void beginText() {
+    showMissingWarning("beginText");
+  }
+
+  
+  public void endText() {
+    showMissingWarning("endText");
+  }    
+  
+  
   public void texture(PImage image0, PImage image1) {
-    showMissingWarning("multitexturing requires OPENGL2");
+    showMissingWarning("multitexturing requires A3D");
   }
   
   
