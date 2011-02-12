@@ -6984,49 +6984,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
-  public PShape beginRecord() {
-    if (g.is3D()) {
-      return ((PGraphicsAndroid3D) g).beginRecord();
-    } else  {
-       throw new RuntimeException("The shapes recorder can only be used with the A3D renderer.");
-    }    
-  }
-  
-  
-  public void beginShapesRecorder() {
-    if (g.is3D()) {
-      ((PGraphicsAndroid3D) g).beginShapesRecorder();
-    } else  {
-       throw new RuntimeException("The shapes recorder can only be used with the A3D renderer.");
-    }
-  }
-
-
-  public void beginShapeRecorder() {
-    if (g.is3D()) {
-      ((PGraphicsAndroid3D) g).beginShapeRecorder();
-    } else  {
-       throw new RuntimeException("The shape recorder can only be used with the A3D renderer.");
-    }
-  }
-
-
-  public void beginShapeRecorder(int kind) {
-    if (g.is3D()) {
-      ((PGraphicsAndroid3D) g).beginShapeRecorder(kind);
-    } else  {
-       throw new RuntimeException("The shape recorder can only be used with the A3D renderer.");
-    }
-  }
-
-
   public void edge(boolean edge) {
     g.edge(edge);
-  }
-
-  
-  public void autoNormal(boolean auto) {
-    g.autoNormal(auto);
   }
 
   
@@ -7087,42 +7046,6 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
   public void endShape(int mode) {
     g.endShape(mode);
-  }
-
-
-  public void endRecord() {
-    if (g.is3D()) {
-      ((PGraphicsAndroid3D) g).endRecord();
-    } else  {
-       throw new RuntimeException("The shapes recorder can only be used with the A3D renderer.");
-    }    
-  }
-  
-  
-  public PShape3D endShapesRecorder() {
-    if (g.is3D()) {
-      return ((PGraphicsAndroid3D) g).endShapesRecorder();
-    } else  {
-       throw new RuntimeException("The shapes recorder can only be used with the A3D renderer.");
-    }
-  }
-
-
-  public PShape3D endShapeRecorder() {
-    if (g.is3D()) {
-      return ((PGraphicsAndroid3D) g).endShapeRecorder();
-    } else  {
-       throw new RuntimeException("The shape recorder can only be used with the A3D renderer.");
-    }
-  }
-
-
-  public PShape3D endShapeRecorder(int mode) {
-    if (g.is3D()) {
-      return ((PGraphicsAndroid3D) g).endShapeRecorder(mode);
-    } else  {
-       throw new RuntimeException("The shape recorder can only be used with the A3D renderer.");
-    }
   }
 
 
@@ -8158,49 +8081,61 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
   // New API:
   
-  public void blend(int mode) {
-    g.blend(mode);
+  
+  public void screenBlend(int mode) {
+    g.screenBlend(mode);
   }
 
-  public void noBlend() {
-    g.noBlend();
-  }
   
   public void textureBlend(int mode) {
     g.textureBlend(mode);
   }
 
-  public void noTextureBlend() {
-    g.noTextureBlend();
-  }  
   
-  public void mergeRecord() { 
-    g.mergeRecord();
+  public PShape beginRecord() {
+    return g.beginRecord();
   }
-
-  public void noMergeRecord() {
-    g.noMergeRecord();
+  
+  
+  public void endRecord() {
+    g.endRecord();
   }
+  
+  
+  public void mergeShapes(boolean val) { 
+    g.mergeShapes(val);
+  }
+  
 
   public void shapeName(String name) {
     g.shapeName(name);
   }
   
+  
+  public void autoNormal(boolean auto) {
+    g.autoNormal(auto);
+  }
+  
+  
   public void matrixMode(int mode) {
     g.matrixMode(mode);
   }
+  
   
   public void texture(PImage image0, PImage image1) {
     g.texture(image0, image1);
   }  
   
+  
   public void texture(PImage image0, PImage image1, PImage image2) {
     g.texture(image0, image1, image2);
   }
 
+  
   public void texture(PImage image0, PImage image1, PImage image2, PImage image3) {
     g.texture(image0, image1, image2, image3);
   }
+  
   
   public void texture(PImage[] images) {
     g.texture(images);
@@ -8209,6 +8144,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
   public void vertex(float x, float y, float u0, float v0, float u1, float v1) {
     g.vertex(x, y, u0, v0, u1, v1); 
   }
+  
   
   public void vertex(float x, float y, float u0, float v0, float u1, float v1, float u2, float v2) {
     g.vertex(x, y, u0, v0, u1, v1, u2, v2);
