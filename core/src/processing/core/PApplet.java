@@ -4174,8 +4174,9 @@ public class PApplet extends Applet
 
 
   /**
-   * Creates an empty shape, with the specified size and parameters.
-   */  
+   * Creates an empty shape, with the specified size and parameters. 
+   * The actual type will depend on the renderer.
+   */ 
   public PShape createShape(int size, Object params) {
     return g.createShape(size, params);
   }
@@ -8850,18 +8851,6 @@ public class PApplet extends Applet
   }
 
 
-  public void beginText() {
-    if (recorder != null) recorder.beginText();
-    g.beginText();
-  }
-
-
-  public void endText() {
-    if (recorder != null) recorder.endText();
-    g.endText();
-  }
-
-
   public float textWidth(char c) {
     return g.textWidth(c);
   }
@@ -10203,6 +10192,11 @@ public class PApplet extends Applet
   }
 
 
+  public boolean isRecording() {
+    return g.isRecording();
+  }
+
+
   public void mergeShapes(boolean val) { 
     if (recorder != null) recorder.mergeShapes(val);
     g.mergeShapes(val);
@@ -10224,6 +10218,18 @@ public class PApplet extends Applet
   public void matrixMode(int mode) {
     if (recorder != null) recorder.matrixMode(mode);
     g.matrixMode(mode);
+  }
+
+
+  public void beginText() {
+    if (recorder != null) recorder.beginText();
+    g.beginText();
+  }
+
+
+  public void endText() {
+    if (recorder != null) recorder.endText();
+    g.endText();
   }
 
 
