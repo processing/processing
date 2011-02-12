@@ -142,12 +142,7 @@ public class PTexture implements PConstants {
   public void delete() {    
     deleteTexture();
   }
-
-  /*
-  protected void finalize() {    
-    deleteTexture();
-  } 
-  */ 
+  
   
   ////////////////////////////////////////////////////////////
   
@@ -217,12 +212,14 @@ public class PTexture implements PConstants {
 
   
   public void set(PImage img) {
-    set(img.texture);
+    PTexture tex = (PTexture)img.getCache(a3d);
+    set(tex);
   }
   
   
   public void set(PImage img, int x, int y, int w, int h) {
-    set(img.texture, x, y, w, h);
+    PTexture tex = (PTexture)img.getCache(a3d);
+    set(tex, x, y, w, h);
   }
   
   
@@ -910,7 +907,12 @@ public class PTexture implements PConstants {
     gl.glTexParameterf(glTarget, GL10.GL_TEXTURE_WRAP_S, glWrapS);
     gl.glTexParameterf(glTarget, GL10.GL_TEXTURE_WRAP_T, glWrapT);
      
-    gl.glTexImage2D(glTarget, 0, glFormat,  glWidth,  glHeight, 0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, null);
+    // This array is used to make sure that the texture doesn't contain any
+    // garbage.
+    int[] initArray = new int[glWidth * glHeight];
+    java.util.Arrays.fill(initArray, 0, glWidth * glHeight, 0x00000000);    
+    gl.glTexImage2D(glTarget, 0, glFormat,  glWidth,  glHeight, 0, GL10.GL_RGBA, 
+                    GL10.GL_UNSIGNED_BYTE, IntBuffer.wrap(initArray));
     gl.glBindTexture(glTarget, 0);
     gl.glDisable(glTarget);
         
@@ -1066,7 +1068,7 @@ public class PTexture implements PConstants {
     if (params.target == TEXTURE2D)  {
         glTarget = GL10.GL_TEXTURE_2D;
     } else {
-      throw new RuntimeException("GTexture: Unknown texture target");     
+      throw new RuntimeException("A3D: Unknown texture target");     
     }
     
     if (params.format == RGB)  {
@@ -1076,7 +1078,7 @@ public class PTexture implements PConstants {
     } else  if (params.format == ALPHA) {
       glFormat = GL10.GL_ALPHA;
     } else {
-      throw new RuntimeException("GTexture: Unknown texture format");     
+      throw new RuntimeException("A3D: Unknown texture format");     
     }
     
     if (params.sampling == POINT) {
@@ -1089,7 +1091,7 @@ public class PTexture implements PConstants {
       glMagFilter = GL10.GL_LINEAR;
       glMinFilter = GL10.GL_LINEAR_MIPMAP_LINEAR;      
     } else {
-      throw new RuntimeException("GTexture: Unknown texture filtering mode");     
+      throw new RuntimeException("A3D: Unknown texture filtering mode");     
     }
     
     if (params.wrapU == CLAMP) {
@@ -1097,7 +1099,7 @@ public class PTexture implements PConstants {
     } else if (params.wrapU == REPEAT)  {
       glWrapS = GL10.GL_REPEAT;
     } else {
-      throw new RuntimeException("GTexture: Unknown wrapping mode");     
+      throw new RuntimeException("A3D: Unknown wrapping mode");     
     }
     
     if (params.wrapV == CLAMP) {
@@ -1105,7 +1107,7 @@ public class PTexture implements PConstants {
     } else if (params.wrapV == REPEAT)  {
       glWrapT = GL10.GL_REPEAT;
     } else {
-      throw new RuntimeException("GTexture: Unknown wrapping mode");     
+      throw new RuntimeException("A3D: Unknown wrapping mode");     
     }
   } 
 

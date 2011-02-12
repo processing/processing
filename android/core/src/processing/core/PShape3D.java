@@ -22,8 +22,6 @@
 
 package processing.core;
 
-import javax.microedition.khronos.opengles.*;
-
 import java.nio.FloatBuffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -32,6 +30,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.io.BufferedReader;
+import javax.microedition.khronos.opengles.*;
 
 /**
  * This class holds a 3D model composed of vertices, normals, colors (per vertex) and 
@@ -167,7 +166,7 @@ public class PShape3D extends PShape implements PConstants {
     this(parent, numVert, new Parameters()); 
   }  
   
-  public PShape3D(PApplet parent, String filename, int mode) {
+  public PShape3D(PApplet parent, String filename, Parameters params) {
     this.papplet = parent;
     a3d = (PGraphicsAndroid3D)parent.g;
 
@@ -179,7 +178,7 @@ public class PShape3D extends PShape implements PConstants {
     glNormalBufferID = 0;
     glTexCoordBufferID = null;
     
-    initShapeOBJ(filename, mode);    
+    initShapeOBJ(filename, params);    
   }  
   
   
@@ -600,10 +599,8 @@ public class PShape3D extends PShape implements PConstants {
     float sy = +1.0f;
     for (int i = firstUpdateIdx; i <= lastUpdateIdx; i++) {
       if (vertexChild[i] != null && vertexChild[i].textures[updateTexunit] != null) {
-        tex = vertexChild[i].textures[updateTexunit].getTexture();
-        if (tex == null) {
-          tex = vertexChild[i].textures[updateTexunit].createTexture();
-        }        
+        PImage img = vertexChild[i].textures[updateTexunit];
+        tex = a3d.getTexture(img);        
         
         if (tex != tex0) {
           uscale = 1.0f;
@@ -1878,7 +1875,7 @@ public class PShape3D extends PShape implements PConstants {
   }
   
   
-  protected void initShapeOBJ(String filename, int mode) {
+  protected void initShapeOBJ(String filename, Parameters params) {
     // Checking we have all we need:
     gl = a3d.gl11;
     if (gl == null) {
@@ -1900,7 +1897,11 @@ public class PShape3D extends PShape implements PConstants {
     }
     
     // Setting parameters.
-    Parameters params = PShape3D.newParameters(TRIANGLES, mode); 
+    if (params == null) {
+      params = PShape3D.newParameters(TRIANGLES, STATIC);
+    } else {
+      params.drawMode = TRIANGLES;
+    }
     setParameters(params);
     
     parseOBJ(reader, objVertices, objNormal, objTexCoords, objFaces, objMaterials);
@@ -2301,12 +2302,10 @@ public class PShape3D extends PShape implements PConstants {
     if (style) {
       for (int t = 0; t < textures.length; t++) {
         if (textures[t] != null) {
-          PTexture tex = textures[t].getTexture();
+          PTexture tex = (PTexture)textures[t].getCache(a3d);
+          tex = a3d.getTexture(textures[t]);
           if (tex == null) {
-            tex = textures[t].createTexture();
-            if (tex == null) {
-              break;
-            }
+            break;
           }
 
           gl.glEnable(tex.getGLTarget());
@@ -2348,10 +2347,10 @@ public class PShape3D extends PShape implements PConstants {
 
         gl.glEnable(GL11.GL_POINT_SPRITE_OES);           
       } else {
-        // Regular texturing.         
-        gl.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
+        // Regular texturing.                 
         for (int t = 0; t < numTextures; t++) {
           gl.glClientActiveTexture(GL11.GL_TEXTURE0 + t);
+          gl.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
           gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glTexCoordBufferID[t]);
           gl.glTexCoordPointer(2, GL11.GL_FLOAT, 0, 0);
         }          
@@ -2377,14 +2376,6 @@ public class PShape3D extends PShape implements PConstants {
     gl.glDrawArrays(glMode, firstVertex, lastVertex - firstVertex + 1);
 
     if (0 < numTextures) {
-      if (1 < numTextures) {
-        a3d.cleanupTextureBlend(numTextures);
-      }        
-      if (pointSprites)   {
-        gl.glDisable(GL11.GL_POINT_SPRITE_OES);
-      } else {
-        gl.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
-      }
       for (int t = 0; t < numTextures; t++) {
         PTexture tex = renderTextures[t];
         gl.glActiveTexture(GL10.GL_TEXTURE0 + t);
@@ -2393,6 +2384,17 @@ public class PShape3D extends PShape implements PConstants {
       for (int t = 0; t < numTextures; t++) {
         PTexture tex = renderTextures[t];
         gl.glDisable(tex.getGLTarget());
+      }      
+      if (pointSprites)   {
+        gl.glDisable(GL11.GL_POINT_SPRITE_OES);
+      } else {
+        for (int t = 0; t < numTextures; t++) {
+          gl.glClientActiveTexture(GL10.GL_TEXTURE0 + t);        
+          gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+        }
+        if (1 < numTextures) {
+          a3d.cleanupTextureBlend(numTextures);
+        }          
       }
     }
 
@@ -2672,72 +2674,23 @@ public class PShape3D extends PShape implements PConstants {
     int mtlIdxCur = -1;
     OBJMaterial mtl = null;
     
-    // Using normal mode for texture coordinates (i.e.: normalized between 0 and 1).
-    int tMode0 = a3d.textureMode;
-    a3d.textureMode = NORMAL;
-    
-    boolean auto0 = a3d.autoNormal;
-    a3d.autoNormal = true;
-    
-    // Strokes are not used to draw the model.
-    boolean stroke0 = a3d.stroke;
-    a3d.stroke = false;
-    
-    // Using RGB mode for coloring.
-    int cMode0 = a3d.colorMode; 
-    a3d.colorMode = RGB;
+    a3d.saveDrawingState();
     
     // The recorded shapes are not merged, they are grouped
-    // according to the group names found in the OBJ file.
-    boolean merge0 = a3d.mergeRecShapes;
+    // according to the group names found in the OBJ file.    
     a3d.mergeRecShapes = false;
     
-    // Saving current colors.
-    float specularR0, specularG0, specularB0; 
-    specularR0 = a3d.specularR;
-    specularG0 = a3d.specularG;
-    specularB0 = a3d.specularB;
+    // Using RGB mode for coloring.
+    a3d.colorMode = RGB;
     
-    float ambientR0, ambientG0, ambientB0; 
-    ambientR0 = a3d.ambientR;
-    ambientG0 = a3d.ambientG;
-    ambientB0 = a3d.ambientB;    
+    // Strokes are not used to draw the model.
+    a3d.stroke = false;    
     
-    boolean fill0;
-    float fillR0, fillG0, fillB0, fillA0;
-    int fillRi0, fillGi0, fillBi0, fillAi0;
-    int fillColor0;
-    boolean fillAlpha0;
-    fill0 = a3d.fill;
-    fillR0 = a3d.fillR;
-    fillG0 = a3d.fillG;
-    fillB0 = a3d.fillB;
-    fillA0 = a3d.fillA;
-    fillRi0 = a3d.fillRi;
-    fillGi0 = a3d.fillGi;
-    fillBi0 = a3d.fillBi;
-    fillAi0 = a3d.fillAi;
-    fillColor0 = a3d.fillColor;
-    fillAlpha0 = a3d.fillAlpha;
+    // Normals are automatically computed if not specified in the OBJ file.
+    a3d.autoNormal(true);
     
-    boolean tint0;
-    float tintR0, tintG0, tintB0, tintA0;
-    int tintRi0, tintGi0, tintBi0, tintAi0;
-    int tintColor0;
-    boolean tintAlpha0;
-    tint0 = a3d.tint;
-    tintR0 = a3d.tintR;
-    tintG0 = a3d.tintG;
-    tintB0 = a3d.tintB;
-    tintA0 = a3d.tintA;
-    tintRi0 = a3d.tintRi;
-    tintGi0 = a3d.tintGi;
-    tintBi0 = a3d.tintBi;
-    tintAi0 = a3d.tintAi;
-    tintColor0 = a3d.tintColor;
-    tintAlpha0 = a3d.tintAlpha;    
-    
-    float shininess0 = a3d.shininess;
+    // Using normal mode for texture coordinates (i.e.: normalized between 0 and 1).
+    a3d.textureMode = NORMAL; 
     
     a3d.beginShapeRecorderImpl();    
     for (int i = 0; i < faces.size(); i++) {
@@ -2802,7 +2755,7 @@ public class PShape3D extends PShape implements PConstants {
             }
           }
           
-          PTexture texMtl = mtl.kdMap.getTexture();
+          PTexture texMtl = (PTexture)mtl.kdMap.getCache(a3d);
           if (texMtl != null) {     
             // Texture orientation in Processing is inverted.
             texMtl.setFlippedY(true);          
@@ -2837,57 +2790,7 @@ public class PShape3D extends PShape implements PConstants {
     
     a3d.endShapeRecorderImpl(this);
     
-    // Restore A3D configuration.
-    a3d.textureMode = tMode0;
-    a3d.colorMode = cMode0;
-    a3d.autoNormal = auto0;
-    a3d.stroke = stroke0;
-    a3d.mergeRecShapes = merge0;
-    
-    // Restore colors
-    a3d.calcR = specularR0;
-    a3d.calcG = specularG0;
-    a3d.calcB = specularB0;
-    a3d.specularFromCalc();
-    
-    a3d.calcR = ambientR0;
-    a3d.calcG = ambientG0;
-    a3d.calcB = ambientB0;    
-    a3d.ambientFromCalc();
-    
-    if (!fill0) {
-      a3d.noFill();
-    } else {
-      a3d.calcR = fillR0;
-      a3d.calcG = fillG0;
-      a3d.calcB = fillB0;
-      a3d.calcA = fillA0;
-      a3d.calcRi = fillRi0;
-      a3d.calcGi = fillGi0;
-      a3d.calcBi = fillBi0;
-      a3d.calcAi = fillAi0;
-      a3d.calcColor = fillColor0;
-      a3d.calcAlpha = fillAlpha0;
-      a3d.fillFromCalc();
-    }
-
-    if (!tint0) {
-      a3d.noTint();
-    } else {
-      a3d.calcR = tintR0;
-      a3d.calcG = tintG0;
-      a3d.calcB = tintB0;
-      a3d.calcA = tintA0;
-      a3d.calcRi = tintRi0;
-      a3d.calcGi = tintGi0;
-      a3d.calcBi = tintBi0;
-      a3d.calcAi = tintAi0;
-      a3d.calcColor = tintColor0;
-      a3d.calcAlpha = tintAlpha0;
-      a3d.tintFromCalc();
-    }    
-    
-    a3d.shininess(shininess0);
+    a3d.restoreDrawingState(); 
   }
 	
 
