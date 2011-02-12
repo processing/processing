@@ -399,6 +399,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected PFramebuffer offscreenFramebuffer;
   protected PImage[] offscreenImages;
   protected PTexture[] offscreenTextures;
+  protected PTexture.Parameters[] offscreenParams;
   protected int offscreenIndex;
   protected int[] offscreenTexCrop;
   
@@ -772,14 +773,6 @@ public class PGraphicsAndroid3D extends PGraphics {
   // }
 
   public void beginDraw() {
-    if (!settingsInited) {
-      defaultSettings();
-    }    
-    
-    // We are ready to go!
-    
-    report("top beginDraw()");    
-    
     if (!primarySurface) {
       a3d.saveGLState();
       
@@ -794,6 +787,14 @@ public class PGraphicsAndroid3D extends PGraphics {
       // primary renderer might stay).
       a3d.disableLights();
     } 
+    
+    if (!settingsInited) {
+      defaultSettings();
+    }    
+    
+    // We are ready to go!
+    
+    report("top beginDraw()");      
     
     vertexBuffer.rewind();
     colorBuffer.rewind();
@@ -6079,18 +6080,23 @@ public class PGraphicsAndroid3D extends PGraphics {
     offscreenTexCrop[3] = height;      
 
     offscreenImages = new PImage[2];
+    offscreenParams = new PTexture.Parameters[2];
     if (primarySurface) {
       // Nearest filtering is used for the primary surface, otherwise some 
       // artifacts appear (diagonal line when blending, for instance). This
       // might deserve further examination.
-      offscreenImages[0] = parent.createImage(width, height, ARGB, new PTexture.Parameters(ARGB, POINT));
-      offscreenImages[1] = parent.createImage(width, height, ARGB, new PTexture.Parameters(ARGB, POINT));          
+      offscreenParams[0] = new PTexture.Parameters(ARGB, POINT);
+      offscreenParams[1] = new PTexture.Parameters(ARGB, POINT);
+      offscreenImages[0] = parent.createImage(width, height, ARGB, offscreenParams[0]);
+      offscreenImages[1] = parent.createImage(width, height, ARGB, offscreenParams[1]);          
     } else {
       // Linear filtering is needed to keep decent image quality when rendering 
       // texture at a size different from its original resolution. This is expected
       // to happen for offscreen rendering.
-      offscreenImages[0] = parent.createImage(width, height, ARGB, new PTexture.Parameters(ARGB, BILINEAR));
-      offscreenImages[1] = parent.createImage(width, height, ARGB, new PTexture.Parameters(ARGB, BILINEAR));                
+      offscreenParams[0] = new PTexture.Parameters(ARGB, BILINEAR);
+      offscreenParams[1] = new PTexture.Parameters(ARGB, BILINEAR);      
+      offscreenImages[0] = parent.createImage(width, height, ARGB, offscreenParams[0]);
+      offscreenImages[1] = parent.createImage(width, height, ARGB, offscreenParams[1]);                
     }
     
     offscreenTextures = new PTexture[2];
@@ -6114,6 +6120,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     // The image texture points to the current offscreen texture.
     texture = offscreenTextures[offscreenIndex]; 
+    this.setCache(a3d, offscreenTextures[offscreenIndex]);
+    this.setParams(a3d, offscreenParams[offscreenIndex]);    
   }
   
   
@@ -6127,6 +6135,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     // The image texture points to the current offscreen texture.
     texture = offscreenTextures[offscreenIndex];
+    this.setCache(a3d, offscreenTextures[offscreenIndex]);
+    this.setParams(a3d, offscreenParams[offscreenIndex]);    
   }
   
   
