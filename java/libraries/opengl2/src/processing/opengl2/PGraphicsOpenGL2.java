@@ -379,7 +379,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
   
   // Testing geometry buffer for now (but it already rocks) ...
   public boolean USE_GBUFFER = false;
-  public boolean GBUFFER_MERGE_ALL = true;
+  public boolean GBUFFER_MERGE_ALL = false;
   public boolean GBUFFER_UPDATE_STACK = true;
   public GeometryBuffer gbuffer;
   
@@ -651,10 +651,6 @@ public class PGraphicsOpenGL2 extends PGraphics {
       
       numTexBuffers = 1;
       
-      if (USE_GBUFFER) {
-        gbuffer = new GeometryBuffer();
-      }
-      
       geometryAllocated = true;
     }      
     
@@ -729,6 +725,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
       
     return id;
   }
+  
   
   protected void deleteGLResource(int id, int type) {
     if (type == GL_TEXTURE_OBJECT) {
@@ -923,9 +920,10 @@ public class PGraphicsOpenGL2 extends PGraphics {
       texCoordBuffer[t].rewind();
     }
  
-    if (USE_GBUFFER && GBUFFER_MERGE_ALL) {
-      gbuffer.init(TRIANGLES);
-    }
+    if (USE_GBUFFER) {
+      if (gbuffer == null) gbuffer = new GeometryBuffer();     
+      if (GBUFFER_MERGE_ALL) gbuffer.init(TRIANGLES);
+    }    
     
     // Each frame starts with textures disabled.
     noTexture();
@@ -999,10 +997,8 @@ public class PGraphicsOpenGL2 extends PGraphics {
 
   public void endDraw() {
     report("top endDraw()");
-    
-    super.endDraw();
 
-    if (USE_GBUFFER && GBUFFER_MERGE_ALL) {
+    if (USE_GBUFFER && GBUFFER_MERGE_ALL && (gbuffer != null)) {
       gl2f.glEnableClientState(GL2.GL_VERTEX_ARRAY);
       gl2f.glEnableClientState(GL2.GL_COLOR_ARRAY);
       gl2f.glEnableClientState(GL2.GL_NORMAL_ARRAY);    
@@ -1310,6 +1306,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
     }
   }
 
+  @SuppressWarnings("unchecked")
   protected void beginShapeRecorderImpl() {
     recordingShape = true;  
     
@@ -2103,7 +2100,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
 
   //////////////////////////////////////////////////////////////
 
-  // POINTS (override from P3D)
+  // POINTS
 
   protected void renderPoints(int start, int stop) {
     gl2f.glEnableClientState(GL2.GL_VERTEX_ARRAY);
@@ -2155,14 +2152,12 @@ public class PGraphicsOpenGL2 extends PGraphics {
   
   //////////////////////////////////////////////////////////////
 
-  // LINES (override from P3D)
-
-  // protected final void addLineBreak() // PGraphics3D
+  // LINES
 
   /**
    * Begin a new section of stroked geometry.
    */
-  protected final void addLineBreak() {
+  protected void addLineBreak() {
     if (pathCount == pathOffset.length) {
       pathOffset = PApplet.expand(pathOffset);
       pathLength = PApplet.expand(pathLength);
@@ -2347,8 +2342,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
     int maxi = PApplet.max(a, b, c);
       
     PImage[] images;
-    images = vertexTex[a];
-    
+    images = vertexTex[a];    
     
     boolean firstFace = triangleCount == 0;
     if (diffFromTextures0(images) || firstFace) {
@@ -3196,6 +3190,31 @@ public class PGraphicsOpenGL2 extends PGraphics {
 
   //////////////////////////////////////////////////////////////
 
+  // SMOOTH
+
+  public void smooth() {
+    smooth = true;
+    if (hints[DISABLE_OPENGL_2X_SMOOTH]) {
+      gl2f.glEnable(GL2.GL_MULTISAMPLE);
+      gl2f.glEnable(GL2.GL_POINT_SMOOTH);
+      gl2f.glEnable(GL2.GL_LINE_SMOOTH);
+      gl2f.glEnable(GL2.GL_POLYGON_SMOOTH);
+    }
+  }
+
+  
+  public void noSmooth() {
+    smooth = false;
+    if (hints[DISABLE_OPENGL_2X_SMOOTH]) {
+      gl2f.glDisable(GL2.GL_MULTISAMPLE);
+      gl2f.glDisable(GL2.GL_POINT_SMOOTH);
+      gl2f.glDisable(GL.GL_LINE_SMOOTH);
+      gl2f.glDisable(GL2.GL_POLYGON_SMOOTH);
+    }
+  }   
+  
+  //////////////////////////////////////////////////////////////
+
   // SHAPE
 
   // public void shapeMode(int mode)
@@ -3459,14 +3478,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
       textTex.setTexture(info.texIndex);
     }
 
-    // There is no need to setup orthographic projection or any related matrix set/restore
-    // operations here because glDrawTexiOES operates on window coordinates:
-    // "glDrawTexiOES takes window coordinates and bypasses the transform pipeline 
-    // (except for mapping Z to the depth range), so there is no need for any 
-    // matrix setup/restore code."
-    // (from https://www.khronos.org/message_boards/viewtopic.php?f=4&t=948&p=2553).        
-    //gl11.glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, info.crop, 0);
-    //gl11x.glDrawTexiOES(xx, height - yy, 0, w0, h0);
+    drawTexture(info.crop, xx, height - yy, w0, h0); 
   }
 
   protected void allocateTextModel() {  
@@ -3614,6 +3626,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
       gbuffer.stack.rotate(angle, v0, v1, v2); 
       return;  
     }
+    
     gl2f.glRotatef(PApplet.degrees(angle), v0, v1, v2);
     if (usingGLMatrixStack) {
       if (matrixMode == PROJECTION) {
@@ -4517,9 +4530,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
    * Print the current projection matrix.
    */
   public void printProjection() {
-    PMatrix3D temp = new PMatrix3D();
-    copyGLArrayToPMatrix(glprojection, temp);
-    temp.print();
+    projection.print();
   }
   
   //////////////////////////////////////////////////////////////
@@ -4743,10 +4754,10 @@ public class PGraphicsOpenGL2 extends PGraphics {
     super.fillFromCalc();
     calcColorBuffer();
     
-    // A3D uses GL_COLOR_MATERIAL mode, so the ambient and diffuse components
-    // for all vertices are taken from the glColor/color buffer settings.
-    //gl.glMaterialfv(GL10.GL_FRONT_AND_BACK, GL10.GL_AMBIENT_AND_DIFFUSE,
-    //    colorFloats, 0);
+    // OPENGL2 uses GL_COLOR_MATERIAL mode, so the ambient and diffuse components
+    // for all vertices are taken from the glColor/color buffer settings and we don't
+    // need this:
+    //gl.glMaterialfv(GL10.GL_FRONT_AND_BACK, GL10.GL_AMBIENT_AND_DIFFUSE, colorFloats, 0);
   }
 
   protected void setFillColor() {
@@ -4783,7 +4794,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
     super.ambientFromCalc();
     calcColorBuffer();
     
-    // A3D uses GL_COLOR_MATERIAL mode, so the ambient and diffuse components
+    // OPENGL uses GL_COLOR_MATERIAL mode, so the ambient and diffuse components
     // for all vertices are taken from the glColor/color buffer settings.    
     gl2f.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_AMBIENT, colorFloats, 0);
   }
@@ -5354,6 +5365,23 @@ public class PGraphicsOpenGL2 extends PGraphics {
   // public boolean displayable()
 
   // public boolean dimensional() // from P3D
+  
+  
+  /**
+   * Return true if this renderer supports 2D drawing. Defaults to true.
+   */
+  public boolean is2D() {
+    return true;
+  }
+  
+
+  /**
+   * Return true if this renderer supports 2D drawing. Defaults to false.
+   */
+  public boolean is3D() {
+    return true;
+  }  
+  
 
   //////////////////////////////////////////////////////////////
 
@@ -5683,6 +5711,10 @@ public class PGraphicsOpenGL2 extends PGraphics {
   
   // Draws wherever it is in the screen texture right now to the screen.
   public void updateTexture() {
+    drawTexture();
+  }
+  
+  protected void drawTexture() {
     drawTexture(texture, texCrop, 0, 0, width, height);
   }
   
@@ -6273,15 +6305,15 @@ public class PGraphicsOpenGL2 extends PGraphics {
    * @param img the image to have a texture metadata associated to it
    */
   protected PTexture addTexture(PImage img) {
-    PTexture.Parameters params = (PTexture.Parameters)img.getParams(this);
+    PTexture.Parameters params = (PTexture.Parameters)img.getParams(ogl);
     if (params == null) {
       params = PTexture.newParameters();
-      img.setParams(this, params);
+      img.setParams(ogl, params);
     }
     PTexture tex = new PTexture(img.parent, img.width, img.height, params);
     img.loadPixels();
     tex.set(img.pixels);
-    img.setCache(this, tex);
+    img.setCache(ogl, tex);
     return tex;
   }
   
@@ -6357,6 +6389,47 @@ public class PGraphicsOpenGL2 extends PGraphics {
     gl2f.glMatrixMode(GL2.GL_MODELVIEW);
     gl2f.glPopMatrix();        
   }  
+  
+  /** 
+   * Utility function to render currently bound using current blend mode. Equivalent to:
+   * glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, crop, 0);
+   * glDrawTexiOES(x, y, 0, w, h);
+   * in OpenGL ES. 
+   */
+  protected void drawTexture(int[] crop, int x, int y, int w, int h) {
+    gl.glViewport(0, 0, w, h);
+
+    gl2f.glMatrixMode(GL2.GL_PROJECTION);
+    gl2f.glPushMatrix();
+    gl2f.glLoadIdentity();
+    
+    gl2f.glOrthof(0, w, 0, h, -1, 1);
+
+    gl2f.glMatrixMode(GL2.GL_MODELVIEW);
+    gl2f.glPushMatrix();
+    gl2f.glLoadIdentity();      
+
+    gl2f.glTranslatef(x, y, 0);
+    gl2f.glScalef(w, h, 1);
+    // Rendering the quad with the appropriate texture coordinates needed for the
+    // specified crop region
+    renderTexQuad(crop[0] / w, crop[1] / h, (crop[0] + crop[2]) / w, (crop[1] + crop[3]) / h);
+
+    if (hints[DISABLE_DEPTH_MASK]) {
+      gl.glDepthMask(false);  
+    } else {
+      gl.glDepthMask(true);
+    }
+
+    // Restoring viewport.
+    gl.glViewport(0, 0, width, height);
+
+    // Restoring matrices.
+    gl2f.glMatrixMode(GL2.GL_PROJECTION);
+    gl2f.glPopMatrix();
+    gl2f.glMatrixMode(GL2.GL_MODELVIEW);
+    gl2f.glPopMatrix();      
+  }
   
   protected void allocateTexQuad() {  
     ByteBuffer vbb = ByteBuffer.allocateDirect(4 * 3 * SIZEOF_FLOAT);
@@ -6729,6 +6802,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
     
     glparamsRead = true;
   }
+  
   
   //////////////////////////////////////////////////////////////
   
@@ -7143,7 +7217,8 @@ public class PGraphicsOpenGL2 extends PGraphics {
     
     public GLMatrixStack() {
       matrixStack = new Stack<float[]>();
-      current = new float[16];    
+      current = new float[16];
+      setIdentity();
     }
     
     public void setIdentity() {

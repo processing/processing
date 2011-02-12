@@ -40,7 +40,7 @@ public class PTexture implements PConstants {
   public int width, height;
     
   protected PApplet parent;
-  protected PGraphicsOpenGL2 pgl;  
+  protected PGraphicsOpenGL2 ogl;  
   protected GL gl;
 
   protected int glID; 
@@ -94,8 +94,8 @@ public class PTexture implements PConstants {
     this.width = width;
     this.height = height;
        
-    pgl = (PGraphicsOpenGL2)parent.g;
-    gl = pgl.gl;
+    ogl = (PGraphicsOpenGL2)parent.g;
+    gl = ogl.gl;
     
     glID = 0;
     
@@ -123,8 +123,8 @@ public class PTexture implements PConstants {
   public PTexture(PApplet parent, String filename, Object params)  {
     this.parent = parent;
      
-    pgl = (PGraphicsOpenGL2)parent.g;
-    gl = pgl.gl;  
+    ogl = (PGraphicsOpenGL2)parent.g;
+    gl = ogl.gl;  
 
     glID = 0;
     
@@ -206,13 +206,13 @@ public class PTexture implements PConstants {
 
   
   public void set(PImage img) {
-    PTexture tex = (PTexture)img.getCache(pgl);
+    PTexture tex = (PTexture)img.getCache(ogl);
     set(tex);
   }
   
   
   public void set(PImage img, int x, int y, int w, int h) {
-    PTexture tex = (PTexture)img.getCache(pgl);
+    PTexture tex = (PTexture)img.getCache(ogl);
     set(tex, x, y, w, h);
   }
   
@@ -306,18 +306,18 @@ public class PTexture implements PConstants {
       // Attaching the texture to the color buffer of a FBO, binding the FBO and reading the pixels
       // from the current draw buffer (which is the color buffer of the FBO).
       tempFbo.setColorBuffer(this);
-      pgl.pushFramebuffer();
-      pgl.setFramebuffer(tempFbo);
+      ogl.pushFramebuffer();
+      ogl.setFramebuffer(tempFbo);
       tempFbo.readPixels();
-      pgl.popFramebuffer();
+      ogl.popFramebuffer();
     } else {
       // Here we don't have FBOs, so the method above is of no use. What we do instead is
       // to draw the texture to the screen framebuffer, and then grab the pixels from there.      
-      pgl.pushFramebuffer();
-      pgl.setFramebuffer(tempFbo);
-      pgl.drawTexture(this, 0, 0, glWidth, glHeight, 0, 0, glWidth, glHeight);
+      ogl.pushFramebuffer();
+      ogl.setFramebuffer(tempFbo);
+      ogl.drawTexture(this, 0, 0, glWidth, glHeight, 0, 0, glWidth, glHeight);
       tempFbo.readPixels();
-      pgl.popFramebuffer();
+      ogl.popFramebuffer();
     }
     
     if (tempPixels == null) {
@@ -763,7 +763,7 @@ public class PTexture implements PConstants {
     usingMipmaps = glMinFilter == GL.GL_LINEAR_MIPMAP_LINEAR;
     
     gl.glEnable(glTarget);
-    glID = pgl.createGLResource(PGraphicsOpenGL2.GL_TEXTURE_OBJECT);     
+    glID = ogl.createGLResource(PGraphicsOpenGL2.GL_TEXTURE_OBJECT);     
     gl.glBindTexture(glTarget, glID);
     gl.glTexParameteri(glTarget, GL.GL_TEXTURE_MIN_FILTER, glMinFilter);
     gl.glTexParameteri(glTarget, GL.GL_TEXTURE_MAG_FILTER, glMagFilter);
@@ -796,7 +796,7 @@ public class PTexture implements PConstants {
    */
   protected void deleteTexture() {
     if (glID != 0) {
-      pgl.deleteGLResource(glID, PGraphicsOpenGL2.GL_TEXTURE_OBJECT);
+      ogl.deleteGLResource(glID, PGraphicsOpenGL2.GL_TEXTURE_OBJECT);
       glID = 0;
     }
   }
@@ -816,19 +816,19 @@ public class PTexture implements PConstants {
     tempFbo.disableDepthTest();
     
     // FBO copy:
-    pgl.pushFramebuffer();
-    pgl.setFramebuffer(tempFbo);
+    ogl.pushFramebuffer();
+    ogl.setFramebuffer(tempFbo);
     if (scale) {
       // Rendering tex into "this", and scaling the source rectangle
       // to cover the entire destination region.
-      pgl.drawTexture(tex, x, y, w, h, 0, 0, width, height);    
+      ogl.drawTexture(tex, x, y, w, h, 0, 0, width, height);    
     } else {
       // Rendering tex into "this" but without scaling so the contents 
       // of the source texture fall in the corresponding texels of the
       // destination.
-      pgl.drawTexture(tex, x, y, w, h, x, y, w, h);
+      ogl.drawTexture(tex, x, y, w, h, x, y, w, h);
     }
-    pgl.popFramebuffer();
+    ogl.popFramebuffer();
   }  
   
   protected void setTexels(int x, int y, int w, int h, int[] pix) {
@@ -858,7 +858,7 @@ public class PTexture implements PConstants {
     height = src.height;
     
     parent = src.parent;
-    pgl = src.pgl;
+    ogl = src.ogl;
     gl = src.gl;
     
     glID = src.glID;
@@ -931,7 +931,7 @@ public class PTexture implements PConstants {
     if (params.target == TEXTURE2D)  {
         glTarget = GL.GL_TEXTURE_2D;
     } else {
-      throw new RuntimeException("GTexture: Unknown texture target");     
+      throw new RuntimeException("OPENGL2: Unknown texture target");     
     }
     
     if (params.format == RGB)  {
@@ -941,7 +941,7 @@ public class PTexture implements PConstants {
     } else  if (params.format == ALPHA) {
       glFormat = GL.GL_ALPHA;
     } else {
-      throw new RuntimeException("GTexture: Unknown texture format");     
+      throw new RuntimeException("OPENGL2: Unknown texture format");     
     }
     
     if (params.sampling == POINT) {
@@ -954,7 +954,7 @@ public class PTexture implements PConstants {
       glMagFilter = GL.GL_LINEAR;
       glMinFilter = GL.GL_LINEAR_MIPMAP_LINEAR;      
     } else {
-      throw new RuntimeException("GTexture: Unknown texture filtering mode");     
+      throw new RuntimeException("OPENGL2: Unknown texture filtering mode");     
     }
     
     if (params.wrapU == CLAMP) {
@@ -962,7 +962,7 @@ public class PTexture implements PConstants {
     } else if (params.wrapU == REPEAT)  {
       glWrapS = GL.GL_REPEAT;
     } else {
-      throw new RuntimeException("GTexture: Unknown wrapping mode");     
+      throw new RuntimeException("OPENGL2: Unknown wrapping mode");     
     }
     
     if (params.wrapV == CLAMP) {
@@ -970,7 +970,7 @@ public class PTexture implements PConstants {
     } else if (params.wrapV == REPEAT)  {
       glWrapT = GL.GL_REPEAT;
     } else {
-      throw new RuntimeException("GTexture: Unknown wrapping mode");     
+      throw new RuntimeException("OPENGL2: Unknown wrapping mode");     
     }
   } 
 
