@@ -24,7 +24,9 @@
 package processing.core;
 
 import java.io.*;
+import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.Set;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
@@ -58,14 +60,16 @@ public class PImage implements PConstants, Cloneable {
   public PApplet parent;
 
   protected Bitmap bitmap;
-  protected PTexture texture;
-  protected PTexture.Parameters texParams;
+
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  /** for subclasses that need to store info about the image */
-  protected HashMap<Object,Object> cacheMap;
+  /** for renderers that need to store info about the image */
+  protected HashMap<PGraphics, Object> cacheMap;
+  
+  /** for renderers that need to store parameters about the image */
+  protected HashMap<PGraphics, Object> paramMap;
 
 
   /** modified portion of the image */
@@ -142,8 +146,27 @@ public class PImage implements PConstants, Cloneable {
 
   
   public void delete() {
-    if (texture != null) {
-      texture.delete();
+    if (cacheMap != null) {
+      Set<PGraphics> keySet = cacheMap.keySet();
+      if (!keySet.isEmpty()) {
+        Object[] keys = keySet.toArray();
+        for (int i = 0; i < keys.length; i++) {          
+          Object data = getCache((PGraphics)keys[i]);
+          Method del = null;
+          
+          try {
+            Class<?> c = data.getClass();
+            del = c.getMethod("delete", new Class[] {});
+          } catch (Exception e) {}
+          
+          if (del != null) {
+            // The metadata have a delete method. We try running it.
+            try {
+              del.invoke(data, new Object[] {});
+            } catch (Exception e) {}
+          }
+        }
+      }
     }
   }
   
@@ -196,140 +219,23 @@ public class PImage implements PConstants, Cloneable {
   public Bitmap getBitmap() {
     return bitmap;
   }
-  
-  
-  public void loadTexture() {
-    if (width == 0 || height == 0) return;
-    if (texture == null) {
-      if (texParams == null) {
-        texParams = PTexture.newParameters();
-      }
-      texture = new PTexture(parent, width, height, texParams);
-    }
-    if (pixels == null) {
-      loadPixels(); // loadPixels calls pixelsToTexture().
-    } else {
-      pixelsToTexture();
-    }
-  }
-  
-
-  public void loadTexture(int sampling) {
-    if (width == 0 || height == 0) return;
-    if (texture == null) {
-      if (texParams == null) {
-        texParams = PTexture.newParameters();
-      }      
-      texParams.sampling = sampling;
-      texture = new PTexture(parent, width, height, texParams);
-    }
-    if (pixels == null) {
-      loadPixels(); // loadPixels calls pixelsToTexture().
-    } else {
-      pixelsToTexture();
-    }
-  }
-
-
-  public void loadTexture(PTexture.Parameters params) {
-    if (width == 0 || height == 0) return;
-    if (texture == null) {
-      if (texParams == null) {
-        texParams = PTexture.newParameters();
-      }      
-      texParams.set(params);
-      texture = new PTexture(parent, width, height, texParams);
-    }
-    if (pixels == null) {
-      loadPixels(); // loadPixels calls pixelsToTexture().
-    } else {
-      pixelsToTexture();
-    }
-  }
-  
-
-  public void setTexture(PTexture tex) {
-    if (tex.width == width && tex.height == height) { 
-      texture.set(tex);
-    } else {
-      System.err.println("PImage: cannot set texture with different resolution from PImage object");
-    }
-  }
-  
-
-  public PTexture getTexture() {
-    return texture;
-  }
-
-  
-  public void updateTexture() {
-    if (pixels != null) {
-      textureToPixels();
-    }
-  }
-  
-  
-  protected void pixelsToTexture() {    
-    texture.set(pixels);
-  }
-  
-  
-  protected void textureToPixels() {
-    texture.get(pixels);
-  }
-
-  
-  protected void reloadTexture() {
-    if (width == 0 || height == 0) return;
-    if (texture != null) {
-      texture = new PTexture(parent, width, height, texture.getParameters());
-    }
-  }
-
-  protected PTexture createTexture() {
-    if (width == 0 || height == 0) return null;
-    if (texture == null) {
-      if (texParams == null) {
-        texParams = PTexture.newParameters();
-      }      
-      texture = new PTexture(parent, width, height, texParams);
-    }
-    if (pixels == null) {
-      loadPixels(); // loadPixels calls pixelsToTexture().
-    } else {
-      pixelsToTexture();
-    }
-    return texture;
-  }
-  
-  protected void createTexParams(int format) {
-    texParams = PTexture.newParameters(format);
-    this.format = texParams.format;    
-  }
-
-  protected void createTexParams(int format, int sampling) {
-    texParams = PTexture.newParameters(format, sampling);
-    this.format = texParams.format;    
-  }  
-  
-  protected void createTexParams(PTexture.Parameters params) {
-    texParams = PTexture.newParameters(params);
-    this.format = texParams.format;    
-  }
-  
+    
   //////////////////////////////////////////////////////////////
 
-
+  // METADATA/PARAMETERS REQUIRED BY RENDERERS
+  
   /**
    * Store data of some kind for a renderer that requires extra metadata of
    * some kind. Usually this is a renderer-specific representation of the
    * image data, for instance a BufferedImage with tint() settings applied for
    * PGraphicsJava2D, or resized image data and OpenGL texture indices for
    * PGraphicsOpenGL.
+   * @param renderer The PGraphics renderer associated to the image
+   * @param storage The metadata required by the renderer   
    */
-  public void setCache(Object parent, Object storage) {
-    if (cacheMap == null) cacheMap = new HashMap<Object, Object>();
-    cacheMap.put(parent, storage);
+  public void setCache(PGraphics renderer, Object storage) {
+    if (cacheMap == null) cacheMap = new HashMap<PGraphics, Object>();
+    cacheMap.put(renderer, storage);
   }
 
 
@@ -338,25 +244,58 @@ public class PImage implements PConstants, Cloneable {
    * will cache data in different formats, it's necessary to store cache data
    * keyed by the renderer object. Otherwise, attempting to draw the same
    * image to both a PGraphicsJava2D and a PGraphicsOpenGL will cause errors.
-   * @param parent The PGraphics object (or any object, really) associated
-   * @return data stored for the specified parent
+   * @param renderer The PGraphics renderer associated to the image
+   * @return metadata stored for the specified renderer
    */
-  public Object getCache(Object parent) {
+  public Object getCache(PGraphics renderer) {
     if (cacheMap == null) return null;
-    return cacheMap.get(parent);
+    return cacheMap.get(renderer);
   }
 
 
   /**
    * Remove information associated with this renderer from the cache, if any.
-   * @param parent The PGraphics object whose cache data should be removed
+   * @param renderer The PGraphics renderer whose cache data should be removed
    */
-  public void removeCache(Object parent) {
+  public void removeCache(PGraphics renderer) {
     if (cacheMap != null) {
-      cacheMap.remove(parent);
+      cacheMap.remove(renderer);
     }
   }
 
+
+  /**
+   * Store parameters for a renderer that requires extra metadata of
+   * some kind.
+   * @param renderer The PGraphics renderer associated to the image
+   * @param storage The parameters required by the renderer  
+   */
+  public void setParams(PGraphics renderer, Object params) {
+    if (paramMap == null) paramMap = new HashMap<PGraphics, Object>();
+    paramMap.put(renderer, params);
+  }
+
+
+  /**
+   * Get the parameters for the specified renderer.
+   * @param renderer The PGraphics renderer associated to the image
+   * @return parameters stored for the specified renderer
+   */
+  public Object getParams(PGraphics renderer) {
+    if (paramMap == null) return null;
+    return paramMap.get(renderer);
+  }
+
+
+  /**
+   * Remove information associated with this renderer from the cache, if any.
+   * @param renderer The PGraphics renderer whose parameters should be removed
+   */
+  public void removeParams(PGraphics renderer) {
+    if (paramMap != null) {
+      paramMap.remove(renderer);
+    }
+  }
 
 
   //////////////////////////////////////////////////////////////
@@ -378,6 +317,25 @@ public class PImage implements PConstants, Cloneable {
     modified = m;
   }
 
+  public int getModifiedX1() {  // ignore
+    return mx1;
+  }
+
+  
+  public int getModifiedX2() {  // ignore
+    return mx2;
+  }
+
+  
+  public int getModifiedY1() {  // ignore
+    return my1;
+  }
+
+  
+  public int getModifiedY2() {  // ignore
+    return my2;
+  }  
+    
 
   /**
    * Call this when you want to mess with the pixels[] array.
@@ -391,15 +349,6 @@ public class PImage implements PConstants, Cloneable {
     }
     if (bitmap != null) {
       bitmap.getPixels(pixels, 0, width, 0, 0, width, height); 
-    }
-    if (parent.g.is3D() && 0 < width && 0 < height) {
-      if (texture == null) {
-        if (texParams == null) {
-          texParams = PTexture.newParameters();
-        }        
-        texture = new PTexture(parent, width, height, texParams);
-      }      
-      pixelsToTexture();
     }
   }
 
@@ -457,26 +406,6 @@ public class PImage implements PConstants, Cloneable {
       if (x2 > mx2) mx2 = x2;
       if (y2 < my1) my1 = y2;
       if (y2 > my2) my2 = y2;
-    }
-    
-    if (texture != null) {
-      int mw = mx2 - mx1; 
-      int mh = my2 - my1;      
-      int[] pix;
-
-      if (mw != width || mh != height) {
-        // Only a sub-region of the whole image was changed, so copying
-        // the pixels of this region into a smaller pixels array.
-        pix = new int[mw * mh];
-        for (int j = 0; j < mh; j++) {
-          int p0 = my1 * width + mx1 + (width - mw) * j;
-          PApplet.arrayCopy(pixels, p0 + mw * j, pix, mw * j, mw);
-        }        
-      } else {
-        pix = pixels;
-      }
-      
-      texture.set(pix, mx1, my1, mw, mh);
     }
   }
 
@@ -536,9 +465,6 @@ public class PImage implements PConstants, Cloneable {
       this.height = high;
       this.pixels = temp.pixels;
       this.bitmap = null;
-      if (parent.g.is3D()) {
-        reloadTexture();
-      }
     }    
     // Mark the pixels array as altered
     updatePixels();
@@ -635,12 +561,7 @@ public class PImage implements PConstants, Cloneable {
         index += width;
         index2 += w;
       }
-    }
-    if (parent.g.is3D()) {
-      // TODO: Check why textures doesn't work in formats other than ARGB...
-      newbie.format = ARGB;
-      newbie.loadTexture();
-    }        
+    }      
     return newbie;
   }
 
@@ -650,12 +571,7 @@ public class PImage implements PConstants, Cloneable {
    */
   public PImage get() {
     try {
-      PImage img = (PImage) clone();
-      if (parent.g.is3D()) {
-        // TODO: Check why textures doesn't work in formats other than ARGB...
-        img.format = ARGB;
-        img.loadTexture();
-      }      
+      PImage img = (PImage) clone();   
       return img;
     } catch (CloneNotSupportedException e) {
       return null;

@@ -252,16 +252,16 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // Vertex, color, texture coordinate and normal buffers.
   public static final int DEFAULT_BUFFER_SIZE = 512;
-  private IntBuffer vertexBuffer;
-  private IntBuffer colorBuffer;
-  private IntBuffer normalBuffer;
-  private IntBuffer[] texCoordBuffer;
+  protected IntBuffer vertexBuffer;
+  protected IntBuffer colorBuffer;
+  protected IntBuffer normalBuffer;
+  protected IntBuffer[] texCoordBuffer;
 
   // Arrays used to put vertex data into the buffers.
-  private int[] vertexArray;
-  private int[] colorArray;
-  private int[] normalArray;
-  private int[][] texCoordArray;
+  protected int[] vertexArray;
+  protected int[] colorArray;
+  protected int[] normalArray;
+  protected int[][] texCoordArray;
   
   protected boolean geometryAllocated = false;
   
@@ -378,11 +378,11 @@ public class PGraphicsAndroid3D extends PGraphics {
   // Text:
     
   /** Buffers and array to draw text quads. */
-  private IntBuffer textVertexBuffer = null;
-  private IntBuffer textTexCoordBuffer = null;
-  private int[] textVertexArray = null;
-  private int[] textTexCoordArray = null;  
-  private int textVertexCount = 0;  
+  protected IntBuffer textVertexBuffer = null;
+  protected IntBuffer textTexCoordBuffer = null;
+  protected int[] textVertexArray = null;
+  protected int[] textTexCoordArray = null;  
+  protected int textVertexCount = 0;  
   
   // .......................................................
   
@@ -425,11 +425,13 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   // Drawing surface:
   
-  // Used to save a copy of the last drawn frame in order to repaint on the
-  // backbuffer when using no clear mode.
-  protected int[] screenTexCrop;
+  /** A handy reference to the PTexture bound to the drawing surface (off or on-screen) */
+  protected PTexture texture;
+  
+  /** The crop rectangle for texture. It should always be {0, 0, width, height}. */
+  protected int[] texCrop;
 
-  // This variable controls clearing of the color buffer.
+  /** These variables controls clearing of the color buffer. */
   protected boolean clearColorBuffer;
   protected boolean clearColorBuffer0;  
   
@@ -578,7 +580,13 @@ public class PGraphicsAndroid3D extends PGraphics {
       numTexBuffers = 1;
       
       geometryAllocated = true;
-    }    
+    }
+    
+    if (primarySurface) {
+      a3d = this;
+    } else {
+      a3d = (PGraphicsAndroid3D)parent.g;
+    }
   }
 
   
@@ -768,8 +776,15 @@ public class PGraphicsAndroid3D extends PGraphics {
   // }
 
   public void beginDraw() {
-    if (!primarySurface) {      
-      PGraphicsAndroid3D a3d = (PGraphicsAndroid3D)parent.g;
+    if (!settingsInited) {
+      defaultSettings();
+    }    
+    
+    // We are ready to go!
+    
+    report("top beginDraw()");    
+    
+    if (!primarySurface) {
       a3d.saveGLState();
       
       // Getting gl objects from primary surface:
@@ -781,16 +796,8 @@ public class PGraphicsAndroid3D extends PGraphics {
       // Disabling all lights, so the offscreen renderer can set completely
       // new light configuration (otherwise some light configuration from the 
       // primary renderer might stay).
-      for (int i = 0; i < a3d.lightCount; i++) {
-        a3d.lightDisable(i);
-      }
+      a3d.disableLights();
     } 
-    
-    if (!settingsInited) {
-      defaultSettings();
-    }
-
-    report("top beginDraw()");
     
     vertexBuffer.rewind();
     colorBuffer.rewind();
@@ -799,19 +806,13 @@ public class PGraphicsAndroid3D extends PGraphics {
       texCoordBuffer[t].rewind();
     }
     
-    // Each frame starts with multitexturing disabled.
-    numTextures = 0;
-    clearTextures();
-    clearTextures0();
-    
-    // The default shade model is GL_SMOOTH, but we set
-    // here just in case...
-    gl.glShadeModel(GL10.GL_SMOOTH);
-    
-    // Blend is needed for alpha (i.e. fonts) to work.
+    // Each frame starts with textures disabled.
+    noTexture();
+        
+    // Screen blend is needed for alpha (i.e. fonts) to work.
     screenBlend(BLEND);
-
-    // Default multitexture blending:
+    
+    // Default texture blending:
     textureBlend(BLEND);
     
     // this is necessary for 3D drawing
@@ -847,23 +848,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     // because y is flipped
     gl.glFrontFace(GL10.GL_CW);
     
-    // The ambient and diffuse components for each vertex are taken
-    // from the glColor/color buffer setting:
-    gl.glEnable(GL10.GL_COLOR_MATERIAL);
-    // For a quick overview of how the lighting model works in OpenGL
-    // see this page:
-    // http://www.sjbaker.org/steve/omniv/opengl_lighting.html
+    setSurfaceParams();
     
-    // Some normal related settings:
-    gl.glEnable(GL10.GL_NORMALIZE);
-    gl.glEnable(GL10.GL_RESCALE_NORMAL);
-    
-    // Light model defaults:
-    // The default opengl ambient light is (0.2, 0.2, 0.2), so
-    // here we set our own default value.
-    gl.glLightModelfv(GL10.GL_LIGHT_MODEL_AMBIENT, baseLight, 0);
-    gl.glLightModelx(GL10.GL_LIGHT_MODEL_TWO_SIDE, 0);
-        
     shapeFirst = 0;
     
     // The current normal vector is set to zero.
@@ -884,7 +870,7 @@ public class PGraphicsAndroid3D extends PGraphics {
             throw new RuntimeException("A3D:  no clear mode with no FBOs requires OpenGL ES 1.1");
           }
           if (texture == null) {
-            createScreenTexture();
+            loadTextureImpl(POINT);
           }
         }
       }
@@ -922,7 +908,7 @@ public class PGraphicsAndroid3D extends PGraphics {
             gl.glClearColor(0, 0, 0, 0);
             gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
             if (0 < parent.frameCount) {
-              drawScreenTexture();
+              drawTexture();
             }
           }
         }
@@ -987,7 +973,7 @@ public class PGraphicsAndroid3D extends PGraphics {
           }
         } else {
           if (texture != null) {
-            copyFrameToScreenTexture();
+            copyFrameToTexture();
           }
         }
       }
@@ -1032,21 +1018,14 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   
   protected void saveGLState() {
-    gl.glMatrixMode(GL10.GL_PROJECTION);
-    gl.glPushMatrix();
-    gl.glMatrixMode(GL10.GL_MODELVIEW);
-    gl.glPushMatrix();  
+    saveGLMatrices();  
   }
   
   protected void restoreGLState() {    
     // Restoring viewport.
     gl.glViewport(0, 0, width, height);
 
-    // Restoring matrices.
-    gl.glMatrixMode(GL10.GL_PROJECTION);
-    gl.glPopMatrix();
-    gl.glMatrixMode(GL10.GL_MODELVIEW);
-    gl.glPopMatrix();    
+    restoreGLMatrices();
     
     // Restoring hints.
     if (hints[DISABLE_DEPTH_TEST]) {
@@ -1139,15 +1118,11 @@ public class PGraphicsAndroid3D extends PGraphics {
     // Some things the user might have changed from OpenGL, 
     // but we want to make sure they return to the Processing
     // defaults (plus these cannot be changed through the API
-    // so they should remain constant anyways):
-    gl.glShadeModel(GL10.GL_SMOOTH);    
+    // so they should remain constant anyways):        
     gl.glFrontFace(GL10.GL_CW);    
     gl.glDepthFunc(GL10.GL_LEQUAL);
-    gl.glEnable(GL10.GL_COLOR_MATERIAL);
-    gl.glEnable(GL10.GL_NORMALIZE);
-    gl.glEnable(GL10.GL_RESCALE_NORMAL);
-    gl.glLightModelfv(GL10.GL_LIGHT_MODEL_AMBIENT, baseLight, 0);
-    gl.glLightModelx(GL10.GL_LIGHT_MODEL_TWO_SIDE, 0);
+
+    setSurfaceParams();
   }  
   
   
@@ -2373,12 +2348,9 @@ public class PGraphicsAndroid3D extends PGraphics {
       if (1 < numTextures) {
         for (int t = 0; t < numTextures; t++) {
           if (images[t] != null) {
-            PTexture tex = images[t].getTexture();
+            PTexture tex = getTexture(images[t]); 
             if (tex == null) {
-              tex = images[t].createTexture();
-              if (tex == null) {
-                break;
-              }
+              break;
             }
               
             gl.glEnable(tex.getGLTarget());
@@ -2395,11 +2367,7 @@ public class PGraphicsAndroid3D extends PGraphics {
           }
         }
       } else if (images[0] != null) {
-        PTexture tex = images[0].getTexture();
-        if (tex == null) {
-          tex = images[0].createTexture();
-        }        
-        
+        PTexture tex = getTexture(images[0]);          
         if (tex != null) {      
           gl.glEnable(tex.getGLTarget());
           gl.glActiveTexture(GL10.GL_TEXTURE0);
@@ -2804,9 +2772,9 @@ public class PGraphicsAndroid3D extends PGraphics {
     // http://dev.processing.org/bugs/show_bug.cgi?id=97
     float vfirst[] = vertices[shapeFirst];
     float vlast[] = vertices[shapeLast - 1];
-    if ((abs(vfirst[X] - vlast[X]) < EPSILON)
-        && (abs(vfirst[Y] - vlast[Y]) < EPSILON)
-        && (abs(vfirst[Z] - vlast[Z]) < EPSILON)) {
+    if ((PApplet.abs(vfirst[X] - vlast[X]) < EPSILON)
+        && (PApplet.abs(vfirst[Y] - vlast[Y]) < EPSILON)
+        && (PApplet.abs(vfirst[Z] - vlast[Z]) < EPSILON)) {
       shapeLast--;
     }
 
@@ -4177,7 +4145,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     float z0 = eyeX - centerX;
     float z1 = eyeY - centerY;
     float z2 = eyeZ - centerZ;
-    float mag = sqrt(z0 * z0 + z1 * z1 + z2 * z2);
+    float mag = PApplet.sqrt(z0 * z0 + z1 * z1 + z2 * z2);
     if (mag != 0) {
       z0 /= mag;
       z1 /= mag;
@@ -4201,14 +4169,14 @@ public class PGraphicsAndroid3D extends PGraphics {
 
     // Cross product gives area of parallelogram, which is < 1.0 for
     // non-perpendicular unit-length vectors; so normalize x, y here:
-    mag = sqrt(x0 * x0 + x1 * x1 + x2 * x2);
+    mag = PApplet.sqrt(x0 * x0 + x1 * x1 + x2 * x2);
     if (mag != 0) {
       x0 /= mag;
       x1 /= mag;
       x2 /= mag;
     }
 
-    mag = sqrt(y0 * y0 + y1 * y1 + y2 * y2);
+    mag = PApplet.sqrt(y0 * y0 + y1 * y1 + y2 * y2);
     if (mag != 0) {
       y0 /= mag;
       y1 /= mag;
@@ -5086,38 +5054,38 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
   }    
   
-  private void enableLighting() {
+  protected void enableLighting() {
     lights = true;
     gl.glEnable(GL10.GL_LIGHTING);
   }
 
-  private void disableLighting() {
+  protected void disableLighting() {
     lights = false;
     gl.glDisable(GL10.GL_LIGHTING);
   }
     
-  private void lightAmbient(int num) {    
+  protected void lightAmbient(int num) {    
     gl.glLightfv(GL10.GL_LIGHT0 + num, GL10.GL_AMBIENT, lightDiffuse[num], 0);
   }
 
-  private void lightNoAmbient(int num) {
+  protected void lightNoAmbient(int num) {
     gl.glLightfv(GL10.GL_LIGHT0 + num, GL10.GL_AMBIENT, zeroLight, 0);
   }
   
-  private void lightNoSpot(int num) {
+  protected void lightNoSpot(int num) {
     gl.glLightf(GL10.GL_LIGHT0 + num, GL10.GL_SPOT_CUTOFF, 180);
     gl.glLightf(GL10.GL_LIGHT0 + num, GL10.GL_SPOT_EXPONENT, 0);
   }
 
-  private void lightDiffuse(int num) {
+  protected void lightDiffuse(int num) {
     gl.glLightfv(GL10.GL_LIGHT0 + num, GL10.GL_DIFFUSE, lightDiffuse[num], 0);
   }
 
-  private void lightNoDiffuse(int num) {
+  protected void lightNoDiffuse(int num) {
     gl.glLightfv(GL10.GL_LIGHT0 + num, GL10.GL_DIFFUSE, zeroLight, 0);
   }
     
-  private void lightDirection(int num) {
+  protected void lightDirection(int num) {
     if (lightType[num] == DIRECTIONAL) {
       // TODO this expects a fourth arg that will be set to 1
       // this is why lightBuffer is length 4,
@@ -5131,15 +5099,15 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
   }
 
-  private void lightEnable(int num) {
+  protected void lightEnable(int num) {
     gl.glEnable(GL10.GL_LIGHT0 + num);
   }
 
-  private void lightDisable(int num) {
+  protected void lightDisable(int num) {
     gl.glDisable(GL10.GL_LIGHT0 + num);
   }
 
-  private void lightFalloff(int num) {
+  protected void lightFalloff(int num) {
     gl.glLightf(GL10.GL_LIGHT0 + num, GL10.GL_CONSTANT_ATTENUATION,
         lightFalloffConstant[num]);
     gl.glLightf(GL10.GL_LIGHT0 + num, GL10.GL_LINEAR_ATTENUATION,
@@ -5148,23 +5116,23 @@ public class PGraphicsAndroid3D extends PGraphics {
         lightFalloffQuadratic[num]);
   }
 
-  private void lightPosition(int num) {
+  protected void lightPosition(int num) {
     gl.glLightfv(GL10.GL_LIGHT0 + num, GL10.GL_POSITION, lightPosition[num], 0);
   }
 
-  private void lightSpecular(int num) {
+  protected void lightSpecular(int num) {
     gl.glLightfv(GL10.GL_LIGHT0 + num, GL10.GL_SPECULAR, lightSpecular[num], 0);
   }
 
-  private void lightNoSpecular(int num) {
+  protected void lightNoSpecular(int num) {
     gl.glLightfv(GL10.GL_LIGHT0 + num, GL10.GL_SPECULAR, zeroLight, 0);
   }
   
-  private void lightSpotAngle(int num) {
+  protected void lightSpotAngle(int num) {
     gl.glLightf(GL10.GL_LIGHT0 + num, GL10.GL_SPOT_CUTOFF, lightSpotAngle[num]);
   }
 
-  private void lightSpotConcentration(int num) {
+  protected void lightSpotConcentration(int num) {
     gl.glLightf(GL10.GL_LIGHT0 + num, GL10.GL_SPOT_EXPONENT,
         lightSpotConcentration[num]);
   }
@@ -5208,7 +5176,7 @@ public class PGraphicsAndroid3D extends PGraphics {
    * Load the calculated color into a pre-allocated array so that it can be
    * quickly passed over to OpenGL.
    */
-  private final void calcColorBuffer() {
+  protected final void calcColorBuffer() {
     if (colorFloats == null) {
       colorFloats = new float[4];
     }
@@ -5580,9 +5548,9 @@ public class PGraphicsAndroid3D extends PGraphics {
     pixelBuffer.rewind();
     
     // Copying pixel buffer to screen texture...
-    copyToScreenTexture(pixelBuffer);
+    copyToTexture(pixelBuffer);
     // ...and drawing the texture to screen.
-    drawScreenTexture();   
+    drawTexture();   
   }
   
   //////////////////////////////////////////////////////////////
@@ -5595,61 +5563,52 @@ public class PGraphicsAndroid3D extends PGraphics {
       loadPixels();      
       pixelsToTexture();
     }
-  }  
-  
-  
-  protected void loadTextureImpl(int sampling) { 
-    if (texture == null) {
-      loadTexture(POINT);
-      texture.setFlippedY(true);
-    }
-    
-    if ((pixels == null) || (pixels.length != width * height)) {
-      pixels = new int[width * height];
-      pixelBuffer = IntBuffer.allocate(pixels.length);
-      pixelBuffer.rewind();
-    }
-               
-    gl.glReadPixels(0, 0, width, height, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, pixelBuffer);
-    
-    copyToScreenTexture(pixelBuffer);
-    pixelBuffer.rewind();
   }
+  
+  protected void loadTextureImpl(int sampling) {
+    if (width == 0 || height == 0) return;
+    if (texture == null) {      
+      PTexture.Parameters params = PTexture.newParameters(ARGB, sampling);
+      texture = new PTexture(parent, width, height, params);
+      texture.setFlippedY(true);
+      this.setCache(a3d, texture);
+      this.setParams(a3d, params);
+      
+      texCrop = new int[4];
+      texCrop[0] = 0;
+      texCrop[1] = 0;
+      texCrop[2] = width;
+      texCrop[3] = height;     
+    }
+  }  
   
   // Draws wherever it is in the screen texture right now to the screen.
   public void updateTexture() {
-    drawScreenTexture();
+    drawTexture();
   }
   
-  
-  protected void createScreenTexture() {
-    loadTexture();
-    
-    int[] buf = new int [width * height];
-    for (int i = 0; i < buf.length; i++) buf[i] = 0xFF000000;
-    texture.set(buf);
-    
-    screenTexCrop = new int[4];
-    screenTexCrop[0] = 0;
-    screenTexCrop[1] = 0;
-    screenTexCrop[2] = width;
-    screenTexCrop[3] = height;      
+  protected void drawTexture() {
+    drawTexture(texture, texCrop, 0, 0, width, height);
   }
 
-  protected void drawScreenTexture() {
-    drawTexture(texture, screenTexCrop, 0, 0, width, height);
-  }
-
-  protected void copyToScreenTexture(IntBuffer buffer) {
+  protected void copyToTexture(IntBuffer buffer) {
     copyToTexture(texture, buffer, 0, 0, width, height);
   }
   
-  protected void copyFrameToScreenTexture() {
-    gl.glFinish(); // Make sure that the execution off all the openGL commands
-                   // is finished.
+  protected void copyFrameToTexture() {
+    // Make sure that the execution off all the openGL commands is 
+    // finished before loading the texture. 
+    gl.glFinish(); 
     loadTexture();    
   }
   
+  protected void pixelsToTexture() {    
+    texture.set(pixels);
+  }
+  
+  protected void textureToPixels() {
+    texture.get(pixels);
+  }  
   
   //////////////////////////////////////////////////////////////
 
@@ -5681,12 +5640,13 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   protected PImage getImpl(int x, int y, int w, int h) {
     PImage newbie = parent.createImage(w, h, ARGB);
-    PTexture newbieTex = newbie.createTexture();
+    PTexture newbieTex = addTexture(newbie);
 
     IntBuffer newbieBuffer = IntBuffer.allocate(w * h);
     gl.glReadPixels(x, height - y, w, -h, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, newbieBuffer);
     copyToTexture(newbieTex, newbieBuffer, 0, 0, w, h);
-    newbie.textureToPixels();
+    newbie.loadPixels();
+    newbieTex.get(newbie.pixels);
     
     return newbie;
   }
@@ -5723,7 +5683,7 @@ public class PGraphicsAndroid3D extends PGraphics {
    */
   public void set(int x, int y, PImage source) {
     // In A3D we can safely assume that the PImage has a valid associated texture.
-    PTexture tex = source.getTexture();
+    PTexture tex = (PTexture)source.getCache(a3d);
     if (tex != null) {
       int w = source.width; 
       int h = source.height;
@@ -6158,376 +6118,25 @@ public class PGraphicsAndroid3D extends PGraphics {
   // SAVE
 
   // public void save(String filename) // PImage calls loadPixels()
-
-  //////////////////////////////////////////////////////////////
-
-  // RENDERER
-
-  public Renderer getRenderer() {
-    return renderer;
-  }
-
-  public class A3DRenderer implements Renderer {
-    public A3DRenderer() {
-    }
-
-    public void onDrawFrame(GL10 igl) {
-      gl = igl;
-
-      try {
-        gl11 = (GL11) gl;
-      } catch (ClassCastException cce) {
-        gl11 = null;
-      }
-
-      try {
-        gl11x = (GL11Ext) gl;
-      } catch (ClassCastException cce) {
-        gl11x = null;
-      }
-
-      try {
-        gl11xp = (GL11ExtensionPack) gl;
-      } catch (ClassCastException cce) {
-        gl11xp = null;
-      }
-      
-      parent.handleDraw();
-
-      gl = null;
-      gl11 = null;
-      gl11x = null;
-      gl11xp = null;
-    }
-
-    public void onSurfaceChanged(GL10 igl, int iwidth, int iheight) {
-      gl = igl;
-      // PGL2JNILib.init(iwidth, iheight);
-
-      try {
-        gl11 = (GL11) gl;
-      } catch (ClassCastException cce) {
-        gl11 = null;
-      }
-
-      try {
-        gl11x = (GL11Ext) gl;
-      } catch (ClassCastException cce) {
-        gl11x = null;
-      }
-
-      try {
-        gl11xp = (GL11ExtensionPack) gl;
-      } catch (ClassCastException cce) {
-        gl11xp = null;
-      }
-      
-      setSize(iwidth, iheight);
-      gl = null;
-      gl11 = null;
-      gl11x = null;
-      gl11xp = null;
-    }
-
-    public void onSurfaceCreated(GL10 igl, EGLConfig config) {
-      gl = igl;
-      
-      try {
-        gl11 = (GL11) gl;
-      } catch (ClassCastException cce) {
-        gl11 = null;
-      }
-
-      try {
-        gl11x = (GL11Ext) gl;
-      } catch (ClassCastException cce) {
-        gl11x = null;
-      }
-
-      try {
-        gl11xp = (GL11ExtensionPack) gl;
-      } catch (ClassCastException cce) {
-        gl11xp = null;
-      }
-
-      OPENGL_VENDOR = gl.glGetString(GL10.GL_VENDOR);
-      OPENGL_RENDERER = gl.glGetString(GL10.GL_RENDERER);
-      OPENGL_VERSION = gl.glGetString(GL10.GL_VERSION);
-
-      npotTexSupported = false;
-      mipmapGeneration = false;
-      matrixGetSupported = false;
-      texenvCrossbarSupported = false;
-      vboSupported = false;
-      fboSupported = false;
-      String extensions = gl.glGetString(GL10.GL_EXTENSIONS);      
-      if (-1 < extensions.indexOf("texture_non_power_of_two")) {
-        npotTexSupported = true;
-      }
-      if (-1 < extensions.indexOf("generate_mipmap")) {
-        mipmapGeneration = true;
-      }
-      if (-1 < extensions.indexOf("matrix_get")) {
-        matrixGetSupported = true;
-      }
-      if (-1 < extensions.indexOf("texture_env_crossbar")) {
-        texenvCrossbarSupported = true;
-      }
-      if (-1 < extensions.indexOf("vertex_buffer_object")
-          || -1 < OPENGL_VERSION.indexOf("1.1") || // Just in case
-                                                   // vertex_buffer_object
-                                                   // doesn't appear in the list
-                                                   // of extensions,
-          -1 < OPENGL_VERSION.indexOf("2.")) { // if the opengl version is
-                                               // greater than 1.1, VBOs should
-                                               // be supported.
-        vboSupported = true;
-      }
-      if (-1 < extensions.indexOf("framebuffer_object") && gl11xp != null) {
-        try {
-          gl11xp.glCheckFramebufferStatusOES(GL11ExtensionPack.GL_FRAMEBUFFER_OES);
-          fboSupported = true;
-        } catch (UnsupportedOperationException e) {
-          // This takes care of Android 2.1 and older where the FBO extension appears to be supported,
-          // but any call to the FBO functions would result in an error.
-          fboSupported = false;
-        }        
-      }
-            
-      if (gl11xp != null) { 
-        try {
-          gl11xp.glBlendEquation(GL11ExtensionPack.GL_FUNC_ADD);
-          blendEqSupported = true;
-        } catch (UnsupportedOperationException e) {
-          // This takes care of Android 2.1 and older where the glBlendEquation is present in the API,
-          // but any call to it will result in an error.
-          blendEqSupported = false;
-        }
-      } else {
-        blendEqSupported = false;
-      }
-      
-      usingGLMatrixStack = gl11 == null || !matrixGetSupported;
-      
-      int temp[] = new int[2];    
-            
-      gl.glGetIntegerv(GL10.GL_MAX_TEXTURE_SIZE, temp, 0);
-      maxTextureSize = temp[0];
-
-      gl.glGetIntegerv(GL10.GL_ALIASED_LINE_WIDTH_RANGE, temp, 0);
-      maxLineWidth  = temp[1];        
-      
-      gl.glGetIntegerv(GL10.GL_ALIASED_POINT_SIZE_RANGE, temp, 0);
-      maxPointSize = temp[1];        
-      
-      gl.glGetIntegerv(GL10.GL_MAX_TEXTURE_UNITS, temp, 0);
-      maxTextureUnits = PApplet.min(MAX_TEXTURES, temp[0]);
-      
-      // Any remanining resources are deleted now, so we (re) start
-      // from scratch.
-      // Since this method is only called when the sketch starts or 
-      // when the screen changes orientation (always before the sketch's
-      // setup() method is triggered) then this seems to be the best 
-      // location to release resources. Also, at this point we are 
-      // guaranteed to have all the gl objects non-null. 
-      //deleteAllGLResources();
-      
-      gl = null;
-      gl11 = null;
-      gl11x = null;
-      gl11xp = null;
-    }
-  }
-
-  //////////////////////////////////////////////////////////////
-
-  // Config chooser
-
-  public GLSurfaceView.EGLConfigChooser getConfigChooser(int r, int g, int b, int a, int d, int s) {
-    A3DConfigChooser configChooser = new A3DConfigChooser(r, g, b, a, d, s);
-    return configChooser;
-  }
-
-  public class A3DConfigChooser implements EGLConfigChooser {
-    // Desired size (in bits) for the rgba color, depth and stencil buffers.
-    protected int redTarget;
-    protected int greenTarget;
-    protected int blueTarget;
-    protected int alphaTarget;
-    protected int depthTarget;
-    protected int stencilTarget;
-    
-    // Actual rgba color, depth and stencil sizes (in bits) supported by the device.
-    protected int redBits;
-    protected int greenBits;
-    protected int blueBits;
-    protected int alphaBits;
-    protected int depthBits;
-    protected int stencilBits;
-    private int[] tempValue = new int[1];
-
-    /*
-     * This EGL config specification is used to specify 2.0 rendering. We use a
-     * minimum size of 4 bits for red/green/blue, but will perform actual
-     * matching in chooseConfig() below.
-     */
-    private int EGL_OPENGL_ES_BIT = 0x01; // EGL 1.x attribute value for
-                                                 // GL_RENDERABLE_TYPE.
-//    private int EGL_OPENGL_ES2_BIT = 0x04; // EGL 2.x attribute value for
-                                                  // GL_RENDERABLE_TYPE.
-    private int[] configAttribsGL = { EGL10.EGL_RED_SIZE, 4,
-        EGL10.EGL_GREEN_SIZE, 4, EGL10.EGL_BLUE_SIZE, 4,
-        EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT,
-        EGL10.EGL_NONE };
-
-    public A3DConfigChooser(int r, int g, int b, int a, int d, int s) {
-      redTarget = r;
-      greenTarget = g;
-      blueTarget = b;
-      alphaTarget = a;
-      depthTarget = d;
-      stencilTarget = s;
-    }
-
-    public EGLConfig chooseConfig(EGL10 egl, EGLDisplay display) {
-
-      // Get the number of minimally matching EGL configurations
-      int[] num_config = new int[1];
-      egl.eglChooseConfig(display, configAttribsGL, null, 0, num_config);
-
-      int numConfigs = num_config[0];
-
-      if (numConfigs <= 0) {
-        throw new IllegalArgumentException("No EGL configs match configSpec");
-      }
-
-      // Allocate then read the array of minimally matching EGL configs
-      EGLConfig[] configs = new EGLConfig[numConfigs];
-      egl.eglChooseConfig(display, configAttribsGL, configs, numConfigs,
-          num_config);
-
-      if (PApplet.DEBUG) {
-        for (EGLConfig config : configs) {
-          String configStr = "A3D - selected EGL config : "
-            + printConfig(egl, display, config);
-          System.out.println(configStr);
-        }
-      }
-
-      // Now return the configuration that best matches the target one.
-      return chooseBestConfig(egl, display, configs);
-    }
-
-    public EGLConfig chooseBestConfig(EGL10 egl, EGLDisplay display,
-        EGLConfig[] configs) {
-      EGLConfig bestConfig = null;
-      float bestScore = 1000;
-      
-      for (EGLConfig config : configs) {
-        int d = findConfigAttrib(egl, display, config, EGL10.EGL_DEPTH_SIZE, 0);
-        int s = findConfigAttrib(egl, display, config, EGL10.EGL_STENCIL_SIZE, 0);
-
-        int r = findConfigAttrib(egl, display, config, EGL10.EGL_RED_SIZE, 0);
-        int g = findConfigAttrib(egl, display, config, EGL10.EGL_GREEN_SIZE, 0);
-        int b = findConfigAttrib(egl, display, config, EGL10.EGL_BLUE_SIZE, 0);
-        int a = findConfigAttrib(egl, display, config, EGL10.EGL_ALPHA_SIZE, 0);
-
-        float score = 0.20f * PApplet.abs(r - redTarget) + 
-                      0.20f * PApplet.abs(g - greenTarget) + 
-                      0.20f * PApplet.abs(b - blueTarget) +
-                      0.15f * PApplet.abs(a - blueTarget) +
-                      0.15f * PApplet.abs(d - depthTarget) +
-                      0.10f * PApplet.abs(s - stencilTarget);
-                      
-        if (score < bestScore) {
-          // We look for the config closest to the target config.
-          // Closeness is measured by the score function defined above:
-          // we give more weight to the RGB components, followed by the 
-          // alpha, depth and finally stencil bits.
-          bestConfig = config;
-          bestScore = score;
-
-          redBits = r;
-          greenBits = g;
-          blueBits = b;
-          alphaBits = a;
-          depthBits = d;
-          stencilBits = s;
-          
-          offscreenDepthBits = d;
-          offscreenStencilBits = s;
-        }
-      }
-      
-      if (PApplet.DEBUG) {
-        String configStr = "A3D - selected EGL config : "
-          + printConfig(egl, display, bestConfig);
-        System.out.println(configStr);
-      }
-      return bestConfig;
-    }
-
-    private String printConfig(EGL10 egl, EGLDisplay display, EGLConfig config) {
-      int r = findConfigAttrib(egl, display, config, EGL10.EGL_RED_SIZE, 0);
-      int g = findConfigAttrib(egl, display, config, EGL10.EGL_GREEN_SIZE, 0);
-      int b = findConfigAttrib(egl, display, config, EGL10.EGL_BLUE_SIZE, 0);
-      int a = findConfigAttrib(egl, display, config, EGL10.EGL_ALPHA_SIZE, 0);
-      int d = findConfigAttrib(egl, display, config, EGL10.EGL_DEPTH_SIZE, 0);
-      int s = findConfigAttrib(egl, display, config, EGL10.EGL_STENCIL_SIZE, 0);
-      int type = findConfigAttrib(egl, display, config, EGL10.EGL_RENDERABLE_TYPE, 0);
-      int nat = findConfigAttrib(egl, display, config, EGL10.EGL_NATIVE_RENDERABLE, 0);
-      int bufSize = findConfigAttrib(egl, display, config, EGL10.EGL_BUFFER_SIZE, 0);
-      int bufSurf = findConfigAttrib(egl, display, config, EGL10.EGL_RENDER_BUFFER, 0);
-
-      return String.format("EGLConfig rgba=%d%d%d%d depth=%d stencil=%d", r,g,b,a,d,s) 
-        + " type=" + type 
-        + " native=" + nat 
-        + " buffer size=" + bufSize 
-        + " buffer surface=" + bufSurf + 
-        String.format(" caveat=0x%04x", findConfigAttrib(egl, display, config, EGL10.EGL_CONFIG_CAVEAT, 0));
-    }
-
-    private int findConfigAttrib(EGL10 egl, EGLDisplay display,
-      EGLConfig config, int attribute, int defaultValue) {
-      if (egl.eglGetConfigAttrib(display, config, attribute, tempValue)) {
-        return tempValue[0];
-      }
-      return defaultValue;
-    }
-
-  }
-
-  //////////////////////////////////////////////////////////////
-
-  // Context factory
-
-  public GLSurfaceView.EGLContextFactory getContextFactory() {
-    A3DContextFactory contextFactory = new A3DContextFactory();
-    return contextFactory;
-  }
-
-  public class A3DContextFactory implements
-      GLSurfaceView.EGLContextFactory {
-    private int EGL_CONTEXT_CLIENT_VERSION = 0x3098;
-
-    public EGLContext createContext(EGL10 egl, EGLDisplay display,
-        EGLConfig eglConfig) {
-      // Log.w(TAG, "creating OpenGL ES 2.0 context");
-      // checkEglError("Before eglCreateContext", egl);
-      int[] attrib_list = { EGL_CONTEXT_CLIENT_VERSION, 1,
-          EGL10.EGL_NONE };
-      EGLContext context = egl.eglCreateContext(display, eglConfig,
-          EGL10.EGL_NO_CONTEXT, attrib_list);
-      // checkEglError("After eglCreateContext", egl);
-      return context;
-    }
-
-    public void destroyContext(EGL10 egl, EGLDisplay display, EGLContext context) {
-      egl.eglDestroyContext(display, context);
-    }
-  }
-
   
+  //////////////////////////////////////////////////////////////
+  
+  // SHAPE I/O  
+  
+  protected String[] getSupportedShapeFormats() {
+    return new String[] { "obj" };
+  }
+    
+  
+  protected PShape loadShape(String filename, Object params) {
+    return new PShape3D(parent, filename, (PShape3D.Parameters)params);
+  }
+  
+  
+  protected PShape createShape(int size, Object params) {
+    return new PShape3D(parent, size, (PShape3D.Parameters)params);
+  }
+    
   //////////////////////////////////////////////////////////////
 
   // OFFSCREEN RENDERING
@@ -6555,8 +6164,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
     
     offscreenTextures = new PTexture[2];
-    offscreenTextures[0] = offscreenImages[0].createTexture();
-    offscreenTextures[1] = offscreenImages[1].createTexture();
+    offscreenTextures[0] = addTexture(offscreenImages[0]);
+    offscreenTextures[1] = addTexture(offscreenImages[1]);
     
     // Drawing textures are marked as flipped along Y to ensure they are properly
     // rendered by Processing, which has inverted Y axis with respect to
@@ -6595,12 +6204,59 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   // TEXTURE UTILS    
   
-  // Utility function to render texture.
+  /**
+   * This utility method returns the texture associated to the image.
+   * creating and/or updating it if needed.
+   * @param img the image to have a texture metadata associated to it
+   */  
+  protected PTexture getTexture(PImage img) {
+    PTexture tex = (PTexture)img.getCache(a3d);
+    if (tex == null) {
+      tex = addTexture(img);
+    } else if (img.isModified()) {
+      updateTexture(img, tex);
+    }
+    return tex;
+  }
+  
+  /**
+   * This utility method creates a texture for the provided image, and adds it
+   * to the metadata cache of the image.
+   * @param img the image to have a texture metadata associated to it
+   */
+  protected PTexture addTexture(PImage img) {
+    PTexture.Parameters params = (PTexture.Parameters)img.getParams(a3d);
+    if (params == null) {
+      params = PTexture.newParameters();
+      img.setParams(a3d, params);
+    }
+    PTexture tex = new PTexture(img.parent, img.width, img.height, params);
+    img.loadPixels();
+    tex.set(img.pixels);
+    img.setCache(a3d, tex);
+    return tex;
+  }
+  
+  
+  protected void updateTexture(PImage img, PTexture tex) {    
+    if (tex != null) {
+      int x = img.getModifiedX1();
+      int y = img.getModifiedY1();
+      int w = img.getModifiedX2() - x;
+      int h = img.getModifiedY2() - y;      
+      tex.set(img.pixels, x, y, w, h, img.format);
+    }
+    img.setModified(false);
+  }
+
+  
+  /** Utility function to render texture. */
   protected void drawTexture(PTexture tex, int x1, int y1, int w1, int h1, int x2, int y2, int w2, int h2) {
     int[] crop = {x1, y1, w1, h1};
     drawTexture(tex, crop, x2, y2, w2, h2);    
   }
   
+  /** Utility function to render texture. */
   protected void drawTexture(PTexture tex, int[] crop, int x, int y, int w, int h) {
     gl.glEnable(tex.getGLTarget());
     gl.glBindTexture(tex.getGLTarget(), tex.getGLID());
@@ -6646,13 +6302,62 @@ public class PGraphicsAndroid3D extends PGraphics {
     gl.glDisable(tex.getGLTarget());
   }  
   
+  //////////////////////////////////////////////////////////////
+  
+  // OPENGL ROUTINES    
+  
+  protected void setSurfaceParams() {
+    // The default shade model is GL_SMOOTH, but we set
+    // here just in case...
+    gl.glShadeModel(GL10.GL_SMOOTH);    
+    
+    // The ambient and diffuse components for each vertex are taken
+    // from the glColor/color buffer setting:
+    gl.glEnable(GL10.GL_COLOR_MATERIAL);
+    // For a quick overview of how the lighting model works in OpenGL
+    // see this page:
+    // http://www.sjbaker.org/steve/omniv/opengl_lighting.html
+    
+    // Some normal related settings:
+    gl.glEnable(GL10.GL_NORMALIZE);
+    gl.glEnable(GL10.GL_RESCALE_NORMAL);
+    
+    // Light model defaults:
+    // The default opengl ambient light is (0.2, 0.2, 0.2), so
+    // here we set our own default value.
+    gl.glLightModelfv(GL10.GL_LIGHT_MODEL_AMBIENT, baseLight, 0);
+    gl.glLightModelx(GL10.GL_LIGHT_MODEL_TWO_SIDE, 0);
+  }
+  
+  protected void saveGLMatrices() {
+    gl.glMatrixMode(GL10.GL_PROJECTION);
+    gl.glPushMatrix();
+    gl.glMatrixMode(GL10.GL_MODELVIEW);
+    gl.glPushMatrix();  
+  }
+  
+  protected void restoreGLMatrices() {
+    gl.glMatrixMode(GL10.GL_PROJECTION);
+    gl.glPopMatrix();
+    gl.glMatrixMode(GL10.GL_MODELVIEW);
+    gl.glPopMatrix();        
+  }  
+  
+  protected void setDefNormals(float nx, float ny, float nz) { 
+    gl.glNormal3f(nx, ny, nz);
+  }  
   
   //////////////////////////////////////////////////////////////
 
-  // WARNINGS and EXCEPTIONS
-
-  // showWarning() and showException() available from PGraphics.
+  // FLOAT TO FIXED CONVERSION
   
+  static public int toFixed32(float x) {
+    return (int) (x * 65536.0f);
+  }
+
+  static public int toFixed16(float x) {
+    return (int) (x * 4096.0f);
+  }  
   
   //////////////////////////////////////////////////////////////
   
@@ -6895,26 +6600,370 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
   }
   
+  //////////////////////////////////////////////////////////////
+
+  // RENDERER
+
+  public Renderer getRenderer() {
+    return renderer;
+  }
+
+  public class A3DRenderer implements Renderer {
+    public A3DRenderer() {
+    }
+
+    public void onDrawFrame(GL10 igl) {
+      gl = igl;
+
+      try {
+        gl11 = (GL11) gl;
+      } catch (ClassCastException cce) {
+        gl11 = null;
+      }
+
+      try {
+        gl11x = (GL11Ext) gl;
+      } catch (ClassCastException cce) {
+        gl11x = null;
+      }
+
+      try {
+        gl11xp = (GL11ExtensionPack) gl;
+      } catch (ClassCastException cce) {
+        gl11xp = null;
+      }
+      
+      parent.handleDraw();
+
+      gl = null;
+      gl11 = null;
+      gl11x = null;
+      gl11xp = null;
+    }
+
+    public void onSurfaceChanged(GL10 igl, int iwidth, int iheight) {
+      gl = igl;
+      // PGL2JNILib.init(iwidth, iheight);
+
+      try {
+        gl11 = (GL11) gl;
+      } catch (ClassCastException cce) {
+        gl11 = null;
+      }
+
+      try {
+        gl11x = (GL11Ext) gl;
+      } catch (ClassCastException cce) {
+        gl11x = null;
+      }
+
+      try {
+        gl11xp = (GL11ExtensionPack) gl;
+      } catch (ClassCastException cce) {
+        gl11xp = null;
+      }
+      
+      setSize(iwidth, iheight);
+      gl = null;
+      gl11 = null;
+      gl11x = null;
+      gl11xp = null;
+    }
+
+    public void onSurfaceCreated(GL10 igl, EGLConfig config) {
+      gl = igl;
+      
+      try {
+        gl11 = (GL11) gl;
+      } catch (ClassCastException cce) {
+        gl11 = null;
+      }
+
+      try {
+        gl11x = (GL11Ext) gl;
+      } catch (ClassCastException cce) {
+        gl11x = null;
+      }
+
+      try {
+        gl11xp = (GL11ExtensionPack) gl;
+      } catch (ClassCastException cce) {
+        gl11xp = null;
+      }
+
+      OPENGL_VENDOR = gl.glGetString(GL10.GL_VENDOR);
+      OPENGL_RENDERER = gl.glGetString(GL10.GL_RENDERER);
+      OPENGL_VERSION = gl.glGetString(GL10.GL_VERSION);
+
+      npotTexSupported = false;
+      mipmapGeneration = false;
+      matrixGetSupported = false;
+      texenvCrossbarSupported = false;
+      vboSupported = false;
+      fboSupported = false;
+      String extensions = gl.glGetString(GL10.GL_EXTENSIONS);      
+      if (-1 < extensions.indexOf("texture_non_power_of_two")) {
+        npotTexSupported = true;
+      }
+      if (-1 < extensions.indexOf("generate_mipmap")) {
+        mipmapGeneration = true;
+      }
+      if (-1 < extensions.indexOf("matrix_get")) {
+        matrixGetSupported = true;
+      }
+      if (-1 < extensions.indexOf("texture_env_crossbar")) {
+        texenvCrossbarSupported = true;
+      }
+      if (-1 < extensions.indexOf("vertex_buffer_object")
+          || -1 < OPENGL_VERSION.indexOf("1.1") || // Just in case
+                                                   // vertex_buffer_object
+                                                   // doesn't appear in the list
+                                                   // of extensions,
+          -1 < OPENGL_VERSION.indexOf("2.")) { // if the opengl version is
+                                               // greater than 1.1, VBOs should
+                                               // be supported.
+        vboSupported = true;
+      }
+      if (-1 < extensions.indexOf("framebuffer_object") && gl11xp != null) {
+        try {
+          gl11xp.glCheckFramebufferStatusOES(GL11ExtensionPack.GL_FRAMEBUFFER_OES);
+          fboSupported = true;
+        } catch (UnsupportedOperationException e) {
+          // This takes care of Android 2.1 and older where the FBO extension appears to be supported,
+          // but any call to the FBO functions would result in an error.
+          fboSupported = false;
+        }        
+      }
+            
+      if (gl11xp != null) { 
+        try {
+          gl11xp.glBlendEquation(GL11ExtensionPack.GL_FUNC_ADD);
+          blendEqSupported = true;
+        } catch (UnsupportedOperationException e) {
+          // This takes care of Android 2.1 and older where the glBlendEquation is present in the API,
+          // but any call to it will result in an error.
+          blendEqSupported = false;
+        }
+      } else {
+        blendEqSupported = false;
+      }
+      
+      usingGLMatrixStack = gl11 == null || !matrixGetSupported;
+      
+      int temp[] = new int[2];    
+            
+      gl.glGetIntegerv(GL10.GL_MAX_TEXTURE_SIZE, temp, 0);
+      maxTextureSize = temp[0];
+
+      gl.glGetIntegerv(GL10.GL_ALIASED_LINE_WIDTH_RANGE, temp, 0);
+      maxLineWidth  = temp[1];        
+      
+      gl.glGetIntegerv(GL10.GL_ALIASED_POINT_SIZE_RANGE, temp, 0);
+      maxPointSize = temp[1];        
+      
+      gl.glGetIntegerv(GL10.GL_MAX_TEXTURE_UNITS, temp, 0);
+      maxTextureUnits = PApplet.min(MAX_TEXTURES, temp[0]);
+      
+      // Any remanining resources are deleted now, so we (re) start
+      // from scratch.
+      // Since this method is only called when the sketch starts or 
+      // when the screen changes orientation (always before the sketch's
+      // setup() method is triggered) then this seems to be the best 
+      // location to release resources. Also, at this point we are 
+      // guaranteed to have all the gl objects non-null. 
+      //deleteAllGLResources();
+      
+      gl = null;
+      gl11 = null;
+      gl11x = null;
+      gl11xp = null;
+    }
+  }
+
+  //////////////////////////////////////////////////////////////
+
+  // CONFIG CHOOSER
+
+  public GLSurfaceView.EGLConfigChooser getConfigChooser(int r, int g, int b, int a, int d, int s) {
+    A3DConfigChooser configChooser = new A3DConfigChooser(r, g, b, a, d, s);
+    return configChooser;
+  }
+
+  public class A3DConfigChooser implements EGLConfigChooser {
+    // Desired size (in bits) for the rgba color, depth and stencil buffers.
+    public int redTarget;
+    public int greenTarget;
+    public int blueTarget;
+    public int alphaTarget;
+    public int depthTarget;
+    public int stencilTarget;
+    
+    // Actual rgba color, depth and stencil sizes (in bits) supported by the device.
+    public int redBits;
+    public int greenBits;
+    public int blueBits;
+    public int alphaBits;
+    public int depthBits;
+    public int stencilBits;
+    public int[] tempValue = new int[1];
+
+    /*
+     * This EGL config specification is used to specify 2.0 rendering. We use a
+     * minimum size of 4 bits for red/green/blue, but will perform actual
+     * matching in chooseConfig() below.
+     */
+    private int EGL_OPENGL_ES_BIT = 0x01; // EGL 1.x attribute value for
+                                                 // GL_RENDERABLE_TYPE.
+//    private int EGL_OPENGL_ES2_BIT = 0x04; // EGL 2.x attribute value for
+                                                  // GL_RENDERABLE_TYPE.
+    private int[] configAttribsGL = { EGL10.EGL_RED_SIZE, 4,
+        EGL10.EGL_GREEN_SIZE, 4, EGL10.EGL_BLUE_SIZE, 4,
+        EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT,
+        EGL10.EGL_NONE };
+
+    public A3DConfigChooser(int r, int g, int b, int a, int d, int s) {
+      redTarget = r;
+      greenTarget = g;
+      blueTarget = b;
+      alphaTarget = a;
+      depthTarget = d;
+      stencilTarget = s;
+    }
+
+    public EGLConfig chooseConfig(EGL10 egl, EGLDisplay display) {
+
+      // Get the number of minimally matching EGL configurations
+      int[] num_config = new int[1];
+      egl.eglChooseConfig(display, configAttribsGL, null, 0, num_config);
+
+      int numConfigs = num_config[0];
+
+      if (numConfigs <= 0) {
+        throw new IllegalArgumentException("No EGL configs match configSpec");
+      }
+
+      // Allocate then read the array of minimally matching EGL configs
+      EGLConfig[] configs = new EGLConfig[numConfigs];
+      egl.eglChooseConfig(display, configAttribsGL, configs, numConfigs,
+          num_config);
+
+      if (PApplet.DEBUG) {
+        for (EGLConfig config : configs) {
+          String configStr = "A3D - selected EGL config : "
+            + printConfig(egl, display, config);
+          System.out.println(configStr);
+        }
+      }
+
+      // Now return the configuration that best matches the target one.
+      return chooseBestConfig(egl, display, configs);
+    }
+
+    public EGLConfig chooseBestConfig(EGL10 egl, EGLDisplay display,
+        EGLConfig[] configs) {
+      EGLConfig bestConfig = null;
+      float bestScore = 1000;
+      
+      for (EGLConfig config : configs) {
+        int d = findConfigAttrib(egl, display, config, EGL10.EGL_DEPTH_SIZE, 0);
+        int s = findConfigAttrib(egl, display, config, EGL10.EGL_STENCIL_SIZE, 0);
+
+        int r = findConfigAttrib(egl, display, config, EGL10.EGL_RED_SIZE, 0);
+        int g = findConfigAttrib(egl, display, config, EGL10.EGL_GREEN_SIZE, 0);
+        int b = findConfigAttrib(egl, display, config, EGL10.EGL_BLUE_SIZE, 0);
+        int a = findConfigAttrib(egl, display, config, EGL10.EGL_ALPHA_SIZE, 0);
+
+        float score = 0.20f * PApplet.abs(r - redTarget) + 
+                      0.20f * PApplet.abs(g - greenTarget) + 
+                      0.20f * PApplet.abs(b - blueTarget) +
+                      0.15f * PApplet.abs(a - blueTarget) +
+                      0.15f * PApplet.abs(d - depthTarget) +
+                      0.10f * PApplet.abs(s - stencilTarget);
+                      
+        if (score < bestScore) {
+          // We look for the config closest to the target config.
+          // Closeness is measured by the score function defined above:
+          // we give more weight to the RGB components, followed by the 
+          // alpha, depth and finally stencil bits.
+          bestConfig = config;
+          bestScore = score;
+
+          redBits = r;
+          greenBits = g;
+          blueBits = b;
+          alphaBits = a;
+          depthBits = d;
+          stencilBits = s;
+          
+          offscreenDepthBits = d;
+          offscreenStencilBits = s;
+        }
+      }
+      
+      if (PApplet.DEBUG) {
+        String configStr = "A3D - selected EGL config : "
+          + printConfig(egl, display, bestConfig);
+        System.out.println(configStr);
+      }
+      return bestConfig;
+    }
+
+    protected String printConfig(EGL10 egl, EGLDisplay display, EGLConfig config) {
+      int r = findConfigAttrib(egl, display, config, EGL10.EGL_RED_SIZE, 0);
+      int g = findConfigAttrib(egl, display, config, EGL10.EGL_GREEN_SIZE, 0);
+      int b = findConfigAttrib(egl, display, config, EGL10.EGL_BLUE_SIZE, 0);
+      int a = findConfigAttrib(egl, display, config, EGL10.EGL_ALPHA_SIZE, 0);
+      int d = findConfigAttrib(egl, display, config, EGL10.EGL_DEPTH_SIZE, 0);
+      int s = findConfigAttrib(egl, display, config, EGL10.EGL_STENCIL_SIZE, 0);
+      int type = findConfigAttrib(egl, display, config, EGL10.EGL_RENDERABLE_TYPE, 0);
+      int nat = findConfigAttrib(egl, display, config, EGL10.EGL_NATIVE_RENDERABLE, 0);
+      int bufSize = findConfigAttrib(egl, display, config, EGL10.EGL_BUFFER_SIZE, 0);
+      int bufSurf = findConfigAttrib(egl, display, config, EGL10.EGL_RENDER_BUFFER, 0);
+
+      return String.format("EGLConfig rgba=%d%d%d%d depth=%d stencil=%d", r,g,b,a,d,s) 
+        + " type=" + type 
+        + " native=" + nat 
+        + " buffer size=" + bufSize 
+        + " buffer surface=" + bufSurf + 
+        String.format(" caveat=0x%04x", findConfigAttrib(egl, display, config, EGL10.EGL_CONFIG_CAVEAT, 0));
+    }
+
+    protected int findConfigAttrib(EGL10 egl, EGLDisplay display,
+      EGLConfig config, int attribute, int defaultValue) {
+      if (egl.eglGetConfigAttrib(display, config, attribute, tempValue)) {
+        return tempValue[0];
+      }
+      return defaultValue;
+    }
+
+  }
   
   //////////////////////////////////////////////////////////////
 
-  // INTERNAL MATH
-  
-  static public int toFixed32(float x) {
-    return (int) (x * 65536.0f);
+  // CONTEXT FACTORY
+
+  public GLSurfaceView.EGLContextFactory getContextFactory() {
+    A3DContextFactory contextFactory = new A3DContextFactory();
+    return contextFactory;
   }
 
-  static public int toFixed16(float x) {
-    return (int) (x * 4096.0f);
+  public class A3DContextFactory implements GLSurfaceView.EGLContextFactory {
+    public int EGL_CONTEXT_CLIENT_VERSION = 0x3098;
+
+    public EGLContext createContext(EGL10 egl, EGLDisplay display,
+        EGLConfig eglConfig) {
+      // Log.w(TAG, "creating OpenGL ES 2.0 context");
+      // checkEglError("Before eglCreateContext", egl);
+      int[] attrib_list = { EGL_CONTEXT_CLIENT_VERSION, 1,
+          EGL10.EGL_NONE };
+      EGLContext context = egl.eglCreateContext(display, eglConfig,
+          EGL10.EGL_NO_CONTEXT, attrib_list);
+      // checkEglError("After eglCreateContext", egl);
+      return context;
+    }
+
+    public void destroyContext(EGL10 egl, EGLDisplay display, EGLContext context) {
+      egl.eglDestroyContext(display, context);
+    }
   }  
-  
-  
-  private final float sqrt(float a) {
-    return (float) Math.sqrt(a);
-  }
-
-
-  private final float abs(float a) {
-    return (a < 0) ? -a : a;
-  }
 }

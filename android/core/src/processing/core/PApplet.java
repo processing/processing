@@ -23,6 +23,7 @@
 
 package processing.core;
 
+import java.io.IOException;
 import java.io.InputStream;
 import processing.xml.XMLElement;
 import android.content.*;
@@ -1535,39 +1536,26 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 
   /**
+   * Creates a new PImage (the datatype for storing images). This provides a fresh buffer of pixels to play with. Set the size of the buffer with the <b>width</b> and <b>height</b> parameters. The <b>format</b> parameter defines how the pixels are stored. See the PImage reference for more information.
+   */ 
+  public PImage createImage(int wide, int high, int format) {
+    return createImage(wide, high, format, null);
+  }
+  
+  
+  /**
    * Preferred method of creating new PImage objects, ensures that a
    * reference to the parent PApplet is included, which makes save() work
    * without needing an absolute path.
    */
-  public PImage createImage(int wide, int high, int format) {
+  public PImage createImage(int wide, int high, int format, Object params) {
     PImage image = new PImage(wide, high, format);
-    image.parent = this;  // make save() work
-    if (g.is3D()) {
-      image.createTexParams(format);
+    if (params != null) {
+      image.setParams(g, params);
     }
+    image.parent = this;  // make save() work
     return image;
   }
-
-
-  public PImage createImage(int wide, int high, int format, int sampling) {
-    PImage image = new PImage(wide, high, format);
-    image.parent = this;  // make save() work
-    if (g.is3D()) {
-      image.createTexParams(format, sampling);
-    }
-    return image;
-  }
-
-
-  public PImage createImage(int wide, int high, PTexture.Parameters params) {
-    PImage image = new PImage(wide, high, params.format);
-    image.parent = this;  // make save() work
-    if (g.is3D()) {
-      image.createTexParams(params);
-    }
-    return image;
-  }
-
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
@@ -3346,15 +3334,13 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 //  protected String[] loadImageFormats;
 
+
   public PImage loadImage(String filename) {
-    return loadImage(filename, new PTexture.Parameters(ARGB));    
+    return loadImage(filename, null);
   }
 
-  public PImage loadImage(String filename, int sampling) {
-    return loadImage(filename, new PTexture.Parameters(ARGB, sampling));
-  }
   
-  public PImage loadImage(String filename, PTexture.Parameters params) {
+  public PImage loadImage(String filename, Object params) {
 //    return loadImage(filename, null);
     InputStream stream = createInput(filename);
     if (stream == null) {
@@ -3375,8 +3361,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
 //    println("loadImage(" + filename + ") was " + nfc(much));
     PImage image = new PImage(bitmap);
     image.parent = this;
-    if (g.is3D()) {
-      image.createTexParams(params);
+    if (params != null) {
+      image.setParams(g, params);
     }
     return image;
   }
@@ -3528,22 +3514,42 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
   // SHAPE I/O
 
-
+  protected String[] loadShapeFormats;
+  
+  
   /**
    * Load a geometry from a file as a PShape (either an SVG or OBJ file).
-   */
+   */  
   public PShape loadShape(String filename) {
-    return loadShape(filename, STATIC);
+    return loadShape(filename, null);
   }
+  
 
 
   /**
    * Load a geometry from a file as a PShape (either an SVG or OBJ file).
    */
-  public PShape loadShape(String filename, int mode) {
-    if (filename.toLowerCase().endsWith(".svg")) {
+  public PShape loadShape(String filename, Object params) {
+   String extension;
+    
+    String lower = filename.toLowerCase();
+    int dot = filename.lastIndexOf('.');
+    if (dot == -1) {
+      extension = "unknown";  // no extension found
+    }
+    extension = lower.substring(dot + 1);
+
+    // check for, and strip any parameters on the url, i.e.
+    // filename.jpg?blah=blah&something=that
+    int question = extension.indexOf('?');
+    if (question != -1) {
+      extension = extension.substring(0, question);
+    }        
+    
+    if (extension.equals("svg")) {
       return new PShapeSVG(this, filename);
-    } else if (filename.toLowerCase().endsWith(".svgz")) {
+
+    } else if (extension.equals("svgz")) {
       try {
         InputStream input = new GZIPInputStream(createInput(filename));
         XMLElement xml = new XMLElement(createReader(input));
@@ -3551,62 +3557,31 @@ public class PApplet extends Activity implements PConstants, Runnable {
       } catch (IOException e) {
         e.printStackTrace();
       }
-    } else if (filename.toLowerCase().endsWith(".obj")) {
-      if (g.is3D()) {
-        return new PShape3D(this, filename, mode);
-      } else {
-        throw new RuntimeException("OBJ files can be loaded only when using the A3D renderer.");
+    } else {
+      // Loading the formats supported by the renderer.
+    
+      loadShapeFormats = g.getSupportedShapeFormats();
+    
+      if (loadShapeFormats != null) {
+        for (int i = 0; i < loadShapeFormats.length; i++) {
+          if (extension.equals(loadShapeFormats[i])) {
+            return g.loadShape(filename, params);
+          }
+        }
       }
+        
     }
+    
     return null;
   }
 
 
   /**
-   * Creates an empty, static 3D shape, with space for nvert vertices.
+   * Creates an empty shape, with the specified size and parameters. 
+   * The actual type will depend on the renderer.
    */
-  public PShape3D createShape(int nvert, int kind) {
-    return this.createShape(nvert, kind, STATIC);
-  }
-
-
-  /**
-   * Creates an empty 3D shape, with space for nvert vertices.
-   */
-  public PShape3D createShape(int nvert, int kind, int mode) {
-    if (g.is3D()) {
-      PShape3D.Parameters params = PShape3D.newParameters(kind, mode);
-      PShape3D model = new PShape3D(this, nvert, params);
-      return model;
-    } else  {
-       throw new RuntimeException("3D PShapes can only be created when using the A3D renderer.");
-    }
-  }
-
-
-  /**
-   * Tesselates a PShape into a static PShape3D (it cannot be modified during the drawing loop).
-   */
-  public PShape3D createShape(PShape shape) {
-    return createShape(shape, STATIC);
-  }
-
-
-  /**
-   * Tesselates a PShape into a PShape3D with the desired drawing mode (STATID or DYNAMIC)..
-   */
-  public PShape3D createShape(PShape shape, int mode) {
-    if (g.is3D()) {
-      PGraphicsAndroid3D a3d = (PGraphicsAndroid3D)g;
-      a3d.beginShapeRecorderImpl();
-      shape(shape, 0, 0, 1, 1);
-      PShape3D.Parameters params = PShape3D.newParameters(TRIANGLES, mode);
-      PShape3D shape3d = new PShape3D(this, a3d.recordedVertices.size(), params);
-      a3d.endShapeRecorderImpl(shape3d);
-      return shape3d;
-    } else  {
-       throw new RuntimeException("3D PShapes can only be created when using the A3D renderer.");
-    }
+  public PShape createShape(int size, Object params) {
+    return g.createShape(size, params);
   }
 
   //////////////////////////////////////////////////////////////
@@ -7987,18 +7962,33 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
-  public void setCache(Object parent, Object storage) {
-    g.setCache(parent, storage);
+  public void setCache(PGraphics renderer, Object storage) {
+    g.setCache(renderer, storage);
   }
 
 
-  public Object getCache(Object parent) {
-    return g.getCache(parent);
+  public Object getCache(PGraphics renderer) {
+    return g.getCache(renderer);
   }
 
 
-  public void removeCache(Object parent) {
-    g.removeCache(parent);
+  public void removeCache(PGraphics renderer) {
+    g.removeCache(renderer);
+  }
+
+
+  public void setParams(PGraphics renderer, Object params) {
+    g.setParams(renderer, params);
+  }
+
+
+  public Object getParams(PGraphics renderer) {
+    return g.getParams(renderer);
+  }
+
+
+  public void removeParams(PGraphics renderer) {
+    g.removeParams(renderer);
   }
 
 
