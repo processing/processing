@@ -377,6 +377,9 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // Text:
     
+  /** Font texture of currently selected font. */
+  PFontTexture textTex;  
+  
   /** Buffers and array to draw text quads. */
   protected IntBuffer textVertexBuffer = null;
   protected IntBuffer textTexCoordBuffer = null;
@@ -3147,23 +3150,25 @@ public class PGraphicsAndroid3D extends PGraphics {
       gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
     }
     
-    if (textFont.textures == null) {
-      textFont.initTexture(parent, maxTextureSize, maxTextureSize);
-      // Add all the current glyphs to the texture.
-      textFont.addAllGlyphsToTexture();
-    }
-    
-    textFont.setFirstTexture();
+    textTex = (PFontTexture)textFont.getCache(a3d);     
+    if (textTex == null) {
+      textTex = new PFontTexture(parent, textFont, maxTextureSize, maxTextureSize);
+      textFont.setCache(this, textTex);
+      textTex.addAllGlyphsToTexture();
+    }    
+    textTex.setFirstTexture();
 
     // Setting the current fill color as the font color.
-    gl.glColor4f(fillR, fillG, fillB, fillA);
+    setFillColor();
 
     if (textMode == MODEL) {
       if (textVertexBuffer == null) {
         allocateTextModel();
       }
-      // Setting Z axis as the normal to the text geometry
-      gl.glNormal3f(0, 0, 1);
+      
+      // Setting Z axis as the normal to the text geometry      
+      setDefNormals(0, 0, 1);
+      
       textVertexCount = 0;
     }
     
@@ -3185,10 +3190,11 @@ public class PGraphicsAndroid3D extends PGraphics {
     PFont.Glyph glyph = textFont.getGlyph(ch);
 
     if (glyph != null) {
+      PFontTexture.TextureInfo tinfo = textTex.getTexInfo(glyph);
       
-      if (glyph.texture == null) {
+      if (tinfo == null) {
         // Adding new glyph to the font texture.
-        glyph.addToTexture();
+        tinfo = textTex.addToTexture(glyph);
       }
       
       if (textMode == MODEL) {
@@ -3202,7 +3208,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         float x2 = x1 + bwidth * textSize;
         float y2 = y1 + high * textSize;
 
-        textCharModelImpl(glyph.texture, x1, y1, x2, y2);
+        textCharModelImpl(tinfo, x1, y1, x2, y2);
 
       } else if (textMode == SCREEN) {
         int xx = (int) x + glyph.leftExtent;
@@ -3211,22 +3217,22 @@ public class PGraphicsAndroid3D extends PGraphics {
         int w0 = glyph.width;
         int h0 = glyph.height;
 
-        textCharScreenImpl(glyph.texture, xx, yy, w0, h0);
+        textCharScreenImpl(tinfo, xx, yy, w0, h0);
       }
     }
   }
 
-  protected void textCharModelImpl(Glyph.TextureInfo info, float x1, float y1,
+  protected void textCharModelImpl(PFontTexture.TextureInfo info, float x1, float y1,
       float x2, float y2) {
-    if (textFont.currentTex != info.tex) {
+    if ((textTex.currentTex != info.texIndex)) {
       if (0 < textVertexCount) {
         // Current texture changes (the font is so large that needs more than one texture).
         // So rendering all we got until now, and reseting vertex counter.
         renderTextModel();        
         textVertexCount = 0;
       }
-      textFont.setTexture(info.tex);      
-    }   
+      textTex.setTexture(info.texIndex);
+    } 
 
     // Division by three needed because each int element in the buffer is used
     // to store three coordinates.
@@ -3280,30 +3286,21 @@ public class PGraphicsAndroid3D extends PGraphics {
     textVertexCount = n;
   }
 
-  protected void textCharScreenImpl(Glyph.TextureInfo info, int xx, int yy,
+  protected void textCharScreenImpl(PFontTexture.TextureInfo info, int xx, int yy,
       int w0, int h0) {
-    if (textFont.currentTex != info.tex) {
-      textFont.setTexture(info.tex);
+    if (textTex.currentTex != info.texIndex) {
+      textTex.setTexture(info.texIndex);
     }
 
-    // There is no need to setup orthographic projection or any related matrix set/restore
-    // operations here because glDrawTexiOES operates on window coordinates:
-    // "glDrawTexiOES takes window coordinates and bypasses the transform pipeline 
-    // (except for mapping Z to the depth range), so there is no need for any 
-    // matrix setup/restore code."
-    // (from https://www.khronos.org/message_boards/viewtopic.php?f=4&t=948&p=2553).        
-    gl11.glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, info.crop, 0);
-    gl11x.glDrawTexiOES(xx, height - yy, 0, w0, h0);
+    drawTexture(info.crop, xx, height - yy, w0, h0);    
   }
 
   protected void allocateTextModel() {  
-    ByteBuffer vbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 3
-      * SIZEOF_INT);
+    ByteBuffer vbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 3 * SIZEOF_INT);
     vbb.order(ByteOrder.nativeOrder());
     textVertexBuffer = vbb.asIntBuffer();
 
-    ByteBuffer tbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 2
-      * SIZEOF_INT);
+    ByteBuffer tbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 2 * SIZEOF_INT);
     tbb.order(ByteOrder.nativeOrder());
     textTexCoordBuffer = tbb.asIntBuffer();      
             
@@ -6232,6 +6229,17 @@ public class PGraphicsAndroid3D extends PGraphics {
 
     screenBlend(screenBlendMode);
   }
+  
+  protected void drawTexture(int[] crop, int x, int y, int w, int h) {
+ // There is no need to setup orthographic projection or any related matrix set/restore
+    // operations here because glDrawTexiOES operates on window coordinates:
+    // "glDrawTexiOES takes window coordinates and bypasses the transform pipeline 
+    // (except for mapping Z to the depth range), so there is no need for any 
+    // matrix setup/restore code."
+    // (from https://www.khronos.org/message_boards/viewtopic.php?f=4&t=948&p=2553).        
+    gl11.glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, crop, 0);
+    gl11x.glDrawTexiOES(x, y, 0, w, h);    
+  }  
   
   // Utility function to copy buffer to texture
   protected void copyToTexture(PTexture tex, IntBuffer buffer, int x, int y, int w, int h) {

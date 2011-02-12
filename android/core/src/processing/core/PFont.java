@@ -152,20 +152,6 @@ public class PFont implements PConstants {
   protected HashMap<PGraphics, Object> cacheMap;    
   
   
-  /**
-   * Required for OpenGL-based font rendering.
-   */
-  protected PApplet parent;
-  protected int maxTexWidth;
-  protected int maxTexHeight;
-  protected int offsetX;
-  protected int offsetY;
-  protected int lineHeight;
-  protected PTexture[] textures = null;
-  protected int currentTex;
-  protected int lastTex;
-
-  
   public PFont() { }  // for subclasses
 
 
@@ -247,6 +233,7 @@ public class PFont implements PConstants {
         if (glyf.value < 128) {
           ascii[glyf.value] = glyphCount;
         }
+        glyf.index = glyphCount;
         glyphs[glyphCount++] = glyf;
       }
 
@@ -313,6 +300,7 @@ public class PFont implements PConstants {
       if (glyph.value < 128) {
         ascii[glyph.value] = i;
       }
+      glyph.index = i;
       glyphs[i] = glyph;
     }
 
@@ -416,6 +404,7 @@ public class PFont implements PConstants {
       glyphs = (Glyph[]) PApplet.expand(glyphs);
     }
     if (glyphCount == 0) {
+      glyph.index = 0;
       glyphs[glyphCount] = glyph;
       if (glyph.value < 128) {
         ascii[glyph.value] = 0;
@@ -436,6 +425,7 @@ public class PFont implements PConstants {
               ascii[glyphs[j].value] = j;
             }
           }
+          glyph.index = i;
           glyphs[i] = glyph;
           // cache locations of the ascii charset
           if (c < 128) ascii[c] = i;
@@ -755,100 +745,6 @@ public class PFont implements PConstants {
     }
   }
 
-
-  //////////////////////////////////////////////////////////////
-
-  // OPENGL stuff
-  
-  public void initTexture(PApplet p, int w, int h) {
-    parent = p;
-    maxTexWidth = w;
-    maxTexHeight = h;
-    
-    currentTex = -1;
-    lastTex = -1;
-    
-    addTexture();
-    
-    offsetX = 0;
-    offsetY = 0;
-    lineHeight = 0;    
-  }
-  
-  public boolean addTexture() {
-    int w, h;
-    boolean resize;
-    
-    w = maxTexWidth;
-    if (-1 < currentTex && textures[currentTex].glHeight < maxTexHeight) {
-      // The height of the current texture is less than the maximum, this 
-      // means we can replace it with a larger texture.
-      h = PApplet.min(2 * textures[currentTex].glHeight, maxTexHeight);
-      resize = true;
-    } else {
-      h = PApplet.max(512, maxTexHeight / 4);
-      resize = false;
-    }
-     
-    PTexture tex = new PTexture(parent, w, h, new PTexture.Parameters(ARGB, POINT));
-            
-    if (textures == null) {
-      textures = new PTexture[1];
-      textures[0] = tex;
-      currentTex = 0;     
-    } else if (resize) {
-      // Replacing old smaller texture with larger one.
-      // But first we must copy the contents of the older
-      // texture into the new one.
-      PTexture tex0 = textures[currentTex];
-      tex.put(tex0);
-      textures[currentTex] = tex;
-      tex0.delete();
-    } else {
-      // Adding new texture to the list.
-      PTexture[] temp = textures;
-      textures = new PTexture[textures.length + 1];
-      PApplet.arrayCopy(temp, textures, temp.length);
-      textures[temp.length] = tex;
-      currentTex = textures.length - 1;
-    }
-    lastTex = currentTex;
-    
-    // Make sure that the current texture is bound.
-    tex.bind();
-    
-    return resize;
-  }
-  
-  public void setFirstTexture() {
-    setTexture(0);
-  }
-  
-  public void setTexture(int idx) {
-    if (0 <= idx && idx < textures.length) {      
-      currentTex = idx;
-      textures[currentTex].bind();
-    }
-  }
-  
-  // Add all the current glyphs to opengl texture.
-  public void addAllGlyphsToTexture() {
-    // loop over current glyphs.
-    for (int i = 0; i < glyphCount; i++) {
-      glyphs[i].addToTexture();
-    }
-  }
-   
-  public void updateGlyphsTexCoords() {
-    // loop over current glyphs.
-    for (int i = 0; i < glyphCount; i++) {
-      if (glyphs[i].texture != null && glyphs[i].texture.tex == currentTex) { 
-        glyphs[i].texture.updateUV();
-      }
-    }
-  }
-  
-
   
   /////////////////////////////////////////////////////////////
 
@@ -856,16 +752,15 @@ public class PFont implements PConstants {
    * A single character, and its visage.
    */
   public class Glyph {
-    PImage image;
-    TextureInfo texture;
-    
-    int value;
-    int height;
-    int width;
-    int setWidth;
-    int topExtent;
-    int leftExtent;
-    boolean fromStream = false;
+    public PImage image;
+    public int value;
+    public int height;
+    public int width;
+    public int index;    
+    public int setWidth;
+    public int topExtent;
+    public int leftExtent;
+    public boolean fromStream = false;
 
 
     protected Glyph() {
@@ -1014,96 +909,5 @@ public class PFont implements PConstants {
         if (descent == 0) descent = -topExtent + height;
       }
     }
-    
-    // Adds this glyph to the opengl texture in PFont.
-    protected void addToTexture() {           
-      // Converting the pixels array from the PImage into a valid RGBA array for OpenGL.
-      int[] rgba = new int[width * height];
-      int t = 0;
-      int p = 0;
-      if (PGraphicsAndroid3D.BIG_ENDIAN)  {
-        for (int y = 0; y < height; y++) {
-          for (int x = 0; x < width; x++) {
-            rgba[t++] = 0xFFFFFF00 | image.pixels[p++];
-          }
-        }
-      } else {
-        for (int y = 0; y < height; y++) {
-          for (int x = 0; x < width; x++) {
-            rgba[t++] = (image.pixels[p++] << 24) | 0x00FFFFFF;
-          }
-        }
-      }
-      
-      // Is there room for this glyph on the current line?
-      if (offsetX + width> textures[currentTex].glWidth) {
-        // No room, go to the next line:
-        offsetX = 0;
-        offsetY += lineHeight;
-        lineHeight = 0;
-      }
-      lineHeight = Math.max(lineHeight, height);
-      
-      boolean resized = false;
-      if (offsetY + lineHeight > textures[currentTex].glHeight) {    
-        // We run out of space in the current texture, we add a new texture:
-        resized = addTexture();
-        if (resized) {
-          // Because the current texture has been resized, we need to 
-          // update the UV coordinates of all the glyphs associated to it:
-          updateGlyphsTexCoords();
-        } else {
-          // A new texture has been created. Reseting texture coordinates 
-          // and line.
-          offsetX = 0;
-          offsetY = 0;
-          lineHeight = 0;
-        }
-      }
-      
-      if (lastTex == -1) { 
-        lastTex = 0;
-      }
-      
-      // We assume GL10.GL_TEXTURE_2D is enabled at this point.
-      // We reset texture when it was resized because even the
-      // texture index didn't change, the texture is a new one
-      // in fact, so we need to rebind.
-      if (currentTex != lastTex || resized) {
-        setTexture(lastTex);
-      }
-      
-      textures[currentTex].setTexels(offsetX, offsetY, width, height, rgba);
-      
-      texture = new TextureInfo(currentTex, offsetX, offsetY + height, width, -height);
-      offsetX += width;
-    }
-    
-    public class TextureInfo {
-      public TextureInfo(int n, int cropX, int cropY, int cropW, int cropH) {
-        tex = n;          
-        crop = new int[4];
-        crop[0] = cropX;
-        crop[1] = cropY;
-        crop[2] = cropW;
-        crop[3] = cropH;
-        u0 = (float)cropX / (float)textures[n].glWidth;
-        u1 = u0 + (float)cropW / (float)textures[n].glWidth;
-        v0 = (float)(cropY + cropH) / (float)textures[n].glHeight;
-        v1 = (float)cropY / (float)textures[n].glHeight;
-      }
-
-      void updateUV() {
-        u0 = (float)crop[0] / (float)textures[tex].glWidth;
-        u1 = u0 + (float)crop[2] / (float)textures[tex].glWidth;
-        v0 = (float)(crop[1] + crop[3]) / (float)textures[tex].glHeight;
-        v1 = (float)crop[1] / (float)textures[tex].glHeight;        
-      }
-      
-      public int tex;
-      public int[] crop;
-      public float u0, u1;
-      public float v0, v1;
-    }    
   }
 }
