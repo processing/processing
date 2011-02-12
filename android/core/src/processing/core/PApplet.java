@@ -729,10 +729,11 @@ public class PApplet extends Activity implements PConstants, Runnable {
       // this.onResume() and thus require a valid renderer) are triggered
       // before surfaceChanged() is ever called.
       g3 = new PGraphicsAndroid3D();
+      g3.setParent(PApplet.this);
+      g3.setPrimary(true);      
       // Set semi-arbitrary size; will be set properly when surfaceChanged() called
       g3.setSize(wide, high);
-      g3.setParent(PApplet.this);
-      g3.setPrimary(true);
+
 
       // Set context factory. This make possible to have 2.x contexts.
       // We don't need this for the time being since we are using GLES 1.1.
