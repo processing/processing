@@ -3206,14 +3206,6 @@ public class PGraphics extends PImage implements PConstants {
     textSize = size;
     textLeading = (textAscent() + textDescent()) * 1.275f;
   }
-
-  public void beginText() {
-    showMissingWarning("beginText");
-  }
-
-  public void endText() {
-    showMissingWarning("endText");
-  }
   
   // ........................................................
 
@@ -5968,7 +5960,7 @@ public class PGraphics extends PImage implements PConstants {
   }
   
   
-  public boolean isRecording() { // ignore
+  public boolean isRecording() {
     showMissingWarning("shape recording requires OPENGL2"); 
     return false;
   }
@@ -5993,6 +5985,16 @@ public class PGraphics extends PImage implements PConstants {
     showMissingWarning("setting matrix mode requires OPENGL2"); 
   }
 
+  
+  public void beginText() {
+    showMissingWarning("beginText");
+  }
+
+  
+  public void endText() {
+    showMissingWarning("endText");
+  }  
+  
   
   public void texture(PImage image0, PImage image1) {
     showMissingWarning("multitexturing requires OPENGL2");
