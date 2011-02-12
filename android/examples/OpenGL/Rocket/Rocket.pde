@@ -30,7 +30,7 @@ void setup() {
 
   // The particle system is stored in a PShape3D object set to
   // POINT_SPRITES mode
-  particles = createShape(numParticlesTotal, POINT_SPRITES, DYNAMIC);
+  particles = (PShape3D)createShape(numParticlesTotal, PShape3D.newParameters(POINT_SPRITES, DYNAMIC));
   particleLifetime = numParticlesTotal / numParticlesPerFrame;
   lifetimes = new int[numParticlesTotal];
   

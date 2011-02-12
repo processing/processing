@@ -30,7 +30,7 @@ void setup() {
   pg = createGraphics(32, 512, A3D);
 
   // Initializing particle system
-  particles = createShape(1000, POINT_SPRITES, DYNAMIC);
+  particles = (PShape3D)createShape(1000, PShape3D.newParameters(POINT_SPRITES, DYNAMIC));
   particles.loadVertices();
   for (int i = 0; i < particles.getVertexCount(); i++) {
     particles.set(i, random(0, 10), random(0, 10), 0);
@@ -89,10 +89,10 @@ void draw() {
     if (mode == 0) {
       trefoil.enableStyle();
       hint(DISABLE_DEPTH_MASK);
-      blend(ADD);
+      screenBlend(ADD);
     } else {
       trefoil.disableStyle();
-      blend(BLEND);    
+      screenBlend(BLEND);    
     }  
   
     shape(trefoil);
