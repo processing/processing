@@ -388,22 +388,22 @@ public class PImage implements PConstants, Cloneable {
   }
 
   
-  public int getModifiedX1() {
+  public int getModifiedX1() {  // ignore
     return mx1;
   }
 
   
-  public int getModifiedX2() {
+  public int getModifiedX2() {  // ignore
     return mx2;
   }
 
   
-  public int getModifiedY1() {
+  public int getModifiedY1() {  // ignore
     return my1;
   }
 
   
-  public int getModifiedY2() {
+  public int getModifiedY2() {  // ignore
     return my2;
   }  
   
