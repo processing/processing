@@ -43,10 +43,12 @@ void createRibbonModel(ArrayList residues, PShape3D model, ArrayList trj) {
   }  
 
   if (renderMode == 0) { 
-    model = createShape(vertices.size(), LINES, STATIC);
+    PShape3D.Parameters params = PShape3D.newParameters(LINES, STATIC);
+    model = (PShape3D)createShape(vertices.size(), params);
     model.setVertices(vertices);
   } else {
-    model = createShape(vertices.size(), TRIANGLES, STATIC);
+    PShape3D.Parameters params = PShape3D.newParameters(TRIANGLES, STATIC);
+    model = (PShape3D)createShape(vertices.size(), params);
     model.setVertices(vertices);
     model.setNormals(normals);
   }

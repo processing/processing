@@ -15,7 +15,7 @@ void setup() {
   // it will hold (this number cannot be changed later). Also, how
   // the vertices will be connected is specified here (this can be
   // changed later though).
-  cube = createShape(36, TRIANGLES);
+  cube = (PShape3D)createShape(36, PShape3D.newParameters(TRIANGLES));
  
   // The vertices array gives access to all the vertex data
   // in the PShape3D object. It can only be used between

@@ -28,15 +28,16 @@ void setup() {
    
   // We need trilinear sampling for this texture so it looks good
   // even when rendered very small.
-  surftex2 = loadImage("mercury.jpg", TRILINEAR);  
+  PTexture.Parameters params1 = PTexture.newParameters(ARGB, TRILINEAR);  
+  surftex2 = loadImage("mercury.jpg", params1); 
   
   // The clouds texture will "move" having the values of its u
   // texture coordinates displaced by adding a constant increment
   // in each frame. This requires REPEAT wrapping mode so texture 
   // coordinates can be larger than 1.
-  PTexture.Parameters params = PTexture.newParameters();
-  params.wrapU = REPEAT;
-  cloudtex = createImage(512, 256, params);
+  PTexture.Parameters params2 = PTexture.newParameters();
+  params2.wrapU = REPEAT;
+  cloudtex = createImage(512, 256, ARGB, params2);
 
   // Using 3D Perlin noise to generate a clouds texture that is seamless on
   // its edges so it can be applied on a sphere.
