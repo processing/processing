@@ -379,9 +379,12 @@ public class PGraphicsOpenGL2 extends PGraphics {
   
   // Testing geometry buffer for now (but it already rocks) ...
   public boolean USE_GBUFFER = false;
-  public boolean GBUFFER_MERGE_ALL = false;
+  public boolean GBUFFER_MERGE_ALL = true;
   public boolean GBUFFER_UPDATE_STACK = true;
   public GeometryBuffer gbuffer;
+  public int GBUFFER_COUNT;
+  public float GBUFFER_SIZE;
+  public int GBUFFER_MAXSIZE = 10000000;
   
   // ........................................................
 
@@ -922,7 +925,13 @@ public class PGraphicsOpenGL2 extends PGraphics {
  
     if (USE_GBUFFER) {
       if (gbuffer == null) gbuffer = new GeometryBuffer();     
-      if (GBUFFER_MERGE_ALL) gbuffer.init(TRIANGLES);
+      if (GBUFFER_MERGE_ALL) { 
+        gbuffer.init(TRIANGLES);
+        GBUFFER_COUNT = 1;
+      } else{
+        GBUFFER_COUNT = 0;
+      }
+      GBUFFER_SIZE = 0;
     }    
     
     // Each frame starts with textures disabled.
@@ -998,14 +1007,12 @@ public class PGraphicsOpenGL2 extends PGraphics {
   public void endDraw() {
     report("top endDraw()");
 
-    if (USE_GBUFFER && GBUFFER_MERGE_ALL && (gbuffer != null)) {
-      gl2f.glEnableClientState(GL2.GL_VERTEX_ARRAY);
-      gl2f.glEnableClientState(GL2.GL_COLOR_ARRAY);
-      gl2f.glEnableClientState(GL2.GL_NORMAL_ARRAY);    
-      gbuffer.render();
-      gl2f.glDisableClientState(GL2.GL_NORMAL_ARRAY);
-      gl2f.glDisableClientState(GL2.GL_COLOR_ARRAY);
-      gl2f.glDisableClientState(GL2.GL_VERTEX_ARRAY);
+    if (USE_GBUFFER) {
+      if (GBUFFER_MERGE_ALL && gbuffer != null && 0 < gbuffer.vertCount) {
+        gbuffer.pre();    
+        gbuffer.render();
+        gbuffer.post();
+      }
     }
     
     if (hints[ENABLE_DEPTH_SORT]) {
@@ -2451,12 +2458,21 @@ public class PGraphicsOpenGL2 extends PGraphics {
       }
       
       if (USE_GBUFFER) {
-        if (!GBUFFER_MERGE_ALL) {
+        if (GBUFFER_MERGE_ALL) {
+          gbuffer.setTextures(renderTextures, tcount);
+        } else {
           gbuffer.init(TRIANGLES, renderTextures, tcount);
         }
         gbuffer.add(triangles, i, i + faceLength[j] - 1, vertices, faceMinIndex[j], faceMaxIndex[j]);
-        if (!GBUFFER_MERGE_ALL) {
+        if (GBUFFER_MERGE_ALL) { 
+          if (GBUFFER_MAXSIZE < gbuffer.vertCount) {
+            gbuffer.render();
+            GBUFFER_COUNT++;
+            gbuffer.init(TRIANGLES, renderTextures, tcount);
+          }        
+        } else {
           gbuffer.render();
+          GBUFFER_COUNT++;
         }
       } else {
         if (recordingShape) {
@@ -6821,6 +6837,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
     PTexture[] texturesArray;
     int minVertIndex;
     int maxVertIndex;
+    int size;
     
     // The GeometryBuffer has its own stack (for now at least) because
     // OpenGL stack contains the contribution of the camera placement, whereas
@@ -6879,6 +6896,26 @@ public class PGraphicsOpenGL2 extends PGraphics {
     }
     
     void init(int mode, PTexture[] textures, int tc) {
+      setTextures(textures, tc);
+      
+      indicesBuffer.rewind();
+      verticesBuffer.rewind();
+      colorsBuffer.rewind();
+      normalsBuffer.rewind();
+      for (int t = 0; t < texCount; t++) {
+        texcoordsBuffer[t].rewind();
+      }
+      
+      idxCount = 0;
+      vertCount = 0;   
+            
+      minVertIndex = 100000; 
+      maxVertIndex = 0;
+      
+      stack.setIdentity();
+    }
+    
+    void setTextures(PTexture[] textures, int tc) {
       if (textures == null || tc == 0) {
         texCount = 0;
       } else {
@@ -6899,23 +6936,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
         texcoordsArray = new float[allocTexStorage + more][size];
         
         allocTexStorage += more;          
-      }
-      
-      indicesBuffer.rewind();
-      verticesBuffer.rewind();
-      colorsBuffer.rewind();
-      normalsBuffer.rewind();
-      for (int t = 0; t < texCount; t++) {
-        texcoordsBuffer[t].rewind();
-      }
-      
-      idxCount = 0;
-      vertCount = 0;   
-            
-      minVertIndex = 100000; 
-      maxVertIndex = 0;
-      
-      stack.setIdentity();
+      }     
     }
     
     void add(int[][] indices, int i0, int i1, float[][] vertices, int v0, int v1) {
@@ -7057,6 +7078,42 @@ public class PGraphicsOpenGL2 extends PGraphics {
       
       idxCount += 3 * gcount;
       vertCount += vcount;
+      GBUFFER_SIZE += vcount;
+    }
+    
+    void pre() {
+      gl2f.glEnableClientState(GL2.GL_VERTEX_ARRAY);
+      gl2f.glEnableClientState(GL2.GL_COLOR_ARRAY);
+      gl2f.glEnableClientState(GL2.GL_NORMAL_ARRAY);
+      if (0 < texCount) {
+        for (int t = 0; t < texCount; t++) {
+          PTexture tex = texturesArray[t];
+          gl.glEnable(tex.getGLTarget());
+          gl.glActiveTexture(GL.GL_TEXTURE0 + t);
+          gl.glBindTexture(tex.getGLTarget(), tex.getGLID());        
+          gl2f.glClientActiveTexture(GL.GL_TEXTURE0 + t);        
+          gl2f.glEnableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
+        }
+      }
+    }
+    
+    void post() {
+      if (0 < texCount) {
+        for (int t = 0; t < texCount; t++) {
+          PTexture tex = texturesArray[t];
+          gl.glActiveTexture(GL.GL_TEXTURE0 + t);
+          gl.glBindTexture(tex.getGLTarget(), 0);        
+          gl2f.glClientActiveTexture(GL.GL_TEXTURE0 + t);        
+          gl2f.glDisableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
+        }
+        for (int t = 0; t < texCount; t++) {
+          PTexture tex = texturesArray[t];
+          gl.glDisable(tex.getGLTarget());
+        }
+      }    
+      gl2f.glDisableClientState(GL2.GL_NORMAL_ARRAY);
+      gl2f.glDisableClientState(GL2.GL_COLOR_ARRAY);
+      gl2f.glDisableClientState(GL2.GL_VERTEX_ARRAY);      
     }
     
     void render() {
@@ -7075,6 +7132,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
         gl2f.glClientActiveTexture(GL.GL_TEXTURE0 + t);
         gl2f.glTexCoordPointer(2, GL.GL_FLOAT, 0, texcoordsBuffer[t]);          
       }
+      
       
       gl2f.glDrawElements(GL.GL_TRIANGLES, idxCount, GL2.GL_UNSIGNED_INT, indicesBuffer);      
       
