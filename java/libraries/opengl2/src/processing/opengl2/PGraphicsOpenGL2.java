@@ -1285,6 +1285,14 @@ public class PGraphicsOpenGL2 extends PGraphics {
       System.err.println("OPENGL2: Already recording.");
       return recordedShape;
     } else {
+      if (USE_GBUFFER) {        
+        if (gbuffer != null && 0 < gbuffer.vertCount) {
+          gbuffer.pre();    
+          gbuffer.render();
+          gbuffer.post();
+        }        
+      }
+      
       recordedShape = new PShape3D(parent);
       beginShapeRecorderImpl();
       return recordedShape;
@@ -2459,13 +2467,26 @@ public class PGraphicsOpenGL2 extends PGraphics {
       
       if (USE_GBUFFER) {
         if (GBUFFER_MERGE_ALL) {
-          gbuffer.setTextures(renderTextures, tcount);
+          if (gbuffer.newTextures(renderTextures, tcount)) {
+            // Accumulation, but texture changed.
+            if (0 < gbuffer.vertCount) {
+              // Rendering accumulated so far and reinitializing buffer.
+              gbuffer.render();
+              GBUFFER_COUNT++;              
+              gbuffer.init(TRIANGLES, renderTextures, tcount);    
+            } else {
+              // No geometry accumulated yet, setting textures just in case.
+              gbuffer.setTextures(renderTextures, tcount);  
+            }
+          }
         } else {
+          // No accumulation, each shape is sent in a separate buffer.
           gbuffer.init(TRIANGLES, renderTextures, tcount);
         }
         gbuffer.add(triangles, i, i + faceLength[j] - 1, vertices, faceMinIndex[j], faceMaxIndex[j]);
         if (GBUFFER_MERGE_ALL) { 
           if (GBUFFER_MAXSIZE < gbuffer.vertCount) {
+            // Accumulation, but maximum buffer size reached.
             gbuffer.render();
             GBUFFER_COUNT++;
             gbuffer.init(TRIANGLES, renderTextures, tcount);
@@ -6915,6 +6936,18 @@ public class PGraphicsOpenGL2 extends PGraphics {
       stack.setIdentity();
     }
     
+    boolean newTextures(PTexture[] textures, int tc) {
+      if (tc == texCount) {
+        for (int i = 0; i < texCount; i++) {
+          if (textures[i] != texturesArray[i]) {
+            return true;
+          }
+        }
+        return false;
+      }
+      return true;
+    }
+    
     void setTextures(PTexture[] textures, int tc) {
       if (textures == null || tc == 0) {
         texCount = 0;
@@ -7319,7 +7352,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
 
       float r1 = current[1]*n0 + current[5]*n1 + current[9]*n2 + current[13]*n3;
       float r5 = current[1]*n4 + current[5]*n5 + current[9]*n6 + current[13]*n7;
-      float r9 = current[1]*n8 + current[5]*n8 + current[9]*n10 + current[13]*n11;
+      float r9 = current[1]*n8 + current[5]*n9 + current[9]*n10 + current[13]*n11;
       float r13 = current[1]*n12 + current[5]*n13 + current[9]*n14 + current[13]*n15;
 
       float r2 = current[2]*n0 + current[6]*n1 + current[10]*n2 + current[14]*n3;
