@@ -378,13 +378,14 @@ public class PGraphicsOpenGL2 extends PGraphics {
   protected PImage[][] faceTextures = new PImage[DEFAULT_FACES][MAX_TEXTURES];  
   
   // Testing geometry buffer for now (but it already rocks) ...
-  public boolean USE_GBUFFER = false;
-  public boolean GBUFFER_MERGE_ALL = true;
-  public boolean GBUFFER_UPDATE_STACK = true;
-  public GeometryBuffer gbuffer;
-  public int GBUFFER_COUNT;
-  public float GBUFFER_SIZE;
-  public int GBUFFER_MAXSIZE = 10000000;
+  public GeometryBuffer geoBuffer;
+  public boolean USE_GEO_BUFFER = false;
+  public boolean GEO_BUFFER_ACCUM_ALL = true;
+  public boolean UPDATE_GEO_BUFFER_MATRIX_STACK = true;
+  
+  public int GEO_BUFFER_COUNT;
+  public float GEO_BUFFER_SIZE;
+  public int GEO_BUFFER_MAXSIZE = 10000000;
   
   // ........................................................
 
@@ -490,7 +491,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
   // Shape recording:
   
   protected boolean recordingShape;
-  protected int numRecordedTextures = 0;
+  protected int recTexturesCount = 0;
   protected boolean mergeRecShapes = false;  
   protected String recShapeName; // Used to set name of shape during recording.  
   protected PShape3D recordedShape = null;
@@ -498,8 +499,9 @@ public class PGraphicsOpenGL2 extends PGraphics {
   protected ArrayList<float[]> recordedColors = null;
   protected ArrayList<PVector> recordedNormals = null;
   protected ArrayList<PVector>[] recordedTexCoords = null;
-  protected ArrayList<PShape3D> recordedChildren = null;
-   
+  protected ArrayList<PShape3D> recordedChildren = null;  
+  protected ArrayList<Integer> recordedIndices = null;
+  
   // ........................................................
   
   // Drawing surface:
@@ -923,15 +925,15 @@ public class PGraphicsOpenGL2 extends PGraphics {
       texCoordBuffer[t].rewind();
     }
  
-    if (USE_GBUFFER) {
-      if (gbuffer == null) gbuffer = new GeometryBuffer();     
-      if (GBUFFER_MERGE_ALL) { 
-        gbuffer.init(TRIANGLES);
-        GBUFFER_COUNT = 1;
+    if (USE_GEO_BUFFER) {
+      if (geoBuffer == null) geoBuffer = new GeometryBuffer();     
+      if (GEO_BUFFER_ACCUM_ALL) { 
+        geoBuffer.init(TRIANGLES);
+        GEO_BUFFER_COUNT = 1;
       } else{
-        GBUFFER_COUNT = 0;
+        GEO_BUFFER_COUNT = 0;
       }
-      GBUFFER_SIZE = 0;
+      GEO_BUFFER_SIZE = 0;
     }    
     
     // Each frame starts with textures disabled.
@@ -1007,11 +1009,11 @@ public class PGraphicsOpenGL2 extends PGraphics {
   public void endDraw() {
     report("top endDraw()");
 
-    if (USE_GBUFFER) {
-      if (GBUFFER_MERGE_ALL && gbuffer != null && 0 < gbuffer.vertCount) {
-        gbuffer.pre();    
-        gbuffer.render();
-        gbuffer.post();
+    if (USE_GEO_BUFFER) {
+      if (GEO_BUFFER_ACCUM_ALL && geoBuffer != null && 0 < geoBuffer.vertCount) {
+        geoBuffer.pre();  
+        geoBuffer.render();
+        geoBuffer.post();
       }
     }
     
@@ -1285,12 +1287,13 @@ public class PGraphicsOpenGL2 extends PGraphics {
       System.err.println("OPENGL2: Already recording.");
       return recordedShape;
     } else {
-      if (USE_GBUFFER) {        
-        if (gbuffer != null && 0 < gbuffer.vertCount) {
-          gbuffer.pre();    
-          gbuffer.render();
-          gbuffer.post();
-        }        
+      if (USE_GEO_BUFFER) {        
+        if (geoBuffer != null && 0 < geoBuffer.vertCount) {
+          geoBuffer.pre();    
+          geoBuffer.render();
+          geoBuffer.post();
+        }
+        if (geoBuffer == null) geoBuffer = new GeometryBuffer();
       }
       
       recordedShape = new PShape3D(parent);
@@ -1360,7 +1363,17 @@ public class PGraphicsOpenGL2 extends PGraphics {
       }      
     }
     
-    numRecordedTextures = 0;
+    if (USE_GEO_BUFFER) {
+      if (recordedIndices == null) {
+        recordedIndices = new ArrayList<Integer>(vertexBuffer.capacity() / 3);  
+      } else {
+        recordedIndices.ensureCapacity(vertexBuffer.capacity() / 3);
+      }
+    } else{
+      recordedIndices = null;
+    }
+    
+    recTexturesCount = 0;
     
     recordedChildren = new ArrayList<PShape3D>(PApplet.max(DEFAULT_PATHS, DEFAULT_FACES));
   }
@@ -1494,6 +1507,10 @@ public class PGraphicsOpenGL2 extends PGraphics {
   }
 
   public void vertex(float x, float y, float u0, float v0, float u1, float v1) {
+  //public void vertex(float x, float y, float texcoords...) {  
+    //for (float tc : texcoords)              
+    //
+    
     if (2 <= maxTextureUnits) {
       vertexTexture(u0, v0, 0);
       vertexTexture(u1, v1, 1);
@@ -1965,9 +1982,16 @@ public class PGraphicsOpenGL2 extends PGraphics {
 
   public void endRecord() {
     if (recordingShape) {
+      if (USE_GEO_BUFFER && 0 < geoBuffer.vertCount) {
+        // Recording remaining geometry.
+        geoBuffer.record();
+        geoBuffer.init(TRIANGLES); // To set counters to zero.
+      }
+      
       if (0 < recordedVertices.size()) {
         recordedShape.initShape(recordedVertices.size());
       }
+            
       endShapeRecorderImpl(recordedShape);
       recordedShape = null;
     } else {
@@ -2011,12 +2035,17 @@ public class PGraphicsOpenGL2 extends PGraphics {
       shape.setColors(recordedColors);
       shape.setNormals(recordedNormals);
       
+      if (recordedIndices != null) {
+        shape.initIndices(recordedIndices.size());
+        shape.setIndices(recordedIndices);
+      }
+      
       // We set children first because they contain the textures...
       shape.optimizeChildren(recordedChildren); // (we make sure that there are not superfluous shapes)
       shape.setChildren(recordedChildren);
             
       // ... and then the texture coordinates.
-      for (int t = 0; t < numRecordedTextures; t++) {        
+      for (int t = 0; t < recTexturesCount; t++) {        
         shape.setTexcoords(t, recordedTexCoords[t]);
       }
           
@@ -2027,6 +2056,9 @@ public class PGraphicsOpenGL2 extends PGraphics {
       for (int t = 0; t < maxTextureUnits; t++) {
         recordedTexCoords[t].clear();
       }
+      if (recordedIndices != null) {
+        recordedIndices.clear();
+      }      
       recordedChildren.clear();
     }
   }
@@ -2465,39 +2497,81 @@ public class PGraphicsOpenGL2 extends PGraphics {
         }
       }
       
-      if (USE_GBUFFER) {
-        if (GBUFFER_MERGE_ALL) {
-          if (gbuffer.newTextures(renderTextures, tcount)) {
+      if (USE_GEO_BUFFER) {
+        
+        if (recordingShape) {
+          recTexturesCount = PApplet.max(recTexturesCount, tcount);
+          
+          int i0 = recordedIndices.size() + geoBuffer.idxCount;
+          int i1 = i0 + 3 * faceLength[j] - 1;
+          
+          int n0 = recordedVertices.size() + geoBuffer.vertCount;
+          int n1 = n0 + faceMaxIndex[j] - faceMinIndex[j];                
+                       
+          String name = "shape";
+          if (mergeRecShapes) {
+            name = "shape";  
+          } else {
+            name = recShapeName.equals("") ? "shape:" + recordedChildren.size() : recShapeName;
+          }
+          
+          PShape3D child = (PShape3D)PShape3D.createChild(name, n0, n1, i0, i1, TRIANGLES, 0, images);
+          recordedChildren.add(child);
+        }          
+        
+        if (GEO_BUFFER_ACCUM_ALL) {
+          if (geoBuffer.newTextures(renderTextures, tcount)) {
             // Accumulation, but texture changed.
-            if (0 < gbuffer.vertCount) {
+            if (0 < geoBuffer.vertCount) {
               // Rendering accumulated so far and reinitializing buffer.
-              gbuffer.render();
-              GBUFFER_COUNT++;              
-              gbuffer.init(TRIANGLES, renderTextures, tcount);    
+              
+              if (recordingShape) {
+                geoBuffer.record();
+              } else {
+                geoBuffer.render();
+              }
+              
+              GEO_BUFFER_COUNT++;              
+              geoBuffer.init(TRIANGLES, renderTextures, tcount);    
             } else {
               // No geometry accumulated yet, setting textures just in case.
-              gbuffer.setTextures(renderTextures, tcount);  
+              geoBuffer.setTextures(renderTextures, tcount);  
             }
           }
         } else {
           // No accumulation, each shape is sent in a separate buffer.
-          gbuffer.init(TRIANGLES, renderTextures, tcount);
+          geoBuffer.init(TRIANGLES, renderTextures, tcount);
         }
-        gbuffer.add(triangles, i, i + faceLength[j] - 1, vertices, faceMinIndex[j], faceMaxIndex[j]);
-        if (GBUFFER_MERGE_ALL) { 
-          if (GBUFFER_MAXSIZE < gbuffer.vertCount) {
+        
+        geoBuffer.add(triangles, i, i + faceLength[j] - 1, vertices, faceMinIndex[j], faceMaxIndex[j]);
+        
+        if (GEO_BUFFER_ACCUM_ALL) { 
+          if (GEO_BUFFER_MAXSIZE < geoBuffer.vertCount) {
             // Accumulation, but maximum buffer size reached.
-            gbuffer.render();
-            GBUFFER_COUNT++;
-            gbuffer.init(TRIANGLES, renderTextures, tcount);
+            
+            if (recordingShape) {
+              geoBuffer.record();
+            } else {
+              geoBuffer.render();
+            }
+            
+            GEO_BUFFER_COUNT++;
+            geoBuffer.init(TRIANGLES, renderTextures, tcount);
           }        
         } else {
-          gbuffer.render();
-          GBUFFER_COUNT++;
+          
+          if (recordingShape) {
+            geoBuffer.record();
+          } else {
+            geoBuffer.render();
+          }
+          
+          GEO_BUFFER_COUNT++;
+          geoBuffer.init(TRIANGLES);
         }
       } else {
         if (recordingShape) {
-          numRecordedTextures = PApplet.max(numRecordedTextures, tcount);
+          recTexturesCount = PApplet.max(recTexturesCount, tcount);
           
           int n0 = recordedVertices.size();
           int n1 = n0 + 3 * faceLength[j] - 1;
@@ -2510,8 +2584,8 @@ public class PGraphicsOpenGL2 extends PGraphics {
           }
           PShape3D child = (PShape3D)PShape3D.createChild(name, n0, n1, TRIANGLES, 0, images);
           recordedChildren.add(child);
-        }
-
+        }         
+        
         // Division by three needed because each int element in the buffer is used
         // to store three coordinates.
         int size = 3 * faceLength[j];
@@ -3572,8 +3646,8 @@ public class PGraphicsOpenGL2 extends PGraphics {
   // MATRIX STACK
 
   public void pushMatrix() {
-    if (USE_GBUFFER && GBUFFER_MERGE_ALL && GBUFFER_UPDATE_STACK) {
-      gbuffer.stack.push();
+    if (USE_GEO_BUFFER && GEO_BUFFER_ACCUM_ALL && UPDATE_GEO_BUFFER_MATRIX_STACK) {
+      geoBuffer.stack.push();
       return;
     }    
     
@@ -3589,8 +3663,8 @@ public class PGraphicsOpenGL2 extends PGraphics {
 
   
   public void popMatrix() {
-    if (USE_GBUFFER && GBUFFER_MERGE_ALL && GBUFFER_UPDATE_STACK) {
-      gbuffer.stack.pop();
+    if (USE_GEO_BUFFER && GEO_BUFFER_ACCUM_ALL && UPDATE_GEO_BUFFER_MATRIX_STACK) {
+      geoBuffer.stack.pop();
       return;
     }    
         
@@ -3615,8 +3689,8 @@ public class PGraphicsOpenGL2 extends PGraphics {
   }
 
   public void translate(float tx, float ty, float tz) {
-    if (USE_GBUFFER && GBUFFER_MERGE_ALL && GBUFFER_UPDATE_STACK) {
-      gbuffer.stack.translate(tx, ty, tz);
+    if (USE_GEO_BUFFER && GEO_BUFFER_ACCUM_ALL && UPDATE_GEO_BUFFER_MATRIX_STACK) {
+      geoBuffer.stack.translate(tx, ty, tz);
       return;
     }    
     
@@ -3659,8 +3733,8 @@ public class PGraphicsOpenGL2 extends PGraphics {
    * takes radians (instead of degrees).
    */
   public void rotate(float angle, float v0, float v1, float v2) {
-    if (USE_GBUFFER && GBUFFER_MERGE_ALL && GBUFFER_UPDATE_STACK) {      
-      gbuffer.stack.rotate(angle, v0, v1, v2); 
+    if (USE_GEO_BUFFER && GEO_BUFFER_ACCUM_ALL && UPDATE_GEO_BUFFER_MATRIX_STACK) {      
+      geoBuffer.stack.rotate(angle, v0, v1, v2); 
       return;  
     }
     
@@ -3694,8 +3768,8 @@ public class PGraphicsOpenGL2 extends PGraphics {
    * Scale in three dimensions.
    */
   public void scale(float sx, float sy, float sz) {
-    if (USE_GBUFFER && GBUFFER_MERGE_ALL && GBUFFER_UPDATE_STACK) {
-      gbuffer.stack.scale(sx, sy, sz);
+    if (USE_GEO_BUFFER && GEO_BUFFER_ACCUM_ALL && UPDATE_GEO_BUFFER_MATRIX_STACK) {
+      geoBuffer.stack.scale(sx, sy, sz);
       return;
     }    
         
@@ -6980,35 +7054,56 @@ public class PGraphicsOpenGL2 extends PGraphics {
       int gcount = i1 - i0 + 1;
       int vcount = v1 - v0 + 1;
  
+      int k = 0;
+      IntBuffer indicesBuffer0 = indicesBuffer;
       while (indicesBuffer.capacity() < idxCount + 3 * gcount) {
         int newSize = indicesBuffer.capacity() << 1;
-        
+                
         ByteBuffer ibb = ByteBuffer.allocateDirect(newSize * SIZEOF_INT);
         ibb.order(ByteOrder.nativeOrder());
         indicesBuffer = ibb.asIntBuffer();
         
         indicesArray = new int[newSize];
+        k++;
+      }
+      if (0 < k) {
+        indicesBuffer0.position(0);
+        indicesBuffer.position(0);
+        indicesBuffer.put(indicesBuffer0);
+        indicesBuffer.position(idxCount);
+        indicesBuffer0 = null;
       }
       
+      
+      k = 0;
+      FloatBuffer verticesBuffer0 = verticesBuffer;
+      FloatBuffer colorsBuffer0 = colorsBuffer;
+      FloatBuffer normalsBuffer0 = normalsBuffer;
+      FloatBuffer[] texcoordsBuffer0 = new FloatBuffer[texCount];
+      for (int t = 0; t < texCount; t++) {
+        texcoordsBuffer0[t] = texcoordsBuffer[t];
+      }
       while (verticesBuffer.capacity() / 3 < vertCount + vcount) {
         int newSize = verticesBuffer.capacity() / 3 << 1;
         
+        // The data already in the buffers cannot be discarded, copy it back to the new resized buffers!!!!!!              
         ByteBuffer vbb = ByteBuffer.allocateDirect(newSize * 3 * SIZEOF_FLOAT);
         vbb.order(ByteOrder.nativeOrder());
         verticesBuffer = vbb.asFloatBuffer();
-
+          
         ByteBuffer cbb = ByteBuffer.allocateDirect(newSize * 4 * SIZEOF_FLOAT);
         cbb.order(ByteOrder.nativeOrder());
         colorsBuffer = cbb.asFloatBuffer();
-
+                
         ByteBuffer nbb = ByteBuffer.allocateDirect(newSize * 3 * SIZEOF_FLOAT);
         nbb.order(ByteOrder.nativeOrder());
         normalsBuffer = nbb.asFloatBuffer();
-
-        for (int t = 0; t < texCount; t++) {    
+        
+        for (int t = 0; t < texCount; t++) {
+           
           ByteBuffer tbb = ByteBuffer.allocateDirect(newSize * 2 * SIZEOF_FLOAT);
           tbb.order(ByteOrder.nativeOrder());
-          texcoordsBuffer[t] = tbb.asFloatBuffer(); 
+          texcoordsBuffer[t] = tbb.asFloatBuffer();
         }
         
         verticesArray = new float[newSize * 3];
@@ -7016,8 +7111,40 @@ public class PGraphicsOpenGL2 extends PGraphics {
         normalsArray = new float[newSize * 3];
         for (int t = 0; t < texCount; t++) { 
           texcoordsArray[t] = new float[newSize * 2];
-        }   
+        }
+        
+        k++;
       }
+      
+      if (0 < k) {
+        // To avoid moving the buffer position to far forward when increasing
+        // the size several consecutive times.
+        verticesBuffer0.position(0);
+        verticesBuffer.position(0);
+        verticesBuffer.put(verticesBuffer0);
+        verticesBuffer0 = null;
+        verticesBuffer.position(3 * vertCount);
+               
+        colorsBuffer0.position(0);
+        colorsBuffer.position(0);
+        colorsBuffer.put(colorsBuffer0);
+        colorsBuffer0 = null;
+        colorsBuffer.position(4 * vertCount);
+        
+        normalsBuffer0.position(0);
+        normalsBuffer.position(0);
+        normalsBuffer.put(normalsBuffer0);
+        normalsBuffer0 = null; 
+        normalsBuffer.position(3 * vertCount);
+        
+        for (int t = 0; t < texCount; t++) {
+          texcoordsBuffer0[t].position(0);
+          texcoordsBuffer[t].position(0);
+          texcoordsBuffer[t].put(texcoordsBuffer0[t]);
+          texcoordsBuffer0[t] = null;
+          texcoordsBuffer[t].position(3 * vertCount);
+        }       
+      }          
       
       int ni = 0;
       for (int i = i0; i <= i1; i++) {
@@ -7111,7 +7238,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
       
       idxCount += 3 * gcount;
       vertCount += vcount;
-      GBUFFER_SIZE += vcount;
+      GEO_BUFFER_SIZE += vcount;
     }
     
     void pre() {
@@ -7150,6 +7277,13 @@ public class PGraphicsOpenGL2 extends PGraphics {
     }
     
     void render() {
+      // Note for my future self: Since this geometry already contains the
+      // geometric transformations that were applied at the moment of drawing,
+      // the current modelview should be reset to the camera state.
+      // In this way, the transformations can be stored in the matrix stack of
+      // the buffer but also being applied in order to affect other geometry
+      // that is not accumulated (PShape3D, for instance).
+      
       indicesBuffer.position(0);
       verticesBuffer.position(0);
       colorsBuffer.position(0);
@@ -7166,13 +7300,49 @@ public class PGraphicsOpenGL2 extends PGraphics {
         gl2f.glTexCoordPointer(2, GL.GL_FLOAT, 0, texcoordsBuffer[t]);          
       }
       
-      
       gl2f.glDrawElements(GL.GL_TRIANGLES, idxCount, GL2.GL_UNSIGNED_INT, indicesBuffer);      
       
       // Using glDrawRangeElements doesn't make any difference:
       //gl2x.glDrawRangeElements(GL.GL_TRIANGLES, minVertIndex, maxVertIndex, idxCount, GL2.GL_UNSIGNED_INT, indicesBuffer);    
     } 
     
+    void record() {
+      indicesBuffer.position(0);
+      verticesBuffer.position(0);
+      colorsBuffer.position(0);
+      normalsBuffer.position(0);
+      for (int t = 0; t < texCount; t++) {
+        texcoordsBuffer[t].position(0);
+      }      
+
+      int v0 = recordedVertices.size();
+      Integer idx;
+      for (int i = 0; i < idxCount; i++) {
+        idx = new Integer(v0 + indicesBuffer.get());
+        recordedIndices.add(idx);
+        //System.out.println(idx);
+      }      
+      
+      PVector v;
+      float[] c;
+      for (int i = 0; i < vertCount; i++) {
+        v = new PVector(verticesBuffer.get(), verticesBuffer.get(), verticesBuffer.get());
+        recordedVertices.add(v);
+        
+        v = new PVector(normalsBuffer.get(), normalsBuffer.get(), normalsBuffer.get());
+        recordedNormals.add(v);
+        
+        c = new float[4];
+        c[0] = colorsBuffer.get(); c[1] = colorsBuffer.get(); 
+        c[2] = colorsBuffer.get(); c[3] = colorsBuffer.get(); 
+        recordedColors.add(c);
+        
+        for (int t = 0; t < texCount; t++) {
+          v = new PVector(texcoordsBuffer[t].get(), texcoordsBuffer[t].get(), 0);          
+          recordedTexCoords[t].add(v);          
+        }           
+      }
+    }
   }
   
   /**
