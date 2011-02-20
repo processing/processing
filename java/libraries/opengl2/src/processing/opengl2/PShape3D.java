@@ -31,6 +31,7 @@ import processing.core.PImage;
 import processing.core.PShape;
 import processing.core.PVector;
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -75,7 +76,7 @@ public class PShape3D extends PShape {
   protected FloatBuffer vertexBuffer;
   protected FloatBuffer colorBuffer;
   protected FloatBuffer normalBuffer;
-  protected FloatBuffer texCoordBuffer;
+  protected FloatBuffer texCoordBuffer; 
   
   // Public arrays for setting/getting vertices, colors, normals, and 
   // texture coordinates when using loadVertices/updateVertices,
@@ -86,6 +87,12 @@ public class PShape3D extends PShape {
   public float[] colors;
   public float[] normals;
   public float[] texcoords;
+  
+  // Indexed mode, testing:
+  protected int glIndexBufferID = 0;
+  protected IntBuffer indexBuffer = null;
+  protected int indexCount = 0;
+  protected int[] indices;
   
   // To put the texture coordinate values adjusted according to texture 
   // flipping mode, max UV range, etc.
@@ -139,6 +146,9 @@ public class PShape3D extends PShape {
   protected int firstVertex;
   protected int lastVertex;  
     
+  protected int firstIndex;
+  protected int lastIndex;    
+  
   // Bounding box (defined for all shapes, group and geometry):
   public float xmin, xmax;
   public float ymin, ymax;
@@ -155,7 +165,9 @@ public class PShape3D extends PShape {
     glVertexBufferID = 0;
     glColorBufferID = 0;
     glNormalBufferID = 0;
-    glTexCoordBufferID = null; 
+    glTexCoordBufferID = null;
+    
+    updateElement = -1;
   }
   
   public PShape3D(PApplet parent) {
@@ -164,7 +176,7 @@ public class PShape3D extends PShape {
     pgl = (PGraphicsOpenGL2)parent.g;
     this.family = PShape.GROUP;
     this.name = "root";
-    this.root = this;    
+    this.root = this;
   }
   
   public PShape3D(PApplet parent, int numVert) {
@@ -183,6 +195,8 @@ public class PShape3D extends PShape {
     glNormalBufferID = 0;
     glTexCoordBufferID = null;
     
+    updateElement = -1;
+    
     initShapeOBJ(filename, params);    
   }  
   
@@ -199,6 +213,8 @@ public class PShape3D extends PShape {
     glNormalBufferID = 0;
     glTexCoordBufferID = null;
     
+    updateElement = -1; 
+    
     initShape(size, params);
   }
   
@@ -209,7 +225,8 @@ public class PShape3D extends PShape {
     deleteVertexBuffer();
     deleteColorBuffer();
     deleteTexCoordBuffer();
-    deleteNormalBuffer();
+    deleteNormalBuffer();    
+    deleteIndexBuffer();
   }
 
   ////////////////////////////////////////////////////////////
@@ -677,6 +694,13 @@ public class PShape3D extends PShape {
   }
   
   
+  static public PShape createChild(String name, int n0, int n1, int i0, int i1, int mode, float weight, PImage[] tex) {
+    PShape3D child = (PShape3D)createChild(name, n0, n1, mode, weight, tex);    
+    child.firstIndex = i0;
+    child.lastIndex = i1;
+    return child;
+  }
+  
   static public PShape createChild(String name, int n0, int n1, int mode, float weight, PImage[] tex) {
     PShape3D child = new PShape3D();
     child.family = PShape.GEOMETRY;    
@@ -744,6 +768,7 @@ public class PShape3D extends PShape {
         who3d.glColorBufferID = root.glColorBufferID;
         who3d.glNormalBufferID = root.glNormalBufferID;
         who3d.glTexCoordBufferID = root.glTexCoordBufferID;
+        who3d.glIndexBufferID = root.glIndexBufferID;
         
         who3d.vertexBuffer = root.vertexBuffer;
         who3d.colorBuffer = root.colorBuffer;
@@ -1445,6 +1470,7 @@ public class PShape3D extends PShape {
       child1 = (PShape3D)childList.get(i);
       if (child0.equalTo(child1, false)) {
         child0.lastVertex = child1.lastVertex;       // Extending child0.
+        child0.lastIndex = child1.lastIndex;
         // Updating the vertex data:
         for (int n = child0.firstVertex; n <= child0.lastVertex; n++) {
           vertexChild[n] = child0;
@@ -1850,6 +1876,35 @@ public class PShape3D extends PShape {
   }
   
   
+  ////////////////////////////////////////////////////////////
+  
+  // INDEXED MODE: TESTING
+  
+  public void initIndices(int n) {
+    indexCount = n;
+    
+    glIndexBufferID = pgl.createGLResource(PGraphicsOpenGL2.GL_VERTEX_BUFFER);    
+    gl.glBindBuffer(GL.GL_ARRAY_BUFFER, glIndexBufferID);    
+    final int bufferSize = indexCount * PGraphicsOpenGL2.SIZEOF_INT;
+    gl.glBufferData(GL.GL_ARRAY_BUFFER, bufferSize, null, GL.GL_STATIC_DRAW);    
+    gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0); 
+    
+    indices = new int[indexCount];
+  }
+  
+  public void setIndices(ArrayList<Integer> recordedIndices) {
+    gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, glIndexBufferID);
+    indexBuffer = gl.glMapBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, GL.GL_WRITE_ONLY).asIntBuffer();
+    
+    for (int i = 0; i < indexCount; i++) {
+      indices[i] = (Integer)recordedIndices.get(i);
+    }    
+    indexBuffer.put(indices);    
+    
+    gl.glUnmapBuffer(GL.GL_ELEMENT_ARRAY_BUFFER);
+    gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);    
+  }
+  
   ////////////////////////////////////////////////////////////  
   
   // Data allocation, deletion.
@@ -2089,6 +2144,13 @@ public class PShape3D extends PShape {
   }  
 
   
+  protected void deleteIndexBuffer() {
+    if (glIndexBufferID != 0) {
+      pgl.deleteGLResource(glIndexBufferID, PGraphicsOpenGL2.GL_VERTEX_BUFFER);
+      glIndexBufferID = 0;    
+    }
+  }
+  
   protected void deleteTexCoordBuffer() {
     for (int i = 0; i < numTexBuffers; i++) { 
       deleteTexCoordBuffer(i);    
@@ -2206,7 +2268,6 @@ public class PShape3D extends PShape {
       }
     
       if (family == GROUP) {
-        
         init();
         for (int i = 0; i < childCount; i++) {
           ((PShape3D)children[i]).draw(g);
@@ -2363,7 +2424,16 @@ public class PShape3D extends PShape {
       }              
     }
 
-    gl.glDrawArrays(glMode, firstVertex, lastVertex - firstVertex + 1);
+    if (glIndexBufferID != 0) {
+      gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, glIndexBufferID);
+      // Here the vertex indices are understood as the range of indices.
+      int last = lastIndex;
+      int first = firstIndex;
+      gl.glDrawElements(glMode, last - first + 1, GL.GL_UNSIGNED_INT, first * PGraphicsOpenGL2.SIZEOF_INT);      
+      gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
+    } else {
+      gl.glDrawArrays(glMode, firstVertex, lastVertex - firstVertex + 1);  
+    }
 
     if (0 < numTextures) {
       for (int t = 0; t < numTextures; t++) {
