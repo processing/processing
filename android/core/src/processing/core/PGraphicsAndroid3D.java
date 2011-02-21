@@ -24,6 +24,7 @@ package processing.core;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 import java.util.ArrayList;
@@ -319,10 +320,14 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected PImage[][] faceTextures = new PImage[DEFAULT_FACES][MAX_TEXTURES];
   
   // Testing geometry buffer for now (but it already rocks) ...
-  public boolean USE_GBUFFER = false;
-  public boolean GBUFFER_MERGE_ALL = false;
-  public boolean GBUFFER_UPDATE_STACK = true;
-  public GeometryBuffer gbuffer;  
+  public GeometryBuffer geoBuffer;
+  public boolean USE_GEO_BUFFER = false;
+  public boolean GEO_BUFFER_ACCUM_ALL = true;
+  public boolean UPDATE_GEO_BUFFER_MATRIX_STACK = true;
+  
+  public int GEO_BUFFER_COUNT;
+  public float GEO_BUFFER_SIZE;
+  public int GEO_BUFFER_MAXSIZE = 0;
   
   // ........................................................
 
@@ -424,7 +429,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   // Shape recording:
 
   protected boolean recordingShape;
-  protected int numRecordedTextures = 0;
+  protected int recTexturesCount = 0;
   protected boolean mergeRecShapes = false;  
   protected String recShapeName; // Used to set name of shape during recording.  
   protected PShape3D recordedShape = null;
@@ -432,7 +437,8 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected ArrayList<float[]> recordedColors = null;
   protected ArrayList<PVector> recordedNormals = null;
   protected ArrayList<PVector>[] recordedTexCoords = null;
-  protected ArrayList<PShape3D> recordedChildren = null;  
+  protected ArrayList<PShape3D> recordedChildren = null;
+  protected ArrayList<Short> recordedIndices = null;
   
   // ........................................................
   
@@ -818,9 +824,15 @@ public class PGraphicsAndroid3D extends PGraphics {
       texCoordBuffer[t].rewind();
     }
         
-    if (USE_GBUFFER) {
-      if (gbuffer == null) gbuffer = new GeometryBuffer();     
-      if (GBUFFER_MERGE_ALL) gbuffer.init(TRIANGLES);
+    if (USE_GEO_BUFFER) {
+      if (geoBuffer == null) geoBuffer = new GeometryBuffer();     
+      if (GEO_BUFFER_ACCUM_ALL) { 
+        geoBuffer.init(TRIANGLES);
+        GEO_BUFFER_COUNT = 1;
+      } else{
+        GEO_BUFFER_COUNT = 0;
+      }
+      GEO_BUFFER_SIZE = 0;
     }    
     
     // Each frame starts with textures disabled.
@@ -892,14 +904,12 @@ public class PGraphicsAndroid3D extends PGraphics {
   public void endDraw() {
     report("top endDraw()");
     
-    if (USE_GBUFFER && GBUFFER_MERGE_ALL && (gbuffer != null)) {
-      gl.glEnableClientState(GL11.GL_VERTEX_ARRAY);
-      gl.glEnableClientState(GL11.GL_COLOR_ARRAY);
-      gl.glEnableClientState(GL11.GL_NORMAL_ARRAY);    
-      gbuffer.render();
-      gl.glDisableClientState(GL11.GL_NORMAL_ARRAY);
-      gl.glDisableClientState(GL11.GL_COLOR_ARRAY);
-      gl.glDisableClientState(GL11.GL_VERTEX_ARRAY);
+    if (USE_GEO_BUFFER) {
+      if (GEO_BUFFER_ACCUM_ALL && geoBuffer != null && 0 < geoBuffer.vertCount) {
+        geoBuffer.pre();  
+        geoBuffer.render();
+        geoBuffer.post();
+      }
     }
     
     if (primarySurface) {
@@ -1171,6 +1181,15 @@ public class PGraphicsAndroid3D extends PGraphics {
       System.err.println("A3D: Already recording.");
       return recordedShape;
     } else {
+      if (USE_GEO_BUFFER) {        
+        if (geoBuffer != null && 0 < geoBuffer.vertCount) {
+          geoBuffer.pre();    
+          geoBuffer.render();
+          geoBuffer.post();
+        }
+        if (geoBuffer == null) geoBuffer = new GeometryBuffer();
+      }
+            
       recordedShape = new PShape3D(parent);
       beginShapeRecorderImpl();
       return recordedShape;
@@ -1238,7 +1257,17 @@ public class PGraphicsAndroid3D extends PGraphics {
       }      
     }
     
-    numRecordedTextures = 0;
+    if (USE_GEO_BUFFER) {
+      if (recordedIndices == null) {
+        recordedIndices = new ArrayList<Short>(vertexBuffer.capacity() / 3);  
+      } else {
+        recordedIndices.ensureCapacity(vertexBuffer.capacity() / 3);
+      }
+    } else{
+      recordedIndices = null;
+    }    
+    
+    recTexturesCount = 0;
     
     recordedChildren = new ArrayList<PShape3D>(PApplet.max(DEFAULT_PATHS, DEFAULT_FACES));
   }
@@ -1840,6 +1869,12 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   public void endRecord() {
     if (recordingShape) {
+      if (USE_GEO_BUFFER && 0 < geoBuffer.vertCount) {
+        // Recording remaining geometry.
+        geoBuffer.record();
+        geoBuffer.init(TRIANGLES); // To set counters to zero.
+      }      
+      
       if (0 < recordedVertices.size()) {
         recordedShape.initShape(recordedVertices.size());
       }
@@ -1886,12 +1921,17 @@ public class PGraphicsAndroid3D extends PGraphics {
       shape.setColors(recordedColors);
       shape.setNormals(recordedNormals);
       
+      if (recordedIndices != null) {
+        shape.initIndices(recordedIndices.size());
+        shape.setIndices(recordedIndices);
+      }
+       
       // We set children first because they contain the textures...
       shape.optimizeChildren(recordedChildren); // (we make sure that there are not superfluous shapes)
       shape.setChildren(recordedChildren);
             
       // ... and then the texture coordinates.
-      for (int t = 0; t < numRecordedTextures; t++) {        
+      for (int t = 0; t < recTexturesCount; t++) {        
         shape.setTexcoords(t, recordedTexCoords[t]);
       }
           
@@ -1902,6 +1942,9 @@ public class PGraphicsAndroid3D extends PGraphics {
       for (int t = 0; t < maxTextureUnits; t++) {
         recordedTexCoords[t].clear();
       }
+      if (recordedIndices != null) {
+        recordedIndices.clear();
+      }      
       recordedChildren.clear();
     }
   }
@@ -2341,17 +2384,81 @@ public class PGraphicsAndroid3D extends PGraphics {
         }
       }
       
-      if (USE_GBUFFER) {
-        if (!GBUFFER_MERGE_ALL) {
-          gbuffer.init(TRIANGLES, renderTextures, tcount);
+      if (USE_GEO_BUFFER) {
+        
+        if (recordingShape) {
+          recTexturesCount = PApplet.max(recTexturesCount, tcount);
+          
+          int i0 = recordedIndices.size() + geoBuffer.idxCount;
+          int i1 = i0 + 3 * faceLength[j] - 1;
+          
+          int n0 = recordedVertices.size() + geoBuffer.vertCount;
+          int n1 = n0 + faceMaxIndex[j] - faceMinIndex[j];                
+                       
+          String name = "shape";
+          if (mergeRecShapes) {
+            name = "shape";  
+          } else {
+            name = recShapeName.equals("") ? "shape:" + recordedChildren.size() : recShapeName;
+          }
+          
+          PShape3D child = (PShape3D)PShape3D.createChild(name, n0, n1, i0, i1, TRIANGLES, 0, images);
+          recordedChildren.add(child);
+        }          
+        
+        if (GEO_BUFFER_ACCUM_ALL) {
+          if (geoBuffer.newTextures(renderTextures, tcount)) {
+            // Accumulation, but texture changed.
+            if (0 < geoBuffer.vertCount) {
+              // Rendering accumulated so far and reinitializing buffer.
+              
+              if (recordingShape) {
+                geoBuffer.record();
+              } else {
+                geoBuffer.render();
+              }
+              
+              GEO_BUFFER_COUNT++;              
+              geoBuffer.init(TRIANGLES, renderTextures, tcount);    
+            } else {
+              // No geometry accumulated yet, setting textures just in case.
+              geoBuffer.setTextures(renderTextures, tcount);  
+            }
+          }
+        } else {
+          // No accumulation, each shape is sent in a separate buffer.
+          geoBuffer.init(TRIANGLES, renderTextures, tcount);
         }
-        gbuffer.add(triangles, i, i + faceLength[j] - 1, vertices, faceMinIndex[j], faceMaxIndex[j]);
-        if (!GBUFFER_MERGE_ALL) {
-          gbuffer.render();
+        
+        geoBuffer.add(triangles, i, i + faceLength[j] - 1, vertices, faceMinIndex[j], faceMaxIndex[j]);
+        
+        if (GEO_BUFFER_ACCUM_ALL) { 
+          if (0 < GEO_BUFFER_MAXSIZE && GEO_BUFFER_MAXSIZE < geoBuffer.vertCount) {
+            // Accumulation, but maximum buffer size reached.
+            
+            if (recordingShape) {
+              geoBuffer.record();
+            } else {
+              geoBuffer.render();
+            }
+            
+            GEO_BUFFER_COUNT++;
+            geoBuffer.init(TRIANGLES, renderTextures, tcount);
+          }        
+        } else {
+          
+          if (recordingShape) {
+            geoBuffer.record();
+          } else {
+            geoBuffer.render();
+          }
+          
+          GEO_BUFFER_COUNT++;
+          geoBuffer.init(TRIANGLES);
         }
       } else {
         if (recordingShape) {
-          numRecordedTextures = PApplet.max(numRecordedTextures, tcount);
+          recTexturesCount = PApplet.max(recTexturesCount, tcount);
           
           int n0 = recordedVertices.size();
           int n1 = n0 + 3 * faceLength[j] - 1;
@@ -3437,8 +3544,8 @@ public class PGraphicsAndroid3D extends PGraphics {
   // MATRIX STACK
 
   public void pushMatrix() {
-    if (USE_GBUFFER && GBUFFER_MERGE_ALL && GBUFFER_UPDATE_STACK) {
-      gbuffer.stack.push();
+    if (USE_GEO_BUFFER && GEO_BUFFER_ACCUM_ALL && UPDATE_GEO_BUFFER_MATRIX_STACK) {
+      geoBuffer.stack.push();
       return;
     }    
     
@@ -3453,8 +3560,8 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
 
   public void popMatrix() {
-    if (USE_GBUFFER && GBUFFER_MERGE_ALL && GBUFFER_UPDATE_STACK) {
-      gbuffer.stack.pop();
+    if (USE_GEO_BUFFER && GEO_BUFFER_ACCUM_ALL && UPDATE_GEO_BUFFER_MATRIX_STACK) {
+      geoBuffer.stack.pop();
       return;
     }    
     
@@ -3479,8 +3586,8 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
 
   public void translate(float tx, float ty, float tz) {
-    if (USE_GBUFFER && GBUFFER_MERGE_ALL && GBUFFER_UPDATE_STACK) {
-      gbuffer.stack.translate(tx, ty, tz);
+    if (USE_GEO_BUFFER && GEO_BUFFER_ACCUM_ALL && UPDATE_GEO_BUFFER_MATRIX_STACK) {
+      geoBuffer.stack.translate(tx, ty, tz);
       return;
     }       
     
@@ -3523,8 +3630,8 @@ public class PGraphicsAndroid3D extends PGraphics {
    * takes radians (instead of degrees).
    */
   public void rotate(float angle, float v0, float v1, float v2) {
-    if (USE_GBUFFER && GBUFFER_MERGE_ALL && GBUFFER_UPDATE_STACK) {      
-      gbuffer.stack.rotate(angle, v0, v1, v2); 
+    if (USE_GEO_BUFFER && GEO_BUFFER_ACCUM_ALL && UPDATE_GEO_BUFFER_MATRIX_STACK) {      
+      geoBuffer.stack.rotate(angle, v0, v1, v2); 
       return;  
     }
         
@@ -3558,8 +3665,8 @@ public class PGraphicsAndroid3D extends PGraphics {
    * Scale in three dimensions.
    */
   public void scale(float sx, float sy, float sz) {
-    if (USE_GBUFFER && GBUFFER_MERGE_ALL && GBUFFER_UPDATE_STACK) {
-      gbuffer.stack.scale(sx, sy, sz);
+    if (USE_GEO_BUFFER && GEO_BUFFER_ACCUM_ALL && UPDATE_GEO_BUFFER_MATRIX_STACK) {
+      geoBuffer.stack.scale(sx, sy, sz);
       return;
     }    
     
@@ -6509,20 +6616,20 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   // UTILITY INNER CLASSES  
   
-  
   protected class GeometryBuffer {
     int mode;    
     int idxCount;
     int vertCount;
     int texCount;
     short[] indicesArray;
-    int[] verticesArray;
-    int[] normalsArray;
-    int[] colorsArray;
-    int[][] texcoordsArray;
+    float[] verticesArray;
+    float[] normalsArray;
+    float[] colorsArray;
+    float[][] texcoordsArray;
     PTexture[] texturesArray;
     int minVertIndex;
     int maxVertIndex;
+    int size;
     
     // The GeometryBuffer has its own stack (for now at least) because
     // OpenGL stack contains the contribution of the camera placement, whereas
@@ -6530,40 +6637,40 @@ public class PGraphicsAndroid3D extends PGraphics {
     GLMatrixStack stack;
     
     ShortBuffer indicesBuffer;
-    IntBuffer verticesBuffer;
-    IntBuffer normalsBuffer;
-    IntBuffer colorsBuffer;
-    IntBuffer[] texcoordsBuffer;
+    FloatBuffer verticesBuffer;
+    FloatBuffer normalsBuffer;
+    FloatBuffer colorsBuffer;
+    FloatBuffer[] texcoordsBuffer;
     
     int allocTexStorage;
     
     GeometryBuffer() {
-      ByteBuffer ibb = ByteBuffer.allocateDirect(DEFAULT_TRIANGLES * SIZEOF_SHORT);
+      ByteBuffer ibb = ByteBuffer.allocateDirect(DEFAULT_TRIANGLES * SIZEOF_INT);
       ibb.order(ByteOrder.nativeOrder());
       indicesBuffer = ibb.asShortBuffer();
             
-      ByteBuffer vbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 3 * SIZEOF_INT);
+      ByteBuffer vbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 3 * SIZEOF_FLOAT);
       vbb.order(ByteOrder.nativeOrder());
-      verticesBuffer = vbb.asIntBuffer();
+      verticesBuffer = vbb.asFloatBuffer();
 
-      ByteBuffer cbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 4 * SIZEOF_INT);
+      ByteBuffer cbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 4 * SIZEOF_FLOAT);
       cbb.order(ByteOrder.nativeOrder());
-      colorsBuffer = cbb.asIntBuffer();
+      colorsBuffer = cbb.asFloatBuffer();
 
-      ByteBuffer nbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 3 * SIZEOF_INT);
+      ByteBuffer nbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 3 * SIZEOF_FLOAT);
       nbb.order(ByteOrder.nativeOrder());
-      normalsBuffer = nbb.asIntBuffer();      
+      normalsBuffer = nbb.asFloatBuffer();      
       
-      texcoordsBuffer = new IntBuffer[MAX_TEXTURES];
-      ByteBuffer tbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 2 * SIZEOF_INT);
+      texcoordsBuffer = new FloatBuffer[MAX_TEXTURES];
+      ByteBuffer tbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 2 * SIZEOF_FLOAT);
       tbb.order(ByteOrder.nativeOrder());
-      texcoordsBuffer[0] = tbb.asIntBuffer();    
+      texcoordsBuffer[0] = tbb.asFloatBuffer();    
       
       indicesArray = new short[DEFAULT_TRIANGLES];
-      verticesArray = new int[DEFAULT_BUFFER_SIZE * 3];
-      colorsArray = new int[DEFAULT_BUFFER_SIZE * 4];      
-      normalsArray = new int[DEFAULT_BUFFER_SIZE * 3];
-      texcoordsArray = new int[1][DEFAULT_BUFFER_SIZE * 2];    
+      verticesArray = new float[DEFAULT_BUFFER_SIZE * 3];
+      colorsArray = new float[DEFAULT_BUFFER_SIZE * 4];      
+      normalsArray = new float[DEFAULT_BUFFER_SIZE * 3];
+      texcoordsArray = new float[1][DEFAULT_BUFFER_SIZE * 2];    
       
       texturesArray = new PTexture[MAX_TEXTURES];
       
@@ -6581,27 +6688,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
     
     void init(int mode, PTexture[] textures, int tc) {
-      if (textures == null || tc == 0) {
-        texCount = 0;
-      } else {
-        texCount = tc;
-        PApplet.arrayCopy(textures, texturesArray, tc);
-      }
-      
-      if (allocTexStorage < texCount) {
-        int more = texCount - allocTexStorage;
-        
-        int size = texcoordsBuffer[allocTexStorage - 1].capacity();
-        for (int i = 0; i < more; i++) {
-          ByteBuffer tbb = ByteBuffer.allocateDirect(size * SIZEOF_INT);
-          tbb.order(ByteOrder.nativeOrder());
-          texcoordsBuffer[allocTexStorage + i] = tbb.asIntBuffer();    
-        }
-        
-        texcoordsArray = new int[allocTexStorage + more][size];
-        
-        allocTexStorage += more;          
-      }
+      setTextures(textures, tc);
       
       indicesBuffer.rewind();
       verticesBuffer.rewind();
@@ -6620,6 +6707,42 @@ public class PGraphicsAndroid3D extends PGraphics {
       stack.setIdentity();
     }
     
+    boolean newTextures(PTexture[] textures, int tc) {
+      if (tc == texCount) {
+        for (int i = 0; i < texCount; i++) {
+          if (textures[i] != texturesArray[i]) {
+            return true;
+          }
+        }
+        return false;
+      }
+      return true;
+    }
+    
+    void setTextures(PTexture[] textures, int tc) {
+      if (textures == null || tc == 0) {
+        texCount = 0;
+      } else {
+        texCount = tc;
+        PApplet.arrayCopy(textures, texturesArray, tc);
+      }
+      
+      if (allocTexStorage < texCount) {
+        int more = texCount - allocTexStorage;
+        
+        int size = texcoordsBuffer[allocTexStorage - 1].capacity();
+        for (int i = 0; i < more; i++) {
+          ByteBuffer tbb = ByteBuffer.allocateDirect(size * SIZEOF_FLOAT);
+          tbb.order(ByteOrder.nativeOrder());
+          texcoordsBuffer[allocTexStorage + i] = tbb.asFloatBuffer();    
+        }
+        
+        texcoordsArray = new float[allocTexStorage + more][size];
+        
+        allocTexStorage += more;          
+      }     
+    }
+    
     void add(int[][] indices, int i0, int i1, float[][] vertices, int v0, int v1) {
       add(indices, i0, i1, vertices, v0, v1, stack.current);
     }
@@ -6628,44 +6751,97 @@ public class PGraphicsAndroid3D extends PGraphics {
       int gcount = i1 - i0 + 1;
       int vcount = v1 - v0 + 1;
  
+      int k = 0;
+      ShortBuffer indicesBuffer0 = indicesBuffer;
       while (indicesBuffer.capacity() < idxCount + 3 * gcount) {
         int newSize = indicesBuffer.capacity() << 1;
-        
-        ByteBuffer ibb = ByteBuffer.allocateDirect(newSize * SIZEOF_SHORT);
+                
+        ByteBuffer ibb = ByteBuffer.allocateDirect(newSize * SIZEOF_INT);
         ibb.order(ByteOrder.nativeOrder());
         indicesBuffer = ibb.asShortBuffer();
         
         indicesArray = new short[newSize];
+        k++;
+      }
+      if (0 < k) {
+        indicesBuffer0.position(0);
+        indicesBuffer.position(0);
+        indicesBuffer.put(indicesBuffer0);
+        indicesBuffer.position(idxCount);
+        indicesBuffer0 = null;
       }
       
+      
+      k = 0;
+      FloatBuffer verticesBuffer0 = verticesBuffer;
+      FloatBuffer colorsBuffer0 = colorsBuffer;
+      FloatBuffer normalsBuffer0 = normalsBuffer;
+      FloatBuffer[] texcoordsBuffer0 = new FloatBuffer[texCount];
+      for (int t = 0; t < texCount; t++) {
+        texcoordsBuffer0[t] = texcoordsBuffer[t];
+      }
       while (verticesBuffer.capacity() / 3 < vertCount + vcount) {
         int newSize = verticesBuffer.capacity() / 3 << 1;
         
-        ByteBuffer vbb = ByteBuffer.allocateDirect(newSize * 3 * SIZEOF_INT);
+        // The data already in the buffers cannot be discarded, copy it back to the new resized buffers!!!!!!              
+        ByteBuffer vbb = ByteBuffer.allocateDirect(newSize * 3 * SIZEOF_FLOAT);
         vbb.order(ByteOrder.nativeOrder());
-        verticesBuffer = vbb.asIntBuffer();
-
-        ByteBuffer cbb = ByteBuffer.allocateDirect(newSize * 4 * SIZEOF_INT);
+        verticesBuffer = vbb.asFloatBuffer();
+          
+        ByteBuffer cbb = ByteBuffer.allocateDirect(newSize * 4 * SIZEOF_FLOAT);
         cbb.order(ByteOrder.nativeOrder());
-        colorsBuffer = cbb.asIntBuffer();
-
-        ByteBuffer nbb = ByteBuffer.allocateDirect(newSize * 3 * SIZEOF_INT);
+        colorsBuffer = cbb.asFloatBuffer();
+                
+        ByteBuffer nbb = ByteBuffer.allocateDirect(newSize * 3 * SIZEOF_FLOAT);
         nbb.order(ByteOrder.nativeOrder());
-        normalsBuffer = nbb.asIntBuffer();
-
-        for (int t = 0; t < texCount; t++) {    
-          ByteBuffer tbb = ByteBuffer.allocateDirect(newSize * 2 * SIZEOF_INT);
+        normalsBuffer = nbb.asFloatBuffer();
+        
+        for (int t = 0; t < texCount; t++) {
+           
+          ByteBuffer tbb = ByteBuffer.allocateDirect(newSize * 2 * SIZEOF_FLOAT);
           tbb.order(ByteOrder.nativeOrder());
-          texcoordsBuffer[t] = tbb.asIntBuffer(); 
+          texcoordsBuffer[t] = tbb.asFloatBuffer();
         }
         
-        verticesArray = new int[newSize * 3];
-        colorsArray = new int[newSize * 4];
-        normalsArray = new int[newSize * 3];
+        verticesArray = new float[newSize * 3];
+        colorsArray = new float[newSize * 4];
+        normalsArray = new float[newSize * 3];
         for (int t = 0; t < texCount; t++) { 
-          texcoordsArray[t] = new int[newSize * 2];
-        }   
+          texcoordsArray[t] = new float[newSize * 2];
+        }
+        
+        k++;
       }
+      
+      if (0 < k) {
+        // To avoid moving the buffer position to far forward when increasing
+        // the size several consecutive times.
+        verticesBuffer0.position(0);
+        verticesBuffer.position(0);
+        verticesBuffer.put(verticesBuffer0);
+        verticesBuffer0 = null;
+        verticesBuffer.position(3 * vertCount);
+               
+        colorsBuffer0.position(0);
+        colorsBuffer.position(0);
+        colorsBuffer.put(colorsBuffer0);
+        colorsBuffer0 = null;
+        colorsBuffer.position(4 * vertCount);
+        
+        normalsBuffer0.position(0);
+        normalsBuffer.position(0);
+        normalsBuffer.put(normalsBuffer0);
+        normalsBuffer0 = null; 
+        normalsBuffer.position(3 * vertCount);
+        
+        for (int t = 0; t < texCount; t++) {
+          texcoordsBuffer0[t].position(0);
+          texcoordsBuffer[t].position(0);
+          texcoordsBuffer[t].put(texcoordsBuffer0[t]);
+          texcoordsBuffer0[t] = null;
+          texcoordsBuffer[t].position(3 * vertCount);
+        }       
+      }          
       
       int ni = 0;
       for (int i = i0; i <= i1; i++) {
@@ -6696,27 +6872,27 @@ public class PGraphicsAndroid3D extends PGraphics {
         nz = vert[NZ];
         
         if (mm == null) {
-          verticesArray[nv++] = toFixed32(x);
-          verticesArray[nv++] = toFixed32(y);
-          verticesArray[nv++] = toFixed32(z);
+          verticesArray[nv++] = x;
+          verticesArray[nv++] = y;
+          verticesArray[nv++] = z;
           
-          normalsArray[nn++] = toFixed32(nx);
-          normalsArray[nn++] = toFixed32(ny);
-          normalsArray[nn++] = toFixed32(nz); 
+          normalsArray[nn++] = nx;
+          normalsArray[nn++] = ny;
+          normalsArray[nn++] = nz; 
         } else {         
-          verticesArray[nv++] = toFixed32(x * mm[0] + y * mm[4] + z * mm[8] + mm[12]);
-          verticesArray[nv++] = toFixed32(x * mm[1] + y * mm[5] + z * mm[9] + mm[13]);
-          verticesArray[nv++] = toFixed32(x * mm[2] + y * mm[6] + z * mm[10] + mm[14]);
+          verticesArray[nv++] = x * mm[0] + y * mm[4] + z * mm[8] + mm[12];
+          verticesArray[nv++] = x * mm[1] + y * mm[5] + z * mm[9] + mm[13];
+          verticesArray[nv++] = x * mm[2] + y * mm[6] + z * mm[10] + mm[14];
           
-          normalsArray[nn++] = toFixed32(nx + mm[12]);
-          normalsArray[nn++] = toFixed32(ny + mm[13]);
-          normalsArray[nn++] = toFixed32(nz + mm[14]);
+          normalsArray[nn++] = nx + mm[12];
+          normalsArray[nn++] = ny + mm[13];
+          normalsArray[nn++] = nz + mm[14];
         }
         
-        colorsArray[nc++] = toFixed32(vert[R]);
-        colorsArray[nc++] = toFixed32(vert[G]);
-        colorsArray[nc++] = toFixed32(vert[B]);
-        colorsArray[nc++] = toFixed32(vert[A]);        
+        colorsArray[nc++] = vert[R];
+        colorsArray[nc++] = vert[G];
+        colorsArray[nc++] = vert[B];
+        colorsArray[nc++] = vert[A];        
         
         if (0 < texCount) {
           float[] vertU = vertexU[i];
@@ -6743,8 +6919,8 @@ public class PGraphicsAndroid3D extends PGraphics {
               sy = -1.0f;
             } 
             
-            texcoordsArray[t][nt++] = toFixed32((cx + sx * vertU[t]) * uscale);
-            texcoordsArray[t][nt++] = toFixed32((cy + sy * vertV[t]) * vscale);
+            texcoordsArray[t][nt++] = (cx + sx * vertU[t]) * uscale;
+            texcoordsArray[t][nt++] = (cy + sy * vertV[t]) * vscale;
           }
         }
       }
@@ -6759,9 +6935,52 @@ public class PGraphicsAndroid3D extends PGraphics {
       
       idxCount += 3 * gcount;
       vertCount += vcount;
+      GEO_BUFFER_SIZE += vcount;
+    }
+    
+    void pre() {
+      gl.glEnableClientState(GL11.GL_VERTEX_ARRAY);
+      gl.glEnableClientState(GL11.GL_COLOR_ARRAY);
+      gl.glEnableClientState(GL11.GL_NORMAL_ARRAY);
+      if (0 < texCount) {
+        for (int t = 0; t < texCount; t++) {
+          PTexture tex = texturesArray[t];
+          gl.glEnable(tex.getGLTarget());
+          gl.glActiveTexture(GL11.GL_TEXTURE0 + t);
+          gl.glBindTexture(tex.getGLTarget(), tex.getGLID());        
+          gl.glClientActiveTexture(GL11.GL_TEXTURE0 + t);        
+          gl.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
+        }
+      }
+    }
+    
+    void post() {
+      if (0 < texCount) {
+        for (int t = 0; t < texCount; t++) {
+          PTexture tex = texturesArray[t];
+          gl.glActiveTexture(GL11.GL_TEXTURE0 + t);
+          gl.glBindTexture(tex.getGLTarget(), 0);        
+          gl.glClientActiveTexture(GL11.GL_TEXTURE0 + t);        
+          gl.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
+        }
+        for (int t = 0; t < texCount; t++) {
+          PTexture tex = texturesArray[t];
+          gl.glDisable(tex.getGLTarget());
+        }
+      }    
+      gl.glDisableClientState(GL11.GL_NORMAL_ARRAY);
+      gl.glDisableClientState(GL11.GL_COLOR_ARRAY);
+      gl.glDisableClientState(GL11.GL_VERTEX_ARRAY);      
     }
     
     void render() {
+      // Note for my future self: Since this geometry already contains the
+      // geometric transformations that were applied at the moment of drawing,
+      // the current modelview should be reset to the camera state.
+      // In this way, the transformations can be stored in the matrix stack of
+      // the buffer but also being applied in order to affect other geometry
+      // that is not accumulated (PShape3D, for instance).
+      
       indicesBuffer.position(0);
       verticesBuffer.position(0);
       colorsBuffer.position(0);
@@ -6770,20 +6989,57 @@ public class PGraphicsAndroid3D extends PGraphics {
         texcoordsBuffer[t].position(0);
       }
       
-      gl.glVertexPointer(3, GL10.GL_FIXED, 0, verticesBuffer);
-      gl.glColorPointer(4, GL10.GL_FIXED, 0, colorsBuffer);
-      gl.glNormalPointer(GL10.GL_FIXED, 0, normalsBuffer);
+      gl.glVertexPointer(3, GL11.GL_FLOAT, 0, verticesBuffer);
+      gl.glColorPointer(4, GL11.GL_FLOAT, 0, colorsBuffer);
+      gl.glNormalPointer(GL11.GL_FLOAT, 0, normalsBuffer);
       for (int t = 0; t < texCount; t++) {
-        gl.glClientActiveTexture(GL10.GL_TEXTURE0 + t);
-        gl.glTexCoordPointer(2, GL10.GL_FIXED, 0, texcoordsBuffer[t]);          
+        gl.glClientActiveTexture(GL11.GL_TEXTURE0 + t);
+        gl.glTexCoordPointer(2, GL11.GL_FLOAT, 0, texcoordsBuffer[t]);          
       }
       
-      gl.glDrawElements(GL10.GL_TRIANGLES, idxCount, GL10.GL_UNSIGNED_SHORT, indicesBuffer);      
+      gl.glDrawElements(GL11.GL_TRIANGLES, idxCount, GL11.GL_UNSIGNED_SHORT, indicesBuffer);      
       
       // Using glDrawRangeElements doesn't make any difference:
       //gl2x.glDrawRangeElements(GL.GL_TRIANGLES, minVertIndex, maxVertIndex, idxCount, GL2.GL_UNSIGNED_INT, indicesBuffer);    
     } 
     
+    void record() {
+      indicesBuffer.position(0);
+      verticesBuffer.position(0);
+      colorsBuffer.position(0);
+      normalsBuffer.position(0);
+      for (int t = 0; t < texCount; t++) {
+        texcoordsBuffer[t].position(0);
+      }      
+
+      int v0 = recordedVertices.size();
+      Short idx;
+      for (int i = 0; i < idxCount; i++) {
+        idx = new Short((short)(v0 + indicesBuffer.get()));
+        recordedIndices.add(idx);
+        //System.out.println(idx);
+      }      
+      
+      PVector v;
+      float[] c;
+      for (int i = 0; i < vertCount; i++) {
+        v = new PVector(verticesBuffer.get(), verticesBuffer.get(), verticesBuffer.get());
+        recordedVertices.add(v);
+        
+        v = new PVector(normalsBuffer.get(), normalsBuffer.get(), normalsBuffer.get());
+        recordedNormals.add(v);
+        
+        c = new float[4];
+        c[0] = colorsBuffer.get(); c[1] = colorsBuffer.get(); 
+        c[2] = colorsBuffer.get(); c[3] = colorsBuffer.get(); 
+        recordedColors.add(c);
+        
+        for (int t = 0; t < texCount; t++) {
+          v = new PVector(texcoordsBuffer[t].get(), texcoordsBuffer[t].get(), 0);          
+          recordedTexCoords[t].add(v);          
+        }           
+      }
+    }
   }
   
 
@@ -6964,7 +7220,7 @@ public class PGraphicsAndroid3D extends PGraphics {
 
       float r1 = current[1]*n0 + current[5]*n1 + current[9]*n2 + current[13]*n3;
       float r5 = current[1]*n4 + current[5]*n5 + current[9]*n6 + current[13]*n7;
-      float r9 = current[1]*n8 + current[5]*n8 + current[9]*n10 + current[13]*n11;
+      float r9 = current[1]*n8 + current[5]*n9 + current[9]*n10 + current[13]*n11;
       float r13 = current[1]*n12 + current[5]*n13 + current[9]*n14 + current[13]*n15;
 
       float r2 = current[2]*n0 + current[6]*n1 + current[10]*n2 + current[14]*n3;
