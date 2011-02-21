@@ -385,7 +385,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
   
   public int GEO_BUFFER_COUNT;
   public float GEO_BUFFER_SIZE;
-  public int GEO_BUFFER_MAXSIZE = 10000000;
+  public int GEO_BUFFER_MAXSIZE = 0;
   
   // ........................................................
 
@@ -2546,7 +2546,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
         geoBuffer.add(triangles, i, i + faceLength[j] - 1, vertices, faceMinIndex[j], faceMaxIndex[j]);
         
         if (GEO_BUFFER_ACCUM_ALL) { 
-          if (GEO_BUFFER_MAXSIZE < geoBuffer.vertCount) {
+          if (0 < GEO_BUFFER_MAXSIZE && GEO_BUFFER_MAXSIZE < geoBuffer.vertCount) {
             // Accumulation, but maximum buffer size reached.
             
             if (recordingShape) {
