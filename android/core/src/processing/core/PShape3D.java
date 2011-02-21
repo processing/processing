@@ -25,6 +25,8 @@ package processing.core;
 import java.nio.FloatBuffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.IntBuffer;
+import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -82,6 +84,12 @@ public class PShape3D extends PShape implements PConstants {
   public float[] normals;
   public float[] texcoords;
   
+  // Indexed mode, testing:
+  protected int glIndexBufferID = 0;
+  protected ShortBuffer indexBuffer = null;
+  protected int indexCount = 0;
+  protected short[] indices;  
+  
   // To put the texture coordinate values adjusted according to texture 
   // flipping mode, max UV range, etc.
   protected float[] convTexcoords;
@@ -133,6 +141,9 @@ public class PShape3D extends PShape implements PConstants {
   // vertexCount - 1.
   protected int firstVertex;
   protected int lastVertex;  
+    
+  protected int firstIndex;
+  protected int lastIndex;    
     
   // Bounding box (defined for all shapes, group and geometry):
   public float xmin, xmax;
@@ -205,6 +216,7 @@ public class PShape3D extends PShape implements PConstants {
     deleteColorBuffer();
     deleteTexCoordBuffer();
     deleteNormalBuffer();
+    deleteIndexBuffer();
   }
 
   ////////////////////////////////////////////////////////////
@@ -663,6 +675,12 @@ public class PShape3D extends PShape implements PConstants {
     return createChild(name, n0, n1, mode, weight, null);
   }
   
+  static public PShape createChild(String name, int n0, int n1, int i0, int i1, int mode, float weight, PImage[] tex) {
+    PShape3D child = (PShape3D)createChild(name, n0, n1, mode, weight, tex);    
+    child.firstIndex = i0;
+    child.lastIndex = i1;
+    return child;
+  }  
   
   static public PShape createChild(String name, int n0, int n1, int mode, float weight, PImage[] tex) {
     PShape3D child = new PShape3D();
@@ -731,11 +749,12 @@ public class PShape3D extends PShape implements PConstants {
         who3d.glColorBufferID = root.glColorBufferID;
         who3d.glNormalBufferID = root.glNormalBufferID;
         who3d.glTexCoordBufferID = root.glTexCoordBufferID;
+        who3d.glIndexBufferID = root.glIndexBufferID;
         
         who3d.vertexBuffer = root.vertexBuffer;
         who3d.colorBuffer = root.colorBuffer;
         who3d.normalBuffer = root.normalBuffer;
-        who3d.texCoordBuffer = root.texCoordBuffer;
+        who3d.texCoordBuffer = root.texCoordBuffer;        
         
         who3d.vertices = root.vertices;
         who3d.colors = root.colors;
@@ -1432,6 +1451,7 @@ public class PShape3D extends PShape implements PConstants {
       child1 = (PShape3D)childList.get(i);
       if (child0.equalTo(child1, false)) {
         child0.lastVertex = child1.lastVertex;       // Extending child0.
+        child0.lastIndex = child1.lastIndex;
         // Updating the vertex data:
         for (int n = child0.firstVertex; n <= child0.lastVertex; n++) {
           vertexChild[n] = child0;
@@ -1834,6 +1854,42 @@ public class PShape3D extends PShape implements PConstants {
     }
   }
   
+  ////////////////////////////////////////////////////////////
+  
+  // INDEXED MODE: TESTING
+  
+  public void initIndices(int n) {
+    indexCount = n;
+    
+    glIndexBufferID = a3d.createGLResource(PGraphicsAndroid3D.GL_VERTEX_BUFFER);    
+    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glIndexBufferID);    
+    final int bufferSize = indexCount * PGraphicsAndroid3D.SIZEOF_INT;
+    gl.glBufferData(GL11.GL_ARRAY_BUFFER, bufferSize, null, GL11.GL_STATIC_DRAW);    
+    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0); 
+    
+    ByteBuffer ibb = ByteBuffer.allocateDirect(indexCount * PGraphicsAndroid3D.SIZEOF_SHORT);
+    ibb.order(ByteOrder.nativeOrder());
+    indexBuffer = ibb.asShortBuffer();
+    
+    indices = new short[indexCount];
+  }
+  
+  public void setIndices(ArrayList<Short> recordedIndices) {
+    gl.glBindBuffer(GL11.GL_ELEMENT_ARRAY_BUFFER, glIndexBufferID);    
+    
+    for (int i = 0; i < indexCount; i++) {
+      indices[i] = (Short)recordedIndices.get(i);
+    }
+    indexBuffer.position(0);
+    indexBuffer.put(indices);    
+    indexBuffer.flip();
+    
+    
+    gl.glBufferSubData(GL11.GL_ELEMENT_ARRAY_BUFFER, 0, indexCount * PGraphicsAndroid3D.SIZEOF_SHORT, 
+                       indexBuffer);
+        
+    gl.glBindBuffer(GL11.GL_ELEMENT_ARRAY_BUFFER, 0);    
+  }  
   
   ////////////////////////////////////////////////////////////  
   
@@ -2098,6 +2154,14 @@ public class PShape3D extends PShape implements PConstants {
     }
   }  
 
+  
+  protected void deleteIndexBuffer() {
+    if (glIndexBufferID != 0) {
+      a3d.deleteGLResource(glIndexBufferID, PGraphicsAndroid3D.GL_VERTEX_BUFFER);
+      glIndexBufferID = 0;    
+    }
+  }
+  
   
   protected void deleteTexCoordBuffer() {
     for (int i = 0; i < numTexBuffers; i++) { 
@@ -2373,8 +2437,17 @@ public class PShape3D extends PShape implements PConstants {
       }              
     }
 
-    gl.glDrawArrays(glMode, firstVertex, lastVertex - firstVertex + 1);
-
+    if (glIndexBufferID != 0) {
+      gl.glBindBuffer(GL11.GL_ELEMENT_ARRAY_BUFFER, glIndexBufferID);
+      // Here the vertex indices are understood as the range of indices.
+      int last = lastIndex;
+      int first = firstIndex;
+      gl.glDrawElements(glMode, last - first + 1, GL11.GL_UNSIGNED_SHORT, first * PGraphicsAndroid3D.SIZEOF_SHORT);      
+      gl.glBindBuffer(GL11.GL_ELEMENT_ARRAY_BUFFER, 0);
+    } else {    
+      gl.glDrawArrays(glMode, firstVertex, lastVertex - firstVertex + 1);
+    }    
+    
     if (0 < numTextures) {
       for (int t = 0; t < numTextures; t++) {
         PTexture tex = renderTextures[t];
