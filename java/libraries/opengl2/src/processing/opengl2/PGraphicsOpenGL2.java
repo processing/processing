@@ -2540,7 +2540,9 @@ public class PGraphicsOpenGL2 extends PGraphics {
           }
         } else {
           // No accumulation, each shape is sent in a separate buffer.
-          geoBuffer.init(TRIANGLES, renderTextures, tcount);
+          if (geoBuffer.newTextures(renderTextures, tcount)) {
+            geoBuffer.init(TRIANGLES, renderTextures, tcount);
+          }
         }
         
         geoBuffer.add(triangles, i, i + faceLength[j] - 1, vertices, faceMinIndex[j], faceMaxIndex[j]);
@@ -3648,7 +3650,6 @@ public class PGraphicsOpenGL2 extends PGraphics {
   public void pushMatrix() {
     if (USE_GEO_BUFFER && GEO_BUFFER_ACCUM_ALL && UPDATE_GEO_BUFFER_MATRIX_STACK) {
       geoBuffer.stack.push();
-      return;
     }    
     
     gl2f.glPushMatrix();  
@@ -3665,7 +3666,6 @@ public class PGraphicsOpenGL2 extends PGraphics {
   public void popMatrix() {
     if (USE_GEO_BUFFER && GEO_BUFFER_ACCUM_ALL && UPDATE_GEO_BUFFER_MATRIX_STACK) {
       geoBuffer.stack.pop();
-      return;
     }    
         
     gl2f.glPopMatrix();
@@ -3691,7 +3691,6 @@ public class PGraphicsOpenGL2 extends PGraphics {
   public void translate(float tx, float ty, float tz) {
     if (USE_GEO_BUFFER && GEO_BUFFER_ACCUM_ALL && UPDATE_GEO_BUFFER_MATRIX_STACK) {
       geoBuffer.stack.translate(tx, ty, tz);
-      return;
     }    
     
     gl2f.glTranslatef(tx, ty, tz);
@@ -3735,7 +3734,6 @@ public class PGraphicsOpenGL2 extends PGraphics {
   public void rotate(float angle, float v0, float v1, float v2) {
     if (USE_GEO_BUFFER && GEO_BUFFER_ACCUM_ALL && UPDATE_GEO_BUFFER_MATRIX_STACK) {      
       geoBuffer.stack.rotate(angle, v0, v1, v2); 
-      return;  
     }
     
     gl2f.glRotatef(PApplet.degrees(angle), v0, v1, v2);
@@ -3770,7 +3768,6 @@ public class PGraphicsOpenGL2 extends PGraphics {
   public void scale(float sx, float sy, float sz) {
     if (USE_GEO_BUFFER && GEO_BUFFER_ACCUM_ALL && UPDATE_GEO_BUFFER_MATRIX_STACK) {
       geoBuffer.stack.scale(sx, sy, sz);
-      return;
     }    
         
     if (manipulatingCamera) {
@@ -3874,6 +3871,8 @@ public class PGraphicsOpenGL2 extends PGraphics {
         modelviewUpdated = false;   
       }
     }
+    
+    // TODO: add inverse calculation!
   }
 
   public void updateModelview() {
@@ -7284,6 +7283,44 @@ public class PGraphicsOpenGL2 extends PGraphics {
       // the buffer but also being applied in order to affect other geometry
       // that is not accumulated (PShape3D, for instance).
       
+      if (GEO_BUFFER_ACCUM_ALL && UPDATE_GEO_BUFFER_MATRIX_STACK) {
+        pushMatrix();
+        
+        // we need to set the modelview matrix to the camera state
+        // to eliminate the transformations that are duplicated in GL's
+        // modelview and the vertices.
+        // In the finished code handling general scenarios, using the camera
+        // matrix might not be enough (maybe we need to save the current modelview
+        // matrix at the moment of applying the transformation to the vertices of 
+        // the buffer), not sure though.
+        // It is also worth noting that these calculations makes the accumulation
+        // method slower under certain scenarios (lots of geometry buffers sent per
+        // frame and lots of geometric tranformations)... This is to say that in the
+        // limit whe the accumulator doesn't actually accumulate because the buffer
+        // is sent at each beginShape/endShape call, then this additional modelview
+        // stack manipulation takes away around 10-12 fps 
+        gltemp[0] = camera.m00;
+        gltemp[1] = camera.m10;
+        gltemp[2] = camera.m20;
+        gltemp[3] = camera.m30;
+
+        gltemp[4] = camera.m01;
+        gltemp[5] = camera.m11;
+        gltemp[6] = camera.m21;
+        gltemp[7] = camera.m31;
+
+        gltemp[8] = camera.m02;
+        gltemp[9] = camera.m12;
+        gltemp[10] = camera.m22;
+        gltemp[11] = camera.m32;
+
+        gltemp[12] = camera.m03;
+        gltemp[13] = camera.m13;
+        gltemp[14] = camera.m23;
+        gltemp[15] = camera.m33;
+        gl2f.glLoadMatrixf(gltemp, 0);      
+      }
+      
       indicesBuffer.position(0);
       verticesBuffer.position(0);
       colorsBuffer.position(0);
@@ -7301,6 +7338,10 @@ public class PGraphicsOpenGL2 extends PGraphics {
       }
       
       gl2f.glDrawElements(GL.GL_TRIANGLES, idxCount, GL2.GL_UNSIGNED_INT, indicesBuffer);      
+      
+      if (GEO_BUFFER_ACCUM_ALL && UPDATE_GEO_BUFFER_MATRIX_STACK) {
+        popMatrix();
+      }
       
       // Using glDrawRangeElements doesn't make any difference:
       //gl2x.glDrawRangeElements(GL.GL_TRIANGLES, minVertIndex, maxVertIndex, idxCount, GL2.GL_UNSIGNED_INT, indicesBuffer);    
