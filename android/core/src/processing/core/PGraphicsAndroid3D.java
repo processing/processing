@@ -6606,6 +6606,14 @@ public class PGraphicsAndroid3D extends PGraphics {
   static public int toFixed16(float x) {
     return (int) (x * 4096.0f);
   }  
+
+  static public float toFloat32(int x) {
+    return x / 65536.0f;
+  }
+
+  static public float toFloat16(int x) {
+    return x / 4096.0f;
+  }  
   
   //////////////////////////////////////////////////////////////
   
@@ -6617,10 +6625,10 @@ public class PGraphicsAndroid3D extends PGraphics {
     int vertCount;
     int texCount;
     short[] indicesArray;
-    float[] verticesArray;
-    float[] normalsArray;
-    float[] colorsArray;
-    float[][] texcoordsArray;
+    int[] verticesArray;
+    int[] normalsArray;
+    int[] colorsArray;
+    int[][] texcoordsArray;
     PTexture[] texturesArray;
     int minVertIndex;
     int maxVertIndex;
@@ -6632,10 +6640,10 @@ public class PGraphicsAndroid3D extends PGraphics {
     GLMatrixStack stack;
     
     ShortBuffer indicesBuffer;
-    FloatBuffer verticesBuffer;
-    FloatBuffer normalsBuffer;
-    FloatBuffer colorsBuffer;
-    FloatBuffer[] texcoordsBuffer;
+    IntBuffer verticesBuffer;
+    IntBuffer normalsBuffer;
+    IntBuffer colorsBuffer;
+    IntBuffer[] texcoordsBuffer;
     
     int allocTexStorage;
     
@@ -6644,28 +6652,28 @@ public class PGraphicsAndroid3D extends PGraphics {
       ibb.order(ByteOrder.nativeOrder());
       indicesBuffer = ibb.asShortBuffer();
             
-      ByteBuffer vbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 3 * SIZEOF_FLOAT);
+      ByteBuffer vbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 3 * SIZEOF_INT);
       vbb.order(ByteOrder.nativeOrder());
-      verticesBuffer = vbb.asFloatBuffer();
+      verticesBuffer = vbb.asIntBuffer();
 
-      ByteBuffer cbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 4 * SIZEOF_FLOAT);
+      ByteBuffer cbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 4 * SIZEOF_INT);
       cbb.order(ByteOrder.nativeOrder());
-      colorsBuffer = cbb.asFloatBuffer();
+      colorsBuffer = cbb.asIntBuffer();
 
-      ByteBuffer nbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 3 * SIZEOF_FLOAT);
+      ByteBuffer nbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 3 * SIZEOF_INT);
       nbb.order(ByteOrder.nativeOrder());
-      normalsBuffer = nbb.asFloatBuffer();      
+      normalsBuffer = nbb.asIntBuffer();      
       
-      texcoordsBuffer = new FloatBuffer[MAX_TEXTURES];
-      ByteBuffer tbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 2 * SIZEOF_FLOAT);
+      texcoordsBuffer = new IntBuffer[MAX_TEXTURES];
+      ByteBuffer tbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 2 * SIZEOF_INT);
       tbb.order(ByteOrder.nativeOrder());
-      texcoordsBuffer[0] = tbb.asFloatBuffer();    
+      texcoordsBuffer[0] = tbb.asIntBuffer();    
       
       indicesArray = new short[DEFAULT_TRIANGLES];
-      verticesArray = new float[DEFAULT_BUFFER_SIZE * 3];
-      colorsArray = new float[DEFAULT_BUFFER_SIZE * 4];      
-      normalsArray = new float[DEFAULT_BUFFER_SIZE * 3];
-      texcoordsArray = new float[1][DEFAULT_BUFFER_SIZE * 2];    
+      verticesArray = new int[DEFAULT_BUFFER_SIZE * 3];
+      colorsArray = new int[DEFAULT_BUFFER_SIZE * 4];      
+      normalsArray = new int[DEFAULT_BUFFER_SIZE * 3];
+      texcoordsArray = new int[1][DEFAULT_BUFFER_SIZE * 2];    
       
       texturesArray = new PTexture[MAX_TEXTURES];
       
@@ -6729,10 +6737,10 @@ public class PGraphicsAndroid3D extends PGraphics {
         for (int i = 0; i < more; i++) {
           ByteBuffer tbb = ByteBuffer.allocateDirect(size * SIZEOF_FLOAT);
           tbb.order(ByteOrder.nativeOrder());
-          texcoordsBuffer[allocTexStorage + i] = tbb.asFloatBuffer();    
+          texcoordsBuffer[allocTexStorage + i] = tbb.asIntBuffer();    
         }
         
-        texcoordsArray = new float[allocTexStorage + more][size];
+        texcoordsArray = new int[allocTexStorage + more][size];
         
         allocTexStorage += more;          
       }     
@@ -6768,10 +6776,10 @@ public class PGraphicsAndroid3D extends PGraphics {
       
       
       k = 0;
-      FloatBuffer verticesBuffer0 = verticesBuffer;
-      FloatBuffer colorsBuffer0 = colorsBuffer;
-      FloatBuffer normalsBuffer0 = normalsBuffer;
-      FloatBuffer[] texcoordsBuffer0 = new FloatBuffer[texCount];
+      IntBuffer verticesBuffer0 = verticesBuffer;
+      IntBuffer colorsBuffer0 = colorsBuffer;
+      IntBuffer normalsBuffer0 = normalsBuffer;
+      IntBuffer[] texcoordsBuffer0 = new IntBuffer[texCount];
       for (int t = 0; t < texCount; t++) {
         texcoordsBuffer0[t] = texcoordsBuffer[t];
       }
@@ -6779,30 +6787,30 @@ public class PGraphicsAndroid3D extends PGraphics {
         int newSize = verticesBuffer.capacity() / 3 << 1;
         
         // The data already in the buffers cannot be discarded, copy it back to the new resized buffers!!!!!!              
-        ByteBuffer vbb = ByteBuffer.allocateDirect(newSize * 3 * SIZEOF_FLOAT);
+        ByteBuffer vbb = ByteBuffer.allocateDirect(newSize * 3 * SIZEOF_INT);
         vbb.order(ByteOrder.nativeOrder());
-        verticesBuffer = vbb.asFloatBuffer();
+        verticesBuffer = vbb.asIntBuffer();
           
-        ByteBuffer cbb = ByteBuffer.allocateDirect(newSize * 4 * SIZEOF_FLOAT);
+        ByteBuffer cbb = ByteBuffer.allocateDirect(newSize * 4 * SIZEOF_INT);
         cbb.order(ByteOrder.nativeOrder());
-        colorsBuffer = cbb.asFloatBuffer();
+        colorsBuffer = cbb.asIntBuffer();
                 
-        ByteBuffer nbb = ByteBuffer.allocateDirect(newSize * 3 * SIZEOF_FLOAT);
+        ByteBuffer nbb = ByteBuffer.allocateDirect(newSize * 3 * SIZEOF_INT);
         nbb.order(ByteOrder.nativeOrder());
-        normalsBuffer = nbb.asFloatBuffer();
+        normalsBuffer = nbb.asIntBuffer();
         
         for (int t = 0; t < texCount; t++) {
            
-          ByteBuffer tbb = ByteBuffer.allocateDirect(newSize * 2 * SIZEOF_FLOAT);
+          ByteBuffer tbb = ByteBuffer.allocateDirect(newSize * 2 * SIZEOF_INT);
           tbb.order(ByteOrder.nativeOrder());
-          texcoordsBuffer[t] = tbb.asFloatBuffer();
+          texcoordsBuffer[t] = tbb.asIntBuffer();
         }
         
-        verticesArray = new float[newSize * 3];
-        colorsArray = new float[newSize * 4];
-        normalsArray = new float[newSize * 3];
+        verticesArray = new int[newSize * 3];
+        colorsArray = new int[newSize * 4];
+        normalsArray = new int[newSize * 3];
         for (int t = 0; t < texCount; t++) { 
-          texcoordsArray[t] = new float[newSize * 2];
+          texcoordsArray[t] = new int[newSize * 2];
         }
         
         k++;
@@ -6867,27 +6875,27 @@ public class PGraphicsAndroid3D extends PGraphics {
         nz = vert[NZ];
         
         if (mm == null) {
-          verticesArray[nv++] = x;
-          verticesArray[nv++] = y;
-          verticesArray[nv++] = z;
+          verticesArray[nv++] = toFixed32(x);
+          verticesArray[nv++] = toFixed32(y);
+          verticesArray[nv++] = toFixed32(z);
           
-          normalsArray[nn++] = nx;
-          normalsArray[nn++] = ny;
-          normalsArray[nn++] = nz; 
+          normalsArray[nn++] = toFixed32(nx);
+          normalsArray[nn++] = toFixed32(ny);
+          normalsArray[nn++] = toFixed32(nz); 
         } else {         
-          verticesArray[nv++] = x * mm[0] + y * mm[4] + z * mm[8] + mm[12];
-          verticesArray[nv++] = x * mm[1] + y * mm[5] + z * mm[9] + mm[13];
-          verticesArray[nv++] = x * mm[2] + y * mm[6] + z * mm[10] + mm[14];
+          verticesArray[nv++] = toFixed32(x * mm[0] + y * mm[4] + z * mm[8] + mm[12]);
+          verticesArray[nv++] = toFixed32(x * mm[1] + y * mm[5] + z * mm[9] + mm[13]);
+          verticesArray[nv++] = toFixed32(x * mm[2] + y * mm[6] + z * mm[10] + mm[14]);
           
-          normalsArray[nn++] = nx + mm[12];
-          normalsArray[nn++] = ny + mm[13];
-          normalsArray[nn++] = nz + mm[14];
+          normalsArray[nn++] = toFixed32(nx + mm[12]);
+          normalsArray[nn++] = toFixed32(ny + mm[13]);
+          normalsArray[nn++] = toFixed32(nz + mm[14]);
         }
         
-        colorsArray[nc++] = vert[R];
-        colorsArray[nc++] = vert[G];
-        colorsArray[nc++] = vert[B];
-        colorsArray[nc++] = vert[A];        
+        colorsArray[nc++] = toFixed32(vert[R]);
+        colorsArray[nc++] = toFixed32(vert[G]);
+        colorsArray[nc++] = toFixed32(vert[B]);
+        colorsArray[nc++] = toFixed32(vert[A]);        
         
         if (0 < texCount) {
           float[] vertU = vertexU[i];
@@ -6914,8 +6922,8 @@ public class PGraphicsAndroid3D extends PGraphics {
               sy = -1.0f;
             } 
             
-            texcoordsArray[t][nt++] = (cx + sx * vertU[t]) * uscale;
-            texcoordsArray[t][nt++] = (cy + sy * vertV[t]) * vscale;
+            texcoordsArray[t][nt++] = toFixed32((cx + sx * vertU[t]) * uscale);
+            texcoordsArray[t][nt++] = toFixed32((cy + sy * vertV[t]) * vscale);
           }
         }
       }
@@ -7022,12 +7030,12 @@ public class PGraphicsAndroid3D extends PGraphics {
         texcoordsBuffer[t].position(0);
       }
       
-      gl.glVertexPointer(3, GL11.GL_FLOAT, 0, verticesBuffer);
-      gl.glColorPointer(4, GL11.GL_FLOAT, 0, colorsBuffer);
-      gl.glNormalPointer(GL11.GL_FLOAT, 0, normalsBuffer);
+      gl.glVertexPointer(3, GL11.GL_FIXED, 0, verticesBuffer);
+      gl.glColorPointer(4, GL11.GL_FIXED, 0, colorsBuffer);
+      gl.glNormalPointer(GL11.GL_FIXED, 0, normalsBuffer);
       for (int t = 0; t < texCount; t++) {
         gl.glClientActiveTexture(GL11.GL_TEXTURE0 + t);
-        gl.glTexCoordPointer(2, GL11.GL_FLOAT, 0, texcoordsBuffer[t]);          
+        gl.glTexCoordPointer(2, GL11.GL_FIXED, 0, texcoordsBuffer[t]);          
       }
       
       gl.glDrawElements(GL11.GL_TRIANGLES, idxCount, GL11.GL_UNSIGNED_SHORT, indicesBuffer);      
@@ -7057,23 +7065,33 @@ public class PGraphicsAndroid3D extends PGraphics {
         //System.out.println(idx);
       }      
       
-      PVector v;
       float[] c;
+      float x, y, z;
+      float nx, ny, nz;
+      float u, v;
       for (int i = 0; i < vertCount; i++) {
-        v = new PVector(verticesBuffer.get(), verticesBuffer.get(), verticesBuffer.get());
-        recordedVertices.add(v);
+        x = toFloat32(verticesBuffer.get());
+        y = toFloat32(verticesBuffer.get());
+        z = toFloat32(verticesBuffer.get());
+        recordedVertices.add(new PVector(x, y, z));
         
-        v = new PVector(normalsBuffer.get(), normalsBuffer.get(), normalsBuffer.get());
-        recordedNormals.add(v);
+        nx = toFloat32(normalsBuffer.get()); 
+        ny = toFloat32(normalsBuffer.get()); 
+        nz = toFloat32(normalsBuffer.get());
+        
+        recordedNormals.add(new PVector(nx, ny, nz));
         
         c = new float[4];
-        c[0] = colorsBuffer.get(); c[1] = colorsBuffer.get(); 
-        c[2] = colorsBuffer.get(); c[3] = colorsBuffer.get(); 
+        c[0] = toFloat32(colorsBuffer.get()); 
+        c[1] = toFloat32(colorsBuffer.get()); 
+        c[2] = toFloat32(colorsBuffer.get()); 
+        c[3] = toFloat32(colorsBuffer.get()); 
         recordedColors.add(c);
         
         for (int t = 0; t < texCount; t++) {
-          v = new PVector(texcoordsBuffer[t].get(), texcoordsBuffer[t].get(), 0);          
-          recordedTexCoords[t].add(v);          
+          u = toFloat32(texcoordsBuffer[t].get()); 
+          v = toFloat32(texcoordsBuffer[t].get());          
+          recordedTexCoords[t].add(new PVector(u, v));
         }           
       }
     }
