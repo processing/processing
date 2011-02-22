@@ -10233,75 +10233,21 @@ public class PApplet extends Applet
   }
 
 
-  public void texture(PImage image0, PImage image1) {
-    if (recorder != null) recorder.texture(image0, image1);
-    g.texture(image0, image1);
-  }
-
-
-  public void texture(PImage image0, PImage image1, PImage image2) {
-    if (recorder != null) recorder.texture(image0, image1, image2);
-    g.texture(image0, image1, image2);
-  }
-
-
-  public void texture(PImage image0, PImage image1, PImage image2, PImage image3) {
-    if (recorder != null) recorder.texture(image0, image1, image2, image3);
-    g.texture(image0, image1, image2, image3);
-  }
-
-
-  public void texture(PImage[] images) {
+  public void texture(PImage... images) {
     if (recorder != null) recorder.texture(images);
     g.texture(images);
   }
 
 
-  public void vertex(float x, float y, float u0, float v0, float u1, float v1) {
-    if (recorder != null) recorder.vertex(x, y, u0, v0, u1, v1);
-    g.vertex(x, y, u0, v0, u1, v1);
+  public void vertex(float x, float y, float... uv) {
+    if (recorder != null) recorder.vertex(x, y, uv);
+    g.vertex(x, y, uv);
   }
 
 
-  public void vertex(float x, float y, float u0, float v0, float u1, float v1, float u2, float v2) {
-    if (recorder != null) recorder.vertex(x, y, u0, v0, u1, v1, u2, v2);
-    g.vertex(x, y, u0, v0, u1, v1, u2, v2);
-  }
-
-
-  public void vertex(float x, float y, float u0, float v0, float u1, float v1, float u2, float v2, float u3, float v3) {
-    if (recorder != null) recorder.vertex(x, y, u0, v0, u1, v1, u2, v2, u3, v3);
-    g.vertex(x, y, u0, v0, u1, v1, u2, v2, u3, v3);
-  }
-
-
-  public void vertex(float x, float y, float[] u, float[] v) {
-    if (recorder != null) recorder.vertex(x, y, u, v);
-    g.vertex(x, y, u, v);
-  }
-
-
-  public void vertex(float x, float y, float z, float u0, float v0, float u1, float v1) {
-    if (recorder != null) recorder.vertex(x, y, z, u0, v0, u1, v1);
-    g.vertex(x, y, z, u0, v0, u1, v1);
-  }
-
-
-  public void vertex(float x, float y, float z, float u0, float v0, float u1, float v1, float u2, float v2) {
-    if (recorder != null) recorder.vertex(x, y, z, u0, v0, u1, v1, u2, v2);
-    g.vertex(x, y, z, u0, v0, u1, v1, u2, v2);
-  }
-
-
-  public void vertex(float x, float y, float z, float u0, float v0, float u1, float v1, float u2, float v2, float u3, float v3) {
-    if (recorder != null) recorder.vertex(x, y, z, u0, v0, u1, v1, u2, v2, u3, v3);
-    g.vertex(x, y, z, u0, v0, u1, v1, u2, v2, u3, v3);
-  }
-
-
-  public void vertex(float x, float y, float z, float[] u, float[] v) {
-    if (recorder != null) recorder.vertex(x, y, z, u, v);
-    g.vertex(x, y, z, u, v);
+  public void vertex(float x, float y, float z, float... uv) {
+    if (recorder != null) recorder.vertex(x, y, z, uv);
+    g.vertex(x, y, z, uv);
   }
 
 
