@@ -5157,61 +5157,17 @@ public class PGraphics extends PImage implements PConstants {
   }    
   
   
-  public void texture(PImage image0, PImage image1) {
-    showMissingWarning("multitexturing requires A3D");
-  }
-  
-  
-  public void texture(PImage image0, PImage image1, PImage image2) {
-    showMissingWarning("multitexturing requires A3D");
-  }
-  
-
-  public void texture(PImage image0, PImage image1, PImage image2, PImage image3) {
-    showMissingWarning("multitexturing requires A3D");
+  public void texture(PImage... images) {
+    showMissingWarning("multitexturing requires A3D");    
   }
 
   
-  public void texture(PImage[] images) {
-    showMissingWarning("multitexturing requires A3D");
-  }
-  
-  
-  public void vertex(float x, float y, float u0, float v0, float u1, float v1) {
-    showMissingWarning("multitextured vertex requires A3D"); 
-  }
-  
-  
-  public void vertex(float x, float y, float u0, float v0, float u1, float v1, float u2, float v2) {
-    showMissingWarning("multitextured vertex requires A3D");    
-  }  
-  
-  
-  public void vertex(float x, float y, float u0, float v0, float u1, float v1, float u2, float v2, float u3, float v3) {
-    showMissingWarning("multitextured vertex requires A3D"); 
-  }  
-
-  public void vertex(float x, float y, float[] u, float[] v) {
-    showMissingWarning("multitextured vertex requires A3D"); 
+  public void vertex(float x, float y, float... uv) {
+    showMissingWarning("multitexturing requires A3D");    
   }
  
   
-  public void vertex(float x, float y, float z, float u0, float v0, float u1, float v1) {
-    showMissingWarning("multitextured vertex requires A3D"); 
-  }
-  
-  
-  public void vertex(float x, float y, float z, float u0, float v0, float u1, float v1, float u2, float v2) {
-    showMissingWarning("multitextured vertex requires A3D");       
-  }  
-  
-  
-  public void vertex(float x, float y, float z, float u0, float v0, float u1, float v1, float u2, float v2, float u3, float v3) {
-    showMissingWarning("multitextured vertex requires A3D");    
-  }  
-  
-  
-  public void vertex(float x, float y, float z, float[] u, float[] v) {
-    showMissingWarning("multitextured vertex requires A3D");
+  public void vertex(float x, float y, float z, float... uv) {
+    showMissingWarning("multitexturing requires A3D");    
   }
 }
