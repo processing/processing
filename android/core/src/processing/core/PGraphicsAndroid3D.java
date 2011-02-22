@@ -24,7 +24,6 @@ package processing.core;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 import java.util.ArrayList;
@@ -1319,55 +1318,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     numTextures = 1;    
   }
   
-  public void texture(PImage image0, PImage image1) {
-    if (1 < maxTextureUnits) {
-      super.texture(image0);
-      textureImages[0] = image0;
-      textureImages[1] = image1;
-      java.util.Arrays.fill(textureImages, 2, maxTextureUnits, null);
-      numTextures = 2;
-      if (numTexBuffers < 2) {
-        addTexBuffers(2 - numTexBuffers);
-      }      
-    } else {
-      System.err.println("A3D: insufficient texture units.");
-    }  
-  }
-  
-  public void texture(PImage image0, PImage image1, PImage image2) {
-    if (2 < maxTextureUnits) {
-      super.texture(image0);
-      textureImages[0] = image0;
-      textureImages[1] = image1;
-      textureImages[2] = image2;
-      java.util.Arrays.fill(textureImages, 3, maxTextureUnits, null);       
-      numTextures = 3;
-      if (numTexBuffers < 3) {
-        addTexBuffers(3 - numTexBuffers);
-      }      
-    } else {
-      System.err.println("A3D: insufficient texture units.");
-    }  
-  }  
-  
-  public void texture(PImage image0, PImage image1, PImage image2, PImage image3) {
-    if (3 < maxTextureUnits) {
-      super.texture(image0);
-      textureImages[0] = image0;
-      textureImages[1] = image1;
-      textureImages[2] = image2;
-      textureImages[3] = image3;
-      java.util.Arrays.fill(textureImages, 4, maxTextureUnits, null);      
-      numTextures = 4;
-      if (numTexBuffers < 4) {
-        addTexBuffers(4 - numTexBuffers);
-      }
-    } else {
-      System.err.println("A3D: insufficient texture units.");
-    }  
-  }  
-
-  public void texture(PImage[] images) {
+  public void texture(PImage... images) {
     int len = images.length;
     if (len <= maxTextureUnits) {
       super.texture(images[0]);
@@ -1379,8 +1330,8 @@ public class PGraphicsAndroid3D extends PGraphics {
       }
     } else {
       System.err.println("A3D: insufficient texture units.");
-    }  
-  }  
+    }    
+  }
   
   public void noTexture() {
     super.noTexture();    
@@ -1400,54 +1351,21 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
   }
 
-  public void vertex(float x, float y, float u0, float v0, float u1, float v1) {
-    if (2 <= maxTextureUnits) {
-      vertexTexture(u0, v0, 0);
-      vertexTexture(u1, v1, 1);
-      vertex(x, y);
-      setTextureData(2);
-    } else {
-      System.err.println("A3D: insufficient texture units.");
-    }
-  }
-  
-  public void vertex(float x, float y, float u0, float v0, float u1, float v1, float u2, float v2) {
-    if (3 <= maxTextureUnits) {     
-      vertexTexture(u0, v0, 0);
-      vertexTexture(u1, v1, 1);
-      vertexTexture(u2, v2, 2);    
-      vertex(x, y);    
-      setTextureData(3);
-    } else {
-      System.err.println("A3D: insufficient texture units.");
-    }    
-  }  
-  
-  public void vertex(float x, float y, float u0, float v0, float u1, float v1, float u2, float v2, float u3, float v3) {  
-    if (4 <= maxTextureUnits) {    
-      vertexTexture(u0, v0, 0);
-      vertexTexture(u1, v1, 1);
-      vertexTexture(u2, v2, 2);
-      vertexTexture(u2, v2, 3);
-      vertex(x, y);    
-      setTextureData(4);
-    } else {
-      System.err.println("A3D: insufficient texture units.");
-    }      
-  }  
-  
-  public void vertex(float x, float y, float[] u, float[] v) {  
-    int len = PApplet.min(u.length, v.length);
+  public void vertex(float x, float y, float... uv) {
+    int len = uv.length / 2;   
     if (len <= maxTextureUnits) {
+      float u, v;
       for (int t = 0; t < len; t++) {
-        vertexTexture(u[t], v[t], t);  
+        u = uv[t];
+        v = uv[2 * t];
+        vertexTexture(u, v, t);  
       }
       vertex(x, y);
       setTextureData(len);
     } else {
       System.err.println("A3D: insufficient texture units.");
-    }    
-  }  
+    }
+  }
   
   public void vertex(float x, float y, float z, float u, float v) {  
     vertexTexture(u, v, 0);
@@ -1460,54 +1378,22 @@ public class PGraphicsAndroid3D extends PGraphics {
     }    
   }
 
-  public void vertex(float x, float y, float z, float u0, float v0, float u1, float v1) {
-    if (2 <= maxTextureUnits) {
-      vertexTexture(u0, v0, 0);
-      vertexTexture(u1, v1, 1);
-      vertex(x, y, z);
-      setTextureData(2);
-    } else {
-      System.err.println("A3D: insufficient texture units.");
-    }
-  }
   
-  public void vertex(float x, float y, float z, float u0, float v0, float u1, float v1, float u2, float v2) {
-    if (3 <= maxTextureUnits) {    
-      vertexTexture(u0, v0, 0);
-      vertexTexture(u1, v1, 1);
-      vertexTexture(u2, v2, 2);    
-      vertex(x, y, z);    
-      setTextureData(3);
-    } else {
-      System.err.println("A3D: insufficient texture units.");
-    }    
-  }  
-  
-  public void vertex(float x, float y, float z, float u0, float v0, float u1, float v1, float u2, float v2, float u3, float v3) {  
-    if (4 <= maxTextureUnits) {    
-      vertexTexture(u0, v0, 0);
-      vertexTexture(u1, v1, 1);
-      vertexTexture(u2, v2, 2);
-      vertexTexture(u2, v2, 3);
-      vertex(x, y, z);    
-      setTextureData(4);
-    } else {
-      System.err.println("A3D: insufficient texture units.");
-    }      
-  }  
-  
-  public void vertex(float x, float y, float z, float[] u, float[] v) {  
-    int len = PApplet.min(u.length, v.length);
+  public void vertex(float x, float y, float z, float... uv) {
+    int len = uv.length / 2;   
     if (len <= maxTextureUnits) {
+      float u, v;
       for (int t = 0; t < len; t++) {
-        vertexTexture(u[t], v[t], t);  
+        u = uv[t];
+        v = uv[2 * t];
+        vertexTexture(u, v, t);  
       }
       vertex(x, y, z);
       setTextureData(len);
     } else {
       System.err.println("A3D: insufficient texture units.");
-    }    
-  }  
+    }
+  }
   
   
   protected void vertexCheck() {
