@@ -382,6 +382,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
   public boolean USE_GEO_BUFFER = false;
   public boolean GEO_BUFFER_ACCUM_ALL = true;
   public boolean UPDATE_GEO_BUFFER_MATRIX_STACK = true;
+  public boolean UPDATE_GL_MATRIX_STACK = true;
   
   public int GEO_BUFFER_COUNT;
   public float GEO_BUFFER_SIZE;
@@ -3539,6 +3540,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
   public void pushMatrix() {
     if (USE_GEO_BUFFER && GEO_BUFFER_ACCUM_ALL && UPDATE_GEO_BUFFER_MATRIX_STACK) {
       geoBuffer.stack.push();
+      if (!UPDATE_GL_MATRIX_STACK) return;
     }    
     
     gl2f.glPushMatrix();  
@@ -3555,6 +3557,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
   public void popMatrix() {
     if (USE_GEO_BUFFER && GEO_BUFFER_ACCUM_ALL && UPDATE_GEO_BUFFER_MATRIX_STACK) {
       geoBuffer.stack.pop();
+      if (!UPDATE_GL_MATRIX_STACK) return;
     }    
         
     gl2f.glPopMatrix();
@@ -3580,6 +3583,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
   public void translate(float tx, float ty, float tz) {
     if (USE_GEO_BUFFER && GEO_BUFFER_ACCUM_ALL && UPDATE_GEO_BUFFER_MATRIX_STACK) {
       geoBuffer.stack.translate(tx, ty, tz);
+      if (!UPDATE_GL_MATRIX_STACK) return;
     }    
     
     gl2f.glTranslatef(tx, ty, tz);
@@ -3623,6 +3627,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
   public void rotate(float angle, float v0, float v1, float v2) {
     if (USE_GEO_BUFFER && GEO_BUFFER_ACCUM_ALL && UPDATE_GEO_BUFFER_MATRIX_STACK) {      
       geoBuffer.stack.rotate(angle, v0, v1, v2); 
+      if (!UPDATE_GL_MATRIX_STACK) return;
     }
     
     gl2f.glRotatef(PApplet.degrees(angle), v0, v1, v2);
@@ -3657,6 +3662,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
   public void scale(float sx, float sy, float sz) {
     if (USE_GEO_BUFFER && GEO_BUFFER_ACCUM_ALL && UPDATE_GEO_BUFFER_MATRIX_STACK) {
       geoBuffer.stack.scale(sx, sy, sz);
+      if (!UPDATE_GL_MATRIX_STACK) return;
     }    
         
     if (manipulatingCamera) {
@@ -7172,7 +7178,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
       // the buffer but also being applied in order to affect other geometry
       // that is not accumulated (PShape3D, for instance).
       
-      if (GEO_BUFFER_ACCUM_ALL && UPDATE_GEO_BUFFER_MATRIX_STACK) {
+      if (GEO_BUFFER_ACCUM_ALL && UPDATE_GEO_BUFFER_MATRIX_STACK && UPDATE_GL_MATRIX_STACK) {
         pushMatrix();
         
         // we need to set the modelview matrix to the camera state
@@ -7228,7 +7234,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
       
       gl2f.glDrawElements(GL.GL_TRIANGLES, idxCount, GL2.GL_UNSIGNED_INT, indicesBuffer);      
       
-      if (GEO_BUFFER_ACCUM_ALL && UPDATE_GEO_BUFFER_MATRIX_STACK) {
+      if (GEO_BUFFER_ACCUM_ALL && UPDATE_GEO_BUFFER_MATRIX_STACK && UPDATE_GL_MATRIX_STACK) {
         popMatrix();
       }
       
