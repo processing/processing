@@ -930,10 +930,8 @@ public class PGraphicsOpenGL2 extends PGraphics {
       if (geoBuffer == null) geoBuffer = new GeometryBuffer();     
       if (GEO_BUFFER_ACCUM_ALL) { 
         geoBuffer.init(TRIANGLES);
-        GEO_BUFFER_COUNT = 1;
-      } else{
-        GEO_BUFFER_COUNT = 0;
       }
+      GEO_BUFFER_COUNT = 0;
       GEO_BUFFER_SIZE = 0;
     }    
     
