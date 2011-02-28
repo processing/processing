@@ -9293,6 +9293,13 @@ public class PApplet extends Applet
 
 
   public void ortho(float left, float right,
+                    float bottom, float top) {
+    if (recorder != null) recorder.ortho(left, right, bottom, top);
+    g.ortho(left, right, bottom, top);
+  }
+
+
+  public void ortho(float left, float right,
                     float bottom, float top,
                     float near, float far) {
     if (recorder != null) recorder.ortho(left, right, bottom, top, near, far);
