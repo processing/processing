@@ -4285,7 +4285,7 @@ public class PGraphicsAndroid3D extends PGraphics {
    * from the current camera configuration.
    */  
   public void ortho(float left, float right, float bottom, float top) {
-    ortho(0, width, 0, height, cameraNear, cameraFar);
+    ortho(left, right, bottom, top, cameraNear, cameraFar);
   }  
   
   /**
