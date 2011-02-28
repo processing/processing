@@ -18,7 +18,7 @@ void draw() {
   if (mousePressed) {
     // The arguments of ortho are specified in screen coordinates, where (0,0)
     // is the upper left corner of the screen
-    ortho(0, 0, width, height);     
+    ortho(0, width, 0, height);     
   } else {
 
     float fov = PI/3.0; 
